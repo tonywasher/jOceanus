@@ -22,16 +22,11 @@ import java.security.SecureRandom;
 import java.security.spec.PKCS8EncodedKeySpec;
 import java.security.spec.X509EncodedKeySpec;
 
-import org.bouncycastle.asn1.ASN1ObjectIdentifier;
 import org.bouncycastle.asn1.ASN1OctetString;
 import org.bouncycastle.asn1.DEROctetString;
-import org.bouncycastle.asn1.cryptopro.ECGOST3410NamedCurves;
 import org.bouncycastle.asn1.gm.GMNamedCurves;
 import org.bouncycastle.asn1.pkcs.PrivateKeyInfo;
-import org.bouncycastle.asn1.rosstandart.RosstandartObjectIdentifiers;
 import org.bouncycastle.asn1.sec.ECPrivateKey;
-import org.bouncycastle.asn1.ua.DSTU4145NamedCurves;
-import org.bouncycastle.asn1.ua.UAObjectIdentifiers;
 import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
 import org.bouncycastle.asn1.x509.SubjectPublicKeyInfo;
 import org.bouncycastle.asn1.x9.ECNamedCurveTable;
@@ -42,7 +37,6 @@ import org.bouncycastle.asn1.x9.X9ObjectIdentifiers;
 import org.bouncycastle.crypto.AsymmetricCipherKeyPair;
 import org.bouncycastle.crypto.CryptoException;
 import org.bouncycastle.crypto.DSA;
-import org.bouncycastle.crypto.generators.DSTU4145KeyPairGenerator;
 import org.bouncycastle.crypto.generators.ECKeyPairGenerator;
 import org.bouncycastle.crypto.kems.ECIESKeyEncapsulation;
 import org.bouncycastle.crypto.params.ECDomainParameters;
@@ -66,14 +60,13 @@ import net.sourceforge.joceanus.jgordianknot.crypto.GordianFactory;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianKeyEncapsulation;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianKeyEncapsulation.GordianKEMSender;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianKeyPair;
-import net.sourceforge.joceanus.jgordianknot.crypto.GordianLength;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianSignatureSpec;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianSigner;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianValidator;
 import net.sourceforge.joceanus.jgordianknot.crypto.bc.BouncyKeyEncapsulation.BouncyKeyDerivation;
 import net.sourceforge.joceanus.jgordianknot.crypto.bc.BouncyKeyPair.BouncyPrivateKey;
 import net.sourceforge.joceanus.jgordianknot.crypto.bc.BouncyKeyPair.BouncyPublicKey;
-import net.sourceforge.joceanus.jgordianknot.crypto.bc.BouncySignature.BouncyDSACoder;
+import net.sourceforge.joceanus.jgordianknot.crypto.bc.BouncySignature.BouncyDERCoder;
 import net.sourceforge.joceanus.jgordianknot.crypto.bc.BouncySignature.BouncyDigestSignature;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
@@ -272,13 +265,13 @@ public final class BouncyEllipticAsymKey {
 
             /* Create the generator */
             final GordianAsymKeyType myType = pKeySpec.getKeyType();
-            theGenerator = GordianAsymKeyType.DSTU4145.equals(myType)
-                                                                      ? new DSTU4145KeyPairGenerator()
-                                                                      : new ECKeyPairGenerator();
+            theGenerator = new ECKeyPairGenerator();
             theCurve = pKeySpec.getElliptic().getCurveName();
 
             /* Lookup the parameters */
-            final X9ECParameters x9 = getDomainParameters();
+            final X9ECParameters x9 = GordianAsymKeyType.SM2.equals(myType)
+                                      ? GMNamedCurves.getByName(theCurve)
+                                      : ECNamedCurveTable.getByName(theCurve);
             if (x9 == null) {
                 throw new GordianLogicException("Invalid KeySpec - " + pKeySpec);
             }
@@ -298,20 +291,21 @@ public final class BouncyEllipticAsymKey {
         }
 
         @Override
-        protected PKCS8EncodedKeySpec getPKCS8Encoding(final GordianKeyPair pKeyPair) throws OceanusException {
+        public PKCS8EncodedKeySpec getPKCS8Encoding(final GordianKeyPair pKeyPair) throws OceanusException {
             final BouncyECPrivateKey myPrivateKey = BouncyECPrivateKey.class.cast(getPrivateKey(pKeyPair));
             final ECPrivateKeyParameters myParms = myPrivateKey.getPrivateKey();
             final X962Parameters myX962Parms = new X962Parameters(ECUtil.getNamedCurveOid(theCurve));
             final BigInteger myOrder = myParms.getParameters().getCurve().getOrder();
             final ECPrivateKey myKey = new ECPrivateKey(myOrder.bitLength(), myParms.getD(), myX962Parms);
-            final byte[] myBytes = KeyUtil.getEncodedPrivateKeyInfo(new AlgorithmIdentifier(getObjectIdentifier(), myX962Parms.toASN1Primitive()),
+            final byte[] myBytes = KeyUtil.getEncodedPrivateKeyInfo(new AlgorithmIdentifier(
+                    X9ObjectIdentifiers.id_ecPublicKey, myX962Parms.toASN1Primitive()),
                     myKey.toASN1Primitive());
             return new PKCS8EncodedKeySpec(myBytes);
         }
 
         @Override
-        protected BouncyKeyPair deriveKeyPair(final X509EncodedKeySpec pPublicKey,
-                                              final PKCS8EncodedKeySpec pPrivateKey) throws OceanusException {
+        public BouncyKeyPair deriveKeyPair(final X509EncodedKeySpec pPublicKey,
+                                           final PKCS8EncodedKeySpec pPrivateKey) throws OceanusException {
             try {
                 final PrivateKeyInfo myInfo = PrivateKeyInfo.getInstance(pPrivateKey.getEncoded());
                 final ECPrivateKey myKey = ECPrivateKey.getInstance(myInfo.parsePrivateKey());
@@ -332,7 +326,8 @@ public final class BouncyEllipticAsymKey {
             final ECCurve myCurve = theDomain.getCurve();
             final ASN1OctetString p = (ASN1OctetString) new X9ECPoint(myCurve.createPoint(myParms.getQ().getAffineXCoord().toBigInteger(),
                     myParms.getQ().getAffineYCoord().toBigInteger())).toASN1Primitive();
-            final SubjectPublicKeyInfo myInfo = new SubjectPublicKeyInfo(new AlgorithmIdentifier(getObjectIdentifier(), myX962Parms), p.getOctets());
+            final SubjectPublicKeyInfo myInfo = new SubjectPublicKeyInfo(
+                    new AlgorithmIdentifier(X9ObjectIdentifiers.id_ecPublicKey, myX962Parms), p.getOctets());
             final byte[] myBytes = KeyUtil.getEncodedSubjectPublicKeyInfo(myInfo);
             return new X509EncodedKeySpec(myBytes);
         }
@@ -354,55 +349,6 @@ public final class BouncyEllipticAsymKey {
             final ECPublicKeyParameters myParms = new ECPublicKeyParameters(myKey.getPoint(), theDomain);
             return new BouncyECPublicKey(getKeySpec(), myParms);
         }
-
-        /**
-         * Look up parameters.
-         * @return the domain parameters
-         */
-        private ASN1ObjectIdentifier getObjectIdentifier() {
-            final GordianAsymKeySpec myKeySpec = getKeySpec();
-            switch (myKeySpec.getKeyType()) {
-                case GOST2012:
-                    return myKeySpec.getElliptic().getKeySize() > GordianLength.LEN_256.getLength()
-                                                                                                    ? RosstandartObjectIdentifiers.id_tc26_gost_3410_12_512
-                                                                                                    : RosstandartObjectIdentifiers.id_tc26_gost_3410_12_256;
-                case DSTU4145:
-                    return UAObjectIdentifiers.dstu4145be;
-                case SM2:
-                case EC:
-                default:
-                    return X9ObjectIdentifiers.id_ecPublicKey;
-            }
-        }
-
-        /**
-         * Look up parameters.
-         * @return the domain parameters
-         */
-        private X9ECParameters getDomainParameters() {
-            switch (getKeySpec().getKeyType()) {
-                case GOST2012:
-                    return fromDomainParameters(ECGOST3410NamedCurves.getByName(theCurve));
-                case DSTU4145:
-                    return fromDomainParameters(DSTU4145NamedCurves.getByOID(new ASN1ObjectIdentifier(theCurve)));
-                case SM2:
-                    return GMNamedCurves.getByName(theCurve);
-                case EC:
-                default:
-                    return ECNamedCurveTable.getByName(theCurve);
-            }
-        }
-
-        /**
-         * Convert from ECDomain parameters to X9EC parameters.
-         * @param pECParms the EC domain parameters
-         * @return X9EC parameters
-         */
-        private static X9ECParameters fromDomainParameters(final ECDomainParameters pECParms) {
-            return pECParms == null
-                                    ? null
-                                    : new X9ECParameters(pECParms.getCurve(), pECParms.getG(), pECParms.getN(), pECParms.getH(), pECParms.getSeed());
-        }
     }
 
     /**
@@ -419,7 +365,7 @@ public final class BouncyEllipticAsymKey {
         /**
          * The Coder.
          */
-        private final BouncyDSACoder theCoder;
+        private final BouncyDERCoder theCoder;
 
         /**
          * Constructor.
@@ -438,7 +384,7 @@ public final class BouncyEllipticAsymKey {
 
             /* Create the signer and Coder */
             theSigner = BouncySignature.getDSASigner(pFactory, pPrivateKey.getKeySpec(), pSpec);
-            theCoder = BouncySignature.getDSACoder(pPrivateKey.getKeySpec());
+            theCoder = new BouncyDERCoder();
 
             /* Initialise and set the signer */
             final ParametersWithRandom myParms = new ParametersWithRandom(pPrivateKey.getPrivateKey(), pRandom);
@@ -466,7 +412,7 @@ public final class BouncyEllipticAsymKey {
         /**
          * The Coder.
          */
-        private final BouncyDSACoder theCoder;
+        private final BouncyDERCoder theCoder;
 
         /**
          * Constructor.
@@ -483,7 +429,7 @@ public final class BouncyEllipticAsymKey {
 
             /* Create the signer */
             theSigner = BouncySignature.getDSASigner(pFactory, pPublicKey.getKeySpec(), pSpec);
-            theCoder = BouncySignature.getDSACoder(pPublicKey.getKeySpec());
+            theCoder = new BouncyDERCoder();
 
             /* Initialise and set the signer */
             theSigner.init(false, pPublicKey.getPublicKey());

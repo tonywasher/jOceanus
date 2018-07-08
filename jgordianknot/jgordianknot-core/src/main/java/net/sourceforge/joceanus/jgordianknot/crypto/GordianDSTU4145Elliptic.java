@@ -101,6 +101,21 @@ public enum GordianDSTU4145Elliptic implements GordianElliptic {
         return theSize;
     }
 
+    /**
+     * Obtain the curve for a Name.
+     * @param pName the name
+     * @return the curve
+     */
+    public static GordianDSTU4145Elliptic getCurveForName(final String pName) {
+        /* Loop through the curves */
+        for (GordianDSTU4145Elliptic myCurve: values()) {
+            if (pName.equals(myCurve.getCurveName())) {
+                return myCurve;
+            }
+        }
+        return null;
+    }
+
     @Override
     public String toString() {
         return name();

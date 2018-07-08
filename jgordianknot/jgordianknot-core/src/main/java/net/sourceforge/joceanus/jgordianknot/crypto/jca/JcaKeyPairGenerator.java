@@ -77,28 +77,20 @@ public abstract class JcaKeyPairGenerator
     }
 
     @Override
-    protected PKCS8EncodedKeySpec getPKCS8Encoding(final GordianKeyPair pKeyPair) throws OceanusException {
-        try {
-            final JcaPrivateKey myPrivateKey = JcaPrivateKey.class.cast(getPrivateKey(pKeyPair));
-            return theFactory.getKeySpec(myPrivateKey.getPrivateKey(), PKCS8EncodedKeySpec.class);
-        } catch (InvalidKeySpecException e) {
-            throw new GordianCryptoException("Failed to generate encoding", e);
-        }
+    public PKCS8EncodedKeySpec getPKCS8Encoding(final GordianKeyPair pKeyPair) throws OceanusException {
+        final JcaPrivateKey myPrivateKey = JcaPrivateKey.class.cast(getPrivateKey(pKeyPair));
+        return new PKCS8EncodedKeySpec(myPrivateKey.getPrivateKey().getEncoded());
     }
 
     @Override
     public X509EncodedKeySpec getX509Encoding(final GordianKeyPair pKeyPair) throws OceanusException {
-        try {
-            final JcaPublicKey myPublicKey = JcaPublicKey.class.cast(getPublicKey(pKeyPair));
-            return theFactory.getKeySpec(myPublicKey.getPublicKey(), X509EncodedKeySpec.class);
-        } catch (InvalidKeySpecException e) {
-            throw new GordianCryptoException("Failed to generate encoding", e);
-        }
+        final JcaPublicKey myPublicKey = JcaPublicKey.class.cast(getPublicKey(pKeyPair));
+        return new X509EncodedKeySpec(myPublicKey.getPublicKey().getEncoded());
     }
 
     @Override
-    protected JcaKeyPair deriveKeyPair(final X509EncodedKeySpec pPublicKey,
-                                       final PKCS8EncodedKeySpec pPrivateKey) throws OceanusException {
+    public JcaKeyPair deriveKeyPair(final X509EncodedKeySpec pPublicKey,
+                                    final PKCS8EncodedKeySpec pPrivateKey) throws OceanusException {
         try {
             final JcaPrivateKey myPrivate = new JcaPrivateKey(getKeySpec(), theFactory.generatePrivate(pPrivateKey));
             final JcaPublicKey myPublic = derivePublicKey(pPublicKey);

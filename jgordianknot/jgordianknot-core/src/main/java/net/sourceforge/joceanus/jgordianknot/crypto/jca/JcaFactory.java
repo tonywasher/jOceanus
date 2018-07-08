@@ -19,6 +19,7 @@ package net.sourceforge.joceanus.jgordianknot.crypto.jca;
 import net.sourceforge.joceanus.jgordianknot.GordianCryptoException;
 import net.sourceforge.joceanus.jgordianknot.GordianDataException;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianAsymKeySpec;
+import net.sourceforge.joceanus.jgordianknot.crypto.GordianAsymKeyType;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianCipherMode;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianCipherSpec.GordianStreamCipherSpec;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianCipherSpec.GordianSymCipherSpec;
@@ -84,6 +85,7 @@ import java.security.Provider;
 import java.security.Security;
 import java.security.Signature;
 import java.util.function.BiPredicate;
+import java.util.function.Predicate;
 
 /**
  * Factory for JCA BouncyCastle Classes.
@@ -311,15 +313,15 @@ public final class JcaFactory
     }
 
     @Override
-    public BiPredicate<GordianKeyPair, GordianSignatureSpec> supportedSignatures() {
-        return this::validSignature;
+    public Predicate<GordianSignatureSpec> supportedSignatureSpec() {
+        return this::validSignatureSpec;
     }
 
     @Override
     public GordianSigner createSigner(final GordianKeyPair pKeyPair,
                                       final GordianSignatureSpec pSignatureSpec) throws OceanusException {
         /* Check validity of Signature */
-        if (!supportedSignatures().test(pKeyPair, pSignatureSpec)) {
+        if (!validSignatureSpecForKeyPair(pKeyPair, pSignatureSpec)) {
             throw new GordianDataException(getInvalidText(pSignatureSpec));
         }
 
@@ -331,7 +333,7 @@ public final class JcaFactory
     public GordianValidator createValidator(final GordianKeyPair pKeyPair,
                                             final GordianSignatureSpec pSignatureSpec) throws OceanusException {
         /* Check validity of Signature */
-        if (!supportedSignatures().test(pKeyPair, pSignatureSpec)) {
+        if (!validSignatureSpecForKeyPair(pKeyPair, pSignatureSpec)) {
             throw new GordianDataException(getInvalidText(pSignatureSpec));
         }
 
@@ -1026,16 +1028,10 @@ public final class JcaFactory
         return super.validDigestSpec(pDigestSpec);
     }
 
-    /**
-     * Check Signature.
-     * @param pKeyPair the keyPair
-     * @param pSpec the signatureSpec
-     * @return true/false
-     */
-    private boolean validSignature(final GordianKeyPair pKeyPair,
-                                   final GordianSignatureSpec pSpec) {
+    @Override
+    protected boolean validSignatureSpec(final GordianSignatureSpec pSpec) {
         /* validate the signatureSpec */
-        if (!validSignatureSpec(pKeyPair, pSpec)) {
+        if (!super.validSignatureSpec(pSpec)) {
             return false;
         }
 
@@ -1051,7 +1047,7 @@ public final class JcaFactory
             case DSA:
                 return validDSASignature(pSpec);
             case SPHINCS:
-                return validSPHINCSSignature(pKeyPair, myDigest);
+                return validSPHINCSSignature(myDigest);
             case RAINBOW:
                 return validRainbowSignature(myDigest);
             case DSTU4145:
@@ -1068,6 +1064,19 @@ public final class JcaFactory
                 return false;
         }
     }
+
+    @Override
+    public boolean validSignatureSpecForKeyPair(final GordianKeyPair pKeyPair,
+                                                final GordianSignatureSpec pSpec) {
+        /* validate the signatureSpec */
+        if (!super.validSignatureSpecForKeyPair(pKeyPair, pSpec)) {
+            return false;
+        }
+
+        /* Do an additional check for SPHINCS * */
+        return !GordianAsymKeyType.SPHINCS.equals(pSpec.getAsymKeyType())
+               ||  validSPHINCSSignature(pKeyPair, pSpec.getDigestSpec());
+     }
 
     /**
      * Check RSASignature.
@@ -1129,17 +1138,33 @@ public final class JcaFactory
 
     /**
      * Check SPHINCSSignature.
+      * @param pSpec the digestSpec
+     * @return true/false
+     */
+    private static boolean validSPHINCSSignature(final GordianDigestSpec pSpec) {
+        /* Must be 512 bytes */
+        if (!GordianLength.LEN_512.equals(pSpec.getDigestLength())) {
+            return false;
+        }
+
+        /* Switch on DigestType */
+        switch (pSpec.getDigestType()) {
+            case SHA2:
+            case SHA3:
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    /**
+     * Check SPHINCSSignature.
      * @param pKeyPair the keyPair
      * @param pSpec the digestSpec
      * @return true/false
      */
     private static boolean validSPHINCSSignature(final GordianKeyPair pKeyPair,
                                                  final GordianDigestSpec pSpec) {
-        /* Must be 512 bytes */
-        if (!GordianLength.LEN_512.equals(pSpec.getDigestLength())) {
-            return false;
-        }
-
         /* Switch on DigestType */
         final GordianSPHINCSKeyType myType = pKeyPair.getKeySpec().getSPHINCSType();
         switch (pSpec.getDigestType()) {

@@ -51,12 +51,12 @@ import net.sourceforge.joceanus.jgordianknot.crypto.GordianSigner;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianValidator;
 import net.sourceforge.joceanus.jgordianknot.crypto.bc.BouncyKeyPair.BouncyPrivateKey;
 import net.sourceforge.joceanus.jgordianknot.crypto.bc.BouncyKeyPair.BouncyPublicKey;
-import net.sourceforge.joceanus.jgordianknot.crypto.bc.BouncySignature.BouncyDSACoder;
+import net.sourceforge.joceanus.jgordianknot.crypto.bc.BouncySignature.BouncyDERCoder;
 import net.sourceforge.joceanus.jgordianknot.crypto.bc.BouncySignature.BouncyDigestSignature;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
- * RSA AsymKey classes.
+ * DSA AsymKey classes.
  */
 public final class BouncyDSAAsymKey {
     /**
@@ -259,7 +259,7 @@ public final class BouncyDSAAsymKey {
         }
 
         @Override
-        protected PKCS8EncodedKeySpec getPKCS8Encoding(final GordianKeyPair pKeyPair) throws GordianCryptoException {
+        public PKCS8EncodedKeySpec getPKCS8Encoding(final GordianKeyPair pKeyPair) throws GordianCryptoException {
             try {
                 final BouncyDSAPrivateKey myPrivateKey = BouncyDSAPrivateKey.class.cast(getPrivateKey(pKeyPair));
                 final DSAPrivateKeyParameters myKey = myPrivateKey.getPrivateKey();
@@ -273,8 +273,8 @@ public final class BouncyDSAAsymKey {
         }
 
         @Override
-        protected BouncyKeyPair deriveKeyPair(final X509EncodedKeySpec pPublicKey,
-                                              final PKCS8EncodedKeySpec pPrivateKey) throws OceanusException {
+        public BouncyKeyPair deriveKeyPair(final X509EncodedKeySpec pPublicKey,
+                                           final PKCS8EncodedKeySpec pPrivateKey) throws OceanusException {
             try {
                 final PrivateKeyInfo myInfo = PrivateKeyInfo.getInstance(pPrivateKey.getEncoded());
                 final DSAParameter myParams = DSAParameter.getInstance(myInfo.getPrivateKeyAlgorithm().getParameters());
@@ -337,7 +337,7 @@ public final class BouncyDSAAsymKey {
         /**
          * The Coder.
          */
-        private final BouncyDSACoder theCoder;
+        private final BouncyDERCoder theCoder;
 
         /**
          * Constructor.
@@ -356,7 +356,7 @@ public final class BouncyDSAAsymKey {
 
             /* Create the signer */
             theSigner = BouncySignature.getDSASigner(pFactory, pPrivateKey.getKeySpec(), pSpec);
-            theCoder = BouncySignature.getDSACoder(pPrivateKey.getKeySpec());
+            theCoder = new BouncyDERCoder();
 
             /* Initialise and set the signer */
             final ParametersWithRandom myParms = new ParametersWithRandom(pPrivateKey.getPrivateKey(), pRandom);
@@ -384,7 +384,7 @@ public final class BouncyDSAAsymKey {
         /**
          * The Coder.
          */
-        private final BouncyDSACoder theCoder;
+        private final BouncyDERCoder theCoder;
 
         /**
          * Constructor.
@@ -401,7 +401,7 @@ public final class BouncyDSAAsymKey {
 
             /* Create the signer */
             theSigner = BouncySignature.getDSASigner(pFactory, pPublicKey.getKeySpec(), pSpec);
-            theCoder = BouncySignature.getDSACoder(pPublicKey.getKeySpec());
+            theCoder = new BouncyDERCoder();
 
             /* Initialise and set the signer */
             theSigner.init(false, pPublicKey.getPublicKey());

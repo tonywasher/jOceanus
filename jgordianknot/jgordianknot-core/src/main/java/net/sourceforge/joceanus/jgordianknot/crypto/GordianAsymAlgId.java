@@ -1,0 +1,773 @@
+/*******************************************************************************
+ * GordianKnot: Security Suite
+ * Copyright 2012,2018 Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ ******************************************************************************/
+package net.sourceforge.joceanus.jgordianknot.crypto;
+
+import java.io.IOException;
+import java.math.BigInteger;
+import java.security.spec.PKCS8EncodedKeySpec;
+import java.security.spec.X509EncodedKeySpec;
+import java.util.HashMap;
+import java.util.Map;
+
+import org.bouncycastle.asn1.ASN1ObjectIdentifier;
+import org.bouncycastle.asn1.cryptopro.ECGOST3410NamedCurves;
+import org.bouncycastle.asn1.cryptopro.GOST3410PublicKeyAlgParameters;
+import org.bouncycastle.asn1.nist.NISTObjectIdentifiers;
+import org.bouncycastle.asn1.pkcs.DHParameter;
+import org.bouncycastle.asn1.pkcs.PKCSObjectIdentifiers;
+import org.bouncycastle.asn1.pkcs.PrivateKeyInfo;
+import org.bouncycastle.asn1.pkcs.RSAPrivateKey;
+import org.bouncycastle.asn1.pkcs.RSAPublicKey;
+import org.bouncycastle.asn1.rosstandart.RosstandartObjectIdentifiers;
+import org.bouncycastle.asn1.ua.DSTU4145NamedCurves;
+import org.bouncycastle.asn1.ua.DSTU4145Params;
+import org.bouncycastle.asn1.ua.UAObjectIdentifiers;
+import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
+import org.bouncycastle.asn1.x509.DSAParameter;
+import org.bouncycastle.asn1.x509.SubjectPublicKeyInfo;
+import org.bouncycastle.asn1.x9.ECNamedCurveTable;
+import org.bouncycastle.asn1.x9.X962Parameters;
+import org.bouncycastle.asn1.x9.X9ObjectIdentifiers;
+import org.bouncycastle.crypto.params.ECDomainParameters;
+import org.bouncycastle.pqc.asn1.McElieceCCA2PrivateKey;
+import org.bouncycastle.pqc.asn1.McElieceCCA2PublicKey;
+import org.bouncycastle.pqc.asn1.PQCObjectIdentifiers;
+import org.bouncycastle.pqc.asn1.SPHINCS256KeyParams;
+import org.bouncycastle.pqc.asn1.XMSSKeyParams;
+import org.bouncycastle.pqc.asn1.XMSSMTKeyParams;
+
+import net.sourceforge.joceanus.jgordianknot.GordianDataException;
+import net.sourceforge.joceanus.jgordianknot.crypto.GordianMcElieceKeySpec.GordianMcElieceDigestType;
+import net.sourceforge.joceanus.jtethys.OceanusException;
+
+/**
+ * Mappings from EncodedId to AsymKeySpec.
+ */
+public class GordianAsymAlgId {
+    /**
+     * The parser map.
+     */
+    private final Map<ASN1ObjectIdentifier, GordianEncodedParser> theParserMap;
+
+    /**
+     * Constructor.
+     */
+    public GordianAsymAlgId() {
+        /* Create the map */
+        theParserMap = new HashMap<>();
+
+        /* Register the parsers */
+        GordianRSAEncodedParser.register(this);
+        GordianDSAEncodedParser.register(this);
+        GordianDHEncodedParser.register(this);
+        GordianECEncodedParser.register(this);
+        GordianDSTUEncodedParser.register(this);
+        GordianGOSTEncodedParser.register(this);
+        GordianRainbowEncodedParser.register(this);
+        GordianNewHopeEncodedParser.register(this);
+        GordianSPHINCSEncodedParser.register(this);
+        GordianXMSSEncodedParser.register(this);
+        GordianXMSSMTEncodedParser.register(this);
+        GordianMcElieceEncodedParser.register(this);
+        GordianMcElieceCCA2EncodedParser.register(this);
+    }
+
+    /**
+     * Obtain KeySpec from X509KeySpec.
+     * @param pEncoded X509 keySpec
+     * @return the keySpec
+     * @throws OceanusException on error
+     */
+    public GordianAsymKeySpec determineKeySpec(final PKCS8EncodedKeySpec pEncoded) throws OceanusException {
+        /* Determine the algorithm Id. */
+        final PrivateKeyInfo myInfo = PrivateKeyInfo.getInstance(pEncoded.getEncoded());
+        final AlgorithmIdentifier myId = myInfo.getPrivateKeyAlgorithm();
+        final ASN1ObjectIdentifier myAlgId = myId.getAlgorithm();
+
+        /* Obtain the parser */
+        final GordianEncodedParser myParser = theParserMap.get(myAlgId);
+        if (myParser != null) {
+            return myParser.determineKeySpec(myInfo);
+        }
+        throw new GordianDataException("Unrecognised algorithm");
+    }
+
+    /**
+     * Obtain KeySpec from X509KeySpec.
+     * @param pEncoded X509 keySpec
+     * @return the keySpec
+     * @throws OceanusException on error
+     */
+    public GordianAsymKeySpec determineKeySpec(final X509EncodedKeySpec pEncoded) throws OceanusException {
+        /* Determine the algorithm Id. */
+        final SubjectPublicKeyInfo myInfo = SubjectPublicKeyInfo.getInstance(pEncoded.getEncoded());
+        final AlgorithmIdentifier myId = myInfo.getAlgorithm();
+        final ASN1ObjectIdentifier myAlgId = myId.getAlgorithm();
+
+        /* Obtain the parser */
+        final GordianEncodedParser myParser = theParserMap.get(myAlgId);
+        if (myParser != null) {
+            return myParser.determineKeySpec(myInfo);
+        }
+        throw new GordianDataException("Unrecognised algorithm");
+    }
+
+    /**
+     * register the parser.
+     * @param pAlgId the algorithm Id.
+     * @param pParser the parser
+     */
+    void registerParser(final ASN1ObjectIdentifier pAlgId,
+                        final GordianEncodedParser pParser) {
+        theParserMap.put(pAlgId, pParser);
+    }
+
+    /**
+     * EncodedParser interface.
+     */
+    private interface GordianEncodedParser {
+        /**
+         * Obtain KeySpec from PrivateKeyInfo.
+         * @param pInfo keySpec
+         * @return the keySpec
+         * @throws OceanusException on error
+         */
+        GordianAsymKeySpec determineKeySpec(SubjectPublicKeyInfo pInfo) throws OceanusException;
+
+        /**
+         * Obtain KeySpec from SubjectPublicKeyInfo.
+         * @param pInfo keySpec
+         * @return the keySpec
+         * @throws OceanusException on error
+         */
+        GordianAsymKeySpec determineKeySpec(PrivateKeyInfo pInfo) throws OceanusException;
+    }
+
+    /**
+     * RSA Encoded parser.
+     */
+    private static class GordianRSAEncodedParser implements GordianEncodedParser {
+        /**
+         * Registrar.
+         * @param pIdManager the idManager
+         */
+        static void register(final GordianAsymAlgId pIdManager) {
+            pIdManager.registerParser(PKCSObjectIdentifiers.rsaEncryption, new GordianRSAEncodedParser());
+        }
+
+        @Override
+        public GordianAsymKeySpec determineKeySpec(final SubjectPublicKeyInfo pInfo) throws OceanusException {
+            /* Protect against exceptions */
+            try {
+                /* Parse the publicKey */
+                final RSAPublicKey myPublic = RSAPublicKey.getInstance(pInfo.parsePublicKey());
+                return determineKeySpec(myPublic.getModulus());
+
+                /* Handle exceptions */
+            } catch (IOException e) {
+                throw new GordianDataException("Failed to parse PublicKey");
+            }
+        }
+
+        @Override
+        public GordianAsymKeySpec determineKeySpec(final PrivateKeyInfo pInfo) throws OceanusException {
+            /* Protect against exceptions */
+            try {
+                /* Parse the publicKey */
+                final RSAPrivateKey myPrivate = RSAPrivateKey.getInstance(pInfo.parsePrivateKey());
+                return determineKeySpec(myPrivate.getModulus());
+
+                /* Handle exceptions */
+            } catch (IOException e) {
+                throw new GordianDataException("Failed to parse PrivateKey");
+            }
+        }
+
+        /**
+         * Obtain keySpec from Modulus.
+         * @param pModulus the modulus
+         * @return the keySpec
+         * @throws OceanusException on error
+         */
+        private static  GordianAsymKeySpec determineKeySpec(final BigInteger pModulus) throws OceanusException {
+            final GordianModulus myModulus = GordianModulus.getModulusForInteger(pModulus);
+            if (myModulus == null) {
+                throw new GordianDataException("RSA strength not supported: " + pModulus.bitLength());
+            }
+            return  GordianAsymKeySpec.rsa(myModulus);
+        }
+    }
+
+    /**
+     * DSA Encoded parser.
+     */
+    private static class GordianDSAEncodedParser implements GordianEncodedParser {
+        /**
+         * Registrar.
+         * @param pIdManager the idManager
+         */
+        static void register(final GordianAsymAlgId pIdManager) {
+            pIdManager.registerParser(X9ObjectIdentifiers.id_dsa, new GordianDSAEncodedParser());
+        }
+
+        @Override
+        public GordianAsymKeySpec determineKeySpec(final SubjectPublicKeyInfo pInfo) throws OceanusException {
+            final AlgorithmIdentifier myId = pInfo.getAlgorithm();
+            final DSAParameter myParms = DSAParameter.getInstance(myId.getParameters());
+            return determineKeySpec(myParms);
+        }
+
+        @Override
+        public GordianAsymKeySpec determineKeySpec(final PrivateKeyInfo pInfo) throws OceanusException {
+            final AlgorithmIdentifier myId = pInfo.getPrivateKeyAlgorithm();
+            final DSAParameter myParms = DSAParameter.getInstance(myId.getParameters());
+            return determineKeySpec(myParms);
+        }
+
+        /**
+         * Obtain keySpec from Parameters.
+         * @param pParms the parameters
+         * @return the keySpec
+         * @throws OceanusException on error
+         */
+        private static  GordianAsymKeySpec determineKeySpec(final DSAParameter pParms) throws OceanusException {
+            final GordianDSAKeyType myKeyType = GordianDSAKeyType.getDSATypeForParms(pParms);
+            if (myKeyType == null) {
+                throw new GordianDataException("Unsupported DSA parameters: "
+                        + pParms.getP().bitLength() + ":" + pParms.getQ().bitLength());
+            }
+            return  GordianAsymKeySpec.dsa(myKeyType);
+        }
+    }
+
+    /**
+     * DH Encoded parser.
+     */
+    private static class GordianDHEncodedParser implements GordianEncodedParser {
+        /**
+         * Registrar.
+         * @param pIdManager the idManager
+         */
+        static void register(final GordianAsymAlgId pIdManager) {
+            pIdManager.registerParser(PKCSObjectIdentifiers.dhKeyAgreement, new GordianDHEncodedParser());
+        }
+
+        @Override
+        public GordianAsymKeySpec determineKeySpec(final SubjectPublicKeyInfo pInfo) throws OceanusException {
+            final AlgorithmIdentifier myId = pInfo.getAlgorithm();
+            final DHParameter myParms = DHParameter.getInstance(myId.getParameters());
+            return determineKeySpec(myParms);
+        }
+
+        @Override
+        public GordianAsymKeySpec determineKeySpec(final PrivateKeyInfo pInfo) throws OceanusException {
+            final AlgorithmIdentifier myId = pInfo.getPrivateKeyAlgorithm();
+            final DHParameter myParms = DHParameter.getInstance(myId.getParameters());
+            return determineKeySpec(myParms);
+        }
+
+        /**
+         * Obtain keySpec from Parameters.
+         * @param pParms the parameters
+         * @return the keySpec
+         * @throws OceanusException on error
+         */
+        private static  GordianAsymKeySpec determineKeySpec(final DHParameter pParms) throws OceanusException {
+            final GordianModulus myModulus = GordianModulus.getModulusForDHParams(pParms);
+            if (myModulus == null) {
+                throw new GordianDataException("Unsupported DH parameters: "
+                        + pParms.getP().bitLength());
+            }
+            return  GordianAsymKeySpec.dh(myModulus);
+        }
+    }
+
+    /**
+     * EC Encoded parser.
+     */
+    private static class GordianECEncodedParser implements GordianEncodedParser {
+        /**
+         * Registrar.
+         * @param pIdManager the idManager
+         */
+        static void register(final GordianAsymAlgId pIdManager) {
+            pIdManager.registerParser(X9ObjectIdentifiers.id_ecPublicKey, new GordianECEncodedParser());
+        }
+
+        @Override
+        public GordianAsymKeySpec determineKeySpec(final SubjectPublicKeyInfo pInfo) throws OceanusException {
+            final AlgorithmIdentifier myId = pInfo.getAlgorithm();
+            final X962Parameters myParms = X962Parameters.getInstance(myId.getParameters());
+            return determineKeySpec(myParms);
+        }
+
+        @Override
+        public GordianAsymKeySpec determineKeySpec(final PrivateKeyInfo pInfo) throws OceanusException {
+            final AlgorithmIdentifier myId = pInfo.getPrivateKeyAlgorithm();
+            final X962Parameters myParms = X962Parameters.getInstance(myId.getParameters());
+            return determineKeySpec(myParms);
+        }
+
+        /**
+         * Obtain keySpec from Parameters.
+         * @param pParms the parameters
+         * @return the keySpec
+         * @throws OceanusException on error
+         */
+        private static  GordianAsymKeySpec determineKeySpec(final X962Parameters pParms) throws OceanusException {
+            /* Reject if not a named curve */
+            if (!pParms.isNamedCurve()) {
+                throw new GordianDataException("Not a named curve");
+            }
+
+            /* Check for EC named surve */
+            final ASN1ObjectIdentifier myId = (ASN1ObjectIdentifier) pParms.getParameters();
+            final String myName = ECNamedCurveTable.getName(myId);
+            if (myName != null) {
+                final GordianDSAElliptic myDSACurve = GordianDSAElliptic.getCurveForName(myName);
+                if (myDSACurve != null) {
+                    return GordianAsymKeySpec.ec(myDSACurve);
+                }
+                final GordianSM2Elliptic mySM2Curve = GordianSM2Elliptic.getCurveForName(myName);
+                if (mySM2Curve != null) {
+                    return GordianAsymKeySpec.sm2(mySM2Curve);
+                }
+                throw new GordianDataException("Unsupported curve: " + myName);
+            }
+
+            /* Curve is not supported */
+            throw new GordianDataException("Unsupported curve: " + pParms.toString());
+        }
+    }
+
+    /**
+     * DSTU Encoded parser.
+     */
+    private static class GordianDSTUEncodedParser implements GordianEncodedParser {
+        /**
+         * Registrar.
+         * @param pIdManager the idManager
+         */
+        static void register(final GordianAsymAlgId pIdManager) {
+            pIdManager.registerParser(UAObjectIdentifiers.dstu4145be, new GordianDSTUEncodedParser());
+        }
+
+        @Override
+        public GordianAsymKeySpec determineKeySpec(final SubjectPublicKeyInfo pInfo) throws OceanusException {
+            final AlgorithmIdentifier myId = pInfo.getAlgorithm();
+            final DSTU4145Params  myParms = DSTU4145Params.getInstance(myId.getParameters());
+            return determineKeySpec(myParms);
+        }
+
+        @Override
+        public GordianAsymKeySpec determineKeySpec(final PrivateKeyInfo pInfo) throws OceanusException {
+            final AlgorithmIdentifier myId = pInfo.getPrivateKeyAlgorithm();
+            final X962Parameters myParms = X962Parameters.getInstance(myId.getParameters());
+            return determineKeySpec(myParms);
+        }
+
+        /**
+         * Obtain keySpec from Parameters.
+         * @param pParms the parameters
+         * @return the keySpec
+         * @throws OceanusException on error
+         */
+        private static  GordianAsymKeySpec determineKeySpec(final DSTU4145Params pParms) throws OceanusException {
+            /* Reject if not a named curve */
+            if (!pParms.isNamedCurve()) {
+                throw new GordianDataException("Not a named curve");
+            }
+            return determineKeySpec(pParms.getNamedCurve());
+        }
+
+        /**
+         * Obtain keySpec from Parameters.
+         * @param pParms the parameters
+         * @return the keySpec
+         * @throws OceanusException on error
+         */
+        private static  GordianAsymKeySpec determineKeySpec(final X962Parameters pParms) throws OceanusException {
+            /* Reject if not a named curve */
+            if (!pParms.isNamedCurve()) {
+                throw new GordianDataException("Not a named curve");
+            }
+            return determineKeySpec((ASN1ObjectIdentifier) pParms.getParameters());
+        }
+
+        /**
+         * Obtain keySpec from curveId.
+         * @param pId the curveId
+         * @return the keySpec
+         * @throws OceanusException on error
+         */
+        private static  GordianAsymKeySpec determineKeySpec(final ASN1ObjectIdentifier pId) throws OceanusException {
+            /* Check for EC named surve */
+            final String myName = pId.toString();
+            final ECDomainParameters myParms = DSTU4145NamedCurves.getByOID(pId);
+            final GordianDSTU4145Elliptic myCurve = GordianDSTU4145Elliptic.getCurveForName(myName);
+            if (myParms == null || myCurve == null) {
+                throw new GordianDataException("Unsupported curve: " + myName);
+            }
+            return GordianAsymKeySpec.dstu4145(myCurve);
+        }
+    }
+
+    /**
+     * GOST Encoded parser.
+     */
+    private static class GordianGOSTEncodedParser implements GordianEncodedParser {
+        /**
+         * Registrar.
+         * @param pIdManager the idManager
+         */
+        static void register(final GordianAsymAlgId pIdManager) {
+            final GordianGOSTEncodedParser myParser = new GordianGOSTEncodedParser();
+            pIdManager.registerParser(RosstandartObjectIdentifiers.id_tc26_gost_3410_12_256, myParser);
+            pIdManager.registerParser(RosstandartObjectIdentifiers.id_tc26_gost_3410_12_512, myParser);
+        }
+
+        @Override
+        public GordianAsymKeySpec determineKeySpec(final SubjectPublicKeyInfo pInfo) throws OceanusException {
+             return determineKeySpec(pInfo.getAlgorithm());
+        }
+
+        @Override
+        public GordianAsymKeySpec determineKeySpec(final PrivateKeyInfo pInfo) throws OceanusException {
+            return determineKeySpec(pInfo.getPrivateKeyAlgorithm());
+        }
+
+        /**
+         * Obtain keySpec from Parameters.
+         * @param pId the algorithmId
+         * @return the keySpec
+         * @throws OceanusException on error
+         */
+        private static  GordianAsymKeySpec determineKeySpec(final AlgorithmIdentifier pId) throws OceanusException {
+            /* Determine the curve name */
+            final GOST3410PublicKeyAlgParameters myParms = GOST3410PublicKeyAlgParameters.getInstance(pId.getParameters());
+            final ASN1ObjectIdentifier myId = myParms.getPublicKeyParamSet();
+            final String myName = ECGOST3410NamedCurves.getName(myId);
+
+            /* Determine curve */
+            if (myName != null) {
+                final GordianGOSTElliptic myCurve = GordianGOSTElliptic.getCurveForName(myName);
+                if (myCurve == null) {
+                    throw new GordianDataException("Unsupported curve: + myName");
+                }
+                return GordianAsymKeySpec.gost2012(myCurve);
+            }
+
+            /* Curve is not supported */
+            throw new GordianDataException("Unsupported curve: " + myParms.toString());
+        }
+    }
+
+    /**
+     * Rainbow Encoded parser.
+     */
+    private static class GordianRainbowEncodedParser implements GordianEncodedParser {
+        /**
+         * Registrar.
+         * @param pIdManager the idManager
+         */
+        static void register(final GordianAsymAlgId pIdManager) {
+            pIdManager.registerParser(PQCObjectIdentifiers.rainbow, new GordianRainbowEncodedParser());
+        }
+
+        @Override
+        public GordianAsymKeySpec determineKeySpec(final SubjectPublicKeyInfo pInfo) throws OceanusException {
+            return GordianAsymKeySpec.rainbow();
+        }
+
+        @Override
+        public GordianAsymKeySpec determineKeySpec(final PrivateKeyInfo pInfo) throws OceanusException {
+            return GordianAsymKeySpec.rainbow();
+        }
+    }
+
+    /**
+     * NewHope Encoded parser.
+     */
+    private static class GordianNewHopeEncodedParser implements GordianEncodedParser {
+        /**
+         * Registrar.
+         * @param pIdManager the idManager
+         */
+        static void register(final GordianAsymAlgId pIdManager) {
+            pIdManager.registerParser(PQCObjectIdentifiers.newHope, new GordianNewHopeEncodedParser());
+        }
+
+        @Override
+        public GordianAsymKeySpec determineKeySpec(final SubjectPublicKeyInfo pInfo) throws OceanusException {
+            return GordianAsymKeySpec.newHope();
+        }
+
+        @Override
+        public GordianAsymKeySpec determineKeySpec(final PrivateKeyInfo pInfo) throws OceanusException {
+            return GordianAsymKeySpec.newHope();
+        }
+    }
+
+    /**
+     * SPHINCS Encoded parser.
+     */
+    private static class GordianSPHINCSEncodedParser implements GordianEncodedParser {
+        /**
+         * Registrar.
+         * @param pIdManager the idManager
+         */
+        static void register(final GordianAsymAlgId pIdManager) {
+            pIdManager.registerParser(PQCObjectIdentifiers.sphincs256, new GordianSPHINCSEncodedParser());
+        }
+
+        @Override
+        public GordianAsymKeySpec determineKeySpec(final SubjectPublicKeyInfo pInfo) throws OceanusException {
+            final AlgorithmIdentifier myId = pInfo.getAlgorithm();
+            final SPHINCS256KeyParams myParms = SPHINCS256KeyParams.getInstance(myId.getParameters());
+            return determineKeySpec(myParms);
+        }
+
+        @Override
+        public GordianAsymKeySpec determineKeySpec(final PrivateKeyInfo pInfo) throws OceanusException {
+            final AlgorithmIdentifier myId = pInfo.getPrivateKeyAlgorithm();
+            final SPHINCS256KeyParams myParms = SPHINCS256KeyParams.getInstance(myId.getParameters());
+            return determineKeySpec(myParms);
+        }
+
+        /**
+         * Obtain keySpec from Parameters.
+         * @param pParms the parameters
+         * @return the keySpec
+         * @throws OceanusException on error
+         */
+        private static  GordianAsymKeySpec determineKeySpec(final SPHINCS256KeyParams pParms) throws OceanusException {
+            final ASN1ObjectIdentifier myDigest = pParms.getTreeDigest().getAlgorithm();
+            if (myDigest.equals(NISTObjectIdentifiers.id_sha512_256)) {
+                return GordianAsymKeySpec.sphincs(GordianSPHINCSKeyType.SHA2);
+            }
+            if (myDigest.equals(NISTObjectIdentifiers.id_sha3_256)) {
+                return GordianAsymKeySpec.sphincs(GordianSPHINCSKeyType.SHA3);
+            }
+
+            /* Tree Digest is not supported */
+            throw new GordianDataException("Unsupported treeDigest: " + myDigest.toString());
+        }
+    }
+
+    /**
+     * XMSS Encoded parser.
+     */
+    private static class GordianXMSSEncodedParser implements GordianEncodedParser {
+        /**
+         * Registrar.
+         * @param pIdManager the idManager
+         */
+        static void register(final GordianAsymAlgId pIdManager) {
+            pIdManager.registerParser(PQCObjectIdentifiers.xmss, new GordianXMSSEncodedParser());
+         }
+
+
+        @Override
+        public GordianAsymKeySpec determineKeySpec(final SubjectPublicKeyInfo pInfo) throws OceanusException {
+            final AlgorithmIdentifier myId = pInfo.getAlgorithm();
+            final XMSSKeyParams myParms = XMSSKeyParams.getInstance(myId.getParameters());
+            return determineKeySpec(myParms);
+        }
+
+        @Override
+        public GordianAsymKeySpec determineKeySpec(final PrivateKeyInfo pInfo) throws OceanusException {
+            final AlgorithmIdentifier myId = pInfo.getPrivateKeyAlgorithm();
+            final XMSSKeyParams myParms = XMSSKeyParams.getInstance(myId.getParameters());
+            return determineKeySpec(myParms);
+        }
+
+        /**
+         * Obtain keySpec from Parameters.
+         * @param pParms the parameters
+         * @return the keySpec
+         * @throws OceanusException on error
+         */
+        private static  GordianAsymKeySpec determineKeySpec(final XMSSKeyParams pParms) throws OceanusException {
+            final ASN1ObjectIdentifier myDigest = pParms.getTreeDigest().getAlgorithm();
+            return GordianAsymKeySpec.xmss(determineKeyType(myDigest));
+         }
+
+        /**
+         * Obtain keyType from digest.
+         * @param pDigest the treeDigest
+         * @return the keyType
+         * @throws OceanusException on error
+         */
+        static  GordianXMSSKeyType determineKeyType(final ASN1ObjectIdentifier pDigest) throws OceanusException {
+            if (pDigest.equals(NISTObjectIdentifiers.id_sha256)) {
+                return GordianXMSSKeyType.SHA256;
+            }
+            if (pDigest.equals(NISTObjectIdentifiers.id_sha512)) {
+                return GordianXMSSKeyType.SHA512;
+            }
+            if (pDigest.equals(NISTObjectIdentifiers.id_shake128)) {
+                return GordianXMSSKeyType.SHAKE128;
+            }
+            if (pDigest.equals(NISTObjectIdentifiers.id_shake256)) {
+                return GordianXMSSKeyType.SHAKE256;
+            }
+
+            /* Tree Digest is not supported */
+            throw new GordianDataException("Unsupported treeDigest: " + pDigest.toString());
+        }
+    }
+
+    /**
+     * XMSSMT Encoded parser.
+     */
+    private static class GordianXMSSMTEncodedParser implements GordianEncodedParser {
+        /**
+         * Registrar.
+         * @param pIdManager the idManager
+         */
+        static void register(final GordianAsymAlgId pIdManager) {
+            pIdManager.registerParser(PQCObjectIdentifiers.xmss_mt, new GordianXMSSMTEncodedParser());
+        }
+
+
+        @Override
+        public GordianAsymKeySpec determineKeySpec(final SubjectPublicKeyInfo pInfo) throws OceanusException {
+            final AlgorithmIdentifier myId = pInfo.getAlgorithm();
+            final XMSSMTKeyParams myParms = XMSSMTKeyParams.getInstance(myId.getParameters());
+            return determineKeySpec(myParms);
+        }
+
+        @Override
+        public GordianAsymKeySpec determineKeySpec(final PrivateKeyInfo pInfo) throws OceanusException {
+            final AlgorithmIdentifier myId = pInfo.getPrivateKeyAlgorithm();
+            final XMSSMTKeyParams myParms = XMSSMTKeyParams.getInstance(myId.getParameters());
+            return determineKeySpec(myParms);
+        }
+
+        /**
+         * Obtain keySpec from Parameters.
+         * @param pParms the parameters
+         * @return the keySpec
+         * @throws OceanusException on error
+         */
+        private static  GordianAsymKeySpec determineKeySpec(final XMSSMTKeyParams pParms) throws OceanusException {
+            final ASN1ObjectIdentifier myDigest = pParms.getTreeDigest().getAlgorithm();
+            return GordianAsymKeySpec.xmssmt(GordianXMSSEncodedParser.determineKeyType(myDigest));
+        }
+    }
+
+    /**
+     * McEliece Encoded parser.
+     */
+    private static class GordianMcElieceEncodedParser implements GordianEncodedParser {
+        /**
+         * Registrar.
+         * @param pIdManager the idManager
+         */
+        static void register(final GordianAsymAlgId pIdManager) {
+            pIdManager.registerParser(PQCObjectIdentifiers.mcEliece, new GordianMcElieceEncodedParser());
+        }
+
+        @Override
+        public GordianAsymKeySpec determineKeySpec(final SubjectPublicKeyInfo pInfo) throws OceanusException {
+            return GordianAsymKeySpec.mcEliece(GordianMcElieceKeySpec.standard());
+        }
+
+        @Override
+        public GordianAsymKeySpec determineKeySpec(final PrivateKeyInfo pInfo) throws OceanusException {
+            return GordianAsymKeySpec.mcEliece(GordianMcElieceKeySpec.standard());
+        }
+    }
+
+    /**
+     * McEliece Encoded parser.
+     */
+    private static class GordianMcElieceCCA2EncodedParser implements GordianEncodedParser {
+        /**
+         * Registrar.
+         * @param pIdManager the idManager
+         */
+        static void register(final GordianAsymAlgId pIdManager) {
+            pIdManager.registerParser(PQCObjectIdentifiers.mcElieceCca2, new GordianMcElieceCCA2EncodedParser());
+        }
+
+
+        @Override
+        public GordianAsymKeySpec determineKeySpec(final SubjectPublicKeyInfo pInfo) throws OceanusException {
+            /* Protect against exceptions */
+            try {
+                /* Parse public key */
+                final McElieceCCA2PublicKey myPublic = McElieceCCA2PublicKey.getInstance(pInfo.parsePublicKey());
+                return determineKeySpec(myPublic.getDigest());
+
+                /* Handle exceptions */
+            } catch (IOException e) {
+                throw new GordianDataException("Failed to parse PublicKey");
+            }
+        }
+
+        @Override
+        public GordianAsymKeySpec determineKeySpec(final PrivateKeyInfo pInfo) throws OceanusException {
+            /* Protect against exceptions */
+            try {
+                /* Parse public key */
+                final McElieceCCA2PrivateKey myPrivate = McElieceCCA2PrivateKey.getInstance(pInfo.parsePrivateKey());
+                return determineKeySpec(myPrivate.getDigest());
+
+                /* Handle exceptions */
+            } catch (IOException e) {
+                throw new GordianDataException("Failed to parse PrivateKey");
+            }
+        }
+
+        /**
+         * Obtain keySpec from digestId.
+         * @param pDigest the digest
+         * @return the keySpec
+         * @throws OceanusException on error
+         */
+        private static  GordianAsymKeySpec determineKeySpec(final AlgorithmIdentifier pDigest) throws OceanusException {
+            final GordianMcElieceDigestType myDigest = determineDigestType(pDigest);
+            return GordianAsymKeySpec.mcEliece(GordianMcElieceKeySpec.cca2(myDigest));
+        }
+
+        /**
+         * Obtain digestType from digest.
+         * @param pDigest the treeDigest
+         * @return the keyType
+         * @throws OceanusException on error
+         */
+        static  GordianMcElieceDigestType determineDigestType(final AlgorithmIdentifier pDigest) throws OceanusException {
+            final ASN1ObjectIdentifier myId = pDigest.getAlgorithm();
+            if (myId.equals(NISTObjectIdentifiers.id_sha224)) {
+                return GordianMcElieceDigestType.SHA224;
+            }
+            if (myId.equals(NISTObjectIdentifiers.id_sha256)) {
+                return GordianMcElieceDigestType.SHA256;
+            }
+            if (myId.equals(NISTObjectIdentifiers.id_sha384)) {
+                return GordianMcElieceDigestType.SHA384;
+            }
+            if (myId.equals(NISTObjectIdentifiers.id_sha512)) {
+                return GordianMcElieceDigestType.SHA512;
+            }
+
+            /* Tree Digest is not supported */
+            throw new GordianDataException("Unsupported treeDigest: " + pDigest.toString());
+        }
+    }
+}

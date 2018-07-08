@@ -22,6 +22,8 @@ import net.sourceforge.joceanus.jgordianknot.crypto.GordianKeyEncapsulation.Gord
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
 import java.security.SecureRandom;
+import java.security.spec.PKCS8EncodedKeySpec;
+import java.security.spec.X509EncodedKeySpec;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.BiPredicate;
@@ -85,6 +87,16 @@ public abstract class GordianFactory {
      * Personalisation.
      */
     private final GordianPersonalisation thePersonalisation;
+
+    /**
+     * SignatureId.
+     */
+    private GordianSignatureAlgId theSignatureId;
+
+    /**
+     * AsymAlgId.
+     */
+    private GordianAsymAlgId theAsymAlgId;
 
     /**
      * Obfuscater.
@@ -156,6 +168,28 @@ public abstract class GordianFactory {
             theIdManager = new GordianIdManager(this);
         }
         return theIdManager;
+    }
+
+    /**
+     * Obtain the signatureIdManager.
+     * @return the signatureIdManager
+     */
+    protected GordianSignatureAlgId getSignatureIdManager() {
+        if (theSignatureId == null) {
+            theSignatureId = new GordianSignatureAlgId(this);
+        }
+        return theSignatureId;
+    }
+
+    /**
+     * Obtain the asymAlgorithmIdManager.
+     * @return the algorithmIdManager
+     */
+    GordianAsymAlgId getAlgorithmIdManager() {
+        if (theAsymAlgId == null) {
+            theAsymAlgId = new GordianAsymAlgId();
+        }
+        return theAsymAlgId;
     }
 
     /**
@@ -466,6 +500,28 @@ public abstract class GordianFactory {
     public abstract GordianKeyPairGenerator getKeyPairGenerator(GordianAsymKeySpec pKeySpec) throws OceanusException;
 
     /**
+     * Determine KeySpec from PKCS8EncodedKeySpec.
+     * @param pEncoded the encodedKeySpec
+     * @return the keySpec
+     * @throws OceanusException on error
+     */
+    GordianAsymKeySpec determineKeySpec(final PKCS8EncodedKeySpec pEncoded) throws OceanusException {
+        final GordianAsymAlgId myAlgId = getAlgorithmIdManager();
+        return myAlgId.determineKeySpec(pEncoded);
+    }
+
+    /**
+     * Determine KeySpec from X509EncodedKeySpec.
+     * @param pEncoded the encodedKeySpec
+     * @return the keySpec
+     * @throws OceanusException on error
+     */
+    public  GordianAsymKeySpec determineKeySpec(final X509EncodedKeySpec pEncoded) throws OceanusException {
+        final GordianAsymAlgId myAlgId = getAlgorithmIdManager();
+        return myAlgId.determineKeySpec(pEncoded);
+    }
+
+    /**
      * generate random SymKey.
      * @return the new key
      * @throws OceanusException on error
@@ -618,7 +674,7 @@ public abstract class GordianFactory {
      * Obtain predicate for signatures.
      * @return the predicate
      */
-    public abstract BiPredicate<GordianKeyPair, GordianSignatureSpec> supportedSignatures();
+    public abstract Predicate<GordianSignatureSpec> supportedSignatureSpec();
 
     /**
      * Create signer.
@@ -993,18 +1049,36 @@ public abstract class GordianFactory {
     }
 
     /**
-     * Check SignatureSpec.
+     * Check SignatureSpec and KeyPair combination.
      * @param pKeyPair the keyPair
      * @param pSignSpec the macSpec
      * @return true/false
      */
-    protected boolean validSignatureSpec(final GordianKeyPair pKeyPair,
-                                         final GordianSignatureSpec pSignSpec) {
+    public boolean validSignatureSpecForKeyPair(final GordianKeyPair pKeyPair,
+                                                final GordianSignatureSpec pSignSpec) {
         /* Check signature matches keyPair */
         if (pSignSpec.getAsymKeyType() != pKeyPair.getKeySpec().getKeyType()) {
             return false;
         }
 
+
+        /* Check that the signatureSpec is supported */
+        if (!validSignatureSpec(pSignSpec)) {
+            return false;
+        }
+
+        /* Disallow ECNR if keySize is smaller than digestSize */
+        final GordianAsymKeySpec myKeySpec = pKeyPair.getKeySpec();
+        return !GordianSignatureType.NR.equals(pSignSpec.getSignatureType())
+               || myKeySpec.getElliptic().getKeySize() >= pSignSpec.getDigestSpec().getDigestLength().getLength();
+    }
+
+    /**
+     * Check SignatureSpec.
+     * @param pSignSpec the macSpec
+     * @return true/false
+     */
+    protected boolean validSignatureSpec(final GordianSignatureSpec pSignSpec) {
         /* Check that the signatureType is supported */
         final GordianAsymKeyType myType = pSignSpec.getAsymKeyType();
         final GordianSignatureType mySignType = pSignSpec.getSignatureType();
@@ -1019,14 +1093,8 @@ public abstract class GordianFactory {
         }
 
         /* Only allow SM3 for SM2 signature */
-        if (GordianAsymKeyType.SM2.equals(myType)) {
-            return GordianDigestType.SM3.equals(mySpec.getDigestType());
-        }
-
-        /* Disallow ECNR if keySize is smaller than digestSize */
-        final GordianAsymKeySpec myKeySpec = pKeyPair.getKeySpec();
-        return !GordianSignatureType.NR.equals(mySignType)
-               || myKeySpec.getElliptic().getKeySize() >= mySpec.getDigestLength().getLength();
+        return !GordianAsymKeyType.SM2.equals(myType)
+               || GordianDigestType.SM3.equals(mySpec.getDigestType());
     }
 
     /**

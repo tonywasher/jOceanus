@@ -76,6 +76,21 @@ public enum GordianGOSTElliptic implements GordianElliptic {
         return theSize;
     }
 
+    /**
+     * Obtain the curve for a Name.
+     * @param pName the name
+     * @return the curve
+     */
+    public static GordianGOSTElliptic getCurveForName(final String pName) {
+        /* Loop through the curves */
+        for (GordianGOSTElliptic myCurve: values()) {
+            if (pName.equals(myCurve.getCurveName())) {
+                return myCurve;
+            }
+        }
+        return null;
+    }
+
     @Override
     public String toString() {
         return theName;

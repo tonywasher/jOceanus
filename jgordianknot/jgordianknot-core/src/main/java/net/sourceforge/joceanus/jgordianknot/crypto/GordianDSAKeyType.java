@@ -16,6 +16,8 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jgordianknot.crypto;
 
+import org.bouncycastle.asn1.x509.DSAParameter;
+
 /**
  * DSA KeyTypes.
  */
@@ -75,6 +77,24 @@ public enum GordianDSAKeyType {
      */
     public int getHashSize() {
         return theHashSize;
+    }
+
+    /**
+     * Obtain the DSAKeyType for DSAParameters.
+     * @param pParams the parameters
+     * @return the DSAKeyType
+     */
+    public static GordianDSAKeyType getDSATypeForParms(final DSAParameter pParams) {
+        /* Loop through the values */
+        final int myLen = pParams.getP().bitLength();
+        final int myHashSize = pParams.getQ().bitLength();
+        for (GordianDSAKeyType myType: values()) {
+            if (myType.getKeySize() == myLen
+                && myType.getHashSize() == myHashSize) {
+                return myType;
+            }
+        }
+        return null;
     }
 
     @Override

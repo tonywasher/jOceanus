@@ -26,10 +26,9 @@ import org.bouncycastle.asn1.ASN1Primitive;
 import org.bouncycastle.asn1.ASN1Sequence;
 import org.bouncycastle.asn1.DERSequence;
 import org.bouncycastle.crypto.DSA;
+import org.bouncycastle.crypto.Digest;
 import org.bouncycastle.crypto.signers.DSASigner;
-import org.bouncycastle.crypto.signers.DSTU4145Signer;
 import org.bouncycastle.crypto.signers.ECDSASigner;
-import org.bouncycastle.crypto.signers.ECGOST3410_2012Signer;
 import org.bouncycastle.crypto.signers.ECNRSigner;
 import org.bouncycastle.crypto.signers.HMacDSAKCalculator;
 
@@ -79,6 +78,17 @@ public final class BouncySignature {
         protected BouncyDigestSignature(final BouncyFactory pFactory,
                                         final GordianSignatureSpec pSpec) throws OceanusException {
             theDigest = pFactory.createDigest(pSpec.getDigestSpec());
+        }
+
+        /**
+         * Constructor.
+         * @param pDigest the digest
+         * @param pSpec the signatureSpec.
+         * @throws OceanusException on error
+         */
+        protected BouncyDigestSignature(final Digest pDigest,
+                                        final GordianSignatureSpec pSpec) throws OceanusException {
+            theDigest = new BouncyDigest(pSpec.getDigestSpec(), pDigest);
         }
 
         @Override
@@ -138,7 +148,7 @@ public final class BouncySignature {
     /**
      * DER encoder.
      */
-    private static final class BouncyDERCoder implements BouncyDSACoder {
+    protected static final class BouncyDERCoder implements BouncyDSACoder {
         @Override
         public byte[] dsaEncode(final BigInteger r,
                                 final BigInteger s) throws OceanusException {
@@ -170,59 +180,6 @@ public final class BouncySignature {
         }
     }
 
-    /**
-     * Plain encoder.
-     */
-    private static final class BouncyPlainCoder implements BouncyDSACoder {
-        @Override
-        public byte[] dsaEncode(final BigInteger r,
-                                final BigInteger s) throws OceanusException {
-            /* Access byteArrays */
-            final byte[] myFirst = makeUnsigned(r);
-            final byte[] mySecond = makeUnsigned(s);
-            final byte[] myResult = myFirst.length > mySecond.length
-                                                                     ? new byte[myFirst.length * 2]
-                                                                     : new byte[mySecond.length * 2];
-
-            /* Build array and return */
-            System.arraycopy(myFirst, 0, myResult, myResult.length / 2 - myFirst.length, myFirst.length);
-            System.arraycopy(mySecond, 0, myResult, myResult.length - mySecond.length, mySecond.length);
-            return myResult;
-        }
-
-        /**
-         * Make the value unsigned.
-         * @param pValue the value
-         * @return the unsigned value
-         */
-        private static byte[] makeUnsigned(final BigInteger pValue) {
-            /* Convert to byteArray and return if OK */
-            final byte[] myResult = pValue.toByteArray();
-            if (myResult[0] != 0) {
-                return myResult;
-            }
-
-            /* Shorten the array */
-            final byte[] myTmp = new byte[myResult.length - 1];
-            System.arraycopy(myResult, 1, myTmp, 0, myTmp.length);
-            return myTmp;
-        }
-
-        @Override
-        public BigInteger[] dsaDecode(final byte[] pEncoded) throws OceanusException {
-            /* Build the value arrays */
-            final byte[] myFirst = new byte[pEncoded.length / 2];
-            final byte[] mySecond = new byte[pEncoded.length / 2];
-            System.arraycopy(pEncoded, 0, myFirst, 0, myFirst.length);
-            System.arraycopy(pEncoded, myFirst.length, mySecond, 0, mySecond.length);
-
-            /* Create the signature values and return */
-            final BigInteger[] sig = new BigInteger[2];
-            sig[0] = new BigInteger(1, myFirst);
-            sig[1] = new BigInteger(1, mySecond);
-            return sig;
-        }
-    }
 
     /**
      * Obtain DSASigner.
@@ -235,14 +192,6 @@ public final class BouncySignature {
     static DSA getDSASigner(final BouncyFactory pFactory,
                             final GordianAsymKeySpec pKeySpec,
                             final GordianSignatureSpec pSpec) throws OceanusException {
-        /* Handle DSTU/GOST explicitly */
-        if (GordianAsymKeyType.DSTU4145.equals(pKeySpec.getKeyType())) {
-            return new DSTU4145Signer();
-        }
-        if (GordianAsymKeyType.GOST2012.equals(pKeySpec.getKeyType())) {
-            return new ECGOST3410_2012Signer();
-        }
-
         /* Note if we are DSA */
         final boolean isDSA = GordianAsymKeyType.DSA.equals(pKeySpec.getKeyType());
 
@@ -261,24 +210,6 @@ public final class BouncySignature {
                 return isDSA
                              ? new DSASigner()
                              : new ECDSASigner();
-        }
-    }
-
-    /**
-     * Obtain DSACoder.
-     * @param pKeySpec the keySpec
-     * @return the ECCoder
-     */
-    static BouncyDSACoder getDSACoder(final GordianAsymKeySpec pKeySpec) {
-        switch (pKeySpec.getKeyType()) {
-            case DSTU4145:
-            case GOST2012:
-                return new BouncyPlainCoder();
-            case EC:
-            case DSA:
-            case SM2:
-            default:
-                return new BouncyDERCoder();
         }
     }
 }

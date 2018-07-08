@@ -293,7 +293,7 @@ public final class BouncyXMSSAsymKey {
         }
 
         @Override
-        protected PKCS8EncodedKeySpec getPKCS8Encoding(final GordianKeyPair pKeyPair) {
+        public PKCS8EncodedKeySpec getPKCS8Encoding(final GordianKeyPair pKeyPair) {
             final BouncyXMSSPrivateKey myPrivateKey = BouncyXMSSPrivateKey.class.cast(getPrivateKey(pKeyPair));
             final XMSSPrivateKeyParameters myParms = myPrivateKey.getPrivateKey();
             final BCXMSSPrivateKey myKey = new BCXMSSPrivateKey(getOID(getKeyType()), myParms);
@@ -301,8 +301,8 @@ public final class BouncyXMSSAsymKey {
         }
 
         @Override
-        protected BouncyKeyPair deriveKeyPair(final X509EncodedKeySpec pPublicKey,
-                                              final PKCS8EncodedKeySpec pPrivateKey) throws OceanusException {
+        public BouncyKeyPair deriveKeyPair(final X509EncodedKeySpec pPublicKey,
+                                           final PKCS8EncodedKeySpec pPrivateKey) throws OceanusException {
             try {
                 final PrivateKeyInfo myInfo = PrivateKeyInfo.getInstance(pPrivateKey.getEncoded());
                 final XMSSKeyParams myParams = XMSSKeyParams.getInstance(myInfo.getPrivateKeyAlgorithm().getParameters());
@@ -315,7 +315,7 @@ public final class BouncyXMSSAsymKey {
                                 .withPublicSeed(myKey.getPublicSeed())
                                 .withRoot(myKey.getRoot());
                 if (myKey.getBdsState() != null) {
-                    myBuilder.withBDSState((BDS) XMSSUtil.deserialize(myKey.getBdsState()));
+                    myBuilder.withBDSState((BDS) XMSSUtil.deserialize(myKey.getBdsState(), BDS.class));
                 }
                 final XMSSPrivateKeyParameters myPrivateParms = myBuilder.build();
 
@@ -617,7 +617,7 @@ public final class BouncyXMSSAsymKey {
         }
 
         @Override
-        protected PKCS8EncodedKeySpec getPKCS8Encoding(final GordianKeyPair pKeyPair) {
+        public PKCS8EncodedKeySpec getPKCS8Encoding(final GordianKeyPair pKeyPair) {
             final BouncyXMSSMTPrivateKey myPrivateKey = BouncyXMSSMTPrivateKey.class.cast(getPrivateKey(pKeyPair));
             final XMSSMTPrivateKeyParameters myParms = myPrivateKey.getPrivateKey();
             final BCXMSSMTPrivateKey myKey = new BCXMSSMTPrivateKey(getOID(getKeyType()), myParms);
@@ -625,8 +625,8 @@ public final class BouncyXMSSAsymKey {
         }
 
         @Override
-        protected BouncyKeyPair deriveKeyPair(final X509EncodedKeySpec pPublicKey,
-                                              final PKCS8EncodedKeySpec pPrivateKey) throws OceanusException {
+        public BouncyKeyPair deriveKeyPair(final X509EncodedKeySpec pPublicKey,
+                                           final PKCS8EncodedKeySpec pPrivateKey) throws OceanusException {
             try {
                 final PrivateKeyInfo myInfo = PrivateKeyInfo.getInstance(pPrivateKey.getEncoded());
                 final XMSSMTKeyParams myParams = XMSSMTKeyParams.getInstance(myInfo.getPrivateKeyAlgorithm().getParameters());
@@ -639,7 +639,7 @@ public final class BouncyXMSSAsymKey {
                                 .withPublicSeed(myKey.getPublicSeed())
                                 .withRoot(myKey.getRoot());
                 if (myKey.getBdsState() != null) {
-                    myBuilder.withBDSState((BDSStateMap) XMSSUtil.deserialize(myKey.getBdsState()));
+                    myBuilder.withBDSState((BDSStateMap) XMSSUtil.deserialize(myKey.getBdsState(), BDSStateMap.class));
                 }
                 final XMSSMTPrivateKeyParameters myPrivateParms = myBuilder.build();
 
