@@ -95,6 +95,10 @@ public class GordianFXTester
             } else if ("test".equals(myArg)) {
                 theTests.testSecurity();
 
+                /* handle asym tests */
+            } else if ("asym".equals(myArg)) {
+                theTests.testKeyRepresentations();
+
                 /* handle zip file creation */
             } else if ("zip".equals(myArg)) {
                 theTests.testZipFile();

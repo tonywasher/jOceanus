@@ -127,13 +127,14 @@ public class GordianTestSuite {
         /* Create new Password Hash */
         final GordianParameters mySrcParams = new GordianParameters(false);
         mySrcParams.setFactoryType(GordianFactoryType.JCA);
-        GordianHashManager mySource = theCreator.newSecureManager(mySrcParams);
+        final GordianHashManager mySource = theCreator.newSecureManager(mySrcParams);
 
         /* Create new Password Hash */
         final GordianParameters myTgtParams = new GordianParameters(false);
         myTgtParams.setFactoryType(GordianFactoryType.BC);
-        GordianHashManager myTarget = theCreator.newSecureManager(myTgtParams);
+        final GordianHashManager myTarget = theCreator.newSecureManager(myTgtParams);
 
+        /* Run checks each way */
         GordianTestAsymmetric.checkKeyPair(mySource.getSecurityFactory(), myTarget.getSecurityFactory());
         GordianTestAsymmetric.checkKeyPair(myTarget.getSecurityFactory(), mySource.getSecurityFactory());
     }

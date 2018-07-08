@@ -73,7 +73,7 @@
     <packageMain/>
     <appDir>${env.BACKUPDIR}</appDir>
     <appLibDir>lib/</appLibDir>
-    <BouncyCastleVersion>1.59</BouncyCastleVersion>
+    <BouncyCastleVersion>1.60</BouncyCastleVersion>
     <SvnKitVersion>1.9.3</SvnKitVersion>
     <JGitVersion>4.11.0.201803080745-r</JGitVersion>
     <HttpClientVersion>4.5.5</HttpClientVersion>

@@ -76,6 +76,10 @@ public class GordianSwingTester
             } else if ("test".equals(args[0])) {
                 theTests.testSecurity();
 
+                /* handle asym tests */
+            } else if ("asym".equals(args[0])) {
+                theTests.testKeyRepresentations();
+
                 /* handle zip file creation */
             } else if ("zip".equals(args[0])) {
                 theTests.testZipFile();
