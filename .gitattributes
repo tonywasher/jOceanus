@@ -11,6 +11,7 @@
 *.js text
 *.apt text
 *.bat text
+.gitignore text
 
 # Declare files that will always have CRLF line endings on checkout.
 #*.sln text eol=crlf

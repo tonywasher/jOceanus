@@ -46,7 +46,8 @@ import java.util.Map;
 /**
  * Scroll utilities examples.
  */
-public class TethysFXScrollUIExample
+public class
+TethysFXScrollUIExample
         extends Application {
     /**
      * Value width.
@@ -77,7 +78,7 @@ public class TethysFXScrollUIExample
      * The simple icon button manager.
      */
     private final TethysFXIconButtonManager<Boolean> theSimpleIconButtonMgr;
-    
+
     /**
      * The state icon button manager.
      */
