@@ -2,7 +2,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>net.sourceforge.joceanus</groupId>
   <artifactId>joceanus</artifactId>
-  <version>v1.5.3-SNAPSHOT</version>
+  <version>v1.5.3-b2</version>
   <name>Java Oceanus package</name>
   <description>Parent project for jOceanus</description>
   <inceptionYear>2012</inceptionYear>
@@ -67,7 +67,7 @@
     <scmParent>jOceanus</scmParent>
     <scmComponent>${scmParent}</scmComponent>
     <scmBranch>v1.5.3</scmBranch>
-    <scmTag>SNAPSHOT</scmTag>
+    <scmTag>b2</scmTag>
     <scmBase>${scmParent}/trunk</scmBase>
     <packageKey>net.sourceforge.joceanus</packageKey>
     <packageMain/>
