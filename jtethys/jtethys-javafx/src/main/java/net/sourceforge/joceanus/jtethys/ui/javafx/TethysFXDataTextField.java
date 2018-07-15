@@ -310,7 +310,7 @@ public abstract class TethysFXDataTextField<T>
      * @param pAttr the attribute
      * @return the style class
      */
-    private String getStyleForAttribute(final TethysFieldAttribute pAttr) {
+    private static String getStyleForAttribute(final TethysFieldAttribute pAttr) {
         switch (pAttr) {
             case NUMERIC:
                 return STYLE_NUMERIC;

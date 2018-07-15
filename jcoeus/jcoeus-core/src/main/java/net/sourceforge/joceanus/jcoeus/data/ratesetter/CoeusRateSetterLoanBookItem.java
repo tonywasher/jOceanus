@@ -97,21 +97,33 @@ public class CoeusRateSetterLoanBookItem
     /**
      * Constructor.
      * @param pParser the parser
+     * @param pNewStyle is this newStyle row
      * @param pRepaid is this an rePaid loan?
      * @param pCells the cells
      * @throws OceanusException on error
      */
     protected CoeusRateSetterLoanBookItem(final CoeusRateSetterLoanBookParser pParser,
+                                          final boolean pNewStyle,
                                           final boolean pRepaid,
                                           final List<Element> pCells) throws OceanusException {
         /* Iterate through the cells */
         final Iterator<Element> myIterator = pCells.iterator();
+
+        /* Skip first column Loan# for new style */
+        if (pNewStyle) {
+            myIterator.next();
+        }
 
         /* Obtain the loanId */
         theLoanId = myIterator.next().text();
 
         /* Obtain the startDate */
         theStartDate = pParser.parseDate(myIterator.next().text());
+
+        /* Skip term remaining for new style */
+        if (pNewStyle) {
+            myIterator.next();
+        }
 
         /* Obtain the amount */
         final String myAmountText = pParser.childElementText(myIterator.next());

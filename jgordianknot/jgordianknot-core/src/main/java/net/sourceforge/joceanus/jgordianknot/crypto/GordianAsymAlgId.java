@@ -59,6 +59,30 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
  */
 public class GordianAsymAlgId {
     /**
+     * The algorithm error.
+     */
+    private static final String ERROR_ALGO = "Unrecognised algorithm";
+
+    /**
+     * The parse error.
+     */
+    private static final String ERROR_PARSE = "Failed to parse Key";
+
+    /**
+     * The namedCurve error.
+     */
+    private static final String ERROR_NAMEDCURVE = "Not a Named Curve";
+
+    /**
+     * The unsupportedCurve error.
+     */
+    private static final String ERROR_UNSUPCURVE = "Unsupported Curve: ";
+
+    /**
+     * The treeDigest error.
+     */
+    private static final String ERROR_TREEDIGEST = "Unsupported treeDigest: ";
+    /**
      * The parser map.
      */
     private final Map<ASN1ObjectIdentifier, GordianEncodedParser> theParserMap;
@@ -103,7 +127,7 @@ public class GordianAsymAlgId {
         if (myParser != null) {
             return myParser.determineKeySpec(myInfo);
         }
-        throw new GordianDataException("Unrecognised algorithm");
+        throw new GordianDataException(ERROR_ALGO);
     }
 
     /**
@@ -123,7 +147,7 @@ public class GordianAsymAlgId {
         if (myParser != null) {
             return myParser.determineKeySpec(myInfo);
         }
-        throw new GordianDataException("Unrecognised algorithm");
+        throw new GordianDataException(ERROR_ALGO);
     }
 
     /**
@@ -179,7 +203,7 @@ public class GordianAsymAlgId {
 
                 /* Handle exceptions */
             } catch (IOException e) {
-                throw new GordianDataException("Failed to parse PublicKey");
+                throw new GordianDataException(ERROR_PARSE);
             }
         }
 
@@ -193,7 +217,7 @@ public class GordianAsymAlgId {
 
                 /* Handle exceptions */
             } catch (IOException e) {
-                throw new GordianDataException("Failed to parse PrivateKey");
+                throw new GordianDataException(ERROR_PARSE);
             }
         }
 
@@ -331,7 +355,7 @@ public class GordianAsymAlgId {
         private static  GordianAsymKeySpec determineKeySpec(final X962Parameters pParms) throws OceanusException {
             /* Reject if not a named curve */
             if (!pParms.isNamedCurve()) {
-                throw new GordianDataException("Not a named curve");
+                throw new GordianDataException(ERROR_NAMEDCURVE);
             }
 
             /* Check for EC named surve */
@@ -346,11 +370,11 @@ public class GordianAsymAlgId {
                 if (mySM2Curve != null) {
                     return GordianAsymKeySpec.sm2(mySM2Curve);
                 }
-                throw new GordianDataException("Unsupported curve: " + myName);
+                throw new GordianDataException(ERROR_UNSUPCURVE + myName);
             }
 
             /* Curve is not supported */
-            throw new GordianDataException("Unsupported curve: " + pParms.toString());
+            throw new GordianDataException(ERROR_UNSUPCURVE + pParms.toString());
         }
     }
 
@@ -389,7 +413,7 @@ public class GordianAsymAlgId {
         private static  GordianAsymKeySpec determineKeySpec(final DSTU4145Params pParms) throws OceanusException {
             /* Reject if not a named curve */
             if (!pParms.isNamedCurve()) {
-                throw new GordianDataException("Not a named curve");
+                throw new GordianDataException(ERROR_NAMEDCURVE);
             }
             return determineKeySpec(pParms.getNamedCurve());
         }
@@ -403,7 +427,7 @@ public class GordianAsymAlgId {
         private static  GordianAsymKeySpec determineKeySpec(final X962Parameters pParms) throws OceanusException {
             /* Reject if not a named curve */
             if (!pParms.isNamedCurve()) {
-                throw new GordianDataException("Not a named curve");
+                throw new GordianDataException(ERROR_NAMEDCURVE);
             }
             return determineKeySpec((ASN1ObjectIdentifier) pParms.getParameters());
         }
@@ -420,7 +444,7 @@ public class GordianAsymAlgId {
             final ECDomainParameters myParms = DSTU4145NamedCurves.getByOID(pId);
             final GordianDSTU4145Elliptic myCurve = GordianDSTU4145Elliptic.getCurveForName(myName);
             if (myParms == null || myCurve == null) {
-                throw new GordianDataException("Unsupported curve: " + myName);
+                throw new GordianDataException(ERROR_UNSUPCURVE + myName);
             }
             return GordianAsymKeySpec.dstu4145(myCurve);
         }
@@ -466,13 +490,13 @@ public class GordianAsymAlgId {
             if (myName != null) {
                 final GordianGOSTElliptic myCurve = GordianGOSTElliptic.getCurveForName(myName);
                 if (myCurve == null) {
-                    throw new GordianDataException("Unsupported curve: + myName");
+                    throw new GordianDataException(ERROR_UNSUPCURVE + myName);
                 }
                 return GordianAsymKeySpec.gost2012(myCurve);
             }
 
             /* Curve is not supported */
-            throw new GordianDataException("Unsupported curve: " + myParms.toString());
+            throw new GordianDataException(ERROR_UNSUPCURVE + myParms.toString());
         }
     }
 
@@ -564,7 +588,7 @@ public class GordianAsymAlgId {
             }
 
             /* Tree Digest is not supported */
-            throw new GordianDataException("Unsupported treeDigest: " + myDigest.toString());
+            throw new GordianDataException(ERROR_TREEDIGEST + myDigest.toString());
         }
     }
 
@@ -627,7 +651,7 @@ public class GordianAsymAlgId {
             }
 
             /* Tree Digest is not supported */
-            throw new GordianDataException("Unsupported treeDigest: " + pDigest.toString());
+            throw new GordianDataException(ERROR_TREEDIGEST + pDigest.toString());
         }
     }
 
@@ -716,7 +740,7 @@ public class GordianAsymAlgId {
 
                 /* Handle exceptions */
             } catch (IOException e) {
-                throw new GordianDataException("Failed to parse PublicKey");
+                throw new GordianDataException(ERROR_PARSE);
             }
         }
 
@@ -730,7 +754,7 @@ public class GordianAsymAlgId {
 
                 /* Handle exceptions */
             } catch (IOException e) {
-                throw new GordianDataException("Failed to parse PrivateKey");
+                throw new GordianDataException(ERROR_PARSE);
             }
         }
 
@@ -767,7 +791,7 @@ public class GordianAsymAlgId {
             }
 
             /* Tree Digest is not supported */
-            throw new GordianDataException("Unsupported treeDigest: " + pDigest.toString());
+            throw new GordianDataException(ERROR_TREEDIGEST + pDigest.toString());
         }
     }
 }

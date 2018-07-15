@@ -269,12 +269,7 @@ public abstract class TethysIconButtonManager<T>
         }
 
         /* Look up icon */
-        TethysIcon myIcon = theIconMap.get(pIconId);
-        if (myIcon == null) {
-            myIcon = theFactory.resolveIcon(pIconId, theWidth);
-            theIconMap.put(pIconId, myIcon);
-        }
-        return myIcon;
+        return theIconMap.computeIfAbsent(pIconId, i -> theFactory.resolveIcon(i, theWidth));
     }
 
     /**

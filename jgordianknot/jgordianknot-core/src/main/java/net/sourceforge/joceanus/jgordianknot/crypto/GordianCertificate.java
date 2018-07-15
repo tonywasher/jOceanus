@@ -406,7 +406,7 @@ public class GordianCertificate {
      * @return the extensions
      * @throws OceanusException on error
      */
-    private Extensions createExtensions(final GordianKeyPairUsage pUsage) throws OceanusException {
+    private static Extensions createExtensions(final GordianKeyPairUsage pUsage) throws OceanusException {
         /* Protect against exceptions */
         try {
             /* Create extensions for the certificate */

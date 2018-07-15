@@ -113,6 +113,16 @@ public final class CoeusZopaTransaction
     private static final String PFIX_BADPRICE = "Bought wrongly priced loans";
 
     /**
+     * Goodwill Payment.
+     */
+    private static final String PFIX_GOODWILL = "Goodwill Payment";
+
+    /**
+     * Capital Adjustment.
+     */
+    private static final String PFIX_CAPADJUST = "Capital Adjustment Debit";
+
+    /**
      * ZERO for BadDebt/CashBack.
      */
     static final TethysDecimal ZERO_MONEY = new TethysDecimal(0, CoeusZopaMarket.DECIMAL_SIZE);
@@ -479,6 +489,12 @@ public final class CoeusZopaTransaction
         /* If the description is CashBack */
         if (PFIX_CASHBACK.equals(theDesc)
             || PFIX_BADPRICE.equals(theDesc)) {
+            return CoeusTransactionType.CASHBACK;
+        }
+
+        /* If the description is Goodwill/CapitalAdjust */
+        if (PFIX_GOODWILL.equals(theDesc)
+            || PFIX_CAPADJUST.equals(theDesc)) {
             return CoeusTransactionType.CASHBACK;
         }
 

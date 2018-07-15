@@ -251,9 +251,7 @@ public class TethysDecimalLocale {
 
         /* Store symbol if not already declared */
         final String myCode = pCurrency.getCurrencyCode();
-        if (theSymbolMap.get(myCode) == null) {
-            theSymbolMap.put(myCode, pSymbol);
-        }
+        theSymbolMap.computeIfAbsent(myCode, c -> pSymbol);
     }
 
     /**

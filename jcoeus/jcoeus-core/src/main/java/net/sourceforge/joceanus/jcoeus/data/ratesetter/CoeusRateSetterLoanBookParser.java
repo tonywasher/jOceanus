@@ -143,6 +143,8 @@ public class CoeusRateSetterLoanBookParser {
             /* select the body of the last of the tables */
             final boolean isRepaid = myTables.size() > 1;
             final Element myBody = myTables.last().select("tbody").first();
+            final Element myFirstCol = myTables.last().select("th").first();
+            final boolean isNewStyle = !"Contract".equals(myFirstCol.text());
 
             /* Obtain a list of rows */
             final List<Element> myRows = new ArrayList<>();
@@ -163,7 +165,7 @@ public class CoeusRateSetterLoanBookParser {
                     }
 
                     /* Add the loan book item */
-                    theLoans.add(new CoeusRateSetterLoanBookItem(this, isRepaid, myCells));
+                    theLoans.add(new CoeusRateSetterLoanBookItem(this, isNewStyle, isRepaid, myCells));
                 }
             }
 

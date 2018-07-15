@@ -366,7 +366,7 @@ public abstract class TethysTableManager<C, R>
      * Register the column.
      * @param pColumn the column
      */
-    private void registerColumn(final TethysBaseTableColumn<?, C, R> pColumn) {
+    void registerColumn(final TethysBaseTableColumn<?, C, R> pColumn) {
         theColumnMap.put(pColumn.getId(), pColumn);
     }
 

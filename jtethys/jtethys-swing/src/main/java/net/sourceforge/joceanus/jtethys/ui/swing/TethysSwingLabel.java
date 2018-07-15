@@ -125,7 +125,7 @@ public final class TethysSwingLabel
      * @param pAlign the alignment
      * @return the FX alignment
      */
-    private int determineHAlignment(final TethysAlignment pAlign) {
+    private static int determineHAlignment(final TethysAlignment pAlign) {
         switch (pAlign) {
             case NORTHEAST:
             case EAST:
@@ -148,7 +148,7 @@ public final class TethysSwingLabel
      * @param pAlign the alignment
      * @return the FX alignment
      */
-    private int determineVAlignment(final TethysAlignment pAlign) {
+    private static int determineVAlignment(final TethysAlignment pAlign) {
         switch (pAlign) {
             case NORTHEAST:
             case NORTH:

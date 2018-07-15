@@ -468,7 +468,10 @@ public final class TethysSwingGuiUtils {
     public static Image[] getIcons(final TethysIconId[] pIds) {
         final Image[] myIcons = new Image[pIds.length];
         for (int i = 0; i < pIds.length; i++) {
-            myIcons[i] = getIcon(pIds[i]).getImage();
+            final TethysSwingIcon myIcon = getIcon(pIds[i]);
+            myIcons[i] = myIcon == null
+                         ? null
+                         : myIcon.getImage();
         }
         return myIcons;
     }
@@ -482,6 +485,9 @@ public final class TethysSwingGuiUtils {
     public static TethysSwingIcon getIconAtSize(final TethysIconId pId,
                                                 final int pWidth) {
         final TethysSwingIcon mySource = getIcon(pId);
+        if (mySource == null) {
+            return null;
+        }
         final Image myImage = mySource.getImage();
         final Image myNewImage = myImage.getScaledInstance(pWidth,
                 pWidth,

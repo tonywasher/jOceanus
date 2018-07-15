@@ -200,7 +200,7 @@ public abstract class TethysHelpModule {
      * @param pEntries the Help Entries
      * @throws OceanusException on error
      */
-    private void loadHelpPages(final List<TethysHelpEntry> pEntries) throws OceanusException {
+    private static void loadHelpPages(final List<TethysHelpEntry> pEntries) throws OceanusException {
         /* Loop through the entities */
         for (TethysHelpEntry myEntry : pEntries) {
             /* If we have a helpId */

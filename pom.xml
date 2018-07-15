@@ -76,11 +76,11 @@
     <BouncyCastleVersion>1.60</BouncyCastleVersion>
     <SvnKitVersion>1.9.3</SvnKitVersion>
     <JGitVersion>5.0.1.201806211838-r</JGitVersion>
-    <HttpClientVersion>4.5.5</HttpClientVersion>
+    <HttpClientVersion>4.5.6</HttpClientVersion>
     <JSONVersion>20180130</JSONVersion>
-    <ApacheMavenVersion>3.5.3</ApacheMavenVersion>
-    <MySQLVersion>5.1.46</MySQLVersion>
-    <PostGreSQLVersion>42.2.2</PostGreSQLVersion>
+    <ApacheMavenVersion>3.5.4</ApacheMavenVersion>
+    <MySQLVersion>8.0.11</MySQLVersion>
+    <PostGreSQLVersion>42.2.3</PostGreSQLVersion>
     <JTDSVersion>1.3.1</JTDSVersion>
     <ApachePOIVersion>3.17</ApachePOIVersion>
     <ApacheODFDOMVersion>0.7-incubating</ApacheODFDOMVersion>
@@ -109,7 +109,7 @@
     <ProjectInfoPluginVersion>3.0.0</ProjectInfoPluginVersion>
     <JxrPluginVersion>2.5</JxrPluginVersion>
     <JavaDocPluginVersion>3.0.1</JavaDocPluginVersion>
-    <SonarQubePluginVersion>3.4.1.1170</SonarQubePluginVersion>
+    <SonarQubePluginVersion>3.4.1.1168</SonarQubePluginVersion>
     <CheckStylePluginVersion>3.0.0</CheckStylePluginVersion>
     <PMDPluginVersion>3.10.0</PMDPluginVersion>
     <FindBugsPluginVersion>3.0.5</FindBugsPluginVersion>

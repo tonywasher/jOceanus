@@ -414,8 +414,7 @@ public abstract class TethysListButtonManager<T extends Comparable<T>>
     protected void handleToggleItem() {
         /* If we selected a value */
         final TethysScrollMenuItem<T> mySelected = theMenu.getSelectedItem();
-        if ((mySelected != null)
-            && (mySelected instanceof TethysScrollMenuToggleItem)) {
+        if (mySelected instanceof TethysScrollMenuToggleItem) {
             /* Toggle the item */
             theNewValue.toggleItem(mySelected.getValue());
         }
