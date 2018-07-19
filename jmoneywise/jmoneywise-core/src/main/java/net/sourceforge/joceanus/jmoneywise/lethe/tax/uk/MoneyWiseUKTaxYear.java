@@ -200,6 +200,7 @@ public class MoneyWiseUKTaxYear
         /* Process the interest */
         myAnalysis.processItem(TaxBasisClass.TAXEDINTEREST, theInterestScheme);
         myAnalysis.processItem(TaxBasisClass.UNTAXEDINTEREST, theInterestScheme);
+        myAnalysis.processItem(TaxBasisClass.PEER2PEERINTEREST, theInterestScheme);
 
         /* Process the dividends */
         myAnalysis.processItem(TaxBasisClass.DIVIDEND, theDividendScheme);

@@ -426,6 +426,11 @@ public enum StaticDataResource
     TRANSTYPE_TAXFREEINTEREST("TransType.TaxFreeInterest"),
 
     /**
+     * TransType Peer2PeerInterest.
+     */
+    TRANSTYPE_PEER2PEERINTEREST("TransType.Peer2PeerInterest"),
+
+    /**
      * TransType GrossInterest.
      */
     TRANSTYPE_GROSSINTEREST("TransType.GrossInterest"),
@@ -1171,6 +1176,7 @@ public enum StaticDataResource
         myMap.put(TransactionCategoryClass.INCOMETAX, TRANSTYPE_INCOMETAX);
         myMap.put(TransactionCategoryClass.TAXEDINTEREST, TRANSTYPE_TAXEDINTEREST);
         myMap.put(TransactionCategoryClass.TAXFREEINTEREST, TRANSTYPE_TAXFREEINTEREST);
+        myMap.put(TransactionCategoryClass.PEER2PEERINTEREST, TRANSTYPE_PEER2PEERINTEREST);
         myMap.put(TransactionCategoryClass.GROSSINTEREST, TRANSTYPE_GROSSINTEREST);
         myMap.put(TransactionCategoryClass.SHAREDIVIDEND, TRANSTYPE_SHAREDIVIDEND);
         myMap.put(TransactionCategoryClass.UNITTRUSTDIVIDEND, TRANSTYPE_UTDIVIDEND);
@@ -1224,8 +1230,7 @@ public enum StaticDataResource
         myMap.put(TaxBasisClass.CHARGEABLEGAINS, TAXBASIS_CHARGEABLEGAINS);
         myMap.put(TaxBasisClass.RESIDENTIALGAINS, TAXBASIS_RESIDENTIALGAINS);
         myMap.put(TaxBasisClass.CAPITALGAINS, TAXBASIS_CAPITALGAINS);
-        myMap.put(TaxBasisClass.BADDEBTCAPITAL, TRANSTYPE_BADDEBTCAPITAL);
-        myMap.put(TaxBasisClass.BADDEBTINTEREST, TRANSTYPE_BADDEBTINTEREST);
+        myMap.put(TaxBasisClass.PEER2PEERINTEREST, TRANSTYPE_PEER2PEERINTEREST);
         myMap.put(TaxBasisClass.TAXPAID, TAXBASIS_TAXPAID);
         myMap.put(TaxBasisClass.MARKET, TAXBASIS_MARKET);
         myMap.put(TaxBasisClass.TAXFREE, TAXBASIS_TAXFREE);

@@ -315,7 +315,9 @@ public final class BouncyXMSSAsymKey {
                                 .withPublicSeed(myKey.getPublicSeed())
                                 .withRoot(myKey.getRoot());
                 if (myKey.getBdsState() != null) {
-                    myBuilder.withBDSState((BDS) XMSSUtil.deserialize(myKey.getBdsState(), BDS.class));
+                    final BDS myImport = (BDS) XMSSUtil.deserialize(myKey.getBdsState(), BDS.class);
+                    //myBuilder.withBDSState(myImport.withWOTSDigest(myParams.getTreeDigest().getAlgorithm()));
+                    myBuilder.withBDSState(myImport);
                 }
                 final XMSSPrivateKeyParameters myPrivateParms = myBuilder.build();
 
@@ -639,7 +641,9 @@ public final class BouncyXMSSAsymKey {
                                 .withPublicSeed(myKey.getPublicSeed())
                                 .withRoot(myKey.getRoot());
                 if (myKey.getBdsState() != null) {
-                    myBuilder.withBDSState((BDSStateMap) XMSSUtil.deserialize(myKey.getBdsState(), BDSStateMap.class));
+                    final BDSStateMap myImport = (BDSStateMap) XMSSUtil.deserialize(myKey.getBdsState(), BDSStateMap.class);
+                    //myBuilder.withBDSState(myImport.withWOTSDigest(myParams.getTreeDigest().getAlgorithm()));
+                    myBuilder.withBDSState(myImport);
                 }
                 final XMSSMTPrivateKeyParameters myPrivateParms = myBuilder.build();
 

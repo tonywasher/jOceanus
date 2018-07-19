@@ -56,9 +56,9 @@ public enum TaxBasisClass implements StaticInterface {
     UNTAXEDINTEREST(6, 5),
 
     /**
-     * BadDebtInterest.
+     * Peer2PeerInterest.
      */
-    BADDEBTINTEREST(7, 6),
+    PEER2PEERINTEREST(7, 6),
 
     /**
      * Dividend Income.
@@ -91,34 +91,29 @@ public enum TaxBasisClass implements StaticInterface {
     CAPITALGAINS(13, 12),
 
     /**
-     * BadDebtCapital.
-     */
-    BADDEBTCAPITAL(14, 13),
-
-    /**
      * Tax Free Income.
      */
-    TAXFREE(15, 14),
+    TAXFREE(14, 13),
 
     /**
      * Market Growth.
      */
-    MARKET(16, 15),
+    MARKET(15, 14),
 
     /**
      * Total Tax Paid.
      */
-    TAXPAID(17, 16),
+    TAXPAID(16, 15),
 
     /**
      * Gross Expense.
      */
-    EXPENSE(18, 17),
+    EXPENSE(17, 16),
 
     /**
      * Virtual Income.
      */
-    VIRTUAL(19, 18);
+    VIRTUAL(18, 17);
 
     /**
      * The String name.
@@ -203,8 +198,7 @@ public enum TaxBasisClass implements StaticInterface {
             case CAPITALGAINS:
             case RESIDENTIALGAINS:
             case TAXFREE:
-            case BADDEBTCAPITAL:
-            case BADDEBTINTEREST:
+            case PEER2PEERINTEREST:
                 return true;
             default:
                 return false;
@@ -217,8 +211,6 @@ public enum TaxBasisClass implements StaticInterface {
      */
     public boolean isExpense() {
         switch (this) {
-            case BADDEBTCAPITAL:
-            case BADDEBTINTEREST:
             case EXPENSE:
             case TAXPAID:
             case VIRTUAL:

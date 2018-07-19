@@ -240,69 +240,74 @@ public enum TransactionCategoryClass implements CategoryInterface {
     TAXFREEINTEREST(43, 46),
 
     /**
+     * Peer2Peer Interest.
+     */
+    PEER2PEERINTEREST(44, 47),
+
+    /**
      * Share Dividend Income.
      */
-    SHAREDIVIDEND(44, 47),
+    SHAREDIVIDEND(45, 48),
 
     /**
      * Unit Trust Dividend Income.
      */
-    UNITTRUSTDIVIDEND(45, 48),
+    UNITTRUSTDIVIDEND(46, 49),
 
     /**
      * Foreign Dividend.
      */
-    FOREIGNDIVIDEND(46, 49),
+    FOREIGNDIVIDEND(47, 50),
 
     /**
      * Tax Free Dividend.
      */
-    TAXFREEDIVIDEND(47, 50),
+    TAXFREEDIVIDEND(48, 51),
 
     /**
      * Taxed Loyalty Bonus.
      */
-    TAXEDLOYALTYBONUS(48, 51),
+    TAXEDLOYALTYBONUS(49, 52),
 
     /**
      * Gross LoyaltyBonus.
      */
-    GROSSLOYALTYBONUS(49, 52),
+    GROSSLOYALTYBONUS(50, 53),
 
     /**
      * Tax Free LoyaltyBonus.
      */
-    TAXFREELOYALTYBONUS(50, 53),
+    TAXFREELOYALTYBONUS(51, 54),
 
     /**
      * Chargeable Gain.
      */
-    CHARGEABLEGAIN(51, 54),
+    CHARGEABLEGAIN(52, 55),
 
     /**
      * Residential Gain.
      */
-    RESIDENTIALGAIN(52, 55),
+    RESIDENTIALGAIN(53, 56),
 
     /**
      * Capital Gain.
      */
-    CAPITALGAIN(53, 56),
+    CAPITALGAIN(54, 57),
 
     /**
      * TaxFreeCapital Gain.
      */
-    TAXFREEGAIN(54, 57),
+    TAXFREEGAIN(55, 58),
 
     /**
      * Market Growth.
      */
-    MARKETGROWTH(55, 58),
+    MARKETGROWTH(56, 59),
 
     /**
      * CurrencyFluctuation.
      */
-    CURRENCYFLUCTUATION(56, 59),
+    CURRENCYFLUCTUATION(57, 60),
 
     /**
      * Withheld.
@@ -310,28 +315,28 @@ public enum TransactionCategoryClass implements CategoryInterface {
      * This is a singular category catching withheld items such as charity donations associated with
      * interest.
      */
-    WITHHELD(57, 60),
+    WITHHELD(58, 61),
 
     /**
      * OpeningBalance.
      * <p>
      * This is a singular category catching opening balances.
      */
-    OPENINGBALANCE(58, 61),
+    OPENINGBALANCE(59, 62),
 
     /**
      * EmployeeNatInsurance.
      * <p>
      * This is a singular category catching opening balances.
      */
-    EMPLOYEENATINS(59, 62),
+    EMPLOYEENATINS(60, 63),
 
     /**
      * EmployeeNatInsurance.
      * <p>
      * This is a singular category catching opening balances.
      */
-    EMPLOYERNATINS(60, 63),
+    EMPLOYERNATINS(61, 64),
 
     /**
      * Income Totals.
@@ -339,7 +344,7 @@ public enum TransactionCategoryClass implements CategoryInterface {
      * This is used for categories which simply own a set of income sub-categories and is used
      * purely for reporting purposes.
      */
-    INCOMETOTALS(61, 1),
+    INCOMETOTALS(62, 1),
 
     /**
      * Expense Totals.
@@ -347,7 +352,7 @@ public enum TransactionCategoryClass implements CategoryInterface {
      * This is used for categories which simply own a set of expense sub-categories and is used
      * purely for reporting purposes.
      */
-    EXPENSETOTALS(62, 2),
+    EXPENSETOTALS(63, 2),
 
     /**
      * Security Parent.
@@ -355,7 +360,7 @@ public enum TransactionCategoryClass implements CategoryInterface {
      * This is used for categories which simply own a set of security transfer sub-categories and is
      * used purely for holding purposes.
      */
-    SECURITYPARENT(63, 3),
+    SECURITYPARENT(64, 3),
 
     /**
      * Totals.
@@ -363,7 +368,7 @@ public enum TransactionCategoryClass implements CategoryInterface {
      * This is used for the total of all non-transfer categories and is used purely for reporting
      * purposes.
      */
-    TOTALS(64, 0);
+    TOTALS(65, 0);
 
     /**
      * The String name.
@@ -441,6 +446,7 @@ public enum TransactionCategoryClass implements CategoryInterface {
             case TAXEDINTEREST:
             case GROSSINTEREST:
             case TAXFREEINTEREST:
+            case PEER2PEERINTEREST:
             case TAXEDLOYALTYBONUS:
             case GROSSLOYALTYBONUS:
             case TAXFREELOYALTYBONUS:
@@ -519,6 +525,7 @@ public enum TransactionCategoryClass implements CategoryInterface {
             case TAXEDINTEREST:
             case GROSSINTEREST:
             case TAXFREEINTEREST:
+            case PEER2PEERINTEREST:
             case TAXEDLOYALTYBONUS:
             case GROSSLOYALTYBONUS:
             case TAXFREELOYALTYBONUS:
@@ -561,6 +568,7 @@ public enum TransactionCategoryClass implements CategoryInterface {
             case TAXEDINTEREST:
             case GROSSINTEREST:
             case TAXFREEINTEREST:
+            case PEER2PEERINTEREST:
             case DIVIDEND:
             case SHAREDIVIDEND:
             case UNITTRUSTDIVIDEND:
@@ -633,6 +641,7 @@ public enum TransactionCategoryClass implements CategoryInterface {
             case TAXEDINTEREST:
             case GROSSINTEREST:
             case TAXFREEINTEREST:
+            case PEER2PEERINTEREST:
                 return true;
             default:
                 return false;

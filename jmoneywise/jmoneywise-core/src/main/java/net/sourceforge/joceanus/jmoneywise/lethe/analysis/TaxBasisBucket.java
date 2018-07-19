@@ -1109,6 +1109,9 @@ public class TaxBasisBucket
                 case GROSSLOYALTYBONUS:
                     addIncome(pTrans, TaxBasisClass.UNTAXEDINTEREST);
                     break;
+                case PEER2PEERINTEREST:
+                    addIncome(pTrans, TaxBasisClass.PEER2PEERINTEREST);
+                    break;
                 case DIVIDEND:
                 case SHAREDIVIDEND:
                     addIncome(pTrans, TaxBasisClass.DIVIDEND);
@@ -1142,10 +1145,10 @@ public class TaxBasisBucket
                     addIncome(pTrans, TaxBasisClass.TAXFREE);
                     break;
                 case BADDEBTCAPITAL:
-                    addExpense(pTrans, TaxBasisClass.BADDEBTCAPITAL);
+                    addExpense(pTrans, TaxBasisClass.CAPITALGAINS);
                     break;
                 case BADDEBTINTEREST:
-                    addExpense(pTrans, TaxBasisClass.BADDEBTINTEREST);
+                    addExpense(pTrans, TaxBasisClass.PEER2PEERINTEREST);
                     break;
                 case EXPENSE:
                 case LOCALTAXES:

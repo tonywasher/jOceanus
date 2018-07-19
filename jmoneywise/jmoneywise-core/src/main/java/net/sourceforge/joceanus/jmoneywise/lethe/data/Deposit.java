@@ -900,6 +900,9 @@ public class Deposit
                 if (isTaxFree()) {
                     return myCategories.getSingularClass(TransactionCategoryClass.TAXFREEINTEREST);
                 }
+                if (isDepositClass(DepositCategoryClass.PEER2PEER)) {
+                    return myCategories.getSingularClass(TransactionCategoryClass.PEER2PEERINTEREST);
+                }
                 return myCategories.getSingularClass(isGross()
                                                      || !pYear.isTaxCreditRequired()
                                                                                      ? TransactionCategoryClass.GROSSINTEREST
