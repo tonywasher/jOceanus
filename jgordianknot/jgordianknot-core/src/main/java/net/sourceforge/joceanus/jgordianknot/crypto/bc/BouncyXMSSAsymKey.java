@@ -63,8 +63,6 @@ import net.sourceforge.joceanus.jgordianknot.crypto.GordianFactory;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianKeyPair;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianLength;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianSignatureSpec;
-import net.sourceforge.joceanus.jgordianknot.crypto.GordianSigner;
-import net.sourceforge.joceanus.jgordianknot.crypto.GordianValidator;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianXMSSKeyType;
 import net.sourceforge.joceanus.jgordianknot.crypto.bc.BouncyKeyPair.BouncyPrivateKey;
 import net.sourceforge.joceanus.jgordianknot.crypto.bc.BouncyKeyPair.BouncyPublicKey;
@@ -96,8 +94,8 @@ public final class BouncyXMSSAsymKey {
          * @param pKeySpec the keySpec
          * @param pPublicKey the public key
          */
-        protected BouncyXMSSPublicKey(final GordianAsymKeySpec pKeySpec,
-                                      final XMSSPublicKeyParameters pPublicKey) {
+        BouncyXMSSPublicKey(final GordianAsymKeySpec pKeySpec,
+                            final XMSSPublicKeyParameters pPublicKey) {
             super(pKeySpec);
             theKey = pPublicKey;
         }
@@ -185,8 +183,8 @@ public final class BouncyXMSSAsymKey {
          * @param pKeySpec the keySpec
          * @param pPrivateKey the private key
          */
-        protected BouncyXMSSPrivateKey(final GordianAsymKeySpec pKeySpec,
-                                       final XMSSPrivateKeyParameters pPrivateKey) {
+        BouncyXMSSPrivateKey(final GordianAsymKeySpec pKeySpec,
+                             final XMSSPrivateKeyParameters pPrivateKey) {
             super(pKeySpec);
             theKey = pPrivateKey;
         }
@@ -264,8 +262,8 @@ public final class BouncyXMSSAsymKey {
          * @param pFactory the Security Factory
          * @param pKeySpec the keySpec
          */
-        protected BouncyXMSSKeyPairGenerator(final BouncyFactory pFactory,
-                                             final GordianAsymKeySpec pKeySpec) {
+        BouncyXMSSKeyPairGenerator(final BouncyFactory pFactory,
+                                   final GordianAsymKeySpec pKeySpec) {
             /* Initialise underlying class */
             super(pFactory, pKeySpec);
 
@@ -421,8 +419,8 @@ public final class BouncyXMSSAsymKey {
          * @param pKeySpec the keySpec
          * @param pPublicKey the public key
          */
-        protected BouncyXMSSMTPublicKey(final GordianAsymKeySpec pKeySpec,
-                                        final XMSSMTPublicKeyParameters pPublicKey) {
+        BouncyXMSSMTPublicKey(final GordianAsymKeySpec pKeySpec,
+                              final XMSSMTPublicKeyParameters pPublicKey) {
             super(pKeySpec);
             theKey = pPublicKey;
         }
@@ -510,8 +508,8 @@ public final class BouncyXMSSAsymKey {
          * @param pKeySpec the keySpec
          * @param pPrivateKey the private key
          */
-        protected BouncyXMSSMTPrivateKey(final GordianAsymKeySpec pKeySpec,
-                                         final XMSSMTPrivateKeyParameters pPrivateKey) {
+        BouncyXMSSMTPrivateKey(final GordianAsymKeySpec pKeySpec,
+                               final XMSSMTPrivateKeyParameters pPrivateKey) {
             super(pKeySpec);
             theKey = pPrivateKey;
         }
@@ -589,8 +587,8 @@ public final class BouncyXMSSAsymKey {
          * @param pFactory the Security Factory
          * @param pKeySpec the keySpec
          */
-        protected BouncyXMSSMTKeyPairGenerator(final BouncyFactory pFactory,
-                                               final GordianAsymKeySpec pKeySpec) {
+        BouncyXMSSMTKeyPairGenerator(final BouncyFactory pFactory,
+                                     final GordianAsymKeySpec pKeySpec) {
             /* Initialise underlying class */
             super(pFactory, pKeySpec);
 
@@ -695,11 +693,10 @@ public final class BouncyXMSSAsymKey {
     }
 
     /**
-     * XMSS signer.
+     * XMSS signature.
      */
-    public static class BouncyXMSSSigner
-            extends BouncyDigestSignature
-            implements GordianSigner {
+    public static class BouncyXMSSSignature
+            extends BouncyDigestSignature {
         /**
          * The XMSS Signer.
          */
@@ -708,73 +705,63 @@ public final class BouncyXMSSAsymKey {
         /**
          * Constructor.
          * @param pFactory the factory
-         * @param pPrivateKey the private key
          * @param pSpec the signatureSpec.
          * @throws OceanusException on error
          */
-        protected BouncyXMSSSigner(final BouncyFactory pFactory,
-                                   final BouncyXMSSPrivateKey pPrivateKey,
-                                   final GordianSignatureSpec pSpec) throws OceanusException {
+        BouncyXMSSSignature(final BouncyFactory pFactory,
+                            final GordianSignatureSpec pSpec) throws OceanusException {
             /* Initialise underlying class */
             super(pFactory, pSpec);
 
             /* Create the signer */
             theSigner = new XMSSSigner();
+        }
+
+
+        @Override
+        public void initForSigning(final GordianKeyPair pKeyPair) throws OceanusException {
+            /* Initialise detail */
+            super.initForSigning(pKeyPair);
 
             /* Initialise and set the signer */
-            theSigner.init(true, pPrivateKey.getPrivateKey());
+            final BouncyXMSSPrivateKey myPrivate = (BouncyXMSSPrivateKey) getKeyPair().getPrivateKey();
+            theSigner.init(true, myPrivate.getPrivateKey());
+        }
+
+        @Override
+        public void initForVerify(final GordianKeyPair pKeyPair) throws OceanusException {
+            /* Initialise detail */
+            super.initForVerify(pKeyPair);
+
+            /* Initialise and set the signer */
+            final BouncyXMSSPublicKey myPublic = (BouncyXMSSPublicKey) getKeyPair().getPublicKey();
+            theSigner.init(false, myPublic.getPublicKey());
         }
 
         @Override
         public byte[] sign() throws OceanusException {
+            /* Check that we are in signing mode */
+            checkMode(GordianSignatureMode.SIGN);
+
             /* Sign the message */
             return theSigner.generateSignature(getDigest());
-        }
-    }
-
-    /**
-     * XMSS validator.
-     */
-    public static class BouncyXMSSValidator
-            extends BouncyDigestSignature
-            implements GordianValidator {
-        /**
-         * The XMSS Signer.
-         */
-        private final XMSSSigner theSigner;
-
-        /**
-         * Constructor.
-         * @param pFactory the factory
-         * @param pPublicKey the public key
-         * @param pSpec the signatureSpec.
-         * @throws OceanusException on error
-         */
-        protected BouncyXMSSValidator(final BouncyFactory pFactory,
-                                      final BouncyXMSSPublicKey pPublicKey,
-                                      final GordianSignatureSpec pSpec) throws OceanusException {
-            /* Initialise underlying class */
-            super(pFactory, pSpec);
-
-            /* Create the signer */
-            theSigner = new XMSSSigner();
-
-            /* Initialise and set the signer */
-            theSigner.init(false, pPublicKey.getPublicKey());
         }
 
         @Override
         public boolean verify(final byte[] pSignature) throws OceanusException {
+            /* Check that we are in verify mode */
+            checkMode(GordianSignatureMode.VERIFY);
+
+            /* Verify the message */
             return theSigner.verifySignature(getDigest(), pSignature);
         }
     }
 
     /**
-     * XMSSMT signer.
+     * XMSSMT signature
      */
-    public static class BouncyXMSSMTSigner
-            extends BouncyDigestSignature
-            implements GordianSigner {
+    public static class BouncyXMSSMTSignature
+            extends BouncyDigestSignature {
         /**
          * The XMSS Signer.
          */
@@ -783,63 +770,54 @@ public final class BouncyXMSSAsymKey {
         /**
          * Constructor.
          * @param pFactory the factory
-         * @param pPrivateKey the private key
          * @param pSpec the signatureSpec.
          * @throws OceanusException on error
          */
-        protected BouncyXMSSMTSigner(final BouncyFactory pFactory,
-                                     final BouncyXMSSMTPrivateKey pPrivateKey,
-                                     final GordianSignatureSpec pSpec) throws OceanusException {
+        BouncyXMSSMTSignature(final BouncyFactory pFactory,
+                              final GordianSignatureSpec pSpec) throws OceanusException {
             /* Initialise underlying class */
             super(pFactory, pSpec);
 
             /* Create the signer */
             theSigner = new XMSSMTSigner();
+        }
+
+
+        @Override
+        public void initForSigning(final GordianKeyPair pKeyPair) throws OceanusException {
+            /* Initialise detail */
+            super.initForSigning(pKeyPair);
 
             /* Initialise and set the signer */
-            theSigner.init(true, pPrivateKey.getPrivateKey());
+            final BouncyXMSSMTPrivateKey myPrivate = (BouncyXMSSMTPrivateKey) getKeyPair().getPrivateKey();
+            theSigner.init(true, myPrivate.getPrivateKey());
+        }
+
+        @Override
+        public void initForVerify(final GordianKeyPair pKeyPair) throws OceanusException {
+            /* Initialise detail */
+            super.initForVerify(pKeyPair);
+
+            /* Initialise and set the signer */
+            final BouncyXMSSMTPublicKey myPublic = (BouncyXMSSMTPublicKey) getKeyPair().getPublicKey();
+            theSigner.init(false, myPublic.getPublicKey());
         }
 
         @Override
         public byte[] sign() throws OceanusException {
+            /* Check that we are in signing mode */
+            checkMode(GordianSignatureMode.SIGN);
+
             /* Sign the message */
             return theSigner.generateSignature(getDigest());
-        }
-    }
-
-    /**
-     * XMSSMT validator.
-     */
-    public static class BouncyXMSSMTValidator
-            extends BouncyDigestSignature
-            implements GordianValidator {
-        /**
-         * The XMSS Signer.
-         */
-        private final XMSSMTSigner theSigner;
-
-        /**
-         * Constructor.
-         * @param pFactory the factory
-         * @param pPublicKey the public key
-         * @param pSpec the signatureSpec.
-         * @throws OceanusException on error
-         */
-        protected BouncyXMSSMTValidator(final BouncyFactory pFactory,
-                                        final BouncyXMSSMTPublicKey pPublicKey,
-                                        final GordianSignatureSpec pSpec) throws OceanusException {
-            /* Initialise underlying class */
-            super(pFactory, pSpec);
-
-            /* Create the signer */
-            theSigner = new XMSSMTSigner();
-
-            /* Initialise and set the signer */
-            theSigner.init(false, pPublicKey.getPublicKey());
         }
 
         @Override
         public boolean verify(final byte[] pSignature) throws OceanusException {
+            /* Check that we are in verify mode */
+            checkMode(GordianSignatureMode.VERIFY);
+
+            /* Verify the message */
             return theSigner.verifySignature(getDigest(), pSignature);
         }
     }

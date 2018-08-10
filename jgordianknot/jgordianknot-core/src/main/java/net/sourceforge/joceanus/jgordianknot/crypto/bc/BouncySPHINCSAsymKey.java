@@ -49,8 +49,6 @@ import net.sourceforge.joceanus.jgordianknot.crypto.GordianKeyPair;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianLength;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianSPHINCSKeyType;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianSignatureSpec;
-import net.sourceforge.joceanus.jgordianknot.crypto.GordianSigner;
-import net.sourceforge.joceanus.jgordianknot.crypto.GordianValidator;
 import net.sourceforge.joceanus.jgordianknot.crypto.bc.BouncyKeyPair.BouncyPrivateKey;
 import net.sourceforge.joceanus.jgordianknot.crypto.bc.BouncyKeyPair.BouncyPublicKey;
 import net.sourceforge.joceanus.jgordianknot.crypto.bc.BouncySignature.BouncyDigestSignature;
@@ -81,8 +79,8 @@ public final class BouncySPHINCSAsymKey {
          * @param pKeySpec the keySpec
          * @param pPublicKey the public key
          */
-        protected BouncySPHINCSPublicKey(final GordianAsymKeySpec pKeySpec,
-                                         final SPHINCSPublicKeyParameters pPublicKey) {
+        BouncySPHINCSPublicKey(final GordianAsymKeySpec pKeySpec,
+                               final SPHINCSPublicKeyParameters pPublicKey) {
             super(pKeySpec);
             theKey = pPublicKey;
         }
@@ -151,8 +149,8 @@ public final class BouncySPHINCSAsymKey {
          * @param pKeySpec the keySpec
          * @param pPrivateKey the private key
          */
-        protected BouncySPHINCSPrivateKey(final GordianAsymKeySpec pKeySpec,
-                                          final SPHINCSPrivateKeyParameters pPrivateKey) {
+        BouncySPHINCSPrivateKey(final GordianAsymKeySpec pKeySpec,
+                                final SPHINCSPrivateKeyParameters pPrivateKey) {
             super(pKeySpec);
             theKey = pPrivateKey;
         }
@@ -226,8 +224,8 @@ public final class BouncySPHINCSAsymKey {
          * @param pFactory the Security Factory
          * @param pKeySpec the keySpec
          */
-        protected BouncySPHINCSKeyPairGenerator(final BouncyFactory pFactory,
-                                                final GordianAsymKeySpec pKeySpec) {
+        BouncySPHINCSKeyPairGenerator(final BouncyFactory pFactory,
+                                      final GordianAsymKeySpec pKeySpec) {
             /* Initialise underlying class */
             super(pFactory, pKeySpec);
 
@@ -314,96 +312,83 @@ public final class BouncySPHINCSAsymKey {
     /**
      * SPHINCS signer.
      */
-    public static class BouncySPHINCSSigner
-            extends BouncyDigestSignature
-            implements GordianSigner {
+    public static class BouncySPHINCSSignature
+            extends BouncyDigestSignature {
         /**
          * The SPHINCS Signer.
          */
-        private final SPHINCS256Signer theSigner;
+        private SPHINCS256Signer theSigner;
 
         /**
          * Constructor.
          * @param pFactory the factory
-         * @param pPrivateKey the private key
          * @param pSpec the signatureSpec.
          * @throws OceanusException on error
          */
-        protected BouncySPHINCSSigner(final BouncyFactory pFactory,
-                                      final BouncySPHINCSPrivateKey pPrivateKey,
-                                      final GordianSignatureSpec pSpec) throws OceanusException {
+        BouncySPHINCSSignature(final BouncyFactory pFactory,
+                               final GordianSignatureSpec pSpec) throws OceanusException {
             /* Initialise underlying class */
             super(pFactory, pSpec);
+        }
 
+        /**
+         * Constructor.
+         * @param pKeyPair the keyPair
+         * @throws OceanusException on error
+         */
+        private void setSigner(final GordianKeyPair pKeyPair) throws OceanusException {
             /* Access the SPHINCS keyType */
-            final GordianSPHINCSKeyType myKeyType = pPrivateKey.getKeySpec().getSPHINCSType();
+            final GordianSPHINCSKeyType myKeyType = pKeyPair.getKeySpec().getSPHINCSType();
 
             /* Create the internal digests */
-            final BouncyDigest myTreeDigest = pFactory.createDigest(GordianSPHINCSKeyType.SHA3.equals(myKeyType)
-                                                                                                                 ? GordianDigestSpec.sha3(GordianLength.LEN_256)
-                                                                                                                 : GordianDigestSpec.sha2Alt(GordianLength.LEN_256));
-            final BouncyDigest myMsgDigest = pFactory.createDigest(GordianSPHINCSKeyType.SHA3.equals(myKeyType)
-                                                                                                                ? GordianDigestSpec.sha3(GordianLength.LEN_512)
-                                                                                                                : GordianDigestSpec.sha2(GordianLength.LEN_512));
+            final BouncyDigest myTreeDigest = getFactory().createDigest(GordianSPHINCSKeyType.SHA3.equals(myKeyType)
+                                                                    ? GordianDigestSpec.sha3(GordianLength.LEN_256)
+                                                                    : GordianDigestSpec.sha2Alt(GordianLength.LEN_256));
+            final BouncyDigest myMsgDigest = getFactory().createDigest(GordianSPHINCSKeyType.SHA3.equals(myKeyType)
+                                                                   ? GordianDigestSpec.sha3(GordianLength.LEN_512)
+                                                                   : GordianDigestSpec.sha2(GordianLength.LEN_512));
 
             /* Create the signer */
             theSigner = new SPHINCS256Signer(myTreeDigest.getDigest(), myMsgDigest.getDigest());
+        }
+
+        @Override
+        public void initForSigning(final GordianKeyPair pKeyPair) throws OceanusException {
+            /* Initialise detail */
+            super.initForSigning(pKeyPair);
 
             /* Initialise and set the signer */
-            theSigner.init(true, pPrivateKey.getPrivateKey());
+            setSigner(pKeyPair);
+            final BouncySPHINCSPrivateKey myPrivate = (BouncySPHINCSPrivateKey) getKeyPair().getPrivateKey();
+            theSigner.init(true, myPrivate.getPrivateKey());
+        }
+
+        @Override
+        public void initForVerify(final GordianKeyPair pKeyPair) throws OceanusException {
+            /* Initialise detail */
+            super.initForVerify(pKeyPair);
+
+            /* Initialise and set the signer */
+            setSigner(pKeyPair);
+            final BouncySPHINCSPublicKey myPublic = (BouncySPHINCSPublicKey) getKeyPair().getPublicKey();
+            theSigner.init(false, myPublic.getPublicKey());
         }
 
         @Override
         public byte[] sign() throws OceanusException {
+            /* Check that we are in signing mode */
+            checkMode(GordianSignatureMode.SIGN);
+
             /* Sign the message */
             return theSigner.generateSignature(getDigest());
-        }
-    }
-
-    /**
-     * SPHINCS validator.
-     */
-    public static class BouncySPHINCSValidator
-            extends BouncyDigestSignature
-            implements GordianValidator {
-        /**
-         * The SPHINCS Signer.
-         */
-        private final SPHINCS256Signer theSigner;
-
-        /**
-         * Constructor.
-         * @param pFactory the factory
-         * @param pPublicKey the public key
-         * @param pSpec the signatureSpec.
-         * @throws OceanusException on error
-         */
-        protected BouncySPHINCSValidator(final BouncyFactory pFactory,
-                                         final BouncySPHINCSPublicKey pPublicKey,
-                                         final GordianSignatureSpec pSpec) throws OceanusException {
-            /* Initialise underlying class */
-            super(pFactory, pSpec);
-
-            /* Access the SPHINCS keyType */
-            final GordianSPHINCSKeyType myKeyType = pPublicKey.getKeySpec().getSPHINCSType();
-
-            /* Create the internal digests */
-            final BouncyDigest myTreeDigest = pFactory.createDigest(GordianSPHINCSKeyType.SHA3.equals(myKeyType)
-                                                                                                                 ? GordianDigestSpec.sha3(GordianLength.LEN_256)
-                                                                                                                 : GordianDigestSpec.sha2Alt(GordianLength.LEN_256));
-            final BouncyDigest myMsgDigest = pFactory.createDigest(GordianSPHINCSKeyType.SHA3.equals(myKeyType)
-                                                                                                                ? GordianDigestSpec.sha3(GordianLength.LEN_512)
-                                                                                                                : GordianDigestSpec.sha2(GordianLength.LEN_512));
-
-            /* Create the signer */
-            theSigner = new SPHINCS256Signer(myTreeDigest.getDigest(), myMsgDigest.getDigest());
-
-            /* Initialise and set the signer */
-            theSigner.init(false, pPublicKey.getPublicKey());
         }
 
         @Override
         public boolean verify(final byte[] pSignature) throws OceanusException {
+            /* Check that we are in verify mode */
+            checkMode(GordianSignatureMode.VERIFY);
+
+            /* Verify the message */
             return theSigner.verifySignature(getDigest(), pSignature);
         }
     }

@@ -34,20 +34,15 @@ import net.sourceforge.joceanus.jgordianknot.crypto.GordianPadding;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianParameters;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianRandomSpec;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianSignatureSpec;
-import net.sourceforge.joceanus.jgordianknot.crypto.GordianSigner;
+import net.sourceforge.joceanus.jgordianknot.crypto.GordianSignature;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianStreamKeyType;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianSymKeySpec;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianSymKeyType;
-import net.sourceforge.joceanus.jgordianknot.crypto.GordianValidator;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianWrapCipher;
 import net.sourceforge.joceanus.jgordianknot.crypto.bc.BouncyDSAAsymKey.BouncyDSAKeyPairGenerator;
-import net.sourceforge.joceanus.jgordianknot.crypto.bc.BouncyDSAAsymKey.BouncyDSAPrivateKey;
-import net.sourceforge.joceanus.jgordianknot.crypto.bc.BouncyDSAAsymKey.BouncyDSAPublicKey;
-import net.sourceforge.joceanus.jgordianknot.crypto.bc.BouncyDSAAsymKey.BouncyDSASigner;
-import net.sourceforge.joceanus.jgordianknot.crypto.bc.BouncyDSAAsymKey.BouncyDSAValidator;
+import net.sourceforge.joceanus.jgordianknot.crypto.bc.BouncyDSAAsymKey.BouncyDSASignature;
 import net.sourceforge.joceanus.jgordianknot.crypto.bc.BouncyDSTUAsymKey.BouncyDSTUKeyPairGenerator;
-import net.sourceforge.joceanus.jgordianknot.crypto.bc.BouncyDSTUAsymKey.BouncyDSTUSigner;
-import net.sourceforge.joceanus.jgordianknot.crypto.bc.BouncyDSTUAsymKey.BouncyDSTUValidator;
+import net.sourceforge.joceanus.jgordianknot.crypto.bc.BouncyDSTUAsymKey.BouncyDSTUSignature;
 import net.sourceforge.joceanus.jgordianknot.crypto.bc.BouncyDiffieHellmanAsymKey.BouncyDiffieHellmanKeyPairGenerator;
 import net.sourceforge.joceanus.jgordianknot.crypto.bc.BouncyDiffieHellmanAsymKey.BouncyDiffieHellmanPrivateKey;
 import net.sourceforge.joceanus.jgordianknot.crypto.bc.BouncyDiffieHellmanAsymKey.BouncyDiffieHellmanPublicKey;
@@ -58,13 +53,10 @@ import net.sourceforge.joceanus.jgordianknot.crypto.bc.BouncyEllipticAsymKey.Bou
 import net.sourceforge.joceanus.jgordianknot.crypto.bc.BouncyEllipticAsymKey.BouncyECKeyPairGenerator;
 import net.sourceforge.joceanus.jgordianknot.crypto.bc.BouncyEllipticAsymKey.BouncyECPrivateKey;
 import net.sourceforge.joceanus.jgordianknot.crypto.bc.BouncyEllipticAsymKey.BouncyECPublicKey;
-import net.sourceforge.joceanus.jgordianknot.crypto.bc.BouncyEllipticAsymKey.BouncyECSigner;
-import net.sourceforge.joceanus.jgordianknot.crypto.bc.BouncyEllipticAsymKey.BouncyECValidator;
-import net.sourceforge.joceanus.jgordianknot.crypto.bc.BouncyEllipticAsymKey.BouncySM2Signer;
-import net.sourceforge.joceanus.jgordianknot.crypto.bc.BouncyEllipticAsymKey.BouncySM2Validator;
+import net.sourceforge.joceanus.jgordianknot.crypto.bc.BouncyEllipticAsymKey.BouncyECSignature;
+import net.sourceforge.joceanus.jgordianknot.crypto.bc.BouncyEllipticAsymKey.BouncySM2Signature;
 import net.sourceforge.joceanus.jgordianknot.crypto.bc.BouncyGOSTAsymKey.BouncyGOSTKeyPairGenerator;
-import net.sourceforge.joceanus.jgordianknot.crypto.bc.BouncyGOSTAsymKey.BouncyGOSTSigner;
-import net.sourceforge.joceanus.jgordianknot.crypto.bc.BouncyGOSTAsymKey.BouncyGOSTValidator;
+import net.sourceforge.joceanus.jgordianknot.crypto.bc.BouncyGOSTAsymKey.BouncyGOSTSignature;
 import net.sourceforge.joceanus.jgordianknot.crypto.bc.BouncyMcElieceAsymKey.BouncyMcElieceCCA2KeyPairGenerator;
 import net.sourceforge.joceanus.jgordianknot.crypto.bc.BouncyMcElieceAsymKey.BouncyMcElieceKeyPairGenerator;
 import net.sourceforge.joceanus.jgordianknot.crypto.bc.BouncyNewHopeAsymKey.BouncyNewHopeKeyPairGenerator;
@@ -77,31 +69,19 @@ import net.sourceforge.joceanus.jgordianknot.crypto.bc.BouncyRSAAsymKey.BouncyRS
 import net.sourceforge.joceanus.jgordianknot.crypto.bc.BouncyRSAAsymKey.BouncyRSAKeyPairGenerator;
 import net.sourceforge.joceanus.jgordianknot.crypto.bc.BouncyRSAAsymKey.BouncyRSAPrivateKey;
 import net.sourceforge.joceanus.jgordianknot.crypto.bc.BouncyRSAAsymKey.BouncyRSAPublicKey;
-import net.sourceforge.joceanus.jgordianknot.crypto.bc.BouncyRSAAsymKey.BouncyRSASigner;
-import net.sourceforge.joceanus.jgordianknot.crypto.bc.BouncyRSAAsymKey.BouncyRSAValidator;
+import net.sourceforge.joceanus.jgordianknot.crypto.bc.BouncyRSAAsymKey.BouncyRSASignature;
 import net.sourceforge.joceanus.jgordianknot.crypto.bc.BouncyRainbowAsymKey.BouncyRainbowKeyPairGenerator;
-import net.sourceforge.joceanus.jgordianknot.crypto.bc.BouncyRainbowAsymKey.BouncyRainbowPrivateKey;
-import net.sourceforge.joceanus.jgordianknot.crypto.bc.BouncyRainbowAsymKey.BouncyRainbowPublicKey;
-import net.sourceforge.joceanus.jgordianknot.crypto.bc.BouncyRainbowAsymKey.BouncyRainbowSigner;
-import net.sourceforge.joceanus.jgordianknot.crypto.bc.BouncyRainbowAsymKey.BouncyRainbowValidator;
+import net.sourceforge.joceanus.jgordianknot.crypto.bc.BouncyRainbowAsymKey.BouncyRainbowSignature;
 import net.sourceforge.joceanus.jgordianknot.crypto.bc.BouncySPHINCSAsymKey.BouncySPHINCSKeyPairGenerator;
-import net.sourceforge.joceanus.jgordianknot.crypto.bc.BouncySPHINCSAsymKey.BouncySPHINCSPrivateKey;
-import net.sourceforge.joceanus.jgordianknot.crypto.bc.BouncySPHINCSAsymKey.BouncySPHINCSPublicKey;
-import net.sourceforge.joceanus.jgordianknot.crypto.bc.BouncySPHINCSAsymKey.BouncySPHINCSSigner;
-import net.sourceforge.joceanus.jgordianknot.crypto.bc.BouncySPHINCSAsymKey.BouncySPHINCSValidator;
+import net.sourceforge.joceanus.jgordianknot.crypto.bc.BouncySPHINCSAsymKey.BouncySPHINCSSignature;
 import net.sourceforge.joceanus.jgordianknot.crypto.bc.BouncyXMSSAsymKey.BouncyXMSSKeyPairGenerator;
 import net.sourceforge.joceanus.jgordianknot.crypto.bc.BouncyXMSSAsymKey.BouncyXMSSMTKeyPairGenerator;
-import net.sourceforge.joceanus.jgordianknot.crypto.bc.BouncyXMSSAsymKey.BouncyXMSSMTPrivateKey;
-import net.sourceforge.joceanus.jgordianknot.crypto.bc.BouncyXMSSAsymKey.BouncyXMSSMTPublicKey;
-import net.sourceforge.joceanus.jgordianknot.crypto.bc.BouncyXMSSAsymKey.BouncyXMSSMTSigner;
-import net.sourceforge.joceanus.jgordianknot.crypto.bc.BouncyXMSSAsymKey.BouncyXMSSMTValidator;
-import net.sourceforge.joceanus.jgordianknot.crypto.bc.BouncyXMSSAsymKey.BouncyXMSSPrivateKey;
-import net.sourceforge.joceanus.jgordianknot.crypto.bc.BouncyXMSSAsymKey.BouncyXMSSPublicKey;
-import net.sourceforge.joceanus.jgordianknot.crypto.bc.BouncyXMSSAsymKey.BouncyXMSSSigner;
-import net.sourceforge.joceanus.jgordianknot.crypto.bc.BouncyXMSSAsymKey.BouncyXMSSValidator;
+import net.sourceforge.joceanus.jgordianknot.crypto.bc.BouncyXMSSAsymKey.BouncyXMSSMTSignature;
+import net.sourceforge.joceanus.jgordianknot.crypto.bc.BouncyXMSSAsymKey.BouncyXMSSSignature;
 import net.sourceforge.joceanus.jgordianknot.crypto.prng.GordianBaseSecureRandom;
 import net.sourceforge.joceanus.jgordianknot.crypto.prng.GordianRandomFactory;
 import net.sourceforge.joceanus.jtethys.OceanusException;
+
 import org.bouncycastle.crypto.BlockCipher;
 import org.bouncycastle.crypto.BufferedBlockCipher;
 import org.bouncycastle.crypto.CipherKeyGenerator;
@@ -231,6 +211,7 @@ public final class BouncyFactory
 
     /**
      * Constructor.
+     *
      * @throws OceanusException on error
      */
     public BouncyFactory() throws OceanusException {
@@ -239,6 +220,7 @@ public final class BouncyFactory
 
     /**
      * Constructor.
+     *
      * @param pParameters the parameters
      * @throws OceanusException on error
      */
@@ -397,27 +379,14 @@ public final class BouncyFactory
     }
 
     @Override
-    public GordianSigner createSigner(final GordianKeyPair pKeyPair,
-                                      final GordianSignatureSpec pSignatureSpec) throws OceanusException {
+    public GordianSignature createSigner(final GordianSignatureSpec pSignatureSpec) throws OceanusException {
         /* Check validity of Signature */
-        if (!validSignatureSpecForKeyPair(pKeyPair, pSignatureSpec)) {
+        if (!validSignatureSpec(pSignatureSpec)) {
             throw new GordianDataException(getInvalidText(pSignatureSpec));
         }
 
         /* Create the signer */
-        return getBCSigner((BouncyKeyPair) pKeyPair, pSignatureSpec);
-    }
-
-    @Override
-    public GordianValidator createValidator(final GordianKeyPair pKeyPair,
-                                            final GordianSignatureSpec pSignatureSpec) throws OceanusException {
-        /* Check validity of Signature */
-        if (!validSignatureSpecForKeyPair(pKeyPair, pSignatureSpec)) {
-            throw new GordianDataException(getInvalidText(pSignatureSpec));
-        }
-
-        /* Create the validator */
-        return getBCValidator((BouncyKeyPair) pKeyPair, pSignatureSpec);
+        return getBCSigner(pSignatureSpec);
     }
 
     @Override
@@ -447,6 +416,7 @@ public final class BouncyFactory
 
     /**
      * Create the SP800 SecureRandom instance.
+     *
      * @param pRandomSpec the randomSpec
      * @return the secureRandom
      * @throws OceanusException on error
@@ -466,6 +436,7 @@ public final class BouncyFactory
 
     /**
      * Create the BouncyCastle digest.
+     *
      * @param pDigestSpec the digestSpec
      * @return the digest
      * @throws OceanusException on error
@@ -520,6 +491,7 @@ public final class BouncyFactory
 
     /**
      * Create the BouncyCastle RIPEMD digest.
+     *
      * @param pLength the digest length
      * @return the digest
      */
@@ -539,18 +511,20 @@ public final class BouncyFactory
 
     /**
      * Create the BouncyCastle Blake2 digest.
+     *
      * @param pSpec the digest spec
      * @return the digest
      */
     private static Digest getBlake2Digest(final GordianDigestSpec pSpec) {
         final int myLength = pSpec.getDigestLength().getLength();
         return GordianDigestType.isBlake2bState(pSpec.getStateLength())
-                                                                        ? new Blake2bDigest(myLength)
-                                                                        : new Blake2sDigest(myLength);
+               ? new Blake2bDigest(myLength)
+               : new Blake2sDigest(myLength);
     }
 
     /**
      * Create the BouncyCastle SHA2 digest.
+     *
      * @param pSpec the digestSpec
      * @return the digest
      */
@@ -560,12 +534,12 @@ public final class BouncyFactory
         switch (myLen) {
             case LEN_224:
                 return myState == null
-                                       ? new SHA224Digest()
-                                       : new SHA512tDigest(myLen.getLength());
+                       ? new SHA224Digest()
+                       : new SHA512tDigest(myLen.getLength());
             case LEN_256:
                 return myState == null
-                                       ? new SHA256Digest()
-                                       : new SHA512tDigest(myLen.getLength());
+                       ? new SHA256Digest()
+                       : new SHA512tDigest(myLen.getLength());
             case LEN_384:
                 return new SHA384Digest();
             case LEN_512:
@@ -576,6 +550,7 @@ public final class BouncyFactory
 
     /**
      * Create the BouncyCastle SHA3 digest.
+     *
      * @param pLength the digest length
      * @return the digest
      */
@@ -585,6 +560,7 @@ public final class BouncyFactory
 
     /**
      * Create the BouncyCastle Kupyna digest.
+     *
      * @param pLength the digest length
      * @return the digest
      */
@@ -594,8 +570,9 @@ public final class BouncyFactory
 
     /**
      * Create the BouncyCastle skeinDigest.
+     *
      * @param pStateLength the state length
-     * @param pLength the digest length
+     * @param pLength      the digest length
      * @return the digest
      */
     private static Digest getSkeinDigest(final GordianLength pStateLength,
@@ -605,17 +582,19 @@ public final class BouncyFactory
 
     /**
      * Create the BouncyCastle Streebog digest.
+     *
      * @param pLength the digest length
      * @return the digest
      */
     private static Digest getStreebogDigest(final GordianLength pLength) {
         return GordianLength.LEN_256.equals(pLength)
-                                                     ? new GOST3411_2012_256Digest()
-                                                     : new GOST3411_2012_512Digest();
+               ? new GOST3411_2012_256Digest()
+               : new GOST3411_2012_512Digest();
     }
 
     /**
      * Create the BouncyCastle MAC.
+     *
      * @param pMacSpec the MacSpec
      * @return the MAC
      * @throws OceanusException on error
@@ -647,6 +626,7 @@ public final class BouncyFactory
 
     /**
      * Create the BouncyCastle HMAC.
+     *
      * @param pDigestSpec the digestSpec
      * @return the MAC
      * @throws OceanusException on error
@@ -658,18 +638,20 @@ public final class BouncyFactory
 
     /**
      * Create the BouncyCastle GMac.
+     *
      * @param pSymKeySpec the SymKeySpec
      * @return the MAC
      * @throws OceanusException on error
      */
     private static Mac getBCGMac(final GordianSymKeySpec pSymKeySpec) throws OceanusException {
         return GordianSymKeyType.KALYNA.equals(pSymKeySpec.getSymKeyType())
-                                                                            ? new KXGMac(new KGCMXBlockCipher(getBCSymEngine(pSymKeySpec)))
-                                                                            : new GMac(new GCMBlockCipher(getBCSymEngine(pSymKeySpec)));
+               ? new KXGMac(new KGCMXBlockCipher(getBCSymEngine(pSymKeySpec)))
+               : new GMac(new GCMBlockCipher(getBCSymEngine(pSymKeySpec)));
     }
 
     /**
      * Create the BouncyCastle CMac.
+     *
      * @param pSymKeySpec the SymKeySpec
      * @return the MAC
      * @throws OceanusException on error
@@ -680,6 +662,7 @@ public final class BouncyFactory
 
     /**
      * Create the BouncyCastle Poly1305Mac.
+     *
      * @param pSymKeySpec the SymKeySpec
      * @return the MAC
      * @throws OceanusException on error
@@ -690,6 +673,7 @@ public final class BouncyFactory
 
     /**
      * Create the BouncyCastle SkeinMac.
+     *
      * @param pSpec the digestSpec
      * @return the MAC
      */
@@ -699,6 +683,7 @@ public final class BouncyFactory
 
     /**
      * Create the BouncyCastle KalynaMac.
+     *
      * @param pSymKeySpec the SymKeySpec
      * @return the MAC
      */
@@ -709,6 +694,7 @@ public final class BouncyFactory
 
     /**
      * Create the BouncyCastle kupynaMac.
+     *
      * @param pSpec the digestSpec
      * @return the MAC
      */
@@ -718,6 +704,7 @@ public final class BouncyFactory
 
     /**
      * Create the BouncyCastle blakeMac.
+     *
      * @param pSpec the digestSpec
      * @return the MAC
      */
@@ -728,6 +715,7 @@ public final class BouncyFactory
 
     /**
      * Create the BouncyCastle VMPCMac.
+     *
      * @return the MAC
      */
     private static Mac getBCVMPCMac() {
@@ -736,6 +724,7 @@ public final class BouncyFactory
 
     /**
      * Create the BouncyCastle Block Cipher.
+     *
      * @param pCipherSpec the cipherSpec
      * @return the Cipher
      * @throws OceanusException on error
@@ -749,6 +738,7 @@ public final class BouncyFactory
 
     /**
      * Create the BouncyCastle Stream Cipher.
+     *
      * @param pKeyType the keyType
      * @return the Cipher
      * @throws OceanusException on error
@@ -757,8 +747,8 @@ public final class BouncyFactory
         switch (pKeyType) {
             case HC:
                 return isRestricted()
-                                      ? new HC128Engine()
-                                      : new HC256Engine();
+                       ? new HC128Engine()
+                       : new HC256Engine();
             case CHACHA:
                 return new ChaChaEngine();
             case CHACHA7539:
@@ -784,6 +774,7 @@ public final class BouncyFactory
 
     /**
      * Create the BouncyCastle Cipher Engine.
+     *
      * @param pKeySpec the SymKeySpec
      * @return the Engine
      * @throws OceanusException on error
@@ -828,8 +819,8 @@ public final class BouncyFactory
                 return new RC2Engine();
             case RC5:
                 return GordianLength.LEN_128.equals(pKeySpec.getBlockLength())
-                                                                               ? new RC564Engine()
-                                                                               : new RC532Engine();
+                       ? new RC564Engine()
+                       : new RC532Engine();
             case CAST5:
                 return new CAST5Engine();
             case DESEDE:
@@ -855,8 +846,9 @@ public final class BouncyFactory
 
     /**
      * Create the BouncyCastle Buffered Cipher.
+     *
      * @param pEngine the underlying engine
-     * @param pMode the cipher mode
+     * @param pMode   the cipher mode
      * @return the Cipher
      * @throws OceanusException on error
      */
@@ -894,6 +886,7 @@ public final class BouncyFactory
 
     /**
      * Create the BouncyCastle Buffered Cipher.
+     *
      * @param pCipherSpec the cipherSpec
      * @return the Cipher
      * @throws OceanusException on error
@@ -920,7 +913,8 @@ public final class BouncyFactory
 
     /**
      * Create the BouncyCastle Mode Cipher.
-     * @param pEngine the underlying engine
+     *
+     * @param pEngine  the underlying engine
      * @param pPadding use padding true/false
      * @return the Cipher
      */
@@ -945,21 +939,23 @@ public final class BouncyFactory
 
     /**
      * Create the BouncyCastle KeyGenerator.
+     *
      * @param pKeyType the keyType
      * @return the KeyGenerator
      */
     private static CipherKeyGenerator getBCKeyGenerator(final Object pKeyType) {
         if (pKeyType instanceof GordianMacSpec
-            && GordianMacType.POLY1305.equals(((GordianMacSpec) pKeyType).getMacType())) {
+                && GordianMacType.POLY1305.equals(((GordianMacSpec) pKeyType).getMacType())) {
             return new Poly1305KeyGenerator();
         }
         return GordianSymKeyType.DESEDE.equals(pKeyType)
-                                                         ? new DESedeKeyGenerator()
-                                                         : new CipherKeyGenerator();
+               ? new DESedeKeyGenerator()
+               : new CipherKeyGenerator();
     }
 
     /**
      * Create the BouncyCastle KeyPairGenerator.
+     *
      * @param pKeySpec the keySpec
      * @return the KeyGenerator
      * @throws OceanusException on error
@@ -985,8 +981,8 @@ public final class BouncyFactory
                 return new BouncyRainbowKeyPairGenerator(this, pKeySpec);
             case MCELIECE:
                 return pKeySpec.getMcElieceSpec().isCCA2()
-                                                           ? new BouncyMcElieceCCA2KeyPairGenerator(this, pKeySpec)
-                                                           : new BouncyMcElieceKeyPairGenerator(this, pKeySpec);
+                       ? new BouncyMcElieceCCA2KeyPairGenerator(this, pKeySpec)
+                       : new BouncyMcElieceKeyPairGenerator(this, pKeySpec);
             case NEWHOPE:
                 return new BouncyNewHopeKeyPairGenerator(this, pKeySpec);
             case XMSS:
@@ -1000,77 +996,42 @@ public final class BouncyFactory
 
     /**
      * Create the BouncyCastle Signer.
-     * @param pKeyPair the privateKey
+     *
      * @param pSignatureSpec the signatureSpec
      * @return the Signer
      * @throws OceanusException on error
      */
-    private GordianSigner getBCSigner(final BouncyKeyPair pKeyPair,
-                                      final GordianSignatureSpec pSignatureSpec) throws OceanusException {
+    private GordianSignature getBCSigner(final GordianSignatureSpec pSignatureSpec) throws OceanusException {
         switch (pSignatureSpec.getAsymKeyType()) {
             case RSA:
-                return new BouncyRSASigner(this, (BouncyRSAPrivateKey) pKeyPair.getPrivateKey(), pSignatureSpec, getRandom());
+                return new BouncyRSASignature(this, pSignatureSpec);
             case EC:
-                return new BouncyECSigner(this, (BouncyECPrivateKey) pKeyPair.getPrivateKey(), pSignatureSpec, getRandom());
+                return new BouncyECSignature(this, pSignatureSpec);
             case DSTU4145:
-                return new BouncyDSTUSigner(this, (BouncyECPrivateKey) pKeyPair.getPrivateKey(), pSignatureSpec, getRandom());
+                return new BouncyDSTUSignature(this, pSignatureSpec);
             case GOST2012:
-                return new BouncyGOSTSigner(this, (BouncyECPrivateKey) pKeyPair.getPrivateKey(), pSignatureSpec, getRandom());
+                return new BouncyGOSTSignature(this, pSignatureSpec);
             case SM2:
-                return new BouncySM2Signer(this, (BouncyECPrivateKey) pKeyPair.getPrivateKey(), getRandom());
+                return new BouncySM2Signature(this, pSignatureSpec);
             case DSA:
-                return new BouncyDSASigner(this, (BouncyDSAPrivateKey) pKeyPair.getPrivateKey(), pSignatureSpec, getRandom());
+                return new BouncyDSASignature(this, pSignatureSpec);
             case SPHINCS:
-                return new BouncySPHINCSSigner(this, (BouncySPHINCSPrivateKey) pKeyPair.getPrivateKey(), pSignatureSpec);
+                return new BouncySPHINCSSignature(this, pSignatureSpec);
             case RAINBOW:
-                return new BouncyRainbowSigner(this, (BouncyRainbowPrivateKey) pKeyPair.getPrivateKey(), pSignatureSpec, getRandom());
+                return new BouncyRainbowSignature(this, pSignatureSpec);
             case XMSS:
-                return new BouncyXMSSSigner(this, (BouncyXMSSPrivateKey) pKeyPair.getPrivateKey(), pSignatureSpec);
+                return new BouncyXMSSSignature(this, pSignatureSpec);
             case XMSSMT:
-                return new BouncyXMSSMTSigner(this, (BouncyXMSSMTPrivateKey) pKeyPair.getPrivateKey(), pSignatureSpec);
+                return new BouncyXMSSMTSignature(this, pSignatureSpec);
             default:
-                throw new GordianDataException(getInvalidText(pKeyPair.getKeySpec().getKeyType()));
-        }
-    }
-
-    /**
-     * Create the BouncyCastle Validator.
-     * @param pKeyPair the keyPair
-     * @param pSignatureSpec the signatureSpec
-     * @return the Validator
-     * @throws OceanusException on error
-     */
-    private GordianValidator getBCValidator(final BouncyKeyPair pKeyPair,
-                                            final GordianSignatureSpec pSignatureSpec) throws OceanusException {
-        switch (pSignatureSpec.getAsymKeyType()) {
-            case RSA:
-                return new BouncyRSAValidator(this, (BouncyRSAPublicKey) pKeyPair.getPublicKey(), pSignatureSpec);
-            case EC:
-                return new BouncyECValidator(this, (BouncyECPublicKey) pKeyPair.getPublicKey(), pSignatureSpec);
-            case DSTU4145:
-                return new BouncyDSTUValidator(this, (BouncyECPublicKey) pKeyPair.getPublicKey(), pSignatureSpec);
-            case GOST2012:
-                return new BouncyGOSTValidator(this, (BouncyECPublicKey) pKeyPair.getPublicKey(), pSignatureSpec);
-            case SM2:
-                return new BouncySM2Validator(this, (BouncyECPublicKey) pKeyPair.getPublicKey());
-            case DSA:
-                return new BouncyDSAValidator(this, (BouncyDSAPublicKey) pKeyPair.getPublicKey(), pSignatureSpec);
-            case SPHINCS:
-                return new BouncySPHINCSValidator(this, (BouncySPHINCSPublicKey) pKeyPair.getPublicKey(), pSignatureSpec);
-            case RAINBOW:
-                return new BouncyRainbowValidator(this, (BouncyRainbowPublicKey) pKeyPair.getPublicKey(), pSignatureSpec);
-            case XMSS:
-                return new BouncyXMSSValidator(this, (BouncyXMSSPublicKey) pKeyPair.getPublicKey(), pSignatureSpec);
-            case XMSSMT:
-                return new BouncyXMSSMTValidator(this, (BouncyXMSSMTPublicKey) pKeyPair.getPublicKey(), pSignatureSpec);
-            default:
-                throw new GordianDataException(getInvalidText(pKeyPair.getKeySpec().getKeyType()));
+                throw new GordianDataException(getInvalidText(pSignatureSpec.getAsymKeyType()));
         }
     }
 
     /**
      * Create the BouncyCastle KEM Sender.
-     * @param pKeyPair the keyPair
+     *
+     * @param pKeyPair    the keyPair
      * @param pDigestSpec the digestSpec
      * @return the KEMSender
      * @throws OceanusException on error
@@ -1094,7 +1055,8 @@ public final class BouncyFactory
 
     /**
      * Create the BouncyCastle KEM Receiver.
-     * @param pKeyPair the keyPair
+     *
+     * @param pKeyPair    the keyPair
      * @param pDigestSpec the digestSpec
      * @param pCipherText the cipherText
      * @return the KEMParser

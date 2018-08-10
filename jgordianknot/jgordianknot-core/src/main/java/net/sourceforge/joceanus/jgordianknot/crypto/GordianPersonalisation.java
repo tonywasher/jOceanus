@@ -121,11 +121,8 @@ public class GordianPersonalisation {
         final byte[][] myHashes = new byte[myDigests.length][];
 
         /* Obtain configuration */
-        final char[] myPhrase = pParameters.getSecurityPhrase();
         final byte[] myPersonalBytes = TethysDataConverter.stringToByteArray(BASE_PERSONAL);
-        final byte[] myPhraseBytes = myPhrase == null
-                                                      ? null
-                                                      : TethysDataConverter.charsToByteArray(myPhrase);
+        final byte[] myPhraseBytes = pParameters.getSecurityPhrase();
 
         /* Initialise hashes */
         final byte[] myConfig = new byte[HASH_LEN.getByteLength()];

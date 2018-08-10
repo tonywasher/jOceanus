@@ -53,7 +53,6 @@ public class MetisPreferenceSecurity {
         /* Create the Bouncy Parameters */
         final GordianParameters myParms = new GordianParameters();
         myParms.setFactoryType(GordianFactoryType.BC);
-        myParms.useRestricted();
         myParms.setSecurityPhrase(getHostName());
 
         /* Create a Security Factory */
@@ -257,8 +256,9 @@ public class MetisPreferenceSecurity {
         /**
          * Get Security Parameters.
          * @return the parameters
+         * @throws OceanusException on error
          */
-        public GordianParameters getParameters() {
+        public GordianParameters getParameters() throws OceanusException {
             /* Create default preferences */
             final GordianParameters myParms = new GordianParameters(getBooleanValue(MetisSecurityPreferenceKey.RESTRICTED));
 

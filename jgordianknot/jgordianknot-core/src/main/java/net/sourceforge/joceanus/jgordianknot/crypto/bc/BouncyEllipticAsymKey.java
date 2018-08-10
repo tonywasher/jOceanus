@@ -18,7 +18,6 @@ package net.sourceforge.joceanus.jgordianknot.crypto.bc;
 
 import java.io.IOException;
 import java.math.BigInteger;
-import java.security.SecureRandom;
 import java.security.spec.PKCS8EncodedKeySpec;
 import java.security.spec.X509EncodedKeySpec;
 
@@ -54,15 +53,13 @@ import net.sourceforge.joceanus.jgordianknot.GordianCryptoException;
 import net.sourceforge.joceanus.jgordianknot.GordianLogicException;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianAsymKeySpec;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianAsymKeyType;
-import net.sourceforge.joceanus.jgordianknot.crypto.GordianConsumer;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianDigestSpec;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianFactory;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianKeyEncapsulation;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianKeyEncapsulation.GordianKEMSender;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianKeyPair;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianSignatureSpec;
-import net.sourceforge.joceanus.jgordianknot.crypto.GordianSigner;
-import net.sourceforge.joceanus.jgordianknot.crypto.GordianValidator;
+import net.sourceforge.joceanus.jgordianknot.crypto.GordianSignature;
 import net.sourceforge.joceanus.jgordianknot.crypto.bc.BouncyKeyEncapsulation.BouncyKeyDerivation;
 import net.sourceforge.joceanus.jgordianknot.crypto.bc.BouncyKeyPair.BouncyPrivateKey;
 import net.sourceforge.joceanus.jgordianknot.crypto.bc.BouncyKeyPair.BouncyPublicKey;
@@ -95,8 +92,8 @@ public final class BouncyEllipticAsymKey {
          * @param pKeySpec the keySpec
          * @param pPublicKey the public key
          */
-        protected BouncyECPublicKey(final GordianAsymKeySpec pKeySpec,
-                                    final ECPublicKeyParameters pPublicKey) {
+        BouncyECPublicKey(final GordianAsymKeySpec pKeySpec,
+                          final ECPublicKeyParameters pPublicKey) {
             super(pKeySpec);
             theKey = pPublicKey;
         }
@@ -176,8 +173,8 @@ public final class BouncyEllipticAsymKey {
          * @param pKeySpec the keySpec
          * @param pPrivateKey the private key
          */
-        protected BouncyECPrivateKey(final GordianAsymKeySpec pKeySpec,
-                                     final ECPrivateKeyParameters pPrivateKey) {
+        BouncyECPrivateKey(final GordianAsymKeySpec pKeySpec,
+                           final ECPrivateKeyParameters pPrivateKey) {
             super(pKeySpec);
             theKey = pPrivateKey;
         }
@@ -258,8 +255,8 @@ public final class BouncyEllipticAsymKey {
          * @param pKeySpec the keySpec
          * @throws OceanusException on error
          */
-        protected BouncyECKeyPairGenerator(final BouncyFactory pFactory,
-                                           final GordianAsymKeySpec pKeySpec) throws OceanusException {
+        BouncyECKeyPairGenerator(final BouncyFactory pFactory,
+                                 final GordianAsymKeySpec pKeySpec) throws OceanusException {
             /* Initialise underlying class */
             super(pFactory, pKeySpec);
 
@@ -354,9 +351,8 @@ public final class BouncyEllipticAsymKey {
     /**
      * EC signer.
      */
-    public static class BouncyECSigner
-            extends BouncyDigestSignature
-            implements GordianSigner {
+    public static class BouncyECSignature
+            extends BouncyDigestSignature {
         /**
          * The Signer.
          */
@@ -370,83 +366,66 @@ public final class BouncyEllipticAsymKey {
         /**
          * Constructor.
          * @param pFactory the factory
-         * @param pPrivateKey the private key
          * @param pSpec the signatureSpec.
-         * @param pRandom the random generator
          * @throws OceanusException on error
          */
-        protected BouncyECSigner(final BouncyFactory pFactory,
-                                 final BouncyECPrivateKey pPrivateKey,
-                                 final GordianSignatureSpec pSpec,
-                                 final SecureRandom pRandom) throws OceanusException {
+        BouncyECSignature(final BouncyFactory pFactory,
+                          final GordianSignatureSpec pSpec) throws OceanusException {
             /* Initialise underlying class */
             super(pFactory, pSpec);
 
             /* Create the signer and Coder */
-            theSigner = BouncySignature.getDSASigner(pFactory, pPrivateKey.getKeySpec(), pSpec);
+            theSigner = BouncySignature.getDSASigner(pFactory, pSpec);
             theCoder = new BouncyDERCoder();
+        }
+
+        @Override
+        public void initForSigning(final GordianKeyPair pKeyPair) throws OceanusException {
+            /* Initialise detail */
+            super.initForSigning(pKeyPair);
 
             /* Initialise and set the signer */
-            final ParametersWithRandom myParms = new ParametersWithRandom(pPrivateKey.getPrivateKey(), pRandom);
+            final BouncyECPrivateKey myPrivate = (BouncyECPrivateKey) getKeyPair().getPrivateKey();
+            final ParametersWithRandom myParms = new ParametersWithRandom(myPrivate.getPrivateKey(), getRandom());
             theSigner.init(true, myParms);
         }
 
         @Override
-        public byte[] sign() throws OceanusException {
-            final BigInteger[] myValues = theSigner.generateSignature(getDigest());
-            return theCoder.dsaEncode(myValues[0], myValues[1]);
-        }
-    }
-
-    /**
-     * EC validator.
-     */
-    public static class BouncyECValidator
-            extends BouncyDigestSignature
-            implements GordianValidator {
-        /**
-         * The EC Signer.
-         */
-        private final DSA theSigner;
-
-        /**
-         * The Coder.
-         */
-        private final BouncyDERCoder theCoder;
-
-        /**
-         * Constructor.
-         * @param pFactory the factory
-         * @param pPublicKey the public key
-         * @param pSpec the signatureSpec.
-         * @throws OceanusException on error-
-         */
-        protected BouncyECValidator(final BouncyFactory pFactory,
-                                    final BouncyECPublicKey pPublicKey,
-                                    final GordianSignatureSpec pSpec) throws OceanusException {
-            /* Initialise underlying class */
-            super(pFactory, pSpec);
-
-            /* Create the signer */
-            theSigner = BouncySignature.getDSASigner(pFactory, pPublicKey.getKeySpec(), pSpec);
-            theCoder = new BouncyDERCoder();
+        public void initForVerify(final GordianKeyPair pKeyPair) throws OceanusException {
+            /* Initialise detail */
+            super.initForVerify(pKeyPair);
 
             /* Initialise and set the signer */
-            theSigner.init(false, pPublicKey.getPublicKey());
+            final BouncyECPublicKey myPublic = (BouncyECPublicKey) getKeyPair().getPublicKey();
+            theSigner.init(false, myPublic.getPublicKey());
+        }
+
+        @Override
+        public byte[] sign() throws OceanusException {
+            /* Check that we are in signing mode */
+            checkMode(GordianSignatureMode.SIGN);
+
+            /* Sign the message */
+            final BigInteger[] myValues = theSigner.generateSignature(getDigest());
+            return theCoder.dsaEncode(myValues[0], myValues[1]);
         }
 
         @Override
         public boolean verify(final byte[] pSignature) throws OceanusException {
+            /* Check that we are in verify mode */
+            checkMode(GordianSignatureMode.VERIFY);
+
+            /* Verify the message */
             final BigInteger[] myValues = theCoder.dsaDecode(pSignature);
             return theSigner.verifySignature(getDigest(), myValues[0], myValues[1]);
         }
     }
 
     /**
-     * SM2 signature base.
+     * SM2 signature.
      */
-    private abstract static class BouncySM2Signature
-            implements GordianConsumer {
+    public static class BouncySM2Signature
+            extends GordianSignature {
         /**
          * The Signer.
          */
@@ -454,9 +433,15 @@ public final class BouncyEllipticAsymKey {
 
         /**
          * Constructor.
+         * @param pFactory the factory
+         * @param pSpec the signatureSpec.
          * @throws OceanusException on error
-         */
-        protected BouncySM2Signature() {
+          */
+        BouncySM2Signature(final BouncyFactory pFactory,
+                           final GordianSignatureSpec pSpec) throws OceanusException {
+            /* Initialise underlying class */
+            super(pFactory, pSpec);
+
             /* Create the signer */
             theSigner = new SM2Signer();
         }
@@ -483,65 +468,52 @@ public final class BouncyEllipticAsymKey {
             theSigner.reset();
         }
 
-        /**
-         * Obtain the signer.
-         * @return the signer
-         */
-        protected SM2Signer getSigner() {
-            return theSigner;
+        @Override
+        protected BouncyKeyPair getKeyPair() {
+            return (BouncyKeyPair) super.getKeyPair();
         }
-    }
 
-    /**
-     * SM2 signer.
-     */
-    public static class BouncySM2Signer
-            extends BouncySM2Signature
-            implements GordianSigner {
-        /**
-         * Constructor.
-         * @param pFactory the factory
-         * @param pPrivateKey the private key
-         * @param pRandom the random generator
-         */
-        protected BouncySM2Signer(final BouncyFactory pFactory,
-                                  final BouncyECPrivateKey pPrivateKey,
-                                  final SecureRandom pRandom) {
+        @Override
+        public void initForSigning(final GordianKeyPair pKeyPair) throws OceanusException {
+            /* Initialise detail */
+            super.initForSigning(pKeyPair);
+
             /* Initialise and set the signer */
-            final ParametersWithRandom myParms = new ParametersWithRandom(pPrivateKey.getPrivateKey(), pRandom);
-            getSigner().init(true, myParms);
+            final BouncyECPrivateKey myPrivate = (BouncyECPrivateKey) getKeyPair().getPrivateKey();
+            final ParametersWithRandom myParms = new ParametersWithRandom(myPrivate.getPrivateKey(), getRandom());
+            theSigner.init(true, myParms);
+        }
+
+        @Override
+        public void initForVerify(final GordianKeyPair pKeyPair) throws OceanusException {
+            /* Initialise detail */
+            super.initForVerify(pKeyPair);
+
+            /* Initialise and set the signer */
+            final BouncyECPublicKey myPublic = (BouncyECPublicKey) getKeyPair().getPublicKey();
+            theSigner.init(false, myPublic.getPublicKey());
         }
 
         @Override
         public byte[] sign() throws OceanusException {
+            /* Check that we are in signing mode */
+            checkMode(GordianSignatureMode.SIGN);
+
+            /* Sign the message */
             try {
-                return getSigner().generateSignature();
+                return theSigner.generateSignature();
             } catch (CryptoException e) {
                 throw new GordianCryptoException(BouncySignature.ERROR_SIGGEN, e);
             }
         }
-    }
-
-    /**
-     * SM2 validator.
-     */
-    public static class BouncySM2Validator
-            extends BouncySM2Signature
-            implements GordianValidator {
-        /**
-         * Constructor.
-         * @param pFactory the factory
-         * @param pPublicKey the public key
-         */
-        protected BouncySM2Validator(final BouncyFactory pFactory,
-                                     final BouncyECPublicKey pPublicKey) {
-            /* Initialise and set the signer */
-            getSigner().init(false, pPublicKey.getPublicKey());
-        }
 
         @Override
-        public boolean verify(final byte[] pSignature) {
-            return getSigner().verifySignature(pSignature);
+        public boolean verify(final byte[] pSignature) throws OceanusException {
+            /* Check that we are in verify mode */
+            checkMode(GordianSignatureMode.VERIFY);
+
+            /* Verify the message */
+            return theSigner.verifySignature(pSignature);
         }
     }
 

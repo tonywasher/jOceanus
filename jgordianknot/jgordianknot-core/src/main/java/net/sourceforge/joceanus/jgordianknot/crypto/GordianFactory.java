@@ -307,7 +307,7 @@ public abstract class GordianFactory {
      * @throws OceanusException on error
      */
     public GordianKeySetHash generateKeySetHash(final char[] pPassword) throws OceanusException {
-        return new GordianKeySetHash(this, pPassword);
+        return GordianKeySetHash.newKeySetHash(this, pPassword);
     }
 
     /**
@@ -320,7 +320,7 @@ public abstract class GordianFactory {
      */
     public GordianKeySetHash deriveKeySetHash(final byte[] pHashBytes,
                                               final char[] pPassword) throws OceanusException {
-        return new GordianKeySetHash(this, pHashBytes, pPassword);
+        return GordianKeySetHash.resolveKeySetHash(this, pHashBytes, pPassword);
     }
 
     /**
@@ -678,23 +678,11 @@ public abstract class GordianFactory {
 
     /**
      * Create signer.
-     * @param pKeyPair the keyPair
      * @param pSignatureSpec the signatureSpec
      * @return the signer
      * @throws OceanusException on error
      */
-    public abstract GordianSigner createSigner(GordianKeyPair pKeyPair,
-                                               GordianSignatureSpec pSignatureSpec) throws OceanusException;
-
-    /**
-     * Create validator.
-     * @param pKeyPair the keyPair
-     * @param pSignatureSpec the signatureSpec
-     * @return the validator
-     * @throws OceanusException on error
-     */
-    public abstract GordianValidator createValidator(GordianKeyPair pKeyPair,
-                                                     GordianSignatureSpec pSignatureSpec) throws OceanusException;
+    public abstract GordianSignature createSigner(GordianSignatureSpec pSignatureSpec) throws OceanusException;
 
     /**
      * Obtain predicate for keyExchange.
@@ -1044,8 +1032,7 @@ public abstract class GordianFactory {
      * @return true/false
      */
     protected boolean validStreamKeyType(final GordianStreamKeyType pKeyType) {
-        return // !GordianStreamKeyType.SOSEMANUK.equals(pKeyType)
-        pKeyType.validForRestriction(isRestricted);
+        return pKeyType.validForRestriction(isRestricted);
     }
 
     /**
@@ -1069,8 +1056,18 @@ public abstract class GordianFactory {
 
         /* Disallow ECNR if keySize is smaller than digestSize */
         final GordianAsymKeySpec myKeySpec = pKeyPair.getKeySpec();
-        return !GordianSignatureType.NR.equals(pSignSpec.getSignatureType())
-               || myKeySpec.getElliptic().getKeySize() >= pSignSpec.getDigestSpec().getDigestLength().getLength();
+        if (GordianSignatureType.NR.equals(pSignSpec.getSignatureType())) {
+            return myKeySpec.getElliptic().getKeySize() >= pSignSpec.getDigestSpec().getDigestLength().getLength();
+        }
+
+        /* Disallow incorrectly sized digest for GOST */
+        if (GordianAsymKeyType.GOST2012.equals(myKeySpec.getKeyType())) {
+            final int myDigestLen = pSignSpec.getDigestSpec().getDigestLength().getLength();
+            return myKeySpec.getElliptic().getKeySize() == myDigestLen;
+        }
+
+        /* OK */
+        return true;
     }
 
     /**
@@ -1093,8 +1090,22 @@ public abstract class GordianFactory {
         }
 
         /* Only allow SM3 for SM2 signature */
-        return !GordianAsymKeyType.SM2.equals(myType)
-               || GordianDigestType.SM3.equals(mySpec.getDigestType());
+        if (GordianAsymKeyType.SM2.equals(myType)) {
+            return GordianDigestType.SM3.equals(mySpec.getDigestType());
+        }
+
+        /* Only allow GOST for DSTU signature */
+        if (GordianAsymKeyType.DSTU4145.equals(myType)) {
+            return GordianDigestType.GOST.equals(mySpec.getDigestType());
+        }
+
+        /* Only allow STREEBOG for GOST signature */
+        if (GordianAsymKeyType.GOST2012.equals(myType)) {
+            return GordianDigestType.STREEBOG.equals(mySpec.getDigestType());
+        }
+
+        /* OK */
+        return true;
     }
 
     /**

@@ -18,7 +18,6 @@ package net.sourceforge.joceanus.jgordianknot.crypto.bc;
 
 import java.io.IOException;
 import java.math.BigInteger;
-import java.security.SecureRandom;
 import java.security.spec.PKCS8EncodedKeySpec;
 import java.security.spec.X509EncodedKeySpec;
 
@@ -52,8 +51,6 @@ import net.sourceforge.joceanus.jgordianknot.GordianDataException;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianAsymKeySpec;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianKeyPair;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianSignatureSpec;
-import net.sourceforge.joceanus.jgordianknot.crypto.GordianSigner;
-import net.sourceforge.joceanus.jgordianknot.crypto.GordianValidator;
 import net.sourceforge.joceanus.jgordianknot.crypto.bc.BouncyEllipticAsymKey.BouncyECPrivateKey;
 import net.sourceforge.joceanus.jgordianknot.crypto.bc.BouncyEllipticAsymKey.BouncyECPublicKey;
 import net.sourceforge.joceanus.jgordianknot.crypto.bc.BouncySignature.BouncyDSACoder;
@@ -121,8 +118,8 @@ public final class BouncyGOSTAsymKey {
          * @param pKeySpec the keySpec
          * @throws OceanusException on error
          */
-        protected BouncyGOSTKeyPairGenerator(final BouncyFactory pFactory,
-                                             final GordianAsymKeySpec pKeySpec) throws OceanusException {
+        BouncyGOSTKeyPairGenerator(final BouncyFactory pFactory,
+                                   final GordianAsymKeySpec pKeySpec) throws OceanusException {
             /* Initialise underlying class */
             super(pFactory, pKeySpec);
 
@@ -272,7 +269,8 @@ public final class BouncyGOSTAsymKey {
     /**
      * GOST encoder.
      */
-    static final class BouncyGOSTCoder implements BouncyDSACoder {
+    static final class BouncyGOSTCoder
+            implements BouncyDSACoder {
         /**
          * The fixed length (if any).
          */
@@ -337,9 +335,8 @@ public final class BouncyGOSTAsymKey {
     /**
      * GOST signer.
      */
-    public static class BouncyGOSTSigner
-            extends BouncyDigestSignature
-            implements GordianSigner {
+    public static class BouncyGOSTSignature
+            extends BouncyDigestSignature {
         /**
          * The Signer.
          */
@@ -353,73 +350,56 @@ public final class BouncyGOSTAsymKey {
         /**
          * Constructor.
          * @param pFactory the factory
-         * @param pPrivateKey the private key
          * @param pSpec the signatureSpec.
-         * @param pRandom the random generator
          * @throws OceanusException on error
          */
-        protected BouncyGOSTSigner(final BouncyFactory pFactory,
-                                   final BouncyECPrivateKey pPrivateKey,
-                                   final GordianSignatureSpec pSpec,
-                                   final SecureRandom pRandom) throws OceanusException {
+        BouncyGOSTSignature(final BouncyFactory pFactory,
+                            final GordianSignatureSpec pSpec) throws OceanusException {
             /* Initialise underlying class */
             super(pFactory, pSpec);
 
             /* Create the signer and Coder */
             theSigner = new ECGOST3410_2012Signer();
             theCoder = new BouncyGOSTCoder(pSpec.getDigestSpec().getDigestLength().getByteLength() << 1);
+        }
+
+        @Override
+        public void initForSigning(final GordianKeyPair pKeyPair) throws OceanusException {
+            /* Initialise detail */
+            super.initForSigning(pKeyPair);
 
             /* Initialise and set the signer */
-            final ParametersWithRandom myParms = new ParametersWithRandom(pPrivateKey.getPrivateKey(), pRandom);
+            final BouncyECPrivateKey myPrivate = (BouncyECPrivateKey) getKeyPair().getPrivateKey();
+            final ParametersWithRandom myParms = new ParametersWithRandom(myPrivate.getPrivateKey(), getRandom());
             theSigner.init(true, myParms);
         }
 
         @Override
-        public byte[] sign() throws OceanusException {
-            final BigInteger[] myValues = theSigner.generateSignature(getDigest());
-            return theCoder.dsaEncode(myValues[0], myValues[1]);
-        }
-    }
-
-    /**
-     * GOST validator.
-     */
-    public static class BouncyGOSTValidator
-            extends BouncyDigestSignature
-            implements GordianValidator {
-        /**
-         * The Signer.
-         */
-        private final ECGOST3410_2012Signer theSigner;
-
-        /**
-         * The Coder.
-         */
-        private final BouncyGOSTCoder theCoder;
-
-        /**
-         * Constructor.
-         * @param pFactory the factory
-         * @param pPublicKey the public key
-         * @param pSpec the signatureSpec.
-         * @throws OceanusException on error-
-         */
-        protected BouncyGOSTValidator(final BouncyFactory pFactory,
-                                      final BouncyECPublicKey pPublicKey,
-                                      final GordianSignatureSpec pSpec) throws OceanusException {
-            /* Initialise underlying class */
-            super(pFactory, pSpec);
-
-            /* Create the signer */
-            theSigner = new ECGOST3410_2012Signer();
-            theCoder = new BouncyGOSTCoder(pSpec.getDigestSpec().getDigestLength().getByteLength() << 1);
+        public void initForVerify(final GordianKeyPair pKeyPair) throws OceanusException {
+            /* Initialise detail */
+            super.initForVerify(pKeyPair);
 
             /* Initialise and set the signer */
-            theSigner.init(false, pPublicKey.getPublicKey());
+            final BouncyECPublicKey myPublic = (BouncyECPublicKey) getKeyPair().getPublicKey();
+            theSigner.init(false, myPublic.getPublicKey());
+        }
+
+        @Override
+        public byte[] sign() throws OceanusException {
+            /* Check that we are in signing mode */
+            checkMode(GordianSignatureMode.SIGN);
+
+            /* Sign the message */
+            final BigInteger[] myValues = theSigner.generateSignature(getDigest());
+            return theCoder.dsaEncode(myValues[0], myValues[1]);
         }
 
         @Override
         public boolean verify(final byte[] pSignature) throws OceanusException {
+            /* Check that we are in verify mode */
+            checkMode(GordianSignatureMode.VERIFY);
+
+            /* Verify the message */
             final BigInteger[] myValues = theCoder.dsaDecode(pSignature);
             return theSigner.verifySignature(getDigest(), myValues[0], myValues[1]);
         }

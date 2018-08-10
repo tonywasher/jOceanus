@@ -119,4 +119,19 @@ public enum GordianAsymKeyType {
         }
         return false;
     }
+
+    /**
+     * use random for signatures?
+     * @return true/false
+     */
+    public boolean useRandomForSignatures() {
+        switch (this) {
+            case SPHINCS:
+            case XMSS:
+            case XMSSMT:
+                return false;
+            default:
+                return true;
+        }
+    }
 }

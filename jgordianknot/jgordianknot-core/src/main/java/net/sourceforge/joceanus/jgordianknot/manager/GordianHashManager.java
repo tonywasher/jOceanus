@@ -254,7 +254,7 @@ public abstract class GordianHashManager {
      * @return the new PasswordHash if successful, otherwise null
      */
     private GordianKeySetHash attemptKnownPasswords(final byte[] pHashBytes) {
-        /* Look for the has in the list */
+        /* Look for the hash in the list */
         Iterator<GordianKeySetHash> myIterator = theHashList.listIterator();
         while (myIterator.hasNext()) {
             /* Access hash */
@@ -273,7 +273,7 @@ public abstract class GordianHashManager {
             final GordianKeySetHash myCurr = myIterator.next();
 
             /* Attempt to initialise the control from this password */
-            final GordianKeySetHash myPassHash = myCurr.attemptPassword(pHashBytes);
+            final GordianKeySetHash myPassHash = myCurr.attemptPasswordForHash(pHashBytes);
 
             /* If we succeeded */
             if (myPassHash != null) {

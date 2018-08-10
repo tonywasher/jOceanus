@@ -18,6 +18,9 @@ package net.sourceforge.joceanus.jgordianknot.crypto;
 
 import java.util.Arrays;
 
+import net.sourceforge.joceanus.jtethys.OceanusException;
+import net.sourceforge.joceanus.jtethys.TethysDataConverter;
+
 /**
  * Security Parameters.
  */
@@ -85,7 +88,7 @@ public class GordianParameters {
     /**
      * The Security phrase.
      */
-    private char[] theSecurityPhrase;
+    private byte[] theSecurityPhrase;
 
     /**
      * Constructor.
@@ -112,7 +115,7 @@ public class GordianParameters {
      * Do we use restricted security?
      * @return true/false
      */
-    public Boolean useRestricted() {
+    Boolean useRestricted() {
         return useRestricted;
     }
 
@@ -128,7 +131,7 @@ public class GordianParameters {
      * Access the number of Cipher Steps.
      * @return the number of cipher steps
      */
-    public int getNumCipherSteps() {
+    int getNumCipherSteps() {
         return theCipherSteps;
     }
 
@@ -136,7 +139,7 @@ public class GordianParameters {
      * Access the number of Hash Iterations.
      * @return the number of hash iterations
      */
-    protected int getNumHashIterations() {
+    int getNumHashIterations() {
         return theIterations;
     }
 
@@ -144,7 +147,7 @@ public class GordianParameters {
      * Access the security phrase in bytes format.
      * @return the security phrase
      */
-    protected char[] getSecurityPhrase() {
+    byte[] getSecurityPhrase() {
         return theSecurityPhrase;
     }
 
@@ -161,7 +164,6 @@ public class GordianParameters {
      * @param pNumCipherSteps number of cipher steps
      */
     public void setNumCipherSteps(final int pNumCipherSteps) {
-        /* Store parameters */
         theCipherSteps = pNumCipherSteps;
     }
 
@@ -176,8 +178,17 @@ public class GordianParameters {
     /**
      * Set security phrase.
      * @param pSecurityPhrase the security phrase (or null)
+     * @throws OceanusException on error
      */
-    public void setSecurityPhrase(final char[] pSecurityPhrase) {
+    public void setSecurityPhrase(final char[] pSecurityPhrase) throws OceanusException {
+        theSecurityPhrase = TethysDataConverter.charsToByteArray(pSecurityPhrase);
+    }
+
+    /**
+     * Set security phrase.
+     * @param pSecurityPhrase the security phrase (or null)
+     */
+    public void setSecurityPhrase(final byte[] pSecurityPhrase) {
         theSecurityPhrase = pSecurityPhrase;
     }
 

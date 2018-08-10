@@ -123,6 +123,7 @@ public class GordianFXPasswordDialog
 
         /* Show the dialog */
         reSizeDialog();
+        theStage.toFront();
         theStage.showAndWait();
     }
 

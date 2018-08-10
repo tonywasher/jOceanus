@@ -102,14 +102,15 @@ public class GordianCertificate {
 
     /**
      * Create a new self-signed certificate.
+     *
      * @param pFactory the factory
      * @param pKeyPair the keyPair
      * @param pSubject the name of the entity
      * @throws OceanusException on error
      */
-    protected GordianCertificate(final GordianFactory pFactory,
-                                 final GordianKeyPair pKeyPair,
-                                 final String pSubject) throws OceanusException {
+    GordianCertificate(final GordianFactory pFactory,
+                       final GordianKeyPair pKeyPair,
+                       final String pSubject) throws OceanusException {
         /* Store the parameters */
         theFactory = pFactory;
         theKeyPair = pKeyPair;
@@ -134,18 +135,19 @@ public class GordianCertificate {
 
     /**
      * Create a new certificate, signed by the relevant authority.
+     *
      * @param pFactory the factory
-     * @param pSigner the signing certificate
+     * @param pSigner  the signing certificate
      * @param pKeyPair the keyPair
      * @param pSubject the name of the entity
-     * @param pUsage the key usage
+     * @param pUsage   the key usage
      * @throws OceanusException on error
      */
-    protected GordianCertificate(final GordianFactory pFactory,
-                                 final GordianCertificate pSigner,
-                                 final GordianKeyPair pKeyPair,
-                                 final String pSubject,
-                                 final GordianKeyPairUsage pUsage) throws OceanusException {
+    private GordianCertificate(final GordianFactory pFactory,
+                               final GordianCertificate pSigner,
+                               final GordianKeyPair pKeyPair,
+                               final String pSubject,
+                               final GordianKeyPairUsage pUsage) throws OceanusException {
         /* Store the parameters */
         theFactory = pFactory;
         theKeyPair = pKeyPair;
@@ -175,14 +177,15 @@ public class GordianCertificate {
 
     /**
      * Parse a certificate.
-     * @param pFactory the factory
+     *
+     * @param pFactory    the factory
      * @param pPrivateKey the privateKeySpec (or null)
-     * @param pSequence the DER representation of the certificate
+     * @param pSequence   the DER representation of the certificate
      * @throws OceanusException on error
      */
-    protected GordianCertificate(final GordianFactory pFactory,
-                                 final PKCS8EncodedKeySpec pPrivateKey,
-                                 final DERSequence pSequence) throws OceanusException {
+    GordianCertificate(final GordianFactory pFactory,
+                       final PKCS8EncodedKeySpec pPrivateKey,
+                       final byte[] pSequence) throws OceanusException {
         /* Store the parameters */
         theFactory = pFactory;
 
@@ -220,7 +223,7 @@ public class GordianCertificate {
         if (isSelfSigned) {
             /* If the signature is valid */
             if (canSignCertificates()
-                && validateSignature(theKeyPair)) {
+                    && validateSignature(theKeyPair)) {
                 theSigner = this;
                 isValidated = true;
             } else {
@@ -231,6 +234,7 @@ public class GordianCertificate {
 
     /**
      * Is the certificate validated?
+     *
      * @return true/false
      */
     public boolean isValidated() {
@@ -238,7 +242,24 @@ public class GordianCertificate {
     }
 
     /**
+     * Is the certificate valid?
+     *
+     * @return true/false
+     */
+    public boolean isValid() {
+        final Date myDate = new Date();
+        if (myDate.compareTo(theTbsCertificate.getStartDate().getDate()) < 0) {
+            return false;
+        }
+        if (myDate.compareTo(theTbsCertificate.getEndDate().getDate()) > 0) {
+            return false;
+        }
+        return isValidated;
+    }
+
+    /**
      * Obtain the subject of the certificate.
+     *
      * @return the subject
      */
     public X500Name getSubject() {
@@ -247,6 +268,7 @@ public class GordianCertificate {
 
     /**
      * Obtain the subjectId of the certificate.
+     *
      * @return the subjectId
      */
     public DERBitString getSubjectId() {
@@ -255,6 +277,7 @@ public class GordianCertificate {
 
     /**
      * Obtain the issuer of the certificate.
+     *
      * @return the issuer name
      */
     public X500Name getIssuer() {
@@ -263,6 +286,7 @@ public class GordianCertificate {
 
     /**
      * Obtain the issuerId of the certificate.
+     *
      * @return the issuerId
      */
     public DERBitString getIssuerId() {
@@ -271,38 +295,43 @@ public class GordianCertificate {
 
     /**
      * Can this certificate sign certificates?
+     *
      * @return true/false
      */
     public boolean canSignCertificates() {
-        return theKeyUsage.canSignCertificates();
+        return isValid() && theKeyUsage.canSignCertificates();
     }
 
     /**
      * Can this certificate sign data?
+     *
      * @return true/false
      */
     public boolean canSignData() {
-        return theKeyUsage.canSignData();
+        return isValid() && theKeyUsage.canSignData();
     }
 
     /**
      * Can this certificate agree keys?
+     *
      * @return true/false
      */
     public boolean canAgreeKeys() {
-        return theKeyUsage.canAgreeKeys();
+        return isValid() && theKeyUsage.canAgreeKeys();
     }
 
     /**
      * Can this certificate encrypt data?
+     *
      * @return true/false
      */
     public boolean canEncrypt() {
-        return theKeyUsage.canEncrypt();
+        return isValid() && theKeyUsage.canEncrypt();
     }
 
     /**
      * Obtain the keyPair of the certificate.
+     *
      * @return the keyPair
      */
     public GordianKeyPair getKeyPair() {
@@ -313,10 +342,11 @@ public class GordianCertificate {
 
     /**
      * Create a certificate.
+     *
      * @param pSigner the signer of the certiicate
      * @throws OceanusException on error
      */
-    protected void validateCertificate(final GordianCertificate pSigner) throws OceanusException {
+    void validateCertificate(final GordianCertificate pSigner) throws OceanusException {
         /* If the certificate is already validated, just return */
         if (isValidated) {
             return;
@@ -326,13 +356,13 @@ public class GordianCertificate {
         final X500Name mySignerName = pSigner.getSubject();
         final DERBitString mySignerId = pSigner.getSubjectId();
         if (!mySignerName.equals(getIssuer())
-            || mySignerId.equals(getIssuerId())) {
+                || mySignerId.equals(getIssuerId())) {
             throw new GordianDataException("Incorrect signer certificate");
         }
 
         /* Check that the signing certificate is valid */
         if (!pSigner.isValidated()
-            || !pSigner.canSignCertificates()) {
+                || !pSigner.canSignCertificates()) {
             throw new GordianDataException("Invalid signer certificate");
         }
 
@@ -348,8 +378,34 @@ public class GordianCertificate {
 
     /**
      * Create a certificate.
+     *
+     * @param pKeySpec the spec of the new keyPair
+     * @param pSubject the name of the entity
+     * @param pUsage   the key usage
+     * @return the new certificate
+     * @throws OceanusException on error
+     */
+    GordianCertificate createCertificate(final GordianAsymKeySpec pKeySpec,
+                                         final String pSubject,
+                                         final GordianKeyPairUsage pUsage) throws OceanusException {
+        /* Check that the signing certificate is valid */
+        if (!canSignCertificates()) {
+            throw new GordianDataException("Invalid signer certificate");
+        }
+
+        /* Create the new keyPair */
+        final GordianKeyPairGenerator myGenerator = theFactory.getKeyPairGenerator(pKeySpec);
+        final GordianKeyPair myKeyPair = myGenerator.generateKeyPair();
+
+        /* Create the certificate */
+        return new GordianCertificate(theFactory, this, myKeyPair, pSubject, pUsage);
+    }
+
+    /**
+     * Create a certificate.
+     *
      * @param pSubject the name of the certificate
-     * @param pUsage the KeyPair Usage
+     * @param pUsage   the KeyPair Usage
      * @return the theCertificate
      * @throws OceanusException on error
      */
@@ -372,7 +428,7 @@ public class GordianCertificate {
         myCalendar.add(Calendar.YEAR, 1);
         final Date myEnd = myCalendar.getTime();
 
-         /* Access the keyPair generator */
+        /* Access the keyPair generator */
         final GordianKeyPairGenerator myGenerator = theFactory.getKeyPairGenerator(theKeyPair.getKeySpec());
 
         /* Obtain the publicKey Info */
@@ -402,6 +458,7 @@ public class GordianCertificate {
 
     /**
      * Create extensions for tbsCertificate.
+     *
      * @param pUsage the KeyPair Usage
      * @return the extensions
      * @throws OceanusException on error
@@ -421,8 +478,9 @@ public class GordianCertificate {
 
     /**
      * Create the subjectId.
+     *
      * @param pEncodedPublicKey the publicKey
-     * @param pSerialNo the certificate Serial#
+     * @param pSerialNo         the certificate Serial#
      * @return the subjectId
      * @throws OceanusException on error
      */
@@ -436,10 +494,11 @@ public class GordianCertificate {
 
         /* Create the subjectId */
         return new DERBitString(myDigest.finish());
-     }
+    }
 
     /**
      * Create the signature.
+     *
      * @param pSigner the signer
      * @return the generated signature
      * @throws OceanusException on error
@@ -448,7 +507,8 @@ public class GordianCertificate {
         /* Protect against exceptions */
         try {
             /* Build the signature */
-            final GordianSigner mySigner = theFactory.createSigner(pSigner, theSigSpec);
+            final GordianSignature mySigner = theFactory.createSigner(theSigSpec);
+            mySigner.initForSigning(pSigner);
             final GordianStreamConsumer myConsumer = new GordianStreamConsumer(mySigner);
             final DEROutputStream myOut = new DEROutputStream(myConsumer);
             myOut.writeObject(theTbsCertificate);
@@ -463,6 +523,7 @@ public class GordianCertificate {
 
     /**
      * Obtain the X509EncodedKeySpec.
+     *
      * @return the keySpec
      * @throws OceanusException on error
      */
@@ -479,6 +540,7 @@ public class GordianCertificate {
 
     /**
      * Validate the signature.
+     *
      * @param pSigner the signer
      * @return true/false is the signature valid?
      * @throws OceanusException on error
@@ -487,7 +549,8 @@ public class GordianCertificate {
         /* Protect against exceptions */
         try {
             /* Build the signature */
-            final GordianValidator myValidator = theFactory.createValidator(pSigner, theSigSpec);
+            final GordianSignature myValidator = theFactory.createSigner(theSigSpec);
+            myValidator.initForVerify(pSigner);
             final GordianStreamConsumer myConsumer = new GordianStreamConsumer(myValidator);
             final DEROutputStream myOut = new DEROutputStream(myConsumer);
             myOut.writeObject(theTbsCertificate);
@@ -502,20 +565,25 @@ public class GordianCertificate {
 
     /**
      * Create the DERSequence for a certificate.
+     *
      * @return the DERSequence
+     * @throws OceanusException on error
      */
-    public DERSequence createDERSequence() {
-        /* Create the DERSequence */
-        final ASN1EncodableVector myVector = new ASN1EncodableVector();
-        myVector.add(theTbsCertificate);
-        myVector.add(theSigAlgId);
-        myVector.add(new DERBitString(theSignature));
-        return new DERSequence(myVector);
+    public byte[] getEncoded() throws OceanusException {
+        /* Protect against exceptions */
+        try {
+            /* Create the DERSequence */
+            final ASN1EncodableVector myVector = new ASN1EncodableVector();
+            myVector.add(theTbsCertificate);
+            myVector.add(theSigAlgId);
+            myVector.add(new DERBitString(theSignature));
+            final DERSequence mySeq = new DERSequence(myVector);
+            return mySeq.getEncoded();
+        } catch (IOException e) {
+            throw new GordianIOException("Failed to generate encoding", e);
+        }
     }
 
-    /**
-     *
-     */
     /**
      * KeyUsage.
      */
@@ -547,6 +615,7 @@ public class GordianCertificate {
 
         /**
          * Constructor.
+         *
          * @param pUsage the usage.
          */
         GordianKeyPairUsage(final int pUsage) {
@@ -555,6 +624,7 @@ public class GordianCertificate {
 
         /**
          * Obtain the usage.
+         *
          * @return the usage
          */
         int getUsage() {
@@ -563,6 +633,7 @@ public class GordianCertificate {
 
         /**
          * Is this a Certificate Authority Key?
+         *
          * @return true/false
          */
         public boolean isCA() {
@@ -571,6 +642,7 @@ public class GordianCertificate {
 
         /**
          * Can certificates be signed?
+         *
          * @return true/false
          */
         public boolean canSignCertificates() {
@@ -579,6 +651,7 @@ public class GordianCertificate {
 
         /**
          * Can data be signed?
+         *
          * @return true/false
          */
         public boolean canSignData() {
@@ -593,6 +666,7 @@ public class GordianCertificate {
 
         /**
          * Can keys be agreed?
+         *
          * @return true/false
          */
         public boolean canAgreeKeys() {
@@ -601,6 +675,7 @@ public class GordianCertificate {
 
         /**
          * Canb data be encrypted?
+         *
          * @return true/false
          */
         public boolean canEncrypt() {
@@ -609,6 +684,7 @@ public class GordianCertificate {
 
         /**
          * Determine usage.
+         *
          * @param pExtensions the extensions.
          * @return the usage
          * @throws OceanusException on error

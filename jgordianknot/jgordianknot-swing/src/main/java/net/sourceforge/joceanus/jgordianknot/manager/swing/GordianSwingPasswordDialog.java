@@ -103,6 +103,7 @@ public class GordianSwingPasswordDialog
     public void showDialog() {
         /* Show the dialog */
         theDialog.setVisible(true);
+        theDialog.toFront();
     }
 
     /**

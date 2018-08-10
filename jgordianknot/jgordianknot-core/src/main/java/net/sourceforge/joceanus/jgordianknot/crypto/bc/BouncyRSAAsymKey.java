@@ -18,7 +18,6 @@ package net.sourceforge.joceanus.jgordianknot.crypto.bc;
 
 import java.io.IOException;
 import java.math.BigInteger;
-import java.security.SecureRandom;
 import java.security.spec.PKCS8EncodedKeySpec;
 import java.security.spec.X509EncodedKeySpec;
 
@@ -50,7 +49,6 @@ import org.bouncycastle.jcajce.provider.asymmetric.util.KeyUtil;
 
 import net.sourceforge.joceanus.jgordianknot.GordianCryptoException;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianAsymKeySpec;
-import net.sourceforge.joceanus.jgordianknot.crypto.GordianConsumer;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianDigestSpec;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianFactory;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianKeyEncapsulation;
@@ -59,8 +57,7 @@ import net.sourceforge.joceanus.jgordianknot.crypto.GordianKeyPair;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianModulus;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianSignatureSpec;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianSignatureType;
-import net.sourceforge.joceanus.jgordianknot.crypto.GordianSigner;
-import net.sourceforge.joceanus.jgordianknot.crypto.GordianValidator;
+import net.sourceforge.joceanus.jgordianknot.crypto.GordianSignature;
 import net.sourceforge.joceanus.jgordianknot.crypto.bc.BouncyKeyEncapsulation.BouncyKeyDerivation;
 import net.sourceforge.joceanus.jgordianknot.crypto.bc.BouncyKeyPair.BouncyPrivateKey;
 import net.sourceforge.joceanus.jgordianknot.crypto.bc.BouncyKeyPair.BouncyPublicKey;
@@ -91,8 +88,8 @@ public final class BouncyRSAAsymKey {
          * @param pKeySpec the keySpec
          * @param pPublicKey the public key
          */
-        protected BouncyRSAPublicKey(final GordianAsymKeySpec pKeySpec,
-                                     final RSAKeyParameters pPublicKey) {
+        BouncyRSAPublicKey(final GordianAsymKeySpec pKeySpec,
+                           final RSAKeyParameters pPublicKey) {
             super(pKeySpec);
             theKey = pPublicKey;
         }
@@ -174,8 +171,8 @@ public final class BouncyRSAAsymKey {
          * @param pKeySpec the keySpec
          * @param pPrivateKey the private key
          */
-        protected BouncyRSAPrivateKey(final GordianAsymKeySpec pKeySpec,
-                                      final RSAPrivateCrtKeyParameters pPrivateKey) {
+        BouncyRSAPrivateKey(final GordianAsymKeySpec pKeySpec,
+                            final RSAPrivateCrtKeyParameters pPrivateKey) {
             super(pKeySpec);
             theKey = pPrivateKey;
         }
@@ -265,8 +262,8 @@ public final class BouncyRSAAsymKey {
          * @param pFactory the Security Factory
          * @param pKeySpec the keySpec
          */
-        protected BouncyRSAKeyPairGenerator(final BouncyFactory pFactory,
-                                            final GordianAsymKeySpec pKeySpec) {
+        BouncyRSAKeyPairGenerator(final BouncyFactory pFactory,
+                                  final GordianAsymKeySpec pKeySpec) {
             /* Initialise underlying class */
             super(pFactory, pKeySpec);
 
@@ -347,7 +344,7 @@ public final class BouncyRSAAsymKey {
      * PSS signature base.
      */
     private abstract static class BouncyPSSSignature
-            implements GordianConsumer {
+            extends GordianSignature {
         /**
          * MGF1 Salt length.
          */
@@ -364,8 +361,9 @@ public final class BouncyRSAAsymKey {
          * @param pSpec the signatureSpec.
          * @throws OceanusException on error
          */
-        protected BouncyPSSSignature(final BouncyFactory pFactory,
-                                     final GordianSignatureSpec pSpec) throws OceanusException {
+        BouncyPSSSignature(final BouncyFactory pFactory,
+                           final GordianSignatureSpec pSpec) throws OceanusException {
+            super(pFactory, pSpec);
             theSigner = getRSASigner(pFactory, pSpec);
         }
 
@@ -425,36 +423,56 @@ public final class BouncyRSAAsymKey {
     }
 
     /**
-     * RSA signer.
+     * RSA signature.
      */
-    public static class BouncyRSASigner
-            extends BouncyPSSSignature
-            implements GordianSigner {
+    public static class BouncyRSASignature
+            extends BouncyPSSSignature {
         /**
          * Constructor.
          * @param pFactory the factory
-         * @param pPrivateKey the private key
          * @param pSpec the signatureSpec
-         * @param pRandom the secure Random
          * @throws OceanusException on error
          */
-        protected BouncyRSASigner(final BouncyFactory pFactory,
-                                  final BouncyRSAPrivateKey pPrivateKey,
-                                  final GordianSignatureSpec pSpec,
-                                  final SecureRandom pRandom) throws OceanusException {
+        BouncyRSASignature(final BouncyFactory pFactory,
+                           final GordianSignatureSpec pSpec) throws OceanusException {
             /* Initialise underlying class */
             super(pFactory, pSpec);
+        }
+
+        @Override
+        protected BouncyKeyPair getKeyPair() {
+            return (BouncyKeyPair) super.getKeyPair();
+        }
+
+        @Override
+        public void initForSigning(final GordianKeyPair pKeyPair) throws OceanusException {
+            /* Initialise detail */
+            super.initForSigning(pKeyPair);
 
             /* Initialise and set the signer */
-            final CipherParameters myParms = GordianSignatureType.PSS.equals(pSpec.getSignatureType())
-                                                                                                       ? new ParametersWithRandom(pPrivateKey.getPrivateKey(), pRandom)
-                                                                                                       : pPrivateKey.getPrivateKey();
+            final BouncyRSAPrivateKey myPrivate = (BouncyRSAPrivateKey) getKeyPair().getPrivateKey();
+            final CipherParameters myParms = GordianSignatureType.PSS.equals(getSignatureSpec().getSignatureType())
+                                             ? new ParametersWithRandom(myPrivate.getPrivateKey(), getRandom())
+                                             : myPrivate.getPrivateKey();
             getSigner().init(true, myParms);
         }
 
         @Override
+        public void initForVerify(final GordianKeyPair pKeyPair) throws OceanusException {
+            /* Initialise detail */
+            super.initForVerify(pKeyPair);
+
+            /* Initialise and set the signer */
+            final BouncyRSAPublicKey myPublic = (BouncyRSAPublicKey) getKeyPair().getPublicKey();
+            getSigner().init(false, myPublic.getPublicKey());
+        }
+
+        @Override
         public byte[] sign() throws OceanusException {
-            /* Protect against exception */
+            /* Check that we are in signing mode */
+            checkMode(GordianSignatureMode.SIGN);
+
+            /* Sign the message */
             try {
                 return getSigner().generateSignature();
             } catch (DataLengthException
@@ -462,33 +480,13 @@ public final class BouncyRSAAsymKey {
                 throw new GordianCryptoException(BouncySignature.ERROR_SIGGEN, e);
             }
         }
-    }
-
-    /**
-     * RSA Validator.
-     */
-    public static class BouncyRSAValidator
-            extends BouncyPSSSignature
-            implements GordianValidator {
-        /**
-         * Constructor.
-         * @param pFactory the factory
-         * @param pPublicKey the public key
-         * @param pSpec the signatureSpec
-         * @throws OceanusException on error
-         */
-        protected BouncyRSAValidator(final BouncyFactory pFactory,
-                                     final BouncyRSAPublicKey pPublicKey,
-                                     final GordianSignatureSpec pSpec) throws OceanusException {
-            /* Initialise underlying class */
-            super(pFactory, pSpec);
-
-            /* Initialise and set the Validator */
-            getSigner().init(false, pPublicKey.getPublicKey());
-        }
 
         @Override
-        public boolean verify(final byte[] pSignature) {
+        public boolean verify(final byte[] pSignature) throws OceanusException {
+            /* Check that we are in verify mode */
+            checkMode(GordianSignatureMode.VERIFY);
+
+            /* Verify the message */
             return getSigner().verifySignature(pSignature);
         }
     }
