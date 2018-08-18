@@ -24,6 +24,7 @@ import java.util.List;
 import net.sourceforge.joceanus.jgordianknot.GordianDataException;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianBadCredentialsException;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianFactory;
+import net.sourceforge.joceanus.jgordianknot.crypto.GordianFactoryGenerator;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianFactoryType;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianKeySet;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianKeySetHash;
@@ -57,20 +58,15 @@ public abstract class GordianHashManager {
      * Security factory.
      */
     private final GordianFactory theFactory;
+    /**
+     * Security factory generator.
+     */
+    private final GordianFactoryGenerator theGenerator;
 
     /**
      * List of resolved password hashes.
      */
     private final List<GordianKeySetHash> theHashList;
-
-    /**
-     * Constructor for default values.
-     * @throws OceanusException on error
-     */
-    protected GordianHashManager() throws OceanusException {
-        /* Access with defaults */
-        this(new GordianParameters());
-    }
 
     /**
      * Constructor.
@@ -79,23 +75,11 @@ public abstract class GordianHashManager {
      */
     protected GordianHashManager(final GordianParameters pParameters) throws OceanusException {
         /* Allocate the factory */
-        theFactory = newFactory(pParameters);
+        theGenerator = new GordianGenerator();
+        theFactory = theGenerator.newFactory(pParameters);
 
         /* Allocate a new Hash list */
         theHashList = new ArrayList<>();
-    }
-
-    /**
-     * Create a new factory instance.
-     * @param pParameters the Security parameters
-     * @return the new factory
-     * @throws OceanusException on error
-     */
-    public static GordianFactory newFactory(final GordianParameters pParameters) throws OceanusException {
-        /* Allocate the factory */
-        return GordianFactoryType.BC.equals(pParameters.getFactoryType())
-                                                                          ? new BouncyFactory(pParameters)
-                                                                          : new JcaFactory(pParameters);
     }
 
     /**

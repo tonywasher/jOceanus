@@ -26,21 +26,6 @@ public enum GordianAgreementType {
     KEM,
 
     /**
-     * Basic.
-     */
-    BASIC,
-
-    /**
-     * CoFactor.
-     */
-    COFACTOR,
-
-    /**
-     * VKO.
-     */
-    VKO,
-
-    /**
      * SM2.
      */
     SM2,
@@ -58,18 +43,12 @@ public enum GordianAgreementType {
     /**
      * Is this Agreement supported for this AsymKeyType?
      * @param pKeyType the asymKeyType
-     * @returm true/false
+     * @return true/false
      */
     public boolean isSupported(final GordianAsymKeyType pKeyType) {
         switch (this) {
             case KEM:
                 return hasKEM(pKeyType);
-            case BASIC:
-                return hasBasic(pKeyType);
-            case COFACTOR:
-                return hasCoFactor(pKeyType);
-            case VKO:
-                return hasVKO(pKeyType);
             case SM2:
                 return hasSM2(pKeyType);
             case MQV:
@@ -84,7 +63,7 @@ public enum GordianAgreementType {
     /**
      * Does the AsymKeyType have an KEM agreement?
      * @param pKeyType the asymKeyType
-     * @returm true/false
+     * @return true/false
      */
     public static boolean hasKEM(final GordianAsymKeyType pKeyType) {
         switch (pKeyType) {
@@ -102,44 +81,9 @@ public enum GordianAgreementType {
     }
 
     /**
-     * Does the AsymKeyType have a Basic agreement?
-     * @param pKeyType the asymKeyType
-     * @returm true/false
-     */
-    public static boolean hasBasic(final GordianAsymKeyType pKeyType) {
-        return isECorDH(pKeyType);
-    }
-
-    /**
-     * Does the AsymKeyType have a CoFactor agreement?
-     * @param pKeyType the asymKeyType
-     * @returm true/false
-     */
-    public static boolean hasCoFactor(final GordianAsymKeyType pKeyType) {
-        switch (pKeyType) {
-            case EC:
-            case SM2:
-            case GOST2012:
-            case DSTU4145:
-                return true;
-            default:
-                return false;
-        }
-    }
-
-    /**
-     * Does the AsymKeyType have a VKO agreement?
-     * @param pKeyType the asymKeyType
-     * @returm true/false
-     */
-    public static boolean hasVKO(final GordianAsymKeyType pKeyType) {
-        return pKeyType == GordianAsymKeyType.GOST2012;
-    }
-
-    /**
      * Does the AsymKeyType have an SM2 agreement?
      * @param pKeyType the asymKeyType
-     * @returm true/false
+     * @return true/false
      */
     public static boolean hasSM2(final GordianAsymKeyType pKeyType) {
         return pKeyType == GordianAsymKeyType.SM2;
@@ -148,7 +92,7 @@ public enum GordianAgreementType {
     /**
      * Does the AsymKeyType have a MQV agreement?
      * @param pKeyType the asymKeyType
-     * @returm true/false
+     * @return true/false
      */
     public static boolean hasMQV(final GordianAsymKeyType pKeyType) {
         return isECorDH(pKeyType);
@@ -157,7 +101,7 @@ public enum GordianAgreementType {
     /**
      * Does the AsymKeyType have a Unified agreement?
      * @param pKeyType the asymKeyType
-     * @returm true/false
+     * @return true/false
      */
     public static boolean hasUnified(final GordianAsymKeyType pKeyType) {
         return isECorDH(pKeyType);
@@ -166,7 +110,7 @@ public enum GordianAgreementType {
     /**
      * Is the AsymKeyType EC/DH?
      * @param pKeyType the asymKeyType
-     * @returm true/false
+     * @return true/false
      */
     private static boolean isECorDH(final GordianAsymKeyType pKeyType) {
         switch (pKeyType) {

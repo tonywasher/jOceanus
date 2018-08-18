@@ -95,7 +95,7 @@ public class GordianParameters {
      */
     public GordianParameters() {
         /* Default restricted value */
-        this(DEFAULT_RESTRICTED);
+        this(DEFAULT_RESTRICTED, DEFAULT_FACTORY);
     }
 
     /**
@@ -103,9 +103,29 @@ public class GordianParameters {
      * @param pRestricted do we use restricted security
      */
     public GordianParameters(final Boolean pRestricted) {
+        /* Default factory */
+        this(pRestricted, DEFAULT_FACTORY);
+    }
+
+    /**
+     * Constructor for explicit factory.
+     * @param pFactoryType the factoryType
+     */
+    public GordianParameters(final GordianFactoryType pFactoryType) {
+        /* Default restruction */
+        this(DEFAULT_RESTRICTED, pFactoryType);
+    }
+
+    /**
+     * Constructor for explicit restriction.
+     * @param pRestricted do we use restricted security
+     * @param pFactoryType the factory type
+     */
+    public GordianParameters(final Boolean pRestricted,
+                             final GordianFactoryType pFactoryType) {
         /* Store parameters */
         useRestricted = pRestricted;
-        theFactoryType = DEFAULT_FACTORY;
+        theFactoryType = pFactoryType;
         theCipherSteps = DEFAULT_CIPHER_STEPS;
         theIterations = DEFAULT_HASH_ITERATIONS;
         theSecurityPhrase = null;

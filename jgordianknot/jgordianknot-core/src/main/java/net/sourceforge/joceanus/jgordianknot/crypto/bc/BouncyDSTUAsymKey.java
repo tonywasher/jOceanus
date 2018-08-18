@@ -294,22 +294,6 @@ public final class BouncyDSTUAsymKey {
     }
 
     /**
-     * Obtain new digest for DSTU signer.
-     * @param pSpec the signature Spec
-     * @return the new digest
-     */
-    private static Digest newDigest(final GordianSignatureSpec pSpec) {
-        final byte[] myCompressed = DSTU4145Params.getDefaultDKE();
-        final byte[] myExpanded = new byte[EXPANDED_LEN];
-
-        for (int i = 0; i < myCompressed.length; i++) {
-            myExpanded[i * 2] = (byte) ((myCompressed[i] >> TethysDataConverter.NYBBLE_SHIFT) & TethysDataConverter.NYBBLE_MASK);
-            myExpanded[i * 2 + 1] = (byte) (myCompressed[i] & TethysDataConverter.NYBBLE_MASK);
-        }
-        return new GOST3411Digest(myExpanded);
-    }
-
-    /**
      * DSTU signer.
      */
     public static class BouncyDSTUSignature
@@ -333,7 +317,7 @@ public final class BouncyDSTUAsymKey {
         BouncyDSTUSignature(final BouncyFactory pFactory,
                             final GordianSignatureSpec pSpec) throws OceanusException {
             /* Initialise underlying class */
-            super(pFactory, pSpec, newDigest(pSpec));
+            super(pFactory, pSpec, newDigest());
 
             /* Create the signer and Coder */
             theSigner = new DSTU4145Signer();
@@ -379,6 +363,21 @@ public final class BouncyDSTUAsymKey {
             /* Verify the message */
             final BigInteger[] myValues = theCoder.dsaDecode(pSignature);
             return theSigner.verifySignature(getDigest(), myValues[0], myValues[1]);
+        }
+
+        /**
+         * Obtain new digest for DSTU signer.
+         * @return the new digest
+         */
+        private static Digest newDigest() {
+            final byte[] myCompressed = DSTU4145Params.getDefaultDKE();
+            final byte[] myExpanded = new byte[EXPANDED_LEN];
+
+            for (int i = 0; i < myCompressed.length; i++) {
+                myExpanded[i * 2] = (byte) ((myCompressed[i] >> TethysDataConverter.NYBBLE_SHIFT) & TethysDataConverter.NYBBLE_MASK);
+                myExpanded[i * 2 + 1] = (byte) (myCompressed[i] & TethysDataConverter.NYBBLE_MASK);
+            }
+            return new GOST3411Digest(myExpanded);
         }
     }
 }

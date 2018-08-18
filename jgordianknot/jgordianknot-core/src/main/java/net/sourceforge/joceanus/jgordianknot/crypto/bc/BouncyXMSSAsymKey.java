@@ -758,7 +758,7 @@ public final class BouncyXMSSAsymKey {
     }
 
     /**
-     * XMSSMT signature
+     * XMSSMT signature.
      */
     public static class BouncyXMSSMTSignature
             extends BouncyDigestSignature {

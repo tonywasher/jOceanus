@@ -48,6 +48,8 @@ import org.bouncycastle.crypto.signers.X931Signer;
 import org.bouncycastle.jcajce.provider.asymmetric.util.KeyUtil;
 
 import net.sourceforge.joceanus.jgordianknot.GordianCryptoException;
+import net.sourceforge.joceanus.jgordianknot.crypto.GordianAgreement.GordianEncapsulationAgreement;
+import net.sourceforge.joceanus.jgordianknot.crypto.GordianAgreementSpec;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianAsymKeySpec;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianDigestSpec;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianFactory;
@@ -569,6 +571,67 @@ public final class BouncyRSAAsymKey {
 
             /* Store secret */
             storeSecret(myParms.getKey(), myInitVector);
+        }
+    }
+
+    /**
+     * RSA Encapsulation.
+     */
+    public static class BouncyRSAEncapsulationAgreement
+            extends GordianEncapsulationAgreement {
+        /**
+         * Constructor.
+         * @param pFactory the security factory
+         * @param pSpec the digestSpec
+         */
+        BouncyRSAEncapsulationAgreement(final BouncyFactory pFactory,
+                                        final GordianAgreementSpec pSpec) {
+            /* Initialise underlying class */
+            super(pFactory, pSpec);
+        }
+
+        @Override
+        public byte[] initiateAgreement(final GordianKeyPair pTarget) throws OceanusException {
+            /* Check keyPair */
+            checkKeyPair(pTarget);
+
+            /* Create Key Encapsulation */
+            final GordianNullKeyDerivation myKDF = new GordianNullKeyDerivation();
+            final RSAKeyEncapsulation myKEMS = new RSAKeyEncapsulation(myKDF, getRandom());
+            final BouncyRSAPublicKey myPublic = (BouncyRSAPublicKey) getPublicKey(pTarget);
+            myKEMS.init(myPublic.getPublicKey());
+
+            /* Create message */
+            final GordianModulus myModulus = myPublic.getKeySpec().getModulus();
+            final int myLen = myModulus.getModulus() / Byte.SIZE;
+            final byte[] myMessage = new byte[myLen];
+            final KeyParameter myParms = (KeyParameter) myKEMS.encrypt(myMessage, 0, myLen);
+
+            /* Store secret and cipherText */
+            storeSecret(myParms.getKey());
+
+            /* Create the message  */
+            return createMessage(myMessage);
+        }
+
+        @Override
+        public void acceptAgreement(final GordianKeyPair pSelf,
+                                    final byte[] pMessage) throws OceanusException {
+            /* Check keyPair */
+            checkKeyPair(pSelf);
+
+            /* Create Key Encapsulation */
+            final GordianNullKeyDerivation myKDF = new GordianNullKeyDerivation();
+            final RSAKeyEncapsulation myKEMS = new RSAKeyEncapsulation(myKDF, null);
+            final BouncyRSAPrivateKey myPrivate = (BouncyRSAPrivateKey) getPrivateKey(pSelf);
+            myKEMS.init(myPrivate.getPrivateKey());
+
+            /* Parse source message */
+            final GordianModulus myModulus = myPrivate.getKeySpec().getModulus();
+            final int myLen = myModulus.getModulus() / Byte.SIZE;
+            final byte[] myMessage = parseMessage(pMessage);
+            final KeyParameter myParms = (KeyParameter) myKEMS.decrypt(myMessage, 0, pMessage.length, myLen);
+            storeSecret(myParms.getKey());
         }
     }
 }

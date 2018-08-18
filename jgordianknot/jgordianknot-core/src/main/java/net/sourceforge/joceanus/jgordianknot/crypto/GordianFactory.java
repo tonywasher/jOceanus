@@ -32,7 +32,8 @@ import java.util.function.Predicate;
 /**
  * GordianKnot base for Factory.
  */
-public abstract class GordianFactory {
+public abstract class GordianFactory
+        implements GordianFactoryGenerator {
     /**
      * The Hash Prime.
      */
@@ -79,6 +80,11 @@ public abstract class GordianFactory {
     private final GordianParameters theParameters;
 
     /**
+     * FactoryGenerator.
+     */
+    private final GordianFactoryGenerator theGenerator;
+
+    /**
      * Do we use restricted keys?
      */
     private final boolean isRestricted;
@@ -116,15 +122,23 @@ public abstract class GordianFactory {
     /**
      * Constructor.
      * @param pParameters the parameters
+     * @param pGenerator the factoryGenerator
      * @throws OceanusException on error
      */
-    protected GordianFactory(final GordianParameters pParameters) throws OceanusException {
+    protected GordianFactory(final GordianParameters pParameters,
+                             final GordianFactoryGenerator pGenerator) throws OceanusException {
         /* Store parameters */
         theParameters = pParameters;
+        theGenerator = pGenerator;
         isRestricted = theParameters.useRestricted();
 
         /* Calculate personalisation bytes */
         thePersonalisation = new GordianPersonalisation(this, theParameters);
+    }
+
+    @Override
+    public GordianFactory newFactory(final GordianParameters pParams) throws OceanusException {
+        return theGenerator.newFactory(pParams);
     }
 
     /**

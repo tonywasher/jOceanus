@@ -31,22 +31,32 @@ import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
 import org.bouncycastle.asn1.x509.SubjectPublicKeyInfo;
 import org.bouncycastle.crypto.AsymmetricCipherKeyPair;
 import org.bouncycastle.crypto.agreement.DHBasicAgreement;
+import org.bouncycastle.crypto.agreement.DHUnifiedAgreement;
+import org.bouncycastle.crypto.agreement.MQVBasicAgreement;
 import org.bouncycastle.crypto.generators.DHKeyPairGenerator;
 import org.bouncycastle.crypto.params.DHKeyGenerationParameters;
+import org.bouncycastle.crypto.params.DHMQVPrivateParameters;
+import org.bouncycastle.crypto.params.DHMQVPublicParameters;
 import org.bouncycastle.crypto.params.DHParameters;
 import org.bouncycastle.crypto.params.DHPrivateKeyParameters;
 import org.bouncycastle.crypto.params.DHPublicKeyParameters;
+import org.bouncycastle.crypto.params.DHUPrivateParameters;
+import org.bouncycastle.crypto.params.DHUPublicParameters;
 import org.bouncycastle.jcajce.provider.asymmetric.dh.BCDHPrivateKey;
 import org.bouncycastle.jcajce.provider.asymmetric.dh.BCDHPublicKey;
 import org.bouncycastle.jcajce.provider.asymmetric.util.KeyUtil;
 
 import net.sourceforge.joceanus.jgordianknot.GordianCryptoException;
+import net.sourceforge.joceanus.jgordianknot.crypto.GordianAgreement.GordianEncapsulationAgreement;
+import net.sourceforge.joceanus.jgordianknot.crypto.GordianAgreement.GordianEphemeralAgreement;
+import net.sourceforge.joceanus.jgordianknot.crypto.GordianAgreementSpec;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianAsymKeySpec;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianDigestSpec;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianFactory;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianKeyEncapsulation;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianKeyEncapsulation.GordianKEMSender;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianKeyPair;
+import net.sourceforge.joceanus.jgordianknot.crypto.GordianKeyPairGenerator;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianModulus;
 import net.sourceforge.joceanus.jgordianknot.crypto.bc.BouncyKeyPair.BouncyPrivateKey;
 import net.sourceforge.joceanus.jgordianknot.crypto.bc.BouncyKeyPair.BouncyPublicKey;
@@ -398,6 +408,216 @@ public final class BouncyDiffieHellmanAsymKey {
 
             /* Store secret */
             storeSecret(BouncyKeyEncapsulation.hashSecret(mySecret.toByteArray(), getDigest(pDigestSpec)), myInitVector);
+        }
+    }
+
+    /**
+     * DH Encapsulation.
+     */
+    public static class BouncyDHEncapsulationAgreement
+            extends GordianEncapsulationAgreement {
+        /**
+         * Constructor.
+         * @param pFactory the security factory
+         * @param pSpec the digestSpec
+         */
+        BouncyDHEncapsulationAgreement(final BouncyFactory pFactory,
+                                       final GordianAgreementSpec pSpec) {
+            /* Initialise underlying class */
+            super(pFactory, pSpec);
+        }
+
+        @Override
+        public byte[] initiateAgreement(final GordianKeyPair pTarget) throws OceanusException {
+            /* Check keyPair */
+            checkKeyPair(pTarget);
+
+            /* Create an ephemeral keyPair */
+            final GordianKeyPairGenerator myGenerator = getFactory().getKeyPairGenerator(pTarget.getKeySpec());
+            final GordianKeyPair myPair = myGenerator.generateKeyPair();
+            final BouncyDiffieHellmanPrivateKey myPrivate = (BouncyDiffieHellmanPrivateKey) getPrivateKey(myPair);
+            final BouncyDiffieHellmanPublicKey myPublic = (BouncyDiffieHellmanPublicKey) getPublicKey(myPair);
+
+            /* Derive the secret */
+            final DHBasicAgreement myAgreement = new DHBasicAgreement();
+            myAgreement.init(myPrivate.getPrivateKey());
+            final BouncyDiffieHellmanPublicKey myTarget = (BouncyDiffieHellmanPublicKey) getPublicKey(pTarget);
+            final BigInteger mySecret = myAgreement.calculateAgreement(myTarget.getPublicKey());
+            storeSecret(mySecret.toByteArray());
+
+            /* Create the message  */
+            final byte[] myY = myPublic.getPublicKey().getY().toByteArray();
+            return createMessage(myY);
+        }
+
+        @Override
+        public void acceptAgreement(final GordianKeyPair pSelf,
+                                    final byte[] pMessage) throws OceanusException {
+            /* Check keyPair */
+            checkKeyPair(pSelf);
+
+            /* Obtain source keySpec */
+            final byte[] myYBytes = parseMessage(pMessage);
+            final BigInteger myY = new BigInteger(myYBytes);
+            final BouncyDiffieHellmanPrivateKey myPrivate = (BouncyDiffieHellmanPrivateKey) getPrivateKey(pSelf);
+            final DHParameters myParms = myPrivate.getPrivateKey().getParameters();
+            final DHPublicKeyParameters myPublicKey = new DHPublicKeyParameters(myY, myParms);
+
+            /* Derive the secret */
+            final DHBasicAgreement myAgreement = new DHBasicAgreement();
+            myAgreement.init(myPrivate.getPrivateKey());
+            final BigInteger mySecret = myAgreement.calculateAgreement(myPublicKey);
+
+            /* Store secret */
+            storeSecret(mySecret.toByteArray());
+        }
+    }
+
+    /**
+     * DH Unified Agreement.
+     */
+    public static class BouncyDHUnifiedAgreement
+            extends GordianEphemeralAgreement {
+        /**
+         * Constructor.
+         * @param pFactory the security factory
+         * @param pSpec the digestSpec
+         */
+        BouncyDHUnifiedAgreement(final BouncyFactory pFactory,
+                                 final GordianAgreementSpec pSpec) {
+            /* Initialise underlying class */
+            super(pFactory, pSpec);
+        }
+
+        @Override
+        public byte[] acceptAgreement(final GordianKeyPair pSource,
+                                      final GordianKeyPair pResponder,
+                                      final byte[] pMessage) throws OceanusException {
+            /* process message */
+            final byte[] myResponse = parseMessage(pResponder, pMessage);
+
+            /* Create Key Agreement */
+            final DHUnifiedAgreement myAgreement = new DHUnifiedAgreement();
+
+            /* Initialise agreement */
+            final BouncyDiffieHellmanPrivateKey myPrivate = (BouncyDiffieHellmanPrivateKey) getPrivateKey(pResponder);
+            final BouncyDiffieHellmanPrivateKey myEphPrivate = (BouncyDiffieHellmanPrivateKey) getPrivateKey(getEphemeralKeyPair());
+            final BouncyDiffieHellmanPublicKey myEphPublic = (BouncyDiffieHellmanPublicKey) getPublicKey(getEphemeralKeyPair());
+            final DHUPrivateParameters myPrivParams = new DHUPrivateParameters(myPrivate.getPrivateKey(),
+                    myEphPrivate.getPrivateKey(), myEphPublic.getPublicKey());
+            myAgreement.init(myPrivParams);
+
+            /* Calculate agreement */
+            final BouncyDiffieHellmanPublicKey mySrcPublic = (BouncyDiffieHellmanPublicKey) getPublicKey(pSource);
+            final BouncyDiffieHellmanPublicKey mySrcEphPublic = (BouncyDiffieHellmanPublicKey) getPublicKey(getPartnerEphemeralKeyPair());
+            final DHUPublicParameters myPubParams = new DHUPublicParameters(mySrcPublic.getPublicKey(),
+                    mySrcEphPublic.getPublicKey());
+            storeSecret(myAgreement.calculateAgreement(myPubParams));
+
+            /* Return the response */
+            return myResponse;
+        }
+
+        @Override
+        public void confirmAgreement(final GordianKeyPair pResponder,
+                                     final byte[] pMessage) throws OceanusException {
+            /* Check keyPair */
+            checkKeyPair(pResponder);
+
+            /* parse the ephemeral message */
+            parseEphemeral(pMessage);
+
+            /* Create Key Agreement */
+            final DHUnifiedAgreement myAgreement = new DHUnifiedAgreement();
+
+            /* Initialise agreement */
+            final BouncyDiffieHellmanPrivateKey myPrivate = (BouncyDiffieHellmanPrivateKey) getPrivateKey(getOwnerKeyPair());
+            final BouncyDiffieHellmanPrivateKey myEphPrivate = (BouncyDiffieHellmanPrivateKey) getPrivateKey(getEphemeralKeyPair());
+            final BouncyDiffieHellmanPublicKey myEphPublic = (BouncyDiffieHellmanPublicKey) getPublicKey(getEphemeralKeyPair());
+            final DHUPrivateParameters myPrivParams = new DHUPrivateParameters(myPrivate.getPrivateKey(),
+                    myEphPrivate.getPrivateKey(), myEphPublic.getPublicKey());
+            myAgreement.init(myPrivParams);
+
+            /* Calculate agreement */
+            final BouncyDiffieHellmanPublicKey mySrcPublic = (BouncyDiffieHellmanPublicKey) getPublicKey(pResponder);
+            final BouncyDiffieHellmanPublicKey mySrcEphPublic = (BouncyDiffieHellmanPublicKey) getPublicKey(getPartnerEphemeralKeyPair());
+            final DHUPublicParameters myPubParams = new DHUPublicParameters(mySrcPublic.getPublicKey(),
+                    mySrcEphPublic.getPublicKey());
+            storeSecret(myAgreement.calculateAgreement(myPubParams));
+        }
+    }
+
+    /**
+     * DH MQV Agreement.
+     */
+    public static class BouncyDHMQVAgreement
+            extends GordianEphemeralAgreement {
+        /**
+         * Constructor.
+         * @param pFactory the security factory
+         * @param pSpec the digestSpec
+         */
+        BouncyDHMQVAgreement(final BouncyFactory pFactory,
+                             final GordianAgreementSpec pSpec) {
+            /* Initialise underlying class */
+            super(pFactory, pSpec);
+        }
+
+        @Override
+        public byte[] acceptAgreement(final GordianKeyPair pSource,
+                                      final GordianKeyPair pResponder,
+                                      final byte[] pMessage) throws OceanusException {
+            /* process message */
+            final byte[] myResponse = parseMessage(pResponder, pMessage);
+
+            /* Create Key Agreement */
+            final MQVBasicAgreement myAgreement = new MQVBasicAgreement();
+
+            /* Initialise agreement */
+            final BouncyDiffieHellmanPrivateKey myPrivate = (BouncyDiffieHellmanPrivateKey) getPrivateKey(pResponder);
+            final BouncyDiffieHellmanPrivateKey myEphPrivate = (BouncyDiffieHellmanPrivateKey) getPrivateKey(getEphemeralKeyPair());
+            final BouncyDiffieHellmanPublicKey myEphPublic = (BouncyDiffieHellmanPublicKey) getPublicKey(getEphemeralKeyPair());
+            final DHMQVPrivateParameters myPrivParams = new DHMQVPrivateParameters(myPrivate.getPrivateKey(),
+                    myEphPrivate.getPrivateKey(), myEphPublic.getPublicKey());
+            myAgreement.init(myPrivParams);
+
+            /* Calculate agreement */
+            final BouncyDiffieHellmanPublicKey mySrcPublic = (BouncyDiffieHellmanPublicKey) getPublicKey(pSource);
+            final BouncyDiffieHellmanPublicKey mySrcEphPublic = (BouncyDiffieHellmanPublicKey) getPublicKey(getPartnerEphemeralKeyPair());
+            final DHMQVPublicParameters myPubParams = new DHMQVPublicParameters(mySrcPublic.getPublicKey(),
+                    mySrcEphPublic.getPublicKey());
+            storeSecret(myAgreement.calculateAgreement(myPubParams).toByteArray());
+
+            /* Return the response */
+            return myResponse;
+        }
+
+        @Override
+        public void confirmAgreement(final GordianKeyPair pResponder,
+                                     final byte[] pMessage) throws OceanusException {
+            /* Check keyPair */
+            checkKeyPair(pResponder);
+
+            /* parse the ephemeral message */
+            parseEphemeral(pMessage);
+
+            /* Create Key Agreement */
+            final MQVBasicAgreement myAgreement = new MQVBasicAgreement();
+
+            /* Initialise agreement */
+            final BouncyDiffieHellmanPrivateKey myPrivate = (BouncyDiffieHellmanPrivateKey) getPrivateKey(getOwnerKeyPair());
+            final BouncyDiffieHellmanPrivateKey myEphPrivate = (BouncyDiffieHellmanPrivateKey) getPrivateKey(getEphemeralKeyPair());
+            final BouncyDiffieHellmanPublicKey myEphPublic = (BouncyDiffieHellmanPublicKey) getPublicKey(getEphemeralKeyPair());
+            final DHMQVPrivateParameters myPrivParams = new DHMQVPrivateParameters(myPrivate.getPrivateKey(),
+                    myEphPrivate.getPrivateKey(), myEphPublic.getPublicKey());
+            myAgreement.init(myPrivParams);
+
+            /* Calculate agreement */
+            final BouncyDiffieHellmanPublicKey mySrcPublic = (BouncyDiffieHellmanPublicKey) getPublicKey(pResponder);
+            final BouncyDiffieHellmanPublicKey mySrcEphPublic = (BouncyDiffieHellmanPublicKey) getPublicKey(getPartnerEphemeralKeyPair());
+            final DHMQVPublicParameters myPubParams = new DHMQVPublicParameters(mySrcPublic.getPublicKey(),
+                    mySrcEphPublic.getPublicKey());
+            storeSecret(myAgreement.calculateAgreement(myPubParams).toByteArray());
         }
     }
 }

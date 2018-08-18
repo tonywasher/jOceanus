@@ -17,7 +17,6 @@
 package net.sourceforge.joceanus.jgordianknot.crypto.jca;
 
 import java.security.InvalidKeyException;
-import java.security.SecureRandom;
 import java.security.Signature;
 import java.security.SignatureException;
 
@@ -306,29 +305,6 @@ public abstract class JcaSignature
     }
 
     /**
-     * Obtain Signer base.
-     * @param pSignatureSpec the signatureSpec
-     * @return the base
-     */
-    private static String getSignature(final GordianSignatureSpec pSignatureSpec) {
-        /* Handle DSTU explicitly */
-        if (GordianAsymKeyType.DSTU4145.equals(pSignatureSpec.getAsymKeyType())) {
-            return DSTU_SIGN;
-        }
-
-        /* Obtain the digest length */
-        final GordianLength myLength = pSignatureSpec.getDigestSpec().getDigestLength();
-
-        /* Build the algorithm */
-        final StringBuilder myBuilder = new StringBuilder();
-        myBuilder.append("GOST3411-2012-");
-        myBuilder.append(myLength.getLength());
-        myBuilder.append("withECGOST3410-2012-");
-        myBuilder.append(myLength.getLength());
-        return myBuilder.toString();
-    }
-
-    /**
      * DSA signer.
      */
     public static class JcaDSASignature
@@ -368,6 +344,29 @@ public abstract class JcaSignature
 
             /* Create the signature class */
             setSigner(JcaFactory.getJavaSignature(getSignature(pSignatureSpec), false));
+        }
+
+        /**
+         * Obtain Signer base.
+         * @param pSignatureSpec the signatureSpec
+         * @return the base
+         */
+        private static String getSignature(final GordianSignatureSpec pSignatureSpec) {
+            /* Handle DSTU explicitly */
+            if (GordianAsymKeyType.DSTU4145.equals(pSignatureSpec.getAsymKeyType())) {
+                return DSTU_SIGN;
+            }
+
+            /* Obtain the digest length */
+            final GordianLength myLength = pSignatureSpec.getDigestSpec().getDigestLength();
+
+            /* Build the algorithm */
+            final StringBuilder myBuilder = new StringBuilder();
+            myBuilder.append("GOST3411-2012-")
+               .append(myLength.getLength())
+               .append("withECGOST3410-2012-")
+               .append(myLength.getLength());
+            return myBuilder.toString();
         }
     }
 

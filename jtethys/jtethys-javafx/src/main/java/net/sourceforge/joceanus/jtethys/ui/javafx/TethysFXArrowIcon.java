@@ -19,11 +19,9 @@ package net.sourceforge.joceanus.jtethys.ui.javafx;
 import java.util.EnumMap;
 import java.util.Map;
 import javafx.geometry.Point2D;
-import javafx.scene.image.ImageView;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Polygon;
 
-import net.sourceforge.joceanus.jtethys.resource.TethysResourceLoader;
 import net.sourceforge.joceanus.jtethys.ui.TethysArrowIconId;
 
 /**

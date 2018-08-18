@@ -21,6 +21,7 @@ import net.sourceforge.joceanus.jgordianknot.crypto.GordianFactoryType;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianKeySet;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianKeySetHash;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianParameters;
+import net.sourceforge.joceanus.jgordianknot.manager.GordianGenerator;
 import net.sourceforge.joceanus.jgordianknot.manager.GordianHashManager;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.TethysDataConverter;
@@ -56,7 +57,7 @@ public class MetisPreferenceSecurity {
         myParms.setSecurityPhrase(getHostName());
 
         /* Create a Security Factory */
-        final GordianFactory myFactory = GordianHashManager.newFactory(myParms);
+        final GordianFactory myFactory = GordianGenerator.createFactory(myParms);
 
         /* Obtain the hash as a preference */
         final MetisBaseSecurityPreferences myPrefs = pManager.getPreferenceSet(MetisBaseSecurityPreferences.class);

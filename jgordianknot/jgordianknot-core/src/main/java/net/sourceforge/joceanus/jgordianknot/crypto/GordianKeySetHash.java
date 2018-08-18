@@ -279,7 +279,7 @@ public final class GordianKeySetHash {
 
     /**
      * resolve child keySetHash (internal password).
-     *
+     * @param pHash the hash to resolve
      * @return the similar hash
      * @throws OceanusException on error
      */
@@ -313,22 +313,24 @@ public final class GordianKeySetHash {
         try {
             /* Generate the Hash */
             myResults = generateHash(pPassword);
-            theHash = myResults[0];
+            int iIndex = 0;
+            theHash = myResults[iIndex++];
 
             /* Create the Key Set */
             theKeySet = new GordianKeySet(theFactory);
-            theKeySet.buildFromSecret(myResults[1], myResults[2]);
+            theKeySet.buildFromSecret(myResults[iIndex++], myResults[iIndex++]);
 
             /* Encrypt the passwords */
             thePassword = theKeySet.encryptBytes(pPassword);
-            theChildPassword = theKeySet.encryptBytes(myResults[3]);
+            theChildPassword = theKeySet.encryptBytes(myResults[iIndex]);
 
         } finally {
             /* Clear out results */
             if (myResults != null) {
-                Arrays.fill(myResults[1], (byte) 0);
-                Arrays.fill(myResults[2], (byte) 0);
-                Arrays.fill(myResults[3], (byte) 0);
+                int iIndex = 1;
+                Arrays.fill(myResults[iIndex++], (byte) 0);
+                Arrays.fill(myResults[iIndex++], (byte) 0);
+                Arrays.fill(myResults[iIndex], (byte) 0);
             }
         }
     }
@@ -348,25 +350,27 @@ public final class GordianKeySetHash {
             myResults = generateHash(pPassword);
 
             /* Check that the arrays match */
-            if (!Arrays.equals(theHash, myResults[0])) {
+            int iIndex = 0;
+            if (!Arrays.equals(theHash, myResults[iIndex++])) {
                 /* Fail the password attempt */
                 throw new GordianBadCredentialsException("Invalid Password");
             }
 
             /* Create the Key Set */
             theKeySet = new GordianKeySet(theFactory);
-            theKeySet.buildFromSecret(myResults[1], myResults[2]);
+            theKeySet.buildFromSecret(myResults[iIndex++], myResults[iIndex++]);
 
             /* Encrypt the passwords*/
             thePassword = theKeySet.encryptBytes(pPassword);
-            theChildPassword = theKeySet.encryptBytes(myResults[3]);
+            theChildPassword = theKeySet.encryptBytes(myResults[iIndex]);
 
         } finally {
             /* Clear out results */
             if (myResults != null) {
-                Arrays.fill(myResults[1], (byte) 0);
-                Arrays.fill(myResults[2], (byte) 0);
-                Arrays.fill(myResults[3], (byte) 0);
+                int iIndex = 1;
+                Arrays.fill(myResults[iIndex++], (byte) 0);
+                Arrays.fill(myResults[iIndex++], (byte) 0);
+                Arrays.fill(myResults[iIndex], (byte) 0);
             }
         }
     }

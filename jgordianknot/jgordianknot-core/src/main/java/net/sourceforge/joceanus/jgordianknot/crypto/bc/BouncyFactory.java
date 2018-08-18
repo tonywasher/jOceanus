@@ -24,6 +24,7 @@ import net.sourceforge.joceanus.jgordianknot.crypto.GordianCipherSpec.GordianSym
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianDigestSpec;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianDigestType;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianFactory;
+import net.sourceforge.joceanus.jgordianknot.crypto.GordianFactoryGenerator;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianKeyEncapsulation;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianKeyEncapsulation.GordianKEMSender;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianKeyPair;
@@ -212,21 +213,14 @@ public final class BouncyFactory
     /**
      * Constructor.
      *
-     * @throws OceanusException on error
-     */
-    public BouncyFactory() throws OceanusException {
-        this(new GordianParameters());
-    }
-
-    /**
-     * Constructor.
-     *
      * @param pParameters the parameters
+     * @param pGenerator the factoryGenerator
      * @throws OceanusException on error
      */
-    public BouncyFactory(final GordianParameters pParameters) throws OceanusException {
+    public BouncyFactory(final GordianParameters pParameters,
+                         final GordianFactoryGenerator pGenerator) throws OceanusException {
         /* Initialise underlying class */
-        super(pParameters);
+        super(pParameters, pGenerator);
 
         /* Create the keyGenerator cache */
         theGeneratorCache = new BouncyKeyGeneratorCache();
