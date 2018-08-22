@@ -21,29 +21,24 @@ package net.sourceforge.joceanus.jgordianknot.crypto;
  */
 public enum GordianGOSTElliptic implements GordianElliptic {
     /**
-     * CryptoPro-A.
+     * 256-paramSetA.
      */
-    CRYPTOPROA("GostR3410-2001-CryptoPro-A", 257),
+    GOST256A("Tc26-Gost-3410-12-256-paramSetA", 256),
 
     /**
-     * CryptoPro-B.
+     * 512-paramSetA.
      */
-    CRYPTOPROB("GostR3410-2001-CryptoPro-B", 254),
+    GOST512A("Tc26-Gost-3410-12-512-paramSetA", 512),
 
     /**
-     * CryptoPro-C.
+     * 512-paramSetB.
      */
-    CRYPTOPROC("GostR3410-2001-CryptoPro-C", 255),
+    GOST512B("Tc26-Gost-3410-12-512-paramSetB", 512),
 
     /**
-     * CryptoPro-XchA.
+     * 512-paramSetC.
      */
-    CRYPTOPROXCHA("GostR3410-2001-CryptoPro-XchA", 257),
-
-    /**
-     * CryptoPro-XchB.
-     */
-    CRYPTOPROXCHB("GostR3410-2001-CryptoPro-XchB", 256);
+    GOST512C("Tc26-Gost-3410-12-512-paramSetC", 512);
 
     /**
      * The curve name.

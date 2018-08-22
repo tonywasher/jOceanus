@@ -18,7 +18,6 @@ package net.sourceforge.joceanus.jgordianknot.crypto.bc;
 
 import java.io.IOException;
 import java.math.BigInteger;
-import java.security.SecureRandom;
 import java.security.spec.PKCS8EncodedKeySpec;
 import java.security.spec.X509EncodedKeySpec;
 
@@ -58,8 +57,6 @@ import net.sourceforge.joceanus.jgordianknot.GordianDataException;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianAsymKeySpec;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianKeyPair;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianSignatureSpec;
-import net.sourceforge.joceanus.jgordianknot.crypto.GordianSigner;
-import net.sourceforge.joceanus.jgordianknot.crypto.GordianValidator;
 import net.sourceforge.joceanus.jgordianknot.crypto.bc.BouncyEllipticAsymKey.BouncyECPrivateKey;
 import net.sourceforge.joceanus.jgordianknot.crypto.bc.BouncyEllipticAsymKey.BouncyECPublicKey;
 import net.sourceforge.joceanus.jgordianknot.crypto.bc.BouncySignature.BouncyDSACoder;
@@ -118,8 +115,8 @@ public final class BouncyDSTUAsymKey {
          * @param pKeySpec the keySpec
          * @throws OceanusException on error
          */
-        protected BouncyDSTUKeyPairGenerator(final BouncyFactory pFactory,
-                                             final GordianAsymKeySpec pKeySpec) throws OceanusException {
+        BouncyDSTUKeyPairGenerator(final BouncyFactory pFactory,
+                                   final GordianAsymKeySpec pKeySpec) throws OceanusException {
             /* Initialise underlying class */
             super(pFactory, pKeySpec);
 
@@ -297,26 +294,10 @@ public final class BouncyDSTUAsymKey {
     }
 
     /**
-     * Obtain new digest for DSTU signer.
-     * @return the new digest
-     */
-    private static Digest newDigest() {
-        final byte[] myCompressed = DSTU4145Params.getDefaultDKE();
-        final byte[] myExpanded = new byte[EXPANDED_LEN];
-
-        for (int i = 0; i < myCompressed.length; i++) {
-            myExpanded[i * 2] = (byte) ((myCompressed[i] >> TethysDataConverter.NYBBLE_SHIFT) & TethysDataConverter.NYBBLE_MASK);
-            myExpanded[i * 2 + 1] = (byte) (myCompressed[i] & TethysDataConverter.NYBBLE_MASK);
-        }
-        return new GOST3411Digest(myExpanded);
-    }
-
-    /**
      * DSTU signer.
      */
-    public static class BouncyDSTUSigner
-            extends BouncyDigestSignature
-            implements GordianSigner {
+    public static class BouncyDSTUSignature
+            extends BouncyDigestSignature {
         /**
          * The Signer.
          */
@@ -330,75 +311,73 @@ public final class BouncyDSTUAsymKey {
         /**
          * Constructor.
          * @param pFactory the factory
-         * @param pPrivateKey the private key
          * @param pSpec the signatureSpec.
-         * @param pRandom the random generator
          * @throws OceanusException on error
          */
-        protected BouncyDSTUSigner(final BouncyFactory pFactory,
-                                   final BouncyECPrivateKey pPrivateKey,
-                                   final GordianSignatureSpec pSpec,
-                                   final SecureRandom pRandom) throws OceanusException {
+        BouncyDSTUSignature(final BouncyFactory pFactory,
+                            final GordianSignatureSpec pSpec) throws OceanusException {
             /* Initialise underlying class */
-            super(newDigest(), pSpec);
+            super(pFactory, pSpec, newDigest());
 
             /* Create the signer and Coder */
             theSigner = new DSTU4145Signer();
             theCoder = new BouncyDSTUCoder();
+        }
+
+        @Override
+        public void initForSigning(final GordianKeyPair pKeyPair) throws OceanusException {
+            /* Initialise detail */
+            super.initForSigning(pKeyPair);
 
             /* Initialise and set the signer */
-            final ParametersWithRandom myParms = new ParametersWithRandom(pPrivateKey.getPrivateKey(), pRandom);
+            final BouncyECPrivateKey myPrivate = (BouncyECPrivateKey) getKeyPair().getPrivateKey();
+            final ParametersWithRandom myParms = new ParametersWithRandom(myPrivate.getPrivateKey(), getRandom());
             theSigner.init(true, myParms);
         }
 
         @Override
-        public byte[] sign() throws OceanusException {
-            final BigInteger[] myValues = theSigner.generateSignature(getDigest());
-            return theCoder.dsaEncode(myValues[0], myValues[1]);
-        }
-    }
-
-    /**
-     * DSTU validator.
-     */
-    public static class BouncyDSTUValidator
-            extends BouncyDigestSignature
-            implements GordianValidator {
-        /**
-         * The Signer.
-         */
-        private final DSTU4145Signer theSigner;
-
-        /**
-         * The Coder.
-         */
-        private final BouncyDSTUCoder theCoder;
-
-        /**
-         * Constructor.
-         * @param pFactory the factory
-         * @param pPublicKey the public key
-         * @param pSpec the signatureSpec.
-         * @throws OceanusException on error-
-         */
-        protected BouncyDSTUValidator(final BouncyFactory pFactory,
-                                      final BouncyECPublicKey pPublicKey,
-                                      final GordianSignatureSpec pSpec) throws OceanusException {
-            /* Initialise underlying class */
-            super(newDigest(), pSpec);
-
-            /* Create the signer */
-            theSigner = new DSTU4145Signer();
-            theCoder = new BouncyDSTUCoder();
+        public void initForVerify(final GordianKeyPair pKeyPair) throws OceanusException {
+            /* Initialise detail */
+            super.initForVerify(pKeyPair);
 
             /* Initialise and set the signer */
-            theSigner.init(false, pPublicKey.getPublicKey());
+            final BouncyECPublicKey myPublic = (BouncyECPublicKey) getKeyPair().getPublicKey();
+            theSigner.init(false, myPublic.getPublicKey());
+        }
+
+        @Override
+        public byte[] sign() throws OceanusException {
+            /* Check that we are in signing mode */
+            checkMode(GordianSignatureMode.SIGN);
+
+            /* Sign the message */
+            final BigInteger[] myValues = theSigner.generateSignature(getDigest());
+            return theCoder.dsaEncode(myValues[0], myValues[1]);
         }
 
         @Override
         public boolean verify(final byte[] pSignature) throws OceanusException {
+            /* Check that we are in verify mode */
+            checkMode(GordianSignatureMode.VERIFY);
+
+            /* Verify the message */
             final BigInteger[] myValues = theCoder.dsaDecode(pSignature);
             return theSigner.verifySignature(getDigest(), myValues[0], myValues[1]);
+        }
+
+        /**
+         * Obtain new digest for DSTU signer.
+         * @return the new digest
+         */
+        private static Digest newDigest() {
+            final byte[] myCompressed = DSTU4145Params.getDefaultDKE();
+            final byte[] myExpanded = new byte[EXPANDED_LEN];
+
+            for (int i = 0; i < myCompressed.length; i++) {
+                myExpanded[i * 2] = (byte) ((myCompressed[i] >> TethysDataConverter.NYBBLE_SHIFT) & TethysDataConverter.NYBBLE_MASK);
+                myExpanded[i * 2 + 1] = (byte) (myCompressed[i] & TethysDataConverter.NYBBLE_MASK);
+            }
+            return new GOST3411Digest(myExpanded);
         }
     }
 }

@@ -33,9 +33,8 @@ import org.bouncycastle.crypto.signers.ECNRSigner;
 import org.bouncycastle.crypto.signers.HMacDSAKCalculator;
 
 import net.sourceforge.joceanus.jgordianknot.GordianCryptoException;
-import net.sourceforge.joceanus.jgordianknot.crypto.GordianAsymKeySpec;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianAsymKeyType;
-import net.sourceforge.joceanus.jgordianknot.crypto.GordianConsumer;
+import net.sourceforge.joceanus.jgordianknot.crypto.GordianSignature;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianSignatureSpec;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
@@ -63,7 +62,7 @@ public final class BouncySignature {
      * Digest signature base.
      */
     public abstract static class BouncyDigestSignature
-            implements GordianConsumer {
+            extends GordianSignature {
         /**
          * The Digest.
          */
@@ -75,19 +74,23 @@ public final class BouncySignature {
          * @param pSpec the signatureSpec.
          * @throws OceanusException on error
          */
-        protected BouncyDigestSignature(final BouncyFactory pFactory,
-                                        final GordianSignatureSpec pSpec) throws OceanusException {
+        BouncyDigestSignature(final BouncyFactory pFactory,
+                              final GordianSignatureSpec pSpec) throws OceanusException {
+            super(pFactory, pSpec);
             theDigest = pFactory.createDigest(pSpec.getDigestSpec());
         }
 
         /**
          * Constructor.
-         * @param pDigest the digest
+         * @param pFactory the factory
          * @param pSpec the signatureSpec.
+         * @param pDigest the digest
          * @throws OceanusException on error
          */
-        protected BouncyDigestSignature(final Digest pDigest,
-                                        final GordianSignatureSpec pSpec) throws OceanusException {
+        BouncyDigestSignature(final BouncyFactory pFactory,
+                              final GordianSignatureSpec pSpec,
+                              final Digest pDigest) throws OceanusException {
+            super(pFactory, pSpec);
             theDigest = new BouncyDigest(pSpec.getDigestSpec(), pDigest);
         }
 
@@ -119,6 +122,16 @@ public final class BouncySignature {
          */
         protected byte[] getDigest() {
             return theDigest.finish();
+        }
+
+        @Override
+        protected BouncyKeyPair getKeyPair() {
+            return (BouncyKeyPair) super.getKeyPair();
+        }
+
+        @Override
+        public BouncyFactory getFactory() {
+            return (BouncyFactory) super.getFactory();
         }
     }
 
@@ -184,16 +197,14 @@ public final class BouncySignature {
     /**
      * Obtain DSASigner.
      * @param pFactory the factory
-     * @param pKeySpec the keySpec
      * @param pSpec the signatureSpec
      * @return the ECSigner
      * @throws OceanusException on error
      */
     static DSA getDSASigner(final BouncyFactory pFactory,
-                            final GordianAsymKeySpec pKeySpec,
                             final GordianSignatureSpec pSpec) throws OceanusException {
         /* Note if we are DSA */
-        final boolean isDSA = GordianAsymKeyType.DSA.equals(pKeySpec.getKeyType());
+        final boolean isDSA = GordianAsymKeyType.DSA.equals(pSpec.getAsymKeyType());
 
         /* Switch on signature type */
         switch (pSpec.getSignatureType()) {

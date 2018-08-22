@@ -18,6 +18,9 @@ package net.sourceforge.joceanus.jgordianknot.crypto;
 
 import java.util.Arrays;
 
+import net.sourceforge.joceanus.jtethys.OceanusException;
+import net.sourceforge.joceanus.jtethys.TethysDataConverter;
+
 /**
  * Security Parameters.
  */
@@ -85,14 +88,14 @@ public class GordianParameters {
     /**
      * The Security phrase.
      */
-    private char[] theSecurityPhrase;
+    private byte[] theSecurityPhrase;
 
     /**
      * Constructor.
      */
     public GordianParameters() {
         /* Default restricted value */
-        this(DEFAULT_RESTRICTED);
+        this(DEFAULT_RESTRICTED, DEFAULT_FACTORY);
     }
 
     /**
@@ -100,9 +103,29 @@ public class GordianParameters {
      * @param pRestricted do we use restricted security
      */
     public GordianParameters(final Boolean pRestricted) {
+        /* Default factory */
+        this(pRestricted, DEFAULT_FACTORY);
+    }
+
+    /**
+     * Constructor for explicit factory.
+     * @param pFactoryType the factoryType
+     */
+    public GordianParameters(final GordianFactoryType pFactoryType) {
+        /* Default restruction */
+        this(DEFAULT_RESTRICTED, pFactoryType);
+    }
+
+    /**
+     * Constructor for explicit restriction.
+     * @param pRestricted do we use restricted security
+     * @param pFactoryType the factory type
+     */
+    public GordianParameters(final Boolean pRestricted,
+                             final GordianFactoryType pFactoryType) {
         /* Store parameters */
         useRestricted = pRestricted;
-        theFactoryType = DEFAULT_FACTORY;
+        theFactoryType = pFactoryType;
         theCipherSteps = DEFAULT_CIPHER_STEPS;
         theIterations = DEFAULT_HASH_ITERATIONS;
         theSecurityPhrase = null;
@@ -112,7 +135,7 @@ public class GordianParameters {
      * Do we use restricted security?
      * @return true/false
      */
-    public Boolean useRestricted() {
+    Boolean useRestricted() {
         return useRestricted;
     }
 
@@ -128,7 +151,7 @@ public class GordianParameters {
      * Access the number of Cipher Steps.
      * @return the number of cipher steps
      */
-    public int getNumCipherSteps() {
+    int getNumCipherSteps() {
         return theCipherSteps;
     }
 
@@ -136,7 +159,7 @@ public class GordianParameters {
      * Access the number of Hash Iterations.
      * @return the number of hash iterations
      */
-    protected int getNumHashIterations() {
+    int getNumHashIterations() {
         return theIterations;
     }
 
@@ -144,7 +167,7 @@ public class GordianParameters {
      * Access the security phrase in bytes format.
      * @return the security phrase
      */
-    protected char[] getSecurityPhrase() {
+    byte[] getSecurityPhrase() {
         return theSecurityPhrase;
     }
 
@@ -161,7 +184,6 @@ public class GordianParameters {
      * @param pNumCipherSteps number of cipher steps
      */
     public void setNumCipherSteps(final int pNumCipherSteps) {
-        /* Store parameters */
         theCipherSteps = pNumCipherSteps;
     }
 
@@ -176,8 +198,17 @@ public class GordianParameters {
     /**
      * Set security phrase.
      * @param pSecurityPhrase the security phrase (or null)
+     * @throws OceanusException on error
      */
-    public void setSecurityPhrase(final char[] pSecurityPhrase) {
+    public void setSecurityPhrase(final char[] pSecurityPhrase) throws OceanusException {
+        theSecurityPhrase = TethysDataConverter.charsToByteArray(pSecurityPhrase);
+    }
+
+    /**
+     * Set security phrase.
+     * @param pSecurityPhrase the security phrase (or null)
+     */
+    public void setSecurityPhrase(final byte[] pSecurityPhrase) {
         theSecurityPhrase = pSecurityPhrase;
     }
 

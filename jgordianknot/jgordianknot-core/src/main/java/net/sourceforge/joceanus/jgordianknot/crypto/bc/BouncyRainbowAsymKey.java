@@ -17,7 +17,6 @@
 package net.sourceforge.joceanus.jgordianknot.crypto.bc;
 
 import java.io.IOException;
-import java.security.SecureRandom;
 import java.security.spec.PKCS8EncodedKeySpec;
 import java.security.spec.X509EncodedKeySpec;
 import java.util.Arrays;
@@ -43,8 +42,6 @@ import net.sourceforge.joceanus.jgordianknot.crypto.GordianAsymKeySpec;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianFactory;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianKeyPair;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianSignatureSpec;
-import net.sourceforge.joceanus.jgordianknot.crypto.GordianSigner;
-import net.sourceforge.joceanus.jgordianknot.crypto.GordianValidator;
 import net.sourceforge.joceanus.jgordianknot.crypto.bc.BouncyKeyPair.BouncyPrivateKey;
 import net.sourceforge.joceanus.jgordianknot.crypto.bc.BouncyKeyPair.BouncyPublicKey;
 import net.sourceforge.joceanus.jgordianknot.crypto.bc.BouncySignature.BouncyDigestSignature;
@@ -75,8 +72,8 @@ public final class BouncyRainbowAsymKey {
          * @param pKeySpec the keySpec
          * @param pPublicKey the public key
          */
-        protected BouncyRainbowPublicKey(final GordianAsymKeySpec pKeySpec,
-                                         final RainbowPublicKeyParameters pPublicKey) {
+        BouncyRainbowPublicKey(final GordianAsymKeySpec pKeySpec,
+                               final RainbowPublicKeyParameters pPublicKey) {
             super(pKeySpec);
             theKey = pPublicKey;
         }
@@ -147,8 +144,8 @@ public final class BouncyRainbowAsymKey {
          * @param pKeySpec the keySpec
          * @param pPrivateKey the private key
          */
-        protected BouncyRainbowPrivateKey(final GordianAsymKeySpec pKeySpec,
-                                          final RainbowPrivateKeyParameters pPrivateKey) {
+        BouncyRainbowPrivateKey(final GordianAsymKeySpec pKeySpec,
+                                final RainbowPrivateKeyParameters pPrivateKey) {
             super(pKeySpec);
             theKey = pPrivateKey;
         }
@@ -226,8 +223,8 @@ public final class BouncyRainbowAsymKey {
          * @param pFactory the Security Factory
          * @param pKeySpec the keySpec
          */
-        protected BouncyRainbowKeyPairGenerator(final BouncyFactory pFactory,
-                                                final GordianAsymKeySpec pKeySpec) {
+        BouncyRainbowKeyPairGenerator(final BouncyFactory pFactory,
+                                      final GordianAsymKeySpec pKeySpec) {
             /* Initialise underlying class */
             super(pFactory, pKeySpec);
 
@@ -302,11 +299,10 @@ public final class BouncyRainbowAsymKey {
     }
 
     /**
-     * Rainbow signer.
+     * Rainbow signature.
      */
-    public static class BouncyRainbowSigner
-            extends BouncyDigestSignature
-            implements GordianSigner {
+    public static class BouncyRainbowSignature
+            extends BouncyDigestSignature {
         /**
          * The Rainbow Signer.
          */
@@ -315,66 +311,54 @@ public final class BouncyRainbowAsymKey {
         /**
          * Constructor.
          * @param pFactory the factory
-         * @param pPrivateKey the private key
          * @param pSpec the signatureSpec.
-         * @param pRandom the secure Random
-         * @throws OceanusException on error
+          * @throws OceanusException on error
          */
-        protected BouncyRainbowSigner(final BouncyFactory pFactory,
-                                      final BouncyRainbowPrivateKey pPrivateKey,
-                                      final GordianSignatureSpec pSpec,
-                                      final SecureRandom pRandom) throws OceanusException {
+        BouncyRainbowSignature(final BouncyFactory pFactory,
+                               final GordianSignatureSpec pSpec) throws OceanusException {
             /* Initialise underlying class */
             super(pFactory, pSpec);
 
             /* Create the signer */
             theSigner = new RainbowSigner();
+        }
+
+        @Override
+        public void initForSigning(final GordianKeyPair pKeyPair) throws OceanusException {
+            /* Initialise detail */
+            super.initForSigning(pKeyPair);
 
             /* Initialise and set the signer */
-            final ParametersWithRandom myParms = new ParametersWithRandom(pPrivateKey.getPrivateKey(), pRandom);
+            final BouncyRainbowPrivateKey myPrivate = (BouncyRainbowPrivateKey) getKeyPair().getPrivateKey();
+            final ParametersWithRandom myParms = new ParametersWithRandom(myPrivate.getPrivateKey(), getRandom());
             theSigner.init(true, myParms);
         }
 
         @Override
-        public byte[] sign() throws OceanusException {
-            /* Sign the message */
-            return theSigner.generateSignature(getDigest());
-        }
-    }
-
-    /**
-     * Rainbow validator.
-     */
-    public static class BouncyRainbowValidator
-            extends BouncyDigestSignature
-            implements GordianValidator {
-        /**
-         * The Rainbow Signer.
-         */
-        private final RainbowSigner theSigner;
-
-        /**
-         * Constructor.
-         * @param pFactory the factory
-         * @param pPublicKey the public key
-         * @param pSpec the signatureSpec.
-         * @throws OceanusException on error
-         */
-        protected BouncyRainbowValidator(final BouncyFactory pFactory,
-                                         final BouncyRainbowPublicKey pPublicKey,
-                                         final GordianSignatureSpec pSpec) throws OceanusException {
-            /* Initialise underlying class */
-            super(pFactory, pSpec);
-
-            /* Create the signer */
-            theSigner = new RainbowSigner();
+        public void initForVerify(final GordianKeyPair pKeyPair) throws OceanusException {
+            /* Initialise detail */
+            super.initForVerify(pKeyPair);
 
             /* Initialise and set the signer */
-            theSigner.init(false, pPublicKey.getPublicKey());
+            final BouncyRainbowPublicKey myPublic = (BouncyRainbowPublicKey) getKeyPair().getPublicKey();
+            theSigner.init(false, myPublic.getPublicKey());
+        }
+
+        @Override
+        public byte[] sign() throws OceanusException {
+            /* Check that we are in signing mode */
+            checkMode(GordianSignatureMode.SIGN);
+
+            /* Sign the message */
+            return theSigner.generateSignature(getDigest());
         }
 
         @Override
         public boolean verify(final byte[] pSignature) throws OceanusException {
+            /* Check that we are in verify mode */
+            checkMode(GordianSignatureMode.VERIFY);
+
+            /* Verify the message */
             return theSigner.verifySignature(getDigest(), pSignature);
         }
     }

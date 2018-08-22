@@ -35,12 +35,15 @@ import org.bouncycastle.pqc.jcajce.provider.newhope.BCNHPrivateKey;
 import org.bouncycastle.pqc.jcajce.provider.newhope.BCNHPublicKey;
 
 import net.sourceforge.joceanus.jgordianknot.GordianCryptoException;
+import net.sourceforge.joceanus.jgordianknot.crypto.GordianAgreement.GordianEncapsulationAgreement;
+import net.sourceforge.joceanus.jgordianknot.crypto.GordianAgreementSpec;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianAsymKeySpec;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianDigestSpec;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianFactory;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianKeyEncapsulation;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianKeyEncapsulation.GordianKEMSender;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianKeyPair;
+import net.sourceforge.joceanus.jgordianknot.crypto.GordianKeyPairGenerator;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianModulus;
 import net.sourceforge.joceanus.jgordianknot.crypto.bc.BouncyKeyPair.BouncyPrivateKey;
 import net.sourceforge.joceanus.jgordianknot.crypto.bc.BouncyKeyPair.BouncyPublicKey;
@@ -366,6 +369,71 @@ public final class BouncyNewHopeAsymKey {
 
             /* Store secret */
             storeSecret(BouncyKeyEncapsulation.hashSecret(mySecret, getDigest(pDigestSpec)), myInitVector);
+        }
+    }
+
+    /**
+     * NewHope Encapsulation.
+     */
+    public static class BouncyNewHopeAgreement
+            extends GordianEncapsulationAgreement {
+        /**
+         * Constructor.
+         * @param pFactory the security factory
+         * @param pSpec the digestSpec
+         */
+        BouncyNewHopeAgreement(final BouncyFactory pFactory,
+                               final GordianAgreementSpec pSpec) {
+            /* Initialise underlying class */
+            super(pFactory, pSpec);
+        }
+
+        @Override
+        public byte[] initiateAgreement(final GordianKeyPair pTarget) throws OceanusException {
+             /* Check keyPair */
+            checkKeyPair(pTarget);
+
+            /* Generate an Exchange KeyPair */
+            final NHExchangePairGenerator myGenerator = new NHExchangePairGenerator(getRandom());
+            final BouncyNewHopePublicKey myTarget = (BouncyNewHopePublicKey) getPublicKey(pTarget);
+            final ExchangePair myPair = myGenerator.GenerateExchange(myTarget.getPublicKey());
+
+            /* Derive the secret */
+            final byte[] mySecret = myPair.getSharedValue();
+            storeSecret(mySecret);
+
+            /* Obtain the encoded keySpec of the public key */
+            final BCNHPublicKey myPublic = new BCNHPublicKey((NHPublicKeyParameters) myPair.getPublicKey());
+            final X509EncodedKeySpec myKeySpec = new X509EncodedKeySpec(myPublic.getEncoded());
+            final byte[] myKeySpecBytes = myKeySpec.getEncoded();
+
+            /* Create the message  */
+            return createMessage(myKeySpecBytes);
+        }
+
+        @Override
+        public void acceptAgreement(final GordianKeyPair pSelf,
+                                    final byte[] pMessage) throws OceanusException {
+            /* Check keyPair */
+            checkKeyPair(pSelf);
+
+            /* Obtain keySpec */
+            final byte[] myX509bytes = parseMessage(pMessage);
+            final X509EncodedKeySpec myKeySpec = new X509EncodedKeySpec(myX509bytes);
+
+            /* Derive ephemeral Public key */
+            final GordianKeyPairGenerator myGenerator = getFactory().getKeyPairGenerator(pSelf.getKeySpec());
+            final GordianKeyPair myPair = myGenerator.derivePublicOnlyKeyPair(myKeySpec);
+            final BouncyNewHopePublicKey myPublic = (BouncyNewHopePublicKey) getPublicKey(myPair);
+
+            /* Derive the secret */
+            final BouncyNewHopePrivateKey myPrivate = (BouncyNewHopePrivateKey) getPrivateKey(pSelf);
+            final NHAgreement myAgreement = new NHAgreement();
+            myAgreement.init(myPrivate.getPrivateKey());
+            final byte[] mySecret = myAgreement.calculateAgreement(myPublic.getPublicKey());
+
+            /* Store secret */
+            storeSecret(mySecret);
         }
     }
 }

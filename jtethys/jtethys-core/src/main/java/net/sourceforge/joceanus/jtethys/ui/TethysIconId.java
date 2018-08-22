@@ -16,6 +16,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jtethys.ui;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
@@ -31,13 +32,25 @@ public interface TethysIconId extends TethysResourceId {
     int DEFAULT_ICONWIDTH = 16;
 
     /**
+     * BUFFER Length.
+     */
+    int BUFFERLEN = 8192;
+
+    /**
      * Obtain resource as bytes.
      * @return the bytes
      * @throws IOException on error
      */
     default byte[] loadResourceToBytes() throws IOException {
-        try (InputStream myInput = getInputStream()) {
-            return myInput.readAllBytes();
+        try (InputStream myInput = getInputStream();
+             ByteArrayOutputStream buffer = new ByteArrayOutputStream()) {
+            int nRead;
+            final byte[] data = new byte[BUFFERLEN];
+            while ((nRead = myInput.read(data, 0, BUFFERLEN)) != -1) {
+                buffer.write(data, 0, nRead);
+            }
+            buffer.flush();
+            return buffer.toByteArray();
         }
     }
 }

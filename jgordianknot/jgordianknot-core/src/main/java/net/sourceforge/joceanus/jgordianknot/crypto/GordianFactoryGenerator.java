@@ -19,14 +19,15 @@ package net.sourceforge.joceanus.jgordianknot.crypto;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
- * GordianKnot interface for signature signer.
+ * FactoryGenerator.
  */
-public interface GordianSigner
-        extends GordianConsumer {
+@FunctionalInterface
+public interface GordianFactoryGenerator {
     /**
-     * Complete the signature operation and return the signature bytes.
-     * @return the signature
+     * Create a new factory for the given parameters.
+     * @param pParams the parameters
+     * @return the new factory
      * @throws OceanusException on error
      */
-    byte[] sign() throws OceanusException;
+    GordianFactory newFactory(GordianParameters pParams) throws OceanusException;
 }

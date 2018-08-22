@@ -21,6 +21,7 @@ import net.sourceforge.joceanus.jgordianknot.crypto.GordianFactoryType;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianKeySet;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianKeySetHash;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianParameters;
+import net.sourceforge.joceanus.jgordianknot.manager.GordianGenerator;
 import net.sourceforge.joceanus.jgordianknot.manager.GordianHashManager;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.TethysDataConverter;
@@ -53,11 +54,10 @@ public class MetisPreferenceSecurity {
         /* Create the Bouncy Parameters */
         final GordianParameters myParms = new GordianParameters();
         myParms.setFactoryType(GordianFactoryType.BC);
-        myParms.useRestricted();
         myParms.setSecurityPhrase(getHostName());
 
         /* Create a Security Factory */
-        final GordianFactory myFactory = GordianHashManager.newFactory(myParms);
+        final GordianFactory myFactory = GordianGenerator.createFactory(myParms);
 
         /* Obtain the hash as a preference */
         final MetisBaseSecurityPreferences myPrefs = pManager.getPreferenceSet(MetisBaseSecurityPreferences.class);
@@ -257,8 +257,9 @@ public class MetisPreferenceSecurity {
         /**
          * Get Security Parameters.
          * @return the parameters
+         * @throws OceanusException on error
          */
-        public GordianParameters getParameters() {
+        public GordianParameters getParameters() throws OceanusException {
             /* Create default preferences */
             final GordianParameters myParms = new GordianParameters(getBooleanValue(MetisSecurityPreferenceKey.RESTRICTED));
 

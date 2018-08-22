@@ -19,6 +19,7 @@ package net.sourceforge.joceanus.jgordianknot.crypto;
 import net.sourceforge.joceanus.jgordianknot.GordianDataException;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.TethysDataConverter;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -59,39 +60,38 @@ public final class GordianKeySetHash {
     private byte[] thePassword;
 
     /**
+     * Encrypted child password.
+     */
+    private byte[] theChildPassword;
+
+    /**
      * CipherSet.
      */
     private GordianKeySet theKeySet;
 
     /**
      * Constructor for a completely new keySetHash.
+     *
      * @param pFactory the factory
-     * @param pPassword the password (cleared after usage)
-     * @throws OceanusException on error
      */
-    protected GordianKeySetHash(final GordianFactory pFactory,
-                                final char[] pPassword) throws OceanusException {
+    private GordianKeySetHash(final GordianFactory pFactory) {
         /* Store the factory */
         theFactory = pFactory;
 
         /* Create a random HashRecipe */
         theRecipe = new GordianKeySetHashRecipe(theFactory);
-
-        /* Build hash from password */
-        setPassword(pPassword);
     }
 
     /**
      * Constructor for a password hash whose hash is known.
-     * @param pFactory the factory
+     *
+     * @param pFactory   the factory
      * @param pHashBytes the Hash bytes
-     * @param pPassword the password (cleared after usage)
-     * @throws GordianBadCredentialsException if wrong password is given
-     * @throws OceanusException on error
+     * @param pPassLen   the password length
      */
-    protected GordianKeySetHash(final GordianFactory pFactory,
-                                final byte[] pHashBytes,
-                                final char[] pPassword) throws OceanusException {
+    private GordianKeySetHash(final GordianFactory pFactory,
+                              final byte[] pHashBytes,
+                              final int pPassLen) {
         /* Store the factory */
         theFactory = pFactory;
 
@@ -99,49 +99,104 @@ public final class GordianKeySetHash {
         theHash = Arrays.copyOf(pHashBytes, pHashBytes.length);
 
         /* Parse the hash */
-        theRecipe = new GordianKeySetHashRecipe(theFactory, pPassword.length, pHashBytes);
-
-        /* Validate the password */
-        attemptPassword(pPassword);
+        theRecipe = new GordianKeySetHashRecipe(theFactory, pPassLen, pHashBytes);
     }
 
     /**
-     * Constructor for alternate hash sharing same password.
-     * @param pSource the source hash
+     * Create a new keySetHash for password.
+     *
+     * @param pFactory  the factory
+     * @param pPassword the password
+     * @return the new keySetHash
      * @throws OceanusException on error
      */
-    private GordianKeySetHash(final GordianKeySetHash pSource) throws OceanusException {
-        /* Build the encryption cipher */
-        final GordianKeySet mySet = pSource.theKeySet;
-
-        /* Store the secure random generator */
-        theFactory = pSource.theFactory;
-
-        /* Create a random HashRecipe */
-        theRecipe = new GordianKeySetHashRecipe(theFactory);
-
+    static GordianKeySetHash newKeySetHash(final GordianFactory pFactory,
+                                           final char[] pPassword) throws OceanusException {
         /* Protect against exceptions */
-        char[] myPassword = null;
-        byte[] myBytes = null;
+        byte[] myPassword = null;
         try {
-            /* Access the original password */
-            myBytes = mySet.decryptBytes(pSource.thePassword);
-            myPassword = TethysDataConverter.bytesToCharArray(myBytes);
+            /* Access bytes of password */
+            myPassword = TethysDataConverter.charsToByteArray(pPassword);
+            return newKeySetHash(pFactory, myPassword);
 
-            /* Build hash from password */
-            setPassword(myPassword);
+            /* Ensure inetrmediate password is reset */
         } finally {
             if (myPassword != null) {
-                Arrays.fill(myPassword, (char) 0);
-            }
-            if (myBytes != null) {
-                Arrays.fill(myBytes, (byte) 0);
+                Arrays.fill(myPassword, (byte) 0);
             }
         }
     }
 
     /**
+     * Create a new keySetHash for password.
+     *
+     * @param pFactory  the factory
+     * @param pPassword the password
+     * @return the new keySetHash
+     * @throws OceanusException on error
+     */
+    private static GordianKeySetHash newKeySetHash(final GordianFactory pFactory,
+                                                   final byte[] pPassword) throws OceanusException {
+        /* Create a new keySetHash */
+        final GordianKeySetHash myHash = new GordianKeySetHash(pFactory);
+
+        /* Build hash from password */
+        myHash.setPassword(pPassword);
+        return myHash;
+    }
+
+    /**
+     * resolve a keySetHash with password.
+     *
+     * @param pFactory  the factory
+     * @param pHash     the hash
+     * @param pPassword the password
+     * @return the resolved keySetHash
+     * @throws GordianBadCredentialsException if wrong password is given
+     * @throws OceanusException               on error
+     */
+    static GordianKeySetHash resolveKeySetHash(final GordianFactory pFactory,
+                                               final byte[] pHash,
+                                               final char[] pPassword) throws OceanusException {
+        /* Protect against exceptions */
+        byte[] myPassword = null;
+        try {
+            /* Access bytes of password */
+            myPassword = TethysDataConverter.charsToByteArray(pPassword);
+            return resolveKeySetHash(pFactory, pHash, myPassword);
+
+            /* Ensure intermediate password is reset */
+        } finally {
+            if (myPassword != null) {
+                Arrays.fill(myPassword, (byte) 0);
+            }
+        }
+    }
+
+    /**
+     * resolve a keySetHash with password.
+     *
+     * @param pFactory  the factory
+     * @param pHash     the hash
+     * @param pPassword the password
+     * @return the new keySetHash
+     * @throws GordianBadCredentialsException if wrong password is given
+     * @throws OceanusException               on error
+     */
+    private static GordianKeySetHash resolveKeySetHash(final GordianFactory pFactory,
+                                                       final byte[] pHash,
+                                                       final byte[] pPassword) throws OceanusException {
+        /* Create a new keySetHash */
+        final GordianKeySetHash myHash = new GordianKeySetHash(pFactory, pHash, pPassword.length);
+
+        /* Resolve hash with password */
+        myHash.attemptPassword(pPassword);
+        return myHash;
+    }
+
+    /**
      * Obtain the Hash.
+     *
      * @return the Hash
      */
     public byte[] getHash() {
@@ -150,6 +205,7 @@ public final class GordianKeySetHash {
 
     /**
      * Get CipherSet.
+     *
      * @return the CipherSet
      */
     public GordianKeySet getKeySet() {
@@ -158,6 +214,7 @@ public final class GordianKeySetHash {
 
     /**
      * Get Factory.
+     *
      * @return the Factory
      */
     private GordianFactory getFactory() {
@@ -166,215 +223,293 @@ public final class GordianKeySetHash {
 
     /**
      * obtain similar keySetHash (same password).
+     *
      * @return the similar hash
      * @throws OceanusException on error
      */
     public GordianKeySetHash similarHash() throws OceanusException {
-        /* Return the similar hash */
-        return new GordianKeySetHash(this);
+        /* Protect against exceptions */
+        byte[] myPassword = null;
+        try {
+            /* Create a new keySetHash */
+            final GordianKeySetHash myHash = new GordianKeySetHash(theFactory);
+
+            /* Access the original password */
+            myPassword = theKeySet.decryptBytes(thePassword);
+
+            /* Build hash from password */
+            myHash.setPassword(myPassword);
+            return myHash;
+
+            /* Ensure password is reset */
+        } finally {
+            if (myPassword != null) {
+                Arrays.fill(myPassword, (byte) 0);
+            }
+        }
+    }
+
+    /**
+     * obtain child keySetHash (internal password).
+     *
+     * @return the similar hash
+     * @throws OceanusException on error
+     */
+    public GordianKeySetHash childHash() throws OceanusException {
+        /* Protect against exceptions */
+        byte[] myPassword = null;
+        try {
+            /* Create a new keySetHash */
+            final GordianKeySetHash myHash = new GordianKeySetHash(theFactory);
+
+            /* Access the child password */
+            myPassword = theKeySet.decryptBytes(theChildPassword);
+
+            /* Build hash from password */
+            myHash.setPassword(myPassword);
+            return myHash;
+
+            /* Ensure password is reset */
+        } finally {
+            if (myPassword != null) {
+                Arrays.fill(myPassword, (byte) 0);
+            }
+        }
+    }
+
+    /**
+     * resolve child keySetHash (internal password).
+     * @param pHash the hash to resolve
+     * @return the similar hash
+     * @throws OceanusException on error
+     */
+    public GordianKeySetHash resolveChildHash(final byte[] pHash) throws OceanusException {
+        /* Protect against exceptions */
+        byte[] myPassword = null;
+        try {
+            /* Access the child password */
+            myPassword = theKeySet.decryptBytes(theChildPassword);
+
+            /* Resolve hash */
+            return resolveKeySetHash(theFactory, pHash, myPassword);
+
+            /* Ensure password is reset */
+        } finally {
+            if (myPassword != null) {
+                Arrays.fill(myPassword, (byte) 0);
+            }
+        }
     }
 
     /**
      * Build the password hash from the password.
+     *
      * @param pPassword the password
      * @throws OceanusException on error
      */
-    private void setPassword(final char[] pPassword) throws OceanusException {
-        /* Generate the Hash */
-        final byte[][] myResults = generateHash(pPassword);
-        theHash = myResults[0];
-
-        /* Create the Key Set */
-        theKeySet = new GordianKeySet(theFactory);
-        theKeySet.buildFromSecret(myResults[1], myResults[2]);
-
+    private void setPassword(final byte[] pPassword) throws OceanusException {
         /* Protect against exceptions */
-        byte[] myBytes = null;
+        byte[][] myResults = null;
         try {
-            /* Encrypt the password */
-            myBytes = TethysDataConverter.charsToByteArray(pPassword);
-            thePassword = theKeySet.encryptBytes(myBytes);
+            /* Generate the Hash */
+            myResults = generateHash(pPassword);
+            int iIndex = 0;
+            theHash = myResults[iIndex++];
+
+            /* Create the Key Set */
+            theKeySet = new GordianKeySet(theFactory);
+            theKeySet.buildFromSecret(myResults[iIndex++], myResults[iIndex++]);
+
+            /* Encrypt the passwords */
+            thePassword = theKeySet.encryptBytes(pPassword);
+            theChildPassword = theKeySet.encryptBytes(myResults[iIndex]);
+
         } finally {
-            /* Clear out the password bytes */
-            if (myBytes != null) {
-                Arrays.fill(myBytes, (byte) 0);
+            /* Clear out results */
+            if (myResults != null) {
+                int iIndex = 1;
+                Arrays.fill(myResults[iIndex++], (byte) 0);
+                Arrays.fill(myResults[iIndex++], (byte) 0);
+                Arrays.fill(myResults[iIndex], (byte) 0);
             }
         }
     }
 
     /**
      * Attempt to match the password hash with the password.
+     *
      * @param pPassword the password
      * @throws GordianBadCredentialsException on wrong password
-     * @throws OceanusException on error
+     * @throws OceanusException               on error
      */
-    private void attemptPassword(final char[] pPassword) throws OceanusException {
-        /* Generate the HashBytes */
-        final byte[][] myResults = generateHash(pPassword);
-
-        /* Check that the arrays match */
-        if (!Arrays.equals(theHash, myResults[0])) {
-            /* Fail the password attempt */
-            throw new GordianBadCredentialsException("Invalid Password");
-        }
-
-        /* Create the Key Set */
-        theKeySet = new GordianKeySet(theFactory);
-        theKeySet.buildFromSecret(myResults[1], myResults[2]);
-
+    private void attemptPassword(final byte[] pPassword) throws OceanusException {
         /* Protect against exceptions */
-        byte[] myBytes = null;
+        byte[][] myResults = null;
         try {
-            /* Encrypt the password */
-            myBytes = TethysDataConverter.charsToByteArray(pPassword);
-            thePassword = theKeySet.encryptBytes(myBytes);
+            /* Generate the HashBytes */
+            myResults = generateHash(pPassword);
+
+            /* Check that the arrays match */
+            int iIndex = 0;
+            if (!Arrays.equals(theHash, myResults[iIndex++])) {
+                /* Fail the password attempt */
+                throw new GordianBadCredentialsException("Invalid Password");
+            }
+
+            /* Create the Key Set */
+            theKeySet = new GordianKeySet(theFactory);
+            theKeySet.buildFromSecret(myResults[iIndex++], myResults[iIndex++]);
+
+            /* Encrypt the passwords*/
+            thePassword = theKeySet.encryptBytes(pPassword);
+            theChildPassword = theKeySet.encryptBytes(myResults[iIndex]);
+
         } finally {
-            /* Clear out the password bytes */
-            if (myBytes != null) {
-                Arrays.fill(myBytes, (byte) 0);
+            /* Clear out results */
+            if (myResults != null) {
+                int iIndex = 1;
+                Arrays.fill(myResults[iIndex++], (byte) 0);
+                Arrays.fill(myResults[iIndex++], (byte) 0);
+                Arrays.fill(myResults[iIndex], (byte) 0);
             }
         }
     }
 
     /**
      * Generate Hash.
+     *
      * @param pPassword the password for the keys
      * @return the Salt and Hash array
      * @throws OceanusException on error
      */
-    private byte[][] generateHash(final char[] pPassword) throws OceanusException {
-        byte[] myPassBytes = null;
+    private byte[][] generateHash(final byte[] pPassword) throws OceanusException {
+        /* Obtain configuration details */
+        final GordianPersonalisation myPersonal = theFactory.getPersonalisation();
+        final int iIterations = theFactory.getNumIterations();
+        final int iFinal = theRecipe.getAdjustment()
+                + iIterations;
 
-        /* Protect against exceptions */
-        try {
-            /* Obtain configuration details */
-            final GordianPersonalisation myPersonal = theFactory.getPersonalisation();
-            final int iIterations = theFactory.getNumIterations();
-            final int iFinal = theRecipe.getAdjustment()
-                               + iIterations;
+        /* Create a byte array of the iterations */
+        final byte[] myLoops = TethysDataConverter.integerToByteArray(iFinal);
 
-            /* Create a byte array of the iterations */
-            final byte[] myLoops = TethysDataConverter.integerToByteArray(iFinal);
+        /* Create the primeMac */
+        GordianMacSpec myMacSpec = GordianMacSpec.hMac(theRecipe.getPrimeDigest());
+        final GordianMac myPrimeMac = theFactory.createMac(myMacSpec);
+        myPrimeMac.initMac(pPassword);
 
-            /* Convert password to bytes */
-            myPassBytes = TethysDataConverter.charsToByteArray(pPassword);
+        /* Create the alternateMac */
+        myMacSpec = GordianMacSpec.hMac(theRecipe.getAlternateDigest());
+        final GordianMac myAlternateMac = theFactory.createMac(myMacSpec);
+        myAlternateMac.initMac(pPassword);
 
-            /* Create the primeMac */
-            GordianMacSpec myMacSpec = GordianMacSpec.hMac(theRecipe.getPrimeDigest());
-            final GordianMac myPrimeMac = theFactory.createMac(myMacSpec);
-            myPrimeMac.initMac(myPassBytes);
+        /* Create the secretMac */
+        myMacSpec = GordianMacSpec.hMac(theRecipe.getSecretDigest());
+        final GordianMac mySecretMac = theFactory.createMac(myMacSpec);
+        mySecretMac.initMac(pPassword);
 
-            /* Create the alternateMac */
-            myMacSpec = GordianMacSpec.hMac(theRecipe.getAlternateDigest());
-            final GordianMac myAlternateMac = theFactory.createMac(myMacSpec);
-            myAlternateMac.initMac(myPassBytes);
+        /* Initialise hash bytes and counter */
+        final byte[] myPrimeBytes = new byte[myPrimeMac.getMacSize()];
+        final byte[] myAlternateBytes = new byte[myAlternateMac.getMacSize()];
+        final byte[] mySecretBytes = new byte[mySecretMac.getMacSize()];
+        final byte[] myPrimeHash = new byte[myPrimeMac.getMacSize()];
+        final byte[] myAlternateHash = new byte[myAlternateMac.getMacSize()];
+        final byte[] mySecretHash = new byte[mySecretMac.getMacSize()];
 
-            /* Create the secretMac */
-            myMacSpec = GordianMacSpec.hMac(theRecipe.getSecretDigest());
-            final GordianMac mySecretMac = theFactory.createMac(myMacSpec);
-            mySecretMac.initMac(myPassBytes);
+        /* Access final digest */
+        final GordianDigestSpec myDigestSpec = new GordianDigestSpec(theRecipe.getExternalDigest(), GordianLength.LEN_512);
+        final GordianDigest myDigest = theFactory.createDigest(myDigestSpec);
 
-            /* Initialise hash bytes and counter */
-            final byte[] myPrimeBytes = new byte[myPrimeMac.getMacSize()];
-            final byte[] myAlternateBytes = new byte[myAlternateMac.getMacSize()];
-            final byte[] mySecretBytes = new byte[mySecretMac.getMacSize()];
-            final byte[] myPrimeHash = new byte[myPrimeMac.getMacSize()];
-            final byte[] myAlternateHash = new byte[myAlternateMac.getMacSize()];
-            final byte[] mySecretHash = new byte[mySecretMac.getMacSize()];
+        /* Initialise the hash input values as the salt bytes */
+        final byte[] mySaltBytes = theRecipe.getInitVector();
+        byte[] myPrimeInput = mySaltBytes;
+        byte[] myAlternateInput = mySaltBytes;
+        byte[] mySecretInput = mySaltBytes;
 
-            /* Access final digest */
-            final GordianDigestSpec myDigestSpec = new GordianDigestSpec(theRecipe.getExternalDigest(), GordianLength.LEN_512);
-            final GordianDigest myDigest = theFactory.createDigest(myDigestSpec);
+        /* Update each Hash with the personalisation */
+        myPersonal.updateMac(myPrimeMac);
+        myPersonal.updateMac(myAlternateMac);
+        myPersonal.updateMac(mySecretMac);
 
-            /* Initialise the hash input values as the salt bytes */
-            final byte[] mySaltBytes = theRecipe.getInitVector();
-            byte[] myPrimeInput = mySaltBytes;
-            byte[] myAlternateInput = mySaltBytes;
-            byte[] mySecretInput = mySaltBytes;
+        /* Update each Hash with the loops */
+        myPrimeMac.update(myLoops);
+        myAlternateMac.update(myLoops);
+        mySecretMac.update(myLoops);
 
-            /* Update each Hash with the personalisation */
-            myPersonal.updateMac(myPrimeMac);
-            myPersonal.updateMac(myAlternateMac);
-            myPersonal.updateMac(mySecretMac);
+        /* Loop through the iterations */
+        for (int iPass = 0; iPass < iFinal; iPass++) {
+            /* Update the prime Mac */
+            myPrimeMac.update(myPrimeInput);
 
-            /* Update each Hash with the loops */
-            myPrimeMac.update(myLoops);
-            myAlternateMac.update(myLoops);
-            mySecretMac.update(myLoops);
+            /* Update the alternate Mac */
+            myAlternateMac.update(myAlternateInput);
 
-            /* Loop through the iterations */
-            for (int iPass = 0; iPass < iFinal; iPass++) {
-                /* Update the prime Mac */
-                myPrimeMac.update(myPrimeInput);
+            /* Update the secret Mac */
+            mySecretMac.update(mySecretInput);
+            mySecretMac.update(myPrimeInput);
+            mySecretMac.update(myAlternateInput);
 
-                /* Update the alternate Mac */
-                myAlternateMac.update(myAlternateInput);
+            /* Update inputs */
+            myPrimeInput = myPrimeHash;
+            myAlternateInput = myAlternateHash;
+            mySecretInput = mySecretHash;
 
-                /* Update the secret Mac */
-                mySecretMac.update(mySecretInput);
-                mySecretMac.update(myPrimeInput);
-                mySecretMac.update(myAlternateInput);
-
-                /* Update inputs */
-                myPrimeInput = myPrimeHash;
-                myAlternateInput = myAlternateHash;
-                mySecretInput = mySecretHash;
-
-                /* Recalculate hashes and combine them */
-                myPrimeMac.finish(myPrimeHash, 0);
-                TethysDataConverter.buildHashResult(myPrimeBytes, myPrimeHash);
-                myAlternateMac.finish(myAlternateHash, 0);
-                TethysDataConverter.buildHashResult(myAlternateBytes, myAlternateHash);
-                mySecretMac.finish(mySecretHash, 0);
-                TethysDataConverter.buildHashResult(mySecretBytes, mySecretHash);
-            }
-
-            /* Combine the Primary and Alternate hashes to form the initVector */
-            myDigest.update(myPrimeHash);
-            myDigest.update(myAlternateHash);
-            final byte[] myInitVector = myDigest.finish();
-
-            /* Combine the Primary and Alternate bytes to form the external hash */
-            myDigest.update(myPrimeBytes);
-            myDigest.update(myAlternateBytes);
-            final byte[] myExternalHash = myDigest.finish();
-
-            /* Create the external hash */
-            final byte[] myHashBytes = theRecipe.buildExternal(pPassword.length, myExternalHash);
-
-            /* Check whether the HashBytes is too large */
-            if (myHashBytes.length > HASHLEN) {
-                throw new GordianDataException("Password Hash too large: "
-                                               + myHashBytes.length);
-            }
-
-            /* Return to caller */
-            return new byte[][]
-            { myHashBytes, mySecretBytes, myInitVector };
-
-        } finally {
-            if (myPassBytes != null) {
-                Arrays.fill(myPassBytes, (byte) 0);
-            }
+            /* Recalculate hashes and combine them */
+            myPrimeMac.finish(myPrimeHash, 0);
+            TethysDataConverter.buildHashResult(myPrimeBytes, myPrimeHash);
+            myAlternateMac.finish(myAlternateHash, 0);
+            TethysDataConverter.buildHashResult(myAlternateBytes, myAlternateHash);
+            mySecretMac.finish(mySecretHash, 0);
+            TethysDataConverter.buildHashResult(mySecretBytes, mySecretHash);
         }
+
+        /* Combine the Primary and Alternate hashes to form the initVector */
+        myDigest.update(myPrimeHash);
+        myDigest.update(myAlternateHash);
+        myDigest.update(mySecretHash);
+        myDigest.update(myPrimeBytes);
+        myDigest.update(myAlternateBytes);
+        myDigest.update(mySecretBytes);
+        final byte[] myChildPassword = myDigest.finish();
+
+        /* Combine the Primary and Alternate hashes to form the initVector */
+        myDigest.update(myPrimeHash);
+        myDigest.update(myAlternateHash);
+        final byte[] myInitVector = myDigest.finish();
+
+        /* Combine the Primary and Alternate bytes to form the external hash */
+        myDigest.update(myPrimeBytes);
+        myDigest.update(myAlternateBytes);
+        final byte[] myExternalHash = myDigest.finish();
+
+        /* Create the external hash */
+        final byte[] myHashBytes = theRecipe.buildExternal(pPassword.length, myExternalHash);
+
+        /* Check whether the HashBytes is too large */
+        if (myHashBytes.length > HASHLEN) {
+            throw new GordianDataException("Password Hash too large: "
+                    + myHashBytes.length);
+        }
+
+        /* Return to caller */
+        return new byte[][]
+                {myHashBytes, mySecretBytes, myInitVector, myChildPassword};
     }
 
     /**
      * Attempt the cached password against the passed hash.
+     *
      * @param pHashBytes the Hash to test against
      * @return the new PasswordHash if successful, otherwise null
      */
-    public GordianKeySetHash attemptPassword(final byte[] pHashBytes) {
+    public GordianKeySetHash attemptPasswordForHash(final byte[] pHashBytes) {
         /* Protect against exceptions */
-        char[] myPassword = null;
-        byte[] myBytes = null;
+        byte[] myPassword = null;
         try {
             /* Access the original password */
-            myBytes = theKeySet.decryptBytes(thePassword);
-            myPassword = TethysDataConverter.bytesToCharArray(myBytes);
+            myPassword = theKeySet.decryptBytes(thePassword);
 
-            /* Try to initialise the hash and return it */
-            return new GordianKeySetHash(theFactory, pHashBytes, myPassword);
+            /* Try to resolve the hash and return it */
+            return resolveKeySetHash(theFactory, pHashBytes, myPassword);
 
             /* Catch Exceptions */
         } catch (OceanusException e) {
@@ -383,12 +518,9 @@ public final class GordianKeySetHash {
         } catch (GordianBadCredentialsException e) {
             return null;
         } finally {
-            /* Clear out password and bytes */
+            /* Clear out password */
             if (myPassword != null) {
-                Arrays.fill(myPassword, (char) 0);
-            }
-            if (myBytes != null) {
-                Arrays.fill(myBytes, (byte) 0);
+                Arrays.fill(myPassword, (byte) 0);
             }
         }
     }
@@ -413,12 +545,12 @@ public final class GordianKeySetHash {
 
         /* Check differences */
         return theFactory.equals(myThat.getFactory())
-               && Arrays.equals(theHash, myThat.getHash());
+                && Arrays.equals(theHash, myThat.getHash());
     }
 
     @Override
     public int hashCode() {
         return GordianFactory.HASH_PRIME * theFactory.hashCode()
-               + Arrays.hashCode(theHash);
+                + Arrays.hashCode(theHash);
     }
 }

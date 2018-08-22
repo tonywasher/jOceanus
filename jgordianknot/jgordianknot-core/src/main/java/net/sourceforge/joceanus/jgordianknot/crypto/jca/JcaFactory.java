@@ -26,6 +26,7 @@ import net.sourceforge.joceanus.jgordianknot.crypto.GordianCipherSpec.GordianSym
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianDigestSpec;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianDigestType;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianFactory;
+import net.sourceforge.joceanus.jgordianknot.crypto.GordianFactoryGenerator;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianKeyEncapsulation;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianKeyEncapsulation.GordianKEMSender;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianKeyPair;
@@ -38,14 +39,11 @@ import net.sourceforge.joceanus.jgordianknot.crypto.GordianRandomSpec;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianSPHINCSKeyType;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianSignatureSpec;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianSignatureType;
-import net.sourceforge.joceanus.jgordianknot.crypto.GordianSigner;
+import net.sourceforge.joceanus.jgordianknot.crypto.GordianSignature;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianStreamKeyType;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianSymKeySpec;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianSymKeyType;
-import net.sourceforge.joceanus.jgordianknot.crypto.GordianValidator;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianWrapCipher;
-import net.sourceforge.joceanus.jgordianknot.crypto.jca.JcaKeyPair.JcaPrivateKey;
-import net.sourceforge.joceanus.jgordianknot.crypto.jca.JcaKeyPair.JcaPublicKey;
 import net.sourceforge.joceanus.jgordianknot.crypto.jca.JcaKeyPairGenerator.JcaDSAKeyPairGenerator;
 import net.sourceforge.joceanus.jgordianknot.crypto.jca.JcaKeyPairGenerator.JcaDiffieHellmanKeyPairGenerator;
 import net.sourceforge.joceanus.jgordianknot.crypto.jca.JcaKeyPairGenerator.JcaECKeyPairGenerator;
@@ -55,18 +53,12 @@ import net.sourceforge.joceanus.jgordianknot.crypto.jca.JcaKeyPairGenerator.JcaR
 import net.sourceforge.joceanus.jgordianknot.crypto.jca.JcaKeyPairGenerator.JcaRainbowKeyPairGenerator;
 import net.sourceforge.joceanus.jgordianknot.crypto.jca.JcaKeyPairGenerator.JcaSPHINCSKeyPairGenerator;
 import net.sourceforge.joceanus.jgordianknot.crypto.jca.JcaKeyPairGenerator.JcaXMSSKeyPairGenerator;
-import net.sourceforge.joceanus.jgordianknot.crypto.jca.JcaSignature.JcaDSASigner;
-import net.sourceforge.joceanus.jgordianknot.crypto.jca.JcaSignature.JcaDSAValidator;
-import net.sourceforge.joceanus.jgordianknot.crypto.jca.JcaSignature.JcaGOSTSigner;
-import net.sourceforge.joceanus.jgordianknot.crypto.jca.JcaSignature.JcaGOSTValidator;
-import net.sourceforge.joceanus.jgordianknot.crypto.jca.JcaSignature.JcaRSASigner;
-import net.sourceforge.joceanus.jgordianknot.crypto.jca.JcaSignature.JcaRSAValidator;
-import net.sourceforge.joceanus.jgordianknot.crypto.jca.JcaSignature.JcaRainbowSigner;
-import net.sourceforge.joceanus.jgordianknot.crypto.jca.JcaSignature.JcaRainbowValidator;
-import net.sourceforge.joceanus.jgordianknot.crypto.jca.JcaSignature.JcaSPHINCSSigner;
-import net.sourceforge.joceanus.jgordianknot.crypto.jca.JcaSignature.JcaSPHINCSValidator;
-import net.sourceforge.joceanus.jgordianknot.crypto.jca.JcaSignature.JcaXMSSSigner;
-import net.sourceforge.joceanus.jgordianknot.crypto.jca.JcaSignature.JcaXMSSValidator;
+import net.sourceforge.joceanus.jgordianknot.crypto.jca.JcaSignature.JcaDSASignature;
+import net.sourceforge.joceanus.jgordianknot.crypto.jca.JcaSignature.JcaGOSTSignature;
+import net.sourceforge.joceanus.jgordianknot.crypto.jca.JcaSignature.JcaRSASignature;
+import net.sourceforge.joceanus.jgordianknot.crypto.jca.JcaSignature.JcaRainbowSignature;
+import net.sourceforge.joceanus.jgordianknot.crypto.jca.JcaSignature.JcaSPHINCSSignature;
+import net.sourceforge.joceanus.jgordianknot.crypto.jca.JcaSignature.JcaXMSSSignature;
 import net.sourceforge.joceanus.jgordianknot.crypto.prng.GordianBaseSecureRandom;
 import net.sourceforge.joceanus.jgordianknot.crypto.prng.GordianRandomFactory;
 import net.sourceforge.joceanus.jtethys.OceanusException;
@@ -146,20 +138,14 @@ public final class JcaFactory
 
     /**
      * Constructor.
-     * @throws OceanusException on error
-     */
-    public JcaFactory() throws OceanusException {
-        this(new GordianParameters());
-    }
-
-    /**
-     * Constructor.
      * @param pParameters the parameters
+     * @param pGenerator the factoryGenerator
      * @throws OceanusException on error
      */
-    public JcaFactory(final GordianParameters pParameters) throws OceanusException {
+    public JcaFactory(final GordianParameters pParameters,
+                      final GordianFactoryGenerator pGenerator) throws OceanusException {
         /* Initialise underlying class */
-        super(pParameters);
+        super(pParameters, pGenerator);
 
         /* Create the keyGenerator cache */
         theGeneratorCache = new JcaKeyGeneratorCache();
@@ -318,27 +304,14 @@ public final class JcaFactory
     }
 
     @Override
-    public GordianSigner createSigner(final GordianKeyPair pKeyPair,
-                                      final GordianSignatureSpec pSignatureSpec) throws OceanusException {
+    public GordianSignature createSigner(final GordianSignatureSpec pSignatureSpec) throws OceanusException {
         /* Check validity of Signature */
-        if (!validSignatureSpecForKeyPair(pKeyPair, pSignatureSpec)) {
+        if (!validSignatureSpec(pSignatureSpec)) {
             throw new GordianDataException(getInvalidText(pSignatureSpec));
         }
 
         /* Create the signer */
-        return getJcaSigner((JcaKeyPair) pKeyPair, pSignatureSpec);
-    }
-
-    @Override
-    public GordianValidator createValidator(final GordianKeyPair pKeyPair,
-                                            final GordianSignatureSpec pSignatureSpec) throws OceanusException {
-        /* Check validity of Signature */
-        if (!validSignatureSpecForKeyPair(pKeyPair, pSignatureSpec)) {
-            throw new GordianDataException(getInvalidText(pSignatureSpec));
-        }
-
-        /* Create the validator */
-        return getJcaValidator((JcaKeyPair) pKeyPair, pSignatureSpec);
+        return getJcaSigner(pSignatureSpec);
     }
 
     /**
@@ -853,61 +826,28 @@ public final class JcaFactory
 
     /**
      * Create the BouncyCastle Signer.
-     * @param pKeyPair the keyPair
      * @param pSignatureSpec the digestSpec
      * @return the Signer
      * @throws OceanusException on error
      */
-    private GordianSigner getJcaSigner(final JcaKeyPair pKeyPair,
-                                       final GordianSignatureSpec pSignatureSpec) throws OceanusException {
+    private GordianSignature getJcaSigner(final GordianSignatureSpec pSignatureSpec) throws OceanusException {
         switch (pSignatureSpec.getAsymKeyType()) {
             case RSA:
-                return new JcaRSASigner((JcaPrivateKey) pKeyPair.getPrivateKey(), pSignatureSpec, getRandom());
+                return new JcaRSASignature(this, pSignatureSpec);
             case EC:
             case SM2:
             case DSA:
-                return new JcaDSASigner((JcaPrivateKey) pKeyPair.getPrivateKey(), pSignatureSpec, getRandom());
+                return new JcaDSASignature(this, pSignatureSpec);
             case GOST2012:
             case DSTU4145:
-                return new JcaGOSTSigner((JcaPrivateKey) pKeyPair.getPrivateKey(), pSignatureSpec, getRandom());
+                return new JcaGOSTSignature(this, pSignatureSpec);
             case XMSS:
             case XMSSMT:
-                return new JcaXMSSSigner((JcaPrivateKey) pKeyPair.getPrivateKey(), pSignatureSpec, getRandom());
+                return new JcaXMSSSignature(this, pSignatureSpec);
             case SPHINCS:
-                return new JcaSPHINCSSigner((JcaPrivateKey) pKeyPair.getPrivateKey(), pSignatureSpec);
+                return new JcaSPHINCSSignature(this, pSignatureSpec);
             case RAINBOW:
-                return new JcaRainbowSigner((JcaPrivateKey) pKeyPair.getPrivateKey(), pSignatureSpec, getRandom());
-            default:
-                throw new GordianDataException(getInvalidText(pSignatureSpec.getAsymKeyType()));
-        }
-    }
-
-    /**
-     * Create the BouncyCastle Validator.
-     * @param pKeyPair the keyPair
-     * @param pSignatureSpec the signatureSpec
-     * @return the Validator
-     * @throws OceanusException on error
-     */
-    private static GordianValidator getJcaValidator(final JcaKeyPair pKeyPair,
-                                                    final GordianSignatureSpec pSignatureSpec) throws OceanusException {
-        switch (pSignatureSpec.getAsymKeyType()) {
-            case RSA:
-                return new JcaRSAValidator((JcaPublicKey) pKeyPair.getPublicKey(), pSignatureSpec);
-            case EC:
-            case SM2:
-            case DSA:
-                return new JcaDSAValidator((JcaPublicKey) pKeyPair.getPublicKey(), pSignatureSpec);
-            case GOST2012:
-            case DSTU4145:
-                return new JcaGOSTValidator((JcaPublicKey) pKeyPair.getPublicKey(), pSignatureSpec);
-            case XMSS:
-            case XMSSMT:
-                return new JcaXMSSValidator((JcaPublicKey) pKeyPair.getPublicKey(), pSignatureSpec);
-            case SPHINCS:
-                return new JcaSPHINCSValidator((JcaPublicKey) pKeyPair.getPublicKey(), pSignatureSpec);
-            case RAINBOW:
-                return new JcaRainbowValidator((JcaPublicKey) pKeyPair.getPublicKey(), pSignatureSpec);
+                return new JcaRainbowSignature(this, pSignatureSpec);
             default:
                 throw new GordianDataException(getInvalidText(pSignatureSpec.getAsymKeyType()));
         }
@@ -1042,6 +982,8 @@ public final class JcaFactory
                 return validRSASignature(pSpec);
             case EC:
                 return validECSignature(pSpec);
+            case DSTU4145:
+            case GOST2012:
             case SM2:
                 return true;
             case DSA:
@@ -1050,10 +992,6 @@ public final class JcaFactory
                 return validSPHINCSSignature(myDigest);
             case RAINBOW:
                 return validRainbowSignature(myDigest);
-            case DSTU4145:
-                return validDSTUSignature(myDigest);
-            case GOST2012:
-                return validGOSTSignature(myDigest);
             case XMSS:
             case XMSSMT:
                 return validXMSSSignature(myDigest);
@@ -1064,19 +1002,6 @@ public final class JcaFactory
                 return false;
         }
     }
-
-    @Override
-    public boolean validSignatureSpecForKeyPair(final GordianKeyPair pKeyPair,
-                                                final GordianSignatureSpec pSpec) {
-        /* validate the signatureSpec */
-        if (!super.validSignatureSpecForKeyPair(pKeyPair, pSpec)) {
-            return false;
-        }
-
-        /* Do an additional check for SPHINCS * */
-        return !GordianAsymKeyType.SPHINCS.equals(pSpec.getAsymKeyType())
-               ||  validSPHINCSSignature(pKeyPair, pSpec.getDigestSpec());
-     }
 
     /**
      * Check RSASignature.
@@ -1138,7 +1063,7 @@ public final class JcaFactory
 
     /**
      * Check SPHINCSSignature.
-      * @param pSpec the digestSpec
+     * @param pSpec the digestSpec
      * @return true/false
      */
     private static boolean validSPHINCSSignature(final GordianDigestSpec pSpec) {
@@ -1152,26 +1077,6 @@ public final class JcaFactory
             case SHA2:
             case SHA3:
                 return true;
-            default:
-                return false;
-        }
-    }
-
-    /**
-     * Check SPHINCSSignature.
-     * @param pKeyPair the keyPair
-     * @param pSpec the digestSpec
-     * @return true/false
-     */
-    private static boolean validSPHINCSSignature(final GordianKeyPair pKeyPair,
-                                                 final GordianDigestSpec pSpec) {
-        /* Switch on DigestType */
-        final GordianSPHINCSKeyType myType = pKeyPair.getKeySpec().getSPHINCSType();
-        switch (pSpec.getDigestType()) {
-            case SHA2:
-                return GordianSPHINCSKeyType.SHA2.equals(myType);
-            case SHA3:
-                return GordianSPHINCSKeyType.SHA3.equals(myType);
             default:
                 return false;
         }
@@ -1236,22 +1141,30 @@ public final class JcaFactory
         }
     }
 
-    /**
-     * Check DSTUSignature.
-     * @param pSpec the digestSpec
-     * @return true/false
-     */
-    private static boolean validDSTUSignature(final GordianDigestSpec pSpec) {
-        return pSpec.getDigestType() == GordianDigestType.GOST;
-    }
+    @Override
+    public boolean validSignatureSpecForKeyPair(final GordianKeyPair pKeyPair,
+                                                final GordianSignatureSpec pSignSpec) {
+        /* Check underlying rules */
+        if (!super.validSignatureSpecForKeyPair(pKeyPair, pSignSpec)) {
+            return false;
+        }
 
-    /**
-     * Check DSTUSignature.
-     * @param pSpec the digestSpec
-     * @return true/false
-     */
-    private static boolean validGOSTSignature(final GordianDigestSpec pSpec) {
-        return pSpec.getDigestType() == GordianDigestType.STREEBOG;
+        /* Only need additional checks for SPHINCS */
+        if (!GordianAsymKeyType.SPHINCS.equals(pSignSpec.getAsymKeyType())) {
+            return true;
+        }
+
+        /* Switch on DigestType */
+        final GordianSPHINCSKeyType myType = pKeyPair.getKeySpec().getSPHINCSType();
+        final GordianDigestSpec mySpec = pSignSpec.getDigestSpec();
+        switch (mySpec.getDigestType()) {
+            case SHA2:
+                return GordianSPHINCSKeyType.SHA2.equals(myType);
+            case SHA3:
+                return GordianSPHINCSKeyType.SHA3.equals(myType);
+            default:
+                return false;
+        }
     }
 
     @Override

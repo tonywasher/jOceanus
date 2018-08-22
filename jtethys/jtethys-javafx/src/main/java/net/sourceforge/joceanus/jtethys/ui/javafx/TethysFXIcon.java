@@ -71,6 +71,7 @@ public class TethysFXIcon
                ? (ImageView) theIcon
                : null;
     }
+
     /**
      * Obtain the icon.
      *

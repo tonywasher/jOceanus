@@ -450,9 +450,10 @@ public abstract class JcaKeyPairGenerator
 
             /* Create and initialise the generator */
             final GordianMcElieceKeySpec myKeyType = pKeySpec.getMcElieceSpec();
-            theGenerator = JcaFactory.getJavaKeyPairGenerator(myKeyType.isCCA2()
-                                                                                 ? MCELIECECCA2_ALGO
-                                                                                 : MCELIECE_ALGO, true);
+            final String myAlgo = myKeyType.isCCA2()
+                                  ? MCELIECECCA2_ALGO
+                                  : MCELIECE_ALGO;
+            theGenerator = JcaFactory.getJavaKeyPairGenerator(myAlgo, true);
 
             /*
              * Note that we should create McEliece parameters and initialise using them, but that
@@ -463,7 +464,7 @@ public abstract class JcaKeyPairGenerator
             theGenerator.initialize(McElieceKeyGenParameterSpec.DEFAULT_M, getRandom());
 
             /* Create the factory */
-            setKeyFactory(JcaFactory.getJavaKeyFactory(MCELIECE_ALGO, true));
+            setKeyFactory(JcaFactory.getJavaKeyFactory(myAlgo, true));
         }
 
         @Override
