@@ -66,9 +66,8 @@ public enum GordianDSAElliptic implements GordianElliptic {
     SECP256K1("secp256k1", 256),
 
     /**
-     * secp256r1.
+     * secp256r1 (same curve as prime256v1).
      */
-    SECP256R1("secp256r1", 256),
 
     /**
      * sect239k1.
@@ -111,9 +110,8 @@ public enum GordianDSAElliptic implements GordianElliptic {
     SECP192K1("secp192k1", 192),
 
     /**
-     * secp192r1.
+     * secp192r1 (same curve as prime192v1).
      */
-    SECP192R1("secp192r1", 192),
 
     /**
      * sect163k1.

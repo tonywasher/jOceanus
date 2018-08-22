@@ -97,7 +97,7 @@
     <SitePluginVersion>3.7.1</SitePluginVersion>
     <DeployPluginVersion>2.8.2</DeployPluginVersion>
     <EnforcerPluginVersion>3.0.0-M2</EnforcerPluginVersion>
-    <CompilerPluginVersion>3.7.0</CompilerPluginVersion>
+    <CompilerPluginVersion>3.8.0</CompilerPluginVersion>
     <ShadePluginVersion>3.1.1</ShadePluginVersion>
     <DependencyPluginVersion>3.1.1</DependencyPluginVersion>
     <SurefirePluginVersion>2.22.0</SurefirePluginVersion>
