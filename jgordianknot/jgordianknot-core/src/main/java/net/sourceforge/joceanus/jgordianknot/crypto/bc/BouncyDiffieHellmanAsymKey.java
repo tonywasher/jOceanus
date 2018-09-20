@@ -47,6 +47,7 @@ import org.bouncycastle.jcajce.provider.asymmetric.dh.BCDHPublicKey;
 import org.bouncycastle.jcajce.provider.asymmetric.util.KeyUtil;
 
 import net.sourceforge.joceanus.jgordianknot.GordianCryptoException;
+import net.sourceforge.joceanus.jgordianknot.crypto.GordianAgreement.GordianBasicAgreement;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianAgreement.GordianEncapsulationAgreement;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianAgreement.GordianEphemeralAgreement;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianAgreementSpec;
@@ -467,6 +468,64 @@ public final class BouncyDiffieHellmanAsymKey {
             final DHBasicAgreement myAgreement = new DHBasicAgreement();
             myAgreement.init(myPrivate.getPrivateKey());
             final BigInteger mySecret = myAgreement.calculateAgreement(myPublicKey);
+
+            /* Store secret */
+            storeSecret(mySecret.toByteArray());
+        }
+    }
+
+    /**
+     * DH Basic Agreement.
+     */
+    public static class BouncyDHBasicAgreement
+            extends GordianBasicAgreement {
+        /**
+         * Constructor.
+         * @param pFactory the security factory
+         * @param pSpec the digestSpec
+         */
+        BouncyDHBasicAgreement(final BouncyFactory pFactory,
+                               final GordianAgreementSpec pSpec) {
+            /* Initialise underlying class */
+            super(pFactory, pSpec);
+        }
+
+        @Override
+        public byte[] initiateAgreement(final GordianKeyPair pSource,
+                                        final GordianKeyPair pTarget) throws OceanusException {
+            /* Check keyPairs */
+            checkKeyPair(pSource);
+            checkKeyPair(pTarget);
+
+            /* Derive the secret */
+            final DHBasicAgreement myAgreement = new DHBasicAgreement();
+            final BouncyDiffieHellmanPrivateKey myPrivate = (BouncyDiffieHellmanPrivateKey) getPrivateKey(pSource);
+            myAgreement.init(myPrivate.getPrivateKey());
+            final BouncyDiffieHellmanPublicKey myTarget = (BouncyDiffieHellmanPublicKey) getPublicKey(pTarget);
+            final BigInteger mySecret = myAgreement.calculateAgreement(myTarget.getPublicKey());
+            storeSecret(mySecret.toByteArray());
+
+            /* Create the message  */
+            return createMessage();
+        }
+
+        @Override
+        public void acceptAgreement(final GordianKeyPair pSource,
+                                    final GordianKeyPair pSelf,
+                                    final byte[] pMessage) throws OceanusException {
+            /* Check keyPair */
+            checkKeyPair(pSource);
+            checkKeyPair(pSelf);
+
+            /* Determine initVector */
+            parseMessage(pMessage);
+            final BouncyDiffieHellmanPrivateKey myPrivate = (BouncyDiffieHellmanPrivateKey) getPrivateKey(pSelf);
+            final BouncyDiffieHellmanPublicKey myPublic = (BouncyDiffieHellmanPublicKey) getPublicKey(pSource);
+
+            /* Derive the secret */
+            final DHBasicAgreement myAgreement = new DHBasicAgreement();
+            myAgreement.init(myPrivate.getPrivateKey());
+            final BigInteger mySecret = myAgreement.calculateAgreement(myPublic.getPublicKey());
 
             /* Store secret */
             storeSecret(mySecret.toByteArray());

@@ -365,22 +365,22 @@ public class MainTab
         final JComponent myComponent = TethysSwingNode.getComponent(myItem);
 
         /* If the selected component is Register */
-        if (myComponent.equals(theRegister.getNode())) {
+        if (myComponent.equals(TethysSwingNode.getComponent(theRegister))) {
             /* Determine focus of Register */
             theRegister.determineFocus();
 
             /* If the selected component is SpotPrices */
-        } else if (myComponent.equals(theSpotPrices.getNode())) {
+        } else if (myComponent.equals(TethysSwingNode.getComponent(theSpotPrices))) {
             /* Determine focus of SpotPrices */
             theSpotPrices.determineFocus();
 
             /* If the selected component is SpotRates */
-        } else if (myComponent.equals(theSpotRates.getNode())) {
+        } else if (myComponent.equals(TethysSwingNode.getComponent(theSpotRates))) {
             /* Determine focus of SpotRates */
             theSpotRates.determineFocus();
 
             /* If the selected component is Maintenance */
-        } else if (myComponent.equals(theMaint.getNode())) {
+        } else if (myComponent.equals(TethysSwingNode.getComponent(theMaint))) {
             /* Determine focus of maintenance */
             theMaint.determineFocus();
         }

@@ -72,14 +72,14 @@
     <appLibDir>lib/</appLibDir>
     <BouncyCastleVersion>1.60</BouncyCastleVersion>
     <SvnKitVersion>1.9.3</SvnKitVersion>
-    <JGitVersion>5.0.2.201807311906-r</JGitVersion>
+    <JGitVersion>5.1.0.201809111528-r</JGitVersion>
     <HttpClientVersion>4.5.6</HttpClientVersion>
     <JSONVersion>20180813</JSONVersion>
     <ApacheMavenVersion>3.5.4</ApacheMavenVersion>
     <MySQLVersion>8.0.12</MySQLVersion>
-    <PostGreSQLVersion>42.2.4</PostGreSQLVersion>
+    <PostGreSQLVersion>42.2.5</PostGreSQLVersion>
     <JTDSVersion>1.3.1</JTDSVersion>
-    <ApachePOIVersion>3.17</ApachePOIVersion>
+    <ApachePOIVersion>4.0.0</ApachePOIVersion>
     <ApacheODFDOMVersion>0.7-incubating</ApacheODFDOMVersion>
     <ApacheXercesVersion>2.11.0</ApacheXercesVersion>
     <JOpenDocumentVersion>1.3</JOpenDocumentVersion>
@@ -91,14 +91,14 @@
     <ZipSDKVersion>9.20</ZipSDKVersion>
     <JavaVersion>1.8</JavaVersion>
     <CheckStyleVersion>8.12</CheckStyleVersion>
-    <PMDVersion>6.6.0</PMDVersion>
+    <PMDVersion>6.7.0</PMDVersion>
     <CleanPluginVersion>3.1.0</CleanPluginVersion>
     <InstallPluginVersion>2.5.2</InstallPluginVersion>
     <SitePluginVersion>3.7.1</SitePluginVersion>
     <DeployPluginVersion>2.8.2</DeployPluginVersion>
     <EnforcerPluginVersion>3.0.0-M2</EnforcerPluginVersion>
     <CompilerPluginVersion>3.8.0</CompilerPluginVersion>
-    <ShadePluginVersion>3.1.1</ShadePluginVersion>
+    <ShadePluginVersion>3.2.0</ShadePluginVersion>
     <DependencyPluginVersion>3.1.1</DependencyPluginVersion>
     <SurefirePluginVersion>2.22.0</SurefirePluginVersion>
     <BuildNumberPluginVersion>1.4</BuildNumberPluginVersion>
@@ -106,11 +106,11 @@
     <ProjectInfoPluginVersion>3.0.0</ProjectInfoPluginVersion>
     <JxrPluginVersion>2.5</JxrPluginVersion>
     <JavaDocPluginVersion>3.0.1</JavaDocPluginVersion>
-    <SonarQubePluginVersion>3.4.1.1168</SonarQubePluginVersion>
+    <SonarQubePluginVersion>3.5.0.1254</SonarQubePluginVersion>
     <CheckStylePluginVersion>3.0.0</CheckStylePluginVersion>
     <PMDPluginVersion>3.10.0</PMDPluginVersion>
     <FindBugsPluginVersion>3.0.5</FindBugsPluginVersion>
-    <VersionsPluginVersion>2.5</VersionsPluginVersion>
+    <VersionsPluginVersion>2.7</VersionsPluginVersion>
   </properties>
   <build>
     <resources>

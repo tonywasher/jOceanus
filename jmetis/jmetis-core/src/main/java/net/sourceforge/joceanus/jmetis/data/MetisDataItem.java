@@ -144,9 +144,7 @@ public final class MetisDataItem {
          */
         default boolean isEmpty() {
             final List<T> myList = getUnderlyingList();
-            return myList == null
-                                  ? true
-                                  : myList.isEmpty();
+            return myList == null || myList.isEmpty();
         }
 
         /**

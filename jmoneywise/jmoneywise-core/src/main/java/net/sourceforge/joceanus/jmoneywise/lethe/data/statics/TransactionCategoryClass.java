@@ -728,9 +728,7 @@ public enum TransactionCategoryClass implements CategoryInterface {
      * @return true/false
      */
     public boolean isTransfer() {
-        return this == TRANSFER
-                                ? true
-                                : isSecurityTransfer();
+        return this == TRANSFER || isSecurityTransfer();
     }
 
     /**

@@ -123,7 +123,7 @@ public class MetisExcelHSSFWorkBook
      * @param pInput the input stream
      * @throws OceanusException on error
      */
-    protected MetisExcelHSSFWorkBook(final InputStream pInput) throws OceanusException {
+    MetisExcelHSSFWorkBook(final InputStream pInput) throws OceanusException {
         try {
             /* Load the book and set null map */
             theBook = new HSSFWorkbook(pInput);
@@ -153,7 +153,7 @@ public class MetisExcelHSSFWorkBook
     /**
      * Constructor.
      */
-    protected MetisExcelHSSFWorkBook() {
+    MetisExcelHSSFWorkBook() {
         /* Create new book and map */
         theBook = new HSSFWorkbook();
         theStyleMap = new HashMap<>();
@@ -196,7 +196,7 @@ public class MetisExcelHSSFWorkBook
      * @param pCell the cell to evaluate
      * @return the calculated value
      */
-    protected CellValue evaluateFormula(final HSSFCell pCell) {
+    CellValue evaluateFormula(final HSSFCell pCell) {
         return theEvaluator.evaluate(pCell);
     }
 
@@ -205,7 +205,7 @@ public class MetisExcelHSSFWorkBook
      * @param pCell the cell to evaluate
      * @return the formatted value
      */
-    protected String formatCellValue(final HSSFCell pCell) {
+    String formatCellValue(final HSSFCell pCell) {
         return theExcelFormatter.formatCellValue(pCell);
     }
 
@@ -236,7 +236,7 @@ public class MetisExcelHSSFWorkBook
     @Override
     public MetisSheetSheet newSheet(final String pName,
                                     final int pNumRows,
-                                    final int pNumCols) throws OceanusException {
+                                    final int pNumCols) {
         return newSheet(pName);
     }
 
@@ -252,7 +252,7 @@ public class MetisExcelHSSFWorkBook
      * @param pSheetIndex the sheet index
      * @return true/false
      */
-    protected boolean isSheetHidden(final int pSheetIndex) {
+    boolean isSheetHidden(final int pSheetIndex) {
         return theBook.isSheetHidden(pSheetIndex);
     }
 
@@ -261,8 +261,8 @@ public class MetisExcelHSSFWorkBook
      * @param pSheetIndex the sheet index
      * @param isHidden true/false
      */
-    protected void setSheetHidden(final int pSheetIndex,
-                                  final boolean isHidden) {
+    void setSheetHidden(final int pSheetIndex,
+                        final boolean isHidden) {
         theBook.setSheetHidden(pSheetIndex, isHidden);
     }
 
@@ -296,8 +296,8 @@ public class MetisExcelHSSFWorkBook
      * @param pRange the range to declare
      * @throws OceanusException on error
      */
-    protected void declareRange(final String pName,
-                                final AreaReference pRange) throws OceanusException {
+    void declareRange(final String pName,
+                      final AreaReference pRange) throws OceanusException {
         /* Check for existing range */
         Name myName = theBook.getName(pName);
         if (myName != null) {
@@ -321,9 +321,9 @@ public class MetisExcelHSSFWorkBook
      * @param pCells the Cells to apply validation to
      * @param pValidRange the name of the validation range
      */
-    protected void applyDataValidation(final HSSFSheet pSheet,
-                                       final CellRangeAddressList pCells,
-                                       final String pValidRange) {
+    void applyDataValidation(final HSSFSheet pSheet,
+                             final CellRangeAddressList pCells,
+                             final String pValidRange) {
         /* Access the constraint */
         final HSSFDataValidationHelper myHelper = new HSSFDataValidationHelper(pSheet);
         final DataValidationConstraint myConstraint = theRangeConstraintMap.computeIfAbsent(pValidRange,
@@ -364,8 +364,8 @@ public class MetisExcelHSSFWorkBook
      * @param pSheet the sheet to filter
      * @param pRange the range to apply the filter to
      */
-    protected void applyDataFilter(final Sheet pSheet,
-                                   final CellRangeAddressList pRange) {
+    void applyDataFilter(final Sheet pSheet,
+                         final CellRangeAddressList pRange) {
         /* Create the new filter */
         pSheet.setAutoFilter(pRange.getCellRangeAddress(0));
     }
@@ -375,7 +375,7 @@ public class MetisExcelHSSFWorkBook
      * @param pType the cell type
      * @return the alignment
      */
-    private HorizontalAlignment getStyleAlignment(final MetisSheetCellStyleType pType) {
+    private static HorizontalAlignment getStyleAlignment(final MetisSheetCellStyleType pType) {
         switch (pType) {
             case HEADER:
             case BOOLEAN:
@@ -410,7 +410,7 @@ public class MetisExcelHSSFWorkBook
      * @param pType the CellStyleType
      * @return the required CellStyle
      */
-    protected HSSFCellStyle getCellStyle(final MetisSheetCellStyleType pType) {
+    HSSFCellStyle getCellStyle(final MetisSheetCellStyleType pType) {
         /* Determine the correct format */
         final String myStyleName = MetisSheetFormats.getFormatName(pType);
 
@@ -442,7 +442,7 @@ public class MetisExcelHSSFWorkBook
      * @param pValue the Cell Value
      * @return the required CellStyle
      */
-    protected HSSFCellStyle getCellStyle(final Object pValue) {
+    HSSFCellStyle getCellStyle(final Object pValue) {
         /* Determine the correct format */
         final String myStyleName = MetisSheetFormats.getFormatName(pValue);
 
@@ -478,7 +478,7 @@ public class MetisExcelHSSFWorkBook
      * @param pValue the Cell Value
      * @return the required CellStyle
      */
-    protected HSSFCellStyle getAlternateCellStyle(final Object pValue) {
+    HSSFCellStyle getAlternateCellStyle(final Object pValue) {
         /* Determine the correct format */
         final String myStyleName = MetisSheetFormats.getAlternateFormatName(pValue);
 

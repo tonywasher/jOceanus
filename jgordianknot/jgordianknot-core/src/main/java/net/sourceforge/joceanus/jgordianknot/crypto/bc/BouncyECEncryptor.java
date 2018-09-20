@@ -161,7 +161,7 @@ public class BouncyECEncryptor {
      * @param pBlockLength the blockLength
      * @return the number of blocks.
      */
-    private int getNumBlocks(final int pLength, final int pBlockLength) {
+    private static int getNumBlocks(final int pLength, final int pBlockLength) {
         return (pLength + pBlockLength - 1) / pBlockLength;
     }
 

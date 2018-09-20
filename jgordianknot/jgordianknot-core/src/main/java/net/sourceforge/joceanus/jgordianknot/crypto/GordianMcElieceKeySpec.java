@@ -215,4 +215,42 @@ public final class GordianMcElieceKeySpec {
             return theParm;
         }
     }
+
+    /**
+     * McEliece encryptionType.
+     */
+    public enum GordianMcElieceEncryptionType {
+        /**
+         * Standard.
+         */
+        STANDARD("Standard"),
+
+        /**
+         * KobaraImai.
+         */
+        KOBARAIMAISTANDARD("KobaraImai"),
+
+        /**
+         * Fujisaka.
+         */
+        FUJISAKA("Fuijisaka"),
+
+        /**
+         * Pointcheval.
+         */
+        POINTCHEVAL("Pointcheval");
+
+        /**
+         * The name.
+         */
+        private final String theName;
+
+        /**
+         * Constructor.
+         * @param pName the name of the encryption
+         */
+        GordianMcElieceEncryptionType(final String pName) {
+            theName = pName;
+        }
+    }
 }

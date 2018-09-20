@@ -456,22 +456,22 @@ public class MaintenanceTab
         final JComponent myComponent = TethysSwingNode.getComponent(myItem);
 
         /* If the selected component is Account */
-        if (myComponent.equals(theAccountTab.getNode())) {
+        if (myComponent.equals(TethysSwingNode.getComponent(theAccountTab))) {
             /* Set the debug focus */
             theAccountTab.determineFocus();
 
             /* If the selected component is Category */
-        } else if (myComponent.equals(theCategoryTab.getNode())) {
+        } else if (myComponent.equals(TethysSwingNode.getComponent(theCategoryTab))) {
             /* Set the debug focus */
             theCategoryTab.determineFocus();
 
             /* If the selected component is Static */
-        } else if (myComponent.equals(theStatic.getNode())) {
+        } else if (myComponent.equals(TethysSwingNode.getComponent(theStatic))) {
             /* Set the debug focus */
             theStatic.determineFocus();
 
             /* If the selected component is Preferences */
-        } else if (myComponent.equals(thePreferences.getNode())) {
+        } else if (myComponent.equals(TethysSwingNode.getComponent(thePreferences))) {
             /* Set the debug focus */
             thePreferences.determineFocus();
         }

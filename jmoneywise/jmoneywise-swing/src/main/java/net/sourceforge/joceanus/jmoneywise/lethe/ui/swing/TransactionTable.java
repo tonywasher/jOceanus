@@ -727,9 +727,7 @@ public class TransactionTable
         @Override
         public boolean isCellEditable(final Transaction pItem,
                                       final int pColIndex) {
-            return pItem.isHeader()
-                                    ? false
-                                    : theColumns.isCellEditable(pItem, pColIndex);
+            return !pItem.isHeader() && theColumns.isCellEditable(pItem, pColIndex);
         }
 
         @Override

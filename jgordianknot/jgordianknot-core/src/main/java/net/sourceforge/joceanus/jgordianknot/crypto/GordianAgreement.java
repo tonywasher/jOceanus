@@ -116,8 +116,12 @@ public abstract class GordianAgreement {
      * Obtain private key from pair.
      * @param pKeyPair the keyPair
      * @return the private key
+     * @throws OceanusException on error
      */
-    protected GordianPrivateKey getPrivateKey(final GordianKeyPair pKeyPair) {
+    protected GordianPrivateKey getPrivateKey(final GordianKeyPair pKeyPair) throws OceanusException {
+        if (pKeyPair.isPublicOnly()) {
+            throw new GordianDataException("missing privateKey");
+        }
         return pKeyPair.getPrivateKey();
     }
 
@@ -291,6 +295,63 @@ public abstract class GordianAgreement {
             final byte[] myBase = new byte[myBaseLen];
             System.arraycopy(pMessage, INITLEN, myBase, 0, myBaseLen);
             return myBase;
+        }
+    }
+
+    /**
+     * Basic Agreement.
+     */
+    public abstract static class GordianBasicAgreement
+            extends GordianAgreement {
+        /**
+         * Constructor.
+         * @param pFactory the factory
+         * @param pSpec the agreementSpec
+         */
+        protected GordianBasicAgreement(final GordianFactory pFactory,
+                                        final GordianAgreementSpec pSpec) {
+            super(pFactory, pSpec);
+        }
+
+        /**
+         * Initiate the agreement.
+         * @param pSelf the source keyPair
+         * @param pTarget the target keyPair
+         * @return the message
+         * @throws OceanusException on error
+         */
+        public abstract byte[] initiateAgreement(GordianKeyPair pSelf,
+                                                 GordianKeyPair pTarget) throws OceanusException;
+
+        /**
+         * Create the message.
+         * @return the message
+         */
+        protected byte[] createMessage() {
+            /* Create the message */
+            return newInitVector();
+        }
+
+        /**
+         * Accept the agreement.
+         * @param pSource the source keyPair
+         * @param pTarget the target keyPair
+         * @param pMessage the incoming message
+         * @throws OceanusException on error
+         */
+        public abstract void acceptAgreement(GordianKeyPair pSource,
+                                             GordianKeyPair pTarget,
+                                             byte[] pMessage)  throws OceanusException;
+
+        /**
+         * Parse the incoming message.
+         * @param pMessage the incoming message
+         */
+        protected void parseMessage(final byte[] pMessage) {
+            /* Obtain initVector */
+            final byte[] myInitVector = new byte[INITLEN];
+            System.arraycopy(pMessage, 0, myInitVector, 0, INITLEN);
+            storeInitVector(myInitVector);
         }
     }
 

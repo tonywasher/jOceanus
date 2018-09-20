@@ -69,10 +69,10 @@ public class MetisExcelXSSFSheet
      * @param pIndex the index of the sheet
      * @param pReadOnly is the sheet readOnly?
      */
-    protected MetisExcelXSSFSheet(final MetisExcelXSSFWorkBook pBook,
-                                  final XSSFSheet pSheet,
-                                  final int pIndex,
-                                  final boolean pReadOnly) {
+    MetisExcelXSSFSheet(final MetisExcelXSSFWorkBook pBook,
+                        final XSSFSheet pSheet,
+                        final int pIndex,
+                        final boolean pReadOnly) {
         /* Construct super-class */
         super(pBook, pSheet.getSheetName());
 
@@ -88,7 +88,7 @@ public class MetisExcelXSSFSheet
      * @param pCell the cell to evaluate
      * @return the calculated value
      */
-    protected CellValue evaluateFormula(final XSSFCell pCell) {
+    CellValue evaluateFormula(final XSSFCell pCell) {
         return theExcelBook.evaluateFormula(pCell);
     }
 
@@ -97,7 +97,7 @@ public class MetisExcelXSSFSheet
      * @param pCell the cell to evaluate
      * @return the formatted value
      */
-    protected String formatCellValue(final XSSFCell pCell) {
+    String formatCellValue(final XSSFCell pCell) {
         return theExcelBook.formatCellValue(pCell);
     }
 
@@ -186,7 +186,7 @@ public class MetisExcelXSSFSheet
     @Override
     public void applyDataValidation(final MetisSheetCellPosition pFirstCell,
                                     final MetisSheetCellPosition pLastCell,
-                                    final String pName) throws OceanusException {
+                                    final String pName) {
         if (!isReadOnly) {
             /* Create the CellAddressList */
             final CellRangeAddressList myCells = new CellRangeAddressList(pFirstCell.getRowIndex(), pLastCell.getRowIndex(), pFirstCell.getColumnIndex(),
@@ -199,7 +199,7 @@ public class MetisExcelXSSFSheet
 
     @Override
     public void applyDataFilter(final MetisSheetCellPosition pBaseCell,
-                                final int pNumRows) throws OceanusException {
+                                final int pNumRows) {
         if (!isReadOnly) {
             /* Create the CellAddressList */
             final int myRow = pBaseCell.getRowIndex();
@@ -225,8 +225,8 @@ public class MetisExcelXSSFSheet
      * @param pColIndex the column index
      * @param isHidden true/false
      */
-    protected void setColumnHidden(final int pColIndex,
-                                   final boolean isHidden) {
+    void setColumnHidden(final int pColIndex,
+                         final boolean isHidden) {
         theExcelSheet.setColumnHidden(pColIndex, isHidden);
     }
 
@@ -235,7 +235,7 @@ public class MetisExcelXSSFSheet
      * @param pColIndex the column
      * @return true/false
      */
-    protected boolean isColumnHidden(final int pColIndex) {
+    boolean isColumnHidden(final int pColIndex) {
         return theExcelSheet.isColumnHidden(pColIndex);
     }
 
@@ -244,8 +244,8 @@ public class MetisExcelXSSFSheet
      * @param pColIndex the column index
      * @param pStyle the style
      */
-    protected void setDefaultCellStyle(final int pColIndex,
-                                       final MetisSheetCellStyleType pStyle) {
+    void setDefaultCellStyle(final int pColIndex,
+                             final MetisSheetCellStyleType pStyle) {
         theExcelSheet.setDefaultColumnStyle(pColIndex, theExcelBook.getCellStyle(pStyle));
         theExcelSheet.setColumnWidth(pColIndex, getColumnWidth(pStyle));
     }
@@ -255,8 +255,8 @@ public class MetisExcelXSSFSheet
      * @param pCell the cell to style
      * @param pValue the cell value
      */
-    protected void setCellStyle(final MetisExcelXSSFCell pCell,
-                                final Object pValue) {
+    void setCellStyle(final MetisExcelXSSFCell pCell,
+                      final Object pValue) {
         pCell.setCellStyle(theExcelBook.getCellStyle(pValue));
     }
 
@@ -265,8 +265,8 @@ public class MetisExcelXSSFSheet
      * @param pCell the cell to style
      * @param pValue the cell value
      */
-    protected void setAlternateCellStyle(final MetisExcelXSSFCell pCell,
-                                         final Object pValue) {
+    void setAlternateCellStyle(final MetisExcelXSSFCell pCell,
+                               final Object pValue) {
         pCell.setCellStyle(theExcelBook.getAlternateCellStyle(pValue));
     }
 

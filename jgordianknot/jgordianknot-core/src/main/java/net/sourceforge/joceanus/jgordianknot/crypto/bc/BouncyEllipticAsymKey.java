@@ -36,6 +36,7 @@ import org.bouncycastle.asn1.x9.X9ObjectIdentifiers;
 import org.bouncycastle.crypto.AsymmetricCipherKeyPair;
 import org.bouncycastle.crypto.CryptoException;
 import org.bouncycastle.crypto.DSA;
+import org.bouncycastle.crypto.agreement.ECDHCBasicAgreement;
 import org.bouncycastle.crypto.agreement.ECDHCUnifiedAgreement;
 import org.bouncycastle.crypto.agreement.ECMQVBasicAgreement;
 import org.bouncycastle.crypto.agreement.SM2KeyExchange;
@@ -60,6 +61,7 @@ import org.bouncycastle.math.ec.ECCurve;
 
 import net.sourceforge.joceanus.jgordianknot.GordianCryptoException;
 import net.sourceforge.joceanus.jgordianknot.GordianLogicException;
+import net.sourceforge.joceanus.jgordianknot.crypto.GordianAgreement.GordianBasicAgreement;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianAgreement.GordianEncapsulationAgreement;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianAgreement.GordianEphemeralAgreement;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianAgreementSpec;
@@ -674,6 +676,64 @@ public final class BouncyEllipticAsymKey {
 
             /* Store secret */
             storeSecret(myParms.getKey());
+        }
+    }
+
+    /**
+     * EC Basic Agreement.
+     */
+    public static class BouncyECBasicAgreement
+            extends GordianBasicAgreement {
+        /**
+         * Constructor.
+         * @param pFactory the security factory
+         * @param pSpec the digestSpec
+         */
+        BouncyECBasicAgreement(final BouncyFactory pFactory,
+                               final GordianAgreementSpec pSpec) {
+            /* Initialise underlying class */
+            super(pFactory, pSpec);
+        }
+
+        @Override
+        public byte[] initiateAgreement(final GordianKeyPair pSource,
+                                        final GordianKeyPair pTarget) throws OceanusException {
+            /* Check keyPairs */
+            checkKeyPair(pSource);
+            checkKeyPair(pTarget);
+
+            /* Derive the secret */
+            final ECDHCBasicAgreement myAgreement = new ECDHCBasicAgreement();
+            final BouncyECPrivateKey myPrivate = (BouncyECPrivateKey) getPrivateKey(pSource);
+            myAgreement.init(myPrivate.getPrivateKey());
+            final BouncyECPublicKey myTarget = (BouncyECPublicKey) getPublicKey(pTarget);
+            final BigInteger mySecret = myAgreement.calculateAgreement(myTarget.getPublicKey());
+            storeSecret(mySecret.toByteArray());
+
+            /* Create the message  */
+            return createMessage();
+        }
+
+        @Override
+        public void acceptAgreement(final GordianKeyPair pSource,
+                                    final GordianKeyPair pSelf,
+                                    final byte[] pMessage) throws OceanusException {
+            /* Check keyPair */
+            checkKeyPair(pSource);
+            checkKeyPair(pSelf);
+
+            /* Determine initVector */
+            parseMessage(pMessage);
+            final BouncyECPrivateKey myPrivate = (BouncyECPrivateKey) getPrivateKey(pSelf);
+            final BouncyECPublicKey myPublic = (BouncyECPublicKey) getPublicKey(pSource);
+
+            /* Derive the secret */
+            final ECDHCBasicAgreement myAgreement = new ECDHCBasicAgreement();
+            myAgreement.init(myPrivate.getPrivateKey());
+            final BigInteger mySecret = myAgreement.calculateAgreement(myPublic.getPublicKey());
+
+            /* Store secret */
+            storeSecret(mySecret.toByteArray());
         }
     }
 

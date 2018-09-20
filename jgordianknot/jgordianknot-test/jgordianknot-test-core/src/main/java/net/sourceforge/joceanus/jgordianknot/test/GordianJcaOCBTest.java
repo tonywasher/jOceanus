@@ -80,7 +80,7 @@ public final class GordianJcaOCBTest {
         /* Catch Exceptions */
         try {
             /* Create the generator and generate a key */
-            final KeyGenerator myGenerator = KeyGenerator.getInstance(pAlgorithm, BCPROV);
+            final KeyGenerator myGenerator = KeyGenerator.getInstance(pAlgorithm.startsWith("DSTU") ? "DSTU7624" : pAlgorithm, BCPROV);
 
             /* Initialise the generator */
             final SecureRandom myRandom = new SecureRandom();
@@ -92,7 +92,7 @@ public final class GordianJcaOCBTest {
             myRandom.nextBytes(myIV);
 
             /* Create a OCB Cipher */
-            final Cipher myCipher = Cipher.getInstance(pAlgorithm + "/OCB/NoPadding", BCPROV);
+            final Cipher myCipher = Cipher.getInstance(pAlgorithm + "/OFB/NoPadding", BCPROV);
             myCipher.init(Cipher.ENCRYPT_MODE, myKey, new IvParameterSpec(myIV));
 
             LOGGER.error(pAlgorithm + " OCB JCA init Bug fixed");
