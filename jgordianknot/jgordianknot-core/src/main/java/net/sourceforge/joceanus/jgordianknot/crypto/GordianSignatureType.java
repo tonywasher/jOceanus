@@ -53,5 +53,15 @@ public enum GordianSignatureType {
     /**
      * ISO9796d2.
      */
-    ISO9796D2;
+    ISO9796D2,
+
+    /**
+     * PreHash.
+     */
+    PREHASH,
+
+    /**
+     * Pure.
+     */
+    PURE;
 }

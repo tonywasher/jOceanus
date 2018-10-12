@@ -42,6 +42,7 @@ import org.bouncycastle.crypto.agreement.ECMQVBasicAgreement;
 import org.bouncycastle.crypto.agreement.SM2KeyExchange;
 import org.bouncycastle.crypto.generators.ECKeyPairGenerator;
 import org.bouncycastle.crypto.kems.ECIESKeyEncapsulation;
+import org.bouncycastle.crypto.params.AsymmetricKeyParameter;
 import org.bouncycastle.crypto.params.ECDHUPrivateParameters;
 import org.bouncycastle.crypto.params.ECDHUPublicParameters;
 import org.bouncycastle.crypto.params.ECDomainParameters;
@@ -68,7 +69,6 @@ import net.sourceforge.joceanus.jgordianknot.crypto.GordianAgreementSpec;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianAsymKeySpec;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianAsymKeyType;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianDigestSpec;
-import net.sourceforge.joceanus.jgordianknot.crypto.GordianFactory;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianKeyEncapsulation;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianKeyEncapsulation.GordianKEMSender;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianKeyPair;
@@ -95,58 +95,25 @@ public final class BouncyEllipticAsymKey {
      * Bouncy Elliptic PublicKey.
      */
     public static class BouncyECPublicKey
-            extends BouncyPublicKey {
-        /**
-         * Public Key details.
-         */
-        private final ECPublicKeyParameters theKey;
-
-        /**
+            extends BouncyPublicKey<ECPublicKeyParameters> {
+         /**
          * Constructor.
          * @param pKeySpec the keySpec
          * @param pPublicKey the public key
          */
         BouncyECPublicKey(final GordianAsymKeySpec pKeySpec,
                           final ECPublicKeyParameters pPublicKey) {
-            super(pKeySpec);
-            theKey = pPublicKey;
-        }
-
-        /**
-         * Obtain the public key.
-         * @return the key
-         */
-        protected ECPublicKeyParameters getPublicKey() {
-            return theKey;
+            super(pKeySpec, pPublicKey);
         }
 
         @Override
-        public boolean equals(final Object pThat) {
-            /* Handle the trivial cases */
-            if (pThat == this) {
-                return true;
-            }
-            if (pThat == null) {
-                return false;
-            }
+        protected boolean matchKey(final AsymmetricKeyParameter pThat) {
+            /* Access keys */
+            final ECPublicKeyParameters myThis = getPublicKey();
+            final ECPublicKeyParameters myThat = (ECPublicKeyParameters) pThat;
 
-            /* Make sure that the object is the same class */
-            if (!(pThat instanceof BouncyECPublicKey)) {
-                return false;
-            }
-
-            /* Access the target field */
-            final BouncyECPublicKey myThat = (BouncyECPublicKey) pThat;
-
-            /* Check differences */
-            return getKeySpec().equals(myThat.getKeySpec())
-                   && compareKeys(theKey, myThat.getPublicKey());
-        }
-
-        @Override
-        public int hashCode() {
-            return GordianFactory.HASH_PRIME * getKeySpec().hashCode()
-                   + theKey.hashCode();
+            /* Compare keys */
+            return compareKeys(myThis, myThat);
         }
 
         /**
@@ -156,7 +123,7 @@ public final class BouncyEllipticAsymKey {
          */
         public boolean validPrivate(final BouncyECPrivateKey pPrivate) {
             final ECPrivateKeyParameters myPrivate = pPrivate.getPrivateKey();
-            return theKey.getParameters().equals(myPrivate.getParameters());
+            return getPublicKey().getParameters().equals(myPrivate.getParameters());
         }
 
         /**
@@ -176,12 +143,7 @@ public final class BouncyEllipticAsymKey {
      * Bouncy Elliptic PrivateKey.
      */
     public static class BouncyECPrivateKey
-            extends BouncyPrivateKey {
-        /**
-         * Private Key details.
-         */
-        private final ECPrivateKeyParameters theKey;
-
+            extends BouncyPrivateKey<ECPrivateKeyParameters> {
         /**
          * Constructor.
          * @param pKeySpec the keySpec
@@ -189,45 +151,17 @@ public final class BouncyEllipticAsymKey {
          */
         BouncyECPrivateKey(final GordianAsymKeySpec pKeySpec,
                            final ECPrivateKeyParameters pPrivateKey) {
-            super(pKeySpec);
-            theKey = pPrivateKey;
-        }
-
-        /**
-         * Obtain the private key.
-         * @return the key
-         */
-        protected ECPrivateKeyParameters getPrivateKey() {
-            return theKey;
+            super(pKeySpec, pPrivateKey);
         }
 
         @Override
-        public boolean equals(final Object pThat) {
-            /* Handle the trivial cases */
-            if (pThat == this) {
-                return true;
-            }
-            if (pThat == null) {
-                return false;
-            }
+        protected boolean matchKey(final AsymmetricKeyParameter pThat) {
+            /* Access keys */
+            final ECPrivateKeyParameters myThis = getPrivateKey();
+            final ECPrivateKeyParameters myThat = (ECPrivateKeyParameters) pThat;
 
-            /* Make sure that the object is the same class */
-            if (!(pThat instanceof BouncyECPrivateKey)) {
-                return false;
-            }
-
-            /* Access the target field */
-            final BouncyECPrivateKey myThat = (BouncyECPrivateKey) pThat;
-
-            /* Check differences */
-            return getKeySpec().equals(myThat.getKeySpec())
-                   && compareKeys(theKey, myThat.getPrivateKey());
-        }
-
-        @Override
-        public int hashCode() {
-            return GordianFactory.HASH_PRIME * getKeySpec().hashCode()
-                   + theKey.hashCode();
+            /* Compare keys */
+            return compareKeys(myThis, myThat);
         }
 
         /**
@@ -296,14 +230,14 @@ public final class BouncyEllipticAsymKey {
         @Override
         public BouncyKeyPair generateKeyPair() {
             final AsymmetricCipherKeyPair myPair = theGenerator.generateKeyPair();
-            final BouncyECPublicKey myPublic = new BouncyECPublicKey(getKeySpec(), ECPublicKeyParameters.class.cast(myPair.getPublic()));
-            final BouncyECPrivateKey myPrivate = new BouncyECPrivateKey(getKeySpec(), ECPrivateKeyParameters.class.cast(myPair.getPrivate()));
+            final BouncyECPublicKey myPublic = new BouncyECPublicKey(getKeySpec(), (ECPublicKeyParameters) myPair.getPublic());
+            final BouncyECPrivateKey myPrivate = new BouncyECPrivateKey(getKeySpec(), (ECPrivateKeyParameters) myPair.getPrivate());
             return new BouncyKeyPair(myPublic, myPrivate);
         }
 
         @Override
         public PKCS8EncodedKeySpec getPKCS8Encoding(final GordianKeyPair pKeyPair) throws OceanusException {
-            final BouncyECPrivateKey myPrivateKey = BouncyECPrivateKey.class.cast(getPrivateKey(pKeyPair));
+            final BouncyECPrivateKey myPrivateKey = (BouncyECPrivateKey) getPrivateKey(pKeyPair);
             final ECPrivateKeyParameters myParms = myPrivateKey.getPrivateKey();
             final X962Parameters myX962Parms = new X962Parameters(ECUtil.getNamedCurveOid(theCurve));
             final BigInteger myOrder = myParms.getParameters().getCurve().getOrder();
@@ -331,7 +265,7 @@ public final class BouncyEllipticAsymKey {
 
         @Override
         public X509EncodedKeySpec getX509Encoding(final GordianKeyPair pKeyPair) throws OceanusException {
-            final BouncyECPublicKey myPublicKey = BouncyECPublicKey.class.cast(getPublicKey(pKeyPair));
+            final BouncyECPublicKey myPublicKey = (BouncyECPublicKey) getPublicKey(pKeyPair);
             final ECPublicKeyParameters myParms = myPublicKey.getPublicKey();
             final X962Parameters myX962Parms = new X962Parameters(ECUtil.getNamedCurveOid(theCurve));
             final ECCurve myCurve = theDomain.getCurve();

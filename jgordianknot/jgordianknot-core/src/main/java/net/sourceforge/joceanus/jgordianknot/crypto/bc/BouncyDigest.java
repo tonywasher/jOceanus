@@ -72,7 +72,9 @@ public final class BouncyDigest
 
     @Override
     public int getDigestSize() {
-        return theDigestSpec.getDigestLength().getByteLength();
+        return theDigestSpec != null
+                    ? theDigestSpec.getDigestLength().getByteLength()
+                    : theDigest.getDigestSize();
     }
 
     @Override

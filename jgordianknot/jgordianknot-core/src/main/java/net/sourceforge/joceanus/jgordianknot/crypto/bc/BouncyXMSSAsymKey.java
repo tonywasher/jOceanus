@@ -31,6 +31,7 @@ import org.bouncycastle.crypto.KeyGenerationParameters;
 import org.bouncycastle.crypto.digests.SHA256Digest;
 import org.bouncycastle.crypto.digests.SHA512Digest;
 import org.bouncycastle.crypto.digests.SHAKEDigest;
+import org.bouncycastle.crypto.params.AsymmetricKeyParameter;
 import org.bouncycastle.pqc.asn1.XMSSKeyParams;
 import org.bouncycastle.pqc.asn1.XMSSMTKeyParams;
 import org.bouncycastle.pqc.asn1.XMSSMTPrivateKey;
@@ -59,10 +60,11 @@ import org.bouncycastle.pqc.jcajce.provider.xmss.BCXMSSPublicKey;
 
 import net.sourceforge.joceanus.jgordianknot.GordianCryptoException;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianAsymKeySpec;
-import net.sourceforge.joceanus.jgordianknot.crypto.GordianFactory;
+import net.sourceforge.joceanus.jgordianknot.crypto.GordianDigestSpec;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianKeyPair;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianLength;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianSignatureSpec;
+import net.sourceforge.joceanus.jgordianknot.crypto.GordianSignatureType;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianXMSSKeyType;
 import net.sourceforge.joceanus.jgordianknot.crypto.bc.BouncyKeyPair.BouncyPrivateKey;
 import net.sourceforge.joceanus.jgordianknot.crypto.bc.BouncyKeyPair.BouncyPublicKey;
@@ -83,12 +85,7 @@ public final class BouncyXMSSAsymKey {
      * Bouncy XMSS PublicKey.
      */
     public static class BouncyXMSSPublicKey
-            extends BouncyPublicKey {
-        /**
-         * Public Key details.
-         */
-        private final XMSSPublicKeyParameters theKey;
-
+            extends BouncyPublicKey<XMSSPublicKeyParameters> {
         /**
          * Constructor.
          * @param pKeySpec the keySpec
@@ -96,54 +93,17 @@ public final class BouncyXMSSAsymKey {
          */
         BouncyXMSSPublicKey(final GordianAsymKeySpec pKeySpec,
                             final XMSSPublicKeyParameters pPublicKey) {
-            super(pKeySpec);
-            theKey = pPublicKey;
-        }
-
-        /**
-         * Obtain the public key.
-         * @return the key
-         */
-        protected XMSSPublicKeyParameters getPublicKey() {
-            return theKey;
+            super(pKeySpec, pPublicKey);
         }
 
         @Override
-        public boolean equals(final Object pThat) {
-            /* Handle the trivial cases */
-            if (pThat == this) {
-                return true;
-            }
-            if (pThat == null) {
-                return false;
-            }
+        protected boolean matchKey(final AsymmetricKeyParameter pThat) {
+            /* Access keys */
+            final XMSSPublicKeyParameters myThis = getPublicKey();
+            final XMSSPublicKeyParameters myThat = (XMSSPublicKeyParameters) pThat;
 
-            /* Make sure that the object is the same class */
-            if (!(pThat instanceof BouncyXMSSPublicKey)) {
-                return false;
-            }
-
-            /* Access the target field */
-            final BouncyXMSSPublicKey myThat = (BouncyXMSSPublicKey) pThat;
-
-            /* Check differences */
-            return getKeySpec().equals(myThat.getKeySpec())
-                   && compareKeys(myThat);
-        }
-
-        @Override
-        public int hashCode() {
-            return GordianFactory.HASH_PRIME * getKeySpec().hashCode()
-                   + theKey.hashCode();
-        }
-
-        /**
-         * CompareKeys.
-         * @param pThat the key to compare with
-         * @return true/false
-         */
-        private boolean compareKeys(final BouncyXMSSPublicKey pThat) {
-            return compareKeys(getPublicKey(), pThat.getPublicKey());
+            /* Check equality */
+            return compareKeys(myThis, myThat);
         }
 
         /**
@@ -172,12 +132,7 @@ public final class BouncyXMSSAsymKey {
      * Bouncy XMSS PrivateKey.
      */
     public static class BouncyXMSSPrivateKey
-            extends BouncyPrivateKey {
-        /**
-         * Private Key details.
-         */
-        private final XMSSPrivateKeyParameters theKey;
-
+            extends BouncyPrivateKey<XMSSPrivateKeyParameters> {
         /**
          * Constructor.
          * @param pKeySpec the keySpec
@@ -185,54 +140,17 @@ public final class BouncyXMSSAsymKey {
          */
         BouncyXMSSPrivateKey(final GordianAsymKeySpec pKeySpec,
                              final XMSSPrivateKeyParameters pPrivateKey) {
-            super(pKeySpec);
-            theKey = pPrivateKey;
-        }
-
-        /**
-         * Obtain the private key.
-         * @return the key
-         */
-        protected XMSSPrivateKeyParameters getPrivateKey() {
-            return theKey;
+            super(pKeySpec, pPrivateKey);
         }
 
         @Override
-        public boolean equals(final Object pThat) {
-            /* Handle the trivial cases */
-            if (pThat == this) {
-                return true;
-            }
-            if (pThat == null) {
-                return false;
-            }
+        protected boolean matchKey(final AsymmetricKeyParameter pThat) {
+            /* Access keys */
+            final XMSSPrivateKeyParameters myThis = getPrivateKey();
+            final XMSSPrivateKeyParameters myThat = (XMSSPrivateKeyParameters) pThat;
 
-            /* Make sure that the object is the same class */
-            if (!(pThat instanceof BouncyXMSSPrivateKey)) {
-                return false;
-            }
-
-            /* Access the target field */
-            final BouncyXMSSPrivateKey myThat = (BouncyXMSSPrivateKey) pThat;
-
-            /* Check differences */
-            return getKeySpec().equals(myThat.getKeySpec())
-                   && compareKeys(myThat);
-        }
-
-        @Override
-        public int hashCode() {
-            return GordianFactory.HASH_PRIME * getKeySpec().hashCode()
-                   + theKey.hashCode();
-        }
-
-        /**
-         * CompareKeys.
-         * @param pThat the key to compare with
-         * @return true/false
-         */
-        private boolean compareKeys(final BouncyXMSSPrivateKey pThat) {
-            return compareKeys(getPrivateKey(), pThat.getPrivateKey());
+            /* Check equality */
+            return compareKeys(myThis, myThat);
         }
 
         /**
@@ -285,14 +203,14 @@ public final class BouncyXMSSAsymKey {
         @Override
         public BouncyKeyPair generateKeyPair() {
             final AsymmetricCipherKeyPair myPair = theGenerator.generateKeyPair();
-            final BouncyXMSSPublicKey myPublic = new BouncyXMSSPublicKey(getKeySpec(), XMSSPublicKeyParameters.class.cast(myPair.getPublic()));
-            final BouncyXMSSPrivateKey myPrivate = new BouncyXMSSPrivateKey(getKeySpec(), XMSSPrivateKeyParameters.class.cast(myPair.getPrivate()));
+            final BouncyXMSSPublicKey myPublic = new BouncyXMSSPublicKey(getKeySpec(), (XMSSPublicKeyParameters) myPair.getPublic());
+            final BouncyXMSSPrivateKey myPrivate = new BouncyXMSSPrivateKey(getKeySpec(), (XMSSPrivateKeyParameters) myPair.getPrivate());
             return new BouncyKeyPair(myPublic, myPrivate);
         }
 
         @Override
         public PKCS8EncodedKeySpec getPKCS8Encoding(final GordianKeyPair pKeyPair) {
-            final BouncyXMSSPrivateKey myPrivateKey = BouncyXMSSPrivateKey.class.cast(getPrivateKey(pKeyPair));
+            final BouncyXMSSPrivateKey myPrivateKey = (BouncyXMSSPrivateKey) getPrivateKey(pKeyPair);
             final XMSSPrivateKeyParameters myParms = myPrivateKey.getPrivateKey();
             final BCXMSSPrivateKey myKey = new BCXMSSPrivateKey(getOID(getKeyType()), myParms);
             return new PKCS8EncodedKeySpec(myKey.getEncoded());
@@ -314,8 +232,7 @@ public final class BouncyXMSSAsymKey {
                                 .withRoot(myKey.getRoot());
                 if (myKey.getBdsState() != null) {
                     final BDS myImport = (BDS) XMSSUtil.deserialize(myKey.getBdsState(), BDS.class);
-                    //myBuilder.withBDSState(myImport.withWOTSDigest(myParams.getTreeDigest().getAlgorithm()));
-                    myBuilder.withBDSState(myImport);
+                    myBuilder.withBDSState(myImport.withWOTSDigest(myParams.getTreeDigest().getAlgorithm()));
                 }
                 final XMSSPrivateKeyParameters myPrivateParms = myBuilder.build();
 
@@ -331,7 +248,7 @@ public final class BouncyXMSSAsymKey {
 
         @Override
         public X509EncodedKeySpec getX509Encoding(final GordianKeyPair pKeyPair) {
-            final BouncyXMSSPublicKey myPublicKey = BouncyXMSSPublicKey.class.cast(getPublicKey(pKeyPair));
+            final BouncyXMSSPublicKey myPublicKey = (BouncyXMSSPublicKey) getPublicKey(pKeyPair);
             final XMSSPublicKeyParameters myParms = myPublicKey.getPublicKey();
             final BCXMSSPublicKey myKey = new BCXMSSPublicKey(getOID(getKeyType()), myParms);
             return new X509EncodedKeySpec(myKey.getEncoded());
@@ -408,12 +325,7 @@ public final class BouncyXMSSAsymKey {
      * Bouncy XMSSMT PublicKey.
      */
     public static class BouncyXMSSMTPublicKey
-            extends BouncyPublicKey {
-        /**
-         * Public Key details.
-         */
-        private final XMSSMTPublicKeyParameters theKey;
-
+            extends BouncyPublicKey<XMSSMTPublicKeyParameters> {
         /**
          * Constructor.
          * @param pKeySpec the keySpec
@@ -421,54 +333,18 @@ public final class BouncyXMSSAsymKey {
          */
         BouncyXMSSMTPublicKey(final GordianAsymKeySpec pKeySpec,
                               final XMSSMTPublicKeyParameters pPublicKey) {
-            super(pKeySpec);
-            theKey = pPublicKey;
+            super(pKeySpec, pPublicKey);
         }
 
-        /**
-         * Obtain the public key.
-         * @return the key
-         */
-        protected XMSSMTPublicKeyParameters getPublicKey() {
-            return theKey;
-        }
 
         @Override
-        public boolean equals(final Object pThat) {
-            /* Handle the trivial cases */
-            if (pThat == this) {
-                return true;
-            }
-            if (pThat == null) {
-                return false;
-            }
+        protected boolean matchKey(final AsymmetricKeyParameter pThat) {
+            /* Access keys */
+            final XMSSMTPublicKeyParameters myThis = getPublicKey();
+            final XMSSMTPublicKeyParameters myThat = (XMSSMTPublicKeyParameters) pThat;
 
-            /* Make sure that the object is the same class */
-            if (!(pThat instanceof BouncyXMSSMTPublicKey)) {
-                return false;
-            }
-
-            /* Access the target field */
-            final BouncyXMSSMTPublicKey myThat = (BouncyXMSSMTPublicKey) pThat;
-
-            /* Check differences */
-            return getKeySpec().equals(myThat.getKeySpec())
-                   && compareKeys(myThat);
-        }
-
-        @Override
-        public int hashCode() {
-            return GordianFactory.HASH_PRIME * getKeySpec().hashCode()
-                   + theKey.hashCode();
-        }
-
-        /**
-         * CompareKeys.
-         * @param pThat the key to compare with
-         * @return true/false
-         */
-        private boolean compareKeys(final BouncyXMSSMTPublicKey pThat) {
-            return compareKeys(getPublicKey(), pThat.getPublicKey());
+            /* Check equality */
+            return compareKeys(myThis, myThat);
         }
 
         /**
@@ -497,12 +373,7 @@ public final class BouncyXMSSAsymKey {
      * Bouncy XMSSMT PrivateKey.
      */
     public static class BouncyXMSSMTPrivateKey
-            extends BouncyPrivateKey {
-        /**
-         * Private Key details.
-         */
-        private final XMSSMTPrivateKeyParameters theKey;
-
+            extends BouncyPrivateKey<XMSSMTPrivateKeyParameters> {
         /**
          * Constructor.
          * @param pKeySpec the keySpec
@@ -510,54 +381,18 @@ public final class BouncyXMSSAsymKey {
          */
         BouncyXMSSMTPrivateKey(final GordianAsymKeySpec pKeySpec,
                                final XMSSMTPrivateKeyParameters pPrivateKey) {
-            super(pKeySpec);
-            theKey = pPrivateKey;
+            super(pKeySpec, pPrivateKey);
         }
 
-        /**
-         * Obtain the private key.
-         * @return the key
-         */
-        protected XMSSMTPrivateKeyParameters getPrivateKey() {
-            return theKey;
-        }
 
         @Override
-        public boolean equals(final Object pThat) {
-            /* Handle the trivial cases */
-            if (pThat == this) {
-                return true;
-            }
-            if (pThat == null) {
-                return false;
-            }
+        protected boolean matchKey(final AsymmetricKeyParameter pThat) {
+            /* Access keys */
+            final XMSSMTPrivateKeyParameters myThis = getPrivateKey();
+            final XMSSMTPrivateKeyParameters myThat = (XMSSMTPrivateKeyParameters) pThat;
 
-            /* Make sure that the object is the same class */
-            if (!(pThat instanceof BouncyXMSSMTPrivateKey)) {
-                return false;
-            }
-
-            /* Access the target field */
-            final BouncyXMSSMTPrivateKey myThat = (BouncyXMSSMTPrivateKey) pThat;
-
-            /* Check differences */
-            return getKeySpec().equals(myThat.getKeySpec())
-                   && compareKeys(myThat);
-        }
-
-        @Override
-        public int hashCode() {
-            return GordianFactory.HASH_PRIME * getKeySpec().hashCode()
-                   + theKey.hashCode();
-        }
-
-        /**
-         * CompareKeys.
-         * @param pThat the key to compare with
-         * @return true/false
-         */
-        private boolean compareKeys(final BouncyXMSSMTPrivateKey pThat) {
-            return compareKeys(getPrivateKey(), pThat.getPrivateKey());
+            /* Check equality */
+            return compareKeys(myThis, myThat);
         }
 
         /**
@@ -611,14 +446,14 @@ public final class BouncyXMSSAsymKey {
         @Override
         public BouncyKeyPair generateKeyPair() {
             final AsymmetricCipherKeyPair myPair = theGenerator.generateKeyPair();
-            final BouncyXMSSMTPublicKey myPublic = new BouncyXMSSMTPublicKey(getKeySpec(), XMSSMTPublicKeyParameters.class.cast(myPair.getPublic()));
-            final BouncyXMSSMTPrivateKey myPrivate = new BouncyXMSSMTPrivateKey(getKeySpec(), XMSSMTPrivateKeyParameters.class.cast(myPair.getPrivate()));
+            final BouncyXMSSMTPublicKey myPublic = new BouncyXMSSMTPublicKey(getKeySpec(), (XMSSMTPublicKeyParameters) myPair.getPublic());
+            final BouncyXMSSMTPrivateKey myPrivate = new BouncyXMSSMTPrivateKey(getKeySpec(), (XMSSMTPrivateKeyParameters) myPair.getPrivate());
             return new BouncyKeyPair(myPublic, myPrivate);
         }
 
         @Override
         public PKCS8EncodedKeySpec getPKCS8Encoding(final GordianKeyPair pKeyPair) {
-            final BouncyXMSSMTPrivateKey myPrivateKey = BouncyXMSSMTPrivateKey.class.cast(getPrivateKey(pKeyPair));
+            final BouncyXMSSMTPrivateKey myPrivateKey = (BouncyXMSSMTPrivateKey) getPrivateKey(pKeyPair);
             final XMSSMTPrivateKeyParameters myParms = myPrivateKey.getPrivateKey();
             final BCXMSSMTPrivateKey myKey = new BCXMSSMTPrivateKey(getOID(getKeyType()), myParms);
             return new PKCS8EncodedKeySpec(myKey.getEncoded());
@@ -640,8 +475,7 @@ public final class BouncyXMSSAsymKey {
                                 .withRoot(myKey.getRoot());
                 if (myKey.getBdsState() != null) {
                     final BDSStateMap myImport = (BDSStateMap) XMSSUtil.deserialize(myKey.getBdsState(), BDSStateMap.class);
-                    //myBuilder.withBDSState(myImport.withWOTSDigest(myParams.getTreeDigest().getAlgorithm()));
-                    myBuilder.withBDSState(myImport);
+                    myBuilder.withBDSState(myImport.withWOTSDigest(myParams.getTreeDigest().getAlgorithm()));
                 }
                 final XMSSMTPrivateKeyParameters myPrivateParms = myBuilder.build();
 
@@ -657,7 +491,7 @@ public final class BouncyXMSSAsymKey {
 
         @Override
         public X509EncodedKeySpec getX509Encoding(final GordianKeyPair pKeyPair) {
-            final BouncyXMSSMTPublicKey myPublicKey = BouncyXMSSMTPublicKey.class.cast(getPublicKey(pKeyPair));
+            final BouncyXMSSMTPublicKey myPublicKey = (BouncyXMSSMTPublicKey) getPublicKey(pKeyPair);
             final XMSSMTPublicKeyParameters myParms = myPublicKey.getPublicKey();
             final BCXMSSMTPublicKey myKey = new BCXMSSMTPublicKey(getOID(getKeyType()), myParms);
             return new X509EncodedKeySpec(myKey.getEncoded());
@@ -698,6 +532,11 @@ public final class BouncyXMSSAsymKey {
     public static class BouncyXMSSSignature
             extends BouncyDigestSignature {
         /**
+         * Is this a preHash signature?
+         */
+        private final boolean preHash;
+
+        /**
          * The XMSS Signer.
          */
         private final XMSSSigner theSigner;
@@ -715,6 +554,9 @@ public final class BouncyXMSSAsymKey {
 
             /* Create the signer */
             theSigner = new XMSSSigner();
+
+            /* Determine preHash */
+            preHash = GordianSignatureType.PREHASH.equals(pSpec.getSignatureType());
         }
 
 
@@ -722,6 +564,10 @@ public final class BouncyXMSSAsymKey {
         public void initForSigning(final GordianKeyPair pKeyPair) throws OceanusException {
             /* Initialise detail */
             super.initForSigning(pKeyPair);
+
+            /* Set the digest */
+            final GordianDigestSpec myDigestSpec = pKeyPair.getKeySpec().getXMSSKeyType().getDigestSpec();
+            setDigest(preHash ? myDigestSpec : null);
 
             /* Initialise and set the signer */
             final BouncyXMSSPrivateKey myPrivate = (BouncyXMSSPrivateKey) getKeyPair().getPrivateKey();
@@ -732,6 +578,10 @@ public final class BouncyXMSSAsymKey {
         public void initForVerify(final GordianKeyPair pKeyPair) throws OceanusException {
             /* Initialise detail */
             super.initForVerify(pKeyPair);
+
+            /* Set the digest */
+            final GordianDigestSpec myDigestSpec = pKeyPair.getKeySpec().getXMSSKeyType().getDigestSpec();
+            setDigest(preHash ? myDigestSpec : null);
 
             /* Initialise and set the signer */
             final BouncyXMSSPublicKey myPublic = (BouncyXMSSPublicKey) getKeyPair().getPublicKey();
@@ -763,6 +613,11 @@ public final class BouncyXMSSAsymKey {
     public static class BouncyXMSSMTSignature
             extends BouncyDigestSignature {
         /**
+         * Is this a preHash signature?
+         */
+        private final boolean preHash;
+
+        /**
          * The XMSS Signer.
          */
         private final XMSSMTSigner theSigner;
@@ -780,13 +635,19 @@ public final class BouncyXMSSAsymKey {
 
             /* Create the signer */
             theSigner = new XMSSMTSigner();
-        }
 
+            /* Determine preHash */
+            preHash = GordianSignatureType.PREHASH.equals(pSpec.getSignatureType());
+       }
 
         @Override
         public void initForSigning(final GordianKeyPair pKeyPair) throws OceanusException {
             /* Initialise detail */
             super.initForSigning(pKeyPair);
+
+            /* Set the digest */
+            final GordianDigestSpec myDigestSpec = pKeyPair.getKeySpec().getXMSSKeyType().getDigestSpec();
+            setDigest(preHash ? myDigestSpec : null);
 
             /* Initialise and set the signer */
             final BouncyXMSSMTPrivateKey myPrivate = (BouncyXMSSMTPrivateKey) getKeyPair().getPrivateKey();
@@ -797,6 +658,10 @@ public final class BouncyXMSSAsymKey {
         public void initForVerify(final GordianKeyPair pKeyPair) throws OceanusException {
             /* Initialise detail */
             super.initForVerify(pKeyPair);
+
+            /* Set the digest */
+            final GordianDigestSpec myDigestSpec = pKeyPair.getKeySpec().getXMSSKeyType().getDigestSpec();
+            setDigest(preHash ? myDigestSpec : null);
 
             /* Initialise and set the signer */
             final BouncyXMSSMTPublicKey myPublic = (BouncyXMSSMTPublicKey) getKeyPair().getPublicKey();

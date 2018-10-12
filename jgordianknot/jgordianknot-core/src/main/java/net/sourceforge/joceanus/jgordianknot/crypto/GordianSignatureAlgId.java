@@ -246,15 +246,36 @@ public class GordianSignatureAlgId {
      */
     private void addSignatures(final GordianAsymKeyType pKeyType,
                                final GordianSignatureType pSigType) {
-         for (GordianDigestSpec mySpec : theDigests) {
+        /* If we have a digestSpec */
+        if (GordianSignatureType.PURE.equals(pSigType)) {
             /* Create the corresponding signatureSpec */
-            final GordianSignatureSpec mySign = new GordianSignatureSpec(pKeyType, pSigType, mySpec);
+            final GordianSignatureSpec mySign = new GordianSignatureSpec(pKeyType, pSigType, null);
 
-            /* If the signature is supported and not already known */
-            if (thePredicate.test(mySign)
-                && !theSpecMap.containsKey(mySign)) {
-                addSignature(mySign);
+            /* Ensure signature is in map */
+            ensureSignature(mySign);
+
+            /* else we use digests */
+        } else {
+            /* loop through all digests */
+            for (GordianDigestSpec mySpec : theDigests) {
+                /* Create the corresponding signatureSpec */
+                final GordianSignatureSpec mySign = new GordianSignatureSpec(pKeyType, pSigType, mySpec);
+
+                /* Ensure signature is in map */
+                ensureSignature(mySign);
             }
+        }
+    }
+
+    /**
+     * Add sigSpec to map if supported and not already present.
+     * @param pSigSpec the signatureSpec
+     */
+    private void ensureSignature(final GordianSignatureSpec pSigSpec) {
+        /* If the signature is supported and not already known */
+        if (thePredicate.test(pSigSpec)
+                && !theSpecMap.containsKey(pSigSpec)) {
+            addSignature(pSigSpec);
         }
     }
 
@@ -271,15 +292,18 @@ public class GordianSignatureAlgId {
         final GordianSignatureType mySigType = pSigSpec.getSignatureType();
         myId = myId.branch(Integer.toString(mySigType.ordinal() + 1));
 
-        /* Create a branch for digest based on the DigestType/Length/State */
-        final GordianDigestSpec myDigestSpec = pSigSpec.getDigestSpec();
-        myId = myId.branch(Integer.toString(myDigestSpec.getDigestType().ordinal() + 1));
-        myId = myId.branch(Integer.toString(myDigestSpec.getDigestLength().ordinal() + 1));
+        /* If we have a digestSpec */
+        if (!GordianSignatureType.PURE.equals(mySigType)) {
+            /* Create a branch for digest based on the DigestType/Length/State */
+            final GordianDigestSpec myDigestSpec = pSigSpec.getDigestSpec();
+            myId = myId.branch(Integer.toString(myDigestSpec.getDigestType().ordinal() + 1));
+            myId = myId.branch(Integer.toString(myDigestSpec.getDigestLength().ordinal() + 1));
 
-        /* Add an additional branch if there is a stateLength */
-        final GordianLength myState = myDigestSpec.getStateLength();
-        if (myState != null) {
-            myId = myId.branch(Integer.toString(myState.ordinal() + 1));
+            /* Add an additional branch if there is a stateLength */
+            final GordianLength myState = myDigestSpec.getStateLength();
+            if (myState != null) {
+                myId = myId.branch(Integer.toString(myState.ordinal() + 1));
+            }
         }
 
         /* Add the id to the maps */

@@ -14,8 +14,7 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  ******************************************************************************/
-package net.sourceforge.joceanus.jmetis.service.sheet;
-
 /**
  * Service definition for SpreadSheet PlugIns.
  */
+package net.sourceforge.joceanus.jmetis.service.sheet;

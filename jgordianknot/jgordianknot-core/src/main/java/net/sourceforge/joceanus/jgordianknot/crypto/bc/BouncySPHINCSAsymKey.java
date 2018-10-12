@@ -32,6 +32,7 @@ import org.bouncycastle.crypto.AsymmetricCipherKeyPair;
 import org.bouncycastle.crypto.Digest;
 import org.bouncycastle.crypto.digests.SHA3Digest;
 import org.bouncycastle.crypto.digests.SHA512tDigest;
+import org.bouncycastle.crypto.params.AsymmetricKeyParameter;
 import org.bouncycastle.jcajce.provider.asymmetric.util.KeyUtil;
 import org.bouncycastle.pqc.asn1.PQCObjectIdentifiers;
 import org.bouncycastle.pqc.asn1.SPHINCS256KeyParams;
@@ -44,7 +45,6 @@ import org.bouncycastle.pqc.crypto.sphincs.SPHINCSPublicKeyParameters;
 import net.sourceforge.joceanus.jgordianknot.GordianCryptoException;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianAsymKeySpec;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianDigestSpec;
-import net.sourceforge.joceanus.jgordianknot.crypto.GordianFactory;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianKeyPair;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianLength;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianSPHINCSKeyType;
@@ -68,12 +68,7 @@ public final class BouncySPHINCSAsymKey {
      * Bouncy SPHINCS PublicKey.
      */
     public static class BouncySPHINCSPublicKey
-            extends BouncyPublicKey {
-        /**
-         * Public Key details.
-         */
-        private final SPHINCSPublicKeyParameters theKey;
-
+            extends BouncyPublicKey<SPHINCSPublicKeyParameters> {
         /**
          * Constructor.
          * @param pKeySpec the keySpec
@@ -81,45 +76,17 @@ public final class BouncySPHINCSAsymKey {
          */
         BouncySPHINCSPublicKey(final GordianAsymKeySpec pKeySpec,
                                final SPHINCSPublicKeyParameters pPublicKey) {
-            super(pKeySpec);
-            theKey = pPublicKey;
-        }
-
-        /**
-         * Obtain the public key.
-         * @return the key
-         */
-        protected SPHINCSPublicKeyParameters getPublicKey() {
-            return theKey;
+            super(pKeySpec, pPublicKey);
         }
 
         @Override
-        public boolean equals(final Object pThat) {
-            /* Handle the trivial cases */
-            if (pThat == this) {
-                return true;
-            }
-            if (pThat == null) {
-                return false;
-            }
+        protected boolean matchKey(final AsymmetricKeyParameter pThat) {
+            /* Access keys */
+            final SPHINCSPublicKeyParameters myThis = getPublicKey();
+            final SPHINCSPublicKeyParameters myThat = (SPHINCSPublicKeyParameters) pThat;
 
-            /* Make sure that the object is the same class */
-            if (!(pThat instanceof BouncySPHINCSPublicKey)) {
-                return false;
-            }
-
-            /* Access the target field */
-            final BouncySPHINCSPublicKey myThat = (BouncySPHINCSPublicKey) pThat;
-
-            /* Check differences */
-            return getKeySpec().equals(myThat.getKeySpec())
-                   && compareKeys(theKey, myThat.getPublicKey());
-        }
-
-        @Override
-        public int hashCode() {
-            return GordianFactory.HASH_PRIME * getKeySpec().hashCode()
-                   + theKey.hashCode();
+            /* Compare keys */
+            return compareKeys(myThis, myThat);
         }
 
         /**
@@ -138,12 +105,7 @@ public final class BouncySPHINCSAsymKey {
      * Bouncy SPHINCS PrivateKey.
      */
     public static class BouncySPHINCSPrivateKey
-            extends BouncyPrivateKey {
-        /**
-         * Private Key details.
-         */
-        private final SPHINCSPrivateKeyParameters theKey;
-
+            extends BouncyPrivateKey<SPHINCSPrivateKeyParameters> {
         /**
          * Constructor.
          * @param pKeySpec the keySpec
@@ -151,45 +113,18 @@ public final class BouncySPHINCSAsymKey {
          */
         BouncySPHINCSPrivateKey(final GordianAsymKeySpec pKeySpec,
                                 final SPHINCSPrivateKeyParameters pPrivateKey) {
-            super(pKeySpec);
-            theKey = pPrivateKey;
+            super(pKeySpec, pPrivateKey);
         }
 
-        /**
-         * Obtain the private key.
-         * @return the key
-         */
-        protected SPHINCSPrivateKeyParameters getPrivateKey() {
-            return theKey;
-        }
 
         @Override
-        public boolean equals(final Object pThat) {
-            /* Handle the trivial cases */
-            if (pThat == this) {
-                return true;
-            }
-            if (pThat == null) {
-                return false;
-            }
+        protected boolean matchKey(final AsymmetricKeyParameter pThat) {
+            /* Access keys */
+            final SPHINCSPrivateKeyParameters myThis = getPrivateKey();
+            final SPHINCSPrivateKeyParameters myThat = (SPHINCSPrivateKeyParameters) pThat;
 
-            /* Make sure that the object is the same class */
-            if (!(pThat instanceof BouncySPHINCSPrivateKey)) {
-                return false;
-            }
-
-            /* Access the target field */
-            final BouncySPHINCSPrivateKey myThat = (BouncySPHINCSPrivateKey) pThat;
-
-            /* Check differences */
-            return getKeySpec().equals(myThat.getKeySpec())
-                   && compareKeys(theKey, myThat.getPrivateKey());
-        }
-
-        @Override
-        public int hashCode() {
-            return GordianFactory.HASH_PRIME * getKeySpec().hashCode()
-                   + theKey.hashCode();
+            /* Compare keys */
+            return compareKeys(myThis, myThat);
         }
 
         /**
@@ -251,15 +186,15 @@ public final class BouncySPHINCSAsymKey {
         @Override
         public BouncyKeyPair generateKeyPair() {
             final AsymmetricCipherKeyPair myPair = theGenerator.generateKeyPair();
-            final BouncySPHINCSPublicKey myPublic = new BouncySPHINCSPublicKey(getKeySpec(), SPHINCSPublicKeyParameters.class.cast(myPair.getPublic()));
-            final BouncySPHINCSPrivateKey myPrivate = new BouncySPHINCSPrivateKey(getKeySpec(), SPHINCSPrivateKeyParameters.class.cast(myPair.getPrivate()));
+            final BouncySPHINCSPublicKey myPublic = new BouncySPHINCSPublicKey(getKeySpec(), (SPHINCSPublicKeyParameters) myPair.getPublic());
+            final BouncySPHINCSPrivateKey myPrivate = new BouncySPHINCSPrivateKey(getKeySpec(), (SPHINCSPrivateKeyParameters) myPair.getPrivate());
             return new BouncyKeyPair(myPublic, myPrivate);
         }
 
         @Override
         public PKCS8EncodedKeySpec getPKCS8Encoding(final GordianKeyPair pKeyPair) throws OceanusException {
             try {
-                final BouncySPHINCSPrivateKey myPrivateKey = BouncySPHINCSPrivateKey.class.cast(getPrivateKey(pKeyPair));
+                final BouncySPHINCSPrivateKey myPrivateKey = (BouncySPHINCSPrivateKey) getPrivateKey(pKeyPair);
                 final SPHINCSPrivateKeyParameters myParms = myPrivateKey.getPrivateKey();
                 final PrivateKeyInfo myInfo = new PrivateKeyInfo(theAlgorithmId, new DEROctetString(myParms.getKeyData()));
                 return new PKCS8EncodedKeySpec(myInfo.getEncoded());
@@ -284,7 +219,7 @@ public final class BouncySPHINCSAsymKey {
 
         @Override
         public X509EncodedKeySpec getX509Encoding(final GordianKeyPair pKeyPair) throws OceanusException {
-            final BouncySPHINCSPublicKey myPublicKey = BouncySPHINCSPublicKey.class.cast(getPublicKey(pKeyPair));
+            final BouncySPHINCSPublicKey myPublicKey = (BouncySPHINCSPublicKey) getPublicKey(pKeyPair);
             final SPHINCSPublicKeyParameters myParms = myPublicKey.getPublicKey();
             final SubjectPublicKeyInfo myInfo = new SubjectPublicKeyInfo(theAlgorithmId, myParms.getKeyData());
             final byte[] myBytes = KeyUtil.getEncodedSubjectPublicKeyInfo(myInfo);
@@ -357,6 +292,10 @@ public final class BouncySPHINCSAsymKey {
             /* Initialise detail */
             super.initForSigning(pKeyPair);
 
+            /* Set the digest */
+            final GordianDigestSpec myDigestSpec = pKeyPair.getKeySpec().getSPHINCSType().getDigestSpec();
+            setDigest(myDigestSpec);
+
             /* Initialise and set the signer */
             setSigner(pKeyPair);
             final BouncySPHINCSPrivateKey myPrivate = (BouncySPHINCSPrivateKey) getKeyPair().getPrivateKey();
@@ -367,6 +306,10 @@ public final class BouncySPHINCSAsymKey {
         public void initForVerify(final GordianKeyPair pKeyPair) throws OceanusException {
             /* Initialise detail */
             super.initForVerify(pKeyPair);
+
+            /* Set the digest */
+            final GordianDigestSpec myDigestSpec = pKeyPair.getKeySpec().getSPHINCSType().getDigestSpec();
+            setDigest(myDigestSpec);
 
             /* Initialise and set the signer */
             setSigner(pKeyPair);

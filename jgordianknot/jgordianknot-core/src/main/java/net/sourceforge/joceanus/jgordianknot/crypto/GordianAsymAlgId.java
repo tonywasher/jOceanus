@@ -26,6 +26,7 @@ import java.util.Map;
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
 import org.bouncycastle.asn1.cryptopro.ECGOST3410NamedCurves;
 import org.bouncycastle.asn1.cryptopro.GOST3410PublicKeyAlgParameters;
+import org.bouncycastle.asn1.edec.EdECObjectIdentifiers;
 import org.bouncycastle.asn1.nist.NISTObjectIdentifiers;
 import org.bouncycastle.asn1.pkcs.DHParameter;
 import org.bouncycastle.asn1.pkcs.PKCSObjectIdentifiers;
@@ -101,6 +102,7 @@ public class GordianAsymAlgId {
         GordianECEncodedParser.register(this);
         GordianDSTUEncodedParser.register(this);
         GordianGOSTEncodedParser.register(this);
+        GordianEdwardsEncodedParser.register(this);
         GordianRainbowEncodedParser.register(this);
         GordianNewHopeEncodedParser.register(this);
         GordianSPHINCSEncodedParser.register(this);
@@ -108,6 +110,7 @@ public class GordianAsymAlgId {
         GordianXMSSMTEncodedParser.register(this);
         GordianMcElieceEncodedParser.register(this);
         GordianMcElieceCCA2EncodedParser.register(this);
+        GordianQTESLAEncodedParser.register(this);
     }
 
     /**
@@ -667,7 +670,6 @@ public class GordianAsymAlgId {
             pIdManager.registerParser(PQCObjectIdentifiers.xmss_mt, new GordianXMSSMTEncodedParser());
         }
 
-
         @Override
         public GordianAsymKeySpec determineKeySpec(final SubjectPublicKeyInfo pInfo) throws OceanusException {
             final AlgorithmIdentifier myId = pInfo.getAlgorithm();
@@ -728,7 +730,6 @@ public class GordianAsymAlgId {
         static void register(final GordianAsymAlgId pIdManager) {
             pIdManager.registerParser(PQCObjectIdentifiers.mcElieceCca2, new GordianMcElieceCCA2EncodedParser());
         }
-
 
         @Override
         public GordianAsymKeySpec determineKeySpec(final SubjectPublicKeyInfo pInfo) throws OceanusException {
@@ -792,6 +793,85 @@ public class GordianAsymAlgId {
 
             /* Tree Digest is not supported */
             throw new GordianDataException(ERROR_TREEDIGEST + pDigest.toString());
+        }
+    }
+
+    /**
+     * Edwards Encoded parser.
+     */
+    private static class GordianEdwardsEncodedParser implements GordianEncodedParser {
+        /**
+         * AsymKeySpec.
+         */
+        private final GordianAsymKeySpec theKeySpec;
+
+        /**
+         * Constructor.
+         * @param pKeySpec the keySpec
+         */
+        GordianEdwardsEncodedParser(final GordianAsymKeySpec pKeySpec) {
+            theKeySpec = pKeySpec;
+        }
+
+        /**
+         * Registrar.
+         * @param pIdManager the idManager
+         */
+        static void register(final GordianAsymAlgId pIdManager) {
+            pIdManager.registerParser(EdECObjectIdentifiers.id_X25519, new GordianEdwardsEncodedParser(GordianAsymKeySpec.x25519()));
+            pIdManager.registerParser(EdECObjectIdentifiers.id_X448, new GordianEdwardsEncodedParser(GordianAsymKeySpec.x448()));
+            pIdManager.registerParser(EdECObjectIdentifiers.id_Ed25519, new GordianEdwardsEncodedParser(GordianAsymKeySpec.ed25519()));
+            pIdManager.registerParser(EdECObjectIdentifiers.id_Ed448, new GordianEdwardsEncodedParser(GordianAsymKeySpec.ed448()));
+        }
+
+        @Override
+        public GordianAsymKeySpec determineKeySpec(final SubjectPublicKeyInfo pInfo) throws OceanusException {
+            return theKeySpec;
+        }
+
+        @Override
+        public GordianAsymKeySpec determineKeySpec(final PrivateKeyInfo pInfo) throws OceanusException {
+            return theKeySpec;
+        }
+    }
+
+    /**
+     * QTESLA Encoded parser.
+     */
+    private static class GordianQTESLAEncodedParser implements GordianEncodedParser {
+        /**
+         * QTESLA KeyType.
+         */
+        private final GordianQTESLAKeyType theKeyType;
+
+        /**
+         * Constructor.
+         * @param pKeyType the keyType
+         */
+        GordianQTESLAEncodedParser(final GordianQTESLAKeyType pKeyType) {
+            theKeyType = pKeyType;
+        }
+
+        /**
+         * Registrar.
+         * @param pIdManager the idManager
+         */
+        static void register(final GordianAsymAlgId pIdManager) {
+            pIdManager.registerParser(PQCObjectIdentifiers.qTESLA_I, new GordianQTESLAEncodedParser(GordianQTESLAKeyType.HEURISTIC_I));
+            pIdManager.registerParser(PQCObjectIdentifiers.qTESLA_p_I, new GordianQTESLAEncodedParser(GordianQTESLAKeyType.PROVABLY_SECURE_I));
+            pIdManager.registerParser(PQCObjectIdentifiers.qTESLA_III_size, new GordianQTESLAEncodedParser(GordianQTESLAKeyType.HEURISTIC_III_SIZE));
+            pIdManager.registerParser(PQCObjectIdentifiers.qTESLA_III_speed, new GordianQTESLAEncodedParser(GordianQTESLAKeyType.HEURISTIC_III_SPEED));
+            pIdManager.registerParser(PQCObjectIdentifiers.qTESLA_p_III, new GordianQTESLAEncodedParser(GordianQTESLAKeyType.PROVABLY_SECURE_III));
+        }
+
+        @Override
+        public GordianAsymKeySpec determineKeySpec(final SubjectPublicKeyInfo pInfo) throws OceanusException {
+            return GordianAsymKeySpec.qTESLA(theKeyType);
+        }
+
+        @Override
+        public GordianAsymKeySpec determineKeySpec(final PrivateKeyInfo pInfo) throws OceanusException {
+            return GordianAsymKeySpec.qTESLA(theKeyType);
         }
     }
 }

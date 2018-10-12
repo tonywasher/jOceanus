@@ -14,8 +14,7 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  ******************************************************************************/
-package net.sourceforge.joceanus.jmoneywise;
-
 /**
  * Top level package.
  */
+package net.sourceforge.joceanus.jmoneywise;

@@ -3,7 +3,7 @@
   <parent>
     <groupId>net.sourceforge.joceanus</groupId>
     <artifactId>jtethys</artifactId>
-    <version>v1.5.3-SNAPSHOT</version>   
+    <version>v1.5.3-SNAPSHOT</version>
   </parent>
   <artifactId>jtethys-javafx</artifactId>
   <name>Tethys JavaFX Utilities</name>
@@ -13,6 +13,11 @@
       <groupId>${project.groupId}</groupId>
       <artifactId>jtethys-core</artifactId>
       <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.openjfx</groupId>
+      <artifactId>javafx-web</artifactId>
+      <version>${JavaVersion}</version>
     </dependency>
   </dependencies>
   <build>

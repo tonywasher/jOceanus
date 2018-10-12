@@ -37,6 +37,7 @@ import org.bouncycastle.crypto.engines.RSABlindedEngine;
 import org.bouncycastle.crypto.engines.RSAEngine;
 import org.bouncycastle.crypto.generators.RSAKeyPairGenerator;
 import org.bouncycastle.crypto.kems.RSAKeyEncapsulation;
+import org.bouncycastle.crypto.params.AsymmetricKeyParameter;
 import org.bouncycastle.crypto.params.KeyParameter;
 import org.bouncycastle.crypto.params.ParametersWithRandom;
 import org.bouncycastle.crypto.params.RSAKeyGenerationParameters;
@@ -52,7 +53,6 @@ import net.sourceforge.joceanus.jgordianknot.crypto.GordianAgreement.GordianEnca
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianAgreementSpec;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianAsymKeySpec;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianDigestSpec;
-import net.sourceforge.joceanus.jgordianknot.crypto.GordianFactory;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianKeyEncapsulation;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianKeyEncapsulation.GordianKEMSender;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianKeyPair;
@@ -79,12 +79,7 @@ public final class BouncyRSAAsymKey {
      * Bouncy RSA PublicKey.
      */
     public static class BouncyRSAPublicKey
-            extends BouncyPublicKey {
-        /**
-         * Public Key details.
-         */
-        private final RSAKeyParameters theKey;
-
+            extends BouncyPublicKey<RSAKeyParameters> {
         /**
          * Constructor.
          * @param pKeySpec the keySpec
@@ -92,57 +87,17 @@ public final class BouncyRSAAsymKey {
          */
         BouncyRSAPublicKey(final GordianAsymKeySpec pKeySpec,
                            final RSAKeyParameters pPublicKey) {
-            super(pKeySpec);
-            theKey = pPublicKey;
-        }
-
-        /**
-         * Obtain the public key.
-         * @return the key
-         */
-        protected RSAKeyParameters getPublicKey() {
-            return theKey;
+            super(pKeySpec, pPublicKey);
         }
 
         @Override
-        public boolean equals(final Object pThat) {
-            /* Handle the trivial cases */
-            if (pThat == this) {
-                return true;
-            }
-            if (pThat == null) {
-                return false;
-            }
+        protected boolean matchKey(final AsymmetricKeyParameter pThat) {
+            /* Access keys */
+            final RSAKeyParameters myThis = getPublicKey();
+            final RSAKeyParameters myThat = (RSAKeyParameters) pThat;
 
-            /* Make sure that the object is the same class */
-            if (!(pThat instanceof BouncyRSAPublicKey)) {
-                return false;
-            }
-
-            /* Access the target field */
-            final BouncyRSAPublicKey myThat = (BouncyRSAPublicKey) pThat;
-
-            /* Check differences */
-            return getKeySpec().equals(myThat.getKeySpec())
-                   && compareKeys(theKey, myThat.getPublicKey());
-        }
-
-        @Override
-        public int hashCode() {
-            return GordianFactory.HASH_PRIME * getKeySpec().hashCode()
-                   + theKey.hashCode();
-        }
-
-        /**
-         * Is the private key valid for this public key?
-         * @param pPrivate the private key
-         * @return true/false
-         */
-        public boolean validPrivate(final BouncyRSAPrivateKey pPrivate) {
-            final RSAPrivateCrtKeyParameters myPrivate = pPrivate.getPrivateKey();
-            return theKey.getExponent().equals(myPrivate.getExponent())
-                   && theKey.getModulus().equals(myPrivate.getModulus());
-
+            /* Compare keys */
+            return compareKeys(myThis, myThat);
         }
 
         /**
@@ -156,18 +111,24 @@ public final class BouncyRSAAsymKey {
             return pFirst.getExponent().equals(pSecond.getExponent())
                    && pFirst.getModulus().equals(pSecond.getModulus());
         }
+
+        /**
+         * Is the private key valid for this public key?
+         * @param pPrivate the private key
+         * @return true/false
+         */
+        public boolean validPrivate(final BouncyRSAPrivateKey pPrivate) {
+            final RSAPrivateCrtKeyParameters myPrivate = pPrivate.getPrivateKey();
+            return getPublicKey().getExponent().equals(myPrivate.getExponent())
+                    && getPublicKey().getModulus().equals(myPrivate.getModulus());
+        }
     }
 
     /**
      * Bouncy RSA PrivateKey.
      */
     public static class BouncyRSAPrivateKey
-            extends BouncyPrivateKey {
-        /**
-         * Private Key details.
-         */
-        private final RSAPrivateCrtKeyParameters theKey;
-
+            extends BouncyPrivateKey<RSAPrivateCrtKeyParameters> {
         /**
          * Constructor.
          * @param pKeySpec the keySpec
@@ -175,45 +136,17 @@ public final class BouncyRSAAsymKey {
          */
         BouncyRSAPrivateKey(final GordianAsymKeySpec pKeySpec,
                             final RSAPrivateCrtKeyParameters pPrivateKey) {
-            super(pKeySpec);
-            theKey = pPrivateKey;
-        }
-
-        /**
-         * Obtain the private key.
-         * @return the key
-         */
-        protected RSAPrivateCrtKeyParameters getPrivateKey() {
-            return theKey;
+            super(pKeySpec, pPrivateKey);
         }
 
         @Override
-        public boolean equals(final Object pThat) {
-            /* Handle the trivial cases */
-            if (pThat == this) {
-                return true;
-            }
-            if (pThat == null) {
-                return false;
-            }
+        protected boolean matchKey(final AsymmetricKeyParameter pThat) {
+            /* Access keys */
+            final RSAPrivateCrtKeyParameters myThis = getPrivateKey();
+            final RSAPrivateCrtKeyParameters myThat = (RSAPrivateCrtKeyParameters) pThat;
 
-            /* Make sure that the object is the same class */
-            if (!(pThat instanceof BouncyRSAPrivateKey)) {
-                return false;
-            }
-
-            /* Access the target field */
-            final BouncyRSAPrivateKey myThat = (BouncyRSAPrivateKey) pThat;
-
-            /* Check differences */
-            return getKeySpec().equals(myThat.getKeySpec())
-                   && compareKeys(theKey, myThat.getPrivateKey());
-        }
-
-        @Override
-        public int hashCode() {
-            return GordianFactory.HASH_PRIME * getKeySpec().hashCode()
-                   + theKey.hashCode();
+            /* Compare keys */
+            return compareKeys(myThis, myThat);
         }
 
         /**
@@ -278,14 +211,14 @@ public final class BouncyRSAAsymKey {
         @Override
         public BouncyKeyPair generateKeyPair() {
             final AsymmetricCipherKeyPair myPair = theGenerator.generateKeyPair();
-            final BouncyRSAPublicKey myPublic = new BouncyRSAPublicKey(getKeySpec(), RSAKeyParameters.class.cast(myPair.getPublic()));
-            final BouncyRSAPrivateKey myPrivate = new BouncyRSAPrivateKey(getKeySpec(), RSAPrivateCrtKeyParameters.class.cast(myPair.getPrivate()));
+            final BouncyRSAPublicKey myPublic = new BouncyRSAPublicKey(getKeySpec(), (RSAKeyParameters) myPair.getPublic());
+            final BouncyRSAPrivateKey myPrivate = new BouncyRSAPrivateKey(getKeySpec(), (RSAPrivateCrtKeyParameters) myPair.getPrivate());
             return new BouncyKeyPair(myPublic, myPrivate);
         }
 
         @Override
         public PKCS8EncodedKeySpec getPKCS8Encoding(final GordianKeyPair pKeyPair) throws OceanusException {
-            final BouncyRSAPrivateKey myPrivateKey = BouncyRSAPrivateKey.class.cast(getPrivateKey(pKeyPair));
+            final BouncyRSAPrivateKey myPrivateKey = (BouncyRSAPrivateKey) getPrivateKey(pKeyPair);
             final RSAPrivateCrtKeyParameters myParms = myPrivateKey.getPrivateKey();
             final byte[] myBytes = KeyUtil.getEncodedPrivateKeyInfo(new AlgorithmIdentifier(PKCSObjectIdentifiers.rsaEncryption, DERNull.INSTANCE),
                     new RSAPrivateKey(myParms.getModulus(), myParms.getPublicExponent(), myParms.getExponent(),
@@ -311,7 +244,7 @@ public final class BouncyRSAAsymKey {
 
         @Override
         public X509EncodedKeySpec getX509Encoding(final GordianKeyPair pKeyPair) throws OceanusException {
-            final BouncyRSAPublicKey myPublicKey = BouncyRSAPublicKey.class.cast(getPublicKey(pKeyPair));
+            final BouncyRSAPublicKey myPublicKey = (BouncyRSAPublicKey) getPublicKey(pKeyPair);
             final RSAKeyParameters myParms = myPublicKey.getPublicKey();
             final byte[] myBytes = KeyUtil.getEncodedSubjectPublicKeyInfo(new AlgorithmIdentifier(PKCSObjectIdentifiers.rsaEncryption, DERNull.INSTANCE),
                     new RSAPublicKey(myParms.getModulus(), myParms.getExponent()));

@@ -139,7 +139,7 @@ public abstract class GordianAgreement {
      * Store initVector.
      * @param pInitVector the initVectore
      */
-    protected void storeInitVector(final byte[] pInitVector) {
+    void storeInitVector(final byte[] pInitVector) {
         /* Store the details */
         theInitVector = Arrays.copyOf(pInitVector, pInitVector.length);
     }
@@ -151,6 +151,7 @@ public abstract class GordianAgreement {
     protected void storeSecret(final byte[] pSecret) {
         /* Store the details */
         theSecret = Arrays.copyOf(pSecret, pSecret.length);
+        Arrays.fill(pSecret, (byte) 0);
     }
 
     /**
@@ -182,14 +183,18 @@ public abstract class GordianAgreement {
      * @throws OceanusException on error
      */
     public GordianKeySet deriveIndependentKeySet() throws OceanusException {
-        /* Make sure that the secret is long enough */
-        if (theSecret.length  < 2 * INITLEN) {
-            throw new GordianDataException("Secret too short");
-        }
+        /* The phrase is built of the first quarter of the secret and the first quarter of the initVector */
+        final int myPhraseSecLen = theSecret.length >> 2;
+        final int myPhraseIVLen = theInitVector.length >> 2;
 
-        /* Split the secret into two */
-        final byte[] myPhrase = Arrays.copyOf(theSecret, INITLEN);
-        final byte[] mySecret = Arrays.copyOfRange(theSecret, INITLEN, theSecret.length);
+        /* Build the phrase */
+        final byte[] myPhrase = new byte[myPhraseSecLen + myPhraseIVLen];
+        System.arraycopy(theSecret, 0, myPhrase, 0, myPhraseSecLen);
+        System.arraycopy(theInitVector, 0, myPhrase,  myPhraseSecLen, myPhraseIVLen);
+
+        /* Access shortened secret and IV */
+        final byte[] mySecret = Arrays.copyOfRange(theSecret, myPhraseSecLen, theSecret.length);
+        final byte[] myIV = Arrays.copyOfRange(theInitVector, myPhraseIVLen, theInitVector.length);
 
         /* Create a new Factory using the phrase */
         final GordianParameters myParms = new GordianParameters();
@@ -198,7 +203,7 @@ public abstract class GordianAgreement {
 
         /* Create the keySet */
         final GordianKeySet myKeySet = new GordianKeySet(myFactory);
-        myKeySet.buildFromSecret(mySecret, theInitVector);
+        myKeySet.buildFromSecret(mySecret, myIV);
         return myKeySet;
     }
 

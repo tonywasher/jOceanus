@@ -62,6 +62,17 @@ public class GordianSignatureSpec {
      * Constructor.
      * @param pAsymKeyType the asymKeyType
      * @param pSignatureType the signatureType
+     */
+    public GordianSignatureSpec(final GordianAsymKeyType pAsymKeyType,
+                                final GordianSignatureType pSignatureType) {
+        /* Store parameters */
+        this(pAsymKeyType, pSignatureType, null);
+    }
+
+    /**
+     * Constructor.
+     * @param pAsymKeyType the asymKeyType
+     * @param pSignatureType the signatureType
      * @param pDigestSpec the digestSpec
      */
     public GordianSignatureSpec(final GordianAsymKeyType pAsymKeyType,
@@ -132,12 +143,51 @@ public class GordianSignatureSpec {
     }
 
     /**
-     * Create SPHINCSSpec.
-     * @param pDigestSpec the digestSpec
+     * Create EdDSA25519Spec.
      * @return the SignatureSpec
      */
-    public static GordianSignatureSpec sphincs(final GordianDigestSpec pDigestSpec) {
-        return new GordianSignatureSpec(GordianAsymKeyType.SPHINCS, pDigestSpec);
+    public static GordianSignatureSpec ed25519() {
+        return new GordianSignatureSpec(GordianAsymKeyType.ED25519, GordianSignatureType.NATIVE);
+    }
+
+    /**
+     * Create EdDSA25519Spec.
+     * @return the SignatureSpec
+     */
+    public static GordianSignatureSpec ed25519ctx() {
+        return new GordianSignatureSpec(GordianAsymKeyType.ED25519, GordianSignatureType.PURE);
+    }
+
+    /**
+     * Create EdDSA25519Spec.
+     * @return the SignatureSpec
+     */
+    public static GordianSignatureSpec ed25519PH() {
+        return new GordianSignatureSpec(GordianAsymKeyType.ED25519, GordianSignatureType.PREHASH);
+    }
+
+    /**
+     * Create EdDSA448Spec.
+     * @return the SignatureSpec
+     */
+    public static GordianSignatureSpec ed448() {
+        return new GordianSignatureSpec(GordianAsymKeyType.ED448, GordianSignatureType.PURE);
+    }
+
+    /**
+     * Create EdDSA448Spec.
+     * @return the SignatureSpec
+     */
+    public static GordianSignatureSpec ed448PH() {
+        return new GordianSignatureSpec(GordianAsymKeyType.ED448, GordianSignatureType.PREHASH);
+    }
+
+    /**
+     * Create SPHINCSSpec.
+     * @return the SignatureSpec
+     */
+    public static GordianSignatureSpec sphincs() {
+        return new GordianSignatureSpec(GordianAsymKeyType.SPHINCS, GordianSignatureType.PREHASH);
     }
 
     /**
@@ -151,20 +201,42 @@ public class GordianSignatureSpec {
 
     /**
      * Create xmssSpec.
-     * @param pDigestSpec the digestSpec
      * @return the SignatureSpec
      */
-    public static GordianSignatureSpec xmss(final GordianDigestSpec pDigestSpec) {
-        return new GordianSignatureSpec(GordianAsymKeyType.XMSS, pDigestSpec);
+    public static GordianSignatureSpec xmss() {
+        return new GordianSignatureSpec(GordianAsymKeyType.XMSS, GordianSignatureType.PURE);
     }
 
     /**
-     * Create xmssMTSpec.
-     * @param pDigestSpec the digestSpec
+     * Create xmssPHSpec.
      * @return the SignatureSpec
      */
-    public static GordianSignatureSpec xmssmt(final GordianDigestSpec pDigestSpec) {
-        return new GordianSignatureSpec(GordianAsymKeyType.XMSSMT, pDigestSpec);
+    public static GordianSignatureSpec xmssPH() {
+        return new GordianSignatureSpec(GordianAsymKeyType.XMSS, GordianSignatureType.PREHASH);
+    }
+
+    /**
+     * Create xmssSpec.
+     * @return the SignatureSpec
+     */
+    public static GordianSignatureSpec xmssmt() {
+        return new GordianSignatureSpec(GordianAsymKeyType.XMSSMT, GordianSignatureType.PURE);
+    }
+
+    /**
+     * Create xmssMTPHSpec.
+     * @return the SignatureSpec
+     */
+    public static GordianSignatureSpec xmssmtPH() {
+        return new GordianSignatureSpec(GordianAsymKeyType.XMSSMT, GordianSignatureType.PREHASH);
+    }
+
+    /**
+     * Create qTESLASpec.
+     * @return the SignatureSpec
+     */
+    public static GordianSignatureSpec qTESLA() {
+        return new GordianSignatureSpec(GordianAsymKeyType.QTESLA, GordianSignatureType.PURE);
     }
 
     /**
@@ -186,16 +258,20 @@ public class GordianSignatureSpec {
                 return dstu4145();
             case GOST2012:
                 return gost2012(GordianLength.LEN_512);
+            case ED25519:
+                return ed25519ctx();
+            case ED448:
+                return ed448();
             case RAINBOW:
                 return rainbow(GordianDigestSpec.sha2(GordianLength.LEN_512));
             case SPHINCS:
-                return sphincs(GordianSPHINCSKeyType.SHA2.equals(pKeySpec.getSPHINCSType())
-                               ? GordianDigestSpec.sha2(GordianLength.LEN_512)
-                               : GordianDigestSpec.sha3(GordianLength.LEN_512));
+                return sphincs();
             case XMSS:
-                return xmss(GordianDigestSpec.sha2(GordianLength.LEN_512));
+                return xmss();
             case XMSSMT:
-                return xmssmt(GordianDigestSpec.sha2(GordianLength.LEN_512));
+                return xmssmt();
+            case QTESLA:
+                return qTESLA();
             default:
                 return null;
         }
@@ -234,7 +310,9 @@ public class GordianSignatureSpec {
             if (theSignatureType != GordianSignatureType.NATIVE) {
                 theName += SEP + theSignatureType.toString();
             }
-            theName += SEP + theDigestSpec.toString();
+            if (theDigestSpec != null) {
+                theName += SEP + theDigestSpec.toString();
+            }
         }
 
         /* return the name */
@@ -266,7 +344,10 @@ public class GordianSignatureSpec {
         }
 
         /* Match digestSpec */
-        return theDigestSpec.equals(myThat.getDigestSpec());
+        final GordianDigestSpec myDigest = myThat.getDigestSpec();
+        return theDigestSpec == null
+               ? myDigest == null
+               : theDigestSpec.equals(myThat.getDigestSpec());
     }
 
     @Override
@@ -274,7 +355,9 @@ public class GordianSignatureSpec {
         int hashCode = theAsymKeyType.hashCode() << TethysDataConverter.BYTE_SHIFT;
         hashCode += theSignatureType.hashCode();
         hashCode <<= TethysDataConverter.BYTE_SHIFT;
-        hashCode += theDigestSpec.hashCode();
+        if (theDigestSpec != null) {
+            hashCode += theDigestSpec.hashCode();
+        }
         return hashCode;
     }
 }

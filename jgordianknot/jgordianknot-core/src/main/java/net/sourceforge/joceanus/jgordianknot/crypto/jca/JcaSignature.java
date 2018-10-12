@@ -21,12 +21,15 @@ import java.security.Signature;
 import java.security.SignatureException;
 
 import net.sourceforge.joceanus.jgordianknot.GordianCryptoException;
+import net.sourceforge.joceanus.jgordianknot.crypto.GordianAsymKeySpec;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianAsymKeyType;
+import net.sourceforge.joceanus.jgordianknot.crypto.GordianDigestSpec;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianFactory;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianKeyPair;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianLength;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianSignatureSpec;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianSignature;
+import net.sourceforge.joceanus.jgordianknot.crypto.GordianSignatureType;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
@@ -37,7 +40,7 @@ public abstract class JcaSignature
     /**
      * The Signature error.
      */
-    static final String SIG_ERROR = "Signature error";
+    private static final String SIG_ERROR = "Signature error";
 
     /**
      * The RSA PSS Algorithm.
@@ -95,19 +98,9 @@ public abstract class JcaSignature
     static final String RAINBOW_ALGOBASE = "withRainbow";
 
     /**
-     * The XMSS Signature.
-     */
-    static final String XMSS_ALGOBASE = "withXMSS";
-
-    /**
-     * The XMSSMT Signature.
-     */
-    static final String XMSSMT_ALGOBASE = "withXMSSMT";
-
-    /**
      * The DSTU Signature.
      */
-    static final String DSTU_SIGN = "DSTU4145";
+    private static final String DSTU_SIGN = "DSTU4145";
 
     /**
      * The RSA Signer.
@@ -119,8 +112,8 @@ public abstract class JcaSignature
      * @param pFactory the factory
      * @param pSpec the signature Spec
      */
-    protected JcaSignature(final GordianFactory pFactory,
-                           final GordianSignatureSpec pSpec) {
+    JcaSignature(final GordianFactory pFactory,
+                 final GordianSignatureSpec pSpec) {
         super(pFactory, pSpec);
     }
 
@@ -248,7 +241,7 @@ public abstract class JcaSignature
     /**
      * RSA signature.
      */
-    public static class JcaRSASignature
+    static class JcaRSASignature
             extends JcaSignature {
         /**
          * Constructor.
@@ -307,7 +300,7 @@ public abstract class JcaSignature
     /**
      * DSA signer.
      */
-    public static class JcaDSASignature
+    static class JcaDSASignature
             extends JcaSignature {
         /**
          * Constructor.
@@ -329,7 +322,7 @@ public abstract class JcaSignature
     /**
      * GOST signature.
      */
-    public static class JcaGOSTSignature
+    static class JcaGOSTSignature
             extends JcaSignature {
         /**
          * Constructor.
@@ -373,7 +366,7 @@ public abstract class JcaSignature
     /**
      * SPHINCS signature.
      */
-    public static class JcaSPHINCSSignature
+    static class JcaSPHINCSSignature
             extends JcaSignature {
         /**
          * Constructor.
@@ -385,17 +378,52 @@ public abstract class JcaSignature
                             final GordianSignatureSpec pSignatureSpec) throws OceanusException {
             /* Initialise class */
             super(pFactory, pSignatureSpec);
+        }
+        @Override
+        public void initForSigning(final GordianKeyPair pKeyPair) throws OceanusException {
+            /* Determine the required signer */
+            final String mySignName = getAlgorithmForKeyPair(pKeyPair);
+            setSigner(JcaFactory.getJavaSignature(mySignName, true));
 
-            /* Create the signature class */
-            final String myDigest = JcaDigest.getAlgorithm(pSignatureSpec.getDigestSpec());
-            setSigner(JcaFactory.getJavaSignature(myDigest + SPHINCS_ALGOBASE, true));
+            /* pass on call */
+            super.initForSigning(pKeyPair);
+        }
+
+        @Override
+        public void initForVerify(final GordianKeyPair pKeyPair) throws OceanusException {
+            /* Determine the required signer */
+            final String mySignName = getAlgorithmForKeyPair(pKeyPair);
+            setSigner(JcaFactory.getJavaSignature(mySignName, true));
+
+            /* pass on call */
+            super.initForVerify(pKeyPair);
+        }
+
+        /**
+         * Obtain algorithmName for keyPair.
+         * @param pKeyPair the keyPair
+         * @return the name
+         * @throws OceanusException on error
+         */
+        private String getAlgorithmForKeyPair(final GordianKeyPair pKeyPair) throws OceanusException {
+            /* Determine the required signer */
+            final GordianDigestSpec myDigestSpec = pKeyPair.getKeySpec().getSPHINCSType().getDigestSpec();
+            final String myDigest = JcaDigest.getAlgorithm(myDigestSpec);
+
+            /* Create builder */
+            final StringBuilder myBuilder = new StringBuilder();
+            myBuilder.append(myDigest)
+                    .append(SPHINCS_ALGOBASE);
+
+            /* Build the algorithm */
+            return myBuilder.toString();
         }
     }
 
     /**
      * Rainbow signature.
      */
-    public static class JcaRainbowSignature
+    static class JcaRainbowSignature
             extends JcaSignature {
         /**
          * Constructor.
@@ -417,8 +445,13 @@ public abstract class JcaSignature
     /**
      * XMSS signature.
      */
-    public static class JcaXMSSSignature
+    static class JcaXMSSSignature
             extends JcaSignature {
+        /**
+         * Is this a preHash signature?
+         */
+        private final boolean preHash;
+
         /**
          * Constructor.
          * @param pFactory the factory
@@ -430,12 +463,114 @@ public abstract class JcaSignature
             /* Initialise class */
             super(pFactory, pSignatureSpec);
 
+            /* Determine preHash */
+            preHash = GordianSignatureType.PREHASH.equals(pSignatureSpec.getSignatureType());
+        }
+
+        @Override
+        public void initForSigning(final GordianKeyPair pKeyPair) throws OceanusException {
+            /* Determine the required signer */
+            final String mySignName = getAlgorithmForKeyPair(pKeyPair);
+            setSigner(JcaFactory.getJavaSignature(mySignName, true));
+
+            /* pass on call */
+            super.initForSigning(pKeyPair);
+        }
+
+        @Override
+        public void initForVerify(final GordianKeyPair pKeyPair) throws OceanusException {
+            /* Determine the required signer */
+            final String mySignName = getAlgorithmForKeyPair(pKeyPair);
+            setSigner(JcaFactory.getJavaSignature(mySignName, true));
+
+            /* pass on call */
+            super.initForVerify(pKeyPair);
+        }
+
+        /**
+         * Obtain algorithmName for keyPair.
+         * @param pKeyPair the keyPair
+         * @return the name
+         * @throws OceanusException on error
+         */
+        private String getAlgorithmForKeyPair(final GordianKeyPair pKeyPair) throws OceanusException {
+            /* Determine the required signer */
+            final GordianDigestSpec myDigestSpec = pKeyPair.getKeySpec().getXMSSKeyType().getDigestSpec();
+            final String myDigest = JcaDigest.getAlgorithm(myDigestSpec);
+
+            /* Create builder */
+            final GordianAsymKeySpec myKeySpec = pKeyPair.getKeySpec();
+            final StringBuilder myBuilder = new StringBuilder();
+            myBuilder.append(myKeySpec.getKeyType())
+                    .append('-')
+                    .append(myDigest);
+            if (preHash) {
+                myBuilder.insert(0, "with")
+                        .insert(0, myDigest);
+            }
+
+            /* Build the algorithm */
+            return myBuilder.toString();
+        }
+    }
+
+    /**
+     * EdDSA signature.
+     */
+    static class JcaEdDSASignature
+            extends JcaSignature {
+        /**
+         * Constructor.
+         * @param pFactory the factory
+         * @param pSignatureSpec the signatureSpec
+         * @throws OceanusException on error
+         */
+        JcaEdDSASignature(final GordianFactory pFactory,
+                          final GordianSignatureSpec pSignatureSpec) throws OceanusException {
+            /* Initialise class */
+            super(pFactory, pSignatureSpec);
+
             /* Create the signature class */
-            final String myDigest = JcaDigest.getAlgorithm(pSignatureSpec.getDigestSpec());
-            final String myBase = GordianAsymKeyType.XMSSMT.equals(pSignatureSpec.getAsymKeyType())
-                                  ? XMSSMT_ALGOBASE
-                                  : XMSS_ALGOBASE;
-            setSigner(JcaFactory.getJavaSignature(myDigest + myBase, true));
+            final boolean is25519 = GordianAsymKeyType.ED25519.equals(pSignatureSpec.getAsymKeyType());
+            final String myAlgo;
+            switch (pSignatureSpec.getSignatureType()) {
+                case PREHASH:
+                    myAlgo = is25519
+                             ? "Ed25519ph"
+                             : "Ed448ph";
+                    break;
+                case PURE:
+                    myAlgo = is25519
+                             ? "Ed25519ctx"
+                             : "Ed448";
+                    break;
+                case NATIVE:
+                default:
+                    myAlgo = "Ed25519";
+                    break;
+            }
+            setSigner(JcaFactory.getJavaSignature(myAlgo, false));
+        }
+    }
+
+    /**
+     * qTESLA signature.
+     */
+    static class JcaQTESLASignature
+            extends JcaSignature {
+        /**
+         * Constructor.
+         * @param pFactory the factory
+         * @param pSignatureSpec the signatureSpec
+         * @throws OceanusException on error
+         */
+        JcaQTESLASignature(final GordianFactory pFactory,
+                           final GordianSignatureSpec pSignatureSpec) throws OceanusException {
+            /* Initialise class */
+            super(pFactory, pSignatureSpec);
+
+            /* Create the signature class */
+            setSigner(JcaFactory.getJavaSignature("QTESLA", true));
         }
     }
 }

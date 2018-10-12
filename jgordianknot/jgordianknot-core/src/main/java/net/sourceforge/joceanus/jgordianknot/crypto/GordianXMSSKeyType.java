@@ -49,4 +49,23 @@ public enum GordianXMSSKeyType {
      * Default layers for XMSS key.
      */
     public static final int DEFAULT_LAYERS = 3;
+
+    /**
+     * Obtain the required digestSpec.
+     * @return the digestSpec
+     */
+    public GordianDigestSpec getDigestSpec() {
+        switch (this) {
+            case SHA256:
+                return GordianDigestSpec.sha2(GordianLength.LEN_256);
+            case SHA512:
+                return GordianDigestSpec.sha2(GordianLength.LEN_512);
+            case SHAKE128:
+                return GordianDigestSpec.shake(GordianLength.LEN_128);
+            case SHAKE256:
+                return GordianDigestSpec.shake(GordianLength.LEN_256);
+            default:
+                throw new IllegalStateException();
+        }
+    }
 }

@@ -14,8 +14,7 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  ******************************************************************************/
-package net.sourceforge.joceanus.jmetis.service.sheet.xssf;
-
 /**
  * PlugIn for poi XSSF.
  */
+package net.sourceforge.joceanus.jmetis.service.sheet.xssf;

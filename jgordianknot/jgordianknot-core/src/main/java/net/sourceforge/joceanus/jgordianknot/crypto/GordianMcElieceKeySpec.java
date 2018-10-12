@@ -252,5 +252,10 @@ public final class GordianMcElieceKeySpec {
         GordianMcElieceEncryptionType(final String pName) {
             theName = pName;
         }
+
+        @Override
+        public String toString() {
+            return theName;
+        }
     }
 }
