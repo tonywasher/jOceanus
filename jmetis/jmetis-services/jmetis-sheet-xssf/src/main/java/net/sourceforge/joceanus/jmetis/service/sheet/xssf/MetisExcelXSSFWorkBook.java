@@ -123,7 +123,7 @@ public class MetisExcelXSSFWorkBook
      * @param pInput the input stream
      * @throws OceanusException on error
      */
-    protected MetisExcelXSSFWorkBook(final InputStream pInput) throws OceanusException {
+    MetisExcelXSSFWorkBook(final InputStream pInput) throws OceanusException {
         try {
             /* Load the book and set null map */
             theBook = new XSSFWorkbook(pInput);
@@ -153,7 +153,7 @@ public class MetisExcelXSSFWorkBook
     /**
      * Constructor.
      */
-    protected MetisExcelXSSFWorkBook() {
+    MetisExcelXSSFWorkBook() {
         /* Create new book and map */
         theBook = new XSSFWorkbook();
         theStyleMap = new HashMap<>();
@@ -196,7 +196,7 @@ public class MetisExcelXSSFWorkBook
      * @param pCell the cell to evaluate
      * @return the calculated value
      */
-    protected CellValue evaluateFormula(final XSSFCell pCell) {
+    CellValue evaluateFormula(final XSSFCell pCell) {
         return theEvaluator.evaluate(pCell);
     }
 
@@ -205,7 +205,7 @@ public class MetisExcelXSSFWorkBook
      * @param pCell the cell to evaluate
      * @return the formatted value
      */
-    protected String formatCellValue(final XSSFCell pCell) {
+    String formatCellValue(final XSSFCell pCell) {
         return theExcelFormatter.formatCellValue(pCell);
     }
 
@@ -236,7 +236,7 @@ public class MetisExcelXSSFWorkBook
     @Override
     public MetisSheetSheet newSheet(final String pName,
                                     final int pNumRows,
-                                    final int pNumCols) throws OceanusException {
+                                    final int pNumCols) {
         return newSheet(pName);
     }
 
@@ -252,7 +252,7 @@ public class MetisExcelXSSFWorkBook
      * @param pSheetIndex the sheet index
      * @return true/false
      */
-    protected boolean isSheetHidden(final int pSheetIndex) {
+    boolean isSheetHidden(final int pSheetIndex) {
         return theBook.isSheetHidden(pSheetIndex);
     }
 
@@ -261,8 +261,8 @@ public class MetisExcelXSSFWorkBook
      * @param pSheetIndex the sheet index
      * @param isHidden true/false
      */
-    protected void setSheetHidden(final int pSheetIndex,
-                                  final boolean isHidden) {
+    void setSheetHidden(final int pSheetIndex,
+                        final boolean isHidden) {
         theBook.setSheetHidden(pSheetIndex, isHidden);
     }
 
@@ -296,8 +296,8 @@ public class MetisExcelXSSFWorkBook
      * @param pRange the range to declare
      * @throws OceanusException on error
      */
-    protected void declareRange(final String pName,
-                                final AreaReference pRange) throws OceanusException {
+    void declareRange(final String pName,
+                      final AreaReference pRange) throws OceanusException {
         /* Check for existing range */
         Name myName = theBook.getName(pName);
         if (myName != null) {
@@ -321,9 +321,9 @@ public class MetisExcelXSSFWorkBook
      * @param pCells the Cells to apply validation to
      * @param pValidRange the name of the validation range
      */
-    protected void applyDataValidation(final XSSFSheet pSheet,
-                                       final CellRangeAddressList pCells,
-                                       final String pValidRange) {
+    void applyDataValidation(final XSSFSheet pSheet,
+                             final CellRangeAddressList pCells,
+                             final String pValidRange) {
         /* Access the constraint */
         final XSSFDataValidationHelper myHelper = new XSSFDataValidationHelper(pSheet);
         final DataValidationConstraint myConstraint = theRangeConstraintMap.computeIfAbsent(pValidRange,
@@ -343,9 +343,9 @@ public class MetisExcelXSSFWorkBook
      * @param pCells the Cells to apply validation to
      * @param pValueList the list of valid values
      */
-    protected void applyDataValidation(final XSSFSheet pSheet,
-                                       final CellRangeAddressList pCells,
-                                       final String[] pValueList) {
+    void applyDataValidation(final XSSFSheet pSheet,
+                             final CellRangeAddressList pCells,
+                             final String[] pValueList) {
         /* Access the constraint */
         final XSSFDataValidationHelper myHelper = new XSSFDataValidationHelper(pSheet);
         final DataValidationConstraint myConstraint = theValueConstraintMap.computeIfAbsent(pValueList,
@@ -364,8 +364,8 @@ public class MetisExcelXSSFWorkBook
      * @param pSheet the sheet to filter
      * @param pRange the range to apply the filter to
      */
-    protected void applyDataFilter(final Sheet pSheet,
-                                   final CellRangeAddressList pRange) {
+    void applyDataFilter(final Sheet pSheet,
+                         final CellRangeAddressList pRange) {
         /* Create the new filter */
         pSheet.setAutoFilter(pRange.getCellRangeAddress(0));
     }
@@ -375,7 +375,7 @@ public class MetisExcelXSSFWorkBook
      * @param pType the cell type
      * @return the alignment
      */
-    private HorizontalAlignment getStyleAlignment(final MetisSheetCellStyleType pType) {
+    private static HorizontalAlignment getStyleAlignment(final MetisSheetCellStyleType pType) {
         switch (pType) {
             case HEADER:
             case BOOLEAN:
@@ -410,7 +410,7 @@ public class MetisExcelXSSFWorkBook
      * @param pType the CellStyleType
      * @return the required CellStyle
      */
-    protected XSSFCellStyle getCellStyle(final MetisSheetCellStyleType pType) {
+    XSSFCellStyle getCellStyle(final MetisSheetCellStyleType pType) {
         /* Determine the correct format */
         final String myStyleName = MetisSheetFormats.getFormatName(pType);
 
@@ -442,7 +442,7 @@ public class MetisExcelXSSFWorkBook
      * @param pValue the Cell Value
      * @return the required CellStyle
      */
-    protected XSSFCellStyle getCellStyle(final Object pValue) {
+    XSSFCellStyle getCellStyle(final Object pValue) {
         /* Determine the correct format */
         final String myStyleName = MetisSheetFormats.getFormatName(pValue);
 
@@ -478,7 +478,7 @@ public class MetisExcelXSSFWorkBook
      * @param pValue the Cell Value
      * @return the required CellStyle
      */
-    protected XSSFCellStyle getAlternateCellStyle(final Object pValue) {
+    XSSFCellStyle getAlternateCellStyle(final Object pValue) {
         /* Determine the correct format */
         final String myStyleName = MetisSheetFormats.getAlternateFormatName(pValue);
 

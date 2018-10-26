@@ -27,6 +27,7 @@ import org.bouncycastle.asn1.ASN1Sequence;
 import org.bouncycastle.asn1.DERSequence;
 import org.bouncycastle.crypto.DSA;
 import org.bouncycastle.crypto.Digest;
+import org.bouncycastle.crypto.digests.NullDigest;
 import org.bouncycastle.crypto.signers.DSASigner;
 import org.bouncycastle.crypto.signers.ECDSASigner;
 import org.bouncycastle.crypto.signers.ECNRSigner;
@@ -34,8 +35,10 @@ import org.bouncycastle.crypto.signers.HMacDSAKCalculator;
 
 import net.sourceforge.joceanus.jgordianknot.GordianCryptoException;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianAsymKeyType;
+import net.sourceforge.joceanus.jgordianknot.crypto.GordianDigestSpec;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianSignature;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianSignatureSpec;
+import net.sourceforge.joceanus.jgordianknot.crypto.GordianSignatureType;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
@@ -66,7 +69,7 @@ public final class BouncySignature {
         /**
          * The Digest.
          */
-        private final BouncyDigest theDigest;
+        private BouncyDigest theDigest;
 
         /**
          * Constructor.
@@ -77,7 +80,9 @@ public final class BouncySignature {
         BouncyDigestSignature(final BouncyFactory pFactory,
                               final GordianSignatureSpec pSpec) throws OceanusException {
             super(pFactory, pSpec);
-            theDigest = pFactory.createDigest(pSpec.getDigestSpec());
+            theDigest = pSpec.getDigestSpec() == null
+                            ? new BouncyDigest(null, new NullDigest())
+                            : pFactory.createDigest(pSpec.getDigestSpec());
         }
 
         /**
@@ -92,6 +97,17 @@ public final class BouncySignature {
                               final Digest pDigest) throws OceanusException {
             super(pFactory, pSpec);
             theDigest = new BouncyDigest(pSpec.getDigestSpec(), pDigest);
+        }
+
+        /**
+         * Set the digest.
+         * @param pSpec the digestSpec.
+         * @throws OceanusException on error
+         */
+        protected void setDigest(final GordianDigestSpec pSpec) throws OceanusException {
+            theDigest = pSpec == null
+                         ? new BouncyDigest(null, new NullDigest())
+                         : getFactory().createDigest(pSpec);
         }
 
         @Override

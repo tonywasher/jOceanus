@@ -14,20 +14,18 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  ******************************************************************************/
-package net.sourceforge.joceanus.jgordianknot.crypto;
+module jgordianknot.javafx {
+    /* javaFX */
+    requires javafx.graphics;
 
-import net.sourceforge.joceanus.jtethys.OceanusException;
+    /* External libraries */
+    requires org.apache.logging.log4j;
 
-/**
- * GordianKnot interface for signature validator.
- */
-public interface GordianValidator
-        extends GordianConsumer {
-    /**
-     * Verify the signature against the supplied signature bytes.
-     * @param pSignature the supplied signature
-     * @return the signature
-     * @throws OceanusException on error
-     */
-    boolean verify(byte[] pSignature) throws OceanusException;
+    /* jOceanus */
+    requires jgordianknot.core;
+    requires jtethys.core;
+    requires jtethys.javafx;
+
+    /* Exports */
+    exports net.sourceforge.joceanus.jgordianknot.manager.javafx;
 }

@@ -41,9 +41,9 @@ public class MetisExcelXSSFColumn
      * @param pIndex the index
      * @param pReadOnly is the column readOnly?
      */
-    protected MetisExcelXSSFColumn(final MetisExcelXSSFSheet pSheet,
-                                   final int pIndex,
-                                   final boolean pReadOnly) {
+    MetisExcelXSSFColumn(final MetisExcelXSSFSheet pSheet,
+                         final int pIndex,
+                         final boolean pReadOnly) {
         /* Store parameters */
         super(pSheet, pIndex);
         theExcelSheet = pSheet;

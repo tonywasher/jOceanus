@@ -51,10 +51,10 @@ public class MetisExcelXSSFRow
      * @param pRowIndex the RowIndex
      * @param pReadOnly is the row readOnly?
      */
-    protected MetisExcelXSSFRow(final MetisExcelXSSFSheet pSheet,
-                                final XSSFRow pRow,
-                                final int pRowIndex,
-                                final boolean pReadOnly) {
+    MetisExcelXSSFRow(final MetisExcelXSSFSheet pSheet,
+                      final XSSFRow pRow,
+                      final int pRowIndex,
+                      final boolean pReadOnly) {
         /* Store parameters */
         super(pSheet, pRowIndex);
         theExcelSheet = pSheet;
@@ -67,7 +67,7 @@ public class MetisExcelXSSFRow
      * @param pCell the cell to evaluate
      * @return the calculated value
      */
-    protected CellValue evaluateFormula(final XSSFCell pCell) {
+    CellValue evaluateFormula(final XSSFCell pCell) {
         return theExcelSheet.evaluateFormula(pCell);
     }
 
@@ -76,7 +76,7 @@ public class MetisExcelXSSFRow
      * @param pCell the cell to evaluate
      * @return the formatted value
      */
-    protected String formatCellValue(final XSSFCell pCell) {
+    String formatCellValue(final XSSFCell pCell) {
         return theExcelSheet.formatCellValue(pCell);
     }
 
@@ -141,8 +141,8 @@ public class MetisExcelXSSFRow
      * @param pCell the cell to style
      * @param pValue the cell value
      */
-    protected void setCellStyle(final MetisExcelXSSFCell pCell,
-                                final Object pValue) {
+    void setCellStyle(final MetisExcelXSSFCell pCell,
+                      final Object pValue) {
         /* Pass through to the sheet */
         theExcelSheet.setCellStyle(pCell, pValue);
     }
@@ -152,8 +152,8 @@ public class MetisExcelXSSFRow
      * @param pCell the cell to style
      * @param pValue the cell value
      */
-    protected void setAlternateCellStyle(final MetisExcelXSSFCell pCell,
-                                         final Object pValue) {
+    void setAlternateCellStyle(final MetisExcelXSSFCell pCell,
+                               final Object pValue) {
         /* Pass through to the sheet */
         theExcelSheet.setAlternateCellStyle(pCell, pValue);
     }

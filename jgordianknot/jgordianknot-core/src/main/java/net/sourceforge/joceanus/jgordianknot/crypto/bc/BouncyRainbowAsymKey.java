@@ -25,6 +25,7 @@ import org.bouncycastle.asn1.pkcs.PrivateKeyInfo;
 import org.bouncycastle.asn1.x509.SubjectPublicKeyInfo;
 import org.bouncycastle.crypto.AsymmetricCipherKeyPair;
 import org.bouncycastle.crypto.KeyGenerationParameters;
+import org.bouncycastle.crypto.params.AsymmetricKeyParameter;
 import org.bouncycastle.crypto.params.ParametersWithRandom;
 import org.bouncycastle.pqc.asn1.RainbowPrivateKey;
 import org.bouncycastle.pqc.asn1.RainbowPublicKey;
@@ -39,7 +40,6 @@ import org.bouncycastle.pqc.jcajce.provider.rainbow.BCRainbowPublicKey;
 
 import net.sourceforge.joceanus.jgordianknot.GordianCryptoException;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianAsymKeySpec;
-import net.sourceforge.joceanus.jgordianknot.crypto.GordianFactory;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianKeyPair;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianSignatureSpec;
 import net.sourceforge.joceanus.jgordianknot.crypto.bc.BouncyKeyPair.BouncyPrivateKey;
@@ -61,12 +61,7 @@ public final class BouncyRainbowAsymKey {
      * Bouncy Rainbow PublicKey.
      */
     public static class BouncyRainbowPublicKey
-            extends BouncyPublicKey {
-        /**
-         * Public Key details.
-         */
-        private final RainbowPublicKeyParameters theKey;
-
+            extends BouncyPublicKey<RainbowPublicKeyParameters> {
         /**
          * Constructor.
          * @param pKeySpec the keySpec
@@ -74,58 +69,19 @@ public final class BouncyRainbowAsymKey {
          */
         BouncyRainbowPublicKey(final GordianAsymKeySpec pKeySpec,
                                final RainbowPublicKeyParameters pPublicKey) {
-            super(pKeySpec);
-            theKey = pPublicKey;
-        }
-
-        /**
-         * Obtain the public key.
-         * @return the key
-         */
-        protected RainbowPublicKeyParameters getPublicKey() {
-            return theKey;
+            super(pKeySpec, pPublicKey);
         }
 
         @Override
-        public boolean equals(final Object pThat) {
-            /* Handle the trivial cases */
-            if (pThat == this) {
-                return true;
-            }
-            if (pThat == null) {
-                return false;
-            }
+        protected boolean matchKey(final AsymmetricKeyParameter pThat) {
+            /* Access keys */
+            final RainbowPublicKeyParameters myThis = getPublicKey();
+            final RainbowPublicKeyParameters myThat = (RainbowPublicKeyParameters) pThat;
 
-            /* Make sure that the object is the same class */
-            if (!(pThat instanceof BouncyRainbowPublicKey)) {
-                return false;
-            }
-
-            /* Access the target field */
-            final BouncyRainbowPublicKey myThat = (BouncyRainbowPublicKey) pThat;
-
-            /* Check differences */
-            return getKeySpec().equals(myThat.getKeySpec())
-                   && compareKeys(theKey, myThat.getPublicKey());
-        }
-
-        @Override
-        public int hashCode() {
-            return GordianFactory.HASH_PRIME * getKeySpec().hashCode()
-                   + theKey.hashCode();
-        }
-
-        /**
-         * CompareKeys.
-         * @param pFirst the first key
-         * @param pSecond the second key
-         * @return true/false
-         */
-        private static boolean compareKeys(final RainbowPublicKeyParameters pFirst,
-                                           final RainbowPublicKeyParameters pSecond) {
-            return Arrays.equals(pFirst.getCoeffScalar(), pSecond.getCoeffScalar())
-                   && Arrays.deepEquals(pFirst.getCoeffSingular(), pSecond.getCoeffSingular())
-                   && Arrays.deepEquals(pFirst.getCoeffQuadratic(), pSecond.getCoeffQuadratic());
+            /* Check equality */
+            return Arrays.equals(myThis.getCoeffScalar(), myThat.getCoeffScalar())
+                   && Arrays.deepEquals(myThis.getCoeffSingular(), myThat.getCoeffSingular())
+                   && Arrays.deepEquals(myThis.getCoeffQuadratic(), myThat.getCoeffQuadratic());
         }
     }
 
@@ -133,12 +89,7 @@ public final class BouncyRainbowAsymKey {
      * Bouncy Rainbow PrivateKey.
      */
     public static class BouncyRainbowPrivateKey
-            extends BouncyPrivateKey {
-        /**
-         * Private Key details.
-         */
-        private final RainbowPrivateKeyParameters theKey;
-
+            extends BouncyPrivateKey<RainbowPrivateKeyParameters> {
         /**
          * Constructor.
          * @param pKeySpec the keySpec
@@ -146,65 +97,26 @@ public final class BouncyRainbowAsymKey {
          */
         BouncyRainbowPrivateKey(final GordianAsymKeySpec pKeySpec,
                                 final RainbowPrivateKeyParameters pPrivateKey) {
-            super(pKeySpec);
-            theKey = pPrivateKey;
-        }
-
-        /**
-         * Obtain the private key.
-         * @return the key
-         */
-        protected RainbowPrivateKeyParameters getPrivateKey() {
-            return theKey;
+            super(pKeySpec, pPrivateKey);
         }
 
         @Override
-        public boolean equals(final Object pThat) {
-            /* Handle the trivial cases */
-            if (pThat == this) {
-                return true;
-            }
-            if (pThat == null) {
+        protected boolean matchKey(final AsymmetricKeyParameter pThat) {
+            /* Access keys */
+            final RainbowPrivateKeyParameters myThis = getPrivateKey();
+            final RainbowPrivateKeyParameters myThat = (RainbowPrivateKeyParameters) pThat;
+
+            /* Check equality */
+            if (!Arrays.equals(myThis.getB1(), myThat.getB1())
+                || !Arrays.equals(myThis.getB2(), myThat.getB2())) {
                 return false;
             }
-
-            /* Make sure that the object is the same class */
-            if (!(pThat instanceof BouncyRainbowPrivateKey)) {
+            if (!Arrays.deepEquals(myThis.getInvA1(), myThat.getInvA1())
+                || !Arrays.deepEquals(myThis.getInvA2(), myThat.getInvA2())) {
                 return false;
             }
-
-            /* Access the target field */
-            final BouncyRainbowPrivateKey myThat = (BouncyRainbowPrivateKey) pThat;
-
-            /* Check differences */
-            return getKeySpec().equals(myThat.getKeySpec())
-                   && compareKeys(theKey, myThat.getPrivateKey());
-        }
-
-        @Override
-        public int hashCode() {
-            return GordianFactory.HASH_PRIME * getKeySpec().hashCode()
-                   + theKey.hashCode();
-        }
-
-        /**
-         * CompareKeys.
-         * @param pFirst the first key
-         * @param pSecond the second key
-         * @return true/false
-         */
-        private static boolean compareKeys(final RainbowPrivateKeyParameters pFirst,
-                                           final RainbowPrivateKeyParameters pSecond) {
-            if (!Arrays.equals(pFirst.getB1(), pSecond.getB1())
-                || !Arrays.equals(pFirst.getB2(), pSecond.getB2())) {
-                return false;
-            }
-            if (!Arrays.deepEquals(pFirst.getInvA1(), pSecond.getInvA1())
-                || !Arrays.deepEquals(pFirst.getInvA2(), pSecond.getInvA2())) {
-                return false;
-            }
-            return Arrays.equals(pFirst.getVi(), pSecond.getVi())
-                   && Arrays.equals(pFirst.getLayers(), pSecond.getLayers());
+            return Arrays.equals(myThis.getVi(), myThat.getVi())
+                   && Arrays.equals(myThis.getLayers(), myThat.getLayers());
         }
     }
 
@@ -237,14 +149,14 @@ public final class BouncyRainbowAsymKey {
         @Override
         public BouncyKeyPair generateKeyPair() {
             final AsymmetricCipherKeyPair myPair = theGenerator.generateKeyPair();
-            final BouncyRainbowPublicKey myPublic = new BouncyRainbowPublicKey(getKeySpec(), RainbowPublicKeyParameters.class.cast(myPair.getPublic()));
-            final BouncyRainbowPrivateKey myPrivate = new BouncyRainbowPrivateKey(getKeySpec(), RainbowPrivateKeyParameters.class.cast(myPair.getPrivate()));
+            final BouncyRainbowPublicKey myPublic = new BouncyRainbowPublicKey(getKeySpec(), (RainbowPublicKeyParameters) myPair.getPublic());
+            final BouncyRainbowPrivateKey myPrivate = new BouncyRainbowPrivateKey(getKeySpec(), (RainbowPrivateKeyParameters) myPair.getPrivate());
             return new BouncyKeyPair(myPublic, myPrivate);
         }
 
         @Override
         public PKCS8EncodedKeySpec getPKCS8Encoding(final GordianKeyPair pKeyPair) {
-            final BouncyRainbowPrivateKey myPrivateKey = BouncyRainbowPrivateKey.class.cast(getPrivateKey(pKeyPair));
+            final BouncyRainbowPrivateKey myPrivateKey = (BouncyRainbowPrivateKey) getPrivateKey(pKeyPair);
             final RainbowPrivateKeyParameters myParms = myPrivateKey.getPrivateKey();
             final BCRainbowPrivateKey myKey = new BCRainbowPrivateKey(myParms);
             return new PKCS8EncodedKeySpec(myKey.getEncoded());
@@ -267,7 +179,7 @@ public final class BouncyRainbowAsymKey {
 
         @Override
         public X509EncodedKeySpec getX509Encoding(final GordianKeyPair pKeyPair) {
-            final BouncyRainbowPublicKey myPublicKey = BouncyRainbowPublicKey.class.cast(getPublicKey(pKeyPair));
+            final BouncyRainbowPublicKey myPublicKey = (BouncyRainbowPublicKey) getPublicKey(pKeyPair);
             final RainbowPublicKeyParameters myParms = myPublicKey.getPublicKey();
             final BCRainbowPublicKey myKey = new BCRainbowPublicKey(myParms);
             return new X509EncodedKeySpec(myKey.getEncoded());

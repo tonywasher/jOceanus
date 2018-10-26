@@ -3,7 +3,7 @@
   <parent>
     <groupId>net.sourceforge.joceanus</groupId>
     <artifactId>jmoneywise</artifactId>
-    <version>v1.5.3-SNAPSHOT</version>   
+    <version>v1.5.3-SNAPSHOT</version>
   </parent>
   <artifactId>jmoneywise-core</artifactId>
   <name>MoneyWise Personal Finance - Core</name>

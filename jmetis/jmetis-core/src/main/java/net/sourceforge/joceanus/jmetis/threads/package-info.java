@@ -14,8 +14,7 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  ******************************************************************************/
-package net.sourceforge.joceanus.jmetis.threads;
-
 /**
  * Package to abstract javaFX/Swing workers.
  */
+package net.sourceforge.joceanus.jmetis.threads;

@@ -41,9 +41,9 @@ public class MetisExcelHSSFColumn
      * @param pIndex the index
      * @param pReadOnly is the column readOnly?
      */
-    protected MetisExcelHSSFColumn(final MetisExcelHSSFSheet pSheet,
-                               final int pIndex,
-                               final boolean pReadOnly) {
+    MetisExcelHSSFColumn(final MetisExcelHSSFSheet pSheet,
+                         final int pIndex,
+                         final boolean pReadOnly) {
         /* Store parameters */
         super(pSheet, pIndex);
         theExcelSheet = pSheet;

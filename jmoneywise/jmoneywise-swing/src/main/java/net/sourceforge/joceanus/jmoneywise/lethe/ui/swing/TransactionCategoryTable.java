@@ -600,9 +600,7 @@ public class TransactionCategoryTable
             }
 
             /* Handle filter */
-            return (theParent == null)
-                                       ? true
-                                       : theParent.equals(pRow.getParentCategory());
+            return theParent == null || theParent.equals(pRow.getParentCategory());
         }
 
         /**
@@ -715,7 +713,7 @@ public class TransactionCategoryTable
          */
         private void setColumns() {
             /* Switch on parent */
-            if ((theParent == null)
+            if (theParent == null
                 || !theParent.isCategoryClass(TransactionCategoryClass.TOTALS)) {
                 revealColumn(theFullNameColumn);
             } else {
@@ -757,9 +755,9 @@ public class TransactionCategoryTable
             switch (pColIndex) {
                 case COLUMN_NAME:
                     final String mySubCat = pCategory.getSubCategory();
-                    return (mySubCat == null)
-                                              ? pCategory.getName()
-                                              : mySubCat;
+                    return mySubCat == null
+                                            ? pCategory.getName()
+                                            : mySubCat;
                 case COLUMN_FULLNAME:
                     return pCategory.getName();
                 case COLUMN_CATEGORY:
@@ -817,9 +815,7 @@ public class TransactionCategoryTable
                 case COLUMN_DESC:
                     return true;
                 case COLUMN_CATEGORY:
-                    return pItem.isActive()
-                                            ? false
-                                            : CategoryType.determineType(pItem).isChangeable();
+                    return !pItem.isActive() && CategoryType.determineType(pItem).isChangeable();
                 case COLUMN_ACTIVE:
                     return !pItem.isActive();
                 default:

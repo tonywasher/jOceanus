@@ -150,6 +150,14 @@ public abstract class GordianFactory
     }
 
     /**
+     * Obtain factory type.
+     * @return the factory type
+     */
+    public GordianFactoryType getFactoryType() {
+        return theParameters.getFactoryType();
+    }
+
+    /**
      * Obtain Number of iterations.
      * @return the # of iterations
      */
@@ -1062,7 +1070,6 @@ public abstract class GordianFactory
             return false;
         }
 
-
         /* Check that the signatureSpec is supported */
         if (!validSignatureSpec(pSignSpec)) {
             return false;
@@ -1097,9 +1104,15 @@ public abstract class GordianFactory
             return false;
         }
 
-        /* Check that the digestSpec is supported */
+        /* Don't worry about digestSpec if it is irrelevant */
         final GordianDigestSpec mySpec = pSignSpec.getDigestSpec();
-        if (!validSignatureDigestSpec(mySpec)) {
+        if (myType.nullDigestForSignatures()) {
+            return mySpec == null;
+        }
+
+        /* Check that the digestSpec is supported */
+        if (mySpec == null
+            || !validSignatureDigestSpec(mySpec)) {
             return false;
         }
 

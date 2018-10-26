@@ -36,7 +36,7 @@ public class MetisExcelXSSFFactory
     }
 
     @Override
-    public MetisSheetWorkBook newWorkBook() throws OceanusException {
+    public MetisSheetWorkBook newWorkBook() {
         return new MetisExcelXSSFWorkBook();
     }
 }

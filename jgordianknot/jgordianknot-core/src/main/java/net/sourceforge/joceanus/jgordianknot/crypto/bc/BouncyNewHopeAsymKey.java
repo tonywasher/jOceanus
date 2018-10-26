@@ -25,6 +25,7 @@ import org.bouncycastle.asn1.pkcs.PrivateKeyInfo;
 import org.bouncycastle.asn1.x509.SubjectPublicKeyInfo;
 import org.bouncycastle.crypto.AsymmetricCipherKeyPair;
 import org.bouncycastle.crypto.KeyGenerationParameters;
+import org.bouncycastle.crypto.params.AsymmetricKeyParameter;
 import org.bouncycastle.pqc.crypto.ExchangePair;
 import org.bouncycastle.pqc.crypto.newhope.NHAgreement;
 import org.bouncycastle.pqc.crypto.newhope.NHExchangePairGenerator;
@@ -39,7 +40,6 @@ import net.sourceforge.joceanus.jgordianknot.crypto.GordianAgreement.GordianEnca
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianAgreementSpec;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianAsymKeySpec;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianDigestSpec;
-import net.sourceforge.joceanus.jgordianknot.crypto.GordianFactory;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianKeyEncapsulation;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianKeyEncapsulation.GordianKEMSender;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianKeyPair;
@@ -63,69 +63,25 @@ public final class BouncyNewHopeAsymKey {
      * Bouncy NewHope PublicKey.
      */
     public static class BouncyNewHopePublicKey
-            extends BouncyPublicKey {
-        /**
-         * Public Key details.
-         */
-        private final NHPublicKeyParameters theKey;
-
+            extends BouncyPublicKey<NHPublicKeyParameters> {
         /**
          * Constructor.
          * @param pKeySpec the keySpec
          * @param pPublicKey the public key
          */
-        protected BouncyNewHopePublicKey(final GordianAsymKeySpec pKeySpec,
-                                         final NHPublicKeyParameters pPublicKey) {
-            super(pKeySpec);
-            theKey = pPublicKey;
-        }
-
-        /**
-         * Obtain the public key.
-         * @return the key
-         */
-        protected NHPublicKeyParameters getPublicKey() {
-            return theKey;
+        BouncyNewHopePublicKey(final GordianAsymKeySpec pKeySpec,
+                               final NHPublicKeyParameters pPublicKey) {
+            super(pKeySpec, pPublicKey);
         }
 
         @Override
-        public boolean equals(final Object pThat) {
-            /* Handle the trivial cases */
-            if (pThat == this) {
-                return true;
-            }
-            if (pThat == null) {
-                return false;
-            }
+        protected boolean matchKey(final AsymmetricKeyParameter pThat) {
+            /* Access keys */
+            final NHPublicKeyParameters myThis = getPublicKey();
+            final NHPublicKeyParameters myThat = (NHPublicKeyParameters) pThat;
 
-            /* Make sure that the object is the same class */
-            if (!(pThat instanceof BouncyNewHopePublicKey)) {
-                return false;
-            }
-
-            /* Access the target field */
-            final BouncyNewHopePublicKey myThat = (BouncyNewHopePublicKey) pThat;
-
-            /* Check differences */
-            return getKeySpec().equals(myThat.getKeySpec())
-                   && compareKeys(theKey, myThat.getPublicKey());
-        }
-
-        @Override
-        public int hashCode() {
-            return GordianFactory.HASH_PRIME * getKeySpec().hashCode()
-                   + theKey.hashCode();
-        }
-
-        /**
-         * CompareKeys.
-         * @param pFirst the first key
-         * @param pSecond the second key
-         * @return true/false
-         */
-        private static boolean compareKeys(final NHPublicKeyParameters pFirst,
-                                           final NHPublicKeyParameters pSecond) {
-            return Arrays.equals(pFirst.getPubData(), pSecond.getPubData());
+            /* Check equality */
+            return Arrays.equals(myThis.getPubData(), myThat.getPubData());
         }
     }
 
@@ -133,69 +89,25 @@ public final class BouncyNewHopeAsymKey {
      * Bouncy NewHope PrivateKey.
      */
     public static class BouncyNewHopePrivateKey
-            extends BouncyPrivateKey {
-        /**
-         * Private Key details.
-         */
-        private final NHPrivateKeyParameters theKey;
-
+            extends BouncyPrivateKey<NHPrivateKeyParameters> {
         /**
          * Constructor.
          * @param pKeySpec the keySpec
          * @param pPrivateKey the private key
          */
-        protected BouncyNewHopePrivateKey(final GordianAsymKeySpec pKeySpec,
-                                          final NHPrivateKeyParameters pPrivateKey) {
-            super(pKeySpec);
-            theKey = pPrivateKey;
-        }
-
-        /**
-         * Obtain the private key.
-         * @return the key
-         */
-        protected NHPrivateKeyParameters getPrivateKey() {
-            return theKey;
+        BouncyNewHopePrivateKey(final GordianAsymKeySpec pKeySpec,
+                                final NHPrivateKeyParameters pPrivateKey) {
+            super(pKeySpec, pPrivateKey);
         }
 
         @Override
-        public boolean equals(final Object pThat) {
-            /* Handle the trivial cases */
-            if (pThat == this) {
-                return true;
-            }
-            if (pThat == null) {
-                return false;
-            }
+        protected boolean matchKey(final AsymmetricKeyParameter pThat) {
+            /* Access keys */
+            final NHPrivateKeyParameters myThis = getPrivateKey();
+            final NHPrivateKeyParameters myThat = (NHPrivateKeyParameters) pThat;
 
-            /* Make sure that the object is the same class */
-            if (!(pThat instanceof BouncyNewHopePrivateKey)) {
-                return false;
-            }
-
-            /* Access the target field */
-            final BouncyNewHopePrivateKey myThat = (BouncyNewHopePrivateKey) pThat;
-
-            /* Check differences */
-            return getKeySpec().equals(myThat.getKeySpec())
-                   && compareKeys(theKey, myThat.getPrivateKey());
-        }
-
-        @Override
-        public int hashCode() {
-            return GordianFactory.HASH_PRIME * getKeySpec().hashCode()
-                   + theKey.hashCode();
-        }
-
-        /**
-         * CompareKeys.
-         * @param pFirst the first key
-         * @param pSecond the second key
-         * @return true/false
-         */
-        private static boolean compareKeys(final NHPrivateKeyParameters pFirst,
-                                           final NHPrivateKeyParameters pSecond) {
-            return Arrays.equals(pFirst.getSecData(), pSecond.getSecData());
+            /* Check equality */
+            return Arrays.equals(myThis.getSecData(), myThat.getSecData());
         }
     }
 
@@ -214,8 +126,8 @@ public final class BouncyNewHopeAsymKey {
          * @param pFactory the Security Factory
          * @param pKeySpec the keySpec
          */
-        protected BouncyNewHopeKeyPairGenerator(final BouncyFactory pFactory,
-                                                final GordianAsymKeySpec pKeySpec) {
+        BouncyNewHopeKeyPairGenerator(final BouncyFactory pFactory,
+                                      final GordianAsymKeySpec pKeySpec) {
             /* Initialise underlying class */
             super(pFactory, pKeySpec);
 
@@ -228,14 +140,14 @@ public final class BouncyNewHopeAsymKey {
         @Override
         public BouncyKeyPair generateKeyPair() {
             final AsymmetricCipherKeyPair myPair = theGenerator.generateKeyPair();
-            final BouncyNewHopePublicKey myPublic = new BouncyNewHopePublicKey(getKeySpec(), NHPublicKeyParameters.class.cast(myPair.getPublic()));
-            final BouncyNewHopePrivateKey myPrivate = new BouncyNewHopePrivateKey(getKeySpec(), NHPrivateKeyParameters.class.cast(myPair.getPrivate()));
+            final BouncyNewHopePublicKey myPublic = new BouncyNewHopePublicKey(getKeySpec(), (NHPublicKeyParameters) myPair.getPublic());
+            final BouncyNewHopePrivateKey myPrivate = new BouncyNewHopePrivateKey(getKeySpec(), (NHPrivateKeyParameters) myPair.getPrivate());
             return new BouncyKeyPair(myPublic, myPrivate);
         }
 
         @Override
         public PKCS8EncodedKeySpec getPKCS8Encoding(final GordianKeyPair pKeyPair) {
-            final BouncyNewHopePrivateKey myPrivateKey = BouncyNewHopePrivateKey.class.cast(getPrivateKey(pKeyPair));
+            final BouncyNewHopePrivateKey myPrivateKey = (BouncyNewHopePrivateKey) getPrivateKey(pKeyPair);
             final NHPrivateKeyParameters myParms = myPrivateKey.getPrivateKey();
             final BCNHPrivateKey myKey = new BCNHPrivateKey(myParms);
             return new PKCS8EncodedKeySpec(myKey.getEncoded());
@@ -257,7 +169,7 @@ public final class BouncyNewHopeAsymKey {
 
         @Override
         public X509EncodedKeySpec getX509Encoding(final GordianKeyPair pKeyPair) {
-            final BouncyNewHopePublicKey myPublicKey = BouncyNewHopePublicKey.class.cast(getPublicKey(pKeyPair));
+            final BouncyNewHopePublicKey myPublicKey = (BouncyNewHopePublicKey) getPublicKey(pKeyPair);
             final NHPublicKeyParameters myParms = myPublicKey.getPublicKey();
             final BCNHPublicKey myKey = new BCNHPublicKey(myParms);
             return new X509EncodedKeySpec(myKey.getEncoded());

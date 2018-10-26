@@ -32,6 +32,7 @@ import org.bouncycastle.crypto.DSA;
 import org.bouncycastle.crypto.digests.SHA256Digest;
 import org.bouncycastle.crypto.generators.DSAKeyPairGenerator;
 import org.bouncycastle.crypto.generators.DSAParametersGenerator;
+import org.bouncycastle.crypto.params.AsymmetricKeyParameter;
 import org.bouncycastle.crypto.params.DSAKeyGenerationParameters;
 import org.bouncycastle.crypto.params.DSAParameterGenerationParameters;
 import org.bouncycastle.crypto.params.DSAParameters;
@@ -43,7 +44,6 @@ import org.bouncycastle.jcajce.provider.asymmetric.util.KeyUtil;
 import net.sourceforge.joceanus.jgordianknot.GordianCryptoException;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianAsymKeySpec;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianDSAKeyType;
-import net.sourceforge.joceanus.jgordianknot.crypto.GordianFactory;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianKeyPair;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianSignatureSpec;
 import net.sourceforge.joceanus.jgordianknot.crypto.bc.BouncyKeyPair.BouncyPrivateKey;
@@ -66,58 +66,25 @@ public final class BouncyDSAAsymKey {
      * Bouncy DSA PublicKey.
      */
     public static class BouncyDSAPublicKey
-            extends BouncyPublicKey {
-        /**
-         * Public Key details.
-         */
-        private final DSAPublicKeyParameters theKey;
-
-        /**
+            extends BouncyPublicKey<DSAPublicKeyParameters> {
+         /**
          * Constructor.
          * @param pKeySpec the keySpec
          * @param pPublicKey the public key
          */
         BouncyDSAPublicKey(final GordianAsymKeySpec pKeySpec,
                            final DSAPublicKeyParameters pPublicKey) {
-            super(pKeySpec);
-            theKey = pPublicKey;
-        }
-
-        /**
-         * Obtain the public key.
-         * @return the key
-         */
-        protected DSAPublicKeyParameters getPublicKey() {
-            return theKey;
+            super(pKeySpec, pPublicKey);
         }
 
         @Override
-        public boolean equals(final Object pThat) {
-            /* Handle the trivial cases */
-            if (pThat == this) {
-                return true;
-            }
-            if (pThat == null) {
-                return false;
-            }
+        protected boolean matchKey(final AsymmetricKeyParameter pThat) {
+            /* Access keys */
+            final DSAPublicKeyParameters myThis = getPublicKey();
+            final DSAPublicKeyParameters myThat = (DSAPublicKeyParameters) pThat;
 
-            /* Make sure that the object is the same class */
-            if (!(pThat instanceof BouncyDSAPublicKey)) {
-                return false;
-            }
-
-            /* Access the target field */
-            final BouncyDSAPublicKey myThat = (BouncyDSAPublicKey) pThat;
-
-            /* Check differences */
-            return getKeySpec().equals(myThat.getKeySpec())
-                   && compareKeys(theKey, myThat.getPublicKey());
-        }
-
-        @Override
-        public int hashCode() {
-            return GordianFactory.HASH_PRIME * getKeySpec().hashCode()
-                   + theKey.hashCode();
+            /* Compare keys */
+            return compareKeys(myThis, myThat);
         }
 
         /**
@@ -127,7 +94,7 @@ public final class BouncyDSAAsymKey {
          */
         public boolean validPrivate(final BouncyDSAPrivateKey pPrivate) {
             final DSAPrivateKeyParameters myPrivate = pPrivate.getPrivateKey();
-            return theKey.getParameters().equals(myPrivate.getParameters());
+            return getPublicKey().getParameters().equals(myPrivate.getParameters());
         }
 
         /**
@@ -147,12 +114,7 @@ public final class BouncyDSAAsymKey {
      * Bouncy DSA PrivateKey.
      */
     public static class BouncyDSAPrivateKey
-            extends BouncyPrivateKey {
-        /**
-         * Private Key details.
-         */
-        private final DSAPrivateKeyParameters theKey;
-
+            extends BouncyPrivateKey<DSAPrivateKeyParameters> {
         /**
          * Constructor.
          * @param pKeySpec the keySpec
@@ -160,45 +122,17 @@ public final class BouncyDSAAsymKey {
          */
         BouncyDSAPrivateKey(final GordianAsymKeySpec pKeySpec,
                             final DSAPrivateKeyParameters pPrivateKey) {
-            super(pKeySpec);
-            theKey = pPrivateKey;
-        }
-
-        /**
-         * Obtain the private key.
-         * @return the key
-         */
-        protected DSAPrivateKeyParameters getPrivateKey() {
-            return theKey;
+            super(pKeySpec, pPrivateKey);
         }
 
         @Override
-        public boolean equals(final Object pThat) {
-            /* Handle the trivial cases */
-            if (pThat == this) {
-                return true;
-            }
-            if (pThat == null) {
-                return false;
-            }
+        protected boolean matchKey(final AsymmetricKeyParameter pThat) {
+            /* Access keys */
+            final DSAPrivateKeyParameters myThis = getPrivateKey();
+            final DSAPrivateKeyParameters myThat = (DSAPrivateKeyParameters) pThat;
 
-            /* Make sure that the object is the same class */
-            if (!(pThat instanceof BouncyDSAPrivateKey)) {
-                return false;
-            }
-
-            /* Access the target field */
-            final BouncyDSAPrivateKey myThat = (BouncyDSAPrivateKey) pThat;
-
-            /* Check differences */
-            return getKeySpec().equals(myThat.getKeySpec())
-                   && compareKeys(theKey, myThat.getPrivateKey());
-        }
-
-        @Override
-        public int hashCode() {
-            return GordianFactory.HASH_PRIME * getKeySpec().hashCode()
-                   + theKey.hashCode();
+            /* Compare keys */
+            return compareKeys(myThis, myThat);
         }
 
         /**
@@ -250,15 +184,15 @@ public final class BouncyDSAAsymKey {
         @Override
         public BouncyKeyPair generateKeyPair() {
             final AsymmetricCipherKeyPair myPair = theGenerator.generateKeyPair();
-            final BouncyDSAPublicKey myPublic = new BouncyDSAPublicKey(getKeySpec(), DSAPublicKeyParameters.class.cast(myPair.getPublic()));
-            final BouncyDSAPrivateKey myPrivate = new BouncyDSAPrivateKey(getKeySpec(), DSAPrivateKeyParameters.class.cast(myPair.getPrivate()));
+            final BouncyDSAPublicKey myPublic = new BouncyDSAPublicKey(getKeySpec(), (DSAPublicKeyParameters) myPair.getPublic());
+            final BouncyDSAPrivateKey myPrivate = new BouncyDSAPrivateKey(getKeySpec(), (DSAPrivateKeyParameters) myPair.getPrivate());
             return new BouncyKeyPair(myPublic, myPrivate);
         }
 
         @Override
         public PKCS8EncodedKeySpec getPKCS8Encoding(final GordianKeyPair pKeyPair) throws GordianCryptoException {
             try {
-                final BouncyDSAPrivateKey myPrivateKey = BouncyDSAPrivateKey.class.cast(getPrivateKey(pKeyPair));
+                final BouncyDSAPrivateKey myPrivateKey = (BouncyDSAPrivateKey) getPrivateKey(pKeyPair);
                 final DSAPrivateKeyParameters myKey = myPrivateKey.getPrivateKey();
                 final DSAParameters myParms = myKey.getParameters();
                 final PrivateKeyInfo myInfo = new PrivateKeyInfo(new AlgorithmIdentifier(X9ObjectIdentifiers.id_dsa, new DSAParameter(myParms.getP(), myParms.getQ(), myParms.getG())
@@ -287,7 +221,7 @@ public final class BouncyDSAAsymKey {
 
         @Override
         public X509EncodedKeySpec getX509Encoding(final GordianKeyPair pKeyPair) {
-            final BouncyDSAPublicKey myPublicKey = BouncyDSAPublicKey.class.cast(getPublicKey(pKeyPair));
+            final BouncyDSAPublicKey myPublicKey = (BouncyDSAPublicKey) getPublicKey(pKeyPair);
             final DSAPublicKeyParameters myKey = myPublicKey.getPublicKey();
             final DSAParameters myParms = myKey.getParameters();
             final byte[] myBytes = KeyUtil.getEncodedSubjectPublicKeyInfo(new AlgorithmIdentifier(X9ObjectIdentifiers.id_dsa,

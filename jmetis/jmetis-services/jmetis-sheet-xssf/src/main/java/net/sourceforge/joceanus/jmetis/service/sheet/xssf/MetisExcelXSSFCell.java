@@ -61,10 +61,10 @@ public class MetisExcelXSSFCell
      * @param pColIndex the column index
      * @param pReadOnly is the cell readOnly?
      */
-    protected MetisExcelXSSFCell(final MetisExcelXSSFRow pRow,
-                                 final XSSFCell pExcelCell,
-                                 final int pColIndex,
-                                 final boolean pReadOnly) {
+    MetisExcelXSSFCell(final MetisExcelXSSFRow pRow,
+                       final XSSFCell pExcelCell,
+                       final int pColIndex,
+                       final boolean pReadOnly) {
         /* Store parameters */
         super(pRow, pColIndex);
         theExcelRow = pRow;
@@ -93,14 +93,14 @@ public class MetisExcelXSSFCell
 
     @Override
     public Boolean getBooleanValue() {
-        switch (theExcelCell.getCellTypeEnum()) {
+        switch (theExcelCell.getCellType()) {
             case BOOLEAN:
                 return theExcelCell.getBooleanCellValue();
             case FORMULA:
                 final CellValue myValue = theExcelRow.evaluateFormula(theExcelCell);
-                return CellType.BOOLEAN == myValue.getCellTypeEnum()
-                                                                     ? myValue.getBooleanValue()
-                                                                     : null;
+                return CellType.BOOLEAN == myValue.getCellType()
+                                                                 ? myValue.getBooleanValue()
+                                                                 : null;
             default:
                 return null;
         }
@@ -108,22 +108,22 @@ public class MetisExcelXSSFCell
 
     @Override
     public TethysDate getDateValue() {
-        return CellType.NUMERIC == theExcelCell.getCellTypeEnum()
-                                                                  ? new TethysDate(theExcelCell.getDateCellValue())
-                                                                  : null;
+        return CellType.NUMERIC == theExcelCell.getCellType()
+                                                              ? new TethysDate(theExcelCell.getDateCellValue())
+                                                              : null;
     }
 
     @Override
     public Integer getIntegerValue() {
-        switch (theExcelCell.getCellTypeEnum()) {
+        switch (theExcelCell.getCellType()) {
             case NUMERIC:
                 final Double myValue = theExcelCell.getNumericCellValue();
                 return myValue.intValue();
             case FORMULA:
                 final CellValue myCellValue = theExcelRow.evaluateFormula(theExcelCell);
-                return CellType.NUMERIC == myCellValue.getCellTypeEnum()
-                                                                         ? ((Double) myCellValue.getNumberValue()).intValue()
-                                                                         : null;
+                return CellType.NUMERIC == myCellValue.getCellType()
+                                                                     ? ((Double) myCellValue.getNumberValue()).intValue()
+                                                                     : null;
             default:
                 return null;
         }
@@ -131,15 +131,15 @@ public class MetisExcelXSSFCell
 
     @Override
     public Long getLongValue() {
-        switch (theExcelCell.getCellTypeEnum()) {
+        switch (theExcelCell.getCellType()) {
             case NUMERIC:
                 final Double myValue = theExcelCell.getNumericCellValue();
                 return myValue.longValue();
             case FORMULA:
                 final CellValue myCellValue = theExcelRow.evaluateFormula(theExcelCell);
-                return CellType.NUMERIC == myCellValue.getCellTypeEnum()
-                                                                         ? ((Double) myCellValue.getNumberValue()).longValue()
-                                                                         : null;
+                return CellType.NUMERIC == myCellValue.getCellType()
+                                                                     ? ((Double) myCellValue.getNumberValue()).longValue()
+                                                                     : null;
             default:
                 return null;
         }
@@ -147,7 +147,7 @@ public class MetisExcelXSSFCell
 
     @Override
     public String getStringValue() {
-        switch (theExcelCell.getCellTypeEnum()) {
+        switch (theExcelCell.getCellType()) {
             case NUMERIC:
             case BOOLEAN:
                 /* Pick up the formatted value */
@@ -168,7 +168,7 @@ public class MetisExcelXSSFCell
      */
     private String getStringFormulaValue() {
         final CellValue myValue = theExcelRow.evaluateFormula(theExcelCell);
-        switch (myValue.getCellTypeEnum()) {
+        switch (myValue.getCellType()) {
             case STRING:
             case NUMERIC:
             case BOOLEAN:
@@ -209,14 +209,14 @@ public class MetisExcelXSSFCell
     }
 
     @Override
-    public void setNullValue() throws OceanusException {
+    public void setNullValue() {
         if (!isReadOnly) {
             theExcelCell.setCellValue((String) null);
         }
     }
 
     @Override
-    protected void setBoolean(final Boolean pValue) throws OceanusException {
+    protected void setBoolean(final Boolean pValue) {
         if (!isReadOnly) {
             /* Set the value */
             theExcelCell.setCellValue(pValue);
@@ -227,7 +227,7 @@ public class MetisExcelXSSFCell
     }
 
     @Override
-    protected void setDate(final TethysDate pValue) throws OceanusException {
+    protected void setDate(final TethysDate pValue) {
         if (!isReadOnly) {
             /* Set the value */
             theExcelCell.setCellValue(pValue.toDate());
@@ -238,7 +238,7 @@ public class MetisExcelXSSFCell
     }
 
     @Override
-    protected void setInteger(final Integer pValue) throws OceanusException {
+    protected void setInteger(final Integer pValue) {
         if (!isReadOnly) {
             /* Set the value */
             theExcelCell.setCellValue(pValue.doubleValue());
@@ -249,7 +249,7 @@ public class MetisExcelXSSFCell
     }
 
     @Override
-    protected void setLong(final Long pValue) throws OceanusException {
+    protected void setLong(final Long pValue) {
         if (!isReadOnly) {
             /* Set the value */
             theExcelCell.setCellValue(pValue.doubleValue());
@@ -260,7 +260,7 @@ public class MetisExcelXSSFCell
     }
 
     @Override
-    protected void setString(final String pValue) throws OceanusException {
+    protected void setString(final String pValue) {
         if (!isReadOnly) {
             /* Set the value */
             theExcelCell.setCellValue(pValue);
@@ -271,7 +271,7 @@ public class MetisExcelXSSFCell
     }
 
     @Override
-    protected void setHeader(final String pValue) throws OceanusException {
+    protected void setHeader(final String pValue) {
         if (!isReadOnly) {
             /* Set as string value */
             theExcelCell.setCellValue(pValue);
@@ -282,7 +282,7 @@ public class MetisExcelXSSFCell
     }
 
     @Override
-    protected void setDecimal(final TethysDecimal pValue) throws OceanusException {
+    protected void setDecimal(final TethysDecimal pValue) {
         if (!isReadOnly) {
             /* Set the value */
             theExcelCell.setCellValue(pValue.doubleValue());
@@ -293,7 +293,7 @@ public class MetisExcelXSSFCell
     }
 
     @Override
-    protected void setMonetary(final TethysMoney pValue) throws OceanusException {
+    protected void setMonetary(final TethysMoney pValue) {
         /* Pass through as decimal */
         setDecimal(pValue);
     }
@@ -302,7 +302,7 @@ public class MetisExcelXSSFCell
      * Set cell style.
      * @param pStyle the style type to use
      */
-    protected void setCellStyle(final XSSFCellStyle pStyle) {
+    void setCellStyle(final XSSFCellStyle pStyle) {
         theExcelCell.setCellStyle(pStyle);
     }
 }

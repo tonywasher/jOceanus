@@ -14,8 +14,7 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  ******************************************************************************/
-package net.sourceforge.joceanus.jmetis.service.sheet.odfdom;
-
 /**
  * PlugIn for odfdom.
  */
+package net.sourceforge.joceanus.jmetis.service.sheet.odfdom;

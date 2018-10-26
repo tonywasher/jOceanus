@@ -117,6 +117,38 @@ public final class GordianAsymKeySpec {
     }
 
     /**
+     * Create EdDSA25519 Key.
+     * @return the KeySpec
+     */
+    public static GordianAsymKeySpec x25519() {
+        return new GordianAsymKeySpec(GordianAsymKeyType.X25519, null);
+    }
+
+    /**
+     * Create EdX448 Key.
+     * @return the KeySpec
+     */
+    public static GordianAsymKeySpec x448() {
+        return new GordianAsymKeySpec(GordianAsymKeyType.X448, null);
+    }
+
+    /**
+     * Create EdDSA25519 Key.
+     * @return the KeySpec
+     */
+    public static GordianAsymKeySpec ed25519() {
+        return new GordianAsymKeySpec(GordianAsymKeyType.ED25519, null);
+    }
+
+    /**
+     * Create EdDSA448 Key.
+     * @return the KeySpec
+     */
+    public static GordianAsymKeySpec ed448() {
+        return new GordianAsymKeySpec(GordianAsymKeyType.ED448, null);
+    }
+
+    /**
      * Create SPHINCSKey.
      * @param pKeyType the SPHINCS keyType
      * @return the KeySpec
@@ -166,6 +198,15 @@ public final class GordianAsymKeySpec {
      */
     public static GordianAsymKeySpec xmssmt(final GordianXMSSKeyType pKeySpec) {
         return new GordianAsymKeySpec(GordianAsymKeyType.XMSSMT, pKeySpec);
+    }
+
+    /**
+     * Create qTESLAKey.
+     * @param pKeySpec the keySpec
+     * @return the KeySpec
+     */
+    public static GordianAsymKeySpec qTESLA(final GordianQTESLAKeyType pKeySpec) {
+        return new GordianAsymKeySpec(GordianAsymKeyType.QTESLA, pKeySpec);
     }
 
     /**
@@ -242,6 +283,27 @@ public final class GordianAsymKeySpec {
         return theSubKeyType instanceof GordianXMSSKeyType
                                                            ? (GordianXMSSKeyType) theSubKeyType
                                                            : null;
+    }
+
+    /**
+     * Obtain the qTESLA keyType.
+     * @return the keyType.
+     */
+    public GordianQTESLAKeyType getQTESLAKeyType() {
+        return theSubKeyType instanceof GordianQTESLAKeyType
+               ? (GordianQTESLAKeyType) theSubKeyType
+               : null;
+    }
+
+    /**
+     * Obtain the qTESLA category.
+     * @return the category.
+     */
+    public int getQTESLACategory() {
+        final GordianQTESLAKeyType myKeyType = getQTESLAKeyType();
+        return myKeyType != null
+               ? myKeyType.getCategory()
+               : null;
     }
 
     @Override

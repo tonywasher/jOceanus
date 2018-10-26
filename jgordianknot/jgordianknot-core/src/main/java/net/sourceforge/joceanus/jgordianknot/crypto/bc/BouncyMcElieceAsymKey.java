@@ -25,6 +25,7 @@ import org.bouncycastle.asn1.x509.SubjectPublicKeyInfo;
 import org.bouncycastle.crypto.AsymmetricCipherKeyPair;
 import org.bouncycastle.crypto.KeyGenerationParameters;
 import org.bouncycastle.crypto.digests.SHA256Digest;
+import org.bouncycastle.crypto.params.AsymmetricKeyParameter;
 import org.bouncycastle.pqc.asn1.McElieceCCA2PrivateKey;
 import org.bouncycastle.pqc.asn1.McElieceCCA2PublicKey;
 import org.bouncycastle.pqc.asn1.McEliecePrivateKey;
@@ -46,7 +47,6 @@ import org.bouncycastle.pqc.jcajce.provider.mceliece.BCMcEliecePublicKey;
 
 import net.sourceforge.joceanus.jgordianknot.GordianCryptoException;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianAsymKeySpec;
-import net.sourceforge.joceanus.jgordianknot.crypto.GordianFactory;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianKeyPair;
 import net.sourceforge.joceanus.jgordianknot.crypto.bc.BouncyKeyPair.BouncyPrivateKey;
 import net.sourceforge.joceanus.jgordianknot.crypto.bc.BouncyKeyPair.BouncyPublicKey;
@@ -66,67 +66,25 @@ public final class BouncyMcElieceAsymKey {
      * Bouncy McEliece PublicKey.
      */
     public static class BouncyMcEliecePublicKey
-            extends BouncyPublicKey {
-        /**
-         * Public Key details.
-         */
-        private final McEliecePublicKeyParameters theKey;
-
+            extends BouncyPublicKey<McEliecePublicKeyParameters> {
         /**
          * Constructor.
          * @param pKeySpec the keySpec
          * @param pPublicKey the public key
          */
-        protected BouncyMcEliecePublicKey(final GordianAsymKeySpec pKeySpec,
-                                          final McEliecePublicKeyParameters pPublicKey) {
-            super(pKeySpec);
-            theKey = pPublicKey;
-        }
-
-        /**
-         * Obtain the public key.
-         * @return the key
-         */
-        protected McEliecePublicKeyParameters getPublicKey() {
-            return theKey;
-        }
+        BouncyMcEliecePublicKey(final GordianAsymKeySpec pKeySpec,
+                                final McEliecePublicKeyParameters pPublicKey) {
+            super(pKeySpec, pPublicKey);
+         }
 
         @Override
-        public boolean equals(final Object pThat) {
-            /* Handle the trivial cases */
-            if (pThat == this) {
-                return true;
-            }
-            if (pThat == null) {
-                return false;
-            }
+        protected boolean matchKey(final AsymmetricKeyParameter pThat) {
+            /* Access keys */
+            final McEliecePublicKeyParameters myThis = getPublicKey();
+            final McEliecePublicKeyParameters myThat = (McEliecePublicKeyParameters) pThat;
 
-            /* Make sure that the object is the same class */
-            if (!(pThat instanceof BouncyMcEliecePublicKey)) {
-                return false;
-            }
-
-            /* Access the target field */
-            final BouncyMcEliecePublicKey myThat = (BouncyMcEliecePublicKey) pThat;
-
-            /* Check differences */
-            return getKeySpec().equals(myThat.getKeySpec())
-                   && compareKeys(myThat);
-        }
-
-        @Override
-        public int hashCode() {
-            return GordianFactory.HASH_PRIME * getKeySpec().hashCode()
-                   + theKey.hashCode();
-        }
-
-        /**
-         * CompareKeys.
-         * @param pThat the key to compare with
-         * @return true/false
-         */
-        private boolean compareKeys(final BouncyMcEliecePublicKey pThat) {
-            return compareKeys(getPublicKey(), pThat.getPublicKey());
+            /* Compare keys */
+            return compareKeys(myThis, myThat);
         }
 
         /**
@@ -159,67 +117,26 @@ public final class BouncyMcElieceAsymKey {
      * Bouncy McEliece PrivateKey.
      */
     public static class BouncyMcEliecePrivateKey
-            extends BouncyPrivateKey {
-        /**
-         * Private Key details.
-         */
-        private final McEliecePrivateKeyParameters theKey;
-
+            extends BouncyPrivateKey<McEliecePrivateKeyParameters> {
         /**
          * Constructor.
          * @param pKeySpec the keySpec
          * @param pPrivateKey the private key
          */
-        protected BouncyMcEliecePrivateKey(final GordianAsymKeySpec pKeySpec,
-                                           final McEliecePrivateKeyParameters pPrivateKey) {
-            super(pKeySpec);
-            theKey = pPrivateKey;
+        BouncyMcEliecePrivateKey(final GordianAsymKeySpec pKeySpec,
+                                 final McEliecePrivateKeyParameters pPrivateKey) {
+            super(pKeySpec, pPrivateKey);
         }
 
-        /**
-         * Obtain the private key.
-         * @return the key
-         */
-        protected McEliecePrivateKeyParameters getPrivateKey() {
-            return theKey;
-        }
 
         @Override
-        public boolean equals(final Object pThat) {
-            /* Handle the trivial cases */
-            if (pThat == this) {
-                return true;
-            }
-            if (pThat == null) {
-                return false;
-            }
+        protected boolean matchKey(final AsymmetricKeyParameter pThat) {
+            /* Access keys */
+            final McEliecePrivateKeyParameters myThis = getPrivateKey();
+            final McEliecePrivateKeyParameters myThat = (McEliecePrivateKeyParameters) pThat;
 
-            /* Make sure that the object is the same class */
-            if (!(pThat instanceof BouncyMcEliecePrivateKey)) {
-                return false;
-            }
-
-            /* Access the target field */
-            final BouncyMcEliecePrivateKey myThat = (BouncyMcEliecePrivateKey) pThat;
-
-            /* Check differences */
-            return getKeySpec().equals(myThat.getKeySpec())
-                   && compareKeys(myThat);
-        }
-
-        @Override
-        public int hashCode() {
-            return GordianFactory.HASH_PRIME * getKeySpec().hashCode()
-                   + theKey.hashCode();
-        }
-
-        /**
-         * CompareKeys.
-         * @param pThat the key to compare with
-         * @return true/false
-         */
-        private boolean compareKeys(final BouncyMcEliecePrivateKey pThat) {
-            return compareKeys(getPrivateKey(), pThat.getPrivateKey());
+            /* Compare keys */
+            return compareKeys(myThis, myThat);
         }
 
         /**
@@ -258,8 +175,8 @@ public final class BouncyMcElieceAsymKey {
          * @param pFactory the Security Factory
          * @param pKeySpec the keySpec
          */
-        protected BouncyMcElieceKeyPairGenerator(final BouncyFactory pFactory,
-                                                 final GordianAsymKeySpec pKeySpec) {
+        BouncyMcElieceKeyPairGenerator(final BouncyFactory pFactory,
+                                       final GordianAsymKeySpec pKeySpec) {
             /* Initialise underlying class */
             super(pFactory, pKeySpec);
 
@@ -272,14 +189,14 @@ public final class BouncyMcElieceAsymKey {
         @Override
         public BouncyKeyPair generateKeyPair() {
             final AsymmetricCipherKeyPair myPair = theGenerator.generateKeyPair();
-            final BouncyMcEliecePublicKey myPublic = new BouncyMcEliecePublicKey(getKeySpec(), McEliecePublicKeyParameters.class.cast(myPair.getPublic()));
-            final BouncyMcEliecePrivateKey myPrivate = new BouncyMcEliecePrivateKey(getKeySpec(), McEliecePrivateKeyParameters.class.cast(myPair.getPrivate()));
+            final BouncyMcEliecePublicKey myPublic = new BouncyMcEliecePublicKey(getKeySpec(), (McEliecePublicKeyParameters) myPair.getPublic());
+            final BouncyMcEliecePrivateKey myPrivate = new BouncyMcEliecePrivateKey(getKeySpec(), (McEliecePrivateKeyParameters) myPair.getPrivate());
             return new BouncyKeyPair(myPublic, myPrivate);
         }
 
         @Override
         public PKCS8EncodedKeySpec getPKCS8Encoding(final GordianKeyPair pKeyPair) {
-            final BouncyMcEliecePrivateKey myPrivateKey = BouncyMcEliecePrivateKey.class.cast(getPrivateKey(pKeyPair));
+            final BouncyMcEliecePrivateKey myPrivateKey = (BouncyMcEliecePrivateKey) getPrivateKey(pKeyPair);
             final McEliecePrivateKeyParameters myParms = myPrivateKey.getPrivateKey();
             final BCMcEliecePrivateKey myKey = new BCMcEliecePrivateKey(myParms);
             return new PKCS8EncodedKeySpec(myKey.getEncoded());
@@ -303,7 +220,7 @@ public final class BouncyMcElieceAsymKey {
 
         @Override
         public X509EncodedKeySpec getX509Encoding(final GordianKeyPair pKeyPair) {
-            final BouncyMcEliecePublicKey myPublicKey = BouncyMcEliecePublicKey.class.cast(getPublicKey(pKeyPair));
+            final BouncyMcEliecePublicKey myPublicKey = (BouncyMcEliecePublicKey) getPublicKey(pKeyPair);
             final McEliecePublicKeyParameters myParms = myPublicKey.getPublicKey();
             final BCMcEliecePublicKey myKey = new BCMcEliecePublicKey(myParms);
             return new X509EncodedKeySpec(myKey.getEncoded());
@@ -338,67 +255,25 @@ public final class BouncyMcElieceAsymKey {
      * Bouncy McElieceCCA2 PublicKey.
      */
     public static class BouncyMcElieceCCA2PublicKey
-            extends BouncyPublicKey {
-        /**
-         * Public Key details.
-         */
-        private final McElieceCCA2PublicKeyParameters theKey;
-
+            extends BouncyPublicKey<McElieceCCA2PublicKeyParameters> {
         /**
          * Constructor.
          * @param pKeySpec the keySpec
          * @param pPublicKey the public key
          */
-        protected BouncyMcElieceCCA2PublicKey(final GordianAsymKeySpec pKeySpec,
-                                              final McElieceCCA2PublicKeyParameters pPublicKey) {
-            super(pKeySpec);
-            theKey = pPublicKey;
-        }
-
-        /**
-         * Obtain the public key.
-         * @return the key
-         */
-        protected McElieceCCA2PublicKeyParameters getPublicKey() {
-            return theKey;
+        BouncyMcElieceCCA2PublicKey(final GordianAsymKeySpec pKeySpec,
+                                    final McElieceCCA2PublicKeyParameters pPublicKey) {
+            super(pKeySpec, pPublicKey);
         }
 
         @Override
-        public boolean equals(final Object pThat) {
-            /* Handle the trivial cases */
-            if (pThat == this) {
-                return true;
-            }
-            if (pThat == null) {
-                return false;
-            }
+        protected boolean matchKey(final AsymmetricKeyParameter pThat) {
+            /* Access keys */
+            final McElieceCCA2PublicKeyParameters myThis = getPublicKey();
+            final McElieceCCA2PublicKeyParameters myThat = (McElieceCCA2PublicKeyParameters) pThat;
 
-            /* Make sure that the object is the same class */
-            if (!(pThat instanceof BouncyMcElieceCCA2PublicKey)) {
-                return false;
-            }
-
-            /* Access the target field */
-            final BouncyMcElieceCCA2PublicKey myThat = (BouncyMcElieceCCA2PublicKey) pThat;
-
-            /* Check differences */
-            return getKeySpec().equals(myThat.getKeySpec())
-                   && compareKeys(myThat);
-        }
-
-        @Override
-        public int hashCode() {
-            return GordianFactory.HASH_PRIME * getKeySpec().hashCode()
-                   + theKey.hashCode();
-        }
-
-        /**
-         * CompareKeys.
-         * @param pThat the key to compare with
-         * @return true/false
-         */
-        private boolean compareKeys(final BouncyMcElieceCCA2PublicKey pThat) {
-            return compareKeys(getPublicKey(), pThat.getPublicKey());
+            /* Compare keys */
+            return compareKeys(myThis, myThat);
         }
 
         /**
@@ -432,67 +307,25 @@ public final class BouncyMcElieceAsymKey {
      * Bouncy McElieceCCA2 PrivateKey.
      */
     public static class BouncyMcElieceCCA2PrivateKey
-            extends BouncyPrivateKey {
-        /**
-         * Private Key details.
-         */
-        private final McElieceCCA2PrivateKeyParameters theKey;
-
+            extends BouncyPrivateKey<McElieceCCA2PrivateKeyParameters> {
         /**
          * Constructor.
          * @param pKeySpec the keySpec
          * @param pPrivateKey the private key
          */
-        protected BouncyMcElieceCCA2PrivateKey(final GordianAsymKeySpec pKeySpec,
-                                               final McElieceCCA2PrivateKeyParameters pPrivateKey) {
-            super(pKeySpec);
-            theKey = pPrivateKey;
-        }
-
-        /**
-         * Obtain the private key.
-         * @return the key
-         */
-        protected McElieceCCA2PrivateKeyParameters getPrivateKey() {
-            return theKey;
+        BouncyMcElieceCCA2PrivateKey(final GordianAsymKeySpec pKeySpec,
+                                     final McElieceCCA2PrivateKeyParameters pPrivateKey) {
+            super(pKeySpec, pPrivateKey);
         }
 
         @Override
-        public boolean equals(final Object pThat) {
-            /* Handle the trivial cases */
-            if (pThat == this) {
-                return true;
-            }
-            if (pThat == null) {
-                return false;
-            }
+        protected boolean matchKey(final AsymmetricKeyParameter pThat) {
+            /* Access keys */
+            final McElieceCCA2PrivateKeyParameters myThis = getPrivateKey();
+            final McElieceCCA2PrivateKeyParameters myThat = (McElieceCCA2PrivateKeyParameters) pThat;
 
-            /* Make sure that the object is the same class */
-            if (!(pThat instanceof BouncyMcElieceCCA2PrivateKey)) {
-                return false;
-            }
-
-            /* Access the target field */
-            final BouncyMcElieceCCA2PrivateKey myThat = (BouncyMcElieceCCA2PrivateKey) pThat;
-
-            /* Check differences */
-            return getKeySpec().equals(myThat.getKeySpec())
-                   && compareKeys(myThat);
-        }
-
-        @Override
-        public int hashCode() {
-            return GordianFactory.HASH_PRIME * getKeySpec().hashCode()
-                   + theKey.hashCode();
-        }
-
-        /**
-         * CompareKeys.
-         * @param pThat the key to compare with
-         * @return true/false
-         */
-        private boolean compareKeys(final BouncyMcElieceCCA2PrivateKey pThat) {
-            return compareKeys(getPrivateKey(), pThat.getPrivateKey());
+            /* Compare keys */
+            return compareKeys(myThis, myThat);
         }
 
         /**
@@ -531,8 +364,8 @@ public final class BouncyMcElieceAsymKey {
          * @param pFactory the Security Factory
          * @param pKeySpec the keySpec
          */
-        protected BouncyMcElieceCCA2KeyPairGenerator(final BouncyFactory pFactory,
-                                                     final GordianAsymKeySpec pKeySpec) {
+        BouncyMcElieceCCA2KeyPairGenerator(final BouncyFactory pFactory,
+                                           final GordianAsymKeySpec pKeySpec) {
             /* Initialise underlying class */
             super(pFactory, pKeySpec);
 
@@ -554,14 +387,14 @@ public final class BouncyMcElieceAsymKey {
         @Override
         public BouncyKeyPair generateKeyPair() {
             final AsymmetricCipherKeyPair myPair = theGenerator.generateKeyPair();
-            final BouncyMcElieceCCA2PublicKey myPublic = new BouncyMcElieceCCA2PublicKey(getKeySpec(), McElieceCCA2PublicKeyParameters.class.cast(myPair.getPublic()));
-            final BouncyMcElieceCCA2PrivateKey myPrivate = new BouncyMcElieceCCA2PrivateKey(getKeySpec(), McElieceCCA2PrivateKeyParameters.class.cast(myPair.getPrivate()));
+            final BouncyMcElieceCCA2PublicKey myPublic = new BouncyMcElieceCCA2PublicKey(getKeySpec(), (McElieceCCA2PublicKeyParameters) myPair.getPublic());
+            final BouncyMcElieceCCA2PrivateKey myPrivate = new BouncyMcElieceCCA2PrivateKey(getKeySpec(), (McElieceCCA2PrivateKeyParameters) myPair.getPrivate());
             return new BouncyKeyPair(myPublic, myPrivate);
         }
 
         @Override
         public PKCS8EncodedKeySpec getPKCS8Encoding(final GordianKeyPair pKeyPair) {
-            final BouncyMcElieceCCA2PrivateKey myPrivateKey = BouncyMcElieceCCA2PrivateKey.class.cast(getPrivateKey(pKeyPair));
+            final BouncyMcElieceCCA2PrivateKey myPrivateKey = (BouncyMcElieceCCA2PrivateKey) getPrivateKey(pKeyPair);
             final McElieceCCA2PrivateKeyParameters myParms = myPrivateKey.getPrivateKey();
             final BCMcElieceCCA2PrivateKey myKey = new BCMcElieceCCA2PrivateKey(myParms);
             return new PKCS8EncodedKeySpec(myKey.getEncoded());
@@ -585,7 +418,7 @@ public final class BouncyMcElieceAsymKey {
 
         @Override
         public X509EncodedKeySpec getX509Encoding(final GordianKeyPair pKeyPair) {
-            final BouncyMcElieceCCA2PublicKey myPublicKey = BouncyMcElieceCCA2PublicKey.class.cast(getPublicKey(pKeyPair));
+            final BouncyMcElieceCCA2PublicKey myPublicKey = (BouncyMcElieceCCA2PublicKey) getPublicKey(pKeyPair);
             final McElieceCCA2PublicKeyParameters myParms = myPublicKey.getPublicKey();
             final BCMcElieceCCA2PublicKey myKey = new BCMcElieceCCA2PublicKey(myParms);
             return new X509EncodedKeySpec(myKey.getEncoded());

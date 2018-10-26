@@ -42,6 +42,7 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
  * EC Encryption Methods.
+ * Based on https://onlinelibrary.wiley.com/doi/pdf/10.1002/sec.1702
  */
 public class BouncyECEncryptor {
     /**
@@ -60,19 +61,19 @@ public class BouncyECEncryptor {
     private final ECCurve theCurve;
 
     /**
-     * The Random.
-     */
-    private final SecureRandom theRandom;
-
-    /**
      * is encryption available?
      */
     private final boolean isAvailable;
 
     /**
-     * The KeyPair.
+     * The encryptor.
      */
-    private AsymmetricCipherKeyPair theKeyPair;
+    private final ECElGamalEncryptor theEncryptor;
+
+    /**
+     * The decryptor.
+     */
+    private final ECElGamalDecryptor theDecryptor;
 
     /**
      * Constructor.
@@ -81,9 +82,6 @@ public class BouncyECEncryptor {
      */
     public BouncyECEncryptor(final SecureRandom pRandom,
                              final GordianAsymKeySpec pKeySpec) {
-        /* Store the random */
-        theRandom = pRandom;
-
         /* Create the generator */
         final ECKeyPairGenerator myGenerator = new ECKeyPairGenerator();
         final GordianAsymKeyType myType = pKeySpec.getKeyType();
@@ -97,12 +95,21 @@ public class BouncyECEncryptor {
 
         /* Initialise the generator */
         final ECDomainParameters myDomain = new ECDomainParameters(x9.getCurve(), x9.getG(), x9.getN(), x9.getH(), x9.getSeed());
-        final ECKeyGenerationParameters myParams = new ECKeyGenerationParameters(myDomain, theRandom);
+        final ECKeyGenerationParameters myParams = new ECKeyGenerationParameters(myDomain, pRandom);
         myGenerator.init(myParams);
 
         /* Create the keyPair */
-        theKeyPair = myGenerator.generateKeyPair();
+        final AsymmetricCipherKeyPair myKeyPair = myGenerator.generateKeyPair();
         isAvailable = x9.getH().compareTo(BigInteger.valueOf(MAXCOFACTOR)) <= 0;
+
+        /* Create encryptor */
+        theEncryptor = new ECElGamalEncryptor();
+        final ParametersWithRandom myParms = new ParametersWithRandom(myKeyPair.getPublic(), pRandom);
+        theEncryptor.init(myParms);
+
+        /* Create decryptor */
+        theDecryptor = new ECElGamalDecryptor();
+        theDecryptor.init(myKeyPair.getPrivate());
     }
 
     /**
@@ -138,18 +145,18 @@ public class BouncyECEncryptor {
     }
 
     /**
-     * Obtain the number of blocks required for the length in terms of blocks.
-     * @param pLength the length of clear data
-     * @return the number of blocks.
+     * Obtain the length of the buffer required to receive the decrypted data.
+     * @param pLength the length of encrypted data
+     * @return the number of bytes.
      */
     private int getDecryptedLength(final int pLength) {
         return getDecryptedBlockLength() * getNumBlocks(pLength, getEncryptedBlockLength());
     }
 
     /**
-     * Obtain the number of blocks required for the encrypted output.
+     * Obtain the length of the buffer required for the encrypted output.
      * @param pLength the length of clear data
-     * @return the number of blocks.
+     * @return the number of bytes.
      */
     private int getEncryptedLength(final int pLength) {
         return getEncryptedBlockLength() * getNumBlocks(pLength, getDecryptedBlockLength());
@@ -161,7 +168,7 @@ public class BouncyECEncryptor {
      * @param pBlockLength the blockLength
      * @return the number of blocks.
      */
-    private int getNumBlocks(final int pLength, final int pBlockLength) {
+    private static int getNumBlocks(final int pLength, final int pBlockLength) {
         return (pLength + pBlockLength - 1) / pBlockLength;
     }
 
@@ -216,14 +223,9 @@ public class BouncyECEncryptor {
                                  final int pInLen) throws OceanusException {
         /* Convert the data to an ECPoint */
         final ECPoint myPoint = convertToECPoint(pData, pInOff, pInLen);
-        final ECElGamalEncryptor myEncryptor = new ECElGamalEncryptor();
-
-        /* Initialise the encryptor */
-        final ParametersWithRandom myParms = new ParametersWithRandom(theKeyPair.getPublic(), theRandom);
-        myEncryptor.init(myParms);
 
         /* Encrypt the data */
-        return myEncryptor.encrypt(myPoint);
+        return theEncryptor.encrypt(myPoint);
     }
 
     /**
@@ -372,12 +374,8 @@ public class BouncyECEncryptor {
     private int decryptFromECPair(final ECPair pPair,
                                   final byte[] pOutBuffer,
                                   final int pOutOff) throws OceanusException {
-        /* Create and initialise the decryptor */
-        final ECElGamalDecryptor myDecryptor = new ECElGamalDecryptor();
-        myDecryptor.init(theKeyPair.getPrivate());
-
         /* Decrypt the pair */
-        final ECPoint myPoint = myDecryptor.decrypt(pPair);
+        final ECPoint myPoint = theDecryptor.decrypt(pPair);
         return convertFromECPoint(myPoint, pOutBuffer, pOutOff);
     }
 

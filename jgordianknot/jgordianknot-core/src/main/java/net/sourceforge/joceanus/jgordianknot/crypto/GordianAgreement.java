@@ -116,8 +116,12 @@ public abstract class GordianAgreement {
      * Obtain private key from pair.
      * @param pKeyPair the keyPair
      * @return the private key
+     * @throws OceanusException on error
      */
-    protected GordianPrivateKey getPrivateKey(final GordianKeyPair pKeyPair) {
+    protected GordianPrivateKey getPrivateKey(final GordianKeyPair pKeyPair) throws OceanusException {
+        if (pKeyPair.isPublicOnly()) {
+            throw new GordianDataException("missing privateKey");
+        }
         return pKeyPair.getPrivateKey();
     }
 
@@ -135,7 +139,7 @@ public abstract class GordianAgreement {
      * Store initVector.
      * @param pInitVector the initVectore
      */
-    protected void storeInitVector(final byte[] pInitVector) {
+    void storeInitVector(final byte[] pInitVector) {
         /* Store the details */
         theInitVector = Arrays.copyOf(pInitVector, pInitVector.length);
     }
@@ -147,6 +151,7 @@ public abstract class GordianAgreement {
     protected void storeSecret(final byte[] pSecret) {
         /* Store the details */
         theSecret = Arrays.copyOf(pSecret, pSecret.length);
+        Arrays.fill(pSecret, (byte) 0);
     }
 
     /**
@@ -178,14 +183,18 @@ public abstract class GordianAgreement {
      * @throws OceanusException on error
      */
     public GordianKeySet deriveIndependentKeySet() throws OceanusException {
-        /* Make sure that the secret is long enough */
-        if (theSecret.length  < 2 * INITLEN) {
-            throw new GordianDataException("Secret too short");
-        }
+        /* The phrase is built of the first quarter of the secret and the first quarter of the initVector */
+        final int myPhraseSecLen = theSecret.length >> 2;
+        final int myPhraseIVLen = theInitVector.length >> 2;
 
-        /* Split the secret into two */
-        final byte[] myPhrase = Arrays.copyOf(theSecret, INITLEN);
-        final byte[] mySecret = Arrays.copyOfRange(theSecret, INITLEN, theSecret.length);
+        /* Build the phrase */
+        final byte[] myPhrase = new byte[myPhraseSecLen + myPhraseIVLen];
+        System.arraycopy(theSecret, 0, myPhrase, 0, myPhraseSecLen);
+        System.arraycopy(theInitVector, 0, myPhrase,  myPhraseSecLen, myPhraseIVLen);
+
+        /* Access shortened secret and IV */
+        final byte[] mySecret = Arrays.copyOfRange(theSecret, myPhraseSecLen, theSecret.length);
+        final byte[] myIV = Arrays.copyOfRange(theInitVector, myPhraseIVLen, theInitVector.length);
 
         /* Create a new Factory using the phrase */
         final GordianParameters myParms = new GordianParameters();
@@ -194,7 +203,7 @@ public abstract class GordianAgreement {
 
         /* Create the keySet */
         final GordianKeySet myKeySet = new GordianKeySet(myFactory);
-        myKeySet.buildFromSecret(mySecret, theInitVector);
+        myKeySet.buildFromSecret(mySecret, myIV);
         return myKeySet;
     }
 
@@ -291,6 +300,63 @@ public abstract class GordianAgreement {
             final byte[] myBase = new byte[myBaseLen];
             System.arraycopy(pMessage, INITLEN, myBase, 0, myBaseLen);
             return myBase;
+        }
+    }
+
+    /**
+     * Basic Agreement.
+     */
+    public abstract static class GordianBasicAgreement
+            extends GordianAgreement {
+        /**
+         * Constructor.
+         * @param pFactory the factory
+         * @param pSpec the agreementSpec
+         */
+        protected GordianBasicAgreement(final GordianFactory pFactory,
+                                        final GordianAgreementSpec pSpec) {
+            super(pFactory, pSpec);
+        }
+
+        /**
+         * Initiate the agreement.
+         * @param pSelf the source keyPair
+         * @param pTarget the target keyPair
+         * @return the message
+         * @throws OceanusException on error
+         */
+        public abstract byte[] initiateAgreement(GordianKeyPair pSelf,
+                                                 GordianKeyPair pTarget) throws OceanusException;
+
+        /**
+         * Create the message.
+         * @return the message
+         */
+        protected byte[] createMessage() {
+            /* Create the message */
+            return newInitVector();
+        }
+
+        /**
+         * Accept the agreement.
+         * @param pSource the source keyPair
+         * @param pTarget the target keyPair
+         * @param pMessage the incoming message
+         * @throws OceanusException on error
+         */
+        public abstract void acceptAgreement(GordianKeyPair pSource,
+                                             GordianKeyPair pTarget,
+                                             byte[] pMessage)  throws OceanusException;
+
+        /**
+         * Parse the incoming message.
+         * @param pMessage the incoming message
+         */
+        protected void parseMessage(final byte[] pMessage) {
+            /* Obtain initVector */
+            final byte[] myInitVector = new byte[INITLEN];
+            System.arraycopy(pMessage, 0, myInitVector, 0, INITLEN);
+            storeInitVector(myInitVector);
         }
     }
 

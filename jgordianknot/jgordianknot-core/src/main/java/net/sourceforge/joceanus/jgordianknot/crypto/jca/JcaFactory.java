@@ -47,14 +47,18 @@ import net.sourceforge.joceanus.jgordianknot.crypto.GordianWrapCipher;
 import net.sourceforge.joceanus.jgordianknot.crypto.jca.JcaKeyPairGenerator.JcaDSAKeyPairGenerator;
 import net.sourceforge.joceanus.jgordianknot.crypto.jca.JcaKeyPairGenerator.JcaDiffieHellmanKeyPairGenerator;
 import net.sourceforge.joceanus.jgordianknot.crypto.jca.JcaKeyPairGenerator.JcaECKeyPairGenerator;
+import net.sourceforge.joceanus.jgordianknot.crypto.jca.JcaKeyPairGenerator.JcaEdKeyPairGenerator;
 import net.sourceforge.joceanus.jgordianknot.crypto.jca.JcaKeyPairGenerator.JcaMcElieceKeyPairGenerator;
 import net.sourceforge.joceanus.jgordianknot.crypto.jca.JcaKeyPairGenerator.JcaNewHopeKeyPairGenerator;
+import net.sourceforge.joceanus.jgordianknot.crypto.jca.JcaKeyPairGenerator.JcaQTESLAKeyPairGenerator;
 import net.sourceforge.joceanus.jgordianknot.crypto.jca.JcaKeyPairGenerator.JcaRSAKeyPairGenerator;
 import net.sourceforge.joceanus.jgordianknot.crypto.jca.JcaKeyPairGenerator.JcaRainbowKeyPairGenerator;
 import net.sourceforge.joceanus.jgordianknot.crypto.jca.JcaKeyPairGenerator.JcaSPHINCSKeyPairGenerator;
 import net.sourceforge.joceanus.jgordianknot.crypto.jca.JcaKeyPairGenerator.JcaXMSSKeyPairGenerator;
 import net.sourceforge.joceanus.jgordianknot.crypto.jca.JcaSignature.JcaDSASignature;
+import net.sourceforge.joceanus.jgordianknot.crypto.jca.JcaSignature.JcaEdDSASignature;
 import net.sourceforge.joceanus.jgordianknot.crypto.jca.JcaSignature.JcaGOSTSignature;
+import net.sourceforge.joceanus.jgordianknot.crypto.jca.JcaSignature.JcaQTESLASignature;
 import net.sourceforge.joceanus.jgordianknot.crypto.jca.JcaSignature.JcaRSASignature;
 import net.sourceforge.joceanus.jgordianknot.crypto.jca.JcaSignature.JcaRainbowSignature;
 import net.sourceforge.joceanus.jgordianknot.crypto.jca.JcaSignature.JcaSPHINCSSignature;
@@ -806,6 +810,11 @@ public final class JcaFactory
                 return new JcaECKeyPairGenerator(this, pKeySpec);
             case DSA:
                 return new JcaDSAKeyPairGenerator(this, pKeySpec);
+            case X25519:
+            case X448:
+            case ED25519:
+            case ED448:
+                return new JcaEdKeyPairGenerator(this, pKeySpec);
             case DIFFIEHELLMAN:
                 return new JcaDiffieHellmanKeyPairGenerator(this, pKeySpec);
             case SPHINCS:
@@ -819,6 +828,8 @@ public final class JcaFactory
             case XMSS:
             case XMSSMT:
                 return new JcaXMSSKeyPairGenerator(this, pKeySpec);
+            case QTESLA:
+                return new JcaQTESLAKeyPairGenerator(this, pKeySpec);
             default:
                 throw new GordianDataException(getInvalidText(pKeySpec.getKeyType()));
         }
@@ -838,6 +849,9 @@ public final class JcaFactory
             case SM2:
             case DSA:
                 return new JcaDSASignature(this, pSignatureSpec);
+            case ED25519:
+            case ED448:
+                return new JcaEdDSASignature(this, pSignatureSpec);
             case GOST2012:
             case DSTU4145:
                 return new JcaGOSTSignature(this, pSignatureSpec);
@@ -848,6 +862,8 @@ public final class JcaFactory
                 return new JcaSPHINCSSignature(this, pSignatureSpec);
             case RAINBOW:
                 return new JcaRainbowSignature(this, pSignatureSpec);
+            case QTESLA:
+                return new JcaQTESLASignature(this, pSignatureSpec);
             default:
                 throw new GordianDataException(getInvalidText(pSignatureSpec.getAsymKeyType()));
         }
@@ -988,16 +1004,20 @@ public final class JcaFactory
                 return true;
             case DSA:
                 return validDSASignature(pSpec);
-            case SPHINCS:
-                return validSPHINCSSignature(myDigest);
             case RAINBOW:
                 return validRainbowSignature(myDigest);
             case XMSS:
             case XMSSMT:
-                return validXMSSSignature(myDigest);
+            case SPHINCS:
+            case QTESLA:
+            case ED25519:
+            case ED448:
+                return true;
             case DIFFIEHELLMAN:
             case NEWHOPE:
             case MCELIECE:
+            case X25519:
+            case X448:
             default:
                 return false;
         }
@@ -1062,27 +1082,6 @@ public final class JcaFactory
     }
 
     /**
-     * Check SPHINCSSignature.
-     * @param pSpec the digestSpec
-     * @return true/false
-     */
-    private static boolean validSPHINCSSignature(final GordianDigestSpec pSpec) {
-        /* Must be 512 bytes */
-        if (!GordianLength.LEN_512.equals(pSpec.getDigestLength())) {
-            return false;
-        }
-
-        /* Switch on DigestType */
-        switch (pSpec.getDigestType()) {
-            case SHA2:
-            case SHA3:
-                return true;
-            default:
-                return false;
-        }
-    }
-
-    /**
      * Check RainbowSignature.
      * @param pSpec the digestSpec
      * @return true/false
@@ -1090,81 +1089,6 @@ public final class JcaFactory
     private static boolean validRainbowSignature(final GordianDigestSpec pSpec) {
         return pSpec.getDigestType() == GordianDigestType.SHA2
                && pSpec.getStateLength() == null;
-    }
-
-    /**
-     * Check XMSSSignature.
-     * @param pSpec the digestSpec
-     * @return true/false
-     */
-    private static boolean validXMSSSignature(final GordianDigestSpec pSpec) {
-        /* Switch on DigestType */
-        switch (pSpec.getDigestType()) {
-            case SHA2:
-                return validXMSSSHA2Signature(pSpec);
-            case SHAKE:
-                return validXMSSSHAKESignature(pSpec);
-            default:
-                return false;
-        }
-    }
-
-    /**
-     * Check XMSSSignature for SHA2.
-     * @param pSpec the digestSpec
-     * @return true/false
-     */
-    private static boolean validXMSSSHA2Signature(final GordianDigestSpec pSpec) {
-        /* Switch on DigestLength */
-        switch (pSpec.getDigestLength()) {
-            case LEN_256:
-            case LEN_512:
-                return pSpec.getStateLength() == null;
-            default:
-                return false;
-        }
-    }
-
-    /**
-     * Check XMSSSignature for SHA2.
-     * @param pSpec the digestSpec
-     * @return true/false
-     */
-    private static boolean validXMSSSHAKESignature(final GordianDigestSpec pSpec) {
-        /* Switch on DigestLength */
-        switch (pSpec.getDigestLength()) {
-            case LEN_128:
-            case LEN_256:
-                return pSpec.getStateLength().equals(pSpec.getDigestLength());
-            default:
-                return false;
-        }
-    }
-
-    @Override
-    public boolean validSignatureSpecForKeyPair(final GordianKeyPair pKeyPair,
-                                                final GordianSignatureSpec pSignSpec) {
-        /* Check underlying rules */
-        if (!super.validSignatureSpecForKeyPair(pKeyPair, pSignSpec)) {
-            return false;
-        }
-
-        /* Only need additional checks for SPHINCS */
-        if (!GordianAsymKeyType.SPHINCS.equals(pSignSpec.getAsymKeyType())) {
-            return true;
-        }
-
-        /* Switch on DigestType */
-        final GordianSPHINCSKeyType myType = pKeyPair.getKeySpec().getSPHINCSType();
-        final GordianDigestSpec mySpec = pSignSpec.getDigestSpec();
-        switch (mySpec.getDigestType()) {
-            case SHA2:
-                return GordianSPHINCSKeyType.SHA2.equals(myType);
-            case SHA3:
-                return GordianSPHINCSKeyType.SHA3.equals(myType);
-            default:
-                return false;
-        }
     }
 
     @Override

@@ -115,6 +115,11 @@ public abstract class GordianSignature
         /* Check that the keyPair matches */
         checkKeyPair(pKeyPair);
 
+        /* Check that we have the private key */
+        if (pKeyPair.isPublicOnly()) {
+            throw new GordianDataException("Missing privateKey");
+        }
+
         /* Store details */
         theMode = GordianSignatureMode.SIGN;
         theKeyPair = pKeyPair;

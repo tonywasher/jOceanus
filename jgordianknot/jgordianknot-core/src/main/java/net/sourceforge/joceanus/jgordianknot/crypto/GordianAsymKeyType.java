@@ -56,9 +56,29 @@ public enum GordianAsymKeyType {
     GOST2012(GordianSignatureType.NATIVE),
 
     /**
+     * EdwardsXDH25519.
+     */
+    X25519(),
+
+    /**
+     * EdwardsXDH448.
+     */
+    X448(),
+
+    /**
+     * EdwardsDSA25519.
+     */
+    ED25519(GordianSignatureType.PREHASH, GordianSignatureType.PURE),
+
+    /**
+     * EdwardsDSA448.
+     */
+    ED448(GordianSignatureType.PREHASH, GordianSignatureType.PURE),
+
+    /**
      * SPHINCS.
      */
-    SPHINCS(GordianSignatureType.NATIVE),
+    SPHINCS(GordianSignatureType.PREHASH),
 
     /**
      * McEliece.
@@ -73,17 +93,22 @@ public enum GordianAsymKeyType {
     /**
      * XMSS.
      */
-    XMSS(GordianSignatureType.NATIVE),
+    XMSS(GordianSignatureType.PREHASH, GordianSignatureType.PURE),
 
     /**
      * XMSSMT.
      */
-    XMSSMT(GordianSignatureType.NATIVE),
+    XMSSMT(GordianSignatureType.PREHASH, GordianSignatureType.PURE),
 
     /**
      * NewHope.
      */
-    NEWHOPE();
+    NEWHOPE(),
+
+    /**
+     * qTESLA.
+     */
+    QTESLA(GordianSignatureType.PURE);
 
     /**
      * The Supported SignatureTypes.
@@ -129,9 +154,45 @@ public enum GordianAsymKeyType {
             case SPHINCS:
             case XMSS:
             case XMSSMT:
+            case ED25519:
+            case ED448:
                 return false;
             default:
                 return true;
+        }
+    }
+
+    /**
+     * null digest for signatures?
+     * @return true/false
+     */
+    public boolean nullDigestForSignatures() {
+        switch (this) {
+            case SPHINCS:
+            case XMSS:
+            case XMSSMT:
+            case ED25519:
+            case ED448:
+            case QTESLA:
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    /**
+     * use subType for signatures?
+     * @return true/false
+     */
+    public boolean subTypeForSignatures() {
+        switch (this) {
+            case SPHINCS:
+            case XMSS:
+            case XMSSMT:
+            case QTESLA:
+                return true;
+            default:
+                return false;
         }
     }
 }

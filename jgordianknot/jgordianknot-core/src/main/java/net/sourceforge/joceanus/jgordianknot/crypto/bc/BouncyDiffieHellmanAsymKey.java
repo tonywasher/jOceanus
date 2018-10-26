@@ -34,6 +34,7 @@ import org.bouncycastle.crypto.agreement.DHBasicAgreement;
 import org.bouncycastle.crypto.agreement.DHUnifiedAgreement;
 import org.bouncycastle.crypto.agreement.MQVBasicAgreement;
 import org.bouncycastle.crypto.generators.DHKeyPairGenerator;
+import org.bouncycastle.crypto.params.AsymmetricKeyParameter;
 import org.bouncycastle.crypto.params.DHKeyGenerationParameters;
 import org.bouncycastle.crypto.params.DHMQVPrivateParameters;
 import org.bouncycastle.crypto.params.DHMQVPublicParameters;
@@ -47,12 +48,12 @@ import org.bouncycastle.jcajce.provider.asymmetric.dh.BCDHPublicKey;
 import org.bouncycastle.jcajce.provider.asymmetric.util.KeyUtil;
 
 import net.sourceforge.joceanus.jgordianknot.GordianCryptoException;
+import net.sourceforge.joceanus.jgordianknot.crypto.GordianAgreement.GordianBasicAgreement;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianAgreement.GordianEncapsulationAgreement;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianAgreement.GordianEphemeralAgreement;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianAgreementSpec;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianAsymKeySpec;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianDigestSpec;
-import net.sourceforge.joceanus.jgordianknot.crypto.GordianFactory;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianKeyEncapsulation;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianKeyEncapsulation.GordianKEMSender;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianKeyPair;
@@ -76,58 +77,25 @@ public final class BouncyDiffieHellmanAsymKey {
      * Bouncy DiffieHellman PublicKey.
      */
     public static class BouncyDiffieHellmanPublicKey
-            extends BouncyPublicKey {
-        /**
-         * Public Key details.
-         */
-        private final DHPublicKeyParameters theKey;
-
+            extends BouncyPublicKey<DHPublicKeyParameters> {
         /**
          * Constructor.
          * @param pKeySpec the keySpec
          * @param pPublicKey the public key
          */
-        protected BouncyDiffieHellmanPublicKey(final GordianAsymKeySpec pKeySpec,
-                                               final DHPublicKeyParameters pPublicKey) {
-            super(pKeySpec);
-            theKey = pPublicKey;
-        }
-
-        /**
-         * Obtain the public key.
-         * @return the key
-         */
-        protected DHPublicKeyParameters getPublicKey() {
-            return theKey;
+        BouncyDiffieHellmanPublicKey(final GordianAsymKeySpec pKeySpec,
+                                     final DHPublicKeyParameters pPublicKey) {
+            super(pKeySpec, pPublicKey);
         }
 
         @Override
-        public boolean equals(final Object pThat) {
-            /* Handle the trivial cases */
-            if (pThat == this) {
-                return true;
-            }
-            if (pThat == null) {
-                return false;
-            }
+        protected boolean matchKey(final AsymmetricKeyParameter pThat) {
+            /* Access keys */
+            final DHPublicKeyParameters myThis = getPublicKey();
+            final DHPublicKeyParameters myThat = (DHPublicKeyParameters) pThat;
 
-            /* Make sure that the object is the same class */
-            if (!(pThat instanceof BouncyDiffieHellmanPublicKey)) {
-                return false;
-            }
-
-            /* Access the target field */
-            final BouncyDiffieHellmanPublicKey myThat = (BouncyDiffieHellmanPublicKey) pThat;
-
-            /* Check differences */
-            return getKeySpec().equals(myThat.getKeySpec())
-                   && compareKeys(theKey, myThat.getPublicKey());
-        }
-
-        @Override
-        public int hashCode() {
-            return GordianFactory.HASH_PRIME * getKeySpec().hashCode()
-                   + theKey.hashCode();
+            /* Compare keys */
+            return compareKeys(myThis, myThat);
         }
 
         /**
@@ -137,7 +105,7 @@ public final class BouncyDiffieHellmanAsymKey {
          */
         public boolean validPrivate(final BouncyDiffieHellmanPrivateKey pPrivate) {
             final DHPrivateKeyParameters myPrivate = pPrivate.getPrivateKey();
-            return theKey.getParameters().equals(myPrivate.getParameters());
+            return getPublicKey().getParameters().equals(myPrivate.getParameters());
         }
 
         /**
@@ -157,58 +125,25 @@ public final class BouncyDiffieHellmanAsymKey {
      * Bouncy DiffieHellman PrivateKey.
      */
     public static class BouncyDiffieHellmanPrivateKey
-            extends BouncyPrivateKey {
-        /**
-         * Private Key details.
-         */
-        private final DHPrivateKeyParameters theKey;
-
+            extends BouncyPrivateKey<DHPrivateKeyParameters> {
         /**
          * Constructor.
          * @param pKeySpec the keySpec
          * @param pPrivateKey the private key
          */
-        protected BouncyDiffieHellmanPrivateKey(final GordianAsymKeySpec pKeySpec,
-                                                final DHPrivateKeyParameters pPrivateKey) {
-            super(pKeySpec);
-            theKey = pPrivateKey;
-        }
-
-        /**
-         * Obtain the private key.
-         * @return the key
-         */
-        protected DHPrivateKeyParameters getPrivateKey() {
-            return theKey;
-        }
+        BouncyDiffieHellmanPrivateKey(final GordianAsymKeySpec pKeySpec,
+                                      final DHPrivateKeyParameters pPrivateKey) {
+            super(pKeySpec, pPrivateKey);
+         }
 
         @Override
-        public boolean equals(final Object pThat) {
-            /* Handle the trivial cases */
-            if (pThat == this) {
-                return true;
-            }
-            if (pThat == null) {
-                return false;
-            }
+        protected boolean matchKey(final AsymmetricKeyParameter pThat) {
+            /* Access keys */
+            final DHPrivateKeyParameters myThis = getPrivateKey();
+            final DHPrivateKeyParameters myThat = (DHPrivateKeyParameters) pThat;
 
-            /* Make sure that the object is the same class */
-            if (!(pThat instanceof BouncyDiffieHellmanPrivateKey)) {
-                return false;
-            }
-
-            /* Access the target field */
-            final BouncyDiffieHellmanPrivateKey myThat = (BouncyDiffieHellmanPrivateKey) pThat;
-
-            /* Check differences */
-            return getKeySpec().equals(myThat.getKeySpec())
-                   && compareKeys(theKey, myThat.getPrivateKey());
-        }
-
-        @Override
-        public int hashCode() {
-            return GordianFactory.HASH_PRIME * getKeySpec().hashCode()
-                   + theKey.hashCode();
+            /* Compare keys */
+            return compareKeys(myThis, myThat);
         }
 
         /**
@@ -239,8 +174,8 @@ public final class BouncyDiffieHellmanAsymKey {
          * @param pFactory the Security Factory
          * @param pKeySpec the keySpec
          */
-        protected BouncyDiffieHellmanKeyPairGenerator(final BouncyFactory pFactory,
-                                                      final GordianAsymKeySpec pKeySpec) {
+        BouncyDiffieHellmanKeyPairGenerator(final BouncyFactory pFactory,
+                                            final GordianAsymKeySpec pKeySpec) {
             /* Initialise underlying class */
             super(pFactory, pKeySpec);
 
@@ -258,15 +193,15 @@ public final class BouncyDiffieHellmanAsymKey {
         @Override
         public BouncyKeyPair generateKeyPair() {
             final AsymmetricCipherKeyPair myPair = theGenerator.generateKeyPair();
-            final BouncyDiffieHellmanPublicKey myPublic = new BouncyDiffieHellmanPublicKey(getKeySpec(), DHPublicKeyParameters.class.cast(myPair.getPublic()));
-            final BouncyDiffieHellmanPrivateKey myPrivate = new BouncyDiffieHellmanPrivateKey(getKeySpec(), DHPrivateKeyParameters.class.cast(myPair.getPrivate()));
+            final BouncyDiffieHellmanPublicKey myPublic = new BouncyDiffieHellmanPublicKey(getKeySpec(), (DHPublicKeyParameters) myPair.getPublic());
+            final BouncyDiffieHellmanPrivateKey myPrivate = new BouncyDiffieHellmanPrivateKey(getKeySpec(), (DHPrivateKeyParameters) myPair.getPrivate());
             return new BouncyKeyPair(myPublic, myPrivate);
         }
 
         @Override
         public PKCS8EncodedKeySpec getPKCS8Encoding(final GordianKeyPair pKeyPair) throws GordianCryptoException {
             try {
-                final BouncyDiffieHellmanPrivateKey myPrivateKey = BouncyDiffieHellmanPrivateKey.class.cast(getPrivateKey(pKeyPair));
+                final BouncyDiffieHellmanPrivateKey myPrivateKey = (BouncyDiffieHellmanPrivateKey) getPrivateKey(pKeyPair);
                 final DHPrivateKeyParameters myKey = myPrivateKey.getPrivateKey();
                 final DHParameters myParms = myKey.getParameters();
                 final PrivateKeyInfo myInfo = new PrivateKeyInfo(new AlgorithmIdentifier(PKCSObjectIdentifiers.dhKeyAgreement,
@@ -295,7 +230,7 @@ public final class BouncyDiffieHellmanAsymKey {
 
         @Override
         public X509EncodedKeySpec getX509Encoding(final GordianKeyPair pKeyPair) {
-            final BouncyDiffieHellmanPublicKey myPublicKey = BouncyDiffieHellmanPublicKey.class.cast(getPublicKey(pKeyPair));
+            final BouncyDiffieHellmanPublicKey myPublicKey = (BouncyDiffieHellmanPublicKey) getPublicKey(pKeyPair);
             final DHPublicKeyParameters myKey = myPublicKey.getPublicKey();
             final DHParameters myParms = myKey.getParameters();
             final byte[] myBytes = KeyUtil.getEncodedSubjectPublicKeyInfo(new AlgorithmIdentifier(PKCSObjectIdentifiers.dhKeyAgreement,
@@ -467,6 +402,64 @@ public final class BouncyDiffieHellmanAsymKey {
             final DHBasicAgreement myAgreement = new DHBasicAgreement();
             myAgreement.init(myPrivate.getPrivateKey());
             final BigInteger mySecret = myAgreement.calculateAgreement(myPublicKey);
+
+            /* Store secret */
+            storeSecret(mySecret.toByteArray());
+        }
+    }
+
+    /**
+     * DH Basic Agreement.
+     */
+    public static class BouncyDHBasicAgreement
+            extends GordianBasicAgreement {
+        /**
+         * Constructor.
+         * @param pFactory the security factory
+         * @param pSpec the digestSpec
+         */
+        BouncyDHBasicAgreement(final BouncyFactory pFactory,
+                               final GordianAgreementSpec pSpec) {
+            /* Initialise underlying class */
+            super(pFactory, pSpec);
+        }
+
+        @Override
+        public byte[] initiateAgreement(final GordianKeyPair pSource,
+                                        final GordianKeyPair pTarget) throws OceanusException {
+            /* Check keyPairs */
+            checkKeyPair(pSource);
+            checkKeyPair(pTarget);
+
+            /* Derive the secret */
+            final DHBasicAgreement myAgreement = new DHBasicAgreement();
+            final BouncyDiffieHellmanPrivateKey myPrivate = (BouncyDiffieHellmanPrivateKey) getPrivateKey(pSource);
+            myAgreement.init(myPrivate.getPrivateKey());
+            final BouncyDiffieHellmanPublicKey myTarget = (BouncyDiffieHellmanPublicKey) getPublicKey(pTarget);
+            final BigInteger mySecret = myAgreement.calculateAgreement(myTarget.getPublicKey());
+            storeSecret(mySecret.toByteArray());
+
+            /* Create the message  */
+            return createMessage();
+        }
+
+        @Override
+        public void acceptAgreement(final GordianKeyPair pSource,
+                                    final GordianKeyPair pSelf,
+                                    final byte[] pMessage) throws OceanusException {
+            /* Check keyPair */
+            checkKeyPair(pSource);
+            checkKeyPair(pSelf);
+
+            /* Determine initVector */
+            parseMessage(pMessage);
+            final BouncyDiffieHellmanPrivateKey myPrivate = (BouncyDiffieHellmanPrivateKey) getPrivateKey(pSelf);
+            final BouncyDiffieHellmanPublicKey myPublic = (BouncyDiffieHellmanPublicKey) getPublicKey(pSource);
+
+            /* Derive the secret */
+            final DHBasicAgreement myAgreement = new DHBasicAgreement();
+            myAgreement.init(myPrivate.getPrivateKey());
+            final BigInteger mySecret = myAgreement.calculateAgreement(myPublic.getPublicKey());
 
             /* Store secret */
             storeSecret(mySecret.toByteArray());

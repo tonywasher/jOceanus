@@ -29,4 +29,19 @@ public enum GordianSPHINCSKeyType {
      * sha3.
      */
     SHA3;
+
+    /**
+     * Obtain the required digestSpec.
+     * @return the digestSpec
+     */
+    public GordianDigestSpec getDigestSpec() {
+        switch (this) {
+            case SHA2:
+                return GordianDigestSpec.sha2(GordianLength.LEN_512);
+            case SHA3:
+                return GordianDigestSpec.sha3(GordianLength.LEN_512);
+            default:
+                throw new IllegalStateException();
+        }
+    }
 }

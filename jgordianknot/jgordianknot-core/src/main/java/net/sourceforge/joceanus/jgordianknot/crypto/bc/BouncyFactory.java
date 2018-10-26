@@ -49,6 +49,11 @@ import net.sourceforge.joceanus.jgordianknot.crypto.bc.BouncyDiffieHellmanAsymKe
 import net.sourceforge.joceanus.jgordianknot.crypto.bc.BouncyDiffieHellmanAsymKey.BouncyDiffieHellmanPublicKey;
 import net.sourceforge.joceanus.jgordianknot.crypto.bc.BouncyDiffieHellmanAsymKey.BouncyDiffieHellmanReceiver;
 import net.sourceforge.joceanus.jgordianknot.crypto.bc.BouncyDiffieHellmanAsymKey.BouncyDiffieHellmanSender;
+import net.sourceforge.joceanus.jgordianknot.crypto.bc.BouncyEdwardsDSAAsymKey.BouncyEd25519KeyPairGenerator;
+import net.sourceforge.joceanus.jgordianknot.crypto.bc.BouncyEdwardsDSAAsymKey.BouncyEd448KeyPairGenerator;
+import net.sourceforge.joceanus.jgordianknot.crypto.bc.BouncyEdwardsDSAAsymKey.BouncyEdDSASignature;
+import net.sourceforge.joceanus.jgordianknot.crypto.bc.BouncyEdwardsXDHAsymKey.BouncyX25519KeyPairGenerator;
+import net.sourceforge.joceanus.jgordianknot.crypto.bc.BouncyEdwardsXDHAsymKey.BouncyX448KeyPairGenerator;
 import net.sourceforge.joceanus.jgordianknot.crypto.bc.BouncyEllipticAsymKey.BouncyECIESReceiver;
 import net.sourceforge.joceanus.jgordianknot.crypto.bc.BouncyEllipticAsymKey.BouncyECIESSender;
 import net.sourceforge.joceanus.jgordianknot.crypto.bc.BouncyEllipticAsymKey.BouncyECKeyPairGenerator;
@@ -65,6 +70,8 @@ import net.sourceforge.joceanus.jgordianknot.crypto.bc.BouncyNewHopeAsymKey.Boun
 import net.sourceforge.joceanus.jgordianknot.crypto.bc.BouncyNewHopeAsymKey.BouncyNewHopePublicKey;
 import net.sourceforge.joceanus.jgordianknot.crypto.bc.BouncyNewHopeAsymKey.BouncyNewHopeReceiver;
 import net.sourceforge.joceanus.jgordianknot.crypto.bc.BouncyNewHopeAsymKey.BouncyNewHopeSender;
+import net.sourceforge.joceanus.jgordianknot.crypto.bc.BouncyQTESLAAsymKey.BouncyQTESLAKeyPairGenerator;
+import net.sourceforge.joceanus.jgordianknot.crypto.bc.BouncyQTESLAAsymKey.BouncyQTESLASignature;
 import net.sourceforge.joceanus.jgordianknot.crypto.bc.BouncyRSAAsymKey.BouncyRSAKEMReceiver;
 import net.sourceforge.joceanus.jgordianknot.crypto.bc.BouncyRSAAsymKey.BouncyRSAKEMSender;
 import net.sourceforge.joceanus.jgordianknot.crypto.bc.BouncyRSAAsymKey.BouncyRSAKeyPairGenerator;
@@ -965,6 +972,14 @@ public final class BouncyFactory
                 return new BouncyDSTUKeyPairGenerator(this, pKeySpec);
             case GOST2012:
                 return new BouncyGOSTKeyPairGenerator(this, pKeySpec);
+            case X25519:
+                return new BouncyX25519KeyPairGenerator(this, pKeySpec);
+            case X448:
+                return new BouncyX448KeyPairGenerator(this, pKeySpec);
+            case ED25519:
+                return new BouncyEd25519KeyPairGenerator(this, pKeySpec);
+            case ED448:
+                return new BouncyEd448KeyPairGenerator(this, pKeySpec);
             case DSA:
                 return new BouncyDSAKeyPairGenerator(this, pKeySpec);
             case DIFFIEHELLMAN:
@@ -983,6 +998,8 @@ public final class BouncyFactory
                 return new BouncyXMSSKeyPairGenerator(this, pKeySpec);
             case XMSSMT:
                 return new BouncyXMSSMTKeyPairGenerator(this, pKeySpec);
+            case QTESLA:
+                return new BouncyQTESLAKeyPairGenerator(this, pKeySpec);
             default:
                 throw new GordianDataException(getInvalidText(pKeySpec.getKeyType()));
         }
@@ -1007,6 +1024,9 @@ public final class BouncyFactory
                 return new BouncyGOSTSignature(this, pSignatureSpec);
             case SM2:
                 return new BouncySM2Signature(this, pSignatureSpec);
+            case ED25519:
+            case ED448:
+                return new BouncyEdDSASignature(this, pSignatureSpec);
             case DSA:
                 return new BouncyDSASignature(this, pSignatureSpec);
             case SPHINCS:
@@ -1017,6 +1037,8 @@ public final class BouncyFactory
                 return new BouncyXMSSSignature(this, pSignatureSpec);
             case XMSSMT:
                 return new BouncyXMSSMTSignature(this, pSignatureSpec);
+            case QTESLA:
+                return new BouncyQTESLASignature(this, pSignatureSpec);
             default:
                 throw new GordianDataException(getInvalidText(pSignatureSpec.getAsymKeyType()));
         }
