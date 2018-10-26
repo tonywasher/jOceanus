@@ -68,7 +68,7 @@ public enum GordianAsymKeyType {
     /**
      * EdwardsDSA25519.
      */
-    ED25519(GordianSignatureType.PREHASH, GordianSignatureType.PURE, GordianSignatureType.NATIVE),
+    ED25519(GordianSignatureType.PREHASH, GordianSignatureType.PURE),
 
     /**
      * EdwardsDSA448.
@@ -173,6 +173,22 @@ public enum GordianAsymKeyType {
             case XMSSMT:
             case ED25519:
             case ED448:
+            case QTESLA:
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    /**
+     * use subType for signatures?
+     * @return true/false
+     */
+    public boolean subTypeForSignatures() {
+        switch (this) {
+            case SPHINCS:
+            case XMSS:
+            case XMSSMT:
             case QTESLA:
                 return true;
             default:

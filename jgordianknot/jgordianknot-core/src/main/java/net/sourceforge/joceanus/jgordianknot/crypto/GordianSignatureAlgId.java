@@ -25,6 +25,7 @@ import org.bouncycastle.asn1.ASN1Integer;
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
 import org.bouncycastle.asn1.DERNull;
 import org.bouncycastle.asn1.bc.BCObjectIdentifiers;
+import org.bouncycastle.asn1.edec.EdECObjectIdentifiers;
 import org.bouncycastle.asn1.gm.GMObjectIdentifiers;
 import org.bouncycastle.asn1.nist.NISTObjectIdentifiers;
 import org.bouncycastle.asn1.oiw.OIWObjectIdentifiers;
@@ -33,6 +34,7 @@ import org.bouncycastle.asn1.pkcs.RSASSAPSSparams;
 import org.bouncycastle.asn1.rosstandart.RosstandartObjectIdentifiers;
 import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
 import org.bouncycastle.asn1.x9.X9ObjectIdentifiers;
+import org.bouncycastle.pqc.asn1.PQCObjectIdentifiers;
 
 import net.sourceforge.joceanus.jgordianknot.GordianDataException;
 import net.sourceforge.joceanus.jtethys.OceanusException;
@@ -50,6 +52,11 @@ public class GordianSignatureAlgId {
      * Map of SignatureSpec to Identifier.
      */
     private final Map<GordianSignatureSpec, AlgorithmIdentifier> theSpecMap;
+
+    /**
+     * Map of SignatureSpec to subTypeMap.
+     */
+    private final Map<GordianSignatureSpec, Map<Object, AlgorithmIdentifier>> theSpecSubTypeMap;
 
     /**
      * Map of Identifier to SignatureSpec.
@@ -70,9 +77,10 @@ public class GordianSignatureAlgId {
      * Constructor.
      * @param pFactory the factory
      */
-    protected GordianSignatureAlgId(final GordianFactory pFactory) {
+    GordianSignatureAlgId(final GordianFactory pFactory) {
         /* Create the maps */
         theSpecMap = new HashMap<>();
+        theSpecSubTypeMap = new HashMap<>();
         theIdentifierMap = new HashMap<>();
 
         /* Access the predicate and digests */
@@ -83,9 +91,20 @@ public class GordianSignatureAlgId {
         addRSASignatures();
         addDSASignatures();
         addECSignatures();
+        addSM2Signatures();
+        addGOSTSignatures();
+        addEdDSASignatures();
+        addPostQuantumSignatures();
 
         /* Loop through the possible AsymKeys */
         for (GordianAsymKeyType myKeyType : GordianAsymKeyType.values()) {
+            /* Ignore keyType if no possible signatures or subTypes are used */
+            if (myKeyType.subTypeForSignatures()
+                    || myKeyType.getSupportedSignatures().length == 0) {
+                continue;
+            }
+
+            /* Add any non-standard signatureSpecs*/
             addSignatures(myKeyType);
         }
 
@@ -96,9 +115,21 @@ public class GordianSignatureAlgId {
     /**
      * Obtain Identifier for SignatureSpec.
      * @param pSpec the signatureSpec.
+     * @param pKeyPair the keyPair
      * @return the Identifier
      */
-    public AlgorithmIdentifier getIdentifierForSpec(final GordianSignatureSpec pSpec) {
+    AlgorithmIdentifier getIdentifierForSpecAndKeyPair(final GordianSignatureSpec pSpec,
+                                                       final GordianKeyPair pKeyPair) {
+        /* If we need to use the subType */
+        if (pSpec.getAsymKeyType().subTypeForSignatures()) {
+            /* Look up in the subKey map */
+            final Map<Object, AlgorithmIdentifier> myMap = theSpecSubTypeMap.get(pSpec);
+            return myMap == null
+                   ? null
+                   : myMap.get(pKeyPair.getKeySpec().getSubKeyType());
+        }
+
+        /* Look up in the standard map */
         return theSpecMap.get(pSpec);
     }
 
@@ -108,7 +139,7 @@ public class GordianSignatureAlgId {
      * @return the signatureSpec
      * @throws OceanusException on error
      */
-    public GordianSignatureSpec getSpecForIdentifier(final AlgorithmIdentifier pIdentifier) throws OceanusException {
+    GordianSignatureSpec getSpecForIdentifier(final AlgorithmIdentifier pIdentifier) throws OceanusException {
         final GordianSignatureSpec mySpec = theIdentifierMap.get(pIdentifier);
         if (mySpec == null) {
             throw new GordianDataException("Invalid identifier " + pIdentifier);
@@ -124,6 +155,21 @@ public class GordianSignatureAlgId {
     private void addToMaps(final GordianSignatureSpec pSpec,
                            final AlgorithmIdentifier pIdentifier) {
         theSpecMap.put(pSpec, pIdentifier);
+        theIdentifierMap.put(pIdentifier, pSpec);
+    }
+
+    /**
+     * Add pair to maps.
+     * @param pSpec the signatureSpec
+     * @param pSubType the subType
+     * @param pIdentifier the identifier
+     */
+    private void addToMaps(final GordianSignatureSpec pSpec,
+                           final Object pSubType,
+                           final AlgorithmIdentifier pIdentifier) {
+        /* Access the relevant map */
+        final Map<Object, AlgorithmIdentifier> myMap = theSpecSubTypeMap.computeIfAbsent(pSpec, p -> new HashMap<>());
+        myMap.put(pSubType, pIdentifier);
         theIdentifierMap.put(pIdentifier, pSpec);
     }
 
@@ -206,12 +252,102 @@ public class GordianSignatureAlgId {
                   new AlgorithmIdentifier(NISTObjectIdentifiers.id_ecdsa_with_sha3_384));
         addToMaps(GordianSignatureSpec.ec(GordianSignatureType.DSA, GordianDigestSpec.sha3(GordianLength.LEN_512)),
                   new AlgorithmIdentifier(NISTObjectIdentifiers.id_ecdsa_with_sha3_512));
+    }
+
+    /**
+     * Add SM2 signatures.
+     */
+    private void addSM2Signatures() {
         addToMaps(GordianSignatureSpec.sm2(),
-                  new AlgorithmIdentifier(GMObjectIdentifiers.sm2sign_with_sm3));
+                new AlgorithmIdentifier(GMObjectIdentifiers.sm2sign_with_sm3));
+    }
+
+    /**
+     * Add GOST signatures.
+     */
+    private void addGOSTSignatures() {
         addToMaps(GordianSignatureSpec.gost2012(GordianLength.LEN_256),
-                  new AlgorithmIdentifier(RosstandartObjectIdentifiers.id_tc26_signwithdigest_gost_3410_12_256));
+                new AlgorithmIdentifier(RosstandartObjectIdentifiers.id_tc26_signwithdigest_gost_3410_12_256));
         addToMaps(GordianSignatureSpec.gost2012(GordianLength.LEN_512),
-                  new AlgorithmIdentifier(RosstandartObjectIdentifiers.id_tc26_signwithdigest_gost_3410_12_512));
+                new AlgorithmIdentifier(RosstandartObjectIdentifiers.id_tc26_signwithdigest_gost_3410_12_512));
+    }
+
+    /**
+     * Add EdDSA signatures.
+     */
+    private void addEdDSASignatures() {
+        addToMaps(GordianSignatureSpec.ed25519(),
+                new AlgorithmIdentifier(EdECObjectIdentifiers.id_Ed25519));
+        addToMaps(GordianSignatureSpec.ed25519ph(),
+                new AlgorithmIdentifier(EdECObjectIdentifiers.id_Ed25519ph));
+        addToMaps(GordianSignatureSpec.ed448(),
+                new AlgorithmIdentifier(EdECObjectIdentifiers.id_Ed448));
+        addToMaps(GordianSignatureSpec.ed448ph(),
+                new AlgorithmIdentifier(EdECObjectIdentifiers.id_Ed448ph));
+    }
+
+    /**
+     * Add postQuantum signatures.
+     */
+    private void addPostQuantumSignatures() {
+        addToMaps(GordianSignatureSpec.rainbow(GordianDigestSpec.sha1()),
+                new AlgorithmIdentifier(PQCObjectIdentifiers.rainbowWithSha1));
+        addToMaps(GordianSignatureSpec.rainbow(GordianDigestSpec.sha2(GordianLength.LEN_224)),
+                new AlgorithmIdentifier(PQCObjectIdentifiers.rainbowWithSha224));
+        addToMaps(GordianSignatureSpec.rainbow(GordianDigestSpec.sha2(GordianLength.LEN_256)),
+                new AlgorithmIdentifier(PQCObjectIdentifiers.rainbowWithSha256));
+        addToMaps(GordianSignatureSpec.rainbow(GordianDigestSpec.sha2(GordianLength.LEN_384)),
+                new AlgorithmIdentifier(PQCObjectIdentifiers.rainbowWithSha384));
+        addToMaps(GordianSignatureSpec.rainbow(GordianDigestSpec.sha2(GordianLength.LEN_512)),
+                new AlgorithmIdentifier(PQCObjectIdentifiers.rainbowWithSha512));
+
+        /* Note that we have multiple signatures oids per spec */
+        addToMaps(GordianSignatureSpec.qTESLA(), GordianQTESLAKeyType.HEURISTIC_I,
+                new AlgorithmIdentifier(PQCObjectIdentifiers.qTESLA_I));
+        addToMaps(GordianSignatureSpec.qTESLA(), GordianQTESLAKeyType.HEURISTIC_III_SIZE,
+                new AlgorithmIdentifier(PQCObjectIdentifiers.qTESLA_III_size));
+        addToMaps(GordianSignatureSpec.qTESLA(), GordianQTESLAKeyType.HEURISTIC_III_SPEED,
+                new AlgorithmIdentifier(PQCObjectIdentifiers.qTESLA_III_speed));
+        addToMaps(GordianSignatureSpec.qTESLA(), GordianQTESLAKeyType.PROVABLY_SECURE_I,
+                new AlgorithmIdentifier(PQCObjectIdentifiers.qTESLA_p_I));
+        addToMaps(GordianSignatureSpec.qTESLA(), GordianQTESLAKeyType.PROVABLY_SECURE_III,
+                new AlgorithmIdentifier(PQCObjectIdentifiers.qTESLA_p_III));
+        addToMaps(GordianSignatureSpec.sphincs(), GordianSPHINCSKeyType.SHA2,
+                new AlgorithmIdentifier(PQCObjectIdentifiers.sphincs256_with_SHA512));
+        addToMaps(GordianSignatureSpec.sphincs(), GordianSPHINCSKeyType.SHA3,
+                new AlgorithmIdentifier(PQCObjectIdentifiers.sphincs256_with_SHA3_512));
+        addToMaps(GordianSignatureSpec.xmss(), GordianXMSSKeyType.SHA256,
+                new AlgorithmIdentifier(PQCObjectIdentifiers.xmss_SHA256));
+        addToMaps(GordianSignatureSpec.xmssph(), GordianXMSSKeyType.SHA256,
+                new AlgorithmIdentifier(PQCObjectIdentifiers.xmss_SHA256ph));
+        addToMaps(GordianSignatureSpec.xmss(), GordianXMSSKeyType.SHA512,
+                new AlgorithmIdentifier(PQCObjectIdentifiers.xmss_SHA512));
+        addToMaps(GordianSignatureSpec.xmssph(), GordianXMSSKeyType.SHA512,
+                new AlgorithmIdentifier(PQCObjectIdentifiers.xmss_SHA512ph));
+        addToMaps(GordianSignatureSpec.xmss(), GordianXMSSKeyType.SHAKE128,
+                new AlgorithmIdentifier(PQCObjectIdentifiers.xmss_SHAKE128));
+        addToMaps(GordianSignatureSpec.xmssph(), GordianXMSSKeyType.SHAKE128,
+                new AlgorithmIdentifier(PQCObjectIdentifiers.xmss_SHAKE128ph));
+        addToMaps(GordianSignatureSpec.xmss(), GordianXMSSKeyType.SHAKE256,
+                new AlgorithmIdentifier(PQCObjectIdentifiers.xmss_SHAKE256));
+        addToMaps(GordianSignatureSpec.xmssph(), GordianXMSSKeyType.SHAKE256,
+                new AlgorithmIdentifier(PQCObjectIdentifiers.xmss_SHAKE256ph));
+        addToMaps(GordianSignatureSpec.xmssmt(), GordianXMSSKeyType.SHA256,
+                new AlgorithmIdentifier(PQCObjectIdentifiers.xmss_mt_SHA256));
+        addToMaps(GordianSignatureSpec.xmssmtph(), GordianXMSSKeyType.SHA256,
+                new AlgorithmIdentifier(PQCObjectIdentifiers.xmss_mt_SHA256ph));
+        addToMaps(GordianSignatureSpec.xmssmt(), GordianXMSSKeyType.SHA512,
+                new AlgorithmIdentifier(PQCObjectIdentifiers.xmss_mt_SHA512));
+        addToMaps(GordianSignatureSpec.xmssmtph(), GordianXMSSKeyType.SHA512,
+                new AlgorithmIdentifier(PQCObjectIdentifiers.xmss_mt_SHA512ph));
+        addToMaps(GordianSignatureSpec.xmssmt(), GordianXMSSKeyType.SHAKE128,
+                new AlgorithmIdentifier(PQCObjectIdentifiers.xmss_mt_SHAKE128));
+        addToMaps(GordianSignatureSpec.xmssmtph(), GordianXMSSKeyType.SHAKE128,
+                new AlgorithmIdentifier(PQCObjectIdentifiers.xmss_mt_SHAKE128ph));
+        addToMaps(GordianSignatureSpec.xmssmt(), GordianXMSSKeyType.SHAKE256,
+                new AlgorithmIdentifier(PQCObjectIdentifiers.xmss_mt_SHAKE256));
+        addToMaps(GordianSignatureSpec.xmssmtph(), GordianXMSSKeyType.SHAKE256,
+                new AlgorithmIdentifier(PQCObjectIdentifiers.xmss_mt_SHAKE256ph));
     }
 
     /**
@@ -246,10 +382,10 @@ public class GordianSignatureAlgId {
      */
     private void addSignatures(final GordianAsymKeyType pKeyType,
                                final GordianSignatureType pSigType) {
-        /* If we have a digestSpec */
-        if (GordianSignatureType.PURE.equals(pSigType)) {
+        /* If we do not have a digestSpec */
+        if (pKeyType.nullDigestForSignatures()) {
             /* Create the corresponding signatureSpec */
-            final GordianSignatureSpec mySign = new GordianSignatureSpec(pKeyType, pSigType, null);
+            final GordianSignatureSpec mySign = new GordianSignatureSpec(pKeyType, pSigType);
 
             /* Ensure signature is in map */
             ensureSignature(mySign);

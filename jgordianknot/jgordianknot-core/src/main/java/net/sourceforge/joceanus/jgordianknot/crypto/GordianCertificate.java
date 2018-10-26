@@ -121,7 +121,7 @@ public class GordianCertificate {
 
         /* Determine the algorithm Id for the signatureSpec */
         final GordianSignatureAlgId mySigIdMgr = theFactory.getSignatureIdManager();
-        theSigAlgId = mySigIdMgr.getIdentifierForSpec(theSigSpec);
+        theSigAlgId = mySigIdMgr.getIdentifierForSpecAndKeyPair(theSigSpec, theKeyPair);
 
         /* Create the TBSCertificate */
         theKeyUsage = GordianKeyPairUsage.CERTIFICATE;
@@ -163,7 +163,7 @@ public class GordianCertificate {
 
         /* Determine the algorithm Id for the signatureSpec */
         final GordianSignatureAlgId mySigIdMgr = theFactory.getSignatureIdManager();
-        theSigAlgId = mySigIdMgr.getIdentifierForSpec(theSigSpec);
+        theSigAlgId = mySigIdMgr.getIdentifierForSpecAndKeyPair(theSigSpec, pSigner.getKeyPair());
 
         /* Create the TBSCertificate */
         theTbsCertificate = buildCertificate(pSubject, pUsage);

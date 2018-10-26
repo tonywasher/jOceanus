@@ -147,22 +147,14 @@ public class GordianSignatureSpec {
      * @return the SignatureSpec
      */
     public static GordianSignatureSpec ed25519() {
-        return new GordianSignatureSpec(GordianAsymKeyType.ED25519, GordianSignatureType.NATIVE);
-    }
-
-    /**
-     * Create EdDSA25519Spec.
-     * @return the SignatureSpec
-     */
-    public static GordianSignatureSpec ed25519ctx() {
         return new GordianSignatureSpec(GordianAsymKeyType.ED25519, GordianSignatureType.PURE);
     }
 
     /**
-     * Create EdDSA25519Spec.
+     * Create EdDSA25519phSpec.
      * @return the SignatureSpec
      */
-    public static GordianSignatureSpec ed25519PH() {
+    public static GordianSignatureSpec ed25519ph() {
         return new GordianSignatureSpec(GordianAsymKeyType.ED25519, GordianSignatureType.PREHASH);
     }
 
@@ -175,10 +167,10 @@ public class GordianSignatureSpec {
     }
 
     /**
-     * Create EdDSA448Spec.
+     * Create EdDSA448phSpec.
      * @return the SignatureSpec
      */
-    public static GordianSignatureSpec ed448PH() {
+    public static GordianSignatureSpec ed448ph() {
         return new GordianSignatureSpec(GordianAsymKeyType.ED448, GordianSignatureType.PREHASH);
     }
 
@@ -211,7 +203,7 @@ public class GordianSignatureSpec {
      * Create xmssPHSpec.
      * @return the SignatureSpec
      */
-    public static GordianSignatureSpec xmssPH() {
+    public static GordianSignatureSpec xmssph() {
         return new GordianSignatureSpec(GordianAsymKeyType.XMSS, GordianSignatureType.PREHASH);
     }
 
@@ -227,7 +219,7 @@ public class GordianSignatureSpec {
      * Create xmssMTPHSpec.
      * @return the SignatureSpec
      */
-    public static GordianSignatureSpec xmssmtPH() {
+    public static GordianSignatureSpec xmssmtph() {
         return new GordianSignatureSpec(GordianAsymKeyType.XMSSMT, GordianSignatureType.PREHASH);
     }
 
@@ -259,7 +251,7 @@ public class GordianSignatureSpec {
             case GOST2012:
                 return gost2012(GordianLength.LEN_512);
             case ED25519:
-                return ed25519ctx();
+                return ed25519();
             case ED448:
                 return ed448();
             case RAINBOW:

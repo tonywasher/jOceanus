@@ -40,7 +40,6 @@ import org.bouncycastle.crypto.params.Ed25519PublicKeyParameters;
 import org.bouncycastle.crypto.params.Ed448KeyGenerationParameters;
 import org.bouncycastle.crypto.params.Ed448PrivateKeyParameters;
 import org.bouncycastle.crypto.params.Ed448PublicKeyParameters;
-import org.bouncycastle.crypto.signers.Ed25519Signer;
 import org.bouncycastle.crypto.signers.Ed25519ctxSigner;
 import org.bouncycastle.crypto.signers.Ed25519phSigner;
 import org.bouncycastle.crypto.signers.Ed448Signer;
@@ -412,9 +411,8 @@ public final class BouncyEdwardsDSAAsymKey {
                     return is25519
                            ? new Ed25519ctxSigner(myContext)
                            : new Ed448Signer(myContext);
-                case NATIVE:
                 default:
-                    return new Ed25519Signer();
+                    throw new IllegalArgumentException("Invalid SignatureType: " + pSpec.getSignatureType());
             }
         }
 

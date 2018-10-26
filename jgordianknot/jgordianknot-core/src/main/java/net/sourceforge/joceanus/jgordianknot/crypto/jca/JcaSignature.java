@@ -544,10 +544,8 @@ public abstract class JcaSignature
                              ? "Ed25519ctx"
                              : "Ed448";
                     break;
-                case NATIVE:
                 default:
-                    myAlgo = "Ed25519";
-                    break;
+                    throw new IllegalArgumentException("Invalid Signature Type: " + pSignatureSpec.getSignatureType());
             }
             setSigner(JcaFactory.getJavaSignature(myAlgo, false));
         }
