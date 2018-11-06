@@ -420,7 +420,7 @@ public abstract class GordianAgreement {
          * @return the composite message
          * @throws OceanusException on error
          */
-        protected byte[] initiateAgreement(final GordianKeyPair pInitiator) throws OceanusException {
+        public byte[] initiateAgreement(final GordianKeyPair pInitiator) throws OceanusException {
             /* Check the keyPair */
             checkKeyPair(pInitiator);
 
@@ -478,6 +478,7 @@ public abstract class GordianAgreement {
             /* Obtain keySpec */
             final int myBaseLen = pMessage.length - INITLEN;
             final byte[] myBase = new byte[myBaseLen];
+            System.arraycopy(pMessage, INITLEN, myBase, 0, myBaseLen);
             final X509EncodedKeySpec myKeySpec = new X509EncodedKeySpec(myBase);
 
             /* Create ephemeral key */

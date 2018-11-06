@@ -18,7 +18,6 @@ package net.sourceforge.joceanus.jgordianknot.crypto;
 
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianCipherSpec.GordianStreamCipherSpec;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianCipherSpec.GordianSymCipherSpec;
-import net.sourceforge.joceanus.jgordianknot.crypto.GordianKeyEncapsulation.GordianKEMSender;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
 import java.security.SecureRandom;
@@ -710,31 +709,17 @@ public abstract class GordianFactory
      * Obtain predicate for keyExchange.
      * @return the predicate
      */
-    public BiPredicate<GordianKeyPair, GordianDigestSpec> supportedKeyExchanges() {
-        return this::validExchangeSpec;
+    public Predicate<GordianAgreementSpec> supportedAgreements() {
+        return this::validAgreementSpec;
     }
 
     /**
-     * Create KEMessage.
-     * @param pKeyPair the keyPair
-     * @param pDigestSpec the digestSpec
-     * @return the KEMSender
+     * Create Agreement.
+     * @param pSpec the agreementSpec
+     * @return the Agreement
      * @throws OceanusException on error
      */
-    public abstract GordianKEMSender createKEMessage(GordianKeyPair pKeyPair,
-                                                     GordianDigestSpec pDigestSpec) throws OceanusException;
-
-    /**
-     * Parse KEMessage.
-     * @param pKeyPair the keyPair
-     * @param pDigestSpec the digestSpec
-     * @param pMessage the cipherText
-     * @return the parsed KEMessage
-     * @throws OceanusException on error
-     */
-    public abstract GordianKeyEncapsulation parseKEMessage(GordianKeyPair pKeyPair,
-                                                           GordianDigestSpec pDigestSpec,
-                                                           byte[] pMessage) throws OceanusException;
+    public abstract GordianAgreement createAgreement(GordianAgreementSpec pSpec) throws OceanusException;
 
     /**
      * Build Invalid text string.
@@ -1087,6 +1072,17 @@ public abstract class GordianFactory
             return myKeySpec.getElliptic().getKeySize() == myDigestLen;
         }
 
+        /* If this is a RSA PSS Signature */
+        if (GordianAsymKeyType.RSA.equals(myKeySpec.getKeyType())
+            && GordianSignatureType.PSS.equals(pSignSpec.getSignatureType())) {
+            /* The digest length cannot be too large wrt to the modulus */
+            int myLen = pSignSpec.getDigestSpec().getDigestLength().getByteLength();
+            myLen = (myLen + 1) * Byte.SIZE;
+            if (myKeySpec.getModulus().getModulus() < (myLen << 1)) {
+                return false;
+            }
+        }
+
         /* OK */
         return true;
     }
@@ -1137,23 +1133,12 @@ public abstract class GordianFactory
 
     /**
      * Check ExchangeSpec.
-     * @param pKeyPair the keyPair
-     * @param pDigestSpec the digestSpec
+     * @param pSpec the agreementSpec
      * @return true/false
      */
-    protected boolean validExchangeSpec(final GordianKeyPair pKeyPair,
-                                        final GordianDigestSpec pDigestSpec) {
-        /* Switch on KeyType */
-        switch (pKeyPair.getKeySpec().getKeyType()) {
-            case RSA:
-            case EC:
-            case SM2:
-            case DIFFIEHELLMAN:
-            case NEWHOPE:
-                return supportedDigestSpecs().test(pDigestSpec);
-            default:
-                return false;
-        }
+    protected boolean validAgreementSpec(final GordianAgreementSpec pSpec) {
+        /* Check that spec is supported */
+        return pSpec.isSupported();
     }
 
     /**

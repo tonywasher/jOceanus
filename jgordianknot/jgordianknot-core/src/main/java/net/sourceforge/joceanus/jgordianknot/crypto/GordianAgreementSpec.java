@@ -47,8 +47,8 @@ public class GordianAgreementSpec {
      * @param pAsymKeyType the asymKeyType
      * @param pAgreementType the agreement type
      */
-    GordianAgreementSpec(final GordianAsymKeyType pAsymKeyType,
-                         final GordianAgreementType pAgreementType) {
+    public GordianAgreementSpec(final GordianAsymKeyType pAsymKeyType,
+                                final GordianAgreementType pAgreementType) {
         theAsymKeyType = pAsymKeyType;
         theAgreementType = pAgreementType;
     }

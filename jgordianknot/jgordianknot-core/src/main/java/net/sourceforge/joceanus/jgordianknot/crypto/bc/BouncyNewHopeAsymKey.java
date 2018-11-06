@@ -39,9 +39,6 @@ import net.sourceforge.joceanus.jgordianknot.GordianCryptoException;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianAgreement.GordianEncapsulationAgreement;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianAgreementSpec;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianAsymKeySpec;
-import net.sourceforge.joceanus.jgordianknot.crypto.GordianDigestSpec;
-import net.sourceforge.joceanus.jgordianknot.crypto.GordianKeyEncapsulation;
-import net.sourceforge.joceanus.jgordianknot.crypto.GordianKeyEncapsulation.GordianKEMSender;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianKeyPair;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianKeyPairGenerator;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianModulus;
@@ -194,97 +191,6 @@ public final class BouncyNewHopeAsymKey {
     }
 
     /**
-     * ClientNewHope Encapsulation.
-     */
-    public static class BouncyNewHopeSender
-            extends GordianKEMSender {
-        /**
-         * Constructor.
-         * @param pFactory the security factory
-         * @param pPublicKey the target publicKey
-         * @param pDigestSpec the digestSpec
-         * @throws OceanusException on error
-         */
-        protected BouncyNewHopeSender(final BouncyFactory pFactory,
-                                      final BouncyNewHopePublicKey pPublicKey,
-                                      final GordianDigestSpec pDigestSpec) throws OceanusException {
-            /* Initialise underlying class */
-            super(pFactory);
-
-            /* Create initVector */
-            final byte[] myInitVector = new byte[INITLEN];
-            getRandom().nextBytes(myInitVector);
-
-            /* Generate an Exchange KeyPair */
-            final NHExchangePairGenerator myGenerator = new NHExchangePairGenerator(getRandom());
-            final ExchangePair myPair = myGenerator.GenerateExchange(pPublicKey.getPublicKey());
-
-            /* Derive the secret */
-            final byte[] mySecret = myPair.getSharedValue();
-
-            /* Obtain the encoded keySpec of the public key */
-            final BCNHPublicKey myPublic = new BCNHPublicKey((NHPublicKeyParameters) myPair.getPublicKey());
-            final X509EncodedKeySpec myKeySpec = new X509EncodedKeySpec(myPublic.getEncoded());
-            final byte[] myKeySpecBytes = myKeySpec.getEncoded();
-
-            /* Create cipherText */
-            final int myLen = myKeySpecBytes.length;
-            final byte[] myCipherText = new byte[myLen + INITLEN];
-            System.arraycopy(myInitVector, 0, myCipherText, 0, INITLEN);
-            System.arraycopy(myKeySpecBytes, 0, myCipherText, INITLEN, myLen);
-
-            /* Store secret and cipherText */
-            storeSecret(BouncyKeyEncapsulation.hashSecret(mySecret, getDigest(pDigestSpec)), myInitVector);
-            storeCipherText(myCipherText);
-        }
-    }
-
-    /**
-     * ServerNewHope Encapsulation.
-     */
-    public static class BouncyNewHopeReceiver
-            extends GordianKeyEncapsulation {
-        /**
-         * Constructor.
-         * @param pFactory the security factory
-         * @param pPrivateKey the target privateKey
-         * @param pDigestSpec the digestSpec
-         * @param pCipherText the cipherText
-         * @throws OceanusException on error
-         */
-        protected BouncyNewHopeReceiver(final BouncyFactory pFactory,
-                                        final BouncyNewHopePrivateKey pPrivateKey,
-                                        final GordianDigestSpec pDigestSpec,
-                                        final byte[] pCipherText) throws OceanusException {
-            /* Initialise underlying class */
-            super(pFactory);
-
-            /* Obtain initVector */
-            final byte[] myInitVector = new byte[INITLEN];
-            System.arraycopy(pCipherText, 0, myInitVector, 0, INITLEN);
-
-            /* Obtain ephemeral PublicKeySpec */
-            final int myX509Len = pCipherText.length - INITLEN;
-            final byte[] myX509bytes = new byte[myX509Len];
-            System.arraycopy(pCipherText, INITLEN, myX509bytes, 0, myX509Len);
-            final X509EncodedKeySpec myKeySpec = new X509EncodedKeySpec(myX509bytes);
-
-            /* Derive ephemeral Public key */
-            final BouncyKeyPairGenerator myGenerator = pFactory.getKeyPairGenerator(pPrivateKey.getKeySpec());
-            final GordianKeyPair myPair = myGenerator.derivePublicOnlyKeyPair(myKeySpec);
-            final BouncyNewHopePublicKey myPublic = BouncyNewHopePublicKey.class.cast(getPublicKey(myPair));
-
-            /* Derive the secret */
-            final NHAgreement myAgreement = new NHAgreement();
-            myAgreement.init(pPrivateKey.getPrivateKey());
-            final byte[] mySecret = myAgreement.calculateAgreement(myPublic.getPublicKey());
-
-            /* Store secret */
-            storeSecret(BouncyKeyEncapsulation.hashSecret(mySecret, getDigest(pDigestSpec)), myInitVector);
-        }
-    }
-
-    /**
      * NewHope Encapsulation.
      */
     public static class BouncyNewHopeAgreement
@@ -292,7 +198,7 @@ public final class BouncyNewHopeAsymKey {
         /**
          * Constructor.
          * @param pFactory the security factory
-         * @param pSpec the digestSpec
+         * @param pSpec the agreementSpec
          */
         BouncyNewHopeAgreement(final BouncyFactory pFactory,
                                final GordianAgreementSpec pSpec) {

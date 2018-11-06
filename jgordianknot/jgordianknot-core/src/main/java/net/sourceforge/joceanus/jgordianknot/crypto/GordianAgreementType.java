@@ -26,6 +26,11 @@ public enum GordianAgreementType {
     KEM,
 
     /**
+     * Basic.
+     */
+    BASIC,
+
+    /**
      * SM2.
      */
     SM2,
@@ -49,6 +54,8 @@ public enum GordianAgreementType {
         switch (this) {
             case KEM:
                 return hasKEM(pKeyType);
+            case BASIC:
+                return hasBasic(pKeyType);
             case SM2:
                 return hasSM2(pKeyType);
             case MQV:
@@ -68,15 +75,13 @@ public enum GordianAgreementType {
     public static boolean hasKEM(final GordianAsymKeyType pKeyType) {
         switch (pKeyType) {
             case RSA:
-            case EC:
-            case SM2:
-            case GOST2012:
-            case DSTU4145:
-            case DIFFIEHELLMAN:
             case NEWHOPE:
                 return true;
-            default:
+            case X25519:
+            case X448:
                 return false;
+            default:
+                return isECorDH(pKeyType);
         }
     }
 
@@ -90,12 +95,21 @@ public enum GordianAgreementType {
     }
 
     /**
+     * Does the AsymKeyType have a Basic agreement?
+     * @param pKeyType the asymKeyType
+     * @return true/false
+     */
+    public static boolean hasBasic(final GordianAsymKeyType pKeyType) {
+        return isECorDH(pKeyType);
+    }
+
+    /**
      * Does the AsymKeyType have a MQV agreement?
      * @param pKeyType the asymKeyType
      * @return true/false
      */
     public static boolean hasMQV(final GordianAsymKeyType pKeyType) {
-        return isECorDH(pKeyType);
+        return isEC(pKeyType);
     }
 
     /**
@@ -119,6 +133,25 @@ public enum GordianAgreementType {
             case GOST2012:
             case DSTU4145:
             case DIFFIEHELLMAN:
+            case X25519:
+            case X448:
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    /**
+     * Is the AsymKeyType EC?
+     * @param pKeyType the asymKeyType
+     * @return true/false
+     */
+    private static boolean isEC(final GordianAsymKeyType pKeyType) {
+        switch (pKeyType) {
+            case SM2:
+            case EC:
+            case GOST2012:
+            case DSTU4145:
                 return true;
             default:
                 return false;
