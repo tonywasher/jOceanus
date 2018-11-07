@@ -47,7 +47,7 @@ import net.sourceforge.joceanus.jgordianknot.crypto.jca.JcaAgreement.JcaEncapsul
 import net.sourceforge.joceanus.jgordianknot.crypto.jca.JcaAgreement.JcaMQVAgreement;
 import net.sourceforge.joceanus.jgordianknot.crypto.jca.JcaAgreement.JcaUnifiedAgreement;
 import net.sourceforge.joceanus.jgordianknot.crypto.jca.JcaKeyPairGenerator.JcaDSAKeyPairGenerator;
-import net.sourceforge.joceanus.jgordianknot.crypto.jca.JcaKeyPairGenerator.JcaDiffieHellmanKeyPairGenerator;
+import net.sourceforge.joceanus.jgordianknot.crypto.jca.JcaKeyPairGenerator.JcaDHKeyPairGenerator;
 import net.sourceforge.joceanus.jgordianknot.crypto.jca.JcaKeyPairGenerator.JcaECKeyPairGenerator;
 import net.sourceforge.joceanus.jgordianknot.crypto.jca.JcaKeyPairGenerator.JcaEdKeyPairGenerator;
 import net.sourceforge.joceanus.jgordianknot.crypto.jca.JcaKeyPairGenerator.JcaMcElieceKeyPairGenerator;
@@ -852,7 +852,7 @@ public final class JcaFactory
             case ED448:
                 return new JcaEdKeyPairGenerator(this, pKeySpec);
             case DIFFIEHELLMAN:
-                return new JcaDiffieHellmanKeyPairGenerator(this, pKeySpec);
+                return new JcaDHKeyPairGenerator(this, pKeySpec);
             case SPHINCS:
                 return new JcaSPHINCSKeyPairGenerator(this, pKeySpec);
             case RAINBOW:

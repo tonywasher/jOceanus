@@ -1045,7 +1045,7 @@ public abstract class GordianFactory
     /**
      * Check SignatureSpec and KeyPair combination.
      * @param pKeyPair the keyPair
-     * @param pSignSpec the macSpec
+     * @param pSignSpec the signSpec
      * @return true/false
      */
     public boolean validSignatureSpecForKeyPair(final GordianKeyPair pKeyPair,
@@ -1078,7 +1078,7 @@ public abstract class GordianFactory
             /* The digest length cannot be too large wrt to the modulus */
             int myLen = pSignSpec.getDigestSpec().getDigestLength().getByteLength();
             myLen = (myLen + 1) * Byte.SIZE;
-            if (myKeySpec.getModulus().getModulus() < (myLen << 1)) {
+            if (myKeySpec.getModulus().getLength() < (myLen << 1)) {
                 return false;
             }
         }
@@ -1132,13 +1132,42 @@ public abstract class GordianFactory
     }
 
     /**
-     * Check ExchangeSpec.
+     * Check AgreementSpec.
      * @param pSpec the agreementSpec
      * @return true/false
      */
     protected boolean validAgreementSpec(final GordianAgreementSpec pSpec) {
         /* Check that spec is supported */
         return pSpec.isSupported();
+    }
+
+    /**
+     * Check AgreementSpec and KeyPair combination.
+     * @param pKeyPair the keyPair
+     * @param pAgreementSpec the macSpec
+     * @return true/false
+     */
+    public boolean validAgreementSpecForKeyPair(final GordianKeyPair pKeyPair,
+                                                final GordianAgreementSpec pAgreementSpec) {
+        /* Check signature matches keyPair */
+        if (pAgreementSpec.getAsymKeyType() != pKeyPair.getKeySpec().getKeyType()) {
+            return false;
+        }
+
+        /* Check that the agreementSpec is supported */
+        if (!validAgreementSpec(pAgreementSpec)) {
+            return false;
+        }
+
+        /* Disallow MQV if group does not support it */
+        final GordianAsymKeySpec myKeySpec = pKeyPair.getKeySpec();
+        if (GordianAsymKeyType.DIFFIEHELLMAN.equals(myKeySpec.getKeyType())
+            && GordianAgreementType.MQV.equals(pAgreementSpec.getAgreementType())) {
+            return myKeySpec.getDHGroup().isMQV();
+        }
+
+        /* OK */
+        return true;
     }
 
     /**

@@ -59,11 +59,11 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
 /**
  * EdwardsCurve XDH AsymKey classes.
  */
-public final class BouncyEdwardsXDHAsymKey {
+public final class BouncyXDHAsymKey {
     /**
      * Private constructor.
      */
-    private BouncyEdwardsXDHAsymKey() {
+    private BouncyXDHAsymKey() {
     }
 
     /**

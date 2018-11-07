@@ -21,14 +21,14 @@ import java.math.BigInteger;
 import java.security.spec.PKCS8EncodedKeySpec;
 import java.security.spec.X509EncodedKeySpec;
 
-import javax.crypto.spec.DHParameterSpec;
-
 import org.bouncycastle.asn1.ASN1Integer;
 import org.bouncycastle.asn1.pkcs.DHParameter;
 import org.bouncycastle.asn1.pkcs.PKCSObjectIdentifiers;
 import org.bouncycastle.asn1.pkcs.PrivateKeyInfo;
 import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
 import org.bouncycastle.asn1.x509.SubjectPublicKeyInfo;
+import org.bouncycastle.asn1.x9.DomainParameters;
+import org.bouncycastle.asn1.x9.X9ObjectIdentifiers;
 import org.bouncycastle.crypto.AsymmetricCipherKeyPair;
 import org.bouncycastle.crypto.agreement.DHBasicAgreement;
 import org.bouncycastle.crypto.agreement.DHUnifiedAgreement;
@@ -46,16 +46,18 @@ import org.bouncycastle.crypto.params.DHUPublicParameters;
 import org.bouncycastle.jcajce.provider.asymmetric.dh.BCDHPrivateKey;
 import org.bouncycastle.jcajce.provider.asymmetric.dh.BCDHPublicKey;
 import org.bouncycastle.jcajce.provider.asymmetric.util.KeyUtil;
+import org.bouncycastle.util.BigIntegers;
 
 import net.sourceforge.joceanus.jgordianknot.GordianCryptoException;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianAgreement.GordianBasicAgreement;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianAgreement.GordianEncapsulationAgreement;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianAgreement.GordianEphemeralAgreement;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianAgreementSpec;
+import net.sourceforge.joceanus.jgordianknot.crypto.GordianAsymAlgId.GordianDHEncodedParser;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianAsymKeySpec;
+import net.sourceforge.joceanus.jgordianknot.crypto.GordianDHGroup;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianKeyPair;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianKeyPairGenerator;
-import net.sourceforge.joceanus.jgordianknot.crypto.GordianModulus;
 import net.sourceforge.joceanus.jgordianknot.crypto.bc.BouncyKeyPair.BouncyPrivateKey;
 import net.sourceforge.joceanus.jgordianknot.crypto.bc.BouncyKeyPair.BouncyPublicKey;
 import net.sourceforge.joceanus.jtethys.OceanusException;
@@ -177,8 +179,8 @@ public final class BouncyDHAsymKey {
             super(pFactory, pKeySpec);
 
             /* Create the parameter generator */
-            final GordianModulus myModulus = pKeySpec.getModulus();
-            final DHParameters myParms = myModulus.getDHParameters();
+            final GordianDHGroup myGroup = pKeySpec.getDHGroup();
+            final DHParameters myParms = myGroup.getParameters();
             final DHKeyGenerationParameters myParams = new DHKeyGenerationParameters(getRandom(), myParms);
 
             /* Create and initialise the generator */
@@ -200,8 +202,8 @@ public final class BouncyDHAsymKey {
                 final BouncyDHPrivateKey myPrivateKey = (BouncyDHPrivateKey) getPrivateKey(pKeyPair);
                 final DHPrivateKeyParameters myKey = myPrivateKey.getPrivateKey();
                 final DHParameters myParms = myKey.getParameters();
-                final PrivateKeyInfo myInfo = new PrivateKeyInfo(new AlgorithmIdentifier(PKCSObjectIdentifiers.dhKeyAgreement,
-                        new DHParameter(myParms.getP(), myParms.getG(), myParms.getL()).toASN1Primitive()), new ASN1Integer(myKey.getX()));
+                final AlgorithmIdentifier myId = getAlgorithmIdentifier(myParms);
+                final PrivateKeyInfo myInfo = new PrivateKeyInfo(myId, new ASN1Integer(myKey.getX()));
                 return new PKCS8EncodedKeySpec(myInfo.getEncoded());
             } catch (IOException e) {
                 throw new GordianCryptoException(ERROR_PARSE, e);
@@ -214,8 +216,7 @@ public final class BouncyDHAsymKey {
             try {
                 final PrivateKeyInfo myInfo = PrivateKeyInfo.getInstance(pPrivateKey.getEncoded());
                 final BCDHPrivateKey myKey = new BCDHPrivateKey(myInfo);
-                final DHParameterSpec mySpec = myKey.getParams();
-                final DHParameters myParms = new DHParameters(mySpec.getP(), mySpec.getG());
+                final DHParameters myParms = GordianDHEncodedParser.determineParameters(myInfo.getPrivateKeyAlgorithm());
                 final BouncyDHPrivateKey myPrivate = new BouncyDHPrivateKey(getKeySpec(), new DHPrivateKeyParameters(myKey.getX(), myParms));
                 final BouncyDHPublicKey myPublic = derivePublicKey(pPublicKey);
                 return new BouncyKeyPair(myPublic, myPrivate);
@@ -229,8 +230,8 @@ public final class BouncyDHAsymKey {
             final BouncyDHPublicKey myPublicKey = (BouncyDHPublicKey) getPublicKey(pKeyPair);
             final DHPublicKeyParameters myKey = myPublicKey.getPublicKey();
             final DHParameters myParms = myKey.getParameters();
-            final byte[] myBytes = KeyUtil.getEncodedSubjectPublicKeyInfo(new AlgorithmIdentifier(PKCSObjectIdentifiers.dhKeyAgreement,
-                    new DHParameter(myParms.getP(), myParms.getG(), myParms.getL()).toASN1Primitive()), new ASN1Integer(myKey.getY()));
+            final AlgorithmIdentifier myId = getAlgorithmIdentifier(myParms);
+            final byte[] myBytes = KeyUtil.getEncodedSubjectPublicKeyInfo(myId, new ASN1Integer(myKey.getY()));
             return new X509EncodedKeySpec(myBytes);
         }
 
@@ -250,6 +251,20 @@ public final class BouncyDHAsymKey {
             final BCDHPublicKey myKey = new BCDHPublicKey(myInfo);
             return new BouncyDHPublicKey(getKeySpec(), myKey.engineGetKeyParameters());
         }
+
+        /**
+         * Obtain algorithm Id from DHParameters.
+         * @param pParams the parameters
+         * @return the algorithmId.
+         */
+        private AlgorithmIdentifier getAlgorithmIdentifier(final DHParameters pParams) {
+            /* If this is a public # algorithm */
+            return pParams.getQ() != null
+                        ? new AlgorithmIdentifier(X9ObjectIdentifiers.dhpublicnumber,
+                                new DomainParameters(pParams.getP(), pParams.getG(), pParams.getQ(), pParams.getJ(), null).toASN1Primitive())
+                        : new AlgorithmIdentifier(PKCSObjectIdentifiers.dhKeyAgreement,
+                                new DHParameter(pParams.getP(), pParams.getG(), pParams.getL()).toASN1Primitive());
+        }
     }
 
     /**
@@ -257,6 +272,11 @@ public final class BouncyDHAsymKey {
      */
     public static class BouncyDHEncapsulationAgreement
             extends GordianEncapsulationAgreement {
+        /**
+         * The agreement.
+         */
+        private final DHBasicAgreement theAgreement;
+
         /**
          * Constructor.
          * @param pFactory the security factory
@@ -266,6 +286,9 @@ public final class BouncyDHAsymKey {
                                        final GordianAgreementSpec pSpec) {
             /* Initialise underlying class */
             super(pFactory, pSpec);
+
+            /* Create the agreement */
+            theAgreement = new DHBasicAgreement();
         }
 
         @Override
@@ -280,11 +303,10 @@ public final class BouncyDHAsymKey {
             final BouncyDHPublicKey myPublic = (BouncyDHPublicKey) getPublicKey(myPair);
 
             /* Derive the secret */
-            final DHBasicAgreement myAgreement = new DHBasicAgreement();
-            myAgreement.init(myPrivate.getPrivateKey());
+            theAgreement.init(myPrivate.getPrivateKey());
             final BouncyDHPublicKey myTarget = (BouncyDHPublicKey) getPublicKey(pTarget);
-            final BigInteger mySecret = myAgreement.calculateAgreement(myTarget.getPublicKey());
-            storeSecret(mySecret.toByteArray());
+            final BigInteger mySecret = theAgreement.calculateAgreement(myTarget.getPublicKey());
+            storeSecret(BigIntegers.asUnsignedByteArray(theAgreement.getFieldSize(), mySecret));
 
             /* Create the message  */
             final byte[] myY = myPublic.getPublicKey().getY().toByteArray();
@@ -305,12 +327,11 @@ public final class BouncyDHAsymKey {
             final DHPublicKeyParameters myPublicKey = new DHPublicKeyParameters(myY, myParms);
 
             /* Derive the secret */
-            final DHBasicAgreement myAgreement = new DHBasicAgreement();
-            myAgreement.init(myPrivate.getPrivateKey());
-            final BigInteger mySecret = myAgreement.calculateAgreement(myPublicKey);
+            theAgreement.init(myPrivate.getPrivateKey());
+            final BigInteger mySecret = theAgreement.calculateAgreement(myPublicKey);
 
             /* Store secret */
-            storeSecret(mySecret.toByteArray());
+            storeSecret(BigIntegers.asUnsignedByteArray(theAgreement.getFieldSize(), mySecret));
         }
     }
 
@@ -350,7 +371,7 @@ public final class BouncyDHAsymKey {
             theAgreement.init(myPrivate.getPrivateKey());
             final BouncyDHPublicKey myTarget = (BouncyDHPublicKey) getPublicKey(pTarget);
             final BigInteger mySecret = theAgreement.calculateAgreement(myTarget.getPublicKey());
-            storeSecret(mySecret.toByteArray());
+            storeSecret(BigIntegers.asUnsignedByteArray(theAgreement.getFieldSize(), mySecret));
 
             /* Create the message  */
             return createMessage();
@@ -374,7 +395,7 @@ public final class BouncyDHAsymKey {
             final BigInteger mySecret = theAgreement.calculateAgreement(myPublic.getPublicKey());
 
             /* Store secret */
-            storeSecret(mySecret.toByteArray());
+            storeSecret(BigIntegers.asUnsignedByteArray(theAgreement.getFieldSize(), mySecret));
         }
     }
 
@@ -498,7 +519,8 @@ public final class BouncyDHAsymKey {
             final BouncyDHPublicKey mySrcEphPublic = (BouncyDHPublicKey) getPublicKey(getPartnerEphemeralKeyPair());
             final DHMQVPublicParameters myPubParams = new DHMQVPublicParameters(mySrcPublic.getPublicKey(),
                     mySrcEphPublic.getPublicKey());
-            storeSecret(theAgreement.calculateAgreement(myPubParams).toByteArray());
+            storeSecret(BigIntegers.asUnsignedByteArray(theAgreement.getFieldSize(),
+                    theAgreement.calculateAgreement(myPubParams)));
 
             /* Return the response */
             return myResponse;
@@ -526,7 +548,8 @@ public final class BouncyDHAsymKey {
             final BouncyDHPublicKey mySrcEphPublic = (BouncyDHPublicKey) getPublicKey(getPartnerEphemeralKeyPair());
             final DHMQVPublicParameters myPubParams = new DHMQVPublicParameters(mySrcPublic.getPublicKey(),
                     mySrcEphPublic.getPublicKey());
-            storeSecret(theAgreement.calculateAgreement(myPubParams).toByteArray());
+            storeSecret(BigIntegers.asUnsignedByteArray(theAgreement.getFieldSize(),
+                    theAgreement.calculateAgreement(myPubParams)));
         }
     }
 }

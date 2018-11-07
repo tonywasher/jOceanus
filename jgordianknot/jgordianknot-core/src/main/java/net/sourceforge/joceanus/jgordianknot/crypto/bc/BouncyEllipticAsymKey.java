@@ -55,6 +55,7 @@ import org.bouncycastle.crypto.util.PrivateKeyInfoFactory;
 import org.bouncycastle.crypto.util.PublicKeyFactory;
 import org.bouncycastle.crypto.util.SubjectPublicKeyInfoFactory;
 import org.bouncycastle.jcajce.provider.asymmetric.util.ECUtil;
+import org.bouncycastle.util.BigIntegers;
 
 import net.sourceforge.joceanus.jgordianknot.GordianCryptoException;
 import net.sourceforge.joceanus.jgordianknot.GordianLogicException;
@@ -558,7 +559,7 @@ public final class BouncyEllipticAsymKey {
             theAgreement.init(myPrivate.getPrivateKey());
             final BouncyECPublicKey myTarget = (BouncyECPublicKey) getPublicKey(pTarget);
             final BigInteger mySecret = theAgreement.calculateAgreement(myTarget.getPublicKey());
-            storeSecret(mySecret.toByteArray());
+            storeSecret(BigIntegers.asUnsignedByteArray(theAgreement.getFieldSize(), mySecret));
 
             /* Create the message  */
             return createMessage();
@@ -582,7 +583,7 @@ public final class BouncyEllipticAsymKey {
             final BigInteger mySecret = theAgreement.calculateAgreement(myPublic.getPublicKey());
 
             /* Store secret */
-            storeSecret(mySecret.toByteArray());
+            storeSecret(BigIntegers.asUnsignedByteArray(theAgreement.getFieldSize(), mySecret));
         }
     }
 
@@ -706,7 +707,7 @@ public final class BouncyEllipticAsymKey {
             final BouncyECPublicKey mySrcEphPublic = (BouncyECPublicKey) getPublicKey(getPartnerEphemeralKeyPair());
             final MQVPublicParameters myPubParams = new MQVPublicParameters(mySrcPublic.getPublicKey(),
                     mySrcEphPublic.getPublicKey());
-            storeSecret(theAgreement.calculateAgreement(myPubParams).toByteArray());
+            storeSecret(BigIntegers.asUnsignedByteArray(theAgreement.getFieldSize(), theAgreement.calculateAgreement(myPubParams)));
 
             /* Return the response */
             return myResponse;
@@ -734,7 +735,7 @@ public final class BouncyEllipticAsymKey {
             final BouncyECPublicKey mySrcEphPublic = (BouncyECPublicKey) getPublicKey(getPartnerEphemeralKeyPair());
             final MQVPublicParameters myPubParams = new MQVPublicParameters(mySrcPublic.getPublicKey(),
                     mySrcEphPublic.getPublicKey());
-            storeSecret(theAgreement.calculateAgreement(myPubParams).toByteArray());
+            storeSecret(BigIntegers.asUnsignedByteArray(theAgreement.getFieldSize(), theAgreement.calculateAgreement(myPubParams)));
         }
     }
 

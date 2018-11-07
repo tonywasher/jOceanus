@@ -40,9 +40,11 @@ import org.bouncycastle.asn1.ua.UAObjectIdentifiers;
 import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
 import org.bouncycastle.asn1.x509.DSAParameter;
 import org.bouncycastle.asn1.x509.SubjectPublicKeyInfo;
+import org.bouncycastle.asn1.x9.DomainParameters;
 import org.bouncycastle.asn1.x9.ECNamedCurveTable;
 import org.bouncycastle.asn1.x9.X962Parameters;
 import org.bouncycastle.asn1.x9.X9ObjectIdentifiers;
+import org.bouncycastle.crypto.params.DHParameters;
 import org.bouncycastle.crypto.params.ECDomainParameters;
 import org.bouncycastle.pqc.asn1.McElieceCCA2PrivateKey;
 import org.bouncycastle.pqc.asn1.McElieceCCA2PublicKey;
@@ -231,7 +233,7 @@ public class GordianAsymAlgId {
          * @throws OceanusException on error
          */
         private static  GordianAsymKeySpec determineKeySpec(final BigInteger pModulus) throws OceanusException {
-            final GordianModulus myModulus = GordianModulus.getModulusForInteger(pModulus);
+            final GordianRSAModulus myModulus = GordianRSAModulus.getModulusForInteger(pModulus);
             if (myModulus == null) {
                 throw new GordianDataException("RSA strength not supported: " + pModulus.bitLength());
             }
@@ -284,27 +286,55 @@ public class GordianAsymAlgId {
     /**
      * DH Encoded parser.
      */
-    private static class GordianDHEncodedParser implements GordianEncodedParser {
+    public static class GordianDHEncodedParser implements GordianEncodedParser {
         /**
          * Registrar.
          * @param pIdManager the idManager
          */
         static void register(final GordianAsymAlgId pIdManager) {
             pIdManager.registerParser(PKCSObjectIdentifiers.dhKeyAgreement, new GordianDHEncodedParser());
+            pIdManager.registerParser(X9ObjectIdentifiers.dhpublicnumber, new GordianDHEncodedParser());
         }
 
         @Override
         public GordianAsymKeySpec determineKeySpec(final SubjectPublicKeyInfo pInfo) throws OceanusException {
-            final AlgorithmIdentifier myId = pInfo.getAlgorithm();
-            final DHParameter myParms = DHParameter.getInstance(myId.getParameters());
+            final DHParameters myParms = determineParameters(pInfo.getAlgorithm());
             return determineKeySpec(myParms);
         }
 
         @Override
         public GordianAsymKeySpec determineKeySpec(final PrivateKeyInfo pInfo) throws OceanusException {
-            final AlgorithmIdentifier myId = pInfo.getPrivateKeyAlgorithm();
-            final DHParameter myParms = DHParameter.getInstance(myId.getParameters());
+            final DHParameters myParms = determineParameters(pInfo.getPrivateKeyAlgorithm());
             return determineKeySpec(myParms);
+        }
+
+        /**
+         * Obtain parameters from encoded sequence.
+         * @param pId the algorithm Identifier
+         * @return the parameters
+         */
+        public static DHParameters determineParameters(final AlgorithmIdentifier pId) {
+            /* Access algorithmId */
+            final ASN1ObjectIdentifier myId = pId.getAlgorithm();
+
+            /* If this is key agreement */
+            if (PKCSObjectIdentifiers.dhKeyAgreement.equals(myId)) {
+                /* Access the DHParameter */
+                final DHParameter myParams = DHParameter.getInstance(pId.getParameters());
+
+                /* If we have an L value */
+                return myParams.getL() != null
+                     ? new DHParameters(myParams.getP(), myParams.getG(), null, myParams.getL().intValue())
+                     : new DHParameters(myParams.getP(), myParams.getG());
+
+            } else if (X9ObjectIdentifiers.dhpublicnumber.equals(myId)) {
+                /* Access Domain Parameters */
+                final DomainParameters myParams = DomainParameters.getInstance(pId.getParameters());
+
+                return new DHParameters(myParams.getP(), myParams.getG(), myParams.getQ(), myParams.getJ(), null);
+            } else {
+                throw new IllegalArgumentException("unknown algorithm type: " + myId);
+            }
         }
 
         /**
@@ -313,13 +343,13 @@ public class GordianAsymAlgId {
          * @return the keySpec
          * @throws OceanusException on error
          */
-        private static  GordianAsymKeySpec determineKeySpec(final DHParameter pParms) throws OceanusException {
-            final GordianModulus myModulus = GordianModulus.getModulusForDHParams(pParms);
-            if (myModulus == null) {
+        private static  GordianAsymKeySpec determineKeySpec(final DHParameters pParms) throws OceanusException {
+            final GordianDHGroup myGroup = GordianDHGroup.getGroupForParams(pParms);
+            if (myGroup == null) {
                 throw new GordianDataException("Unsupported DH parameters: "
                         + pParms.getP().bitLength());
             }
-            return  GordianAsymKeySpec.dh(myModulus);
+            return  GordianAsymKeySpec.dh(myGroup);
         }
     }
 

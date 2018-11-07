@@ -58,7 +58,7 @@ public final class GordianAsymKeySpec {
      * @param pModulus the modulus
      * @return the KeySpec
      */
-    public static GordianAsymKeySpec rsa(final GordianModulus pModulus) {
+    public static GordianAsymKeySpec rsa(final GordianRSAModulus pModulus) {
         return new GordianAsymKeySpec(GordianAsymKeyType.RSA, pModulus);
     }
 
@@ -109,11 +109,11 @@ public final class GordianAsymKeySpec {
 
     /**
      * Create DHKey.
-     * @param pModulus the modulus
+     * @param pGroup the group
      * @return the KeySpec
      */
-    public static GordianAsymKeySpec dh(final GordianModulus pModulus) {
-        return new GordianAsymKeySpec(GordianAsymKeyType.DIFFIEHELLMAN, pModulus);
+    public static GordianAsymKeySpec dh(final GordianDHGroup pGroup) {
+        return new GordianAsymKeySpec(GordianAsymKeyType.DIFFIEHELLMAN, pGroup);
     }
 
     /**
@@ -226,12 +226,12 @@ public final class GordianAsymKeySpec {
     }
 
     /**
-     * Obtain the modulus length.
-     * @return the length.
+     * Obtain the RSAmodulus.
+     * @return the modulus.
      */
-    public GordianModulus getModulus() {
-        return theSubKeyType instanceof GordianModulus
-                                                       ? (GordianModulus) theSubKeyType
+    public GordianRSAModulus getModulus() {
+        return theSubKeyType instanceof GordianRSAModulus
+                                                       ? (GordianRSAModulus) theSubKeyType
                                                        : null;
     }
 
@@ -243,6 +243,16 @@ public final class GordianAsymKeySpec {
         return theSubKeyType instanceof GordianDSAKeyType
                                                           ? (GordianDSAKeyType) theSubKeyType
                                                           : null;
+    }
+
+    /**
+     * Obtain the DSA keyType.
+     * @return the keyType.
+     */
+    public GordianDHGroup getDHGroup() {
+        return theSubKeyType instanceof GordianDHGroup
+               ? (GordianDHGroup) theSubKeyType
+               : null;
     }
 
     /**
@@ -357,5 +367,46 @@ public final class GordianAsymKeySpec {
             hashCode += theSubKeyType.hashCode();
         }
         return hashCode;
+    }
+
+    /**
+     * Check subKeyType validity.
+     * @return valid true/false
+     */
+    public boolean checkSubKeyType() {
+        switch (theKeyType) {
+            case RSA:
+                return theSubKeyType instanceof GordianRSAModulus;
+            case DSA:
+                return theSubKeyType instanceof GordianDSAKeyType;
+            case DIFFIEHELLMAN:
+                return theSubKeyType instanceof GordianDHGroup;
+            case EC:
+                return theSubKeyType instanceof GordianDSAElliptic;
+            case SM2:
+                return theSubKeyType instanceof GordianSM2Elliptic;
+            case GOST2012:
+                return theSubKeyType instanceof GordianGOSTElliptic;
+            case DSTU4145:
+                return theSubKeyType instanceof GordianDSTU4145Elliptic;
+            case SPHINCS:
+                return theSubKeyType instanceof GordianSPHINCSKeyType;
+            case MCELIECE:
+                return theSubKeyType instanceof GordianMcElieceKeySpec;
+            case XMSS:
+            case XMSSMT:
+                return theSubKeyType instanceof GordianXMSSKeyType;
+            case QTESLA:
+                return theSubKeyType instanceof GordianQTESLAKeyType;
+            case ED25519:
+            case ED448:
+            case X25519:
+            case X448:
+            case RAINBOW:
+            case NEWHOPE:
+                return theSubKeyType == null;
+            default:
+                throw new IllegalArgumentException();
+        }
     }
 }

@@ -109,7 +109,7 @@ public enum GordianAgreementType {
      * @return true/false
      */
     public static boolean hasMQV(final GordianAsymKeyType pKeyType) {
-        return isEC(pKeyType);
+        return  pKeyType == GordianAsymKeyType.DIFFIEHELLMAN || isEC(pKeyType);
     }
 
     /**

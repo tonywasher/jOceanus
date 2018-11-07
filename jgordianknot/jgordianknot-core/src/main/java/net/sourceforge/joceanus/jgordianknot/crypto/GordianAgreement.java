@@ -98,8 +98,8 @@ public abstract class GordianAgreement {
      */
     protected void checkKeyPair(final GordianKeyPair pKeyPair) throws OceanusException {
         /* Check that the KeyPair is valid */
-        if (pKeyPair.getKeySpec().getKeyType() != theSpec.getAsymKeyType()) {
-            throw new GordianDataException("Invalid KeyPair");
+        if (!theFactory.validAgreementSpecForKeyPair(pKeyPair, theSpec)) {
+            throw new GordianDataException("Incorrect KeyPair type");
         }
     }
 

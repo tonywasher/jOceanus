@@ -52,7 +52,7 @@ import net.sourceforge.joceanus.jgordianknot.crypto.GordianAgreementSpec;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianAsymKeySpec;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianDigestSpec;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianKeyPair;
-import net.sourceforge.joceanus.jgordianknot.crypto.GordianModulus;
+import net.sourceforge.joceanus.jgordianknot.crypto.GordianRSAModulus;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianSignatureSpec;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianSignatureType;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianSignature;
@@ -199,7 +199,7 @@ public final class BouncyRSAAsymKey {
 
             /* Create and initialise the generator */
             theGenerator = new RSAKeyPairGenerator();
-            final RSAKeyGenerationParameters myParams = new RSAKeyGenerationParameters(RSA_EXPONENT, getRandom(), pKeySpec.getModulus().getModulus(), PRIME_CERTAINTY);
+            final RSAKeyGenerationParameters myParams = new RSAKeyGenerationParameters(RSA_EXPONENT, getRandom(), pKeySpec.getModulus().getLength(), PRIME_CERTAINTY);
             theGenerator.init(myParams);
         }
 
@@ -455,8 +455,8 @@ public final class BouncyRSAAsymKey {
             theAgreement.init(myPublic.getPublicKey());
 
             /* Create message */
-            final GordianModulus myModulus = myPublic.getKeySpec().getModulus();
-            final int myLen = myModulus.getModulus() / Byte.SIZE;
+            final GordianRSAModulus myModulus = myPublic.getKeySpec().getModulus();
+            final int myLen = myModulus.getLength() / Byte.SIZE;
             final byte[] myMessage = new byte[myLen];
             final KeyParameter myParms = (KeyParameter) theAgreement.encrypt(myMessage, 0, myLen);
 
@@ -478,8 +478,8 @@ public final class BouncyRSAAsymKey {
             theAgreement.init(myPrivate.getPrivateKey());
 
             /* Parse source message */
-            final GordianModulus myModulus = myPrivate.getKeySpec().getModulus();
-            final int myLen = myModulus.getModulus() / Byte.SIZE;
+            final GordianRSAModulus myModulus = myPrivate.getKeySpec().getModulus();
+            final int myLen = myModulus.getLength() / Byte.SIZE;
             final byte[] myMessage = parseMessage(pMessage);
             final KeyParameter myParms = (KeyParameter) theAgreement.decrypt(myMessage, 0, myMessage.length, myLen);
             storeSecret(myParms.getKey());

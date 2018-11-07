@@ -34,6 +34,7 @@ import net.sourceforge.joceanus.jgordianknot.crypto.GordianAgreementType;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianAsymAlgId;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianAsymKeySpec;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianAsymKeyType;
+import net.sourceforge.joceanus.jgordianknot.crypto.GordianDHGroup;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianDSAElliptic;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianDSAKeyType;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianDSTU4145Elliptic;
@@ -46,10 +47,11 @@ import net.sourceforge.joceanus.jgordianknot.crypto.GordianKeyPairGenerator;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianKeySet;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianMcElieceKeySpec;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianMcElieceKeySpec.GordianMcElieceDigestType;
-import net.sourceforge.joceanus.jgordianknot.crypto.GordianModulus;
+import net.sourceforge.joceanus.jgordianknot.crypto.GordianRSAModulus;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianQTESLAKeyType;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianSM2Elliptic;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianSPHINCSKeyType;
+import net.sourceforge.joceanus.jgordianknot.crypto.GordianSignatureAlgId;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianSignatureSpec;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianSignatureType;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianSignature;
@@ -95,10 +97,10 @@ public class GordianTestAsymmetric {
      */
     void createKeyPairs(final GordianFactory pFactory,
                         final GordianKeySet pKeySet) throws OceanusException {
-        createKeyPair(pFactory, pKeySet, GordianAsymKeySpec.rsa(GordianModulus.MOD2048));
+        createKeyPair(pFactory, pKeySet, GordianAsymKeySpec.rsa(GordianRSAModulus.MOD2048));
         createKeyPair(pFactory, pKeySet, GordianAsymKeySpec.ec(GordianDSAElliptic.SECT571K1));
         createKeyPair(pFactory, pKeySet, GordianAsymKeySpec.dsa(GordianDSAKeyType.MOD2048_2));
-        createKeyPair(pFactory, pKeySet, GordianAsymKeySpec.dh(GordianModulus.MOD4096));
+        createKeyPair(pFactory, pKeySet, GordianAsymKeySpec.dh(GordianDHGroup.STD4096));
         createKeyPair(pFactory, pKeySet, GordianAsymKeySpec.sm2(GordianSM2Elliptic.SM2P256V1));
         createKeyPair(pFactory, pKeySet, GordianAsymKeySpec.sphincs(GordianSPHINCSKeyType.SHA3));
         createKeyPair(pFactory, pKeySet, GordianAsymKeySpec.rainbow());
@@ -122,10 +124,15 @@ public class GordianTestAsymmetric {
      */
     static void checkKeyPair(final GordianFactory pSource,
                              final GordianFactory pTarget) throws OceanusException {
-        checkKeyPair(pSource, pTarget, GordianAsymKeySpec.rsa(GordianModulus.MOD2048));
+        /**
+         * AsyncSig table.
+         */
+        final GordianSignatureAlgId sigID = new GordianSignatureAlgId(pSource);
+
+        checkKeyPair(pSource, pTarget, GordianAsymKeySpec.rsa(GordianRSAModulus.MOD2048));
         checkKeyPair(pSource, pTarget, GordianAsymKeySpec.ec(GordianDSAElliptic.SECT571K1));
         checkKeyPair(pSource, pTarget, GordianAsymKeySpec.dsa(GordianDSAKeyType.MOD2048_2));
-        checkKeyPair(pSource, pTarget, GordianAsymKeySpec.dh(GordianModulus.MOD4096));
+        checkKeyPair(pSource, pTarget, GordianAsymKeySpec.dh(GordianDHGroup.STD4096));
         checkKeyPair(pSource, pTarget, GordianAsymKeySpec.sm2(GordianSM2Elliptic.SM2P256V1));
         checkKeyPair(pSource, pTarget, GordianAsymKeySpec.sphincs(GordianSPHINCSKeyType.SHA2));
         checkKeyPair(pSource, pTarget, GordianAsymKeySpec.rainbow());
@@ -337,15 +344,14 @@ public class GordianTestAsymmetric {
     private static void checkAgreements(final GordianFactory pFactory,
                                         final GordianKeyPair pTarget) throws OceanusException {
         /* Access the Exchange predicate */
-        final Predicate<GordianAgreementSpec> myPredicate = pFactory.supportedAgreements();
-        final GordianAsymKeySpec myKeySpec = pTarget.getKeySpec();
+         final GordianAsymKeySpec myKeySpec = pTarget.getKeySpec();
         GordianKeyPair mySource = null;
 
         /* Loop through the agreement types */
         for (final GordianAgreementType myType : GordianAgreementType.values()) {
             /* If the agreement is valid */
             final GordianAgreementSpec mySpec = new GordianAgreementSpec(myKeySpec.getKeyType(), myType);
-            if (myPredicate.test(mySpec)) {
+            if (pFactory.validAgreementSpecForKeyPair(pTarget, mySpec)) {
                 /* Check the agreement */
                 System.out.println("  Checking Agreement " + mySpec.toString());
                 final GordianAgreement mySender = pFactory.createAgreement(mySpec);

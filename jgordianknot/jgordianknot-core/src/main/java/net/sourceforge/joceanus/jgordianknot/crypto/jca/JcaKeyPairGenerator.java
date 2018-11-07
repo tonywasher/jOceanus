@@ -26,10 +26,8 @@ import java.security.spec.InvalidKeySpecException;
 import java.security.spec.PKCS8EncodedKeySpec;
 import java.security.spec.X509EncodedKeySpec;
 
-import javax.crypto.spec.DHParameterSpec;
-
 import org.bouncycastle.crypto.params.DHParameters;
-import org.bouncycastle.jcajce.provider.asymmetric.edec.KeyAgreementSpi.X25519;
+import org.bouncycastle.jcajce.spec.DHDomainParameterSpec;
 import org.bouncycastle.jcajce.spec.EdDSAParameterSpec;
 import org.bouncycastle.jcajce.spec.XDHParameterSpec;
 import org.bouncycastle.pqc.jcajce.spec.McElieceKeyGenParameterSpec;
@@ -42,11 +40,12 @@ import net.sourceforge.joceanus.jgordianknot.GordianCryptoException;
 import net.sourceforge.joceanus.jgordianknot.GordianLogicException;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianAsymKeySpec;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianAsymKeyType;
+import net.sourceforge.joceanus.jgordianknot.crypto.GordianDHGroup;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianDSAKeyType;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianKeyPair;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianKeyPairGenerator;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianMcElieceKeySpec;
-import net.sourceforge.joceanus.jgordianknot.crypto.GordianModulus;
+import net.sourceforge.joceanus.jgordianknot.crypto.GordianRSAModulus;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianSPHINCSKeyType;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianXMSSKeyType;
 import net.sourceforge.joceanus.jgordianknot.crypto.jca.JcaKeyPair.JcaPrivateKey;
@@ -153,7 +152,7 @@ public abstract class JcaKeyPairGenerator
 
             /* Create and initialise the generator */
             theGenerator = JcaFactory.getJavaKeyPairGenerator(RSA_ALGO, false);
-            theGenerator.initialize(pKeySpec.getModulus().getModulus(), getRandom());
+            theGenerator.initialize(pKeySpec.getModulus().getLength(), getRandom());
 
             /* Create the factory */
             setKeyFactory(JcaFactory.getJavaKeyFactory(RSA_ALGO, false));
@@ -275,7 +274,7 @@ public abstract class JcaKeyPairGenerator
     /**
      * Jca DiffieHellman KeyPair generator.
      */
-    public static class JcaDiffieHellmanKeyPairGenerator
+    public static class JcaDHKeyPairGenerator
             extends JcaKeyPairGenerator {
         /**
          * DH algorithm.
@@ -293,17 +292,17 @@ public abstract class JcaKeyPairGenerator
          * @param pKeySpec the keySpec
          * @throws OceanusException on error
          */
-        JcaDiffieHellmanKeyPairGenerator(final JcaFactory pFactory,
-                                         final GordianAsymKeySpec pKeySpec) throws OceanusException {
+        JcaDHKeyPairGenerator(final JcaFactory pFactory,
+                              final GordianAsymKeySpec pKeySpec) throws OceanusException {
             /* Initialise underlying class */
             super(pFactory, pKeySpec);
 
             /* Protect against exceptions */
             try {
                 /* Create the parameter generator */
-                final GordianModulus myModulus = pKeySpec.getModulus();
-                final DHParameters myParms = myModulus.getDHParameters();
-                final DHParameterSpec mySpec = new DHParameterSpec(myParms.getP(), myParms.getG());
+                final GordianDHGroup myGroup = pKeySpec.getDHGroup();
+                final DHParameters myParms = myGroup.getParameters();
+                final DHDomainParameterSpec mySpec = new DHDomainParameterSpec(myParms);
 
                 /* Create and initialise the generator */
                 theGenerator = JcaFactory.getJavaKeyPairGenerator(DH_ALGO, false);
@@ -407,7 +406,7 @@ public abstract class JcaKeyPairGenerator
 
             /* Create and initialise the generator */
             theGenerator = JcaFactory.getJavaKeyPairGenerator(RAINBOW_ALGO, true);
-            theGenerator.initialize(GordianModulus.MOD1024.getModulus(), getRandom());
+            theGenerator.initialize(GordianRSAModulus.MOD1024.getLength(), getRandom());
 
             /* Create the factory */
             setKeyFactory(JcaFactory.getJavaKeyFactory(RAINBOW_ALGO, true));
@@ -509,7 +508,7 @@ public abstract class JcaKeyPairGenerator
 
             /* Create and initialise the generator */
             theGenerator = JcaFactory.getJavaKeyPairGenerator(NEWHOPE_ALGO, true);
-            theGenerator.initialize(GordianModulus.MOD1024.getModulus(), getRandom());
+            theGenerator.initialize(GordianRSAModulus.MOD1024.getLength(), getRandom());
 
             /* Create the factory */
             setKeyFactory(JcaFactory.getJavaKeyFactory(NEWHOPE_ALGO, true));
@@ -565,7 +564,7 @@ public abstract class JcaKeyPairGenerator
                 /* Create the factory */
                 setKeyFactory(JcaFactory.getJavaKeyFactory(myJavaType, true));
             } catch (InvalidAlgorithmParameterException e) {
-                throw new GordianCryptoException("Failed to create DHgenerator", e);
+                throw new GordianCryptoException("Failed to create XMSSgenerator", e);
             }
         }
 
@@ -603,7 +602,7 @@ public abstract class JcaKeyPairGenerator
             try {
                 /* Create the parameters */
                 final AlgorithmParameterSpec myAlgo;
-                switch(pKeySpec.getKeyType()) {
+                switch (pKeySpec.getKeyType()) {
                     case X25519:
                         myAlgo = new XDHParameterSpec(XDHParameterSpec.X25519);
                         break;
@@ -666,7 +665,7 @@ public abstract class JcaKeyPairGenerator
             try {
                 /* Create the parameters */
                 final String myCategory;
-                switch(pKeySpec.getQTESLAKeyType()) {
+                switch (pKeySpec.getQTESLAKeyType()) {
                     case HEURISTIC_I:
                         myCategory = QTESLAParameterSpec.HEURISTIC_I;
                         break;
@@ -695,7 +694,7 @@ public abstract class JcaKeyPairGenerator
                 /* Create the factory */
                 setKeyFactory(JcaFactory.getJavaKeyFactory(myJavaType, true));
             } catch (InvalidAlgorithmParameterException e) {
-                throw new GordianCryptoException("Failed to create DHgenerator", e);
+                throw new GordianCryptoException("Failed to create qTESLAgenerator", e);
             }
         }
 
