@@ -109,6 +109,8 @@ public class GordianTestAsymmetric {
         createKeyPair(pFactory, pKeySet, GordianAsymKeySpec.gost2012(GordianGOSTElliptic.GOST512A));
         createKeyPair(pFactory, pKeySet, GordianAsymKeySpec.xmss(GordianXMSSKeyType.SHA256));
         createKeyPair(pFactory, pKeySet, GordianAsymKeySpec.xmssmt(GordianXMSSKeyType.SHA256));
+        createKeyPair(pFactory, pKeySet, GordianAsymKeySpec.mcEliece(GordianMcElieceKeySpec.standard()));
+        createKeyPair(pFactory, pKeySet, GordianAsymKeySpec.mcEliece(GordianMcElieceKeySpec.cca2(GordianMcElieceDigestType.SHA256)));
         createKeyPair(pFactory, pKeySet, GordianAsymKeySpec.qTESLA(GordianQTESLAKeyType.HEURISTIC_I));
         createKeyPair(pFactory, pKeySet, GordianAsymKeySpec.ed25519());
         createKeyPair(pFactory, pKeySet, GordianAsymKeySpec.ed448());
@@ -132,7 +134,7 @@ public class GordianTestAsymmetric {
         checkKeyPair(pSource, pTarget, GordianAsymKeySpec.rsa(GordianRSAModulus.MOD2048));
         checkKeyPair(pSource, pTarget, GordianAsymKeySpec.ec(GordianDSAElliptic.SECT571K1));
         checkKeyPair(pSource, pTarget, GordianAsymKeySpec.dsa(GordianDSAKeyType.MOD2048_2));
-        checkKeyPair(pSource, pTarget, GordianAsymKeySpec.dh(GordianDHGroup.STD4096));
+        checkKeyPair(pSource, pTarget, GordianAsymKeySpec.dh(GordianDHGroup.FFDE2048));
         checkKeyPair(pSource, pTarget, GordianAsymKeySpec.sm2(GordianSM2Elliptic.SM2P256V1));
         checkKeyPair(pSource, pTarget, GordianAsymKeySpec.sphincs(GordianSPHINCSKeyType.SHA2));
         checkKeyPair(pSource, pTarget, GordianAsymKeySpec.rainbow());

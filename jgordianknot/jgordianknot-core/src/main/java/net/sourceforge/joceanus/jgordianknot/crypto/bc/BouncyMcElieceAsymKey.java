@@ -25,11 +25,11 @@ import org.bouncycastle.asn1.x509.SubjectPublicKeyInfo;
 import org.bouncycastle.crypto.AsymmetricCipherKeyPair;
 import org.bouncycastle.crypto.KeyGenerationParameters;
 import org.bouncycastle.crypto.digests.SHA256Digest;
+import org.bouncycastle.crypto.newutils.PqcPrivateKeyFactory;
+import org.bouncycastle.crypto.newutils.PqcPrivateKeyInfoFactory;
+import org.bouncycastle.crypto.newutils.PqcPublicKeyFactory;
+import org.bouncycastle.crypto.newutils.PqcSubjectPublicKeyInfoFactory;
 import org.bouncycastle.crypto.params.AsymmetricKeyParameter;
-import org.bouncycastle.pqc.asn1.McElieceCCA2PrivateKey;
-import org.bouncycastle.pqc.asn1.McElieceCCA2PublicKey;
-import org.bouncycastle.pqc.asn1.McEliecePrivateKey;
-import org.bouncycastle.pqc.asn1.McEliecePublicKey;
 import org.bouncycastle.pqc.crypto.mceliece.McElieceCCA2KeyGenerationParameters;
 import org.bouncycastle.pqc.crypto.mceliece.McElieceCCA2KeyPairGenerator;
 import org.bouncycastle.pqc.crypto.mceliece.McElieceCCA2Parameters;
@@ -40,10 +40,6 @@ import org.bouncycastle.pqc.crypto.mceliece.McElieceKeyPairGenerator;
 import org.bouncycastle.pqc.crypto.mceliece.McElieceParameters;
 import org.bouncycastle.pqc.crypto.mceliece.McEliecePrivateKeyParameters;
 import org.bouncycastle.pqc.crypto.mceliece.McEliecePublicKeyParameters;
-import org.bouncycastle.pqc.jcajce.provider.mceliece.BCMcElieceCCA2PrivateKey;
-import org.bouncycastle.pqc.jcajce.provider.mceliece.BCMcElieceCCA2PublicKey;
-import org.bouncycastle.pqc.jcajce.provider.mceliece.BCMcEliecePrivateKey;
-import org.bouncycastle.pqc.jcajce.provider.mceliece.BCMcEliecePublicKey;
 
 import net.sourceforge.joceanus.jgordianknot.GordianCryptoException;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianAsymKeySpec;
@@ -195,11 +191,15 @@ public final class BouncyMcElieceAsymKey {
         }
 
         @Override
-        public PKCS8EncodedKeySpec getPKCS8Encoding(final GordianKeyPair pKeyPair) {
-            final BouncyMcEliecePrivateKey myPrivateKey = (BouncyMcEliecePrivateKey) getPrivateKey(pKeyPair);
-            final McEliecePrivateKeyParameters myParms = myPrivateKey.getPrivateKey();
-            final BCMcEliecePrivateKey myKey = new BCMcEliecePrivateKey(myParms);
-            return new PKCS8EncodedKeySpec(myKey.getEncoded());
+        public PKCS8EncodedKeySpec getPKCS8Encoding(final GordianKeyPair pKeyPair) throws OceanusException {
+            try {
+                final BouncyMcEliecePrivateKey myPrivateKey = (BouncyMcEliecePrivateKey) getPrivateKey(pKeyPair);
+                final McEliecePrivateKeyParameters myParms = myPrivateKey.getPrivateKey();
+                final PrivateKeyInfo myInfo = PqcPrivateKeyInfoFactory.createPrivateKeyInfo(myParms, null);
+                return new PKCS8EncodedKeySpec(myInfo.getEncoded());
+            } catch (IOException e) {
+                throw new GordianCryptoException(ERROR_PARSE, e);
+            }
         }
 
         @Override
@@ -207,10 +207,8 @@ public final class BouncyMcElieceAsymKey {
                                            final PKCS8EncodedKeySpec pPrivateKey) throws OceanusException {
             try {
                 final PrivateKeyInfo myInfo = PrivateKeyInfo.getInstance(pPrivateKey.getEncoded());
-                final McEliecePrivateKey myKey = McEliecePrivateKey.getInstance(myInfo.parsePrivateKey());
-                final BouncyMcEliecePrivateKey myPrivate = new BouncyMcEliecePrivateKey(getKeySpec(),
-                        new McEliecePrivateKeyParameters(myKey.getN(), myKey.getK(), myKey.getField(), myKey.getGoppaPoly(),
-                                myKey.getP1(), myKey.getP2(), myKey.getSInv()));
+                final McEliecePrivateKeyParameters myParms = (McEliecePrivateKeyParameters) PqcPrivateKeyFactory.createKey(myInfo);
+                final BouncyMcEliecePrivateKey myPrivate = new BouncyMcEliecePrivateKey(getKeySpec(), myParms);
                 final BouncyMcEliecePublicKey myPublic = derivePublicKey(pPublicKey);
                 return new BouncyKeyPair(myPublic, myPrivate);
             } catch (IOException e) {
@@ -219,11 +217,15 @@ public final class BouncyMcElieceAsymKey {
         }
 
         @Override
-        public X509EncodedKeySpec getX509Encoding(final GordianKeyPair pKeyPair) {
-            final BouncyMcEliecePublicKey myPublicKey = (BouncyMcEliecePublicKey) getPublicKey(pKeyPair);
-            final McEliecePublicKeyParameters myParms = myPublicKey.getPublicKey();
-            final BCMcEliecePublicKey myKey = new BCMcEliecePublicKey(myParms);
-            return new X509EncodedKeySpec(myKey.getEncoded());
+        public X509EncodedKeySpec getX509Encoding(final GordianKeyPair pKeyPair) throws OceanusException {
+            try {
+                final BouncyMcEliecePublicKey myPublicKey = (BouncyMcEliecePublicKey) getPublicKey(pKeyPair);
+                final McEliecePublicKeyParameters myParms = myPublicKey.getPublicKey();
+                final SubjectPublicKeyInfo myInfo = PqcSubjectPublicKeyInfoFactory.createSubjectPublicKeyInfo(myParms);
+                return new X509EncodedKeySpec(myInfo.getEncoded());
+            } catch (IOException e) {
+                throw new GordianCryptoException(ERROR_PARSE, e);
+            }
         }
 
         @Override
@@ -241,9 +243,7 @@ public final class BouncyMcElieceAsymKey {
         private BouncyMcEliecePublicKey derivePublicKey(final X509EncodedKeySpec pEncodedKey) throws OceanusException {
             try {
                 final SubjectPublicKeyInfo myInfo = SubjectPublicKeyInfo.getInstance(pEncodedKey.getEncoded());
-                final McEliecePublicKey myKey = McEliecePublicKey.getInstance(myInfo.parsePublicKey());
-                final McEliecePublicKeyParameters myParms = new McEliecePublicKeyParameters(myKey.getN(),
-                        myKey.getT(), myKey.getG());
+                final McEliecePublicKeyParameters myParms = (McEliecePublicKeyParameters) PqcPublicKeyFactory.createKey(myInfo);
                 return new BouncyMcEliecePublicKey(getKeySpec(), myParms);
             } catch (IOException e) {
                 throw new GordianCryptoException(ERROR_PARSE, e);
@@ -393,11 +393,15 @@ public final class BouncyMcElieceAsymKey {
         }
 
         @Override
-        public PKCS8EncodedKeySpec getPKCS8Encoding(final GordianKeyPair pKeyPair) {
-            final BouncyMcElieceCCA2PrivateKey myPrivateKey = (BouncyMcElieceCCA2PrivateKey) getPrivateKey(pKeyPair);
-            final McElieceCCA2PrivateKeyParameters myParms = myPrivateKey.getPrivateKey();
-            final BCMcElieceCCA2PrivateKey myKey = new BCMcElieceCCA2PrivateKey(myParms);
-            return new PKCS8EncodedKeySpec(myKey.getEncoded());
+        public PKCS8EncodedKeySpec getPKCS8Encoding(final GordianKeyPair pKeyPair) throws OceanusException {
+            try {
+                final BouncyMcElieceCCA2PrivateKey myPrivateKey = (BouncyMcElieceCCA2PrivateKey) getPrivateKey(pKeyPair);
+                final McElieceCCA2PrivateKeyParameters myParms = myPrivateKey.getPrivateKey();
+                final PrivateKeyInfo myInfo = PqcPrivateKeyInfoFactory.createPrivateKeyInfo(myParms, null);
+                return new PKCS8EncodedKeySpec(myInfo.getEncoded());
+            } catch (IOException e) {
+                throw new GordianCryptoException(ERROR_PARSE, e);
+            }
         }
 
         @Override
@@ -405,10 +409,8 @@ public final class BouncyMcElieceAsymKey {
                                            final PKCS8EncodedKeySpec pPrivateKey) throws OceanusException {
             try {
                 final PrivateKeyInfo myInfo = PrivateKeyInfo.getInstance(pPrivateKey.getEncoded());
-                final McElieceCCA2PrivateKey myKey = McElieceCCA2PrivateKey.getInstance(myInfo.parsePrivateKey());
-                final BouncyMcElieceCCA2PrivateKey myPrivate = new BouncyMcElieceCCA2PrivateKey(getKeySpec(),
-                        new McElieceCCA2PrivateKeyParameters(myKey.getN(), myKey.getK(), myKey.getField(), myKey.getGoppaPoly(),
-                                myKey.getP(), getDigest()));
+                final McElieceCCA2PrivateKeyParameters myParms = (McElieceCCA2PrivateKeyParameters) PqcPrivateKeyFactory.createKey(myInfo);
+                final BouncyMcElieceCCA2PrivateKey myPrivate = new BouncyMcElieceCCA2PrivateKey(getKeySpec(), myParms);
                 final BouncyMcElieceCCA2PublicKey myPublic = derivePublicKey(pPublicKey);
                 return new BouncyKeyPair(myPublic, myPrivate);
             } catch (IOException e) {
@@ -417,11 +419,15 @@ public final class BouncyMcElieceAsymKey {
         }
 
         @Override
-        public X509EncodedKeySpec getX509Encoding(final GordianKeyPair pKeyPair) {
-            final BouncyMcElieceCCA2PublicKey myPublicKey = (BouncyMcElieceCCA2PublicKey) getPublicKey(pKeyPair);
-            final McElieceCCA2PublicKeyParameters myParms = myPublicKey.getPublicKey();
-            final BCMcElieceCCA2PublicKey myKey = new BCMcElieceCCA2PublicKey(myParms);
-            return new X509EncodedKeySpec(myKey.getEncoded());
+        public X509EncodedKeySpec getX509Encoding(final GordianKeyPair pKeyPair) throws OceanusException {
+            try {
+                final BouncyMcElieceCCA2PublicKey myPublicKey = (BouncyMcElieceCCA2PublicKey) getPublicKey(pKeyPair);
+                final McElieceCCA2PublicKeyParameters myParms = myPublicKey.getPublicKey();
+                final SubjectPublicKeyInfo myInfo = PqcSubjectPublicKeyInfoFactory.createSubjectPublicKeyInfo(myParms);
+                return new X509EncodedKeySpec(myInfo.getEncoded());
+            } catch (IOException e) {
+                throw new GordianCryptoException(ERROR_PARSE, e);
+            }
         }
 
         @Override
@@ -439,9 +445,7 @@ public final class BouncyMcElieceAsymKey {
         private BouncyMcElieceCCA2PublicKey derivePublicKey(final X509EncodedKeySpec pEncodedKey) throws OceanusException {
             try {
                 final SubjectPublicKeyInfo myInfo = SubjectPublicKeyInfo.getInstance(pEncodedKey.getEncoded());
-                final McElieceCCA2PublicKey myKey = McElieceCCA2PublicKey.getInstance(myInfo.parsePublicKey());
-                final McElieceCCA2PublicKeyParameters myParms = new McElieceCCA2PublicKeyParameters(myKey.getN(),
-                        myKey.getT(), myKey.getG(), getDigest());
+                final McElieceCCA2PublicKeyParameters myParms = (McElieceCCA2PublicKeyParameters) PqcPublicKeyFactory.createKey(myInfo);
                 return new BouncyMcElieceCCA2PublicKey(getKeySpec(), myParms);
             } catch (IOException e) {
                 throw new GordianCryptoException(ERROR_PARSE, e);

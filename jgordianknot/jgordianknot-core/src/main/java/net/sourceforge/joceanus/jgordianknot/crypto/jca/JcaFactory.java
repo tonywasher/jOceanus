@@ -1141,9 +1141,10 @@ public final class JcaFactory
             case XMSSMT:
             case SPHINCS:
             case QTESLA:
-            case ED25519:
-            case ED448:
                 return true;
+            case ED448:
+                return GordianSignatureType.PURE.equals(pSpec.getSignatureType());
+            case ED25519:
             case DIFFIEHELLMAN:
             case NEWHOPE:
             case MCELIECE:
