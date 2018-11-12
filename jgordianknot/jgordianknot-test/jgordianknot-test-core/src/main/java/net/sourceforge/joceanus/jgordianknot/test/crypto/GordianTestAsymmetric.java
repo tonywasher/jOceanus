@@ -20,7 +20,6 @@ import java.security.SecureRandom;
 import java.security.spec.PKCS8EncodedKeySpec;
 import java.security.spec.X509EncodedKeySpec;
 import java.util.Arrays;
-import java.util.List;
 
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianAgreement;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianAgreement.GordianBasicAgreement;
@@ -30,29 +29,16 @@ import net.sourceforge.joceanus.jgordianknot.crypto.GordianAgreementSpec;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianAsymAlgId;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianAsymKeySpec;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianAsymKeyType;
-import net.sourceforge.joceanus.jgordianknot.crypto.GordianDHGroup;
-import net.sourceforge.joceanus.jgordianknot.crypto.GordianDSAElliptic;
-import net.sourceforge.joceanus.jgordianknot.crypto.GordianDSAKeyType;
-import net.sourceforge.joceanus.jgordianknot.crypto.GordianDSTU4145Elliptic;
-import net.sourceforge.joceanus.jgordianknot.crypto.GordianDigestSpec;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianEncryptor;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianEncryptorSpec;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianFactory;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianFactoryType;
-import net.sourceforge.joceanus.jgordianknot.crypto.GordianGOSTElliptic;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianKeyPair;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianKeyPairGenerator;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianKeySet;
-import net.sourceforge.joceanus.jgordianknot.crypto.GordianMcElieceKeySpec;
-import net.sourceforge.joceanus.jgordianknot.crypto.GordianMcElieceKeySpec.GordianMcElieceDigestType;
-import net.sourceforge.joceanus.jgordianknot.crypto.GordianRSAModulus;
-import net.sourceforge.joceanus.jgordianknot.crypto.GordianQTESLAKeyType;
-import net.sourceforge.joceanus.jgordianknot.crypto.GordianSM2Elliptic;
-import net.sourceforge.joceanus.jgordianknot.crypto.GordianSPHINCSKeyType;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianSignatureAlgId;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianSignatureSpec;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianSignature;
-import net.sourceforge.joceanus.jgordianknot.crypto.GordianXMSSKeyType;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
@@ -92,26 +78,41 @@ public final class GordianTestAsymmetric {
          * AsyncSig table.
          */
         final GordianSignatureAlgId sigID = new GordianSignatureAlgId(pSource);
+        //checkKeyPair(pSource, pTarget, GordianAsymKeyType.RSA);
+        //checkKeyPair(pSource, pTarget, GordianAsymKeyType.EC);
+        //checkKeyPair(pSource, pTarget, GordianAsymKeyType.DSA);
+        //checkKeyPair(pSource, pTarget, GordianAsymKeyType.DIFFIEHELLMAN);
+        //checkKeyPair(pSource, pTarget, GordianAsymKeyType.SM2);
+        //checkKeyPair(pSource, pTarget, GordianAsymKeyType.GOST2012);
+        //checkKeyPair(pSource, pTarget, GordianAsymKeyType.DSTU4145);
+        //checkKeyPair(pSource, pTarget, GordianAsymKeyType.SPHINCS);
+        //checkKeyPair(pSource, pTarget, GordianAsymKeyType.RAINBOW);
+        //checkKeyPair(pSource, pTarget, GordianAsymKeyType.NEWHOPE);
+        checkKeyPair(pSource, pTarget, GordianAsymKeyType.MCELIECE);
+        //checkKeyPair(pSource, pTarget, GordianAsymKeyType.XMSS);
+        //checkKeyPair(pSource, pTarget, GordianAsymKeyType.XMSSMT);
+        //checkKeyPair(pSource, pTarget, GordianAsymKeyType.QTESLA);
+        //checkKeyPair(pSource, pTarget, GordianAsymKeyType.ED25519);
+        //checkKeyPair(pSource, pTarget, GordianAsymKeyType.ED448);
+        //checkKeyPair(pSource, pTarget, GordianAsymKeyType.X25519);
+        //checkKeyPair(pSource, pTarget, GordianAsymKeyType.X448);
+    }
 
-        checkKeyPair(pSource, pTarget, GordianAsymKeySpec.rsa(GordianRSAModulus.MOD2048));
-        checkKeyPair(pSource, pTarget, GordianAsymKeySpec.ec(GordianDSAElliptic.SECT571K1));
-        checkKeyPair(pSource, pTarget, GordianAsymKeySpec.dsa(GordianDSAKeyType.MOD2048_2));
-        checkKeyPair(pSource, pTarget, GordianAsymKeySpec.dh(GordianDHGroup.FFDE2048));
-        checkKeyPair(pSource, pTarget, GordianAsymKeySpec.sm2(GordianSM2Elliptic.SM2P256V1));
-        checkKeyPair(pSource, pTarget, GordianAsymKeySpec.sphincs(GordianSPHINCSKeyType.SHA2));
-        checkKeyPair(pSource, pTarget, GordianAsymKeySpec.rainbow());
-        checkKeyPair(pSource, pTarget, GordianAsymKeySpec.newHope());
-        checkKeyPair(pSource, pTarget, GordianAsymKeySpec.dstu4145(GordianDSTU4145Elliptic.DSTU9));
-        checkKeyPair(pSource, pTarget, GordianAsymKeySpec.gost2012(GordianGOSTElliptic.GOST512A));
-        checkKeyPair(pSource, pTarget, GordianAsymKeySpec.xmss(GordianXMSSKeyType.SHA256));
-        checkKeyPair(pSource, pTarget, GordianAsymKeySpec.xmssmt(GordianXMSSKeyType.SHA256));
-        checkKeyPair(pSource, pTarget, GordianAsymKeySpec.mcEliece(GordianMcElieceKeySpec.standard()));
-        checkKeyPair(pSource, pTarget, GordianAsymKeySpec.mcEliece(GordianMcElieceKeySpec.cca2(GordianMcElieceDigestType.SHA256)));
-        checkKeyPair(pSource, pTarget, GordianAsymKeySpec.qTESLA(GordianQTESLAKeyType.HEURISTIC_I));
-        checkKeyPair(pSource, pTarget, GordianAsymKeySpec.ed25519());
-        checkKeyPair(pSource, pTarget, GordianAsymKeySpec.ed448());
-        checkKeyPair(pSource, pTarget, GordianAsymKeySpec.x25519());
-        checkKeyPair(pSource, pTarget, GordianAsymKeySpec.x448());
+    /**
+     * Create keyPairs.
+     * @param pSource the source factory
+     * @param pTarget the target factory
+     * @throws OceanusException on error
+     */
+    static void checkKeyPair(final GordianFactory pSource,
+                             final GordianFactory pTarget,
+                             final GordianAsymKeyType pKeyType) throws OceanusException {
+
+        /* For each possible keySpec */
+        for (GordianAsymKeySpec mySpec : GordianAsymKeySpec.listPossibleKeySpecs(pKeyType)) {
+            /* Check the keyPair */
+            checkKeyPair(pSource, pTarget, mySpec);
+        }
     }
 
     /**
@@ -171,9 +172,6 @@ public final class GordianTestAsymmetric {
                                         final GordianKeyPair pSrcPair,
                                         final GordianKeyPair pMirrorPair,
                                         final GordianKeyPair pTgtPair) throws OceanusException {
-        /* Access the list of possible digests */
-        final List<GordianDigestSpec> myDigests = GordianDigestSpec.listAll();
-
         /* For each possible signature */
         final GordianAsymKeyType myType = pSrcPair.getKeySpec().getKeyType();
         for (GordianSignatureSpec mySign : GordianSignatureSpec.listPossibleSignatures(pSrcPair)) {
@@ -347,7 +345,7 @@ public final class GordianTestAsymmetric {
                                      final GordianAsymKeySpec pSpec) throws OceanusException {
         final GordianAsymKeySpec mySpec = ALGID.determineKeySpec(pEncoded);
         if (!pSpec.equals(mySpec)) {
-            System.out.println("Help");
+            System.out.println("PKCS8 mismatch: " + mySpec);
         }
     }
 
@@ -361,7 +359,7 @@ public final class GordianTestAsymmetric {
                                      final GordianAsymKeySpec pSpec) throws OceanusException {
         final GordianAsymKeySpec mySpec = ALGID.determineKeySpec(pEncoded);
         if (!pSpec.equals(mySpec)) {
-            System.out.println("Help");
+            System.out.println("X509 mismatch: " + mySpec);
         }
     }
 }

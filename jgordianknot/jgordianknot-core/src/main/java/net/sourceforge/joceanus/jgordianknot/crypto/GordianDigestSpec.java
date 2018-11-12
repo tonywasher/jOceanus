@@ -256,12 +256,21 @@ public class GordianDigestSpec {
      * @param pLength the length
      * @return the DigestSpec
      */
+    public static GordianDigestSpec shakeAlt(final GordianLength pLength) {
+        return new GordianDigestSpec(GordianDigestType.SHAKE, GordianDigestType.SHAKE.getAlternateStateForLength(pLength), pLength);
+    }
+
+    /**
+     * Create shakeDigestSpec.
+     * @param pLength the length
+     * @return the DigestSpec
+     */
     public static GordianDigestSpec shake(final GordianLength pLength) {
         return new GordianDigestSpec(GordianDigestType.SHAKE, pLength);
     }
 
     /**
-     * Create shakeDigestSpec.
+     * Create kupynaDigestSpec.
      * @param pLength the length
      * @return the DigestSpec
      */

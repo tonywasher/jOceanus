@@ -30,6 +30,7 @@ import org.bouncycastle.crypto.params.DHParameters;
 import org.bouncycastle.jcajce.spec.DHDomainParameterSpec;
 import org.bouncycastle.jcajce.spec.EdDSAParameterSpec;
 import org.bouncycastle.jcajce.spec.XDHParameterSpec;
+import org.bouncycastle.pqc.jcajce.spec.McElieceCCA2KeyGenParameterSpec;
 import org.bouncycastle.pqc.jcajce.spec.McElieceKeyGenParameterSpec;
 import org.bouncycastle.pqc.jcajce.spec.QTESLAParameterSpec;
 import org.bouncycastle.pqc.jcajce.spec.SPHINCS256KeyGenParameterSpec;
@@ -45,6 +46,7 @@ import net.sourceforge.joceanus.jgordianknot.crypto.GordianDSAKeyType;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianKeyPair;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianKeyPairGenerator;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianMcElieceKeySpec;
+import net.sourceforge.joceanus.jgordianknot.crypto.GordianMcElieceKeySpec.GordianMcElieceDigestType;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianRSAModulus;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianSPHINCSKeyType;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianXMSSKeyType;
@@ -465,7 +467,17 @@ public abstract class JcaKeyPairGenerator
              * try to generate the keyPair. Note also that obtaining PKCS8 and X509 encoding also
              * leads to NullPointer exceptions, since this is also not yet supported.
              */
-            theGenerator.initialize(McElieceKeyGenParameterSpec.DEFAULT_M, getRandom());
+            try {
+                if (myKeyType.isCCA2()) {
+                    final GordianMcElieceDigestType myDigestType = myKeyType.getDigestType();
+                    theGenerator.initialize(new McElieceCCA2KeyGenParameterSpec(myDigestType.getM(), McElieceCCA2KeyGenParameterSpec.DEFAULT_T,
+                            myDigestType.getParameter()));
+                } else {
+                    theGenerator.initialize(new McElieceKeyGenParameterSpec());
+                }
+            } catch (InvalidAlgorithmParameterException e) {
+                throw new GordianCryptoException("Failed to initialise generator", e);
+            }
 
             /* Create the factory */
             setKeyFactory(JcaFactory.getJavaKeyFactory(myAlgo, true));

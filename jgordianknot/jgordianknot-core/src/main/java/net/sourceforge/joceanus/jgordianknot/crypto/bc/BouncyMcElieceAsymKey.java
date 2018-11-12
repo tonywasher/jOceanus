@@ -55,6 +55,7 @@ import net.sourceforge.joceanus.jgordianknot.crypto.GordianAsymKeySpec;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianEncryptor;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianEncryptorSpec;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianKeyPair;
+import net.sourceforge.joceanus.jgordianknot.crypto.GordianMcElieceKeySpec.GordianMcElieceDigestType;
 import net.sourceforge.joceanus.jgordianknot.crypto.bc.BouncyKeyPair.BouncyPrivateKey;
 import net.sourceforge.joceanus.jgordianknot.crypto.bc.BouncyKeyPair.BouncyPublicKey;
 import net.sourceforge.joceanus.jtethys.OceanusException;
@@ -381,18 +382,11 @@ public final class BouncyMcElieceAsymKey {
             super(pFactory, pKeySpec);
 
             /* Create and initialise the generator */
+            final GordianMcElieceDigestType myType = pKeySpec.getMcElieceSpec().getDigestType();
             theGenerator = new McElieceCCA2KeyPairGenerator();
             final KeyGenerationParameters myParams = new McElieceCCA2KeyGenerationParameters(getRandom(),
-                    new McElieceCCA2Parameters(getDigest()));
+                    new McElieceCCA2Parameters(myType.getM(), McElieceParameters.DEFAULT_T, myType.getParameter()));
             theGenerator.init(myParams);
-        }
-
-        /**
-         * Obtain the digest string.
-         * @return the digest
-         */
-        private String getDigest() {
-            return getKeySpec().getMcElieceSpec().getDigestType().getParameter();
         }
 
         @Override

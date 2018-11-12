@@ -1079,7 +1079,7 @@ public abstract class GordianFactory
         /* Disallow ECNR if keySize is smaller than digestSize */
         final GordianAsymKeySpec myKeySpec = pKeyPair.getKeySpec();
         if (GordianSignatureType.NR.equals(pSignSpec.getSignatureType())) {
-            return myKeySpec.getElliptic().getKeySize() >= pSignSpec.getDigestSpec().getDigestLength().getLength();
+            return myKeySpec.getElliptic().getKeySize() > pSignSpec.getDigestSpec().getDigestLength().getLength();
         }
 
         /* Disallow incorrectly sized digest for GOST */
@@ -1223,6 +1223,16 @@ public abstract class GordianFactory
         /* Disallow McEliece if it is the wrong style key */
         if (GordianAsymKeyType.MCELIECE.equals(myKeySpec.getKeyType())) {
             return GordianMcElieceKeySpec.checkValidEncryptionType(myKeySpec.getMcElieceSpec(), pEncryptorSpec.getMcElieceType());
+        }
+
+        /* If this is a RSA encryption */
+        if (GordianAsymKeyType.RSA.equals(myKeySpec.getKeyType())) {
+            /* The digest length cannot be too large wrt to the modulus */
+            int myLen = pEncryptorSpec.getDigestSpec().getDigestLength().getByteLength();
+            myLen = (myLen + 1) * Byte.SIZE;
+            if (myKeySpec.getModulus().getLength() < (myLen << 1)) {
+                return false;
+            }
         }
 
         /* OK */

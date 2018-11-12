@@ -301,72 +301,72 @@ public enum GordianDSAElliptic implements GordianElliptic {
     /**
      * brainpoolp512r1.
      */
-    BRAINPOOLP512R1("brainpoolp512r1", 512),
+    BRAINPOOLP512R1("brainpoolP512r1", 512),
 
     /**
      * brainpoolp512t1.
      */
-    BRAINPOOLP512T1("brainpoolp512t1", 512),
+    BRAINPOOLP512T1("brainpoolP512t1", 512),
 
     /**
      * brainpoolp384r1.
      */
-    BRAINPOOLP384R1("brainpoolp384r1", 384),
+    BRAINPOOLP384R1("brainpoolP384r1", 384),
 
     /**
      * brainpoolt384t1.
      */
-    BRAINPOOLP384T1("brainpoolp384t1", 384),
+    BRAINPOOLP384T1("brainpoolP384t1", 384),
 
     /**
      * brainpoolp320r1.
      */
-    BRAINPOOLP320R1("brainpoolp320r1", 320),
+    BRAINPOOLP320R1("brainpoolP320r1", 320),
 
     /**
      * brainpoolp320t1.
      */
-    BRAINPOOLP320T1("brainpoolp320t1", 320),
+    BRAINPOOLP320T1("brainpoolP320t1", 320),
 
     /**
      * brainpoolp256r1.
      */
-    BRAINPOOLP256R1("brainpoolp256r1", 256),
+    BRAINPOOLP256R1("brainpoolP256r1", 256),
 
     /**
      * brainpoolp256t1.
      */
-    BRAINPOOLP256T1("brainpoolp256t1", 256),
+    BRAINPOOLP256T1("brainpoolP256t1", 256),
 
     /**
      * brainpoolp224r1.
      */
-    BRAINPOOLP224R1("brainpoolp224r1", 224),
+    BRAINPOOLP224R1("brainpoolP224r1", 224),
 
     /**
      * brainpoolp224t1.
      */
-    BRAINPOOLP224T1("brainpoolp224t1", 224),
+    BRAINPOOLP224T1("brainpoolP224t1", 224),
 
     /**
      * brainpoolp192r1.
      */
-    BRAINPOOLP192R1("brainpoolp192r1", 192),
+    BRAINPOOLP192R1("brainpoolP192r1", 192),
 
     /**
      * brainpoolp192t1.
      */
-    BRAINPOOLP192T1("brainpoolp192t1", 192),
+    BRAINPOOLP192T1("brainpoolP192t1", 192),
 
     /**
      * brainpoolp160r1.
      */
-    BRAINPOOLP160R1("brainpoolp160r1", 160),
+    BRAINPOOLP160R1("brainpoolP160r1", 160),
 
     /**
      * brainpoolp160t1.
      */
-    BRAINPOOLP160T1("brainpoolp160t1", 160);
+    BRAINPOOLP160T1("brainpoolP160t1", 160);
 
     /**
      * The curve name.

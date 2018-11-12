@@ -19,6 +19,8 @@ package net.sourceforge.joceanus.jgordianknot.crypto;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.bouncycastle.pqc.crypto.mceliece.McElieceCCA2KeyGenerationParameters;
+import org.bouncycastle.pqc.crypto.mceliece.McElieceCCA2Parameters;
 import org.bouncycastle.pqc.jcajce.provider.McEliece;
 import org.bouncycastle.pqc.jcajce.spec.McElieceCCA2KeyGenParameterSpec;
 
@@ -255,6 +257,21 @@ public final class GordianMcElieceKeySpec {
          */
         public String getParameter() {
             return theParm;
+        }
+
+        /**
+         * Obtain the required value for M.
+         * @return M
+         */
+        public int getM() {
+            switch(this) {
+                case SHA512:
+                    return McElieceCCA2Parameters.DEFAULT_M + 4;
+                case SHA384:
+                    return McElieceCCA2Parameters.DEFAULT_M + 1;
+                default:
+                    return McElieceCCA2Parameters.DEFAULT_M;
+            }
         }
     }
 
