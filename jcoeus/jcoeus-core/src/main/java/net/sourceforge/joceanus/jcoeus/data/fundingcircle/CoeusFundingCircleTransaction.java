@@ -118,6 +118,11 @@ public final class CoeusFundingCircleTransaction
     private static final String PFIX_RECOVERY3 = "Interest recovery repayment for loan part ";
 
     /**
+     * Recovery prefix4.
+     */
+    private static final String PFIX_RECOVERY4 = "Additional principal recovery payment for loan part ";
+
+    /**
      * ZERO for BadDebt/CashBack.
      */
     static final TethysMoney ZERO_MONEY = new TethysMoney();
@@ -484,6 +489,12 @@ public final class CoeusFundingCircleTransaction
         /* If the description is Recovery3 */
         if (theDesc.startsWith(PFIX_RECOVERY3)) {
             thePrefix = PFIX_RECOVERY3;
+            return CoeusTransactionType.RECOVERY;
+        }
+
+        /* If the description is Recovery4 */
+        if (theDesc.startsWith(PFIX_RECOVERY4)) {
+            thePrefix = PFIX_RECOVERY4;
             return CoeusTransactionType.RECOVERY;
         }
 

@@ -205,11 +205,6 @@ public class GordianTestSuite {
         final byte[] myIV = myMac.getInitVector();
         final int myMacId = myKnuth.deriveExternalIdFromType(myMac.getMacSpec());
 
-        /* Create AsymTest Control */
-        final GordianTestAsymmetric myAsymTest = new GordianTestAsymmetric(mySymSafe, myStreamSafe);
-        // myAsymTest.testKeyPairs(myFactory, myKeySet);
-        myAsymTest.createKeyPairs(myFactory, myKeySet);
-
         /* Start a new session */
         myManager = theCreator.newSecureManager(myParams);
         final GordianKeySetHash myNewHash = myManager.getSecurityFactory().deriveKeySetHash(myHash.getHash(), DEF_PASSWORD.clone());
@@ -259,9 +254,6 @@ public class GordianTestSuite {
         if (!myStm1.equals(myStream)) {
             System.out.println("Failed to decrypt StreamKey");
         }
-
-        /* Validate the Asymmetric Tests */
-        myAsymTest.validateKeyPairs(myFactory, myKeySet1);
 
         /* Decrypt the bytes */
         byte[] myResult = myKeySet1.decryptBytes(myEncrypt1);

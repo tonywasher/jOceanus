@@ -16,6 +16,10 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jgordianknot.crypto;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import org.bouncycastle.pqc.jcajce.provider.McEliece;
 import org.bouncycastle.pqc.jcajce.spec.McElieceCCA2KeyGenParameterSpec;
 
 import net.sourceforge.joceanus.jtethys.TethysDataConverter;
@@ -143,6 +147,44 @@ public final class GordianMcElieceKeySpec {
     }
 
     /**
+     * Check valid encryption type.
+     * @param pKeySpec the McElieceKeySpec
+     * @param pEncryptorType the encryptorType
+     * @return true/false
+     */
+    static boolean checkValidEncryptionType(final GordianMcElieceKeySpec pKeySpec,
+                                            final GordianMcElieceEncryptionType pEncryptorType) {
+        switch (pEncryptorType) {
+            case STANDARD:
+                return GordianMcElieceKeyType.STANDARD.equals(pKeySpec.getKeyType());
+            case FUJISAKI:
+            case KOBARAIMAI:
+            case POINTCHEVAL:
+                return !GordianMcElieceKeyType.STANDARD.equals(pKeySpec.getKeyType());
+            default:
+                throw new IllegalArgumentException();
+        }
+    }
+
+    /**
+     * Obtain a list of all possible specs.
+     * @return the list
+     */
+    public static List<GordianMcElieceKeySpec> listPossibleKeySpecs() {
+        /* Create the list */
+        final List<GordianMcElieceKeySpec> mySpecs = new ArrayList<>();
+
+        /* Add the specs */
+        mySpecs.add(GordianMcElieceKeySpec.standard());
+        for (final GordianMcElieceDigestType myType : GordianMcElieceDigestType.values()) {
+            mySpecs.add(GordianMcElieceKeySpec.cca2(myType));
+        }
+
+        /* Return the list */
+        return mySpecs;
+    }
+
+    /**
      * McEliece keyTypes.
      */
     public enum GordianMcElieceKeyType {
@@ -228,12 +270,12 @@ public final class GordianMcElieceKeySpec {
         /**
          * KobaraImai.
          */
-        KOBARAIMAISTANDARD("KobaraImai"),
+        KOBARAIMAI("KobaraImai"),
 
         /**
-         * Fujisaka.
+         * Fujisaki.
          */
-        FUJISAKA("Fuijisaka"),
+        FUJISAKI("Fujisaki"),
 
         /**
          * Pointcheval.

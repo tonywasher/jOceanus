@@ -30,12 +30,15 @@ import org.bouncycastle.asn1.x9.X9ECParameters;
 import org.bouncycastle.crypto.AsymmetricCipherKeyPair;
 import org.bouncycastle.crypto.CryptoException;
 import org.bouncycastle.crypto.DSA;
+import org.bouncycastle.crypto.InvalidCipherTextException;
 import org.bouncycastle.crypto.agreement.ECDHCBasicAgreement;
 import org.bouncycastle.crypto.agreement.ECDHCUnifiedAgreement;
 import org.bouncycastle.crypto.agreement.ECMQVBasicAgreement;
 import org.bouncycastle.crypto.agreement.SM2KeyExchange;
+import org.bouncycastle.crypto.engines.SM2Engine;
 import org.bouncycastle.crypto.generators.ECKeyPairGenerator;
 import org.bouncycastle.crypto.kems.ECIESKeyEncapsulation;
+import org.bouncycastle.crypto.newengines.EllipticEncryptor;
 import org.bouncycastle.crypto.params.AsymmetricKeyParameter;
 import org.bouncycastle.crypto.params.ECDHUPrivateParameters;
 import org.bouncycastle.crypto.params.ECDHUPublicParameters;
@@ -65,6 +68,8 @@ import net.sourceforge.joceanus.jgordianknot.crypto.GordianAgreement.GordianEphe
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianAgreementSpec;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianAsymKeySpec;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianAsymKeyType;
+import net.sourceforge.joceanus.jgordianknot.crypto.GordianEncryptor;
+import net.sourceforge.joceanus.jgordianknot.crypto.GordianEncryptorSpec;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianKeyPair;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianSignatureSpec;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianSignature;
@@ -815,6 +820,165 @@ public final class BouncyEllipticAsymKey {
             final SM2KeyExchangePublicParameters myPubParams = new SM2KeyExchangePublicParameters(mySrcPublic.getPublicKey(),
                     mySrcEphPublic.getPublicKey());
             storeSecret(theAgreement.calculateKey(KEYLEN, myPubParams));
+        }
+    }
+
+
+    /**
+     * EC Encryptor.
+     */
+    public static class BouncyECEncryptor
+            extends GordianEncryptor {
+        /**
+         * The underlying encryptor.
+         */
+        private final EllipticEncryptor theEncryptor;
+
+        /**
+         * Constructor.
+         * @param pFactory the factory
+         * @param pSpec the encryptorSpec
+         * @throws OceanusException on error
+         */
+        BouncyECEncryptor(final BouncyFactory pFactory,
+                          final GordianEncryptorSpec pSpec) throws OceanusException {
+            /* Initialise underlying cipher */
+            super(pFactory, pSpec);
+            theEncryptor = new EllipticEncryptor();
+        }
+
+        @Override
+        protected BouncyPublicKey getPublicKey() {
+            return (BouncyPublicKey) super.getPublicKey();
+        }
+
+        @Override
+        protected BouncyPrivateKey getPrivateKey() {
+            return (BouncyPrivateKey) super.getPrivateKey();
+        }
+
+        @Override
+        public void initForEncrypt(final GordianKeyPair pKeyPair) throws OceanusException {
+            /* Initialise underlying cipher */
+            super.initForEncrypt(pKeyPair);
+
+            /* Initialise for encryption */
+            final ECPublicKeyParameters myParms = (ECPublicKeyParameters) getPublicKey().getPublicKey();
+            theEncryptor.initForEncrypt(myParms, getRandom());
+        }
+
+        @Override
+        public void initForDecrypt(final GordianKeyPair pKeyPair) throws OceanusException {
+            /* Initialise underlying cipher */
+            super.initForDecrypt(pKeyPair);
+
+            /* Initialise for decryption */
+            final ECPrivateKeyParameters myParms = (ECPrivateKeyParameters) getPrivateKey().getPrivateKey();
+            theEncryptor.initForDecrypt(myParms);
+        }
+
+        @Override
+        public byte[] encrypt(final byte[] pBytes) throws OceanusException {
+            try {
+            /* Check that we are in encryption mode */
+            checkMode(GordianEncryptMode.ENCRYPT);
+
+            /* Encrypt the message */
+            return theEncryptor.encrypt(pBytes);
+            } catch (InvalidCipherTextException e) {
+                throw new GordianCryptoException("Failed to process data", e);
+            }
+        }
+
+        @Override
+        public byte[] decrypt(final byte[] pBytes) throws OceanusException {
+            try {
+            /* Check that we are in decryption mode */
+            checkMode(GordianEncryptMode.DECRYPT);
+
+            /* Decrypt the message */
+            return theEncryptor.decrypt(pBytes);
+            } catch (InvalidCipherTextException e) {
+                throw new GordianCryptoException("Failed to process data", e);
+            }
+        }
+    }
+
+    /**
+     * SM2 Encryptor.
+     */
+    public static class BouncySM2Encryptor
+            extends GordianEncryptor {
+        /**
+         * The underlying encryptor.
+         */
+        private final SM2Engine theEncryptor;
+
+        /**
+         * Constructor.
+         * @param pFactory the factory
+         * @param pSpec the encryptorSpec
+         */
+        BouncySM2Encryptor(final BouncyFactory pFactory,
+                           final GordianEncryptorSpec pSpec) {
+            /* Initialise underlying cipher */
+            super(pFactory, pSpec);
+            theEncryptor = new SM2Engine();
+        }
+
+        @Override
+        protected BouncyPublicKey getPublicKey() {
+            return (BouncyPublicKey) super.getPublicKey();
+        }
+
+        @Override
+        protected BouncyPrivateKey getPrivateKey() {
+            return (BouncyPrivateKey) super.getPrivateKey();
+        }
+
+        @Override
+        public void initForEncrypt(final GordianKeyPair pKeyPair) throws OceanusException {
+            /* Initialise underlying cipher */
+            super.initForEncrypt(pKeyPair);
+
+            /* Initialise for encryption */
+            final ParametersWithRandom myParms = new ParametersWithRandom(getPublicKey().getPublicKey(), getRandom());
+            theEncryptor.init(true, myParms);
+        }
+
+        @Override
+        public void initForDecrypt(final GordianKeyPair pKeyPair) throws OceanusException {
+            /* Initialise underlying cipher */
+            super.initForDecrypt(pKeyPair);
+
+            /* Initialise for decryption */
+            theEncryptor.init(false, getPrivateKey().getPrivateKey());
+        }
+
+        @Override
+        public byte[] encrypt(final byte[] pBytes) throws OceanusException {
+            try {
+                /* Check that we are in encryption mode */
+                checkMode(GordianEncryptMode.ENCRYPT);
+
+                /* Encrypt the message */
+                return theEncryptor.processBlock(pBytes, 0, pBytes.length);
+            } catch (InvalidCipherTextException e) {
+                throw new GordianCryptoException("Failed to encrypt data", e);
+            }
+        }
+
+        @Override
+        public byte[] decrypt(final byte[] pBytes) throws OceanusException {
+            try {
+                /* Check that we are in decryption mode */
+                checkMode(GordianEncryptMode.DECRYPT);
+
+                /* Decrypt the message */
+                return theEncryptor.processBlock(pBytes, 0, pBytes.length);
+            } catch (InvalidCipherTextException e) {
+                throw new GordianCryptoException("Failed to decrypt data", e);
+            }
         }
     }
 }

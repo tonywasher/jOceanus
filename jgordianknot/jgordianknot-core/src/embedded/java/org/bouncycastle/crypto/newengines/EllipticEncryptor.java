@@ -1,50 +1,24 @@
-/*******************************************************************************
- * GordianKnot: Security Suite
- * Copyright 2012,2018 Tony Washer
- *
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not
- * use this file except in compliance with the License.  You may obtain a copy
- * of the License at
- *
- *   http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
- * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
- * License for the specific language governing permissions and limitations under
- * the License.
- ******************************************************************************/
-package net.sourceforge.joceanus.jgordianknot.crypto.bc;
+package org.bouncycastle.crypto.newengines;
 
 import java.math.BigInteger;
 import java.security.SecureRandom;
 import java.util.Arrays;
 
-import org.bouncycastle.asn1.gm.GMNamedCurves;
-import org.bouncycastle.asn1.x9.ECNamedCurveTable;
-import org.bouncycastle.asn1.x9.X9ECParameters;
-import org.bouncycastle.crypto.AsymmetricCipherKeyPair;
+import org.bouncycastle.crypto.InvalidCipherTextException;
 import org.bouncycastle.crypto.ec.ECElGamalDecryptor;
 import org.bouncycastle.crypto.ec.ECElGamalEncryptor;
 import org.bouncycastle.crypto.ec.ECPair;
-import org.bouncycastle.crypto.generators.ECKeyPairGenerator;
 import org.bouncycastle.crypto.params.ECDomainParameters;
-import org.bouncycastle.crypto.params.ECKeyGenerationParameters;
+import org.bouncycastle.crypto.params.ECPrivateKeyParameters;
+import org.bouncycastle.crypto.params.ECPublicKeyParameters;
 import org.bouncycastle.crypto.params.ParametersWithRandom;
 import org.bouncycastle.math.ec.ECCurve;
 import org.bouncycastle.math.ec.ECPoint;
 
-import net.sourceforge.joceanus.jgordianknot.GordianDataException;
-import net.sourceforge.joceanus.jgordianknot.GordianLogicException;
-import net.sourceforge.joceanus.jgordianknot.crypto.GordianAsymKeySpec;
-import net.sourceforge.joceanus.jgordianknot.crypto.GordianAsymKeyType;
-import net.sourceforge.joceanus.jtethys.OceanusException;
-
 /**
- * EC Encryption Methods.
- * Based on https://onlinelibrary.wiley.com/doi/pdf/10.1002/sec.1702
+ * Elliptic curve encryptor.
  */
-public class BouncyECEncryptor {
+public class EllipticEncryptor {
     /**
      * CoFactor must be less than or equal to 20. Boundary is actually 10 < b < 76.
      */
@@ -54,16 +28,6 @@ public class BouncyECEncryptor {
      * The max iterations to try for a point.
      */
     private static final int MAXITERATION = 1 << Byte.SIZE;
-
-    /**
-     * The ECCurve.
-     */
-    private final ECCurve theCurve;
-
-    /**
-     * is encryption available?
-     */
-    private final boolean isAvailable;
 
     /**
      * The encryptor.
@@ -76,48 +40,79 @@ public class BouncyECEncryptor {
     private final ECElGamalDecryptor theDecryptor;
 
     /**
-     * Constructor.
-     * @param pRandom the secure random
-     * @param pKeySpec the keySpec.
+     * The ECCurve.
      */
-    public BouncyECEncryptor(final SecureRandom pRandom,
-                             final GordianAsymKeySpec pKeySpec) {
-        /* Create the generator */
-        final ECKeyPairGenerator myGenerator = new ECKeyPairGenerator();
-        final GordianAsymKeyType myType = pKeySpec.getKeyType();
-        final String myCurve = pKeySpec.getElliptic().getCurveName();
+    private ECCurve theCurve;
 
-        /* Lookup the parameters */
-        final X9ECParameters x9 = GordianAsymKeyType.SM2.equals(myType)
-                                  ? GMNamedCurves.getByName(myCurve)
-                                  : ECNamedCurveTable.getByName(myCurve);
-        theCurve = x9.getCurve();
+    /**
+     * is encryption available?
+     */
+    private boolean isAvailable;
 
-        /* Initialise the generator */
-        final ECDomainParameters myDomain = new ECDomainParameters(x9.getCurve(), x9.getG(), x9.getN(), x9.getH(), x9.getSeed());
-        final ECKeyGenerationParameters myParams = new ECKeyGenerationParameters(myDomain, pRandom);
-        myGenerator.init(myParams);
+    /**
+     * Are we encrypting or decrypting?
+     */
+    private boolean encrypting;
 
-        /* Create the keyPair */
-        final AsymmetricCipherKeyPair myKeyPair = myGenerator.generateKeyPair();
-        isAvailable = x9.getH().compareTo(BigInteger.valueOf(MAXCOFACTOR)) <= 0;
-
-        /* Create encryptor */
+    /**
+     * Constructor.
+     */
+    public EllipticEncryptor() {
         theEncryptor = new ECElGamalEncryptor();
-        final ParametersWithRandom myParms = new ParametersWithRandom(myKeyPair.getPublic(), pRandom);
-        theEncryptor.init(myParms);
-
-        /* Create decryptor */
         theDecryptor = new ECElGamalDecryptor();
-        theDecryptor.init(myKeyPair.getPrivate());
+    }
+
+
+    /**
+     * Initialise for encryption.
+     * @param pPublicKey the publicKey
+     * @param pRandom the secureRandom
+     */
+    public void initForEncrypt(final ECPublicKeyParameters pPublicKey,
+                               final SecureRandom pRandom) {
+        /* Access domain parameters */
+        final ECDomainParameters myDomain = pPublicKey.getParameters();
+        if (isUnsupported(myDomain)) {
+            throw new IllegalArgumentException("Unsupported curve");
+        }
+
+        /* Record details */
+        theCurve = myDomain.getCurve();
+        isAvailable = true;
+        encrypting = true;
+
+        /* Initialise for encryption */
+        final ParametersWithRandom myParms = new ParametersWithRandom(pPublicKey, pRandom);
+        theEncryptor.init(myParms);
+   }
+
+    /**
+     * Initialise for decryption.
+     * @param pPrivateKey the privateKey
+     */
+    public void initForDecrypt(final ECPrivateKeyParameters pPrivateKey) {
+        /* Access domain parameters */
+        final ECDomainParameters myDomain = pPrivateKey.getParameters();
+        if (isUnsupported(myDomain)) {
+            throw new IllegalArgumentException("Unsupported curve");
+        }
+
+        /* Record details */
+        theCurve = myDomain.getCurve();
+        isAvailable = true;
+        encrypting = false;
+
+        /* Initialise for decryption */
+        theDecryptor.init(pPrivateKey);
     }
 
     /**
-     * Is encryption available?
+     * Check whether encryption is available for this domain.
+     * @param pDomain the domain
      * @return true/false
      */
-    public boolean isAvailable() {
-        return isAvailable;
+    private boolean isUnsupported(final ECDomainParameters pDomain) {
+        return pDomain.getH().compareTo(BigInteger.valueOf(MAXCOFACTOR)) > 0;
     }
 
     /**
@@ -176,9 +171,14 @@ public class BouncyECEncryptor {
      * Encrypt a data buffer.
      * @param pData the buffer to encrypt
      * @return the encrypted keyPair
-     * @throws OceanusException on error
+     * @throws InvalidCipherTextException on error
      */
-    public byte[] encrypt(final byte[] pData) throws OceanusException {
+    public byte[] encrypt(final byte[] pData) throws InvalidCipherTextException {
+        /* Check that we are set to encrypt */
+        if (!isAvailable || !encrypting) {
+            throw new IllegalStateException("Not initialised for encrypting");
+        }
+
         /* Create the output buffer */
         int myInLen = pData.length;
         final byte[] myOutput = new byte[getEncryptedLength(pData.length)];
@@ -216,11 +216,11 @@ public class BouncyECEncryptor {
      * @param pInOff the offset in the buffer
      * @param pInLen the length of data to encrypt
      * @return the encrypted keyPair
-     * @throws OceanusException on error
+     * @throws InvalidCipherTextException on error
      */
     private ECPair encryptToPair(final byte[] pData,
                                  final int pInOff,
-                                 final int pInLen) throws OceanusException {
+                                 final int pInLen) throws InvalidCipherTextException {
         /* Convert the data to an ECPoint */
         final ECPoint myPoint = convertToECPoint(pData, pInOff, pInLen);
 
@@ -234,19 +234,19 @@ public class BouncyECEncryptor {
      * @param pInOff the input offset
      * @param pInLen the length of data to process
      * @return the ECPair
-     * @throws OceanusException on error
+     * @throws InvalidCipherTextException on error
      */
     private ECPoint convertToECPoint(final byte[] pInBuffer,
                                      final int pInOff,
-                                     final int pInLen) throws OceanusException {
+                                     final int pInLen) throws InvalidCipherTextException {
         /* Check length */
         final int myLen = getBlockLength();
         if (pInLen > myLen - 2
                 || pInLen <= 0) {
-            throw new GordianLogicException("Invalid input length");
+            throw new IllegalArgumentException("Invalid input length");
         }
         if (pInBuffer.length - pInOff < pInLen) {
-            throw new GordianLogicException("Invalid input buffer");
+            throw new IllegalArgumentException("Invalid input buffer");
         }
         final int myStart = myLen - pInLen - 1;
 
@@ -270,7 +270,7 @@ public class BouncyECEncryptor {
         }
 
         /* No possible value found */
-        throw new GordianDataException("Unable to find point on curve");
+        throw new InvalidCipherTextException("Unable to find point on curve");
     }
 
     /**
@@ -304,22 +304,22 @@ public class BouncyECEncryptor {
      * @param pOutBuffer the output buffer
      * @param pOutOff the output offset
      * @return the length of data decoded
-     * @throws OceanusException on error
+     * @throws InvalidCipherTextException on error
      */
     private int convertFromECPair(final ECPair pPair,
                                   final byte[] pOutBuffer,
-                                  final int pOutOff) throws OceanusException {
+                                  final int pOutOff) throws InvalidCipherTextException {
         /* Check length */
         final int myLen = getBlockLength() + 1;
         if (pOutBuffer.length - pOutOff < myLen << 1) {
-            throw new GordianLogicException("Output buffer too small");
+            throw new IllegalArgumentException("Output buffer too small");
         }
 
         /* Access the two encoded parameters  */
         final byte[] myX = pPair.getX().getEncoded(true);
         final byte[] myY = pPair.getY().getEncoded(true);
         if (myX.length != myLen || myY.length != myLen) {
-            throw new GordianDataException("Bad encoding");
+            throw new InvalidCipherTextException("Bad encoding");
         }
 
         /* Copy to the output buffer */
@@ -332,9 +332,14 @@ public class BouncyECEncryptor {
      * Decrypt a data buffer.
      * @param pData the buffer to encrypt
      * @return the encrypted keyPair
-     * @throws OceanusException on error
+     * @throws InvalidCipherTextException on error
      */
-    public byte[] decrypt(final byte[] pData) throws OceanusException {
+    public byte[] decrypt(final byte[] pData) throws InvalidCipherTextException {
+        /* Check that we are set to encrypt */
+        if (!isAvailable || encrypting) {
+            throw new IllegalStateException("Not initialised for decrypting");
+        }
+
         /* Create the output buffer */
         int myInLen = pData.length;
         final byte[] myOutput = new byte[getDecryptedLength(pData.length)];
@@ -369,11 +374,11 @@ public class BouncyECEncryptor {
      * @param pOutBuffer the output buffer
      * @param pOutOff the output offset
      * @return the length of data decoded
-     * @throws OceanusException on error
+     * @throws InvalidCipherTextException on error
      */
     private int decryptFromECPair(final ECPair pPair,
                                   final byte[] pOutBuffer,
-                                  final int pOutOff) throws OceanusException {
+                                  final int pOutOff) throws InvalidCipherTextException {
         /* Decrypt the pair */
         final ECPoint myPoint = theDecryptor.decrypt(pPair);
         return convertFromECPoint(myPoint, pOutBuffer, pOutOff);
@@ -385,15 +390,15 @@ public class BouncyECEncryptor {
      * @param pOutBuffer the output buffer
      * @param pOutOff the output offset
      * @return the length of data decoded
-     * @throws OceanusException on error
+     * @throws InvalidCipherTextException on error
      */
     private int convertFromECPoint(final ECPoint pPoint,
                                    final byte[] pOutBuffer,
-                                   final int pOutOff) throws OceanusException {
+                                   final int pOutOff) throws InvalidCipherTextException {
         /* Check length */
         final int myLen = getBlockLength();
         if (pOutBuffer.length - pOutOff < myLen - 2) {
-            throw new GordianLogicException("Output buffer too small");
+            throw new IllegalArgumentException("Output buffer too small");
         }
 
         /* Obtain the X co-ordinate */
@@ -415,7 +420,7 @@ public class BouncyECEncryptor {
 
         /* Check validity */
         if (myStart == myEnd || myBuf[myStart] != 1) {
-            throw new GordianDataException("Invalid data");
+            throw new InvalidCipherTextException("Invalid data");
         }
 
         /* Copy the data out */
@@ -430,14 +435,13 @@ public class BouncyECEncryptor {
      * @param pInBuffer the input buffer
      * @param pInOff the input offset
      * @return the ECPair
-     * @throws OceanusException on error
      */
     private ECPair convertToECPair(final byte[] pInBuffer,
-                                   final int pInOff) throws OceanusException {
+                                   final int pInOff)  {
         /* Check length */
         final int myLen = getBlockLength() + 1;
         if (pInBuffer.length - pInOff < myLen << 1) {
-            throw new GordianLogicException("Invalid input buffer");
+            throw new IllegalArgumentException("Invalid input buffer");
         }
 
         /* Access the X point */

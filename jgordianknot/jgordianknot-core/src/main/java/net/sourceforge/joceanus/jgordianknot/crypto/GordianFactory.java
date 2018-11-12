@@ -706,7 +706,7 @@ public abstract class GordianFactory
     public abstract GordianSignature createSigner(GordianSignatureSpec pSignatureSpec) throws OceanusException;
 
     /**
-     * Obtain predicate for keyExchange.
+     * Obtain predicate for keyAgreement.
      * @return the predicate
      */
     public Predicate<GordianAgreementSpec> supportedAgreements() {
@@ -720,6 +720,22 @@ public abstract class GordianFactory
      * @throws OceanusException on error
      */
     public abstract GordianAgreement createAgreement(GordianAgreementSpec pSpec) throws OceanusException;
+
+    /**
+     * Obtain predicate for Encryptor.
+     * @return the predicate
+     */
+    public Predicate<GordianEncryptorSpec> supportedEncryptors() {
+        return this::validEncryptorSpec;
+    }
+
+    /**
+     * Create Encryptor.
+     * @param pSpec the encryptorSpec
+     * @return the Encryptor
+     * @throws OceanusException on error
+     */
+    public abstract GordianEncryptor createEncryptor(GordianEncryptorSpec pSpec) throws OceanusException;
 
     /**
      * Build Invalid text string.
@@ -1149,7 +1165,7 @@ public abstract class GordianFactory
      */
     public boolean validAgreementSpecForKeyPair(final GordianKeyPair pKeyPair,
                                                 final GordianAgreementSpec pAgreementSpec) {
-        /* Check signature matches keyPair */
+        /* Check agreement matches keyPair */
         if (pAgreementSpec.getAsymKeyType() != pKeyPair.getKeySpec().getKeyType()) {
             return false;
         }
@@ -1164,6 +1180,49 @@ public abstract class GordianFactory
         if (GordianAsymKeyType.DIFFIEHELLMAN.equals(myKeySpec.getKeyType())
             && GordianAgreementType.MQV.equals(pAgreementSpec.getAgreementType())) {
             return myKeySpec.getDHGroup().isMQV();
+        }
+
+        /* OK */
+        return true;
+    }
+
+    /**
+     * Check EncryptorSpec.
+     * @param pSpec the encryptorSpec
+     * @return true/false
+     */
+    protected boolean validEncryptorSpec(final GordianEncryptorSpec pSpec) {
+        /* Check that spec is supported */
+        return pSpec.isSupported();
+    }
+
+    /**
+     * Check EncryptorSpec and KeyPair combination.
+     * @param pKeyPair the keyPair
+     * @param pEncryptorSpec the macSpec
+     * @return true/false
+     */
+    public boolean validEncryptorSpecForKeyPair(final GordianKeyPair pKeyPair,
+                                                final GordianEncryptorSpec pEncryptorSpec) {
+        /* Check encryptor matches keyPair */
+        if (pEncryptorSpec.getKeyType() != pKeyPair.getKeySpec().getKeyType()) {
+            return false;
+        }
+
+        /* Check that the encryptorSpec is supported */
+        if (!validEncryptorSpec(pEncryptorSpec)) {
+            return false;
+        }
+
+        /* Disallow EC if the curve does not support encryption */
+        final GordianAsymKeySpec myKeySpec = pKeyPair.getKeySpec();
+        if (GordianAsymKeyType.EC.equals(myKeySpec.getKeyType())) {
+            return myKeySpec.getElliptic().canEncrypt();
+        }
+
+        /* Disallow McEliece if it is the wrong style key */
+        if (GordianAsymKeyType.MCELIECE.equals(myKeySpec.getKeyType())) {
+            return GordianMcElieceKeySpec.checkValidEncryptionType(myKeySpec.getMcElieceSpec(), pEncryptorSpec.getMcElieceType());
         }
 
         /* OK */

@@ -23,7 +23,7 @@ import net.sourceforge.joceanus.jgordianknot.crypto.GordianAsymKeySpec;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianDSAElliptic;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianGOSTElliptic;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianSM2Elliptic;
-import net.sourceforge.joceanus.jgordianknot.crypto.bc.BouncyECEncryptor;
+import net.sourceforge.joceanus.jgordianknot.crypto.bc.BouncyOldECEncryptor;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
@@ -52,7 +52,7 @@ public final class GordianECEncrypt {
      */
     private static void runTest(final GordianAsymKeySpec pSpec) {
         /* Create the encryptor */
-        final BouncyECEncryptor myEncryptor = new BouncyECEncryptor(theRandom, pSpec);
+        final BouncyOldECEncryptor myEncryptor = new BouncyOldECEncryptor(theRandom, pSpec);
         if (!myEncryptor.isAvailable()) {
             return;
         }

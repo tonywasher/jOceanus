@@ -20,14 +20,20 @@ import java.io.IOException;
 import java.math.BigInteger;
 import java.security.spec.PKCS8EncodedKeySpec;
 import java.security.spec.X509EncodedKeySpec;
+import java.util.Arrays;
+
+import javax.crypto.spec.PSource;
 
 import org.bouncycastle.asn1.pkcs.PrivateKeyInfo;
 import org.bouncycastle.asn1.x509.SubjectPublicKeyInfo;
+import org.bouncycastle.crypto.AsymmetricBlockCipher;
 import org.bouncycastle.crypto.AsymmetricCipherKeyPair;
 import org.bouncycastle.crypto.CipherParameters;
 import org.bouncycastle.crypto.CryptoException;
 import org.bouncycastle.crypto.DataLengthException;
+import org.bouncycastle.crypto.InvalidCipherTextException;
 import org.bouncycastle.crypto.Signer;
+import org.bouncycastle.crypto.encodings.OAEPEncoding;
 import org.bouncycastle.crypto.engines.RSABlindedEngine;
 import org.bouncycastle.crypto.generators.RSAKeyPairGenerator;
 import org.bouncycastle.crypto.kems.RSAKeyEncapsulation;
@@ -51,6 +57,8 @@ import net.sourceforge.joceanus.jgordianknot.crypto.GordianAgreement.GordianEnca
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianAgreementSpec;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianAsymKeySpec;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianDigestSpec;
+import net.sourceforge.joceanus.jgordianknot.crypto.GordianEncryptor;
+import net.sourceforge.joceanus.jgordianknot.crypto.GordianEncryptorSpec;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianKeyPair;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianRSAModulus;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianSignatureSpec;
@@ -483,6 +491,141 @@ public final class BouncyRSAAsymKey {
             final byte[] myMessage = parseMessage(pMessage);
             final KeyParameter myParms = (KeyParameter) theAgreement.decrypt(myMessage, 0, myMessage.length, myLen);
             storeSecret(myParms.getKey());
+        }
+    }
+
+    /**
+     * RSA Encryptor.
+     */
+    public static class BouncyRSAEncryptor
+            extends GordianEncryptor {
+        /**
+         * The underlying encryptor.
+         */
+        private final AsymmetricBlockCipher theEncryptor;
+
+        /**
+         * Constructor.
+         * @param pFactory the factory
+         * @param pSpec the encryptorSpec
+         * @throws OceanusException on error
+         */
+        BouncyRSAEncryptor(final BouncyFactory pFactory,
+                           final GordianEncryptorSpec pSpec) throws OceanusException {
+            /* Initialise underlying cipher */
+            super(pFactory, pSpec);
+            final BouncyDigest myDigest = pFactory.createDigest(pSpec.getDigestSpec());
+            theEncryptor = new OAEPEncoding(new RSABlindedEngine(), myDigest.getDigest(), PSource.PSpecified.DEFAULT.getValue());
+        }
+
+        @Override
+        protected BouncyPublicKey getPublicKey() {
+            return (BouncyPublicKey) super.getPublicKey();
+        }
+
+        @Override
+        protected BouncyPrivateKey getPrivateKey() {
+            return (BouncyPrivateKey) super.getPrivateKey();
+        }
+
+        @Override
+        public void initForEncrypt(final GordianKeyPair pKeyPair) throws OceanusException {
+            /* Initialise underlying cipher */
+            super.initForEncrypt(pKeyPair);
+
+            /* Initialise for encryption */
+            final ParametersWithRandom myParms = new ParametersWithRandom(getPublicKey().getPublicKey(), getRandom());
+            theEncryptor.init(true, myParms);
+        }
+
+        @Override
+        public void initForDecrypt(final GordianKeyPair pKeyPair) throws OceanusException {
+            /* Initialise underlying cipher */
+            super.initForDecrypt(pKeyPair);
+
+            /* Initialise for decryption */
+            theEncryptor.init(false, getPrivateKey().getPrivateKey());
+        }
+
+        @Override
+        public byte[] encrypt(final byte[] pBytes) throws OceanusException {
+            /* Check that we are in encryption mode */
+            checkMode(GordianEncryptMode.ENCRYPT);
+
+            /* Encrypt the message */
+            return processData(pBytes);
+        }
+
+        @Override
+        public byte[] decrypt(final byte[] pBytes) throws OceanusException {
+            /* Check that we are in decryption mode */
+            checkMode(GordianEncryptMode.DECRYPT);
+
+            /* Decrypt the message */
+            return processData(pBytes);
+        }
+
+        /**
+         * Process a data buffer.
+         * @param pData the buffer to process
+         * @return the processed buffer
+         * @throws OceanusException on error
+         */
+        private byte[] processData(final byte[] pData) throws OceanusException {
+            try {
+                /* Create the output buffer */
+                int myInLen = pData.length;
+                final byte[] myOutput = new byte[getProcessedLength(myInLen)];
+
+                /* Access input block length */
+                final int myInBlockLength = theEncryptor.getInputBlockSize();
+
+                /* Loop encrypting the blocks */
+                int myInOff = 0;
+                int myOutOff = 0;
+                while (myInLen > 0) {
+                    /* Process the data */
+                    final int myLen = myInLen >= myInBlockLength
+                                      ? myInBlockLength
+                                      : myInLen;
+                    final byte[] myBlock = theEncryptor.processBlock(pData, myInOff, myLen);
+
+                    /* Copy to the output buffer */
+                    final int myOutLen = myBlock.length;
+                    System.arraycopy(myBlock, 0, myOutput, myOutOff, myOutLen);
+                    myOutOff += myOutLen;
+
+                    /* Move to next block */
+                    myInOff += myInBlockLength;
+                    myInLen -= myInBlockLength;
+                }
+
+                /* Return the data */
+                return myOutOff == myOutput.length
+                       ? myOutput
+                    : Arrays.copyOf(myOutput, myOutOff);
+            } catch (InvalidCipherTextException e) {
+                throw new GordianCryptoException("Failed to process data", e);
+            }
+        }
+
+        /**
+         * Obtain the length of the buffer required for the processed output.
+         * @param pLength the length of input data
+         * @return the number of bytes.
+         */
+        private int getProcessedLength(final int pLength) {
+            return theEncryptor.getOutputBlockSize() * getNumBlocks(pLength, theEncryptor.getInputBlockSize());
+        }
+
+        /**
+         * Obtain the number of blocks required for the length in terms of blocks.
+         * @param pLength the length of data
+         * @param pBlockLength the blockLength
+         * @return the number of blocks.
+         */
+        private static int getNumBlocks(final int pLength, final int pBlockLength) {
+            return (pLength + pBlockLength - 1) / pBlockLength;
         }
     }
 }

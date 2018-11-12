@@ -31,4 +31,12 @@ public interface GordianElliptic {
      * @return the size
      */
     int getKeySize();
+
+    /**
+     * Can the curve encrypt?
+     * @return true/false
+     */
+    default boolean canEncrypt() {
+        return true;
+    }
 }

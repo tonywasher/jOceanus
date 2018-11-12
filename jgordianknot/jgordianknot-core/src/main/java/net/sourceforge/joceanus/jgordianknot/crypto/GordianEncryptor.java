@@ -16,6 +16,8 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jgordianknot.crypto;
 
+import java.security.SecureRandom;
+
 import net.sourceforge.joceanus.jgordianknot.GordianDataException;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
@@ -23,6 +25,11 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
  * Asymmetric Encryptor.
  */
 public abstract class GordianEncryptor {
+    /**
+     * The Factory.
+     */
+    private final GordianFactory theFactory;
+
     /**
      * The encryptorSpec.
      */
@@ -40,10 +47,29 @@ public abstract class GordianEncryptor {
 
     /**
      * Constructor.
+     * @param pFactory the factory
      * @param pSpec the encryptorSpec
      */
-    GordianEncryptor(final GordianEncryptorSpec pSpec) {
+    protected GordianEncryptor(final GordianFactory pFactory,
+                               final GordianEncryptorSpec pSpec) {
+        theFactory = pFactory;
         theSpec = pSpec;
+    }
+
+    /**
+     * Obtain the factory.
+     * @return the factory
+     */
+    public GordianFactory getFactory() {
+        return theFactory;
+    }
+
+    /**
+     * Obtain the randomGenerator.
+     * @return the random
+     */
+    public SecureRandom getRandom() {
+        return theFactory.getRandom();
     }
 
     /**
@@ -60,9 +86,8 @@ public abstract class GordianEncryptor {
      * @throws OceanusException on error
      */
     protected void checkKeyPair(final GordianKeyPair pKeyPair) throws OceanusException {
-        /* Check that the KeyPair is valid */
-        if (pKeyPair.getKeySpec().getKeyType() != theSpec.getKeyType()) {
-            throw new GordianDataException("Invalid KeyPair");
+        if (!theFactory.validEncryptorSpecForKeyPair(pKeyPair, theSpec)) {
+            throw new GordianDataException("Incorrect KeyPair type");
         }
     }
 
@@ -127,6 +152,14 @@ public abstract class GordianEncryptor {
     }
 
     /**
+     * Are we encrypting?
+     * @return true/false
+     */
+    protected boolean isEncrypting() {
+        return GordianEncryptMode.ENCRYPT.equals(theMode);
+    }
+
+    /**
      * Encrypt the bytes.
      * @param pBytes the bytes to encrypt
      * @return the encrypted bytes
@@ -143,7 +176,7 @@ public abstract class GordianEncryptor {
     public abstract byte[] decrypt(byte[] pEncrypted) throws OceanusException;
 
     /**
-     * SignatureMode.
+     * EncryptionMode.
      */
     public enum GordianEncryptMode {
         /**

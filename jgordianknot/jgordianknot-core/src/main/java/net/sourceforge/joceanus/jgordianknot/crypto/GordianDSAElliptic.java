@@ -418,4 +418,20 @@ public enum GordianDSAElliptic implements GordianElliptic {
     public String toString() {
         return theName;
     }
+
+    @Override
+    public boolean canEncrypt() {
+        switch (this) {
+            case C2PNB176W1:
+            case C2PNB208W1:
+            case C2PNB272W1:
+            case C2PNB304W1:
+            case C2TNB359V1:
+            case C2PNB368W1:
+            case C2TNB431R1:
+                return false;
+            default:
+                return true;
+        }
+    }
 }

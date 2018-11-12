@@ -25,11 +25,14 @@ import net.sourceforge.joceanus.jgordianknot.crypto.GordianCipherSpec.GordianStr
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianCipherSpec.GordianSymCipherSpec;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianDigestSpec;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianDigestType;
+import net.sourceforge.joceanus.jgordianknot.crypto.GordianEncryptor;
+import net.sourceforge.joceanus.jgordianknot.crypto.GordianEncryptorSpec;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianFactory;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianFactoryGenerator;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianLength;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianMacSpec;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianMacType;
+import net.sourceforge.joceanus.jgordianknot.crypto.GordianMcElieceKeySpec.GordianMcElieceEncryptionType;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianPadding;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianParameters;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianRandomSpec;
@@ -51,6 +54,11 @@ import net.sourceforge.joceanus.jgordianknot.crypto.bc.BouncyDHAsymKey.BouncyDHU
 import net.sourceforge.joceanus.jgordianknot.crypto.bc.BouncyEdDSAAsymKey.BouncyEd25519KeyPairGenerator;
 import net.sourceforge.joceanus.jgordianknot.crypto.bc.BouncyEdDSAAsymKey.BouncyEd448KeyPairGenerator;
 import net.sourceforge.joceanus.jgordianknot.crypto.bc.BouncyEdDSAAsymKey.BouncyEdDSASignature;
+import net.sourceforge.joceanus.jgordianknot.crypto.bc.BouncyEllipticAsymKey.BouncyECEncryptor;
+import net.sourceforge.joceanus.jgordianknot.crypto.bc.BouncyEllipticAsymKey.BouncySM2Encryptor;
+import net.sourceforge.joceanus.jgordianknot.crypto.bc.BouncyMcElieceAsymKey.BouncyMcElieceCCA2Encryptor;
+import net.sourceforge.joceanus.jgordianknot.crypto.bc.BouncyMcElieceAsymKey.BouncyMcElieceEncryptor;
+import net.sourceforge.joceanus.jgordianknot.crypto.bc.BouncyRSAAsymKey.BouncyRSAEncryptor;
 import net.sourceforge.joceanus.jgordianknot.crypto.bc.BouncyXDHAsymKey.BouncyX25519KeyPairGenerator;
 import net.sourceforge.joceanus.jgordianknot.crypto.bc.BouncyXDHAsymKey.BouncyX448KeyPairGenerator;
 import net.sourceforge.joceanus.jgordianknot.crypto.bc.BouncyXDHAsymKey.BouncyXDHBasicAgreement;
@@ -388,13 +396,24 @@ public final class BouncyFactory
 
     @Override
     public GordianAgreement createAgreement(final GordianAgreementSpec pSpec) throws OceanusException {
-        /* Check validity of Exchange */
+        /* Check validity of Agreement */
         if (!supportedAgreements().test(pSpec)) {
             throw new GordianDataException(getInvalidText(pSpec));
         }
 
-        /* Create the sender */
+        /* Create the agreement */
         return getBCAgreement(pSpec);
+    }
+
+    @Override
+    public GordianEncryptor createEncryptor(final GordianEncryptorSpec pSpec) throws OceanusException {
+        /* Check validity of Encryptor */
+        if (!supportedEncryptors().test(pSpec)) {
+            throw new GordianDataException(getInvalidText(pSpec));
+        }
+
+        /* Create the encryptor */
+        return getBCEncryptor(pSpec);
     }
 
     /**
@@ -1113,6 +1132,32 @@ public final class BouncyFactory
                 return new BouncyXDHBasicAgreement(this, pSpec);
             case UNIFIED:
                 return new BouncyXDHUnifiedAgreement(this, pSpec);
+            default:
+                throw new GordianDataException(getInvalidText(pSpec));
+        }
+    }
+
+    /**
+     * Create the BouncyCastle Encryptor.
+     *
+     * @param pSpec the agreementSpec
+     * @return the Agreement
+     * @throws OceanusException on error
+     */
+    private GordianEncryptor getBCEncryptor(final GordianEncryptorSpec pSpec) throws OceanusException {
+        switch (pSpec.getKeyType()) {
+            case RSA:
+                return new BouncyRSAEncryptor(this, pSpec);
+            case EC:
+            case GOST2012:
+            case DSTU4145:
+                return new BouncyECEncryptor(this, pSpec);
+            case SM2:
+                return new BouncySM2Encryptor(this, pSpec);
+            case MCELIECE:
+                return GordianMcElieceEncryptionType.STANDARD.equals(pSpec.getMcElieceType())
+                    ? new BouncyMcElieceEncryptor(this, pSpec)
+                    : new BouncyMcElieceCCA2Encryptor(this, pSpec);
             default:
                 throw new GordianDataException(getInvalidText(pSpec));
         }

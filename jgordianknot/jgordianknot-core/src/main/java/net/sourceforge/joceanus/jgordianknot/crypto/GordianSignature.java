@@ -37,11 +37,6 @@ public abstract class GordianSignature
     private final GordianSignatureSpec theSpec;
 
     /**
-     * The random generator.
-     */
-    private final SecureRandom theRandom;
-
-    /**
      * Signature Mode.
      */
     private GordianSignatureMode theMode;
@@ -60,7 +55,6 @@ public abstract class GordianSignature
                                final GordianSignatureSpec pSpec) {
         theFactory = pFactory;
         theSpec = pSpec;
-        theRandom = theFactory.getRandom();
     }
 
     /**
@@ -84,7 +78,7 @@ public abstract class GordianSignature
      * @return the random
      */
     public SecureRandom getRandom() {
-        return theRandom;
+        return theFactory.getRandom();
     }
 
     /**
