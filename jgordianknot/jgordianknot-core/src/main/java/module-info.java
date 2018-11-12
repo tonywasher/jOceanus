@@ -28,10 +28,5 @@ module jgordianknot.core {
     exports net.sourceforge.joceanus.jgordianknot.manager;
     exports net.sourceforge.joceanus.jgordianknot.crypto.stream;
     exports net.sourceforge.joceanus.jgordianknot.zip;
-
-    /* Temp export */
-    exports org.bouncycastle.crypto.newdigests;
-    exports org.bouncycastle.crypto.newengines;
-    exports net.sourceforge.joceanus.jgordianknot.crypto.bc;
 }
 
