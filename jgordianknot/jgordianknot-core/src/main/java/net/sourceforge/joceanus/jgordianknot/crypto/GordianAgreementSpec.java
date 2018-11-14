@@ -154,6 +154,11 @@ public final class GordianAgreementSpec {
                 myAgreements.add(new GordianAgreementSpec(myType, GordianAgreementType.UNIFIED));
                 myAgreements.add(new GordianAgreementSpec(myType, GordianAgreementType.MQV));
                 break;
+            case X25519:
+            case X448:
+                myAgreements.add(new GordianAgreementSpec(myType, GordianAgreementType.BASIC));
+                myAgreements.add(new GordianAgreementSpec(myType, GordianAgreementType.UNIFIED));
+                break;
             default:
                 break;
          }

@@ -21,6 +21,11 @@ package net.sourceforge.joceanus.jgordianknot.crypto;
  */
 public enum GordianDSTU4145Elliptic implements GordianElliptic {
     /**
+     * DSTU4145-9.
+     */
+    DSTU9(9, 431),
+
+    /**
      * DSTU4145-1.
      */
     DSTU1(1, 167),
@@ -58,12 +63,7 @@ public enum GordianDSTU4145Elliptic implements GordianElliptic {
     /**
      * DSTU4145-8.
      */
-    DSTU8(8, 366),
-
-    /**
-     * DSTU4145-9.
-     */
-    DSTU9(9, 431);
+    DSTU8(8, 366);
 
     /**
      * Curve Base.

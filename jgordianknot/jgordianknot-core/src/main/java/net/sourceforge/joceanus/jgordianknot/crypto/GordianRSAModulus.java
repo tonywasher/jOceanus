@@ -23,6 +23,11 @@ import java.math.BigInteger;
  */
 public enum GordianRSAModulus {
     /**
+     * 2048.
+     */
+    MOD2048(2048),
+
+    /**
      * 1024.
      */
     MOD1024(1024),
@@ -31,11 +36,6 @@ public enum GordianRSAModulus {
      * 1536.
      */
     MOD1536(1536),
-
-    /**
-     * 2048.
-     */
-    MOD2048(2048),
 
     /**
      * 3072.

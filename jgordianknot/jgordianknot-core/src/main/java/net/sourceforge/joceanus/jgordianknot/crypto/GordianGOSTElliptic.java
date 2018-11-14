@@ -20,12 +20,7 @@ package net.sourceforge.joceanus.jgordianknot.crypto;
  * Named GOST-2012 Elliptic Curves.
  */
 public enum GordianGOSTElliptic implements GordianElliptic {
-    /**
-     * 256-paramSetA.
-     */
-    GOST256A("Tc26-Gost-3410-12-256-paramSetA", 256),
-
-    /**
+     /**
      * 512-paramSetA.
      */
     GOST512A("Tc26-Gost-3410-12-512-paramSetA", 512),
@@ -38,7 +33,12 @@ public enum GordianGOSTElliptic implements GordianElliptic {
     /**
      * 512-paramSetC.
      */
-    GOST512C("Tc26-Gost-3410-12-512-paramSetC", 512);
+    GOST512C("Tc26-Gost-3410-12-512-paramSetC", 512),
+
+    /**
+     * 256-paramSetA.
+     */
+    GOST256A("Tc26-Gost-3410-12-256-paramSetA", 256);
 
     /**
      * The curve name.

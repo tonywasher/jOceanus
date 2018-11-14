@@ -129,7 +129,7 @@ public abstract class GordianAgreement {
      * Create a new initVector.
      * @return the initVector
      */
-    protected byte[] newInitVector() {
+    byte[] newInitVector() {
         theInitVector = new byte[INITLEN];
         theFactory.getRandom().nextBytes(theInitVector);
         return Arrays.copyOf(theInitVector, theInitVector.length);
@@ -226,6 +226,7 @@ public abstract class GordianAgreement {
                                  ? Arrays.copyOf(theKey, pLength)
                                  : theKey;
             System.arraycopy(myKey, 0, pBuffer, pOffset, pLength);
+            Arrays.fill(theKey, (byte) 0);
             return pLength;
         }
 

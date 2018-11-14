@@ -214,6 +214,11 @@ public final class GordianMcElieceKeySpec {
      */
     public enum GordianMcElieceDigestType {
         /**
+         * SHA256.
+         */
+        SHA256(McElieceCCA2KeyGenParameterSpec.SHA256),
+
+        /**
          * SHA1.
          */
         SHA1(McElieceCCA2KeyGenParameterSpec.SHA1),
@@ -222,11 +227,6 @@ public final class GordianMcElieceKeySpec {
          * SHA224.
          */
         SHA224(McElieceCCA2KeyGenParameterSpec.SHA224),
-
-        /**
-         * SHA256.
-         */
-        SHA256(McElieceCCA2KeyGenParameterSpec.SHA256),
 
         /**
          * SHA384.

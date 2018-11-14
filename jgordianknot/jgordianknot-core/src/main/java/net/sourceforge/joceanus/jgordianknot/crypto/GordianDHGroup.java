@@ -24,6 +24,11 @@ import org.bouncycastle.crypto.params.DHParameters;
  */
 public enum GordianDHGroup {
     /**
+     * std 2048.
+     */
+    STD2048(DHStandardGroups.rfc3526_2048),
+
+    /**
      * std 1024.
      */
     STD1024(DHStandardGroups.rfc2409_1024),
@@ -32,11 +37,6 @@ public enum GordianDHGroup {
      * std 2048.
      */
     STD1536(DHStandardGroups.rfc3526_1536),
-
-    /**
-     * std 2048.
-     */
-    STD2048(DHStandardGroups.rfc3526_2048),
 
     /**
      * ffde 2048.

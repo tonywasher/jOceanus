@@ -32,7 +32,7 @@ public class CoeusLendingWorksTransactionParser
      * Header fields.
      */
     private static final String[] HEADERS =
-    { "Date", "Type", "LoanID", "LoanTerm", "Amount" };
+    { "Date", "Type", "ChunkId", "Term", "Amount" };
 
     /**
      * The market.
