@@ -27,6 +27,7 @@ import org.bouncycastle.asn1.ASN1Sequence;
 import org.bouncycastle.asn1.DERSequence;
 import org.bouncycastle.crypto.DSA;
 import org.bouncycastle.crypto.Digest;
+import org.bouncycastle.crypto.Xof;
 import org.bouncycastle.crypto.digests.NullDigest;
 import org.bouncycastle.crypto.signers.DSASigner;
 import org.bouncycastle.crypto.signers.ECDSASigner;

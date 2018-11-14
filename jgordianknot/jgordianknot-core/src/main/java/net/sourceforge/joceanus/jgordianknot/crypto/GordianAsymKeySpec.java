@@ -16,6 +16,9 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jgordianknot.crypto;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import net.sourceforge.joceanus.jtethys.TethysDataConverter;
 
 /**
@@ -58,7 +61,7 @@ public final class GordianAsymKeySpec {
      * @param pModulus the modulus
      * @return the KeySpec
      */
-    public static GordianAsymKeySpec rsa(final GordianModulus pModulus) {
+    public static GordianAsymKeySpec rsa(final GordianRSAModulus pModulus) {
         return new GordianAsymKeySpec(GordianAsymKeyType.RSA, pModulus);
     }
 
@@ -109,11 +112,11 @@ public final class GordianAsymKeySpec {
 
     /**
      * Create DHKey.
-     * @param pModulus the modulus
+     * @param pGroup the group
      * @return the KeySpec
      */
-    public static GordianAsymKeySpec dh(final GordianModulus pModulus) {
-        return new GordianAsymKeySpec(GordianAsymKeyType.DIFFIEHELLMAN, pModulus);
+    public static GordianAsymKeySpec dh(final GordianDHGroup pGroup) {
+        return new GordianAsymKeySpec(GordianAsymKeyType.DIFFIEHELLMAN, pGroup);
     }
 
     /**
@@ -226,12 +229,12 @@ public final class GordianAsymKeySpec {
     }
 
     /**
-     * Obtain the modulus length.
-     * @return the length.
+     * Obtain the RSAmodulus.
+     * @return the modulus.
      */
-    public GordianModulus getModulus() {
-        return theSubKeyType instanceof GordianModulus
-                                                       ? (GordianModulus) theSubKeyType
+    public GordianRSAModulus getModulus() {
+        return theSubKeyType instanceof GordianRSAModulus
+                                                       ? (GordianRSAModulus) theSubKeyType
                                                        : null;
     }
 
@@ -243,6 +246,16 @@ public final class GordianAsymKeySpec {
         return theSubKeyType instanceof GordianDSAKeyType
                                                           ? (GordianDSAKeyType) theSubKeyType
                                                           : null;
+    }
+
+    /**
+     * Obtain the DSA keyType.
+     * @return the keyType.
+     */
+    public GordianDHGroup getDHGroup() {
+        return theSubKeyType instanceof GordianDHGroup
+               ? (GordianDHGroup) theSubKeyType
+               : null;
     }
 
     /**
@@ -357,5 +370,143 @@ public final class GordianAsymKeySpec {
             hashCode += theSubKeyType.hashCode();
         }
         return hashCode;
+    }
+
+    /**
+     * Check subKeyType validity.
+     * @return valid true/false
+     */
+    public boolean checkSubKeyType() {
+        switch (theKeyType) {
+            case RSA:
+                return theSubKeyType instanceof GordianRSAModulus;
+            case DSA:
+                return theSubKeyType instanceof GordianDSAKeyType;
+            case DIFFIEHELLMAN:
+                return theSubKeyType instanceof GordianDHGroup;
+            case EC:
+                return theSubKeyType instanceof GordianDSAElliptic;
+            case SM2:
+                return theSubKeyType instanceof GordianSM2Elliptic;
+            case GOST2012:
+                return theSubKeyType instanceof GordianGOSTElliptic;
+            case DSTU4145:
+                return theSubKeyType instanceof GordianDSTU4145Elliptic;
+            case SPHINCS:
+                return theSubKeyType instanceof GordianSPHINCSKeyType;
+            case MCELIECE:
+                return theSubKeyType instanceof GordianMcElieceKeySpec;
+            case XMSS:
+            case XMSSMT:
+                return theSubKeyType instanceof GordianXMSSKeyType;
+            case QTESLA:
+                return theSubKeyType instanceof GordianQTESLAKeyType;
+            case ED25519:
+            case ED448:
+            case X25519:
+            case X448:
+            case RAINBOW:
+            case NEWHOPE:
+                return theSubKeyType == null;
+            default:
+                throw new IllegalArgumentException();
+        }
+    }
+
+    /**
+     * Obtain a list of all possible specs for the keyType.
+     * @param pKeyType the keyType
+     * @return the list
+     */
+    public static List<GordianAsymKeySpec> listPossibleKeySpecs(final GordianAsymKeyType pKeyType) {
+        /* Create the list */
+        final List<GordianAsymKeySpec> mySpecs = new ArrayList<>();
+
+        /* Switch on AsymKeyType */
+        switch (pKeyType) {
+            case RSA:
+                for (final GordianRSAModulus myModulus : GordianRSAModulus.values()) {
+                    mySpecs.add(GordianAsymKeySpec.rsa(myModulus));
+                }
+                break;
+            case DSA:
+                for (final GordianDSAKeyType myKeyType : GordianDSAKeyType.values()) {
+                    mySpecs.add(GordianAsymKeySpec.dsa(myKeyType));
+                }
+                break;
+            case DIFFIEHELLMAN:
+                for (final GordianDHGroup myGroup : GordianDHGroup.values()) {
+                    mySpecs.add(GordianAsymKeySpec.dh(myGroup));
+                }
+                break;
+            case EC:
+                for (final GordianDSAElliptic myCurve : GordianDSAElliptic.values()) {
+                    mySpecs.add(GordianAsymKeySpec.ec(myCurve));
+                }
+                break;
+            case SM2:
+                for (final GordianSM2Elliptic myCurve : GordianSM2Elliptic.values()) {
+                    mySpecs.add(GordianAsymKeySpec.sm2(myCurve));
+                }
+                break;
+            case GOST2012:
+                for (final GordianGOSTElliptic myCurve : GordianGOSTElliptic.values()) {
+                    mySpecs.add(GordianAsymKeySpec.gost2012(myCurve));
+                }
+                break;
+            case DSTU4145:
+                for (final GordianDSTU4145Elliptic myCurve : GordianDSTU4145Elliptic.values()) {
+                    mySpecs.add(GordianAsymKeySpec.dstu4145(myCurve));
+                }
+                break;
+            case ED25519:
+                mySpecs.add(GordianAsymKeySpec.ed25519());
+                break;
+            case ED448:
+                mySpecs.add(GordianAsymKeySpec.ed448());
+                break;
+            case X25519:
+                mySpecs.add(GordianAsymKeySpec.x25519());
+                break;
+            case X448:
+                mySpecs.add(GordianAsymKeySpec.x448());
+                break;
+            case RAINBOW:
+                mySpecs.add(GordianAsymKeySpec.rainbow());
+                break;
+            case NEWHOPE:
+                mySpecs.add(GordianAsymKeySpec.newHope());
+                break;
+            case QTESLA:
+                for (final GordianQTESLAKeyType myType : GordianQTESLAKeyType.values()) {
+                    mySpecs.add(GordianAsymKeySpec.qTESLA(myType));
+                }
+                break;
+            case SPHINCS:
+                for (final GordianSPHINCSKeyType myType : GordianSPHINCSKeyType.values()) {
+                    mySpecs.add(GordianAsymKeySpec.sphincs(myType));
+                }
+                break;
+            case XMSS:
+                for (final GordianXMSSKeyType myType : GordianXMSSKeyType.values()) {
+                    mySpecs.add(GordianAsymKeySpec.xmss(myType));
+                }
+                break;
+            case XMSSMT:
+                for (final GordianXMSSKeyType myType : GordianXMSSKeyType.values()) {
+                    mySpecs.add(GordianAsymKeySpec.xmssmt(myType));
+                }
+                break;
+            case MCELIECE:
+                for (final GordianMcElieceKeySpec mySpec : GordianMcElieceKeySpec.listPossibleKeySpecs()) {
+                    mySpecs.add(GordianAsymKeySpec.mcEliece(mySpec));
+                }
+                break;
+            default:
+                break;
+        }
+
+        /* Return the list */
+        return mySpecs;
     }
 }

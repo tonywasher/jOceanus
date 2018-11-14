@@ -98,8 +98,8 @@ public abstract class GordianAgreement {
      */
     protected void checkKeyPair(final GordianKeyPair pKeyPair) throws OceanusException {
         /* Check that the KeyPair is valid */
-        if (pKeyPair.getKeySpec().getKeyType() != theSpec.getAsymKeyType()) {
-            throw new GordianDataException("Invalid KeyPair");
+        if (!theFactory.validAgreementSpecForKeyPair(pKeyPair, theSpec)) {
+            throw new GordianDataException("Incorrect KeyPair type");
         }
     }
 
@@ -129,7 +129,7 @@ public abstract class GordianAgreement {
      * Create a new initVector.
      * @return the initVector
      */
-    protected byte[] newInitVector() {
+    byte[] newInitVector() {
         theInitVector = new byte[INITLEN];
         theFactory.getRandom().nextBytes(theInitVector);
         return Arrays.copyOf(theInitVector, theInitVector.length);
@@ -226,6 +226,7 @@ public abstract class GordianAgreement {
                                  ? Arrays.copyOf(theKey, pLength)
                                  : theKey;
             System.arraycopy(myKey, 0, pBuffer, pOffset, pLength);
+            Arrays.fill(theKey, (byte) 0);
             return pLength;
         }
 
@@ -420,7 +421,7 @@ public abstract class GordianAgreement {
          * @return the composite message
          * @throws OceanusException on error
          */
-        protected byte[] initiateAgreement(final GordianKeyPair pInitiator) throws OceanusException {
+        public byte[] initiateAgreement(final GordianKeyPair pInitiator) throws OceanusException {
             /* Check the keyPair */
             checkKeyPair(pInitiator);
 
@@ -478,6 +479,7 @@ public abstract class GordianAgreement {
             /* Obtain keySpec */
             final int myBaseLen = pMessage.length - INITLEN;
             final byte[] myBase = new byte[myBaseLen];
+            System.arraycopy(pMessage, INITLEN, myBase, 0, myBaseLen);
             final X509EncodedKeySpec myKeySpec = new X509EncodedKeySpec(myBase);
 
             /* Create ephemeral key */

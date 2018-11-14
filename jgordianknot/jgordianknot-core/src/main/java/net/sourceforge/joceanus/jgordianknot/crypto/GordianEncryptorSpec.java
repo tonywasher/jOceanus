@@ -16,13 +16,16 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jgordianknot.crypto;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianMcElieceKeySpec.GordianMcElieceEncryptionType;
 import net.sourceforge.joceanus.jtethys.TethysDataConverter;
 
 /**
  * Asymmetric Encryption Specification.
  */
-public class GordianEncryptorSpec {
+public final class GordianEncryptorSpec {
     /**
      * The Separator.
      */
@@ -149,6 +152,24 @@ public class GordianEncryptorSpec {
                : null;
     }
 
+    /**
+     * Is the Spec supported?
+     * @return true/false
+     */
+    public boolean isSupported() {
+        switch (theAsymKeyType) {
+            case RSA:
+                final GordianDigestSpec mySpec = getDigestSpec();
+                return mySpec != null && GordianDigestType.SHA2.equals(mySpec.getDigestType()) && mySpec.getStateLength() == null;
+            case EC:
+            case SM2:
+            case MCELIECE:
+                return true;
+            default:
+                return false;
+        }
+    }
+
     @Override
     public String toString() {
         /* If we have not yet loaded the name */
@@ -200,5 +221,49 @@ public class GordianEncryptorSpec {
             hashCode += theEncryptorType.hashCode();
         }
         return hashCode;
+    }
+
+    /**
+     * Obtain a list of all possible agreements for the keyPair.
+     * @param pKeyPair the keyPair
+     * @return the list
+     */
+    public static List<GordianEncryptorSpec> listPossibleEncryptors(final GordianKeyPair pKeyPair) {
+        /* Create list */
+        final List<GordianEncryptorSpec> myEncryptors = new ArrayList<>();
+
+        /* Switch on AsymKeyType */
+        final GordianAsymKeyType myType = pKeyPair.getKeySpec().getKeyType();
+        switch (myType) {
+            case RSA:
+                myEncryptors.add(GordianEncryptorSpec.rsa(GordianDigestSpec.sha2(GordianLength.LEN_224)));
+                myEncryptors.add(GordianEncryptorSpec.rsa(GordianDigestSpec.sha2(GordianLength.LEN_256)));
+                myEncryptors.add(GordianEncryptorSpec.rsa(GordianDigestSpec.sha2(GordianLength.LEN_384)));
+                myEncryptors.add(GordianEncryptorSpec.rsa(GordianDigestSpec.sha2(GordianLength.LEN_512)));
+                break;
+            case SM2:
+                myEncryptors.add(GordianEncryptorSpec.sm2());
+                break;
+            case EC:
+                myEncryptors.add(GordianEncryptorSpec.ec());
+                break;
+            case GOST2012:
+                myEncryptors.add(GordianEncryptorSpec.gost2012());
+                break;
+            case DSTU4145:
+                myEncryptors.add(GordianEncryptorSpec.dstu4145());
+                break;
+            case MCELIECE:
+                myEncryptors.add(GordianEncryptorSpec.mcEliece(GordianMcElieceEncryptionType.STANDARD));
+                myEncryptors.add(GordianEncryptorSpec.mcEliece(GordianMcElieceEncryptionType.FUJISAKI));
+                myEncryptors.add(GordianEncryptorSpec.mcEliece(GordianMcElieceEncryptionType.KOBARAIMAI));
+                myEncryptors.add(GordianEncryptorSpec.mcEliece(GordianMcElieceEncryptionType.POINTCHEVAL));
+                break;
+            default:
+                break;
+        }
+
+        /* Return the list */
+        return myEncryptors;
     }
 }

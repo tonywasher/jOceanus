@@ -18,7 +18,6 @@ package net.sourceforge.joceanus.jgordianknot.crypto;
 
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianCipherSpec.GordianStreamCipherSpec;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianCipherSpec.GordianSymCipherSpec;
-import net.sourceforge.joceanus.jgordianknot.crypto.GordianKeyEncapsulation.GordianKEMSender;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
 import java.security.SecureRandom;
@@ -707,34 +706,36 @@ public abstract class GordianFactory
     public abstract GordianSignature createSigner(GordianSignatureSpec pSignatureSpec) throws OceanusException;
 
     /**
-     * Obtain predicate for keyExchange.
+     * Obtain predicate for keyAgreement.
      * @return the predicate
      */
-    public BiPredicate<GordianKeyPair, GordianDigestSpec> supportedKeyExchanges() {
-        return this::validExchangeSpec;
+    public Predicate<GordianAgreementSpec> supportedAgreements() {
+        return this::validAgreementSpec;
     }
 
     /**
-     * Create KEMessage.
-     * @param pKeyPair the keyPair
-     * @param pDigestSpec the digestSpec
-     * @return the KEMSender
+     * Create Agreement.
+     * @param pSpec the agreementSpec
+     * @return the Agreement
      * @throws OceanusException on error
      */
-    public abstract GordianKEMSender createKEMessage(GordianKeyPair pKeyPair,
-                                                     GordianDigestSpec pDigestSpec) throws OceanusException;
+    public abstract GordianAgreement createAgreement(GordianAgreementSpec pSpec) throws OceanusException;
 
     /**
-     * Parse KEMessage.
-     * @param pKeyPair the keyPair
-     * @param pDigestSpec the digestSpec
-     * @param pMessage the cipherText
-     * @return the parsed KEMessage
+     * Obtain predicate for Encryptor.
+     * @return the predicate
+     */
+    public Predicate<GordianEncryptorSpec> supportedEncryptors() {
+        return this::validEncryptorSpec;
+    }
+
+    /**
+     * Create Encryptor.
+     * @param pSpec the encryptorSpec
+     * @return the Encryptor
      * @throws OceanusException on error
      */
-    public abstract GordianKeyEncapsulation parseKEMessage(GordianKeyPair pKeyPair,
-                                                           GordianDigestSpec pDigestSpec,
-                                                           byte[] pMessage) throws OceanusException;
+    public abstract GordianEncryptor createEncryptor(GordianEncryptorSpec pSpec) throws OceanusException;
 
     /**
      * Build Invalid text string.
@@ -1060,7 +1061,7 @@ public abstract class GordianFactory
     /**
      * Check SignatureSpec and KeyPair combination.
      * @param pKeyPair the keyPair
-     * @param pSignSpec the macSpec
+     * @param pSignSpec the signSpec
      * @return true/false
      */
     public boolean validSignatureSpecForKeyPair(final GordianKeyPair pKeyPair,
@@ -1078,13 +1079,24 @@ public abstract class GordianFactory
         /* Disallow ECNR if keySize is smaller than digestSize */
         final GordianAsymKeySpec myKeySpec = pKeyPair.getKeySpec();
         if (GordianSignatureType.NR.equals(pSignSpec.getSignatureType())) {
-            return myKeySpec.getElliptic().getKeySize() >= pSignSpec.getDigestSpec().getDigestLength().getLength();
+            return myKeySpec.getElliptic().getKeySize() > pSignSpec.getDigestSpec().getDigestLength().getLength();
         }
 
         /* Disallow incorrectly sized digest for GOST */
         if (GordianAsymKeyType.GOST2012.equals(myKeySpec.getKeyType())) {
             final int myDigestLen = pSignSpec.getDigestSpec().getDigestLength().getLength();
             return myKeySpec.getElliptic().getKeySize() == myDigestLen;
+        }
+
+        /* If this is a RSA PSS Signature */
+        if (GordianAsymKeyType.RSA.equals(myKeySpec.getKeyType())
+            && GordianSignatureType.PSS.equals(pSignSpec.getSignatureType())) {
+            /* The digest length cannot be too large wrt to the modulus */
+            int myLen = pSignSpec.getDigestSpec().getDigestLength().getByteLength();
+            myLen = (myLen + 1) * Byte.SIZE;
+            if (myKeySpec.getModulus().getLength() < (myLen << 1)) {
+                return false;
+            }
         }
 
         /* OK */
@@ -1136,24 +1148,95 @@ public abstract class GordianFactory
     }
 
     /**
-     * Check ExchangeSpec.
-     * @param pKeyPair the keyPair
-     * @param pDigestSpec the digestSpec
+     * Check AgreementSpec.
+     * @param pSpec the agreementSpec
      * @return true/false
      */
-    protected boolean validExchangeSpec(final GordianKeyPair pKeyPair,
-                                        final GordianDigestSpec pDigestSpec) {
-        /* Switch on KeyType */
-        switch (pKeyPair.getKeySpec().getKeyType()) {
-            case RSA:
-            case EC:
-            case SM2:
-            case DIFFIEHELLMAN:
-            case NEWHOPE:
-                return supportedDigestSpecs().test(pDigestSpec);
-            default:
-                return false;
+    protected boolean validAgreementSpec(final GordianAgreementSpec pSpec) {
+        /* Check that spec is supported */
+        return pSpec.isSupported();
+    }
+
+    /**
+     * Check AgreementSpec and KeyPair combination.
+     * @param pKeyPair the keyPair
+     * @param pAgreementSpec the macSpec
+     * @return true/false
+     */
+    public boolean validAgreementSpecForKeyPair(final GordianKeyPair pKeyPair,
+                                                final GordianAgreementSpec pAgreementSpec) {
+        /* Check agreement matches keyPair */
+        if (pAgreementSpec.getAsymKeyType() != pKeyPair.getKeySpec().getKeyType()) {
+            return false;
         }
+
+        /* Check that the agreementSpec is supported */
+        if (!validAgreementSpec(pAgreementSpec)) {
+            return false;
+        }
+
+        /* Disallow MQV if group does not support it */
+        final GordianAsymKeySpec myKeySpec = pKeyPair.getKeySpec();
+        if (GordianAsymKeyType.DIFFIEHELLMAN.equals(myKeySpec.getKeyType())
+            && GordianAgreementType.MQV.equals(pAgreementSpec.getAgreementType())) {
+            return myKeySpec.getDHGroup().isMQV();
+        }
+
+        /* OK */
+        return true;
+    }
+
+    /**
+     * Check EncryptorSpec.
+     * @param pSpec the encryptorSpec
+     * @return true/false
+     */
+    protected boolean validEncryptorSpec(final GordianEncryptorSpec pSpec) {
+        /* Check that spec is supported */
+        return pSpec.isSupported();
+    }
+
+    /**
+     * Check EncryptorSpec and KeyPair combination.
+     * @param pKeyPair the keyPair
+     * @param pEncryptorSpec the macSpec
+     * @return true/false
+     */
+    public boolean validEncryptorSpecForKeyPair(final GordianKeyPair pKeyPair,
+                                                final GordianEncryptorSpec pEncryptorSpec) {
+        /* Check encryptor matches keyPair */
+        if (pEncryptorSpec.getKeyType() != pKeyPair.getKeySpec().getKeyType()) {
+            return false;
+        }
+
+        /* Check that the encryptorSpec is supported */
+        if (!validEncryptorSpec(pEncryptorSpec)) {
+            return false;
+        }
+
+        /* Disallow EC if the curve does not support encryption */
+        final GordianAsymKeySpec myKeySpec = pKeyPair.getKeySpec();
+        if (GordianAsymKeyType.EC.equals(myKeySpec.getKeyType())) {
+            return myKeySpec.getElliptic().canEncrypt();
+        }
+
+        /* Disallow McEliece if it is the wrong style key */
+        if (GordianAsymKeyType.MCELIECE.equals(myKeySpec.getKeyType())) {
+            return GordianMcElieceKeySpec.checkValidEncryptionType(myKeySpec.getMcElieceSpec(), pEncryptorSpec.getMcElieceType());
+        }
+
+        /* If this is a RSA encryption */
+        if (GordianAsymKeyType.RSA.equals(myKeySpec.getKeyType())) {
+            /* The digest length cannot be too large wrt to the modulus */
+            int myLen = pEncryptorSpec.getDigestSpec().getDigestLength().getByteLength();
+            myLen = (myLen + 1) * Byte.SIZE;
+            if (myKeySpec.getModulus().getLength() < (myLen << 1)) {
+                return false;
+            }
+        }
+
+        /* OK */
+        return true;
     }
 
     /**

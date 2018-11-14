@@ -20,21 +20,21 @@ import java.io.IOException;
 import java.math.BigInteger;
 import java.security.spec.PKCS8EncodedKeySpec;
 import java.security.spec.X509EncodedKeySpec;
+import java.util.Arrays;
 
-import org.bouncycastle.asn1.DERNull;
-import org.bouncycastle.asn1.pkcs.PKCSObjectIdentifiers;
+import javax.crypto.spec.PSource;
+
 import org.bouncycastle.asn1.pkcs.PrivateKeyInfo;
-import org.bouncycastle.asn1.pkcs.RSAPrivateKey;
-import org.bouncycastle.asn1.pkcs.RSAPublicKey;
-import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
 import org.bouncycastle.asn1.x509.SubjectPublicKeyInfo;
+import org.bouncycastle.crypto.AsymmetricBlockCipher;
 import org.bouncycastle.crypto.AsymmetricCipherKeyPair;
 import org.bouncycastle.crypto.CipherParameters;
 import org.bouncycastle.crypto.CryptoException;
 import org.bouncycastle.crypto.DataLengthException;
+import org.bouncycastle.crypto.InvalidCipherTextException;
 import org.bouncycastle.crypto.Signer;
+import org.bouncycastle.crypto.encodings.OAEPEncoding;
 import org.bouncycastle.crypto.engines.RSABlindedEngine;
-import org.bouncycastle.crypto.engines.RSAEngine;
 import org.bouncycastle.crypto.generators.RSAKeyPairGenerator;
 import org.bouncycastle.crypto.kems.RSAKeyEncapsulation;
 import org.bouncycastle.crypto.params.AsymmetricKeyParameter;
@@ -44,23 +44,26 @@ import org.bouncycastle.crypto.params.RSAKeyGenerationParameters;
 import org.bouncycastle.crypto.params.RSAKeyParameters;
 import org.bouncycastle.crypto.params.RSAPrivateCrtKeyParameters;
 import org.bouncycastle.crypto.signers.ISO9796d2Signer;
+import org.bouncycastle.crypto.signers.ISOTrailers;
 import org.bouncycastle.crypto.signers.PSSSigner;
 import org.bouncycastle.crypto.signers.X931Signer;
-import org.bouncycastle.jcajce.provider.asymmetric.util.KeyUtil;
+import org.bouncycastle.crypto.util.PrivateKeyFactory;
+import org.bouncycastle.crypto.util.PrivateKeyInfoFactory;
+import org.bouncycastle.crypto.util.PublicKeyFactory;
+import org.bouncycastle.crypto.util.SubjectPublicKeyInfoFactory;
 
 import net.sourceforge.joceanus.jgordianknot.GordianCryptoException;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianAgreement.GordianEncapsulationAgreement;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianAgreementSpec;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianAsymKeySpec;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianDigestSpec;
-import net.sourceforge.joceanus.jgordianknot.crypto.GordianKeyEncapsulation;
-import net.sourceforge.joceanus.jgordianknot.crypto.GordianKeyEncapsulation.GordianKEMSender;
+import net.sourceforge.joceanus.jgordianknot.crypto.GordianEncryptor;
+import net.sourceforge.joceanus.jgordianknot.crypto.GordianEncryptorSpec;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianKeyPair;
-import net.sourceforge.joceanus.jgordianknot.crypto.GordianModulus;
+import net.sourceforge.joceanus.jgordianknot.crypto.GordianRSAModulus;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianSignatureSpec;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianSignatureType;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianSignature;
-import net.sourceforge.joceanus.jgordianknot.crypto.bc.BouncyKeyEncapsulation.BouncyKeyDerivation;
 import net.sourceforge.joceanus.jgordianknot.crypto.bc.BouncyKeyPair.BouncyPrivateKey;
 import net.sourceforge.joceanus.jgordianknot.crypto.bc.BouncyKeyPair.BouncyPublicKey;
 import net.sourceforge.joceanus.jtethys.OceanusException;
@@ -204,7 +207,7 @@ public final class BouncyRSAAsymKey {
 
             /* Create and initialise the generator */
             theGenerator = new RSAKeyPairGenerator();
-            final RSAKeyGenerationParameters myParams = new RSAKeyGenerationParameters(RSA_EXPONENT, getRandom(), pKeySpec.getModulus().getModulus(), PRIME_CERTAINTY);
+            final RSAKeyGenerationParameters myParams = new RSAKeyGenerationParameters(RSA_EXPONENT, getRandom(), pKeySpec.getModulus().getLength(), PRIME_CERTAINTY);
             theGenerator.init(myParams);
         }
 
@@ -218,12 +221,14 @@ public final class BouncyRSAAsymKey {
 
         @Override
         public PKCS8EncodedKeySpec getPKCS8Encoding(final GordianKeyPair pKeyPair) throws OceanusException {
-            final BouncyRSAPrivateKey myPrivateKey = (BouncyRSAPrivateKey) getPrivateKey(pKeyPair);
-            final RSAPrivateCrtKeyParameters myParms = myPrivateKey.getPrivateKey();
-            final byte[] myBytes = KeyUtil.getEncodedPrivateKeyInfo(new AlgorithmIdentifier(PKCSObjectIdentifiers.rsaEncryption, DERNull.INSTANCE),
-                    new RSAPrivateKey(myParms.getModulus(), myParms.getPublicExponent(), myParms.getExponent(),
-                            myParms.getP(), myParms.getQ(), myParms.getDP(), myParms.getDQ(), myParms.getQInv()));
-            return new PKCS8EncodedKeySpec(myBytes);
+            try {
+                final BouncyRSAPrivateKey myPrivateKey = (BouncyRSAPrivateKey) getPrivateKey(pKeyPair);
+                final RSAPrivateCrtKeyParameters myParms = myPrivateKey.getPrivateKey();
+                final PrivateKeyInfo myInfo = PrivateKeyInfoFactory.createPrivateKeyInfo(myParms);
+                return new PKCS8EncodedKeySpec(myInfo.getEncoded());
+            } catch (IOException e) {
+                throw new GordianCryptoException(ERROR_PARSE, e);
+            }
         }
 
         @Override
@@ -231,9 +236,7 @@ public final class BouncyRSAAsymKey {
                                            final PKCS8EncodedKeySpec pPrivateKey) throws OceanusException {
             try {
                 final PrivateKeyInfo myInfo = PrivateKeyInfo.getInstance(pPrivateKey.getEncoded());
-                final RSAPrivateKey myKey = RSAPrivateKey.getInstance(myInfo.parsePrivateKey());
-                final RSAPrivateCrtKeyParameters myParms = new RSAPrivateCrtKeyParameters(myKey.getModulus(), myKey.getPublicExponent(), myKey.getPrivateExponent(),
-                        myKey.getPrime1(), myKey.getPrime2(), myKey.getExponent1(), myKey.getExponent2(), myKey.getCoefficient());
+                final RSAPrivateCrtKeyParameters myParms = (RSAPrivateCrtKeyParameters) PrivateKeyFactory.createKey(myInfo);
                 final BouncyRSAPrivateKey myPrivate = new BouncyRSAPrivateKey(getKeySpec(), myParms);
                 final BouncyRSAPublicKey myPublic = derivePublicKey(pPublicKey);
                 return new BouncyKeyPair(myPublic, myPrivate);
@@ -244,11 +247,14 @@ public final class BouncyRSAAsymKey {
 
         @Override
         public X509EncodedKeySpec getX509Encoding(final GordianKeyPair pKeyPair) throws OceanusException {
-            final BouncyRSAPublicKey myPublicKey = (BouncyRSAPublicKey) getPublicKey(pKeyPair);
-            final RSAKeyParameters myParms = myPublicKey.getPublicKey();
-            final byte[] myBytes = KeyUtil.getEncodedSubjectPublicKeyInfo(new AlgorithmIdentifier(PKCSObjectIdentifiers.rsaEncryption, DERNull.INSTANCE),
-                    new RSAPublicKey(myParms.getModulus(), myParms.getExponent()));
-            return new X509EncodedKeySpec(myBytes);
+            try {
+                final BouncyRSAPublicKey myPublicKey = (BouncyRSAPublicKey) getPublicKey(pKeyPair);
+                final RSAKeyParameters myParms = myPublicKey.getPublicKey();
+                final SubjectPublicKeyInfo myInfo = SubjectPublicKeyInfoFactory.createSubjectPublicKeyInfo(myParms);
+                return new X509EncodedKeySpec(myInfo.getEncoded());
+            } catch (IOException e) {
+                throw new GordianCryptoException(ERROR_PARSE, e);
+            }
         }
 
         @Override
@@ -266,8 +272,7 @@ public final class BouncyRSAAsymKey {
         private BouncyRSAPublicKey derivePublicKey(final X509EncodedKeySpec pEncodedKey) throws OceanusException {
             try {
                 final SubjectPublicKeyInfo myInfo = SubjectPublicKeyInfo.getInstance(pEncodedKey.getEncoded());
-                final RSAPublicKey myKey = RSAPublicKey.getInstance(myInfo.parsePublicKey());
-                final RSAKeyParameters myParms = new RSAKeyParameters(false, myKey.getModulus(), myKey.getPublicExponent());
+                final RSAKeyParameters myParms = (RSAKeyParameters) PublicKeyFactory.createKey(myInfo);
                 return new BouncyRSAPublicKey(getKeySpec(), myParms);
             } catch (IOException e) {
                 throw new GordianCryptoException(ERROR_PARSE, e);
@@ -280,11 +285,6 @@ public final class BouncyRSAAsymKey {
      */
     private abstract static class BouncyPSSSignature
             extends GordianSignature {
-        /**
-         * MGF1 Salt length.
-         */
-        private static final int MGF1_SALTLEN = 64;
-
         /**
          * The RSA Signer.
          */
@@ -342,17 +342,19 @@ public final class BouncyRSAAsymKey {
         private static Signer getRSASigner(final BouncyFactory pFactory,
                                            final GordianSignatureSpec pSpec) throws OceanusException {
             /* Create the digest */
-            final BouncyDigest myDigest = pFactory.createDigest(pSpec.getDigestSpec());
+            final GordianDigestSpec myDigestSpec = pSpec.getDigestSpec();
+            final BouncyDigest myDigest = pFactory.createDigest(myDigestSpec);
+            final int mySaltLength = myDigestSpec.getDigestLength().getByteLength();
 
             /* Access the signature type */
             switch (pSpec.getSignatureType()) {
                 case ISO9796D2:
                     return new ISO9796d2Signer(new RSABlindedEngine(), myDigest.getDigest(), true);
                 case X931:
-                    return new X931Signer(new RSABlindedEngine(), myDigest.getDigest(), true);
+                    return new X931Signer(new RSABlindedEngine(), myDigest.getDigest(), ISOTrailers.noTrailerAvailable(myDigest.getDigest()));
                 case PSS:
                 default:
-                    return new PSSSigner(new RSAEngine(), myDigest.getDigest(), MGF1_SALTLEN);
+                    return new PSSSigner(new RSABlindedEngine(), myDigest.getDigest(), mySaltLength);
             }
         }
     }
@@ -427,100 +429,28 @@ public final class BouncyRSAAsymKey {
     }
 
     /**
-     * ClientRSA Encapsulation.
-     */
-    public static class BouncyRSAKEMSender
-            extends GordianKEMSender {
-        /**
-         * Constructor.
-         * @param pFactory the security factory
-         * @param pPublicKey the target publicKey
-         * @param pDigestSpec the digestSpec
-         * @throws OceanusException on error
-         */
-        protected BouncyRSAKEMSender(final BouncyFactory pFactory,
-                                     final BouncyRSAPublicKey pPublicKey,
-                                     final GordianDigestSpec pDigestSpec) throws OceanusException {
-            /* Initialise underlying class */
-            super(pFactory);
-
-            /* Create Key Encapsulation */
-            final BouncyKeyDerivation myKDF = new BouncyKeyDerivation(getDigest(pDigestSpec));
-            final RSAKeyEncapsulation myKEMS = new RSAKeyEncapsulation(myKDF, getRandom());
-
-            /* Initialise the encapsulation */
-            myKEMS.init(pPublicKey.getPublicKey());
-
-            /* Create initVector */
-            final byte[] myInitVector = new byte[INITLEN];
-            getRandom().nextBytes(myInitVector);
-
-            /* Create cipherText */
-            final GordianModulus myModulus = pPublicKey.getKeySpec().getModulus();
-            final int myLen = myModulus.getModulus() / Byte.SIZE;
-            final byte[] myCipherText = new byte[myLen + INITLEN];
-            final KeyParameter myParms = (KeyParameter) myKEMS.encrypt(myCipherText, INITLEN, myKDF.getKeyLen());
-            System.arraycopy(myInitVector, 0, myCipherText, 0, INITLEN);
-
-            /* Store secret and cipherText */
-            storeSecret(myParms.getKey(), myInitVector);
-            storeCipherText(myCipherText);
-        }
-    }
-
-    /**
-     * ServerRSA Encapsulation.
-     */
-    public static class BouncyRSAKEMReceiver
-            extends GordianKeyEncapsulation {
-        /**
-         * Constructor.
-         * @param pFactory the security factory
-         * @param pPrivateKey the target privateKey
-         * @param pDigestSpec the digestSpec
-         * @param pCipherText the cipherText
-         * @throws OceanusException on error
-         */
-        protected BouncyRSAKEMReceiver(final BouncyFactory pFactory,
-                                       final BouncyRSAPrivateKey pPrivateKey,
-                                       final GordianDigestSpec pDigestSpec,
-                                       final byte[] pCipherText) throws OceanusException {
-            /* Initialise underlying class */
-            super(pFactory);
-
-            /* Create Key Encapsulation */
-            final BouncyKeyDerivation myKDF = new BouncyKeyDerivation(getDigest(pDigestSpec));
-            final RSAKeyEncapsulation myKEMS = new RSAKeyEncapsulation(myKDF, null);
-
-            /* Initialise the encapsulation */
-            myKEMS.init(pPrivateKey.getPrivateKey());
-
-            /* Obtain initVector */
-            final byte[] myInitVector = new byte[INITLEN];
-            System.arraycopy(pCipherText, 0, myInitVector, 0, INITLEN);
-
-            /* Parse cipherText */
-            final KeyParameter myParms = (KeyParameter) myKEMS.decrypt(pCipherText, INITLEN, pCipherText.length - INITLEN, myKDF.getKeyLen());
-
-            /* Store secret */
-            storeSecret(myParms.getKey(), myInitVector);
-        }
-    }
-
-    /**
      * RSA Encapsulation.
      */
     public static class BouncyRSAEncapsulationAgreement
             extends GordianEncapsulationAgreement {
         /**
+         * The agreement.
+         */
+        private final RSAKeyEncapsulation theAgreement;
+
+        /**
          * Constructor.
          * @param pFactory the security factory
-         * @param pSpec the digestSpec
+         * @param pSpec the agreementSpec
          */
         BouncyRSAEncapsulationAgreement(final BouncyFactory pFactory,
                                         final GordianAgreementSpec pSpec) {
             /* Initialise underlying class */
             super(pFactory, pSpec);
+
+            /* Create Agreement */
+            final GordianNullKeyDerivation myKDF = new GordianNullKeyDerivation();
+            theAgreement = new RSAKeyEncapsulation(myKDF, getRandom());
         }
 
         @Override
@@ -528,17 +458,15 @@ public final class BouncyRSAAsymKey {
             /* Check keyPair */
             checkKeyPair(pTarget);
 
-            /* Create Key Encapsulation */
-            final GordianNullKeyDerivation myKDF = new GordianNullKeyDerivation();
-            final RSAKeyEncapsulation myKEMS = new RSAKeyEncapsulation(myKDF, getRandom());
+            /* Initialise Key Encapsulation */
             final BouncyRSAPublicKey myPublic = (BouncyRSAPublicKey) getPublicKey(pTarget);
-            myKEMS.init(myPublic.getPublicKey());
+            theAgreement.init(myPublic.getPublicKey());
 
             /* Create message */
-            final GordianModulus myModulus = myPublic.getKeySpec().getModulus();
-            final int myLen = myModulus.getModulus() / Byte.SIZE;
+            final GordianRSAModulus myModulus = myPublic.getKeySpec().getModulus();
+            final int myLen = myModulus.getLength() / Byte.SIZE;
             final byte[] myMessage = new byte[myLen];
-            final KeyParameter myParms = (KeyParameter) myKEMS.encrypt(myMessage, 0, myLen);
+            final KeyParameter myParms = (KeyParameter) theAgreement.encrypt(myMessage, 0, myLen);
 
             /* Store secret and cipherText */
             storeSecret(myParms.getKey());
@@ -553,18 +481,151 @@ public final class BouncyRSAAsymKey {
             /* Check keyPair */
             checkKeyPair(pSelf);
 
-            /* Create Key Encapsulation */
-            final GordianNullKeyDerivation myKDF = new GordianNullKeyDerivation();
-            final RSAKeyEncapsulation myKEMS = new RSAKeyEncapsulation(myKDF, null);
+            /* Initialise Key Encapsulation */
             final BouncyRSAPrivateKey myPrivate = (BouncyRSAPrivateKey) getPrivateKey(pSelf);
-            myKEMS.init(myPrivate.getPrivateKey());
+            theAgreement.init(myPrivate.getPrivateKey());
 
             /* Parse source message */
-            final GordianModulus myModulus = myPrivate.getKeySpec().getModulus();
-            final int myLen = myModulus.getModulus() / Byte.SIZE;
+            final GordianRSAModulus myModulus = myPrivate.getKeySpec().getModulus();
+            final int myLen = myModulus.getLength() / Byte.SIZE;
             final byte[] myMessage = parseMessage(pMessage);
-            final KeyParameter myParms = (KeyParameter) myKEMS.decrypt(myMessage, 0, pMessage.length, myLen);
+            final KeyParameter myParms = (KeyParameter) theAgreement.decrypt(myMessage, 0, myMessage.length, myLen);
             storeSecret(myParms.getKey());
+        }
+    }
+
+    /**
+     * RSA Encryptor.
+     */
+    public static class BouncyRSAEncryptor
+            extends GordianEncryptor {
+        /**
+         * The underlying encryptor.
+         */
+        private final AsymmetricBlockCipher theEncryptor;
+
+        /**
+         * Constructor.
+         * @param pFactory the factory
+         * @param pSpec the encryptorSpec
+         * @throws OceanusException on error
+         */
+        BouncyRSAEncryptor(final BouncyFactory pFactory,
+                           final GordianEncryptorSpec pSpec) throws OceanusException {
+            /* Initialise underlying cipher */
+            super(pFactory, pSpec);
+            final BouncyDigest myDigest = pFactory.createDigest(pSpec.getDigestSpec());
+            theEncryptor = new OAEPEncoding(new RSABlindedEngine(), myDigest.getDigest(), PSource.PSpecified.DEFAULT.getValue());
+        }
+
+        @Override
+        protected BouncyPublicKey getPublicKey() {
+            return (BouncyPublicKey) super.getPublicKey();
+        }
+
+        @Override
+        protected BouncyPrivateKey getPrivateKey() {
+            return (BouncyPrivateKey) super.getPrivateKey();
+        }
+
+        @Override
+        public void initForEncrypt(final GordianKeyPair pKeyPair) throws OceanusException {
+            /* Initialise underlying cipher */
+            super.initForEncrypt(pKeyPair);
+
+            /* Initialise for encryption */
+            final ParametersWithRandom myParms = new ParametersWithRandom(getPublicKey().getPublicKey(), getRandom());
+            theEncryptor.init(true, myParms);
+        }
+
+        @Override
+        public void initForDecrypt(final GordianKeyPair pKeyPair) throws OceanusException {
+            /* Initialise underlying cipher */
+            super.initForDecrypt(pKeyPair);
+
+            /* Initialise for decryption */
+            theEncryptor.init(false, getPrivateKey().getPrivateKey());
+        }
+
+        @Override
+        public byte[] encrypt(final byte[] pBytes) throws OceanusException {
+            /* Check that we are in encryption mode */
+            checkMode(GordianEncryptMode.ENCRYPT);
+
+            /* Encrypt the message */
+            return processData(pBytes);
+        }
+
+        @Override
+        public byte[] decrypt(final byte[] pBytes) throws OceanusException {
+            /* Check that we are in decryption mode */
+            checkMode(GordianEncryptMode.DECRYPT);
+
+            /* Decrypt the message */
+            return processData(pBytes);
+        }
+
+        /**
+         * Process a data buffer.
+         * @param pData the buffer to process
+         * @return the processed buffer
+         * @throws OceanusException on error
+         */
+        private byte[] processData(final byte[] pData) throws OceanusException {
+            try {
+                /* Create the output buffer */
+                int myInLen = pData.length;
+                final byte[] myOutput = new byte[getProcessedLength(myInLen)];
+
+                /* Access input block length */
+                final int myInBlockLength = theEncryptor.getInputBlockSize();
+
+                /* Loop encrypting the blocks */
+                int myInOff = 0;
+                int myOutOff = 0;
+                while (myInLen > 0) {
+                    /* Process the data */
+                    final int myLen = myInLen >= myInBlockLength
+                                      ? myInBlockLength
+                                      : myInLen;
+                    final byte[] myBlock = theEncryptor.processBlock(pData, myInOff, myLen);
+
+                    /* Copy to the output buffer */
+                    final int myOutLen = myBlock.length;
+                    System.arraycopy(myBlock, 0, myOutput, myOutOff, myOutLen);
+                    myOutOff += myOutLen;
+
+                    /* Move to next block */
+                    myInOff += myInBlockLength;
+                    myInLen -= myInBlockLength;
+                }
+
+                /* Return the data */
+                return myOutOff == myOutput.length
+                       ? myOutput
+                    : Arrays.copyOf(myOutput, myOutOff);
+            } catch (InvalidCipherTextException e) {
+                throw new GordianCryptoException("Failed to process data", e);
+            }
+        }
+
+        /**
+         * Obtain the length of the buffer required for the processed output.
+         * @param pLength the length of input data
+         * @return the number of bytes.
+         */
+        private int getProcessedLength(final int pLength) {
+            return theEncryptor.getOutputBlockSize() * getNumBlocks(pLength, theEncryptor.getInputBlockSize());
+        }
+
+        /**
+         * Obtain the number of blocks required for the length in terms of blocks.
+         * @param pLength the length of data
+         * @param pBlockLength the blockLength
+         * @return the number of blocks.
+         */
+        private static int getNumBlocks(final int pLength, final int pBlockLength) {
+            return (pLength + pBlockLength - 1) / pBlockLength;
         }
     }
 }

@@ -20,19 +20,19 @@ import java.io.IOException;
 import java.security.spec.PKCS8EncodedKeySpec;
 import java.security.spec.X509EncodedKeySpec;
 import java.util.Arrays;
-
-import org.bouncycastle.asn1.ASN1OctetString;
 import org.bouncycastle.asn1.pkcs.PrivateKeyInfo;
 import org.bouncycastle.asn1.x509.SubjectPublicKeyInfo;
 import org.bouncycastle.crypto.AsymmetricCipherKeyPair;
+import org.bouncycastle.crypto.newutils.PqcPrivateKeyFactory;
+import org.bouncycastle.crypto.newutils.PqcPrivateKeyInfoFactory;
+import org.bouncycastle.crypto.newutils.PqcPublicKeyFactory;
+import org.bouncycastle.crypto.newutils.PqcSubjectPublicKeyInfoFactory;
 import org.bouncycastle.crypto.params.AsymmetricKeyParameter;
 import org.bouncycastle.pqc.crypto.qtesla.QTESLAKeyGenerationParameters;
 import org.bouncycastle.pqc.crypto.qtesla.QTESLAKeyPairGenerator;
 import org.bouncycastle.pqc.crypto.qtesla.QTESLAPrivateKeyParameters;
 import org.bouncycastle.pqc.crypto.qtesla.QTESLAPublicKeyParameters;
 import org.bouncycastle.pqc.crypto.qtesla.QTESLASigner;
-import org.bouncycastle.pqc.jcajce.provider.qtesla.BCqTESLAPrivateKey;
-import org.bouncycastle.pqc.jcajce.provider.qtesla.BCqTESLAPublicKey;
 
 import net.sourceforge.joceanus.jgordianknot.GordianCryptoException;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianAsymKeySpec;
@@ -151,10 +151,14 @@ public final class BouncyQTESLAAsymKey {
 
         @Override
         public PKCS8EncodedKeySpec getPKCS8Encoding(final GordianKeyPair pKeyPair) throws OceanusException {
-            final BouncyQTESLAPrivateKey myPrivateKey = (BouncyQTESLAPrivateKey) getPrivateKey(pKeyPair);
-            final QTESLAPrivateKeyParameters myParms = myPrivateKey.getPrivateKey();
-            final BCqTESLAPrivateKey myKey = new BCqTESLAPrivateKey(myParms);
-            return new PKCS8EncodedKeySpec(myKey.getEncoded());
+            try {
+                final BouncyQTESLAPrivateKey myPrivateKey = (BouncyQTESLAPrivateKey) getPrivateKey(pKeyPair);
+                final QTESLAPrivateKeyParameters myParms = myPrivateKey.getPrivateKey();
+                final PrivateKeyInfo myInfo = PqcPrivateKeyInfoFactory.createPrivateKeyInfo(myParms, null);
+                return new PKCS8EncodedKeySpec(myInfo.getEncoded());
+            } catch (IOException e) {
+                throw new GordianCryptoException(ERROR_PARSE, e);
+            }
         }
 
         @Override
@@ -162,8 +166,7 @@ public final class BouncyQTESLAAsymKey {
                                            final PKCS8EncodedKeySpec pPrivateKey) throws OceanusException {
             try {
                 final PrivateKeyInfo myInfo = PrivateKeyInfo.getInstance(pPrivateKey.getEncoded());
-                final ASN1OctetString myOctets = ASN1OctetString.getInstance(myInfo.parsePrivateKey());
-                final QTESLAPrivateKeyParameters myParms = new QTESLAPrivateKeyParameters(theCategory, myOctets.getOctets());
+                final QTESLAPrivateKeyParameters myParms = (QTESLAPrivateKeyParameters) PqcPrivateKeyFactory.createKey(myInfo);
                 final BouncyQTESLAPrivateKey myPrivate = new BouncyQTESLAPrivateKey(getKeySpec(), myParms);
                 final BouncyQTESLAPublicKey myPublic = derivePublicKey(pPublicKey);
                 return new BouncyKeyPair(myPublic, myPrivate);
@@ -174,10 +177,14 @@ public final class BouncyQTESLAAsymKey {
 
         @Override
         public X509EncodedKeySpec getX509Encoding(final GordianKeyPair pKeyPair) throws OceanusException {
-            final BouncyQTESLAPublicKey myPublicKey = (BouncyQTESLAPublicKey) getPublicKey(pKeyPair);
-            final QTESLAPublicKeyParameters myParms = myPublicKey.getPublicKey();
-            final BCqTESLAPublicKey myKey = new BCqTESLAPublicKey(myParms);
-            return new X509EncodedKeySpec(myKey.getEncoded());
+            try {
+                final BouncyQTESLAPublicKey myPublicKey = (BouncyQTESLAPublicKey) getPublicKey(pKeyPair);
+                final QTESLAPublicKeyParameters myParms = myPublicKey.getPublicKey();
+                final SubjectPublicKeyInfo myInfo = PqcSubjectPublicKeyInfoFactory.createSubjectPublicKeyInfo(myParms);
+                return new X509EncodedKeySpec(myInfo.getEncoded());
+            } catch (IOException e) {
+                throw new GordianCryptoException(ERROR_PARSE, e);
+            }
         }
 
         @Override
@@ -190,11 +197,16 @@ public final class BouncyQTESLAAsymKey {
          * Derive public key from encoded.
          * @param pEncodedKey the encoded key
          * @return the public key
+         * @throws OceanusException on error
          */
-        private BouncyQTESLAPublicKey derivePublicKey(final X509EncodedKeySpec pEncodedKey) {
-            final SubjectPublicKeyInfo myInfo = SubjectPublicKeyInfo.getInstance(pEncodedKey.getEncoded());
-            final QTESLAPublicKeyParameters myParms = new QTESLAPublicKeyParameters(theCategory, myInfo.getPublicKeyData().getOctets());
-            return new BouncyQTESLAPublicKey(getKeySpec(), myParms);
+        private BouncyQTESLAPublicKey derivePublicKey(final X509EncodedKeySpec pEncodedKey) throws OceanusException {
+            try {
+                final SubjectPublicKeyInfo myInfo = SubjectPublicKeyInfo.getInstance(pEncodedKey.getEncoded());
+                final QTESLAPublicKeyParameters myParms = (QTESLAPublicKeyParameters) PqcPublicKeyFactory.createKey(myInfo);
+                return new BouncyQTESLAPublicKey(getKeySpec(), myParms);
+            } catch (IOException e) {
+                throw new GordianCryptoException(ERROR_PARSE, e);
+            }
         }
     }
 

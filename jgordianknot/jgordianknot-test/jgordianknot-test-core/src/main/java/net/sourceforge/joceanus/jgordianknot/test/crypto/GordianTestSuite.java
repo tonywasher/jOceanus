@@ -17,9 +17,11 @@
 package net.sourceforge.joceanus.jgordianknot.test.crypto;
 
 import java.io.File;
+import java.util.List;
 
 import org.bouncycastle.util.Arrays;
 
+import net.sourceforge.joceanus.jgordianknot.crypto.GordianAsymKeyType;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianDigest;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianFactory;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianFactoryType;
@@ -72,6 +74,21 @@ public class GordianTestSuite {
     private final SecurityManagerCreator theCreator;
 
     /**
+     * The test to run.
+     */
+    private String theTest;
+
+    /**
+     * The keyType to test.
+     */
+    private String theKeyType;
+
+    /**
+     * Do we test allSpecs.
+     */
+    private boolean allSpecs;
+
+    /**
      * Constructor.
      * @param pCreator the Secure Manager creator
      */
@@ -80,10 +97,63 @@ public class GordianTestSuite {
     }
 
     /**
+     * Run test
+     * @param pArgs the parameters
+     * @throws OceanusException on error
+     */
+    public void runTests(final List<String> pArgs) throws OceanusException {
+        /* Process the arguments */
+        processArgs(pArgs);
+
+        /* handle check algorithms */
+        if ("check".equals(theTest)) {
+            checkAlgorithms();
+
+        /* handle test security */
+        } else if ("test".equals(theTest)) {
+            testSecurity();
+
+        /* handle asym tests */
+        } else if ("asym".equals(theTest)) {
+            testAsync();
+
+           /* handle zip file creation */
+        } else if ("zip".equals(theTest)) {
+            testZipFile();
+
+        } else {
+            GordianListAlgorithms.listAlgorithms();
+        }
+    }
+
+    /**
+     * Constructor.
+     * @param pArgs the parameters
+     * @throws OceanusException on error
+     */
+    private void processArgs(final List<String> pArgs) throws OceanusException {
+        /* Loop through the arguments */
+        for(String myArg : pArgs) {
+            /* If this is the test */
+            if (myArg.startsWith("--test=")) {
+                theTest=myArg.substring("--test=".length());
+
+                /* if this is the key */
+            } else if (myArg.startsWith("--keyType=")) {
+                theKeyType=myArg.substring("--keyType=".length());
+
+                /* If this is allSpecs */
+            } else if ("--allSpecs".equals(myArg)) {
+                allSpecs=true;
+            }
+        }
+    }
+
+    /**
      * Test Zip File.
      * @throws OceanusException on error
      */
-    public void testZipFile() throws OceanusException {
+    private void testZipFile() throws OceanusException {
         /* Create the Zip Tester */
         final GordianTestZip myZipTest = new GordianTestZip(theCreator);
 
@@ -100,7 +170,7 @@ public class GordianTestSuite {
      * Check the supported algorithms.
      * @throws OceanusException on error
      */
-    public void checkAlgorithms() throws OceanusException {
+    private void checkAlgorithms() throws OceanusException {
         /* Create the Algorithm Tester */
         final GordianTestAlgorithms myAlgTest = new GordianTestAlgorithms(theCreator);
 
@@ -112,7 +182,7 @@ public class GordianTestSuite {
      * Test security algorithms.
      * @throws OceanusException on error
      */
-    public void testSecurity() throws OceanusException {
+    private void testSecurity() throws OceanusException {
         testSecurity(true, GordianFactoryType.BC);
         testSecurity(false, GordianFactoryType.BC);
         testSecurity(true, GordianFactoryType.JCA);
@@ -120,24 +190,36 @@ public class GordianTestSuite {
     }
 
     /**
-     * Test key representations
+     * Test async functionality.
      * @throws OceanusException on error
      */
-    public void testKeyRepresentations() throws OceanusException {
-        /* Create new Password Hash */
-        final GordianParameters mySrcParams = new GordianParameters(false);
-        mySrcParams.setFactoryType(GordianFactoryType.JCA);
-        final GordianHashManager mySource = theCreator.newSecureManager(mySrcParams);
+    private void testAsync() throws OceanusException {
+        /* Create new Jca factory */
+        final GordianParameters myJcaParams = new GordianParameters(false);
+        myJcaParams.setFactoryType(GordianFactoryType.JCA);
+        final GordianFactory myJCA = theCreator.newSecureManager(myJcaParams).getSecurityFactory();
 
-        /* Create new Password Hash */
-        final GordianParameters myTgtParams = new GordianParameters(false);
-        myTgtParams.setFactoryType(GordianFactoryType.BC);
-        final GordianHashManager myTarget = theCreator.newSecureManager(myTgtParams);
+        /* Create new Bc Factory */
+        final GordianParameters myBcParams = new GordianParameters(false);
+        myBcParams.setFactoryType(GordianFactoryType.BC);
+        final GordianFactory myBC = theCreator.newSecureManager(myBcParams).getSecurityFactory();
 
-        /* Run checks each way */
-        GordianTestAsymmetric.checkKeyPair(mySource.getSecurityFactory(), myTarget.getSecurityFactory());
-        GordianTestAsymmetric.checkKeyPair(myTarget.getSecurityFactory(), mySource.getSecurityFactory());
-    }
+        /* Determine the singleKeyType */
+        GordianAsymKeyType myKeyType = null;
+        for (final GordianAsymKeyType myType : GordianAsymKeyType.values()) {
+            if (myType.toString().equalsIgnoreCase(theKeyType)) {
+                myKeyType = myType;
+            }
+        }
+
+        /* Test from Jca to Bc */
+        GordianTestAsymmetric myTest = new GordianTestAsymmetric(myJCA,  myBC, myKeyType, allSpecs);
+        myTest.checkKeyPairs();
+
+        /* Test from Jca to Bc */
+        myTest = new GordianTestAsymmetric(myBC,  myJCA, myKeyType, allSpecs);
+        myTest.checkKeyPairs();
+   }
 
     /**
      * Test security algorithms.
@@ -205,11 +287,6 @@ public class GordianTestSuite {
         final byte[] myIV = myMac.getInitVector();
         final int myMacId = myKnuth.deriveExternalIdFromType(myMac.getMacSpec());
 
-        /* Create AsymTest Control */
-        final GordianTestAsymmetric myAsymTest = new GordianTestAsymmetric(mySymSafe, myStreamSafe);
-        // myAsymTest.testKeyPairs(myFactory, myKeySet);
-        myAsymTest.createKeyPairs(myFactory, myKeySet);
-
         /* Start a new session */
         myManager = theCreator.newSecureManager(myParams);
         final GordianKeySetHash myNewHash = myManager.getSecurityFactory().deriveKeySetHash(myHash.getHash(), DEF_PASSWORD.clone());
@@ -259,9 +336,6 @@ public class GordianTestSuite {
         if (!myStm1.equals(myStream)) {
             System.out.println("Failed to decrypt StreamKey");
         }
-
-        /* Validate the Asymmetric Tests */
-        myAsymTest.validateKeyPairs(myFactory, myKeySet1);
 
         /* Decrypt the bytes */
         byte[] myResult = myKeySet1.decryptBytes(myEncrypt1);

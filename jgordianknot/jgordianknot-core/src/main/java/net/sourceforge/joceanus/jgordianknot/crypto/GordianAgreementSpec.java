@@ -16,12 +16,15 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jgordianknot.crypto;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import net.sourceforge.joceanus.jtethys.TethysDataConverter;
 
 /**
  * Key Agreement Specification.
  */
-public class GordianAgreementSpec {
+public final class GordianAgreementSpec {
     /**
      * The Separator.
      */
@@ -117,5 +120,50 @@ public class GordianAgreementSpec {
     public int hashCode() {
         final int hashCode = theAsymKeyType.hashCode() << TethysDataConverter.BYTE_SHIFT;
         return hashCode + theAgreementType.hashCode();
+    }
+
+    /**
+     * Obtain a list of all possible agreements for the keyPair.
+     * @param pKeyPair the keyPair
+     * @return the list
+     */
+    public static List<GordianAgreementSpec> listPossibleAgreements(final GordianKeyPair pKeyPair) {
+        /* Create list */
+        final List<GordianAgreementSpec> myAgreements = new ArrayList<>();
+
+        /* Switch on AsymKeyType */
+        final GordianAsymKeyType myType = pKeyPair.getKeySpec().getKeyType();
+        switch (myType) {
+            case RSA:
+            case NEWHOPE:
+                myAgreements.add(new GordianAgreementSpec(myType, GordianAgreementType.KEM));
+                break;
+            case SM2:
+                myAgreements.add(new GordianAgreementSpec(myType, GordianAgreementType.SM2));
+                myAgreements.add(new GordianAgreementSpec(myType, GordianAgreementType.KEM));
+                myAgreements.add(new GordianAgreementSpec(myType, GordianAgreementType.BASIC));
+                myAgreements.add(new GordianAgreementSpec(myType, GordianAgreementType.UNIFIED));
+                myAgreements.add(new GordianAgreementSpec(myType, GordianAgreementType.MQV));
+                break;
+            case EC:
+            case GOST2012:
+            case DSTU4145:
+            case DIFFIEHELLMAN:
+                myAgreements.add(new GordianAgreementSpec(myType, GordianAgreementType.KEM));
+                myAgreements.add(new GordianAgreementSpec(myType, GordianAgreementType.BASIC));
+                myAgreements.add(new GordianAgreementSpec(myType, GordianAgreementType.UNIFIED));
+                myAgreements.add(new GordianAgreementSpec(myType, GordianAgreementType.MQV));
+                break;
+            case X25519:
+            case X448:
+                myAgreements.add(new GordianAgreementSpec(myType, GordianAgreementType.BASIC));
+                myAgreements.add(new GordianAgreementSpec(myType, GordianAgreementType.UNIFIED));
+                break;
+            default:
+                break;
+         }
+
+        /* Return the list */
+        return myAgreements;
     }
 }

@@ -61,9 +61,9 @@ public enum GordianXMSSKeyType {
             case SHA512:
                 return GordianDigestSpec.sha2(GordianLength.LEN_512);
             case SHAKE128:
-                return GordianDigestSpec.shake(GordianLength.LEN_128);
+                return GordianDigestSpec.shakeAlt(GordianLength.LEN_256);
             case SHAKE256:
-                return GordianDigestSpec.shake(GordianLength.LEN_256);
+                return GordianDigestSpec.shake(GordianLength.LEN_512);
             default:
                 throw new IllegalStateException();
         }

@@ -16,6 +16,10 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jgordianknot.test.crypto.swing;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 import javax.swing.SwingUtilities;
 
 import org.apache.logging.log4j.LogManager;
@@ -67,26 +71,7 @@ public class GordianSwingTester
      * @throws OceanusException on error
      */
     public void runTests(final String[] args) throws OceanusException {
-        if (args.length > 0) {
-            /* handle check algorithms */
-            if ("check".equals(args[0])) {
-                theTests.checkAlgorithms();
-
-                /* handle test security */
-            } else if ("test".equals(args[0])) {
-                theTests.testSecurity();
-
-                /* handle asym tests */
-            } else if ("asym".equals(args[0])) {
-                theTests.testKeyRepresentations();
-
-                /* handle zip file creation */
-            } else if ("zip".equals(args[0])) {
-                theTests.testZipFile();
-            }
-        } else {
-            GordianListAlgorithms.listAlgorithms();
-        }
+        theTests.runTests(Arrays.asList(args));
     }
 
     /**

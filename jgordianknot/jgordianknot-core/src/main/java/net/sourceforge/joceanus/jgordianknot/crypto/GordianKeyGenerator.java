@@ -293,7 +293,8 @@ public abstract class GordianKeyGenerator<T> {
                                     final byte[] pInitVector) throws OceanusException {
         /* Determine a digestType to use based on the first four bytes of the initVector */
         int mySeed = TethysDataConverter.byteArrayToInteger(Arrays.copyOf(pInitVector, Integer.SIZE));
-        mySeed = theFactory.getPersonalisation().convertRecipe(mySeed);
+        final GordianPersonalisation myPersonal = theFactory.getPersonalisation();
+        mySeed = myPersonal.convertRecipe(mySeed);
         final GordianDigestType[] myDigestType = new GordianDigestType[1];
         theFactory.getIdManager().deriveKeyHashDigestTypesFromSeed(mySeed, myDigestType);
 
@@ -304,7 +305,6 @@ public abstract class GordianKeyGenerator<T> {
 
         /* Create the standard data */
         final byte[] myAlgo = TethysDataConverter.stringToByteArray(theKeyType.toString());
-        final GordianPersonalisation myPersonal = theFactory.getPersonalisation();
 
         /* Update with personalisation, algorithm and initVector */
         myPersonal.updateMac(myMac);

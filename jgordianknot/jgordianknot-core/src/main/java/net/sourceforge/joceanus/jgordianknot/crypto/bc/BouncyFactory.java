@@ -17,20 +17,22 @@
 package net.sourceforge.joceanus.jgordianknot.crypto.bc;
 
 import net.sourceforge.joceanus.jgordianknot.GordianDataException;
+import net.sourceforge.joceanus.jgordianknot.crypto.GordianAgreement;
+import net.sourceforge.joceanus.jgordianknot.crypto.GordianAgreementSpec;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianAsymKeySpec;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianCipherMode;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianCipherSpec.GordianStreamCipherSpec;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianCipherSpec.GordianSymCipherSpec;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianDigestSpec;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianDigestType;
+import net.sourceforge.joceanus.jgordianknot.crypto.GordianEncryptor;
+import net.sourceforge.joceanus.jgordianknot.crypto.GordianEncryptorSpec;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianFactory;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianFactoryGenerator;
-import net.sourceforge.joceanus.jgordianknot.crypto.GordianKeyEncapsulation;
-import net.sourceforge.joceanus.jgordianknot.crypto.GordianKeyEncapsulation.GordianKEMSender;
-import net.sourceforge.joceanus.jgordianknot.crypto.GordianKeyPair;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianLength;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianMacSpec;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianMacType;
+import net.sourceforge.joceanus.jgordianknot.crypto.GordianMcElieceKeySpec.GordianMcElieceEncryptionType;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianPadding;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianParameters;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianRandomSpec;
@@ -40,43 +42,45 @@ import net.sourceforge.joceanus.jgordianknot.crypto.GordianStreamKeyType;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianSymKeySpec;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianSymKeyType;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianWrapCipher;
+import net.sourceforge.joceanus.jgordianknot.crypto.bc.BouncyDHAsymKey.BouncyDHKeyPairGenerator;
 import net.sourceforge.joceanus.jgordianknot.crypto.bc.BouncyDSAAsymKey.BouncyDSAKeyPairGenerator;
 import net.sourceforge.joceanus.jgordianknot.crypto.bc.BouncyDSAAsymKey.BouncyDSASignature;
 import net.sourceforge.joceanus.jgordianknot.crypto.bc.BouncyDSTUAsymKey.BouncyDSTUKeyPairGenerator;
 import net.sourceforge.joceanus.jgordianknot.crypto.bc.BouncyDSTUAsymKey.BouncyDSTUSignature;
-import net.sourceforge.joceanus.jgordianknot.crypto.bc.BouncyDiffieHellmanAsymKey.BouncyDiffieHellmanKeyPairGenerator;
-import net.sourceforge.joceanus.jgordianknot.crypto.bc.BouncyDiffieHellmanAsymKey.BouncyDiffieHellmanPrivateKey;
-import net.sourceforge.joceanus.jgordianknot.crypto.bc.BouncyDiffieHellmanAsymKey.BouncyDiffieHellmanPublicKey;
-import net.sourceforge.joceanus.jgordianknot.crypto.bc.BouncyDiffieHellmanAsymKey.BouncyDiffieHellmanReceiver;
-import net.sourceforge.joceanus.jgordianknot.crypto.bc.BouncyDiffieHellmanAsymKey.BouncyDiffieHellmanSender;
-import net.sourceforge.joceanus.jgordianknot.crypto.bc.BouncyEdwardsDSAAsymKey.BouncyEd25519KeyPairGenerator;
-import net.sourceforge.joceanus.jgordianknot.crypto.bc.BouncyEdwardsDSAAsymKey.BouncyEd448KeyPairGenerator;
-import net.sourceforge.joceanus.jgordianknot.crypto.bc.BouncyEdwardsDSAAsymKey.BouncyEdDSASignature;
-import net.sourceforge.joceanus.jgordianknot.crypto.bc.BouncyEdwardsXDHAsymKey.BouncyX25519KeyPairGenerator;
-import net.sourceforge.joceanus.jgordianknot.crypto.bc.BouncyEdwardsXDHAsymKey.BouncyX448KeyPairGenerator;
-import net.sourceforge.joceanus.jgordianknot.crypto.bc.BouncyEllipticAsymKey.BouncyECIESReceiver;
-import net.sourceforge.joceanus.jgordianknot.crypto.bc.BouncyEllipticAsymKey.BouncyECIESSender;
+import net.sourceforge.joceanus.jgordianknot.crypto.bc.BouncyDHAsymKey.BouncyDHBasicAgreement;
+import net.sourceforge.joceanus.jgordianknot.crypto.bc.BouncyDHAsymKey.BouncyDHEncapsulationAgreement;
+import net.sourceforge.joceanus.jgordianknot.crypto.bc.BouncyDHAsymKey.BouncyDHMQVAgreement;
+import net.sourceforge.joceanus.jgordianknot.crypto.bc.BouncyDHAsymKey.BouncyDHUnifiedAgreement;
+import net.sourceforge.joceanus.jgordianknot.crypto.bc.BouncyEdDSAAsymKey.BouncyEd25519KeyPairGenerator;
+import net.sourceforge.joceanus.jgordianknot.crypto.bc.BouncyEdDSAAsymKey.BouncyEd448KeyPairGenerator;
+import net.sourceforge.joceanus.jgordianknot.crypto.bc.BouncyEdDSAAsymKey.BouncyEdDSASignature;
+import net.sourceforge.joceanus.jgordianknot.crypto.bc.BouncyEllipticAsymKey.BouncyECEncryptor;
+import net.sourceforge.joceanus.jgordianknot.crypto.bc.BouncyEllipticAsymKey.BouncySM2Encryptor;
+import net.sourceforge.joceanus.jgordianknot.crypto.bc.BouncyMcElieceAsymKey.BouncyMcElieceCCA2Encryptor;
+import net.sourceforge.joceanus.jgordianknot.crypto.bc.BouncyMcElieceAsymKey.BouncyMcElieceEncryptor;
+import net.sourceforge.joceanus.jgordianknot.crypto.bc.BouncyRSAAsymKey.BouncyRSAEncryptor;
+import net.sourceforge.joceanus.jgordianknot.crypto.bc.BouncyXDHAsymKey.BouncyX25519KeyPairGenerator;
+import net.sourceforge.joceanus.jgordianknot.crypto.bc.BouncyXDHAsymKey.BouncyX448KeyPairGenerator;
+import net.sourceforge.joceanus.jgordianknot.crypto.bc.BouncyXDHAsymKey.BouncyXDHBasicAgreement;
+import net.sourceforge.joceanus.jgordianknot.crypto.bc.BouncyXDHAsymKey.BouncyXDHUnifiedAgreement;
+import net.sourceforge.joceanus.jgordianknot.crypto.bc.BouncyEllipticAsymKey.BouncyECBasicAgreement;
+import net.sourceforge.joceanus.jgordianknot.crypto.bc.BouncyEllipticAsymKey.BouncyECIESAgreement;
 import net.sourceforge.joceanus.jgordianknot.crypto.bc.BouncyEllipticAsymKey.BouncyECKeyPairGenerator;
-import net.sourceforge.joceanus.jgordianknot.crypto.bc.BouncyEllipticAsymKey.BouncyECPrivateKey;
-import net.sourceforge.joceanus.jgordianknot.crypto.bc.BouncyEllipticAsymKey.BouncyECPublicKey;
+import net.sourceforge.joceanus.jgordianknot.crypto.bc.BouncyEllipticAsymKey.BouncyECMQVAgreement;
+import net.sourceforge.joceanus.jgordianknot.crypto.bc.BouncyEllipticAsymKey.BouncyECSM2Agreement;
 import net.sourceforge.joceanus.jgordianknot.crypto.bc.BouncyEllipticAsymKey.BouncyECSignature;
+import net.sourceforge.joceanus.jgordianknot.crypto.bc.BouncyEllipticAsymKey.BouncyECUnifiedAgreement;
 import net.sourceforge.joceanus.jgordianknot.crypto.bc.BouncyEllipticAsymKey.BouncySM2Signature;
 import net.sourceforge.joceanus.jgordianknot.crypto.bc.BouncyGOSTAsymKey.BouncyGOSTKeyPairGenerator;
 import net.sourceforge.joceanus.jgordianknot.crypto.bc.BouncyGOSTAsymKey.BouncyGOSTSignature;
 import net.sourceforge.joceanus.jgordianknot.crypto.bc.BouncyMcElieceAsymKey.BouncyMcElieceCCA2KeyPairGenerator;
 import net.sourceforge.joceanus.jgordianknot.crypto.bc.BouncyMcElieceAsymKey.BouncyMcElieceKeyPairGenerator;
+import net.sourceforge.joceanus.jgordianknot.crypto.bc.BouncyNewHopeAsymKey.BouncyNewHopeAgreement;
 import net.sourceforge.joceanus.jgordianknot.crypto.bc.BouncyNewHopeAsymKey.BouncyNewHopeKeyPairGenerator;
-import net.sourceforge.joceanus.jgordianknot.crypto.bc.BouncyNewHopeAsymKey.BouncyNewHopePrivateKey;
-import net.sourceforge.joceanus.jgordianknot.crypto.bc.BouncyNewHopeAsymKey.BouncyNewHopePublicKey;
-import net.sourceforge.joceanus.jgordianknot.crypto.bc.BouncyNewHopeAsymKey.BouncyNewHopeReceiver;
-import net.sourceforge.joceanus.jgordianknot.crypto.bc.BouncyNewHopeAsymKey.BouncyNewHopeSender;
 import net.sourceforge.joceanus.jgordianknot.crypto.bc.BouncyQTESLAAsymKey.BouncyQTESLAKeyPairGenerator;
 import net.sourceforge.joceanus.jgordianknot.crypto.bc.BouncyQTESLAAsymKey.BouncyQTESLASignature;
-import net.sourceforge.joceanus.jgordianknot.crypto.bc.BouncyRSAAsymKey.BouncyRSAKEMReceiver;
-import net.sourceforge.joceanus.jgordianknot.crypto.bc.BouncyRSAAsymKey.BouncyRSAKEMSender;
+import net.sourceforge.joceanus.jgordianknot.crypto.bc.BouncyRSAAsymKey.BouncyRSAEncapsulationAgreement;
 import net.sourceforge.joceanus.jgordianknot.crypto.bc.BouncyRSAAsymKey.BouncyRSAKeyPairGenerator;
-import net.sourceforge.joceanus.jgordianknot.crypto.bc.BouncyRSAAsymKey.BouncyRSAPrivateKey;
-import net.sourceforge.joceanus.jgordianknot.crypto.bc.BouncyRSAAsymKey.BouncyRSAPublicKey;
 import net.sourceforge.joceanus.jgordianknot.crypto.bc.BouncyRSAAsymKey.BouncyRSASignature;
 import net.sourceforge.joceanus.jgordianknot.crypto.bc.BouncyRainbowAsymKey.BouncyRainbowKeyPairGenerator;
 import net.sourceforge.joceanus.jgordianknot.crypto.bc.BouncyRainbowAsymKey.BouncyRainbowSignature;
@@ -391,28 +395,25 @@ public final class BouncyFactory
     }
 
     @Override
-    public GordianKEMSender createKEMessage(final GordianKeyPair pKeyPair,
-                                            final GordianDigestSpec pDigestSpec) throws OceanusException {
-        /* Check validity of Exchange */
-        if (!supportedKeyExchanges().test(pKeyPair, pDigestSpec)) {
-            throw new GordianDataException(getInvalidText(pDigestSpec));
+    public GordianAgreement createAgreement(final GordianAgreementSpec pSpec) throws OceanusException {
+        /* Check validity of Agreement */
+        if (!supportedAgreements().test(pSpec)) {
+            throw new GordianDataException(getInvalidText(pSpec));
         }
 
-        /* Create the sender */
-        return getBCKEMSender((BouncyKeyPair) pKeyPair, pDigestSpec);
+        /* Create the agreement */
+        return getBCAgreement(pSpec);
     }
 
     @Override
-    public GordianKeyEncapsulation parseKEMessage(final GordianKeyPair pKeyPair,
-                                                  final GordianDigestSpec pDigestSpec,
-                                                  final byte[] pMessage) throws OceanusException {
-        /* Check validity of Exchange */
-        if (!supportedKeyExchanges().test(pKeyPair, pDigestSpec)) {
-            throw new GordianDataException(getInvalidText(pDigestSpec));
+    public GordianEncryptor createEncryptor(final GordianEncryptorSpec pSpec) throws OceanusException {
+        /* Check validity of Encryptor */
+        if (!supportedEncryptors().test(pSpec)) {
+            throw new GordianDataException(getInvalidText(pSpec));
         }
 
-        /* Create the parser */
-        return getBCKEMParser((BouncyKeyPair) pKeyPair, pDigestSpec, pMessage);
+        /* Create the encryptor */
+        return getBCEncryptor(pSpec);
     }
 
     /**
@@ -983,7 +984,7 @@ public final class BouncyFactory
             case DSA:
                 return new BouncyDSAKeyPairGenerator(this, pKeySpec);
             case DIFFIEHELLMAN:
-                return new BouncyDiffieHellmanKeyPairGenerator(this, pKeySpec);
+                return new BouncyDHKeyPairGenerator(this, pKeySpec);
             case SPHINCS:
                 return new BouncySPHINCSKeyPairGenerator(this, pKeySpec);
             case RAINBOW:
@@ -1045,54 +1046,120 @@ public final class BouncyFactory
     }
 
     /**
-     * Create the BouncyCastle KEM Sender.
+     * Create the BouncyCastle Agreement.
      *
-     * @param pKeyPair    the keyPair
-     * @param pDigestSpec the digestSpec
-     * @return the KEMSender
+     * @param pSpec the agreementSpec
+     * @return the Agreement
      * @throws OceanusException on error
      */
-    private GordianKEMSender getBCKEMSender(final BouncyKeyPair pKeyPair,
-                                            final GordianDigestSpec pDigestSpec) throws OceanusException {
-        switch (pKeyPair.getKeySpec().getKeyType()) {
+    private GordianAgreement getBCAgreement(final GordianAgreementSpec pSpec) throws OceanusException {
+        switch (pSpec.getAsymKeyType()) {
             case RSA:
-                return new BouncyRSAKEMSender(this, (BouncyRSAPublicKey) pKeyPair.getPublicKey(), pDigestSpec);
+                return new BouncyRSAEncapsulationAgreement(this, pSpec);
             case EC:
+            case GOST2012:
+            case DSTU4145:
             case SM2:
-                return new BouncyECIESSender(this, (BouncyECPublicKey) pKeyPair.getPublicKey(), pDigestSpec);
+                return getBCECAgreement(pSpec);
             case DIFFIEHELLMAN:
-                return new BouncyDiffieHellmanSender(this, (BouncyDiffieHellmanPublicKey) pKeyPair.getPublicKey(), pDigestSpec);
+                return getBCDHAgreement(pSpec);
             case NEWHOPE:
-                return new BouncyNewHopeSender(this, (BouncyNewHopePublicKey) pKeyPair.getPublicKey(), pDigestSpec);
+                return new BouncyNewHopeAgreement(this, pSpec);
+            case X25519:
+            case X448:
+                return getBCXDHAgreement(pSpec);
             default:
-                throw new GordianDataException(getInvalidText(pKeyPair.getKeySpec().getKeyType()));
+                throw new GordianDataException(getInvalidText(pSpec));
         }
     }
 
     /**
-     * Create the BouncyCastle KEM Receiver.
+     * Create the BouncyCastle EC Agreement.
      *
-     * @param pKeyPair    the keyPair
-     * @param pDigestSpec the digestSpec
-     * @param pCipherText the cipherText
-     * @return the KEMParser
+     * @param pSpec the agreementSpec
+     * @return the Agreement
      * @throws OceanusException on error
      */
-    private GordianKeyEncapsulation getBCKEMParser(final BouncyKeyPair pKeyPair,
-                                                   final GordianDigestSpec pDigestSpec,
-                                                   final byte[] pCipherText) throws OceanusException {
-        switch (pKeyPair.getKeySpec().getKeyType()) {
-            case RSA:
-                return new BouncyRSAKEMReceiver(this, (BouncyRSAPrivateKey) pKeyPair.getPrivateKey(), pDigestSpec, pCipherText);
-            case EC:
+    private GordianAgreement getBCECAgreement(final GordianAgreementSpec pSpec) throws OceanusException {
+        switch (pSpec.getAgreementType()) {
+            case KEM:
+                return new BouncyECIESAgreement(this, pSpec);
+            case BASIC:
+                return new BouncyECBasicAgreement(this, pSpec);
+            case MQV:
+                return new BouncyECMQVAgreement(this, pSpec);
+            case UNIFIED:
+                return new BouncyECUnifiedAgreement(this, pSpec);
             case SM2:
-                return new BouncyECIESReceiver(this, (BouncyECPrivateKey) pKeyPair.getPrivateKey(), pDigestSpec, pCipherText);
-            case DIFFIEHELLMAN:
-                return new BouncyDiffieHellmanReceiver(this, (BouncyDiffieHellmanPrivateKey) pKeyPair.getPrivateKey(), pDigestSpec, pCipherText);
-            case NEWHOPE:
-                return new BouncyNewHopeReceiver(this, (BouncyNewHopePrivateKey) pKeyPair.getPrivateKey(), pDigestSpec, pCipherText);
+                return new BouncyECSM2Agreement(this, pSpec);
             default:
-                throw new GordianDataException(getInvalidText(pKeyPair.getKeySpec().getKeyType()));
+                throw new GordianDataException(getInvalidText(pSpec));
+        }
+    }
+
+    /**
+     * Create the BouncyCastle DH Agreement.
+     *
+     * @param pSpec the agreementSpec
+     * @return the Agreement
+     * @throws OceanusException on error
+     */
+    private GordianAgreement getBCDHAgreement(final GordianAgreementSpec pSpec) throws OceanusException {
+        switch (pSpec.getAgreementType()) {
+            case KEM:
+                return new BouncyDHEncapsulationAgreement(this, pSpec);
+            case BASIC:
+                return new BouncyDHBasicAgreement(this, pSpec);
+            case MQV:
+                return new BouncyDHMQVAgreement(this, pSpec);
+            case UNIFIED:
+                return new BouncyDHUnifiedAgreement(this, pSpec);
+            default:
+                throw new GordianDataException(getInvalidText(pSpec));
+        }
+    }
+
+    /**
+     * Create the BouncyCastle XDH Agreement.
+     *
+     * @param pSpec the agreementSpec
+     * @return the Agreement
+     * @throws OceanusException on error
+     */
+    private GordianAgreement getBCXDHAgreement(final GordianAgreementSpec pSpec) throws OceanusException {
+        switch (pSpec.getAgreementType()) {
+            case BASIC:
+                return new BouncyXDHBasicAgreement(this, pSpec);
+            case UNIFIED:
+                return new BouncyXDHUnifiedAgreement(this, pSpec);
+            default:
+                throw new GordianDataException(getInvalidText(pSpec));
+        }
+    }
+
+    /**
+     * Create the BouncyCastle Encryptor.
+     *
+     * @param pSpec the agreementSpec
+     * @return the Agreement
+     * @throws OceanusException on error
+     */
+    private GordianEncryptor getBCEncryptor(final GordianEncryptorSpec pSpec) throws OceanusException {
+        switch (pSpec.getKeyType()) {
+            case RSA:
+                return new BouncyRSAEncryptor(this, pSpec);
+            case EC:
+            case GOST2012:
+            case DSTU4145:
+                return new BouncyECEncryptor(this, pSpec);
+            case SM2:
+                return new BouncySM2Encryptor(this, pSpec);
+            case MCELIECE:
+                return GordianMcElieceEncryptionType.STANDARD.equals(pSpec.getMcElieceType())
+                    ? new BouncyMcElieceEncryptor(this, pSpec)
+                    : new BouncyMcElieceCCA2Encryptor(this, pSpec);
+            default:
+                throw new GordianDataException(getInvalidText(pSpec));
         }
     }
 }

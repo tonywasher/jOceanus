@@ -23,19 +23,14 @@ import org.bouncycastle.asn1.x509.DSAParameter;
  */
 public enum GordianDSAKeyType {
     /**
+     * 2048.
+     */
+    MOD2048(2048, 256),
+
+    /**
      * 1024, 160.
      */
     MOD1024(1024, 160),
-
-    /**
-     * 2048, 224.
-     */
-    MOD2048_1(2048, 224),
-
-    /**
-     * 2048.
-     */
-    MOD2048_2(2048, 256),
 
     /**
      * 3072.

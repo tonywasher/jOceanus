@@ -16,194 +16,144 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jgordianknot.test.crypto;
 
+import java.security.SecureRandom;
 import java.security.spec.PKCS8EncodedKeySpec;
 import java.security.spec.X509EncodedKeySpec;
-import java.util.EnumMap;
-import java.util.Iterator;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.function.BiPredicate;
+import java.util.Arrays;
 
+import net.sourceforge.joceanus.jgordianknot.crypto.GordianAgreement;
+import net.sourceforge.joceanus.jgordianknot.crypto.GordianAgreement.GordianBasicAgreement;
+import net.sourceforge.joceanus.jgordianknot.crypto.GordianAgreement.GordianEncapsulationAgreement;
+import net.sourceforge.joceanus.jgordianknot.crypto.GordianAgreement.GordianEphemeralAgreement;
+import net.sourceforge.joceanus.jgordianknot.crypto.GordianAgreementSpec;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianAsymAlgId;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianAsymKeySpec;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianAsymKeyType;
-import net.sourceforge.joceanus.jgordianknot.crypto.GordianDSAElliptic;
-import net.sourceforge.joceanus.jgordianknot.crypto.GordianDSAKeyType;
-import net.sourceforge.joceanus.jgordianknot.crypto.GordianDSTU4145Elliptic;
-import net.sourceforge.joceanus.jgordianknot.crypto.GordianDigestSpec;
+import net.sourceforge.joceanus.jgordianknot.crypto.GordianEncryptor;
+import net.sourceforge.joceanus.jgordianknot.crypto.GordianEncryptorSpec;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianFactory;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianFactoryType;
-import net.sourceforge.joceanus.jgordianknot.crypto.GordianGOSTElliptic;
-import net.sourceforge.joceanus.jgordianknot.crypto.GordianKeyEncapsulation;
-import net.sourceforge.joceanus.jgordianknot.crypto.GordianKeyEncapsulation.GordianKEMSender;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianKeyPair;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianKeyPairGenerator;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianKeySet;
-import net.sourceforge.joceanus.jgordianknot.crypto.GordianMcElieceKeySpec;
-import net.sourceforge.joceanus.jgordianknot.crypto.GordianMcElieceKeySpec.GordianMcElieceDigestType;
-import net.sourceforge.joceanus.jgordianknot.crypto.GordianModulus;
-import net.sourceforge.joceanus.jgordianknot.crypto.GordianQTESLAKeyType;
-import net.sourceforge.joceanus.jgordianknot.crypto.GordianSM2Elliptic;
-import net.sourceforge.joceanus.jgordianknot.crypto.GordianSPHINCSKeyType;
+import net.sourceforge.joceanus.jgordianknot.crypto.GordianSignatureAlgId;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianSignatureSpec;
-import net.sourceforge.joceanus.jgordianknot.crypto.GordianSignatureType;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianSignature;
-import net.sourceforge.joceanus.jgordianknot.crypto.GordianXMSSKeyType;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
  * AsymKeys Test Control.
  */
-public class GordianTestAsymmetric {
-    /**
-     * AsyncKey table.
-     */
-    private final Map<GordianAsymKeyType, AsymPairControl> theMap;
-
+public final class GordianTestAsymmetric {
     /**
      * AsyncKey table.
      */
     private static final GordianAsymAlgId ALGID = new GordianAsymAlgId();
 
     /**
-     * Signature Source.
+     * Random source.
      */
-    private final byte[][] theSignatureSource;
+    private static final SecureRandom RANDOM = new SecureRandom();
 
     /**
-     * Constructor.
-     * @param pSignatures the signature sources
+     * Test buffer size.
      */
-    protected GordianTestAsymmetric(final byte[]... pSignatures) {
-        /* Create the map */
-        theMap = new EnumMap<>(GordianAsymKeyType.class);
-
-        /* Create the signature sources */
-        theSignatureSource = pSignatures;
-    }
-
-     /**
-     * Create keyPairs.
-     * @param pFactory the factory
-     * @param pKeySet the keySet
-     * @throws OceanusException on error
-     */
-    protected void createKeyPairs(final GordianFactory pFactory,
-                                  final GordianKeySet pKeySet) throws OceanusException {
-        createKeyPair(pFactory, pKeySet, GordianAsymKeySpec.rsa(GordianModulus.MOD2048));
-        createKeyPair(pFactory, pKeySet, GordianAsymKeySpec.ec(GordianDSAElliptic.SECT571K1));
-        createKeyPair(pFactory, pKeySet, GordianAsymKeySpec.dsa(GordianDSAKeyType.MOD2048_2));
-        createKeyPair(pFactory, pKeySet, GordianAsymKeySpec.dh(GordianModulus.MOD4096));
-        createKeyPair(pFactory, pKeySet, GordianAsymKeySpec.sm2(GordianSM2Elliptic.SM2P256V1));
-        createKeyPair(pFactory, pKeySet, GordianAsymKeySpec.sphincs(GordianSPHINCSKeyType.SHA3));
-        createKeyPair(pFactory, pKeySet, GordianAsymKeySpec.rainbow());
-        createKeyPair(pFactory, pKeySet, GordianAsymKeySpec.newHope());
-        createKeyPair(pFactory, pKeySet, GordianAsymKeySpec.dstu4145(GordianDSTU4145Elliptic.DSTU9));
-        createKeyPair(pFactory, pKeySet, GordianAsymKeySpec.gost2012(GordianGOSTElliptic.GOST512A));
-        createKeyPair(pFactory, pKeySet, GordianAsymKeySpec.xmss(GordianXMSSKeyType.SHA256));
-        createKeyPair(pFactory, pKeySet, GordianAsymKeySpec.xmssmt(GordianXMSSKeyType.SHA256));
-        createKeyPair(pFactory, pKeySet, GordianAsymKeySpec.qTESLA(GordianQTESLAKeyType.HEURISTIC_I));
-        createKeyPair(pFactory, pKeySet, GordianAsymKeySpec.ed25519());
-        createKeyPair(pFactory, pKeySet, GordianAsymKeySpec.ed448());
-        createKeyPair(pFactory, pKeySet, GordianAsymKeySpec.x25519());
-        createKeyPair(pFactory, pKeySet, GordianAsymKeySpec.x448());
-    }
+    private static final int TESTLEN = 1024;
 
     /**
-     * Create keyPairs.
+     * The source factory.
+     */
+    private final GordianFactory theSource;
+
+    /**
+     * The target factory.
+     */
+    private final GordianFactory theTarget;
+
+    /**
+     * The single keyType to test.
+     */
+    private final GordianAsymKeyType theKeyType;
+
+    /**
+     * Do we process all specs.
+     */
+    private final boolean allSpecs;
+
+    /**
+     * AsyncKey table.
+     */
+    private final GordianSignatureAlgId sigID;
+
+    /**
+     * Private Constructor.
      * @param pSource the source factory
      * @param pTarget the target factory
-     * @throws OceanusException on error
+     * @param pSingleType the type of key that is to be tested (or null for all)
+     * @param pAllSpecs test all specs for each keyType
      */
-    protected static void checkKeyPair(final GordianFactory pSource,
-                                       final GordianFactory pTarget) throws OceanusException {
-        checkKeyPair(pSource, pTarget, GordianAsymKeySpec.rsa(GordianModulus.MOD2048));
-        checkKeyPair(pSource, pTarget, GordianAsymKeySpec.ec(GordianDSAElliptic.SECT571K1));
-        checkKeyPair(pSource, pTarget, GordianAsymKeySpec.dsa(GordianDSAKeyType.MOD2048_2));
-        checkKeyPair(pSource, pTarget, GordianAsymKeySpec.dh(GordianModulus.MOD4096));
-        checkKeyPair(pSource, pTarget, GordianAsymKeySpec.sm2(GordianSM2Elliptic.SM2P256V1));
-        checkKeyPair(pSource, pTarget, GordianAsymKeySpec.sphincs(GordianSPHINCSKeyType.SHA2));
-        checkKeyPair(pSource, pTarget, GordianAsymKeySpec.rainbow());
-        checkKeyPair(pSource, pTarget, GordianAsymKeySpec.newHope());
-        checkKeyPair(pSource, pTarget, GordianAsymKeySpec.dstu4145(GordianDSTU4145Elliptic.DSTU9));
-        checkKeyPair(pSource, pTarget, GordianAsymKeySpec.gost2012(GordianGOSTElliptic.GOST512A));
-        checkKeyPair(pSource, pTarget, GordianAsymKeySpec.xmss(GordianXMSSKeyType.SHA256));
-        checkKeyPair(pSource, pTarget, GordianAsymKeySpec.xmssmt(GordianXMSSKeyType.SHA256));
-        checkKeyPair(pSource, pTarget, GordianAsymKeySpec.mcEliece(GordianMcElieceKeySpec.standard()));
-        checkKeyPair(pSource, pTarget, GordianAsymKeySpec.mcEliece(GordianMcElieceKeySpec.cca2(GordianMcElieceDigestType.SHA256)));
-        checkKeyPair(pSource, pTarget, GordianAsymKeySpec.qTESLA(GordianQTESLAKeyType.HEURISTIC_I));
-        checkKeyPair(pSource, pTarget, GordianAsymKeySpec.ed25519());
-        checkKeyPair(pSource, pTarget, GordianAsymKeySpec.ed448());
-        checkKeyPair(pSource, pTarget, GordianAsymKeySpec.x25519());
-        checkKeyPair(pSource, pTarget, GordianAsymKeySpec.x448());
+    GordianTestAsymmetric(final GordianFactory pSource,
+                          final GordianFactory pTarget,
+                          final GordianAsymKeyType pSingleType,
+                          final boolean pAllSpecs) {
+        /* Store parameters */
+        theSource = pSource;
+        theTarget = pTarget;
+        theKeyType = pSingleType;
+        allSpecs = pAllSpecs;
+
+        /* Build signatire table */
+        sigID = new GordianSignatureAlgId(pSource);
     }
 
     /**
-     * Test keyPairs.
-     * @param pFactory the factory
-     * @param pKeySet the keySet
+     * Create keyPairs.
      * @throws OceanusException on error
      */
-    protected void testKeyPairs(final GordianFactory pFactory,
-                                final GordianKeySet pKeySet) throws OceanusException {
-        for (GordianDSAElliptic myCurve : GordianDSAElliptic.values()) {
-            createKeyPair(pFactory, pKeySet, GordianAsymKeySpec.ec(myCurve));
+    void checkKeyPairs() throws OceanusException {
+        /* Check the different types */
+        for (final GordianAsymKeyType myKeyType: GordianAsymKeyType.values()) {
+            checkKeyPairs(myKeyType);
         }
-        for (GordianSM2Elliptic myCurve : GordianSM2Elliptic.values()) {
-            createKeyPair(pFactory, pKeySet, GordianAsymKeySpec.sm2(myCurve));
-        }
-        for (GordianDSTU4145Elliptic myCurve : GordianDSTU4145Elliptic.values()) {
-            createKeyPair(pFactory, pKeySet, GordianAsymKeySpec.dstu4145(myCurve));
-        }
-        for (GordianGOSTElliptic myCurve : GordianGOSTElliptic.values()) {
-            createKeyPair(pFactory, pKeySet, GordianAsymKeySpec.gost2012(myCurve));
-        }
-        theMap.clear();
     }
 
     /**
-     * Create keyPair.
-     * @param pFactory the factory
-     * @param pKeySet the keySet
-     * @param pKeySpec the keySpec
+     * Create keyPairs.
+     * @param pKeyType the keyType
      * @throws OceanusException on error
      */
-    private void createKeyPair(final GordianFactory pFactory,
-                               final GordianKeySet pKeySet,
-                               final GordianAsymKeySpec pKeySpec) throws OceanusException {
-        /* Create and record the pair */
-        System.out.println(" Creating " + pKeySpec.toString());
-        final AsymPairControl myPair = new AsymPairControl(pFactory, pKeySpec);
-        theMap.put(pKeySpec.getKeyType(), myPair);
+    private void checkKeyPairs(final GordianAsymKeyType pKeyType) throws OceanusException {
+        /* If we are testing a single keyType, make sure this is the right one */
+        if (theKeyType != null
+                && !pKeyType.equals(theKeyType)) {
+            return;
+        }
 
-        /* Create signatures */
-        myPair.createSignatures(theSignatureSource);
+        /* For each possible keySpec */
+        for (GordianAsymKeySpec mySpec : GordianAsymKeySpec.listPossibleKeySpecs(pKeyType)) {
+            /* Check the keyPair */
+            checkKeyPair(mySpec);
 
-        /* Check KeyExchange */
-        myPair.checkKEMS();
-
-        /* Secure the privateKey */
-        myPair.securePrivateKey(pKeySet);
+            /* Break loop if we are only testing a single Spec */
+            if (!allSpecs) {
+                break;
+            }
+        }
     }
 
     /**
      * Check KeyPair.
-     * @param pSource the source factory
-     * @param pTarget the target factory
      * @param pKeySpec the keySpec
      * @throws OceanusException on error
      */
-    private static void checkKeyPair(final GordianFactory pSource,
-                                     final GordianFactory pTarget,
-                                     final GordianAsymKeySpec pKeySpec) throws OceanusException {
+    private void checkKeyPair(final GordianAsymKeySpec pKeySpec) throws OceanusException {
         /* Create and record the pair */
-        System.out.println(" Checking " + pKeySpec.toString() + " from " + (GordianFactoryType.BC.equals(pSource.getFactoryType())
+        System.out.println(" Checking " + pKeySpec.toString() + " from " + (GordianFactoryType.BC.equals(theSource.getFactoryType())
                                                                             ? "BC"
                                                                             : "Jca"));
 
         /* Create new KeyPair */
-        final GordianKeyPairGenerator mySrcGen = pSource.getKeyPairGenerator(pKeySpec);
+        final GordianKeyPairGenerator mySrcGen = theSource.getKeyPairGenerator(pKeySpec);
         final GordianKeyPair myPair = mySrcGen.generateKeyPair();
         final X509EncodedKeySpec myPublic = mySrcGen.getX509Encoding(myPair);
         final PKCS8EncodedKeySpec myPrivate = mySrcGen.getPKCS8Encoding(myPair);
@@ -217,43 +167,286 @@ public class GordianTestAsymmetric {
         }
 
         /* Derive receiving keyPair */
-        final GordianKeyPairGenerator myTgtGen = pTarget.getKeyPairGenerator(pKeySpec);
-        final GordianKeyPair myResult = myTgtGen.deriveKeyPair(myPublic, myPrivate);
+        final GordianKeyPairGenerator myTgtGen = theTarget.getKeyPairGenerator(pKeySpec);
+        final GordianKeyPair myTarget = myTgtGen.deriveKeyPair(myPublic, myPrivate);
 
-        /* Determine signature algorithm */
-        final GordianSignatureSpec mySpec = GordianSignatureSpec.defaultForKey(pKeySpec);
-        if (mySpec == null) {
-            return;
+        /* check signatures */
+        checkSignatures(myPair, myMirror, myTarget);
+
+        /* check agreements */
+        checkAgreements(myPair, myTarget);
+
+        /* check encryptors */
+        checkEncryptors(myPair, myTarget);
+    }
+
+    /**
+     * Check the signatures.
+     * @param pSrcPair the source pair
+     * @param pMirrorPair the source pair
+     * @param pTgtPair the source pair
+     * @throws OceanusException on error
+     */
+    private void checkSignatures(final GordianKeyPair pSrcPair,
+                                 final GordianKeyPair pMirrorPair,
+                                 final GordianKeyPair pTgtPair) throws OceanusException {
+        /* For each possible signature */
+        final GordianAsymKeyType myType = pSrcPair.getKeySpec().getKeyType();
+        for (GordianSignatureSpec mySign : GordianSignatureSpec.listPossibleSignatures(pSrcPair)) {
+            /* If the signature is supported */
+            if (theSource.validSignatureSpecForKeyPair(pSrcPair, mySign)) {
+                /* Check it */
+                checkSignature(pSrcPair, pMirrorPair, pTgtPair, mySign);
+            }
         }
+    }
+
+    /**
+     * Check Signature.
+     * @param pSrcPair the source pair
+     * @param pMirrorPair the mirror pair
+     * @param pTgtPair the target pair
+     * @param pSpec the signature spec
+     * @throws OceanusException on error
+     */
+    private void checkSignature(final GordianKeyPair pSrcPair,
+                                final GordianKeyPair pMirrorPair,
+                                final GordianKeyPair pTgtPair,
+                                final GordianSignatureSpec pSpec) throws OceanusException {
+        /* Report test */
+        System.out.println("  Signature " + pSpec.toString());
 
         /* Check outgoing signature */
         final byte[] myMessage = "Hello there. How is life treating you?".getBytes();
-        GordianSignature mySigner = pSource.createSigner(mySpec);
-        mySigner.initForSigning(myMirror);
+        GordianSignature mySigner = theSource.createSigner(pSpec);
+        mySigner.initForSigning(pMirrorPair);
         mySigner.update(myMessage);
         byte[] mySignature = mySigner.sign();
-        mySigner.initForVerify(myPair);
+        mySigner.initForVerify(pSrcPair);
         mySigner.update(myMessage);
         if (!mySigner.verify(mySignature)) {
             System.out.println("Failed to verify own signature");
         }
-        mySigner = pTarget.createSigner(mySpec);
-        mySigner.initForVerify(myResult);
-        mySigner.update(myMessage);
-        if (!mySigner.verify(mySignature)) {
-            System.out.println("Failed to verify sent signature");
+
+        /* If the spec is supported in the target */
+        if (theTarget.validSignatureSpecForKeyPair(pTgtPair, pSpec)) {
+            mySigner = theTarget.createSigner(pSpec);
+            mySigner.initForVerify(pTgtPair);
+            mySigner.update(myMessage);
+            if (!mySigner.verify(mySignature)) {
+                System.out.println("Failed to verify sent signature");
+            }
+
+            /* Check incoming signature */
+            mySigner = theTarget.createSigner(pSpec);
+            mySigner.initForSigning(pTgtPair);
+            mySigner.update(myMessage);
+            mySignature = mySigner.sign();
+            mySigner = theSource.createSigner(pSpec);
+            mySigner.initForVerify(pSrcPair);
+            mySigner.update(myMessage);
+            if (!mySigner.verify(mySignature)) {
+                System.out.println("Failed to verify returned signature");
+            }
+        }
+    }
+
+    /**
+     * Check Agreements.
+     * @param pSrcPair the source keyPair
+     * @param pTgtPair the target keyPair
+     * @throws OceanusException on error
+     */
+    private void checkAgreements(final GordianKeyPair pSrcPair,
+                                 final GordianKeyPair pTgtPair) throws OceanusException {
+        /* Loop through the possible agreements */
+        for (final GordianAgreementSpec mySpec : GordianAgreementSpec.listPossibleAgreements(pSrcPair)) {
+            /* If the agreement is valid */
+            if (theSource.validAgreementSpecForKeyPair(pSrcPair, mySpec)) {
+                /* Check the agreement */
+                checkAgreement(pSrcPair, mySpec);
+
+                /* If the agreement is valid for the target */
+                if (theTarget.validAgreementSpecForKeyPair(pTgtPair, mySpec)) {
+                    /* Check the agreement */
+                    checkAgreement(pSrcPair, pTgtPair, mySpec);
+                }
+            }
+        }
+    }
+
+    /**
+     * Check Agreement.
+     * @param pPair the keyPair
+     * @param pSpec the agreementSpec
+     * @throws OceanusException on error
+     */
+    private void checkAgreement(final GordianKeyPair pPair,
+                                final GordianAgreementSpec pSpec) throws OceanusException {
+        /* Access the KeySpec */
+        final GordianAsymKeySpec myKeySpec = pPair.getKeySpec();
+        GordianKeyPair myPartner = null;
+
+        /* Check the agreement */
+        System.out.println("  Checking Agreement " + pSpec.toString());
+        final GordianAgreement mySender = theSource.createAgreement(pSpec);
+        final GordianAgreement myResponder = theSource.createAgreement(pSpec);
+
+        /* Initialise the encryptors */
+        if (!(mySender instanceof GordianEncapsulationAgreement)) {
+            final GordianKeyPairGenerator myKeyGen = theSource.getKeyPairGenerator(myKeySpec);
+            myPartner = myKeyGen.generateKeyPair();
         }
 
-        /* Check incoming signature */
-        mySigner = pTarget.createSigner(mySpec);
-        mySigner.initForSigning(myResult);
-        mySigner.update(myMessage);
-        mySignature = mySigner.sign();
-        mySigner = pSource.createSigner(mySpec);
-        mySigner.initForVerify(myPair);
-        mySigner.update(myMessage);
-        if (!mySigner.verify(mySignature)) {
-            System.out.println("Failed to verify returned signature");
+        /* Handle Encapsulation */
+        if (mySender instanceof GordianEncapsulationAgreement
+                 && myResponder instanceof GordianEncapsulationAgreement) {
+            final byte[] myMsg = ((GordianEncapsulationAgreement) mySender).initiateAgreement(pPair);
+            ((GordianEncapsulationAgreement) myResponder).acceptAgreement(pPair, myMsg);
+
+            /* Handle Basic */
+        } else if (mySender instanceof GordianBasicAgreement
+                 && myResponder instanceof GordianBasicAgreement) {
+            final byte[] myMsg = ((GordianBasicAgreement) mySender).initiateAgreement(myPartner, pPair);
+            ((GordianBasicAgreement) myResponder).acceptAgreement(myPartner, pPair, myMsg);
+
+            /* Handle ephemeral */
+        } else if (mySender instanceof GordianEphemeralAgreement
+                 && myResponder instanceof GordianEphemeralAgreement) {
+            final byte[] myMsg = ((GordianEphemeralAgreement) mySender).initiateAgreement(myPartner);
+            final byte[] myResp = ((GordianEphemeralAgreement) myResponder).acceptAgreement(myPartner, pPair, myMsg);
+            ((GordianEphemeralAgreement) mySender).confirmAgreement(pPair, myResp);
+
+        } else {
+            System.out.println("Invalid Agreement");
+            return;
+        }
+
+        /* Check that the values match */
+        final GordianKeySet myFirst = mySender.deriveKeySet();
+        final GordianKeySet mySecond = myResponder.deriveKeySet();
+        if (!myFirst.equals(mySecond)) {
+            System.out.println("Failed to agree keySet");
+        }
+    }
+
+    /**
+     * Check Agreement.
+     * @param pSrcPair the source keyPair
+     * @param pTgtPair the target keyPair
+     * @param pSpec the agreementSpec
+     * @throws OceanusException on error
+     */
+    private void checkAgreement(final GordianKeyPair pSrcPair,
+                                final GordianKeyPair pTgtPair,
+                                final GordianAgreementSpec pSpec) throws OceanusException {
+        /* Check the agreement */
+        final GordianAgreement mySender = theSource.createAgreement(pSpec);
+        final GordianAgreement myResponder = theTarget.createAgreement(pSpec);
+
+         /* Handle Encapsulation */
+        if (mySender instanceof GordianEncapsulationAgreement
+                && myResponder instanceof GordianEncapsulationAgreement) {
+            final byte[] myMsg = ((GordianEncapsulationAgreement) mySender).initiateAgreement(pSrcPair);
+            ((GordianEncapsulationAgreement) myResponder).acceptAgreement(pTgtPair, myMsg);
+
+            /* Handle Basic */
+        } else if (mySender instanceof GordianBasicAgreement
+                && myResponder instanceof GordianBasicAgreement) {
+            final byte[] myMsg = ((GordianBasicAgreement) mySender).initiateAgreement(pSrcPair, pSrcPair);
+            ((GordianBasicAgreement) myResponder).acceptAgreement(pTgtPair, pTgtPair, myMsg);
+
+            /* Handle ephemeral */
+        } else if (mySender instanceof GordianEphemeralAgreement
+                && myResponder instanceof GordianEphemeralAgreement) {
+            final byte[] myMsg = ((GordianEphemeralAgreement) mySender).initiateAgreement(pSrcPair);
+            final byte[] myResp = ((GordianEphemeralAgreement) myResponder).acceptAgreement(pTgtPair, pTgtPair, myMsg);
+            ((GordianEphemeralAgreement) mySender).confirmAgreement(pSrcPair, myResp);
+
+        } else {
+            System.out.println("Invalid Agreement");
+            return;
+        }
+
+        /* Check that the values match */
+        final GordianKeySet myFirst = mySender.deriveIndependentKeySet();
+        final GordianKeySet mySecond = myResponder.deriveIndependentKeySet();
+        if (!myFirst.equals(mySecond)) {
+            System.out.println("Failed to agree crossFactory keySet");
+        }
+    }
+
+    /**
+     * Check Encryptors.
+     * @param pPair the keyPair
+     * @param pTgtPair the target pair
+     * @throws OceanusException on error
+     */
+    private void checkEncryptors(final GordianKeyPair pPair,
+                                 final GordianKeyPair pTgtPair) throws OceanusException {
+        /* Loop through the possible encryptors */
+        for (final GordianEncryptorSpec mySpec : GordianEncryptorSpec.listPossibleEncryptors(pPair)) {
+            /* If the encryptor is valid */
+            if (theSource.validEncryptorSpecForKeyPair(pPair, mySpec)) {
+                /* Check the encryptor */
+                checkEncryptor(pPair, pTgtPair, mySpec);
+            }
+        }
+    }
+
+    /**
+     * Check Encryptors.
+     * @param pPair the keyPair
+     * @param pTgtPair the target pair
+     * @param pSpec the encryptorSpec
+     * @throws OceanusException on error
+     */
+    private void checkEncryptor(final GordianKeyPair pPair,
+                                final GordianKeyPair pTgtPair,
+                                final GordianEncryptorSpec pSpec) throws OceanusException {
+        /* Create the data to encrypt */
+        final byte[] mySrc = new byte[TESTLEN];
+        RANDOM.nextBytes(mySrc);
+
+        /* Check the agreement */
+        System.out.println("  Checking Encryptor " + pSpec.toString());
+        final GordianEncryptor mySender = theSource.createEncryptor(pSpec);
+        final GordianEncryptor myReceiver = theSource.createEncryptor(pSpec);
+
+        /* Handle Initialisation */
+        mySender.initForEncrypt(pPair);
+        myReceiver.initForDecrypt(pPair);
+
+        /* Perform the encryption and decryption */
+        final byte[] myEncrypted = mySender.encrypt(mySrc);
+        final byte[] myResult = myReceiver.decrypt(myEncrypted);
+
+        /* Check that the values match */
+        if (!Arrays.equals(mySrc, myResult)) {
+            System.out.println("Failed self Encryption");
+        }
+
+        /* If the spec is supported in the target */
+        if (theTarget.validEncryptorSpecForKeyPair(pTgtPair, pSpec)) {
+            /* Create a target encryptor and decrypt message */
+            final GordianEncryptor myTarget = theTarget.createEncryptor(pSpec);
+            myTarget.initForDecrypt(pTgtPair);
+            final byte[] myResult1 = myTarget.decrypt(myEncrypted);
+
+            /* Check that the values match */
+            if (!Arrays.equals(mySrc, myResult1)) {
+                System.out.println("Failed sent Encryption");
+            }
+
+            /* Create a new target encryption and decrypt at receiver */
+            myTarget.initForEncrypt(pTgtPair);
+            final byte[] myEncrypted2 = myTarget.encrypt(mySrc);
+            final byte[] myResult2 = myReceiver.decrypt(myEncrypted2);
+
+            /* Check that the values match */
+            if (!Arrays.equals(mySrc, myResult2)) {
+                System.out.println("Failed received Encryption");
+            }
         }
     }
 
@@ -267,7 +460,7 @@ public class GordianTestAsymmetric {
                                      final GordianAsymKeySpec pSpec) throws OceanusException {
         final GordianAsymKeySpec mySpec = ALGID.determineKeySpec(pEncoded);
         if (!pSpec.equals(mySpec)) {
-            System.out.println("Help");
+            System.out.println("PKCS8 mismatch: " + mySpec);
         }
     }
 
@@ -281,238 +474,7 @@ public class GordianTestAsymmetric {
                                      final GordianAsymKeySpec pSpec) throws OceanusException {
         final GordianAsymKeySpec mySpec = ALGID.determineKeySpec(pEncoded);
         if (!pSpec.equals(mySpec)) {
-            System.out.println("Help");
-        }
-    }
-
-    /**
-     * Create keyPairs.
-     * @param pFactory the factory
-     * @param pKeySet the keySet
-     * @throws OceanusException on error
-     */
-    protected void validateKeyPairs(final GordianFactory pFactory,
-                                    final GordianKeySet pKeySet) throws OceanusException {
-        /* For each control that has been created */
-        final Iterator<AsymPairControl> myIterator = theMap.values().iterator();
-        while (myIterator.hasNext()) {
-            AsymPairControl myControl = myIterator.next();
-            System.out.println(" Restoring " + myControl.getKeySpec().toString());
-            myControl = new AsymPairControl(pFactory, pKeySet, myControl);
-            myControl.validateSignatures(theSignatureSource);
-        }
-    }
-
-    /**
-     * AsymmetricPair Control.
-     */
-    private static final class AsymPairControl {
-        /**
-         * The Factory.
-         */
-        private final GordianFactory theFactory;
-
-        /**
-         * The KeyPairGenerator.
-         */
-        private final GordianKeyPairGenerator theGenerator;
-
-        /**
-         * The KeyPair.
-         */
-        private final GordianKeyPair thePair;
-
-        /**
-         * The Public KeySpec.
-         */
-        private final X509EncodedKeySpec thePublic;
-
-        /**
-         * The Private KeySpec.
-         */
-        private byte[] thePrivate;
-
-        /**
-         * Signature Map.
-         */
-        private final Map<GordianSignatureSpec, byte[]> theSignatures;
-
-        /**
-         * Constructor.
-         * @param pFactory the factory
-         * @param pKeySpec the Asymmetric KeyType.
-         * @throws OceanusException on error
-         */
-        private AsymPairControl(final GordianFactory pFactory,
-                                final GordianAsymKeySpec pKeySpec) throws OceanusException {
-            /* Store the factory */
-            theFactory = pFactory;
-
-            /* Create new KeyPair */
-            theGenerator = pFactory.getKeyPairGenerator(pKeySpec);
-            thePair = theGenerator.generateKeyPair();
-
-            /* Secure the public key */
-            thePublic = theGenerator.getX509Encoding(thePair);
-
-            /* Create the signature map */
-            theSignatures = new LinkedHashMap<>();
-        }
-
-        /**
-         * Constructor.
-         * @param pFactory the factory
-         * @param pKeySet the keySet
-         * @param pStatus the Base Status.
-         * @throws OceanusException on error
-         */
-        private AsymPairControl(final GordianFactory pFactory,
-                                final GordianKeySet pKeySet,
-                                final AsymPairControl pStatus) throws OceanusException {
-            /* Store the factory */
-            theFactory = pFactory;
-
-            /* Create new KeyPair */
-            theGenerator = pFactory.getKeyPairGenerator(pStatus.getKeySpec());
-            thePair = theGenerator.deriveKeyPair(pStatus.thePublic, pStatus.thePrivate, pKeySet);
-
-            /* Don't worry about the keySpecs */
-            thePrivate = null;
-            thePublic = null;
-
-            /* Record the signature map */
-            theSignatures = pStatus.theSignatures;
-
-            /* Check that the pairs are identical */
-            if (!thePair.equals(pStatus.thePair)) {
-                System.out.println("Failed to decrypt KeyPair for: " + getKeySpec());
-            }
-        }
-
-        /**
-         * Obtain the keySpec.
-         * @return the keySpec
-         */
-        private GordianAsymKeySpec getKeySpec() {
-            return thePair.getKeySpec();
-        }
-
-        /**
-         * Secure the privateKey.
-         * @param pKeySet the keySet
-         * @throws OceanusException on error
-         */
-        private void securePrivateKey(final GordianKeySet pKeySet) throws OceanusException {
-            thePrivate = theGenerator.securePrivateKey(thePair, pKeySet);
-        }
-
-        /**
-         * Create the signatures.
-         * @param pSources the sources to sign
-         * @throws OceanusException on error
-         */
-        private void createSignatures(final byte[][] pSources) throws OceanusException {
-            /* Access the list of possible digests */
-            final List<GordianDigestSpec> myDigests = GordianDigestSpec.listAll();
-
-            /* For each possible signature */
-            final GordianAsymKeyType myType = getKeySpec().getKeyType();
-            for (GordianSignatureType mySignType : myType.getSupportedSignatures()) {
-                /* If we need null-digestSpec */
-                if (myType.nullDigestForSignatures()) {
-                    /* If the signature is supported */
-                    final GordianSignatureSpec mySign = new GordianSignatureSpec(myType, mySignType);
-                    if (theFactory.validSignatureSpecForKeyPair(thePair, mySign)) {
-                        createSignature(mySign, pSources);
-                    }
-                    continue;
-                }
-
-                /* For each possible digestSpec */
-                for (GordianDigestSpec mySpec : myDigests) {
-                    /* Create the corresponding signatureSpec */
-                    final GordianSignatureSpec mySign = new GordianSignatureSpec(myType, mySignType, mySpec);
-
-                    /* If the signature is supported */
-                    if (theFactory.validSignatureSpecForKeyPair(thePair, mySign)) {
-                        createSignature(mySign, pSources);
-                    }
-                }
-            }
-        }
-
-        /**
-         * Create the signature.
-         * @param pSignatureSpec the signatureSpec
-         * @param pSources the sources to sign
-         * @throws OceanusException on error
-         */
-        private void createSignature(final GordianSignatureSpec pSignatureSpec,
-                                     final byte[][] pSources) throws OceanusException {
-            System.out.println("  Signing " + pSignatureSpec.toString());
-            final GordianSignature mySigner = theFactory.createSigner(pSignatureSpec);
-            mySigner.initForSigning(thePair);
-            for (byte[] mySource : pSources) {
-                mySigner.update(mySource);
-            }
-            theSignatures.put(pSignatureSpec, mySigner.sign());
-        }
-
-        /**
-         * Validate the signatures.
-         * @param pSources the sources that were signed
-         * @throws OceanusException on error
-         */
-        private void validateSignatures(final byte[][] pSources) throws OceanusException {
-            /* For each signature that has been created */
-            final Iterator<GordianSignatureSpec> myIterator = theSignatures.keySet().iterator();
-            while (myIterator.hasNext()) {
-                final GordianSignatureSpec mySpec = myIterator.next();
-                validateSignature(mySpec, pSources);
-            }
-        }
-
-        /**
-         * Validate the signature.
-         * @param pSignatureSpec the signatureSpec
-         * @param pSources the sources that were signed
-         * @throws OceanusException on error
-         */
-        private void validateSignature(final GordianSignatureSpec pSignatureSpec,
-                                       final byte[][] pSources) throws OceanusException {
-            System.out.println("  Validating " + pSignatureSpec.toString());
-            final GordianSignature myValidator = theFactory.createSigner(pSignatureSpec);
-            myValidator.initForVerify(thePair);
-            for (byte[] mySource : pSources) {
-                myValidator.update(mySource);
-            }
-            if (!myValidator.verify(theSignatures.get(pSignatureSpec))) {
-                System.out.println("Failed to validate signature: " + pSignatureSpec);
-            }
-        }
-
-        /**
-         * Check KEMS.
-         * @throws OceanusException on error
-         */
-        private void checkKEMS() throws OceanusException {
-            /* Access the Exchange predicate */
-            final BiPredicate<GordianKeyPair, GordianDigestSpec> myXchgPredicate = theFactory.supportedKeyExchanges();
-            final GordianDigestSpec mySpec = GordianDigestSpec.whirlpool();
-
-            /* If we can perform keyExchange */
-            if (myXchgPredicate.test(thePair, mySpec)) {
-                /* Perform the key exchange */
-                System.out.println("  Checking KEMS " + mySpec.toString());
-                final GordianKEMSender mySender = theFactory.createKEMessage(thePair, mySpec);
-                final GordianKeyEncapsulation myReceiver = theFactory.parseKEMessage(thePair, mySpec, mySender.getCipherText());
-
-                /* Check agreement */
-                final GordianKeySet myKeySet = mySender.deriveKeySet();
-                if (!myKeySet.equals(myReceiver.deriveKeySet())) {
-                    System.out.println("Failed to agree keys: " + getKeySpec());
-                }
-            }
+            System.out.println("X509 mismatch: " + mySpec);
         }
     }
 }

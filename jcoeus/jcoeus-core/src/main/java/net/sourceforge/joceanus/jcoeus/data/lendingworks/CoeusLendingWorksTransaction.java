@@ -69,6 +69,11 @@ public final class CoeusLendingWorksTransaction
     private static final String PFIX_INTEREST = "Interest payment received";
 
     /**
+     * Interest2 prefix.
+     */
+    private static final String PFIX_INTEREST2 = "Quick Withdraw loan interest shortfall received";
+
+    /**
      * Capital prefix.
      */
     private static final String PFIX_CAPITAL = "Capital repayment received";
@@ -324,7 +329,8 @@ public final class CoeusLendingWorksTransaction
         }
 
         /* If the description is Interest */
-        if (PFIX_INTEREST.equals(theDesc)) {
+        if (PFIX_INTEREST.equals(theDesc)
+             || PFIX_INTEREST2.equals(theDesc)) {
             return CoeusTransactionType.INTEREST;
         }
 

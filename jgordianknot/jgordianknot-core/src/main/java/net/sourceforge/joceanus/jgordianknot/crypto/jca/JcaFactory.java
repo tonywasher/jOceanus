@@ -18,25 +18,26 @@ package net.sourceforge.joceanus.jgordianknot.crypto.jca;
 
 import net.sourceforge.joceanus.jgordianknot.GordianCryptoException;
 import net.sourceforge.joceanus.jgordianknot.GordianDataException;
+import net.sourceforge.joceanus.jgordianknot.crypto.GordianAgreement;
+import net.sourceforge.joceanus.jgordianknot.crypto.GordianAgreementSpec;
+import net.sourceforge.joceanus.jgordianknot.crypto.GordianAgreementType;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianAsymKeySpec;
-import net.sourceforge.joceanus.jgordianknot.crypto.GordianAsymKeyType;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianCipherMode;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianCipherSpec.GordianStreamCipherSpec;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianCipherSpec.GordianSymCipherSpec;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianDigestSpec;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianDigestType;
+import net.sourceforge.joceanus.jgordianknot.crypto.GordianEncryptor;
+import net.sourceforge.joceanus.jgordianknot.crypto.GordianEncryptorSpec;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianFactory;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianFactoryGenerator;
-import net.sourceforge.joceanus.jgordianknot.crypto.GordianKeyEncapsulation;
-import net.sourceforge.joceanus.jgordianknot.crypto.GordianKeyEncapsulation.GordianKEMSender;
-import net.sourceforge.joceanus.jgordianknot.crypto.GordianKeyPair;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianLength;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianMacSpec;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianMacType;
+import net.sourceforge.joceanus.jgordianknot.crypto.GordianMcElieceKeySpec.GordianMcElieceEncryptionType;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianPadding;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianParameters;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianRandomSpec;
-import net.sourceforge.joceanus.jgordianknot.crypto.GordianSPHINCSKeyType;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianSignatureSpec;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianSignatureType;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianSignature;
@@ -44,8 +45,14 @@ import net.sourceforge.joceanus.jgordianknot.crypto.GordianStreamKeyType;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianSymKeySpec;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianSymKeyType;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianWrapCipher;
+import net.sourceforge.joceanus.jgordianknot.crypto.jca.JcaAgreement.JcaBasicAgreement;
+import net.sourceforge.joceanus.jgordianknot.crypto.jca.JcaAgreement.JcaEncapsulationAgreement;
+import net.sourceforge.joceanus.jgordianknot.crypto.jca.JcaAgreement.JcaMQVAgreement;
+import net.sourceforge.joceanus.jgordianknot.crypto.jca.JcaAgreement.JcaUnifiedAgreement;
+import net.sourceforge.joceanus.jgordianknot.crypto.jca.JcaEncryptor.JcaHybridEncryptor;
+import net.sourceforge.joceanus.jgordianknot.crypto.jca.JcaEncryptor.JcaBlockEncryptor;
 import net.sourceforge.joceanus.jgordianknot.crypto.jca.JcaKeyPairGenerator.JcaDSAKeyPairGenerator;
-import net.sourceforge.joceanus.jgordianknot.crypto.jca.JcaKeyPairGenerator.JcaDiffieHellmanKeyPairGenerator;
+import net.sourceforge.joceanus.jgordianknot.crypto.jca.JcaKeyPairGenerator.JcaDHKeyPairGenerator;
 import net.sourceforge.joceanus.jgordianknot.crypto.jca.JcaKeyPairGenerator.JcaECKeyPairGenerator;
 import net.sourceforge.joceanus.jgordianknot.crypto.jca.JcaKeyPairGenerator.JcaEdKeyPairGenerator;
 import net.sourceforge.joceanus.jgordianknot.crypto.jca.JcaKeyPairGenerator.JcaMcElieceKeyPairGenerator;
@@ -70,6 +77,7 @@ import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.pqc.jcajce.provider.BouncyCastlePQCProvider;
 
 import javax.crypto.Cipher;
+import javax.crypto.KeyAgreement;
 import javax.crypto.KeyGenerator;
 import javax.crypto.Mac;
 import javax.crypto.NoSuchPaddingException;
@@ -80,7 +88,6 @@ import java.security.NoSuchAlgorithmException;
 import java.security.Provider;
 import java.security.Security;
 import java.security.Signature;
-import java.util.function.BiPredicate;
 import java.util.function.Predicate;
 
 /**
@@ -318,6 +325,28 @@ public final class JcaFactory
         return getJcaSigner(pSignatureSpec);
     }
 
+    @Override
+    public GordianAgreement createAgreement(final GordianAgreementSpec pAgreementSpec) throws OceanusException {
+        /* Check validity of agreement */
+        if (!validAgreementSpec(pAgreementSpec)) {
+            throw new GordianDataException(getInvalidText(pAgreementSpec));
+        }
+
+        /* Create the agreement */
+        return getJcaAgreement(pAgreementSpec);
+    }
+
+    @Override
+    public GordianEncryptor createEncryptor(final GordianEncryptorSpec pEncryptorSpec) throws OceanusException {
+        /* Check validity of encryptor */
+        if (!validEncryptorSpec(pEncryptorSpec)) {
+            throw new GordianDataException(getInvalidText(pEncryptorSpec));
+        }
+
+        /* Create the encryptor */
+        return getJcaEncryptor(pEncryptorSpec);
+    }
+
     /**
      * Create the SP800 SecureRandom instance.
      * @param pRandomSpec the randomSpec
@@ -542,6 +571,52 @@ public final class JcaFactory
         }
     }
 
+    /**
+     * Create the BouncyCastle KeyFactory via JCA.
+     * @param pAlgorithm the Algorithm
+     * @param postQuantum is this a postQuantum algorithm?
+     * @return the KeyFactory
+     * @throws OceanusException on error
+     */
+    private static KeyAgreement getJavaKeyAgreement(final String pAlgorithm,
+                                                    final boolean postQuantum) throws OceanusException {
+        /* Protect against exceptions */
+        try {
+            /* Return a KeyAgreement for the algorithm */
+            return KeyAgreement.getInstance(pAlgorithm, postQuantum
+                                                      ? BCPQPROV
+                                                      : BCPROV);
+
+            /* Catch exceptions */
+        } catch (NoSuchAlgorithmException e) {
+            /* Throw the exception */
+            throw new GordianCryptoException("Failed to create KeyAgreement", e);
+        }
+    }
+
+    /**
+     * Create the BouncyCastle KeyFactory via JCA.
+     * @param pAlgorithm the Algorithm
+     * @param postQuantum is this a postQuantum algorithm?
+     * @return the KeyFactory
+     * @throws OceanusException on error
+     */
+    protected static Cipher getJavaEncryptor(final String pAlgorithm,
+                                             final boolean postQuantum) throws OceanusException {
+        /* Protect against exceptions */
+        try {
+            /* Return a Cipher for the algorithm */
+            return Cipher.getInstance(pAlgorithm, postQuantum
+                                                        ? BCPQPROV
+                                                        : BCPROV);
+
+            /* Catch exceptions */
+        } catch (NoSuchAlgorithmException
+                | NoSuchPaddingException e) {
+            /* Throw the exception */
+            throw new GordianCryptoException("Failed to create Cipher", e);
+        }
+    }
     /**
      * Create the BouncyCastle KeyFactory via JCA.
      * @param pAlgorithm the Algorithm
@@ -794,7 +869,7 @@ public final class JcaFactory
     }
 
     /**
-     * Create the BouncyCastle KeyPairGenerator.
+     * Create the Jca KeyPairGenerator.
      * @param pKeySpec the keySpec
      * @return the KeyGenerator
      * @throws OceanusException on error
@@ -816,7 +891,7 @@ public final class JcaFactory
             case ED448:
                 return new JcaEdKeyPairGenerator(this, pKeySpec);
             case DIFFIEHELLMAN:
-                return new JcaDiffieHellmanKeyPairGenerator(this, pKeySpec);
+                return new JcaDHKeyPairGenerator(this, pKeySpec);
             case SPHINCS:
                 return new JcaSPHINCSKeyPairGenerator(this, pKeySpec);
             case RAINBOW:
@@ -836,8 +911,8 @@ public final class JcaFactory
     }
 
     /**
-     * Create the BouncyCastle Signer.
-     * @param pSignatureSpec the digestSpec
+     * Create the Jca Signer.
+     * @param pSignatureSpec the signatureSpec
      * @return the Signer
      * @throws OceanusException on error
      */
@@ -870,21 +945,108 @@ public final class JcaFactory
     }
 
     @Override
-    public BiPredicate<GordianKeyPair, GordianDigestSpec> supportedKeyExchanges() {
-        return (p, d) -> false;
+    public Predicate<GordianAgreementSpec> supportedAgreements() {
+        return this::validAgreementSpec;
     }
 
-    @Override
-    public GordianKEMSender createKEMessage(final GordianKeyPair pKeyPair,
-                                            final GordianDigestSpec pDigestSpec) {
-        throw new UnsupportedOperationException();
+    /**
+     * Create the Jca Agreement.
+     * @param pAgreementSpec the agreementSpec
+     * @return the Agreement
+     * @throws OceanusException on error
+     */
+    private GordianAgreement getJcaAgreement(final GordianAgreementSpec pAgreementSpec) throws OceanusException {
+        switch (pAgreementSpec.getAsymKeyType()) {
+            case NEWHOPE:
+                return getNHAgreement(pAgreementSpec);
+            case EC:
+                return getECAgreement(pAgreementSpec);
+            case DIFFIEHELLMAN:
+                return getDHAgreement(pAgreementSpec);
+            case X25519:
+            case X448:
+                return getXDHAgreement(pAgreementSpec);
+            default:
+                throw new GordianDataException(getInvalidText(pAgreementSpec.getAsymKeyType()));
+        }
     }
 
-    @Override
-    public GordianKeyEncapsulation parseKEMessage(final GordianKeyPair pKeyPair,
-                                                  final GordianDigestSpec pDigestSpec,
-                                                  final byte[] pMessage) {
-        throw new UnsupportedOperationException();
+    /**
+     * Create the NewHope Agreement.
+     * @param pAgreementSpec the agreementSpec
+     * @return the Agreement
+     * @throws OceanusException on error
+     */
+    private GordianAgreement getNHAgreement(final GordianAgreementSpec pAgreementSpec) throws OceanusException {
+        return new JcaEncapsulationAgreement(this, pAgreementSpec, getJavaKeyAgreement("NH", true));
+    }
+
+    /**
+     * Create the EC Agreement.
+     * @param pAgreementSpec the agreementSpec
+     * @return the Agreement
+     * @throws OceanusException on error
+     */
+    private GordianAgreement getECAgreement(final GordianAgreementSpec pAgreementSpec) throws OceanusException {
+        switch (pAgreementSpec.getAgreementType()) {
+            case BASIC:
+                return new JcaBasicAgreement(this, pAgreementSpec, getJavaKeyAgreement("ECDHC", false));
+            case UNIFIED:
+                return new JcaUnifiedAgreement(this, pAgreementSpec, getJavaKeyAgreement("ECCDHU", false));
+            case MQV:
+                return new JcaMQVAgreement(this, pAgreementSpec, getJavaKeyAgreement("ECMQV", false));
+            default:
+                throw new GordianDataException(getInvalidText(pAgreementSpec));
+        }
+    }
+
+    /**
+     * Create the DH Agreement.
+     * @param pAgreementSpec the agreementSpec
+     * @return the Agreement
+     * @throws OceanusException on error
+     */
+    private GordianAgreement getDHAgreement(final GordianAgreementSpec pAgreementSpec) throws OceanusException {
+        switch (pAgreementSpec.getAgreementType()) {
+            case BASIC:
+                return new JcaBasicAgreement(this, pAgreementSpec, getJavaKeyAgreement("DH", false));
+            default:
+                throw new GordianDataException(getInvalidText(pAgreementSpec));
+        }
+    }
+
+    /**
+     * Create the XDH Agreement.
+     * @param pAgreementSpec the agreementSpec
+     * @return the Agreement
+     * @throws OceanusException on error
+     */
+    private GordianAgreement getXDHAgreement(final GordianAgreementSpec pAgreementSpec) throws OceanusException {
+        switch (pAgreementSpec.getAgreementType()) {
+            case BASIC:
+                return new JcaBasicAgreement(this, pAgreementSpec, getJavaKeyAgreement("XDH", false));
+            default:
+                throw new GordianDataException(getInvalidText(pAgreementSpec));
+        }
+    }
+
+    /**
+     * Create the Jca Encryptor.
+     * @param pEncryptorSpec the encryptorSpec
+     * @return the Encryptor
+     * @throws OceanusException on error
+     */
+    private GordianEncryptor getJcaEncryptor(final GordianEncryptorSpec pEncryptorSpec) throws OceanusException {
+        switch (pEncryptorSpec.getKeyType()) {
+            case RSA:
+                return new JcaBlockEncryptor(this, pEncryptorSpec);
+            case MCELIECE:
+                return GordianMcElieceEncryptionType.STANDARD.equals(pEncryptorSpec.getMcElieceType())
+                        ? new JcaBlockEncryptor(this, pEncryptorSpec)
+                        : new JcaHybridEncryptor(this, pEncryptorSpec);
+            default:
+                throw new GordianDataException(getInvalidText(pEncryptorSpec.getKeyType()));
+        }
     }
 
     @Override
@@ -985,6 +1147,50 @@ public final class JcaFactory
     }
 
     @Override
+    protected boolean validAgreementSpec(final GordianAgreementSpec pSpec) {
+        /* validate the agreementSpec */
+        if (!super.validAgreementSpec(pSpec)) {
+            return false;
+        }
+
+        /* Switch on KeyType */
+        final GordianAgreementType myType = pSpec.getAgreementType();
+        switch (pSpec.getAsymKeyType()) {
+            case RSA:
+            case DSTU4145:
+            case GOST2012:
+                return false;
+            case NEWHOPE:
+                return true;
+            case EC:
+                return !GordianAgreementType.KEM.equals(myType);
+            case DIFFIEHELLMAN:
+            case X25519:
+            case X448:
+                return GordianAgreementType.BASIC.equals(myType);
+            default:
+                return false;
+        }
+    }
+
+    @Override
+    protected boolean validEncryptorSpec(final GordianEncryptorSpec pSpec) {
+        /* validate the encryptorSpec */
+        if (!super.validEncryptorSpec(pSpec)) {
+            return false;
+        }
+
+        /* Switch on KeyType */
+        switch (pSpec.getKeyType()) {
+            case RSA:
+            case MCELIECE:
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    @Override
     protected boolean validSignatureSpec(final GordianSignatureSpec pSpec) {
         /* validate the signatureSpec */
         if (!super.validSignatureSpec(pSpec)) {
@@ -1010,9 +1216,10 @@ public final class JcaFactory
             case XMSSMT:
             case SPHINCS:
             case QTESLA:
-            case ED25519:
-            case ED448:
                 return true;
+            case ED448:
+                return GordianSignatureType.PURE.equals(pSpec.getSignatureType());
+            case ED25519:
             case DIFFIEHELLMAN:
             case NEWHOPE:
             case MCELIECE:

@@ -25,18 +25,18 @@ import org.bouncycastle.asn1.pkcs.PrivateKeyInfo;
 import org.bouncycastle.asn1.x509.SubjectPublicKeyInfo;
 import org.bouncycastle.crypto.AsymmetricCipherKeyPair;
 import org.bouncycastle.crypto.KeyGenerationParameters;
+import org.bouncycastle.crypto.newutils.PqcPrivateKeyFactory;
+import org.bouncycastle.crypto.newutils.PqcPrivateKeyInfoFactory;
+import org.bouncycastle.crypto.newutils.PqcPublicKeyFactory;
+import org.bouncycastle.crypto.newutils.PqcSubjectPublicKeyInfoFactory;
 import org.bouncycastle.crypto.params.AsymmetricKeyParameter;
 import org.bouncycastle.crypto.params.ParametersWithRandom;
-import org.bouncycastle.pqc.asn1.RainbowPrivateKey;
-import org.bouncycastle.pqc.asn1.RainbowPublicKey;
 import org.bouncycastle.pqc.crypto.rainbow.RainbowKeyGenerationParameters;
 import org.bouncycastle.pqc.crypto.rainbow.RainbowKeyPairGenerator;
 import org.bouncycastle.pqc.crypto.rainbow.RainbowParameters;
 import org.bouncycastle.pqc.crypto.rainbow.RainbowPrivateKeyParameters;
 import org.bouncycastle.pqc.crypto.rainbow.RainbowPublicKeyParameters;
 import org.bouncycastle.pqc.crypto.rainbow.RainbowSigner;
-import org.bouncycastle.pqc.jcajce.provider.rainbow.BCRainbowPrivateKey;
-import org.bouncycastle.pqc.jcajce.provider.rainbow.BCRainbowPublicKey;
 
 import net.sourceforge.joceanus.jgordianknot.GordianCryptoException;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianAsymKeySpec;
@@ -155,11 +155,15 @@ public final class BouncyRainbowAsymKey {
         }
 
         @Override
-        public PKCS8EncodedKeySpec getPKCS8Encoding(final GordianKeyPair pKeyPair) {
-            final BouncyRainbowPrivateKey myPrivateKey = (BouncyRainbowPrivateKey) getPrivateKey(pKeyPair);
-            final RainbowPrivateKeyParameters myParms = myPrivateKey.getPrivateKey();
-            final BCRainbowPrivateKey myKey = new BCRainbowPrivateKey(myParms);
-            return new PKCS8EncodedKeySpec(myKey.getEncoded());
+        public PKCS8EncodedKeySpec getPKCS8Encoding(final GordianKeyPair pKeyPair) throws OceanusException {
+            try {
+                final BouncyRainbowPrivateKey myPrivateKey = (BouncyRainbowPrivateKey) getPrivateKey(pKeyPair);
+                final RainbowPrivateKeyParameters myParms = myPrivateKey.getPrivateKey();
+                final PrivateKeyInfo myInfo = PqcPrivateKeyInfoFactory.createPrivateKeyInfo(myParms, null);
+                return new PKCS8EncodedKeySpec(myInfo.getEncoded());
+            } catch (IOException e) {
+                throw new GordianCryptoException(ERROR_PARSE, e);
+            }
         }
 
         @Override
@@ -167,9 +171,8 @@ public final class BouncyRainbowAsymKey {
                                            final PKCS8EncodedKeySpec pPrivateKey) throws OceanusException {
             try {
                 final PrivateKeyInfo myInfo = PrivateKeyInfo.getInstance(pPrivateKey.getEncoded());
-                final RainbowPrivateKey myKey = RainbowPrivateKey.getInstance(myInfo.parsePrivateKey());
-                final BouncyRainbowPrivateKey myPrivate = new BouncyRainbowPrivateKey(getKeySpec(),
-                        new RainbowPrivateKeyParameters(myKey.getInvA1(), myKey.getB1(), myKey.getInvA2(), myKey.getB2(), myKey.getVi(), myKey.getLayers()));
+                final RainbowPrivateKeyParameters myParms = (RainbowPrivateKeyParameters) PqcPrivateKeyFactory.createKey(myInfo);
+                final BouncyRainbowPrivateKey myPrivate = new BouncyRainbowPrivateKey(getKeySpec(), myParms);
                 final BouncyRainbowPublicKey myPublic = derivePublicKey(pPublicKey);
                 return new BouncyKeyPair(myPublic, myPrivate);
             } catch (IOException e) {
@@ -178,11 +181,15 @@ public final class BouncyRainbowAsymKey {
         }
 
         @Override
-        public X509EncodedKeySpec getX509Encoding(final GordianKeyPair pKeyPair) {
-            final BouncyRainbowPublicKey myPublicKey = (BouncyRainbowPublicKey) getPublicKey(pKeyPair);
-            final RainbowPublicKeyParameters myParms = myPublicKey.getPublicKey();
-            final BCRainbowPublicKey myKey = new BCRainbowPublicKey(myParms);
-            return new X509EncodedKeySpec(myKey.getEncoded());
+        public X509EncodedKeySpec getX509Encoding(final GordianKeyPair pKeyPair) throws OceanusException {
+            try {
+                final BouncyRainbowPublicKey myPublicKey = (BouncyRainbowPublicKey) getPublicKey(pKeyPair);
+                final RainbowPublicKeyParameters myParms = myPublicKey.getPublicKey();
+                final SubjectPublicKeyInfo myInfo = PqcSubjectPublicKeyInfoFactory.createSubjectPublicKeyInfo(myParms);
+                return new X509EncodedKeySpec(myInfo.getEncoded());
+            } catch (IOException e) {
+                throw new GordianCryptoException(ERROR_PARSE, e);
+            }
         }
 
         @Override
@@ -200,9 +207,7 @@ public final class BouncyRainbowAsymKey {
         private BouncyRainbowPublicKey derivePublicKey(final X509EncodedKeySpec pEncodedKey) throws OceanusException {
             try {
                 final SubjectPublicKeyInfo myInfo = SubjectPublicKeyInfo.getInstance(pEncodedKey.getEncoded());
-                final RainbowPublicKey myKey = RainbowPublicKey.getInstance(myInfo.parsePublicKey());
-                final RainbowPublicKeyParameters myParms = new RainbowPublicKeyParameters(myKey.getDocLength(),
-                        myKey.getCoeffQuadratic(), myKey.getCoeffSingular(), myKey.getCoeffScalar());
+                final RainbowPublicKeyParameters myParms = (RainbowPublicKeyParameters) PqcPublicKeyFactory.createKey(myInfo);
                 return new BouncyRainbowPublicKey(getKeySpec(), myParms);
             } catch (IOException e) {
                 throw new GordianCryptoException(ERROR_PARSE, e);

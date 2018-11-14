@@ -22,20 +22,18 @@ import java.security.spec.X509EncodedKeySpec;
 import java.util.Arrays;
 
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
-import org.bouncycastle.asn1.ASN1OctetString;
-import org.bouncycastle.asn1.DEROctetString;
 import org.bouncycastle.asn1.nist.NISTObjectIdentifiers;
 import org.bouncycastle.asn1.pkcs.PrivateKeyInfo;
-import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
 import org.bouncycastle.asn1.x509.SubjectPublicKeyInfo;
 import org.bouncycastle.crypto.AsymmetricCipherKeyPair;
 import org.bouncycastle.crypto.Digest;
 import org.bouncycastle.crypto.digests.SHA3Digest;
 import org.bouncycastle.crypto.digests.SHA512tDigest;
+import org.bouncycastle.crypto.newutils.PqcPrivateKeyFactory;
+import org.bouncycastle.crypto.newutils.PqcPrivateKeyInfoFactory;
+import org.bouncycastle.crypto.newutils.PqcPublicKeyFactory;
+import org.bouncycastle.crypto.newutils.PqcSubjectPublicKeyInfoFactory;
 import org.bouncycastle.crypto.params.AsymmetricKeyParameter;
-import org.bouncycastle.jcajce.provider.asymmetric.util.KeyUtil;
-import org.bouncycastle.pqc.asn1.PQCObjectIdentifiers;
-import org.bouncycastle.pqc.asn1.SPHINCS256KeyParams;
 import org.bouncycastle.pqc.crypto.sphincs.SPHINCS256KeyGenerationParameters;
 import org.bouncycastle.pqc.crypto.sphincs.SPHINCS256KeyPairGenerator;
 import org.bouncycastle.pqc.crypto.sphincs.SPHINCS256Signer;
@@ -150,9 +148,9 @@ public final class BouncySPHINCSAsymKey {
         private final SPHINCS256KeyPairGenerator theGenerator;
 
         /**
-         * AlgorithmId.
+         * TreeDigest.
          */
-        private final AlgorithmIdentifier theAlgorithmId;
+        private final ASN1ObjectIdentifier theTreeDigest;
 
         /**
          * Constructor.
@@ -166,11 +164,9 @@ public final class BouncySPHINCSAsymKey {
 
             /* Determine the algorithm Id */
             final GordianSPHINCSKeyType myKeyType = pKeySpec.getSPHINCSType();
-            final ASN1ObjectIdentifier myId = GordianSPHINCSKeyType.SHA3.equals(myKeyType)
-                                                                                           ? NISTObjectIdentifiers.id_sha3_256
-                                                                                           : NISTObjectIdentifiers.id_sha512_256;
-            theAlgorithmId = new AlgorithmIdentifier(PQCObjectIdentifiers.sphincs256,
-                    new SPHINCS256KeyParams(new AlgorithmIdentifier(myId)));
+            theTreeDigest = GordianSPHINCSKeyType.SHA3.equals(myKeyType)
+                                  ? NISTObjectIdentifiers.id_sha3_256
+                                  : NISTObjectIdentifiers.id_sha512_256;
 
             /* Determine the digest */
             final Digest myDigest = GordianSPHINCSKeyType.SHA3.equals(myKeyType)
@@ -196,7 +192,7 @@ public final class BouncySPHINCSAsymKey {
             try {
                 final BouncySPHINCSPrivateKey myPrivateKey = (BouncySPHINCSPrivateKey) getPrivateKey(pKeyPair);
                 final SPHINCSPrivateKeyParameters myParms = myPrivateKey.getPrivateKey();
-                final PrivateKeyInfo myInfo = new PrivateKeyInfo(theAlgorithmId, new DEROctetString(myParms.getKeyData()));
+                final PrivateKeyInfo myInfo = PqcPrivateKeyInfoFactory.createSPHINCSPrivateKeyInfo(myParms, theTreeDigest);
                 return new PKCS8EncodedKeySpec(myInfo.getEncoded());
             } catch (IOException e) {
                 throw new GordianCryptoException(ERROR_PARSE, e);
@@ -208,7 +204,7 @@ public final class BouncySPHINCSAsymKey {
                                            final PKCS8EncodedKeySpec pPrivateKey) throws OceanusException {
             try {
                 final PrivateKeyInfo myInfo = PrivateKeyInfo.getInstance(pPrivateKey.getEncoded());
-                final SPHINCSPrivateKeyParameters myParms = new SPHINCSPrivateKeyParameters(ASN1OctetString.getInstance(myInfo.parsePrivateKey()).getOctets());
+                final SPHINCSPrivateKeyParameters myParms = (SPHINCSPrivateKeyParameters) PqcPrivateKeyFactory.createKey(myInfo);
                 final BouncySPHINCSPrivateKey myPrivate = new BouncySPHINCSPrivateKey(getKeySpec(), myParms);
                 final BouncySPHINCSPublicKey myPublic = derivePublicKey(pPublicKey);
                 return new BouncyKeyPair(myPublic, myPrivate);
@@ -219,11 +215,14 @@ public final class BouncySPHINCSAsymKey {
 
         @Override
         public X509EncodedKeySpec getX509Encoding(final GordianKeyPair pKeyPair) throws OceanusException {
-            final BouncySPHINCSPublicKey myPublicKey = (BouncySPHINCSPublicKey) getPublicKey(pKeyPair);
-            final SPHINCSPublicKeyParameters myParms = myPublicKey.getPublicKey();
-            final SubjectPublicKeyInfo myInfo = new SubjectPublicKeyInfo(theAlgorithmId, myParms.getKeyData());
-            final byte[] myBytes = KeyUtil.getEncodedSubjectPublicKeyInfo(myInfo);
-            return new X509EncodedKeySpec(myBytes);
+            try {
+                final BouncySPHINCSPublicKey myPublicKey = (BouncySPHINCSPublicKey) getPublicKey(pKeyPair);
+                final SPHINCSPublicKeyParameters myParms = myPublicKey.getPublicKey();
+                final SubjectPublicKeyInfo myInfo = PqcSubjectPublicKeyInfoFactory.createSPHINCSPublicKeyInfo(myParms, theTreeDigest);
+                return new X509EncodedKeySpec(myInfo.getEncoded());
+            } catch (IOException e) {
+                throw new GordianCryptoException(ERROR_PARSE, e);
+            }
         }
 
         @Override
@@ -236,11 +235,16 @@ public final class BouncySPHINCSAsymKey {
          * Derive public key from encoded.
          * @param pEncodedKey the encoded key
          * @return the public key
+         * @throws OceanusException on error
          */
-        private BouncySPHINCSPublicKey derivePublicKey(final X509EncodedKeySpec pEncodedKey) {
-            final SubjectPublicKeyInfo myInfo = SubjectPublicKeyInfo.getInstance(pEncodedKey.getEncoded());
-            final SPHINCSPublicKeyParameters myParms = new SPHINCSPublicKeyParameters(myInfo.getPublicKeyData().getBytes());
-            return new BouncySPHINCSPublicKey(getKeySpec(), myParms);
+        private BouncySPHINCSPublicKey derivePublicKey(final X509EncodedKeySpec pEncodedKey) throws OceanusException {
+            try {
+                final SubjectPublicKeyInfo myInfo = SubjectPublicKeyInfo.getInstance(pEncodedKey.getEncoded());
+                final SPHINCSPublicKeyParameters myParms = (SPHINCSPublicKeyParameters) PqcPublicKeyFactory.createKey(myInfo);
+                return new BouncySPHINCSPublicKey(getKeySpec(), myParms);
+            } catch (IOException e) {
+                throw new GordianCryptoException(ERROR_PARSE, e);
+            }
         }
     }
 

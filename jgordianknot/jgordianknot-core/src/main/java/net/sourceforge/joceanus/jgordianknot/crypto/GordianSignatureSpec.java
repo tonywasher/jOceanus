@@ -16,12 +16,15 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jgordianknot.crypto;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import net.sourceforge.joceanus.jtethys.TethysDataConverter;
 
 /**
  * Signature Specification.
  */
-public class GordianSignatureSpec {
+public final class GordianSignatureSpec {
     /**
      * The Separator.
      */
@@ -52,8 +55,8 @@ public class GordianSignatureSpec {
      * @param pAsymKeyType the asymKeyType
      * @param pDigestSpec the digestSpec
      */
-    public GordianSignatureSpec(final GordianAsymKeyType pAsymKeyType,
-                                final GordianDigestSpec pDigestSpec) {
+    GordianSignatureSpec(final GordianAsymKeyType pAsymKeyType,
+                         final GordianDigestSpec pDigestSpec) {
         /* Store parameters */
         this(pAsymKeyType, GordianSignatureType.NATIVE, pDigestSpec);
     }
@@ -63,8 +66,8 @@ public class GordianSignatureSpec {
      * @param pAsymKeyType the asymKeyType
      * @param pSignatureType the signatureType
      */
-    public GordianSignatureSpec(final GordianAsymKeyType pAsymKeyType,
-                                final GordianSignatureType pSignatureType) {
+    GordianSignatureSpec(final GordianAsymKeyType pAsymKeyType,
+                         final GordianSignatureType pSignatureType) {
         /* Store parameters */
         this(pAsymKeyType, pSignatureType, null);
     }
@@ -75,9 +78,9 @@ public class GordianSignatureSpec {
      * @param pSignatureType the signatureType
      * @param pDigestSpec the digestSpec
      */
-    public GordianSignatureSpec(final GordianAsymKeyType pAsymKeyType,
-                                final GordianSignatureType pSignatureType,
-                                final GordianDigestSpec pDigestSpec) {
+    GordianSignatureSpec(final GordianAsymKeyType pAsymKeyType,
+                         final GordianSignatureType pSignatureType,
+                         final GordianDigestSpec pDigestSpec) {
         /* Store parameters */
         theAsymKeyType = pAsymKeyType;
         theSignatureType = pSignatureType;
@@ -236,7 +239,7 @@ public class GordianSignatureSpec {
      * @param pKeySpec the keySpec
      * @return the SignatureSpec
      */
-    public static GordianSignatureSpec defaultForKey(final GordianAsymKeySpec pKeySpec) {
+    static GordianSignatureSpec defaultForKey(final GordianAsymKeySpec pKeySpec) {
         switch (pKeySpec.getKeyType()) {
             case RSA:
                 return rsa(GordianSignatureType.PSS, GordianDigestSpec.sha3(GordianLength.LEN_512));
@@ -351,5 +354,36 @@ public class GordianSignatureSpec {
             hashCode += theDigestSpec.hashCode();
         }
         return hashCode;
+    }
+
+    /**
+     * Obtain a list of all possible signatures for the keyPair.
+     * @param pKeyPair the keyPair
+     * @return the list
+     */
+    public static List<GordianSignatureSpec> listPossibleSignatures(final GordianKeyPair pKeyPair) {
+        /* Access the list of possible digests */
+        final List<GordianSignatureSpec> mySignatures = new ArrayList<>();
+        final List<GordianDigestSpec> myDigests = GordianDigestSpec.listAll();
+
+        /* For each supported signature */
+        final GordianAsymKeyType myType = pKeyPair.getKeySpec().getKeyType();
+        for (GordianSignatureType mySignType : myType.getSupportedSignatures()) {
+            /* If we need null-digestSpec */
+            if (myType.nullDigestForSignatures()) {
+                /* Add the signature */
+                mySignatures.add(new GordianSignatureSpec(myType, mySignType));
+                continue;
+            }
+
+            /* For each possible digestSpec */
+            for (GordianDigestSpec mySpec : myDigests) {
+                /* Add the signature */
+                mySignatures.add(new GordianSignatureSpec(myType, mySignType, mySpec));
+            }
+        }
+
+        /* Return the list */
+        return mySignatures;
     }
 }

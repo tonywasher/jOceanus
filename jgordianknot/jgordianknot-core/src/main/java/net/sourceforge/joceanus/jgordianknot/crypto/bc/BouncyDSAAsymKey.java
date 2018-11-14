@@ -21,12 +21,8 @@ import java.math.BigInteger;
 import java.security.spec.PKCS8EncodedKeySpec;
 import java.security.spec.X509EncodedKeySpec;
 
-import org.bouncycastle.asn1.ASN1Integer;
 import org.bouncycastle.asn1.pkcs.PrivateKeyInfo;
-import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
-import org.bouncycastle.asn1.x509.DSAParameter;
 import org.bouncycastle.asn1.x509.SubjectPublicKeyInfo;
-import org.bouncycastle.asn1.x9.X9ObjectIdentifiers;
 import org.bouncycastle.crypto.AsymmetricCipherKeyPair;
 import org.bouncycastle.crypto.DSA;
 import org.bouncycastle.crypto.digests.SHA256Digest;
@@ -35,11 +31,13 @@ import org.bouncycastle.crypto.generators.DSAParametersGenerator;
 import org.bouncycastle.crypto.params.AsymmetricKeyParameter;
 import org.bouncycastle.crypto.params.DSAKeyGenerationParameters;
 import org.bouncycastle.crypto.params.DSAParameterGenerationParameters;
-import org.bouncycastle.crypto.params.DSAParameters;
 import org.bouncycastle.crypto.params.DSAPrivateKeyParameters;
 import org.bouncycastle.crypto.params.DSAPublicKeyParameters;
 import org.bouncycastle.crypto.params.ParametersWithRandom;
-import org.bouncycastle.jcajce.provider.asymmetric.util.KeyUtil;
+import org.bouncycastle.crypto.util.PrivateKeyFactory;
+import org.bouncycastle.crypto.util.PrivateKeyInfoFactory;
+import org.bouncycastle.crypto.util.PublicKeyFactory;
+import org.bouncycastle.crypto.util.SubjectPublicKeyInfoFactory;
 
 import net.sourceforge.joceanus.jgordianknot.GordianCryptoException;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianAsymKeySpec;
@@ -193,10 +191,8 @@ public final class BouncyDSAAsymKey {
         public PKCS8EncodedKeySpec getPKCS8Encoding(final GordianKeyPair pKeyPair) throws GordianCryptoException {
             try {
                 final BouncyDSAPrivateKey myPrivateKey = (BouncyDSAPrivateKey) getPrivateKey(pKeyPair);
-                final DSAPrivateKeyParameters myKey = myPrivateKey.getPrivateKey();
-                final DSAParameters myParms = myKey.getParameters();
-                final PrivateKeyInfo myInfo = new PrivateKeyInfo(new AlgorithmIdentifier(X9ObjectIdentifiers.id_dsa, new DSAParameter(myParms.getP(), myParms.getQ(), myParms.getG())
-                        .toASN1Primitive()), new ASN1Integer(myKey.getX()));
+                final DSAPrivateKeyParameters myParms = myPrivateKey.getPrivateKey();
+                final PrivateKeyInfo myInfo = PrivateKeyInfoFactory.createPrivateKeyInfo(myParms);
                 return new PKCS8EncodedKeySpec(myInfo.getEncoded());
             } catch (IOException e) {
                 throw new GordianCryptoException(ERROR_PARSE, e);
@@ -208,10 +204,8 @@ public final class BouncyDSAAsymKey {
                                            final PKCS8EncodedKeySpec pPrivateKey) throws OceanusException {
             try {
                 final PrivateKeyInfo myInfo = PrivateKeyInfo.getInstance(pPrivateKey.getEncoded());
-                final DSAParameter myParams = DSAParameter.getInstance(myInfo.getPrivateKeyAlgorithm().getParameters());
-                final ASN1Integer myX = ASN1Integer.getInstance(myInfo.parsePrivateKey());
-                final DSAParameters myParms = new DSAParameters(myParams.getP(), myParams.getQ(), myParams.getG());
-                final BouncyDSAPrivateKey myPrivate = new BouncyDSAPrivateKey(getKeySpec(), new DSAPrivateKeyParameters(myX.getValue(), myParms));
+                final DSAPrivateKeyParameters myParms = (DSAPrivateKeyParameters) PrivateKeyFactory.createKey(myInfo);
+                final BouncyDSAPrivateKey myPrivate = new BouncyDSAPrivateKey(getKeySpec(), myParms);
                 final BouncyDSAPublicKey myPublic = derivePublicKey(pPublicKey);
                 return new BouncyKeyPair(myPublic, myPrivate);
             } catch (IOException e) {
@@ -220,13 +214,15 @@ public final class BouncyDSAAsymKey {
         }
 
         @Override
-        public X509EncodedKeySpec getX509Encoding(final GordianKeyPair pKeyPair) {
-            final BouncyDSAPublicKey myPublicKey = (BouncyDSAPublicKey) getPublicKey(pKeyPair);
-            final DSAPublicKeyParameters myKey = myPublicKey.getPublicKey();
-            final DSAParameters myParms = myKey.getParameters();
-            final byte[] myBytes = KeyUtil.getEncodedSubjectPublicKeyInfo(new AlgorithmIdentifier(X9ObjectIdentifiers.id_dsa,
-                    new DSAParameter(myParms.getP(), myParms.getQ(), myParms.getG()).toASN1Primitive()), new ASN1Integer(myKey.getY()));
-            return new X509EncodedKeySpec(myBytes);
+        public X509EncodedKeySpec getX509Encoding(final GordianKeyPair pKeyPair) throws OceanusException {
+            try {
+                final BouncyDSAPublicKey myPublicKey = (BouncyDSAPublicKey) getPublicKey(pKeyPair);
+                final DSAPublicKeyParameters myParms = myPublicKey.getPublicKey();
+                final SubjectPublicKeyInfo myInfo = SubjectPublicKeyInfoFactory.createSubjectPublicKeyInfo(myParms);
+                return new X509EncodedKeySpec(myInfo.getEncoded());
+            } catch (IOException e) {
+                throw new GordianCryptoException(ERROR_PARSE, e);
+            }
         }
 
         @Override
@@ -244,10 +240,8 @@ public final class BouncyDSAAsymKey {
         private BouncyDSAPublicKey derivePublicKey(final X509EncodedKeySpec pEncodedKey) throws OceanusException {
             try {
                 final SubjectPublicKeyInfo myInfo = SubjectPublicKeyInfo.getInstance(pEncodedKey.getEncoded());
-                final DSAParameter myParams = DSAParameter.getInstance(myInfo.getAlgorithm().getParameters());
-                final ASN1Integer myY = ASN1Integer.getInstance(myInfo.parsePublicKey());
-                final DSAParameters myParms = new DSAParameters(myParams.getP(), myParams.getQ(), myParams.getG());
-                return new BouncyDSAPublicKey(getKeySpec(), new DSAPublicKeyParameters(myY.getValue(), myParms));
+                final DSAPublicKeyParameters myParms = (DSAPublicKeyParameters) PublicKeyFactory.createKey(myInfo);
+                return new BouncyDSAPublicKey(getKeySpec(), myParms);
             } catch (IOException e) {
                 throw new GordianCryptoException(ERROR_PARSE, e);
             }

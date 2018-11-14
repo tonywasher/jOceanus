@@ -77,7 +77,7 @@ public class GordianSignatureAlgId {
      * Constructor.
      * @param pFactory the factory
      */
-    GordianSignatureAlgId(final GordianFactory pFactory) {
+    public GordianSignatureAlgId(final GordianFactory pFactory) {
         /* Create the maps */
         theSpecMap = new HashMap<>();
         theSpecSubTypeMap = new HashMap<>();
@@ -278,12 +278,8 @@ public class GordianSignatureAlgId {
     private void addEdDSASignatures() {
         addToMaps(GordianSignatureSpec.ed25519(),
                 new AlgorithmIdentifier(EdECObjectIdentifiers.id_Ed25519));
-        addToMaps(GordianSignatureSpec.ed25519ph(),
-                new AlgorithmIdentifier(EdECObjectIdentifiers.id_Ed25519ph));
         addToMaps(GordianSignatureSpec.ed448(),
                 new AlgorithmIdentifier(EdECObjectIdentifiers.id_Ed448));
-        addToMaps(GordianSignatureSpec.ed448ph(),
-                new AlgorithmIdentifier(EdECObjectIdentifiers.id_Ed448ph));
     }
 
     /**
@@ -429,7 +425,7 @@ public class GordianSignatureAlgId {
         myId = myId.branch(Integer.toString(mySigType.ordinal() + 1));
 
         /* If we have a digestSpec */
-        if (!GordianSignatureType.PURE.equals(mySigType)) {
+        if (!myKeyType.nullDigestForSignatures()) {
             /* Create a branch for digest based on the DigestType/Length/State */
             final GordianDigestSpec myDigestSpec = pSigSpec.getDigestSpec();
             myId = myId.branch(Integer.toString(myDigestSpec.getDigestType().ordinal() + 1));
