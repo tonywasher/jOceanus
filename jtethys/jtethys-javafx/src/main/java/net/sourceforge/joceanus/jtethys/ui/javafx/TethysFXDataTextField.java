@@ -594,7 +594,7 @@ public abstract class TethysFXDataTextField<T>
          */
         TethysFXShortTextField(final TethysFXGuiFactory pFactory) {
             super(pFactory, new TethysShortEditConverter(pFactory.getDataFormatter()));
-            setTheAttribute(TethysFieldAttribute.NUMERIC);
+            super.setTheAttribute(TethysFieldAttribute.NUMERIC);
         }
     }
 
@@ -610,7 +610,7 @@ public abstract class TethysFXDataTextField<T>
          */
         TethysFXIntegerTextField(final TethysFXGuiFactory pFactory) {
             super(pFactory, new TethysIntegerEditConverter(pFactory.getDataFormatter()));
-            setTheAttribute(TethysFieldAttribute.NUMERIC);
+            super.setTheAttribute(TethysFieldAttribute.NUMERIC);
         }
     }
 
@@ -626,7 +626,7 @@ public abstract class TethysFXDataTextField<T>
          */
         TethysFXLongTextField(final TethysFXGuiFactory pFactory) {
             super(pFactory, new TethysLongEditConverter(pFactory.getDataFormatter()));
-            setTheAttribute(TethysFieldAttribute.NUMERIC);
+            super.setTheAttribute(TethysFieldAttribute.NUMERIC);
         }
     }
 
@@ -643,7 +643,7 @@ public abstract class TethysFXDataTextField<T>
          */
         TethysFXRawDecimalTextField(final TethysFXGuiFactory pFactory) {
             super(pFactory, new TethysRawDecimalEditConverter(pFactory.getDataFormatter()));
-            setTheAttribute(TethysFieldAttribute.NUMERIC);
+            super.setTheAttribute(TethysFieldAttribute.NUMERIC);
         }
 
         @Override
@@ -674,7 +674,7 @@ public abstract class TethysFXDataTextField<T>
         TethysFXCurrencyTextFieldBase(final TethysFXGuiFactory pFactory,
                                       final TethysMoneyEditConverterBase<T> pConverter) {
             super(pFactory, pConverter);
-            setTheAttribute(TethysFieldAttribute.NUMERIC);
+            super.setTheAttribute(TethysFieldAttribute.NUMERIC);
         }
 
         @Override
@@ -745,7 +745,7 @@ public abstract class TethysFXDataTextField<T>
          */
         TethysFXRateTextField(final TethysFXGuiFactory pFactory) {
             super(pFactory, new TethysRateEditConverter(pFactory.getDataFormatter()));
-            setTheAttribute(TethysFieldAttribute.NUMERIC);
+            super.setTheAttribute(TethysFieldAttribute.NUMERIC);
         }
     }
 
@@ -761,7 +761,7 @@ public abstract class TethysFXDataTextField<T>
          */
         TethysFXUnitsTextField(final TethysFXGuiFactory pFactory) {
             super(pFactory, new TethysUnitsEditConverter(pFactory.getDataFormatter()));
-            setTheAttribute(TethysFieldAttribute.NUMERIC);
+            super.setTheAttribute(TethysFieldAttribute.NUMERIC);
         }
     }
 
@@ -777,7 +777,7 @@ public abstract class TethysFXDataTextField<T>
          */
         TethysFXDilutionTextField(final TethysFXGuiFactory pFactory) {
             super(pFactory, new TethysDilutionEditConverter(pFactory.getDataFormatter()));
-            setTheAttribute(TethysFieldAttribute.NUMERIC);
+            super.setTheAttribute(TethysFieldAttribute.NUMERIC);
         }
     }
 
@@ -793,7 +793,7 @@ public abstract class TethysFXDataTextField<T>
          */
         TethysFXRatioTextField(final TethysFXGuiFactory pFactory) {
             super(pFactory, new TethysRatioEditConverter(pFactory.getDataFormatter()));
-            setTheAttribute(TethysFieldAttribute.NUMERIC);
+            super.setTheAttribute(TethysFieldAttribute.NUMERIC);
         }
     }
 }

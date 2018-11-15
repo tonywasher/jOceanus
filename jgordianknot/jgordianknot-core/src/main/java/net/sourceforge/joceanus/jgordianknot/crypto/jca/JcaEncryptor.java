@@ -39,6 +39,11 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
  */
 public final class JcaEncryptor {
     /**
+     * Error string.
+     */
+    private static final String ERROR_INIT = "Failed to initialise";
+
+    /**
      * Private constructor.
      */
     private JcaEncryptor() {
@@ -91,7 +96,7 @@ public final class JcaEncryptor {
                 /* Initialise for encryption */
                 theEncryptor.init(Cipher.ENCRYPT_MODE, getPublicKey().getPublicKey(), getRandom());
             } catch (InvalidKeyException e) {
-                throw new GordianCryptoException("Failed to initialise", e);
+                throw new GordianCryptoException(ERROR_INIT, e);
             }
         }
 
@@ -104,7 +109,7 @@ public final class JcaEncryptor {
                 /* Initialise for decryption */
                 theEncryptor.init(Cipher.DECRYPT_MODE, getPrivateKey().getPrivateKey());
             } catch (InvalidKeyException e) {
-                throw new GordianCryptoException("Failed to initialise", e);
+                throw new GordianCryptoException(ERROR_INIT, e);
             }
         }
 
@@ -190,7 +195,7 @@ public final class JcaEncryptor {
          * @param pSpec the Spec
          * @return the algorithm name
          */
-        private String getAlgorithmName(final GordianEncryptorSpec pSpec) {
+        private static String getAlgorithmName(final GordianEncryptorSpec pSpec) {
             /* If this is a McEliece encryptor */
             if (GordianAsymKeyType.MCELIECE.equals(pSpec.getKeyType())) {
                 return "McEliece";
@@ -199,14 +204,14 @@ public final class JcaEncryptor {
             /* Switch on encryptor type */
             switch (pSpec.getDigestSpec().getDigestLength()) {
                 case LEN_224:
-                    return "RSA/NONE/OAEPWITHSHA-224ANDMGF1PADDING";
+                    return "RSA/ECB/OAEPWITHSHA-224ANDMGF1PADDING";
                 case LEN_256:
-                    return "RSA/NONE/OAEPWITHSHA-256ANDMGF1PADDING";
+                    return "RSA/ECB/OAEPWITHSHA-256ANDMGF1PADDING";
                 case LEN_384:
-                    return "RSA/NONE/OAEPWITHSHA-384ANDMGF1PADDING";
+                    return "RSA/ECB/OAEPWITHSHA-384ANDMGF1PADDING";
                 case LEN_512:
                 default:
-                    return "RSA/NONE/OAEPWITHSHA-512ANDMGF1PADDING";
+                    return "RSA/ECB/OAEPWITHSHA-512ANDMGF1PADDING";
             }
         }
     }
@@ -253,7 +258,7 @@ public final class JcaEncryptor {
                 /* Initialise for encryption */
                 theEncryptor.init(Cipher.ENCRYPT_MODE, getPublicKey().getPublicKey(), getRandom());
             } catch (InvalidKeyException e) {
-                throw new GordianCryptoException("Failed to initialise", e);
+                throw new GordianCryptoException(ERROR_INIT, e);
             }
         }
 
@@ -266,7 +271,7 @@ public final class JcaEncryptor {
                 /* Initialise for decryption */
                 theEncryptor.init(Cipher.DECRYPT_MODE, getPrivateKey().getPrivateKey());
             } catch (InvalidKeyException e) {
-                throw new GordianCryptoException("Failed to initialise", e);
+                throw new GordianCryptoException(ERROR_INIT, e);
             }
         }
 
@@ -308,7 +313,7 @@ public final class JcaEncryptor {
          * @param pSpec the Spec
          * @return the algorithm name
          */
-        private String getAlgorithmName(final GordianEncryptorSpec pSpec) {
+        private static String getAlgorithmName(final GordianEncryptorSpec pSpec) {
             /* Switch on encryptor type */
             switch (pSpec.getMcElieceType()) {
                 case FUJISAKI:

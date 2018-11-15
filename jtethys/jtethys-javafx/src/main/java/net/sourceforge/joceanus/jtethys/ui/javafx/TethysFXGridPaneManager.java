@@ -142,7 +142,7 @@ public class TethysFXGridPaneManager
      * @param pAlign the alignment
      * @return the FX alignment
      */
-    private HPos determineHAlignment(final TethysAlignment pAlign) {
+    private static HPos determineHAlignment(final TethysAlignment pAlign) {
         switch (pAlign) {
             case NORTHEAST:
             case EAST:
@@ -166,7 +166,7 @@ public class TethysFXGridPaneManager
      * @param pAlign the alignment
      * @return the FX alignment
      */
-    private VPos determineVAlignment(final TethysAlignment pAlign) {
+    private static VPos determineVAlignment(final TethysAlignment pAlign) {
         switch (pAlign) {
             case NORTHEAST:
             case NORTH:

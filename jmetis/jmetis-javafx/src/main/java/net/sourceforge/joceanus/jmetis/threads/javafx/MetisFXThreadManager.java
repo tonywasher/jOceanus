@@ -16,6 +16,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmetis.threads.javafx;
 
+import java.util.concurrent.atomic.AtomicReference;
 import javafx.concurrent.Worker.State;
 
 import net.sourceforge.joceanus.jmetis.threads.MetisThread;
@@ -35,14 +36,14 @@ public class MetisFXThreadManager
     private final MetisFXToolkit theToolkit;
 
     /**
+     * The Active status.
+     */
+    private final AtomicReference<MetisThreadStatus> theActiveStatus;
+
+    /**
      * The Active worker.
      */
     private MetisFXThread<?> theWorker;
-
-    /**
-     * The Active status.
-     */
-    private volatile MetisThreadStatus theActiveStatus;
 
     /**
      * Constructor.
@@ -50,10 +51,11 @@ public class MetisFXThreadManager
      * @param pToolkit the toolkit
      * @param pSlider  use slider status
      */
-    public MetisFXThreadManager(final MetisFXToolkit pToolkit,
-                                final boolean pSlider) {
+    MetisFXThreadManager(final MetisFXToolkit pToolkit,
+                         final boolean pSlider) {
         super(pToolkit, pSlider);
         theToolkit = pToolkit;
+        theActiveStatus = new AtomicReference<>();
     }
 
     @Override
@@ -97,7 +99,7 @@ public class MetisFXThreadManager
         checkForCancellation();
 
         /* Take a copy as the active status */
-        theActiveStatus = new MetisThreadStatus(pStatus);
+        theActiveStatus.set(new MetisThreadStatus(pStatus));
 
         /* update status */
         theWorker.publishStatus();
@@ -106,9 +108,9 @@ public class MetisFXThreadManager
     /**
      * Process the status.
      */
-    protected void processStatus() {
+    private void processStatus() {
         /* Pass to the status bar */
-        getStatusManager().setProgress(theActiveStatus);
+        getStatusManager().setProgress(theActiveStatus.get());
     }
 
     /**

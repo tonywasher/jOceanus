@@ -28,6 +28,7 @@ import java.util.function.BiPredicate;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
+import java.util.function.ToIntFunction;
 
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
@@ -710,7 +711,7 @@ public abstract class TethysTableManager<C, R>
          * Set the Number of decimals supplier.
          * @param pSupplier the supplier
          */
-        void setNumDecimals(Function<R, Integer> pSupplier);
+        void setNumDecimals(ToIntFunction<R> pSupplier);
     }
 
     /**

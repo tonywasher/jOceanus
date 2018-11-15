@@ -155,8 +155,8 @@ public class TethysSwingHTMLManager
             /* Print the data */
             theEditor.print();
 
-        } catch (PrinterAbortException e) {
-            return;
+        } catch (PrinterAbortException ignore) {
+            /* Ignore exception and just return */
         } catch (PrinterException e) {
             LOGGER.error("Failed to print", e);
         }

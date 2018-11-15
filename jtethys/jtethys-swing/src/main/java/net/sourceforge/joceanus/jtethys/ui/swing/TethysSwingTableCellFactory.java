@@ -792,7 +792,7 @@ public class TethysSwingTableCellFactory<C, R> {
         TethysSwingTableRawDecimalCell(final TethysSwingTableRawDecimalColumn<C, R> pColumn,
                                        final TethysSwingGuiFactory pFactory) {
             super(pColumn, pFactory.newRawDecimalField(), TethysDecimal.class);
-            getControl().setNumDecimals(() -> getColumn().getNumDecimals().apply(getActiveRow()));
+            getControl().setNumDecimals(() -> getColumn().getNumDecimals().applyAsInt(getActiveRow()));
         }
 
         @Override

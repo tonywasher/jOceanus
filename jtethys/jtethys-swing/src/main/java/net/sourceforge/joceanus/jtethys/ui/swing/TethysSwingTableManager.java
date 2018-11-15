@@ -28,6 +28,7 @@ import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.Predicate;
+import java.util.function.ToIntFunction;
 
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
@@ -871,7 +872,7 @@ public class TethysSwingTableManager<C, R>
         /**
          * Raw decimals supplier.
          */
-        private Function<R, Integer> theSupplier;
+        private ToIntFunction<R> theSupplier;
 
         /**
          * Constructor.
@@ -887,7 +888,7 @@ public class TethysSwingTableManager<C, R>
         }
 
         @Override
-        public void setNumDecimals(final Function<R, Integer> pSupplier) {
+        public void setNumDecimals(final ToIntFunction<R> pSupplier) {
             theSupplier = pSupplier;
         }
 
@@ -896,7 +897,7 @@ public class TethysSwingTableManager<C, R>
          *
          * @return the supplier
          */
-        Function<R, Integer> getNumDecimals() {
+        ToIntFunction<R> getNumDecimals() {
             return theSupplier;
         }
     }

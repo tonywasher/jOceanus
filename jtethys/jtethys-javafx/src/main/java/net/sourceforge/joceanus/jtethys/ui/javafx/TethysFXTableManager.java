@@ -25,6 +25,7 @@ import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.Predicate;
+import java.util.function.ToIntFunction;
 
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
@@ -633,7 +634,7 @@ public class TethysFXTableManager<C, R>
         /**
          * Raw decimals supplier.
          */
-        private Function<R, Integer> theSupplier;
+        private ToIntFunction<R> theSupplier;
 
         /**
          * Constructor.
@@ -649,7 +650,7 @@ public class TethysFXTableManager<C, R>
         }
 
         @Override
-        public void setNumDecimals(final Function<R, Integer> pSupplier) {
+        public void setNumDecimals(final ToIntFunction<R> pSupplier) {
             theSupplier = pSupplier;
         }
 
@@ -658,7 +659,7 @@ public class TethysFXTableManager<C, R>
          *
          * @return the supplier
          */
-        Function<R, Integer> getNumDecimals() {
+        ToIntFunction<R> getNumDecimals() {
             return theSupplier;
         }
     }

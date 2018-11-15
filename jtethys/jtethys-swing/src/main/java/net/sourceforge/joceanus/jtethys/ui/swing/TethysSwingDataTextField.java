@@ -589,7 +589,7 @@ public abstract class TethysSwingDataTextField<T>
 
         @Override
         protected TethysSwingStringTextField cloneField(final JLabel pLabel) {
-            return new TethysSwingStringTextField(getGuiFactory(), pLabel);
+            return new TethysSwingStringTextField(super.getGuiFactory(), pLabel);
         }
     }
 
@@ -618,7 +618,7 @@ public abstract class TethysSwingDataTextField<T>
 
         @Override
         protected TethysSwingCharArrayTextField cloneField(final JLabel pLabel) {
-            return new TethysSwingCharArrayTextField(getGuiFactory(), pLabel);
+            return new TethysSwingCharArrayTextField(super.getGuiFactory(), pLabel);
         }
     }
 
@@ -647,7 +647,7 @@ public abstract class TethysSwingDataTextField<T>
 
         @Override
         protected TethysSwingShortTextField cloneField(final JLabel pLabel) {
-            return new TethysSwingShortTextField(getGuiFactory(), pLabel);
+            return new TethysSwingShortTextField(super.getGuiFactory(), pLabel);
         }
     }
 
@@ -676,7 +676,7 @@ public abstract class TethysSwingDataTextField<T>
 
         @Override
         protected TethysSwingIntegerTextField cloneField(final JLabel pLabel) {
-            return new TethysSwingIntegerTextField(getGuiFactory(), pLabel);
+            return new TethysSwingIntegerTextField(super.getGuiFactory(), pLabel);
         }
     }
 
@@ -705,7 +705,7 @@ public abstract class TethysSwingDataTextField<T>
 
         @Override
         protected TethysSwingLongTextField cloneField(final JLabel pLabel) {
-            return new TethysSwingLongTextField(getGuiFactory(), pLabel);
+            return new TethysSwingLongTextField(super.getGuiFactory(), pLabel);
         }
     }
 
@@ -735,7 +735,7 @@ public abstract class TethysSwingDataTextField<T>
 
         @Override
         protected TethysSwingRawDecimalTextField cloneField(final JLabel pLabel) {
-            return new TethysSwingRawDecimalTextField(getGuiFactory(), pLabel);
+            return new TethysSwingRawDecimalTextField(super.getGuiFactory(), pLabel);
         }
 
         @Override
@@ -804,7 +804,7 @@ public abstract class TethysSwingDataTextField<T>
 
         @Override
         protected TethysSwingMoneyTextField cloneField(final JLabel pLabel) {
-            return new TethysSwingMoneyTextField(getGuiFactory(), pLabel);
+            return new TethysSwingMoneyTextField(super.getGuiFactory(), pLabel);
         }
     }
 
@@ -833,7 +833,7 @@ public abstract class TethysSwingDataTextField<T>
 
         @Override
         protected TethysSwingPriceTextField cloneField(final JLabel pLabel) {
-            return new TethysSwingPriceTextField(getGuiFactory(), pLabel);
+            return new TethysSwingPriceTextField(super.getGuiFactory(), pLabel);
         }
     }
 
@@ -862,7 +862,7 @@ public abstract class TethysSwingDataTextField<T>
 
         @Override
         protected TethysSwingDilutedPriceTextField cloneField(final JLabel pLabel) {
-            return new TethysSwingDilutedPriceTextField(getGuiFactory(), pLabel);
+            return new TethysSwingDilutedPriceTextField(super.getGuiFactory(), pLabel);
         }
     }
 
@@ -891,7 +891,7 @@ public abstract class TethysSwingDataTextField<T>
 
         @Override
         protected TethysSwingRateTextField cloneField(final JLabel pLabel) {
-            return new TethysSwingRateTextField(getGuiFactory(), pLabel);
+            return new TethysSwingRateTextField(super.getGuiFactory(), pLabel);
         }
     }
 
@@ -920,7 +920,7 @@ public abstract class TethysSwingDataTextField<T>
 
         @Override
         protected TethysSwingUnitsTextField cloneField(final JLabel pLabel) {
-            return new TethysSwingUnitsTextField(getGuiFactory(), pLabel);
+            return new TethysSwingUnitsTextField(super.getGuiFactory(), pLabel);
         }
     }
 
@@ -949,7 +949,7 @@ public abstract class TethysSwingDataTextField<T>
 
         @Override
         protected TethysSwingDilutionTextField cloneField(final JLabel pLabel) {
-            return new TethysSwingDilutionTextField(getGuiFactory(), pLabel);
+            return new TethysSwingDilutionTextField(super.getGuiFactory(), pLabel);
         }
     }
 
@@ -978,7 +978,7 @@ public abstract class TethysSwingDataTextField<T>
 
         @Override
         protected TethysSwingRatioTextField cloneField(final JLabel pLabel) {
-            return new TethysSwingRatioTextField(getGuiFactory(), pLabel);
+            return new TethysSwingRatioTextField(super.getGuiFactory(), pLabel);
         }
     }
 }

@@ -117,11 +117,6 @@ public final class BouncyQTESLAAsymKey {
         private final QTESLAKeyPairGenerator theGenerator;
 
         /**
-         * Category.
-         */
-        private final int theCategory;
-
-        /**
          * Constructor.
          * @param pFactory the Security Factory
          * @param pKeySpec the keySpec
@@ -130,9 +125,6 @@ public final class BouncyQTESLAAsymKey {
                                      final GordianAsymKeySpec pKeySpec) {
             /* Initialise underlying class */
             super(pFactory, pKeySpec);
-
-            /* Set the category */
-            theCategory = pKeySpec.getQTESLACategory();
 
             /* Create and initialise the generator */
             theGenerator = new QTESLAKeyPairGenerator();

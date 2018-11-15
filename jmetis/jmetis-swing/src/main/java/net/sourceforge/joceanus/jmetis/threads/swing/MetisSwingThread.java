@@ -145,8 +145,12 @@ public class MetisSwingThread<T>
             theManager.handleFailure(e.getCause());
 
             /* Catch other Exceptions */
-        } catch (OceanusException
-                | InterruptedException e) {
+        } catch (InterruptedException e) {
+            theManager.handleFailure(e);
+            Thread.currentThread().interrupt();
+
+            /* Catch other Exceptions */
+        } catch (OceanusException e) {
             theManager.handleFailure(e);
         }
     }

@@ -28,6 +28,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
+import javax.xml.XMLConstants;
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerException;
@@ -105,6 +106,7 @@ public class MetisReportManager<F>
         try {
             /* Create the transformer */
             final TransformerFactory myXformFactory = TransformerFactory.newInstance();
+            myXformFactory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
             theXformer = myXformFactory.newTransformer();
             theXformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
 

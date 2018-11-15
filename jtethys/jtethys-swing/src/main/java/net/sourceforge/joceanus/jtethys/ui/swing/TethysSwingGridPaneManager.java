@@ -86,8 +86,8 @@ public class TethysSwingGridPaneManager
         final JComponent myNode = TethysSwingNode.getComponent(pNode);
 
         /* Obtain the padding size */
-        final Integer myHPad = getHGap() >> 1;
-        final Integer myVPad = getVGap() >> 1;
+        final int myHPad = getHGap() >> 1;
+        final int myVPad = getVGap() >> 1;
 
         /* Create constraints */
         final GridBagConstraints myConstraints = new GridBagConstraints();
@@ -166,7 +166,7 @@ public class TethysSwingGridPaneManager
      * @param pAlign the alignment
      * @return the FX alignment
      */
-    private int determineAlignment(final TethysAlignment pAlign) {
+    private static int determineAlignment(final TethysAlignment pAlign) {
         switch (pAlign) {
             case NORTHWEST:
                 return GridBagConstraints.NORTHWEST;

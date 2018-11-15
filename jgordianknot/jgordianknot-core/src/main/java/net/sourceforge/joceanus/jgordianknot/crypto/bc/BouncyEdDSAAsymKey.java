@@ -393,8 +393,6 @@ public final class BouncyEdDSAAsymKey {
             super(pFactory, pSpec);
 
             /* Create the signer */
-            final byte[] myContext =  new byte[0];
-            final boolean is25519 = GordianAsymKeyType.ED25519.equals(pSpec.getAsymKeyType());
             theSigner = createSigner(pSpec);
         }
 

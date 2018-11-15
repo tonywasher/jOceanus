@@ -257,7 +257,7 @@ public final class BouncyDHAsymKey {
          * @param pParams the parameters
          * @return the algorithmId.
          */
-        private AlgorithmIdentifier getAlgorithmIdentifier(final DHParameters pParams) {
+        private static AlgorithmIdentifier getAlgorithmIdentifier(final DHParameters pParams) {
             /* If this is a public # algorithm */
             return pParams.getQ() != null
                         ? new AlgorithmIdentifier(X9ObjectIdentifiers.dhpublicnumber,

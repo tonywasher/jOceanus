@@ -672,7 +672,7 @@ public class TethysFXTableCellFactory<C, R> {
         TethysFXTableRawDecimalCell(final TethysFXTableRawDecimalColumn<C, R> pColumn,
                                     final TethysFXGuiFactory pFactory) {
             super(pColumn, pFactory.newRawDecimalField(), TethysDecimal.class);
-            getControl().setNumDecimals(() -> getColumn().getNumDecimals().apply(getActiveRow()));
+            getControl().setNumDecimals(() -> getColumn().getNumDecimals().applyAsInt(getActiveRow()));
         }
 
         @Override

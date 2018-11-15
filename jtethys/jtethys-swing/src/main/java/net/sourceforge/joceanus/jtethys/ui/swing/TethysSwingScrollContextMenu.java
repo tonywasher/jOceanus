@@ -50,7 +50,7 @@ import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventProvider;
 import net.sourceforge.joceanus.jtethys.ui.TethysArrowIconId;
 import net.sourceforge.joceanus.jtethys.ui.TethysIcon;
-import net.sourceforge.joceanus.jtethys.ui.TethysIconId;
+import net.sourceforge.joceanus.jtethys.ui.TethysIconButtonManager;
 import net.sourceforge.joceanus.jtethys.ui.TethysScrollIcon;
 import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent;
 import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollMenu;
@@ -71,7 +71,7 @@ public class TethysSwingScrollContextMenu<T>
     /**
      * Background active colour.
      */
-    protected static final Color COLOR_BACKGROUND = Color.decode("#add8e6");
+    private static final Color COLOR_BACKGROUND = Color.decode("#add8e6");
 
     /**
      * Timer.
@@ -1092,7 +1092,7 @@ public class TethysSwingScrollContextMenu<T>
             /* Create a Label for the graphic */
             theIcon = new JLabel();
             theIcon.setIcon(TethysSwingIcon.getIcon(pGraphic));
-            final Dimension myDim = new Dimension(TethysIconId.DEFAULT_ICONWIDTH, DEFAULT_ROWHEIGHT);
+            final Dimension myDim = new Dimension(TethysIconButtonManager.DEFAULT_ICONWIDTH, DEFAULT_ROWHEIGHT);
             theIcon.setMinimumSize(myDim);
             theIcon.setPreferredSize(myDim);
             theIcon.setMaximumSize(myDim);
@@ -1296,7 +1296,7 @@ public class TethysSwingScrollContextMenu<T>
         public void setSelected(final boolean pSelected) {
             isSelected = pSelected;
             setIcon(isSelected
-                               ? TethysSwingGuiUtils.getIconAtSize(TethysScrollIcon.CHECKMARK, TethysIconId.DEFAULT_ICONWIDTH)
+                               ? TethysSwingGuiUtils.getIconAtSize(TethysScrollIcon.CHECKMARK, TethysIconButtonManager.DEFAULT_ICONWIDTH)
                                : null);
         }
 

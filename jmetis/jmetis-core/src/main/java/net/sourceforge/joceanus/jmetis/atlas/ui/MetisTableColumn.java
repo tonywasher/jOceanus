@@ -23,6 +23,7 @@ import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.Predicate;
+import java.util.function.ToIntFunction;
 
 import net.sourceforge.joceanus.jmetis.data.MetisDataItem.MetisDataFieldId;
 import net.sourceforge.joceanus.jmetis.field.MetisFieldItem.MetisFieldDef;
@@ -430,7 +431,7 @@ public abstract class MetisTableColumn<T, R extends MetisFieldTableItem> {
         }
 
         @Override
-        public void setNumDecimals(final Function<R, Integer> pSupplier) {
+        public void setNumDecimals(final ToIntFunction<R> pSupplier) {
             getColumn().setNumDecimals(pSupplier);
         }
     }

@@ -115,7 +115,7 @@ public final class TethysFXLabel
      * @param pAlign the alignment
      * @return the FX alignment
      */
-    private Pos determineAlignment(final TethysAlignment pAlign) {
+    private static Pos determineAlignment(final TethysAlignment pAlign) {
         switch (pAlign) {
             case NORTHWEST:
                 return Pos.TOP_LEFT;

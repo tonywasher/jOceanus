@@ -21,6 +21,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicReference;
 
 import net.sourceforge.joceanus.jtethys.event.TethysEvent.TethysEventListener;
 
@@ -56,7 +57,7 @@ public class TethysEventRegistrar<E extends Enum<E>> {
     /**
      * The list of registrations.
      */
-    private volatile List<TethysEventRegistration<E>> theRegistrations;
+    private final AtomicReference<List<TethysEventRegistration<E>>> theRegistrations;
 
     /**
      * The Next registrationId.
@@ -72,7 +73,8 @@ public class TethysEventRegistrar<E extends Enum<E>> {
         theMgrId = pMgrId;
 
         /* Allocate the list */
-        theRegistrations = new ArrayList<>();
+        theRegistrations = new AtomicReference<>();
+        theRegistrations.set(new ArrayList<>());
     }
 
     /**
@@ -80,16 +82,16 @@ public class TethysEventRegistrar<E extends Enum<E>> {
      * @return the iterator
      */
     protected Iterator<TethysEventRegistration<E>> iterator() {
-        return theRegistrations.iterator();
+        return theRegistrations.get().iterator();
     }
 
     /**
      * Obtain reverse registration iterator.
      * @return the iterator
      */
-    protected ListIterator<TethysEventRegistration<E>> reverseIterator() {
+    ListIterator<TethysEventRegistration<E>> reverseIterator() {
         /* Obtain a reference to the registrations */
-        final List<TethysEventRegistration<E>> myList = theRegistrations;
+        final List<TethysEventRegistration<E>> myList = theRegistrations.get();
 
         /* Create an iterator positioned at the end of the list */
         return myList.listIterator(myList.size());
@@ -136,11 +138,10 @@ public class TethysEventRegistrar<E extends Enum<E>> {
     /**
      * Add To Listener list.
      * @param pRegistration the relevant registration
-     * @return the id of the new registration
      */
-    private synchronized Integer addToListenerList(final TethysEventRegistration<E> pRegistration) {
+    private synchronized void addToListenerList(final TethysEventRegistration<E> pRegistration) {
         /* Create a new list to avoid affecting any currently firing iterations */
-        final List<TethysEventRegistration<E>> myNew = new ArrayList<>(theRegistrations);
+        final List<TethysEventRegistration<E>> myNew = new ArrayList<>(theRegistrations.get());
 
         /* Set the new registration Id */
         pRegistration.setRegId(theNextRegId.getAndIncrement());
@@ -149,10 +150,7 @@ public class TethysEventRegistrar<E extends Enum<E>> {
         myNew.add(pRegistration);
 
         /* Record the new list */
-        theRegistrations = myNew;
-
-        /* return the new registration id */
-        return pRegistration.getRegId();
+        theRegistrations.set(myNew);
     }
 
     /**
@@ -161,7 +159,7 @@ public class TethysEventRegistrar<E extends Enum<E>> {
      */
     private synchronized void removeFromListenerList(final TethysEventRegistration<E> pRegistration) {
         /* Create a new list to avoid affecting any currently firing iterations */
-        final List<TethysEventRegistration<E>> myNew = new ArrayList<>(theRegistrations);
+        final List<TethysEventRegistration<E>> myNew = new ArrayList<>(theRegistrations.get());
 
         /* Iterate through the registrations */
         final Iterator<TethysEventRegistration<E>> myIterator = myNew.iterator();
@@ -174,7 +172,7 @@ public class TethysEventRegistrar<E extends Enum<E>> {
                 myIterator.remove();
 
                 /* Record the new list and return */
-                theRegistrations = myNew;
+                theRegistrations.set(myNew);
                 return;
             }
         }

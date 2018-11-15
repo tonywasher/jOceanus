@@ -19,6 +19,7 @@ package net.sourceforge.joceanus.jmetis.ui;
 import java.io.InputStream;
 
 import net.sourceforge.joceanus.jtethys.ui.TethysButton;
+import net.sourceforge.joceanus.jtethys.ui.TethysIconButtonManager;
 import net.sourceforge.joceanus.jtethys.ui.TethysIconButtonManager.TethysIconMapSet;
 import net.sourceforge.joceanus.jtethys.ui.TethysIconId;
 import net.sourceforge.joceanus.jtethys.ui.TethysScrollButtonManager;
@@ -190,7 +191,7 @@ public enum MetisIcon implements TethysIconId {
      * @param pButton the button manager
      */
     public static void configureNewScrollButton(final TethysScrollButtonManager<?> pButton) {
-        pButton.setSimpleDetails(NEW, TethysIconId.DEFAULT_ICONWIDTH, TIP_NEW);
+        pButton.setSimpleDetails(NEW, TethysIconButtonManager.DEFAULT_ICONWIDTH, TIP_NEW);
     }
 
     /**

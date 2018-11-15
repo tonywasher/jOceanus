@@ -32,7 +32,7 @@ public abstract class TethysToolBarManager
     /**
      * Default icon width.
      */
-    protected static final int DEFAULT_ICONWIDTH = TethysIconId.DEFAULT_ICONWIDTH;
+    protected static final int DEFAULT_ICONWIDTH = TethysIconButtonManager.DEFAULT_ICONWIDTH;
 
     /**
      * The Id.

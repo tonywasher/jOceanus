@@ -33,6 +33,7 @@ import net.sourceforge.joceanus.jtethys.date.TethysDateFormatter;
 import net.sourceforge.joceanus.jtethys.decimal.TethysDecimal;
 import net.sourceforge.joceanus.jtethys.decimal.TethysDecimalFormatter;
 import net.sourceforge.joceanus.jtethys.ui.TethysIcon;
+import net.sourceforge.joceanus.jtethys.ui.TethysIconButtonManager;
 import net.sourceforge.joceanus.jtethys.ui.TethysIconButtonManager.TethysIconMapSet;
 import net.sourceforge.joceanus.jtethys.ui.TethysIconId;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingGuiFactory;
@@ -312,7 +313,7 @@ public final class MetisSwingFieldCellRenderer {
             /* Look up icon */
             TethysIcon myIcon = theIconMap.get(pIconId);
             if (myIcon == null) {
-                myIcon = theFactory.resolveIcon(pIconId, TethysIconId.DEFAULT_ICONWIDTH);
+                myIcon = theFactory.resolveIcon(pIconId, TethysIconButtonManager.DEFAULT_ICONWIDTH);
                 theIconMap.put(pIconId, myIcon);
             }
             return TethysSwingIcon.getIcon(myIcon);

@@ -22,6 +22,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Iterator;
 
+import javax.xml.XMLConstants;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -110,6 +111,7 @@ public class DataValuesFormatter<T extends DataSet<T, E>, E extends Enum<E>> {
 
             /* Create the transformer */
             final TransformerFactory myXformFactory = TransformerFactory.newInstance();
+            myXformFactory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
             theXformer = myXformFactory.newTransformer();
 
         } catch (ParserConfigurationException | TransformerConfigurationException e) {

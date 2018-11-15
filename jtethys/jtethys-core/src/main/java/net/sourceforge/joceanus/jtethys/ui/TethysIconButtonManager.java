@@ -39,6 +39,11 @@ import net.sourceforge.joceanus.jtethys.ui.TethysDataEditField.TethysIconButton;
 public abstract class TethysIconButtonManager<T>
         implements TethysIconButton<T>, TethysEventProvider<TethysUIEvent>, TethysComponent {
     /**
+     * Default icon width.
+     */
+    public static final int DEFAULT_ICONWIDTH = 16;
+
+    /**
      * The Factory.
      */
     private final TethysGuiFactory theFactory;
@@ -342,7 +347,7 @@ public abstract class TethysIconButtonManager<T>
          * Constructor.
          */
         public TethysIconMapSet() {
-            this(TethysIconId.DEFAULT_ICONWIDTH);
+            this(DEFAULT_ICONWIDTH);
         }
 
         /**

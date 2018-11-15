@@ -26,6 +26,7 @@ import org.apache.logging.log4j.Logger;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
+import javax.xml.XMLConstants;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.transform.Transformer;
@@ -201,6 +202,7 @@ public class MetisViewerBuilder {
 
             /* Create the transformer */
             final TransformerFactory myXformFactory = TransformerFactory.newInstance();
+            myXformFactory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
             theXformer = myXformFactory.newTransformer();
 
             /* Create the document */
