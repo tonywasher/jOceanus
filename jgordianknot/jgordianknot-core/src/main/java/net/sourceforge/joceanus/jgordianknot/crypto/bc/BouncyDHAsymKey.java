@@ -289,6 +289,7 @@ public final class BouncyDHAsymKey {
 
             /* Create the agreement */
             theAgreement = new DHBasicAgreement();
+            enableDerivation();
         }
 
         @Override
@@ -357,6 +358,7 @@ public final class BouncyDHAsymKey {
 
             /* Create the agreement */
             theAgreement = new DHBasicAgreement();
+            enableDerivation();
         }
 
         @Override
@@ -421,6 +423,7 @@ public final class BouncyDHAsymKey {
 
             /* Create Key Agreement */
             theAgreement = new DHUnifiedAgreement();
+            enableDerivation();
         }
 
         @Override
@@ -497,6 +500,7 @@ public final class BouncyDHAsymKey {
 
             /* Create Key Agreement */
             theAgreement = new MQVBasicAgreement();
+            enableDerivation();
         }
 
         @Override

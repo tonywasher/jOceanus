@@ -31,6 +31,7 @@ import org.bouncycastle.crypto.AsymmetricCipherKeyPair;
 import org.bouncycastle.crypto.CipherParameters;
 import org.bouncycastle.crypto.CryptoException;
 import org.bouncycastle.crypto.DataLengthException;
+import org.bouncycastle.crypto.DerivationFunction;
 import org.bouncycastle.crypto.InvalidCipherTextException;
 import org.bouncycastle.crypto.Signer;
 import org.bouncycastle.crypto.encodings.OAEPEncoding;
@@ -449,7 +450,7 @@ public final class BouncyRSAAsymKey {
             super(pFactory, pSpec);
 
             /* Create Agreement */
-            final GordianNullKeyDerivation myKDF = new GordianNullKeyDerivation();
+            final DerivationFunction myKDF = newDerivationFunction();
             theAgreement = new RSAKeyEncapsulation(myKDF, getRandom());
         }
 

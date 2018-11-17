@@ -990,11 +990,11 @@ public final class JcaFactory
     private GordianAgreement getECAgreement(final GordianAgreementSpec pAgreementSpec) throws OceanusException {
         switch (pAgreementSpec.getAgreementType()) {
             case BASIC:
-                return new JcaBasicAgreement(this, pAgreementSpec, getJavaKeyAgreement("ECDHC", false));
+                return new JcaBasicAgreement(this, pAgreementSpec, getJavaKeyAgreement(getFullAgreementName("ECCDH", pAgreementSpec), false));
             case UNIFIED:
-                return new JcaUnifiedAgreement(this, pAgreementSpec, getJavaKeyAgreement("ECCDHU", false));
+                return new JcaUnifiedAgreement(this, pAgreementSpec, getJavaKeyAgreement(getFullAgreementName("ECCDHU", pAgreementSpec), false));
             case MQV:
-                return new JcaMQVAgreement(this, pAgreementSpec, getJavaKeyAgreement("ECMQV", false));
+                 return new JcaMQVAgreement(this, pAgreementSpec, getJavaKeyAgreement(getFullAgreementName("ECMQV", pAgreementSpec), false));
             default:
                 throw new GordianDataException(getInvalidText(pAgreementSpec));
         }
@@ -1009,7 +1009,11 @@ public final class JcaFactory
     private GordianAgreement getDHAgreement(final GordianAgreementSpec pAgreementSpec) throws OceanusException {
         switch (pAgreementSpec.getAgreementType()) {
             case BASIC:
-                return new JcaBasicAgreement(this, pAgreementSpec, getJavaKeyAgreement("DH", false));
+                return new JcaBasicAgreement(this, pAgreementSpec, getJavaKeyAgreement(getFullAgreementName("DH", pAgreementSpec), false));
+            case UNIFIED:
+                return new JcaUnifiedAgreement(this, pAgreementSpec, getJavaKeyAgreement(getFullAgreementName("DHU", pAgreementSpec), false));
+            case MQV:
+                return new JcaMQVAgreement(this, pAgreementSpec, getJavaKeyAgreement(getFullAgreementName("MQV", pAgreementSpec), false));
             default:
                 throw new GordianDataException(getInvalidText(pAgreementSpec));
         }
@@ -1022,9 +1026,37 @@ public final class JcaFactory
      * @throws OceanusException on error
      */
     private GordianAgreement getXDHAgreement(final GordianAgreementSpec pAgreementSpec) throws OceanusException {
+        final String myBase = pAgreementSpec.getAsymKeyType().toString();
         switch (pAgreementSpec.getAgreementType()) {
             case BASIC:
-                return new JcaBasicAgreement(this, pAgreementSpec, getJavaKeyAgreement("XDH", false));
+                return new JcaBasicAgreement(this, pAgreementSpec, getJavaKeyAgreement(getFullAgreementName(myBase, pAgreementSpec), false));
+            case UNIFIED:
+                return new JcaUnifiedAgreement(this, pAgreementSpec, getJavaKeyAgreement(getFullAgreementName(myBase + "U", pAgreementSpec), false));
+            default:
+                throw new GordianDataException(getInvalidText(pAgreementSpec));
+        }
+    }
+
+    /**
+     * Obtain the agreement name.
+     * @param pBase the base agreement
+     * @param pAgreementSpec the agreementSpec
+     * @return the full agreement name
+     * @throws OceanusException on error
+     */
+    private static String getFullAgreementName(final String pBase,
+                                               final GordianAgreementSpec pAgreementSpec) throws OceanusException {
+        switch (pAgreementSpec.getKDFType()) {
+            case NONE:
+                return pBase;
+            case SHA256KDF:
+                return pBase + "withSHA256KDF";
+            case SHA512KDF:
+                return pBase + "withSHA512KDF";
+            case SHA256CKDF:
+                return pBase + "withSHA256CKDF";
+            case SHA512CKDF:
+                return pBase + "withSHA512CKDF";
             default:
                 throw new GordianDataException(getInvalidText(pAgreementSpec));
         }
@@ -1165,9 +1197,12 @@ public final class JcaFactory
             case EC:
                 return !GordianAgreementType.KEM.equals(myType);
             case DIFFIEHELLMAN:
+                return !GordianAgreementType.KEM.equals(myType)
+                        && !GordianAgreementType.SM2.equals(myType);
             case X25519:
             case X448:
-                return GordianAgreementType.BASIC.equals(myType);
+                return GordianAgreementType.BASIC.equals(myType)
+                       || GordianAgreementType.UNIFIED.equals(myType);
             default:
                 return false;
         }

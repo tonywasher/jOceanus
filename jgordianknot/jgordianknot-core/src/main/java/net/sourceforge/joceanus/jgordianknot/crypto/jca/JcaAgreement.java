@@ -25,12 +25,14 @@ import javax.crypto.KeyAgreement;
 
 import org.bouncycastle.jcajce.spec.DHUParameterSpec;
 import org.bouncycastle.jcajce.spec.MQVParameterSpec;
+import org.bouncycastle.jcajce.spec.UserKeyingMaterialSpec;
 
 import net.sourceforge.joceanus.jgordianknot.GordianCryptoException;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianAgreement.GordianBasicAgreement;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianAgreement.GordianEncapsulationAgreement;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianAgreement.GordianEphemeralAgreement;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianAgreementSpec;
+import net.sourceforge.joceanus.jgordianknot.crypto.GordianKDFType;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianKeyPair;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianKeyPairGenerator;
 import net.sourceforge.joceanus.jgordianknot.crypto.jca.JcaKeyPair.JcaPrivateKey;
@@ -75,6 +77,7 @@ public final class JcaAgreement {
 
             /* Store the agreement */
             theAgreement = pAgreement;
+            enableDerivation();
         }
 
         @Override
@@ -166,14 +169,18 @@ public final class JcaAgreement {
 
                 /* Derive the secret */
                 final JcaPrivateKey myPrivate = (JcaPrivateKey) getPrivateKey(pSource);
-                theAgreement.init(myPrivate.getPrivateKey());
+                final UserKeyingMaterialSpec myParams = getAgreementSpec().getKDFType() == GordianKDFType.NONE
+                                                        ? null
+                                                        : new UserKeyingMaterialSpec(new byte[0]);
+                theAgreement.init(myPrivate.getPrivateKey(), myParams);
                 final JcaPublicKey myTarget = (JcaPublicKey) getPublicKey(pTarget);
                 theAgreement.doPhase(myTarget.getPublicKey(), true);
                 storeSecret(theAgreement.generateSecret());
 
                 /* Create the message  */
                 return createMessage();
-            } catch (InvalidKeyException e) {
+            } catch (InvalidKeyException
+                    | InvalidAlgorithmParameterException e) {
                 throw new GordianCryptoException(ERR_AGREEMENT, e);
             }
         }
@@ -194,12 +201,16 @@ public final class JcaAgreement {
                 final JcaPublicKey myPublic = (JcaPublicKey) getPublicKey(pSource);
 
                 /* Derive the secret */
-                theAgreement.init(myPrivate.getPrivateKey());
+                final UserKeyingMaterialSpec myParams = getAgreementSpec().getKDFType() == GordianKDFType.NONE
+                                                        ? null
+                                                        : new UserKeyingMaterialSpec(new byte[0]);
+                theAgreement.init(myPrivate.getPrivateKey(), myParams);
                 theAgreement.doPhase(myPublic.getPublicKey(), true);
 
                 /* Store secret */
                 storeSecret(theAgreement.generateSecret());
-            } catch (InvalidKeyException e) {
+            } catch (InvalidKeyException
+                     | InvalidAlgorithmParameterException e) {
                 throw new GordianCryptoException(ERR_AGREEMENT, e);
             }
         }
@@ -246,7 +257,7 @@ public final class JcaAgreement {
                 final JcaPublicKey myEphPublic = (JcaPublicKey) getPublicKey(getEphemeralKeyPair());
                 final JcaPublicKey mySrcEphPublic = (JcaPublicKey) getPublicKey(getPartnerEphemeralKeyPair());
                 final DHUParameterSpec myParams = new DHUParameterSpec(myEphPublic.getPublicKey(),
-                        myEphPrivate.getPrivateKey(), mySrcEphPublic.getPublicKey());
+                        myEphPrivate.getPrivateKey(), mySrcEphPublic.getPublicKey(), new byte[0]);
                 theAgreement.init(myPrivate.getPrivateKey(), myParams);
 
                 /* Calculate agreement */
@@ -279,7 +290,7 @@ public final class JcaAgreement {
                 final JcaPublicKey myEphPublic = (JcaPublicKey) getPublicKey(getEphemeralKeyPair());
                 final JcaPublicKey mySrcEphPublic = (JcaPublicKey) getPublicKey(getPartnerEphemeralKeyPair());
                 final DHUParameterSpec myParams = new DHUParameterSpec(myEphPublic.getPublicKey(),
-                        myEphPrivate.getPrivateKey(), mySrcEphPublic.getPublicKey());
+                        myEphPrivate.getPrivateKey(), mySrcEphPublic.getPublicKey(), new byte[0]);
                 theAgreement.init(myPrivate.getPrivateKey(), myParams);
 
                 /* Calculate agreement */
@@ -336,7 +347,7 @@ public final class JcaAgreement {
                 final JcaPublicKey myEphPublic = (JcaPublicKey) getPublicKey(getEphemeralKeyPair());
                 final JcaPublicKey mySrcEphPublic = (JcaPublicKey) getPublicKey(getPartnerEphemeralKeyPair());
                 final MQVParameterSpec myParams = new MQVParameterSpec(myEphPublic.getPublicKey(),
-                        myEphPrivate.getPrivateKey(), mySrcEphPublic.getPublicKey());
+                        myEphPrivate.getPrivateKey(), mySrcEphPublic.getPublicKey(), new byte[0]);
                 theAgreement.init(myPrivate.getPrivateKey(), myParams);
 
                 /* Calculate agreement */
@@ -369,7 +380,7 @@ public final class JcaAgreement {
                 final JcaPublicKey myEphPublic = (JcaPublicKey) getPublicKey(getEphemeralKeyPair());
                 final JcaPublicKey mySrcEphPublic = (JcaPublicKey) getPublicKey(getPartnerEphemeralKeyPair());
                 final MQVParameterSpec myParams = new MQVParameterSpec(myEphPublic.getPublicKey(),
-                            myEphPrivate.getPrivateKey(), mySrcEphPublic.getPublicKey());
+                            myEphPrivate.getPrivateKey(), mySrcEphPublic.getPublicKey(), new byte[0]);
                 theAgreement.init(myPrivate.getPrivateKey(), myParams);
 
                 /* Calculate agreement */

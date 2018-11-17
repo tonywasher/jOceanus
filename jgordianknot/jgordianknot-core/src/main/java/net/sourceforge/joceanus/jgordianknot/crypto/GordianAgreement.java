@@ -21,6 +21,10 @@ import java.security.spec.X509EncodedKeySpec;
 
 import org.bouncycastle.crypto.DerivationFunction;
 import org.bouncycastle.crypto.DerivationParameters;
+import org.bouncycastle.crypto.agreement.kdf.ConcatenationKDFGenerator;
+import org.bouncycastle.crypto.digests.SHA256Digest;
+import org.bouncycastle.crypto.digests.SHA512Digest;
+import org.bouncycastle.crypto.generators.KDF2BytesGenerator;
 import org.bouncycastle.crypto.params.KDFParameters;
 import org.bouncycastle.util.Arrays;
 
@@ -45,6 +49,11 @@ public abstract class GordianAgreement {
      * The agreementSpec.
      */
     private final GordianAgreementSpec theSpec;
+
+    /**
+     * The keyDerivation function.
+     */
+    private DerivationFunction theKDF;
 
     /**
      * The shared secret.
@@ -149,8 +158,21 @@ public abstract class GordianAgreement {
      * @param pSecret the secret
      */
     protected void storeSecret(final byte[] pSecret) {
-        /* Store the details */
-        theSecret = Arrays.copyOf(pSecret, pSecret.length);
+        /* If we have a kdf */
+        if (theKDF != null) {
+            /* Create KDF Parameters */
+            final KDFParameters myParms = new KDFParameters(pSecret, new byte[0]);
+            theKDF.init(myParms);
+
+            /* Create the secret */
+            theSecret = new byte[pSecret.length];
+            theKDF.generateBytes(theSecret, 0, theSecret.length);
+        } else {
+            /* Just store the secret */
+            theSecret = Arrays.copyOf(pSecret, pSecret.length);
+        }
+
+        /* Clear the secret */
         Arrays.fill(pSecret, (byte) 0);
     }
 
@@ -208,6 +230,36 @@ public abstract class GordianAgreement {
     }
 
     /**
+     * Enable additional derivation of secret.
+     */
+    protected void enableDerivation() {
+        /* Only enable derivation if it is not none */
+        if (!GordianKDFType.NONE.equals(getAgreementSpec().getKDFType())) {
+            theKDF = newDerivationFunction();
+        }
+    }
+
+    /**
+     * Obtain the required derivation function.
+     * @return the derivation function
+     */
+    protected DerivationFunction newDerivationFunction() {
+        switch (getAgreementSpec().getKDFType()) {
+            case SHA256KDF:
+                return new KDF2BytesGenerator(new SHA256Digest());
+            case SHA512KDF:
+                return new KDF2BytesGenerator(new SHA512Digest());
+            case SHA256CKDF:
+                return new ConcatenationKDFGenerator(new SHA256Digest());
+            case SHA512CKDF:
+                return new ConcatenationKDFGenerator(new SHA512Digest());
+            case NONE:
+            default:
+                return new GordianNullKeyDerivation();
+        }
+    }
+
+    /**
      * NullKeyDerivation.
      */
     public static final class GordianNullKeyDerivation
@@ -222,11 +274,10 @@ public abstract class GordianAgreement {
                                  final int pOffset,
                                  final int pLength) {
             /* Create the array that is to be copied */
-            final byte[] myKey = pLength > theKey.length
-                                 ? Arrays.copyOf(theKey, pLength)
-                                 : theKey;
-            System.arraycopy(myKey, 0, pBuffer, pOffset, pLength);
+            final byte[] myKey = Arrays.copyOf(theKey, pLength);
             Arrays.fill(theKey, (byte) 0);
+            System.arraycopy(myKey, 0, pBuffer, pOffset, pLength);
+            Arrays.fill(myKey, (byte) 0);
             return pLength;
         }
 

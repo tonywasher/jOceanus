@@ -394,6 +394,7 @@ public final class BouncyXDHAsymKey {
             theAgreement = GordianAsymKeyType.X25519.equals(pSpec.getAsymKeyType())
                                   ? new X25519Agreement()
                                   : new X448Agreement();
+            enableDerivation();
         }
 
         @Override
@@ -461,6 +462,7 @@ public final class BouncyXDHAsymKey {
                     ? new X25519Agreement()
                     : new X448Agreement();
             theAgreement = new XDHUnifiedAgreement(myAgreement);
+            enableDerivation();
         }
 
         @Override
