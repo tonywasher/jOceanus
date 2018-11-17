@@ -41,6 +41,11 @@ public final class GordianAgreementSpec {
     private final GordianAgreementType theAgreementType;
 
     /**
+     * KDFType.
+     */
+    private final GordianKDFType theKDFType;
+
+    /**
      * The String name.
      */
     private String theName;
@@ -49,11 +54,14 @@ public final class GordianAgreementSpec {
      * Constructor.
      * @param pAsymKeyType the asymKeyType
      * @param pAgreementType the agreement type
+     * @param pKDFType the KDF type
      */
-    GordianAgreementSpec(final GordianAsymKeyType pAsymKeyType,
-                         final GordianAgreementType pAgreementType) {
+    private GordianAgreementSpec(final GordianAsymKeyType pAsymKeyType,
+                                 final GordianAgreementType pAgreementType,
+                                 final GordianKDFType pKDFType) {
         theAsymKeyType = pAsymKeyType;
         theAgreementType = pAgreementType;
+        theKDFType = pKDFType;
     }
 
     /**
@@ -73,11 +81,19 @@ public final class GordianAgreementSpec {
     }
 
     /**
+     * Obtain the kdfType.
+     * @return the kdfype
+     */
+    public GordianKDFType getKDFType() {
+        return theKDFType;
+    }
+
+    /**
      * Is this Agreement supported?
      * @return true/false
      */
     public boolean isSupported() {
-        return theAgreementType.isSupported(theAsymKeyType);
+        return theAgreementType.isSupported(theAsymKeyType) && theKDFType.isSupported(theAsymKeyType, theAgreementType);
     }
 
     @Override
@@ -87,6 +103,11 @@ public final class GordianAgreementSpec {
             /* Load the name */
             theName = theAsymKeyType.toString()
                         + SEP + theAgreementType.toString();
+
+            /* Add KDF type if present */
+            if (GordianKDFType.NONE != theKDFType) {
+                theName += SEP + theKDFType.toString();
+            }
         }
 
         /* return the name */
@@ -113,13 +134,15 @@ public final class GordianAgreementSpec {
 
         /* Match subfields */
         return theAsymKeyType == myThat.getAsymKeyType()
-               && theAgreementType == myThat.getAgreementType();
+               && theAgreementType == myThat.getAgreementType()
+               && theKDFType == myThat.getKDFType();
     }
 
     @Override
     public int hashCode() {
-        final int hashCode = theAsymKeyType.hashCode() << TethysDataConverter.BYTE_SHIFT;
-        return hashCode + theAgreementType.hashCode();
+        int hashCode = theAsymKeyType.hashCode() << TethysDataConverter.BYTE_SHIFT;
+        hashCode += theAgreementType.hashCode();
+        return (hashCode << TethysDataConverter.BYTE_SHIFT) + theKDFType.hashCode();
     }
 
     /**
@@ -136,32 +159,52 @@ public final class GordianAgreementSpec {
         switch (myType) {
             case RSA:
             case NEWHOPE:
-                myAgreements.add(new GordianAgreementSpec(myType, GordianAgreementType.KEM));
+                myAgreements.addAll(listAllKDFs(myType, GordianAgreementType.KEM));
                 break;
             case SM2:
-                myAgreements.add(new GordianAgreementSpec(myType, GordianAgreementType.SM2));
-                myAgreements.add(new GordianAgreementSpec(myType, GordianAgreementType.KEM));
-                myAgreements.add(new GordianAgreementSpec(myType, GordianAgreementType.BASIC));
-                myAgreements.add(new GordianAgreementSpec(myType, GordianAgreementType.UNIFIED));
-                myAgreements.add(new GordianAgreementSpec(myType, GordianAgreementType.MQV));
+                myAgreements.addAll(listAllKDFs(myType, GordianAgreementType.SM2));
+                myAgreements.addAll(listAllKDFs(myType, GordianAgreementType.KEM));
+                myAgreements.addAll(listAllKDFs(myType, GordianAgreementType.BASIC));
+                myAgreements.addAll(listAllKDFs(myType, GordianAgreementType.UNIFIED));
+                myAgreements.addAll(listAllKDFs(myType, GordianAgreementType.MQV));
                 break;
             case EC:
             case GOST2012:
             case DSTU4145:
             case DIFFIEHELLMAN:
-                myAgreements.add(new GordianAgreementSpec(myType, GordianAgreementType.KEM));
-                myAgreements.add(new GordianAgreementSpec(myType, GordianAgreementType.BASIC));
-                myAgreements.add(new GordianAgreementSpec(myType, GordianAgreementType.UNIFIED));
-                myAgreements.add(new GordianAgreementSpec(myType, GordianAgreementType.MQV));
+                myAgreements.addAll(listAllKDFs(myType, GordianAgreementType.KEM));
+                myAgreements.addAll(listAllKDFs(myType, GordianAgreementType.BASIC));
+                myAgreements.addAll(listAllKDFs(myType, GordianAgreementType.UNIFIED));
+                myAgreements.addAll(listAllKDFs(myType, GordianAgreementType.MQV));
                 break;
             case X25519:
             case X448:
-                myAgreements.add(new GordianAgreementSpec(myType, GordianAgreementType.BASIC));
-                myAgreements.add(new GordianAgreementSpec(myType, GordianAgreementType.UNIFIED));
+                myAgreements.addAll(listAllKDFs(myType, GordianAgreementType.BASIC));
+                myAgreements.addAll(listAllKDFs(myType, GordianAgreementType.UNIFIED));
                 break;
             default:
                 break;
-         }
+        }
+
+        /* Return the list */
+        return myAgreements;
+    }
+
+    /**
+     * Create list of KDF variants.
+     * @param pAsymKeyType the keyType
+     * @param pAgreementType the agreementType
+     * @return the list
+     */
+    private static List<GordianAgreementSpec> listAllKDFs(final GordianAsymKeyType pAsymKeyType,
+                                                          final GordianAgreementType pAgreementType) {
+        /* Create list */
+        final List<GordianAgreementSpec> myAgreements = new ArrayList<>();
+
+        /* Loop through the KDFs */
+        for (final GordianKDFType myKDF : GordianKDFType.values()) {
+            myAgreements.add(new GordianAgreementSpec(pAsymKeyType, pAgreementType, myKDF));
+        }
 
         /* Return the list */
         return myAgreements;

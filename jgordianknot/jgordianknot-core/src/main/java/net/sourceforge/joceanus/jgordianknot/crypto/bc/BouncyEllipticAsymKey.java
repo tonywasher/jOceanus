@@ -30,6 +30,7 @@ import org.bouncycastle.asn1.x9.X9ECParameters;
 import org.bouncycastle.crypto.AsymmetricCipherKeyPair;
 import org.bouncycastle.crypto.CryptoException;
 import org.bouncycastle.crypto.DSA;
+import org.bouncycastle.crypto.DerivationFunction;
 import org.bouncycastle.crypto.InvalidCipherTextException;
 import org.bouncycastle.crypto.agreement.ECDHCBasicAgreement;
 import org.bouncycastle.crypto.agreement.ECDHCUnifiedAgreement;
@@ -480,8 +481,8 @@ public final class BouncyEllipticAsymKey {
             super(pFactory, pSpec);
 
             /* Create Key Encapsulation */
-            final GordianNullKeyDerivation myKDF = new GordianNullKeyDerivation();
-            theAgreement = new ECIESKeyEncapsulation(myKDF, getRandom(), true, false, false);
+            final DerivationFunction myKDF = newDerivationFunction();
+            theAgreement = new ECIESKeyEncapsulation(myKDF, getRandom());
         }
 
         @Override
@@ -519,9 +520,14 @@ public final class BouncyEllipticAsymKey {
             final BouncyECPrivateKey myPrivate = (BouncyECPrivateKey) getPrivateKey(pSelf);
             theAgreement.init(myPrivate.getPrivateKey());
 
+            /* Determine key length */
+            int myFieldSize = myPrivate.getPrivateKey().getParameters().getCurve().getFieldSize();
+            myFieldSize = (myFieldSize + Byte.SIZE - 1) / Byte.SIZE;
+            final int myLen = 2 * myFieldSize + 1;
+
             /* Parse message */
             final byte[] myMessage = parseMessage(pMessage);
-            final KeyParameter myParms = (KeyParameter) theAgreement.decrypt(myMessage, 0, myMessage.length, myMessage.length);
+            final KeyParameter myParms = (KeyParameter) theAgreement.decrypt(myMessage, 0, myMessage.length, myLen);
 
             /* Store secret */
             storeSecret(myParms.getKey());
@@ -550,6 +556,7 @@ public final class BouncyEllipticAsymKey {
 
             /* Derive the secret */
             theAgreement = new ECDHCBasicAgreement();
+            enableDerivation();
         }
 
         @Override
@@ -614,6 +621,7 @@ public final class BouncyEllipticAsymKey {
 
             /* Create Key Agreement */
             theAgreement = new ECDHCUnifiedAgreement();
+            enableDerivation();
         }
 
         @Override
@@ -690,6 +698,7 @@ public final class BouncyEllipticAsymKey {
 
             /* Create Key Agreement */
             theAgreement = new ECMQVBasicAgreement();
+            enableDerivation();
         }
 
         @Override

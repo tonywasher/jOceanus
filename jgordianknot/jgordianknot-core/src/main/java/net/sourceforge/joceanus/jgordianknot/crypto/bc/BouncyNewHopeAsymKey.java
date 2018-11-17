@@ -221,6 +221,7 @@ public final class BouncyNewHopeAsymKey {
                                final GordianAgreementSpec pSpec) {
             /* Initialise underlying class */
             super(pFactory, pSpec);
+            enableDerivation();
         }
 
         @Override
