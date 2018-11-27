@@ -70,7 +70,7 @@
     <packageMain/>
     <appDir>${env.BACKUPDIR}</appDir>
     <appLibDir>lib/</appLibDir>
-    <BouncyCastleVersion>161b19</BouncyCastleVersion>
+    <BouncyCastleVersion>161b20</BouncyCastleVersion>
     <SvnKitVersion>1.9.3</SvnKitVersion>
     <JGitVersion>5.1.3.201810200350-r</JGitVersion>
     <HttpClientVersion>4.5.6</HttpClientVersion>
@@ -93,6 +93,7 @@
     <CheckStyleVersion>8.14</CheckStyleVersion>
     <PMDVersion>6.9.0</PMDVersion>
     <CleanPluginVersion>3.1.0</CleanPluginVersion>
+    <ResourcesPluginVersion>3.1.0</ResourcesPluginVersion>
     <InstallPluginVersion>3.0.0-M1</InstallPluginVersion>
     <SitePluginVersion>3.7.1</SitePluginVersion>
     <DeployPluginVersion>3.0.0-M1</DeployPluginVersion>
@@ -122,6 +123,16 @@
       </resource>
     </resources>
     <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-resources-plugin</artifactId>
+        <version>${ResourcesPluginVersion}</version>
+        <configuration>
+          <nonFilteredFileExtensions>
+            <nonFilteredFileExtension>ods</nonFilteredFileExtension>
+          </nonFilteredFileExtensions>
+        </configuration>
+      </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-enforcer-plugin</artifactId>

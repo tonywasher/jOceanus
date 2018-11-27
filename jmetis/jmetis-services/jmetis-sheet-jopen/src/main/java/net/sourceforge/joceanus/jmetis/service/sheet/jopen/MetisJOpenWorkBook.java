@@ -28,6 +28,7 @@ import org.jopendocument.dom.spreadsheet.Sheet;
 import org.jopendocument.dom.spreadsheet.SpreadSheet;
 
 import net.sourceforge.joceanus.jmetis.service.sheet.MetisSheetCellPosition;
+import net.sourceforge.joceanus.jmetis.service.sheet.MetisSheetCellRange;
 import net.sourceforge.joceanus.jmetis.service.sheet.MetisSheetException;
 import net.sourceforge.joceanus.jmetis.service.sheet.MetisSheetSheet;
 import net.sourceforge.joceanus.jmetis.service.sheet.MetisSheetView;
@@ -140,11 +141,7 @@ public class MetisJOpenWorkBook
         return theDataFormatter;
     }
 
-    /**
-     * Save the workBook to output stream.
-     * @param pOutput the output stream
-     * @throws OceanusException on error
-     */
+    @Override
     public void saveToStream(final OutputStream pOutput) throws OceanusException {
         try {
             thePackage.save(pOutput);
@@ -185,8 +182,11 @@ public class MetisJOpenWorkBook
         }
 
         /* Obtain the address */
-        final MetisSheetCellPosition myFirstCell = new MetisSheetCellPosition(myRange.getStartPoint().x, myRange.getStartPoint().y);
-        final MetisSheetCellPosition myLastCell = new MetisSheetCellPosition(myRange.getEndPoint().x, myRange.getEndPoint().y);
+        final MetisSheetCellRange myCellRange = new MetisSheetCellRange(myRange.toString());
+        final MetisSheetCellPosition myFirstCell = myCellRange.getFirstCell().getPosition();
+        final MetisSheetCellPosition myLastCell = myCellRange.getLastCell().getPosition();
+        //new MetisSheetCellPosition((int) myCellRange.getFirstCell(), (int) myRange.getStartPoint().getY());
+        //final MetisSheetCellPosition myLastCell = new MetisSheetCellPosition((int) myRange.getEndPoint().getX(), (int) myRange.getEndPoint().getY());
 
         /* Obtain the sheet and reject if missing */
         final MetisSheetSheet mySheet = getSheet(myRange.getStartSheet());

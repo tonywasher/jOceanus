@@ -66,9 +66,8 @@ public final class GordianListAlgorithms {
                 && !"BCPQC".equals(myProvider.getName())) {
                 continue;
             }
-            final Iterator<Object> it = myProvider.keySet().iterator();
-            while (it.hasNext()) {
-                String entry = (String) it.next();
+            for (Object key : myProvider.keySet()) {
+                String entry = (String) key;
                 if (entry.startsWith("Alg.Alias.")) {
                     entry = entry.substring("Alg.Alias.".length());
                 }

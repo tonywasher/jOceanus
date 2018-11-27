@@ -853,6 +853,7 @@ public class MetisOasisWorkBook
         theStyleMap.put(STYLE_ROW, myStyle);
     }
 
+
     /**
      * Obtain alignment for a cell.
      * @param pType the cell type

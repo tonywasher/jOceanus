@@ -61,7 +61,7 @@ public final class MetisSheetTester {
     public static void main(final String[] args) {
         /* Test a SpreadSheet for each type */
         // loadRange();
-        writeSample(MetisSheetWorkBookType.OASISODS,  "TestOasis.ods");
+        writeSample(MetisSheetWorkBookType.OASIS,  "TestOasis.ods");
         writeSample(MetisSheetWorkBookType.EXCELXLS,  "TestExcel.xls");
         writeSample(MetisSheetWorkBookType.EXCELXLSX,  "TestExcel.xlsx");
     }
@@ -133,7 +133,7 @@ public final class MetisSheetTester {
         final File myFile = new File("C:\\Users\\Tony\\Documents\\MoneywiseNI.ods");
         try (FileInputStream myInFile = new FileInputStream(myFile);
              BufferedInputStream myInBuffer = new BufferedInputStream(myInFile)) {
-            final MetisSheetWorkBook myBook = MetisSheetProvider.loadFromStream(MetisSheetWorkBookType.OASISODS, myInBuffer);
+            final MetisSheetWorkBook myBook = MetisSheetProvider.loadFromStream(MetisSheetWorkBookType.OASIS, myInBuffer);
             final MetisSheetView myView = myBook.getRangeView("Finance82");
             final int iNumRows = myView.getRowCount();
             final int iNumCols = myView.getColumnCount();
