@@ -204,10 +204,12 @@ public class GordianZipWriteFile
     /**
      * Obtain an output stream for an entry in the zip file.
      * @param pFile the file details for the new zip entry
+     * @param pCompress should we compress this file?
      * @return the output stream
      * @throws OceanusException on error
      */
-    public OutputStream getOutputStream(final File pFile) throws OceanusException {
+    public OutputStream getOutputStream(final File pFile,
+                                        final boolean pCompress) throws OceanusException {
         /* Reject call if we have closed the stream */
         if (theStream == null) {
             throw new GordianLogicException("ZipFile is closed");
@@ -240,7 +242,7 @@ public class GordianZipWriteFile
             /* If we are encrypting */
             if (isEncrypted()) {
                 /* Create an the output stream */
-                theOutput = theStreamMgr.buildOutputStream(theOutput);
+                theOutput = theStreamMgr.buildOutputStream(theOutput, pCompress);
             }
 
             /* Catch exceptions */

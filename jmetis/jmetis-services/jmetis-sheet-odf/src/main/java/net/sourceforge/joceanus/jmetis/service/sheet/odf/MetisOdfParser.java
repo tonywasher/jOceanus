@@ -37,28 +37,12 @@ public class MetisOdfParser {
     private final Document theDocument;
 
     /**
-     * The nameSpaces.
-     */
-    private final Map<MetisOdfNameSpace, String> theNameSpaceMap;
-
-    /**
      * Constructor.
      * @param pDocument the document
      */
     MetisOdfParser(final Document pDocument) {
         /* Store parameters */
         theDocument = pDocument;
-
-        /* Create the nameSpaceMap */
-        theNameSpaceMap = new EnumMap<>(MetisOdfNameSpace.class);
-
-        /* Loop through the nameSpaces */
-        final Element myMain = pDocument.getDocumentElement();
-        for (MetisOdfNameSpace mySpace : MetisOdfNameSpace.values()) {
-            /* Access nameSpace definition */
-            final String myNameSpace = myMain.getAttribute("xmlns:" + mySpace.getPrefix());
-            theNameSpaceMap.put(mySpace, myNameSpace);
-        }
     }
 
     /**
@@ -83,15 +67,13 @@ public class MetisOdfParser {
         }
 
         /* Access the details */
-        final String mySpace = theNameSpaceMap.get(pItem.getNameSpace());
-        final String myName = pItem.getName();
+        final String myName = pItem.getQualifiedName();
 
         /* Loop through all children */
         Node myNode = pParent.getFirstChild();
         while (myNode != null) {
             /* Break loop if this is a matching child */
-            if (mySpace.equals(myNode.getNamespaceURI())
-                    && myName.equals(myNode.getLocalName())) {
+            if (myName.equals(myNode.getNodeName())) {
                 break;
             }
 
@@ -118,15 +100,13 @@ public class MetisOdfParser {
         }
 
         /* Access the details */
-        final String mySpace = theNameSpaceMap.get(pItem.getNameSpace());
-        final String myName = pItem.getName();
+        final String myName = pItem.getQualifiedName();
 
         /* Loop through all children */
         Node myNode = pParent.getFirstChild();
         while (myNode != null) {
             /* Add to list if this is a matching child */
-            if (mySpace.equals(myNode.getNamespaceURI())
-                    && myName.equals(myNode.getLocalName())) {
+            if (myName.equals(myNode.getNodeName())) {
                 myList.add((Element) myNode);
             }
 
@@ -152,11 +132,10 @@ public class MetisOdfParser {
         }
 
         /* Access the details */
-        final String mySpace = theNameSpaceMap.get(pItem.getNameSpace());
-        final String myName = pItem.getName();
+        final String myName = pItem.getQualifiedName();
 
         /* Return the element */
-        final String myAttr = pElement.getAttributeNS(mySpace, myName);
+        final String myAttr = pElement.getAttribute(myName);
         return myAttr.length() == 0
                ? null
                : myAttr;
@@ -232,7 +211,7 @@ public class MetisOdfParser {
                       final MetisOdfItem pItem,
                       final String pValue) {
         /* Access the details */
-        final String mySpace = theNameSpaceMap.get(pItem.getNameSpace());
+        final String mySpace = pItem.getNameSpace().getNameSpace();
         final String myName = pItem.getQualifiedName();
 
         /* Set the attribute */
@@ -299,7 +278,7 @@ public class MetisOdfParser {
     void removeAttribute(final Element pElement,
                          final MetisOdfItem pItem) {
         /* Access the details */
-        final String mySpace = theNameSpaceMap.get(pItem.getNameSpace());
+        final String mySpace = pItem.getNameSpace().getNameSpace();
         final String myName = pItem.getName();
 
         /* Remove the attribute */
@@ -313,7 +292,7 @@ public class MetisOdfParser {
      */
     Element newElement(final MetisOdfItem pItem) {
         /* Access the details */
-        final String mySpace = theNameSpaceMap.get(pItem.getNameSpace());
+        final String mySpace = pItem.getNameSpace().getNameSpace();
         final String myName = pItem.getQualifiedName();
 
         /* Create the element */
@@ -362,12 +341,10 @@ public class MetisOdfParser {
     boolean isElementOfType(final Node pNode,
                             final MetisOdfItem pItem) {
         /* Access the details */
-        final String mySpace = theNameSpaceMap.get(pItem.getNameSpace());
-        final String myName = pItem.getName();
+        final String myName = pItem.getQualifiedName();
 
         /* Create the element */
         return pNode.getNodeType() == Node.ELEMENT_NODE
-                && mySpace.equals(pNode.getNamespaceURI())
-                && myName.equals(pNode.getLocalName());
+                && myName.equals(pNode.getNodeName());
     }
 }

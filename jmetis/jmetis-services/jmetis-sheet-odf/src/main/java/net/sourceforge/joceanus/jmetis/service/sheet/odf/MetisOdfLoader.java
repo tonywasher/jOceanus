@@ -91,12 +91,12 @@ public final class MetisOdfLoader {
     }
 
     /**
-     * load spreadSheet from stream .
+     * load spreadSheet from stream.
      * @param pInput the input stream
      * @return the contents
      * @throws OceanusException on error
      */
-    public static Document loadNewSpreadSheet(final InputStream pInput) throws OceanusException {
+    static Document loadNewSpreadSheet(final InputStream pInput) throws OceanusException {
         /* Create a spreadSheet from scratch */
         try (BufferedInputStream myBufferedIn = new BufferedInputStream(pInput)) {
             /* Load document */
@@ -112,7 +112,7 @@ public final class MetisOdfLoader {
      * @return the contents
      * @throws OceanusException on error
      */
-    public static Document loadInitialSpreadSheet() throws OceanusException {
+    static Document loadInitialSpreadSheet() throws OceanusException {
         /* Load the initial spreadSheet */
         try (InputStream myInput = MetisOdfLoader.class.getResourceAsStream(FILE_EMPTY);
              BufferedInputStream myBufferedIn = new BufferedInputStream(myInput)) {
@@ -181,15 +181,15 @@ public final class MetisOdfLoader {
                 /* Read next entry */
                 final ZipEntry myEntry = myZipStream.getNextEntry();
 
-                /* If this is EOF break the loop */
-                if (myEntry == null) {
-                    break;
-                }
-
                 /* If we have found the contents */
                 if (FILE_CONTENT.equals(myEntry.getName())) {
                     /* Parse the contents and return the document */
                     return myBuilder.parse(new WrapInputStream(myZipStream));
+                }
+
+                /* If this is EOF break the loop */
+                if (myEntry == null) {
+                    break;
                 }
             }
 

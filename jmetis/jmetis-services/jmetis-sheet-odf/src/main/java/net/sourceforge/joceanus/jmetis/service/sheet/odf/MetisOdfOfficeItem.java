@@ -69,6 +69,11 @@ public enum MetisOdfOfficeItem
     private final String theName;
 
     /**
+     * Qualified Name.
+     */
+    private String theQualifiedName;
+
+    /**
      * Constructor.
      * @param pName the name
      */
@@ -79,6 +84,14 @@ public enum MetisOdfOfficeItem
     @Override
     public String getName() {
         return theName;
+    }
+
+    @Override
+    public String getQualifiedName() {
+        if (theQualifiedName == null) {
+            theQualifiedName = MetisOdfNameSpace.buildQualifiedName(this);
+        }
+        return theQualifiedName;
     }
 
     @Override

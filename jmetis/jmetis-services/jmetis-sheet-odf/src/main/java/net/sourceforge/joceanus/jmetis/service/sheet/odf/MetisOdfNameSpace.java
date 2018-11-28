@@ -23,44 +23,52 @@ public enum MetisOdfNameSpace {
     /**
      * Office.
      */
-    OFFICE("office"),
+    OFFICE("office", "urn:oasis:names:tc:opendocument:xmlns:office:1.0"),
 
     /**
      * Table.
      */
-    TABLE("table"),
+    TABLE("table", "urn:oasis:names:tc:opendocument:xmlns:table:1.0"),
 
     /**
      * Text.
      */
-    TEXT("text"),
+    TEXT("text", "urn:oasis:names:tc:opendocument:xmlns:text:1.0"),
 
     /**
      * Number.
      */
-    NUMBER("number"),
+    NUMBER("number", "urn:oasis:names:tc:opendocument:xmlns:datastyle:1.0"),
 
     /**
      * Format.
      */
-    FORMAT("fo"),
+    FORMAT("fo", "urn:oasis:names:tc:opendocument:xmlns:xsl-fo-compatible:1.0"),
 
     /**
      * Style.
      */
-    STYLE("style");
+    STYLE("style", "urn:oasis:names:tc:opendocument:xmlns:style:1.0");
 
     /**
      * The prefix.
      */
     private final String thePrefix;
 
+
+    /**
+     * The nameSpace.
+     */
+    private final String theNameSpace;
     /**
      * Constructor.
      * @param pPrefix the prefix
+     * @param pNameSpace the nameSpace
      */
-    MetisOdfNameSpace(final String pPrefix) {
+    MetisOdfNameSpace(final String pPrefix,
+                      final String pNameSpace) {
         thePrefix = pPrefix;
+        theNameSpace = pNameSpace;
     }
 
     /**
@@ -69,6 +77,27 @@ public enum MetisOdfNameSpace {
      */
     public String getPrefix() {
         return thePrefix;
+    }
+
+    /**
+     * Obtain the nameSpace.
+     * @return the nameSpace.
+     */
+    public String getNameSpace() {
+        return theNameSpace;
+    }
+
+    /**
+     * Get qualified name.
+     * @param pItem the item
+     * @return the qualified name.
+     */
+    static String buildQualifiedName(final MetisOdfItem pItem) {
+        final StringBuilder myBuilder = new StringBuilder();
+        myBuilder.append(pItem.getNameSpace().getPrefix());
+        myBuilder.append(':');
+        myBuilder.append(pItem.getName());
+        return myBuilder.toString();
     }
 
     /**
@@ -82,21 +111,15 @@ public enum MetisOdfNameSpace {
         String getName();
 
         /**
+         * Obtain the qualified name.
+         * @return the name
+         */
+        String getQualifiedName();
+
+        /**
          * Obtain the nameSpace.
          * @return the nameSpace
          */
         MetisOdfNameSpace getNameSpace();
-
-        /**
-         * Get qualified name.
-         * @return the qualified name.
-         */
-        default String getQualifiedName() {
-            final StringBuffer myBuffer = new StringBuffer();
-            myBuffer.append(getNameSpace().getPrefix());
-            myBuffer.append(':');
-            myBuffer.append(getName());
-            return myBuffer.toString();
-        }
     }
 }

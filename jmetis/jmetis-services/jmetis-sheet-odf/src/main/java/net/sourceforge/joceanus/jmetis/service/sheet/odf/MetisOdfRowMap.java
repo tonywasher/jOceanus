@@ -297,7 +297,7 @@ public class MetisOdfRowMap {
 
             /* Must be an empty Cell Element */
             if ((!theParser.isElementOfType(myChild, MetisOdfTableItem.CELL))
-                    || MetisOdfCellMap.isEmpty(theParser, (Element) myChild)) {
+                    || !MetisOdfCellMap.isEmpty(theParser, (Element) myChild)) {
                 return false;
             }
         }

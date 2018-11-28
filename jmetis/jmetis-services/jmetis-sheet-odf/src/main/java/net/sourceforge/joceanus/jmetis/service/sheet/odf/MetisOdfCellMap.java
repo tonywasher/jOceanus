@@ -147,8 +147,8 @@ public class MetisOdfCellMap {
      */
     MetisOdfCell getReadOnlyCellByIndex(final int pCellIndex) {
         /* Handle index out of range */
-        if ((pCellIndex < 0)
-                || (pCellIndex >= theNumCells)) {
+        if (pCellIndex < 0
+                || pCellIndex >= theNumCells) {
             return null;
         }
 
@@ -172,8 +172,8 @@ public class MetisOdfCellMap {
      */
     MetisOdfCell getMutableCellByIndex(final int pCellIndex) {
         /* Handle index out of range */
-        if ((pCellIndex < 0)
-                || (pCellIndex >= theNumCells)) {
+        if (pCellIndex < 0
+                || pCellIndex >= theNumCells) {
             return null;
         }
 

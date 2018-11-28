@@ -96,6 +96,11 @@ public class MetisOdfWorkBook
     private final boolean isReadOnly;
 
     /**
+     * The officeSpreadSheet element.
+     */
+    private Element theSpreadSheet;
+
+    /**
      * Constructor.
      * @param pInput the input stream
      * @throws OceanusException on error
@@ -117,6 +122,11 @@ public class MetisOdfWorkBook
         theRangeMap = new HashMap<>();
         theConstraintMap = null;
 
+        /* Access the list of tables */
+        final Element myMain = theContents.getDocumentElement();
+        final Element myBody = theParser.getFirstNamedChild(myMain, MetisOdfOfficeItem.BODY);
+        theSpreadSheet = theParser.getFirstNamedChild(myBody, MetisOdfOfficeItem.SPREADSHEET);
+
         /* Build the maps */
         buildSheetMap();
         buildRangeMap();
@@ -126,7 +136,7 @@ public class MetisOdfWorkBook
      * Constructor.
      * @throws OceanusException on error
      */
-    public MetisOdfWorkBook() throws OceanusException {
+    MetisOdfWorkBook() throws OceanusException {
         /* Create empty workBook */
         theContents = MetisOdfLoader.loadInitialSpreadSheet();
         theParser = new MetisOdfParser(theContents);
@@ -139,6 +149,14 @@ public class MetisOdfWorkBook
         theSheetMap = new HashMap<>();
         theRangeMap = new HashMap<>();
         theConstraintMap = new HashMap<>();
+
+        /* Clear out all existing tables */
+        final Element myMain = theContents.getDocumentElement();
+        final Element myBody = theParser.getFirstNamedChild(myMain, MetisOdfOfficeItem.BODY);
+        theSpreadSheet = theParser.getFirstNamedChild(myBody, MetisOdfOfficeItem.SPREADSHEET);
+        for (Element myTable : theParser.getAllNamedChildren(theSpreadSheet, MetisOdfTableItem.TABLE)) {
+            theSpreadSheet.removeChild(myTable);
+        }
 
         /* Note writable */
         isReadOnly = false;
@@ -184,10 +202,7 @@ public class MetisOdfWorkBook
      */
     private void buildSheetMap() {
         /* Access the list of tables */
-        final Element myMain = theContents.getDocumentElement();
-        final Element myBody = theParser.getFirstNamedChild(myMain, MetisOdfOfficeItem.BODY);
-        final Element mySpreadSheet = theParser.getFirstNamedChild(myBody, MetisOdfOfficeItem.SPREADSHEET);
-        final List<Element> mySheets = theParser.getAllNamedChildren(mySpreadSheet, MetisOdfTableItem.TABLE);
+        final List<Element> mySheets = theParser.getAllNamedChildren(theSpreadSheet, MetisOdfTableItem.TABLE);
 
         /* Loop through the list */
         for (Element mySheet : mySheets) {
@@ -207,10 +222,7 @@ public class MetisOdfWorkBook
         theParser.setAttribute(myTable, MetisOdfTableItem.STYLENAME, MetisOdfStyler.STYLE_TABLE);
 
         /* Access the expressions */
-        final Element myMain = theContents.getDocumentElement();
-        final Element myBody = theParser.getFirstNamedChild(myMain, MetisOdfOfficeItem.BODY);
-        final Element mySpreadSheet = theParser.getFirstNamedChild(myBody, MetisOdfOfficeItem.SPREADSHEET);
-        final Element myExpressions = theParser.getFirstNamedChild(mySpreadSheet, MetisOdfTableItem.EXPRESSIONS);
+        final Element myExpressions = theParser.getFirstNamedChild(theSpreadSheet, MetisOdfTableItem.EXPRESSIONS);
         MetisOdfParser.addAsPriorSibling(myTable, myExpressions);
 
         /* Create the columns */
@@ -260,10 +272,7 @@ public class MetisOdfWorkBook
      */
     private void buildRangeMap() {
         /* Access the list of ranges */
-        final Element myMain = theContents.getDocumentElement();
-        final Element myBody = theParser.getFirstNamedChild(myMain, MetisOdfOfficeItem.BODY);
-        final Element mySpreadSheet = theParser.getFirstNamedChild(myBody, MetisOdfOfficeItem.SPREADSHEET);
-        final Element myExpressions = theParser.getFirstNamedChild(mySpreadSheet, MetisOdfTableItem.EXPRESSIONS);
+        final Element myExpressions = theParser.getFirstNamedChild(theSpreadSheet, MetisOdfTableItem.EXPRESSIONS);
         final List<Element> myRanges = theParser.getAllNamedChildren(myExpressions, MetisOdfTableItem.RANGE);
 
         /* Loop through the named ranges */
@@ -315,10 +324,7 @@ public class MetisOdfWorkBook
         }
 
         /* Access the expressions */
-        final Element myMain = theContents.getDocumentElement();
-        final Element myBody = theParser.getFirstNamedChild(myMain, MetisOdfOfficeItem.BODY);
-        final Element mySpreadSheet = theParser.getFirstNamedChild(myBody, MetisOdfOfficeItem.SPREADSHEET);
-        final Element myExpressions = theParser.getFirstNamedChild(mySpreadSheet, MetisOdfTableItem.EXPRESSIONS);
+        final Element myExpressions = theParser.getFirstNamedChild(theSpreadSheet, MetisOdfTableItem.EXPRESSIONS);
 
         /* Protect against exceptions */
         try {
@@ -438,13 +444,10 @@ public class MetisOdfWorkBook
                 + ++theNumConstraints;
 
         /* Access the constraints */
-        final Element myMain = theContents.getDocumentElement();
-        final Element myBody = theParser.getFirstNamedChild(myMain, MetisOdfOfficeItem.BODY);
-        final Element mySpreadSheet = theParser.getFirstNamedChild(myBody, MetisOdfOfficeItem.SPREADSHEET);
-        Element myConstraints = theParser.getFirstNamedChild(mySpreadSheet, MetisOdfTableItem.VALIDATIONS);
+        Element myConstraints = theParser.getFirstNamedChild(theSpreadSheet, MetisOdfTableItem.VALIDATIONS);
         if (myConstraints == null) {
             myConstraints = theParser.newElement(MetisOdfTableItem.VALIDATIONS);
-            mySpreadSheet.insertBefore(myConstraints, mySpreadSheet.getFirstChild());
+            theSpreadSheet.insertBefore(myConstraints, theSpreadSheet.getFirstChild());
         }
 
         /* Create the new constraint */
@@ -472,13 +475,10 @@ public class MetisOdfWorkBook
      */
     void applyDataFilter(final MetisSheetCellRange pRange) {
         /* Access the dbRanges */
-        final Element myMain = theContents.getDocumentElement();
-        final Element myBody = theParser.getFirstNamedChild(myMain, MetisOdfOfficeItem.BODY);
-        final Element mySpreadSheet = theParser.getFirstNamedChild(myBody, MetisOdfOfficeItem.SPREADSHEET);
-        Element myDBRanges = theParser.getFirstNamedChild(mySpreadSheet, MetisOdfTableItem.DATARANGES);
+        Element myDBRanges = theParser.getFirstNamedChild(theSpreadSheet, MetisOdfTableItem.DATARANGES);
         if (myDBRanges == null) {
             myDBRanges = theParser.newElement(MetisOdfTableItem.DATARANGES);
-            mySpreadSheet.appendChild(myDBRanges);
+            theSpreadSheet.appendChild(myDBRanges);
         }
 
         /* Build the name */
