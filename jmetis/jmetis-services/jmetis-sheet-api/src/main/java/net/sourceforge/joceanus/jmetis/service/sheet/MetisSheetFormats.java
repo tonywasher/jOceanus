@@ -139,7 +139,7 @@ public final class MetisSheetFormats {
     /**
      * Internal boolean format.
      */
-    private static final String FORMAT_BOOLEAN = "BOOLEAN";
+    private static final String FORMAT_BOOLEAN = "\"TRUE\";;\"FALSE\"";
 
     /**
      * Format current prefix.
@@ -262,7 +262,8 @@ public final class MetisSheetFormats {
         final String myFormat = getExtendedFormat(pValue);
 
         /* Obtain currency code */
-        final String myCurrency = pValue.getCurrency().getSymbol();
+        String myCurrency = pValue.getCurrency().getSymbol();
+        myCurrency = "\"" + myCurrency + "\"";
 
         /* Insert initial values */
         myBuilder.append(myCurrency);
@@ -290,7 +291,8 @@ public final class MetisSheetFormats {
         final String myFormat = getCurrencyFormat(pValue);
 
         /* Obtain currency code */
-        final String myCurrency = pValue.getCurrency().getSymbol();
+        String myCurrency = pValue.getCurrency().getSymbol();
+        myCurrency = "\"" + myCurrency + "\"";
 
         /* Insert initial values */
         myBuilder.append(myFormat);

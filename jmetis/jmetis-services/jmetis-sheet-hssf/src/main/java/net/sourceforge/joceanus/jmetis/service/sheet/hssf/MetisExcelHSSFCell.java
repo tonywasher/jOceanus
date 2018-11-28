@@ -96,6 +96,8 @@ public class MetisExcelHSSFCell
         switch (theExcelCell.getCellType()) {
             case BOOLEAN:
                 return theExcelCell.getBooleanCellValue();
+            case NUMERIC:
+                return theExcelCell.getNumericCellValue() != 0;
             case FORMULA:
                 final CellValue myValue = theExcelRow.evaluateFormula(theExcelCell);
                 return CellType.BOOLEAN == myValue.getCellType()
@@ -219,7 +221,7 @@ public class MetisExcelHSSFCell
     protected void setBoolean(final Boolean pValue) {
         if (!isReadOnly) {
             /* Set the value */
-            theExcelCell.setCellValue(pValue);
+            theExcelCell.setCellValue(pValue.booleanValue());
 
             /* Set the style for the cell */
             theExcelRow.setCellStyle(this, pValue);
