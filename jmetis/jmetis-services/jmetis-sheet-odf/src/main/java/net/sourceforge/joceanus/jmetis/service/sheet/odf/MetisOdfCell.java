@@ -233,14 +233,14 @@ public class MetisOdfCell
     @Override
     public Integer getIntegerValue() {
         return MetisOdfValue.FLOAT.equals(getValueType())
-               ? theParser.getIntegerAttribute(theOasisCell, MetisOdfOfficeItem.VALUE)
+               ? theParser.getDoubleAttribute(theOasisCell, MetisOdfOfficeItem.VALUE).intValue()
                : null;
     }
 
     @Override
-    public Long getLongValue() {
+    public Long getLongValue() throws OceanusException {
         return MetisOdfValue.FLOAT.equals(getValueType())
-               ? theParser.getLongAttribute(theOasisCell, MetisOdfOfficeItem.VALUE)
+               ? theParser.getDoubleAttribute(theOasisCell, MetisOdfOfficeItem.VALUE).longValue()
                : null;
     }
 

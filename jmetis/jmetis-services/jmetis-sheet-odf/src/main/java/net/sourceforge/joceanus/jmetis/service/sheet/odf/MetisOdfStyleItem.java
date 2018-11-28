@@ -109,6 +109,26 @@ public enum MetisOdfStyleItem
     TEXTPROPS("text-properties"),
 
     /**
+     * Map.
+     */
+    MAP("map"),
+
+    /**
+     * ApplyStyle.
+     */
+    APPLYSTYLE("apply-style-name"),
+
+    /**
+     * Condition.
+     */
+    CONDITION("condition"),
+
+    /**
+     * Colour.
+     */
+    COLOR("color"),
+
+    /**
      * FontName.
      */
     FONTNAME("font-name"),
@@ -146,6 +166,7 @@ public enum MetisOdfStyleItem
         switch (this) {
             case BREAKBEFORE:
             case TEXTALIGN:
+            case COLOR:
                 return MetisOdfNameSpace.FORMAT;
             default:
                 return MetisOdfNameSpace.STYLE;

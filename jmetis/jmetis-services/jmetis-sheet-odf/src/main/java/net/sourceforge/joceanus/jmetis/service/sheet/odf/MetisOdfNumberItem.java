@@ -34,6 +34,11 @@ public enum MetisOdfNumberItem
     STYLE("style"),
 
     /**
+     * NumberStyle.
+     */
+    NUMBERSTYLE("number-style"),
+
+    /**
      * DateStyle.
      */
     DATESTYLE("date-style"),
@@ -94,21 +99,6 @@ public enum MetisOdfNumberItem
     DECPLACES("decimal-places"),
 
     /**
-     * DecPlaces.
-     */
-    MINDECPLACES("min-decimal-places"),
-
-    /**
-     * CurrencyStyle.
-     */
-    CURRENCYSTYLE("currency-style"),
-
-    /**
-     * Currency.
-     */
-    CURRENCY("currency"),
-
-    /**
      * Styles.
      */
     PERCENTAGESTYLE("percentage-style");
@@ -133,12 +123,7 @@ public enum MetisOdfNumberItem
 
     @Override
     public MetisOdfNameSpace getNameSpace() {
-        switch (this) {
-            case MINDECPLACES:
-                return MetisOdfNameSpace.LOEXT;
-            default:
-                return MetisOdfNameSpace.NUMBER;
-        }
+       return MetisOdfNameSpace.NUMBER;
     }
 }
 

@@ -26,7 +26,6 @@ import net.sourceforge.joceanus.jmetis.service.sheet.MetisSheetFormats;
 import net.sourceforge.joceanus.jtethys.decimal.TethysDecimal;
 import net.sourceforge.joceanus.jtethys.decimal.TethysDecimalParser;
 import net.sourceforge.joceanus.jtethys.decimal.TethysMoney;
-import net.sourceforge.joceanus.jtethys.decimal.TethysPrice;
 import net.sourceforge.joceanus.jtethys.decimal.TethysRate;
 
 /**
@@ -151,9 +150,9 @@ public class MetisOdfStyler {
             /* If we have a data format */
             if (MetisSheetFormats.hasDataFormat(pType)) {
                 /* Determine the format */
-                final String myFormat = MetisSheetFormats.getDataFormatString(pType);
+                final Object myValue = MetisSheetFormats.getDefaultValue(pType);
                 final String myFormatName = getDataStyleName(myStyleName);
-                createNumericStyle(myFormatName, myFormat, pType);
+                createNumericStyle(myFormatName, myValue, pType);
                 theParser.setAttribute(myStyle, MetisOdfStyleItem.DATASTYLE, myFormatName);
             }
 
@@ -203,9 +202,8 @@ public class MetisOdfStyler {
             /* If we have a data format */
             if (MetisSheetFormats.hasDataFormat(myType)) {
                 /* Determine the format */
-                final String myFormat = MetisSheetFormats.getDataFormatString(pValue);
                 final String myFormatName = getDataStyleName(myStyleName);
-                createNumericStyle(myFormatName, myFormat, myType);
+                createNumericStyle(myFormatName, pValue, myType);
                 theParser.setAttribute(myStyle, MetisOdfStyleItem.DATASTYLE, myFormatName);
             }
 
@@ -329,10 +327,8 @@ public class MetisOdfStyler {
                 createDateStyle(pStyleName);
                 break;
             case MONEY:
-                createMoneyStyle(pStyleName, (TethysMoney) pValue);
-                break;
             case PRICE:
-                createPriceStyle(pStyleName, (TethysPrice) pValue);
+                createMoneyStyle(pStyleName, (TethysMoney) pValue);
                 break;
             case INTEGER:
                 createIntegerStyle(pStyleName);
@@ -373,7 +369,7 @@ public class MetisOdfStyler {
         final Element myMonth = theParser.newElement(MetisOdfNumberItem.MONTH);
         theParser.setAttribute(myMonth, MetisOdfNumberItem.STYLE, "short");
         theParser.setAttribute(myMonth, MetisOdfNumberItem.TEXTUAL, Boolean.TRUE);
-        myStyle.appendChild(myDay);
+        myStyle.appendChild(myMonth);
 
         /* Define the separator properties */
         mySep = theParser.newElement(MetisOdfNumberItem.TEXT);
@@ -383,7 +379,7 @@ public class MetisOdfStyler {
         /* Define the year properties */
         final Element myYear = theParser.newElement(MetisOdfNumberItem.YEAR);
         theParser.setAttribute(myYear, MetisOdfNumberItem.STYLE, "short");
-        myStyle.appendChild(myDay);
+        myStyle.appendChild(myYear);
     }
 
     /**
@@ -411,7 +407,7 @@ public class MetisOdfStyler {
      */
     private void createIntegerStyle(final String pStyleName) {
         /* Create the Integer Cell Style */
-        final Element myStyle = theParser.newElement(MetisOdfNumberItem.STYLE);
+        final Element myStyle = theParser.newElement(MetisOdfNumberItem.NUMBERSTYLE);
         theParser.setAttribute(myStyle, MetisOdfStyleItem.NAME, pStyleName);
         theStyles.appendChild(myStyle);
 
@@ -430,7 +426,7 @@ public class MetisOdfStyler {
     private void createDecimalStyle(final String pStyleName,
                                     final TethysDecimal pValue) {
         /* Create the Ratio Cell Style */
-        final Element myStyle = theParser.newElement(MetisOdfNumberItem.STYLE);
+        final Element myStyle = theParser.newElement(MetisOdfNumberItem.NUMBERSTYLE);
         theParser.setAttribute(myStyle, MetisOdfStyleItem.NAME, pStyleName);
         theStyles.appendChild(myStyle);
 
@@ -439,7 +435,6 @@ public class MetisOdfStyler {
         myStyle.appendChild(myNumber);
         final int myDecimals = pValue.scale();
         theParser.setAttribute(myNumber, MetisOdfNumberItem.DECPLACES, myDecimals);
-        theParser.setAttribute(myNumber, MetisOdfNumberItem.MINDECPLACES, myDecimals);
         theParser.setAttribute(myNumber, MetisOdfNumberItem.MININTDIGITS, 1);
     }
 
@@ -460,7 +455,6 @@ public class MetisOdfStyler {
         myStyle.appendChild(myNumber);
         final int myDecimals = pValue.scale() - TethysDecimalParser.ADJUST_PERCENT;
         theParser.setAttribute(myNumber, MetisOdfNumberItem.DECPLACES, myDecimals);
-        theParser.setAttribute(myNumber, MetisOdfNumberItem.MINDECPLACES, myDecimals);
         theParser.setAttribute(myNumber, MetisOdfNumberItem.MININTDIGITS, 1);
 
         /* Define the text properties */
@@ -474,45 +468,101 @@ public class MetisOdfStyler {
      * @param pStyleName the style name
      * @param pValue the value
      */
-    private void createMoneyStyle(final String pStyleName,
-                                  final TethysMoney pValue) {
-        /* Create the Money Cell Style */
-        final Element myStyle = theParser.newElement(MetisOdfNumberItem.CURRENCYSTYLE);
-        theParser.setAttribute(myStyle, MetisOdfStyleItem.NAME, pStyleName);
-        theParser.setAttribute(myStyle, MetisOdfNumberItem.CURRENCY, pValue.getCurrency().getCurrencyCode());
-        theStyles.appendChild(myStyle);
+    //private void createMoneyStyle(final String pStyleName,
+    //                              final TethysMoney pValue) {
+    //    /* Create the Money Cell Style */
+    //    final Element myStyle = theParser.newElement(MetisOdfNumberItem.NUMBERSTYLE);
+    //    theParser.setAttribute(myStyle, MetisOdfStyleItem.NAME, pStyleName);
+    //    theStyles.appendChild(myStyle)//;
+
+        /* Define the text properties */
+        //final Element myText = theParser.newElement(MetisOdfNumberItem.TEXT);
+        //myText.setTextContent(pValue.getCurrency().getSymbol());
+        //myStyle.appendChild(myText);
 
         /* Define the number properties */
-        final Element myNumber = theParser.newElement(MetisOdfNumberItem.NUMBER);
-        myStyle.appendChild(myNumber);
-        final int myDecimals = pValue.scale();
-        theParser.setAttribute(myNumber, MetisOdfNumberItem.DECPLACES, myDecimals);
-        theParser.setAttribute(myNumber, MetisOdfNumberItem.MINDECPLACES, myDecimals);
-        theParser.setAttribute(myNumber, MetisOdfNumberItem.MININTDIGITS, 1);
-        theParser.setAttribute(myNumber, MetisOdfNumberItem.GROUPING, Boolean.TRUE);
-    }
+        //final Element myNumber = theParser.newElement(MetisOdfNumberItem.NUMBER);
+        //myStyle.appendChild(myNumber);
+        //final int myDecimals = pValue.scale();
+        //theParser.setAttribute(myNumber, MetisOdfNumberItem.DECPLACES, myDecimals);
+        //theParser.setAttribute(myNumber, MetisOdfNumberItem.MININTDIGITS, 1);
+        //theParser.setAttribute(myNumber, MetisOdfNumberItem.GROUPING, Boolean.TRUE);
+    //}
 
     /**
      * Define a priceStyle.
      * @param pStyleName the style name
      * @param pValue the value
      */
-    private void createPriceStyle(final String pStyleName,
-                                  final TethysPrice pValue) {
+    private void createMoneyStyle(final String pStyleName,
+                                  final TethysMoney pValue) {
         /* Create the Price Cell Style */
-        final Element myStyle = theParser.newElement(MetisOdfNumberItem.CURRENCYSTYLE);
+        final Element myStyle = theParser.newElement(MetisOdfNumberItem.NUMBERSTYLE);
         theParser.setAttribute(myStyle, MetisOdfStyleItem.NAME, pStyleName);
-        theParser.setAttribute(myStyle, MetisOdfNumberItem.CURRENCY, pValue.getCurrency().getCurrencyCode());
         theStyles.appendChild(myStyle);
+
+        /* Define the text properties */
+        final Element myText = theParser.newElement(MetisOdfNumberItem.TEXT);
+        myText.setTextContent(pValue.getCurrency().getSymbol() + " -");
+        myStyle.appendChild(myText);
+
+        /* Define the negative map */
+        Element myMap = theParser.newElement(MetisOdfStyleItem.MAP);
+        myStyle.appendChild(myMap);
+        String myName = createCurrencyStyle(pStyleName, pValue, true);
+        theParser.setAttribute(myMap, MetisOdfStyleItem.APPLYSTYLE, myName);
+        theParser.setAttribute(myMap, MetisOdfStyleItem.CONDITION, "value()<0");
+
+        /* Define the negative map */
+        myMap = theParser.newElement(MetisOdfStyleItem.MAP);
+        myStyle.appendChild(myMap);
+        myName = createCurrencyStyle(pStyleName, pValue, false);
+        theParser.setAttribute(myMap, MetisOdfStyleItem.APPLYSTYLE, myName);
+        theParser.setAttribute(myMap, MetisOdfStyleItem.CONDITION, "value()>0");
+    }
+
+    /**
+     * Define a currency subStyle.
+     * @param pStyleName the style name
+     * @param pValue the value
+     * @param pNegative is this the negative form
+     * @return the
+     */
+    private String createCurrencyStyle(final String pStyleName,
+                                       final TethysMoney pValue,
+                                        final boolean pNegative) {
+        /* Determine the prefix */
+        final String myPrefix = pNegative ? "n" : "p";
+        final String myName = myPrefix + pStyleName;
+
+        /* Create the Price Cell Style */
+        final Element myStyle = theParser.newElement(MetisOdfNumberItem.NUMBERSTYLE);
+        theParser.setAttribute(myStyle, MetisOdfStyleItem.NAME, myName);
+        theStyles.appendChild(myStyle);
+
+        /* If this is a negative value */
+        if (pNegative) {
+            /* Make the format red */
+            final Element myProperties = theParser.newElement(MetisOdfStyleItem.TEXTPROPS);
+            theParser.setAttribute(myProperties, MetisOdfStyleItem.COLOR, "#ff0000");
+            myStyle.appendChild(myProperties);
+        }
+
+        /* Define the text properties */
+        final Element myText = theParser.newElement(MetisOdfNumberItem.TEXT);
+        myText.setTextContent(pValue.getCurrency().getSymbol());
+        myStyle.appendChild(myText);
 
         /* Define the number properties */
         final Element myNumber = theParser.newElement(MetisOdfNumberItem.NUMBER);
         myStyle.appendChild(myNumber);
         final int myDecimals = pValue.scale();
         theParser.setAttribute(myNumber, MetisOdfNumberItem.DECPLACES, myDecimals);
-        theParser.setAttribute(myNumber, MetisOdfNumberItem.MINDECPLACES, myDecimals);
         theParser.setAttribute(myNumber, MetisOdfNumberItem.MININTDIGITS, 1);
         theParser.setAttribute(myNumber, MetisOdfNumberItem.GROUPING, Boolean.TRUE);
+
+        /* Return the name */
+        return myName;
     }
 
     /**
@@ -630,7 +680,7 @@ public class MetisOdfStyler {
         /* Create the Hidden Table Style */
         myStyle = theParser.newElement(MetisOdfStyleItem.STYLE);
         theParser.setAttribute(myStyle, MetisOdfStyleItem.FAMILY, MetisOdfTableItem.TABLE.getName());
-        theParser.setAttribute(myStyle, MetisOdfStyleItem.NAME, STYLE_TABLE);
+        theParser.setAttribute(myStyle, MetisOdfStyleItem.NAME, STYLE_HIDDENTABLE);
         myProperty = theParser.newElement(MetisOdfStyleItem.TABLEPROPS);
         myStyle.appendChild(myProperty);
         theParser.setAttribute(myProperty, MetisOdfStyleItem.DISPLAY, Boolean.FALSE);

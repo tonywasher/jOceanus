@@ -75,6 +75,5 @@ public final class MetisSheetProvider {
     public static MetisSheetWorkBook newWorkBook(final MetisSheetWorkBookType pType) throws OceanusException {
         final MetisSheetFactory myFactory = newFactory(pType);
         return myFactory.newWorkBook();
-
     }
 }

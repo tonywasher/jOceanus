@@ -31,16 +31,6 @@ public enum MetisOdfNameSpace {
     TABLE("table"),
 
     /**
-     * CalcExt.
-     */
-    CALCEXT("calcext"),
-
-    /**
-     * LoExt.
-     */
-    LOEXT("loext"),
-
-    /**
      * Text.
      */
     TEXT("text"),
@@ -96,5 +86,17 @@ public enum MetisOdfNameSpace {
          * @return the nameSpace
          */
         MetisOdfNameSpace getNameSpace();
+
+        /**
+         * Get qualified name.
+         * @return the qualified name.
+         */
+        default String getQualifiedName() {
+            final StringBuffer myBuffer = new StringBuffer();
+            myBuffer.append(getNameSpace().getPrefix());
+            myBuffer.append(':');
+            myBuffer.append(getName());
+            return myBuffer.toString();
+        }
     }
 }

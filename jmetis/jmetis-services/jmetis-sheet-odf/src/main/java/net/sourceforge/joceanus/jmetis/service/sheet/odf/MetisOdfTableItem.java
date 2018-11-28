@@ -104,11 +104,6 @@ public enum MetisOdfTableItem
     CELL("table-cell"),
 
     /**
-     * ValueType.
-     */
-    VALUETYPE("value-type"),
-
-    /**
      * Text.
      */
     TEXT("p"),
@@ -214,8 +209,6 @@ public enum MetisOdfTableItem
     @Override
     public MetisOdfNameSpace getNameSpace() {
         switch (this) {
-            case VALUETYPE:
-                return MetisOdfNameSpace.CALCEXT;
             case TEXT:
                 return MetisOdfNameSpace.TEXT;
             default:

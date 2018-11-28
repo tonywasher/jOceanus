@@ -12,8 +12,6 @@
   <modules>
     <module>jmetis-sheet-api</module>
     <module>jmetis-sheet-hssf</module>
-    <!--<module>jmetis-sheet-jopen</module>
-    <module>jmetis-sheet-odfdom</module>-->
     <module>jmetis-sheet-xssf</module>
     <module>jmetis-sheet-odf</module>
   </modules>

@@ -93,7 +93,8 @@ public final class MetisSheetTester {
 
             /* Write the spreadsheet out */
             System.out.println("Writing " + pName);
-            final File myXFile = new File("C:\\Users\\Tony\\Documents\\" + pName);
+            final String myHome = System.getProperty("user.home");
+            final File myXFile = new File(myHome + "\\Documents\\" + pName);
             try (FileOutputStream myOutFile = new FileOutputStream(myXFile);
                  BufferedOutputStream myOutBuffer = new BufferedOutputStream(myOutFile)) {
                 myBook.saveToStream(myOutBuffer);
@@ -178,7 +179,7 @@ public final class MetisSheetTester {
     }
 
     /**
-     * Cell Data
+     * Cell Data.
      */
     public enum CellDataType {
         /**
@@ -224,7 +225,7 @@ public final class MetisSheetTester {
         /**
          * PriceJPY.
          */
-        PRICEJPY("PriceGB", TethysPrice.getWholeUnits(6, Currency.getInstance("JPY"))),
+        PRICEJPY("PriceJP", TethysPrice.getWholeUnits(6, Currency.getInstance("JPY"))),
 
         /**
          * MoneyUS.
@@ -234,7 +235,7 @@ public final class MetisSheetTester {
         /**
          * PriceEUR.
          */
-        PRICEEUR("PriceUS", TethysPrice.getWholeUnits(16, Currency.getInstance("EUR"))),
+        PRICEEUR("PriceEU", TethysPrice.getWholeUnits(16, Currency.getInstance("EUR"))),
 
         /**
          * Boolean.

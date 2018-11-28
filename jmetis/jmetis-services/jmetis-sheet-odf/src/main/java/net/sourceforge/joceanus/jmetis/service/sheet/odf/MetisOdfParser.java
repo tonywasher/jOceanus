@@ -107,6 +107,7 @@ public class MetisOdfParser {
      * Obtain all matching named children.
      * @param pParent the parent
      * @param pItem the item
+     * @return the list of children
      */
     List<Element> getAllNamedChildren(final Element pParent,
                                       final MetisOdfItem pItem) {
@@ -155,7 +156,10 @@ public class MetisOdfParser {
         final String myName = pItem.getName();
 
         /* Return the element */
-        return pElement.getAttributeNS(mySpace, myName);
+        final String myAttr = pElement.getAttributeNS(mySpace, myName);
+        return myAttr.length() == 0
+               ? null
+               : myAttr;
     }
 
     /**
@@ -229,7 +233,7 @@ public class MetisOdfParser {
                       final String pValue) {
         /* Access the details */
         final String mySpace = theNameSpaceMap.get(pItem.getNameSpace());
-        final String myName = pItem.getName();
+        final String myName = pItem.getQualifiedName();
 
         /* Set the attribute */
         pElement.setAttributeNS(mySpace, myName, pValue);
@@ -310,7 +314,7 @@ public class MetisOdfParser {
     Element newElement(final MetisOdfItem pItem) {
         /* Access the details */
         final String mySpace = theNameSpaceMap.get(pItem.getNameSpace());
-        final String myName = pItem.getName();
+        final String myName = pItem.getQualifiedName();
 
         /* Create the element */
         return theDocument.createElementNS(mySpace, myName);

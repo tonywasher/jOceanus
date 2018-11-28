@@ -311,25 +311,36 @@ public final class MetisSheetFormats {
      * @return the format string
      */
     public static String getDataFormatString(final MetisSheetCellStyleType pType) {
+        return getDataFormatString(getDefaultValue(pType));
+    }
+
+    /**
+     * Obtain default value for a cell type.
+     * @param pType the cell style type
+     * @return the format string
+     */
+    public static Object getDefaultValue(final MetisSheetCellStyleType pType) {
         switch (pType) {
+            case STRING:
+                return STR_NULL;
             case DATE:
-                return getDataFormatString(new TethysDate());
+                return new TethysDate();
             case BOOLEAN:
-                return getDataFormatString(Boolean.TRUE);
+                return Boolean.TRUE;
             case INTEGER:
-                return getDataFormatString(Integer.valueOf(0));
+                return 0;
             case MONEY:
-                return getDataFormatString(new TethysMoney(STR_ZERO));
+                return new TethysMoney(STR_ZERO);
             case PRICE:
-                return getDataFormatString(new TethysPrice(STR_ZERO));
+                return new TethysPrice(STR_ZERO);
             case RATE:
-                return getDataFormatString(new TethysRate(STR_ZERO));
+                return new TethysRate(STR_ZERO);
             case UNITS:
-                return getDataFormatString(new TethysUnits(STR_ZERO));
+                return new TethysUnits(STR_ZERO);
             case DILUTION:
-                return getDataFormatString(new TethysDilution(STR_ZERO));
+                return new TethysDilution(STR_ZERO);
             case RATIO:
-                return getDataFormatString(new TethysRatio(STR_ZERO));
+                return new TethysRatio(STR_ZERO);
             default:
                 return null;
         }
@@ -394,32 +405,9 @@ public final class MetisSheetFormats {
      * @return the format string
      */
     public static String getFormatName(final MetisSheetCellStyleType pType) {
-        switch (pType) {
-            case HEADER:
-                return getAlternateFormatName(STR_NULL);
-            case STRING:
-                return getFormatName(STR_NULL);
-            case DATE:
-                return getFormatName(new TethysDate());
-            case BOOLEAN:
-                return getFormatName(Boolean.TRUE);
-            case INTEGER:
-                return getFormatName(Integer.valueOf(0));
-            case MONEY:
-                return getFormatName(new TethysMoney(STR_ZERO));
-            case PRICE:
-                return getFormatName(new TethysPrice(STR_ZERO));
-            case RATE:
-                return getFormatName(new TethysRate(STR_ZERO));
-            case UNITS:
-                return getFormatName(new TethysUnits(STR_ZERO));
-            case DILUTION:
-                return getFormatName(new TethysDilution(STR_ZERO));
-            case RATIO:
-                return getFormatName(new TethysRatio(STR_ZERO));
-            default:
-                return null;
-        }
+        return pType == MetisSheetCellStyleType.HEADER
+               ? getAlternateFormatName(STR_NULL)
+               : getFormatName(getDefaultValue(pType));
     }
 
     /**

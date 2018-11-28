@@ -21,4 +21,8 @@ module jmetis.sheet.odf {
     /* jOceanus */
     requires jtethys.core;
     requires jmetis.sheet.api;
+
+    /* Services provided */
+    provides net.sourceforge.joceanus.jmetis.service.sheet.MetisSheetFactory
+            with net.sourceforge.joceanus.jmetis.service.sheet.odf.MetisOdfFactory;
 }
