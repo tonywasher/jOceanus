@@ -48,11 +48,6 @@ public class MetisOdfRow
     private final Element theOasisRow;
 
     /**
-     * Is the row readOnly.
-     */
-    private final boolean isReadOnly;
-
-    /**
      * Constructor.
      * @param pMap the row map
      * @param pRow the Oasis row
@@ -64,11 +59,10 @@ public class MetisOdfRow
                 final int pIndex,
                 final boolean pReadOnly) {
         /* Store parameters */
-        super(pMap.getSheet(), pIndex);
+        super(pMap.getSheet(), pIndex, pReadOnly);
         theParser = getSheet().getParser();
         theRowMap = pMap;
         theOasisRow = pRow;
-        isReadOnly = pReadOnly;
 
         /* Create the cell map */
         theCellMap = new MetisOdfCellMap(this);
@@ -105,11 +99,8 @@ public class MetisOdfRow
         return theParser.getAttribute(theOasisRow, MetisOdfTableItem.STYLENAME);
     }
 
-    /**
-     * Is the row hidden?
-     * @return true/false
-     */
-    protected boolean isHidden() {
+    @Override
+    public boolean isHidden() {
         final String myString = theParser.getAttribute(theOasisRow, MetisOdfTableItem.VISIBILITY);
         return myString != null
                 && !myString.equals(MetisOdfValue.VISIBLE.getValue());
@@ -119,27 +110,21 @@ public class MetisOdfRow
      * Set the row style.
      * @param pStyle the row style
      */
-    protected void setRowStyle(final String pStyle) {
+    void setRowStyle(final String pStyle) {
         /* Ignore if readOnly */
-        if (!isReadOnly) {
+        if (!isReadOnly()) {
             /* Set the row style */
             theParser.setAttribute(theOasisRow, MetisOdfTableItem.STYLENAME, pStyle);
         }
     }
 
-    /**
-     * Set the hidden property.
-     * @param isHidden true/false
-     */
-    protected void setHidden(final boolean isHidden) {
-        /* Ignore if readOnly */
-        if (!isReadOnly) {
-            /* Set the visibility attribute */
-            theParser.setAttribute(theOasisRow, MetisOdfTableItem.VISIBILITY,
-                    isHidden
-                          ? MetisOdfValue.COLLAPSE
-                          : MetisOdfValue.VISIBLE);
-        }
+    @Override
+    protected void setHiddenValue(final boolean isHidden) {
+        /* Set the visibility attribute */
+        theParser.setAttribute(theOasisRow, MetisOdfTableItem.VISIBILITY,
+                isHidden
+                      ? MetisOdfValue.COLLAPSE
+                      : MetisOdfValue.VISIBLE);
     }
 
     @Override
@@ -153,10 +138,8 @@ public class MetisOdfRow
     }
 
     @Override
-    public MetisOdfCell getMutableCellByIndex(final int pIndex) {
-        return isReadOnly
-               ? null
-               : theCellMap.getMutableCellByIndex(pIndex);
+    protected MetisOdfCell getWriteableCellByIndex(final int pIndex) {
+        return theCellMap.getMutableCellByIndex(pIndex);
     }
 
     /**

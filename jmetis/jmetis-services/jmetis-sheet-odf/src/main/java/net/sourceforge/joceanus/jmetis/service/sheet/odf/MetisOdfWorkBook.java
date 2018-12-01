@@ -98,7 +98,12 @@ public class MetisOdfWorkBook
     /**
      * The officeSpreadSheet element.
      */
-    private Element theSpreadSheet;
+    private final Element theSpreadSheet;
+
+    /**
+     * The tableStore.
+     */
+    private final MetisOdfTableStore theTableStore;
 
     /**
      * Constructor.
@@ -126,6 +131,11 @@ public class MetisOdfWorkBook
         final Element myMain = theContents.getDocumentElement();
         final Element myBody = theParser.getFirstNamedChild(myMain, MetisOdfOfficeItem.BODY);
         theSpreadSheet = theParser.getFirstNamedChild(myBody, MetisOdfOfficeItem.SPREADSHEET);
+
+        /* Build tableStore */
+        theTableStore = null;
+        //theTableStore = new MetisOdfTableStore(this, theSpreadSheet);
+        //theTableStore.loadMaps();
 
         /* Build the maps */
         buildSheetMap();
@@ -157,6 +167,10 @@ public class MetisOdfWorkBook
         for (Element myTable : theParser.getAllNamedChildren(theSpreadSheet, MetisOdfTableItem.TABLE)) {
             theSpreadSheet.removeChild(myTable);
         }
+
+        /* Build tableStore */
+        theTableStore = null;
+        //theTableStore = new MetisOdfTableStore(this, theSpreadSheet);
 
         /* Note writable */
         isReadOnly = false;
@@ -193,6 +207,7 @@ public class MetisOdfWorkBook
 
     @Override
     public void saveToStream(final OutputStream pOutput) throws OceanusException {
+        //theTableStore.buildSheetXML();
         /* Write to a completely new spreadSheet */
         MetisOdfLoader.writeNewSpreadSheet(theContents, pOutput);
     }
@@ -216,6 +231,7 @@ public class MetisOdfWorkBook
     public MetisSheetSheet newSheet(final String pName,
                                     final int pNumRows,
                                     final int pNumCols) {
+        //return theTableStore.newSheet(pName, pNumRows, pNumCols);
         /* Create the new Sheet */
         final Element myTable = theParser.newElement(MetisOdfTableItem.TABLE);
         theParser.setAttribute(myTable, MetisOdfTableItem.NAME, pName);
@@ -260,6 +276,7 @@ public class MetisOdfWorkBook
 
     @Override
     public MetisSheetSheet getSheet(final String pName) {
+        //return theTableStore.getSheet(pName);
         /* Obtain the existing sheet */
         final SheetReference myRef = theSheetMap.get(pName);
         return myRef == null
@@ -284,6 +301,7 @@ public class MetisOdfWorkBook
 
     @Override
     public MetisSheetView getRangeView(final String pName) throws OceanusException {
+        //return theTableStore.getRangeView(pName);
         /* Locate the named range in the map */
         final Element myNamedRange = theRangeMap.get(pName);
         if (myNamedRange == null) {
@@ -427,7 +445,7 @@ public class MetisOdfWorkBook
             /* Loop through the columns */
             for (int iCol = iFirstCol; iCol <= iLastCol; iCol++) {
                 /* Access the cell and set the constraint */
-                final MetisOdfCell myCell = myRow.getMutableCellByIndex(iCol);
+                final MetisOdfCell myCell = myRow.getWriteableCellByIndex(iCol);
                 myCell.setValidationName(myName);
             }
         }

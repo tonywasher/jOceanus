@@ -40,11 +40,6 @@ public class MetisExcelHSSFRow
     private final HSSFRow theExcelRow;
 
     /**
-     * Is the row readOnly.
-     */
-    private final boolean isReadOnly;
-
-    /**
      * Constructor.
      * @param pSheet the sheet for the row
      * @param pRow the Excel Row
@@ -56,10 +51,9 @@ public class MetisExcelHSSFRow
                       final int pRowIndex,
                       final boolean pReadOnly) {
         /* Store parameters */
-        super(pSheet, pRowIndex);
+        super(pSheet, pRowIndex, pReadOnly);
         theExcelSheet = pSheet;
         theExcelRow = pRow;
-        isReadOnly = pReadOnly;
     }
 
     /**
@@ -122,16 +116,20 @@ public class MetisExcelHSSFRow
     }
 
     @Override
-    public MetisExcelHSSFCell getMutableCellByIndex(final int pIndex) {
-        /* Handle negative index and readOnly */
-        if (pIndex < 0
-            || isReadOnly) {
-            return null;
-        }
-
+    public MetisExcelHSSFCell getWriteableCellByIndex(final int pIndex) {
         /* Create the cell */
         final HSSFCell myExcelCell = theExcelRow.createCell(pIndex);
         return new MetisExcelHSSFCell(this, myExcelCell, pIndex, false);
+    }
+
+    @Override
+    protected void setHiddenValue(final boolean pHidden) {
+        theExcelRow.setZeroHeight(pHidden);
+    }
+
+    @Override
+    public boolean isHidden() {
+        return theExcelRow.getZeroHeight();
     }
 
     /**

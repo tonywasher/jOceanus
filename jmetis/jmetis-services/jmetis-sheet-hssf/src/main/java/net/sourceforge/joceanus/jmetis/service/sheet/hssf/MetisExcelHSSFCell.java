@@ -50,11 +50,6 @@ public class MetisExcelHSSFCell
     private final HSSFCell theExcelCell;
 
     /**
-     * Is the cell readOnly.
-     */
-    private final boolean isReadOnly;
-
-    /**
      * Constructor.
      * @param pRow the row for the cell
      * @param pExcelCell the Excel Cell
@@ -66,10 +61,9 @@ public class MetisExcelHSSFCell
                        final int pColIndex,
                        final boolean pReadOnly) {
         /* Store parameters */
-        super(pRow, pColIndex);
+        super(pRow, pColIndex, pReadOnly);
         theExcelRow = pRow;
         theExcelCell = pExcelCell;
-        isReadOnly = pReadOnly;
     }
 
     /**
@@ -92,7 +86,7 @@ public class MetisExcelHSSFCell
     }
 
     @Override
-    public Boolean getBooleanValue() {
+    public Boolean getBoolean() {
         switch (theExcelCell.getCellType()) {
             case BOOLEAN:
                 return theExcelCell.getBooleanCellValue();
@@ -109,14 +103,14 @@ public class MetisExcelHSSFCell
     }
 
     @Override
-    public TethysDate getDateValue() {
+    public TethysDate getDate() {
         return CellType.NUMERIC == theExcelCell.getCellType()
                                                               ? new TethysDate(theExcelCell.getDateCellValue())
                                                               : null;
     }
 
     @Override
-    public Integer getIntegerValue() {
+    public Integer getInteger() {
         switch (theExcelCell.getCellType()) {
             case NUMERIC:
                 final Double myValue = theExcelCell.getNumericCellValue();
@@ -132,7 +126,7 @@ public class MetisExcelHSSFCell
     }
 
     @Override
-    public Long getLongValue() {
+    public Long getLong() {
         switch (theExcelCell.getCellType()) {
             case NUMERIC:
                 final Double myValue = theExcelCell.getNumericCellValue();
@@ -148,7 +142,7 @@ public class MetisExcelHSSFCell
     }
 
     @Override
-    public String getStringValue() {
+    public String getString() {
         switch (theExcelCell.getCellType()) {
             case NUMERIC:
             case BOOLEAN:
@@ -181,123 +175,107 @@ public class MetisExcelHSSFCell
     }
 
     @Override
-    public TethysMoney getMoneyValue() throws OceanusException {
-        return parseValue(getStringValue(), TethysMoney.class);
+    public TethysMoney getMoney() throws OceanusException {
+        return parseValue(getString(), TethysMoney.class);
     }
 
     @Override
-    public TethysPrice getPriceValue() throws OceanusException {
-        return parseValue(getStringValue(), TethysPrice.class);
+    public TethysPrice getPrice() throws OceanusException {
+        return parseValue(getString(), TethysPrice.class);
     }
 
     @Override
-    public TethysRate getRateValue() throws OceanusException {
-        return parseValue(getStringValue(), TethysRate.class);
+    public TethysRate getRate() throws OceanusException {
+        return parseValue(getString(), TethysRate.class);
     }
 
     @Override
-    public TethysUnits getUnitsValue() throws OceanusException {
-        return parseValue(getStringValue(), TethysUnits.class);
+    public TethysUnits getUnits() throws OceanusException {
+        return parseValue(getString(), TethysUnits.class);
     }
 
     @Override
-    public TethysDilution getDilutionValue() throws OceanusException {
-        return parseValue(getStringValue(), TethysDilution.class);
+    public TethysDilution getDilution() throws OceanusException {
+        return parseValue(getString(), TethysDilution.class);
     }
 
     @Override
-    public TethysRatio getRatioValue() throws OceanusException {
-        return parseValue(getStringValue(), TethysRatio.class);
+    public TethysRatio getRatio() throws OceanusException {
+        return parseValue(getString(), TethysRatio.class);
     }
 
     @Override
-    public void setNullValue() {
-        if (!isReadOnly) {
-            theExcelCell.setCellValue((String) null);
-        }
+    protected void setNullValue() {
+        theExcelCell.setCellValue((String) null);
     }
 
     @Override
-    protected void setBoolean(final Boolean pValue) {
-        if (!isReadOnly) {
-            /* Set the value */
-            theExcelCell.setCellValue(pValue.booleanValue());
+    protected void setBooleanValue(final Boolean pValue) {
+        /* Set the value */
+        theExcelCell.setCellValue(pValue.booleanValue());
 
-            /* Set the style for the cell */
-            theExcelRow.setCellStyle(this, pValue);
-        }
+        /* Set the style for the cell */
+        theExcelRow.setCellStyle(this, pValue);
     }
 
     @Override
-    protected void setDate(final TethysDate pValue) {
-        if (!isReadOnly) {
-            /* Set the value */
-            theExcelCell.setCellValue(pValue.toDate());
+    protected void setDateValue(final TethysDate pValue) {
+        /* Set the value */
+        theExcelCell.setCellValue(pValue.toDate());
 
-            /* Set the style for the cell */
-            theExcelRow.setCellStyle(this, pValue);
-        }
+        /* Set the style for the cell */
+        theExcelRow.setCellStyle(this, pValue);
+     }
+
+    @Override
+    protected void setIntegerValue(final Integer pValue) {
+        /* Set the value */
+        theExcelCell.setCellValue(pValue.doubleValue());
+
+        /* Set the style for the cell */
+        theExcelRow.setCellStyle(this, pValue);
     }
 
     @Override
-    protected void setInteger(final Integer pValue) {
-        if (!isReadOnly) {
-            /* Set the value */
-            theExcelCell.setCellValue(pValue.doubleValue());
+    protected void setLongValue(final Long pValue) {
+        /* Set the value */
+        theExcelCell.setCellValue(pValue.doubleValue());
 
-            /* Set the style for the cell */
-            theExcelRow.setCellStyle(this, pValue);
-        }
+        /* Set the style for the cell */
+        theExcelRow.setCellStyle(this, pValue);
     }
 
     @Override
-    protected void setLong(final Long pValue) {
-        if (!isReadOnly) {
-            /* Set the value */
-            theExcelCell.setCellValue(pValue.doubleValue());
+    protected void setStringValue(final String pValue) {
+        /* Set the value */
+        theExcelCell.setCellValue(pValue);
 
-            /* Set the style for the cell */
-            theExcelRow.setCellStyle(this, pValue);
-        }
+        /* Set the style for the cell */
+        theExcelRow.setCellStyle(this, pValue);
     }
 
     @Override
-    protected void setString(final String pValue) {
-        if (!isReadOnly) {
-            /* Set the value */
-            theExcelCell.setCellValue(pValue);
+    protected void setHeaderValue(final String pValue) {
+        /* Set as string value */
+        theExcelCell.setCellValue(pValue);
 
-            /* Set the style for the cell */
-            theExcelRow.setCellStyle(this, pValue);
-        }
+        /* Adjust the style for the cell */
+        theExcelRow.setAlternateCellStyle(this, pValue);
     }
 
     @Override
-    protected void setHeader(final String pValue) {
-        if (!isReadOnly) {
-            /* Set as string value */
-            theExcelCell.setCellValue(pValue);
+    protected void setDecimalValue(final TethysDecimal pValue) {
+        /* Set the value */
+        theExcelCell.setCellValue(pValue.doubleValue());
 
-            /* Adjust the style for the cell */
-            theExcelRow.setAlternateCellStyle(this, pValue);
-        }
+        /* Set the style for the cell */
+        theExcelRow.setCellStyle(this, pValue);
     }
 
     @Override
-    protected void setDecimal(final TethysDecimal pValue) {
-        if (!isReadOnly) {
-            /* Set the value */
-            theExcelCell.setCellValue(pValue.doubleValue());
-
-            /* Set the style for the cell */
-            theExcelRow.setCellStyle(this, pValue);
-        }
-    }
-
-    @Override
-    protected void setMonetary(final TethysMoney pValue) {
+    protected void setMonetaryValue(final TethysMoney pValue) {
         /* Pass through as decimal */
-        setDecimal(pValue);
+        setDecimalValue(pValue);
     }
 
     /**

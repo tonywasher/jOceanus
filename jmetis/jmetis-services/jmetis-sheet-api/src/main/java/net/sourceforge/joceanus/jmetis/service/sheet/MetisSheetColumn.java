@@ -32,15 +32,23 @@ public abstract class MetisSheetColumn {
     private final int theColIndex;
 
     /**
+     * Is the column readOnly?
+     */
+    private final boolean isReadOnly;
+
+    /**
      * Constructor.
      * @param pSheet the sheet for the column
      * @param pIndex the index
+     * @param pReadOnly is the column readOnly?
      */
     protected MetisSheetColumn(final MetisSheetSheet pSheet,
-                              final int pIndex) {
+                               final int pIndex,
+                               final boolean pReadOnly) {
         /* Store parameters */
         theSheet = pSheet;
         theColIndex = pIndex;
+        isReadOnly = pReadOnly;
     }
 
     /**
@@ -60,6 +68,14 @@ public abstract class MetisSheetColumn {
     }
 
     /**
+     * Is the column readOnly?
+     * @return true/false
+     */
+    public boolean isReadOnly() {
+        return isReadOnly;
+    }
+
+    /**
      * Get the next column.
      * @return the next column
      */
@@ -75,7 +91,17 @@ public abstract class MetisSheetColumn {
      * Set hidden status.
      * @param isHidden is the column hidden?
      */
-    public abstract void setHidden(boolean isHidden);
+    public void setHidden(final boolean isHidden) {
+        if (!isReadOnly) {
+            setHiddenValue(isHidden);
+        }
+    }
+
+    /**
+     * Set hidden status.
+     * @param isHidden is the column hidden?
+     */
+    protected abstract void setHiddenValue(boolean isHidden);
 
     /**
      * Is the column hidden?
@@ -84,8 +110,18 @@ public abstract class MetisSheetColumn {
     public abstract boolean isHidden();
 
     /**
+     * Set hidden status.
+     * @param pStyle the cell style
+     */
+    public void setDefaultCellStyle(final MetisSheetCellStyleType pStyle) {
+        if (!isReadOnly) {
+            setDefaultCellStyleValue(pStyle);
+        }
+    }
+
+    /**
      * Set the default cell style.
      * @param pStyle the cell style
      */
-    public abstract void setDefaultCellStyle(MetisSheetCellStyleType pStyle);
+    protected abstract void setDefaultCellStyleValue(MetisSheetCellStyleType pStyle);
 }

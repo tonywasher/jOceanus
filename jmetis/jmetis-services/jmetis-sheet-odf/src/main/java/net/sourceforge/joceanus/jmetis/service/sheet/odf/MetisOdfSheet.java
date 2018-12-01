@@ -66,11 +66,6 @@ public class MetisOdfSheet
     private MetisOdfColumnMap theColMap;
 
     /**
-     * Is the sheet readOnly.
-     */
-    private final boolean isReadOnly;
-
-    /**
      * Constructor for Oasis Sheet.
      * @param pBook the WorkBook
      * @param pTable the Oasis table
@@ -82,7 +77,7 @@ public class MetisOdfSheet
                   final int pIndex,
                   final boolean pReadOnly) {
         /* Construct super-class */
-        super(pBook, pBook.getParser().getAttribute(pTable, MetisOdfTableItem.NAME));
+        super(pBook, pBook.getParser().getAttribute(pTable, MetisOdfTableItem.NAME), pReadOnly);
 
         /* Store parameters */
         theOasisBook = pBook;
@@ -90,7 +85,6 @@ public class MetisOdfSheet
         theStyler = pBook.getStyler();
         theIndex = pIndex;
         theOasisTable = pTable;
-        isReadOnly = pReadOnly;
 
         /* Create the maps */
         theColMap = new MetisOdfColumnMap(this);
@@ -140,7 +134,7 @@ public class MetisOdfSheet
     @Override
     public MetisOdfRow getMutableRowByIndex(final int pRowIndex) {
         /* Obtain row from row map, creating row if necessary */
-        return isReadOnly
+        return isReadOnly()
                ? null
                : theRowMap.getMutableRowByIndex(pRowIndex);
     }
@@ -154,7 +148,7 @@ public class MetisOdfSheet
     @Override
     public MetisOdfColumn getMutableColumnByIndex(final int pColIndex) {
         /* Obtain column from column map, creating column if necessary */
-        return isReadOnly
+        return isReadOnly()
                ? null
                : theColMap.getMutableColumnByIndex(pColIndex);
     }
@@ -166,7 +160,7 @@ public class MetisOdfSheet
 
     @Override
     public void setHidden(final boolean isHidden) {
-        if (!isReadOnly) {
+        if (!isReadOnly()) {
             theParser.setAttribute(theOasisTable, MetisOdfTableItem.STYLENAME,
                           isHidden
                               ? MetisOdfStyler.STYLE_HIDDENTABLE
@@ -221,7 +215,7 @@ public class MetisOdfSheet
     public void declareRange(final String pName,
                              final MetisSheetCellPosition pFirstCell,
                              final MetisSheetCellPosition pLastCell) throws OceanusException {
-        if (!isReadOnly) {
+        if (!isReadOnly()) {
             /* Build the range */
             final MetisSheetCellRange myRange = new MetisSheetCellRange(getName(), pFirstCell, pLastCell);
 
@@ -234,7 +228,7 @@ public class MetisOdfSheet
     public void applyDataValidation(final MetisSheetCellPosition pFirstCell,
                                     final MetisSheetCellPosition pLastCell,
                                     final String pName) throws OceanusException {
-        if (!isReadOnly) {
+        if (!isReadOnly()) {
             /* Declare to workBook */
             theOasisBook.applyDataValidation(this, pFirstCell, pLastCell, pName);
         }
@@ -243,7 +237,7 @@ public class MetisOdfSheet
     @Override
     public void applyDataFilter(final MetisSheetCellPosition pBaseCell,
                                 final int pNumRows) throws OceanusException {
-        if (!isReadOnly) {
+        if (!isReadOnly()) {
             /* Build the range */
             final MetisSheetCellPosition myEnd = new MetisSheetCellPosition(pBaseCell.getColumnIndex(), pNumRows - 1);
             final MetisSheetCellRange myRange = new MetisSheetCellRange(getName(), pBaseCell, myEnd);

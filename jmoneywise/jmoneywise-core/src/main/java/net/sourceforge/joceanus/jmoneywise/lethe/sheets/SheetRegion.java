@@ -137,7 +137,7 @@ public class SheetRegion
 
                 /* Access name */
                 final MetisSheetCell myCell = myView.getRowCellByIndex(myRow, ++iAdjust);
-                final String myName = myCell.getStringValue();
+                final String myName = myCell.getString();
 
                 /* Build data values */
                 final DataValues<MoneyWiseDataType> myValues = new DataValues<>(Region.OBJECT_NAME);

@@ -33,15 +33,23 @@ public abstract class MetisSheetSheet {
     private final String theSheetName;
 
     /**
+     * Is the sheet readOnly?
+     */
+    private final boolean isReadOnly;
+
+    /**
      * Constructor for Excel Sheet.
      * @param pWorkBook the workBook
      * @param pName the sheet name
+     * @param pReadOnly is the sheet readOnly?
      */
     protected MetisSheetSheet(final MetisSheetWorkBook pWorkBook,
-                              final String pName) {
+                              final String pName,
+                              final boolean pReadOnly) {
         /* Store parameters */
         theWorkBook = pWorkBook;
         theSheetName = pName;
+        isReadOnly = pReadOnly;
     }
 
     /**
@@ -65,6 +73,14 @@ public abstract class MetisSheetSheet {
      * @return the index of the sheet
      */
     public abstract int getSheetIndex();
+
+    /**
+     * Is the sheet readOnly?
+     * @return true/false
+     */
+    public boolean isReadOnly() {
+        return isReadOnly;
+    }
 
     /**
      * Is the sheet hidden?

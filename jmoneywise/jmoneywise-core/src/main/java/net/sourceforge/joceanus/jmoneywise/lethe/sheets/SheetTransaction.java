@@ -243,23 +243,23 @@ public class SheetTransaction
         /* Access date */
         MetisSheetCell myCell = pView.getRowCellByIndex(pRow, ++iAdjust);
         final TethysDate myDate = (myCell != null)
-                                                   ? myCell.getDateValue()
+                                                   ? myCell.getDate()
                                                    : null;
 
         /* Access the values */
         myCell = pView.getRowCellByIndex(pRow, ++iAdjust);
         final String myDebit = (myCell != null)
-                                                ? myCell.getStringValue()
+                                                ? myCell.getString()
                                                 : null;
         myCell = pView.getRowCellByIndex(pRow, ++iAdjust);
         final String myCredit = (myCell != null)
-                                                 ? myCell.getStringValue()
+                                                 ? myCell.getString()
                                                  : null;
         myCell = pView.getRowCellByIndex(pRow, ++iAdjust);
         final String myAmount = (myCell != null)
-                                                 ? myCell.getStringValue()
+                                                 ? myCell.getString()
                                                  : null;
-        final String myCategory = pView.getRowCellByIndex(pRow, ++iAdjust).getStringValue();
+        final String myCategory = pView.getRowCellByIndex(pRow, ++iAdjust).getString();
 
         /* Handle Reconciled which may be missing */
         myCell = pView.getRowCellByIndex(pRow, ++iAdjust);
@@ -280,56 +280,56 @@ public class SheetTransaction
         myCell = pView.getRowCellByIndex(pRow, ++iAdjust);
         String myDesc = null;
         if (myCell != null) {
-            myDesc = myCell.getStringValue();
+            myDesc = myCell.getString();
         }
 
         /* Handle Tax Credit which may be missing */
         myCell = pView.getRowCellByIndex(pRow, ++iAdjust);
         String myTaxCredit = null;
         if (myCell != null) {
-            myTaxCredit = myCell.getStringValue();
+            myTaxCredit = myCell.getString();
         }
 
         /* Handle EmployeeNatIns which may be missing */
         myCell = pView.getRowCellByIndex(pRow, ++iAdjust);
         String myEmployeeNatIns = null;
         if (myCell != null) {
-            myEmployeeNatIns = myCell.getStringValue();
+            myEmployeeNatIns = myCell.getString();
         }
 
         /* Handle EmployerNatIns which may be missing */
         myCell = pView.getRowCellByIndex(pRow, ++iAdjust);
         String myEmployerNatIns = null;
         if (myCell != null) {
-            myEmployerNatIns = myCell.getStringValue();
+            myEmployerNatIns = myCell.getString();
         }
 
         /* Handle Benefit which may be missing */
         myCell = pView.getRowCellByIndex(pRow, ++iAdjust);
         String myBenefit = null;
         if (myCell != null) {
-            myBenefit = myCell.getStringValue();
+            myBenefit = myCell.getString();
         }
 
         /* Handle DebitUnits which may be missing */
         myCell = pView.getRowCellByIndex(pRow, ++iAdjust);
         String myDebitUnits = null;
         if (myCell != null) {
-            myDebitUnits = myCell.getStringValue();
+            myDebitUnits = myCell.getString();
         }
 
         /* Handle CreditUnits which may be missing */
         myCell = pView.getRowCellByIndex(pRow, ++iAdjust);
         String myCreditUnits = null;
         if (myCell != null) {
-            myCreditUnits = myCell.getStringValue();
+            myCreditUnits = myCell.getString();
         }
 
         /* Handle Dilution which may be missing */
         myCell = pView.getRowCellByIndex(pRow, ++iAdjust);
         String myDilution = null;
         if (myCell != null) {
-            myDilution = myCell.getStringValue();
+            myDilution = myCell.getString();
             if (!myDilution.startsWith("0.")) {
                 myDilution = null;
             }
@@ -339,56 +339,56 @@ public class SheetTransaction
         myCell = pView.getRowCellByIndex(pRow, ++iAdjust);
         String myReference = null;
         if (myCell != null) {
-            myReference = myCell.getStringValue();
+            myReference = myCell.getString();
         }
 
         /* Handle Years which may be missing */
         myCell = pView.getRowCellByIndex(pRow, ++iAdjust);
         Integer myYears = null;
         if (myCell != null) {
-            myYears = myCell.getIntegerValue();
+            myYears = myCell.getInteger();
         }
 
         /* Handle Withheld which may be missing */
         myCell = pView.getRowCellByIndex(pRow, ++iAdjust);
         String myWithheld = null;
         if (myCell != null) {
-            myWithheld = myCell.getStringValue();
+            myWithheld = myCell.getString();
         }
 
         /* Handle ReturnedCashAccount which may be missing */
         myCell = pView.getRowCellByIndex(pRow, ++iAdjust);
         String myReturnedCashAccount = null;
         if (myCell != null) {
-            myReturnedCashAccount = myCell.getStringValue();
+            myReturnedCashAccount = myCell.getString();
         }
 
         /* Handle ReturnedCash which may be missing */
         myCell = pView.getRowCellByIndex(pRow, ++iAdjust);
         String myReturnedCash = null;
         if (myCell != null) {
-            myReturnedCash = myCell.getStringValue();
+            myReturnedCash = myCell.getString();
         }
 
         /* Handle PartnerAmount which may be missing */
         myCell = pView.getRowCellByIndex(pRow, ++iAdjust);
         String myPartnerAmount = null;
         if (myCell != null) {
-            myPartnerAmount = myCell.getStringValue();
+            myPartnerAmount = myCell.getString();
         }
 
         /* Handle XchangeRate which may be missing */
         myCell = pView.getRowCellByIndex(pRow, ++iAdjust);
         String myXchangeRate = null;
         if (myCell != null) {
-            myXchangeRate = myCell.getStringValue();
+            myXchangeRate = myCell.getString();
         }
 
         /* Handle TagList which may be missing */
         myCell = pView.getRowCellByIndex(pRow, ++iAdjust);
         String myTagList = null;
         if (myCell != null) {
-            myTagList = myCell.getStringValue();
+            myTagList = myCell.getString();
         }
 
         /* If the debit was reversed */

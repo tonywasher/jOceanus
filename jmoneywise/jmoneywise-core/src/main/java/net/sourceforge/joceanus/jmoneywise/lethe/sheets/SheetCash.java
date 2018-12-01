@@ -140,8 +140,8 @@ public class SheetCash
                                       final MetisSheetRow pRow) throws OceanusException {
         /* Access name and type */
         int iAdjust = -1;
-        final String myName = pView.getRowCellByIndex(pRow, ++iAdjust).getStringValue();
-        final String myType = pView.getRowCellByIndex(pRow, ++iAdjust).getStringValue();
+        final String myName = pView.getRowCellByIndex(pRow, ++iAdjust).getString();
+        final String myType = pView.getRowCellByIndex(pRow, ++iAdjust).getString();
 
         /* Skip class */
         ++iAdjust;
@@ -150,7 +150,7 @@ public class SheetCash
         MetisSheetCell myCell = pView.getRowCellByIndex(pRow, ++iAdjust);
         Boolean isClosed = Boolean.FALSE;
         if (myCell != null) {
-            isClosed = myCell.getBooleanValue();
+            isClosed = myCell.getBoolean();
         }
 
         /* Skip parent, alias, portfolio, and maturity columns */
@@ -163,7 +163,7 @@ public class SheetCash
         myCell = pView.getRowCellByIndex(pRow, ++iAdjust);
         String myBalance = null;
         if (myCell != null) {
-            myBalance = myCell.getStringValue();
+            myBalance = myCell.getString();
         }
 
         /* Skip symbol and region columns */
@@ -174,7 +174,7 @@ public class SheetCash
         myCell = pView.getRowCellByIndex(pRow, ++iAdjust);
         AssetCurrency myCurrency = pData.getDefaultCurrency();
         if (myCell != null) {
-            final String myCurrName = myCell.getStringValue();
+            final String myCurrName = myCell.getString();
             myCurrency = pData.getAccountCurrencies().findItemByName(myCurrName);
         }
 
@@ -183,7 +183,7 @@ public class SheetCash
         String myAutoExpense = null;
         String myAutoPayee = null;
         if (myCell != null) {
-            myAutoExpense = myCell.getStringValue();
+            myAutoExpense = myCell.getString();
             myAutoPayee = myName + "Expense";
         }
 
@@ -222,7 +222,7 @@ public class SheetCash
                                            final MetisSheetRow pRow) throws OceanusException {
         /* Access name */
         int iAdjust = -1;
-        final String myName = pView.getRowCellByIndex(pRow, ++iAdjust).getStringValue();
+        final String myName = pView.getRowCellByIndex(pRow, ++iAdjust).getString();
 
         /* Skip type, class */
         ++iAdjust;
@@ -232,7 +232,7 @@ public class SheetCash
         MetisSheetCell myCell = pView.getRowCellByIndex(pRow, ++iAdjust);
         Boolean isClosed = Boolean.FALSE;
         if (myCell != null) {
-            isClosed = myCell.getBooleanValue();
+            isClosed = myCell.getBoolean();
         }
 
         /*

@@ -150,7 +150,7 @@ public class SheetSecurityPrice
 
                 /* Access date */
                 MetisSheetCell myCell = myView.getRowCellByIndex(myRow, 0);
-                final TethysDate myDate = myCell.getDateValue();
+                final TethysDate myDate = myCell.getDate();
 
                 /* If the price is too late */
                 if (!pLoader.checkDate(myDate)) {
@@ -165,13 +165,13 @@ public class SheetSecurityPrice
                     if (myCell == null) {
                         continue;
                     }
-                    final String mySecurity = myCell.getStringValue();
+                    final String mySecurity = myCell.getString();
 
                     /* Handle price which may be missing */
                     myCell = myView.getRowCellByIndex(myRow, j);
                     if (myCell != null) {
                         /* Access the formatted cell */
-                        final String myPrice = myCell.getStringValue();
+                        final String myPrice = myCell.getString();
 
                         /* Build data values */
                         final DataValues<MoneyWiseDataType> myValues = new DataValues<>(SecurityPrice.OBJECT_NAME);

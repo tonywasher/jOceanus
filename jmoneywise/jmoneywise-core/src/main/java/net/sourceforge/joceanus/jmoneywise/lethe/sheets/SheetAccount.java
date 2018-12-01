@@ -137,7 +137,7 @@ public final class SheetAccount {
         ++iAdjust;
 
         /* Access account class */
-        final String myClass = pView.getRowCellByIndex(pRow, ++iAdjust).getStringValue();
+        final String myClass = pView.getRowCellByIndex(pRow, ++iAdjust).getString();
 
         /* If this is a Payee */
         if (myClass.equals(MoneyWiseDataType.PAYEE.toString())) {
@@ -169,7 +169,7 @@ public final class SheetAccount {
         ++iAdjust;
 
         /* Access account class */
-        final String myClass = pView.getRowCellByIndex(pRow, ++iAdjust).getStringValue();
+        final String myClass = pView.getRowCellByIndex(pRow, ++iAdjust).getString();
 
         /* If this is a deposit */
         if (myClass.equals(MoneyWiseDataType.DEPOSIT.toString())) {

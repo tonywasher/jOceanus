@@ -59,11 +59,6 @@ public class MetisOdfCell
     private Element theOasisCell;
 
     /**
-     * Is the row readOnly.
-     */
-    private final boolean isReadOnly;
-
-    /**
      * Constructor.
      * @param pMap the cell map
      * @param pCell the Oasis cell
@@ -75,11 +70,10 @@ public class MetisOdfCell
                  final int pIndex,
                  final boolean pReadOnly) {
         /* Store parameters */
-        super(pMap.getRow(), pIndex);
+        super(pMap.getRow(), pIndex, pReadOnly);
         theCellMap = pMap;
         theOasisCell = pCell;
         theParser = getSheet().getParser();
-        isReadOnly = pReadOnly;
     }
 
     @Override
@@ -116,11 +110,7 @@ public class MetisOdfCell
      * @param pStyle the row style
      */
     protected void setCellStyle(final String pStyle) {
-        /* Ignore if readOnly */
-        if (!isReadOnly) {
-            /* Set the cell style */
-            theParser.setAttribute(theOasisCell, MetisOdfTableItem.STYLENAME, pStyle);
-        }
+        theParser.setAttribute(theOasisCell, MetisOdfTableItem.STYLENAME, pStyle);
     }
 
     /**
@@ -128,11 +118,7 @@ public class MetisOdfCell
      * @param pValidation the validation name
      */
     void setValidationName(final String pValidation) {
-        /* Ignore if readOnly */
-        if (!isReadOnly) {
-            /* Set the content validation name */
-            theParser.setAttribute(theOasisCell, MetisOdfTableItem.VALIDATIONNAME, pValidation);
-        }
+        theParser.setAttribute(theOasisCell, MetisOdfTableItem.VALIDATIONNAME, pValidation);
     }
 
     /**
@@ -217,35 +203,35 @@ public class MetisOdfCell
     }
 
     @Override
-    public Boolean getBooleanValue() {
+    public Boolean getBoolean() {
         return MetisOdfValue.BOOLEAN.equals(getValueType())
                ? theParser.getBooleanAttribute(theOasisCell, MetisOdfOfficeItem.BOOLEANVALUE)
                : null;
     }
 
     @Override
-    public TethysDate getDateValue() throws OceanusException {
+    public TethysDate getDate() throws OceanusException {
         return MetisOdfValue.DATE.equals(getValueType())
                ? parseValue(theParser.getAttribute(theOasisCell, MetisOdfOfficeItem.DATEVALUE), TethysDate.class)
                : null;
     }
 
     @Override
-    public Integer getIntegerValue() {
+    public Integer getInteger() {
         return MetisOdfValue.FLOAT.equals(getValueType())
                ? theParser.getDoubleAttribute(theOasisCell, MetisOdfOfficeItem.VALUE).intValue()
                : null;
     }
 
     @Override
-    public Long getLongValue() throws OceanusException {
+    public Long getLong() throws OceanusException {
         return MetisOdfValue.FLOAT.equals(getValueType())
                ? theParser.getDoubleAttribute(theOasisCell, MetisOdfOfficeItem.VALUE).longValue()
                : null;
     }
 
     @Override
-    public TethysMoney getMoneyValue() throws OceanusException {
+    public TethysMoney getMoney() throws OceanusException {
         switch (getValueType()) {
             case CURRENCY:
                 return parseValue(theParser.getDoubleAttribute(theOasisCell, MetisOdfOfficeItem.VALUE),
@@ -258,7 +244,7 @@ public class MetisOdfCell
     }
 
     @Override
-    public TethysPrice getPriceValue() throws OceanusException {
+    public TethysPrice getPrice() throws OceanusException {
         switch (getValueType()) {
             case CURRENCY:
                 return parseValue(theParser.getDoubleAttribute(theOasisCell, MetisOdfOfficeItem.VALUE),
@@ -271,7 +257,7 @@ public class MetisOdfCell
     }
 
     @Override
-    public TethysRate getRateValue() throws OceanusException {
+    public TethysRate getRate() throws OceanusException {
         switch (getValueType()) {
             case PERCENTAGE:
             case FLOAT:
@@ -282,28 +268,28 @@ public class MetisOdfCell
     }
 
     @Override
-    public TethysUnits getUnitsValue() throws OceanusException {
+    public TethysUnits getUnits() throws OceanusException {
         return MetisOdfValue.FLOAT.equals(getValueType())
                ? parseValue(theParser.getAttribute(theOasisCell, MetisOdfOfficeItem.VALUE), TethysUnits.class)
                : null;
     }
 
     @Override
-    public TethysDilution getDilutionValue() throws OceanusException {
+    public TethysDilution getDilution() throws OceanusException {
         return MetisOdfValue.FLOAT.equals(getValueType())
                ? parseValue(theParser.getAttribute(theOasisCell, MetisOdfOfficeItem.VALUE), TethysDilution.class)
                : null;
     }
 
     @Override
-    public TethysRatio getRatioValue() throws OceanusException {
+    public TethysRatio getRatio() throws OceanusException {
         return MetisOdfValue.FLOAT.equals(getValueType())
                ? parseValue(theParser.getAttribute(theOasisCell, MetisOdfOfficeItem.VALUE), TethysRatio.class)
                : null;
     }
 
     @Override
-    public String getStringValue() {
+    public String getString() {
         final MetisOdfValue myType = getValueType();
         if (myType != null) {
             switch (myType) {
@@ -332,12 +318,8 @@ public class MetisOdfCell
     }
 
     @Override
-    public void setNullValue() {
-        /* Ignore if readOnly */
-        if (!isReadOnly) {
-            /* Remove Cell content */
-            removeCellContent();
-        }
+    protected void setNullValue() {
+        removeCellContent();
     }
 
     /**
@@ -363,124 +345,100 @@ public class MetisOdfCell
     }
 
     @Override
-    protected void setBoolean(final Boolean pValue) {
-        /* Ignore if readOnly */
-        if (!isReadOnly) {
-            /* Remove existing content */
-            removeCellContent();
+    protected void setBooleanValue(final Boolean pValue) {
+        /* Remove existing content */
+        removeCellContent();
 
-            /* Set value type and value */
-            theParser.setAttribute(theOasisCell, MetisOdfOfficeItem.VALUETYPE, MetisOdfValue.BOOLEAN);
-            theParser.setAttribute(theOasisCell, MetisOdfOfficeItem.BOOLEANVALUE, pValue);
-            theCellMap.getRow().setCellStyle(theOasisCell, pValue);
-        }
+        /* Set value type and value */
+        theParser.setAttribute(theOasisCell, MetisOdfOfficeItem.VALUETYPE, MetisOdfValue.BOOLEAN);
+        theParser.setAttribute(theOasisCell, MetisOdfOfficeItem.BOOLEANVALUE, pValue);
+        theCellMap.getRow().setCellStyle(theOasisCell, pValue);
     }
 
     @Override
-    protected void setDate(final TethysDate pValue) {
-        /* Ignore if readOnly */
-        if (!isReadOnly) {
-            /* Remove existing content */
-            removeCellContent();
+    protected void setDateValue(final TethysDate pValue) {
+        /* Remove existing content */
+        removeCellContent();
 
-            /* Set value type and value */
-            theParser.setAttribute(theOasisCell, MetisOdfOfficeItem.VALUETYPE, MetisOdfValue.DATE);
-            theParser.setAttribute(theOasisCell, MetisOdfOfficeItem.DATEVALUE, formatValue(pValue));
-            theCellMap.getRow().setCellStyle(theOasisCell, pValue);
-        }
+        /* Set value type and value */
+        theParser.setAttribute(theOasisCell, MetisOdfOfficeItem.VALUETYPE, MetisOdfValue.DATE);
+        theParser.setAttribute(theOasisCell, MetisOdfOfficeItem.DATEVALUE, formatValue(pValue));
+        theCellMap.getRow().setCellStyle(theOasisCell, pValue);
     }
 
     @Override
-    protected void setInteger(final Integer pValue) {
-        /* Ignore if readOnly */
-        if (!isReadOnly) {
-            /* Remove existing content */
-            removeCellContent();
+    protected void setIntegerValue(final Integer pValue) {
+        /* Remove existing content */
+        removeCellContent();
 
-            /* Set value type and value */
-            theParser.setAttribute(theOasisCell, MetisOdfOfficeItem.VALUETYPE, MetisOdfValue.FLOAT);
-            theParser.setAttribute(theOasisCell, MetisOdfOfficeItem.VALUE, pValue.doubleValue());
-            theCellMap.getRow().setCellStyle(theOasisCell, pValue);
-        }
+        /* Set value type and value */
+        theParser.setAttribute(theOasisCell, MetisOdfOfficeItem.VALUETYPE, MetisOdfValue.FLOAT);
+        theParser.setAttribute(theOasisCell, MetisOdfOfficeItem.VALUE, pValue.doubleValue());
+        theCellMap.getRow().setCellStyle(theOasisCell, pValue);
     }
 
     @Override
-    protected void setLong(final Long pValue) {
-        /* Ignore if readOnly */
-        if (!isReadOnly) {
-            /* Remove existing content */
-            removeCellContent();
+    protected void setLongValue(final Long pValue) {
+        /* Remove existing content */
+        removeCellContent();
 
-            /* Set value type and value */
-            theParser.setAttribute(theOasisCell, MetisOdfOfficeItem.VALUETYPE, MetisOdfValue.FLOAT);
-            theParser.setAttribute(theOasisCell, MetisOdfOfficeItem.VALUE, pValue.doubleValue());
-            theCellMap.getRow().setCellStyle(theOasisCell, pValue);
-        }
+        /* Set value type and value */
+        theParser.setAttribute(theOasisCell, MetisOdfOfficeItem.VALUETYPE, MetisOdfValue.FLOAT);
+        theParser.setAttribute(theOasisCell, MetisOdfOfficeItem.VALUE, pValue.doubleValue());
+        theCellMap.getRow().setCellStyle(theOasisCell, pValue);
     }
 
     @Override
-    protected void setString(final String pValue) {
-        /* Ignore if readOnly */
-        if (!isReadOnly) {
-            /* Remove existing content */
-            removeCellContent();
+    protected void setStringValue(final String pValue) {
+        /* Remove existing content */
+        removeCellContent();
 
-            /* Set value type and value */
-            theParser.setAttribute(theOasisCell, MetisOdfOfficeItem.VALUETYPE, MetisOdfValue.STRING);
-            setTextContent(pValue);
-            theCellMap.getRow().setCellStyle(theOasisCell, pValue);
-        }
+        /* Set value type and value */
+        theParser.setAttribute(theOasisCell, MetisOdfOfficeItem.VALUETYPE, MetisOdfValue.STRING);
+        setTextContent(pValue);
+        theCellMap.getRow().setCellStyle(theOasisCell, pValue);
     }
 
     @Override
-    protected void setDecimal(final TethysDecimal pValue) {
-        /* Ignore if readOnly */
-        if (!isReadOnly) {
-            /* Remove existing content */
-            removeCellContent();
+    protected void setDecimalValue(final TethysDecimal pValue) {
+        /* Remove existing content */
+        removeCellContent();
 
-            /* Set value type and value */
-            theParser.setAttribute(theOasisCell, MetisOdfOfficeItem.VALUETYPE,
-                    pValue instanceof TethysRate
-                                            ? MetisOdfValue.PERCENTAGE
-                                            : MetisOdfValue.FLOAT);
-            theParser.setAttribute(theOasisCell, MetisOdfOfficeItem.VALUE, pValue.doubleValue());
-            setTextContent(formatValue(pValue));
+        /* Set value type and value */
+        theParser.setAttribute(theOasisCell, MetisOdfOfficeItem.VALUETYPE,
+                pValue instanceof TethysRate
+                                        ? MetisOdfValue.PERCENTAGE
+                                        : MetisOdfValue.FLOAT);
+        theParser.setAttribute(theOasisCell, MetisOdfOfficeItem.VALUE, pValue.doubleValue());
+        setTextContent(formatValue(pValue));
 
-            /* Set the style for the cell */
-            theCellMap.getRow().setCellStyle(theOasisCell, pValue);
-        }
+        /* Set the style for the cell */
+        theCellMap.getRow().setCellStyle(theOasisCell, pValue);
     }
 
     @Override
-    protected void setMonetary(final TethysMoney pValue) {
-        /* Ignore if readOnly */
-        if (!isReadOnly) {
-            /* Remove existing content */
-            removeCellContent();
+    protected void setMonetaryValue(final TethysMoney pValue) {
+        /* Remove existing content */
+        removeCellContent();
 
-            /* Set value type and value */
-            theParser.setAttribute(theOasisCell, MetisOdfOfficeItem.VALUETYPE, MetisOdfValue.CURRENCY);
-            theParser.setAttribute(theOasisCell, MetisOdfOfficeItem.VALUE, pValue.doubleValue());
-            theParser.setAttribute(theOasisCell, MetisOdfOfficeItem.CURRENCY, pValue.getCurrency().getCurrencyCode());
-            setTextContent(formatValue(pValue));
+        /* Set value type and value */
+        theParser.setAttribute(theOasisCell, MetisOdfOfficeItem.VALUETYPE, MetisOdfValue.CURRENCY);
+        theParser.setAttribute(theOasisCell, MetisOdfOfficeItem.VALUE, pValue.doubleValue());
+        theParser.setAttribute(theOasisCell, MetisOdfOfficeItem.CURRENCY, pValue.getCurrency().getCurrencyCode());
+        setTextContent(formatValue(pValue));
 
-            /* Set the style for the cell */
-            theCellMap.getRow().setAlternateCellStyle(theOasisCell, pValue);
-        }
+        /* Set the style for the cell */
+        theCellMap.getRow().setAlternateCellStyle(theOasisCell, pValue);
     }
 
     @Override
-    protected void setHeader(final String pValue) {
-        /* Ignore if readOnly */
-        if (!isReadOnly) {
-            /* Remove existing content */
-            removeCellContent();
+    protected void setHeaderValue(final String pValue) {
+        /* Remove existing content */
+        removeCellContent();
 
-            /* Set value type and value */
-            theParser.setAttribute(theOasisCell, MetisOdfOfficeItem.VALUETYPE, MetisOdfValue.STRING);
-            setTextContent(pValue);
-            theCellMap.getRow().setAlternateCellStyle(theOasisCell, pValue);
-        }
+        /* Set value type and value */
+        theParser.setAttribute(theOasisCell, MetisOdfOfficeItem.VALUETYPE, MetisOdfValue.STRING);
+        setTextContent(pValue);
+        theCellMap.getRow().setAlternateCellStyle(theOasisCell, pValue);
     }
 }

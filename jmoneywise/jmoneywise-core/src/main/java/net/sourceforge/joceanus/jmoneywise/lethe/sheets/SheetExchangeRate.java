@@ -160,7 +160,7 @@ public class SheetExchangeRate
 
                 /* Access date */
                 MetisSheetCell myCell = myView.getRowCellByIndex(myRow, 0);
-                final TethysDate myDate = myCell.getDateValue();
+                final TethysDate myDate = myCell.getDate();
 
                 /* If the rate is too late */
                 if (!pLoader.checkDate(myDate)) {
@@ -175,13 +175,13 @@ public class SheetExchangeRate
                     if (myCell == null) {
                         continue;
                     }
-                    final String myCurrency = myCell.getStringValue();
+                    final String myCurrency = myCell.getString();
 
                     /* Handle rate which may be missing */
                     myCell = myView.getRowCellByIndex(myRow, j);
                     if (myCell != null) {
                         /* Access the formatted cell */
-                        final String myRate = myCell.getStringValue();
+                        final String myRate = myCell.getString();
 
                         /* Build data values */
                         final DataValues<MoneyWiseDataType> myValues = new DataValues<>(ExchangeRate.OBJECT_NAME);

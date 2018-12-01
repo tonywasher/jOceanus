@@ -14,69 +14,64 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  ******************************************************************************/
-package net.sourceforge.joceanus.jmetis.service.sheet.xssf;
+package net.sourceforge.joceanus.jmetis.service.sheet.odf;
 
 import net.sourceforge.joceanus.jmetis.service.sheet.MetisSheetCellStyleType;
 import net.sourceforge.joceanus.jmetis.service.sheet.MetisSheetColumn;
 
 /**
- * Class representing an Excel column.
- * @author Tony Washer
+ * Column class.
  */
-public class MetisExcelXSSFColumn
+public class MetisOdfColumnNew
         extends MetisSheetColumn {
     /**
-     * The Excel Sheet.
+     * The column storage.
      */
-    private final MetisExcelXSSFSheet theExcelSheet;
+    private final MetisOdfColumnStore theStore;
 
     /**
      * Constructor.
-     * @param pSheet the excel sheet
+     * @param pStore the column store
+     * @param pSheet the owning sheet
      * @param pIndex the index
      * @param pReadOnly is the column readOnly?
      */
-    MetisExcelXSSFColumn(final MetisExcelXSSFSheet pSheet,
-                         final int pIndex,
-                         final boolean pReadOnly) {
+    MetisOdfColumnNew(final MetisOdfColumnStore pStore,
+                      final MetisOdfSheetNew pSheet,
+                      final int pIndex,
+                      final boolean pReadOnly) {
         /* Store parameters */
         super(pSheet, pIndex, pReadOnly);
-        theExcelSheet = pSheet;
+        theStore = pStore;
     }
 
     @Override
-    public MetisExcelXSSFColumn getNextColumn() {
-        /* Determine the required index */
-        final int myIndex = getColumnIndex() + 1;
-
-        /* Return the next column */
-        return theExcelSheet.getReadOnlyColumnByIndex(myIndex);
+    public MetisOdfSheetNew getSheet() {
+        return (MetisOdfSheetNew) super.getSheet();
     }
 
     @Override
-    public MetisExcelXSSFColumn getPreviousColumn() {
-        /* Determine the required index */
-        final int myIndex = getColumnIndex() - 1;
-        if (myIndex < 0) {
-            return null;
-        }
-
-        /* Return the previous column */
-        return theExcelSheet.getReadOnlyColumnByIndex(myIndex);
+    public MetisOdfColumnNew getNextColumn() {
+        return theStore.getReadOnlyColumnByIndex(getSheet(), getColumnIndex() + 1);
     }
 
     @Override
-    protected void setHiddenValue(final boolean isHidden) {
-        theExcelSheet.setColumnHidden(getColumnIndex(), isHidden);
+    public MetisOdfColumnNew getPreviousColumn() {
+        return theStore.getReadOnlyColumnByIndex(getSheet(), getColumnIndex() - 1);
     }
 
     @Override
     public boolean isHidden() {
-        return theExcelSheet.isColumnHidden(getColumnIndex());
+        return theStore.getHiddenAtIndex(getColumnIndex());
     }
 
     @Override
     protected void setDefaultCellStyleValue(final MetisSheetCellStyleType pStyle) {
-        theExcelSheet.setDefaultCellStyle(getColumnIndex(), pStyle);
+        theStore.setStyleAtIndex(getColumnIndex(), pStyle);
+    }
+
+    @Override
+    protected void setHiddenValue(final boolean isHidden) {
+        theStore.setHiddenAtIndex(getColumnIndex(), isHidden);
     }
 }

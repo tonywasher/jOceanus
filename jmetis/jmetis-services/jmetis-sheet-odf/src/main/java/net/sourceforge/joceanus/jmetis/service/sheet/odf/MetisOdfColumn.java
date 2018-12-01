@@ -43,11 +43,6 @@ public class MetisOdfColumn
     private final Element theOasisColumn;
 
     /**
-     * Is the column readOnly.
-     */
-    private final boolean isReadOnly;
-
-    /**
      * Constructor.
      * @param pMap the column map
      * @param pColumn the Oasis column
@@ -59,11 +54,10 @@ public class MetisOdfColumn
                    final int pIndex,
                    final boolean pReadOnly) {
         /* Store parameters */
-        super(pMap.getSheet(), pIndex);
+        super(pMap.getSheet(), pIndex, pReadOnly);
         theParser = getSheet().getParser();
         theColumnMap = pMap;
         theOasisColumn = pColumn;
-        isReadOnly = pReadOnly;
     }
 
     @Override
@@ -97,25 +91,18 @@ public class MetisOdfColumn
     }
 
     @Override
-    public void setDefaultCellStyle(final MetisSheetCellStyleType pStyle) {
-        /* Ignore if readOnly */
-        if (!isReadOnly) {
-            /* Set the default cell style and the column style */
-            final MetisOdfSheet mySheet = theColumnMap.getSheet();
-            mySheet.setColumnStyle(theOasisColumn, pStyle);
-            mySheet.setDefaultCellStyle(theOasisColumn, pStyle);
-        }
+    protected void setDefaultCellStyleValue(final MetisSheetCellStyleType pStyle) {
+        /* Set the default cell style and the column style */
+        final MetisOdfSheet mySheet = theColumnMap.getSheet();
+        mySheet.setColumnStyle(theOasisColumn, pStyle);
+        mySheet.setDefaultCellStyle(theOasisColumn, pStyle);
     }
 
     @Override
-    public void setHidden(final boolean isHidden) {
-        /* Ignore if readOnly */
-        if (!isReadOnly) {
-            /* Set the visibility attribute */
-            theParser.setAttribute(theOasisColumn, MetisOdfTableItem.VISIBILITY,
-                    isHidden
+    protected void setHiddenValue(final boolean isHidden) {
+        theParser.setAttribute(theOasisColumn, MetisOdfTableItem.VISIBILITY,
+                isHidden
                     ? MetisOdfValue.COLLAPSE
                     : MetisOdfValue.VISIBLE);
-        }
     }
 }

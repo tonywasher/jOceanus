@@ -112,6 +112,11 @@ public final class MetisSheetFormats {
     public static final char CHAR_SEP = ';';
 
     /**
+     * The Quote String.
+     */
+    private static final String STR_QUOTE = "\"";
+
+    /**
      * The Red indicating.
      */
     private static final String STR_RED = "[RED]";
@@ -263,7 +268,7 @@ public final class MetisSheetFormats {
 
         /* Obtain currency code */
         String myCurrency = pValue.getCurrency().getSymbol();
-        myCurrency = "\"" + myCurrency + "\"";
+        myCurrency = STR_QUOTE + myCurrency + STR_QUOTE;
 
         /* Insert initial values */
         myBuilder.append(myCurrency);
@@ -292,7 +297,7 @@ public final class MetisSheetFormats {
 
         /* Obtain currency code */
         String myCurrency = pValue.getCurrency().getSymbol();
-        myCurrency = "\"" + myCurrency + "\"";
+        myCurrency = STR_QUOTE + myCurrency + STR_QUOTE;
 
         /* Insert initial values */
         myBuilder.append(myFormat);
@@ -358,8 +363,8 @@ public final class MetisSheetFormats {
         if (pValue instanceof Boolean) {
             return FORMAT_BOOLEAN;
         }
-        if ((pValue instanceof Integer)
-            || (pValue instanceof Long)) {
+        if (pValue instanceof Integer
+            || pValue instanceof Long) {
             return getIntegerFormat();
         }
         if (pValue instanceof TethysMoney) {
@@ -425,8 +430,8 @@ public final class MetisSheetFormats {
         if (pValue instanceof TethysDate) {
             return getStyleName(TethysDate.class.getSimpleName());
         }
-        if ((pValue instanceof Integer)
-            || (pValue instanceof Long)) {
+        if (pValue instanceof Integer
+            || pValue instanceof Long) {
             return getStyleName(Integer.class.getSimpleName());
         }
         if (pValue instanceof TethysPrice) {
