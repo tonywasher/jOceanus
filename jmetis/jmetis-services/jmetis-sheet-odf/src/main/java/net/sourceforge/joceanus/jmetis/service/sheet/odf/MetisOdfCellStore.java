@@ -152,8 +152,8 @@ class MetisOdfCellStore {
      * @param pCellIndex the index of the cell.
      * @return the column
      */
-    MetisOdfCellNew getReadOnlyCellByIndex(final MetisOdfRowNew pRow,
-                                           final int pCellIndex) {
+    MetisOdfCell getReadOnlyCellByIndex(final MetisOdfRow pRow,
+                                        final int pCellIndex) {
         /* Handle index out of range */
         if (pCellIndex < 0 || pCellIndex >= theNumCells) {
             return null;
@@ -165,7 +165,7 @@ class MetisOdfCellStore {
                                : getValueAtIndex(pCellIndex);
         return myValue == null
                ? null
-               : new MetisOdfCellNew(this, pRow, pCellIndex, true);
+               : new MetisOdfCell(this, pRow, pCellIndex, true);
     }
 
     /**
@@ -174,12 +174,12 @@ class MetisOdfCellStore {
      * @param pCellIndex the index of the cell.
      * @return the column
      */
-    MetisOdfCellNew getMutableCellByIndex(final MetisOdfRowNew pRow,
-                                          final int pCellIndex) {
+    MetisOdfCell getMutableCellByIndex(final MetisOdfRow pRow,
+                                       final int pCellIndex) {
         /* Handle index out of range */
         return pCellIndex < 0 || pCellIndex >= theNumCells
                 ? null
-                : new MetisOdfCellNew(this, pRow, pCellIndex, false);
+                : new MetisOdfCell(this, pRow, pCellIndex, false);
     }
 
     /**

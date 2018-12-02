@@ -168,15 +168,15 @@ class MetisOdfColumnStore {
      * @param pColIndex the index of the column.
      * @return the column if it exists, else null
      */
-    MetisOdfColumnNew getReadOnlyColumnByIndex(final MetisOdfSheetNew pSheet,
-                                               final int pColIndex) {
+    MetisOdfColumn getReadOnlyColumnByIndex(final MetisOdfSheet pSheet,
+                                            final int pColIndex) {
         /* Handle index out of range */
         if (pColIndex < 0 || pColIndex >= theNumCols) {
             return null;
         }
 
         /* Just return the column */
-        return new MetisOdfColumnNew(this, pSheet, pColIndex, true);
+        return new MetisOdfColumn(this, pSheet, pColIndex, true);
     }
 
     /**
@@ -185,8 +185,8 @@ class MetisOdfColumnStore {
      * @param pColIndex the index of the column.
      * @return the column
      */
-    MetisOdfColumnNew getMutableColumnByIndex(final MetisOdfSheetNew pSheet,
-                                              final int pColIndex) {
+    MetisOdfColumn getMutableColumnByIndex(final MetisOdfSheet pSheet,
+                                           final int pColIndex) {
         /* Handle negative column index */
         if (pColIndex < 0) {
             return null;
@@ -204,7 +204,7 @@ class MetisOdfColumnStore {
         }
 
         /* Return the required column */
-        return new MetisOdfColumnNew(this, pSheet, pColIndex, false);
+        return new MetisOdfColumn(this, pSheet, pColIndex, false);
     }
 
     /**

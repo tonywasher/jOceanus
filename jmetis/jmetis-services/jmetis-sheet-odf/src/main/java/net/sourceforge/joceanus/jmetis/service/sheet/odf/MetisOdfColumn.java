@@ -16,48 +16,33 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmetis.service.sheet.odf;
 
-import org.w3c.dom.Element;
-
 import net.sourceforge.joceanus.jmetis.service.sheet.MetisSheetCellStyleType;
 import net.sourceforge.joceanus.jmetis.service.sheet.MetisSheetColumn;
 
 /**
- * Class representing a column in Oasis.
- * @author Tony Washer
+ * Column class.
  */
 public class MetisOdfColumn
         extends MetisSheetColumn {
     /**
-     * The Parser.
+     * The column storage.
      */
-    private final MetisOdfParser theParser;
-
-    /**
-     * The map of columns.
-     */
-    private final MetisOdfColumnMap theColumnMap;
-
-    /**
-     * The underlying ODFDOM column.
-     */
-    private final Element theOasisColumn;
+    private final MetisOdfColumnStore theStore;
 
     /**
      * Constructor.
-     * @param pMap the column map
-     * @param pColumn the Oasis column
+     * @param pStore the column store
+     * @param pSheet the owning sheet
      * @param pIndex the index
      * @param pReadOnly is the column readOnly?
      */
-    MetisOdfColumn(final MetisOdfColumnMap pMap,
-                   final Element pColumn,
+    MetisOdfColumn(final MetisOdfColumnStore pStore,
+                   final MetisOdfSheet pSheet,
                    final int pIndex,
                    final boolean pReadOnly) {
         /* Store parameters */
-        super(pMap.getSheet(), pIndex, pReadOnly);
-        theParser = getSheet().getParser();
-        theColumnMap = pMap;
-        theOasisColumn = pColumn;
+        super(pSheet, pIndex, pReadOnly);
+        theStore = pStore;
     }
 
     @Override
@@ -67,42 +52,26 @@ public class MetisOdfColumn
 
     @Override
     public MetisOdfColumn getNextColumn() {
-        return theColumnMap.getReadOnlyColumnByIndex(getColumnIndex() + 1);
+        return theStore.getReadOnlyColumnByIndex(getSheet(), getColumnIndex() + 1);
     }
 
     @Override
     public MetisOdfColumn getPreviousColumn() {
-        return theColumnMap.getReadOnlyColumnByIndex(getColumnIndex() - 1);
-    }
-
-    /**
-     * Obtain the column style name.
-     * @return the column style name
-     */
-    protected String getColumnStyle() {
-        return theParser.getAttribute(theOasisColumn, MetisOdfTableItem.STYLENAME);
+        return theStore.getReadOnlyColumnByIndex(getSheet(), getColumnIndex() - 1);
     }
 
     @Override
     public boolean isHidden() {
-        final String myString = theParser.getAttribute(theOasisColumn, MetisOdfTableItem.VISIBILITY);
-        return myString != null
-                && !myString.equals(MetisOdfValue.VISIBLE.getValue());
+        return theStore.getHiddenAtIndex(getColumnIndex());
     }
 
     @Override
     protected void setDefaultCellStyleValue(final MetisSheetCellStyleType pStyle) {
-        /* Set the default cell style and the column style */
-        final MetisOdfSheet mySheet = theColumnMap.getSheet();
-        mySheet.setColumnStyle(theOasisColumn, pStyle);
-        mySheet.setDefaultCellStyle(theOasisColumn, pStyle);
+        theStore.setStyleAtIndex(getColumnIndex(), pStyle);
     }
 
     @Override
     protected void setHiddenValue(final boolean isHidden) {
-        theParser.setAttribute(theOasisColumn, MetisOdfTableItem.VISIBILITY,
-                isHidden
-                    ? MetisOdfValue.COLLAPSE
-                    : MetisOdfValue.VISIBLE);
+        theStore.setHiddenAtIndex(getColumnIndex(), isHidden);
     }
 }

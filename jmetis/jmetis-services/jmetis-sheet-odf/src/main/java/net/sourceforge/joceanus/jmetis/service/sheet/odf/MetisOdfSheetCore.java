@@ -206,16 +206,16 @@ class MetisOdfSheetCore {
      * Obtain a readOnly sheet.
      * @return the sheet
      */
-    MetisOdfSheetNew getReadOnlySheet() {
-        return new MetisOdfSheetNew(theBook, this, theIndex, true);
+    MetisOdfSheet getReadOnlySheet() {
+        return new MetisOdfSheet(theBook, this, theIndex, true);
     }
 
     /**
      * Obtain a mutable sheet.
      * @return the sheet
      */
-    MetisOdfSheetNew getMutableSheet() {
-        return new MetisOdfSheetNew(theBook, this, theIndex, false);
+    MetisOdfSheet getMutableSheet() {
+        return new MetisOdfSheet(theBook, this, theIndex, false);
     }
 
     /**
@@ -224,8 +224,8 @@ class MetisOdfSheetCore {
      * @param pRowIndex the index of the row.
      * @return the row
      */
-    MetisOdfRowNew getReadOnlyRowByIndex(final MetisOdfSheetNew pSheet,
-                                         final int pRowIndex) {
+    MetisOdfRow getReadOnlyRowByIndex(final MetisOdfSheet pSheet,
+                                      final int pRowIndex) {
         return theRows.getReadOnlyRowByIndex(pSheet, pRowIndex);
     }
 
@@ -235,8 +235,8 @@ class MetisOdfSheetCore {
      * @param pRowIndex the index of the row.
      * @return the row
      */
-    MetisOdfRowNew getMutableRowByIndex(final MetisOdfSheetNew pSheet,
-                                        final int pRowIndex) {
+    MetisOdfRow getMutableRowByIndex(final MetisOdfSheet pSheet,
+                                     final int pRowIndex) {
         return theRows.getMutableRowByIndex(pSheet, pRowIndex);
     }
 
@@ -246,8 +246,8 @@ class MetisOdfSheetCore {
      * @param pColIndex the index of the row.
      * @return the column
      */
-    MetisOdfColumnNew getReadOnlyColumnByIndex(final MetisOdfSheetNew pSheet,
-                                               final int pColIndex) {
+    MetisOdfColumn getReadOnlyColumnByIndex(final MetisOdfSheet pSheet,
+                                            final int pColIndex) {
         return theColumns.getReadOnlyColumnByIndex(pSheet, pColIndex);
     }
 
@@ -257,8 +257,8 @@ class MetisOdfSheetCore {
      * @param pColIndex the index of the column.
      * @return the column
      */
-    MetisOdfColumnNew getMutableColumnByIndex(final MetisOdfSheetNew pSheet,
-                                              final int pColIndex) {
+    MetisOdfColumn getMutableColumnByIndex(final MetisOdfSheet pSheet,
+                                           final int pColIndex) {
         return theColumns.getMutableColumnByIndex(pSheet, pColIndex);
     }
 

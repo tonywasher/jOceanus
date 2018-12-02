@@ -220,15 +220,15 @@ class MetisOdfRowStore {
      * @param pRowIndex the index of the row.
      * @return the row
      */
-    MetisOdfRowNew getReadOnlyRowByIndex(final MetisOdfSheetNew pSheet,
-                                         final int pRowIndex) {
+    MetisOdfRow getReadOnlyRowByIndex(final MetisOdfSheet pSheet,
+                                      final int pRowIndex) {
         /* Handle index out of range */
         if (pRowIndex < 0 || pRowIndex >= theNumRows) {
             return null;
         }
 
         /* Just return the row */
-        return new MetisOdfRowNew(this, pSheet, pRowIndex, true);
+        return new MetisOdfRow(this, pSheet, pRowIndex, true);
     }
 
     /**
@@ -237,8 +237,8 @@ class MetisOdfRowStore {
      * @param pRowIndex the index of the row.
      * @return the row
      */
-    MetisOdfRowNew getMutableRowByIndex(final MetisOdfSheetNew pSheet,
-                                        final int pRowIndex) {
+    MetisOdfRow getMutableRowByIndex(final MetisOdfSheet pSheet,
+                                     final int pRowIndex) {
         /* Handle negative row index */
         if (pRowIndex < 0) {
             return null;
@@ -262,7 +262,7 @@ class MetisOdfRowStore {
         }
 
         /* Return the required row */
-        return new MetisOdfRowNew(this, pSheet, pRowIndex, false);
+        return new MetisOdfRow(this, pSheet, pRowIndex, false);
     }
 
     /**
@@ -271,8 +271,8 @@ class MetisOdfRowStore {
      * @param pCellIndex the index of the cell.
      * @return the row
      */
-    MetisOdfCellNew getReadOnlyCellByIndex(final MetisOdfRowNew pRow,
-                                           final int pCellIndex) {
+    MetisOdfCell getReadOnlyCellByIndex(final MetisOdfRow pRow,
+                                        final int pCellIndex) {
         /* Handle index out of range */
         final MetisOdfCellStore myCells = theRows[pRow.getRowIndex()];
 
@@ -286,8 +286,8 @@ class MetisOdfRowStore {
      * @param pCellIndex the index of the cell.
      * @return the row
      */
-    MetisOdfCellNew getMutableCellByIndex(final MetisOdfRowNew pRow,
-                                          final int pCellIndex) {
+    MetisOdfCell getMutableCellByIndex(final MetisOdfRow pRow,
+                                       final int pCellIndex) {
         /* Handle index out of range */
         final MetisOdfCellStore myCells = theRows[pRow.getRowIndex()];
 

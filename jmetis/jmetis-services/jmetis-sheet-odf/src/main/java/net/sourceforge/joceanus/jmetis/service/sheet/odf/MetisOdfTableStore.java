@@ -116,7 +116,7 @@ public class MetisOdfTableStore {
     }
 
     /**
-     * Build sheet map.
+     * Build maps.
      * @throws OceanusException on error
      */
     void loadMaps() throws OceanusException {
@@ -145,7 +145,7 @@ public class MetisOdfTableStore {
      * @param pName the name of the sheet
      * @return the sheet
      */
-    MetisOdfSheetNew getSheet(final String pName) {
+    MetisOdfSheet getSheet(final String pName) {
         /* Obtain the existing sheet */
         final MetisOdfSheetCore myCore = theSheets.get(pName);
         return myCore == null
@@ -161,9 +161,9 @@ public class MetisOdfTableStore {
      * @return the new sheet
      * @throws OceanusException on error
      */
-    MetisOdfSheetNew newSheet(final String pName,
-                              final int pNumRows,
-                              final int pNumCols) throws OceanusException {
+    MetisOdfSheet newSheet(final String pName,
+                           final int pNumRows,
+                           final int pNumCols) throws OceanusException {
         /* Check for existing sheet */
         if (theSheets.get(pName) != null) {
             throw new MetisSheetException("Sheet "

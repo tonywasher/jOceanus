@@ -16,56 +16,32 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmetis.service.sheet.odf;
 
-import org.w3c.dom.Element;
-
 import net.sourceforge.joceanus.jmetis.service.sheet.MetisSheetRow;
-import net.sourceforge.joceanus.jtethys.ui.TethysDataFormatter;
 
 /**
- * Class representing a row in Oasis.
- * @author Tony Washer
+ * Row implementation.
  */
 public class MetisOdfRow
         extends MetisSheetRow {
     /**
-     * The Parser.
+     * The row store.
      */
-    private final MetisOdfParser theParser;
+    private final MetisOdfRowStore theStore;
 
     /**
-     * The map of rows.
-     */
-    private final MetisOdfRowMap theRowMap;
-
-    /**
-     * The map of cells.
-     */
-    private final MetisOdfCellMap theCellMap;
-
-    /**
-     * The underlying ODFDOM row.
-     */
-    private final Element theOasisRow;
-
-    /**
-     * Constructor.
-     * @param pMap the row map
-     * @param pRow the Oasis row
+     * Constructor .
+     * @param pStore the row storage
+     * @param pSheet the sheet
      * @param pIndex the index
-     * @param pReadOnly is the row readOnly?
+     * @param pReadOnly is the cell readOnly?
      */
-    MetisOdfRow(final MetisOdfRowMap pMap,
-                final Element pRow,
+    MetisOdfRow(final MetisOdfRowStore pStore,
+                final MetisOdfSheet pSheet,
                 final int pIndex,
                 final boolean pReadOnly) {
         /* Store parameters */
-        super(pMap.getSheet(), pIndex, pReadOnly);
-        theParser = getSheet().getParser();
-        theRowMap = pMap;
-        theOasisRow = pRow;
-
-        /* Create the cell map */
-        theCellMap = new MetisOdfCellMap(this);
+        super(pSheet, pIndex, pReadOnly);
+        theStore = pStore;
     }
 
     @Override
@@ -75,152 +51,36 @@ public class MetisOdfRow
 
     @Override
     public MetisOdfRow getNextRow() {
-        return theRowMap.getReadOnlyRowByIndex(getRowIndex() + 1);
+        return theStore.getReadOnlyRowByIndex(getSheet(), getRowIndex() + 1);
     }
 
     @Override
     public MetisOdfRow getPreviousRow() {
-        return theRowMap.getReadOnlyRowByIndex(getRowIndex() - 1);
-    }
-
-    /**
-     * Obtain the row element.
-     * @return the row element
-     */
-    Element getRowElement() {
-        return theOasisRow;
-    }
-
-    /**
-     * Obtain the row style name.
-     * @return the row style name
-     */
-    String getRowStyle() {
-        return theParser.getAttribute(theOasisRow, MetisOdfTableItem.STYLENAME);
-    }
-
-    @Override
-    public boolean isHidden() {
-        final String myString = theParser.getAttribute(theOasisRow, MetisOdfTableItem.VISIBILITY);
-        return myString != null
-                && !myString.equals(MetisOdfValue.VISIBLE.getValue());
-    }
-
-    /**
-     * Set the row style.
-     * @param pStyle the row style
-     */
-    void setRowStyle(final String pStyle) {
-        /* Ignore if readOnly */
-        if (!isReadOnly()) {
-            /* Set the row style */
-            theParser.setAttribute(theOasisRow, MetisOdfTableItem.STYLENAME, pStyle);
-        }
-    }
-
-    @Override
-    protected void setHiddenValue(final boolean isHidden) {
-        /* Set the visibility attribute */
-        theParser.setAttribute(theOasisRow, MetisOdfTableItem.VISIBILITY,
-                isHidden
-                      ? MetisOdfValue.COLLAPSE
-                      : MetisOdfValue.VISIBLE);
+        return theStore.getReadOnlyRowByIndex(getSheet(), getRowIndex() - 1);
     }
 
     @Override
     public int getCellCount() {
-        return theCellMap.getCellCount();
+        return theStore.getCellCount();
+    }
+
+    @Override
+    public boolean isHidden() {
+        return theStore.getHiddenAtIndex(getRowIndex());
+    }
+
+    @Override
+    protected void setHiddenValue(final boolean isHidden) {
+        theStore.setHiddenAtIndex(getRowIndex(), isHidden);
     }
 
     @Override
     public MetisOdfCell getReadOnlyCellByIndex(final int pIndex) {
-        return theCellMap.getReadOnlyCellByIndex(pIndex);
+        return theStore.getReadOnlyCellByIndex(this, pIndex);
     }
 
     @Override
     protected MetisOdfCell getWriteableCellByIndex(final int pIndex) {
-        return theCellMap.getMutableCellByIndex(pIndex);
-    }
-
-    /**
-     * Add extra columns to row.
-     * @param pNumNewCols the number of new columns to add
-     */
-    void addColumnsToRow(final int pNumNewCols) {
-        /* Pass call to CellMap */
-        theCellMap.addAdditionalCells(pNumNewCols);
-    }
-
-    /**
-     * Format object value.
-     * @param pValue the value
-     * @return the formatted value
-     */
-    String formatValue(final Object pValue) {
-        final TethysDataFormatter myFormatter = theRowMap.getFormatter();
-        return myFormatter.formatObject(pValue);
-    }
-
-    /**
-     * Parse object value.
-     * @param <T> the value type
-     * @param pSource the source value
-     * @param pClass the value type class
-     * @return the formatted value
-     */
-    <T> T parseValue(final String pSource,
-                     final Class<T> pClass) {
-        final TethysDataFormatter myFormatter = theRowMap.getFormatter();
-        return myFormatter.parseValue(pSource, pClass);
-    }
-
-    /**
-     * Parse object value.
-     * @param <T> the value type
-     * @param pSource the source value
-     * @param pClass the value type class
-     * @return the formatted value
-     */
-    <T> T parseValue(final Double pSource,
-                     final Class<T> pClass) {
-        final TethysDataFormatter myFormatter = theRowMap.getFormatter();
-        return myFormatter.parseValue(pSource, pClass);
-    }
-
-    /**
-     * Parse object value.
-     * @param <T> the value type
-     * @param pSource the source value
-     * @param pCurrCode the currency code
-     * @param pClass the value type class
-     * @return the formatted value
-     */
-    <T> T parseValue(final Double pSource,
-                     final String pCurrCode,
-                     final Class<T> pClass) {
-        final TethysDataFormatter myFormatter = theRowMap.getFormatter();
-        return myFormatter.parseValue(pSource, pCurrCode, pClass);
-    }
-
-    /**
-     * Ensure and determine the cell style.
-     * @param pCell the cell to style
-     * @param pValue the cell value
-     */
-    void setCellStyle(final Element pCell,
-                      final Object pValue) {
-        /* Pass through to the sheet */
-        getSheet().setCellStyle(pCell, pValue);
-    }
-
-    /**
-     * Ensure and determine the alternate cell style.
-     * @param pCell the cell to style
-     * @param pValue the cell value
-     */
-    void setAlternateCellStyle(final Element pCell,
-                               final Object pValue) {
-        /* Pass through to the sheet */
-        getSheet().setAlternateCellStyle(pCell, pValue);
+        return theStore.getMutableCellByIndex(this, pIndex);
     }
 }
