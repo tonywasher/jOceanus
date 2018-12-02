@@ -109,8 +109,7 @@ public final class MetisSheetTester {
             try (FileInputStream myInFile = new FileInputStream(myXFile);
                  BufferedInputStream myInBuffer = new BufferedInputStream(myInFile)) {
                 myBook = MetisSheetProvider.loadFromStream(pType, myInBuffer);
-                mySheet = myBook.getSheet("TestData");
-            } catch (IOException
+                mySheet = myBook.getSheet("TestData");            } catch (IOException
                     | OceanusException e) {
                 LOGGER.fatal("Failed to load file", e);
                 return;

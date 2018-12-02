@@ -133,13 +133,12 @@ public class MetisOdfWorkBook
         theSpreadSheet = theParser.getFirstNamedChild(myBody, MetisOdfOfficeItem.SPREADSHEET);
 
         /* Build tableStore */
-        theTableStore = null;
-        //theTableStore = new MetisOdfTableStore(this, theSpreadSheet);
-        //theTableStore.loadMaps();
+        theTableStore = new MetisOdfTableStore(this, theSpreadSheet);
+        theTableStore.loadMaps();
 
         /* Build the maps */
-        buildSheetMap();
-        buildRangeMap();
+        //buildSheetMap();
+        //buildRangeMap();
     }
 
     /**
@@ -169,8 +168,8 @@ public class MetisOdfWorkBook
         }
 
         /* Build tableStore */
-        theTableStore = null;
-        //theTableStore = new MetisOdfTableStore(this, theSpreadSheet);
+        //theTableStore = null;
+        theTableStore = new MetisOdfTableStore(this, theSpreadSheet);
 
         /* Note writable */
         isReadOnly = false;
@@ -207,7 +206,9 @@ public class MetisOdfWorkBook
 
     @Override
     public void saveToStream(final OutputStream pOutput) throws OceanusException {
-        //theTableStore.buildSheetXML();
+        /* build the elements */
+        theTableStore.buildSheetXML();
+
         /* Write to a completely new spreadSheet */
         MetisOdfLoader.writeNewSpreadSheet(theContents, pOutput);
     }
@@ -230,58 +231,58 @@ public class MetisOdfWorkBook
     @Override
     public MetisSheetSheet newSheet(final String pName,
                                     final int pNumRows,
-                                    final int pNumCols) {
-        //return theTableStore.newSheet(pName, pNumRows, pNumCols);
+                                    final int pNumCols) throws OceanusException {
+        return theTableStore.newSheet(pName, pNumRows, pNumCols);
         /* Create the new Sheet */
-        final Element myTable = theParser.newElement(MetisOdfTableItem.TABLE);
-        theParser.setAttribute(myTable, MetisOdfTableItem.NAME, pName);
-        theParser.setAttribute(myTable, MetisOdfTableItem.STYLENAME, MetisOdfStyler.STYLE_TABLE);
+        //final Element myTable = theParser.newElement(MetisOdfTableItem.TABLE);
+        //theParser.setAttribute(myTable, MetisOdfTableItem.NAME, pName);
+        //theParser.setAttribute(myTable, MetisOdfTableItem.STYLENAME, MetisOdfStyler.STYLE_TABLE);
 
         /* Access the expressions */
-        final Element myExpressions = theParser.getFirstNamedChild(theSpreadSheet, MetisOdfTableItem.EXPRESSIONS);
-        MetisOdfParser.addAsPriorSibling(myTable, myExpressions);
+        //final Element myExpressions = theParser.getFirstNamedChild(theSpreadSheet, MetisOdfTableItem.EXPRESSIONS);
+        //MetisOdfParser.addAsPriorSibling(myTable, myExpressions);
 
         /* Create the columns */
-        final Element myCol = theParser.newElement(MetisOdfTableItem.COLUMN);
-        myTable.appendChild(myCol);
-        if (pNumCols > 1) {
-            theParser.setAttribute(myCol, MetisOdfTableItem.COLUMNREPEAT, pNumCols);
-        }
+        //final Element myCol = theParser.newElement(MetisOdfTableItem.COLUMN);
+        //myTable.appendChild(myCol);
+        //if (pNumCols > 1) {
+          //  theParser.setAttribute(myCol, MetisOdfTableItem.COLUMNREPEAT, pNumCols);
+        //}
 
         /* Create the rows */
-        final Element myRow = theParser.newElement(MetisOdfTableItem.ROW);
-        myTable.appendChild(myRow);
-        theParser.setAttribute(myRow, MetisOdfTableItem.STYLENAME, MetisOdfStyler.STYLE_ROW);
-        if (pNumCols > 1) {
-            theParser.setAttribute(myRow, MetisOdfTableItem.ROWREPEAT, pNumCols);
-        }
+        //final Element myRow = theParser.newElement(MetisOdfTableItem.ROW);
+        //myTable.appendChild(myRow);
+        //theParser.setAttribute(myRow, MetisOdfTableItem.STYLENAME, MetisOdfStyler.STYLE_ROW);
+        //if (pNumCols > 1) {
+          //  theParser.setAttribute(myRow, MetisOdfTableItem.ROWREPEAT, pNumCols);
+        //}
 
         /* Create the cells */
-        final Element myCell = theParser.newElement(MetisOdfTableItem.CELL);
-        myRow.appendChild(myCell);
-        if (pNumCols > 1) {
-            theParser.setAttribute(myCell, MetisOdfTableItem.COLUMNREPEAT, pNumCols);
-        }
+        //final Element myCell = theParser.newElement(MetisOdfTableItem.CELL);
+        //myRow.appendChild(myCell);
+        //if (pNumCols > 1) {
+          //  theParser.setAttribute(myCell, MetisOdfTableItem.COLUMNREPEAT, pNumCols);
+        //}
 
         /* Create the sheet representation */
-        final SheetReference myRef = new SheetReference(myTable);
-        myRef.addToMap();
-        return myRef.getSheet();
+        //final SheetReference myRef = new SheetReference(myTable);
+        //myRef.addToMap();
+        //return myRef.getSheet();
     }
 
     @Override
-    public MetisSheetSheet newSheet(final String pName) {
+    public MetisSheetSheet newSheet(final String pName) throws OceanusException {
         return newSheet(pName, 1, 1);
     }
 
     @Override
-    public MetisSheetSheet getSheet(final String pName) {
-        //return theTableStore.getSheet(pName);
+    public MetisSheetSheet getSheet(final String pName) throws OceanusException {
+        return theTableStore.getSheet(pName);
         /* Obtain the existing sheet */
-        final SheetReference myRef = theSheetMap.get(pName);
-        return myRef == null
-               ? null
-               : myRef.getReadOnlySheet();
+        //final SheetReference myRef = theSheetMap.get(pName);
+        //return myRef == null
+          //     ? null
+            //   : myRef.getReadOnlySheet();
     }
 
     /**
@@ -301,29 +302,29 @@ public class MetisOdfWorkBook
 
     @Override
     public MetisSheetView getRangeView(final String pName) throws OceanusException {
-        //return theTableStore.getRangeView(pName);
+        return theTableStore.getRangeView(pName);
         /* Locate the named range in the map */
-        final Element myNamedRange = theRangeMap.get(pName);
-        if (myNamedRange == null) {
-            return null;
-        }
+        //final Element myNamedRange = theRangeMap.get(pName);
+        //if (myNamedRange == null) {
+          //  return null;
+        //}
 
         /* Obtain the address */
-        final String myRange = theParser.getAttribute(myNamedRange, MetisOdfTableItem.CELLRANGEADDRESS);
-        final MetisSheetCellRange myCellRange = new MetisSheetCellRange(myRange);
-        final MetisSheetCellPosition myFirstCell = myCellRange.getFirstCell().getPosition();
-        final MetisSheetCellPosition myLastCell = myCellRange.getLastCell().getPosition();
+        //final String myRange = theParser.getAttribute(myNamedRange, MetisOdfTableItem.CELLRANGEADDRESS);
+        //final MetisSheetCellRange myCellRange = new MetisSheetCellRange(myRange);
+        //final MetisSheetCellPosition myFirstCell = myCellRange.getFirstCell().getPosition();
+        //final MetisSheetCellPosition myLastCell = myCellRange.getLastCell().getPosition();
 
         /* Obtain the sheet and reject if missing */
-        final MetisSheetSheet mySheet = getSheet(myCellRange.getFirstCell().getSheetName());
-        if (mySheet == null) {
-          throw new MetisSheetException("Sheet for "
-                    + pName
-                    + " not found in workbook");
-        }
+        //final MetisSheetSheet mySheet = getSheet(myCellRange.getFirstCell().getSheetName());
+        //if (mySheet == null) {
+          //throw new MetisSheetException("Sheet for "
+            //        + pName
+              //      + " not found in workbook");
+        //}
 
         /* Return the view */
-        return new MetisSheetView(mySheet, myFirstCell, myLastCell);
+        //return new MetisSheetView(mySheet, myFirstCell, myLastCell);
     }
 
     /**

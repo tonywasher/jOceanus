@@ -92,11 +92,19 @@ public enum MetisOdfValue {
      * @return the matching value (or null)
      */
     public static MetisOdfValue findValueType(final String pValue) {
+        /* Handle null case specially */
+        if (pValue == null) {
+            return null;
+        }
+
+        /* Loop to find the value type */
         for (final MetisOdfValue myValue : MetisOdfValue.values()) {
             if (pValue.equalsIgnoreCase(myValue.getValue())) {
                 return myValue;
             }
         }
+
+        /* Type not found */
         return null;
     }
 }

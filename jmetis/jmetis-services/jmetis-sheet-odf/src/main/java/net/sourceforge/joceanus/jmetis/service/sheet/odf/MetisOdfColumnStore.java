@@ -94,6 +94,14 @@ class MetisOdfColumnStore {
     }
 
     /**
+     * Obtain Column count.
+     * @return the column count.
+     */
+    int getColumnCount() {
+        return theNumCols;
+    }
+
+    /**
      * Process Column Node.
      * @param pNode the node
      */

@@ -1032,7 +1032,7 @@ class MetisOdfCellStore {
          * @return the boolean
          */
         Boolean getBooleanValue() {
-            return MetisOdfValue.DATE.equals(theValueType)
+            return MetisOdfValue.BOOLEAN.equals(theValueType)
                    ? (Boolean) theValue
                    : null;
         }
@@ -1054,7 +1054,7 @@ class MetisOdfCellStore {
          */
         Integer getIntegerValue() throws OceanusException {
             return MetisOdfValue.FLOAT.equals(theValueType)
-                   ? theStore.parseValue(theIndex, (String) theValue, Integer.class)
+                   ? theStore.parseValue(theIndex, (String) theValue, Double.class).intValue()
                    : null;
         }
 
@@ -1065,7 +1065,7 @@ class MetisOdfCellStore {
          */
         Long getLongValue() throws OceanusException {
             return MetisOdfValue.FLOAT.equals(theValueType)
-                   ? theStore.parseValue(theIndex, (String) theValue, Long.class)
+                   ? theStore.parseValue(theIndex, (String) theValue, Double.class).longValue()
                    : null;
         }
 

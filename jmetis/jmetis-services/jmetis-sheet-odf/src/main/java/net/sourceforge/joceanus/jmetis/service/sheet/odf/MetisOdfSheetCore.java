@@ -107,9 +107,9 @@ class MetisOdfSheetCore {
         /* Access the name of the sheet */
         theName = theParser.getAttribute(pElement, MetisOdfTableItem.NAME);
 
-        /* Create the column and row stores */
+        /* Create the rows and the columns */
         theColumns = new MetisOdfColumnStore(this, pElement);
-        theRows = new MetisOdfRowStore(this, pElement);
+        theRows = new MetisOdfRowStore(this, theColumns.getColumnCount(), pElement);
     }
 
     /**
@@ -197,7 +197,9 @@ class MetisOdfSheetCore {
      * @param pXtraCols the number of columns to add.
      */
     void addAdditionalCols(final int pXtraCols) {
-        theRows.addAdditionalCols(pXtraCols);
+        if (theRows != null) {
+            theRows.addAdditionalCols(pXtraCols);
+        }
     }
 
     /**

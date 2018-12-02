@@ -73,16 +73,19 @@ class MetisOdfRowStore {
     /**
      * ReadOnly Constructor.
      * @param pSheet the owning sheet.
+     * @param pNumCols the number of columns
      * @param pElement the table element
      * @throws OceanusException on error
      */
     MetisOdfRowStore(final MetisOdfSheetCore pSheet,
+                     final int pNumCols,
                      final Element pElement) throws OceanusException {
         /* Store details */
         theSheet = pSheet;
         theParser = theSheet.getParser();
         theFormatter = theSheet.getFormatter();
         theHiddens = new Boolean[0];
+        theNumCols = pNumCols;
         theRows = new MetisOdfCellStore[0];
         isReadOnly = true;
 
@@ -169,20 +172,20 @@ class MetisOdfRowStore {
                        ? 1
                        : Integer.parseInt(myRepeatStr);
 
-        /* Parse the value */
-        final Boolean myValue = parseRowHidden(pRow);
+        /* Parse the values */
+        final Boolean myHidden = parseRowHidden(pRow);
         final MetisOdfCellStore myCells = parseRowCells(pRow, theNumRows);
 
         /* Add the additional rows */
         addAdditionalRows(myRepeat);
 
         /* If we have a value */
-        if (myValue != null) {
+        if (myCells != null || myHidden != null) {
             /* Loop through the cells in reverse order */
             for (int iIndex = theNumRows - 1;
                  myRepeat > 0; iIndex--, myRepeat--) {
                 /* Set the values */
-                theHiddens[iIndex] = myValue;
+                theHiddens[iIndex] = myHidden;
                 theRows[iIndex] = myCells;
             }
         }

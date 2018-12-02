@@ -110,8 +110,8 @@ public class MetisOdfTableStore {
      */
     void buildSheetXML() {
         /* Loop through the sheets */
-        for (MetisOdfSheetCore mySheet : theSheets.values()) {
-            mySheet.populateSheet();
+        for (Object mySheet : theSheets.values()) {
+            ((MetisOdfSheetCore) mySheet).populateSheet();
         }
     }
 
@@ -134,7 +134,7 @@ public class MetisOdfTableStore {
 
         /* Loop through the list */
         for (Element mySheet : mySheets) {
-            /* Create the Core sheet and add to the map */
+            /* Store the sheet in the map */
             final MetisOdfSheetCore myCore = new MetisOdfSheetCore(this, theNumTables++, mySheet);
             theSheets.put(theParser.getAttribute(mySheet, MetisOdfTableItem.NAME), myCore);
         }
@@ -159,10 +159,18 @@ public class MetisOdfTableStore {
      * @param pNumRows the initial number of rows
      * @param pNumCols the initial number of columns
      * @return the new sheet
+     * @throws OceanusException on error
      */
     MetisOdfSheetNew newSheet(final String pName,
                               final int pNumRows,
-                              final int pNumCols) {
+                              final int pNumCols) throws OceanusException {
+        /* Check for existing sheet */
+        if (theSheets.get(pName) != null) {
+            throw new MetisSheetException("Sheet "
+                    + pName
+                    + "already exists in workbook");
+        }
+
         /* Create the new Sheet */
         final Element myTable = theParser.newElement(MetisOdfTableItem.TABLE);
         theParser.setAttribute(myTable, MetisOdfTableItem.NAME, pName);
