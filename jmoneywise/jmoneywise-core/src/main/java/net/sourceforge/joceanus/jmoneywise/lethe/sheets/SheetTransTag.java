@@ -138,7 +138,7 @@ public class SheetTransTag
 
                 /* Access name */
                 final MetisSheetCell myCell = myView.getRowCellByIndex(myRow, ++iAdjust);
-                final String myName = myCell.getStringValue();
+                final String myName = myCell.getString();
 
                 /* Build data values */
                 final DataValues<MoneyWiseDataType> myValues = new DataValues<>(TransactionTag.OBJECT_NAME);

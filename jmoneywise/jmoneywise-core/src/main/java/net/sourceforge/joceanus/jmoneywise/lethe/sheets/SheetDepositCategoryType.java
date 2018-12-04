@@ -108,7 +108,7 @@ public class SheetDepositCategoryType
                 final MetisSheetCell myCell = myView.getRowCellByIndex(myRow, 0);
 
                 /* Add the value into the tables */
-                myList.addBasicItem(myCell.getStringValue());
+                myList.addBasicItem(myCell.getString());
 
                 /* Report the progress */
                 pReport.setNextStep();

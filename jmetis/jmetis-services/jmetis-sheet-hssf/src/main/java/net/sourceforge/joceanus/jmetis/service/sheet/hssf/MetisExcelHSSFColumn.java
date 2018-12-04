@@ -30,12 +30,7 @@ public class MetisExcelHSSFColumn
      */
     private final MetisExcelHSSFSheet theExcelSheet;
 
-    /**
-     * Is the column readOnly.
-     */
-    private final boolean isReadOnly;
-
-    /**
+   /**
      * Constructor.
      * @param pSheet the excel sheet
      * @param pIndex the index
@@ -45,9 +40,8 @@ public class MetisExcelHSSFColumn
                          final int pIndex,
                          final boolean pReadOnly) {
         /* Store parameters */
-        super(pSheet, pIndex);
+        super(pSheet, pIndex, pReadOnly);
         theExcelSheet = pSheet;
-        isReadOnly = pReadOnly;
     }
 
     @Override
@@ -72,11 +66,8 @@ public class MetisExcelHSSFColumn
     }
 
     @Override
-    public void setHidden(final boolean isHidden) {
-        /* Ignore if readOnly */
-        if (!isReadOnly) {
-            theExcelSheet.setColumnHidden(getColumnIndex(), isHidden);
-        }
+    protected void setHiddenValue(final boolean isHidden) {
+        theExcelSheet.setColumnHidden(getColumnIndex(), isHidden);
     }
 
     @Override
@@ -85,10 +76,7 @@ public class MetisExcelHSSFColumn
     }
 
     @Override
-    public void setDefaultCellStyle(final MetisSheetCellStyleType pStyle) {
-        /* Ignore if readOnly */
-        if (!isReadOnly) {
-            theExcelSheet.setDefaultCellStyle(getColumnIndex(), pStyle);
-        }
+    protected void setDefaultCellStyleValue(final MetisSheetCellStyleType pStyle) {
+        theExcelSheet.setDefaultCellStyle(getColumnIndex(), pStyle);
     }
 }

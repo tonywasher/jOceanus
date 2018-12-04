@@ -47,16 +47,24 @@ public abstract class MetisSheetCell {
     private final MetisSheetCellPosition thePosition;
 
     /**
+     * Is the cell readOnly?
+     */
+    private final boolean isReadOnly;
+
+    /**
      * Constructor.
      * @param pRow the row for the cell
      * @param pColIndex the column index
+     * @param pReadOnly is the cell readOnly?
      */
     protected MetisSheetCell(final MetisSheetRow pRow,
-                             final int pColIndex) {
+                             final int pColIndex,
+                             final boolean pReadOnly) {
         /* Store parameters */
         theRow = pRow;
         theView = pRow.getView();
         thePosition = new MetisSheetCellPosition(pColIndex, pRow.getRowIndex());
+        isReadOnly = pReadOnly;
     }
 
     /**
@@ -92,6 +100,14 @@ public abstract class MetisSheetCell {
     }
 
     /**
+     * Is the cell readOnly?
+     * @return true/false
+     */
+    public boolean isReadOnly() {
+        return isReadOnly;
+    }
+
+    /**
      * Obtain the cell index.
      * @return the index
      */
@@ -103,83 +119,83 @@ public abstract class MetisSheetCell {
      * Obtain boolean value of the cell.
      * @return the boolean value
      */
-    public abstract Boolean getBooleanValue();
+    public abstract Boolean getBoolean();
 
     /**
      * Obtain date value of the cell.
      * @return the date value
      * @throws OceanusException on error
      */
-    public abstract TethysDate getDateValue() throws OceanusException;
+    public abstract TethysDate getDate() throws OceanusException;
 
     /**
      * Obtain integer value of the cell.
      * @return the integer value
      * @throws OceanusException on error
      */
-    public abstract Integer getIntegerValue() throws OceanusException;
+    public abstract Integer getInteger() throws OceanusException;
 
     /**
      * Obtain long value of the cell.
      * @return the long value
      * @throws OceanusException on error
      */
-    public abstract Long getLongValue() throws OceanusException;
+    public abstract Long getLong() throws OceanusException;
 
     /**
      * Obtain money value of the cell.
      * @return the money value
      * @throws OceanusException on error
      */
-    public abstract TethysMoney getMoneyValue() throws OceanusException;
+    public abstract TethysMoney getMoney() throws OceanusException;
 
     /**
      * Obtain price value of the cell.
      * @return the price value
      * @throws OceanusException on error
      */
-    public abstract TethysPrice getPriceValue() throws OceanusException;
+    public abstract TethysPrice getPrice() throws OceanusException;
 
     /**
      * Obtain rate value of the cell.
      * @return the rate value
      * @throws OceanusException on error
      */
-    public abstract TethysRate getRateValue() throws OceanusException;
+    public abstract TethysRate getRate() throws OceanusException;
 
     /**
      * Obtain units value of the cell.
      * @return the units value
      * @throws OceanusException on error
      */
-    public abstract TethysUnits getUnitsValue() throws OceanusException;
+    public abstract TethysUnits getUnits() throws OceanusException;
 
     /**
      * Obtain dilution value of the cell.
      * @return the dilution value
      * @throws OceanusException on error
      */
-    public abstract TethysDilution getDilutionValue() throws OceanusException;
+    public abstract TethysDilution getDilution() throws OceanusException;
 
     /**
      * Obtain ratio value of the cell.
      * @return the ratio value
      * @throws OceanusException on error
      */
-    public abstract TethysRatio getRatioValue() throws OceanusException;
+    public abstract TethysRatio getRatio() throws OceanusException;
 
     /**
      * Obtain string value of the cell.
      * @return the string value
      */
-    public abstract String getStringValue();
+    public abstract String getString();
 
     /**
      * Obtain byte array value of the cell.
      * @return the byte array value
      */
-    public byte[] getBytesValue() {
-        final String myValue = getStringValue();
+    public byte[] getBytes() {
+        final String myValue = getString();
         return myValue == null
                                ? null
                                : TethysDataConverter.base64ToByteArray(myValue);
@@ -190,8 +206,8 @@ public abstract class MetisSheetCell {
      * @return the char array value
      * @throws OceanusException on error
      */
-    public char[] getCharArrayValue() throws OceanusException {
-        final byte[] myValue = getBytesValue();
+    public char[] getCharArray() throws OceanusException {
+        final byte[] myValue = getBytes();
         return myValue == null
                                ? null
                                : TethysDataConverter.bytesToCharArray(myValue);
@@ -201,20 +217,35 @@ public abstract class MetisSheetCell {
      * Set null value for the cell.
      * @throws OceanusException on error
      */
-    public abstract void setNullValue() throws OceanusException;
+    public void setNull() throws OceanusException {
+        /* Ignore readOnly */
+        if (!isReadOnly) {
+            setNullValue();
+        }
+    }
+
+    /**
+     * Set null value for the cell.
+     * @throws OceanusException on error
+     */
+    protected abstract void setNullValue() throws OceanusException;
 
     /**
      * Set boolean value of the cell.
      * @param pValue the integer value
      * @throws OceanusException on error
      */
-    public void setBooleanValue(final Boolean pValue) throws OceanusException {
-        /* Handle null values */
+    public void setBoolean(final Boolean pValue) throws OceanusException {
+        /* Ignore readOnly */
+        if (isReadOnly) {
+            return;
+        }
+
+         /* Handle null values */
         if (pValue == null) {
             setNullValue();
         } else {
-            /* Set value */
-            setBoolean(pValue);
+            setBooleanValue(pValue);
         }
     }
 
@@ -223,42 +254,50 @@ public abstract class MetisSheetCell {
      * @param pValue the integer value
      * @throws OceanusException on error
      */
-    protected abstract void setBoolean(Boolean pValue) throws OceanusException;
-
-    /**
-     * Set non-null date value of the cell.
-     * @param pValue the integer value
-     * @throws OceanusException on error
-     */
-    protected abstract void setDate(TethysDate pValue) throws OceanusException;
+    protected abstract void setBooleanValue(Boolean pValue) throws OceanusException;
 
     /**
      * Set date value of the cell.
      * @param pValue the date value
      * @throws OceanusException on error
      */
-    public void setDateValue(final TethysDate pValue) throws OceanusException {
+    public void setDate(final TethysDate pValue) throws OceanusException {
+        /* Ignore readOnly */
+        if (isReadOnly) {
+            return;
+        }
+
         /* Handle null values */
         if (pValue == null) {
             setNullValue();
         } else {
-            /* Set value */
-            setDate(pValue);
+            setDateValue(pValue);
         }
     }
+
+    /**
+     * Set non-null date value of the cell.
+     * @param pValue the integer value
+     * @throws OceanusException on error
+     */
+    protected abstract void setDateValue(TethysDate pValue) throws OceanusException;
 
     /**
      * Set integer value of the cell.
      * @param pValue the integer value
      * @throws OceanusException on error
      */
-    public void setIntegerValue(final Integer pValue) throws OceanusException {
+    public void setInteger(final Integer pValue) throws OceanusException {
+        /* Ignore readOnly */
+        if (isReadOnly) {
+            return;
+        }
+
         /* Handle null values */
         if (pValue == null) {
             setNullValue();
         } else {
-            /* Set value */
-            setInteger(pValue);
+            setIntegerValue(pValue);
         }
     }
 
@@ -267,20 +306,24 @@ public abstract class MetisSheetCell {
      * @param pValue the integer value
      * @throws OceanusException on error
      */
-    protected abstract void setInteger(Integer pValue) throws OceanusException;
+    protected abstract void setIntegerValue(Integer pValue) throws OceanusException;
 
     /**
      * Set long value of the cell.
      * @param pValue the integer value
      * @throws OceanusException on error
      */
-    public void setLongValue(final Long pValue) throws OceanusException {
+    public void setLong(final Long pValue) throws OceanusException {
+        /* Ignore readOnly */
+        if (isReadOnly) {
+            return;
+        }
+
         /* Handle null values */
         if (pValue == null) {
             setNullValue();
         } else {
-            /* Set value */
-            setLong(pValue);
+            setLongValue(pValue);
         }
     }
 
@@ -289,20 +332,24 @@ public abstract class MetisSheetCell {
      * @param pValue the long value
      * @throws OceanusException on error
      */
-    protected abstract void setLong(Long pValue) throws OceanusException;
+    protected abstract void setLongValue(Long pValue) throws OceanusException;
 
     /**
      * Set string value of the cell.
      * @param pValue the string value
      * @throws OceanusException on error
      */
-    public void setStringValue(final String pValue) throws OceanusException {
+    public void setString(final String pValue) throws OceanusException {
+        /* Ignore readOnly */
+        if (isReadOnly) {
+            return;
+        }
+
         /* Handle null values */
         if (pValue == null) {
             setNullValue();
         } else {
-            /* Set value */
-            setString(pValue);
+            setStringValue(pValue);
         }
     }
 
@@ -311,20 +358,24 @@ public abstract class MetisSheetCell {
      * @param pValue the string value
      * @throws OceanusException on error
      */
-    protected abstract void setString(String pValue) throws OceanusException;
+    protected abstract void setStringValue(String pValue) throws OceanusException;
 
     /**
      * Set decimal value of the cell.
      * @param pValue the decimal value
      * @throws OceanusException on error
      */
-    public void setDecimalValue(final TethysDecimal pValue) throws OceanusException {
+    public void setDecimal(final TethysDecimal pValue) throws OceanusException {
+        /* Ignore readOnly */
+        if (isReadOnly) {
+            return;
+        }
+
         /* Handle null values */
         if (pValue == null) {
             setNullValue();
         } else {
-            /* Set value */
-            setDecimal(pValue);
+            setDecimalValue(pValue);
         }
     }
 
@@ -333,20 +384,24 @@ public abstract class MetisSheetCell {
      * @param pValue the decimal value
      * @throws OceanusException on error
      */
-    protected abstract void setDecimal(TethysDecimal pValue) throws OceanusException;
+    protected abstract void setDecimalValue(TethysDecimal pValue) throws OceanusException;
 
     /**
      * Set monetary value of the cell.
      * @param pValue the monetary value
      * @throws OceanusException on error
      */
-    public void setMonetaryValue(final TethysMoney pValue) throws OceanusException {
+    public void setMonetary(final TethysMoney pValue) throws OceanusException {
+        /* Ignore readOnly */
+        if (isReadOnly) {
+            return;
+        }
+
         /* Handle null values */
         if (pValue == null) {
             setNullValue();
         } else {
-            /* Set value */
-            setMonetary(pValue);
+            setMonetaryValue(pValue);
         }
     }
 
@@ -355,20 +410,20 @@ public abstract class MetisSheetCell {
      * @param pValue the monetary value
      * @throws OceanusException on error
      */
-    protected abstract void setMonetary(TethysMoney pValue) throws OceanusException;
+    protected abstract void setMonetaryValue(TethysMoney pValue) throws OceanusException;
 
     /**
      * Set header value of the cell.
      * @param pValue the string value
      * @throws OceanusException on error
      */
-    public void setHeaderValue(final String pValue) throws OceanusException {
+    public void setHeader(final String pValue) throws OceanusException {
         /* Handle null values */
         if (pValue == null) {
             setNullValue();
         } else {
             /* Set value */
-            setHeader(pValue);
+            setHeaderValue(pValue);
         }
     }
 
@@ -377,19 +432,23 @@ public abstract class MetisSheetCell {
      * @param pValue the header value
      * @throws OceanusException on error
      */
-    protected abstract void setHeader(String pValue) throws OceanusException;
+    protected abstract void setHeaderValue(String pValue) throws OceanusException;
 
     /**
      * Set byte array value of the cell.
      * @param pValue the byte array value
      * @throws OceanusException on error
      */
-    public void setBytesValue(final byte[] pValue) throws OceanusException {
+    public void setBytes(final byte[] pValue) throws OceanusException {
+        /* Ignore readOnly */
+        if (isReadOnly) {
+            return;
+        }
+
         /* Handle null values */
         if (pValue == null) {
             setNullValue();
         } else {
-            /* Convert value to string */
             setStringValue(TethysDataConverter.byteArrayToBase64(pValue));
         }
     }
@@ -399,13 +458,18 @@ public abstract class MetisSheetCell {
      * @param pValue the byte array value
      * @throws OceanusException on error
      */
-    public void setCharArrayValue(final char[] pValue) throws OceanusException {
+    public void setCharArray(final char[] pValue) throws OceanusException {
+        /* Ignore readOnly */
+        if (isReadOnly) {
+            return;
+        }
+
         /* Handle null values */
         if (pValue == null) {
             setNullValue();
         } else {
-            /* Convert value to string */
-            setBytesValue(TethysDataConverter.charsToByteArray(pValue));
+            final byte[] myBytes = TethysDataConverter.charsToByteArray(pValue);
+            setStringValue(TethysDataConverter.byteArrayToBase64(myBytes));
         }
     }
 
@@ -414,7 +478,7 @@ public abstract class MetisSheetCell {
      * @param pValue the value
      * @return the required CellStyle
      */
-    protected static MetisSheetCellStyleType getCellStyle(final TethysDecimal pValue) {
+    protected static MetisSheetCellStyleType getCellStyle(final Object pValue) {
         if (pValue instanceof TethysPrice) {
             return MetisSheetCellStyleType.PRICE;
         }
@@ -432,6 +496,18 @@ public abstract class MetisSheetCell {
         }
         if (pValue instanceof TethysRatio) {
             return MetisSheetCellStyleType.RATIO;
+        }
+        if (pValue instanceof Boolean) {
+            return MetisSheetCellStyleType.BOOLEAN;
+        }
+        if (pValue instanceof Number) {
+            return MetisSheetCellStyleType.INTEGER;
+        }
+        if (pValue instanceof TethysDate) {
+            return MetisSheetCellStyleType.DATE;
+        }
+        if (pValue instanceof String) {
+            return MetisSheetCellStyleType.STRING;
         }
         return null;
     }

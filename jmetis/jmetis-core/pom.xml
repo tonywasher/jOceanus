@@ -32,13 +32,7 @@
     </dependency>
     <dependency>
       <groupId>${project.groupId}</groupId>
-      <artifactId>jmetis-sheet-jopen</artifactId>
-      <version>${project.version}</version>
-      <scope>runtime</scope>
-    </dependency>
-    <dependency>
-      <groupId>${project.groupId}</groupId>
-      <artifactId>jmetis-sheet-odfdom</artifactId>
+      <artifactId>jmetis-sheet-odf</artifactId>
       <version>${project.version}</version>
       <scope>runtime</scope>
     </dependency>

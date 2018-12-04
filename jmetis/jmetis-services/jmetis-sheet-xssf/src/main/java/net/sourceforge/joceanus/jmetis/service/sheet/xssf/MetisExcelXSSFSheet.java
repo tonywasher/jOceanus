@@ -16,6 +16,10 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmetis.service.sheet.xssf;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.ListIterator;
+
 import org.apache.poi.ss.SpreadsheetVersion;
 import org.apache.poi.ss.usermodel.CellValue;
 import org.apache.poi.ss.util.AreaReference;
@@ -28,6 +32,7 @@ import org.apache.poi.xssf.usermodel.XSSFSheet;
 import net.sourceforge.joceanus.jmetis.service.sheet.MetisSheetCellPosition;
 import net.sourceforge.joceanus.jmetis.service.sheet.MetisSheetCellStyleType;
 import net.sourceforge.joceanus.jmetis.service.sheet.MetisSheetFormats;
+import net.sourceforge.joceanus.jmetis.service.sheet.MetisSheetRow;
 import net.sourceforge.joceanus.jmetis.service.sheet.MetisSheetSheet;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.ui.TethysDataFormatter;
@@ -58,11 +63,6 @@ public class MetisExcelXSSFSheet
     private final XSSFSheet theExcelSheet;
 
     /**
-     * Is the sheet readOnly.
-     */
-    private final boolean isReadOnly;
-
-    /**
      * Constructor for Excel Sheet.
      * @param pBook the WorkBook
      * @param pSheet the Excel sheet
@@ -74,13 +74,12 @@ public class MetisExcelXSSFSheet
                         final int pIndex,
                         final boolean pReadOnly) {
         /* Construct super-class */
-        super(pBook, pSheet.getSheetName());
+        super(pBook, pSheet.getSheetName(), pReadOnly);
 
         /* Store parameters */
         theExcelBook = pBook;
         theExcelSheet = pSheet;
         theIndex = pIndex;
-        isReadOnly = pReadOnly;
     }
 
     /**
@@ -131,8 +130,29 @@ public class MetisExcelXSSFSheet
     }
 
     @Override
+    protected ListIterator<MetisSheetRow> iteratorForRange(final int pFirstIndex,
+                                                           final int pLastIndex) {
+        /* Determine bounds for search */
+        final int myLower = Math.max(pFirstIndex, theExcelSheet.getFirstRowNum());
+        final int myUpper = Math.min(pLastIndex, theExcelSheet.getLastRowNum());
+
+        /* Create a list of cells */
+        final List<MetisSheetRow> myList = new ArrayList<>();
+        for (int iIndex = myLower; iIndex <= myUpper; iIndex++) {
+            /* Only return a row if a value is present */
+            final XSSFRow myExcelRow = theExcelSheet.getRow(iIndex);
+            if (myExcelRow != null) {
+                myList.add(new MetisExcelXSSFRow(this, myExcelRow, iIndex, true));
+            }
+        }
+
+        /* Return the iterator */
+        return myList.listIterator();
+    }
+
+    @Override
     public MetisExcelXSSFRow getMutableRowByIndex(final int pRowIndex) {
-        if (isReadOnly) {
+        if (isReadOnly()) {
             return null;
         }
         XSSFRow myExcelRow = theExcelSheet.getRow(pRowIndex);
@@ -150,7 +170,7 @@ public class MetisExcelXSSFSheet
 
     @Override
     public MetisExcelXSSFColumn getMutableColumnByIndex(final int pColIndex) {
-        return isReadOnly
+        return isReadOnly()
                           ? null
                           : new MetisExcelXSSFColumn(this, pColIndex, false);
     }
@@ -162,7 +182,7 @@ public class MetisExcelXSSFSheet
 
     @Override
     public void setHidden(final boolean isHidden) {
-        if (!isReadOnly) {
+        if (!isReadOnly()) {
             theExcelBook.setSheetHidden(theIndex, isHidden);
         }
     }
@@ -171,7 +191,7 @@ public class MetisExcelXSSFSheet
     public void declareRange(final String pName,
                              final MetisSheetCellPosition pFirstCell,
                              final MetisSheetCellPosition pLastCell) throws OceanusException {
-        if (!isReadOnly) {
+        if (!isReadOnly()) {
             /* Build the area reference */
             final String myName = getName();
             final CellReference myFirst = new CellReference(myName, pFirstCell.getRowIndex(), pFirstCell.getColumnIndex(), true, true);
@@ -187,7 +207,7 @@ public class MetisExcelXSSFSheet
     public void applyDataValidation(final MetisSheetCellPosition pFirstCell,
                                     final MetisSheetCellPosition pLastCell,
                                     final String pName) {
-        if (!isReadOnly) {
+        if (!isReadOnly()) {
             /* Create the CellAddressList */
             final CellRangeAddressList myCells = new CellRangeAddressList(pFirstCell.getRowIndex(), pLastCell.getRowIndex(), pFirstCell.getColumnIndex(),
                     pLastCell.getColumnIndex());
@@ -200,7 +220,7 @@ public class MetisExcelXSSFSheet
     @Override
     public void applyDataFilter(final MetisSheetCellPosition pBaseCell,
                                 final int pNumRows) {
-        if (!isReadOnly) {
+        if (!isReadOnly()) {
             /* Create the CellAddressList */
             final int myRow = pBaseCell.getRowIndex();
             final int myCol = pBaseCell.getColumnIndex();
@@ -215,7 +235,7 @@ public class MetisExcelXSSFSheet
 
     @Override
     public void createFreezePane(final MetisSheetCellPosition pFreezeCell) {
-        if (!isReadOnly) {
+        if (!isReadOnly()) {
             theExcelSheet.createFreezePane(pFreezeCell.getColumnIndex(), pFreezeCell.getRowIndex());
         }
     }

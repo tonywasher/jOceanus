@@ -243,23 +243,23 @@ public class SheetTransaction
         /* Access date */
         MetisSheetCell myCell = pView.getRowCellByIndex(pRow, ++iAdjust);
         final TethysDate myDate = (myCell != null)
-                                                   ? myCell.getDateValue()
+                                                   ? myCell.getDate()
                                                    : null;
 
         /* Access the values */
         myCell = pView.getRowCellByIndex(pRow, ++iAdjust);
         final String myDebit = (myCell != null)
-                                                ? myCell.getStringValue()
+                                                ? myCell.getString()
                                                 : null;
         myCell = pView.getRowCellByIndex(pRow, ++iAdjust);
         final String myCredit = (myCell != null)
-                                                 ? myCell.getStringValue()
+                                                 ? myCell.getString()
                                                  : null;
         myCell = pView.getRowCellByIndex(pRow, ++iAdjust);
         final String myAmount = (myCell != null)
-                                                 ? myCell.getStringValue()
+                                                 ? myCell.getString()
                                                  : null;
-        final String myCategory = pView.getRowCellByIndex(pRow, ++iAdjust).getStringValue();
+        final String myCategory = pView.getRowCellByIndex(pRow, ++iAdjust).getString();
 
         /* Handle Reconciled which may be missing */
         myCell = pView.getRowCellByIndex(pRow, ++iAdjust);
@@ -276,60 +276,83 @@ public class SheetTransaction
         /* Build transaction */
         final Transaction myTrans = myCache.buildTransaction(myAmount, myReconciled);
 
+        /* Process TransactionInfo */
+        processTransInfo(pData, myCache, pView, pRow, myTrans, iAdjust);
+
+        /* Continue */
+        return true;
+    }
+    /**
+     * Process transaction row from archive.
+     * @param pData the DataSet
+     * @param pCache the parent cache
+     * @param pView the spreadsheet view
+     * @param pRow the spreadsheet row
+     * @param pTrans the transaction
+     * @param pAdjust the cell#
+     * @throws OceanusException on error
+     */
+    private static void processTransInfo(final MoneyWiseData pData,
+                                         final ParentCache pCache,
+                                         final MetisSheetView pView,
+                                         final MetisSheetRow pRow,
+                                         final Transaction pTrans,
+                                         final int pAdjust) throws OceanusException {
         /* Handle Description which may be missing */
-        myCell = pView.getRowCellByIndex(pRow, ++iAdjust);
+        int iAdjust = pAdjust;
+        MetisSheetCell myCell = pView.getRowCellByIndex(pRow, ++iAdjust);
         String myDesc = null;
         if (myCell != null) {
-            myDesc = myCell.getStringValue();
+            myDesc = myCell.getString();
         }
 
         /* Handle Tax Credit which may be missing */
         myCell = pView.getRowCellByIndex(pRow, ++iAdjust);
         String myTaxCredit = null;
         if (myCell != null) {
-            myTaxCredit = myCell.getStringValue();
+            myTaxCredit = myCell.getString();
         }
 
         /* Handle EmployeeNatIns which may be missing */
         myCell = pView.getRowCellByIndex(pRow, ++iAdjust);
         String myEmployeeNatIns = null;
         if (myCell != null) {
-            myEmployeeNatIns = myCell.getStringValue();
+            myEmployeeNatIns = myCell.getString();
         }
 
         /* Handle EmployerNatIns which may be missing */
         myCell = pView.getRowCellByIndex(pRow, ++iAdjust);
         String myEmployerNatIns = null;
         if (myCell != null) {
-            myEmployerNatIns = myCell.getStringValue();
+            myEmployerNatIns = myCell.getString();
         }
 
         /* Handle Benefit which may be missing */
         myCell = pView.getRowCellByIndex(pRow, ++iAdjust);
         String myBenefit = null;
         if (myCell != null) {
-            myBenefit = myCell.getStringValue();
+            myBenefit = myCell.getString();
         }
 
         /* Handle DebitUnits which may be missing */
         myCell = pView.getRowCellByIndex(pRow, ++iAdjust);
         String myDebitUnits = null;
         if (myCell != null) {
-            myDebitUnits = myCell.getStringValue();
+            myDebitUnits = myCell.getString();
         }
 
         /* Handle CreditUnits which may be missing */
         myCell = pView.getRowCellByIndex(pRow, ++iAdjust);
         String myCreditUnits = null;
         if (myCell != null) {
-            myCreditUnits = myCell.getStringValue();
+            myCreditUnits = myCell.getString();
         }
 
         /* Handle Dilution which may be missing */
         myCell = pView.getRowCellByIndex(pRow, ++iAdjust);
         String myDilution = null;
         if (myCell != null) {
-            myDilution = myCell.getStringValue();
+            myDilution = myCell.getString();
             if (!myDilution.startsWith("0.")) {
                 myDilution = null;
             }
@@ -339,60 +362,60 @@ public class SheetTransaction
         myCell = pView.getRowCellByIndex(pRow, ++iAdjust);
         String myReference = null;
         if (myCell != null) {
-            myReference = myCell.getStringValue();
+            myReference = myCell.getString();
         }
 
         /* Handle Years which may be missing */
         myCell = pView.getRowCellByIndex(pRow, ++iAdjust);
         Integer myYears = null;
         if (myCell != null) {
-            myYears = myCell.getIntegerValue();
+            myYears = myCell.getInteger();
         }
 
         /* Handle Withheld which may be missing */
         myCell = pView.getRowCellByIndex(pRow, ++iAdjust);
         String myWithheld = null;
         if (myCell != null) {
-            myWithheld = myCell.getStringValue();
+            myWithheld = myCell.getString();
         }
 
         /* Handle ReturnedCashAccount which may be missing */
         myCell = pView.getRowCellByIndex(pRow, ++iAdjust);
         String myReturnedCashAccount = null;
         if (myCell != null) {
-            myReturnedCashAccount = myCell.getStringValue();
+            myReturnedCashAccount = myCell.getString();
         }
 
         /* Handle ReturnedCash which may be missing */
         myCell = pView.getRowCellByIndex(pRow, ++iAdjust);
         String myReturnedCash = null;
         if (myCell != null) {
-            myReturnedCash = myCell.getStringValue();
+            myReturnedCash = myCell.getString();
         }
 
         /* Handle PartnerAmount which may be missing */
         myCell = pView.getRowCellByIndex(pRow, ++iAdjust);
         String myPartnerAmount = null;
         if (myCell != null) {
-            myPartnerAmount = myCell.getStringValue();
+            myPartnerAmount = myCell.getString();
         }
 
         /* Handle XchangeRate which may be missing */
         myCell = pView.getRowCellByIndex(pRow, ++iAdjust);
         String myXchangeRate = null;
         if (myCell != null) {
-            myXchangeRate = myCell.getStringValue();
+            myXchangeRate = myCell.getString();
         }
 
         /* Handle TagList which may be missing */
         myCell = pView.getRowCellByIndex(pRow, ++iAdjust);
         String myTagList = null;
         if (myCell != null) {
-            myTagList = myCell.getStringValue();
+            myTagList = myCell.getString();
         }
 
         /* If the debit was reversed */
-        if (myCache.isDebitReversed()) {
+        if (pCache.isDebitReversed()) {
             /* Flip the Debit and credit values */
             final String myTemp = myDebitUnits;
             myDebitUnits = myCreditUnits;
@@ -402,44 +425,41 @@ public class SheetTransaction
             }
         } else if (myDebitUnits != null) {
             myDebitUnits = "-" + myDebitUnits;
-        } else if (myCache.isRecursive()) {
+        } else if (pCache.isRecursive()) {
             myDebitUnits = myCreditUnits;
             myCreditUnits = null;
         }
 
         /* Add information relating to the account */
         final TransactionInfoList myInfoList = pData.getTransactionInfo();
-        myInfoList.addInfoItem(null, myTrans, TransactionInfoClass.COMMENTS, myDesc);
-        myInfoList.addInfoItem(null, myTrans, TransactionInfoClass.TAXCREDIT, myTaxCredit);
-        myInfoList.addInfoItem(null, myTrans, TransactionInfoClass.EMPLOYEENATINS, myEmployeeNatIns);
-        myInfoList.addInfoItem(null, myTrans, TransactionInfoClass.EMPLOYERNATINS, myEmployerNatIns);
-        myInfoList.addInfoItem(null, myTrans, TransactionInfoClass.DEEMEDBENEFIT, myBenefit);
-        myInfoList.addInfoItem(null, myTrans, TransactionInfoClass.ACCOUNTDELTAUNITS, myDebitUnits);
-        myInfoList.addInfoItem(null, myTrans, TransactionInfoClass.PARTNERDELTAUNITS, myCreditUnits);
-        myInfoList.addInfoItem(null, myTrans, TransactionInfoClass.DILUTION, myDilution);
-        myInfoList.addInfoItem(null, myTrans, TransactionInfoClass.REFERENCE, myReference);
-        myInfoList.addInfoItem(null, myTrans, TransactionInfoClass.QUALIFYYEARS, myYears);
-        myInfoList.addInfoItem(null, myTrans, TransactionInfoClass.WITHHELD, myWithheld);
-        myInfoList.addInfoItem(null, myTrans, TransactionInfoClass.RETURNEDCASHACCOUNT, myReturnedCashAccount);
-        myInfoList.addInfoItem(null, myTrans, TransactionInfoClass.RETURNEDCASH, myReturnedCash);
-        myInfoList.addInfoItem(null, myTrans, TransactionInfoClass.PARTNERAMOUNT, myPartnerAmount);
-        myInfoList.addInfoItem(null, myTrans, TransactionInfoClass.XCHANGERATE, myXchangeRate);
+        myInfoList.addInfoItem(null, pTrans, TransactionInfoClass.COMMENTS, myDesc);
+        myInfoList.addInfoItem(null, pTrans, TransactionInfoClass.TAXCREDIT, myTaxCredit);
+        myInfoList.addInfoItem(null, pTrans, TransactionInfoClass.EMPLOYEENATINS, myEmployeeNatIns);
+        myInfoList.addInfoItem(null, pTrans, TransactionInfoClass.EMPLOYERNATINS, myEmployerNatIns);
+        myInfoList.addInfoItem(null, pTrans, TransactionInfoClass.DEEMEDBENEFIT, myBenefit);
+        myInfoList.addInfoItem(null, pTrans, TransactionInfoClass.ACCOUNTDELTAUNITS, myDebitUnits);
+        myInfoList.addInfoItem(null, pTrans, TransactionInfoClass.PARTNERDELTAUNITS, myCreditUnits);
+        myInfoList.addInfoItem(null, pTrans, TransactionInfoClass.DILUTION, myDilution);
+        myInfoList.addInfoItem(null, pTrans, TransactionInfoClass.REFERENCE, myReference);
+        myInfoList.addInfoItem(null, pTrans, TransactionInfoClass.QUALIFYYEARS, myYears);
+        myInfoList.addInfoItem(null, pTrans, TransactionInfoClass.WITHHELD, myWithheld);
+        myInfoList.addInfoItem(null, pTrans, TransactionInfoClass.RETURNEDCASHACCOUNT, myReturnedCashAccount);
+        myInfoList.addInfoItem(null, pTrans, TransactionInfoClass.RETURNEDCASH, myReturnedCash);
+        myInfoList.addInfoItem(null, pTrans, TransactionInfoClass.PARTNERAMOUNT, myPartnerAmount);
+        myInfoList.addInfoItem(null, pTrans, TransactionInfoClass.XCHANGERATE, myXchangeRate);
 
         /* If we have a TagList */
         if (myTagList != null) {
             /* Process any separated items */
             int iIndex = myTagList.indexOf(TethysListButtonManager.ITEM_SEP);
             while (iIndex != -1) {
-                myInfoList.addInfoItem(null, myTrans, TransactionInfoClass.TRANSTAG, myTagList.substring(0, iIndex));
+                myInfoList.addInfoItem(null, pTrans, TransactionInfoClass.TRANSTAG, myTagList.substring(0, iIndex));
                 myTagList = myTagList.substring(iIndex + 1);
                 iIndex = myTagList.indexOf(TethysListButtonManager.ITEM_SEP);
             }
 
             /* Process the single remaining item */
-            myInfoList.addInfoItem(null, myTrans, TransactionInfoClass.TRANSTAG, myTagList);
+            myInfoList.addInfoItem(null, pTrans, TransactionInfoClass.TRANSTAG, myTagList);
         }
-
-        /* Continue */
-        return true;
     }
 }

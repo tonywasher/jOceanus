@@ -145,8 +145,8 @@ public class SheetDeposit
                                          final MetisSheetRow pRow) throws OceanusException {
         /* Access name and type */
         int iAdjust = -1;
-        final String myName = pView.getRowCellByIndex(pRow, ++iAdjust).getStringValue();
-        final String myType = pView.getRowCellByIndex(pRow, ++iAdjust).getStringValue();
+        final String myName = pView.getRowCellByIndex(pRow, ++iAdjust).getString();
+        final String myType = pView.getRowCellByIndex(pRow, ++iAdjust).getString();
 
         /* Skip class */
         ++iAdjust;
@@ -155,11 +155,11 @@ public class SheetDeposit
         MetisSheetCell myCell = pView.getRowCellByIndex(pRow, ++iAdjust);
         Boolean isClosed = Boolean.FALSE;
         if (myCell != null) {
-            isClosed = myCell.getBooleanValue();
+            isClosed = myCell.getBoolean();
         }
 
         /* Access Parent account */
-        final String myParent = pView.getRowCellByIndex(pRow, ++iAdjust).getStringValue();
+        final String myParent = pView.getRowCellByIndex(pRow, ++iAdjust).getString();
 
         /* Skip alias and portfolio columns */
         ++iAdjust;
@@ -169,14 +169,14 @@ public class SheetDeposit
         myCell = pView.getRowCellByIndex(pRow, ++iAdjust);
         TethysDate myMaturity = null;
         if (myCell != null) {
-            myMaturity = myCell.getDateValue();
+            myMaturity = myCell.getDate();
         }
 
         /* Handle opening balance which may be missing */
         myCell = pView.getRowCellByIndex(pRow, ++iAdjust);
         String myBalance = null;
         if (myCell != null) {
-            myBalance = myCell.getStringValue();
+            myBalance = myCell.getString();
         }
 
         /* Skip symbol and region columns */
@@ -187,7 +187,7 @@ public class SheetDeposit
         myCell = pView.getRowCellByIndex(pRow, ++iAdjust);
         AssetCurrency myCurrency = pData.getDefaultCurrency();
         if (myCell != null) {
-            final String myCurrName = myCell.getStringValue();
+            final String myCurrName = myCell.getString();
             myCurrency = pData.getAccountCurrencies().findItemByName(myCurrName);
         }
 

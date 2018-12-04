@@ -147,7 +147,7 @@ public interface PrometheusBackup {
             /* Make sure that the enum is specified */
             final MetisEnumPreference<PrometheusBackupPreferenceKey, MetisSheetWorkBookType> myTypePref = getEnumPreference(PrometheusBackupPreferenceKey.BACKUPTYPE, MetisSheetWorkBookType.class);
             if (!myTypePref.isAvailable()) {
-                myTypePref.setValue(MetisSheetWorkBookType.OASISODS);
+                myTypePref.setValue(MetisSheetWorkBookType.OASIS);
             }
 
             /* Make sure that the date is specified */

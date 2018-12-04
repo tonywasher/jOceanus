@@ -62,8 +62,9 @@ public interface MetisSheetWorkBook {
      * Access an existing Sheet with the given name.
      * @param pName the name of the sheet
      * @return the sheet (or null if no such sheet)
+     * @throws OceanusException on error
      */
-    MetisSheetSheet getSheet(String pName);
+    MetisSheetSheet getSheet(String pName) throws OceanusException;
 
     /**
      * Obtain a view of the named range.

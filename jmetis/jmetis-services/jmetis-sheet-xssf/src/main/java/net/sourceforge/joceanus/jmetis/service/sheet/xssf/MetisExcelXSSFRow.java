@@ -16,11 +16,16 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmetis.service.sheet.xssf;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.ListIterator;
+
 import org.apache.poi.ss.usermodel.CellValue;
 import org.apache.poi.ss.usermodel.Row.MissingCellPolicy;
 import org.apache.poi.xssf.usermodel.XSSFCell;
 import org.apache.poi.xssf.usermodel.XSSFRow;
 
+import net.sourceforge.joceanus.jmetis.service.sheet.MetisSheetCell;
 import net.sourceforge.joceanus.jmetis.service.sheet.MetisSheetRow;
 import net.sourceforge.joceanus.jtethys.ui.TethysDataFormatter;
 
@@ -40,11 +45,6 @@ public class MetisExcelXSSFRow
     private final XSSFRow theExcelRow;
 
     /**
-     * Is the row readOnly.
-     */
-    private final boolean isReadOnly;
-
-    /**
      * Constructor.
      * @param pSheet the sheet for the row
      * @param pRow the Excel Row
@@ -56,10 +56,9 @@ public class MetisExcelXSSFRow
                       final int pRowIndex,
                       final boolean pReadOnly) {
         /* Store parameters */
-        super(pSheet, pRowIndex);
+        super(pSheet, pRowIndex, pReadOnly);
         theExcelSheet = pSheet;
         theExcelRow = pRow;
-        isReadOnly = pReadOnly;
     }
 
     /**
@@ -121,19 +120,50 @@ public class MetisExcelXSSFRow
                                    : null;
     }
 
-    @Override
-    public MetisExcelXSSFCell getMutableCellByIndex(final int pIndex) {
-        /* Handle negative index and readOnly */
-        if (pIndex < 0
-            || isReadOnly) {
-            return null;
+    /**
+     * Obtain an iterator of non-null cells for the range.
+     * @param pFirstCell the index of the first cell.
+     * @param pLastCell the index of the last cell.
+     * @return the column
+     */
+    protected ListIterator<MetisSheetCell> iteratorForRange(final int pFirstCell,
+                                                            final int pLastCell) {
+        /* Determine bounds for search */
+        final int myLower = Math.max(pFirstCell, theExcelRow.getFirstCellNum());
+        final int myUpper = Math.min(pLastCell, theExcelRow.getLastCellNum());
+
+        /* Create a list of cells */
+        final List<MetisSheetCell> myList = new ArrayList<>();
+        for (int iIndex = myLower; iIndex <= myUpper; iIndex++) {
+            /* Only return a cell if a value is present */
+            final XSSFCell myExcelCell = theExcelRow.getCell(iIndex, MissingCellPolicy.RETURN_BLANK_AS_NULL);
+            if (myExcelCell != null) {
+                myList.add(new MetisExcelXSSFCell(this, myExcelCell, iIndex, true));
+            }
         }
 
+        /* Return the iterator */
+        return myList.listIterator();
+    }
+
+    @Override
+    protected MetisExcelXSSFCell getWriteableCellByIndex(final int pIndex) {
         /* Create the cell */
         final XSSFCell myExcelCell = theExcelRow.createCell(pIndex);
         return myExcelCell != null
                                    ? new MetisExcelXSSFCell(this, myExcelCell, pIndex, false)
                                    : null;
+    }
+
+
+    @Override
+    protected void setHiddenValue(final boolean pHidden) {
+        theExcelRow.setZeroHeight(pHidden);
+    }
+
+    @Override
+    public boolean isHidden() {
+        return theExcelRow.getZeroHeight();
     }
 
     /**

@@ -177,24 +177,24 @@ public class SheetDepositRate
 
             /* Access deposit */
             MetisSheetCell myCell = pView.getRowCellByIndex(myRow, ++iAdjust);
-            final String myDeposit = myCell.getStringValue();
+            final String myDeposit = myCell.getString();
 
             /* Handle Rate */
             myCell = pView.getRowCellByIndex(myRow, ++iAdjust);
-            final String myRate = myCell.getStringValue();
+            final String myRate = myCell.getString();
 
             /* Handle bonus which may be missing */
             myCell = pView.getRowCellByIndex(myRow, ++iAdjust);
             String myBonus = null;
             if (myCell != null) {
-                myBonus = myCell.getStringValue();
+                myBonus = myCell.getString();
             }
 
             /* Handle expiration which may be missing */
             myCell = pView.getRowCellByIndex(myRow, ++iAdjust);
             TethysDate myExpiry = null;
             if (myCell != null) {
-                myExpiry = myCell.getDateValue();
+                myExpiry = myCell.getDate();
             }
 
             /* Build data values */

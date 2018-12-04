@@ -61,7 +61,7 @@ public final class MetisSheetTester {
     public static void main(final String[] args) {
         /* Test a SpreadSheet for each type */
         // loadRange();
-        writeSample(MetisSheetWorkBookType.OASISODS,  "TestOasis.ods");
+        writeSample(MetisSheetWorkBookType.OASIS,  "TestOasis.ods");
         writeSample(MetisSheetWorkBookType.EXCELXLS,  "TestExcel.xls");
         writeSample(MetisSheetWorkBookType.EXCELXLSX,  "TestExcel.xlsx");
     }
@@ -93,7 +93,8 @@ public final class MetisSheetTester {
 
             /* Write the spreadsheet out */
             System.out.println("Writing " + pName);
-            final File myXFile = new File("C:\\Users\\Tony\\Documents\\" + pName);
+            final String myHome = System.getProperty("user.home");
+            final File myXFile = new File(myHome + "\\Documents\\" + pName);
             try (FileOutputStream myOutFile = new FileOutputStream(myXFile);
                  BufferedOutputStream myOutBuffer = new BufferedOutputStream(myOutFile)) {
                 myBook.saveToStream(myOutBuffer);
@@ -108,8 +109,7 @@ public final class MetisSheetTester {
             try (FileInputStream myInFile = new FileInputStream(myXFile);
                  BufferedInputStream myInBuffer = new BufferedInputStream(myInFile)) {
                 myBook = MetisSheetProvider.loadFromStream(pType, myInBuffer);
-                mySheet = myBook.getSheet("TestData");
-            } catch (IOException
+                mySheet = myBook.getSheet("TestData");            } catch (IOException
                     | OceanusException e) {
                 LOGGER.fatal("Failed to load file", e);
                 return;
@@ -133,42 +133,43 @@ public final class MetisSheetTester {
         final File myFile = new File("C:\\Users\\Tony\\Documents\\MoneywiseNI.ods");
         try (FileInputStream myInFile = new FileInputStream(myFile);
              BufferedInputStream myInBuffer = new BufferedInputStream(myInFile)) {
-            final MetisSheetWorkBook myBook = MetisSheetProvider.loadFromStream(MetisSheetWorkBookType.OASISODS, myInBuffer);
+            final MetisSheetWorkBook myBook = MetisSheetProvider.loadFromStream(MetisSheetWorkBookType.OASIS, myInBuffer);
             final MetisSheetView myView = myBook.getRangeView("Finance82");
             final int iNumRows = myView.getRowCount();
             final int iNumCols = myView.getColumnCount();
             for (MetisSheetRow myRow = myView.getRowByIndex(0); myRow != null; myRow = myRow.getNextRow()) {
-                MetisSheetCell myCell = myView.getRowCellByIndex(myRow, 0);
-                final String myType = myCell.getStringValue();
-                myCell = myView.getRowCellByIndex(myRow, 1);
+                int myIndex = 0;
+                MetisSheetCell myCell = myView.getRowCellByIndex(myRow, myIndex++);
+                final String myType = myCell.getString();
+                myCell = myView.getRowCellByIndex(myRow, myIndex++);
                 final String myParent = myCell == null
                                                    ? null
-                                                   : myCell.getStringValue();
-                myCell = myView.getRowCellByIndex(myRow, 2);
+                                                   : myCell.getString();
+                myCell = myView.getRowCellByIndex(myRow, myIndex++);
                 final String myAlias = myCell == null
                                                   ? null
-                                                  : myCell.getStringValue();
-                myCell = myView.getRowCellByIndex(myRow, 3);
+                                                  : myCell.getString();
+                myCell = myView.getRowCellByIndex(myRow, myIndex++);
                 final String myPortfolio = myCell == null
                                                       ? null
-                                                      : myCell.getStringValue();
-                myCell = myView.getRowCellByIndex(myRow, 4);
+                                                      : myCell.getString();
+                myCell = myView.getRowCellByIndex(myRow, myIndex++);
                 final String myBalance = myCell == null
                                                     ? null
-                                                    : myCell.getStringValue();
-                myCell = myView.getRowCellByIndex(myRow, 5);
+                                                    : myCell.getString();
+                myCell = myView.getRowCellByIndex(myRow, myIndex++);
                 final String mySymbol = myCell == null
                                                    ? null
-                                                   : myCell.getStringValue();
-                myCell = myView.getRowCellByIndex(myRow, 6);
+                                                   : myCell.getString();
+                myCell = myView.getRowCellByIndex(myRow, myIndex++);
                 final Boolean isTaxFree = myCell == null
                                                      ? null
-                                                     : myCell.getBooleanValue();
-                myCell = myView.getRowCellByIndex(myRow, 7);
+                                                     : myCell.getBoolean();
+                myCell = myView.getRowCellByIndex(myRow, myIndex++);
                 final Boolean isClosed = myCell == null
                                                     ? null
-                                                    : myCell.getBooleanValue();
-                myCell = myView.getRowCellByIndex(myRow, 8);
+                                                    : myCell.getBoolean();
+                myCell = myView.getRowCellByIndex(myRow, myIndex);
                 myCell = null;
             }
         } catch (IOException
@@ -178,7 +179,7 @@ public final class MetisSheetTester {
     }
 
     /**
-     * Cell Data
+     * Cell Data.
      */
     public enum CellDataType {
         /**
@@ -224,7 +225,7 @@ public final class MetisSheetTester {
         /**
          * PriceJPY.
          */
-        PRICEJPY("PriceGB", TethysPrice.getWholeUnits(6, Currency.getInstance("JPY"))),
+        PRICEJPY("PriceJP", TethysPrice.getWholeUnits(6, Currency.getInstance("JPY"))),
 
         /**
          * MoneyUS.
@@ -234,7 +235,7 @@ public final class MetisSheetTester {
         /**
          * PriceEUR.
          */
-        PRICEEUR("PriceUS", TethysPrice.getWholeUnits(16, Currency.getInstance("EUR"))),
+        PRICEEUR("PriceEU", TethysPrice.getWholeUnits(16, Currency.getInstance("EUR"))),
 
         /**
          * Boolean.
@@ -285,7 +286,7 @@ public final class MetisSheetTester {
          */
         void setHeader(final MetisSheetRow pRow) throws OceanusException {
             final MetisSheetCell myCell = pRow.getMutableCellByIndex(ordinal());
-            myCell.setHeaderValue(theHeader);
+            myCell.setHeader(theHeader);
         }
 
         /**
@@ -297,13 +298,13 @@ public final class MetisSheetTester {
             final MetisSheetCell myCell = pRow.getMutableCellByIndex(ordinal());
             switch (this) {
                 case BOOLEAN:
-                    myCell.setBooleanValue((Boolean) theValue);
+                    myCell.setBoolean((Boolean) theValue);
                     break;
                 case INTEGER:
-                    myCell.setIntegerValue((Integer) theValue);
+                    myCell.setInteger((Integer) theValue);
                     break;
                 case DATE:
-                    myCell.setDateValue((TethysDate) theValue);
+                    myCell.setDate((TethysDate) theValue);
                     break;
                 case RATE:
                 case RATIO:
@@ -313,11 +314,11 @@ public final class MetisSheetTester {
                 case MONEYUS:
                 case PRICEJPY:
                 case PRICEEUR:
-                    myCell.setDecimalValue((TethysDecimal) theValue);
+                    myCell.setDecimal((TethysDecimal) theValue);
                     break;
                 case STRING:
                 default:
-                    myCell.setStringValue((String) theValue);
+                    myCell.setString((String) theValue);
                     break;
             }
         }
@@ -334,7 +335,7 @@ public final class MetisSheetTester {
                 case MONEYUS:
                 case PRICEJPY:
                 case PRICEEUR:
-                    myCell.setMonetaryValue((TethysMoney) theValue);
+                    myCell.setMonetary((TethysMoney) theValue);
                     break;
                 default:
                     break;
@@ -363,28 +364,28 @@ public final class MetisSheetTester {
             final MetisSheetCell myCell = pRow.getReadOnlyCellByIndex(ordinal());
             switch (this) {
                 case BOOLEAN:
-                    return myCell.getBooleanValue();
+                    return myCell.getBoolean();
                 case INTEGER:
-                    return myCell.getIntegerValue();
+                    return myCell.getInteger();
                 case DATE:
-                    return myCell.getDateValue();
+                    return myCell.getDate();
                 case RATE:
-                    return myCell.getRateValue();
+                    return myCell.getRate();
                 case RATIO:
-                    return myCell.getRatioValue();
+                    return myCell.getRatio();
                 case UNITS:
-                    return myCell.getUnitsValue();
+                    return myCell.getUnits();
                 case DILUTION:
-                    return myCell.getDilutionValue();
+                    return myCell.getDilution();
                 case MONEYGB:
                 case MONEYUS:
-                    return myCell.getMoneyValue();
+                    return myCell.getMoney();
                 case PRICEJPY:
                 case PRICEEUR:
-                    return myCell.getPriceValue();
+                    return myCell.getPrice();
                 case STRING:
                 default:
-                    return myCell.getStringValue();
+                    return myCell.getString();
             }
         }
 

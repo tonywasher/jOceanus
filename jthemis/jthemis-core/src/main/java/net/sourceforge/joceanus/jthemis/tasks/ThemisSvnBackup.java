@@ -256,7 +256,7 @@ public class ThemisSvnBackup {
         /* Protect against exceptions */
         boolean writeFailed = false;
         try (GordianZipWriteFile myZipFile = new GordianZipWriteFile(myHash, myZipName);
-             OutputStream myStream = myZipFile.getOutputStream(myEntryName)) {
+             OutputStream myStream = myZipFile.getOutputStream(myEntryName, true)) {
             /* Access the current entry and set the number of revisions */
             final GordianZipFileEntry myEntry = myZipFile.getCurrentEntry();
             myEntry.setUserLongProperty(PROP_NUMREV, revLast);

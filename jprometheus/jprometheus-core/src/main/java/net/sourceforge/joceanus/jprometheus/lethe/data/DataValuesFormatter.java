@@ -242,7 +242,7 @@ public class DataValuesFormatter<T extends DataSet<T, E>, E extends Enum<E>> {
         final String myName = pList.listName() + SUFFIX_ENTRY;
 
         /* Protect the workbook access */
-        try (OutputStream myStream = pZipFile.getOutputStream(new File(myName))) {
+        try (OutputStream myStream = pZipFile.getOutputStream(new File(myName), true)) {
             /* Create a new document */
             final Document myDocument = theBuilder.newDocument();
 

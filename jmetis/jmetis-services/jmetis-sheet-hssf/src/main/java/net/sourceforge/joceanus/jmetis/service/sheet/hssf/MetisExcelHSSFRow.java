@@ -16,11 +16,16 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmetis.service.sheet.hssf;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.ListIterator;
+
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.ss.usermodel.CellValue;
 import org.apache.poi.ss.usermodel.Row.MissingCellPolicy;
 
+import net.sourceforge.joceanus.jmetis.service.sheet.MetisSheetCell;
 import net.sourceforge.joceanus.jmetis.service.sheet.MetisSheetRow;
 import net.sourceforge.joceanus.jtethys.ui.TethysDataFormatter;
 
@@ -40,11 +45,6 @@ public class MetisExcelHSSFRow
     private final HSSFRow theExcelRow;
 
     /**
-     * Is the row readOnly.
-     */
-    private final boolean isReadOnly;
-
-    /**
      * Constructor.
      * @param pSheet the sheet for the row
      * @param pRow the Excel Row
@@ -56,10 +56,9 @@ public class MetisExcelHSSFRow
                       final int pRowIndex,
                       final boolean pReadOnly) {
         /* Store parameters */
-        super(pSheet, pRowIndex);
+        super(pSheet, pRowIndex, pReadOnly);
         theExcelSheet = pSheet;
         theExcelRow = pRow;
-        isReadOnly = pReadOnly;
     }
 
     /**
@@ -122,16 +121,41 @@ public class MetisExcelHSSFRow
     }
 
     @Override
-    public MetisExcelHSSFCell getMutableCellByIndex(final int pIndex) {
-        /* Handle negative index and readOnly */
-        if (pIndex < 0
-            || isReadOnly) {
-            return null;
+    protected ListIterator<MetisSheetCell> iteratorForRange(final int pFirstIndex,
+                                                            final int pLastIndex) {
+        /* Determine bounds for search */
+        final int myLower = Math.max(pFirstIndex, theExcelRow.getFirstCellNum());
+        final int myUpper = Math.min(pLastIndex, theExcelRow.getLastCellNum());
+
+        /* Create a list of cells */
+        final List<MetisSheetCell> myList = new ArrayList<>();
+        for (int iIndex = myLower; iIndex <= myUpper; iIndex++) {
+            /* Only return a cell if a value is present */
+            final HSSFCell myExcelCell = theExcelRow.getCell(iIndex, MissingCellPolicy.RETURN_BLANK_AS_NULL);
+            if (myExcelCell != null) {
+                myList.add(new MetisExcelHSSFCell(this, myExcelCell, iIndex, true));
+            }
         }
 
+        /* Return the iterator */
+        return myList.listIterator();
+    }
+
+    @Override
+    public MetisExcelHSSFCell getWriteableCellByIndex(final int pIndex) {
         /* Create the cell */
         final HSSFCell myExcelCell = theExcelRow.createCell(pIndex);
         return new MetisExcelHSSFCell(this, myExcelCell, pIndex, false);
+    }
+
+    @Override
+    protected void setHiddenValue(final boolean pHidden) {
+        theExcelRow.setZeroHeight(pHidden);
+    }
+
+    @Override
+    public boolean isHidden() {
+        return theExcelRow.getZeroHeight();
     }
 
     /**

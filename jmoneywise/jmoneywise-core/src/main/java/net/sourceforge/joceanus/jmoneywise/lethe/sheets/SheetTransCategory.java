@@ -154,17 +154,17 @@ public class SheetTransCategory
 
                 /* Access name */
                 MetisSheetCell myCell = myView.getRowCellByIndex(myRow, ++iAdjust);
-                final String myName = myCell.getStringValue();
+                final String myName = myCell.getString();
 
                 /* Access Type */
                 myCell = myView.getRowCellByIndex(myRow, ++iAdjust);
-                final String myType = myCell.getStringValue();
+                final String myType = myCell.getString();
 
                 /* Access Parent */
                 String myParent = null;
                 myCell = myView.getRowCellByIndex(myRow, ++iAdjust);
                 if (myCell != null) {
-                    myParent = myCell.getStringValue();
+                    myParent = myCell.getString();
                 }
 
                 /* Build data values */

@@ -16,6 +16,8 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmetis.service.sheet;
 
+import java.util.ListIterator;
+
 /**
  * Class representing a row within a sheet or a view.
  */
@@ -36,16 +38,24 @@ public abstract class MetisSheetRow {
     private final int theRowIndex;
 
     /**
+     * Is the row readOnly?
+     */
+    private final boolean isReadOnly;
+
+    /**
      * Constructor.
      * @param pSheet the sheet for the row
      * @param pRowIndex the Row index
+     * @param pReadOnly is the row readOnly?
      */
     protected MetisSheetRow(final MetisSheetSheet pSheet,
-                            final int pRowIndex) {
+                            final int pRowIndex,
+                            final boolean pReadOnly) {
         /* Store parameters */
         theSheet = pSheet;
         theView = null;
         theRowIndex = pRowIndex;
+        isReadOnly = pReadOnly;
     }
 
     /**
@@ -59,6 +69,7 @@ public abstract class MetisSheetRow {
         theSheet = pView.getSheet();
         theView = pView;
         theRowIndex = pRowIndex;
+        isReadOnly = true;
     }
 
     /**
@@ -86,6 +97,14 @@ public abstract class MetisSheetRow {
     }
 
     /**
+     * Is the row readOnly?
+     * @return true/false
+     */
+    public boolean isReadOnly() {
+        return isReadOnly;
+    }
+
+    /**
      * Get the next row.
      * @return the next row
      */
@@ -104,6 +123,28 @@ public abstract class MetisSheetRow {
     public abstract int getCellCount();
 
     /**
+     * Set hidden status.
+     * @param isHidden is the column hidden?
+     */
+    public void setHidden(final boolean isHidden) {
+        if (!isReadOnly) {
+            setHiddenValue(isHidden);
+        }
+    }
+
+    /**
+     * Set hidden status.
+     * @param isHidden is the column hidden?
+     */
+    protected abstract void setHiddenValue(boolean isHidden);
+
+    /**
+     * Is the column hidden?
+     * @return true/false
+     */
+    public abstract boolean isHidden();
+
+    /**
      * Get the cell at the required index.
      * @param pIndex the column index.
      * @return the cell
@@ -115,5 +156,25 @@ public abstract class MetisSheetRow {
      * @param pIndex the column index.
      * @return the cell
      */
-    public abstract MetisSheetCell getMutableCellByIndex(int pIndex);
+    public MetisSheetCell getMutableCellByIndex(final int pIndex) {
+        return !isReadOnly && pIndex >= 0
+                ? getWriteableCellByIndex(pIndex)
+                : null;
+    }
+
+    /**
+     * Get the cell at the required index.
+     * @param pIndex the column index.
+     * @return the cell
+     */
+    protected abstract MetisSheetCell getWriteableCellByIndex(int pIndex);
+
+    /**
+     * Obtain an iterator of non-null cells for the row in the view.
+     * @param pFirstIndex the first cell in the view
+     * @param pLastIndex the last cell in the view
+     * @return the iterator
+     */
+    protected abstract ListIterator<MetisSheetCell> iteratorForRange(int pFirstIndex,
+                                                                     int pLastIndex);
 }

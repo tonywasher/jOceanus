@@ -146,8 +146,8 @@ public class SheetSecurity
                                           final MetisSheetRow pRow) throws OceanusException {
         /* Access name and type */
         int iAdjust = -1;
-        final String myName = pView.getRowCellByIndex(pRow, ++iAdjust).getStringValue();
-        final String myType = pView.getRowCellByIndex(pRow, ++iAdjust).getStringValue();
+        final String myName = pView.getRowCellByIndex(pRow, ++iAdjust).getString();
+        final String myType = pView.getRowCellByIndex(pRow, ++iAdjust).getString();
 
         /* Look for separator in category */
         final int iIndex = myType.indexOf(TransactionCategory.STR_SEP);
@@ -165,24 +165,24 @@ public class SheetSecurity
         MetisSheetCell myCell = pView.getRowCellByIndex(pRow, ++iAdjust);
         Boolean isClosed = Boolean.FALSE;
         if (myCell != null) {
-            isClosed = myCell.getBooleanValue();
+            isClosed = myCell.getBoolean();
         }
 
         /* Access the list */
         final SecurityList myList = pData.getSecurities();
 
         /* Access Parent account */
-        final String myParent = pView.getRowCellByIndex(pRow, ++iAdjust).getStringValue();
+        final String myParent = pView.getRowCellByIndex(pRow, ++iAdjust).getString();
 
         /* Access the alias account */
         myCell = pView.getRowCellByIndex(pRow, ++iAdjust);
         String myAlias = null;
         if (myCell != null) {
-            myAlias = myCell.getStringValue();
+            myAlias = myCell.getString();
         }
 
         /* Access Portfolio */
-        final String myPortfolio = pView.getRowCellByIndex(pRow, ++iAdjust).getStringValue();
+        final String myPortfolio = pView.getRowCellByIndex(pRow, ++iAdjust).getString();
 
         /* If we have an alias */
         if (myAlias != null) {
@@ -201,21 +201,21 @@ public class SheetSecurity
         myCell = pView.getRowCellByIndex(pRow, ++iAdjust);
         String mySymbol = null;
         if (myCell != null) {
-            mySymbol = myCell.getStringValue();
+            mySymbol = myCell.getString();
         }
 
         /* Handle region which may be missing */
         myCell = pView.getRowCellByIndex(pRow, ++iAdjust);
         String myRegion = null;
         if (myCell != null) {
-            myRegion = myCell.getStringValue();
+            myRegion = myCell.getString();
         }
 
         /* Handle currency which may be missing */
         myCell = pView.getRowCellByIndex(pRow, ++iAdjust);
         AssetCurrency myCurrency = pData.getDefaultCurrency();
         if (myCell != null) {
-            final String myCurrName = myCell.getStringValue();
+            final String myCurrName = myCell.getString();
             myCurrency = pData.getAccountCurrencies().findItemByName(myCurrName);
         }
 

@@ -92,7 +92,7 @@ public class GordianTestZip {
                 /* Open the file for reading */
                 try (InputStream myInFile = new FileInputStream(myFile);
                      InputStream myInBuffer = new BufferedInputStream(myInFile);
-                     OutputStream myOutput = myZipFile.getOutputStream(new File(myFile.getName()))) {
+                     OutputStream myOutput = myZipFile.getOutputStream(new File(myFile.getName()), true)) {
                     /* Read the header entry */
                     while ((myRead = myInBuffer.read(myBuffer, 0, myBufLen)) != -1) {
                         /* Write the data to the zip file */

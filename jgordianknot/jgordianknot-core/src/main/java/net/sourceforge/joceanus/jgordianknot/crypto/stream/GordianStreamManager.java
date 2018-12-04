@@ -143,10 +143,12 @@ public final class GordianStreamManager {
     /**
      * Build output stream.
      * @param pBaseStream the base output stream
+     * @param pCompress should we compress this file?
      * @return the new output stream
      * @throws OceanusException on error
      */
-    public OutputStream buildOutputStream(final OutputStream pBaseStream) throws OceanusException {
+    public OutputStream buildOutputStream(final OutputStream pBaseStream,
+                                          final boolean pCompress) throws OceanusException {
         /* Loop through the stream definitions */
         OutputStream myCurrent = pBaseStream;
 
@@ -192,8 +194,11 @@ public final class GordianStreamManager {
         myStreamCipher.initCipher(myStreamKey);
         myCurrent = new GordianCipherOutputStream<GordianStreamKeyType>(myStreamCipher, myCurrent);
 
-        /* Attach an LZMA output stream onto the output */
-        myCurrent = new GordianLZMAOutputStream(myCurrent);
+        /* If we are compressing */
+        if (pCompress) {
+            /* Attach an LZMA output stream onto the output */
+            myCurrent = new GordianLZMAOutputStream(myCurrent);
+        }
 
         /* Create a digest stream */
         final GordianDigest myDigest = myFactory.generateRandomDigest();

@@ -256,7 +256,7 @@ public class ArchiveLoader {
         for (int myIndex = 0; myIndex < myView.getColumnCount(); myIndex++) {
             /* Access the cell and add year to the list */
             final MetisSheetCell myCell = myView.getCellByPosition(myIndex, 0);
-            addYear(myCell.getStringValue());
+            addYear(myCell.getString());
         }
 
         /* Access the static */

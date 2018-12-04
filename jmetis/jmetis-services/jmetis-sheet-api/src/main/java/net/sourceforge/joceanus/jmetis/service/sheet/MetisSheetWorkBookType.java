@@ -33,14 +33,9 @@ public enum MetisSheetWorkBookType {
     EXCELXLSX("xlsx"),
 
     /**
-     * Oasis jOpenDoc.
+     * Oasis.
      */
-    OASISJOPEN("ods"),
-
-    /**
-     * Oasis ods.
-     */
-    OASISODS("ods");
+    OASIS("ods");
 
     /**
      * The String name.

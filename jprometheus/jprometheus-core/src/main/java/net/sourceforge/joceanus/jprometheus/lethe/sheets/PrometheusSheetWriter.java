@@ -127,7 +127,7 @@ public abstract class PrometheusSheetWriter<T extends DataSet<T, ?>> {
         /* Protect the workbook access */
         boolean writeFailed = false;
         try (GordianZipWriteFile myZipFile = new GordianZipWriteFile(myHash, pFile);
-             OutputStream myStream = myZipFile.getOutputStream(new File(myName))) {
+             OutputStream myStream = myZipFile.getOutputStream(new File(myName), false)) {
             /* Record the DataSet */
             theData = pData;
 
