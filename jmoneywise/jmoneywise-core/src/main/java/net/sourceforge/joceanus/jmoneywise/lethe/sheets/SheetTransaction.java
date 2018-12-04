@@ -276,8 +276,31 @@ public class SheetTransaction
         /* Build transaction */
         final Transaction myTrans = myCache.buildTransaction(myAmount, myReconciled);
 
+        /* Process TransactionInfo */
+        processTransInfo(pData, myCache, pView, pRow, myTrans, iAdjust);
+
+        /* Continue */
+        return true;
+    }
+    /**
+     * Process transaction row from archive.
+     * @param pData the DataSet
+     * @param pCache the parent cache
+     * @param pView the spreadsheet view
+     * @param pRow the spreadsheet row
+     * @param pTrans the transaction
+     * @param pAdjust the cell#
+     * @throws OceanusException on error
+     */
+    private static void processTransInfo(final MoneyWiseData pData,
+                                         final ParentCache pCache,
+                                         final MetisSheetView pView,
+                                         final MetisSheetRow pRow,
+                                         final Transaction pTrans,
+                                         final int pAdjust) throws OceanusException {
         /* Handle Description which may be missing */
-        myCell = pView.getRowCellByIndex(pRow, ++iAdjust);
+        int iAdjust = pAdjust;
+        MetisSheetCell myCell = pView.getRowCellByIndex(pRow, ++iAdjust);
         String myDesc = null;
         if (myCell != null) {
             myDesc = myCell.getString();
@@ -392,7 +415,7 @@ public class SheetTransaction
         }
 
         /* If the debit was reversed */
-        if (myCache.isDebitReversed()) {
+        if (pCache.isDebitReversed()) {
             /* Flip the Debit and credit values */
             final String myTemp = myDebitUnits;
             myDebitUnits = myCreditUnits;
@@ -402,44 +425,41 @@ public class SheetTransaction
             }
         } else if (myDebitUnits != null) {
             myDebitUnits = "-" + myDebitUnits;
-        } else if (myCache.isRecursive()) {
+        } else if (pCache.isRecursive()) {
             myDebitUnits = myCreditUnits;
             myCreditUnits = null;
         }
 
         /* Add information relating to the account */
         final TransactionInfoList myInfoList = pData.getTransactionInfo();
-        myInfoList.addInfoItem(null, myTrans, TransactionInfoClass.COMMENTS, myDesc);
-        myInfoList.addInfoItem(null, myTrans, TransactionInfoClass.TAXCREDIT, myTaxCredit);
-        myInfoList.addInfoItem(null, myTrans, TransactionInfoClass.EMPLOYEENATINS, myEmployeeNatIns);
-        myInfoList.addInfoItem(null, myTrans, TransactionInfoClass.EMPLOYERNATINS, myEmployerNatIns);
-        myInfoList.addInfoItem(null, myTrans, TransactionInfoClass.DEEMEDBENEFIT, myBenefit);
-        myInfoList.addInfoItem(null, myTrans, TransactionInfoClass.ACCOUNTDELTAUNITS, myDebitUnits);
-        myInfoList.addInfoItem(null, myTrans, TransactionInfoClass.PARTNERDELTAUNITS, myCreditUnits);
-        myInfoList.addInfoItem(null, myTrans, TransactionInfoClass.DILUTION, myDilution);
-        myInfoList.addInfoItem(null, myTrans, TransactionInfoClass.REFERENCE, myReference);
-        myInfoList.addInfoItem(null, myTrans, TransactionInfoClass.QUALIFYYEARS, myYears);
-        myInfoList.addInfoItem(null, myTrans, TransactionInfoClass.WITHHELD, myWithheld);
-        myInfoList.addInfoItem(null, myTrans, TransactionInfoClass.RETURNEDCASHACCOUNT, myReturnedCashAccount);
-        myInfoList.addInfoItem(null, myTrans, TransactionInfoClass.RETURNEDCASH, myReturnedCash);
-        myInfoList.addInfoItem(null, myTrans, TransactionInfoClass.PARTNERAMOUNT, myPartnerAmount);
-        myInfoList.addInfoItem(null, myTrans, TransactionInfoClass.XCHANGERATE, myXchangeRate);
+        myInfoList.addInfoItem(null, pTrans, TransactionInfoClass.COMMENTS, myDesc);
+        myInfoList.addInfoItem(null, pTrans, TransactionInfoClass.TAXCREDIT, myTaxCredit);
+        myInfoList.addInfoItem(null, pTrans, TransactionInfoClass.EMPLOYEENATINS, myEmployeeNatIns);
+        myInfoList.addInfoItem(null, pTrans, TransactionInfoClass.EMPLOYERNATINS, myEmployerNatIns);
+        myInfoList.addInfoItem(null, pTrans, TransactionInfoClass.DEEMEDBENEFIT, myBenefit);
+        myInfoList.addInfoItem(null, pTrans, TransactionInfoClass.ACCOUNTDELTAUNITS, myDebitUnits);
+        myInfoList.addInfoItem(null, pTrans, TransactionInfoClass.PARTNERDELTAUNITS, myCreditUnits);
+        myInfoList.addInfoItem(null, pTrans, TransactionInfoClass.DILUTION, myDilution);
+        myInfoList.addInfoItem(null, pTrans, TransactionInfoClass.REFERENCE, myReference);
+        myInfoList.addInfoItem(null, pTrans, TransactionInfoClass.QUALIFYYEARS, myYears);
+        myInfoList.addInfoItem(null, pTrans, TransactionInfoClass.WITHHELD, myWithheld);
+        myInfoList.addInfoItem(null, pTrans, TransactionInfoClass.RETURNEDCASHACCOUNT, myReturnedCashAccount);
+        myInfoList.addInfoItem(null, pTrans, TransactionInfoClass.RETURNEDCASH, myReturnedCash);
+        myInfoList.addInfoItem(null, pTrans, TransactionInfoClass.PARTNERAMOUNT, myPartnerAmount);
+        myInfoList.addInfoItem(null, pTrans, TransactionInfoClass.XCHANGERATE, myXchangeRate);
 
         /* If we have a TagList */
         if (myTagList != null) {
             /* Process any separated items */
             int iIndex = myTagList.indexOf(TethysListButtonManager.ITEM_SEP);
             while (iIndex != -1) {
-                myInfoList.addInfoItem(null, myTrans, TransactionInfoClass.TRANSTAG, myTagList.substring(0, iIndex));
+                myInfoList.addInfoItem(null, pTrans, TransactionInfoClass.TRANSTAG, myTagList.substring(0, iIndex));
                 myTagList = myTagList.substring(iIndex + 1);
                 iIndex = myTagList.indexOf(TethysListButtonManager.ITEM_SEP);
             }
 
             /* Process the single remaining item */
-            myInfoList.addInfoItem(null, myTrans, TransactionInfoClass.TRANSTAG, myTagList);
+            myInfoList.addInfoItem(null, pTrans, TransactionInfoClass.TRANSTAG, myTagList);
         }
-
-        /* Continue */
-        return true;
     }
 }

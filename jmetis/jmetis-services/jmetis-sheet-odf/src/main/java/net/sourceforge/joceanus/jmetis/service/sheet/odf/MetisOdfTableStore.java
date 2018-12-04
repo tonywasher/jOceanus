@@ -33,11 +33,11 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
 /**
  * Table storage.
  */
-public class MetisOdfTableStore {
+class MetisOdfTableStore {
     /**
      * The map of sheets.
      */
-    private final Map<String, MetisOdfSheetCore> theSheets;
+    private final Map<String, Object> theSheets;
 
     /**
      * The map of ranges.
@@ -135,8 +135,8 @@ public class MetisOdfTableStore {
         /* Loop through the list */
         for (Element mySheet : mySheets) {
             /* Store the sheet in the map */
-            final MetisOdfSheetCore myCore = new MetisOdfSheetCore(this, theNumTables++, mySheet);
-            theSheets.put(theParser.getAttribute(mySheet, MetisOdfTableItem.NAME), myCore);
+            //final MetisOdfSheetCore myCore = new MetisOdfSheetCore(this, theNumTables++, mySheet);
+            theSheets.put(theParser.getAttribute(mySheet, MetisOdfTableItem.NAME), mySheet);
         }
     }
 
@@ -144,13 +144,17 @@ public class MetisOdfTableStore {
      * Obtain existing sheet.
      * @param pName the name of the sheet
      * @return the sheet
+     * @throws OceanusException on error
      */
-    MetisOdfSheet getSheet(final String pName) {
+    MetisOdfSheet getSheet(final String pName) throws OceanusException {
         /* Obtain the existing sheet */
-        final MetisOdfSheetCore myCore = theSheets.get(pName);
+        Object myCore = theSheets.get(pName);
+        if (myCore instanceof Element) {
+            myCore = new MetisOdfSheetCore(this, theNumTables++, (Element) myCore);
+        }
         return myCore == null
                ? null
-               : myCore.getReadOnlySheet();
+               : ((MetisOdfSheetCore) myCore).getReadOnlySheet();
     }
 
     /**

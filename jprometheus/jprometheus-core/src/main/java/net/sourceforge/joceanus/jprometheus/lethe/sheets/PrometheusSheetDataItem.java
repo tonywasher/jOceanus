@@ -168,7 +168,7 @@ public abstract class PrometheusSheetDataItem<T extends DataItem<E> & Comparable
             /* Access the view of the range */
             theActiveView = theWorkBook.getRangeView(theRangeName);
             if (theActiveView != null) {
-                final Iterator<MetisSheetRow> myIterator = theActiveView.iterator();
+                final Iterator<MetisSheetRow> myIterator = theActiveView.rowIterator();
 
                 /* Declare the new stage */
                 theReport.setNewStage(theRangeName);

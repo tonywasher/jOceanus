@@ -17,9 +17,7 @@
 package net.sourceforge.joceanus.jmetis.service.sheet.odf;
 
 import java.util.ArrayList;
-import java.util.EnumMap;
 import java.util.List;
-import java.util.Map;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -30,7 +28,7 @@ import net.sourceforge.joceanus.jmetis.service.sheet.odf.MetisOdfNameSpace.Metis
 /**
  * Parser for Document.
  */
-public class MetisOdfParser {
+class MetisOdfParser {
     /**
      * The document.
      */
@@ -335,16 +333,23 @@ public class MetisOdfParser {
     /**
      * Is the node an element of the correct type?.
      * @param pNode the node
-     * @param pItem the item type
+     * @param pItems the item types
      * @return true/false
      */
     boolean isElementOfType(final Node pNode,
-                            final MetisOdfItem pItem) {
-        /* Access the details */
-        final String myName = pItem.getQualifiedName();
+                            final MetisOdfItem... pItems) {
+        /* Loop through the items */
+        for (MetisOdfItem myItem : pItems) {
+            /* Access the details */
+            final String myName = myItem.getQualifiedName();
 
-        /* Create the element */
-        return pNode.getNodeType() == Node.ELEMENT_NODE
-                && myName.equals(pNode.getNodeName());
+            /* Check the element */
+            if (myName.equals(pNode.getNodeName())) {
+               return true;
+            }
+        }
+
+        /* Not valid element type */
+        return false;
     }
 }

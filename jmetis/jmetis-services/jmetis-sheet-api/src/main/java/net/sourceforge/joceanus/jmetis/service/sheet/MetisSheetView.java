@@ -16,17 +16,13 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmetis.service.sheet;
 
-import java.util.Comparator;
-import java.util.Iterator;
-import java.util.NoSuchElementException;
-import java.util.Spliterator;
-import java.util.function.Consumer;
+import java.util.Collections;
+import java.util.ListIterator;
 
 /**
  * Represents a view of a range of cells.
  */
-public class MetisSheetView
-        implements Iterable<MetisSheetRow> {
+public class MetisSheetView {
     /**
      * Underlying Sheet.
      */
@@ -198,244 +194,36 @@ public class MetisSheetView
                            : pRow.getReadOnlyCellByIndex(myIndex);
     }
 
-    @Override
-    public Iterator<MetisSheetRow> iterator() {
-        return new RowIterator(this);
-    }
+    /**
+     * Obtain a cell iterator for non-empty cells in the view and in the row.
+     * @param pRow the row
+     * @return the iterator
+     */
+    public ListIterator<MetisSheetCell> cellIterator(final MetisSheetRow pRow) {
+        /* Check that the row is in the view */
+        final int myIndex = pRow.getRowIndex();
+        final int myFirstIndex = theBaseCell.getRowIndex();
+        final int myLastIndex = myFirstIndex + theNumRows - 1;
 
-    @Override
-    public void forEach(final Consumer<? super MetisSheetRow> pAction) {
-        final Iterator<MetisSheetRow> myIterator = iterator();
-        while (myIterator.hasNext()) {
-            pAction.accept(myIterator.next());
+        /* Return null iterator for row not in view */
+        if (myIndex < myFirstIndex
+                || myIndex > myLastIndex
+                || !theSheet.getName().equals(pRow.getSheet().getName())) {
+            return Collections.emptyListIterator();
         }
-    }
 
-    @Override
-    public Spliterator<MetisSheetRow> spliterator() {
-        return new RowSpliterator(this);
+        /* return the iterator */
+        return pRow.iteratorForRange(myFirstIndex, myLastIndex);
     }
 
     /**
-     * Iterator class for rows.
+     * Obtain a row iterator for non-empty rows in this view.
+     * @return the iterator
      */
-    private static class RowIterator
-            implements Iterator<MetisSheetRow> {
-        /**
-         * The data view.
-         */
-        private final MetisSheetView theView;
-
-        /**
-         * The base row.
-         */
-        private final int theBaseRow;
-
-        /**
-         * The last row.
-         */
-        private MetisSheetRow theLastRow;
-
-        /**
-         * Constructor.
-         * @param pView the underlying view.
-         */
-        protected RowIterator(final MetisSheetView pView) {
-            theLastRow = null;
-            theView = pView;
-            theBaseRow = theView.getBaseCell().getRowIndex();
-        }
-
-        @Override
-        public boolean hasNext() {
-            /* Calculate the next index */
-            int iIndex = theLastRow != null
-                                            ? theLastRow.getRowIndex() + 1
-                                            : theBaseRow;
-
-            /* Check that the row is within the view */
-            iIndex -= theBaseRow;
-            return iIndex >= 0
-                   && iIndex < theView.getRowCount();
-        }
-
-        @Override
-        public MetisSheetRow next() {
-            /* Check validity */
-            if (!hasNext()) {
-                throw new NoSuchElementException();
-            }
-
-            /* If we are a new iterator */
-            if (theLastRow == null) {
-                /* Access the first element of the view */
-                theLastRow = theView.getRowByIndex(0);
-            } else {
-                /* Return the next row */
-                theLastRow = theLastRow.getNextRow();
-            }
-
-            /* Return the next row */
-            return theLastRow;
-        }
-
-        @Override
-        public void remove() {
-            /* Throw exception */
-            throw new UnsupportedOperationException();
-        }
-
-        @Override
-        public void forEachRemaining(final Consumer<? super MetisSheetRow> pAction) {
-            while (hasNext()) {
-                pAction.accept(next());
-            }
-        }
-    }
-
-    /**
-     * Spliterator class for rows.
-     */
-    private static class RowSpliterator
-            implements Spliterator<MetisSheetRow> {
-        /**
-         * The minimum split size.
-         */
-        private static final int MIN_SPLIT = 8;
-
-        /**
-         * The data view.
-         */
-        private final MetisSheetView theView;
-
-        /**
-         * The last row.
-         */
-        private MetisSheetRow theLastRow;
-
-        /**
-         * The current index.
-         */
-        private int theCurrIndex;
-
-        /**
-         * The number of rows.
-         */
-        private int theLastIndex;
-
-        /**
-         * Constructor.
-         * @param pView the underlying view.
-         */
-        protected RowSpliterator(final MetisSheetView pView) {
-            theLastRow = null;
-            theView = pView;
-            theCurrIndex = 0;
-            theLastIndex = theView.getRowCount();
-        }
-
-        /**
-         * Constructor.
-         * @param pBase the base spliterator.
-         * @param pSplit the split point
-         */
-        private RowSpliterator(final RowSpliterator pBase,
-                               final int pSplit) {
-            theView = pBase.theView;
-            theCurrIndex = pBase.theCurrIndex + pSplit;
-            theLastIndex = pBase.theLastIndex;
-        }
-
-        /**
-         * Is there a next row in this spliterator?
-         * @return true/false
-         */
-        private boolean hasNext() {
-            /* Check that the row is within the view */
-            return theCurrIndex < theLastIndex;
-        }
-
-        /**
-         * Obtain the next element in this spliterator.
-         * @return the next element
-         */
-        private MetisSheetRow next() {
-            /* If we are a new iterator */
-            if (theLastRow == null) {
-                /* Access the first element of the view */
-                theLastRow = theView.getRowByIndex(theCurrIndex);
-            } else {
-                /* Return the next row */
-                theLastRow = theLastRow.getNextRow();
-            }
-
-            /* Increment the index */
-            theCurrIndex++;
-
-            /* Return the next row */
-            return theLastRow;
-        }
-
-        @Override
-        public Spliterator<MetisSheetRow> trySplit() {
-            /* Check the size and don't split if too small */
-            final long myRemaining = estimateSize();
-            if (myRemaining < MIN_SPLIT) {
-                return null;
-            }
-
-            /* Determine the split point */
-            final int mySplit = (int) (myRemaining >> 1);
-
-            /* Create the spliterator */
-            final RowSpliterator mySpliterator = new RowSpliterator(this, mySplit);
-
-            /* Adjust self */
-            theLastIndex = theCurrIndex + mySplit;
-
-            /* Return */
-            return mySpliterator;
-        }
-
-        @Override
-        public boolean tryAdvance(final Consumer<? super MetisSheetRow> pAction) {
-            if (hasNext()) {
-                pAction.accept(next());
-                return true;
-            }
-            return false;
-        }
-
-        @Override
-        public void forEachRemaining(final Consumer<? super MetisSheetRow> pAction) {
-            while (hasNext()) {
-                pAction.accept(next());
-            }
-        }
-
-        @Override
-        public long estimateSize() {
-            return (long) theLastIndex - theCurrIndex;
-        }
-
-        @Override
-        public long getExactSizeIfKnown() {
-            return estimateSize();
-        }
-
-        @Override
-        public int characteristics() {
-            return Spliterator.NONNULL + Spliterator.SIZED + Spliterator.SUBSIZED;
-        }
-
-        @Override
-        public boolean hasCharacteristics(final int pCharacteristics) {
-            return (pCharacteristics & characteristics()) == pCharacteristics;
-        }
-
-        @Override
-        public Comparator<? super MetisSheetRow> getComparator() {
-            throw new IllegalStateException();
-        }
+    public ListIterator<MetisSheetRow> rowIterator() {
+        /* Obtain the iterator */
+        final int myFirstIndex = theBaseCell.getRowIndex();
+        final int myLastIndex = myFirstIndex + theNumRows - 1;
+        return theSheet.iteratorForRange(myFirstIndex, myLastIndex);
     }
 }

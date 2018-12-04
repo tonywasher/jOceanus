@@ -16,11 +16,15 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmetis.service.sheet.odf;
 
+import java.util.ListIterator;
+
 import org.w3c.dom.Element;
+import org.w3c.dom.Node;
 
 import net.sourceforge.joceanus.jmetis.service.sheet.MetisSheetCellPosition;
 import net.sourceforge.joceanus.jmetis.service.sheet.MetisSheetCellRange;
 import net.sourceforge.joceanus.jmetis.service.sheet.MetisSheetCellStyleType;
+import net.sourceforge.joceanus.jmetis.service.sheet.MetisSheetRow;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.ui.TethysDataFormatter;
 
@@ -108,8 +112,11 @@ class MetisOdfSheetCore {
         theName = theParser.getAttribute(pElement, MetisOdfTableItem.NAME);
 
         /* Create the rows and the columns */
-        theColumns = new MetisOdfColumnStore(this, pElement);
-        theRows = new MetisOdfRowStore(this, theColumns.getColumnCount(), pElement);
+        theColumns = new MetisOdfColumnStore(this);
+        theRows = new MetisOdfRowStore(this);
+
+        /* Process the Sheet Node */
+        processSheetNode(pElement);
     }
 
     /**
@@ -177,6 +184,34 @@ class MetisOdfSheetCore {
     }
 
     /**
+     * Process Sheet Node.
+     * @param pNode the node
+     * @throws OceanusException on error
+     */
+    private void processSheetNode(final Node pNode) throws OceanusException {
+        /* Loop through the children of the node */
+        for (Node myNode = pNode.getFirstChild(); myNode != null; myNode = myNode.getNextSibling()) {
+            /* If this is a row element */
+            if (theParser.isElementOfType(myNode, MetisOdfTableItem.ROW)) {
+                /* Add row to list */
+                theRows.processRow((Element) myNode);
+
+                /* else if this is a column element */
+            } else if (theParser.isElementOfType(myNode, MetisOdfTableItem.COLUMN)) {
+               /* Add column to list */
+               theColumns.processColumn((Element) myNode);
+
+               /* If this is a node that contains groups */
+            } else if (theParser.isElementOfType(myNode, MetisOdfTableItem.ROWGROUP, MetisOdfTableItem.COLUMNGROUP,
+                    MetisOdfTableItem.HDRROWS, MetisOdfTableItem.HDRCOLUMNS,
+                    MetisOdfTableItem.ROWS, MetisOdfTableItem.COLUMNS)) {
+                /* Process node */
+                processSheetNode(myNode);
+            }
+        }
+    }
+
+    /**
      * Is the sheet hidden?
      * @return true/false
      */
@@ -227,6 +262,19 @@ class MetisOdfSheetCore {
     MetisOdfRow getReadOnlyRowByIndex(final MetisOdfSheet pSheet,
                                       final int pRowIndex) {
         return theRows.getReadOnlyRowByIndex(pSheet, pRowIndex);
+    }
+
+    /**
+     * Obtain an iterator of non-null rows for the range.
+     * @param pSheet the sheet for the rows
+     * @param pFirstRow the index of the first row.
+     * @param pLastRow the index of the last row.
+     * @return the iterator
+     */
+    ListIterator<MetisSheetRow> iteratorForRange(final MetisOdfSheet pSheet,
+                                                 final int pFirstRow,
+                                                 final int pLastRow) {
+        return theRows.iteratorForRange(pSheet, pFirstRow, pLastRow);
     }
 
     /**

@@ -16,6 +16,10 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmetis.service.sheet.xssf;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.ListIterator;
+
 import org.apache.poi.ss.SpreadsheetVersion;
 import org.apache.poi.ss.usermodel.CellValue;
 import org.apache.poi.ss.util.AreaReference;
@@ -28,6 +32,7 @@ import org.apache.poi.xssf.usermodel.XSSFSheet;
 import net.sourceforge.joceanus.jmetis.service.sheet.MetisSheetCellPosition;
 import net.sourceforge.joceanus.jmetis.service.sheet.MetisSheetCellStyleType;
 import net.sourceforge.joceanus.jmetis.service.sheet.MetisSheetFormats;
+import net.sourceforge.joceanus.jmetis.service.sheet.MetisSheetRow;
 import net.sourceforge.joceanus.jmetis.service.sheet.MetisSheetSheet;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.ui.TethysDataFormatter;
@@ -122,6 +127,27 @@ public class MetisExcelXSSFSheet
         return myExcelRow == null
                                   ? null
                                   : new MetisExcelXSSFRow(this, myExcelRow, pRowIndex, true);
+    }
+
+    @Override
+    protected ListIterator<MetisSheetRow> iteratorForRange(final int pFirstIndex,
+                                                           final int pLastIndex) {
+        /* Determine bounds for search */
+        final int myLower = Math.max(pFirstIndex, theExcelSheet.getFirstRowNum());
+        final int myUpper = Math.min(pLastIndex, theExcelSheet.getLastRowNum());
+
+        /* Create a list of cells */
+        final List<MetisSheetRow> myList = new ArrayList<>();
+        for (int iIndex = myLower; iIndex <= myUpper; iIndex++) {
+            /* Only return a row if a value is present */
+            final XSSFRow myExcelRow = theExcelSheet.getRow(iIndex);
+            if (myExcelRow != null) {
+                myList.add(new MetisExcelXSSFRow(this, myExcelRow, iIndex, true));
+            }
+        }
+
+        /* Return the iterator */
+        return myList.listIterator();
     }
 
     @Override

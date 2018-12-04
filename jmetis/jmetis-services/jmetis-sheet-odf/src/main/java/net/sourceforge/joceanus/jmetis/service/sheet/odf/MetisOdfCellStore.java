@@ -16,12 +16,16 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmetis.service.sheet.odf;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
+import java.util.ListIterator;
 import java.util.Objects;
 
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
+import net.sourceforge.joceanus.jmetis.service.sheet.MetisSheetCell;
 import net.sourceforge.joceanus.jmetis.service.sheet.MetisSheetCellAddress;
 import net.sourceforge.joceanus.jmetis.service.sheet.MetisSheetCellPosition;
 import net.sourceforge.joceanus.jmetis.service.sheet.MetisSheetException;
@@ -39,6 +43,11 @@ import net.sourceforge.joceanus.jtethys.decimal.TethysUnits;
  * Hold cells as a list of values.
  */
 class MetisOdfCellStore {
+    /**
+     * Cell Expansion.
+     */
+    private static final int CELL_EXPAND = 20;
+
     /**
      * The Null Element.
      */
@@ -117,7 +126,7 @@ class MetisOdfCellStore {
         isReadOnly = true;
 
         /* Allocate the element array */
-        theElements = new MetisCellElement[0];
+        theElements = new MetisCellElement[CELL_EXPAND];
 
         /* Process the children of the row */
         processRowChildren(pElement);
@@ -144,6 +153,35 @@ class MetisOdfCellStore {
         theValues = new Object[0];
         theAlternates = new Boolean[0];
         theValidations = new String[0];
+    }
+
+    /**
+     * Obtain an iterator of non-null cells for the range.
+     * @param pRow the row for the cell
+     * @param pFirstCell the index of the first cell.
+     * @param pLastCell the index of the last cell.
+     * @return the iterator
+     */
+    ListIterator<MetisSheetCell> iteratorForRange(final MetisOdfRow pRow,
+                                                  final int pFirstCell,
+                                                  final int pLastCell) {
+        /* Determine upper bound for search */
+        final int myBound = Math.min(pLastCell, theNumCells);
+
+        /* Create a list of cells */
+        final List<MetisSheetCell> myList = new ArrayList<>();
+        for (int iIndex = pFirstCell; iIndex <= myBound; iIndex++) {
+            /* Only return a cell if a value is present */
+            final Object myValue = isReadOnly
+                                   ? getElementAtIndex(iIndex)
+                                   : getValueAtIndex(iIndex);
+            if (myValue != null) {
+                myList.add(new MetisOdfCell(this, pRow, iIndex, true));
+            }
+        }
+
+        /* Return the iterator */
+        return myList.listIterator();
     }
 
     /**
@@ -496,8 +534,8 @@ class MetisOdfCellStore {
      * @param pValidation the validation
      * @param pIndex the index
      */
-    void setValidationAtIndex(final String pValidation,
-                              final int pIndex) {
+    private void setValidationAtIndex(final String pValidation,
+                                      final int pIndex) {
         /* Check the index */
         ensureIndex(pIndex);
 
@@ -537,7 +575,9 @@ class MetisOdfCellStore {
 
         /* Expand the elements array if required */
         if (pIndex >= theElements.length) {
-            theElements = Arrays.copyOf(theElements, pIndex + 1);
+            /* Determine the expansion length */
+            final int myLen = (((pIndex + 1) / CELL_EXPAND) + 1)  * CELL_EXPAND;
+            theElements = Arrays.copyOf(theElements, myLen);
         }
 
         /* Set the element */

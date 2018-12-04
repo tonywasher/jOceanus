@@ -16,6 +16,8 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmetis.service.sheet;
 
+import java.util.ListIterator;
+
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
@@ -176,4 +178,13 @@ public abstract class MetisSheetSheet {
      * @param pFreezeCell the cell to freeze at
      */
     public abstract void createFreezePane(MetisSheetCellPosition pFreezeCell);
+
+    /**
+     * Obtain an iterator of non-null rows for the view.
+     * @param pFirstIndex the first row in the view
+     * @param pLastIndex the last row in the view
+     * @return the iterator
+     */
+    protected abstract ListIterator<MetisSheetRow> iteratorForRange(int pFirstIndex,
+                                                                    int pLastIndex);
 }

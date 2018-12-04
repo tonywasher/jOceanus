@@ -16,13 +16,17 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmetis.service.sheet.odf;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
+import java.util.ListIterator;
 import java.util.Objects;
 
 import org.w3c.dom.Element;
-import org.w3c.dom.Node;
 
+import net.sourceforge.joceanus.jmetis.service.sheet.MetisSheetCell;
 import net.sourceforge.joceanus.jmetis.service.sheet.MetisSheetCellPosition;
+import net.sourceforge.joceanus.jmetis.service.sheet.MetisSheetRow;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.ui.TethysDataFormatter;
 
@@ -30,6 +34,11 @@ import net.sourceforge.joceanus.jtethys.ui.TethysDataFormatter;
  * Row store.
  */
 class MetisOdfRowStore {
+    /**
+     * Row Expansion.
+     */
+    private static final int ROW_EXPAND = 100;
+
     /**
      * Underlying sheet.
      */
@@ -73,24 +82,16 @@ class MetisOdfRowStore {
     /**
      * ReadOnly Constructor.
      * @param pSheet the owning sheet.
-     * @param pNumCols the number of columns
-     * @param pElement the table element
      * @throws OceanusException on error
      */
-    MetisOdfRowStore(final MetisOdfSheetCore pSheet,
-                     final int pNumCols,
-                     final Element pElement) throws OceanusException {
+    MetisOdfRowStore(final MetisOdfSheetCore pSheet) throws OceanusException {
         /* Store details */
         theSheet = pSheet;
         theParser = theSheet.getParser();
         theFormatter = theSheet.getFormatter();
-        theHiddens = new Boolean[0];
-        theNumCols = pNumCols;
-        theRows = new MetisOdfCellStore[0];
+        theHiddens = new Boolean[ROW_EXPAND];
+        theRows = new MetisOdfCellStore[ROW_EXPAND];
         isReadOnly = true;
-
-        /* Process the row nodes */
-        processRowNode(pElement);
     }
 
     /**
@@ -138,34 +139,11 @@ class MetisOdfRowStore {
     }
 
     /**
-     * Process Column Node.
-     * @param pNode the node
-     * @throws OceanusException on error
-     */
-    private void processRowNode(final Node pNode) throws OceanusException {
-        /* Loop through the children of the node */
-        for (Node myNode = pNode.getFirstChild(); myNode != null; myNode = myNode.getNextSibling()) {
-            /* If this is a column element */
-            if (theParser.isElementOfType(myNode, MetisOdfTableItem.ROW)) {
-                /* Add column to list */
-                processRow((Element) myNode);
-
-                /* If this is a node that contains columns */
-            } else if (theParser.isElementOfType(myNode, MetisOdfTableItem.ROWGROUP)
-                    || theParser.isElementOfType(myNode, MetisOdfTableItem.HDRROWS)
-                    || theParser.isElementOfType(myNode, MetisOdfTableItem.ROWS)) {
-                /* Process nodes */
-                processRowNode(myNode);
-            }
-        }
-    }
-
-    /**
      * Process a row Element.
      * @param pRow the row to process
      * @throws OceanusException on error
      */
-    private void processRow(final Element pRow) throws OceanusException {
+    void processRow(final Element pRow) throws OceanusException {
         /* Determine the number of repeated columns */
         final String myRepeatStr = theParser.getAttribute(pRow, MetisOdfTableItem.ROWREPEAT);
         int myRepeat = myRepeatStr == null
@@ -179,26 +157,27 @@ class MetisOdfRowStore {
         /* Add the additional rows */
         addAdditionalRows(myRepeat);
 
-        /* If we have a value */
-        if (myCells != null || myHidden != null) {
-            /* Loop through the cells in reverse order */
-            for (int iIndex = theNumRows - 1;
-                 myRepeat > 0; iIndex--, myRepeat--) {
-                /* Set the values */
-                theHiddens[iIndex] = myHidden;
-                theRows[iIndex] = myCells;
-            }
+        /* Loop through the cells in reverse order */
+        for (int iIndex = theNumRows - 1;
+             myRepeat > 0; iIndex--, myRepeat--) {
+            /* Set the values */
+            theHiddens[iIndex] = myHidden;
+            theRows[iIndex] = myCells;
         }
-    }
+     }
 
     /**
      * Add additional rows to table.
      * @param pXtraRows the number of rows to add.
      */
     private void addAdditionalRows(final int pXtraRows) {
+        /* Adjust the # of rows */
         theNumRows += pXtraRows;
-        theHiddens = Arrays.copyOf(theHiddens, theNumRows);
-        theRows = Arrays.copyOf(theRows, theNumRows);
+
+        /* Determine the expansion length */
+        final int myLen = (((theNumRows + 1) / ROW_EXPAND) + 1)  * ROW_EXPAND;
+        theHiddens = Arrays.copyOf(theHiddens, myLen);
+        theRows = Arrays.copyOf(theRows, myLen);
     }
 
     /**
@@ -227,8 +206,56 @@ class MetisOdfRowStore {
             return null;
         }
 
+        /* If we have no cells, just return null */
+        final MetisOdfCellStore myCells = theRows[pRowIndex];
+        if (myCells == null) {
+            return null;
+        }
+
         /* Just return the row */
         return new MetisOdfRow(this, pSheet, pRowIndex, true);
+    }
+
+    /**
+     * Obtain an iterator of non-null rows for the range.
+     * @param pSheet the sheet for the rows
+     * @param pFirstRow the index of the first row.
+     * @param pLastRow the index of the last row.
+     * @return the iterator
+     */
+    ListIterator<MetisSheetRow> iteratorForRange(final MetisOdfSheet pSheet,
+                                                 final int pFirstRow,
+                                                 final int pLastRow) {
+        /* Determine upper bound for search */
+        final int myBound = Math.min(pLastRow, theNumRows);
+
+        /* Create a list of cells */
+        final List<MetisSheetRow> myList = new ArrayList<>();
+        for (int iIndex = pFirstRow; iIndex <= myBound; iIndex++) {
+            /* Only return a row if a value is present */
+            final MetisOdfCellStore myCells = theRows[iIndex];
+            if (myCells != null) {
+                myList.add(new MetisOdfRow(this, pSheet, iIndex, true));
+            }
+        }
+
+        /* Return the iterator */
+        return myList.listIterator();
+    }
+
+    /**
+     * Obtain an iterator of non-null cells for the range.
+     * @param pRow the row for the cell
+     * @param pFirstIndex the index of the first cell.
+     * @param pLastIndex the index of the last cell.
+     * @return the iterator
+     */
+    ListIterator<MetisSheetCell> iteratorForRange(final MetisOdfRow pRow,
+                                                  final int pFirstIndex,
+                                                  final int pLastIndex) {
+        /* Access cells */
+        final MetisOdfCellStore myCells = theRows[pRow.getRowIndex()];
+        return myCells.iteratorForRange(pRow, pFirstIndex, pLastIndex);
     }
 
     /**
@@ -288,7 +315,7 @@ class MetisOdfRowStore {
      */
     MetisOdfCell getMutableCellByIndex(final MetisOdfRow pRow,
                                        final int pCellIndex) {
-        /* Handle index out of range */
+        /* Access cells */
         final MetisOdfCellStore myCells = theRows[pRow.getRowIndex()];
 
         /* Just return the cell */

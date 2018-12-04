@@ -20,7 +20,6 @@ import java.util.Arrays;
 import java.util.Objects;
 
 import org.w3c.dom.Element;
-import org.w3c.dom.Node;
 
 import net.sourceforge.joceanus.jmetis.service.sheet.MetisSheetCellStyleType;
 
@@ -28,6 +27,11 @@ import net.sourceforge.joceanus.jmetis.service.sheet.MetisSheetCellStyleType;
  * Hold columns as a list of values.
  */
 class MetisOdfColumnStore {
+    /**
+     * Column Expansion.
+     */
+    private static final int COL_EXPAND = 20;
+
     /**
      * Underlying sheet.
      */
@@ -56,18 +60,13 @@ class MetisOdfColumnStore {
     /**
      * ReadOnly Constructor.
      * @param pSheet the owning sheet.
-     * @param pElement the table element
      */
-    MetisOdfColumnStore(final MetisOdfSheetCore pSheet,
-                        final Element pElement) {
+    MetisOdfColumnStore(final MetisOdfSheetCore pSheet) {
         /* Store details */
         theSheet = pSheet;
         theParser = theSheet.getParser();
-        theHiddens = new Boolean[0];
-        theStyles = new MetisSheetCellStyleType[0];
-
-        /* Process the column nodes */
-        processColumnNode(pElement);
+        theHiddens = new Boolean[COL_EXPAND];
+        theStyles = new MetisSheetCellStyleType[COL_EXPAND];
     }
 
     /**
@@ -102,32 +101,10 @@ class MetisOdfColumnStore {
     }
 
     /**
-     * Process Column Node.
-     * @param pNode the node
-     */
-    private void processColumnNode(final Node pNode) {
-        /* Loop through the children of the node */
-        for (Node myNode = pNode.getFirstChild(); myNode != null; myNode = myNode.getNextSibling()) {
-            /* If this is a column element */
-            if (theParser.isElementOfType(myNode, MetisOdfTableItem.COLUMN)) {
-                /* Add column to list */
-                processColumn((Element) myNode);
-
-                /* If this is a node that contains columns */
-            } else if (theParser.isElementOfType(myNode, MetisOdfTableItem.COLUMNGROUP)
-                    || theParser.isElementOfType(myNode, MetisOdfTableItem.HDRCOLUMNS)
-                    || theParser.isElementOfType(myNode, MetisOdfTableItem.COLUMNS)) {
-                /* Process nodes */
-                processColumnNode(myNode);
-            }
-        }
-    }
-
-    /**
      * Process a column Element.
      * @param pColumn the column to process
      */
-    private void processColumn(final Element pColumn) {
+    void processColumn(final Element pColumn) {
         /* Determine the number of repeated columns */
         final String myRepeatStr = theParser.getAttribute(pColumn, MetisOdfTableItem.COLUMNREPEAT);
         int myRepeat = myRepeatStr == null
@@ -156,9 +133,13 @@ class MetisOdfColumnStore {
      * @param pXtraCols the number of columns to add.
      */
     private void addAdditionalCols(final int pXtraCols) {
+        /* Adjust the # of columns */
         theNumCols += pXtraCols;
-        theHiddens = Arrays.copyOf(theHiddens, theNumCols);
-        theStyles = Arrays.copyOf(theStyles, theNumCols);
+
+        /* Determine the expansion length */
+        final int myLen = (((theNumCols + 1) / COL_EXPAND) + 1)  * COL_EXPAND;
+        theHiddens = Arrays.copyOf(theHiddens, myLen);
+        theStyles = Arrays.copyOf(theStyles, myLen);
         theSheet.addAdditionalCols(pXtraCols);
     }
 

@@ -16,11 +16,16 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmetis.service.sheet.xssf;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.ListIterator;
+
 import org.apache.poi.ss.usermodel.CellValue;
 import org.apache.poi.ss.usermodel.Row.MissingCellPolicy;
 import org.apache.poi.xssf.usermodel.XSSFCell;
 import org.apache.poi.xssf.usermodel.XSSFRow;
 
+import net.sourceforge.joceanus.jmetis.service.sheet.MetisSheetCell;
 import net.sourceforge.joceanus.jmetis.service.sheet.MetisSheetRow;
 import net.sourceforge.joceanus.jtethys.ui.TethysDataFormatter;
 
@@ -113,6 +118,32 @@ public class MetisExcelXSSFRow
         return myExcelCell != null
                                    ? new MetisExcelXSSFCell(this, myExcelCell, pIndex, true)
                                    : null;
+    }
+
+    /**
+     * Obtain an iterator of non-null cells for the range.
+     * @param pFirstCell the index of the first cell.
+     * @param pLastCell the index of the last cell.
+     * @return the column
+     */
+    protected ListIterator<MetisSheetCell> iteratorForRange(final int pFirstCell,
+                                                            final int pLastCell) {
+        /* Determine bounds for search */
+        final int myLower = Math.max(pFirstCell, theExcelRow.getFirstCellNum());
+        final int myUpper = Math.min(pLastCell, theExcelRow.getLastCellNum());
+
+        /* Create a list of cells */
+        final List<MetisSheetCell> myList = new ArrayList<>();
+        for (int iIndex = myLower; iIndex <= myUpper; iIndex++) {
+            /* Only return a cell if a value is present */
+            final XSSFCell myExcelCell = theExcelRow.getCell(iIndex, MissingCellPolicy.RETURN_BLANK_AS_NULL);
+            if (myExcelCell != null) {
+                myList.add(new MetisExcelXSSFCell(this, myExcelCell, iIndex, true));
+            }
+        }
+
+        /* Return the iterator */
+        return myList.listIterator();
     }
 
     @Override

@@ -16,6 +16,9 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmetis.service.sheet.odf;
 
+import java.util.ListIterator;
+
+import net.sourceforge.joceanus.jmetis.service.sheet.MetisSheetCell;
 import net.sourceforge.joceanus.jmetis.service.sheet.MetisSheetRow;
 
 /**
@@ -57,6 +60,12 @@ public class MetisOdfRow
     @Override
     public MetisOdfRow getPreviousRow() {
         return theStore.getReadOnlyRowByIndex(getSheet(), getRowIndex() - 1);
+    }
+
+    @Override
+    protected ListIterator<MetisSheetCell> iteratorForRange(final int pFirstIndex,
+                                                            final int pLastIndex) {
+        return theStore.iteratorForRange(this, pFirstIndex, pLastIndex);
     }
 
     @Override

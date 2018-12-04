@@ -138,12 +138,23 @@ public class SheetSecurityPrice
             final int myRows = myView.getRowCount();
             final int myCols = myView.getColumnCount();
             final int myTotal = (myRows - 1) * (myCols - 1);
+            final String[] mySecurities = new String[myCols];
 
             /* Declare the number of steps */
             pReport.setNumSteps(myTotal);
 
             /* Loop through the rows of the table */
             final MetisSheetRow myActRow = myView.getRowByIndex(0);
+            /* Load the securities */
+            for (int j = 1; j < myCols; j++) {
+                /* Access account */
+                final MetisSheetCell myAct = myView.getRowCellByIndex(myActRow, j);
+                if (myAct != null) {
+                    mySecurities[j] = myAct.getString();
+                }
+            }
+
+            /* Loop through the rows of the table */
             for (int i = myRows - 1; i > 0; i--) {
                 /* Access the cell by reference */
                 final MetisSheetRow myRow = myView.getRowByIndex(i);
@@ -160,24 +171,14 @@ public class SheetSecurityPrice
 
                 /* Loop through the columns of the table */
                 for (int j = 1; j < myCols; j++) {
-                    /* Access account */
-                    myCell = myView.getRowCellByIndex(myActRow, j);
-                    if (myCell == null) {
-                        continue;
-                    }
-                    final String mySecurity = myCell.getString();
-
                     /* Handle price which may be missing */
                     myCell = myView.getRowCellByIndex(myRow, j);
                     if (myCell != null) {
-                        /* Access the formatted cell */
-                        final String myPrice = myCell.getString();
-
                         /* Build data values */
                         final DataValues<MoneyWiseDataType> myValues = new DataValues<>(SecurityPrice.OBJECT_NAME);
-                        myValues.addValue(SecurityPrice.FIELD_SECURITY, mySecurity);
+                        myValues.addValue(SecurityPrice.FIELD_SECURITY, mySecurities[j]);
                         myValues.addValue(SecurityPrice.FIELD_DATE, myDate);
-                        myValues.addValue(SecurityPrice.FIELD_PRICE, myPrice);
+                        myValues.addValue(SecurityPrice.FIELD_PRICE, myCell.getString());
 
                         /* Add the value into the list */
                         myList.addValuesItem(myValues);

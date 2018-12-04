@@ -16,6 +16,8 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmetis.service.sheet;
 
+import java.util.ListIterator;
+
 /**
  * Class representing a row within a sheet or a view.
  */
@@ -166,4 +168,13 @@ public abstract class MetisSheetRow {
      * @return the cell
      */
     protected abstract MetisSheetCell getWriteableCellByIndex(int pIndex);
+
+    /**
+     * Obtain an iterator of non-null cells for the row in the view.
+     * @param pFirstIndex the first cell in the view
+     * @param pLastIndex the last cell in the view
+     * @return the iterator
+     */
+    protected abstract ListIterator<MetisSheetCell> iteratorForRange(int pFirstIndex,
+                                                                     int pLastIndex);
 }
