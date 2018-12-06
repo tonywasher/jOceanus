@@ -33,6 +33,7 @@ import net.sourceforge.joceanus.jgordianknot.crypto.GordianKnuthObfuscater;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianMac;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianMacSpec;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianParameters;
+import net.sourceforge.joceanus.jgordianknot.crypto.GordianSignatureType;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianStreamKeyType;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianSymKeySpec;
 import net.sourceforge.joceanus.jgordianknot.manager.GordianHashManager;
@@ -82,6 +83,11 @@ public class GordianTestSuite {
      * The keyType to test.
      */
     private String theKeyType;
+
+    /**
+     * The signatureType to test.
+     */
+    private String theSigType;
 
     /**
      * Do we test allSpecs.
@@ -141,6 +147,10 @@ public class GordianTestSuite {
                 /* if this is the key */
             } else if (myArg.startsWith("--keyType=")) {
                 theKeyType=myArg.substring("--keyType=".length());
+
+                /* if this is the signature */
+            } else if (myArg.startsWith("--sigType=")) {
+                theSigType=myArg.substring("--sigType=".length());
 
                 /* If this is allSpecs */
             } else if ("--allSpecs".equals(myArg)) {
@@ -212,12 +222,20 @@ public class GordianTestSuite {
             }
         }
 
+        /* Determine the signatureType */
+        GordianSignatureType mySigType = null;
+        for (final GordianSignatureType myType : GordianSignatureType.values()) {
+            if (myType.toString().equalsIgnoreCase(theSigType)) {
+                mySigType = myType;
+            }
+        }
+
         /* Test from Jca to Bc */
-        GordianTestAsymmetric myTest = new GordianTestAsymmetric(myJCA,  myBC, myKeyType, allSpecs);
+        GordianTestAsymmetric myTest = new GordianTestAsymmetric(myJCA,  myBC, myKeyType, mySigType, allSpecs);
         myTest.checkKeyPairs();
 
         /* Test from Jca to Bc */
-        myTest = new GordianTestAsymmetric(myBC,  myJCA, myKeyType, allSpecs);
+        myTest = new GordianTestAsymmetric(myBC,  myJCA, myKeyType, mySigType, allSpecs);
         myTest.checkKeyPairs();
    }
 

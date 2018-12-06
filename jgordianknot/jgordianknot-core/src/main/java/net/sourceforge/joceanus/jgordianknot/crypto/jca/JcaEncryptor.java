@@ -170,10 +170,16 @@ public final class JcaEncryptor {
                     myInLen -= myInBlockLength;
                 }
 
-                /* Return the data */
-                return myOutOff == myOutput.length
-                       ? myOutput
-                       : Arrays.copyOf(myOutput, myOutOff);
+                /* Return full buffer if possible */
+                if (myOutOff == myOutput.length) {
+                    return myOutput;
+                }
+
+                /* Cut down buffer */
+                final byte[] myReturn = Arrays.copyOf(myOutput, myOutOff);
+                Arrays.fill(myOutput, (byte) 0);
+                return myReturn;
+
             } catch (IllegalBlockSizeException
                     | BadPaddingException e) {
                 throw new GordianCryptoException("Failed to process data", e);

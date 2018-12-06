@@ -204,7 +204,7 @@ public class EllipticEncryptor {
             myInLen -= myInBlockLength;
         }
 
-        /* Return the data */
+        /* Return full buffer if possible */
         return myOutOff == myOutput.length
                ? myOutput
                : Arrays.copyOf(myOutput, myOutOff);
@@ -362,10 +362,15 @@ public class EllipticEncryptor {
             myInLen -= myInBlockLength;
         }
 
-        /* Return the data */
-        return myOutOff == myOutput.length
-               ? myOutput
-               : Arrays.copyOf(myOutput, myOutOff);
+        /* Return full buffer if possible */
+        if (myOutOff == myOutput.length) {
+            return myOutput;
+        }
+
+        /* Cut down buffer */
+        final byte[] myReturn = Arrays.copyOf(myOutput, myOutOff);
+        Arrays.fill(myOutput, (byte) 0);
+        return myReturn;
     }
 
     /**

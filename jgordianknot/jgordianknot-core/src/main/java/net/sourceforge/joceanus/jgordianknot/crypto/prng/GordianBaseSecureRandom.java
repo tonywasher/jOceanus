@@ -117,6 +117,11 @@ public class GordianBaseSecureRandom
         return theGenerator.getAlgorithm();
     }
 
+    @Override
+    public String toString() {
+        return getAlgorithm();
+    }
+
     /**
      * Force a reSeed of the DRBG.
      * @param pXtraInput optional additional input

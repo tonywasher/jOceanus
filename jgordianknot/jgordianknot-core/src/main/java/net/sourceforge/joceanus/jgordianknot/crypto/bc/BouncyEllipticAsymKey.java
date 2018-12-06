@@ -889,11 +889,11 @@ public final class BouncyEllipticAsymKey {
         @Override
         public byte[] encrypt(final byte[] pBytes) throws OceanusException {
             try {
-            /* Check that we are in encryption mode */
-            checkMode(GordianEncryptMode.ENCRYPT);
+                /* Check that we are in encryption mode */
+                checkMode(GordianEncryptMode.ENCRYPT);
 
-            /* Encrypt the message */
-            return theEncryptor.encrypt(pBytes);
+                /* Encrypt the message */
+                return theEncryptor.encrypt(pBytes);
             } catch (InvalidCipherTextException e) {
                 throw new GordianCryptoException("Failed to process data", e);
             }
@@ -902,11 +902,11 @@ public final class BouncyEllipticAsymKey {
         @Override
         public byte[] decrypt(final byte[] pBytes) throws OceanusException {
             try {
-            /* Check that we are in decryption mode */
-            checkMode(GordianEncryptMode.DECRYPT);
+                /* Check that we are in decryption mode */
+                checkMode(GordianEncryptMode.DECRYPT);
 
-            /* Decrypt the message */
-            return theEncryptor.decrypt(pBytes);
+                /* Decrypt the message */
+                return theEncryptor.decrypt(pBytes);
             } catch (InvalidCipherTextException e) {
                 throw new GordianCryptoException("Failed to process data", e);
             }

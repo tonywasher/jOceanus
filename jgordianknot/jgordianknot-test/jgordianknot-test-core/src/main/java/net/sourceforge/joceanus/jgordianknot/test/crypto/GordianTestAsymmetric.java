@@ -39,6 +39,7 @@ import net.sourceforge.joceanus.jgordianknot.crypto.GordianKeySet;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianSignatureAlgId;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianSignatureSpec;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianSignature;
+import net.sourceforge.joceanus.jgordianknot.crypto.GordianSignatureType;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
@@ -76,6 +77,11 @@ public final class GordianTestAsymmetric {
     private final GordianAsymKeyType theKeyType;
 
     /**
+     * The single signatureType to test.
+     */
+    private final GordianSignatureType theSigType;
+
+    /**
      * Do we process all specs.
      */
     private final boolean allSpecs;
@@ -90,16 +96,19 @@ public final class GordianTestAsymmetric {
      * @param pSource the source factory
      * @param pTarget the target factory
      * @param pSingleType the type of key that is to be tested (or null for all)
+     * @param pSigType the type of signature that is to be tested (or null for all)
      * @param pAllSpecs test all specs for each keyType
      */
     GordianTestAsymmetric(final GordianFactory pSource,
                           final GordianFactory pTarget,
                           final GordianAsymKeyType pSingleType,
+                          final GordianSignatureType pSigType,
                           final boolean pAllSpecs) {
         /* Store parameters */
         theSource = pSource;
         theTarget = pTarget;
         theKeyType = pSingleType;
+        theSigType = pSigType;
         allSpecs = pAllSpecs;
 
         /* Build signatire table */
@@ -173,11 +182,14 @@ public final class GordianTestAsymmetric {
         /* check signatures */
         checkSignatures(myPair, myMirror, myTarget);
 
-        /* check agreements */
-        checkAgreements(myPair, myTarget);
+        /* Don't do further tests if we have a signature restriction */
+        if (theSigType == null) {
+            /* check agreements */
+            checkAgreements(myPair, myTarget);
 
-        /* check encryptors */
-        checkEncryptors(myPair, myTarget);
+            /* check encryptors */
+            checkEncryptors(myPair, myTarget);
+        }
     }
 
     /**
@@ -191,8 +203,13 @@ public final class GordianTestAsymmetric {
                                  final GordianKeyPair pMirrorPair,
                                  final GordianKeyPair pTgtPair) throws OceanusException {
         /* For each possible signature */
-        final GordianAsymKeyType myType = pSrcPair.getKeySpec().getKeyType();
         for (GordianSignatureSpec mySign : GordianSignatureSpec.listPossibleSignatures(pSrcPair)) {
+            /* If we are testing a single sigType, make sure this is the right one */
+            if (theSigType != null
+                    && !mySign.getSignatureType().equals(theSigType)) {
+                continue;
+            }
+
             /* If the signature is supported */
             if (theSource.validSignatureSpecForKeyPair(pSrcPair, mySign)) {
                 /* Check it */

@@ -29,7 +29,7 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
 /**
  * MultiKey Cipher.
  */
-public final class GordianMultiCipher {
+final class GordianMultiCipher {
     /**
      * The default buffer size.
      */
@@ -79,7 +79,7 @@ public final class GordianMultiCipher {
      * Constructor.
      * @param pKeySet the keySet
      */
-    protected GordianMultiCipher(final GordianKeySet pKeySet) {
+    GordianMultiCipher(final GordianKeySet pKeySet) {
         /* Access the factory and determine number of steps */
         theKeySet = pKeySet;
         theFactory = pKeySet.getFactory();
@@ -133,10 +133,15 @@ public final class GordianMultiCipher {
         /* Process the data */
         final int myOut = update(pBytes, pOffset, pLength, myOutput, 0);
 
-        /* Return full or partial buffer */
-        return myOut == myLen
-                              ? myOutput
-                              : Arrays.copyOf(myOutput, myOut);
+        /* Return full buffer if possible */
+        if (myOut == myLen) {
+            return myOutput;
+        }
+
+        /* Cut down buffer */
+        final byte[] myReturn = Arrays.copyOf(myOutput, myOut);
+        Arrays.fill(myOutput, (byte) 0);
+        return myReturn;
     }
 
     /**
@@ -207,12 +212,14 @@ public final class GordianMultiCipher {
 
         /* Check bounds of output array */
         if (pOutput.length < pOutOffset + myDataLen) {
+            Arrays.fill(mySource, (byte) 0);
             throw new GordianDataException("Buffer too short");
         }
 
         /* Copy data to final buffer */
         if (myDataLen > 0) {
             System.arraycopy(mySource, 0, pOutput, pOutOffset, myDataLen);
+            Arrays.fill(mySource, (byte) 0);
         }
 
         /* Return the number of bytes that were output */
@@ -232,10 +239,15 @@ public final class GordianMultiCipher {
         /* Process the data */
         final int myOut = finish(myOutput, 0);
 
-        /* Return full or partial buffer */
-        return myOut == myLen
-                              ? myOutput
-                              : Arrays.copyOf(myOutput, myOut);
+        /* Return full buffer if possible */
+        if (myOut == myLen) {
+            return myOutput;
+        }
+
+        /* Cut down buffer */
+        final byte[] myReturn = Arrays.copyOf(myOutput, myOut);
+        Arrays.fill(myOutput, (byte) 0);
+        return myReturn;
     }
 
     /**
@@ -266,10 +278,15 @@ public final class GordianMultiCipher {
         /* Process the data */
         final int myOut = finish(pBytes, pOffset, pLength, myOutput, 0);
 
-        /* Return full or partial buffer */
-        return myOut == myLen
-                              ? myOutput
-                              : Arrays.copyOf(myOutput, myOut);
+        /* Return full buffer if possible */
+        if (myOut == myLen) {
+            return myOutput;
+        }
+
+        /* Cut down buffer */
+        final byte[] myReturn = Arrays.copyOf(myOutput, myOut);
+        Arrays.fill(myOutput, (byte) 0);
+        return myReturn;
     }
 
     /**
@@ -353,12 +370,14 @@ public final class GordianMultiCipher {
 
         /* Check bounds of output array */
         if (pOutput.length < pOutOffset + myDataLen) {
+            Arrays.fill(mySource, (byte) 0);
             throw new GordianDataException("Buffer too short");
         }
 
         /* Copy data to final buffer */
         if (myDataLen > 0) {
             System.arraycopy(mySource, 0, pOutput, pOutOffset, myDataLen);
+            Arrays.fill(mySource, (byte) 0);
         }
 
         /* Return the number of bytes that were output */
