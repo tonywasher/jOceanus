@@ -101,10 +101,10 @@ public final class JcaCipher<T>
     private int getIVLength() {
         final T myType = getKeyType();
         if (myType instanceof GordianStreamKeyType) {
-            return ((GordianStreamKeyType) myType).getIVLength();
+            return ((GordianStreamKeyType) myType).getIVLength(isRestricted());
         }
         return needsIV()
-                         ? getCipherSpec().getIVLength()
+                         ? getCipherSpec().getIVLength(false)
                          : 0;
     }
 

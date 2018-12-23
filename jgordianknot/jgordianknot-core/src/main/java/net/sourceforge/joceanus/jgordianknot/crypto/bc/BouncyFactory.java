@@ -192,6 +192,7 @@ import org.bouncycastle.crypto.newengines.MARSEngine;
 import org.bouncycastle.crypto.newengines.SimonEngine;
 import org.bouncycastle.crypto.newengines.SosemanukEngine;
 import org.bouncycastle.crypto.newengines.SpeckEngine;
+import org.bouncycastle.crypto.newengines.XChaCha20Engine;
 import org.bouncycastle.crypto.newmacs.Blake2Mac;
 import org.bouncycastle.crypto.newmacs.DSTUX7564Mac;
 import org.bouncycastle.crypto.newmacs.DSTUX7624Mac;
@@ -752,9 +753,11 @@ public final class BouncyFactory
                        ? new HC128Engine()
                        : new HC256Engine();
             case CHACHA:
-                return new ChaChaEngine();
-            case CHACHA7539:
-                return new ChaCha7539Engine();
+                return isRestricted()
+                       ? new ChaChaEngine()
+                       : new ChaCha7539Engine();
+            case XCHACHA20:
+                return new XChaCha20Engine();
             case SALSA20:
                 return new Salsa20Engine();
             case XSALSA20:

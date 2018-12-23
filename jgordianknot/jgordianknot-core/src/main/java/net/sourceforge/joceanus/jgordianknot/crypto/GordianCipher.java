@@ -38,6 +38,11 @@ public abstract class GordianCipher<T> {
     private final GordianCipherSpec<T> theCipherSpec;
 
     /**
+     * Restricted.
+     */
+    private final boolean isRestricted;
+
+    /**
      * The Random Generator.
      */
     private final SecureRandom theRandom;
@@ -62,6 +67,7 @@ public abstract class GordianCipher<T> {
         theCipherSpec = pCipherSpec;
         theKeyType = theCipherSpec.getKeyType();
         theRandom = pFactory.getRandom();
+        isRestricted = pFactory.isRestricted();
     }
 
     /**
@@ -86,6 +92,14 @@ public abstract class GordianCipher<T> {
      */
     protected SecureRandom getRandom() {
         return theRandom;
+    }
+
+    /**
+     * Is the cipher restricted?
+     * @return true/false
+     */
+    public boolean isRestricted() {
+        return isRestricted;
     }
 
     /**
