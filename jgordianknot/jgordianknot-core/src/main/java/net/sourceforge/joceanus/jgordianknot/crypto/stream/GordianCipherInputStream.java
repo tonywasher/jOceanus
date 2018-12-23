@@ -18,6 +18,8 @@ package net.sourceforge.joceanus.jgordianknot.crypto.stream;
 
 import java.io.InputStream;
 
+import org.bouncycastle.util.Arrays;
+
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianCipher;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
@@ -73,6 +75,7 @@ public class GordianCipherInputStream<T>
 
             /* Extend the buffer if required */
             if (iNumBytes > theBuffer.length) {
+                Arrays.fill(theBuffer, (byte) 0);
                 theBuffer = new byte[iNumBytes];
             }
 

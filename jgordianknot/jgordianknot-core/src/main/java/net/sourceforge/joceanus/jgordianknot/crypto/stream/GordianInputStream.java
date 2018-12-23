@@ -19,6 +19,8 @@ package net.sourceforge.joceanus.jgordianknot.crypto.stream;
 import java.io.IOException;
 import java.io.InputStream;
 
+import org.bouncycastle.util.Arrays;
+
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.TethysDataConverter;
 
@@ -90,6 +92,10 @@ public abstract class GordianInputStream
             /* Close the input stream */
             theStream.close();
             isClosed = true;
+
+            /* Clear the buffers */
+            Arrays.fill(theBuffer, (byte) 0);
+            theProcessed.setBuffer(null, 0);
         }
     }
 

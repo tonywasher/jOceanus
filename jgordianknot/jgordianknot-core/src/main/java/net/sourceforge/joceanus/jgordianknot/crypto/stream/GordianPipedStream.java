@@ -22,6 +22,8 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.concurrent.ArrayBlockingQueue;
 
+import org.bouncycastle.util.Arrays;
+
 /**
  * Class to provide a pipe enabling data to be passed between threads via writing to an output
  * stream and reading from an input stream.
@@ -196,6 +198,7 @@ public class GordianPipedStream {
                 /* If we have finished with the data in the element */
                 if (theReadOffset >= theDataLen) {
                     /* Reset the values */
+                    Arrays.fill(theElement, (byte) 0);
                     theElement = null;
                     theDataLen = 0;
                     theReadOffset = 0;
@@ -210,6 +213,12 @@ public class GordianPipedStream {
         public void close() throws IOException {
             /* Note that we have closed the stream */
             isClosed = true;
+
+            /* Clear any data buffer */
+            if (theElement != null) {
+                Arrays.fill(theElement, (byte) 0);
+                theElement = null;
+            }
         }
     }
 
