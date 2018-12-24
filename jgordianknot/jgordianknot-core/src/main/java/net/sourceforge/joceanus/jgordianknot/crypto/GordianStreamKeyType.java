@@ -33,22 +33,22 @@ public enum GordianStreamKeyType {
     /**
      * HC.
      */
-    HC(GordianLength.LEN_128),
+    HC(GordianLength.LEN_128, GordianLength.LEN_256),
 
     /**
      * ChaCha.
      */
-    CHACHA(GordianLength.LEN_64),
+    CHACHA(GordianLength.LEN_64, GordianLength.LEN_96),
 
     /**
-     * ChaCha7539.
+     * XChaCha.
      */
-    CHACHA7539(GordianLength.LEN_96),
+    XCHACHA20(GordianLength.LEN_192),
 
     /**
      * VMPC.
      */
-    VMPC(GordianLength.LEN_128),
+    VMPC(GordianLength.LEN_128, GordianLength.LEN_256),
 
     /**
      * ISAAC.
@@ -73,7 +73,12 @@ public enum GordianStreamKeyType {
     /**
      * The IV Length.
      */
-    private final GordianLength theIVLen;
+    private final GordianLength theShortIVLen;
+
+    /**
+     * The long IV Length.
+     */
+    private final GordianLength theLongIVLen;
 
     /**
      * The String name.
@@ -85,17 +90,30 @@ public enum GordianStreamKeyType {
      * @param pIVLen the IV length
      */
     GordianStreamKeyType(final GordianLength pIVLen) {
-        theIVLen = pIVLen;
+        this(pIVLen, pIVLen);
+    }
+
+    /**
+     * Constructor.
+     * @param pShortIVLen the short IV length
+     * @param pLongIVLen the short IV length
+     */
+    GordianStreamKeyType(final GordianLength pShortIVLen,
+                         final GordianLength pLongIVLen) {
+        theShortIVLen = pShortIVLen;
+        theLongIVLen = pLongIVLen;
     }
 
     /**
      * Obtain the IV Length.
+     * @param pRestricted is the cipher restricted?
      * @return the IV length.
      */
-    public int getIVLength() {
-        return theIVLen == null
+    public int getIVLength(final boolean pRestricted) {
+        final GordianLength myIVLen = pRestricted ? theShortIVLen : theLongIVLen;
+        return myIVLen == null
                                 ? 0
-                                : theIVLen.getByteLength();
+                                : myIVLen.getByteLength();
     }
 
     @Override
@@ -118,7 +136,7 @@ public enum GordianStreamKeyType {
     public boolean validForRestriction(final boolean pRestricted) {
         switch (this) {
             case XSALSA20:
-            case CHACHA7539:
+            case XCHACHA20:
                 return !pRestricted;
             case GRAIN:
                 return pRestricted;

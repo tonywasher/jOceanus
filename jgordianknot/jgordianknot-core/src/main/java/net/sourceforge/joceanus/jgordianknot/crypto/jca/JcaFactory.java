@@ -852,12 +852,14 @@ public final class JcaFactory
                 return isRestricted()
                                       ? "HC128"
                                       : "HC256";
+            case CHACHA:
+                return isRestricted()
+                                      ? pKeyType.name()
+                                      : "CHACHA7539";
             case VMPC:
                 return "VMPC-KSA3";
             case GRAIN:
                 return "Grain128";
-            case CHACHA:
-            case CHACHA7539:
             case SALSA20:
             case XSALSA20:
             case ISAAC:
@@ -1104,6 +1106,7 @@ public final class JcaFactory
         switch (pKeyType) {
             case ISAAC:
             case SOSEMANUK:
+            case XCHACHA20:
                 return false;
             default:
                 return super.validStreamKeyType(pKeyType);

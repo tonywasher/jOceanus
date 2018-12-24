@@ -57,9 +57,10 @@ public abstract class GordianCipherSpec<T> {
 
     /**
      * Obtain the IV length for the cipher.
+     * @param pRestricted is the cipher restricted?
      * @return the IV length
      */
-    public abstract int getIVLength();
+    public abstract int getIVLength(boolean pRestricted);
 
     @Override
     public boolean equals(final Object pThat) {
@@ -287,7 +288,7 @@ public abstract class GordianCipherSpec<T> {
         }
 
         @Override
-        public int getIVLength() {
+        public int getIVLength(final boolean pRestricted) {
             if (getCipherMode().isAAD()) {
                 return GordianAADCipher.AADIVLEN;
             }
@@ -389,12 +390,12 @@ public abstract class GordianCipherSpec<T> {
 
         @Override
         public boolean needsIV() {
-            return getKeyType().getIVLength() > 0;
+            return getKeyType().getIVLength(false) > 0;
         }
 
         @Override
-        public int getIVLength() {
-            return getKeyType().getIVLength();
+        public int getIVLength(final boolean pRestricted) {
+            return getKeyType().getIVLength(pRestricted);
         }
     }
 }
