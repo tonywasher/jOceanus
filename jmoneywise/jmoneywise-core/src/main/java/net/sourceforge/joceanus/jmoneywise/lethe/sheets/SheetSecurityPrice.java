@@ -16,6 +16,8 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.lethe.sheets;
 
+import java.util.Iterator;
+
 import net.sourceforge.joceanus.jmetis.service.sheet.MetisSheetCell;
 import net.sourceforge.joceanus.jmetis.service.sheet.MetisSheetRow;
 import net.sourceforge.joceanus.jmetis.service.sheet.MetisSheetView;
@@ -137,15 +139,14 @@ public class SheetSecurityPrice
             /* Count the number of Prices */
             final int myRows = myView.getRowCount();
             final int myCols = myView.getColumnCount();
-            final int myTotal = (myRows - 1) * (myCols - 1);
+            final int myTotal = (myRows - 1);
             final String[] mySecurities = new String[myCols];
 
             /* Declare the number of steps */
             pReport.setNumSteps(myTotal);
 
-            /* Loop through the rows of the table */
-            final MetisSheetRow myActRow = myView.getRowByIndex(0);
             /* Load the securities */
+            final MetisSheetRow myActRow = myView.getRowByIndex(0);
             for (int j = 1; j < myCols; j++) {
                 /* Access account */
                 final MetisSheetCell myAct = myView.getRowCellByIndex(myActRow, j);
@@ -170,7 +171,8 @@ public class SheetSecurityPrice
                 }
 
                 /* Loop through the columns of the table */
-                for (int j = 1; j < myCols; j++) {
+                final int myLast = myRow.getMaxValuedCellIndex();
+                for (int j = 1; j <= myLast; j++) {
                     /* Handle price which may be missing */
                     myCell = myView.getRowCellByIndex(myRow, j);
                     if (myCell != null) {
@@ -183,10 +185,10 @@ public class SheetSecurityPrice
                         /* Add the value into the list */
                         myList.addValuesItem(myValues);
                     }
-
-                    /* Report the progress */
-                    pReport.setNextStep();
                 }
+
+                /* Report the progress */
+                pReport.setNextStep();
             }
 
             /* Post process the prices */
