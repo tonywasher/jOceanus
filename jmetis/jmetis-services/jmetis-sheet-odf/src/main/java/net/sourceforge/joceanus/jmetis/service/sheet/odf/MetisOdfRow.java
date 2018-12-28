@@ -74,6 +74,11 @@ public class MetisOdfRow
     }
 
     @Override
+    public int getMaxValuedCellIndex() {
+        return theStore.getMaxValuedCellForRow(this);
+    }
+
+    @Override
     public boolean isHidden() {
         return theStore.getHiddenAtIndex(getRowIndex());
     }

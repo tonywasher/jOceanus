@@ -123,6 +123,12 @@ public abstract class MetisSheetRow {
     public abstract int getCellCount();
 
     /**
+     * Determine index of the max valued cell.
+     * @return the index.
+     */
+    public abstract int getMaxValuedCellIndex();
+
+    /**
      * Set hidden status.
      * @param isHidden is the column hidden?
      */

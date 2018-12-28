@@ -323,6 +323,18 @@ class MetisOdfRowStore {
     }
 
     /**
+     * Obtain the index of the max valued cell.
+     * @return the index
+     */
+    int getMaxValuedCellForRow(final MetisOdfRow pRow) {
+        /* Access cells */
+        final MetisOdfCellStore myCells = theRows[pRow.getRowIndex()];
+
+        /* Just return the cell */
+        return myCells.getMaxValuedIndex();
+    }
+
+    /**
      * Apply validation.
      * @param pValidation the validation name
      * @param pFirstCell the first cell

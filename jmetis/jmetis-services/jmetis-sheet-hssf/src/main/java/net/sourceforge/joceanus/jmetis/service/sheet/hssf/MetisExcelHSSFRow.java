@@ -107,6 +107,11 @@ public class MetisExcelHSSFRow
     }
 
     @Override
+    public int getMaxValuedCellIndex() {
+        return theExcelRow.getLastCellNum() - 1;
+    }
+
+    @Override
     public MetisExcelHSSFCell getReadOnlyCellByIndex(final int pIndex) {
         /* Handle negative index */
         if (pIndex < 0) {

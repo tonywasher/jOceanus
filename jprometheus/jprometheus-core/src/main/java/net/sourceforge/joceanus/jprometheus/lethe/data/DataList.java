@@ -175,7 +175,7 @@ public abstract class DataList<T extends DataItem<E> & Comparable<? super T>, E 
 
     @Override
     public String formatObject(final MetisDataFormatter pFormatter) {
-        return getDataFieldSet().getName() + "(" + size() + ")";
+        return getDataFieldSet().getName();
     }
 
     @Override

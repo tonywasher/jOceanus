@@ -202,8 +202,8 @@ public class MetisSheetView {
     public ListIterator<MetisSheetCell> cellIterator(final MetisSheetRow pRow) {
         /* Check that the row is in the view */
         final int myIndex = pRow.getRowIndex();
-        final int myFirstIndex = theBaseCell.getRowIndex();
-        final int myLastIndex = myFirstIndex + theNumRows - 1;
+        int myFirstIndex = theBaseCell.getRowIndex();
+        int myLastIndex = myFirstIndex + theNumRows - 1;
 
         /* Return null iterator for row not in view */
         if (myIndex < myFirstIndex
@@ -213,6 +213,8 @@ public class MetisSheetView {
         }
 
         /* return the iterator */
+        myFirstIndex = theBaseCell.getColumnIndex();
+        myLastIndex = myFirstIndex + theNumColumns - 1;
         return pRow.iteratorForRange(myFirstIndex, myLastIndex);
     }
 

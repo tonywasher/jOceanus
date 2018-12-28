@@ -277,11 +277,15 @@ public class SheetTransaction
         final Transaction myTrans = myCache.buildTransaction(myAmount, myReconciled);
 
         /* Process TransactionInfo */
-        processTransInfo(pData, myCache, pView, pRow, myTrans, iAdjust);
+        final int myLast = pRow.getMaxValuedCellIndex();
+        if (iAdjust < myLast) {
+            processTransInfo(pData, myCache, pView, pRow, myTrans, iAdjust);
+        }
 
         /* Continue */
         return true;
     }
+
     /**
      * Process transaction row from archive.
      * @param pData the DataSet

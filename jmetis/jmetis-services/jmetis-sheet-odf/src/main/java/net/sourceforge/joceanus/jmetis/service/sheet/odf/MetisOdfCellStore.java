@@ -109,6 +109,11 @@ class MetisOdfCellStore {
     private int theNumCells;
 
     /**
+     * Max valued Cell.
+     */
+    private int theMaxValuedCell;
+
+    /**
      * ReadOnly Constructor.
      * @param pRow the owning row.
      * @param pRowIndex the row index
@@ -218,6 +223,14 @@ class MetisOdfCellStore {
         return pCellIndex < 0 || pCellIndex >= theNumCells
                 ? null
                 : new MetisOdfCell(this, pRow, pCellIndex, false);
+    }
+
+    /**
+     * Obtain the index of the max valued cell.
+     * @return the index
+     */
+    int getMaxValuedIndex() {
+        return theMaxValuedCell;
     }
 
     /**
@@ -553,6 +566,11 @@ class MetisOdfCellStore {
             throw new IllegalArgumentException();
         }
 
+        /* Adjust maximum cell */
+        if (pIndex > theMaxValuedCell) {
+            theMaxValuedCell = pIndex;
+        }
+
         /* Expand the value array if required */
         if (pIndex >= theValues.length) {
             theValues = Arrays.copyOf(theValues, pIndex + 1);
@@ -578,6 +596,12 @@ class MetisOdfCellStore {
             /* Determine the expansion length */
             final int myLen = (((pIndex + 1) / CELL_EXPAND) + 1)  * CELL_EXPAND;
             theElements = Arrays.copyOf(theElements, myLen);
+        }
+
+        /* Adjust maximum cell */
+        if (pIndex > theMaxValuedCell
+                && pElement != null) {
+            theMaxValuedCell = pIndex;
         }
 
         /* Set the element */
