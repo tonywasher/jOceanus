@@ -28,5 +28,21 @@ module jgordianknot.core {
     exports net.sourceforge.joceanus.jgordianknot.manager;
     exports net.sourceforge.joceanus.jgordianknot.crypto.stream;
     exports net.sourceforge.joceanus.jgordianknot.zip;
+
+    /* New Exports */
+    exports net.sourceforge.joceanus.jgordianknot.api.agree;
+    exports net.sourceforge.joceanus.jgordianknot.api.asym;
+    exports net.sourceforge.joceanus.jgordianknot.api.base;
+    exports net.sourceforge.joceanus.jgordianknot.api.cipher;
+    exports net.sourceforge.joceanus.jgordianknot.api.digest;
+    exports net.sourceforge.joceanus.jgordianknot.api.encrypt;
+    exports net.sourceforge.joceanus.jgordianknot.api.factory;
+    exports net.sourceforge.joceanus.jgordianknot.api.impl;
+    exports net.sourceforge.joceanus.jgordianknot.api.key;
+    exports net.sourceforge.joceanus.jgordianknot.api.keyset;
+    exports net.sourceforge.joceanus.jgordianknot.api.mac;
+    exports net.sourceforge.joceanus.jgordianknot.api.random;
+    exports net.sourceforge.joceanus.jgordianknot.api.sign;
+    exports net.sourceforge.joceanus.jgordianknot.api.zip;
 }
 
