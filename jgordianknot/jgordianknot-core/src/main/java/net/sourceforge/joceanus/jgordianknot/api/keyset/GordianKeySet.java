@@ -16,7 +16,6 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jgordianknot.api.keyset;
 
-import java.security.spec.PKCS8EncodedKeySpec;
 import java.security.spec.X509EncodedKeySpec;
 
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianSymKeySpec;
@@ -31,23 +30,39 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
 public interface GordianKeySet {
     /**
      * Encrypt bytes.
-     * @param pBytes the bytes to encrypt
+     * @param pBytesToEncrypt the bytes to encrypt
      * @return the encrypted bytes
      * @throws OceanusException on error
      */
-    byte[] encryptBytes(byte[] pBytes) throws OceanusException;
+    byte[] encryptBytes(byte[] pBytesToEncrypt) throws OceanusException;
 
     /**
      * Decrypt bytes.
-     * @param pBytes the bytes to decrypt
+     * @param pBytesToDecrypt the bytes to decrypt
      * @return the decrypted bytes
      * @throws OceanusException on error
      */
-    byte[] decryptBytes(byte[] pBytes) throws OceanusException;
+    byte[] decryptBytes(byte[] pBytesToDecrypt) throws OceanusException;
+
+    /**
+     * secure bytes.
+     * @param pBytesToSecure the bytes to secure
+     * @return the securedBytes
+     * @throws OceanusException on error
+     */
+    byte[] secureBytes(byte[] pBytesToSecure) throws OceanusException;
+
+    /**
+     * derive bytes.
+     * @param pSecuredBytes the secured bytes
+     * @return the derivedBytes
+     * @throws OceanusException on error
+     */
+    byte[] deriveBytes(byte[] pSecuredBytes) throws OceanusException;
 
     /**
      * secure Key.
-     * @param pKeyToSecure the key to wrap
+     * @param pKeyToSecure the key to secure
      * @return the securedKey
      * @throws OceanusException on error
      */
@@ -87,5 +102,5 @@ public interface GordianKeySet {
      * @param pKey the key
      * @throws OceanusException on error
      */
-    void declareSymKey(final GordianKey<GordianSymKeySpec> pKey) throws OceanusException;
+    void declareSymKey(GordianKey<GordianSymKeySpec> pKey) throws OceanusException;
 }

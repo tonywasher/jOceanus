@@ -81,7 +81,9 @@ public class GordianSecureRandom
     public void setSeed(final byte[] seed) {
         synchronized (this) {
             /* Ensure that the random generator is seeded if it exists */
-            theRandom.setSeed(seed);
+            if (theRandom != null) {
+                theRandom.setSeed(seed);
+            }
         }
     }
 
@@ -129,45 +131,6 @@ public class GordianSecureRandom
     public void reseed(final byte[] pXtraInput) {
         synchronized (this) {
             theGenerator.reseed(pXtraInput);
-        }
-    }
-
-    /**
-     * Simple secureRandom.
-     */
-    static class GordianSimpleSecureRandom
-            implements GordianSeededRandom {
-        /**
-         * The underlying secureRandom.
-         */
-        private final SecureRandom theRandom;
-
-        /**
-         * Constructor.
-         * @param pRandom the underlying random
-         */
-        protected GordianSimpleSecureRandom(final SecureRandom pRandom) {
-            theRandom = pRandom;
-        }
-
-        @Override
-        public byte[] generateSeed(final int pLength) {
-            return theRandom.generateSeed(pLength);
-        }
-
-        @Override
-        public void setSeed(final byte[] pSeed) {
-            theRandom.setSeed(pSeed);
-        }
-
-        @Override
-        public void reseed(final byte[] pXtraBytes) {
-            setSeed(pXtraBytes);
-        }
-
-        @Override
-        public SecureRandom getRandom() {
-            return theRandom;
         }
     }
 }

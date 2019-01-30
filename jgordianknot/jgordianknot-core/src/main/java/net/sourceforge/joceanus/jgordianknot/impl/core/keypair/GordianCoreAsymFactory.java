@@ -18,6 +18,7 @@ package net.sourceforge.joceanus.jgordianknot.impl.core.keypair;
 
 import java.security.spec.PKCS8EncodedKeySpec;
 import java.security.spec.X509EncodedKeySpec;
+import java.util.function.Predicate;
 
 import net.sourceforge.joceanus.jgordianknot.api.agree.GordianAgreementFactory;
 import net.sourceforge.joceanus.jgordianknot.api.asym.GordianAsymKeySpec;
@@ -35,7 +36,7 @@ public abstract class GordianCoreAsymFactory
     /**
      * AsymAlgId.
      */
-    private static final GordianAsymAlgId theAsymAlgId = new GordianAsymAlgId();
+    private static final GordianAsymAlgId ASYM_ALG_ID = new GordianAsymAlgId();
 
     /**
      * The factory.
@@ -114,11 +115,16 @@ public abstract class GordianCoreAsymFactory
 
     @Override
     public GordianAsymKeySpec determineKeySpec(final PKCS8EncodedKeySpec pEncoded) throws OceanusException {
-        return theAsymAlgId.determineKeySpec(pEncoded);
+        return ASYM_ALG_ID.determineKeySpec(pEncoded);
     }
 
     @Override
     public GordianAsymKeySpec determineKeySpec(final X509EncodedKeySpec pEncoded) throws OceanusException {
-        return theAsymAlgId.determineKeySpec(pEncoded);
+        return ASYM_ALG_ID.determineKeySpec(pEncoded);
+    }
+
+    @Override
+    public Predicate<GordianAsymKeySpec> supportedAsymKeySpecs() {
+        return GordianAsymKeySpec::isValid;
     }
 }

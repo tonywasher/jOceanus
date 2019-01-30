@@ -101,10 +101,10 @@ public final class GordianSP800HashDRBG
      * @param pSecurityBytes personalisation string to distinguish this DRBG (may be null).
      * @param pInitVector nonce to further distinguish this DRBG (may be null).
      */
-    protected GordianSP800HashDRBG(final GordianDigest pDigest,
-                                   final EntropySource pEntropy,
-                                   final byte[] pSecurityBytes,
-                                   final byte[] pInitVector) {
+    GordianSP800HashDRBG(final GordianDigest pDigest,
+                         final EntropySource pEntropy,
+                         final byte[] pSecurityBytes,
+                         final byte[] pInitVector) {
         /* Store digest and entropy source */
         theDigest = pDigest;
         theEntropy = pEntropy;

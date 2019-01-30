@@ -79,7 +79,8 @@ public abstract class GordianCoreDigestFactory
         final GordianLength myLen = pDigestSpec.getDigestLength();
 
         /* Check validity */
-        return supportedDigestTypes().test(myType)
+        return pDigestSpec.isValid()
+                && supportedDigestTypes().test(myType)
                 && myType.isLengthValid(myLen)
                 && myType.isStateValidForLength(myStateLen, myLen);
     }

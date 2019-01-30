@@ -24,9 +24,7 @@ import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigestFactory;
 import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigestSpec;
 import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigestType;
 import net.sourceforge.joceanus.jgordianknot.api.factory.GordianFactory;
-import net.sourceforge.joceanus.jgordianknot.api.factory.GordianParameters;
 import net.sourceforge.joceanus.jgordianknot.api.mac.GordianMac;
-import net.sourceforge.joceanus.jgordianknot.api.mac.GordianMacFactory;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianCoreFactory;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.TethysDataConverter;
@@ -152,9 +150,8 @@ public class GordianPersonalisation {
         /* Loop the configured amount of times to cross-fertilise */
         for (int i = 0; i < pFactory.getNumIterations(); i++) {
             /* Update all the digests */
-            for (int j = 0; j < myDigests.length; j++) {
+            for (final GordianDigest myDigest : myDigests) {
                 /* Update with the results */
-                final GordianDigest myDigest = myDigests[j];
                 for (int k = 0; k < myDigests.length; k++) {
                     myDigest.update(myHashes[k]);
                 }
@@ -186,7 +183,7 @@ public class GordianPersonalisation {
      * @param pIV the input IV
      * @return the adjusted IV
      */
-    public byte[] adjustIV(final byte[] pIV) {
+    byte[] adjustIV(final byte[] pIV) {
         return TethysDataConverter.combineHashes(pIV, theInitVector);
     }
 
@@ -213,7 +210,7 @@ public class GordianPersonalisation {
      * @param pId the id of the integer
      * @return the result
      */
-    public int getPersonalisedInteger(final GordianPersonalId pId) {
+    int getPersonalisedInteger(final GordianPersonalId pId) {
         return sanitiseValue(getPersonalisedMask(getOffsetForId(pId)));
     }
 

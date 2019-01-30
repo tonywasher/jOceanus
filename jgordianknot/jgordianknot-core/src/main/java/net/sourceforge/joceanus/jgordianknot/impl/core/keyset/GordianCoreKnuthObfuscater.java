@@ -23,7 +23,6 @@ import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianStreamKeyType;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianSymCipherSpec;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianSymKeySpec;
 import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigestSpec;
-import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetFactory;
 import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKnuthObfuscater;
 import net.sourceforge.joceanus.jgordianknot.api.mac.GordianMacSpec;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianCoreFactory;
@@ -58,15 +57,14 @@ public class GordianCoreKnuthObfuscater
 
     /**
      * Constructor.
-     * @param pFactory the factory
+     * @param pKeySetFactory the keySet factory
      */
-    GordianCoreKnuthObfuscater(final GordianCoreFactory pFactory) {
+    GordianCoreKnuthObfuscater(final GordianCoreKeySetFactory pKeySetFactory) {
         /* Store the manager */
-        final GordianCoreKeySetFactory myFactory = (GordianCoreKeySetFactory) pFactory.getKeySetFactory();
-        theIdManager = myFactory.getIdManager();
+        theIdManager = pKeySetFactory.getIdManager();
 
         /* Generate Knuth Prime/Inverse */
-        final GordianPersonalisation myPersonal = myFactory.getPersonalisation();
+        final GordianPersonalisation myPersonal = pKeySetFactory.getPersonalisation();
         final BigInteger[] myKnuth = generatePrime(myPersonal.getPersonalisedInteger(GordianPersonalId.KNUTHPRIME));
         thePrime = myKnuth[0].intValue();
         theInverse = myKnuth[1].intValue();
@@ -145,20 +143,20 @@ public class GordianCoreKnuthObfuscater
      * @return the original input
      */
     public long knuthDecodeLong(final long pEncoded) {
-        final int myHigh = knuthDecodeInteger((int) (pEncoded >>> Integer.SIZE));
+        final long myHigh = knuthDecodeInteger((int) (pEncoded >>> Integer.SIZE));
         final int myLow = knuthDecodeInteger((int) pEncoded);
         return (myHigh << Integer.SIZE) | Integer.toUnsignedLong(myLow);
     }
 
     /**
-     * Decode a Knuth Encoded integer value.
+     * Decode a Knuth Encoded long value.
      * @param pEncoded the encoded value
      * @param pAdjustment the adjustment
      * @return the original input
      */
     public long knuthDecodeLong(final long pEncoded,
                                 final int pAdjustment) {
-        final int myHigh = knuthDecodeInteger((int) (pEncoded >>> Integer.SIZE), pAdjustment);
+        final long myHigh = knuthDecodeInteger((int) (pEncoded >>> Integer.SIZE), pAdjustment);
         final int myLow = knuthDecodeInteger((int) pEncoded, pAdjustment);
         return (myHigh << Integer.SIZE) | Integer.toUnsignedLong(myLow);
     }
@@ -182,22 +180,22 @@ public class GordianCoreKnuthObfuscater
      * @throws OceanusException on error
      */
     private <T> int deriveEncodedIdFromType(final T pType) throws OceanusException {
-        if (GordianDigestSpec.class.isInstance(pType)) {
+        if (pType instanceof GordianDigestSpec) {
             return theIdManager.deriveEncodedIdFromDigestSpec((GordianDigestSpec) pType);
         }
-        if (GordianSymCipherSpec.class.isInstance(pType)) {
+        if (pType instanceof GordianSymCipherSpec) {
             return theIdManager.deriveEncodedIdFromCipherSpec((GordianSymCipherSpec) pType);
         }
-        if (GordianStreamCipherSpec.class.isInstance(pType)) {
+        if (pType instanceof GordianStreamCipherSpec) {
             return theIdManager.deriveEncodedIdFromCipherSpec((GordianStreamCipherSpec) pType);
         }
-        if (GordianMacSpec.class.isInstance(pType)) {
+        if (pType instanceof GordianMacSpec) {
             return theIdManager.deriveEncodedIdFromMacSpec((GordianMacSpec) pType);
         }
-        if (GordianSymKeySpec.class.isInstance(pType)) {
+        if (pType instanceof GordianSymKeySpec) {
             return theIdManager.deriveEncodedIdFromSymKeySpec((GordianSymKeySpec) pType);
         }
-        if (GordianStreamKeyType.class.isInstance(pType)) {
+        if (pType instanceof GordianStreamKeyType) {
             return theIdManager.deriveEncodedIdFromStreamKeyType((GordianStreamKeyType) pType);
         }
         throw new GordianDataException("Invalid type: " + pType.getClass().getCanonicalName());
@@ -252,7 +250,7 @@ public class GordianCoreKnuthObfuscater
      * @param pBase the base value
      * @return the encoded value
      */
-    public BigInteger[] generatePrime(final int pBase) {
+    private BigInteger[] generatePrime(final int pBase) {
         /* Make sure that the value is prime */
         BigInteger myValue = BigInteger.valueOf(pBase);
         if (!myValue.isProbablePrime(Integer.SIZE)) {

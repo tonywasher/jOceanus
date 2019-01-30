@@ -107,6 +107,7 @@ public class DataValuesFormatter<T extends DataSet<T, E>, E extends Enum<E>> {
         try {
             /* Create a Document builder */
             final DocumentBuilderFactory myFactory = DocumentBuilderFactory.newInstance();
+            myFactory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
             theBuilder = myFactory.newDocumentBuilder();
 
             /* Create the transformer */

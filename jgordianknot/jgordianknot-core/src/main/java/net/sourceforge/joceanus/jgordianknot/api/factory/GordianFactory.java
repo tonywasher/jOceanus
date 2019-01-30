@@ -28,6 +28,12 @@ import net.sourceforge.joceanus.jgordianknot.api.zip.GordianZipFactory;
  */
 public interface GordianFactory {
     /**
+     * Obtain factory type.
+     * @return the factory type
+     */
+    GordianFactoryType getFactoryType();
+
+    /**
      * Obtain the Digest Factory.
      * @return the digest factory
      */

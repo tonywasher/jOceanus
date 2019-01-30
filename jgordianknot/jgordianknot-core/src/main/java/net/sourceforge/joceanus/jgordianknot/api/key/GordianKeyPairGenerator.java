@@ -16,6 +16,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jgordianknot.api.key;
 
+import java.security.spec.PKCS8EncodedKeySpec;
 import java.security.spec.X509EncodedKeySpec;
 
 import net.sourceforge.joceanus.jgordianknot.api.asym.GordianAsymKeySpec;
@@ -44,6 +45,25 @@ public interface GordianKeyPairGenerator {
      * @throws OceanusException on error
      */
     X509EncodedKeySpec getX509Encoding(GordianKeyPair pKeyPair) throws OceanusException;
+
+
+    /**
+     * Obtain PKCS8EncodedKeySpec.
+     * @param pKeyPair the keyPair
+     * @return the PrivateKeySpec
+     * @throws OceanusException on error
+     */
+    PKCS8EncodedKeySpec getPKCS8Encoding(GordianKeyPair pKeyPair) throws OceanusException;
+
+    /**
+     * Create the keyPair from the PKCS8/X509 encodings.
+     * @param pPublicKey the encoded public key
+     * @param pPrivateKey the secured private key
+     * @return the keyPair
+     * @throws OceanusException on error
+     */
+    GordianKeyPair deriveKeyPair(X509EncodedKeySpec pPublicKey,
+                                 PKCS8EncodedKeySpec pPrivateKey) throws OceanusException;
 
     /**
      * Derive the public-only keyPair from the X509 encoding.

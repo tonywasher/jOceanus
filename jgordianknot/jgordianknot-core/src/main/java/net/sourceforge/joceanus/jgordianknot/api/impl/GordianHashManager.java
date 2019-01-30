@@ -27,14 +27,11 @@ import net.sourceforge.joceanus.jgordianknot.api.factory.GordianParameters;
 import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianBadCredentialsException;
 import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetFactory;
 import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetHash;
-import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySet;
-import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyFactory;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianCoreFactory;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianDataException;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianFactoryGenerator;
 import net.sourceforge.joceanus.jgordianknot.impl.core.keyset.GordianCoreKeySet;
 import net.sourceforge.joceanus.jgordianknot.impl.core.keyset.GordianCoreKeySetHash;
-import net.sourceforge.joceanus.jgordianknot.impl.jca.JcaFactory;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
@@ -64,11 +61,6 @@ public abstract class GordianHashManager {
     private final GordianFactory theFactory;
 
     /**
-     * Security factory generator.
-     */
-    private final GordianFactoryGenerator theGenerator;
-
-    /**
      * List of resolved password hashes.
      */
     private final List<GordianCoreKeySetHash> theHashList;
@@ -80,8 +72,8 @@ public abstract class GordianHashManager {
      */
     protected GordianHashManager(final GordianParameters pParameters) throws OceanusException {
         /* Allocate the factory */
-        theGenerator = new GordianGenerator();
-        theFactory = theGenerator.newFactory(pParameters);
+        final GordianFactoryGenerator myGenerator = new GordianGenerator();
+        theFactory = myGenerator.newFactory(pParameters);
 
         /* Allocate a new Hash list */
         theHashList = new ArrayList<>();
@@ -115,7 +107,7 @@ public abstract class GordianHashManager {
     public GordianKeySetHash resolveKeySetHash(final byte[] pHashBytes,
                                                final String pSource) throws OceanusException {
         GordianCoreKeySetHash myHash = null;
-        GordianKeySetFactory myKeySets = theFactory.getKeySetFactory();
+        final GordianKeySetFactory myKeySets = theFactory.getKeySetFactory();
 
         /* If the hash bytes exist try existing hashes for either absolute or password match */
         if (pHashBytes != null) {

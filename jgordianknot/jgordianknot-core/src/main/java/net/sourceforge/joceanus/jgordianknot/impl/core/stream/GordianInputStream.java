@@ -147,12 +147,12 @@ public abstract class GordianInputStream
     }
 
     @Override
-    public void mark(final int pReadLimit) {
+    public synchronized void mark(final int pReadLimit) {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public void reset() throws IOException {
+    public synchronized void reset() throws IOException {
         /* If we are already closed then throw IO Exception */
         if (isClosed) {
             throw new IOException(ERROR_CLOSED);

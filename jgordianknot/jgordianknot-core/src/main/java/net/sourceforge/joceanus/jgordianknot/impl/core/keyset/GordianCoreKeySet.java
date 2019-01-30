@@ -25,7 +25,7 @@ import java.util.function.Predicate;
 import net.sourceforge.joceanus.jgordianknot.api.asym.GordianAsymKeySpec;
 import net.sourceforge.joceanus.jgordianknot.api.base.GordianLength;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianCipherFactory;
-import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianKeyWrapper;
+import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianWrapper;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianSymKeySpec;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianSymKeyType;
 import net.sourceforge.joceanus.jgordianknot.api.factory.GordianAsymFactory;
@@ -33,7 +33,6 @@ import net.sourceforge.joceanus.jgordianknot.api.factory.GordianParameters;
 import net.sourceforge.joceanus.jgordianknot.api.key.GordianKey;
 import net.sourceforge.joceanus.jgordianknot.api.base.GordianKeySpec;
 import net.sourceforge.joceanus.jgordianknot.api.key.GordianKeyPair;
-import net.sourceforge.joceanus.jgordianknot.api.key.GordianKeyPairGenerator;
 import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySet;
 import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetFactory;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianCoreFactory;
@@ -140,7 +139,7 @@ public final class GordianCoreKeySet
      * @return the keyWrap expansion
      */
     public static int getKeyWrapExpansion(final int pNumSteps) {
-        final int myExpansion = GordianKeyWrapper.getKeyWrapExpansion(GordianLength.LEN_128) * pNumSteps;
+        final int myExpansion = GordianWrapper.getKeyWrapExpansion(GordianLength.LEN_128) * pNumSteps;
         return myExpansion + getEncryptionOverhead();
     }
 
@@ -183,6 +182,7 @@ public final class GordianCoreKeySet
         return myRecipe.buildExternal(myBytes);
     }
 
+    @Override
     public <T extends GordianKeySpec> GordianKey<T> deriveKey(final byte[] pSecuredKey,
                                                               final T pKeyType) throws OceanusException {
         /* Parse the bytes into the separate parts */
@@ -192,6 +192,30 @@ public final class GordianCoreKeySet
 
         /* Unwrap the key and return it */
         return theCipher.deriveKey(myParams, myBytes, pKeyType);
+    }
+
+    @Override
+    public byte[] secureBytes(final byte[] pBytesToSecure) throws OceanusException {
+        /* Generate set of keys */
+        final GordianKeySetRecipe myRecipe = new GordianKeySetRecipe(theFactory);
+        final GordianKeySetParameters myParams = myRecipe.getParameters();
+
+        /* secure the key */
+        final byte[] myBytes = theCipher.secureBytes(myParams, pBytesToSecure);
+
+        /* Package and return the encrypted bytes */
+        return myRecipe.buildExternal(myBytes);
+    }
+
+    @Override
+    public byte[] deriveBytes(final byte[] pSecuredBytes) throws OceanusException {
+        /* Parse the bytes into the separate parts */
+        final GordianKeySetRecipe myRecipe = new GordianKeySetRecipe(theFactory, pSecuredBytes);
+        final GordianKeySetParameters myParams = myRecipe.getParameters();
+        final byte[] myBytes = myRecipe.getBytes();
+
+        /* Unwrap the bytes and return them */
+        return theCipher.deriveBytes(myParams, myBytes);
     }
 
     @Override

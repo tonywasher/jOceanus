@@ -19,7 +19,6 @@ package net.sourceforge.joceanus.jgordianknot.impl.core.agree;
 import net.sourceforge.joceanus.jgordianknot.api.agree.GordianAgreementSpec;
 import net.sourceforge.joceanus.jgordianknot.api.agree.GordianEncapsulationAgreement;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianCoreFactory;
-import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
  * Encapsulation Agreement.

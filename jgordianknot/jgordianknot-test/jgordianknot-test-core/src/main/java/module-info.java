@@ -24,5 +24,6 @@ module jgordianknot.test.core {
     requires jtethys.core;
 
     /* Exports */
+    exports net.sourceforge.joceanus.jgordianknot.test.api;
     exports net.sourceforge.joceanus.jgordianknot.test.crypto;
 }

@@ -31,6 +31,7 @@ import javax.xml.XMLConstants;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.stream.XMLInputFactory;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
@@ -173,6 +174,7 @@ public final class MetisOdfLoader {
         try (ZipInputStream myZipStream = new ZipInputStream(pInput)) {
             /* Create the Document builder */
             final DocumentBuilderFactory myFactory = DocumentBuilderFactory.newInstance();
+            myFactory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
             myFactory.setNamespaceAware(true);
             final DocumentBuilder myBuilder = myFactory.newDocumentBuilder();
 
@@ -181,15 +183,15 @@ public final class MetisOdfLoader {
                 /* Read next entry */
                 final ZipEntry myEntry = myZipStream.getNextEntry();
 
+                /* If this is EOF break the loop */
+                if (myEntry == null) {
+                    break;
+                }
+
                 /* If we have found the contents */
                 if (FILE_CONTENT.equals(myEntry.getName())) {
                     /* Parse the contents and return the document */
                     return myBuilder.parse(new WrapInputStream(myZipStream));
-                }
-
-                /* If this is EOF break the loop */
-                if (myEntry == null) {
-                    break;
                 }
             }
 
@@ -396,14 +398,14 @@ public final class MetisOdfLoader {
         }
 
         @Override
-        public void mark(final int pReadLimit) {
+        public synchronized void mark(final int pReadLimit) {
             if (!isClosed) {
                 theStream.mark(pReadLimit);
             }
         }
 
         @Override
-        public void reset() throws IOException {
+        public synchronized void reset() throws IOException {
             /* If we are already closed then throw IO Exception */
             if (isClosed) {
                 throw new IOException(ERROR_CLOSED);

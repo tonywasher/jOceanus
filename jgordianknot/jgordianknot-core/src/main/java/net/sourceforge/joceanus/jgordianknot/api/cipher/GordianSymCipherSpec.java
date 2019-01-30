@@ -304,10 +304,9 @@ public class GordianSymCipherSpec
 
     /**
      * List all possible cipherSpecs.
-     * @param isAAD are the cipherSpecs for an AADCipher?
      * @return the list
      */
-    public static List<GordianSymCipherSpec> listAll(final boolean isAAD) {
+    public static List<GordianSymCipherSpec> listAll() {
         /* Create the array list */
         final List<GordianSymCipherSpec> myList = new ArrayList<>();
 

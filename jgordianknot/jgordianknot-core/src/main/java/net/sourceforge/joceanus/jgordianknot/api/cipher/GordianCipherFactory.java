@@ -88,12 +88,12 @@ public interface GordianCipherFactory {
     Predicate<GordianStreamKeyType> supportedStreamKeyTypes();
 
     /**
-     * create GordianKeyWrapper.
+     * create GordianWrapper.
      * @param pKeySpec the KeySpec
      * @return the new wrapper
      * @throws OceanusException on error
      */
-    GordianKeyWrapper createKeyWrapper(GordianSymKeySpec pKeySpec) throws OceanusException;
+    GordianWrapper createKeyWrapper(GordianSymKeySpec pKeySpec) throws OceanusException;
 
     /**
      * Obtain a list of supported symKeySpecs.
@@ -112,7 +112,7 @@ public interface GordianCipherFactory {
      * @return the list of supported symCipherSpecs.
      */
     default List<GordianSymCipherSpec> listAllSupportedSymCipherSpecs(final boolean isAAD) {
-        return GordianSymCipherSpec.listAll(isAAD)
+        return GordianSymCipherSpec.listAll()
                 .stream()
                 .filter(s -> supportedSymCipherSpecs().test(s, isAAD))
                 .collect(Collectors.toList());

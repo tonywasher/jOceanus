@@ -318,26 +318,34 @@ public final class GordianMacSpec implements GordianKeySpec {
             theName = theMacType.toString();
             switch (theMacType) {
                 case HMAC:
-                    theName += SEP + theDigestSpec.toString();
+                    theName += SEP + theDigestSpec;
                     break;
                 case SKEIN:
-                    theName += SEP + theDigestSpec.getStateLength().getLength()
-                            + SEP + theDigestSpec.getDigestLength().getLength();
+                    if (theDigestSpec != null) {
+                        theName += SEP + theDigestSpec.getStateLength()
+                                + SEP + theDigestSpec.getDigestLength();
+                    }
                     break;
                 case GMAC:
                 case CMAC:
                 case POLY1305:
-                    theName += SEP + theKeySpec.toString();
+                    theName += SEP + theKeySpec;
                     break;
                 case KUPYNA:
-                    theName += SEP + theDigestSpec.getDigestLength().getLength();
+                    if (theDigestSpec != null) {
+                        theName += SEP + theDigestSpec.getDigestLength();
+                    }
                     break;
                 case BLAKE:
-                    theName = GordianDigestType.getBlakeAlgorithmForStateLength(theDigestSpec.getStateLength());
-                    theName += "Mac" + SEP + Integer.toString(theDigestSpec.getDigestLength().getLength());
+                    if (theDigestSpec != null) {
+                        theName = GordianDigestType.getBlakeAlgorithmForStateLength(theDigestSpec.getStateLength());
+                        theName += "Mac" + SEP + theDigestSpec.getDigestLength();
+                    }
                     break;
                 case KALYNA:
-                    theName += SEP + theKeySpec.getBlockLength().getLength();
+                    if (theKeySpec != null) {
+                        theName += SEP + theKeySpec.getBlockLength();
+                    }
                     break;
                 case VMPC:
                 default:

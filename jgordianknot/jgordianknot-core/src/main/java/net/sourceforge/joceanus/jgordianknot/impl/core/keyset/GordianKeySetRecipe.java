@@ -133,7 +133,7 @@ public final class GordianKeySetRecipe {
     /**
      * The parameters class.
      */
-    protected static final class GordianKeySetParameters {
+    static final class GordianKeySetParameters {
         /**
          * The Recipe.
          */

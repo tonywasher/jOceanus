@@ -56,7 +56,7 @@ public abstract class GordianCoreAgreement
     /**
      * InitVectorLength.
      */
-    protected static final int INITLEN = 32;
+    static final int INITLEN = 32;
 
     /**
      * The factory.
@@ -194,11 +194,7 @@ public abstract class GordianCoreAgreement
         Arrays.fill(pSecret, (byte) 0);
     }
 
-    /**
-     * Derive keySet.
-     * @return the keySet
-     * @throws OceanusException on error
-     */
+    @Override
     public GordianKeySet deriveKeySet() throws OceanusException {
         final GordianKeySetFactory myKeySets = theFactory.getKeySetFactory();
         final GordianCoreKeySet myKeySet = (GordianCoreKeySet) myKeySets.createKeySet();
@@ -206,13 +202,7 @@ public abstract class GordianCoreAgreement
         return myKeySet;
     }
 
-    /**
-     * Derive key.
-     * @param <T> the type of key
-     * @param pKeyType the key type
-     * @return the key
-     * @throws OceanusException on error
-     */
+    @Override
     public <T extends GordianKeySpec> GordianKey<T> deriveKey(final T pKeyType) throws OceanusException {
         final GordianCipherFactory myCiphers = theFactory.getCipherFactory();
         final GordianCoreKeyGenerator<T> myGenerator = (GordianCoreKeyGenerator<T>) myCiphers.getKeyGenerator(pKeyType);

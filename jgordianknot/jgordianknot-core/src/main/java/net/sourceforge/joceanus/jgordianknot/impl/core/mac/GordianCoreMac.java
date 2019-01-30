@@ -123,7 +123,7 @@ public abstract class GordianCoreMac
     public void initMac(final byte[] pKeyBytes) throws OceanusException {
         /* Create generator if needed */
         if (theGenerator == null) {
-            GordianMacFactory myFactory = theFactory.getMacFactory();
+            final GordianMacFactory myFactory = theFactory.getMacFactory();
             theGenerator = (GordianCoreKeyGenerator<GordianMacSpec>) myFactory.getKeyGenerator(theMacSpec);
         }
 

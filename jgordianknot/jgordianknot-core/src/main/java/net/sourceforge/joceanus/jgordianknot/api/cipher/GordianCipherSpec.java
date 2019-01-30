@@ -16,9 +16,6 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jgordianknot.api.cipher;
 
-import java.util.ArrayList;
-import java.util.List;
-
 /**
  * Cipher Specification.
  * @param <T> the keyType

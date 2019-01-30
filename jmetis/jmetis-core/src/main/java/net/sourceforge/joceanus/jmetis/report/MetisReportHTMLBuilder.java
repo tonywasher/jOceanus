@@ -16,6 +16,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmetis.report;
 
+import javax.xml.XMLConstants;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
@@ -245,6 +246,7 @@ public class MetisReportHTMLBuilder {
 
             /* Create the document builder */
             final DocumentBuilderFactory myDocFactory = DocumentBuilderFactory.newInstance();
+            myDocFactory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
             theBuilder = myDocFactory.newDocumentBuilder();
 
         } catch (Exception e) {

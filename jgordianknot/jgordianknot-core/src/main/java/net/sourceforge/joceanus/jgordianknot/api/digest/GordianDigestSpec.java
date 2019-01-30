@@ -47,6 +47,11 @@ public class GordianDigestSpec {
     private final GordianLength theLength;
 
     /**
+     * The Validity.
+     */
+    private final boolean isValid;
+
+    /**
      * The String name.
      */
     private String theName;
@@ -83,6 +88,7 @@ public class GordianDigestSpec {
         theDigestType = pDigestType;
         theStateLength = pStateLength;
         theLength = pLength;
+        isValid = checkValidity();
     }
 
     /**
@@ -304,6 +310,14 @@ public class GordianDigestSpec {
     }
 
     /**
+     * Is the digestSpec valid?
+     * @return true/false.
+     */
+    public boolean isValid() {
+        return isValid;
+    }
+
+    /**
      * Is this a hybrid state.
      * @return true/false
      */
@@ -311,38 +325,67 @@ public class GordianDigestSpec {
         return theStateLength != null && !theStateLength.equals(theLength);
     }
 
+    /**
+     * Check spec validity.
+     * @return valid true/false
+     */
+    private boolean checkValidity() {
+        /* Handle null keyType */
+        if (theDigestType == null || theLength == null) {
+            return false;
+        }
+
+        /* Switch on keyType */
+        switch (theDigestType) {
+            case SKEIN:
+            case BLAKE:
+            case SHAKE:
+                return theStateLength != null;
+            case SHA2:
+                return true;
+            default:
+                return theStateLength == null;
+        }
+    }
+
     @Override
     public String toString() {
         /* If we have not yet loaded the name */
         if (theName == null) {
-            /* Load the name */
-            theName = theDigestType.toString();
-            switch (theDigestType) {
-                case SHA2:
-                    if (theStateLength != null) {
-                        theName += SEP + Integer.toString(theStateLength.getLength());
-                    }
-                    theName += SEP + Integer.toString(theLength.getLength());
-                    break;
-                case SHAKE:
-                    if (!theStateLength.equals(theLength)) {
-                        theName += SEP + Integer.toString(theStateLength.getLength());
-                    }
-                    theName += SEP + Integer.toString(theLength.getLength());
-                    break;
-                case SKEIN:
-                    theName += SEP + Integer.toString(theStateLength.getLength());
-                    theName += SEP + Integer.toString(theLength.getLength());
-                    break;
-                case BLAKE:
-                    theName = GordianDigestType.getBlakeAlgorithmForStateLength(theStateLength);
-                    theName += SEP + Integer.toString(theLength.getLength());
-                    break;
-                default:
-                    if (theDigestType.getSupportedLengths().length > 1) {
-                        theName += SEP + Integer.toString(theLength.getLength());
-                    }
-                    break;
+            /* If the keySpec is valid */
+            if (isValid) {
+                /* Load the name */
+                theName = theDigestType.toString();
+                switch (theDigestType) {
+                    case SHA2:
+                        if (theStateLength != null) {
+                            theName += SEP + theStateLength;
+                        }
+                        theName += SEP + theLength;
+                        break;
+                    case SHAKE:
+                        if (!theStateLength.equals(theLength)) {
+                            theName += SEP + theStateLength;
+                        }
+                        theName += SEP + theLength;
+                        break;
+                    case SKEIN:
+                        theName += SEP + theStateLength;
+                        theName += SEP + theLength;
+                        break;
+                    case BLAKE:
+                        theName = GordianDigestType.getBlakeAlgorithmForStateLength(theStateLength);
+                        theName += SEP + theLength;
+                        break;
+                    default:
+                        if (theDigestType.getSupportedLengths().length > 1) {
+                            theName += SEP + theLength;
+                        }
+                        break;
+                }
+            }  else {
+                /* Report invalid spec */
+                theName = "InvalidDigestSpec: " + theDigestType + ":" + theStateLength + ":" + theLength;
             }
         }
 

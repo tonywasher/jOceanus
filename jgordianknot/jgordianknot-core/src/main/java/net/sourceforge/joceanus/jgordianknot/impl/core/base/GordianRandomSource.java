@@ -50,7 +50,7 @@ public class GordianRandomSource {
      * Constructor.
      * @throws OceanusException on error
      */
-    public GordianRandomSource() throws OceanusException {
+    GordianRandomSource() throws OceanusException {
         theRandom = getStrongRandom();
     }
 

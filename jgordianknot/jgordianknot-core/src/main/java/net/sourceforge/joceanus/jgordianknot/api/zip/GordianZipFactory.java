@@ -29,6 +29,7 @@ public interface GordianZipFactory {
      * Create a secure zipFile.
      * @param pHash the password hash to use
      * @param pFile the file details for the new zip file
+     * @return the zipFile
      * @throws OceanusException on error
      */
     GordianZipWriteFile createZipFile(GordianKeySetHash pHash,
@@ -37,6 +38,7 @@ public interface GordianZipFactory {
     /**
      * Create a standard zipFile with no security.
      * @param pFile the file details for the new zip file
+     * @return the zipFile
      * @throws OceanusException on error
      */
     GordianZipWriteFile createZipFile(File pFile) throws OceanusException;
@@ -44,6 +46,7 @@ public interface GordianZipFactory {
     /**
      * Open an existing zipFile.
      * @param pFile the file to read
+     * @return the zipFile
      * @throws OceanusException on error
      */
     GordianZipReadFile openZipFile(File pFile) throws OceanusException;

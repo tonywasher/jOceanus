@@ -103,5 +103,10 @@ public enum GordianLength {
     public int getByteLength() {
         return theLength / Byte.SIZE;
     }
+
+    @Override
+    public String toString() {
+        return Integer.toString(theLength);
+    }
 }
 

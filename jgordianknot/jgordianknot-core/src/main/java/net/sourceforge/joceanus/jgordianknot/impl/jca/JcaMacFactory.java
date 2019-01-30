@@ -17,7 +17,10 @@
 package net.sourceforge.joceanus.jgordianknot.impl.jca;
 
 import java.security.NoSuchAlgorithmException;
+import java.util.HashMap;
+import java.util.Map;
 
+import javax.crypto.KeyGenerator;
 import javax.crypto.Mac;
 
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianStreamKeyType;
@@ -45,6 +48,11 @@ public class JcaMacFactory
     private static final String CMAC_ALGORITHM = "CMAC";
 
     /**
+     * KeyGenerator Cache.
+     */
+    final Map<GordianMacSpec, JcaKeyGenerator<GordianMacSpec>> theCache;
+
+    /**
      * Constructor.
      *
      * @param pFactory the factory
@@ -52,6 +60,9 @@ public class JcaMacFactory
     public JcaMacFactory(final GordianCoreFactory pFactory) {
         /* Initialise underlying class */
         super(pFactory);
+
+        /* Create the cache */
+        theCache = new HashMap<>();
     }
 
     @Override
@@ -60,9 +71,22 @@ public class JcaMacFactory
     }
 
     @Override
-    public GordianKeyGenerator<GordianMacSpec> getKeyGenerator(final GordianMacSpec pKeyType) throws OceanusException {
-        return null;
+    public GordianKeyGenerator<GordianMacSpec> getKeyGenerator(final GordianMacSpec pKeySpec) throws OceanusException {
+        /* Look up in the cache */
+        JcaKeyGenerator<GordianMacSpec> myGenerator = theCache.get(pKeySpec);
+        if (myGenerator == null) {
+            /* Create the new generator */
+            final String myAlgorithm = getMacSpecAlgorithm(pKeySpec);
+            final KeyGenerator myJavaGenerator = getJavaKeyGenerator(myAlgorithm);
+            myGenerator = new JcaKeyGenerator<>(getFactory(), pKeySpec, myJavaGenerator);
+
+            /* Add to cache */
+
+            theCache.put(pKeySpec, myGenerator);
+        }
+        return myGenerator;
     }
+
     @Override
     public JcaMac createMac(final GordianMacSpec pMacSpec) throws OceanusException {
         /* Check validity of MacSpec */
@@ -85,6 +109,7 @@ public class JcaMacFactory
                 return super.validMacType(pMacType);
         }
     }
+
     /**
      * Create the BouncyCastle MAC via JCA.
      * @param pMacSpec the MacSpec
@@ -123,6 +148,33 @@ public class JcaMacFactory
         } catch (NoSuchAlgorithmException e) {
             /* Throw the exception */
             throw new GordianCryptoException("Failed to create Mac", e);
+        }
+    }
+
+    /**
+     * Create the BouncyCastle KeyGenerator via JCA.
+     * @param pAlgorithm the Algorithm
+     * @return the KeyGenerator
+     * @throws OceanusException on error
+     */
+    private static KeyGenerator getJavaKeyGenerator(final String pAlgorithm) throws OceanusException {
+        /* Protect against exceptions */
+        try {
+            /* Massage the keyGenerator name */
+            String myAlgorithm = pAlgorithm;
+
+            /* CMAC generators use the symKeyGenerator */
+            if (myAlgorithm.endsWith(CMAC_ALGORITHM)) {
+                myAlgorithm = myAlgorithm.substring(0, myAlgorithm.length() - CMAC_ALGORITHM.length());
+            }
+
+            /* Return a KeyGenerator for the algorithm */
+            return KeyGenerator.getInstance(myAlgorithm, JcaFactory.BCPROV);
+
+            /* Catch exceptions */
+        } catch (NoSuchAlgorithmException e) {
+            /* Throw the exception */
+            throw new GordianCryptoException("Failed to create KeyGenerator", e);
         }
     }
 

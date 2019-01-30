@@ -102,7 +102,6 @@ public enum GordianKDFType {
             case SHA256KDF:
                 return true;
             case SHA256CKDF:
-            case NONE:
                 return pAgreeType == GordianAgreementType.BASIC;
             default:
                 return false;
@@ -120,7 +119,6 @@ public enum GordianKDFType {
             case SHA512KDF:
                 return true;
             case SHA512CKDF:
-            case NONE:
                 return pAgreeType == GordianAgreementType.BASIC;
             default:
                 return false;

@@ -22,12 +22,25 @@ import java.util.List;
 import org.bouncycastle.pqc.crypto.mceliece.McElieceCCA2Parameters;
 import org.bouncycastle.pqc.jcajce.spec.McElieceCCA2KeyGenParameterSpec;
 
+import net.sourceforge.joceanus.jgordianknot.crypto.GordianMcElieceKeySpec.GordianMcElieceDigestType;
+import net.sourceforge.joceanus.jgordianknot.crypto.GordianMcElieceKeySpec.GordianMcElieceEncryptionType;
+import net.sourceforge.joceanus.jgordianknot.crypto.GordianMcElieceKeySpec.GordianMcElieceKeyType;
 import net.sourceforge.joceanus.jtethys.TethysDataConverter;
 
 /**
  * McEliece KeyTypes.
  */
 public final class GordianMcElieceKeySpec {
+    /**
+     * The SHA512 Shift.
+     */
+    private static final int SHIFT_SHA512 = 4;
+
+    /**
+     * The SHA384 Shift.
+     */
+    private static final int SHIFT_SHA384 = 1;
+
     /**
      * The Separator.
      */
@@ -44,6 +57,11 @@ public final class GordianMcElieceKeySpec {
     private final GordianMcElieceDigestType theDigestType;
 
     /**
+     * The Validity.
+     */
+    private final boolean isValid;
+
+    /**
      * The String name.
      */
     private String theName;
@@ -53,10 +71,11 @@ public final class GordianMcElieceKeySpec {
      * @param pKeyType the keyType
      * @param pDigestType the digestType
      */
-    private GordianMcElieceKeySpec(final GordianMcElieceKeyType pKeyType,
-                                   final GordianMcElieceDigestType pDigestType) {
+    public GordianMcElieceKeySpec(final GordianMcElieceKeyType pKeyType,
+                                  final GordianMcElieceDigestType pDigestType) {
         theKeyType = pKeyType;
         theDigestType = pDigestType;
+        isValid = checkValidity();
     }
 
     /**
@@ -84,6 +103,14 @@ public final class GordianMcElieceKeySpec {
     }
 
     /**
+     * Is the keySpec valid?
+     * @return true/false.
+     */
+    public boolean isValid() {
+        return isValid;
+    }
+
+    /**
      * Create McElieceSpec.
      * @return the keySpec
      */
@@ -100,14 +127,35 @@ public final class GordianMcElieceKeySpec {
         return new GordianMcElieceKeySpec(GordianMcElieceKeyType.CCA2, pDigestType);
     }
 
+    /**
+     * Check spec validity.
+     * @return valid true/false
+     */
+    private boolean checkValidity() {
+        /* Handle standard keyType */
+        if (theKeyType == GordianMcElieceKeyType.STANDARD) {
+            return theDigestType == null;
+        } else if (theKeyType == GordianMcElieceKeyType.CCA2) {
+            return theDigestType != null;
+        } else {
+            return false;
+        }
+    }
+
     @Override
     public String toString() {
         /* If we have not yet loaded the name */
         if (theName == null) {
-            /* Load the name */
-            theName = theKeyType.toString();
-            if (theDigestType != null) {
-                theName += SEP + theDigestType.toString();
+            /* If the keySpec is valid */
+            if (isValid) {
+                /* Load the name */
+                theName = theKeyType.toString();
+                if (theDigestType != null) {
+                    theName += SEP + theDigestType.toString();
+                }
+            }  else {
+                /* Report invalid spec */
+                theName = "InvalidMcElieceKeySpec: " + theKeyType + ":" + theDigestType;
             }
         }
 
@@ -264,9 +312,9 @@ public final class GordianMcElieceKeySpec {
         public int getM() {
             switch (this) {
                 case SHA512:
-                    return McElieceCCA2Parameters.DEFAULT_M + 4;
+                    return McElieceCCA2Parameters.DEFAULT_M + SHIFT_SHA512;
                 case SHA384:
-                    return McElieceCCA2Parameters.DEFAULT_M + 1;
+                    return McElieceCCA2Parameters.DEFAULT_M + SHIFT_SHA384;
                 default:
                     return McElieceCCA2Parameters.DEFAULT_M;
             }

@@ -27,7 +27,7 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
 /**
  * GordianKnot base for Wrap Cipher.
  */
-public interface GordianKeyWrapper {
+public interface GordianWrapper {
     /**
      * Obtain the keyType.
      * @return the keyType
@@ -45,16 +45,6 @@ public interface GordianKeyWrapper {
                      GordianKey<?> pKeyToSecure) throws OceanusException;
 
     /**
-     * Secure privateKey.
-     * @param pKey the key to use to secure privateKey
-     * @param pKeyPair the keyPair to secure
-     * @return the securedPrivateKey
-     * @throws OceanusException on error
-     */
-    byte[] securePrivateKey(GordianKey<GordianSymKeySpec> pKey,
-                            GordianKeyPair pKeyPair) throws OceanusException;
-
-    /**
      * Derive key from bytes.
      * @param <T> type of key to be derived
      * @param pKey the key to use to derive the key
@@ -68,6 +58,16 @@ public interface GordianKeyWrapper {
                                                        T pKeyType) throws OceanusException;
 
     /**
+     * Secure privateKey.
+     * @param pKey the key to use to secure privateKey
+     * @param pKeyPair the keyPair to secure
+     * @return the securedPrivateKey
+     * @throws OceanusException on error
+     */
+    byte[] securePrivateKey(GordianKey<GordianSymKeySpec> pKey,
+                            GordianKeyPair pKeyPair) throws OceanusException;
+
+    /**
      * Derive the keyPair from the PKCS8/X509 encodings.
      * @param pKey the key to use to derive privateKey
      * @param pPublicKeySpec the publicKeySpec
@@ -78,6 +78,26 @@ public interface GordianKeyWrapper {
     GordianKeyPair deriveKeyPair(GordianKey<GordianSymKeySpec> pKey,
                                  X509EncodedKeySpec pPublicKeySpec,
                                  byte[] pSecuredPrivateKey) throws OceanusException;
+
+    /**
+     * secure bytes.
+     * @param pKey the key to use to secure the key
+     * @param pBytesToSecure the bytes to secure
+     * @return the securedBytes
+     * @throws OceanusException on error
+     */
+    byte[] secureBytes(GordianKey<GordianSymKeySpec> pKey,
+                       byte[] pBytesToSecure) throws OceanusException;
+
+    /**
+     * derive bytes.
+     * @param pKey the key to use to derive the bytes
+     * @param pSecuredBytes the secured bytes
+     * @return the derivedBytes
+     * @throws OceanusException on error
+     */
+    byte[] deriveBytes(GordianKey<GordianSymKeySpec> pKey,
+                       byte[] pSecuredBytes) throws OceanusException;
 
     /**
      * Obtain keyWrapExpansion for this cipher.

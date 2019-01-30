@@ -38,6 +38,7 @@ import net.sourceforge.joceanus.jgordianknot.api.mac.GordianMacSpec;
 import net.sourceforge.joceanus.jgordianknot.api.mac.GordianMacType;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianCoreFactory;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianDataException;
+import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianRandomSource;
 import net.sourceforge.joceanus.jgordianknot.impl.core.keyset.GordianPersonalisation.GordianPersonalId;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.TethysDataConverter;
@@ -54,7 +55,7 @@ public class GordianIdManager {
     /**
      * The SecureRandom.
      */
-    private SecureRandom theRandom;
+    private final GordianRandomSource theRandom;
 
     /**
      * The personalisation.
@@ -104,38 +105,29 @@ public class GordianIdManager {
     /**
      * Constructor.
      * @param pFactory the security factory
+     * @param pKeySetFactory the keySet factory
      */
-    protected GordianIdManager(final GordianCoreFactory pFactory) {
+    GordianIdManager(final GordianCoreFactory pFactory,
+                     final GordianCoreKeySetFactory pKeySetFactory) {
         /* Store the factory */
         theFactory = pFactory;
-
-        /* Access personalisation */
-        final GordianCoreKeySetFactory myFactory = (GordianCoreKeySetFactory) pFactory.getKeySetFactory();
-        thePersonalisation = myFactory.getPersonalisation();
+        theRandom = pFactory.getRandomSource();
+        thePersonalisation = pKeySetFactory.getPersonalisation();
 
         /* Access factories */
         final GordianDigestFactory myDigests = theFactory.getDigestFactory();
         final GordianCipherFactory myCiphers = theFactory.getCipherFactory();
         final GordianMacFactory myMacs = theFactory.getMacFactory();
-        final GordianKeySetFactory myKeySets = theFactory.getKeySetFactory();
 
         /* Create shuffled and filtered lists */
         theSymKeys = shuffleTypes(GordianSymKeyType.values(), GordianPersonalId.SYMKEY, myCiphers.supportedSymKeyTypes());
-        theKeySetSymKeys = shuffleTypes(GordianSymKeyType.values(), GordianPersonalId.KEYSETSYMKEY, myKeySets.supportedKeySetSymKeyTypes());
+        theKeySetSymKeys = shuffleTypes(GordianSymKeyType.values(), GordianPersonalId.KEYSETSYMKEY, pKeySetFactory.supportedKeySetSymKeyTypes());
         theStreamKeys = shuffleTypes(GordianStreamKeyType.values(), GordianPersonalId.STREAMKEY, myCiphers.supportedStreamKeyTypes());
         theDigests = shuffleTypes(GordianDigestType.values(), GordianPersonalId.DIGEST, myDigests.supportedDigestTypes());
         theExternalDigests = shuffleTypes(GordianDigestType.values(), GordianPersonalId.XTERNDIGEST, myDigests.supportedExternalDigestTypes());
-        theKeySetDigests = shuffleTypes(GordianDigestType.values(), GordianPersonalId.KEYSETDIGEST, myKeySets.supportedKeySetDigestTypes());
+        theKeySetDigests = shuffleTypes(GordianDigestType.values(), GordianPersonalId.KEYSETDIGEST, pKeySetFactory.supportedKeySetDigestTypes());
         theHMacDigests = shuffleTypes(GordianDigestType.values(), GordianPersonalId.HMAC, myMacs.supportedHMacDigestTypes());
         theMacs = shuffleTypes(GordianMacType.values(), GordianPersonalId.MAC, myMacs.supportedMacTypes());
-    }
-
-    /**
-     * Set the secureRandom instance.
-     * @param pRandom the secureRandom instance
-     */
-    protected void setSecureRandom(final SecureRandom pRandom) {
-        theRandom = pRandom;
     }
 
     /**
@@ -794,7 +786,7 @@ public class GordianIdManager {
                                                    final int pCount) {
         /* Use a random seed */
         final E[] myResult = Arrays.copyOf(pTypes, pCount);
-        getSeededTypes(pTypes, myResult, theRandom.nextInt());
+        getSeededTypes(pTypes, myResult, theRandom.getRandom().nextInt());
         return myResult;
     }
 

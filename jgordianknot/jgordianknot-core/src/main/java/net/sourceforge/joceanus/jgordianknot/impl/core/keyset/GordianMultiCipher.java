@@ -32,15 +32,16 @@ import net.sourceforge.joceanus.jgordianknot.api.factory.GordianAsymFactory;
 import net.sourceforge.joceanus.jgordianknot.api.key.GordianKey;
 import net.sourceforge.joceanus.jgordianknot.api.base.GordianKeySpec;
 import net.sourceforge.joceanus.jgordianknot.api.key.GordianKeyPair;
-import net.sourceforge.joceanus.jgordianknot.api.key.GordianKeyPairGenerator;
+import net.sourceforge.joceanus.jgordianknot.api.mac.GordianMacSpec;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianCoreFactory;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianDataException;
 import net.sourceforge.joceanus.jgordianknot.impl.core.cipher.GordianCoreCipherFactory;
-import net.sourceforge.joceanus.jgordianknot.impl.core.cipher.GordianCoreKeyWrapper;
+import net.sourceforge.joceanus.jgordianknot.impl.core.cipher.GordianCoreWrapper;
 import net.sourceforge.joceanus.jgordianknot.impl.core.key.GordianCoreKey;
 import net.sourceforge.joceanus.jgordianknot.impl.core.key.GordianCoreKeyGenerator;
 import net.sourceforge.joceanus.jgordianknot.impl.core.keypair.GordianCoreKeyPairGenerator;
 import net.sourceforge.joceanus.jgordianknot.impl.core.keyset.GordianKeySetRecipe.GordianKeySetParameters;
+import net.sourceforge.joceanus.jgordianknot.impl.core.mac.GordianCoreMacFactory;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
@@ -559,6 +560,7 @@ final class GordianMultiCipher {
      * @return the derived key
      * @throws OceanusException on error
      */
+    @SuppressWarnings("unchecked")
     <T extends GordianKeySpec> GordianKey<T> deriveKey(final GordianKeySetParameters pParams,
                                                        final byte[] pSecuredKey,
                                                        final T pKeyType) throws OceanusException {
@@ -567,6 +569,13 @@ final class GordianMultiCipher {
 
         /* Derive the bytes */
         final byte[] myBytes = deriveBytes(pParams, pSecuredKey);
+
+        /* Handle the macSpec separately */
+        if (pKeyType instanceof GordianMacSpec) {
+            final GordianCoreMacFactory myFactory = (GordianCoreMacFactory) theFactory.getMacFactory();
+            final GordianCoreKeyGenerator<T> myGenerator = (GordianCoreKeyGenerator<T>) myFactory.getKeyGenerator((GordianMacSpec) pKeyType);
+            return myGenerator.buildKeyFromBytes(myBytes);
+        }
 
         /* Generate the key */
         final GordianCoreCipherFactory myFactory = (GordianCoreCipherFactory) theFactory.getCipherFactory();
@@ -637,7 +646,7 @@ final class GordianMultiCipher {
         for (int i = 1; i < theNumSteps; i++) {
             final GordianSymKeyType myKeyType = mySymKeyTypes[i];
             final SymKeyCiphers myCiphers = getKeyCiphers(myKeyType);
-            final GordianCoreKeyWrapper myCipher = myCiphers.getWrapCipher();
+            final GordianCoreWrapper myCipher = myCiphers.getWrapCipher();
             myBytes = myCipher.secureBytes(myCiphers.getKey(), myBytes);
         }
 
@@ -652,8 +661,8 @@ final class GordianMultiCipher {
      * @return the derived bytes
      * @throws OceanusException on error
      */
-    private byte[] deriveBytes(final GordianKeySetParameters pParams,
-                               final byte[] pSecuredBytes) throws OceanusException {
+    byte[] deriveBytes(final GordianKeySetParameters pParams,
+                       final byte[] pSecuredBytes) throws OceanusException {
         /* Check the parameters */
         checkParameters(pParams);
 
@@ -666,7 +675,7 @@ final class GordianMultiCipher {
         for (int i = theNumSteps - 1; i >= 1; i--) {
             final GordianSymKeyType myKeyType = mySymKeyTypes[i];
             final SymKeyCiphers myCiphers = getKeyCiphers(myKeyType);
-            final GordianCoreKeyWrapper myCipher = myCiphers.getWrapCipher();
+            final GordianCoreWrapper myCipher = myCiphers.getWrapCipher();
             myBytes = myCipher.deriveBytes(myCiphers.getKey(), myBytes);
         }
 
@@ -711,7 +720,7 @@ final class GordianMultiCipher {
         /**
          * Wrap Cipher.
          */
-        private final GordianCoreKeyWrapper theWrapCipher;
+        private final GordianCoreWrapper theWrapCipher;
 
         /**
          * Constructor.
@@ -732,7 +741,7 @@ final class GordianMultiCipher {
             theStreamCipher = myFactory.createSymKeyCipher(GordianSymCipherSpec.sic(myKeySpec));
 
             /* Create the wrap cipher */
-            theWrapCipher = (GordianCoreKeyWrapper) myFactory.createKeyWrapper(myKeySpec);
+            theWrapCipher = (GordianCoreWrapper) myFactory.createKeyWrapper(myKeySpec);
         }
 
         /**
@@ -771,7 +780,7 @@ final class GordianMultiCipher {
          * Obtain the Wrap cipher.
          * @return the WrapCipher
          */
-        GordianCoreKeyWrapper getWrapCipher() {
+        GordianCoreWrapper getWrapCipher() {
             return theWrapCipher;
         }
     }

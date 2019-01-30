@@ -16,22 +16,23 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jgordianknot.impl.core.cipher;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.function.BiPredicate;
 import java.util.function.Predicate;
 
+import net.sourceforge.joceanus.jgordianknot.api.base.GordianKeySpec;
 import net.sourceforge.joceanus.jgordianknot.api.base.GordianLength;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianCipher;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianCipherFactory;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianCipherMode;
-import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianKeyWrapper;
+import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianWrapper;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianPadding;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianStreamKeyType;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianSymCipherSpec;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianSymKeySpec;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianSymKeyType;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianCoreFactory;
+import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianDataException;
+import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
  * Core Cipher factory.
@@ -84,8 +85,8 @@ public abstract class GordianCoreCipherFactory
      * @param pBlockCipher the underlying block cipher
      * @return the wrapCipher
      */
-    protected GordianKeyWrapper createKeyWrapper(final GordianCipher<GordianSymKeySpec> pBlockCipher) {
-        return new GordianCoreKeyWrapper(theFactory, (GordianCoreCipher<GordianSymKeySpec>) pBlockCipher);
+    protected GordianWrapper createKeyWrapper(final GordianCipher<GordianSymKeySpec> pBlockCipher) {
+        return new GordianCoreWrapper(theFactory, (GordianCoreCipher<GordianSymKeySpec>) pBlockCipher);
     }
 
     /**
@@ -97,6 +98,11 @@ public abstract class GordianCoreCipherFactory
         /* Access details */
         final GordianLength myLen = pSymKeySpec.getBlockLength();
         final boolean isRestricted = theFactory.isRestricted();
+
+        /* Reject invalid Specs */
+        if (!pSymKeySpec.isValid()) {
+            return false;
+        }
 
         /* Reject restrictedSpecs where the block length is too large */
         if (isRestricted
@@ -167,6 +173,33 @@ public abstract class GordianCoreCipherFactory
                ? myPadding != null
                : GordianPadding.NONE.equals(myPadding);
     }
+
+    /**
+     * Check the keySpec.
+     * @param pKeySpec the keySpec
+     * @throws OceanusException on error
+     */
+    protected void checkKeySpec(final GordianKeySpec pKeySpec) throws OceanusException {
+        /* Assume failure */
+        boolean bValid = false;
+
+        /* If this is a streamKey */
+        if (pKeySpec instanceof GordianStreamKeyType) {
+            /* Check validity of StreamKey */
+            bValid = supportedStreamKeyTypes().test((GordianStreamKeyType) pKeySpec);
+
+            /* If this is a symKeySpec */
+        } else  if (pKeySpec instanceof GordianSymKeySpec) {
+            /* Check validity of SymKey */
+            bValid = supportedSymKeySpecs().test((GordianSymKeySpec) pKeySpec);
+        }
+
+        /* Report error */
+        if (!bValid) {
+            throw new GordianDataException(GordianCoreFactory.getInvalidText(pKeySpec));
+        }
+    }
+
     /**
      * Check SymKeyType.
      * @param pKeyType the symKeyType

@@ -92,7 +92,7 @@ import org.bouncycastle.crypto.paddings.X923Padding;
 
 import net.sourceforge.joceanus.jgordianknot.api.base.GordianLength;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianCipherMode;
-import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianKeyWrapper;
+import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianWrapper;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianPadding;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianStreamCipherSpec;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianStreamKeyType;
@@ -135,16 +135,16 @@ public class BouncyCipherFactory
 
     @Override
     @SuppressWarnings("unchecked")
-    public <T extends GordianKeySpec> BouncyKeyGenerator<T> getKeyGenerator(final T pKeyType) throws OceanusException {
+    public <T extends GordianKeySpec> BouncyKeyGenerator<T> getKeyGenerator(final T pKeySpec) throws OceanusException {
         /* Look up in the cache */
-        BouncyKeyGenerator<T> myGenerator = (BouncyKeyGenerator<T>) theCache.get(pKeyType);
+        BouncyKeyGenerator<T> myGenerator = (BouncyKeyGenerator<T>) theCache.get(pKeySpec);
         if (myGenerator == null) {
             /* Create the new generator */
-            final CipherKeyGenerator myBCGenerator = getBCKeyGenerator(pKeyType);
-            myGenerator = new BouncyKeyGenerator<>(getFactory(), pKeyType, myBCGenerator);
+            final CipherKeyGenerator myBCGenerator = getBCKeyGenerator(pKeySpec);
+            myGenerator = new BouncyKeyGenerator<>(getFactory(), pKeySpec, myBCGenerator);
 
             /* Add to cache */
-            theCache.put(pKeyType, myGenerator);
+            theCache.put(pKeySpec, myGenerator);
         }
         return myGenerator;
     }
@@ -199,7 +199,7 @@ public class BouncyCipherFactory
     }
 
     @Override
-    public GordianKeyWrapper createKeyWrapper(final GordianSymKeySpec pKeySpec) throws OceanusException {
+    public GordianWrapper createKeyWrapper(final GordianSymKeySpec pKeySpec) throws OceanusException {
         /* Check validity of SymKey */
         final GordianSymKeyType myKeyType = pKeySpec.getSymKeyType();
         if (!supportedSymKeyTypes().test(myKeyType)) {
@@ -215,11 +215,13 @@ public class BouncyCipherFactory
     /**
      * Create the BouncyCastle KeyGenerator.
      *
-     * @param pKeyType the keyType
+     * @param pKeySpec the keySpec
      * @return the KeyGenerator
      */
-    private static CipherKeyGenerator getBCKeyGenerator(final GordianKeySpec pKeyType) {
-        return GordianSymKeyType.DESEDE.equals(pKeyType)
+    private CipherKeyGenerator getBCKeyGenerator(final GordianKeySpec pKeySpec) throws OceanusException {
+        checkKeySpec(pKeySpec);
+        return pKeySpec instanceof GordianSymKeySpec
+                && GordianSymKeyType.DESEDE.equals(((GordianSymKeySpec) pKeySpec).getSymKeyType())
                ? new DESedeKeyGenerator()
                : new CipherKeyGenerator();
     }

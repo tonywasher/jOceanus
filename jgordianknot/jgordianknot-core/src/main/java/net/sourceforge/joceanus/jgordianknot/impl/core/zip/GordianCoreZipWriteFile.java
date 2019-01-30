@@ -42,7 +42,7 @@ import net.sourceforge.joceanus.jtethys.TethysDataConverter;
  * Class used to build a ZipFile.
  */
 public class GordianCoreZipWriteFile
-        implements GordianZipWriteFile, AutoCloseable {
+        implements GordianZipWriteFile {
     /**
      * The Create ZipFile Error text.
      */
@@ -189,10 +189,7 @@ public class GordianCoreZipWriteFile
         return theHash != null;
     }
 
-    /**
-     * Obtain the contents.
-     * @return the ZipFile Contents
-     */
+    @Override
     public GordianCoreZipFileContents getContents() {
         return theContents;
     }

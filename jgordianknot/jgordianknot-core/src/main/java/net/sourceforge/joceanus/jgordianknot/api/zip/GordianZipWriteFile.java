@@ -17,6 +17,7 @@
 package net.sourceforge.joceanus.jgordianknot.api.zip;
 
 import java.io.File;
+import java.io.IOException;
 import java.io.OutputStream;
 
 import net.sourceforge.joceanus.jtethys.OceanusException;
@@ -24,7 +25,7 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
 /**
  * GordianKnot Zip WriteFile API.
  */
-public interface GordianZipWriteFile {
+public interface GordianZipWriteFile extends AutoCloseable {
     /**
      * Obtain an output stream for an entry in the zip file.
      * @param pFile the file details for the new zip entry
@@ -34,4 +35,13 @@ public interface GordianZipWriteFile {
      */
     OutputStream createOutputStream(File pFile,
                                     boolean pCompress) throws OceanusException;
+
+    /**
+     * Obtain the contents.
+     * @return the ZipFile Contents
+     */
+    GordianZipFileContents getContents();
+
+    @Override
+    void close() throws IOException;
 }

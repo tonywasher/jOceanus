@@ -240,6 +240,7 @@ public enum GordianSymKeyType {
             case THREEFISH:
             case GOST:
             case KUZNYECHIK:
+            case SHACAL2:
                 return !pRestricted;
             case SM4:
             case SEED:

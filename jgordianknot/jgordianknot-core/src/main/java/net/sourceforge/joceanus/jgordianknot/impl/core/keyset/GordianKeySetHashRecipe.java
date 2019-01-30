@@ -31,7 +31,7 @@ public final class GordianKeySetHashRecipe {
     /**
      * Number of digests.
      */
-    public static final int NUM_DIGESTS = 3;
+    private static final int NUM_DIGESTS = 3;
 
     /**
      * Recipe length (Integer).
@@ -82,7 +82,7 @@ public final class GordianKeySetHashRecipe {
      * Constructor for random choices.
      * @param pFactory the factory
      */
-    protected GordianKeySetHashRecipe(final GordianCoreFactory pFactory) {
+    GordianKeySetHashRecipe(final GordianCoreFactory pFactory) {
         /* Access the secureRandom */
         final SecureRandom myRandom = pFactory.getRandomSource().getRandom();
 
@@ -107,9 +107,9 @@ public final class GordianKeySetHashRecipe {
      * @param pPassLength the password length
      * @param pExternal the external form
      */
-    protected GordianKeySetHashRecipe(final GordianCoreFactory pFactory,
-                                      final int pPassLength,
-                                      final byte[] pExternal) {
+    GordianKeySetHashRecipe(final GordianCoreFactory pFactory,
+                            final int pPassLength,
+                            final byte[] pExternal) {
         /* Determine hash length */
         final int myLen = pExternal.length;
         final int myHashLen = myLen

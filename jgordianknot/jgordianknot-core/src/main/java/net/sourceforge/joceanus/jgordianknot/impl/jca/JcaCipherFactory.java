@@ -17,12 +17,15 @@
 package net.sourceforge.joceanus.jgordianknot.impl.jca;
 
 import java.security.NoSuchAlgorithmException;
+import java.util.HashMap;
+import java.util.Map;
 import javax.crypto.Cipher;
+import javax.crypto.KeyGenerator;
 import javax.crypto.NoSuchPaddingException;
 
 import net.sourceforge.joceanus.jgordianknot.api.base.GordianLength;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianCipherMode;
-import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianKeyWrapper;
+import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianWrapper;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianPadding;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianStreamCipherSpec;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianStreamKeyType;
@@ -53,22 +56,46 @@ public class JcaCipherFactory
     private static final String KALYNA_ALGORITHM = "DSTU7624";
 
     /**
+     * KeyGenerator Cache.
+     */
+    final Map<GordianKeySpec, JcaKeyGenerator<? extends GordianKeySpec>> theCache;
+
+    /**
      * Constructor.
      *
      * @param pFactory the factory
      */
-    public JcaCipherFactory(final GordianCoreFactory pFactory) {
+    JcaCipherFactory(final GordianCoreFactory pFactory) {
         /* Initialise underlying class */
         super(pFactory);
+
+        /* Create the cache */
+        theCache = new HashMap<>();
     }
 
     @Override
-    public JcaFactory getFactory() { return (JcaFactory) super.getFactory(); }
+    public JcaFactory getFactory() {
+        return (JcaFactory) super.getFactory();
+    }
 
     @Override
-    public <T extends GordianKeySpec> GordianKeyGenerator<T> getKeyGenerator(final T pKeyType) throws OceanusException {
-        return null;
+    @SuppressWarnings("unchecked")
+    public <T extends GordianKeySpec> GordianKeyGenerator<T> getKeyGenerator(final T pKeySpec) throws OceanusException {
+        /* Look up in the cache */
+        JcaKeyGenerator<T> myGenerator = (JcaKeyGenerator<T>) theCache.get(pKeySpec);
+        if (myGenerator == null) {
+            /* Create the new generator */
+            final String myAlgorithm = getKeyAlgorithm(pKeySpec);
+            final KeyGenerator myJavaGenerator = getJavaKeyGenerator(myAlgorithm);
+            myGenerator = new JcaKeyGenerator<>(getFactory(), pKeySpec, myJavaGenerator);
+
+            /* Add to cache */
+
+            theCache.put(pKeySpec, myGenerator);
+        }
+        return myGenerator;
     }
+
     @Override
     public JcaCipher<GordianSymKeySpec> createSymKeyCipher(final GordianSymCipherSpec pCipherSpec) throws OceanusException {
         /* Check validity of SymKey */
@@ -119,7 +146,7 @@ public class JcaCipherFactory
     }
 
     @Override
-    public GordianKeyWrapper createKeyWrapper(final GordianSymKeySpec pKeySpec) throws OceanusException {
+    public GordianWrapper createKeyWrapper(final GordianSymKeySpec pKeySpec) throws OceanusException {
         /* Check validity of SymKey */
         if (!supportedSymKeySpecs().test(pKeySpec)) {
             throw new GordianDataException(GordianCoreFactory.getInvalidText(pKeySpec));
@@ -129,6 +156,50 @@ public class JcaCipherFactory
         final GordianSymCipherSpec mySpec = GordianSymCipherSpec.ecb(pKeySpec, GordianPadding.NONE);
         final JcaCipher<GordianSymKeySpec> myJcaCipher = createSymKeyCipher(mySpec);
         return createKeyWrapper(myJcaCipher);
+    }
+
+    /**
+     * Obtain the algorithm for the keySpec.
+     * @param pKeySpec the keySpec
+     * @param <T> the SpecType
+     * @return the name of the algorithm
+     * @throws OceanusException on error
+     */
+    private <T extends GordianKeySpec> String getKeyAlgorithm(final T pKeySpec) throws OceanusException {
+        if (pKeySpec instanceof GordianStreamKeyType) {
+            return getStreamKeyAlgorithm((GordianStreamKeyType) pKeySpec);
+        }
+        if (pKeySpec instanceof GordianSymKeySpec) {
+            return getSymKeyAlgorithm((GordianSymKeySpec) pKeySpec);
+        }
+        throw new GordianDataException(JcaFactory.getInvalidText(pKeySpec));
+    }
+
+    /**
+     * Create the BouncyCastle KeyGenerator via JCA.
+     * @param pAlgorithm the Algorithm
+     * @return the KeyGenerator
+     * @throws OceanusException on error
+     */
+    private static KeyGenerator getJavaKeyGenerator(final String pAlgorithm) throws OceanusException {
+        /* Protect against exceptions */
+        try {
+            /* Massage the keyGenerator name */
+            String myAlgorithm = pAlgorithm;
+
+            /* Note that DSTU7624 has only a single keyGenerator */
+            if (myAlgorithm.startsWith(KALYNA_ALGORITHM)) {
+                myAlgorithm = KALYNA_ALGORITHM;
+            }
+
+            /* Return a KeyGenerator for the algorithm */
+            return KeyGenerator.getInstance(myAlgorithm, JcaFactory.BCPROV);
+
+            /* Catch exceptions */
+        } catch (NoSuchAlgorithmException e) {
+            /* Throw the exception */
+            throw new GordianCryptoException("Failed to create KeyGenerator", e);
+        }
     }
 
     /**

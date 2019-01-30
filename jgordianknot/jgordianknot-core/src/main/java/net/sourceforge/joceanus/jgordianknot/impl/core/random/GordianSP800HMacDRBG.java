@@ -80,10 +80,10 @@ public final class GordianSP800HMacDRBG
      * @param pSecurityBytes personalisation string to distinguish this DRBG (may be null).
      * @param pInitVector nonce to further distinguish this DRBG (may be null).
      */
-    protected GordianSP800HMacDRBG(final GordianMac pHMac,
-                                   final EntropySource pEntropy,
-                                   final byte[] pSecurityBytes,
-                                   final byte[] pInitVector) {
+    GordianSP800HMacDRBG(final GordianMac pHMac,
+                         final EntropySource pEntropy,
+                         final byte[] pSecurityBytes,
+                         final byte[] pInitVector) {
         /* Store hMac and entropy source */
         theHMac = pHMac;
         theEntropy = pEntropy;

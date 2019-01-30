@@ -19,13 +19,12 @@ package net.sourceforge.joceanus.jgordianknot.impl.core.cipher;
 import net.sourceforge.joceanus.jgordianknot.api.asym.GordianAsymKeySpec;
 import net.sourceforge.joceanus.jgordianknot.api.base.GordianLength;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianCipherFactory;
-import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianKeyWrapper;
+import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianWrapper;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianSymKeySpec;
 import net.sourceforge.joceanus.jgordianknot.api.factory.GordianAsymFactory;
 import net.sourceforge.joceanus.jgordianknot.api.key.GordianKey;
 import net.sourceforge.joceanus.jgordianknot.api.base.GordianKeySpec;
 import net.sourceforge.joceanus.jgordianknot.api.key.GordianKeyPair;
-import net.sourceforge.joceanus.jgordianknot.api.key.GordianKeyPairGenerator;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianDataException;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianCoreFactory;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianLogicException;
@@ -45,8 +44,8 @@ import java.security.spec.X509EncodedKeySpec;
  * This class uses a variant of RFC5649 to wrap keyData. It has been modified so that it does not
  * require a 128-block cipher.
  */
-public class GordianCoreKeyWrapper
-        implements GordianKeyWrapper {
+public class GordianCoreWrapper
+        implements GordianWrapper {
     /**
      * Wrap repeat count.
      */
@@ -87,8 +86,8 @@ public class GordianCoreKeyWrapper
      * @param pFactory the Security Factory
      * @param pCipher the underlying cipher
      */
-    protected GordianCoreKeyWrapper(final GordianCoreFactory pFactory,
-                                    final GordianCoreCipher<GordianSymKeySpec> pCipher) {
+    GordianCoreWrapper(final GordianCoreFactory pFactory,
+                       final GordianCoreCipher<GordianSymKeySpec> pCipher) {
         theFactory = pFactory;
         theCipher = pCipher;
         theBlockLen = getKeySpec().getBlockLength().getByteLength() >> 1;
@@ -170,13 +169,7 @@ public class GordianCoreKeyWrapper
         return new PKCS8EncodedKeySpec(myBytes);
     }
 
-    /**
-     * secure bytes (based on RFC 5649).
-     * @param pKey the key to use to secure the bytes
-     * @param pBytesToSecure the bytes to secure
-     * @return the secured bytes
-     * @throws OceanusException on error
-     */
+    @Override
     public byte[] secureBytes(final GordianKey<GordianSymKeySpec> pKey,
                               final byte[] pBytesToSecure) throws OceanusException {
         /* Check validity of key */
@@ -260,13 +253,7 @@ public class GordianCoreKeyWrapper
         return myData;
     }
 
-    /**
-     * derive bytes (based on RFC 5649).
-     * @param pKey the key to use to derive the bytes
-     * @param pSecuredBytes the bytes to derive
-     * @return the derived bytes
-     * @throws OceanusException on error
-     */
+    @Override
     public byte[] deriveBytes(final GordianKey<GordianSymKeySpec> pKey,
                               final byte[] pSecuredBytes) throws OceanusException {
         /* Check validity of key */
@@ -376,10 +363,7 @@ public class GordianCoreKeyWrapper
                : INTEGRITY_VALUE2;
     }
 
-    /**
-     * Obtain keyWrapExpansion for this cipher.
-     * @return the keyWrap expansion
-     */
+    @Override
     public int getKeyWrapExpansion() {
         return getKeyWrapExpansion(getKeySpec().getBlockLength());
     }

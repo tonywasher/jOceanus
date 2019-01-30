@@ -229,7 +229,7 @@ public class CoeusMarketCache
     private void handlePrefChange() {
         /* If the Totals preference has changed */
         final Boolean myTotals = thePreferences.getBooleanValue(CoeusPreferenceKey.CALENDARYEAR);
-        if (myTotals != theCalendar.useCalendarTotals()) {
+        if (!myTotals.equals(theCalendar.useCalendarTotals())) {
             /* Create new calendar and reset maps */
             theCalendar = new CoeusCalendar(theFormatter.getLocale(), myTotals);
             resetMaps();

@@ -18,7 +18,6 @@ package net.sourceforge.joceanus.jgordianknot.impl.core.sign;
 
 import java.security.SecureRandom;
 
-import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigestFactory;
 import net.sourceforge.joceanus.jgordianknot.api.factory.GordianAsymFactory;
 import net.sourceforge.joceanus.jgordianknot.api.key.GordianKeyPair;
 import net.sourceforge.joceanus.jgordianknot.api.sign.GordianSignature;

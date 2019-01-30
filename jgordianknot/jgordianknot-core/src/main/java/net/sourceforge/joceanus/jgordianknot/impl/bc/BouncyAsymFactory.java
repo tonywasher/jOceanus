@@ -20,7 +20,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import net.sourceforge.joceanus.jgordianknot.api.asym.GordianAsymKeySpec;
-import net.sourceforge.joceanus.jgordianknot.api.key.GordianKeyPairGenerator;
 import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyDHAsymKey.BouncyDHKeyPairGenerator;
 import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyDSAAsymKey.BouncyDSAKeyPairGenerator;
 import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyDSTUAsymKey.BouncyDSTUKeyPairGenerator;

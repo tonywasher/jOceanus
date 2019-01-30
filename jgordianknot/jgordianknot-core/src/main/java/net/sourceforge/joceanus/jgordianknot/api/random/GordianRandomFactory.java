@@ -21,6 +21,11 @@ import java.util.List;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
+import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianStreamKeyType;
+import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianSymKeySpec;
+import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigest;
+import net.sourceforge.joceanus.jgordianknot.api.key.GordianKey;
+import net.sourceforge.joceanus.jgordianknot.api.mac.GordianMac;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
@@ -40,6 +45,34 @@ public interface GordianRandomFactory {
      * @return the predicate
      */
     Predicate<GordianRandomSpec> supportedRandomSpecs();
+
+    /**
+     * generate random GordianDigest.
+     * @return the new Digest
+     * @throws OceanusException on error
+     */
+    GordianDigest generateRandomDigest() throws OceanusException;
+
+    /**
+     * generate random GordianMac.
+     * @return the new MAC
+     * @throws OceanusException on error
+     */
+    GordianMac generateRandomMac() throws OceanusException;
+
+    /**
+     * generate random SymKey.
+     * @return the new key
+     * @throws OceanusException on error
+     */
+    GordianKey<GordianSymKeySpec> generateRandomSymKey() throws OceanusException;
+
+    /**
+     * generate random GordianStreamKey.
+     * @return the new StreamKey
+     * @throws OceanusException on error
+     */
+    GordianKey<GordianStreamKeyType> generateRandomStreamKey() throws OceanusException;
 
     /**
      * Obtain a list of supported randomSpecs.

@@ -123,10 +123,7 @@ public abstract class GordianCoreFactory
         return theRandom;
     }
 
-    /**
-     * Obtain factory type.
-     * @return the factory type
-     */
+    @Override
     public GordianFactoryType getFactoryType() {
         return theParameters.getFactoryType();
     }
@@ -195,7 +192,7 @@ public abstract class GordianCoreFactory
             /* Generate and apply the new seed */
             final byte[] mySeed = mySeeded.generateSeed(SEED_SIZE);
             mySeeded.setSeed(mySeed);
-            mySeeded.reseed((byte[]) null);
+            mySeeded.reseed(null);
         }
     }
 
@@ -262,6 +259,33 @@ public abstract class GordianCoreFactory
      */
     protected void setKeySetFactory(final GordianKeySetFactory pFactory) {
         theKeySetFactory = pFactory;
+    }
+
+    @Override
+    public boolean equals(final Object pThat) {
+        /* Handle the trivial cases */
+        if (pThat == this) {
+            return true;
+        }
+        if (pThat == null) {
+            return false;
+        }
+
+        /* Make sure that the object is the same class */
+        if (!(pThat instanceof GordianCoreFactory)) {
+            return false;
+        }
+
+        /* Access the target field */
+        final GordianCoreFactory myThat = (GordianCoreFactory) pThat;
+
+        /* Check Differences */
+        return theParameters.equals(myThat.theParameters);
+    }
+
+    @Override
+    public int hashCode() {
+        return theParameters.hashCode();
     }
 
     /**

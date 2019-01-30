@@ -43,6 +43,11 @@ public class GordianSymKeySpec implements GordianKeySpec {
     private final GordianLength theBlockLength;
 
     /**
+     * The Validity.
+     */
+    private final boolean isValid;
+
+    /**
      * The String name.
      */
     private String theName;
@@ -65,6 +70,7 @@ public class GordianSymKeySpec implements GordianKeySpec {
         /* Store parameters */
         theSymKeyType = pSymKeyType;
         theBlockLength = pBlockLength;
+        isValid = checkValidity();
     }
 
     /**
@@ -285,18 +291,40 @@ public class GordianSymKeySpec implements GordianKeySpec {
         return theBlockLength;
     }
 
+    /**
+     * Is the keySpec valid?
+     * @return true/false.
+     */
+    public boolean isValid() {
+        return isValid;
+    }
+
+    /**
+     * Check spec validity.
+     * @return valid true/false
+     */
+    private boolean checkValidity() {
+        return theSymKeyType != null && theBlockLength != null;
+    }
+
     @Override
     public String toString() {
         /* If we have not yet loaded the name */
         if (theName == null) {
-            /* Load the name */
-            theName = theSymKeyType.toString();
-            if (theSymKeyType.hasMultipleLengths()) {
-                int myLen = theBlockLength.getLength();
-                if (GordianSymKeyType.RC5.equals(theSymKeyType)) {
-                    myLen >>= 1;
+            /* If the keySpec is valid */
+            if (isValid) {
+                /* Load the name */
+                theName = theSymKeyType.toString();
+                if (theSymKeyType.hasMultipleLengths()) {
+                    int myLen = theBlockLength.getLength();
+                    if (GordianSymKeyType.RC5.equals(theSymKeyType)) {
+                        myLen >>= 1;
+                    }
+                    theName += SEP + myLen;
                 }
-                theName += SEP + Integer.toString(myLen);
+            }  else {
+                /* Report invalid spec */
+                theName = "InvalidSymKeySpec: " + theSymKeyType + ":" + theBlockLength;
             }
         }
 

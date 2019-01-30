@@ -63,8 +63,8 @@ public class GordianCoreKeySetFactory
     public GordianCoreKeySetFactory(final GordianCoreFactory pFactory) throws OceanusException {
         theFactory = pFactory;
         thePersonalisation = new GordianPersonalisation(theFactory);
-        theIdManager = new GordianIdManager(theFactory);
-        theObfuscater = new GordianCoreKnuthObfuscater(theFactory);
+        theIdManager = new GordianIdManager(theFactory, this);
+        theObfuscater = new GordianCoreKnuthObfuscater(this);
     }
 
     /**
@@ -134,7 +134,7 @@ public class GordianCoreKeySetFactory
      * @param pKeyType the symKeyType
      * @return true/false
      */
-    protected boolean validKeySetSymKeyType(final GordianSymKeyType pKeyType) {
+    private boolean validKeySetSymKeyType(final GordianSymKeyType pKeyType) {
         final GordianCoreFactory myFactory = getFactory();
         final GordianCoreCipherFactory myCiphers = (GordianCoreCipherFactory) myFactory.getCipherFactory();
         return myCiphers.validSymKeyType(pKeyType)
@@ -147,8 +147,8 @@ public class GordianCoreKeySetFactory
      * @param pRestricted is the symKeyType restricted?
      * @return true/false
      */
-    protected boolean validKeySetSymKeyTypeForRestriction(final GordianSymKeyType pKeyType,
-                                                          final boolean pRestricted) {
+    private boolean validKeySetSymKeyTypeForRestriction(final GordianSymKeyType pKeyType,
+                                                        final boolean pRestricted) {
         final GordianCoreCipherFactory myCiphers = (GordianCoreCipherFactory) getFactory().getCipherFactory();
         return myCiphers.validSymKeyTypeForRestriction(pKeyType, pRestricted)
                 && pKeyType.getDefaultLength().equals(GordianLength.LEN_128);

@@ -103,9 +103,9 @@ public class GordianX931CipherDRBG
      * @param pEntropy source of entropy to use for seeding/reSeeding.
      * @param pInitVector nonce to further distinguish this DRBG.
      */
-    protected GordianX931CipherDRBG(final GordianCipher<GordianSymKeySpec> pCipher,
-                                    final EntropySource pEntropy,
-                                    final byte[] pInitVector) {
+    GordianX931CipherDRBG(final GordianCipher<GordianSymKeySpec> pCipher,
+                          final EntropySource pEntropy,
+                          final byte[] pInitVector) {
         /* Store parameters */
         theCipher = pCipher;
         theEntropy = pEntropy;
@@ -217,7 +217,7 @@ public class GordianX931CipherDRBG
     /**
      * ReSeed the RNG.
      */
-    void reseed() {
+    private void reseed() {
         /* Initialise V from entropy */
         initFromEntropy();
 

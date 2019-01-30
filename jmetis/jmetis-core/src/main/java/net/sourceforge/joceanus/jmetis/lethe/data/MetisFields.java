@@ -713,7 +713,7 @@ public final class MetisFields {
                     }
                     break;
                 default:
-                    if (theMaxLength != FIELD_NO_MAXLENGTH) {
+                    if (!theMaxLength.equals(FIELD_NO_MAXLENGTH)) {
                         throw new InvalidParameterException("Length allowed only for String/Array");
                     }
                     break;

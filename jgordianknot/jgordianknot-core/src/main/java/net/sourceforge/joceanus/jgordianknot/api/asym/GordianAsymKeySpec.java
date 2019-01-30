@@ -17,7 +17,9 @@
 package net.sourceforge.joceanus.jgordianknot.api.asym;
 
 import java.util.ArrayList;
+import java.util.EnumSet;
 import java.util.List;
+import java.util.Objects;
 
 import net.sourceforge.joceanus.jgordianknot.api.base.GordianKeySpec;
 import net.sourceforge.joceanus.jtethys.TethysDataConverter;
@@ -42,6 +44,11 @@ public final class GordianAsymKeySpec implements GordianKeySpec {
     private final Object theSubKeyType;
 
     /**
+     * The Validity.
+     */
+    private final boolean isValid;
+
+    /**
      * The String name.
      */
     private String theName;
@@ -51,10 +58,11 @@ public final class GordianAsymKeySpec implements GordianKeySpec {
      * @param pKeyType the keyType
      * @param pSubKeyType the subKeyType
      */
-    private GordianAsymKeySpec(final GordianAsymKeyType pKeyType,
-                               final Object pSubKeyType) {
+    public GordianAsymKeySpec(final GordianAsymKeyType pKeyType,
+                              final Object pSubKeyType) {
         theKeyType = pKeyType;
         theSubKeyType = pSubKeyType;
+        isValid = checkValidity();
     }
 
     /**
@@ -230,6 +238,14 @@ public final class GordianAsymKeySpec implements GordianKeySpec {
     }
 
     /**
+     * Is the keySpec valid?
+     * @return true/false.
+     */
+    public boolean isValid() {
+        return isValid;
+    }
+
+    /**
      * Obtain the RSAmodulus.
      * @return the modulus.
      */
@@ -323,10 +339,16 @@ public final class GordianAsymKeySpec implements GordianKeySpec {
     public String toString() {
         /* If we have not yet loaded the name */
         if (theName == null) {
-            /* Load the name */
-            theName = theKeyType.toString();
-            if (theSubKeyType != null) {
-                theName += SEP + theSubKeyType.toString();
+            /* If the keySpec is valid */
+            if (isValid) {
+                /* Load the name */
+                theName = theKeyType.toString();
+                if (theSubKeyType != null) {
+                    theName += SEP + theSubKeyType.toString();
+                }
+            }  else {
+                /* Report invalid spec */
+                theName = "InvalidAsymKeySpec: " + theKeyType + ":" + theSubKeyType;
             }
         }
 
@@ -358,9 +380,7 @@ public final class GordianAsymKeySpec implements GordianKeySpec {
         }
 
         /* Match subfields */
-        return theSubKeyType == null
-               ? myThat.theSubKeyType == null
-               : theSubKeyType.equals(myThat.theSubKeyType);
+        return Objects.equals(theSubKeyType, myThat.theSubKeyType);
     }
 
     @Override
@@ -373,10 +393,16 @@ public final class GordianAsymKeySpec implements GordianKeySpec {
     }
 
     /**
-     * Check subKeyType validity.
+     * Check spec validity.
      * @return valid true/false
      */
-    public boolean checkSubKeyType() {
+    private boolean checkValidity() {
+        /* Handle null keyType */
+        if (theKeyType == null) {
+            return false;
+        }
+
+        /* Switch on keyType */
         switch (theKeyType) {
             case RSA:
                 return theSubKeyType instanceof GordianRSAModulus;
@@ -395,7 +421,8 @@ public final class GordianAsymKeySpec implements GordianKeySpec {
             case SPHINCS:
                 return theSubKeyType instanceof GordianSPHINCSKeyType;
             case MCELIECE:
-                return theSubKeyType instanceof GordianMcElieceKeySpec;
+                return theSubKeyType instanceof GordianMcElieceKeySpec
+                        && ((GordianMcElieceKeySpec) theSubKeyType).isValid();
             case XMSS:
             case XMSSMT:
                 return theSubKeyType instanceof GordianXMSSKeyType;
@@ -409,7 +436,7 @@ public final class GordianAsymKeySpec implements GordianKeySpec {
             case NEWHOPE:
                 return theSubKeyType == null;
             default:
-                throw new IllegalArgumentException();
+                return false;
         }
     }
 
@@ -425,39 +452,25 @@ public final class GordianAsymKeySpec implements GordianKeySpec {
         /* Switch on AsymKeyType */
         switch (pKeyType) {
             case RSA:
-                for (final GordianRSAModulus myModulus : GordianRSAModulus.values()) {
-                    mySpecs.add(GordianAsymKeySpec.rsa(myModulus));
-                }
+                EnumSet.allOf(GordianRSAModulus.class).forEach(m -> mySpecs.add(GordianAsymKeySpec.rsa(m)));
                 break;
             case DSA:
-                for (final GordianDSAKeyType myKeyType : GordianDSAKeyType.values()) {
-                    mySpecs.add(GordianAsymKeySpec.dsa(myKeyType));
-                }
+                EnumSet.allOf(GordianDSAKeyType.class).forEach(t -> mySpecs.add(GordianAsymKeySpec.dsa(t)));
                 break;
             case DIFFIEHELLMAN:
-                for (final GordianDHGroup myGroup : GordianDHGroup.values()) {
-                    mySpecs.add(GordianAsymKeySpec.dh(myGroup));
-                }
+                EnumSet.allOf(GordianDHGroup.class).forEach(g -> mySpecs.add(GordianAsymKeySpec.dh(g)));
                 break;
             case EC:
-                for (final GordianDSAElliptic myCurve : GordianDSAElliptic.values()) {
-                    mySpecs.add(GordianAsymKeySpec.ec(myCurve));
-                }
+                EnumSet.allOf(GordianDSAElliptic.class).forEach(c -> mySpecs.add(GordianAsymKeySpec.ec(c)));
                 break;
             case SM2:
-                for (final GordianSM2Elliptic myCurve : GordianSM2Elliptic.values()) {
-                    mySpecs.add(GordianAsymKeySpec.sm2(myCurve));
-                }
+                EnumSet.allOf(GordianSM2Elliptic.class).forEach(c -> mySpecs.add(GordianAsymKeySpec.sm2(c)));
                 break;
             case GOST2012:
-                for (final GordianGOSTElliptic myCurve : GordianGOSTElliptic.values()) {
-                    mySpecs.add(GordianAsymKeySpec.gost2012(myCurve));
-                }
+                EnumSet.allOf(GordianGOSTElliptic.class).forEach(c -> mySpecs.add(GordianAsymKeySpec.gost2012(c)));
                 break;
             case DSTU4145:
-                for (final GordianDSTU4145Elliptic myCurve : GordianDSTU4145Elliptic.values()) {
-                    mySpecs.add(GordianAsymKeySpec.dstu4145(myCurve));
-                }
+                EnumSet.allOf(GordianDSTU4145Elliptic.class).forEach(c -> mySpecs.add(GordianAsymKeySpec.dstu4145(c)));
                 break;
             case ED25519:
                 mySpecs.add(GordianAsymKeySpec.ed25519());
@@ -478,29 +491,19 @@ public final class GordianAsymKeySpec implements GordianKeySpec {
                 mySpecs.add(GordianAsymKeySpec.newHope());
                 break;
             case QTESLA:
-                for (final GordianQTESLAKeyType myType : GordianQTESLAKeyType.values()) {
-                    mySpecs.add(GordianAsymKeySpec.qTESLA(myType));
-                }
+                EnumSet.allOf(GordianQTESLAKeyType.class).forEach(t -> mySpecs.add(GordianAsymKeySpec.qTESLA(t)));
                 break;
             case SPHINCS:
-                for (final GordianSPHINCSKeyType myType : GordianSPHINCSKeyType.values()) {
-                    mySpecs.add(GordianAsymKeySpec.sphincs(myType));
-                }
+                EnumSet.allOf(GordianSPHINCSKeyType.class).forEach(t -> mySpecs.add(GordianAsymKeySpec.sphincs(t)));
                 break;
             case XMSS:
-                for (final GordianXMSSKeyType myType : GordianXMSSKeyType.values()) {
-                    mySpecs.add(GordianAsymKeySpec.xmss(myType));
-                }
+                EnumSet.allOf(GordianXMSSKeyType.class).forEach(t -> mySpecs.add(GordianAsymKeySpec.xmss(t)));
                 break;
             case XMSSMT:
-                for (final GordianXMSSKeyType myType : GordianXMSSKeyType.values()) {
-                    mySpecs.add(GordianAsymKeySpec.xmssmt(myType));
-                }
+                EnumSet.allOf(GordianXMSSKeyType.class).forEach(t -> mySpecs.add(GordianAsymKeySpec.xmssmt(t)));
                 break;
             case MCELIECE:
-                for (final GordianMcElieceKeySpec mySpec : GordianMcElieceKeySpec.listPossibleKeySpecs()) {
-                    mySpecs.add(GordianAsymKeySpec.mcEliece(mySpec));
-                }
+                GordianMcElieceKeySpec.listPossibleKeySpecs().forEach(t -> mySpecs.add(GordianAsymKeySpec.mcEliece(t)));
                 break;
             default:
                 break;

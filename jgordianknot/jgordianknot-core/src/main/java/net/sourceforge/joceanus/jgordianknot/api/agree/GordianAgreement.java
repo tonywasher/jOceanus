@@ -40,6 +40,13 @@ public interface GordianAgreement {
     <T extends GordianKeySpec> GordianKey<T> deriveKey(T pKeyType) throws OceanusException;
 
     /**
+     * Derive keySet.
+     * @return the keySet
+     * @throws OceanusException on error
+     */
+    GordianKeySet deriveKeySet() throws OceanusException;
+
+    /**
      * Derive independent keySet.
      * @return the keySet
      * @throws OceanusException on error
