@@ -54,14 +54,12 @@ public class BouncyAgreementFactory
     protected BouncyFactory getFactory() { return (BouncyFactory) super.getFactory(); }
 
     @Override
-    public GordianAgreement createAgreement(final GordianAgreementSpec pSpec) throws OceanusException {
+    public GordianAgreement createAgreement(final GordianAgreementSpec pAgreementSpec) throws OceanusException {
         /* Check validity of Agreement */
-        if (!supportedAgreements().test(pSpec)) {
-            throw new GordianDataException(BouncyFactory.getInvalidText(pSpec));
-        }
+        checkAgreementSpec(pAgreementSpec);
 
         /* Create the agreement */
-        return getBCAgreement(pSpec);
+        return getBCAgreement(pAgreementSpec);
     }
 
     /**

@@ -27,9 +27,11 @@ import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigestType;
 import net.sourceforge.joceanus.jgordianknot.api.mac.GordianMacFactory;
 import net.sourceforge.joceanus.jgordianknot.api.mac.GordianMacSpec;
 import net.sourceforge.joceanus.jgordianknot.api.mac.GordianMacType;
+import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianCoreFactory;
+import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianDataException;
 import net.sourceforge.joceanus.jgordianknot.impl.core.cipher.GordianCoreCipherFactory;
 import net.sourceforge.joceanus.jgordianknot.impl.core.digest.GordianCoreDigestFactory;
-import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianCoreFactory;
+import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
  * Core Mac Factory.
@@ -104,6 +106,18 @@ public abstract class GordianCoreMacFactory
     }
 
     /**
+     * Check the macSpec.
+     * @param pMacSpec the macSpec
+     * @throws OceanusException on error
+     */
+    protected void checkMacSpec(final GordianMacSpec pMacSpec) throws OceanusException {
+        /* Check validity of SymKey */
+        if (!supportedMacSpecs().test(pMacSpec)) {
+            throw new GordianDataException(GordianCoreFactory.getInvalidText(pMacSpec));
+        }
+    }
+
+    /**
      * Check HMacDigestType.
      * @param pDigestType the digestType
      * @return true/false
@@ -134,10 +148,13 @@ public abstract class GordianCoreMacFactory
      * @return true/false
      */
     private boolean validMacSpec(final GordianMacSpec pMacSpec) {
-        /* Access details */
-        final GordianMacType myType = pMacSpec.getMacType();
+        /* Reject invalid macSpec */
+        if (pMacSpec == null || !pMacSpec.isValid()) {
+            return false;
+        }
 
         /* Check that the macType is supported */
+        final GordianMacType myType = pMacSpec.getMacType();
         if (!supportedMacTypes().test(myType)) {
             return false;
         }

@@ -23,9 +23,10 @@ import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
 import javax.crypto.IllegalBlockSizeException;
 
-import org.bouncycastle.pqc.jcajce.spec.McElieceKeyGenParameterSpec;
-
 import net.sourceforge.joceanus.jgordianknot.api.asym.GordianAsymKeyType;
+import net.sourceforge.joceanus.jgordianknot.api.base.GordianLength;
+import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigestSpec;
+import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigestType;
 import net.sourceforge.joceanus.jgordianknot.api.encrypt.GordianEncryptorSpec;
 import net.sourceforge.joceanus.jgordianknot.api.key.GordianKeyPair;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianCryptoException;
@@ -54,11 +55,6 @@ public final class JcaEncryptor {
      */
     public static class JcaBlockEncryptor
             extends GordianCoreEncryptor {
-        /**
-         * McEliece cipher length.
-         */
-        private static final int MCELIECE_CIPHERLEN = (1 << McElieceKeyGenParameterSpec.DEFAULT_M) / Byte.SIZE;
-
         /**
          * The underlying encryptor.
          */
@@ -143,9 +139,7 @@ public final class JcaEncryptor {
                 int myInLen = pData.length;
                 final int myInBlockLength = theEncryptor.getBlockSize();
                 final int myNumBlocks = getNumBlocks(myInLen, myInBlockLength);
-                final int myOutBlockLength = GordianAsymKeyType.MCELIECE.equals(getEncryptorSpec().getKeyType())
-                                             ? MCELIECE_CIPHERLEN
-                                             : theEncryptor.getOutputSize(myInBlockLength);
+                final int myOutBlockLength = theEncryptor.getOutputSize(myInBlockLength);
 
                 /* Create the output buffer */
                 final byte[] myOutput = new byte[myOutBlockLength * myNumBlocks];
@@ -242,7 +236,7 @@ public final class JcaEncryptor {
                            final GordianEncryptorSpec pSpec) throws OceanusException {
             /* Initialise underlying cipher */
             super(pFactory, pSpec);
-            theEncryptor = JcaEncryptorFactory.getJavaEncryptor(getAlgorithmName(pSpec), true);
+            theEncryptor = JcaEncryptorFactory.getJavaEncryptor(getAlgorithmName(pSpec), GordianAsymKeyType.MCELIECE.equals(pSpec.getKeyType()));
         }
 
         @Override
@@ -320,6 +314,23 @@ public final class JcaEncryptor {
          * @return the algorithm name
          */
         private static String getAlgorithmName(final GordianEncryptorSpec pSpec) {
+            /* If this is an SM2 encryptor */
+            if (GordianAsymKeyType.SM2.equals(pSpec.getKeyType())) {
+                /* Switch on encryptor type */
+                final GordianDigestSpec myDigestSpec = pSpec.getDigestSpec();
+                final GordianDigestType myDigestType = myDigestSpec.getDigestType();
+                switch (myDigestType) {
+                    case SHA2:
+                        return "SM2withSHA" + myDigestSpec.getDigestLength();
+                    case BLAKE:
+                        return "SM2withBlake2" + (GordianLength.LEN_512.equals(myDigestSpec.getDigestLength()) ? "b" : "s");
+                    case WHIRLPOOL:
+                    case SM3:
+                    default:
+                        return "SM2with" +  myDigestType;
+                }
+            }
+
             /* Switch on encryptor type */
             switch (pSpec.getMcElieceType()) {
                 case FUJISAKI:

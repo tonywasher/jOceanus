@@ -55,14 +55,14 @@ public class BouncyMacFactory
     /**
      * KeyPairGenerator Cache.
      */
-    final Map<GordianMacSpec, BouncyKeyGenerator<GordianMacSpec>> theCache;
+    private final Map<GordianMacSpec, BouncyKeyGenerator<GordianMacSpec>> theCache;
 
     /**
      * Constructor.
      *
      * @param pFactory the factory
      */
-    public BouncyMacFactory(final GordianCoreFactory pFactory) {
+    BouncyMacFactory(final GordianCoreFactory pFactory) {
         /* Initialise underlying class */
         super(pFactory);
 
@@ -74,16 +74,19 @@ public class BouncyMacFactory
     public BouncyFactory getFactory() { return (BouncyFactory) super.getFactory(); }
 
     @Override
-    public BouncyKeyGenerator<GordianMacSpec> getKeyGenerator(final GordianMacSpec pKeyType) throws OceanusException {
+    public BouncyKeyGenerator<GordianMacSpec> getKeyGenerator(final GordianMacSpec pMacSpec) throws OceanusException {
         /* Look up in the cache */
-        BouncyKeyGenerator<GordianMacSpec> myGenerator = theCache.get(pKeyType);
+        BouncyKeyGenerator<GordianMacSpec> myGenerator = theCache.get(pMacSpec);
         if (myGenerator == null) {
+            /* Check validity of MacSpec */
+            checkMacSpec(pMacSpec);
+
             /* Create the new generator */
-            final CipherKeyGenerator myBCGenerator = getBCKeyGenerator(pKeyType);
-            myGenerator = new BouncyKeyGenerator<>(getFactory(), pKeyType, myBCGenerator);
+            final CipherKeyGenerator myBCGenerator = getBCKeyGenerator(pMacSpec);
+            myGenerator = new BouncyKeyGenerator<>(getFactory(), pMacSpec, myBCGenerator);
 
             /* Add to cache */
-            theCache.put(pKeyType, myGenerator);
+            theCache.put(pMacSpec, myGenerator);
         }
         return myGenerator;
     }
@@ -103,9 +106,7 @@ public class BouncyMacFactory
     @Override
     public BouncyMac createMac(final GordianMacSpec pMacSpec) throws OceanusException {
         /* Check validity of MacSpec */
-        if (!supportedMacSpecs().test(pMacSpec)) {
-            throw new GordianDataException(GordianCoreFactory.getInvalidText(pMacSpec));
-        }
+        checkMacSpec(pMacSpec);
 
         /* Create Mac */
         final Mac myBCMac = getBCMac(pMacSpec);

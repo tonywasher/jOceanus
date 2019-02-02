@@ -87,6 +87,9 @@ public class BouncyAsymFactory
         /* Look up in the cache */
         BouncyKeyPairGenerator myGenerator = theCache.get(pKeySpec);
         if (myGenerator == null) {
+            /* Check the keySpec */
+            checkAsymKeySpec(pKeySpec);
+
             /* Create the new generator */
             myGenerator = getBCKeyPairGenerator(pKeySpec);
 
@@ -95,6 +98,7 @@ public class BouncyAsymFactory
         }
         return myGenerator;
     }
+
     /**
      * Create the BouncyCastle KeyPairGenerator.
      *

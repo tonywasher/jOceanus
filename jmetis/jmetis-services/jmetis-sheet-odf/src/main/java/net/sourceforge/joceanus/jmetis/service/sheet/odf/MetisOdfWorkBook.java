@@ -18,17 +18,10 @@ package net.sourceforge.joceanus.jmetis.service.sheet.odf;
 
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
-import net.sourceforge.joceanus.jmetis.service.sheet.MetisSheetCellAddress;
-import net.sourceforge.joceanus.jmetis.service.sheet.MetisSheetCellPosition;
-import net.sourceforge.joceanus.jmetis.service.sheet.MetisSheetCellRange;
-import net.sourceforge.joceanus.jmetis.service.sheet.MetisSheetException;
 import net.sourceforge.joceanus.jmetis.service.sheet.MetisSheetSheet;
 import net.sourceforge.joceanus.jmetis.service.sheet.MetisSheetView;
 import net.sourceforge.joceanus.jmetis.service.sheet.MetisSheetWorkBook;

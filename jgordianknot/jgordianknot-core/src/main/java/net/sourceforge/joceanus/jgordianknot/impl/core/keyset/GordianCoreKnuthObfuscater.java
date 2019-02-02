@@ -25,7 +25,6 @@ import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianSymKeySpec;
 import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigestSpec;
 import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKnuthObfuscater;
 import net.sourceforge.joceanus.jgordianknot.api.mac.GordianMacSpec;
-import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianCoreFactory;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianDataException;
 import net.sourceforge.joceanus.jgordianknot.impl.core.keyset.GordianPersonalisation.GordianPersonalId;
 import net.sourceforge.joceanus.jtethys.OceanusException;
@@ -250,7 +249,7 @@ public class GordianCoreKnuthObfuscater
      * @param pBase the base value
      * @return the encoded value
      */
-    private BigInteger[] generatePrime(final int pBase) {
+    private static BigInteger[] generatePrime(final int pBase) {
         /* Make sure that the value is prime */
         BigInteger myValue = BigInteger.valueOf(pBase);
         if (!myValue.isProbablePrime(Integer.SIZE)) {

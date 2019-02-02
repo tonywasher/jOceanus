@@ -27,7 +27,9 @@ import net.sourceforge.joceanus.jgordianknot.api.sign.GordianSignatureFactory;
 import net.sourceforge.joceanus.jgordianknot.api.sign.GordianSignatureSpec;
 import net.sourceforge.joceanus.jgordianknot.api.sign.GordianSignatureType;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianCoreFactory;
+import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianDataException;
 import net.sourceforge.joceanus.jgordianknot.impl.core.digest.GordianCoreDigestFactory;
+import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
  * GordianKnot base for signatureFactory.
@@ -74,9 +76,26 @@ public abstract class GordianCoreSignatureFactory
         return this::validSignatureSpec;
     }
 
+    /**
+     * Check the signatureSpec.
+     * @param pSignatureSpec the signatureSpec
+     * @throws OceanusException on error
+     */
+    protected void checkSignatureSpec(final GordianSignatureSpec pSignatureSpec) throws OceanusException {
+        /* Check validity of signature */
+        if (!validSignatureSpec(pSignatureSpec)) {
+            throw new GordianDataException(GordianCoreFactory.getInvalidText(pSignatureSpec));
+        }
+    }
+
     @Override
     public boolean validSignatureSpecForKeyPair(final GordianKeyPair pKeyPair,
                                                 final GordianSignatureSpec pSignSpec) {
+        /* Reject invalid signatureSpec */
+        if (pSignSpec == null || !pSignSpec.isValid()) {
+            return false;
+        }
+
         /* Check signature matches keyPair */
         if (pSignSpec.getAsymKeyType() != pKeyPair.getKeySpec().getKeyType()) {
             return false;
@@ -99,13 +118,23 @@ public abstract class GordianCoreSignatureFactory
             return myKeySpec.getElliptic().getKeySize() == myDigestLen;
         }
 
-        /* If this is a RSA PSS Signature */
-        if (GordianAsymKeyType.RSA.equals(myKeySpec.getKeyType())
-                && GordianSignatureType.PSS.equals(pSignSpec.getSignatureType())) {
+        /* If this is a RSA Signature */
+        if (GordianAsymKeyType.RSA.equals(myKeySpec.getKeyType())) {
+            /* If this is a PSS signature */
+            if (GordianSignatureType.PSS.equals(pSignSpec.getSignatureType())) {
+                /* The digest length cannot be too large wrt to the modulus */
+                int myLen = pSignSpec.getDigestSpec().getDigestLength().getLength();
+                myLen += Byte.SIZE;
+                if (myKeySpec.getModulus().getLength() < (myLen << 1)) {
+                    return false;
+                }
+            }
+
+            /* Must be X931/ISO9796d2 Signature */
             /* The digest length cannot be too large wrt to the modulus */
-            int myLen = pSignSpec.getDigestSpec().getDigestLength().getByteLength();
-            myLen = (myLen + 1) * Byte.SIZE;
-            if (myKeySpec.getModulus().getLength() < (myLen << 1)) {
+            int myLen = pSignSpec.getDigestSpec().getDigestLength().getLength();
+            myLen += Integer.SIZE;
+            if (myKeySpec.getModulus().getLength() < myLen) {
                 return false;
             }
         }
@@ -120,6 +149,11 @@ public abstract class GordianCoreSignatureFactory
      * @return true/false
      */
     protected boolean validSignatureSpec(final GordianSignatureSpec pSignSpec) {
+        /* Reject invalid signatureSpec */
+        if (pSignSpec == null || !pSignSpec.isValid()) {
+            return false;
+        }
+
         /* Check that the signatureType is supported */
         final GordianAsymKeyType myType = pSignSpec.getAsymKeyType();
         final GordianSignatureType mySignType = pSignSpec.getSignatureType();

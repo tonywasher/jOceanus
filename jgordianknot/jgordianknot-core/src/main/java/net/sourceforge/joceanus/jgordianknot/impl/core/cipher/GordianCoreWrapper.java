@@ -25,6 +25,8 @@ import net.sourceforge.joceanus.jgordianknot.api.factory.GordianAsymFactory;
 import net.sourceforge.joceanus.jgordianknot.api.key.GordianKey;
 import net.sourceforge.joceanus.jgordianknot.api.base.GordianKeySpec;
 import net.sourceforge.joceanus.jgordianknot.api.key.GordianKeyPair;
+import net.sourceforge.joceanus.jgordianknot.api.mac.GordianMacFactory;
+import net.sourceforge.joceanus.jgordianknot.api.mac.GordianMacSpec;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianDataException;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianCoreFactory;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianLogicException;
@@ -114,11 +116,19 @@ public class GordianCoreWrapper
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public <T extends GordianKeySpec> GordianKey<T> deriveKey(final GordianKey<GordianSymKeySpec> pKey,
                                                               final byte[] pSecuredKey,
                                                               final T pKeyType) throws OceanusException {
         /* Unwrap the bytes */
         final byte[] myBytes = deriveBytes(pKey, pSecuredKey);
+
+        /* Handle the macSpec separately */
+        if (pKeyType instanceof GordianMacSpec) {
+            final GordianMacFactory myFactory = theFactory.getMacFactory();
+            final GordianCoreKeyGenerator<T> myGenerator = (GordianCoreKeyGenerator<T>) myFactory.getKeyGenerator((GordianMacSpec) pKeyType);
+            return myGenerator.buildKeyFromBytes(myBytes);
+        }
 
         /* Generate the key */
         final GordianCipherFactory myCipherFactory = theFactory.getCipherFactory();

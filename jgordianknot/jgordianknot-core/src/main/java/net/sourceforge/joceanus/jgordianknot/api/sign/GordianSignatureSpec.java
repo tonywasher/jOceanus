@@ -50,6 +50,11 @@ public final class GordianSignatureSpec {
     private final GordianDigestSpec theDigestSpec;
 
     /**
+     * The Validity.
+     */
+    private final boolean isValid;
+
+    /**
      * The String name.
      */
     private String theName;
@@ -89,6 +94,7 @@ public final class GordianSignatureSpec {
         theAsymKeyType = pAsymKeyType;
         theSignatureType = pSignatureType;
         theDigestSpec = pDigestSpec;
+        isValid = checkValidity();
     }
 
     /**
@@ -298,6 +304,43 @@ public final class GordianSignatureSpec {
      */
     public GordianDigestSpec getDigestSpec() {
         return theDigestSpec;
+    }
+
+    /**
+     * Is the signatureSpec valid?
+     * @return true/false.
+     */
+    public boolean isValid() {
+        return isValid;
+    }
+
+    /**
+     * Check spec validity.
+     * @return valid true/false
+     */
+    private boolean checkValidity() {
+        if (theAsymKeyType == null || theSignatureType == null) {
+            return false;
+        }
+        switch (theAsymKeyType) {
+            case RSA:
+            case DSA:
+            case EC:
+            case DSTU4145:
+            case GOST2012:
+            case SM2:
+            case RAINBOW:
+                return theDigestSpec != null && theDigestSpec.isValid();
+            case ED25519:
+            case ED448:
+            case SPHINCS:
+            case QTESLA:
+            case XMSS:
+            case XMSSMT:
+                return theDigestSpec == null;
+            default:
+                return false;
+        }
     }
 
     @Override

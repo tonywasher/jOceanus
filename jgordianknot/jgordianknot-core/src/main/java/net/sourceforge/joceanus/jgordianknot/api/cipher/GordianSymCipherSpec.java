@@ -47,6 +47,11 @@ public class GordianSymCipherSpec
     private final GordianPadding thePadding;
 
     /**
+     * The Validity.
+     */
+    private final boolean isValid;
+
+    /**
      * The String name.
      */
     private String theName;
@@ -63,6 +68,7 @@ public class GordianSymCipherSpec
         super(pKeySpec);
         theMode = pMode;
         thePadding = pPadding;
+        isValid = checkValidity();
     }
 
     /**
@@ -211,6 +217,14 @@ public class GordianSymCipherSpec
         return thePadding;
     }
 
+    /**
+     * Is the keySpec valid?
+     * @return true/false.
+     */
+    public boolean isValid() {
+        return isValid;
+    }
+
     @Override
     public boolean needsIV() {
         return theMode.needsIV();
@@ -247,18 +261,32 @@ public class GordianSymCipherSpec
     public String toString() {
         /* If we have not yet loaded the name */
         if (theName == null) {
-            /* Load the name */
-            theName = super.toString();
-            if (theMode != null) {
-                theName += SEP + theMode.toString();
-            }
-            if (thePadding != null && !GordianPadding.NONE.equals(thePadding)) {
-                theName += SEP + thePadding.toString();
+            /* If the keySpec is valid */
+            if (isValid) {
+                /* Load the name */
+                theName = super.toString();
+                theName += SEP + theMode;
+                if (!GordianPadding.NONE.equals(thePadding)) {
+                    theName += SEP + thePadding;
+                }
+            }  else {
+                /* Report invalid spec */
+                theName = "InvalidSymCipherSpec: " + super.toString() + ":" + theMode + ":" + thePadding;
             }
         }
 
         /* return the name */
         return theName;
+    }
+
+    /**
+     * Check spec validity.
+     * @return valid true/false
+     */
+    private boolean checkValidity() {
+        final GordianSymKeySpec mySpec = getKeyType();
+        return mySpec != null && mySpec.isValid()
+                && theMode != null && thePadding != null;
     }
 
     @Override

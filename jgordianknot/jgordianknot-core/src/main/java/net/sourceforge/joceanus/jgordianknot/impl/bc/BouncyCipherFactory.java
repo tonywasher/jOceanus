@@ -113,14 +113,14 @@ public class BouncyCipherFactory
     /**
      * KeyPairGenerator Cache.
      */
-    final Map<GordianKeySpec, BouncyKeyGenerator<? extends GordianKeySpec>> theCache;
+    private final Map<GordianKeySpec, BouncyKeyGenerator<? extends GordianKeySpec>> theCache;
 
     /**
      * Constructor.
      *
      * @param pFactory the factory
      */
-    public BouncyCipherFactory(final GordianCoreFactory pFactory) {
+    BouncyCipherFactory(final GordianCoreFactory pFactory) {
         /* Initialise underlying class */
         super(pFactory);
 
@@ -151,16 +151,8 @@ public class BouncyCipherFactory
 
     @Override
     public BouncySymKeyCipher createSymKeyCipher(final GordianSymCipherSpec pCipherSpec) throws OceanusException {
-        /* Check validity of SymKey */
-        final GordianSymKeySpec myKeySpec = pCipherSpec.getKeyType();
-        if (!supportedSymKeySpecs().test(myKeySpec)) {
-            throw new GordianDataException(GordianCoreFactory.getInvalidText(pCipherSpec));
-        }
-
-        /* Check validity of Mode */
-        if (!validSymCipherSpec(pCipherSpec, false)) {
-            throw new GordianDataException(GordianCoreFactory.getInvalidText(pCipherSpec));
-        }
+        /* Check validity of SymKeySpec */
+        checkSymCipherSpec(pCipherSpec, false);
 
         /* Create the cipher */
         final BufferedBlockCipher myBCCipher = getBCBlockCipher(pCipherSpec);
@@ -169,16 +161,8 @@ public class BouncyCipherFactory
 
     @Override
     public BouncyAADCipher createAADCipher(final GordianSymCipherSpec pCipherSpec) throws OceanusException {
-        /* Check validity of SymKey */
-        final GordianSymKeySpec myKeySpec = pCipherSpec.getKeyType();
-        if (!supportedSymKeySpecs().test(myKeySpec)) {
-            throw new GordianDataException(GordianCoreFactory.getInvalidText(pCipherSpec));
-        }
-
-        /* Check validity of Mode */
-        if (!validSymCipherSpec(pCipherSpec, true)) {
-            throw new GordianDataException(GordianCoreFactory.getInvalidText(pCipherSpec));
-        }
+        /* Check validity of SymKeySpec */
+        checkSymCipherSpec(pCipherSpec, true);
 
         /* Create the cipher */
         final AEADBlockCipher myBCCipher = getBCAADCipher(pCipherSpec);
@@ -187,24 +171,18 @@ public class BouncyCipherFactory
 
     @Override
     public BouncyStreamKeyCipher createStreamKeyCipher(final GordianStreamCipherSpec pCipherSpec) throws OceanusException {
-        /* Check validity of StreamKey */
-        final GordianStreamKeyType myKeyType = pCipherSpec.getKeyType();
-        if (!supportedStreamKeyTypes().test(myKeyType)) {
-            throw new GordianDataException(GordianCoreFactory.getInvalidText(myKeyType));
-        }
+        /* Check validity of StreamKeySpec */
+        checkStreamCipherSpec(pCipherSpec);
 
         /* Create the cipher */
-        final StreamCipher myBCCipher = getBCStreamCipher(myKeyType);
+        final StreamCipher myBCCipher = getBCStreamCipher(pCipherSpec.getKeyType());
         return new BouncyStreamKeyCipher(getFactory(), pCipherSpec, myBCCipher);
     }
 
     @Override
     public GordianWrapper createKeyWrapper(final GordianSymKeySpec pKeySpec) throws OceanusException {
         /* Check validity of SymKey */
-        final GordianSymKeyType myKeyType = pKeySpec.getSymKeyType();
-        if (!supportedSymKeyTypes().test(myKeyType)) {
-            throw new GordianDataException(GordianCoreFactory.getInvalidText(pKeySpec));
-        }
+        checkSymKeySpec(pKeySpec);
 
         /* Create the cipher */
         final GordianSymCipherSpec mySpec = GordianSymCipherSpec.ecb(pKeySpec, GordianPadding.NONE);
@@ -443,4 +421,21 @@ public class BouncyCipherFactory
         }
     }
 
+    /**
+     * Determine maximum cipherSteps.
+     * @param pRestricted are keys restricted?
+     * @return the maximum
+     */
+    public static int getMaximumCipherSteps(final boolean pRestricted) {
+        /* Count valid values */
+        int myCount = 0;
+        for (final GordianSymKeyType myType : GordianSymKeyType.values()) {
+            if (GordianCoreCipherFactory.validStdBlockSymKeyTypeForRestriction(myType, pRestricted)) {
+                myCount++;
+            }
+        }
+
+        /* Maximum is 1 less than the count */
+        return myCount - 1;
+    }
 }

@@ -107,8 +107,8 @@ public final class GordianStreamDefinition {
      * @param pStream the DigestOutputStream
      * @throws OceanusException on error
      */
-    protected GordianStreamDefinition(final GordianCoreKeySet pKeySet,
-                                      final GordianDigestOutputStream pStream) throws OceanusException {
+    GordianStreamDefinition(final GordianCoreKeySet pKeySet,
+                            final GordianDigestOutputStream pStream) throws OceanusException {
         /* Access factory */
         final GordianCoreFactory myFactory = pKeySet.getFactory();
         final GordianCoreKeySetFactory myKeySets = (GordianCoreKeySetFactory) myFactory.getKeySetFactory();
@@ -132,8 +132,8 @@ public final class GordianStreamDefinition {
      * @param pStream the MacOutputStream
      * @throws OceanusException on error
      */
-    protected GordianStreamDefinition(final GordianCoreKeySet pKeySet,
-                                      final GordianMacOutputStream pStream) throws OceanusException {
+    GordianStreamDefinition(final GordianCoreKeySet pKeySet,
+                            final GordianMacOutputStream pStream) throws OceanusException {
         /* Access factory */
         final GordianCoreFactory myFactory = pKeySet.getFactory();
         final GordianCoreKeySetFactory myKeySets = (GordianCoreKeySetFactory) myFactory.getKeySetFactory();
@@ -145,7 +145,6 @@ public final class GordianStreamDefinition {
         theTypeId = myKnuth.deriveExternalIdFromType(myMac.getMacSpec());
 
         /* Build details */
-        final GordianCoreMacFactory myMacs = (GordianCoreMacFactory) myFactory.getMacFactory();
         theTypeDefinition = pKeySet.secureKey(myMac.getKey());
         theInitVector = myMac.getInitVector();
         theValue = pStream.getResult();
@@ -158,8 +157,8 @@ public final class GordianStreamDefinition {
      * @param pStream the CipherOutputStream
      * @throws OceanusException on error
      */
-    protected GordianStreamDefinition(final GordianCoreKeySet pKeySet,
-                                      final GordianCipherOutputStream<?> pStream) throws OceanusException {
+    GordianStreamDefinition(final GordianCoreKeySet pKeySet,
+                            final GordianCipherOutputStream<?> pStream) throws OceanusException {
         /* Access factory */
         final GordianCoreFactory myFactory = pKeySet.getFactory();
         final GordianCoreKeySetFactory myKeySets = (GordianCoreKeySetFactory) myFactory.getKeySetFactory();
@@ -173,7 +172,6 @@ public final class GordianStreamDefinition {
         theTypeId = myKnuth.deriveExternalIdFromType(myCipher.getCipherSpec());
 
         /* Build details */
-        final GordianCoreCipherFactory myCiphers = (GordianCoreCipherFactory) myFactory.getCipherFactory();
         theTypeDefinition = pKeySet.secureKey(myCipher.getKey());
         theInitVector = myCipher.getInitVector();
         theValue = null;
@@ -184,7 +182,7 @@ public final class GordianStreamDefinition {
      * Constructor.
      * @param pStream the LZMAOutputStream
      */
-    protected GordianStreamDefinition(final GordianLZMAOutputStream pStream) {
+    GordianStreamDefinition(final GordianLZMAOutputStream pStream) {
         theType = StreamType.LZMA;
         theTypeId = 0;
         theTypeDefinition = null;

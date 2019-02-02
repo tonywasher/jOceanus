@@ -927,12 +927,15 @@ public final class BouncyEllipticAsymKey {
          * Constructor.
          * @param pFactory the factory
          * @param pSpec the encryptorSpec
+         * @throws OceanusException on error
          */
         BouncySM2Encryptor(final BouncyFactory pFactory,
-                           final GordianEncryptorSpec pSpec) {
+                           final GordianEncryptorSpec pSpec) throws OceanusException {
             /* Initialise underlying cipher */
             super(pFactory, pSpec);
-            theEncryptor = new SM2Engine();
+            final BouncyDigestFactory myFactory = pFactory.getDigestFactory();
+            final BouncyDigest myDigest = myFactory.createDigest(pSpec.getDigestSpec());
+            theEncryptor = new SM2Engine(myDigest.getDigest());
         }
 
         @Override

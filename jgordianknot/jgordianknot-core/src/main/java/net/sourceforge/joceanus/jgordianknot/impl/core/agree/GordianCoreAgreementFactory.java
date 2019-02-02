@@ -25,6 +25,8 @@ import net.sourceforge.joceanus.jgordianknot.api.asym.GordianAsymKeySpec;
 import net.sourceforge.joceanus.jgordianknot.api.asym.GordianAsymKeyType;
 import net.sourceforge.joceanus.jgordianknot.api.key.GordianKeyPair;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianCoreFactory;
+import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianDataException;
+import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
  * GordianKnot base for encryptorFactory.
@@ -59,12 +61,29 @@ public abstract class GordianCoreAgreementFactory
     }
 
     /**
+     * Check the agreementSpec.
+     * @param pAgreementSpec the agreementSpec
+     * @throws OceanusException on error
+     */
+    protected void checkAgreementSpec(final GordianAgreementSpec pAgreementSpec) throws OceanusException {
+        /* Check validity of agreement */
+        if (!validAgreementSpec(pAgreementSpec)) {
+            throw new GordianDataException(GordianCoreFactory.getInvalidText(pAgreementSpec));
+        }
+    }
+
+    /**
      * Check AgreementSpec.
      *
      * @param pSpec the agreementSpec
      * @return true/false
      */
     protected boolean validAgreementSpec(final GordianAgreementSpec pSpec) {
+        /* Reject invalid agreementSpec */
+        if (pSpec == null || !pSpec.isValid()) {
+            return false;
+        }
+
         /* Check that spec is supported */
         return pSpec.isSupported();
     }
@@ -78,6 +97,11 @@ public abstract class GordianCoreAgreementFactory
      */
     public boolean validAgreementSpecForKeyPair(final GordianKeyPair pKeyPair,
                                                 final GordianAgreementSpec pAgreementSpec) {
+        /* Reject invalid agreementSpec */
+        if (pAgreementSpec == null || !pAgreementSpec.isValid()) {
+            return false;
+        }
+
         /* Check agreement matches keyPair */
         if (pAgreementSpec.getAsymKeyType() != pKeyPair.getKeySpec().getKeyType()) {
             return false;

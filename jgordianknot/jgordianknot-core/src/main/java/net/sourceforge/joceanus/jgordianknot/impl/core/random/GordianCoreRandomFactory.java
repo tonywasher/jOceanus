@@ -168,6 +168,11 @@ public class GordianCoreRandomFactory
      * @return true/false
      */
     private boolean validRandomSpec(final GordianRandomSpec pRandomSpec) {
+        /* Reject invalid randomSpec */
+        if (pRandomSpec == null || !pRandomSpec.isValid()) {
+            return false;
+        }
+
         /* Access details */
         final GordianRandomType myType = pRandomSpec.getRandomType();
         final GordianDigestSpec myDigest = pRandomSpec.getDigestSpec();

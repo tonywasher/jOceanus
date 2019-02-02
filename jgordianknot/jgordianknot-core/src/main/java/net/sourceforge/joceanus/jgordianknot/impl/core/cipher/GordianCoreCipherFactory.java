@@ -24,6 +24,7 @@ import net.sourceforge.joceanus.jgordianknot.api.base.GordianLength;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianCipher;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianCipherFactory;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianCipherMode;
+import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianStreamCipherSpec;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianWrapper;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianPadding;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianStreamKeyType;
@@ -95,14 +96,14 @@ public abstract class GordianCoreCipherFactory
      * @return true/false
      */
     public boolean validSymKeySpec(final GordianSymKeySpec pSymKeySpec) {
+        /* Reject invalid keySpec */
+        if (pSymKeySpec == null || !pSymKeySpec.isValid()) {
+            return false;
+        }
+
         /* Access details */
         final GordianLength myLen = pSymKeySpec.getBlockLength();
         final boolean isRestricted = theFactory.isRestricted();
-
-        /* Reject invalid Specs */
-        if (!pSymKeySpec.isValid()) {
-            return false;
-        }
 
         /* Reject restrictedSpecs where the block length is too large */
         if (isRestricted
@@ -131,6 +132,11 @@ public abstract class GordianCoreCipherFactory
      */
     protected boolean validSymCipherSpec(final GordianSymCipherSpec pCipherSpec,
                                          final Boolean isAAD) {
+        /* Reject invalid cipherSpec */
+        if (pCipherSpec == null || !pCipherSpec.isValid()) {
+            return false;
+        }
+
         /* Reject null modes and wrong AAD modes */
         final GordianCipherMode myMode = pCipherSpec.getCipherMode();
         if (myMode == null
@@ -201,12 +207,67 @@ public abstract class GordianCoreCipherFactory
     }
 
     /**
+     * Check the symKeySpec.
+     * @param pKeySpec the symKeySpec
+     * @throws OceanusException on error
+     */
+    public void checkSymKeySpec(final GordianSymKeySpec pKeySpec) throws OceanusException {
+        /* Check validity of SymKey */
+        if (!supportedSymKeySpecs().test(pKeySpec)) {
+            throw new GordianDataException(GordianCoreFactory.getInvalidText(pKeySpec));
+        }
+    }
+
+    /**
+     * Check the symCipherSpec.
+     * @param pCipherSpec the cipherSpec
+     * @param isAAD should the cipher be AAD or not?
+     * @throws OceanusException on error
+     */
+    public void checkSymCipherSpec(final GordianSymCipherSpec pCipherSpec,
+                                   final boolean isAAD) throws OceanusException {
+        /* Reject invalid cipherSpec */
+        if (pCipherSpec == null || !pCipherSpec.isValid()) {
+            throw new GordianDataException(GordianCoreFactory.getInvalidText(pCipherSpec));
+        }
+
+        /* Check validity of SymKey */
+        final GordianSymKeySpec myKeySpec = pCipherSpec.getKeyType();
+        if (!supportedSymKeySpecs().test(myKeySpec)) {
+            throw new GordianDataException(GordianCoreFactory.getInvalidText(pCipherSpec));
+        }
+
+        /* Check validity of Mode */
+        if (!validSymCipherSpec(pCipherSpec, isAAD)) {
+            throw new GordianDataException(GordianCoreFactory.getInvalidText(pCipherSpec));
+        }
+    }
+
+    /**
+     * Check the streamCipherSpec.
+     * @param pCipherSpec the cipherSpec
+     * @throws OceanusException on error
+     */
+    public void checkStreamCipherSpec(final GordianStreamCipherSpec pCipherSpec) throws OceanusException {
+        /* Reject invalid cipherSpec */
+        if (pCipherSpec == null || !pCipherSpec.isValid()) {
+            throw new GordianDataException(GordianCoreFactory.getInvalidText(pCipherSpec));
+        }
+
+        /* Check validity of StreamKey */
+        final GordianStreamKeyType myKeyType = pCipherSpec.getKeyType();
+        if (!supportedStreamKeyTypes().test(myKeyType)) {
+            throw new GordianDataException(GordianCoreFactory.getInvalidText(myKeyType));
+        }
+    }
+
+    /**
      * Check SymKeyType.
      * @param pKeyType the symKeyType
      * @return true/false
      */
     public boolean validSymKeyType(final GordianSymKeyType pKeyType) {
-        return validSymKeyTypeForRestriction(pKeyType, theFactory.isRestricted());
+        return pKeyType != null && validSymKeyTypeForRestriction(pKeyType, theFactory.isRestricted());
     }
 
     /**
@@ -226,6 +287,18 @@ public abstract class GordianCoreCipherFactory
      * @return true/false
      */
     protected boolean validStreamKeyType(final GordianStreamKeyType pKeyType) {
-        return pKeyType.validForRestriction(theFactory.isRestricted());
+        return pKeyType != null && pKeyType.validForRestriction(theFactory.isRestricted());
+    }
+
+    /**
+     * Check standard block symKeyType.
+     * @param pKeyType the symKeyType
+     * @param pRestricted is the symKeyType restricted?
+     * @return true/false
+     */
+    public static boolean validStdBlockSymKeyTypeForRestriction(final GordianSymKeyType pKeyType,
+                                                                final boolean pRestricted) {
+        return validSymKeyTypeForRestriction(pKeyType, pRestricted)
+                && pKeyType.getDefaultLength().equals(GordianLength.LEN_128);
     }
 }

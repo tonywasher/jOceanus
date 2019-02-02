@@ -50,14 +50,14 @@ public class JcaMacFactory
     /**
      * KeyGenerator Cache.
      */
-    final Map<GordianMacSpec, JcaKeyGenerator<GordianMacSpec>> theCache;
+    private final Map<GordianMacSpec, JcaKeyGenerator<GordianMacSpec>> theCache;
 
     /**
      * Constructor.
      *
      * @param pFactory the factory
      */
-    public JcaMacFactory(final GordianCoreFactory pFactory) {
+    JcaMacFactory(final GordianCoreFactory pFactory) {
         /* Initialise underlying class */
         super(pFactory);
 
@@ -71,18 +71,20 @@ public class JcaMacFactory
     }
 
     @Override
-    public GordianKeyGenerator<GordianMacSpec> getKeyGenerator(final GordianMacSpec pKeySpec) throws OceanusException {
+    public GordianKeyGenerator<GordianMacSpec> getKeyGenerator(final GordianMacSpec pMacSpec) throws OceanusException {
         /* Look up in the cache */
-        JcaKeyGenerator<GordianMacSpec> myGenerator = theCache.get(pKeySpec);
+        JcaKeyGenerator<GordianMacSpec> myGenerator = theCache.get(pMacSpec);
         if (myGenerator == null) {
+            /* Check validity of MacSpec */
+            checkMacSpec(pMacSpec);
+
             /* Create the new generator */
-            final String myAlgorithm = getMacSpecAlgorithm(pKeySpec);
+            final String myAlgorithm = getMacSpecAlgorithm(pMacSpec);
             final KeyGenerator myJavaGenerator = getJavaKeyGenerator(myAlgorithm);
-            myGenerator = new JcaKeyGenerator<>(getFactory(), pKeySpec, myJavaGenerator);
+            myGenerator = new JcaKeyGenerator<>(getFactory(), pMacSpec, myJavaGenerator);
 
             /* Add to cache */
-
-            theCache.put(pKeySpec, myGenerator);
+            theCache.put(pMacSpec, myGenerator);
         }
         return myGenerator;
     }
@@ -90,9 +92,7 @@ public class JcaMacFactory
     @Override
     public JcaMac createMac(final GordianMacSpec pMacSpec) throws OceanusException {
         /* Check validity of MacSpec */
-        if (!supportedMacSpecs().test(pMacSpec)) {
-            throw new GordianDataException(GordianCoreFactory.getInvalidText(pMacSpec));
-        }
+        checkMacSpec(pMacSpec);
 
         /* Create Mac */
         final Mac myJavaMac = getJavaMac(pMacSpec);

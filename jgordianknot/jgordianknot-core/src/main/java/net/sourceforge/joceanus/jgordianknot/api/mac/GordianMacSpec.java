@@ -57,6 +57,11 @@ public final class GordianMacSpec implements GordianKeySpec {
     private final GordianSymKeySpec theKeySpec;
 
     /**
+     * The Validity.
+     */
+    private final boolean isValid;
+
+    /**
      * The String name.
      */
     private String theName;
@@ -72,6 +77,7 @@ public final class GordianMacSpec implements GordianKeySpec {
         theMacType = pMacType;
         theDigestSpec = pDigestSpec;
         theKeySpec = null;
+        isValid = checkValidity();
     }
 
     /**
@@ -85,6 +91,7 @@ public final class GordianMacSpec implements GordianKeySpec {
         theMacType = pMacType;
         theDigestSpec = null;
         theKeySpec = pKeySpec;
+        isValid = checkValidity();
     }
 
     /**
@@ -95,6 +102,7 @@ public final class GordianMacSpec implements GordianKeySpec {
         theMacType = pMacType;
         theDigestSpec = null;
         theKeySpec = null;
+        isValid = checkValidity();
     }
 
     /**
@@ -291,6 +299,14 @@ public final class GordianMacSpec implements GordianKeySpec {
     }
 
     /**
+     * Is the macSpec valid?
+     * @return true/false.
+     */
+    public boolean isValid() {
+        return isValid;
+    }
+
+    /**
      * Obtain the IV length.
      * @return the IV Length
      */
@@ -310,46 +326,70 @@ public final class GordianMacSpec implements GordianKeySpec {
         }
     }
 
+    /**
+     * Check spec validity.
+     * @return valid true/false
+     */
+    private boolean checkValidity() {
+        if (theMacType == null) {
+            return false;
+        }
+        switch (theMacType) {
+            case HMAC:
+            case KUPYNA:
+            case BLAKE:
+            case SKEIN:
+                return theDigestSpec != null && theDigestSpec.isValid() && theKeySpec == null;
+            case CMAC:
+            case GMAC:
+            case POLY1305:
+            case KALYNA:
+                return theDigestSpec == null && theKeySpec != null && theKeySpec.isValid();
+            case VMPC:
+                return theDigestSpec == null && theKeySpec == null;
+            default:
+                return false;
+        }
+    }
+
     @Override
     public String toString() {
         /* If we have not yet loaded the name */
         if (theName == null) {
-            /* Load the name */
-            theName = theMacType.toString();
-            switch (theMacType) {
-                case HMAC:
-                    theName += SEP + theDigestSpec;
-                    break;
-                case SKEIN:
-                    if (theDigestSpec != null) {
+            /* If the macSpec is valid */
+            if (isValid) {
+                /* Load the name */
+                theName = theMacType.toString();
+                switch (theMacType) {
+                    case HMAC:
+                        theName += SEP + theDigestSpec;
+                        break;
+                    case SKEIN:
                         theName += SEP + theDigestSpec.getStateLength()
-                                + SEP + theDigestSpec.getDigestLength();
-                    }
-                    break;
-                case GMAC:
-                case CMAC:
-                case POLY1305:
-                    theName += SEP + theKeySpec;
-                    break;
-                case KUPYNA:
-                    if (theDigestSpec != null) {
+                                    + SEP + theDigestSpec.getDigestLength();
+                        break;
+                    case GMAC:
+                    case CMAC:
+                    case POLY1305:
+                        theName += SEP + theKeySpec;
+                        break;
+                    case KUPYNA:
                         theName += SEP + theDigestSpec.getDigestLength();
-                    }
-                    break;
-                case BLAKE:
-                    if (theDigestSpec != null) {
+                        break;
+                    case BLAKE:
                         theName = GordianDigestType.getBlakeAlgorithmForStateLength(theDigestSpec.getStateLength());
                         theName += "Mac" + SEP + theDigestSpec.getDigestLength();
-                    }
-                    break;
-                case KALYNA:
-                    if (theKeySpec != null) {
+                        break;
+                    case KALYNA:
                         theName += SEP + theKeySpec.getBlockLength();
-                    }
-                    break;
-                case VMPC:
-                default:
-                    break;
+                        break;
+                    case VMPC:
+                    default:
+                        break;
+                }
+            }  else {
+                /* Report invalid spec */
+                theName = "InvalidMacSpec: " + theMacType + ":" + theDigestSpec + ":" + theKeySpec;
             }
         }
 

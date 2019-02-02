@@ -46,26 +46,16 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
 public class JcaAsymFactory
     extends GordianCoreAsymFactory {
     /**
-     * Kalyna algorithm name.
-     */
-    private static final String KALYNA_ALGORITHM = "DSTU7624";
-
-    /**
-     * CMAC algorithm name.
-     */
-    private static final String CMAC_ALGORITHM = "CMAC";
-
-    /**
      * KeyPairGenerator Cache.
      */
-    final Map<GordianAsymKeySpec, JcaKeyPairGenerator> theCache;
+    private final Map<GordianAsymKeySpec, JcaKeyPairGenerator> theCache;
 
     /**
      * Constructor.
      *
      * @param pFactory the factory
      */
-    public JcaAsymFactory(final JcaFactory pFactory) {
+    JcaAsymFactory(final JcaFactory pFactory) {
         /* Initialise underlying class */
         super(pFactory);
 
@@ -95,6 +85,9 @@ public class JcaAsymFactory
         /* Look up in the cache */
         JcaKeyPairGenerator myGenerator = theCache.get(pKeySpec);
         if (myGenerator == null) {
+            /* Check the keySpec */
+            checkAsymKeySpec(pKeySpec);
+
             /* Create the new generator */
             myGenerator = getJcaKeyPairGenerator(pKeySpec);
 
@@ -153,8 +146,8 @@ public class JcaAsymFactory
      * @return the KeyFactory
      * @throws OceanusException on error
      */
-    protected static KeyFactory getJavaKeyFactory(final String pAlgorithm,
-                                                  final boolean postQuantum) throws OceanusException {
+    static KeyFactory getJavaKeyFactory(final String pAlgorithm,
+                                        final boolean postQuantum) throws OceanusException {
         /* Protect against exceptions */
         try {
             /* Return a KeyFactory for the algorithm */
@@ -166,38 +159,6 @@ public class JcaAsymFactory
         } catch (NoSuchAlgorithmException e) {
             /* Throw the exception */
             throw new GordianCryptoException("Failed to create KeyFactory", e);
-        }
-    }
-
-    /**
-     * Create the BouncyCastle KeyGenerator via JCA.
-     * @param pAlgorithm the Algorithm
-     * @return the KeyGenerator
-     * @throws OceanusException on error
-     */
-    private static KeyGenerator getJavaKeyGenerator(final String pAlgorithm) throws OceanusException {
-        /* Protect against exceptions */
-        try {
-            /* Massage the keyGenerator name */
-            String myAlgorithm = pAlgorithm;
-
-            /* Note that DSTU7624 has only a single keyGenerator */
-            if (myAlgorithm.startsWith(KALYNA_ALGORITHM)) {
-                myAlgorithm = KALYNA_ALGORITHM;
-            }
-
-            /* CMAC generators use the symKeyGenerator */
-            if (myAlgorithm.endsWith(CMAC_ALGORITHM)) {
-                myAlgorithm = myAlgorithm.substring(0, myAlgorithm.length() - CMAC_ALGORITHM.length());
-            }
-
-            /* Return a KeyGenerator for the algorithm */
-            return KeyGenerator.getInstance(myAlgorithm, JcaFactory.BCPROV);
-
-            /* Catch exceptions */
-        } catch (NoSuchAlgorithmException e) {
-            /* Throw the exception */
-            throw new GordianCryptoException("Failed to create KeyGenerator", e);
         }
     }
 

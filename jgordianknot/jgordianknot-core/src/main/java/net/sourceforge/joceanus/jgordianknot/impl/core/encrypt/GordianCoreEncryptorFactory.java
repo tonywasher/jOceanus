@@ -25,6 +25,8 @@ import net.sourceforge.joceanus.jgordianknot.api.encrypt.GordianEncryptorFactory
 import net.sourceforge.joceanus.jgordianknot.api.encrypt.GordianEncryptorSpec;
 import net.sourceforge.joceanus.jgordianknot.api.key.GordianKeyPair;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianCoreFactory;
+import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianDataException;
+import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
  * GordianKnot base for encryptorFactory.
@@ -58,11 +60,28 @@ public abstract class GordianCoreEncryptorFactory
     }
 
     /**
+     * Check the encryptorSpec.
+     * @param pEncryptorSpec the encryptorSpec
+     * @throws OceanusException on error
+     */
+    protected void checkEncryptorSpec(final GordianEncryptorSpec pEncryptorSpec) throws OceanusException {
+        /* Check validity of encryptor */
+        if (!validEncryptorSpec(pEncryptorSpec)) {
+            throw new GordianDataException(GordianCoreFactory.getInvalidText(pEncryptorSpec));
+        }
+    }
+
+    /**
      * Check EncryptorSpec.
      * @param pSpec the encryptorSpec
      * @return true/false
      */
     protected boolean validEncryptorSpec(final GordianEncryptorSpec pSpec) {
+        /* Reject invalid encryptorSpec */
+        if (pSpec == null || !pSpec.isValid()) {
+            return false;
+        }
+
         /* Check that spec is supported */
         return pSpec.isSupported();
     }
@@ -70,6 +89,11 @@ public abstract class GordianCoreEncryptorFactory
     @Override
     public boolean validEncryptorSpecForKeyPair(final GordianKeyPair pKeyPair,
                                                 final GordianEncryptorSpec pEncryptorSpec) {
+        /* Reject invalid encryptorSpec */
+        if (pEncryptorSpec == null || !pEncryptorSpec.isValid()) {
+            return false;
+        }
+
         /* Check encryptor matches keyPair */
         if (pEncryptorSpec.getKeyType() != pKeyPair.getKeySpec().getKeyType()) {
             return false;
@@ -96,9 +120,7 @@ public abstract class GordianCoreEncryptorFactory
             /* The digest length cannot be too large wrt to the modulus */
             int myLen = pEncryptorSpec.getDigestSpec().getDigestLength().getByteLength();
             myLen = (myLen + 1) * Byte.SIZE;
-            if (myKeySpec.getModulus().getLength() < (myLen << 1)) {
-                return false;
-            }
+            return myKeySpec.getModulus().getLength() >= (myLen << 1);
         }
 
         /* OK */

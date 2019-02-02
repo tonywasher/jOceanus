@@ -48,6 +48,11 @@ public final class GordianAgreementSpec {
     private final GordianKDFType theKDFType;
 
     /**
+     * The Validity.
+     */
+    private final boolean isValid;
+
+    /**
      * The String name.
      */
     private String theName;
@@ -58,12 +63,13 @@ public final class GordianAgreementSpec {
      * @param pAgreementType the agreement type
      * @param pKDFType the KDF type
      */
-    private GordianAgreementSpec(final GordianAsymKeyType pAsymKeyType,
-                                 final GordianAgreementType pAgreementType,
-                                 final GordianKDFType pKDFType) {
+    public GordianAgreementSpec(final GordianAsymKeyType pAsymKeyType,
+                                final GordianAgreementType pAgreementType,
+                                final GordianKDFType pKDFType) {
         theAsymKeyType = pAsymKeyType;
         theAgreementType = pAgreementType;
         theKDFType = pKDFType;
+        isValid = checkValidity();
     }
 
     /**
@@ -98,17 +104,39 @@ public final class GordianAgreementSpec {
         return theAgreementType.isSupported(theAsymKeyType) && theKDFType.isSupported(theAsymKeyType, theAgreementType);
     }
 
+    /**
+     * Is the agreementSpec valid?
+     * @return true/false.
+     */
+    public boolean isValid() {
+        return isValid;
+    }
+
+    /**
+     * Check spec validity.
+     * @return valid true/false
+     */
+    private boolean checkValidity() {
+        return theAsymKeyType != null && theAgreementType != null && theKDFType != null;
+    }
+
     @Override
     public String toString() {
         /* If we have not yet loaded the name */
         if (theName == null) {
-            /* Load the name */
-            theName = theAsymKeyType.toString()
-                    + SEP + theAgreementType.toString();
+            /* If the agreementSpec is valid */
+            if (isValid) {
+                /* Load the name */
+                theName = theAsymKeyType.toString()
+                        + SEP + theAgreementType;
 
-            /* Add KDF type if present */
-            if (GordianKDFType.NONE != theKDFType) {
-                theName += SEP + theKDFType.toString();
+                /* Add KDF type if present */
+                if (GordianKDFType.NONE != theKDFType) {
+                    theName += SEP + theKDFType;
+                }
+            } else {
+                /* Report invalid spec */
+                theName = "InvalidAgreementSpec: " + theAsymKeyType + ":" + theAgreementType + ":" + theKDFType;
             }
         }
 

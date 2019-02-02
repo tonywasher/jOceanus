@@ -47,14 +47,12 @@ public class BouncyEncryptorFactory
     protected BouncyFactory getFactory() { return (BouncyFactory) super.getFactory(); }
 
     @Override
-    public GordianEncryptor createEncryptor(final GordianEncryptorSpec pSpec) throws OceanusException {
+    public GordianEncryptor createEncryptor(final GordianEncryptorSpec pEncryptorSpec) throws OceanusException {
         /* Check validity of Encryptor */
-        if (!supportedEncryptors().test(pSpec)) {
-            throw new GordianDataException(BouncyFactory.getInvalidText(pSpec));
-        }
+        checkEncryptorSpec(pEncryptorSpec);
 
         /* Create the encryptor */
-        return getBCEncryptor(pSpec);
+        return getBCEncryptor(pEncryptorSpec);
     }
 
     /**
@@ -70,10 +68,11 @@ public class BouncyEncryptorFactory
                 return new BouncyRSAEncryptor(getFactory(), pSpec);
             case EC:
             case GOST2012:
-            case DSTU4145:
                 return new BouncyECEncryptor(getFactory(), pSpec);
             case SM2:
-                return new BouncySM2Encryptor(getFactory(), pSpec);
+                return pSpec.getDigestSpec() == null
+                       ? new BouncyECEncryptor(getFactory(), pSpec)
+                       : new BouncySM2Encryptor(getFactory(), pSpec);
             case MCELIECE:
                 return GordianMcElieceEncryptionType.STANDARD.equals(pSpec.getMcElieceType())
                        ? new BouncyMcElieceEncryptor(getFactory(), pSpec)

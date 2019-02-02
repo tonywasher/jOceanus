@@ -24,6 +24,8 @@ import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigestSpec;
 import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigestType;
 import net.sourceforge.joceanus.jgordianknot.api.mac.GordianMacFactory;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianCoreFactory;
+import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianDataException;
+import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
  * Base Digest Factory.
@@ -68,19 +70,35 @@ public abstract class GordianCoreDigestFactory
     }
 
     /**
+     * Check digestSpec.
+     * @param pDigestSpec the digestSpec
+     * @throws OceanusException on error
+     */
+    public void checkDigestSpec(final GordianDigestSpec pDigestSpec) throws OceanusException {
+        /* Check validity of DigestType */
+        if (!supportedDigestSpecs().test(pDigestSpec)) {
+            throw new GordianDataException(GordianCoreFactory.getInvalidText(pDigestSpec));
+        }
+    }
+
+    /**
      * Check DigestSpec.
      * @param pDigestSpec the digestSpec
      * @return true/false
      */
     public boolean validDigestSpec(final GordianDigestSpec pDigestSpec) {
+        /* Reject invalid digestSpec */
+        if (pDigestSpec == null || !pDigestSpec.isValid()) {
+            return false;
+        }
+
         /* Access details */
         final GordianDigestType myType = pDigestSpec.getDigestType();
         final GordianLength myStateLen = pDigestSpec.getStateLength();
         final GordianLength myLen = pDigestSpec.getDigestLength();
 
         /* Check validity */
-        return pDigestSpec.isValid()
-                && supportedDigestTypes().test(myType)
+        return supportedDigestTypes().test(myType)
                 && myType.isLengthValid(myLen)
                 && myType.isStateValidForLength(myStateLen, myLen);
     }

@@ -52,9 +52,7 @@ public class JcaAgreementFactory
     @Override
     public GordianAgreement createAgreement(final GordianAgreementSpec pAgreementSpec) throws OceanusException {
         /* Check validity of agreement */
-        if (!validAgreementSpec(pAgreementSpec)) {
-            throw new GordianDataException(JcaFactory.getInvalidText(pAgreementSpec));
-        }
+        checkAgreementSpec(pAgreementSpec);
 
         /* Create the agreement */
         return getJcaAgreement(pAgreementSpec);

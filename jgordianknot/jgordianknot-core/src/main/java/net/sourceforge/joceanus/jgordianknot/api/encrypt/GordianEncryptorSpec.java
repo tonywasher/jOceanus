@@ -32,6 +32,11 @@ import net.sourceforge.joceanus.jtethys.TethysDataConverter;
  */
 public final class GordianEncryptorSpec {
     /**
+     * The EC-ElGamal name.
+     */
+    private static final String ECELGAMAL = "ElGamal";
+
+    /**
      * The Separator.
      */
     private static final String SEP = "-";
@@ -47,6 +52,11 @@ public final class GordianEncryptorSpec {
     private final Object theEncryptorType;
 
     /**
+     * The Validity.
+     */
+    private final boolean isValid;
+
+    /**
      * The String name.
      */
     private String theName;
@@ -56,10 +66,11 @@ public final class GordianEncryptorSpec {
      * @param pAsymKeyType the asymKeyType
      * @param pEncryptorType the encryptor type
      */
-    GordianEncryptorSpec(final GordianAsymKeyType pAsymKeyType,
-                         final Object pEncryptorType) {
+    public GordianEncryptorSpec(final GordianAsymKeyType pAsymKeyType,
+                                final Object pEncryptorType) {
         theAsymKeyType = pAsymKeyType;
         theEncryptorType = pEncryptorType;
+        isValid = checkValidity();
     }
 
     /**
@@ -158,31 +169,105 @@ public final class GordianEncryptorSpec {
     }
 
     /**
-     * Is the Spec supported?
-     * @return true/false
+     * Is the encryptorSpec valid?
+     * @return true/false.
      */
-    public boolean isSupported() {
+    public boolean isValid() {
+        return isValid;
+    }
+
+    /**
+     * Check spec validity.
+     * @return valid true/false
+     */
+    private boolean checkValidity() {
+        if (theAsymKeyType == null) {
+            return false;
+        }
         switch (theAsymKeyType) {
             case RSA:
-                final GordianDigestSpec mySpec = getDigestSpec();
-                return mySpec != null && GordianDigestType.SHA2.equals(mySpec.getDigestType()) && mySpec.getStateLength() == null;
-            case EC:
+                return theEncryptorType instanceof GordianDigestSpec
+                        && ((GordianDigestSpec) theEncryptorType).isValid();
             case SM2:
+                return theEncryptorType == null
+                        || (theEncryptorType instanceof GordianDigestSpec
+                            && ((GordianDigestSpec) theEncryptorType).isValid());
+            case EC:
+            case DSTU4145:
+            case GOST2012:
+                return theEncryptorType == null;
             case MCELIECE:
-                return true;
+                return theEncryptorType instanceof GordianMcElieceEncryptionType;
             default:
                 return false;
         }
     }
 
+    /**
+     * Is the Spec supported?
+     * @return true/false
+     */
+    public boolean isSupported() {
+        final GordianDigestSpec mySpec = getDigestSpec();
+        switch (theAsymKeyType) {
+            case RSA:
+                return mySpec != null && GordianDigestType.SHA2.equals(mySpec.getDigestType()) && mySpec.getStateLength() == null;
+            case EC:
+            case GOST2012:
+            case MCELIECE:
+                return true;
+            case SM2:
+                return mySpec == null || isSM2Supported(mySpec);
+            default:
+                return false;
+        }
+    }
+
+    /**
+     * Is the SM2 digestSpec supported?
+     * @param pDigestSpec the digestSpec
+     * @return true/false
+     */
+    private static boolean isSM2Supported(final GordianDigestSpec pDigestSpec) {
+        switch (pDigestSpec.getDigestType()) {
+            case SHA2:
+                return pDigestSpec.getStateLength() == null;
+            case WHIRLPOOL:
+            case SM3:
+                return true;
+            case BLAKE:
+                return pDigestSpec.getDigestLength().equals(pDigestSpec.getStateLength());
+            default:
+                return false;
+        }
+    }
     @Override
     public String toString() {
         /* If we have not yet loaded the name */
         if (theName == null) {
-            /* Load the name */
-            theName = theAsymKeyType.toString();
-            if (theEncryptorType != null) {
-                theName += SEP + theEncryptorType.toString();
+            /* If the encryptorSpec is valid */
+            if (isValid) {
+                /* Load the name */
+                theName = theAsymKeyType.toString();
+                switch (theAsymKeyType) {
+                    case RSA:
+                    case MCELIECE:
+                        theName += SEP + theEncryptorType;
+                        break;
+                    case EC:
+                    case DSTU4145:
+                    case GOST2012:
+                        theName += SEP + ECELGAMAL;
+                        break;
+                    case SM2:
+                        theName += SEP + (theEncryptorType == null ? ECELGAMAL : theEncryptorType);
+                        break;
+                    default:
+                        break;
+                }
+            }  else {
+                /* Report invalid spec */
+                theName = "InvalidEncryptorSpec: " + theAsymKeyType + ":" + theEncryptorType;
             }
         }
 
@@ -248,15 +333,20 @@ public final class GordianEncryptorSpec {
                 break;
             case SM2:
                 myEncryptors.add(GordianEncryptorSpec.sm2());
+                myEncryptors.add(GordianEncryptorSpec.sm2(GordianDigestSpec.sm3()));
+                myEncryptors.add(GordianEncryptorSpec.sm2(GordianDigestSpec.sha2(GordianLength.LEN_224)));
+                myEncryptors.add(GordianEncryptorSpec.sm2(GordianDigestSpec.sha2(GordianLength.LEN_256)));
+                myEncryptors.add(GordianEncryptorSpec.sm2(GordianDigestSpec.sha2(GordianLength.LEN_384)));
+                myEncryptors.add(GordianEncryptorSpec.sm2(GordianDigestSpec.sha2(GordianLength.LEN_512)));
+                myEncryptors.add(GordianEncryptorSpec.sm2(GordianDigestSpec.blakeAlt(GordianLength.LEN_256)));
+                myEncryptors.add(GordianEncryptorSpec.sm2(GordianDigestSpec.blake(GordianLength.LEN_512)));
+                myEncryptors.add(GordianEncryptorSpec.sm2(GordianDigestSpec.whirlpool()));
                 break;
             case EC:
                 myEncryptors.add(GordianEncryptorSpec.ec());
                 break;
             case GOST2012:
                 myEncryptors.add(GordianEncryptorSpec.gost2012());
-                break;
-            case DSTU4145:
-                myEncryptors.add(GordianEncryptorSpec.dstu4145());
                 break;
             case MCELIECE:
                 myEncryptors.add(GordianEncryptorSpec.mcEliece(GordianMcElieceEncryptionType.STANDARD));

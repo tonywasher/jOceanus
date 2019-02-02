@@ -18,6 +18,7 @@ package net.sourceforge.joceanus.jgordianknot.api.random;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianSymKeySpec;
 import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigestSpec;
@@ -48,6 +49,11 @@ public class GordianRandomSpec {
     private final boolean isPredictionResistent;
 
     /**
+     * The Validity.
+     */
+    private final boolean isValid;
+
+    /**
      * The String name.
      */
     private String theName;
@@ -64,6 +70,7 @@ public class GordianRandomSpec {
         theRandomType = pRandomType;
         theSubSpec = pSubSpec;
         isPredictionResistent = pResistent;
+        isValid = checkValidity();
     }
 
     /**
@@ -137,6 +144,14 @@ public class GordianRandomSpec {
     }
 
     /**
+     * Is the macSpec valid?
+     * @return true/false.
+     */
+    public boolean isValid() {
+        return isValid;
+    }
+
+    /**
      * Obtain the digestSpec.
      * @return the digestSpec.
      */
@@ -164,17 +179,40 @@ public class GordianRandomSpec {
         return isPredictionResistent;
     }
 
+    /**
+     * Check spec validity.
+     * @return valid true/false
+     */
+    private boolean checkValidity() {
+        if (theRandomType == null) {
+            return false;
+        }
+        switch (theRandomType) {
+            case HMAC:
+            case HASH:
+                return theSubSpec instanceof GordianDigestSpec;
+            case X931:
+                return theSubSpec instanceof GordianSymKeySpec;
+            default:
+                return false;
+        }
+    }
+
     @Override
     public String toString() {
         /* If we have not yet loaded the name */
         if (theName == null) {
-            /* Load the name */
-            theName = theRandomType.toString();
-            if (theSubSpec != null) {
-                theName += SEP + theSubSpec.toString();
-            }
-            if (isPredictionResistent) {
-                theName += SEP + Boolean.TRUE;
+            /* If the randomSpec is valid */
+            if (isValid) {
+                /* Load the name */
+                theName = theRandomType.toString();
+                theName += SEP + theSubSpec;
+                if (isPredictionResistent) {
+                    theName += SEP + Boolean.TRUE;
+                }
+            }  else {
+                /* Report invalid spec */
+                theName = "InvalidRandomSpec: " + theRandomType + ":" + theSubSpec + ":" + isPredictionResistent;
             }
         }
 
@@ -209,9 +247,7 @@ public class GordianRandomSpec {
         }
 
         /* Match subSpecs */
-        return theSubSpec != null
-               ? theSubSpec.equals(myThat.getSubSpec())
-               : myThat.getSubSpec() == null;
+        return Objects.equals(theSubSpec, myThat.getSubSpec());
     }
 
     @Override

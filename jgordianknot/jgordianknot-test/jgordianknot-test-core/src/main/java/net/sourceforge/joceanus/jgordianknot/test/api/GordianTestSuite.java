@@ -116,12 +116,12 @@ public class GordianTestSuite {
         /* Process the arguments */
         processArgs(pArgs);
 
-        /* handle check algorithms */
-        if ("check".equals(theTest)) {
+        /* handle symmetric algorithms */
+        if ("sym".equals(theTest)) {
             checkAlgorithms();
 
-            /* handle test security */
-        } else if ("test".equals(theTest)) {
+            /* handle keySet security */
+        } else if ("keyset".equals(theTest)) {
             testSecurity();
 
             /* handle asym tests */
@@ -140,26 +140,25 @@ public class GordianTestSuite {
     /**
      * Constructor.
      * @param pArgs the parameters
-     * @throws OceanusException on error
      */
-    private void processArgs(final List<String> pArgs) throws OceanusException {
+    private void processArgs(final List<String> pArgs) {
         /* Loop through the arguments */
-        for(String myArg : pArgs) {
+        for (String myArg : pArgs) {
             /* If this is the test */
             if (myArg.startsWith("--test=")) {
-                theTest=myArg.substring("--test=".length());
+                theTest = myArg.substring("--test=".length());
 
                 /* if this is the key */
             } else if (myArg.startsWith("--keyType=")) {
-                theKeyType=myArg.substring("--keyType=".length());
+                theKeyType = myArg.substring("--keyType=".length());
 
                 /* if this is the signature */
             } else if (myArg.startsWith("--sigType=")) {
-                theSigType=myArg.substring("--sigType=".length());
+                theSigType = myArg.substring("--sigType=".length());
 
                 /* If this is allSpecs */
             } else if ("--allSpecs".equals(myArg)) {
-                allSpecs=true;
+                allSpecs = true;
             }
         }
     }
@@ -263,10 +262,7 @@ public class GordianTestSuite {
         myParams.setFactoryType(pType);
         GordianHashManager myManager = theCreator.newSecureManager(myParams);
         GordianFactory myFactory = myManager.getSecurityFactory();
-        GordianDigestFactory myDigests = myFactory.getDigestFactory();
-        GordianCipherFactory myCiphers = myFactory.getCipherFactory();
-        GordianMacFactory myMacs = myFactory.getMacFactory();
-        GordianRandomFactory myRandoms = myFactory.getRandomFactory();
+        final GordianRandomFactory myRandoms = myFactory.getRandomFactory();
         GordianKeySetFactory myKeySets = myFactory.getKeySetFactory();
         final GordianKeySetHash myHash = myKeySets.generateKeySetHash(DEF_PASSWORD.clone());
         final GordianKeySet myKeySet = myHash.getKeySet();
@@ -315,9 +311,8 @@ public class GordianTestSuite {
         /* Start a new session */
         myManager = theCreator.newSecureManager(myParams);
         myFactory = myManager.getSecurityFactory();
-        myDigests = myFactory.getDigestFactory();
-        myCiphers = myFactory.getCipherFactory();
-        myMacs = myFactory.getMacFactory();
+        final GordianDigestFactory myDigests = myFactory.getDigestFactory();
+        final GordianMacFactory myMacs = myFactory.getMacFactory();
         myKeySets = myFactory.getKeySetFactory();
         final GordianKeySetHash myNewHash = myKeySets.deriveKeySetHash(myHash.getHash(), DEF_PASSWORD.clone());
         final GordianKeySet myKeySet1 = myNewHash.getKeySet();

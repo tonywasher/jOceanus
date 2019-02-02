@@ -130,7 +130,7 @@ public class GordianCoreKeySetFactory
     }
 
     /**
-     * Generate keySet symKeyType.
+     * check valid keySet symKeyType.
      * @param pKeyType the symKeyType
      * @return true/false
      */
@@ -138,19 +138,6 @@ public class GordianCoreKeySetFactory
         final GordianCoreFactory myFactory = getFactory();
         final GordianCoreCipherFactory myCiphers = (GordianCoreCipherFactory) myFactory.getCipherFactory();
         return myCiphers.validSymKeyType(pKeyType)
-                && validKeySetSymKeyTypeForRestriction(pKeyType, myFactory.isRestricted());
-    }
-
-    /**
-     * Generate keySet symKeyType.
-     * @param pKeyType the symKeyType
-     * @param pRestricted is the symKeyType restricted?
-     * @return true/false
-     */
-    private boolean validKeySetSymKeyTypeForRestriction(final GordianSymKeyType pKeyType,
-                                                        final boolean pRestricted) {
-        final GordianCoreCipherFactory myCiphers = (GordianCoreCipherFactory) getFactory().getCipherFactory();
-        return myCiphers.validSymKeyTypeForRestriction(pKeyType, pRestricted)
-                && pKeyType.getDefaultLength().equals(GordianLength.LEN_128);
+                && GordianCoreCipherFactory.validStdBlockSymKeyTypeForRestriction(pKeyType, myFactory.isRestricted());
     }
 }

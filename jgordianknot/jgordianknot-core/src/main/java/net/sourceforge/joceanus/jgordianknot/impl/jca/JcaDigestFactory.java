@@ -24,7 +24,6 @@ import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigestType;
 import net.sourceforge.joceanus.jgordianknot.impl.core.digest.GordianCoreDigestFactory;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianCoreFactory;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianCryptoException;
-import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianDataException;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
@@ -37,7 +36,7 @@ public class JcaDigestFactory
      *
      * @param pFactory the factory
      */
-    public JcaDigestFactory(final GordianCoreFactory pFactory) {
+    JcaDigestFactory(final GordianCoreFactory pFactory) {
         /* Initialise underlying class */
         super(pFactory);
     }
@@ -47,10 +46,8 @@ public class JcaDigestFactory
 
     @Override
     public JcaDigest createDigest(final GordianDigestSpec pDigestSpec) throws OceanusException {
-        /* Check validity of DigestType */
-        if (!supportedDigestSpecs().test(pDigestSpec)) {
-            throw new GordianDataException(GordianCoreFactory.getInvalidText(pDigestSpec));
-        }
+        /* Check validity of DigestSpec */
+        checkDigestSpec(pDigestSpec);
 
         /* Create digest */
         final MessageDigest myJavaDigest = getJavaDigest(pDigestSpec);

@@ -22,11 +22,22 @@ package net.sourceforge.joceanus.jgordianknot.api.cipher;
 public class GordianStreamCipherSpec
         extends GordianCipherSpec<GordianStreamKeyType> {
     /**
+     * The Validity.
+     */
+    private final boolean isValid;
+
+    /**
+     * The String name.
+     */
+    private String theName;
+
+    /**
      * Constructor.
      * @param pKeyType the keyType
      */
     protected GordianStreamCipherSpec(final GordianStreamKeyType pKeyType) {
         super(pKeyType);
+        isValid = checkValidity();
     }
 
     /**
@@ -46,5 +57,39 @@ public class GordianStreamCipherSpec
     @Override
     public int getIVLength(final boolean pRestricted) {
         return getKeyType().getIVLength(pRestricted);
+    }
+
+    /**
+     * Is the keySpec valid?
+     * @return true/false.
+     */
+    public boolean isValid() {
+        return isValid;
+    }
+
+    /**
+     * Check spec validity.
+     * @return valid true/false
+     */
+    private boolean checkValidity() {
+        return getKeyType() != null;
+    }
+
+    @Override
+    public String toString() {
+        /* If we have not yet loaded the name */
+        if (theName == null) {
+            /* If the keySpec is valid */
+            if (isValid) {
+                /* Load the name */
+                theName = super.toString();
+            }  else {
+                /* Report invalid spec */
+                theName = "InvalidStreamCipherSpec: " + getKeyType();
+            }
+        }
+
+        /* return the name */
+        return theName;
     }
 }

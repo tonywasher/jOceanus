@@ -26,6 +26,7 @@ import net.sourceforge.joceanus.jgordianknot.api.encrypt.GordianEncryptorFactory
 import net.sourceforge.joceanus.jgordianknot.api.factory.GordianAsymFactory;
 import net.sourceforge.joceanus.jgordianknot.api.sign.GordianSignatureFactory;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianCoreFactory;
+import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianDataException;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
@@ -121,6 +122,18 @@ public abstract class GordianCoreAsymFactory
     @Override
     public GordianAsymKeySpec determineKeySpec(final X509EncodedKeySpec pEncoded) throws OceanusException {
         return ASYM_ALG_ID.determineKeySpec(pEncoded);
+    }
+
+    /**
+     * Check the asymKeySpec.
+     * @param pKeySpec the asymKeySpec
+     * @throws OceanusException on error
+     */
+    protected void checkAsymKeySpec(final GordianAsymKeySpec pKeySpec) throws OceanusException {
+        /* Check validity of keySpec */
+        if (pKeySpec == null || !pKeySpec.isValid()) {
+            throw new GordianDataException(GordianCoreFactory.getInvalidText(pKeySpec));
+        }
     }
 
     @Override

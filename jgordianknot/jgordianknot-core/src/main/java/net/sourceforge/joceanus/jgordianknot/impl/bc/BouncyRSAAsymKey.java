@@ -350,7 +350,7 @@ public final class BouncyRSAAsymKey {
             /* Access the signature type */
             switch (pSpec.getSignatureType()) {
                 case ISO9796D2:
-                    return new ISO9796d2Signer(new RSABlindedEngine(), myDigest.getDigest(), true);
+                    return new ISO9796d2Signer(new RSABlindedEngine(), myDigest.getDigest(), ISOTrailers.noTrailerAvailable(myDigest.getDigest()));
                 case X931:
                     return new X931Signer(new RSABlindedEngine(), myDigest.getDigest(), ISOTrailers.noTrailerAvailable(myDigest.getDigest()));
                 case PSS:

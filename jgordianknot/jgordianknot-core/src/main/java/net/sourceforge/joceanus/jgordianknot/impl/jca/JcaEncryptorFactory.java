@@ -51,9 +51,7 @@ public class JcaEncryptorFactory
     @Override
     public GordianEncryptor createEncryptor(final GordianEncryptorSpec pEncryptorSpec) throws OceanusException {
         /* Check validity of encryptor */
-        if (!validEncryptorSpec(pEncryptorSpec)) {
-            throw new GordianDataException(JcaFactory.getInvalidText(pEncryptorSpec));
-        }
+        checkEncryptorSpec(pEncryptorSpec);
 
         /* Create the encryptor */
         return getJcaEncryptor(pEncryptorSpec);
@@ -69,6 +67,8 @@ public class JcaEncryptorFactory
         switch (pEncryptorSpec.getKeyType()) {
             case RSA:
                 return new JcaBlockEncryptor(getFactory(), pEncryptorSpec);
+            case SM2:
+                return new JcaHybridEncryptor(getFactory(), pEncryptorSpec);
             case MCELIECE:
                 return GordianMcElieceEncryptionType.STANDARD.equals(pEncryptorSpec.getMcElieceType())
                        ? new JcaBlockEncryptor(getFactory(), pEncryptorSpec)
@@ -114,6 +114,8 @@ public class JcaEncryptorFactory
             case RSA:
             case MCELIECE:
                 return true;
+            case SM2:
+                return pSpec.getDigestSpec() != null;
             default:
                 return false;
         }

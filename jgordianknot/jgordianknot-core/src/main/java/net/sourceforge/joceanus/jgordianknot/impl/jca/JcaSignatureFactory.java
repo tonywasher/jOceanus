@@ -58,9 +58,7 @@ public class JcaSignatureFactory
     @Override
     public GordianSignature createSigner(final GordianSignatureSpec pSignatureSpec) throws OceanusException {
         /* Check validity of Signature */
-        if (!validSignatureSpec(pSignatureSpec)) {
-            throw new GordianDataException(JcaFactory.getInvalidText(pSignatureSpec));
-        }
+        checkSignatureSpec(pSignatureSpec);
 
         /* Create the signer */
         return getJcaSigner(pSignatureSpec);

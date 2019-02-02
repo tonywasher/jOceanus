@@ -58,7 +58,7 @@ public class JcaCipherFactory
     /**
      * KeyGenerator Cache.
      */
-    final Map<GordianKeySpec, JcaKeyGenerator<? extends GordianKeySpec>> theCache;
+    private final Map<GordianKeySpec, JcaKeyGenerator<? extends GordianKeySpec>> theCache;
 
     /**
      * Constructor.
@@ -84,6 +84,9 @@ public class JcaCipherFactory
         /* Look up in the cache */
         JcaKeyGenerator<T> myGenerator = (JcaKeyGenerator<T>) theCache.get(pKeySpec);
         if (myGenerator == null) {
+            /* Check the KeySpec */
+            checkKeySpec(pKeySpec);
+
             /* Create the new generator */
             final String myAlgorithm = getKeyAlgorithm(pKeySpec);
             final KeyGenerator myJavaGenerator = getJavaKeyGenerator(myAlgorithm);
@@ -98,16 +101,8 @@ public class JcaCipherFactory
 
     @Override
     public JcaCipher<GordianSymKeySpec> createSymKeyCipher(final GordianSymCipherSpec pCipherSpec) throws OceanusException {
-        /* Check validity of SymKey */
-        final GordianSymKeySpec myKeySpec = pCipherSpec.getKeyType();
-        if (!supportedSymKeySpecs().test(myKeySpec)) {
-            throw new GordianDataException(GordianCoreFactory.getInvalidText(pCipherSpec));
-        }
-
-        /* Check validity of Mode */
-        if (!validSymCipherSpec(pCipherSpec, false)) {
-            throw new GordianDataException(GordianCoreFactory.getInvalidText(pCipherSpec));
-        }
+        /* Check validity of SymKeySpec */
+        checkSymCipherSpec(pCipherSpec, false);
 
         /* Create the cipher */
         final Cipher myBCCipher = getJavaCipher(pCipherSpec);
@@ -116,16 +111,8 @@ public class JcaCipherFactory
 
     @Override
     public JcaAADCipher createAADCipher(final GordianSymCipherSpec pCipherSpec) throws OceanusException {
-        /* Check validity of SymKey */
-        final GordianSymKeySpec myKeySpec = pCipherSpec.getKeyType();
-        if (!supportedSymKeySpecs().test(myKeySpec)) {
-            throw new GordianDataException(GordianCoreFactory.getInvalidText(pCipherSpec));
-        }
-
-        /* Check validity of Mode */
-        if (!validSymCipherSpec(pCipherSpec, true)) {
-            throw new GordianDataException(GordianCoreFactory.getInvalidText(pCipherSpec));
-        }
+        /* Check validity of SymKeySpec */
+        checkSymCipherSpec(pCipherSpec, true);
 
         /* Create the cipher */
         final Cipher myBCCipher = getJavaCipher(pCipherSpec);
@@ -134,23 +121,18 @@ public class JcaCipherFactory
 
     @Override
     public JcaCipher<GordianStreamKeyType> createStreamKeyCipher(final GordianStreamCipherSpec pCipherSpec) throws OceanusException {
-        /* Check validity of StreamKey */
-        final GordianStreamKeyType myKeyType = pCipherSpec.getKeyType();
-        if (!supportedStreamKeyTypes().test(myKeyType)) {
-            throw new GordianDataException(GordianCoreFactory.getInvalidText(myKeyType));
-        }
+        /* Check validity of StreamKeySpec */
+        checkStreamCipherSpec(pCipherSpec);
 
         /* Create the cipher */
-        final Cipher myJavaCipher = getJavaCipher(myKeyType);
+        final Cipher myJavaCipher = getJavaCipher(pCipherSpec.getKeyType());
         return new JcaCipher<>(getFactory(), pCipherSpec, myJavaCipher);
     }
 
     @Override
     public GordianWrapper createKeyWrapper(final GordianSymKeySpec pKeySpec) throws OceanusException {
         /* Check validity of SymKey */
-        if (!supportedSymKeySpecs().test(pKeySpec)) {
-            throw new GordianDataException(GordianCoreFactory.getInvalidText(pKeySpec));
-        }
+        checkSymKeySpec(pKeySpec);
 
         /* Create the cipher */
         final GordianSymCipherSpec mySpec = GordianSymCipherSpec.ecb(pKeySpec, GordianPadding.NONE);
@@ -390,6 +372,19 @@ public class JcaCipherFactory
 
     @Override
     public boolean validSymKeyType(final GordianSymKeyType pKeyType) {
+        return supportedSymKeyType(pKeyType)
+                && super.validSymKeyType(pKeyType);
+    }
+
+    /**
+     * Is this symKeyType supported by Jca?
+     * @param pKeyType the keyType
+     * @return true/false
+     */
+    private static boolean supportedSymKeyType(final GordianSymKeyType pKeyType) {
+        if (pKeyType == null) {
+            return false;
+        }
         switch (pKeyType) {
             case SPECK:
             case ANUBIS:
@@ -397,7 +392,7 @@ public class JcaCipherFactory
             case MARS:
                 return false;
             default:
-                return super.validSymKeyType(pKeyType);
+                return true;
         }
     }
 
@@ -445,5 +440,24 @@ public class JcaCipherFactory
             default:
                 return true;
         }
+    }
+
+    /**
+     * Determine maximum cipherSteps.
+     * @param pRestricted are keys restricted?
+     * @return the maximum
+     */
+    public static int getMaximumCipherSteps(final boolean pRestricted) {
+        /* Count valid values */
+        int myCount = 0;
+        for (final GordianSymKeyType myType : GordianSymKeyType.values()) {
+            if (GordianCoreCipherFactory.validStdBlockSymKeyTypeForRestriction(myType, pRestricted)
+                    && supportedSymKeyType(myType)) {
+                myCount++;
+            }
+        }
+
+        /* Maximum is 1 less than the count */
+        return myCount - 1;
     }
 }

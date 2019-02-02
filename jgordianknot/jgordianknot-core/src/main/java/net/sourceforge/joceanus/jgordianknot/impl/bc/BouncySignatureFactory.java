@@ -62,9 +62,7 @@ public class BouncySignatureFactory
     @Override
     public GordianSignature createSigner(final GordianSignatureSpec pSignatureSpec) throws OceanusException {
         /* Check validity of Signature */
-        if (!validSignatureSpec(pSignatureSpec)) {
-            throw new GordianDataException(BouncyFactory.getInvalidText(pSignatureSpec));
-        }
+        checkSignatureSpec(pSignatureSpec);
 
         /* Create the signer */
         return getBCSigner(pSignatureSpec);

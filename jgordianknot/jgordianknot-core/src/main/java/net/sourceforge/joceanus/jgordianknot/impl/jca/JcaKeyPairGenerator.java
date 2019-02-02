@@ -471,9 +471,9 @@ public abstract class JcaKeyPairGenerator
                 if (myKeyType.isCCA2()) {
                     final GordianMcElieceDigestType myDigestType = myKeyType.getDigestType();
                     theGenerator.initialize(new McElieceCCA2KeyGenParameterSpec(myDigestType.getM(), McElieceCCA2KeyGenParameterSpec.DEFAULT_T,
-                            myDigestType.getParameter()));
+                            myDigestType.getParameter()), getRandom());
                 } else {
-                    theGenerator.initialize(new McElieceKeyGenParameterSpec());
+                    theGenerator.initialize(new McElieceKeyGenParameterSpec(), getRandom());
                 }
             } catch (InvalidAlgorithmParameterException e) {
                 throw new GordianCryptoException("Failed to initialise generator", e);

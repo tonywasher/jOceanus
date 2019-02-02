@@ -63,7 +63,7 @@ public class BouncyDigestFactory
      *
      * @param pFactory the factory
      */
-    public BouncyDigestFactory(final GordianCoreFactory pFactory) {
+    BouncyDigestFactory(final GordianCoreFactory pFactory) {
         /* Initialise underlying class */
         super(pFactory);
     }
@@ -74,14 +74,13 @@ public class BouncyDigestFactory
     @Override
     public BouncyDigest createDigest(final GordianDigestSpec pDigestSpec) throws OceanusException {
         /* Check validity of DigestSpec */
-        if (!supportedDigestSpecs().test(pDigestSpec)) {
-            throw new GordianDataException(GordianCoreFactory.getInvalidText(pDigestSpec));
-        }
+        checkDigestSpec(pDigestSpec);
 
         /* Create digest */
         final Digest myBCDigest = getBCDigest(pDigestSpec);
         return new BouncyDigest(pDigestSpec, myBCDigest);
     }
+
     /**
      * Create the BouncyCastle digest.
      *
