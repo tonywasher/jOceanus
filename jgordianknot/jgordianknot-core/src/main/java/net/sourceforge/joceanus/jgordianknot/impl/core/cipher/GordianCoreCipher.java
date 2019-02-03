@@ -18,11 +18,11 @@ package net.sourceforge.joceanus.jgordianknot.impl.core.cipher;
 
 import java.security.SecureRandom;
 
-import net.sourceforge.joceanus.jgordianknot.GordianLogicException;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianCipher;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianCipherSpec;
 import net.sourceforge.joceanus.jgordianknot.api.key.GordianKey;
 import net.sourceforge.joceanus.jgordianknot.api.base.GordianKeySpec;
+import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianLogicException;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianRandomSource;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianCoreFactory;
 import net.sourceforge.joceanus.jtethys.OceanusException;

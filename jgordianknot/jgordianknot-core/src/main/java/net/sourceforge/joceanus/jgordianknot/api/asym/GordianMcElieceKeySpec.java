@@ -22,9 +22,6 @@ import java.util.List;
 import org.bouncycastle.pqc.crypto.mceliece.McElieceCCA2Parameters;
 import org.bouncycastle.pqc.jcajce.spec.McElieceCCA2KeyGenParameterSpec;
 
-import net.sourceforge.joceanus.jgordianknot.crypto.GordianMcElieceKeySpec.GordianMcElieceDigestType;
-import net.sourceforge.joceanus.jgordianknot.crypto.GordianMcElieceKeySpec.GordianMcElieceEncryptionType;
-import net.sourceforge.joceanus.jgordianknot.crypto.GordianMcElieceKeySpec.GordianMcElieceKeyType;
 import net.sourceforge.joceanus.jtethys.TethysDataConverter;
 
 /**

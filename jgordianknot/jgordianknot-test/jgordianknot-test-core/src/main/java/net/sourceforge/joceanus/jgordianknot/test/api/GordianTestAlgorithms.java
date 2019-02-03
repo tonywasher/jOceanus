@@ -45,7 +45,7 @@ import net.sourceforge.joceanus.jgordianknot.api.mac.GordianMacFactory;
 import net.sourceforge.joceanus.jgordianknot.api.mac.GordianMac;
 import net.sourceforge.joceanus.jgordianknot.api.mac.GordianMacSpec;
 import net.sourceforge.joceanus.jgordianknot.api.mac.GordianMacType;
-import net.sourceforge.joceanus.jgordianknot.api.impl.GordianHashManager;
+import net.sourceforge.joceanus.jgordianknot.api.impl.GordianSecurityManager;
 import net.sourceforge.joceanus.jgordianknot.test.api.GordianTestSuite.SecurityManagerCreator;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.TethysDataConverter;
@@ -105,7 +105,7 @@ public class GordianTestAlgorithms {
         /* Create new Security Generator */
         final GordianParameters myParams = new GordianParameters(pRestricted);
         myParams.setFactoryType(pType);
-        final GordianHashManager myManager = theCreator.newSecureManager(myParams);
+        final GordianSecurityManager myManager = theCreator.newSecureManager(myParams);
         final GordianFactory myFactory = myManager.getSecurityFactory();
         final GordianCipherFactory myCiphers = myFactory.getCipherFactory();
         final GordianDigestFactory myDigests = myFactory.getDigestFactory();

@@ -16,9 +16,9 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmetis.threads.swing;
 
-import net.sourceforge.joceanus.jgordianknot.crypto.GordianParameters;
-import net.sourceforge.joceanus.jgordianknot.manager.GordianHashManager;
-import net.sourceforge.joceanus.jgordianknot.manager.swing.GordianSwingHashManager;
+import net.sourceforge.joceanus.jgordianknot.api.factory.GordianParameters;
+import net.sourceforge.joceanus.jgordianknot.api.impl.GordianSecurityManager;
+import net.sourceforge.joceanus.jgordianknot.api.swing.GordianSwingSecurityManager;
 import net.sourceforge.joceanus.jmetis.atlas.ui.swing.MetisSwingTableManager;
 import net.sourceforge.joceanus.jmetis.field.MetisFieldItem.MetisFieldTableItem;
 import net.sourceforge.joceanus.jmetis.list.MetisListEditSession;
@@ -86,8 +86,8 @@ public class MetisSwingToolkit
     }
 
     @Override
-    protected GordianHashManager newSecurityManager(final GordianParameters pParameters) throws OceanusException {
-        return new GordianSwingHashManager(getGuiFactory(), pParameters);
+    protected GordianSecurityManager newSecurityManager(final GordianParameters pParameters) throws OceanusException {
+        return new GordianSwingSecurityManager(getGuiFactory(), pParameters);
     }
 
     @Override

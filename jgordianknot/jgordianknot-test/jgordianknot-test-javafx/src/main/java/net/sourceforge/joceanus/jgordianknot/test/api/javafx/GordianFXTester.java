@@ -28,10 +28,9 @@ import javafx.scene.Scene;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
 
-import net.sourceforge.joceanus.jgordianknot.api.asym.GordianAsymKeySpec;
 import net.sourceforge.joceanus.jgordianknot.api.factory.GordianParameters;
-import net.sourceforge.joceanus.jgordianknot.api.impl.GordianHashManager;
-import net.sourceforge.joceanus.jgordianknot.api.javafx.GordianFXHashManager;
+import net.sourceforge.joceanus.jgordianknot.api.impl.GordianSecurityManager;
+import net.sourceforge.joceanus.jgordianknot.api.javafx.GordianFXSecurityManager;
 import net.sourceforge.joceanus.jgordianknot.test.api.GordianTestSuite;
 import net.sourceforge.joceanus.jgordianknot.test.api.GordianTestSuite.SecurityManagerCreator;
 import net.sourceforge.joceanus.jtethys.OceanusException;
@@ -67,14 +66,14 @@ public class GordianFXTester
     }
 
     @Override
-    public GordianHashManager newSecureManager() throws OceanusException {
-        final GordianFXHashManager myManager = new GordianFXHashManager(theGuiFactory);
+    public GordianSecurityManager newSecureManager() throws OceanusException {
+        final GordianFXSecurityManager myManager = new GordianFXSecurityManager(theGuiFactory);
         return myManager;
     }
 
     @Override
-    public GordianHashManager newSecureManager(final GordianParameters pParams) throws OceanusException {
-        final GordianFXHashManager myManager = new GordianFXHashManager(theGuiFactory, pParams);
+    public GordianSecurityManager newSecureManager(final GordianParameters pParams) throws OceanusException {
+        final GordianFXSecurityManager myManager = new GordianFXSecurityManager(theGuiFactory, pParams);
         return myManager;
     }
 

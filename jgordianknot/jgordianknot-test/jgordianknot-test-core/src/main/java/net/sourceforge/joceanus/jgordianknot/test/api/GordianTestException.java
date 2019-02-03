@@ -14,20 +14,35 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  ******************************************************************************/
-package net.sourceforge.joceanus.jgordianknot.crypto;
+package net.sourceforge.joceanus.jgordianknot.test.api;
 
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
- * FactoryGenerator.
+ * Cryptography Exception.
  */
-@FunctionalInterface
-public interface GordianFactoryGenerator {
+public class GordianTestException
+        extends OceanusException {
     /**
-     * Create a new factory for the given parameters.
-     * @param pParams the parameters
-     * @return the new factory
-     * @throws OceanusException on error
+     * SerialId.
      */
-    GordianFactory newFactory(GordianParameters pParams) throws OceanusException;
+    private static final long serialVersionUID = 5856242835104016341L;
+
+    /**
+     * Create a new GordianKnot Exception object based on a string.
+     * @param s the description of the exception
+     */
+    public GordianTestException(final String s) {
+        super(s);
+    }
+
+    /**
+     * Create a new GordianKnot Exception object based on a string and an underlying exception.
+     * @param s the description of the exception
+     * @param e the underlying exception
+     */
+    public GordianTestException(final String s,
+                                final Throwable e) {
+        super(s, e);
+    }
 }

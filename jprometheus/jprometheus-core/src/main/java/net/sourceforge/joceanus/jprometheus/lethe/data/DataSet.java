@@ -21,8 +21,8 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import net.sourceforge.joceanus.jgordianknot.crypto.GordianKeySetHash;
-import net.sourceforge.joceanus.jgordianknot.manager.GordianHashManager;
+import net.sourceforge.joceanus.jgordianknot.api.impl.GordianSecurityManager;
+import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetHash;
 import net.sourceforge.joceanus.jmetis.data.MetisDataFieldValue;
 import net.sourceforge.joceanus.jmetis.data.MetisDataFormatter;
 import net.sourceforge.joceanus.jmetis.field.MetisFieldItem;
@@ -105,7 +105,7 @@ public abstract class DataSet<T extends DataSet<T, E>, E extends Enum<E>>
     /**
      * Security Manager.
      */
-    private final GordianHashManager theSecurity;
+    private final GordianSecurityManager theSecurity;
 
     /**
      * Enum class.
@@ -229,7 +229,7 @@ public abstract class DataSet<T extends DataSet<T, E>, E extends Enum<E>>
      * Get Security Manager.
      * @return the security manager
      */
-    public GordianHashManager getSecurity() {
+    public GordianSecurityManager getSecurity() {
         return theSecurity;
     }
 

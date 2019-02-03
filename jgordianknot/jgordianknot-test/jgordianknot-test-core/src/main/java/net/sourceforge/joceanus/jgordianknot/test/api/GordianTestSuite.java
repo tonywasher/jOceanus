@@ -22,7 +22,6 @@ import java.util.List;
 import org.bouncycastle.util.Arrays;
 
 import net.sourceforge.joceanus.jgordianknot.api.asym.GordianAsymKeyType;
-import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianCipherFactory;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianStreamKeyType;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianSymKeySpec;
 import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigest;
@@ -30,9 +29,8 @@ import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigestFactory;
 import net.sourceforge.joceanus.jgordianknot.api.factory.GordianFactory;
 import net.sourceforge.joceanus.jgordianknot.api.factory.GordianFactoryType;
 import net.sourceforge.joceanus.jgordianknot.api.factory.GordianParameters;
-import net.sourceforge.joceanus.jgordianknot.api.impl.GordianHashManager;
+import net.sourceforge.joceanus.jgordianknot.api.impl.GordianSecurityManager;
 import net.sourceforge.joceanus.jgordianknot.api.key.GordianKey;
-import net.sourceforge.joceanus.jgordianknot.api.key.GordianKeyGenerator;
 import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySet;
 import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetFactory;
 import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetHash;
@@ -63,7 +61,7 @@ public class GordianTestSuite {
          * @return the new SecureManager
          * @throws OceanusException on error
          */
-        GordianHashManager newSecureManager() throws OceanusException;
+        GordianSecurityManager newSecureManager() throws OceanusException;
 
         /**
          * Create a new SecureManager.
@@ -71,7 +69,7 @@ public class GordianTestSuite {
          * @return the new SecureManager
          * @throws OceanusException on error
          */
-        GordianHashManager newSecureManager(GordianParameters pParams) throws OceanusException;
+        GordianSecurityManager newSecureManager(GordianParameters pParams) throws OceanusException;
     }
 
     /**
@@ -260,7 +258,7 @@ public class GordianTestSuite {
         /* Create new Password Hash */
         final GordianParameters myParams = new GordianParameters(pRestricted);
         myParams.setFactoryType(pType);
-        GordianHashManager myManager = theCreator.newSecureManager(myParams);
+        GordianSecurityManager myManager = theCreator.newSecureManager(myParams);
         GordianFactory myFactory = myManager.getSecurityFactory();
         final GordianRandomFactory myRandoms = myFactory.getRandomFactory();
         GordianKeySetFactory myKeySets = myFactory.getKeySetFactory();

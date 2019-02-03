@@ -14,10 +14,10 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  ******************************************************************************/
-package net.sourceforge.joceanus.jgordianknot.manager.swing;
+package net.sourceforge.joceanus.jgordianknot.api.swing;
 
-import net.sourceforge.joceanus.jgordianknot.crypto.GordianParameters;
-import net.sourceforge.joceanus.jgordianknot.manager.GordianHashManager;
+import net.sourceforge.joceanus.jgordianknot.api.factory.GordianParameters;
+import net.sourceforge.joceanus.jgordianknot.api.impl.GordianSecurityManager;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingGuiFactory;
 
@@ -26,8 +26,8 @@ import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingGuiFactory;
  * hashes that were not previously resolved, previously used passwords will be attempted. If no
  * match is found, then the user will be prompted for the password.
  */
-public class GordianSwingHashManager
-        extends GordianHashManager {
+public class GordianSwingSecurityManager
+        extends GordianSecurityManager {
     /**
      * GUI factory.
      */
@@ -42,7 +42,7 @@ public class GordianSwingHashManager
      * Constructor for default values.
      * @throws OceanusException on error
      */
-    public GordianSwingHashManager() throws OceanusException {
+    public GordianSwingSecurityManager() throws OceanusException {
         this(new TethysSwingGuiFactory());
     }
 
@@ -51,7 +51,7 @@ public class GordianSwingHashManager
      * @param pFactory the GUI Factory
      * @throws OceanusException on error
      */
-    public GordianSwingHashManager(final TethysSwingGuiFactory pFactory) throws OceanusException {
+    public GordianSwingSecurityManager(final TethysSwingGuiFactory pFactory) throws OceanusException {
         this(pFactory, new GordianParameters());
     }
 
@@ -60,7 +60,7 @@ public class GordianSwingHashManager
      * @param pParameters the Security parameters
      * @throws OceanusException on error
      */
-    public GordianSwingHashManager(final GordianParameters pParameters) throws OceanusException {
+    public GordianSwingSecurityManager(final GordianParameters pParameters) throws OceanusException {
         this(new TethysSwingGuiFactory(), pParameters);
     }
 
@@ -70,8 +70,8 @@ public class GordianSwingHashManager
      * @param pParameters the Security parameters
      * @throws OceanusException on error
      */
-    public GordianSwingHashManager(final TethysSwingGuiFactory pFactory,
-                                   final GordianParameters pParameters) throws OceanusException {
+    public GordianSwingSecurityManager(final TethysSwingGuiFactory pFactory,
+                                       final GordianParameters pParameters) throws OceanusException {
         super(pParameters);
         theFactory = pFactory;
     }

@@ -74,4 +74,9 @@ public interface GordianFactory {
      * @return the asym factory
      */
     GordianAsymFactory getAsymmetricFactory();
+
+    /**
+     * ReSeed the random number generator.
+     */
+    void reSeedRandom();
 }

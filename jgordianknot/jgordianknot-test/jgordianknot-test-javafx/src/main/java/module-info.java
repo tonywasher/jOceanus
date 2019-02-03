@@ -30,5 +30,4 @@ module jgordianknot.test.javafx {
 
     /* Exports */
     exports net.sourceforge.joceanus.jgordianknot.test.api.javafx to javafx.graphics;
-    exports net.sourceforge.joceanus.jgordianknot.test.crypto.javafx to javafx.graphics;
 }

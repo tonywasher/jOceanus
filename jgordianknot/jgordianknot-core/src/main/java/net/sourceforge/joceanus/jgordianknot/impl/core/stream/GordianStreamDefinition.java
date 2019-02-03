@@ -321,7 +321,7 @@ public final class GordianStreamDefinition {
         final GordianMacSpec mySpec = myKnuth.deriveTypeFromExternalId(theTypeId, GordianMacSpec.class);
 
         /* Generate the MAC */
-        final GordianCoreMacFactory myMacs = (GordianCoreMacFactory) myFactory.getCipherFactory();
+        final GordianCoreMacFactory myMacs = (GordianCoreMacFactory) myFactory.getMacFactory();
         final GordianMac myMac = myMacs.createMac(mySpec);
         final GordianKey<GordianMacSpec> myKey = pKeySet.deriveKey(theTypeDefinition, mySpec);
         myMac.initMac(myKey, theInitVector);

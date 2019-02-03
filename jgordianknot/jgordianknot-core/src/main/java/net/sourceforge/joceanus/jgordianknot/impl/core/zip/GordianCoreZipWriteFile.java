@@ -194,10 +194,7 @@ public class GordianCoreZipWriteFile
         return theContents;
     }
 
-    /**
-     * Obtain the currently active ZipFileEntry.
-     * @return the ZipFile Entry
-     */
+    @Override
     public GordianZipFileEntry getCurrentEntry() {
         return theFileEntry;
     }

@@ -23,13 +23,6 @@ module jgordianknot.core {
     requires jtethys.core;
 
     /* Exports */
-    exports net.sourceforge.joceanus.jgordianknot;
-    exports net.sourceforge.joceanus.jgordianknot.crypto;
-    exports net.sourceforge.joceanus.jgordianknot.manager;
-    exports net.sourceforge.joceanus.jgordianknot.crypto.stream;
-    exports net.sourceforge.joceanus.jgordianknot.zip;
-
-    /* New Exports */
     exports net.sourceforge.joceanus.jgordianknot.api.agree;
     exports net.sourceforge.joceanus.jgordianknot.api.asym;
     exports net.sourceforge.joceanus.jgordianknot.api.base;

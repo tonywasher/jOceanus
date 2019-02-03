@@ -38,12 +38,13 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.xml.sax.SAXException;
 
-import net.sourceforge.joceanus.jgordianknot.crypto.GordianKeySetHash;
-import net.sourceforge.joceanus.jgordianknot.manager.GordianHashManager;
-import net.sourceforge.joceanus.jgordianknot.zip.GordianZipFileContents;
-import net.sourceforge.joceanus.jgordianknot.zip.GordianZipFileEntry;
-import net.sourceforge.joceanus.jgordianknot.zip.GordianZipReadFile;
-import net.sourceforge.joceanus.jgordianknot.zip.GordianZipWriteFile;
+import net.sourceforge.joceanus.jgordianknot.api.impl.GordianSecurityManager;
+import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetHash;
+import net.sourceforge.joceanus.jgordianknot.api.zip.GordianZipFactory;
+import net.sourceforge.joceanus.jgordianknot.api.zip.GordianZipFileContents;
+import net.sourceforge.joceanus.jgordianknot.api.zip.GordianZipFileEntry;
+import net.sourceforge.joceanus.jgordianknot.api.zip.GordianZipReadFile;
+import net.sourceforge.joceanus.jgordianknot.api.zip.GordianZipWriteFile;
 import net.sourceforge.joceanus.jmetis.data.MetisDataDifference;
 import net.sourceforge.joceanus.jmetis.data.MetisDataFormatter;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields;
@@ -74,7 +75,7 @@ public class DataValuesFormatter<T extends DataSet<T, E>, E extends Enum<E>> {
     /**
      * The security manager.
      */
-    private final GordianHashManager theSecurityMgr;
+    private final GordianSecurityManager theSecurityMgr;
 
     /**
      * The document builder.
@@ -98,7 +99,7 @@ public class DataValuesFormatter<T extends DataSet<T, E>, E extends Enum<E>> {
      * @throws PrometheusIOException on error
      */
     public DataValuesFormatter(final MetisThreadStatusReport pReport,
-                               final GordianHashManager pSecureMgr) throws PrometheusIOException {
+                               final GordianSecurityManager pSecureMgr) throws PrometheusIOException {
         /* Store values */
         theReport = pReport;
         theSecurityMgr = pSecureMgr;
@@ -133,9 +134,10 @@ public class DataValuesFormatter<T extends DataSet<T, E>, E extends Enum<E>> {
         final MetisProfile myStage = myTask.startTask("Writing");
 
         /* Create a similar security control */
-        final GordianHashManager mySecure = pData.getSecurity();
+        final GordianSecurityManager mySecure = pData.getSecurity();
         final GordianKeySetHash myBase = pData.getKeySetHash();
         final GordianKeySetHash myHash = mySecure.similarKeySetHash(myBase);
+        final GordianZipFactory myZips = mySecure.getSecurityFactory().getZipFactory();
 
         /* Access the data version */
         theVersion = pData.getControl().getDataVersion();
@@ -145,7 +147,7 @@ public class DataValuesFormatter<T extends DataSet<T, E>, E extends Enum<E>> {
 
         /* Protect the workbook access */
         boolean writeFailed = false;
-        try (GordianZipWriteFile myZipFile = new GordianZipWriteFile(myHash, pFile)) {
+        try (GordianZipWriteFile myZipFile = myZips.createZipFile(myHash, pFile)) {
             /* Loop through the data lists */
             final Iterator<DataList<?, E>> myIterator = pData.iterator();
             while (myIterator.hasNext()) {
@@ -194,10 +196,11 @@ public class DataValuesFormatter<T extends DataSet<T, E>, E extends Enum<E>> {
 
         /* Declare the number of stages */
         theReport.setNumStages(pData.getListMap().size());
+        final GordianZipFactory myZips = theSecurityMgr.getSecurityFactory().getZipFactory();
 
         /* Protect the workbook access */
         boolean writeFailed = false;
-        try (GordianZipWriteFile myZipFile = new GordianZipWriteFile(pFile)) {
+        try (GordianZipWriteFile myZipFile = myZips.createZipFile(pFile)) {
             /* Loop through the data lists */
             final Iterator<DataList<?, E>> myIterator = pData.iterator();
             while (myIterator.hasNext()) {
@@ -243,7 +246,7 @@ public class DataValuesFormatter<T extends DataSet<T, E>, E extends Enum<E>> {
         final String myName = pList.listName() + SUFFIX_ENTRY;
 
         /* Protect the workbook access */
-        try (OutputStream myStream = pZipFile.getOutputStream(new File(myName), true)) {
+        try (OutputStream myStream = pZipFile.createOutputStream(new File(myName), true)) {
             /* Create a new document */
             final Document myDocument = theBuilder.newDocument();
 
@@ -330,7 +333,8 @@ public class DataValuesFormatter<T extends DataSet<T, E>, E extends Enum<E>> {
         myStage.startTask("Parsing");
 
         /* Access the zip file */
-        final GordianZipReadFile myZipFile = new GordianZipReadFile(pFile);
+        final GordianZipFactory myZips = theSecurityMgr.getSecurityFactory().getZipFactory();
+        final GordianZipReadFile myZipFile = myZips.openZipFile(pFile);
 
         /* Obtain the hash bytes from the file */
         final byte[] myHashBytes = myZipFile.getHashBytes();
@@ -412,7 +416,7 @@ public class DataValuesFormatter<T extends DataSet<T, E>, E extends Enum<E>> {
         }
 
         /* Protect the workbook access */
-        try (InputStream myStream = pZipFile.getInputStream(myEntry)) {
+        try (InputStream myStream = pZipFile.createInputStream(myEntry)) {
             /* Read the document from the stream and parse it */
             final Document myDocument = theBuilder.parse(myStream);
 

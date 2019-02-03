@@ -28,5 +28,4 @@ module jgordianknot.swing {
 
     /* Exports */
     exports net.sourceforge.joceanus.jgordianknot.api.swing;
-    exports net.sourceforge.joceanus.jgordianknot.manager.swing;
 }

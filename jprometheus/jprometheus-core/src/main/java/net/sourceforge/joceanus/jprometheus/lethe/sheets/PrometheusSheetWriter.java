@@ -23,9 +23,10 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import net.sourceforge.joceanus.jgordianknot.crypto.GordianKeySetHash;
-import net.sourceforge.joceanus.jgordianknot.manager.GordianHashManager;
-import net.sourceforge.joceanus.jgordianknot.zip.GordianZipWriteFile;
+import net.sourceforge.joceanus.jgordianknot.api.impl.GordianSecurityManager;
+import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetHash;
+import net.sourceforge.joceanus.jgordianknot.api.zip.GordianZipFactory;
+import net.sourceforge.joceanus.jgordianknot.api.zip.GordianZipWriteFile;
 import net.sourceforge.joceanus.jmetis.profile.MetisProfile;
 import net.sourceforge.joceanus.jmetis.service.sheet.MetisSheetProvider;
 import net.sourceforge.joceanus.jmetis.service.sheet.MetisSheetWorkBook;
@@ -117,17 +118,18 @@ public abstract class PrometheusSheetWriter<T extends DataSet<T, ?>> {
         myTask = myTask.startTask("Writing");
 
         /* Create a similar security control */
-        final GordianHashManager mySecure = pData.getSecurity();
+        final GordianSecurityManager mySecure = pData.getSecurity();
         final GordianKeySetHash myBase = pData.getKeySetHash();
         final GordianKeySetHash myHash = mySecure.similarKeySetHash(myBase);
+        final GordianZipFactory myZips = mySecure.getSecurityFactory().getZipFactory();
 
         /* Assume failure */
         final String myName = PrometheusSpreadSheet.FILE_NAME + pType.getExtension();
 
         /* Protect the workbook access */
         boolean writeFailed = false;
-        try (GordianZipWriteFile myZipFile = new GordianZipWriteFile(myHash, pFile);
-             OutputStream myStream = myZipFile.getOutputStream(new File(myName), false)) {
+        try (GordianZipWriteFile myZipFile = myZips.createZipFile(myHash, pFile);
+             OutputStream myStream = myZipFile.createOutputStream(new File(myName), false)) {
             /* Record the DataSet */
             theData = pData;
 

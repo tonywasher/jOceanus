@@ -83,7 +83,7 @@ public enum GordianMgrResource implements TethysBundleId {
     /**
      * The Resource Loader.
      */
-    private static final TethysBundleLoader LOADER = TethysBundleLoader.getLoader(GordianHashManager.class.getCanonicalName(),
+    private static final TethysBundleLoader LOADER = TethysBundleLoader.getLoader(GordianSecurityManager.class.getCanonicalName(),
             ResourceBundle::getBundle);
 
     /**

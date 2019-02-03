@@ -26,9 +26,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Iterator;
 
-import net.sourceforge.joceanus.jgordianknot.GordianDataException;
-import net.sourceforge.joceanus.jgordianknot.GordianIOException;
-import net.sourceforge.joceanus.jgordianknot.api.impl.GordianHashManager;
+import net.sourceforge.joceanus.jgordianknot.api.impl.GordianSecurityManager;
 import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetHash;
 import net.sourceforge.joceanus.jgordianknot.api.zip.GordianZipFactory;
 import net.sourceforge.joceanus.jgordianknot.api.zip.GordianZipFileContents;
@@ -51,6 +49,11 @@ public class GordianTestZip {
      * The Security Manager creator.
      */
     private final SecurityManagerCreator theCreator;
+
+    /**
+     * The Hash.
+     */
+    private GordianKeySetHash theHash;
 
     /**
      * Constructor.
@@ -80,7 +83,7 @@ public class GordianTestZip {
 
             /* Make sure that we have a directory */
             if (!pDirectory.isDirectory()) {
-                throw new GordianDataException("Invalid source directory");
+                throw new GordianTestException("Invalid source directory");
             }
 
             /* Loop through the files in the directory */
@@ -101,7 +104,7 @@ public class GordianTestZip {
                     }
 
                 } catch (IOException e) {
-                    throw new GordianIOException("Failed to create Zip File", e);
+                    throw new GordianTestException("Failed to create Zip File", e);
                 }
             }
 
@@ -109,7 +112,7 @@ public class GordianTestZip {
             return myZipFile.getContents();
 
         } catch (IOException e) {
-            throw new GordianIOException("Failed to create Zip File", e);
+            throw new GordianTestException("Failed to create Zip File", e);
         }
     }
 
@@ -123,13 +126,14 @@ public class GordianTestZip {
     private GordianZipWriteFile createZipFile(final File pZipFile,
                                               final boolean bSecure) throws OceanusException {
         /* Access ZipManager */
-        final GordianHashManager myManager = theCreator.newSecureManager();
+        final GordianSecurityManager myManager = theCreator.newSecureManager();
         final GordianZipFactory myZipMgr = myManager.getSecurityFactory().getZipFactory();
 
         /* If we are creating a secure zip file */
         if (bSecure) {
             /* Create new Password Hash */
             final GordianKeySetHash myHash = myManager.newKeySetHash("New");
+            theHash = myHash;
 
             /* Initialise the Zip file */
             return myZipMgr.createZipFile(myHash, pZipFile);
@@ -150,7 +154,7 @@ public class GordianTestZip {
     protected void extractZipFile(final File pZipFile,
                                   final File pDirectory) throws OceanusException {
         /* Access ZipManager */
-        final GordianHashManager myManager = theCreator.newSecureManager();
+        final GordianSecurityManager myManager = theCreator.newSecureManager();
         final GordianZipFactory myZipMgr = myManager.getSecurityFactory().getZipFactory();
 
         /* Access the file */
@@ -162,6 +166,9 @@ public class GordianTestZip {
             /* Resolve security and unlock file */
             final GordianKeySetHash myHash = myManager.resolveKeySetHash(myHashBytes, pZipFile.getName());
             myZipFile.setKeySetHash(myHash);
+            if (!myHash.getKeySet().equals(theHash.getKeySet())) {
+                int i = 0;
+            }
         }
 
         /* Access the contents */
@@ -174,7 +181,7 @@ public class GordianTestZip {
 
         /* Make sure that we have a directory */
         if (!pDirectory.isDirectory()) {
-            throw new GordianDataException("Invalid target directory");
+            throw new GordianTestException("Invalid target directory");
         }
 
         /* Loop through the entries */
@@ -195,7 +202,7 @@ public class GordianTestZip {
                 }
 
             } catch (IOException e) {
-                throw new GordianIOException("Failed to extract Zip File", e);
+                throw new GordianTestException("Failed to extract Zip File", e);
             }
         }
     }

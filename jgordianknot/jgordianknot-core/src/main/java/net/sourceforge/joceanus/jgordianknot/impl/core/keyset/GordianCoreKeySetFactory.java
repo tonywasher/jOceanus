@@ -71,7 +71,7 @@ public class GordianCoreKeySetFactory
      * Obtain the factory.
      * @return the factory
      */
-    protected GordianCoreFactory getFactory() {
+    public GordianCoreFactory getFactory() {
         return theFactory;
     }
 

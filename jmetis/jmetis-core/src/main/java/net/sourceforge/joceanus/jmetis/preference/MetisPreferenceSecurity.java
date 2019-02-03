@@ -16,13 +16,14 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmetis.preference;
 
-import net.sourceforge.joceanus.jgordianknot.crypto.GordianFactory;
-import net.sourceforge.joceanus.jgordianknot.crypto.GordianFactoryType;
-import net.sourceforge.joceanus.jgordianknot.crypto.GordianKeySet;
-import net.sourceforge.joceanus.jgordianknot.crypto.GordianKeySetHash;
-import net.sourceforge.joceanus.jgordianknot.crypto.GordianParameters;
-import net.sourceforge.joceanus.jgordianknot.manager.GordianGenerator;
-import net.sourceforge.joceanus.jgordianknot.manager.GordianHashManager;
+import net.sourceforge.joceanus.jgordianknot.api.factory.GordianFactory;
+import net.sourceforge.joceanus.jgordianknot.api.factory.GordianFactoryType;
+import net.sourceforge.joceanus.jgordianknot.api.factory.GordianParameters;
+import net.sourceforge.joceanus.jgordianknot.api.impl.GordianGenerator;
+import net.sourceforge.joceanus.jgordianknot.api.impl.GordianSecurityManager;
+import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySet;
+import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetFactory;
+import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetHash;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.TethysDataConverter;
 import org.apache.logging.log4j.LogManager;
@@ -58,6 +59,7 @@ public class MetisPreferenceSecurity {
 
         /* Create a Security Factory */
         final GordianFactory myFactory = GordianGenerator.createFactory(myParms);
+        final GordianKeySetFactory myKeySets = myFactory.getKeySetFactory();
 
         /* Obtain the hash as a preference */
         final MetisBaseSecurityPreferences myPrefs = pManager.getPreferenceSet(MetisBaseSecurityPreferences.class);
@@ -66,8 +68,8 @@ public class MetisPreferenceSecurity {
         /* Derive or create the hash */
         final char[] myPassword = System.getProperty("user.name").toCharArray();
         final GordianKeySetHash myKeySetHash = myHash == null
-                                                              ? myFactory.generateKeySetHash(myPassword)
-                                                              : myFactory.deriveKeySetHash(myHash, myPassword);
+                                                              ? myKeySets.generateKeySetHash(myPassword)
+                                                              : myKeySets.deriveKeySetHash(myHash, myPassword);
 
         /* record the KeySet */
         theKeySet = myKeySetHash.getKeySet();
@@ -310,7 +312,7 @@ public class MetisPreferenceSecurity {
             }
 
             /* Define the range */
-            final Integer maxSteps = GordianHashManager.getMaximumCipherSteps(myFactPref.getValue(), myRestrictPref.getValue());
+            final Integer maxSteps = GordianSecurityManager.getMaximumCipherSteps(myFactPref.getValue(), myRestrictPref.getValue());
             myPref.setRange(GordianParameters.MINIMUM_CIPHER_STEPS, maxSteps);
             if (!myPref.validate()) {
                 myPref.setValue(GordianParameters.DEFAULT_CIPHER_STEPS);

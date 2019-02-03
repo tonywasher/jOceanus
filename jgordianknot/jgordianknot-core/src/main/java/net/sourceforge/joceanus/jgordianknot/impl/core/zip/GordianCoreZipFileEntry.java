@@ -231,11 +231,7 @@ public class GordianCoreZipFileEntry
         return theProperties;
     }
 
-    /**
-     * Set User String property.
-     * @param pPropertyName the property name
-     * @param pPropertyValue the property value
-     */
+    @Override
     public void setUserStringProperty(final String pPropertyName,
                                       final String pPropertyValue) {
         /* Set the property */
@@ -243,11 +239,7 @@ public class GordianCoreZipFileEntry
                 + pPropertyName, pPropertyValue);
     }
 
-    /**
-     * Set User Long property.
-     * @param pPropertyName the property name
-     * @param pPropertyValue the property value
-     */
+    @Override
     public void setUserLongProperty(final String pPropertyName,
                                     final Long pPropertyValue) {
         /* Set the property */
@@ -255,22 +247,14 @@ public class GordianCoreZipFileEntry
                 + pPropertyName, pPropertyValue);
     }
 
-    /**
-     * Get User String property.
-     * @param pPropertyName the property name
-     * @return the property value (or null)
-     */
+    @Override
     public String getUserStringProperty(final String pPropertyName) {
         /* Set the property */
         return theProperties.getStringProperty(PROP_USERPFIX
                 + pPropertyName);
     }
 
-    /**
-     * Get User Longproperty.
-     * @param pPropertyName the property name
-     * @return the property value (or null)
-     */
+    @Override
     public Long getUserLongProperty(final String pPropertyName) {
         /* Set the property */
         return theProperties.getLongProperty(PROP_USERPFIX

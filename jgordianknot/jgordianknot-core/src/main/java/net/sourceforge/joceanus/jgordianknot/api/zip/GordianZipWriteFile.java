@@ -42,6 +42,12 @@ public interface GordianZipWriteFile extends AutoCloseable {
      */
     GordianZipFileContents getContents();
 
+    /**
+     * Obtain the currently active ZipFileEntry.
+     * @return the ZipFile Entry
+     */
+    GordianZipFileEntry getCurrentEntry();
+
     @Override
     void close() throws IOException;
 }

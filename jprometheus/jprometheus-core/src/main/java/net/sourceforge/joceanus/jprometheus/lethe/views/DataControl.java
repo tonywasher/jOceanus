@@ -19,7 +19,7 @@ package net.sourceforge.joceanus.jprometheus.lethe.views;
 import java.util.EnumMap;
 import java.util.Map;
 
-import net.sourceforge.joceanus.jgordianknot.manager.GordianHashManager;
+import net.sourceforge.joceanus.jgordianknot.api.impl.GordianSecurityManager;
 import net.sourceforge.joceanus.jmetis.data.MetisDataFormatter;
 import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceManager;
 import net.sourceforge.joceanus.jmetis.profile.MetisProfile;
@@ -212,7 +212,7 @@ public abstract class DataControl<T extends DataSet<T, E>, E extends Enum<E>>
      * Obtain SecurityManager.
      * @return the SecurityManager
      */
-    public GordianHashManager getSecurityManager() {
+    public GordianSecurityManager getSecurityManager() {
         return theToolkit.getSecurityManager();
     }
 

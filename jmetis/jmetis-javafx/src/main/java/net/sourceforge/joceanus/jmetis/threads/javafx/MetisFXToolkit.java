@@ -16,9 +16,9 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmetis.threads.javafx;
 
-import net.sourceforge.joceanus.jgordianknot.crypto.GordianParameters;
-import net.sourceforge.joceanus.jgordianknot.manager.GordianHashManager;
-import net.sourceforge.joceanus.jgordianknot.manager.javafx.GordianFXHashManager;
+import net.sourceforge.joceanus.jgordianknot.api.factory.GordianParameters;
+import net.sourceforge.joceanus.jgordianknot.api.impl.GordianSecurityManager;
+import net.sourceforge.joceanus.jgordianknot.api.javafx.GordianFXSecurityManager;
 import net.sourceforge.joceanus.jmetis.atlas.ui.javafx.MetisFXTableManager;
 import net.sourceforge.joceanus.jmetis.field.MetisFieldItem.MetisFieldTableItem;
 import net.sourceforge.joceanus.jmetis.list.MetisListEditSession;
@@ -86,8 +86,8 @@ public class MetisFXToolkit
     }
 
     @Override
-    protected GordianHashManager newSecurityManager(final GordianParameters pParameters) throws OceanusException {
-        return new GordianFXHashManager(getGuiFactory(), pParameters);
+    protected GordianSecurityManager newSecurityManager(final GordianParameters pParameters) throws OceanusException {
+        return new GordianFXSecurityManager(getGuiFactory(), pParameters);
     }
 
     @Override

@@ -23,8 +23,8 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import net.sourceforge.joceanus.jgordianknot.api.factory.GordianParameters;
-import net.sourceforge.joceanus.jgordianknot.api.impl.GordianHashManager;
-import net.sourceforge.joceanus.jgordianknot.api.swing.GordianSwingHashManager;
+import net.sourceforge.joceanus.jgordianknot.api.impl.GordianSecurityManager;
+import net.sourceforge.joceanus.jgordianknot.api.swing.GordianSwingSecurityManager;
 import net.sourceforge.joceanus.jgordianknot.test.api.GordianTestSuite;
 import net.sourceforge.joceanus.jgordianknot.test.api.GordianTestSuite.SecurityManagerCreator;
 import net.sourceforge.joceanus.jtethys.OceanusException;
@@ -52,13 +52,13 @@ public class GordianSwingTester
     }
 
     @Override
-    public GordianHashManager newSecureManager() throws OceanusException {
-        return new GordianSwingHashManager();
+    public GordianSecurityManager newSecureManager() throws OceanusException {
+        return new GordianSwingSecurityManager();
     }
 
     @Override
-    public GordianHashManager newSecureManager(final GordianParameters pParams) throws OceanusException {
-        return new GordianSwingHashManager(pParams);
+    public GordianSecurityManager newSecureManager(final GordianParameters pParams) throws OceanusException {
+        return new GordianSwingSecurityManager(pParams);
     }
 
     /**

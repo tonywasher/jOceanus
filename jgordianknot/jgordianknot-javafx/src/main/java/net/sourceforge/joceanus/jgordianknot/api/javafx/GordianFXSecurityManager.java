@@ -17,7 +17,7 @@
 package net.sourceforge.joceanus.jgordianknot.api.javafx;
 
 import net.sourceforge.joceanus.jgordianknot.api.factory.GordianParameters;
-import net.sourceforge.joceanus.jgordianknot.api.impl.GordianHashManager;
+import net.sourceforge.joceanus.jgordianknot.api.impl.GordianSecurityManager;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXGuiFactory;
 
@@ -26,8 +26,8 @@ import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXGuiFactory;
  * hashes that were not previously resolved, previously used passwords will be attempted. If no
  * match is found, then the user will be prompted for the password.
  */
-public class GordianFXHashManager
-        extends GordianHashManager {
+public class GordianFXSecurityManager
+        extends GordianSecurityManager {
     /**
      * GUI factory.
      */
@@ -42,7 +42,7 @@ public class GordianFXHashManager
      * Constructor for default values.
      * @throws OceanusException on error
      */
-    public GordianFXHashManager() throws OceanusException {
+    public GordianFXSecurityManager() throws OceanusException {
         this(new TethysFXGuiFactory());
     }
 
@@ -51,7 +51,7 @@ public class GordianFXHashManager
      * @param pFactory the GUI Factory
      * @throws OceanusException on error
      */
-    public GordianFXHashManager(final TethysFXGuiFactory pFactory) throws OceanusException {
+    public GordianFXSecurityManager(final TethysFXGuiFactory pFactory) throws OceanusException {
         this(pFactory, new GordianParameters());
     }
 
@@ -60,7 +60,7 @@ public class GordianFXHashManager
      * @param pParameters the Security parameters
      * @throws OceanusException on error
      */
-    public GordianFXHashManager(final GordianParameters pParameters) throws OceanusException {
+    public GordianFXSecurityManager(final GordianParameters pParameters) throws OceanusException {
         this(new TethysFXGuiFactory(), pParameters);
     }
 
@@ -70,8 +70,8 @@ public class GordianFXHashManager
      * @param pParameters the Security parameters
      * @throws OceanusException on error
      */
-    public GordianFXHashManager(final TethysFXGuiFactory pFactory,
-                                final GordianParameters pParameters) throws OceanusException {
+    public GordianFXSecurityManager(final TethysFXGuiFactory pFactory,
+                                    final GordianParameters pParameters) throws OceanusException {
         super(pParameters);
         theFactory = pFactory;
     }

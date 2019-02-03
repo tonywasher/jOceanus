@@ -16,7 +16,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jprometheus.lethe;
 
-import net.sourceforge.joceanus.jgordianknot.manager.GordianHashManager;
+import net.sourceforge.joceanus.jgordianknot.api.impl.GordianSecurityManager;
 import net.sourceforge.joceanus.jmetis.data.MetisDataFormatter;
 import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceManager;
 import net.sourceforge.joceanus.jmetis.threads.MetisThreadManager;
@@ -36,7 +36,7 @@ public abstract class JOceanusUtilitySet {
     /**
      * Secure Manager.
      */
-    private final GordianHashManager theSecureMgr;
+    private final GordianSecurityManager theSecureMgr;
 
     /**
      * Preference Manager.
@@ -82,7 +82,7 @@ public abstract class JOceanusUtilitySet {
      * Obtain the secure manager.
      * @return the secure manager
      */
-    public GordianHashManager getSecureManager() {
+    public GordianSecurityManager getSecureManager() {
         return theSecureMgr;
     }
 

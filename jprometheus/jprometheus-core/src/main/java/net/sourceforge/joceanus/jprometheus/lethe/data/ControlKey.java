@@ -20,9 +20,9 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import net.sourceforge.joceanus.jgordianknot.crypto.GordianFactory;
-import net.sourceforge.joceanus.jgordianknot.crypto.GordianKeySetHash;
-import net.sourceforge.joceanus.jgordianknot.manager.GordianHashManager;
+import net.sourceforge.joceanus.jgordianknot.api.factory.GordianFactory;
+import net.sourceforge.joceanus.jgordianknot.api.impl.GordianSecurityManager;
+import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetHash;
 import net.sourceforge.joceanus.jmetis.data.MetisDataFormatter;
 import net.sourceforge.joceanus.jmetis.data.MetisDataItem.MetisDataList;
 import net.sourceforge.joceanus.jmetis.data.MetisDataResource;
@@ -58,7 +58,7 @@ public final class ControlKey
     /**
      * KeySetHash Length.
      */
-    public static final int HASHLEN = GordianKeySetHash.HASHLEN;
+    public static final int HASHLEN = GordianSecurityManager.getKeySetHashLen();
 
     /**
      * Report fields.
@@ -158,7 +158,7 @@ public final class ControlKey
         try {
             /* Access the Security manager */
             final DataSet<?, ?> myData = getDataSet();
-            final GordianHashManager mySecure = myData.getSecurity();
+            final GordianSecurityManager mySecure = myData.getSecurity();
 
             /* Create a new keySetHash with new password */
             final GordianKeySetHash myHash = mySecure.newKeySetHash(NAME_DATABASE);
@@ -192,7 +192,7 @@ public final class ControlKey
         try {
             /* Access the Security manager */
             final DataSet<?, ?> myData = getDataSet();
-            final GordianHashManager mySecure = myData.getSecurity();
+            final GordianSecurityManager mySecure = myData.getSecurity();
 
             /* ReSeed the security generator */
             final GordianFactory myFactory = mySecure.getSecurityFactory();
@@ -426,7 +426,7 @@ public final class ControlKey
     private GordianKeySetHash resolvePrimeHash() throws OceanusException {
         /* Access the Security manager */
         final DataSet<?, ?> myData = getDataSet();
-        final GordianHashManager mySecure = myData.getSecurity();
+        final GordianSecurityManager mySecure = myData.getSecurity();
 
         /* Resolve the keySetHash */
         final GordianKeySetHash myHash = mySecure.resolveKeySetHash(getPrimeHashBytes(), NAME_DATABASE);
@@ -444,7 +444,7 @@ public final class ControlKey
     private GordianKeySetHash resolveAltHash() throws OceanusException {
         /* Access the Security manager */
         final DataSet<?, ?> myData = getDataSet();
-        final GordianHashManager mySecure = myData.getSecurity();
+        final GordianSecurityManager mySecure = myData.getSecurity();
 
         /* Resolve the keySetHash */
         final GordianKeySetHash myHash = mySecure.resolveKeySetHash(getAltHashBytes(), NAME_DATABASE);

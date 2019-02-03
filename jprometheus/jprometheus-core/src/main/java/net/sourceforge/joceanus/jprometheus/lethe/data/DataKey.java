@@ -16,15 +16,17 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jprometheus.lethe.data;
 
-import net.sourceforge.joceanus.jgordianknot.crypto.GordianFactory;
-import net.sourceforge.joceanus.jgordianknot.crypto.GordianKey;
-import net.sourceforge.joceanus.jgordianknot.crypto.GordianKeyGenerator;
-import net.sourceforge.joceanus.jgordianknot.crypto.GordianKeySet;
-import net.sourceforge.joceanus.jgordianknot.crypto.GordianKeySetHash;
-import net.sourceforge.joceanus.jgordianknot.crypto.GordianKnuthObfuscater;
-import net.sourceforge.joceanus.jgordianknot.crypto.GordianSymKeySpec;
-import net.sourceforge.joceanus.jgordianknot.crypto.GordianSymKeyType;
-import net.sourceforge.joceanus.jgordianknot.manager.GordianHashManager;
+import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianCipherFactory;
+import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianSymKeySpec;
+import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianSymKeyType;
+import net.sourceforge.joceanus.jgordianknot.api.factory.GordianFactory;
+import net.sourceforge.joceanus.jgordianknot.api.impl.GordianSecurityManager;
+import net.sourceforge.joceanus.jgordianknot.api.key.GordianKey;
+import net.sourceforge.joceanus.jgordianknot.api.key.GordianKeyGenerator;
+import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySet;
+import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetFactory;
+import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetHash;
+import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKnuthObfuscater;
 import net.sourceforge.joceanus.jmetis.data.MetisDataType;
 import net.sourceforge.joceanus.jmetis.field.MetisFieldSet;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields;
@@ -46,7 +48,7 @@ public class DataKey
     /**
      * Encrypted Symmetric Key Length.
      */
-    public static final int KEYLEN = GordianHashManager.getMaximumKeyWrapSize();
+    public static final int KEYLEN = GordianSecurityManager.getMaximumKeyWrapSize();
 
     /**
      * Object name.
@@ -144,7 +146,8 @@ public class DataKey
         final GordianKeySetHash myHash = myDataKeySet.getKeySetHash(isHashPrime);
         final GordianKeySet myKeySet = myHash.getKeySet();
         final GordianFactory myFactory = myKeySet.getFactory();
-        final GordianKnuthObfuscater myKnuth = myFactory.getObfuscater();
+        final GordianKeySetFactory myKeySets = myFactory.getKeySetFactory();
+        final GordianKnuthObfuscater myKnuth = myKeySets.getObfuscater();
 
         /* Store the KeyType */
         myValue = pValues.getValue(FIELD_KEYTYPE);
@@ -183,8 +186,7 @@ public class DataKey
                 /* Create the Key from the wrapped data */
                 final GordianSymKeyType myType = getSymKeyType();
                 final GordianSymKeySpec mySpec = new GordianSymKeySpec(myType);
-                final GordianKeyGenerator<GordianSymKeySpec> myGenerator = myFactory.getKeyGenerator(mySpec);
-                final GordianKey<GordianSymKeySpec> myKey = myGenerator.deriveKey(myBytes, myKeySet);
+                final GordianKey<GordianSymKeySpec> myKey = myKeySet.deriveKey(myBytes, mySpec);
                 setValueSymKey(myKey);
             }
 
@@ -217,7 +219,9 @@ public class DataKey
             final GordianKeySet myKeySet = myHash.getKeySet();
             final GordianSymKeySpec myKeySpec = new GordianSymKeySpec(pKeyType);
             final GordianFactory myFactory = myKeySet.getFactory();
-            final GordianKnuthObfuscater myKnuth = myFactory.getObfuscater();
+            final GordianCipherFactory myCiphers = myFactory.getCipherFactory();
+            final GordianKeySetFactory myKeySets = myFactory.getKeySetFactory();
+            final GordianKnuthObfuscater myKnuth = myKeySets.getObfuscater();
 
             /* Store the Details */
             setValueDataKeySet(pKeySet);
@@ -225,12 +229,12 @@ public class DataKey
             setValueSymKeyType(pKeyType);
 
             /* Create the new key */
-            final GordianKeyGenerator<GordianSymKeySpec> myGenerator = myFactory.getKeyGenerator(myKeySpec);
+            final GordianKeyGenerator<GordianSymKeySpec> myGenerator = myCiphers.getKeyGenerator(myKeySpec);
             final GordianKey<GordianSymKeySpec> myKey = myGenerator.generateKey();
             setValueSymKey(myKey);
 
             /* Store its secured keyDef */
-            setValueSecuredKeyDef(myGenerator.secureKey(myKey, myKeySet));
+            setValueSecuredKeyDef(myKeySet.secureKey(myKey));
 
             /* Register the DataKey */
             pKeySet.registerDataKey(this);
@@ -472,8 +476,7 @@ public class DataKey
             final GordianFactory myFactory = myKeySet.getFactory();
             final GordianSymKeyType myType = getSymKeyType();
             final GordianSymKeySpec mySpec = new GordianSymKeySpec(myType);
-            final GordianKeyGenerator<GordianSymKeySpec> myGenerator = myFactory.getKeyGenerator(mySpec);
-            setValueSecuredKeyDef(myGenerator.secureKey(getSymKey(), myKeySet));
+            setValueSecuredKeyDef(myKeySet.secureKey(getSymKey()));
 
             /* Check for changes */
             if (checkForHistory()) {

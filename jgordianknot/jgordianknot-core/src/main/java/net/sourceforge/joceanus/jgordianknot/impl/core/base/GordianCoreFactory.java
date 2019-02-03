@@ -179,9 +179,7 @@ public abstract class GordianCoreFactory
         return getKeyLength(isRestricted());
     }
 
-    /**
-     * ReSeed the random number generator.
-     */
+    @Override
     public void reSeedRandom() {
         /* Access the random */
         final SecureRandom myRandom = theRandom.getRandom();

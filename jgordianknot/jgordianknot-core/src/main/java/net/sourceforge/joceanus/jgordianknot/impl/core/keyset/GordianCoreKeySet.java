@@ -84,11 +84,7 @@ public final class GordianCoreKeySet
         theCipher = new GordianMultiCipher(this);
     }
 
-    /**
-     * Obtain the factory.
-     *
-     * @return a new MultiCipher
-     */
+    @Override
     public GordianCoreFactory getFactory() {
         return theFactory;
     }

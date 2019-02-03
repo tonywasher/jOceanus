@@ -345,7 +345,7 @@ public class GordianCoreWrapper
         }
 
         /* Check trailing bytes */
-        for (int myZeros = myZeroLen, myLoc = myData.length - 1; myZeros > 0; myZeros--, myLoc--) {
+        for (int myZeros = myZeroLen, myLoc = myData.length - 1; myZeros > 0 && myLoc > 0; myZeros--, myLoc--) {
             /* Check that byte is zero */
             if (myData[myLoc] != 0) {
                 isCheckOK = false;

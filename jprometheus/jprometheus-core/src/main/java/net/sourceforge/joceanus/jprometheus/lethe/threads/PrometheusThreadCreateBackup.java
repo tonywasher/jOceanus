@@ -18,8 +18,7 @@ package net.sourceforge.joceanus.jprometheus.lethe.threads;
 
 import java.io.File;
 
-import net.sourceforge.joceanus.jgordianknot.manager.GordianHashManager;
-import net.sourceforge.joceanus.jgordianknot.zip.GordianZipReadFile;
+import net.sourceforge.joceanus.jgordianknot.api.impl.GordianSecurityManager;
 import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceManager;
 import net.sourceforge.joceanus.jmetis.service.sheet.MetisSheetWorkBookType;
 import net.sourceforge.joceanus.jmetis.threads.MetisThread;
@@ -74,7 +73,7 @@ public class PrometheusThreadCreateBackup<T extends DataSet<T, E>, E extends Enu
     public Void performTask(final MetisToolkit pToolkit) throws OceanusException {
         /* Access the thread manager */
         final MetisThreadManager myManager = pToolkit.getThreadManager();
-        final GordianHashManager mySecurityMgr = pToolkit.getSecurityManager();
+        final GordianSecurityManager mySecurityMgr = pToolkit.getSecurityManager();
         boolean doDelete = false;
         File myFile = null;
 
@@ -115,7 +114,7 @@ public class PrometheusThreadCreateBackup<T extends DataSet<T, E>, E extends Enu
             }
 
             /* Set the standard backup name */
-            myFile = new File(myName.toString() + GordianZipReadFile.ZIPFILE_EXT);
+            myFile = new File(myName.toString() + GordianSecurityManager.SECUREZIPFILE_EXT);
 
             /* Create backup */
             final PrometheusSpreadSheet<T> mySheet = theControl.getSpreadSheet();

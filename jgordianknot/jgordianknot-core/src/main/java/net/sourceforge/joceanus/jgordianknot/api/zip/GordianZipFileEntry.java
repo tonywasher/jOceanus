@@ -22,13 +22,49 @@ package net.sourceforge.joceanus.jgordianknot.api.zip;
 public interface GordianZipFileEntry {
     /**
      * Obtain the name of the file.
+     *
      * @return the name of the file
      */
     String getFileName();
 
     /**
      * Obtain the parent contents.
+     *
      * @return the parent of the fileEntry
      */
     GordianZipFileContents getParent();
+
+    /**
+     * Set User String property.
+     *
+     * @param pPropertyName  the property name
+     * @param pPropertyValue the property value
+     */
+    void setUserStringProperty(String pPropertyName,
+                               String pPropertyValue);
+
+    /**
+     * Set User Long property.
+     *
+     * @param pPropertyName  the property name
+     * @param pPropertyValue the property value
+     */
+    void setUserLongProperty(String pPropertyName,
+                             Long pPropertyValue);
+
+    /**
+     * Get User String property.
+     *
+     * @param pPropertyName the property name
+     * @return the property value (or null)
+     */
+    String getUserStringProperty(String pPropertyName);
+
+    /**
+     * Get User Long property.
+     *
+     * @param pPropertyName the property name
+     * @return the property value (or null)
+     */
+    Long getUserLongProperty(String pPropertyName);
 }

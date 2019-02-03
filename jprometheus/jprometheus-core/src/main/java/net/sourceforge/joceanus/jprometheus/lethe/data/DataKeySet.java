@@ -20,11 +20,12 @@ import java.util.EnumMap;
 import java.util.Map;
 import java.util.function.Predicate;
 
-import net.sourceforge.joceanus.jgordianknot.crypto.GordianFactory;
-import net.sourceforge.joceanus.jgordianknot.crypto.GordianKeySet;
-import net.sourceforge.joceanus.jgordianknot.crypto.GordianKeySetHash;
-import net.sourceforge.joceanus.jgordianknot.crypto.GordianSymKeyType;
-import net.sourceforge.joceanus.jgordianknot.manager.GordianHashManager;
+import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianSymKeyType;
+import net.sourceforge.joceanus.jgordianknot.api.factory.GordianFactory;
+import net.sourceforge.joceanus.jgordianknot.api.impl.GordianSecurityManager;
+import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySet;
+import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetFactory;
+import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetHash;
 import net.sourceforge.joceanus.jmetis.data.MetisDataFormatter;
 import net.sourceforge.joceanus.jmetis.data.MetisDataType;
 import net.sourceforge.joceanus.jmetis.field.MetisFieldSet;
@@ -116,7 +117,8 @@ public class DataKeySet
             case CLONE:
                 theSecurityFactory = pSource.theSecurityFactory;
                 theSymMap = new EnumMap<>(GordianSymKeyType.class);
-                theKeySet = theSecurityFactory.createKeySet();
+                final GordianKeySetFactory myKeySets = theSecurityFactory.getKeySetFactory();
+                theKeySet = myKeySets.createKeySet();
                 theFieldGenerator = new MetisEncryptionGenerator(theKeySet, getDataSet().getDataFormatter());
                 break;
             default:
@@ -137,7 +139,7 @@ public class DataKeySet
 
         /* Access the Security manager */
         final DataSet<?, ?> myData = getDataSet();
-        final GordianHashManager mySecure = myData.getSecurity();
+        final GordianSecurityManager mySecure = myData.getSecurity();
         final MetisDataFormatter myFormatter = myData.getDataFormatter();
 
         /* Record the security factory */
@@ -164,7 +166,8 @@ public class DataKeySet
         final ControlKey myControl = getControlKey();
 
         /* Create the KeySet and security generator */
-        theKeySet = theSecurityFactory.createKeySet();
+        final GordianKeySetFactory myKeySets = theSecurityFactory.getKeySetFactory();
+        theKeySet = myKeySets.createKeySet();
         theFieldGenerator = new MetisEncryptionGenerator(theKeySet, myFormatter);
 
         /* Store the CreationDate */
@@ -196,7 +199,7 @@ public class DataKeySet
 
             /* Access the Security manager */
             final DataSet<?, ?> myData = getDataSet();
-            final GordianHashManager mySecure = myData.getSecurity();
+            final GordianSecurityManager mySecure = myData.getSecurity();
             final MetisDataFormatter myFormatter = myData.getDataFormatter();
 
             /* Record the security factory */
@@ -206,7 +209,8 @@ public class DataKeySet
             theSymMap = new EnumMap<>(GordianSymKeyType.class);
 
             /* Create the KeySet */
-            theKeySet = theSecurityFactory.createKeySet();
+            final GordianKeySetFactory myKeySets = theSecurityFactory.getKeySetFactory();
+            theKeySet = myKeySets.createKeySet();
             theFieldGenerator = new MetisEncryptionGenerator(theKeySet, myFormatter);
 
             /* Set the creationDate */
@@ -398,7 +402,8 @@ public class DataKeySet
         /* Access the KeyPredicates */
         final DataSet<?, ?> myData = getDataSet();
         final GordianFactory myFactory = myData.getSecurity().getSecurityFactory();
-        final Predicate<GordianSymKeyType> mySymPredicate = myFactory.supportedKeySetSymKeyTypes();
+        final GordianKeySetFactory myKeySets = myFactory.getKeySetFactory();
+        final Predicate<GordianSymKeyType> mySymPredicate = myKeySets.supportedKeySetSymKeyTypes();
 
         /* Loop through the SymKeyType values */
         for (GordianSymKeyType myType : GordianSymKeyType.values()) {
@@ -602,7 +607,8 @@ public class DataKeySet
 
             /* Access the symKeyPredicate */
             final GordianFactory myFactory = myData.getSecurity().getSecurityFactory();
-            final Predicate<GordianSymKeyType> mySymPredicate = myFactory.supportedKeySetSymKeyTypes();
+            final GordianKeySetFactory myKeySets = myFactory.getKeySetFactory();
+            final Predicate<GordianSymKeyType> mySymPredicate = myKeySets.supportedKeySetSymKeyTypes();
 
             /* Loop through the SymKeyType values */
             for (GordianSymKeyType myType : GordianSymKeyType.values()) {

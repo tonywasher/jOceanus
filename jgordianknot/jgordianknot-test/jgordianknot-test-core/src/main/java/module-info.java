@@ -25,5 +25,4 @@ module jgordianknot.test.core {
 
     /* Exports */
     exports net.sourceforge.joceanus.jgordianknot.test.api;
-    exports net.sourceforge.joceanus.jgordianknot.test.crypto;
 }

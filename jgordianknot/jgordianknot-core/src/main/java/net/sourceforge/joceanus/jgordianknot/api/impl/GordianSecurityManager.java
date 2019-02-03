@@ -41,7 +41,17 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
  * hashes that were not previously resolved, previously used passwords will be attempted. If no
  * match is found, then the user will be prompted for the password.
  */
-public abstract class GordianHashManager {
+public abstract class GordianSecurityManager {
+    /**
+     * The ZipFile extension.
+     */
+    public static final String ZIPFILE_EXT = ".zip";
+
+    /**
+     * The Encrypted ZipFile extension.
+     */
+    public static final String SECUREZIPFILE_EXT = ".gkzip";
+
     /**
      * Text for Password title.
      */
@@ -72,7 +82,7 @@ public abstract class GordianHashManager {
      * @param pParameters the Security parameters
      * @throws OceanusException on error
      */
-    protected GordianHashManager(final GordianParameters pParameters) throws OceanusException {
+    protected GordianSecurityManager(final GordianParameters pParameters) throws OceanusException {
         /* Allocate the factory */
         final GordianFactoryGenerator myGenerator = new GordianGenerator();
         theFactory = myGenerator.newFactory(pParameters);
@@ -292,5 +302,32 @@ public abstract class GordianHashManager {
         final int myMaxCipherSteps = getMaximumCipherSteps(GordianFactoryType.BC, false);
         return GordianCoreKeySet.getKeyWrapExpansion(myMaxCipherSteps)
                 + GordianCoreFactory.getKeyLength(false) / Byte.SIZE;
+    }
+
+    /**
+     * Obtain HashLength.
+     * @return the maximum keyWrap size
+     */
+    public static int getKeySetHashLen() {
+        return GordianCoreKeySetHash.HASHLEN;
+    }
+
+    /**
+     * Obtain Encryption length.
+     *
+     * @param pDataLength the length of data to be encrypted
+     * @return the length of encrypted data
+     */
+    public static int getEncryptionLength(final int pDataLength) {
+        return GordianCoreKeySet.getEncryptionLength(pDataLength);
+    }
+
+    /**
+     * Obtain Encryption overhead.
+     *
+     * @return the encryption overhead
+     */
+    public static int getEncryptionOverhead() {
+        return GordianCoreKeySet.getEncryptionOverhead();
     }
 }

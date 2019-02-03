@@ -16,8 +16,8 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmetis.threads;
 
-import net.sourceforge.joceanus.jgordianknot.crypto.GordianParameters;
-import net.sourceforge.joceanus.jgordianknot.manager.GordianHashManager;
+import net.sourceforge.joceanus.jgordianknot.api.factory.GordianParameters;
+import net.sourceforge.joceanus.jgordianknot.api.impl.GordianSecurityManager;
 import net.sourceforge.joceanus.jmetis.atlas.ui.MetisErrorPanel;
 import net.sourceforge.joceanus.jmetis.atlas.ui.MetisFieldColours.MetisColorPreferences;
 import net.sourceforge.joceanus.jmetis.atlas.ui.MetisFieldSetPanelPair;
@@ -83,7 +83,7 @@ public abstract class MetisToolkit {
     /**
      * Security Manager.
      */
-    private final GordianHashManager theHashManager;
+    private final GordianSecurityManager theHashManager;
 
     /**
      * Thread Manager.
@@ -205,7 +205,7 @@ public abstract class MetisToolkit {
      * Obtain the Security Manager.
      * @return the security manager
      */
-    public GordianHashManager getSecurityManager() {
+    public GordianSecurityManager getSecurityManager() {
         return theHashManager;
     }
 
@@ -252,7 +252,7 @@ public abstract class MetisToolkit {
      * @return the manager
      * @throws OceanusException on error
      */
-    protected abstract GordianHashManager newSecurityManager(GordianParameters pParameters) throws OceanusException;
+    protected abstract GordianSecurityManager newSecurityManager(GordianParameters pParameters) throws OceanusException;
 
     /**
      * Create a Help Window.

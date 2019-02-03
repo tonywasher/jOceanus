@@ -45,11 +45,6 @@ import net.sourceforge.joceanus.jtethys.TethysDataConverter;
 public class GordianCoreZipReadFile
     implements GordianZipReadFile {
     /**
-     * The ZipFile extension.
-     */
-    public static final String ZIPFILE_EXT = ".zip";
-
-    /**
      * The extension size for the buffer.
      */
     private static final int BUFFERSIZE = 1024;
@@ -178,7 +173,7 @@ public class GordianCoreZipReadFile
         /* Obtain encoded keySet */
         final GordianCoreKeySetHash myKeyHash = (GordianCoreKeySetHash) pHash;
         final byte[] myHashBytes = myHeader.getHash();
-        final GordianKeySetHash myHash = myKeyHash.attemptPasswordForHash(myHashBytes);
+        final GordianCoreKeySetHash myHash = (GordianCoreKeySetHash) myKeyHash.attemptPasswordForHash(myHashBytes);
 
         /* Reject if wrong password */
         if (myHash == null) {
@@ -186,7 +181,7 @@ public class GordianCoreZipReadFile
         }
 
         /* Obtain the keySet */
-        theKeySet = myKeyHash.getKeySet();
+        theKeySet = myHash.getKeySet();
     }
 
     /**
