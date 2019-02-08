@@ -25,7 +25,7 @@ import org.bouncycastle.crypto.params.KeyParameter;
 /**
  * AnubisEngine.
  * <p>
- * Directly ported from the Anubis C reference implementation
+ * Directly ported from the Anubis C reference implementation found at https://embeddedsw.net/Cipher_Reference_Home.html
  */
 public class AnubisEngine implements BlockCipher {
     /*
@@ -463,9 +463,8 @@ public class AnubisEngine implements BlockCipher {
     /**
      * Create the Anubis key schedule for a given cipher key. Both encryption and decryption key
      * schedules are generated.
-     * 
+     *
      * @param key The 32N-bit cipher key.
-     * @param structpointer Pointer to the structure that will hold the expanded key.
      */
     private void NESSIEkeysetup(final byte[] key) {
         int i, pos, r;
@@ -578,14 +577,15 @@ public class AnubisEngine implements BlockCipher {
 
     /**
      * Either encrypt or decrypt a data block, according to the key schedule.
-     * 
-     * @param block the data block to be encrypted/decrypted.
-     * @param roundKey the key schedule to be used.
-     * @param R number of rounds.
+     *
+     * @param inBuffer the input buffer.
+     * @param inOff the input offset.
+     * @param outBuffer the output buffer.
+     * @param outOff the output offset
      */
-    private void crypt(final byte[] plaintext,
+    private void crypt(final byte[] inBuffer,
                        final int inOff,
-                       final byte[] ciphertext,
+                       final byte[] outBuffer,
                        final int outOff) {
         int i, pos, r;
         int[] state = new int[4];
@@ -595,10 +595,10 @@ public class AnubisEngine implements BlockCipher {
          * map plaintext block to cipher state (mu) and add initial round key (sigma[K^0]):
          */
         for (i = 0, pos = inOff; i < 4; i++, pos += 4) {
-            state[i] = (plaintext[pos] << 24) ^
-                       ((plaintext[pos + 1] << 16) & 0xff0000) ^
-                       ((plaintext[pos + 2] << 8) & 0xff00) ^
-                       ((plaintext[pos + 3]) & 0xff) ^
+            state[i] = (inBuffer[pos] << 24) ^
+                       ((inBuffer[pos + 1] << 16) & 0xff0000) ^
+                       ((inBuffer[pos + 2] << 8) & 0xff00) ^
+                       ((inBuffer[pos + 3]) & 0xff) ^
                        roundKey[0][i];
         }
 
@@ -661,10 +661,10 @@ public class AnubisEngine implements BlockCipher {
          */
         for (i = 0, pos = outOff; i < 4; i++, pos += 4) {
             int w = inter[i];
-            ciphertext[pos] = (byte) (w >> 24);
-            ciphertext[pos + 1] = (byte) (w >> 16);
-            ciphertext[pos + 2] = (byte) (w >> 8);
-            ciphertext[pos + 3] = (byte) (w);
+            outBuffer[pos] = (byte) (w >> 24);
+            outBuffer[pos + 1] = (byte) (w >> 16);
+            outBuffer[pos + 2] = (byte) (w >> 8);
+            outBuffer[pos + 3] = (byte) (w);
         }
     }
 

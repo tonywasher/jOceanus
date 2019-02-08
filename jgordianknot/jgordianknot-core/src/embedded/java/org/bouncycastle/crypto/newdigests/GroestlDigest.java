@@ -98,7 +98,7 @@ public class GroestlDigest
     }
 
     @Override
-    public Memoable copy() {
+    public GroestlDigest copy() {
         return new GroestlDigest(this);
     }
 

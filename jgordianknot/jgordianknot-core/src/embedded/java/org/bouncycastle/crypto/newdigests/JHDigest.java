@@ -98,7 +98,7 @@ public class JHDigest
     }
 
     @Override
-    public Memoable copy() {
+    public JHDigest copy() {
         return new JHDigest(this);
     }
 

@@ -23,7 +23,7 @@ import org.bouncycastle.crypto.OutputLengthException;
 import org.bouncycastle.crypto.params.KeyParameter;
 
 /**
- * MARSEngine ported from the reference C implementation.
+ * MARSEngine ported from the reference C implementation, found at https://embeddedsw.net/Cipher_Reference_Home.html
  */
 public class MARSEngine implements BlockCipher {
     /*

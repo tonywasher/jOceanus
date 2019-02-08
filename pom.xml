@@ -76,7 +76,7 @@
     <HttpClientVersion>4.5.7</HttpClientVersion>
     <JSONVersion>20180813</JSONVersion>
     <ApacheMavenVersion>3.6.0</ApacheMavenVersion>
-    <MySQLVersion>8.0.14</MySQLVersion>
+    <MySQLVersion>8.0.15</MySQLVersion>
     <PostGreSQLVersion>42.2.5</PostGreSQLVersion>
     <JTDSVersion>1.3.1</JTDSVersion>
     <ApachePOIVersion>4.0.1</ApachePOIVersion>
