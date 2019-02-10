@@ -52,6 +52,8 @@ import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianLogicExceptio
 import net.sourceforge.joceanus.jgordianknot.impl.core.keypair.GordianCoreKeyPairGenerator;
 import net.sourceforge.joceanus.jgordianknot.impl.jca.JcaKeyPair.JcaPrivateKey;
 import net.sourceforge.joceanus.jgordianknot.impl.jca.JcaKeyPair.JcaPublicKey;
+import net.sourceforge.joceanus.jgordianknot.impl.jca.JcaKeyPair.JcaStateAwareKeyPair;
+import net.sourceforge.joceanus.jgordianknot.impl.jca.JcaKeyPair.JcaStateAwarePrivateKey;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
@@ -72,6 +74,14 @@ public abstract class JcaKeyPairGenerator
     JcaKeyPairGenerator(final JcaFactory pFactory,
                         final GordianAsymKeySpec pKeySpec) {
         super(pFactory, pKeySpec);
+    }
+
+    /**
+     * Obtain Set the key factory.
+     * @return the keyFactory
+     */
+    KeyFactory getKeyFactory() {
+        return theFactory;
     }
 
     /**
@@ -118,7 +128,7 @@ public abstract class JcaKeyPairGenerator
      * @return the public key
      * @throws OceanusException on error
      */
-    private JcaPublicKey derivePublicKey(final X509EncodedKeySpec pEncodedKey) throws OceanusException {
+    protected JcaPublicKey derivePublicKey(final X509EncodedKeySpec pEncodedKey) throws OceanusException {
         try {
             return new JcaPublicKey(getKeySpec(), theFactory.generatePublic(pEncodedKey));
         } catch (InvalidKeySpecException e) {
@@ -584,8 +594,20 @@ public abstract class JcaKeyPairGenerator
         public JcaKeyPair generateKeyPair() {
             final KeyPair myPair = theGenerator.generateKeyPair();
             final JcaPublicKey myPublic = new JcaPublicKey(getKeySpec(), myPair.getPublic());
-            final JcaPrivateKey myPrivate = new JcaPrivateKey(getKeySpec(), myPair.getPrivate());
-            return new JcaKeyPair(myPublic, myPrivate);
+            final JcaStateAwarePrivateKey myPrivate = new JcaStateAwarePrivateKey(getKeySpec(), myPair.getPrivate());
+            return new JcaStateAwareKeyPair(myPublic, myPrivate);
+        }
+
+        @Override
+        public JcaKeyPair deriveKeyPair(final X509EncodedKeySpec pPublicKey,
+                                        final PKCS8EncodedKeySpec pPrivateKey) throws OceanusException {
+            try {
+                final JcaPublicKey myPublic = derivePublicKey(pPublicKey);
+                final JcaStateAwarePrivateKey myPrivate = new JcaStateAwarePrivateKey(getKeySpec(), getKeyFactory().generatePrivate(pPrivateKey));
+                return new JcaStateAwareKeyPair(myPublic, myPrivate);
+            } catch (InvalidKeySpecException e) {
+                throw new GordianCryptoException("Failed to parse encoding", e);
+            }
         }
     }
 

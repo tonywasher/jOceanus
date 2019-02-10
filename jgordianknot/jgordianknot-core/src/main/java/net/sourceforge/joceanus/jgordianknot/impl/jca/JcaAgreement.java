@@ -89,7 +89,7 @@ public final class JcaAgreement {
                 checkKeyPair(pTarget);
 
                 /* Derive the secret */
-                theAgreement.init(null);
+                theAgreement.init(null, getRandom());
                 final JcaPublicKey myTarget = (JcaPublicKey) getPublicKey(pTarget);
                 final PublicKey myKey = (PublicKey) theAgreement.doPhase(myTarget.getPublicKey(), true);
                 storeSecret(theAgreement.generateSecret());
@@ -169,18 +169,22 @@ public final class JcaAgreement {
                 checkKeyPair(pSource);
                 checkKeyPair(pTarget);
 
-                /* Derive the secret */
+                /* Initialise the agreement taking care in case of null parameters */
                 final JcaPrivateKey myPrivate = (JcaPrivateKey) getPrivateKey(pSource);
-                final UserKeyingMaterialSpec myParams = getAgreementSpec().getKDFType() == GordianKDFType.NONE
-                                                        ? null
-                                                        : new UserKeyingMaterialSpec(new byte[0]);
-                theAgreement.init(myPrivate.getPrivateKey(), myParams);
+                if (getAgreementSpec().getKDFType() == GordianKDFType.NONE) {
+                    theAgreement.init(myPrivate.getPrivateKey(), getRandom());
+                } else {
+                    theAgreement.init(myPrivate.getPrivateKey(), new UserKeyingMaterialSpec(new byte[0]), getRandom());
+                }
+
+                /* Derive the secret */
                 final JcaPublicKey myTarget = (JcaPublicKey) getPublicKey(pTarget);
                 theAgreement.doPhase(myTarget.getPublicKey(), true);
                 storeSecret(theAgreement.generateSecret());
 
                 /* Create the message  */
                 return createMessage();
+
             } catch (InvalidKeyException
                     | InvalidAlgorithmParameterException e) {
                 throw new GordianCryptoException(ERR_AGREEMENT, e);
@@ -200,17 +204,19 @@ public final class JcaAgreement {
                 /* Determine initVector */
                 parseMessage(pMessage);
                 final JcaPrivateKey myPrivate = (JcaPrivateKey) getPrivateKey(pSelf);
-                final JcaPublicKey myPublic = (JcaPublicKey) getPublicKey(pSource);
+
+                /* Initialise the agreement taking care in case of null parameters */
+                if (getAgreementSpec().getKDFType() == GordianKDFType.NONE) {
+                    theAgreement.init(myPrivate.getPrivateKey(), getRandom());
+                } else {
+                    theAgreement.init(myPrivate.getPrivateKey(), new UserKeyingMaterialSpec(new byte[0]), getRandom());
+                }
 
                 /* Derive the secret */
-                final UserKeyingMaterialSpec myParams = getAgreementSpec().getKDFType() == GordianKDFType.NONE
-                                                        ? null
-                                                        : new UserKeyingMaterialSpec(new byte[0]);
-                theAgreement.init(myPrivate.getPrivateKey(), myParams);
+                final JcaPublicKey myPublic = (JcaPublicKey) getPublicKey(pSource);
                 theAgreement.doPhase(myPublic.getPublicKey(), true);
-
-                /* Store secret */
                 storeSecret(theAgreement.generateSecret());
+
             } catch (InvalidKeyException
                     | InvalidAlgorithmParameterException e) {
                 throw new GordianCryptoException(ERR_AGREEMENT, e);
@@ -260,7 +266,7 @@ public final class JcaAgreement {
                 final JcaPublicKey mySrcEphPublic = (JcaPublicKey) getPublicKey(getPartnerEphemeralKeyPair());
                 final DHUParameterSpec myParams = new DHUParameterSpec(myEphPublic.getPublicKey(),
                         myEphPrivate.getPrivateKey(), mySrcEphPublic.getPublicKey(), new byte[0]);
-                theAgreement.init(myPrivate.getPrivateKey(), myParams);
+                theAgreement.init(myPrivate.getPrivateKey(), myParams, getRandom());
 
                 /* Calculate agreement */
                 final JcaPublicKey mySrcPublic = (JcaPublicKey) getPublicKey(pSource);

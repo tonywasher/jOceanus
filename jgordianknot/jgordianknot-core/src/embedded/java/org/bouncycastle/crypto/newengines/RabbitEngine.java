@@ -13,7 +13,7 @@ import org.bouncycastle.util.Memoable;
 /**
  * StreamCipher implementation based on the SosemanukFast java implementation.
  * <p>
- * Copied from http://www.ecrypt.eu.org/stream/e2-rabbit.html.
+ * Based on http://www.ecrypt.eu.org/stream/e2-rabbit.html.
  */
 public class RabbitEngine implements StreamCipher, Memoable {
     /**

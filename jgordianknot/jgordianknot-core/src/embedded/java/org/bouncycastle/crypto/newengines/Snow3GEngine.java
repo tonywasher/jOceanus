@@ -53,11 +53,6 @@ public class Snow3GEngine implements StreamCipher, Memoable {
     };
 
     /**
-     * Advanced stream length.
-     */
-    private static final int STREAM_LEN = 80;
-
-    /**
      * State.
      */
     private final int[] LFSR = new int[16];
@@ -71,7 +66,12 @@ public class Snow3GEngine implements StreamCipher, Memoable {
     /**
      * Advanced stream.
      */
-    private final byte[] keyStream = new byte[STREAM_LEN];
+    private final byte[] keyStream = new byte[Integer.BYTES];
+
+    /**
+     * The iterations.
+     */
+    private int theIterations;
 
     /**
      * Reset state.
@@ -121,11 +121,19 @@ public class Snow3GEngine implements StreamCipher, Memoable {
 
         /* Initialise engine and mark as initialised */
         theIndex = 0;
+        theIterations = 0;
         setKeyAndIV(newKey, newIV);
-        makeKeyStream();
 
         /* Save reset state */
         theResetState = copy();
+    }
+
+    /**
+     * Obtain Max iterations.
+     * @return the maximum iterations
+     */
+    protected int getMaxIterations() {
+        return 625;
     }
 
     @Override
@@ -152,12 +160,7 @@ public class Snow3GEngine implements StreamCipher, Memoable {
 
         /* Loop through the input bytes */
         for (int i = 0; i < len; i++) {
-            out[i + outOff] = (byte) (keyStream[theIndex] ^ in[i + inOff]);
-            theIndex = (theIndex + 1) & STREAM_LEN - 1;
-
-            if (theIndex == 0) {
-                makeKeyStream();
-            }
+            out[i + outOff] = returnByte(in[i + inOff]);
         }
         return len;
     }
@@ -171,12 +174,16 @@ public class Snow3GEngine implements StreamCipher, Memoable {
 
     @Override
     public byte returnByte(final byte in) {
-        final byte out = (byte) (keyStream[theIndex] ^ in);
-        theIndex = (theIndex + 1) & STREAM_LEN - 1;
-
+        /* Make the keyStream if required */
         if (theIndex == 0) {
             makeKeyStream();
         }
+
+        /* Map the next byte and adjust index */
+        final byte out = (byte) (keyStream[theIndex] ^ in);
+        theIndex = (theIndex + 1) & Integer.BYTES - 1;
+
+        /* Return the mapped character */
         return out;
     }
 
@@ -416,8 +423,6 @@ public class Snow3GEngine implements StreamCipher, Memoable {
     * Input k[4]: Four 32-bit words making up 128-bit key.
     * Input IV[4]: Four 32-bit words making 128-bit initialization variable.
     * Output: All the LFSRs and FSM are initialized for key generation.
-    3GPP Confidentiality and Integrity Algorithms UEA2 & UIA2. page 37 of 37
-    SNOW 3G Algorithm Specification Version 1.1
     * See Section 4.1.
     */
     void setKeyAndIV(byte[] key, byte[] iv)
@@ -482,14 +487,13 @@ public class Snow3GEngine implements StreamCipher, Memoable {
      */
     void makeKeyStream()
     {
-        for (int t = 0; t<80; t +=4)
-        {
-            int F = ClockFSM(); /* STEP 1 */
-            encode32be(F ^ LFSR[0], keyStream, t); /* STEP 2 */
-            /* Note that ks[t] corresponds to z_{t+1} in section 4.2
-             */
-            ClockLFSRKeyStreamMode(); /* STEP 3 */
+        if (theIterations++ >= getMaxIterations()) {
+            throw new IllegalStateException("Too much data processed by singleKey/IV");
         }
+        int F = ClockFSM(); /* STEP 1 */
+        encode32be(F ^ LFSR[0], keyStream, 0); /* STEP 2 */
+        /* Note that ks[t] corresponds to z_{t+1} in section 4.2 */
+        ClockLFSRKeyStreamMode(); /* STEP 3 */
     }
 
     @Override
@@ -502,7 +506,8 @@ public class Snow3GEngine implements StreamCipher, Memoable {
         final Snow3GEngine e = (Snow3GEngine) pState;
         System.arraycopy(e.LFSR, 0, LFSR, 0, LFSR.length);
         System.arraycopy(e.FSM, 0, FSM, 0, FSM.length);
-        System.arraycopy(keyStream, 0, e.keyStream, 0, STREAM_LEN);
+        System.arraycopy(keyStream, 0, e.keyStream, 0, keyStream.length);
+        theIterations = e.theIterations;
         theIndex = e.theIndex;
     }
 }

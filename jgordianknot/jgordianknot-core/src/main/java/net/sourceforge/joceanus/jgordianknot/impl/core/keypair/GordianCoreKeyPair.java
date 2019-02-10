@@ -84,6 +84,7 @@ public class GordianCoreKeyPair
     public GordianPrivateKey getPrivateKey() {
         return thePrivateKey;
     }
+
     @Override
     public boolean equals(final Object pThat) {
         /* Handle the trivial cases */

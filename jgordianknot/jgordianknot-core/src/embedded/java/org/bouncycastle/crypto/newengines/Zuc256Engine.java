@@ -70,6 +70,10 @@ public class Zuc256Engine extends Zuc128Engine {
         super(pSource);
     }
 
+    @Override
+    protected int getMaxIterations() {
+        return 625;
+    }
 
     @Override
     public String getAlgorithmName() {
@@ -87,8 +91,8 @@ public class Zuc256Engine extends Zuc128Engine {
         if (k == null || k.length != 32) {
             throw new IllegalArgumentException("A key of 32 bytes is needed");
         }
-        if (iv == null || iv.length != 25) {
-            throw new IllegalArgumentException("An IV of 25 bytes is needed");
+        if (iv == null || iv.length != 23) {
+            throw new IllegalArgumentException("An IV of 23 bytes is needed");
         }
 
         /* expand key and IV */
@@ -97,14 +101,14 @@ public class Zuc256Engine extends Zuc128Engine {
         pLFSR[2] = MAKEU31(k[2], theD[2], k[23], k[18]);
         pLFSR[3] = MAKEU31(k[3], theD[3], k[24], k[19]);
         pLFSR[4] = MAKEU31(k[4], theD[4], k[25], k[20]);
-        pLFSR[5] = MAKEU31(iv[0], (byte)(theD[5] | iv[17]), k[5], k[26]);
-        pLFSR[6] = MAKEU31(iv[1], (byte)(theD[6] | iv[18]), k[6], k[27]);
-        pLFSR[7] = MAKEU31(iv[10], (byte)(theD[7] | iv[19]), k[7], iv[2]);
-        pLFSR[8] = MAKEU31(k[8], (byte)(theD[8] | iv[20]), iv[3], iv[11]);
-        pLFSR[9] = MAKEU31(k[9], (byte)(theD[9] | iv[21]), iv[12], iv[4]);
-        pLFSR[10] = MAKEU31(iv[5], (byte)(theD[10] | iv[22]), k[10], k[28]);
-        pLFSR[11] = MAKEU31(k[11], (byte)(theD[11] | iv[23]), iv[6], iv[13]);
-        pLFSR[12] = MAKEU31(k[12], (byte)(theD[12] | iv[24]), iv[7], iv[14]);
+        pLFSR[5] = MAKEU31(iv[0], (byte)(theD[5] | (iv[17] >>> 2)), k[5], k[26]);
+        pLFSR[6] = MAKEU31(iv[1], (byte)(theD[6] | ((iv[17] << 4) & 0x3F) | (iv[18] >>> 4)), k[6], k[27]);
+        pLFSR[7] = MAKEU31(iv[10], (byte)(theD[7] | ((iv[18] << 2) & 0x3F) | (iv[19] >>> 6)), k[7], iv[2]);
+        pLFSR[8] = MAKEU31(k[8], (byte)(theD[8] | (iv[19] & 0x3F)), iv[3], iv[11]);
+        pLFSR[9] = MAKEU31(k[9], (byte)(theD[9] | (iv[20] >>> 2)), iv[12], iv[4]);
+        pLFSR[10] = MAKEU31(iv[5], (byte)(theD[10] | ((iv[20] << 4) & 0x3F) | (iv[21] >>> 4)), k[10], k[28]);
+        pLFSR[11] = MAKEU31(k[11], (byte)(theD[11] | ((iv[21] << 2) & 0x3F) | (iv[22] >>> 6)), iv[6], iv[13]);
+        pLFSR[12] = MAKEU31(k[12], (byte)(theD[12] | (iv[22] & 0x3F)), iv[7], iv[14]);
         pLFSR[13] = MAKEU31(k[13], theD[13], iv[15], iv[8]);
         pLFSR[14] = MAKEU31(k[14], (byte)(theD[14] | (k[31] >>> 4)), iv[16], iv[9]);
         pLFSR[15] = MAKEU31(k[15], (byte)(theD[15] | (k[31] & 0xF)), k[30], k[29]);

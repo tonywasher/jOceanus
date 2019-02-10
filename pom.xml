@@ -81,7 +81,7 @@
     <JTDSVersion>1.3.1</JTDSVersion>
     <ApachePOIVersion>4.0.1</ApachePOIVersion>
     <SLF4JVersion>1.7.25</SLF4JVersion>
-    <LOG4JVersion>2.11.1</LOG4JVersion>
+    <LOG4JVersion>2.11.2</LOG4JVersion>
     <JFreeChartVersion>1.5.0</JFreeChartVersion>
     <JSoupVersion>1.11.3</JSoupVersion>
     <ZipSDKVersion>9.20</ZipSDKVersion>

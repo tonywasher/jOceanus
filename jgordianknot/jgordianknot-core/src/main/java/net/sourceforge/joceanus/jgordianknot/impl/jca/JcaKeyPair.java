@@ -19,8 +19,12 @@ package net.sourceforge.joceanus.jgordianknot.impl.jca;
 import java.security.PrivateKey;
 import java.security.PublicKey;
 
+import org.bouncycastle.pqc.jcajce.interfaces.XMSSMTPrivateKey;
+import org.bouncycastle.pqc.jcajce.interfaces.XMSSPrivateKey;
+
 import net.sourceforge.joceanus.jgordianknot.api.asym.GordianAsymKeySpec;
 import net.sourceforge.joceanus.jgordianknot.api.factory.GordianParameters;
+import net.sourceforge.joceanus.jgordianknot.api.key.GordianStateAwareSigner;
 import net.sourceforge.joceanus.jgordianknot.impl.core.keypair.GordianCoreKeyPair;
 import net.sourceforge.joceanus.jgordianknot.impl.core.keypair.GordianPrivateKey;
 import net.sourceforge.joceanus.jgordianknot.impl.core.keypair.GordianPublicKey;
@@ -173,6 +177,107 @@ public class JcaKeyPair
         public int hashCode() {
             return GordianParameters.HASH_PRIME * getKeySpec().hashCode()
                     + theKey.hashCode();
+        }
+    }
+
+    /**
+     * Bouncy StateAware PrivateKey.
+     */
+    public static class JcaStateAwarePrivateKey
+            extends JcaPrivateKey
+            implements GordianStateAwareSigner {
+        /**
+         * The private key.
+         */
+        private PrivateKey thePrivateKey;
+
+        /**
+         * Constructor.
+         * @param pKeySpec the key spec
+         * @param pKey the key
+         */
+        protected JcaStateAwarePrivateKey(final GordianAsymKeySpec pKeySpec,
+                                          final PrivateKey pKey) {
+            super(pKeySpec, pKey);
+            thePrivateKey = pKey;
+        }
+
+        @Override
+        public PrivateKey getPrivateKey() {
+            return thePrivateKey;
+        }
+
+        /**
+         * Update the privateKey.
+         * @param pKey the updated privateKey
+         */
+        void updatePrivateKey(final PrivateKey pKey) {
+            thePrivateKey = pKey;
+        }
+
+        @Override
+        public long getUsagesRemaining() {
+            if (thePrivateKey instanceof XMSSMTPrivateKey) {
+                return ((XMSSMTPrivateKey) getPrivateKey()).getUsagesRemaining();
+            }
+            return thePrivateKey instanceof XMSSPrivateKey
+                    ? ((XMSSPrivateKey) getPrivateKey()).getUsagesRemaining()
+                    : 0;
+        }
+        @Override
+        public boolean equals(final Object pThat) {
+            /* Handle the trivial cases */
+            if (pThat == this) {
+                return true;
+            }
+            if (pThat == null) {
+                return false;
+            }
+
+            /* Make sure that the object is the same class */
+            if (!(pThat instanceof JcaStateAwarePrivateKey)) {
+                return false;
+            }
+
+            /* Access the target field */
+            final JcaStateAwarePrivateKey myThat = (JcaStateAwarePrivateKey) pThat;
+
+            /* Check differences */
+            return getKeySpec().equals(myThat.getKeySpec())
+                    && thePrivateKey.equals(myThat.getPrivateKey());
+        }
+
+        @Override
+        public int hashCode() {
+            return GordianParameters.HASH_PRIME * getKeySpec().hashCode()
+                    + thePrivateKey.hashCode();
+        }
+    }
+
+    /**
+     * Jca StateAware KeyPair.
+     */
+    public static class JcaStateAwareKeyPair
+            extends JcaKeyPair
+            implements GordianStateAwareSigner {
+        /**
+         * Constructor.
+         * @param pPublic the public key
+         * @param pPrivate the private key
+         */
+        JcaStateAwareKeyPair(final JcaPublicKey pPublic,
+                             final JcaStateAwarePrivateKey pPrivate) {
+            super(pPublic, pPrivate);
+        }
+
+        @Override
+        public JcaStateAwarePrivateKey getPrivateKey() {
+            return (JcaStateAwarePrivateKey) super.getPrivateKey();
+        }
+
+        @Override
+        public long getUsagesRemaining() {
+            return getPrivateKey().getUsagesRemaining();
         }
     }
 }

@@ -59,11 +59,6 @@ public class Zuc128Engine implements StreamCipher, Memoable {
     };
 
     /**
-     * Advanced stream length.
-     */
-    private static final int STREAM_LEN = 80;
-
-    /**
      * State.
      */
     private final int[] LFSR = new int[16];
@@ -78,7 +73,12 @@ public class Zuc128Engine implements StreamCipher, Memoable {
     /**
      * Advanced stream.
      */
-    private final byte[] keyStream = new byte[STREAM_LEN];
+    private final byte[] keyStream = new byte[Integer.BYTES];
+
+    /**
+     * The iterations.
+     */
+    private int theIterations;
 
     /**
      * Reset state.
@@ -128,11 +128,19 @@ public class Zuc128Engine implements StreamCipher, Memoable {
 
         /* Initialise engine and mark as initialised */
         theIndex = 0;
+        theIterations = 0;
         setKeyAndIV(newKey, newIV);
-        makeKeyStream();
 
         /* Save reset state */
         theResetState = copy();
+    }
+
+    /**
+     * Obtain Max iterations.
+     * @return the maximum iterations
+     */
+    protected int getMaxIterations() {
+        return 2047;
     }
 
     @Override
@@ -159,12 +167,7 @@ public class Zuc128Engine implements StreamCipher, Memoable {
 
         /* Loop through the input bytes */
         for (int i = 0; i < len; i++) {
-            out[i + outOff] = (byte) (keyStream[theIndex] ^ in[i + inOff]);
-            theIndex = (theIndex + 1) & STREAM_LEN - 1;
-
-            if (theIndex == 0) {
-                makeKeyStream();
-            }
+            out[i + outOff] = returnByte(in[i + inOff]);
         }
         return len;
     }
@@ -178,12 +181,16 @@ public class Zuc128Engine implements StreamCipher, Memoable {
 
     @Override
     public byte returnByte(final byte in) {
-        final byte out = (byte) (keyStream[theIndex] ^ in);
-        theIndex = (theIndex + 1) & STREAM_LEN - 1;
-
+        /* Make the keyStream if required */
         if (theIndex == 0) {
             makeKeyStream();
         }
+
+        /* Map the next byte and adjust index */
+        final byte out = (byte) (keyStream[theIndex] ^ in);
+        theIndex = (theIndex + 1) & Integer.BYTES - 1;
+
+        /* Return the mapped character */
         return out;
     }
 
@@ -388,15 +395,11 @@ public class Zuc128Engine implements StreamCipher, Memoable {
     }
 
     /**
-     * Create the next 80 byte keyStream
+     * Create the next byte keyStream
      */
     void makeKeyStream()
     {
-        int i;
-        for (i = 0; i < 80; i+=4)
-        {
-            encode32be(makeKeyStreamWord(), keyStream, i);
-        }
+       encode32be(makeKeyStreamWord(), keyStream, 0);
     }
 
     /**
@@ -405,6 +408,9 @@ public class Zuc128Engine implements StreamCipher, Memoable {
      */
     public int makeKeyStreamWord()
     {
+        if (theIterations++ >= getMaxIterations()) {
+            throw new IllegalStateException("Too much data processed by singleKey/IV");
+        }
         BitReorganization();
         int result = F() ^ BRC[3];
         LFSRWithWorkMode();
@@ -422,7 +428,8 @@ public class Zuc128Engine implements StreamCipher, Memoable {
         System.arraycopy(e.LFSR, 0, LFSR, 0, LFSR.length);
         System.arraycopy(e.F, 0, F, 0, F.length);
         System.arraycopy(e.BRC, 0, BRC, 0, BRC.length);
-        System.arraycopy(keyStream, 0, e.keyStream, 0, STREAM_LEN);
+        System.arraycopy(keyStream, 0, e.keyStream, 0, keyStream.length);
         theIndex = e.theIndex;
+        theIterations = e.theIterations;
     }
 }

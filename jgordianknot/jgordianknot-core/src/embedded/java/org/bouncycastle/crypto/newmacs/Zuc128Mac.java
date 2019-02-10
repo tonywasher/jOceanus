@@ -12,7 +12,12 @@ import org.bouncycastle.crypto.params.ParametersWithIV;
  */
 public class Zuc128Mac implements Mac {
     /**
-     * The Zuc256 Engine.
+     * The Maximum Bit Mask.
+     */
+    private static final int TOPBIT = 0x80;
+
+    /**
+     * The Zuc128 Engine.
      */
     private final Zuc128Engine theEngine;
 
@@ -32,15 +37,19 @@ public class Zuc128Mac implements Mac {
     private Zuc128Engine theState;
 
     /**
-     * The current index.
+     * The current word index.
      */
-    private int theIndex;
+    private int theWordIndex;
+
+    /**
+     * The current byte index.
+     */
+    private int theByteIndex;
 
     /**
      * Constructor.
-     * @param pLength the bit length of the Mac
      */
-    Zuc128Mac(int pLength) {
+    public Zuc128Mac() {
         theEngine = new Zuc128Engine();
         theKeyStream = new int[2];
     }
@@ -52,20 +61,18 @@ public class Zuc128Mac implements Mac {
 
     @Override
     public int getMacSize() {
-        return 4;
+        return Integer.BYTES;
     }
 
     @Override
     public void init(final CipherParameters pParams) {
         CipherParameters myParams = pParams;
-        byte[] myIV = null;
-        if (myParams instanceof ParametersWithIV) {
-            final ParametersWithIV ivParams = (ParametersWithIV) myParams;
-            myIV = ivParams.getIV();
-            myParams = ivParams.getParameters();
-        } else {
+        if (!(myParams instanceof ParametersWithIV)) {
             throw new IllegalArgumentException(getAlgorithmName() + " requires an IV.");
         }
+        final ParametersWithIV ivParams = (ParametersWithIV) myParams;
+        final byte[] myIV = ivParams.getIV();
+        myParams = ivParams.getParameters();
 
         /* Access the key */
         if (!(myParams instanceof KeyParameter)) {
@@ -91,49 +98,64 @@ public class Zuc128Mac implements Mac {
         for (int i = 0; i < theKeyStream.length - 1; i++) {
             theKeyStream[i] = theEngine.makeKeyStreamWord();
         }
-        theIndex = theKeyStream.length - 1;
+        theWordIndex = theKeyStream.length - 1;
+        theByteIndex = Integer.BYTES - 1;
     }
 
     @Override
     public void update(final byte in) {
-        /* Read in the next keyStream word */
-        theKeyStream[theIndex] = theEngine.makeKeyStreamWord();
-        theIndex = (theIndex + 1) % theKeyStream.length;
+        /* shift for next byte */
+        shift4NextByte();
 
         /* Loop through the bits */
-        for (int bitMask = 128, bitNo = 0; bitMask > 0; bitMask >>= 1, bitNo++) {
+        final int bitBase = theByteIndex * Byte.SIZE;
+        for (int bitMask = TOPBIT, bitNo = 0; bitMask > 0; bitMask >>= 1, bitNo++) {
             /* If the bit is set */
             if ((in & bitMask) != 0) {
                 /* update theMac */
-                updateMac(bitNo);
+                updateMac(bitBase + bitNo);
             }
         }
     }
 
     /**
-     * Update the Mac
-     * @param bitNo the bit number
+     * Shift for next byte.
      */
-    private void updateMac(int bitNo) {
-        /* Update the Mac */
-        theMac ^= getKeyStreamWord(bitNo);
-     }
+    private void shift4NextByte() {
+        /* Adjust the byte index */
+        theByteIndex = (theByteIndex + 1) % Integer.BYTES;
+
+        /* Adjust keyStream if required */
+        if (theByteIndex == 0) {
+            theKeyStream[theWordIndex] = theEngine.makeKeyStreamWord();
+            theWordIndex = (theWordIndex + 1) % theKeyStream.length;
+        }
+    }
 
     /**
-     * Obtain the keyStreamWord
+     * Update the Mac.
+     * @param bitNo the bit number
+     */
+    private void updateMac(final int bitNo) {
+        /* Update the Mac */
+        theMac ^= getKeyStreamWord(bitNo);
+    }
+
+    /**
+     * Obtain the keyStreamWord.
      * @param bitNo the bitNumber
      * @return the word
      */
-    private int getKeyStreamWord(int bitNo) {
+    private int getKeyStreamWord(final int bitNo) {
         /* Access the first word and return it if this is bit 0 */
-        int myFirst = theKeyStream[theIndex];
+        final int myFirst = theKeyStream[theWordIndex];
         if (bitNo == 0) {
             return myFirst;
         }
 
         /* Access the second word */
-        int mySecond = theKeyStream[(theIndex + 1) % theKeyStream.length];
-        return (myFirst << bitNo) | (mySecond >> (32 - bitNo));
+        final int mySecond = theKeyStream[(theWordIndex + 1) % theKeyStream.length];
+        return (myFirst << bitNo) | (mySecond >>> (Integer.SIZE - bitNo));
     }
 
     @Override
@@ -146,7 +168,8 @@ public class Zuc128Mac implements Mac {
     @Override
     public int doFinal(final byte[] out, final int outOff) {
         /* Finish the Mac and output it */
-        theMac ^= theEngine.makeKeyStreamWord();
+        shift4NextByte();
+        theMac ^= getKeyStreamWord(0);
         theMac ^= theEngine.makeKeyStreamWord();
         Zuc128Engine.encode32be(theMac, out, outOff);
 

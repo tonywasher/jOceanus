@@ -20,6 +20,7 @@ import org.bouncycastle.crypto.params.AsymmetricKeyParameter;
 
 import net.sourceforge.joceanus.jgordianknot.api.asym.GordianAsymKeySpec;
 import net.sourceforge.joceanus.jgordianknot.api.factory.GordianParameters;
+import net.sourceforge.joceanus.jgordianknot.api.key.GordianStateAwareSigner;
 import net.sourceforge.joceanus.jgordianknot.impl.core.keypair.GordianCoreKeyPair;
 import net.sourceforge.joceanus.jgordianknot.impl.core.keypair.GordianPrivateKey;
 import net.sourceforge.joceanus.jgordianknot.impl.core.keypair.GordianPublicKey;
@@ -43,18 +44,18 @@ public class BouncyKeyPair
      * @param pPublic the public key
      * @param pPrivate the private key
      */
-    protected BouncyKeyPair(final BouncyPublicKey pPublic,
-                            final BouncyPrivateKey pPrivate) {
+    protected BouncyKeyPair(final BouncyPublicKey<?> pPublic,
+                            final BouncyPrivateKey<?> pPrivate) {
         super(pPublic, pPrivate);
     }
 
     @Override
-    public BouncyPublicKey getPublicKey() {
+    public BouncyPublicKey<?> getPublicKey() {
         return (BouncyPublicKey) super.getPublicKey();
     }
 
     @Override
-    public BouncyPrivateKey getPrivateKey() {
+    public BouncyPrivateKey<?> getPrivateKey() {
         return (BouncyPrivateKey) super.getPrivateKey();
     }
 
@@ -189,6 +190,98 @@ public class BouncyKeyPair
         public int hashCode() {
             return GordianParameters.HASH_PRIME * getKeySpec().hashCode()
                     + theKey.hashCode();
+        }
+    }
+
+    /**
+     * Bouncy StateAware PrivateKey.
+     * @param <T> parameter type
+     */
+    public abstract static class BouncyStateAwarePrivateKey<T extends AsymmetricKeyParameter>
+            extends BouncyPrivateKey<T>
+            implements GordianStateAwareSigner {
+        /**
+         * The private key.
+         */
+        private T thePrivateKey;
+
+        /**
+         * Constructor.
+         * @param pKeySpec the key spec
+         * @param pKey the key
+         */
+        protected BouncyStateAwarePrivateKey(final GordianAsymKeySpec pKeySpec,
+                                             final T pKey) {
+            super(pKeySpec, pKey);
+            thePrivateKey = pKey;
+        }
+
+        @Override
+        public T getPrivateKey() {
+            return thePrivateKey;
+        }
+
+        /**
+         * Update the privateKey.
+         * @param pKey the updated privateKey
+         */
+        void updatePrivateKey(final T pKey) {
+            thePrivateKey = pKey;
+        }
+        @Override
+        public boolean equals(final Object pThat) {
+            /* Handle the trivial cases */
+            if (pThat == this) {
+                return true;
+            }
+            if (pThat == null) {
+                return false;
+            }
+
+            /* Make sure that the object is the same class */
+            if (!(pThat instanceof BouncyStateAwarePrivateKey)) {
+                return false;
+            }
+
+            /* Access the target field */
+            final BouncyStateAwarePrivateKey<?> myThat = (BouncyStateAwarePrivateKey<?>) pThat;
+
+            /* Check differences */
+            return getKeySpec().equals(myThat.getKeySpec())
+                    && matchKey(myThat.getPrivateKey());
+        }
+
+        @Override
+        public int hashCode() {
+            return GordianParameters.HASH_PRIME * getKeySpec().hashCode()
+                    + thePrivateKey.hashCode();
+        }
+    }
+
+    /**
+     * Bouncy StateAware KeyPair.
+      */
+    public static class BouncyStateAwareKeyPair
+            extends BouncyKeyPair
+            implements GordianStateAwareSigner {
+        /**
+         * Constructor.
+         * @param pPublic the public key
+         * @param pPrivate the private key
+         */
+        BouncyStateAwareKeyPair(final BouncyPublicKey<?> pPublic,
+                                final BouncyStateAwarePrivateKey<?> pPrivate) {
+            super(pPublic, pPrivate);
+        }
+
+        @Override
+        public BouncyStateAwarePrivateKey<?> getPrivateKey() {
+            return (BouncyStateAwarePrivateKey) super.getPrivateKey();
+        }
+
+        @Override
+        public long getUsagesRemaining() {
+            return getPrivateKey().getUsagesRemaining();
         }
     }
 }

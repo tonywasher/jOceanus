@@ -59,20 +59,6 @@ public final class PqcSubjectPublicKeyInfoFactory {
             AlgorithmIdentifier algorithmIdentifier = new AlgorithmIdentifier(PQCObjectIdentifiers.mcElieceCca2);
             return new SubjectPublicKeyInfo(algorithmIdentifier, key);
         }
-        else if (publicKey instanceof NHPublicKeyParameters)
-        {
-            NHPublicKeyParameters pub = (NHPublicKeyParameters)publicKey;
-
-            AlgorithmIdentifier algorithmIdentifier = new AlgorithmIdentifier(PQCObjectIdentifiers.newHope);
-            return new SubjectPublicKeyInfo(algorithmIdentifier, pub.getPubData());
-        }
-        else if (publicKey instanceof QTESLAPublicKeyParameters)
-        {
-            QTESLAPublicKeyParameters pub = (QTESLAPublicKeyParameters)publicKey;
-
-            AlgorithmIdentifier algorithmIdentifier = PqcPrivateKeyInfoFactory.lookupQTESLAAlgID(pub.getSecurityCategory());
-            return new SubjectPublicKeyInfo(algorithmIdentifier, pub.getPublicData());
-        }
         else if (publicKey instanceof RainbowPublicKeyParameters)
         {
             RainbowPublicKeyParameters pub = (RainbowPublicKeyParameters)publicKey;
@@ -86,48 +72,5 @@ public final class PqcSubjectPublicKeyInfoFactory {
         {
             throw new IOException("key parameters not recognised.");
         }
-    }
-
-    /**
-     * Create a SubjectPublicKeyInfo representation of a public key.
-     *
-     * @param publicKey the key to be encoded into the info object.
-     * @param treeDigest the treeDigest id.
-     * @return the appropriate SubjectPublicKeyInfo
-     * @throws java.io.IOException on an error encoding the key
-     */
-    public static SubjectPublicKeyInfo createSPHINCSPublicKeyInfo(SPHINCSPublicKeyParameters publicKey, ASN1ObjectIdentifier treeDigest) throws IOException
-    {
-        AlgorithmIdentifier algorithmIdentifier = new AlgorithmIdentifier(PQCObjectIdentifiers.sphincs256, new SPHINCS256KeyParams(new AlgorithmIdentifier(treeDigest)));
-        return new SubjectPublicKeyInfo(algorithmIdentifier, publicKey.getKeyData());
-    }
-
-    /**
-     * Create a SubjectPublicKeyInfo representation of a public key.
-     *
-     * @param publicKey the key to be encoded into the info object.
-     * @param treeDigest the treeDigest id.
-     * @return the appropriate SubjectPublicKeyInfo
-     * @throws java.io.IOException on an error encoding the key
-     */
-    public static SubjectPublicKeyInfo createXMSSPublicKeyInfo(XMSSPublicKeyParameters publicKey, ASN1ObjectIdentifier treeDigest) throws IOException
-    {
-        AlgorithmIdentifier algorithmIdentifier = new AlgorithmIdentifier(PQCObjectIdentifiers.xmss, new XMSSKeyParams(publicKey.getParameters().getHeight(), new AlgorithmIdentifier(treeDigest)));
-        return new SubjectPublicKeyInfo(algorithmIdentifier, new XMSSPublicKey(publicKey.getPublicSeed(), publicKey.getRoot()));
-    }
-
-    /**
-     * Create a SubjectPublicKeyInfo representation of a public key.
-     *
-     * @param publicKey the key to be encoded into the info object.
-     * @param treeDigest the treeDigest id.
-     * @return the appropriate SubjectPublicKeyInfo
-     * @throws java.io.IOException on an error encoding the key
-     */
-    public static SubjectPublicKeyInfo createXMSSMTPublicKeyInfo(XMSSMTPublicKeyParameters publicKey, ASN1ObjectIdentifier treeDigest) throws IOException
-    {
-        AlgorithmIdentifier algorithmIdentifier = new AlgorithmIdentifier(PQCObjectIdentifiers.xmss_mt,
-                new XMSSMTKeyParams(publicKey.getParameters().getHeight(), publicKey.getParameters().getLayers(), new AlgorithmIdentifier(treeDigest)));
-        return new SubjectPublicKeyInfo(algorithmIdentifier, new XMSSPublicKey(publicKey.getPublicSeed(), publicKey.getRoot()));
     }
 }

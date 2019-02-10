@@ -482,7 +482,7 @@ public final class BouncyEllipticAsymKey {
 
             /* Create Key Encapsulation */
             final DerivationFunction myKDF = newDerivationFunction();
-            theAgreement = new ECIESKeyEncapsulation(myKDF, getRandom());
+            theAgreement = new ECIESKeyEncapsulation(myKDF, getRandom(), true, false, false);
         }
 
         @Override
