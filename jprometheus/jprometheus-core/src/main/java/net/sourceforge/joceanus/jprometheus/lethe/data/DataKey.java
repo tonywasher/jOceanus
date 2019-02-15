@@ -473,15 +473,10 @@ public class DataKey
             /* Update the Security Control Key and obtain the new secured KeyDef */
             final GordianKeySet myKeySet = pHash.getKeySet();
             setValueHashPrime(pPrimeHash);
-            final GordianFactory myFactory = myKeySet.getFactory();
-            final GordianSymKeyType myType = getSymKeyType();
-            final GordianSymKeySpec mySpec = new GordianSymKeySpec(myType);
             setValueSecuredKeyDef(myKeySet.secureKey(getSymKey()));
 
             /* Check for changes */
-            if (checkForHistory()) {
-                return true;
-            }
+            return checkForHistory();
         }
 
         /* No changes */

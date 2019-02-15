@@ -62,6 +62,10 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
 public abstract class JcaKeyPairGenerator
         extends GordianCoreKeyPairGenerator {
     /**
+     * Parse error.
+     */
+    private static final String PARSE_ERROR = "Failed to parse encoding";
+    /**
      * Factory.
      */
     private KeyFactory theFactory;
@@ -112,7 +116,7 @@ public abstract class JcaKeyPairGenerator
             final JcaPublicKey myPublic = derivePublicKey(pPublicKey);
             return new JcaKeyPair(myPublic, myPrivate);
         } catch (InvalidKeySpecException e) {
-            throw new GordianCryptoException("Failed to parse encoding", e);
+            throw new GordianCryptoException(PARSE_ERROR, e);
         }
     }
 
@@ -132,7 +136,7 @@ public abstract class JcaKeyPairGenerator
         try {
             return new JcaPublicKey(getKeySpec(), theFactory.generatePublic(pEncodedKey));
         } catch (InvalidKeySpecException e) {
-            throw new GordianCryptoException("Failed to parse encoding", e);
+            throw new GordianCryptoException(PARSE_ERROR, e);
         }
     }
 
@@ -606,7 +610,7 @@ public abstract class JcaKeyPairGenerator
                 final JcaStateAwarePrivateKey myPrivate = new JcaStateAwarePrivateKey(getKeySpec(), getKeyFactory().generatePrivate(pPrivateKey));
                 return new JcaStateAwareKeyPair(myPublic, myPrivate);
             } catch (InvalidKeySpecException e) {
-                throw new GordianCryptoException("Failed to parse encoding", e);
+                throw new GordianCryptoException(PARSE_ERROR, e);
             }
         }
     }

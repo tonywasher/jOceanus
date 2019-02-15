@@ -249,7 +249,8 @@
         <configuration>
           <show>public</show>
           <nohelp>true</nohelp>
-          <excludePackageNames>SevenZip:org</excludePackageNames>
+          <excludePackageNames>SevenZip</excludePackageNames>
+          <sourceFileExcludes><sourceFileExclude>src/main/java/module-info.java</sourceFileExclude></sourceFileExcludes>
         </configuration>
         <executions>
           <execution>
@@ -404,8 +405,6 @@
           <linkJavadoc>true</linkJavadoc>
           <excludes>
             <exclude>**/SevenZip/**/*.java</exclude>
-            <exclude>**/org/**/*.java</exclude>
-            <exclude>**/test/**/*.java</exclude>
             <exclude>**/module-info.java</exclude>
           </excludes>
         </configuration>
@@ -425,7 +424,7 @@
         <configuration>
           <show>public</show>
           <nohelp>true</nohelp>
-          <excludePackageNames>SevenZip:org</excludePackageNames>
+          <excludePackageNames>SevenZip</excludePackageNames>
           <sourceFileExcludes><sourceFileExclude>src/main/java/module-info.java</sourceFileExclude></sourceFileExcludes>
         </configuration>
       </plugin>-->

@@ -675,7 +675,7 @@ public class MetisOdfStyler {
      * @param pType the cell type
      * @return the alignment
      */
-    private String getStyleAlignment(final MetisSheetCellStyleType pType) {
+    private static String getStyleAlignment(final MetisSheetCellStyleType pType) {
         switch (pType) {
             case HEADER:
             case BOOLEAN:
