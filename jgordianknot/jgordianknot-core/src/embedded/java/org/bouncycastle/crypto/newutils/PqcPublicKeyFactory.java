@@ -58,10 +58,62 @@ public final class PqcPublicKeyFactory {
             McElieceCCA2PublicKey myKey = McElieceCCA2PublicKey.getInstance(keyInfo.parsePublicKey());
             return new McElieceCCA2PublicKeyParameters(myKey.getN(), myKey.getT(), myKey.getG(), PqcPrivateKeyFactory.getDigest(myKey.getDigest().getAlgorithm()).getAlgorithmName());
         }
+        else if (algOID.equals(PQCObjectIdentifiers.newHope))
+        {
+            return new NHPublicKeyParameters(keyInfo.getPublicKeyData().getBytes());
+        }
+        else if (algOID.equals(PQCObjectIdentifiers.qTESLA_I))
+        {
+            return new QTESLAPublicKeyParameters(QTESLASecurityCategory.HEURISTIC_I, keyInfo.getPublicKeyData().getOctets());
+        }
+        else if (algOID.equals(PQCObjectIdentifiers.qTESLA_III_size))
+        {
+            return new QTESLAPublicKeyParameters(QTESLASecurityCategory.HEURISTIC_III_SIZE, keyInfo.getPublicKeyData().getOctets());
+        }
+        else if (algOID.equals(PQCObjectIdentifiers.qTESLA_III_speed))
+        {
+            return new QTESLAPublicKeyParameters(QTESLASecurityCategory.HEURISTIC_III_SPEED, keyInfo.getPublicKeyData().getOctets());
+        }
+        else if (algOID.equals(PQCObjectIdentifiers.qTESLA_p_I))
+        {
+            return new QTESLAPublicKeyParameters(QTESLASecurityCategory.PROVABLY_SECURE_I, keyInfo.getPublicKeyData().getOctets());
+        }
+        else if (algOID.equals(PQCObjectIdentifiers.qTESLA_p_III))
+        {
+            return new QTESLAPublicKeyParameters(QTESLASecurityCategory.PROVABLY_SECURE_III, keyInfo.getPublicKeyData().getOctets());
+        }
         else if (algOID.equals(PQCObjectIdentifiers.rainbow))
         {
             RainbowPublicKey key = RainbowPublicKey.getInstance(keyInfo.parsePublicKey());
             return new RainbowPublicKeyParameters(key.getDocLength(), key.getCoeffQuadratic(), key.getCoeffSingular(), key.getCoeffScalar());
+        }
+        else if (algOID.equals(PQCObjectIdentifiers.sphincs256))
+        {
+            return new SPHINCSPublicKeyParameters(keyInfo.getPublicKeyData().getBytes());
+        }
+        else if (algOID.equals(PQCObjectIdentifiers.xmss))
+        {
+            XMSSKeyParams keyParams = XMSSKeyParams.getInstance(keyInfo.getAlgorithm().getParameters());
+            ASN1ObjectIdentifier treeDigest = keyParams.getTreeDigest().getAlgorithm();
+
+            XMSSPublicKey xmssPublicKey = XMSSPublicKey.getInstance(keyInfo.parsePublicKey());
+
+            return new XMSSPublicKeyParameters
+                    .Builder(new XMSSParameters(keyParams.getHeight(), PqcPrivateKeyFactory.getDigest(treeDigest)))
+                    .withPublicSeed(xmssPublicKey.getPublicSeed())
+                    .withRoot(xmssPublicKey.getRoot()).build();
+        }
+        else if (algOID.equals(PQCObjectIdentifiers.xmss_mt))
+        {
+            XMSSMTKeyParams keyParams = XMSSMTKeyParams.getInstance(keyInfo.getAlgorithm().getParameters());
+            ASN1ObjectIdentifier treeDigest = keyParams.getTreeDigest().getAlgorithm();
+
+            XMSSPublicKey xmssMtPublicKey = XMSSPublicKey.getInstance(keyInfo.parsePublicKey());
+
+            return new XMSSMTPublicKeyParameters
+                    .Builder(new XMSSMTParameters(keyParams.getHeight(), keyParams.getLayers(), PqcPrivateKeyFactory.getDigest(treeDigest)))
+                    .withPublicSeed(xmssMtPublicKey.getPublicSeed())
+                    .withRoot(xmssMtPublicKey.getRoot()).build();
         }
         else
         {

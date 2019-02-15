@@ -141,12 +141,7 @@ public class RabbitEngine implements StreamCipher, Memoable {
 
         /* Loop through the input bytes */
         for (int i = 0; i < len; i++) {
-            out[i + outOff] = (byte) (keyStream[theIndex] ^ in[i + inOff]);
-            theIndex = (theIndex + 1) & STREAM_LEN - 1;
-
-            if (theIndex == 0) {
-                makeKeyStream();
-            }
+            out[i + outOff] = returnByte(in[i + inOff]);
         }
         return len;
     }
@@ -161,7 +156,7 @@ public class RabbitEngine implements StreamCipher, Memoable {
     @Override
     public byte returnByte(final byte in) {
         final byte out = (byte) (keyStream[theIndex] ^ in);
-        theIndex = (theIndex + 1) & STREAM_LEN - 1;
+        theIndex = (theIndex + 1) % STREAM_LEN;
 
         if (theIndex == 0) {
             makeKeyStream();
@@ -275,10 +270,10 @@ public class RabbitEngine implements StreamCipher, Memoable {
         master.x[2] = k1;
         master.x[4] = k2;
         master.x[6] = k3;
-        master.x[1] = (k3 << 16) | (k2 >> 16);
-        master.x[3] = (k0 << 16) | (k3 >> 16);
-        master.x[5] = (k1 << 16) | (k0 >> 16);
-        master.x[7] = (k2 << 16) | (k1 >> 16);
+        master.x[1] = (k3 << 16) | (k2 >>> 16);
+        master.x[3] = (k0 << 16) | (k3 >>> 16);
+        master.x[5] = (k1 << 16) | (k0 >>> 16);
+        master.x[7] = (k2 << 16) | (k1 >>> 16);
 
         /* Generate initial counter values */
         master.c[0] = ROTL32(k2, 16);
@@ -326,7 +321,7 @@ public class RabbitEngine implements StreamCipher, Memoable {
         /* Generate four subvectors */
         i0 = decode32le(iv, 0);
         i2 = decode32le(iv, 4);
-        i1 = (i0 >> 16) | (i2 & 0xFFFF0000);
+        i1 = (i0 >>> 16) | (i2 & 0xFFFF0000);
         i3 = (i2 << 16) | (i0 & 0x0000FFFF);
 
         /* Modify counter values */
@@ -359,10 +354,10 @@ public class RabbitEngine implements StreamCipher, Memoable {
             RABBIT_next_state(work);
 
             /* Generate 16 bytes of pseudo-random data */
-            encode32le(work.x[0] ^ (work.x[5] >> 16) ^ (work.x[3] << 16), keyStream, i + 0);
-            encode32le(work.x[2] ^ (work.x[7] >> 16) ^ (work.x[5] << 16), keyStream, i + 4);
-            encode32le(work.x[4] ^ (work.x[1] >> 16) ^ (work.x[7] << 16), keyStream, i + 8);
-            encode32le(work.x[6] ^ (work.x[3] >> 16) ^ (work.x[1] << 16), keyStream, i + 12);
+            encode32le(work.x[0] ^ (work.x[5] >>> 16) ^ (work.x[3] << 16), keyStream, i + 0);
+            encode32le(work.x[2] ^ (work.x[7] >>> 16) ^ (work.x[5] << 16), keyStream, i + 4);
+            encode32le(work.x[4] ^ (work.x[1] >>> 16) ^ (work.x[7] << 16), keyStream, i + 8);
+            encode32le(work.x[6] ^ (work.x[3] >>> 16) ^ (work.x[1] << 16), keyStream, i + 12);
         }
     }
 
@@ -376,7 +371,7 @@ public class RabbitEngine implements StreamCipher, Memoable {
         final RabbitEngine e = (RabbitEngine) pState;
         work.copyFrom(e.work);
         master.copyFrom(e.master);
-        System.arraycopy(keyStream, 0, e.keyStream, 0, STREAM_LEN);
+        System.arraycopy(e.keyStream, 0, keyStream, 0, STREAM_LEN);
         theIndex = e.theIndex;
     }
 }

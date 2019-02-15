@@ -29,16 +29,16 @@ import org.bouncycastle.crypto.AsymmetricCipherKeyPair;
 import org.bouncycastle.crypto.Digest;
 import org.bouncycastle.crypto.digests.SHA3Digest;
 import org.bouncycastle.crypto.digests.SHA512tDigest;
+import org.bouncycastle.crypto.newutils.PqcPrivateKeyFactory;
+import org.bouncycastle.crypto.newutils.PqcPrivateKeyInfoFactory;
+import org.bouncycastle.crypto.newutils.PqcPublicKeyFactory;
+import org.bouncycastle.crypto.newutils.PqcSubjectPublicKeyInfoFactory;
 import org.bouncycastle.crypto.params.AsymmetricKeyParameter;
 import org.bouncycastle.pqc.crypto.sphincs.SPHINCS256KeyGenerationParameters;
 import org.bouncycastle.pqc.crypto.sphincs.SPHINCS256KeyPairGenerator;
 import org.bouncycastle.pqc.crypto.sphincs.SPHINCS256Signer;
 import org.bouncycastle.pqc.crypto.sphincs.SPHINCSPrivateKeyParameters;
 import org.bouncycastle.pqc.crypto.sphincs.SPHINCSPublicKeyParameters;
-import org.bouncycastle.pqc.crypto.util.PrivateKeyFactory;
-import org.bouncycastle.pqc.crypto.util.PrivateKeyInfoFactory;
-import org.bouncycastle.pqc.crypto.util.PublicKeyFactory;
-import org.bouncycastle.pqc.crypto.util.SubjectPublicKeyInfoFactory;
 
 import net.sourceforge.joceanus.jgordianknot.api.asym.GordianAsymKeySpec;
 import net.sourceforge.joceanus.jgordianknot.api.asym.GordianSPHINCSKeyType;
@@ -192,7 +192,7 @@ public final class BouncySPHINCSAsymKey {
             try {
                 final BouncySPHINCSPrivateKey myPrivateKey = (BouncySPHINCSPrivateKey) getPrivateKey(pKeyPair);
                 final SPHINCSPrivateKeyParameters myParms = myPrivateKey.getPrivateKey();
-                final PrivateKeyInfo myInfo = PrivateKeyInfoFactory.createPrivateKeyInfo(myParms);
+                final PrivateKeyInfo myInfo = PqcPrivateKeyInfoFactory.createSPHINCSPrivateKeyInfo(myParms, theTreeDigest);
                 return new PKCS8EncodedKeySpec(myInfo.getEncoded());
             } catch (IOException e) {
                 throw new GordianCryptoException(ERROR_PARSE, e);
@@ -204,7 +204,7 @@ public final class BouncySPHINCSAsymKey {
                                            final PKCS8EncodedKeySpec pPrivateKey) throws OceanusException {
             try {
                 final PrivateKeyInfo myInfo = PrivateKeyInfo.getInstance(pPrivateKey.getEncoded());
-                final SPHINCSPrivateKeyParameters myParms = (SPHINCSPrivateKeyParameters) PrivateKeyFactory.createKey(myInfo);
+                final SPHINCSPrivateKeyParameters myParms = (SPHINCSPrivateKeyParameters) PqcPrivateKeyFactory.createKey(myInfo);
                 final BouncySPHINCSPrivateKey myPrivate = new BouncySPHINCSPrivateKey(getKeySpec(), myParms);
                 final BouncySPHINCSPublicKey myPublic = derivePublicKey(pPublicKey);
                 return new BouncyKeyPair(myPublic, myPrivate);
@@ -218,7 +218,7 @@ public final class BouncySPHINCSAsymKey {
             try {
                 final BouncySPHINCSPublicKey myPublicKey = (BouncySPHINCSPublicKey) getPublicKey(pKeyPair);
                 final SPHINCSPublicKeyParameters myParms = myPublicKey.getPublicKey();
-                final SubjectPublicKeyInfo myInfo = SubjectPublicKeyInfoFactory.createSubjectPublicKeyInfo(myParms);
+                final SubjectPublicKeyInfo myInfo = PqcSubjectPublicKeyInfoFactory.createSPHINCSPublicKeyInfo(myParms, theTreeDigest);
                 return new X509EncodedKeySpec(myInfo.getEncoded());
             } catch (IOException e) {
                 throw new GordianCryptoException(ERROR_PARSE, e);
@@ -240,7 +240,7 @@ public final class BouncySPHINCSAsymKey {
         private BouncySPHINCSPublicKey derivePublicKey(final X509EncodedKeySpec pEncodedKey) throws OceanusException {
             try {
                 final SubjectPublicKeyInfo myInfo = SubjectPublicKeyInfo.getInstance(pEncodedKey.getEncoded());
-                final SPHINCSPublicKeyParameters myParms = (SPHINCSPublicKeyParameters) PublicKeyFactory.createKey(myInfo);
+                final SPHINCSPublicKeyParameters myParms = (SPHINCSPublicKeyParameters) PqcPublicKeyFactory.createKey(myInfo);
                 return new BouncySPHINCSPublicKey(getKeySpec(), myParms);
             } catch (IOException e) {
                 throw new GordianCryptoException(ERROR_PARSE, e);

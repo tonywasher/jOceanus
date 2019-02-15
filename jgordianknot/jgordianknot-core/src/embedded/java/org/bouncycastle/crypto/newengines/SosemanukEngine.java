@@ -126,12 +126,7 @@ public class SosemanukEngine
 
         /* Loop through the input bytes */
         for (int i = 0; i < len; i++) {
-            out[i + outOff] = (byte) (keyStream[theIndex] ^ in[i + inOff]);
-            theIndex = (theIndex + 1) & STREAM_LEN - 1;
-
-            if (theIndex == 0) {
-                makeStreamBlock(keyStream, 0);
-            }
+            out[i + outOff] = returnByte(in[i + inOff]);
         }
         return len;
     }
@@ -146,7 +141,7 @@ public class SosemanukEngine
     @Override
     public byte returnByte(final byte in) {
         final byte out = (byte) (keyStream[theIndex] ^ in);
-        theIndex = (theIndex + 1) & STREAM_LEN - 1;
+        theIndex = (theIndex + 1) % STREAM_LEN;
 
         if (theIndex == 0) {
             makeStreamBlock(keyStream, 0);
@@ -175,7 +170,7 @@ public class SosemanukEngine
         lfsr9 = e.lfsr9;
         fsmR1 = e.fsmR1;
         fsmR2 = e.fsmR2;
-        System.arraycopy(keyStream, 0, e.keyStream, 0, STREAM_LEN);
+        System.arraycopy(e.keyStream, 0, keyStream, 0, STREAM_LEN);
         theIndex = e.theIndex;
     }
 

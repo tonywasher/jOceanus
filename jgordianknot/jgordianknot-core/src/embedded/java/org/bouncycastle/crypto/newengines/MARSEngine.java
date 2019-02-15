@@ -303,8 +303,8 @@ public class MARSEngine implements BlockCipher {
         /* m to find sequences of 9 or more '1' bits. As a result */
         /* bits in m are set if they are at the bottom of sequences */
         /* of 10 adjacent '0's or 10 adjacent '1's in x. */
-        m &= (m >> 1) & (m >> 2);
-        m &= (m >> 3) & (m >> 6);
+        m &= (m >>> 1) & (m >>> 2);
+        m &= (m >>> 3) & (m >>> 6);
 
         /* return if mask is empty - no key fixing needed */
         if (m == 0)
@@ -491,6 +491,7 @@ public class MARSEngine implements BlockCipher {
         int keyLength = pKey.length;
         int intLength = keyLength / Integer.BYTES;
         keyLength *= Byte.SIZE;
+
 
         /* map cipher key to initial key state */
         int[] myIntKey = new int[intLength];

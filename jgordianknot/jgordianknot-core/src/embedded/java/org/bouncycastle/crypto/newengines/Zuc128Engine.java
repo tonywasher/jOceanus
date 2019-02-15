@@ -188,7 +188,7 @@ public class Zuc128Engine implements StreamCipher, Memoable {
 
         /* Map the next byte and adjust index */
         final byte out = (byte) (keyStream[theIndex] ^ in);
-        theIndex = (theIndex + 1) & Integer.BYTES - 1;
+        theIndex = (theIndex + 1) % Integer.BYTES;
 
         /* Return the mapped character */
         return out;
@@ -428,7 +428,7 @@ public class Zuc128Engine implements StreamCipher, Memoable {
         System.arraycopy(e.LFSR, 0, LFSR, 0, LFSR.length);
         System.arraycopy(e.F, 0, F, 0, F.length);
         System.arraycopy(e.BRC, 0, BRC, 0, BRC.length);
-        System.arraycopy(keyStream, 0, e.keyStream, 0, keyStream.length);
+        System.arraycopy(e.keyStream, 0, keyStream, 0, keyStream.length);
         theIndex = e.theIndex;
         theIterations = e.theIterations;
     }

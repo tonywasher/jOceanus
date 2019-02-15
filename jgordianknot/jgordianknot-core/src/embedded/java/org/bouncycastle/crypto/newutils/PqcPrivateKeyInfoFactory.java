@@ -69,6 +69,28 @@ public final class PqcPrivateKeyInfoFactory {
             AlgorithmIdentifier algorithmIdentifier = new AlgorithmIdentifier(PQCObjectIdentifiers.mcElieceCca2);
             return new PrivateKeyInfo(algorithmIdentifier, privKey);
         }
+        else if (privateKey instanceof NHPrivateKeyParameters)
+        {
+            NHPrivateKeyParameters priv = (NHPrivateKeyParameters) privateKey;
+
+            AlgorithmIdentifier algorithmIdentifier = new AlgorithmIdentifier(PQCObjectIdentifiers.newHope);
+            short[] privateKeyData = priv.getSecData();
+
+            byte[] octets = new byte[privateKeyData.length * 2];
+            for (int i = 0; i != privateKeyData.length; i++)
+            {
+                Pack.shortToLittleEndian(privateKeyData[i], octets, i * 2);
+            }
+
+            return new PrivateKeyInfo(algorithmIdentifier, new DEROctetString(octets));
+        }
+        else if (privateKey instanceof QTESLAPrivateKeyParameters)
+        {
+            QTESLAPrivateKeyParameters priv = (QTESLAPrivateKeyParameters) privateKey;
+
+            AlgorithmIdentifier algorithmIdentifier = lookupQTESLAAlgID(priv.getSecurityCategory());
+            return new PrivateKeyInfo(algorithmIdentifier, new DEROctetString(priv.getSecret()));
+        }
         else if (privateKey instanceof RainbowPrivateKeyParameters)
         {
             RainbowPrivateKeyParameters priv = (RainbowPrivateKeyParameters) privateKey;
@@ -81,6 +103,135 @@ public final class PqcPrivateKeyInfoFactory {
         {
             throw new IOException("key parameters not recognised.");
         }
+    }
+
+    /**
+     * Create a PrivateKeyInfo representation of a private key.
+     *
+     * @param privateKey the key to be encoded into the info object.
+     * @param treeDigest the treeDigest id.
+     * @return the appropriate PrivateKeyInfo
+     * @throws java.io.IOException on an error encoding the key
+     */
+    public static PrivateKeyInfo createSPHINCSPrivateKeyInfo(SPHINCSPrivateKeyParameters privateKey, ASN1ObjectIdentifier treeDigest) throws IOException
+    {
+        AlgorithmIdentifier algorithmIdentifier = new AlgorithmIdentifier(PQCObjectIdentifiers.sphincs256, new SPHINCS256KeyParams(new AlgorithmIdentifier(treeDigest)));
+        return new PrivateKeyInfo(algorithmIdentifier, new DEROctetString(privateKey.getKeyData()));
+    }
+
+    /**
+     * Create a PrivateKeyInfo representation of a private key.
+     *
+     * @param privateKey the key to be encoded into the info object.
+     * @param treeDigest the treeDigest id.
+     * @return the appropriate PrivateKeyInfo
+     * @throws java.io.IOException on an error encoding the key
+     */
+    public static PrivateKeyInfo createXMSSPrivateKeyInfo(XMSSPrivateKeyParameters privateKey, ASN1ObjectIdentifier treeDigest) throws IOException
+    {
+        AlgorithmIdentifier algorithmIdentifier = new AlgorithmIdentifier(PQCObjectIdentifiers.xmss,
+                new XMSSKeyParams(privateKey.getParameters().getHeight(), new AlgorithmIdentifier(treeDigest)));
+        return new PrivateKeyInfo(algorithmIdentifier, createXMSSKeyStructure(privateKey));
+    }
+
+    /**
+     * Create a PrivateKeyInfo representation of a private key.
+     *
+     * @param privateKey the key to be encoded into the info object.
+     * @param treeDigest the treeDigest id.
+     * @return the appropriate PrivateKeyInfo
+     * @throws java.io.IOException on an error encoding the key
+     */
+    public static PrivateKeyInfo createXMSSMTPrivateKeyInfo(XMSSMTPrivateKeyParameters privateKey, ASN1ObjectIdentifier treeDigest) throws IOException
+    {
+        AlgorithmIdentifier algorithmIdentifier = new AlgorithmIdentifier(PQCObjectIdentifiers.xmss_mt,
+                new XMSSMTKeyParams(privateKey.getParameters().getHeight(), privateKey.getParameters().getLayers(), new AlgorithmIdentifier(treeDigest)));
+        return new PrivateKeyInfo(algorithmIdentifier, createXMSSMTKeyStructure(privateKey));
+    }
+
+    static AlgorithmIdentifier lookupQTESLAAlgID(int securityCategory)
+    {
+        switch (securityCategory)
+        {
+            case QTESLASecurityCategory.HEURISTIC_I:
+                return new AlgorithmIdentifier(PQCObjectIdentifiers.qTESLA_I);
+            case QTESLASecurityCategory.HEURISTIC_III_SIZE:
+                return new AlgorithmIdentifier(PQCObjectIdentifiers.qTESLA_III_size);
+            case QTESLASecurityCategory.HEURISTIC_III_SPEED:
+                return new AlgorithmIdentifier(PQCObjectIdentifiers.qTESLA_III_speed);
+            case QTESLASecurityCategory.PROVABLY_SECURE_I:
+                return new AlgorithmIdentifier(PQCObjectIdentifiers.qTESLA_p_I);
+            case QTESLASecurityCategory.PROVABLY_SECURE_III:
+                return new AlgorithmIdentifier(PQCObjectIdentifiers.qTESLA_p_III);
+            default:
+                throw new IllegalArgumentException("unknown security category: " + securityCategory);
+        }
+    }
+
+    private static XMSSPrivateKey createXMSSKeyStructure(XMSSPrivateKeyParameters privateKey)
+    {
+        byte[] keyData = privateKey.toByteArray();
+
+        int n = privateKey.getParameters().getDigestSize();
+        int totalHeight = privateKey.getParameters().getHeight();
+        int indexSize = 4;
+        int secretKeySize = n;
+        int secretKeyPRFSize = n;
+        int publicSeedSize = n;
+        int rootSize = n;
+
+        int position = 0;
+        int index = (int) XMSSUtil.bytesToXBigEndian(keyData, position, indexSize);
+        if (!XMSSUtil.isIndexValid(totalHeight, index))
+        {
+            throw new IllegalArgumentException("index out of bounds");
+        }
+        position += indexSize;
+        byte[] secretKeySeed = XMSSUtil.extractBytesAtOffset(keyData, position, secretKeySize);
+        position += secretKeySize;
+        byte[] secretKeyPRF = XMSSUtil.extractBytesAtOffset(keyData, position, secretKeyPRFSize);
+        position += secretKeyPRFSize;
+        byte[] publicSeed = XMSSUtil.extractBytesAtOffset(keyData, position, publicSeedSize);
+        position += publicSeedSize;
+        byte[] root = XMSSUtil.extractBytesAtOffset(keyData, position, rootSize);
+        position += rootSize;
+        /* import BDS state */
+        byte[] bdsStateBinary = XMSSUtil.extractBytesAtOffset(keyData, position, keyData.length - position);
+
+        return new XMSSPrivateKey(index, secretKeySeed, secretKeyPRF, publicSeed, root, bdsStateBinary);
+    }
+
+    private static XMSSMTPrivateKey createXMSSMTKeyStructure(XMSSMTPrivateKeyParameters privateKey)
+    {
+        byte[] keyData = privateKey.toByteArray();
+
+        int n = privateKey.getParameters().getDigestSize();
+        int totalHeight = privateKey.getParameters().getHeight();
+        int indexSize = (totalHeight + 7) / 8;
+        int secretKeySize = n;
+        int secretKeyPRFSize = n;
+        int publicSeedSize = n;
+        int rootSize = n;
+
+        int position = 0;
+        int index = (int)XMSSUtil.bytesToXBigEndian(keyData, position, indexSize);
+        if (!XMSSUtil.isIndexValid(totalHeight, index))
+        {
+            throw new IllegalArgumentException("index out of bounds");
+        }
+        position += indexSize;
+        byte[] secretKeySeed = XMSSUtil.extractBytesAtOffset(keyData, position, secretKeySize);
+        position += secretKeySize;
+        byte[] secretKeyPRF = XMSSUtil.extractBytesAtOffset(keyData, position, secretKeyPRFSize);
+        position += secretKeyPRFSize;
+        byte[] publicSeed = XMSSUtil.extractBytesAtOffset(keyData, position, publicSeedSize);
+        position += publicSeedSize;
+        byte[] root = XMSSUtil.extractBytesAtOffset(keyData, position, rootSize);
+        position += rootSize;
+        /* import BDS state */
+        byte[] bdsStateBinary = XMSSUtil.extractBytesAtOffset(keyData, position, keyData.length - position);
+
+        return new XMSSMTPrivateKey(index, secretKeySeed, secretKeyPRF, publicSeed, root, bdsStateBinary);
     }
 
     static AlgorithmIdentifier getDigAlgId(String digestName)

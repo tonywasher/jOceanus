@@ -165,12 +165,24 @@ public class Zuc128Mac implements Mac {
         }
     }
 
+    /**
+     * Obtain the final word.
+     * @return the final word
+     */
+    private int getFinalWord() {
+        if (theByteIndex != 0) {
+            return theEngine.makeKeyStreamWord();
+        }
+        theWordIndex = (theWordIndex + 1) % theKeyStream.length;
+        return theKeyStream[theWordIndex];
+    }
+
     @Override
     public int doFinal(final byte[] out, final int outOff) {
         /* Finish the Mac and output it */
         shift4NextByte();
-        theMac ^= getKeyStreamWord(0);
-        theMac ^= theEngine.makeKeyStreamWord();
+        theMac ^= getKeyStreamWord(theByteIndex * Byte.SIZE);
+        theMac ^= getFinalWord();
         Zuc128Engine.encode32be(theMac, out, outOff);
 
         /* Reset the Mac */

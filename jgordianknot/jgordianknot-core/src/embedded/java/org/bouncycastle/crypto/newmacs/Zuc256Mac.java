@@ -182,8 +182,9 @@ public class Zuc256Mac implements Mac {
     @Override
     public int doFinal(final byte[] out, final int outOff) {
         /* Finish the Mac and output it */
+        shift4NextByte();
+        updateMac(theByteIndex * Byte.SIZE);
         for (int i = 0; i < theMac.length; i++) {
-            theMac[i] ^= theEngine.makeKeyStreamWord();
             Zuc256Engine.encode32be(theMac[i], out, outOff + i * Integer.BYTES);
         }
 

@@ -76,12 +76,108 @@ public final class PqcPrivateKeyFactory {
             return new McElieceCCA2PrivateKeyParameters(myKey.getN(), myKey.getK(), myKey.getField(), myKey.getGoppaPoly(),
                             myKey.getP(), getDigest(myKey.getDigest().getAlgorithm()).getAlgorithmName());
         }
+        else if (algOID.equals(PQCObjectIdentifiers.newHope))
+        {
+            return new NHPrivateKeyParameters(convert(ASN1OctetString.getInstance(keyInfo.parsePrivateKey()).getOctets()));
+        }
+        else if (algOID.equals(PQCObjectIdentifiers.qTESLA_I))
+        {
+            ASN1OctetString qTESLAPriv = ASN1OctetString.getInstance(keyInfo.parsePrivateKey());
+
+            return new QTESLAPrivateKeyParameters(QTESLASecurityCategory.HEURISTIC_I, qTESLAPriv.getOctets());
+        }
+        else if (algOID.equals(PQCObjectIdentifiers.qTESLA_III_size))
+        {
+            ASN1OctetString qTESLAPriv = ASN1OctetString.getInstance(keyInfo.parsePrivateKey());
+
+            return new QTESLAPrivateKeyParameters(QTESLASecurityCategory.HEURISTIC_III_SIZE, qTESLAPriv.getOctets());
+        }
+        else if (algOID.equals(PQCObjectIdentifiers.qTESLA_III_speed))
+        {
+            ASN1OctetString qTESLAPriv = ASN1OctetString.getInstance(keyInfo.parsePrivateKey());
+
+            return new QTESLAPrivateKeyParameters(QTESLASecurityCategory.HEURISTIC_III_SPEED, qTESLAPriv.getOctets());
+        }
+        else if (algOID.equals(PQCObjectIdentifiers.qTESLA_p_I))
+        {
+            ASN1OctetString qTESLAPriv = ASN1OctetString.getInstance(keyInfo.parsePrivateKey());
+
+            return new QTESLAPrivateKeyParameters(QTESLASecurityCategory.PROVABLY_SECURE_I, qTESLAPriv.getOctets());
+        }
+        else if (algOID.equals(PQCObjectIdentifiers.qTESLA_p_III))
+        {
+            ASN1OctetString qTESLAPriv = ASN1OctetString.getInstance(keyInfo.parsePrivateKey());
+
+            return new QTESLAPrivateKeyParameters(QTESLASecurityCategory.PROVABLY_SECURE_III, qTESLAPriv.getOctets());
+        }
         else if (algOID.equals(PQCObjectIdentifiers.rainbow))
         {
             RainbowPrivateKey keyStructure = RainbowPrivateKey.getInstance(keyInfo.parsePrivateKey());
 
             return new RainbowPrivateKeyParameters(keyStructure.getInvA1(), keyStructure.getB1(),
                     keyStructure.getInvA2(), keyStructure.getB2(), keyStructure.getVi(), keyStructure.getLayers());
+        }
+        else if (algOID.equals(PQCObjectIdentifiers.sphincs256))
+        {
+            return new SPHINCSPrivateKeyParameters(ASN1OctetString.getInstance(keyInfo.parsePrivateKey()).getOctets());
+        }
+        else if (algOID.equals(PQCObjectIdentifiers.xmss))
+        {
+            XMSSKeyParams keyParams = XMSSKeyParams.getInstance(keyInfo.getPrivateKeyAlgorithm().getParameters());
+            ASN1ObjectIdentifier treeDigest = keyParams.getTreeDigest().getAlgorithm();
+            XMSSPrivateKey xmssPrivateKey = XMSSPrivateKey.getInstance(keyInfo.parsePrivateKey());
+            try
+            {
+                XMSSPrivateKeyParameters.Builder keyBuilder = new XMSSPrivateKeyParameters
+                        .Builder(new XMSSParameters(keyParams.getHeight(), getDigest(treeDigest)))
+                        .withIndex(xmssPrivateKey.getIndex())
+                        .withSecretKeySeed(xmssPrivateKey.getSecretKeySeed())
+                        .withSecretKeyPRF(xmssPrivateKey.getSecretKeyPRF())
+                        .withPublicSeed(xmssPrivateKey.getPublicSeed())
+                        .withRoot(xmssPrivateKey.getRoot());
+
+                if (xmssPrivateKey.getBdsState() != null)
+                {
+                    BDS bds = (BDS) XMSSUtil.deserialize(xmssPrivateKey.getBdsState(), BDS.class);
+                    keyBuilder.withBDSState(bds.withWOTSDigest(treeDigest));
+                }
+
+                return keyBuilder.build();
+            }
+            catch (ClassNotFoundException e)
+            {
+                throw new IOException("ClassNotFoundException processing BDS state: " + e.getMessage());
+            }
+        }
+        else if (algOID.equals(PQCObjectIdentifiers.xmss_mt))
+        {
+            XMSSMTKeyParams keyParams = XMSSMTKeyParams.getInstance(keyInfo.getPrivateKeyAlgorithm().getParameters());
+            ASN1ObjectIdentifier treeDigest = keyParams.getTreeDigest().getAlgorithm();
+
+            XMSSPrivateKey xmssMtPrivateKey = XMSSPrivateKey.getInstance(keyInfo.parsePrivateKey());
+
+            try
+            {
+                XMSSMTPrivateKeyParameters.Builder keyBuilder = new XMSSMTPrivateKeyParameters
+                        .Builder(new XMSSMTParameters(keyParams.getHeight(), keyParams.getLayers(), getDigest(treeDigest)))
+                        .withIndex(xmssMtPrivateKey.getIndex())
+                        .withSecretKeySeed(xmssMtPrivateKey.getSecretKeySeed())
+                        .withSecretKeyPRF(xmssMtPrivateKey.getSecretKeyPRF())
+                        .withPublicSeed(xmssMtPrivateKey.getPublicSeed())
+                        .withRoot(xmssMtPrivateKey.getRoot());
+
+                if (xmssMtPrivateKey.getBdsState() != null)
+                {
+                    BDSStateMap bdsState = (BDSStateMap)XMSSUtil.deserialize(xmssMtPrivateKey.getBdsState(), BDSStateMap.class);
+                    keyBuilder.withBDSState(bdsState.withWOTSDigest(treeDigest));
+                }
+
+                return keyBuilder.build();
+            }
+            catch (ClassNotFoundException e)
+            {
+                throw new IOException("ClassNotFoundException processing BDS state: " + e.getMessage());
+            }
         }
         else
         {
@@ -121,5 +217,17 @@ public final class PqcPrivateKeyFactory {
         }
 
         throw new IllegalArgumentException("unrecognized digest OID: " + oid);
+    }
+
+    private static short[] convert(byte[] octets)
+    {
+        short[] rv = new short[octets.length / 2];
+
+        for (int i = 0; i != rv.length; i++)
+        {
+            rv[i] = Pack.littleEndianToShort(octets, i * 2);
+        }
+
+        return rv;
     }
 }

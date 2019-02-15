@@ -181,7 +181,7 @@ public class Snow3GEngine implements StreamCipher, Memoable {
 
         /* Map the next byte and adjust index */
         final byte out = (byte) (keyStream[theIndex] ^ in);
-        theIndex = (theIndex + 1) & Integer.BYTES - 1;
+        theIndex = (theIndex + 1) % Integer.BYTES;
 
         /* Return the mapped character */
         return out;
@@ -212,7 +212,7 @@ public class Snow3GEngine implements StreamCipher, Memoable {
         buf[off] = (byte) (val >> 24);
         buf[off + 1] = (byte) (val >> 16);
         buf[off + 2] = (byte) (val >> 8);
-        buf[off + 3] = (byte) val;
+        buf[off + 3] = (byte) (val);
     }
 
     /* MULx.
@@ -381,9 +381,9 @@ public class Snow3GEngine implements StreamCipher, Memoable {
     void ClockLFSRKeyStreamMode()
     {
         int v = (((LFSR[0] << 8) & 0xffffff00) ^
-                (MULalpha((byte)((LFSR[0] >> 24) & 0xff))) ^
+                (MULalpha((byte)((LFSR[0] >>> 24) & 0xff))) ^
                 (LFSR[2]) ^
-                ((LFSR[11] >> 8) & 0x00ffffff) ^
+                ((LFSR[11] >>> 8) & 0x00ffffff) ^
                 (DIValpha((byte) ((LFSR[11]) & 0xff)))
         );
         LFSR[0] = LFSR[1];
@@ -439,16 +439,16 @@ public class Snow3GEngine implements StreamCipher, Memoable {
         int k0, k1, k2, k3, i0, i1, i2, i3;
 
         /* Generate four subkeys */
-        k0 = decode32be(key, 0);
-        k1 = decode32be(key, 4);
-        k2 = decode32be(key, 8);
-        k3 = decode32be(key, 12);
+        k0 = decode32be(key, 12);
+        k1 = decode32be(key, 8);
+        k2 = decode32be(key, 4);
+        k3 = decode32be(key, 0);
 
         /* Generate four subvectors */
-        i0 = decode32be(iv, 0);
-        i1 = decode32be(iv, 4);
-        i2 = decode32be(iv, 8);
-        i3 = decode32be(iv, 12);
+        i0 = decode32be(iv, 12);
+        i1 = decode32be(iv, 8);
+        i2 = decode32be(iv, 4);
+        i3 = decode32be(iv, 0);
 
         LFSR[15] = k3 ^ i0;
         LFSR[14] = k2;
@@ -506,7 +506,7 @@ public class Snow3GEngine implements StreamCipher, Memoable {
         final Snow3GEngine e = (Snow3GEngine) pState;
         System.arraycopy(e.LFSR, 0, LFSR, 0, LFSR.length);
         System.arraycopy(e.FSM, 0, FSM, 0, FSM.length);
-        System.arraycopy(keyStream, 0, e.keyStream, 0, keyStream.length);
+        System.arraycopy(e.keyStream, 0, keyStream, 0, keyStream.length);
         theIterations = e.theIterations;
         theIndex = e.theIndex;
     }
