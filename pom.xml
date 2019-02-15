@@ -70,24 +70,26 @@
     <packageMain/>
     <appDir>${env.BACKUPDIR}</appDir>
     <appLibDir>lib/</appLibDir>
-    <BouncyCastleVersion>161b20</BouncyCastleVersion>
-    <SvnKitVersion>1.9.3</SvnKitVersion>
-    <JGitVersion>5.2.0.201812061821-r</JGitVersion>
-    <HttpClientVersion>4.5.6</HttpClientVersion>
+    <BouncyCastleVersion>1.61</BouncyCastleVersion>
+    <SvnKitVersion>1.10.0</SvnKitVersion>
+    <JGitVersion>5.2.1.201812262042-r</JGitVersion>
+    <JUnitVersion>5.4.0</JUnitVersion>
+    <HttpClientVersion>4.5.7</HttpClientVersion>
     <JSONVersion>20180813</JSONVersion>
     <ApacheMavenVersion>3.6.0</ApacheMavenVersion>
-    <MySQLVersion>8.0.13</MySQLVersion>
+    <MySQLVersion>8.0.15</MySQLVersion>
     <PostGreSQLVersion>42.2.5</PostGreSQLVersion>
     <JTDSVersion>1.3.1</JTDSVersion>
     <ApachePOIVersion>4.0.1</ApachePOIVersion>
     <SLF4JVersion>1.7.25</SLF4JVersion>
-    <LOG4JVersion>2.11.1</LOG4JVersion>
+    <LOG4JVersion>2.11.2</LOG4JVersion>
     <JFreeChartVersion>1.5.0</JFreeChartVersion>
     <JSoupVersion>1.11.3</JSoupVersion>
     <ZipSDKVersion>9.20</ZipSDKVersion>
     <JavaVersion>11</JavaVersion>
-    <CheckStyleVersion>8.15</CheckStyleVersion>
-    <PMDVersion>6.10.0</PMDVersion>
+    <JavaFXVersion>11.0.2</JavaFXVersion>
+    <CheckStyleVersion>8.17</CheckStyleVersion>
+    <PMDVersion>6.11.0</PMDVersion>
     <CleanPluginVersion>3.1.0</CleanPluginVersion>
     <ResourcesPluginVersion>3.1.0</ResourcesPluginVersion>
     <InstallPluginVersion>3.0.0-M1</InstallPluginVersion>
@@ -97,14 +99,14 @@
     <CompilerPluginVersion>3.8.0</CompilerPluginVersion>
     <ShadePluginVersion>3.2.1</ShadePluginVersion>
     <DependencyPluginVersion>3.1.1</DependencyPluginVersion>
-    <SurefirePluginVersion>3.0.0-M2</SurefirePluginVersion>
+    <SurefirePluginVersion>3.0.0-M3</SurefirePluginVersion>
     <BuildNumberPluginVersion>1.4</BuildNumberPluginVersion>
     <BuildHelperPluginVersion>3.0.0</BuildHelperPluginVersion>
     <JarPluginVersion>3.1.1</JarPluginVersion>
     <ProjectInfoPluginVersion>3.0.0</ProjectInfoPluginVersion>
     <JxrPluginVersion>3.0.0</JxrPluginVersion>
     <JavaDocPluginVersion>3.0.1</JavaDocPluginVersion>
-    <SonarQubePluginVersion>3.5.0.1254</SonarQubePluginVersion>
+    <SonarQubePluginVersion>3.6.0.1398</SonarQubePluginVersion>
     <CheckStylePluginVersion>3.0.0</CheckStylePluginVersion>
     <PMDPluginVersion>3.11.0</PMDPluginVersion>
     <JetBrainsAnnotationsVersion>16.0.3</JetBrainsAnnotationsVersion>
@@ -174,7 +176,9 @@
         <artifactId>maven-surefire-plugin</artifactId>
         <version>${SurefirePluginVersion}</version>
         <configuration>
-          <skipTests>true</skipTests>
+          <excludes>
+            <exclude/>
+          </excludes>
         </configuration>
       </plugin>
       <plugin>
@@ -245,7 +249,8 @@
         <configuration>
           <show>public</show>
           <nohelp>true</nohelp>
-          <excludePackageNames>SevenZip:org</excludePackageNames>
+          <excludePackageNames>SevenZip</excludePackageNames>
+          <sourceFileExcludes><sourceFileExclude>src/main/java/module-info.java</sourceFileExclude></sourceFileExcludes>
         </configuration>
         <executions>
           <execution>
@@ -400,8 +405,6 @@
           <linkJavadoc>true</linkJavadoc>
           <excludes>
             <exclude>**/SevenZip/**/*.java</exclude>
-            <exclude>**/org/**/*.java</exclude>
-            <exclude>**/test/**/*.java</exclude>
             <exclude>**/module-info.java</exclude>
           </excludes>
         </configuration>
@@ -421,7 +424,7 @@
         <configuration>
           <show>public</show>
           <nohelp>true</nohelp>
-          <excludePackageNames>SevenZip:org</excludePackageNames>
+          <excludePackageNames>SevenZip</excludePackageNames>
           <sourceFileExcludes><sourceFileExclude>src/main/java/module-info.java</sourceFileExclude></sourceFileExcludes>
         </configuration>
       </plugin>-->

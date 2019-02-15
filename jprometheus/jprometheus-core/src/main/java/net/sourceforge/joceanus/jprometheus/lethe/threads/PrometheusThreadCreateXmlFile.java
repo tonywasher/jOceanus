@@ -18,8 +18,7 @@ package net.sourceforge.joceanus.jprometheus.lethe.threads;
 
 import java.io.File;
 
-import net.sourceforge.joceanus.jgordianknot.manager.GordianHashManager;
-import net.sourceforge.joceanus.jgordianknot.zip.GordianZipReadFile;
+import net.sourceforge.joceanus.jgordianknot.api.impl.GordianSecurityManager;
 import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceManager;
 import net.sourceforge.joceanus.jmetis.threads.MetisThread;
 import net.sourceforge.joceanus.jmetis.threads.MetisThreadManager;
@@ -87,7 +86,7 @@ public class PrometheusThreadCreateXmlFile<T extends DataSet<T, E>, E extends En
     public Void performTask(final MetisToolkit pToolkit) throws OceanusException {
         /* Access the thread manager */
         final MetisThreadManager myManager = pToolkit.getThreadManager();
-        final GordianHashManager mySecurity = pToolkit.getSecurityManager();
+        final GordianSecurityManager mySecurity = pToolkit.getSecurityManager();
         boolean doDelete = false;
         File myFile = null;
 
@@ -129,7 +128,9 @@ public class PrometheusThreadCreateXmlFile<T extends DataSet<T, E>, E extends En
             }
 
             /* Set the standard backup name */
-            myFile = new File(myName.toString() + GordianZipReadFile.ZIPFILE_EXT);
+            myFile = new File(myName.toString() + (isSecure
+                                                   ? GordianSecurityManager.SECUREZIPFILE_EXT
+                                                   : GordianSecurityManager.ZIPFILE_EXT));
 
             /* Access the data */
             final T myOldData = theControl.getData();

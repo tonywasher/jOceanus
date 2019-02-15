@@ -18,8 +18,7 @@ package net.sourceforge.joceanus.jprometheus.lethe.threads;
 
 import java.io.File;
 
-import net.sourceforge.joceanus.jgordianknot.manager.GordianHashManager;
-import net.sourceforge.joceanus.jgordianknot.zip.GordianZipReadFile;
+import net.sourceforge.joceanus.jgordianknot.api.impl.GordianSecurityManager;
 import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceManager;
 import net.sourceforge.joceanus.jmetis.threads.MetisThread;
 import net.sourceforge.joceanus.jmetis.threads.MetisThreadManager;
@@ -67,7 +66,7 @@ public class PrometheusThreadLoadXmlFile<T extends DataSet<T, E>, E extends Enum
     public T performTask(final MetisToolkit pToolkit) throws OceanusException {
         /* Access the thread manager */
         final MetisThreadManager myManager = pToolkit.getThreadManager();
-        final GordianHashManager mySecurity = pToolkit.getSecurityManager();
+        final GordianSecurityManager mySecurity = pToolkit.getSecurityManager();
 
         /* Initialise the status window */
         myManager.initTask(getTaskName());
@@ -83,7 +82,7 @@ public class PrometheusThreadLoadXmlFile<T extends DataSet<T, E>, E extends Enum
         final TethysFileSelector myDialog = pToolkit.getGuiFactory().newFileSelector();
         myDialog.setTitle(TASK_SELECTFILE);
         myDialog.setInitialDirectory(myBackupDir);
-        myDialog.setExtension(GordianZipReadFile.ZIPFILE_EXT);
+        myDialog.setExtension(GordianSecurityManager.SECUREZIPFILE_EXT);
         final File myFile = myDialog.selectFile();
 
         /* If we did not select a file */

@@ -21,8 +21,6 @@ import java.io.BufferedOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
@@ -38,8 +36,6 @@ import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
 import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
 import org.xml.sax.SAXException;
 
 import net.sourceforge.joceanus.jmetis.service.sheet.MetisSheetException;
@@ -173,6 +169,7 @@ public final class MetisOdfLoader {
         try (ZipInputStream myZipStream = new ZipInputStream(pInput)) {
             /* Create the Document builder */
             final DocumentBuilderFactory myFactory = DocumentBuilderFactory.newInstance();
+            myFactory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
             myFactory.setNamespaceAware(true);
             final DocumentBuilder myBuilder = myFactory.newDocumentBuilder();
 
@@ -181,15 +178,15 @@ public final class MetisOdfLoader {
                 /* Read next entry */
                 final ZipEntry myEntry = myZipStream.getNextEntry();
 
+                /* If this is EOF break the loop */
+                if (myEntry == null) {
+                    break;
+                }
+
                 /* If we have found the contents */
                 if (FILE_CONTENT.equals(myEntry.getName())) {
                     /* Parse the contents and return the document */
                     return myBuilder.parse(new WrapInputStream(myZipStream));
-                }
-
-                /* If this is EOF break the loop */
-                if (myEntry == null) {
-                    break;
                 }
             }
 
@@ -396,14 +393,14 @@ public final class MetisOdfLoader {
         }
 
         @Override
-        public void mark(final int pReadLimit) {
+        public synchronized void mark(final int pReadLimit) {
             if (!isClosed) {
                 theStream.mark(pReadLimit);
             }
         }
 
         @Override
-        public void reset() throws IOException {
+        public synchronized void reset() throws IOException {
             /* If we are already closed then throw IO Exception */
             if (isClosed) {
                 throw new IOException(ERROR_CLOSED);

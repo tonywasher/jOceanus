@@ -18,8 +18,7 @@ package net.sourceforge.joceanus.jthemis.threads;
 
 import java.io.File;
 
-import net.sourceforge.joceanus.jgordianknot.manager.GordianHashManager;
-import net.sourceforge.joceanus.jgordianknot.zip.GordianZipReadFile;
+import net.sourceforge.joceanus.jgordianknot.api.impl.GordianSecurityManager;
 import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceManager;
 import net.sourceforge.joceanus.jmetis.threads.MetisThread;
 import net.sourceforge.joceanus.jmetis.threads.MetisThreadManager;
@@ -46,7 +45,7 @@ public class ThemisSubversionRestore
         /* Access details from toolkit */
         final MetisThreadManager myManager = pToolkit.getThreadManager();
         final MetisPreferenceManager myPreferenceMgr = pToolkit.getPreferenceManager();
-        final GordianHashManager mySecureMgr = pToolkit.getSecurityManager();
+        final GordianSecurityManager mySecureMgr = pToolkit.getSecurityManager();
 
         /* Access the BackUp preferences */
         final ThemisSvnPreferences myPreferences = myPreferenceMgr.getPreferenceSet(ThemisSvnPreferences.class);
@@ -60,7 +59,7 @@ public class ThemisSubversionRestore
         final TethysFileSelector myDialog = pToolkit.getGuiFactory().newFileSelector();
         myDialog.setTitle("Select Backup to restore");
         myDialog.setInitialDirectory(myBackupDir);
-        myDialog.setExtension(GordianZipReadFile.ZIPFILE_EXT);
+        myDialog.setExtension(GordianSecurityManager.SECUREZIPFILE_EXT);
         final File myFile = myDialog.selectFile();
 
         /* If we did not select a file */
@@ -72,8 +71,8 @@ public class ThemisSubversionRestore
         /* Determine the name of the repository */
         String myName = myFile.getName();
         myName = myName.substring(myPrefix.length());
-        if (myName.endsWith(GordianZipReadFile.ZIPFILE_EXT)) {
-            myName = myName.substring(0, myName.length() - GordianZipReadFile.ZIPFILE_EXT.length());
+        if (myName.endsWith(GordianSecurityManager.SECUREZIPFILE_EXT)) {
+            myName = myName.substring(0, myName.length() - GordianSecurityManager.SECUREZIPFILE_EXT.length());
         }
         myRepo = new File(myRepo.getPath(), myName);
 

@@ -190,7 +190,7 @@ public class MetisField<T extends MetisFieldItem>
                 }
                 break;
             default:
-                if (theMaxLength != MetisFieldSet.FIELD_NO_MAXLENGTH) {
+                if (!theMaxLength.equals(MetisFieldSet.FIELD_NO_MAXLENGTH)) {
                     throw new IllegalArgumentException("Length allowed only for String/Array");
                 }
                 break;

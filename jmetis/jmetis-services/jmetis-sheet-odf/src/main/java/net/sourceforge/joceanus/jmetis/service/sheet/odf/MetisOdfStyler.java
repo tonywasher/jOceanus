@@ -464,32 +464,6 @@ public class MetisOdfStyler {
     }
 
     /**
-     * Define a moneyStyle.
-     * @param pStyleName the style name
-     * @param pValue the value
-     */
-    //private void createMoneyStyle(final String pStyleName,
-    //                              final TethysMoney pValue) {
-    //    /* Create the Money Cell Style */
-    //    final Element myStyle = theParser.newElement(MetisOdfNumberItem.NUMBERSTYLE);
-    //    theParser.setAttribute(myStyle, MetisOdfStyleItem.NAME, pStyleName);
-    //    theStyles.appendChild(myStyle)//;
-
-        /* Define the text properties */
-        //final Element myText = theParser.newElement(MetisOdfNumberItem.TEXT);
-        //myText.setTextContent(pValue.getCurrency().getSymbol());
-        //myStyle.appendChild(myText);
-
-        /* Define the number properties */
-        //final Element myNumber = theParser.newElement(MetisOdfNumberItem.NUMBER);
-        //myStyle.appendChild(myNumber);
-        //final int myDecimals = pValue.scale();
-        //theParser.setAttribute(myNumber, MetisOdfNumberItem.DECPLACES, myDecimals);
-        //theParser.setAttribute(myNumber, MetisOdfNumberItem.MININTDIGITS, 1);
-        //theParser.setAttribute(myNumber, MetisOdfNumberItem.GROUPING, Boolean.TRUE);
-    //}
-
-    /**
      * Define a priceStyle.
      * @param pStyleName the style name
      * @param pValue the value
@@ -544,7 +518,7 @@ public class MetisOdfStyler {
         if (pNegative) {
             /* Make the format red */
             final Element myProperties = theParser.newElement(MetisOdfStyleItem.TEXTPROPS);
-            theParser.setAttribute(myProperties, MetisOdfStyleItem.COLOR, "#ff0000");
+            theParser.setAttribute(myProperties, MetisOdfStyleItem.COLOR, COLOR_NEG);
             myStyle.appendChild(myProperties);
         }
 
@@ -701,7 +675,7 @@ public class MetisOdfStyler {
      * @param pType the cell type
      * @return the alignment
      */
-    private String getStyleAlignment(final MetisSheetCellStyleType pType) {
+    private static String getStyleAlignment(final MetisSheetCellStyleType pType) {
         switch (pType) {
             case HEADER:
             case BOOLEAN:
@@ -719,7 +693,7 @@ public class MetisOdfStyler {
      * @param pType the cell type
      * @return the font
      */
-    private String getStyleFont(final MetisSheetCellStyleType pType) {
+    private static String getStyleFont(final MetisSheetCellStyleType pType) {
         switch (pType) {
             case HEADER:
             case BOOLEAN:

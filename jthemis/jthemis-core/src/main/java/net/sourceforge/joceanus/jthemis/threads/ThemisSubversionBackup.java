@@ -16,7 +16,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jthemis.threads;
 
-import net.sourceforge.joceanus.jgordianknot.manager.GordianHashManager;
+import net.sourceforge.joceanus.jgordianknot.api.impl.GordianSecurityManager;
 import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceManager;
 import net.sourceforge.joceanus.jmetis.threads.MetisThread;
 import net.sourceforge.joceanus.jmetis.threads.MetisThreadManager;
@@ -39,7 +39,7 @@ public class ThemisSubversionBackup
         /* Access details from toolkit */
         final MetisThreadManager myManager = pToolkit.getThreadManager();
         final MetisPreferenceManager myPreferences = pToolkit.getPreferenceManager();
-        final GordianHashManager mySecureMgr = pToolkit.getSecurityManager();
+        final GordianSecurityManager mySecureMgr = pToolkit.getSecurityManager();
 
         /* Create backup */
         final ThemisSvnBackup myAccess = new ThemisSvnBackup(myManager, myPreferences);

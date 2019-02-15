@@ -27,5 +27,5 @@ module jgordianknot.javafx {
     requires jtethys.javafx;
 
     /* Exports */
-    exports net.sourceforge.joceanus.jgordianknot.manager.javafx;
+    exports net.sourceforge.joceanus.jgordianknot.api.javafx;
 }

@@ -55,11 +55,6 @@ class MetisOdfRowStore {
     private final TethysDataFormatter theFormatter;
 
     /**
-     * Is the store readOnly?
-     */
-    private final boolean isReadOnly;
-
-    /**
      * Array of hiddens.
      */
     private Boolean[] theHiddens;
@@ -91,7 +86,6 @@ class MetisOdfRowStore {
         theFormatter = theSheet.getFormatter();
         theHiddens = new Boolean[ROW_EXPAND];
         theRows = new MetisOdfCellStore[ROW_EXPAND];
-        isReadOnly = true;
     }
 
     /**
@@ -111,7 +105,6 @@ class MetisOdfRowStore {
         theNumCols = pNumCols;
         theHiddens = new Boolean[theNumRows];
         theRows = new MetisOdfCellStore[theNumRows];
-        isReadOnly = false;
     }
 
     /**

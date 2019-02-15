@@ -23,11 +23,12 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import net.sourceforge.joceanus.jgordianknot.crypto.GordianKeySetHash;
-import net.sourceforge.joceanus.jgordianknot.manager.GordianHashManager;
-import net.sourceforge.joceanus.jgordianknot.zip.GordianZipFileContents;
-import net.sourceforge.joceanus.jgordianknot.zip.GordianZipFileEntry;
-import net.sourceforge.joceanus.jgordianknot.zip.GordianZipReadFile;
+import net.sourceforge.joceanus.jgordianknot.api.impl.GordianSecurityManager;
+import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetHash;
+import net.sourceforge.joceanus.jgordianknot.api.zip.GordianZipFactory;
+import net.sourceforge.joceanus.jgordianknot.api.zip.GordianZipFileContents;
+import net.sourceforge.joceanus.jgordianknot.api.zip.GordianZipFileEntry;
+import net.sourceforge.joceanus.jgordianknot.api.zip.GordianZipReadFile;
 import net.sourceforge.joceanus.jmetis.profile.MetisProfile;
 import net.sourceforge.joceanus.jmetis.service.sheet.MetisSheetProvider;
 import net.sourceforge.joceanus.jmetis.service.sheet.MetisSheetWorkBook;
@@ -51,7 +52,7 @@ public abstract class PrometheusSheetReader<T extends DataSet<T, ?>> {
     /**
      * The security manager.
      */
-    private final GordianHashManager theSecurityMgr;
+    private final GordianSecurityManager theSecurityMgr;
 
     /**
      * Spreadsheet.
@@ -74,7 +75,7 @@ public abstract class PrometheusSheetReader<T extends DataSet<T, ?>> {
      * @param pSecureMgr the security manager
      */
     public PrometheusSheetReader(final MetisThreadStatusReport pReport,
-                                 final GordianHashManager pSecureMgr) {
+                                 final GordianSecurityManager pSecureMgr) {
         theReport = pReport;
         theSecurityMgr = pSecureMgr;
     }
@@ -125,7 +126,8 @@ public abstract class PrometheusSheetReader<T extends DataSet<T, ?>> {
         theData = pData;
 
         /* Access the zip file */
-        final GordianZipReadFile myFile = new GordianZipReadFile(pFile);
+        final GordianZipFactory myZips = theSecurityMgr.getSecurityFactory().getZipFactory();
+        final GordianZipReadFile myFile = myZips.openZipFile(pFile);
 
         /* Obtain the hash bytes from the file */
         final byte[] myHashBytes = myFile.getHashBytes();
@@ -168,7 +170,7 @@ public abstract class PrometheusSheetReader<T extends DataSet<T, ?>> {
     public void loadEntry(final GordianZipReadFile pFile,
                           final GordianZipFileEntry pEntry) throws OceanusException {
         /* Protect the workbook retrieval */
-        try (InputStream myStream = pFile.getInputStream(pEntry)) {
+        try (InputStream myStream = pFile.createInputStream(pEntry)) {
             /* Obtain the active profile */
             final MetisProfile myTask = theReport.getActiveTask();
             myTask.startTask("Parsing");

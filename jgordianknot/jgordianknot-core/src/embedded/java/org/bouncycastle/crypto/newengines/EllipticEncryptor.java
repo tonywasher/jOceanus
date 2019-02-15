@@ -17,6 +17,7 @@ import org.bouncycastle.math.ec.ECPoint;
 
 /**
  * Elliptic curve encryptor.
+ * Based on https://onlinelibrary.wiley.com/doi/pdf/10.1002/sec.1702
  */
 public class EllipticEncryptor {
     /**

@@ -18,7 +18,7 @@ package net.sourceforge.joceanus.jprometheus.lethe.sheets;
 
 import java.io.File;
 
-import net.sourceforge.joceanus.jgordianknot.manager.GordianHashManager;
+import net.sourceforge.joceanus.jgordianknot.api.impl.GordianSecurityManager;
 import net.sourceforge.joceanus.jmetis.service.sheet.MetisSheetWorkBookType;
 import net.sourceforge.joceanus.jmetis.threads.MetisThreadStatusReport;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataSet;
@@ -42,7 +42,7 @@ public abstract class PrometheusSpreadSheet<T extends DataSet<T, ?>> {
      * @return the sheet reader
      */
     protected abstract PrometheusSheetReader<T> getSheetReader(MetisThreadStatusReport pReport,
-                                                               GordianHashManager pSecureMgr);
+                                                               GordianSecurityManager pSecureMgr);
 
     /**
      * Obtain a sheet writer.
@@ -60,7 +60,7 @@ public abstract class PrometheusSpreadSheet<T extends DataSet<T, ?>> {
      * @throws OceanusException on error
      */
     public void loadBackup(final MetisThreadStatusReport pReport,
-                           final GordianHashManager pSecureMgr,
+                           final GordianSecurityManager pSecureMgr,
                            final T pData,
                            final File pFile) throws OceanusException {
         /* Create a sheet reader object */

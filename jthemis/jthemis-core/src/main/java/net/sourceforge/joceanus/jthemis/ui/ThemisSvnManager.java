@@ -18,7 +18,7 @@ package net.sourceforge.joceanus.jthemis.ui;
 
 import java.util.Iterator;
 
-import net.sourceforge.joceanus.jgordianknot.manager.GordianHashManager;
+import net.sourceforge.joceanus.jgordianknot.api.impl.GordianSecurityManager;
 import net.sourceforge.joceanus.jmetis.atlas.ui.MetisPreferenceView;
 import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceManager;
 import net.sourceforge.joceanus.jmetis.threads.MetisThread;
@@ -74,7 +74,7 @@ public abstract class ThemisSvnManager {
     /**
      * The Security Manager.
      */
-    private final GordianHashManager theSecureMgr;
+    private final GordianSecurityManager theSecureMgr;
 
     /**
      * The Thread Manager.
@@ -195,7 +195,7 @@ public abstract class ThemisSvnManager {
      * Obtain secure manager.
      * @return the secure manager
      */
-    protected GordianHashManager getSecureMgr() {
+    protected GordianSecurityManager getSecureMgr() {
         return theSecureMgr;
     }
 

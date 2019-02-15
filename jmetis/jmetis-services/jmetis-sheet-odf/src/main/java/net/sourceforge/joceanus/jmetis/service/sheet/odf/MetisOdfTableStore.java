@@ -117,25 +117,22 @@ class MetisOdfTableStore {
 
     /**
      * Build maps.
-     * @throws OceanusException on error
-     */
-    void loadMaps() throws OceanusException {
+      */
+    void loadMaps() {
         buildSheetMap();
         buildRangeMap();
     }
 
     /**
      * Build sheet map.
-     * @throws OceanusException on error
      */
-    private void buildSheetMap() throws OceanusException {
+    private void buildSheetMap() {
         /* Access the list of tables */
         final List<Element> mySheets = theParser.getAllNamedChildren(theSpreadSheet, MetisOdfTableItem.TABLE);
 
         /* Loop through the list */
         for (Element mySheet : mySheets) {
             /* Store the sheet in the map */
-            //final MetisOdfSheetCore myCore = new MetisOdfSheetCore(this, theNumTables++, mySheet);
             theSheets.put(theParser.getAttribute(mySheet, MetisOdfTableItem.NAME), mySheet);
         }
     }

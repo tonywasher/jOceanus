@@ -37,11 +37,12 @@ import org.tmatesoft.svn.core.wc.admin.SVNAdminClient;
 import org.tmatesoft.svn.core.wc.admin.SVNAdminEvent;
 import org.tmatesoft.svn.core.wc.admin.SVNAdminEventAction;
 
-import net.sourceforge.joceanus.jgordianknot.crypto.GordianKeySetHash;
-import net.sourceforge.joceanus.jgordianknot.manager.GordianHashManager;
-import net.sourceforge.joceanus.jgordianknot.zip.GordianZipFileEntry;
-import net.sourceforge.joceanus.jgordianknot.zip.GordianZipReadFile;
-import net.sourceforge.joceanus.jgordianknot.zip.GordianZipWriteFile;
+import net.sourceforge.joceanus.jgordianknot.api.impl.GordianSecurityManager;
+import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetHash;
+import net.sourceforge.joceanus.jgordianknot.api.zip.GordianZipFactory;
+import net.sourceforge.joceanus.jgordianknot.api.zip.GordianZipFileEntry;
+import net.sourceforge.joceanus.jgordianknot.api.zip.GordianZipReadFile;
+import net.sourceforge.joceanus.jgordianknot.api.zip.GordianZipWriteFile;
 import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceManager;
 import net.sourceforge.joceanus.jmetis.threads.MetisThreadStatusReport;
 import net.sourceforge.joceanus.jmetis.threads.MetisToolkit;
@@ -130,12 +131,13 @@ public class ThemisSvnBackup {
      * @throws OceanusException on error
      */
     public void loadRepository(final File pRepository,
-                               final GordianHashManager pSecurity,
+                               final GordianSecurityManager pSecurity,
                                final File pZipFile) throws OceanusException {
         /* Protect against exceptions */
         try {
             /* Open file */
-            final GordianZipReadFile myFile = new GordianZipReadFile(pZipFile);
+            final GordianZipFactory myZips = pSecurity.getSecurityFactory().getZipFactory();
+            final GordianZipReadFile myFile = myZips.openZipFile(pZipFile);
 
             /* Install an event handler */
             theAdminClient.setEventHandler(new SubversionHandler());
@@ -160,14 +162,15 @@ public class ThemisSvnBackup {
             theStatus.setNumSteps(myNumRevs.intValue());
 
             /* Access the input stream for the relevant file */
-            final InputStream myStream = myFile.getInputStream(myEntry);
+            try (InputStream myStream = myFile.createInputStream(myEntry)) {
+                /* Re-create the repository */
+                theAdminClient.doCreateRepository(pRepository, null, true, true);
 
-            /* Re-create the repository */
-            theAdminClient.doCreateRepository(pRepository, null, true, true);
-
-            /* Read the data from the input stream */
-            theAdminClient.doLoad(pRepository, myStream);
-        } catch (SVNException e) {
+                /* Read the data from the input stream */
+                theAdminClient.doLoad(pRepository, myStream);
+            }
+        } catch (SVNException
+                | IOException e) {
             throw new ThemisIOException("Failed", e);
         }
     }
@@ -199,7 +202,7 @@ public class ThemisSvnBackup {
      * @param pBackupDir the backup directory
      * @throws OceanusException on error
      */
-    private void backUpRepository(final GordianHashManager pManager,
+    private void backUpRepository(final GordianSecurityManager pManager,
                                   final File pRepository,
                                   final File pBackupDir) throws OceanusException {
         /* Access the name of the repository */
@@ -224,7 +227,7 @@ public class ThemisSvnBackup {
             revLast = myRepo.getDatedRevision(new Date());
 
             /* Determine the name of the zip file */
-            myZipName = new File(pBackupDir.getPath(), myPrefix + myName + GordianZipReadFile.ZIPFILE_EXT);
+            myZipName = new File(pBackupDir.getPath(), myPrefix + myName + GordianSecurityManager.SECUREZIPFILE_EXT);
 
             /* If the backup file exists */
             if (myZipName.exists()) {
@@ -255,8 +258,9 @@ public class ThemisSvnBackup {
 
         /* Protect against exceptions */
         boolean writeFailed = false;
-        try (GordianZipWriteFile myZipFile = new GordianZipWriteFile(myHash, myZipName);
-             OutputStream myStream = myZipFile.getOutputStream(myEntryName, true)) {
+        final GordianZipFactory myZips = pManager.getSecurityFactory().getZipFactory();
+        try (GordianZipWriteFile myZipFile = myZips.createZipFile(myHash, myZipName);
+             OutputStream myStream = myZipFile.createOutputStream(myEntryName, true)) {
             /* Access the current entry and set the number of revisions */
             final GordianZipFileEntry myEntry = myZipFile.getCurrentEntry();
             myEntry.setUserLongProperty(PROP_NUMREV, revLast);
@@ -288,7 +292,7 @@ public class ThemisSvnBackup {
      * @param pManager the secure manager
      * @throws OceanusException on error
      */
-    public void backUpRepositories(final GordianHashManager pManager) throws OceanusException {
+    public void backUpRepositories(final GordianSecurityManager pManager) throws OceanusException {
         /* Install an event handler */
         theAdminClient.setEventHandler(new SubversionHandler());
 
