@@ -24,8 +24,8 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.event.TethysEventManager;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventProvider;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import net.sourceforge.joceanus.jtethys.logger.TethysLogManager;
+import net.sourceforge.joceanus.jtethys.logger.TethysLogger;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
@@ -42,7 +42,7 @@ public class MetisPreferenceManager
     /**
      * Logger.
      */
-    private static final Logger LOGGER = LogManager.getLogger(MetisPreferenceManager.class);
+    private static final TethysLogger LOGGER = TethysLogManager.getLogger(MetisPreferenceManager.class);
 
     /**
      * Report fields.

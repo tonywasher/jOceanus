@@ -16,8 +16,6 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jtethys.ui.javafx;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
@@ -38,6 +36,8 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
 
+import net.sourceforge.joceanus.jtethys.logger.TethysLogManager;
+import net.sourceforge.joceanus.jtethys.logger.TethysLogger;
 import net.sourceforge.joceanus.jtethys.ui.TethysHTMLManager;
 
 import netscape.javascript.JSObject;
@@ -50,7 +50,7 @@ public class TethysFXHTMLManager
     /**
      * The logger.
      */
-    private static final Logger LOGGER = LogManager.getLogger(TethysFXHTMLManager.class);
+    private static final TethysLogger LOGGER = TethysLogManager.getLogger(TethysFXHTMLManager.class);
 
     /**
      * Click event type.

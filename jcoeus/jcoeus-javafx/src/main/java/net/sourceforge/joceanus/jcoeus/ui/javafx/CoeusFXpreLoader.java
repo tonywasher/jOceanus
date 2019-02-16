@@ -22,8 +22,8 @@ import net.sourceforge.joceanus.jcoeus.ui.CoeusApp;
 import net.sourceforge.joceanus.jmetis.atlas.ui.javafx.MetisFXSplash;
 import net.sourceforge.joceanus.jmetis.profile.MetisProgram;
 import net.sourceforge.joceanus.jtethys.OceanusException;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import net.sourceforge.joceanus.jtethys.logger.TethysLogManager;
+import net.sourceforge.joceanus.jtethys.logger.TethysLogger;
 
 /**
  * Coeus javaFX preLoader.
@@ -33,7 +33,7 @@ public class CoeusFXpreLoader
     /**
      * Logger.
      */
-    private static final Logger LOGGER = LogManager.getLogger(CoeusFXpreLoader.class);
+    private static final TethysLogger LOGGER = TethysLogManager.getLogger(CoeusFXpreLoader.class);
 
     /**
      * The splashPane.

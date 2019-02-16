@@ -34,8 +34,9 @@ import net.sourceforge.joceanus.jmoneywise.lethe.views.AnalysisFilter;
 import net.sourceforge.joceanus.jmoneywise.lethe.views.AnalysisFilter.SecurityFilter;
 import net.sourceforge.joceanus.jtethys.date.TethysDateRange;
 import net.sourceforge.joceanus.jtethys.decimal.TethysMoney;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import net.sourceforge.joceanus.jtethys.logger.TethysLogManager;
+import net.sourceforge.joceanus.jtethys.logger.TethysLogger;
+
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -49,7 +50,7 @@ public class MoneyWiseReportMarketGrowth
     /**
      * Logger.
      */
-    private static final Logger LOGGER = LogManager.getLogger(MoneyWiseReportMarketGrowth.class);
+    private static final TethysLogger LOGGER = TethysLogManager.getLogger(MoneyWiseReportMarketGrowth.class);
 
     /**
      * The Title text.
@@ -283,7 +284,7 @@ public class MoneyWiseReportMarketGrowth
         myCalcGrowth.addAmount(myAdjust);
         final TethysMoney myProfit = myValues.getMoneyValue(SecurityAttribute.MARKETPROFIT);
         if (!myProfit.equals(myCalcGrowth)) {
-            LOGGER.error("Incorrect profit calculation for security {} of {}", pBucket.getName(), myCalcGrowth);
+            LOGGER.error("Incorrect profit calculation for security <%s> of <%s>", pBucket.getName(), myCalcGrowth);
         }
 
         /* Check market growth */
@@ -292,7 +293,7 @@ public class MoneyWiseReportMarketGrowth
         myCalcGrowth.subtractAmount(myValues.getMoneyValue(SecurityAttribute.CURRENCYFLUCT));
         final TethysMoney myGrowth = myValues.getMoneyValue(SecurityAttribute.MARKETGROWTH);
         if (!myGrowth.equals(myCalcGrowth)) {
-            LOGGER.error("Incorrect growth calculation for portfolio {} of {}", pBucket.getName(), myCalcGrowth);
+            LOGGER.error("Incorrect growth calculation for portfolio <%s> of <%s>", pBucket.getName(), myCalcGrowth);
         }
     }
 
@@ -311,7 +312,7 @@ public class MoneyWiseReportMarketGrowth
         myCalcGrowth.addAmount(myAdjust);
         final TethysMoney myProfit = myValues.getMoneyValue(SecurityAttribute.MARKETPROFIT);
         if (!myProfit.equals(myCalcGrowth)) {
-            LOGGER.error("Incorrect profit calculation for security {} of {}", pBucket.getDecoratedName(), myCalcGrowth);
+            LOGGER.error("Incorrect profit calculation for security <%s> of <%s>", pBucket.getDecoratedName(), myCalcGrowth);
         }
 
         /* Check market growth */
@@ -323,7 +324,7 @@ public class MoneyWiseReportMarketGrowth
         }
         final TethysMoney myGrowth = myValues.getMoneyValue(SecurityAttribute.MARKETGROWTH);
         if (!myGrowth.equals(myCalcGrowth)) {
-            LOGGER.error("Incorrect growth calculation for security {} of {}", pBucket.getDecoratedName(), myCalcGrowth);
+            LOGGER.error("Incorrect growth calculation for security <%s> of <%s>", pBucket.getDecoratedName(), myCalcGrowth);
         }
     }
 

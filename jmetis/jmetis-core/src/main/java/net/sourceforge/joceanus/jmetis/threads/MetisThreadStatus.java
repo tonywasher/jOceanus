@@ -16,8 +16,8 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmetis.threads;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import net.sourceforge.joceanus.jtethys.logger.TethysLogManager;
+import net.sourceforge.joceanus.jtethys.logger.TethysLogger;
 
 /**
  * Thread Status.
@@ -26,7 +26,7 @@ public class MetisThreadStatus {
     /**
      * Logger.
      */
-    private static final Logger LOGGER = LogManager.getLogger(MetisThreadStatus.class);
+    private static final TethysLogger LOGGER = TethysLogManager.getLogger(MetisThreadStatus.class);
 
     /**
      * Default Number of steps/stages.
@@ -245,7 +245,7 @@ public class MetisThreadStatus {
         theNumSteps = -1;
         theStepsDone = -1;
         if (theStagesDone != theNumStages) {
-            LOGGER.info("Incorrect # of stages for Task: {} ({}/{})", theTask, theStagesDone, theNumStages);
+            LOGGER.info("Incorrect # of stages for Task: <%s> (%d/%d)", theTask, theStagesDone, theNumStages);
         }
     }
 }

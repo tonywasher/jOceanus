@@ -20,7 +20,6 @@ module jmetis.core {
     requires java.xml;
 
     /* External libraries */
-    requires org.apache.logging.log4j;
     requires org.apache.httpcomponents.httpcore;
     requires org.apache.httpcomponents.httpclient;
     requires org.json;

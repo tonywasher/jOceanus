@@ -18,9 +18,6 @@ module jprometheus.swing {
     /* Java Libraries */
     requires java.desktop;
 
-    /* External Libraries */
-    requires org.apache.logging.log4j;
-
     //* jOceanus */
     requires jprometheus.core;
     requires jmetis.core;

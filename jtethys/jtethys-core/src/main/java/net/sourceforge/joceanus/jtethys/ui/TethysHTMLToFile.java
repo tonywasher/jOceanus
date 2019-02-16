@@ -21,8 +21,6 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.nio.charset.StandardCharsets;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Document.OutputSettings;
@@ -32,6 +30,8 @@ import org.jsoup.select.Elements;
 
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.TethysDataException;
+import net.sourceforge.joceanus.jtethys.logger.TethysLogManager;
+import net.sourceforge.joceanus.jtethys.logger.TethysLogger;
 
 /**
  * HTML to File.
@@ -40,7 +40,7 @@ public class TethysHTMLToFile {
     /**
      * The logger.
      */
-    private static final Logger LOGGER = LogManager.getLogger(TethysHTMLToFile.class);
+    private static final TethysLogger LOGGER = TethysLogManager.getLogger(TethysHTMLToFile.class);
 
     /**
      * Link element name.

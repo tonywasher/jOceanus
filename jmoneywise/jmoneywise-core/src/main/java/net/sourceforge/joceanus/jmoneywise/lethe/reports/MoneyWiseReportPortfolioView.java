@@ -34,8 +34,9 @@ import net.sourceforge.joceanus.jmoneywise.lethe.views.AnalysisFilter;
 import net.sourceforge.joceanus.jmoneywise.lethe.views.AnalysisFilter.SecurityFilter;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
 import net.sourceforge.joceanus.jtethys.decimal.TethysMoney;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import net.sourceforge.joceanus.jtethys.logger.TethysLogManager;
+import net.sourceforge.joceanus.jtethys.logger.TethysLogger;
+
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -49,7 +50,7 @@ public class MoneyWiseReportPortfolioView
     /**
      * Logger.
      */
-    private static final Logger LOGGER = LogManager.getLogger(MoneyWiseReportPortfolioView.class);
+    private static final TethysLogger LOGGER = TethysLogManager.getLogger(MoneyWiseReportPortfolioView.class);
 
     /**
      * The Title text.
@@ -243,7 +244,7 @@ public class MoneyWiseReportPortfolioView
         myCalcProfit.addAmount(myValues.getMoneyValue(SecurityAttribute.GROWTHADJUST));
         final TethysMoney myProfit = myValues.getMoneyValue(SecurityAttribute.PROFIT);
         if (!myProfit.equals(myCalcProfit)) {
-            LOGGER.error("Incorrect profit calculation for portfolio {}", pBucket.getName());
+            LOGGER.error("Incorrect profit calculation for portfolio <%s>", pBucket.getName());
         }
     }
 
@@ -260,7 +261,7 @@ public class MoneyWiseReportPortfolioView
         myCalcProfit.addAmount(myValues.getMoneyValue(SecurityAttribute.GROWTHADJUST));
         final TethysMoney myProfit = myValues.getMoneyValue(SecurityAttribute.PROFIT);
         if (!myProfit.equals(myCalcProfit)) {
-            LOGGER.error("Incorrect profit calculation for security {}", pBucket.getDecoratedName());
+            LOGGER.error("Incorrect profit calculation for security <%s>", pBucket.getDecoratedName());
         }
     }
 

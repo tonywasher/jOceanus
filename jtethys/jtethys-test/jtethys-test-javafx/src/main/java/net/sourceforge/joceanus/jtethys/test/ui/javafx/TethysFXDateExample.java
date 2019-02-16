@@ -32,7 +32,6 @@ import javafx.collections.ObservableList;
 import javafx.scene.Scene;
 import javafx.scene.layout.Region;
 import javafx.stage.Stage;
-import net.sourceforge.joceanus.jtethys.TethysLogConfig;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
 import net.sourceforge.joceanus.jtethys.date.TethysDateFormatter;
 import net.sourceforge.joceanus.jtethys.date.TethysDateRange;
@@ -233,9 +232,6 @@ public final class TethysFXDateExample
      * @return the panel
      */
     private TethysFXGridPaneManager makePanel() {
-        /* Configure log4j */
-        TethysLogConfig.configureLog4j();
-
         /* Create the table */
         theTable = theGuiFactory.newTable();
         makeTable();

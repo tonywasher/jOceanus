@@ -18,9 +18,6 @@ package net.sourceforge.joceanus.jgordianknot.test.api.javafx;
 
 import java.util.List;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.scene.Group;
@@ -34,6 +31,8 @@ import net.sourceforge.joceanus.jgordianknot.api.javafx.GordianFXSecurityManager
 import net.sourceforge.joceanus.jgordianknot.test.api.GordianTestSuite;
 import net.sourceforge.joceanus.jgordianknot.test.api.GordianTestSuite.SecurityManagerCreator;
 import net.sourceforge.joceanus.jtethys.OceanusException;
+import net.sourceforge.joceanus.jtethys.logger.TethysLogManager;
+import net.sourceforge.joceanus.jtethys.logger.TethysLogger;
 import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXGuiFactory;
 
 /**
@@ -45,7 +44,7 @@ public class GordianFXTester
     /**
      * Create a logger.
      */
-    private static final Logger LOGGER = LogManager.getLogger(GordianFXTester.class);
+    private static final TethysLogger LOGGER = TethysLogManager.getLogger(GordianFXTester.class);
 
     /**
      * The Test suite.

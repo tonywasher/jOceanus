@@ -26,10 +26,9 @@ import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.SwingUtilities;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
 import net.sourceforge.joceanus.jgordianknot.api.impl.GordianPasswordDialog;
+import net.sourceforge.joceanus.jtethys.logger.TethysLogManager;
+import net.sourceforge.joceanus.jtethys.logger.TethysLogger;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingBorderPaneManager;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingGuiFactory;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingNode;
@@ -42,7 +41,7 @@ public class GordianSwingPasswordDialog
     /**
      * Logger.
      */
-    private static final Logger LOGGER = LogManager.getLogger(GordianSwingPasswordDialog.class);
+    private static final TethysLogger LOGGER = TethysLogManager.getLogger(GordianSwingPasswordDialog.class);
 
     /**
      * Dialog.

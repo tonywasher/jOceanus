@@ -19,9 +19,6 @@ package net.sourceforge.joceanus.jgordianknot.api.javafx;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.FutureTask;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
 import javafx.application.Platform;
 import javafx.scene.Scene;
 import javafx.scene.layout.Region;
@@ -31,6 +28,8 @@ import javafx.stage.StageStyle;
 import javafx.stage.Window;
 
 import net.sourceforge.joceanus.jgordianknot.api.impl.GordianPasswordDialog;
+import net.sourceforge.joceanus.jtethys.logger.TethysLogManager;
+import net.sourceforge.joceanus.jtethys.logger.TethysLogger;
 import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXBorderPaneManager;
 import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXGuiFactory;
 import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXNode;
@@ -53,7 +52,7 @@ public class GordianFXPasswordDialog
     /**
      * Logger.
      */
-    private static final Logger LOGGER = LogManager.getLogger(GordianFXPasswordDialog.class);
+    private static final TethysLogger LOGGER = TethysLogManager.getLogger(GordianFXPasswordDialog.class);
 
     /**
      * The stage.

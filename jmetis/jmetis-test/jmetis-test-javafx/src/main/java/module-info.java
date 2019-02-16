@@ -18,9 +18,6 @@ module jmetis.test.javafx {
     /* Java Libraries */
     requires javafx.graphics;
 
-    /* External libraries */
-    requires org.apache.logging.log4j;
-
     /* jOceanus */
     requires jmetis.core;
     requires jmetis.javafx;

@@ -19,7 +19,6 @@ package net.sourceforge.joceanus.jthemis.sf;
 import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceManager;
 import net.sourceforge.joceanus.jmetis.viewer.MetisViewerManager;
 import net.sourceforge.joceanus.jtethys.OceanusException;
-import net.sourceforge.joceanus.jtethys.TethysLogConfig;
 import net.sourceforge.joceanus.jthemis.sf.data.ThemisSfServer;
 
 /**
@@ -39,7 +38,6 @@ public final class TestSF {
     public static void main(final String[] args) {
         try {
             /* Configure log4j */
-            TethysLogConfig.configureLog4j();
             final MetisViewerManager myViewer = new MetisViewerManager();
             final ThemisSfServer myServer = new ThemisSfServer(new MetisPreferenceManager(myViewer));
             System.exit(0);

@@ -19,11 +19,10 @@ package net.sourceforge.joceanus.jmetis.test.atlas.ui.swing;
 import net.sourceforge.joceanus.jmetis.test.atlas.ui.MetisTestDataTable;
 import net.sourceforge.joceanus.jmetis.threads.swing.MetisSwingToolkit;
 import net.sourceforge.joceanus.jtethys.OceanusException;
+import net.sourceforge.joceanus.jtethys.logger.TethysLogManager;
+import net.sourceforge.joceanus.jtethys.logger.TethysLogger;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingGuiFactory;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingNode;
-
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 import javax.swing.JComponent;
 import javax.swing.JFrame;
@@ -38,7 +37,7 @@ public class MetisSwingTestTable {
     /**
      * Logger.
      */
-    private static final Logger LOGGER = LogManager.getLogger(MetisSwingTestTable.class);
+    private static final TethysLogger LOGGER = TethysLogManager.getLogger(MetisSwingTestTable.class);
 
     /**
      * Toolkit.

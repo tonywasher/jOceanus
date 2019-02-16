@@ -27,13 +27,11 @@ import javax.swing.JFrame;
 import javax.swing.SwingUtilities;
 import javax.swing.WindowConstants;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
-import net.sourceforge.joceanus.jtethys.TethysLogConfig;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
 import net.sourceforge.joceanus.jtethys.date.TethysDateFormatter;
 import net.sourceforge.joceanus.jtethys.date.TethysDateRange;
+import net.sourceforge.joceanus.jtethys.logger.TethysLogManager;
+import net.sourceforge.joceanus.jtethys.logger.TethysLogger;
 import net.sourceforge.joceanus.jtethys.ui.TethysAlignment;
 import net.sourceforge.joceanus.jtethys.ui.TethysDataFormatter;
 import net.sourceforge.joceanus.jtethys.ui.TethysUIEvent;
@@ -115,7 +113,7 @@ public class TethysSwingDateExample {
     /**
      * Logger.
      */
-    private static final Logger LOGGER = LogManager.getLogger(TethysSwingDateExample.class);
+    private static final TethysLogger LOGGER = TethysLogManager.getLogger(TethysSwingDateExample.class);
 
     /**
      * The first date format.
@@ -209,9 +207,6 @@ public class TethysSwingDateExample {
         try {
             /* Create the frame */
             final JFrame myFrame = new JFrame("TethysDate Swing Demo");
-
-            /* Configure log4j */
-            TethysLogConfig.configureLog4j();
 
             /* Create the Example program */
             final TethysSwingDateExample myProgram = new TethysSwingDateExample();

@@ -16,9 +16,9 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jtethys.ui.swing;
 
+import net.sourceforge.joceanus.jtethys.logger.TethysLogManager;
+import net.sourceforge.joceanus.jtethys.logger.TethysLogger;
 import net.sourceforge.joceanus.jtethys.ui.TethysFileSelector;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 import javax.swing.JFileChooser;
 import javax.swing.SwingUtilities;
@@ -35,7 +35,7 @@ public class TethysSwingFileSelector
     /**
      * Logger.
      */
-    private static final Logger LOGGER = LogManager.getLogger(TethysSwingFileSelector.class);
+    private static final TethysLogger LOGGER = TethysLogManager.getLogger(TethysSwingFileSelector.class);
 
     /**
      * Parent frame.

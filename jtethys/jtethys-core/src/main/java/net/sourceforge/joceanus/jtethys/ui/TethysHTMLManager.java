@@ -16,13 +16,12 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jtethys.ui;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.event.TethysEventManager;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventProvider;
+import net.sourceforge.joceanus.jtethys.logger.TethysLogManager;
+import net.sourceforge.joceanus.jtethys.logger.TethysLogger;
 import net.sourceforge.joceanus.jtethys.resource.TethysResourceId;
 import net.sourceforge.joceanus.jtethys.resource.TethysResourceLoader;
 
@@ -40,7 +39,7 @@ public abstract class TethysHTMLManager
     /**
      * The logger.
      */
-    private static final Logger LOGGER = LogManager.getLogger(TethysHTMLManager.class);
+    private static final TethysLogger LOGGER = TethysLogManager.getLogger(TethysHTMLManager.class);
 
     /**
      * Reference Separator.

@@ -37,10 +37,9 @@ import javax.swing.JPanel;
 import javax.swing.SwingConstants;
 import javax.swing.border.Border;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
 import net.sourceforge.joceanus.jtethys.TethysDataConverter;
+import net.sourceforge.joceanus.jtethys.logger.TethysLogManager;
+import net.sourceforge.joceanus.jtethys.logger.TethysLogger;
 import net.sourceforge.joceanus.jtethys.ui.TethysIconId;
 
 /**
@@ -50,7 +49,7 @@ public final class TethysSwingGuiUtils {
     /**
      * Logger.
      */
-    private static final Logger LOGGER = LogManager.getLogger(TethysSwingGuiUtils.class);
+    private static final TethysLogger LOGGER = TethysLogManager.getLogger(TethysSwingGuiUtils.class);
 
     /**
      * Height adjustment for field.

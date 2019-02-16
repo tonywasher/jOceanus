@@ -23,8 +23,8 @@ import net.sourceforge.joceanus.jmetis.profile.MetisProgram;
 import net.sourceforge.joceanus.jmetis.profile.MetisProgram.MetisApplication;
 import net.sourceforge.joceanus.jmetis.threads.javafx.MetisFXToolkit;
 import net.sourceforge.joceanus.jtethys.OceanusException;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import net.sourceforge.joceanus.jtethys.logger.TethysLogManager;
+import net.sourceforge.joceanus.jtethys.logger.TethysLogger;
 
 /**
  * Coeus javaFX StartUp.
@@ -35,7 +35,7 @@ public class Coeus4FX
     /**
      * Logger.
      */
-    private static final Logger LOGGER = LogManager.getLogger(Coeus4FX.class);
+    private static final TethysLogger LOGGER = TethysLogManager.getLogger(Coeus4FX.class);
 
     /**
      * Main panel.

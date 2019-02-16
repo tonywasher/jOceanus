@@ -18,9 +18,6 @@ module jcoeus.javafx {
     /* Java Libraries */
     requires javafx.graphics;
 
-    /* External Libraries */
-    requires org.apache.logging.log4j;
-
     /* jOceanus */
     requires jcoeus.core;
     requires jmetis.core;

@@ -17,7 +17,6 @@
 module jgordianknot.core {
     /* External libraries */
     requires org.bouncycastle.provider;
-    requires org.apache.logging.log4j;
 
     /* jOceanus */
     requires jtethys.core;

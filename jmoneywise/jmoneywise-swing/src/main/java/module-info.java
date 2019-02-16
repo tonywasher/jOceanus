@@ -18,9 +18,6 @@ module jmoneywise.swing {
     /* Java Libraries */
     requires java.desktop;
 
-    /* External Libraries */
-    requires org.apache.logging.log4j;
-
     /* Exports */
     requires jmoneywise.core;
     requires jmetis.core;

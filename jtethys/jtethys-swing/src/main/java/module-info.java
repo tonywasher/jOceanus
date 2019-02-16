@@ -18,9 +18,6 @@ module jtethys.swing {
     /* Java runTime */
     requires java.desktop;
 
-    /* External libraries */
-    requires org.apache.logging.log4j;
-
     /* jOceanus */
     requires jtethys.core;
 

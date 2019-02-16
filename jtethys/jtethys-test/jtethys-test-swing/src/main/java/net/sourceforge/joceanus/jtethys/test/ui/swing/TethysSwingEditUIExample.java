@@ -16,7 +16,6 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jtethys.test.ui.swing;
 
-import javax.swing.Icon;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.SwingUtilities;
@@ -25,12 +24,13 @@ import java.awt.HeadlessException;
 import java.util.Currency;
 import java.util.List;
 
-import net.sourceforge.joceanus.jtethys.TethysLogConfig;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
 import net.sourceforge.joceanus.jtethys.date.TethysDateFormatter;
 import net.sourceforge.joceanus.jtethys.decimal.TethysDecimal;
 import net.sourceforge.joceanus.jtethys.decimal.TethysDecimalFormatter;
 import net.sourceforge.joceanus.jtethys.event.TethysEvent;
+import net.sourceforge.joceanus.jtethys.logger.TethysLogManager;
+import net.sourceforge.joceanus.jtethys.logger.TethysLogger;
 import net.sourceforge.joceanus.jtethys.test.ui.TethysHelperIcon;
 import net.sourceforge.joceanus.jtethys.test.ui.TethysListId;
 import net.sourceforge.joceanus.jtethys.test.ui.TethysScrollUITestHelper;
@@ -65,9 +65,6 @@ import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingNode;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingScrollButtonManager;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingScrollContextMenu;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
 /**
  * Scroll utilities examples.
  */
@@ -75,7 +72,7 @@ public class TethysSwingEditUIExample {
     /**
      * Logger.
      */
-    private static final Logger LOGGER = LogManager.getLogger(TethysSwingEditUIExample.class);
+    private static final TethysLogger LOGGER = TethysLogManager.getLogger(TethysSwingEditUIExample.class);
 
     /**
      * The padding.
@@ -268,9 +265,6 @@ public class TethysSwingEditUIExample {
         try {
             /* Create the frame */
             final JFrame myFrame = new JFrame("SwingEdit Demo");
-
-            /* Configure log4j */
-            TethysLogConfig.configureLog4j();
 
             /* Create the UI */
             final TethysSwingEditUIExample myExample = new TethysSwingEditUIExample();

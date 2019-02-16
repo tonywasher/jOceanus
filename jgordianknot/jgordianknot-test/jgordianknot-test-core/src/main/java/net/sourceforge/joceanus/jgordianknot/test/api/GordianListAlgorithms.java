@@ -22,10 +22,11 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.pqc.jcajce.provider.BouncyCastlePQCProvider;
+
+import net.sourceforge.joceanus.jtethys.logger.TethysLogManager;
+import net.sourceforge.joceanus.jtethys.logger.TethysLogger;
 
 /**
  * Security Test suite - List Algorithms.
@@ -34,7 +35,7 @@ public final class GordianListAlgorithms {
     /**
      * Create a logger.
      */
-    private static final Logger LOGGER = LogManager.getLogger(GordianListAlgorithms.class);
+    private static final TethysLogger LOGGER = TethysLogManager.getLogger(GordianListAlgorithms.class);
 
     /**
      * Constructor.

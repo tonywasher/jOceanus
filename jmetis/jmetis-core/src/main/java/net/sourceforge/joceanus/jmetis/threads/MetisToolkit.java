@@ -40,11 +40,11 @@ import net.sourceforge.joceanus.jmetis.viewer.MetisViewerWindow;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
 import net.sourceforge.joceanus.jtethys.help.TethysHelpWindow;
+import net.sourceforge.joceanus.jtethys.logger.TethysLogManager;
+import net.sourceforge.joceanus.jtethys.logger.TethysLogger;
 import net.sourceforge.joceanus.jtethys.ui.TethysGuiFactory;
 import net.sourceforge.joceanus.jtethys.ui.TethysProgram;
 import net.sourceforge.joceanus.jtethys.ui.TethysValueSet;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 import java.io.File;
 import java.io.IOException;
@@ -58,7 +58,7 @@ public abstract class MetisToolkit {
     /**
      * Logger.
      */
-    private static final Logger LOGGER = LogManager.getLogger(MetisToolkit.class);
+    private static final TethysLogger LOGGER = TethysLogManager.getLogger(MetisToolkit.class);
 
     /**
      * Formatter.

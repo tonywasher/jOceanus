@@ -20,9 +20,9 @@ import net.sourceforge.joceanus.jmetis.MetisIOException;
 import net.sourceforge.joceanus.jmetis.data.MetisDataDelta;
 import net.sourceforge.joceanus.jmetis.data.MetisDataDifference;
 import net.sourceforge.joceanus.jtethys.OceanusException;
+import net.sourceforge.joceanus.jtethys.logger.TethysLogManager;
+import net.sourceforge.joceanus.jtethys.logger.TethysLogger;
 import net.sourceforge.joceanus.jtethys.ui.TethysDataFormatter;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -43,7 +43,7 @@ public class MetisViewerBuilder {
     /**
      * Logger.
      */
-    private static final Logger LOGGER = LogManager.getLogger(MetisViewerBuilder.class);
+    private static final TethysLogger LOGGER = TethysLogManager.getLogger(MetisViewerBuilder.class);
 
     /**
      * Wrap for hex string.

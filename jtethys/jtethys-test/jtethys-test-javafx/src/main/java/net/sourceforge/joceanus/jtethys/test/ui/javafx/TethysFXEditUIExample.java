@@ -24,7 +24,6 @@ import javafx.scene.Scene;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
 
-import net.sourceforge.joceanus.jtethys.TethysLogConfig;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
 import net.sourceforge.joceanus.jtethys.date.TethysDateFormatter;
 import net.sourceforge.joceanus.jtethys.decimal.TethysDecimal;
@@ -255,9 +254,6 @@ public class TethysFXEditUIExample
 
     @Override
     public void start(final Stage pStage) {
-        /* Configure log4j */
-        TethysLogConfig.configureLog4j();
-
         /* Create the panel */
         final Node myMain = buildPanel();
 

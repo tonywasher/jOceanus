@@ -27,15 +27,14 @@ import net.sourceforge.joceanus.jmetis.threads.javafx.MetisFXThreadManager;
 import net.sourceforge.joceanus.jmetis.threads.javafx.MetisFXToolkit;
 import net.sourceforge.joceanus.jmetis.viewer.javafx.MetisFXViewerWindow;
 import net.sourceforge.joceanus.jtethys.OceanusException;
+import net.sourceforge.joceanus.jtethys.logger.TethysLogManager;
+import net.sourceforge.joceanus.jtethys.logger.TethysLogger;
 import net.sourceforge.joceanus.jtethys.ui.TethysUIEvent;
 import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXBorderPaneManager;
 import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXBoxPaneManager;
 import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXButton;
 import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXGuiFactory;
 import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXNode;
-
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 /**
  * Thread Manager Tester.
@@ -45,7 +44,7 @@ public class MetisFXThreadTester
     /**
      * Create a logger.
      */
-    private static final Logger LOGGER = LogManager.getLogger(MetisFXThreadTester.class);
+    private static final TethysLogger LOGGER = TethysLogManager.getLogger(MetisFXThreadTester.class);
 
     /**
      * Toolkit.

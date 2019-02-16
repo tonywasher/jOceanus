@@ -19,9 +19,6 @@ module jtethys.test.javafx {
     requires javafx.controls;
     requires javafx.graphics;
 
-    /* External libraries */
-    requires org.apache.logging.log4j;
-
     /* jOceanus */
     requires jtethys.core;
     requires jtethys.javafx;
