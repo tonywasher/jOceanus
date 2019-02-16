@@ -43,8 +43,8 @@ import net.sourceforge.joceanus.jtethys.decimal.TethysMoney;
 import net.sourceforge.joceanus.jtethys.decimal.TethysPrice;
 import net.sourceforge.joceanus.jtethys.decimal.TethysRatio;
 import net.sourceforge.joceanus.jtethys.decimal.TethysUnits;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import net.sourceforge.joceanus.jtethys.logger.TethysLogManager;
+import net.sourceforge.joceanus.jtethys.logger.TethysLogger;
 
 import java.util.Iterator;
 import java.util.List;
@@ -56,7 +56,7 @@ public class QIFPortfolioBuilder {
     /**
      * Logger.
      */
-    private static final Logger LOGGER = LogManager.getLogger(QIFPortfolioBuilder.class);
+    private static final TethysLogger LOGGER = TethysLogManager.getLogger(QIFPortfolioBuilder.class);
 
     /**
      * The QIF File.
@@ -488,7 +488,7 @@ public class QIFPortfolioBuilder {
                 processSecurityExchange(pSource, pTarget, pTrans);
                 break;
             default:
-                LOGGER.error("Unsupported TransferBetweenSecurities Category: {}", pTrans.getCategoryClass());
+                LOGGER.error("Unsupported TransferBetweenSecurities Category: <%s>", pTrans.getCategoryClass());
                 break;
         }
     }
@@ -1203,7 +1203,7 @@ public class QIFPortfolioBuilder {
                 processCashTransferBetweenPortfolios(pSource, pTarget, pTrans);
                 break;
             default:
-                LOGGER.error("Unsupported TransferBetweenPortfolios Category: {}", pTrans.getCategoryClass());
+                LOGGER.error("Unsupported TransferBetweenPortfolios Category: <%s>", pTrans.getCategoryClass());
                 break;
         }
     }
@@ -1402,7 +1402,7 @@ public class QIFPortfolioBuilder {
                 processCashTransferToPortfolio(pPortfolio, pDebit, pTrans);
                 break;
             default:
-                LOGGER.error("Unsupported TransferToPortfolio Category: {}", pTrans.getCategoryClass());
+                LOGGER.error("Unsupported TransferToPortfolio Category: <%s>", pTrans.getCategoryClass());
                 break;
         }
     }
@@ -1460,7 +1460,7 @@ public class QIFPortfolioBuilder {
                 processCashTransferFromPortfolio(pPortfolio, pCredit, pTrans);
                 break;
             default:
-                LOGGER.error("Unsupported TransferFromPortfolio Category: {}", pTrans.getCategoryClass());
+                LOGGER.error("Unsupported TransferFromPortfolio Category: <%s>", pTrans.getCategoryClass());
                 break;
         }
     }

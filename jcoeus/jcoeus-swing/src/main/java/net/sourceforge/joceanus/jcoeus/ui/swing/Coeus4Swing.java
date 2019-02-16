@@ -20,10 +20,10 @@ import net.sourceforge.joceanus.jcoeus.ui.CoeusApp;
 import net.sourceforge.joceanus.jmetis.profile.MetisProgram;
 import net.sourceforge.joceanus.jmetis.threads.swing.MetisSwingToolkit;
 import net.sourceforge.joceanus.jtethys.OceanusException;
+import net.sourceforge.joceanus.jtethys.logger.TethysLogManager;
+import net.sourceforge.joceanus.jtethys.logger.TethysLogger;
 import net.sourceforge.joceanus.jtethys.ui.TethysProgram;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingSplash;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 import javax.swing.JFrame;
 import javax.swing.SwingUtilities;
@@ -35,7 +35,7 @@ public final class Coeus4Swing {
     /**
      * Logger.
      */
-    private static final Logger LOGGER = LogManager.getLogger(Coeus4Swing.class);
+    private static final TethysLogger LOGGER = TethysLogManager.getLogger(Coeus4Swing.class);
 
     /**
      * Private constructor.

@@ -20,13 +20,13 @@ import java.io.File;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.FutureTask;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
 import javafx.application.Platform;
 import javafx.stage.FileChooser;
 import javafx.stage.FileChooser.ExtensionFilter;
 import javafx.stage.Stage;
+
+import net.sourceforge.joceanus.jtethys.logger.TethysLogManager;
+import net.sourceforge.joceanus.jtethys.logger.TethysLogger;
 import net.sourceforge.joceanus.jtethys.ui.TethysFileSelector;
 
 /**
@@ -37,7 +37,7 @@ public class TethysFXFileSelector
     /**
      * Logger.
      */
-    private static final Logger LOGGER = LogManager.getLogger(TethysFXFileSelector.class);
+    private static final TethysLogger LOGGER = TethysLogManager.getLogger(TethysFXFileSelector.class);
 
     /**
      * Parent stage.

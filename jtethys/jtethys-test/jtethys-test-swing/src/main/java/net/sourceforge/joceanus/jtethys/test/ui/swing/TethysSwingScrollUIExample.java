@@ -19,17 +19,14 @@ package net.sourceforge.joceanus.jtethys.test.ui.swing;
 import java.awt.HeadlessException;
 import java.util.Map;
 
-import javax.swing.Icon;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.SwingUtilities;
 import javax.swing.WindowConstants;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
-import net.sourceforge.joceanus.jtethys.TethysLogConfig;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
+import net.sourceforge.joceanus.jtethys.logger.TethysLogManager;
+import net.sourceforge.joceanus.jtethys.logger.TethysLogger;
 import net.sourceforge.joceanus.jtethys.test.ui.TethysHelperIcon;
 import net.sourceforge.joceanus.jtethys.test.ui.TethysListId;
 import net.sourceforge.joceanus.jtethys.test.ui.TethysScrollUITestHelper;
@@ -62,7 +59,7 @@ public class TethysSwingScrollUIExample {
     /**
      * Logger.
      */
-    private static final Logger LOGGER = LogManager.getLogger(TethysSwingScrollUIExample.class);
+    private static final TethysLogger LOGGER = TethysLogManager.getLogger(TethysSwingScrollUIExample.class);
 
     /**
      * The GuiFactory.
@@ -192,9 +189,6 @@ public class TethysSwingScrollUIExample {
         try {
             /* Create the frame */
             final JFrame myFrame = new JFrame("SwingScroll Demo");
-
-            /* Configure log4j */
-            TethysLogConfig.configureLog4j();
 
             /* Create the UI */
             final TethysSwingScrollUIExample myExample = new TethysSwingScrollUIExample();

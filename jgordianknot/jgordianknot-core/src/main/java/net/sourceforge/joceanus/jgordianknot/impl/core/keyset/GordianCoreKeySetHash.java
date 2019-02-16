@@ -31,9 +31,8 @@ import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianCoreFactory;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianDataException;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.TethysDataConverter;
-
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import net.sourceforge.joceanus.jtethys.logger.TethysLogManager;
+import net.sourceforge.joceanus.jtethys.logger.TethysLogger;
 
 import java.util.Arrays;
 
@@ -45,7 +44,7 @@ public final class GordianCoreKeySetHash
     /**
      * Logger.
      */
-    private static final Logger LOGGER = LogManager.getLogger(GordianKeySetHash.class);
+    private static final TethysLogger LOGGER = TethysLogManager.getLogger(GordianKeySetHash.class);
 
     /**
      * Hash size for password hash.

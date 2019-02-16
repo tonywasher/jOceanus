@@ -23,9 +23,6 @@ module jmetis.test.core {
     requires jtethys.core;
     requires jtethys.test.core;
 
-    /* External libraries */
-    requires org.apache.logging.log4j;
-
     /* Exports */
     exports net.sourceforge.joceanus.jmetis.test.threads;
     exports net.sourceforge.joceanus.jmetis.test.atlas.ui;

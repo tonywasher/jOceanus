@@ -37,6 +37,8 @@ import net.sourceforge.joceanus.jmetis.viewer.MetisViewerEntry;
 import net.sourceforge.joceanus.jmetis.viewer.MetisViewerManager;
 import net.sourceforge.joceanus.jmetis.viewer.MetisViewerStandardEntry;
 import net.sourceforge.joceanus.jtethys.OceanusException;
+import net.sourceforge.joceanus.jtethys.logger.TethysLogManager;
+import net.sourceforge.joceanus.jtethys.logger.TethysLogger;
 import net.sourceforge.joceanus.jtethys.test.ui.TethysHelperIcon;
 import net.sourceforge.joceanus.jtethys.test.ui.TethysListId;
 import net.sourceforge.joceanus.jtethys.test.ui.TethysScrollUITestHelper;
@@ -44,9 +46,6 @@ import net.sourceforge.joceanus.jtethys.test.ui.TethysScrollUITestHelper.IconSta
 import net.sourceforge.joceanus.jtethys.ui.TethysComponent;
 import net.sourceforge.joceanus.jtethys.ui.TethysIconButtonManager.TethysIconMapSet;
 import net.sourceforge.joceanus.jtethys.ui.TethysNode;
-
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 /**
  * Test Table.
@@ -56,7 +55,7 @@ public class MetisTestDataTable
     /**
      * Create a logger.
      */
-    private static final Logger LOGGER = LogManager.getLogger(MetisTestDataTable.class);
+    private static final TethysLogger LOGGER = TethysLogManager.getLogger(MetisTestDataTable.class);
 
     /**
      * The TableManager.

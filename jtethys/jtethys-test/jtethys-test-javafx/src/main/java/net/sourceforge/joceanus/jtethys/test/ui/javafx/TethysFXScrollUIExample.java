@@ -21,7 +21,6 @@ import javafx.scene.Scene;
 import javafx.scene.layout.Region;
 import javafx.stage.Stage;
 
-import net.sourceforge.joceanus.jtethys.TethysLogConfig;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
 import net.sourceforge.joceanus.jtethys.test.ui.TethysHelperIcon;
 import net.sourceforge.joceanus.jtethys.test.ui.TethysListId;
@@ -178,9 +177,6 @@ public class TethysFXScrollUIExample
 
     @Override
     public void start(final Stage pStage) {
-        /* Configure log4j */
-        TethysLogConfig.configureLog4j();
-
         /* Create a GridPane */
         final TethysFXGridPaneManager myGrid = theGuiFactory.newGridPane();
 

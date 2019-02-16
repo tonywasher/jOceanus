@@ -18,9 +18,6 @@ module jmoneywise.core {
     /* Java libraries */
     requires java.xml;
 
-    /* External Libraries */
-    requires org.apache.logging.log4j;
-
     /* jOceanus */
     requires jprometheus.core;
     requires jmetis.core;

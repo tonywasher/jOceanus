@@ -24,9 +24,6 @@ module jtethys.javafx {
     requires javafx.graphics;
     requires javafx.web;
 
-    /* External libraries */
-    requires org.apache.logging.log4j;
-
     /* jOceanus */
     requires jtethys.core;
 

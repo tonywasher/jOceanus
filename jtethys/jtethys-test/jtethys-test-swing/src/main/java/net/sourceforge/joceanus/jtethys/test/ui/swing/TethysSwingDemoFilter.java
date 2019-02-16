@@ -36,10 +36,8 @@ import javax.swing.SwingUtilities;
 import javax.swing.WindowConstants;
 import javax.swing.table.AbstractTableModel;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
-import net.sourceforge.joceanus.jtethys.TethysLogConfig;
+import net.sourceforge.joceanus.jtethys.logger.TethysLogManager;
+import net.sourceforge.joceanus.jtethys.logger.TethysLogger;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingTableSorter;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingTableSorter.TethysSwingTableSorterModel;
 
@@ -51,7 +49,7 @@ public final class TethysSwingDemoFilter {
     /**
      * Logger.
      */
-    private static final Logger LOGGER = LogManager.getLogger(TethysSwingDemoFilter.class);
+    private static final TethysLogger LOGGER = TethysLogManager.getLogger(TethysSwingDemoFilter.class);
 
     /**
      * Main function.
@@ -74,9 +72,6 @@ public final class TethysSwingDemoFilter {
         try {
             /* Create the frame */
             final JFrame myFrame = new JFrame("DataFilter Test");
-
-            /* Configure log4j */
-            TethysLogConfig.configureLog4j();
 
             /* Create the Test Table */
             final TestTable myTable = new TestTable();

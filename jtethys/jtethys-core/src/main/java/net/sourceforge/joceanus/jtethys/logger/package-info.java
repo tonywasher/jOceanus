@@ -14,22 +14,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ******************************************************************************/
-package net.sourceforge.joceanus.jtethys;
 
 /**
- * Log4j Configuration.
+ * Logger implementation.
  */
-public final class TethysLogConfig {
-    /**
-     * Private constructor.
-     */
-    private TethysLogConfig() {
-    }
-
-    /**
-     * Configure log4j.
-     */
-    public static void configureLog4j() {
-        System.setProperty("log4j.configurationFile", "log4j2.xml");
-    }
-}
+package net.sourceforge.joceanus.jtethys.logger;

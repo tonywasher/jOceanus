@@ -19,7 +19,6 @@ package net.sourceforge.joceanus.jthemis.jira;
 import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceManager;
 import net.sourceforge.joceanus.jmetis.viewer.MetisViewerManager;
 import net.sourceforge.joceanus.jtethys.OceanusException;
-import net.sourceforge.joceanus.jtethys.TethysLogConfig;
 import net.sourceforge.joceanus.jthemis.jira.data.ThemisJiraServer;
 
 /**
@@ -38,9 +37,6 @@ public final class TestJira {
      */
     public static void main(final String[] args) {
         try {
-            /* Configure log4j */
-            TethysLogConfig.configureLog4j();
-
             final MetisViewerManager myViewer = new MetisViewerManager();
             final ThemisJiraServer myServer = new ThemisJiraServer(new MetisPreferenceManager(myViewer));
             myServer.getIssue("FIN-47");

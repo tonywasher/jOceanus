@@ -18,9 +18,6 @@ module jmetis.test.swing {
     /* Java Libraries */
     requires java.desktop;
 
-    /* External Libraries */
-    requires org.apache.logging.log4j;
-
     /* jOceanus */
     requires jmetis.core;
     requires jmetis.swing;

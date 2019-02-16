@@ -39,8 +39,8 @@ import net.sourceforge.joceanus.jgordianknot.impl.core.keyset.GordianCoreKeySetF
 import net.sourceforge.joceanus.jgordianknot.impl.core.keyset.GordianIdManager;
 import net.sourceforge.joceanus.jgordianknot.impl.core.mac.GordianCoreMacFactory;
 import net.sourceforge.joceanus.jtethys.OceanusException;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import net.sourceforge.joceanus.jtethys.logger.TethysLogManager;
+import net.sourceforge.joceanus.jtethys.logger.TethysLogger;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -56,7 +56,7 @@ public final class GordianStreamManager {
     /**
      * Logger.
      */
-    private static final Logger LOGGER = LogManager.getLogger(GordianStreamManager.class);
+    private static final TethysLogger LOGGER = TethysLogManager.getLogger(GordianStreamManager.class);
 
     /**
      * Close error.

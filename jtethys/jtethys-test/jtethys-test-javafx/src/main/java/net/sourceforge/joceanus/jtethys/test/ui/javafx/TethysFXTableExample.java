@@ -23,7 +23,6 @@ import javafx.collections.ObservableList;
 import javafx.scene.Scene;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
-import net.sourceforge.joceanus.jtethys.TethysLogConfig;
 import net.sourceforge.joceanus.jtethys.test.ui.TethysDataId;
 import net.sourceforge.joceanus.jtethys.test.ui.TethysHelperIcon;
 import net.sourceforge.joceanus.jtethys.test.ui.TethysListId;
@@ -215,9 +214,6 @@ public class TethysFXTableExample
 
     @Override
     public void start(final Stage pStage) {
-        /* Configure log4j */
-        TethysLogConfig.configureLog4j();
-
         /* Create scene */
         final BorderPane myPane = new BorderPane();
         final Scene myScene = new Scene(myPane);

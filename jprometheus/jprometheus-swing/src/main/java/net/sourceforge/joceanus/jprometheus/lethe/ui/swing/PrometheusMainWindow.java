@@ -41,15 +41,14 @@ import net.sourceforge.joceanus.jprometheus.lethe.views.DataControl;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.help.TethysHelpModule;
 import net.sourceforge.joceanus.jtethys.help.swing.TethysSwingHelpWindow;
+import net.sourceforge.joceanus.jtethys.logger.TethysLogManager;
+import net.sourceforge.joceanus.jtethys.logger.TethysLogger;
 import net.sourceforge.joceanus.jtethys.ui.TethysMenuBarManager;
 import net.sourceforge.joceanus.jtethys.ui.TethysMenuBarManager.TethysMenuSubMenu;
 import net.sourceforge.joceanus.jtethys.ui.TethysUIEvent;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingGuiFactory;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingMenuBarManager;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingNode;
-
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 import javax.swing.JComponent;
 import javax.swing.JFrame;
@@ -70,7 +69,7 @@ public abstract class PrometheusMainWindow<T extends DataSet<T, E>, E extends En
     /**
      * Logger.
      */
-    private static final Logger LOGGER = LogManager.getLogger(PrometheusMainWindow.class);
+    private static final TethysLogger LOGGER = TethysLogManager.getLogger(PrometheusMainWindow.class);
 
     /**
      * Discard prompt.

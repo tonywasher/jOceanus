@@ -26,7 +26,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import net.sourceforge.joceanus.jtethys.TethysLogConfig;
+import net.sourceforge.joceanus.jtethys.logger.TethysLogManager;
+import net.sourceforge.joceanus.jtethys.logger.TethysLogger;
 import net.sourceforge.joceanus.jtethys.test.ui.TethysDataId;
 import net.sourceforge.joceanus.jtethys.test.ui.TethysHelperIcon;
 import net.sourceforge.joceanus.jtethys.test.ui.TethysListId;
@@ -53,9 +54,6 @@ import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingTableManager.TethysS
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingTableManager.TethysSwingTableStringColumn;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingTableManager.TethysSwingTableUnitsColumn;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
 /**
  * Test Swing Table Cells.
  */
@@ -73,7 +71,7 @@ public class TethysSwingTableExample {
     /**
      * Logger.
      */
-    private static final Logger LOGGER = LogManager.getLogger(TethysSwingTableExample.class);
+    private static final TethysLogger LOGGER = TethysLogManager.getLogger(TethysSwingTableExample.class);
 
     /**
      * The GUI Factory.
@@ -238,9 +236,6 @@ public class TethysSwingTableExample {
         try {
             /* Create the frame */
             final JFrame myFrame = new JFrame("SwingTable Demo");
-
-            /* Configure log4j */
-            TethysLogConfig.configureLog4j();
 
             /* Create the UI */
             final TethysSwingTableExample myExample = new TethysSwingTableExample();

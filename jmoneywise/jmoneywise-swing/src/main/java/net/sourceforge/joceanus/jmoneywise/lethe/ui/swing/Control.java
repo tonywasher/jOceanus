@@ -22,14 +22,14 @@ import java.util.Arrays;
 import javax.swing.JFrame;
 import javax.swing.SwingUtilities;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 import net.sourceforge.joceanus.jmetis.profile.MetisProgram;
 import net.sourceforge.joceanus.jmetis.threads.swing.MetisSwingToolkit;
 import net.sourceforge.joceanus.jmoneywise.lethe.swing.SwingView;
 import net.sourceforge.joceanus.jmoneywise.lethe.ui.MoneyWiseApp;
 import net.sourceforge.joceanus.jtethys.OceanusException;
+import net.sourceforge.joceanus.jtethys.logger.TethysLogManager;
+import net.sourceforge.joceanus.jtethys.logger.TethysLogger;
 import net.sourceforge.joceanus.jtethys.ui.TethysIconId;
 import net.sourceforge.joceanus.jtethys.ui.TethysProgram;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingGuiUtils;
@@ -42,7 +42,7 @@ public final class Control {
     /**
      * Logger.
      */
-    private static final Logger LOGGER = LogManager.getLogger(Control.class);
+    private static final TethysLogger LOGGER = TethysLogManager.getLogger(Control.class);
 
     /**
      * Private constructor to avoid instantiation.

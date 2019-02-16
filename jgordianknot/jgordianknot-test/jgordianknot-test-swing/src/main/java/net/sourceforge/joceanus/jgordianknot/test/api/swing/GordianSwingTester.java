@@ -19,15 +19,14 @@ package net.sourceforge.joceanus.jgordianknot.test.api.swing;
 import java.util.Arrays;
 import javax.swing.SwingUtilities;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
 import net.sourceforge.joceanus.jgordianknot.api.factory.GordianParameters;
 import net.sourceforge.joceanus.jgordianknot.api.impl.GordianSecurityManager;
 import net.sourceforge.joceanus.jgordianknot.api.swing.GordianSwingSecurityManager;
 import net.sourceforge.joceanus.jgordianknot.test.api.GordianTestSuite;
 import net.sourceforge.joceanus.jgordianknot.test.api.GordianTestSuite.SecurityManagerCreator;
 import net.sourceforge.joceanus.jtethys.OceanusException;
+import net.sourceforge.joceanus.jtethys.logger.TethysLogManager;
+import net.sourceforge.joceanus.jtethys.logger.TethysLogger;
 
 /**
  * Security Test suite.
@@ -37,7 +36,7 @@ public class GordianSwingTester
     /**
      * Create a logger.
      */
-    private static final Logger LOGGER = LogManager.getLogger(GordianSwingTester.class);
+    private static final TethysLogger LOGGER = TethysLogManager.getLogger(GordianSwingTester.class);
 
     /**
      * The Test suite.

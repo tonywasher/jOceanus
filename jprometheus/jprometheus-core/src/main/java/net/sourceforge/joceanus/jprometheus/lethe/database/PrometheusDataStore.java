@@ -24,8 +24,8 @@ import net.sourceforge.joceanus.jprometheus.atlas.preference.PrometheusDatabase.
 import net.sourceforge.joceanus.jprometheus.atlas.preference.PrometheusJDBCDriver;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataSet;
 import net.sourceforge.joceanus.jtethys.OceanusException;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import net.sourceforge.joceanus.jtethys.logger.TethysLogManager;
+import net.sourceforge.joceanus.jtethys.logger.TethysLogger;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -64,7 +64,7 @@ public abstract class PrometheusDataStore<T extends DataSet<T, ?>> {
     /**
      * Logger.
      */
-    private static final Logger LOGGER = LogManager.getLogger(PrometheusDataStore.class);
+    private static final TethysLogger LOGGER = TethysLogManager.getLogger(PrometheusDataStore.class);
 
     /**
      * Database connection.

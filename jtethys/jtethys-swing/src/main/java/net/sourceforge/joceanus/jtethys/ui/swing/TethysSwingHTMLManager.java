@@ -16,9 +16,9 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jtethys.ui.swing;
 
+import net.sourceforge.joceanus.jtethys.logger.TethysLogManager;
+import net.sourceforge.joceanus.jtethys.logger.TethysLogger;
 import net.sourceforge.joceanus.jtethys.ui.TethysHTMLManager;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 import javax.swing.JEditorPane;
 import javax.swing.event.HyperlinkEvent;
@@ -40,7 +40,7 @@ public class TethysSwingHTMLManager
     /**
      * The logger.
      */
-    private static final Logger LOGGER = LogManager.getLogger(TethysSwingHTMLManager.class);
+    private static final TethysLogger LOGGER = TethysLogManager.getLogger(TethysSwingHTMLManager.class);
 
     /**
      * The stream close error.

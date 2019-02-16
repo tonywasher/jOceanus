@@ -20,7 +20,6 @@ module jcoeus.core {
 
     /* External Libraries */
     requires org.jsoup;
-    requires org.apache.logging.log4j;
 
     /* jOceanus */
     requires jmetis.core;

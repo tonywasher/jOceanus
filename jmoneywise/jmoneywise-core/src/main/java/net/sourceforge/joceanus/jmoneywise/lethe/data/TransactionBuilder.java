@@ -36,9 +36,8 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
 import net.sourceforge.joceanus.jtethys.date.TethysDateRange;
 import net.sourceforge.joceanus.jtethys.decimal.TethysMoney;
-
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import net.sourceforge.joceanus.jtethys.logger.TethysLogManager;
+import net.sourceforge.joceanus.jtethys.logger.TethysLogger;
 
 /**
  * Transaction builder.
@@ -48,7 +47,7 @@ public class TransactionBuilder {
     /**
      * Logger.
      */
-    private static final Logger LOGGER = LogManager.getLogger(TransactionBuilder.class);
+    private static final TethysLogger LOGGER = TethysLogManager.getLogger(TransactionBuilder.class);
 
     /**
      * The updateSet.

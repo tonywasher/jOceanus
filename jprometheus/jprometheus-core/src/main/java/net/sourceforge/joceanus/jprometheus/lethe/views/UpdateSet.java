@@ -32,8 +32,8 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.event.TethysEventManager;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventProvider;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import net.sourceforge.joceanus.jtethys.logger.TethysLogManager;
+import net.sourceforge.joceanus.jtethys.logger.TethysLogger;
 
 import java.util.EnumMap;
 import java.util.Iterator;
@@ -61,7 +61,7 @@ public class UpdateSet<E extends Enum<E>>
     /**
      * Logger.
      */
-    private static final Logger LOGGER = LogManager.getLogger(UpdateSet.class);
+    private static final TethysLogger LOGGER = TethysLogManager.getLogger(UpdateSet.class);
 
     /**
      * The Event Manager.

@@ -21,9 +21,9 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.event.TethysEventManager;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventProvider;
+import net.sourceforge.joceanus.jtethys.logger.TethysLogManager;
+import net.sourceforge.joceanus.jtethys.logger.TethysLogger;
 import net.sourceforge.joceanus.jtethys.ui.TethysHTMLManager;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -50,7 +50,7 @@ public class MetisReportManager<F>
     /**
      * Logger.
      */
-    private static final Logger LOGGER = LogManager.getLogger(MetisReportManager.class);
+    private static final TethysLogger LOGGER = TethysLogManager.getLogger(MetisReportManager.class);
 
     /**
      * The Event Manager.

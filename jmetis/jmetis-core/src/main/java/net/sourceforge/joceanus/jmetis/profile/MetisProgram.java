@@ -20,7 +20,6 @@ import java.lang.reflect.InvocationTargetException;
 
 import net.sourceforge.joceanus.jmetis.MetisDataException;
 import net.sourceforge.joceanus.jtethys.OceanusException;
-import net.sourceforge.joceanus.jtethys.TethysLogConfig;
 import net.sourceforge.joceanus.jtethys.ui.TethysProgram;
 
 /**
@@ -58,9 +57,6 @@ public class MetisProgram {
         try {
             /* Create a timer */
             theProfile = new MetisProfile("StartUp");
-
-            /* Configure log4j */
-            TethysLogConfig.configureLog4j();
 
             /* Obtain program details */
             theApp = pClazz.getDeclaredConstructor().newInstance();

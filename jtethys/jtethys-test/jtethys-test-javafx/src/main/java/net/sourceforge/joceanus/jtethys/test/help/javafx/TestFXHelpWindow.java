@@ -16,9 +16,6 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jtethys.test.help.javafx;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
 import javafx.application.Application;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -32,6 +29,8 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.help.TethysHelpEntry;
 import net.sourceforge.joceanus.jtethys.help.TethysHelpModule;
 import net.sourceforge.joceanus.jtethys.help.javafx.TethysFXHelpWindow;
+import net.sourceforge.joceanus.jtethys.logger.TethysLogManager;
+import net.sourceforge.joceanus.jtethys.logger.TethysLogger;
 import net.sourceforge.joceanus.jtethys.test.help.TethysTestHelpPage;
 import net.sourceforge.joceanus.jtethys.test.help.TethysTestHelpStyleSheet;
 import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXGuiFactory;
@@ -44,7 +43,7 @@ public class TestFXHelpWindow
     /**
      * Logger.
      */
-    private static final Logger LOGGER = LogManager.getLogger(TestFXHelpWindow.class);
+    private static final TethysLogger LOGGER = TethysLogManager.getLogger(TestFXHelpWindow.class);
 
     /**
      * Main entry point.

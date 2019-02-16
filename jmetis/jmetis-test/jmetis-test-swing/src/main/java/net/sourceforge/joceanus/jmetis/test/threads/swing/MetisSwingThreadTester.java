@@ -22,15 +22,14 @@ import net.sourceforge.joceanus.jmetis.threads.swing.MetisSwingThreadManager;
 import net.sourceforge.joceanus.jmetis.threads.swing.MetisSwingToolkit;
 import net.sourceforge.joceanus.jmetis.viewer.swing.MetisSwingViewerWindow;
 import net.sourceforge.joceanus.jtethys.OceanusException;
+import net.sourceforge.joceanus.jtethys.logger.TethysLogManager;
+import net.sourceforge.joceanus.jtethys.logger.TethysLogger;
 import net.sourceforge.joceanus.jtethys.ui.TethysUIEvent;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingBorderPaneManager;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingBoxPaneManager;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingButton;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingGuiFactory;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingNode;
-
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 import javax.swing.JComponent;
 import javax.swing.JFrame;
@@ -45,7 +44,7 @@ public class MetisSwingThreadTester {
     /**
      * Logger.
      */
-    private static final Logger LOGGER = LogManager.getLogger(MetisSwingThreadTester.class);
+    private static final TethysLogger LOGGER = TethysLogManager.getLogger(MetisSwingThreadTester.class);
 
     /**
      * Toolkit.

@@ -18,9 +18,6 @@ module jgordianknot.test.javafx {
     /* javaFX */
     requires javafx.graphics;
 
-    /* External libraries */
-    requires org.apache.logging.log4j;
-
     /* jOceanus */
     requires jgordianknot.core;
     requires jgordianknot.javafx;

@@ -26,8 +26,8 @@ import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetFactory;
 import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetHash;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.TethysDataConverter;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import net.sourceforge.joceanus.jtethys.logger.TethysLogManager;
+import net.sourceforge.joceanus.jtethys.logger.TethysLogger;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;
@@ -39,7 +39,7 @@ public class MetisPreferenceSecurity {
     /**
      * Logger.
      */
-    private static final Logger LOGGER = LogManager.getLogger(MetisPreferenceSecurity.class);
+    private static final TethysLogger LOGGER = TethysLogManager.getLogger(MetisPreferenceSecurity.class);
 
     /**
      * The KeySet.

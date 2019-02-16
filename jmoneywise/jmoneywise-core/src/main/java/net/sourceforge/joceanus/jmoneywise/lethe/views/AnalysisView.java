@@ -40,9 +40,8 @@ import net.sourceforge.joceanus.jtethys.date.TethysDateRange;
 import net.sourceforge.joceanus.jtethys.event.TethysEventManager;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventProvider;
-
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import net.sourceforge.joceanus.jtethys.logger.TethysLogManager;
+import net.sourceforge.joceanus.jtethys.logger.TethysLogger;
 
 /**
  * Analysis Edit View.
@@ -66,7 +65,7 @@ public class AnalysisView
     /**
      * Logger.
      */
-    private static final Logger LOGGER = LogManager.getLogger(AnalysisView.class);
+    private static final TethysLogger LOGGER = TethysLogManager.getLogger(AnalysisView.class);
 
     /**
      * The Event Manager.

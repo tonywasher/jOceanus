@@ -18,9 +18,6 @@ module jprometheus.core {
     /* Java Libraries */
     requires java.sql;
 
-    /* External Libraries */
-    requires org.apache.logging.log4j;
-
     /* jOceanus */
     requires jtethys.core;
     requires jgordianknot.core;

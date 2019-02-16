@@ -20,12 +20,12 @@ import java.io.File;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.FutureTask;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
 import javafx.application.Platform;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.Stage;
+
+import net.sourceforge.joceanus.jtethys.logger.TethysLogManager;
+import net.sourceforge.joceanus.jtethys.logger.TethysLogger;
 import net.sourceforge.joceanus.jtethys.ui.TethysDirectorySelector;
 
 /**
@@ -36,7 +36,7 @@ public class TethysFXDirectorySelector
     /**
      * Logger.
      */
-    private static final Logger LOGGER = LogManager.getLogger(TethysFXDirectorySelector.class);
+    private static final TethysLogger LOGGER = TethysLogManager.getLogger(TethysFXDirectorySelector.class);
 
     /**
      * Parent stage.

@@ -18,9 +18,6 @@ module jgordianknot.test.swing {
     /* Java */
     requires java.desktop;
 
-    /* External libraries */
-    requires org.apache.logging.log4j;
-
     /* jOceanus */
     requires jgordianknot.core;
     requires jgordianknot.swing;

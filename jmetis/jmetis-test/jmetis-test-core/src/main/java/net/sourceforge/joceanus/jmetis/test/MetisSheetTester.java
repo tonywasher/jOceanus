@@ -41,9 +41,8 @@ import net.sourceforge.joceanus.jtethys.decimal.TethysPrice;
 import net.sourceforge.joceanus.jtethys.decimal.TethysRate;
 import net.sourceforge.joceanus.jtethys.decimal.TethysRatio;
 import net.sourceforge.joceanus.jtethys.decimal.TethysUnits;
-
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import net.sourceforge.joceanus.jtethys.logger.TethysLogManager;
+import net.sourceforge.joceanus.jtethys.logger.TethysLogger;
 
 /**
  * Sheet Tester.
@@ -52,7 +51,7 @@ public final class MetisSheetTester {
     /**
      * Create a logger.
      */
-    private static final Logger LOGGER = LogManager.getLogger(MetisSheetTester.class);
+    private static final TethysLogger LOGGER = TethysLogManager.getLogger(MetisSheetTester.class);
 
     /**
      * Main entry point.

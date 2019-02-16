@@ -25,13 +25,12 @@ import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 import javax.swing.WindowConstants;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.help.TethysHelpEntry;
 import net.sourceforge.joceanus.jtethys.help.TethysHelpModule;
 import net.sourceforge.joceanus.jtethys.help.swing.TethysSwingHelpWindow;
+import net.sourceforge.joceanus.jtethys.logger.TethysLogManager;
+import net.sourceforge.joceanus.jtethys.logger.TethysLogger;
 import net.sourceforge.joceanus.jtethys.test.help.TethysTestHelpPage;
 import net.sourceforge.joceanus.jtethys.test.help.TethysTestHelpStyleSheet;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingGuiFactory;
@@ -43,7 +42,7 @@ public final class TestSwingHelpWindow {
     /**
      * Logger.
      */
-    private static final Logger LOGGER = LogManager.getLogger(TestSwingHelpWindow.class);
+    private static final TethysLogger LOGGER = TethysLogManager.getLogger(TestSwingHelpWindow.class);
 
     /**
      * Constructor.
