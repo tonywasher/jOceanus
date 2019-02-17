@@ -14,14 +14,17 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  ******************************************************************************/
-module jmetis.test.swing {
+/**
+ * Metis Test Swing.
+ */
+module net.sourceforge.joceanus.jmetis.test.swing {
     /* Java Libraries */
     requires java.desktop;
 
     /* jOceanus */
-    requires jmetis.core;
-    requires jmetis.swing;
-    requires jtethys.core;
-    requires jtethys.swing;
-    requires jmetis.test.core;
+    requires net.sourceforge.joceanus.jmetis.core;
+    requires net.sourceforge.joceanus.jmetis.swing;
+    requires net.sourceforge.joceanus.jtethys.core;
+    requires net.sourceforge.joceanus.jtethys.swing;
+    requires net.sourceforge.joceanus.jmetis.test.core;
 }

@@ -1,6 +1,6 @@
 /*******************************************************************************
  * GordianKnot: Security Suite
- * Copyright 2012,2018 Tony Washer
+ * Copyright 2012,2019 Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License.  You may obtain a copy
@@ -19,7 +19,6 @@ package net.sourceforge.joceanus.jgordianknot.api.keyset;
 import java.security.spec.X509EncodedKeySpec;
 
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianSymKeySpec;
-import net.sourceforge.joceanus.jgordianknot.api.factory.GordianFactory;
 import net.sourceforge.joceanus.jgordianknot.api.key.GordianKey;
 import net.sourceforge.joceanus.jgordianknot.api.base.GordianKeySpec;
 import net.sourceforge.joceanus.jgordianknot.api.key.GordianKeyPair;
@@ -29,12 +28,6 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
  * keySet API.
  */
 public interface GordianKeySet {
-    /**
-     * Obtain the factory.
-     * @return the factory
-     */
-    GordianFactory getFactory();
-
     /**
      * Encrypt bytes.
      * @param pBytesToEncrypt the bytes to encrypt

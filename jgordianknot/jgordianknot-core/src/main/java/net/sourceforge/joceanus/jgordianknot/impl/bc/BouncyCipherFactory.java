@@ -1,6 +1,6 @@
 /*******************************************************************************
  * GordianKnot: Security Suite
- * Copyright 2012,2018 Tony Washer
+ * Copyright 2012,2019 Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License.  You may obtain a copy
@@ -195,6 +195,7 @@ public class BouncyCipherFactory
      *
      * @param pKeySpec the keySpec
      * @return the KeyGenerator
+     * @throws OceanusException on error
      */
     private CipherKeyGenerator getBCKeyGenerator(final GordianKeySpec pKeySpec) throws OceanusException {
         checkKeySpec(pKeySpec);

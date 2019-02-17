@@ -1,6 +1,6 @@
 /*******************************************************************************
  * GordianKnot: Security Suite
- * Copyright 2012,2018 Tony Washer
+ * Copyright 2012,2019 Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License.  You may obtain a copy
@@ -71,7 +71,9 @@ public class BouncyMacFactory
     }
 
     @Override
-    public BouncyFactory getFactory() { return (BouncyFactory) super.getFactory(); }
+    public BouncyFactory getFactory() {
+        return (BouncyFactory) super.getFactory();
+    }
 
     @Override
     public BouncyKeyGenerator<GordianMacSpec> getKeyGenerator(final GordianMacSpec pMacSpec) throws OceanusException {

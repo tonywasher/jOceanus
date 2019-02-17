@@ -14,18 +14,21 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  ******************************************************************************/
-module jmetis.javafx {
+/**
+ * Metos javaFX.
+ */
+module net.sourceforge.joceanus.jmetis.javafx {
     /* Java Libraries */
     requires javafx.base;
     requires javafx.controls;
     requires javafx.graphics;
 
     /* jOceanus */
-    requires jmetis.core;
-    requires jtethys.core;
-    requires jtethys.javafx;
-    requires jgordianknot.core;
-    requires jgordianknot.javafx;
+    requires net.sourceforge.joceanus.jmetis.core;
+    requires net.sourceforge.joceanus.jtethys.core;
+    requires net.sourceforge.joceanus.jtethys.javafx;
+    requires net.sourceforge.joceanus.jgordianknot.core;
+    requires net.sourceforge.joceanus.jgordianknot.javafx;
 
     /* Exports */
     exports net.sourceforge.joceanus.jmetis.atlas.ui.javafx;

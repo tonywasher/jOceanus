@@ -1,6 +1,6 @@
 /*******************************************************************************
  * Coeus: Peer2Peer Analysis
- * Copyright 2012,2018 Tony Washer
+ * Copyright 2012,2019 Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,16 +14,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ******************************************************************************/
-module jcoeus.javafx {
+/**
+ * Coeus javaFX.
+ */
+module net.sourceforge.joceanus.jcoeus.javafx {
     /* Java Libraries */
     requires javafx.graphics;
 
     /* jOceanus */
-    requires jcoeus.core;
-    requires jmetis.core;
-    requires jtethys.core;
-    requires jmetis.javafx;
-    requires jtethys.javafx;
+    requires net.sourceforge.joceanus.jcoeus.core;
+    requires net.sourceforge.joceanus.jmetis.core;
+    requires net.sourceforge.joceanus.jtethys.core;
+    requires net.sourceforge.joceanus.jmetis.javafx;
+    requires net.sourceforge.joceanus.jtethys.javafx;
 
     /* Exports */
     exports net.sourceforge.joceanus.jcoeus.ui.javafx to javafx.graphics;

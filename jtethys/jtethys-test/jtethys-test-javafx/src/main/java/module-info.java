@@ -1,6 +1,6 @@
 /*******************************************************************************
  * Tethys: Java Utilities
- * Copyright 2012,2018 Tony Washer
+ * Copyright 2012,2019 Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,15 +14,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ******************************************************************************/
-module jtethys.test.javafx {
+/**
+ * Tethys Test javaFX.
+ */
+module net.sourceforge.joceanus.jtethys.test.javafx {
     /* javaFX runTime */
     requires javafx.controls;
     requires javafx.graphics;
 
     /* jOceanus */
-    requires jtethys.core;
-    requires jtethys.javafx;
-    requires jtethys.test.core;
+    requires net.sourceforge.joceanus.jtethys.core;
+    requires net.sourceforge.joceanus.jtethys.javafx;
+    requires net.sourceforge.joceanus.jtethys.test.core;
 
     /* Main classes */
     exports net.sourceforge.joceanus.jtethys.test.help.javafx to javafx.graphics;

@@ -1,6 +1,6 @@
 /*******************************************************************************
  * Prometheus: Application Framework
- * Copyright 2012,2018 Tony Washer
+ * Copyright 2012,2019 Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License.  You may obtain a copy
@@ -145,7 +145,7 @@ public class DataKey
         final DataKeySet myDataKeySet = getDataKeySet();
         final GordianKeySetHash myHash = myDataKeySet.getKeySetHash(isHashPrime);
         final GordianKeySet myKeySet = myHash.getKeySet();
-        final GordianFactory myFactory = myKeySet.getFactory();
+        final GordianFactory myFactory = myDataKeySet.getSecurityFactory();
         final GordianKeySetFactory myKeySets = myFactory.getKeySetFactory();
         final GordianKnuthObfuscater myKnuth = myKeySets.getObfuscater();
 
@@ -218,7 +218,7 @@ public class DataKey
             final GordianKeySetHash myHash = pKeySet.getKeySetHash(isHashPrime);
             final GordianKeySet myKeySet = myHash.getKeySet();
             final GordianSymKeySpec myKeySpec = new GordianSymKeySpec(pKeyType);
-            final GordianFactory myFactory = myKeySet.getFactory();
+            final GordianFactory myFactory = pKeySet.getSecurityFactory();
             final GordianCipherFactory myCiphers = myFactory.getCipherFactory();
             final GordianKeySetFactory myKeySets = myFactory.getKeySetFactory();
             final GordianKnuthObfuscater myKnuth = myKeySets.getObfuscater();

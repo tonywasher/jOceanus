@@ -1,6 +1,6 @@
 /*******************************************************************************
  * GordianKnot: Security Suite
- * Copyright 2012,2018 Tony Washer
+ * Copyright 2012,2019 Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License.  You may obtain a copy
@@ -50,14 +50,14 @@ public class BouncyAsymFactory
     /**
      * KeyPairGenerator Cache.
      */
-    final Map<GordianAsymKeySpec, BouncyKeyPairGenerator> theCache;
+    private final Map<GordianAsymKeySpec, BouncyKeyPairGenerator> theCache;
 
     /**
      * Constructor.
      *
      * @param pFactory the factory
      */
-    public BouncyAsymFactory(final BouncyFactory pFactory) {
+    BouncyAsymFactory(final BouncyFactory pFactory) {
         /* Initialise underlying class */
         super(pFactory);
 
@@ -71,16 +71,24 @@ public class BouncyAsymFactory
     }
 
     @Override
-    public BouncyFactory getFactory() { return (BouncyFactory) super.getFactory(); }
+    public BouncyFactory getFactory() {
+        return (BouncyFactory) super.getFactory();
+    }
 
     @Override
-    public BouncySignatureFactory getSignatureFactory() { return (BouncySignatureFactory) super.getSignatureFactory(); }
+    public BouncySignatureFactory getSignatureFactory() {
+        return (BouncySignatureFactory) super.getSignatureFactory();
+    }
 
     @Override
-    public BouncyAgreementFactory getAgreementFactory() { return (BouncyAgreementFactory) super.getAgreementFactory(); }
+    public BouncyAgreementFactory getAgreementFactory() {
+        return (BouncyAgreementFactory) super.getAgreementFactory();
+    }
 
     @Override
-    public BouncyEncryptorFactory getEncryptorFactory() { return (BouncyEncryptorFactory) super.getEncryptorFactory(); }
+    public BouncyEncryptorFactory getEncryptorFactory() {
+        return (BouncyEncryptorFactory) super.getEncryptorFactory();
+    }
 
     @Override
     public BouncyKeyPairGenerator getKeyPairGenerator(final GordianAsymKeySpec pKeySpec) throws OceanusException {

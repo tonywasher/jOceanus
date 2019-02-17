@@ -1,6 +1,6 @@
 /*******************************************************************************
  * GordianKnot: Security Suite
- * Copyright 2012,2018 Tony Washer
+ * Copyright 2012,2019 Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License.  You may obtain a copy
@@ -38,13 +38,15 @@ public class BouncyEncryptorFactory
      *
      * @param pFactory the factory
      */
-    public BouncyEncryptorFactory(final BouncyFactory pFactory) {
+    BouncyEncryptorFactory(final BouncyFactory pFactory) {
         /* Initialise underlying class */
         super(pFactory);
     }
 
     @Override
-    protected BouncyFactory getFactory() { return (BouncyFactory) super.getFactory(); }
+    protected BouncyFactory getFactory() {
+        return (BouncyFactory) super.getFactory();
+    }
 
     @Override
     public GordianEncryptor createEncryptor(final GordianEncryptorSpec pEncryptorSpec) throws OceanusException {

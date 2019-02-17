@@ -1,6 +1,6 @@
 /*******************************************************************************
  * Prometheus: Application Framework
- * Copyright 2012,2018 Tony Washer
+ * Copyright 2012,2019 Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License.  You may obtain a copy
@@ -14,16 +14,19 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  ******************************************************************************/
-module jprometheus.swing {
+/**
+ * Prometheus Swing.
+ */
+module net.sourceforge.joceanus.jprometheus.swing {
     /* Java Libraries */
     requires java.desktop;
 
     //* jOceanus */
-    requires jprometheus.core;
-    requires jmetis.core;
-    requires jmetis.swing;
-    requires jtethys.core;
-    requires jtethys.swing;
+    requires net.sourceforge.joceanus.jprometheus.core;
+    requires net.sourceforge.joceanus.jmetis.core;
+    requires net.sourceforge.joceanus.jmetis.swing;
+    requires net.sourceforge.joceanus.jtethys.core;
+    requires net.sourceforge.joceanus.jtethys.swing;
 
     /* Exports */
     exports net.sourceforge.joceanus.jprometheus.lethe.swing;

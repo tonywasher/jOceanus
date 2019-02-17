@@ -14,7 +14,10 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  ******************************************************************************/
-module jmetis.core {
+/**
+ * Metis Core.
+ */
+module net.sourceforge.joceanus.jmetis.core {
     /* Java libraries */
     requires java.prefs;
     requires java.xml;
@@ -25,9 +28,9 @@ module jmetis.core {
     requires org.json;
 
     /* jOceanus */
-    requires jgordianknot.core;
-    requires jtethys.core;
-    requires jmetis.sheet.api;
+    requires net.sourceforge.joceanus.jgordianknot.core;
+    requires net.sourceforge.joceanus.jtethys.core;
+    requires net.sourceforge.joceanus.jmetis.sheet.api;
 
     /* Exports */
     exports net.sourceforge.joceanus.jmetis;

@@ -1,6 +1,6 @@
 /*******************************************************************************
  * GordianKnot: Security Suite
- * Copyright 2012,2018 Tony Washer
+ * Copyright 2012,2019 Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License.  You may obtain a copy
@@ -14,13 +14,16 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  ******************************************************************************/
-module jgordianknot.test.core {
+/**
+ * GordianKnot test core.
+ */
+module net.sourceforge.joceanus.jgordianknot.test.core {
     /* External libraries */
     requires org.bouncycastle.provider;
 
     /* jOceanus */
-    requires jgordianknot.core;
-    requires jtethys.core;
+    requires net.sourceforge.joceanus.jgordianknot.core;
+    requires net.sourceforge.joceanus.jtethys.core;
 
     /* Exports */
     exports net.sourceforge.joceanus.jgordianknot.test.api;

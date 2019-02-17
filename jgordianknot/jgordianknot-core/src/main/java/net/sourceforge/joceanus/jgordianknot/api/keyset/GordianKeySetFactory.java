@@ -1,6 +1,6 @@
 /*******************************************************************************
  * GordianKnot: Security Suite
- * Copyright 2012,2018 Tony Washer
+ * Copyright 2012,2019 Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License.  You may obtain a copy
@@ -39,7 +39,7 @@ public interface GordianKeySetFactory {
      * @return the Password hash
      * @throws OceanusException on error
      */
-    GordianKeySetHash generateKeySetHash(final char[] pPassword) throws OceanusException;
+    GordianKeySetHash generateKeySetHash(char[] pPassword) throws OceanusException;
 
     /**
      * Derive a keySetHash for the given hash and password.

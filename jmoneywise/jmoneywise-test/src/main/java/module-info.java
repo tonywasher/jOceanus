@@ -1,6 +1,6 @@
 /*******************************************************************************
  * MoneyWise: Finance Application
- * Copyright 2012,2018 Tony Washer
+ * Copyright 2012,2019 Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License.  You may obtain a copy
@@ -14,7 +14,10 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  ******************************************************************************/
-module jmoneywise.test {
+/**
+ * MoneyWise Test.
+ */
+module net.sourceforge.joceanus.jmoneywise.test {
     /* jOceanus */
-    requires jmoneywise.core;
+    requires net.sourceforge.joceanus.jmoneywise.core;
 }

@@ -1,6 +1,6 @@
 /*******************************************************************************
  * GordianKnot: Security Suite
- * Copyright 2012,2018 Tony Washer
+ * Copyright 2012,2019 Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License.  You may obtain a copy
@@ -21,7 +21,6 @@ import java.security.KeyPairGenerator;
 import java.security.NoSuchAlgorithmException;
 import java.util.HashMap;
 import java.util.Map;
-import javax.crypto.KeyGenerator;
 
 import net.sourceforge.joceanus.jgordianknot.api.asym.GordianAsymKeySpec;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianCryptoException;
@@ -69,16 +68,24 @@ public class JcaAsymFactory
     }
 
     @Override
-    public JcaFactory getFactory() { return (JcaFactory) super.getFactory(); }
+    public JcaFactory getFactory() {
+        return (JcaFactory) super.getFactory();
+    }
 
     @Override
-    public JcaSignatureFactory getSignatureFactory() { return (JcaSignatureFactory) super.getSignatureFactory(); }
+    public JcaSignatureFactory getSignatureFactory() {
+        return (JcaSignatureFactory) super.getSignatureFactory();
+    }
 
     @Override
-    public JcaAgreementFactory getAgreementFactory() { return (JcaAgreementFactory) super.getAgreementFactory(); }
+    public JcaAgreementFactory getAgreementFactory() {
+        return (JcaAgreementFactory) super.getAgreementFactory();
+    }
 
     @Override
-    public JcaEncryptorFactory getEncryptorFactory() { return (JcaEncryptorFactory) super.getEncryptorFactory(); }
+    public JcaEncryptorFactory getEncryptorFactory() {
+        return (JcaEncryptorFactory) super.getEncryptorFactory();
+    }
 
     @Override
     public JcaKeyPairGenerator getKeyPairGenerator(final GordianAsymKeySpec pKeySpec) throws OceanusException {

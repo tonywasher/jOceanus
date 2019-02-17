@@ -1,6 +1,6 @@
 /*******************************************************************************
  * Tethys: Java Utilities
- * Copyright 2012,2018 Tony Washer
+ * Copyright 2012,2019 Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,8 +15,6 @@
  * limitations under the License.
  ******************************************************************************/
 package net.sourceforge.joceanus.jtethys.logger;
-
-import java.util.Formatter;
 
 /**
  * Logger instance.
@@ -34,6 +32,7 @@ public class TethysLogger {
 
     /**
      * Constructor.
+     * @param pManager the manager
      * @param pOwner the owning class
      */
     public TethysLogger(final TethysLogManager pManager,

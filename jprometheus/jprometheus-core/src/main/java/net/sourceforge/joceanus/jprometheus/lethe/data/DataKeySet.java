@@ -1,6 +1,6 @@
 /*******************************************************************************
  * Prometheus: Application Framework
- * Copyright 2012,2018 Tony Washer
+ * Copyright 2012,2019 Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License.  You may obtain a copy
@@ -248,6 +248,14 @@ public class DataKeySet
      */
     public MetisEncryptionGenerator getFieldGenerator() {
         return theFieldGenerator;
+    }
+
+    /**
+     * Obtain the security factory.
+     * @return the security factory
+     */
+    GordianFactory getSecurityFactory() {
+        return theSecurityFactory;
     }
 
     /**

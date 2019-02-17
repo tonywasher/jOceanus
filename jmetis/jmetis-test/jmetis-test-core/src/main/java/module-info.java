@@ -14,14 +14,17 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  ******************************************************************************/
-module jmetis.test.core {
+/**
+ * Metis Test Core.
+ */
+module net.sourceforge.joceanus.jmetis.test.core {
     requires java.xml;
 
     /* jOceanus */
-    requires jmetis.core;
-    requires jmetis.sheet.api;
-    requires jtethys.core;
-    requires jtethys.test.core;
+    requires net.sourceforge.joceanus.jmetis.core;
+    requires net.sourceforge.joceanus.jmetis.sheet.api;
+    requires net.sourceforge.joceanus.jtethys.core;
+    requires net.sourceforge.joceanus.jtethys.test.core;
 
     /* Exports */
     exports net.sourceforge.joceanus.jmetis.test.threads;

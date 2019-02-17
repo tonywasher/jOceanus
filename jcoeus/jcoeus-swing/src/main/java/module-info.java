@@ -1,6 +1,6 @@
 /*******************************************************************************
  * Coeus: Peer2Peer Analysis
- * Copyright 2012,2018 Tony Washer
+ * Copyright 2012,2019 Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,14 +14,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ******************************************************************************/
-module jcoeus.swing {
+/**
+ * Coeus Swing.
+ */
+module net.sourceforge.joceanus.jcoeus.swing {
     /* Java Libraries */
     requires java.desktop;
 
     /* jOceanus */
-    requires jcoeus.core;
-    requires jmetis.core;
-    requires jtethys.core;
-    requires jmetis.swing;
-    requires jtethys.swing;
+    requires net.sourceforge.joceanus.jcoeus.core;
+    requires net.sourceforge.joceanus.jmetis.core;
+    requires net.sourceforge.joceanus.jtethys.core;
+    requires net.sourceforge.joceanus.jmetis.swing;
+    requires net.sourceforge.joceanus.jtethys.swing;
 }

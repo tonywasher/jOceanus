@@ -14,9 +14,12 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  ******************************************************************************/
-module jmetis.sheet.api {
+/**
+ * Metis Sheet API.
+ */
+module net.sourceforge.joceanus.jmetis.sheet.api {
     /* jOceanus */
-    requires jtethys.core;
+    requires net.sourceforge.joceanus.jtethys.core;
 
     /* Exports */
     exports net.sourceforge.joceanus.jmetis.service.sheet;

@@ -1,6 +1,6 @@
 /*******************************************************************************
  * Tethys: Java Utilities
- * Copyright 2012,2018 Tony Washer
+ * Copyright 2012,2019 Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,12 +17,11 @@
 package net.sourceforge.joceanus.jtethys.logger;
 
 import java.io.PrintStream;
-import java.util.Formatter;
 
 /**
  * Log Manager.
  */
-public class TethysLogManager {
+public final class TethysLogManager {
     /**
      * The output stream.
      */
@@ -62,6 +61,7 @@ public class TethysLogManager {
      * Format message.
      * @param pOwner the owner
      * @param pMessage the message to format
+     * @return the formatted string
      */
     String formatMessage(final Class<?> pOwner,
                          final String pMessage) {
