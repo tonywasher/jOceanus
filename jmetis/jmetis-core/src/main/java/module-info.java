@@ -1,6 +1,6 @@
 /*******************************************************************************
  * Metis: Java Data Framework
- * Copyright 2012, 2018 Tony Washer
+ * Copyright 2012, 2019 Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License.  You may obtain a copy
@@ -21,10 +21,9 @@ module net.sourceforge.joceanus.jmetis.core {
     /* Java libraries */
     requires java.prefs;
     requires java.xml;
+    requires java.net.http;
 
     /* External libraries */
-    requires org.apache.httpcomponents.httpcore;
-    requires org.apache.httpcomponents.httpclient;
     requires org.json;
 
     /* jOceanus */

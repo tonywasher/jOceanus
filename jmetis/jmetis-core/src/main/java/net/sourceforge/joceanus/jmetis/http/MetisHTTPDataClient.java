@@ -1,6 +1,6 @@
 /*******************************************************************************
  * Metis: Java Data Framework
- * Copyright 2012, 2018 Tony Washer
+ * Copyright 2012,2019 Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License.  You may obtain a copy
@@ -19,21 +19,27 @@ package net.sourceforge.joceanus.jmetis.http;
 import java.io.Closeable;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.net.URI;
 import java.net.URLEncoder;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpRequest.BodyPublishers;
+import java.net.http.HttpResponse;
+import java.net.http.HttpResponse.BodyHandlers;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.http.HttpEntity;
-import org.apache.http.NameValuePair;
-import org.apache.http.StatusLine;
-import org.apache.http.client.entity.EntityBuilder;
-import org.apache.http.client.methods.CloseableHttpResponse;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClients;
-import org.apache.http.message.BasicNameValuePair;
-import org.apache.http.util.EntityUtils;
+//import org.apache.http.HttpEntity;
+//import org.apache.http.NameValuePair;
+//import org.apache.http.StatusLine;
+//import org.apache.http.client.entity.EntityBuilder;
+//import org.apache.http.client.methods.CloseableHttpResponse;
+//import org.apache.http.client.methods.HttpGet;
+//import org.apache.http.client.methods.HttpPost;
+//import org.apache.http.impl.client.CloseableHttpClient;
+//import org.apache.http.impl.client.HttpClients;
+//import org.apache.http.message.BasicNameValuePair;
+//import org.apache.http.util.EntityUtils;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.json.JSONTokener;
@@ -97,7 +103,7 @@ public abstract class MetisHTTPDataClient
     /**
      * The HTTPClient.
      */
-    private final CloseableHttpClient theClient;
+    private final HttpClient theClient;
 
     /**
      * The Authorisation string.
@@ -122,7 +128,7 @@ public abstract class MetisHTTPDataClient
                                   final MetisHTTPAuthType pAuthType,
                                   final String pAuth) {
         theBaseAddress = pBaseAddress;
-        theClient = HttpClients.createDefault();
+        theClient = HttpClient.newHttpClient();
 
         /* Determine the authorisation string */
         theAuth = pAuthType.getAuthString(pAuth);
@@ -313,33 +319,32 @@ public abstract class MetisHTTPDataClient
      */
     private JSONTokener performJSONQuery(final String pURL) throws OceanusException {
         /* Create the get request */
-        final HttpGet myGet = new HttpGet(pURL);
+        final HttpRequest.Builder myBuilder = HttpRequest.newBuilder()
+                .uri(URI.create(pURL));
         if (theAuth != null) {
             /* Build header */
-            myGet.addHeader(HEADER_AUTH, theAuth);
-            myGet.addHeader(HEADER_ACCEPT, HEADER_ACCEPT_DTL);
+            myBuilder.setHeader(HEADER_AUTH, theAuth);
+            myBuilder.setHeader(HEADER_ACCEPT, HEADER_ACCEPT_DTL);
         }
+        final HttpRequest myGet = myBuilder.build();
 
         /* Protect against exceptions */
-        try (CloseableHttpResponse myResponse = theClient.execute(myGet)) {
-            /* Access the entity */
-            final StatusLine myStatusLine = myResponse.getStatusLine();
+        try {
+            HttpResponse<String> myResponse = theClient.send(myGet, BodyHandlers.ofString());
 
             /* If we were successful */
-            if (myStatusLine.getStatusCode() == HTTP_OK) {
-                /* Access the response as a JSON Object */
-                final HttpEntity myEntity = myResponse.getEntity();
-
+            if (myResponse.statusCode() == HTTP_OK) {
                 /* Parse into string to prevent timeouts */
-                final String myRes = EntityUtils.toString(myEntity);
+                final String myRes = myResponse.body();
                 return new JSONTokener(myRes);
             }
 
             /* Notify of failure */
-            throw new MetisDataException(myStatusLine, HTTPERROR_QUERY);
+            throw new MetisDataException(myResponse.toString(), HTTPERROR_QUERY);
 
             /* Catch exceptions */
-        } catch (IOException e) {
+        } catch (IOException
+                 | InterruptedException e) {
             throw new MetisIOException(HTTPERROR_QUERY, e);
         }
     }
@@ -390,34 +395,23 @@ public abstract class MetisHTTPDataClient
     private JSONTokener performJSONPost(final String pURL,
                                         final JSONObject pRequest) throws OceanusException {
         /* Create the post request */
-        final HttpPost myPost = new HttpPost(pURL);
-
-        /* Build header */
-        myPost.addHeader(HEADER_AUTH, theAuth);
-
-        /* Convert JSONObject to Name/Value Pairs */
-        final List<NameValuePair> myRequest = new ArrayList<>();
-        for (String myKey : pRequest.keySet()) {
-            myRequest.add(new BasicNameValuePair(myKey, pRequest.getString(myKey)));
+        final HttpRequest.Builder myBuilder = HttpRequest.newBuilder()
+                .uri(URI.create(pURL));
+        if (theAuth != null) {
+            /* Build header */
+            myBuilder.setHeader(HEADER_AUTH, theAuth);
         }
-
-        /* Build the content */
-        final EntityBuilder myBuilder = EntityBuilder.create();
-        myBuilder.setParameters(myRequest);
-        myPost.setEntity(myBuilder.build());
+        myBuilder.POST(BodyPublishers.ofString(pRequest.toString()));
+        final HttpRequest myPost = myBuilder.build();
 
         /* Protect against exceptions */
-        try (CloseableHttpResponse myResponse = theClient.execute(myPost)) {
-            /* Access the entity */
-            final StatusLine myStatusLine = myResponse.getStatusLine();
+        try {
+            HttpResponse<String> myResponse = theClient.send(myPost, BodyHandlers.ofString());
 
             /* If we were successful */
-            if (myStatusLine.getStatusCode() == HTTP_FOUND) {
-                /* Access the response as a JSON Object */
-                final HttpEntity myEntity = myResponse.getEntity();
-
+            if (myResponse.statusCode() == HTTP_FOUND) {
                 /* Parse into string to prevent timeouts */
-                final String myRes = EntityUtils.toString(myEntity);
+                final String myRes = myResponse.body();
 
                 /* Extract URL of new object and query it */
                 final int myBase = myRes.indexOf(theBaseAddress);
@@ -426,17 +420,18 @@ public abstract class MetisHTTPDataClient
             }
 
             /* Notify of failure */
-            throw new MetisDataException(myStatusLine, HTTPERROR_QUERY);
+            throw new MetisDataException(myResponse.toString(), HTTPERROR_QUERY);
 
             /* Catch exceptions */
-        } catch (IOException e) {
+        } catch (IOException
+                | InterruptedException  e) {
             throw new MetisIOException(HTTPERROR_QUERY, e);
         }
     }
 
     @Override
     public void close() throws IOException {
-        theClient.close();
+        //theClient.close();
     }
 
     /**
