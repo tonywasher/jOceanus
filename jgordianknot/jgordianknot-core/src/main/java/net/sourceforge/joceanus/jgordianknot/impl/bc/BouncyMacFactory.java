@@ -71,7 +71,9 @@ public class BouncyMacFactory
     }
 
     @Override
-    public BouncyFactory getFactory() { return (BouncyFactory) super.getFactory(); }
+    public BouncyFactory getFactory() {
+        return (BouncyFactory) super.getFactory();
+    }
 
     @Override
     public BouncyKeyGenerator<GordianMacSpec> getKeyGenerator(final GordianMacSpec pMacSpec) throws OceanusException {

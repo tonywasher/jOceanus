@@ -14,14 +14,17 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  ******************************************************************************/
-module jgordianknot.swing {
+/**
+ * GordianKnot Swing.
+ */
+module net.sourceforge.joceanus.jgordianknot.swing {
     /* java */
     requires java.desktop;
 
     /* jOceanus */
-    requires jgordianknot.core;
-    requires jtethys.core;
-    requires jtethys.swing;
+    requires net.sourceforge.joceanus.jgordianknot.core;
+    requires net.sourceforge.joceanus.jtethys.core;
+    requires net.sourceforge.joceanus.jtethys.swing;
 
     /* Exports */
     exports net.sourceforge.joceanus.jgordianknot.api.swing;

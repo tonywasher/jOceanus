@@ -14,16 +14,19 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  ******************************************************************************/
-module jgordianknot.test.javafx {
+/**
+ * GordianKnot test javaFX.
+ */
+module net.sourceforge.joceanus.jgordianknot.test.javafx {
     /* javaFX */
     requires javafx.graphics;
 
     /* jOceanus */
-    requires jgordianknot.core;
-    requires jgordianknot.javafx;
-    requires jtethys.core;
-    requires jtethys.javafx;
-    requires jgordianknot.test.core;
+    requires net.sourceforge.joceanus.jgordianknot.core;
+    requires net.sourceforge.joceanus.jgordianknot.javafx;
+    requires net.sourceforge.joceanus.jtethys.core;
+    requires net.sourceforge.joceanus.jtethys.javafx;
+    requires net.sourceforge.joceanus.jgordianknot.test.core;
 
     /* Exports */
     exports net.sourceforge.joceanus.jgordianknot.test.api.javafx to javafx.graphics;

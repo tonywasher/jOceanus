@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ******************************************************************************/
-module jtethys.javafx {
+/**
+ * Tethys javaFX.
+ */
+module net.sourceforge.joceanus.jtethys.javafx {
     /* Java runTime */
     requires java.xml;
     requires jdk.jsobject;
@@ -25,7 +28,7 @@ module jtethys.javafx {
     requires javafx.web;
 
     /* jOceanus */
-    requires jtethys.core;
+    requires net.sourceforge.joceanus.jtethys.core;
 
     /* Exports */
     exports net.sourceforge.joceanus.jtethys.help.javafx;

@@ -38,13 +38,15 @@ public class BouncyEncryptorFactory
      *
      * @param pFactory the factory
      */
-    public BouncyEncryptorFactory(final BouncyFactory pFactory) {
+    BouncyEncryptorFactory(final BouncyFactory pFactory) {
         /* Initialise underlying class */
         super(pFactory);
     }
 
     @Override
-    protected BouncyFactory getFactory() { return (BouncyFactory) super.getFactory(); }
+    protected BouncyFactory getFactory() {
+        return (BouncyFactory) super.getFactory();
+    }
 
     @Override
     public GordianEncryptor createEncryptor(final GordianEncryptorSpec pEncryptorSpec) throws OceanusException {

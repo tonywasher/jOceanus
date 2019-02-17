@@ -18,7 +18,6 @@ package net.sourceforge.joceanus.jtethys.ui;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.lang.System.Logger;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;

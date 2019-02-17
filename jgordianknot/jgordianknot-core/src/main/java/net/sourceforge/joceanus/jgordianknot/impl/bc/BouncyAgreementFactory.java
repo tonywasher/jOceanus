@@ -45,13 +45,15 @@ public class BouncyAgreementFactory
      *
      * @param pFactory the factory
      */
-    public BouncyAgreementFactory(final BouncyFactory pFactory) {
+    BouncyAgreementFactory(final BouncyFactory pFactory) {
         /* Initialise underlying class */
         super(pFactory);
     }
 
     @Override
-    protected BouncyFactory getFactory() { return (BouncyFactory) super.getFactory(); }
+    protected BouncyFactory getFactory() {
+        return (BouncyFactory) super.getFactory();
+    }
 
     @Override
     public GordianAgreement createAgreement(final GordianAgreementSpec pAgreementSpec) throws OceanusException {

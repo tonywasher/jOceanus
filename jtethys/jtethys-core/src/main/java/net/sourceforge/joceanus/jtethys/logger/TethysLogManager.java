@@ -17,12 +17,11 @@
 package net.sourceforge.joceanus.jtethys.logger;
 
 import java.io.PrintStream;
-import java.util.Formatter;
 
 /**
  * Log Manager.
  */
-public class TethysLogManager {
+public final class TethysLogManager {
     /**
      * The output stream.
      */
@@ -62,6 +61,7 @@ public class TethysLogManager {
      * Format message.
      * @param pOwner the owner
      * @param pMessage the message to format
+     * @return the formatted string
      */
     String formatMessage(final Class<?> pOwner,
                          final String pMessage) {

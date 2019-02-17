@@ -14,7 +14,10 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  ******************************************************************************/
-module jmoneywise.test {
+/**
+ * MoneyWise Test.
+ */
+module net.sourceforge.joceanus.jmoneywise.test {
     /* jOceanus */
-    requires jmoneywise.core;
+    requires net.sourceforge.joceanus.jmoneywise.core;
 }

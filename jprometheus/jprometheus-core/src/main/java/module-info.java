@@ -14,15 +14,18 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  ******************************************************************************/
-module jprometheus.core {
+/**
+ * Prometheus Core.
+ */
+module net.sourceforge.joceanus.jprometheus.core {
     /* Java Libraries */
     requires java.sql;
 
     /* jOceanus */
-    requires jtethys.core;
-    requires jgordianknot.core;
-    requires jmetis.core;
-    requires jmetis.sheet.api;
+    requires net.sourceforge.joceanus.jtethys.core;
+    requires net.sourceforge.joceanus.jgordianknot.core;
+    requires net.sourceforge.joceanus.jmetis.core;
+    requires net.sourceforge.joceanus.jmetis.sheet.api;
 
     /* Exports */
     exports net.sourceforge.joceanus.jprometheus;

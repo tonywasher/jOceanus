@@ -14,12 +14,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ******************************************************************************/
-module jtethys.test.swing {
+/**
+ * Tethys Test Swing.
+ */
+module net.sourceforge.joceanus.jtethys.test.swing {
     /* Java runTime */
     requires java.desktop;
 
     /* jOceanus */
-    requires jtethys.core;
-    requires jtethys.swing;
-    requires jtethys.test.core;
+    requires net.sourceforge.joceanus.jtethys.core;
+    requires net.sourceforge.joceanus.jtethys.swing;
+    requires net.sourceforge.joceanus.jtethys.test.core;
 }

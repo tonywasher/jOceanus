@@ -14,12 +14,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ******************************************************************************/
-module jtethys.test.core {
+/**
+ * Tethys Test Core.
+ */
+module net.sourceforge.joceanus.jtethys.test.core {
     /* Java runTime */
     requires java.desktop;
 
     /* jOceanus */
-    requires jtethys.core;
+    requires net.sourceforge.joceanus.jtethys.core;
 
     /* Exports */
     exports net.sourceforge.joceanus.jtethys.test.help;

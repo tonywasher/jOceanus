@@ -58,5 +58,5 @@ public interface GordianKeySetHash {
      * @return the similar hash
      * @throws OceanusException on error
      */
-    GordianKeySetHash resolveChildHash(final byte[] pHash) throws OceanusException;
+    GordianKeySetHash resolveChildHash(byte[] pHash) throws OceanusException;
 }

@@ -67,7 +67,8 @@ public class SpeckEngine
     /**
      * Initialises the Speck engine.
      *
-     * @param a {@link KeyParameter} specifying a key with a length appropriate to the configured
+     * @param forEncryption true/false
+     * @param params a {@link KeyParameter} specifying a key with a length appropriate to the configured
      * block size of this engine.
      */
     @Override
@@ -464,7 +465,7 @@ public class SpeckEngine
         /**
          * Writes {@link SpeckCipher#wordSize} bytes into a buffer in big-endian order.
          *
-         * @param the word to write.
+         * @param word the word to write.
          * @param bytes the buffer to write the word bytes to.
          * @param off the offset to write the data at.
          */
@@ -649,7 +650,7 @@ public class SpeckEngine
         /**
          * Writes {@link SpeckCipher#wordSize} bytes into a buffer in big-endian order.
          *
-         * @param the word to write.
+         * @param word the word to write.
          * @param bytes the buffer to write the word bytes to.
          * @param off the offset to write the data at.
          */

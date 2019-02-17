@@ -39,7 +39,7 @@ public interface GordianKeySetFactory {
      * @return the Password hash
      * @throws OceanusException on error
      */
-    GordianKeySetHash generateKeySetHash(final char[] pPassword) throws OceanusException;
+    GordianKeySetHash generateKeySetHash(char[] pPassword) throws OceanusException;
 
     /**
      * Derive a keySetHash for the given hash and password.

@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ******************************************************************************/
-module jtethys.core {
+
+/**
+ * Tethys Core.
+ */
+module net.sourceforge.joceanus.jtethys.core {
     /* External libraries */
     requires org.jsoup;
 

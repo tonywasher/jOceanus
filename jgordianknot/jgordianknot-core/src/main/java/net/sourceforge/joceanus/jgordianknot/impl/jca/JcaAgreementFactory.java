@@ -41,13 +41,15 @@ public class JcaAgreementFactory
      *
      * @param pFactory the factory
      */
-    public JcaAgreementFactory(final JcaFactory pFactory) {
+    JcaAgreementFactory(final JcaFactory pFactory) {
         /* Initialise underlying class */
         super(pFactory);
     }
 
     @Override
-    public JcaFactory getFactory() { return (JcaFactory) super.getFactory(); }
+    public JcaFactory getFactory() {
+        return (JcaFactory) super.getFactory();
+    }
 
     @Override
     public GordianAgreement createAgreement(final GordianAgreementSpec pAgreementSpec) throws OceanusException {

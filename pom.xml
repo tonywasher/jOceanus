@@ -242,15 +242,21 @@
           </excludes>
         </configuration>
       </plugin>
-      <plugin>
+      <!--<plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-javadoc-plugin</artifactId>
         <version>${JavaDocPluginVersion}</version>
+        <dependencies>
+          <dependency>
+            <groupId>org.ow2.asm</groupId>
+            <artifactId>asm</artifactId>
+            <version>7.0</version>
+          </dependency>
+        </dependencies>
         <configuration>
           <show>public</show>
           <nohelp>true</nohelp>
           <excludePackageNames>SevenZip</excludePackageNames>
-          <sourceFileExcludes><sourceFileExclude>src/main/java/module-info.java</sourceFileExclude></sourceFileExcludes>
         </configuration>
         <executions>
           <execution>
@@ -261,7 +267,7 @@
             <phase>site</phase>
           </execution>
         </executions>
-      </plugin>
+      </plugin>-->
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-clean-plugin</artifactId>
@@ -402,7 +408,7 @@
         <artifactId>maven-jxr-plugin</artifactId>
         <version>${JxrPluginVersion}</version>
         <configuration>
-          <linkJavadoc>true</linkJavadoc>
+          <!--<linkJavadoc>true</linkJavadoc>-->
           <excludes>
             <exclude>**/SevenZip/**/*.java</exclude>
             <exclude>**/module-info.java</exclude>
@@ -425,7 +431,6 @@
           <show>public</show>
           <nohelp>true</nohelp>
           <excludePackageNames>SevenZip</excludePackageNames>
-          <sourceFileExcludes><sourceFileExclude>src/main/java/module-info.java</sourceFileExclude></sourceFileExcludes>
         </configuration>
       </plugin>-->
     </plugins>

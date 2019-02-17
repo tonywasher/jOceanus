@@ -16,8 +16,6 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jtethys.logger;
 
-import java.util.Formatter;
-
 /**
  * Logger instance.
  */
@@ -34,6 +32,7 @@ public class TethysLogger {
 
     /**
      * Constructor.
+     * @param pManager the manager
      * @param pOwner the owning class
      */
     public TethysLogger(final TethysLogManager pManager,

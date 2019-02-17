@@ -317,6 +317,7 @@ class MetisOdfRowStore {
 
     /**
      * Obtain the index of the max valued cell.
+     * @param pRow the row containing the cell.
      * @return the index
      */
     int getMaxValuedCellForRow(final MetisOdfRow pRow) {

@@ -195,6 +195,7 @@ public class BouncyCipherFactory
      *
      * @param pKeySpec the keySpec
      * @return the KeyGenerator
+     * @throws OceanusException on error
      */
     private CipherKeyGenerator getBCKeyGenerator(final GordianKeySpec pKeySpec) throws OceanusException {
         checkKeySpec(pKeySpec);

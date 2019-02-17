@@ -46,13 +46,15 @@ public class BouncySignatureFactory
      *
      * @param pFactory the factory
      */
-    public BouncySignatureFactory(final BouncyFactory pFactory) {
+    BouncySignatureFactory(final BouncyFactory pFactory) {
         /* Initialise underlying class */
         super(pFactory);
     }
 
     @Override
-    protected BouncyFactory getFactory() { return (BouncyFactory) super.getFactory(); }
+    protected BouncyFactory getFactory() {
+        return (BouncyFactory) super.getFactory();
+    }
 
     @Override
     public Predicate<GordianSignatureSpec> supportedSignatureSpecs() {

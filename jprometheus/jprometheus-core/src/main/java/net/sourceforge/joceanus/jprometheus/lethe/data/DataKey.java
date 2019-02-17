@@ -145,7 +145,7 @@ public class DataKey
         final DataKeySet myDataKeySet = getDataKeySet();
         final GordianKeySetHash myHash = myDataKeySet.getKeySetHash(isHashPrime);
         final GordianKeySet myKeySet = myHash.getKeySet();
-        final GordianFactory myFactory = myKeySet.getFactory();
+        final GordianFactory myFactory = myDataKeySet.getSecurityFactory();
         final GordianKeySetFactory myKeySets = myFactory.getKeySetFactory();
         final GordianKnuthObfuscater myKnuth = myKeySets.getObfuscater();
 
@@ -218,7 +218,7 @@ public class DataKey
             final GordianKeySetHash myHash = pKeySet.getKeySetHash(isHashPrime);
             final GordianKeySet myKeySet = myHash.getKeySet();
             final GordianSymKeySpec myKeySpec = new GordianSymKeySpec(pKeyType);
-            final GordianFactory myFactory = myKeySet.getFactory();
+            final GordianFactory myFactory = pKeySet.getSecurityFactory();
             final GordianCipherFactory myCiphers = myFactory.getCipherFactory();
             final GordianKeySetFactory myKeySets = myFactory.getKeySetFactory();
             final GordianKnuthObfuscater myKnuth = myKeySets.getObfuscater();

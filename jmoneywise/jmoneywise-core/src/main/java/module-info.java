@@ -14,16 +14,19 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  ******************************************************************************/
-module jmoneywise.core {
+/**
+ * MonetyWise Core.
+ */
+module net.sourceforge.joceanus.jmoneywise.core {
     /* Java libraries */
     requires java.xml;
 
     /* jOceanus */
-    requires jprometheus.core;
-    requires jmetis.core;
-    requires jgordianknot.core;
-    requires jtethys.core;
-    requires jmetis.sheet.api;
+    requires net.sourceforge.joceanus.jprometheus.core;
+    requires net.sourceforge.joceanus.jmetis.core;
+    requires net.sourceforge.joceanus.jgordianknot.core;
+    requires net.sourceforge.joceanus.jtethys.core;
+    requires net.sourceforge.joceanus.jmetis.sheet.api;
 
     /* Exports */
     exports net.sourceforge.joceanus.jmoneywise;

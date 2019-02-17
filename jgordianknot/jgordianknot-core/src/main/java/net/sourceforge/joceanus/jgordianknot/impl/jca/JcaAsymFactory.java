@@ -21,7 +21,6 @@ import java.security.KeyPairGenerator;
 import java.security.NoSuchAlgorithmException;
 import java.util.HashMap;
 import java.util.Map;
-import javax.crypto.KeyGenerator;
 
 import net.sourceforge.joceanus.jgordianknot.api.asym.GordianAsymKeySpec;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianCryptoException;
@@ -69,16 +68,24 @@ public class JcaAsymFactory
     }
 
     @Override
-    public JcaFactory getFactory() { return (JcaFactory) super.getFactory(); }
+    public JcaFactory getFactory() {
+        return (JcaFactory) super.getFactory();
+    }
 
     @Override
-    public JcaSignatureFactory getSignatureFactory() { return (JcaSignatureFactory) super.getSignatureFactory(); }
+    public JcaSignatureFactory getSignatureFactory() {
+        return (JcaSignatureFactory) super.getSignatureFactory();
+    }
 
     @Override
-    public JcaAgreementFactory getAgreementFactory() { return (JcaAgreementFactory) super.getAgreementFactory(); }
+    public JcaAgreementFactory getAgreementFactory() {
+        return (JcaAgreementFactory) super.getAgreementFactory();
+    }
 
     @Override
-    public JcaEncryptorFactory getEncryptorFactory() { return (JcaEncryptorFactory) super.getEncryptorFactory(); }
+    public JcaEncryptorFactory getEncryptorFactory() {
+        return (JcaEncryptorFactory) super.getEncryptorFactory();
+    }
 
     @Override
     public JcaKeyPairGenerator getKeyPairGenerator(final GordianAsymKeySpec pKeySpec) throws OceanusException {

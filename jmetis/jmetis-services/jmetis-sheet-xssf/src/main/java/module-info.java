@@ -14,14 +14,17 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  ******************************************************************************/
-module jmetis.sheet.xssf {
+/**
+ * Metis Sheet XSSF.
+ */
+module net.sourceforge.joceanus.jmetis.sheet.xssf {
     /* External libraries */
     requires poi;
     requires poi.ooxml;
 
     /* jOceanus */
-    requires jtethys.core;
-    requires jmetis.sheet.api;
+    requires net.sourceforge.joceanus.jtethys.core;
+    requires net.sourceforge.joceanus.jmetis.sheet.api;
 
     /* Services provided */
     provides net.sourceforge.joceanus.jmetis.service.sheet.MetisSheetFactory

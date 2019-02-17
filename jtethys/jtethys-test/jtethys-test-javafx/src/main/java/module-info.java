@@ -14,15 +14,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ******************************************************************************/
-module jtethys.test.javafx {
+/**
+ * Tethys Test javaFX.
+ */
+module net.sourceforge.joceanus.jtethys.test.javafx {
     /* javaFX runTime */
     requires javafx.controls;
     requires javafx.graphics;
 
     /* jOceanus */
-    requires jtethys.core;
-    requires jtethys.javafx;
-    requires jtethys.test.core;
+    requires net.sourceforge.joceanus.jtethys.core;
+    requires net.sourceforge.joceanus.jtethys.javafx;
+    requires net.sourceforge.joceanus.jtethys.test.core;
 
     /* Main classes */
     exports net.sourceforge.joceanus.jtethys.test.help.javafx to javafx.graphics;

@@ -251,6 +251,14 @@ public class DataKeySet
     }
 
     /**
+     * Obtain the security factory.
+     * @return the security factory
+     */
+    GordianFactory getSecurityFactory() {
+        return theSecurityFactory;
+    }
+
+    /**
      * Get the ControlKey.
      * @return the controlKey
      */

@@ -14,16 +14,19 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  ******************************************************************************/
-module jmetis.test.javafx {
+/**
+ * Metis Test javaFX.
+ */
+module net.sourceforge.joceanus.jmetis.test.javafx {
     /* Java Libraries */
     requires javafx.graphics;
 
     /* jOceanus */
-    requires jmetis.core;
-    requires jmetis.javafx;
-    requires jtethys.core;
-    requires jtethys.javafx;
-    requires jmetis.test.core;
+    requires net.sourceforge.joceanus.jmetis.core;
+    requires net.sourceforge.joceanus.jmetis.javafx;
+    requires net.sourceforge.joceanus.jtethys.core;
+    requires net.sourceforge.joceanus.jtethys.javafx;
+    requires net.sourceforge.joceanus.jmetis.test.core;
 
     /* Exports */
     exports net.sourceforge.joceanus.jmetis.test.threads.javafx to javafx.graphics;

@@ -42,7 +42,9 @@ public class JcaDigestFactory
     }
 
     @Override
-    public JcaFactory getFactory() { return (JcaFactory) super.getFactory(); }
+    public JcaFactory getFactory() {
+        return (JcaFactory) super.getFactory();
+    }
 
     @Override
     public JcaDigest createDigest(final GordianDigestSpec pDigestSpec) throws OceanusException {

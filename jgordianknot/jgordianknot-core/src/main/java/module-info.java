@@ -14,12 +14,15 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  ******************************************************************************/
-module jgordianknot.core {
+/**
+ * GordianKnot core.
+ */
+module net.sourceforge.joceanus.jgordianknot.core {
     /* External libraries */
     requires org.bouncycastle.provider;
 
     /* jOceanus */
-    requires jtethys.core;
+    requires net.sourceforge.joceanus.jtethys.core;
 
     /* Exports */
     exports net.sourceforge.joceanus.jgordianknot.api.agree;

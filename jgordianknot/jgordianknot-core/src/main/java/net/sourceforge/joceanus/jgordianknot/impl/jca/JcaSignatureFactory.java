@@ -47,13 +47,15 @@ public class JcaSignatureFactory
      *
      * @param pFactory the factory
      */
-    public JcaSignatureFactory(final JcaFactory pFactory) {
+    JcaSignatureFactory(final JcaFactory pFactory) {
         /* Initialise underlying class */
         super(pFactory);
     }
 
     @Override
-    public JcaFactory getFactory() { return (JcaFactory) super.getFactory(); }
+    public JcaFactory getFactory() {
+        return (JcaFactory) super.getFactory();
+    }
 
     @Override
     public GordianSignature createSigner(final GordianSignatureSpec pSignatureSpec) throws OceanusException {

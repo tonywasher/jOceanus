@@ -19,7 +19,6 @@ package net.sourceforge.joceanus.jgordianknot.api.keyset;
 import java.security.spec.X509EncodedKeySpec;
 
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianSymKeySpec;
-import net.sourceforge.joceanus.jgordianknot.api.factory.GordianFactory;
 import net.sourceforge.joceanus.jgordianknot.api.key.GordianKey;
 import net.sourceforge.joceanus.jgordianknot.api.base.GordianKeySpec;
 import net.sourceforge.joceanus.jgordianknot.api.key.GordianKeyPair;
@@ -29,12 +28,6 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
  * keySet API.
  */
 public interface GordianKeySet {
-    /**
-     * Obtain the factory.
-     * @return the factory
-     */
-    GordianFactory getFactory();
-
     /**
      * Encrypt bytes.
      * @param pBytesToEncrypt the bytes to encrypt

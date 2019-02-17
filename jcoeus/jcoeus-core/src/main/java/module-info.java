@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ******************************************************************************/
-module jcoeus.core {
+/**
+ * Coeus Core.
+ */
+module net.sourceforge.joceanus.jcoeus.core {
     /* Java Libraries */
     requires java.xml;
 
@@ -22,8 +25,8 @@ module jcoeus.core {
     requires org.jsoup;
 
     /* jOceanus */
-    requires jmetis.core;
-    requires jtethys.core;
+    requires net.sourceforge.joceanus.jmetis.core;
+    requires net.sourceforge.joceanus.jtethys.core;
 
     /* Exports */
     exports net.sourceforge.joceanus.jcoeus.ui;

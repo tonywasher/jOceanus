@@ -14,14 +14,17 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  ******************************************************************************/
-module jgordianknot.javafx {
+/**
+ * GordianKnot javaFX.
+ */
+module net.sourceforge.joceanus.jgordianknot.javafx {
     /* javaFX */
     requires javafx.graphics;
 
     /* jOceanus */
-    requires jgordianknot.core;
-    requires jtethys.core;
-    requires jtethys.javafx;
+    requires net.sourceforge.joceanus.jgordianknot.core;
+    requires net.sourceforge.joceanus.jtethys.core;
+    requires net.sourceforge.joceanus.jtethys.javafx;
 
     /* Exports */
     exports net.sourceforge.joceanus.jgordianknot.api.javafx;
