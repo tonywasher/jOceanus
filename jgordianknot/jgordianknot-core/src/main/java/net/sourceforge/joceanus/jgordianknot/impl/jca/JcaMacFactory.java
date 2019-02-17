@@ -104,6 +104,7 @@ public class JcaMacFactory
         switch (pMacType) {
             case BLAKE:
             case KALYNA:
+            case ZUC:
                 return false;
             default:
                 return super.validMacType(pMacType);

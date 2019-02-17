@@ -402,6 +402,9 @@ public class JcaCipherFactory
             case ISAAC:
             case SOSEMANUK:
             case XCHACHA20:
+            case RABBIT:
+            case SNOW3G:
+            case ZUC:
                 return false;
             default:
                 return super.validStreamKeyType(pKeyType);

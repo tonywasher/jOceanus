@@ -20,6 +20,7 @@ import java.util.EnumMap;
 import java.util.Map;
 import java.util.ResourceBundle;
 
+import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianCipherResource;
 import net.sourceforge.joceanus.jtethys.resource.TethysBundleId;
 import net.sourceforge.joceanus.jtethys.resource.TethysBundleLoader;
 
@@ -138,6 +139,7 @@ public enum GordianMacResource implements TethysBundleId {
         myMap.put(GordianMacType.KUPYNA, MAC_KUPYNA);
         myMap.put(GordianMacType.BLAKE, MAC_BLAKE);
         myMap.put(GordianMacType.VMPC, MAC_VMPC);
+        myMap.put(GordianMacType.ZUC, GordianCipherResource.STREAMKEY_ZUC);
         return myMap;
     }
 

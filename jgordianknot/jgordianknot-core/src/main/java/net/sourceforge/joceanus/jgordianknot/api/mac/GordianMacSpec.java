@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import net.sourceforge.joceanus.jgordianknot.api.base.GordianLength;
+import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianStreamKeyType;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianSymKeySpec;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianSymKeyType;
 import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigestSpec;
@@ -275,6 +276,14 @@ public final class GordianMacSpec implements GordianKeySpec {
     }
 
     /**
+     * Create zucMacSpec.
+     * @return the MacSpec
+     */
+    public static GordianMacSpec zucMac() {
+        return new GordianMacSpec(GordianMacType.ZUC);
+    }
+
+    /**
      * Obtain Mac Type.
      * @return the MacType
      */
@@ -308,9 +317,10 @@ public final class GordianMacSpec implements GordianKeySpec {
 
     /**
      * Obtain the IV length.
+     * @param pRestricted is the mac restricted?
      * @return the IV Length
      */
-    public int getIVLen() {
+    public int getIVLen(final boolean pRestricted) {
         switch (theMacType) {
             case VMPC:
             case GMAC:
@@ -321,6 +331,8 @@ public final class GordianMacSpec implements GordianKeySpec {
                 return GordianDigestType.isBlake2bState(theDigestSpec.getStateLength())
                        ? IVSIZE
                        : IVSIZE >> 1;
+            case ZUC:
+                return GordianStreamKeyType.ZUC.getIVLength(pRestricted);
             default:
                 return 0;
         }
@@ -346,6 +358,7 @@ public final class GordianMacSpec implements GordianKeySpec {
             case KALYNA:
                 return theDigestSpec == null && theKeySpec != null && theKeySpec.isValid();
             case VMPC:
+            case ZUC:
                 return theDigestSpec == null && theKeySpec == null;
             default:
                 return false;
@@ -382,6 +395,9 @@ public final class GordianMacSpec implements GordianKeySpec {
                         break;
                     case KALYNA:
                         theName += SEP + theKeySpec.getBlockLength();
+                        break;
+                    case ZUC:
+                        theName += SEP + "Mac";
                         break;
                     case VMPC:
                     default:
@@ -491,6 +507,9 @@ public final class GordianMacSpec implements GordianKeySpec {
         for (final GordianLength myLength : GordianDigestType.KUPYNA.getSupportedLengths()) {
             myList.add(GordianMacSpec.kupynaMac(myLength));
         }
+
+        /* Add zucMac */
+        myList.add(GordianMacSpec.zucMac());
 
         /* Return the list */
         return myList;

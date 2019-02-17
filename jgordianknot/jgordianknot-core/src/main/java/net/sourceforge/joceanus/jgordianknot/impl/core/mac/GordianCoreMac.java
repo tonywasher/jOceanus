@@ -52,6 +52,11 @@ public abstract class GordianCoreMac
     private GordianCoreKeyGenerator<GordianMacSpec> theGenerator;
 
     /**
+     * Restricted.
+     */
+    private final boolean isRestricted;
+
+    /**
      * Key.
      */
     private GordianKey<GordianMacSpec> theKey;
@@ -72,6 +77,7 @@ public abstract class GordianCoreMac
         theMacSpec = pMacSpec;
         theFactory = pFactory;
         theRandom = pFactory.getRandomSource();
+        isRestricted = pFactory.isRestricted();
     }
 
     @Override
@@ -135,7 +141,7 @@ public abstract class GordianCoreMac
     @Override
     public void initMac(final GordianKey<GordianMacSpec> pKey) throws OceanusException {
         /* Determine the required length of IV */
-        final int myLen = getMacSpec().getIVLen();
+        final int myLen = getMacSpec().getIVLen(isRestricted);
         byte[] myIV = null;
 
         /* If we need an IV */

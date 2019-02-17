@@ -16,6 +16,8 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jgordianknot.api.mac;
 
+import org.bouncycastle.jcajce.provider.symmetric.VMPC;
+
 /**
  * Mac types. Available algorithms.
  */
@@ -63,7 +65,12 @@ public enum GordianMacType {
     /**
      * VMPC.
      */
-    VMPC;
+    VMPC,
+
+    /**
+     * ZUC.
+     */
+    ZUC;
 
     /**
      * The String name.

@@ -215,7 +215,22 @@ public enum GordianCipherResource implements TethysBundleId {
     /**
      * StreamKey SOSEMANUK.
      */
-    STREAMKEY_SOSEMANUK("streamKey.SOSEMANUK");
+    STREAMKEY_SOSEMANUK("streamKey.SOSEMANUK"),
+
+    /**
+     * StreamKey Rabbit.
+     */
+    STREAMKEY_RABBIT("streamKey.Rabbit"),
+
+    /**
+     * StreamKey Snow3G.
+     */
+    STREAMKEY_SNOW3G("streamKey.SNOW3G"),
+
+    /**
+     * StreamKey ZUC.
+     */
+    STREAMKEY_ZUC("streamKey.ZUC");
 
     /**
      * The SymKey Map.
@@ -337,6 +352,9 @@ public enum GordianCipherResource implements TethysBundleId {
         myMap.put(GordianStreamKeyType.GRAIN, STREAMKEY_GRAIN);
         myMap.put(GordianStreamKeyType.RC4, STREAMKEY_RC4);
         myMap.put(GordianStreamKeyType.SOSEMANUK, STREAMKEY_SOSEMANUK);
+        myMap.put(GordianStreamKeyType.RABBIT, STREAMKEY_RABBIT);
+        myMap.put(GordianStreamKeyType.SNOW3G, STREAMKEY_SNOW3G);
+        myMap.put(GordianStreamKeyType.ZUC, STREAMKEY_ZUC);
         return myMap;
     }
 

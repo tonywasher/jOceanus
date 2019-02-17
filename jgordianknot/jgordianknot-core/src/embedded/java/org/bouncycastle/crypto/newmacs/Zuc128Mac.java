@@ -66,23 +66,8 @@ public class Zuc128Mac implements Mac {
 
     @Override
     public void init(final CipherParameters pParams) {
-        CipherParameters myParams = pParams;
-        if (!(myParams instanceof ParametersWithIV)) {
-            throw new IllegalArgumentException(getAlgorithmName() + " requires an IV.");
-        }
-        final ParametersWithIV ivParams = (ParametersWithIV) myParams;
-        final byte[] myIV = ivParams.getIV();
-        myParams = ivParams.getParameters();
-
-        /* Access the key */
-        if (!(myParams instanceof KeyParameter)) {
-            throw new IllegalArgumentException(getAlgorithmName() + " requires a key.");
-        }
-        final KeyParameter keyParams = (KeyParameter) myParams;
-        final byte[] myKey = keyParams.getKey();
-
        /* Initialise the engine */
-        theEngine.setKeyAndIV(myKey, myIV);
+        theEngine.init(true, pParams);
         theState = theEngine.copy();
         initKeyStream();
     }

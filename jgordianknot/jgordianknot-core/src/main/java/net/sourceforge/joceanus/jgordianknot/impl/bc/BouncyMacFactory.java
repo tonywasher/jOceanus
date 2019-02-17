@@ -30,10 +30,14 @@ import org.bouncycastle.crypto.macs.Poly1305;
 import org.bouncycastle.crypto.macs.SkeinMac;
 import org.bouncycastle.crypto.macs.VMPCMac;
 import org.bouncycastle.crypto.modes.GCMBlockCipher;
+import org.bouncycastle.crypto.newengines.Zuc128Engine;
+import org.bouncycastle.crypto.newengines.Zuc256Engine;
 import org.bouncycastle.crypto.newmacs.Blake2Mac;
 import org.bouncycastle.crypto.newmacs.DSTUX7564Mac;
 import org.bouncycastle.crypto.newmacs.DSTUX7624Mac;
 import org.bouncycastle.crypto.newmacs.KXGMac;
+import org.bouncycastle.crypto.newmacs.Zuc128Mac;
+import org.bouncycastle.crypto.newmacs.Zuc256Mac;
 import org.bouncycastle.crypto.newmodes.KGCMXBlockCipher;
 
 import net.sourceforge.joceanus.jgordianknot.api.base.GordianLength;
@@ -142,6 +146,8 @@ public class BouncyMacFactory
                 return getBCKupynaMac(pMacSpec.getDigestSpec());
             case VMPC:
                 return getBCVMPCMac();
+            case ZUC:
+                return getBCZucMac();
             default:
                 throw new GordianDataException(GordianCoreFactory.getInvalidText(pMacSpec));
         }
@@ -243,5 +249,16 @@ public class BouncyMacFactory
      */
     private static Mac getBCVMPCMac() {
         return new VMPCMac();
+    }
+
+    /**
+     * Create the BouncyCastle ZucMac.
+     *
+     * @return the MAC
+     */
+    private Mac getBCZucMac() {
+        return getFactory().isRestricted()
+               ? new Zuc128Mac()
+               : new Zuc256Mac(GordianLength.LEN_128.getLength());
     }
 }

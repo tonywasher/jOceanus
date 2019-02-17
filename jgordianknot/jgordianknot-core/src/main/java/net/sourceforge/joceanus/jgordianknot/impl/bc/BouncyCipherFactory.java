@@ -78,10 +78,14 @@ import org.bouncycastle.crypto.modes.OFBBlockCipher;
 import org.bouncycastle.crypto.modes.SICBlockCipher;
 import org.bouncycastle.crypto.newengines.AnubisEngine;
 import org.bouncycastle.crypto.newengines.MARSEngine;
+import org.bouncycastle.crypto.newengines.RabbitEngine;
 import org.bouncycastle.crypto.newengines.SimonEngine;
+import org.bouncycastle.crypto.newengines.Snow3GEngine;
 import org.bouncycastle.crypto.newengines.SosemanukEngine;
 import org.bouncycastle.crypto.newengines.SpeckEngine;
 import org.bouncycastle.crypto.newengines.XChaCha20Engine;
+import org.bouncycastle.crypto.newengines.Zuc128Engine;
+import org.bouncycastle.crypto.newengines.Zuc256Engine;
 import org.bouncycastle.crypto.newmodes.KCCMXBlockCipher;
 import org.bouncycastle.crypto.newmodes.KGCMXBlockCipher;
 import org.bouncycastle.crypto.paddings.ISO7816d4Padding;
@@ -252,6 +256,14 @@ public class BouncyCipherFactory
                 return new RC4Engine();
             case SOSEMANUK:
                 return new SosemanukEngine();
+            case RABBIT:
+                return new RabbitEngine();
+            case SNOW3G:
+                return new Snow3GEngine();
+            case ZUC:
+                return getFactory().isRestricted()
+                       ? new Zuc128Engine()
+                       : new Zuc256Engine();
             default:
                 throw new GordianDataException(GordianCoreFactory.getInvalidText(pKeyType));
         }

@@ -71,7 +71,22 @@ public enum GordianStreamKeyType  implements GordianKeySpec {
     /**
      * Sosemanuk.
      */
-    SOSEMANUK(GordianLength.LEN_128);
+    SOSEMANUK(GordianLength.LEN_128),
+
+    /**
+     * Rabbit.
+     */
+    RABBIT(GordianLength.LEN_64),
+
+    /**
+     * Snow3G.
+     */
+    SNOW3G(GordianLength.LEN_128),
+
+    /**
+     * Zuc.
+     */
+    ZUC(GordianLength.LEN_128, GordianLength.LEN_184);
 
     /**
      * The IV Length.
@@ -142,6 +157,8 @@ public enum GordianStreamKeyType  implements GordianKeySpec {
             case XCHACHA20:
                 return !pRestricted;
             case GRAIN:
+            case RABBIT:
+            case SNOW3G:
                 return pRestricted;
             default:
                 return true;

@@ -186,6 +186,7 @@ public abstract class GordianCoreMacFactory
                 return GordianSymKeyType.KALYNA.equals(mySymSpec.getSymKeyType())
                         && myCiphers.validSymKeySpec(mySymSpec);
             case VMPC:
+            case ZUC:
                 return true;
             default:
                 return false;
