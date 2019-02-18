@@ -57,7 +57,7 @@ public class BouncySignatureFactory
     }
 
     @Override
-    public Predicate<GordianSignatureSpec> supportedSignatureSpecs() {
+    public Predicate<GordianSignatureSpec> supportedSignatures() {
         return this::validSignatureSpec;
     }
 

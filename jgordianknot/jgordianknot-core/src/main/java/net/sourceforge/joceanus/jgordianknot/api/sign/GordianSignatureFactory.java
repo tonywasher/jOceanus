@@ -27,7 +27,8 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
 /**
  * GordianKnot SignatureFactory API.
  */
-public interface GordianSignatureFactory {
+public interface
+GordianSignatureFactory {
     /**
      * Create signer.
      * @param pSignatureSpec the signatureSpec
@@ -40,17 +41,17 @@ public interface GordianSignatureFactory {
      * Obtain predicate for signatures.
      * @return the predicate
      */
-    Predicate<GordianSignatureSpec> supportedSignatureSpecs();
+    Predicate<GordianSignatureSpec> supportedSignatures();
 
     /**
-     * Obtain a list of supported signatureSpecs.
+     * Obtain a list of supported signatures.
      * @param pKeyType the keyType
      * @return the list of supported signatureSpecs.
      */
-    default List<GordianSignatureSpec> listAllSupportedSignatureSpecs(final GordianAsymKeyType pKeyType) {
+    default List<GordianSignatureSpec> listAllSupportedSignatures(final GordianAsymKeyType pKeyType) {
         return GordianSignatureSpec.listPossibleSignatures(pKeyType)
                 .stream()
-                .filter(supportedSignatureSpecs())
+                .filter(supportedSignatures())
                 .collect(Collectors.toList());
     }
 
@@ -68,7 +69,7 @@ public interface GordianSignatureFactory {
      * @param pKeyPair the keyPair
      * @return the list of supported signatureSpecs.
      */
-    default List<GordianSignatureSpec> listAllSupportedSignatureSpecs(final GordianKeyPair pKeyPair) {
+    default List<GordianSignatureSpec> listAllSupportedSignatures(final GordianKeyPair pKeyPair) {
         return GordianSignatureSpec.listPossibleSignatures(pKeyPair.getKeySpec().getKeyType())
                 .stream()
                 .filter(s -> validSignatureSpecForKeyPair(pKeyPair, s))

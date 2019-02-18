@@ -72,7 +72,7 @@ public abstract class GordianCoreSignatureFactory
     }
 
     @Override
-    public Predicate<GordianSignatureSpec> supportedSignatureSpecs() {
+    public Predicate<GordianSignatureSpec> supportedSignatures() {
         return this::validSignatureSpec;
     }
 

@@ -111,9 +111,11 @@ public interface GordianCipherFactory {
      * @param isAAD are the cipherSpecs for an AADCipher?
      * @return the list of supported symCipherSpecs.
      */
-    default List<GordianSymCipherSpec> listAllSupportedSymCipherSpecs(final boolean isAAD) {
+    default List<GordianSymCipherSpec> listAllSupportedSymCipherSpecs(final GordianSymKeySpec pSpec,
+                                                                      final boolean isAAD) {
         return GordianSymCipherSpec.listAll()
                 .stream()
+                .filter(s -> s.getKeyType().equals(pSpec))
                 .filter(s -> supportedSymCipherSpecs().test(s, isAAD))
                 .collect(Collectors.toList());
     }

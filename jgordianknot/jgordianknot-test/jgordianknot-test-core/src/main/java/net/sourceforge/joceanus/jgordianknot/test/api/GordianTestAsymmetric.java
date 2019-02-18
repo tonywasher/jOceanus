@@ -277,7 +277,7 @@ public final class GordianTestAsymmetric {
         /* Loop through the possible agreements */
         final GordianAgreementFactory mySrcAgrees = theSource.getAgreementFactory();
         final GordianAgreementFactory myTgtAgrees = theTarget.getAgreementFactory();
-        for (final GordianAgreementSpec mySpec : GordianAgreementSpec.listPossibleAgreements(pSrcPair)) {
+        for (final GordianAgreementSpec mySpec : GordianAgreementSpec.listPossibleAgreements(pSrcPair.getKeySpec().getKeyType())) {
             /* If the agreement is valid */
             if (mySrcAgrees.validAgreementSpecForKeyPair(pSrcPair, mySpec)) {
                 /* Check the agreement */
@@ -406,7 +406,7 @@ public final class GordianTestAsymmetric {
                                  final GordianKeyPair pTgtPair) throws OceanusException {
         /* Loop through the possible encryptors */
         final GordianEncryptorFactory myEncryptors = theSource.getEncryptorFactory();
-        for (final GordianEncryptorSpec mySpec : GordianEncryptorSpec.listPossibleEncryptors(pPair)) {
+        for (final GordianEncryptorSpec mySpec : GordianEncryptorSpec.listPossibleEncryptors(pPair.getKeySpec().getKeyType())) {
             /* If the encryptor is valid */
             if (myEncryptors.validEncryptorSpecForKeyPair(pPair, mySpec)) {
                 /* Check the encryptor */

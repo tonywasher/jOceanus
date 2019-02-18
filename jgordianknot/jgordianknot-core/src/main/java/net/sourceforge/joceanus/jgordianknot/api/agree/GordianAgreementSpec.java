@@ -20,7 +20,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import net.sourceforge.joceanus.jgordianknot.api.asym.GordianAsymKeyType;
-import net.sourceforge.joceanus.jgordianknot.api.key.GordianKeyPair;
 import net.sourceforge.joceanus.jtethys.TethysDataConverter;
 
 /**
@@ -176,41 +175,40 @@ public final class GordianAgreementSpec {
     }
 
     /**
-     * Obtain a list of all possible agreements for the keyPair.
-     * @param pKeyPair the keyPair
+     * Obtain a list of all possible agreements for the keyType.
+     * @param pKeyType the keyType
      * @return the list
      */
-    public static List<GordianAgreementSpec> listPossibleAgreements(final GordianKeyPair pKeyPair) {
+    public static List<GordianAgreementSpec> listPossibleAgreements(final GordianAsymKeyType pKeyType) {
         /* Create list */
         final List<GordianAgreementSpec> myAgreements = new ArrayList<>();
 
         /* Switch on AsymKeyType */
-        final GordianAsymKeyType myType = pKeyPair.getKeySpec().getKeyType();
-        switch (myType) {
+        switch (pKeyType) {
             case RSA:
             case NEWHOPE:
-                myAgreements.addAll(listAllKDFs(myType, GordianAgreementType.KEM));
+                myAgreements.addAll(listAllKDFs(pKeyType, GordianAgreementType.KEM));
                 break;
             case SM2:
-                myAgreements.addAll(listAllKDFs(myType, GordianAgreementType.SM2));
-                myAgreements.addAll(listAllKDFs(myType, GordianAgreementType.KEM));
-                myAgreements.addAll(listAllKDFs(myType, GordianAgreementType.BASIC));
-                myAgreements.addAll(listAllKDFs(myType, GordianAgreementType.UNIFIED));
-                myAgreements.addAll(listAllKDFs(myType, GordianAgreementType.MQV));
+                myAgreements.addAll(listAllKDFs(pKeyType, GordianAgreementType.SM2));
+                myAgreements.addAll(listAllKDFs(pKeyType, GordianAgreementType.KEM));
+                myAgreements.addAll(listAllKDFs(pKeyType, GordianAgreementType.BASIC));
+                myAgreements.addAll(listAllKDFs(pKeyType, GordianAgreementType.UNIFIED));
+                myAgreements.addAll(listAllKDFs(pKeyType, GordianAgreementType.MQV));
                 break;
             case EC:
             case GOST2012:
             case DSTU4145:
             case DIFFIEHELLMAN:
-                myAgreements.addAll(listAllKDFs(myType, GordianAgreementType.KEM));
-                myAgreements.addAll(listAllKDFs(myType, GordianAgreementType.BASIC));
-                myAgreements.addAll(listAllKDFs(myType, GordianAgreementType.UNIFIED));
-                myAgreements.addAll(listAllKDFs(myType, GordianAgreementType.MQV));
+                myAgreements.addAll(listAllKDFs(pKeyType, GordianAgreementType.KEM));
+                myAgreements.addAll(listAllKDFs(pKeyType, GordianAgreementType.BASIC));
+                myAgreements.addAll(listAllKDFs(pKeyType, GordianAgreementType.UNIFIED));
+                myAgreements.addAll(listAllKDFs(pKeyType, GordianAgreementType.MQV));
                 break;
             case X25519:
             case X448:
-                myAgreements.addAll(listAllKDFs(myType, GordianAgreementType.BASIC));
-                myAgreements.addAll(listAllKDFs(myType, GordianAgreementType.UNIFIED));
+                myAgreements.addAll(listAllKDFs(pKeyType, GordianAgreementType.BASIC));
+                myAgreements.addAll(listAllKDFs(pKeyType, GordianAgreementType.UNIFIED));
                 break;
             default:
                 break;

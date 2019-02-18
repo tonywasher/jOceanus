@@ -20,7 +20,9 @@ import java.util.List;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
+import net.sourceforge.joceanus.jgordianknot.api.asym.GordianAsymKeyType;
 import net.sourceforge.joceanus.jgordianknot.api.key.GordianKeyPair;
+import net.sourceforge.joceanus.jgordianknot.api.sign.GordianSignatureSpec;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
@@ -42,6 +44,18 @@ public interface GordianAgreementFactory {
     Predicate<GordianAgreementSpec> supportedAgreements();
 
     /**
+     * Obtain a list of supported agreementSpecs.
+     * @param pKeyType the keyType
+     * @return the list of supported agreementSpecs.
+     */
+    default List<GordianAgreementSpec> listAllSupportedAgreements(final GordianAsymKeyType pKeyType) {
+        return GordianAgreementSpec.listPossibleAgreements(pKeyType)
+                .stream()
+                .filter(supportedAgreements())
+                .collect(Collectors.toList());
+    }
+
+    /**
      * Check AgreementSpec and KeyPair combination.
      * @param pKeyPair the keyPair
      * @param pAgreementSpec the macSpec
@@ -55,8 +69,8 @@ public interface GordianAgreementFactory {
      * @param pKeyPair the keyPair
      * @return the list of supported agreementSpecs.
      */
-    default List<GordianAgreementSpec> listAllSupportedAgreementSpecs(final GordianKeyPair pKeyPair) {
-        return GordianAgreementSpec.listPossibleAgreements(pKeyPair)
+    default List<GordianAgreementSpec> listAllSupportedAgreements(final GordianKeyPair pKeyPair) {
+        return GordianAgreementSpec.listPossibleAgreements(pKeyPair.getKeySpec().getKeyType())
                 .stream()
                 .filter(s -> validAgreementSpecForKeyPair(pKeyPair, s))
                 .collect(Collectors.toList());

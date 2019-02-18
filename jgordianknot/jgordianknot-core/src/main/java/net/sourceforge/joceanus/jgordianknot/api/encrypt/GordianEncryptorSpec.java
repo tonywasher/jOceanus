@@ -18,13 +18,13 @@ package net.sourceforge.joceanus.jgordianknot.api.encrypt;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import net.sourceforge.joceanus.jgordianknot.api.asym.GordianAsymKeyType;
 import net.sourceforge.joceanus.jgordianknot.api.asym.GordianMcElieceKeySpec.GordianMcElieceEncryptionType;
 import net.sourceforge.joceanus.jgordianknot.api.base.GordianLength;
 import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigestSpec;
 import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigestType;
-import net.sourceforge.joceanus.jgordianknot.api.key.GordianKeyPair;
 import net.sourceforge.joceanus.jtethys.TethysDataConverter;
 
 /**
@@ -299,9 +299,7 @@ public final class GordianEncryptorSpec {
         }
 
         /* Match subfields */
-        return theEncryptorType == null
-               ? myThat.theEncryptorType == null
-               : theEncryptorType.equals(myThat.theEncryptorType);
+        return Objects.equals(theEncryptorType, myThat.theEncryptorType);
     }
 
     @Override
@@ -314,17 +312,16 @@ public final class GordianEncryptorSpec {
     }
 
     /**
-     * Obtain a list of all possible agreements for the keyPair.
-     * @param pKeyPair the keyPair
+     * Obtain a list of all possible agreements for the keyType.
+     * @param pKeyType the keyType
      * @return the list
      */
-    public static List<GordianEncryptorSpec> listPossibleEncryptors(final GordianKeyPair pKeyPair) {
+    public static List<GordianEncryptorSpec> listPossibleEncryptors(final GordianAsymKeyType pKeyType) {
         /* Create list */
         final List<GordianEncryptorSpec> myEncryptors = new ArrayList<>();
 
         /* Switch on AsymKeyType */
-        final GordianAsymKeyType myType = pKeyPair.getKeySpec().getKeyType();
-        switch (myType) {
+        switch (pKeyType) {
             case RSA:
                 myEncryptors.add(GordianEncryptorSpec.rsa(GordianDigestSpec.sha2(GordianLength.LEN_224)));
                 myEncryptors.add(GordianEncryptorSpec.rsa(GordianDigestSpec.sha2(GordianLength.LEN_256)));

@@ -230,5 +230,4 @@ public class JcaSignatureFactory
         return pSpec.getDigestType() == GordianDigestType.SHA2
                 && pSpec.getStateLength() == null;
     }
-
 }

@@ -374,7 +374,7 @@ public class GordianSignatureAlgId {
      * @param pKeyType the keyType
      */
     private void addSignatures(final GordianAsymKeyType pKeyType) {
-        for (GordianSignatureSpec mySpec : theFactory.listAllSupportedSignatureSpecs(pKeyType)) {
+        for (GordianSignatureSpec mySpec : theFactory.listAllSupportedSignatures(pKeyType)) {
             ensureSignature(mySpec);
         }
     }
