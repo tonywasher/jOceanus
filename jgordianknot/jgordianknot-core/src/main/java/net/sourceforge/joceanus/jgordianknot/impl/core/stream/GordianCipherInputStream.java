@@ -38,15 +38,15 @@ public class GordianCipherInputStream<T extends GordianKeySpec>
     protected GordianCipherInputStream(final GordianCipher<T> pCipher,
                                        final InputStream pInput) {
         super(pInput);
-        setProcessedBuffer(new CipherBuffer<T>(pCipher));
+        setProcessedBuffer(new GordianCipherBuffer<T>(pCipher));
     }
 
     /**
      * Buffer to hold the processed data prior to returning it to the caller.
      * @param <T> the key type
      */
-    private static final class CipherBuffer<T extends GordianKeySpec>
-            extends ProcessedBuffer {
+    private static final class GordianCipherBuffer<T extends GordianKeySpec>
+            extends GordianProcessedBuffer {
         /**
          * The cipher.
          */
@@ -61,7 +61,7 @@ public class GordianCipherInputStream<T extends GordianKeySpec>
          * Constructor.
          * @param pCipher the decryption cipher
          */
-        CipherBuffer(final GordianCipher<T> pCipher) {
+        GordianCipherBuffer(final GordianCipher<T> pCipher) {
             theCipher = pCipher;
         }
 

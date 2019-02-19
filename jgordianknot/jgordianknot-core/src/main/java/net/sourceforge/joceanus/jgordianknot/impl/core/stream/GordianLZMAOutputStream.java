@@ -48,7 +48,7 @@ public final class GordianLZMAOutputStream
     /**
      * The encoder service.
      */
-    private final EncoderService theService;
+    private final GordianEncoderService theService;
 
     /**
      * Constructor.
@@ -64,7 +64,7 @@ public final class GordianLZMAOutputStream
         theSource = myPipe.getSource();
 
         /* Create encoder service */
-        theService = new EncoderService();
+        theService = new GordianEncoderService();
         theService.start();
     }
 
@@ -129,7 +129,7 @@ public final class GordianLZMAOutputStream
     /**
      * The encoder service.
      */
-    private final class EncoderService
+    private final class GordianEncoderService
             extends Thread {
         /**
          * The encoder.
@@ -144,7 +144,7 @@ public final class GordianLZMAOutputStream
         /**
          * Constructor.
          */
-        EncoderService() {
+        GordianEncoderService() {
             /* Create the encoder */
             theEncoder = new Encoder();
             theError = null;

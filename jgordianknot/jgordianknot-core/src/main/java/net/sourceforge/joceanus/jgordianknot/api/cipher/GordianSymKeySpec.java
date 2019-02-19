@@ -268,6 +268,31 @@ public class GordianSymKeySpec implements GordianKeySpec {
     }
 
     /**
+     * Create simonKeySpec.
+     * @return the keySpec
+     */
+    public static GordianSymKeySpec simon() {
+        return new GordianSymKeySpec(GordianSymKeyType.SIMON);
+    }
+
+    /**
+     * Create simonKeySpec.
+     * @param pBlockLength the block length
+     * @return the keySpec
+     */
+    public static GordianSymKeySpec simon(final GordianLength pBlockLength) {
+        return new GordianSymKeySpec(GordianSymKeyType.SIMON, pBlockLength);
+    }
+
+    /**
+     * Create marsKeySpec.
+     * @return the keySpec
+     */
+    public static GordianSymKeySpec mars() {
+        return new GordianSymKeySpec(GordianSymKeyType.MARS);
+    }
+
+    /**
      * Create anubisKeySpec.
      * @return the keySpec
      */

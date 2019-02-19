@@ -42,6 +42,7 @@ import org.bouncycastle.crypto.digests.SM3Digest;
 import org.bouncycastle.crypto.digests.SkeinDigest;
 import org.bouncycastle.crypto.digests.TigerDigest;
 import org.bouncycastle.crypto.digests.WhirlpoolDigest;
+import org.bouncycastle.crypto.newdigests.CubeHashDigest;
 import org.bouncycastle.crypto.newdigests.GroestlDigest;
 import org.bouncycastle.crypto.newdigests.JHDigest;
 
@@ -117,6 +118,8 @@ public class BouncyDigestFactory
                 return new GroestlDigest(myLen.getLength());
             case JH:
                 return new JHDigest(myLen.getLength());
+            case CUBEHASH:
+                return new CubeHashDigest(myLen.getLength());
             case GOST:
                 return new GOST3411Digest();
             case TIGER:

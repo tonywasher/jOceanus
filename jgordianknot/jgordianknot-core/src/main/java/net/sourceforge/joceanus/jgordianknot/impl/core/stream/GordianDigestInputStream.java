@@ -56,7 +56,7 @@ public class GordianDigestInputStream
         theExpected = Arrays.copyOf(pExpected, pExpected.length);
 
         /* Create processed buffer */
-        setProcessedBuffer(new DigestBuffer(this));
+        setProcessedBuffer(new GordianDigestBuffer(this));
     }
 
     /**
@@ -84,8 +84,8 @@ public class GordianDigestInputStream
     /**
      * Buffer to hold the processed data prior to returning it to the caller.
      */
-    private static final class DigestBuffer
-            extends ProcessedBuffer {
+    private static final class GordianDigestBuffer
+            extends GordianProcessedBuffer {
         /**
          * The InputStream.
          */
@@ -100,7 +100,7 @@ public class GordianDigestInputStream
          * Constructor.
          * @param pStream the input stream
          */
-        DigestBuffer(final GordianDigestInputStream pStream) {
+        GordianDigestBuffer(final GordianDigestInputStream pStream) {
             theStream = pStream;
             theDigest = theStream.getDigest();
         }

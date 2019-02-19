@@ -47,7 +47,7 @@ public class GordianPipedStream {
     /**
      * The Input Stream.
      */
-    private final PipedInputStream theSource;
+    private final GordianPipedInputStream theSource;
 
     /**
      * The Output Stream.
@@ -62,10 +62,10 @@ public class GordianPipedStream {
         theQueue = new ArrayBlockingQueue<>(QUEUE_LEN);
 
         /* Create the source stream */
-        theSource = new PipedInputStream();
+        theSource = new GordianPipedInputStream();
 
         /* Create the sink stream */
-        theSink = new BufferedOutputStream(new PipedOutputStream(), BUFFER_LEN);
+        theSink = new BufferedOutputStream(new GordianPipedOutputStream(), BUFFER_LEN);
     }
 
     /**
@@ -87,7 +87,7 @@ public class GordianPipedStream {
     /**
      * The inputStream class.
      */
-    private class PipedInputStream
+    private class GordianPipedInputStream
             extends InputStream {
         /**
          * The currently active element.
@@ -225,7 +225,7 @@ public class GordianPipedStream {
     /**
      * The outputStream class.
      */
-    private class PipedOutputStream
+    private class GordianPipedOutputStream
             extends OutputStream {
         /**
          * has this stream been closed.

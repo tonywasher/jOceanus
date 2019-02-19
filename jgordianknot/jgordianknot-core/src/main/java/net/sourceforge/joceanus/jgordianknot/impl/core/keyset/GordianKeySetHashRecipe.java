@@ -76,7 +76,7 @@ public final class GordianKeySetHashRecipe {
     /**
      * The Hash Parameters.
      */
-    private final HashParameters theParams;
+    private final GordianHashParameters theParams;
 
     /**
      * Constructor for random choices.
@@ -96,7 +96,7 @@ public final class GordianKeySetHashRecipe {
         theInitVector = myPersonal.adjustIV(theSalt);
 
         /* Allocate new set of parameters */
-        theParams = new HashParameters(pFactory);
+        theParams = new GordianHashParameters(pFactory);
         theRecipe = theParams.getRecipe();
         theHash = null;
     }
@@ -142,7 +142,7 @@ public final class GordianKeySetHashRecipe {
         theInitVector = myPersonal.adjustIV(theSalt);
 
         /* Allocate new set of parameters */
-        theParams = new HashParameters(pFactory, theRecipe);
+        theParams = new GordianHashParameters(pFactory, theRecipe);
     }
 
     /**
@@ -242,7 +242,7 @@ public final class GordianKeySetHashRecipe {
     /**
      * The parameters class.
      */
-    private static final class HashParameters {
+    private static final class GordianHashParameters {
         /**
          * The Recipe.
          */
@@ -267,7 +267,7 @@ public final class GordianKeySetHashRecipe {
          * Construct the parameters from random.
          * @param pFactory the factory
          */
-        HashParameters(final GordianCoreFactory pFactory) {
+        GordianHashParameters(final GordianCoreFactory pFactory) {
             /* Obtain Id manager and random */
             final GordianCoreKeySetFactory myFactory = (GordianCoreKeySetFactory) pFactory.getKeySetFactory();
             final GordianIdManager myManager = myFactory.getIdManager();
@@ -294,8 +294,8 @@ public final class GordianKeySetHashRecipe {
          * @param pFactory the factory
          * @param pRecipe the recipe bytes
          */
-        HashParameters(final GordianCoreFactory pFactory,
-                       final byte[] pRecipe) {
+        GordianHashParameters(final GordianCoreFactory pFactory,
+                              final byte[] pRecipe) {
             /* Obtain Id manager */
             final GordianCoreKeySetFactory myFactory = (GordianCoreKeySetFactory) pFactory.getKeySetFactory();
             final GordianIdManager myManager = myFactory.getIdManager();

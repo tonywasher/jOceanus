@@ -49,7 +49,7 @@ public final class GordianLZMAInputStream
     /**
      * The decoder service.
      */
-    private final DecoderService theService;
+    private final GordianDecoderService theService;
 
     /**
      * Constructor.
@@ -65,7 +65,7 @@ public final class GordianLZMAInputStream
         theSource = myPipe.getSource();
 
         /* Create and run the decoder service */
-        theService = new DecoderService();
+        theService = new GordianDecoderService();
         theService.start();
     }
 
@@ -133,7 +133,7 @@ public final class GordianLZMAInputStream
     /**
      * The decoder service.
      */
-    private final class DecoderService
+    private final class GordianDecoderService
             extends Thread {
         /**
          * The decoder.
@@ -148,7 +148,7 @@ public final class GordianLZMAInputStream
         /**
          * Constructor.
          */
-        DecoderService() {
+        GordianDecoderService() {
             /* Create the decoder */
             theDecoder = new Decoder();
             theError = null;

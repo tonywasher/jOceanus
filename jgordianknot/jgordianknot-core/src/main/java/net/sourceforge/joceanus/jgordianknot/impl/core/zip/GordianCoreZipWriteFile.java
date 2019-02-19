@@ -229,7 +229,7 @@ public class GordianCoreZipWriteFile
             theFileEntry = theContents.addZipFileEntry(theFileName);
 
             /* Simply create a wrapper on the output stream */
-            theOutput = new WrapOutputStream(theStream);
+            theOutput = new GordianWrapOutputStream(theStream);
 
             /* If we are encrypting */
             if (isEncrypted()) {
@@ -340,7 +340,7 @@ public class GordianCoreZipWriteFile
     /**
      * Wrapper class to catch close of output stream and prevent it from closing the ZipFile.
      */
-    private final class WrapOutputStream
+    private final class GordianWrapOutputStream
             extends OutputStream {
         /**
          * The underlying Zip output stream.
@@ -351,7 +351,7 @@ public class GordianCoreZipWriteFile
          * Constructor.
          * @param pStream the ZipStream
          */
-        WrapOutputStream(final ZipOutputStream pStream) {
+        GordianWrapOutputStream(final ZipOutputStream pStream) {
             theStream = pStream;
         }
 

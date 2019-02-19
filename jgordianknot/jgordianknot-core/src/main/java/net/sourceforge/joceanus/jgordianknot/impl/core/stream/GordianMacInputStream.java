@@ -56,7 +56,7 @@ public class GordianMacInputStream
         theExpected = Arrays.copyOf(pExpected, pExpected.length);
 
         /* Create processed buffer */
-        setProcessedBuffer(new MacBuffer(this));
+        setProcessedBuffer(new GordianMacBuffer(this));
     }
 
     /**
@@ -84,8 +84,8 @@ public class GordianMacInputStream
     /**
      * Buffer to hold the processed data prior to returning it to the caller.
      */
-    private static final class MacBuffer
-            extends ProcessedBuffer {
+    private static final class GordianMacBuffer
+            extends GordianProcessedBuffer {
         /**
          * The InputStream.
          */
@@ -100,7 +100,7 @@ public class GordianMacInputStream
          * Constructor.
          * @param pStream the input stream
          */
-        MacBuffer(final GordianMacInputStream pStream) {
+        GordianMacBuffer(final GordianMacInputStream pStream) {
             theStream = pStream;
             theMac = theStream.getMac();
         }

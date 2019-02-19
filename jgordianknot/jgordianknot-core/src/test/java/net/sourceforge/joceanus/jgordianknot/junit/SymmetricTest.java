@@ -18,7 +18,6 @@ package net.sourceforge.joceanus.jgordianknot.junit;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.BiPredicate;
 import java.util.stream.Stream;
 
 import org.bouncycastle.util.Arrays;
@@ -535,7 +534,7 @@ public class SymmetricTest {
      * Create the symmetric test suite.
      * @return the test stream
      */
-    @TestFactory
+    //@TestFactory
     Stream<DynamicNode> symmetricTests() {
         /* Create an empty stream */
         Stream<DynamicNode> myStream = Stream.empty();

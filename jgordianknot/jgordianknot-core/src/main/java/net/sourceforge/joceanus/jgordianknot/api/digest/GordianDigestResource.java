@@ -115,7 +115,12 @@ public enum GordianDigestResource implements TethysBundleId {
     /**
      * Digest Groestl.
      */
-    DIGEST_GROESTL("GROESTL");
+    DIGEST_GROESTL("GROESTL"),
+
+    /**
+     * Digest CubeHash.
+     */
+    DIGEST_CUBEHASH("CubeHash");
 
     /**
      * The Digest Map.
@@ -193,6 +198,7 @@ public enum GordianDigestResource implements TethysBundleId {
         myMap.put(GordianDigestType.MD2, DIGEST_MD2);
         myMap.put(GordianDigestType.JH, DIGEST_JH);
         myMap.put(GordianDigestType.GROESTL, DIGEST_GROESTL);
+        myMap.put(GordianDigestType.CUBEHASH, DIGEST_CUBEHASH);
         return myMap;
     }
 

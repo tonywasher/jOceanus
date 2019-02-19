@@ -286,6 +286,33 @@ public class GordianDigestSpec {
     }
 
     /**
+     * Create jhDigestSpec.
+     * @param pLength the length
+     * @return the DigestSpec
+     */
+    public static GordianDigestSpec jh(final GordianLength pLength) {
+        return new GordianDigestSpec(GordianDigestType.JH, pLength);
+    }
+
+    /**
+     * Create groestlDigestSpec.
+     * @param pLength the length
+     * @return the DigestSpec
+     */
+    public static GordianDigestSpec groestl(final GordianLength pLength) {
+        return new GordianDigestSpec(GordianDigestType.GROESTL, pLength);
+    }
+
+    /**
+     * Create cubeHashDigestSpec.
+     * @param pLength the length
+     * @return the DigestSpec
+     */
+    public static GordianDigestSpec cubeHash(final GordianLength pLength) {
+        return new GordianDigestSpec(GordianDigestType.CUBEHASH, pLength);
+    }
+
+    /**
      * Obtain Digest Type.
      * @return the DigestType
      */

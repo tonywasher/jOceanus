@@ -52,7 +52,7 @@ public abstract class GordianInputStream
     /**
      * The holding buffer for data that has been processed but not read.
      */
-    private ProcessedBuffer theProcessed;
+    private GordianProcessedBuffer theProcessed;
 
     /**
      * The buffer used for reading from input stream.
@@ -81,7 +81,7 @@ public abstract class GordianInputStream
      * Set the processed buffer.
      * @param pProcessed the processed buffer
      */
-    protected void setProcessedBuffer(final ProcessedBuffer pProcessed) {
+    protected void setProcessedBuffer(final GordianProcessedBuffer pProcessed) {
         theProcessed = pProcessed;
     }
 
@@ -243,7 +243,7 @@ public abstract class GordianInputStream
     /**
      * Buffer to hold the processed data prior to returning it to the caller.
      */
-    protected abstract static class ProcessedBuffer {
+    protected abstract static class GordianProcessedBuffer {
         /**
          * The buffer itself.
          */

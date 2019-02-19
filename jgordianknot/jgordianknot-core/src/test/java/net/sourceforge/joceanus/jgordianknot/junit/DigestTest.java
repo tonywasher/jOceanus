@@ -17,6 +17,7 @@
 package net.sourceforge.joceanus.jgordianknot.junit;
 
 import org.bouncycastle.crypto.Digest;
+import org.bouncycastle.crypto.newdigests.CubeHashDigest;
 import org.bouncycastle.crypto.newdigests.GroestlDigest;
 import org.bouncycastle.crypto.newdigests.JHDigest;
 import org.junit.jupiter.api.Assertions;
@@ -250,6 +251,98 @@ public class DigestTest {
         @Test
         public void testDigests() throws OceanusException {
             testDigestStrings(new JHDigest(512), EXPECTED);
+        }
+    }
+
+    /**
+     * CubeHash224.
+     */
+    public static class CubeHash224Test extends DigestTest {
+        /**
+         * Expected results.
+         */
+        private static final String[] EXPECTED = {
+                "4d841199a71b60279dd4da3fd1efbedf671716f6d1c4e2fdbfc0a879",
+                "5f0122e539e241ad5aaf42fe5150468c40e3670a3bf8d6dda15bcc98",
+                "f5c18c49e9e1236bed4065da8fc95cafc44f35d37ac05f8d4f06961d",
+                "9719cf78ea33ea70bde332f93d10bc5e71de05e0dbc3da80f45b99e1",
+                "b4de8505a5ad631db28ec031c9551c6d41863f5c9ab12d12a5477978",
+                "40ac16e99b72813241dcb1969c4fbd83b805162a5cac46a68d9430cf",
+                "cec6fe7c403e12d2740b0e6011c6066da2b9fad6a17b07b40d207155"
+        };
+
+        @Test
+        public void testDigests() throws OceanusException {
+            testDigestStrings(new CubeHashDigest(224), EXPECTED);
+        }
+    }
+
+    /**
+     * CubeHash256.
+     */
+    public static class CubeHash256Test extends DigestTest {
+        /**
+         * Expected results.
+         */
+        private static final String[] EXPECTED = {
+                "67dfa7b6b3cb27c58c19db1d7bbb7c4596913e25f228ddfb9910ddf3c5cad2eb",
+                "22e30986ffa6beb826ae34b5960ec6388e146aa92454985d7cf064a49f010fec",
+                "0bff398cba8200a6914e740b3b092e46e9658bf84fb5921b29b346ab34294238",
+                "aea2a33310a88d0446fb8c308f2fbc4194bfaea3044e3ac90f9420438f314ec7",
+                "947faf774cfec74fe5f9e59e676afd0f026774959d132541e78df7b510a4cc1e",
+                "de7540f2e1c04f7de29729441f2a1ad4c28b25dfeeb11aea7ba0d8de19b78339",
+                "cf750745b502b313459a9c7b0a850da20cf092bf85b70a02875049a9607bda4a"
+        };
+
+        @Test
+        public void testDigests() throws OceanusException {
+            testDigestStrings(new CubeHashDigest(256), EXPECTED);
+        }
+    }
+
+    /**
+     * CubeHash384.
+     */
+    public static class CubeHash384Test extends DigestTest {
+        /**
+         * Expected results.
+         */
+        private static final String[] EXPECTED = {
+                "05442e0edbc4efceed1eda27115a4a4d4cd6adb865f787b5e83a62ec4642b9e639040db0b410c73f19767319ad6f82bf",
+                "ae72fd99ff8e391ff5a39d7a1352ae64191bcc890076543835ae014656f2abfc027a0cfbeac387bcdb91627718c3a91f",
+                "409a451205d22bb010381fb85567d04c6d485b726d35465c8347def3cb8c5fb380c2741f924c446e5c38c0c3f8257bb2",
+                "743a670038507ce0449764c6b617facc0b2da21a927a699df828c47b47d87eea8e10a9b15ac1d19a4d7f6e6c2977f98f",
+                "a2ee6a7ef7b9865a3c4b361af87acbd3525555036dfb088d3230113d9c9b79bb92a34e0a1df39dd682709b82864f69b6",
+                "df867f1ea8d793c388864ce225dab35c387bbf8c58fa8e998f56f7e0cb9c045eb3e633ab309b998c75b746b8f5fa93bd",
+                "d6cb0ecbe1f10dbf50cf04df376540c220f8278a458d6357c01051605da9818f7df91d829230d1ae327f3bafcfcfcaa9"
+        };
+
+        @Test
+        public void testDigests() throws OceanusException {
+            testDigestStrings(new CubeHashDigest(384), EXPECTED);
+        }
+    }
+
+    /**
+     * CubeHash512.
+     */
+    public static class CubeHash512Test extends DigestTest {
+        /**
+         * Expected results.
+         */
+        private static final String[] EXPECTED = {
+                "37045cca405ee6fbdf815ed8b57c971bb78dafb58f3ef676c977a716f66dbd8f376fef59d2e0687cf5608c5dad53ba42c8456269f3f3bcfb27d9b75caaa26e11",
+                "edab0e685bb06bd7032d78a837b0a6e53b85a01787d505c3e56461ee9a27ad3c7fb5a02942a46147168646e0b8f4d2c636a69d70472368037e3a852706ea2e57",
+                "f6c085ffde5374ef3ddc42b2a56a793b5371e23cd05b60c79106851d8c0f219e2d24e4c5f5d73b647efdb145b12ffd7005f913386c4d22627c9b4e75586ab490",
+                "c5dc45bbc711594ff3bb4329487f4fcf3eb530c08ad6e2698d0c5373d3f9b977e111eea58d686266e25190c7c816dff6f62479d4fd2bc01cae28988ac53ce30e",
+                "5540b7ad4c469184088fbe360207443fb0005bb7c948e6cfa550c15469d2ff4cbf3172c7344fb6ab4b98b86fc461bba6db26a664f1a81ea21fb13e78303f556e",
+                "4b09926453ed768fea54bd2c829a9ae6105aa05ba8df4cde45d46725f26fb7edc4f8e94f294283a8cb451da0e573eb9f03db0327fdaa12440140dca61712685e",
+                "48e34719a74c380fbeaf6f9914a3d84570bee32f9284f919459f12eb3360bf9c632663daa154455f79ec95db11ba1d3c23e9d9f7d12a59dcdb7c464c52965d5d"
+        };
+
+        @Test
+        public void testDigests() throws OceanusException {
+            testDigestStrings(new CubeHashDigest(512), EXPECTED);
         }
     }
 }

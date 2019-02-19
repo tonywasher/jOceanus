@@ -41,6 +41,11 @@ import net.sourceforge.joceanus.jtethys.TethysDataConverter;
 public abstract class GordianCoreKeyGenerator<T extends GordianKeySpec>
     implements GordianKeyGenerator<T> {
     /**
+     * Default iterations for buildCipher.
+     */
+    private static final int DEFAULT_ITERATIONS = 32;
+
+    /**
      * The Key Type.
      */
     private final T theKeyType;
@@ -206,14 +211,20 @@ public abstract class GordianCoreKeyGenerator<T extends GordianKeySpec>
         final GordianPersonalisation myPersonal = myKeySets.getPersonalisation();
         final byte[] myKeyLen = TethysDataConverter.integerToByteArray(theKeyLength);
 
-        /* Update with personalisation, algorithm and section */
+        /* Update prime with personalisation, algorithm and section */
         myPersonal.updateMac(myPrime);
         myPrime.update(myAlgo);
         myPrime.update(myKeyLen);
         myPrime.update(pSection);
 
+        /* Update alt with personalisation, algorithm and section */
+        myPersonal.updateMac(myAlt);
+        myAlt.update(myAlgo);
+        myAlt.update(myKeyLen);
+        myAlt.update(pSection);
+
         /* Loop through the iterations */
-        final int myNumIterations = theFactory.getNumIterations() + pIterations;
+        final int myNumIterations = DEFAULT_ITERATIONS + pIterations;
         for (int i = 0; i < myNumIterations; i++) {
             /* Calculate alternate hash */
             myAlt.update(myAltInput);

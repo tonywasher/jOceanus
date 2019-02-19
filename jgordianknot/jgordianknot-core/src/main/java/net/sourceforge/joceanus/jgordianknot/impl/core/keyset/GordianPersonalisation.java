@@ -44,14 +44,9 @@ public class GordianPersonalisation {
     private static final GordianLength HASH_LEN = GordianLength.LEN_512;
 
     /**
-     * The Mask to see whether adjustment is needed for a small Recipe/Personalised Integer.
+     * Make sure that the top positive bit is set for all integer masks.
      */
-    private static final int VALUE_CHECK = 0x7F000000;
-
-    /**
-     * The Adjustment to apply to a small Recipe/Personalised Integer.
-     */
-    private static final int VALUE_ADJUST = 0x7000000;
+    private static final int VALUE_MASK = 0x40000000;
 
     /**
      * Personalisation bytes.
@@ -273,14 +268,8 @@ public class GordianPersonalisation {
                     ? -pValue
                     : pValue;
 
-        /* If the value is insufficiently large */
-        if ((myVal & VALUE_CHECK) == 0) {
-            /* Set some top bits */
-            myVal |= VALUE_ADJUST;
-        }
-
         /* Return the sanitised value */
-        return myVal;
+        return myVal | VALUE_MASK;
     }
 
     /**

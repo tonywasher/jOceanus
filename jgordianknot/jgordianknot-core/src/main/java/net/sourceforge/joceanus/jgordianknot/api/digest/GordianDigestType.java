@@ -110,7 +110,12 @@ public enum GordianDigestType {
     /**
      * GROESTL.
      */
-    GROESTL(GordianLength.LEN_512, GordianLength.LEN_224, GordianLength.LEN_256, GordianLength.LEN_384);
+    GROESTL(GordianLength.LEN_512, GordianLength.LEN_224, GordianLength.LEN_256, GordianLength.LEN_384),
+
+    /**
+     * CubeHash.
+     */
+    CUBEHASH(GordianLength.LEN_512, GordianLength.LEN_224, GordianLength.LEN_256, GordianLength.LEN_384);
 
     /**
      * The Supported lengths.

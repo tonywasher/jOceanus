@@ -82,10 +82,11 @@ public class JcaDigestFactory
             return false;
         }
 
-        /* Disable JH, and Groestl */
+        /* Disable JH, Groestl, and CubeHash */
         switch (pDigestType) {
             case JH:
             case GROESTL:
+            case CUBEHASH:
                 return false;
             default:
                 return true;
