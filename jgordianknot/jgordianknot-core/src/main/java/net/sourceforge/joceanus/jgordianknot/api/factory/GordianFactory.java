@@ -34,6 +34,12 @@ public interface GordianFactory {
     GordianFactoryType getFactoryType();
 
     /**
+     * Do we use restricted security?
+     * @return true/false
+     */
+    boolean isRestricted();
+
+    /**
      * Obtain the Digest Factory.
      * @return the digest factory
      */

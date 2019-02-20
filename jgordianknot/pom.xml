@@ -13,7 +13,6 @@
     <module>jgordianknot-swing</module>
     <module>jgordianknot-javafx</module>
     <module>jgordianknot-core</module>
-    <module>jgordianknot-test</module>
   </modules>
   <properties>
     <scmComponent>jgordianknot</scmComponent>

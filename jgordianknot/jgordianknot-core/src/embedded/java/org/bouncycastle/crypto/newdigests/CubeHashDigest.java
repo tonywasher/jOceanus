@@ -154,7 +154,7 @@ public class CubeHashDigest
 
     @Override
     public int getByteLength() {
-        return theBlockLen;
+        return theHashLen;
     }
 
     @Override

@@ -22,8 +22,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map.Entry;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.tmatesoft.svn.core.SVNLogEntry;
 import org.tmatesoft.svn.core.SVNLogEntryPath;
 import org.tmatesoft.svn.core.SVNNodeKind;
@@ -36,6 +34,8 @@ import net.sourceforge.joceanus.jmetis.data.MetisDataItem.MetisDataObjectFormat;
 import net.sourceforge.joceanus.jmetis.field.MetisFieldItem;
 import net.sourceforge.joceanus.jmetis.field.MetisFieldSet;
 import net.sourceforge.joceanus.jtethys.OceanusException;
+import net.sourceforge.joceanus.jtethys.logger.TethysLogManager;
+import net.sourceforge.joceanus.jtethys.logger.TethysLogger;
 import net.sourceforge.joceanus.jthemis.ThemisDataException;
 import net.sourceforge.joceanus.jthemis.ThemisResource;
 import net.sourceforge.joceanus.jthemis.scm.data.ThemisScmOwner;
@@ -48,7 +48,7 @@ public class ThemisSvnRevisionHistory
     /**
      * Logger.
      */
-    private static final Logger LOGGER = LogManager.getLogger(ThemisSvnRevisionHistory.class);
+    private static final TethysLogger LOGGER = TethysLogManager.getLogger(ThemisSvnRevisionHistory.class);
 
     /**
      * DataFields.
@@ -153,7 +153,7 @@ public class ThemisSvnRevisionHistory
         theRevisionKey = new ThemisSvnRevisionKey(pPath, theRevision);
 
         /* Log instance */
-        LOGGER.debug("Path {} @ Rev{}", pPath, pEntry.getRevision());
+        LOGGER.debug("Path <%s> @ Rev<%s>", pPath, pEntry.getRevision());
 
         /* Iterate through the file changes */
         for (final Entry<String, SVNLogEntryPath> myEntry : pEntry.getChangedPaths().entrySet()) {
@@ -187,7 +187,7 @@ public class ThemisSvnRevisionHistory
                             }
 
                             /* Log origin copy */
-                            LOGGER.debug("O:{} <- {}", myDetail, myCopyPath);
+                            LOGGER.debug("O:<%s> <- <%s>", myDetail, myCopyPath);
 
                             /* Record the origin */
                             theOrigin = new ThemisSvnRevisionKey(myDetail);
@@ -202,7 +202,7 @@ public class ThemisSvnRevisionHistory
                             /* Check whether we should copy this component */
                             if (checkComponentCopy(pPath, myDir, myCopyPath)) {
                                 /* Log subDir copy */
-                                LOGGER.debug("S:{} <- {}@{}", myDetail, myCopyPath, myDetail.getCopyRevision());
+                                LOGGER.debug("S:<%s> <- <%s>@<%s>", myDetail, myCopyPath, myDetail.getCopyRevision());
 
                                 /* Record the copyDir */
                                 theSourceDirs.addItem(new ThemisSvnSourceDir(myCopyPath, myDetail.getCopyRevision()));
@@ -236,12 +236,12 @@ public class ThemisSvnRevisionHistory
                 isOrigin = true;
 
                 /* Log root origin copy */
-                LOGGER.debug("R:{} <- {}@{}", myDetail, myNewPath, myDetail.getCopyRevision());
+                LOGGER.debug("R:<%s> <- <%s>@<%s>", myDetail, myNewPath, myDetail.getCopyRevision());
             }
         }
 
         /* Log completion */
-        LOGGER.debug("Complete Path {} @ Rev{}", pPath, pEntry.getRevision());
+        LOGGER.debug("Complete Path <%s> @ Rev<%s>", pPath, pEntry.getRevision());
     }
 
     /**

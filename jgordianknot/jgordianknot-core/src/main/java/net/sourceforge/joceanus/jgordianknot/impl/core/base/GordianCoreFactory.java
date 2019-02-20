@@ -128,10 +128,7 @@ public abstract class GordianCoreFactory
         return theParameters.getFactoryType();
     }
 
-    /**
-     * is the factory restricted?
-     * @return true/false
-     */
+    @Override
     public boolean isRestricted() {
         return theParameters.useRestricted();
     }

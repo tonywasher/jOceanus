@@ -21,8 +21,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Iterator;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.Status;
 import org.eclipse.jgit.api.StatusCommand;
@@ -41,6 +39,8 @@ import org.eclipse.jgit.treewalk.filter.PathFilter;
 import net.sourceforge.joceanus.jmetis.field.MetisFieldSet;
 import net.sourceforge.joceanus.jmetis.threads.MetisThreadStatusReport;
 import net.sourceforge.joceanus.jtethys.OceanusException;
+import net.sourceforge.joceanus.jtethys.logger.TethysLogManager;
+import net.sourceforge.joceanus.jtethys.logger.TethysLogger;
 import net.sourceforge.joceanus.jthemis.ThemisIOException;
 import net.sourceforge.joceanus.jthemis.ThemisResource;
 import net.sourceforge.joceanus.jthemis.git.data.ThemisGitBranch.ThemisGitBranchList;
@@ -85,7 +85,7 @@ public final class ThemisGitComponent
     /**
      * Logger.
      */
-    private static final Logger LOGGER = LogManager.getLogger(ThemisGitComponent.class);
+    private static final TethysLogger LOGGER = TethysLogManager.getLogger(ThemisGitComponent.class);
 
     /**
      * The revision history.

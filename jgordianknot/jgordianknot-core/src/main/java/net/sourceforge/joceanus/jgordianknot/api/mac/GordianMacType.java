@@ -16,6 +16,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jgordianknot.api.mac;
 
+import org.bouncycastle.crypto.params.ParametersWithIV;
 import org.bouncycastle.jcajce.provider.symmetric.VMPC;
 
 /**
@@ -94,6 +95,12 @@ public enum GordianMacType {
      * @return true/false
      */
     public boolean needsReInitialisation() {
-        return this == GMAC;
+        switch (this) {
+            case GMAC:
+            case KUPYNA:
+                return true;
+            default:
+                return false;
+        }
     }
 }

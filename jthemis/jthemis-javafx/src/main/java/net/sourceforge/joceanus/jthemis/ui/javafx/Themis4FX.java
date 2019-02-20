@@ -22,9 +22,9 @@ import net.sourceforge.joceanus.jmetis.profile.MetisProgram;
 import net.sourceforge.joceanus.jmetis.profile.MetisProgram.MetisApplication;
 import net.sourceforge.joceanus.jmetis.threads.javafx.MetisFXToolkit;
 import net.sourceforge.joceanus.jtethys.OceanusException;
+import net.sourceforge.joceanus.jtethys.logger.TethysLogManager;
+import net.sourceforge.joceanus.jtethys.logger.TethysLogger;
 import net.sourceforge.joceanus.jthemis.ui.ThemisApp;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 /**
  * Themis javaFX entryPoint.
@@ -35,7 +35,7 @@ public class Themis4FX
     /**
      * Logger.
      */
-    private static final Logger LOGGER = LogManager.getLogger(Themis4FX.class);
+    private static final TethysLogger LOGGER = TethysLogManager.getLogger(Themis4FX.class);
 
     /**
      * Main panel.

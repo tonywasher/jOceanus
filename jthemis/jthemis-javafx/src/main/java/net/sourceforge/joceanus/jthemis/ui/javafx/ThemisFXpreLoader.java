@@ -21,9 +21,9 @@ import javafx.stage.Stage;
 import net.sourceforge.joceanus.jmetis.atlas.ui.javafx.MetisFXSplash;
 import net.sourceforge.joceanus.jmetis.profile.MetisProgram;
 import net.sourceforge.joceanus.jtethys.OceanusException;
+import net.sourceforge.joceanus.jtethys.logger.TethysLogManager;
+import net.sourceforge.joceanus.jtethys.logger.TethysLogger;
 import net.sourceforge.joceanus.jthemis.ui.ThemisApp;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 /**
  * Themis javaFX preLoader.
@@ -33,7 +33,7 @@ public class ThemisFXpreLoader
     /**
      * Logger.
      */
-    private static final Logger LOGGER = LogManager.getLogger(ThemisFXpreLoader.class);
+    private static final TethysLogger LOGGER = TethysLogManager.getLogger(ThemisFXpreLoader.class);
 
     /**
      * The splashPane.

@@ -160,5 +160,15 @@ public enum GordianAsymKeyType {
                 return false;
         }
     }
+
+    /**
+     * Dow we skipped derived key equality check?
+     * <p>
+     * Temporary fix for DH JCA bug where the derived key does not equal the original key
+     * @return true/false
+     */
+    public boolean differentDerivedKey() {
+        return this == DIFFIEHELLMAN;
+    }
 }
 

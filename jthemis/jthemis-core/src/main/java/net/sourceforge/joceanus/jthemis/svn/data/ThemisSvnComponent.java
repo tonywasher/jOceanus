@@ -23,8 +23,6 @@ import java.io.InputStream;
 import java.util.Iterator;
 import java.util.ListIterator;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.tmatesoft.svn.core.ISVNDirEntryHandler;
 import org.tmatesoft.svn.core.SVNDepth;
 import org.tmatesoft.svn.core.SVNDirEntry;
@@ -41,6 +39,8 @@ import net.sourceforge.joceanus.jmetis.field.MetisFieldSet;
 import net.sourceforge.joceanus.jmetis.profile.MetisProfile;
 import net.sourceforge.joceanus.jmetis.threads.MetisThreadStatusReport;
 import net.sourceforge.joceanus.jtethys.OceanusException;
+import net.sourceforge.joceanus.jtethys.logger.TethysLogManager;
+import net.sourceforge.joceanus.jtethys.logger.TethysLogger;
 import net.sourceforge.joceanus.jthemis.ThemisIOException;
 import net.sourceforge.joceanus.jthemis.scm.data.ThemisScmBranch;
 import net.sourceforge.joceanus.jthemis.scm.data.ThemisScmComponent;
@@ -88,7 +88,7 @@ public final class ThemisSvnComponent
     /**
      * Logger.
      */
-    private static final Logger LOGGER = LogManager.getLogger(ThemisSvnComponent.class);
+    private static final TethysLogger LOGGER = TethysLogManager.getLogger(ThemisSvnComponent.class);
 
     /**
      * Constructor.

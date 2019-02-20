@@ -42,6 +42,18 @@ public class TethysLogger {
     }
 
     /**
+     * Write a debug message with parameters.
+     * @param pFormat the format
+     * @param pArgs the arguments
+     */
+    public void debug(final String pFormat,
+                      final Object... pArgs) {
+        final String myMessage = String.format(pFormat, pArgs);
+        final String myLogMessage = theManager.formatMessage(theOwner, myMessage);
+        theManager.writeLogMessage(myLogMessage);
+    }
+
+    /**
      * Write an information message with parameters.
      * @param pFormat the format
      * @param pArgs the arguments

@@ -19,12 +19,11 @@ package net.sourceforge.joceanus.jthemis.ui.swing;
 import javax.swing.JFrame;
 import javax.swing.SwingUtilities;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
 import net.sourceforge.joceanus.jmetis.profile.MetisProgram;
 import net.sourceforge.joceanus.jmetis.threads.swing.MetisSwingToolkit;
 import net.sourceforge.joceanus.jtethys.OceanusException;
+import net.sourceforge.joceanus.jtethys.logger.TethysLogManager;
+import net.sourceforge.joceanus.jtethys.logger.TethysLogger;
 import net.sourceforge.joceanus.jtethys.ui.TethysProgram;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingSplash;
 import net.sourceforge.joceanus.jthemis.ui.ThemisApp;
@@ -36,7 +35,7 @@ public final class Themis4Swing {
     /**
      * Logger.
      */
-    private static final Logger LOGGER = LogManager.getLogger(Themis4Swing.class);
+    private static final TethysLogger LOGGER = TethysLogManager.getLogger(Themis4Swing.class);
 
     /**
      * Private constructor.
