@@ -49,7 +49,7 @@ public class TethysLogger {
     public void debug(final String pFormat,
                       final Object... pArgs) {
         final String myMessage = String.format(pFormat, pArgs);
-        final String myLogMessage = theManager.formatMessage(theOwner, myMessage);
+        final String myLogMessage = theManager.formatMessage(theOwner, TethysLogLevel.DEBUG, myMessage);
         theManager.writeLogMessage(myLogMessage);
     }
 
@@ -61,7 +61,7 @@ public class TethysLogger {
     public void info(final String pFormat,
                      final Object... pArgs) {
         final String myMessage = String.format(pFormat, pArgs);
-        final String myLogMessage = theManager.formatMessage(theOwner, myMessage);
+        final String myLogMessage = theManager.formatMessage(theOwner, TethysLogLevel.INFO, myMessage);
         theManager.writeLogMessage(myLogMessage);
     }
 
@@ -73,7 +73,7 @@ public class TethysLogger {
     public void error(final String pFormat,
                       final Object... pArgs) {
         final String myMessage = String.format(pFormat, pArgs);
-        final String myLogMessage = theManager.formatMessage(theOwner, myMessage);
+        final String myLogMessage = theManager.formatMessage(theOwner, TethysLogLevel.ERROR, myMessage);
         theManager.writeLogMessage(myLogMessage);
     }
 
@@ -84,7 +84,7 @@ public class TethysLogger {
      */
     public void error(final String pMessage,
                       final Throwable pException) {
-        final String myLogMessage = theManager.formatMessage(theOwner, pMessage);
+        final String myLogMessage = theManager.formatMessage(theOwner, TethysLogLevel.ERROR, pMessage);
         theManager.writeLogMessage(myLogMessage, pException);
     }
 
@@ -96,7 +96,7 @@ public class TethysLogger {
     public void fatal(final String pFormat,
                       final Object... pArgs) {
         final String myMessage = String.format(pFormat, pArgs);
-        final String myLogMessage = theManager.formatMessage(theOwner, myMessage);
+        final String myLogMessage = theManager.formatMessage(theOwner, TethysLogLevel.FATAL, myMessage);
         theManager.writeLogMessage(myLogMessage);
     }
 
@@ -107,7 +107,7 @@ public class TethysLogger {
      */
     public void fatal(final String pMessage,
                       final Throwable pException) {
-        final String myLogMessage = theManager.formatMessage(theOwner, pMessage);
+        final String myLogMessage = theManager.formatMessage(theOwner, TethysLogLevel.FATAL, pMessage);
         theManager.writeLogMessage(myLogMessage, pException);
     }
 }

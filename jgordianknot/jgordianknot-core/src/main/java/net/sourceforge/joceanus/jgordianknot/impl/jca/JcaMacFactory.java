@@ -104,6 +104,7 @@ public class JcaMacFactory
         switch (pMacType) {
             case BLAKE:
             case KALYNA:
+            case KUPYNA:
             case ZUC:
                 return false;
             default:

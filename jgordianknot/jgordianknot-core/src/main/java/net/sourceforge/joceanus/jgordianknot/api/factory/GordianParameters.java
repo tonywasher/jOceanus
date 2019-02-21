@@ -46,6 +46,11 @@ public class GordianParameters {
     public static final Integer MINIMUM_CIPHER_STEPS = 3;
 
     /**
+     * Maximum Cipher Steps.
+     */
+    public static final Integer MAXIMUM_CIPHER_STEPS = 5;
+
+    /**
      * Default Cipher Steps.
      */
     public static final Integer DEFAULT_CIPHER_STEPS = 4;
@@ -73,7 +78,7 @@ public class GordianParameters {
     /**
      * Do we use restricted keys?
      */
-    private final Boolean useRestricted;
+    private final boolean useRestricted;
 
     /**
      * The Factory Type.
@@ -107,7 +112,7 @@ public class GordianParameters {
      * Constructor for explicit restriction.
      * @param pRestricted do we use restricted security
      */
-    public GordianParameters(final Boolean pRestricted) {
+    public GordianParameters(final boolean pRestricted) {
         /* Default factory */
         this(pRestricted, DEFAULT_FACTORY);
     }
@@ -117,7 +122,7 @@ public class GordianParameters {
      * @param pFactoryType the factoryType
      */
     public GordianParameters(final GordianFactoryType pFactoryType) {
-        /* Default restruction */
+        /* Default restriction */
         this(DEFAULT_RESTRICTED, pFactoryType);
     }
 
@@ -126,7 +131,7 @@ public class GordianParameters {
      * @param pRestricted do we use restricted security
      * @param pFactoryType the factory type
      */
-    public GordianParameters(final Boolean pRestricted,
+    public GordianParameters(final boolean pRestricted,
                              final GordianFactoryType pFactoryType) {
         /* Store parameters */
         useRestricted = pRestricted;
@@ -140,7 +145,7 @@ public class GordianParameters {
      * Do we use restricted security?
      * @return true/false
      */
-    public Boolean useRestricted() {
+    public boolean useRestricted() {
         return useRestricted;
     }
 
@@ -223,6 +228,26 @@ public class GordianParameters {
      */
     public static char[] getDefaultSecurityPhrase() {
         return DEFAULT_SECURITY_PHRASE.toCharArray();
+    }
+
+    /**
+     * Validate the Parameters.
+     * @return valid true/false
+     */
+    public boolean validate() {
+        /* Check factory type */
+        if (theFactoryType == null) {
+            return false;
+        }
+
+        /* Check cipher steps is in range */
+        if (theCipherSteps < MINIMUM_CIPHER_STEPS || theCipherSteps > MAXIMUM_CIPHER_STEPS) {
+            return false;
+        }
+
+        /* Check iterations is in range */
+        return (theIterations >= MINIMUM_HASH_ITERATIONS
+                && theIterations <= MAXIMUM_HASH_ITERATIONS);
     }
 
     @Override

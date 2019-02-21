@@ -58,7 +58,7 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
 /**
  * Security Test suite - Test Asymmetric functionality.
  */
-class AsymmetricTest {
+public class AsymmetricTest {
     /**
      * The factories.
      */
@@ -79,7 +79,7 @@ class AsymmetricTest {
      * Initialise Factories.
      */
     @BeforeAll
-    static void createSecurityFactories() throws OceanusException {
+    public static void createSecurityFactories() throws OceanusException {
         BCFACTORY = GordianGenerator.createFactory(new GordianParameters(GordianFactoryType.BC));
         JCAFACTORY = GordianGenerator.createFactory(new GordianParameters(GordianFactoryType.JCA));
     }
@@ -90,7 +90,7 @@ class AsymmetricTest {
      * @throws OceanusException on error
      */
     @TestFactory
-    Stream<DynamicNode> asymmetricTests() throws OceanusException {
+    public Stream<DynamicNode> asymmetricTests() throws OceanusException {
         /* Create tests */
         final Stream<DynamicNode> myBC = asymmetricTests(BCFACTORY, JCAFACTORY);
         final Stream<DynamicNode> myJCA = asymmetricTests(JCAFACTORY, BCFACTORY);

@@ -49,7 +49,7 @@ public class DigestTest {
      * @param pExpected the expected results
      * @throws OceanusException on error
      */
-    public void testDigestStrings(final Digest pDigest,
+    static void testDigestStrings(final Digest pDigest,
                                   final String[] pExpected) throws OceanusException {
         /* Check the array */
         Assertions.assertEquals(INPUTS.length, pExpected.length, "Expected results must have same dimensions as Inputs");

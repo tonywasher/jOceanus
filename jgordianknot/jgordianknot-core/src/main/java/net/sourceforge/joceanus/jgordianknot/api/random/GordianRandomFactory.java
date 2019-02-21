@@ -55,10 +55,11 @@ public interface GordianRandomFactory {
 
     /**
      * generate random GordianMac.
+     * @param pLargeData only generate a Mac that is suitable for for parsing large amounts of data
      * @return the new MAC
      * @throws OceanusException on error
      */
-    GordianMac generateRandomMac() throws OceanusException;
+    GordianMac generateRandomMac(boolean pLargeData) throws OceanusException;
 
     /**
      * generate random SymKey.
@@ -69,10 +70,11 @@ public interface GordianRandomFactory {
 
     /**
      * generate random GordianStreamKey.
+     * @param pLargeData only generate a Mac that is suitable for for parsing large amounts of data
      * @return the new StreamKey
      * @throws OceanusException on error
      */
-    GordianKey<GordianStreamKeyType> generateRandomStreamKey() throws OceanusException;
+    GordianKey<GordianStreamKeyType> generateRandomStreamKey(boolean pLargeData) throws OceanusException;
 
     /**
      * Obtain a list of supported randomSpecs.

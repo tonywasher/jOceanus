@@ -102,12 +102,18 @@ public class StreamCipherTest {
     private static final String IV184_5 = "FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF";
 
     /**
+     * Define the bit limits for engines.
+     */
+    private static final int SNOWLIMIT = 20000;
+    private static final int ZUCLIMIT = 65504;
+
+    /**
      * Test the Cipher against the results.
      * @param pCipher the cipher to test.
      * @param pTestCase the testCase
      * @throws OceanusException on error
      */
-    public void testCipher(final StreamCipher pCipher,
+    static void testCipher(final StreamCipher pCipher,
                            final TestCase pTestCase) throws OceanusException {
         /* Access the expected bytes */
         final byte[] myExpected = TethysDataConverter.hexStringToBytes(pTestCase.theExpected);
@@ -136,7 +142,7 @@ public class StreamCipherTest {
      * @param pTestCase the testCase
      * @throws OceanusException on error
      */
-    public void testMac(final Mac pMac,
+    static void testMac(final Mac pMac,
                         final boolean pOnes,
                         final TestCase pTestCase) throws OceanusException {
         /* Access the expected bytes */
@@ -159,6 +165,76 @@ public class StreamCipherTest {
 
         /* Check the encryption */
         Assertions.assertArrayEquals(myExpected, myOutput, "Mac mismatch");
+    }
+
+    /**
+     * Test the Stream Cipher against the limit.
+     * @param pCipher the cipher to test.
+     * @param pTestCase the testCase
+     * @param pLimit the limit in bits.
+     * @throws OceanusException on error
+     */
+    static void testStreamLimit(final StreamCipher pCipher,
+                                final TestCase pTestCase,
+                                final int pLimit) throws OceanusException {
+        /* Check the limit is a whole numbet of integers */
+        Assertions.assertTrue((pLimit % Integer.SIZE == 0), "Invalid limit");
+        final int myNumBytes = pLimit / Byte.SIZE;
+
+        /* Create the maximum # of bytes */
+        final byte[] myData = new byte[myNumBytes];
+        final byte[] myOutput = new byte[myNumBytes];
+
+        /* Access the key and the iv */
+        final KeyParameter myKey = new KeyParameter(TethysDataConverter.hexStringToBytes(pTestCase.theKey));
+        final byte[] myIV = TethysDataConverter.hexStringToBytes(pTestCase.theIV);
+        final ParametersWithIV myParms = new ParametersWithIV(myKey, myIV);
+
+        /* Initialise the cipher and create the keyStream */
+        pCipher.init(true, myParms);
+        pCipher.processBytes(myData, 0, myData.length, myOutput, 0);
+
+        /* Check that next encryption throws exception */
+        Assertions.assertThrows(IllegalStateException.class, () -> pCipher.processBytes(myData, 0, 1, myOutput, 0), "Limit failure");
+    }
+
+    /**
+     * Test the Mac against the limit.
+     * @param pMac the mac to test.
+     * @param pTestCase the testCase
+     * @param pLimit the limit in bits.
+     * @throws OceanusException on error
+     */
+    static void testMacLimit(final Mac pMac,
+                             final TestCase pTestCase,
+                             final int pLimit) throws OceanusException {
+        /* Check the limit is a whole numbet of integers */
+        Assertions.assertTrue((pLimit % Integer.SIZE == 0), "Invalid limit");
+        final int myNumBytes = pLimit / Byte.SIZE;
+
+        /* Create the maximum # of bytes */
+        final byte[] myData = new byte[myNumBytes];
+        final byte[] myOutput = new byte[myNumBytes];
+
+        /* Access the key and the iv */
+        final KeyParameter myKey = new KeyParameter(TethysDataConverter.hexStringToBytes(pTestCase.theKey));
+        final byte[] myIV = TethysDataConverter.hexStringToBytes(pTestCase.theIV);
+        final ParametersWithIV myParms = new ParametersWithIV(myKey, myIV);
+
+        /* Initialise the mac and create the result */
+        pMac.init(myParms);
+        pMac.update(myData, 0, myData.length);
+        pMac.doFinal(myOutput, 0);
+
+        /* Initialise the mac and process as much data as possible */
+        pMac.init(myParms);
+        pMac.update(myData, 0, myData.length);
+
+        /* We expect a failure on processing a further byte */
+        Assertions.assertThrows(IllegalStateException.class, () -> {
+            pMac.update(myData, 0, 1);
+            pMac.doFinal(myOutput, 0);
+        }, "Limit failure");
     }
 
     /**
@@ -289,6 +365,7 @@ public class StreamCipherTest {
             testCipher(myEngine, TEST1);
             testCipher(myEngine, TEST2);
             testCipher(myEngine, TEST3);
+            testStreamLimit(myEngine, TEST3, SNOWLIMIT);
         }
     }
 
@@ -323,6 +400,7 @@ public class StreamCipherTest {
             testCipher(myEngine, TEST3);
             testCipher(myEngine, TEST4);
             testCipher(myEngine, TEST5);
+            testStreamLimit(myEngine, TEST5, ZUCLIMIT);
         }
     }
 
@@ -357,6 +435,7 @@ public class StreamCipherTest {
             testCipher(myEngine, TEST3);
             testCipher(myEngine, TEST4);
             testCipher(myEngine, TEST5);
+            testStreamLimit(myEngine, TEST5, SNOWLIMIT);
         }
     }
 
@@ -388,6 +467,7 @@ public class StreamCipherTest {
             testMac(myMac, true, TEST2);
             testMac(myMac, false, TEST3);
             testMac(myMac, true, TEST4);
+            testMacLimit(myMac, TEST4, ZUCLIMIT - (2 * Integer.SIZE));
         }
     }
 
@@ -418,6 +498,7 @@ public class StreamCipherTest {
             testMac(myMac, true, TEST2);
             testMac(myMac, false, TEST3);
             testMac(myMac, true, TEST4);
+            testMacLimit(myMac, TEST4, SNOWLIMIT - (2 * myMac.getMacSize() * Byte.SIZE));
         }
     }
 
@@ -448,6 +529,7 @@ public class StreamCipherTest {
             testMac(myMac, true, TEST2);
             testMac(myMac, false, TEST3);
             testMac(myMac, true, TEST4);
+            testMacLimit(myMac, TEST4, SNOWLIMIT - (2 * myMac.getMacSize() * Byte.SIZE));
         }
     }
 
@@ -478,6 +560,7 @@ public class StreamCipherTest {
             testMac(myMac, true, TEST2);
             testMac(myMac, false, TEST3);
             testMac(myMac, true, TEST4);
+            testMacLimit(myMac, TEST4, SNOWLIMIT - (2 * myMac.getMacSize() * Byte.SIZE));
         }
     }
 }

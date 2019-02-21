@@ -111,9 +111,10 @@ public abstract class GordianCoreCipherFactory
             return false;
         }
 
-        /* Reject Speck-64 for unrestricted */
+        /* Reject Speck-64/Simon-64 for unrestricted */
         if (!isRestricted
-                && GordianSymKeyType.SPECK.equals(pSymKeySpec.getSymKeyType())
+                && (GordianSymKeyType.SPECK.equals(pSymKeySpec.getSymKeyType())
+                    || GordianSymKeyType.SIMON.equals(pSymKeySpec.getSymKeyType()))
                 && GordianLength.LEN_64.equals(myLen)) {
             return false;
         }

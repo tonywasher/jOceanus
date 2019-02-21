@@ -108,6 +108,7 @@ public interface GordianCipherFactory {
 
     /**
      * Obtain a list of supported symCipherSpecs.
+     * @param pSpec the symKeySpec
      * @param isAAD are the cipherSpecs for an AADCipher?
      * @return the list of supported symCipherSpecs.
      */

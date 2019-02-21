@@ -227,15 +227,20 @@ public class GordianIdManager {
 
     /**
      * Obtain random StreamKeyType.
+     * @param pLargeData only generate a Mac that is suitable for for parsing large amounts of data
      * @return the random streamKeyType
      */
-    public GordianStreamKeyType generateRandomStreamKeyType() {
-        /* Determine a random streamKeyType */
-        final GordianStreamKeyType[] myStreamKey = getRandomTypes(theStreamKeys, 1);
-
-        /* Return the single StreamKeyType */
-        return myStreamKey[0];
-    }
+    public GordianStreamKeyType generateRandomStreamKeyType(final boolean pLargeData) {
+        /* Loop in case we need to retry */
+        for (;;) {
+            /* Generate a random streamKey type and return it if suitable */
+            final GordianStreamKeyType[] myStreamKey = getRandomTypes(theStreamKeys, 1);
+            if (!pLargeData || myStreamKey[0].supportsLargeData()) {
+                /* Return the StreamKeyType */
+                return myStreamKey[0];
+            }
+        }
+     }
 
     /**
      * Obtain streamKeyType from encoded StreamKeyId.
@@ -273,7 +278,7 @@ public class GordianIdManager {
      * Obtain random hMacDigestType.
      * @return the random digestType
      */
-    GordianDigestType generateRandomHMacDigestType() {
+    private GordianDigestType generateRandomHMacDigestType() {
         /* Determine a random digestType */
         final GordianDigestType[] myDigest = getRandomTypes(theHMacDigests, 1);
 
@@ -367,10 +372,11 @@ public class GordianIdManager {
 
     /**
      * generate random GordianMacSpec.
+     * @param pLargeData only generate a Mac that is suitable for for parsing large amounts of data
      * @return the new MacSpec
      */
-    public GordianMacSpec generateRandomMacSpec() {
-        final GordianMacType myMacType = generateRandomMacType();
+    public GordianMacSpec generateRandomMacSpec(final boolean pLargeData) {
+        final GordianMacType myMacType = generateRandomMacType(pLargeData);
         switch (myMacType) {
             case HMAC:
                 final GordianDigestType myDigestType = generateRandomHMacDigestType();
@@ -394,14 +400,19 @@ public class GordianIdManager {
 
     /**
      * Obtain random MacType.
+     * @param pLargeData only generate a Mac that is suitable for for parsing large amounts of data
      * @return the random macType
      */
-    private GordianMacType generateRandomMacType() {
-        /* Determine a random digest */
-        final GordianMacType[] myMac = getRandomTypes(theMacs, 1);
-
-        /* Return the single macType */
-        return myMac[0];
+    private GordianMacType generateRandomMacType(final boolean pLargeData) {
+        /* Loop in case we need to retry */
+        for (;;) {
+            /* Generate a random macType and return it if suitable */
+            final GordianMacType[] myMacType = getRandomTypes(theMacs, 1);
+            if (!pLargeData || myMacType[0].supportsLargeData()) {
+                /* Return the macType */
+                return myMacType[0];
+            }
+        }
     }
 
     /**
@@ -410,9 +421,10 @@ public class GordianIdManager {
      * @return the random symKey MacSpec
      */
     private GordianMacSpec generateRandomSymKeyMacSpec(final GordianMacType pMacType) {
-        /* Loop until we get a valid Spec */
+        /* Loop in case we need to retry */
         final GordianMacFactory myMacs = theFactory.getMacFactory();
         for (;;) {
+            /* Generate a random symKey for the Mac and return it if suitable */
             final GordianSymKeyType mySymType = generateRandomKeySetSymKeyType();
             final GordianMacSpec myMacSpec = new GordianMacSpec(pMacType, new GordianSymKeySpec(mySymType));
             if (myMacs.supportedMacSpecs().test(myMacSpec)) {

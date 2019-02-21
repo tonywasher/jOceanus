@@ -444,23 +444,4 @@ public class JcaCipherFactory
                 return true;
         }
     }
-
-    /**
-     * Determine maximum cipherSteps.
-     * @param pRestricted are keys restricted?
-     * @return the maximum
-     */
-    public static int getMaximumCipherSteps(final boolean pRestricted) {
-        /* Count valid values */
-        int myCount = 0;
-        for (final GordianSymKeyType myType : GordianSymKeyType.values()) {
-            if (GordianCoreCipherFactory.validStdBlockSymKeyTypeForRestriction(myType, pRestricted)
-                    && supportedSymKeyType(myType)) {
-                myCount++;
-            }
-        }
-
-        /* Maximum is 1 less than the count */
-        return myCount - 1;
-    }
 }

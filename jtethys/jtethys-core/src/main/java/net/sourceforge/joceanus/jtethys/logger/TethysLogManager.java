@@ -60,15 +60,19 @@ public final class TethysLogManager {
     /**
      * Format message.
      * @param pOwner the owner
+     * @param pLevel the log level
      * @param pMessage the message to format
      * @return the formatted string
      */
     String formatMessage(final Class<?> pOwner,
+                         final TethysLogLevel pLevel,
                          final String pMessage) {
         final StringBuilder myBuilder = new StringBuilder();
         myBuilder.append(System.nanoTime() - theTimeZero);
+        myBuilder.append(" ");
+        myBuilder.append(pLevel.name());
         myBuilder.append(": ");
-        myBuilder.append(pOwner.getCanonicalName());
+        myBuilder.append(pOwner.getSimpleName());
         myBuilder.append("- ");
         myBuilder.append(pMessage);
         return myBuilder.toString();

@@ -264,9 +264,9 @@ public class GordianPersonalisation {
      */
     private static int sanitiseValue(final int pValue) {
         /* Ensure that the value is positive */
-        int myVal = pValue < 0
-                    ? -pValue
-                    : pValue;
+        final int myVal = pValue < 0
+                                ? -pValue
+                                : pValue;
 
         /* Return the sanitised value */
         return myVal | VALUE_MASK;

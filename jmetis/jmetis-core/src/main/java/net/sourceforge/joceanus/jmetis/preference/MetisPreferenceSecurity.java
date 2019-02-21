@@ -312,8 +312,7 @@ public class MetisPreferenceSecurity {
             }
 
             /* Define the range */
-            final Integer maxSteps = GordianSecurityManager.getMaximumCipherSteps(myFactPref.getValue(), myRestrictPref.getValue());
-            myPref.setRange(GordianParameters.MINIMUM_CIPHER_STEPS, maxSteps);
+            myPref.setRange(GordianParameters.MINIMUM_CIPHER_STEPS, GordianParameters.MAXIMUM_CIPHER_STEPS);
             if (!myPref.validate()) {
                 myPref.setValue(GordianParameters.DEFAULT_CIPHER_STEPS);
             }

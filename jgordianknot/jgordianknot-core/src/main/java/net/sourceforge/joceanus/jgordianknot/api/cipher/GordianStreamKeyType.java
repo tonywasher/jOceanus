@@ -164,5 +164,19 @@ public enum GordianStreamKeyType  implements GordianKeySpec {
                 return true;
         }
     }
+
+    /**
+     * Is this KeyType valid for largeData?
+     * @return true/false
+     */
+    public boolean supportsLargeData() {
+        switch (this) {
+            case SNOW3G:
+            case ZUC:
+                return false;
+            default:
+                return true;
+        }
+    }
 }
 

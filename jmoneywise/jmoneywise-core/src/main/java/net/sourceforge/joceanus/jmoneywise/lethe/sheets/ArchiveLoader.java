@@ -87,9 +87,9 @@ import net.sourceforge.joceanus.jtethys.date.TethysFiscalYear;
 public class ArchiveLoader {
     /**
      * Number of base archive load areas.
-     * 12xStatic,TransactionTags,Regions,2*Category,Schedule,Rate,Price,Account,Range+Transaction.
+     * 12xStatic,TransactionTags,Regions,2*Category,XchgRate,Rate,Price,Account.
      */
-    private static final int NUM_ARCHIVE_AREAS = 22;
+    private static final int NUM_ARCHIVE_AREAS = 20;
 
     /**
      * Year boundary.

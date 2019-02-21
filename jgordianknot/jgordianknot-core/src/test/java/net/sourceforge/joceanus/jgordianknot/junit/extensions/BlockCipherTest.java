@@ -53,7 +53,7 @@ public class BlockCipherTest {
      * @param pExpected the expected results
      * @throws OceanusException on error
      */
-    public void testCipher(final BlockCipher pCipher,
+    static void testCipher(final BlockCipher pCipher,
                            final String pKey,
                            final String pData,
                            final String pExpected) throws OceanusException {

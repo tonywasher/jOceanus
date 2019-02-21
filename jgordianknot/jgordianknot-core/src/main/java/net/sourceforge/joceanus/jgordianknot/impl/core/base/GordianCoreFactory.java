@@ -102,6 +102,11 @@ public abstract class GordianCoreFactory
      */
     protected GordianCoreFactory(final GordianFactoryGenerator pGenerator,
                                  final GordianParameters pParameters) throws OceanusException {
+        /* Check parameters */
+        if (pParameters == null || !pParameters.validate()) {
+            throw new GordianDataException("Invalid Parameters");
+        }
+
         /* Store the parameters */
         theGenerator = pGenerator;
         theParameters = pParameters;

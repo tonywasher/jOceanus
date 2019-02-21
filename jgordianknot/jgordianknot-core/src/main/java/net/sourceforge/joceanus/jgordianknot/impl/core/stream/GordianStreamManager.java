@@ -170,7 +170,7 @@ public final class GordianStreamManager {
         final GordianIdManager myIdMgr = myKeySets.getIdManager();
 
         /* Create an initial MAC stream */
-        final GordianMacSpec myMacSpec = myIdMgr.generateRandomMacSpec();
+        final GordianMacSpec myMacSpec = myIdMgr.generateRandomMacSpec(true);
 
         /* Determine a random key */
         final GordianKeyGenerator<GordianMacSpec> myGenerator = myMacs.getKeyGenerator(myMacSpec);
@@ -211,7 +211,7 @@ public final class GordianStreamManager {
         }
 
         /* Create the encryption stream for a stream key */
-        final GordianStreamKeyType myType = myIdMgr.generateRandomStreamKeyType();
+        final GordianStreamKeyType myType = myIdMgr.generateRandomStreamKeyType(true);
         final GordianKeyGenerator<GordianStreamKeyType> myStreamGenerator = myCiphers.getKeyGenerator(myType);
         final GordianKey<GordianStreamKeyType> myStreamKey = myStreamGenerator.generateKey();
         final GordianCipher<GordianStreamKeyType> myStreamCipher = myCiphers.createStreamKeyCipher(GordianStreamCipherSpec.stream(myStreamKey.getKeyType()));

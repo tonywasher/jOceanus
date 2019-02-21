@@ -16,9 +16,6 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jgordianknot.api.mac;
 
-import org.bouncycastle.crypto.params.ParametersWithIV;
-import org.bouncycastle.jcajce.provider.symmetric.VMPC;
-
 /**
  * Mac types. Available algorithms.
  */
@@ -95,12 +92,14 @@ public enum GordianMacType {
      * @return true/false
      */
     public boolean needsReInitialisation() {
-        switch (this) {
-            case GMAC:
-            case KUPYNA:
-                return true;
-            default:
-                return false;
-        }
+        return this == GMAC;
+    }
+
+    /**
+     * Is this KeyType valid for largeData?
+     * @return true/false
+     */
+    public boolean supportsLargeData() {
+        return this != ZUC;
     }
 }

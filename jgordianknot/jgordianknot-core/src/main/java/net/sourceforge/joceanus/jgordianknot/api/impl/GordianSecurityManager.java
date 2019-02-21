@@ -282,25 +282,11 @@ public abstract class GordianSecurityManager {
     }
 
     /**
-     * Obtain Maximum CipherSteps.
-     * @param pFactory the factory type
-     * @param pRestricted are the keys restricted
-     * @return the maximum
-     */
-    public static int getMaximumCipherSteps(final GordianFactoryType pFactory,
-                                            final boolean pRestricted) {
-        return GordianFactoryType.BC.equals(pFactory)
-               ? BouncyCipherFactory.getMaximumCipherSteps(pRestricted)
-               : JcaCipherFactory.getMaximumCipherSteps(pRestricted);
-    }
-
-    /**
      * Obtain KeyWrapSize.
      * @return the maximum keyWrap size
      */
     public static int getMaximumKeyWrapSize() {
-        final int myMaxCipherSteps = getMaximumCipherSteps(GordianFactoryType.BC, false);
-        return GordianCoreKeySet.getKeyWrapExpansion(myMaxCipherSteps)
+        return GordianCoreKeySet.getKeyWrapExpansion(GordianParameters.MAXIMUM_CIPHER_STEPS)
                 + GordianCoreFactory.getKeyLength(false) / Byte.SIZE;
     }
 

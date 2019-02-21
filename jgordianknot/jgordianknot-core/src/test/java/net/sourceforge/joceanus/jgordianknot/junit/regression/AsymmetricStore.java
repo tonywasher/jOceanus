@@ -60,28 +60,39 @@ class AsymmetricStore {
      * Configure the test according to system properties.
      */
     static {
-        /* Access system properties */
-        String myPropKeyType = System.getProperty("keyType");
-        String myPropSigType = System.getProperty("sigType");
-        allSpecs = System.getProperty("allSpecs") != null;
+        /* If this is a full build */
+        final String myBuildType = System.getProperty("joceanus.fullBuild");
+        if (myBuildType != null) {
+            /* Test everything */
+            allSpecs=true;
+            theSigType=null;
+            theKeyType=null;
 
-        /* Determine the singleKeyType */
-        GordianAsymKeyType myKeyType = null;
-        for (final GordianAsymKeyType myType : GordianAsymKeyType.values()) {
-            if (myType.toString().equalsIgnoreCase(myPropKeyType)) {
-                myKeyType = myType;
-            }
-        }
-        theKeyType = myKeyType;
+            /* else allow further configuration */
+        } else {
+            /* Check for explicit request for all keySpecs */
+            allSpecs = System.getProperty("allSpecs") != null;
 
-        /* Determine the signatureType */
-        GordianSignatureType mySigType = null;
-        for (final GordianSignatureType myType : GordianSignatureType.values()) {
-            if (myType.toString().equalsIgnoreCase(myPropSigType)) {
-                mySigType = myType;
+            /* Look for request to test a single keyType */
+            final String myPropKeyType = System.getProperty("keyType");
+            GordianAsymKeyType myKeyType = null;
+            for (final GordianAsymKeyType myType : GordianAsymKeyType.values()) {
+                if (myType.toString().equalsIgnoreCase(myPropKeyType)) {
+                    myKeyType = myType;
+                }
             }
+            theKeyType = myKeyType;
+
+            /* Look for request to test a single keyType */
+            String myPropSigType = System.getProperty("sigType");
+            GordianSignatureType mySigType = null;
+            for (final GordianSignatureType myType : GordianSignatureType.values()) {
+                if (myType.toString().equalsIgnoreCase(myPropSigType)) {
+                    mySigType = myType;
+                }
+            }
+            theSigType = mySigType;
         }
-        theSigType = mySigType;
     }
 
     /**

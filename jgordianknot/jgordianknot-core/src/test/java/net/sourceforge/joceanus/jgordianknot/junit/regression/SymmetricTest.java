@@ -64,7 +64,7 @@ import net.sourceforge.joceanus.jtethys.TethysDataConverter;
 /**
  * Security Test suite - Test Symmetric/Stream and Digest/MAC Algorithms.
  */
-class SymmetricTest {
+public class SymmetricTest {
     /**
      * NanoSeconds in milliSeconds.
      */
@@ -84,9 +84,21 @@ class SymmetricTest {
      * Configure the test according to system properties.
      */
     static {
-        /* Access system properties */
-        fullProfiles = System.getProperty("fullProfiles") != null;
-        profileRepeat = fullProfiles ? 100 : 5;
+        /* If this is a full build */
+        final String myBuildType = System.getProperty("joceanus.fullBuild");
+        if (myBuildType != null) {
+            /* Test everything */
+            fullProfiles=false;
+            profileRepeat=5;
+
+            /* else allow further configuration */
+        } else {
+            /* Access system properties */
+            fullProfiles = System.getProperty("fullProfiles") != null;
+            profileRepeat = fullProfiles
+                            ? 100
+                            : 5;
+        }
     }
 
     /**
@@ -101,7 +113,7 @@ class SymmetricTest {
      * Initialise Factories.
      */
     @BeforeAll
-    static void createSecurityFactories() throws OceanusException {
+    public static void createSecurityFactories() throws OceanusException {
         BCFULLFACTORY = GordianGenerator.createFactory(new GordianParameters(false, GordianFactoryType.BC));
         BCCUTFACTORY = GordianGenerator.createFactory(new GordianParameters(true, GordianFactoryType.BC));
         JCAFULLFACTORY = GordianGenerator.createFactory(new GordianParameters(false, GordianFactoryType.JCA));
@@ -123,7 +135,7 @@ class SymmetricTest {
      * @return the test stream
      */
     @TestFactory
-    Stream<DynamicNode> symmetricTests() {
+    public Stream<DynamicNode> symmetricTests() {
         /* Create tests */
         Stream<DynamicNode> myStream = symmetricTests(BCCUTFACTORY);
         myStream = Stream.concat(myStream, symmetricTests(BCFULLFACTORY));

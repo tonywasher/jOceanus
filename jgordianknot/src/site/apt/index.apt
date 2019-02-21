@@ -102,12 +102,12 @@ for each algorithm as defined in <<Key Wrapping>>.
 *-------------*-------------*------------**
 | SHACAL2     | 256         | 128, 256   ||
 *-------------*-------------*------------*----------*
-| Kalyna      | 128         | 128, 256   | DSTU7624 |
+| Kalyna      | 128\        | 128, 256\  | DSTU7624 |
 |             | 256         | 256        |          |
 *-------------*-------------*------------*----------*
 | Kuznyechik  | 128         | 256        | GOST3412-2015 |
 *-------------*-------------*------------*----------*
-| Speck       | 64          | 128        | Not for JCA |
+| Speck       | 64\         | 128\       | Not for JCA |
 |             | 128         | 128, 256   | |
 *-------------*-------------*------------*----------*
 | Simon       | 128         | 128, 256   | Not for JCA |
@@ -128,14 +128,14 @@ for each algorithm as defined in <<Key Wrapping>>.
 *------*-*
 | CBC  | K3413CBC Mode available for Kuznyechik |
 *------*--------------------------------*
-| SIC  | KCTR Mode available for Kalyna |
+| SIC  | KCTR Mode available for Kalyna\|
 |      | K3413CTR Mode available for Kuznyechik |
 *------*--------------------------------*
-| OFB  | GOFB Mode available for Magma  |
+| OFB  | GOFB Mode available for Magma\ |
 |      | K3413OFB Mode available for Kuznyechik |
 *------*--------------------------------*
-|      | Actually CFB8                  |
-| CFB  | GCFB Mode available for Magma  |
+|      | Actually CFB8\                 |
+| CFB  | GCFB Mode available for Magma\ |
 |      | K3413CFB Mode available for Kuznyechik |
 *------*--------------------------------*
 | EAX  | |
@@ -226,25 +226,25 @@ for each algorithm as defined in <<Key Wrapping>>.
 *-------------*-------------*-----------------*------------*
 | <<Algorithm>>   | <<StateLength>> | <<OutputLengths>>   | <<Notes>>      |
 *-------------*-------------*-----------------*---------=--*
-| SHA2        | 512         | 224,256,384,512 | |
+| SHA2        | 512\        | 224,256,384,512\ | |
 |             | 256         | 224 256 | |
 *-------------*-----------------*-*-*
 | Tiger       |             | 192 | |
 *-------------*-------------*-----*-*
 | WHIRLPOOL   |             | 512 | |
 *-------------*-------------*-----*-*
-| Streebog    | 256         | 256 | GOST3411-2012 |
+| Streebog    | 256\        | 256\| GOST3411-2012 |
 |             | 512         | 512 | |
 *-------------*-------------*-----*-*
 | GOST        |             | 256 | GOST3411-94 |
 *-------------*-------------*-----*-*
-| RIPEMD      | 128         | 128,160 | |
+| RIPEMD      | 128\         | 128,160\ | |
 |             | 256         | 256,320 | |
 *-------------*-------------*---------*-*
 | SHA3        |             | 224,256,384,512 | |
 *-------------*-------------*-----------------*-*
-| Skein       | 256         | 128,160,224,256         | |
-|             | 512         | 128,160,224,256,384,512 | |
+| Skein       | 256\        | 128,160,224,256\         | |
+|             | 512\        | 128,160,224,256,384,512\ | |
 |             | 1024        | 384, 512, 1024          | |
 *-------------*-------------*-----------------*-*
 | SM3         |             | 256  | |
@@ -261,7 +261,7 @@ for each algorithm as defined in <<Key Wrapping>>.
 *-------------*-------------*----*-*
 | MD2         |             |128             | |
 *-------------*-------------*----*-*
-| SHAKE       | 128         | 128 | Not for JCA |
+| SHAKE       | 128\        | 128\ | Not for JCA |
 |             | 256         | 256 | |
 *-------------*-------------*----*-*
 | Kupyna      |             |256,384,512 | DSTU7564 |
@@ -278,27 +278,26 @@ for each algorithm as defined in <<Key Wrapping>>.
 *-------------*------------------*------------*
 | <<Algorithm>>   | <<OutputLengths>>    | <<Notes>>      |
 *-------------*------------------*------------*
-| HMac        | digest length    | For all digests. |
+| HMac        | digest length    | For all digests.\ |
 |             |                  | Jca does not support SM3, BLAKE, SHAKE, JH, Groestl, CubeHash or Kupyna |
 *-------------*------------------*-*
-| GMac        | 128 bits         | For all supported 128 bit ciphers except Kalyna (BUG). |
+| GMac        | 128 bits         | For all supported 128 bit ciphers except Kalyna (BUG).\ |
 |             |                  | Jca does not support Kuznyechik |
 *-------------*------------------*-*
-| CMac        | cipher blockSize | For all supported ciphers. |
+| CMac        | cipher blockSize | For all supported ciphers.\ |
 |             |                  | Jca has limited  set of supported ciphers |
 *-------------*------------------*-*
-| Poly1305    | 128 bits         | For all supported 128 bit ciphers except Kuznyechik |
+| Poly1305    | 128 bits         | For all supported 128 bit ciphers except Kuznyechik\ |
 |             |                  | Jca does not support Kalyna |
 *-------------*------------------*-*
 | Skein       | as per Skein     | For all Skein digests |
 *-------------*------------------*-*
 | VMPC        | 160 bits         | |
 *-------------*------------------*-*
-| Blake       | as per Blake     | For all supported Blake2s/Blake2b digests |
+| BlakeMac    | as per Blake     | For all supported Blake2s/Blake2b digests\ |
 |             |                  | Not for Jca |
 *-------------*------------------*-*
 | KupynaMac   | as per Kupyna    | For all supported Kupyna digests |
-|             |                  | Not for Jca |
 *-------------*------------------*-*
 | KalynaMac   | as per Kalyna blockSize  | Not for Jca |
 *-------------*------------------*-*

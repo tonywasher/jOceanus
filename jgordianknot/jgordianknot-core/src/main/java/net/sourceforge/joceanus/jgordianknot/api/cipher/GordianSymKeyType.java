@@ -155,7 +155,7 @@ public enum GordianSymKeyType {
     /**
      * Simon.
      */
-    SIMON(GordianLength.LEN_128),
+    SIMON(GordianLength.LEN_128, GordianLength.LEN_64),
 
     /**
      * MARS.

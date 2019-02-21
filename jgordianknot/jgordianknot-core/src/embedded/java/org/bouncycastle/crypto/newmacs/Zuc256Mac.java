@@ -129,6 +129,19 @@ public class Zuc256Mac implements Mac {
     }
 
     /**
+     * Shift for final update.
+     */
+    private void shift4Final() {
+        /* Adjust the byte index */
+        theByteIndex = (theByteIndex + 1) % Integer.BYTES;
+
+        /* No need to read another word to the keyStream */
+        if (theByteIndex == 0) {
+            theWordIndex = (theWordIndex + 1) % theKeyStream.length;
+        }
+    }
+
+    /**
      * Update the Mac.
      * @param bitNo the bit number
      */
@@ -166,8 +179,10 @@ public class Zuc256Mac implements Mac {
 
     @Override
     public int doFinal(final byte[] out, final int outOff) {
+        /* shift for final update */
+        shift4Final();
+
         /* Finish the Mac and output it */
-        shift4NextByte();
         updateMac(theByteIndex * Byte.SIZE);
         for (int i = 0; i < theMac.length; i++) {
             Zuc256Engine.encode32be(theMac[i], out, outOff + i * Integer.BYTES);

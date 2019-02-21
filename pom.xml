@@ -3,20 +3,11 @@
   <groupId>net.sourceforge.joceanus</groupId>
   <artifactId>joceanus</artifactId>
   <version>v1.6.0-SNAPSHOT</version>
+  <packaging>pom</packaging>
   <name>Java Oceanus package</name>
   <description>Parent project for jOceanus</description>
-  <inceptionYear>2012</inceptionYear>
   <url>http://joceanus.sourceforge.net/staging/</url>
-  <packaging>pom</packaging>
-  <modules>
-    <module>jmoneywise</module>
-    <module>jthemis</module>
-    <module>jcoeus</module>
-    <module>jprometheus</module>
-    <module>jmetis</module>
-    <module>jgordianknot</module>
-    <module>jtethys</module>
-  </modules>
+  <inceptionYear>2012</inceptionYear>
   <licenses>
     <license>
       <name>The Apache Software License, Version 2.0</name>
@@ -35,21 +26,24 @@
       </roles>
     </developer>
   </developers>
-  <issueManagement>
-    <system>Sourceforge</system>
-    <url>https://sourceforge.net/p/joceanus/tickets/</url>
-  </issueManagement>
+  <modules>
+    <module>jmoneywise</module>
+    <module>jthemis</module>
+    <module>jcoeus</module>
+    <module>jprometheus</module>
+    <module>jmetis</module>
+    <module>jgordianknot</module>
+    <module>jtethys</module>
+  </modules>
   <scm>
     <connection>scm:git:git://sourceforge.net/p/joceanus/git</connection>
     <developerConnection>scm:git:ssh:sourceforge.net/p/joceanus/git</developerConnection>
     <url>http://sourceforge.net/p/joceanus/git/ci/{scmMaster}/tree/</url>
   </scm>
-  <repositories>
-    <repository>
-      <id>svnKit</id>
-      <url>https://maven.tmatesoft.com/content/repositories/releases/</url>
-    </repository>
-  </repositories>
+  <issueManagement>
+    <system>Sourceforge</system>
+    <url>https://sourceforge.net/p/joceanus/tickets/</url>
+  </issueManagement>
   <distributionManagement>
     <site>
       <id>jOceanus.website</id>
@@ -70,7 +64,7 @@
     <packageMain/>
     <appDir>${env.BACKUPDIR}</appDir>
     <appLibDir>lib/</appLibDir>
-    <BouncyCastleVersion>1.61</BouncyCastleVersion>
+    <BouncyCastleVersion>162b1</BouncyCastleVersion>
     <SvnKitVersion>1.10.0</SvnKitVersion>
     <JGitVersion>5.2.1.201812262042-r</JGitVersion>
     <JUnitVersion>5.4.0</JUnitVersion>
@@ -106,10 +100,17 @@
     <SonarQubePluginVersion>3.6.0.1398</SonarQubePluginVersion>
     <CheckStylePluginVersion>3.0.0</CheckStylePluginVersion>
     <PMDPluginVersion>3.11.0</PMDPluginVersion>
+    <JacocoPluginVersion>0.8.3</JacocoPluginVersion>
     <JetBrainsAnnotationsVersion>16.0.3</JetBrainsAnnotationsVersion>
     <FindBugsPluginVersion>3.0.5</FindBugsPluginVersion>
     <VersionsPluginVersion>2.7</VersionsPluginVersion>
   </properties>
+  <repositories>
+    <repository>
+      <id>svnKit</id>
+      <url>https://maven.tmatesoft.com/content/repositories/releases/</url>
+    </repository>
+  </repositories>
   <build>
     <resources>
       <resource>
@@ -173,6 +174,7 @@
         <artifactId>maven-surefire-plugin</artifactId>
         <version>${SurefirePluginVersion}</version>
         <configuration>
+          <argLine>${jOceanusEnv}</argLine>
           <excludes>
             <exclude/>
           </excludes>
@@ -265,6 +267,25 @@
           </execution>
         </executions>
       </plugin>-->
+      <plugin>
+        <groupId>org.jacoco</groupId>
+        <artifactId>jacoco-maven-plugin</artifactId>
+        <version>${JacocoPluginVersion}</version>
+        <executions>
+          <execution>
+            <goals>
+              <goal>prepare-agent</goal>
+            </goals>
+          </execution>
+          <execution>
+            <id>report</id>
+            <phase>test</phase>
+            <goals>
+              <goal>report</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-clean-plugin</artifactId>
@@ -430,6 +451,39 @@
           <excludePackageNames>SevenZip</excludePackageNames>
         </configuration>
       </plugin>-->
+      <plugin>
+        <groupId>org.jacoco</groupId>
+        <artifactId>jacoco-maven-plugin</artifactId>
+        <reportSets>
+          <reportSet>
+            <reports>
+              <report>report</report>
+            </reports>
+          </reportSet>
+        </reportSets>
+      </plugin>
     </plugins>
   </reporting>
+  <profiles>
+    <profile>
+      <id>devBuild</id>
+      <activation>
+        <activeByDefault>true</activeByDefault>
+      </activation>
+      <properties>
+        <jOceanusEnv>-Djoceanus.devBuild</jOceanusEnv>
+      </properties>
+    </profile>
+    <profile>
+      <id>fullBuild</id>
+      <activation>
+      <property>
+        <name>fullBuild</name>
+      </property>
+      </activation>
+      <properties>
+        <jOceanusEnv>-Djoceanus.fullBuild</jOceanusEnv>
+      </properties>
+    </profile>
+  </profiles>
 </project>

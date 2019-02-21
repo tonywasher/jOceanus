@@ -47,7 +47,7 @@ import net.sourceforge.joceanus.jtethys.TethysDataConverter;
 /**
  * Security Test suite - Test KeySet functionality.
  */
-class KeySetTest {
+public class KeySetTest {
     /**
      * Default password.
      */
@@ -65,7 +65,7 @@ class KeySetTest {
      * Initialise Factories.
      */
     @BeforeAll
-    static void createSecurityFactories() throws OceanusException {
+    public static void createSecurityFactories() throws OceanusException {
         BCFULLFACTORY = GordianGenerator.createFactory(new GordianParameters(false, GordianFactoryType.BC));
         BCCUTFACTORY = GordianGenerator.createFactory(new GordianParameters(true, GordianFactoryType.BC));
         JCAFULLFACTORY = GordianGenerator.createFactory(new GordianParameters(false, GordianFactoryType.JCA));
@@ -77,7 +77,7 @@ class KeySetTest {
      * @return the test stream
      */
     @TestFactory
-    Stream<DynamicNode> keySetTests() {
+    public Stream<DynamicNode> keySetTests() {
         /* Create tests */
         Stream<DynamicNode> myStream = keySetTests(BCCUTFACTORY);
         myStream = Stream.concat(myStream, keySetTests(BCFULLFACTORY));
@@ -112,7 +112,7 @@ class KeySetTest {
 
         /* Create new symmetric key and stream Key */
         final GordianKey<GordianSymKeySpec> mySym = myRandoms.generateRandomSymKey();
-        final GordianKey<GordianStreamKeyType> myStream = myRandoms.generateRandomStreamKey();
+        final GordianKey<GordianStreamKeyType> myStream = myRandoms.generateRandomStreamKey(false);
 
         /* Secure the keys */
         final byte[] mySymSafe = myKeySet.secureKey(mySym);
@@ -140,7 +140,7 @@ class KeySetTest {
         final byte[] myDigestBytes = myDigest.finish();
 
         /* Create a data MAC */
-        GordianMac myMac = myRandoms.generateRandomMac();
+        GordianMac myMac = myRandoms.generateRandomMac(false);
         myMac.update(mySymSafe);
         myMac.update(myStreamSafe);
         final byte[] myMacBytes = myMac.finish();

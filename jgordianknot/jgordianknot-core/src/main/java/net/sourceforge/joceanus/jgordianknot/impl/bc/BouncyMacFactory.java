@@ -30,8 +30,6 @@ import org.bouncycastle.crypto.macs.Poly1305;
 import org.bouncycastle.crypto.macs.SkeinMac;
 import org.bouncycastle.crypto.macs.VMPCMac;
 import org.bouncycastle.crypto.modes.GCMBlockCipher;
-import org.bouncycastle.crypto.newengines.Zuc128Engine;
-import org.bouncycastle.crypto.newengines.Zuc256Engine;
 import org.bouncycastle.crypto.newmacs.Blake2Mac;
 import org.bouncycastle.crypto.newmacs.DSTUX7564Mac;
 import org.bouncycastle.crypto.newmacs.DSTUX7624Mac;

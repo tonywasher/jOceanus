@@ -247,14 +247,14 @@ public class GordianCoreRandomFactory
     }
 
     @Override
-    public GordianMac generateRandomMac() throws OceanusException {
+    public GordianMac generateRandomMac(final boolean pLargeData) throws OceanusException {
         /* Access Mac Factory and IdManager */
         final GordianMacFactory myMacs = theFactory.getMacFactory();
         final GordianCoreKeySetFactory myKeySets = (GordianCoreKeySetFactory) theFactory.getKeySetFactory();
         final GordianIdManager myIds = myKeySets.getIdManager();
 
         /* Determine a random specification */
-        final GordianMacSpec mySpec = myIds.generateRandomMacSpec();
+        final GordianMacSpec mySpec = myIds.generateRandomMacSpec(pLargeData);
 
         /* Determine a random key */
         final GordianKeyGenerator<GordianMacSpec> myGenerator = myMacs.getKeyGenerator(mySpec);
@@ -284,14 +284,14 @@ public class GordianCoreRandomFactory
     }
 
     @Override
-    public GordianKey<GordianStreamKeyType> generateRandomStreamKey() throws OceanusException {
+    public GordianKey<GordianStreamKeyType> generateRandomStreamKey(final boolean pLargeData) throws OceanusException {
         /* Access Cipher Factory and IdManager */
         final GordianCipherFactory myCiphers = theFactory.getCipherFactory();
         final GordianCoreKeySetFactory myKeySets = (GordianCoreKeySetFactory) theFactory.getKeySetFactory();
         final GordianIdManager myIds = myKeySets.getIdManager();
 
         /* Generate a random key */
-        final GordianStreamKeyType myType =  myIds.generateRandomStreamKeyType();
+        final GordianStreamKeyType myType =  myIds.generateRandomStreamKeyType(pLargeData);
 
         /* Generate a random key */
         final GordianKeyGenerator<GordianStreamKeyType> myGenerator = myCiphers.getKeyGenerator(myType);
