@@ -74,7 +74,6 @@
     <SvnKitVersion>1.10.0</SvnKitVersion>
     <JGitVersion>5.2.1.201812262042-r</JGitVersion>
     <JUnitVersion>5.4.0</JUnitVersion>
-    <HttpClientVersion>4.5.7</HttpClientVersion>
     <JSONVersion>20180813</JSONVersion>
     <ApacheMavenVersion>3.6.0</ApacheMavenVersion>
     <MySQLVersion>8.0.15</MySQLVersion>
