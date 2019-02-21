@@ -8,14 +8,33 @@
   <artifactId>jtethys-test</artifactId>
   <name>Tethys Java Test</name>
   <description>Tethys Java Test</description>
-  <packaging>pom</packaging>
-  <modules>
-    <module>jtethys-test-swing</module>
-    <module>jtethys-test-javafx</module>
-    <module>jtethys-test-core</module>
-  </modules>
+  <dependencies>
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>jtethys-core</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>jtethys-javafx</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>jtethys-swing</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+  </dependencies>
   <properties>
     <svnComponent>jtethys-test</svnComponent>
     <packageName>${packageKey}.${svnComponent}</packageName>
   </properties>
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-jar-plugin</artifactId>
+      </plugin>
+    </plugins>
+  </build>
 </project>

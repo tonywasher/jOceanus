@@ -8,14 +8,38 @@
   <artifactId>jmetis-test</artifactId>
   <name>Metis Data Test Framework</name>
   <description>Metis Data Test Framework</description>
-  <packaging>pom</packaging>
-  <modules>
-    <module>jmetis-test-core</module>
-    <module>jmetis-test-javafx</module>
-    <module>jmetis-test-swing</module>
-  </modules>
   <properties>
     <svnComponent>jmetis</svnComponent>
     <packageName>${packageKey}.${svnComponent}</packageName>
   </properties>
+  <dependencies>
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>jmetis-core</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>jmetis-javafx</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>jmetis-swing</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>jtethys-test</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+  </dependencies>
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-jar-plugin</artifactId>
+      </plugin>
+    </plugins>
+  </build>
 </project>
