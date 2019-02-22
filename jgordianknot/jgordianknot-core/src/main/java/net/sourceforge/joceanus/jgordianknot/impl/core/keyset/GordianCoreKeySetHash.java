@@ -456,7 +456,7 @@ public final class GordianCoreKeySetHash
             TethysDataConverter.buildHashResult(mySecretBytes, mySecretHash);
         }
 
-        /* Combine the Primary and Alternate hashes to form the initVector */
+        /* Combine the Primary and Alternate hashes to form the childPassword */
         myDigest.update(myPrimeHash);
         myDigest.update(myAlternateHash);
         myDigest.update(mySecretHash);

@@ -251,9 +251,9 @@ public class ThemisSvnRevisionHistory
      * @param pSource the source path
      * @return should we copy path true/false
      */
-    private boolean checkComponentCopy(final String pPath,
-                                       final String pTarget,
-                                       final String pSource) {
+    private static boolean checkComponentCopy(final String pPath,
+                                              final String pTarget,
+                                              final String pSource) {
         /* Look for a standard component copy */
         final String myInnerPath = pTarget.substring(pPath.length());
         if (pSource.startsWith(myInnerPath)) {

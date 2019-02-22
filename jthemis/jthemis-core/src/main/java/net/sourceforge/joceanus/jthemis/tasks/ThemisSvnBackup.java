@@ -268,10 +268,6 @@ public class ThemisSvnBackup {
             /* Dump the data to the zip file */
             theAdminClient.doDump(pRepository, myStream, SVNRevision.UNDEFINED, SVNRevision.create(revLast), false, true);
 
-            /* Close the stream */
-            myStream.close();
-            myZipFile.close();
-
             /* Handle other exceptions */
         } catch (SVNException
                 | IOException e) {

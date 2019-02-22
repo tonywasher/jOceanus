@@ -184,8 +184,7 @@ public class GordianPersonalisation {
 
     /**
      * Update a MAC with personalisation.
-     * @param pMac the MAC
-     */
+     * @param pMac the MAC*/
     public void updateMac(final GordianMac pMac) {
         pMac.update(thePersonalisation);
         pMac.update(theInitVector);

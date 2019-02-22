@@ -21,6 +21,7 @@ import java.util.Arrays;
 import java.util.EnumMap;
 import java.util.Map;
 
+import net.sourceforge.joceanus.jgordianknot.api.base.GordianConsumer;
 import net.sourceforge.joceanus.jgordianknot.api.base.GordianLength;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianCipher;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianCipherFactory;
@@ -28,10 +29,15 @@ import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianPadding;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianSymCipherSpec;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianSymKeySpec;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianSymKeyType;
+import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigest;
+import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigestFactory;
+import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigestSpec;
 import net.sourceforge.joceanus.jgordianknot.api.factory.GordianAsymFactory;
 import net.sourceforge.joceanus.jgordianknot.api.key.GordianKey;
 import net.sourceforge.joceanus.jgordianknot.api.base.GordianKeySpec;
 import net.sourceforge.joceanus.jgordianknot.api.key.GordianKeyPair;
+import net.sourceforge.joceanus.jgordianknot.api.mac.GordianMac;
+import net.sourceforge.joceanus.jgordianknot.api.mac.GordianMacFactory;
 import net.sourceforge.joceanus.jgordianknot.api.mac.GordianMacSpec;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianCoreFactory;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianDataException;
@@ -89,7 +95,7 @@ final class GordianMultiCipher {
     private final GordianCoreKeySet theKeySet;
 
     /**
-     * Have we initialises the map yet?
+     * Have we initialised the map yet?
      */
     private boolean initKeys;
 
@@ -426,7 +432,7 @@ final class GordianMultiCipher {
             /* Initialise the cipher */
             final GordianKey<GordianSymKeySpec> mySymKey = theSymKeyMap.get(myKeyType);
             final byte[] myIV = myCipher.getCipherSpec().needsIV()
-                                ? calculateInitVector(myInitVector, GordianLength.LEN_128.getByteLength())
+                                ? calculateInitVector(myInitVector, i == 0 ? 0 : 1)
                                 : null;
             myCipher.initCipher(mySymKey, myIV, pEncrypt);
 
@@ -522,17 +528,18 @@ final class GordianMultiCipher {
     }
 
     /**
-     * Obtain hashed initialisation vector.
+     * Obtain relevant initialisation vector.
      * @param pVector the initialisation vector
-     * @param pIVLen the length of the required IV
+     * @param pSection the requested section
      * @return the shifted vector
      */
     private static byte[] calculateInitVector(final byte[] pVector,
-                                              final int pIVLen) {
-        /* Return appropriate length of data */
-        return pVector.length != pIVLen
-               ? Arrays.copyOf(pVector, pIVLen)
-               : pVector;
+                                              final int pSection) {
+        /* Determine the index of the section */
+        final int myIndex = pSection * GordianLength.LEN_128.getByteLength();
+
+        /* Return appropriate section length of data */
+        return Arrays.copyOfRange(pVector, myIndex, myIndex + GordianLength.LEN_128.getByteLength());
     }
 
     /**
@@ -636,7 +643,7 @@ final class GordianMultiCipher {
         final GordianSymKeyType myStreamKeyType = mySymKeyTypes[0];
         final GordianKey<GordianSymKeySpec> myStreamKey = theSymKeyMap.get(myStreamKeyType);
         final GordianCipher<GordianSymKeySpec> myStreamCipher = getCipher(myStreamKeyType, 0);
-        final byte[] myIV = calculateInitVector(myInitVector, GordianLength.LEN_128.getByteLength());
+        final byte[] myIV = calculateInitVector(myInitVector, 0);
         myStreamCipher.initCipher(myStreamKey, myIV, true);
 
         /* Process via the stream Cipher */
@@ -683,7 +690,7 @@ final class GordianMultiCipher {
         final GordianSymKeyType myStreamKeyType = mySymKeyTypes[0];
         final GordianKey<GordianSymKeySpec> myStreamKey = theSymKeyMap.get(myStreamKeyType);
         final GordianCipher<GordianSymKeySpec> myStreamCipher = getCipher(myStreamKeyType, 0);
-        final byte[] myIV = calculateInitVector(myInitVector, GordianLength.LEN_128.getByteLength());
+        final byte[] myIV = calculateInitVector(myInitVector, 0);
         myStreamCipher.initCipher(myStreamKey, myIV, false);
 
         /* Process via the stream Cipher */

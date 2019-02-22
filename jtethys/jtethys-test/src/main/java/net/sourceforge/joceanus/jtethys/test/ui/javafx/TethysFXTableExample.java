@@ -90,7 +90,7 @@ public class TethysFXTableExample
         theTable.setItems(myData);
         theTable.setRepaintRowOnCommit(true);
         theTable.setComparator((l, r) -> l.nameProperty().getValue().compareTo(r.nameProperty().getValue()));
-        theTable.setOnCommit(r -> r.incrementUpdates());
+        theTable.setOnCommit(TethysFXTableItem::incrementUpdates);
 
         /* Create the name column */
         final TethysFXTableStringColumn<TethysDataId, TethysFXTableItem> myNameColumn = theTable.declareStringColumn(TethysDataId.NAME);

@@ -197,11 +197,11 @@ public class ThemisGitAnalyser {
      * @param pParent the parent
      * @return has badParentage true/false
      */
-    private boolean checkForBadParentage(final ThemisGitRevision pCommit,
-                                         final ThemisGitRevision pParent) {
+    private static boolean checkForBadParentage(final ThemisGitRevision pCommit,
+                                                final ThemisGitRevision pParent) {
         /* Check for orphans */
         final boolean isExpectedOrphan = pParent == null;
-        final boolean isOrphan = pCommit.getParents().size() == 0;
+        final boolean isOrphan = pCommit.getParents().isEmpty();
 
         /* Check for matching orphan status */
         if (isOrphan != isExpectedOrphan) {
@@ -247,7 +247,7 @@ public class ThemisGitAnalyser {
      * Prune a plan.
      * @param pPlan the plan
      */
-    private void prunePlan(final ThemisSvnExtractPlan<?> pPlan) {
+    private static void prunePlan(final ThemisSvnExtractPlan<?> pPlan) {
         /* Don't prune the plan if it has a bad parent */
         if (pPlan.isBadParent()) {
             return;

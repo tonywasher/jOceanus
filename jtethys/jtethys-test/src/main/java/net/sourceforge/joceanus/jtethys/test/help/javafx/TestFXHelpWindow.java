@@ -71,7 +71,7 @@ public class TestFXHelpWindow
      * @param pStage the stage
      * @return the panel
      */
-    private Node buildPanel(final Stage pStage) {
+    private static Node buildPanel(final Stage pStage) {
         /* Create the factory */
         final TethysFXGuiFactory myFactory = new TethysFXGuiFactory();
         myFactory.setStage(pStage);

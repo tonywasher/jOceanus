@@ -56,7 +56,7 @@ public final class TethysSwingDemoFilter {
      * @param args the arguments
      */
     public static void main(final String[] args) {
-        SwingUtilities.invokeLater(() -> createAndShowGUI());
+        SwingUtilities.invokeLater(TethysSwingDemoFilter::createAndShowGUI);
     }
 
     /**

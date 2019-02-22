@@ -51,7 +51,7 @@ public class MetisDataTester {
         /**
          * FieldSet.
          */
-        private static MetisFieldSet<BaseClass> FIELD_DEFS = MetisFieldSet.newFieldSet(BaseClass.class);
+        private static final MetisFieldSet<BaseClass> FIELD_DEFS = MetisFieldSet.newFieldSet(BaseClass.class);
 
         /**
          * Declare fields.
@@ -86,7 +86,7 @@ public class MetisDataTester {
         /**
          * FieldSet.
          */
-        private static MetisFieldSet<MainClass> FIELD_DEFS = MetisFieldSet.newFieldSet(MainClass.class);
+        private static final MetisFieldSet<MainClass> FIELD_DEFS = MetisFieldSet.newFieldSet(MainClass.class);
 
         /**
          * DataFieldThree.

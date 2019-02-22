@@ -85,19 +85,9 @@ public abstract class PrometheusAtlasDatabase {
     private Connection theConnection;
 
     /**
-     * Database metaData.
-     */
-    private DatabaseMetaData theMetaData;
-
-    /**
      * Quote database name?
      */
     private boolean quoteDatabase;
-
-    /**
-     * Quote identifiers?
-     */
-    private boolean quoteIdentifiers;
 
     /**
      * Do we convert prefixes to lowerCase?
@@ -178,23 +168,23 @@ public abstract class PrometheusAtlasDatabase {
 
             /* Connect using properties */
             theConnection = DriverManager.getConnection(myConnString, myProperties);
-            theMetaData = theConnection.getMetaData();
+            final DatabaseMetaData myMetaData = theConnection.getMetaData();
 
             /* Switch off autoCommit for non-maintenance databases */
             theConnection.setAutoCommit(pDatabase == null);
 
             /* Determine whether we should quote identifiers */
-            quoteIdentifiers = !theMetaData.supportsMixedCaseIdentifiers()
-                               && theMetaData.supportsMixedCaseQuotedIdentifiers();
+            final boolean quoteIdentifiers = !myMetaData.supportsMixedCaseIdentifiers()
+                                             && myMetaData.supportsMixedCaseQuotedIdentifiers();
 
             /* Determine whether we should quote database */
             quoteDatabase = quoteIdentifiers && theType.canQuoteDatabase();
 
             /* If we are not quoting database and we do not support mixed case */
-            if (!quoteDatabase && !theMetaData.supportsMixedCaseIdentifiers()) {
+            if (!quoteDatabase && !myMetaData.supportsMixedCaseIdentifiers()) {
                 /* Determine whether prefix is switched to upper or lower case */
-                prefixToLower = theMetaData.storesLowerCaseIdentifiers();
-                prefixToUpper = theMetaData.storesUpperCaseIdentifiers();
+                prefixToLower = myMetaData.storesLowerCaseIdentifiers();
+                prefixToUpper = myMetaData.storesUpperCaseIdentifiers();
             } else {
                 prefixToLower = false;
                 prefixToUpper = false;

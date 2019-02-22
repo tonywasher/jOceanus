@@ -29,7 +29,6 @@ import java.util.List;
 import java.util.stream.Stream;
 
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DynamicContainer;
 import org.junit.jupiter.api.DynamicNode;
 import org.junit.jupiter.api.DynamicTest;
@@ -59,42 +58,37 @@ public class ZipFileTest {
     private static final char[] DEF_PASSWORD = "SimplePassword".toCharArray();
 
     /**
-     * The factory.
-     */
-    private static GordianFactory BCFACTORY;
-    private static GordianFactory JCAFACTORY;
-
-    /**
-     * Initialise Factories.
-     */
-    @BeforeAll
-    public static void createSecurityFactories() throws OceanusException {
-        BCFACTORY = GordianGenerator.createFactory(new GordianParameters(GordianFactoryType.BC));
-        JCAFACTORY = GordianGenerator.createFactory(new GordianParameters(GordianFactoryType.JCA));
-    }
-
-    /**
      * Create the zipFile test suite.
      * @return the test stream
+     * @throws OceanusException on error
      */
     @TestFactory
-    public Stream<DynamicNode> zipFileTests() {
+    public Stream<DynamicNode> zipFileTests() throws OceanusException {
         /* Create tests */
-        final Stream<DynamicNode> myStream = zipFileTests(BCFACTORY);
-        return Stream.concat(myStream, zipFileTests(JCAFACTORY));
+        Stream<DynamicNode> myStream = zipFileTests(false, GordianFactoryType.BC);
+        myStream = Stream.concat(myStream, zipFileTests(true, GordianFactoryType.BC));
+        myStream = Stream.concat(myStream, zipFileTests(false, GordianFactoryType.JCA));
+        return Stream.concat(myStream, zipFileTests(true, GordianFactoryType.JCA));
     }
 
     /**
      * Create the keySet test suite for a factory.
-     * @param pFactory the factory
+     * @param pRestricted is the factory restricted
+     * @param pType the factoryType
      * @return the test stream
+     * @throws OceanusException on error
      */
-    private Stream<DynamicNode> zipFileTests(final GordianFactory pFactory) {
+    private Stream<DynamicNode> zipFileTests(final boolean pRestricted,
+                                             final GordianFactoryType pType) throws OceanusException {
+        /* Create the factory */
+        final GordianFactory myFactory = GordianGenerator.createFactory(new GordianParameters(pRestricted, pType));
+
         /* Return the stream */
-        final String myName = pFactory.getFactoryType().toString();
+        final String myName = pType.toString()
+                + (pRestricted ? "-Restricted" : "-Full");
         return Stream.of(DynamicContainer.dynamicContainer(myName, Stream.of(
-                DynamicTest.dynamicTest("standard", () -> testZipFile(pFactory, false)),
-                DynamicTest.dynamicTest("encrypted", () -> testZipFile(pFactory, true))
+                DynamicTest.dynamicTest("standard", () -> testZipFile(myFactory, false)),
+                DynamicTest.dynamicTest("encrypted", () -> testZipFile(myFactory, true))
         )));
     }
 

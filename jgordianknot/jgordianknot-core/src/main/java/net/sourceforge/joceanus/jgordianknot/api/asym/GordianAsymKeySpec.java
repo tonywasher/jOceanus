@@ -441,73 +441,60 @@ public final class GordianAsymKeySpec implements GordianKeySpec {
     }
 
     /**
-     * Obtain a list of all possible specs for the keyType.
-     * @param pKeyType the keyType
+     * Obtain a list of all possible asymKeySpecs.
      * @return the list
      */
-    public static List<GordianAsymKeySpec> listPossibleKeySpecs(final GordianAsymKeyType pKeyType) {
+    public static List<GordianAsymKeySpec> listPossibleKeySpecs() {
         /* Create the list */
         final List<GordianAsymKeySpec> mySpecs = new ArrayList<>();
 
-        /* Switch on AsymKeyType */
-        switch (pKeyType) {
-            case RSA:
-                EnumSet.allOf(GordianRSAModulus.class).forEach(m -> mySpecs.add(GordianAsymKeySpec.rsa(m)));
-                break;
-            case DSA:
-                EnumSet.allOf(GordianDSAKeyType.class).forEach(t -> mySpecs.add(GordianAsymKeySpec.dsa(t)));
-                break;
-            case DIFFIEHELLMAN:
-                EnumSet.allOf(GordianDHGroup.class).forEach(g -> mySpecs.add(GordianAsymKeySpec.dh(g)));
-                break;
-            case EC:
-                EnumSet.allOf(GordianDSAElliptic.class).forEach(c -> mySpecs.add(GordianAsymKeySpec.ec(c)));
-                break;
-            case SM2:
-                EnumSet.allOf(GordianSM2Elliptic.class).forEach(c -> mySpecs.add(GordianAsymKeySpec.sm2(c)));
-                break;
-            case GOST2012:
-                EnumSet.allOf(GordianGOSTElliptic.class).forEach(c -> mySpecs.add(GordianAsymKeySpec.gost2012(c)));
-                break;
-            case DSTU4145:
-                EnumSet.allOf(GordianDSTU4145Elliptic.class).forEach(c -> mySpecs.add(GordianAsymKeySpec.dstu4145(c)));
-                break;
-            case ED25519:
-                mySpecs.add(GordianAsymKeySpec.ed25519());
-                break;
-            case ED448:
-                mySpecs.add(GordianAsymKeySpec.ed448());
-                break;
-            case X25519:
-                mySpecs.add(GordianAsymKeySpec.x25519());
-                break;
-            case X448:
-                mySpecs.add(GordianAsymKeySpec.x448());
-                break;
-            case RAINBOW:
-                mySpecs.add(GordianAsymKeySpec.rainbow());
-                break;
-            case NEWHOPE:
-                mySpecs.add(GordianAsymKeySpec.newHope());
-                break;
-            case QTESLA:
-                EnumSet.allOf(GordianQTESLAKeyType.class).forEach(t -> mySpecs.add(GordianAsymKeySpec.qTESLA(t)));
-                break;
-            case SPHINCS:
-                EnumSet.allOf(GordianSPHINCSKeyType.class).forEach(t -> mySpecs.add(GordianAsymKeySpec.sphincs(t)));
-                break;
-            case XMSS:
-                EnumSet.allOf(GordianXMSSKeyType.class).forEach(t -> mySpecs.add(GordianAsymKeySpec.xmss(t)));
-                break;
-            case XMSSMT:
-                EnumSet.allOf(GordianXMSSKeyType.class).forEach(t -> mySpecs.add(GordianAsymKeySpec.xmssmt(t)));
-                break;
-            case MCELIECE:
-                GordianMcElieceKeySpec.listPossibleKeySpecs().forEach(t -> mySpecs.add(GordianAsymKeySpec.mcEliece(t)));
-                break;
-            default:
-                break;
-        }
+        /* Add RSA */
+        EnumSet.allOf(GordianRSAModulus.class).forEach(m -> mySpecs.add(GordianAsymKeySpec.rsa(m)));
+
+        /* Add DSA */
+        EnumSet.allOf(GordianDSAKeyType.class).forEach(t -> mySpecs.add(GordianAsymKeySpec.dsa(t)));
+
+        /* Add DH  */
+        EnumSet.allOf(GordianDHGroup.class).forEach(g -> mySpecs.add(GordianAsymKeySpec.dh(g)));
+
+        /* Add EC */
+        EnumSet.allOf(GordianDSAElliptic.class).forEach(c -> mySpecs.add(GordianAsymKeySpec.ec(c)));
+
+        /* Add SM2 */
+        EnumSet.allOf(GordianSM2Elliptic.class).forEach(c -> mySpecs.add(GordianAsymKeySpec.sm2(c)));
+
+        /* Add GOST2012 */
+        EnumSet.allOf(GordianGOSTElliptic.class).forEach(c -> mySpecs.add(GordianAsymKeySpec.gost2012(c)));
+
+        /* Add DSTU4145 */
+        EnumSet.allOf(GordianDSTU4145Elliptic.class).forEach(c -> mySpecs.add(GordianAsymKeySpec.dstu4145(c)));
+
+        /* Add Ed25519/Ed448 */
+        mySpecs.add(GordianAsymKeySpec.ed25519());
+        mySpecs.add(GordianAsymKeySpec.ed448());
+
+        /* Add X25519/X448 */
+        mySpecs.add(GordianAsymKeySpec.x25519());
+        mySpecs.add(GordianAsymKeySpec.x448());
+
+        /* Add Rainbow */
+        mySpecs.add(GordianAsymKeySpec.rainbow());
+
+        /* Add NewHope */
+        mySpecs.add(GordianAsymKeySpec.newHope());
+
+        /* Add qTESLA */
+        EnumSet.allOf(GordianQTESLAKeyType.class).forEach(t -> mySpecs.add(GordianAsymKeySpec.qTESLA(t)));
+
+        /* Add SPHINCS */
+        EnumSet.allOf(GordianSPHINCSKeyType.class).forEach(t -> mySpecs.add(GordianAsymKeySpec.sphincs(t)));
+
+        /* Add XMSS/XMSSMT */
+        EnumSet.allOf(GordianXMSSKeyType.class).forEach(t -> mySpecs.add(GordianAsymKeySpec.xmss(t)));
+        EnumSet.allOf(GordianXMSSKeyType.class).forEach(t -> mySpecs.add(GordianAsymKeySpec.xmssmt(t)));
+
+        /* Add McEliece */
+        GordianMcElieceKeySpec.listPossibleKeySpecs().forEach(t -> mySpecs.add(GordianAsymKeySpec.mcEliece(t)));
 
         /* Return the list */
         return mySpecs;

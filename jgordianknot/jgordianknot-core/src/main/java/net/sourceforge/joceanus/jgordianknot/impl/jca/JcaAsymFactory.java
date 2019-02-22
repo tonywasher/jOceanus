@@ -191,4 +191,24 @@ public class JcaAsymFactory
             throw new GordianCryptoException("Failed to create KeyPairGenerator", e);
         }
     }
+
+    @Override
+    public boolean validAsymKeySpec(final GordianAsymKeySpec pKeySpec) {
+        /* Perform standard checks */
+        if (!super.validAsymKeySpec(pKeySpec)) {
+            return false;
+        }
+
+        /* Disable EdwardsCurves and qTESLA */
+        switch (pKeySpec.getKeyType()) {
+            case QTESLA:
+            case ED25519:
+            case ED448:
+            case X25519:
+            case X448:
+                return false;
+            default:
+                return true;
+        }
+    }
 }

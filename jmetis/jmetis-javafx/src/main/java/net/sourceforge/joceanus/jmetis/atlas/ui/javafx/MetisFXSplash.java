@@ -142,7 +142,7 @@ public class MetisFXSplash {
      * @param pText the text for the box
      * @return the box
      */
-    private HBox getCentredText(final String pText) {
+    private static HBox getCentredText(final String pText) {
         /* Create the text */
         final Label myText = new Label(pText);
         myText.setStyle("-fx-text-fill:white; -fx-background-color: blue; -fx-font-size: 16;");

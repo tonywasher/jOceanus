@@ -21,7 +21,6 @@ import java.util.stream.Stream;
 
 import org.bouncycastle.util.Arrays;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DynamicContainer;
 import org.junit.jupiter.api.DynamicNode;
 import org.junit.jupiter.api.DynamicTest;
@@ -102,25 +101,6 @@ public class SymmetricTest {
     }
 
     /**
-     * The factories.
-     */
-    private static GordianFactory BCFULLFACTORY;
-    private static GordianFactory JCAFULLFACTORY;
-    private static GordianFactory BCCUTFACTORY;
-    private static GordianFactory JCACUTFACTORY;
-
-    /**
-     * Initialise Factories.
-     */
-    @BeforeAll
-    public static void createSecurityFactories() throws OceanusException {
-        BCFULLFACTORY = GordianGenerator.createFactory(new GordianParameters(false, GordianFactoryType.BC));
-        BCCUTFACTORY = GordianGenerator.createFactory(new GordianParameters(true, GordianFactoryType.BC));
-        JCAFULLFACTORY = GordianGenerator.createFactory(new GordianParameters(false, GordianFactoryType.JCA));
-        JCACUTFACTORY = GordianGenerator.createFactory(new GordianParameters(true, GordianFactoryType.JCA));
-    }
-
-    /**
      * The TestData.
      */
     private byte[] theTestData;
@@ -133,52 +113,59 @@ public class SymmetricTest {
     /**
      * Create the symmetric test suite.
      * @return the test stream
+     * @throws OceanusException on error
      */
     @TestFactory
-    public Stream<DynamicNode> symmetricTests() {
+    public Stream<DynamicNode> symmetricTests() throws OceanusException {
         /* Create tests */
-        Stream<DynamicNode> myStream = symmetricTests(BCCUTFACTORY);
-        myStream = Stream.concat(myStream, symmetricTests(BCFULLFACTORY));
-        myStream = Stream.concat(myStream, symmetricTests(JCACUTFACTORY));
-        return Stream.concat(myStream, symmetricTests(JCAFULLFACTORY));
+        Stream<DynamicNode> myStream = symmetricTests(false, GordianFactoryType.BC);
+        myStream = Stream.concat(myStream, symmetricTests(true, GordianFactoryType.BC));
+        myStream = Stream.concat(myStream, symmetricTests(false, GordianFactoryType.JCA));
+        return Stream.concat(myStream, symmetricTests(true, GordianFactoryType.JCA));
     }
 
     /**
      * Create the symmetric test suite for a factory.
-     * @param pFactory the factory
+     * @param pRestricted is the factory restricted
+     * @param pType the factoryType
      * @return the test stream
+     * @throws OceanusException on error
      */
-    private Stream<DynamicNode> symmetricTests(final GordianFactory pFactory) {
+    private Stream<DynamicNode> symmetricTests(final boolean pRestricted,
+                                               final GordianFactoryType pType) throws OceanusException {
+        /* Create the factory */
+        final GordianFactory myFactory = GordianGenerator.createFactory(new GordianParameters(pRestricted, pType));
+
         /* Create an empty stream */
         Stream<DynamicNode> myStream = Stream.empty();
 
         /* Add digest Tests */
-        Stream<DynamicNode> mySubStream = digestTests(pFactory);
+        Stream<DynamicNode> mySubStream = digestTests(myFactory);
         if (mySubStream != null) {
             myStream = Stream.concat(myStream, mySubStream);
         }
 
         /* Add mac Tests */
-        mySubStream = macTests(pFactory);
+        mySubStream = macTests(myFactory);
         if (mySubStream != null) {
             myStream = Stream.concat(myStream, mySubStream);
         }
 
         /* Add symKey Tests */
-        mySubStream = symKeyTests(pFactory);
+        mySubStream = symKeyTests(myFactory);
         if (mySubStream != null) {
             myStream = Stream.concat(myStream, mySubStream);
         }
 
         /* Add streamKey Tests */
-        mySubStream = streamKeyTests(pFactory);
+        mySubStream = streamKeyTests(myFactory);
         if (mySubStream != null) {
             myStream = Stream.concat(myStream, mySubStream);
         }
 
         /* Return the stream */
-        final String myName = pFactory.getFactoryType().toString()
-                + (pFactory.isRestricted() ? "-Restricted" : "-Full");
+        final String myName = pType.toString()
+                + (pRestricted ? "-Restricted" : "-Full");
         myStream = Stream.of(DynamicContainer.dynamicContainer(myName, myStream));
         return myStream;
     }

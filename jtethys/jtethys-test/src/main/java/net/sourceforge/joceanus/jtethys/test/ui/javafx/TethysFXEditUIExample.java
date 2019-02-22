@@ -616,7 +616,7 @@ public class TethysFXEditUIExample
      * Configure a cmdMenu.
      * @param pField the command menu to configure
      */
-    private void configureCmdMenu(final TethysFXDataTextField<?> pField) {
+    private static void configureCmdMenu(final TethysFXDataTextField<?> pField) {
         /* Configure the command menu */
         pField.showCmdButton(true);
         pField.setCmdMenuConfigurator(c -> {

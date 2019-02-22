@@ -59,9 +59,14 @@ import net.sourceforge.joceanus.jthemis.ThemisIOException;
  */
 public final class ThemisGitBundle {
     /**
+     * Bundle load error.
+     */
+    private static final String ERROR_CREATE = "Failed to create bundle";
+
+    /**
      * Bundle remote name.
      */
-    protected static final String REMOTE_BUNDLE = "bundle";
+    static final String REMOTE_BUNDLE = "bundle";
 
     /**
      * The Status reporter.
@@ -144,7 +149,7 @@ public final class ThemisGitBundle {
             createComponentFromBundle(pRepository, "Test", myStream);
 
         } catch (IOException e) {
-            throw new ThemisIOException("Failed to create bundle", e);
+            throw new ThemisIOException(ERROR_CREATE, e);
         }
     }
 
@@ -233,7 +238,7 @@ public final class ThemisGitBundle {
             createBundleFromComponent(pComponent, myStream);
 
         } catch (IOException e) {
-            throw new ThemisIOException("Failed to create bundle", e);
+            throw new ThemisIOException(ERROR_CREATE, e);
         }
     }
 
@@ -269,7 +274,7 @@ public final class ThemisGitBundle {
 
         } catch (IOException
                 | GitAPIException e) {
-            throw new ThemisIOException("Failed to create bundle", e);
+            throw new ThemisIOException(ERROR_CREATE, e);
         }
     }
 

@@ -59,6 +59,12 @@ public interface GordianAsymFactory {
     GordianAsymKeySpec determineKeySpec(X509EncodedKeySpec pEncoded) throws OceanusException;
 
     /**
+     * Obtain the underlying Factory.
+     * @return the factory
+     */
+    GordianFactory getFactory();
+
+    /**
      * Obtain the signatureFactory.
      * @return the signature factory
      */
@@ -84,12 +90,24 @@ public interface GordianAsymFactory {
 
     /**
      * Obtain a list of supported asymKeySpecs.
+     * @return the list of supported asymKeySpecs.
+     */
+    default List<GordianAsymKeySpec> listAllSupportedAsymSpecs() {
+        return GordianAsymKeySpec.listPossibleKeySpecs()
+                .stream()
+                .filter(supportedAsymKeySpecs())
+                .collect(Collectors.toList());
+    }
+
+    /**
+     * Obtain a list of supported asymKeySpecs for a KeyType
      * @param pKeyType the keyType
      * @return the list of supported asymKeySpecs.
      */
     default List<GordianAsymKeySpec> listAllSupportedAsymSpecs(final GordianAsymKeyType pKeyType) {
-        return GordianAsymKeySpec.listPossibleKeySpecs(pKeyType)
+        return GordianAsymKeySpec.listPossibleKeySpecs()
                 .stream()
+                .filter(s -> pKeyType.equals(s.getKeyType()))
                 .filter(supportedAsymKeySpecs())
                 .collect(Collectors.toList());
     }

@@ -17,7 +17,6 @@
 package net.sourceforge.joceanus.jmetis.test.atlas.ui.javafx;
 
 import javafx.application.Application;
-import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.layout.Region;
 import javafx.stage.Stage;

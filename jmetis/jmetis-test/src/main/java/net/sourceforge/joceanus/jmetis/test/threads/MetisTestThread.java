@@ -60,8 +60,8 @@ public class MetisTestThread
      * @param pNumSteps the number of steps
      * @throws OceanusException on error
      */
-    private void singleTask(final MetisThreadManager pManager,
-                            final int pNumSteps) throws OceanusException {
+    private static void singleTask(final MetisThreadManager pManager,
+                                   final int pNumSteps) throws OceanusException {
         /* Record task details */
         pManager.setNumSteps(500);
 

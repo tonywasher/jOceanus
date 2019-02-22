@@ -53,9 +53,14 @@ public class MetisListIndexed<T extends MetisDataIndexedItem>
     }
 
     /**
+     * Already Present error.
+     */
+    private static final String ERROR_PRESENT = "Already present";
+
+    /**
      * The First Id.
      */
-    private static final Integer ID_FIRST = Integer.valueOf(1);
+    private static final Integer ID_FIRST = 1;
 
     /**
      * The underlying list.
@@ -187,7 +192,7 @@ public class MetisListIndexed<T extends MetisDataIndexedItem>
 
         /* Check that the id is not currently present */
         if (theIdMap.get(myId) != null) {
-            throw new IllegalArgumentException("Already present");
+            throw new IllegalArgumentException(ERROR_PRESENT);
         }
 
         /* Check and adjust for id */
@@ -207,7 +212,7 @@ public class MetisListIndexed<T extends MetisDataIndexedItem>
 
         /* Check that the id is not currently present */
         if (theIdMap.get(myId) != null) {
-            throw new IllegalArgumentException("Already present");
+            throw new IllegalArgumentException(ERROR_PRESENT);
         }
 
         /* Check and adjust for id */
@@ -330,7 +335,7 @@ public class MetisListIndexed<T extends MetisDataIndexedItem>
 
         /* Check that the id is not currently present */
         if (theIdMap.get(myId) != null) {
-            throw new IllegalArgumentException("Already present");
+            throw new IllegalArgumentException(ERROR_PRESENT);
         }
 
         /* Add to the list */

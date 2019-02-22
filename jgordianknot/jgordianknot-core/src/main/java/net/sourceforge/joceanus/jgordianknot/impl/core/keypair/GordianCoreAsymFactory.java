@@ -22,6 +22,7 @@ import java.util.function.Predicate;
 
 import net.sourceforge.joceanus.jgordianknot.api.agree.GordianAgreementFactory;
 import net.sourceforge.joceanus.jgordianknot.api.asym.GordianAsymKeySpec;
+import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigestType;
 import net.sourceforge.joceanus.jgordianknot.api.encrypt.GordianEncryptorFactory;
 import net.sourceforge.joceanus.jgordianknot.api.factory.GordianAsymFactory;
 import net.sourceforge.joceanus.jgordianknot.api.sign.GordianSignatureFactory;
@@ -67,11 +68,8 @@ public abstract class GordianCoreAsymFactory
         theFactory = pFactory;
     }
 
-    /**
-     * Obtain the factory.
-     * @return the factory
-     */
-    protected GordianCoreFactory getFactory() {
+    @Override
+    public GordianCoreFactory getFactory() {
         return theFactory;
     }
 
@@ -138,6 +136,15 @@ public abstract class GordianCoreAsymFactory
 
     @Override
     public Predicate<GordianAsymKeySpec> supportedAsymKeySpecs() {
-        return GordianAsymKeySpec::isValid;
+        return this::validAsymKeySpec;
+    }
+
+    /**
+     * Valid keySpec.
+     * @param pKeySpec the asymKeySpec
+     * @return true/false
+     */
+    public boolean validAsymKeySpec(final GordianAsymKeySpec pKeySpec) {
+        return pKeySpec != null && pKeySpec.isValid();
     }
 }

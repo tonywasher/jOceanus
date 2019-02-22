@@ -234,7 +234,7 @@ public class TethysSwingDateExample {
      * @param args the arguments
      */
     public static void main(final String[] args) {
-        SwingUtilities.invokeLater(() -> createAndShowGUI());
+        SwingUtilities.invokeLater(TethysSwingDateExample::createAndShowGUI);
     }
 
     /**
