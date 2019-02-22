@@ -68,7 +68,7 @@ public class SymmetricTest {
     /**
      * NanoSeconds in milliSeconds.
      */
-    private static final int MILLINANOS = 1000;
+    static final int MILLINANOS = 1000;
 
     /**
      * Run full profiles.
@@ -453,11 +453,16 @@ public class SymmetricTest {
         /* Access Data */
         final byte[] myTestData = getTestData();
 
-        /* Create the Cipher */
+        /* Check wrapping bytes */
         final GordianWrapper myWrapper = myCipherFactory.createKeyWrapper(mySpec);
-        final byte[] myWrapped = myWrapper.secureBytes(mySymKey, myTestData);
+        byte[] myWrapped = myWrapper.secureBytes(mySymKey, myTestData);
         final byte[] myResult = myWrapper.deriveBytes(mySymKey, myWrapped);
-        Assertions.assertArrayEquals(myTestData, myResult, "Failed to encrypt/decrypt");
+        Assertions.assertArrayEquals(myTestData, myResult, "Failed to wrap/unwrap bytes");
+
+        /* Check wrapping key */
+        myWrapped = myWrapper.secureKey(mySymKey, mySymKey);
+        final GordianKey<GordianSymKeySpec> myResultKey = myWrapper.deriveKey(mySymKey, myWrapped, mySymKey.getKeyType());
+        Assertions.assertEquals(mySymKey, myResultKey, "Failed to wrap/unwrap key");
     }
 
     /**

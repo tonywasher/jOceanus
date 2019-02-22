@@ -16,7 +16,6 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmetis.http;
 
-import java.io.Closeable;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URI;
@@ -26,20 +25,7 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpRequest.BodyPublishers;
 import java.net.http.HttpResponse;
 import java.net.http.HttpResponse.BodyHandlers;
-import java.util.ArrayList;
-import java.util.List;
 
-//import org.apache.http.HttpEntity;
-//import org.apache.http.NameValuePair;
-//import org.apache.http.StatusLine;
-//import org.apache.http.client.entity.EntityBuilder;
-//import org.apache.http.client.methods.CloseableHttpResponse;
-//import org.apache.http.client.methods.HttpGet;
-//import org.apache.http.client.methods.HttpPost;
-//import org.apache.http.impl.client.CloseableHttpClient;
-//import org.apache.http.impl.client.HttpClients;
-//import org.apache.http.message.BasicNameValuePair;
-//import org.apache.http.util.EntityUtils;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.json.JSONTokener;
@@ -53,8 +39,7 @@ import net.sourceforge.joceanus.jtethys.TethysDataConverter;
  * Http client interface.
  * @author Tony Washer
  */
-public abstract class MetisHTTPDataClient
-        implements Closeable {
+public abstract class MetisHTTPDataClient {
     /**
      * Byte encoding.
      */
@@ -330,7 +315,7 @@ public abstract class MetisHTTPDataClient
 
         /* Protect against exceptions */
         try {
-            HttpResponse<String> myResponse = theClient.send(myGet, BodyHandlers.ofString());
+            final HttpResponse<String> myResponse = theClient.send(myGet, BodyHandlers.ofString());
 
             /* If we were successful */
             if (myResponse.statusCode() == HTTP_OK) {
@@ -343,8 +328,10 @@ public abstract class MetisHTTPDataClient
             throw new MetisDataException(myResponse.toString(), HTTPERROR_QUERY);
 
             /* Catch exceptions */
-        } catch (IOException
-                 | InterruptedException e) {
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            return performJSONQuery(pURL);
+        } catch (IOException  e) {
             throw new MetisIOException(HTTPERROR_QUERY, e);
         }
     }
@@ -406,7 +393,7 @@ public abstract class MetisHTTPDataClient
 
         /* Protect against exceptions */
         try {
-            HttpResponse<String> myResponse = theClient.send(myPost, BodyHandlers.ofString());
+            final HttpResponse<String> myResponse = theClient.send(myPost, BodyHandlers.ofString());
 
             /* If we were successful */
             if (myResponse.statusCode() == HTTP_FOUND) {
@@ -423,15 +410,12 @@ public abstract class MetisHTTPDataClient
             throw new MetisDataException(myResponse.toString(), HTTPERROR_QUERY);
 
             /* Catch exceptions */
-        } catch (IOException
-                | InterruptedException  e) {
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            return performJSONPost(pURL, pRequest);
+        } catch (IOException  e) {
             throw new MetisIOException(HTTPERROR_QUERY, e);
         }
-    }
-
-    @Override
-    public void close() throws IOException {
-        //theClient.close();
     }
 
     /**

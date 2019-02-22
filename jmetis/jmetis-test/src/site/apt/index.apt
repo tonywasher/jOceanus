@@ -1,3 +1,3 @@
-jMetis Test Project
+Metis Test Project
 
-  jMetis Test contains test projects for jMetis
+  Metis Test contains test projects for Metis. These are packaged separately from the Metis test structure due to the needs of the GUI tests.

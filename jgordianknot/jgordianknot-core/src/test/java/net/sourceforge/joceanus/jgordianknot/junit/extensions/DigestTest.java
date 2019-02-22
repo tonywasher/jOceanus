@@ -16,12 +16,17 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jgordianknot.junit.extensions;
 
+import java.util.stream.Stream;
+
 import org.bouncycastle.crypto.Digest;
 import org.bouncycastle.crypto.newdigests.CubeHashDigest;
 import org.bouncycastle.crypto.newdigests.GroestlDigest;
 import org.bouncycastle.crypto.newdigests.JHDigest;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.DynamicContainer;
+import org.junit.jupiter.api.DynamicNode;
+import org.junit.jupiter.api.DynamicTest;
+import org.junit.jupiter.api.TestFactory;
 
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.TethysDataConverter;
@@ -44,13 +49,43 @@ public class DigestTest {
     };
 
     /**
+     * Create the blockCipher test suite.
+     * @return the test stream
+     * @throws OceanusException on error
+     */
+    @TestFactory
+    public Stream<DynamicNode> digestTests() throws OceanusException {
+        /* Create tests */
+        return Stream.of(DynamicContainer.dynamicContainer("Digests", Stream.of(
+                DynamicContainer.dynamicContainer("Groestl", Stream.of(
+                        DynamicTest.dynamicTest("224", () -> new Groestl224Test().checkDigests()),
+                        DynamicTest.dynamicTest("256", () -> new Groestl256Test().checkDigests()),
+                        DynamicTest.dynamicTest("384", () -> new Groestl384Test().checkDigests()),
+                        DynamicTest.dynamicTest("512", () -> new Groestl512Test().checkDigests())
+                )),
+                DynamicContainer.dynamicContainer("JH", Stream.of(
+                        DynamicTest.dynamicTest("224", () -> new JH224Test().checkDigests()),
+                        DynamicTest.dynamicTest("256", () -> new JH256Test().checkDigests()),
+                        DynamicTest.dynamicTest("384", () -> new JH384Test().checkDigests()),
+                        DynamicTest.dynamicTest("512", () -> new JH512Test().checkDigests())
+                )),
+                DynamicContainer.dynamicContainer("CubeHash", Stream.of(
+                        DynamicTest.dynamicTest("224", () -> new CubeHash224Test().checkDigests()),
+                        DynamicTest.dynamicTest("256", () -> new CubeHash256Test().checkDigests()),
+                        DynamicTest.dynamicTest("384", () -> new CubeHash384Test().checkDigests()),
+                        DynamicTest.dynamicTest("512", () -> new CubeHash512Test().checkDigests())
+                ))
+        )));
+    }
+
+    /**
      * Test the Digests against the results.
      * @param pDigest the digest to test.
      * @param pExpected the expected results
      * @throws OceanusException on error
      */
-    static void testDigestStrings(final Digest pDigest,
-                                  final String[] pExpected) throws OceanusException {
+    static void checkDigestStrings(final Digest pDigest,
+                                   final String[] pExpected) throws OceanusException {
         /* Check the array */
         Assertions.assertEquals(INPUTS.length, pExpected.length, "Expected results must have same dimensions as Inputs");
 
@@ -73,7 +108,7 @@ public class DigestTest {
     /**
      * Groestl224.
      */
-    public static class Groestl224Test extends DigestTest {
+    static class Groestl224Test {
         /**
          * Expected results.
          */
@@ -87,16 +122,19 @@ public class DigestTest {
                 "c8a3e7274d599900ae673419683c3626a2e49ed57308ed2687508bef"
         };
 
-        @Test
-        public void testDigests() throws OceanusException {
-            testDigestStrings(new GroestlDigest(224), EXPECTED);
+        /**
+         * Test digests.
+         * @throws OceanusException on error
+         */
+        void checkDigests() throws OceanusException {
+            checkDigestStrings(new GroestlDigest(224), EXPECTED);
         }
     }
 
     /**
      * Groestl256.
      */
-    public static class Groestl256Test extends DigestTest {
+    static class Groestl256Test {
         /**
          * Expected results.
          */
@@ -110,16 +148,19 @@ public class DigestTest {
                 "2679d98913bee62e57fdbdde97ddb328373548c6b24fc587cc3d08f2a02a529c"
         };
 
-        @Test
-        public void testDigests() throws OceanusException {
-            testDigestStrings(new GroestlDigest(256), EXPECTED);
+        /**
+         * Test digests.
+         * @throws OceanusException on error
+         */
+        void checkDigests() throws OceanusException {
+            checkDigestStrings(new GroestlDigest(256), EXPECTED);
         }
     }
 
     /**
      * Groestl384.
      */
-    public static class Groestl384Test extends DigestTest {
+    static class Groestl384Test {
         /**
          * Expected results.
          */
@@ -133,16 +174,19 @@ public class DigestTest {
                 "1c446cd70a6de52c9db386f5305aae029fe5a4120bc6230b7cd3a5e1ef1949cc8e6d2548c24cd7347b5ba512628a62f6"
         };
 
-        @Test
-        public void testDigests() throws OceanusException {
-            testDigestStrings(new GroestlDigest(384), EXPECTED);
+        /**
+         * Test digests.
+         * @throws OceanusException on error
+         */
+        void checkDigests() throws OceanusException {
+            checkDigestStrings(new GroestlDigest(384), EXPECTED);
         }
     }
 
     /**
      * Groestl512.
      */
-    public static class Groestl512Test extends DigestTest {
+    static class Groestl512Test {
         /**
          * Expected results.
          */
@@ -156,16 +200,19 @@ public class DigestTest {
                 "862849fd911852cd54beefa88759db4cead0ef8e36aaf15398303c5c4cbc016d9b4c42b32081cbdcba710d2693e7663d244fae116ec29ffb40168baf44f944e7"
         };
 
-        @Test
-        public void testDigests() throws OceanusException {
-            testDigestStrings(new GroestlDigest(512), EXPECTED);
+        /**
+         * Test digests.
+         * @throws OceanusException on error
+         */
+        void checkDigests() throws OceanusException {
+            checkDigestStrings(new GroestlDigest(512), EXPECTED);
         }
     }
 
     /**
      * JH224.
      */
-    public static class JH224Test extends DigestTest {
+    static class JH224Test {
         /**
          * Expected results.
          */
@@ -179,16 +226,19 @@ public class DigestTest {
                 "c2b1967e635bd55b6a4d36f863ac4a877be302251d68692873007281"
         };
 
-        @Test
-        public void testDigests() throws OceanusException {
-            testDigestStrings(new JHDigest(224), EXPECTED);
+        /**
+         * Test digests.
+         * @throws OceanusException on error
+         */
+        void checkDigests() throws OceanusException {
+            checkDigestStrings(new JHDigest(224), EXPECTED);
         }
     }
 
     /**
      * JH256.
      */
-    public static class JH256Test extends DigestTest {
+    static class JH256Test {
         /**
          * Expected results.
          */
@@ -202,16 +252,19 @@ public class DigestTest {
                 "fc4214867025a8af94c614353b3553b10e561ae749fc18c40e5fd44a7a4ecd1b"
         };
 
-        @Test
-        public void testDigests() throws OceanusException {
-            testDigestStrings(new JHDigest(256), EXPECTED);
+        /**
+         * Test digests.
+         * @throws OceanusException on error
+         */
+        void checkDigests() throws OceanusException {
+            checkDigestStrings(new JHDigest(256), EXPECTED);
         }
     }
 
     /**
      * JH384.
      */
-    public static class JH384Test extends DigestTest {
+    static class JH384Test {
         /**
          * Expected results.
          */
@@ -225,16 +278,19 @@ public class DigestTest {
                 "6f73d9b9b8ed362f8180fb26020725b40bd6ca75b3b947405f26c4c37a885ce028876dc42e379d2faf6146fed3ea0e42"
         };
 
-        @Test
-        public void testDigests() throws OceanusException {
-            testDigestStrings(new JHDigest(384), EXPECTED);
+        /**
+         * Test digests.
+         * @throws OceanusException on error
+         */
+        void checkDigests() throws OceanusException {
+            checkDigestStrings(new JHDigest(384), EXPECTED);
         }
     }
 
     /**
      * JH512.
      */
-    public static class JH512Test extends DigestTest {
+    static class JH512Test {
         /**
          * Expected results.
          */
@@ -248,16 +304,19 @@ public class DigestTest {
                 "bafb8e710b35eabeb1a48220c4b0987c2c985b6e73b7b31d164bfb9d67c94d99d7bc43b474a25e647cd6cc36334b6a00a5f2a85fae74907fd2885c6168132fe7"
         };
 
-        @Test
-        public void testDigests() throws OceanusException {
-            testDigestStrings(new JHDigest(512), EXPECTED);
+        /**
+         * Test digests.
+         * @throws OceanusException on error
+         */
+        void checkDigests() throws OceanusException {
+            checkDigestStrings(new JHDigest(512), EXPECTED);
         }
     }
 
     /**
      * CubeHash224.
      */
-    public static class CubeHash224Test extends DigestTest {
+    static class CubeHash224Test {
         /**
          * Expected results.
          */
@@ -271,16 +330,19 @@ public class DigestTest {
                 "cec6fe7c403e12d2740b0e6011c6066da2b9fad6a17b07b40d207155"
         };
 
-        @Test
-        public void testDigests() throws OceanusException {
-            testDigestStrings(new CubeHashDigest(224), EXPECTED);
+        /**
+         * Test digests.
+         * @throws OceanusException on error
+         */
+        void checkDigests() throws OceanusException {
+            checkDigestStrings(new CubeHashDigest(224), EXPECTED);
         }
     }
 
     /**
      * CubeHash256.
      */
-    public static class CubeHash256Test extends DigestTest {
+    static class CubeHash256Test {
         /**
          * Expected results.
          */
@@ -294,16 +356,19 @@ public class DigestTest {
                 "cf750745b502b313459a9c7b0a850da20cf092bf85b70a02875049a9607bda4a"
         };
 
-        @Test
-        public void testDigests() throws OceanusException {
-            testDigestStrings(new CubeHashDigest(256), EXPECTED);
+        /**
+         * Test digests.
+         * @throws OceanusException on error
+         */
+        void checkDigests() throws OceanusException {
+            checkDigestStrings(new CubeHashDigest(256), EXPECTED);
         }
     }
 
     /**
      * CubeHash384.
      */
-    public static class CubeHash384Test extends DigestTest {
+    static class CubeHash384Test {
         /**
          * Expected results.
          */
@@ -317,16 +382,19 @@ public class DigestTest {
                 "d6cb0ecbe1f10dbf50cf04df376540c220f8278a458d6357c01051605da9818f7df91d829230d1ae327f3bafcfcfcaa9"
         };
 
-        @Test
-        public void testDigests() throws OceanusException {
-            testDigestStrings(new CubeHashDigest(384), EXPECTED);
+        /**
+         * Test digests.
+         * @throws OceanusException on error
+         */
+        void checkDigests() throws OceanusException {
+            checkDigestStrings(new CubeHashDigest(384), EXPECTED);
         }
     }
 
     /**
      * CubeHash512.
      */
-    public static class CubeHash512Test extends DigestTest {
+    static class CubeHash512Test {
         /**
          * Expected results.
          */
@@ -340,9 +408,8 @@ public class DigestTest {
                 "48e34719a74c380fbeaf6f9914a3d84570bee32f9284f919459f12eb3360bf9c632663daa154455f79ec95db11ba1d3c23e9d9f7d12a59dcdb7c464c52965d5d"
         };
 
-        @Test
-        public void testDigests() throws OceanusException {
-            testDigestStrings(new CubeHashDigest(512), EXPECTED);
+        void checkDigests() throws OceanusException {
+            checkDigestStrings(new CubeHashDigest(512), EXPECTED);
         }
     }
 }

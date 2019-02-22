@@ -174,7 +174,7 @@
         <artifactId>maven-surefire-plugin</artifactId>
         <version>${SurefirePluginVersion}</version>
         <configuration>
-          <argLine>${jOceanusEnv}</argLine>
+          <argLine>${jOceanusEnv} ${argLine}</argLine>
           <excludes>
             <exclude/>
           </excludes>
@@ -273,13 +273,13 @@
         <version>${JacocoPluginVersion}</version>
         <executions>
           <execution>
+            <id>jacoco-initialize</id>
             <goals>
               <goal>prepare-agent</goal>
             </goals>
           </execution>
           <execution>
-            <id>report</id>
-            <phase>test</phase>
+            <id>jacoco-report</id>
             <goals>
               <goal>report</goal>
             </goals>
@@ -437,6 +437,7 @@
             <id>aggregate</id>
             <reports>
               <report>aggregate</report>
+              <report>test-aggregate</report>
             </reports>
           </reportSet>
         </reportSets>
@@ -461,6 +462,11 @@
             </reports>
           </reportSet>
         </reportSets>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-report-plugin</artifactId>
+        <version>${SurefirePluginVersion}</version>
       </plugin>
     </plugins>
   </reporting>

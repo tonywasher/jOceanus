@@ -20,14 +20,13 @@ import java.util.stream.Stream;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.DynamicContainer;
 import org.junit.jupiter.api.DynamicNode;
 import org.junit.jupiter.api.DynamicTest;
 import org.junit.jupiter.api.TestFactory;
 
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianStreamKeyType;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianSymKeySpec;
-import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigest;
-import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigestFactory;
 import net.sourceforge.joceanus.jgordianknot.api.factory.GordianFactory;
 import net.sourceforge.joceanus.jgordianknot.api.factory.GordianFactoryType;
 import net.sourceforge.joceanus.jgordianknot.api.factory.GordianParameters;
@@ -36,9 +35,7 @@ import net.sourceforge.joceanus.jgordianknot.api.key.GordianKey;
 import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySet;
 import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetFactory;
 import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetHash;
-import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKnuthObfuscater;
 import net.sourceforge.joceanus.jgordianknot.api.mac.GordianMac;
-import net.sourceforge.joceanus.jgordianknot.api.mac.GordianMacFactory;
 import net.sourceforge.joceanus.jgordianknot.api.mac.GordianMacSpec;
 import net.sourceforge.joceanus.jgordianknot.api.random.GordianRandomFactory;
 import net.sourceforge.joceanus.jtethys.OceanusException;
@@ -52,6 +49,37 @@ public class KeySetTest {
      * Default password.
      */
     private static final char[] DEF_PASSWORD = "SimplePassword".toCharArray();
+
+    /**
+     * Run full profiles.
+     */
+    private static final boolean fullProfiles;
+
+    /**
+     * Run full profiles.
+     */
+    private static final int profileRepeat;
+
+    /**
+     * Configure the test according to system properties.
+     */
+    static {
+        /* If this is a full build */
+        final String myBuildType = System.getProperty("joceanus.fullBuild");
+        if (myBuildType != null) {
+            /* Test everything */
+            fullProfiles=false;
+            profileRepeat=5;
+
+            /* else allow further configuration */
+        } else {
+            /* Access system properties */
+            fullProfiles = System.getProperty("fullProfiles") != null;
+            profileRepeat = fullProfiles
+                            ? 1000
+                            : 5;
+        }
+    }
 
     /**
      * The factories.
@@ -73,11 +101,117 @@ public class KeySetTest {
     }
 
     /**
+     * Factory and KeySet definition.
+     */
+    static class FactoryKeySet {
+        /**
+         * The Factory.
+         */
+        private final GordianFactory theFactory;
+
+        /**
+         * The keyHash.
+         */
+        private final GordianKeySetHash theKeySetHash;
+
+        /**
+         * The symKey.
+         */
+        private final GordianKey<GordianSymKeySpec> theSymKey;
+
+        /**
+         * The streamKey.
+         */
+        private final GordianKey<GordianStreamKeyType> theStreamKey;
+
+        /**
+         * The macKey.
+         */
+        private final GordianKey<GordianMacSpec> theMacKey;
+
+        /**
+         * Constructor.
+         * @param pFactory the factory
+         * @throws OceanusException on error
+         */
+        FactoryKeySet(final GordianFactory pFactory) throws OceanusException {
+            /* Store parameters */
+            theFactory = pFactory;
+
+            /* Generate the hash */
+            final GordianKeySetFactory myKeySets = pFactory.getKeySetFactory();
+            theKeySetHash = myKeySets.generateKeySetHash(DEF_PASSWORD.clone());
+
+            /* Initialise data */
+            final GordianRandomFactory myRandoms = theFactory.getRandomFactory();
+            theSymKey = myRandoms.generateRandomSymKey();
+            theStreamKey = myRandoms.generateRandomStreamKey(false);
+            GordianMac myMac = myRandoms.generateRandomMac(false);
+            theMacKey = myMac.getKey();
+        }
+
+        /**
+         * Obtain the factory.
+         * @return the factory
+         */
+        GordianFactory getFactory() {
+            return theFactory;
+        }
+
+        /**
+         * Obtain the keySetHash.
+         * @return the keySetHash
+         */
+        GordianKeySetHash getKeySetHash() {
+            return theKeySetHash;
+        }
+
+        /**
+         * Obtain the keySet.
+         * @return the keySet
+         */
+        GordianKeySet getKeySet() {
+            return theKeySetHash.getKeySet();
+        }
+
+        /**
+         * Obtain the symKey.
+         * @return the symKey
+         */
+        GordianKey<GordianSymKeySpec> getSymKey() {
+            return theSymKey;
+        }
+
+        /**
+         * Obtain the streamKey.
+         * @return the streamKey
+         */
+        GordianKey<GordianStreamKeyType> getStreamKey() {
+            return theStreamKey;
+        }
+
+        /**
+         * Obtain the macKey.
+         * @return the macKey
+         */
+        GordianKey<GordianMacSpec> getMacKey() {
+            return theMacKey;
+        }
+
+        @Override
+        public String toString() {
+            return theFactory.getFactoryType().toString()
+                    + (theFactory.isRestricted() ? "-Restricted" : "-Full");
+        }
+    }
+
+    /**
      * Create the keySet test suite.
      * @return the test stream
+     * @throws OceanusException on error
      */
     @TestFactory
-    public Stream<DynamicNode> keySetTests() {
+    public Stream<DynamicNode> keySetTests() throws OceanusException {
         /* Create tests */
         Stream<DynamicNode> myStream = keySetTests(BCCUTFACTORY);
         myStream = Stream.concat(myStream, keySetTests(BCFULLFACTORY));
@@ -89,112 +223,119 @@ public class KeySetTest {
      * Create the keySet test suite for a factory.
      * @param pFactory the factory
      * @return the test stream
+     * @throws OceanusException on error
      */
-    private Stream<DynamicNode> keySetTests(final GordianFactory pFactory) {
+    private Stream<DynamicNode> keySetTests(final GordianFactory pFactory) throws OceanusException {
         /* Return the stream */
-        final String myName = pFactory.getFactoryType().toString()
-                + (pFactory.isRestricted() ? "-Restricted" : "-Full");
-        return Stream.of(DynamicTest.dynamicTest(myName, () -> testSecurity(BCCUTFACTORY)));
+        final FactoryKeySet myKeySet = new FactoryKeySet(pFactory);
+        return Stream.of(DynamicContainer.dynamicContainer(pFactory.toString(), Stream.of(
+                DynamicTest.dynamicTest("keySet", () -> checkKeySetHash(myKeySet)),
+                DynamicTest.dynamicTest("encrypt", () -> checkEncrypt(myKeySet)),
+                DynamicTest.dynamicTest("wrap", () -> checkWrap(myKeySet)),
+                DynamicTest.dynamicTest("profile", () -> profileEncrypt(myKeySet))
+        )));
     }
 
     /**
-     * Test keySet algorithms.
-     * @param pFactory the factory
+     * Check keySetHash.
+     * @param pKeySet the keySet
      * @throws OceanusException on error
      */
-    private void testSecurity(final GordianFactory pFactory) throws OceanusException {
-        /* Create new Password Hash */
-        final GordianRandomFactory myRandoms = pFactory.getRandomFactory();
-        GordianKeySetFactory myKeySets = pFactory.getKeySetFactory();
-        final GordianKeySetHash myHash = myKeySets.generateKeySetHash(DEF_PASSWORD.clone());
+    private void checkKeySetHash(final FactoryKeySet pKeySet) throws OceanusException {
+        /* Access the keySet factory */
+        GordianKeySetFactory myKeySets = pKeySet.getFactory().getKeySetFactory();
+        final GordianKeySetHash myHash = myKeySets.deriveKeySetHash(pKeySet.getKeySetHash().getHash(), DEF_PASSWORD.clone());
         final GordianKeySet myKeySet = myHash.getKeySet();
-        GordianKnuthObfuscater myKnuth = myKeySets.getObfuscater();
 
-        /* Create new symmetric key and stream Key */
-        final GordianKey<GordianSymKeySpec> mySym = myRandoms.generateRandomSymKey();
-        final GordianKey<GordianStreamKeyType> myStream = myRandoms.generateRandomStreamKey(false);
+        /* Check the keySets are the same */
+        Assertions.assertEquals(myKeySet, pKeySet.getKeySet(), "Failed to derive keySet");
+    }
 
-        /* Secure the keys */
-        final byte[] mySymSafe = myKeySet.secureKey(mySym);
-        final byte[] myStreamSafe = myKeySet.secureKey(myStream);
+    /**
+     * Check encrypt.
+     * @param pKeySet the keySet
+     * @throws OceanusException on error
+     */
+    private void checkEncrypt(final FactoryKeySet pKeySet) throws OceanusException {
+        /* Access the keys */
+        final GordianKeySet myKeySet = pKeySet.getKeySet();
 
         /* Encrypt short block */
         final String myTest1 = "TestString";
         byte[] myBytes = TethysDataConverter.stringToByteArray(myTest1);
-        final byte[] myEncrypt1 = myKeySet.encryptBytes(myBytes);
+        byte[] myEncrypt = myKeySet.encryptBytes(myBytes);
+        byte[] myResult = myKeySet.decryptBytes(myEncrypt);
+        String myAnswer = TethysDataConverter.byteArrayToString(myResult);
+        Assertions.assertEquals(myTest1, myAnswer, "Failed to decrypt test1 string");
 
         /* Encrypt full block */
         final String myTest2 = "TestString123456";
         myBytes = TethysDataConverter.stringToByteArray(myTest2);
-        final byte[] myEncrypt2 = myKeySet.encryptBytes(myBytes);
+        myEncrypt = myKeySet.encryptBytes(myBytes);
+        myResult = myKeySet.decryptBytes(myEncrypt);
+        myAnswer = TethysDataConverter.byteArrayToString(myResult);
+        Assertions.assertEquals(myTest2, myAnswer, "Failed to decrypt test2 string");
 
         /* Encrypt some multi-block */
         final String myTest3 = "TestString1234567";
         myBytes = TethysDataConverter.stringToByteArray(myTest3);
-        final byte[] myEncrypt3 = myKeySet.encryptBytes(myBytes);
-
-        /* Create a data digest */
-        GordianDigest myDigest = myRandoms.generateRandomDigest();
-        myDigest.update(mySymSafe);
-        myDigest.update(myStreamSafe);
-        final byte[] myDigestBytes = myDigest.finish();
-
-        /* Create a data MAC */
-        GordianMac myMac = myRandoms.generateRandomMac(false);
-        myMac.update(mySymSafe);
-        myMac.update(myStreamSafe);
-        final byte[] myMacBytes = myMac.finish();
-
-        /* Secure the keys */
-        final byte[] myMacSafe = myKeySet.secureKey(myMac.getKey());
-        final byte[] myIV = myMac.getInitVector();
-        final int myMacId = myKnuth.deriveExternalIdFromType(myMac.getMacSpec());
-
-        /* Start a new session */
-        final GordianParameters myParams = new GordianParameters(pFactory.isRestricted(), pFactory.getFactoryType());
-        final GordianFactory myFactory = GordianGenerator.createFactory(myParams);
-        final GordianDigestFactory myDigests = myFactory.getDigestFactory();
-        final GordianMacFactory myMacs = myFactory.getMacFactory();
-        myKeySets = myFactory.getKeySetFactory();
-        final GordianKeySetHash myNewHash = myKeySets.deriveKeySetHash(myHash.getHash(), DEF_PASSWORD.clone());
-        final GordianKeySet myKeySet1 = myNewHash.getKeySet();
-        myKnuth = myKeySets.getObfuscater();
-
-        /* Check the keySets are the same */
-        Assertions.assertEquals(myKeySet1, myKeySet, "Failed to derive keySet");
-
-        /* Derive the Mac */
-        final GordianMacSpec myMacSpec = myKnuth.deriveTypeFromExternalId(myMacId, GordianMacSpec.class);
-        final GordianKey<GordianMacSpec> myMacKey = myKeySet1.deriveKey(myMacSafe, myMacSpec);
-        myMac = myMacs.createMac(myMacSpec);
-        myMac.initMac(myMacKey, myIV);
-        myMac.update(mySymSafe);
-        myMac.update(myStreamSafe);
-        final byte[] myMac1Bytes = myMac.finish();
-        Assertions.assertArrayEquals(myMacBytes, myMac1Bytes, "Failed to recalculate mac");
-
-        /* Create a message digest */
-        myDigest = myDigests.createDigest(myDigest.getDigestSpec());
-        myDigest.update(mySymSafe);
-        myDigest.update(myStreamSafe);
-        final byte[] myNewBytes = myDigest.finish();
-        Assertions.assertArrayEquals(myDigestBytes, myNewBytes, "Failed to recalculate digest");
-
-        /* Derive the keys */
-        final GordianKey<GordianSymKeySpec> mySym1 = myKeySet1.deriveKey(mySymSafe, mySym.getKeyType());
-        Assertions.assertEquals(mySym1, mySym,"Failed to decrypt symmetricKey");
-        final GordianKey<GordianStreamKeyType> myStm1 = myKeySet1.deriveKey(myStreamSafe, myStream.getKeyType());
-        Assertions.assertEquals(myStm1, myStream,"Failed to decrypt streamKey");
-
-        /* Decrypt the bytes */
-        byte[] myResult = myKeySet1.decryptBytes(myEncrypt1);
-        String myAnswer = TethysDataConverter.byteArrayToString(myResult);
-        Assertions.assertEquals(myAnswer, myTest1,"Failed to decrypt test1 string");
-        myResult = myKeySet1.decryptBytes(myEncrypt2);
+        myEncrypt = myKeySet.encryptBytes(myBytes);
+        myResult = myKeySet.decryptBytes(myEncrypt);
         myAnswer = TethysDataConverter.byteArrayToString(myResult);
-        Assertions.assertEquals(myAnswer, myTest2,"Failed to decrypt test2 string");
-        myResult = myKeySet1.decryptBytes(myEncrypt3);
-        myAnswer = TethysDataConverter.byteArrayToString(myResult);
-        Assertions.assertEquals(myAnswer, myTest3, "Failed to decrypt test3 string");
+        Assertions.assertEquals(myTest3, myAnswer, "Failed to decrypt test3 string");
+    }
+
+    /**
+     * Check wrapping.
+     * @param pKeySet the keySet
+     * @throws OceanusException on error
+     */
+    private void checkWrap(final FactoryKeySet pKeySet) throws OceanusException {
+        /* Access the keys */
+        final GordianKeySet myKeySet = pKeySet.getKeySet();
+        final GordianKey<GordianSymKeySpec> mySymKey = pKeySet.getSymKey();
+        final GordianKey<GordianStreamKeyType> myStreamKey = pKeySet.getStreamKey();
+        final GordianKey<GordianMacSpec> myMacKey = pKeySet.getMacKey();
+
+        /* Check wrap of symKey */
+        final byte[] mySymSafe = myKeySet.secureKey(mySymKey);
+        final GordianKey<GordianSymKeySpec> mySymResult = myKeySet.deriveKey(mySymSafe, mySymKey.getKeyType());
+        Assertions.assertEquals(mySymKey, mySymResult, "Failed to wrap/unwrap symKey");
+
+        /* Check wrap of streamKey */
+        final byte[] myStreamSafe = myKeySet.secureKey(myStreamKey);
+        final GordianKey<GordianStreamKeyType> myStreamResult = myKeySet.deriveKey(myStreamSafe, myStreamKey.getKeyType());
+        Assertions.assertEquals(myStreamKey, myStreamResult, "Failed to wrap/unwrap streamKey");
+
+        /* Check wrap of macKey */
+        final byte[] myMacSafe = myKeySet.secureKey(myMacKey);
+        final GordianKey<GordianMacSpec> myMacResult = myKeySet.deriveKey(myMacSafe, myMacKey.getKeyType());
+        Assertions.assertEquals(myMacKey, myMacResult, "Failed to wrap/unwrap macKey");
+    }
+
+    /**
+     * Profile encrypt.
+     * @param pKeySet the keySet
+     * @throws OceanusException on error
+     */
+    private void profileEncrypt(final FactoryKeySet pKeySet) throws OceanusException {
+        /* Access the keys */
+        final GordianKeySet myKeySet = pKeySet.getKeySet();
+
+        /* Creat the test data */
+        final byte[] myData = new byte[1000];
+
+        /* Loop through encrypt/decrypt */
+        final long myStart = System.nanoTime();
+        for (int i = 0; i < profileRepeat; i++) {
+            final byte[] myEncrypt = myKeySet.encryptBytes(myData);
+            final byte[] myResult = myKeySet.decryptBytes(myEncrypt);
+            Assertions.assertArrayEquals(myData, myResult, "Failed to decrypt test1 string");
+        }
+        long myElapsed = System.nanoTime() - myStart;
+        myElapsed /= SymmetricTest.MILLINANOS * profileRepeat;
+        if (fullProfiles) {
+            System.out.println("Elapsed: " + myElapsed);
+        }
     }
 }

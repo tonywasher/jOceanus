@@ -16,7 +16,6 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.lethe.views;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Currency;
 import java.util.Iterator;
@@ -24,7 +23,6 @@ import java.util.List;
 import java.util.Map;
 
 import net.sourceforge.joceanus.jmetis.http.MetisHTTPYQLClient;
-import net.sourceforge.joceanus.jmoneywise.MoneyWiseIOException;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.Security;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.AssetCurrency;
@@ -58,52 +56,47 @@ public final class YQLDownloader {
 
         /* If we have a default currency */
         if (myCurrency != null) {
-            /* Protect against exceptions */
-            try (MetisHTTPYQLClient myClient = new MetisHTTPYQLClient(myData.getDataFormatter())) {
-                /* Build the symbols list */
-                final List<String> mySymbols = new ArrayList<>();
-                Iterator<SpotSecurityPrice> myIterator = pPrices.iterator();
-                while (myIterator.hasNext()) {
-                    final SpotSecurityPrice mySpot = myIterator.next();
+            /* Create the http client */
+            final MetisHTTPYQLClient myClient = new MetisHTTPYQLClient(myData.getDataFormatter());
 
-                    /* Ignore closed prices */
-                    if (!mySpot.isDisabled()) {
-                        /* Add the symbol to the list */
-                        final Security mySecurity = mySpot.getSecurity();
-                        mySymbols.add(mySecurity.getSymbol());
+            /* Build the symbols list */
+            final List<String> mySymbols = new ArrayList<>();
+            Iterator<SpotSecurityPrice> myIterator = pPrices.iterator();
+            while (myIterator.hasNext()) {
+                final SpotSecurityPrice mySpot = myIterator.next();
+
+                /* Ignore closed prices */
+                if (!mySpot.isDisabled()) {
+                    /* Add the symbol to the list */
+                    final Security mySecurity = mySpot.getSecurity();
+                    mySymbols.add(mySecurity.getSymbol());
+                }
+            }
+
+            /* Access the prices */
+            final Map<String, TethysPrice> myPrices = myClient.obtainSecurityPrices(mySymbols, myCurrency.getCurrency());
+
+            /* re-loop through the securities */
+            myIterator = pPrices.iterator();
+            while (myIterator.hasNext()) {
+                final SpotSecurityPrice mySpot = myIterator.next();
+
+                /* Ignore closed prices */
+                if (!mySpot.isDisabled()) {
+                    /* Lookup the price */
+                    final Security mySecurity = mySpot.getSecurity();
+                    final TethysPrice myPrice = myPrices.get(mySecurity.getSymbol());
+
+                    /* If we found a price */
+                    if (myPrice != null) {
+                        /* Push history */
+                        mySpot.pushHistory();
+
+                        /* Set it */
+                        mySpot.setPrice(myPrice);
+                        hasChanges = true;
                     }
                 }
-
-                /* Access the prices */
-                final Map<String, TethysPrice> myPrices = myClient.obtainSecurityPrices(mySymbols, myCurrency.getCurrency());
-
-                /* re-loop through the securities */
-                myIterator = pPrices.iterator();
-                while (myIterator.hasNext()) {
-                    final SpotSecurityPrice mySpot = myIterator.next();
-
-                    /* Ignore closed prices */
-                    if (!mySpot.isDisabled()) {
-                        /* Lookup the price */
-                        final Security mySecurity = mySpot.getSecurity();
-                        final TethysPrice myPrice = myPrices.get(mySecurity.getSymbol());
-
-                        /* If we found a price */
-                        if (myPrice != null) {
-                            /* Push history */
-                            mySpot.pushHistory();
-
-                            /* Set it */
-                            mySpot.setPrice(myPrice);
-                            hasChanges = true;
-                        }
-                    }
-                }
-
-                /* Catch exceptions */
-            } catch (OceanusException
-                    | IOException e) {
-                throw new MoneyWiseIOException("Failed to download prices", e);
             }
         }
 
@@ -125,47 +118,44 @@ public final class YQLDownloader {
 
         /* If we have a default currency */
         if (myCurrency != null) {
-            /* Protect against exceptions */
-            try (MetisHTTPYQLClient myClient = new MetisHTTPYQLClient(myData.getDataFormatter())) {
-                /* Build the currency list */
-                final List<Currency> myCurrencies = new ArrayList<>();
-                Iterator<SpotExchangeRate> myIterator = pRates.iterator();
-                while (myIterator.hasNext()) {
-                    final SpotExchangeRate mySpot = myIterator.next();
+            /* Create the client */
+            final MetisHTTPYQLClient myClient = new MetisHTTPYQLClient(myData.getDataFormatter());
 
-                    /* Add the currency to the list */
-                    final AssetCurrency myToCurr = mySpot.getToCurrency();
-                    myCurrencies.add(myToCurr.getCurrency());
+            /* Build the currency list */
+            final List<Currency> myCurrencies = new ArrayList<>();
+            Iterator<SpotExchangeRate> myIterator = pRates.iterator();
+            while (myIterator.hasNext()) {
+                final SpotExchangeRate mySpot = myIterator.next();
+
+                /* Add the currency to the list */
+                final AssetCurrency myToCurr = mySpot.getToCurrency();
+                myCurrencies.add(myToCurr.getCurrency());
+            }
+
+            /* Access the rates */
+            final Map<Currency, TethysRatio> myRates = myClient.obtainExchangeRates(myCurrency.getCurrency(), myCurrencies);
+
+            /* re-loop through the rates */
+            myIterator = pRates.iterator();
+            while (myIterator.hasNext()) {
+                final SpotExchangeRate mySpot = myIterator.next();
+
+                /* Lookup the rate */
+                final AssetCurrency myCurr = mySpot.getToCurrency();
+                final TethysRatio myRate = myRates.get(myCurr.getCurrency());
+
+                /* If we found a rate */
+                if (myRate != null) {
+                    /* Push history */
+                    mySpot.pushHistory();
+
+                    /* Set it */
+                    mySpot.setExchangeRate(myRate);
+                    hasChanges = true;
                 }
-
-                /* Access the rates */
-                final Map<Currency, TethysRatio> myRates = myClient.obtainExchangeRates(myCurrency.getCurrency(), myCurrencies);
-
-                /* re-loop through the rates */
-                myIterator = pRates.iterator();
-                while (myIterator.hasNext()) {
-                    final SpotExchangeRate mySpot = myIterator.next();
-
-                    /* Lookup the rate */
-                    final AssetCurrency myCurr = mySpot.getToCurrency();
-                    final TethysRatio myRate = myRates.get(myCurr.getCurrency());
-
-                    /* If we found a rate */
-                    if (myRate != null) {
-                        /* Push history */
-                        mySpot.pushHistory();
-
-                        /* Set it */
-                        mySpot.setExchangeRate(myRate);
-                        hasChanges = true;
-                    }
-                }
-
-                /* Catch exceptions */
-            } catch (OceanusException | IOException e) {
-                throw new MoneyWiseIOException("Failed to download rates", e);
             }
         }
+
         /* Return change indication */
         return hasChanges;
     }

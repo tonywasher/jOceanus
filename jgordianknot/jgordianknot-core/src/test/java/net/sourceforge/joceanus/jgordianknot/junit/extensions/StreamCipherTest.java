@@ -17,6 +17,7 @@
 package net.sourceforge.joceanus.jgordianknot.junit.extensions;
 
 import java.util.Arrays;
+import java.util.stream.Stream;
 
 import org.bouncycastle.crypto.Mac;
 import org.bouncycastle.crypto.StreamCipher;
@@ -30,7 +31,10 @@ import org.bouncycastle.crypto.newmacs.Zuc256Mac;
 import org.bouncycastle.crypto.params.KeyParameter;
 import org.bouncycastle.crypto.params.ParametersWithIV;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.DynamicContainer;
+import org.junit.jupiter.api.DynamicNode;
+import org.junit.jupiter.api.DynamicTest;
+import org.junit.jupiter.api.TestFactory;
 
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.TethysDataConverter;
@@ -106,6 +110,52 @@ public class StreamCipherTest {
      */
     private static final int SNOWLIMIT = 20000;
     private static final int ZUCLIMIT = 65504;
+
+    /**
+     * Create the streamCipher test suite.
+     * @return the test stream
+     * @throws OceanusException on error
+     */
+    @TestFactory
+    public Stream<DynamicNode> streamCipherTests() throws OceanusException {
+        /* Create tests */
+        return Stream.of(DynamicContainer.dynamicContainer("streamCiphers", Stream.of(
+                DynamicContainer.dynamicContainer("Rabbit", Stream.of(
+                        DynamicTest.dynamicTest("128", () -> new Rabbit128Test().testTheCipher())
+                )),
+                DynamicContainer.dynamicContainer("Sosemanuk", Stream.of(
+                        DynamicTest.dynamicTest("128", () -> new Sosemanuk128Test().testTheCipher()),
+                        DynamicTest.dynamicTest("256", () -> new Sosemanuk256Test().testTheCipher())
+                )),
+                DynamicContainer.dynamicContainer("Snow3G", Stream.of(
+                        DynamicTest.dynamicTest("128", () -> new Snow3G128Test().testTheCipher())
+                )),
+                DynamicContainer.dynamicContainer("Zuc", Stream.of(
+                        DynamicTest.dynamicTest("128", () -> new Zuc128Test().testTheCipher()),
+                        DynamicTest.dynamicTest("256", () -> new Zuc256Test().testTheCipher())
+                ))
+        )));
+    }
+
+    /**
+     * Create the streamMac test suite.
+     * @return the test stream
+     * @throws OceanusException on error
+     */
+    @TestFactory
+    public Stream<DynamicNode> streamMacTests() throws OceanusException {
+        /* Create tests */
+        return Stream.of(DynamicContainer.dynamicContainer("streamMacs", Stream.of(
+                DynamicContainer.dynamicContainer("Zuc128Mac", Stream.of(
+                        DynamicTest.dynamicTest("128", () -> new Zuc128MacTest().testTheMac())
+                )),
+                DynamicContainer.dynamicContainer("Zuc256Mac", Stream.of(
+                        DynamicTest.dynamicTest("32", () -> new Zuc256Mac32Test().testTheMac()),
+                        DynamicTest.dynamicTest("64", () -> new Zuc256Mac64Test().testTheMac()),
+                        DynamicTest.dynamicTest("128", () -> new Zuc256Mac128Test().testTheMac())
+                ))
+        )));
+    }
 
     /**
      * Test the Cipher against the results.
@@ -240,7 +290,7 @@ public class StreamCipherTest {
     /**
      * Rabbit128.
      */
-    public static class Rabbit128Test extends StreamCipherTest {
+    static class Rabbit128Test {
         /**
          * TestCases.
          */
@@ -263,8 +313,11 @@ public class StreamCipherTest {
                         "B7EFA4C4C9C8D29DC5B3888314A6816F"
         );
 
-        @Test
-        public void testTheCipher() throws OceanusException {
+        /**
+         * Test cipher.
+         * @throws OceanusException on error
+         */
+        void testTheCipher() throws OceanusException {
             final RabbitEngine myEngine = new RabbitEngine();
             testCipher(myEngine, TEST1);
             testCipher(myEngine, TEST2);
@@ -275,7 +328,7 @@ public class StreamCipherTest {
     /**
      * Sosemanuk128.
      */
-    public static class Sosemanuk128Test extends StreamCipherTest {
+    static class Sosemanuk128Test {
         /**
          * TestCases.
          */
@@ -298,8 +351,11 @@ public class StreamCipherTest {
                         "12130B4013D6CE624A5C6376D623A88D"
         );
 
-        @Test
-        public void testTheCipher() throws OceanusException {
+        /**
+         * Test cipher.
+         * @throws OceanusException on error
+         */
+        void testTheCipher() throws OceanusException {
             final SosemanukEngine myEngine = new SosemanukEngine();
             testCipher(myEngine, TEST1);
             testCipher(myEngine, TEST2);
@@ -310,7 +366,7 @@ public class StreamCipherTest {
     /**
      * Sosemanuk256.
      */
-    public static class Sosemanuk256Test extends StreamCipherTest {
+    static class Sosemanuk256Test {
         /**
          * TestCases.
          */
@@ -333,8 +389,11 @@ public class StreamCipherTest {
                         "243EFD8B8E2AB7BC453A8D8A3515183E"
         );
 
-        @Test
-        public void testTheCipher() throws OceanusException {
+        /**
+         * Test cipher.
+         * @throws OceanusException on error
+         */
+        void testTheCipher() throws OceanusException {
             final SosemanukEngine myEngine = new SosemanukEngine();
             testCipher(myEngine, TEST1);
             testCipher(myEngine, TEST2);
@@ -345,7 +404,7 @@ public class StreamCipherTest {
     /**
      * Snow3G128.
      */
-    public static class Snow3G128Test extends StreamCipherTest {
+    static class Snow3G128Test {
         /**
          * TestCases.
          */
@@ -359,8 +418,11 @@ public class StreamCipherTest {
                 "6bcca6f60951d1b24088aecbed18bd5883c819f78208621363c43bcbd4c1c09d27ff391f40ce2b152e8f2c8781668870cd9c2d631dd4c1995c05a4edfa879de8"
         );
 
-        @Test
-        public void testTheCipher() throws OceanusException {
+        /**
+         * Test cipher.
+         * @throws OceanusException on error
+         */
+        void testTheCipher() throws OceanusException {
             final Snow3GEngine myEngine = new Snow3GEngine();
             testCipher(myEngine, TEST1);
             testCipher(myEngine, TEST2);
@@ -372,7 +434,7 @@ public class StreamCipherTest {
     /**
      * Zuc128.
      */
-    public static class Zuc128Test extends StreamCipherTest {
+    static class Zuc128Test {
         /**
          * TestCases.
          */
@@ -392,8 +454,11 @@ public class StreamCipherTest {
                 "0657cfa07096398b734b6cb4883eedf4257a76eb97595208d884adcdb1cbffb8e0f9d15846a0eed015328503351138f740d079af17296c232c4f022d6e4acac6"
         );
 
-        @Test
-        public void testTheCipher() throws OceanusException {
+        /**
+         * Test cipher.
+         * @throws OceanusException on error
+         */
+        void testTheCipher() throws OceanusException {
             final Zuc128Engine myEngine = new Zuc128Engine();
             testCipher(myEngine, TEST1);
             testCipher(myEngine, TEST2);
@@ -407,7 +472,7 @@ public class StreamCipherTest {
     /**
      * Zuc256.
      */
-    public static class Zuc256Test extends StreamCipherTest {
+    static class Zuc256Test {
         /**
          * TestCases.
          */
@@ -427,8 +492,11 @@ public class StreamCipherTest {
                 "3356cbaed1a1c18b6baa4ffe343f777c9e15128f251ab65b949f7b26ef7157f296dd2fa9df95e3ee7a5be02ec32ba585505af316c2f9ded27cdbd935e441ce11"
         );
 
-        @Test
-        public void testTheCipher() throws OceanusException {
+        /**
+         * Test cipher.
+         * @throws OceanusException on error
+         */
+        void testTheCipher() throws OceanusException {
             final Zuc256Engine myEngine = new Zuc256Engine();
             testCipher(myEngine, TEST1);
             testCipher(myEngine, TEST2);
@@ -443,7 +511,7 @@ public class StreamCipherTest {
     /**
      * Zuc128Mac.
      */
-    public static class Zuc128MacTest extends StreamCipherTest {
+    static class Zuc128MacTest {
         /**
          * TestCases.
          */
@@ -460,8 +528,11 @@ public class StreamCipherTest {
                 "9ce9a0c4"
         );
 
-        @Test
-        public void testTheMac() throws OceanusException {
+        /**
+         * Test Mac.
+         * @throws OceanusException on error
+         */
+        void testTheMac() throws OceanusException {
             final Zuc128Mac myMac = new Zuc128Mac();
             testMac(myMac, false, TEST1);
             testMac(myMac, true, TEST2);
@@ -474,7 +545,7 @@ public class StreamCipherTest {
     /**
      * Zuc256Mac32.
      */
-    public static class Zuc256Mac32Test extends StreamCipherTest {
+    static class Zuc256Mac32Test {
         /**
          * TestCases.
          */
@@ -491,8 +562,11 @@ public class StreamCipherTest {
                 "5c7c8b88"
         );
 
-        @Test
-        public void testTheMac() throws OceanusException {
+        /**
+         * Test Mac.
+         * @throws OceanusException on error
+         */
+        void testTheMac() throws OceanusException {
             final Zuc256Mac myMac = new Zuc256Mac(32);
             testMac(myMac, false, TEST1);
             testMac(myMac, true, TEST2);
@@ -505,7 +579,7 @@ public class StreamCipherTest {
     /**
      * Zuc256Mac64.
      */
-    public static class Zuc256Mac64Test extends StreamCipherTest {
+    static class Zuc256Mac64Test {
         /**
          * TestCases.
          */
@@ -522,8 +596,11 @@ public class StreamCipherTest {
                 "ea1dee544bb6223b"
         );
 
-        @Test
-        public void testTheMac() throws OceanusException {
+        /**
+         * Test Mac.
+         * @throws OceanusException on error
+         */
+        void testTheMac() throws OceanusException {
             final Zuc256Mac myMac = new Zuc256Mac(64);
             testMac(myMac, false, TEST1);
             testMac(myMac, true, TEST2);
@@ -536,7 +613,7 @@ public class StreamCipherTest {
     /**
      * Zuc256Mac128.
      */
-    public static class Zuc256Mac128Test extends StreamCipherTest {
+    static class Zuc256Mac128Test {
         /**
          * TestCases.
          */
@@ -553,8 +630,11 @@ public class StreamCipherTest {
                 "3a83b554be408ca5494124ed9d473205"
         );
 
-        @Test
-        public void testTheMac() throws OceanusException {
+        /**
+         * Test Mac.
+         * @throws OceanusException on error
+         */
+        void testTheMac() throws OceanusException {
             final Zuc256Mac myMac = new Zuc256Mac(128);
             testMac(myMac, false, TEST1);
             testMac(myMac, true, TEST2);

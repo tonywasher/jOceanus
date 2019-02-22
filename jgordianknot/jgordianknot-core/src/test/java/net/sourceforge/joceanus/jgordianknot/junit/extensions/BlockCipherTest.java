@@ -16,12 +16,17 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jgordianknot.junit.extensions;
 
+import java.util.stream.Stream;
+
 import org.bouncycastle.crypto.BlockCipher;
 import org.bouncycastle.crypto.newengines.AnubisEngine;
 import org.bouncycastle.crypto.newengines.MARSEngine;
 import org.bouncycastle.crypto.params.KeyParameter;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.DynamicContainer;
+import org.junit.jupiter.api.DynamicNode;
+import org.junit.jupiter.api.DynamicTest;
+import org.junit.jupiter.api.TestFactory;
 
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.TethysDataConverter;
@@ -44,6 +49,26 @@ public class BlockCipherTest {
      * The testData
     */
     private static final String TESTDATA = "00112233445566778899aabbccddeeff";
+
+    /**
+     * Create the blockCipher test suite.
+     * @return the test stream
+     * @throws OceanusException on error
+     */
+    @TestFactory
+    public Stream<DynamicNode> blockCipherTests() throws OceanusException {
+        /* Create tests */
+        return Stream.of(DynamicContainer.dynamicContainer("BlockCiphers", Stream.of(
+                DynamicContainer.dynamicContainer("Anubis", Stream.of(
+                        DynamicTest.dynamicTest("128", () -> new Anubis128Test().testTheCipher()),
+                        DynamicTest.dynamicTest("256", () -> new Anubis256Test().testTheCipher())
+                )),
+                DynamicContainer.dynamicContainer("MARS", Stream.of(
+                    DynamicTest.dynamicTest("128", () -> new MARS128Test().testTheCipher()),
+                    DynamicTest.dynamicTest("256", () -> new MARS256Test().testTheCipher())
+                ))
+        )));
+    }
 
     /**
      * Test the Cipher against the results.
@@ -82,15 +107,18 @@ public class BlockCipherTest {
     /**
      * Anubis128.
      */
-    public static class Anubis128Test extends BlockCipherTest {
+    static class Anubis128Test {
         /**
          * Expected results.
          */
         private static final String EXPECTED =
                 "4d384bf9eaeb03cc6507971c04cde7bb";
 
-        @Test
-        public void testTheCipher() throws OceanusException {
+        /**
+         * Test cipher.
+         * @throws OceanusException on error
+         */
+        void testTheCipher() throws OceanusException {
             testCipher(new AnubisEngine(), KEY128, TESTDATA, EXPECTED);
         }
     }
@@ -98,15 +126,18 @@ public class BlockCipherTest {
     /**
      * Anubis256.
      */
-    public static class Anubis256Test extends BlockCipherTest {
+    static class Anubis256Test {
         /**
          * Expected results.
          */
         private static final String EXPECTED =
                 "f0ce4d9a173f71c61e46926f643db171";
 
-        @Test
-        public void testTheCipher() throws OceanusException {
+        /**
+         * Test cipher.
+         * @throws OceanusException on error
+         */
+        void testTheCipher() throws OceanusException {
             testCipher(new AnubisEngine(), KEY256, TESTDATA, EXPECTED);
         }
     }
@@ -114,16 +145,18 @@ public class BlockCipherTest {
     /**
      * MARS128.
      */
-    public static class MARS128Test extends BlockCipherTest {
+    static class MARS128Test {
         /**
          * Expected results.
          */
         private static final String EXPECTED =
                 "672db14c7714fd2477ca8499b0808ff7";
 
-        @Test
-        //@Disabled("NotYet")
-        public void testTheCipher() throws OceanusException {
+        /**
+         * Test cipher.
+         * @throws OceanusException on error
+         */
+        void testTheCipher() throws OceanusException {
             testCipher(new MARSEngine(), KEY128, TESTDATA, EXPECTED);
         }
     }
@@ -131,15 +164,18 @@ public class BlockCipherTest {
     /**
      * MARS256.
      */
-    public static class MARS256Test extends BlockCipherTest {
+    static class MARS256Test {
         /**
          * Expected results.
          */
         private static final String EXPECTED =
                 "fc7e7ca35ed9fe729635cbdf078c8f1c";
 
-        @Test
-        public void testTheCipher() throws OceanusException {
+        /**
+         * Test cipher.
+         * @throws OceanusException on error
+         */
+        void testTheCipher() throws OceanusException {
             testCipher(new MARSEngine(), KEY256, TESTDATA, EXPECTED);
         }
     }

@@ -108,7 +108,7 @@ public final class TethysLogManager {
     /**
      * Log Manager Helper.
      */
-    public static class TethysLogManagerHelper  {
+    private static class TethysLogManagerHelper  {
         /**
          * The Log Manager instance.
          */
