@@ -266,6 +266,9 @@ public class SymmetricTest {
         final GordianDigestFactory myDigestFactory = myFactory.getDigestFactory();
         final GordianDigest myDigest = myDigestFactory.createDigest(mySpec);
 
+        /* Check that the digestLength is correct */
+        Assertions.assertEquals(mySpec.getDigestLength().getByteLength(), myDigest.getDigestSize(), "DigestLength incorrect");
+
         /* Loop 100 times */
         final byte[] myBytes = "DigestInput".getBytes();
         final long myStart = System.nanoTime();
@@ -293,6 +296,9 @@ public class SymmetricTest {
         final GordianMacFactory myMacFactory = myFactory.getMacFactory();
         final GordianMac myMac1 = myMacFactory.createMac(pMacSpec.getSpec());
         final GordianKey<GordianMacSpec> myKey = pMacSpec.getKey();
+
+        /* Check that the macLength is correct */
+        Assertions.assertEquals(mySpec.getMacLength().getByteLength(), myMac1.getMacSize(), "MacLength incorrect");
 
         /* Define the input */
         final byte[] myBytes = "MacInput".getBytes();
@@ -469,6 +475,8 @@ public class SymmetricTest {
         byte[] myBytes = new byte[myLen];
         final GordianSymCipherSpec myCipherSpec = new GordianSymCipherSpec(mySpec, GordianCipherMode.ECB, GordianPadding.NONE);
         final GordianCipher<GordianSymKeySpec> myCipher = myCipherFactory.createSymKeyCipher(myCipherSpec);
+
+        /* Start loop */
         final long myStart = System.nanoTime();
         for (int i = 0; i < profileRepeat; i++) {
             myCipher.initCipher(mySymKey);

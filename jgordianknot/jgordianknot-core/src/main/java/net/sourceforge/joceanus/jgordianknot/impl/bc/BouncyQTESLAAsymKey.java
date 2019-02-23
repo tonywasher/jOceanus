@@ -157,10 +157,11 @@ public final class BouncyQTESLAAsymKey {
         public BouncyKeyPair deriveKeyPair(final X509EncodedKeySpec pPublicKey,
                                            final PKCS8EncodedKeySpec pPrivateKey) throws OceanusException {
             try {
+                checkKeySpec(pPrivateKey);
+                final BouncyQTESLAPublicKey myPublic = derivePublicKey(pPublicKey);
                 final PrivateKeyInfo myInfo = PrivateKeyInfo.getInstance(pPrivateKey.getEncoded());
                 final QTESLAPrivateKeyParameters myParms = (QTESLAPrivateKeyParameters) PqcPrivateKeyFactory.createKey(myInfo);
                 final BouncyQTESLAPrivateKey myPrivate = new BouncyQTESLAPrivateKey(getKeySpec(), myParms);
-                final BouncyQTESLAPublicKey myPublic = derivePublicKey(pPublicKey);
                 return new BouncyKeyPair(myPublic, myPrivate);
             } catch (IOException e) {
                 throw new GordianCryptoException(ERROR_PARSE, e);
@@ -193,6 +194,7 @@ public final class BouncyQTESLAAsymKey {
          */
         private BouncyQTESLAPublicKey derivePublicKey(final X509EncodedKeySpec pEncodedKey) throws OceanusException {
             try {
+                checkKeySpec(pEncodedKey);
                 final SubjectPublicKeyInfo myInfo = SubjectPublicKeyInfo.getInstance(pEncodedKey.getEncoded());
                 final QTESLAPublicKeyParameters myParms = (QTESLAPublicKeyParameters) PqcPublicKeyFactory.createKey(myInfo);
                 return new BouncyQTESLAPublicKey(getKeySpec(), myParms);

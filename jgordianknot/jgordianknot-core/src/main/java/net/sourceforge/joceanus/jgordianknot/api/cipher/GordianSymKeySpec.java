@@ -309,11 +309,32 @@ public class GordianSymKeySpec implements GordianKeySpec {
     }
 
     /**
-     * Obtain State Length.
+     * Obtain Block Length.
      * @return the Length
      */
     public GordianLength getBlockLength() {
         return theBlockLength;
+    }
+
+    /**
+     * Obtain HalfBlock length.
+     * @return the Length
+     */
+    public GordianLength getHalfBlockLength() {
+        switch (theBlockLength) {
+            case LEN_64:
+                return GordianLength.LEN_32;
+            case LEN_128:
+                return GordianLength.LEN_64;
+            case LEN_256:
+                return GordianLength.LEN_128;
+            case LEN_512:
+                return GordianLength.LEN_256;
+            case LEN_1024:
+                return GordianLength.LEN_512;
+            default:
+                return theBlockLength;
+        }
     }
 
     /**

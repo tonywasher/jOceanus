@@ -455,6 +455,8 @@ public class GordianIdManager {
             case CMAC:
             case POLY1305:
             case KALYNA:
+            case CFBMAC:
+            case CBCMAC:
                 return new GordianMacSpec(myMacType, deriveSymKeySpecFromEncodedId(myCode));
             case SKEIN:
                 GordianDigestSpec mySpec = deriveDigestSpecFromEncodedId(myCode);
@@ -465,6 +467,11 @@ public class GordianIdManager {
             case KUPYNA:
                 mySpec = deriveDigestSpecFromEncodedId(myCode);
                 return GordianMacSpec.kupynaMac(mySpec.getDigestLength());
+            case ZUC:
+                GordianLength myLength = deriveLengthFromEncodedId(myCode);
+                return GordianMacSpec.zucMac(myLength);
+            case SIPHASH:
+                return new GordianMacSpec(GordianMacType.SIPHASH, myCode != 0);
             default:
                 return new GordianMacSpec(myMacType);
         }
@@ -493,7 +500,15 @@ public class GordianIdManager {
             case CMAC:
             case POLY1305:
             case KALYNA:
-                myCode += deriveEncodedIdFromSymKeySpec(pMacSpec.getKeySpec()) << TethysDataConverter.NYBBLE_SHIFT;
+            case CBCMAC:
+            case CFBMAC:
+                myCode += deriveEncodedIdFromSymKeySpec(pMacSpec.getSymKeySpec()) << TethysDataConverter.NYBBLE_SHIFT;
+                break;
+            case ZUC:
+                myCode += deriveEncodedIdFromLength(pMacSpec.getMacLength()) << TethysDataConverter.NYBBLE_SHIFT;
+                break;
+            case SIPHASH:
+                myCode += (pMacSpec.getBoolean() ? 1 : 0) << TethysDataConverter.NYBBLE_SHIFT;
                 break;
             default:
                 break;

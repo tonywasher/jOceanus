@@ -16,6 +16,8 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jgordianknot.api.mac;
 
+import org.bouncycastle.jcajce.provider.asymmetric.GOST;
+
 /**
  * Mac types. Available algorithms.
  */
@@ -68,7 +70,27 @@ public enum GordianMacType {
     /**
      * ZUC.
      */
-    ZUC;
+    ZUC,
+
+    /**
+     * CBCMac.
+     */
+    CBCMAC,
+
+    /**
+     * CFBMac.
+     */
+    CFBMAC,
+
+    /**
+     * SipHash.
+     */
+    SIPHASH,
+
+    /**
+     * GOST.
+     */
+    GOST;
 
     /**
      * The String name.
@@ -96,10 +118,27 @@ public enum GordianMacType {
     }
 
     /**
-     * Is this KeyType valid for largeData?
+     * Is this MacType valid for largeData?
      * @return true/false
      */
     public boolean supportsLargeData() {
         return this != ZUC;
+    }
+
+    /**
+     * Is this MacType valid for restriction?
+     * @param pRestricted true/false
+     * @return true/false
+     */
+    public boolean validForRestriction(final boolean pRestricted) {
+        switch (this) {
+            case POLY1305:
+            case GOST:
+                return !pRestricted;
+            case SIPHASH:
+                return pRestricted;
+            default:
+                return true;
+        }
     }
 }

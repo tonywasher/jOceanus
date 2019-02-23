@@ -23,10 +23,14 @@ import org.bouncycastle.crypto.CipherKeyGenerator;
 import org.bouncycastle.crypto.Digest;
 import org.bouncycastle.crypto.Mac;
 import org.bouncycastle.crypto.generators.Poly1305KeyGenerator;
+import org.bouncycastle.crypto.macs.CBCBlockCipherMac;
+import org.bouncycastle.crypto.macs.CFBBlockCipherMac;
 import org.bouncycastle.crypto.macs.CMac;
 import org.bouncycastle.crypto.macs.GMac;
+import org.bouncycastle.crypto.macs.GOST28147Mac;
 import org.bouncycastle.crypto.macs.HMac;
 import org.bouncycastle.crypto.macs.Poly1305;
+import org.bouncycastle.crypto.macs.SipHash;
 import org.bouncycastle.crypto.macs.SkeinMac;
 import org.bouncycastle.crypto.macs.VMPCMac;
 import org.bouncycastle.crypto.modes.GCMBlockCipher;
@@ -54,6 +58,11 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
  */
 public class BouncyMacFactory
     extends GordianCoreMacFactory {
+    /**
+     * SipHash standard constant.
+     */
+    private static final int SIPHASH_STD = 4;
+
     /**
      * KeyPairGenerator Cache.
      */
@@ -129,23 +138,31 @@ public class BouncyMacFactory
             case HMAC:
                 return getBCHMac(pMacSpec.getDigestSpec());
             case GMAC:
-                return getBCGMac(pMacSpec.getKeySpec());
+                return getBCGMac(pMacSpec.getSymKeySpec());
             case CMAC:
-                return getBCCMac(pMacSpec.getKeySpec());
+                return getBCCMac(pMacSpec.getSymKeySpec());
             case POLY1305:
-                return getBCPoly1305Mac(pMacSpec.getKeySpec());
+                return getBCPoly1305Mac(pMacSpec.getSymKeySpec());
             case SKEIN:
                 return getBCSkeinMac(pMacSpec.getDigestSpec());
             case BLAKE:
                 return getBCBlakeMac(pMacSpec);
             case KALYNA:
-                return getBCKalynaMac(pMacSpec.getKeySpec());
+                return getBCKalynaMac(pMacSpec.getSymKeySpec());
             case KUPYNA:
                 return getBCKupynaMac(pMacSpec.getDigestSpec());
             case VMPC:
                 return getBCVMPCMac();
+            case CBCMAC:
+                return getBCCBCMac(pMacSpec.getSymKeySpec());
+            case CFBMAC:
+                return getBCCFBMac(pMacSpec.getSymKeySpec());
+            case SIPHASH:
+                return getBCSipHash(pMacSpec.getBoolean());
+            case GOST:
+                return getBCGOSTMac();
             case ZUC:
-                return getBCZucMac();
+                return getBCZucMac(pMacSpec.getMacLength());
             default:
                 throw new GordianDataException(GordianCoreFactory.getInvalidText(pMacSpec));
         }
@@ -250,13 +267,56 @@ public class BouncyMacFactory
     }
 
     /**
-     * Create the BouncyCastle ZucMac.
+     * Create the BouncyCastle CBCMac.
+     *
+     * @param pSymKeySpec the SymKeySpec
+     * @return the MAC
+     * @throws OceanusException on error
+     */
+    private static Mac getBCCBCMac(final GordianSymKeySpec pSymKeySpec) throws OceanusException {
+        return new CBCBlockCipherMac(BouncyCipherFactory.getBCSymEngine(pSymKeySpec));
+    }
+
+    /**
+     * Create the BouncyCastle CFBMac.
+     *
+     * @param pSymKeySpec the SymKeySpec
+     * @return the MAC
+     * @throws OceanusException on error
+     */
+    private static Mac getBCCFBMac(final GordianSymKeySpec pSymKeySpec) throws OceanusException {
+        return new CFBBlockCipherMac(BouncyCipherFactory.getBCSymEngine(pSymKeySpec));
+    }
+
+    /**
+     * Create the BouncyCastle SipHash.
+     *
+     * @param pFast use fast sipHas?
+     * @return the MAC
+     */
+    private static Mac getBCSipHash(final Boolean pFast) {
+        return pFast ? new SipHash()
+                     : new SipHash(SIPHASH_STD, SIPHASH_STD << 1) ;
+    }
+
+    /**
+     * Create the BouncyCastle GOSTMac.
      *
      * @return the MAC
      */
-    private Mac getBCZucMac() {
+    private static Mac getBCGOSTMac() {
+        return new GOST28147Mac();
+    }
+
+    /**
+     * Create the BouncyCastle ZucMac.
+     *
+     * @param pLength the length of the mac
+     * @return the MAC
+     */
+    private Mac getBCZucMac(final GordianLength pLength) {
         return getFactory().isRestricted()
                ? new Zuc128Mac()
-               : new Zuc256Mac(GordianLength.LEN_128.getLength());
+               : new Zuc256Mac(pLength.getLength());
     }
 }

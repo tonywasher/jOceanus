@@ -106,6 +106,8 @@ public class JcaMacFactory
             case KALYNA:
             case KUPYNA:
             case ZUC:
+            case CBCMAC:
+            case CFBMAC:
                 return false;
             default:
                 return super.validMacType(pMacType);
@@ -126,6 +128,8 @@ public class JcaMacFactory
             case POLY1305:
             case SKEIN:
             case KUPYNA:
+            case SIPHASH:
+            case GOST:
                 return getJavaMac(getMacSpecAlgorithm(pMacSpec));
             case VMPC:
                 return getJavaMac("VMPC-MAC");
@@ -170,6 +174,11 @@ public class JcaMacFactory
                 myAlgorithm = myAlgorithm.substring(0, myAlgorithm.length() - CMAC_ALGORITHM.length());
             }
 
+            /* GOST generators use the GOST28147 key generator */
+            if (myAlgorithm.startsWith("GOST28147")) {
+                myAlgorithm = "GOST28147";
+            }
+
             /* Return a KeyGenerator for the algorithm */
             return KeyGenerator.getInstance(myAlgorithm, JcaFactory.BCPROV);
 
@@ -191,15 +200,19 @@ public class JcaMacFactory
             case HMAC:
                 return getHMacAlgorithm(pMacSpec.getDigestSpec());
             case GMAC:
-                return getGMacAlgorithm(pMacSpec.getKeySpec());
+                return getGMacAlgorithm(pMacSpec.getSymKeySpec());
             case CMAC:
-                return getCMacAlgorithm(pMacSpec.getKeySpec());
+                return getCMacAlgorithm(pMacSpec.getSymKeySpec());
             case POLY1305:
-                return getPoly1305Algorithm(pMacSpec.getKeySpec());
+                return getPoly1305Algorithm(pMacSpec.getSymKeySpec());
             case SKEIN:
                 return getSkeinMacAlgorithm(pMacSpec.getDigestSpec());
             case KUPYNA:
                 return getKupynaMacAlgorithm(pMacSpec.getDigestSpec());
+            case SIPHASH:
+                return pMacSpec.toString();
+            case GOST:
+                return "GOST28147MAC";
             case VMPC:
                 return getFactory().getCipherFactory().getStreamKeyAlgorithm(GordianStreamKeyType.VMPC);
             default:

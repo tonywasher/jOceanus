@@ -17,12 +17,19 @@
 package net.sourceforge.joceanus.jgordianknot.impl.core.keypair;
 
 import java.security.SecureRandom;
+import java.security.spec.PKCS8EncodedKeySpec;
+import java.security.spec.X509EncodedKeySpec;
 
 import net.sourceforge.joceanus.jgordianknot.api.asym.GordianAsymKeySpec;
+import net.sourceforge.joceanus.jgordianknot.api.base.GordianKeySpec;
+import net.sourceforge.joceanus.jgordianknot.api.factory.GordianAsymFactory;
 import net.sourceforge.joceanus.jgordianknot.api.key.GordianKeyPair;
 import net.sourceforge.joceanus.jgordianknot.api.key.GordianKeyPairGenerator;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianCoreFactory;
+import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianCryptoException;
+import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianDataException;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianRandomSource;
+import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
  * GordianKnot class for KeyPair Generators.
@@ -99,5 +106,31 @@ public abstract class GordianCoreKeyPairGenerator
      */
     protected GordianPrivateKey getPrivateKey(final GordianKeyPair pKeyPair) {
         return ((GordianCoreKeyPair) pKeyPair).getPrivateKey();
+    }
+
+    /**
+     * Check keySpec.
+     * @param pKeySpec the keySpec.
+     * @throws OceanusException on error
+     */
+    protected void checkKeySpec(final PKCS8EncodedKeySpec pKeySpec) throws OceanusException {
+        final GordianAsymFactory myFactory = theFactory.getAsymmetricFactory();
+        final GordianKeySpec myKeySpec = myFactory.determineKeySpec(pKeySpec);
+        if (!theKeySpec.equals(myKeySpec)) {
+            throw new GordianDataException("KeySpec not supported by this KeyPairGenerator");
+        }
+    }
+
+    /**
+     * Check keySpec.
+     * @param pKeySpec the keySpec.
+     * @throws OceanusException on error
+     */
+    protected void checkKeySpec(final X509EncodedKeySpec pKeySpec) throws OceanusException {
+        final GordianAsymFactory myFactory = theFactory.getAsymmetricFactory();
+        final GordianKeySpec myKeySpec = myFactory.determineKeySpec(pKeySpec);
+        if (!theKeySpec.equals(myKeySpec)) {
+            throw new GordianDataException("KeySpec not supported by this KeyPairGenerator");
+        }
     }
 }

@@ -203,10 +203,11 @@ public final class BouncyDSAAsymKey {
         public BouncyKeyPair deriveKeyPair(final X509EncodedKeySpec pPublicKey,
                                            final PKCS8EncodedKeySpec pPrivateKey) throws OceanusException {
             try {
+                checkKeySpec(pPrivateKey);
+                final BouncyDSAPublicKey myPublic = derivePublicKey(pPublicKey);
                 final PrivateKeyInfo myInfo = PrivateKeyInfo.getInstance(pPrivateKey.getEncoded());
                 final DSAPrivateKeyParameters myParms = (DSAPrivateKeyParameters) PrivateKeyFactory.createKey(myInfo);
                 final BouncyDSAPrivateKey myPrivate = new BouncyDSAPrivateKey(getKeySpec(), myParms);
-                final BouncyDSAPublicKey myPublic = derivePublicKey(pPublicKey);
                 return new BouncyKeyPair(myPublic, myPrivate);
             } catch (IOException e) {
                 throw new GordianCryptoException(ERROR_PARSE, e);
@@ -239,6 +240,7 @@ public final class BouncyDSAAsymKey {
          */
         private BouncyDSAPublicKey derivePublicKey(final X509EncodedKeySpec pEncodedKey) throws OceanusException {
             try {
+                checkKeySpec(pEncodedKey);
                 final SubjectPublicKeyInfo myInfo = SubjectPublicKeyInfo.getInstance(pEncodedKey.getEncoded());
                 final DSAPublicKeyParameters myParms = (DSAPublicKeyParameters) PublicKeyFactory.createKey(myInfo);
                 return new BouncyDSAPublicKey(getKeySpec(), myParms);

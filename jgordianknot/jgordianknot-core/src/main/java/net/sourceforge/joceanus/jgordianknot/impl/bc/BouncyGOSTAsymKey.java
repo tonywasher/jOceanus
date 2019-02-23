@@ -168,10 +168,11 @@ public final class BouncyGOSTAsymKey {
         @Override
         public BouncyKeyPair deriveKeyPair(final X509EncodedKeySpec pPublicKey,
                                            final PKCS8EncodedKeySpec pPrivateKey) throws OceanusException {
+            checkKeySpec(pPrivateKey);
+            final BouncyECPublicKey myPublic = derivePublicKey(pPublicKey);
             final PrivateKeyInfo myInfo = PrivateKeyInfo.getInstance(pPrivateKey.getEncoded());
             final ECPrivateKeyParameters myParms = deriveFromPrivKeyInfo(myInfo);
             final BouncyECPrivateKey myPrivate = new BouncyECPrivateKey(getKeySpec(), myParms);
-            final BouncyECPublicKey myPublic = derivePublicKey(pPublicKey);
             return new BouncyKeyPair(myPublic, myPrivate);
         }
 
@@ -196,6 +197,7 @@ public final class BouncyGOSTAsymKey {
          * @throws OceanusException on error
          */
         private BouncyECPublicKey derivePublicKey(final X509EncodedKeySpec pEncodedKey) throws OceanusException {
+            checkKeySpec(pEncodedKey);
             final SubjectPublicKeyInfo myInfo = SubjectPublicKeyInfo.getInstance(pEncodedKey.getEncoded());
             final ECPublicKeyParameters myParms = deriveFromPubKeyInfo(myInfo);
             return new BouncyECPublicKey(getKeySpec(), myParms);

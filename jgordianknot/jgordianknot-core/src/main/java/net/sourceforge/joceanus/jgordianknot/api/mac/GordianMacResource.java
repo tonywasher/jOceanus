@@ -69,6 +69,26 @@ public enum GordianMacResource implements TethysBundleId {
     MAC_BLAKE("BLAKE"),
 
     /**
+     * MAC CBC.
+     */
+    MAC_CBC("CBC"),
+
+    /**
+     * MAC CFB.
+     */
+    MAC_CFB("CFB"),
+
+    /**
+     * MAC SipHash.
+     */
+    MAC_SIPHASH("SipHash"),
+
+    /**
+     * MAC GOST.
+     */
+    MAC_GOST("GOST"),
+
+    /**
      * MAC VMPC.
      */
     MAC_VMPC("VMPC");
@@ -140,6 +160,10 @@ public enum GordianMacResource implements TethysBundleId {
         myMap.put(GordianMacType.BLAKE, MAC_BLAKE);
         myMap.put(GordianMacType.VMPC, MAC_VMPC);
         myMap.put(GordianMacType.ZUC, GordianCipherResource.STREAMKEY_ZUC);
+        myMap.put(GordianMacType.CBCMAC, MAC_CBC);
+        myMap.put(GordianMacType.CFBMAC, MAC_CFB);
+        myMap.put(GordianMacType.SIPHASH, MAC_SIPHASH);
+        myMap.put(GordianMacType.GOST, MAC_GOST);
         return myMap;
     }
 

@@ -227,11 +227,12 @@ public final class BouncyXMSSAsymKey {
         public BouncyKeyPair deriveKeyPair(final X509EncodedKeySpec pPublicKey,
                                            final PKCS8EncodedKeySpec pPrivateKey) throws OceanusException {
             try {
+                checkKeySpec(pPrivateKey);
+                final BouncyXMSSPublicKey myPublic = derivePublicKey(pPublicKey);
                 final PrivateKeyInfo myInfo = PrivateKeyInfo.getInstance(pPrivateKey.getEncoded());
                 final XMSSPrivateKeyParameters myParms = (XMSSPrivateKeyParameters) PqcPrivateKeyFactory.createKey(myInfo);
 
                 final BouncyXMSSPrivateKey myPrivate = new BouncyXMSSPrivateKey(getKeySpec(), myParms);
-                final BouncyXMSSPublicKey myPublic = derivePublicKey(pPublicKey);
                 return new BouncyStateAwareKeyPair(myPublic, myPrivate);
 
             } catch (IOException e) {
@@ -265,6 +266,7 @@ public final class BouncyXMSSAsymKey {
          */
         private BouncyXMSSPublicKey derivePublicKey(final X509EncodedKeySpec pEncodedKey) throws OceanusException {
             try {
+                checkKeySpec(pEncodedKey);
                 final SubjectPublicKeyInfo myInfo = SubjectPublicKeyInfo.getInstance(pEncodedKey.getEncoded());
                 final XMSSPublicKeyParameters myParms = (XMSSPublicKeyParameters) PqcPublicKeyFactory.createKey(myInfo);
                 return new BouncyXMSSPublicKey(getKeySpec(), myParms);
@@ -469,11 +471,12 @@ public final class BouncyXMSSAsymKey {
         public BouncyKeyPair deriveKeyPair(final X509EncodedKeySpec pPublicKey,
                                            final PKCS8EncodedKeySpec pPrivateKey) throws OceanusException {
             try {
+                checkKeySpec(pPrivateKey);
+                final BouncyXMSSMTPublicKey myPublic = derivePublicKey(pPublicKey);
                 final PrivateKeyInfo myInfo = PrivateKeyInfo.getInstance(pPrivateKey.getEncoded());
                 final XMSSMTPrivateKeyParameters myParms = (XMSSMTPrivateKeyParameters) PqcPrivateKeyFactory.createKey(myInfo);
 
                 final BouncyXMSSMTPrivateKey myPrivate = new BouncyXMSSMTPrivateKey(getKeySpec(), myParms);
-                final BouncyXMSSMTPublicKey myPublic = derivePublicKey(pPublicKey);
                 return new BouncyStateAwareKeyPair(myPublic, myPrivate);
 
             } catch (IOException e) {
@@ -507,6 +510,7 @@ public final class BouncyXMSSAsymKey {
          */
         private BouncyXMSSMTPublicKey derivePublicKey(final X509EncodedKeySpec pEncodedKey) throws OceanusException {
             try {
+                checkKeySpec(pEncodedKey);
                 final SubjectPublicKeyInfo myInfo = SubjectPublicKeyInfo.getInstance(pEncodedKey.getEncoded());
                 final XMSSMTPublicKeyParameters myParms = (XMSSMTPublicKeyParameters) PqcPublicKeyFactory.createKey(myInfo);
                 return new BouncyXMSSMTPublicKey(getKeySpec(), myParms);

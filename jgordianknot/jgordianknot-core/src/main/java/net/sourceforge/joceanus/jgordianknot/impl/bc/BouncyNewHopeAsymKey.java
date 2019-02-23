@@ -161,10 +161,11 @@ public final class BouncyNewHopeAsymKey {
         public BouncyKeyPair deriveKeyPair(final X509EncodedKeySpec pPublicKey,
                                            final PKCS8EncodedKeySpec pPrivateKey) throws OceanusException {
             try {
+                checkKeySpec(pPrivateKey);
+                final BouncyNewHopePublicKey myPublic = derivePublicKey(pPublicKey);
                 final PrivateKeyInfo myInfo = PrivateKeyInfo.getInstance(pPrivateKey.getEncoded());
                 final NHPrivateKeyParameters myParms = (NHPrivateKeyParameters) PqcPrivateKeyFactory.createKey(myInfo);
                 final BouncyNewHopePrivateKey myPrivate = new BouncyNewHopePrivateKey(getKeySpec(), myParms);
-                final BouncyNewHopePublicKey myPublic = derivePublicKey(pPublicKey);
                 return new BouncyKeyPair(myPublic, myPrivate);
             } catch (IOException e) {
                 throw new GordianCryptoException(ERROR_PARSE, e);
@@ -197,6 +198,7 @@ public final class BouncyNewHopeAsymKey {
          */
         private BouncyNewHopePublicKey derivePublicKey(final X509EncodedKeySpec pEncodedKey) throws OceanusException {
             try {
+                checkKeySpec(pEncodedKey);
                 final SubjectPublicKeyInfo myInfo = SubjectPublicKeyInfo.getInstance(pEncodedKey.getEncoded());
                 final NHPublicKeyParameters myParms = (NHPublicKeyParameters) PqcPublicKeyFactory.createKey(myInfo);
                 return new BouncyNewHopePublicKey(getKeySpec(), myParms);

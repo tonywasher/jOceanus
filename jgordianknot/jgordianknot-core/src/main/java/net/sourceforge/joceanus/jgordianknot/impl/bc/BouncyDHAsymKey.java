@@ -215,11 +215,12 @@ public final class BouncyDHAsymKey {
         public BouncyKeyPair deriveKeyPair(final X509EncodedKeySpec pPublicKey,
                                            final PKCS8EncodedKeySpec pPrivateKey) throws OceanusException {
             try {
+                checkKeySpec(pPrivateKey);
+                final BouncyDHPublicKey myPublic = derivePublicKey(pPublicKey);
                 final PrivateKeyInfo myInfo = PrivateKeyInfo.getInstance(pPrivateKey.getEncoded());
                 final BCDHPrivateKey myKey = new BCDHPrivateKey(myInfo);
                 final DHParameters myParms = GordianDHEncodedParser.determineParameters(myInfo.getPrivateKeyAlgorithm());
                 final BouncyDHPrivateKey myPrivate = new BouncyDHPrivateKey(getKeySpec(), new DHPrivateKeyParameters(myKey.getX(), myParms));
-                final BouncyDHPublicKey myPublic = derivePublicKey(pPublicKey);
                 return new BouncyKeyPair(myPublic, myPrivate);
             } catch (IOException e) {
                 throw new GordianCryptoException(ERROR_PARSE, e);
@@ -237,7 +238,7 @@ public final class BouncyDHAsymKey {
         }
 
         @Override
-        public BouncyKeyPair derivePublicOnlyKeyPair(final X509EncodedKeySpec pEncodedKey) {
+        public BouncyKeyPair derivePublicOnlyKeyPair(final X509EncodedKeySpec pEncodedKey) throws OceanusException {
             final BouncyDHPublicKey myPublic = derivePublicKey(pEncodedKey);
             return new BouncyKeyPair(myPublic);
         }
@@ -246,8 +247,10 @@ public final class BouncyDHAsymKey {
          * Derive public key from encoded.
          * @param pEncodedKey the encoded key
          * @return the public key
+         * @throws OceanusException on error
          */
-        private BouncyDHPublicKey derivePublicKey(final X509EncodedKeySpec pEncodedKey) {
+        private BouncyDHPublicKey derivePublicKey(final X509EncodedKeySpec pEncodedKey) throws OceanusException {
+            checkKeySpec(pEncodedKey);
             final SubjectPublicKeyInfo myInfo = SubjectPublicKeyInfo.getInstance(pEncodedKey.getEncoded());
             final BCDHPublicKey myKey = new BCDHPublicKey(myInfo);
             return new BouncyDHPublicKey(getKeySpec(), myKey.engineGetKeyParameters());

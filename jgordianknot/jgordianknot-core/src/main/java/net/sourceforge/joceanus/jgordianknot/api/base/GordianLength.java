@@ -21,6 +21,11 @@ package net.sourceforge.joceanus.jgordianknot.api.base;
  */
 public enum GordianLength {
     /**
+     * 32 bits.
+     */
+    LEN_32(32),
+
+    /**
      * 64 bits.
      */
     LEN_64(64),

@@ -18,7 +18,10 @@ package net.sourceforge.joceanus.jgordianknot.api.mac;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
+import net.sourceforge.joceanus.jgordianknot.api.asym.GordianDSAKeyType;
+import net.sourceforge.joceanus.jgordianknot.api.asym.GordianMcElieceKeySpec;
 import net.sourceforge.joceanus.jgordianknot.api.base.GordianLength;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianStreamKeyType;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianSymKeySpec;
@@ -40,7 +43,7 @@ public final class GordianMacSpec implements GordianKeySpec {
     /**
      * Initialisation Vector size (128/8).
      */
-    private static final int IVSIZE = 16;
+    //private static final int IVSIZE = GordianLength.LEN_128.getByteLength();
 
     /**
      * The Mac Type.
@@ -48,14 +51,9 @@ public final class GordianMacSpec implements GordianKeySpec {
     private final GordianMacType theMacType;
 
     /**
-     * The DigestSpec.
+     * The Subpec.
      */
-    private final GordianDigestSpec theDigestSpec;
-
-    /**
-     * The SymKey Type.
-     */
-    private final GordianSymKeySpec theKeySpec;
+    private final Object theSubSpec;
 
     /**
      * The Validity.
@@ -76,8 +74,7 @@ public final class GordianMacSpec implements GordianKeySpec {
                           final GordianDigestSpec pDigestSpec) {
         /* Store parameters */
         theMacType = pMacType;
-        theDigestSpec = pDigestSpec;
-        theKeySpec = null;
+        theSubSpec = pDigestSpec;
         isValid = checkValidity();
     }
 
@@ -90,8 +87,33 @@ public final class GordianMacSpec implements GordianKeySpec {
                           final GordianSymKeySpec pKeySpec) {
         /* Store parameters */
         theMacType = pMacType;
-        theDigestSpec = null;
-        theKeySpec = pKeySpec;
+        theSubSpec = pKeySpec;
+        isValid = checkValidity();
+    }
+
+    /**
+     * zucMac Constructor.
+     * @param pMacType the macType
+     * @param pLength the length
+     */
+    public GordianMacSpec(final GordianMacType pMacType,
+                          final GordianLength pLength) {
+        /* Store parameters */
+        theMacType = pMacType;
+        theSubSpec = pLength;
+        isValid = checkValidity();
+    }
+
+    /**
+     * sipHash Constructor.
+     * @param pMacType the macType
+     * @param pFast use fast hash true/false
+     */
+    public GordianMacSpec(final GordianMacType pMacType,
+                          final Boolean pFast) {
+        /* Store parameters */
+        theMacType = pMacType;
+        theSubSpec = pFast;
         isValid = checkValidity();
     }
 
@@ -101,8 +123,7 @@ public final class GordianMacSpec implements GordianKeySpec {
      */
     public GordianMacSpec(final GordianMacType pMacType) {
         theMacType = pMacType;
-        theDigestSpec = null;
-        theKeySpec = null;
+        theSubSpec = null;
         isValid = checkValidity();
     }
 
@@ -276,11 +297,54 @@ public final class GordianMacSpec implements GordianKeySpec {
     }
 
     /**
-     * Create zucMacSpec.
+     * Create gostMacSpec.
      * @return the MacSpec
      */
-    public static GordianMacSpec zucMac() {
-        return new GordianMacSpec(GordianMacType.ZUC);
+    public static GordianMacSpec gostMac() {
+        return new GordianMacSpec(GordianMacType.GOST);
+    }
+
+    /**
+     * Create sipHashSpec.
+     * @return the MacSpec
+     */
+    public static GordianMacSpec sipHash() {
+        return new GordianMacSpec(GordianMacType.SIPHASH, Boolean.FALSE);
+    }
+
+    /**
+     * Create sipHashFastSpec.
+     * @return the MacSpec
+     */
+    public static GordianMacSpec sipHashFast() {
+        return new GordianMacSpec(GordianMacType.SIPHASH, Boolean.TRUE);
+    }
+
+    /**
+     * Create cbcMacSpec.
+     * @param pSymKeySpec the symKeySpec
+     * @return the MacSpec
+     */
+    public static GordianMacSpec cbcMac(final GordianSymKeySpec pSymKeySpec) {
+        return new GordianMacSpec(GordianMacType.CBCMAC, pSymKeySpec);
+    }
+
+    /**
+     * Create cfbMacSpec.
+     * @param pSymKeySpec the symKeySpec
+     * @return the MacSpec
+     */
+    public static GordianMacSpec cfbMac(final GordianSymKeySpec pSymKeySpec) {
+        return new GordianMacSpec(GordianMacType.CFBMAC, pSymKeySpec);
+    }
+
+    /**
+     * Create zucMacSpec.
+     * @param pLength the length
+     * @return the MacSpec
+     */
+    public static GordianMacSpec zucMac(final GordianLength pLength) {
+        return new GordianMacSpec(GordianMacType.ZUC, pLength);
     }
 
     /**
@@ -292,19 +356,11 @@ public final class GordianMacSpec implements GordianKeySpec {
     }
 
     /**
-     * Obtain DigestSpec.
-     * @return the DigestSpec
+     * Obtain SubSpec.
+     * @return the SubSpec
      */
-    public GordianDigestSpec getDigestSpec() {
-        return theDigestSpec;
-    }
-
-    /**
-     * Obtain SymKey Type.
-     * @return the KeyType
-     */
-    public GordianSymKeySpec getKeySpec() {
-        return theKeySpec;
+    public Object getSubSpec() {
+        return theSubSpec;
     }
 
     /**
@@ -316,6 +372,66 @@ public final class GordianMacSpec implements GordianKeySpec {
     }
 
     /**
+     * Obtain DigestSpec.
+     * @return the DigestSpec
+     */
+    public GordianDigestSpec getDigestSpec() {
+        return theSubSpec instanceof GordianDigestSpec
+               ? (GordianDigestSpec) theSubSpec
+               : GordianDigestSpec.sha1();
+    }
+
+    /**
+     * Obtain SymKeySpec.
+     * @return the SymKeySpec
+     */
+    public GordianSymKeySpec getSymKeySpec() {
+        return theSubSpec instanceof GordianSymKeySpec
+               ? (GordianSymKeySpec) theSubSpec
+               : GordianSymKeySpec.aes();
+    }
+
+    /**
+     * Obtain Boolean.
+     * @return the Boolean
+     */
+    public Boolean getBoolean() {
+        return theSubSpec instanceof Boolean
+               ? (Boolean) theSubSpec
+               : Boolean.FALSE;
+    }
+
+    /**
+     * Obtain MacLength.
+     * @return the Length
+     */
+    public GordianLength getMacLength() {
+        switch (theMacType) {
+            case HMAC:
+            case BLAKE:
+            case SKEIN:
+            case KUPYNA:
+                return getDigestSpec().getDigestLength();
+            case GMAC:
+            case POLY1305:
+                return GordianLength.LEN_128;
+            case CMAC:
+            case KALYNA:
+                return getSymKeySpec().getBlockLength();
+            case CBCMAC:
+            case CFBMAC:
+                return getSymKeySpec().getHalfBlockLength();
+            case ZUC:
+                return ((GordianLength) theSubSpec);
+            case VMPC:
+                return GordianLength.LEN_160;
+            case SIPHASH:
+            default:
+                return GordianLength.LEN_64;
+        }
+    }
+
+    /**
      * Obtain the IV length.
      * @param pRestricted is the mac restricted?
      * @return the IV Length
@@ -323,14 +439,20 @@ public final class GordianMacSpec implements GordianKeySpec {
     public int getIVLen(final boolean pRestricted) {
         switch (theMacType) {
             case VMPC:
-            case GMAC:
             case POLY1305:
             case SKEIN:
-                return IVSIZE;
+                return GordianLength.LEN_128.getByteLength();
             case BLAKE:
-                return GordianDigestType.isBlake2bState(theDigestSpec.getStateLength())
-                       ? IVSIZE
-                       : IVSIZE >> 1;
+                return GordianDigestType.isBlake2bState(getDigestSpec().getStateLength())
+                       ? GordianLength.LEN_128.getByteLength()
+                       : GordianLength.LEN_64.getByteLength();
+            case GMAC:
+                return GordianLength.LEN_96.getByteLength();
+            case CBCMAC:
+            case CFBMAC:
+                return getSymKeySpec().getBlockLength().getByteLength();
+            case GOST:
+                return GordianLength.LEN_64.getByteLength();
             case ZUC:
                 return GordianStreamKeyType.ZUC.getIVLength(pRestricted);
             default:
@@ -351,15 +473,22 @@ public final class GordianMacSpec implements GordianKeySpec {
             case KUPYNA:
             case BLAKE:
             case SKEIN:
-                return theDigestSpec != null && theDigestSpec.isValid() && theKeySpec == null;
+                return theSubSpec instanceof GordianDigestSpec
+                        && ((GordianDigestSpec) theSubSpec).isValid();
             case CMAC:
             case GMAC:
             case POLY1305:
             case KALYNA:
-                return theDigestSpec == null && theKeySpec != null && theKeySpec.isValid();
-            case VMPC:
+            case CBCMAC:
+            case CFBMAC:
+                return theSubSpec instanceof GordianSymKeySpec
+                        && ((GordianSymKeySpec) theSubSpec).isValid();
             case ZUC:
-                return theDigestSpec == null && theKeySpec == null;
+                return theSubSpec instanceof GordianLength;
+            case SIPHASH:
+                return theSubSpec instanceof Boolean;
+            case VMPC:
+                 return theSubSpec == null;
             default:
                 return false;
         }
@@ -369,49 +498,26 @@ public final class GordianMacSpec implements GordianKeySpec {
     public String toString() {
         /* If we have not yet loaded the name */
         if (theName == null) {
-            /* If the macSpec is valid */
-            if (isValid) {
-                /* Load the name */
-                theName = theMacType.toString();
-                switch (theMacType) {
-                    case HMAC:
-                        theName += SEP + theDigestSpec;
-                        break;
-                    case SKEIN:
-                        theName += SEP + theDigestSpec.getStateLength()
-                                    + SEP + theDigestSpec.getDigestLength();
-                        break;
-                    case GMAC:
-                    case CMAC:
-                    case POLY1305:
-                        theName += SEP + theKeySpec;
-                        break;
-                    case KUPYNA:
-                        theName += SEP + theDigestSpec.getDigestLength();
-                        break;
-                    case BLAKE:
-                        theName = GordianDigestType.getBlakeAlgorithmForStateLength(theDigestSpec.getStateLength());
-                        theName += "Mac" + SEP + theDigestSpec.getDigestLength();
-                        break;
-                    case KALYNA:
-                        theName += SEP + theKeySpec.getBlockLength();
-                        break;
-                    case ZUC:
-                        theName += SEP + "Mac";
-                        break;
-                    case VMPC:
-                    default:
-                        break;
-                }
-            }  else {
+            /* If the macSpec is invalid */
+            if (!isValid) {
                 /* Report invalid spec */
-                theName = "InvalidMacSpec: " + theMacType + ":" + theDigestSpec + ":" + theKeySpec;
+                theName = "InvalidMacSpec: " + theMacType + ":" + theSubSpec;
+                return theName;
             }
-        }
+
+            /* Load the name */
+            theName = theMacType.toString();
+            if (theSubSpec != null) {
+                if (GordianMacType.SIPHASH.equals(theMacType)) {
+                    theName += SEP + (getBoolean() ? "2-4": "4-8");
+                } else {
+                    theName += SEP + theSubSpec.toString();
+                }
+            }
+         }
 
         /* return the name */
         return theName;
-
     }
 
     @Override
@@ -437,24 +543,15 @@ public final class GordianMacSpec implements GordianKeySpec {
             return false;
         }
 
-        /* Match subfields */
-        if (theDigestSpec != null) {
-            return theDigestSpec.equals(myThat.getDigestSpec());
-        }
-        if (theKeySpec != null) {
-            return theKeySpec.equals(myThat.getKeySpec());
-        }
-        return true;
+        /* Match subSpec */
+        return Objects.equals(theSubSpec, myThat.getSubSpec());
     }
 
     @Override
     public int hashCode() {
         int hashCode = theMacType.ordinal() << TethysDataConverter.BYTE_SHIFT;
-        if (theDigestSpec != null) {
-            hashCode += theDigestSpec.hashCode();
-        }
-        if (theKeySpec != null) {
-            hashCode += theKeySpec.hashCode();
+        if (theSubSpec != null) {
+            hashCode += theSubSpec.hashCode();
         }
         return hashCode;
     }
@@ -477,6 +574,8 @@ public final class GordianMacSpec implements GordianKeySpec {
             myList.add(GordianMacSpec.gMac(mySymKeySpec));
             myList.add(GordianMacSpec.cMac(mySymKeySpec));
             myList.add(GordianMacSpec.poly1305Mac(mySymKeySpec));
+            myList.add(GordianMacSpec.cbcMac(mySymKeySpec));
+            myList.add(GordianMacSpec.cfbMac(mySymKeySpec));
         }
 
         /* Add SkeinMacs */
@@ -489,6 +588,13 @@ public final class GordianMacSpec implements GordianKeySpec {
 
         /* Add vmpcMac */
         myList.add(GordianMacSpec.vmpcMac());
+
+        /* Add spiHash */
+        myList.add(GordianMacSpec.sipHashFast());
+        myList.add(GordianMacSpec.sipHash());
+
+        /* Add gostHash */
+        myList.add(GordianMacSpec.gostMac());
 
         /* Add blakeMac */
         for (final GordianLength myLength : GordianDigestType.BLAKE.getSupportedLengths()) {
@@ -509,7 +615,9 @@ public final class GordianMacSpec implements GordianKeySpec {
         }
 
         /* Add zucMac */
-        myList.add(GordianMacSpec.zucMac());
+        myList.add(GordianMacSpec.zucMac(GordianLength.LEN_32));
+        myList.add(GordianMacSpec.zucMac(GordianLength.LEN_64));
+        myList.add(GordianMacSpec.zucMac(GordianLength.LEN_128));
 
         /* Return the list */
         return myList;

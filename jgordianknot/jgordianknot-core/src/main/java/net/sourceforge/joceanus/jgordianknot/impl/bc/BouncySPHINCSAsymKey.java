@@ -203,10 +203,11 @@ public final class BouncySPHINCSAsymKey {
         public BouncyKeyPair deriveKeyPair(final X509EncodedKeySpec pPublicKey,
                                            final PKCS8EncodedKeySpec pPrivateKey) throws OceanusException {
             try {
+                checkKeySpec(pPrivateKey);
+                final BouncySPHINCSPublicKey myPublic = derivePublicKey(pPublicKey);
                 final PrivateKeyInfo myInfo = PrivateKeyInfo.getInstance(pPrivateKey.getEncoded());
                 final SPHINCSPrivateKeyParameters myParms = (SPHINCSPrivateKeyParameters) PqcPrivateKeyFactory.createKey(myInfo);
                 final BouncySPHINCSPrivateKey myPrivate = new BouncySPHINCSPrivateKey(getKeySpec(), myParms);
-                final BouncySPHINCSPublicKey myPublic = derivePublicKey(pPublicKey);
                 return new BouncyKeyPair(myPublic, myPrivate);
             } catch (IOException e) {
                 throw new GordianCryptoException(ERROR_PARSE, e);
@@ -239,6 +240,7 @@ public final class BouncySPHINCSAsymKey {
          */
         private BouncySPHINCSPublicKey derivePublicKey(final X509EncodedKeySpec pEncodedKey) throws OceanusException {
             try {
+                checkKeySpec(pEncodedKey);
                 final SubjectPublicKeyInfo myInfo = SubjectPublicKeyInfo.getInstance(pEncodedKey.getEncoded());
                 final SPHINCSPublicKeyParameters myParms = (SPHINCSPublicKeyParameters) PqcPublicKeyFactory.createKey(myInfo);
                 return new BouncySPHINCSPublicKey(getKeySpec(), myParms);

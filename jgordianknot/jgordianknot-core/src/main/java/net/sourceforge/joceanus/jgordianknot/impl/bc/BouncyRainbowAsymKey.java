@@ -170,10 +170,11 @@ public final class BouncyRainbowAsymKey {
         public BouncyKeyPair deriveKeyPair(final X509EncodedKeySpec pPublicKey,
                                            final PKCS8EncodedKeySpec pPrivateKey) throws OceanusException {
             try {
+                checkKeySpec(pPrivateKey);
+                final BouncyRainbowPublicKey myPublic = derivePublicKey(pPublicKey);
                 final PrivateKeyInfo myInfo = PrivateKeyInfo.getInstance(pPrivateKey.getEncoded());
                 final RainbowPrivateKeyParameters myParms = (RainbowPrivateKeyParameters) PqcPrivateKeyFactory.createKey(myInfo);
                 final BouncyRainbowPrivateKey myPrivate = new BouncyRainbowPrivateKey(getKeySpec(), myParms);
-                final BouncyRainbowPublicKey myPublic = derivePublicKey(pPublicKey);
                 return new BouncyKeyPair(myPublic, myPrivate);
             } catch (IOException e) {
                 throw new GordianCryptoException(ERROR_PARSE, e);
@@ -206,6 +207,7 @@ public final class BouncyRainbowAsymKey {
          */
         private BouncyRainbowPublicKey derivePublicKey(final X509EncodedKeySpec pEncodedKey) throws OceanusException {
             try {
+                checkKeySpec(pEncodedKey);
                 final SubjectPublicKeyInfo myInfo = SubjectPublicKeyInfo.getInstance(pEncodedKey.getEncoded());
                 final RainbowPublicKeyParameters myParms = (RainbowPublicKeyParameters) PqcPublicKeyFactory.createKey(myInfo);
                 return new BouncyRainbowPublicKey(getKeySpec(), myParms);

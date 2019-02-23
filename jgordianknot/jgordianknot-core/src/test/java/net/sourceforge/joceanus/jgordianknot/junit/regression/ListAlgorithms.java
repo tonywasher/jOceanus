@@ -116,15 +116,15 @@ public final class ListAlgorithms {
      */
     private static void printSet(final String setName,
                                  final Set<String> algorithms) {
-        LOGGER.error(setName
+        LOGGER.info(setName
                 + ":");
         if (algorithms.isEmpty()) {
-            LOGGER.error("            None available.");
+            LOGGER.info("            None available.");
         } else {
             final Iterator<String> it = algorithms.iterator();
             while (it.hasNext()) {
                 final String name = it.next();
-                LOGGER.error("            "
+                LOGGER.info("            "
                         + name);
             }
         }

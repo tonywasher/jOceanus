@@ -236,10 +236,11 @@ public final class BouncyRSAAsymKey {
         public BouncyKeyPair deriveKeyPair(final X509EncodedKeySpec pPublicKey,
                                            final PKCS8EncodedKeySpec pPrivateKey) throws OceanusException {
             try {
+                checkKeySpec(pPrivateKey);
+                final BouncyRSAPublicKey myPublic = derivePublicKey(pPublicKey);
                 final PrivateKeyInfo myInfo = PrivateKeyInfo.getInstance(pPrivateKey.getEncoded());
                 final RSAPrivateCrtKeyParameters myParms = (RSAPrivateCrtKeyParameters) PrivateKeyFactory.createKey(myInfo);
                 final BouncyRSAPrivateKey myPrivate = new BouncyRSAPrivateKey(getKeySpec(), myParms);
-                final BouncyRSAPublicKey myPublic = derivePublicKey(pPublicKey);
                 return new BouncyKeyPair(myPublic, myPrivate);
             } catch (IOException e) {
                 throw new GordianCryptoException(ERROR_PARSE, e);
@@ -272,6 +273,7 @@ public final class BouncyRSAAsymKey {
          */
         private BouncyRSAPublicKey derivePublicKey(final X509EncodedKeySpec pEncodedKey) throws OceanusException {
             try {
+                checkKeySpec(pEncodedKey);
                 final SubjectPublicKeyInfo myInfo = SubjectPublicKeyInfo.getInstance(pEncodedKey.getEncoded());
                 final RSAKeyParameters myParms = (RSAKeyParameters) PublicKeyFactory.createKey(myInfo);
                 return new BouncyRSAPublicKey(getKeySpec(), myParms);

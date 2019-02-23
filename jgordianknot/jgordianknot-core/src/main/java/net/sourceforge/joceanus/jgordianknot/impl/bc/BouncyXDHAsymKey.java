@@ -225,10 +225,11 @@ public final class BouncyXDHAsymKey {
         public BouncyKeyPair deriveKeyPair(final X509EncodedKeySpec pPublicKey,
                                            final PKCS8EncodedKeySpec pPrivateKey) throws OceanusException {
             try {
+                checkKeySpec(pPrivateKey);
+                final BouncyX25519PublicKey myPublic = derivePublicKey(pPublicKey);
                 final PrivateKeyInfo myInfo = PrivateKeyInfo.getInstance(pPrivateKey.getEncoded());
                 final X25519PrivateKeyParameters myParms = (X25519PrivateKeyParameters) PrivateKeyFactory.createKey(myInfo);
                 final BouncyX25519PrivateKey myPrivate = new BouncyX25519PrivateKey(getKeySpec(), myParms);
-                final BouncyX25519PublicKey myPublic = derivePublicKey(pPublicKey);
                 return new BouncyKeyPair(myPublic, myPrivate);
             } catch (IOException e) {
                 throw new GordianCryptoException(ERROR_PARSE, e);
@@ -262,6 +263,7 @@ public final class BouncyXDHAsymKey {
          */
         private BouncyX25519PublicKey derivePublicKey(final X509EncodedKeySpec pEncodedKey) throws OceanusException {
             try {
+                checkKeySpec(pEncodedKey);
                 final SubjectPublicKeyInfo myInfo = SubjectPublicKeyInfo.getInstance(pEncodedKey.getEncoded());
                 final X25519PublicKeyParameters myParms = (X25519PublicKeyParameters) PublicKeyFactory.createKey(myInfo);
                 return new BouncyX25519PublicKey(getKeySpec(), myParms);
@@ -324,10 +326,11 @@ public final class BouncyXDHAsymKey {
         public BouncyKeyPair deriveKeyPair(final X509EncodedKeySpec pPublicKey,
                                            final PKCS8EncodedKeySpec pPrivateKey) throws OceanusException {
             try {
+                checkKeySpec(pPrivateKey);
+                final BouncyX448PublicKey myPublic = derivePublicKey(pPublicKey);
                 final PrivateKeyInfo myInfo = PrivateKeyInfo.getInstance(pPrivateKey.getEncoded());
                 final X448PrivateKeyParameters myParms = (X448PrivateKeyParameters) PrivateKeyFactory.createKey(myInfo);
                 final BouncyX448PrivateKey myPrivate = new BouncyX448PrivateKey(getKeySpec(), myParms);
-                final BouncyX448PublicKey myPublic = derivePublicKey(pPublicKey);
                 return new BouncyKeyPair(myPublic, myPrivate);
             } catch (IOException e) {
                 throw new GordianCryptoException(ERROR_PARSE, e);
@@ -361,6 +364,7 @@ public final class BouncyXDHAsymKey {
          */
         private BouncyX448PublicKey derivePublicKey(final X509EncodedKeySpec pEncodedKey) throws OceanusException {
             try {
+                checkKeySpec(pEncodedKey);
                 final SubjectPublicKeyInfo myInfo = SubjectPublicKeyInfo.getInstance(pEncodedKey.getEncoded());
                 final X448PublicKeyParameters myParms = (X448PublicKeyParameters) PublicKeyFactory.createKey(myInfo);
                 return new BouncyX448PublicKey(getKeySpec(), myParms);
