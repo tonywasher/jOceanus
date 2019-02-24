@@ -384,6 +384,8 @@ public class GordianIdManager {
             case POLY1305:
             case GMAC:
             case CMAC:
+            case CBCMAC:
+            case CFBMAC:
                 return generateRandomSymKeyMacSpec(myMacType);
             case SKEIN:
                 return GordianMacSpec.skeinMac();
@@ -393,6 +395,10 @@ public class GordianIdManager {
                 return GordianMacSpec.kupynaMac();
             case KALYNA:
                 return GordianMacSpec.kalynaMac();
+            case SIPHASH:
+                return GordianMacSpec.sipHash();
+            case ZUC:
+                return GordianMacSpec.zucMac(GordianLength.LEN_32);
             default:
                 return new GordianMacSpec(myMacType);
         }

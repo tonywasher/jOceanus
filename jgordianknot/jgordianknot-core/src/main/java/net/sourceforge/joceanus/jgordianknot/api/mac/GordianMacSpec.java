@@ -20,8 +20,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-import net.sourceforge.joceanus.jgordianknot.api.asym.GordianDSAKeyType;
-import net.sourceforge.joceanus.jgordianknot.api.asym.GordianMcElieceKeySpec;
 import net.sourceforge.joceanus.jgordianknot.api.base.GordianLength;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianStreamKeyType;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianSymKeySpec;
@@ -39,11 +37,6 @@ public final class GordianMacSpec implements GordianKeySpec {
      * The Separator.
      */
     private static final String SEP = "-";
-
-    /**
-     * Initialisation Vector size (128/8).
-     */
-    //private static final int IVSIZE = GordianLength.LEN_128.getByteLength();
 
     /**
      * The Mac Type.
@@ -425,6 +418,8 @@ public final class GordianMacSpec implements GordianKeySpec {
                 return ((GordianLength) theSubSpec);
             case VMPC:
                 return GordianLength.LEN_160;
+            case GOST:
+                return GordianLength.LEN_32;
             case SIPHASH:
             default:
                 return GordianLength.LEN_64;
@@ -487,6 +482,7 @@ public final class GordianMacSpec implements GordianKeySpec {
                 return theSubSpec instanceof GordianLength;
             case SIPHASH:
                 return theSubSpec instanceof Boolean;
+            case GOST:
             case VMPC:
                  return theSubSpec == null;
             default:
