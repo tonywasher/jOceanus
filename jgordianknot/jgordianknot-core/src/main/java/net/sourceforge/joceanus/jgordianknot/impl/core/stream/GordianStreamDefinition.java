@@ -258,14 +258,16 @@ public final class GordianStreamDefinition {
      * Build input Stream.
      * @param pKeySet the keySet
      * @param pCurrent the current stream
+     * @param pMacStream the Mac input stream
      * @return the new input stream
      * @throws OceanusException on error
      */
     InputStream buildInputStream(final GordianCoreKeySet pKeySet,
-                                 final InputStream pCurrent) throws OceanusException {
+                                 final InputStream pCurrent,
+                                 final GordianMacInputStream pMacStream) throws OceanusException {
         switch (theType) {
             case DIGEST:
-                return buildDigestInputStream(pKeySet, pCurrent);
+                return buildDigestInputStream(pKeySet, pCurrent, pMacStream);
             case MAC:
                 return buildMacInputStream(pKeySet, pCurrent);
             case SYMMETRIC:
@@ -282,11 +284,13 @@ public final class GordianStreamDefinition {
      * Build digest input Stream.
      * @param pKeySet the keySet
      * @param pCurrent the current stream
+     * @param pMacStream the Mac input stream
      * @return the new input stream
      * @throws OceanusException on error
      */
     private InputStream buildDigestInputStream(final GordianCoreKeySet pKeySet,
-                                               final InputStream pCurrent) throws OceanusException {
+                                               final InputStream pCurrent,
+                                               final GordianMacInputStream pMacStream) throws OceanusException {
         /* Access factory */
         final GordianCoreFactory myFactory = pKeySet.getFactory();
         final GordianCoreKeySetFactory myKeySets = (GordianCoreKeySetFactory) myFactory.getKeySetFactory();
@@ -300,7 +304,7 @@ public final class GordianStreamDefinition {
         final GordianDigest myDigest = myDigests.createDigest(mySpec);
 
         /* Create the stream */
-        return new GordianDigestInputStream(myDigest, theValue, pCurrent);
+        return new GordianDigestInputStream(myDigest, theValue, pCurrent, pMacStream);
     }
 
     /**

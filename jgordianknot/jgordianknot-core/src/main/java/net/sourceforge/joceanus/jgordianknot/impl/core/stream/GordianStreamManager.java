@@ -138,12 +138,16 @@ public final class GordianStreamManager {
                                         final InputStream pBaseStream) throws OceanusException {
         /* Loop through the stream definitions */
         InputStream myCurrent = pBaseStream;
+        GordianMacInputStream myMacStream = null;
         final Iterator<GordianStreamDefinition> myIterator = pStreamDefs.iterator();
         while (myIterator.hasNext()) {
             final GordianStreamDefinition myDef = myIterator.next();
 
             /* Build the stream */
-            myCurrent = myDef.buildInputStream(theKeySet, myCurrent);
+            myCurrent = myDef.buildInputStream(theKeySet, myCurrent, myMacStream);
+            if (myCurrent instanceof GordianMacInputStream) {
+                myMacStream = (GordianMacInputStream) myCurrent;
+            }
         }
 
         /* Return the stream */
@@ -179,7 +183,8 @@ public final class GordianStreamManager {
         /* Create and initialise the MAC */
         final GordianMac myMac = myMacs.createMac(myMacSpec);
         myMac.initMac(myMacKey);
-        myCurrent = new GordianMacOutputStream(myMac, myCurrent);
+        final GordianMacOutputStream myMacStream = new GordianMacOutputStream(myMac, myCurrent);
+        myCurrent = myMacStream;
 
         /* Generate a list of encryption types */
         final List<GordianKey<GordianSymKeySpec>> mySymKeys = generateRandomSymKeyList();
@@ -226,7 +231,7 @@ public final class GordianStreamManager {
 
         /* Create a digest stream */
         final GordianDigest myDigest = generateRandomDigest();
-        myCurrent = new GordianDigestOutputStream(myDigest, myCurrent);
+        myCurrent = new GordianDigestOutputStream(myDigest, myCurrent, myMacStream);
 
         /* Return the stream */
         return myCurrent;
@@ -238,20 +243,15 @@ public final class GordianStreamManager {
      * @throws OceanusException on error
      */
     private GordianDigest generateRandomDigest() throws OceanusException {
-        /* Access factory and bump the random engine */
+        /* Access factory */
         final GordianCoreFactory myFactory = theKeySet.getFactory();
         final GordianCoreDigestFactory myDigests = (GordianCoreDigestFactory) myFactory.getDigestFactory();
         final GordianCoreKeySetFactory myKeySets = (GordianCoreKeySetFactory) myFactory.getKeySetFactory();
         final GordianIdManager myIdMgr = myKeySets.getIdManager();
 
-        /* Keep looping until we find a valid digest */
-        for (;;) {
-            final GordianDigestType myType = myIdMgr.generateRandomDigestType();
-            final GordianDigestSpec mySpec = new GordianDigestSpec(myType);
-            if (myDigests.supportedDigestSpecs().test(mySpec)) {
-                return myDigests.createDigest(new GordianDigestSpec(myType));
-            }
-        }
+        /* Generate the random digest */
+        final GordianDigestType myType = myIdMgr.generateRandomDigestType();
+        return myDigests.createDigest(new GordianDigestSpec(myType));
     }
 
     /**
@@ -260,7 +260,7 @@ public final class GordianStreamManager {
      * @throws OceanusException on error
      */
     public List<GordianKey<GordianSymKeySpec>> generateRandomSymKeyList() throws OceanusException {
-        /* Access factory and bump the random engine */
+        /* Access factory */
         final GordianCoreFactory myFactory = theKeySet.getFactory();
         final GordianCoreCipherFactory myCiphers = (GordianCoreCipherFactory) myFactory.getCipherFactory();
         final GordianCoreKeySetFactory myKeySets = (GordianCoreKeySetFactory) myFactory.getKeySetFactory();

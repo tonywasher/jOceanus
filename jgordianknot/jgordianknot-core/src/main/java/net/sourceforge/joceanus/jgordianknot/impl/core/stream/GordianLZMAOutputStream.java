@@ -28,7 +28,7 @@ import SevenZip.Compression.LZMA.Encoder;
  * PipedStream and to compress the data to the target output stream. This class works as the wrapper
  * to write the data to be compressed to the PipedStream.
  */
-public final class GordianLZMAOutputStream
+final class GordianLZMAOutputStream
         extends OutputStream {
     /**
      * The sink stream to write to the encoder thread.
@@ -54,7 +54,7 @@ public final class GordianLZMAOutputStream
      * Constructor.
      * @param pOutput the output stream to wrap
      */
-    public GordianLZMAOutputStream(final OutputStream pOutput) {
+    GordianLZMAOutputStream(final OutputStream pOutput) {
         /* Store the target */
         theTarget = pOutput;
 
@@ -72,7 +72,7 @@ public final class GordianLZMAOutputStream
      * Obtain the next stream.
      * @return the stream
      */
-    protected OutputStream getNextStream() {
+    OutputStream getNextStream() {
         return theTarget;
     }
 

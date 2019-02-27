@@ -28,15 +28,15 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
  * Input stream Cipher implementation.
  * @param <T> the key type
  */
-public class GordianCipherInputStream<T extends GordianKeySpec>
+class GordianCipherInputStream<T extends GordianKeySpec>
         extends GordianInputStream {
     /**
      * Constructor.
      * @param pCipher the decryption cipher
      * @param pInput the underlying input stream
      */
-    protected GordianCipherInputStream(final GordianCipher<T> pCipher,
-                                       final InputStream pInput) {
+    GordianCipherInputStream(final GordianCipher<T> pCipher,
+                             final InputStream pInput) {
         super(pInput);
         setProcessedBuffer(new GordianCipherBuffer<T>(pCipher));
     }

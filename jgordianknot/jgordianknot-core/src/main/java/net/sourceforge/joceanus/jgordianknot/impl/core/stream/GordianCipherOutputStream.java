@@ -28,7 +28,7 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
  * Output stream cipher implementation.
  * @param <T> the key type
  */
-public class GordianCipherOutputStream<T extends GordianKeySpec>
+class GordianCipherOutputStream<T extends GordianKeySpec>
         extends GordianOutputStream {
     /**
      * Default buffer size.
@@ -50,7 +50,7 @@ public class GordianCipherOutputStream<T extends GordianKeySpec>
      * @param pCipher the encryption cipher
      * @param pOutput the underlying output stream
      */
-    protected GordianCipherOutputStream(final GordianCipher<T> pCipher,
+    GordianCipherOutputStream(final GordianCipher<T> pCipher,
                                         final OutputStream pOutput) {
         super(pOutput);
         theCipher = pCipher;
@@ -68,7 +68,7 @@ public class GordianCipherOutputStream<T extends GordianKeySpec>
      * Is this stream a SymKey Stream.
      * @return true/false
      */
-    public boolean isSymKeyStream() {
+    boolean isSymKeyStream() {
         return theCipher.getKeyType() instanceof GordianSymKeySpec;
     }
 

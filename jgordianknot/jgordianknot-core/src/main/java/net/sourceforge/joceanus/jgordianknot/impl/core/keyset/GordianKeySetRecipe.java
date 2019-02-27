@@ -20,6 +20,7 @@ import java.security.SecureRandom;
 
 import net.sourceforge.joceanus.jgordianknot.api.base.GordianLength;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianSymKeyType;
+import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigestType;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianCoreFactory;
 import net.sourceforge.joceanus.jtethys.TethysDataConverter;
 
@@ -38,6 +39,11 @@ public final class GordianKeySetRecipe {
     static final int SALTLEN = GordianLength.LEN_128.getByteLength();
 
     /**
+     * Mac length.
+     */
+    static final int MACLEN = GordianLength.LEN_128.getByteLength();
+
+    /**
      * The Recipe.
      */
     private final byte[] theRecipe;
@@ -53,13 +59,21 @@ public final class GordianKeySetRecipe {
     private final GordianKeySetParameters theParams;
 
     /**
-     * Constructor for random choices.
-     * @param pFactory the factory
+     * Is this recipe for encryption?
      */
-    GordianKeySetRecipe(final GordianCoreFactory pFactory) {
+    private final boolean forEncryption;
+
+    /**
+     * Constructor for new recipe.
+     * @param pFactory the factory
+     * @param pEncryption is this for encryption or wrapping?
+     */
+    private GordianKeySetRecipe(final GordianCoreFactory pFactory,
+                                final boolean pEncryption) {
         /* Allocate new set of parameters */
-        theParams = new GordianKeySetParameters(pFactory);
+        theParams = new GordianKeySetParameters(pFactory, pEncryption);
         theRecipe = theParams.getRecipe();
+        forEncryption = pEncryption;
         theBytes = null;
     }
 
@@ -67,28 +81,75 @@ public final class GordianKeySetRecipe {
      * Constructor for external form parse.
      * @param pFactory the factory
      * @param pExternal the external form
+     * @param pEncryption is this for encryption or wrapping?
      */
     GordianKeySetRecipe(final GordianCoreFactory pFactory,
-                        final byte[] pExternal) {
+                        final byte[] pExternal,
+                        final boolean pEncryption) {
         /* Determine data length */
         final int myLen = pExternal.length;
-        final int myDataLen = myLen
+        int myDataLen = myLen
                 - RECIPELEN
                 - SALTLEN;
+        if (pEncryption) {
+            myDataLen -= MACLEN;
+        }
 
         /* Allocate buffers */
+        forEncryption = pEncryption;
         theRecipe = new byte[RECIPELEN];
         final byte[] mySalt = new byte[SALTLEN];
         theBytes = new byte[myDataLen];
+        final byte[] myMac = pEncryption ? new byte[MACLEN] : null;
 
         /* Copy Data into buffers */
         System.arraycopy(pExternal, 0, theRecipe, 0, RECIPELEN);
         System.arraycopy(pExternal, RECIPELEN, mySalt, 0, SALTLEN);
         System.arraycopy(pExternal, RECIPELEN
                 + SALTLEN, theBytes, 0, myDataLen);
+        if (pEncryption) {
+            System.arraycopy(pExternal, RECIPELEN
+                    + SALTLEN + myDataLen, myMac, 0, MACLEN);
+        }
 
         /* Allocate new set of parameters */
-        theParams = new GordianKeySetParameters(pFactory, theRecipe, mySalt);
+        theParams = new GordianKeySetParameters(pFactory, theRecipe, mySalt, myMac);
+    }
+
+    /**
+     * Create a new encryption recipe.
+     * @param pFactory the factory
+     */
+    static GordianKeySetRecipe newEncryptionRecipe(final GordianCoreFactory pFactory) {
+        return new GordianKeySetRecipe(pFactory, true);
+    }
+
+    /**
+     * parse the encryption recipe.
+     * @param pFactory the factory
+     * @param pExternal the external form
+     */
+    static GordianKeySetRecipe parseEncryptionRecipe(final GordianCoreFactory pFactory,
+                                                     final byte[] pExternal) {
+        return new GordianKeySetRecipe(pFactory, pExternal, true);
+    }
+
+    /**
+     * Create a new wrap recipe.
+     * @param pFactory the factory
+     */
+    static GordianKeySetRecipe newWrapRecipe(final GordianCoreFactory pFactory) {
+        return new GordianKeySetRecipe(pFactory, false);
+    }
+
+    /**
+     * Parse the wrap recipe.
+     * @param pFactory the factory
+     * @param pExternal the external form
+     */
+    static GordianKeySetRecipe parseWrapRecipe(final GordianCoreFactory pFactory,
+                                               final byte[] pExternal) {
+        return new GordianKeySetRecipe(pFactory, pExternal, false);
     }
 
     /**
@@ -115,8 +176,11 @@ public final class GordianKeySetRecipe {
     byte[] buildExternal(final byte[] pData) {
         /* Determine lengths */
         final int myDataLen = pData.length;
-        final int myLen = RECIPELEN
+        int myLen = RECIPELEN
                 + myDataLen + SALTLEN;
+        if (forEncryption) {
+            myLen += MACLEN;
+        }
 
         /* Allocate the buffer */
         final byte[] myBuffer = new byte[myLen];
@@ -125,6 +189,9 @@ public final class GordianKeySetRecipe {
         System.arraycopy(theRecipe, 0, myBuffer, 0, RECIPELEN);
         System.arraycopy(theParams.getSalt(), 0, myBuffer, RECIPELEN, SALTLEN);
         System.arraycopy(pData, 0, myBuffer, RECIPELEN + SALTLEN, myDataLen);
+        if (forEncryption) {
+            System.arraycopy(theParams.getMac(), 0, myBuffer, RECIPELEN + SALTLEN + myDataLen, MACLEN);
+        }
 
         /* return the external format */
         return myBuffer;
@@ -145,9 +212,19 @@ public final class GordianKeySetRecipe {
         private final GordianSymKeyType[] theSymKeyTypes;
 
         /**
+         * The DigestType.
+         */
+        private final GordianDigestType[] theDigestType;
+
+        /**
          * The Salt.
          */
         private final byte[] theSalt;
+
+        /**
+         * The Mac.
+         */
+        private final byte[] theMac;
 
         /**
          * The Initialisation Vector.
@@ -157,8 +234,10 @@ public final class GordianKeySetRecipe {
         /**
          * Construct the parameters from random.
          * @param pFactory the factory
+         * @param pEncryption is this for encryption or wrapping?
          */
-        GordianKeySetParameters(final GordianCoreFactory pFactory) {
+        GordianKeySetParameters(final GordianCoreFactory pFactory,
+                                final boolean pEncryption) {
             /* Obtain Id manager and random */
             final GordianCoreKeySetFactory myFactory = (GordianCoreKeySetFactory) pFactory.getKeySetFactory();
             final GordianIdManager myManager = myFactory.getIdManager();
@@ -168,18 +247,23 @@ public final class GordianKeySetRecipe {
             /* Allocate the initVector */
             theSalt = new byte[SALTLEN];
             myRandom.nextBytes(theSalt);
+            theMac = pEncryption ? new byte[MACLEN] : null;
 
             /* Calculate the initVector */
             theInitVector = myPersonal.adjustIV(theSalt);
 
             /* Allocate the arrays */
             theSymKeyTypes = new GordianSymKeyType[pFactory.getNumCipherSteps()];
+            theDigestType = pEncryption ? new GordianDigestType[1] : null;
 
             /* Generate recipe and derive parameters */
             int mySeed = myRandom.nextInt();
             theRecipe = TethysDataConverter.integerToByteArray(mySeed);
             mySeed = myPersonal.convertRecipe(mySeed);
-            myManager.deriveKeySetSymKeyTypesFromSeed(mySeed, theSymKeyTypes);
+            mySeed = myManager.deriveKeySetSymKeyTypesFromSeed(mySeed, theSymKeyTypes);
+            if (pEncryption) {
+                myManager.deriveKeyHashDigestTypesFromSeed(mySeed, theDigestType);
+            }
         }
 
         /**
@@ -187,29 +271,37 @@ public final class GordianKeySetRecipe {
          * @param pFactory the factory
          * @param pRecipe the recipe bytes
          * @param pSalt the salt
+         * @param pMac the Mac
          */
         GordianKeySetParameters(final GordianCoreFactory pFactory,
                                 final byte[] pRecipe,
-                                final byte[] pSalt) {
+                                final byte[] pSalt,
+                                final byte[] pMac) {
             /* Obtain Id manager */
             final GordianCoreKeySetFactory myFactory = (GordianCoreKeySetFactory) pFactory.getKeySetFactory();
             final GordianIdManager myManager = myFactory.getIdManager();
             final GordianPersonalisation myPersonal = myFactory.getPersonalisation();
 
-            /* Store recipe and salt */
+            /* Store recipe, salt and Mac */
             theRecipe = pRecipe;
             theSalt = pSalt;
+            theMac = pMac;
+            boolean forEncryption = pMac != null;
 
             /* Calculate the initVector */
             theInitVector = myPersonal.adjustIV(theSalt);
 
             /* Allocate the arrays */
             theSymKeyTypes = new GordianSymKeyType[pFactory.getNumCipherSteps()];
+            theDigestType = forEncryption ? new GordianDigestType[1] : null;
 
             /* derive parameters */
             int mySeed = TethysDataConverter.byteArrayToInteger(theRecipe);
             mySeed = myPersonal.convertRecipe(mySeed);
-            myManager.deriveKeySetSymKeyTypesFromSeed(mySeed, theSymKeyTypes);
+            mySeed = myManager.deriveKeySetSymKeyTypesFromSeed(mySeed, theSymKeyTypes);
+            if (forEncryption) {
+                myManager.deriveKeyHashDigestTypesFromSeed(mySeed, theDigestType);
+            }
         }
 
         /**
@@ -221,11 +313,27 @@ public final class GordianKeySetRecipe {
         }
 
         /**
+         * Obtain the Mac.
+         * @return the mac
+         */
+        byte[] getMac() {
+            return theMac;
+        }
+
+        /**
          * Obtain the SymKey Types.
          * @return the symKeyTypes
          */
         GordianSymKeyType[] getSymKeyTypes() {
             return theSymKeyTypes;
+        }
+
+        /**
+         * Obtain the Digest Type.
+         * @return the digestType
+         */
+        GordianDigestType getDigestType() {
+            return theDigestType[0];
         }
 
         /**

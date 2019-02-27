@@ -17,10 +17,12 @@
 package net.sourceforge.joceanus.jgordianknot.impl.core.keyset;
 
 import java.security.spec.PKCS8EncodedKeySpec;
-import java.util.Arrays;
 import java.util.EnumMap;
 import java.util.Map;
 
+import org.bouncycastle.util.Arrays;
+
+import net.sourceforge.joceanus.jgordianknot.api.base.GordianConsumer;
 import net.sourceforge.joceanus.jgordianknot.api.base.GordianLength;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianCipher;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianCipherFactory;
@@ -28,10 +30,16 @@ import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianPadding;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianSymCipherSpec;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianSymKeySpec;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianSymKeyType;
+import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigest;
+import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigestFactory;
+import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigestSpec;
+import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigestType;
 import net.sourceforge.joceanus.jgordianknot.api.factory.GordianAsymFactory;
 import net.sourceforge.joceanus.jgordianknot.api.key.GordianKey;
 import net.sourceforge.joceanus.jgordianknot.api.base.GordianKeySpec;
 import net.sourceforge.joceanus.jgordianknot.api.key.GordianKeyPair;
+import net.sourceforge.joceanus.jgordianknot.api.mac.GordianMac;
+import net.sourceforge.joceanus.jgordianknot.api.mac.GordianMacFactory;
 import net.sourceforge.joceanus.jgordianknot.api.mac.GordianMacSpec;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianCoreFactory;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianDataException;
@@ -84,9 +92,29 @@ final class GordianMultiCipher {
     private final byte[][] theBuffers = new byte[2][BUFSIZE];
 
     /**
-     * The keySet?
+     * The keySet.
      */
     private final GordianCoreKeySet theKeySet;
+
+    /**
+     * The digest.
+     */
+    private GordianDigest theDigest;
+
+    /**
+     * The Mac.
+     */
+    private GordianMac theMac;
+
+    /**
+     * The initial Consumer.
+     */
+    private GordianConsumer theInitial;
+
+    /**
+     * The final Consumer.
+     */
+    private GordianConsumer theFinal;
 
     /**
      * Have we initialised the map yet?
@@ -200,6 +228,9 @@ final class GordianMultiCipher {
         int myOffset = pOffset;
         int myDataLen = pLength;
 
+        /* Update the initial consumer */
+        theInitial.update(pBytes, pOffset, pLength);
+
         /* Loop through the ciphers */
         for (final GordianCipher<?> myCipher : theCiphers) {
             /* If we have no data to update, we have finished */
@@ -234,8 +265,12 @@ final class GordianMultiCipher {
             throw new GordianDataException("Buffer too short");
         }
 
-        /* Copy data to final buffer */
+        /* If we have data */
         if (myDataLen > 0) {
+            /* Update the final consumer */
+            theFinal.update(mySource, 0, myDataLen);
+
+            /* Copy data to final buffer */
             System.arraycopy(mySource, 0, pOutput, pOutOffset, myDataLen);
             Arrays.fill(mySource, (byte) 0);
         }
@@ -392,8 +427,12 @@ final class GordianMultiCipher {
             throw new GordianDataException("Buffer too short");
         }
 
-        /* Copy data to final buffer */
+        /* If we have data  */
         if (myDataLen > 0) {
+            /* Update the final consumer */
+            theFinal.update(mySource, 0, myDataLen);
+
+            /* Copy data to final buffer */
             System.arraycopy(mySource, 0, pOutput, pOutOffset, myDataLen);
             Arrays.fill(mySource, (byte) 0);
         }
@@ -418,6 +457,7 @@ final class GordianMultiCipher {
         final byte[] myInitVector = pParams.getInitVector();
 
         /* Loop through the keys */
+        int mySection = 0;
         for (int i = 0; i < theNumSteps; i++) {
             /* Obtain the ciphers */
             final GordianSymKeyType myKeyType = mySymKeyTypes[i];
@@ -426,7 +466,7 @@ final class GordianMultiCipher {
             /* Initialise the cipher */
             final GordianKey<GordianSymKeySpec> mySymKey = theSymKeyMap.get(myKeyType);
             final byte[] myIV = myCipher.getCipherSpec().needsIV()
-                                ? calculateInitVector(myInitVector, i == 0 ? 0 : 1)
+                                ? calculateInitVector(myInitVector, mySection++)
                                 : null;
             myCipher.initCipher(mySymKey, myIV, pEncrypt);
 
@@ -435,6 +475,61 @@ final class GordianMultiCipher {
                               ? i
                               : theNumSteps - i - 1;
             theCiphers[myLoc] = myCipher;
+        }
+
+        /* Create the the digest and the Mac */
+        final GordianDigestType myDigest = pParams.getDigestType();
+        final GordianDigestFactory myDigests = theFactory.getDigestFactory();
+        theDigest = myDigests.createDigest(new GordianDigestSpec(myDigest));
+        final GordianMacFactory myMacs = theFactory.getMacFactory();
+        theMac = myMacs.createMac(GordianMacSpec.hMac(myDigest));
+
+        /* Initialise the digest and the Mac */
+        theDigest.update(calculateInitVector(myInitVector, mySection++));
+        theMac.initMac(calculateInitVector(myInitVector, mySection));
+
+        /* Set the consumers inthe correct order */
+        theInitial = pEncrypt ? theDigest : theMac;
+        theFinal = pEncrypt ? theMac : theDigest;
+    }
+
+    /**
+     * Calculate Mac.
+     * @param pParams the parameters.
+     */
+    void calculateMac(final GordianKeySetParameters pParams) {
+        /* Calculate the digest */
+        theMac.update(theDigest.finish());
+
+        /* Calculate the mac and store the required bytes */
+        final byte[] myResult = theMac.finish();
+        System.arraycopy(myResult, 0, pParams.getMac(), 0, GordianKeySetRecipe.MACLEN);
+    }
+
+    /**
+     * validate Mac.
+     * @param pParams the parameters.
+     * @throws OceanusException on error
+     */
+    void validateMac(final GordianKeySetParameters pParams) throws OceanusException {
+        /* Calculate the digest */
+        theMac.update(theDigest.finish());
+
+        /* Calculate the mac */
+        final byte[] myResult = theMac.finish();
+        final byte[] myExpected = pParams.getMac();
+
+        /* Validate the mac */
+        boolean bFailed = false;
+        for (int i = 0; i < GordianKeySetRecipe.MACLEN; i++) {
+            if (myResult[i] != myExpected[i]) {
+                bFailed = true;
+            }
+        }
+
+        /* Throw exception on error */
+        if (bFailed) {
+            throw new GordianDataException("Invalid Mac");
         }
     }
 
@@ -446,9 +541,12 @@ final class GordianMultiCipher {
     private void checkParameters(final GordianKeySetParameters pParams) throws OceanusException {
         /* If we have not yet initialised the keys */
         if (!initKeys) {
+            /* Initialise the keyMap */
             for (final GordianKey<GordianSymKeySpec> myKey : theKeySet.getSymKeyMap().values()) {
                 theSymKeyMap.put(myKey.getKeyType().getSymKeyType(), myKey);
             }
+
+            /* Set the flag */
             initKeys = true;
         }
 

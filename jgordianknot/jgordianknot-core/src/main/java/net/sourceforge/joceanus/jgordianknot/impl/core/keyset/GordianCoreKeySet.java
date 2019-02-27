@@ -119,7 +119,9 @@ public final class GordianCoreKeySet
      * @return the encryption overhead
      */
     public static int getEncryptionOverhead() {
-        return GordianKeySetRecipe.SALTLEN + GordianKeySetRecipe.RECIPELEN;
+        return GordianKeySetRecipe.SALTLEN
+                + GordianKeySetRecipe.MACLEN
+                + GordianKeySetRecipe.RECIPELEN;
     }
 
     /**
@@ -145,12 +147,13 @@ public final class GordianCoreKeySet
     @Override
     public byte[] encryptBytes(final byte[] pBytes) throws OceanusException {
         /* Generate set of keys and initialisation vector */
-        final GordianKeySetRecipe myRecipe = new GordianKeySetRecipe(theFactory);
+        final GordianKeySetRecipe myRecipe =  GordianKeySetRecipe.newEncryptionRecipe(theFactory);
         final GordianKeySetParameters myParams = myRecipe.getParameters();
 
         /* Encrypt the bytes */
         theCipher.initCiphers(myParams, true);
         final byte[] myBytes = theCipher.finish(pBytes);
+        theCipher.calculateMac(myParams);
 
         /* Package and return the encrypted bytes */
         return myRecipe.buildExternal(myBytes);
@@ -159,19 +162,21 @@ public final class GordianCoreKeySet
     @Override
     public byte[] decryptBytes(final byte[] pBytes) throws OceanusException {
         /* Parse the bytes into the separate parts */
-        final GordianKeySetRecipe myRecipe = new GordianKeySetRecipe(theFactory, pBytes);
+        final GordianKeySetRecipe myRecipe = GordianKeySetRecipe.parseEncryptionRecipe(theFactory, pBytes);
         final GordianKeySetParameters myParams = myRecipe.getParameters();
         final byte[] myBytes = myRecipe.getBytes();
 
         /* Decrypt the bytes and return them */
         theCipher.initCiphers(myParams, false);
-        return theCipher.finish(myBytes);
+        final byte[] myResult = theCipher.finish(myBytes);
+        theCipher.validateMac(myParams);
+        return myResult;
     }
 
     @Override
     public byte[] secureKey(final GordianKey<?> pKeyToSecure) throws OceanusException {
         /* Generate set of keys */
-        final GordianKeySetRecipe myRecipe = new GordianKeySetRecipe(theFactory);
+        final GordianKeySetRecipe myRecipe = GordianKeySetRecipe.newWrapRecipe(theFactory);
         final GordianKeySetParameters myParams = myRecipe.getParameters();
 
         /* secure the key */
@@ -185,7 +190,7 @@ public final class GordianCoreKeySet
     public <T extends GordianKeySpec> GordianKey<T> deriveKey(final byte[] pSecuredKey,
                                                               final T pKeyType) throws OceanusException {
         /* Parse the bytes into the separate parts */
-        final GordianKeySetRecipe myRecipe = new GordianKeySetRecipe(theFactory, pSecuredKey);
+        final GordianKeySetRecipe myRecipe = GordianKeySetRecipe.parseWrapRecipe(theFactory, pSecuredKey);
         final GordianKeySetParameters myParams = myRecipe.getParameters();
         final byte[] myBytes = myRecipe.getBytes();
 
@@ -196,7 +201,7 @@ public final class GordianCoreKeySet
     @Override
     public byte[] secureBytes(final byte[] pBytesToSecure) throws OceanusException {
         /* Generate set of keys */
-        final GordianKeySetRecipe myRecipe = new GordianKeySetRecipe(theFactory);
+        final GordianKeySetRecipe myRecipe = GordianKeySetRecipe.newWrapRecipe(theFactory);
         final GordianKeySetParameters myParams = myRecipe.getParameters();
 
         /* secure the key */
@@ -209,18 +214,18 @@ public final class GordianCoreKeySet
     @Override
     public byte[] deriveBytes(final byte[] pSecuredBytes) throws OceanusException {
         /* Parse the bytes into the separate parts */
-        final GordianKeySetRecipe myRecipe = new GordianKeySetRecipe(theFactory, pSecuredBytes);
+        final GordianKeySetRecipe myRecipe = GordianKeySetRecipe.parseWrapRecipe(theFactory, pSecuredBytes);
         final GordianKeySetParameters myParams = myRecipe.getParameters();
         final byte[] myBytes = myRecipe.getBytes();
 
         /* Unwrap the bytes and return them */
         return theCipher.deriveBytes(myParams, myBytes);
-    }
+   }
 
     @Override
     public byte[] securePrivateKey(final GordianKeyPair pKeyPair) throws OceanusException {
         /* Generate set of keys */
-        final GordianKeySetRecipe myRecipe = new GordianKeySetRecipe(theFactory);
+        final GordianKeySetRecipe myRecipe = GordianKeySetRecipe.newWrapRecipe(theFactory);
         final GordianKeySetParameters myParams = myRecipe.getParameters();
 
         /* Wrap the key */
@@ -256,7 +261,7 @@ public final class GordianCoreKeySet
      */
     private PKCS8EncodedKeySpec derivePrivateKeySpec(final byte[] pSecuredPrivateKey) throws OceanusException {
         /* Parse the bytes into the separate parts */
-        final GordianKeySetRecipe myRecipe = new GordianKeySetRecipe(theFactory, pSecuredPrivateKey);
+        final GordianKeySetRecipe myRecipe = GordianKeySetRecipe.parseWrapRecipe(theFactory, pSecuredPrivateKey);
         final GordianKeySetParameters myParams = myRecipe.getParameters();
         final byte[] myBytes = myRecipe.getBytes();
 

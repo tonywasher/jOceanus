@@ -27,22 +27,22 @@ import net.sourceforge.joceanus.jtethys.TethysDataConverter;
 /**
  * Input stream base implementation.
  */
-public abstract class GordianInputStream
+abstract class GordianInputStream
         extends InputStream {
     /**
      * Closed stream failure.
      */
-    protected static final String ERROR_CLOSED = "Stream is closed";
+    static final String ERROR_CLOSED = "Stream is closed";
 
     /**
      * Buffer size for transfers.
      */
-    protected static final int BUFSIZE = 1024;
+    static final int BUFSIZE = 1024;
 
     /**
      * Byte mask.
      */
-    protected static final int BYTE_MASK = TethysDataConverter.BYTE_MASK;
+    static final int BYTE_MASK = TethysDataConverter.BYTE_MASK;
 
     /**
      * The underlying input stream.
@@ -73,7 +73,7 @@ public abstract class GordianInputStream
      * Constructor.
      * @param pInput the underlying input stream
      */
-    protected GordianInputStream(final InputStream pInput) {
+    GordianInputStream(final InputStream pInput) {
         theStream = pInput;
     }
 
@@ -81,7 +81,7 @@ public abstract class GordianInputStream
      * Set the processed buffer.
      * @param pProcessed the processed buffer
      */
-    protected void setProcessedBuffer(final GordianProcessedBuffer pProcessed) {
+    void setProcessedBuffer(final GordianProcessedBuffer pProcessed) {
         theProcessed = pProcessed;
     }
 
@@ -277,14 +277,14 @@ public abstract class GordianInputStream
          * Has EOF been seen.
          * @return true/false
          */
-        protected boolean hasEOFbeenSeen() {
+        boolean hasEOFbeenSeen() {
             return hasEOFbeenSeen;
         }
 
         /**
          * Set EOF seen marker.
          */
-        protected void setEOFSeen() {
+        void setEOFSeen() {
             hasEOFbeenSeen = true;
         }
 
@@ -293,8 +293,8 @@ public abstract class GordianInputStream
          * @param pBuffer the buffer
          * @param pDataLength the dataLength
          */
-        protected void setBuffer(final byte[] pBuffer,
-                                 final int pDataLength) {
+        void setBuffer(final byte[] pBuffer,
+                       final int pDataLength) {
             /* Set new data */
             theStore = pBuffer;
             theDataLen = pDataLength;

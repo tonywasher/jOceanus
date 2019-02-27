@@ -27,7 +27,7 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
 /**
  * Input stream Digest implementation.
  */
-public class GordianDigestInputStream
+class GordianDigestInputStream
         extends GordianInputStream {
     /**
      * The digest.
@@ -40,23 +40,34 @@ public class GordianDigestInputStream
     private final byte[] theExpected;
 
     /**
+     * The MacStream.
+     */
+    private final GordianMacInputStream theMacStream;
+
+    /**
      * Constructor.
      * @param pDigest the digest
      * @param pExpected the expected result
      * @param pInput the underlying input stream
+     * @param pMacStream the MacStream
      */
-    protected GordianDigestInputStream(final GordianDigest pDigest,
-                                       final byte[] pExpected,
-                                       final InputStream pInput) {
+    GordianDigestInputStream(final GordianDigest pDigest,
+                             final byte[] pExpected,
+                             final InputStream pInput,
+                             final GordianMacInputStream pMacStream) {
         /* Initialise underlying class */
         super(pInput);
 
         /* Store parameters */
         theDigest = pDigest;
         theExpected = Arrays.copyOf(pExpected, pExpected.length);
+        theMacStream = pMacStream;
 
         /* Create processed buffer */
         setProcessedBuffer(new GordianDigestBuffer(this));
+
+        /* Report the expected Digest to the Mac */
+        theMacStream.setExpectedDigest(theExpected);
     }
 
     /**

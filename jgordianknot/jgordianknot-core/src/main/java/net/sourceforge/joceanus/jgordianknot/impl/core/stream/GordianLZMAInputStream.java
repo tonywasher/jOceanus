@@ -29,7 +29,7 @@ import SevenZip.Compression.LZMA.Encoder;
  * data from the input stream, decompress the data and write the output to a PipeStream. This class
  * works as the wrapper to read the decompressed data from the PipedStream.
  */
-public final class GordianLZMAInputStream
+final class GordianLZMAInputStream
         extends InputStream {
     /**
      * The sink stream to write to for the decoder thread.
@@ -55,7 +55,7 @@ public final class GordianLZMAInputStream
      * Constructor.
      * @param pInput the input stream to wrap
      */
-    public GordianLZMAInputStream(final InputStream pInput) {
+    GordianLZMAInputStream(final InputStream pInput) {
         /* Store the target */
         theInput = pInput;
 

@@ -28,7 +28,7 @@ import org.bouncycastle.util.Arrays;
  * Class to provide a pipe enabling data to be passed between threads via writing to an output
  * stream and reading from an input stream.
  */
-public class GordianPipedStream {
+class GordianPipedStream {
     /**
      * The Queue Capacity.
      */
@@ -57,7 +57,7 @@ public class GordianPipedStream {
     /**
      * Constructor.
      */
-    public GordianPipedStream() {
+    GordianPipedStream() {
         /* Create the queue */
         theQueue = new ArrayBlockingQueue<>(QUEUE_LEN);
 
@@ -80,7 +80,7 @@ public class GordianPipedStream {
      * Obtain the sink stream.
      * @return the sink stream
      */
-    public OutputStream getSink() {
+    OutputStream getSink() {
         return theSink;
     }
 

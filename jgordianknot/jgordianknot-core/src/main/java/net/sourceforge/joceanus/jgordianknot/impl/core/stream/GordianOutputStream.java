@@ -22,12 +22,12 @@ import java.io.OutputStream;
 /**
  * Output stream base implementation.
  */
-public abstract class GordianOutputStream
+abstract class GordianOutputStream
         extends OutputStream {
     /**
      * Closed stream failure.
      */
-    protected static final String ERROR_CLOSED = GordianInputStream.ERROR_CLOSED;
+    static final String ERROR_CLOSED = GordianInputStream.ERROR_CLOSED;
 
     /**
      * The underlying output stream.
@@ -48,7 +48,7 @@ public abstract class GordianOutputStream
      * Constructor.
      * @param pOutput the underlying output stream
      */
-    protected GordianOutputStream(final OutputStream pOutput) {
+    GordianOutputStream(final OutputStream pOutput) {
         theStream = pOutput;
     }
 
@@ -56,7 +56,7 @@ public abstract class GordianOutputStream
      * Obtain the next stream.
      * @return the stream
      */
-    public OutputStream getNextStream() {
+    OutputStream getNextStream() {
         return theStream;
     }
 
@@ -64,11 +64,11 @@ public abstract class GordianOutputStream
     public void close() throws IOException {
         /* Null operation if we are already closed */
         if (!isClosed) {
-            /* Finish processing the data */
-            finishData();
-
             /* Flush the output stream */
             theStream.flush();
+
+            /* Finish processing the data */
+            finishData();
 
             /* Close the output stream */
             theStream.close();
@@ -118,9 +118,9 @@ public abstract class GordianOutputStream
      * @param pLength the length of the data to use
      * @throws IOException on error
      */
-    protected void writeToStream(final byte[] pBytes,
-                                 final int pOffset,
-                                 final int pLength) throws IOException {
+    void writeToStream(final byte[] pBytes,
+                       final int pOffset,
+                       final int pLength) throws IOException {
         /* Write the bytes to the stream */
         theStream.write(pBytes, pOffset, pLength);
     }

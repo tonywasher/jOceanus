@@ -27,7 +27,7 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
 /**
  * Input stream MAC implementation.
  */
-public class GordianMacInputStream
+class GordianMacInputStream
         extends GordianInputStream {
     /**
      * The MAC.
@@ -40,14 +40,19 @@ public class GordianMacInputStream
     private final byte[] theExpected;
 
     /**
+     * The expected digest.
+     */
+    private byte[] theDigest;
+
+    /**
      * Constructor.
      * @param pMac the MAC
      * @param pExpected the expected result
      * @param pInput the underlying input stream
      */
-    protected GordianMacInputStream(final GordianMac pMac,
-                                    final byte[] pExpected,
-                                    final InputStream pInput) {
+    GordianMacInputStream(final GordianMac pMac,
+                          final byte[] pExpected,
+                          final InputStream pInput) {
         /* Initialise underlying class */
         super(pInput);
 
@@ -68,10 +73,21 @@ public class GordianMacInputStream
     }
 
     /**
+     * Set the expected digest.
+     * @param pExpected the expected digest
+     */
+    void setExpectedDigest(final byte[] pExpected) {
+        theDigest = pExpected;
+    }
+
+    /**
      * Check result.
      * @throws OceanusException on error
      */
     void checkResult() throws OceanusException {
+        /* Record the digest */
+        theMac.update(theDigest);
+
         /* Calculate MAC */
         final byte[] myResult = theMac.finish();
 
@@ -108,11 +124,8 @@ public class GordianMacInputStream
         @Override
         public int processBytes(final byte[] pBuffer,
                                 final int pLength) throws OceanusException {
-            /* Initialise variables */
-            final int iLength = pLength;
-
             /* If we have EOF from the input stream */
-            if (iLength == -1) {
+            if (pLength == -1) {
                 /* Record the fact and reset the read length to zero */
                 setEOFSeen();
                 theStream.checkResult();
@@ -120,11 +133,11 @@ public class GordianMacInputStream
             }
 
             /* Update the MAC */
-            theMac.update(pBuffer, 0, iLength);
+            theMac.update(pBuffer, 0, pLength);
 
             /* Set up buffer variables */
-            setBuffer(pBuffer, iLength);
-            return iLength;
+            setBuffer(pBuffer, pLength);
+            return pLength;
         }
     }
 }

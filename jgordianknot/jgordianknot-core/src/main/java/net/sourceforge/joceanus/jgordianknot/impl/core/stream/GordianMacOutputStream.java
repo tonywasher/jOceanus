@@ -33,6 +33,11 @@ public class GordianMacOutputStream
     private final GordianMac theMac;
 
     /**
+     * The digest result.
+     */
+    private byte[] theDigest;
+
+    /**
      * The result.
      */
     private byte[] theResult;
@@ -47,8 +52,8 @@ public class GordianMacOutputStream
      * @param pMac the MAC
      * @param pOutput the underlying output stream
      */
-    protected GordianMacOutputStream(final GordianMac pMac,
-                                     final OutputStream pOutput) {
+    GordianMacOutputStream(final GordianMac pMac,
+                           final OutputStream pOutput) {
         super(pOutput);
         theMac = pMac;
     }
@@ -75,7 +80,7 @@ public class GordianMacOutputStream
      * Obtain the dataLength.
      * @return the length
      */
-    public long getDataLen() {
+    long getDataLen() {
         return theDataLen;
     }
 
@@ -89,8 +94,18 @@ public class GordianMacOutputStream
         writeToStream(pBytes, pOffset, pLength);
     }
 
+    /**
+     * Record the digest.
+     * @param pDigest the digest
+     */
+    void setDigest(final byte[] pDigest) {
+        /* Record the digest */
+        theDigest = pDigest;
+    }
+
     @Override
     protected void finishData() {
+        theMac.update(theDigest);
         theResult = theMac.finish();
     }
 }
