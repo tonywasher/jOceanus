@@ -71,9 +71,39 @@ public class GordianIdManager {
     private final GordianSymKeyType[] theKeySetSymKeys;
 
     /**
+     * The list of CMac Symmetric Keys.
+     */
+    private final GordianSymKeyType[] theCMacSymKeys;
+
+    /**
+     * The list of CMac Symmetric Keys.
+     */
+    private final GordianSymKeyType[] theGMacSymKeys;
+
+    /**
+     * The list of Poly1305 Symmetric Keys.
+     */
+    private final GordianSymKeyType[] thePolySymKeys;
+
+    /**
+     * The list of CBCMac Symmetric Keys.
+     */
+    private final GordianSymKeyType[] theCBCMacSymKeys;
+
+    /**
+     * The list of CFBMac Symmetric Keys.
+     */
+    private final GordianSymKeyType[] theCFBMacSymKeys;
+
+    /**
      * The list of Stream Keys.
      */
     private final GordianStreamKeyType[] theStreamKeys;
+
+    /**
+     * The list of largeData Stream Keys.
+     */
+    private final GordianStreamKeyType[] theLargeDataStreamKeys;
 
     /**
      * The list of Digests.
@@ -101,6 +131,11 @@ public class GordianIdManager {
     private final GordianMacType[] theMacs;
 
     /**
+     * The list of LargeData MACs.
+     */
+    private final GordianMacType[] theLargeDataMacs;
+
+    /**
      * Constructor.
      * @param pFactory the security factory
      * @param pKeySetFactory the keySet factory
@@ -118,14 +153,38 @@ public class GordianIdManager {
         final GordianMacFactory myMacs = theFactory.getMacFactory();
 
         /* Create shuffled and filtered lists */
-        theSymKeys = shuffleTypes(GordianSymKeyType.values(), GordianPersonalId.SYMKEY, myCiphers.supportedSymKeyTypes());
-        theKeySetSymKeys = shuffleTypes(GordianSymKeyType.values(), GordianPersonalId.KEYSETSYMKEY, pKeySetFactory.supportedKeySetSymKeyTypes());
-        theStreamKeys = shuffleTypes(GordianStreamKeyType.values(), GordianPersonalId.STREAMKEY, myCiphers.supportedStreamKeyTypes());
+        theSymKeys = shuffleTypes(GordianSymKeyType.values(), GordianPersonalId.SYMKEY,
+                myCiphers.supportedSymKeyTypes());
+        theKeySetSymKeys = shuffleTypes(GordianSymKeyType.values(), GordianPersonalId.SYMKEY,
+                pKeySetFactory.supportedKeySetSymKeyTypes());
+        theCMacSymKeys = shuffleTypes(GordianSymKeyType.values(), GordianPersonalId.SYMKEY,
+                t -> validSymKeyTypeForMacType(GordianMacType.CMAC, t));
+        theGMacSymKeys = shuffleTypes(GordianSymKeyType.values(), GordianPersonalId.SYMKEY,
+                t -> validSymKeyTypeForMacType(GordianMacType.GMAC, t));
+        thePolySymKeys = shuffleTypes(GordianSymKeyType.values(), GordianPersonalId.SYMKEY,
+                t -> validSymKeyTypeForMacType(GordianMacType.POLY1305, t));
+        theCBCMacSymKeys = shuffleTypes(GordianSymKeyType.values(), GordianPersonalId.SYMKEY,
+                t -> validSymKeyTypeForMacType(GordianMacType.CBCMAC, t));
+        theCFBMacSymKeys = shuffleTypes(GordianSymKeyType.values(), GordianPersonalId.SYMKEY,
+                t -> validSymKeyTypeForMacType(GordianMacType.CFBMAC, t));
+
+        /* Create shuffled streamKey lists */
+        theStreamKeys = shuffleTypes(GordianStreamKeyType.values(), GordianPersonalId.STREAMKEY,
+                myCiphers.supportedStreamKeyTypes());
+        theLargeDataStreamKeys = shuffleTypes(GordianStreamKeyType.values(), GordianPersonalId.STREAMKEY,
+                myCiphers.supportedStreamKeyTypes().and(GordianStreamKeyType::supportsLargeData));
+
+        /* Create shuffled digest lists */
         theDigests = shuffleTypes(GordianDigestType.values(), GordianPersonalId.DIGEST, myDigests.supportedDigestTypes());
-        theExternalDigests = shuffleTypes(GordianDigestType.values(), GordianPersonalId.XTERNDIGEST, myDigests.supportedExternalDigestTypes());
-        theKeySetDigests = shuffleTypes(GordianDigestType.values(), GordianPersonalId.KEYSETDIGEST, pKeySetFactory.supportedKeySetDigestTypes());
-        theHMacDigests = shuffleTypes(GordianDigestType.values(), GordianPersonalId.HMAC, myMacs.supportedHMacDigestTypes());
-        theMacs = shuffleTypes(GordianMacType.values(), GordianPersonalId.MAC, myMacs.supportedMacTypes());
+        theExternalDigests = shuffleTypes(GordianDigestType.values(), GordianPersonalId.DIGEST, myDigests.supportedExternalDigestTypes());
+        theKeySetDigests = shuffleTypes(GordianDigestType.values(), GordianPersonalId.DIGEST, pKeySetFactory.supportedKeySetDigestTypes());
+        theHMacDigests = shuffleTypes(GordianDigestType.values(), GordianPersonalId.DIGEST, myMacs.supportedHMacDigestTypes());
+
+        /* Create shuffled MacType lists */
+        theMacs = shuffleTypes(GordianMacType.values(), GordianPersonalId.MAC,
+                myMacs.supportedMacTypes());
+        theLargeDataMacs = shuffleTypes(GordianMacType.values(), GordianPersonalId.MAC,
+                myMacs.supportedMacTypes().and(GordianMacType::supportsLargeData));
     }
 
     /**
@@ -231,15 +290,7 @@ public class GordianIdManager {
      * @return the random streamKeyType
      */
     public GordianStreamKeyType generateRandomStreamKeyType(final boolean pLargeData) {
-        /* Loop in case we need to retry */
-        for (;;) {
-            /* Generate a random streamKey type and return it if suitable */
-            final GordianStreamKeyType[] myStreamKey = getRandomTypes(theStreamKeys, 1);
-            if (!pLargeData || myStreamKey[0].supportsLargeData()) {
-                /* Return the StreamKeyType */
-                return myStreamKey[0];
-            }
-        }
+        return getRandomTypes(pLargeData ? theLargeDataStreamKeys : theStreamKeys, 1)[0];
      }
 
     /**
@@ -410,15 +461,20 @@ public class GordianIdManager {
      * @return the random macType
      */
     private GordianMacType generateRandomMacType(final boolean pLargeData) {
-        /* Loop in case we need to retry */
-        for (;;) {
-            /* Generate a random macType and return it if suitable */
-            final GordianMacType[] myMacType = getRandomTypes(theMacs, 1);
-            if (!pLargeData || myMacType[0].supportsLargeData()) {
-                /* Return the macType */
-                return myMacType[0];
-            }
-        }
+        return getRandomTypes(pLargeData ? theLargeDataMacs : theMacs, 1)[0];
+    }
+
+    /**
+     * Is the symKeyType valid for the MacType.
+     * @param pMacType the macType
+     * @param pSymKeyType the symKey Type
+     * @return true/false
+     */
+    private boolean validSymKeyTypeForMacType(final GordianMacType pMacType,
+                                              final GordianSymKeyType pSymKeyType) {
+        final GordianMacFactory myMacs = theFactory.getMacFactory();
+        final GordianMacSpec myMacSpec = new GordianMacSpec(pMacType, new GordianSymKeySpec(pSymKeyType));
+        return myMacs.supportedMacSpecs().test(myMacSpec);
     }
 
     /**
@@ -427,17 +483,32 @@ public class GordianIdManager {
      * @return the random symKey MacSpec
      */
     private GordianMacSpec generateRandomSymKeyMacSpec(final GordianMacType pMacType) {
-        /* Loop in case we need to retry */
-        final GordianMacFactory myMacs = theFactory.getMacFactory();
-        for (;;) {
-            /* Generate a random symKey for the Mac and return it if suitable */
-            final GordianSymKeyType mySymType = generateRandomKeySetSymKeyType();
-            final GordianMacSpec myMacSpec = new GordianMacSpec(pMacType, new GordianSymKeySpec(mySymType));
-            if (myMacs.supportedMacSpecs().test(myMacSpec)) {
-                return myMacSpec;
-            }
-        }
+        final GordianSymKeyType mySymType = getRandomTypes(determineSymKeySetForMacType(pMacType), 1)[0];
+        return new GordianMacSpec(pMacType, new GordianSymKeySpec(mySymType));
     }
+
+    /**
+     * Obtain random symKey MacSpec.
+     * @param pMacType the macType
+     * @return the random symKey MacSpec
+     */
+    private GordianSymKeyType[] determineSymKeySetForMacType(final GordianMacType pMacType) {
+        /* Obtain the correct symKeySet */
+        switch (pMacType) {
+            case CMAC:
+                return theCMacSymKeys;
+            case GMAC:
+                return theGMacSymKeys;
+            case POLY1305:
+                return thePolySymKeys;
+            case CBCMAC:
+                return theCBCMacSymKeys;
+            case CFBMAC:
+                return theCFBMacSymKeys;
+            default:
+                throw new IllegalArgumentException("IllegalMacType: " + pMacType);
+        }
+     }
 
     /**
      * Obtain macSpec from encoded macSpecId.
@@ -474,7 +545,7 @@ public class GordianIdManager {
                 mySpec = deriveDigestSpecFromEncodedId(myCode);
                 return GordianMacSpec.kupynaMac(mySpec.getDigestLength());
             case ZUC:
-                GordianLength myLength = deriveLengthFromEncodedId(myCode);
+                final GordianLength myLength = deriveLengthFromEncodedId(myCode);
                 return GordianMacSpec.zucMac(myLength);
             case SIPHASH:
                 return new GordianMacSpec(GordianMacType.SIPHASH, myCode != 0);

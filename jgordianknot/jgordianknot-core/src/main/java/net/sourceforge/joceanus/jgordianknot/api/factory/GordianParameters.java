@@ -48,7 +48,7 @@ public class GordianParameters {
     /**
      * Maximum Cipher Steps.
      */
-    public static final Integer MAXIMUM_CIPHER_STEPS = 5;
+    public static final Integer MAXIMUM_CIPHER_STEPS = 6;
 
     /**
      * Default Cipher Steps.

@@ -194,7 +194,7 @@ public abstract class GordianCoreMacFactory
             case CBCMAC:
             case CFBMAC:
                 return (!GordianSymKeyType.RC5.equals(mySymSpec.getSymKeyType())
-                        && !GordianLength.LEN_128.equals(mySymSpec.getBlockLength()))
+                        || !GordianLength.LEN_128.equals(mySymSpec.getBlockLength()))
                     && myCiphers.validSymKeySpec(mySymSpec);
             case ZUC:
                 return validZucMacLength(pMacSpec.getMacLength());

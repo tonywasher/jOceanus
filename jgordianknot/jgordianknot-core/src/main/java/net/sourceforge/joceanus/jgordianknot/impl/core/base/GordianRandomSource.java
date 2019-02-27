@@ -80,6 +80,12 @@ public class GordianRandomSource {
      * @throws OceanusException on error
      */
     private static SecureRandom getStrongRandom() throws OceanusException {
+        /* Return the entropy if it has been created */
+        if (theStrongEntropy != null) {
+            return theStrongEntropy;
+        }
+
+        /* Synchronize the attempts */
         synchronized (GordianRandomSource.class) {
             /* If we have not yet created the strong entropy */
             if (theStrongEntropy == null) {
@@ -101,6 +107,7 @@ public class GordianRandomSource {
             return theStrongEntropy;
         }
     }
+
     /**
      * Create a personalisation Vector.
      * @return initVector.

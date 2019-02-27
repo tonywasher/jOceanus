@@ -82,25 +82,15 @@ public class JcaDigestFactory
             return false;
         }
 
-        /* Disable JH, Groestl, and CubeHash */
+        /* Disable JH, Groestl, SHAKE and CubeHash */
         switch (pDigestType) {
             case JH:
             case GROESTL:
+            case SHAKE:
             case CUBEHASH:
                 return false;
             default:
                 return true;
         }
-    }
-
-    @Override
-    public boolean validDigestSpec(final GordianDigestSpec pDigestSpec) {
-        /* Perform standard checks */
-        if (!super.validDigestSpec(pDigestSpec)) {
-            return false;
-        }
-
-        /* Disable SHAKE via DigestSpec */
-        return !GordianDigestType.SHAKE.equals(pDigestSpec.getDigestType());
     }
 }

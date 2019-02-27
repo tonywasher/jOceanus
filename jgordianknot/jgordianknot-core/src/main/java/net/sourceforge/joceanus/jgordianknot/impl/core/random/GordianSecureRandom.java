@@ -55,6 +55,16 @@ public class GordianSecureRandom
     private final boolean predictionResistant;
 
     /**
+     * The pre-calculated buffer.
+     */
+    private final byte[] theBuffer;
+
+    /**
+     * Bytes available in buffer.
+     */
+    private int bytesAvailable;
+
+    /**
      * Constructor.
      * @param pGenerator the random generator
      * @param pRandom the secure random instance
@@ -70,6 +80,7 @@ public class GordianSecureRandom
         theRandom = pRandom;
         theEntropy = pEntropy;
         predictionResistant = isPredictionResistant;
+        theBuffer = new byte[pGenerator.getBlockSize()];
     }
 
     @Override
@@ -80,19 +91,18 @@ public class GordianSecureRandom
     @Override
     public void setSeed(final byte[] seed) {
         synchronized (this) {
-            /* Ensure that the random generator is seeded if it exists */
-            if (theRandom != null) {
-                theRandom.setSeed(seed);
-            }
+            /* Pass the call on */
+            theRandom.setSeed(seed);
+            bytesAvailable = 0;
         }
     }
 
     @Override
     public void setSeed(final long seed) {
         synchronized (this) {
-            /* this will happen when SecureRandom() is created */
             if (theRandom != null) {
                 theRandom.setSeed(seed);
+                bytesAvailable = 0;
             }
         }
     }
@@ -100,13 +110,46 @@ public class GordianSecureRandom
     @Override
     public void nextBytes(final byte[] bytes) {
         synchronized (this) {
-            /* Generate, checking for reSeed request */
-            if (theGenerator.generate(bytes, null, predictionResistant) < 0) {
-                /* ReSeed and regenerate */
-                theGenerator.reseed(null);
-                theGenerator.generate(bytes, null, predictionResistant);
+            /* Determine how many bytes are needed */
+            int bytesNeeded = bytes.length;
+            int bytesBuilt = 0;
+
+            /* If we have bytes available */
+            if (bytesAvailable > 0) {
+                /* Fulfil the request from the buffer as much as possible */
+                final int bytesToTransfer = Math.min(bytesNeeded, bytesAvailable);
+                System.arraycopy(theBuffer, theBuffer.length - bytesAvailable, bytes, 0, bytesToTransfer);
+                bytesAvailable -= bytesToTransfer;
+                bytesNeeded -= bytesToTransfer;
+                bytesBuilt += bytesToTransfer;
+            }
+
+            /* Loop to fulfil remaining bytes */
+            while (bytesNeeded > 0) {
+                /* Fill the buffer again */
+                nextBuffer();
+
+                /* Fulfil the request from the buffer as much as possible */
+                final int bytesToTransfer = Math.min(bytesNeeded, bytesAvailable);
+                System.arraycopy(theBuffer, 0, bytes, bytesBuilt, bytesToTransfer);
+                bytesAvailable -= bytesToTransfer;
+                bytesNeeded -= bytesToTransfer;
+                bytesBuilt += bytesToTransfer;
             }
         }
+    }
+
+    /**
+     * Next buffer of random data.
+     */
+    private void nextBuffer() {
+        /* Generate, checking for reSeed request */
+        if (theGenerator.generate(theBuffer, null, predictionResistant) < 0) {
+            /* ReSeed and regenerate */
+            theGenerator.reseed(null);
+            theGenerator.generate(theBuffer, null, predictionResistant);
+        }
+        bytesAvailable = theBuffer.length;
     }
 
     @Override
@@ -131,6 +174,7 @@ public class GordianSecureRandom
     public void reseed(final byte[] pXtraInput) {
         synchronized (this) {
             theGenerator.reseed(pXtraInput);
+            bytesAvailable = 0;
         }
     }
 }

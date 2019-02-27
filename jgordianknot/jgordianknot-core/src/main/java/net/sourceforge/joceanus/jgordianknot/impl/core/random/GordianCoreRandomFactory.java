@@ -224,7 +224,7 @@ public class GordianCoreRandomFactory
 
             /* If this is a valid digestSpec, return it */
             if (myPredicate.test(mySpec)) {
-                return new GordianRandomSpec(myType, new GordianDigestSpec(myDigestTypes[myInt]), true);
+                return new GordianRandomSpec(myType, new GordianDigestSpec(myDigestTypes[myInt]), false);
             }
         }
     }

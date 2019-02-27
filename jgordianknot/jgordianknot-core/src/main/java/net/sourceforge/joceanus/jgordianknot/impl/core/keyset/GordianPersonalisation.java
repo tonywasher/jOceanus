@@ -281,11 +281,6 @@ public class GordianPersonalisation {
         SYMKEY,
 
         /**
-         * KeySetSymKey.
-         */
-        KEYSETSYMKEY,
-
-        /**
          * StreamKey.
          */
         STREAMKEY,
@@ -294,21 +289,6 @@ public class GordianPersonalisation {
          * Digest.
          */
         DIGEST,
-
-        /**
-         * ExternalDigest.
-         */
-        XTERNDIGEST,
-
-        /**
-         * KeySetDigest.
-         */
-        KEYSETDIGEST,
-
-        /**
-         * HMac.
-         */
-        HMAC,
 
         /**
          * MAC.
