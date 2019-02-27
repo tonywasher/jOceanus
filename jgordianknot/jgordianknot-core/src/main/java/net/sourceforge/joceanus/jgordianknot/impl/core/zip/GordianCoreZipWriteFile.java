@@ -121,8 +121,8 @@ public class GordianCoreZipWriteFile
             /* Record hash */
             theHash = (GordianCoreKeySetHash) pHash;
 
-            /* Create a similar hash and record details */
-            final GordianCoreKeySetHash myHash = theHash.similarHash();
+            /* Create a child hash and record details */
+            final GordianCoreKeySetHash myHash = theHash.childHash();
             theHashBytes = myHash.getHash();
             theKeySet = myHash.getKeySet();
 

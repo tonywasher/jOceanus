@@ -22,7 +22,6 @@ import java.util.function.Predicate;
 
 import net.sourceforge.joceanus.jgordianknot.api.agree.GordianAgreementFactory;
 import net.sourceforge.joceanus.jgordianknot.api.asym.GordianAsymKeySpec;
-import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigestType;
 import net.sourceforge.joceanus.jgordianknot.api.encrypt.GordianEncryptorFactory;
 import net.sourceforge.joceanus.jgordianknot.api.factory.GordianAsymFactory;
 import net.sourceforge.joceanus.jgordianknot.api.sign.GordianSignatureFactory;

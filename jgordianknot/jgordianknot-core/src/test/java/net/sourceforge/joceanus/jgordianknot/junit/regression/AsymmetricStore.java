@@ -151,7 +151,6 @@ class AsymmetricStore {
             /* Store parameters */
             theFactoryType = pFactory.getFactoryType();
             theFactory = pFactory.getAsymmetricFactory();
-            thePartner = pPartner.getAsymmetricFactory();
             theKeySpec = pKeySpec;
 
             /* Initialise data */
@@ -159,6 +158,11 @@ class AsymmetricStore {
             theSignatures = new ArrayList<>();
             theAgreements = new ArrayList<>();
             theEncryptors = new ArrayList<>();
+
+            /* Check whether the keySpec is supported by the partner */
+            thePartner = pPartner.getAsymmetricFactory().supportedAsymKeySpecs().test(pKeySpec)
+                         ? pPartner.getAsymmetricFactory()
+                         : null;
         }
 
         /**
@@ -406,7 +410,8 @@ class AsymmetricStore {
          */
         GordianKeyPair getPartnerSelfKeyPair() throws OceanusException {
             /* Return partnerSelf keyPair if it exists */
-            if (thePartnerSelf != null) {
+            if (thePartnerSelf != null
+                 || theOwner.getPartner() == null) {
                 return thePartnerSelf;
             }
 
@@ -439,7 +444,8 @@ class AsymmetricStore {
          */
         GordianKeyPair getPartnerTargetKeyPair() throws OceanusException {
             /* Return partnerTarget keyPair if it exists */
-            if (thePartnerTarget != null) {
+            if (thePartnerTarget != null
+                    || theOwner.getPartner() == null) {
                 return thePartnerTarget;
             }
 

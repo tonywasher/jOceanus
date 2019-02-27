@@ -505,7 +505,7 @@ public final class GordianMacSpec implements GordianKeySpec {
             theName = theMacType.toString();
             if (theSubSpec != null) {
                 if (GordianMacType.SIPHASH.equals(theMacType)) {
-                    theName += SEP + (getBoolean() ? "2-4": "4-8");
+                    theName += SEP + (getBoolean() ? "2-4" : "4-8");
                 } else {
                     theName += SEP + theSubSpec.toString();
                 }

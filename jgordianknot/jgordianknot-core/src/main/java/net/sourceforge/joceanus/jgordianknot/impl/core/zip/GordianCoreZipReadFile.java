@@ -173,7 +173,7 @@ public class GordianCoreZipReadFile
         /* Obtain encoded keySet */
         final GordianCoreKeySetHash myKeyHash = (GordianCoreKeySetHash) pHash;
         final byte[] myHashBytes = myHeader.getHash();
-        final GordianCoreKeySetHash myHash = (GordianCoreKeySetHash) myKeyHash.attemptPasswordForHash(myHashBytes);
+        final GordianCoreKeySetHash myHash = (GordianCoreKeySetHash) myKeyHash.resolveChildHash(myHashBytes);
 
         /* Reject if wrong password */
         if (myHash == null) {

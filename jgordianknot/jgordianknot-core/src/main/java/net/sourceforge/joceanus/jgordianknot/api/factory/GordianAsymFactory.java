@@ -100,7 +100,7 @@ public interface GordianAsymFactory {
     }
 
     /**
-     * Obtain a list of supported asymKeySpecs for a KeyType
+     * Obtain a list of supported asymKeySpecs for a KeyType.
      * @param pKeyType the keyType
      * @return the list of supported asymKeySpecs.
      */

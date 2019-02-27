@@ -296,7 +296,7 @@ public class BouncyMacFactory
      */
     private static Mac getBCSipHash(final Boolean pFast) {
         return pFast ? new SipHash()
-                     : new SipHash(SIPHASH_STD, SIPHASH_STD << 1) ;
+                     : new SipHash(SIPHASH_STD, SIPHASH_STD << 1);
     }
 
     /**
