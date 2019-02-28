@@ -279,12 +279,12 @@ public abstract class GordianSecurityManager {
     }
 
     /**
-     * Obtain KeyWrapSize.
+     * Obtain Maximum KeyWrapLength.
      * @return the maximum keyWrap size
      */
-    public static int getMaximumKeyWrapSize() {
-        return GordianCoreKeySet.getKeyWrapExpansion(GordianParameters.MAXIMUM_CIPHER_STEPS)
-                + GordianCoreFactory.getKeyLength(false) / Byte.SIZE;
+    public static int getMaximumKeyWrapLength() {
+        return GordianCoreKeySet.getDataWrapLength(GordianCoreFactory.getKeyLength(false) / Byte.SIZE,
+                GordianParameters.MAXIMUM_CIPHER_STEPS);
     }
 
     /**
@@ -299,18 +299,11 @@ public abstract class GordianSecurityManager {
      * Obtain Encryption length.
      *
      * @param pDataLength the length of data to be encrypted
+     * @param pAEAD true/false is AEAD in use?
      * @return the length of encrypted data
      */
-    public static int getEncryptionLength(final int pDataLength) {
-        return GordianCoreKeySet.getEncryptionLength(pDataLength);
-    }
-
-    /**
-     * Obtain Encryption overhead.
-     *
-     * @return the encryption overhead
-     */
-    public static int getEncryptionOverhead() {
-        return GordianCoreKeySet.getEncryptionOverhead();
+    public static int getKeySetEncryptionLength(final int pDataLength,
+                                                final boolean pAEAD) {
+        return GordianCoreKeySet.getEncryptionLength(pDataLength, pAEAD);
     }
 }

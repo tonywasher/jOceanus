@@ -259,7 +259,7 @@ public class GordianX931CipherDRBG
     @Override
     public int getBlockSize() {
         final GordianSymCipherSpec mySpec = (GordianSymCipherSpec) theCipher.getCipherSpec();
-        return mySpec.getBlockLength();
+        return mySpec.getBlockLength().getLength();
     }
 
     @Override

@@ -25,7 +25,6 @@ import java.util.function.Predicate;
 import net.sourceforge.joceanus.jgordianknot.api.asym.GordianAsymKeySpec;
 import net.sourceforge.joceanus.jgordianknot.api.base.GordianLength;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianCipherFactory;
-import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianWrapper;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianSymKeySpec;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianSymKeyType;
 import net.sourceforge.joceanus.jgordianknot.api.factory.GordianAsymFactory;
@@ -38,6 +37,7 @@ import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetFactory;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianCoreFactory;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianDataException;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianLogicException;
+import net.sourceforge.joceanus.jgordianknot.impl.core.cipher.GordianCoreWrapper;
 import net.sourceforge.joceanus.jgordianknot.impl.core.key.GordianCoreKeyGenerator;
 import net.sourceforge.joceanus.jgordianknot.impl.core.keypair.GordianCoreKeyPairGenerator;
 import net.sourceforge.joceanus.jgordianknot.impl.core.keyset.GordianKeySetRecipe.GordianKeySetParameters;
@@ -51,7 +51,7 @@ public final class GordianCoreKeySet
     /**
      * Initialisation Vector size.
      */
-    private static final int BLOCKLEN = GordianLength.LEN_128.getByteLength();
+    private static final GordianLength BLOCKLEN = GordianLength.LEN_128;
 
     /**
      * The factory.
@@ -69,11 +69,16 @@ public final class GordianCoreKeySet
     private final GordianMultiCipher theCipher;
 
     /**
+     * is the keySet in AEAD mode?
+     */
+    private boolean isAEAD;
+
+    /**
      * Constructor.
      *
      * @param pFactory the factory
      */
-    protected GordianCoreKeySet(final GordianCoreFactory pFactory) {
+    GordianCoreKeySet(final GordianCoreFactory pFactory) {
         /* Store parameters */
         theFactory = pFactory;
 
@@ -82,6 +87,25 @@ public final class GordianCoreKeySet
 
         /* Create the cipher */
         theCipher = new GordianMultiCipher(this);
+    }
+
+    /**
+     * Constructor.
+     *
+     * @param pSource the source
+     */
+    private GordianCoreKeySet(final GordianCoreKeySet pSource) {
+        /* Copy factory */
+        theFactory = pSource.getFactory();
+
+        /* Copy the symKeyMap */
+        theSymKeyMap = new HashMap<>(pSource.getSymKeyMap());
+
+        /* Create the cipher */
+        theCipher = new GordianMultiCipher(this);
+
+        /* Copy AEAD mode */
+        isAEAD = pSource.isAEAD();
     }
 
     /**
@@ -101,59 +125,116 @@ public final class GordianCoreKeySet
         return theSymKeyMap;
     }
 
+
+    @Override
+    public GordianCoreKeySet cloneIt() {
+        return new GordianCoreKeySet(this);
+    }
+
+    @Override
+    public boolean isAEAD() {
+        return isAEAD;
+    }
+
+    @Override
+    public void setAEAD(final boolean pAEAD) {
+        isAEAD = pAEAD;
+    }
+
     /**
      * Encryption length.
      *
      * @param pDataLength the length of data to be encrypted
      * @return the length of encrypted data
      */
-    public static int getEncryptionLength(final int pDataLength) {
-        final int iBlocks = 1 + ((pDataLength - 1) % BLOCKLEN);
-        return iBlocks
-                * BLOCKLEN;
+    public int getEncryptionLength(final int pDataLength) {
+        return getEncryptionLength(pDataLength, isAEAD);
+    }
+
+    /**
+     * Encryption length.
+     *
+     * @param pDataLength the length of data to be encrypted
+     * @param pAEAD true/false is AEAD in use?
+     * @return the length of encrypted data
+     */
+    public static int getEncryptionLength(final int pDataLength,
+                                          final boolean pAEAD) {
+        final int iBlocks = 1 + (pDataLength / BLOCKLEN.getByteLength());
+        return iBlocks * BLOCKLEN.getByteLength()
+                + getEncryptionOverhead(pAEAD);
     }
 
     /**
      * Encryption overhead.
-     *
+     * @param pAEAD true/false is AEAD in use?
      * @return the encryption overhead
      */
-    public static int getEncryptionOverhead() {
+    private static int getEncryptionOverhead(final boolean pAEAD) {
         return GordianKeySetRecipe.SALTLEN
-                + GordianKeySetRecipe.MACLEN
-                + GordianKeySetRecipe.RECIPELEN;
+                + GordianKeySetRecipe.RECIPELEN
+                + (pAEAD ? GordianKeySetRecipe.MACLEN : 0);
     }
 
     /**
-     * Obtain keyWrapExpansion for this keySet.
-     *
-     * @return the keyWrap expansion
+     * Obtain wrapped size of a key.
+     * @return the wrapped length
      */
-    public int getKeyWrapExpansion() {
-        return getKeyWrapExpansion(theFactory.getNumCipherSteps() - 1);
+    public int getKeyWrapLength() {
+        return getDataWrapLength(theFactory.getKeyLength() / Byte.SIZE);
     }
 
     /**
-     * Obtain keyWrapExpansion for # of steps.
-     *
-     * @param pNumSteps the number of wrap steps
-     * @return the keyWrap expansion
+     * Obtain wrapped size of a byte array of the given length.
+     * @param pDataLength the length of the byte array
+     * @return the wrapped length
      */
-    public static int getKeyWrapExpansion(final int pNumSteps) {
-        final int myExpansion = GordianWrapper.getKeyWrapExpansion(GordianLength.LEN_128) * pNumSteps;
-        return myExpansion + getEncryptionOverhead();
+    public int getDataWrapLength(final int pDataLength) {
+        return getDataWrapLength(pDataLength, theCipher.getNumSteps());
+    }
+
+    /**
+     * Obtain wrapped size of a byte array of the given length.
+     * @param pDataLength the length of the byte array
+     * @param pNumSteps the numbert of cipher steps
+     * @return the wrapped length
+     */
+    public static int getDataWrapLength(final int pDataLength,
+                                        final int pNumSteps) {
+        return GordianCoreWrapper.getKeyWrapLength(pDataLength, BLOCKLEN)
+                + getEncryptionOverhead(false)
+                + (pNumSteps - 1)
+                * GordianCoreWrapper.getKeyWrapExpansion(BLOCKLEN);
+    }
+
+    /**
+     * Obtain wrapped size of the privateKey of a keyPair.
+     * @param pKeyPair the keyPair
+     * @return the wrapped length
+     * @throws OceanusException on error
+     */
+    public int getPrivateKeyWrapLength(final GordianKeyPair pKeyPair) throws OceanusException {
+        /* Determine and check the keySpec */
+        final GordianAsymFactory myAsym = theFactory.getAsymmetricFactory();
+        final GordianCoreKeyPairGenerator myGenerator = (GordianCoreKeyPairGenerator) myAsym.getKeyPairGenerator(pKeyPair.getKeySpec());
+        final PKCS8EncodedKeySpec myPrivateKey = myGenerator.getPKCS8Encoding(pKeyPair);
+        return getDataWrapLength(myPrivateKey.getEncoded().length);
     }
 
     @Override
     public byte[] encryptBytes(final byte[] pBytes) throws OceanusException {
         /* Generate set of keys and initialisation vector */
-        final GordianKeySetRecipe myRecipe =  GordianKeySetRecipe.newEncryptionRecipe(theFactory);
+        final GordianKeySetRecipe myRecipe =  GordianKeySetRecipe.newRecipe(theFactory, isAEAD);
         final GordianKeySetParameters myParams = myRecipe.getParameters();
 
         /* Encrypt the bytes */
         theCipher.initCiphers(myParams, true);
         final byte[] myBytes = theCipher.finish(pBytes);
-        theCipher.calculateMac(myParams);
+
+        /* Calculate the Mac if we are in AEAD mode */
+        if (isAEAD) {
+            theCipher.calculateMac(myParams);
+        }
 
         /* Package and return the encrypted bytes */
         return myRecipe.buildExternal(myBytes);
@@ -162,21 +243,27 @@ public final class GordianCoreKeySet
     @Override
     public byte[] decryptBytes(final byte[] pBytes) throws OceanusException {
         /* Parse the bytes into the separate parts */
-        final GordianKeySetRecipe myRecipe = GordianKeySetRecipe.parseEncryptionRecipe(theFactory, pBytes);
+        final GordianKeySetRecipe myRecipe = GordianKeySetRecipe.parseRecipe(theFactory, pBytes, isAEAD);
         final GordianKeySetParameters myParams = myRecipe.getParameters();
         final byte[] myBytes = myRecipe.getBytes();
 
         /* Decrypt the bytes and return them */
         theCipher.initCiphers(myParams, false);
         final byte[] myResult = theCipher.finish(myBytes);
-        theCipher.validateMac(myParams);
+
+        /* Validate the Mac if we are in AEAD mode */
+        if (isAEAD) {
+            theCipher.validateMac(myParams);
+        }
+
+        /* Return the result */
         return myResult;
     }
 
     @Override
     public byte[] secureKey(final GordianKey<?> pKeyToSecure) throws OceanusException {
         /* Generate set of keys */
-        final GordianKeySetRecipe myRecipe = GordianKeySetRecipe.newWrapRecipe(theFactory);
+        final GordianKeySetRecipe myRecipe = GordianKeySetRecipe.newRecipe(theFactory, false);
         final GordianKeySetParameters myParams = myRecipe.getParameters();
 
         /* secure the key */
@@ -190,7 +277,7 @@ public final class GordianCoreKeySet
     public <T extends GordianKeySpec> GordianKey<T> deriveKey(final byte[] pSecuredKey,
                                                               final T pKeyType) throws OceanusException {
         /* Parse the bytes into the separate parts */
-        final GordianKeySetRecipe myRecipe = GordianKeySetRecipe.parseWrapRecipe(theFactory, pSecuredKey);
+        final GordianKeySetRecipe myRecipe = GordianKeySetRecipe.parseRecipe(theFactory, pSecuredKey, false);
         final GordianKeySetParameters myParams = myRecipe.getParameters();
         final byte[] myBytes = myRecipe.getBytes();
 
@@ -201,7 +288,7 @@ public final class GordianCoreKeySet
     @Override
     public byte[] secureBytes(final byte[] pBytesToSecure) throws OceanusException {
         /* Generate set of keys */
-        final GordianKeySetRecipe myRecipe = GordianKeySetRecipe.newWrapRecipe(theFactory);
+        final GordianKeySetRecipe myRecipe = GordianKeySetRecipe.newRecipe(theFactory, false);
         final GordianKeySetParameters myParams = myRecipe.getParameters();
 
         /* secure the key */
@@ -214,7 +301,7 @@ public final class GordianCoreKeySet
     @Override
     public byte[] deriveBytes(final byte[] pSecuredBytes) throws OceanusException {
         /* Parse the bytes into the separate parts */
-        final GordianKeySetRecipe myRecipe = GordianKeySetRecipe.parseWrapRecipe(theFactory, pSecuredBytes);
+        final GordianKeySetRecipe myRecipe = GordianKeySetRecipe.parseRecipe(theFactory, pSecuredBytes, false);
         final GordianKeySetParameters myParams = myRecipe.getParameters();
         final byte[] myBytes = myRecipe.getBytes();
 
@@ -225,7 +312,7 @@ public final class GordianCoreKeySet
     @Override
     public byte[] securePrivateKey(final GordianKeyPair pKeyPair) throws OceanusException {
         /* Generate set of keys */
-        final GordianKeySetRecipe myRecipe = GordianKeySetRecipe.newWrapRecipe(theFactory);
+        final GordianKeySetRecipe myRecipe = GordianKeySetRecipe.newRecipe(theFactory, false);
         final GordianKeySetParameters myParams = myRecipe.getParameters();
 
         /* Wrap the key */
@@ -261,7 +348,7 @@ public final class GordianCoreKeySet
      */
     private PKCS8EncodedKeySpec derivePrivateKeySpec(final byte[] pSecuredPrivateKey) throws OceanusException {
         /* Parse the bytes into the separate parts */
-        final GordianKeySetRecipe myRecipe = GordianKeySetRecipe.parseWrapRecipe(theFactory, pSecuredPrivateKey);
+        final GordianKeySetRecipe myRecipe = GordianKeySetRecipe.parseRecipe(theFactory, pSecuredPrivateKey, false);
         final GordianKeySetParameters myParams = myRecipe.getParameters();
         final byte[] myBytes = myRecipe.getBytes();
 

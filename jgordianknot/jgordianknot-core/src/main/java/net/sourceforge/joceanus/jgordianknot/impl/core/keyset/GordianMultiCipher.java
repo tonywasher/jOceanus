@@ -138,6 +138,14 @@ final class GordianMultiCipher {
     }
 
     /**
+     * Obtain the number of steps.
+     * @return the number of steps
+     */
+    int getNumSteps() {
+        return theNumSteps;
+    }
+
+    /**
      * Determine the maximum number of output bytes that will be produced for the given number of
      * input bytes.
      * @param pLength the number of input bytes
@@ -229,7 +237,9 @@ final class GordianMultiCipher {
         int myDataLen = pLength;
 
         /* Update the initial consumer */
-        theInitial.update(pBytes, pOffset, pLength);
+        if (theInitial != null) {
+            theInitial.update(pBytes, pOffset, pLength);
+        }
 
         /* Loop through the ciphers */
         for (final GordianCipher<?> myCipher : theCiphers) {
@@ -268,7 +278,9 @@ final class GordianMultiCipher {
         /* If we have data */
         if (myDataLen > 0) {
             /* Update the final consumer */
-            theFinal.update(mySource, 0, myDataLen);
+            if (theFinal != null) {
+                theFinal.update(mySource, 0, myDataLen);
+            }
 
             /* Copy data to final buffer */
             System.arraycopy(mySource, 0, pOutput, pOutOffset, myDataLen);
@@ -430,7 +442,9 @@ final class GordianMultiCipher {
         /* If we have data  */
         if (myDataLen > 0) {
             /* Update the final consumer */
-            theFinal.update(mySource, 0, myDataLen);
+            if (theFinal != null) {
+                theFinal.update(mySource, 0, myDataLen);
+            }
 
             /* Copy data to final buffer */
             System.arraycopy(mySource, 0, pOutput, pOutOffset, myDataLen);
@@ -477,20 +491,36 @@ final class GordianMultiCipher {
             theCiphers[myLoc] = myCipher;
         }
 
-        /* Create the the digest and the Mac */
+        /* Determine whether we are using AEAD */
         final GordianDigestType myDigest = pParams.getDigestType();
-        final GordianDigestFactory myDigests = theFactory.getDigestFactory();
-        theDigest = myDigests.createDigest(new GordianDigestSpec(myDigest));
-        final GordianMacFactory myMacs = theFactory.getMacFactory();
-        theMac = myMacs.createMac(GordianMacSpec.hMac(myDigest));
 
-        /* Initialise the digest and the Mac */
-        theDigest.update(calculateInitVector(myInitVector, mySection++));
-        theMac.initMac(calculateInitVector(myInitVector, mySection));
+        /* If we are using AEAD */
+        if (myDigest != null) {
+            /* Create the the digest and the Mac */
+            final GordianDigestFactory myDigests = theFactory.getDigestFactory();
+            theDigest = myDigests.createDigest(new GordianDigestSpec(myDigest));
+            final GordianMacFactory myMacs = theFactory.getMacFactory();
+            theMac = myMacs.createMac(GordianMacSpec.hMac(myDigest));
 
-        /* Set the consumers inthe correct order */
-        theInitial = pEncrypt ? theDigest : theMac;
-        theFinal = pEncrypt ? theMac : theDigest;
+            /* Initialise the digest and the Mac */
+            theDigest.update(calculateInitVector(myInitVector, mySection++));
+            theMac.initMac(calculateInitVector(myInitVector, mySection));
+
+            /* Set the consumers inthe correct order */
+            theInitial = pEncrypt
+                         ? theDigest
+                         : theMac;
+            theFinal = pEncrypt
+                       ? theMac
+                       : theDigest;
+
+            /* Else set up for no AEAD */
+        } else {
+            theDigest = null;
+            theMac = null;
+            theInitial = null;
+            theFinal = null;
+        }
     }
 
     /**

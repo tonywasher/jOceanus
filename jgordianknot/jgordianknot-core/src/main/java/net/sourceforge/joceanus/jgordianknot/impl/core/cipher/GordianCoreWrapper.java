@@ -373,9 +373,50 @@ public class GordianCoreWrapper
                : INTEGRITY_VALUE2;
     }
 
-    @Override
-    public int getKeyWrapExpansion() {
-        return getKeyWrapExpansion(getKeySpec().getBlockLength());
+    /**
+     * Obtain wrapped size of a key.
+     * @return the wrapped length
+     */
+    public int getKeyWrapLength() {
+        return getDataWrapLength(theFactory.getKeyLength() / Byte.SIZE);
+    }
+
+    /**
+     * Obtain wrapped size of a byte array of the given length.
+     * @param pDataLength the length of the byte array
+     * @return the wrapped length
+     */
+    public int getDataWrapLength(final int pDataLength) {
+        final GordianLength myBlockLen = getKeySpec().getBlockLength();
+        return getKeyWrapLength(pDataLength, myBlockLen)
+                + getKeyWrapExpansion(myBlockLen);
+    }
+
+    /**
+     * Obtain wrapped size of the privateKey of a keyPair.
+     * @param pKeyPair the keyPair
+     * @return the wrapped length
+     * @throws OceanusException on error
+     */
+    public int getPrivateKeyWrapLength(final GordianKeyPair pKeyPair) throws OceanusException {
+        /* Determine and check the keySpec */
+        final GordianAsymFactory myAsym = theFactory.getAsymmetricFactory();
+        final GordianCoreKeyPairGenerator myGenerator = (GordianCoreKeyPairGenerator) myAsym.getKeyPairGenerator(pKeyPair.getKeySpec());
+        final PKCS8EncodedKeySpec myPrivateKey = myGenerator.getPKCS8Encoding(pKeyPair);
+        return getDataWrapLength(myPrivateKey.getEncoded().length);
+    }
+
+    /**
+     * Obtain initial wrapLength for a particular dataLength and BlockSize.
+     * @param pDataLength the data length
+     * @param pBlockLen the number of bits in the blockLen
+     * @return the keyWrap expansion
+     */
+    public static int getKeyWrapLength(final int pDataLength,
+                                       final GordianLength pBlockLen) {
+        final int myBlockLen = pBlockLen.getByteLength() >> 1;
+        final int myNumBlocks = (pDataLength + myBlockLen - 1) / myBlockLen;
+        return myNumBlocks * myBlockLen;
     }
 
     /**
@@ -385,9 +426,9 @@ public class GordianCoreWrapper
      */
     public static int getKeyWrapExpansion(final GordianLength pBlockLen) {
         final int myBlockLen = pBlockLen.getByteLength() >> 1;
-        final int myNumBlocks = 1 + myBlockLen <= Integer.BYTES
-                                ? 2
-                                : 1;
+        final int myNumBlocks = 1 + (myBlockLen <= Integer.BYTES
+                                      ? 2
+                                      : 1);
         return myNumBlocks * myBlockLen;
     }
 }

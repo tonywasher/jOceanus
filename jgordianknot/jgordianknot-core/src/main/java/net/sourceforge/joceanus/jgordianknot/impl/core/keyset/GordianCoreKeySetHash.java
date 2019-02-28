@@ -478,12 +478,6 @@ public final class GordianCoreKeySetHash
         /* Create the external hash */
         final byte[] myHashBytes = theRecipe.buildExternal(pPassword.length, myExternalHash);
 
-        /* Check whether the HashBytes is too large */
-        if (myHashBytes.length > HASHLEN) {
-            throw new GordianDataException("Password Hash too large: "
-                    + myHashBytes.length);
-        }
-
         /* Return to caller */
         return new byte[][]
                 {myHashBytes, mySecretBytes, myInitVector, myChildPassword};

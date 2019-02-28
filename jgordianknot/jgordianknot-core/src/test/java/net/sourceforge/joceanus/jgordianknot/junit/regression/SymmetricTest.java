@@ -50,6 +50,8 @@ import net.sourceforge.joceanus.jgordianknot.api.mac.GordianMac;
 import net.sourceforge.joceanus.jgordianknot.api.mac.GordianMacFactory;
 import net.sourceforge.joceanus.jgordianknot.api.mac.GordianMacSpec;
 import net.sourceforge.joceanus.jgordianknot.api.mac.GordianMacType;
+import net.sourceforge.joceanus.jgordianknot.impl.core.cipher.GordianCoreCipher;
+import net.sourceforge.joceanus.jgordianknot.impl.core.cipher.GordianCoreWrapper;
 import net.sourceforge.joceanus.jgordianknot.junit.regression.SymmetricStore.FactoryDigestSpec;
 import net.sourceforge.joceanus.jgordianknot.junit.regression.SymmetricStore.FactoryMacSpec;
 import net.sourceforge.joceanus.jgordianknot.junit.regression.SymmetricStore.FactorySpec;
@@ -364,16 +366,22 @@ public class SymmetricTest {
         final byte[] myTestData = getTestData();
 
         /* Create the Spec */
-        final GordianCipher<GordianSymKeySpec> myCipher = myCipherFactory.createSymKeyCipher(mySpec);
+        final GordianCoreCipher<GordianSymKeySpec> myCipher = (GordianCoreCipher<GordianSymKeySpec>) myCipherFactory.createSymKeyCipher(mySpec);
         myCipher.initCipher(myKey);
         if (!mySpec.getCipherMode().hasPadding()
                 || !GordianPadding.NONE.equals(mySpec.getPadding())) {
+            /* Check encryption */
             final byte[] myIV = myCipher.getInitVector();
             final byte[] myEncrypted = myCipher.finish(myTestData);
             myCipher.initCipher(myKey, myIV, false);
             final byte[] myResult = myCipher.finish(myEncrypted);
             Assertions.assertArrayEquals(myTestData, myResult, "Failed to encrypt/decrypt");
+        } else {
+            /* Check that the blockLength is correct */
+            Assertions.assertEquals(mySpec.getBlockLength().getByteLength(), myCipher.getBlockSize(), "BlockLength incorrect");
         }
+
+        /* Check the external ID */
         checkExternalId(pCipherSpec);
     }
 
@@ -447,15 +455,17 @@ public class SymmetricTest {
         final byte[] myTestData = getTestData();
 
         /* Check wrapping bytes */
-        final GordianWrapper myWrapper = myCipherFactory.createKeyWrapper(mySpec);
+        final GordianCoreWrapper myWrapper = (GordianCoreWrapper) myCipherFactory.createKeyWrapper(mySpec);
         byte[] myWrapped = myWrapper.secureBytes(mySymKey, myTestData);
         final byte[] myResult = myWrapper.deriveBytes(mySymKey, myWrapped);
         Assertions.assertArrayEquals(myTestData, myResult, "Failed to wrap/unwrap bytes");
+        Assertions.assertEquals(myWrapper.getDataWrapLength(myTestData.length), myWrapped.length, "Incorrect wrapped length");
 
         /* Check wrapping key */
         myWrapped = myWrapper.secureKey(mySymKey, mySymKey);
         final GordianKey<GordianSymKeySpec> myResultKey = myWrapper.deriveKey(mySymKey, myWrapped, mySymKey.getKeyType());
         Assertions.assertEquals(mySymKey, myResultKey, "Failed to wrap/unwrap key");
+        Assertions.assertEquals(myWrapper.getKeyWrapLength(), myWrapped.length, "Incorrect wrapped length");
     }
 
     /**

@@ -103,4 +103,22 @@ public interface GordianKeySet {
      * @throws OceanusException on error
      */
     void declareSymKey(GordianKey<GordianSymKeySpec> pKey) throws OceanusException;
+
+    /**
+     * Is the keySet in AEAD mode?
+     * @return true/false
+     */
+    boolean isAEAD();
+
+    /**
+     * Set the AEAD mode.
+     * @param pAEAD true/false
+     */
+    void setAEAD(boolean pAEAD);
+
+    /**
+     * Clone the keySet.
+     * @return the cloned keySet
+     */
+    GordianKeySet cloneIt();
 }

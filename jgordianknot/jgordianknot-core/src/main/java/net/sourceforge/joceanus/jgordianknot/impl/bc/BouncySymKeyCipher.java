@@ -168,4 +168,10 @@ public final class BouncySymKeyCipher
             throw new GordianCryptoException("Failed to finish operation", e);
         }
     }
+
+    @Override
+    public int getBlockSize() {
+        return getCipherSpec().getCipherMode().hasPadding()
+               ? theCipher.getBlockSize() : 0;
+    }
 }

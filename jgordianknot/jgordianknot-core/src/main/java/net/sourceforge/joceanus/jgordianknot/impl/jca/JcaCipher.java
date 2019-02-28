@@ -32,6 +32,7 @@ import javax.crypto.spec.RC5ParameterSpec;
 import net.sourceforge.joceanus.jgordianknot.api.base.GordianLength;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianCipherSpec;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianStreamKeyType;
+import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianSymCipherSpec;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianSymKeySpec;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianSymKeyType;
 import net.sourceforge.joceanus.jgordianknot.api.key.GordianKey;
@@ -210,5 +211,13 @@ public final class JcaCipher<T extends GordianKeySpec>
                 | BadPaddingException e) {
             throw new GordianCryptoException("Failed to finish operation", e);
         }
+    }
+
+    @Override
+    public int getBlockSize() {
+        final GordianCipherSpec<T> mySpec = getCipherSpec();
+        return (mySpec instanceof GordianSymCipherSpec
+                        && ((GordianSymCipherSpec) mySpec).getCipherMode().hasPadding())
+               ? theCipher.getBlockSize() : 0;
     }
 }

@@ -48,7 +48,7 @@ public class DataKey
     /**
      * Encrypted Symmetric Key Length.
      */
-    public static final int KEYLEN = GordianSecurityManager.getMaximumKeyWrapSize();
+    public static final int KEYLEN = GordianSecurityManager.getMaximumKeyWrapLength();
 
     /**
      * Object name.

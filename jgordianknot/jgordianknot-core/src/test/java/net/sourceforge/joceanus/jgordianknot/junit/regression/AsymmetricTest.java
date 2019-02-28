@@ -45,9 +45,12 @@ import net.sourceforge.joceanus.jgordianknot.api.factory.GordianParameters;
 import net.sourceforge.joceanus.jgordianknot.api.impl.GordianGenerator;
 import net.sourceforge.joceanus.jgordianknot.api.key.GordianKeyPair;
 import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySet;
+import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetFactory;
+import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetHash;
 import net.sourceforge.joceanus.jgordianknot.api.sign.GordianSignature;
 import net.sourceforge.joceanus.jgordianknot.api.sign.GordianSignatureFactory;
 import net.sourceforge.joceanus.jgordianknot.api.sign.GordianSignatureSpec;
+import net.sourceforge.joceanus.jgordianknot.impl.core.keyset.GordianCoreKeySet;
 import net.sourceforge.joceanus.jgordianknot.junit.regression.AsymmetricStore.FactoryAgreement;
 import net.sourceforge.joceanus.jgordianknot.junit.regression.AsymmetricStore.FactoryEncryptor;
 import net.sourceforge.joceanus.jgordianknot.junit.regression.AsymmetricStore.FactoryKeyPairs;
@@ -113,6 +116,7 @@ public class AsymmetricTest {
         for (final FactoryKeySpec myKeySpec : AsymmetricStore.keySpecProvider(pFactory, pPartner)) {
             /* Create an empty stream */
             Stream<DynamicNode> myKeyStream = Stream.of(DynamicTest.dynamicTest("keySpec", () -> checkKeyPair(myKeySpec)));
+            myKeyStream = Stream.concat(myKeyStream, Stream.of(DynamicTest.dynamicTest("keyWrap", () -> checkKeyWrap(myKeySpec))));
 
             /* Add signature Tests */
             AsymmetricStore.signatureProvider(myKeySpec);
@@ -248,6 +252,31 @@ public class AsymmetricTest {
             final GordianKeyPair myMirror = myPairs.getMirrorKeyPair();
             Assertions.assertEquals(myPair, myMirror, "Derived pair has wrong keySpec");
         }
+    }
+
+    /**
+     * Check KeyPair.
+     * @param pKeySpec the keySpec
+     * @throws OceanusException on error
+     */
+    private void checkKeyWrap(final FactoryKeySpec pKeySpec) throws OceanusException {
+        /* Access the keyPairs */
+        final FactoryKeyPairs myPairs = pKeySpec.getKeyPairs();
+        final GordianAsymFactory myFactory = pKeySpec.getFactory();
+        final GordianAsymKeySpec mySpec = pKeySpec.getKeySpec();
+        final GordianKeyPair myPair = myPairs.getKeyPair();
+        final X509EncodedKeySpec myPublic = myPairs.getX509Encoding();
+
+        /* Create a keySet */
+        final GordianKeySetFactory myKeySetFactory = myFactory.getFactory().getKeySetFactory();
+        final GordianKeySetHash myHash = myKeySetFactory.generateKeySetHash("Hello".toCharArray());
+        final GordianCoreKeySet myKeySet = (GordianCoreKeySet) myHash.getKeySet();
+        final byte[] mySecured = myKeySet.securePrivateKey(myPair);
+        final GordianKeyPair myDerived = myKeySet.deriveKeyPair(myPublic, mySecured);
+        if (!mySpec.getKeyType().differentDerivedKey()) {
+            Assertions.assertEquals(myPair, myDerived, "Incorrect derived pair");
+        }
+        Assertions.assertEquals(myKeySet.getPrivateKeyWrapLength(myPair), mySecured.length, "Incorrect wrapped length");
     }
 
     /**

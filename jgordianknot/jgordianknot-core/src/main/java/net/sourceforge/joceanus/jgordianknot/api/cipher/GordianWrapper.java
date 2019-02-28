@@ -98,25 +98,4 @@ public interface GordianWrapper {
      */
     byte[] deriveBytes(GordianKey<GordianSymKeySpec> pKey,
                        byte[] pSecuredBytes) throws OceanusException;
-
-    /**
-     * Obtain keyWrapExpansion for this cipher.
-     * @return the keyWrap expansion
-     */
-    default int getKeyWrapExpansion() {
-        return getKeyWrapExpansion(getKeySpec().getBlockLength());
-    }
-
-    /**
-     * Obtain keyWrapExpansion for a blockLen.
-     * @param pBlockLen the number of bits in the blockLen
-     * @return the keyWrap expansion
-     */
-    static int getKeyWrapExpansion(final GordianLength pBlockLen) {
-        final int myBlockLen = pBlockLen.getByteLength() >> 1;
-        final int myNumBlocks = 1 + myBlockLen <= Integer.BYTES
-                                ? 2
-                                : 1;
-        return myNumBlocks * myBlockLen;
-    }
 }

@@ -140,4 +140,9 @@ public class BouncyAADCipher
             throw new GordianCryptoException("Failed to finish operation", e);
         }
     }
+
+    @Override
+    public int getBlockSize() {
+        return 0;
+    }
 }

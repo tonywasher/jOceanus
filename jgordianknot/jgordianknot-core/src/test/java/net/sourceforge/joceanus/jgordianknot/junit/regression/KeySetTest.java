@@ -30,6 +30,7 @@ import net.sourceforge.joceanus.jgordianknot.api.factory.GordianFactory;
 import net.sourceforge.joceanus.jgordianknot.api.factory.GordianFactoryType;
 import net.sourceforge.joceanus.jgordianknot.api.factory.GordianParameters;
 import net.sourceforge.joceanus.jgordianknot.api.impl.GordianGenerator;
+import net.sourceforge.joceanus.jgordianknot.api.impl.GordianSecurityManager;
 import net.sourceforge.joceanus.jgordianknot.api.key.GordianKey;
 import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySet;
 import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetFactory;
@@ -37,6 +38,8 @@ import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetHash;
 import net.sourceforge.joceanus.jgordianknot.api.mac.GordianMac;
 import net.sourceforge.joceanus.jgordianknot.api.mac.GordianMacSpec;
 import net.sourceforge.joceanus.jgordianknot.api.random.GordianRandomFactory;
+import net.sourceforge.joceanus.jgordianknot.impl.core.keyset.GordianCoreKeySet;
+import net.sourceforge.joceanus.jgordianknot.impl.core.keyset.GordianCoreKeySetHash;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.TethysDataConverter;
 
@@ -234,9 +237,11 @@ public class KeySetTest {
         /* Return the stream */
         return Stream.of(DynamicContainer.dynamicContainer(myKeySet.toString(), Stream.of(
                 DynamicTest.dynamicTest("keySet", () -> checkKeySetHash(myKeySet)),
-                DynamicTest.dynamicTest("encrypt", () -> checkEncrypt(myKeySet)),
+                DynamicTest.dynamicTest("encrypt", () -> checkEncrypt(myKeySet, false)),
+                DynamicTest.dynamicTest("encryptAEAD", () -> checkEncrypt(myKeySet, true)),
                 DynamicTest.dynamicTest("wrap", () -> checkWrap(myKeySet)),
-                DynamicTest.dynamicTest("profile", () -> profileEncrypt(myKeySet))
+                DynamicTest.dynamicTest("profile", () -> profileEncrypt(myKeySet, false)),
+                DynamicTest.dynamicTest("profileAEAD", () -> profileEncrypt(myKeySet, true))
         )));
     }
 
@@ -253,16 +258,22 @@ public class KeySetTest {
 
         /* Check the keySets are the same */
         Assertions.assertEquals(myKeySet, pKeySet.getKeySet(), "Failed to derive keySet");
+
+        /* Check the keySet Hash is the correct length */
+        Assertions.assertEquals(myHash.getHash().length, GordianSecurityManager.getKeySetHashLen(), "Hash is incorrect length");
     }
 
     /**
      * Check encrypt.
      * @param pKeySet the keySet
+     * @param pAEAD true/false use keySet in AEAD mode
      * @throws OceanusException on error
      */
-    private void checkEncrypt(final FactoryKeySet pKeySet) throws OceanusException {
+    private void checkEncrypt(final FactoryKeySet pKeySet,
+                              final boolean pAEAD) throws OceanusException {
         /* Access the keys */
-        final GordianKeySet myKeySet = pKeySet.getKeySet();
+        final GordianCoreKeySet myKeySet = (GordianCoreKeySet) pKeySet.getKeySet();
+        myKeySet.setAEAD(pAEAD);
 
         /* Encrypt short block */
         final String myTest1 = "TestString";
@@ -271,6 +282,8 @@ public class KeySetTest {
         byte[] myResult = myKeySet.decryptBytes(myEncrypt);
         String myAnswer = TethysDataConverter.byteArrayToString(myResult);
         Assertions.assertEquals(myTest1, myAnswer, "Failed to decrypt test1 string");
+        Assertions.assertEquals(myKeySet.getEncryptionLength(myBytes.length),
+                myEncrypt.length, "Incorrect encrypted length");
 
         /* Encrypt full block */
         final String myTest2 = "TestString123456";
@@ -279,6 +292,8 @@ public class KeySetTest {
         myResult = myKeySet.decryptBytes(myEncrypt);
         myAnswer = TethysDataConverter.byteArrayToString(myResult);
         Assertions.assertEquals(myTest2, myAnswer, "Failed to decrypt test2 string");
+        Assertions.assertEquals(myKeySet.getEncryptionLength(myBytes.length),
+                myEncrypt.length, "Incorrect encrypted length");
 
         /* Encrypt some multi-block */
         final String myTest3 = "TestString1234567";
@@ -287,6 +302,8 @@ public class KeySetTest {
         myResult = myKeySet.decryptBytes(myEncrypt);
         myAnswer = TethysDataConverter.byteArrayToString(myResult);
         Assertions.assertEquals(myTest3, myAnswer, "Failed to decrypt test3 string");
+        Assertions.assertEquals(myKeySet.getEncryptionLength(myBytes.length),
+                myEncrypt.length, "Incorrect encrypted length");
     }
 
     /**
@@ -296,7 +313,7 @@ public class KeySetTest {
      */
     private void checkWrap(final FactoryKeySet pKeySet) throws OceanusException {
         /* Access the keys */
-        final GordianKeySet myKeySet = pKeySet.getKeySet();
+        final GordianCoreKeySet myKeySet = (GordianCoreKeySet) pKeySet.getKeySet();
         final GordianKey<GordianSymKeySpec> mySymKey = pKeySet.getSymKey();
         final GordianKey<GordianStreamKeyType> myStreamKey = pKeySet.getStreamKey();
         final GordianKey<GordianMacSpec> myMacKey = pKeySet.getMacKey();
@@ -305,26 +322,32 @@ public class KeySetTest {
         final byte[] mySymSafe = myKeySet.secureKey(mySymKey);
         final GordianKey<GordianSymKeySpec> mySymResult = myKeySet.deriveKey(mySymSafe, mySymKey.getKeyType());
         Assertions.assertEquals(mySymKey, mySymResult, "Failed to wrap/unwrap symKey");
+        Assertions.assertEquals(myKeySet.getKeyWrapLength(), mySymSafe.length, "Incorrect wrapped length");
 
         /* Check wrap of streamKey */
         final byte[] myStreamSafe = myKeySet.secureKey(myStreamKey);
         final GordianKey<GordianStreamKeyType> myStreamResult = myKeySet.deriveKey(myStreamSafe, myStreamKey.getKeyType());
         Assertions.assertEquals(myStreamKey, myStreamResult, "Failed to wrap/unwrap streamKey");
+        Assertions.assertEquals(myKeySet.getKeyWrapLength(), myStreamSafe.length, "Incorrect wrapped length");
 
         /* Check wrap of macKey */
         final byte[] myMacSafe = myKeySet.secureKey(myMacKey);
         final GordianKey<GordianMacSpec> myMacResult = myKeySet.deriveKey(myMacSafe, myMacKey.getKeyType());
         Assertions.assertEquals(myMacKey, myMacResult, "Failed to wrap/unwrap macKey");
+        Assertions.assertEquals(myKeySet.getKeyWrapLength(), myMacSafe.length, "Incorrect wrapped length");
     }
 
     /**
      * Profile encrypt.
      * @param pKeySet the keySet
+     * @param pAEAD true/false use keySet in AEAD mode
      * @throws OceanusException on error
      */
-    private void profileEncrypt(final FactoryKeySet pKeySet) throws OceanusException {
+    private void profileEncrypt(final FactoryKeySet pKeySet,
+                                final boolean pAEAD) throws OceanusException {
         /* Access the keys */
         final GordianKeySet myKeySet = pKeySet.getKeySet();
+        myKeySet.setAEAD(pAEAD);
 
         /* Creat the test data */
         final byte[] myData = new byte[1000];

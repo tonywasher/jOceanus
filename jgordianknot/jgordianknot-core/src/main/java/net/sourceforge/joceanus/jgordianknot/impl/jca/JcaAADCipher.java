@@ -155,4 +155,9 @@ public class JcaAADCipher
             throw new GordianCryptoException("Failed to finish operation", e);
         }
     }
+
+    @Override
+    public int getBlockSize() {
+        return 0;
+    }
 }

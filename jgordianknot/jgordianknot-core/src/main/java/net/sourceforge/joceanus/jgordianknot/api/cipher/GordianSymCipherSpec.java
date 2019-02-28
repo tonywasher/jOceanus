@@ -19,6 +19,7 @@ package net.sourceforge.joceanus.jgordianknot.api.cipher;
 import java.util.ArrayList;
 import java.util.List;
 
+import net.sourceforge.joceanus.jgordianknot.api.base.GordianLength;
 import net.sourceforge.joceanus.jtethys.TethysDataConverter;
 
 /**
@@ -234,8 +235,8 @@ public class GordianSymCipherSpec
      * Obtain the blockLength.
      * @return the blockLength
      */
-    public int getBlockLength() {
-        return getKeyType().getBlockLength().getLength();
+    public GordianLength getBlockLength() {
+        return getKeyType().getBlockLength();
     }
 
     @Override

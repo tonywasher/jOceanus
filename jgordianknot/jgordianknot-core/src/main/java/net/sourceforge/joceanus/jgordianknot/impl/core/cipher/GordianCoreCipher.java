@@ -109,6 +109,12 @@ public abstract class GordianCoreCipher<T extends GordianKeySpec>
     }
 
     /**
+     * Obtain the blockSize.
+     * @return true/false
+     */
+    public abstract int getBlockSize();
+
+    /**
      * Obtain the key.
      * @return the key
      */

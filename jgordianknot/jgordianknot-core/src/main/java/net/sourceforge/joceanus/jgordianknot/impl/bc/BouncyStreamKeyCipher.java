@@ -127,4 +127,9 @@ public final class BouncyStreamKeyCipher
         /* Null operation */
         return 0;
     }
+
+    @Override
+    public int getBlockSize() {
+        return 0;
+    }
 }
