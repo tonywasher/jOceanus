@@ -17,6 +17,7 @@
 package net.sourceforge.joceanus.jgordianknot.api.javafx;
 
 import net.sourceforge.joceanus.jgordianknot.api.factory.GordianParameters;
+import net.sourceforge.joceanus.jgordianknot.api.impl.GordianDialogController;
 import net.sourceforge.joceanus.jgordianknot.api.impl.GordianSecurityManager;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXGuiFactory;
@@ -28,16 +29,6 @@ import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXGuiFactory;
  */
 public class GordianFXSecurityManager
         extends GordianSecurityManager {
-    /**
-     * GUI factory.
-     */
-    private final TethysFXGuiFactory theFactory;
-
-    /**
-     * Password dialog.
-     */
-    private GordianFXPasswordDialog theDialog;
-
     /**
      * Constructor for default values.
      * @throws OceanusException on error
@@ -72,34 +63,61 @@ public class GordianFXSecurityManager
      */
     public GordianFXSecurityManager(final TethysFXGuiFactory pFactory,
                                     final GordianParameters pParameters) throws OceanusException {
-        super(pParameters);
-        theFactory = pFactory;
+        super(pParameters, new GordianFXDialogControl(pFactory));
     }
 
-    @Override
-    protected void createTheDialog(final String pTitle,
-                                   final boolean pNeedConfirm) {
-        theDialog = GordianFXPasswordDialog.createTheDialog(theFactory, pTitle, pNeedConfirm);
-    }
+    /**
+     * javaFX DialogControl.
+     */
+    private static class GordianFXDialogControl
+            implements GordianDialogController {
+        /**
+         * GUI factory.
+         */
+        private final TethysFXGuiFactory theFactory;
 
-    @Override
-    protected boolean showTheDialog() {
-        return GordianFXPasswordDialog.showTheDialog(theDialog);
-    }
+        /**
+         * Password dialog.
+         */
+        private GordianFXPasswordDialog theDialog;
 
-    @Override
-    protected char[] getPassword() {
-        return theDialog.getPassword();
-    }
+        /**
+         * Constructor.
+         * @param pFactory the factory
+         */
+        GordianFXDialogControl(final TethysFXGuiFactory pFactory) {
+            theFactory = pFactory;
+        }
 
-    @Override
-    protected void setError(final String pError) {
-        theDialog.setError(pError);
-    }
+        @Override
+        public void createTheDialog(final String pTitle,
+                                    final boolean pNeedConfirm) {
+            /* Create the title for the window */
+            final String myTitle = pNeedConfirm
+                                    ? NLS_TITLENEWPASS + " " + pTitle
+                                    : NLS_TITLEPASS + " " + pTitle;
+            theDialog = GordianFXPasswordDialog.createTheDialog(theFactory, myTitle, pNeedConfirm);
+        }
 
-    @Override
-    protected void releaseDialog() {
-        theDialog.release();
-        theDialog = null;
+        @Override
+        public boolean showTheDialog() {
+            return GordianFXPasswordDialog.showTheDialog(theDialog);
+        }
+
+        @Override
+        public char[] getPassword() {
+            return theDialog.getPassword();
+        }
+
+        @Override
+        public void setError(final String pError) {
+            theDialog.setError(pError);
+        }
+
+        @Override
+        public void releaseDialog() {
+            theDialog.release();
+            theDialog = null;
+        }
     }
 }

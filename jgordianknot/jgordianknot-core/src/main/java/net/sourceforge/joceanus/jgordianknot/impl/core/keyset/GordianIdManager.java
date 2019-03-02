@@ -200,18 +200,6 @@ public class GordianIdManager {
     }
 
     /**
-     * Obtain random keySet SymKeyType.
-     * @return the random symKeyType
-     */
-    private GordianSymKeyType generateRandomKeySetSymKeyType() {
-        /* Determine a random symKey */
-        final GordianSymKeyType[] mySymKey = getRandomTypes(theKeySetSymKeys, 1);
-
-        /* Return the single SymKeyType */
-        return mySymKey[0];
-    }
-
-    /**
      * Obtain set of random keySet SymKeyTypes.
      * @param pCount the count
      * @return the random symKeyTypes

@@ -14,41 +14,40 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  ******************************************************************************/
-package net.sourceforge.joceanus.jgordianknot.api.keyset;
-
-import net.sourceforge.joceanus.jtethys.OceanusException;
+package net.sourceforge.joceanus.jgordianknot.api.impl;
 
 /**
- * Hash from which to derive KeySet.
+ * Dialogue Controller class.
  */
-public interface GordianKeySetHash {
+public interface GordianDialogController {
     /**
-     * Obtain the Hash.
-     *
-     * @return the Hash
+     * Create the dialog.
+     * @param pTitle the title
+     * @param pNeedConfirm true/false
      */
-    byte[] getHash();
+    void createTheDialog(String pTitle,
+                         boolean pNeedConfirm);
 
     /**
-     * Get CipherSet.
-     *
-     * @return the CipherSet
+     * Show the dialog under an invokeAndWait clause.
+     * @return successful dialog usage true/false
      */
-    GordianKeySet getKeySet();
+    boolean showTheDialog();
 
     /**
-     * obtain child keySetHash (internal password).
-     *
-     * @return the similar hash
-     * @throws OceanusException on error
+     * Release dialog.
      */
-    GordianKeySetHash childHash() throws OceanusException;
+    void releaseDialog();
 
     /**
-     * resolve child keySetHash (internal password).
-     * @param pHash the hash to resolve
-     * @return the similar hash
-     * @throws OceanusException on error
+     * Obtain the password.
+     * @return the password
      */
-    GordianKeySetHash resolveChildHash(byte[] pHash) throws OceanusException;
+    char[] getPassword();
+
+    /**
+     * set the error for the dialog.
+     * @param pError the error to display
+     */
+    void setError(String pError);
 }

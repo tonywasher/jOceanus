@@ -28,10 +28,17 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
  */
 public interface GordianKeySetFactory {
     /**
-     * create KeySet.
+     * create empty KeySet.
      * @return the new keySet
      */
     GordianKeySet createKeySet();
+
+    /**
+     * generate random KeySet.
+     * @return the new keySet
+     * @throws OceanusException on error
+     */
+    GordianKeySet generateKeySet() throws OceanusException;
 
     /**
      * Generate a keySetHash for the given password.

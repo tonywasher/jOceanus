@@ -18,7 +18,6 @@ package net.sourceforge.joceanus.jgordianknot.api.cipher;
 
 import java.security.spec.X509EncodedKeySpec;
 
-import net.sourceforge.joceanus.jgordianknot.api.base.GordianLength;
 import net.sourceforge.joceanus.jgordianknot.api.base.GordianKeySpec;
 import net.sourceforge.joceanus.jgordianknot.api.key.GordianKey;
 import net.sourceforge.joceanus.jgordianknot.api.key.GordianKeyPair;

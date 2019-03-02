@@ -120,6 +120,7 @@ public final class GordianKeySetRecipe {
      * Create a new recipe.
      * @param pFactory the factory
      * @param pAEAD true/false is AEAD in use?
+     * @return the recipe
      */
     static GordianKeySetRecipe newRecipe(final GordianCoreFactory pFactory,
                                          final boolean pAEAD) {
@@ -131,6 +132,7 @@ public final class GordianKeySetRecipe {
      * @param pFactory the factory
      * @param pExternal the external form
      * @param pAEAD true/false is AEAD in use?
+     * @return the recipe
      */
     static GordianKeySetRecipe parseRecipe(final GordianCoreFactory pFactory,
                                            final byte[] pExternal,
@@ -272,7 +274,7 @@ public final class GordianKeySetRecipe {
             theRecipe = pRecipe;
             theSalt = pSalt;
             theMac = pMac;
-            boolean forAEAD = pMac != null;
+            final boolean forAEAD = pMac != null;
 
             /* Calculate the initVector */
             theInitVector = myPersonal.adjustIV(theSalt);

@@ -102,6 +102,16 @@ public class GordianCoreKeySetFactory
     }
 
     @Override
+    public GordianKeySet generateKeySet() throws OceanusException {
+        /* Generate a random password */
+        final byte[] myPassword = new byte[GordianLength.LEN_256.getByteLength()];
+        theFactory.getRandomSource().getRandom().nextBytes(myPassword);
+
+        /* Generate a keySet using this password */
+        return GordianCoreKeySetHash.newKeySetHash(getFactory(), myPassword).getKeySet();
+    }
+
+    @Override
     public GordianKeySetHash generateKeySetHash(final char[] pPassword) throws OceanusException {
         return GordianCoreKeySetHash.newKeySetHash(getFactory(), pPassword);
     }

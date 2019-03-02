@@ -28,11 +28,8 @@ import net.sourceforge.joceanus.jgordianknot.api.mac.GordianMac;
 import net.sourceforge.joceanus.jgordianknot.api.mac.GordianMacFactory;
 import net.sourceforge.joceanus.jgordianknot.api.mac.GordianMacSpec;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianCoreFactory;
-import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianDataException;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.TethysDataConverter;
-import net.sourceforge.joceanus.jtethys.logger.TethysLogManager;
-import net.sourceforge.joceanus.jtethys.logger.TethysLogger;
 
 import java.util.Arrays;
 
@@ -41,11 +38,6 @@ import java.util.Arrays;
  */
 public final class GordianCoreKeySetHash
     implements GordianKeySetHash {
-    /**
-     * Logger.
-     */
-    private static final TethysLogger LOGGER = TethysLogManager.getLogger(GordianKeySetHash.class);
-
     /**
      * Hash size for password hash.
      */
@@ -65,11 +57,6 @@ public final class GordianCoreKeySetHash
      * The Hash.
      */
     private byte[] theHash;
-
-    /**
-     * Encrypted password.
-     */
-    private byte[] thePassword;
 
     /**
      * Encrypted child password.
@@ -131,7 +118,7 @@ public final class GordianCoreKeySetHash
             myPassword = TethysDataConverter.charsToByteArray(pPassword);
             return newKeySetHash(pFactory, myPassword);
 
-            /* Ensure inetrmediate password is reset */
+            /* Ensure intermediate password is reset */
         } finally {
             if (myPassword != null) {
                 Arrays.fill(myPassword, (byte) 0);
@@ -147,8 +134,8 @@ public final class GordianCoreKeySetHash
      * @return the new keySetHash
      * @throws OceanusException on error
      */
-    private static GordianKeySetHash newKeySetHash(final GordianFactory pFactory,
-                                                   final byte[] pPassword) throws OceanusException {
+    static GordianKeySetHash newKeySetHash(final GordianFactory pFactory,
+                                           final byte[] pPassword) throws OceanusException {
         /* Create a new keySetHash */
         final GordianCoreKeySetHash myHash = new GordianCoreKeySetHash((GordianCoreFactory) pFactory);
 
@@ -226,29 +213,6 @@ public final class GordianCoreKeySetHash
     }
 
     @Override
-    public GordianCoreKeySetHash similarHash() throws OceanusException {
-        /* Protect against exceptions */
-        byte[] myPassword = null;
-        try {
-            /* Create a new keySetHash */
-            final GordianCoreKeySetHash myHash = new GordianCoreKeySetHash(theFactory);
-
-            /* Access the original password */
-            myPassword = theKeySet.decryptBytes(thePassword);
-
-            /* Build hash from password */
-            myHash.setPassword(myPassword);
-            return myHash;
-
-            /* Ensure password is reset */
-        } finally {
-            if (myPassword != null) {
-                Arrays.fill(myPassword, (byte) 0);
-            }
-        }
-    }
-
-    @Override
     public GordianCoreKeySetHash childHash() throws OceanusException {
         /* Protect against exceptions */
         byte[] myPassword = null;
@@ -310,7 +274,6 @@ public final class GordianCoreKeySetHash
             theKeySet.buildFromSecret(myResults[iIndex++], myResults[iIndex++]);
 
             /* Encrypt the passwords */
-            thePassword = theKeySet.encryptBytes(pPassword);
             theChildPassword = theKeySet.encryptBytes(myResults[iIndex]);
 
         } finally {
@@ -350,7 +313,6 @@ public final class GordianCoreKeySetHash
             theKeySet.buildFromSecret(myResults[iIndex++], myResults[iIndex++]);
 
             /* Encrypt the passwords*/
-            thePassword = theKeySet.encryptBytes(pPassword);
             theChildPassword = theKeySet.encryptBytes(myResults[iIndex]);
 
         } finally {
@@ -481,36 +443,6 @@ public final class GordianCoreKeySetHash
         /* Return to caller */
         return new byte[][]
                 {myHashBytes, mySecretBytes, myInitVector, myChildPassword};
-    }
-
-    /**
-     * Attempt the cached password against the passed hash.
-     *
-     * @param pHashBytes the Hash to test against
-     * @return the new PasswordHash if successful, otherwise null
-     */
-    public GordianKeySetHash attemptPasswordForHash(final byte[] pHashBytes) {
-        /* Protect against exceptions */
-        byte[] myPassword = null;
-        try {
-            /* Access the original password */
-            myPassword = theKeySet.decryptBytes(thePassword);
-
-            /* Try to resolve the hash and return it */
-            return resolveKeySetHash(theFactory, pHashBytes, myPassword);
-
-            /* Catch Exceptions */
-        } catch (OceanusException e) {
-            LOGGER.error("Password attempt failed", e);
-            return null;
-        } catch (GordianBadCredentialsException e) {
-            return null;
-        } finally {
-            /* Clear out password */
-            if (myPassword != null) {
-                Arrays.fill(myPassword, (byte) 0);
-            }
-        }
     }
 
     @Override
