@@ -40,6 +40,7 @@
         <dt>v1.5.2-b6</dt> <dd>Adjust Security algorithms</dd>
         <dt>v1.5.3-b1</dt> <dd>Repackage for java 9 modularisation</dd>
         <dt>v1.5.3-b2</dt> <dd>Rework Gui classes</dd>
+        <dt>v1.6.0-b1</dt> <dd>Restructure Security</dd>
       </dl>
     </section>
   </body>
