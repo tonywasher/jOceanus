@@ -19,8 +19,8 @@ package net.sourceforge.joceanus.jgordianknot.junit.extensions;
 import java.util.stream.Stream;
 
 import org.bouncycastle.crypto.BlockCipher;
-import org.bouncycastle.crypto.newengines.AnubisEngine;
-import org.bouncycastle.crypto.newengines.MARSEngine;
+import org.bouncycastle.crypto.ext.engines.AnubisEngine;
+import org.bouncycastle.crypto.ext.engines.MARSEngine;
 import org.bouncycastle.crypto.params.KeyParameter;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DynamicContainer;

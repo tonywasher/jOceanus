@@ -19,9 +19,9 @@ package net.sourceforge.joceanus.jgordianknot.junit.extensions;
 import java.util.stream.Stream;
 
 import org.bouncycastle.crypto.Digest;
-import org.bouncycastle.crypto.newdigests.CubeHashDigest;
-import org.bouncycastle.crypto.newdigests.GroestlDigest;
-import org.bouncycastle.crypto.newdigests.JHDigest;
+import org.bouncycastle.crypto.ext.digests.CubeHashDigest;
+import org.bouncycastle.crypto.ext.digests.GroestlDigest;
+import org.bouncycastle.crypto.ext.digests.JHDigest;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DynamicContainer;
 import org.junit.jupiter.api.DynamicNode;
