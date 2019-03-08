@@ -32,7 +32,7 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.TethysDataConverter;
 
 /**
- * BlockCipjher Tests.
+ * BlockCipher Tests.
  */
 public class BlockCipherTest {
     /**

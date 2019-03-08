@@ -80,7 +80,7 @@ public class GordianSecureRandom
         theRandom = pRandom;
         theEntropy = pEntropy;
         predictionResistant = isPredictionResistant;
-        theBuffer = new byte[pGenerator.getBlockSize()];
+        theBuffer = new byte[pGenerator.getBlockSize() >> 2];
     }
 
     @Override
@@ -110,6 +110,12 @@ public class GordianSecureRandom
     @Override
     public void nextBytes(final byte[] bytes) {
         synchronized (this) {
+            /* Fill buffer directly if we are prediction resistant */
+            if (predictionResistant) {
+                fillBuffer(bytes);
+                return;
+            }
+
             /* Determine how many bytes are needed */
             int bytesNeeded = bytes.length;
             int bytesBuilt = 0;
@@ -150,6 +156,19 @@ public class GordianSecureRandom
             theGenerator.generate(theBuffer, null, predictionResistant);
         }
         bytesAvailable = theBuffer.length;
+    }
+
+    /**
+     * Next buffer of random data.
+     */
+    private void fillBuffer(final byte[] pBuffer) {
+        /* Generate, checking for reSeed request */
+        if (theGenerator.generate(pBuffer, null, predictionResistant) < 0) {
+            /* ReSeed and regenerate */
+            theGenerator.reseed(null);
+            theGenerator.generate(pBuffer, null, predictionResistant);
+        }
+        bytesAvailable = 0;
     }
 
     @Override

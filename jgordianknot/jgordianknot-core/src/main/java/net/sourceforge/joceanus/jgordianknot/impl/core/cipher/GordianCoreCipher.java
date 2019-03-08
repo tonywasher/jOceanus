@@ -19,12 +19,14 @@ package net.sourceforge.joceanus.jgordianknot.impl.core.cipher;
 import java.security.SecureRandom;
 
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianCipher;
+import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianCipherFactory;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianCipherSpec;
 import net.sourceforge.joceanus.jgordianknot.api.key.GordianKey;
 import net.sourceforge.joceanus.jgordianknot.api.base.GordianKeySpec;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianLogicException;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianRandomSource;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianCoreFactory;
+import net.sourceforge.joceanus.jgordianknot.impl.core.key.GordianCoreKeyGenerator;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
@@ -42,6 +44,16 @@ public abstract class GordianCoreCipher<T extends GordianKeySpec>
      * CipherSpec.
      */
     private final GordianCipherSpec<T> theCipherSpec;
+
+    /**
+     * The Security Factory.
+     */
+    private final GordianCoreFactory theFactory;
+
+    /**
+     * The KeyGenerator.
+     */
+    private GordianCoreKeyGenerator<T> theGenerator;
 
     /**
      * Restricted.
@@ -73,6 +85,7 @@ public abstract class GordianCoreCipher<T extends GordianKeySpec>
         theCipherSpec = pCipherSpec;
         theKeyType = theCipherSpec.getKeyType();
         theRandom = pFactory.getRandomSource();
+        theFactory = pFactory;
         isRestricted = pFactory.isRestricted();
     }
 
@@ -136,6 +149,22 @@ public abstract class GordianCoreCipher<T extends GordianKeySpec>
      */
     protected void setKey(final GordianKey<T> pKey) {
         theKey = pKey;
+    }
+
+    /**
+     * Init with bytes as key.
+     * @param pKeyBytes the bytes to use
+     */
+    public void initCipher(final byte[] pKeyBytes) throws OceanusException {
+        /* Create generator if needed */
+        if (theGenerator == null) {
+            final GordianCipherFactory myFactory = theFactory.getCipherFactory();
+            theGenerator = (GordianCoreKeyGenerator<T>) myFactory.getKeyGenerator(theKeyType);
+        }
+
+        /* Create the key and initialise */
+        final GordianKey<T> myKey = theGenerator.buildKeyFromBytes(pKeyBytes);
+        initCipher(myKey);
     }
 
     /**

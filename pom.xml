@@ -28,7 +28,7 @@
   </developers>
   <modules>
     <module>jmoneywise</module>
-    <module>jthemis</module>
+    <!--<module>jthemis</module>-->
     <module>jcoeus</module>
     <module>jprometheus</module>
     <module>jmetis</module>
@@ -38,7 +38,7 @@
   <scm>
     <connection>scm:git:git://sourceforge.net/p/joceanus/git</connection>
     <developerConnection>scm:git:ssh:sourceforge.net/p/joceanus/git</developerConnection>
-    <url>http://sourceforge.net/p/joceanus/git/ci/{scmMaster}/tree/</url>
+    <url>http://sourceforge.net/p/joceanus/git/ci/${scmMaster}/tree/</url>
   </scm>
   <issueManagement>
     <system>Sourceforge</system>
@@ -96,7 +96,7 @@
     <JarPluginVersion>3.1.1</JarPluginVersion>
     <ProjectInfoPluginVersion>3.0.0</ProjectInfoPluginVersion>
     <JxrPluginVersion>3.0.0</JxrPluginVersion>
-    <JavaDocPluginVersion>3.0.1</JavaDocPluginVersion>
+    <JavaDocPluginVersion>3.1.0</JavaDocPluginVersion>
     <SonarQubePluginVersion>3.6.0.1398</SonarQubePluginVersion>
     <CheckStylePluginVersion>3.0.0</CheckStylePluginVersion>
     <PMDPluginVersion>3.11.0</PMDPluginVersion>
@@ -241,7 +241,7 @@
           </excludes>
         </configuration>
       </plugin>
-      <!--<plugin>
+      <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-javadoc-plugin</artifactId>
         <version>${JavaDocPluginVersion}</version>
@@ -255,18 +255,28 @@
         <configuration>
           <show>public</show>
           <nohelp>true</nohelp>
-          <excludePackageNames>SevenZip</excludePackageNames>
+          <excludePackageNames>SevenZip*</excludePackageNames>
         </configuration>
         <executions>
           <execution>
+            <id>javadoc</id>
+            <goals>
+              <goal>javadoc</goal>
+            </goals>
+            <phase>site</phase>
+          </execution>
+          <execution>
             <id>aggregate</id>
+            <configuration>
+              <skip>true</skip>
+            </configuration>
             <goals>
               <goal>aggregate</goal>
             </goals>
             <phase>site</phase>
           </execution>
         </executions>
-      </plugin>-->
+      </plugin>
       <plugin>
         <groupId>org.jacoco</groupId>
         <artifactId>jacoco-maven-plugin</artifactId>
@@ -384,7 +394,7 @@
           <configuration>
             <archive>
               <manifest>
-   	        <mainClass>${packageMain}</mainClass>
+                <mainClass>${packageMain}</mainClass>
                 <packageName>${packageName}</packageName>
                 <addClasspath>true</addClasspath>
                 <classpathLayoutType>simple</classpathLayoutType>
@@ -401,6 +411,7 @@
     </pluginManagement>
   </build>
   <reporting>
+    <excludeDefaults>true</excludeDefaults>
     <plugins>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
@@ -426,7 +437,7 @@
         <artifactId>maven-jxr-plugin</artifactId>
         <version>${JxrPluginVersion}</version>
         <configuration>
-          <!--<linkJavadoc>true</linkJavadoc>-->
+          <linkJavadoc>true</linkJavadoc>
           <excludes>
             <exclude>**/SevenZip/**/*.java</exclude>
             <exclude>**/module-info.java</exclude>
@@ -442,16 +453,25 @@
           </reportSet>
         </reportSets>
       </plugin>
-      <!--<plugin>
+      <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-javadoc-plugin</artifactId>
         <version>${JavaDocPluginVersion}</version>
         <configuration>
-          <show>public</show>
+          <show>package</show>
           <nohelp>true</nohelp>
-          <excludePackageNames>SevenZip</excludePackageNames>
+          <excludePackageNames>SevenZip*</excludePackageNames>
         </configuration>
-      </plugin>-->
+        <reportSets>
+          <reportSet>
+            <id>aggregate</id>
+            <inherited>false</inherited>
+            <reports>
+              <report>aggregate-no-fork</report>
+            </reports>
+          </reportSet>
+        </reportSets>
+      </plugin>
       <plugin>
         <groupId>org.jacoco</groupId>
         <artifactId>jacoco-maven-plugin</artifactId>

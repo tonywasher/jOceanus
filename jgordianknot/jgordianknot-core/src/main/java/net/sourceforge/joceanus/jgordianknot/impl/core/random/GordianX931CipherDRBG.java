@@ -103,9 +103,9 @@ public class GordianX931CipherDRBG
      * @param pEntropy source of entropy to use for seeding/reSeeding.
      * @param pInitVector nonce to further distinguish this DRBG.
      */
-    GordianX931CipherDRBG(final GordianCipher<GordianSymKeySpec> pCipher,
-                          final EntropySource pEntropy,
-                          final byte[] pInitVector) {
+    public GordianX931CipherDRBG(final GordianCipher<GordianSymKeySpec> pCipher,
+                                 final EntropySource pEntropy,
+                                 final byte[] pInitVector) {
         /* Store parameters */
         theCipher = pCipher;
         theEntropy = pEntropy;
@@ -186,7 +186,7 @@ public class GordianX931CipherDRBG
         int myBuilt = 0;
         while (myBuilt < myLen) {
             /* Generate a new block */
-            theCipher.finish(theDT.getBuffer(), 0, myLen, theI);
+            theCipher.finish(theDT.getBuffer(), 0, mySize, theI);
             processBytes(theR, theI, theV);
             processBytes(theV, theR, theI);
 

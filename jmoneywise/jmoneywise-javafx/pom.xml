@@ -47,14 +47,14 @@
       </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-javadoc-plugin</artifactId>
+        <configuration>
+          <skip>true</skip>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-jar-plugin</artifactId>
-          <configuration>
-            <archive>
-              <manifestEntries>
-                <SplashScreen-Image>${packageSplash}</SplashScreen-Image>
-              </manifestEntries>
-            </archive>
-          </configuration>
       </plugin>
     </plugins>
   </build>

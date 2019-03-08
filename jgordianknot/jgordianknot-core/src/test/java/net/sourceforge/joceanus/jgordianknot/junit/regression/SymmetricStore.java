@@ -31,6 +31,8 @@ import net.sourceforge.joceanus.jgordianknot.api.key.GordianKey;
 import net.sourceforge.joceanus.jgordianknot.api.key.GordianKeyGenerator;
 import net.sourceforge.joceanus.jgordianknot.api.mac.GordianMacFactory;
 import net.sourceforge.joceanus.jgordianknot.api.mac.GordianMacSpec;
+import net.sourceforge.joceanus.jgordianknot.api.random.GordianRandomFactory;
+import net.sourceforge.joceanus.jgordianknot.api.random.GordianRandomSpec;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
@@ -410,6 +412,48 @@ class SymmetricStore {
     }
 
     /**
+     * Factory and Mac definition.
+     */
+    static class FactoryRandomSpec
+            implements FactorySpec<GordianRandomSpec> {
+        /**
+         * The factory.
+         */
+        private final GordianFactory theFactory;
+
+        /**
+         * The macSpec.
+         */
+        private final GordianRandomSpec theRandomSpec;
+
+       /**
+         * Constructor.
+         * @param pFactory the factory
+         * @param pRandomSpec the macSpec
+         */
+        FactoryRandomSpec(final GordianFactory pFactory,
+                          final GordianRandomSpec pRandomSpec) {
+            theFactory = pFactory;
+            theRandomSpec = pRandomSpec;
+        }
+
+        @Override
+        public GordianFactory getFactory() {
+            return theFactory;
+        }
+
+        @Override
+        public GordianRandomSpec getSpec() {
+            return theRandomSpec;
+        }
+
+        @Override
+        public String toString() {
+            return theRandomSpec.toString();
+        }
+    }
+
+    /**
      * Obtain the list of digests to test.
      * @param pFactory the factory
      * @return the list
@@ -498,6 +542,24 @@ class SymmetricStore {
         for (GordianStreamKeyType myType : myCipherFactory.listAllSupportedStreamKeyTypes()) {
             /* Add the streamKeySpec */
             myResult.add(new FactoryStreamKeyType(pFactory, myType));
+        }
+
+        /* Return the list */
+        return myResult;
+    }
+
+    /**
+     * Obtain the list of randomSpecs to test.
+     * @param pFactory the factory
+     * @return the list
+     */
+    static List<FactoryRandomSpec> randomProvider(final GordianFactory pFactory) {
+        /* Loop through the possible randomSpecs */
+        final List<FactoryRandomSpec> myResult = new ArrayList<>();
+        final GordianRandomFactory myRandomFactory = pFactory.getRandomFactory();
+        for (GordianRandomSpec mySpec : myRandomFactory.listAllSupportedRandomSpecs()) {
+            /* Add the randomSpec */
+            myResult.add(new FactoryRandomSpec(pFactory, mySpec));
         }
 
         /* Return the list */

@@ -16,6 +16,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jgordianknot.junit.regression;
 
+import java.security.SecureRandom;
 import java.util.List;
 import java.util.stream.Stream;
 
@@ -50,10 +51,13 @@ import net.sourceforge.joceanus.jgordianknot.api.mac.GordianMac;
 import net.sourceforge.joceanus.jgordianknot.api.mac.GordianMacFactory;
 import net.sourceforge.joceanus.jgordianknot.api.mac.GordianMacSpec;
 import net.sourceforge.joceanus.jgordianknot.api.mac.GordianMacType;
+import net.sourceforge.joceanus.jgordianknot.api.random.GordianRandomFactory;
+import net.sourceforge.joceanus.jgordianknot.api.random.GordianRandomSpec;
 import net.sourceforge.joceanus.jgordianknot.impl.core.cipher.GordianCoreCipher;
 import net.sourceforge.joceanus.jgordianknot.impl.core.cipher.GordianCoreWrapper;
 import net.sourceforge.joceanus.jgordianknot.junit.regression.SymmetricStore.FactoryDigestSpec;
 import net.sourceforge.joceanus.jgordianknot.junit.regression.SymmetricStore.FactoryMacSpec;
+import net.sourceforge.joceanus.jgordianknot.junit.regression.SymmetricStore.FactoryRandomSpec;
 import net.sourceforge.joceanus.jgordianknot.junit.regression.SymmetricStore.FactorySpec;
 import net.sourceforge.joceanus.jgordianknot.junit.regression.SymmetricStore.FactoryStreamCipherSpec;
 import net.sourceforge.joceanus.jgordianknot.junit.regression.SymmetricStore.FactoryStreamKeyType;
@@ -165,6 +169,12 @@ public class SymmetricTest {
             myStream = Stream.concat(myStream, mySubStream);
         }
 
+        /* Add random Tests */
+        mySubStream = randomKeyTests(myFactory);
+        if (mySubStream != null) {
+            myStream = Stream.concat(myStream, mySubStream);
+        }
+
         /* Return the stream */
         final String myName = pType.toString()
                 + (pRestricted ? "-Restricted" : "-Full");
@@ -254,6 +264,23 @@ public class SymmetricTest {
         }
 
         /* No mac Tests */
+        return null;
+    }
+
+    /**
+     * Create the random test suite for a factory.
+     * @param pFactory the factory
+     * @return the test stream or null
+     */
+    private Stream<DynamicNode> randomKeyTests(final GordianFactory pFactory) {
+        /* Add random Tests */
+        List<FactoryRandomSpec> myRandoms = SymmetricStore.randomProvider(pFactory);
+        if (!myRandoms.isEmpty()) {
+            Stream<DynamicNode> myTests = myRandoms.stream().map(x -> DynamicTest.dynamicTest(x.toString(), () -> checkRandomSpec(x)));
+            return Stream.of(DynamicContainer.dynamicContainer("randoms", myTests));
+        }
+
+        /* No random Tests */
         return null;
     }
 
@@ -525,6 +552,24 @@ public class SymmetricTest {
         if (fullProfiles) {
             System.out.println(myType.toString() + ":" + myElapsed);
         }
+    }
+
+    /**
+     * check randomSpec.
+     * @param pRandomSpec the randomSpec
+     * @throws OceanusException on error
+     */
+    private void checkRandomSpec(final FactoryRandomSpec pRandomSpec) throws OceanusException {
+        /* Create the secure random */
+        final GordianFactory myFactory = pRandomSpec.getFactory();
+        final GordianRandomSpec mySpec = pRandomSpec.getSpec();
+        final GordianRandomFactory myRandomFactory = myFactory.getRandomFactory();
+        final SecureRandom myRandom = myRandomFactory.createRandom(mySpec);
+
+        /* Generate some random bytes */
+        final int myLen = 128;
+        byte[] myBytes = new byte[myLen];
+        myRandom.nextBytes(myBytes);
     }
 
     /**

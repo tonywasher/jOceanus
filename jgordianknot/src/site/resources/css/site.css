@@ -1,0 +1,17 @@
+/* Define tables */
+.defTable {
+    width: 90%;
+    margin: 0 auto;
+    text-align: center;
+    border-spacing: 1px;
+    border-collapse: collapse;
+    border-top: solid;
+    border-bottom: solid;
+}
+
+/* Define table headers */
+.defHdr {
+    text-align: center;
+    font-weight: bold;
+    font-size: 120%;
+}

@@ -86,4 +86,17 @@ public interface GordianRandomFactory {
                 .filter(supportedRandomSpecs())
                 .collect(Collectors.toList());
     }
+
+    /**
+     * Obtain a list of supported randomSpecs of a given type.
+     * @param pType the random type
+     * @return the list of supported randomSpecs.
+     */
+    default List<GordianRandomSpec> listAllSupportedRandomSpecs(final GordianRandomType pType) {
+        return GordianRandomSpec.listAll()
+                .stream()
+                .filter(s -> s.getRandomType().equals(pType))
+                .filter(supportedRandomSpecs())
+                .collect(Collectors.toList());
+    }
 }

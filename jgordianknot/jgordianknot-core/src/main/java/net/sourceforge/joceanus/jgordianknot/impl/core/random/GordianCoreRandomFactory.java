@@ -46,6 +46,7 @@ import net.sourceforge.joceanus.jgordianknot.api.random.GordianRandomType;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianCoreFactory;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianDataException;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianRandomSource;
+import net.sourceforge.joceanus.jgordianknot.impl.core.cipher.GordianCoreCipher;
 import net.sourceforge.joceanus.jgordianknot.impl.core.cipher.GordianCoreCipherFactory;
 import net.sourceforge.joceanus.jgordianknot.impl.core.digest.GordianCoreDigestFactory;
 import net.sourceforge.joceanus.jgordianknot.impl.core.keyset.GordianCoreKeySetFactory;
@@ -59,9 +60,19 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
 public class GordianCoreRandomFactory
     implements GordianRandomFactory {
     /**
+     * The SP800 prefix.
+     */
+    static final String SP800_PREFIX = "SP800-";
+
+    /**
+     * The bit shift.
+     */
+    static final int BIT_SHIFT = 3;
+
+    /**
      * The number of entropy bits required.
      */
-    private static final int NUM_ENTROPY_BITS_REQUIRED = 256;
+    private static final int NUM_ENTROPY_BITS_REQUIRED = GordianSP800HashDRBG.LONG_SEED_LENGTH;
 
     /**
      * The number of entropy bits required.
@@ -142,15 +153,18 @@ public class GordianCoreRandomFactory
 
         /* Access the digestSpec */
         final GordianDigestSpec myDigest = pRandomSpec.getDigestSpec();
-        final boolean isResistent = pRandomSpec.isPredictionResistent();
+        final boolean isResistent = pRandomSpec.isPredictionResistant();
         switch (pRandomSpec.getRandomType()) {
             case HASH:
                 return buildHash(myDigests.createDigest(myDigest), isResistent);
             case HMAC:
                 final GordianMacSpec myMacSpec = GordianMacSpec.hMac(myDigest);
                 return buildHMAC(myMacs.createMac(myMacSpec), isResistent);
+            case CTR:
+                GordianSymCipherSpec myCipherSpec = GordianSymCipherSpec.ecb(pRandomSpec.getSymKeySpec(), GordianPadding.NONE);
+                return buildCTR(myCiphers.createSymKeyCipher(myCipherSpec), isResistent);
             case X931:
-                final GordianSymCipherSpec myCipherSpec = GordianSymCipherSpec.ecb(pRandomSpec.getSymKeySpec(), GordianPadding.NONE);
+                myCipherSpec = GordianSymCipherSpec.ecb(pRandomSpec.getSymKeySpec(), GordianPadding.NONE);
                 return buildX931(myCiphers.createSymKeyCipher(myCipherSpec), isResistent);
             default:
                 throw new GordianDataException(GordianCoreFactory.getInvalidText(pRandomSpec));
@@ -186,6 +200,7 @@ public class GordianCoreRandomFactory
             case HMAC:
                 final GordianCoreMacFactory myMacs = (GordianCoreMacFactory) theFactory.getMacFactory();
                 return myDigest != null && myMacs.validHMacSpec(myDigest);
+            case CTR:
             case X931:
                 final GordianCoreCipherFactory myCiphers = (GordianCoreCipherFactory) theFactory.getCipherFactory();
                 return mySymKey != null && myCiphers.validSymKeySpec(mySymKey);
@@ -335,16 +350,43 @@ public class GordianCoreRandomFactory
     }
 
     /**
+     * Build a SecureRandom based on a SP 800-90A CTR DRBG.
+     * @param pCipher cipher to use in the DRBG underneath the SecureRandom.
+     * @param isPredictionResistant specify whether the underlying DRBG in the resulting
+     * SecureRandom should re-seed on each request for bytes.
+     * @return a SecureRandom supported by a CTR DRBG.
+     * @throws OceanusException on error
+     */
+    private GordianSecureRandom buildCTR(final GordianCipher<GordianSymKeySpec> pCipher,
+                                         final boolean isPredictionResistant) throws OceanusException {
+        /* Create initVector */
+        final byte[] myInit = theRandom.generateSeed(NUM_ENTROPY_BYTES_REQUIRED);
+
+        /* Build DRBG */
+        final GordianCoreCipher<GordianSymKeySpec> myCipher = (GordianCoreCipher<GordianSymKeySpec>) pCipher;
+        final EntropySource myEntropy = theEntropyProvider.get(NUM_ENTROPY_BITS_REQUIRED);
+        final GordianSP800CTRDRBG myProvider = new GordianSP800CTRDRBG(myCipher, theFactory.getKeyLength(), myEntropy, theRandomSource.defaultPersonalisation(), myInit);
+        return new GordianSecureRandom(myProvider, theRandom, myEntropy, isPredictionResistant);
+    }
+
+    /**
      * Build a SecureRandom based on a X931 Cipher DRBG.
-     * @param pCipher HMAC algorithm to use in the DRBG underneath the SecureRandom.
+     * @param pCipher ctr cipher to use in the DRBG underneath the SecureRandom.
      * @param isPredictionResistant specify whether the underlying DRBG in the resulting
      * SecureRandom should re-seed on each request for bytes.
      * @return a SecureRandom supported by a HMAC DRBG.
+     * @throws OceanusException on error
      */
     private GordianSecureRandom buildX931(final GordianCipher<GordianSymKeySpec> pCipher,
-                                          final boolean isPredictionResistant) {
+                                          final boolean isPredictionResistant) throws OceanusException {
+        /* Initialise the cipher with a random key */
+        final GordianCipherFactory myCiphers = theFactory.getCipherFactory();
+        final GordianKeyGenerator<GordianSymKeySpec> myGenerator = myCiphers.getKeyGenerator(pCipher.getKeyType());
+        final GordianKey<GordianSymKeySpec> myKey = myGenerator.generateKey();
+        pCipher.initCipher(myKey);
+
         /* Build DRBG */
-        final EntropySource myEntropy = theEntropyProvider.get(NUM_ENTROPY_BITS_REQUIRED);
+        final EntropySource myEntropy = theEntropyProvider.get(pCipher.getKeyType().getBlockLength().getLength());
         final GordianX931CipherDRBG myProvider = new GordianX931CipherDRBG(pCipher, myEntropy, theRandomSource.defaultPersonalisation());
         return new GordianSecureRandom(myProvider, theRandom, myEntropy, isPredictionResistant);
     }

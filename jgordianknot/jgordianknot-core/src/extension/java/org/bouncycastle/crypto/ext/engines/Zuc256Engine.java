@@ -61,6 +61,7 @@ public class Zuc256Engine extends Zuc128Engine {
 
     /**
      * Constructor for Mac.
+     * @param pLength the Mac length
      */
     public Zuc256Engine(int pLength){
         switch (pLength) {

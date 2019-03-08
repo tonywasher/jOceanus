@@ -1,5 +1,5 @@
 /*******************************************************************************
- * GordianKnot: Security Suite
+ * Prometheus: Application Framework
  * Copyright 2012,2019 Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
@@ -14,8 +14,8 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  ******************************************************************************/
-
 /**
- * BouncyCastle extension tests.
+ * Prometheus javaFX.
  */
-package net.sourceforge.joceanus.jgordianknot.junit.extensions;
+module net.sourceforge.joceanus.jprometheus.javafx {
+}
