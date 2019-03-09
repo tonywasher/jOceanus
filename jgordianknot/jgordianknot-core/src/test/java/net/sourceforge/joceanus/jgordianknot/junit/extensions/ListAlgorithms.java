@@ -14,7 +14,7 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  ******************************************************************************/
-package net.sourceforge.joceanus.jgordianknot.junit.regression;
+package net.sourceforge.joceanus.jgordianknot.junit.extensions;
 
 import java.security.Provider;
 import java.security.Security;

@@ -20,6 +20,7 @@ import java.io.File;
 import java.io.IOException;
 
 import org.eclipse.jgit.api.CloneCommand;
+import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.errors.GitAPIException;
 import org.eclipse.jgit.lib.Repository;
 import org.eclipse.jgit.storage.file.FileRepositoryBuilder;
@@ -56,6 +57,11 @@ public class ThemisGitRepository
     }
 
     /**
+     * The local fields.
+     */
+    private final MetisFieldSet<ThemisGitRepository> theLocalFields;
+
+    /**
      * The Preferences.
      */
     private final ThemisGitPreferences thePreferences;
@@ -78,6 +84,9 @@ public class ThemisGitRepository
         setBase(thePreferences.getStringValue(ThemisGitPreferenceKey.BASE));
         setName(thePreferences.getStringValue(ThemisGitPreferenceKey.NAME));
 
+        /* Allocate the local fields */
+        theLocalFields = MetisFieldSet.newFieldSet(this);
+
         /* Create component list */
         final ThemisGitComponentList myComponents = new ThemisGitComponentList(this);
         setComponents(myComponents);
@@ -96,7 +105,7 @@ public class ThemisGitRepository
 
     @Override
     public MetisFieldSet<ThemisGitRepository> getDataFieldSet() {
-        return FIELD_DEFS;
+        return theLocalFields;
     }
 
     /**
@@ -146,6 +155,23 @@ public class ThemisGitRepository
     }
 
     /**
+     * Declare a component.
+     * @param pComponent the component
+     */
+    void declareComponent(final ThemisGitComponent pComponent) {
+        /* Determine the name of the field */
+        final ThemisGitComponentList myList = getComponents();
+        String myName = ThemisResource.SCM_COMPONENT.getValue();
+        if (!myList.isEmpty()) {
+            myName += (myList.size() + 1);
+        }
+
+        /* Declare the field and add the component */
+        theLocalFields.declareLocalField(myName, f -> pComponent);
+        myList.add(pComponent);
+    }
+
+    /**
      * Create repository.
      * @param pName the name of the component
      * @return the new component
@@ -164,18 +190,14 @@ public class ThemisGitRepository
             ThemisDirectory.removeDirectory(new File(myRepoPath));
 
             /* Create repository */
-            final FileRepositoryBuilder myBuilder = new FileRepositoryBuilder();
-            myBuilder.setGitDir(new File(myRepoPath, ThemisGitComponent.NAME_GITDIR));
-            final Repository myRepo = myBuilder.build();
-            myRepo.create();
-            myRepo.close();
+            Git.init().setDirectory(new File(myRepoPath)).call();
 
             /* Create the base component */
             final ThemisGitComponent myComponent = new ThemisGitComponent(this, pName);
             getComponents().add(myComponent);
             return myComponent;
 
-        } catch (IOException e) {
+        } catch (GitAPIException e) {
             throw new ThemisIOException("Failed to create", e);
         }
     }
@@ -203,7 +225,7 @@ public class ThemisGitRepository
             /* Clone the component */
             final CloneCommand myClone = new CloneCommand();
             myClone.setCloneAllBranches(true);
-            myClone.setRemote(ThemisGitBundle.REMOTE_BUNDLE);
+            myClone.setRemote(ThemisGitBundle.REMOTE_ORIGIN);
             myClone.setBranch(ThemisGitBranch.BRN_MASTER);
             myClone.setDirectory(new File(myRepoPath));
             myClone.setURI(pSource.getAbsolutePath());

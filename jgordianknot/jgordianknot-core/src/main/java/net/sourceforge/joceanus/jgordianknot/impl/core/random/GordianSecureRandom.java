@@ -160,6 +160,7 @@ public class GordianSecureRandom
 
     /**
      * Next buffer of random data.
+     * @param pBuffer the buffer to fill
      */
     private void fillBuffer(final byte[] pBuffer) {
         /* Generate, checking for reSeed request */

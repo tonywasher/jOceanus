@@ -187,6 +187,7 @@ public class HashManager {
      * Create a new hash for an indexed password.
      * @param pManager the security manager
      * @param pIndex the index of the password
+     * @return the new Hash
      * @throws OceanusException on error
      */
     static HashIndex createNewHash(final GordianSecurityManager pManager,
@@ -200,6 +201,7 @@ public class HashManager {
      * Create a new hash for an indexed password.
      * @param pManager the security manager
      * @param pHash the hashIndex
+     * @return the new Hash
      * @throws OceanusException on error
      */
     static HashIndex createSimilarHash(final GordianSecurityManager pManager,

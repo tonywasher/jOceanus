@@ -16,8 +16,6 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jthemis.ui;
 
-import java.util.Iterator;
-
 import net.sourceforge.joceanus.jgordianknot.api.impl.GordianSecurityManager;
 import net.sourceforge.joceanus.jmetis.atlas.ui.MetisPreferenceView;
 import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceManager;
@@ -39,17 +37,8 @@ import net.sourceforge.joceanus.jtethys.ui.TethysUIEvent;
 import net.sourceforge.joceanus.jthemis.git.data.ThemisGitPreference.ThemisGitPreferences;
 import net.sourceforge.joceanus.jthemis.git.data.ThemisGitRepository;
 import net.sourceforge.joceanus.jthemis.jira.data.ThemisJiraPreference.ThemisJiraPreferences;
-import net.sourceforge.joceanus.jthemis.scm.data.ThemisScmComponent;
 import net.sourceforge.joceanus.jthemis.sf.data.ThemisSfPreference.ThemisSfPreferences;
-import net.sourceforge.joceanus.jthemis.svn.data.ThemisSvnComponent;
-import net.sourceforge.joceanus.jthemis.svn.data.ThemisSvnPreference.ThemisSvnPreferences;
-import net.sourceforge.joceanus.jthemis.svn.data.ThemisSvnRepository;
-import net.sourceforge.joceanus.jthemis.svn.data.ThemisSvnWorkingCopy.ThemisSvnWorkingCopySet;
-import net.sourceforge.joceanus.jthemis.tasks.ThemisSvnExtract;
-import net.sourceforge.joceanus.jthemis.threads.ThemisCreateGitRepo;
 import net.sourceforge.joceanus.jthemis.threads.ThemisDiscoverData;
-import net.sourceforge.joceanus.jthemis.threads.ThemisSubversionBackup;
-import net.sourceforge.joceanus.jthemis.threads.ThemisSubversionRestore;
 import net.sourceforge.joceanus.jthemis.threads.ThemisThreadId;
 
 /**
@@ -145,7 +134,6 @@ public abstract class ThemisSvnManager {
 
         /* Add interesting preferences */
         thePrefMgr.getPreferenceSet(ThemisJiraPreferences.class);
-        thePrefMgr.getPreferenceSet(ThemisSvnPreferences.class);
         thePrefMgr.getPreferenceSet(ThemisGitPreferences.class);
         thePrefMgr.getPreferenceSet(ThemisSfPreferences.class);
 
@@ -164,8 +152,6 @@ public abstract class ThemisSvnManager {
 
         /* Create the menuItems */
         myTasks.newSubMenu(ThemisThreadId.CREATEGITREPO);
-        myTasks.newMenuItem(ThemisThreadId.BACKUPSVN, e -> backupSubversion());
-        myTasks.newMenuItem(ThemisThreadId.RESTORESVN, e -> restoreSubversion());
         theMenuBar.setEnabled(ThemisThreadId.CREATEGITREPO, false);
 
         /* Create the data window */
@@ -222,49 +208,15 @@ public abstract class ThemisSvnManager {
     protected void setSubversionData(final ThemisDiscoverData pData) {
         /* TODO clear data entries */
 
-        /* Declare subversion repository to data manager */
-        final MetisViewerEntry mySvnEntry = theViewerMgr.newEntry(theDataEntry, "SvnRepository");
-        final ThemisSvnRepository mySvnRepository = pData.getSvnRepository();
-        mySvnEntry.setObject(mySvnRepository);
-        mySvnEntry.setFocus();
-
         /* Declare Git repositories to data manager */
         final MetisViewerEntry myGitEntry = theViewerMgr.newEntry(theDataEntry, "GitRepository");
         final ThemisGitRepository myGitRepository = pData.getGitRepository();
         myGitEntry.setObject(myGitRepository);
 
-        /* Declare WorkingCopySet to data manager */
-        final MetisViewerEntry mySetEntry = theViewerMgr.newEntry(theDataEntry, "WorkingSet");
-        final ThemisSvnWorkingCopySet myWorkingSet = pData.getWorkingCopySet();
-        mySetEntry.setObject(myWorkingSet);
-
-        /* Declare Extract Plans to data manager */
-        final MetisViewerEntry myPlanEntry = theViewerMgr.newEntry(theDataEntry, "ExtractPlans");
-        pData.declareExtractPlans(theViewerMgr, myPlanEntry);
 
         /* Access the git menu */
         final TethysMenuSubMenu<?> myMenu = theMenuBar.lookUpSubMenu(ThemisThreadId.CREATEGITREPO);
         myMenu.clearItems();
-
-        /* If we have a repository */
-        if (mySvnRepository != null) {
-            /* Loop through the components */
-            final Iterator<ThemisScmComponent> myIterator = mySvnRepository.getComponents().iterator();
-            while (myIterator.hasNext()) {
-                final ThemisSvnComponent myComp = (ThemisSvnComponent) myIterator.next();
-
-                /* Locate the corresponding Git Component (if it exists) */
-                final ThemisSvnExtract myExtract = pData.getExtractForComponent(myComp);
-
-                /* If the extract is usable */
-                if (myExtract != null
-                    && !myExtract.isComplete()
-                    && !myExtract.hasErrors()) {
-                    /* Create a new menu item for the component */
-                    myMenu.newMenuItem(myComp, e -> createGitRepo(myComp, myExtract));
-                }
-            }
-        }
 
         /* Enable the GIT menu if we have components */
         theMenuBar.setEnabled(ThemisThreadId.CREATEGITREPO, myMenu.countItems() > 0);
@@ -286,36 +238,6 @@ public abstract class ThemisSvnManager {
 
         /* Enable other tasks */
         theMenuBar.setEnabled(ThemisSvnMenuItem.TASKS, true);
-    }
-
-    /**
-     * Backup subversion.
-     */
-    private void backupSubversion() {
-        /* Create the worker thread */
-        final ThemisSubversionBackup myThread = new ThemisSubversionBackup();
-        runThread(myThread);
-    }
-
-    /**
-     * Restore subversion.
-     */
-    private void restoreSubversion() {
-        /* Create the worker thread */
-        final ThemisSubversionRestore myThread = new ThemisSubversionRestore();
-        runThread(myThread);
-    }
-
-    /**
-     * Run create GitRepo.
-     * @param pSource the source component
-     * @param pExtract the extract plan
-     */
-    private void createGitRepo(final ThemisSvnComponent pSource,
-                               final ThemisSvnExtract pExtract) {
-        /* Create the worker thread */
-        final ThemisCreateGitRepo myThread = new ThemisCreateGitRepo(pSource, pExtract);
-        runThread(myThread);
     }
 
     /**

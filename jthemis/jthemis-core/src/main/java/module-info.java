@@ -14,8 +14,28 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ******************************************************************************/
+
 /**
- * Data Models for subversion.
- * @author Tony Washer
+ * Themis git management.
  */
-package net.sourceforge.joceanus.jthemis.svn.data;
+module net.sourceforge.joceanus.jthemis.core {
+    /* java */
+    requires java.desktop;
+
+    /* External libraries */
+    requires maven.model;
+    requires org.json;
+    requires org.eclipse.jgit;
+    requires plexus.utils;
+
+    /* jOceanus */
+    requires net.sourceforge.joceanus.jgordianknot.core;
+    requires net.sourceforge.joceanus.jmetis.core;
+    requires net.sourceforge.joceanus.jtethys.core;
+
+    /* Exports */
+    exports net.sourceforge.joceanus.jthemis.ui;
+    exports net.sourceforge.joceanus.jthemis.git.data to net.sourceforge.joceanus.jmetis.core;
+    exports net.sourceforge.joceanus.jthemis.sf.data to net.sourceforge.joceanus.jmetis.core;
+    exports net.sourceforge.joceanus.jthemis.jira.data to net.sourceforge.joceanus.jmetis.core;
+}

@@ -34,6 +34,7 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jthemis.ThemisIOException;
 import net.sourceforge.joceanus.jthemis.ThemisResource;
 import net.sourceforge.joceanus.jthemis.git.data.ThemisGitRevisionHistory.ThemisGitCommitId;
+import net.sourceforge.joceanus.jthemis.git.data.ThemisGitRevisionHistory.ThemisGitRevision;
 import net.sourceforge.joceanus.jthemis.scm.data.ThemisScmBranch;
 import net.sourceforge.joceanus.jthemis.scm.data.ThemisScmTag;
 import net.sourceforge.joceanus.jthemis.scm.maven.ThemisMvnProjectDefinition;
@@ -61,6 +62,7 @@ public final class ThemisGitTag
         FIELD_DEFS.declareLocalField(ThemisResource.SCM_REPOSITORY, ThemisGitTag::getRepository);
         FIELD_DEFS.declareLocalField(ThemisResource.SCM_COMPONENT, ThemisGitTag::getComponent);
         FIELD_DEFS.declareLocalField(ThemisResource.GIT_COMMITID, ThemisGitTag::getCommitId);
+        FIELD_DEFS.declareLocalField(ThemisResource.GIT_REVISION, ThemisGitTag::getRevision);
         FIELD_DEFS.declareLocalField(ThemisResource.GIT_REMOTE, ThemisGitTag::isRemote);
     }
 
@@ -78,6 +80,11 @@ public final class ThemisGitTag
      * Object Id of the commit.
      */
     private final ThemisGitCommitId theCommitId;
+
+    /**
+     * Revision details of the commit.
+     */
+    private ThemisGitRevision theRevision;
 
     /**
      * Constructor.
@@ -121,6 +128,16 @@ public final class ThemisGitTag
     @Override
     public ThemisGitCommitId getCommitId() {
         return theCommitId;
+    }
+
+    @Override
+    public ThemisGitRevision getRevision() {
+        return theRevision;
+    }
+
+    @Override
+    public void setRevision(final ThemisGitRevision pRevision) {
+        theRevision = pRevision;
     }
 
     /**
@@ -251,7 +268,7 @@ public final class ThemisGitTag
                         /* Create the new tag and add it */
                         final RevCommit myCommit = myRevWalk.parseCommit(myObjectId);
                         final ThemisGitTag myTag = new ThemisGitTag(getBranch(), myTagNo, new ThemisGitCommitId(myCommit));
-                        add(myTag);
+                        getBranch().declareTag(myTag);
                     }
                 }
 

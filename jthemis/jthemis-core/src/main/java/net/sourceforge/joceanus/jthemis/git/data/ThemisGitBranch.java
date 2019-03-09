@@ -36,6 +36,7 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jthemis.ThemisIOException;
 import net.sourceforge.joceanus.jthemis.ThemisResource;
 import net.sourceforge.joceanus.jthemis.git.data.ThemisGitRevisionHistory.ThemisGitCommitId;
+import net.sourceforge.joceanus.jthemis.git.data.ThemisGitRevisionHistory.ThemisGitRevision;
 import net.sourceforge.joceanus.jthemis.git.data.ThemisGitTag.ThemisGitTagList;
 import net.sourceforge.joceanus.jthemis.scm.data.ThemisScmBranch;
 import net.sourceforge.joceanus.jthemis.scm.data.ThemisScmComponent;
@@ -80,7 +81,13 @@ public final class ThemisGitBranch
         FIELD_DEFS.declareLocalField(ThemisResource.SCM_REPOSITORY, ThemisGitBranch::getRepository);
         FIELD_DEFS.declareLocalField(ThemisResource.GIT_COMMITID, ThemisGitBranch::getCommitId);
         FIELD_DEFS.declareLocalField(ThemisResource.GIT_REMOTE, ThemisGitBranch::isRemote);
+        FIELD_DEFS.declareLocalField(ThemisResource.GIT_REVISION, ThemisGitBranch::getRevision);
     }
+
+    /**
+     * The local fields.
+     */
+    private final MetisFieldSet<ThemisGitBranch> theLocalFields;
 
     /**
      * Parent Repository.
@@ -91,6 +98,11 @@ public final class ThemisGitBranch
      * Object Id of the commit.
      */
     private final ThemisGitCommitId theCommitId;
+
+    /**
+     * Revision details of the commit.
+     */
+    private ThemisGitRevision theRevision;
 
     /**
      * Is this a remote branch?
@@ -112,6 +124,9 @@ public final class ThemisGitBranch
         /* Store values */
         theRepository = pParent.getRepository();
         theCommitId = pCommitId;
+
+        /* Allocate the local fields */
+        theLocalFields = MetisFieldSet.newFieldSet(this);
 
         /* Create tag list */
         final ThemisGitTagList myTags = new ThemisGitTagList(this);
@@ -135,6 +150,9 @@ public final class ThemisGitBranch
         /* Store values */
         theRepository = pParent.getRepository();
 
+        /* Allocate the local fields */
+        theLocalFields = MetisFieldSet.newFieldSet(this);
+
         /* Create tag list */
         final ThemisGitTagList myTags = new ThemisGitTagList(this);
         setTags(myTags);
@@ -146,7 +164,7 @@ public final class ThemisGitBranch
 
     @Override
     public MetisFieldSet<ThemisGitBranch> getDataFieldSet() {
-        return FIELD_DEFS;
+        return theLocalFields;
     }
 
     /**
@@ -165,6 +183,16 @@ public final class ThemisGitBranch
     @Override
     public boolean isRemote() {
         return isRemote;
+    }
+
+    @Override
+    public ThemisGitRevision getRevision() {
+        return theRevision;
+    }
+
+    @Override
+    public void setRevision(final ThemisGitRevision pRevision) {
+        theRevision = pRevision;
     }
 
     /**
@@ -232,6 +260,23 @@ public final class ThemisGitBranch
         return myName.startsWith(myPrefix)
                                            ? myName.substring(myPrefix.length())
                                            : null;
+    }
+
+    /**
+     * Declare a tag.
+     * @param pTag the tag
+     */
+    void declareTag(final ThemisGitTag pTag) {
+        /* Determine the name of the field */
+        final ThemisGitTagList myList = getTagList();
+        String myName = ThemisResource.SCM_TAG.getValue();
+        if (!myList.isEmpty()) {
+            myName += (myList.size() + 1);
+        }
+
+        /* Declare the field and add the tag */
+        theLocalFields.declareLocalField(myName, f -> pTag);
+        myList.add(pTag);
     }
 
     /**
@@ -305,6 +350,9 @@ public final class ThemisGitBranch
                 /* Discover tags for the branches */
                 pReport.checkForCancellation();
                 discoverTags(pReport);
+
+                /* Process the history */
+                theComponent.processHistory();
             }
         }
 
@@ -393,7 +441,7 @@ public final class ThemisGitBranch
 
                             /* Create the new branch and add it */
                             final ThemisGitBranch myBranch = new ThemisGitBranch(theComponent, myName, myCommitId);
-                            add(myBranch);
+                            theComponent.declareBranch(myBranch);
                             myBranch.setTrunk();
                             myBranch.setRemote(pRemote);
 
@@ -410,7 +458,14 @@ public final class ThemisGitBranch
 
                     /* Create the new branch and add it */
                     final ThemisGitBranch myBranch = new ThemisGitBranch(theComponent, myName, myCommitId);
-                    add(myBranch);
+                    theComponent.declareBranch(myBranch);
+                    myBranch.setRemote(pRemote);
+
+                    /* If this looks like a valid branch */
+                } else if (!pRemote || !myName.equals("HEAD")) {
+                    /* Create the new branch and add it */
+                    final ThemisGitBranch myBranch = new ThemisGitBranch(theComponent, myName, myCommitId);
+                    theComponent.declareBranch(myBranch);
                     myBranch.setRemote(pRemote);
                 }
 
@@ -495,7 +550,7 @@ public final class ThemisGitBranch
 
                             /* Create the new branch and add it */
                             final ThemisGitBranch myBranch = new ThemisGitBranch(theComponent, myName, null);
-                            add(myBranch);
+                            theComponent.declareBranch(myBranch);
 
                             /* Set virtual flag */
                             myBranch.setVirtual();

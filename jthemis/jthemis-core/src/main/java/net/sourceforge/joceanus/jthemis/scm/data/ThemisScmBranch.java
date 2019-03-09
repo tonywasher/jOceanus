@@ -69,8 +69,8 @@ public abstract class ThemisScmBranch
     static {
         FIELD_DEFS.declareLocalField(ThemisResource.SCM_NAME, ThemisScmBranch::getName);
         FIELD_DEFS.declareLocalField(ThemisResource.SCM_COMPONENT, ThemisScmBranch::getComponent);
-        FIELD_DEFS.declareLocalField(ThemisResource.SCM_TAGS, ThemisScmBranch::getTagList);
         FIELD_DEFS.declareLocalField(ThemisResource.SCM_PROJECT, ThemisScmBranch::getProjectDefinition);
+        FIELD_DEFS.declareLocalField(ThemisResource.SCM_VIRTUAL, ThemisScmBranch::isVirtual);
     }
 
     /**
@@ -99,6 +99,11 @@ public abstract class ThemisScmBranch
     private ThemisScmTagList theTags;
 
     /**
+     * The branch name.
+     */
+    private String theName;
+
+    /**
      * Is this the trunk branch.
      */
     private boolean isTrunk;
@@ -107,6 +112,11 @@ public abstract class ThemisScmBranch
      * Is this a virtual branch.
      */
     private boolean isVirtual;
+
+    /**
+     * Is this a non-standard branch.
+     */
+    private boolean isNonStd;
 
     /**
      * The project definition.
@@ -128,13 +138,17 @@ public abstract class ThemisScmBranch
 
         /* If we do not have three parts reject it */
         if (myParts.length != NUM_VERS_PARTS) {
-            throw new IllegalArgumentException();
+            isNonStd = true;
+            theName = pVersion;
+            theMajorVersion = -1;
+            theMinorVersion = -1;
+            theDeltaVersion = -1;
+        } else {
+            /* Determine values */
+            theMajorVersion = Integer.parseInt(myParts[0]);
+            theMinorVersion = Integer.parseInt(myParts[1]);
+            theDeltaVersion = Integer.parseInt(myParts[2]);
         }
-
-        /* Determine values */
-        theMajorVersion = Integer.parseInt(myParts[0]);
-        theMinorVersion = Integer.parseInt(myParts[1]);
-        theDeltaVersion = Integer.parseInt(myParts[2]);
     }
 
     /**
@@ -184,7 +198,7 @@ public abstract class ThemisScmBranch
      * Is this a virtual branch?
      * @return true/false
      */
-    public boolean isVirtual() {
+    public Boolean isVirtual() {
         return isVirtual;
     }
 
@@ -276,19 +290,23 @@ public abstract class ThemisScmBranch
 
     @Override
     public String getName() {
-        /* Build the underlying string */
-        final StringBuilder myBuilder = new StringBuilder(BUFFER_LEN);
+        /* Return previously formatted name */
+        if (theName == null) {
+            /* Build the underlying string */
+            final StringBuilder myBuilder = new StringBuilder(BUFFER_LEN);
 
-        /* Build the version directory */
-        myBuilder.append(BRANCH_PREFIX)
-                .append(theMajorVersion)
-                .append(BRANCH_SEP)
-                .append(theMinorVersion)
-                .append(BRANCH_SEP)
-                .append(theDeltaVersion);
+            /* Build the version directory */
+            myBuilder.append(BRANCH_PREFIX)
+                    .append(theMajorVersion)
+                    .append(BRANCH_SEP)
+                    .append(theMinorVersion)
+                    .append(BRANCH_SEP)
+                    .append(theDeltaVersion);
+            theName = myBuilder.toString();
+        }
 
         /* Return the branch name */
-        return myBuilder.toString();
+        return theName;
     }
 
     /**

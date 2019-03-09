@@ -154,6 +154,7 @@ public abstract class GordianCoreCipher<T extends GordianKeySpec>
     /**
      * Init with bytes as key.
      * @param pKeyBytes the bytes to use
+     * @throws OceanusException on error
      */
     public void initCipher(final byte[] pKeyBytes) throws OceanusException {
         /* Create generator if needed */

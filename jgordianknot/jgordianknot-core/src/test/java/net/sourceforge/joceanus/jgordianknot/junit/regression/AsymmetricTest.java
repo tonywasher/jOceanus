@@ -80,6 +80,7 @@ public class AsymmetricTest {
 
     /**
      * Initialise Factories.
+     * @throws OceanusException on error
      */
     @BeforeAll
     public static void createSecurityFactories() throws OceanusException {

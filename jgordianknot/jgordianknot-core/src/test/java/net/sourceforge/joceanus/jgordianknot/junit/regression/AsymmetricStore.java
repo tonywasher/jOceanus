@@ -669,6 +669,7 @@ class AsymmetricStore {
     /**
      * Update the list of Signatures to test.
      * @param pKeySpec the keySpec
+     * @throws OceanusException on error
      */
     static void signatureProvider(final FactoryKeySpec pKeySpec) throws OceanusException {
         /* Access the list */
@@ -703,6 +704,7 @@ class AsymmetricStore {
     /**
      * Update the list of Agreements to test.
      * @param pKeySpec the keySpec
+     * @throws OceanusException on error
      */
     static void agreementProvider(final FactoryKeySpec pKeySpec) throws OceanusException {
         /* Access the list */
@@ -731,6 +733,7 @@ class AsymmetricStore {
     /**
      * Update the list of Encryptors to test.
      * @param pKeySpec the keySpec
+     * @throws OceanusException on error
      */
     static void encryptorProvider(final FactoryKeySpec pKeySpec) throws OceanusException {
         /* Access the list */

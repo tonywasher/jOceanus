@@ -47,12 +47,10 @@ import net.sourceforge.joceanus.jthemis.git.data.ThemisGitBranch.ThemisGitBranch
 import net.sourceforge.joceanus.jthemis.git.data.ThemisGitRevisionHistory.ThemisGitCommitId;
 import net.sourceforge.joceanus.jthemis.git.data.ThemisGitRevisionHistory.ThemisGitRevision;
 import net.sourceforge.joceanus.jthemis.scm.data.ThemisScmComponent;
+import net.sourceforge.joceanus.jthemis.scm.data.ThemisScmComponent.ThemisScmComponentList;
 import net.sourceforge.joceanus.jthemis.scm.data.ThemisScmOwner;
 import net.sourceforge.joceanus.jthemis.scm.maven.ThemisMvnProjectDefinition;
 import net.sourceforge.joceanus.jthemis.scm.maven.ThemisMvnProjectDefinition.ThemisMvnSubModule;
-import net.sourceforge.joceanus.jthemis.svn.data.ThemisSvnBranch;
-import net.sourceforge.joceanus.jthemis.svn.data.ThemisSvnRepository;
-import net.sourceforge.joceanus.jthemis.svn.data.ThemisSvnTag;
 
 /**
  * Represents a component in the repository.
@@ -60,6 +58,11 @@ import net.sourceforge.joceanus.jthemis.svn.data.ThemisSvnTag;
  */
 public final class ThemisGitComponent
         extends ThemisScmComponent {
+    /**
+     * URL separator character.
+     */
+    public static final char SEP_URL = '/';
+
     /**
      * The buffer length.
      */
@@ -88,6 +91,11 @@ public final class ThemisGitComponent
     private static final TethysLogger LOGGER = TethysLogManager.getLogger(ThemisGitComponent.class);
 
     /**
+     * The local fields.
+     */
+    private final MetisFieldSet<ThemisGitComponent> theLocalFields;
+
+    /**
      * The revision history.
      */
     private final ThemisGitRevisionHistory theHistory;
@@ -99,8 +107,9 @@ public final class ThemisGitComponent
 
     /**
      * Constructor.
+     *
      * @param pParent the Parent repository
-     * @param pName the component name
+     * @param pName   the component name
      * @throws OceanusException on error
      */
     protected ThemisGitComponent(final ThemisGitRepository pParent,
@@ -110,6 +119,9 @@ public final class ThemisGitComponent
 
         /* Access the repository */
         theGitRepo = getRepositoryAccess();
+
+        /* Allocate the local fields */
+        theLocalFields = MetisFieldSet.newFieldSet(this);
 
         /* Create the revision history */
         theHistory = new ThemisGitRevisionHistory(this);
@@ -121,7 +133,7 @@ public final class ThemisGitComponent
 
     @Override
     public MetisFieldSet<ThemisGitComponent> getDataFieldSet() {
-        return FIELD_DEFS;
+        return theLocalFields;
     }
 
     @Override
@@ -131,6 +143,7 @@ public final class ThemisGitComponent
 
     /**
      * Obtain GitRepository access.
+     *
      * @return the access object
      */
     public Repository getGitRepo() {
@@ -139,6 +152,7 @@ public final class ThemisGitComponent
 
     /**
      * Obtain GitRepository access.
+     *
      * @return the access object
      */
     public ThemisGitRevisionHistory getRevisionHistory() {
@@ -147,6 +161,7 @@ public final class ThemisGitComponent
 
     /**
      * Obtain Working directory.
+     *
      * @return the working directory
      */
     public File getWorkingDir() {
@@ -160,7 +175,25 @@ public final class ThemisGitComponent
     }
 
     /**
+     * Declare a branch.
+     * @param pBranch the branch
+     */
+    void declareBranch(final ThemisGitBranch pBranch) {
+        /* Determine the name of the field */
+        final ThemisGitBranchList myList = getBranches();
+        String myName = ThemisResource.SCM_BRANCH.getValue();
+        if (!myList.isEmpty()) {
+            myName += (myList.size() + 1);
+        }
+
+        /* Declare the field and add the branch */
+        theLocalFields.declareLocalField(myName, f -> pBranch);
+        myList.add(pBranch);
+    }
+
+    /**
      * reDiscover history.
+     *
      * @param pReport the thread report
      * @throws OceanusException on error
      */
@@ -178,6 +211,7 @@ public final class ThemisGitComponent
 
     /**
      * Build repository access.
+     *
      * @return the Git repository
      * @throws OceanusException on error
      */
@@ -204,8 +238,9 @@ public final class ThemisGitComponent
 
     /**
      * Get FileURL as input stream.
+     *
      * @param pCommitId the commit id within which the file exists
-     * @param pPath the base path
+     * @param pPath     the base path
      * @return the stream of null if file does not exists
      * @throws OceanusException on error
      */
@@ -221,7 +256,7 @@ public final class ThemisGitComponent
             /* Build the initial path and POM Name */
             if (pPath.length() > 0) {
                 myBuilder.append(pPath)
-                        .append(ThemisSvnRepository.SEP_URL);
+                        .append(SEP_URL);
             }
             myBuilder.append(ThemisMvnProjectDefinition.POM_NAME);
 
@@ -245,7 +280,7 @@ public final class ThemisGitComponent
                 /* Build the path name */
                 if (pPath.length() > 0) {
                     myBuilder.append(pPath)
-                            .append(ThemisSvnRepository.SEP_URL);
+                            .append(SEP_URL);
                 }
                 myBuilder.append(myModule.getName());
 
@@ -270,8 +305,9 @@ public final class ThemisGitComponent
 
     /**
      * Get FileObject as input stream.
+     *
      * @param pCommitId the commit id within which the file exists
-     * @param pPath the file to stream
+     * @param pPath     the file to stream
      * @return the stream of null if file does not exists
      * @throws OceanusException on error
      */
@@ -303,6 +339,7 @@ public final class ThemisGitComponent
 
     /**
      * Obtain status for component.
+     *
      * @return the status
      * @throws OceanusException on error
      */
@@ -319,6 +356,7 @@ public final class ThemisGitComponent
 
     /**
      * Locate Branch.
+     *
      * @param pOwner the owner to locate
      * @return the relevant branch or Null
      */
@@ -328,24 +366,11 @@ public final class ThemisGitComponent
     }
 
     /**
-     * Obtain the gitRevision for a subversion extract.
-     * @param pOwner the owner
-     * @param pRevision the revision
-     * @return the commit or null if not found
-     */
-    public ThemisGitRevision getGitRevisionForRevisionKey(final ThemisScmOwner pOwner,
-                                                          final String pRevision) {
-        final ThemisGitOwner myOwner = locateOwner(pOwner);
-        return myOwner == null
-                               ? null
-                               : theHistory.getGitRevisionForRevisionKey(myOwner, pRevision);
-    }
-
-    /**
      * Obtain gitRevision for new commit.
-     * @param pOwner the owner
+     *
+     * @param pOwner    the owner
      * @param pRevision the revision
-     * @param pCommit the commit
+     * @param pCommit   the commit
      * @return the gitRevision
      */
     public ThemisGitRevision getGitRevisionForNewCommit(final ThemisScmOwner pOwner,
@@ -353,39 +378,17 @@ public final class ThemisGitComponent
                                                         final RevCommit pCommit) {
         final ThemisGitOwner myOwner = locateOwner(pOwner);
         return myOwner == null
-                               ? null
-                               : theHistory.getGitRevisionForNewCommit(myOwner, pRevision, pCommit);
+               ? null
+               : theHistory.getGitRevisionForNewCommit(myOwner, pRevision, pCommit);
     }
 
-    /**
-     * Declare a new branch.
-     * @param pBranch the branch
-     * @return the new branch
-     */
-    public ThemisGitBranch declareNewBranch(final ThemisSvnBranch pBranch) {
-        /* Create and add the branch */
-        final ThemisGitBranch myBranch = new ThemisGitBranch(this, pBranch.getBaseName(), null);
-        getBranches().add(myBranch);
-        return myBranch;
-    }
 
     /**
-     * Declare a new tag.
-     * @param pTag the tag
-     * @return the new branch
+     * Process history.
      */
-    public ThemisGitTag declareNewTag(final ThemisSvnTag pTag) {
-        /* Access the gitBranch */
-        final ThemisSvnBranch myBranch = pTag.getBranch();
-        ThemisGitBranch myGitBranch = (ThemisGitBranch) locateOwner(myBranch);
-        if (myGitBranch == null) {
-            myGitBranch = declareNewBranch(myBranch);
-        }
-
-        /* Create and add the tag */
-        final ThemisGitTag myTag = new ThemisGitTag(myGitBranch, pTag.getTagNo());
-        myGitBranch.getTagList().add(myTag);
-        return myTag;
+    void processHistory() {
+        /* Process the history */
+        theHistory.processHistory();
     }
 
     /**
@@ -439,7 +442,7 @@ public final class ThemisGitComponent
                 if (myGitDir.isDirectory()) {
                     /* Create the component and add to the list */
                     final ThemisGitComponent myComp = new ThemisGitComponent(theRepository, mySubDir.getName());
-                    add(myComp);
+                    theRepository.declareComponent(myComp);
                 }
             }
 
