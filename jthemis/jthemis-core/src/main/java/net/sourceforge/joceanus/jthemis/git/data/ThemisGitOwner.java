@@ -17,6 +17,7 @@
 package net.sourceforge.joceanus.jthemis.git.data;
 
 import net.sourceforge.joceanus.jthemis.git.data.ThemisGitRevisionHistory.ThemisGitCommitId;
+import net.sourceforge.joceanus.jthemis.git.data.ThemisGitRevisionHistory.ThemisGitRevision;
 import net.sourceforge.joceanus.jthemis.scm.data.ThemisScmOwner;
 
 /**
@@ -29,6 +30,18 @@ public interface ThemisGitOwner
      * @return the commit id
      */
     ThemisGitCommitId getCommitId();
+
+    /**
+     * Get the revision.
+     * @return the revision
+     */
+    ThemisGitRevision getRevision();
+
+    /**
+     * Set the revision.
+     * @param pRevision the revision
+     */
+    void setRevision(ThemisGitRevision pRevision);
 
     /**
      * Is this a remote branch?

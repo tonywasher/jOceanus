@@ -141,16 +141,16 @@ public class GordianSwingPasswordDialog
         public Component getComponentAfter(final Container pRoot,
                                            final Component pCurrent) {
             /* Handle field order */
-            if (pCurrent.equals(getPasswordNode())) {
+            if (pCurrent.equals(TethysSwingNode.getComponent(getPasswordNode()))) {
                 return TethysSwingNode.getComponent(getConfirmNode());
             }
-            if (pCurrent.equals(getConfirmNode())) {
+            if (pCurrent.equals(TethysSwingNode.getComponent(getConfirmNode()))) {
                 return TethysSwingNode.getComponent(getOKButtonNode());
             }
-            if (pCurrent.equals(getOKButtonNode())) {
+            if (pCurrent.equals(TethysSwingNode.getComponent(getOKButtonNode()))) {
                 return TethysSwingNode.getComponent(getCancelButtonNode());
             }
-            if (pCurrent.equals(getCancelButtonNode())) {
+            if (pCurrent.equals(TethysSwingNode.getComponent(getCancelButtonNode()))) {
                 return TethysSwingNode.getComponent(getPasswordNode());
             }
 
@@ -162,16 +162,16 @@ public class GordianSwingPasswordDialog
         public Component getComponentBefore(final Container pRoot,
                                             final Component pCurrent) {
             /* Handle field order */
-            if (pCurrent.equals(getPasswordNode())) {
+            if (pCurrent.equals(TethysSwingNode.getComponent(getPasswordNode()))) {
                 return TethysSwingNode.getComponent(getCancelButtonNode());
             }
-            if (pCurrent.equals(getConfirmNode())) {
+            if (pCurrent.equals(TethysSwingNode.getComponent(getConfirmNode()))) {
                 return TethysSwingNode.getComponent(getPasswordNode());
             }
-            if (pCurrent.equals(getOKButtonNode())) {
+            if (pCurrent.equals(TethysSwingNode.getComponent(getOKButtonNode()))) {
                 return TethysSwingNode.getComponent(getConfirmNode());
             }
-            if (pCurrent.equals(getCancelButtonNode())) {
+            if (pCurrent.equals(TethysSwingNode.getComponent(getCancelButtonNode()))) {
                 return TethysSwingNode.getComponent(getOKButtonNode());
             }
 

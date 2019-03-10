@@ -1,0 +1,69 @@
+<document>
+    <properties>
+        <title>GordianKnot Digests and Macs</title>
+        <author email="Tony.Washer@yahoo.co.uk">Tony Washer</author>
+    </properties>
+    <body>
+        <section name="Overview">
+            <p>GordianKnot supports most Digests and Macs plus some additional algorithms.</p>
+            <p>A cipher for block encryption/decryption is created by specifying a CipherSpec which comprises the symKeySpec (algorithm/BlockSize)
+                with the cipherMode and padding (if required). The cipher can be used in much the same way as a JCA Cipher,
+                allowing init, update and finalise methods.</p>
+            <p>A cipher for stream encryption is created by specifying the algorithm. The cipher can be used similarly to a blockCipher.</p>
+            <p>A cipher for blockCipher keyWrapping is created by specifying the symKeySpec. The cipher allows init, secure and derive methods</p>
+        </section>
+        <section name="Digests">
+            <p>The following algorithms are supported.</p>
+            <table class="defTable">
+                <tr><td class="defHdr">Algorithm</td><td class="defHdr">StateLength</td><td class="defHdr">OutputLengths</td>
+                    <td class="defHdr">BouncyCastle</td><td class="defHdr">JCA</td><td class="defHdr">Notes</td></tr>
+                <tr><td rowspan="2">SHA2</td><td>512</td><td>224,256,384,512</td><td>Y</td><td>Y</td><td/></tr>
+                <tr><td>256</td><td>224,256</td><td>Y</td><td>Y</td><td/></tr>
+                <tr><td>Tiger</td><td/><td>192</td><td>Y</td><td>Y</td><td/></tr>
+                <tr><td>WHIRLPOOL</td><td/><td>512</td><td>Y</td><td>Y</td><td/></tr>
+                <tr><td rowspan="2">Streebog</td><td>512</td><td>512</td><td>Y</td><td>Y</td><td rowspan="2">GOST3411-2012</td></tr>
+                <tr><td>256</td><td>256</td><td>Y</td><td>Y</td></tr>
+                <tr><td>GOST</td><td/><td>256</td><td>Y</td><td>Y</td><td>GOST3411-94</td></tr>
+                <tr><td rowspan="2">RipeMD</td><td>128</td><td>128,160</td><td>Y</td><td>Y</td><td/></tr>
+                <tr><td>256</td><td>256,320</td><td>Y</td><td>Y</td><td/></tr>
+                <tr><td>SHA3</td><td/><td>224,256,384,512</td><td>Y</td><td>Y</td><td/></tr>
+                <tr><td rowspan="3">Skein</td><td>256</td><td>128,160,224,256</td><td>Y</td><td>Y</td><td/></tr>
+                <tr><td>512</td><td>128,160,224,256,384,512</td><td>Y</td><td>Y</td><td/></tr>
+                <tr><td>1024</td><td>384,512,1024</td><td>Y</td><td>Y</td><td/></tr>
+                <tr><td>SM3</td><td/><td>256</td><td>Y</td><td>Y</td><td/></tr>
+                <tr><td>Blake2s</td><td/><td>128,160, 224,256</td><td>Y</td><td>Y</td><td/></tr>
+                <tr><td>Blake2b</td><td/><td>224,256,384,512</td><td>Y</td><td>Y</td><td/></tr>
+                <tr><td>SHA1</td><td/><td>160</td><td>Y</td><td>Y</td><td/></tr>
+                <tr><td>MD2</td><td/><td>128</td><td>Y</td><td>Y</td><td/></tr>
+                <tr><td>MD4</td><td/><td>128</td><td>Y</td><td>Y</td><td/></tr>
+                <tr><td>MD5</td><td/><td>128</td><td>Y</td><td>Y</td><td/></tr>
+                <tr><td rowspan="2">SHAKE</td><td>128</td><td>128,160,224,256</td><td>Y</td><td>N</td><td/></tr>
+                <tr><td>256</td><td>256,384,512</td><td>Y</td><td>N</td></tr>
+                <tr><td>Kupyna</td><td/><td>256,384,512</td><td>Y</td><td>Y</td><td>DSTU7564</td></tr>
+                <tr><td>JH</td><td/><td>224,256,384,512</td><td>Y</td><td>N</td><td/></tr>
+                <tr><td>Groestl</td><td/><td>224,256,384,512</td><td>Y</td><td>N</td><td/></tr>
+                <tr><td>CubeHash</td><td/><td>224,256,384,512</td><td>Y</td><td>N</td><td/></tr>
+            </table>
+        </section>
+        <section name="Macs">
+            <p>The following algorithms are supported.</p>
+            <table class="defTable">
+                <tr><td class="defHdr">Algorithm</td><td class="defHdr">OutputLengths</td>
+                    <td class="defHdr">BouncyCastle</td><td class="defHdr">JCA</td><td class="defHdr">Notes</td></tr>
+                <tr><td>HMac</td><td>digest length</td><td>Y</td><td>Y</td><td>Jca does not support SM3, BLAKE, SHAKE, JH, Groestl, CubeHash or Kupyna</td></tr>
+                <tr><td>GMac</td><td>128</td><td>Y</td><td>Y</td><td>For all supported 128 bit ciphers except Kalyna (BUG). Jca does not support Kuznyechik</td></tr>
+                <tr><td>CMac</td><td>cipher block length</td><td>Y</td><td>Y</td><td>Jca has limited  set of supported ciphers</td></tr>
+                <tr><td>Poly1305Mac</td><td>128</td><td>Y</td><td>Y</td><td>For all supported 128 bit ciphers except Kuznyechik. JCA does not support Kalyna. Only available for 256 bit keys</td></tr>
+                <tr><td>SkeinMac</td><td>digest length</td><td>Y</td><td>Y</td><td/></tr>
+                <tr><td>VMPCMac</td><td>160</td><td>Y</td><td>Y</td><td/></tr>
+                <tr><td>BlakeMac</td><td>digest length</td><td>Y</td><td>N</td><td/></tr>
+                <tr><td>KupynaMac</td><td>digest length</td><td>Y</td><td>N</td><td/></tr>
+                <tr><td>KalynaMac</td><td>cipher block length</td><td>Y</td><td>N</td><td/></tr>
+                <tr><td>CBCMac</td><td>cipher length</td><td>Y</td><td>N</td><td/></tr>
+                <tr><td>CFBMac</td><td>cipher length</td><td>Y</td><td>N</td><td/></tr>
+                <tr><td>SipHash</td><td>64</td><td>Y</td><td>Y</td><td/></tr>
+                <tr><td>ZucMac</td><td>32,64,128</td><td>Y</td><td>N</td><td>For 128 bit keys the ony length supported is 32</td></tr>
+            </table>
+        </section>
+    </body>
+</document>

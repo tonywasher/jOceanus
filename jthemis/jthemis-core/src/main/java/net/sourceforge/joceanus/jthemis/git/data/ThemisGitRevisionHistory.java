@@ -21,8 +21,10 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.ListIterator;
 import java.util.Map;
 
+import org.eclipse.jgit.lib.ObjectId;
 import org.eclipse.jgit.revwalk.RevCommit;
 import org.eclipse.jgit.revwalk.RevWalk;
 
@@ -32,6 +34,7 @@ import net.sourceforge.joceanus.jmetis.field.MetisFieldSet;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jthemis.ThemisIOException;
 import net.sourceforge.joceanus.jthemis.ThemisResource;
+import net.sourceforge.joceanus.jthemis.git.data.ThemisGitTag.ThemisGitTagList;
 
 /**
  * Revision History for a Git Component.
@@ -59,7 +62,6 @@ public class ThemisGitRevisionHistory
     static {
         FIELD_DEFS.declareLocalField(ThemisResource.SCM_COMPONENT, ThemisGitRevisionHistory::getComponent);
         FIELD_DEFS.declareLocalField(ThemisResource.GIT_COMMITMAP, ThemisGitRevisionHistory::getCommitMap);
-        FIELD_DEFS.declareLocalField(ThemisResource.GIT_REVISIONMAP, ThemisGitRevisionHistory::getRevisionMap);
     }
 
     /**
@@ -73,18 +75,12 @@ public class ThemisGitRevisionHistory
     private final Map<ThemisGitCommitId, ThemisGitRevision> theCommitMap;
 
     /**
-     * The map of revisions.
-     */
-    private final Map<String, ThemisGitRevision> theRevisionMap;
-
-    /**
      * Constructor.
      * @param pComponent the component
      */
     ThemisGitRevisionHistory(final ThemisGitComponent pComponent) {
         theComponent = pComponent;
         theCommitMap = new HashMap<>();
-        theRevisionMap = new HashMap<>();
     }
 
     @Override
@@ -109,19 +105,10 @@ public class ThemisGitRevisionHistory
     }
 
     /**
-     * Obtain the commitMap.
-     * @return the commitMap
-     */
-    private Map<String, ThemisGitRevision> getRevisionMap() {
-        return theRevisionMap;
-    }
-
-    /**
      * Clear the maps.
      */
     public void clearMaps() {
         theCommitMap.clear();
-        theRevisionMap.clear();
     }
 
     /**
@@ -144,8 +131,20 @@ public class ThemisGitRevisionHistory
                 processCommit(pOwner, myIterator.next());
             }
 
+            /* Set the revision */
+            pOwner.setRevision(theCommitMap.get(new ThemisGitCommitId(myCommit)));
+
         } catch (IOException e) {
             throw new ThemisIOException("Unable to read File Object", e);
+        }
+    }
+
+    /**
+     * Process history.
+     */
+    void processHistory() {
+        for (ThemisGitRevision myRevision : theCommitMap.values()) {
+            myRevision.parseParents(theCommitMap);
         }
     }
 
@@ -166,29 +165,11 @@ public class ThemisGitRevisionHistory
         /* Add the commit to the map */
         final ThemisGitRevision myRevision = new ThemisGitRevision(pOwner, myCommitId);
         theCommitMap.put(myCommitId, myRevision);
-
-        /* If this is subVersion */
-        if (myRevision.isSubversion()) {
-            /* Add to the revision map */
-            theRevisionMap.put(myRevision.getRevisionKey(), myRevision);
-        }
     }
 
     @Override
     public String toString() {
         return ThemisGitRevisionHistory.class.getSimpleName();
-    }
-
-    /**
-     * Obtain commit for revisionKey.
-     * @param pOwner the owner
-     * @param pRevision the revision
-     * @return the commit or null if not found
-     */
-    protected ThemisGitRevision getGitRevisionForRevisionKey(final ThemisGitOwner pOwner,
-                                                             final String pRevision) {
-        final String myKey = pOwner.getName() + SVN_COMMIT_SEP + pRevision;
-        return theRevisionMap.get(myKey);
     }
 
     /**
@@ -304,8 +285,12 @@ public class ThemisGitRevisionHistory
             FIELD_DEFS.declareLocalField(ThemisResource.GIT_COMMITID, ThemisGitRevision::getCommitId);
             FIELD_DEFS.declareLocalField(ThemisResource.SCM_OWNER, ThemisGitRevision::getOwner);
             FIELD_DEFS.declareLocalField(ThemisResource.GIT_REVISIONNO, ThemisGitRevision::getGitRevisionNo);
-            FIELD_DEFS.declareLocalField(ThemisResource.GIT_PARENTS, ThemisGitRevision::getParents);
         }
+
+        /**
+         * The local fields.
+         */
+        private final MetisFieldSet<ThemisGitRevision> theLocalFields;
 
         /**
          * The CommitId of the revision.
@@ -323,9 +308,9 @@ public class ThemisGitRevisionHistory
         private final String theRevision;
 
         /**
-         * The Parent commitIds.
+         * The Parents.
          */
-        private final List<ThemisGitCommitId> theParents;
+        private final List<Object> theParents;
 
         /**
          * Constructor.
@@ -337,6 +322,9 @@ public class ThemisGitRevisionHistory
             /* Store parameters */
             theCommitId = pCommitId;
             theOwner = pOwner;
+
+            /* Allocate the local fields */
+            theLocalFields = MetisFieldSet.newFieldSet(this);
 
             /* Add the parents to the list */
             theParents = new ArrayList<>();
@@ -359,6 +347,9 @@ public class ThemisGitRevisionHistory
             theCommitId = new ThemisGitCommitId(pCommit);
             theOwner = pOwner;
             theRevision = pRevision;
+
+            /* Allocate the local fields */
+            theLocalFields = MetisFieldSet.newFieldSet(this);
 
             /* Add the parents to the list */
             theParents = new ArrayList<>();
@@ -390,6 +381,32 @@ public class ThemisGitRevisionHistory
             /* Process parents */
             for (RevCommit myCommit : getCommit().getParents()) {
                 theParents.add(new ThemisGitCommitId(myCommit));
+            }
+        }
+
+        /**
+         * Parse parents.
+         * @param pMap the commit map
+         */
+        void parseParents(final Map<ThemisGitCommitId, ThemisGitRevision> pMap) {
+            /* Process parents */
+            int iIndex = 0;
+            final ListIterator<Object> myIterator = theParents.listIterator();
+            while (myIterator.hasNext()) {
+                final ThemisGitCommitId myCommitId = (ThemisGitCommitId) myIterator.next();
+                final ThemisGitRevision myRevision = pMap.get(myCommitId);
+
+                /* Determine the name of the field */
+                String myName = ThemisResource.GIT_PARENT.getValue();
+                if (iIndex++ > 0) {
+                    myName += iIndex;
+                }
+
+                /* Declare the field */
+                theLocalFields.declareLocalField(myName, f -> myRevision);
+
+                /* Replace commint id with revision details */
+                myIterator.set(myRevision);
             }
         }
 
@@ -445,7 +462,7 @@ public class ThemisGitRevisionHistory
          * Obtain the parent list.
          * @return the parent list
          */
-        public List<ThemisGitCommitId> getParents() {
+        public List<Object> getParents() {
             return theParents;
         }
 
@@ -469,7 +486,7 @@ public class ThemisGitRevisionHistory
 
         @Override
         public MetisFieldSetDef getDataFieldSet() {
-            return FIELD_DEFS;
+            return theLocalFields;
         }
     }
 }

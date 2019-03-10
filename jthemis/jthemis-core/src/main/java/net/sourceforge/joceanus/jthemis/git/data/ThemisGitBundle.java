@@ -25,6 +25,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URISyntaxException;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
@@ -34,6 +35,7 @@ import org.eclipse.jgit.api.DeleteBranchCommand;
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.ListBranchCommand;
 import org.eclipse.jgit.api.ListBranchCommand.ListMode;
+import org.eclipse.jgit.api.ListTagCommand;
 import org.eclipse.jgit.api.PullCommand;
 import org.eclipse.jgit.api.RemoteRemoveCommand;
 import org.eclipse.jgit.api.ResetCommand;
@@ -41,14 +43,17 @@ import org.eclipse.jgit.api.ResetCommand.ResetType;
 import org.eclipse.jgit.api.errors.GitAPIException;
 import org.eclipse.jgit.errors.NotSupportedException;
 import org.eclipse.jgit.errors.TransportException;
+import org.eclipse.jgit.lib.NullProgressMonitor;
 import org.eclipse.jgit.lib.ProgressMonitor;
 import org.eclipse.jgit.lib.Ref;
 import org.eclipse.jgit.lib.Repository;
 import org.eclipse.jgit.storage.pack.PackConfig;
 import org.eclipse.jgit.transport.BundleWriter;
 import org.eclipse.jgit.transport.RefSpec;
+import org.eclipse.jgit.transport.RemoteRefUpdate;
 import org.eclipse.jgit.transport.TransportBundleStream;
 import org.eclipse.jgit.transport.URIish;
+import org.eclipse.jgit.util.IO;
 
 import net.sourceforge.joceanus.jmetis.threads.MetisThreadStatusReport;
 import net.sourceforge.joceanus.jtethys.OceanusException;
@@ -66,7 +71,7 @@ public final class ThemisGitBundle {
     /**
      * Bundle remote name.
      */
-    static final String REMOTE_BUNDLE = "bundle";
+    static final String REMOTE_ORIGIN = "origin";
 
     /**
      * The Status reporter.
@@ -107,27 +112,27 @@ public final class ThemisGitBundle {
                 final Ref myRef = myIterator.next();
 
                 /* Convert to remote branch name */
-                final String myName = ThemisGitBranch.getRemoteBranchName(myRef, REMOTE_BUNDLE);
-                if (myName == null) {
+                final String myName = ThemisGitBranch.getRemoteBranchName(myRef, REMOTE_ORIGIN);
+                if (myName == null || myName.equals(ThemisGitBranch.BRN_MASTER)) {
                     continue;
                 }
 
                 /* Pull the contents of the remote branch */
                 final PullCommand myPull = myGit.pull();
-                myPull.setRemote(REMOTE_BUNDLE);
+                myPull.setRemote(REMOTE_ORIGIN);
                 myPull.setRemoteBranchName(myName);
                 myPull.call();
 
                 /* Delete the remote branch */
                 final DeleteBranchCommand myDelete = myGit.branchDelete();
-                myDelete.setBranchNames(REMOTE_BUNDLE + "/" + myName);
+                myDelete.setBranchNames(REMOTE_ORIGIN + "/" + myName);
                 myDelete.call();
             }
 
             /* Delete the remote configuration */
-            final RemoteRemoveCommand myRemove = myGit.remoteRemove();
-            myRemove.setName(REMOTE_BUNDLE);
-            myRemove.call();
+            //final RemoteRemoveCommand myRemove = myGit.remoteRemove();
+            //myRemove.setName(REMOTE_BUNDLE);
+            //myRemove.call();
 
         } catch (GitAPIException e) {
             throw new ThemisIOException("Failed to process bundle", e);
@@ -169,17 +174,15 @@ public final class ThemisGitBundle {
 
         /* Create the bundle stream */
         try (TransportBundleStream myStream = new TransportBundleStream(myTarget.getGitRepo(), myURI, pBundle)) {
+            /* Define all refs */
             final RefSpec rs = new RefSpec("refs/heads/*:refs/heads/*");
             final Set<RefSpec> myRefs = Collections.singleton(rs);
 
             /* Fetch what we can */
-            myStream.fetch(new GitProgressMonitor(), myRefs);
-
-            /* Perform a hard reset */
-            performHardReset(myTarget);
+            myStream.fetch(NullProgressMonitor.INSTANCE, myRefs);
 
         } catch (TransportException
-                | NotSupportedException e) {
+                 | NotSupportedException e) {
             throw new ThemisIOException("Failed to process bundle", e);
         }
     }
@@ -199,27 +202,6 @@ public final class ThemisGitBundle {
 
         } catch (URISyntaxException e) {
             throw new ThemisIOException("URI error", e);
-        }
-    }
-
-    /**
-     * Perform a hard reset for a component.
-     * @param pComponent the component
-     * @throws OceanusException on error
-     */
-    public void performHardReset(final ThemisGitComponent pComponent) throws OceanusException {
-        /* Access the repository */
-        final Repository myRepo = pComponent.getGitRepo();
-
-        /* Protect against exceptions */
-        try (Git myGit = new Git(myRepo)) {
-            /* Perform a hard reset */
-            final ResetCommand myReset = myGit.reset();
-            myReset.setMode(ResetType.HARD);
-            myReset.call();
-
-        } catch (GitAPIException e) {
-            throw new ThemisIOException("perform hard reset", e);
         }
     }
 
@@ -261,7 +243,7 @@ public final class ThemisGitBundle {
             final List<Ref> myBranches = myBrnCommand.call();
 
             /* Loop through the branches */
-            final Iterator<Ref> myIterator = myBranches.iterator();
+            Iterator<Ref> myIterator = myBranches.iterator();
             while (myIterator.hasNext()) {
                 final Ref myRef = myIterator.next();
 
@@ -269,49 +251,25 @@ public final class ThemisGitBundle {
                 myWriter.include(myRef);
             }
 
+            /* Access list of local tags */
+            final ListTagCommand myTagCommand = myGit.tagList();
+            final List<Ref> myTags = myTagCommand.call();
+
+            /* Loop through the tags */
+            myIterator = myTags.iterator();
+            while (myIterator.hasNext()) {
+                final Ref myRef = myIterator.next();
+
+                /* include any tag */
+                myWriter.include(myRef);
+            }
+
             /* Write to the output stream */
-            myWriter.writeBundle(new GitProgressMonitor(), pBundle);
+            myWriter.writeBundle(NullProgressMonitor.INSTANCE, pBundle);
 
         } catch (IOException
                 | GitAPIException e) {
             throw new ThemisIOException(ERROR_CREATE, e);
-        }
-    }
-
-    /**
-     * Progress Monitor class.
-     */
-    protected final class GitProgressMonitor
-            implements ProgressMonitor {
-        @Override
-        public boolean isCancelled() {
-            try {
-                theStatus.checkForCancellation();
-            } catch (OceanusException e) {
-                return true;
-            }
-            return false;
-        }
-
-        @Override
-        public void beginTask(final String pTitle,
-                              final int pTotalWork) {
-            /* Not needed */
-        }
-
-        @Override
-        public void start(final int pTotalTasks) {
-            /* Not needed */
-        }
-
-        @Override
-        public void update(final int pCompleted) {
-            /* Not needed */
-        }
-
-        @Override
-        public void endTask() {
-            /* Not needed */
         }
     }
 }

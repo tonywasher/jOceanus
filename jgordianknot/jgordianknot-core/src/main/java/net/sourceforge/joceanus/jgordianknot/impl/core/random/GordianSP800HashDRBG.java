@@ -19,6 +19,7 @@ package net.sourceforge.joceanus.jgordianknot.impl.core.random;
 import org.bouncycastle.crypto.prng.EntropySource;
 import org.bouncycastle.util.Arrays;
 
+import net.sourceforge.joceanus.jgordianknot.api.base.GordianLength;
 import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigest;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianByteArrayInteger;
 import net.sourceforge.joceanus.jtethys.TethysDataConverter;
@@ -30,16 +31,6 @@ import net.sourceforge.joceanus.jtethys.TethysDataConverter;
  */
 public final class GordianSP800HashDRBG
         implements GordianDRBGenerator {
-    /**
-     * The SP800 prefix.
-     */
-    static final String SP800_PREFIX = "SP800-";
-
-    /**
-     * The bit shift.
-     */
-    private static final int BIT_SHIFT = 3;
-
     /**
      * The Initial Seed Id.
      */
@@ -65,14 +56,24 @@ public final class GordianSP800HashDRBG
             { 3 };
 
     /**
-     * The Seed length.
+     * The Seed length for large digests.
      */
-    private static final int SEED_LENGTH = 880;
+    public static final int LONG_SEED_LENGTH = 888;
+
+    /**
+     * The Seed length for large digests.
+     */
+    public static final int SHORT_SEED_LENGTH = 440;
 
     /**
      * The Message Digest.
      */
     private final GordianDigest theDigest;
+
+    /**
+     * The SeedLength.
+     */
+    private final int theSeedLength;
 
     /**
      * The Entropy Source.
@@ -101,22 +102,27 @@ public final class GordianSP800HashDRBG
      * @param pSecurityBytes personalisation string to distinguish this DRBG (may be null).
      * @param pInitVector nonce to further distinguish this DRBG (may be null).
      */
-    GordianSP800HashDRBG(final GordianDigest pDigest,
-                         final EntropySource pEntropy,
-                         final byte[] pSecurityBytes,
-                         final byte[] pInitVector) {
+    public GordianSP800HashDRBG(final GordianDigest pDigest,
+                                final EntropySource pEntropy,
+                                final byte[] pSecurityBytes,
+                                final byte[] pInitVector) {
         /* Store digest and entropy source */
         theDigest = pDigest;
         theEntropy = pEntropy;
 
+        /* Calculate the seedLength */
+        theSeedLength = pDigest.getDigestSize() > GordianLength.LEN_256.getByteLength()
+                        ? LONG_SEED_LENGTH
+                        : SHORT_SEED_LENGTH;
+
         /* Create variable Hash */
         final byte[] myEntropy = theEntropy.getEntropy();
         final byte[] mySeed = Arrays.concatenate(myEntropy, pInitVector, pSecurityBytes);
-        theV = hashDerive(mySeed, SEED_LENGTH);
+        theV = hashDerive(mySeed, theSeedLength);
 
         /* Create constant hash */
         final byte[] myTempH = Arrays.concatenate(INIT_ID, theV.getBuffer());
-        theC = hashDerive(myTempH, SEED_LENGTH);
+        theC = hashDerive(myTempH, theSeedLength);
 
         /* Initialise reSeed counter */
         theReseedCounter = new GordianByteArrayInteger(TethysDataConverter.BYTES_LONG);
@@ -128,11 +134,11 @@ public final class GordianSP800HashDRBG
         /* Create variable Hash */
         final byte[] myEntropy = theEntropy.getEntropy();
         final byte[] mySeed = Arrays.concatenate(RESEED_ID, theV.getBuffer(), myEntropy, pXtraBytes);
-        theV = hashDerive(mySeed, SEED_LENGTH);
+        theV = hashDerive(mySeed, theSeedLength);
 
         /* Create constant hash */
         final byte[] myTempH = Arrays.concatenate(INIT_ID, theV.getBuffer());
-        theC = hashDerive(myTempH, SEED_LENGTH);
+        theC = hashDerive(myTempH, theSeedLength);
 
         /* re-initialise reSeed counter */
         theReseedCounter.reset();
@@ -144,7 +150,7 @@ public final class GordianSP800HashDRBG
                         final byte[] pXtraBytes,
                         final boolean isPredictionResistant) {
         /* Check valid # of bits */
-        final int myNumBits = pOutput.length << BIT_SHIFT;
+        final int myNumBits = pOutput.length << GordianCoreRandomFactory.BIT_SHIFT;
         if (myNumBits > GordianCoreRandomFactory.MAX_BITS_REQUEST) {
             throw new IllegalArgumentException("Number of bits per request limited to "
                     + GordianCoreRandomFactory.MAX_BITS_REQUEST);
@@ -200,7 +206,7 @@ public final class GordianSP800HashDRBG
                            final int pNumBits) {
         /* Determine # of iterations */
         final int mySize = theDigest.getDigestSize();
-        final int myLen = pNumBits >> BIT_SHIFT;
+        final int myLen = pNumBits >> GordianCoreRandomFactory.BIT_SHIFT;
 
         /* Allocate counters */
         final GordianByteArrayInteger myData = new GordianByteArrayInteger(pInputBytes);
@@ -241,7 +247,7 @@ public final class GordianSP800HashDRBG
                                                final int pSeedLength) {
         /* Determine sizes */
         final int mySize = theDigest.getDigestSize();
-        final int myLen = pSeedLength >> BIT_SHIFT;
+        final int myLen = pSeedLength >> GordianCoreRandomFactory.BIT_SHIFT;
         byte myCount = 1;
 
         /* Create output buffer */
@@ -293,6 +299,6 @@ public final class GordianSP800HashDRBG
 
     @Override
     public String getAlgorithm() {
-        return SP800_PREFIX + theDigest.getDigestSpec().toString();
+        return GordianCoreRandomFactory.SP800_PREFIX + theDigest.getDigestSpec().toString();
     }
 }

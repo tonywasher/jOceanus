@@ -39,8 +39,9 @@ public final class ListAlgorithms {
 
     /**
      * List the supported algorithms.
+     * @param pArgs the program parameters
      */
-    public static void main(String[] pArgs) {
+    public static void main(final String[] pArgs) {
         final Set<String> ciphers = new HashSet<>();
         final Set<String> secretKeyFactories = new HashSet<>();
         final Set<String> keyFactories = new HashSet<>();

@@ -31,6 +31,11 @@ public enum GordianRandomType {
     HMAC,
 
     /**
+     * Cipher based SP800 PRNG.
+     */
+    CTR,
+
+    /**
      * Cipher based X931 PRNG.
      */
     X931;

@@ -32,11 +32,6 @@ import net.sourceforge.joceanus.jtethys.TethysDataConverter;
 public final class GordianSP800HMacDRBG
         implements GordianDRBGenerator {
     /**
-     * The bit shift.
-     */
-    private static final int BIT_SHIFT = 3;
-
-    /**
      * The Update Id.
      */
     private static final byte[] UPDATE_ID =
@@ -80,10 +75,10 @@ public final class GordianSP800HMacDRBG
      * @param pSecurityBytes personalisation string to distinguish this DRBG (may be null).
      * @param pInitVector nonce to further distinguish this DRBG (may be null).
      */
-    GordianSP800HMacDRBG(final GordianMac pHMac,
-                         final EntropySource pEntropy,
-                         final byte[] pSecurityBytes,
-                         final byte[] pInitVector) {
+    public GordianSP800HMacDRBG(final GordianMac pHMac,
+                                final EntropySource pEntropy,
+                                final byte[] pSecurityBytes,
+                                final byte[] pInitVector) {
         /* Store hMac and entropy source */
         theHMac = pHMac;
         theEntropy = pEntropy;
@@ -171,7 +166,7 @@ public final class GordianSP800HMacDRBG
                         final boolean isPredictionResistant) {
         /* Check valid # of bits */
         final int myLen = pOutput.length;
-        final int myNumBits = myLen << BIT_SHIFT;
+        final int myNumBits = myLen << GordianCoreRandomFactory.BIT_SHIFT;
         if (myNumBits > GordianCoreRandomFactory.MAX_BITS_REQUEST) {
             throw new IllegalArgumentException("Number of bits per request limited to "
                     + GordianCoreRandomFactory.MAX_BITS_REQUEST);
@@ -248,6 +243,6 @@ public final class GordianSP800HMacDRBG
 
     @Override
     public String getAlgorithm() {
-        return GordianSP800HashDRBG.SP800_PREFIX + theHMac.getMacSpec().toString();
+        return GordianCoreRandomFactory.SP800_PREFIX + theHMac.getMacSpec().toString();
     }
 }

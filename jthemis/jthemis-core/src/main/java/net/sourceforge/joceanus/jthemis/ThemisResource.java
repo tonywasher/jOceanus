@@ -88,6 +88,11 @@ public enum ThemisResource
     SCM_OWNER("scm.owner"),
 
     /**
+     * SCM Virtual.
+     */
+    SCM_VIRTUAL("scm.virtual"),
+
+    /**
      * SVN Trunk.
      */
     SVN_TRUNK("svn.trunk"),
@@ -255,7 +260,7 @@ public enum ThemisResource
     /**
      * Git Parents.
      */
-    GIT_PARENTS("git.parents"),
+    GIT_PARENT("git.parent"),
 
     /**
      * Git Revision.

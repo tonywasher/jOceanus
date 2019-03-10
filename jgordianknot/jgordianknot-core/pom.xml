@@ -64,14 +64,12 @@
             <configuration>
               <sources>
                 <source>src/embedded/java</source>
+                <source>src/extension/java</source>
+                <source>src/patch/java</source>
               </sources>
             </configuration>
           </execution>
         </executions>
-      </plugin>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-jar-plugin</artifactId>
       </plugin>
     </plugins>
   </build>

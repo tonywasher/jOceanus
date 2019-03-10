@@ -49,7 +49,6 @@ public abstract class ThemisScmRepository
      */
     static {
         FIELD_DEFS.declareLocalField(ThemisResource.SCM_NAME, ThemisScmRepository::getName);
-        FIELD_DEFS.declareLocalField(ThemisResource.SCM_COMPONENTS, ThemisScmRepository::getComponents);
         FIELD_DEFS.declareLocalField(ThemisResource.SCM_BRANCHES, ThemisScmRepository::getBranches);
         FIELD_DEFS.declareLocalField(ThemisResource.SCM_TAGS, ThemisScmRepository::getTags);
     }

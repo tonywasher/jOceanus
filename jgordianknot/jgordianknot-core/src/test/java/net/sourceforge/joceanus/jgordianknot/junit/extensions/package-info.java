@@ -16,6 +16,6 @@
  ******************************************************************************/
 
 /**
- * BounctCastle extension tests.
+ * BouncyCastle extension tests.
  */
 package net.sourceforge.joceanus.jgordianknot.junit.extensions;

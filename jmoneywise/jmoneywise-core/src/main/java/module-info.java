@@ -15,7 +15,7 @@
  * the License.
  ******************************************************************************/
 /**
- * MonetyWise Core.
+ * MoneyWise Core.
  */
 module net.sourceforge.joceanus.jmoneywise.core {
     /* Java libraries */

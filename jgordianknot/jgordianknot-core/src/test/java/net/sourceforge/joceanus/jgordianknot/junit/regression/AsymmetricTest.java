@@ -80,6 +80,7 @@ public class AsymmetricTest {
 
     /**
      * Initialise Factories.
+     * @throws OceanusException on error
      */
     @BeforeAll
     public static void createSecurityFactories() throws OceanusException {
@@ -114,7 +115,7 @@ public class AsymmetricTest {
 
         /* Loop through the possible keySpecs */
         for (final FactoryKeySpec myKeySpec : AsymmetricStore.keySpecProvider(pFactory, pPartner)) {
-            /* Create an empty stream */
+            /* Create a stream */
             Stream<DynamicNode> myKeyStream = Stream.of(DynamicTest.dynamicTest("keySpec", () -> checkKeyPair(myKeySpec)));
             myKeyStream = Stream.concat(myKeyStream, Stream.of(DynamicTest.dynamicTest("keyWrap", () -> checkKeyWrap(myKeySpec))));
 

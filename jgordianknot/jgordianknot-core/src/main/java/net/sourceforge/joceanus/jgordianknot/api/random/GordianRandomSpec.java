@@ -44,9 +44,9 @@ public class GordianRandomSpec {
     private final Object theSubSpec;
 
     /**
-     * Is the secureRandom predicationResistent?
+     * Is the secureRandom predicationResistant?
      */
-    private final boolean isPredictionResistent;
+    private final boolean isPredictionResistant;
 
     /**
      * The Validity.
@@ -62,14 +62,14 @@ public class GordianRandomSpec {
      * Constructor.
      * @param pRandomType the randomType
      * @param pSubSpec the subSpec
-     * @param pResistent is the secureRandom predicationResistent?
+     * @param pResistant is the secureRandom predicationResistant?
      */
     public GordianRandomSpec(final GordianRandomType pRandomType,
                              final Object pSubSpec,
-                             final boolean pResistent) {
+                             final boolean pResistant) {
         theRandomType = pRandomType;
         theSubSpec = pSubSpec;
-        isPredictionResistent = pResistent;
+        isPredictionResistant = pResistant;
         isValid = checkValidity();
     }
 
@@ -83,7 +83,7 @@ public class GordianRandomSpec {
     }
 
     /**
-     * Create prediction resistent hashSpec.
+     * Create prediction resistant hashSpec.
      * @param pDigest the digestSpec
      * @return the RandomSpec
      */
@@ -101,12 +101,30 @@ public class GordianRandomSpec {
     }
 
     /**
-     * Create prediction resistent hMacSpec.
+     * Create prediction resistant hMacSpec.
      * @param pDigest the digestSpec
      * @return the RandomSpec
      */
     public static GordianRandomSpec hMacResist(final GordianDigestSpec pDigest) {
         return new GordianRandomSpec(GordianRandomType.HMAC, pDigest, true);
+    }
+
+    /**
+     * Create ctrSpec.
+     * @param pSymKeySpec the symKeySpec
+     * @return the RandomSpec
+     */
+    public static GordianRandomSpec ctr(final GordianSymKeySpec pSymKeySpec) {
+        return new GordianRandomSpec(GordianRandomType.CTR, pSymKeySpec, false);
+    }
+
+    /**
+     * Create prediction resistant ctrSpec.
+     * @param pSymKeySpec the symKeySpec
+     * @return the RandomSpec
+     */
+    public static GordianRandomSpec ctrResist(final GordianSymKeySpec pSymKeySpec) {
+        return new GordianRandomSpec(GordianRandomType.CTR, pSymKeySpec, true);
     }
 
     /**
@@ -119,7 +137,7 @@ public class GordianRandomSpec {
     }
 
     /**
-     * Create x931Spec.
+     * Create prediction resistant x931Spec.
      * @param pSymKeySpec the symKeySpec
      * @return the RandomSpec
      */
@@ -172,11 +190,11 @@ public class GordianRandomSpec {
     }
 
     /**
-     * Obtain the randomType.
-     * @return the randomType.
+     * Obtain the predication resistance.
+     * @return the resistance.
      */
-    public boolean isPredictionResistent() {
-        return isPredictionResistent;
+    public boolean isPredictionResistant() {
+        return isPredictionResistant;
     }
 
     /**
@@ -191,6 +209,7 @@ public class GordianRandomSpec {
             case HMAC:
             case HASH:
                 return theSubSpec instanceof GordianDigestSpec;
+            case CTR:
             case X931:
                 return theSubSpec instanceof GordianSymKeySpec;
             default:
@@ -207,12 +226,12 @@ public class GordianRandomSpec {
                 /* Load the name */
                 theName = theRandomType.toString();
                 theName += SEP + theSubSpec;
-                if (isPredictionResistent) {
-                    theName += SEP + Boolean.TRUE;
+                if (isPredictionResistant) {
+                    theName += SEP + "resistant";
                 }
             }  else {
                 /* Report invalid spec */
-                theName = "InvalidRandomSpec: " + theRandomType + ":" + theSubSpec + ":" + isPredictionResistent;
+                theName = "InvalidRandomSpec: " + theRandomType + ":" + theSubSpec + ":" + isPredictionResistant;
             }
         }
 
@@ -242,7 +261,7 @@ public class GordianRandomSpec {
         if (theRandomType != myThat.getRandomType()) {
             return false;
         }
-        if (isPredictionResistent != myThat.isPredictionResistent()) {
+        if (isPredictionResistant != myThat.isPredictionResistant()) {
             return false;
         }
 
@@ -256,7 +275,7 @@ public class GordianRandomSpec {
         hashCode += theSubSpec != null
                     ? theSubSpec.hashCode()
                     : 0;
-        return hashCode + (isPredictionResistent ? 1 : 0);
+        return hashCode + (isPredictionResistant ? 1 : 0);
     }
 
     /**
@@ -269,15 +288,21 @@ public class GordianRandomSpec {
 
         /* For each digestSpec */
         for (final GordianDigestSpec mySpec : GordianDigestSpec.listAll()) {
-            /* Add a hash and hMac random */
+            /* Add a hash random */
             myList.add(GordianRandomSpec.hash(mySpec));
             myList.add(GordianRandomSpec.hashResist(mySpec));
+
+            /* Add an hMac random */
             myList.add(GordianRandomSpec.hMac(mySpec));
             myList.add(GordianRandomSpec.hMacResist(mySpec));
         }
 
         /* For each symKeySpec */
         for (final GordianSymKeySpec mySpec : GordianSymKeySpec.listAll()) {
+            /* Add a CTR random */
+            myList.add(GordianRandomSpec.ctr(mySpec));
+            myList.add(GordianRandomSpec.ctrResist(mySpec));
+
             /* Add an X931 random */
             myList.add(GordianRandomSpec.x931(mySpec));
             myList.add(GordianRandomSpec.x931Resist(mySpec));
@@ -287,3 +312,4 @@ public class GordianRandomSpec {
         return myList;
     }
 }
+

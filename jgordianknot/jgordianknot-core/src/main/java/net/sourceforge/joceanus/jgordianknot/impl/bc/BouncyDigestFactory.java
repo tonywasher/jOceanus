@@ -42,9 +42,9 @@ import org.bouncycastle.crypto.digests.SM3Digest;
 import org.bouncycastle.crypto.digests.SkeinDigest;
 import org.bouncycastle.crypto.digests.TigerDigest;
 import org.bouncycastle.crypto.digests.WhirlpoolDigest;
-import org.bouncycastle.crypto.newdigests.CubeHashDigest;
-import org.bouncycastle.crypto.newdigests.GroestlDigest;
-import org.bouncycastle.crypto.newdigests.JHDigest;
+import org.bouncycastle.crypto.ext.digests.CubeHashDigest;
+import org.bouncycastle.crypto.ext.digests.GroestlDigest;
+import org.bouncycastle.crypto.ext.digests.JHDigest;
 
 import net.sourceforge.joceanus.jgordianknot.api.base.GordianLength;
 import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigestSpec;

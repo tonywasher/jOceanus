@@ -15,7 +15,7 @@
  * the License.
  ******************************************************************************/
 /**
- * Metos javaFX.
+ * Metis javaFX.
  */
 module net.sourceforge.joceanus.jmetis.javafx {
     /* Java Libraries */
