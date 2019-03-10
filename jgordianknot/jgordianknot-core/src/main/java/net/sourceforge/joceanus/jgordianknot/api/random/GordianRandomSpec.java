@@ -227,7 +227,7 @@ public class GordianRandomSpec {
                 theName = theRandomType.toString();
                 theName += SEP + theSubSpec;
                 if (isPredictionResistant) {
-                    theName += SEP + Boolean.TRUE;
+                    theName += SEP + "resistant";
                 }
             }  else {
                 /* Report invalid spec */

@@ -33,6 +33,7 @@ import net.sourceforge.joceanus.jgordianknot.api.mac.GordianMacFactory;
 import net.sourceforge.joceanus.jgordianknot.api.mac.GordianMacSpec;
 import net.sourceforge.joceanus.jgordianknot.api.random.GordianRandomFactory;
 import net.sourceforge.joceanus.jgordianknot.api.random.GordianRandomSpec;
+import net.sourceforge.joceanus.jgordianknot.api.random.GordianRandomType;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
@@ -380,7 +381,7 @@ class SymmetricStore {
         private final FactoryStreamKeyType theOwner;
 
         /**
-         * The streamKeyType.
+         * The streamKeySpec.
          */
         private final GordianStreamCipherSpec theCipherSpec;
 
@@ -412,7 +413,63 @@ class SymmetricStore {
     }
 
     /**
-     * Factory and Mac definition.
+     * Factory and randomType definition.
+     */
+    static class FactoryRandomType
+            implements FactorySpec<GordianRandomType> {
+        /**
+         * The factory.
+         */
+        private final GordianFactory theFactory;
+
+        /**
+         * The randomType.
+         */
+        private final GordianRandomType theRandomType;
+
+        /**
+         * The list of randomSpecs.
+         */
+        private final List<FactoryRandomSpec> theSpecs;
+
+        /**
+         * Constructor.
+         * @param pFactory the factory
+         * @param pRandomType the randomType
+         */
+        FactoryRandomType(final GordianFactory pFactory,
+                          final GordianRandomType pRandomType) {
+            theFactory = pFactory;
+            theRandomType = pRandomType;
+            theSpecs = new ArrayList<>();
+        }
+
+        @Override
+        public GordianFactory getFactory() {
+            return theFactory;
+        }
+
+        @Override
+        public GordianRandomType getSpec() {
+            return theRandomType;
+        }
+
+        /**
+         * Obtain the signatureList.
+         * @return the signature list
+         */
+        List<FactoryRandomSpec> getSpecs() {
+            return theSpecs;
+        }
+
+        @Override
+        public String toString() {
+            return theRandomType.toString();
+        }
+    }
+
+    /**
+     * Factory and randomSpec definition.
      */
     static class FactoryRandomSpec
             implements FactorySpec<GordianRandomSpec> {
@@ -422,14 +479,14 @@ class SymmetricStore {
         private final GordianFactory theFactory;
 
         /**
-         * The macSpec.
+         * The randomSpec.
          */
         private final GordianRandomSpec theRandomSpec;
 
-       /**
+        /**
          * Constructor.
          * @param pFactory the factory
-         * @param pRandomSpec the macSpec
+         * @param pRandomSpec the randomSpec
          */
         FactoryRandomSpec(final GordianFactory pFactory,
                           final GordianRandomSpec pRandomSpec) {
@@ -553,13 +610,25 @@ class SymmetricStore {
      * @param pFactory the factory
      * @return the list
      */
-    static List<FactoryRandomSpec> randomProvider(final GordianFactory pFactory) {
-        /* Loop through the possible randomSpecs */
-        final List<FactoryRandomSpec> myResult = new ArrayList<>();
+    static List<FactoryRandomType> randomProvider(final GordianFactory pFactory) {
+        /* Loop through the possible randomTypes */
+        final List<FactoryRandomType> myResult = new ArrayList<>();
         final GordianRandomFactory myRandomFactory = pFactory.getRandomFactory();
-        for (GordianRandomSpec mySpec : myRandomFactory.listAllSupportedRandomSpecs()) {
-            /* Add the randomSpec */
-            myResult.add(new FactoryRandomSpec(pFactory, mySpec));
+        for (GordianRandomType myType : GordianRandomType.values()) {
+            /* Create the random type */
+            final FactoryRandomType myFactoryType = new FactoryRandomType(pFactory, myType);
+
+            /* Populate the list of specs */
+            final List<FactoryRandomSpec> myList = myFactoryType.getSpecs();
+            for (GordianRandomSpec mySpec : myRandomFactory.listAllSupportedRandomSpecs(myType)) {
+                /* Add the randomSpec */
+                myList.add(new FactoryRandomSpec(pFactory, mySpec));
+            }
+
+            /* Add to the list */
+            if (!myList.isEmpty()) {
+                myResult.add(myFactoryType);
+            }
         }
 
         /* Return the list */

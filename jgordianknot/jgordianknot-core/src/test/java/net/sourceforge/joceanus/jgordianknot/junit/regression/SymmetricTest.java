@@ -55,9 +55,11 @@ import net.sourceforge.joceanus.jgordianknot.api.random.GordianRandomFactory;
 import net.sourceforge.joceanus.jgordianknot.api.random.GordianRandomSpec;
 import net.sourceforge.joceanus.jgordianknot.impl.core.cipher.GordianCoreCipher;
 import net.sourceforge.joceanus.jgordianknot.impl.core.cipher.GordianCoreWrapper;
+import net.sourceforge.joceanus.jgordianknot.junit.regression.AsymmetricStore.FactoryKeySpec;
 import net.sourceforge.joceanus.jgordianknot.junit.regression.SymmetricStore.FactoryDigestSpec;
 import net.sourceforge.joceanus.jgordianknot.junit.regression.SymmetricStore.FactoryMacSpec;
 import net.sourceforge.joceanus.jgordianknot.junit.regression.SymmetricStore.FactoryRandomSpec;
+import net.sourceforge.joceanus.jgordianknot.junit.regression.SymmetricStore.FactoryRandomType;
 import net.sourceforge.joceanus.jgordianknot.junit.regression.SymmetricStore.FactorySpec;
 import net.sourceforge.joceanus.jgordianknot.junit.regression.SymmetricStore.FactoryStreamCipherSpec;
 import net.sourceforge.joceanus.jgordianknot.junit.regression.SymmetricStore.FactoryStreamKeyType;
@@ -170,7 +172,7 @@ public class SymmetricTest {
         }
 
         /* Add random Tests */
-        mySubStream = randomKeyTests(myFactory);
+        mySubStream = randomTests(myFactory);
         if (mySubStream != null) {
             myStream = Stream.concat(myStream, mySubStream);
         }
@@ -272,16 +274,20 @@ public class SymmetricTest {
      * @param pFactory the factory
      * @return the test stream or null
      */
-    private Stream<DynamicNode> randomKeyTests(final GordianFactory pFactory) {
-        /* Add random Tests */
-        List<FactoryRandomSpec> myRandoms = SymmetricStore.randomProvider(pFactory);
-        if (!myRandoms.isEmpty()) {
-            Stream<DynamicNode> myTests = myRandoms.stream().map(x -> DynamicTest.dynamicTest(x.toString(), () -> checkRandomSpec(x)));
-            return Stream.of(DynamicContainer.dynamicContainer("randoms", myTests));
+    private Stream<DynamicNode> randomTests(final GordianFactory pFactory) {
+        /* Create an empty stream */
+        Stream<DynamicNode> myStream = Stream.empty();
+
+        /* Loop through the possible keySpecs */
+        for (final FactoryRandomType myType : SymmetricStore.randomProvider(pFactory)) {
+            /* Access the specs */
+            List<FactoryRandomSpec> mySpecs = myType.getSpecs();
+            Stream<DynamicNode> myTests = mySpecs.stream().map(x -> DynamicTest.dynamicTest(x.toString(), () -> checkRandomSpec(x)));
+            myStream = Stream.concat(myStream, Stream.of(DynamicContainer.dynamicContainer(myType.toString(), myTests)));
         }
 
         /* No random Tests */
-        return null;
+        return Stream.of(DynamicContainer.dynamicContainer("randoms", myStream));
     }
 
     /**

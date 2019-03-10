@@ -16,11 +16,16 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jgordianknot.junit.extensions;
 
+import java.util.stream.Stream;
+
 import org.bouncycastle.crypto.prng.EntropySource;
 import org.bouncycastle.crypto.prng.EntropySourceProvider;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.DynamicContainer;
+import org.junit.jupiter.api.DynamicNode;
+import org.junit.jupiter.api.DynamicTest;
+import org.junit.jupiter.api.TestFactory;
 
 import net.sourceforge.joceanus.jgordianknot.api.base.GordianLength;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianCipherFactory;
@@ -50,6 +55,26 @@ import net.sourceforge.joceanus.jtethys.TethysDataConverter;
  * GordianKnot DRBG testCases.
  */
 public class RandomTest {
+    /**
+     * The standard test name.
+     */
+    private static final String STANDARD = "Standard";
+
+    /**
+     * The resistant test name.
+     */
+    private static final String RESISTANT = "Resistant";
+
+    /**
+     * The personalised test name.
+     */
+    private static final String PERSONALISED = "Personalised";
+
+    /**
+     * The additional test name.
+     */
+    private static final String ADDITIONAL = "Additional";
+
     /**
      * The factories.
      */
@@ -247,6 +272,32 @@ public class RandomTest {
     }
 
     /**
+     * Create the drbg test suite.
+     * @return the test stream
+     * @throws OceanusException on error
+     */
+    @TestFactory
+    public Stream<DynamicNode> drbgTests() throws OceanusException {
+        /* Create tests */
+        DynamicNode myHash = DynamicContainer.dynamicContainer("Hash", Stream.of(
+                testSHA1HashDRBG(),
+                testSHA512HashDRBG()
+        ));
+        DynamicNode myHMac = DynamicContainer.dynamicContainer("HMac", Stream.of(
+                testSHA1HMacDRBG(),
+                testSHA512HMacDRBG()
+        ));
+        DynamicNode myCTR = DynamicContainer.dynamicContainer("CTR", Stream.of(
+                testAES128CtrDRBG(),
+                testAES256CtrDRBG()
+        ));
+        DynamicNode myX931 = DynamicContainer.dynamicContainer("X931", Stream.of(
+                testAES128X931DRBG()
+        ));
+        return Stream.of(myHash, myHMac, myCTR, myX931);
+    }
+
+    /**
      * Test random.
      * @param pRandom the random generator
      * @param pResistant is the generator prediction resistant?
@@ -409,11 +460,11 @@ public class RandomTest {
     private static final String sha1Add2 = "A0A1A2A3A4A5A6A7A8A9AAABACADAEAFB0B1B2B3B4B5B6B7B8B9BABBBCBDBEBFC0C1C2C3C4C5C6C7C8C9CACBCCCDCECFD0D1D2D3D4D5D6";
 
     /**
-     * Test Sha1 Hash DRBG.
+     * Create Sha1 Hash DRBG Test.
+     * @return the test
      * @throws OceanusException on error
      */
-    @Test
-    public void testSHA1HashDRBG() throws OceanusException {
+    private DynamicNode testSHA1HashDRBG() throws OceanusException {
         /* The SHA1 Init */
         final GordianDRBGInit myInitF =  new GordianDRBGInit(false, sha1Nonce, sha1Entropy);
         final GordianDRBGInit myInitFP =  new GordianDRBGInit(false, sha1Nonce, sha1Entropy, sha1Personal);
@@ -446,23 +497,38 @@ public class RandomTest {
                 new GordianTestCase(sha1Add2,"F196F9BD021C745CBD5AC7BFCE48EAAF0D0E7C091FBF436940E63A198EE770D9A4F0718669AF2BC9")
         };
 
-        /* Run the tests */
+        /* Create the digest */
         final GordianDigestFactory myFactory = BCFACTORY.getDigestFactory();
         final GordianDigest myDigest = myFactory.createDigest(GordianDigestSpec.sha1());
-        testHashDRBG(myDigest, myInitF, myTestsF);
-        testHashDRBG(myDigest, myInitFP, myTestsFP);
-        testHashDRBG(myDigest, myInitF, myTestsFA);
-        testHashDRBG(myDigest, myInitT, myTestsT);
-        testHashDRBG(myDigest, myInitTP, myTestsTP);
-        testHashDRBG(myDigest, myInitT, myTestsTA);
+
+        /* Create a standard stream */
+        Stream<DynamicNode> myStandard = Stream.of(DynamicTest.dynamicTest(STANDARD,
+                () -> testHashDRBG(myDigest, myInitF, myTestsF)));
+        myStandard = Stream.concat(myStandard, Stream.of(DynamicTest.dynamicTest(PERSONALISED,
+                () -> testHashDRBG(myDigest, myInitFP, myTestsFP))));
+        myStandard = Stream.concat(myStandard, Stream.of(DynamicTest.dynamicTest(ADDITIONAL,
+                () -> testHashDRBG(myDigest, myInitF, myTestsFA))));
+        myStandard = Stream.of(DynamicContainer.dynamicContainer(STANDARD, myStandard));
+
+        /* Create a resistant stream */
+        Stream<DynamicNode> myResistant = Stream.of(DynamicTest.dynamicTest(STANDARD,
+                () -> testHashDRBG(myDigest, myInitT, myTestsT)));
+        myResistant = Stream.concat(myResistant, Stream.of(DynamicTest.dynamicTest(PERSONALISED,
+                () -> testHashDRBG(myDigest, myInitTP, myTestsTP))));
+        myResistant = Stream.concat(myResistant, Stream.of(DynamicTest.dynamicTest(ADDITIONAL,
+                () -> testHashDRBG(myDigest, myInitT, myTestsTA))));
+        myResistant = Stream.of(DynamicContainer.dynamicContainer(RESISTANT, myResistant));
+
+        /* Return the test */
+        return DynamicContainer.dynamicContainer("Sha1", Stream.concat(myStandard, myResistant));
     }
 
     /**
-     * Test Sha1 HMac DRBG.
+     * Create Sha1 HMac DRBG test .
+     * @return the test
      * @throws OceanusException on error
      */
-    @Test
-    public void testSHA1HMacDRBG() throws OceanusException {
+    private DynamicNode testSHA1HMacDRBG() throws OceanusException {
         /* The SHA1 Init */
         final GordianDRBGInit myInitF =  new GordianDRBGInit(false, sha1Nonce, sha1Entropy);
         final GordianDRBGInit myInitFP =  new GordianDRBGInit(false, sha1Nonce, sha1Entropy, sha1Personal);
@@ -495,15 +561,30 @@ public class RandomTest {
                 new GordianTestCase(sha1Add2,"84264A73A818C95C2F424B37D3CC990B046FB50C2DC64A164211889A010F2471A0912FFEA1BF0195")
         };
 
-        /* Run the tests */
+        /* Create the mac */
         final GordianMacFactory myFactory = BCFACTORY.getMacFactory();
         final GordianMac myMac = myFactory.createMac(GordianMacSpec.hMac(GordianDigestSpec.sha1()));
-        testHMacDRBG(myMac, myInitF, myTestsF);
-        testHMacDRBG(myMac, myInitFP, myTestsFP);
-        testHMacDRBG(myMac, myInitF, myTestsFA);
-        testHMacDRBG(myMac, myInitT, myTestsT);
-        testHMacDRBG(myMac, myInitTP, myTestsTP);
-        testHMacDRBG(myMac, myInitT, myTestsTA);
+
+        /* Create a standard stream */
+        Stream<DynamicNode> myStandard = Stream.of(DynamicTest.dynamicTest(STANDARD,
+                () -> testHMacDRBG(myMac, myInitF, myTestsF)));
+        myStandard = Stream.concat(myStandard, Stream.of(DynamicTest.dynamicTest(PERSONALISED,
+                () -> testHMacDRBG(myMac, myInitFP, myTestsFP))));
+        myStandard = Stream.concat(myStandard, Stream.of(DynamicTest.dynamicTest(ADDITIONAL,
+                () -> testHMacDRBG(myMac, myInitF, myTestsFA))));
+        myStandard = Stream.of(DynamicContainer.dynamicContainer(STANDARD, myStandard));
+
+        /* Create a resistant stream */
+        Stream<DynamicNode> myResistant = Stream.of(DynamicTest.dynamicTest(STANDARD,
+                () -> testHMacDRBG(myMac, myInitT, myTestsT)));
+        myResistant = Stream.concat(myResistant, Stream.of(DynamicTest.dynamicTest(PERSONALISED,
+                () -> testHMacDRBG(myMac, myInitTP, myTestsTP))));
+        myResistant = Stream.concat(myResistant, Stream.of(DynamicTest.dynamicTest(ADDITIONAL,
+                () -> testHMacDRBG(myMac, myInitT, myTestsTA))));
+        myResistant = Stream.of(DynamicContainer.dynamicContainer(RESISTANT, myResistant));
+
+        /* Return the test */
+        return DynamicContainer.dynamicContainer("Sha1", Stream.concat(myStandard, myResistant));
     }
 
     /* The SHA512 Constants */
@@ -540,11 +621,11 @@ public class RandomTest {
             "F7F8F9FAFBFCFDFEFF000102030405060708090A0B0C0D0E";
 
     /**
-     * Test Sha512 Hash DRBG.
+     * Create Sha512 Hash DRBG test.
+     * @return the test
      * @throws OceanusException on error
      */
-    @Test
-    public void testSHA512HashDRBG() throws OceanusException {
+    private DynamicNode testSHA512HashDRBG() throws OceanusException {
         /* The SHA512 Init */
         final GordianDRBGInit myInitFP =  new GordianDRBGInit(false, sha512Nonce, sha512Entropy, sha512Personal);
         final GordianDRBGInit myInitT =  new GordianDRBGInit(true, sha512Nonce, sha512Entropy);
@@ -622,22 +703,36 @@ public class RandomTest {
                         "87F8C5AF2D96B20FAF3D0BB392E15F4A06CDB0DECD1B6AD7")
         };
 
-        /* Run the tests */
+        /* Build the digest */
         final GordianDigestFactory myFactory = BCFACTORY.getDigestFactory();
         final GordianDigest myDigest = myFactory.createDigest(GordianDigestSpec.sha2(GordianLength.LEN_512));
-        testHashDRBG(myDigest, myInitFP, myTestsFPA);
-        testHashDRBG(myDigest, myInitT, myTestsT);
-        testHashDRBG(myDigest, myInitTP, myTestsTP);
-        testHashDRBG(myDigest, myInitT, myTestsTA);
-        testHashDRBG(myDigest, myInitTP, myTestsTPA);
+
+        /* Create a standard stream */
+        Stream<DynamicNode> myStandard = Stream.of(DynamicTest.dynamicTest(PERSONALISED + ADDITIONAL,
+                () -> testHashDRBG(myDigest, myInitFP, myTestsFPA)));
+        myStandard = Stream.of(DynamicContainer.dynamicContainer(STANDARD, myStandard));
+
+        /* Create a resistant stream */
+        Stream<DynamicNode> myResistant = Stream.of(DynamicTest.dynamicTest(STANDARD,
+                () -> testHashDRBG(myDigest, myInitT, myTestsT)));
+        myResistant = Stream.concat(myResistant, Stream.of(DynamicTest.dynamicTest(PERSONALISED,
+                () -> testHashDRBG(myDigest, myInitTP, myTestsTP))));
+        myResistant = Stream.concat(myResistant, Stream.of(DynamicTest.dynamicTest(ADDITIONAL,
+                () -> testHashDRBG(myDigest, myInitT, myTestsTA))));
+        myResistant = Stream.concat(myResistant, Stream.of(DynamicTest.dynamicTest(PERSONALISED + ADDITIONAL,
+                () -> testHashDRBG(myDigest, myInitTP, myTestsTPA))));
+        myResistant = Stream.of(DynamicContainer.dynamicContainer(RESISTANT, myResistant));
+
+        /* Return the test */
+        return DynamicContainer.dynamicContainer("Sha512", Stream.concat(myStandard, myResistant));
     }
 
     /**
-     * Test Sha512 HMac DRBG.
+     * Create Sha512 HMac DRBG test.
+     * @return the test
      * @throws OceanusException on error
      */
-    @Test
-    public void testSHA512HMacDRBG() throws OceanusException {
+    private DynamicNode testSHA512HMacDRBG() throws OceanusException {
         /* The SHA512 Init */
         final GordianDRBGInit myInitFP =  new GordianDRBGInit(false, sha512Nonce, sha512Entropy, sha512Personal);
         final GordianDRBGInit myInitT =  new GordianDRBGInit(true, sha512Nonce, sha512Entropy);
@@ -729,15 +824,30 @@ public class RandomTest {
                         "EED956D147480B1D0A42DF8AA990BB628666F6F61D60CBE2")
         };
 
-        /* Run the tests */
+        /* Create the mac */
         final GordianMacFactory myFactory = BCFACTORY.getMacFactory();
         final GordianMac myMac = myFactory.createMac(GordianMacSpec.hMac(GordianDigestSpec.sha2(GordianLength.LEN_512)));
-        testHMacDRBG(myMac, myInitFP, myTestsFP);
-        testHMacDRBG(myMac, myInitFP, myTestsFPA);
-        testHMacDRBG(myMac, myInitT, myTestsT);
-        testHMacDRBG(myMac, myInitTP, myTestsTP);
-        testHMacDRBG(myMac, myInitT, myTestsTA);
-        testHMacDRBG(myMac, myInitTP, myTestsTPA);
+
+        /* Create a standard stream */
+        Stream<DynamicNode> myStandard = Stream.of(DynamicTest.dynamicTest(PERSONALISED,
+                () -> testHMacDRBG(myMac, myInitFP, myTestsFP)));
+        myStandard = Stream.concat(myStandard, Stream.of(DynamicTest.dynamicTest(PERSONALISED + ADDITIONAL,
+                () -> testHMacDRBG(myMac, myInitFP, myTestsFPA))));
+        myStandard = Stream.of(DynamicContainer.dynamicContainer(STANDARD, myStandard));
+
+        /* Create a resistant stream */
+        Stream<DynamicNode> myResistant = Stream.of(DynamicTest.dynamicTest(STANDARD,
+                () -> testHMacDRBG(myMac, myInitT, myTestsT)));
+        myResistant = Stream.concat(myResistant, Stream.of(DynamicTest.dynamicTest(PERSONALISED,
+                () -> testHMacDRBG(myMac, myInitTP, myTestsTP))));
+        myResistant = Stream.concat(myResistant, Stream.of(DynamicTest.dynamicTest(ADDITIONAL,
+                () -> testHMacDRBG(myMac, myInitT, myTestsTA))));
+        myResistant = Stream.concat(myResistant, Stream.of(DynamicTest.dynamicTest(PERSONALISED + ADDITIONAL,
+                () -> testHMacDRBG(myMac, myInitTP, myTestsTPA))));
+        myResistant = Stream.of(DynamicContainer.dynamicContainer(RESISTANT, myResistant));
+
+        /* Return the test */
+        return DynamicContainer.dynamicContainer("Sha512", Stream.concat(myStandard, myResistant));
     }
 
     /* The AES 128 Constants */
@@ -753,11 +863,11 @@ public class RandomTest {
     private static final String aes128Add2 = "A0A1A2A3A4A5A6A7A8A9AAABACADAEAFB0B1B2B3B4B5B6B7B8B9BABBBCBDBEBF";
 
     /**
-     * Test aes128 Ctr DRBG.
+     * Create aes128 Ctr DRBG test.
+     * @return the test
      * @throws OceanusException on error
      */
-    @Test
-    public void testAES128CtrDRBG() throws OceanusException {
+    private DynamicNode testAES128CtrDRBG() throws OceanusException {
         /* The AES128 Init */
         final GordianDRBGInit myInitF =  new GordianDRBGInit(false, aes128Nonce, aes128Entropy);
         final GordianDRBGInit myInitFP =  new GordianDRBGInit(false, aes128Nonce, aes128Entropy, aes128Personal);
@@ -790,24 +900,39 @@ public class RandomTest {
                 new GordianTestCase(aes128Add2,"99C628CDD87BD8C2F1FE443AA7F761DA16886436326323354DA6311FFF5BC678")
         };
 
-        /* Run the tests */
+        /* Create the cipher */
         final GordianCipherFactory myFactory = BCFACTORY.getCipherFactory();
         final GordianSymCipherSpec mySpec = GordianSymCipherSpec.ecb(GordianSymKeySpec.aes(), GordianPadding.NONE);
         final GordianCoreCipher<GordianSymKeySpec> myCipher = (GordianCoreCipher<GordianSymKeySpec>) myFactory.createSymKeyCipher(mySpec);
-        testCTRCipherDRBG(myCipher, GordianLength.LEN_128, myInitF, myTestsF);
-        testCTRCipherDRBG(myCipher, GordianLength.LEN_128, myInitFP, myTestsFP);
-        testCTRCipherDRBG(myCipher, GordianLength.LEN_128, myInitF, myTestsFA);
-        testCTRCipherDRBG(myCipher, GordianLength.LEN_128, myInitT, myTestsT);
-        testCTRCipherDRBG(myCipher, GordianLength.LEN_128, myInitTP, myTestsTP);
-        testCTRCipherDRBG(myCipher, GordianLength.LEN_128, myInitT, myTestsTA);
+
+        /* Create a standard stream */
+        Stream<DynamicNode> myStandard = Stream.of(DynamicTest.dynamicTest(STANDARD,
+                () -> testCTRCipherDRBG(myCipher, GordianLength.LEN_128, myInitF, myTestsF)));
+        myStandard = Stream.concat(myStandard, Stream.of(DynamicTest.dynamicTest(PERSONALISED,
+                () -> testCTRCipherDRBG(myCipher, GordianLength.LEN_128, myInitFP, myTestsFP))));
+        myStandard = Stream.concat(myStandard, Stream.of(DynamicTest.dynamicTest(ADDITIONAL
+                , () -> testCTRCipherDRBG(myCipher, GordianLength.LEN_128, myInitF, myTestsFA))));
+        myStandard = Stream.of(DynamicContainer.dynamicContainer(STANDARD, myStandard));
+
+        /* Create a resistant stream */
+        Stream<DynamicNode> myResistant = Stream.of(DynamicTest.dynamicTest(STANDARD,
+                () -> testCTRCipherDRBG(myCipher, GordianLength.LEN_128, myInitT, myTestsT)));
+        myResistant = Stream.concat(myResistant, Stream.of(DynamicTest.dynamicTest(PERSONALISED,
+                () -> testCTRCipherDRBG(myCipher, GordianLength.LEN_128, myInitTP, myTestsTP))));
+        myResistant = Stream.concat(myResistant, Stream.of(DynamicTest.dynamicTest(ADDITIONAL,
+                () -> testCTRCipherDRBG(myCipher, GordianLength.LEN_128, myInitT, myTestsTA))));
+        myResistant = Stream.of(DynamicContainer.dynamicContainer(RESISTANT, myResistant));
+
+        /* Return the test */
+        return DynamicContainer.dynamicContainer("aes128", Stream.concat(myStandard, myResistant));
     }
 
     /**
-     * Test aes128 X931 DRBG.
+     * Create aes128 X931 DRBG test.
+     * @return the test
      * @throws OceanusException on error
      */
-    @Test
-    public void testAES128X931DRBG() throws OceanusException {
+    private DynamicNode testAES128X931DRBG() throws OceanusException {
         /* The AES128 Init */
         final GordianDRBGInit myInitF =  new GordianDRBGInit(false, "259e67249288597a4d61e7c0e690afae", "35cc0ea481fc8a4f5f05c7d4667233b2");
 
@@ -825,6 +950,13 @@ public class RandomTest {
         final GordianSymCipherSpec mySpec = GordianSymCipherSpec.ecb(GordianSymKeySpec.aes(), GordianPadding.NONE);
         final GordianCoreCipher<GordianSymKeySpec> myCipher = (GordianCoreCipher<GordianSymKeySpec>) myFactory.createSymKeyCipher(mySpec);
         testX931CipherDRBG(myCipher, "f7d36762b9915f1ed585eb8e91700eb2", myInitF, myTestsF);
+
+        /* Create a standard stream */
+        Stream<DynamicNode> myStandard = Stream.of(DynamicTest.dynamicTest(STANDARD,
+                () -> testX931CipherDRBG(myCipher, "f7d36762b9915f1ed585eb8e91700eb2", myInitF, myTestsF)));
+
+        /* Return the test */
+        return DynamicContainer.dynamicContainer("aes128", myStandard);
     }
 
     /* The AES 256 Constants */
@@ -840,11 +972,11 @@ public class RandomTest {
     private static final String aes256Add2 = "A0A1A2A3A4A5A6A7A8A9AAABACADAEAFB0B1B2B3B4B5B6B7B8B9BABBBCBDBEBFC0C1C2C3C4C5C6C7C8C9CACBCCCDCECF";
 
     /**
-     * Test aes128 Ctr DRBG.
+     * Create aes128 Ctr DRBG test.
+     * @return the test
      * @throws OceanusException on error
      */
-    @Test
-    public void testAES256CtrDRBG() throws OceanusException {
+    private DynamicNode testAES256CtrDRBG() throws OceanusException {
         /* The AES256 Init */
         final GordianDRBGInit myInitF =  new GordianDRBGInit(false, aes256Nonce, aes256Entropy);
         final GordianDRBGInit myInitFP =  new GordianDRBGInit(false, aes256Nonce, aes256Entropy, aes256Personal);
@@ -873,14 +1005,28 @@ public class RandomTest {
                 new GordianTestCase(aes256Add2,"ec51b55b49904c3ff9e13939f1cf27398993e1b3acb2b0be0be8761261428f0aa8ba2657")
         };
 
-        /* Run the tests */
+        /* Create the cipher */
         final GordianCipherFactory myFactory = BCFACTORY.getCipherFactory();
         final GordianSymCipherSpec mySpec = GordianSymCipherSpec.ecb(GordianSymKeySpec.aes(), GordianPadding.NONE);
         final GordianCoreCipher<GordianSymKeySpec> myCipher = (GordianCoreCipher<GordianSymKeySpec>) myFactory.createSymKeyCipher(mySpec);
-        testCTRCipherDRBG(myCipher, GordianLength.LEN_256, myInitFP, myTestsFPA);
-        testCTRCipherDRBG(myCipher, GordianLength.LEN_256, myInitTP, myTestsTP);
-        testCTRCipherDRBG(myCipher, GordianLength.LEN_256, myInitT, myTestsTA);
-        testCTRCipherDRBG(myCipher, GordianLength.LEN_256, myInitTP, myTestsTPA);
-        testCTRCipherDRBG(myCipher, GordianLength.LEN_256, myInitTP, myTestsTPA2);
+
+        /* Create a standard stream */
+        Stream<DynamicNode> myStandard = Stream.of(DynamicTest.dynamicTest(PERSONALISED + ADDITIONAL,
+                () -> testCTRCipherDRBG(myCipher, GordianLength.LEN_256, myInitFP, myTestsFPA)));
+        myStandard = Stream.of(DynamicContainer.dynamicContainer(STANDARD, myStandard));
+
+        /* Create a resistant stream */
+        Stream<DynamicNode> myResistant = Stream.of(DynamicTest.dynamicTest(PERSONALISED,
+                () -> testCTRCipherDRBG(myCipher, GordianLength.LEN_256, myInitTP, myTestsTP)));
+        myResistant = Stream.concat(myResistant, Stream.of(DynamicTest.dynamicTest(ADDITIONAL,
+                () -> testCTRCipherDRBG(myCipher, GordianLength.LEN_256, myInitT, myTestsTA))));
+        myResistant = Stream.concat(myResistant, Stream.of(DynamicTest.dynamicTest(PERSONALISED + ADDITIONAL,
+                () -> testCTRCipherDRBG(myCipher, GordianLength.LEN_256, myInitTP, myTestsTPA))));
+        myResistant = Stream.concat(myResistant, Stream.of(DynamicTest.dynamicTest(PERSONALISED + ADDITIONAL + 2,
+                () -> testCTRCipherDRBG(myCipher, GordianLength.LEN_256, myInitTP, myTestsTPA2))));
+        myResistant = Stream.of(DynamicContainer.dynamicContainer(RESISTANT, myResistant));
+
+        /* Return the test */
+        return DynamicContainer.dynamicContainer("aes256", Stream.concat(myStandard, myResistant));
     }
 }
