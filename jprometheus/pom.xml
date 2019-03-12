@@ -12,7 +12,6 @@
   <modules>
     <module>jprometheus-swing</module>
     <module>jprometheus-core</module>
-    <module>jprometheus-javafx</module>
   </modules>
   <properties>
     <scmComponent>jprometheus</scmComponent>
