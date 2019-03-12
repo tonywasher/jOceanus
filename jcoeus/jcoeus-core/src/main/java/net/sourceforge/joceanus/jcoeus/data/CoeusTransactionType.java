@@ -51,6 +51,11 @@ public enum CoeusTransactionType {
     CASHBACK,
 
     /**
+     * TaxableCashBack.
+     */
+    TAXABLECASHBACK,
+
+    /**
      * Rate Promise.
      */
     RATEPROMISE,

@@ -256,6 +256,7 @@
             <id>javadoc</id>
             <goals>
               <goal>javadoc</goal>
+              <goal>test-javadoc</goal>
             </goals>
             <phase>site</phase>
           </execution>
@@ -263,6 +264,7 @@
             <id>aggregate</id>
             <goals>
               <goal>aggregate</goal>
+              <goal>test-aggregate</goal>
             </goals>
             <phase>site</phase>
           </execution>
@@ -455,10 +457,21 @@
         </configuration>
         <reportSets>
           <reportSet>
+            <id>default</id>
+            <configuration>
+              <skip>true</skip>
+            </configuration>
+            <reports>
+              <report>javadoc-no-fork</report>
+              <report>test-javadoc-no-fork</report>
+            </reports>
+          </reportSet>
+          <reportSet>
             <id>aggregate</id>
             <inherited>false</inherited>
             <reports>
               <report>aggregate-no-fork</report>
+              <report>test-aggregate-no-fork</report>
             </reports>
           </reportSet>
         </reportSets>

@@ -79,6 +79,11 @@ public class CoeusRateSetterTransaction
     private static final String PFIX_FEES = "RateSetter lender fee";
 
     /**
+     * Taxable CashBack prefix.
+     */
+    private static final String PFIX_CBACK = "TaxableCashBack";
+
+    /**
      * ZERO for BadDebt/CashBack.
      */
     protected static final TethysMoney ZERO_MONEY = new TethysMoney();
@@ -161,7 +166,9 @@ public class CoeusRateSetterTransaction
         /* Parse the monetary values */
         theHolding = pParser.parseMoney(myIterator.next());
         final TethysMoney myCapital = pParser.parseMoney(myIterator.next());
-        theInterest = pParser.parseMoney(myIterator.next());
+        theInterest = CoeusTransactionType.TAXABLECASHBACK.equals(theTransType)
+                      ? theHolding
+                      : pParser.parseMoney(myIterator.next());
 
         /* Handle fees */
         theFees = pParser.parseMoney(myIterator.next());
@@ -369,6 +376,11 @@ public class CoeusRateSetterTransaction
         if (PFIX_INTEREST.equals(theDesc)
             || PFIX_FULLINTEREST.equals(theDesc)) {
             return CoeusTransactionType.INTEREST;
+        }
+
+        /* If the description is Interest */
+        if (PFIX_CBACK.equals(theDesc)) {
+            return CoeusTransactionType.TAXABLECASHBACK;
         }
 
         /* If the description is Fees */

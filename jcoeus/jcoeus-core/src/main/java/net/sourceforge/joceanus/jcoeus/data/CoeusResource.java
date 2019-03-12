@@ -141,6 +141,11 @@ public enum CoeusResource
     TRANS_RECOVERY("trans.recovery"),
 
     /**
+     * Transaction TaxableCashBack.
+     */
+    TRANS_TAXCASHBACK("trans.taxcashback"),
+
+    /**
      * Transaction Totals.
      */
     TRANS_TOTALS("trans.totals"),
@@ -633,6 +638,7 @@ public enum CoeusResource
         myMap.put(CoeusTransactionType.BADDEBT, TRANS_BADDEBT);
         myMap.put(CoeusTransactionType.RECOVERY, TRANS_RECOVERY);
         myMap.put(CoeusTransactionType.TOTALS, TRANS_TOTALS);
+        myMap.put(CoeusTransactionType.TAXABLECASHBACK, TRANS_TAXCASHBACK);
         return myMap;
     }
 

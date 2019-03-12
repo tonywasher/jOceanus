@@ -118,9 +118,14 @@ public final class CoeusZopaTransaction
     private static final String PFIX_GOODWILL = "Goodwill Payment";
 
     /**
-     * Capital Adjustment.
+     * Capital Adjustment Debit.
      */
-    private static final String PFIX_CAPADJUST = "Capital Adjustment Debit";
+    private static final String PFIX_CAPADJUSTDBT = "Capital Adjustment Debit";
+
+    /**
+     * Capital Adjustment Credit.
+     */
+    private static final String PFIX_CAPADJUSTCDT = "Capital Adjustment Credit";
 
     /**
      * ZERO for BadDebt/CashBack.
@@ -494,7 +499,8 @@ public final class CoeusZopaTransaction
 
         /* If the description is Goodwill/CapitalAdjust */
         if (PFIX_GOODWILL.equals(theDesc)
-            || PFIX_CAPADJUST.equals(theDesc)) {
+            || PFIX_CAPADJUSTDBT.equals(theDesc)
+            || PFIX_CAPADJUSTCDT.equals(theDesc)) {
             return CoeusTransactionType.CASHBACK;
         }
 
