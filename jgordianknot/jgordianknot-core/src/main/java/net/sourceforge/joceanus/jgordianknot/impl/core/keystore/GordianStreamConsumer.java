@@ -14,7 +14,7 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  ******************************************************************************/
-package net.sourceforge.joceanus.jgordianknot.impl.core.sign;
+package net.sourceforge.joceanus.jgordianknot.impl.core.keystore;
 
 import java.io.IOException;
 import java.io.OutputStream;

@@ -126,8 +126,8 @@ public class GordianSignatureAlgId {
      * @param pKeyPair the keyPair
      * @return the Identifier
      */
-    AlgorithmIdentifier getIdentifierForSpecAndKeyPair(final GordianSignatureSpec pSpec,
-                                                       final GordianKeyPair pKeyPair) {
+    public AlgorithmIdentifier getIdentifierForSpecAndKeyPair(final GordianSignatureSpec pSpec,
+                                                              final GordianKeyPair pKeyPair) {
         /* If we need to use the subType */
         if (pSpec.getAsymKeyType().subTypeForSignatures()) {
             /* Look up in the subKey map */
@@ -147,7 +147,7 @@ public class GordianSignatureAlgId {
      * @return the signatureSpec
      * @throws OceanusException on error
      */
-    GordianSignatureSpec getSpecForIdentifier(final AlgorithmIdentifier pIdentifier) throws OceanusException {
+    public GordianSignatureSpec getSpecForIdentifier(final AlgorithmIdentifier pIdentifier) throws OceanusException {
         final GordianSignatureSpec mySpec = theIdentifierMap.get(pIdentifier);
         if (mySpec == null) {
             throw new GordianDataException("Invalid identifier " + pIdentifier);
