@@ -24,5 +24,5 @@ public interface GordianKeyStoreFactory {
      * Create a new empty KeyStore.
      * @return the keyStore
      */
-    public GordianKeyStore createKeyStore();
+    GordianKeyStore createKeyStore();
 }

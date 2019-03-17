@@ -72,7 +72,7 @@ public abstract class GordianCoreAsymFactory
      */
     public GordianCoreAsymFactory(final GordianCoreFactory pFactory) {
         theFactory = pFactory;
-        theKeyStoreFactory = new GordianCoreKeyStoreFactory(pFactory);
+        theKeyStoreFactory = new GordianCoreKeyStoreFactory(this);
     }
 
     @Override

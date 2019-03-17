@@ -45,6 +45,7 @@ import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianCoreFactory;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianDataException;
 import net.sourceforge.joceanus.jgordianknot.impl.core.keypair.GordianCoreKeyPair;
 import net.sourceforge.joceanus.jgordianknot.impl.core.keystore.GordianKeyStoreElement.GordianKeyStoreCertificateElement;
+import net.sourceforge.joceanus.jgordianknot.impl.core.keystore.GordianKeyStoreElement.GordianKeyStoreCertificateHolder;
 import net.sourceforge.joceanus.jgordianknot.impl.core.keystore.GordianKeyStoreElement.GordianKeyStoreCertificateKey;
 import net.sourceforge.joceanus.jgordianknot.impl.core.keystore.GordianKeyStoreElement.GordianKeyStoreHashElement;
 import net.sourceforge.joceanus.jgordianknot.impl.core.keystore.GordianKeyStoreElement.GordianKeyStoreKeyElement;
@@ -206,13 +207,13 @@ public class GordianCoreKeyStore
         final GordianCoreKeyStoreEntry myEntry = theAliases.remove(pAlias);
 
         /* Nothing more to do unless we are removing a certificate */
-        if (!(myEntry instanceof GordianKeyStoreCertificateElement)) {
+        if (!(myEntry instanceof GordianKeyStoreCertificateHolder)) {
             return;
         }
 
         /* Access the certificate */
-        final GordianKeyStoreCertificateElement myCertEntry = (GordianKeyStoreCertificateElement) myEntry;
-        final GordianCoreCertificate myCert = getCertificate(myCertEntry.getCertificateKey());
+        final GordianKeyStoreCertificateHolder myCertHolder = (GordianKeyStoreCertificateHolder) myEntry;
+        final GordianCoreCertificate myCert = getCertificate(myCertHolder.getCertificateKey());
 
         /* If the certificate is not referenced by any other alias */
         if (getCertificateAlias(myCert) == null) {
@@ -366,7 +367,7 @@ public class GordianCoreKeyStore
      * Check that the alias is valid.
      * @param pAlias the alias
      */
-    private void checkAlias(final String pAlias) {
+    private static void checkAlias(final String pAlias) {
         if (pAlias == null) {
             throw new NullPointerException();
         }
@@ -495,12 +496,8 @@ public class GordianCoreKeyStore
         for (Map.Entry<String, GordianCoreKeyStoreEntry> myRecord : theAliases.entrySet()) {
             /* Check for match on certificate entry */
             final GordianKeyStoreEntry myEntry = myRecord.getValue();
-            if (myEntry instanceof GordianKeyStoreCertificateElement
-                    && pCertificate.equals(getCertificate(((GordianKeyStoreCertificateElement) myEntry).getCertificateKey()))) {
-                return myRecord.getKey();
-            }
-            if (myEntry instanceof GordianKeyStorePairElement
-                    && pCertificate.equals(getCertificate(((GordianKeyStorePairElement) myEntry).getCertificateKey()))) {
+            if (myEntry instanceof GordianKeyStoreCertificateHolder
+                    && pCertificate.equals(getCertificate(((GordianKeyStoreCertificateHolder) myEntry).getCertificateKey()))) {
                 return myRecord.getKey();
             }
         }
@@ -558,7 +555,7 @@ public class GordianCoreKeyStore
         for (int i = 0; i < pChain.length - 1; i++) {
             /* Access the certificate */
             final GordianCoreCertificate myTestCert = (GordianCoreCertificate) pChain[i];
-            final GordianCoreCertificate mySignerCert = (GordianCoreCertificate) pChain[i+1];
+            final GordianCoreCertificate mySignerCert = (GordianCoreCertificate) pChain[i + 1];
 
             /* Check the hierarchy */
             if (!myTestCert.validateCertificate(mySignerCert)) {

@@ -26,7 +26,7 @@ import net.sourceforge.joceanus.jgordianknot.api.keystore.GordianCertificateId;
 /**
  * Certificate Id implementation.
  */
-public class GordianCoreCertificateId
+public final class GordianCoreCertificateId
         implements GordianCertificateId {
     /**
      * The Name.

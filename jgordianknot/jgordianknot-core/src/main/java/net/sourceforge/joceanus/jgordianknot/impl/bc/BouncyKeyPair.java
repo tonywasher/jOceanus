@@ -59,6 +59,10 @@ public class BouncyKeyPair
         return (BouncyPrivateKey) super.getPrivateKey();
     }
 
+    @Override
+    public BouncyKeyPair getPublicOnly() {
+        return new BouncyKeyPair(getPublicKey());
+    }
     /**
      * Bouncy PublicKey.
      * @param <T> parameter type

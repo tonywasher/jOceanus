@@ -19,6 +19,7 @@ package net.sourceforge.joceanus.jgordianknot.impl.core.keystore;
 import net.sourceforge.joceanus.jgordianknot.api.keystore.GordianKeyStore;
 import net.sourceforge.joceanus.jgordianknot.api.keystore.GordianKeyStoreFactory;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianCoreFactory;
+import net.sourceforge.joceanus.jgordianknot.impl.core.keypair.GordianCoreAsymFactory;
 
 /**
  * KeyStore Factory implementation.
@@ -33,15 +34,14 @@ public class GordianCoreKeyStoreFactory
     /**
      * The algorithm Ids.
      */
-    private final GordianSignatureAlgId theAlgIds;
+    private GordianSignatureAlgId theAlgIds;
 
     /**
      * Constructor.
      * @param pFactory the factory
      */
-    public GordianCoreKeyStoreFactory(final GordianCoreFactory pFactory) {
-        theFactory = pFactory;
-        theAlgIds = new GordianSignatureAlgId(pFactory);
+    public GordianCoreKeyStoreFactory(final GordianCoreAsymFactory pFactory) {
+        theFactory = pFactory.getFactory();
     }
 
     /**
@@ -49,6 +49,9 @@ public class GordianCoreKeyStoreFactory
      * @return the signature Algorithm Ids
      */
     public GordianSignatureAlgId getAlgorithmIds() {
+        if (theAlgIds == null) {
+            theAlgIds = new GordianSignatureAlgId(theFactory);
+        }
         return theAlgIds;
     }
 

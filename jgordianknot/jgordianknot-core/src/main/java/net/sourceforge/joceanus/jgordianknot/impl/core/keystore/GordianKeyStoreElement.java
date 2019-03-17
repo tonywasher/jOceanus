@@ -16,7 +16,6 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jgordianknot.impl.core.keystore;
 
-import java.security.Key;
 import java.util.Arrays;
 import java.util.EnumMap;
 import java.util.Map;
@@ -43,7 +42,7 @@ import net.sourceforge.joceanus.jtethys.date.TethysDate;
  * These are the entries as held in the keyStore.
  * </p>
  */
-public abstract class GordianKeyStoreElement {
+public interface GordianKeyStoreElement {
     /**
      * KeyStore Certificate.
      */
@@ -85,10 +84,22 @@ public abstract class GordianKeyStoreElement {
     }
 
     /**
+     * KeyStore Certificate.
+     */
+    interface GordianKeyStoreCertificateHolder {
+        /**
+         * Obtain the key.
+         * @return the key
+         */
+        GordianKeyStoreCertificateKey getCertificateKey();
+    }
+
+    /**
      * KeyStore Certificate Element.
      */
     static class GordianKeyStoreCertificateElement
-            extends GordianCoreKeyStoreEntry {
+            extends GordianCoreKeyStoreEntry
+            implements GordianKeyStoreCertificateHolder {
         /**
          * The certificate Id.
          */
@@ -113,11 +124,8 @@ public abstract class GordianKeyStoreElement {
             theKey = pKey;
         }
 
-        /**
-         * Obtain the key.
-         * @return the key
-         */
-        GordianKeyStoreCertificateKey getCertificateKey() {
+        @Override
+        public GordianKeyStoreCertificateKey getCertificateKey() {
             return theKey;
         }
 
@@ -136,7 +144,8 @@ public abstract class GordianKeyStoreElement {
      * KeyStore KeyPair Element.
      */
     static class GordianKeyStorePairElement
-            extends GordianCoreKeyStoreEntry {
+            extends GordianCoreKeyStoreEntry
+            implements GordianKeyStoreCertificateHolder {
         /**
          * The securedPrivateKey.
          */
@@ -214,11 +223,8 @@ public abstract class GordianKeyStoreElement {
             return theSecuringHash.getHash();
         }
 
-        /**
-         * Obtain the key.
-         * @return the key
-         */
-        GordianKeyStoreCertificateKey getCertificateKey() {
+        @Override
+        public GordianKeyStoreCertificateKey getCertificateKey() {
             return theChain[0];
         }
 
@@ -508,7 +514,7 @@ public abstract class GordianKeyStoreElement {
 
             /* Create a new keySet */
             final GordianKeySetFactory myFactory = pKeyStore.getFactory().getKeySetFactory();
-            final GordianKeySet myKeySet = myFactory.generateKeySet();
+            final GordianKeySet myKeySet = myFactory.createKeySet();
 
             /* Loop through the keys */
             for (Map.Entry<GordianSymKeyType, byte[]> myEntry : theKeyMap.entrySet()) {

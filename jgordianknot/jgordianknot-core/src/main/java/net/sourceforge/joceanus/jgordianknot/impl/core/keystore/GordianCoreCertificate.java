@@ -64,7 +64,6 @@ import net.sourceforge.joceanus.jgordianknot.impl.core.keypair.GordianCoreKeyPai
 import net.sourceforge.joceanus.jgordianknot.impl.core.keypair.GordianCoreKeyPairGenerator;
 import net.sourceforge.joceanus.jgordianknot.impl.core.sign.GordianCoreSignatureFactory;
 import net.sourceforge.joceanus.jtethys.OceanusException;
-import net.sourceforge.joceanus.jtethys.date.TethysDate;
 
 /**
  * Certificate implementation.
@@ -149,7 +148,7 @@ public class GordianCoreCertificate
 
         /* Store the parameters */
         theFactory = pFactory;
-        theKeyPair = new GordianCoreKeyPair(pKeyPair.getPublicKey(), null);
+        theKeyPair = pKeyPair.getPublicOnly();
 
         /* Determine the signatureSpec */
         theSigSpec = GordianSignatureSpec.defaultForKey(theKeyPair.getKeySpec());
@@ -193,14 +192,14 @@ public class GordianCoreCertificate
                            final GordianKeyPairUsage pUsage) throws OceanusException {
         /* Store the parameters */
         theFactory = pFactory;
-        theKeyPair = new GordianCoreKeyPair(pKeyPair.getPublicKey(), null);
+        theKeyPair = pKeyPair.getPublicOnly();
         theKeyUsage = pUsage;
 
         /* Check that the signer is allowed to sign certificates */
         final GordianKeyPair mySignerPair = pSigner.getKeyPair();
         final GordianCoreCertificate mySignerCert = (GordianCoreCertificate) pSigner.getCertificateChain()[0];
         if (!mySignerCert.getUsage().hasUse(GordianKeyPairUse.CERTIFICATE)
-                || !mySignerCert.isValidToday()
+                || !mySignerCert.isValidNow()
                 || mySignerPair.isPublicOnly()) {
             throw new GordianLogicException("Invalid signer");
         }
@@ -286,9 +285,8 @@ public class GordianCoreCertificate
      *
      * @param pExtensions the extensions.
      * @return the usage
-     * @throws OceanusException on error
      */
-    private static GordianKeyPairUsage determineUsage(final Extensions pExtensions) throws OceanusException {
+    private static GordianKeyPairUsage determineUsage(final Extensions pExtensions) {
         /* Access details */
         final KeyUsage myUsage = KeyUsage.fromExtensions(pExtensions);
         final BasicConstraints myConstraint = BasicConstraints.fromExtensions(pExtensions);
@@ -319,11 +317,10 @@ public class GordianCoreCertificate
     }
 
     @Override
-    public boolean isValidOnDate(final TethysDate pDate) {
+    public boolean isValidOnDate(final Date pDate) {
         /* Access the date */
-        final Date myDate = pDate.toDate();
-        return myDate.compareTo(theTbsCertificate.getStartDate().getDate()) >= 0
-                && myDate.compareTo(theTbsCertificate.getEndDate().getDate()) <= 0;
+        return pDate.compareTo(theTbsCertificate.getStartDate().getDate()) >= 0
+                && pDate.compareTo(theTbsCertificate.getEndDate().getDate()) <= 0;
     }
 
     @Override
@@ -417,7 +414,7 @@ public class GordianCoreCertificate
 
         /* Check that the signing certificate is valid */
         if (!pSigner.getUsage().hasUse(GordianKeyPairUse.CERTIFICATE)
-                || !pSigner.isValidToday()) {
+                || !pSigner.isValidNow()) {
             throw new GordianDataException("Invalid signer certificate");
         }
 
@@ -455,6 +452,7 @@ public class GordianCoreCertificate
     /**
      * Validate that the keyPair public Key matches.
      * @param pPair the key pair
+     * @return matches true/false
      */
     boolean checkMatchingPublicKey(final GordianKeyPair pPair) {
         final GordianCoreKeyPair myPair = (GordianCoreKeyPair) pPair;

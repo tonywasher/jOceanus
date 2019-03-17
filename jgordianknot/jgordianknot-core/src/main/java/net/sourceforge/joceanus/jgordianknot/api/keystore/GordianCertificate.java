@@ -16,8 +16,9 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jgordianknot.api.keystore;
 
+import java.util.Date;
+
 import net.sourceforge.joceanus.jgordianknot.api.key.GordianKeyPair;
-import net.sourceforge.joceanus.jtethys.date.TethysDate;
 
 /**
  * Certificate API.
@@ -51,12 +52,12 @@ public interface GordianCertificate {
     byte[] getEncoded();
 
     /**
-     * Is the certificate valid today?
+     * Is the certificate valid at this moment?
      *
      * @return true/false
      */
-    default boolean isValidToday() {
-        return isValidOnDate(new TethysDate());
+    default boolean isValidNow() {
+        return isValidOnDate(new Date(System.currentTimeMillis()));
     }
 
     /**
@@ -65,7 +66,7 @@ public interface GordianCertificate {
      * @param pDate the date to test
      * @return true/false
      */
-    boolean isValidOnDate(TethysDate pDate);
+    boolean isValidOnDate(Date pDate);
 
     /**
      * Is this certificate self-signed?

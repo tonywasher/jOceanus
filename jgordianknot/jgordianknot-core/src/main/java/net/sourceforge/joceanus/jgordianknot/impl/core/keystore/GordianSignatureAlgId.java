@@ -85,7 +85,7 @@ public class GordianSignatureAlgId {
 
     /**
      * Constructor.
-     * @param pFactory the factory
+     * @param pFactory the asymmetric factory
      */
     GordianSignatureAlgId(final GordianCoreFactory pFactory) {
         /* Create the maps */
