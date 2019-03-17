@@ -24,9 +24,11 @@ import net.sourceforge.joceanus.jgordianknot.api.agree.GordianAgreementFactory;
 import net.sourceforge.joceanus.jgordianknot.api.asym.GordianAsymKeySpec;
 import net.sourceforge.joceanus.jgordianknot.api.encrypt.GordianEncryptorFactory;
 import net.sourceforge.joceanus.jgordianknot.api.factory.GordianAsymFactory;
+import net.sourceforge.joceanus.jgordianknot.api.keystore.GordianKeyStoreFactory;
 import net.sourceforge.joceanus.jgordianknot.api.sign.GordianSignatureFactory;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianCoreFactory;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianDataException;
+import net.sourceforge.joceanus.jgordianknot.impl.core.keystore.GordianCoreKeyStoreFactory;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
@@ -60,11 +62,17 @@ public abstract class GordianCoreAsymFactory
     private GordianEncryptorFactory theEncryptorFactory;
 
     /**
+     * The keyStore factory.
+     */
+    private GordianKeyStoreFactory theKeyStoreFactory;
+
+    /**
      * Constructor.
      * @param pFactory the factory
      */
     public GordianCoreAsymFactory(final GordianCoreFactory pFactory) {
         theFactory = pFactory;
+        theKeyStoreFactory = new GordianCoreKeyStoreFactory(pFactory);
     }
 
     @Override
@@ -109,6 +117,11 @@ public abstract class GordianCoreAsymFactory
      */
     protected void setEncryptorFactory(final GordianEncryptorFactory pFactory) {
         theEncryptorFactory = pFactory;
+    }
+
+    @Override
+    public GordianKeyStoreFactory getKeyStoreFactory() {
+        return theKeyStoreFactory;
     }
 
     @Override

@@ -14,7 +14,7 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  ******************************************************************************/
-package net.sourceforge.joceanus.jgordianknot.impl.core.sign;
+package net.sourceforge.joceanus.jgordianknot.impl.core.keystore;
 
 import java.util.HashMap;
 import java.util.List;
@@ -45,6 +45,7 @@ import net.sourceforge.joceanus.jgordianknot.api.key.GordianKeyPair;
 import net.sourceforge.joceanus.jgordianknot.api.sign.GordianSignatureFactory;
 import net.sourceforge.joceanus.jgordianknot.api.sign.GordianSignatureSpec;
 import net.sourceforge.joceanus.jgordianknot.api.sign.GordianSignatureType;
+import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianCoreFactory;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianDataException;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
@@ -86,14 +87,14 @@ public class GordianSignatureAlgId {
      * Constructor.
      * @param pFactory the factory
      */
-    GordianSignatureAlgId(final GordianSignatureFactory pFactory) {
+    GordianSignatureAlgId(final GordianCoreFactory pFactory) {
         /* Create the maps */
         theSpecMap = new HashMap<>();
         theSpecSubTypeMap = new HashMap<>();
         theIdentifierMap = new HashMap<>();
 
         /* Access the asymFactory and digests */
-        theFactory = pFactory;
+        theFactory = pFactory.getAsymmetricFactory().getSignatureFactory();
         theDigests = GordianDigestSpec.listAll();
 
         /* Populate with the public standards */

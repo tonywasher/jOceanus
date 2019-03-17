@@ -27,6 +27,7 @@ import net.sourceforge.joceanus.jgordianknot.api.asym.GordianAsymKeySpec;
 import net.sourceforge.joceanus.jgordianknot.api.asym.GordianAsymKeyType;
 import net.sourceforge.joceanus.jgordianknot.api.encrypt.GordianEncryptorFactory;
 import net.sourceforge.joceanus.jgordianknot.api.key.GordianKeyPairGenerator;
+import net.sourceforge.joceanus.jgordianknot.api.keystore.GordianKeyStoreFactory;
 import net.sourceforge.joceanus.jgordianknot.api.sign.GordianSignatureFactory;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
@@ -81,6 +82,12 @@ public interface GordianAsymFactory {
      * @return the encryptor factory
      */
     GordianEncryptorFactory getEncryptorFactory();
+
+    /**
+     * Obtain the keyStore Factory.
+     * @return the keyStore factory
+     */
+    GordianKeyStoreFactory getKeyStoreFactory();
 
     /**
      * Obtain predicate for keyAgreement.

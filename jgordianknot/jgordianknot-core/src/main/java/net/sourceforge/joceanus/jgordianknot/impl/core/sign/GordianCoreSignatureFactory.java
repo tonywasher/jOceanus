@@ -42,17 +42,11 @@ public abstract class GordianCoreSignatureFactory
     private final GordianCoreFactory theFactory;
 
     /**
-     * The algorithm Ids.
-     */
-    private final GordianSignatureAlgId theAlgIds;
-
-    /**
      * Constructor.
      * @param pFactory the factory
      */
     public GordianCoreSignatureFactory(final GordianCoreFactory pFactory) {
         theFactory = pFactory;
-        theAlgIds = new GordianSignatureAlgId(this);
     }
 
     /**
@@ -61,14 +55,6 @@ public abstract class GordianCoreSignatureFactory
      */
     protected GordianCoreFactory getFactory() {
         return theFactory;
-    }
-
-    /**
-     * Obtain the signature algrithm Ids.
-     * @return the signature Algorithm Ids
-     */
-    public GordianSignatureAlgId getAlgorithmIds() {
-        return theAlgIds;
     }
 
     @Override

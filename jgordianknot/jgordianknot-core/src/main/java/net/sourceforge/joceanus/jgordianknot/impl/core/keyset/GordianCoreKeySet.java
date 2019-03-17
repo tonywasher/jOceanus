@@ -121,7 +121,7 @@ public final class GordianCoreKeySet
      *
      * @return the keySet
      */
-    Map<GordianSymKeySpec, GordianKey<GordianSymKeySpec>> getSymKeyMap() {
+    public Map<GordianSymKeySpec, GordianKey<GordianSymKeySpec>> getSymKeyMap() {
         return theSymKeyMap;
     }
 
