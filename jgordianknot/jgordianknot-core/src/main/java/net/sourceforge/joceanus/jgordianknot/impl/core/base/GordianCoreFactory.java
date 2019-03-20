@@ -48,16 +48,6 @@ public abstract class GordianCoreFactory
     public static final int RC5_ROUNDS = 12;
 
     /**
-     * Restricted key length.
-     */
-    private static final int SMALL_KEYLEN = GordianLength.LEN_128.getLength();
-
-    /**
-     * Unlimited key length.
-     */
-    protected static final int BIG_KEYLEN = GordianLength.LEN_256.getLength();
-
-    /**
      * The number of seed bytes.
      */
     private static final int SEED_SIZE = GordianLength.LEN_256.getByteLength();
@@ -142,8 +132,8 @@ public abstract class GordianCoreFactory
     }
 
     @Override
-    public boolean isRestricted() {
-        return theParameters.useRestricted();
+    public GordianLength getKeyLength() {
+        return theParameters.getKeyLength();
     }
 
     /**
@@ -168,25 +158,6 @@ public abstract class GordianCoreFactory
      */
     public byte[] getSecurityPhrase() {
         return theParameters.getSecurityPhrase();
-    }
-
-    /**
-     * Obtain keyLength.
-     * @param isRestricted is the factory restricted?
-     * @return the keyLength
-     */
-    public static int getKeyLength(final boolean isRestricted) {
-        return isRestricted
-               ? SMALL_KEYLEN
-               : BIG_KEYLEN;
-    }
-
-    /**
-     * Obtain keyLength.
-     * @return the keyLength
-     */
-    public int getKeyLength() {
-        return getKeyLength(isRestricted());
     }
 
     @Override

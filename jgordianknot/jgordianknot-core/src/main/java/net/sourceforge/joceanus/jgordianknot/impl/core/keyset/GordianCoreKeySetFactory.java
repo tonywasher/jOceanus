@@ -146,6 +146,6 @@ public class GordianCoreKeySetFactory
         final GordianCoreFactory myFactory = getFactory();
         final GordianCoreCipherFactory myCiphers = (GordianCoreCipherFactory) myFactory.getCipherFactory();
         return myCiphers.validSymKeyType(pKeyType)
-                && GordianCoreCipherFactory.validStdBlockSymKeyTypeForRestriction(pKeyType, myFactory.isRestricted());
+                && GordianCoreCipherFactory.validStdBlockSymKeyTypeForKeyLength(pKeyType, myFactory.getKeyLength());
     }
 }

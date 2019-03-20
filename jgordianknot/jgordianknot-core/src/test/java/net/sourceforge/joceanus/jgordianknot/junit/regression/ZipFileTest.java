@@ -34,6 +34,7 @@ import org.junit.jupiter.api.DynamicNode;
 import org.junit.jupiter.api.DynamicTest;
 import org.junit.jupiter.api.TestFactory;
 
+import net.sourceforge.joceanus.jgordianknot.api.base.GordianLength;
 import net.sourceforge.joceanus.jgordianknot.api.factory.GordianFactory;
 import net.sourceforge.joceanus.jgordianknot.api.factory.GordianFactoryType;
 import net.sourceforge.joceanus.jgordianknot.api.factory.GordianParameters;
@@ -65,27 +66,28 @@ public class ZipFileTest {
     @TestFactory
     public Stream<DynamicNode> zipFileTests() throws OceanusException {
         /* Create tests */
-        Stream<DynamicNode> myStream = zipFileTests(false, GordianFactoryType.BC);
-        myStream = Stream.concat(myStream, zipFileTests(true, GordianFactoryType.BC));
-        myStream = Stream.concat(myStream, zipFileTests(false, GordianFactoryType.JCA));
-        return Stream.concat(myStream, zipFileTests(true, GordianFactoryType.JCA));
+        Stream<DynamicNode> myStream = zipFileTests(GordianLength.LEN_256, GordianFactoryType.BC);
+        myStream = Stream.concat(myStream, zipFileTests(GordianLength.LEN_192, GordianFactoryType.BC));
+        myStream = Stream.concat(myStream, zipFileTests(GordianLength.LEN_128, GordianFactoryType.BC));
+        myStream = Stream.concat(myStream, zipFileTests(GordianLength.LEN_256, GordianFactoryType.JCA));
+        myStream = Stream.concat(myStream, zipFileTests(GordianLength.LEN_192, GordianFactoryType.JCA));
+        return Stream.concat(myStream, zipFileTests(GordianLength.LEN_128, GordianFactoryType.JCA));
     }
 
     /**
      * Create the keySet test suite for a factory.
-     * @param pRestricted is the factory restricted
+     * @param pKeyLen the factory keyLength
      * @param pType the factoryType
      * @return the test stream
      * @throws OceanusException on error
      */
-    private Stream<DynamicNode> zipFileTests(final boolean pRestricted,
+    private Stream<DynamicNode> zipFileTests(final GordianLength pKeyLen,
                                              final GordianFactoryType pType) throws OceanusException {
         /* Create the factory */
-        final GordianFactory myFactory = GordianGenerator.createFactory(new GordianParameters(pRestricted, pType));
+        final GordianFactory myFactory = GordianGenerator.createFactory(new GordianParameters(pKeyLen, pType));
 
         /* Return the stream */
-        final String myName = pType.toString()
-                + (pRestricted ? "-Restricted" : "-Full");
+        final String myName = pType.toString() + "-" + pKeyLen;
         return Stream.of(DynamicContainer.dynamicContainer(myName, Stream.of(
                 DynamicTest.dynamicTest("standard", () -> testZipFile(myFactory, false)),
                 DynamicTest.dynamicTest("encrypted", () -> testZipFile(myFactory, true))

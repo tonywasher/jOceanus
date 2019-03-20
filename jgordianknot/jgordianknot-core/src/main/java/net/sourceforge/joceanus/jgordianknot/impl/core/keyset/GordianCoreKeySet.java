@@ -176,7 +176,7 @@ public final class GordianCoreKeySet
 
     @Override
     public int getKeyWrapLength() {
-        return getDataWrapLength(theFactory.getKeyLength() / Byte.SIZE);
+        return getDataWrapLength(theFactory.getKeyLength().getByteLength());
     }
 
     @Override

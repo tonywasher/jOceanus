@@ -16,6 +16,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jgordianknot.impl.core.mac;
 
+import net.sourceforge.joceanus.jgordianknot.api.base.GordianLength;
 import net.sourceforge.joceanus.jgordianknot.api.key.GordianKey;
 import net.sourceforge.joceanus.jgordianknot.api.mac.GordianMac;
 import net.sourceforge.joceanus.jgordianknot.api.mac.GordianMacFactory;
@@ -52,9 +53,9 @@ public abstract class GordianCoreMac
     private GordianCoreKeyGenerator<GordianMacSpec> theGenerator;
 
     /**
-     * Restricted.
+     * keyLength.
      */
-    private final boolean isRestricted;
+    private final GordianLength theKeyLength;
 
     /**
      * Key.
@@ -77,7 +78,7 @@ public abstract class GordianCoreMac
         theMacSpec = pMacSpec;
         theFactory = pFactory;
         theRandom = pFactory.getRandomSource();
-        isRestricted = pFactory.isRestricted();
+        theKeyLength = pFactory.getKeyLength();
     }
 
     @Override
@@ -141,7 +142,7 @@ public abstract class GordianCoreMac
     @Override
     public void initMac(final GordianKey<GordianMacSpec> pKey) throws OceanusException {
         /* Determine the required length of IV */
-        final int myLen = getMacSpec().getIVLen(isRestricted);
+        final int myLen = getMacSpec().getIVLen(theKeyLength);
         byte[] myIV = null;
 
         /* If we need an IV */

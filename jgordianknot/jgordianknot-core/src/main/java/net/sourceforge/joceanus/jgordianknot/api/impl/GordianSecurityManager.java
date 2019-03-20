@@ -21,13 +21,13 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import net.sourceforge.joceanus.jgordianknot.api.base.GordianLength;
 import net.sourceforge.joceanus.jgordianknot.api.factory.GordianFactory;
 import net.sourceforge.joceanus.jgordianknot.api.factory.GordianParameters;
 import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianBadCredentialsException;
 import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySet;
 import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetFactory;
 import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetHash;
-import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianCoreFactory;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianDataException;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianFactoryGenerator;
 import net.sourceforge.joceanus.jgordianknot.impl.core.keyset.GordianCoreKeySet;
@@ -235,7 +235,7 @@ public class GordianSecurityManager {
      * @return the maximum keyWrap size
      */
     public static int getMaximumKeyWrapLength() {
-        return GordianCoreKeySet.getDataWrapLength(GordianCoreFactory.getKeyLength(false) / Byte.SIZE,
+        return GordianCoreKeySet.getDataWrapLength(GordianLength.LEN_256.getByteLength(),
                 GordianParameters.MAXIMUM_CIPHER_STEPS);
     }
 

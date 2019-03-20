@@ -102,27 +102,27 @@ public abstract class GordianCoreCipherFactory
         }
 
         /* Access details */
-        final GordianLength myLen = pSymKeySpec.getBlockLength();
-        final boolean isRestricted = theFactory.isRestricted();
+        final GordianLength myBlkLen = pSymKeySpec.getBlockLength();
+        final GordianLength myKeyLen = theFactory.getKeyLength();
 
-        /* Reject restrictedSpecs where the block length is too large */
-        if (isRestricted
-                && myLen.getLength() > GordianLength.LEN_128.getLength()) {
+        /* Reject 128bit keys where the block length is too large */
+        if (GordianLength.LEN_128 == myKeyLen
+                && myBlkLen.getLength() > GordianLength.LEN_128.getLength()) {
             return false;
         }
 
-        /* Reject Speck-64/Simon-64 for unrestricted */
-        if (!isRestricted
-                && (GordianSymKeyType.SPECK.equals(pSymKeySpec.getSymKeyType())
-                    || GordianSymKeyType.SIMON.equals(pSymKeySpec.getSymKeyType()))
-                && GordianLength.LEN_64.equals(myLen)) {
-            return false;
+        /* Simon/Speck 64-bit blockSize can only be used with 128-bit keys */
+        if ((GordianSymKeyType.SPECK.equals(pSymKeySpec.getSymKeyType())
+             || GordianSymKeyType.SIMON.equals(pSymKeySpec.getSymKeyType()))
+            && myBlkLen == GordianLength.LEN_64
+            && myKeyLen != GordianLength.LEN_128) {
+                return false;
         }
 
         /* Check validity */
         final GordianSymKeyType myType = pSymKeySpec.getSymKeyType();
         return supportedSymKeyTypes().test(myType)
-                && myType.isLengthValid(myLen);
+                && myType.isBlockLengthValid(myBlkLen);
     }
 
     /**
@@ -268,18 +268,19 @@ public abstract class GordianCoreCipherFactory
      * @return true/false
      */
     public boolean validSymKeyType(final GordianSymKeyType pKeyType) {
-        return pKeyType != null && validSymKeyTypeForRestriction(pKeyType, theFactory.isRestricted());
+        return pKeyType != null
+                && validSymKeyTypeForKeyLength(pKeyType, theFactory.getKeyLength());
     }
 
     /**
      * Check SymKeyType.
      * @param pKeyType the symKeyType
-     * @param pRestricted is the symKeyType restricted?
+     * @param pKeyLen the keyLength
      * @return true/false
      */
-    public static boolean validSymKeyTypeForRestriction(final GordianSymKeyType pKeyType,
-                                                        final boolean pRestricted) {
-        return pKeyType.validForRestriction(pRestricted);
+    public static boolean validSymKeyTypeForKeyLength(final GordianSymKeyType pKeyType,
+                                                      final GordianLength pKeyLen) {
+        return pKeyType.validForKeyLength(pKeyLen);
     }
 
     /**
@@ -288,18 +289,19 @@ public abstract class GordianCoreCipherFactory
      * @return true/false
      */
     protected boolean validStreamKeyType(final GordianStreamKeyType pKeyType) {
-        return pKeyType != null && pKeyType.validForRestriction(theFactory.isRestricted());
+        return pKeyType != null
+                && pKeyType.validForKeyLength(theFactory.getKeyLength());
     }
 
     /**
      * Check standard block symKeyType.
      * @param pKeyType the symKeyType
-     * @param pRestricted is the symKeyType restricted?
+     * @param pKeyLen the keyLength
      * @return true/false
      */
-    public static boolean validStdBlockSymKeyTypeForRestriction(final GordianSymKeyType pKeyType,
-                                                                final boolean pRestricted) {
-        return validSymKeyTypeForRestriction(pKeyType, pRestricted)
-                && pKeyType.getDefaultLength().equals(GordianLength.LEN_128);
+    public static boolean validStdBlockSymKeyTypeForKeyLength(final GordianSymKeyType pKeyType,
+                                                              final GordianLength pKeyLen) {
+        return validSymKeyTypeForKeyLength(pKeyType, pKeyLen)
+                && pKeyType.getDefaultBlockLength().equals(GordianLength.LEN_128);
     }
 }

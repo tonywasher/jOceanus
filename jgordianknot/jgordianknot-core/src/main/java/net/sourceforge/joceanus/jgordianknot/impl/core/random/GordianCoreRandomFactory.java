@@ -365,7 +365,8 @@ public class GordianCoreRandomFactory
         /* Build DRBG */
         final GordianCoreCipher<GordianSymKeySpec> myCipher = (GordianCoreCipher<GordianSymKeySpec>) pCipher;
         final EntropySource myEntropy = theEntropyProvider.get(NUM_ENTROPY_BITS_REQUIRED);
-        final GordianSP800CTRDRBG myProvider = new GordianSP800CTRDRBG(myCipher, theFactory.getKeyLength(), myEntropy, theRandomSource.defaultPersonalisation(), myInit);
+        final GordianSP800CTRDRBG myProvider = new GordianSP800CTRDRBG(myCipher, theFactory.getKeyLength().getLength(),
+                myEntropy, theRandomSource.defaultPersonalisation(), myInit);
         return new GordianSecureRandom(myProvider, theRandom, myEntropy, isPredictionResistant);
     }
 

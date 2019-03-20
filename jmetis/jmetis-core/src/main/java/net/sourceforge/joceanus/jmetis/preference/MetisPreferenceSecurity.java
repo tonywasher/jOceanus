@@ -16,6 +16,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmetis.preference;
 
+import net.sourceforge.joceanus.jgordianknot.api.base.GordianLength;
 import net.sourceforge.joceanus.jgordianknot.api.factory.GordianFactory;
 import net.sourceforge.joceanus.jgordianknot.api.factory.GordianFactoryType;
 import net.sourceforge.joceanus.jgordianknot.api.factory.GordianParameters;
@@ -30,6 +31,8 @@ import net.sourceforge.joceanus.jtethys.logger.TethysLogger;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;
+import java.util.EnumSet;
+import java.util.Set;
 
 /**
  * Security for Preferences.
@@ -50,7 +53,7 @@ public class MetisPreferenceSecurity {
      * @param pManager the preference manager
      * @throws OceanusException on error
      */
-    protected MetisPreferenceSecurity(final MetisPreferenceManager pManager) throws OceanusException {
+    MetisPreferenceSecurity(final MetisPreferenceManager pManager) throws OceanusException {
         /* Create the Bouncy Parameters */
         final GordianParameters myParms = new GordianParameters();
         myParms.setFactoryType(GordianFactoryType.BC);
@@ -134,9 +137,9 @@ public class MetisPreferenceSecurity {
         FACTORY("FactoryType", MetisPreferenceResource.SECPREF_FACTORY),
 
         /**
-         * Restricted Keys.
+         * KeyLength.
          */
-        RESTRICTED("RestrictedKeys", MetisPreferenceResource.SECPREF_RESTRICTED),
+        KEYLENGTH("KeyLength", MetisPreferenceResource.SECPREF_KEYLEN),
 
         /**
          * Cipher Steps.
@@ -232,6 +235,11 @@ public class MetisPreferenceSecurity {
     public static class MetisSecurityPreferences
             extends MetisPreferenceSet<MetisSecurityPreferenceKey> {
         /**
+         * Valid lengths.
+         */
+        private static final Set<GordianLength> VALID_LENGTHS = EnumSet.of(GordianLength.LEN_128, GordianLength.LEN_192, GordianLength.LEN_256);
+
+        /**
          * Minimum Number of Active KeySets.
          */
         private static final int MINIMUM_ACTIVE_KEYSETS = 2;
@@ -262,7 +270,7 @@ public class MetisPreferenceSecurity {
          */
         public GordianParameters getParameters() throws OceanusException {
             /* Create default preferences */
-            final GordianParameters myParms = new GordianParameters(getBooleanValue(MetisSecurityPreferenceKey.RESTRICTED));
+            final GordianParameters myParms = new GordianParameters(getEnumValue(MetisSecurityPreferenceKey.KEYLENGTH, GordianLength.class));
 
             /* Set other parameters */
             myParms.setFactoryType(getEnumValue(MetisSecurityPreferenceKey.FACTORY, GordianFactoryType.class));
@@ -277,7 +285,7 @@ public class MetisPreferenceSecurity {
         @Override
         protected void definePreferences() throws OceanusException {
             defineEnumPreference(MetisSecurityPreferenceKey.FACTORY, GordianFactoryType.class);
-            defineBooleanPreference(MetisSecurityPreferenceKey.RESTRICTED);
+            defineEnumPreference(MetisSecurityPreferenceKey.KEYLENGTH, GordianLength.class);
             defineIntegerPreference(MetisSecurityPreferenceKey.CIPHERSTEPS);
             defineIntegerPreference(MetisSecurityPreferenceKey.HASHITERATIONS);
             defineCharArrayPreference(MetisSecurityPreferenceKey.SECURITYPHRASE);
@@ -287,16 +295,21 @@ public class MetisPreferenceSecurity {
         @Override
         public void autoCorrectPreferences() {
             /* Make sure that the factory is specified */
-            final MetisEnumPreference<MetisSecurityPreferenceKey, GordianFactoryType> myFactPref = getEnumPreference(MetisSecurityPreferenceKey.FACTORY, GordianFactoryType.class);
+            final MetisEnumPreference<MetisSecurityPreferenceKey, GordianFactoryType> myFactPref
+                    = getEnumPreference(MetisSecurityPreferenceKey.FACTORY, GordianFactoryType.class);
             if (!myFactPref.isAvailable()) {
                 myFactPref.setValue(GordianParameters.DEFAULT_FACTORY);
             }
 
             /* Make sure that the restricted state is specified */
-            final MetisBooleanPreference<MetisSecurityPreferenceKey> myRestrictPref = getBooleanPreference(MetisSecurityPreferenceKey.RESTRICTED);
-            if (!myRestrictPref.isAvailable()) {
-                myRestrictPref.setValue(GordianParameters.DEFAULT_RESTRICTED);
+            final MetisEnumPreference<MetisSecurityPreferenceKey, GordianLength> myLengthPref
+                    = getEnumPreference(MetisSecurityPreferenceKey.KEYLENGTH, GordianLength.class);
+            if (!myLengthPref.isAvailable()) {
+                myLengthPref.setValue(GordianParameters.DEFAULT_KEYLEN);
             }
+
+            /* Make sure that the length is restricted */
+            myLengthPref.setFilter(VALID_LENGTHS::contains);
 
             /* Make sure that the security phrase is specified */
             final MetisCharArrayPreference<MetisSecurityPreferenceKey> myPhrasePref = getCharArrayPreference(MetisSecurityPreferenceKey.SECURITYPHRASE);

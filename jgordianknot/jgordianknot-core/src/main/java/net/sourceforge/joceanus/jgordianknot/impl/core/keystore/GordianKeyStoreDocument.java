@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import javax.xml.XMLConstants;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -149,6 +150,7 @@ public final class GordianKeyStoreDocument {
 
             /* Create the document */
             final DocumentBuilderFactory myFactory = DocumentBuilderFactory.newInstance();
+            myFactory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
             final DocumentBuilder myBuilder = myFactory.newDocumentBuilder();
             theDocument = myBuilder.newDocument();
 
@@ -695,7 +697,7 @@ public final class GordianKeyStoreDocument {
      * @return the key
      * @throws OceanusException on error
      */
-    private GordianKeyStoreCertificateKey parseCertificateKey(final Node pNode) throws OceanusException {
+    private static GordianKeyStoreCertificateKey parseCertificateKey(final Node pNode) throws OceanusException {
         /* Loop through the nodes */
         GordianCertificateId mySubject = null;
         Node myNode = pNode.getFirstChild();
@@ -735,7 +737,7 @@ public final class GordianKeyStoreDocument {
      * @return the key
      * @throws OceanusException on error
      */
-    private GordianCertificateId parseCertificateId(final Node pNode) throws OceanusException {
+    private static GordianCertificateId parseCertificateId(final Node pNode) throws OceanusException {
         /* Loop through the nodes */
         X500Name myName = null;
         Node myNode = pNode.getFirstChild();

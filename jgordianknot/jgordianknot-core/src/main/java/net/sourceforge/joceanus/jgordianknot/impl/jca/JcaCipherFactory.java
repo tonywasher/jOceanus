@@ -349,11 +349,11 @@ public class JcaCipherFactory
     String getStreamKeyAlgorithm(final GordianStreamKeyType pKeyType) throws OceanusException {
         switch (pKeyType) {
             case HC:
-                return getFactory().isRestricted()
+                return GordianLength.LEN_128 == getFactory().getKeyLength()
                        ? "HC128"
                        : "HC256";
             case CHACHA:
-                return getFactory().isRestricted()
+                return GordianLength.LEN_128 == getFactory().getKeyLength()
                        ? pKeyType.name()
                        : "CHACHA7539";
             case VMPC:

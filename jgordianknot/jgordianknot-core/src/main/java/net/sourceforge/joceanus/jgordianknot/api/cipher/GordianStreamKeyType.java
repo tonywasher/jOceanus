@@ -124,14 +124,32 @@ public enum GordianStreamKeyType  implements GordianKeySpec {
 
     /**
      * Obtain the IV Length.
-     * @param pRestricted is the cipher restricted?
+     * @param pKeyLen the keyLength
      * @return the IV length.
      */
-    public int getIVLength(final boolean pRestricted) {
-        final GordianLength myIVLen = pRestricted ? theShortIVLen : theLongIVLen;
-        return myIVLen == null
-               ? 0
-               : myIVLen.getByteLength();
+    public int getIVLength(final GordianLength pKeyLen) {
+        switch (this) {
+            case ISAAC:
+            case RC4:
+                return 0;
+            case VMPC:
+                return pKeyLen.getByteLength();
+            case HC:
+            case ZUC:
+            case CHACHA:
+                return GordianLength.LEN_128 == pKeyLen
+                       ? theShortIVLen.getByteLength()
+                       : theLongIVLen.getByteLength();
+            case XSALSA20:
+            case SALSA20:
+            case XCHACHA20:
+            case GRAIN:
+            case SOSEMANUK:
+            case RABBIT:
+            case SNOW3G:
+            default:
+                return theShortIVLen.getByteLength();
+        }
     }
 
     @Override
@@ -147,19 +165,25 @@ public enum GordianStreamKeyType  implements GordianKeySpec {
     }
 
     /**
-     * Is this KeyType valid for restriction?
-     * @param pRestricted true/false
+     * Is this KeyType valid for keyLength?
+     * @param pKeyLen the keyLength
      * @return true/false
      */
-    public boolean validForRestriction(final boolean pRestricted) {
+    public boolean validForKeyLength(final GordianLength pKeyLen) {
         switch (this) {
             case XSALSA20:
             case XCHACHA20:
-                return !pRestricted;
+                return GordianLength.LEN_256 == pKeyLen;
             case GRAIN:
             case RABBIT:
             case SNOW3G:
-                return pRestricted;
+                return GordianLength.LEN_128 == pKeyLen;
+            case HC:
+            case CHACHA:
+            case SALSA20:
+            case SOSEMANUK:
+            case ZUC:
+                return GordianLength.LEN_192 != pKeyLen;
             default:
                 return true;
         }

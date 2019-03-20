@@ -315,7 +315,7 @@ public class BouncyMacFactory
      * @return the MAC
      */
     private Mac getBCZucMac(final GordianLength pLength) {
-        return getFactory().isRestricted()
+        return GordianLength.LEN_128 == getFactory().getKeyLength()
                ? new Zuc128Mac()
                : new Zuc256Mac(pLength.getLength());
     }

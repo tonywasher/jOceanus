@@ -164,9 +164,9 @@ public enum MetisPreferenceResource implements TethysBundleId {
     SECPREF_FACTORY("secpref.factory"),
 
     /**
-     * SecurityPreference Restricted.
+     * SecurityPreference keyLength.
      */
-    SECPREF_RESTRICTED("secpref.restricted"),
+    SECPREF_KEYLEN("secpref.keylen"),
 
     /**
      * SecurityPreference Cipher Steps.
