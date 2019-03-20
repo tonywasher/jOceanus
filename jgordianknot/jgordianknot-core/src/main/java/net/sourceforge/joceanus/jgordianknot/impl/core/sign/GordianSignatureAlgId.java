@@ -14,7 +14,7 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  ******************************************************************************/
-package net.sourceforge.joceanus.jgordianknot.impl.core.keystore;
+package net.sourceforge.joceanus.jgordianknot.impl.core.sign;
 
 import java.util.HashMap;
 import java.util.List;
@@ -23,7 +23,6 @@ import java.util.Map;
 import org.bouncycastle.asn1.ASN1Integer;
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
 import org.bouncycastle.asn1.DERNull;
-import org.bouncycastle.asn1.bc.BCObjectIdentifiers;
 import org.bouncycastle.asn1.edec.EdECObjectIdentifiers;
 import org.bouncycastle.asn1.gm.GMObjectIdentifiers;
 import org.bouncycastle.asn1.nist.NISTObjectIdentifiers;
@@ -56,7 +55,7 @@ public class GordianSignatureAlgId {
     /**
      *  Base our signatures off bouncyCastle.
      */
-    private static final ASN1ObjectIdentifier BASEOID = BCObjectIdentifiers.bc.branch("100");
+    private static final ASN1ObjectIdentifier SIGOID = GordianCoreFactory.BASEOID.branch("1");
 
     /**
      * Map of SignatureSpec to Identifier.
@@ -398,7 +397,7 @@ public class GordianSignatureAlgId {
     private void addSignature(final GordianSignatureSpec pSigSpec) {
         /* Create a branch for signatures based on the AsymKeyType */
         final GordianAsymKeyType myKeyType = pSigSpec.getAsymKeyType();
-        ASN1ObjectIdentifier myId = BASEOID.branch(Integer.toString(myKeyType.ordinal() + 1));
+        ASN1ObjectIdentifier myId = SIGOID.branch(Integer.toString(myKeyType.ordinal() + 1));
 
         /* Create a branch for signatures based on the SignatureType */
         final GordianSignatureType mySigType = pSigSpec.getSignatureType();

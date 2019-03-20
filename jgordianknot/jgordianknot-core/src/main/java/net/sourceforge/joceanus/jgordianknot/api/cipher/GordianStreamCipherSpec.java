@@ -16,11 +16,14 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jgordianknot.api.cipher;
 
+import net.sourceforge.joceanus.jgordianknot.api.base.GordianIdSpec;
+
 /**
  * The StreamCipherSpec class.
  */
 public class GordianStreamCipherSpec
-        extends GordianCipherSpec<GordianStreamKeyType> {
+        extends GordianCipherSpec<GordianStreamKeyType>
+        implements GordianIdSpec {
     /**
      * The Validity.
      */

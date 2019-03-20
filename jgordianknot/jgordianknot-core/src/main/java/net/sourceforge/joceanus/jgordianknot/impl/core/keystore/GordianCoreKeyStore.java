@@ -111,6 +111,30 @@ public class GordianCoreKeyStore
     }
 
     /**
+     * Obtain the subjectMapOfMaps.
+     * @return the map
+     */
+    Map<GordianCertificateId, Map<GordianCertificateId, GordianCoreCertificate>> getSubjectMapOfMaps() {
+        return theSubjectCerts;
+    }
+
+    /**
+     * Obtain the issuerMapofMaps.
+     * @return the map
+     */
+    Map<GordianCertificateId, Map<GordianCertificateId, GordianCoreCertificate>> getIssuerMapOfMaps() {
+        return theIssuerCerts;
+    }
+
+    /**
+     * Obtain the issuerMapofMaps.
+     * @return the map
+     */
+    Map<String, GordianCoreKeyStoreEntry> getAliasMap() {
+        return theAliases;
+    }
+
+    /**
      * Obtain the certificate.
      * @param pKey the key of the certificate
      * @return the certificate
@@ -510,7 +534,7 @@ public class GordianCoreKeyStore
      * Store certificate.
      * @param pCertificate the certificate
      */
-    private void storeCertificate(final GordianCertificate pCertificate) {
+    void storeCertificate(final GordianCertificate pCertificate) {
         /* Access certificate */
         final GordianCoreCertificate myCert = (GordianCoreCertificate) pCertificate;
 
@@ -576,5 +600,38 @@ public class GordianCoreKeyStore
         if (!((GordianCoreCertificate) pChain[pChain.length - 1]).validateRootCertificate()) {
             throw new GordianDataException("Invalid root certificate");
         }
+    }
+
+    @Override
+    public boolean equals(final Object pThat) {
+        /* Handle the trivial case */
+        if (pThat == this) {
+            return true;
+        }
+        if (pThat == null) {
+            return false;
+        }
+
+        /* Ensure object is correct class */
+        if (!(pThat instanceof GordianCoreKeyStore)) {
+            return false;
+        }
+        final GordianCoreKeyStore myThat = (GordianCoreKeyStore) pThat;
+
+        /* Check that the certificate maps are is identical */
+        if (!theSubjectCerts.equals(myThat.getSubjectMapOfMaps())
+            || !theIssuerCerts.equals(myThat.getIssuerMapOfMaps())) {
+            return false;
+        }
+
+        /* Compare alias maps */
+        return theAliases.equals(myThat.getAliasMap());
+    }
+
+    @Override
+    public int hashCode() {
+        return theSubjectCerts.hashCode()
+                + theIssuerCerts.hashCode()
+                + theAliases.hashCode();
     }
 }

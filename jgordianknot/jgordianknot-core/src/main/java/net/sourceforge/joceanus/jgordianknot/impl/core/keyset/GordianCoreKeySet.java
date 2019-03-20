@@ -16,8 +16,10 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jgordianknot.impl.core.keyset;
 
+import java.io.IOException;
 import java.security.spec.PKCS8EncodedKeySpec;
 import java.security.spec.X509EncodedKeySpec;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Predicate;
@@ -31,11 +33,13 @@ import net.sourceforge.joceanus.jgordianknot.api.factory.GordianAsymFactory;
 import net.sourceforge.joceanus.jgordianknot.api.factory.GordianParameters;
 import net.sourceforge.joceanus.jgordianknot.api.key.GordianKey;
 import net.sourceforge.joceanus.jgordianknot.api.base.GordianKeySpec;
+import net.sourceforge.joceanus.jgordianknot.api.key.GordianKeyGenerator;
 import net.sourceforge.joceanus.jgordianknot.api.key.GordianKeyPair;
 import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySet;
 import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetFactory;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianCoreFactory;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianDataException;
+import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianIOException;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianLogicException;
 import net.sourceforge.joceanus.jgordianknot.impl.core.cipher.GordianCoreWrapper;
 import net.sourceforge.joceanus.jgordianknot.impl.core.key.GordianCoreKeyGenerator;
@@ -121,10 +125,9 @@ public final class GordianCoreKeySet
      *
      * @return the keySet
      */
-    public Map<GordianSymKeySpec, GordianKey<GordianSymKeySpec>> getSymKeyMap() {
+    Map<GordianSymKeySpec, GordianKey<GordianSymKeySpec>> getSymKeyMap() {
         return theSymKeyMap;
     }
-
 
     @Override
     public GordianCoreKeySet cloneIt() {
@@ -141,12 +144,7 @@ public final class GordianCoreKeySet
         isAEAD = pAEAD;
     }
 
-    /**
-     * Encryption length.
-     *
-     * @param pDataLength the length of data to be encrypted
-     * @return the length of encrypted data
-     */
+    @Override
     public int getEncryptionLength(final int pDataLength) {
         return getEncryptionLength(pDataLength, isAEAD);
     }
@@ -176,19 +174,12 @@ public final class GordianCoreKeySet
                 + (pAEAD ? GordianKeySetRecipe.MACLEN : 0);
     }
 
-    /**
-     * Obtain wrapped size of a key.
-     * @return the wrapped length
-     */
+    @Override
     public int getKeyWrapLength() {
         return getDataWrapLength(theFactory.getKeyLength() / Byte.SIZE);
     }
 
-    /**
-     * Obtain wrapped size of a byte array of the given length.
-     * @param pDataLength the length of the byte array
-     * @return the wrapped length
-     */
+    @Override
     public int getDataWrapLength(final int pDataLength) {
         return getDataWrapLength(pDataLength, theCipher.getNumSteps());
     }
@@ -207,18 +198,25 @@ public final class GordianCoreKeySet
                 * GordianCoreWrapper.getKeyWrapExpansion(BLOCKLEN);
     }
 
-    /**
-     * Obtain wrapped size of the privateKey of a keyPair.
-     * @param pKeyPair the keyPair
-     * @return the wrapped length
-     * @throws OceanusException on error
-     */
+    @Override
     public int getPrivateKeyWrapLength(final GordianKeyPair pKeyPair) throws OceanusException {
         /* Determine and check the keySpec */
         final GordianAsymFactory myAsym = theFactory.getAsymmetricFactory();
         final GordianCoreKeyPairGenerator myGenerator = (GordianCoreKeyPairGenerator) myAsym.getKeyPairGenerator(pKeyPair.getKeySpec());
         final PKCS8EncodedKeySpec myPrivateKey = myGenerator.getPKCS8Encoding(pKeyPair);
         return getDataWrapLength(myPrivateKey.getEncoded().length);
+    }
+
+    @Override
+    public int getKeySetWrapLength() throws OceanusException {
+        /* Obtain the count of valid symKeyTypes */
+        final GordianKeySetFactory myFactory = theFactory.getKeySetFactory();
+        final Predicate<GordianSymKeyType> myPredicate = myFactory.supportedKeySetSymKeyTypes();
+        final int myCount = (int) Arrays.stream(GordianSymKeyType.values()).filter(myPredicate).count();
+
+        /* Determine the size of the encoded ASN1 keySet */
+        final int mySize = GordianKeySetEncoded.getEncodedLength(getKeyWrapLength(), myCount);
+        return getDataWrapLength(mySize);
     }
 
     @Override
@@ -356,6 +354,50 @@ public final class GordianCoreKeySet
         return theCipher.derivePrivateKeySpec(myParams, myBytes);
     }
 
+    @Override
+    public byte[] secureKeySet(final GordianKeySet pKeySetToSecure) throws OceanusException {
+        /* Protect against exceptions */
+        try {
+            /* Generate set of keys */
+            final GordianKeySetRecipe myRecipe = GordianKeySetRecipe.newRecipe(theFactory, false);
+            final GordianKeySetParameters myParams = myRecipe.getParameters();
+
+            /* Encode the keySet */
+            final GordianKeySetEncoded myEncoded = new GordianKeySetEncoded((GordianCoreKeySet) pKeySetToSecure, this);
+            final byte[] myBytesToSecure = myEncoded.toASN1Primitive().getEncoded();
+
+            /* secure the key */
+            final byte[] myBytes = theCipher.secureBytes(myParams, myBytesToSecure);
+
+            /* Package and return the encrypted bytes */
+            return myRecipe.buildExternal(myBytes);
+
+            /* Handle exceptions */
+        } catch (IOException e) {
+            throw new GordianIOException("Failed to secure KeySet", e);
+        }
+    }
+
+    @Override
+    public GordianCoreKeySet deriveKeySet(final byte[] pSecuredKeySet) throws OceanusException {
+        /* Parse the bytes into the separate parts */
+        final GordianKeySetRecipe myRecipe = GordianKeySetRecipe.parseRecipe(theFactory, pSecuredKeySet, false);
+        final GordianKeySetParameters myParams = myRecipe.getParameters();
+        final byte[] myBytes = myRecipe.getBytes();
+
+        /* Unwrap the bytes resolve them */
+        final byte[] mySecuredBytes = theCipher.deriveBytes(myParams, myBytes);
+        final GordianKeySetEncoded myEncoded = GordianKeySetEncoded.getInstance(mySecuredBytes);
+        if (myEncoded == null) {
+            throw new GordianLogicException("Unable to parse encoded keySet");
+        }
+
+        /* Resolve and return the keySet */
+        final GordianCoreKeySet myKeySet = (GordianCoreKeySet) theFactory.getKeySetFactory().createKeySet();
+        myEncoded.populateKeySet(myKeySet, this);
+        return myKeySet;
+    }
+
     /**
      * Declare symmetricKey.
      * @param pKey the key
@@ -401,6 +443,26 @@ public final class GordianCoreKeySet
     }
 
     /**
+     * Build key set from random.
+     * @throws OceanusException on error
+     */
+    void buildFromRandom() throws OceanusException {
+        /* Loop through the symmetricKeys values */
+        final GordianKeySetFactory myFactory = theFactory.getKeySetFactory();
+        final Predicate<GordianSymKeyType> mySymPredicate = myFactory.supportedKeySetSymKeyTypes();
+        for (final GordianSymKeyType myType : GordianSymKeyType.values()) {
+            /* If this is supported for a keySet */
+            if (mySymPredicate.test(myType)) {
+                /* Generate the key and add to map */
+                final GordianSymKeySpec mySpec = new GordianSymKeySpec(myType);
+                final GordianCipherFactory myCipherFactory = theFactory.getCipherFactory();
+                final GordianKeyGenerator<GordianSymKeySpec> myGenerator = myCipherFactory.getKeyGenerator(mySpec);
+                theSymKeyMap.put(mySpec, myGenerator.generateKey());
+            }
+        }
+    }
+
+    /**
      * Build key set from secret.
      * @param pSecret the secret.
      * @param pInitVector the initialisation vector.
@@ -409,8 +471,8 @@ public final class GordianCoreKeySet
     public void buildFromSecret(final byte[] pSecret,
                                 final byte[] pInitVector) throws OceanusException {
         /* Loop through the symmetricKeys values */
-        final GordianKeySetFactory myFactory = theFactory.getKeySetFactory();
-        final Predicate<GordianSymKeyType> mySymPredicate = myFactory.supportedKeySetSymKeyTypes();
+        final GordianKeySetFactory myKeySetFactory = theFactory.getKeySetFactory();
+        final Predicate<GordianSymKeyType> mySymPredicate = myKeySetFactory.supportedKeySetSymKeyTypes();
         for (final GordianSymKeyType myType : GordianSymKeyType.values()) {
             /* If this is supported for a keySet */
             if (mySymPredicate.test(myType)) {

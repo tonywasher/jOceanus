@@ -16,11 +16,14 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jgordianknot.api.cipher;
 
+import net.sourceforge.joceanus.jgordianknot.api.base.GordianIdSpec;
+
 /**
  * Cipher Specification.
  * @param <T> the keyType
  */
-public abstract class GordianCipherSpec<T> {
+public abstract class GordianCipherSpec<T>
+        implements GordianIdSpec {
     /**
      * KeyType.
      */

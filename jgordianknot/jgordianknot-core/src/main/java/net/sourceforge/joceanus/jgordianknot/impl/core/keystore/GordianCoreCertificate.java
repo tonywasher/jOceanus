@@ -154,9 +154,8 @@ public class GordianCoreCertificate
         theSigSpec = GordianSignatureSpec.defaultForKey(theKeyPair.getKeySpec());
 
         /* Determine the algorithm Id for the signatureSpec */
-        final GordianCoreKeyStoreFactory myStore = (GordianCoreKeyStoreFactory) theFactory.getAsymmetricFactory().getKeyStoreFactory();
-        final GordianSignatureAlgId mySigIdMgr = myStore.getAlgorithmIds();
-        theSigAlgId = mySigIdMgr.getIdentifierForSpecAndKeyPair(theSigSpec, theKeyPair);
+        final GordianCoreSignatureFactory mySignFactory = (GordianCoreSignatureFactory) theFactory.getAsymmetricFactory().getSignatureFactory();
+        theSigAlgId = mySignFactory.getIdentifierForSpecAndKeyPair(theSigSpec, theKeyPair);
 
         /* Create the TBSCertificate */
         theKeyUsage = new GordianKeyPairUsage(GordianKeyPairUse.CERTIFICATE);
@@ -211,9 +210,8 @@ public class GordianCoreCertificate
         theSigSpec = GordianSignatureSpec.defaultForKey(pSigner.getKeyPair().getKeySpec());
 
         /* Determine the algorithm Id for the signatureSpec */
-        final GordianCoreKeyStoreFactory myStore = (GordianCoreKeyStoreFactory) theFactory.getAsymmetricFactory().getKeyStoreFactory();
-        final GordianSignatureAlgId mySigIdMgr = myStore.getAlgorithmIds();
-        theSigAlgId = mySigIdMgr.getIdentifierForSpecAndKeyPair(theSigSpec, pSigner.getKeyPair());
+        final GordianCoreSignatureFactory mySignFactory = (GordianCoreSignatureFactory) theFactory.getAsymmetricFactory().getSignatureFactory();
+        theSigAlgId = mySignFactory.getIdentifierForSpecAndKeyPair(theSigSpec, pSigner.getKeyPair());
 
         /* Create the TBSCertificate */
         theTbsCertificate = buildCertificate(mySignerCert, pSubject);
@@ -252,9 +250,8 @@ public class GordianCoreCertificate
 
         /* Determine the signatureSpec for the algorithmId */
         final GordianAsymFactory myAsym = theFactory.getAsymmetricFactory();
-        final GordianCoreKeyStoreFactory myStore = (GordianCoreKeyStoreFactory) theFactory.getAsymmetricFactory().getKeyStoreFactory();
-        final GordianSignatureAlgId mySigIdMgr = myStore.getAlgorithmIds();
-        theSigSpec = mySigIdMgr.getSpecForIdentifier(theSigAlgId);
+        final GordianCoreSignatureFactory mySignFactory = (GordianCoreSignatureFactory) theFactory.getAsymmetricFactory().getSignatureFactory();
+        theSigSpec = mySignFactory.getSpecForIdentifier(theSigAlgId);
 
         /* Derive the keyPair */
         final X509EncodedKeySpec myX509 = getX509KeySpec();
@@ -302,17 +299,37 @@ public class GordianCoreCertificate
             myResult.addUse(GordianKeyPairUse.SIGNATURE);
         }
 
+        /* Check for nonRepudiation. */
+        if (myUsage.hasUsages(KeyUsage.nonRepudiation)) {
+            myResult.addUse(GordianKeyPairUse.NONREPUDIATION);
+        }
+
         /* Check for keyAgreement. */
         if (myUsage.hasUsages(KeyUsage.keyAgreement)) {
             myResult.addUse(GordianKeyPairUse.AGREEMENT);
         }
 
-        /* Check for encryption. */
-        if (myUsage.hasUsages(KeyUsage.dataEncipherment)) {
-            myResult.addUse(GordianKeyPairUse.ENCRYPT);
+        /* Check for keyEncryption. */
+        if (myUsage.hasUsages(KeyUsage.keyEncipherment)) {
+            myResult.addUse(GordianKeyPairUse.KEYENCRYPT);
         }
 
-        /* Not recognised */
+        /* Check for dataEncryption. */
+        if (myUsage.hasUsages(KeyUsage.dataEncipherment)) {
+            myResult.addUse(GordianKeyPairUse.DATAENCRYPT);
+        }
+
+        /* Check for encipherOnly. */
+        if (myUsage.hasUsages(KeyUsage.encipherOnly)) {
+            myResult.addUse(GordianKeyPairUse.ENCRYPTONLY);
+        }
+
+        /* Check for decipherOnly. */
+        if (myUsage.hasUsages(KeyUsage.decipherOnly)) {
+            myResult.addUse(GordianKeyPairUse.DECRYPTONLY);
+        }
+
+        /* Return the result */
         return myResult;
     }
 
@@ -532,7 +549,7 @@ public class GordianCoreCertificate
      * @param pGenerator the extensions generator
      * @throws OceanusException on error
      */
-    void createKeyUseExtensions(final ExtensionsGenerator pGenerator) throws OceanusException {
+    private void createKeyUseExtensions(final ExtensionsGenerator pGenerator) throws OceanusException {
         /* Protect against exceptions */
         try {
             pGenerator.addExtension(Extension.keyUsage, true, theKeyUsage.getKeyUsage());

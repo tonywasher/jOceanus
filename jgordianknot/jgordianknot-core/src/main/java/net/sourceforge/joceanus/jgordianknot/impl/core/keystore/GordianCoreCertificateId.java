@@ -43,8 +43,8 @@ public final class GordianCoreCertificateId
      * @param pName the name
      * @param pId the id
      */
-    private GordianCoreCertificateId(final X500Name pName,
-                                     final DERBitString pId) {
+    GordianCoreCertificateId(final X500Name pName,
+                             final DERBitString pId) {
         theName = pName;
         theId = pId;
     }

@@ -16,6 +16,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jgordianknot.api.keyset;
 
+import net.sourceforge.joceanus.jgordianknot.api.base.GordianIdSpec;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
@@ -29,7 +30,7 @@ public interface GordianKnuthObfuscater {
      * @return the externalId
      * @throws OceanusException on error
      */
-    int deriveExternalIdFromType(Object pType,
+    int deriveExternalIdFromType(GordianIdSpec pType,
                                  int pAdjustment) throws OceanusException;
 
     /**
@@ -38,29 +39,23 @@ public interface GordianKnuthObfuscater {
      * @return the externalId
      * @throws OceanusException on error
      */
-    int deriveExternalIdFromType(Object pType) throws OceanusException;
+    int deriveExternalIdFromType(GordianIdSpec pType) throws OceanusException;
 
     /**
-     * Obtain external Id from Type.
-     * @param <T> the type class
+     * Obtain IdSpec from external Id.
      * @param pId the externalId
      * @param pAdjustment the adjustment
-     * @param pClazz the class of the type
      * @return the derived Type
      * @throws OceanusException on error
      */
-    <T> T deriveTypeFromExternalId(int pId,
-                                   int pAdjustment,
-                                   Class<T> pClazz) throws OceanusException;
+    GordianIdSpec deriveTypeFromExternalId(int pId,
+                                           int pAdjustment) throws OceanusException;
 
     /**
-     * Obtain external Id from Type.
-     * @param <T> the type class
+     * Obtain IdSpec from external Id.
      * @param pId the externalId
-     * @param pClazz the class of the type
      * @return the derived Type
      * @throws OceanusException on error
      */
-    <T> T deriveTypeFromExternalId(int pId,
-                                   Class<T> pClazz) throws OceanusException;
+    GordianIdSpec deriveTypeFromExternalId(int pId) throws OceanusException;
 }

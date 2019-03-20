@@ -33,14 +33,34 @@ public enum GordianKeyPairUse {
     SIGNATURE(KeyUsage.digitalSignature),
 
     /**
+     * NonRepudiation.
+     */
+    NONREPUDIATION(KeyUsage.nonRepudiation),
+
+    /**
      * KeyAgreement.
      */
     AGREEMENT(KeyUsage.keyAgreement),
 
     /**
-     * Encryption.
+     * keyEncryption.
      */
-    ENCRYPT(KeyUsage.dataEncipherment);
+    KEYENCRYPT(KeyUsage.keyEncipherment),
+
+    /**
+     * dataEncryption.
+     */
+    DATAENCRYPT(KeyUsage.dataEncipherment),
+
+    /**
+     * EncryptOnly.
+     */
+    ENCRYPTONLY(KeyUsage.encipherOnly),
+
+    /**
+     * DecryptOnly.
+     */
+    DECRYPTONLY(KeyUsage.decipherOnly);
 
     /**
      * The KeyUsage.

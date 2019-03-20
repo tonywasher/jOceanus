@@ -20,6 +20,7 @@ import net.sourceforge.joceanus.jgordianknot.api.keystore.GordianKeyStore;
 import net.sourceforge.joceanus.jgordianknot.api.keystore.GordianKeyStoreFactory;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianCoreFactory;
 import net.sourceforge.joceanus.jgordianknot.impl.core.keypair.GordianCoreAsymFactory;
+import net.sourceforge.joceanus.jgordianknot.impl.core.sign.GordianSignatureAlgId;
 
 /**
  * KeyStore Factory implementation.
@@ -42,17 +43,6 @@ public class GordianCoreKeyStoreFactory
      */
     public GordianCoreKeyStoreFactory(final GordianCoreAsymFactory pFactory) {
         theFactory = pFactory.getFactory();
-    }
-
-    /**
-     * Obtain the signature algrithm Ids.
-     * @return the signature Algorithm Ids
-     */
-    public GordianSignatureAlgId getAlgorithmIds() {
-        if (theAlgIds == null) {
-            theAlgIds = new GordianSignatureAlgId(theFactory);
-        }
-        return theAlgIds;
     }
 
     /**

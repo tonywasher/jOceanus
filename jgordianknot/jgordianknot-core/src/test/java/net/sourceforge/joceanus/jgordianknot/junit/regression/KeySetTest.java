@@ -335,6 +335,12 @@ public class KeySetTest {
         final GordianKey<GordianMacSpec> myMacResult = myKeySet.deriveKey(myMacSafe, myMacKey.getKeyType());
         Assertions.assertEquals(myMacKey, myMacResult, "Failed to wrap/unwrap macKey");
         Assertions.assertEquals(myKeySet.getKeyWrapLength(), myMacSafe.length, "Incorrect wrapped length");
+
+        /* Check wrap of mackeySet */
+        final byte[] myKeySetSafe = myKeySet.secureKeySet(myKeySet);
+        final GordianKeySet myKeySetResult = myKeySet.deriveKeySet(myKeySetSafe);
+        Assertions.assertEquals(myKeySet, myKeySetResult, "Failed to wrap/unwrap keySet");
+        Assertions.assertEquals(myKeySet.getKeySetWrapLength(), myKeySetSafe.length, "Incorrect wrapped length");
     }
 
     /**

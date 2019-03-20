@@ -17,13 +17,9 @@
 package net.sourceforge.joceanus.jgordianknot.impl.core.keystore;
 
 import java.util.Arrays;
-import java.util.EnumMap;
-import java.util.Map;
+import java.util.List;
 
 import net.sourceforge.joceanus.jgordianknot.api.base.GordianKeySpec;
-import net.sourceforge.joceanus.jgordianknot.api.base.GordianLength;
-import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianSymKeySpec;
-import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianSymKeyType;
 import net.sourceforge.joceanus.jgordianknot.api.factory.GordianFactory;
 import net.sourceforge.joceanus.jgordianknot.api.key.GordianKey;
 import net.sourceforge.joceanus.jgordianknot.api.key.GordianKeyPair;
@@ -32,7 +28,6 @@ import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetFactory;
 import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetHash;
 import net.sourceforge.joceanus.jgordianknot.api.keystore.GordianCertificate;
 import net.sourceforge.joceanus.jgordianknot.api.keystore.GordianCertificateId;
-import net.sourceforge.joceanus.jgordianknot.impl.core.keyset.GordianCoreKeySet;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
 
@@ -46,7 +41,7 @@ public interface GordianKeyStoreElement {
     /**
      * KeyStore Certificate.
      */
-    static class GordianKeyStoreCertificateKey {
+    class GordianKeyStoreCertificateKey {
         /**
          * The issuer Id.
          */
@@ -67,6 +62,17 @@ public interface GordianKeyStoreElement {
         }
 
         /**
+         * Constructor.
+         * @param pIssuer the issuer.
+         * @param pSubject the subject.
+         */
+        GordianKeyStoreCertificateKey(final GordianCertificateId pIssuer,
+                                      final GordianCertificateId pSubject) {
+            theIssuer = pIssuer;
+            theSubject = pSubject;
+        }
+
+        /**
          * Obtain the issuer.
          * @return the issuer
          */
@@ -80,6 +86,33 @@ public interface GordianKeyStoreElement {
          */
         public GordianCertificateId getSubject() {
             return theSubject;
+        }
+
+        @Override
+        public boolean equals(final Object pThat) {
+            /* Handle the trivial case */
+            if (pThat == this) {
+                return true;
+            }
+            if (pThat == null) {
+                return false;
+            }
+
+            /* Ensure object is correct class */
+            if (!(pThat instanceof GordianKeyStoreCertificateKey)) {
+                return false;
+            }
+            final GordianKeyStoreCertificateKey myThat = (GordianKeyStoreCertificateKey) pThat;
+
+            /* Check that the subject and issuers match */
+            return theSubject.equals(myThat.getSubject())
+                    && theIssuer.equals(myThat.getIssuer());
+        }
+
+        @Override
+        public int hashCode() {
+            return theSubject.hashCode()
+                    + theIssuer.hashCode();
         }
     }
 
@@ -97,7 +130,7 @@ public interface GordianKeyStoreElement {
     /**
      * KeyStore Certificate Element.
      */
-    static class GordianKeyStoreCertificateElement
+    class GordianKeyStoreCertificateElement
             extends GordianCoreKeyStoreEntry
             implements GordianKeyStoreCertificateHolder {
         /**
@@ -138,12 +171,39 @@ public interface GordianKeyStoreElement {
             final GordianCoreCertificate myCert = pKeyStore.getCertificate(theKey);
             return new GordianCoreKeyStoreCertificate(myCert, getCreationDate());
         }
+
+        @Override
+        public boolean equals(final Object pThat) {
+            /* Handle the trivial case */
+            if (pThat == this) {
+                return true;
+            }
+            if (pThat == null) {
+                return false;
+            }
+
+            /* Ensure object is correct class */
+            if (!(pThat instanceof GordianKeyStoreCertificateElement)) {
+                return false;
+            }
+            final GordianKeyStoreCertificateElement myThat = (GordianKeyStoreCertificateElement) pThat;
+
+            /* Check that the keys match */
+            return theKey.equals(myThat.getCertificateKey())
+                    && super.equals(pThat);
+        }
+
+        @Override
+        public int hashCode() {
+            return theKey.hashCode()
+                    + super.hashCode();
+        }
     }
 
     /**
      * KeyStore KeyPair Element.
      */
-    static class GordianKeyStorePairElement
+    class GordianKeyStorePairElement
             extends GordianCoreKeyStoreEntry
             implements GordianKeyStoreCertificateHolder {
         /**
@@ -198,13 +258,14 @@ public interface GordianKeyStoreElement {
          */
         GordianKeyStorePairElement(final byte[] pSecuredKey,
                                    final byte[] pSecuringHash,
-                                   final GordianKeyStoreCertificateKey[] pChain,
+                                   final List<GordianKeyStoreCertificateKey> pChain,
                                    final TethysDate pDate) {
             /* Store details */
             super(pDate);
             theSecuredKey = pSecuredKey;
             theSecuringHash = new GordianKeyStoreHashElement(pSecuringHash, pDate);
-            theChain = Arrays.copyOf(pChain, pChain.length);
+            theChain = new GordianKeyStoreCertificateKey[pChain.size()];
+            pChain.toArray(theChain);
         }
 
         /**
@@ -261,12 +322,43 @@ public interface GordianKeyStoreElement {
             /* Create the entry */
             return new GordianCoreKeyStorePair(myPair, myChain, getCreationDate());
         }
+
+        @Override
+        public boolean equals(final Object pThat) {
+            /* Handle the trivial case */
+            if (pThat == this) {
+                return true;
+            }
+            if (pThat == null) {
+                return false;
+            }
+
+            /* Ensure object is correct class */
+            if (!(pThat instanceof GordianKeyStorePairElement)) {
+                return false;
+            }
+            final GordianKeyStorePairElement myThat = (GordianKeyStorePairElement) pThat;
+
+            /* Check that the hashes match */
+            return Arrays.equals(theSecuredKey, myThat.getSecuredKey())
+                    && Arrays.equals(getSecuringHash(), myThat.getSecuringHash())
+                    && Arrays.equals(theChain, myThat.getCertificateChain())
+                    && super.equals(pThat);
+        }
+
+        @Override
+        public int hashCode() {
+            return Arrays.hashCode(theSecuredKey)
+                    + Arrays.hashCode(getSecuringHash())
+                    + Arrays.hashCode(theChain)
+                    + super.hashCode();
+        }
     }
 
     /**
      * KeyStore hash Element.
      */
-    static class GordianKeyStoreHashElement
+    class GordianKeyStoreHashElement
             extends GordianCoreKeyStoreEntry {
         /**
          * The hash.
@@ -316,13 +408,40 @@ public interface GordianKeyStoreElement {
             final GordianKeySetHash myHash = myFactory.deriveKeySetHash(theHash, pPassword);
             return new GordianCoreKeyStoreHash(myHash, getCreationDate());
         }
+
+        @Override
+        public boolean equals(final Object pThat) {
+            /* Handle the trivial case */
+            if (pThat == this) {
+                return true;
+            }
+            if (pThat == null) {
+                return false;
+            }
+
+            /* Ensure object is correct class */
+            if (!(pThat instanceof GordianKeyStoreHashElement)) {
+                return false;
+            }
+            final GordianKeyStoreHashElement myThat = (GordianKeyStoreHashElement) pThat;
+
+            /* Check that the hashes match */
+            return Arrays.equals(theHash, myThat.getHash())
+                    && super.equals(pThat);
+        }
+
+        @Override
+        public int hashCode() {
+            return Arrays.hashCode(theHash)
+                    + super.hashCode();
+        }
     }
 
     /**
      * KeyStore key Element.
      * @param <T> the key type
      */
-    static class GordianKeyStoreKeyElement<T extends GordianKeySpec>
+    class GordianKeyStoreKeyElement<T extends GordianKeySpec>
             extends GordianCoreKeyStoreEntry {
         /**
          * The keyType.
@@ -419,17 +538,48 @@ public interface GordianKeyStoreElement {
             final GordianKey<T> myKey = myKeySet.deriveKey(theSecuredKey, theKeyType);
             return new GordianCoreKeyStoreKey<>(myKey, getCreationDate());
         }
+
+        @Override
+        public boolean equals(final Object pThat) {
+            /* Handle the trivial case */
+            if (pThat == this) {
+                return true;
+            }
+            if (pThat == null) {
+                return false;
+            }
+
+            /* Ensure object is correct class */
+            if (!(pThat instanceof GordianKeyStoreKeyElement)) {
+                return false;
+            }
+            final GordianKeyStoreKeyElement myThat = (GordianKeyStoreKeyElement) pThat;
+
+            /* Check that the hashes match */
+            return theKeyType.equals(myThat.getKeyType())
+                    && Arrays.equals(theSecuredKey, myThat.getSecuredKey())
+                    && Arrays.equals(getSecuringHash(), myThat.getSecuringHash())
+                    && super.equals(pThat);
+        }
+
+        @Override
+        public int hashCode() {
+            return theKeyType.hashCode()
+                    + Arrays.hashCode(theSecuredKey)
+                    + Arrays.hashCode(getSecuringHash())
+                    + super.hashCode();
+        }
     }
 
     /**
      * KeyStore keySet Element.
      */
-    static class GordianKeyStoreSetElement
+    class GordianKeyStoreSetElement
             extends GordianCoreKeyStoreEntry {
         /**
          * The keyMap.
          */
-        private final Map<GordianSymKeyType, byte[]> theKeyMap;
+        private final byte[] theSecuredKeySet;
 
         /**
          * The securing hash.
@@ -446,49 +596,37 @@ public interface GordianKeyStoreElement {
         GordianKeyStoreSetElement(final GordianFactory pFactory,
                                   final GordianKeySet pKeySet,
                                   final char[] pPassword) throws OceanusException {
-            /* Access the KeySet */
-            final GordianCoreKeySet mySrcKeySet = (GordianCoreKeySet) pKeySet;
-
             /* Create a securing hash */
             final GordianKeySetFactory myFactory = pFactory.getKeySetFactory();
             final GordianKeySetHash myHash = myFactory.generateKeySetHash(pPassword);
             final GordianKeySet myKeySet = myHash.getKeySet();
             theSecuringHash = new GordianKeyStoreHashElement(myHash);
 
-            /* Create the map */
-            theKeyMap = new EnumMap<>(GordianSymKeyType.class);
-
-            /* For each key in the map */
-            for (Map.Entry<GordianSymKeySpec, GordianKey<GordianSymKeySpec>> myEntry : mySrcKeySet.getSymKeyMap().entrySet()) {
-                final GordianSymKeyType myKeyType = myEntry.getKey().getSymKeyType();
-                final byte[] mySecuredKey = myKeySet.secureKey(myEntry.getValue());
-                theKeyMap.put(myKeyType, mySecuredKey);
-            }
+            /* Secure the keySet */
+            theSecuredKeySet = myKeySet.secureKeySet(pKeySet);
        }
 
         /**
          * Constructor.
-         * @param pKeyMap the keyMap
+         * @param pSecuredKeySet the securedKeySet
          * @param pSecuringHash the securing hash.
          * @param pDate the creation date
          */
-        GordianKeyStoreSetElement(final Map<GordianSymKeyType, byte[]> pKeyMap,
+        GordianKeyStoreSetElement(final byte[] pSecuredKeySet,
                                   final byte[] pSecuringHash,
                                   final TethysDate pDate) {
             /* Store details */
             super(pDate);
+            theSecuredKeySet = pSecuredKeySet;
             theSecuringHash = new GordianKeyStoreHashElement(pSecuringHash, pDate);
-
-            /* Create the map */
-            theKeyMap = new EnumMap<>(pKeyMap);
         }
 
         /**
          * Obtain the keyType.
          * @return the keyType
          */
-        Map<GordianSymKeyType, byte[]> getKeyMap() {
-            return theKeyMap;
+        byte[] getSecuredKeySet() {
+            return theSecuredKeySet;
         }
 
         /**
@@ -512,20 +650,40 @@ public interface GordianKeyStoreElement {
             final GordianKeyStoreHash myHash = theSecuringHash.buildEntry(pKeyStore, pPassword);
             final GordianKeySet mySecuringKeySet = myHash.getKeySetHash().getKeySet();
 
-            /* Create a new keySet */
-            final GordianKeySetFactory myFactory = pKeyStore.getFactory().getKeySetFactory();
-            final GordianKeySet myKeySet = myFactory.createKeySet();
-
-            /* Loop through the keys */
-            for (Map.Entry<GordianSymKeyType, byte[]> myEntry : theKeyMap.entrySet()) {
-                /* Derive and declare the key */
-                final GordianSymKeySpec mySpec = new GordianSymKeySpec(myEntry.getKey(), GordianLength.LEN_128);
-                final GordianKey<GordianSymKeySpec> myKey = mySecuringKeySet.deriveKey(myEntry.getValue(), mySpec);
-                myKeySet.declareSymKey(myKey);
-            }
+            /* Derive the keySet */
+            final GordianKeySet myKeySet = mySecuringKeySet.deriveKeySet(theSecuredKeySet);
 
             /* build the new entry */
             return new GordianCoreKeyStoreSet(myKeySet, getCreationDate());
+        }
+
+        @Override
+        public boolean equals(final Object pThat) {
+            /* Handle the trivial case */
+            if (pThat == this) {
+                return true;
+            }
+            if (pThat == null) {
+                return false;
+            }
+
+            /* Ensure object is correct class */
+            if (!(pThat instanceof GordianKeyStoreSetElement)) {
+                return false;
+            }
+            final GordianKeyStoreSetElement myThat = (GordianKeyStoreSetElement) pThat;
+
+            /* Check that the hashes match */
+            return Arrays.equals(theSecuredKeySet, myThat.getSecuredKeySet())
+                    && Arrays.equals(getSecuringHash(), myThat.getSecuringHash())
+                    && super.equals(pThat);
+        }
+
+        @Override
+        public int hashCode() {
+            return Arrays.hashCode(theSecuredKeySet)
+                    + Arrays.hashCode(getSecuringHash())
+                    + super.hashCode();
         }
     }
 }

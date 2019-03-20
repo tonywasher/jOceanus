@@ -61,6 +61,31 @@ class GordianCoreKeyStoreEntry
         return theDate;
     }
 
+    @Override
+    public boolean equals(final Object pThat) {
+        /* Handle the trivial case */
+        if (pThat == this) {
+            return true;
+        }
+        if (pThat == null) {
+            return false;
+        }
+
+        /* Ensure object is correct class */
+        if (!(pThat instanceof GordianCoreKeyStoreEntry)) {
+            return false;
+        }
+        final GordianCoreKeyStoreEntry myThat = (GordianCoreKeyStoreEntry) pThat;
+
+        /* Check that the hashes match */
+        return theDate.equals(myThat.getCreationDate());
+    }
+
+    @Override
+    public int hashCode() {
+        return theDate.hashCode();
+    }
+
     /**
      * KeyStore Certificate.
      */

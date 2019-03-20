@@ -18,6 +18,9 @@
  * GordianKnot core.
  */
 module net.sourceforge.joceanus.jgordianknot.core {
+    /* Java libraries */
+    requires java.xml;
+
     /* External libraries */
     requires org.bouncycastle.provider;
 

@@ -297,7 +297,7 @@ public final class GordianStreamDefinition {
         final GordianCoreKnuthObfuscater myKnuth = myKeySets.getObfuscater();
 
         /* Parse the TypeId */
-        final GordianDigestSpec mySpec = myKnuth.deriveTypeFromExternalId(theTypeId, GordianDigestSpec.class);
+        final GordianDigestSpec mySpec = (GordianDigestSpec) myKnuth.deriveTypeFromExternalId(theTypeId);
 
         /* Generate the Digest */
         final GordianCoreDigestFactory myDigests = (GordianCoreDigestFactory) myFactory.getDigestFactory();
@@ -322,7 +322,7 @@ public final class GordianStreamDefinition {
         final GordianCoreKnuthObfuscater myKnuth = myKeySets.getObfuscater();
 
         /* Parse the TypeId */
-        final GordianMacSpec mySpec = myKnuth.deriveTypeFromExternalId(theTypeId, GordianMacSpec.class);
+        final GordianMacSpec mySpec = (GordianMacSpec) myKnuth.deriveTypeFromExternalId(theTypeId);
 
         /* Generate the MAC */
         final GordianCoreMacFactory myMacs = (GordianCoreMacFactory) myFactory.getMacFactory();
@@ -349,7 +349,7 @@ public final class GordianStreamDefinition {
         final GordianCoreKnuthObfuscater myKnuth = myKeySets.getObfuscater();
 
         /* Parse the TypeId */
-        final GordianSymCipherSpec mySpec = myKnuth.deriveTypeFromExternalId(theTypeId, GordianSymCipherSpec.class);
+        final GordianSymCipherSpec mySpec = (GordianSymCipherSpec) myKnuth.deriveTypeFromExternalId(theTypeId);
         final GordianSymKeySpec myKeySpec = mySpec.getKeyType();
 
         /* Generate the Cipher */
@@ -377,7 +377,7 @@ public final class GordianStreamDefinition {
         final GordianCoreKnuthObfuscater myKnuth = myKeySets.getObfuscater();
 
         /* Parse the TypeId */
-        final GordianStreamCipherSpec mySpec = myKnuth.deriveTypeFromExternalId(theTypeId, GordianStreamCipherSpec.class);
+        final GordianStreamCipherSpec mySpec = (GordianStreamCipherSpec) myKnuth.deriveTypeFromExternalId(theTypeId);
         final GordianStreamKeyType myType = mySpec.getKeyType();
 
         /* Generate the Cipher */

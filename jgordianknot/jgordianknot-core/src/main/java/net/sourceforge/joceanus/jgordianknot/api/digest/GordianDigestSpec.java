@@ -19,13 +19,15 @@ package net.sourceforge.joceanus.jgordianknot.api.digest;
 import java.util.ArrayList;
 import java.util.List;
 
+import net.sourceforge.joceanus.jgordianknot.api.base.GordianIdSpec;
 import net.sourceforge.joceanus.jgordianknot.api.base.GordianLength;
 import net.sourceforge.joceanus.jtethys.TethysDataConverter;
 
 /**
  * Digest Specification.
  */
-public class GordianDigestSpec {
+public class GordianDigestSpec
+    implements GordianIdSpec {
     /**
      * The Separator.
      */

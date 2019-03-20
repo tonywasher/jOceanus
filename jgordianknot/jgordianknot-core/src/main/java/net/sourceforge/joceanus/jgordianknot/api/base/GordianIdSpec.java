@@ -17,8 +17,7 @@
 package net.sourceforge.joceanus.jgordianknot.api.base;
 
 /**
- * Marker interface for keySpec.
+ * Marker interface for idSpec.
  */
-public interface GordianKeySpec
-        extends GordianIdSpec {
+public interface GordianIdSpec {
 }

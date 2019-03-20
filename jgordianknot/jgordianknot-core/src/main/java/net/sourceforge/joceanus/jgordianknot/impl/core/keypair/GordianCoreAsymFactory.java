@@ -28,7 +28,6 @@ import net.sourceforge.joceanus.jgordianknot.api.keystore.GordianKeyStoreFactory
 import net.sourceforge.joceanus.jgordianknot.api.sign.GordianSignatureFactory;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianCoreFactory;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianDataException;
-import net.sourceforge.joceanus.jgordianknot.impl.core.keystore.GordianCoreKeyStoreFactory;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
@@ -72,7 +71,6 @@ public abstract class GordianCoreAsymFactory
      */
     public GordianCoreAsymFactory(final GordianCoreFactory pFactory) {
         theFactory = pFactory;
-        theKeyStoreFactory = new GordianCoreKeyStoreFactory(this);
     }
 
     @Override
@@ -122,6 +120,14 @@ public abstract class GordianCoreAsymFactory
     @Override
     public GordianKeyStoreFactory getKeyStoreFactory() {
         return theKeyStoreFactory;
+    }
+
+    /**
+     * Set the keyStore factory.
+     * @param pFactory the factory
+     */
+    protected void setKeyStoreFactory(final GordianKeyStoreFactory pFactory) {
+        theKeyStoreFactory = pFactory;
     }
 
     @Override

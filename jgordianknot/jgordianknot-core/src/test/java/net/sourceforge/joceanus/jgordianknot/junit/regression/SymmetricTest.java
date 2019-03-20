@@ -27,6 +27,7 @@ import org.junit.jupiter.api.DynamicNode;
 import org.junit.jupiter.api.DynamicTest;
 import org.junit.jupiter.api.TestFactory;
 
+import net.sourceforge.joceanus.jgordianknot.api.base.GordianIdSpec;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianAADCipher;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianCipher;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianCipherFactory;
@@ -583,23 +584,22 @@ public class SymmetricTest {
      * @param pSpec the Spec to check
      * @throws OceanusException on error
      */
-    private void checkExternalId(final FactorySpec<?> pSpec) throws OceanusException {
+    private void checkExternalId(final FactorySpec<? extends GordianIdSpec> pSpec) throws OceanusException {
         /* Access the factories */
         final GordianKeySetFactory myKeySets = pSpec.getFactory().getKeySetFactory();
         final GordianKnuthObfuscater myKnuth = myKeySets.getObfuscater();
-        final Class<?> myClazz = pSpec.getSpec().getClass();
 
         /* Check standard obfuscation */
         int myId = myKnuth.deriveExternalIdFromType(pSpec.getSpec());
-        Object myResult = myKnuth.deriveTypeFromExternalId(myId, myClazz);
+        GordianIdSpec myResult = myKnuth.deriveTypeFromExternalId(myId);
         Assertions.assertEquals(pSpec.getSpec(), myResult,
-                "Standard obfuscation for " + myClazz.getSimpleName() + ":" + pSpec);
+                "Standard obfuscation for " + pSpec.getClass().getSimpleName() + ":" + pSpec);
 
         final int myOffset = 205;
         myId = myKnuth.deriveExternalIdFromType(pSpec.getSpec(), myOffset);
-        myResult = myKnuth.deriveTypeFromExternalId(myId, myOffset, myClazz);
+        myResult = myKnuth.deriveTypeFromExternalId(myId, myOffset);
         Assertions.assertEquals(pSpec.getSpec(), myResult,
-                "Offset obfuscation for " + myClazz.getSimpleName() + ":" + pSpec);
+                "Offset obfuscation for " + pSpec.getClass().getSimpleName() + ":" + pSpec);
     }
 
     /**

@@ -156,7 +156,7 @@ public class DataKey
             setValueKeyTypeId((Integer) myValue);
 
             /* Resolve the KeyType */
-            final GordianSymKeySpec mySpec = myKnuth.deriveTypeFromExternalId(getKeyTypeId(), GordianSymKeySpec.class);
+            final GordianSymKeySpec mySpec = (GordianSymKeySpec) myKnuth.deriveTypeFromExternalId(getKeyTypeId());
             setValueSymKeyType(mySpec.getSymKeyType());
 
         } else if (myValue instanceof GordianSymKeyType) {

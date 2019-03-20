@@ -18,6 +18,9 @@ package net.sourceforge.joceanus.jgordianknot.impl.core.base;
 
 import java.security.SecureRandom;
 
+import org.bouncycastle.asn1.ASN1ObjectIdentifier;
+import org.bouncycastle.asn1.bc.BCObjectIdentifiers;
+
 import net.sourceforge.joceanus.jgordianknot.api.base.GordianLength;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianCipherFactory;
 import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigestFactory;
@@ -34,6 +37,11 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
  */
 public abstract class GordianCoreFactory
     implements GordianFactory, GordianFactoryGenerator {
+    /**
+     *  Base our ids off bouncyCastle.
+     */
+    public static final ASN1ObjectIdentifier BASEOID = BCObjectIdentifiers.bc.branch("100");
+
     /**
      * RC5 rounds.
      */

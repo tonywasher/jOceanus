@@ -33,6 +33,10 @@ import net.sourceforge.joceanus.jtethys.TethysDataConverter;
 
 import java.util.Arrays;
 
+import org.bouncycastle.asn1.ASN1ObjectIdentifier;
+import org.bouncycastle.asn1.DEROctetString;
+import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
+
 /**
  * Hash from which to derive KeySet.
  */
@@ -42,6 +46,11 @@ public final class GordianCoreKeySetHash
      * Hash size for password hash.
      */
     public static final int HASHLEN = GordianKeySetHashRecipe.HASHLEN;
+
+    /**
+     * KeySetHash OID.
+     */
+    public static final ASN1ObjectIdentifier OID = GordianCoreFactory.BASEOID.branch("2.1");
 
     /**
      * Hash Recipe.
@@ -472,5 +481,13 @@ public final class GordianCoreKeySetHash
     public int hashCode() {
         return GordianParameters.HASH_PRIME * theFactory.hashCode()
                 + Arrays.hashCode(theHash);
+    }
+
+    /**
+     * Obtain the algorithm identifier.
+     * @return the algorithm identifier.
+     */
+    public AlgorithmIdentifier getAlgorithmIdentifier() {
+        return new AlgorithmIdentifier(OID, new DEROctetString(theHash));
     }
 }
