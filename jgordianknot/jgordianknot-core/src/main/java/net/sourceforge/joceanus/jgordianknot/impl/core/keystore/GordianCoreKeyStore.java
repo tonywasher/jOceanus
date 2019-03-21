@@ -16,6 +16,10 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jgordianknot.impl.core.keystore;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -30,6 +34,7 @@ import net.sourceforge.joceanus.jgordianknot.api.key.GordianKey;
 import net.sourceforge.joceanus.jgordianknot.api.key.GordianKeyPair;
 import net.sourceforge.joceanus.jgordianknot.api.key.GordianKeyPairGenerator;
 import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySet;
+import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetFactory;
 import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetHash;
 import net.sourceforge.joceanus.jgordianknot.api.keystore.GordianCertificate;
 import net.sourceforge.joceanus.jgordianknot.api.keystore.GordianCertificateId;
@@ -41,8 +46,11 @@ import net.sourceforge.joceanus.jgordianknot.api.keystore.GordianKeyStoreEntry.G
 import net.sourceforge.joceanus.jgordianknot.api.keystore.GordianKeyStoreEntry.GordianKeyStoreKey;
 import net.sourceforge.joceanus.jgordianknot.api.keystore.GordianKeyStoreEntry.GordianKeyStorePair;
 import net.sourceforge.joceanus.jgordianknot.api.keystore.GordianKeyStoreEntry.GordianKeyStoreSet;
+import net.sourceforge.joceanus.jgordianknot.api.zip.GordianZipFactory;
+import net.sourceforge.joceanus.jgordianknot.api.zip.GordianZipWriteFile;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianCoreFactory;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianDataException;
+import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianIOException;
 import net.sourceforge.joceanus.jgordianknot.impl.core.keypair.GordianCoreKeyPair;
 import net.sourceforge.joceanus.jgordianknot.impl.core.keystore.GordianKeyStoreElement.GordianKeyStoreCertificateElement;
 import net.sourceforge.joceanus.jgordianknot.impl.core.keystore.GordianKeyStoreElement.GordianKeyStoreCertificateHolder;
@@ -60,14 +68,21 @@ import net.sourceforge.joceanus.jtethys.date.TethysDate;
  * It should be noted that this implementation is based upon a number of assumptions.
  * <ol>
  *     <li>The combination of Subject Name/Subject Id is viewed as a unique identifier for a public key. Multiple Certificates for the same subject,
- *     issued by different authorities must describe the same publicKey. It is expected that different publicKeys for the same subjectName WILL have different subjectIDs</li>
+ *     issued by different authorities must describe the same publicKey. It is expected that different publicKeys for the same subjectName
+ *     WILL have different subjectIDs.</li>
  *     <li>An issuerCertificate will only issue a single certificate at a time for a subjectName/subjectID combination.
- *     If two such certificates are received, the later one will overwrite the first one, (assuming the publicKey is the same)</li>
+ *     If two such certificates are received, the later one will overwrite the first one, (assuming the publicKey is the same).
+ *     No attempt will be made to dtermine a BETTER certificate (e.g. longer validity)</li>
  * </ol>
  * </p>
  */
 public class GordianCoreKeyStore
         implements GordianKeyStore {
+    /**
+     * The ZipFile entry name.
+     */
+    static final String ZIPENTRY = "KeyStore";
+
     /**
      * The factory.
      */
@@ -122,7 +137,7 @@ public class GordianCoreKeyStore
      * Obtain the issuerMapofMaps.
      * @return the map
      */
-    Map<GordianCertificateId, Map<GordianCertificateId, GordianCoreCertificate>> getIssuerMapOfMaps() {
+    private Map<GordianCertificateId, Map<GordianCertificateId, GordianCoreCertificate>> getIssuerMapOfMaps() {
         return theIssuerCerts;
     }
 
@@ -210,6 +225,40 @@ public class GordianCoreKeyStore
         return getKeyPair(pAlias, pPassword);
     }
 
+    /**
+     * Create an alternate certificate for keyPair.
+     *
+     * @param pKeyPair the existing keyPair record
+     * @param pUsage   the key usage
+     * @param pSigner the signer
+     * @param pAlias the alias
+     * @param pPassword the password
+     * @return the new keyPair entry
+     * @throws OceanusException on error
+     */
+    public GordianKeyStorePair createAlternate(final GordianKeyStorePair pKeyPair,
+                                               final GordianKeyPairUsage pUsage,
+                                               final GordianKeyStorePair pSigner,
+                                               final String pAlias,
+                                               final char[] pPassword) throws OceanusException {
+        /* Access the keyPair and subject */
+        final GordianCoreKeyPair myKeyPair = (GordianCoreKeyPair) pKeyPair.getKeyPair();
+        final X500Name mySubject = pKeyPair.getCertificateChain()[0].getSubject().getName();
+
+        /* Create the certificate */
+        final GordianCoreCertificate myCert = new GordianCoreCertificate(theFactory, pSigner, myKeyPair, mySubject, pUsage);
+
+        /* Create the new chain */
+        final GordianCertificate[] myParentChain = pSigner.getCertificateChain();
+        final GordianCertificate[] myChain = new GordianCertificate[myParentChain.length + 1];
+        myChain[0] = myCert;
+        System.arraycopy(myParentChain, 0, myChain, 1, myParentChain.length);
+
+        /* Record into keyStore */
+        setKeyPair(pAlias, myKeyPair, pPassword, myChain);
+        return getKeyPair(pAlias, pPassword);
+    }
+
     @Override
     public List<String> getAliases() {
         return new ArrayList<>(theAliases.keySet());
@@ -257,15 +306,18 @@ public class GordianCoreKeyStore
 
         /* If it is not referenced as issuer by any other certificate */
         Map<GordianCertificateId, GordianCoreCertificate> myIssuedMap = theIssuerCerts.get(mySubjectId);
-        if (myIssuedMap == null) {
-            /* Remove the certificate from the issuer map */
-            myIssuedMap = theIssuerCerts.get(myIssuerId);
-            myIssuedMap.remove(mySubjectId);
+        if (isWithoutIssue(myIssuedMap)) {
+            /* If the certificate is not self-signed */
+            if (!pCertificate.isSelfSigned()) {
+                /* Remove the certificate from the issuer map */
+                myIssuedMap = theIssuerCerts.get(myIssuerId);
+                myIssuedMap.remove(mySubjectId);
 
-            /* If the issuer now has no issued certificates */
-            if (myIssuedMap.isEmpty()) {
-                /* Purge orphan issuers */
-                purgeOrphanIssuers(myIssuerId);
+                /* If the issuer now has no issued certificates */
+                if (isWithoutIssue(myIssuedMap)) {
+                    /* Purge orphan issuers */
+                    purgeOrphanIssuers(myIssuerId);
+                }
             }
 
             /* Remove the certificate from the subject map */
@@ -278,6 +330,28 @@ public class GordianCoreKeyStore
     }
 
     /**
+     * Determine whether an issuer has no children (other than self).
+     * @param pIssuer the issuer Map
+     * @return true/false
+     */
+    private static boolean isWithoutIssue(final Map<GordianCertificateId, GordianCoreCertificate> pIssuer) {
+        /* If the map is null or empty then there are no children */
+        if (pIssuer == null || pIssuer.isEmpty()) {
+            return true;
+        }
+
+        /* If there is only one certificate in the map */
+        if (pIssuer.size() == 1) {
+            /* If the single certificate is self-signed then we are childless */
+            final GordianCoreCertificate myCert = pIssuer.values().iterator().next();
+            return myCert.isSelfSigned();
+        }
+
+        /* Not childless */
+        return false;
+    }
+
+    /**
      * Purge orphan issuers.
      * @param pIssuerId the issuerId to purge
      */
@@ -285,10 +359,10 @@ public class GordianCoreKeyStore
         /* Remove the entry */
         theIssuerCerts.remove(pIssuerId);
 
-        /* If it is not referenced as issuer by any other certificate */
+        /* Look for all issuers */
         final Map<GordianCertificateId, GordianCoreCertificate> myCertMap = theSubjectCerts.get(pIssuerId);
 
-        /* Loop through all the certificates TODO not sure whether this will work when we are deleting */
+        /* Loop through all the certificates */
         for (GordianCoreCertificate myCert : myCertMap.values()) {
             /* If the certificate is not referenced by any other alias */
             if (getCertificateAlias(myCert) == null) {
@@ -599,6 +673,40 @@ public class GordianCoreKeyStore
         /* Check that we are anchored by a root certificate */
         if (!((GordianCoreCertificate) pChain[pChain.length - 1]).validateRootCertificate()) {
             throw new GordianDataException("Invalid root certificate");
+        }
+    }
+
+    @Override
+    public void storeToFile(final File pFile,
+                            final char[] pPassword) throws OceanusException {
+        try {
+            storeToStream(new FileOutputStream(pFile), pPassword);
+        } catch (IOException e) {
+            throw new GordianIOException("Failed to store to file", e);
+        }
+    }
+
+    @Override
+    public void storeToStream(final OutputStream pOutputStream,
+                              final char[] pPassword) throws OceanusException {
+        /* Access the Factories */
+        final GordianZipFactory myZipFactory = theFactory.getZipFactory();
+        final GordianKeySetFactory myKeySetFactory = theFactory.getKeySetFactory();
+
+        /* Create the securing hash */
+        final GordianKeySetHash myHash = myKeySetFactory.generateKeySetHash(pPassword);
+
+        /* Create the Zip file */
+        try (GordianZipWriteFile myZipFile = myZipFactory.createZipFile(myHash, pOutputStream)) {
+            /* Create the XML representation */
+            final GordianKeyStoreDocument myDocument = new GordianKeyStoreDocument(this);
+
+            /* Write the document to the file */
+            myZipFile.writeXMLDocument(new File(ZIPENTRY), myDocument.getDocument());
+
+            /* Catch Exceptions */
+        } catch (IOException e) {
+            throw new GordianIOException("Failed to store to stream", e);
         }
     }
 

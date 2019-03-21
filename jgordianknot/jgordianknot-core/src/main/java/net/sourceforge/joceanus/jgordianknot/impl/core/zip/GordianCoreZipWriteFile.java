@@ -18,12 +18,20 @@ package net.sourceforge.joceanus.jgordianknot.impl.core.zip;
 
 import java.io.BufferedOutputStream;
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.List;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
+
+import javax.xml.XMLConstants;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
+
+import org.w3c.dom.Document;
 
 import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySet;
 import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetHash;
@@ -44,14 +52,9 @@ import net.sourceforge.joceanus.jtethys.TethysDataConverter;
 public class GordianCoreZipWriteFile
         implements GordianZipWriteFile {
     /**
-     * The Create ZipFile Error text.
-     */
-    private static final String ERROR_CREATE = "Failed to create ZipFile";
-
-    /**
      * The FileName prefix.
      */
-    protected static final String FILE_PREFIX = "File";
+    private static final String FILE_PREFIX = "File";
 
     /**
      * Security Hash for this zip file.
@@ -111,74 +114,57 @@ public class GordianCoreZipWriteFile
     /**
      * Constructor for new output zip file with security.
      * @param pHash the password hash to use
-     * @param pFile the file details for the new zip file
+     * @param pOutputStream the output stream to write to
      * @throws OceanusException on error
      */
     GordianCoreZipWriteFile(final GordianKeySetHash pHash,
-                            final File pFile) throws OceanusException {
-        /* Protect against exceptions */
-        try {
-            /* Record hash */
-            theHash = (GordianCoreKeySetHash) pHash;
+                            final OutputStream pOutputStream) throws OceanusException {
+        /* Record hash */
+        theHash = (GordianCoreKeySetHash) pHash;
 
-            /* Create a child hash and record details */
-            final GordianCoreKeySetHash myHash = theHash.childHash();
-            theHashBytes = myHash.getHash();
-            theKeySet = myHash.getKeySet();
+        /* Create a child hash and record details */
+        final GordianCoreKeySetHash myHash = theHash.childHash();
+        theHashBytes = myHash.getHash();
+        theKeySet = myHash.getKeySet();
 
-            /* Create the Stream Manager */
-            theStreamFactory = new GordianStreamManager(theKeySet);
+        /* Create the Stream Manager */
+        theStreamFactory = new GordianStreamManager(theKeySet);
 
-            /* reSeed the random number generator */
-            theKeySet.getFactory().reSeedRandom();
+        /* reSeed the random number generator */
+        theKeySet.getFactory().reSeedRandom();
 
-            /* Create the output streams */
-            final FileOutputStream myOutFile = new FileOutputStream(pFile);
-            final BufferedOutputStream myOutBuffer = new BufferedOutputStream(myOutFile);
-            theStream = new ZipOutputStream(myOutBuffer);
+        /* Create the output streams */
+        final BufferedOutputStream myOutBuffer = new BufferedOutputStream(pOutputStream);
+        theStream = new ZipOutputStream(myOutBuffer);
 
-            /*
-             * Set compression level to zero to speed things up. It would be nice to use the STORED
-             * method, but this requires calculating the CRC and file size prior to writing data to
-             * the Zip file which will badly affect performance.
-             */
-            theStream.setLevel(ZipOutputStream.STORED);
+        /*
+         * Set compression level to zero to speed things up. It would be nice to use the STORED
+         * method, but this requires calculating the CRC and file size prior to writing data to
+         * the Zip file which will badly affect performance.
+         */
+        theStream.setLevel(ZipOutputStream.STORED);
 
-            /* Create the file contents */
-            theContents = new GordianCoreZipFileContents();
-
-            /* Catch exceptions */
-        } catch (IOException e) {
-            throw new GordianIOException(ERROR_CREATE, e);
-        }
+        /* Create the file contents */
+        theContents = new GordianCoreZipFileContents();
     }
 
     /**
      * Constructor for new output zip file with no security.
-     * @param pFile the file details for the new zip file
-     * @throws OceanusException on error
+     * @param pOutputStream the output stream to write to
      */
-    GordianCoreZipWriteFile(final File pFile) throws OceanusException {
-        /* Protect against exceptions */
-        try {
-            /* record null security */
-            theHash = null;
-            theHashBytes = null;
-            theKeySet = null;
-            theStreamFactory = null;
+    GordianCoreZipWriteFile(final OutputStream pOutputStream) {
+        /* record null security */
+        theHash = null;
+        theHashBytes = null;
+        theKeySet = null;
+        theStreamFactory = null;
 
-            /* Create the output streams */
-            final FileOutputStream myOutFile = new FileOutputStream(pFile);
-            final BufferedOutputStream myOutBuffer = new BufferedOutputStream(myOutFile);
-            theStream = new ZipOutputStream(myOutBuffer);
+        /* Create the output streams */
+        final BufferedOutputStream myOutBuffer = new BufferedOutputStream(pOutputStream);
+        theStream = new ZipOutputStream(myOutBuffer);
 
-            /* Create the file contents */
-            theContents = new GordianCoreZipFileContents();
-
-            /* Catch exceptions */
-        } catch (IOException e) {
-            throw new GordianIOException(ERROR_CREATE, e);
-        }
+        /* Create the file contents */
+        theContents = new GordianCoreZipFileContents();
     }
 
     /**
@@ -197,6 +183,26 @@ public class GordianCoreZipWriteFile
     @Override
     public GordianZipFileEntry getCurrentEntry() {
         return theFileEntry;
+    }
+
+    @Override
+    public void writeXMLDocument(final File pFile,
+                                 final Document pDocument) throws OceanusException {
+        /* Access the entry as an input stream */
+        try (OutputStream myOutputStream = createOutputStream(pFile, true)) {
+            /* Create the transformer */
+            final TransformerFactory myXformFactory = TransformerFactory.newInstance();
+            myXformFactory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
+            final Transformer myXformer = myXformFactory.newTransformer();
+
+            /* Format the XML and write to stream */
+            myXformer.transform(new DOMSource(pDocument), new StreamResult(myOutputStream));
+
+            /* Catch exceptions */
+        } catch (IOException
+                | TransformerException e) {
+            throw new GordianIOException("Failed to write Document", e);
+        }
     }
 
     @Override
@@ -250,7 +256,7 @@ public class GordianCoreZipWriteFile
      * Close any active output stream and record digest values.
      * @throws IOException on error
      */
-    void closeOutputStream() throws IOException {
+    private void closeOutputStream() throws IOException {
         /* Protect against exceptions */
         try {
             /* If we have an output stream */

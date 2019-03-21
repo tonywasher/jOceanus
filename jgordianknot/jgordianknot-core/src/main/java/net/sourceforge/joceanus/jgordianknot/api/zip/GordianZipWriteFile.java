@@ -20,6 +20,8 @@ import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
 
+import org.w3c.dom.Document;
+
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
@@ -35,6 +37,15 @@ public interface GordianZipWriteFile extends AutoCloseable {
      */
     OutputStream createOutputStream(File pFile,
                                     boolean pCompress) throws OceanusException;
+
+    /**
+     * Write an XML Document as a compressed in the Zip file.
+     * @param pFile the file details for the new zip entry
+     * @param pDocument the XML document.
+     * @throws OceanusException on error
+     */
+    void writeXMLDocument(File pFile,
+                          Document pDocument) throws OceanusException;
 
     /**
      * Obtain the contents.

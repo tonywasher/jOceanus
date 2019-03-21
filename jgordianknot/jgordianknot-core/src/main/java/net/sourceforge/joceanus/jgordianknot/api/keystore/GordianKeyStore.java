@@ -16,6 +16,8 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jgordianknot.api.keystore;
 
+import java.io.File;
+import java.io.OutputStream;
 import java.util.List;
 
 import org.bouncycastle.asn1.x500.X500Name;
@@ -38,6 +40,25 @@ import net.sourceforge.joceanus.jtethys.date.TethysDate;
  * KeyStore.
  */
 public interface GordianKeyStore {
+    /**
+     * Store the keyStore to a file.
+     * @param pTarget the file to store to
+     * @param pPassword the password
+     * @throws OceanusException on error
+     */
+    void storeToFile(File pTarget,
+                     char[] pPassword) throws OceanusException;
+
+    /**
+     * Store the keyStore to an OutputStream
+     * .
+     * @param pTarget the stream to store to
+     * @param pPassword the password
+     * @throws OceanusException on error
+     */
+    void storeToStream(OutputStream pTarget,
+                       char[] pPassword) throws OceanusException;
+
     /**
      * Obtain a list of all aliases.
      * @return the list
@@ -266,4 +287,21 @@ public interface GordianKeyStore {
                                       GordianKeyStorePair pSigner,
                                       String pAlias,
                                       char[] pPassword) throws OceanusException;
+
+    /**
+     * Create an alternate certificate for keyPair.
+     *
+     * @param pKeyPair the existing keyPair record
+     * @param pUsage   the key usage
+     * @param pSigner the signer
+     * @param pAlias the alias
+     * @param pPassword the password
+     * @return the new keyPair entry
+     * @throws OceanusException on error
+     */
+    GordianKeyStorePair createAlternate(GordianKeyStorePair pKeyPair,
+                                        GordianKeyPairUsage pUsage,
+                                        GordianKeyStorePair pSigner,
+                                        String pAlias,
+                                        char[] pPassword) throws OceanusException;
 }

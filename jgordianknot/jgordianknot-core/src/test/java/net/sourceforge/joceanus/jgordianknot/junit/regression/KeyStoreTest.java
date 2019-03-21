@@ -16,6 +16,8 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jgordianknot.junit.regression;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.security.spec.KeySpec;
 
 import org.bouncycastle.asn1.ASN1Primitive;
@@ -50,6 +52,7 @@ import net.sourceforge.joceanus.jgordianknot.api.keystore.GordianKeyStoreEntry.G
 import net.sourceforge.joceanus.jgordianknot.api.keystore.GordianKeyStoreFactory;
 import net.sourceforge.joceanus.jgordianknot.api.mac.GordianMacFactory;
 import net.sourceforge.joceanus.jgordianknot.api.mac.GordianMacSpec;
+import net.sourceforge.joceanus.jgordianknot.api.zip.GordianZipWriteFile;
 import net.sourceforge.joceanus.jgordianknot.impl.core.keystore.GordianKeyStoreDocument;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
@@ -88,15 +91,28 @@ public class KeyStoreTest {
         final GordianKeyStoreFactory myFactory = FACTORY.getAsymmetricFactory().getKeyStoreFactory();
         final GordianKeyStore myStore = myFactory.createKeyStore();
 
-        /* Create a root certificate */
+        /* Create a root certificates */
         final GordianAsymKeySpec mySpec = GordianAsymKeySpec.ec(GordianDSAElliptic.SECT571K1);
         final X500Name myRootName = buildX500Name("Root Certificate");
         final GordianKeyStorePair myRoot = myStore.createRootKeyPair(mySpec, myRootName, "RootCert", DEF_PASSWORD);
+        final X500Name myRoot2Name = buildX500Name("Root Certificate 2");
+        final GordianKeyStorePair myRoot2 = myStore.createRootKeyPair(mySpec, myRoot2Name, "RootCert2", DEF_PASSWORD);
 
-        /* Create an intermediate */
-        final X500Name myInterName = buildX500Name("Intermediate Certificate");
+        /* Cross-sign theRoots */
         GordianKeyPairUsage myUsage = new GordianKeyPairUsage(GordianKeyPairUse.CERTIFICATE);
+        final GordianKeyStorePair myRootAlt = myStore.createAlternate(myRoot, myUsage, myRoot2, "RootCertAlt", DEF_PASSWORD);
+        final GordianKeyStorePair myRoot2Alt = myStore.createAlternate(myRoot2, myUsage, myRoot, "RootCert2Alt", DEF_PASSWORD);
+
+        /* Create intermediates */
+        final X500Name myInterName = buildX500Name("Intermediate Certificate");
         final GordianKeyStorePair myIntermediate = myStore.createKeyPair(mySpec, myInterName, myUsage, myRoot, "InterCert", DEF_PASSWORD);
+        final X500Name myInter2Name = buildX500Name("Intermediate Certificate 2");
+        final GordianKeyStorePair myIntermediate2 = myStore.createKeyPair(mySpec, myInter2Name, myUsage, myRoot2, "InterCert2", DEF_PASSWORD);
+
+        /* Cross-sign the intermediates */
+        myUsage = new GordianKeyPairUsage(GordianKeyPairUse.CERTIFICATE, GordianKeyPairUse.SIGNATURE);
+        final GordianKeyStorePair myIntermediateAlt = myStore.createAlternate(myIntermediate, myUsage, myRoot2, "InterCertAlt", DEF_PASSWORD);
+        final GordianKeyStorePair myIntermediate2Alt = myStore.createAlternate(myIntermediate2, myUsage, myRoot, "InterCert2Alt", DEF_PASSWORD);
 
         /* Create a signature keyPair */
         final X500Name mySignName = buildX500Name("Signing Certificate");
@@ -150,13 +166,21 @@ public class KeyStoreTest {
         Assertions.assertEquals(myMacKey, myMacKeyRec.getKey());
 
         /* Create keyStore documents */
-        final GordianKeyStoreDocument myDoc1 = new GordianKeyStoreDocument(myStore);
-        final GordianKeyStoreDocument myDoc2 = new GordianKeyStoreDocument(FACTORY, myDoc1.getDocument());
-        Assertions.assertEquals(myStore, myDoc2.getKeyStore());
+        final ByteArrayOutputStream myZipStream = new ByteArrayOutputStream();
+        myStore.storeToStream(myZipStream, DEF_PASSWORD);
+        final ByteArrayInputStream myInputStream = new ByteArrayInputStream(myZipStream.toByteArray());
+        final GordianKeyStore myStore2 = myFactory.loadKeyStore(myInputStream, DEF_PASSWORD);
+        Assertions.assertEquals(myStore, myStore2);
 
         /* delete the entries */
         myStore.deleteEntry("RootCert");
+        myStore.deleteEntry("RootCert2");
+        myStore.deleteEntry("RootCertAlt");
+        myStore.deleteEntry("RootCert2Alt");
         myStore.deleteEntry("InterCert");
+        myStore.deleteEntry("InterCert2");
+        myStore.deleteEntry("InterCertAlt");
+        myStore.deleteEntry("InterCert2Alt");
         myStore.deleteEntry("SigningCert");
         myStore.deleteEntry("AgreementCert");
         myStore.deleteEntry("EncryptCert");

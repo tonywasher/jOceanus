@@ -16,6 +16,11 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jgordianknot.api.keystore;
 
+import java.io.File;
+import java.io.InputStream;
+
+import net.sourceforge.joceanus.jtethys.OceanusException;
+
 /**
  * KeyStore Factory.
  */
@@ -25,4 +30,24 @@ public interface GordianKeyStoreFactory {
      * @return the keyStore
      */
     GordianKeyStore createKeyStore();
+
+    /**
+     * Load a keyStore from a File.
+     * @param pSource the file to load from
+     * @param pPassword the password
+     * @return the loaded keyStore
+     * @throws OceanusException on error
+     */
+    GordianKeyStore loadKeyStore(File pSource,
+                                 char[] pPassword) throws OceanusException;
+
+    /**
+     * Load a keyStore from an InputStream.
+     * @param pSource the stream to load from
+     * @param pPassword the password
+     * @return the loaded keyStore
+     * @throws OceanusException on error
+     */
+    GordianKeyStore loadKeyStore(InputStream pSource,
+                                 char[] pPassword) throws OceanusException;
 }

@@ -18,6 +18,8 @@ package net.sourceforge.joceanus.jgordianknot.api.zip;
 
 import java.io.InputStream;
 
+import org.w3c.dom.Document;
+
 import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetHash;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
@@ -51,4 +53,12 @@ public interface GordianZipReadFile {
      * @throws OceanusException on error
      */
     InputStream createInputStream(GordianZipFileEntry pFile) throws OceanusException;
+
+    /**
+     * Read an entry in the zip file and parse as an XML Document.
+     * @param pFile the file details for the new zip entry
+     * @return the parsed XML Document
+     * @throws OceanusException on error
+     */
+    Document readXMLDocument(GordianZipFileEntry pFile) throws OceanusException;
 }
