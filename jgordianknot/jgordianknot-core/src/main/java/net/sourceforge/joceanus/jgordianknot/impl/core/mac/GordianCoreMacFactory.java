@@ -102,7 +102,7 @@ public abstract class GordianCoreMacFactory
      * @return true/false
      */
     protected boolean validMacType(final GordianMacType pMacType) {
-        return pMacType != null && pMacType.validForRestriction(theFactory.isRestricted());
+        return pMacType != null && pMacType.validForKeyLength(theFactory.getKeyLength());
     }
 
     /**
@@ -260,7 +260,7 @@ public abstract class GordianCoreMacFactory
                 return true;
             case LEN_64:
             case LEN_128:
-                return !theFactory.isRestricted();
+                return GordianLength.LEN_256 == theFactory.getKeyLength();
             default:
                 return false;
         }

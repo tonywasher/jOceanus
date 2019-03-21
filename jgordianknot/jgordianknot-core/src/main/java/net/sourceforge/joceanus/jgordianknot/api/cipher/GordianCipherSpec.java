@@ -16,11 +16,15 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jgordianknot.api.cipher;
 
+import net.sourceforge.joceanus.jgordianknot.api.base.GordianIdSpec;
+import net.sourceforge.joceanus.jgordianknot.api.base.GordianLength;
+
 /**
  * Cipher Specification.
  * @param <T> the keyType
  */
-public abstract class GordianCipherSpec<T> {
+public abstract class GordianCipherSpec<T>
+        implements GordianIdSpec {
     /**
      * KeyType.
      */
@@ -55,10 +59,10 @@ public abstract class GordianCipherSpec<T> {
 
     /**
      * Obtain the IV length for the cipher.
-     * @param pRestricted is the cipher restricted?
+     * @param pKeyLen the keyLength
      * @return the IV length
      */
-    public abstract int getIVLength(boolean pRestricted);
+    public abstract int getIVLength(GordianLength pKeyLen);
 
     @Override
     public boolean equals(final Object pThat) {

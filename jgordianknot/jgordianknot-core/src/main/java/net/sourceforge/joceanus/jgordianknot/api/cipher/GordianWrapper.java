@@ -97,4 +97,25 @@ public interface GordianWrapper {
      */
     byte[] deriveBytes(GordianKey<GordianSymKeySpec> pKey,
                        byte[] pSecuredBytes) throws OceanusException;
+
+    /**
+     * Obtain wrapped size of a key.
+     * @return the wrapped length
+     */
+    int getKeyWrapLength();
+
+    /**
+     * Obtain wrapped size of a byte array of the given length.
+     * @param pDataLength the length of the byte array
+     * @return the wrapped length
+     */
+    int getDataWrapLength(int pDataLength);
+
+    /**
+     * Obtain wrapped size of the privateKey of a keyPair.
+     * @param pKeyPair the keyPair
+     * @return the wrapped length
+     * @throws OceanusException on error
+     */
+    int getPrivateKeyWrapLength(GordianKeyPair pKeyPair) throws OceanusException;
 }

@@ -250,7 +250,7 @@ public final class GordianMacSpec implements GordianKeySpec {
      * @return the MacSpec
      */
     public static GordianMacSpec kalynaMac() {
-        return GordianMacSpec.kalynaMac(GordianSymKeyType.KALYNA.getDefaultLength());
+        return GordianMacSpec.kalynaMac(GordianSymKeyType.KALYNA.getDefaultBlockLength());
     }
 
     /**
@@ -428,10 +428,10 @@ public final class GordianMacSpec implements GordianKeySpec {
 
     /**
      * Obtain the IV length.
-     * @param pRestricted is the mac restricted?
+     * @param pKeyLen the keyLength
      * @return the IV Length
      */
-    public int getIVLen(final boolean pRestricted) {
+    public int getIVLen(final GordianLength pKeyLen) {
         switch (theMacType) {
             case VMPC:
             case POLY1305:
@@ -449,7 +449,7 @@ public final class GordianMacSpec implements GordianKeySpec {
             case GOST:
                 return GordianLength.LEN_64.getByteLength();
             case ZUC:
-                return GordianStreamKeyType.ZUC.getIVLength(pRestricted);
+                return GordianStreamKeyType.ZUC.getIVLength(pKeyLen);
             default:
                 return 0;
         }
@@ -601,7 +601,7 @@ public final class GordianMacSpec implements GordianKeySpec {
         }
 
         /* Add kalynaMac */
-        for (final GordianLength myLength : GordianSymKeyType.KALYNA.getSupportedLengths()) {
+        for (final GordianLength myLength : GordianSymKeyType.KALYNA.getSupportedBlockLengths()) {
             myList.add(GordianMacSpec.kalynaMac(myLength));
         }
 

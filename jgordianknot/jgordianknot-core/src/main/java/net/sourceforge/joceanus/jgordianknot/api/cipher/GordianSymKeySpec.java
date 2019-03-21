@@ -57,7 +57,7 @@ public class GordianSymKeySpec implements GordianKeySpec {
      * @param pSymKeyType the symKeyType
      */
     public GordianSymKeySpec(final GordianSymKeyType pSymKeyType) {
-        this(pSymKeyType, pSymKeyType.getDefaultLength());
+        this(pSymKeyType, pSymKeyType.getDefaultBlockLength());
     }
 
     /**
@@ -361,7 +361,7 @@ public class GordianSymKeySpec implements GordianKeySpec {
             if (isValid) {
                 /* Load the name */
                 theName = theSymKeyType.toString();
-                if (theSymKeyType.hasMultipleLengths()) {
+                if (theSymKeyType.hasMultipleBlockLengths()) {
                     int myLen = theBlockLength.getLength();
                     if (GordianSymKeyType.RC5.equals(theSymKeyType)) {
                         myLen >>= 1;
@@ -419,7 +419,7 @@ public class GordianSymKeySpec implements GordianKeySpec {
         /* For each symKey type */
         for (final GordianSymKeyType myType : GordianSymKeyType.values()) {
             /* For each length */
-            for (final GordianLength myLength : myType.getSupportedLengths()) {
+            for (final GordianLength myLength : myType.getSupportedBlockLengths()) {
                 myList.add(new GordianSymKeySpec(myType, myLength));
             }
         }

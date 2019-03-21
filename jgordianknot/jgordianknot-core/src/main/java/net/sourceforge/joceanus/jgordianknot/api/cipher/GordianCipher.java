@@ -18,6 +18,7 @@ package net.sourceforge.joceanus.jgordianknot.api.cipher;
 
 import java.util.Arrays;
 
+import net.sourceforge.joceanus.jgordianknot.api.base.GordianLength;
 import net.sourceforge.joceanus.jgordianknot.api.key.GordianKey;
 import net.sourceforge.joceanus.jgordianknot.api.base.GordianKeySpec;
 import net.sourceforge.joceanus.jtethys.OceanusException;
@@ -40,10 +41,10 @@ public interface GordianCipher<T extends GordianKeySpec> {
     GordianCipherSpec<T> getCipherSpec();
 
     /**
-     * Is the cipher restricted?
-     * @return true/false
+     * Obtain the keyLength.
+     * @return the keyLength
      */
-    boolean isRestricted();
+    GordianLength getKeyLength();
 
     /**
      * Obtain the key.

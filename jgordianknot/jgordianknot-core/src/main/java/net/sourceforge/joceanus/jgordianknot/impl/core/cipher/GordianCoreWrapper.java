@@ -373,31 +373,19 @@ public class GordianCoreWrapper
                : INTEGRITY_VALUE2;
     }
 
-    /**
-     * Obtain wrapped size of a key.
-     * @return the wrapped length
-     */
+    @Override
     public int getKeyWrapLength() {
-        return getDataWrapLength(theFactory.getKeyLength() / Byte.SIZE);
+        return getDataWrapLength(theFactory.getKeyLength().getByteLength());
     }
 
-    /**
-     * Obtain wrapped size of a byte array of the given length.
-     * @param pDataLength the length of the byte array
-     * @return the wrapped length
-     */
+    @Override
     public int getDataWrapLength(final int pDataLength) {
         final GordianLength myBlockLen = getKeySpec().getBlockLength();
         return getKeyWrapLength(pDataLength, myBlockLen)
                 + getKeyWrapExpansion(myBlockLen);
     }
 
-    /**
-     * Obtain wrapped size of the privateKey of a keyPair.
-     * @param pKeyPair the keyPair
-     * @return the wrapped length
-     * @throws OceanusException on error
-     */
+    @Override
     public int getPrivateKeyWrapLength(final GordianKeyPair pKeyPair) throws OceanusException {
         /* Determine and check the keySpec */
         final GordianAsymFactory myAsym = theFactory.getAsymmetricFactory();

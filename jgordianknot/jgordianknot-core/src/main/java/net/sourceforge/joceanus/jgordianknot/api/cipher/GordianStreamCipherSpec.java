@@ -16,11 +16,15 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jgordianknot.api.cipher;
 
+import net.sourceforge.joceanus.jgordianknot.api.base.GordianIdSpec;
+import net.sourceforge.joceanus.jgordianknot.api.base.GordianLength;
+
 /**
  * The StreamCipherSpec class.
  */
 public class GordianStreamCipherSpec
-        extends GordianCipherSpec<GordianStreamKeyType> {
+        extends GordianCipherSpec<GordianStreamKeyType>
+        implements GordianIdSpec {
     /**
      * The Validity.
      */
@@ -51,12 +55,12 @@ public class GordianStreamCipherSpec
 
     @Override
     public boolean needsIV() {
-        return getKeyType().getIVLength(false) > 0;
+        return getKeyType().getIVLength(GordianLength.LEN_128) > 0;
     }
 
     @Override
-    public int getIVLength(final boolean pRestricted) {
-        return getKeyType().getIVLength(pRestricted);
+    public int getIVLength(final GordianLength pKeyLen) {
+        return getKeyType().getIVLength(pKeyLen);
     }
 
     /**

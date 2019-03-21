@@ -24,6 +24,7 @@ import org.bouncycastle.crypto.params.KeyParameter;
 import org.bouncycastle.crypto.params.ParametersWithIV;
 import org.bouncycastle.crypto.params.RC5Parameters;
 
+import net.sourceforge.joceanus.jgordianknot.api.base.GordianLength;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianSymCipherSpec;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianSymKeySpec;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianSymKeyType;
@@ -82,7 +83,7 @@ public final class BouncySymKeyCipher
         /* If we need an IV */
         if (needsIV()) {
             /* Create a random IV */
-            final int myLen = getCipherSpec().getIVLength(false);
+            final int myLen = getCipherSpec().getIVLength(GordianLength.LEN_128);
             myIV = new byte[myLen];
             getRandom().nextBytes(myIV);
         }

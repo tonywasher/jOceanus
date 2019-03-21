@@ -17,6 +17,8 @@
 package net.sourceforge.joceanus.jgordianknot.junit.regression;
 
 import java.io.BufferedInputStream;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -34,6 +36,7 @@ import org.junit.jupiter.api.DynamicNode;
 import org.junit.jupiter.api.DynamicTest;
 import org.junit.jupiter.api.TestFactory;
 
+import net.sourceforge.joceanus.jgordianknot.api.base.GordianLength;
 import net.sourceforge.joceanus.jgordianknot.api.factory.GordianFactory;
 import net.sourceforge.joceanus.jgordianknot.api.factory.GordianFactoryType;
 import net.sourceforge.joceanus.jgordianknot.api.factory.GordianParameters;
@@ -65,27 +68,28 @@ public class ZipFileTest {
     @TestFactory
     public Stream<DynamicNode> zipFileTests() throws OceanusException {
         /* Create tests */
-        Stream<DynamicNode> myStream = zipFileTests(false, GordianFactoryType.BC);
-        myStream = Stream.concat(myStream, zipFileTests(true, GordianFactoryType.BC));
-        myStream = Stream.concat(myStream, zipFileTests(false, GordianFactoryType.JCA));
-        return Stream.concat(myStream, zipFileTests(true, GordianFactoryType.JCA));
+        Stream<DynamicNode> myStream = zipFileTests(GordianLength.LEN_256, GordianFactoryType.BC);
+        myStream = Stream.concat(myStream, zipFileTests(GordianLength.LEN_192, GordianFactoryType.BC));
+        myStream = Stream.concat(myStream, zipFileTests(GordianLength.LEN_128, GordianFactoryType.BC));
+        myStream = Stream.concat(myStream, zipFileTests(GordianLength.LEN_256, GordianFactoryType.JCA));
+        myStream = Stream.concat(myStream, zipFileTests(GordianLength.LEN_192, GordianFactoryType.JCA));
+        return Stream.concat(myStream, zipFileTests(GordianLength.LEN_128, GordianFactoryType.JCA));
     }
 
     /**
      * Create the keySet test suite for a factory.
-     * @param pRestricted is the factory restricted
+     * @param pKeyLen the factory keyLength
      * @param pType the factoryType
      * @return the test stream
      * @throws OceanusException on error
      */
-    private Stream<DynamicNode> zipFileTests(final boolean pRestricted,
+    private Stream<DynamicNode> zipFileTests(final GordianLength pKeyLen,
                                              final GordianFactoryType pType) throws OceanusException {
         /* Create the factory */
-        final GordianFactory myFactory = GordianGenerator.createFactory(new GordianParameters(pRestricted, pType));
+        final GordianFactory myFactory = GordianGenerator.createFactory(new GordianParameters(pKeyLen, pType));
 
         /* Return the stream */
-        final String myName = pType.toString()
-                + (pRestricted ? "-Restricted" : "-Full");
+        final String myName = pType.toString() + "-" + pKeyLen;
         return Stream.of(DynamicContainer.dynamicContainer(myName, Stream.of(
                 DynamicTest.dynamicTest("standard", () -> testZipFile(myFactory, false)),
                 DynamicTest.dynamicTest("encrypted", () -> testZipFile(myFactory, true))
@@ -104,35 +108,33 @@ public class ZipFileTest {
         final String myHome = System.getProperty("user.home");
 
         /* Run the tests */
-        final File myZipFile = new File(myHome, pSecure
-                                                ? "TestEncZip" + GordianSecurityManager.SECUREZIPFILE_EXT
-                                                : "TestStdZip" + GordianSecurityManager.ZIPFILE_EXT);
         final File myDirectory = new File(myHome, "tester");
-        createZipFile(pFactory, myZipFile, myDirectory, pSecure);
+        final byte[] myZipFile = createZipFile(pFactory, myDirectory, pSecure);
         extractZipFile(pFactory, myZipFile, myDirectory);
     }
 
     /**
      * Create a Zip File of files in a directory.
      * @param pFactory the factory to use
-     * @param pZipFile the name of the zip file to create
      * @param pDirectory the directory to archive
      * @param bSecure encrypt the zip file (true/false)
+     * @return the in-memory ZipFile
      * @throws OceanusException on error
      */
-    private void createZipFile(final GordianFactory pFactory,
-                               final File pZipFile,
-                               final File pDirectory,
-                               final boolean bSecure) throws OceanusException {
+    private byte[] createZipFile(final GordianFactory pFactory,
+                                 final File pDirectory,
+                                 final boolean bSecure) throws OceanusException {
         /* Protect against exceptions */
-        try (GordianZipWriteFile myZipFile = createZipFile(pFactory, pZipFile, bSecure)) {
+        final ByteArrayOutputStream myZipStream = new ByteArrayOutputStream();
+        try (GordianZipWriteFile myZipFile = createZipFile(pFactory, myZipStream, bSecure)) {
             /* Make sure that we have a directory */
-            if (!pDirectory.isDirectory()) {
+            final File[] myFiles = pDirectory.listFiles();
+            if (!pDirectory.isDirectory() || myFiles == null) {
                 throw new GordianTestException("Invalid source directory");
             }
 
             /* Loop through the files in the directory */
-            for (File myFile : pDirectory.listFiles()) {
+            for (File myFile : myFiles) {
                 /* Skip directories */
                 if (myFile.isDirectory()) {
                     continue;
@@ -149,22 +151,25 @@ public class ZipFileTest {
                     throw new GordianTestException("Failed to create Zip File", e);
                 }
             }
-
         } catch (IOException e) {
             throw new GordianTestException("Failed to create Zip File", e);
         }
+
+
+        /* Return the ZipFile */
+        return myZipStream.toByteArray();
     }
 
     /**
      * Create a Zip File of files in a directory.
      * @param pFactory the factory to use
-     * @param pZipFile the name of the zip file to create
+     * @param pZipStream the output stream to write the ZipFile to
      * @param bSecure encrypt the zip file (true/false)
      * @return the new zip file
      * @throws OceanusException on error
      */
     private GordianZipWriteFile createZipFile(final GordianFactory pFactory,
-                                              final File pZipFile,
+                                              final OutputStream pZipStream,
                                               final boolean bSecure) throws OceanusException {
         /* Access ZipManager */
         final GordianZipFactory myZipMgr = pFactory.getZipFactory();
@@ -176,30 +181,31 @@ public class ZipFileTest {
             final GordianKeySetHash myHash = myKeySets.generateKeySetHash(DEF_PASSWORD.clone());
 
             /* Initialise the Zip file */
-            return myZipMgr.createZipFile(myHash, pZipFile);
+            return myZipMgr.createZipFile(myHash, pZipStream);
 
             /* else */
         } else {
             /* Just create a standard zip file */
-            return myZipMgr.createZipFile(pZipFile);
+            return myZipMgr.createZipFile(pZipStream);
         }
     }
 
     /**
      * Extract a Zip File and compare to a directory.
-     * @param pZipFile the name of the zip file to extract from
+     * @param pZipFile the in-memory Zip file
      * @param pDirectory the directory to compare against
      * @throws OceanusException on error
      */
     private void extractZipFile(final GordianFactory pFactory,
-                                final File pZipFile,
+                                final byte[] pZipFile,
                                 final File pDirectory) throws OceanusException {
         /* Access ZipManager */
         final GordianZipFactory myZipMgr = pFactory.getZipFactory();
         final GordianKeySetFactory myKeySets = pFactory.getKeySetFactory();
 
         /* Access the file */
-        final GordianZipReadFile myZipFile = myZipMgr.openZipFile(pZipFile);
+        final ByteArrayInputStream myInputStream = new ByteArrayInputStream(pZipFile);
+        final GordianZipReadFile myZipFile = myZipMgr.openZipFile(myInputStream);
 
         /* Check for security */
         final byte[] myHashBytes = myZipFile.getHashBytes();
@@ -211,7 +217,9 @@ public class ZipFileTest {
 
         /* Access the contents */
         final GordianZipFileContents myContents = myZipFile.getContents();
-        final List<File> myFiles = new ArrayList<>(Arrays.asList(pDirectory.listFiles()));
+        final File[] myDirFiles = pDirectory.listFiles();
+        Assertions.assertNotNull(myDirFiles, "Invalid directory");
+        final List<File> myFiles = new ArrayList<>(Arrays.asList(myDirFiles));
         myFiles.removeIf(File::isDirectory);
 
         /* Loop through the entries */
@@ -220,6 +228,7 @@ public class ZipFileTest {
             /* Access next entry */
             final GordianZipFileEntry myEntry = myIterator.next();
             final File myFile = findFileForEntry(myFiles, myEntry.getFileName());
+            Assertions.assertNotNull(myFile, "File not found");
 
             /* Protect against exceptions */
             try (InputStream myZipInput = myZipFile.createInputStream(myEntry);

@@ -18,6 +18,7 @@ package net.sourceforge.joceanus.jgordianknot.impl.core.cipher;
 
 import java.security.SecureRandom;
 
+import net.sourceforge.joceanus.jgordianknot.api.base.GordianLength;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianCipher;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianCipherFactory;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianCipherSpec;
@@ -56,9 +57,9 @@ public abstract class GordianCoreCipher<T extends GordianKeySpec>
     private GordianCoreKeyGenerator<T> theGenerator;
 
     /**
-     * Restricted.
+     * KeyLength.
      */
-    private final boolean isRestricted;
+    private final GordianLength theKeyLength;
 
     /**
      * The Random Generator.
@@ -86,7 +87,7 @@ public abstract class GordianCoreCipher<T extends GordianKeySpec>
         theKeyType = theCipherSpec.getKeyType();
         theRandom = pFactory.getRandomSource();
         theFactory = pFactory;
-        isRestricted = pFactory.isRestricted();
+        theKeyLength = pFactory.getKeyLength();
     }
 
     /**
@@ -113,12 +114,9 @@ public abstract class GordianCoreCipher<T extends GordianKeySpec>
         return theRandom.getRandom();
     }
 
-    /**
-     * Is the cipher restricted?
-     * @return true/false
-     */
-    public boolean isRestricted() {
-        return isRestricted;
+    @Override
+    public GordianLength getKeyLength() {
+        return theKeyLength;
     }
 
     /**

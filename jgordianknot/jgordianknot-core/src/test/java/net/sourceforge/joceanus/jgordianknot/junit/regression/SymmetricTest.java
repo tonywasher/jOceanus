@@ -27,6 +27,8 @@ import org.junit.jupiter.api.DynamicNode;
 import org.junit.jupiter.api.DynamicTest;
 import org.junit.jupiter.api.TestFactory;
 
+import net.sourceforge.joceanus.jgordianknot.api.base.GordianIdSpec;
+import net.sourceforge.joceanus.jgordianknot.api.base.GordianLength;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianAADCipher;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianCipher;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianCipherFactory;
@@ -126,23 +128,25 @@ public class SymmetricTest {
     @TestFactory
     public Stream<DynamicNode> symmetricTests() throws OceanusException {
         /* Create tests */
-        Stream<DynamicNode> myStream = symmetricTests(false, GordianFactoryType.BC);
-        myStream = Stream.concat(myStream, symmetricTests(true, GordianFactoryType.BC));
-        myStream = Stream.concat(myStream, symmetricTests(false, GordianFactoryType.JCA));
-        return Stream.concat(myStream, symmetricTests(true, GordianFactoryType.JCA));
+        Stream<DynamicNode> myStream = symmetricTests(GordianLength.LEN_256, GordianFactoryType.BC);
+        myStream = Stream.concat(myStream, symmetricTests(GordianLength.LEN_192, GordianFactoryType.BC));
+        myStream = Stream.concat(myStream, symmetricTests(GordianLength.LEN_128, GordianFactoryType.BC));
+        myStream = Stream.concat(myStream, symmetricTests(GordianLength.LEN_256, GordianFactoryType.JCA));
+        myStream = Stream.concat(myStream, symmetricTests(GordianLength.LEN_192, GordianFactoryType.JCA));
+        return Stream.concat(myStream, symmetricTests(GordianLength.LEN_128, GordianFactoryType.JCA));
     }
 
     /**
      * Create the symmetric test suite for a factory.
-     * @param pRestricted is the factory restricted
+     * @param pKeyLen the factory keyLength
      * @param pType the factoryType
      * @return the test stream
      * @throws OceanusException on error
      */
-    private Stream<DynamicNode> symmetricTests(final boolean pRestricted,
+    private Stream<DynamicNode> symmetricTests(final GordianLength pKeyLen,
                                                final GordianFactoryType pType) throws OceanusException {
         /* Create the factory */
-        final GordianFactory myFactory = GordianGenerator.createFactory(new GordianParameters(pRestricted, pType));
+        final GordianFactory myFactory = GordianGenerator.createFactory(new GordianParameters(pKeyLen, pType));
 
         /* Create an empty stream */
         Stream<DynamicNode> myStream = Stream.empty();
@@ -178,8 +182,7 @@ public class SymmetricTest {
         }
 
         /* Return the stream */
-        final String myName = pType.toString()
-                + (pRestricted ? "-Restricted" : "-Full");
+        final String myName = pType.toString() + "-" + pKeyLen;
         myStream = Stream.of(DynamicContainer.dynamicContainer(myName, myStream));
         return myStream;
     }
@@ -583,23 +586,22 @@ public class SymmetricTest {
      * @param pSpec the Spec to check
      * @throws OceanusException on error
      */
-    private void checkExternalId(final FactorySpec<?> pSpec) throws OceanusException {
+    private void checkExternalId(final FactorySpec<? extends GordianIdSpec> pSpec) throws OceanusException {
         /* Access the factories */
         final GordianKeySetFactory myKeySets = pSpec.getFactory().getKeySetFactory();
         final GordianKnuthObfuscater myKnuth = myKeySets.getObfuscater();
-        final Class<?> myClazz = pSpec.getSpec().getClass();
 
         /* Check standard obfuscation */
         int myId = myKnuth.deriveExternalIdFromType(pSpec.getSpec());
-        Object myResult = myKnuth.deriveTypeFromExternalId(myId, myClazz);
+        GordianIdSpec myResult = myKnuth.deriveTypeFromExternalId(myId);
         Assertions.assertEquals(pSpec.getSpec(), myResult,
-                "Standard obfuscation for " + myClazz.getSimpleName() + ":" + pSpec);
+                "Standard obfuscation for " + pSpec.getClass().getSimpleName() + ":" + pSpec);
 
         final int myOffset = 205;
         myId = myKnuth.deriveExternalIdFromType(pSpec.getSpec(), myOffset);
-        myResult = myKnuth.deriveTypeFromExternalId(myId, myOffset, myClazz);
+        myResult = myKnuth.deriveTypeFromExternalId(myId, myOffset);
         Assertions.assertEquals(pSpec.getSpec(), myResult,
-                "Offset obfuscation for " + myClazz.getSimpleName() + ":" + pSpec);
+                "Offset obfuscation for " + pSpec.getClass().getSimpleName() + ":" + pSpec);
     }
 
     /**

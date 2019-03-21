@@ -23,7 +23,6 @@ import java.util.Map;
 import org.bouncycastle.asn1.ASN1Integer;
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
 import org.bouncycastle.asn1.DERNull;
-import org.bouncycastle.asn1.bc.BCObjectIdentifiers;
 import org.bouncycastle.asn1.edec.EdECObjectIdentifiers;
 import org.bouncycastle.asn1.gm.GMObjectIdentifiers;
 import org.bouncycastle.asn1.nist.NISTObjectIdentifiers;
@@ -45,6 +44,7 @@ import net.sourceforge.joceanus.jgordianknot.api.key.GordianKeyPair;
 import net.sourceforge.joceanus.jgordianknot.api.sign.GordianSignatureFactory;
 import net.sourceforge.joceanus.jgordianknot.api.sign.GordianSignatureSpec;
 import net.sourceforge.joceanus.jgordianknot.api.sign.GordianSignatureType;
+import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianCoreFactory;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianDataException;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
@@ -55,7 +55,7 @@ public class GordianSignatureAlgId {
     /**
      *  Base our signatures off bouncyCastle.
      */
-    private static final ASN1ObjectIdentifier BASEOID = BCObjectIdentifiers.bc.branch("100");
+    private static final ASN1ObjectIdentifier SIGOID = GordianCoreFactory.BASEOID.branch("1");
 
     /**
      * Map of SignatureSpec to Identifier.
@@ -84,16 +84,16 @@ public class GordianSignatureAlgId {
 
     /**
      * Constructor.
-     * @param pFactory the factory
+     * @param pFactory the asymmetric factory
      */
-    GordianSignatureAlgId(final GordianSignatureFactory pFactory) {
+    GordianSignatureAlgId(final GordianCoreFactory pFactory) {
         /* Create the maps */
         theSpecMap = new HashMap<>();
         theSpecSubTypeMap = new HashMap<>();
         theIdentifierMap = new HashMap<>();
 
         /* Access the asymFactory and digests */
-        theFactory = pFactory;
+        theFactory = pFactory.getAsymmetricFactory().getSignatureFactory();
         theDigests = GordianDigestSpec.listAll();
 
         /* Populate with the public standards */
@@ -126,8 +126,8 @@ public class GordianSignatureAlgId {
      * @param pKeyPair the keyPair
      * @return the Identifier
      */
-    AlgorithmIdentifier getIdentifierForSpecAndKeyPair(final GordianSignatureSpec pSpec,
-                                                       final GordianKeyPair pKeyPair) {
+    public AlgorithmIdentifier getIdentifierForSpecAndKeyPair(final GordianSignatureSpec pSpec,
+                                                              final GordianKeyPair pKeyPair) {
         /* If we need to use the subType */
         if (pSpec.getAsymKeyType().subTypeForSignatures()) {
             /* Look up in the subKey map */
@@ -147,7 +147,7 @@ public class GordianSignatureAlgId {
      * @return the signatureSpec
      * @throws OceanusException on error
      */
-    GordianSignatureSpec getSpecForIdentifier(final AlgorithmIdentifier pIdentifier) throws OceanusException {
+    public GordianSignatureSpec getSpecForIdentifier(final AlgorithmIdentifier pIdentifier) throws OceanusException {
         final GordianSignatureSpec mySpec = theIdentifierMap.get(pIdentifier);
         if (mySpec == null) {
             throw new GordianDataException("Invalid identifier " + pIdentifier);
@@ -397,7 +397,7 @@ public class GordianSignatureAlgId {
     private void addSignature(final GordianSignatureSpec pSigSpec) {
         /* Create a branch for signatures based on the AsymKeyType */
         final GordianAsymKeyType myKeyType = pSigSpec.getAsymKeyType();
-        ASN1ObjectIdentifier myId = BASEOID.branch(Integer.toString(myKeyType.ordinal() + 1));
+        ASN1ObjectIdentifier myId = SIGOID.branch(Integer.toString(myKeyType.ordinal() + 1));
 
         /* Create a branch for signatures based on the SignatureType */
         final GordianSignatureType mySigType = pSigSpec.getSignatureType();

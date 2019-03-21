@@ -689,8 +689,8 @@ public class AnubisEngine implements BlockCipher {
         /* Determine keySize */
         byte[] keyBytes = ((KeyParameter) pParameters).getKey();
         int keyBitSize = keyBytes.length * Byte.SIZE;
-        if (keyBitSize != 128 && keyBitSize != 256) {
-            throw new IllegalArgumentException("KeyBitSize must be 128 or 256");
+        if (keyBitSize != 128 && keyBitSize != 192 && keyBitSize != 256) {
+            throw new IllegalArgumentException("KeyBitSize must be 128, 192 or 256");
         }
 
         /* Record parameters */

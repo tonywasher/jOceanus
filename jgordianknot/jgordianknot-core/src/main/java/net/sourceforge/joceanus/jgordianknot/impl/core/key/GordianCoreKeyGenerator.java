@@ -77,7 +77,7 @@ public abstract class GordianCoreKeyGenerator<T extends GordianKeySpec>
         theFactory = pFactory;
 
         /* Cache some values */
-        theKeyLength = pFactory.getKeyLength();
+        theKeyLength = pFactory.getKeyLength().getLength();
         theRandom = pFactory.getRandomSource();
     }
 

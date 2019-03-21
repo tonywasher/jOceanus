@@ -233,11 +233,11 @@ public class BouncyCipherFactory
     private StreamCipher getBCStreamCipher(final GordianStreamKeyType pKeyType) throws OceanusException {
         switch (pKeyType) {
             case HC:
-                return getFactory().isRestricted()
+                return GordianLength.LEN_128 == getFactory().getKeyLength()
                        ? new HC128Engine()
                        : new HC256Engine();
             case CHACHA:
-                return getFactory().isRestricted()
+                return GordianLength.LEN_128 == getFactory().getKeyLength()
                        ? new ChaChaEngine()
                        : new ChaCha7539Engine();
             case XCHACHA20:
@@ -261,7 +261,7 @@ public class BouncyCipherFactory
             case SNOW3G:
                 return new Snow3GEngine();
             case ZUC:
-                return getFactory().isRestricted()
+                return GordianLength.LEN_128 == getFactory().getKeyLength()
                        ? new Zuc128Engine()
                        : new Zuc256Engine();
             default:

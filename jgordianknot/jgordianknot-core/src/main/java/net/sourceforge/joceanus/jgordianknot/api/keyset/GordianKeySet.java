@@ -80,6 +80,22 @@ public interface GordianKeySet {
                                                        T pKeyType) throws OceanusException;
 
     /**
+     * secure KeySet.
+     * @param pKeySetToSecure the keySet to secure
+     * @return the securedKeySet
+     * @throws OceanusException on error
+     */
+    byte[] secureKeySet(GordianKeySet pKeySetToSecure) throws OceanusException;
+
+    /**
+     * derive KeySet.
+     * @param pSecuredKeySet the secured keySet
+     * @return the derived keySet
+     * @throws OceanusException on error
+     */
+    GordianKeySet deriveKeySet(byte[] pSecuredKeySet) throws OceanusException;
+
+    /**
      * secure privateKey.
      * @param pKeyPair the keyPair to secure
      * @return the securedPrivateKey
@@ -96,6 +112,42 @@ public interface GordianKeySet {
      */
     GordianKeyPair deriveKeyPair(X509EncodedKeySpec pPublicKeySpec,
                                  byte[] pSecuredPrivateKey) throws OceanusException;
+
+    /**
+     * Encryption length.
+     *
+     * @param pDataLength the length of data to be encrypted
+     * @return the length of encrypted data
+     */
+    int getEncryptionLength(int pDataLength);
+
+    /**
+     * Obtain wrapped size of a key.
+     * @return the wrapped length
+     */
+    int getKeyWrapLength();
+
+    /**
+     * Obtain wrapped size of a byte array of the given length.
+     * @param pDataLength the length of the byte array
+     * @return the wrapped length
+     */
+    int getDataWrapLength(int pDataLength);
+
+    /**
+     * Obtain wrapped size of the privateKey of a keyPair.
+     * @param pKeyPair the keyPair
+     * @return the wrapped length
+     * @throws OceanusException on error
+     */
+    int getPrivateKeyWrapLength(GordianKeyPair pKeyPair) throws OceanusException;
+
+    /**
+     * Obtain the keySet wrap length.
+     * @return the length
+     * @throws OceanusException on error
+     */
+    int getKeySetWrapLength() throws OceanusException;
 
     /**
      * Declare symmetricKey.

@@ -41,6 +41,11 @@ public class BlockCipherTest {
     private static final String KEY128 = "000102030405060708090a0b0c0d0e0f";
 
     /**
+     * The 192 byte key.
+     */
+    private static final String KEY192 = "000102030405060708090a0b0c0d0e0f1011121314151617";
+
+    /**
      * The 256 byte key.
      */
     private static final String KEY256 = "000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f";
@@ -61,11 +66,13 @@ public class BlockCipherTest {
         return Stream.of(DynamicContainer.dynamicContainer("BlockCiphers", Stream.of(
                 DynamicContainer.dynamicContainer("Anubis", Stream.of(
                         DynamicTest.dynamicTest("128", () -> new Anubis128Test().testTheCipher()),
+                        DynamicTest.dynamicTest("192", () -> new Anubis192Test().testTheCipher()),
                         DynamicTest.dynamicTest("256", () -> new Anubis256Test().testTheCipher())
                 )),
                 DynamicContainer.dynamicContainer("MARS", Stream.of(
-                    DynamicTest.dynamicTest("128", () -> new MARS128Test().testTheCipher()),
-                    DynamicTest.dynamicTest("256", () -> new MARS256Test().testTheCipher())
+                        DynamicTest.dynamicTest("128", () -> new MARS128Test().testTheCipher()),
+                        DynamicTest.dynamicTest("192", () -> new MARS192Test().testTheCipher()),
+                        DynamicTest.dynamicTest("256", () -> new MARS256Test().testTheCipher())
                 ))
         )));
     }
@@ -124,6 +131,25 @@ public class BlockCipherTest {
     }
 
     /**
+     * Anubis192.
+     */
+    static class Anubis192Test {
+        /**
+         * Expected results.
+         */
+        private static final String EXPECTED =
+                "213c3d791c6d403d9e9288fce3f61794";
+
+        /**
+         * Test cipher.
+         * @throws OceanusException on error
+         */
+        void testTheCipher() throws OceanusException {
+            testCipher(new AnubisEngine(), KEY192, TESTDATA, EXPECTED);
+        }
+    }
+
+    /**
      * Anubis256.
      */
     static class Anubis256Test {
@@ -158,6 +184,25 @@ public class BlockCipherTest {
          */
         void testTheCipher() throws OceanusException {
             testCipher(new MARSEngine(), KEY128, TESTDATA, EXPECTED);
+        }
+    }
+
+    /**
+     * MARS128.
+     */
+    static class MARS192Test {
+        /**
+         * Expected results.
+         */
+        private static final String EXPECTED =
+                "98fde4ef2eef3386bf81b9434aa8b6dd";
+
+        /**
+         * Test cipher.
+         * @throws OceanusException on error
+         */
+        void testTheCipher() throws OceanusException {
+            testCipher(new MARSEngine(), KEY192, TESTDATA, EXPECTED);
         }
     }
 

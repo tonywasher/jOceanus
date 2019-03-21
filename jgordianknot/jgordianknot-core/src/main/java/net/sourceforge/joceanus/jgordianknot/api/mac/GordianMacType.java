@@ -18,6 +18,8 @@ package net.sourceforge.joceanus.jgordianknot.api.mac;
 
 import org.bouncycastle.jcajce.provider.asymmetric.GOST;
 
+import net.sourceforge.joceanus.jgordianknot.api.base.GordianLength;
+
 /**
  * Mac types. Available algorithms.
  */
@@ -126,17 +128,20 @@ public enum GordianMacType {
     }
 
     /**
-     * Is this MacType valid for restriction?
-     * @param pRestricted true/false
+     * Is this MacType valid for keyLength?
+     * @param pKeyLen the keyLength
      * @return true/false
      */
-    public boolean validForRestriction(final boolean pRestricted) {
+    public boolean validForKeyLength(final GordianLength pKeyLen) {
         switch (this) {
             case POLY1305:
             case GOST:
-                return !pRestricted;
+                return GordianLength.LEN_256 == pKeyLen;
+            case ZUC:
+            case KALYNA:
+                return GordianLength.LEN_192 != pKeyLen;
             case SIPHASH:
-                return pRestricted;
+                return GordianLength.LEN_128 == pKeyLen;
             default:
                 return true;
         }

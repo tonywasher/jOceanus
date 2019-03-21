@@ -18,6 +18,9 @@ package net.sourceforge.joceanus.jgordianknot.impl.core.base;
 
 import java.security.SecureRandom;
 
+import org.bouncycastle.asn1.ASN1ObjectIdentifier;
+import org.bouncycastle.asn1.bc.BCObjectIdentifiers;
+
 import net.sourceforge.joceanus.jgordianknot.api.base.GordianLength;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianCipherFactory;
 import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigestFactory;
@@ -35,19 +38,14 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
 public abstract class GordianCoreFactory
     implements GordianFactory, GordianFactoryGenerator {
     /**
+     *  Base our ids off bouncyCastle.
+     */
+    public static final ASN1ObjectIdentifier BASEOID = BCObjectIdentifiers.bc.branch("100");
+
+    /**
      * RC5 rounds.
      */
     public static final int RC5_ROUNDS = 12;
-
-    /**
-     * Restricted key length.
-     */
-    private static final int SMALL_KEYLEN = GordianLength.LEN_128.getLength();
-
-    /**
-     * Unlimited key length.
-     */
-    protected static final int BIG_KEYLEN = GordianLength.LEN_256.getLength();
 
     /**
      * The number of seed bytes.
@@ -134,8 +132,8 @@ public abstract class GordianCoreFactory
     }
 
     @Override
-    public boolean isRestricted() {
-        return theParameters.useRestricted();
+    public GordianLength getKeyLength() {
+        return theParameters.getKeyLength();
     }
 
     /**
@@ -160,25 +158,6 @@ public abstract class GordianCoreFactory
      */
     public byte[] getSecurityPhrase() {
         return theParameters.getSecurityPhrase();
-    }
-
-    /**
-     * Obtain keyLength.
-     * @param isRestricted is the factory restricted?
-     * @return the keyLength
-     */
-    public static int getKeyLength(final boolean isRestricted) {
-        return isRestricted
-               ? SMALL_KEYLEN
-               : BIG_KEYLEN;
-    }
-
-    /**
-     * Obtain keyLength.
-     * @return the keyLength
-     */
-    public int getKeyLength() {
-        return getKeyLength(isRestricted());
     }
 
     @Override

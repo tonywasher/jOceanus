@@ -40,6 +40,7 @@ import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyXMSSAsymKey.BouncyXMS
 import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyXMSSAsymKey.BouncyXMSSMTKeyPairGenerator;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianDataException;
 import net.sourceforge.joceanus.jgordianknot.impl.core.keypair.GordianCoreAsymFactory;
+import net.sourceforge.joceanus.jgordianknot.impl.core.keystore.GordianCoreKeyStoreFactory;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
@@ -68,6 +69,7 @@ public class BouncyAsymFactory
         setSignatureFactory(new BouncySignatureFactory(pFactory));
         setAgreementFactory(new BouncyAgreementFactory(pFactory));
         setEncryptorFactory(new BouncyEncryptorFactory(pFactory));
+        setKeyStoreFactory(new GordianCoreKeyStoreFactory(this));
     }
 
     @Override

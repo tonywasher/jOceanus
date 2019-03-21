@@ -193,27 +193,27 @@ public enum GordianSymKeyType {
     }
 
     /**
-     * Obtain default length.
+     * Obtain default block length.
      * @return the default length
      */
-    public GordianLength getDefaultLength() {
+    public GordianLength getDefaultBlockLength() {
         return theLengths[0];
     }
 
     /**
-     * Obtain supported lengths.
+     * Obtain supported block lengths.
      * @return the supported lengths (first is default)
      */
-    public GordianLength[] getSupportedLengths() {
+    public GordianLength[] getSupportedBlockLengths() {
         return theLengths;
     }
 
     /**
-     * is length valid?
+     * is block length valid?
      * @param pLength the length
      * @return true/false
      */
-    public boolean isLengthValid(final GordianLength pLength) {
+    public boolean isBlockLengthValid(final GordianLength pLength) {
         for (final GordianLength myLength : theLengths) {
             if (myLength.equals(pLength)) {
                 return true;
@@ -223,25 +223,25 @@ public enum GordianSymKeyType {
     }
 
     /**
-     * Does this KeyType have multiple lengths?
+     * Does this KeyType have multiple block lengths?
      * @return true/false
      */
-    public boolean hasMultipleLengths() {
+    public boolean hasMultipleBlockLengths() {
         return theLengths.length > 1;
     }
 
     /**
-     * Is this KeyType valid for restriction?
-     * @param pRestricted true/false
+     * Is this KeyType valid for keyLength?
+     * @param pKeyLen the key length
      * @return true/false
      */
-    public boolean validForRestriction(final boolean pRestricted) {
+    public boolean validForKeyLength(final GordianLength pKeyLen) {
         switch (this) {
             case THREEFISH:
             case GOST:
             case KUZNYECHIK:
             case SHACAL2:
-                return !pRestricted;
+                return GordianLength.LEN_256 == pKeyLen;
             case SM4:
             case SEED:
             case NOEKEON:
@@ -251,8 +251,11 @@ public enum GordianSymKeyType {
             case TEA:
             case XTEA:
             case IDEA:
+                return GordianLength.LEN_128 == pKeyLen;
             case DESEDE:
-                return pRestricted;
+                return GordianLength.LEN_256 != pKeyLen;
+            case KALYNA:
+                return GordianLength.LEN_192 != pKeyLen;
             default:
                 return true;
         }

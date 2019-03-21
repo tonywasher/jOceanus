@@ -18,6 +18,9 @@
  * GordianKnot core.
  */
 module net.sourceforge.joceanus.jgordianknot.core {
+    /* Java libraries */
+    requires java.xml;
+
     /* External libraries */
     requires org.bouncycastle.provider;
 
@@ -35,6 +38,7 @@ module net.sourceforge.joceanus.jgordianknot.core {
     exports net.sourceforge.joceanus.jgordianknot.api.impl;
     exports net.sourceforge.joceanus.jgordianknot.api.key;
     exports net.sourceforge.joceanus.jgordianknot.api.keyset;
+    exports net.sourceforge.joceanus.jgordianknot.api.keystore;
     exports net.sourceforge.joceanus.jgordianknot.api.mac;
     exports net.sourceforge.joceanus.jgordianknot.api.random;
     exports net.sourceforge.joceanus.jgordianknot.api.sign;

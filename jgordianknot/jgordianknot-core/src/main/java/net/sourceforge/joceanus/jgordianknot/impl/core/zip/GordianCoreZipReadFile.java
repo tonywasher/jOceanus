@@ -17,13 +17,21 @@
 package net.sourceforge.joceanus.jgordianknot.impl.core.zip;
 
 import java.io.BufferedInputStream;
-import java.io.File;
-import java.io.FileInputStream;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Arrays;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
+
+import javax.xml.XMLConstants;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+
+import org.w3c.dom.Document;
+import org.xml.sax.SAXException;
 
 import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySet;
 import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetHash;
@@ -60,9 +68,9 @@ public class GordianCoreZipReadFile
     private GordianCoreZipFileContents theContents;
 
     /**
-     * The name of the Zip file.
+     * The zip file contents.
      */
-    private File theZipFile;
+    private byte[] theZipFile;
 
     /**
      * KeySet for this zip file.
@@ -76,17 +84,25 @@ public class GordianCoreZipReadFile
 
     /**
      * Constructor.
-     * @param pFile the file to read
+     * @param pInputStream the input stream to read
      * @throws OceanusException on error
      */
-    GordianCoreZipReadFile(final File pFile) throws OceanusException {
+    GordianCoreZipReadFile(final InputStream pInputStream) throws OceanusException {
         /* Protect against exceptions */
-        try (FileInputStream myInFile = new FileInputStream(pFile);
-             BufferedInputStream myInBuffer = new BufferedInputStream(myInFile);
-             ZipInputStream myHdrStream = new ZipInputStream(myInBuffer)) {
-            /* Store the zipFile name */
-            theZipFile = new File(pFile.getPath());
+        try (BufferedInputStream myInBuffer = new BufferedInputStream(pInputStream);
+             ByteArrayOutputStream myOutBuffer = new ByteArrayOutputStream()) {
+            /* Read the Zip file into memory */
+            myInBuffer.transferTo(myOutBuffer);
+            theZipFile = myOutBuffer.toByteArray();
 
+            /* Handle exceptions */
+        } catch (IOException e) {
+            throw new GordianIOException("Exception accessing Zip file", e);
+        }
+
+        /* Protect against exceptions */
+        try (ByteArrayInputStream myInBuffer = new ByteArrayInputStream(theZipFile);
+             ZipInputStream myHdrStream = new ZipInputStream(myInBuffer)) {
             /* Create the file contents */
             theContents = new GordianCoreZipFileContents();
 
@@ -222,6 +238,26 @@ public class GordianCoreZipReadFile
     }
 
     @Override
+    public Document readXMLDocument(final GordianZipFileEntry pFile) throws OceanusException {
+        /* Access the entry as an input stream */
+        try (InputStream myInputStream = createInputStream(pFile)) {
+            /* Create a Document builder */
+            final DocumentBuilderFactory myFactory = DocumentBuilderFactory.newInstance();
+            myFactory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
+            final DocumentBuilder myBuilder = myFactory.newDocumentBuilder();
+
+            /* Build the document from the input stream */
+            return myBuilder.parse(myInputStream);
+
+            /* Catch exceptions */
+        } catch (IOException
+                | ParserConfigurationException
+                | SAXException e) {
+            throw new GordianIOException("Failed to parse Document", e);
+        }
+    }
+
+    @Override
     public InputStream createInputStream(final GordianZipFileEntry pFile) throws OceanusException {
         /* Check that entry belongs to this zip file */
         if (!pFile.getParent().equals(theContents)) {
@@ -236,8 +272,7 @@ public class GordianCoreZipReadFile
         final GordianCoreZipFileEntry myFile = (GordianCoreZipFileEntry) pFile;
         try {
             /* Open the zip file for reading */
-            final FileInputStream myInFile = new FileInputStream(theZipFile);
-            final BufferedInputStream myInBuffer = new BufferedInputStream(myInFile);
+            final ByteArrayInputStream myInBuffer = new ByteArrayInputStream(theZipFile);
             myZipFile = new ZipInputStream(myInBuffer);
 
             /* Access the name of the file entry */
@@ -245,16 +280,13 @@ public class GordianCoreZipReadFile
             ZipEntry myEntry;
 
             /* Loop through the Zip file entries */
-            for (;;) {
+            do {
                 /* Read the entry */
                 myEntry = myZipFile.getNextEntry();
 
                 /* Break if we reached EOF or found the correct entry */
-                if (myEntry == null
-                        || myEntry.getName().compareTo(myName) == 0) {
-                    break;
-                }
-            }
+            } while (myEntry != null
+                    && myEntry.getName().compareTo(myName) != 0);
 
             /* Handle entry not found */
             if (myEntry == null) {

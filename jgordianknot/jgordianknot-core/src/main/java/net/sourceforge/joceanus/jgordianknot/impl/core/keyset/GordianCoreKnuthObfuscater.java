@@ -18,6 +18,7 @@ package net.sourceforge.joceanus.jgordianknot.impl.core.keyset;
 
 import java.math.BigInteger;
 
+import net.sourceforge.joceanus.jgordianknot.api.base.GordianIdSpec;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianStreamCipherSpec;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianStreamKeyType;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianSymCipherSpec;
@@ -161,13 +162,13 @@ public class GordianCoreKnuthObfuscater
     }
 
     @Override
-    public int deriveExternalIdFromType(final Object pType,
+    public int deriveExternalIdFromType(final GordianIdSpec pType,
                                         final int pAdjustment) throws OceanusException {
         return knuthEncodeInteger(deriveEncodedIdFromType(pType), pAdjustment);
     }
 
     @Override
-    public int deriveExternalIdFromType(final Object pType) throws OceanusException {
+    public int deriveExternalIdFromType(final GordianIdSpec pType) throws OceanusException {
         return knuthEncodeInteger(deriveEncodedIdFromType(pType));
     }
 
@@ -178,70 +179,70 @@ public class GordianCoreKnuthObfuscater
      * @return the externalId
      * @throws OceanusException on error
      */
-    private <T> int deriveEncodedIdFromType(final T pType) throws OceanusException {
+    private <T extends GordianIdSpec> int deriveEncodedIdFromType(final T pType) throws OceanusException {
         if (pType instanceof GordianDigestSpec) {
-            return theIdManager.deriveEncodedIdFromDigestSpec((GordianDigestSpec) pType);
+            final int myId = theIdManager.deriveEncodedIdFromDigestSpec((GordianDigestSpec) pType);
+            return GordianIdMarker.DIGEST.applyMarker(myId);
         }
         if (pType instanceof GordianSymCipherSpec) {
-            return theIdManager.deriveEncodedIdFromCipherSpec((GordianSymCipherSpec) pType);
+            final int myId = theIdManager.deriveEncodedIdFromCipherSpec((GordianSymCipherSpec) pType);
+            return GordianIdMarker.SYMCIPHER.applyMarker(myId);
         }
         if (pType instanceof GordianStreamCipherSpec) {
-            return theIdManager.deriveEncodedIdFromCipherSpec((GordianStreamCipherSpec) pType);
+            final int myId = theIdManager.deriveEncodedIdFromCipherSpec((GordianStreamCipherSpec) pType);
+            return GordianIdMarker.STREAMCIPHER.applyMarker(myId);
         }
         if (pType instanceof GordianMacSpec) {
-            return theIdManager.deriveEncodedIdFromMacSpec((GordianMacSpec) pType);
+            final int myId = theIdManager.deriveEncodedIdFromMacSpec((GordianMacSpec) pType);
+            return GordianIdMarker.MACKEY.applyMarker(myId);
         }
         if (pType instanceof GordianSymKeySpec) {
-            return theIdManager.deriveEncodedIdFromSymKeySpec((GordianSymKeySpec) pType);
+            final int myId = theIdManager.deriveEncodedIdFromSymKeySpec((GordianSymKeySpec) pType);
+            return GordianIdMarker.SYMKEY.applyMarker(myId);
         }
         if (pType instanceof GordianStreamKeyType) {
-            return theIdManager.deriveEncodedIdFromStreamKeyType((GordianStreamKeyType) pType);
+            final int myId = theIdManager.deriveEncodedIdFromStreamKeyType((GordianStreamKeyType) pType);
+            return GordianIdMarker.STREAMKEY.applyMarker(myId);
         }
         throw new GordianDataException("Invalid type: " + pType.getClass().getCanonicalName());
     }
 
     @Override
-    public <T> T deriveTypeFromExternalId(final int pId,
-                                          final int pAdjustment,
-                                          final Class<T> pClazz) throws OceanusException {
-        return deriveTypeFromEncodedId(knuthDecodeInteger(pId, pAdjustment), pClazz);
+    public GordianIdSpec deriveTypeFromExternalId(final int pId,
+                                                  final int pAdjustment) throws OceanusException {
+        return deriveTypeFromEncodedId(knuthDecodeInteger(pId, pAdjustment));
     }
 
     @Override
-    public <T> T deriveTypeFromExternalId(final int pId,
-                                          final Class<T> pClazz) throws OceanusException {
-        return deriveTypeFromEncodedId(knuthDecodeInteger(pId), pClazz);
+    public GordianIdSpec deriveTypeFromExternalId(final int pId) throws OceanusException {
+        return deriveTypeFromEncodedId(knuthDecodeInteger(pId));
     }
 
     /**
      * Obtain Type from external Id.
-     * @param <T> the type class
      * @param pId the external id
-     * @param pClazz the type class
      * @return the Type
      * @throws OceanusException on error
      */
-    private <T> T deriveTypeFromEncodedId(final int pId,
-                                          final Class<T> pClazz) throws OceanusException {
-        if (GordianDigestSpec.class.equals(pClazz)) {
-            return pClazz.cast(theIdManager.deriveDigestSpecFromEncodedId(pId));
+    private GordianIdSpec deriveTypeFromEncodedId(final int pId) throws OceanusException {
+        final GordianIdMarker myMarker = GordianIdMarker.determine(pId);
+        final int myId = GordianIdMarker.removeMarker(pId);
+        switch (myMarker) {
+            case DIGEST:
+                return theIdManager.deriveDigestSpecFromEncodedId(myId);
+            case SYMCIPHER:
+                return theIdManager.deriveSymCipherSpecFromEncodedId(myId);
+            case STREAMCIPHER:
+                return theIdManager.deriveStreamCipherSpecFromEncodedId(myId);
+            case MACKEY:
+                return theIdManager.deriveMacSpecFromEncodedId(myId);
+            case SYMKEY:
+                return theIdManager.deriveSymKeySpecFromEncodedId(myId);
+            case STREAMKEY:
+                return theIdManager.deriveStreamKeyTypeFromEncodedId(myId);
+            default:
+                throw new GordianDataException("Unsupported encoding");
         }
-        if (GordianSymCipherSpec.class.equals(pClazz)) {
-            return pClazz.cast(theIdManager.deriveSymCipherSpecFromEncodedId(pId));
-        }
-        if (GordianStreamCipherSpec.class.equals(pClazz)) {
-            return pClazz.cast(theIdManager.deriveStreamCipherSpecFromEncodedId(pId));
-        }
-        if (GordianMacSpec.class.equals(pClazz)) {
-            return pClazz.cast(theIdManager.deriveMacSpecFromEncodedId(pId));
-        }
-        if (GordianSymKeySpec.class.equals(pClazz)) {
-            return pClazz.cast(theIdManager.deriveSymKeySpecFromEncodedId(pId));
-        }
-        if (GordianStreamKeyType.class.equals(pClazz)) {
-            return pClazz.cast(theIdManager.deriveStreamKeyTypeFromEncodedId(pId));
-        }
-        throw new GordianDataException("Invalid class: " + pClazz.getCanonicalName());
     }
 
     /**
@@ -263,5 +264,100 @@ public class GordianCoreKnuthObfuscater
         /* Return the pair of values */
         return new BigInteger[]
                 { myValue, myInverse };
+    }
+
+    /**
+     * GordianIdSpec markers.
+     */
+    private enum GordianIdMarker {
+        /**
+         * SymKey.
+         */
+        SYMKEY(1),
+
+        /**
+         * StreamKey.
+         */
+        STREAMKEY(2),
+
+        /**
+         * MacKey.
+         */
+        MACKEY(3),
+
+        /**
+         * Digest.
+         */
+        DIGEST(4),
+
+        /**
+         * SymKeyCipher.
+         */
+        SYMCIPHER(5),
+
+        /**
+         * StreamCipher.
+         */
+        STREAMCIPHER(6);
+
+        /**
+         * The marker mask.
+         */
+        private static final int MASK = 0x70000000;
+
+        /**
+         * The marker shift.
+         */
+        private static final int SHIFT = 28;
+
+        /**
+         * The marker.
+         */
+        private final int theMarker;
+
+        /**
+         * Constructor.
+         * @param pMarker the marker
+         */
+        GordianIdMarker(final int pMarker) {
+            theMarker = pMarker;
+        }
+
+        /**
+         * Apply marker.
+         * @param pId the encoded id
+         * @return the marked and encoded id
+         */
+        int applyMarker(final int pId) {
+            if ((pId & MASK) != 0) {
+                throw new IllegalArgumentException();
+            }
+
+            return pId | (theMarker << SHIFT);
+        }
+
+        /**
+         * Remove marker.
+         * @param pId the merked encoded id
+         * @return the marked and encoded id
+         */
+        static int removeMarker(final int pId) {
+            return pId & ~MASK;
+        }
+
+        /**
+         * Determine marker.
+         * @param pId the merked encoded id
+         * @return the marker
+         */
+        static GordianIdMarker determine(final int pId) {
+            final int myMark = (pId & MASK) >> SHIFT;
+            for (GordianIdMarker myMarker : values()) {
+                if (myMarker.theMarker == myMark) {
+                    return myMarker;
+                }
+            }
+            throw new IllegalArgumentException();
+        }
     }
 }

@@ -23,7 +23,7 @@ import net.sourceforge.joceanus.jgordianknot.api.key.GordianKeyPair;
 /**
  * KeyPair implementation.
  */
-public class GordianCoreKeyPair
+public abstract class GordianCoreKeyPair
         implements GordianKeyPair {
     /**
      * The KeySpec.
@@ -68,6 +68,12 @@ public class GordianCoreKeyPair
     public boolean isPublicOnly() {
         return thePrivateKey == null;
     }
+
+    /**
+     * Obtain a publicOnly version of this key.
+     * @return the public key
+     */
+    public abstract GordianCoreKeyPair getPublicOnly();
 
     /**
      * Obtain the public key.

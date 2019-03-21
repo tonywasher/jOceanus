@@ -62,6 +62,11 @@ public class JcaKeyPair
         return (JcaPrivateKey) super.getPrivateKey();
     }
 
+    @Override
+    public JcaKeyPair getPublicOnly() {
+        return new JcaKeyPair(getPublicKey());
+    }
+
     /**
      * Jca PublicKey.
      */

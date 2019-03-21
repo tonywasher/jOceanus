@@ -17,6 +17,8 @@
 package net.sourceforge.joceanus.jgordianknot.api.zip;
 
 import java.io.File;
+import java.io.InputStream;
+import java.io.OutputStream;
 
 import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetHash;
 import net.sourceforge.joceanus.jtethys.OceanusException;
@@ -36,6 +38,16 @@ public interface GordianZipFactory {
                                       File pFile) throws OceanusException;
 
     /**
+     * Create a secure zipFile.
+     * @param pHash the password hash to use
+     * @param pOutputStream the output stream to write to
+     * @return the zipFile
+     * @throws OceanusException on error
+     */
+    GordianZipWriteFile createZipFile(GordianKeySetHash pHash,
+                                      OutputStream pOutputStream) throws OceanusException;
+
+    /**
      * Create a standard zipFile with no security.
      * @param pFile the file details for the new zip file
      * @return the zipFile
@@ -44,10 +56,25 @@ public interface GordianZipFactory {
     GordianZipWriteFile createZipFile(File pFile) throws OceanusException;
 
     /**
+     * Create a standard zipFile with no security.
+     * @param pOutputStream the output stream to write to
+     * @return the zipFile
+     */
+    GordianZipWriteFile createZipFile(OutputStream pOutputStream);
+
+    /**
      * Open an existing zipFile.
      * @param pFile the file to read
      * @return the zipFile
      * @throws OceanusException on error
      */
     GordianZipReadFile openZipFile(File pFile) throws OceanusException;
+
+    /**
+     * Open an existing zipFile.
+     * @param pInputStream the input stream to read from
+     * @return the zipFile
+     * @throws OceanusException on error
+     */
+    GordianZipReadFile openZipFile(InputStream pInputStream) throws OceanusException;
 }

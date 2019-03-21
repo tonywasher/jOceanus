@@ -18,6 +18,8 @@ package net.sourceforge.joceanus.jgordianknot.impl.core.sign;
 
 import java.util.function.Predicate;
 
+import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
+
 import net.sourceforge.joceanus.jgordianknot.api.asym.GordianAsymKeySpec;
 import net.sourceforge.joceanus.jgordianknot.api.asym.GordianAsymKeyType;
 import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigestSpec;
@@ -44,7 +46,7 @@ public abstract class GordianCoreSignatureFactory
     /**
      * The algorithm Ids.
      */
-    private final GordianSignatureAlgId theAlgIds;
+    private GordianSignatureAlgId theAlgIds;
 
     /**
      * Constructor.
@@ -52,7 +54,6 @@ public abstract class GordianCoreSignatureFactory
      */
     public GordianCoreSignatureFactory(final GordianCoreFactory pFactory) {
         theFactory = pFactory;
-        theAlgIds = new GordianSignatureAlgId(this);
     }
 
     /**
@@ -61,14 +62,6 @@ public abstract class GordianCoreSignatureFactory
      */
     protected GordianCoreFactory getFactory() {
         return theFactory;
-    }
-
-    /**
-     * Obtain the signature algrithm Ids.
-     * @return the signature Algorithm Ids
-     */
-    public GordianSignatureAlgId getAlgorithmIds() {
-        return theAlgIds;
     }
 
     @Override
@@ -200,5 +193,37 @@ public abstract class GordianCoreSignatureFactory
     protected boolean validSignatureDigestSpec(final GordianDigestSpec pDigestSpec) {
         final GordianCoreDigestFactory myDigests = (GordianCoreDigestFactory) theFactory.getDigestFactory();
         return myDigests.validDigestSpec(pDigestSpec);
+    }
+
+    /**
+     * Obtain Identifier for SignatureSpec.
+     * @param pSpec the signatureSpec.
+     * @param pKeyPair the keyPair
+     * @return the Identifier
+     */
+    public AlgorithmIdentifier getIdentifierForSpecAndKeyPair(final GordianSignatureSpec pSpec,
+                                                              final GordianKeyPair pKeyPair) {
+        return getAlgorithmIds().getIdentifierForSpecAndKeyPair(pSpec, pKeyPair);
+    }
+
+    /**
+     * Obtain SignatureSpec for Identifier.
+     * @param pIdentifier the identifier.
+     * @return the signatureSpec
+     * @throws OceanusException on error
+     */
+    public GordianSignatureSpec getSpecForIdentifier(final AlgorithmIdentifier pIdentifier) throws OceanusException {
+        return getAlgorithmIds().getSpecForIdentifier(pIdentifier);
+    }
+
+    /**
+     * Obtain the signature algrithm Ids.
+     * @return the signature Algorithm Ids
+     */
+    private GordianSignatureAlgId getAlgorithmIds() {
+        if (theAlgIds == null) {
+            theAlgIds = new GordianSignatureAlgId(theFactory);
+        }
+        return theAlgIds;
     }
 }
