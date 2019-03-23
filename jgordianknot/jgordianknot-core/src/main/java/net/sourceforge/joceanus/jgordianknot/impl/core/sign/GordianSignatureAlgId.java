@@ -55,7 +55,7 @@ public class GordianSignatureAlgId {
     /**
      *  Base our signatures off bouncyCastle.
      */
-    private static final ASN1ObjectIdentifier SIGOID = GordianCoreFactory.BASEOID.branch("1");
+    private static final ASN1ObjectIdentifier SIGOID = GordianCoreFactory.BASEOID.branch("20");
 
     /**
      * Map of SignatureSpec to Identifier.
@@ -78,13 +78,8 @@ public class GordianSignatureAlgId {
     private final GordianSignatureFactory theFactory;
 
     /**
-     *  The list of possible digestSpecs.
-     */
-    private final List<GordianDigestSpec> theDigests;
-
-    /**
      * Constructor.
-     * @param pFactory the asymmetric factory
+     * @param pFactory the factory
      */
     GordianSignatureAlgId(final GordianCoreFactory pFactory) {
         /* Create the maps */
@@ -94,7 +89,6 @@ public class GordianSignatureAlgId {
 
         /* Access the asymFactory and digests */
         theFactory = pFactory.getAsymmetricFactory().getSignatureFactory();
-        theDigests = GordianDigestSpec.listAll();
 
         /* Populate with the public standards */
         addRSASignatures();
@@ -112,12 +106,9 @@ public class GordianSignatureAlgId {
                 continue;
             }
 
-            /* Add any non-standard signatureSpecs*/
+            /* Add any non-standard signatureSpecs */
             addSignatures(myKeyType);
         }
-
-        /* Clear out the Digest list */
-        theDigests.clear();
     }
 
     /**

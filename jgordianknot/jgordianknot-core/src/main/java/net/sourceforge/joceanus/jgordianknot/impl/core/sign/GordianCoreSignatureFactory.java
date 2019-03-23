@@ -217,7 +217,7 @@ public abstract class GordianCoreSignatureFactory
     }
 
     /**
-     * Obtain the signature algrithm Ids.
+     * Obtain the signature algorithm Ids.
      * @return the signature Algorithm Ids
      */
     private GordianSignatureAlgId getAlgorithmIds() {

@@ -20,6 +20,7 @@ import java.security.SecureRandom;
 import java.util.List;
 import java.util.stream.Stream;
 
+import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
 import org.bouncycastle.util.Arrays;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DynamicContainer;
@@ -33,12 +34,12 @@ import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianAADCipher;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianCipher;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianCipherFactory;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianCipherMode;
+import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianCipherSpec;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianPadding;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianStreamCipherSpec;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianStreamKeyType;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianSymCipherSpec;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianSymKeySpec;
-import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianWrapper;
 import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigest;
 import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigestFactory;
 import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigestSpec;
@@ -56,8 +57,10 @@ import net.sourceforge.joceanus.jgordianknot.api.mac.GordianMacType;
 import net.sourceforge.joceanus.jgordianknot.api.random.GordianRandomFactory;
 import net.sourceforge.joceanus.jgordianknot.api.random.GordianRandomSpec;
 import net.sourceforge.joceanus.jgordianknot.impl.core.cipher.GordianCoreCipher;
+import net.sourceforge.joceanus.jgordianknot.impl.core.cipher.GordianCoreCipherFactory;
 import net.sourceforge.joceanus.jgordianknot.impl.core.cipher.GordianCoreWrapper;
-import net.sourceforge.joceanus.jgordianknot.junit.regression.AsymmetricStore.FactoryKeySpec;
+import net.sourceforge.joceanus.jgordianknot.impl.core.digest.GordianCoreDigestFactory;
+import net.sourceforge.joceanus.jgordianknot.impl.core.mac.GordianCoreMacFactory;
 import net.sourceforge.joceanus.jgordianknot.junit.regression.SymmetricStore.FactoryDigestSpec;
 import net.sourceforge.joceanus.jgordianknot.junit.regression.SymmetricStore.FactoryMacSpec;
 import net.sourceforge.joceanus.jgordianknot.junit.regression.SymmetricStore.FactoryRandomSpec;
@@ -177,9 +180,7 @@ public class SymmetricTest {
 
         /* Add random Tests */
         mySubStream = randomTests(myFactory);
-        if (mySubStream != null) {
-            myStream = Stream.concat(myStream, mySubStream);
-        }
+        myStream = Stream.concat(myStream, mySubStream);
 
         /* Return the stream */
         final String myName = pType.toString() + "-" + pKeyLen;
@@ -198,6 +199,7 @@ public class SymmetricTest {
         if (!myDigests.isEmpty()) {
             Stream<DynamicNode> myTests = myDigests.stream().map(x -> DynamicContainer.dynamicContainer(x.toString(), Stream.of(
                         DynamicTest.dynamicTest("profile", () -> profileDigest(x)),
+                        DynamicTest.dynamicTest("algID", () -> checkDigestAlgId(x)),
                         DynamicTest.dynamicTest("externalID", () -> checkExternalId(x)))
                      ));
             return Stream.of(DynamicContainer.dynamicContainer("Digests", myTests));
@@ -218,6 +220,7 @@ public class SymmetricTest {
         if (!myMacs.isEmpty()) {
             Stream<DynamicNode> myTests = myMacs.stream().map(x -> DynamicContainer.dynamicContainer(x.toString(), Stream.of(
                     DynamicTest.dynamicTest("profile", () -> profileMac(x)),
+                    DynamicTest.dynamicTest("algID", () -> checkMacAlgId(x)),
                     DynamicTest.dynamicTest("externalID", () -> checkExternalId(x)))
             ));
             return Stream.of(DynamicContainer.dynamicContainer("Macs", myTests));
@@ -247,7 +250,7 @@ public class SymmetricTest {
             return Stream.of(DynamicContainer.dynamicContainer("symKeys", myTests));
         }
 
-        /* No mac Tests */
+        /* No sym Tests */
         return null;
     }
 
@@ -268,7 +271,7 @@ public class SymmetricTest {
             return Stream.of(DynamicContainer.dynamicContainer("streamKeys", myTests));
         }
 
-        /* No mac Tests */
+        /* No stream Tests */
         return null;
     }
 
@@ -289,7 +292,7 @@ public class SymmetricTest {
             myStream = Stream.concat(myStream, Stream.of(DynamicContainer.dynamicContainer(myType.toString(), myTests)));
         }
 
-        /* No random Tests */
+        /* return random Tests */
         return Stream.of(DynamicContainer.dynamicContainer("randoms", myStream));
     }
 
@@ -419,6 +422,7 @@ public class SymmetricTest {
 
         /* Check the external ID */
         checkExternalId(pCipherSpec);
+        checkSymCipherAlgId(pCipherSpec);
     }
 
     /**
@@ -446,6 +450,7 @@ public class SymmetricTest {
         final byte[] myResult = myCipher.finish(myEncrypted);
         Assertions.assertArrayEquals(myTestData, myResult, "Failed to encrypt/decrypt");
         checkExternalId(pCipherSpec);
+        checkSymCipherAlgId(pCipherSpec);
     }
 
     /**
@@ -472,7 +477,9 @@ public class SymmetricTest {
         myCipher.initCipher(myStreamKey, myIV, false);
         final byte[] myResult = myCipher.finish(myEncrypted);
         Assertions.assertArrayEquals(myTestData, myResult, "Failed to encrypt/decrypt");
-        checkExternalId(new FactoryStreamCipherSpec(pStreamKeySpec, mySpec));
+        final FactoryStreamCipherSpec myCipherSpec = new FactoryStreamCipherSpec(pStreamKeySpec, mySpec);
+        checkExternalId(myCipherSpec);
+        checkStreamCipherAlgId(myCipherSpec);
     }
 
     /**
@@ -597,11 +604,84 @@ public class SymmetricTest {
         Assertions.assertEquals(pSpec.getSpec(), myResult,
                 "Standard obfuscation for " + pSpec.getClass().getSimpleName() + ":" + pSpec);
 
+        /* Check offset obfuscation */
         final int myOffset = 205;
         myId = myKnuth.deriveExternalIdFromType(pSpec.getSpec(), myOffset);
         myResult = myKnuth.deriveTypeFromExternalId(myId, myOffset);
         Assertions.assertEquals(pSpec.getSpec(), myResult,
                 "Offset obfuscation for " + pSpec.getClass().getSimpleName() + ":" + pSpec);
+    }
+
+    /**
+     * Check digestAlgId.
+     * @param pSpec the Spec to check
+     * @throws OceanusException on error
+     */
+    private void checkDigestAlgId(final FactoryDigestSpec pSpec) throws OceanusException {
+        /* Access the factory */
+        final GordianCoreDigestFactory myFactory = (GordianCoreDigestFactory) pSpec.getFactory().getDigestFactory();
+
+        /* Check that we have an id */
+        final AlgorithmIdentifier myId = myFactory.getIdentifierForSpec(pSpec.getSpec());
+        Assertions.assertNotNull(myId,  "Unknown AlgorithmId for " + pSpec.getSpec());
+
+        /* Check unique mapping */
+        final GordianDigestSpec mySpec = myFactory.getSpecForIdentifier(myId);
+        Assertions.assertEquals(pSpec.getSpec(), mySpec, "Invalid mapping for  " + pSpec.getSpec());
+    }
+
+    /**
+     * Check cipherAlgId.
+     * @param pSpec the Spec to check
+     * @throws OceanusException on error
+     */
+    private void checkSymCipherAlgId(final FactorySymCipherSpec pSpec) throws OceanusException {
+        /* Access the factory */
+        final GordianCoreCipherFactory myFactory = (GordianCoreCipherFactory) pSpec.getFactory().getCipherFactory();
+
+        /* Check that we have an id */
+        final AlgorithmIdentifier myId = myFactory.getIdentifierForSpec(pSpec.getSpec());
+        Assertions.assertNotNull(myId,  "Unknown AlgorithmId for " + pSpec.getSpec());
+
+        /* Check unique mapping */
+        final GordianCipherSpec<?> mySpec = myFactory.getSymSpecForIdentifier(myId);
+        Assertions.assertEquals(pSpec.getSpec(), mySpec, "Invalid mapping for  " + pSpec.getSpec());
+    }
+
+    /**
+     * Check streamCipherAlgId.
+     * @param pSpec the Spec to check
+     * @throws OceanusException on error
+     */
+    private void checkStreamCipherAlgId(final FactoryStreamCipherSpec pSpec) throws OceanusException {
+        /* Access the factory */
+        final GordianCoreCipherFactory myFactory = (GordianCoreCipherFactory) pSpec.getFactory().getCipherFactory();
+
+        /* Check that we have an id */
+        final AlgorithmIdentifier myId = myFactory.getIdentifierForSpec(pSpec.getSpec());
+        Assertions.assertNotNull(myId,  "Unknown AlgorithmId for " + pSpec.getSpec());
+
+        /* Check unique mapping */
+        final GordianCipherSpec<?> mySpec = myFactory.getStreamSpecForIdentifier(myId);
+        Assertions.assertEquals(pSpec.getSpec(), mySpec, "Invalid mapping for  " + pSpec.getSpec());
+    }
+
+    /**
+     * Check macAlgId.
+     * @param pSpec the Spec to check
+     * @throws OceanusException on error
+     */
+    private void checkMacAlgId(final FactoryMacSpec pSpec) throws OceanusException {
+        /* Access the factory */
+        final GordianCoreMacFactory myFactory = (GordianCoreMacFactory) pSpec.getFactory().getMacFactory();
+
+        /* Check that we have an id */
+        final AlgorithmIdentifier myId = myFactory.getIdentifierForSpec(pSpec.getSpec());
+        Assertions.assertNotNull(myId,  "Unknown AlgorithmId for " + pSpec.getSpec());
+
+        /* Check unique mapping */
+        final GordianMacSpec mySpec = myFactory.getSpecForIdentifier(myId);
+        Assertions.assertEquals(pSpec.getSpec(), mySpec, "Invalid mapping for  " + pSpec.getSpec());
     }
 
     /**

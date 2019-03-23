@@ -18,6 +18,8 @@ package net.sourceforge.joceanus.jgordianknot.impl.core.agree;
 
 import java.util.function.Predicate;
 
+import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
+
 import net.sourceforge.joceanus.jgordianknot.api.agree.GordianAgreementFactory;
 import net.sourceforge.joceanus.jgordianknot.api.agree.GordianAgreementSpec;
 import net.sourceforge.joceanus.jgordianknot.api.agree.GordianAgreementType;
@@ -37,6 +39,11 @@ public abstract class GordianCoreAgreementFactory
      * The factory.
      */
     private final GordianCoreFactory theFactory;
+
+    /**
+     * The algorithm Ids.
+     */
+    private GordianAgreementAlgId theAlgIds;
 
     /**
      * Constructor.
@@ -121,5 +128,35 @@ public abstract class GordianCoreAgreementFactory
 
         /* OK */
         return true;
+    }
+
+    /**
+     * Obtain Identifier for AgreementSpec.
+     * @param pSpec the agreementSpec.
+     * @return the Identifier
+     */
+    public AlgorithmIdentifier getIdentifierForSpec(final GordianAgreementSpec pSpec) {
+        return getAlgorithmIds().getIdentifierForSpec(pSpec);
+    }
+
+    /**
+     * Obtain AgreementSpec for Identifier.
+     * @param pIdentifier the identifier.
+     * @return the agreementSpec
+     * @throws OceanusException on error
+     */
+    public GordianAgreementSpec getSpecForIdentifier(final AlgorithmIdentifier pIdentifier) throws OceanusException {
+        return getAlgorithmIds().getSpecForIdentifier(pIdentifier);
+    }
+
+    /**
+     * Obtain the agreement algorithm Ids.
+     * @return the agreement Algorithm Ids
+     */
+    private GordianAgreementAlgId getAlgorithmIds() {
+        if (theAlgIds == null) {
+            theAlgIds = new GordianAgreementAlgId(theFactory);
+        }
+        return theAlgIds;
     }
 }

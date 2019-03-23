@@ -18,6 +18,8 @@ package net.sourceforge.joceanus.jgordianknot.impl.core.mac;
 
 import java.util.function.Predicate;
 
+import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
+
 import net.sourceforge.joceanus.jgordianknot.api.base.GordianLength;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianSymKeySpec;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianSymKeyType;
@@ -42,6 +44,11 @@ public abstract class GordianCoreMacFactory
      * The factory.
      */
     private final GordianCoreFactory theFactory;
+
+    /**
+     * The Mac AlgIds.
+     */
+    private GordianMacAlgId theAlgIds;
 
     /**
      * Constructor.
@@ -264,5 +271,34 @@ public abstract class GordianCoreMacFactory
             default:
                 return false;
         }
+    }
+    /**
+     * Obtain Identifier for MacSpec.
+     * @param pSpec the macSpec.
+     * @return the Identifier
+     */
+    public AlgorithmIdentifier getIdentifierForSpec(final GordianMacSpec pSpec) {
+        return getAlgorithmIds().getIdentifierForSpec(pSpec);
+    }
+
+    /**
+     * Obtain MacSpec for Identifier.
+     * @param pIdentifier the identifier.
+     * @return the macSpec
+     * @throws OceanusException on error
+     */
+    public GordianMacSpec getSpecForIdentifier(final AlgorithmIdentifier pIdentifier) throws OceanusException {
+        return getAlgorithmIds().getSpecForIdentifier(pIdentifier);
+    }
+
+    /**
+     * Obtain the mac algorithm Ids.
+     * @return the mac Algorithm Ids
+     */
+    private GordianMacAlgId getAlgorithmIds() {
+        if (theAlgIds == null) {
+            theAlgIds = new GordianMacAlgId(theFactory);
+        }
+        return theAlgIds;
     }
 }

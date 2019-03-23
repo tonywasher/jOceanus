@@ -19,6 +19,8 @@ package net.sourceforge.joceanus.jgordianknot.impl.core.cipher;
 import java.util.function.BiPredicate;
 import java.util.function.Predicate;
 
+import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
+
 import net.sourceforge.joceanus.jgordianknot.api.base.GordianKeySpec;
 import net.sourceforge.joceanus.jgordianknot.api.base.GordianLength;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianCipher;
@@ -44,6 +46,11 @@ public abstract class GordianCoreCipherFactory
      * The factory.
      */
     private final GordianCoreFactory theFactory;
+
+    /**
+     * The Digest AlgIds.
+     */
+    private GordianCipherAlgId theAlgIds;
 
     /**
      * Constructor.
@@ -303,5 +310,54 @@ public abstract class GordianCoreCipherFactory
                                                               final GordianLength pKeyLen) {
         return validSymKeyTypeForKeyLength(pKeyType, pKeyLen)
                 && pKeyType.getDefaultBlockLength().equals(GordianLength.LEN_128);
+    }
+
+    /**
+     * Obtain Identifier for CipherSpec.
+     * @param pSpec the cipherSpec.
+     * @return the Identifier
+     */
+    public AlgorithmIdentifier getIdentifierForSpec(final GordianSymCipherSpec pSpec) {
+        return getAlgorithmIds().getIdentifierForSpec(pSpec);
+    }
+
+    /**
+     * Obtain CipherSpec for Identifier.
+     * @param pIdentifier the identifier.
+     * @return the cipherSpec
+     * @throws OceanusException on error
+     */
+    public GordianSymCipherSpec getSymSpecForIdentifier(final AlgorithmIdentifier pIdentifier) throws OceanusException {
+        return getAlgorithmIds().getSymSpecForIdentifier(pIdentifier);
+    }
+
+    /**
+     * Obtain Identifier for CipherSpec.
+     * @param pSpec the cipherSpec.
+     * @return the Identifier
+     */
+    public AlgorithmIdentifier getIdentifierForSpec(final GordianStreamCipherSpec pSpec) {
+        return getAlgorithmIds().getIdentifierForSpec(pSpec);
+    }
+
+    /**
+     * Obtain CipherSpec for Identifier.
+     * @param pIdentifier the identifier.
+     * @return the cipherSpec
+     * @throws OceanusException on error
+     */
+    public GordianStreamCipherSpec getStreamSpecForIdentifier(final AlgorithmIdentifier pIdentifier) throws OceanusException {
+        return getAlgorithmIds().getStreamSpecForIdentifier(pIdentifier);
+    }
+
+    /**
+     * Obtain the cipher algorithm Ids.
+     * @return the cipher Algorithm Ids
+     */
+    private GordianCipherAlgId getAlgorithmIds() {
+        if (theAlgIds == null) {
+            theAlgIds = new GordianCipherAlgId(theFactory);
+        }
+        return theAlgIds;
     }
 }

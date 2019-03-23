@@ -21,6 +21,7 @@ import java.security.spec.PKCS8EncodedKeySpec;
 import java.security.spec.X509EncodedKeySpec;
 import java.util.stream.Stream;
 
+import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DynamicContainer;
@@ -50,7 +51,10 @@ import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetHash;
 import net.sourceforge.joceanus.jgordianknot.api.sign.GordianSignature;
 import net.sourceforge.joceanus.jgordianknot.api.sign.GordianSignatureFactory;
 import net.sourceforge.joceanus.jgordianknot.api.sign.GordianSignatureSpec;
+import net.sourceforge.joceanus.jgordianknot.impl.core.agree.GordianCoreAgreementFactory;
+import net.sourceforge.joceanus.jgordianknot.impl.core.encrypt.GordianCoreEncryptorFactory;
 import net.sourceforge.joceanus.jgordianknot.impl.core.keyset.GordianCoreKeySet;
+import net.sourceforge.joceanus.jgordianknot.impl.core.sign.GordianCoreSignatureFactory;
 import net.sourceforge.joceanus.jgordianknot.junit.regression.AsymmetricStore.FactoryAgreement;
 import net.sourceforge.joceanus.jgordianknot.junit.regression.AsymmetricStore.FactoryEncryptor;
 import net.sourceforge.joceanus.jgordianknot.junit.regression.AsymmetricStore.FactoryKeyPairs;
@@ -163,7 +167,10 @@ public class AsymmetricTest {
     private Stream<DynamicNode> signatureTests(final FactorySignature pSignature,
                                                final GordianKeyPair pPartnerSelf) {
         /* Add self signature test */
-         Stream<DynamicNode> myTests = Stream.of(DynamicTest.dynamicTest("SelfSign", () -> checkSelfSignature(pSignature)));
+        Stream<DynamicNode> myTests = Stream.of(DynamicTest.dynamicTest("SelfSign", () -> checkSelfSignature(pSignature)));
+
+        /* Add algorithmId test */
+        myTests = Stream.concat(myTests, Stream.of(DynamicTest.dynamicTest("checkAlgId", () -> checkSignatureAlgId(pSignature))));
 
         /* Check that the partner supports this keySpec*/
         final GordianAsymFactory myTgtAsym = pSignature.getOwner().getPartner();
@@ -189,6 +196,9 @@ public class AsymmetricTest {
         /* Add self agreement test */
         Stream<DynamicNode> myTests = Stream.of(DynamicTest.dynamicTest("SelfAgree", () -> checkSelfAgreement(pAgreement)));
 
+        /* Add algorithmId test */
+        myTests = Stream.concat(myTests, Stream.of(DynamicTest.dynamicTest("checkAlgId", () -> checkAgreementAlgId(pAgreement))));
+
         /* Check that the partner supports this keySpec*/
         final GordianAsymFactory myTgtAsym = pAgreement.getOwner().getPartner();
         if (myTgtAsym != null) {
@@ -212,6 +222,9 @@ public class AsymmetricTest {
                                                final GordianKeyPair pPartnerSelf) {
         /* Add self encrypt test */
         Stream<DynamicNode> myTests = Stream.of(DynamicTest.dynamicTest("SelfEncrypt", () -> checkSelfEncryptor(pEncryptor)));
+
+        /* Add algorithmId test */
+        myTests = Stream.concat(myTests, Stream.of(DynamicTest.dynamicTest("checkAlgId", () -> checkEncryptorAlgId(pEncryptor))));
 
         /* Check that the partner supports this keySpec*/
         final GordianAsymFactory myTgtAsym = pEncryptor.getOwner().getPartner();
@@ -516,5 +529,60 @@ public class AsymmetricTest {
 
         /* Check that the values match */
         Assertions.assertArrayEquals(mySrc, myResult2, "Failed received encryption");
+    }
+
+    /**
+     * Check signatureAlgId.
+     * @param pSignature the signature to check
+     * @throws OceanusException on error
+     */
+    private void checkSignatureAlgId(final FactorySignature pSignature) throws OceanusException {
+        /* Access the factory */
+        final GordianCoreSignatureFactory myFactory = (GordianCoreSignatureFactory) pSignature.getOwner().getFactory().getSignatureFactory();
+
+        /* Check that we have an id */
+        final AlgorithmIdentifier myId = myFactory.getIdentifierForSpecAndKeyPair(pSignature.getSpec(), pSignature.getOwner().getKeyPairs().getKeyPair());
+        Assertions.assertNotNull(myId,  "Unknown AlgorithmId for " + pSignature.getSpec());
+
+        /* Check unique mapping */
+        final GordianSignatureSpec mySpec = myFactory.getSpecForIdentifier(myId);
+        Assertions.assertEquals(pSignature.getSpec(), mySpec, "Invalid mapping for  " + pSignature.getSpec());
+    }
+
+
+    /**
+     * Check agreementAlgId.
+     * @param pAgreement the agreement to check
+     * @throws OceanusException on error
+     */
+    private void checkAgreementAlgId(final FactoryAgreement pAgreement) throws OceanusException {
+        /* Access the factory */
+        final GordianCoreAgreementFactory myFactory = (GordianCoreAgreementFactory) pAgreement.getOwner().getFactory().getAgreementFactory();
+
+        /* Check that we have an id */
+        final AlgorithmIdentifier myId = myFactory.getIdentifierForSpec(pAgreement.getSpec());
+        Assertions.assertNotNull(myId,  "Unknown AlgorithmId for " + pAgreement.getSpec());
+
+        /* Check unique mapping */
+        final GordianAgreementSpec mySpec = myFactory.getSpecForIdentifier(myId);
+        Assertions.assertEquals(pAgreement.getSpec(), mySpec, "Invalid mapping for  " + pAgreement.getSpec());
+    }
+
+    /**
+     * Check encryptorAlgId.
+     * @param pEncryptor the encryptor to check
+     * @throws OceanusException on error
+     */
+    private void checkEncryptorAlgId(final FactoryEncryptor pEncryptor) throws OceanusException {
+        /* Access the factory */
+        final GordianCoreEncryptorFactory myFactory = (GordianCoreEncryptorFactory) pEncryptor.getOwner().getFactory().getEncryptorFactory();
+
+        /* Check that we have an id */
+        final AlgorithmIdentifier myId = myFactory.getIdentifierForSpec(pEncryptor.getSpec());
+        Assertions.assertNotNull(myId,  "Unknown AlgorithmId for " + pEncryptor.getSpec());
+
+        /* Check unique mapping */
+        final GordianEncryptorSpec mySpec = myFactory.getSpecForIdentifier(myId);
+        Assertions.assertEquals(pEncryptor.getSpec(), mySpec, "Invalid mapping for  " + pEncryptor.getSpec());
     }
 }

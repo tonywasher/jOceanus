@@ -18,6 +18,8 @@ package net.sourceforge.joceanus.jgordianknot.impl.core.encrypt;
 
 import java.util.function.Predicate;
 
+import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
+
 import net.sourceforge.joceanus.jgordianknot.api.asym.GordianAsymKeySpec;
 import net.sourceforge.joceanus.jgordianknot.api.asym.GordianAsymKeyType;
 import net.sourceforge.joceanus.jgordianknot.api.asym.GordianMcElieceKeySpec;
@@ -37,6 +39,11 @@ public abstract class GordianCoreEncryptorFactory
      * The factory.
      */
     private final GordianCoreFactory theFactory;
+
+    /**
+     * The algorithm Ids.
+     */
+    private GordianEncryptorAlgId theAlgIds;
 
     /**
      * Constructor.
@@ -125,5 +132,35 @@ public abstract class GordianCoreEncryptorFactory
 
         /* OK */
         return true;
+    }
+
+    /**
+     * Obtain Identifier for EncryptorSpec.
+     * @param pSpec the encryptorSpec.
+     * @return the Identifier
+     */
+    public AlgorithmIdentifier getIdentifierForSpec(final GordianEncryptorSpec pSpec) {
+        return getAlgorithmIds().getIdentifierForSpec(pSpec);
+    }
+
+    /**
+     * Obtain EncryptorSpec for Identifier.
+     * @param pIdentifier the identifier.
+     * @return the encryptorSpec
+     * @throws OceanusException on error
+     */
+    public GordianEncryptorSpec getSpecForIdentifier(final AlgorithmIdentifier pIdentifier) throws OceanusException {
+        return getAlgorithmIds().getSpecForIdentifier(pIdentifier);
+    }
+
+    /**
+     * Obtain the encryptor algorithm Ids.
+     * @return the encryptor Algorithm Ids
+     */
+    private GordianEncryptorAlgId getAlgorithmIds() {
+        if (theAlgIds == null) {
+            theAlgIds = new GordianEncryptorAlgId(theFactory);
+        }
+        return theAlgIds;
     }
 }

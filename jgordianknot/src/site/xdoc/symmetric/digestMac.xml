@@ -38,7 +38,7 @@
                 <tr><td>MD4</td><td/><td>128</td><td>Y</td><td>Y</td><td/></tr>
                 <tr><td>MD5</td><td/><td>128</td><td>Y</td><td>Y</td><td/></tr>
                 <tr><td rowspan="2">SHAKE</td><td>128</td><td>128,160,224,256</td><td>Y</td><td>N</td><td/></tr>
-                <tr><td>256</td><td>256,384,512</td><td>Y</td><td>N</td></tr>
+                <tr><td>256</td><td>256,384,512</td><td>Y</td><td>N</td><td/></tr>
                 <tr><td>Kupyna</td><td/><td>256,384,512</td><td>Y</td><td>Y</td><td>DSTU7564</td></tr>
                 <tr><td>JH</td><td/><td>224,256,384,512</td><td>Y</td><td>N</td><td/></tr>
                 <tr><td>Groestl</td><td/><td>224,256,384,512</td><td>Y</td><td>N</td><td/></tr>
@@ -58,11 +58,12 @@
                 <tr><td>VMPCMac</td><td>160</td><td>Y</td><td>Y</td><td/></tr>
                 <tr><td>BlakeMac</td><td>digest length</td><td>Y</td><td>N</td><td/></tr>
                 <tr><td>KupynaMac</td><td>digest length</td><td>Y</td><td>N</td><td/></tr>
-                <tr><td>KalynaMac</td><td>cipher block length</td><td>Y</td><td>N</td><td/></tr>
+                <tr><td>KalynaMac</td><td>cipher block length</td><td>Y</td><td>N</td><td>Not available for 192 bit keys</td></tr>
                 <tr><td>CBCMac</td><td>cipher length</td><td>Y</td><td>N</td><td/></tr>
                 <tr><td>CFBMac</td><td>cipher length</td><td>Y</td><td>N</td><td/></tr>
-                <tr><td>SipHash</td><td>64</td><td>Y</td><td>Y</td><td/></tr>
-                <tr><td>ZucMac</td><td>32,64,128</td><td>Y</td><td>N</td><td>For 128 bit keys the ony length supported is 32</td></tr>
+                <tr><td>GOSTMac</td><td>32</td><td>Y</td><td>Y</td><td>Only available for 256 bit keys.</td></tr>
+                <tr><td>SipHash</td><td>64</td><td>Y</td><td>Y</td><td>Only available for 128 bit keys</td></tr>
+                <tr><td>ZucMac</td><td>32,64,128</td><td>Y</td><td>N</td><td>For 128 bit keys the only length supported is 32. Not available for 192 bit keys</td></tr>
             </table>
         </section>
     </body>
