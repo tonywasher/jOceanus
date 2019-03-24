@@ -20,6 +20,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
+import org.bouncycastle.asn1.gm.GMObjectIdentifiers;
 import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
 
 import net.sourceforge.joceanus.jgordianknot.api.asym.GordianAsymKeyType;
@@ -70,10 +71,7 @@ public class GordianEncryptorAlgId {
         theFactory = pFactory.getAsymmetricFactory().getEncryptorFactory();
 
         /* Populate with the public standards */
-        //addSHADigests();
-        //addBlakeDigests();
-        //addGOSTDigests();
-        //addSundryDigests();
+        addWellKnownEncryptors();
 
         /* Loop through the possible AsymKeys */
         for (GordianAsymKeyType myKeyType : GordianAsymKeyType.values()) {
@@ -108,11 +106,11 @@ public class GordianEncryptorAlgId {
     }
 
     /**
-     * Add SHA digests.
+     * Add WellKnown encryptors.
      */
-    //private void addSHADigests() {
-    //  addToMaps(GordianDigestSpec.sha1(), new AlgorithmIdentifier(OIWObjectIdentifiers.idSHA1));
-    //}
+    private void addWellKnownEncryptors() {
+        addToMaps(GordianEncryptorSpec.sm2(GordianDigestSpec.sm3()), new AlgorithmIdentifier(GMObjectIdentifiers.sm2encrypt_with_sm3));
+    }
 
     /**
      * Create Identifiers for all valid EncryptorTypes.

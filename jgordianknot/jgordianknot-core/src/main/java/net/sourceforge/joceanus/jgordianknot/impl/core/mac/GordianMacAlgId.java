@@ -20,6 +20,12 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
+import org.bouncycastle.asn1.cryptopro.CryptoProObjectIdentifiers;
+import org.bouncycastle.asn1.nist.NISTObjectIdentifiers;
+import org.bouncycastle.asn1.nsri.NSRIObjectIdentifiers;
+import org.bouncycastle.asn1.pkcs.PKCSObjectIdentifiers;
+import org.bouncycastle.asn1.rosstandart.RosstandartObjectIdentifiers;
+import org.bouncycastle.asn1.ua.UAObjectIdentifiers;
 import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
 
 import net.sourceforge.joceanus.jgordianknot.api.base.GordianLength;
@@ -67,10 +73,7 @@ public class GordianMacAlgId {
         final GordianMacFactory myFactory = pFactory.getMacFactory();
 
         /* Populate with the public standards */
-        //addSHADigests();
-        //addBlakeDigests();
-        //addGOSTDigests();
-        //addSundryDigests();
+        addWellKnownMacs();
 
         /* Loop through the possible MacSpecs */
         for (GordianMacSpec mySpec : myFactory.listAllSupportedSpecs()) {
@@ -105,11 +108,28 @@ public class GordianMacAlgId {
     }
 
     /**
-     * Add SHA digests.
+     * Add well-known macs.
      */
-    //private void addSHADigests() {
-      //  addToMaps(GordianDigestSpec.sha1(), new AlgorithmIdentifier(OIWObjectIdentifiers.idSHA1));
-    //}
+    private void addWellKnownMacs() {
+        addToMaps(GordianMacSpec.hMac(GordianDigestSpec.gost()), new AlgorithmIdentifier(CryptoProObjectIdentifiers.gostR3411Hmac));
+        addToMaps(GordianMacSpec.hMac(GordianDigestSpec.streebog(GordianLength.LEN_256)),
+                new AlgorithmIdentifier(RosstandartObjectIdentifiers.id_tc26_hmac_gost_3411_12_256));
+        addToMaps(GordianMacSpec.hMac(GordianDigestSpec.streebog(GordianLength.LEN_512)),
+                new AlgorithmIdentifier(RosstandartObjectIdentifiers.id_tc26_hmac_gost_3411_12_512));
+        addToMaps(GordianMacSpec.hMac(GordianDigestSpec.sha1()), new AlgorithmIdentifier(PKCSObjectIdentifiers.id_hmacWithSHA1));
+        addToMaps(GordianMacSpec.hMac(GordianDigestSpec.sha2(GordianLength.LEN_224)), new AlgorithmIdentifier(PKCSObjectIdentifiers.id_hmacWithSHA224));
+        addToMaps(GordianMacSpec.hMac(GordianDigestSpec.sha2(GordianLength.LEN_256)), new AlgorithmIdentifier(PKCSObjectIdentifiers.id_hmacWithSHA256));
+        addToMaps(GordianMacSpec.hMac(GordianDigestSpec.sha2(GordianLength.LEN_384)), new AlgorithmIdentifier(PKCSObjectIdentifiers.id_hmacWithSHA384));
+        addToMaps(GordianMacSpec.hMac(GordianDigestSpec.sha2(GordianLength.LEN_512)), new AlgorithmIdentifier(PKCSObjectIdentifiers.id_hmacWithSHA512));
+        addToMaps(GordianMacSpec.hMac(GordianDigestSpec.sha3(GordianLength.LEN_224)), new AlgorithmIdentifier(NISTObjectIdentifiers.id_hmacWithSHA3_224));
+        addToMaps(GordianMacSpec.hMac(GordianDigestSpec.sha3(GordianLength.LEN_256)), new AlgorithmIdentifier(NISTObjectIdentifiers.id_hmacWithSHA3_256));
+        addToMaps(GordianMacSpec.hMac(GordianDigestSpec.sha3(GordianLength.LEN_384)), new AlgorithmIdentifier(NISTObjectIdentifiers.id_hmacWithSHA3_384));
+        addToMaps(GordianMacSpec.hMac(GordianDigestSpec.sha3(GordianLength.LEN_512)), new AlgorithmIdentifier(NISTObjectIdentifiers.id_hmacWithSHA3_512));
+        addToMaps(GordianMacSpec.cMac(GordianSymKeySpec.aria()), new AlgorithmIdentifier(NSRIObjectIdentifiers.id_aria256_cmac));
+        addToMaps(GordianMacSpec.kupynaMac(GordianLength.LEN_256), new AlgorithmIdentifier(UAObjectIdentifiers.dstu7564mac_256));
+        addToMaps(GordianMacSpec.kupynaMac(GordianLength.LEN_384), new AlgorithmIdentifier(UAObjectIdentifiers.dstu7564mac_384));
+        addToMaps(GordianMacSpec.kupynaMac(GordianLength.LEN_512), new AlgorithmIdentifier(UAObjectIdentifiers.dstu7564mac_512));
+    }
 
     /**
      * Add macSpec to map if supported and not already present.

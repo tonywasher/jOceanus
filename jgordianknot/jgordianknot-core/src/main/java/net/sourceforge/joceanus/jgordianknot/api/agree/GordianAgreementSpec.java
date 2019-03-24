@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import net.sourceforge.joceanus.jgordianknot.api.asym.GordianAsymKeyType;
+import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianSymKeyType;
 import net.sourceforge.joceanus.jtethys.TethysDataConverter;
 
 /**
@@ -69,6 +70,149 @@ public final class GordianAgreementSpec {
         theAgreementType = pAgreementType;
         theKDFType = pKDFType;
         isValid = checkValidity();
+    }
+
+    /**
+     * Create the rsa agreementSpec.
+     * @param pKDFType the KDF type
+     * @return the Spec
+     */
+    public static GordianAgreementSpec rsaKEM(final GordianKDFType pKDFType) {
+        return new GordianAgreementSpec(GordianAsymKeyType.RSA, GordianAgreementType.KEM, pKDFType);
+    }
+
+    /**
+     * Create the dhKEM agreementSpec.
+     * @param pKDFType the KDF type
+     * @return the Spec
+     */
+    public static GordianAgreementSpec dhKEM(final GordianKDFType pKDFType) {
+        return new GordianAgreementSpec(GordianAsymKeyType.DIFFIEHELLMAN, GordianAgreementType.KEM, pKDFType);
+    }
+
+    /**
+     * Create the dhBasic agreementSpec.
+     * @param pKDFType the KDF type
+     * @return the Spec
+     */
+    public static GordianAgreementSpec dhBasic(final GordianKDFType pKDFType) {
+        return new GordianAgreementSpec(GordianAsymKeyType.DIFFIEHELLMAN, GordianAgreementType.BASIC, pKDFType);
+    }
+
+    /**
+     * Create the dhMQV agreementSpec.
+     * @param pKDFType the KDF type
+     * @return the Spec
+     */
+    public static GordianAgreementSpec dhMQV(final GordianKDFType pKDFType) {
+        return new GordianAgreementSpec(GordianAsymKeyType.DIFFIEHELLMAN, GordianAgreementType.MQV, pKDFType);
+    }
+
+    /**
+     * Create the dhUnified agreementSpec.
+     * @param pKDFType the KDF type
+     * @return the Spec
+     */
+    public static GordianAgreementSpec dhUnified(final GordianKDFType pKDFType) {
+        return new GordianAgreementSpec(GordianAsymKeyType.DIFFIEHELLMAN, GordianAgreementType.UNIFIED, pKDFType);
+    }
+
+    /**
+     * Create the ecIES agreementSpec.
+     * @param pKeyType the asymKeyType
+     * @param pKDFType the KDF type
+     * @return the Spec
+     */
+    public static GordianAgreementSpec ecIES(final GordianAsymKeyType pKeyType,
+                                             final GordianKDFType pKDFType) {
+        return new GordianAgreementSpec(pKeyType, GordianAgreementType.KEM, pKDFType);
+    }
+
+    /**
+     * Create the ecdhBasic agreementSpec.
+     * @param pKeyType the asymKeyType
+     * @param pKDFType the KDF type
+     * @return the Spec
+     */
+    public static GordianAgreementSpec ecdhBasic(final GordianAsymKeyType pKeyType,
+                                                 final GordianKDFType pKDFType) {
+        return new GordianAgreementSpec(pKeyType, GordianAgreementType.BASIC, pKDFType);
+    }
+
+    /**
+     * Create the ecdhMQV agreementSpec.
+     * @param pKeyType the asymKeyType
+     * @param pKDFType the KDF type
+     * @return the Spec
+     */
+    public static GordianAgreementSpec ecdhMQV(final GordianAsymKeyType pKeyType,
+                                               final GordianKDFType pKDFType) {
+        return new GordianAgreementSpec(pKeyType, GordianAgreementType.MQV, pKDFType);
+    }
+
+    /**
+     * Create the ecdhUnified agreementSpec.
+     * @param pKeyType the asymKeyType
+     * @param pKDFType the KDF type
+     * @return the Spec
+     */
+    public static GordianAgreementSpec ecdhUnified(final GordianAsymKeyType pKeyType,
+                                                   final GordianKDFType pKDFType) {
+        return new GordianAgreementSpec(pKeyType, GordianAgreementType.UNIFIED, pKDFType);
+    }
+
+    /**
+     * Create the sm2 agreementSpec.
+     * @param pKDFType the KDF type
+     * @return the Spec
+     */
+    public static GordianAgreementSpec sm2(final GordianKDFType pKDFType) {
+        return new GordianAgreementSpec(GordianAsymKeyType.SM2, GordianAgreementType.SM2, pKDFType);
+    }
+
+    /**
+     * Create the x25519Basic agreementSpec.
+     * @param pKDFType the KDF type
+     * @return the Spec
+     */
+    public static GordianAgreementSpec x25519Basic(final GordianKDFType pKDFType) {
+        return new GordianAgreementSpec(GordianAsymKeyType.X25519, GordianAgreementType.BASIC, pKDFType);
+    }
+
+    /**
+     * Create the x25519Basic agreementSpec.
+     * @param pKDFType the KDF type
+     * @return the Spec
+     */
+    public static GordianAgreementSpec x25519Unified(final GordianKDFType pKDFType) {
+        return new GordianAgreementSpec(GordianAsymKeyType.X25519, GordianAgreementType.UNIFIED, pKDFType);
+    }
+
+    /**
+     * Create the x448Basic agreementSpec.
+     * @param pKDFType the KDF type
+     * @return the Spec
+     */
+    public static GordianAgreementSpec x448Basic(final GordianKDFType pKDFType) {
+        return new GordianAgreementSpec(GordianAsymKeyType.X448, GordianAgreementType.BASIC, pKDFType);
+    }
+
+    /**
+     * Create the x25519Basic agreementSpec.
+     * @param pKDFType the KDF type
+     * @return the Spec
+     */
+    public static GordianAgreementSpec x448Unified(final GordianKDFType pKDFType) {
+        return new GordianAgreementSpec(GordianAsymKeyType.X448, GordianAgreementType.UNIFIED, pKDFType);
+    }
+
+    /**
+     * Create the newHope agreementSpec.
+     * @param pKDFType the KDF type
+     * @return the Spec
+     */
+    public static GordianAgreementSpec newHope(final GordianKDFType pKDFType) {
+        return new GordianAgreementSpec(GordianAsymKeyType.NEWHOPE, GordianAgreementType.KEM, pKDFType);
     }
 
     /**

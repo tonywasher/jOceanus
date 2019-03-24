@@ -41,6 +41,7 @@ import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianCoreFactory;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianDataException;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianIOException;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianLogicException;
+import net.sourceforge.joceanus.jgordianknot.impl.core.cipher.GordianCoreCipherFactory;
 import net.sourceforge.joceanus.jgordianknot.impl.core.cipher.GordianCoreWrapper;
 import net.sourceforge.joceanus.jgordianknot.impl.core.key.GordianCoreKeyGenerator;
 import net.sourceforge.joceanus.jgordianknot.impl.core.keypair.GordianCoreKeyPairGenerator;
@@ -196,6 +197,30 @@ public final class GordianCoreKeySet
                 + getEncryptionOverhead(false)
                 + (pNumSteps - 1)
                 * GordianCoreWrapper.getKeyWrapExpansion(BLOCKLEN);
+    }
+
+    /**
+     * Obtain the keySet wrap length.
+     * @param pKeyLen the keyLength.
+     * @param pNumSteps the numbert of cipher steps
+     * @return the wrapped length
+     */
+    public static int getKeySetWrapLength(final GordianLength pKeyLen,
+                                          final int pNumSteps) {
+        /* Count the number of KeySetSymTypes for 256 bit keys */
+        int myCount = 0;
+        for (GordianSymKeyType myType : GordianSymKeyType.values()) {
+            if (GordianCoreCipherFactory.validStdBlockSymKeyTypeForKeyLength(myType, pKeyLen)) {
+                myCount++;
+            }
+        }
+
+        /* Determine the length of the encoded keySet prior to wrapping */
+        final int myWrapLength = getDataWrapLength(pKeyLen.getByteLength(), pNumSteps);
+        final int myEncodedLength = GordianKeySetEncoded.getEncodedLength(myWrapLength, myCount);
+
+        /* Determine the wrapped length of the data */
+        return getDataWrapLength(myEncodedLength, pNumSteps);
     }
 
     @Override

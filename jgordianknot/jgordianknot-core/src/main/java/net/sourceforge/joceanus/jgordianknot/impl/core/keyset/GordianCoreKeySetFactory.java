@@ -28,6 +28,7 @@ import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetHash;
 import net.sourceforge.joceanus.jgordianknot.api.mac.GordianMacFactory;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianCoreFactory;
 import net.sourceforge.joceanus.jgordianknot.impl.core.cipher.GordianCoreCipherFactory;
+import net.sourceforge.joceanus.jgordianknot.impl.core.cipher.GordianCoreWrapper;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
@@ -148,4 +149,5 @@ public class GordianCoreKeySetFactory
         return myCiphers.validSymKeyType(pKeyType)
                 && GordianCoreCipherFactory.validStdBlockSymKeyTypeForKeyLength(pKeyType, myFactory.getKeyLength());
     }
+
 }
