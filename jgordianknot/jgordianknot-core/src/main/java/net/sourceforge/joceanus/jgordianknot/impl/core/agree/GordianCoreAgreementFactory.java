@@ -142,10 +142,9 @@ public abstract class GordianCoreAgreementFactory
     /**
      * Obtain AgreementSpec for Identifier.
      * @param pIdentifier the identifier.
-     * @return the agreementSpec
-     * @throws OceanusException on error
+     * @return the agreementSpec (or null if not found)
      */
-    public GordianAgreementSpec getSpecForIdentifier(final AlgorithmIdentifier pIdentifier) throws OceanusException {
+    public GordianAgreementSpec getSpecForIdentifier(final AlgorithmIdentifier pIdentifier) {
         return getAlgorithmIds().getSpecForIdentifier(pIdentifier);
     }
 

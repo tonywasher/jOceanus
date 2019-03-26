@@ -98,15 +98,10 @@ public class GordianDigestAlgId {
      * Obtain DigestSpec for Identifier.
      *
      * @param pIdentifier the identifier.
-     * @return the digestSpec
-     * @throws OceanusException on error
+     * @return the digestSpec (or null if not found)
      */
-    public GordianDigestSpec getSpecForIdentifier(final AlgorithmIdentifier pIdentifier) throws OceanusException {
-        final GordianDigestSpec mySpec = theIdentifierMap.get(pIdentifier);
-        if (mySpec == null) {
-            throw new GordianDataException("Invalid identifier " + pIdentifier);
-        }
-        return mySpec;
+    public GordianDigestSpec getSpecForIdentifier(final AlgorithmIdentifier pIdentifier) {
+        return theIdentifierMap.get(pIdentifier);
     }
 
     /**

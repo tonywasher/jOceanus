@@ -146,10 +146,9 @@ public abstract class GordianCoreEncryptorFactory
     /**
      * Obtain EncryptorSpec for Identifier.
      * @param pIdentifier the identifier.
-     * @return the encryptorSpec
-     * @throws OceanusException on error
+     * @return the encryptorSpec (or null if not found)
      */
-    public GordianEncryptorSpec getSpecForIdentifier(final AlgorithmIdentifier pIdentifier) throws OceanusException {
+    public GordianEncryptorSpec getSpecForIdentifier(final AlgorithmIdentifier pIdentifier) {
         return getAlgorithmIds().getSpecForIdentifier(pIdentifier);
     }
 

@@ -92,15 +92,10 @@ public class GordianAgreementAlgId {
      * Obtain AgreementSpec for Identifier.
      *
      * @param pIdentifier the identifier.
-     * @return the agreementSpec
-     * @throws OceanusException on error
+     * @return the agreementSpec (or null if not found)
      */
-    public GordianAgreementSpec getSpecForIdentifier(final AlgorithmIdentifier pIdentifier) throws OceanusException {
-        final GordianAgreementSpec mySpec = theIdentifierMap.get(pIdentifier);
-        if (mySpec == null) {
-            throw new GordianDataException("Invalid identifier " + pIdentifier);
-        }
-        return mySpec;
+    public GordianAgreementSpec getSpecForIdentifier(final AlgorithmIdentifier pIdentifier) {
+        return theIdentifierMap.get(pIdentifier);
     }
 
     /**

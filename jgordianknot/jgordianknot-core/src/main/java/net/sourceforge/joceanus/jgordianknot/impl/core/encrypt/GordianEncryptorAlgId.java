@@ -94,15 +94,10 @@ public class GordianEncryptorAlgId {
      * Obtain EncryptorSpec for Identifier.
      *
      * @param pIdentifier the identifier.
-     * @return the encryptorSpec
-     * @throws OceanusException on error
+     * @return the encryptorSpec (or null if not found)
      */
-    public GordianEncryptorSpec getSpecForIdentifier(final AlgorithmIdentifier pIdentifier) throws OceanusException {
-        final GordianEncryptorSpec mySpec = theIdentifierMap.get(pIdentifier);
-        if (mySpec == null) {
-            throw new GordianDataException("Invalid identifier " + pIdentifier);
-        }
-        return mySpec;
+    public GordianEncryptorSpec getSpecForIdentifier(final AlgorithmIdentifier pIdentifier) {
+        return theIdentifierMap.get(pIdentifier);
     }
 
     /**

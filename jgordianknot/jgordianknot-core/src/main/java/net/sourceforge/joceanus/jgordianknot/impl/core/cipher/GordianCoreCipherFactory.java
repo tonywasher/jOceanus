@@ -324,10 +324,9 @@ public abstract class GordianCoreCipherFactory
     /**
      * Obtain CipherSpec for Identifier.
      * @param pIdentifier the identifier.
-     * @return the cipherSpec
-     * @throws OceanusException on error
+     * @return the cipherSpec (or null if not found)
      */
-    public GordianSymCipherSpec getSymSpecForIdentifier(final AlgorithmIdentifier pIdentifier) throws OceanusException {
+    public GordianSymCipherSpec getSymSpecForIdentifier(final AlgorithmIdentifier pIdentifier) {
         return getAlgorithmIds().getSymSpecForIdentifier(pIdentifier);
     }
 
@@ -343,10 +342,9 @@ public abstract class GordianCoreCipherFactory
     /**
      * Obtain CipherSpec for Identifier.
      * @param pIdentifier the identifier.
-     * @return the cipherSpec
-     * @throws OceanusException on error
+     * @return the cipherSpec (or null if not found)
      */
-    public GordianStreamCipherSpec getStreamSpecForIdentifier(final AlgorithmIdentifier pIdentifier) throws OceanusException {
+    public GordianStreamCipherSpec getStreamSpecForIdentifier(final AlgorithmIdentifier pIdentifier) {
         return getAlgorithmIds().getStreamSpecForIdentifier(pIdentifier);
     }
 

@@ -131,10 +131,9 @@ public abstract class GordianCoreDigestFactory
     /**
      * Obtain DigestSpec for Identifier.
      * @param pIdentifier the identifier.
-     * @return the digestSpec
-     * @throws OceanusException on error
+     * @return the digestSpec (or null if not found)
      */
-    public GordianDigestSpec getSpecForIdentifier(final AlgorithmIdentifier pIdentifier) throws OceanusException {
+    public GordianDigestSpec getSpecForIdentifier(final AlgorithmIdentifier pIdentifier) {
         return getAlgorithmIds().getSpecForIdentifier(pIdentifier);
     }
 

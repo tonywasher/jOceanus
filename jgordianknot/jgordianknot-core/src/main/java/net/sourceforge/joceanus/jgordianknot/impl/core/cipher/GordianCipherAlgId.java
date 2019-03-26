@@ -144,30 +144,20 @@ public class GordianCipherAlgId {
      * Obtain symCipherSpec for Identifier.
      *
      * @param pIdentifier the identifier.
-     * @return the cipherSpec
-     * @throws OceanusException on error
+     * @return the cipherSpec (or null if not found)
      */
-    public GordianSymCipherSpec getSymSpecForIdentifier(final AlgorithmIdentifier pIdentifier) throws OceanusException {
-        final GordianSymCipherSpec mySpec = theSymIdentifierMap.get(pIdentifier);
-        if (mySpec == null) {
-            throw new GordianDataException("Invalid identifier " + pIdentifier);
-        }
-        return mySpec;
+    GordianSymCipherSpec getSymSpecForIdentifier(final AlgorithmIdentifier pIdentifier) {
+        return theSymIdentifierMap.get(pIdentifier);
     }
 
     /**
      * Obtain symCipherSpec for Identifier.
      *
      * @param pIdentifier the identifier.
-     * @return the cipherSpec
-     * @throws OceanusException on error
+     * @return the cipherSpec (or null if not found)
      */
-    public GordianStreamCipherSpec getStreamSpecForIdentifier(final AlgorithmIdentifier pIdentifier) throws OceanusException {
-        final GordianStreamCipherSpec mySpec = theStreamIdentifierMap.get(pIdentifier);
-        if (mySpec == null) {
-            throw new GordianDataException("Invalid identifier " + pIdentifier);
-        }
-        return mySpec;
+    GordianStreamCipherSpec getStreamSpecForIdentifier(final AlgorithmIdentifier pIdentifier) {
+        return theStreamIdentifierMap.get(pIdentifier);
     }
 
     /**

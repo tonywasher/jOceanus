@@ -209,10 +209,9 @@ public abstract class GordianCoreSignatureFactory
     /**
      * Obtain SignatureSpec for Identifier.
      * @param pIdentifier the identifier.
-     * @return the signatureSpec
-     * @throws OceanusException on error
+     * @return the signatureSpec (or null if not found)
      */
-    public GordianSignatureSpec getSpecForIdentifier(final AlgorithmIdentifier pIdentifier) throws OceanusException {
+    public GordianSignatureSpec getSpecForIdentifier(final AlgorithmIdentifier pIdentifier) {
         return getAlgorithmIds().getSpecForIdentifier(pIdentifier);
     }
 

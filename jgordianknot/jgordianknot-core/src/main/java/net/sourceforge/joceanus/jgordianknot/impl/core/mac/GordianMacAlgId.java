@@ -96,15 +96,10 @@ public class GordianMacAlgId {
      * Obtain MacSpec for Identifier.
      *
      * @param pIdentifier the identifier.
-     * @return the macSpec
-     * @throws OceanusException on error
+     * @return the macSpec (or null if not found)
      */
-    public GordianMacSpec getSpecForIdentifier(final AlgorithmIdentifier pIdentifier) throws OceanusException {
-        final GordianMacSpec mySpec = theIdentifierMap.get(pIdentifier);
-        if (mySpec == null) {
-            throw new GordianDataException("Invalid identifier " + pIdentifier);
-        }
-        return mySpec;
+    public GordianMacSpec getSpecForIdentifier(final AlgorithmIdentifier pIdentifier) {
+        return theIdentifierMap.get(pIdentifier);
     }
 
     /**

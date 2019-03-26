@@ -284,10 +284,9 @@ public abstract class GordianCoreMacFactory
     /**
      * Obtain MacSpec for Identifier.
      * @param pIdentifier the identifier.
-     * @return the macSpec
-     * @throws OceanusException on error
+     * @return the macSpec (or null if not found)
      */
-    public GordianMacSpec getSpecForIdentifier(final AlgorithmIdentifier pIdentifier) throws OceanusException {
+    public GordianMacSpec getSpecForIdentifier(final AlgorithmIdentifier pIdentifier) {
         return getAlgorithmIds().getSpecForIdentifier(pIdentifier);
     }
 

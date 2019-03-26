@@ -413,9 +413,6 @@ public final class GordianCoreKeySet
         /* Unwrap the bytes resolve them */
         final byte[] mySecuredBytes = theCipher.deriveBytes(myParams, myBytes);
         final GordianKeySetEncoded myEncoded = GordianKeySetEncoded.getInstance(mySecuredBytes);
-        if (myEncoded == null) {
-            throw new GordianLogicException("Unable to parse encoded keySet");
-        }
 
         /* Resolve and return the keySet */
         final GordianCoreKeySet myKeySet = (GordianCoreKeySet) theFactory.getKeySetFactory().createKeySet();
