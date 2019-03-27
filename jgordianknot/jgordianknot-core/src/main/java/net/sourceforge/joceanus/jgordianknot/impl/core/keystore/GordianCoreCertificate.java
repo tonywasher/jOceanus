@@ -252,6 +252,9 @@ public class GordianCoreCertificate
         final GordianAsymFactory myAsym = theFactory.getAsymmetricFactory();
         final GordianCoreSignatureFactory mySignFactory = (GordianCoreSignatureFactory) theFactory.getAsymmetricFactory().getSignatureFactory();
         theSigSpec = mySignFactory.getSpecForIdentifier(theSigAlgId);
+        if (theSigSpec == null) {
+            throw new GordianDataException("Unsupported Signature AlgorithmId: " + theSigAlgId);
+        }
 
         /* Derive the keyPair */
         final X509EncodedKeySpec myX509 = getX509KeySpec();

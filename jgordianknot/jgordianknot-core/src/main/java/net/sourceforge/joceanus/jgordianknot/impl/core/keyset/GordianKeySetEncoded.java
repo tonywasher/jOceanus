@@ -34,6 +34,8 @@ import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianSymKeySpec;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianSymKeyType;
 import net.sourceforge.joceanus.jgordianknot.api.key.GordianKey;
 import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySet;
+import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianDataException;
+import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianIOException;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
@@ -68,18 +70,26 @@ public class GordianKeySetEncoded
     /**
      * Constructor.
      * @param pSequence the Sequence
+     * @throws OceanusException on error
      */
-    private GordianKeySetEncoded(final ASN1Sequence pSequence) {
-        /* Create the map */
-        theMap = new LinkedHashMap<>();
+    private GordianKeySetEncoded(final ASN1Sequence pSequence) throws OceanusException {
+        /* Protect against exceptions */
+        try {
+            /* Create the map */
+            theMap = new LinkedHashMap<>();
 
-        /* Build the map from the sequence */
-        final Enumeration e = pSequence.getObjects();
-        while (e.hasMoreElements()) {
-            final ASN1Sequence k = ASN1Sequence.getInstance(e.nextElement());
-            final Enumeration ek = k.getObjects();
-            theMap.put(ASN1Integer.getInstance(ek.nextElement()).getValue().intValue(),
-                     ASN1OctetString.getInstance(ek.nextElement()).getOctets());
+            /* Build the map from the sequence */
+            final Enumeration e = pSequence.getObjects();
+            while (e.hasMoreElements()) {
+                final ASN1Sequence k = ASN1Sequence.getInstance(e.nextElement());
+                final Enumeration ek = k.getObjects();
+                theMap.put(ASN1Integer.getInstance(ek.nextElement()).getValue().intValue(),
+                        ASN1OctetString.getInstance(ek.nextElement()).getOctets());
+            }
+
+            /* handle exceptions */
+        } catch (IllegalArgumentException e) {
+            throw new GordianIOException("Unable to parse ASN1 sequence", e);
         }
     }
 
@@ -87,14 +97,15 @@ public class GordianKeySetEncoded
      * Parse the ASN1 object.
      * @param pObject the object to parse
      * @return the parsed object
+     * @throws OceanusException on error
      */
-    public static GordianKeySetEncoded getInstance(final Object pObject) {
+    public static GordianKeySetEncoded getInstance(final Object pObject) throws OceanusException {
         if (pObject instanceof GordianKeySetEncoded) {
             return (GordianKeySetEncoded) pObject;
         } else if (pObject != null) {
             return new GordianKeySetEncoded(ASN1Sequence.getInstance(pObject));
         }
-        return null;
+        throw new GordianDataException("Null sequence");
     }
 
     /**
@@ -109,6 +120,7 @@ public class GordianKeySetEncoded
      * </pre>
      * @return the ASN1 Encoding
      */
+    @Override
     public ASN1Primitive toASN1Primitive() {
         final ASN1EncodableVector v = new ASN1EncodableVector();
 

@@ -40,7 +40,6 @@ import net.sourceforge.joceanus.jgordianknot.api.mac.GordianMac;
 import net.sourceforge.joceanus.jgordianknot.api.mac.GordianMacSpec;
 import net.sourceforge.joceanus.jgordianknot.api.random.GordianRandomFactory;
 import net.sourceforge.joceanus.jgordianknot.impl.core.keyset.GordianCoreKeySet;
-import net.sourceforge.joceanus.jgordianknot.impl.core.keyset.GordianCoreKeySetHash;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.TethysDataConverter;
 
@@ -341,7 +340,7 @@ public class KeySetTest {
         Assertions.assertEquals(myMacKey, myMacResult, "Failed to wrap/unwrap macKey");
         Assertions.assertEquals(myKeySet.getKeyWrapLength(), myMacSafe.length, "Incorrect wrapped length");
 
-        /* Check wrap of mackeySet */
+        /* Check wrap of keySet */
         final byte[] myKeySetSafe = myKeySet.secureKeySet(myKeySet);
         final GordianKeySet myKeySetResult = myKeySet.deriveKeySet(myKeySetSafe);
         Assertions.assertEquals(myKeySet, myKeySetResult, "Failed to wrap/unwrap keySet");

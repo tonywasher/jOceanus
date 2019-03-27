@@ -16,9 +16,20 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jgordianknot.impl.core.agree;
 
+import java.io.IOException;
+import java.util.Enumeration;
+
+import org.bouncycastle.asn1.ASN1EncodableVector;
+import org.bouncycastle.asn1.ASN1OctetString;
+import org.bouncycastle.asn1.ASN1Sequence;
+import org.bouncycastle.asn1.DEROctetString;
+import org.bouncycastle.asn1.DERSequence;
+
 import net.sourceforge.joceanus.jgordianknot.api.agree.GordianAgreementSpec;
 import net.sourceforge.joceanus.jgordianknot.api.agree.GordianBasicAgreement;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianCoreFactory;
+import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianIOException;
+import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
  * Basic Agreement.
@@ -39,21 +50,38 @@ public abstract class GordianCoreBasicAgreement
     /**
      * Create the message.
      * @return the message
+     * @throws OceanusException on error
      */
-    protected byte[] createMessage() {
-        /* Create the message */
-        return newInitVector();
+    protected byte[] createMessage() throws OceanusException {
+        /* Build the sequence */
+        try {
+            final ASN1EncodableVector v = new ASN1EncodableVector();
+            v.add(new DEROctetString(newInitVector()));
+            return new DERSequence(v).getEncoded();
+
+        } catch (IOException e) {
+            throw new GordianIOException("Unable to build ASN1 sequence", e);
+        }
     }
 
     /**
      * Parse the incoming message.
      * @param pMessage the incoming message
+     * @throws OceanusException on error
      */
-    protected void parseMessage(final byte[] pMessage) {
-        /* Obtain initVector */
-        final byte[] myInitVector = new byte[INITLEN];
-        System.arraycopy(pMessage, 0, myInitVector, 0, INITLEN);
-        storeInitVector(myInitVector);
+    protected void parseMessage(final byte[] pMessage) throws OceanusException {
+        /* Parse the sequence */
+        try {
+            /* Access the sequence */
+            final ASN1Sequence mySequence = ASN1Sequence.getInstance(pMessage);
+            final Enumeration en = mySequence.getObjects();
+
+            /* Store the initVector */
+            storeInitVector(ASN1OctetString.getInstance(en.nextElement()).getOctets());
+
+        } catch (IllegalArgumentException e) {
+            throw new GordianIOException("Unable to parse ASN1 sequence", e);
+        }
     }
 }
 

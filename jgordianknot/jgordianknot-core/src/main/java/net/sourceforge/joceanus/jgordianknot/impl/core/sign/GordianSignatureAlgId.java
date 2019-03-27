@@ -55,7 +55,7 @@ public class GordianSignatureAlgId {
     /**
      *  Base our signatures off bouncyCastle.
      */
-    private static final ASN1ObjectIdentifier SIGOID = GordianCoreFactory.BASEOID.branch("1");
+    private static final ASN1ObjectIdentifier SIGOID = GordianCoreFactory.BASEOID.branch("20");
 
     /**
      * Map of SignatureSpec to Identifier.
@@ -78,13 +78,8 @@ public class GordianSignatureAlgId {
     private final GordianSignatureFactory theFactory;
 
     /**
-     *  The list of possible digestSpecs.
-     */
-    private final List<GordianDigestSpec> theDigests;
-
-    /**
      * Constructor.
-     * @param pFactory the asymmetric factory
+     * @param pFactory the factory
      */
     GordianSignatureAlgId(final GordianCoreFactory pFactory) {
         /* Create the maps */
@@ -94,7 +89,6 @@ public class GordianSignatureAlgId {
 
         /* Access the asymFactory and digests */
         theFactory = pFactory.getAsymmetricFactory().getSignatureFactory();
-        theDigests = GordianDigestSpec.listAll();
 
         /* Populate with the public standards */
         addRSASignatures();
@@ -112,12 +106,9 @@ public class GordianSignatureAlgId {
                 continue;
             }
 
-            /* Add any non-standard signatureSpecs*/
+            /* Add any non-standard signatureSpecs */
             addSignatures(myKeyType);
         }
-
-        /* Clear out the Digest list */
-        theDigests.clear();
     }
 
     /**
@@ -126,8 +117,8 @@ public class GordianSignatureAlgId {
      * @param pKeyPair the keyPair
      * @return the Identifier
      */
-    public AlgorithmIdentifier getIdentifierForSpecAndKeyPair(final GordianSignatureSpec pSpec,
-                                                              final GordianKeyPair pKeyPair) {
+    AlgorithmIdentifier getIdentifierForSpecAndKeyPair(final GordianSignatureSpec pSpec,
+                                                       final GordianKeyPair pKeyPair) {
         /* If we need to use the subType */
         if (pSpec.getAsymKeyType().subTypeForSignatures()) {
             /* Look up in the subKey map */
@@ -144,15 +135,10 @@ public class GordianSignatureAlgId {
     /**
      * Obtain SignatureSpec for Identifier.
      * @param pIdentifier the identifier.
-     * @return the signatureSpec
-     * @throws OceanusException on error
+     * @return the signatureSpec (or null if not found)
      */
-    public GordianSignatureSpec getSpecForIdentifier(final AlgorithmIdentifier pIdentifier) throws OceanusException {
-        final GordianSignatureSpec mySpec = theIdentifierMap.get(pIdentifier);
-        if (mySpec == null) {
-            throw new GordianDataException("Invalid identifier " + pIdentifier);
-        }
-        return mySpec;
+    public GordianSignatureSpec getSpecForIdentifier(final AlgorithmIdentifier pIdentifier) {
+        return theIdentifierMap.get(pIdentifier);
     }
 
     /**

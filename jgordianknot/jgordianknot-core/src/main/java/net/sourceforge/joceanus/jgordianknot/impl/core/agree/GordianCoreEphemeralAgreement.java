@@ -16,7 +16,15 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jgordianknot.impl.core.agree;
 
+import java.io.IOException;
 import java.security.spec.X509EncodedKeySpec;
+import java.util.Enumeration;
+
+import org.bouncycastle.asn1.ASN1EncodableVector;
+import org.bouncycastle.asn1.ASN1OctetString;
+import org.bouncycastle.asn1.ASN1Sequence;
+import org.bouncycastle.asn1.DEROctetString;
+import org.bouncycastle.asn1.DERSequence;
 
 import net.sourceforge.joceanus.jgordianknot.api.agree.GordianAgreementSpec;
 import net.sourceforge.joceanus.jgordianknot.api.agree.GordianEphemeralAgreement;
@@ -24,6 +32,7 @@ import net.sourceforge.joceanus.jgordianknot.api.factory.GordianAsymFactory;
 import net.sourceforge.joceanus.jgordianknot.api.key.GordianKeyPair;
 import net.sourceforge.joceanus.jgordianknot.api.key.GordianKeyPairGenerator;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianCoreFactory;
+import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianIOException;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
@@ -96,14 +105,16 @@ public abstract class GordianCoreEphemeralAgreement
         final X509EncodedKeySpec myKeySpec = myGenerator.getX509Encoding(theEphemeral);
         final byte[] myKeyBytes = myKeySpec.getEncoded();
 
-        /* Create buffer for message */
-        final int myLen = myKeyBytes.length;
-        final byte[] myMessage = new byte[myLen + INITLEN];
+        /* Build the sequence */
+        try {
+            final ASN1EncodableVector v = new ASN1EncodableVector();
+            v.add(new DEROctetString(newInitVector()));
+            v.add(new DEROctetString(myKeyBytes));
+            return new DERSequence(v).getEncoded();
 
-        /* Create the message */
-        System.arraycopy(newInitVector(), 0, myMessage, 0, INITLEN);
-        System.arraycopy(myKeyBytes, 0, myMessage, INITLEN, myLen);
-        return myMessage;
+        } catch (IOException e) {
+            throw new GordianIOException("Unable to build ASN1 sequence", e);
+        }
     }
 
     /**
@@ -121,27 +132,38 @@ public abstract class GordianCoreEphemeralAgreement
         /* Store the keyPair */
         theOwner = pResponder;
 
-        /* Obtain initVector */
-        final byte[] myInitVector = new byte[INITLEN];
-        System.arraycopy(pMessage, 0, myInitVector, 0, INITLEN);
-        storeInitVector(myInitVector);
+        /* Parse the sequence */
+        try {
+            /* Access the sequence */
+            final ASN1Sequence mySequence = ASN1Sequence.getInstance(pMessage);
+            final Enumeration en = mySequence.getObjects();
 
-        /* Obtain keySpec */
-        final int myBaseLen = pMessage.length - INITLEN;
-        final byte[] myBase = new byte[myBaseLen];
-        System.arraycopy(pMessage, INITLEN, myBase, 0, myBaseLen);
-        final X509EncodedKeySpec myKeySpec = new X509EncodedKeySpec(myBase);
+            /* Store the initVector */
+            storeInitVector(ASN1OctetString.getInstance(en.nextElement()).getOctets());
 
-        /* Create ephemeral key */
-        final GordianAsymFactory myAsym = getFactory().getAsymmetricFactory();
-        final GordianKeyPairGenerator myGenerator = myAsym.getKeyPairGenerator(theOwner.getKeySpec());
-        theEphemeral = myGenerator.generateKeyPair();
+            /* Parse the ephemeral encoding */
+            final byte[] myBase = ASN1OctetString.getInstance(en.nextElement()).getOctets();
+            final X509EncodedKeySpec myKeySpec = new X509EncodedKeySpec(myBase);
 
-        /* Derive partner ephemeral key */
-        thePartnerEphemeral = myGenerator.derivePublicOnlyKeyPair(myKeySpec);
+            /* Create ephemeral key */
+            final GordianAsymFactory myAsym = getFactory().getAsymmetricFactory();
+            final GordianKeyPairGenerator myGenerator = myAsym.getKeyPairGenerator(theOwner.getKeySpec());
+            theEphemeral = myGenerator.generateKeyPair();
 
-        /* Return the ephemeral keySpec */
-        return myGenerator.getX509Encoding(theEphemeral).getEncoded();
+            /* Derive partner ephemeral key */
+            thePartnerEphemeral = myGenerator.derivePublicOnlyKeyPair(myKeySpec);
+
+            /* Build the ephemeral keySpec sequence */
+            final byte[] myKeyBytes = myGenerator.getX509Encoding(theEphemeral).getEncoded();
+            final ASN1EncodableVector v = new ASN1EncodableVector();
+            v.add(new DEROctetString(myKeyBytes));
+            return new DERSequence(v).getEncoded();
+
+            /* Catch exceptions */
+        } catch (IllegalArgumentException
+                 | IOException e) {
+            throw new GordianIOException("Unable to parse ASN1 sequence", e);
+        }
     }
 
     /**
@@ -150,12 +172,24 @@ public abstract class GordianCoreEphemeralAgreement
      * @throws OceanusException on error
      */
     protected void parseEphemeral(final byte[] pKeySpec) throws OceanusException {
-        /* Obtain keySpec */
-        final X509EncodedKeySpec myKeySpec = new X509EncodedKeySpec(pKeySpec);
+        /* Parse the sequence */
+        try {
+            /* Access the sequence */
+            final ASN1Sequence mySequence = ASN1Sequence.getInstance(pKeySpec);
+            final Enumeration en = mySequence.getObjects();
 
-        /* Derive partner ephemeral key */
-        final GordianAsymFactory myAsym = getFactory().getAsymmetricFactory();
-        final GordianKeyPairGenerator myGenerator = myAsym.getKeyPairGenerator(theOwner.getKeySpec());
-        thePartnerEphemeral = myGenerator.derivePublicOnlyKeyPair(myKeySpec);
+            /* Obtain keySpec */
+            final byte[] myKeyBytes = ASN1OctetString.getInstance(en.nextElement()).getOctets();
+            final X509EncodedKeySpec myKeySpec = new X509EncodedKeySpec(myKeyBytes);
+
+            /* Derive partner ephemeral key */
+            final GordianAsymFactory myAsym = getFactory().getAsymmetricFactory();
+            final GordianKeyPairGenerator myGenerator = myAsym.getKeyPairGenerator(theOwner.getKeySpec());
+            thePartnerEphemeral = myGenerator.derivePublicOnlyKeyPair(myKeySpec);
+
+            /* Catch exceptions */
+        } catch (IllegalArgumentException e) {
+            throw new GordianIOException("Unable to parse ASN1 sequence", e);
+        }
     }
 }

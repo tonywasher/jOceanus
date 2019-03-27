@@ -50,7 +50,7 @@ public final class GordianCoreKeySetHash
     /**
      * KeySetHash OID.
      */
-    public static final ASN1ObjectIdentifier OID = GordianCoreFactory.BASEOID.branch("2.1");
+    public static final ASN1ObjectIdentifier KEYSETOID = GordianCoreFactory.BASEOID.branch("10");
 
     /**
      * Hash Recipe.
@@ -488,6 +488,6 @@ public final class GordianCoreKeySetHash
      * @return the algorithm identifier.
      */
     public AlgorithmIdentifier getAlgorithmIdentifier() {
-        return new AlgorithmIdentifier(OID, new DEROctetString(theHash));
+        return new AlgorithmIdentifier(KEYSETOID, new DEROctetString(theHash));
     }
 }

@@ -18,6 +18,8 @@ package net.sourceforge.joceanus.jgordianknot.impl.core.digest;
 
 import java.util.function.Predicate;
 
+import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
+
 import net.sourceforge.joceanus.jgordianknot.api.base.GordianLength;
 import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigestFactory;
 import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigestSpec;
@@ -36,6 +38,11 @@ public abstract class GordianCoreDigestFactory
      * The factory.
      */
     private final GordianCoreFactory theFactory;
+
+    /**
+     * The Digest AlgIds.
+     */
+    private GordianDigestAlgId theAlgIds;
 
     /**
      * Constructor.
@@ -110,5 +117,34 @@ public abstract class GordianCoreDigestFactory
      */
     public boolean validDigestType(final GordianDigestType pDigestType) {
         return true;
+    }
+
+    /**
+     * Obtain Identifier for DigestSpec.
+     * @param pSpec the digestSpec.
+     * @return the Identifier
+     */
+    public AlgorithmIdentifier getIdentifierForSpec(final GordianDigestSpec pSpec) {
+        return getAlgorithmIds().getIdentifierForSpec(pSpec);
+    }
+
+    /**
+     * Obtain DigestSpec for Identifier.
+     * @param pIdentifier the identifier.
+     * @return the digestSpec (or null if not found)
+     */
+    public GordianDigestSpec getSpecForIdentifier(final AlgorithmIdentifier pIdentifier) {
+        return getAlgorithmIds().getSpecForIdentifier(pIdentifier);
+    }
+
+    /**
+     * Obtain the digest algorithm Ids.
+     * @return the digest Algorithm Ids
+     */
+    private GordianDigestAlgId getAlgorithmIds() {
+        if (theAlgIds == null) {
+            theAlgIds = new GordianDigestAlgId(theFactory);
+        }
+        return theAlgIds;
     }
 }
