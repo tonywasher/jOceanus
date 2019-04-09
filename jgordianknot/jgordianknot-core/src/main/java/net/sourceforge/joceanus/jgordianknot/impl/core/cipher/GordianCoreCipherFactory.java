@@ -27,6 +27,7 @@ import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianCipher;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianCipherFactory;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianCipherMode;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianStreamCipherSpec;
+import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianStreamKeySpec;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianWrapper;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianPadding;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianStreamKeyType;
@@ -84,6 +85,11 @@ public abstract class GordianCoreCipherFactory
     }
 
     @Override
+    public Predicate<GordianStreamKeySpec> supportedStreamKeySpecs() {
+        return this::validStreamKeySpec;
+    }
+
+    @Override
     public Predicate<GordianStreamKeyType> supportedStreamKeyTypes() {
         return this::validStreamKeyType;
     }
@@ -104,32 +110,11 @@ public abstract class GordianCoreCipherFactory
      */
     public boolean validSymKeySpec(final GordianSymKeySpec pSymKeySpec) {
         /* Reject invalid keySpec */
-        if (pSymKeySpec == null || !pSymKeySpec.isValid()) {
+        if (pSymKeySpec == null
+                || !pSymKeySpec.isValid()) {
             return false;
         }
-
-        /* Access details */
-        final GordianLength myBlkLen = pSymKeySpec.getBlockLength();
-        final GordianLength myKeyLen = theFactory.getKeyLength();
-
-        /* Reject 128bit keys where the block length is too large */
-        if (GordianLength.LEN_128 == myKeyLen
-                && myBlkLen.getLength() > GordianLength.LEN_128.getLength()) {
-            return false;
-        }
-
-        /* Simon/Speck 64-bit blockSize can only be used with 128-bit keys */
-        if ((GordianSymKeyType.SPECK.equals(pSymKeySpec.getSymKeyType())
-             || GordianSymKeyType.SIMON.equals(pSymKeySpec.getSymKeyType()))
-            && myBlkLen == GordianLength.LEN_64
-            && myKeyLen != GordianLength.LEN_128) {
-                return false;
-        }
-
-        /* Check validity */
-        final GordianSymKeyType myType = pSymKeySpec.getSymKeyType();
-        return supportedSymKeyTypes().test(myType)
-                && myType.isBlockLengthValid(myBlkLen);
+        return supportedSymKeyTypes().test(pSymKeySpec.getSymKeyType());
     }
 
     /**
@@ -142,6 +127,11 @@ public abstract class GordianCoreCipherFactory
                                          final Boolean isAAD) {
         /* Reject invalid cipherSpec */
         if (pCipherSpec == null || !pCipherSpec.isValid()) {
+            return false;
+        }
+
+        /* Reject unsupported keySpecs */
+        if (!supportedSymKeySpecs().test(pCipherSpec.getKeyType())) {
             return false;
         }
 
@@ -197,10 +187,10 @@ public abstract class GordianCoreCipherFactory
         /* Assume failure */
         boolean bValid = false;
 
-        /* If this is a streamKey */
-        if (pKeySpec instanceof GordianStreamKeyType) {
+        /* If this is a streamKeySpec */
+        if (pKeySpec instanceof GordianStreamKeySpec) {
             /* Check validity of StreamKey */
-            bValid = supportedStreamKeyTypes().test((GordianStreamKeyType) pKeySpec);
+            bValid = supportedStreamKeySpecs().test((GordianStreamKeySpec) pKeySpec);
 
             /* If this is a symKeySpec */
         } else  if (pKeySpec instanceof GordianSymKeySpec) {
@@ -263,9 +253,9 @@ public abstract class GordianCoreCipherFactory
         }
 
         /* Check validity of StreamKey */
-        final GordianStreamKeyType myKeyType = pCipherSpec.getKeyType();
-        if (!supportedStreamKeyTypes().test(myKeyType)) {
-            throw new GordianDataException(GordianCoreFactory.getInvalidText(myKeyType));
+        final GordianStreamKeySpec myKeySpec = pCipherSpec.getKeyType();
+        if (!supportedStreamKeySpecs().test(myKeySpec)) {
+            throw new GordianDataException(GordianCoreFactory.getInvalidText(myKeySpec));
         }
     }
 
@@ -275,8 +265,7 @@ public abstract class GordianCoreCipherFactory
      * @return true/false
      */
     public boolean validSymKeyType(final GordianSymKeyType pKeyType) {
-        return pKeyType != null
-                && validSymKeyTypeForKeyLength(pKeyType, theFactory.getKeyLength());
+        return pKeyType != null;
     }
 
     /**
@@ -291,13 +280,26 @@ public abstract class GordianCoreCipherFactory
     }
 
     /**
+     * Check StreamKeySpec.
+     * @param pKeySpec the streamKeyType
+     * @return true/false
+     */
+    protected boolean validStreamKeySpec(final GordianStreamKeySpec pKeySpec) {
+        /* Reject invalid keySpec */
+        if (pKeySpec == null
+                || !pKeySpec.isValid()) {
+            return false;
+        }
+        return supportedStreamKeyTypes().test(pKeySpec.getStreamKeyType());
+    }
+
+    /**
      * Check StreamKeyType.
      * @param pKeyType the streamKeyType
      * @return true/false
      */
     protected boolean validStreamKeyType(final GordianStreamKeyType pKeyType) {
-        return pKeyType != null
-                && pKeyType.validForKeyLength(theFactory.getKeyLength());
+        return pKeyType != null;
     }
 
     /**

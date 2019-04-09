@@ -21,12 +21,14 @@ import java.util.List;
 
 import net.sourceforge.joceanus.jgordianknot.api.base.GordianLength;
 import net.sourceforge.joceanus.jgordianknot.api.base.GordianKeySpec;
+import net.sourceforge.joceanus.jgordianknot.api.key.GordianKeyLengths;
 import net.sourceforge.joceanus.jtethys.TethysDataConverter;
 
 /**
  * SymKey specification.
  */
-public class GordianSymKeySpec implements GordianKeySpec {
+public class GordianSymKeySpec
+        implements GordianKeySpec {
     /**
      * The Separator.
      */
@@ -43,6 +45,11 @@ public class GordianSymKeySpec implements GordianKeySpec {
     private final GordianLength theBlockLength;
 
     /**
+     * The Key Length.
+     */
+    private final GordianLength theKeyLength;
+
+    /**
      * The Validity.
      */
     private final boolean isValid;
@@ -55,70 +62,81 @@ public class GordianSymKeySpec implements GordianKeySpec {
     /**
      * Constructor.
      * @param pSymKeyType the symKeyType
+     * @param pKeyLength the keyLength
      */
-    public GordianSymKeySpec(final GordianSymKeyType pSymKeyType) {
-        this(pSymKeyType, pSymKeyType.getDefaultBlockLength());
+    public GordianSymKeySpec(final GordianSymKeyType pSymKeyType,
+                             final GordianLength pKeyLength) {
+        this(pSymKeyType, pSymKeyType.getDefaultBlockLength(), pKeyLength);
     }
 
     /**
      * Constructor.
      * @param pSymKeyType the symKeyType
      * @param pBlockLength the stateLength
+     * @param pKeyLength the keyLength
      */
     public GordianSymKeySpec(final GordianSymKeyType pSymKeyType,
-                             final GordianLength pBlockLength) {
+                             final GordianLength pBlockLength,
+                             final GordianLength pKeyLength) {
         /* Store parameters */
         theSymKeyType = pSymKeyType;
         theBlockLength = pBlockLength;
+        theKeyLength = pKeyLength;
         isValid = checkValidity();
     }
 
     /**
-     * Create AesKeySpec.
+     * Create aesKeySpec.
+     * @param pKeyLength the keyLength
      * @return the keySpec
      */
-    public static GordianSymKeySpec aes() {
-        return new GordianSymKeySpec(GordianSymKeyType.AES);
+    public static GordianSymKeySpec aes(final GordianLength pKeyLength) {
+        return new GordianSymKeySpec(GordianSymKeyType.AES, pKeyLength);
     }
 
     /**
-     * Create SerpentKeySpec.
+     * Create serpentKeySpec.
+     * @param pKeyLength the keyLength
      * @return the keySpec
      */
-    public static GordianSymKeySpec serpent() {
-        return new GordianSymKeySpec(GordianSymKeyType.SERPENT);
+    public static GordianSymKeySpec serpent(final GordianLength pKeyLength) {
+        return new GordianSymKeySpec(GordianSymKeyType.SERPENT, pKeyLength);
     }
 
     /**
-     * Create TwoFishKeySpec.
+     * Create twoFishKeySpec.
+     * @param pKeyLength the keyLength
      * @return the keySpec
      */
-    public static GordianSymKeySpec twofish() {
-        return new GordianSymKeySpec(GordianSymKeyType.TWOFISH);
+    public static GordianSymKeySpec twoFish(final GordianLength pKeyLength) {
+        return new GordianSymKeySpec(GordianSymKeyType.TWOFISH, pKeyLength);
     }
 
     /**
-     * Create ThreeFishKeySpec.
+     * Create threeFishKeySpec.
+     * @param pKeyLength the keyLength
      * @return the keySpec
      */
-    public static GordianSymKeySpec threefish() {
-        return new GordianSymKeySpec(GordianSymKeyType.THREEFISH);
+    public static GordianSymKeySpec threeFish(final GordianLength pKeyLength) {
+        return new GordianSymKeySpec(GordianSymKeyType.THREEFISH, pKeyLength);
     }
 
     /**
-     * Create CamelliaKeySpec.
+     * Create camelliaKeySpec.
+     * @param pKeyLength the keyLength
      * @return the keySpec
      */
-    public static GordianSymKeySpec camellia() {
-        return new GordianSymKeySpec(GordianSymKeyType.CAMELLIA);
+    public static GordianSymKeySpec camellia(final GordianLength pKeyLength) {
+        return new GordianSymKeySpec(GordianSymKeyType.CAMELLIA, pKeyLength);
     }
 
     /**
      * Create rc2KeySpec.
+     * @param pKeyLength the keyLength
      * @return the keySpec
      */
-    public static GordianSymKeySpec rc2() {
-        return new GordianSymKeySpec(GordianSymKeyType.RC2);
+    public static GordianSymKeySpec rc2(final GordianLength pKeyLength) {
+        return new GordianSymKeySpec(GordianSymKeyType.RC2, pKeyLength);
     }
 
     /**
@@ -126,15 +144,25 @@ public class GordianSymKeySpec implements GordianKeySpec {
      * @return the keySpec
      */
     public static GordianSymKeySpec rc5() {
-        return new GordianSymKeySpec(GordianSymKeyType.RC5);
+        return new GordianSymKeySpec(GordianSymKeyType.RC5, GordianLength.LEN_128);
+    }
+
+    /**
+     * Create rc5KeySpec.
+     * @param pBlockLength the blockLength
+     * @return the keySpec
+     */
+    public static GordianSymKeySpec rc5(final GordianLength pBlockLength) {
+        return new GordianSymKeySpec(GordianSymKeyType.RC5, pBlockLength, GordianLength.LEN_128);
     }
 
     /**
      * Create rc6KeySpec.
+     * @param pKeyLength the keyLength
      * @return the keySpec
      */
-    public static GordianSymKeySpec rc6() {
-        return new GordianSymKeySpec(GordianSymKeyType.RC6);
+    public static GordianSymKeySpec rc6(final GordianLength pKeyLength) {
+        return new GordianSymKeySpec(GordianSymKeyType.RC6, pKeyLength);
     }
 
     /**
@@ -142,23 +170,25 @@ public class GordianSymKeySpec implements GordianKeySpec {
      * @return the keySpec
      */
     public static GordianSymKeySpec cast5() {
-        return new GordianSymKeySpec(GordianSymKeyType.CAST5);
+        return new GordianSymKeySpec(GordianSymKeyType.CAST5, GordianLength.LEN_128);
     }
 
     /**
      * Create cast6KeySpec.
+     * @param pKeyLength the keyLength
      * @return the keySpec
      */
-    public static GordianSymKeySpec cast6() {
-        return new GordianSymKeySpec(GordianSymKeyType.CAST6);
+    public static GordianSymKeySpec cast6(final GordianLength pKeyLength) {
+        return new GordianSymKeySpec(GordianSymKeyType.CAST6, pKeyLength);
     }
 
     /**
      * Create ariaKeySpec.
+     * @param pKeyLength the keyLength
      * @return the keySpec
      */
-    public static GordianSymKeySpec aria() {
-        return new GordianSymKeySpec(GordianSymKeyType.ARIA);
+    public static GordianSymKeySpec aria(final GordianLength pKeyLength) {
+        return new GordianSymKeySpec(GordianSymKeyType.ARIA, pKeyLength);
     }
 
     /**
@@ -166,15 +196,15 @@ public class GordianSymKeySpec implements GordianKeySpec {
      * @return the keySpec
      */
     public static GordianSymKeySpec sm4() {
-        return new GordianSymKeySpec(GordianSymKeyType.SM4);
+        return new GordianSymKeySpec(GordianSymKeyType.SM4, GordianLength.LEN_128);
     }
 
     /**
-     * Create noekeonKeySpec.
+     * Create noeKeonKeySpec.
      * @return the keySpec
      */
     public static GordianSymKeySpec noekeon() {
-        return new GordianSymKeySpec(GordianSymKeyType.NOEKEON);
+        return new GordianSymKeySpec(GordianSymKeyType.NOEKEON, GordianLength.LEN_128);
     }
 
     /**
@@ -182,7 +212,7 @@ public class GordianSymKeySpec implements GordianKeySpec {
      * @return the keySpec
      */
     public static GordianSymKeySpec seed() {
-        return new GordianSymKeySpec(GordianSymKeyType.SEED);
+        return new GordianSymKeySpec(GordianSymKeyType.SEED, GordianLength.LEN_128);
     }
 
     /**
@@ -190,7 +220,7 @@ public class GordianSymKeySpec implements GordianKeySpec {
      * @return the keySpec
      */
     public static GordianSymKeySpec tea() {
-        return new GordianSymKeySpec(GordianSymKeyType.TEA);
+        return new GordianSymKeySpec(GordianSymKeyType.TEA, GordianLength.LEN_128);
     }
 
     /**
@@ -198,7 +228,7 @@ public class GordianSymKeySpec implements GordianKeySpec {
      * @return the keySpec
      */
     public static GordianSymKeySpec xtea() {
-        return new GordianSymKeySpec(GordianSymKeyType.XTEA);
+        return new GordianSymKeySpec(GordianSymKeyType.XTEA, GordianLength.LEN_128);
     }
 
     /**
@@ -206,7 +236,7 @@ public class GordianSymKeySpec implements GordianKeySpec {
      * @return the keySpec
      */
     public static GordianSymKeySpec idea() {
-        return new GordianSymKeySpec(GordianSymKeyType.IDEA);
+        return new GordianSymKeySpec(GordianSymKeyType.IDEA, GordianLength.LEN_128);
     }
 
     /**
@@ -214,90 +244,103 @@ public class GordianSymKeySpec implements GordianKeySpec {
      * @return the keySpec
      */
     public static GordianSymKeySpec skipjack() {
-        return new GordianSymKeySpec(GordianSymKeyType.SKIPJACK);
+        return new GordianSymKeySpec(GordianSymKeyType.SKIPJACK, GordianLength.LEN_128);
     }
 
     /**
      * Create desedeKeySpec.
+     * @param pKeyLength the keyLength
      * @return the keySpec
      */
-    public static GordianSymKeySpec desede() {
-        return new GordianSymKeySpec(GordianSymKeyType.DESEDE);
+    public static GordianSymKeySpec desede(final GordianLength pKeyLength) {
+        return new GordianSymKeySpec(GordianSymKeyType.DESEDE, pKeyLength);
     }
 
     /**
      * Create blowfishKeySpec.
+     * @param pKeyLength the keyLength
      * @return the keySpec
      */
-    public static GordianSymKeySpec blowfish() {
-        return new GordianSymKeySpec(GordianSymKeyType.BLOWFISH);
+    public static GordianSymKeySpec blowfish(final GordianLength pKeyLength) {
+        return new GordianSymKeySpec(GordianSymKeyType.BLOWFISH, pKeyLength);
     }
 
     /**
      * Create kalynaKeySpec.
+     * @param pKeyLength the keyLength
      * @return the keySpec
      */
-    public static GordianSymKeySpec kalyna() {
-        return new GordianSymKeySpec(GordianSymKeyType.KALYNA);
+    public static GordianSymKeySpec kalyna(final GordianLength pKeyLength) {
+        return new GordianSymKeySpec(GordianSymKeyType.KALYNA, pKeyLength);
     }
 
     /**
      * Create kalynaKeySpec.
      * @param pBlockLength the block length
+     * @param pKeyLength the keyLength
      * @return the keySpec
      */
-    public static GordianSymKeySpec kalyna(final GordianLength pBlockLength) {
-        return new GordianSymKeySpec(GordianSymKeyType.KALYNA, pBlockLength);
+    public static GordianSymKeySpec kalyna(final GordianLength pBlockLength,
+                                           final GordianLength pKeyLength) {
+        return new GordianSymKeySpec(GordianSymKeyType.KALYNA, pBlockLength, pKeyLength);
     }
 
     /**
      * Create speckKeySpec.
+     * @param pKeyLength the keyLength
      * @return the keySpec
      */
-    public static GordianSymKeySpec speck() {
-        return new GordianSymKeySpec(GordianSymKeyType.SPECK);
+    public static GordianSymKeySpec speck(final GordianLength pKeyLength) {
+        return new GordianSymKeySpec(GordianSymKeyType.SPECK, pKeyLength);
     }
 
     /**
      * Create speckKeySpec.
      * @param pBlockLength the block length
+     * @param pKeyLength the keyLength
      * @return the keySpec
      */
-    public static GordianSymKeySpec speck(final GordianLength pBlockLength) {
-        return new GordianSymKeySpec(GordianSymKeyType.SPECK, pBlockLength);
+    public static GordianSymKeySpec speck(final GordianLength pBlockLength,
+                                          final GordianLength pKeyLength) {
+        return new GordianSymKeySpec(GordianSymKeyType.SPECK, pBlockLength, pKeyLength);
     }
 
     /**
      * Create simonKeySpec.
+     * @param pKeyLength the keyLength
      * @return the keySpec
      */
-    public static GordianSymKeySpec simon() {
-        return new GordianSymKeySpec(GordianSymKeyType.SIMON);
+    public static GordianSymKeySpec simon(final GordianLength pKeyLength) {
+        return new GordianSymKeySpec(GordianSymKeyType.SIMON, pKeyLength);
     }
 
     /**
      * Create simonKeySpec.
      * @param pBlockLength the block length
+     * @param pKeyLength the keyLength
      * @return the keySpec
      */
-    public static GordianSymKeySpec simon(final GordianLength pBlockLength) {
-        return new GordianSymKeySpec(GordianSymKeyType.SIMON, pBlockLength);
+    public static GordianSymKeySpec simon(final GordianLength pBlockLength,
+                                          final GordianLength pKeyLength) {
+        return new GordianSymKeySpec(GordianSymKeyType.SIMON, pBlockLength, pKeyLength);
     }
 
     /**
      * Create marsKeySpec.
+     * @param pKeyLength the keyLength
      * @return the keySpec
      */
-    public static GordianSymKeySpec mars() {
-        return new GordianSymKeySpec(GordianSymKeyType.MARS);
+    public static GordianSymKeySpec mars(final GordianLength pKeyLength) {
+        return new GordianSymKeySpec(GordianSymKeyType.MARS, pKeyLength);
     }
 
     /**
      * Create anubisKeySpec.
+     * @param pKeyLength the keyLength
      * @return the keySpec
      */
-    public static GordianSymKeySpec anubis() {
-        return new GordianSymKeySpec(GordianSymKeyType.ANUBIS);
+    public static GordianSymKeySpec anubis(final GordianLength pKeyLength) {
+        return new GordianSymKeySpec(GordianSymKeyType.ANUBIS, pKeyLength);
     }
 
     /**
@@ -310,10 +353,15 @@ public class GordianSymKeySpec implements GordianKeySpec {
 
     /**
      * Obtain Block Length.
-     * @return the Length
+     * @return the blockLength
      */
     public GordianLength getBlockLength() {
         return theBlockLength;
+    }
+
+    @Override
+    public GordianLength getKeyLength() {
+        return theKeyLength;
     }
 
     /**
@@ -350,7 +398,15 @@ public class GordianSymKeySpec implements GordianKeySpec {
      * @return valid true/false
      */
     private boolean checkValidity() {
-        return theSymKeyType != null && theBlockLength != null;
+        /* Everything must be non-null */
+        if (theSymKeyType == null
+                || theBlockLength == null
+                || theKeyLength == null) {
+            return false;
+        }
+
+        /* Check blockLength and keyLength validity */
+        return theSymKeyType.validBlockAndKeyLengths(theBlockLength, theKeyLength);
     }
 
     @Override
@@ -361,16 +417,18 @@ public class GordianSymKeySpec implements GordianKeySpec {
             if (isValid) {
                 /* Load the name */
                 theName = theSymKeyType.toString();
-                if (theSymKeyType.hasMultipleBlockLengths()) {
+                if (theSymKeyType.hasMultipleBlockLengths()
+                    && !GordianSymKeyType.THREEFISH.equals(theSymKeyType)) {
                     int myLen = theBlockLength.getLength();
                     if (GordianSymKeyType.RC5.equals(theSymKeyType)) {
                         myLen >>= 1;
                     }
-                    theName += SEP + myLen;
+                    theName += myLen;
                 }
+                theName += SEP + theKeyLength;
             }  else {
                 /* Report invalid spec */
-                theName = "InvalidSymKeySpec: " + theSymKeyType + ":" + theBlockLength;
+                theName = "InvalidSymKeySpec: " + theSymKeyType + ":" + theBlockLength + ":" + theKeyLength;
             }
         }
 
@@ -398,29 +456,40 @@ public class GordianSymKeySpec implements GordianKeySpec {
 
         /* Check subFields */
         return theSymKeyType == myThat.getSymKeyType()
-                && theBlockLength == myThat.getBlockLength();
+                && theBlockLength == myThat.getBlockLength()
+                && theKeyLength == myThat.getKeyLength();
     }
 
     @Override
     public int hashCode() {
         int hashCode = theSymKeyType.ordinal() + 1 << TethysDataConverter.BYTE_SHIFT;
-        hashCode += theBlockLength.ordinal() + 1;
+        hashCode += theBlockLength.ordinal() + 1 << TethysDataConverter.BYTE_SHIFT;
+        hashCode += theKeyLength.ordinal() + 1;
         return hashCode;
     }
 
     /**
-     * List all possible symKeySpecs.
+     * List all possible symKeySpecs for the keyLength.
+     * @param pKeyLen the keyLength
      * @return the list
      */
-    public static List<GordianSymKeySpec> listAll() {
+    public static List<GordianSymKeySpec> listAll(final GordianLength pKeyLen) {
         /* Create the array list */
         final List<GordianSymKeySpec> myList = new ArrayList<>();
 
+        /* Check that the keyLength is supported */
+        if (!GordianKeyLengths.isSupportedLength(pKeyLen)) {
+            return myList;
+        }
+
         /* For each symKey type */
         for (final GordianSymKeyType myType : GordianSymKeyType.values()) {
-            /* For each length */
-            for (final GordianLength myLength : myType.getSupportedBlockLengths()) {
-                myList.add(new GordianSymKeySpec(myType, myLength));
+            /* For each supported block length */
+            for (final GordianLength myBlkLen : myType.getSupportedBlockLengths()) {
+                /* Add spec if valid for blkLen and keyLen */
+                if (myType.validBlockAndKeyLengths(myBlkLen, pKeyLen)) {
+                    myList.add(new GordianSymKeySpec(myType, myBlkLen, pKeyLen));
+                }
             }
         }
 

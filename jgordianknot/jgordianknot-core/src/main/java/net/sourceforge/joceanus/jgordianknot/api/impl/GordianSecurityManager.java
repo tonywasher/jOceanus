@@ -28,10 +28,12 @@ import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianBadCredentialsExc
 import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySet;
 import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetFactory;
 import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetHash;
+import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetSpec;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianDataException;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianFactoryGenerator;
 import net.sourceforge.joceanus.jgordianknot.impl.core.keyset.GordianCoreKeySet;
 import net.sourceforge.joceanus.jgordianknot.impl.core.keyset.GordianCoreKeySetHash;
+import net.sourceforge.joceanus.jgordianknot.impl.core.keyset.GordianKeySetHashASN1;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.TethysDataConverter;
 import net.sourceforge.joceanus.jtethys.logger.TethysLogManager;
@@ -111,7 +113,7 @@ public class GordianSecurityManager {
 
         /* Create a keySet */
         final GordianKeySetFactory myFactory = theFactory.getKeySetFactory();
-        theKeySet = myFactory.generateKeySet();
+        theKeySet = myFactory.generateKeySet(new GordianKeySetSpec(GordianLength.LEN_256));
     }
 
     /**
@@ -176,7 +178,7 @@ public class GordianSecurityManager {
 
                 /* Check the password */
                 if (needConfirm) {
-                    myHash = (GordianCoreKeySetHash) myKeySets.generateKeySetHash(myPassword);
+                    myHash = (GordianCoreKeySetHash) myKeySets.generateKeySetHash(theKeySet.getKeySetSpec(), myPassword);
                 } else {
                     myHash = (GordianCoreKeySetHash) myKeySets.deriveKeySetHash(pHashBytes, myPassword);
                 }
@@ -256,7 +258,7 @@ public class GordianSecurityManager {
      * @return the maximum keyWrap size
      */
     public static int getKeySetHashLen() {
-        return GordianCoreKeySetHash.HASHLEN;
+        return GordianKeySetHashASN1.getEncodedLength();
     }
 
     /**
@@ -423,7 +425,8 @@ public class GordianSecurityManager {
 
             /* Try to resolve the hash and return it */
             final GordianKeySetFactory myKeySets = theFactory.getKeySetFactory();
-            final GordianCoreKeySetHash myHash = (GordianCoreKeySetHash) myKeySets.generateKeySetHash(myPasswordChars);
+            final GordianCoreKeySetHash myHash
+                    = (GordianCoreKeySetHash) myKeySets.generateKeySetHash(theKeySet.getKeySetSpec(), myPasswordChars);
 
             /* Add the entry to the list and return the hash */
             theHashCache.add(new GordianKeySetHashCache(myHash, pPassword));

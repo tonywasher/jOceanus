@@ -32,11 +32,6 @@ public class GordianParameters {
     public static final int HASH_PRIME = 37;
 
     /**
-     * Default Key length.
-     */
-    public static final GordianLength DEFAULT_KEYLEN = GordianLength.LEN_256;
-
-    /**
      * Default Factory.
      */
     public static final GordianFactoryType DEFAULT_FACTORY = GordianFactoryType.BC;
@@ -77,11 +72,6 @@ public class GordianParameters {
     private static final String DEFAULT_SECURITY_PHRASE = "PleaseChangeMeToSomethingMoreUnique";
 
     /**
-     * KeyLength.
-     */
-    private final GordianLength theKeyLength;
-
-    /**
      * The Factory Type.
      */
     private GordianFactoryType theFactoryType;
@@ -105,48 +95,19 @@ public class GordianParameters {
      * Default Constructor.
      */
     public GordianParameters() {
-        this(DEFAULT_KEYLEN, DEFAULT_FACTORY);
+        this(DEFAULT_FACTORY);
     }
 
     /**
-     * Constructor for explicit keyLength.
-     * @param pKeyLen the keyLength
-     */
-    public GordianParameters(final GordianLength pKeyLen) {
-        /* Default factory */
-        this(pKeyLen, DEFAULT_FACTORY);
-    }
-
-    /**
-     * Constructor for explicit factory.
-     * @param pFactoryType the factoryType
-     */
-    public GordianParameters(final GordianFactoryType pFactoryType) {
-        /* Default keyLen */
-        this(DEFAULT_KEYLEN, pFactoryType);
-    }
-
-    /**
-     * Full Constructor.
-     * @param pKeyLen the keyLength
+     * Constructor.
      * @param pFactoryType the factory type
      */
-    public GordianParameters(final GordianLength pKeyLen,
-                             final GordianFactoryType pFactoryType) {
+    public GordianParameters(final GordianFactoryType pFactoryType) {
         /* Store parameters */
-        theKeyLength = pKeyLen;
         theFactoryType = pFactoryType;
         theCipherSteps = DEFAULT_CIPHER_STEPS;
         theIterations = DEFAULT_HASH_ITERATIONS;
         theSecurityPhrase = null;
-    }
-
-    /**
-     * Obtain the key length.
-     * @return the key length
-     */
-    public GordianLength getKeyLength() {
-        return theKeyLength;
     }
 
     /**
@@ -235,19 +196,6 @@ public class GordianParameters {
      * @return valid true/false
      */
     public boolean validate() {
-        /* Check keyLength */
-        if (theKeyLength == null) {
-            return false;
-        }
-        switch (theKeyLength) {
-            case LEN_128:
-            case LEN_192:
-            case LEN_256:
-                break;
-            default:
-                return false;
-        }
-
         /* Check factory type */
         if (theFactoryType == null) {
             return false;
@@ -283,7 +231,6 @@ public class GordianParameters {
 
         /* Check Differences */
         if (theCipherSteps != myThat.getNumCipherSteps()
-                || theKeyLength != myThat.getKeyLength()
                 || theIterations != myThat.getNumHashIterations()) {
             return false;
         }
@@ -310,8 +257,6 @@ public class GordianParameters {
         myCode *= myPrime;
 
         /* Calculate hash from types */
-        myCode += theKeyLength.hashCode();
-        myCode *= myPrime;
         myCode += theFactoryType.hashCode();
         myCode *= myPrime;
 

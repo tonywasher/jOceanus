@@ -23,7 +23,9 @@ import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigestSpec;
 import net.sourceforge.joceanus.jgordianknot.api.factory.GordianFactory;
 import net.sourceforge.joceanus.jgordianknot.api.factory.GordianParameters;
 import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianBadCredentialsException;
+import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySet;
 import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetHash;
+import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetSpec;
 import net.sourceforge.joceanus.jgordianknot.api.mac.GordianMac;
 import net.sourceforge.joceanus.jgordianknot.api.mac.GordianMacFactory;
 import net.sourceforge.joceanus.jgordianknot.api.mac.GordianMacSpec;
@@ -63,6 +65,11 @@ public final class GordianCoreKeySetHash
     private final GordianCoreFactory theFactory;
 
     /**
+     * keySetSpec.
+     */
+    private GordianKeySetSpec theSpec;
+
+    /**
      * The Hash.
      */
     private byte[] theHash;
@@ -81,13 +88,16 @@ public final class GordianCoreKeySetHash
      * Constructor for a completely new keySetHash.
      *
      * @param pFactory the factory
+     * @param pSpec the keySetSpec
      */
-    private GordianCoreKeySetHash(final GordianCoreFactory pFactory) {
+    private GordianCoreKeySetHash(final GordianCoreFactory pFactory,
+                                  final GordianKeySetSpec pSpec) {
         /* Store the factory */
         theFactory = pFactory;
+        theSpec = pSpec;
 
         /* Create a random HashRecipe */
-        theRecipe = new GordianKeySetHashRecipe(theFactory);
+        theRecipe = new GordianKeySetHashRecipe(theFactory, pSpec);
     }
 
     /**
@@ -96,10 +106,11 @@ public final class GordianCoreKeySetHash
      * @param pFactory   the factory
      * @param pHashBytes the Hash bytes
      * @param pPassLen   the password length
+     * @throws OceanusException on error
      */
     private GordianCoreKeySetHash(final GordianCoreFactory pFactory,
                                   final byte[] pHashBytes,
-                                  final int pPassLen) {
+                                  final int pPassLen) throws OceanusException {
         /* Store the factory */
         theFactory = pFactory;
 
@@ -108,24 +119,27 @@ public final class GordianCoreKeySetHash
 
         /* Parse the hash */
         theRecipe = new GordianKeySetHashRecipe(theFactory, pPassLen, pHashBytes);
+        theSpec = theRecipe.getSpec();
     }
 
     /**
      * Create a new keySetHash for password.
      *
      * @param pFactory  the factory
+     * @param pSpec the keySetSpec
      * @param pPassword the password
      * @return the new keySetHash
      * @throws OceanusException on error
      */
     static GordianKeySetHash newKeySetHash(final GordianCoreFactory pFactory,
+                                           final GordianKeySetSpec pSpec,
                                            final char[] pPassword) throws OceanusException {
         /* Protect against exceptions */
         byte[] myPassword = null;
         try {
             /* Access bytes of password */
             myPassword = TethysDataConverter.charsToByteArray(pPassword);
-            return newKeySetHash(pFactory, myPassword);
+            return newKeySetHash(pFactory, pSpec, myPassword);
 
             /* Ensure intermediate password is reset */
         } finally {
@@ -139,14 +153,16 @@ public final class GordianCoreKeySetHash
      * Create a new keySetHash for password.
      *
      * @param pFactory  the factory
+     * @param pSpec the keySetSpec
      * @param pPassword the password
      * @return the new keySetHash
      * @throws OceanusException on error
      */
     static GordianKeySetHash newKeySetHash(final GordianFactory pFactory,
+                                           final GordianKeySetSpec pSpec,
                                            final byte[] pPassword) throws OceanusException {
         /* Create a new keySetHash */
-        final GordianCoreKeySetHash myHash = new GordianCoreKeySetHash((GordianCoreFactory) pFactory);
+        final GordianCoreKeySetHash myHash = new GordianCoreKeySetHash((GordianCoreFactory) pFactory, pSpec);
 
         /* Build hash from password */
         myHash.setPassword(pPassword);
@@ -227,7 +243,7 @@ public final class GordianCoreKeySetHash
         byte[] myPassword = null;
         try {
             /* Create a new keySetHash */
-            final GordianCoreKeySetHash myHash = new GordianCoreKeySetHash(theFactory);
+            final GordianCoreKeySetHash myHash = new GordianCoreKeySetHash(theFactory, theSpec);
 
             /* Access the child password */
             myPassword = theKeySet.decryptBytes(theChildPassword);
@@ -279,7 +295,7 @@ public final class GordianCoreKeySetHash
             theHash = myResults[iIndex++];
 
             /* Create the Key Set */
-            theKeySet = new GordianCoreKeySet(theFactory);
+            theKeySet = new GordianCoreKeySet(theFactory, theSpec);
             theKeySet.buildFromSecret(myResults[iIndex++], myResults[iIndex++]);
 
             /* Encrypt the passwords */
@@ -318,7 +334,7 @@ public final class GordianCoreKeySetHash
             }
 
             /* Create the Key Set */
-            theKeySet = new GordianCoreKeySet(theFactory);
+            theKeySet = new GordianCoreKeySet(theFactory, theSpec);
             theKeySet.buildFromSecret(myResults[iIndex++], myResults[iIndex++]);
 
             /* Encrypt the passwords*/

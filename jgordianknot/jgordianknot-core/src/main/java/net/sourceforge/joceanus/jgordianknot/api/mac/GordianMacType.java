@@ -19,6 +19,7 @@ package net.sourceforge.joceanus.jgordianknot.api.mac;
 import org.bouncycastle.jcajce.provider.asymmetric.GOST;
 
 import net.sourceforge.joceanus.jgordianknot.api.base.GordianLength;
+import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianSymKeyType;
 
 /**
  * Mac types. Available algorithms.
@@ -138,8 +139,10 @@ public enum GordianMacType {
             case GOST:
                 return GordianLength.LEN_256 == pKeyLen;
             case ZUC:
+                return GordianLength.LEN_128 == pKeyLen
+                        || GordianLength.LEN_256 == pKeyLen;
             case KALYNA:
-                return GordianLength.LEN_192 != pKeyLen;
+                return GordianSymKeyType.KALYNA.validForKeyLength(pKeyLen);
             case SIPHASH:
                 return GordianLength.LEN_128 == pKeyLen;
             default:

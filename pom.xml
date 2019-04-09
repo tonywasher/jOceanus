@@ -80,8 +80,8 @@
     <ZipSDKVersion>9.20</ZipSDKVersion>
     <JavaVersion>12</JavaVersion>
     <JavaFXVersion>12</JavaFXVersion>
-    <CheckStyleVersion>8.18</CheckStyleVersion>
-    <PMDVersion>6.12.0</PMDVersion>
+    <CheckStyleVersion>8.19</CheckStyleVersion>
+    <PMDVersion>6.13.0</PMDVersion>
     <CleanPluginVersion>3.1.0</CleanPluginVersion>
     <ResourcesPluginVersion>3.1.0</ResourcesPluginVersion>
     <InstallPluginVersion>3.0.0-M1</InstallPluginVersion>
@@ -106,12 +106,6 @@
     <FindBugsPluginVersion>3.0.5</FindBugsPluginVersion>
     <VersionsPluginVersion>2.7</VersionsPluginVersion>
   </properties>
-  <repositories>
-    <repository>
-      <id>svnKit</id>
-      <url>https://maven.tmatesoft.com/content/repositories/releases/</url>
-    </repository>
-  </repositories>
   <build>
     <resources>
       <resource>

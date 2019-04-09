@@ -17,6 +17,7 @@
 package net.sourceforge.joceanus.jgordianknot.api.cipher;
 
 import net.sourceforge.joceanus.jgordianknot.api.base.GordianLength;
+import net.sourceforge.joceanus.jgordianknot.api.key.GordianKeyLengths;
 
 /**
  * Symmetric Key Types. Available algorithms.
@@ -55,7 +56,7 @@ public enum GordianSymKeyType {
     /**
      * ThreeFish.
      */
-    THREEFISH(GordianLength.LEN_256),
+    THREEFISH(GordianLength.LEN_256, GordianLength.LEN_512, GordianLength.LEN_1024),
 
     /**
      * ARIA.
@@ -103,7 +104,7 @@ public enum GordianSymKeyType {
     DESEDE(GordianLength.LEN_64),
 
     /**
-     * DESede.
+     * CAST5.
      */
     CAST5(GordianLength.LEN_64),
 
@@ -125,7 +126,7 @@ public enum GordianSymKeyType {
     /**
      * Kalyna.
      */
-    KALYNA(GordianLength.LEN_128, GordianLength.LEN_256),
+    KALYNA(GordianLength.LEN_128, GordianLength.LEN_256, GordianLength.LEN_512),
 
     /**
      * GOST.
@@ -213,7 +214,7 @@ public enum GordianSymKeyType {
      * @param pLength the length
      * @return true/false
      */
-    public boolean isBlockLengthValid(final GordianLength pLength) {
+    private boolean isBlockLengthValid(final GordianLength pLength) {
         for (final GordianLength myLength : theLengths) {
             if (myLength.equals(pLength)) {
                 return true;
@@ -236,11 +237,22 @@ public enum GordianSymKeyType {
      * @return true/false
      */
     public boolean validForKeyLength(final GordianLength pKeyLen) {
+        /* Reject unsupported keyLengths */
+        if (!GordianKeyLengths.isSupportedLength(pKeyLen)) {
+            return false;
+        }
+
+        /* switch on keyLength */
         switch (this) {
             case THREEFISH:
+                return GordianLength.LEN_256 == pKeyLen
+                        || GordianLength.LEN_512 == pKeyLen
+                        || GordianLength.LEN_1024 == pKeyLen;
+            case SHACAL2:
+                return GordianLength.LEN_256 == pKeyLen
+                        || GordianLength.LEN_512 == pKeyLen;
             case GOST:
             case KUZNYECHIK:
-            case SHACAL2:
                 return GordianLength.LEN_256 == pKeyLen;
             case SM4:
             case SEED:
@@ -253,9 +265,56 @@ public enum GordianSymKeyType {
             case IDEA:
                 return GordianLength.LEN_128 == pKeyLen;
             case DESEDE:
-                return GordianLength.LEN_256 != pKeyLen;
+                return GordianLength.LEN_128 == pKeyLen
+                        || GordianLength.LEN_192 == pKeyLen;
             case KALYNA:
-                return GordianLength.LEN_192 != pKeyLen;
+                return GordianLength.LEN_128 == pKeyLen
+                        || GordianLength.LEN_256 == pKeyLen
+                        || GordianLength.LEN_512 == pKeyLen;
+            default:
+                return GordianLength.LEN_128 == pKeyLen
+                        || GordianLength.LEN_192 == pKeyLen
+                        || GordianLength.LEN_256 == pKeyLen;
+        }
+    }
+
+    /**
+     * Is this KeyType valid for blockLength and keyLength?
+     * @param pBlkLen the block Length
+     * @param pKeyLen the key length
+     * @return true/false
+     */
+    public boolean validBlockAndKeyLengths(final GordianLength pBlkLen,
+                                           final GordianLength pKeyLen) {
+        /* Reject unsupported blockLengths */
+        if (!isBlockLengthValid(pBlkLen)) {
+            return false;
+        }
+
+        /* Reject unsupported keyLengths */
+        if (!validForKeyLength(pKeyLen)) {
+            return false;
+        }
+
+        /* Reject keys that are shorter than the block length */
+        if (pBlkLen.getLength() > pKeyLen.getLength()) {
+            return false;
+        }
+
+        /* Switch on keyType */
+        switch (this) {
+            /* ThreeFish keys must be same length as blockSize */
+            case THREEFISH:
+                return pKeyLen == pBlkLen;
+            /* Explicitly disallow Kalyna128-512 */
+            case KALYNA:
+                return GordianLength.LEN_128 != pBlkLen
+                        || GordianLength.LEN_512 != pKeyLen;
+            /* Simon/Speck 64-bit blockSize can only be used with 128-bit keys */
+            case SIMON:
+            case SPECK:
+                return pBlkLen != GordianLength.LEN_64
+                        || pKeyLen == GordianLength.LEN_128;
             default:
                 return true;
         }

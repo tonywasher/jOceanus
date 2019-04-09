@@ -17,6 +17,7 @@
 package net.sourceforge.joceanus.jgordianknot.junit.regression;
 
 import java.security.SecureRandom;
+import java.util.Iterator;
 import java.util.List;
 import java.util.stream.Stream;
 
@@ -37,7 +38,7 @@ import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianCipherMode;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianCipherSpec;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianPadding;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianStreamCipherSpec;
-import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianStreamKeyType;
+import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianStreamKeySpec;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianSymCipherSpec;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianSymKeySpec;
 import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigest;
@@ -48,6 +49,7 @@ import net.sourceforge.joceanus.jgordianknot.api.factory.GordianFactoryType;
 import net.sourceforge.joceanus.jgordianknot.api.factory.GordianParameters;
 import net.sourceforge.joceanus.jgordianknot.api.impl.GordianGenerator;
 import net.sourceforge.joceanus.jgordianknot.api.key.GordianKey;
+import net.sourceforge.joceanus.jgordianknot.api.key.GordianKeyLengths;
 import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetFactory;
 import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKnuthObfuscater;
 import net.sourceforge.joceanus.jgordianknot.api.mac.GordianMac;
@@ -67,7 +69,7 @@ import net.sourceforge.joceanus.jgordianknot.junit.regression.SymmetricStore.Fac
 import net.sourceforge.joceanus.jgordianknot.junit.regression.SymmetricStore.FactoryRandomType;
 import net.sourceforge.joceanus.jgordianknot.junit.regression.SymmetricStore.FactorySpec;
 import net.sourceforge.joceanus.jgordianknot.junit.regression.SymmetricStore.FactoryStreamCipherSpec;
-import net.sourceforge.joceanus.jgordianknot.junit.regression.SymmetricStore.FactoryStreamKeyType;
+import net.sourceforge.joceanus.jgordianknot.junit.regression.SymmetricStore.FactoryStreamKeySpec;
 import net.sourceforge.joceanus.jgordianknot.junit.regression.SymmetricStore.FactorySymCipherSpec;
 import net.sourceforge.joceanus.jgordianknot.junit.regression.SymmetricStore.FactorySymKeySpec;
 import net.sourceforge.joceanus.jtethys.OceanusException;
@@ -131,25 +133,19 @@ public class SymmetricTest {
     @TestFactory
     public Stream<DynamicNode> symmetricTests() throws OceanusException {
         /* Create tests */
-        Stream<DynamicNode> myStream = symmetricTests(GordianLength.LEN_256, GordianFactoryType.BC);
-        myStream = Stream.concat(myStream, symmetricTests(GordianLength.LEN_192, GordianFactoryType.BC));
-        myStream = Stream.concat(myStream, symmetricTests(GordianLength.LEN_128, GordianFactoryType.BC));
-        myStream = Stream.concat(myStream, symmetricTests(GordianLength.LEN_256, GordianFactoryType.JCA));
-        myStream = Stream.concat(myStream, symmetricTests(GordianLength.LEN_192, GordianFactoryType.JCA));
-        return Stream.concat(myStream, symmetricTests(GordianLength.LEN_128, GordianFactoryType.JCA));
+        Stream<DynamicNode> myStream = symmetricTests(GordianFactoryType.BC);
+        return Stream.concat(myStream, symmetricTests(GordianFactoryType.JCA));
     }
 
     /**
      * Create the symmetric test suite for a factory.
-     * @param pKeyLen the factory keyLength
      * @param pType the factoryType
      * @return the test stream
      * @throws OceanusException on error
      */
-    private Stream<DynamicNode> symmetricTests(final GordianLength pKeyLen,
-                                               final GordianFactoryType pType) throws OceanusException {
+    private Stream<DynamicNode> symmetricTests(final GordianFactoryType pType) throws OceanusException {
         /* Create the factory */
-        final GordianFactory myFactory = GordianGenerator.createFactory(new GordianParameters(pKeyLen, pType));
+        final GordianFactory myFactory = GordianGenerator.createFactory(new GordianParameters(pType));
 
         /* Create an empty stream */
         Stream<DynamicNode> myStream = Stream.empty();
@@ -162,28 +158,23 @@ public class SymmetricTest {
 
         /* Add mac Tests */
         mySubStream = macTests(myFactory);
-        if (mySubStream != null) {
-            myStream = Stream.concat(myStream, mySubStream);
-        }
+        myStream = Stream.concat(myStream, mySubStream);
 
         /* Add symKey Tests */
         mySubStream = symKeyTests(myFactory);
-        if (mySubStream != null) {
-            myStream = Stream.concat(myStream, mySubStream);
-        }
+        myStream = Stream.concat(myStream, mySubStream);
+
 
         /* Add streamKey Tests */
         mySubStream = streamKeyTests(myFactory);
-        if (mySubStream != null) {
-            myStream = Stream.concat(myStream, mySubStream);
-        }
+        myStream = Stream.concat(myStream, mySubStream);
 
         /* Add random Tests */
         mySubStream = randomTests(myFactory);
         myStream = Stream.concat(myStream, mySubStream);
 
         /* Return the stream */
-        final String myName = pType.toString() + "-" + pKeyLen;
+        final String myName = pType.toString();
         myStream = Stream.of(DynamicContainer.dynamicContainer(myName, myStream));
         return myStream;
     }
@@ -212,18 +203,45 @@ public class SymmetricTest {
     /**
      * Create the mac test suite for a factory.
      * @param pFactory the factory
-     * @return the test stream or null
+     * @return the test stream
      */
     private Stream<DynamicNode> macTests(final GordianFactory pFactory) {
+        /* Create the default stream */
+        Stream<DynamicNode> myTests = Stream.empty();
+
+        /* Loop through the keyLengths */
+        Iterator<GordianLength> myIterator = GordianKeyLengths.iterator();
+        while (myIterator.hasNext()) {
+            final GordianLength myKeyLen = myIterator.next();
+
+            /* Build tests for this keyLength */
+            final Stream<DynamicNode> myTest = macTests(pFactory, myKeyLen);
+            if (myTest != null) {
+                myTests = Stream.concat(myTests, myTest);
+            }
+        }
+
+        /* Return the tests */
+        return Stream.of(DynamicContainer.dynamicContainer("Macs", myTests));
+    }
+
+    /**
+     * Create the mac test suite for a factory.
+     * @param pFactory the factory
+     * @param pKeyLen the keyLength
+     * @return the test stream or null
+     */
+    private Stream<DynamicNode> macTests(final GordianFactory pFactory,
+                                         final GordianLength pKeyLen) {
         /* Add mac Tests */
-        List<FactoryMacSpec> myMacs = SymmetricStore.macProvider(pFactory);
+        List<FactoryMacSpec> myMacs = SymmetricStore.macProvider(pFactory, pKeyLen);
         if (!myMacs.isEmpty()) {
             Stream<DynamicNode> myTests = myMacs.stream().map(x -> DynamicContainer.dynamicContainer(x.toString(), Stream.of(
                     DynamicTest.dynamicTest("profile", () -> profileMac(x)),
                     DynamicTest.dynamicTest("algID", () -> checkMacAlgId(x)),
                     DynamicTest.dynamicTest("externalID", () -> checkExternalId(x)))
             ));
-            return Stream.of(DynamicContainer.dynamicContainer("Macs", myTests));
+            return Stream.of(DynamicContainer.dynamicContainer(pKeyLen.toString(), myTests));
         }
 
         /* No mac Tests */
@@ -236,8 +254,35 @@ public class SymmetricTest {
      * @return the test stream or null
      */
     private Stream<DynamicNode> symKeyTests(final GordianFactory pFactory) {
+        /* Create the default stream */
+        Stream<DynamicNode> myTests = Stream.empty();
+
+        /* Loop through the keyLengths */
+        Iterator<GordianLength> myIterator = GordianKeyLengths.iterator();
+        while (myIterator.hasNext()) {
+            final GordianLength myKeyLen = myIterator.next();
+
+            /* Build tests for this keyLength */
+            final Stream<DynamicNode> myTest = symKeyTests(pFactory, myKeyLen);
+            if (myTest != null) {
+                myTests = Stream.concat(myTests, myTest);
+            }
+        }
+
+        /* Return the tests */
+        return Stream.of(DynamicContainer.dynamicContainer("symKeys", myTests));
+    }
+
+    /**
+     * Create the symKey test suite for a factory.
+     * @param pFactory the factory
+     * @param pKeyLen the keyLength
+     * @return the test stream or null
+     */
+    private Stream<DynamicNode> symKeyTests(final GordianFactory pFactory,
+                                            final GordianLength pKeyLen) {
         /* Add symKey Test */
-        List<FactorySymKeySpec> myKeys = SymmetricStore.symKeyProvider(pFactory);
+        List<FactorySymKeySpec> myKeys = SymmetricStore.symKeyProvider(pFactory, pKeyLen);
         if (!myKeys.isEmpty()) {
             Stream<DynamicNode> myTests = myKeys.stream().map(x -> DynamicContainer.dynamicContainer(x.toString(), Stream.of(
                     DynamicTest.dynamicTest("profile", () -> profileSymKey(x)),
@@ -247,7 +292,7 @@ public class SymmetricTest {
                     DynamicTest.dynamicTest("checkWrapCipher", () -> checkWrapCipher(x)),
                     DynamicTest.dynamicTest("externalID", () -> checkExternalId(x)))
             ));
-            return Stream.of(DynamicContainer.dynamicContainer("symKeys", myTests));
+            return Stream.of(DynamicContainer.dynamicContainer(pKeyLen.toString(), myTests));
         }
 
         /* No sym Tests */
@@ -260,15 +305,42 @@ public class SymmetricTest {
      * @return the test stream or null
      */
     private Stream<DynamicNode> streamKeyTests(final GordianFactory pFactory) {
+        /* Create the default stream */
+        Stream<DynamicNode> myTests = Stream.empty();
+
+        /* Loop through the keyLengths */
+        Iterator<GordianLength> myIterator = GordianKeyLengths.iterator();
+        while (myIterator.hasNext()) {
+            final GordianLength myKeyLen = myIterator.next();
+
+            /* Build tests for this keyLength */
+            final Stream<DynamicNode> myTest = streamKeyTests(pFactory, myKeyLen);
+            if (myTest != null) {
+                myTests = Stream.concat(myTests, myTest);
+            }
+        }
+
+        /* Return the tests */
+        return Stream.of(DynamicContainer.dynamicContainer("streamKeys", myTests));
+    }
+
+    /**
+     * Create the streamKey test suite for a factory.
+     * @param pFactory the factory
+     * @param pKeyLen the keyLength
+     * @return the test stream or null
+     */
+    private Stream<DynamicNode> streamKeyTests(final GordianFactory pFactory,
+                                               final GordianLength pKeyLen) {
         /* Add streamKey Tests */
-        List<FactoryStreamKeyType> myKeys = SymmetricStore.streamKeyProvider(pFactory);
+        List<FactoryStreamKeySpec> myKeys = SymmetricStore.streamKeyProvider(pFactory, pKeyLen);
         if (!myKeys.isEmpty()) {
             Stream<DynamicNode> myTests = myKeys.stream().map(x -> DynamicContainer.dynamicContainer(x.toString(), Stream.of(
                     DynamicTest.dynamicTest("profile", () -> profileStreamKey(x)),
                     DynamicTest.dynamicTest("checkCipher", () -> checkCipher(x)),
                     DynamicTest.dynamicTest("externalID", () -> checkExternalId(x)))
             ));
-            return Stream.of(DynamicContainer.dynamicContainer("streamKeys", myTests));
+            return Stream.of(DynamicContainer.dynamicContainer(pKeyLen.toString(), myTests));
         }
 
         /* No stream Tests */
@@ -458,28 +530,28 @@ public class SymmetricTest {
      * @param pStreamKeySpec the keySpec
      * @throws OceanusException on error
      */
-    private void checkCipher(final FactoryStreamKeyType pStreamKeySpec) throws OceanusException {
+    private void checkCipher(final FactoryStreamKeySpec pStreamKeySpec) throws OceanusException {
         /* Access details */
         final GordianFactory myFactory = pStreamKeySpec.getFactory();
-        final GordianStreamKeyType myType = pStreamKeySpec.getSpec();
+        final GordianStreamKeySpec myKeySpec = pStreamKeySpec.getSpec();
         final GordianCipherFactory myCipherFactory = myFactory.getCipherFactory();
-        final GordianKey<GordianStreamKeyType> myStreamKey = pStreamKeySpec.getKey();
+        final GordianKey<GordianStreamKeySpec> myStreamKey = pStreamKeySpec.getKey();
 
         /* Access Data */
         final byte[] myTestData = getTestData();
 
         /* Create the Cipher */
-        final GordianStreamCipherSpec mySpec = GordianStreamCipherSpec.stream(myType);
-        final GordianCipher<GordianStreamKeyType> myCipher = myCipherFactory.createStreamKeyCipher(mySpec);
+        final GordianStreamCipherSpec myCipherSpec = GordianStreamCipherSpec.stream(myKeySpec);
+        final GordianCipher<GordianStreamKeySpec> myCipher = myCipherFactory.createStreamKeyCipher(myCipherSpec);
         myCipher.initCipher(myStreamKey);
         final byte[] myIV = myCipher.getInitVector();
         final byte[] myEncrypted = myCipher.finish(myTestData);
         myCipher.initCipher(myStreamKey, myIV, false);
         final byte[] myResult = myCipher.finish(myEncrypted);
         Assertions.assertArrayEquals(myTestData, myResult, "Failed to encrypt/decrypt");
-        final FactoryStreamCipherSpec myCipherSpec = new FactoryStreamCipherSpec(pStreamKeySpec, mySpec);
-        checkExternalId(myCipherSpec);
-        checkStreamCipherAlgId(myCipherSpec);
+        final FactoryStreamCipherSpec myNewSpec = new FactoryStreamCipherSpec(pStreamKeySpec, myCipherSpec);
+        checkExternalId(myNewSpec);
+        checkStreamCipherAlgId(myNewSpec);
     }
 
     /**
@@ -508,7 +580,7 @@ public class SymmetricTest {
         myWrapped = myWrapper.secureKey(mySymKey, mySymKey);
         final GordianKey<GordianSymKeySpec> myResultKey = myWrapper.deriveKey(mySymKey, myWrapped, mySymKey.getKeyType());
         Assertions.assertEquals(mySymKey, myResultKey, "Failed to wrap/unwrap key");
-        Assertions.assertEquals(myWrapper.getKeyWrapLength(), myWrapped.length, "Incorrect wrapped length");
+        Assertions.assertEquals(myWrapper.getKeyWrapLength(pKeySpec.getSpec().getKeyLength()), myWrapped.length, "Incorrect wrapped length");
     }
 
     /**
@@ -548,15 +620,15 @@ public class SymmetricTest {
      * @param pStreamKeySpec the keySpec
      * @throws OceanusException on error
      */
-    private void profileStreamKey(final FactoryStreamKeyType pStreamKeySpec) throws OceanusException {
+    private void profileStreamKey(final FactoryStreamKeySpec pStreamKeySpec) throws OceanusException {
         final GordianFactory myFactory = pStreamKeySpec.getFactory();
-        final GordianStreamKeyType myType = pStreamKeySpec.getSpec();
+        final GordianStreamKeySpec myKeySpec = pStreamKeySpec.getSpec();
         final GordianCipherFactory myCipherFactory = myFactory.getCipherFactory();
-        final GordianKey<GordianStreamKeyType> myStreamKey = pStreamKeySpec.getKey();
+        final GordianKey<GordianStreamKeySpec> myStreamKey = pStreamKeySpec.getKey();
         final int myLen = 128;
         byte[] myBytes = new byte[myLen];
-        final GordianStreamCipherSpec mySpec = GordianStreamCipherSpec.stream(myType);
-        final GordianCipher<GordianStreamKeyType> myCipher = myCipherFactory.createStreamKeyCipher(mySpec);
+        final GordianStreamCipherSpec myCipherSpec = GordianStreamCipherSpec.stream(myKeySpec);
+        final GordianCipher<GordianStreamKeySpec> myCipher = myCipherFactory.createStreamKeyCipher(myCipherSpec);
         final long myStart = System.nanoTime();
         for (int i = 0; i < profileRepeat; i++) {
             myCipher.initCipher(myStreamKey);
@@ -566,7 +638,7 @@ public class SymmetricTest {
         long myElapsed = System.nanoTime() - myStart;
         myElapsed /= MILLINANOS * profileRepeat;
         if (fullProfiles) {
-            System.out.println(myType.toString() + ":" + myElapsed);
+            System.out.println(myKeySpec.toString() + ":" + myElapsed);
         }
     }
 
@@ -690,7 +762,10 @@ public class SymmetricTest {
      */
     private byte[] getTestData() {
         if (theTestData == null) {
-            theTestData = TethysDataConverter.stringToByteArray("TestDataStringThatIsNotRidiculouslyShort");
+            /* Needs to be larger than the largest block size to enable CTS Mode to work */
+            theTestData = new byte[GordianLength.LEN_1024.getByteLength() + 1];
+            final SecureRandom myRandom = new SecureRandom();
+            myRandom.nextBytes(theTestData);
         }
         return theTestData;
     }

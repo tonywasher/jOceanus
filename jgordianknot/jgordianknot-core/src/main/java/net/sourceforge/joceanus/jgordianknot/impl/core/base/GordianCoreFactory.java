@@ -131,11 +131,6 @@ public abstract class GordianCoreFactory
         return theParameters.getFactoryType();
     }
 
-    @Override
-    public GordianLength getKeyLength() {
-        return theParameters.getKeyLength();
-    }
-
     /**
      * Obtain the number of cipher steps.
      * @return the number of steps

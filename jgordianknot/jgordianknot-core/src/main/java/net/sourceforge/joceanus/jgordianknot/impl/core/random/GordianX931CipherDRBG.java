@@ -116,7 +116,8 @@ public class GordianX931CipherDRBG
 
         /* Create DT Buffer */
         theDT = new GordianByteArrayInteger(myLen);
-        System.arraycopy(pInitVector, 0, theDT.getBuffer(), 0, myLen);
+        final int myCopyLen = Math.min(myLen, pInitVector.length);
+        System.arraycopy(pInitVector, 0, theDT.getBuffer(), 0, myCopyLen);
 
         /* Create intermediate buffers */
         theI = new byte[myLen];

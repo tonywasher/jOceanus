@@ -21,6 +21,8 @@ import java.util.List;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
+import net.sourceforge.joceanus.jgordianknot.api.base.GordianLength;
+import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianStreamKeySpec;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianStreamKeyType;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianSymKeySpec;
 import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigest;
@@ -55,26 +57,31 @@ public interface GordianRandomFactory {
 
     /**
      * generate random GordianMac.
+     * @param pKeyLen the keyLength
      * @param pLargeData only generate a Mac that is suitable for for parsing large amounts of data
      * @return the new MAC
      * @throws OceanusException on error
      */
-    GordianMac generateRandomMac(boolean pLargeData) throws OceanusException;
+    GordianMac generateRandomMac(GordianLength pKeyLen,
+                                 boolean pLargeData) throws OceanusException;
 
     /**
      * generate random SymKey.
+     * @param pKeyLen the keyLength
      * @return the new key
      * @throws OceanusException on error
      */
-    GordianKey<GordianSymKeySpec> generateRandomSymKey() throws OceanusException;
+    GordianKey<GordianSymKeySpec> generateRandomSymKey(GordianLength pKeyLen) throws OceanusException;
 
     /**
      * generate random GordianStreamKey.
+     * @param pKeyLen the keyLength
      * @param pLargeData only generate a Mac that is suitable for for parsing large amounts of data
      * @return the new StreamKey
      * @throws OceanusException on error
      */
-    GordianKey<GordianStreamKeyType> generateRandomStreamKey(boolean pLargeData) throws OceanusException;
+    GordianKey<GordianStreamKeySpec> generateRandomStreamKey(GordianLength pKeyLen,
+                                                             boolean pLargeData) throws OceanusException;
 
     /**
      * Obtain a list of supported randomSpecs.
@@ -96,6 +103,24 @@ public interface GordianRandomFactory {
         return GordianRandomSpec.listAll()
                 .stream()
                 .filter(s -> s.getRandomType().equals(pType))
+                .filter(supportedRandomSpecs())
+                .collect(Collectors.toList());
+    }
+
+    /**
+     * Obtain a list of supported randomSpecs of a given type and keyLength.
+     * <p>Only valid for CTR And X931 types</p>
+     * @param pType the random type
+     * @param pKeyLen the keyLength
+     * @return the list of supported randomSpecs.
+     */
+    default List<GordianRandomSpec> listAllSupportedRandomSpecs(final GordianRandomType pType,
+                                                                final GordianLength pKeyLen) {
+        return GordianRandomSpec.listAll()
+                .stream()
+                .filter(s -> s.getRandomType().equals(pType))
+                .filter(s -> s.getRandomType().hasSymKeySpec())
+                .filter(s -> s.getSymKeySpec().getKeyLength() == pKeyLen)
                 .filter(supportedRandomSpecs())
                 .collect(Collectors.toList());
     }

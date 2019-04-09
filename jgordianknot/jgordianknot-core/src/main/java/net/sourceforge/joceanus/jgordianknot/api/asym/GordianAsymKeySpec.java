@@ -27,7 +27,7 @@ import net.sourceforge.joceanus.jtethys.TethysDataConverter;
 /**
  * Asymmetric Key Specification.
  */
-public final class GordianAsymKeySpec implements GordianKeySpec {
+public final class GordianAsymKeySpec {
     /**
      * The Separator.
      */

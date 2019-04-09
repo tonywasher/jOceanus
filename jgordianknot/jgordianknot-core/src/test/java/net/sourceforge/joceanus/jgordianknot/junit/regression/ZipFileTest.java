@@ -44,6 +44,7 @@ import net.sourceforge.joceanus.jgordianknot.api.impl.GordianGenerator;
 import net.sourceforge.joceanus.jgordianknot.api.impl.GordianSecurityManager;
 import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetFactory;
 import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetHash;
+import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetSpec;
 import net.sourceforge.joceanus.jgordianknot.api.zip.GordianZipFactory;
 import net.sourceforge.joceanus.jgordianknot.api.zip.GordianZipFileContents;
 import net.sourceforge.joceanus.jgordianknot.api.zip.GordianZipFileEntry;
@@ -86,30 +87,30 @@ public class ZipFileTest {
     private Stream<DynamicNode> zipFileTests(final GordianLength pKeyLen,
                                              final GordianFactoryType pType) throws OceanusException {
         /* Create the factory */
-        final GordianFactory myFactory = GordianGenerator.createFactory(new GordianParameters(pKeyLen, pType));
+        final GordianFactory myFactory = GordianGenerator.createFactory(new GordianParameters(pType));
 
         /* Return the stream */
         final String myName = pType.toString() + "-" + pKeyLen;
         return Stream.of(DynamicContainer.dynamicContainer(myName, Stream.of(
-                DynamicTest.dynamicTest("standard", () -> testZipFile(myFactory, false)),
-                DynamicTest.dynamicTest("encrypted", () -> testZipFile(myFactory, true))
+                DynamicTest.dynamicTest("standard", () -> testZipFile(myFactory, null)),
+                DynamicTest.dynamicTest("encrypted", () -> testZipFile(myFactory, pKeyLen))
         )));
     }
 
     /**
      * Test security.
      * @param pFactory the factory.
-     * @param pSecure is the zip file secure?
+     * @param pKeyLen the keyLength (or null)
      * @throws OceanusException on error
      */
     private void testZipFile(final GordianFactory pFactory,
-                             final boolean pSecure) throws OceanusException {
+                             final GordianLength pKeyLen) throws OceanusException {
         /* Obtain the home directory */
         final String myHome = System.getProperty("user.home");
 
         /* Run the tests */
         final File myDirectory = new File(myHome, "tester");
-        final byte[] myZipFile = createZipFile(pFactory, myDirectory, pSecure);
+        final byte[] myZipFile = createZipFile(pFactory, myDirectory, pKeyLen);
         extractZipFile(pFactory, myZipFile, myDirectory);
     }
 
@@ -117,16 +118,16 @@ public class ZipFileTest {
      * Create a Zip File of files in a directory.
      * @param pFactory the factory to use
      * @param pDirectory the directory to archive
-     * @param bSecure encrypt the zip file (true/false)
+     * @param pKeyLen the keyLength (or null)
      * @return the in-memory ZipFile
      * @throws OceanusException on error
      */
     private byte[] createZipFile(final GordianFactory pFactory,
                                  final File pDirectory,
-                                 final boolean bSecure) throws OceanusException {
+                                 final GordianLength pKeyLen) throws OceanusException {
         /* Protect against exceptions */
         final ByteArrayOutputStream myZipStream = new ByteArrayOutputStream();
-        try (GordianZipWriteFile myZipFile = createZipFile(pFactory, myZipStream, bSecure)) {
+        try (GordianZipWriteFile myZipFile = createZipFile(pFactory, myZipStream, pKeyLen)) {
             /* Make sure that we have a directory */
             final File[] myFiles = pDirectory.listFiles();
             if (!pDirectory.isDirectory() || myFiles == null) {
@@ -164,21 +165,22 @@ public class ZipFileTest {
      * Create a Zip File of files in a directory.
      * @param pFactory the factory to use
      * @param pZipStream the output stream to write the ZipFile to
-     * @param bSecure encrypt the zip file (true/false)
+     * @param pKeyLen the keyLength (or null)
      * @return the new zip file
      * @throws OceanusException on error
      */
     private GordianZipWriteFile createZipFile(final GordianFactory pFactory,
                                               final OutputStream pZipStream,
-                                              final boolean bSecure) throws OceanusException {
+                                              final GordianLength pKeyLen) throws OceanusException {
         /* Access ZipManager */
         final GordianZipFactory myZipMgr = pFactory.getZipFactory();
         final GordianKeySetFactory myKeySets = pFactory.getKeySetFactory();
 
         /* If we are creating a secure zip file */
-        if (bSecure) {
+        if (pKeyLen != null) {
             /* Create new Password Hash */
-            final GordianKeySetHash myHash = myKeySets.generateKeySetHash(DEF_PASSWORD.clone());
+            final GordianKeySetSpec mySpec = new GordianKeySetSpec(pKeyLen);
+            final GordianKeySetHash myHash = myKeySets.generateKeySetHash(mySpec, DEF_PASSWORD.clone());
 
             /* Initialise the Zip file */
             return myZipMgr.createZipFile(myHash, pZipStream);

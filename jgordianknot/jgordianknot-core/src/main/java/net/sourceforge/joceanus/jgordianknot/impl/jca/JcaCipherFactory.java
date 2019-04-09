@@ -25,6 +25,7 @@ import javax.crypto.NoSuchPaddingException;
 
 import net.sourceforge.joceanus.jgordianknot.api.base.GordianLength;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianCipherMode;
+import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianStreamKeySpec;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianWrapper;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianPadding;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianStreamCipherSpec;
@@ -120,7 +121,7 @@ public class JcaCipherFactory
     }
 
     @Override
-    public JcaCipher<GordianStreamKeyType> createStreamKeyCipher(final GordianStreamCipherSpec pCipherSpec) throws OceanusException {
+    public JcaCipher<GordianStreamKeySpec> createStreamKeyCipher(final GordianStreamCipherSpec pCipherSpec) throws OceanusException {
         /* Check validity of StreamKeySpec */
         checkStreamCipherSpec(pCipherSpec);
 
@@ -148,8 +149,8 @@ public class JcaCipherFactory
      * @throws OceanusException on error
      */
     private <T extends GordianKeySpec> String getKeyAlgorithm(final T pKeySpec) throws OceanusException {
-        if (pKeySpec instanceof GordianStreamKeyType) {
-            return getStreamKeyAlgorithm((GordianStreamKeyType) pKeySpec);
+        if (pKeySpec instanceof GordianStreamKeySpec) {
+            return getStreamKeyAlgorithm((GordianStreamKeySpec) pKeySpec);
         }
         if (pKeySpec instanceof GordianSymKeySpec) {
             return getSymKeyAlgorithm((GordianSymKeySpec) pKeySpec);
@@ -202,12 +203,12 @@ public class JcaCipherFactory
 
     /**
      * Create the BouncyCastle StreamKey Cipher via JCA.
-     * @param pKeyType the StreamKeyType
+     * @param pKeySpec the StreamKeySpec
      * @return the Cipher
      * @throws OceanusException on error
      */
-    private Cipher getJavaCipher(final GordianStreamKeyType pKeyType) throws OceanusException {
-        return getJavaCipher(getStreamKeyAlgorithm(pKeyType));
+    private Cipher getJavaCipher(final GordianStreamKeySpec pKeySpec) throws OceanusException {
+        return getJavaCipher(getStreamKeyAlgorithm(pKeySpec));
     }
 
     /**
@@ -342,19 +343,19 @@ public class JcaCipherFactory
 
     /**
      * Obtain the StreamKey algorithm.
-     * @param pKeyType the keyType
+     * @param pKeySpec the keySpec
      * @return the Algorithm
      * @throws OceanusException on error
      */
-    String getStreamKeyAlgorithm(final GordianStreamKeyType pKeyType) throws OceanusException {
-        switch (pKeyType) {
+    String getStreamKeyAlgorithm(final GordianStreamKeySpec pKeySpec) throws OceanusException {
+        switch (pKeySpec.getStreamKeyType()) {
             case HC:
-                return GordianLength.LEN_128 == getFactory().getKeyLength()
+                return GordianLength.LEN_128 == pKeySpec.getKeyLength()
                        ? "HC128"
                        : "HC256";
             case CHACHA:
-                return GordianLength.LEN_128 == getFactory().getKeyLength()
-                       ? pKeyType.name()
+                return GordianLength.LEN_128 == pKeySpec.getKeyLength()
+                       ? pKeySpec.getStreamKeyType().name()
                        : "CHACHA7539";
             case VMPC:
                 return "VMPC-KSA3";
@@ -364,9 +365,9 @@ public class JcaCipherFactory
             case XSALSA20:
             case ISAAC:
             case RC4:
-                return pKeyType.name();
+                return pKeySpec.getStreamKeyType().name();
             default:
-                throw new GordianDataException(GordianCoreFactory.getInvalidText(pKeyType));
+                throw new GordianDataException(GordianCoreFactory.getInvalidText(pKeySpec));
         }
     }
 
@@ -398,6 +399,9 @@ public class JcaCipherFactory
 
     @Override
     protected boolean validStreamKeyType(final GordianStreamKeyType pKeyType) {
+        if (pKeyType == null) {
+            return false;
+        }
         switch (pKeyType) {
             case ISAAC:
             case SOSEMANUK:

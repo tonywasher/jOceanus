@@ -129,7 +129,7 @@ final class GordianMultiCipher {
         /* Access the factory and determine number of steps */
         theKeySet = pKeySet;
         theFactory = pKeySet.getFactory();
-        theNumSteps = theFactory.getNumCipherSteps();
+        theNumSteps = pKeySet.getKeySetSpec().getCipherSteps();
         theCiphers = new GordianCipher<?>[theNumSteps];
 
         /* Create symmetric maps */

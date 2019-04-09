@@ -36,6 +36,7 @@ import net.sourceforge.joceanus.jgordianknot.api.key.GordianKeyPairGenerator;
 import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySet;
 import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetFactory;
 import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetHash;
+import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetSpec;
 import net.sourceforge.joceanus.jgordianknot.api.keystore.GordianCertificate;
 import net.sourceforge.joceanus.jgordianknot.api.keystore.GordianCertificateId;
 import net.sourceforge.joceanus.jgordianknot.api.keystore.GordianKeyPairUsage;
@@ -72,7 +73,7 @@ import net.sourceforge.joceanus.jtethys.date.TethysDate;
  *     WILL have different subjectIDs.</li>
  *     <li>An issuerCertificate will only issue a single certificate at a time for a subjectName/subjectID combination.
  *     If two such certificates are received, the later one will overwrite the first one, (assuming the publicKey is the same).
- *     No attempt will be made to dtermine a BETTER certificate (e.g. longer validity)</li>
+ *     No attempt will be made to determine a BETTER certificate (e.g. longer validity)</li>
  * </ol>
  * </p>
  */
@@ -87,6 +88,11 @@ public class GordianCoreKeyStore
      * The factory.
      */
     private final GordianCoreFactory theFactory;
+
+    /**
+     * The keySetSpec.
+     */
+    private final GordianKeySetSpec theKeySetSpec;
 
     /**
      * The map of certificates by Subject.
@@ -106,10 +112,13 @@ public class GordianCoreKeyStore
     /**
      * Constructor.
      * @param pFactory the factory
+     * @param pSpec the keySetSpec
      */
-    GordianCoreKeyStore(final GordianCoreFactory pFactory) {
+    GordianCoreKeyStore(final GordianCoreFactory pFactory,
+                        final GordianKeySetSpec pSpec) {
         /* Store parameters */
         theFactory = pFactory;
+        theKeySetSpec = pSpec;
 
         /* Create the maps */
         theSubjectCerts = new LinkedHashMap<>();
@@ -123,6 +132,14 @@ public class GordianCoreKeyStore
      */
     GordianCoreFactory getFactory() {
         return theFactory;
+    }
+
+    /**
+     * Obtain the keySetSpec.
+     * @return the keySetSpec
+     */
+    GordianKeySetSpec getKeySetSpec() {
+        return theKeySetSpec;
     }
 
     /**
@@ -411,7 +428,7 @@ public class GordianCoreKeyStore
         deleteEntry(pAlias);
 
         /* Set the new value */
-        final GordianKeyStorePairElement myPair = new GordianKeyStorePairElement(theFactory, pKeyPair, pPassword, pCertificateChain);
+        final GordianKeyStorePairElement myPair = new GordianKeyStorePairElement(theFactory, theKeySetSpec, pKeyPair, pPassword, pCertificateChain);
         theAliases.put(pAlias, myPair);
 
         /* Store all the certificates in the chain */
@@ -431,7 +448,7 @@ public class GordianCoreKeyStore
         deleteEntry(pAlias);
 
         /* Set the new value */
-        final GordianKeyStoreKeyElement<T> myKey = new GordianKeyStoreKeyElement<>(theFactory, pKey, pPassword);
+        final GordianKeyStoreKeyElement<T> myKey = new GordianKeyStoreKeyElement<>(theFactory, theKeySetSpec, pKey, pPassword);
         theAliases.put(pAlias, myKey);
     }
 
@@ -446,7 +463,7 @@ public class GordianCoreKeyStore
         deleteEntry(pAlias);
 
         /* Set the new value */
-        final GordianKeyStoreSetElement mySet = new GordianKeyStoreSetElement(theFactory, pKeySet, pPassword);
+        final GordianKeyStoreSetElement mySet = new GordianKeyStoreSetElement(theFactory, theKeySetSpec, pKeySet, pPassword);
         theAliases.put(pAlias, mySet);
     }
 
@@ -694,7 +711,7 @@ public class GordianCoreKeyStore
         final GordianKeySetFactory myKeySetFactory = theFactory.getKeySetFactory();
 
         /* Create the securing hash */
-        final GordianKeySetHash myHash = myKeySetFactory.generateKeySetHash(pPassword);
+        final GordianKeySetHash myHash = myKeySetFactory.generateKeySetHash(theKeySetSpec, pPassword);
 
         /* Create the Zip file */
         try (GordianZipWriteFile myZipFile = myZipFactory.createZipFile(myHash, pOutputStream)) {

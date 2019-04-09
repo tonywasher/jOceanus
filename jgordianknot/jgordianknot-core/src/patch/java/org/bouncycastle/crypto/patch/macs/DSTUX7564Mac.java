@@ -129,7 +129,8 @@ public class DSTUX7564Mac
     private byte[] padKey(byte[] in) {
         int paddedLen = ((in.length + engine.getByteLength() - 1) / engine.getByteLength()) * engine.getByteLength();
 
-        int extra = engine.getByteLength() - (int) (in.length % engine.getByteLength());
+        int lastBlk = (int) (in.length % engine.getByteLength());
+        int extra = lastBlk == 0 ? 0 : engine.getByteLength() - lastBlk;
         if (extra < 13) // terminator byte + 96 bits of length
         {
             paddedLen += engine.getByteLength();

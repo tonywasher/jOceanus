@@ -374,8 +374,8 @@ public class GordianCoreWrapper
     }
 
     @Override
-    public int getKeyWrapLength() {
-        return getDataWrapLength(theFactory.getKeyLength().getByteLength());
+    public int getKeyWrapLength(final GordianLength pKeyLen) {
+        return getDataWrapLength(pKeyLen.getByteLength());
     }
 
     @Override

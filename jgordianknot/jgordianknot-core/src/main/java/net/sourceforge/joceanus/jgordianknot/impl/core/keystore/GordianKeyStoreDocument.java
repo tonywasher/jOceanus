@@ -39,6 +39,7 @@ import net.sourceforge.joceanus.jgordianknot.api.keystore.GordianKeyStore;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianCoreFactory;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianDataException;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianIOException;
+import net.sourceforge.joceanus.jgordianknot.impl.core.keyset.GordianKeySetSpecASN1;
 import net.sourceforge.joceanus.jgordianknot.impl.core.keystore.GordianKeyStoreElement.GordianKeyStoreCertificateElement;
 import net.sourceforge.joceanus.jgordianknot.impl.core.keystore.GordianKeyStoreElement.GordianKeyStoreCertificateKey;
 import net.sourceforge.joceanus.jgordianknot.impl.core.keystore.GordianKeyStoreElement.GordianKeyStoreHashElement;
@@ -62,6 +63,11 @@ public final class GordianKeyStoreDocument {
      * The KeyStore element.
      */
     private static final String DOC_KEYSTORE = "KeyStore";
+
+    /**
+     * The KeySetSpec attribute.
+     */
+    private static final String ATTR_KEYSETSPEC = "KeySetSpec";
 
     /**
      * The CreationDate attribute.
@@ -143,7 +149,7 @@ public final class GordianKeyStoreDocument {
      * @param pKeyStore the keyStore
      * @throws OceanusException on error
      */
-    public GordianKeyStoreDocument(final GordianKeyStore pKeyStore) throws OceanusException {
+    public GordianKeyStoreDocument(final GordianCoreKeyStore pKeyStore) throws OceanusException {
         try {
             /* Store the keyStore */
             theKeyStore = (GordianCoreKeyStore) pKeyStore;
@@ -158,6 +164,11 @@ public final class GordianKeyStoreDocument {
             final Element myMain = theDocument.createElement(DOC_KEYSTORE);
             theDocument.appendChild(myMain);
 
+            /* Record the keySetSpec */
+            final GordianKeySetSpecASN1 mySpecASN1 = new GordianKeySetSpecASN1(pKeyStore.getKeySetSpec());
+            final String myAttrSpec = TethysDataConverter.byteArrayToBase64(mySpecASN1.toASN1Primitive().getEncoded());
+            myMain.setAttribute(ATTR_KEYSETSPEC, myAttrSpec);
+
             /* Create the aliases */
             final Element myAliases = theDocument.createElement(ELEMENT_ALIASES);
             myMain.appendChild(myAliases);
@@ -168,7 +179,8 @@ public final class GordianKeyStoreDocument {
             myMain.appendChild(myCerts);
             buildCertificates(myCerts);
 
-        } catch (ParserConfigurationException e) {
+        } catch (ParserConfigurationException
+                 | IOException e) {
             throw new GordianIOException("Failed to initialise author", e);
         }
     }
@@ -189,8 +201,13 @@ public final class GordianKeyStoreDocument {
             throw new GordianDataException("Invalid Document");
         }
 
+        /* Access the keySetSpec */
+        final String myAttrSpec = myDocElement.getAttribute(ATTR_KEYSETSPEC);
+        final byte[] myAttrArray = TethysDataConverter.base64ToByteArray(myAttrSpec);
+        final GordianKeySetSpecASN1 mySpecASN1 = GordianKeySetSpecASN1.getInstance(myAttrArray);
+
         /* Create the empty keyStore */
-        theKeyStore = new GordianCoreKeyStore((GordianCoreFactory) pFactory);
+        theKeyStore = new GordianCoreKeyStore((GordianCoreFactory) pFactory, mySpecASN1.getSpec());
         theDocument = pDocument;
 
         /* Loop through the nodes */

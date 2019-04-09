@@ -109,7 +109,7 @@ public abstract class GordianCoreMacFactory
      * @return true/false
      */
     protected boolean validMacType(final GordianMacType pMacType) {
-        return pMacType != null && pMacType.validForKeyLength(theFactory.getKeyLength());
+        return pMacType != null;
     }
 
     /**
@@ -204,7 +204,6 @@ public abstract class GordianCoreMacFactory
                         || !GordianLength.LEN_128.equals(mySymSpec.getBlockLength()))
                     && myCiphers.validSymKeySpec(mySymSpec);
             case ZUC:
-                return validZucMacLength(pMacSpec.getMacLength());
             case VMPC:
             case SIPHASH:
             case GOST:
@@ -256,22 +255,6 @@ public abstract class GordianCoreMacFactory
         return myCiphers.validSymKeySpec(pKeySpec);
     }
 
-    /**
-     * Determine supported ZumMac algorithms.
-     * @param pLength the MacLength
-     * @return true/false
-     */
-    private boolean validZucMacLength(final GordianLength pLength) {
-        switch (pLength) {
-            case LEN_32:
-                return true;
-            case LEN_64:
-            case LEN_128:
-                return GordianLength.LEN_256 == theFactory.getKeyLength();
-            default:
-                return false;
-        }
-    }
     /**
      * Obtain Identifier for MacSpec.
      * @param pSpec the macSpec.

@@ -214,7 +214,7 @@ public class JcaMacFactory
             case GOST:
                 return "GOST28147MAC";
             case VMPC:
-                return getFactory().getCipherFactory().getStreamKeyAlgorithm(GordianStreamKeyType.VMPC);
+                return "VMPC-KSA3";
             default:
                 throw new GordianDataException(GordianCoreFactory.getInvalidText(pMacSpec));
         }

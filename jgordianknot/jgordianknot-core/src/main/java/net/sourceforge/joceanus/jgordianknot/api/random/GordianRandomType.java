@@ -39,5 +39,19 @@ public enum GordianRandomType {
      * Cipher based X931 PRNG.
      */
     X931;
+
+    /**
+     * Does the randomType have a symKeySpec?
+     * @return true/false
+     */
+    public boolean hasSymKeySpec() {
+        switch(this) {
+            case CTR:
+            case X931:
+                return true;
+            default:
+                return false;
+        }
+    }
 }
 

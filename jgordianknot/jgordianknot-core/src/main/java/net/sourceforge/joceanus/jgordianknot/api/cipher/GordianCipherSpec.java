@@ -17,13 +17,14 @@
 package net.sourceforge.joceanus.jgordianknot.api.cipher;
 
 import net.sourceforge.joceanus.jgordianknot.api.base.GordianIdSpec;
+import net.sourceforge.joceanus.jgordianknot.api.base.GordianKeySpec;
 import net.sourceforge.joceanus.jgordianknot.api.base.GordianLength;
 
 /**
  * Cipher Specification.
  * @param <T> the keyType
  */
-public abstract class GordianCipherSpec<T>
+public abstract class GordianCipherSpec<T extends GordianKeySpec>
         implements GordianIdSpec {
     /**
      * KeyType.
@@ -34,7 +35,7 @@ public abstract class GordianCipherSpec<T>
      * Constructor.
      * @param pKeyType the keyType
      */
-    protected GordianCipherSpec(final T pKeyType) {
+    GordianCipherSpec(final T pKeyType) {
         theKeyType = pKeyType;
     }
 

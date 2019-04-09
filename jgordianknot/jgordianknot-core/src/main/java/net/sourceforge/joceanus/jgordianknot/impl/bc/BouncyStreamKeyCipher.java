@@ -23,6 +23,7 @@ import org.bouncycastle.crypto.params.KeyParameter;
 import org.bouncycastle.crypto.params.ParametersWithIV;
 
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianStreamCipherSpec;
+import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianStreamKeySpec;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianStreamKeyType;
 import net.sourceforge.joceanus.jgordianknot.api.key.GordianKey;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianCryptoException;
@@ -33,7 +34,7 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
  * Cipher for BouncyCastle Stream Ciphers.
  */
 public final class BouncyStreamKeyCipher
-        extends GordianCoreCipher<GordianStreamKeyType> {
+        extends GordianCoreCipher<GordianStreamKeySpec> {
     /**
      * Cipher.
      */
@@ -53,14 +54,14 @@ public final class BouncyStreamKeyCipher
     }
 
     @Override
-    public BouncyKey<GordianStreamKeyType> getKey() {
-        return (BouncyKey<GordianStreamKeyType>) super.getKey();
+    public BouncyKey<GordianStreamKeySpec> getKey() {
+        return (BouncyKey<GordianStreamKeySpec>) super.getKey();
     }
 
     @Override
-    public void initCipher(final GordianKey<GordianStreamKeyType> pKey) throws OceanusException {
+    public void initCipher(final GordianKey<GordianStreamKeySpec> pKey) throws OceanusException {
         /* Determine the required length of IV */
-        final int myLen = getKeyType().getIVLength(getKeyLength());
+        final int myLen = getKeyType().getIVLength();
         byte[] myIV = null;
 
         /* If we need an IV */
@@ -75,11 +76,11 @@ public final class BouncyStreamKeyCipher
     }
 
     @Override
-    public void initCipher(final GordianKey<GordianStreamKeyType> pKey,
+    public void initCipher(final GordianKey<GordianStreamKeySpec> pKey,
                            final byte[] pIV,
                            final boolean pEncrypt) throws OceanusException {
         /* Access and validate the key */
-        final BouncyKey<GordianStreamKeyType> myKey = BouncyKey.accessKey(pKey);
+        final BouncyKey<GordianStreamKeySpec> myKey = BouncyKey.accessKey(pKey);
         checkValidKey(pKey);
 
         /* Initialise the cipher */

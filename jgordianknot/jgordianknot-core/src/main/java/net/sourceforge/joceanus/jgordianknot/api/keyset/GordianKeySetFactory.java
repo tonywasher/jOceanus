@@ -18,6 +18,8 @@ package net.sourceforge.joceanus.jgordianknot.api.keyset;
 
 import java.util.function.Predicate;
 
+import net.sourceforge.joceanus.jgordianknot.api.base.GordianLength;
+import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianStreamKeyType;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianSymKeySpec;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianSymKeyType;
 import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigestType;
@@ -29,24 +31,29 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
 public interface GordianKeySetFactory {
     /**
      * create empty KeySet.
-     * @return the new keySet
-     */
-    GordianKeySet createKeySet();
-
-    /**
-     * generate random KeySet.
+     * @param pKeySetSpec the keySetSpec
      * @return the new keySet
      * @throws OceanusException on error
      */
-    GordianKeySet generateKeySet() throws OceanusException;
+    GordianKeySet createKeySet(GordianKeySetSpec pKeySetSpec) throws OceanusException;
+
+    /**
+     * generate random KeySet.
+     * @param pKeySetSpec the keySetSpec
+     * @return the new keySet
+     * @throws OceanusException on error
+     */
+    GordianKeySet generateKeySet(GordianKeySetSpec pKeySetSpec) throws OceanusException;
 
     /**
      * Generate a keySetHash for the given password.
+     * @param pKeySetSpec the keySetSpec
      * @param pPassword the password
      * @return the Password hash
      * @throws OceanusException on error
      */
-    GordianKeySetHash generateKeySetHash(char[] pPassword) throws OceanusException;
+    GordianKeySetHash generateKeySetHash(GordianKeySetSpec pKeySetSpec,
+                                         char[] pPassword) throws OceanusException;
 
     /**
      * Derive a keySetHash for the given hash and password.
@@ -66,6 +73,12 @@ public interface GordianKeySetFactory {
     GordianKnuthObfuscater getObfuscater();
 
     /**
+     * Obtain predicate for supported KeySetSpecs.
+     * @return the predicate
+     */
+    Predicate<GordianKeySetSpec> supportedKeySetSpecs();
+
+    /**
      * Obtain predicate for supported KeyHash digests.
      * @return the predicate
      */
@@ -73,13 +86,15 @@ public interface GordianKeySetFactory {
 
     /**
      * Obtain predicate for keySet SymKeyTypes.
+     * @param pKeyLen the keyLength
      * @return the predicate
      */
-    Predicate<GordianSymKeyType> supportedKeySetSymKeyTypes();
+    Predicate<GordianSymKeyType> supportedKeySetSymKeyTypes(GordianLength pKeyLen);
 
     /**
      * Obtain predicate for supported keySet symKeySpecs.
+     * @param pKeyLen the keyLength
      * @return the predicate
      */
-    Predicate<GordianSymKeySpec> supportedKeySetSymKeySpecs();
+    Predicate<GordianSymKeySpec> supportedKeySetSymKeySpecs(GordianLength pKeyLen);
 }

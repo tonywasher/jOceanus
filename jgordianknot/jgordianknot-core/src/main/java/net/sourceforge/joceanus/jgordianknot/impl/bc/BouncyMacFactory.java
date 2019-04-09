@@ -162,7 +162,7 @@ public class BouncyMacFactory
             case GOST:
                 return getBCGOSTMac();
             case ZUC:
-                return getBCZucMac(pMacSpec.getMacLength());
+                return getBCZucMac(pMacSpec);
             default:
                 throw new GordianDataException(GordianCoreFactory.getInvalidText(pMacSpec));
         }
@@ -311,12 +311,12 @@ public class BouncyMacFactory
     /**
      * Create the BouncyCastle ZucMac.
      *
-     * @param pLength the length of the mac
+     * @param pMacSpec the macSpec
      * @return the MAC
      */
-    private Mac getBCZucMac(final GordianLength pLength) {
-        return GordianLength.LEN_128 == getFactory().getKeyLength()
+    private Mac getBCZucMac(final GordianMacSpec pMacSpec) {
+        return GordianLength.LEN_128 == pMacSpec.getKeyLength()
                ? new Zuc128Mac()
-               : new Zuc256Mac(pLength.getLength());
+               : new Zuc256Mac(pMacSpec.getMacLength().getLength());
     }
 }

@@ -35,12 +35,6 @@ public interface GordianFactory {
     GordianFactoryType getFactoryType();
 
     /**
-     * Obtain the keyLength.
-     * @return the keyLength in bits
-     */
-    GordianLength getKeyLength();
-
-    /**
      * Obtain the Digest Factory.
      * @return the digest factory
      */

@@ -19,6 +19,7 @@ package net.sourceforge.joceanus.jgordianknot.api.cipher;
 import java.security.spec.X509EncodedKeySpec;
 
 import net.sourceforge.joceanus.jgordianknot.api.base.GordianKeySpec;
+import net.sourceforge.joceanus.jgordianknot.api.base.GordianLength;
 import net.sourceforge.joceanus.jgordianknot.api.key.GordianKey;
 import net.sourceforge.joceanus.jgordianknot.api.key.GordianKeyPair;
 import net.sourceforge.joceanus.jtethys.OceanusException;
@@ -100,9 +101,10 @@ public interface GordianWrapper {
 
     /**
      * Obtain wrapped size of a key.
+     * @param pLength the keyLength
      * @return the wrapped length
      */
-    int getKeyWrapLength();
+    int getKeyWrapLength(GordianLength pLength);
 
     /**
      * Obtain wrapped size of a byte array of the given length.

@@ -39,6 +39,7 @@ import net.sourceforge.joceanus.jgordianknot.api.base.GordianKeySpec;
 import net.sourceforge.joceanus.jgordianknot.api.key.GordianKeyPair;
 import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySet;
 import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetFactory;
+import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetSpec;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianCoreFactory;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianDataException;
 import net.sourceforge.joceanus.jgordianknot.impl.core.key.GordianCoreKeyGenerator;
@@ -195,9 +196,9 @@ public abstract class GordianCoreAgreement
     }
 
     @Override
-    public GordianKeySet deriveKeySet() throws OceanusException {
+    public GordianKeySet deriveKeySet(final GordianKeySetSpec pSpec) throws OceanusException {
         final GordianKeySetFactory myKeySets = theFactory.getKeySetFactory();
-        final GordianCoreKeySet myKeySet = (GordianCoreKeySet) myKeySets.createKeySet();
+        final GordianCoreKeySet myKeySet = (GordianCoreKeySet) myKeySets.createKeySet(pSpec);
         myKeySet.buildFromSecret(theSecret, theInitVector);
         return myKeySet;
     }
@@ -210,7 +211,7 @@ public abstract class GordianCoreAgreement
     }
 
     @Override
-    public GordianKeySet deriveIndependentKeySet() throws OceanusException {
+    public GordianKeySet deriveIndependentKeySet(final GordianKeySetSpec pSpec) throws OceanusException {
         /* The phrase is built of the first quarter of the secret and the first quarter of the initVector */
         final int myPhraseSecLen = theSecret.length >> 2;
         final int myPhraseIVLen = theInitVector.length >> 2;
@@ -231,7 +232,7 @@ public abstract class GordianCoreAgreement
 
         /* Create the keySet */
         final GordianKeySetFactory myKeySets = myFactory.getKeySetFactory();
-        final GordianCoreKeySet myKeySet = (GordianCoreKeySet) myKeySets.createKeySet();
+        final GordianCoreKeySet myKeySet = (GordianCoreKeySet) myKeySets.createKeySet(pSpec);
         myKeySet.buildFromSecret(mySecret, myIV);
         return myKeySet;
     }

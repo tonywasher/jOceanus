@@ -36,6 +36,7 @@ import net.sourceforge.joceanus.jgordianknot.api.agree.GordianBasicAgreement;
 import net.sourceforge.joceanus.jgordianknot.api.agree.GordianEncapsulationAgreement;
 import net.sourceforge.joceanus.jgordianknot.api.agree.GordianEphemeralAgreement;
 import net.sourceforge.joceanus.jgordianknot.api.asym.GordianAsymKeySpec;
+import net.sourceforge.joceanus.jgordianknot.api.base.GordianLength;
 import net.sourceforge.joceanus.jgordianknot.api.encrypt.GordianEncryptor;
 import net.sourceforge.joceanus.jgordianknot.api.encrypt.GordianEncryptorFactory;
 import net.sourceforge.joceanus.jgordianknot.api.encrypt.GordianEncryptorSpec;
@@ -48,6 +49,7 @@ import net.sourceforge.joceanus.jgordianknot.api.key.GordianKeyPair;
 import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySet;
 import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetFactory;
 import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetHash;
+import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetSpec;
 import net.sourceforge.joceanus.jgordianknot.api.sign.GordianSignature;
 import net.sourceforge.joceanus.jgordianknot.api.sign.GordianSignatureFactory;
 import net.sourceforge.joceanus.jgordianknot.api.sign.GordianSignatureSpec;
@@ -81,6 +83,11 @@ public class AsymmetricTest {
      * Test buffer size.
      */
     private static final int TESTLEN = 1024;
+
+    /**
+     * KeySetSpec.
+     */
+    private static final GordianKeySetSpec KEYSETSPEC = new GordianKeySetSpec(GordianLength.LEN_256);
 
     /**
      * Initialise Factories.
@@ -283,7 +290,7 @@ public class AsymmetricTest {
 
         /* Create a keySet */
         final GordianKeySetFactory myKeySetFactory = myFactory.getFactory().getKeySetFactory();
-        final GordianKeySetHash myHash = myKeySetFactory.generateKeySetHash("Hello".toCharArray());
+        final GordianKeySetHash myHash = myKeySetFactory.generateKeySetHash(KEYSETSPEC, "Hello".toCharArray());
         final GordianCoreKeySet myKeySet = (GordianCoreKeySet) myHash.getKeySet();
         final byte[] mySecured = myKeySet.securePrivateKey(myPair);
         final GordianKeyPair myDerived = myKeySet.deriveKeyPair(myPublic, mySecured);
@@ -400,8 +407,8 @@ public class AsymmetricTest {
         }
 
         /* Check that the values match */
-        final GordianKeySet myFirst = mySender.deriveKeySet();
-        final GordianKeySet mySecond = myResponder.deriveKeySet();
+        final GordianKeySet myFirst = mySender.deriveKeySet(KEYSETSPEC);
+        final GordianKeySet mySecond = myResponder.deriveKeySet(KEYSETSPEC);
         Assertions.assertEquals(myFirst, mySecond, "Failed to agree keySet");
     }
 
@@ -449,8 +456,8 @@ public class AsymmetricTest {
         }
 
         /* Check that the values match */
-        final GordianKeySet myFirst = mySender.deriveIndependentKeySet();
-        final GordianKeySet mySecond = myResponder.deriveIndependentKeySet();
+        final GordianKeySet myFirst = mySender.deriveIndependentKeySet(KEYSETSPEC);
+        final GordianKeySet mySecond = myResponder.deriveIndependentKeySet(KEYSETSPEC);
         Assertions.assertEquals(myFirst, mySecond, "Failed to agree crossFactory keySet");
     }
 

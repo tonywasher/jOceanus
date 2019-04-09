@@ -19,6 +19,7 @@ package net.sourceforge.joceanus.jgordianknot.api.agree;
 import net.sourceforge.joceanus.jgordianknot.api.base.GordianKeySpec;
 import net.sourceforge.joceanus.jgordianknot.api.key.GordianKey;
 import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySet;
+import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetSpec;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
@@ -41,16 +42,18 @@ public interface GordianAgreement {
 
     /**
      * Derive keySet.
+     * @param pSpec the keySetSpec
      * @return the keySet
      * @throws OceanusException on error
      */
-    GordianKeySet deriveKeySet() throws OceanusException;
+    GordianKeySet deriveKeySet(GordianKeySetSpec pSpec) throws OceanusException;
 
     /**
      * Derive independent keySet.
+     * @param pSpec the keySetSpec
      * @return the keySet
      * @throws OceanusException on error
      */
-    GordianKeySet deriveIndependentKeySet() throws OceanusException;
+    GordianKeySet deriveIndependentKeySet(GordianKeySetSpec pSpec) throws OceanusException;
 }
 

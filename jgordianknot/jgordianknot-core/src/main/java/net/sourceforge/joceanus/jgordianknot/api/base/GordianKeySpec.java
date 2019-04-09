@@ -21,4 +21,9 @@ package net.sourceforge.joceanus.jgordianknot.api.base;
  */
 public interface GordianKeySpec
         extends GordianIdSpec {
+    /**
+     * Obtain the keyLength.
+     * @return the keyLength
+     */
+    GordianLength getKeyLength();
 }
