@@ -20,7 +20,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import net.sourceforge.joceanus.jgordianknot.api.asym.GordianAsymKeyType;
-import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianSymKeyType;
 import net.sourceforge.joceanus.jtethys.TethysDataConverter;
 
 /**

@@ -205,10 +205,6 @@ public class JcaAgreementFactory
         /* Switch on KeyType */
         final GordianAgreementType myType = pSpec.getAgreementType();
         switch (pSpec.getAsymKeyType()) {
-            case RSA:
-            case DSTU4145:
-            case GOST2012:
-                return false;
             case NEWHOPE:
                 return true;
             case EC:
@@ -220,6 +216,9 @@ public class JcaAgreementFactory
             case X448:
                 return GordianAgreementType.BASIC.equals(myType)
                         || GordianAgreementType.UNIFIED.equals(myType);
+            case RSA:
+            case DSTU4145:
+            case GOST2012:
             default:
                 return false;
         }

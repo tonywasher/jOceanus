@@ -218,7 +218,7 @@ public final class GordianStreamManager {
 
         /* Create the encryption stream for a stream key */
         final GordianLength myKeyLen = theKeySet.getKeySetSpec().getKeyLength();
-        final GordianStreamKeyType myType = myIdMgr.generateRandomStreamKeyType(myKeyLen,true);
+        final GordianStreamKeyType myType = myIdMgr.generateRandomStreamKeyType(myKeyLen, true);
         final GordianKeyGenerator<GordianStreamKeySpec> myStreamGenerator = myCiphers.getKeyGenerator(new GordianStreamKeySpec(myType, myKeyLen));
         final GordianKey<GordianStreamKeySpec> myStreamKey = myStreamGenerator.generateKey();
         final GordianCipher<GordianStreamKeySpec> myStreamCipher = myCiphers.createStreamKeyCipher(GordianStreamCipherSpec.stream(myStreamKey.getKeyType()));
@@ -269,7 +269,7 @@ public final class GordianStreamManager {
         final GordianIdManager myIdMgr = myKeySets.getIdManager();
 
         /* Determine a random set of keyType */
-        final int myCount = myFactory.getNumCipherSteps() - 1;
+        final int myCount = theKeySet.getKeySetSpec().getCipherSteps() - 1;
         final GordianLength myKeyLen = theKeySet.getKeySetSpec().getKeyLength();
         final GordianSymKeyType[] myTypes = myIdMgr.generateRandomKeySetSymKeyTypes(myKeyLen, myCount);
 

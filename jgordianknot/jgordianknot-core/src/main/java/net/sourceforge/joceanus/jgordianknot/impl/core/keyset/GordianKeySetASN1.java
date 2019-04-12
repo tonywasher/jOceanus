@@ -197,7 +197,7 @@ public class GordianKeySetASN1
         myLength = getLengthSequence(myLength);
 
         /* We have pNumKeys of these in a sequence */
-        myLength = getLengthSequence( myLength * pNumKeys);
+        myLength = getLengthSequence(myLength * pNumKeys);
 
         /* Return the sequence length */
         return getLengthSequence(myLength + GordianKeySetSpecASN1.getEncodedLength());

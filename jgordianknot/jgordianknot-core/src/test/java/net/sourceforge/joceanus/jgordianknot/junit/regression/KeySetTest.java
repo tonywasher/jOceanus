@@ -137,8 +137,8 @@ public class KeySetTest {
                       final boolean pMaxSteps) throws OceanusException {
             /* Create the factory */
             final GordianParameters myParams = new GordianParameters(pType);
-            final int myMaxSteps = pMaxSteps ? GordianParameters.MAXIMUM_CIPHER_STEPS
-                                             : GordianParameters.MINIMUM_CIPHER_STEPS;
+            final int myMaxSteps = pMaxSteps ? GordianKeySetSpec.MAXIMUM_CIPHER_STEPS
+                                             : GordianKeySetSpec.MINIMUM_CIPHER_STEPS;
             theFactory = GordianGenerator.createFactory(myParams);
             theSpec = new GordianKeySetSpec(pKeyLen, myMaxSteps);
             maxSteps = pMaxSteps;

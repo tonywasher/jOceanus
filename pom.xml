@@ -74,7 +74,7 @@
     <MySQLVersion>8.0.15</MySQLVersion>
     <PostGreSQLVersion>42.2.5</PostGreSQLVersion>
     <JTDSVersion>1.3.1</JTDSVersion>
-    <ApachePOIVersion>4.0.1</ApachePOIVersion>
+    <ApachePOIVersion>4.1.0</ApachePOIVersion>
     <SLF4JVersion>1.8.0-beta4</SLF4JVersion>
     <JSoupVersion>1.11.3</JSoupVersion>
     <ZipSDKVersion>9.20</ZipSDKVersion>

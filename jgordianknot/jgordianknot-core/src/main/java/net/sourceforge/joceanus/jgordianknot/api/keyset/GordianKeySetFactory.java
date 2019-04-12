@@ -19,7 +19,6 @@ package net.sourceforge.joceanus.jgordianknot.api.keyset;
 import java.util.function.Predicate;
 
 import net.sourceforge.joceanus.jgordianknot.api.base.GordianLength;
-import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianStreamKeyType;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianSymKeySpec;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianSymKeyType;
 import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigestType;
@@ -29,14 +28,6 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
  * GordianKnot KeySet API.
  */
 public interface GordianKeySetFactory {
-    /**
-     * create empty KeySet.
-     * @param pKeySetSpec the keySetSpec
-     * @return the new keySet
-     * @throws OceanusException on error
-     */
-    GordianKeySet createKeySet(GordianKeySetSpec pKeySetSpec) throws OceanusException;
-
     /**
      * generate random KeySet.
      * @param pKeySetSpec the keySetSpec

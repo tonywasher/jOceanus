@@ -19,7 +19,6 @@ package net.sourceforge.joceanus.jgordianknot.api.keyset;
 import java.security.spec.X509EncodedKeySpec;
 
 import net.sourceforge.joceanus.jgordianknot.api.base.GordianLength;
-import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianSymKeySpec;
 import net.sourceforge.joceanus.jgordianknot.api.key.GordianKey;
 import net.sourceforge.joceanus.jgordianknot.api.base.GordianKeySpec;
 import net.sourceforge.joceanus.jgordianknot.api.key.GordianKeyPair;
@@ -31,6 +30,7 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
 public interface GordianKeySet {
     /**
      * Obtain the keySetSpec.
+     * @return the keySetSpec
      */
     GordianKeySetSpec getKeySetSpec();
 
@@ -155,13 +155,6 @@ public interface GordianKeySet {
      * @throws OceanusException on error
      */
     int getKeySetWrapLength() throws OceanusException;
-
-    /**
-     * Declare symmetricKey.
-     * @param pKey the key
-     * @throws OceanusException on error
-     */
-    void declareSymKey(GordianKey<GordianSymKeySpec> pKey) throws OceanusException;
 
     /**
      * Is the keySet in AEAD mode?

@@ -16,11 +16,6 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jprometheus.lethe.data;
 
-import java.util.EnumMap;
-import java.util.Map;
-import java.util.function.Predicate;
-
-import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianSymKeyType;
 import net.sourceforge.joceanus.jgordianknot.api.factory.GordianFactory;
 import net.sourceforge.joceanus.jgordianknot.api.impl.GordianSecurityManager;
 import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySet;
@@ -34,7 +29,6 @@ import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisField;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisValueSet;
 import net.sourceforge.joceanus.jprometheus.PrometheusDataException;
-import net.sourceforge.joceanus.jprometheus.lethe.data.DataKey.DataKeyList;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataSet.CryptographyDataType;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
@@ -58,6 +52,11 @@ public class DataKeySet
     public static final String LIST_NAME = CryptographyDataType.DATAKEYSET.getListName();
 
     /**
+     * KeySetWrapLength.
+     */
+    private static final int WRAPLEN = GordianSecurityManager.getMaximumKeySetWrapLength();
+
+    /**
      * Report fields.
      */
     private static final MetisFields FIELD_DEFS = new MetisFields(OBJECT_NAME, DataItem.FIELD_DEFS);
@@ -68,24 +67,24 @@ public class DataKeySet
     public static final MetisField FIELD_CONTROLKEY = FIELD_DEFS.declareEqualityValueField(CryptographyDataType.CONTROLKEY.getItemName(), MetisDataType.LINK);
 
     /**
+     * HashPrime Field Id.
+     */
+    public static final MetisField FIELD_HASHPRIME = FIELD_DEFS.declareEqualityValueField(PrometheusDataResource.CONTROLKEY_PRIME.getValue(), MetisDataType.BOOLEAN);
+
+    /**
+     * Field ID for KeySetDef.
+     */
+    public static final MetisField FIELD_KEYSETDEF = FIELD_DEFS.declareEqualityValueField(PrometheusDataResource.DATAKEYSET_KEYSETDEF.getValue(), MetisDataType.BYTEARRAY, WRAPLEN);
+
+    /**d
      * Field ID for CreationDate.
      */
     public static final MetisField FIELD_CREATEDATE = FIELD_DEFS.declareEqualityValueField(PrometheusDataResource.DATAKEYSET_CREATION.getValue(), MetisDataType.DATE);
 
     /**
-     * Field ID for SymKeyMap.
-     */
-    public static final MetisField FIELD_SYMMAP = FIELD_DEFS.declareLocalField(PrometheusDataResource.DATAKEYSET_SYMKEYMAP.getValue());
-
-    /**
      * Field ID for KeySet.
      */
     public static final MetisField FIELD_KEYSET = FIELD_DEFS.declareLocalField(PrometheusDataResource.DATAKEYSET_KEYSET.getValue());
-
-    /**
-     * The SymDataKey Map.
-     */
-    private Map<GordianSymKeyType, DataKey> theSymMap;
 
     /**
      * The Encryption KeySet.
@@ -116,9 +115,9 @@ public class DataKeySet
         switch (getStyle()) {
             case CLONE:
                 theSecurityFactory = pSource.theSecurityFactory;
-                theSymMap = new EnumMap<>(GordianSymKeyType.class);
+                final GordianSecurityManager mySecure = getDataSet().getSecurity();
                 final GordianKeySetFactory myKeySets = theSecurityFactory.getKeySetFactory();
-                theKeySet = myKeySets.createKeySet();
+                theKeySet = pSource.theKeySet.cloneIt();
                 theFieldGenerator = new MetisEncryptionGenerator(theKeySet, getDataSet().getDataFormatter());
                 break;
             default:
@@ -145,9 +144,6 @@ public class DataKeySet
         /* Record the security factory */
         theSecurityFactory = mySecure.getSecurityFactory();
 
-        /* Create the DataKey Maps */
-        theSymMap = new EnumMap<>(GordianSymKeyType.class);
-
         /* Store the ControlKey */
         Object myValue = pValues.getValue(FIELD_CONTROLKEY);
         if (myValue instanceof Integer) {
@@ -165,10 +161,21 @@ public class DataKeySet
         /* Access the controlKey */
         final ControlKey myControl = getControlKey();
 
-        /* Create the KeySet and security generator */
-        final GordianKeySetFactory myKeySets = theSecurityFactory.getKeySetFactory();
-        theKeySet = myKeySets.createKeySet();
-        theFieldGenerator = new MetisEncryptionGenerator(theKeySet, myFormatter);
+        /* Store the PrimeHash indicator */
+        myValue = pValues.getValue(FIELD_HASHPRIME);
+        final Boolean isHashPrime = (myValue instanceof Boolean)
+                                    ? (Boolean) myValue
+                                    : Boolean.TRUE;
+        setValueHashPrime(isHashPrime);
+
+        /* Store the WrappedKeySetDef */
+        myValue = pValues.getValue(FIELD_KEYSETDEF);
+        if (myValue instanceof byte[]) {
+            final byte[] myBytes = (byte[]) myValue;
+            setValueSecuredKeySetDef(myBytes);
+            theKeySet = myControl.getKeySetHash(isHashPrime()).getKeySet().deriveKeySet(myBytes);
+            theFieldGenerator = new MetisEncryptionGenerator(theKeySet, myFormatter);
+        }
 
         /* Store the CreationDate */
         myValue = pValues.getValue(FIELD_CREATEDATE);
@@ -182,7 +189,7 @@ public class DataKeySet
     }
 
     /**
-     * Constructor for a new DataKeySet. This will create a set of DataKeys.
+     * Constructor for a new DataKeySet.
      * @param pList the list to which to add the keySet to
      * @param pControlKey the control key
      * @throws OceanusException on error
@@ -205,19 +212,17 @@ public class DataKeySet
             /* Record the security factory */
             theSecurityFactory = mySecure.getSecurityFactory();
 
-            /* Create the DataKey Map */
-            theSymMap = new EnumMap<>(GordianSymKeyType.class);
-
             /* Create the KeySet */
             final GordianKeySetFactory myKeySets = theSecurityFactory.getKeySetFactory();
-            theKeySet = myKeySets.createKeySet();
+            theKeySet = myKeySets.generateKeySet(mySecure.getKeySetSpec());
             theFieldGenerator = new MetisEncryptionGenerator(theKeySet, myFormatter);
+
+            /* Set the wrappedKeySetDef */
+            setValueHashPrime(pControlKey.isHashPrime());
+            setValueSecuredKeySetDef(pControlKey.getKeySetHash().getKeySet().secureKeySet(theKeySet));
 
             /* Set the creationDate */
             setValueCreationDate(new TethysDate());
-
-            /* Allocate the DataKeys */
-            allocateDataKeys(myData);
 
             /* Catch Exceptions */
         } catch (OceanusException e) {
@@ -233,12 +238,10 @@ public class DataKeySet
 
     @Override
     public Object getFieldValue(final MetisField pField) {
-        if (FIELD_SYMMAP.equals(pField)) {
-            return theSymMap;
-        }
         if (FIELD_KEYSET.equals(pField)) {
             return theKeySet;
         }
+
         return super.getFieldValue(pField);
     }
 
@@ -278,6 +281,22 @@ public class DataKeySet
     }
 
     /**
+     * Is this locked by prime hash.
+     * @return true/false
+     */
+    public Boolean isHashPrime() {
+        return isHashPrime(getValueSet());
+    }
+
+    /**
+     * Get the securedKeySetDef.
+     * @return the securedKeySetDef
+     */
+    public final byte[] getSecuredKeySetDef() {
+        return getSecuredKeySetDef(getValueSet());
+    }
+
+    /**
      * Get the CreationDate.
      * @return the creationDate
      */
@@ -295,39 +314,30 @@ public class DataKeySet
     }
 
     /**
+     * Is this locked by prime hash.
+     * @param pValueSet the valueSet
+     * @return true/false
+     */
+    public static Boolean isHashPrime(final MetisValueSet pValueSet) {
+        return pValueSet.getValue(FIELD_HASHPRIME, Boolean.class);
+    }
+
+    /**
+     * Get the securedKeySetDef.
+     * @param pValueSet the valueSet
+     * @return the securedKeySetDef
+     */
+    public static byte[] getSecuredKeySetDef(final MetisValueSet pValueSet) {
+        return pValueSet.getValue(FIELD_KEYSETDEF, byte[].class);
+    }
+
+    /**
      * Get the CreationDate.
      * @param pValueSet the valueSet
      * @return the creationDate
      */
     public static TethysDate getCreationDate(final MetisValueSet pValueSet) {
         return pValueSet.getValue(FIELD_CREATEDATE, TethysDate.class);
-    }
-
-    /**
-     * Is this locked by prime hash.
-     * @return true/false
-     */
-    protected Boolean isHashPrime() {
-        return getControlKey().isHashPrime();
-    }
-
-    /**
-     * Get the keySetHash.
-     * @return the keySetHash
-     * @throws OceanusException on error
-     */
-    protected GordianKeySetHash getKeySetHash() throws OceanusException {
-        return getControlKey().getKeySetHash();
-    }
-
-    /**
-     * Get the PassWordHash.
-     * @param useHashPrime true/false
-     * @return the passwordHash
-     * @throws OceanusException on error
-     */
-    protected GordianKeySetHash getKeySetHash(final Boolean useHashPrime) throws OceanusException {
-        return getControlKey().getKeySetHash(useHashPrime);
     }
 
     /**
@@ -344,6 +354,22 @@ public class DataKeySet
      */
     private void setValueControlKey(final Integer pId) {
         getValueSet().setValue(FIELD_CONTROLKEY, pId);
+    }
+
+    /**
+     * Set the HashPrime indicator.
+     * @param pPrime true/false
+     */
+    private void setValueHashPrime(final Boolean pPrime) {
+        getValueSet().setValue(FIELD_HASHPRIME, pPrime);
+    }
+
+    /**
+     * Set the securedKeySetDef.
+     * @param pValue the securedKeySetDef
+     */
+    private void setValueSecuredKeySetDef(final byte[] pValue) {
+        getValueSet().setValue(FIELD_KEYSETDEF, pValue);
     }
 
     /**
@@ -398,47 +424,9 @@ public class DataKeySet
     }
 
     /**
-     * Allocate a new set of DataKeys.
-     * @param pData the DataSet
-     * @throws OceanusException on error
-     */
-    private void allocateDataKeys(final DataSet<?, ?> pData) throws OceanusException {
-        /* Access the DataKey List */
-        final DataKeyList myKeys = pData.getDataKeys();
-        setNewVersion();
-
-        /* Access the KeyPredicates */
-        final DataSet<?, ?> myData = getDataSet();
-        final GordianFactory myFactory = myData.getSecurity().getSecurityFactory();
-        final GordianKeySetFactory myKeySets = myFactory.getKeySetFactory();
-        final Predicate<GordianSymKeyType> mySymPredicate = myKeySets.supportedKeySetSymKeyTypes();
-
-        /* Loop through the SymKeyType values */
-        for (GordianSymKeyType myType : GordianSymKeyType.values()) {
-            /* If this is valid for this keyLength */
-            if (mySymPredicate.test(myType)) {
-                /* Create a new DataKey for this DataKeySet */
-                final DataKey myKey = myKeys.createNewKey(this, myType);
-                myKey.setNewVersion();
-            }
-        }
-    }
-
-    /**
      * Delete the old set of DataKeySet and DataKeys.
      */
     protected void deleteDataKeySet() {
-        /* Loop through the SymKeyType values */
-        for (GordianSymKeyType myType : GordianSymKeyType.values()) {
-            /* Access the Data Key */
-            final DataKey myKey = theSymMap.get(myType);
-
-            /* Mark as deleted */
-            if (myKey != null) {
-                myKey.setDeleted(true);
-            }
-        }
-
         /* Mark this dataKeySet as deleted */
         setDeleted(true);
     }
@@ -450,35 +438,24 @@ public class DataKeySet
      * @return were there changes? true/false
      * @throws OceanusException on error
      */
-    protected boolean updateKeySetHash(final Boolean pPrimeHash,
-                                       final GordianKeySetHash pHash) throws OceanusException {
-        /* Loop through the SymKeyType values */
-        boolean bChanges = false;
-        for (GordianSymKeyType myType : GordianSymKeyType.values()) {
-            /* Access the Data Key */
-            final DataKey myKey = theSymMap.get(myType);
+    boolean updateKeySetHash(final Boolean pPrimeHash,
+                             final GordianKeySetHash pHash) throws OceanusException {
+        /* Determine whether we need to update */
+        if (!pPrimeHash.equals(isHashPrime())) {
+            /* Store the current detail into history */
+            pushHistory();
 
-            /* Update the password hash */
-            if (myKey != null) {
-                bChanges |= myKey.updateKeySetHash(pPrimeHash, pHash);
-            }
+            /* Update the Security Control Key and obtain the new secured KeySetDef */
+            final GordianKeySet myKeySet = pHash.getKeySet();
+            setValueHashPrime(pPrimeHash);
+            setValueSecuredKeySetDef(myKeySet.secureKeySet(theKeySet));
+
+            /* Check for changes */
+            return checkForHistory();
         }
 
-        /* return the flag */
-        return bChanges;
-    }
-
-    /**
-     * Register DataKey.
-     * @param pKey the DataKey to register
-     * @throws OceanusException on error
-     */
-    protected void registerDataKey(final DataKey pKey) throws OceanusException {
-        /* Store the DataKey into the map */
-        theSymMap.put(pKey.getSymKeyType(), pKey);
-
-        /* Declare the Key */
-        theKeySet.declareSymKey(pKey.getSymKey());
+        /* No changes */
+        return false;
     }
 
     /**
@@ -604,40 +581,12 @@ public class DataKeySet
             final DataValues<CryptographyDataType> myValues = new DataValues<>(DataKeySet.OBJECT_NAME);
             myValues.addValue(DataKeySet.FIELD_ID, pKeySet.getId());
             myValues.addValue(DataKeySet.FIELD_CONTROLKEY, pControlKey);
+            myValues.addValue(DataKeySet.FIELD_HASHPRIME, pKeySet.isHashPrime());
+            myValues.addValue(DataKeySet.FIELD_KEYSETDEF, pKeySet.getSecuredKeySetDef());
             myValues.addValue(DataKeySet.FIELD_CREATEDATE, pKeySet.getCreationDate());
 
             /* Clone the dataKeySet */
-            final DataKeySet myKeySet = addValuesItem(myValues);
-
-            /* Access the DataKey List */
-            final DataSet<?, ?> myData = getDataSet();
-            final DataKeyList myKeys = myData.getDataKeys();
-
-            /* Access the symKeyPredicate */
-            final GordianFactory myFactory = myData.getSecurity().getSecurityFactory();
-            final GordianKeySetFactory myKeySets = myFactory.getKeySetFactory();
-            final Predicate<GordianSymKeyType> mySymPredicate = myKeySets.supportedKeySetSymKeyTypes();
-
-            /* Loop through the SymKeyType values */
-            for (GordianSymKeyType myType : GordianSymKeyType.values()) {
-                /* If this is valid for this keyLength */
-                if (mySymPredicate.test(myType)) {
-                    /* Access the source Data key */
-                    final DataKey mySrcKey = pKeySet.theSymMap.get(myType);
-
-                    /* Clone the DataKey for this DataKeySet */
-                    final DataKey myKey = myKeys.cloneDataKey(myKeySet, mySrcKey);
-
-                    /* Store the DataKey into the map */
-                    myKeySet.theSymMap.put(myType, myKey);
-
-                    /* Declare the Key */
-                    myKeySet.theKeySet.declareSymKey(myKey.getSymKey());
-                }
-            }
-
-            /* return the cloned keySet */
-            return myKeySet;
+            return addValuesItem(myValues);
         }
 
         @Override

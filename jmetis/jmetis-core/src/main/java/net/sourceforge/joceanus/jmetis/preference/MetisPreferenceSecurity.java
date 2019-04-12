@@ -24,6 +24,7 @@ import net.sourceforge.joceanus.jgordianknot.api.impl.GordianGenerator;
 import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySet;
 import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetFactory;
 import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetHash;
+import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetSpec;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.TethysDataConverter;
 import net.sourceforge.joceanus.jtethys.logger.TethysLogManager;
@@ -42,6 +43,11 @@ public class MetisPreferenceSecurity {
      * Logger.
      */
     private static final TethysLogger LOGGER = TethysLogManager.getLogger(MetisPreferenceSecurity.class);
+
+    /**
+     * Default KeyLength.
+     */
+    private static final GordianLength DEFAULT_KEYLEN = GordianLength.LEN_256;
 
     /**
      * The KeySet.
@@ -70,7 +76,7 @@ public class MetisPreferenceSecurity {
         /* Derive or create the hash */
         final char[] myPassword = System.getProperty("user.name").toCharArray();
         final GordianKeySetHash myKeySetHash = myHash == null
-                                                              ? myKeySets.generateKeySetHash(myPassword)
+                                                              ? myKeySets.generateKeySetHash(new GordianKeySetSpec(DEFAULT_KEYLEN), myPassword)
                                                               : myKeySets.deriveKeySetHash(myHash, myPassword);
 
         /* record the KeySet */
@@ -270,16 +276,27 @@ public class MetisPreferenceSecurity {
          */
         public GordianParameters getParameters() throws OceanusException {
             /* Create default preferences */
-            final GordianParameters myParms = new GordianParameters(getEnumValue(MetisSecurityPreferenceKey.KEYLENGTH, GordianLength.class));
+            final GordianParameters myParms = new GordianParameters();
 
             /* Set other parameters */
             myParms.setFactoryType(getEnumValue(MetisSecurityPreferenceKey.FACTORY, GordianFactoryType.class));
-            myParms.setNumCipherSteps(getIntegerValue(MetisSecurityPreferenceKey.CIPHERSTEPS));
             myParms.setNumIterations(getIntegerValue(MetisSecurityPreferenceKey.HASHITERATIONS));
             myParms.setSecurityPhrase(getCharArrayValue(MetisSecurityPreferenceKey.SECURITYPHRASE));
 
             /* return the parameters */
             return myParms;
+        }
+
+        /**
+         * Get KeySetSpec.
+         * @return the parameters
+         * @throws OceanusException on error
+         */
+        public GordianKeySetSpec getKeySetSpec() throws OceanusException {
+            /* Build and return keySetSpec */
+            final GordianLength myKeyLen = getEnumValue(MetisSecurityPreferenceKey.KEYLENGTH, GordianLength.class);
+            final int mySteps = getIntegerValue(MetisSecurityPreferenceKey.CIPHERSTEPS);
+            return new GordianKeySetSpec(myKeyLen, mySteps);
         }
 
         @Override
@@ -305,7 +322,7 @@ public class MetisPreferenceSecurity {
             final MetisEnumPreference<MetisSecurityPreferenceKey, GordianLength> myLengthPref
                     = getEnumPreference(MetisSecurityPreferenceKey.KEYLENGTH, GordianLength.class);
             if (!myLengthPref.isAvailable()) {
-                myLengthPref.setValue(GordianParameters.DEFAULT_KEYLEN);
+                myLengthPref.setValue(DEFAULT_KEYLEN);
             }
 
             /* Make sure that the length is restricted */
@@ -320,13 +337,13 @@ public class MetisPreferenceSecurity {
             /* Make sure that the cipherSteps is specified */
             MetisIntegerPreference<MetisSecurityPreferenceKey> myPref = getIntegerPreference(MetisSecurityPreferenceKey.CIPHERSTEPS);
             if (!myPref.isAvailable()) {
-                myPref.setValue(GordianParameters.DEFAULT_CIPHER_STEPS);
+                myPref.setValue(GordianKeySetSpec.DEFAULT_CIPHER_STEPS);
             }
 
             /* Define the range */
-            myPref.setRange(GordianParameters.MINIMUM_CIPHER_STEPS, GordianParameters.MAXIMUM_CIPHER_STEPS);
+            myPref.setRange(GordianKeySetSpec.MINIMUM_CIPHER_STEPS, GordianKeySetSpec.MAXIMUM_CIPHER_STEPS);
             if (!myPref.validate()) {
-                myPref.setValue(GordianParameters.DEFAULT_CIPHER_STEPS);
+                myPref.setValue(GordianKeySetSpec.DEFAULT_CIPHER_STEPS);
             }
 
             /* Make sure that the hashIterations is specified */

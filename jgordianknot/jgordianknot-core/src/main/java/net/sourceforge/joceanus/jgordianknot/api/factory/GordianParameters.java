@@ -18,7 +18,6 @@ package net.sourceforge.joceanus.jgordianknot.api.factory;
 
 import java.util.Arrays;
 
-import net.sourceforge.joceanus.jgordianknot.api.base.GordianLength;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.TethysDataConverter;
 
@@ -35,21 +34,6 @@ public class GordianParameters {
      * Default Factory.
      */
     public static final GordianFactoryType DEFAULT_FACTORY = GordianFactoryType.BC;
-
-    /**
-     * Minimum Cipher Steps.
-     */
-    public static final Integer MINIMUM_CIPHER_STEPS = 3;
-
-    /**
-     * Maximum Cipher Steps.
-     */
-    public static final Integer MAXIMUM_CIPHER_STEPS = 6;
-
-    /**
-     * Default Cipher Steps.
-     */
-    public static final Integer DEFAULT_CIPHER_STEPS = 4;
 
     /**
      * Minimum Hash iterations.
@@ -77,11 +61,6 @@ public class GordianParameters {
     private GordianFactoryType theFactoryType;
 
     /**
-     * The Number of cipher steps.
-     */
-    private int theCipherSteps;
-
-    /**
      * The Number of hash iterations.
      */
     private int theIterations;
@@ -105,7 +84,6 @@ public class GordianParameters {
     public GordianParameters(final GordianFactoryType pFactoryType) {
         /* Store parameters */
         theFactoryType = pFactoryType;
-        theCipherSteps = DEFAULT_CIPHER_STEPS;
         theIterations = DEFAULT_HASH_ITERATIONS;
         theSecurityPhrase = null;
     }
@@ -116,14 +94,6 @@ public class GordianParameters {
      */
     public GordianFactoryType getFactoryType() {
         return theFactoryType;
-    }
-
-    /**
-     * Access the number of Cipher Steps.
-     * @return the number of cipher steps
-     */
-    public int getNumCipherSteps() {
-        return theCipherSteps;
     }
 
     /**
@@ -148,14 +118,6 @@ public class GordianParameters {
      */
     public void setFactoryType(final GordianFactoryType pType) {
         theFactoryType = pType;
-    }
-
-    /**
-     * Set number of cipher steps.
-     * @param pNumCipherSteps number of cipher steps
-     */
-    public void setNumCipherSteps(final int pNumCipherSteps) {
-        theCipherSteps = pNumCipherSteps;
     }
 
     /**
@@ -201,11 +163,6 @@ public class GordianParameters {
             return false;
         }
 
-        /* Check cipher steps is in range */
-        if (theCipherSteps < MINIMUM_CIPHER_STEPS || theCipherSteps > MAXIMUM_CIPHER_STEPS) {
-            return false;
-        }
-
         /* Check iterations is in range */
         return (theIterations >= MINIMUM_HASH_ITERATIONS
                 && theIterations <= MAXIMUM_HASH_ITERATIONS);
@@ -230,8 +187,7 @@ public class GordianParameters {
         final GordianParameters myThat = (GordianParameters) pThat;
 
         /* Check Differences */
-        if (theCipherSteps != myThat.getNumCipherSteps()
-                || theIterations != myThat.getNumHashIterations()) {
+        if (theIterations != myThat.getNumHashIterations()) {
             return false;
         }
         if (theFactoryType != myThat.getFactoryType()) {
@@ -250,10 +206,7 @@ public class GordianParameters {
         final int myPrime = HASH_PRIME;
 
         /* Calculate hash from simple values */
-        int myCode = theCipherSteps;
-        myCode *= myPrime;
-        myCode += theIterations;
-        myCode *= myPrime;
+        int myCode = theIterations;
         myCode *= myPrime;
 
         /* Calculate hash from types */

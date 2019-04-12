@@ -19,6 +19,7 @@ package net.sourceforge.joceanus.jgordianknot.api.swing;
 import net.sourceforge.joceanus.jgordianknot.api.factory.GordianParameters;
 import net.sourceforge.joceanus.jgordianknot.api.impl.GordianDialogController;
 import net.sourceforge.joceanus.jgordianknot.api.impl.GordianSecurityManager;
+import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetSpec;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingGuiFactory;
 
@@ -30,40 +31,16 @@ import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingGuiFactory;
 public class GordianSwingSecurityManager
         extends GordianSecurityManager {
     /**
-     * Constructor for default values.
-     * @throws OceanusException on error
-     */
-    public GordianSwingSecurityManager() throws OceanusException {
-        this(new TethysSwingGuiFactory());
-    }
-
-    /**
-     * Constructor.
-     * @param pFactory the GUI Factory
-     * @throws OceanusException on error
-     */
-    public GordianSwingSecurityManager(final TethysSwingGuiFactory pFactory) throws OceanusException {
-        this(pFactory, new GordianParameters());
-    }
-
-    /**
-     * Constructor.
-     * @param pParameters the Security parameters
-     * @throws OceanusException on error
-     */
-    public GordianSwingSecurityManager(final GordianParameters pParameters) throws OceanusException {
-        this(new TethysSwingGuiFactory(), pParameters);
-    }
-
-    /**
      * Constructor.
      * @param pFactory the GUI Factory
      * @param pParameters the Security parameters
+     * @param pKeySetSpec the keySetSpec
      * @throws OceanusException on error
      */
     public GordianSwingSecurityManager(final TethysSwingGuiFactory pFactory,
-                                       final GordianParameters pParameters) throws OceanusException {
-        super(pParameters, new GordianSwingDialogControl(pFactory));
+                                       final GordianParameters pParameters,
+                                       final GordianKeySetSpec pKeySetSpec) throws OceanusException {
+        super(pParameters, pKeySetSpec, new GordianSwingDialogControl(pFactory));
     }
 
     /**

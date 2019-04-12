@@ -16,8 +16,6 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jgordianknot.api.keyset;
 
-import net.sourceforge.joceanus.jtethys.OceanusException;
-
 /**
  * Hash from which to derive KeySet.
  */
@@ -35,20 +33,4 @@ public interface GordianKeySetHash {
      * @return the CipherSet
      */
     GordianKeySet getKeySet();
-
-    /**
-     * obtain child keySetHash (internal password).
-     *
-     * @return the similar hash
-     * @throws OceanusException on error
-     */
-    GordianKeySetHash childHash() throws OceanusException;
-
-    /**
-     * resolve child keySetHash (internal password).
-     * @param pHash the hash to resolve
-     * @return the similar hash
-     * @throws OceanusException on error
-     */
-    GordianKeySetHash resolveChildHash(byte[] pHash) throws OceanusException;
 }

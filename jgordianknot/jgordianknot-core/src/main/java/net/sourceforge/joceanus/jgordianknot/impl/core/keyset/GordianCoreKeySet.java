@@ -438,7 +438,7 @@ public final class GordianCoreKeySet
      * @param pKey the key
      * @throws OceanusException on error
      */
-    public void declareSymKey(final GordianKey<GordianSymKeySpec> pKey) throws OceanusException {
+    void declareSymKey(final GordianKey<GordianSymKeySpec> pKey) throws OceanusException {
         final GordianKeySetFactory myFactory = theFactory.getKeySetFactory();
         declareKey(pKey, myFactory.supportedKeySetSymKeySpecs(theSpec.getKeyLength()), theSymKeyMap);
     }

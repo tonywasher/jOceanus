@@ -23,7 +23,6 @@ import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigestSpec;
 import net.sourceforge.joceanus.jgordianknot.api.factory.GordianFactory;
 import net.sourceforge.joceanus.jgordianknot.api.factory.GordianParameters;
 import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianBadCredentialsException;
-import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySet;
 import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetHash;
 import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetSpec;
 import net.sourceforge.joceanus.jgordianknot.api.mac.GordianMac;
@@ -73,11 +72,6 @@ public final class GordianCoreKeySetHash
      * The Hash.
      */
     private byte[] theHash;
-
-    /**
-     * Encrypted child password.
-     */
-    private byte[] theChildPassword;
 
     /**
      * CipherSet.
@@ -233,50 +227,8 @@ public final class GordianCoreKeySetHash
      *
      * @return the Factory
      */
-    private GordianFactory getFactory() {
+    public GordianFactory getFactory() {
         return theFactory;
-    }
-
-    @Override
-    public GordianCoreKeySetHash childHash() throws OceanusException {
-        /* Protect against exceptions */
-        byte[] myPassword = null;
-        try {
-            /* Create a new keySetHash */
-            final GordianCoreKeySetHash myHash = new GordianCoreKeySetHash(theFactory, theSpec);
-
-            /* Access the child password */
-            myPassword = theKeySet.decryptBytes(theChildPassword);
-
-            /* Build hash from password */
-            myHash.setPassword(myPassword);
-            return myHash;
-
-            /* Ensure password is reset */
-        } finally {
-            if (myPassword != null) {
-                Arrays.fill(myPassword, (byte) 0);
-            }
-        }
-    }
-
-    @Override
-    public GordianKeySetHash resolveChildHash(final byte[] pHash) throws OceanusException {
-        /* Protect against exceptions */
-        byte[] myPassword = null;
-        try {
-            /* Access the child password */
-            myPassword = theKeySet.decryptBytes(theChildPassword);
-
-            /* Resolve hash */
-            return resolveKeySetHash(theFactory, pHash, myPassword);
-
-            /* Ensure password is reset */
-        } finally {
-            if (myPassword != null) {
-                Arrays.fill(myPassword, (byte) 0);
-            }
-        }
     }
 
     /**
@@ -298,14 +250,10 @@ public final class GordianCoreKeySetHash
             theKeySet = new GordianCoreKeySet(theFactory, theSpec);
             theKeySet.buildFromSecret(myResults[iIndex++], myResults[iIndex++]);
 
-            /* Encrypt the passwords */
-            theChildPassword = theKeySet.encryptBytes(myResults[iIndex]);
-
         } finally {
             /* Clear out results */
             if (myResults != null) {
                 int iIndex = 1;
-                Arrays.fill(myResults[iIndex++], (byte) 0);
                 Arrays.fill(myResults[iIndex++], (byte) 0);
                 Arrays.fill(myResults[iIndex], (byte) 0);
             }
@@ -337,14 +285,10 @@ public final class GordianCoreKeySetHash
             theKeySet = new GordianCoreKeySet(theFactory, theSpec);
             theKeySet.buildFromSecret(myResults[iIndex++], myResults[iIndex++]);
 
-            /* Encrypt the passwords*/
-            theChildPassword = theKeySet.encryptBytes(myResults[iIndex]);
-
         } finally {
             /* Clear out results */
             if (myResults != null) {
                 int iIndex = 1;
-                Arrays.fill(myResults[iIndex++], (byte) 0);
                 Arrays.fill(myResults[iIndex++], (byte) 0);
                 Arrays.fill(myResults[iIndex], (byte) 0);
             }
@@ -443,15 +387,6 @@ public final class GordianCoreKeySetHash
             TethysDataConverter.buildHashResult(mySecretBytes, mySecretHash);
         }
 
-        /* Combine the Primary and Alternate hashes to form the childPassword */
-        myDigest.update(myPrimeHash);
-        myDigest.update(myAlternateHash);
-        myDigest.update(mySecretHash);
-        myDigest.update(myPrimeBytes);
-        myDigest.update(myAlternateBytes);
-        myDigest.update(mySecretBytes);
-        final byte[] myChildPassword = myDigest.finish();
-
         /* Combine the Primary and Alternate hashes to form the initVector */
         myDigest.update(myPrimeHash);
         myDigest.update(myAlternateHash);
@@ -467,7 +402,7 @@ public final class GordianCoreKeySetHash
 
         /* Return to caller */
         return new byte[][]
-                {myHashBytes, mySecretBytes, myInitVector, myChildPassword};
+                {myHashBytes, mySecretBytes, myInitVector};
     }
 
     @Override

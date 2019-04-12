@@ -37,10 +37,8 @@ import net.sourceforge.joceanus.jgordianknot.api.mac.GordianMacFactory;
 import net.sourceforge.joceanus.jgordianknot.api.mac.GordianMacSpec;
 import net.sourceforge.joceanus.jgordianknot.api.mac.GordianMacType;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianCoreFactory;
-import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianDataException;
 import net.sourceforge.joceanus.jgordianknot.impl.core.cipher.GordianCipherAlgId;
 import net.sourceforge.joceanus.jgordianknot.impl.core.digest.GordianDigestAlgId;
-import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
  * Mappings from EncodedId to MacSpec.

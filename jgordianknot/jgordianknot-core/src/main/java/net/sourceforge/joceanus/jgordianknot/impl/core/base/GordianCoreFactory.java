@@ -132,14 +132,6 @@ public abstract class GordianCoreFactory
     }
 
     /**
-     * Obtain the number of cipher steps.
-     * @return the number of steps
-     */
-    public int getNumCipherSteps() {
-        return theParameters.getNumCipherSteps();
-    }
-
-    /**
      * Obtain the number of iterations.
      * @return the number of iterations
      */

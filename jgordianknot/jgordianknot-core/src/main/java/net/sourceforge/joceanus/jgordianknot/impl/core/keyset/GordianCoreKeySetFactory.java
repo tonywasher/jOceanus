@@ -18,7 +18,6 @@ package net.sourceforge.joceanus.jgordianknot.impl.core.keyset;
 
 import java.util.function.Predicate;
 
-import net.sourceforge.joceanus.jgordianknot.api.base.GordianKeySpec;
 import net.sourceforge.joceanus.jgordianknot.api.base.GordianLength;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianSymKeySpec;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianSymKeyType;
@@ -98,7 +97,12 @@ public class GordianCoreKeySetFactory
         return theObfuscater;
     }
 
-    @Override
+    /**
+     * create an empty keySet.
+     * @param pSpec the keySetSpec
+     * @return the empty keySedt
+     * @throws OceanusException on error
+     */
     public GordianCoreKeySet createKeySet(final GordianKeySetSpec pSpec) throws OceanusException {
         /* Check Spec */
         checkKeySetSpec(pSpec);

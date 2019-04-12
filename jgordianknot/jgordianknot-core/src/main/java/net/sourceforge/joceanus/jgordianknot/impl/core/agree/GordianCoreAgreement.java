@@ -38,7 +38,6 @@ import net.sourceforge.joceanus.jgordianknot.api.key.GordianKey;
 import net.sourceforge.joceanus.jgordianknot.api.base.GordianKeySpec;
 import net.sourceforge.joceanus.jgordianknot.api.key.GordianKeyPair;
 import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySet;
-import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetFactory;
 import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetSpec;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianCoreFactory;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianDataException;
@@ -47,6 +46,7 @@ import net.sourceforge.joceanus.jgordianknot.impl.core.keypair.GordianCoreKeyPai
 import net.sourceforge.joceanus.jgordianknot.impl.core.keypair.GordianPrivateKey;
 import net.sourceforge.joceanus.jgordianknot.impl.core.keypair.GordianPublicKey;
 import net.sourceforge.joceanus.jgordianknot.impl.core.keyset.GordianCoreKeySet;
+import net.sourceforge.joceanus.jgordianknot.impl.core.keyset.GordianCoreKeySetFactory;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
@@ -197,8 +197,8 @@ public abstract class GordianCoreAgreement
 
     @Override
     public GordianKeySet deriveKeySet(final GordianKeySetSpec pSpec) throws OceanusException {
-        final GordianKeySetFactory myKeySets = theFactory.getKeySetFactory();
-        final GordianCoreKeySet myKeySet = (GordianCoreKeySet) myKeySets.createKeySet(pSpec);
+        final GordianCoreKeySetFactory myKeySets = (GordianCoreKeySetFactory) theFactory.getKeySetFactory();
+        final GordianCoreKeySet myKeySet = myKeySets.createKeySet(pSpec);
         myKeySet.buildFromSecret(theSecret, theInitVector);
         return myKeySet;
     }
@@ -231,8 +231,8 @@ public abstract class GordianCoreAgreement
         final GordianCoreFactory myFactory = (GordianCoreFactory) theFactory.newFactory(myParms);
 
         /* Create the keySet */
-        final GordianKeySetFactory myKeySets = myFactory.getKeySetFactory();
-        final GordianCoreKeySet myKeySet = (GordianCoreKeySet) myKeySets.createKeySet(pSpec);
+        final GordianCoreKeySetFactory myKeySets = (GordianCoreKeySetFactory) myFactory.getKeySetFactory();
+        final GordianCoreKeySet myKeySet = myKeySets.createKeySet(pSpec);
         myKeySet.buildFromSecret(mySecret, myIV);
         return myKeySet;
     }

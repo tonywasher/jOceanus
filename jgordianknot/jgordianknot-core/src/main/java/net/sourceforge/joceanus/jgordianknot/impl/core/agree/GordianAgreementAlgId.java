@@ -28,8 +28,6 @@ import net.sourceforge.joceanus.jgordianknot.api.agree.GordianAgreementType;
 import net.sourceforge.joceanus.jgordianknot.api.agree.GordianKDFType;
 import net.sourceforge.joceanus.jgordianknot.api.asym.GordianAsymKeyType;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianCoreFactory;
-import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianDataException;
-import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
  * Mappings from EncodedId to AgreementSpec.

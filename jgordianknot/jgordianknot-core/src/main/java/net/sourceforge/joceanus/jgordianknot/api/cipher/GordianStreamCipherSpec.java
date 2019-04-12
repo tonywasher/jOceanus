@@ -18,7 +18,6 @@ package net.sourceforge.joceanus.jgordianknot.api.cipher;
 
 import net.sourceforge.joceanus.jgordianknot.api.base.GordianIdSpec;
 import net.sourceforge.joceanus.jgordianknot.api.base.GordianLength;
-import net.sourceforge.joceanus.jtethys.TethysDataConverter;
 
 /**
  * The StreamCipherSpec class.

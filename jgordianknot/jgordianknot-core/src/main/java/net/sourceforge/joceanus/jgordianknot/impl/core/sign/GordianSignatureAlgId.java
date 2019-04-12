@@ -17,7 +17,6 @@
 package net.sourceforge.joceanus.jgordianknot.impl.core.sign;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import org.bouncycastle.asn1.ASN1Integer;
@@ -45,8 +44,6 @@ import net.sourceforge.joceanus.jgordianknot.api.sign.GordianSignatureFactory;
 import net.sourceforge.joceanus.jgordianknot.api.sign.GordianSignatureSpec;
 import net.sourceforge.joceanus.jgordianknot.api.sign.GordianSignatureType;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianCoreFactory;
-import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianDataException;
-import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
  * OID Manager for Signatures.

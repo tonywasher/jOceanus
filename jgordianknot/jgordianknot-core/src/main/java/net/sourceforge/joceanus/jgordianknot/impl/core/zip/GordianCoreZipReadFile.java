@@ -33,7 +33,6 @@ import javax.xml.parsers.ParserConfigurationException;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 
-import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySet;
 import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetHash;
 import net.sourceforge.joceanus.jgordianknot.api.zip.GordianZipFileContents;
 import net.sourceforge.joceanus.jgordianknot.api.zip.GordianZipFileEntry;
@@ -42,7 +41,6 @@ import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianDataException
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianIOException;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianLogicException;
 import net.sourceforge.joceanus.jgordianknot.impl.core.keyset.GordianCoreKeySet;
-import net.sourceforge.joceanus.jgordianknot.impl.core.keyset.GordianCoreKeySetHash;
 import net.sourceforge.joceanus.jgordianknot.impl.core.stream.GordianStreamManager;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.TethysDataConverter;
@@ -172,10 +170,10 @@ public class GordianCoreZipReadFile
         }
 
         /* Access the keySet */
-        final GordianKeySet myKeySet = pHash.getKeySet();
+        final GordianCoreKeySet myHashKeySet = (GordianCoreKeySet) pHash.getKeySet();
 
         /* Parse the decrypted header */
-        final byte[] myBytes = myKeySet.decryptBytes(theHeader);
+        final byte[] myBytes = myHashKeySet.decryptBytes(theHeader);
         theContents = new GordianCoreZipFileContents(TethysDataConverter.byteArrayToString(myBytes));
 
         /* Access the security details */
@@ -187,18 +185,9 @@ public class GordianCoreZipReadFile
         }
 
         /* Obtain encoded keySet */
-        final GordianCoreKeySetHash myKeyHash = (GordianCoreKeySetHash) pHash;
         final byte[] myHashBytes = myHeader.getHash();
-        final GordianCoreKeySetHash myHash = (GordianCoreKeySetHash) myKeyHash.resolveChildHash(myHashBytes);
-
-        /* Reject if wrong password */
-        if (myHash == null) {
-            throw new GordianDataException("Incorrect internal hash.");
-        }
-
-        /* Obtain the keySet */
-        theKeySet = myHash.getKeySet();
-    }
+        theKeySet = myHashKeySet.deriveKeySet(myHashBytes);
+   }
 
     /**
      * Read the header.

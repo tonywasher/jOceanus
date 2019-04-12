@@ -24,6 +24,9 @@ import net.sourceforge.joceanus.jgordianknot.api.base.GordianLength;
 import net.sourceforge.joceanus.jgordianknot.api.key.GordianKeyLengths;
 import net.sourceforge.joceanus.jtethys.TethysDataConverter;
 
+/**
+ * GordianKnot StreamKeySpec.
+ */
 public class GordianStreamKeySpec
     implements GordianKeySpec {
     /**
@@ -211,7 +214,7 @@ public class GordianStreamKeySpec
     }
 
     /**
-     * Obtain the IV length for this cipher
+     * Obtain the IV length for this cipher.
      * @return the IV Length
      */
     public int getIVLength() {
