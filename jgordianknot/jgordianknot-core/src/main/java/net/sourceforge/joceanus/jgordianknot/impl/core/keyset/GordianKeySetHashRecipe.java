@@ -22,6 +22,7 @@ import java.util.Arrays;
 
 import net.sourceforge.joceanus.jgordianknot.api.base.GordianLength;
 import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigestType;
+import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetHashSpec;
 import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetSpec;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianCoreFactory;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianIOException;
@@ -58,9 +59,9 @@ public final class GordianKeySetHashRecipe {
     private static final int HASH_MARGIN = 4;
 
     /**
-     * The KeySetSpec.
+     * The KeySetHashSpec.
      */
-    private final GordianKeySetSpec theSpec;
+    private final GordianKeySetHashSpec theSpec;
 
     /**
      * The Recipe.
@@ -90,10 +91,10 @@ public final class GordianKeySetHashRecipe {
     /**
      * Constructor for random choices.
      * @param pFactory the factory
-     * @param pSpec the keySetSpec
+     * @param pSpec the keySetHashSpec
      */
     GordianKeySetHashRecipe(final GordianCoreFactory pFactory,
-                            final GordianKeySetSpec pSpec) {
+                            final GordianKeySetHashSpec pSpec) {
         /* Access the secureRandom */
         final SecureRandom myRandom = pFactory.getRandomSource().getRandom();
 
@@ -167,7 +168,7 @@ public final class GordianKeySetHashRecipe {
      * Obtain the Spec.
      * @return the spec
      */
-    GordianKeySetSpec getSpec() {
+    GordianKeySetHashSpec getSpec() {
         return theSpec;
     }
 

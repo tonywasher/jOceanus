@@ -27,13 +27,12 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
-import net.sourceforge.joceanus.jgordianknot.api.base.GordianLength;
 import net.sourceforge.joceanus.jgordianknot.api.factory.GordianFactoryType;
 import net.sourceforge.joceanus.jgordianknot.api.factory.GordianParameters;
 import net.sourceforge.joceanus.jgordianknot.api.impl.GordianDialogController;
 import net.sourceforge.joceanus.jgordianknot.api.impl.GordianSecurityManager;
 import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetHash;
-import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetSpec;
+import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetHashSpec;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianDataException;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
@@ -221,7 +220,7 @@ public class HashManagerTest {
     public static void setUpHashes() throws OceanusException {
         /* Create the security manager */
         final GordianParameters myParams = new GordianParameters(GordianFactoryType.BC);
-        final GordianKeySetSpec mySpec = new GordianKeySetSpec(GordianLength.LEN_256);
+        final GordianKeySetHashSpec mySpec = new GordianKeySetHashSpec();
         final GordianSecurityManager myManager = new GordianSecurityManager(myParams, mySpec, new DialogController());
 
         /* For each NAME */
@@ -248,7 +247,7 @@ public class HashManagerTest {
     public void SecurityManagerTest() throws OceanusException {
         /* Create the security manager */
         final GordianParameters myParams = new GordianParameters(GordianFactoryType.BC);
-        final GordianKeySetSpec mySpec = new GordianKeySetSpec(GordianLength.LEN_256);
+        final GordianKeySetHashSpec mySpec = new GordianKeySetHashSpec();
         final DialogController myController = new DialogController();
         final GordianSecurityManager myManager = new GordianSecurityManager(myParams, mySpec, myController);
 

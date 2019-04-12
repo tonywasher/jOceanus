@@ -152,9 +152,8 @@ public interface GordianKeySet {
     /**
      * Obtain the keySet wrap length.
      * @return the length
-     * @throws OceanusException on error
      */
-    int getKeySetWrapLength() throws OceanusException;
+    int getKeySetWrapLength();
 
     /**
      * Is the keySet in AEAD mode?

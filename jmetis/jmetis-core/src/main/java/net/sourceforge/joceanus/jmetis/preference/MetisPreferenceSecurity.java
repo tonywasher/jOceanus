@@ -24,6 +24,7 @@ import net.sourceforge.joceanus.jgordianknot.api.impl.GordianGenerator;
 import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySet;
 import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetFactory;
 import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetHash;
+import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetHashSpec;
 import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetSpec;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.TethysDataConverter;
@@ -76,7 +77,7 @@ public class MetisPreferenceSecurity {
         /* Derive or create the hash */
         final char[] myPassword = System.getProperty("user.name").toCharArray();
         final GordianKeySetHash myKeySetHash = myHash == null
-                                                              ? myKeySets.generateKeySetHash(new GordianKeySetSpec(DEFAULT_KEYLEN), myPassword)
+                                                              ? myKeySets.generateKeySetHash(new GordianKeySetHashSpec(), myPassword)
                                                               : myKeySets.deriveKeySetHash(myHash, myPassword);
 
         /* record the KeySet */
@@ -280,7 +281,7 @@ public class MetisPreferenceSecurity {
 
             /* Set other parameters */
             myParms.setFactoryType(getEnumValue(MetisSecurityPreferenceKey.FACTORY, GordianFactoryType.class));
-            myParms.setNumIterations(getIntegerValue(MetisSecurityPreferenceKey.HASHITERATIONS));
+            myParms.setKIterations(getIntegerValue(MetisSecurityPreferenceKey.HASHITERATIONS));
             myParms.setSecurityPhrase(getCharArrayValue(MetisSecurityPreferenceKey.SECURITYPHRASE));
 
             /* return the parameters */
@@ -349,13 +350,13 @@ public class MetisPreferenceSecurity {
             /* Make sure that the hashIterations is specified */
             myPref = getIntegerPreference(MetisSecurityPreferenceKey.HASHITERATIONS);
             if (!myPref.isAvailable()) {
-                myPref.setValue(GordianParameters.DEFAULT_HASH_ITERATIONS);
+                myPref.setValue(GordianParameters.DEFAULT_ITERATIONS);
             }
 
             /* Define the range */
-            myPref.setRange(GordianParameters.MINIMUM_HASH_ITERATIONS, GordianParameters.MAXIMUM_HASH_ITERATIONS);
+            myPref.setRange(GordianParameters.MINIMUM_ITERATIONS, GordianParameters.MAXIMUM_ITERATIONS);
             if (!myPref.validate()) {
-                myPref.setValue(GordianParameters.DEFAULT_HASH_ITERATIONS);
+                myPref.setValue(GordianParameters.DEFAULT_ITERATIONS);
             }
 
             /* Make sure that the activeKeySets is specified */

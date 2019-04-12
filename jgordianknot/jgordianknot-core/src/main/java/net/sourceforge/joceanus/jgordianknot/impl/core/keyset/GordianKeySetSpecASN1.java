@@ -117,7 +117,7 @@ public class GordianKeySetSpecASN1
     }
 
     /**
-     * Obtain the byte length of the encoded a given wrapped keyLength and # of keys.
+     * Obtain the byte length of the encoded sequence.
      * @return the byte length
      */
     static int getEncodedLength() {

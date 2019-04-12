@@ -37,6 +37,7 @@ import net.sourceforge.joceanus.jgordianknot.api.key.GordianKey;
 import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySet;
 import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetFactory;
 import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetHash;
+import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetHashSpec;
 import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetSpec;
 import net.sourceforge.joceanus.jgordianknot.api.mac.GordianMac;
 import net.sourceforge.joceanus.jgordianknot.api.mac.GordianMacSpec;
@@ -103,7 +104,7 @@ public class KeySetTest {
         /**
          * the KeySetSpec.
          */
-        private final GordianKeySetSpec theSpec;
+        private final GordianKeySetHashSpec theSpec;
 
         /**
          * The keyHash.
@@ -140,7 +141,7 @@ public class KeySetTest {
             final int myMaxSteps = pMaxSteps ? GordianKeySetSpec.MAXIMUM_CIPHER_STEPS
                                              : GordianKeySetSpec.MINIMUM_CIPHER_STEPS;
             theFactory = GordianGenerator.createFactory(myParams);
-            theSpec = new GordianKeySetSpec(pKeyLen, myMaxSteps);
+            theSpec = new GordianKeySetHashSpec(new GordianKeySetSpec(pKeyLen, myMaxSteps));
             maxSteps = pMaxSteps;
 
             /* Generate the hash */
@@ -164,10 +165,10 @@ public class KeySetTest {
         }
 
         /**
-         * Obtain the keySetSpec.
-         * @return the keySetSpec
+         * Obtain the keySetHashSpec.
+         * @return the keySetHashSpec
          */
-        GordianKeySetSpec getKeySetSpec() {
+        GordianKeySetHashSpec getKeySetHashSpec() {
             return theSpec;
         }
 
@@ -214,7 +215,7 @@ public class KeySetTest {
         @Override
         public String toString() {
             return theFactory.getFactoryType().toString()
-                    + "-" + theSpec.getKeyLength()
+                    + "-" + theSpec.getKeySetSpec().getKeyLength()
                     + (maxSteps ? "-Max" : "-Min");
         }
     }
@@ -338,7 +339,7 @@ public class KeySetTest {
         final GordianKey<GordianSymKeySpec> mySymKey = pKeySet.getSymKey();
         final GordianKey<GordianStreamKeySpec> myStreamKey = pKeySet.getStreamKey();
         final GordianKey<GordianMacSpec> myMacKey = pKeySet.getMacKey();
-        final GordianLength myKeyLen = pKeySet.getKeySetSpec().getKeyLength();
+        final GordianLength myKeyLen = pKeySet.getKeySetHashSpec().getKeySetSpec().getKeyLength();
 
         /* Check wrap of symKey */
         final byte[] mySymSafe = myKeySet.secureKey(mySymKey);

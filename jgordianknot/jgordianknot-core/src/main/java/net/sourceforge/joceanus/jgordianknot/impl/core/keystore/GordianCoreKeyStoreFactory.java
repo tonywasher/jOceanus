@@ -25,7 +25,7 @@ import org.w3c.dom.Document;
 
 import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetFactory;
 import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetHash;
-import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetSpec;
+import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetHashSpec;
 import net.sourceforge.joceanus.jgordianknot.api.keystore.GordianKeyStore;
 import net.sourceforge.joceanus.jgordianknot.api.keystore.GordianKeyStoreFactory;
 import net.sourceforge.joceanus.jgordianknot.api.zip.GordianZipFactory;
@@ -56,7 +56,7 @@ public class GordianCoreKeyStoreFactory
     }
 
     @Override
-    public GordianKeyStore createKeyStore(final GordianKeySetSpec pSpec) {
+    public GordianKeyStore createKeyStore(final GordianKeySetHashSpec pSpec) {
         return new GordianCoreKeyStore(theFactory, pSpec);
     }
 

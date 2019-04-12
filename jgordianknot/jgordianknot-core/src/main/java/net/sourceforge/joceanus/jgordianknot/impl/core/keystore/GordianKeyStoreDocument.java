@@ -38,6 +38,7 @@ import net.sourceforge.joceanus.jgordianknot.api.keystore.GordianCertificateId;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianCoreFactory;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianDataException;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianIOException;
+import net.sourceforge.joceanus.jgordianknot.impl.core.keyset.GordianKeySetHashSpecASN1;
 import net.sourceforge.joceanus.jgordianknot.impl.core.keyset.GordianKeySetSpecASN1;
 import net.sourceforge.joceanus.jgordianknot.impl.core.keystore.GordianKeyStoreElement.GordianKeyStoreCertificateElement;
 import net.sourceforge.joceanus.jgordianknot.impl.core.keystore.GordianKeyStoreElement.GordianKeyStoreCertificateKey;
@@ -151,7 +152,7 @@ public final class GordianKeyStoreDocument {
     public GordianKeyStoreDocument(final GordianCoreKeyStore pKeyStore) throws OceanusException {
         try {
             /* Store the keyStore */
-            theKeyStore = (GordianCoreKeyStore) pKeyStore;
+            theKeyStore = pKeyStore;
 
             /* Create the document */
             final DocumentBuilderFactory myFactory = DocumentBuilderFactory.newInstance();
@@ -164,7 +165,7 @@ public final class GordianKeyStoreDocument {
             theDocument.appendChild(myMain);
 
             /* Record the keySetSpec */
-            final GordianKeySetSpecASN1 mySpecASN1 = new GordianKeySetSpecASN1(pKeyStore.getKeySetSpec());
+            final GordianKeySetHashSpecASN1 mySpecASN1 = new GordianKeySetHashSpecASN1(pKeyStore.getKeySetSpec());
             final String myAttrSpec = TethysDataConverter.byteArrayToBase64(mySpecASN1.toASN1Primitive().getEncoded());
             myMain.setAttribute(ATTR_KEYSETSPEC, myAttrSpec);
 
@@ -203,7 +204,7 @@ public final class GordianKeyStoreDocument {
         /* Access the keySetSpec */
         final String myAttrSpec = myDocElement.getAttribute(ATTR_KEYSETSPEC);
         final byte[] myAttrArray = TethysDataConverter.base64ToByteArray(myAttrSpec);
-        final GordianKeySetSpecASN1 mySpecASN1 = GordianKeySetSpecASN1.getInstance(myAttrArray);
+        final GordianKeySetHashSpecASN1 mySpecASN1 = GordianKeySetHashSpecASN1.getInstance(myAttrArray);
 
         /* Create the empty keyStore */
         theKeyStore = new GordianCoreKeyStore((GordianCoreFactory) pFactory, mySpecASN1.getSpec());

@@ -36,19 +36,24 @@ public class GordianParameters {
     public static final GordianFactoryType DEFAULT_FACTORY = GordianFactoryType.BC;
 
     /**
-     * Minimum Hash iterations.
+     * Minimum iterations.
      */
-    public static final Integer MINIMUM_HASH_ITERATIONS = 1024;
+    public static final Integer MINIMUM_ITERATIONS = 1;
 
     /**
-     * Maximum Hash iterations.
+     * Maximum iterations.
      */
-    public static final Integer MAXIMUM_HASH_ITERATIONS = 4096;
+    public static final Integer MAXIMUM_ITERATIONS = 64;
 
     /**
-     * Default Hash iterations.
+     * Default iterations.
      */
-    public static final Integer DEFAULT_HASH_ITERATIONS = 2048;
+    public static final Integer DEFAULT_ITERATIONS = 2;
+
+    /**
+     * 1K Multiplier.
+     */
+    public static final int K_MULTIPLIER = 1024;
 
     /**
      * Default Security Phrase.
@@ -61,9 +66,9 @@ public class GordianParameters {
     private GordianFactoryType theFactoryType;
 
     /**
-     * The Number of hash iterations.
+     * The Number of iterations (x 1K).
      */
-    private int theIterations;
+    private int theKIterations;
 
     /**
      * The Security phrase.
@@ -84,7 +89,7 @@ public class GordianParameters {
     public GordianParameters(final GordianFactoryType pFactoryType) {
         /* Store parameters */
         theFactoryType = pFactoryType;
-        theIterations = DEFAULT_HASH_ITERATIONS;
+        theKIterations = DEFAULT_ITERATIONS;
         theSecurityPhrase = null;
     }
 
@@ -97,11 +102,19 @@ public class GordianParameters {
     }
 
     /**
-     * Access the number of Hash Iterations.
+     * Access the number of Iterations.
+     * @return the number of iterations
+     */
+    public int getNumIterations() {
+        return theKIterations * K_MULTIPLIER;
+    }
+
+    /**
+     * Access the number of Hash Iterations (x 1K).
      * @return the number of hash iterations
      */
-    public int getNumHashIterations() {
-        return theIterations;
+    public int getKIterations() {
+        return theKIterations;
     }
 
     /**
@@ -122,10 +135,10 @@ public class GordianParameters {
 
     /**
      * Set number of iterations.
-     * @param pNumIterations the number of iterations
+     * @param pKIterations the number of iterations (x 1K)
      */
-    public void setNumIterations(final int pNumIterations) {
-        theIterations = pNumIterations;
+    public void setKIterations(final int pKIterations) {
+        theKIterations = pKIterations;
     }
 
     /**
@@ -164,8 +177,8 @@ public class GordianParameters {
         }
 
         /* Check iterations is in range */
-        return (theIterations >= MINIMUM_HASH_ITERATIONS
-                && theIterations <= MAXIMUM_HASH_ITERATIONS);
+        return (theKIterations >= MINIMUM_ITERATIONS
+                && theKIterations <= MAXIMUM_ITERATIONS);
     }
 
     @Override
@@ -187,7 +200,7 @@ public class GordianParameters {
         final GordianParameters myThat = (GordianParameters) pThat;
 
         /* Check Differences */
-        if (theIterations != myThat.getNumHashIterations()) {
+        if (theKIterations != myThat.getKIterations()) {
             return false;
         }
         if (theFactoryType != myThat.getFactoryType()) {
@@ -206,7 +219,7 @@ public class GordianParameters {
         final int myPrime = HASH_PRIME;
 
         /* Calculate hash from simple values */
-        int myCode = theIterations;
+        int myCode = theKIterations;
         myCode *= myPrime;
 
         /* Calculate hash from types */

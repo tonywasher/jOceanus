@@ -24,7 +24,7 @@ import net.sourceforge.joceanus.jgordianknot.api.factory.GordianFactory;
 import net.sourceforge.joceanus.jgordianknot.api.factory.GordianParameters;
 import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianBadCredentialsException;
 import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetHash;
-import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetSpec;
+import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetHashSpec;
 import net.sourceforge.joceanus.jgordianknot.api.mac.GordianMac;
 import net.sourceforge.joceanus.jgordianknot.api.mac.GordianMacFactory;
 import net.sourceforge.joceanus.jgordianknot.api.mac.GordianMacSpec;
@@ -33,10 +33,6 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.TethysDataConverter;
 
 import java.util.Arrays;
-
-import org.bouncycastle.asn1.ASN1ObjectIdentifier;
-import org.bouncycastle.asn1.DEROctetString;
-import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
 
 /**
  * Hash from which to derive KeySet.
@@ -49,11 +45,6 @@ public final class GordianCoreKeySetHash
     public static final int HASHLEN = GordianKeySetHashRecipe.HASHLEN;
 
     /**
-     * KeySetHash OID.
-     */
-    public static final ASN1ObjectIdentifier KEYSETOID = GordianCoreFactory.BASEOID.branch("10");
-
-    /**
      * Hash Recipe.
      */
     private final GordianKeySetHashRecipe theRecipe;
@@ -64,9 +55,9 @@ public final class GordianCoreKeySetHash
     private final GordianCoreFactory theFactory;
 
     /**
-     * keySetSpec.
+     * keySetHashSpec.
      */
-    private GordianKeySetSpec theSpec;
+    private GordianKeySetHashSpec theSpec;
 
     /**
      * The Hash.
@@ -82,10 +73,10 @@ public final class GordianCoreKeySetHash
      * Constructor for a completely new keySetHash.
      *
      * @param pFactory the factory
-     * @param pSpec the keySetSpec
+     * @param pSpec the keySetHashSpec
      */
     private GordianCoreKeySetHash(final GordianCoreFactory pFactory,
-                                  final GordianKeySetSpec pSpec) {
+                                  final GordianKeySetHashSpec pSpec) {
         /* Store the factory */
         theFactory = pFactory;
         theSpec = pSpec;
@@ -126,7 +117,7 @@ public final class GordianCoreKeySetHash
      * @throws OceanusException on error
      */
     static GordianKeySetHash newKeySetHash(final GordianCoreFactory pFactory,
-                                           final GordianKeySetSpec pSpec,
+                                           final GordianKeySetHashSpec pSpec,
                                            final char[] pPassword) throws OceanusException {
         /* Protect against exceptions */
         byte[] myPassword = null;
@@ -147,13 +138,13 @@ public final class GordianCoreKeySetHash
      * Create a new keySetHash for password.
      *
      * @param pFactory  the factory
-     * @param pSpec the keySetSpec
+     * @param pSpec the keySetHashSpec
      * @param pPassword the password
      * @return the new keySetHash
      * @throws OceanusException on error
      */
     static GordianKeySetHash newKeySetHash(final GordianFactory pFactory,
-                                           final GordianKeySetSpec pSpec,
+                                           final GordianKeySetHashSpec pSpec,
                                            final byte[] pPassword) throws OceanusException {
         /* Create a new keySetHash */
         final GordianCoreKeySetHash myHash = new GordianCoreKeySetHash((GordianCoreFactory) pFactory, pSpec);
@@ -247,7 +238,7 @@ public final class GordianCoreKeySetHash
             theHash = myResults[iIndex++];
 
             /* Create the Key Set */
-            theKeySet = new GordianCoreKeySet(theFactory, theSpec);
+            theKeySet = new GordianCoreKeySet(theFactory, theSpec.getKeySetSpec());
             theKeySet.buildFromSecret(myResults[iIndex++], myResults[iIndex++]);
 
         } finally {
@@ -282,7 +273,7 @@ public final class GordianCoreKeySetHash
             }
 
             /* Create the Key Set */
-            theKeySet = new GordianCoreKeySet(theFactory, theSpec);
+            theKeySet = new GordianCoreKeySet(theFactory, theSpec.getKeySetSpec());
             theKeySet.buildFromSecret(myResults[iIndex++], myResults[iIndex++]);
 
         } finally {
@@ -306,7 +297,7 @@ public final class GordianCoreKeySetHash
         /* Obtain configuration details */
         final GordianCoreKeySetFactory myFactory = (GordianCoreKeySetFactory) theFactory.getKeySetFactory();
         final GordianPersonalisation myPersonal = myFactory.getPersonalisation();
-        final int iIterations = theFactory.getNumIterations();
+        final int iIterations = theRecipe.getSpec().getNumIterations();
         final int iFinal = theRecipe.getAdjustment()
                 + iIterations;
 
@@ -432,13 +423,5 @@ public final class GordianCoreKeySetHash
     public int hashCode() {
         return GordianParameters.HASH_PRIME * theFactory.hashCode()
                 + Arrays.hashCode(theHash);
-    }
-
-    /**
-     * Obtain the algorithm identifier.
-     * @return the algorithm identifier.
-     */
-    public AlgorithmIdentifier getAlgorithmIdentifier() {
-        return new AlgorithmIdentifier(KEYSETOID, new DEROctetString(theHash));
     }
 }

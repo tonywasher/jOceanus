@@ -36,6 +36,7 @@ import net.sourceforge.joceanus.jgordianknot.api.key.GordianKeyPairGenerator;
 import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySet;
 import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetFactory;
 import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetHash;
+import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetHashSpec;
 import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetSpec;
 import net.sourceforge.joceanus.jgordianknot.api.keystore.GordianCertificate;
 import net.sourceforge.joceanus.jgordianknot.api.keystore.GordianCertificateId;
@@ -92,7 +93,7 @@ public class GordianCoreKeyStore
     /**
      * The keySetSpec.
      */
-    private final GordianKeySetSpec theKeySetSpec;
+    private final GordianKeySetHashSpec theKeySetSpec;
 
     /**
      * The map of certificates by Subject.
@@ -115,7 +116,7 @@ public class GordianCoreKeyStore
      * @param pSpec the keySetSpec
      */
     GordianCoreKeyStore(final GordianCoreFactory pFactory,
-                        final GordianKeySetSpec pSpec) {
+                        final GordianKeySetHashSpec pSpec) {
         /* Store parameters */
         theFactory = pFactory;
         theKeySetSpec = pSpec;
@@ -135,10 +136,10 @@ public class GordianCoreKeyStore
     }
 
     /**
-     * Obtain the keySetSpec.
-     * @return the keySetSpec
+     * Obtain the keySetHashSpec.
+     * @return the keySetHashSpec
      */
-    GordianKeySetSpec getKeySetSpec() {
+    GordianKeySetHashSpec getKeySetSpec() {
         return theKeySetSpec;
     }
 

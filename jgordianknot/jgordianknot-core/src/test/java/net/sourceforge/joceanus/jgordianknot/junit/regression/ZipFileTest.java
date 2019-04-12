@@ -44,6 +44,7 @@ import net.sourceforge.joceanus.jgordianknot.api.impl.GordianGenerator;
 import net.sourceforge.joceanus.jgordianknot.api.impl.GordianSecurityManager;
 import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetFactory;
 import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetHash;
+import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetHashSpec;
 import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetSpec;
 import net.sourceforge.joceanus.jgordianknot.api.zip.GordianZipFactory;
 import net.sourceforge.joceanus.jgordianknot.api.zip.GordianZipFileContents;
@@ -179,7 +180,7 @@ public class ZipFileTest {
         /* If we are creating a secure zip file */
         if (pKeyLen != null) {
             /* Create new Password Hash */
-            final GordianKeySetSpec mySpec = new GordianKeySetSpec(pKeyLen);
+            final GordianKeySetHashSpec mySpec = new GordianKeySetHashSpec(new GordianKeySetSpec(pKeyLen));
             final GordianKeySetHash myHash = myKeySets.generateKeySetHash(mySpec, DEF_PASSWORD.clone());
 
             /* Initialise the Zip file */

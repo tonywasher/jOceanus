@@ -44,6 +44,7 @@ import net.sourceforge.joceanus.jgordianknot.api.key.GordianKeyGenerator;
 import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySet;
 import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetFactory;
 import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetHash;
+import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetHashSpec;
 import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetSpec;
 import net.sourceforge.joceanus.jgordianknot.api.keystore.GordianKeyPairUsage;
 import net.sourceforge.joceanus.jgordianknot.api.keystore.GordianKeyPairUse;
@@ -93,10 +94,11 @@ public class KeyStoreTest {
         /* Set up test parameters */
         final GordianLength myKeyLen = GordianLength.LEN_256;
         final GordianKeySetSpec myKeySetSpec = new GordianKeySetSpec(myKeyLen);
+        final GordianKeySetHashSpec myKeySetHashSpec = new GordianKeySetHashSpec(myKeySetSpec);
 
         /* Access keyStoreFactory and create a keyStore */
         final GordianKeyStoreFactory myFactory = FACTORY.getAsymmetricFactory().getKeyStoreFactory();
-        final GordianKeyStore myStore = myFactory.createKeyStore(myKeySetSpec);
+        final GordianKeyStore myStore = myFactory.createKeyStore(myKeySetHashSpec);
 
         /* Create a root certificates */
         final GordianAsymKeySpec mySpec = GordianAsymKeySpec.ec(GordianDSAElliptic.SECT571K1);
@@ -138,7 +140,7 @@ public class KeyStoreTest {
 
         /* Create a keySetHash */
         final GordianKeySetFactory mySetFactory = FACTORY.getKeySetFactory();
-        final GordianKeySetHash myHash = mySetFactory.generateKeySetHash(myKeySetSpec, DEF_PASSWORD);
+        final GordianKeySetHash myHash = mySetFactory.generateKeySetHash(myKeySetHashSpec, DEF_PASSWORD);
         myStore.setKeySetHash("HashDef", myHash);
         final GordianKeyStoreHash myHashRec = myStore.getKeySetHash("HashDef", DEF_PASSWORD);
         Assertions.assertEquals(myHash, myHashRec.getKeySetHash());

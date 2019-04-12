@@ -248,7 +248,7 @@ public final class GordianCoreKeySet
     }
 
     @Override
-    public int getKeySetWrapLength() throws OceanusException {
+    public int getKeySetWrapLength() {
         /* Obtain the count of valid symKeyTypes */
         final GordianKeySetFactory myFactory = theFactory.getKeySetFactory();
         final Predicate<GordianSymKeyType> myPredicate = myFactory.supportedKeySetSymKeyTypes(theSpec.getKeyLength());

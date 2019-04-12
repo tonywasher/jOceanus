@@ -39,6 +39,11 @@ public class GordianKeySetSpec {
     public static final Integer DEFAULT_CIPHER_STEPS = 4;
 
     /**
+     * Default KeyLength.
+     */
+    public static final GordianLength DEFAULT_KEYLEN = GordianLength.LEN_256;
+
+    /**
      * KeyLength.
      */
     private final GordianLength theKeyLength;
@@ -52,6 +57,13 @@ public class GordianKeySetSpec {
      * Is the Spec valid?.
      */
     private final boolean isValid;
+
+    /**
+     * Constructor.
+     */
+    public GordianKeySetSpec() {
+        this(DEFAULT_KEYLEN);
+    }
 
     /**
      * Constructor.
@@ -70,7 +82,7 @@ public class GordianKeySetSpec {
                              final int pNumSteps) {
         theKeyLength = pKeyLen;
         theCipherSteps = pNumSteps;
-        isValid = validate();
+        isValid = validateKeySetSpec();
     }
 
     /**
@@ -101,7 +113,7 @@ public class GordianKeySetSpec {
      * Validate the Parameters.
      * @return valid true/false
      */
-    private boolean validate() {
+    private boolean validateKeySetSpec() {
         /* Check keyLength */
         if (theKeyLength == null
             || !GordianKeyLengths.isSupportedLength(theKeyLength)) {

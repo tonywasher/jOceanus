@@ -136,7 +136,7 @@ public abstract class GordianCoreFactory
      * @return the number of iterations
      */
     public int getNumIterations() {
-        return theParameters.getNumHashIterations();
+        return theParameters.getNumIterations();
     }
 
     /**

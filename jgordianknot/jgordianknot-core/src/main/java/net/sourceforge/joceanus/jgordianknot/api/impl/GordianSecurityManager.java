@@ -28,6 +28,7 @@ import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianBadCredentialsExc
 import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySet;
 import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetFactory;
 import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetHash;
+import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetHashSpec;
 import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetSpec;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianDataException;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianFactoryGenerator;
@@ -86,6 +87,11 @@ public class GordianSecurityManager {
     private final GordianDialogController theDialog;
 
     /**
+     * keySetHashSpec.
+     */
+    private final GordianKeySetHashSpec theKeySetHashSpec;
+
+    /**
      * Local keySet.
      */
     private final GordianKeySet theKeySet;
@@ -98,24 +104,25 @@ public class GordianSecurityManager {
     /**
      * Constructor.
      * @param pParameters the Security parameters
-     * @param pKeySetSpec the keySetSpec
+     * @param pKeySetHashSpec the keySetHashSpec
      * @param pDialog the dialog controller
      * @throws OceanusException on error
      */
     public GordianSecurityManager(final GordianParameters pParameters,
-                                  final GordianKeySetSpec pKeySetSpec,
+                                  final GordianKeySetHashSpec pKeySetHashSpec,
                                   final GordianDialogController pDialog) throws OceanusException {
         /* Allocate the factory */
         final GordianFactoryGenerator myGenerator = new GordianGenerator();
         theFactory = myGenerator.newFactory(pParameters);
         theDialog = pDialog;
+        theKeySetHashSpec = pKeySetHashSpec;
 
         /* Allocate a new Hash cache */
         theHashCache = new ArrayList<>();
 
         /* Create a keySet */
         final GordianKeySetFactory myFactory = theFactory.getKeySetFactory();
-        theKeySet = myFactory.generateKeySet(pKeySetSpec);
+        theKeySet = myFactory.generateKeySet(pKeySetHashSpec.getKeySetSpec());
     }
 
     /**
@@ -136,14 +143,14 @@ public class GordianSecurityManager {
 
     /**
      * Create a new keySet Hash.
-     * @param pKeySetSpec the keySetSpec
+     * @param pKeySetHashSpec the keySetHashSpec
      * @param pSource the description of the secured resource
      * @return the keySetHash
      * @throws OceanusException on error
      */
-    public GordianKeySetHash newKeySetHash(final GordianKeySetSpec pKeySetSpec,
+    public GordianKeySetHash newKeySetHash(final GordianKeySetHashSpec pKeySetHashSpec,
                                            final String pSource) throws OceanusException {
-        return requestPassword(pKeySetSpec, pSource);
+        return requestPassword(pKeySetHashSpec, pSource);
     }
 
     /**
@@ -199,9 +206,9 @@ public class GordianSecurityManager {
         final byte[] myHashBytes = pQualifier instanceof byte[]
                                      ? (byte[]) pQualifier
                                      : null;
-        final GordianKeySetSpec myKeySetSpec = pQualifier instanceof GordianKeySetSpec
-                                                ? (GordianKeySetSpec) pQualifier
-                                                : theKeySet.getKeySetSpec();
+        final GordianKeySetHashSpec myKeySetHashSpec = pQualifier instanceof GordianKeySetHashSpec
+                                                        ? (GordianKeySetHashSpec) pQualifier
+                                                        : theKeySetHashSpec;
         final boolean needConfirm = myHashBytes == null;
 
         /* Create a new password dialog */
@@ -217,7 +224,7 @@ public class GordianSecurityManager {
 
                 /* Check the password */
                 if (needConfirm) {
-                    myHash = (GordianCoreKeySetHash) myKeySets.generateKeySetHash(myKeySetSpec, myPassword);
+                    myHash = (GordianCoreKeySetHash) myKeySets.generateKeySetHash(myKeySetHashSpec, myPassword);
                 } else {
                     myHash = (GordianCoreKeySetHash) myKeySets.deriveKeySetHash(myHashBytes, myPassword);
                 }
@@ -262,17 +269,17 @@ public class GordianSecurityManager {
      */
     public GordianKeySetHash similarKeySetHash(final GordianKeySetHash pHash) throws OceanusException {
         /* Use configured keySetSpec */
-        return similarKeySetHash(theKeySet.getKeySetSpec(), pHash);
+        return similarKeySetHash(theKeySetHashSpec, pHash);
     }
 
     /**
      * obtain similar (same password) hash.
-     * @param pKeySetSpec the keySetSpec
+     * @param pKeySetHashSpec the keySetHashSpec
      * @param pHash the keySetHash to clone
      * @return the similar keySetHash
      * @throws OceanusException on error
      */
-    public GordianKeySetHash similarKeySetHash(final GordianKeySetSpec pKeySetSpec,
+    public GordianKeySetHash similarKeySetHash(final GordianKeySetHashSpec pKeySetHashSpec,
                                                final GordianKeySetHash pHash) throws OceanusException {
         /* LookUp the hash */
         final ByteBuffer myPassword = lookUpResolvedPassword(pHash);
@@ -281,7 +288,7 @@ public class GordianSecurityManager {
         }
 
         /* Create a similar hash */
-        return createSimilarHash(myPassword);
+        return createSimilarHash(pKeySetHashSpec, myPassword);
     }
 
     /**
@@ -466,7 +473,8 @@ public class GordianSecurityManager {
      * @return the new PasswordHash
      * @throws OceanusException on error
      */
-    private GordianKeySetHash createSimilarHash(final ByteBuffer pPassword) throws OceanusException {
+    private GordianKeySetHash createSimilarHash(final GordianKeySetHashSpec pKeySetHashSpec,
+                                                final ByteBuffer pPassword) throws OceanusException {
         /* Protect against exceptions */
         byte[] myPasswordBytes = null;
         char[] myPasswordChars = null;
@@ -478,7 +486,7 @@ public class GordianSecurityManager {
             /* Try to resolve the hash and return it */
             final GordianKeySetFactory myKeySets = theFactory.getKeySetFactory();
             final GordianCoreKeySetHash myHash
-                    = (GordianCoreKeySetHash) myKeySets.generateKeySetHash(theKeySet.getKeySetSpec(), myPasswordChars);
+                    = (GordianCoreKeySetHash) myKeySets.generateKeySetHash(pKeySetHashSpec, myPasswordChars);
 
             /* Add the entry to the list and return the hash */
             theHashCache.add(new GordianKeySetHashCache(myHash, pPassword));

@@ -24,6 +24,7 @@ import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianSymKeyType;
 import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigestType;
 import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetFactory;
 import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetHash;
+import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetHashSpec;
 import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetSpec;
 import net.sourceforge.joceanus.jgordianknot.api.mac.GordianMacFactory;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianCoreFactory;
@@ -123,10 +124,10 @@ public class GordianCoreKeySetFactory
     }
 
     @Override
-    public GordianKeySetHash generateKeySetHash(final GordianKeySetSpec pSpec,
+    public GordianKeySetHash generateKeySetHash(final GordianKeySetHashSpec pSpec,
                                                 final char[] pPassword) throws OceanusException {
         /* Check Spec */
-        checkKeySetSpec(pSpec);
+        checkKeySetHashSpec(pSpec);
 
         /* Create the new hash */
         return GordianCoreKeySetHash.newKeySetHash(getFactory(), pSpec, pPassword);
@@ -187,6 +188,18 @@ public class GordianCoreKeySetFactory
     }
 
     /**
+     * Check the keySetHashSpec.
+     * @param pSpec the keySetSpec
+     * @throws OceanusException on error
+     */
+    public void checkKeySetHashSpec(final GordianKeySetHashSpec pSpec) throws OceanusException {
+        /* Check validity of KeySet */
+        if (!validKeySetHashSpec(pSpec)) {
+            throw new GordianDataException(GordianCoreFactory.getInvalidText(pSpec));
+        }
+    }
+
+    /**
      * check valid keySetSpec.
      * @param pSpec the keySetSpec
      * @return true/false
@@ -206,5 +219,20 @@ public class GordianCoreKeySetFactory
             default:
                 return false;
         }
+    }
+
+    /**
+     * check valid keySetHashSpec.
+     * @param pSpec the keySetHashSpec
+     * @return true/false
+     */
+    private boolean validKeySetHashSpec(final GordianKeySetHashSpec pSpec) {
+        /* Check for invalid spec */
+        if (pSpec == null || !pSpec.isValid()) {
+            return false;
+        }
+
+        /* Check on length */
+        return validKeySetSpec(pSpec.getKeySetSpec());
     }
 }
