@@ -16,9 +16,6 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jgordianknot.api.keyset;
 
-import net.sourceforge.joceanus.jgordianknot.api.base.GordianLength;
-import net.sourceforge.joceanus.jgordianknot.api.factory.GordianParameters;
-
 /**
  * KeySetHash Specification.
  */
@@ -26,17 +23,22 @@ public class GordianKeySetHashSpec {
     /**
      * Minimum iterations.
      */
-    public static final Integer MINIMUM_ITERATIONS = GordianParameters.MINIMUM_ITERATIONS;
+    public static final Integer MINIMUM_ITERATIONS = 1;
 
     /**
      * Maximum iterations.
      */
-    public static final Integer MAXIMUM_ITERATIONS = GordianParameters.MAXIMUM_ITERATIONS;
+    public static final Integer MAXIMUM_ITERATIONS = 64;
 
     /**
      * Default iterations.
      */
     public static final Integer DEFAULT_ITERATIONS = 4;
+
+    /**
+     * 1K Multiplier.
+     */
+    private static final int K_MULTIPLIER = 1024;
 
     /**
      * The Number of iterations (x 1K).
@@ -93,7 +95,7 @@ public class GordianKeySetHashSpec {
      * @return the number of iterations
      */
     public int getNumIterations() {
-        return theKIterations * GordianParameters.K_MULTIPLIER;
+        return theKIterations * K_MULTIPLIER;
     }
 
     /**

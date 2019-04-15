@@ -25,6 +25,7 @@ import net.sourceforge.joceanus.jgordianknot.api.agree.GordianAgreementType;
 import net.sourceforge.joceanus.jgordianknot.impl.core.agree.GordianCoreAgreementFactory;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianCryptoException;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianDataException;
+import net.sourceforge.joceanus.jgordianknot.impl.jca.JcaAgreement.JcaAnonymousAgreement;
 import net.sourceforge.joceanus.jgordianknot.impl.jca.JcaAgreement.JcaBasicAgreement;
 import net.sourceforge.joceanus.jgordianknot.impl.jca.JcaAgreement.JcaEncapsulationAgreement;
 import net.sourceforge.joceanus.jgordianknot.impl.jca.JcaAgreement.JcaMQVAgreement;
@@ -99,6 +100,8 @@ public class JcaAgreementFactory
      */
     private GordianAgreement getECAgreement(final GordianAgreementSpec pAgreementSpec) throws OceanusException {
         switch (pAgreementSpec.getAgreementType()) {
+            case ANON:
+                return new JcaAnonymousAgreement(getFactory(), pAgreementSpec, getJavaKeyAgreement(getFullAgreementName("ECCDH", pAgreementSpec), false));
             case BASIC:
                 return new JcaBasicAgreement(getFactory(), pAgreementSpec, getJavaKeyAgreement(getFullAgreementName("ECCDH", pAgreementSpec), false));
             case UNIFIED:
@@ -118,6 +121,8 @@ public class JcaAgreementFactory
      */
     private GordianAgreement getDHAgreement(final GordianAgreementSpec pAgreementSpec) throws OceanusException {
         switch (pAgreementSpec.getAgreementType()) {
+            case ANON:
+                return new JcaAnonymousAgreement(getFactory(), pAgreementSpec, getJavaKeyAgreement(getFullAgreementName("DH", pAgreementSpec), false));
             case BASIC:
                 return new JcaBasicAgreement(getFactory(), pAgreementSpec, getJavaKeyAgreement(getFullAgreementName("DH", pAgreementSpec), false));
             case UNIFIED:
@@ -138,6 +143,8 @@ public class JcaAgreementFactory
     private GordianAgreement getXDHAgreement(final GordianAgreementSpec pAgreementSpec) throws OceanusException {
         final String myBase = pAgreementSpec.getAsymKeyType().toString();
         switch (pAgreementSpec.getAgreementType()) {
+            case ANON:
+                return new JcaAnonymousAgreement(getFactory(), pAgreementSpec, getJavaKeyAgreement(getFullAgreementName(myBase, pAgreementSpec), false));
             case BASIC:
                 return new JcaBasicAgreement(getFactory(), pAgreementSpec, getJavaKeyAgreement(getFullAgreementName(myBase, pAgreementSpec), false));
             case UNIFIED:
@@ -214,11 +221,13 @@ public class JcaAgreementFactory
                         && !GordianAgreementType.SM2.equals(myType);
             case X25519:
             case X448:
-                return GordianAgreementType.BASIC.equals(myType)
+                return GordianAgreementType.ANON.equals(myType)
+                        || GordianAgreementType.BASIC.equals(myType)
                         || GordianAgreementType.UNIFIED.equals(myType);
             case RSA:
             case DSTU4145:
             case GOST2012:
+            case SM2:
             default:
                 return false;
         }

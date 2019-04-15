@@ -70,31 +70,27 @@ public class ZipFileTest {
     @TestFactory
     public Stream<DynamicNode> zipFileTests() throws OceanusException {
         /* Create tests */
-        Stream<DynamicNode> myStream = zipFileTests(GordianLength.LEN_256, GordianFactoryType.BC);
-        myStream = Stream.concat(myStream, zipFileTests(GordianLength.LEN_192, GordianFactoryType.BC));
-        myStream = Stream.concat(myStream, zipFileTests(GordianLength.LEN_128, GordianFactoryType.BC));
-        myStream = Stream.concat(myStream, zipFileTests(GordianLength.LEN_256, GordianFactoryType.JCA));
-        myStream = Stream.concat(myStream, zipFileTests(GordianLength.LEN_192, GordianFactoryType.JCA));
-        return Stream.concat(myStream, zipFileTests(GordianLength.LEN_128, GordianFactoryType.JCA));
+        Stream<DynamicNode> myStream = zipFileTests(GordianFactoryType.BC);
+        return Stream.concat(myStream, zipFileTests(GordianFactoryType.JCA));
     }
 
     /**
      * Create the keySet test suite for a factory.
-     * @param pKeyLen the factory keyLength
      * @param pType the factoryType
      * @return the test stream
      * @throws OceanusException on error
      */
-    private Stream<DynamicNode> zipFileTests(final GordianLength pKeyLen,
-                                             final GordianFactoryType pType) throws OceanusException {
+    private Stream<DynamicNode> zipFileTests(final GordianFactoryType pType) throws OceanusException {
         /* Create the factory */
         final GordianFactory myFactory = GordianGenerator.createFactory(new GordianParameters(pType));
 
         /* Return the stream */
-        final String myName = pType.toString() + "-" + pKeyLen;
+        final String myName = pType.toString();
         return Stream.of(DynamicContainer.dynamicContainer(myName, Stream.of(
                 DynamicTest.dynamicTest("standard", () -> testZipFile(myFactory, null)),
-                DynamicTest.dynamicTest("encrypted", () -> testZipFile(myFactory, pKeyLen))
+                DynamicTest.dynamicTest("encrypted128", () -> testZipFile(myFactory, GordianLength.LEN_128)),
+                DynamicTest.dynamicTest("encrypted192", () -> testZipFile(myFactory, GordianLength.LEN_192)),
+                DynamicTest.dynamicTest("encrypted256", () -> testZipFile(myFactory, GordianLength.LEN_256))
         )));
     }
 

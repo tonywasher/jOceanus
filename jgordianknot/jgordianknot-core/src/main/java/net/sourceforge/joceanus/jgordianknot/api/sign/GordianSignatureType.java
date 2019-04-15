@@ -153,6 +153,7 @@ public enum GordianSignatureType {
     public static boolean hasNative(final GordianAsymKeyType pKeyType) {
         switch (pKeyType) {
             case SM2:
+            case ED25519:
             case DSTU4145:
             case GOST2012:
             case RAINBOW:

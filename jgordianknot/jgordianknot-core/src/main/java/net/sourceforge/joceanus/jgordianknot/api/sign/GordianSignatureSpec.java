@@ -159,6 +159,14 @@ public final class GordianSignatureSpec {
      * Create EdDSA25519Spec.
      * @return the SignatureSpec
      */
+    public static GordianSignatureSpec ed25519ctx() {
+        return new GordianSignatureSpec(GordianAsymKeyType.ED25519, GordianSignatureType.NATIVE);
+    }
+
+    /**
+     * Create EdDSA25519Spec.
+     * @return the SignatureSpec
+     */
     public static GordianSignatureSpec ed25519() {
         return new GordianSignatureSpec(GordianAsymKeyType.ED25519, GordianSignatureType.PURE);
     }
@@ -264,7 +272,7 @@ public final class GordianSignatureSpec {
             case GOST2012:
                 return gost2012(GordianLength.LEN_512);
             case ED25519:
-                return ed25519();
+                return ed25519ctx();
             case ED448:
                 return ed448();
             case RAINBOW:

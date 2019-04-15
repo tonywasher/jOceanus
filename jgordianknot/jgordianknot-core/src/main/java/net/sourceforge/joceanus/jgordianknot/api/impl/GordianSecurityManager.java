@@ -469,6 +469,7 @@ public class GordianSecurityManager {
 
     /**
      * Create a hash with a previously used password.
+     * @param pKeySetHashSpec the new hashSpec
      * @param pPassword the encrypted password
      * @return the new PasswordHash
      * @throws OceanusException on error

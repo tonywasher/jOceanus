@@ -53,7 +53,7 @@ public class GordianParameters {
     /**
      * 1K Multiplier.
      */
-    public static final int K_MULTIPLIER = 1024;
+    private static final int K_MULTIPLIER = 1024;
 
     /**
      * Default Security Phrase.

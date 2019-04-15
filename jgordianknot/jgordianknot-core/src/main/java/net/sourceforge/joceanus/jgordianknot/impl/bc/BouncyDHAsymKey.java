@@ -57,7 +57,7 @@ import net.sourceforge.joceanus.jgordianknot.api.key.GordianKeyPairGenerator;
 import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyKeyPair.BouncyPrivateKey;
 import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyKeyPair.BouncyPublicKey;
 import net.sourceforge.joceanus.jgordianknot.impl.core.agree.GordianCoreBasicAgreement;
-import net.sourceforge.joceanus.jgordianknot.impl.core.agree.GordianCoreEncapsulationAgreement;
+import net.sourceforge.joceanus.jgordianknot.impl.core.agree.GordianCoreAnonymousAgreement;
 import net.sourceforge.joceanus.jgordianknot.impl.core.agree.GordianCoreEphemeralAgreement;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianCryptoException;
 import net.sourceforge.joceanus.jgordianknot.impl.core.keypair.GordianAsymAlgId.GordianDHEncodedParser;
@@ -272,10 +272,10 @@ public final class BouncyDHAsymKey {
     }
 
     /**
-     * DH Encapsulation.
+     * DH Anonymous.
      */
-    public static class BouncyDHEncapsulationAgreement
-            extends GordianCoreEncapsulationAgreement {
+    public static class BouncyDHAnonymousAgreement
+            extends GordianCoreAnonymousAgreement {
         /**
          * The agreement.
          */
@@ -286,8 +286,8 @@ public final class BouncyDHAsymKey {
          * @param pFactory the security factory
          * @param pSpec the agreementSpec
          */
-        BouncyDHEncapsulationAgreement(final BouncyFactory pFactory,
-                                       final GordianAgreementSpec pSpec) {
+        BouncyDHAnonymousAgreement(final BouncyFactory pFactory,
+                                   final GordianAgreementSpec pSpec) {
             /* Initialise underlying class */
             super(pFactory, pSpec);
 
@@ -306,7 +306,6 @@ public final class BouncyDHAsymKey {
             final GordianKeyPairGenerator myGenerator = myAsym.getKeyPairGenerator(pTarget.getKeySpec());
             final GordianKeyPair myPair = myGenerator.generateKeyPair();
             final BouncyDHPrivateKey myPrivate = (BouncyDHPrivateKey) getPrivateKey(myPair);
-            final BouncyDHPublicKey myPublic = (BouncyDHPublicKey) getPublicKey(myPair);
 
             /* Derive the secret */
             theAgreement.init(myPrivate.getPrivateKey());
@@ -315,8 +314,9 @@ public final class BouncyDHAsymKey {
             storeSecret(BigIntegers.asUnsignedByteArray(theAgreement.getFieldSize(), mySecret));
 
             /* Create the message  */
-            final byte[] myY = myPublic.getPublicKey().getY().toByteArray();
-            return createMessage(myY);
+            final X509EncodedKeySpec myKeySpec = myGenerator.getX509Encoding(myPair);
+            final byte[] myKeyBytes = myKeySpec.getEncoded();
+            return createMessage(myKeyBytes);
         }
 
         @Override
@@ -326,15 +326,17 @@ public final class BouncyDHAsymKey {
             checkKeyPair(pSelf);
 
             /* Obtain source keySpec */
-            final byte[] myYBytes = parseMessage(pMessage);
-            final BigInteger myY = new BigInteger(myYBytes);
+            final byte[] myKeyBytes = parseMessage(pMessage);
+            final X509EncodedKeySpec myKeySpec = new X509EncodedKeySpec(myKeyBytes);
+            final GordianAsymFactory myAsym = getFactory().getAsymmetricFactory();
+            final GordianKeyPairGenerator myGenerator = myAsym.getKeyPairGenerator(pSelf.getKeySpec());
+            final GordianKeyPair myPartner = myGenerator.derivePublicOnlyKeyPair(myKeySpec);
             final BouncyDHPrivateKey myPrivate = (BouncyDHPrivateKey) getPrivateKey(pSelf);
-            final DHParameters myParms = myPrivate.getPrivateKey().getParameters();
-            final DHPublicKeyParameters myPublicKey = new DHPublicKeyParameters(myY, myParms);
+            final BouncyDHPublicKey myPublic = (BouncyDHPublicKey) getPublicKey(myPartner);
 
             /* Derive the secret */
             theAgreement.init(myPrivate.getPrivateKey());
-            final BigInteger mySecret = theAgreement.calculateAgreement(myPublicKey);
+            final BigInteger mySecret = theAgreement.calculateAgreement(myPublic.getPublicKey());
 
             /* Store secret */
             storeSecret(BigIntegers.asUnsignedByteArray(theAgreement.getFieldSize(), mySecret));

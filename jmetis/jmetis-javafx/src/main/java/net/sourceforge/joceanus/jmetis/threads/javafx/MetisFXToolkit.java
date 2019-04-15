@@ -19,7 +19,7 @@ package net.sourceforge.joceanus.jmetis.threads.javafx;
 import net.sourceforge.joceanus.jgordianknot.api.factory.GordianParameters;
 import net.sourceforge.joceanus.jgordianknot.api.impl.GordianSecurityManager;
 import net.sourceforge.joceanus.jgordianknot.api.javafx.GordianFXSecurityManager;
-import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetSpec;
+import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetHashSpec;
 import net.sourceforge.joceanus.jmetis.atlas.ui.javafx.MetisFXTableManager;
 import net.sourceforge.joceanus.jmetis.field.MetisFieldItem.MetisFieldTableItem;
 import net.sourceforge.joceanus.jmetis.list.MetisListEditSession;
@@ -88,7 +88,7 @@ public class MetisFXToolkit
 
     @Override
     protected GordianSecurityManager newSecurityManager(final GordianParameters pParameters,
-                                                        final GordianKeySetSpec pKeySetSpec) throws OceanusException {
+                                                        final GordianKeySetHashSpec pKeySetSpec) throws OceanusException {
         return new GordianFXSecurityManager(getGuiFactory(), pParameters, pKeySetSpec);
     }
 

@@ -65,14 +65,16 @@ import net.sourceforge.joceanus.jgordianknot.api.agree.GordianAgreementSpec;
 import net.sourceforge.joceanus.jgordianknot.api.asym.GordianAsymKeySpec;
 import net.sourceforge.joceanus.jgordianknot.api.asym.GordianAsymKeyType;
 import net.sourceforge.joceanus.jgordianknot.api.encrypt.GordianEncryptorSpec;
+import net.sourceforge.joceanus.jgordianknot.api.factory.GordianAsymFactory;
 import net.sourceforge.joceanus.jgordianknot.api.key.GordianKeyPair;
+import net.sourceforge.joceanus.jgordianknot.api.key.GordianKeyPairGenerator;
 import net.sourceforge.joceanus.jgordianknot.api.sign.GordianSignatureSpec;
 import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyKeyPair.BouncyPrivateKey;
 import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyKeyPair.BouncyPublicKey;
 import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncySignature.BouncyDERCoder;
 import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncySignature.BouncyDigestSignature;
 import net.sourceforge.joceanus.jgordianknot.impl.core.agree.GordianCoreBasicAgreement;
-import net.sourceforge.joceanus.jgordianknot.impl.core.agree.GordianCoreEncapsulationAgreement;
+import net.sourceforge.joceanus.jgordianknot.impl.core.agree.GordianCoreAnonymousAgreement;
 import net.sourceforge.joceanus.jgordianknot.impl.core.agree.GordianCoreEphemeralAgreement;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianCryptoException;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianLogicException;
@@ -466,7 +468,7 @@ public final class BouncyEllipticAsymKey {
      * ECIES Encapsulation.
      */
     public static class BouncyECIESAgreement
-            extends GordianCoreEncapsulationAgreement {
+            extends GordianCoreAnonymousAgreement {
         /**
          * Key Agreement.
          */
@@ -533,6 +535,80 @@ public final class BouncyEllipticAsymKey {
 
             /* Store secret */
             storeSecret(myParms.getKey());
+        }
+    }
+
+    /**
+     * EC Anonymous.
+     */
+    public static class BouncyECAnonymousAgreement
+            extends GordianCoreAnonymousAgreement {
+        /**
+         * The agreement.
+         */
+        private final ECDHCBasicAgreement theAgreement;
+
+        /**
+         * Constructor.
+         * @param pFactory the security factory
+         * @param pSpec the agreementSpec
+         */
+        BouncyECAnonymousAgreement(final BouncyFactory pFactory,
+                                   final GordianAgreementSpec pSpec) {
+            /* Initialise underlying class */
+            super(pFactory, pSpec);
+
+            /* Create the agreement */
+            theAgreement = new ECDHCBasicAgreement();
+            enableDerivation();
+        }
+
+        @Override
+        public byte[] initiateAgreement(final GordianKeyPair pTarget) throws OceanusException {
+            /* Check keyPair */
+            checkKeyPair(pTarget);
+
+            /* Create an ephemeral keyPair */
+            final GordianAsymFactory myAsym = getFactory().getAsymmetricFactory();
+            final GordianKeyPairGenerator myGenerator = myAsym.getKeyPairGenerator(pTarget.getKeySpec());
+            final GordianKeyPair myPair = myGenerator.generateKeyPair();
+            final BouncyECPrivateKey myPrivate = (BouncyECPrivateKey) getPrivateKey(myPair);
+
+            /* Derive the secret */
+            theAgreement.init(myPrivate.getPrivateKey());
+            final BouncyECPublicKey myTarget = (BouncyECPublicKey) getPublicKey(pTarget);
+            final BigInteger mySecret = theAgreement.calculateAgreement(myTarget.getPublicKey());
+            storeSecret(BigIntegers.asUnsignedByteArray(theAgreement.getFieldSize(), mySecret));
+
+            /* Create the message  */
+            final X509EncodedKeySpec myKeySpec = myGenerator.getX509Encoding(myPair);
+            final byte[] myKeyBytes = myKeySpec.getEncoded();
+            return createMessage(myKeyBytes);
+        }
+
+        @Override
+        public void acceptAgreement(final GordianKeyPair pSelf,
+                                    final byte[] pMessage) throws OceanusException {
+            /* Check keyPair */
+            checkKeyPair(pSelf);
+
+            /* Obtain source keySpec */
+            final byte[] myKeyBytes = parseMessage(pMessage);
+            final BouncyECPrivateKey myPrivate = (BouncyECPrivateKey) getPrivateKey(pSelf);
+            final X509EncodedKeySpec myKeySpec = new X509EncodedKeySpec(myKeyBytes);
+            final GordianAsymFactory myAsym = getFactory().getAsymmetricFactory();
+            final GordianKeyPairGenerator myGenerator = myAsym.getKeyPairGenerator(pSelf.getKeySpec());
+
+            /* Derive partner key */
+            final GordianKeyPair myPartner = myGenerator.derivePublicOnlyKeyPair(myKeySpec);
+            final BouncyECPublicKey myPublicKey = (BouncyECPublicKey) getPublicKey(myPartner);
+
+            /* Derive the secret */
+            theAgreement.init(myPrivate.getPrivateKey());
+            final BigInteger mySecret = theAgreement.calculateAgreement(myPublicKey.getPublicKey());
+
+            /* Store secret */
+            storeSecret(BigIntegers.asUnsignedByteArray(theAgreement.getFieldSize(), mySecret));
         }
     }
 

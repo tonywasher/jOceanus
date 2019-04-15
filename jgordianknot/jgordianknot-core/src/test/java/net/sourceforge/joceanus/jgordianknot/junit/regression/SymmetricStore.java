@@ -430,6 +430,11 @@ class SymmetricStore {
         private final GordianRandomType theRandomType;
 
         /**
+         * The length.
+         */
+        private final GordianLength theLength;
+
+        /**
          * The list of randomSpecs.
          */
         private final List<FactoryRandomSpec> theSpecs;
@@ -441,8 +446,20 @@ class SymmetricStore {
          */
         FactoryRandomType(final GordianFactory pFactory,
                           final GordianRandomType pRandomType) {
+            this(pFactory, pRandomType, null);
+        }
+
+        /**
+         * Constructor.
+         * @param pFactory the factory
+         * @param pRandomType the randomType
+         */
+        FactoryRandomType(final GordianFactory pFactory,
+                          final GordianRandomType pRandomType,
+                          final GordianLength pLength) {
             theFactory = pFactory;
             theRandomType = pRandomType;
+            theLength = pLength;
             theSpecs = new ArrayList<>();
         }
 
@@ -457,8 +474,16 @@ class SymmetricStore {
         }
 
         /**
-         * Obtain the signatureList.
-         * @return the signature list
+         * Obtain the length.
+         * @return the length
+         */
+        public GordianLength getLength() {
+            return theLength;
+        }
+
+        /**
+         * Obtain the randomList.
+         * @return the random list
          */
         List<FactoryRandomSpec> getSpecs() {
             return theSpecs;
@@ -466,7 +491,7 @@ class SymmetricStore {
 
         @Override
         public String toString() {
-            return theRandomType.toString();
+            return theRandomType.toString() + (theLength == null ? "" : "-" + theLength);
         }
     }
 
@@ -616,30 +641,48 @@ class SymmetricStore {
     /**
      * Obtain the list of randomSpecs to test.
      * @param pFactory the factory
-     * @return the list
+     * @param pType the random type
+     * @return the randomType
      */
-    static List<FactoryRandomType> randomProvider(final GordianFactory pFactory) {
-        /* Loop through the possible randomTypes */
-        final List<FactoryRandomType> myResult = new ArrayList<>();
+    static FactoryRandomType randomProvider(final GordianFactory pFactory,
+                                            final GordianRandomType pType) {
+        /* Create the random type */
         final GordianRandomFactory myRandomFactory = pFactory.getRandomFactory();
-        for (GordianRandomType myType : GordianRandomType.values()) {
-            /* Create the random type */
-            final FactoryRandomType myFactoryType = new FactoryRandomType(pFactory, myType);
+        final FactoryRandomType myFactoryType = new FactoryRandomType(pFactory, pType);
 
-            /* Populate the list of specs */
-            final List<FactoryRandomSpec> myList = myFactoryType.getSpecs();
-            for (GordianRandomSpec mySpec : myRandomFactory.listAllSupportedRandomSpecs(myType)) {
-                /* Add the randomSpec */
-                myList.add(new FactoryRandomSpec(pFactory, mySpec));
-            }
-
-            /* Add to the list */
-            if (!myList.isEmpty()) {
-                myResult.add(myFactoryType);
-            }
+        /* Populate the list of specs */
+        final List<FactoryRandomSpec> myList = myFactoryType.getSpecs();
+        for (GordianRandomSpec mySpec : myRandomFactory.listAllSupportedRandomSpecs(pType)) {
+            /* Add the randomSpec */
+            myList.add(new FactoryRandomSpec(pFactory, mySpec));
         }
 
-        /* Return the list */
-        return myResult;
+        /* Return the type */
+        return myFactoryType;
+    }
+
+    /**
+     * Obtain the list of randomSpecs to test.
+     * @param pFactory the factory
+     * @param pType the random type
+     * @param pKeyLen the keyLength
+     * @return the randomType
+     */
+    static FactoryRandomType randomProvider(final GordianFactory pFactory,
+                                            final GordianRandomType pType,
+                                            final GordianLength pKeyLen) {
+        /* Create the random type */
+        final GordianRandomFactory myRandomFactory = pFactory.getRandomFactory();
+        final FactoryRandomType myFactoryType = new FactoryRandomType(pFactory, pType, pKeyLen);
+
+        /* Populate the list of specs */
+        final List<FactoryRandomSpec> myList = myFactoryType.getSpecs();
+        for (GordianRandomSpec mySpec : myRandomFactory.listAllSupportedRandomSpecs(pType, pKeyLen)) {
+            /* Add the randomSpec */
+            myList.add(new FactoryRandomSpec(pFactory, mySpec));
+        }
+
+        /* Return the type */
+        return myFactoryType;
     }
 }

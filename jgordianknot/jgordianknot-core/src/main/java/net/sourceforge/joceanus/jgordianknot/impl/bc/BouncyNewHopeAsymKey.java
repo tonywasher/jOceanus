@@ -45,7 +45,7 @@ import net.sourceforge.joceanus.jgordianknot.api.key.GordianKeyPair;
 import net.sourceforge.joceanus.jgordianknot.api.key.GordianKeyPairGenerator;
 import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyKeyPair.BouncyPrivateKey;
 import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyKeyPair.BouncyPublicKey;
-import net.sourceforge.joceanus.jgordianknot.impl.core.agree.GordianCoreEncapsulationAgreement;
+import net.sourceforge.joceanus.jgordianknot.impl.core.agree.GordianCoreAnonymousAgreement;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianCryptoException;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
@@ -212,7 +212,7 @@ public final class BouncyNewHopeAsymKey {
      * NewHope Encapsulation.
      */
     public static class BouncyNewHopeAgreement
-            extends GordianCoreEncapsulationAgreement {
+            extends GordianCoreAnonymousAgreement {
         /**
          * Constructor.
          * @param pFactory the security factory

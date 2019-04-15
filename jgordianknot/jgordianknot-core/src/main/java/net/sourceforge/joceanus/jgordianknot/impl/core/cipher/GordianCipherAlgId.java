@@ -34,7 +34,6 @@ import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianCipherMode;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianPadding;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianStreamCipherSpec;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianStreamKeySpec;
-import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianStreamKeyType;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianSymCipherSpec;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianSymKeySpec;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianSymKeyType;
@@ -281,7 +280,7 @@ public class GordianCipherAlgId {
                 new AlgorithmIdentifier(NSRIObjectIdentifiers.id_aria256_gcm));
         addToSymMaps(GordianSymCipherSpec.cbc(GordianSymKeySpec.camellia(GordianLength.LEN_256), GordianPadding.NONE),
                 new AlgorithmIdentifier(NTTObjectIdentifiers.id_camellia256_cbc));
-        addToSymMaps(GordianSymCipherSpec.ecb(GordianSymKeySpec.kalyna(GordianLength.LEN_256 , GordianLength.LEN_256), GordianPadding.NONE),
+        addToSymMaps(GordianSymCipherSpec.ecb(GordianSymKeySpec.kalyna(GordianLength.LEN_256, GordianLength.LEN_256), GordianPadding.NONE),
                 new AlgorithmIdentifier(UAObjectIdentifiers.dstu7624ecb_256));
         addToSymMaps(GordianSymCipherSpec.cbc(GordianSymKeySpec.kalyna(GordianLength.LEN_256, GordianLength.LEN_256), GordianPadding.NONE),
                 new AlgorithmIdentifier(UAObjectIdentifiers.dstu7624cbc_256));
@@ -334,6 +333,7 @@ public class GordianCipherAlgId {
     /**
      * Append Identifier for a symCipherSpec.
      * @param pBaseOID the base OID
+     * @param pAddLength add length to id true/false
      * @param pSpec the cipherSpec
      * @return the resulting OID
      */
@@ -349,7 +349,7 @@ public class GordianCipherAlgId {
         myId = myId.branch(Integer.toString(myBlockLength.ordinal() + 1));
 
         /* Add length if required */
-        if (pAddLength){
+        if (pAddLength) {
             final GordianLength myKeyLength = pSpec.getKeyLength();
             myId = myId.branch(Integer.toString(myKeyLength.ordinal() + 1));
         }

@@ -19,7 +19,7 @@ package net.sourceforge.joceanus.jgordianknot.api.javafx;
 import net.sourceforge.joceanus.jgordianknot.api.factory.GordianParameters;
 import net.sourceforge.joceanus.jgordianknot.api.impl.GordianDialogController;
 import net.sourceforge.joceanus.jgordianknot.api.impl.GordianSecurityManager;
-import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetSpec;
+import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetHashSpec;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXGuiFactory;
 
@@ -39,7 +39,7 @@ public class GordianFXSecurityManager
      */
     public GordianFXSecurityManager(final TethysFXGuiFactory pFactory,
                                     final GordianParameters pParameters,
-                                    final GordianKeySetSpec pKeySetSpec) throws OceanusException {
+                                    final GordianKeySetHashSpec pKeySetSpec) throws OceanusException {
         super(pParameters, pKeySetSpec, new GordianFXDialogControl(pFactory));
     }
 

@@ -26,7 +26,7 @@ import org.bouncycastle.asn1.DEROctetString;
 import org.bouncycastle.asn1.DERSequence;
 
 import net.sourceforge.joceanus.jgordianknot.api.agree.GordianAgreementSpec;
-import net.sourceforge.joceanus.jgordianknot.api.agree.GordianEncapsulationAgreement;
+import net.sourceforge.joceanus.jgordianknot.api.agree.GordianAnonymousAgreement;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianCoreFactory;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianIOException;
 import net.sourceforge.joceanus.jtethys.OceanusException;
@@ -34,16 +34,16 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
 /**
  * Encapsulation Agreement.
  */
-public abstract class GordianCoreEncapsulationAgreement
+public abstract class GordianCoreAnonymousAgreement
         extends GordianCoreAgreement
-        implements GordianEncapsulationAgreement {
+        implements GordianAnonymousAgreement {
     /**
      * Constructor.
      * @param pFactory the factory
      * @param pSpec the agreementSpec
      */
-    protected GordianCoreEncapsulationAgreement(final GordianCoreFactory pFactory,
-                                                final GordianAgreementSpec pSpec) {
+    protected GordianCoreAnonymousAgreement(final GordianCoreFactory pFactory,
+                                            final GordianAgreementSpec pSpec) {
         super(pFactory, pSpec);
     }
 

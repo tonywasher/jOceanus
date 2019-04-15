@@ -289,15 +289,16 @@ public class MetisPreferenceSecurity {
         }
 
         /**
-         * Get KeySetSpec.
+         * Get KeySetHashSpec.
          * @return the parameters
          * @throws OceanusException on error
          */
-        public GordianKeySetSpec getKeySetSpec() throws OceanusException {
+        public GordianKeySetHashSpec getKeySetHashSpec() throws OceanusException {
             /* Build and return keySetSpec */
             final GordianLength myKeyLen = getEnumValue(MetisSecurityPreferenceKey.KEYLENGTH, GordianLength.class);
+            final int myIterations = getIntegerValue(MetisSecurityPreferenceKey.HASHITERATIONS);
             final int mySteps = getIntegerValue(MetisSecurityPreferenceKey.CIPHERSTEPS);
-            return new GordianKeySetSpec(myKeyLen, mySteps);
+            return new GordianKeySetHashSpec(myIterations, new GordianKeySetSpec(myKeyLen, mySteps));
         }
 
         @Override

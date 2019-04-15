@@ -33,10 +33,9 @@ import net.sourceforge.joceanus.jgordianknot.api.agree.GordianAgreement;
 import net.sourceforge.joceanus.jgordianknot.api.agree.GordianAgreementFactory;
 import net.sourceforge.joceanus.jgordianknot.api.agree.GordianAgreementSpec;
 import net.sourceforge.joceanus.jgordianknot.api.agree.GordianBasicAgreement;
-import net.sourceforge.joceanus.jgordianknot.api.agree.GordianEncapsulationAgreement;
+import net.sourceforge.joceanus.jgordianknot.api.agree.GordianAnonymousAgreement;
 import net.sourceforge.joceanus.jgordianknot.api.agree.GordianEphemeralAgreement;
 import net.sourceforge.joceanus.jgordianknot.api.asym.GordianAsymKeySpec;
-import net.sourceforge.joceanus.jgordianknot.api.base.GordianLength;
 import net.sourceforge.joceanus.jgordianknot.api.encrypt.GordianEncryptor;
 import net.sourceforge.joceanus.jgordianknot.api.encrypt.GordianEncryptorFactory;
 import net.sourceforge.joceanus.jgordianknot.api.encrypt.GordianEncryptorSpec;
@@ -50,7 +49,6 @@ import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySet;
 import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetFactory;
 import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetHash;
 import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetHashSpec;
-import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetSpec;
 import net.sourceforge.joceanus.jgordianknot.api.sign.GordianSignature;
 import net.sourceforge.joceanus.jgordianknot.api.sign.GordianSignatureFactory;
 import net.sourceforge.joceanus.jgordianknot.api.sign.GordianSignatureSpec;
@@ -380,15 +378,15 @@ public class AsymmetricTest {
         final GordianAgreement myResponder = myAgrees.createAgreement(mySpec);
 
         /* Access target if we are using one */
-        if (!(mySender instanceof GordianEncapsulationAgreement)) {
+        if (!(mySender instanceof GordianAnonymousAgreement)) {
             myTarget = myPairs.getTargetKeyPair();
         }
 
         /* Handle Encapsulation */
-        if (mySender instanceof GordianEncapsulationAgreement
-                && myResponder instanceof GordianEncapsulationAgreement) {
-            final byte[] myMsg = ((GordianEncapsulationAgreement) mySender).initiateAgreement(myPair);
-            ((GordianEncapsulationAgreement) myResponder).acceptAgreement(myPair, myMsg);
+        if (mySender instanceof GordianAnonymousAgreement
+                && myResponder instanceof GordianAnonymousAgreement) {
+            final byte[] myMsg = ((GordianAnonymousAgreement) mySender).initiateAgreement(myPair);
+            ((GordianAnonymousAgreement) myResponder).acceptAgreement(myPair, myMsg);
 
             /* Handle Basic */
         } else if (mySender instanceof GordianBasicAgreement
@@ -434,10 +432,10 @@ public class AsymmetricTest {
         final GordianAgreement myResponder = myPartnerAgrees.createAgreement(mySpec);
 
         /* Handle Encapsulation */
-        if (mySender instanceof GordianEncapsulationAgreement
-                && myResponder instanceof GordianEncapsulationAgreement) {
-            final byte[] myMsg = ((GordianEncapsulationAgreement) mySender).initiateAgreement(myTarget);
-            ((GordianEncapsulationAgreement) myResponder).acceptAgreement(myPartnerTarget, myMsg);
+        if (mySender instanceof GordianAnonymousAgreement
+                && myResponder instanceof GordianAnonymousAgreement) {
+            final byte[] myMsg = ((GordianAnonymousAgreement) mySender).initiateAgreement(myTarget);
+            ((GordianAnonymousAgreement) myResponder).acceptAgreement(myPartnerTarget, myMsg);
 
             /* Handle Basic */
         } else if (mySender instanceof GordianBasicAgreement

@@ -58,6 +58,7 @@ import net.sourceforge.joceanus.jgordianknot.api.mac.GordianMacSpec;
 import net.sourceforge.joceanus.jgordianknot.api.mac.GordianMacType;
 import net.sourceforge.joceanus.jgordianknot.api.random.GordianRandomFactory;
 import net.sourceforge.joceanus.jgordianknot.api.random.GordianRandomSpec;
+import net.sourceforge.joceanus.jgordianknot.api.random.GordianRandomType;
 import net.sourceforge.joceanus.jgordianknot.impl.core.cipher.GordianCoreCipher;
 import net.sourceforge.joceanus.jgordianknot.impl.core.cipher.GordianCoreCipherFactory;
 import net.sourceforge.joceanus.jgordianknot.impl.core.cipher.GordianCoreWrapper;
@@ -356,12 +357,34 @@ public class SymmetricTest {
         /* Create an empty stream */
         Stream<DynamicNode> myStream = Stream.empty();
 
-        /* Loop through the possible keySpecs */
-        for (final FactoryRandomType myType : SymmetricStore.randomProvider(pFactory)) {
-            /* Access the specs */
-            List<FactoryRandomSpec> mySpecs = myType.getSpecs();
-            Stream<DynamicNode> myTests = mySpecs.stream().map(x -> DynamicTest.dynamicTest(x.toString(), () -> checkRandomSpec(x)));
-            myStream = Stream.concat(myStream, Stream.of(DynamicContainer.dynamicContainer(myType.toString(), myTests)));
+        /* Loop through the random types */
+        for (GordianRandomType myType : GordianRandomType.values()) {
+            /* If this type has symKeySpecs */
+            if (myType.hasSymKeySpec()) {
+                /* Create an empty stream */
+                Stream<DynamicNode> myTypeStream = Stream.empty();
+
+                /* Loop through the keyLengths */
+                Iterator<GordianLength> myIterator = GordianKeyLengths.iterator();
+                while (myIterator.hasNext()) {
+                    final GordianLength myKeyLen = myIterator.next();
+
+                    /* Access the specs */
+                    FactoryRandomType myRandomType = SymmetricStore.randomProvider(pFactory, myType, myKeyLen);
+                    final List<FactoryRandomSpec> mySpecs = myRandomType.getSpecs();
+                    Stream<DynamicNode> myTests = mySpecs.stream().map(x -> DynamicTest.dynamicTest(x.toString(), () -> checkRandomSpec(x)));
+                    myTypeStream = Stream.concat(myTypeStream, Stream.of(DynamicContainer.dynamicContainer(myRandomType.toString(), myTests)));
+                }
+                myStream = Stream.concat(myStream, Stream.of(DynamicContainer.dynamicContainer(myType.toString(), myTypeStream)));
+
+                /* else simple randomType */
+            } else {
+                /* Access the specs */
+                FactoryRandomType myRandomType = SymmetricStore.randomProvider(pFactory, myType);
+                final List<FactoryRandomSpec> mySpecs = myRandomType.getSpecs();
+                Stream<DynamicNode> myTests = mySpecs.stream().map(x -> DynamicTest.dynamicTest(x.toString(), () -> checkRandomSpec(x)));
+                myStream = Stream.concat(myStream, Stream.of(DynamicContainer.dynamicContainer(myRandomType.toString(), myTests)));
+            }
         }
 
         /* return random Tests */

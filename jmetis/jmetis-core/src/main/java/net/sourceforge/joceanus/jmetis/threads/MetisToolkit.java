@@ -18,7 +18,7 @@ package net.sourceforge.joceanus.jmetis.threads;
 
 import net.sourceforge.joceanus.jgordianknot.api.factory.GordianParameters;
 import net.sourceforge.joceanus.jgordianknot.api.impl.GordianSecurityManager;
-import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetSpec;
+import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetHashSpec;
 import net.sourceforge.joceanus.jmetis.atlas.ui.MetisErrorPanel;
 import net.sourceforge.joceanus.jmetis.atlas.ui.MetisFieldColours.MetisColorPreferences;
 import net.sourceforge.joceanus.jmetis.atlas.ui.MetisFieldSetPanelPair;
@@ -146,7 +146,7 @@ public abstract class MetisToolkit {
 
         /* Create the hashManager */
         final MetisSecurityPreferences myPreferences = thePreferenceManager.getPreferenceSet(MetisSecurityPreferences.class);
-        theHashManager = newSecurityManager(myPreferences.getParameters(), myPreferences.getKeySetSpec());
+        theHashManager = newSecurityManager(myPreferences.getParameters(), myPreferences.getKeySetHashSpec());
 
         /* create the thread manager */
         theThreadManager = newThreadManager(pSlider);
@@ -250,12 +250,12 @@ public abstract class MetisToolkit {
     /**
      * Create a Security Manager.
      * @param pParameters the parameters
-     * @param pKeySetSpec the keySetSpec
+     * @param pKeySetSpec the keySetHashSpec
      * @return the manager
      * @throws OceanusException on error
      */
     protected abstract GordianSecurityManager newSecurityManager(GordianParameters pParameters,
-                                                                 GordianKeySetSpec pKeySetSpec) throws OceanusException;
+                                                                 GordianKeySetHashSpec pKeySetSpec) throws OceanusException;
 
     /**
      * Create a Help Window.
