@@ -54,7 +54,7 @@ public class DataKeySet
     /**
      * KeySetWrapLength.
      */
-    private static final int WRAPLEN = GordianSecurityManager.getMaximumKeySetWrapLength();
+    public static final int WRAPLEN = GordianSecurityManager.getMaximumKeySetWrapLength();
 
     /**
      * Report fields.

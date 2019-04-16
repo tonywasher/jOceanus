@@ -899,11 +899,6 @@ public abstract class StaticData<T extends StaticData<T, S, E>, S extends Enum<S
         protected DataMapItem<T, E> allocateDataMap() {
             return new StaticDataMap<>();
         }
-
-        @Override
-        public void resolveDataSetLinks() throws OceanusException {
-            /* We have no links so disable this */
-        }
     }
 
     /**

@@ -619,11 +619,6 @@ public class Region
         protected RegionDataMap allocateDataMap() {
             return new RegionDataMap();
         }
-
-        @Override
-        public void resolveDataSetLinks() throws OceanusException {
-            /* We have no links so disable this */
-        }
     }
 
     /**

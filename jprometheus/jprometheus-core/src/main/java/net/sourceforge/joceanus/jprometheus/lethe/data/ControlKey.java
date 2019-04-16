@@ -483,6 +483,7 @@ public final class ControlKey
         for (int i = 0; i < myNumKeySets; i++) {
             /* Allocate the DataKeySet */
             final DataKeySet mySet = new DataKeySet(mySets, this);
+            mySet.setNewVersion();
             mySets.add(mySet);
 
             /* Register the DataKeySet */
@@ -829,7 +830,7 @@ public final class ControlKey
 
         @Override
         public String formatObject(final MetisDataFormatter pFormatter) {
-            return getDataFieldSet().getName() + "(" + size() + ")";
+            return getDataFieldSet().getName();
         }
 
         /**

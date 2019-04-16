@@ -44,6 +44,8 @@ public class PrometheusTableDataKeySet
         /* Define the columns */
         myTableDef.addReferenceColumn(DataKeySet.FIELD_CONTROLKEY, PrometheusTableControlKeys.TABLE_NAME);
         myTableDef.addDateColumn(DataKeySet.FIELD_CREATEDATE);
+        myTableDef.addBooleanColumn(DataKeySet.FIELD_HASHPRIME);
+        myTableDef.addBinaryColumn(DataKeySet.FIELD_KEYSETDEF, DataKeySet.WRAPLEN);
     }
 
     @Override
@@ -60,6 +62,8 @@ public class PrometheusTableDataKeySet
         final DataValues<CryptographyDataType> myValues = getRowValues(DataKeySet.OBJECT_NAME);
         myValues.addValue(DataKeySet.FIELD_CONTROLKEY, myTableDef.getIntegerValue(DataKeySet.FIELD_CONTROLKEY));
         myValues.addValue(DataKeySet.FIELD_CREATEDATE, myTableDef.getDateValue(DataKeySet.FIELD_CREATEDATE));
+        myValues.addValue(DataKeySet.FIELD_HASHPRIME, myTableDef.getBooleanValue(DataKeySet.FIELD_HASHPRIME));
+        myValues.addValue(DataKeySet.FIELD_KEYSETDEF, myTableDef.getBinaryValue(DataKeySet.FIELD_KEYSETDEF));
 
         /* Return the values */
         return myValues;
@@ -74,6 +78,10 @@ public class PrometheusTableDataKeySet
             myTableDef.setIntegerValue(iField, pItem.getControlKeyId());
         } else if (DataKeySet.FIELD_CREATEDATE.equals(iField)) {
             myTableDef.setDateValue(iField, pItem.getCreationDate());
+        } else if (DataKeySet.FIELD_HASHPRIME.equals(iField)) {
+            myTableDef.setBooleanValue(iField, pItem.isHashPrime());
+        } else if (DataKeySet.FIELD_KEYSETDEF.equals(iField)) {
+            myTableDef.setBinaryValue(iField, pItem.getSecuredKeySetDef());
         } else {
             super.setFieldValue(pItem, iField);
         }
