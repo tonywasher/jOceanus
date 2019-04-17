@@ -17,12 +17,12 @@
 package net.sourceforge.joceanus.jgordianknot.api.cipher;
 
 import net.sourceforge.joceanus.jgordianknot.api.base.GordianLength;
-import net.sourceforge.joceanus.jgordianknot.api.base.GordianKeySpec;
+import net.sourceforge.joceanus.jgordianknot.api.key.GordianKeyLengths;
 
 /**
  * Stream Key Type.
  */
-public enum GordianStreamKeyType  implements GordianKeySpec {
+public enum GordianStreamKeyType {
     /**
      * XSalsa20.
      */
@@ -170,6 +170,12 @@ public enum GordianStreamKeyType  implements GordianKeySpec {
      * @return true/false
      */
     public boolean validForKeyLength(final GordianLength pKeyLen) {
+        /* Reject unsupported keyLengths */
+        if (!GordianKeyLengths.isSupportedLength(pKeyLen)) {
+            return false;
+        }
+
+        /* Switch on keyType */
         switch (this) {
             case XSALSA20:
             case XCHACHA20:
@@ -183,7 +189,8 @@ public enum GordianStreamKeyType  implements GordianKeySpec {
             case SALSA20:
             case SOSEMANUK:
             case ZUC:
-                return GordianLength.LEN_192 != pKeyLen;
+                return GordianLength.LEN_128 == pKeyLen
+                        || GordianLength.LEN_256 == pKeyLen;
             default:
                 return true;
         }

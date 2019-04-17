@@ -22,13 +22,14 @@ import net.sourceforge.joceanus.jgordianknot.api.base.GordianLength;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianSymKeySpec;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianSymKeyType;
 import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigestType;
-import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySet;
 import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetFactory;
 import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetHash;
+import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetHashSpec;
+import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetSpec;
 import net.sourceforge.joceanus.jgordianknot.api.mac.GordianMacFactory;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianCoreFactory;
+import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianDataException;
 import net.sourceforge.joceanus.jgordianknot.impl.core.cipher.GordianCoreCipherFactory;
-import net.sourceforge.joceanus.jgordianknot.impl.core.cipher.GordianCoreWrapper;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
@@ -97,22 +98,39 @@ public class GordianCoreKeySetFactory
         return theObfuscater;
     }
 
-    @Override
-    public GordianKeySet createKeySet() {
-        return new GordianCoreKeySet(getFactory());
+    /**
+     * create an empty keySet.
+     * @param pSpec the keySetSpec
+     * @return the empty keySedt
+     * @throws OceanusException on error
+     */
+    public GordianCoreKeySet createKeySet(final GordianKeySetSpec pSpec) throws OceanusException {
+        /* Check Spec */
+        checkKeySetSpec(pSpec);
+
+        /* Generate an empty keySet */
+        return new GordianCoreKeySet(getFactory(), pSpec);
     }
 
     @Override
-    public GordianKeySet generateKeySet() throws OceanusException {
+    public GordianCoreKeySet generateKeySet(final GordianKeySetSpec pSpec) throws OceanusException {
+        /* Check Spec */
+        checkKeySetSpec(pSpec);
+
         /* Generate a random keySet */
-        final GordianCoreKeySet myKeySet = new GordianCoreKeySet(theFactory);
+        final GordianCoreKeySet myKeySet = new GordianCoreKeySet(theFactory, pSpec);
         myKeySet.buildFromRandom();
         return myKeySet;
     }
 
     @Override
-    public GordianKeySetHash generateKeySetHash(final char[] pPassword) throws OceanusException {
-        return GordianCoreKeySetHash.newKeySetHash(getFactory(), pPassword);
+    public GordianKeySetHash generateKeySetHash(final GordianKeySetHashSpec pSpec,
+                                                final char[] pPassword) throws OceanusException {
+        /* Check Spec */
+        checkKeySetHashSpec(pSpec);
+
+        /* Create the new hash */
+        return GordianCoreKeySetHash.newKeySetHash(getFactory(), pSpec, pPassword);
     }
 
     @Override
@@ -128,26 +146,93 @@ public class GordianCoreKeySetFactory
     }
 
     @Override
-    public Predicate<GordianSymKeyType> supportedKeySetSymKeyTypes() {
-        return this::validKeySetSymKeyType;
+    public Predicate<GordianSymKeyType> supportedKeySetSymKeyTypes(final GordianLength pKeyLen) {
+        return t -> validKeySetSymKeyType(t, pKeyLen);
     }
 
     @Override
-    public Predicate<GordianSymKeySpec> supportedKeySetSymKeySpecs() {
-        return p -> supportedKeySetSymKeyTypes().test(p.getSymKeyType())
-                && p.getBlockLength() == GordianLength.LEN_128;
+    public Predicate<GordianSymKeySpec> supportedKeySetSymKeySpecs(final GordianLength pKeyLen) {
+        return s -> supportedKeySetSymKeyTypes(pKeyLen).test(s.getSymKeyType())
+                && s.getBlockLength() == GordianLength.LEN_128;
+    }
+
+    @Override
+    public Predicate<GordianKeySetSpec> supportedKeySetSpecs() {
+        return this::validKeySetSpec;
     }
 
     /**
      * check valid keySet symKeyType.
      * @param pKeyType the symKeyType
+     * @param pKeyLen the keyLength
      * @return true/false
      */
-    private boolean validKeySetSymKeyType(final GordianSymKeyType pKeyType) {
+    private boolean validKeySetSymKeyType(final GordianSymKeyType pKeyType,
+                                          final GordianLength pKeyLen) {
         final GordianCoreFactory myFactory = getFactory();
         final GordianCoreCipherFactory myCiphers = (GordianCoreCipherFactory) myFactory.getCipherFactory();
         return myCiphers.validSymKeyType(pKeyType)
-                && GordianCoreCipherFactory.validStdBlockSymKeyTypeForKeyLength(pKeyType, myFactory.getKeyLength());
+                && GordianCoreCipherFactory.validStdBlockSymKeyTypeForKeyLength(pKeyType, pKeyLen);
     }
 
+    /**
+     * Check the keySetSpec.
+     * @param pSpec the keySetSpec
+     * @throws OceanusException on error
+     */
+    public void checkKeySetSpec(final GordianKeySetSpec pSpec) throws OceanusException {
+        /* Check validity of KeySet */
+        if (!supportedKeySetSpecs().test(pSpec)) {
+            throw new GordianDataException(GordianCoreFactory.getInvalidText(pSpec));
+        }
+    }
+
+    /**
+     * Check the keySetHashSpec.
+     * @param pSpec the keySetSpec
+     * @throws OceanusException on error
+     */
+    public void checkKeySetHashSpec(final GordianKeySetHashSpec pSpec) throws OceanusException {
+        /* Check validity of KeySet */
+        if (!validKeySetHashSpec(pSpec)) {
+            throw new GordianDataException(GordianCoreFactory.getInvalidText(pSpec));
+        }
+    }
+
+    /**
+     * check valid keySetSpec.
+     * @param pSpec the keySetSpec
+     * @return true/false
+     */
+    private boolean validKeySetSpec(final GordianKeySetSpec pSpec) {
+        /* Check for invalid spec */
+        if (pSpec == null || !pSpec.isValid()) {
+            return false;
+        }
+
+        /* Check on length */
+        switch (pSpec.getKeyLength()) {
+            case LEN_128:
+            case LEN_192:
+            case LEN_256:
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    /**
+     * check valid keySetHashSpec.
+     * @param pSpec the keySetHashSpec
+     * @return true/false
+     */
+    private boolean validKeySetHashSpec(final GordianKeySetHashSpec pSpec) {
+        /* Check for invalid spec */
+        if (pSpec == null || !pSpec.isValid()) {
+            return false;
+        }
+
+        /* Check on length */
+        return validKeySetSpec(pSpec.getKeySetSpec());
+    }
 }

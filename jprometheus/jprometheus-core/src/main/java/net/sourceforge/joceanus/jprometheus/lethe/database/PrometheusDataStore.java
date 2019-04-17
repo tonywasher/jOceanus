@@ -135,7 +135,6 @@ public abstract class PrometheusDataStore<T extends DataSet<T, ?>> {
         theTables = new ArrayList<>();
         theTables.add(new PrometheusTableControlKeys(this));
         theTables.add(new PrometheusTableDataKeySet(this));
-        theTables.add(new PrometheusTableDataKeys(this));
         theTables.add(new PrometheusTableControlData(this));
     }
 

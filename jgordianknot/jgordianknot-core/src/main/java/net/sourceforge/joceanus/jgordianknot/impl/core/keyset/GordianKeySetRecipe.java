@@ -21,6 +21,7 @@ import java.security.SecureRandom;
 import net.sourceforge.joceanus.jgordianknot.api.base.GordianLength;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianSymKeyType;
 import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigestType;
+import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetSpec;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianCoreFactory;
 import net.sourceforge.joceanus.jtethys.TethysDataConverter;
 
@@ -66,12 +67,14 @@ public final class GordianKeySetRecipe {
     /**
      * Constructor for new recipe.
      * @param pFactory the factory
+     * @param pSpec the keySetSpec
      * @param pAEAD true/false is AEAD in use?
      */
     private GordianKeySetRecipe(final GordianCoreFactory pFactory,
+                                final GordianKeySetSpec pSpec,
                                 final boolean pAEAD) {
         /* Allocate new set of parameters */
-        theParams = new GordianKeySetParameters(pFactory, pAEAD);
+        theParams = new GordianKeySetParameters(pFactory, pSpec, pAEAD);
         theRecipe = theParams.getRecipe();
         forAEAD = pAEAD;
         theBytes = null;
@@ -80,10 +83,12 @@ public final class GordianKeySetRecipe {
     /**
      * Constructor for external form parse.
      * @param pFactory the factory
+     * @param pSpec the keySetSpec
      * @param pExternal the external form
      * @param pAEAD true/false is AEAD in use?
      */
     private GordianKeySetRecipe(final GordianCoreFactory pFactory,
+                                final GordianKeySetSpec pSpec,
                                 final byte[] pExternal,
                                 final boolean pAEAD) {
         /* Determine data length */
@@ -113,31 +118,35 @@ public final class GordianKeySetRecipe {
         }
 
         /* Allocate new set of parameters */
-        theParams = new GordianKeySetParameters(pFactory, theRecipe, mySalt, myMac);
+        theParams = new GordianKeySetParameters(pFactory, pSpec, theRecipe, mySalt, myMac);
     }
 
     /**
      * Create a new recipe.
      * @param pFactory the factory
+     * @param pSpec the keySetSpec
      * @param pAEAD true/false is AEAD in use?
      * @return the recipe
      */
     static GordianKeySetRecipe newRecipe(final GordianCoreFactory pFactory,
+                                         final GordianKeySetSpec pSpec,
                                          final boolean pAEAD) {
-        return new GordianKeySetRecipe(pFactory, pAEAD);
+        return new GordianKeySetRecipe(pFactory, pSpec, pAEAD);
     }
 
     /**
      * parse the encryption recipe.
      * @param pFactory the factory
+     * @param pSpec the keySetSpec
      * @param pExternal the external form
      * @param pAEAD true/false is AEAD in use?
      * @return the recipe
      */
     static GordianKeySetRecipe parseRecipe(final GordianCoreFactory pFactory,
+                                           final GordianKeySetSpec pSpec,
                                            final byte[] pExternal,
                                            final boolean pAEAD) {
-        return new GordianKeySetRecipe(pFactory, pExternal, pAEAD);
+        return new GordianKeySetRecipe(pFactory, pSpec, pExternal, pAEAD);
     }
 
     /**
@@ -222,9 +231,11 @@ public final class GordianKeySetRecipe {
         /**
          * Construct the parameters from random.
          * @param pFactory the factory
+         * @param pSpec the keySetSpec
          * @param pAEAD true/false is AEAD in use?
          */
         GordianKeySetParameters(final GordianCoreFactory pFactory,
+                                final GordianKeySetSpec pSpec,
                                 final boolean pAEAD) {
             /* Obtain Id manager and random */
             final GordianCoreKeySetFactory myFactory = (GordianCoreKeySetFactory) pFactory.getKeySetFactory();
@@ -241,14 +252,14 @@ public final class GordianKeySetRecipe {
             theInitVector = myPersonal.adjustIV(theSalt);
 
             /* Allocate the arrays */
-            theSymKeyTypes = new GordianSymKeyType[pFactory.getNumCipherSteps()];
+            theSymKeyTypes = new GordianSymKeyType[pSpec.getCipherSteps()];
             theDigestType = pAEAD ? new GordianDigestType[1] : null;
 
             /* Generate recipe and derive parameters */
             int mySeed = myRandom.nextInt();
             theRecipe = TethysDataConverter.integerToByteArray(mySeed);
             mySeed = myPersonal.convertRecipe(mySeed);
-            mySeed = myManager.deriveKeySetSymKeyTypesFromSeed(mySeed, theSymKeyTypes);
+            mySeed = myManager.deriveKeySetSymKeyTypesFromSeed(pSpec.getKeyLength(), mySeed, theSymKeyTypes);
             if (pAEAD) {
                 myManager.deriveKeyHashDigestTypesFromSeed(mySeed, theDigestType);
             }
@@ -257,11 +268,13 @@ public final class GordianKeySetRecipe {
         /**
          * Construct the parameters from recipe.
          * @param pFactory the factory
+         * @param pSpec the keySetSpec
          * @param pRecipe the recipe bytes
          * @param pSalt the salt
          * @param pMac the Mac
          */
         GordianKeySetParameters(final GordianCoreFactory pFactory,
+                                final GordianKeySetSpec pSpec,
                                 final byte[] pRecipe,
                                 final byte[] pSalt,
                                 final byte[] pMac) {
@@ -280,13 +293,13 @@ public final class GordianKeySetRecipe {
             theInitVector = myPersonal.adjustIV(theSalt);
 
             /* Allocate the arrays */
-            theSymKeyTypes = new GordianSymKeyType[pFactory.getNumCipherSteps()];
+            theSymKeyTypes = new GordianSymKeyType[pSpec.getCipherSteps()];
             theDigestType = forAEAD ? new GordianDigestType[1] : null;
 
             /* derive parameters */
             int mySeed = TethysDataConverter.byteArrayToInteger(theRecipe);
             mySeed = myPersonal.convertRecipe(mySeed);
-            mySeed = myManager.deriveKeySetSymKeyTypesFromSeed(mySeed, theSymKeyTypes);
+            mySeed = myManager.deriveKeySetSymKeyTypesFromSeed(pSpec.getKeyLength(), mySeed, theSymKeyTypes);
             if (forAEAD) {
                 myManager.deriveKeyHashDigestTypesFromSeed(mySeed, theDigestType);
             }

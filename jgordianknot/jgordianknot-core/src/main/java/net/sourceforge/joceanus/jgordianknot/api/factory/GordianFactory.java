@@ -16,7 +16,6 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jgordianknot.api.factory;
 
-import net.sourceforge.joceanus.jgordianknot.api.base.GordianLength;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianCipherFactory;
 import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigestFactory;
 import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetFactory;
@@ -33,12 +32,6 @@ public interface GordianFactory {
      * @return the factory type
      */
     GordianFactoryType getFactoryType();
-
-    /**
-     * Obtain the keyLength.
-     * @return the keyLength in bits
-     */
-    GordianLength getKeyLength();
 
     /**
      * Obtain the Digest Factory.

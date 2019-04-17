@@ -48,9 +48,12 @@ import org.bouncycastle.crypto.util.SubjectPublicKeyInfoFactory;
 import net.sourceforge.joceanus.jgordianknot.api.agree.GordianAgreementSpec;
 import net.sourceforge.joceanus.jgordianknot.api.asym.GordianAsymKeySpec;
 import net.sourceforge.joceanus.jgordianknot.api.asym.GordianAsymKeyType;
+import net.sourceforge.joceanus.jgordianknot.api.factory.GordianAsymFactory;
 import net.sourceforge.joceanus.jgordianknot.api.key.GordianKeyPair;
+import net.sourceforge.joceanus.jgordianknot.api.key.GordianKeyPairGenerator;
 import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyKeyPair.BouncyPrivateKey;
 import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyKeyPair.BouncyPublicKey;
+import net.sourceforge.joceanus.jgordianknot.impl.core.agree.GordianCoreAnonymousAgreement;
 import net.sourceforge.joceanus.jgordianknot.impl.core.agree.GordianCoreBasicAgreement;
 import net.sourceforge.joceanus.jgordianknot.impl.core.agree.GordianCoreEphemeralAgreement;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianCryptoException;
@@ -371,6 +374,82 @@ public final class BouncyXDHAsymKey {
             } catch (IOException e) {
                 throw new GordianCryptoException(ERROR_PARSE, e);
             }
+        }
+    }
+
+    /**
+     * XDH Anonymous.
+     */
+    public static class BouncyXDHAnonymousAgreement
+            extends GordianCoreAnonymousAgreement {
+        /**
+         * The agreement.
+         */
+        private final RawAgreement theAgreement;
+
+        /**
+         * Constructor.
+         * @param pFactory the security factory
+         * @param pSpec the agreementSpec
+         */
+        BouncyXDHAnonymousAgreement(final BouncyFactory pFactory,
+                                    final GordianAgreementSpec pSpec) {
+            /* Initialise underlying class */
+            super(pFactory, pSpec);
+
+            /* Create the agreement */
+            theAgreement = GordianAsymKeyType.X25519.equals(pSpec.getAsymKeyType())
+                           ? new X25519Agreement()
+                           : new X448Agreement();
+            enableDerivation();
+        }
+
+        @Override
+        public byte[] initiateAgreement(final GordianKeyPair pTarget) throws OceanusException {
+            /* Check keyPair */
+            checkKeyPair(pTarget);
+
+            /* Create an ephemeral keyPair */
+            final GordianAsymFactory myAsym = getFactory().getAsymmetricFactory();
+            final GordianKeyPairGenerator myGenerator = myAsym.getKeyPairGenerator(pTarget.getKeySpec());
+            final GordianKeyPair myPair = myGenerator.generateKeyPair();
+            final BouncyPrivateKey myPrivate = (BouncyPrivateKey) getPrivateKey(myPair);
+
+            /* Derive the secret */
+            theAgreement.init(myPrivate.getPrivateKey());
+            final BouncyPublicKey myTarget = (BouncyPublicKey) getPublicKey(pTarget);
+            final byte[] mySecret = new byte[theAgreement.getAgreementSize()];
+            theAgreement.calculateAgreement(myTarget.getPublicKey(), mySecret, 0);
+            storeSecret(mySecret);
+
+            /* Create the message  */
+            final X509EncodedKeySpec myKeySpec = myGenerator.getX509Encoding(myPair);
+            final byte[] myKeyBytes = myKeySpec.getEncoded();
+            return createMessage(myKeyBytes);
+        }
+
+        @Override
+        public void acceptAgreement(final GordianKeyPair pSelf,
+                                    final byte[] pMessage) throws OceanusException {
+            /* Check keyPair */
+            checkKeyPair(pSelf);
+
+            /* Obtain source keySpec */
+            final byte[] myKeyBytes = parseMessage(pMessage);
+            final BouncyPrivateKey myPrivate = (BouncyPrivateKey) getPrivateKey(pSelf);
+            final X509EncodedKeySpec myKeySpec = new X509EncodedKeySpec(myKeyBytes);
+            final GordianAsymFactory myAsym = getFactory().getAsymmetricFactory();
+            final GordianKeyPairGenerator myGenerator = myAsym.getKeyPairGenerator(pSelf.getKeySpec());
+
+            /* Derive partner key */
+            final GordianKeyPair myPartner = myGenerator.derivePublicOnlyKeyPair(myKeySpec);
+            final BouncyPublicKey myPublic = (BouncyPublicKey) getPublicKey(myPartner);
+
+            /* Derive the secret */
+            theAgreement.init(myPrivate.getPrivateKey());
+            final byte[] mySecret = new byte[theAgreement.getAgreementSize()];
+            theAgreement.calculateAgreement(myPublic.getPublicKey(), mySecret, 0);
+            storeSecret(mySecret);
         }
     }
 

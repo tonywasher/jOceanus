@@ -18,7 +18,7 @@ package net.sourceforge.joceanus.jgordianknot.api.keyset;
 
 import java.security.spec.X509EncodedKeySpec;
 
-import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianSymKeySpec;
+import net.sourceforge.joceanus.jgordianknot.api.base.GordianLength;
 import net.sourceforge.joceanus.jgordianknot.api.key.GordianKey;
 import net.sourceforge.joceanus.jgordianknot.api.base.GordianKeySpec;
 import net.sourceforge.joceanus.jgordianknot.api.key.GordianKeyPair;
@@ -28,6 +28,12 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
  * keySet API.
  */
 public interface GordianKeySet {
+    /**
+     * Obtain the keySetSpec.
+     * @return the keySetSpec
+     */
+    GordianKeySetSpec getKeySetSpec();
+
     /**
      * Encrypt bytes.
      * @param pBytesToEncrypt the bytes to encrypt
@@ -123,9 +129,10 @@ public interface GordianKeySet {
 
     /**
      * Obtain wrapped size of a key.
+     * @param pKeyLen the keyLength
      * @return the wrapped length
      */
-    int getKeyWrapLength();
+    int getKeyWrapLength(GordianLength pKeyLen);
 
     /**
      * Obtain wrapped size of a byte array of the given length.
@@ -145,16 +152,8 @@ public interface GordianKeySet {
     /**
      * Obtain the keySet wrap length.
      * @return the length
-     * @throws OceanusException on error
      */
-    int getKeySetWrapLength() throws OceanusException;
-
-    /**
-     * Declare symmetricKey.
-     * @param pKey the key
-     * @throws OceanusException on error
-     */
-    void declareSymKey(GordianKey<GordianSymKeySpec> pKey) throws OceanusException;
+    int getKeySetWrapLength();
 
     /**
      * Is the keySet in AEAD mode?

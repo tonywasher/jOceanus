@@ -619,11 +619,6 @@ public class TransactionTag
         protected TagDataMap allocateDataMap() {
             return new TagDataMap();
         }
-
-        @Override
-        public void resolveDataSetLinks() throws OceanusException {
-            /* We have no links so disable this */
-        }
     }
 
     /**

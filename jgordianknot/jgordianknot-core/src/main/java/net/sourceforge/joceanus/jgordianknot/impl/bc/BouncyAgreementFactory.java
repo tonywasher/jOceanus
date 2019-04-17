@@ -19,9 +19,10 @@ package net.sourceforge.joceanus.jgordianknot.impl.bc;
 import net.sourceforge.joceanus.jgordianknot.api.agree.GordianAgreement;
 import net.sourceforge.joceanus.jgordianknot.api.agree.GordianAgreementSpec;
 import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyDHAsymKey.BouncyDHBasicAgreement;
-import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyDHAsymKey.BouncyDHEncapsulationAgreement;
+import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyDHAsymKey.BouncyDHAnonymousAgreement;
 import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyDHAsymKey.BouncyDHMQVAgreement;
 import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyDHAsymKey.BouncyDHUnifiedAgreement;
+import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyEllipticAsymKey.BouncyECAnonymousAgreement;
 import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyEllipticAsymKey.BouncyECBasicAgreement;
 import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyEllipticAsymKey.BouncyECIESAgreement;
 import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyEllipticAsymKey.BouncyECMQVAgreement;
@@ -29,6 +30,7 @@ import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyEllipticAsymKey.Bounc
 import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyEllipticAsymKey.BouncyECUnifiedAgreement;
 import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyNewHopeAsymKey.BouncyNewHopeAgreement;
 import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyRSAAsymKey.BouncyRSAEncapsulationAgreement;
+import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyXDHAsymKey.BouncyXDHAnonymousAgreement;
 import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyXDHAsymKey.BouncyXDHBasicAgreement;
 import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyXDHAsymKey.BouncyXDHUnifiedAgreement;
 import net.sourceforge.joceanus.jgordianknot.impl.core.agree.GordianCoreAgreementFactory;
@@ -103,6 +105,8 @@ public class BouncyAgreementFactory
         switch (pSpec.getAgreementType()) {
             case KEM:
                 return new BouncyECIESAgreement(getFactory(), pSpec);
+            case ANON:
+                return new BouncyECAnonymousAgreement(getFactory(), pSpec);
             case BASIC:
                 return new BouncyECBasicAgreement(getFactory(), pSpec);
             case MQV:
@@ -125,8 +129,8 @@ public class BouncyAgreementFactory
      */
     private GordianAgreement getBCDHAgreement(final GordianAgreementSpec pSpec) throws OceanusException {
         switch (pSpec.getAgreementType()) {
-            case KEM:
-                return new BouncyDHEncapsulationAgreement(getFactory(), pSpec);
+            case ANON:
+                return new BouncyDHAnonymousAgreement(getFactory(), pSpec);
             case BASIC:
                 return new BouncyDHBasicAgreement(getFactory(), pSpec);
             case MQV:
@@ -147,6 +151,8 @@ public class BouncyAgreementFactory
      */
     private GordianAgreement getBCXDHAgreement(final GordianAgreementSpec pSpec) throws OceanusException {
         switch (pSpec.getAgreementType()) {
+            case ANON:
+                return new BouncyXDHAnonymousAgreement(getFactory(), pSpec);
             case BASIC:
                 return new BouncyXDHBasicAgreement(getFactory(), pSpec);
             case UNIFIED:
@@ -155,5 +161,4 @@ public class BouncyAgreementFactory
                 throw new GordianDataException(BouncyFactory.getInvalidText(pSpec));
         }
     }
-
 }

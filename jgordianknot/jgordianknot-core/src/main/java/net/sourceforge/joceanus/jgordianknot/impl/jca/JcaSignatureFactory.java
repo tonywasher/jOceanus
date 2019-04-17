@@ -153,6 +153,7 @@ public class JcaSignatureFactory
             case ED448:
                 return GordianSignatureType.PURE.equals(pSpec.getSignatureType());
             case ED25519:
+                return GordianSignatureType.NATIVE.equals(pSpec.getSignatureType());
             case DIFFIEHELLMAN:
             case NEWHOPE:
             case MCELIECE:

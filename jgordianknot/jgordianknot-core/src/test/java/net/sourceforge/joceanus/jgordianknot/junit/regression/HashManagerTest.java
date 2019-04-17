@@ -32,13 +32,14 @@ import net.sourceforge.joceanus.jgordianknot.api.factory.GordianParameters;
 import net.sourceforge.joceanus.jgordianknot.api.impl.GordianDialogController;
 import net.sourceforge.joceanus.jgordianknot.api.impl.GordianSecurityManager;
 import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetHash;
+import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetHashSpec;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianDataException;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
  * Security Test suite - Test SecurityManager functionality.
  */
-public class HashManager {
+public class HashManagerTest {
     /**
      * The List of password names.
      */
@@ -69,7 +70,7 @@ public class HashManager {
     };
 
     /**
-     * HashManager Dialog Controller.
+     * HashManagerTest Dialog Controller.
      */
     private static class DialogController
             implements GordianDialogController {
@@ -219,7 +220,8 @@ public class HashManager {
     public static void setUpHashes() throws OceanusException {
         /* Create the security manager */
         final GordianParameters myParams = new GordianParameters(GordianFactoryType.BC);
-        final GordianSecurityManager myManager = new GordianSecurityManager(myParams, new DialogController());
+        final GordianKeySetHashSpec mySpec = new GordianKeySetHashSpec();
+        final GordianSecurityManager myManager = new GordianSecurityManager(myParams, mySpec, new DialogController());
 
         /* For each NAME */
         for (int i = 0; i < NAMES.length; i++) {
@@ -245,8 +247,9 @@ public class HashManager {
     public void SecurityManagerTest() throws OceanusException {
         /* Create the security manager */
         final GordianParameters myParams = new GordianParameters(GordianFactoryType.BC);
+        final GordianKeySetHashSpec mySpec = new GordianKeySetHashSpec();
         final DialogController myController = new DialogController();
-        final GordianSecurityManager myManager = new GordianSecurityManager(myParams, myController);
+        final GordianSecurityManager myManager = new GordianSecurityManager(myParams, mySpec, myController);
 
         /* Loop through the hashes in the list */
         for (HashIndex myHash : HASHES) {

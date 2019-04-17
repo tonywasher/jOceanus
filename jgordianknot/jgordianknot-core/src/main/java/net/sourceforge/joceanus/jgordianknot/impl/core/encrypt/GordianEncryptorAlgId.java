@@ -22,16 +22,16 @@ import java.util.Map;
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
 import org.bouncycastle.asn1.gm.GMObjectIdentifiers;
 import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
+import org.bouncycastle.pqc.asn1.PQCObjectIdentifiers;
 
 import net.sourceforge.joceanus.jgordianknot.api.asym.GordianAsymKeyType;
 import net.sourceforge.joceanus.jgordianknot.api.asym.GordianMcElieceKeySpec.GordianMcElieceEncryptionType;
+import net.sourceforge.joceanus.jgordianknot.api.base.GordianLength;
 import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigestSpec;
 import net.sourceforge.joceanus.jgordianknot.api.encrypt.GordianEncryptorFactory;
 import net.sourceforge.joceanus.jgordianknot.api.encrypt.GordianEncryptorSpec;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianCoreFactory;
-import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianDataException;
 import net.sourceforge.joceanus.jgordianknot.impl.core.digest.GordianDigestAlgId;
-import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
  * Mappings from EncodedId to EncryptorSpec.
@@ -105,6 +105,17 @@ public class GordianEncryptorAlgId {
      */
     private void addWellKnownEncryptors() {
         addToMaps(GordianEncryptorSpec.sm2(GordianDigestSpec.sm3()), new AlgorithmIdentifier(GMObjectIdentifiers.sm2encrypt_with_sm3));
+        addToMaps(GordianEncryptorSpec.sm2(GordianDigestSpec.sha2(GordianLength.LEN_224)), new AlgorithmIdentifier(GMObjectIdentifiers.sm2encrypt_with_sha224));
+        addToMaps(GordianEncryptorSpec.sm2(GordianDigestSpec.sha2(GordianLength.LEN_256)), new AlgorithmIdentifier(GMObjectIdentifiers.sm2encrypt_with_sha256));
+        addToMaps(GordianEncryptorSpec.sm2(GordianDigestSpec.sha2(GordianLength.LEN_384)), new AlgorithmIdentifier(GMObjectIdentifiers.sm2encrypt_with_sha384));
+        addToMaps(GordianEncryptorSpec.sm2(GordianDigestSpec.sha2(GordianLength.LEN_512)), new AlgorithmIdentifier(GMObjectIdentifiers.sm2encrypt_with_sha512));
+        addToMaps(GordianEncryptorSpec.sm2(GordianDigestSpec.whirlpool()), new AlgorithmIdentifier(GMObjectIdentifiers.sm2encrypt_with_whirlpool));
+        addToMaps(GordianEncryptorSpec.sm2(GordianDigestSpec.blake(GordianLength.LEN_256)), new AlgorithmIdentifier(GMObjectIdentifiers.sm2encrypt_with_blake2s256));
+        addToMaps(GordianEncryptorSpec.sm2(GordianDigestSpec.blake(GordianLength.LEN_512)), new AlgorithmIdentifier(GMObjectIdentifiers.sm2encrypt_with_blake2b512));
+        addToMaps(GordianEncryptorSpec.mcEliece(GordianMcElieceEncryptionType.STANDARD), new AlgorithmIdentifier(PQCObjectIdentifiers.mcEliece));
+        addToMaps(GordianEncryptorSpec.mcEliece(GordianMcElieceEncryptionType.FUJISAKI), new AlgorithmIdentifier(PQCObjectIdentifiers.mcElieceFujisaki));
+        addToMaps(GordianEncryptorSpec.mcEliece(GordianMcElieceEncryptionType.KOBARAIMAI), new AlgorithmIdentifier(PQCObjectIdentifiers.mcElieceKobara_Imai));
+        addToMaps(GordianEncryptorSpec.mcEliece(GordianMcElieceEncryptionType.POINTCHEVAL), new AlgorithmIdentifier(PQCObjectIdentifiers.mcEliecePointcheval));
     }
 
     /**

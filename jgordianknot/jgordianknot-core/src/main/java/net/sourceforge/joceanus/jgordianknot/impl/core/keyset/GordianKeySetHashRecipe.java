@@ -16,12 +16,16 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jgordianknot.impl.core.keyset;
 
+import java.io.IOException;
 import java.security.SecureRandom;
 import java.util.Arrays;
 
 import net.sourceforge.joceanus.jgordianknot.api.base.GordianLength;
 import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigestType;
+import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetHashSpec;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianCoreFactory;
+import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianIOException;
+import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.TethysDataConverter;
 
 /**
@@ -54,6 +58,11 @@ public final class GordianKeySetHashRecipe {
     private static final int HASH_MARGIN = 4;
 
     /**
+     * The KeySetHashSpec.
+     */
+    private final GordianKeySetHashSpec theSpec;
+
+    /**
      * The Recipe.
      */
     private final byte[] theRecipe;
@@ -81,8 +90,10 @@ public final class GordianKeySetHashRecipe {
     /**
      * Constructor for random choices.
      * @param pFactory the factory
+     * @param pSpec the keySetHashSpec
      */
-    GordianKeySetHashRecipe(final GordianCoreFactory pFactory) {
+    GordianKeySetHashRecipe(final GordianCoreFactory pFactory,
+                            final GordianKeySetHashSpec pSpec) {
         /* Access the secureRandom */
         final SecureRandom myRandom = pFactory.getRandomSource().getRandom();
 
@@ -98,6 +109,7 @@ public final class GordianKeySetHashRecipe {
         /* Allocate new set of parameters */
         theParams = new GordianHashParameters(pFactory);
         theRecipe = theParams.getRecipe();
+        theSpec = pSpec;
         theHash = null;
     }
 
@@ -106,12 +118,18 @@ public final class GordianKeySetHashRecipe {
      * @param pFactory the factory
      * @param pPassLength the password length
      * @param pExternal the external form
+     * @throws OceanusException on error
      */
     GordianKeySetHashRecipe(final GordianCoreFactory pFactory,
                             final int pPassLength,
-                            final byte[] pExternal) {
+                            final byte[] pExternal) throws OceanusException  {
+        /* Parse the ASN1 external form */
+        final GordianKeySetHashASN1 myASN1 = GordianKeySetHashASN1.getInstance(pExternal);
+        final byte[] myExternal = myASN1.getHashBytes();
+        theSpec = myASN1.getSpec();
+
         /* Determine hash length */
-        final int myLen = pExternal.length;
+        final int myLen = myExternal.length;
         final int myHashLen = myLen
                 - RECIPELEN
                 - SALTLEN;
@@ -127,11 +145,11 @@ public final class GordianKeySetHashRecipe {
                 - HASH_MARGIN);
 
         /* Copy Data into buffers */
-        System.arraycopy(pExternal, 0, theHash, 0, myOffSet);
-        System.arraycopy(pExternal, myOffSet, theRecipe, 0, RECIPELEN);
-        System.arraycopy(pExternal, myOffSet
+        System.arraycopy(myExternal, 0, theHash, 0, myOffSet);
+        System.arraycopy(myExternal, myOffSet, theRecipe, 0, RECIPELEN);
+        System.arraycopy(myExternal, myOffSet
                 + RECIPELEN, theSalt, 0, SALTLEN);
-        System.arraycopy(pExternal, myOffSet
+        System.arraycopy(myExternal, myOffSet
                 + RECIPELEN
                 + SALTLEN, theHash, myOffSet, myHashLen
                 - myOffSet);
@@ -143,6 +161,14 @@ public final class GordianKeySetHashRecipe {
 
         /* Allocate new set of parameters */
         theParams = new GordianHashParameters(pFactory, theRecipe);
+    }
+
+    /**
+     * Obtain the Spec.
+     * @return the spec
+     */
+    GordianKeySetHashSpec getSpec() {
+        return theSpec;
     }
 
     /**
@@ -210,33 +236,42 @@ public final class GordianKeySetHashRecipe {
      * @param pPassLength the password length
      * @param pHash the calculated hash
      * @return the external form
+     * @throws OceanusException on error
      */
     byte[] buildExternal(final int pPassLength,
-                         final byte[] pHash) {
-        /* Allocate the new buffer */
-        final int myHashLen = pHash.length;
-        final int myLen = RECIPELEN
-                + SALTLEN
-                + myHashLen;
-        final byte[] myBuffer = new byte[myLen];
+                         final byte[] pHash) throws OceanusException {
+        /* Protect against exceptions */
+        try {
+            /* Allocate the new buffer */
+            final int myHashLen = pHash.length;
+            final int myLen = RECIPELEN
+                    + SALTLEN
+                    + myHashLen;
+            final byte[] myBuffer = new byte[myLen];
 
-        /* Determine offset position */
-        int myOffSet = Math.max(pPassLength, HASH_MARGIN);
-        myOffSet = Math.min(myOffSet, myHashLen
-                - HASH_MARGIN);
+            /* Determine offset position */
+            int myOffSet = Math.max(pPassLength, HASH_MARGIN);
+            myOffSet = Math.min(myOffSet, myHashLen
+                    - HASH_MARGIN);
 
-        /* Copy Data into buffer */
-        System.arraycopy(pHash, 0, myBuffer, 0, myOffSet);
-        System.arraycopy(theRecipe, 0, myBuffer, myOffSet, RECIPELEN);
-        System.arraycopy(theSalt, 0, myBuffer, myOffSet
-                + RECIPELEN, SALTLEN);
-        System.arraycopy(pHash, myOffSet, myBuffer, myOffSet
-                + RECIPELEN
-                + SALTLEN, myHashLen
-                - myOffSet);
+            /* Copy Data into buffer */
+            System.arraycopy(pHash, 0, myBuffer, 0, myOffSet);
+            System.arraycopy(theRecipe, 0, myBuffer, myOffSet, RECIPELEN);
+            System.arraycopy(theSalt, 0, myBuffer, myOffSet
+                    + RECIPELEN, SALTLEN);
+            System.arraycopy(pHash, myOffSet, myBuffer, myOffSet
+                    + RECIPELEN
+                    + SALTLEN, myHashLen
+                    - myOffSet);
 
-        /* return the external format */
-        return myBuffer;
+            /* Build the ASN1 form */
+            final GordianKeySetHashASN1 myASN1 = new GordianKeySetHashASN1(theSpec, myBuffer);
+            return myASN1.getEncoded();
+
+            /* Handle exceptions */
+        } catch (IOException e) {
+            throw new GordianIOException("Failed to build ASN!", e);
+        }
     }
 
     /**

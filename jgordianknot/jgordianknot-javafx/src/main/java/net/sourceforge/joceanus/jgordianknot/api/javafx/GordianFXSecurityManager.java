@@ -19,6 +19,7 @@ package net.sourceforge.joceanus.jgordianknot.api.javafx;
 import net.sourceforge.joceanus.jgordianknot.api.factory.GordianParameters;
 import net.sourceforge.joceanus.jgordianknot.api.impl.GordianDialogController;
 import net.sourceforge.joceanus.jgordianknot.api.impl.GordianSecurityManager;
+import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetHashSpec;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXGuiFactory;
 
@@ -30,40 +31,16 @@ import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXGuiFactory;
 public class GordianFXSecurityManager
         extends GordianSecurityManager {
     /**
-     * Constructor for default values.
-     * @throws OceanusException on error
-     */
-    public GordianFXSecurityManager() throws OceanusException {
-        this(new TethysFXGuiFactory());
-    }
-
-    /**
-     * Constructor.
-     * @param pFactory the GUI Factory
-     * @throws OceanusException on error
-     */
-    public GordianFXSecurityManager(final TethysFXGuiFactory pFactory) throws OceanusException {
-        this(pFactory, new GordianParameters());
-    }
-
-    /**
-     * Constructor.
-     * @param pParameters the Security parameters
-     * @throws OceanusException on error
-     */
-    public GordianFXSecurityManager(final GordianParameters pParameters) throws OceanusException {
-        this(new TethysFXGuiFactory(), pParameters);
-    }
-
-    /**
      * Constructor.
      * @param pFactory the GUI Factory
      * @param pParameters the Security parameters
+     * @param pKeySetSpec the keySetSpec
      * @throws OceanusException on error
      */
     public GordianFXSecurityManager(final TethysFXGuiFactory pFactory,
-                                    final GordianParameters pParameters) throws OceanusException {
-        super(pParameters, new GordianFXDialogControl(pFactory));
+                                    final GordianParameters pParameters,
+                                    final GordianKeySetHashSpec pKeySetSpec) throws OceanusException {
+        super(pParameters, pKeySetSpec, new GordianFXDialogControl(pFactory));
     }
 
     /**

@@ -22,7 +22,7 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
 /**
  * Encapsulation Agreement.
  */
-public interface GordianEncapsulationAgreement
+public interface GordianAnonymousAgreement
         extends GordianAgreement {
     /**
      * Initiate the agreement.

@@ -87,7 +87,7 @@ public abstract class GordianCoreCipher<T extends GordianKeySpec>
         theKeyType = theCipherSpec.getKeyType();
         theRandom = pFactory.getRandomSource();
         theFactory = pFactory;
-        theKeyLength = pFactory.getKeyLength();
+        theKeyLength = pCipherSpec.getKeyType().getKeyLength();
     }
 
     /**

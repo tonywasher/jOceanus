@@ -23,7 +23,7 @@ import net.sourceforge.joceanus.jgordianknot.api.base.GordianLength;
  * The StreamCipherSpec class.
  */
 public class GordianStreamCipherSpec
-        extends GordianCipherSpec<GordianStreamKeyType>
+        extends GordianCipherSpec<GordianStreamKeySpec>
         implements GordianIdSpec {
     /**
      * The Validity.
@@ -37,30 +37,30 @@ public class GordianStreamCipherSpec
 
     /**
      * Constructor.
-     * @param pKeyType the keyType
+     * @param pKeySpec the keySpec
      */
-    protected GordianStreamCipherSpec(final GordianStreamKeyType pKeyType) {
-        super(pKeyType);
+    GordianStreamCipherSpec(final GordianStreamKeySpec pKeySpec) {
+        super(pKeySpec);
         isValid = checkValidity();
     }
 
     /**
-     * Create a streamKey cipherSpec.
-     * @param pKeyType the keyType
+     * Create a streamCipherSpec.
+     * @param pKeySpec the keySpec
      * @return the cipherSpec
      */
-    public static GordianStreamCipherSpec stream(final GordianStreamKeyType pKeyType) {
-        return new GordianStreamCipherSpec(pKeyType);
+    public static GordianStreamCipherSpec stream(final GordianStreamKeySpec pKeySpec) {
+        return new GordianStreamCipherSpec(pKeySpec);
     }
 
     @Override
     public boolean needsIV() {
-        return getKeyType().getIVLength(GordianLength.LEN_128) > 0;
+        return getKeyType().needsIV();
     }
 
     @Override
     public int getIVLength(final GordianLength pKeyLen) {
-        return getKeyType().getIVLength(pKeyLen);
+        return getKeyType().getIVLength();
     }
 
     /**
@@ -76,7 +76,8 @@ public class GordianStreamCipherSpec
      * @return valid true/false
      */
     private boolean checkValidity() {
-        return getKeyType() != null;
+        return getKeyType() != null
+                && getKeyType().isValid();
     }
 
     @Override
@@ -95,5 +96,32 @@ public class GordianStreamCipherSpec
 
         /* return the name */
         return theName;
+    }
+
+    @Override
+    public boolean equals(final Object pThat) {
+        /* Handle the trivial cases */
+        if (this == pThat) {
+            return true;
+        }
+        if (pThat == null) {
+            return false;
+        }
+
+        /* Make sure that the object is a StreamCipherSpec */
+        if (pThat.getClass() != this.getClass()) {
+            return false;
+        }
+
+        /* Access the target StreamKeySpec */
+        final GordianStreamCipherSpec myThat = (GordianStreamCipherSpec) pThat;
+
+        /* Check KeyType */
+        return getKeyType().equals(myThat.getKeyType());
+    }
+
+    @Override
+    public int hashCode() {
+       return getKeyType().hashCode();
     }
 }

@@ -175,7 +175,6 @@ public abstract class PrometheusSheetWriter<T extends DataSet<T, ?>> {
         /* Add security details */
         theSheets.add(new PrometheusSheetControlKey(this));
         theSheets.add(new PrometheusSheetDataKeySet(this));
-        theSheets.add(new PrometheusSheetDataKey(this));
         theSheets.add(new PrometheusSheetControlData(this));
 
         /* register additional sheets */

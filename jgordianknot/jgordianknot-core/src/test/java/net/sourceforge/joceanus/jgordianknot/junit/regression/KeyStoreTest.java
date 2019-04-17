@@ -30,7 +30,9 @@ import org.junit.jupiter.api.Test;
 
 import net.sourceforge.joceanus.jgordianknot.api.asym.GordianAsymKeySpec;
 import net.sourceforge.joceanus.jgordianknot.api.asym.GordianDSAElliptic;
+import net.sourceforge.joceanus.jgordianknot.api.base.GordianLength;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianCipherFactory;
+import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianStreamKeySpec;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianStreamKeyType;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianSymKeySpec;
 import net.sourceforge.joceanus.jgordianknot.api.factory.GordianFactory;
@@ -42,6 +44,8 @@ import net.sourceforge.joceanus.jgordianknot.api.key.GordianKeyGenerator;
 import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySet;
 import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetFactory;
 import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetHash;
+import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetHashSpec;
+import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetSpec;
 import net.sourceforge.joceanus.jgordianknot.api.keystore.GordianKeyPairUsage;
 import net.sourceforge.joceanus.jgordianknot.api.keystore.GordianKeyPairUse;
 import net.sourceforge.joceanus.jgordianknot.api.keystore.GordianKeyStore;
@@ -87,9 +91,14 @@ public class KeyStoreTest {
      */
     @Test
     public void runSimpleTest() throws OceanusException {
+        /* Set up test parameters */
+        final GordianLength myKeyLen = GordianLength.LEN_256;
+        final GordianKeySetSpec myKeySetSpec = new GordianKeySetSpec(myKeyLen);
+        final GordianKeySetHashSpec myKeySetHashSpec = new GordianKeySetHashSpec(myKeySetSpec);
+
         /* Access keyStoreFactory and create a keyStore */
         final GordianKeyStoreFactory myFactory = FACTORY.getAsymmetricFactory().getKeyStoreFactory();
-        final GordianKeyStore myStore = myFactory.createKeyStore();
+        final GordianKeyStore myStore = myFactory.createKeyStore(myKeySetHashSpec);
 
         /* Create a root certificates */
         final GordianAsymKeySpec mySpec = GordianAsymKeySpec.ec(GordianDSAElliptic.SECT571K1);
@@ -131,35 +140,35 @@ public class KeyStoreTest {
 
         /* Create a keySetHash */
         final GordianKeySetFactory mySetFactory = FACTORY.getKeySetFactory();
-        final GordianKeySetHash myHash = mySetFactory.generateKeySetHash(DEF_PASSWORD);
+        final GordianKeySetHash myHash = mySetFactory.generateKeySetHash(myKeySetHashSpec, DEF_PASSWORD);
         myStore.setKeySetHash("HashDef", myHash);
         final GordianKeyStoreHash myHashRec = myStore.getKeySetHash("HashDef", DEF_PASSWORD);
         Assertions.assertEquals(myHash, myHashRec.getKeySetHash());
 
         /* Record the keySet */
-        final GordianKeySet myKeySet = mySetFactory.generateKeySet();
+        final GordianKeySet myKeySet = mySetFactory.generateKeySet(myKeySetSpec);
         myStore.setKeySet("KeySet", myKeySet, DEF_PASSWORD);
         final GordianKeyStoreSet mySetRec = myStore.getKeySet("KeySet", DEF_PASSWORD);
         Assertions.assertEquals(myKeySet, mySetRec.getKeySet());
 
         /* Create a symKey */
         final GordianCipherFactory myCipherFactory = FACTORY.getCipherFactory();
-        final GordianKeyGenerator<GordianSymKeySpec> mySymGenerator = myCipherFactory.getKeyGenerator(GordianSymKeySpec.aes());
+        final GordianKeyGenerator<GordianSymKeySpec> mySymGenerator = myCipherFactory.getKeyGenerator(GordianSymKeySpec.aes(myKeyLen));
         final GordianKey<GordianSymKeySpec> mySymKey = mySymGenerator.generateKey();
         myStore.setKey("symKey", mySymKey, DEF_PASSWORD);
         final GordianKeyStoreKey<?> mySymKeyRec = myStore.getKey("symKey", DEF_PASSWORD);
         Assertions.assertEquals(mySymKey, mySymKeyRec.getKey());
 
         /* Create a streamKey */
-        final GordianKeyGenerator<GordianStreamKeyType> myStreamGenerator = myCipherFactory.getKeyGenerator(GordianStreamKeyType.HC);
-        final GordianKey<GordianStreamKeyType> myStreamKey = myStreamGenerator.generateKey();
+        final GordianKeyGenerator<GordianStreamKeySpec> myStreamGenerator = myCipherFactory.getKeyGenerator(GordianStreamKeySpec.hc(myKeyLen));
+        final GordianKey<GordianStreamKeySpec> myStreamKey = myStreamGenerator.generateKey();
         myStore.setKey("streamKey", myStreamKey, DEF_PASSWORD);
         final GordianKeyStoreKey<?> myStreamKeyRec = myStore.getKey("streamKey", DEF_PASSWORD);
         Assertions.assertEquals(myStreamKey, myStreamKeyRec.getKey());
 
         /* Create a macKey */
         final GordianMacFactory myMacFactory = FACTORY.getMacFactory();
-        final GordianKeyGenerator<GordianMacSpec> myMacGenerator = myMacFactory.getKeyGenerator(GordianMacSpec.vmpcMac());
+        final GordianKeyGenerator<GordianMacSpec> myMacGenerator = myMacFactory.getKeyGenerator(GordianMacSpec.vmpcMac(myKeyLen));
         final GordianKey<GordianMacSpec> myMacKey = myMacGenerator.generateKey();
         myStore.setKey("macKey", myMacKey, DEF_PASSWORD);
         final GordianKeyStoreKey<?> myMacKeyRec = myStore.getKey("macKey", DEF_PASSWORD);

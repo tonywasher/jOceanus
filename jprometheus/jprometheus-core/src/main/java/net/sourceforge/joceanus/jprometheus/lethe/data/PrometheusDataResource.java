@@ -446,54 +446,14 @@ public enum PrometheusDataResource
     DATAKEYSET_CREATION("DataKeySet.CreationDate"),
 
     /**
-     * DataKeySet SymKeyMap.
-     */
-    DATAKEYSET_SYMKEYMAP("DataKeySet.SymKeyMap"),
-
-    /**
-     * DataKeySet StreamKeyMap.
-     */
-    DATAKEYSET_STREAMKEYMAP("DataKeySet.StreamKeyMap"),
-
-    /**
      * DataKeySet KeySet.
      */
     DATAKEYSET_KEYSET("DataKeySet.KeySet"),
 
     /**
-     * DataKey Name.
+     * DataKeySet KeySetDefinition.
      */
-    DATAKEY_NAME("DataKey.Name"),
-
-    /**
-     * DataKey List.
-     */
-    DATAKEY_LIST("DataKey.List"),
-
-    /**
-     * DataKey isSymKey.
-     */
-    DATAKEY_ISSYMKEY("DataKey.isSymKey"),
-
-    /**
-     * DataKey Type.
-     */
-    DATAKEY_TYPE("DataKey.Type"),
-
-    /**
-     * DataKey TypeId.
-     */
-    DATAKEY_TYPEID("DataKey.TypeId"),
-
-    /**
-     * DataKey Definition.
-     */
-    DATAKEY_DEF("DataKey.Definition"),
-
-    /**
-     * DataKey Key.
-     */
-    DATAKEY_KEY("DataKey.Key"),
+    DATAKEYSET_KEYSETDEF("DataKeySet.KeySetDef"),
 
     /**
      * ControlData Name.
@@ -615,7 +575,6 @@ public enum PrometheusDataResource
         final Map<CryptographyDataType, TethysBundleId> myMap = new EnumMap<>(CryptographyDataType.class);
         myMap.put(CryptographyDataType.CONTROLKEY, CONTROLKEY_NAME);
         myMap.put(CryptographyDataType.DATAKEYSET, DATAKEYSET_NAME);
-        myMap.put(CryptographyDataType.DATAKEY, DATAKEY_NAME);
         myMap.put(CryptographyDataType.CONTROLDATA, CONTROLDATA_NAME);
         return myMap;
     }
@@ -638,7 +597,6 @@ public enum PrometheusDataResource
         final Map<CryptographyDataType, TethysBundleId> myMap = new EnumMap<>(CryptographyDataType.class);
         myMap.put(CryptographyDataType.CONTROLKEY, CONTROLKEY_LIST);
         myMap.put(CryptographyDataType.DATAKEYSET, DATAKEYSET_LIST);
-        myMap.put(CryptographyDataType.DATAKEY, DATAKEY_LIST);
         myMap.put(CryptographyDataType.CONTROLDATA, CONTROLDATA_LIST);
         return myMap;
     }

@@ -96,10 +96,10 @@ import org.bouncycastle.crypto.patch.modes.KGCMXBlockCipher;
 
 import net.sourceforge.joceanus.jgordianknot.api.base.GordianLength;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianCipherMode;
+import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianStreamKeySpec;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianWrapper;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianPadding;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianStreamCipherSpec;
-import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianStreamKeyType;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianSymCipherSpec;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianSymKeySpec;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianSymKeyType;
@@ -226,18 +226,18 @@ public class BouncyCipherFactory
     /**
      * Create the BouncyCastle Stream Cipher.
      *
-     * @param pKeyType the keyType
+     * @param pKeySpec the keySpec
      * @return the Cipher
      * @throws OceanusException on error
      */
-    private StreamCipher getBCStreamCipher(final GordianStreamKeyType pKeyType) throws OceanusException {
-        switch (pKeyType) {
+    private StreamCipher getBCStreamCipher(final GordianStreamKeySpec pKeySpec) throws OceanusException {
+        switch (pKeySpec.getStreamKeyType()) {
             case HC:
-                return GordianLength.LEN_128 == getFactory().getKeyLength()
+                return GordianLength.LEN_128 == pKeySpec.getKeyLength()
                        ? new HC128Engine()
                        : new HC256Engine();
             case CHACHA:
-                return GordianLength.LEN_128 == getFactory().getKeyLength()
+                return GordianLength.LEN_128 == pKeySpec.getKeyLength()
                        ? new ChaChaEngine()
                        : new ChaCha7539Engine();
             case XCHACHA20:
@@ -261,11 +261,11 @@ public class BouncyCipherFactory
             case SNOW3G:
                 return new Snow3GEngine();
             case ZUC:
-                return GordianLength.LEN_128 == getFactory().getKeyLength()
+                return GordianLength.LEN_128 == pKeySpec.getKeyLength()
                        ? new Zuc128Engine()
                        : new Zuc256Engine();
             default:
-                throw new GordianDataException(GordianCoreFactory.getInvalidText(pKeyType));
+                throw new GordianDataException(GordianCoreFactory.getInvalidText(pKeySpec));
         }
     }
 

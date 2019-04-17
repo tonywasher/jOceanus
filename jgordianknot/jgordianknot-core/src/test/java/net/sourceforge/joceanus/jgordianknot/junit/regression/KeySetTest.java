@@ -25,6 +25,7 @@ import org.junit.jupiter.api.DynamicTest;
 import org.junit.jupiter.api.TestFactory;
 
 import net.sourceforge.joceanus.jgordianknot.api.base.GordianLength;
+import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianStreamKeySpec;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianStreamKeyType;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianSymKeySpec;
 import net.sourceforge.joceanus.jgordianknot.api.factory.GordianFactory;
@@ -36,8 +37,11 @@ import net.sourceforge.joceanus.jgordianknot.api.key.GordianKey;
 import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySet;
 import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetFactory;
 import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetHash;
+import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetHashSpec;
+import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetSpec;
 import net.sourceforge.joceanus.jgordianknot.api.mac.GordianMac;
 import net.sourceforge.joceanus.jgordianknot.api.mac.GordianMacSpec;
+import net.sourceforge.joceanus.jgordianknot.api.mac.GordianMacType;
 import net.sourceforge.joceanus.jgordianknot.api.random.GordianRandomFactory;
 import net.sourceforge.joceanus.jgordianknot.impl.core.keyset.GordianCoreKeySet;
 import net.sourceforge.joceanus.jtethys.OceanusException;
@@ -98,6 +102,11 @@ public class KeySetTest {
         private final boolean maxSteps;
 
         /**
+         * the KeySetSpec.
+         */
+        private final GordianKeySetHashSpec theSpec;
+
+        /**
          * The keyHash.
          */
         private final GordianKeySetHash theKeySetHash;
@@ -110,7 +119,7 @@ public class KeySetTest {
         /**
          * The streamKey.
          */
-        private final GordianKey<GordianStreamKeyType> theStreamKey;
+        private final GordianKey<GordianStreamKeySpec> theStreamKey;
 
         /**
          * The macKey.
@@ -128,21 +137,22 @@ public class KeySetTest {
                       final GordianFactoryType pType,
                       final boolean pMaxSteps) throws OceanusException {
             /* Create the factory */
-            final GordianParameters myParams = new GordianParameters(pKeyLen, pType);
-            myParams.setNumCipherSteps(pMaxSteps ? GordianParameters.MAXIMUM_CIPHER_STEPS
-                                                 : GordianParameters.MINIMUM_CIPHER_STEPS);
+            final GordianParameters myParams = new GordianParameters(pType);
+            final int myMaxSteps = pMaxSteps ? GordianKeySetSpec.MAXIMUM_CIPHER_STEPS
+                                             : GordianKeySetSpec.MINIMUM_CIPHER_STEPS;
             theFactory = GordianGenerator.createFactory(myParams);
+            theSpec = new GordianKeySetHashSpec(new GordianKeySetSpec(pKeyLen, myMaxSteps));
             maxSteps = pMaxSteps;
 
             /* Generate the hash */
             final GordianKeySetFactory myKeySets = theFactory.getKeySetFactory();
-            theKeySetHash = myKeySets.generateKeySetHash(DEF_PASSWORD.clone());
+            theKeySetHash = myKeySets.generateKeySetHash(theSpec, DEF_PASSWORD.clone());
 
             /* Initialise data */
             final GordianRandomFactory myRandoms = theFactory.getRandomFactory();
-            theSymKey = myRandoms.generateRandomSymKey();
-            theStreamKey = myRandoms.generateRandomStreamKey(false);
-            GordianMac myMac = myRandoms.generateRandomMac(false);
+            theSymKey = myRandoms.generateRandomSymKey(pKeyLen);
+            theStreamKey = myRandoms.generateRandomStreamKey(pKeyLen, false);
+            GordianMac myMac = myRandoms.generateRandomMac(pKeyLen, false);
             theMacKey = myMac.getKey();
         }
 
@@ -152,6 +162,14 @@ public class KeySetTest {
          */
         GordianFactory getFactory() {
             return theFactory;
+        }
+
+        /**
+         * Obtain the keySetHashSpec.
+         * @return the keySetHashSpec
+         */
+        GordianKeySetHashSpec getKeySetHashSpec() {
+            return theSpec;
         }
 
         /**
@@ -182,7 +200,7 @@ public class KeySetTest {
          * Obtain the streamKey.
          * @return the streamKey
          */
-        GordianKey<GordianStreamKeyType> getStreamKey() {
+        GordianKey<GordianStreamKeySpec> getStreamKey() {
             return theStreamKey;
         }
 
@@ -197,7 +215,7 @@ public class KeySetTest {
         @Override
         public String toString() {
             return theFactory.getFactoryType().toString()
-                    + "-" + theFactory.getKeyLength()
+                    + "-" + theSpec.getKeySetSpec().getKeyLength()
                     + (maxSteps ? "-Max" : "-Min");
         }
     }
@@ -261,10 +279,10 @@ public class KeySetTest {
         final GordianKeySet myKeySet = myHash.getKeySet();
 
         /* Check the keySets are the same */
-        Assertions.assertEquals(myKeySet, pKeySet.getKeySet(), "Failed to derive keySet");
+        Assertions.assertEquals(pKeySet.getKeySet(), myKeySet, "Failed to derive keySet");
 
         /* Check the keySet Hash is the correct length */
-        Assertions.assertEquals(myHash.getHash().length, GordianSecurityManager.getKeySetHashLen(), "Hash is incorrect length");
+        Assertions.assertEquals(GordianSecurityManager.getKeySetHashLen(), myHash.getHash().length, "Hash is incorrect length");
     }
 
     /**
@@ -319,32 +337,33 @@ public class KeySetTest {
         /* Access the keys */
         final GordianCoreKeySet myKeySet = (GordianCoreKeySet) pKeySet.getKeySet();
         final GordianKey<GordianSymKeySpec> mySymKey = pKeySet.getSymKey();
-        final GordianKey<GordianStreamKeyType> myStreamKey = pKeySet.getStreamKey();
+        final GordianKey<GordianStreamKeySpec> myStreamKey = pKeySet.getStreamKey();
         final GordianKey<GordianMacSpec> myMacKey = pKeySet.getMacKey();
+        final GordianLength myKeyLen = pKeySet.getKeySetHashSpec().getKeySetSpec().getKeyLength();
 
         /* Check wrap of symKey */
         final byte[] mySymSafe = myKeySet.secureKey(mySymKey);
         final GordianKey<GordianSymKeySpec> mySymResult = myKeySet.deriveKey(mySymSafe, mySymKey.getKeyType());
         Assertions.assertEquals(mySymKey, mySymResult, "Failed to wrap/unwrap symKey");
-        Assertions.assertEquals(myKeySet.getKeyWrapLength(), mySymSafe.length, "Incorrect wrapped length");
+        Assertions.assertEquals(myKeySet.getKeyWrapLength(myKeyLen), mySymSafe.length, "Incorrect wrapped symLength");
 
         /* Check wrap of streamKey */
         final byte[] myStreamSafe = myKeySet.secureKey(myStreamKey);
-        final GordianKey<GordianStreamKeyType> myStreamResult = myKeySet.deriveKey(myStreamSafe, myStreamKey.getKeyType());
+        final GordianKey<GordianStreamKeySpec> myStreamResult = myKeySet.deriveKey(myStreamSafe, myStreamKey.getKeyType());
         Assertions.assertEquals(myStreamKey, myStreamResult, "Failed to wrap/unwrap streamKey");
-        Assertions.assertEquals(myKeySet.getKeyWrapLength(), myStreamSafe.length, "Incorrect wrapped length");
+        Assertions.assertEquals(myKeySet.getKeyWrapLength(myKeyLen), myStreamSafe.length, "Incorrect wrapped streamLength");
 
         /* Check wrap of macKey */
         final byte[] myMacSafe = myKeySet.secureKey(myMacKey);
         final GordianKey<GordianMacSpec> myMacResult = myKeySet.deriveKey(myMacSafe, myMacKey.getKeyType());
         Assertions.assertEquals(myMacKey, myMacResult, "Failed to wrap/unwrap macKey");
-        Assertions.assertEquals(myKeySet.getKeyWrapLength(), myMacSafe.length, "Incorrect wrapped length");
+        Assertions.assertEquals(myKeySet.getKeyWrapLength(myKeyLen), myMacSafe.length, "Incorrect wrapped macLength: " + myMacKey.getKeyType());
 
         /* Check wrap of keySet */
         final byte[] myKeySetSafe = myKeySet.secureKeySet(myKeySet);
         final GordianKeySet myKeySetResult = myKeySet.deriveKeySet(myKeySetSafe);
         Assertions.assertEquals(myKeySet, myKeySetResult, "Failed to wrap/unwrap keySet");
-        Assertions.assertEquals(myKeySet.getKeySetWrapLength(), myKeySetSafe.length, "Incorrect wrapped length");
+        Assertions.assertEquals(myKeySet.getKeySetWrapLength(), myKeySetSafe.length, "Incorrect wrapped keySetLength");
     }
 
     /**

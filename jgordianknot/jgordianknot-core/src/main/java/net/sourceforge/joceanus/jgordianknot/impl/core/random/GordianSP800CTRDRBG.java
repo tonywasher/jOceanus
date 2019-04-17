@@ -75,14 +75,12 @@ public class GordianSP800CTRDRBG
     /**
      * Construct a SP800-90A Hash DRBG.
      * @param pCipher SIC Cipher to base the DRBG on.
-     * @param pKeySize the keySize in bits
      * @param pEntropy source of entropy to use for seeding/reSeeding.
      * @param pSecurityBytes personalisation string to distinguish this DRBG (may be null).
      * @param pInitVector nonce to further distinguish this DRBG (may be null).
      * @throws OceanusException on error
      */
     public GordianSP800CTRDRBG(final GordianCoreCipher<GordianSymKeySpec> pCipher,
-                               final int pKeySize,
                                final EntropySource pEntropy,
                                final byte[] pSecurityBytes,
                                final byte[] pInitVector) throws OceanusException {
@@ -91,7 +89,7 @@ public class GordianSP800CTRDRBG
         theEntropy = pEntropy;
 
         /* Initialise buffers */
-        final int myKeyLen = pKeySize / Byte.SIZE;
+        final int myKeyLen = pCipher.getKeyType().getKeyLength().getByteLength();
         theBlockLen = theCipher.getKeyType().getBlockLength().getByteLength();
         theKey = new byte[myKeyLen];
         theV = new GordianByteArrayInteger(theBlockLen);

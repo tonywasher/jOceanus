@@ -23,7 +23,6 @@ import java.util.Map;
 import javax.crypto.KeyGenerator;
 import javax.crypto.Mac;
 
-import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianStreamKeyType;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianSymKeySpec;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianSymKeyType;
 import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigestSpec;
@@ -214,7 +213,7 @@ public class JcaMacFactory
             case GOST:
                 return "GOST28147MAC";
             case VMPC:
-                return getFactory().getCipherFactory().getStreamKeyAlgorithm(GordianStreamKeyType.VMPC);
+                return "VMPC-KSA3";
             default:
                 throw new GordianDataException(GordianCoreFactory.getInvalidText(pMacSpec));
         }

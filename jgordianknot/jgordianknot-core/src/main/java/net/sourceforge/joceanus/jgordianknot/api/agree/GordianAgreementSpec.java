@@ -20,7 +20,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import net.sourceforge.joceanus.jgordianknot.api.asym.GordianAsymKeyType;
-import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianSymKeyType;
 import net.sourceforge.joceanus.jtethys.TethysDataConverter;
 
 /**
@@ -82,12 +81,12 @@ public final class GordianAgreementSpec {
     }
 
     /**
-     * Create the dhKEM agreementSpec.
+     * Create the dhANON agreementSpec.
      * @param pKDFType the KDF type
      * @return the Spec
      */
-    public static GordianAgreementSpec dhKEM(final GordianKDFType pKDFType) {
-        return new GordianAgreementSpec(GordianAsymKeyType.DIFFIEHELLMAN, GordianAgreementType.KEM, pKDFType);
+    public static GordianAgreementSpec dhAnon(final GordianKDFType pKDFType) {
+        return new GordianAgreementSpec(GordianAsymKeyType.DIFFIEHELLMAN, GordianAgreementType.ANON, pKDFType);
     }
 
     /**
@@ -128,6 +127,16 @@ public final class GordianAgreementSpec {
         return new GordianAgreementSpec(pKeyType, GordianAgreementType.KEM, pKDFType);
     }
 
+    /**
+     * Create the ecANON agreementSpec.
+     * @param pKeyType the asymKeyType
+     * @param pKDFType the KDF type
+     * @return the Spec
+     */
+    public static GordianAgreementSpec ecAnon(final GordianAsymKeyType pKeyType,
+                                              final GordianKDFType pKDFType) {
+        return new GordianAgreementSpec(pKeyType, GordianAgreementType.ANON, pKDFType);
+    }
     /**
      * Create the ecdhBasic agreementSpec.
      * @param pKeyType the asymKeyType
@@ -175,6 +184,15 @@ public final class GordianAgreementSpec {
      * @param pKDFType the KDF type
      * @return the Spec
      */
+    public static GordianAgreementSpec x25519Anon(final GordianKDFType pKDFType) {
+        return new GordianAgreementSpec(GordianAsymKeyType.X25519, GordianAgreementType.ANON, pKDFType);
+    }
+
+    /**
+     * Create the x25519Basic agreementSpec.
+     * @param pKDFType the KDF type
+     * @return the Spec
+     */
     public static GordianAgreementSpec x25519Basic(final GordianKDFType pKDFType) {
         return new GordianAgreementSpec(GordianAsymKeyType.X25519, GordianAgreementType.BASIC, pKDFType);
     }
@@ -186,6 +204,15 @@ public final class GordianAgreementSpec {
      */
     public static GordianAgreementSpec x25519Unified(final GordianKDFType pKDFType) {
         return new GordianAgreementSpec(GordianAsymKeyType.X25519, GordianAgreementType.UNIFIED, pKDFType);
+    }
+
+    /**
+     * Create the x448Basic agreementSpec.
+     * @param pKDFType the KDF type
+     * @return the Spec
+     */
+    public static GordianAgreementSpec x448Anon(final GordianKDFType pKDFType) {
+        return new GordianAgreementSpec(GordianAsymKeyType.X448, GordianAgreementType.ANON, pKDFType);
     }
 
     /**
@@ -212,7 +239,7 @@ public final class GordianAgreementSpec {
      * @return the Spec
      */
     public static GordianAgreementSpec newHope(final GordianKDFType pKDFType) {
-        return new GordianAgreementSpec(GordianAsymKeyType.NEWHOPE, GordianAgreementType.KEM, pKDFType);
+        return new GordianAgreementSpec(GordianAsymKeyType.NEWHOPE, GordianAgreementType.ANON, pKDFType);
     }
 
     /**
@@ -330,12 +357,15 @@ public final class GordianAgreementSpec {
         /* Switch on AsymKeyType */
         switch (pKeyType) {
             case RSA:
-            case NEWHOPE:
                 myAgreements.addAll(listAllKDFs(pKeyType, GordianAgreementType.KEM));
+                break;
+            case NEWHOPE:
+                myAgreements.addAll(listAllKDFs(pKeyType, GordianAgreementType.ANON));
                 break;
             case SM2:
                 myAgreements.addAll(listAllKDFs(pKeyType, GordianAgreementType.SM2));
                 myAgreements.addAll(listAllKDFs(pKeyType, GordianAgreementType.KEM));
+                myAgreements.addAll(listAllKDFs(pKeyType, GordianAgreementType.ANON));
                 myAgreements.addAll(listAllKDFs(pKeyType, GordianAgreementType.BASIC));
                 myAgreements.addAll(listAllKDFs(pKeyType, GordianAgreementType.UNIFIED));
                 myAgreements.addAll(listAllKDFs(pKeyType, GordianAgreementType.MQV));
@@ -345,12 +375,14 @@ public final class GordianAgreementSpec {
             case DSTU4145:
             case DIFFIEHELLMAN:
                 myAgreements.addAll(listAllKDFs(pKeyType, GordianAgreementType.KEM));
+                myAgreements.addAll(listAllKDFs(pKeyType, GordianAgreementType.ANON));
                 myAgreements.addAll(listAllKDFs(pKeyType, GordianAgreementType.BASIC));
                 myAgreements.addAll(listAllKDFs(pKeyType, GordianAgreementType.UNIFIED));
                 myAgreements.addAll(listAllKDFs(pKeyType, GordianAgreementType.MQV));
                 break;
             case X25519:
             case X448:
+                myAgreements.addAll(listAllKDFs(pKeyType, GordianAgreementType.ANON));
                 myAgreements.addAll(listAllKDFs(pKeyType, GordianAgreementType.BASIC));
                 myAgreements.addAll(listAllKDFs(pKeyType, GordianAgreementType.UNIFIED));
                 break;

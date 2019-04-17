@@ -18,7 +18,6 @@ package net.sourceforge.joceanus.jgordianknot.api.factory;
 
 import java.util.Arrays;
 
-import net.sourceforge.joceanus.jgordianknot.api.base.GordianLength;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.TethysDataConverter;
 
@@ -32,44 +31,29 @@ public class GordianParameters {
     public static final int HASH_PRIME = 37;
 
     /**
-     * Default Key length.
-     */
-    public static final GordianLength DEFAULT_KEYLEN = GordianLength.LEN_256;
-
-    /**
      * Default Factory.
      */
     public static final GordianFactoryType DEFAULT_FACTORY = GordianFactoryType.BC;
 
     /**
-     * Minimum Cipher Steps.
+     * Minimum iterations.
      */
-    public static final Integer MINIMUM_CIPHER_STEPS = 3;
+    public static final Integer MINIMUM_ITERATIONS = 1;
 
     /**
-     * Maximum Cipher Steps.
+     * Maximum iterations.
      */
-    public static final Integer MAXIMUM_CIPHER_STEPS = 6;
+    public static final Integer MAXIMUM_ITERATIONS = 64;
 
     /**
-     * Default Cipher Steps.
+     * Default iterations.
      */
-    public static final Integer DEFAULT_CIPHER_STEPS = 4;
+    public static final Integer DEFAULT_ITERATIONS = 2;
 
     /**
-     * Minimum Hash iterations.
+     * 1K Multiplier.
      */
-    public static final Integer MINIMUM_HASH_ITERATIONS = 1024;
-
-    /**
-     * Maximum Hash iterations.
-     */
-    public static final Integer MAXIMUM_HASH_ITERATIONS = 4096;
-
-    /**
-     * Default Hash iterations.
-     */
-    public static final Integer DEFAULT_HASH_ITERATIONS = 2048;
+    private static final int K_MULTIPLIER = 1024;
 
     /**
      * Default Security Phrase.
@@ -77,24 +61,14 @@ public class GordianParameters {
     private static final String DEFAULT_SECURITY_PHRASE = "PleaseChangeMeToSomethingMoreUnique";
 
     /**
-     * KeyLength.
-     */
-    private final GordianLength theKeyLength;
-
-    /**
      * The Factory Type.
      */
     private GordianFactoryType theFactoryType;
 
     /**
-     * The Number of cipher steps.
+     * The Number of iterations (x 1K).
      */
-    private int theCipherSteps;
-
-    /**
-     * The Number of hash iterations.
-     */
-    private int theIterations;
+    private int theKIterations;
 
     /**
      * The Security phrase.
@@ -105,48 +79,18 @@ public class GordianParameters {
      * Default Constructor.
      */
     public GordianParameters() {
-        this(DEFAULT_KEYLEN, DEFAULT_FACTORY);
+        this(DEFAULT_FACTORY);
     }
 
     /**
-     * Constructor for explicit keyLength.
-     * @param pKeyLen the keyLength
-     */
-    public GordianParameters(final GordianLength pKeyLen) {
-        /* Default factory */
-        this(pKeyLen, DEFAULT_FACTORY);
-    }
-
-    /**
-     * Constructor for explicit factory.
-     * @param pFactoryType the factoryType
-     */
-    public GordianParameters(final GordianFactoryType pFactoryType) {
-        /* Default keyLen */
-        this(DEFAULT_KEYLEN, pFactoryType);
-    }
-
-    /**
-     * Full Constructor.
-     * @param pKeyLen the keyLength
+     * Constructor.
      * @param pFactoryType the factory type
      */
-    public GordianParameters(final GordianLength pKeyLen,
-                             final GordianFactoryType pFactoryType) {
+    public GordianParameters(final GordianFactoryType pFactoryType) {
         /* Store parameters */
-        theKeyLength = pKeyLen;
         theFactoryType = pFactoryType;
-        theCipherSteps = DEFAULT_CIPHER_STEPS;
-        theIterations = DEFAULT_HASH_ITERATIONS;
+        theKIterations = DEFAULT_ITERATIONS;
         theSecurityPhrase = null;
-    }
-
-    /**
-     * Obtain the key length.
-     * @return the key length
-     */
-    public GordianLength getKeyLength() {
-        return theKeyLength;
     }
 
     /**
@@ -158,19 +102,19 @@ public class GordianParameters {
     }
 
     /**
-     * Access the number of Cipher Steps.
-     * @return the number of cipher steps
+     * Access the number of Iterations.
+     * @return the number of iterations
      */
-    public int getNumCipherSteps() {
-        return theCipherSteps;
+    public int getNumIterations() {
+        return theKIterations * K_MULTIPLIER;
     }
 
     /**
-     * Access the number of Hash Iterations.
+     * Access the number of Hash Iterations (x 1K).
      * @return the number of hash iterations
      */
-    public int getNumHashIterations() {
-        return theIterations;
+    public int getKIterations() {
+        return theKIterations;
     }
 
     /**
@@ -190,19 +134,11 @@ public class GordianParameters {
     }
 
     /**
-     * Set number of cipher steps.
-     * @param pNumCipherSteps number of cipher steps
-     */
-    public void setNumCipherSteps(final int pNumCipherSteps) {
-        theCipherSteps = pNumCipherSteps;
-    }
-
-    /**
      * Set number of iterations.
-     * @param pNumIterations the number of iterations
+     * @param pKIterations the number of iterations (x 1K)
      */
-    public void setNumIterations(final int pNumIterations) {
-        theIterations = pNumIterations;
+    public void setKIterations(final int pKIterations) {
+        theKIterations = pKIterations;
     }
 
     /**
@@ -235,32 +171,14 @@ public class GordianParameters {
      * @return valid true/false
      */
     public boolean validate() {
-        /* Check keyLength */
-        if (theKeyLength == null) {
-            return false;
-        }
-        switch (theKeyLength) {
-            case LEN_128:
-            case LEN_192:
-            case LEN_256:
-                break;
-            default:
-                return false;
-        }
-
         /* Check factory type */
         if (theFactoryType == null) {
             return false;
         }
 
-        /* Check cipher steps is in range */
-        if (theCipherSteps < MINIMUM_CIPHER_STEPS || theCipherSteps > MAXIMUM_CIPHER_STEPS) {
-            return false;
-        }
-
         /* Check iterations is in range */
-        return (theIterations >= MINIMUM_HASH_ITERATIONS
-                && theIterations <= MAXIMUM_HASH_ITERATIONS);
+        return (theKIterations >= MINIMUM_ITERATIONS
+                && theKIterations <= MAXIMUM_ITERATIONS);
     }
 
     @Override
@@ -282,9 +200,7 @@ public class GordianParameters {
         final GordianParameters myThat = (GordianParameters) pThat;
 
         /* Check Differences */
-        if (theCipherSteps != myThat.getNumCipherSteps()
-                || theKeyLength != myThat.getKeyLength()
-                || theIterations != myThat.getNumHashIterations()) {
+        if (theKIterations != myThat.getKIterations()) {
             return false;
         }
         if (theFactoryType != myThat.getFactoryType()) {
@@ -303,15 +219,10 @@ public class GordianParameters {
         final int myPrime = HASH_PRIME;
 
         /* Calculate hash from simple values */
-        int myCode = theCipherSteps;
-        myCode *= myPrime;
-        myCode += theIterations;
-        myCode *= myPrime;
+        int myCode = theKIterations;
         myCode *= myPrime;
 
         /* Calculate hash from types */
-        myCode += theKeyLength.hashCode();
-        myCode *= myPrime;
         myCode += theFactoryType.hashCode();
         myCode *= myPrime;
 

@@ -26,6 +26,7 @@ import net.sourceforge.joceanus.jgordianknot.api.key.GordianKeyPair;
 import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySet;
 import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetFactory;
 import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetHash;
+import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetHashSpec;
 import net.sourceforge.joceanus.jgordianknot.api.keystore.GordianCertificate;
 import net.sourceforge.joceanus.jgordianknot.api.keystore.GordianCertificateId;
 import net.sourceforge.joceanus.jtethys.OceanusException;
@@ -224,18 +225,20 @@ public interface GordianKeyStoreElement {
         /**
          * Constructor.
          * @param pFactory the factory
+         * @param pSpec the keySetHashSpec
          * @param pKeyPair the keyPair
          * @param pPassword the securing password.
          * @param pChain the certificate chain.
          * @throws OceanusException on error
          */
         GordianKeyStorePairElement(final GordianFactory pFactory,
+                                   final GordianKeySetHashSpec pSpec,
                                    final GordianKeyPair pKeyPair,
                                    final char[] pPassword,
                                    final GordianCertificate[] pChain) throws OceanusException {
             /* Create a securing hash */
             final GordianKeySetFactory myFactory = pFactory.getKeySetFactory();
-            final GordianKeySetHash myHash = myFactory.generateKeySetHash(pPassword);
+            final GordianKeySetHash myHash = myFactory.generateKeySetHash(pSpec, pPassword);
             final GordianKeySet myKeySet = myHash.getKeySet();
 
             /* Store details */
@@ -461,16 +464,18 @@ public interface GordianKeyStoreElement {
         /**
          * Constructor.
          * @param pFactory the factory
+         * @param pSpec the keySetHashSpec
          * @param pKey the key
          * @param pPassword the securing password.
          * @throws OceanusException on error
          */
         GordianKeyStoreKeyElement(final GordianFactory pFactory,
+                                  final GordianKeySetHashSpec pSpec,
                                   final GordianKey<T> pKey,
                                   final char[] pPassword) throws OceanusException {
             /* Create a securing hash */
             final GordianKeySetFactory myFactory = pFactory.getKeySetFactory();
-            final GordianKeySetHash myHash = myFactory.generateKeySetHash(pPassword);
+            final GordianKeySetHash myHash = myFactory.generateKeySetHash(pSpec, pPassword);
             final GordianKeySet myKeySet = myHash.getKeySet();
 
             /* Store details */
@@ -589,16 +594,18 @@ public interface GordianKeyStoreElement {
         /**
          * Constructor.
          * @param pFactory the factory
+         * @param pSpec the keySetHashSpec
          * @param pKeySet the keySet
          * @param pPassword the securing password.
          * @throws OceanusException on error
          */
         GordianKeyStoreSetElement(final GordianFactory pFactory,
+                                  final GordianKeySetHashSpec pSpec,
                                   final GordianKeySet pKeySet,
                                   final char[] pPassword) throws OceanusException {
             /* Create a securing hash */
             final GordianKeySetFactory myFactory = pFactory.getKeySetFactory();
-            final GordianKeySetHash myHash = myFactory.generateKeySetHash(pPassword);
+            final GordianKeySetHash myHash = myFactory.generateKeySetHash(pSpec, pPassword);
             final GordianKeySet myKeySet = myHash.getKeySet();
             theSecuringHash = new GordianKeyStoreHashElement(myHash);
 

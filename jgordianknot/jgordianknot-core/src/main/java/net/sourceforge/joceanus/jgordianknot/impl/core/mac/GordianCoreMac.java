@@ -78,7 +78,7 @@ public abstract class GordianCoreMac
         theMacSpec = pMacSpec;
         theFactory = pFactory;
         theRandom = pFactory.getRandomSource();
-        theKeyLength = pFactory.getKeyLength();
+        theKeyLength = pMacSpec.getKeyLength();
     }
 
     @Override

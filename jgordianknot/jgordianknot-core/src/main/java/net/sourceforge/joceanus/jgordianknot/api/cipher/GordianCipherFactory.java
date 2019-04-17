@@ -22,6 +22,7 @@ import java.util.function.BiPredicate;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
+import net.sourceforge.joceanus.jgordianknot.api.base.GordianLength;
 import net.sourceforge.joceanus.jgordianknot.api.key.GordianKeyGenerator;
 import net.sourceforge.joceanus.jgordianknot.api.base.GordianKeySpec;
 import net.sourceforge.joceanus.jtethys.OceanusException;
@@ -61,7 +62,7 @@ public interface GordianCipherFactory {
      * @return the new Cipher
      * @throws OceanusException on error
      */
-    GordianCipher<GordianStreamKeyType> createStreamKeyCipher(GordianStreamCipherSpec pCipherSpec) throws OceanusException;
+    GordianCipher<GordianStreamKeySpec> createStreamKeyCipher(GordianStreamCipherSpec pCipherSpec) throws OceanusException;
 
     /**
      * Obtain predicate for supported symKeySpecs.
@@ -82,6 +83,12 @@ public interface GordianCipherFactory {
     Predicate<GordianSymKeyType> supportedSymKeyTypes();
 
     /**
+     * Obtain predicate for supported streamKeySpecs.
+     * @return the predicate
+     */
+    Predicate<GordianStreamKeySpec> supportedStreamKeySpecs();
+
+    /**
      * Obtain predicate for supported StreamKeyTypes.
      * @return the predicate
      */
@@ -96,11 +103,12 @@ public interface GordianCipherFactory {
     GordianWrapper createKeyWrapper(GordianSymKeySpec pKeySpec) throws OceanusException;
 
     /**
-     * Obtain a list of supported symKeySpecs.
+     * Obtain a list of supported symKeySpecs for the keyLength.
+     * @param pKeyLen the keyLength
      * @return the list of supported symKeySpecs.
      */
-    default List<GordianSymKeySpec> listAllSupportedSymKeySpecs() {
-        return GordianSymKeySpec.listAll()
+    default List<GordianSymKeySpec> listAllSupportedSymKeySpecs(final GordianLength pKeyLen) {
+        return GordianSymKeySpec.listAll(pKeyLen)
                 .stream()
                 .filter(supportedSymKeySpecs())
                 .collect(Collectors.toList());
@@ -114,9 +122,8 @@ public interface GordianCipherFactory {
      */
     default List<GordianSymCipherSpec> listAllSupportedSymCipherSpecs(final GordianSymKeySpec pSpec,
                                                                       final boolean isAAD) {
-        return GordianSymCipherSpec.listAll()
+        return GordianSymCipherSpec.listAll(pSpec)
                 .stream()
-                .filter(s -> s.getKeyType().equals(pSpec))
                 .filter(s -> supportedSymCipherSpecs().test(s, isAAD))
                 .collect(Collectors.toList());
     }
@@ -128,6 +135,18 @@ public interface GordianCipherFactory {
     default List<GordianSymKeyType> listAllSupportedSymKeyTypes() {
         return Arrays.stream(GordianSymKeyType.values())
                 .filter(supportedSymKeyTypes())
+                .collect(Collectors.toList());
+    }
+
+    /**
+     * Obtain a list of supported streamKeySpecs for the keyLength.
+     * @param pKeyLen the keyLength
+     * @return the list of supported streamKeySpecs.
+     */
+    default List<GordianStreamKeySpec> listAllSupportedStreamKeySpecs(final GordianLength pKeyLen) {
+        return GordianStreamKeySpec.listAll(pKeyLen)
+                .stream()
+                .filter(supportedStreamKeySpecs())
                 .collect(Collectors.toList());
     }
 

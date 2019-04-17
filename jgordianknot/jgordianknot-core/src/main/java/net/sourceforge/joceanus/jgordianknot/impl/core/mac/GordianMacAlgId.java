@@ -17,6 +17,7 @@
 package net.sourceforge.joceanus.jgordianknot.impl.core.mac;
 
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
@@ -31,14 +32,13 @@ import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
 import net.sourceforge.joceanus.jgordianknot.api.base.GordianLength;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianSymKeySpec;
 import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigestSpec;
+import net.sourceforge.joceanus.jgordianknot.api.key.GordianKeyLengths;
 import net.sourceforge.joceanus.jgordianknot.api.mac.GordianMacFactory;
 import net.sourceforge.joceanus.jgordianknot.api.mac.GordianMacSpec;
 import net.sourceforge.joceanus.jgordianknot.api.mac.GordianMacType;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianCoreFactory;
-import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianDataException;
 import net.sourceforge.joceanus.jgordianknot.impl.core.cipher.GordianCipherAlgId;
 import net.sourceforge.joceanus.jgordianknot.impl.core.digest.GordianDigestAlgId;
-import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
  * Mappings from EncodedId to MacSpec.
@@ -75,10 +75,16 @@ public class GordianMacAlgId {
         /* Populate with the public standards */
         addWellKnownMacs();
 
-        /* Loop through the possible MacSpecs */
-        for (GordianMacSpec mySpec : myFactory.listAllSupportedSpecs()) {
-            /* Add any non-standard macs */
-            ensureMac(mySpec);
+        /* For each KeyLength */
+        final Iterator<GordianLength> myIterator = GordianKeyLengths.iterator();
+        while (myIterator.hasNext()) {
+            final GordianLength myKeyLen = myIterator.next();
+
+            /* Loop through the possible MacSpecs */
+            for (GordianMacSpec mySpec : myFactory.listAllSupportedSpecs(myKeyLen)) {
+                /* Add any non-standard macs */
+                ensureMac(mySpec);
+            }
         }
     }
 
@@ -120,10 +126,12 @@ public class GordianMacAlgId {
         addToMaps(GordianMacSpec.hMac(GordianDigestSpec.sha3(GordianLength.LEN_256)), new AlgorithmIdentifier(NISTObjectIdentifiers.id_hmacWithSHA3_256));
         addToMaps(GordianMacSpec.hMac(GordianDigestSpec.sha3(GordianLength.LEN_384)), new AlgorithmIdentifier(NISTObjectIdentifiers.id_hmacWithSHA3_384));
         addToMaps(GordianMacSpec.hMac(GordianDigestSpec.sha3(GordianLength.LEN_512)), new AlgorithmIdentifier(NISTObjectIdentifiers.id_hmacWithSHA3_512));
-        addToMaps(GordianMacSpec.cMac(GordianSymKeySpec.aria()), new AlgorithmIdentifier(NSRIObjectIdentifiers.id_aria256_cmac));
-        addToMaps(GordianMacSpec.kupynaMac(GordianLength.LEN_256), new AlgorithmIdentifier(UAObjectIdentifiers.dstu7564mac_256));
-        addToMaps(GordianMacSpec.kupynaMac(GordianLength.LEN_384), new AlgorithmIdentifier(UAObjectIdentifiers.dstu7564mac_384));
-        addToMaps(GordianMacSpec.kupynaMac(GordianLength.LEN_512), new AlgorithmIdentifier(UAObjectIdentifiers.dstu7564mac_512));
+        addToMaps(GordianMacSpec.cMac(GordianSymKeySpec.aria(GordianLength.LEN_128)), new AlgorithmIdentifier(NSRIObjectIdentifiers.id_aria128_cmac));
+        addToMaps(GordianMacSpec.cMac(GordianSymKeySpec.aria(GordianLength.LEN_192)), new AlgorithmIdentifier(NSRIObjectIdentifiers.id_aria192_cmac));
+        addToMaps(GordianMacSpec.cMac(GordianSymKeySpec.aria(GordianLength.LEN_256)), new AlgorithmIdentifier(NSRIObjectIdentifiers.id_aria256_cmac));
+        addToMaps(GordianMacSpec.kupynaMac(GordianLength.LEN_256, GordianLength.LEN_256), new AlgorithmIdentifier(UAObjectIdentifiers.dstu7564mac_256));
+        addToMaps(GordianMacSpec.kupynaMac(GordianLength.LEN_256, GordianLength.LEN_384), new AlgorithmIdentifier(UAObjectIdentifiers.dstu7564mac_384));
+        addToMaps(GordianMacSpec.kupynaMac(GordianLength.LEN_256, GordianLength.LEN_512), new AlgorithmIdentifier(UAObjectIdentifiers.dstu7564mac_512));
     }
 
     /**
@@ -147,13 +155,14 @@ public class GordianMacAlgId {
         /* Create a branch for mac based on the MacType */
         final GordianMacType myType = pSpec.getMacType();
         ASN1ObjectIdentifier myId = MACOID.branch(Integer.toString(myType.ordinal() + 1));
+        myId = myId.branch(Integer.toString(pSpec.getKeyLength().ordinal() + 1));
 
         /* Obtain the subSpec */
         final Object mySubSpec = pSpec.getSubSpec();
         if (mySubSpec instanceof GordianDigestSpec) {
             myId = GordianDigestAlgId.appendDigestOID(myId, (GordianDigestSpec) mySubSpec);
         } else if (mySubSpec instanceof GordianSymKeySpec) {
-            myId = GordianCipherAlgId.appendSymKeyOID(myId, (GordianSymKeySpec) mySubSpec);
+            myId = GordianCipherAlgId.appendSymKeyOID(myId, false, (GordianSymKeySpec) mySubSpec);
         } else if (mySubSpec instanceof GordianLength) {
             myId = myId.branch(Integer.toString(((GordianLength) mySubSpec).ordinal() + 1));
         } else if (mySubSpec instanceof Boolean) {

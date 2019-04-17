@@ -31,7 +31,7 @@ import javax.crypto.spec.RC5ParameterSpec;
 
 import net.sourceforge.joceanus.jgordianknot.api.base.GordianLength;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianCipherSpec;
-import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianStreamKeyType;
+import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianStreamKeySpec;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianSymCipherSpec;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianSymKeySpec;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianSymKeyType;
@@ -102,8 +102,8 @@ public final class JcaCipher<T extends GordianKeySpec>
      */
     private int getIVLength() {
         final T myType = getKeyType();
-        if (myType instanceof GordianStreamKeyType) {
-            return ((GordianStreamKeyType) myType).getIVLength(getKeyLength());
+        if (myType instanceof GordianStreamKeySpec) {
+            return ((GordianStreamKeySpec) myType).getIVLength();
         }
         return needsIV()
                ? getCipherSpec().getIVLength(GordianLength.LEN_128)

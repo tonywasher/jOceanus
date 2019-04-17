@@ -18,7 +18,6 @@ package net.sourceforge.joceanus.jprometheus.lethe.database;
 
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisField;
 import net.sourceforge.joceanus.jprometheus.lethe.data.ControlData;
-import net.sourceforge.joceanus.jprometheus.lethe.data.DataKey;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataSet;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataSet.CryptographyDataType;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataValues;
@@ -58,7 +57,7 @@ public class PrometheusTableControlData
         final PrometheusTableDefinition myTableDef = getTableDef();
 
         /* Build data values */
-        final DataValues<CryptographyDataType> myValues = getRowValues(DataKey.OBJECT_NAME);
+        final DataValues<CryptographyDataType> myValues = getRowValues(ControlData.OBJECT_NAME);
         myValues.addValue(ControlData.FIELD_DATAVERSION, myTableDef.getIntegerValue(ControlData.FIELD_DATAVERSION));
         myValues.addValue(ControlData.FIELD_CONTROLKEY, myTableDef.getIntegerValue(ControlData.FIELD_CONTROLKEY));
 

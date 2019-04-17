@@ -33,6 +33,7 @@ import javax.xml.transform.stream.StreamResult;
 
 import org.w3c.dom.Document;
 
+import net.sourceforge.joceanus.jgordianknot.api.factory.GordianFactory;
 import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySet;
 import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetHash;
 import net.sourceforge.joceanus.jgordianknot.api.zip.GordianZipFileEntry;
@@ -123,9 +124,9 @@ public class GordianCoreZipWriteFile
         theHash = (GordianCoreKeySetHash) pHash;
 
         /* Create a child hash and record details */
-        final GordianCoreKeySetHash myHash = theHash.childHash();
-        theHashBytes = myHash.getHash();
-        theKeySet = myHash.getKeySet();
+        final GordianFactory myFactory = theHash.getFactory();
+        theKeySet = (GordianCoreKeySet) myFactory.getKeySetFactory().generateKeySet(theHash.getKeySet().getKeySetSpec());
+        theHashBytes = theHash.getKeySet().secureKeySet(theKeySet);
 
         /* Create the Stream Manager */
         theStreamFactory = new GordianStreamManager(theKeySet);

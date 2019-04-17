@@ -27,6 +27,7 @@ import net.sourceforge.joceanus.jgordianknot.api.base.GordianLength;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianCipher;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianCipherFactory;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianPadding;
+import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianStreamKeySpec;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianStreamKeyType;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianSymCipherSpec;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianSymKeySpec;
@@ -262,14 +263,15 @@ public class GordianCoreRandomFactory
     }
 
     @Override
-    public GordianMac generateRandomMac(final boolean pLargeData) throws OceanusException {
+    public GordianMac generateRandomMac(final GordianLength pKeyLen,
+                                        final boolean pLargeData) throws OceanusException {
         /* Access Mac Factory and IdManager */
         final GordianMacFactory myMacs = theFactory.getMacFactory();
         final GordianCoreKeySetFactory myKeySets = (GordianCoreKeySetFactory) theFactory.getKeySetFactory();
         final GordianIdManager myIds = myKeySets.getIdManager();
 
         /* Determine a random specification */
-        final GordianMacSpec mySpec = myIds.generateRandomMacSpec(pLargeData);
+        final GordianMacSpec mySpec = myIds.generateRandomMacSpec(pKeyLen, pLargeData);
 
         /* Determine a random key */
         final GordianKeyGenerator<GordianMacSpec> myGenerator = myMacs.getKeyGenerator(mySpec);
@@ -284,32 +286,33 @@ public class GordianCoreRandomFactory
     }
 
     @Override
-    public GordianKey<GordianSymKeySpec> generateRandomSymKey() throws OceanusException {
+    public GordianKey<GordianSymKeySpec> generateRandomSymKey(final GordianLength pKeyLen) throws OceanusException {
         /* Access Cipher Factory and IdManager */
         final GordianCipherFactory myCiphers = theFactory.getCipherFactory();
         final GordianCoreKeySetFactory myKeySets = (GordianCoreKeySetFactory) theFactory.getKeySetFactory();
         final GordianIdManager myIds = myKeySets.getIdManager();
 
         /* Determine a random keyType */
-        final GordianSymKeyType myType = myIds.generateRandomSymKeyType();
+        final GordianSymKeyType myType = myIds.generateRandomSymKeyType(pKeyLen);
 
         /* Generate a random key */
-        final GordianKeyGenerator<GordianSymKeySpec> myGenerator = myCiphers.getKeyGenerator(new GordianSymKeySpec(myType));
+        final GordianKeyGenerator<GordianSymKeySpec> myGenerator = myCiphers.getKeyGenerator(new GordianSymKeySpec(myType, pKeyLen));
         return myGenerator.generateKey();
     }
 
     @Override
-    public GordianKey<GordianStreamKeyType> generateRandomStreamKey(final boolean pLargeData) throws OceanusException {
+    public GordianKey<GordianStreamKeySpec> generateRandomStreamKey(final GordianLength pKeyLen,
+                                                                    final boolean pLargeData) throws OceanusException {
         /* Access Cipher Factory and IdManager */
         final GordianCipherFactory myCiphers = theFactory.getCipherFactory();
         final GordianCoreKeySetFactory myKeySets = (GordianCoreKeySetFactory) theFactory.getKeySetFactory();
         final GordianIdManager myIds = myKeySets.getIdManager();
 
         /* Generate a random key */
-        final GordianStreamKeyType myType =  myIds.generateRandomStreamKeyType(pLargeData);
+        final GordianStreamKeyType myType =  myIds.generateRandomStreamKeyType(pKeyLen, pLargeData);
 
         /* Generate a random key */
-        final GordianKeyGenerator<GordianStreamKeyType> myGenerator = myCiphers.getKeyGenerator(myType);
+        final GordianKeyGenerator<GordianStreamKeySpec> myGenerator = myCiphers.getKeyGenerator(new GordianStreamKeySpec(myType, pKeyLen));
         return myGenerator.generateKey();
     }
 
@@ -365,7 +368,7 @@ public class GordianCoreRandomFactory
         /* Build DRBG */
         final GordianCoreCipher<GordianSymKeySpec> myCipher = (GordianCoreCipher<GordianSymKeySpec>) pCipher;
         final EntropySource myEntropy = theEntropyProvider.get(NUM_ENTROPY_BITS_REQUIRED);
-        final GordianSP800CTRDRBG myProvider = new GordianSP800CTRDRBG(myCipher, theFactory.getKeyLength().getLength(),
+        final GordianSP800CTRDRBG myProvider = new GordianSP800CTRDRBG(myCipher,
                 myEntropy, theRandomSource.defaultPersonalisation(), myInit);
         return new GordianSecureRandom(myProvider, theRandom, myEntropy, isPredictionResistant);
     }

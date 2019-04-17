@@ -28,6 +28,11 @@ public enum GordianAgreementType {
     KEM,
 
     /**
+     * Anonymous.
+     */
+    ANON,
+
+    /**
      * Basic.
      */
     BASIC,
@@ -56,6 +61,8 @@ public enum GordianAgreementType {
         switch (this) {
             case KEM:
                 return hasKEM(pKeyType);
+            case ANON:
+                return hasAnon(pKeyType);
             case BASIC:
                 return hasBasic(pKeyType);
             case SM2:
@@ -77,13 +84,34 @@ public enum GordianAgreementType {
     public static boolean hasKEM(final GordianAsymKeyType pKeyType) {
         switch (pKeyType) {
             case RSA:
-            case NEWHOPE:
+            case EC:
+            case GOST2012:
+            case DSTU4145:
+            case SM2:
                 return true;
+            default:
+                return false;
+        }
+    }
+
+    /**
+     * Does the AsymKeyType have an ANON agreement?
+     * @param pKeyType the asymKeyType
+     * @return true/false
+     */
+    public static boolean hasAnon(final GordianAsymKeyType pKeyType) {
+        switch (pKeyType) {
+            case NEWHOPE:
+            case DIFFIEHELLMAN:
+            case EC:
+            case SM2:
+            case GOST2012:
+            case DSTU4145:
             case X25519:
             case X448:
-                return false;
+                return true;
             default:
-                return isECorDH(pKeyType);
+                return false;
         }
     }
 

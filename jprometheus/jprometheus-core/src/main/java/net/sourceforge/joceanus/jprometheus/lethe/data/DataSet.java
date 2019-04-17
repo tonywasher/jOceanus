@@ -35,7 +35,6 @@ import net.sourceforge.joceanus.jmetis.threads.MetisThreadStatusReport;
 import net.sourceforge.joceanus.jprometheus.lethe.JOceanusUtilitySet;
 import net.sourceforge.joceanus.jprometheus.lethe.data.ControlData.ControlDataList;
 import net.sourceforge.joceanus.jprometheus.lethe.data.ControlKey.ControlKeyList;
-import net.sourceforge.joceanus.jprometheus.lethe.data.DataKey.DataKeyList;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataKeySet.DataKeySetList;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataList.DataListSet;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataList.ListStyle;
@@ -68,7 +67,6 @@ public abstract class DataSet<T extends DataSet<T, E>, E extends Enum<E>>
         FIELD_DEFS.declareLocalField(PrometheusDataResource.DATASET_VERSION, DataSet::getVersion);
         FIELD_DEFS.declareLocalField(PrometheusDataResource.CONTROLKEY_LIST, DataSet::getControlKeys);
         FIELD_DEFS.declareLocalField(PrometheusDataResource.DATAKEYSET_LIST, DataSet::getDataKeySets);
-        FIELD_DEFS.declareLocalField(PrometheusDataResource.DATAKEY_LIST, DataSet::getDataKeys);
         FIELD_DEFS.declareLocalField(PrometheusDataResource.CONTROLDATA_LIST, DataSet::getControlData);
     }
 
@@ -121,11 +119,6 @@ public abstract class DataSet<T extends DataSet<T, E>, E extends Enum<E>>
      * DataKeySets.
      */
     private DataKeySetList theDataKeySets;
-
-    /**
-     * DataKeys.
-     */
-    private DataKeyList theDataKeys;
 
     /**
      * ControlData.
@@ -181,7 +174,6 @@ public abstract class DataSet<T extends DataSet<T, E>, E extends Enum<E>>
         /* Create the empty security lists */
         theControlKeys = new ControlKeyList(this);
         theDataKeySets = new DataKeySetList(this);
-        theDataKeys = new DataKeyList(this);
         theControlData = new ControlDataList(this);
 
         /* Create the map of additional DataLists */
@@ -250,14 +242,6 @@ public abstract class DataSet<T extends DataSet<T, E>, E extends Enum<E>>
     }
 
     /**
-     * Get DataKeys.
-     * @return the dataKeys
-     */
-    public DataKeyList getDataKeys() {
-        return theDataKeys;
-    }
-
-    /**
      * Get ControlData.
      * @return the controlData
      */
@@ -321,7 +305,6 @@ public abstract class DataSet<T extends DataSet<T, E>, E extends Enum<E>>
         /* Clone the Security items */
         theControlKeys = pSource.getControlKeys().getEmptyList(ListStyle.CLONE);
         theDataKeySets = pSource.getDataKeySets().getEmptyList(ListStyle.CLONE);
-        theDataKeys = pSource.getDataKeys().getEmptyList(ListStyle.CLONE);
         theControlData = pSource.getControlData().getEmptyList(ListStyle.CLONE);
 
         /* Loop through the source lists */
@@ -347,7 +330,6 @@ public abstract class DataSet<T extends DataSet<T, E>, E extends Enum<E>>
         /* Clone the Security items */
         theControlKeys.cloneList(this, pSource.getControlKeys());
         theDataKeySets.cloneList(this, pSource.getDataKeySets());
-        theDataKeys.cloneList(this, pSource.getDataKeys());
         theControlData.cloneList(this, pSource.getControlData());
 
         /* Obtain listMaps */
@@ -384,7 +366,6 @@ public abstract class DataSet<T extends DataSet<T, E>, E extends Enum<E>>
         /* Build the security extract */
         theControlKeys = pSource.getControlKeys().deriveList(ListStyle.UPDATE);
         theDataKeySets = pSource.getDataKeySets().deriveList(ListStyle.UPDATE);
-        theDataKeys = pSource.getDataKeys().deriveList(ListStyle.UPDATE);
         theControlData = pSource.getControlData().deriveList(ListStyle.UPDATE);
 
         /* Loop through the source lists */
@@ -440,7 +421,6 @@ public abstract class DataSet<T extends DataSet<T, E>, E extends Enum<E>>
         /* Build the security differences */
         theControlKeys = pNew.getControlKeys().deriveDifferences(this, pOld.getControlKeys());
         theDataKeySets = pNew.getDataKeySets().deriveDifferences(this, pOld.getDataKeySets());
-        theDataKeys = pNew.getDataKeys().deriveDifferences(this, pOld.getDataKeys());
         theControlData = pNew.getControlData().deriveDifferences(this, pOld.getControlData());
 
         /* Obtain listMaps */
@@ -480,7 +460,6 @@ public abstract class DataSet<T extends DataSet<T, E>, E extends Enum<E>>
         /* ReBase the security items */
         boolean bUpdates = theControlKeys.reBase(pOld.getControlKeys());
         bUpdates |= theDataKeySets.reBase(pOld.getDataKeySets());
-        bUpdates |= theDataKeys.reBase(pOld.getDataKeys());
         bUpdates |= theControlData.reBase(pOld.getControlData());
 
         /* Obtain old listMap */
@@ -588,7 +567,6 @@ public abstract class DataSet<T extends DataSet<T, E>, E extends Enum<E>>
         /* Set the security lists */
         theControlKeys.setGeneration(pGeneration);
         theDataKeySets.setGeneration(pGeneration);
-        theDataKeys.setGeneration(pGeneration);
         theControlData.setGeneration(pGeneration);
 
         /* Loop through the List values */
@@ -612,7 +590,6 @@ public abstract class DataSet<T extends DataSet<T, E>, E extends Enum<E>>
         /* Set the security lists */
         theControlKeys.setVersion(pVersion);
         theDataKeySets.setVersion(pVersion);
-        theDataKeys.setVersion(pVersion);
         theControlData.setVersion(pVersion);
 
         /* Loop through the List values */
@@ -636,7 +613,6 @@ public abstract class DataSet<T extends DataSet<T, E>, E extends Enum<E>>
         /* rewind the security lists */
         theControlKeys.rewindToVersion(pVersion);
         theDataKeySets.rewindToVersion(pVersion);
-        theDataKeys.rewindToVersion(pVersion);
         theControlData.rewindToVersion(pVersion);
 
         /* Loop through the List values */
@@ -687,9 +663,6 @@ public abstract class DataSet<T extends DataSet<T, E>, E extends Enum<E>>
         if (!theDataKeySets.equals(myThat.getDataKeySets())) {
             return false;
         }
-        if (!theDataKeys.equals(myThat.getDataKeys())) {
-            return false;
-        }
         if (!theControlData.equals(myThat.getControlData())) {
             return false;
         }
@@ -709,8 +682,6 @@ public abstract class DataSet<T extends DataSet<T, E>, E extends Enum<E>>
         int myHashCode = theControlKeys.hashCode();
         myHashCode *= HASH_PRIME;
         myHashCode += theDataKeySets.hashCode();
-        myHashCode *= HASH_PRIME;
-        myHashCode += theDataKeys.hashCode();
         myHashCode *= HASH_PRIME;
         myHashCode += theControlData.hashCode();
 
@@ -734,10 +705,9 @@ public abstract class DataSet<T extends DataSet<T, E>, E extends Enum<E>>
      */
     public boolean isEmpty() {
         /* Determine whether the security data is empty */
-        if (!theControlKeys.isEmpty() || !theControlData.isEmpty()) {
-            return false;
-        }
-        if (!theDataKeySets.isEmpty() || !theDataKeys.isEmpty()) {
+        if (!theControlKeys.isEmpty()
+            || !theControlData.isEmpty()
+            || !theDataKeySets.isEmpty()) {
             return false;
         }
 
@@ -762,10 +732,9 @@ public abstract class DataSet<T extends DataSet<T, E>, E extends Enum<E>>
      */
     public boolean hasUpdates() {
         /* Determine whether we have updates */
-        if (theControlKeys.hasUpdates() || theControlData.hasUpdates()) {
-            return true;
-        }
-        if (theDataKeySets.hasUpdates() || theDataKeys.hasUpdates()) {
+        if (theControlKeys.hasUpdates()
+            || theControlData.hasUpdates()
+            || theDataKeySets.hasUpdates()) {
             return true;
         }
 

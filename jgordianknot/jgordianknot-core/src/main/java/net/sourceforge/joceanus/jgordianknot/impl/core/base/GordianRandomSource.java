@@ -142,7 +142,7 @@ public class GordianRandomSource {
         System.arraycopy(myThread, 0, myVector, 0, myThread.length);
         System.arraycopy(myTime, 0, myVector, myThread.length, myTime.length);
         if (pSeed != null) {
-            System.arraycopy(pSeed, 0, myVector, 0, pSeed.length);
+            System.arraycopy(pSeed, 0, myVector, myThread.length + myTime.length, pSeed.length);
         }
 
         /* return it */

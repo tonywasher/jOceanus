@@ -63,7 +63,7 @@ import net.sourceforge.joceanus.jgordianknot.api.sign.GordianSignatureSpec;
 import net.sourceforge.joceanus.jgordianknot.api.sign.GordianSignatureType;
 import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyKeyPair.BouncyPrivateKey;
 import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyKeyPair.BouncyPublicKey;
-import net.sourceforge.joceanus.jgordianknot.impl.core.agree.GordianCoreEncapsulationAgreement;
+import net.sourceforge.joceanus.jgordianknot.impl.core.agree.GordianCoreAnonymousAgreement;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianCryptoException;
 import net.sourceforge.joceanus.jgordianknot.impl.core.encrypt.GordianCoreEncryptor;
 import net.sourceforge.joceanus.jgordianknot.impl.core.sign.GordianCoreSignature;
@@ -435,7 +435,7 @@ public final class BouncyRSAAsymKey {
      * RSA Encapsulation.
      */
     public static class BouncyRSAEncapsulationAgreement
-            extends GordianCoreEncapsulationAgreement {
+            extends GordianCoreAnonymousAgreement {
         /**
          * The agreement.
          */

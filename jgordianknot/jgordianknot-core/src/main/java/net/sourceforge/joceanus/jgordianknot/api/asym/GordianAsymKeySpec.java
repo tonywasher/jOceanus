@@ -21,13 +21,12 @@ import java.util.EnumSet;
 import java.util.List;
 import java.util.Objects;
 
-import net.sourceforge.joceanus.jgordianknot.api.base.GordianKeySpec;
 import net.sourceforge.joceanus.jtethys.TethysDataConverter;
 
 /**
  * Asymmetric Key Specification.
  */
-public final class GordianAsymKeySpec implements GordianKeySpec {
+public final class GordianAsymKeySpec {
     /**
      * The Separator.
      */

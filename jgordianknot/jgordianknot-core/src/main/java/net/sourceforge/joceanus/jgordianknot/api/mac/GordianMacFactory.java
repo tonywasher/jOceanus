@@ -20,6 +20,7 @@ import java.util.List;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
+import net.sourceforge.joceanus.jgordianknot.api.base.GordianLength;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianSymKeySpec;
 import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigestSpec;
 import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigestType;
@@ -89,11 +90,12 @@ public interface GordianMacFactory {
     Predicate<GordianSymKeySpec> supportedCMacSymKeySpecs();
 
     /**
-     * Obtain a list of supported digestSpecs.
-     * @return the list of supported digestSpecs.
+     * Obtain a list of supported macSpecs for a keyLength.
+     * @param pKeyLen the keyLength
+     * @return the list of supported macSpecs.
      */
-    default List<GordianMacSpec> listAllSupportedSpecs() {
-        return GordianMacSpec.listAll()
+    default List<GordianMacSpec> listAllSupportedSpecs(final GordianLength pKeyLen) {
+        return GordianMacSpec.listAll(pKeyLen)
                 .stream()
                 .filter(supportedMacSpecs())
                 .collect(Collectors.toList());

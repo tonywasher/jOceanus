@@ -17,11 +17,14 @@
 package net.sourceforge.joceanus.jgordianknot.api.random;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
 
+import net.sourceforge.joceanus.jgordianknot.api.base.GordianLength;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianSymKeySpec;
 import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigestSpec;
+import net.sourceforge.joceanus.jgordianknot.api.key.GordianKeyLengths;
 import net.sourceforge.joceanus.jtethys.TethysDataConverter;
 
 /**
@@ -208,10 +211,12 @@ public class GordianRandomSpec {
         switch (theRandomType) {
             case HMAC:
             case HASH:
-                return theSubSpec instanceof GordianDigestSpec;
+                return theSubSpec instanceof GordianDigestSpec
+                        && ((GordianDigestSpec) theSubSpec).isValid();
             case CTR:
             case X931:
-                return theSubSpec instanceof GordianSymKeySpec;
+                return theSubSpec instanceof GordianSymKeySpec
+                        && ((GordianSymKeySpec) theSubSpec).isValid();
             default:
                 return false;
         }
@@ -297,15 +302,21 @@ public class GordianRandomSpec {
             myList.add(GordianRandomSpec.hMacResist(mySpec));
         }
 
-        /* For each symKeySpec */
-        for (final GordianSymKeySpec mySpec : GordianSymKeySpec.listAll()) {
-            /* Add a CTR random */
-            myList.add(GordianRandomSpec.ctr(mySpec));
-            myList.add(GordianRandomSpec.ctrResist(mySpec));
+        /* For each KeyLength */
+        final Iterator<GordianLength> myIterator = GordianKeyLengths.iterator();
+        while (myIterator.hasNext()) {
+            final GordianLength myKeyLen = myIterator.next();
 
-            /* Add an X931 random */
-            myList.add(GordianRandomSpec.x931(mySpec));
-            myList.add(GordianRandomSpec.x931Resist(mySpec));
+            /* For each symKeySpec */
+            for (final GordianSymKeySpec mySpec : GordianSymKeySpec.listAll(myKeyLen)) {
+                /* Add a CTR random */
+                myList.add(GordianRandomSpec.ctr(mySpec));
+                myList.add(GordianRandomSpec.ctrResist(mySpec));
+
+                /* Add an X931 random */
+                myList.add(GordianRandomSpec.x931(mySpec));
+                myList.add(GordianRandomSpec.x931Resist(mySpec));
+            }
         }
 
         /* Return the list */

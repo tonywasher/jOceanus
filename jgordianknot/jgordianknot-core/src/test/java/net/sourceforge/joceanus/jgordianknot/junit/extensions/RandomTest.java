@@ -408,7 +408,7 @@ public class RandomTest {
         final int myEntropyLength = pKeySize.getLength() + pCipher.getKeyType().getBlockLength().getLength();
 
         /* Create the provider */
-        final GordianSP800CTRDRBG myProvider = new GordianSP800CTRDRBG(pCipher, pKeySize.getLength(), myEntropy.get(myEntropyLength), myPersonal, myNonce);
+        final GordianSP800CTRDRBG myProvider = new GordianSP800CTRDRBG(pCipher, myEntropy.get(myEntropyLength), myPersonal, myNonce);
 
         /* Run the testCases */
         for(GordianTestCase myCase : pTestCases) {
@@ -902,7 +902,7 @@ public class RandomTest {
 
         /* Create the cipher */
         final GordianCipherFactory myFactory = BCFACTORY.getCipherFactory();
-        final GordianSymCipherSpec mySpec = GordianSymCipherSpec.ecb(GordianSymKeySpec.aes(), GordianPadding.NONE);
+        final GordianSymCipherSpec mySpec = GordianSymCipherSpec.ecb(GordianSymKeySpec.aes(GordianLength.LEN_128), GordianPadding.NONE);
         final GordianCoreCipher<GordianSymKeySpec> myCipher = (GordianCoreCipher<GordianSymKeySpec>) myFactory.createSymKeyCipher(mySpec);
 
         /* Create a standard stream */
@@ -947,7 +947,7 @@ public class RandomTest {
 
         /* Run the tests */
         final GordianCipherFactory myFactory = BCFACTORY.getCipherFactory();
-        final GordianSymCipherSpec mySpec = GordianSymCipherSpec.ecb(GordianSymKeySpec.aes(), GordianPadding.NONE);
+        final GordianSymCipherSpec mySpec = GordianSymCipherSpec.ecb(GordianSymKeySpec.aes(GordianLength.LEN_128), GordianPadding.NONE);
         final GordianCoreCipher<GordianSymKeySpec> myCipher = (GordianCoreCipher<GordianSymKeySpec>) myFactory.createSymKeyCipher(mySpec);
         testX931CipherDRBG(myCipher, "f7d36762b9915f1ed585eb8e91700eb2", myInitF, myTestsF);
 
@@ -1007,7 +1007,7 @@ public class RandomTest {
 
         /* Create the cipher */
         final GordianCipherFactory myFactory = BCFACTORY.getCipherFactory();
-        final GordianSymCipherSpec mySpec = GordianSymCipherSpec.ecb(GordianSymKeySpec.aes(), GordianPadding.NONE);
+        final GordianSymCipherSpec mySpec = GordianSymCipherSpec.ecb(GordianSymKeySpec.aes(GordianLength.LEN_256), GordianPadding.NONE);
         final GordianCoreCipher<GordianSymKeySpec> myCipher = (GordianCoreCipher<GordianSymKeySpec>) myFactory.createSymKeyCipher(mySpec);
 
         /* Create a standard stream */

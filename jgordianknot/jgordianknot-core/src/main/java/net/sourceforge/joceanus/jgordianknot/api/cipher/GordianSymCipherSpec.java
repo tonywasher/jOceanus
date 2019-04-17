@@ -332,28 +332,26 @@ public class GordianSymCipherSpec
     }
 
     /**
-     * List all possible cipherSpecs.
+     * List all possible cipherSpecs for a SymKeySpec.
+     * @param pSpec the keySpec
      * @return the list
      */
-    public static List<GordianSymCipherSpec> listAll() {
+    public static List<GordianSymCipherSpec> listAll(final GordianSymKeySpec pSpec) {
         /* Create the array list */
         final List<GordianSymCipherSpec> myList = new ArrayList<>();
 
-        /* For each symKeyType */
-        for (final GordianSymKeySpec mySpec : GordianSymKeySpec.listAll()) {
-            /* Loop through the modes */
-            for (GordianCipherMode myMode : GordianCipherMode.values()) {
-                /* If the mode has padding */
-                if (myMode.hasPadding()) {
-                    /* Loop through the paddings */
-                    for (GordianPadding myPadding : GordianPadding.values()) {
-                        myList.add(new GordianSymCipherSpec(mySpec, myMode, myPadding));
-                    }
-
-                    /* else no padding */
-                } else {
-                    myList.add(new GordianSymCipherSpec(mySpec, myMode, GordianPadding.NONE));
+        /* Loop through the modes */
+        for (GordianCipherMode myMode : GordianCipherMode.values()) {
+            /* If the mode has padding */
+            if (myMode.hasPadding()) {
+                /* Loop through the paddings */
+                for (GordianPadding myPadding : GordianPadding.values()) {
+                    myList.add(new GordianSymCipherSpec(pSpec, myMode, myPadding));
                 }
+
+                /* else no padding */
+            } else {
+                myList.add(new GordianSymCipherSpec(pSpec, myMode, GordianPadding.NONE));
             }
         }
 

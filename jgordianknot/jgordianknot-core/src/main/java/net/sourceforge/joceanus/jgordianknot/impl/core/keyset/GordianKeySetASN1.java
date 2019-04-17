@@ -34,6 +34,7 @@ import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianSymKeySpec;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianSymKeyType;
 import net.sourceforge.joceanus.jgordianknot.api.key.GordianKey;
 import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySet;
+import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetSpec;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianDataException;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianIOException;
 import net.sourceforge.joceanus.jtethys.OceanusException;
@@ -41,8 +42,13 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
 /**
  * ASN1 Encoding of KeySet.
  */
-public class GordianKeySetEncoded
+public class GordianKeySetASN1
         extends ASN1Object {
+    /**
+     * The keySetSpec.
+     */
+    private final GordianKeySetSpec theSpec;
+
     /**
      * The map of keyTypes to secured key.
      */
@@ -54,8 +60,11 @@ public class GordianKeySetEncoded
      * @param pWrapper the wrapping keySet
      * @throws OceanusException on error
      */
-    GordianKeySetEncoded(final GordianCoreKeySet pKeySet,
-                         final GordianKeySet pWrapper) throws OceanusException {
+    GordianKeySetASN1(final GordianCoreKeySet pKeySet,
+                      final GordianKeySet pWrapper) throws OceanusException {
+        /* Store the Spec */
+        theSpec = pKeySet.getKeySetSpec();
+
         /* Create the map */
         theMap = new LinkedHashMap<>();
 
@@ -72,14 +81,19 @@ public class GordianKeySetEncoded
      * @param pSequence the Sequence
      * @throws OceanusException on error
      */
-    private GordianKeySetEncoded(final ASN1Sequence pSequence) throws OceanusException {
+    private GordianKeySetASN1(final ASN1Sequence pSequence) throws OceanusException {
         /* Protect against exceptions */
         try {
             /* Create the map */
             theMap = new LinkedHashMap<>();
 
             /* Build the map from the sequence */
-            final Enumeration e = pSequence.getObjects();
+            Enumeration e = pSequence.getObjects();
+            theSpec = GordianKeySetSpecASN1.getInstance(e.nextElement()).getSpec();
+            final ASN1Sequence myKeySet = ASN1Sequence.getInstance(e.nextElement());
+
+            /* Build the map from the keySet sequence */
+            e = myKeySet.getObjects();
             while (e.hasMoreElements()) {
                 final ASN1Sequence k = ASN1Sequence.getInstance(e.nextElement());
                 final Enumeration ek = k.getObjects();
@@ -99,11 +113,11 @@ public class GordianKeySetEncoded
      * @return the parsed object
      * @throws OceanusException on error
      */
-    public static GordianKeySetEncoded getInstance(final Object pObject) throws OceanusException {
-        if (pObject instanceof GordianKeySetEncoded) {
-            return (GordianKeySetEncoded) pObject;
+    public static GordianKeySetASN1 getInstance(final Object pObject) throws OceanusException {
+        if (pObject instanceof GordianKeySetASN1) {
+            return (GordianKeySetASN1) pObject;
         } else if (pObject != null) {
-            return new GordianKeySetEncoded(ASN1Sequence.getInstance(pObject));
+            return new GordianKeySetASN1(ASN1Sequence.getInstance(pObject));
         }
         throw new GordianDataException("Null sequence");
     }
@@ -111,9 +125,12 @@ public class GordianKeySetEncoded
     /**
      * Produce an object suitable for an ASN1OutputStream.
      * <pre>
-     * GordianKeySetEncoded ::= SEQUENCE OF securedKey
+     * GordianKeySetASN1 ::= SEQUENCE OF {
+     *      keySetSpec GordianKeySetSpecASN1
+     *      securedKeys securedKeySet
+     * } securedKey
      *
-     * securedKey ::= SEQUENCE {
+     * securedKeySet ::= SEQUENCE {
      *      wrappedKeyId INTEGER
      *      wrappedKey OCTET STRING
      * }
@@ -122,32 +139,44 @@ public class GordianKeySetEncoded
      */
     @Override
     public ASN1Primitive toASN1Primitive() {
-        final ASN1EncodableVector v = new ASN1EncodableVector();
-
+        /* Build the keySetSequence */
+        final ASN1EncodableVector ks = new ASN1EncodableVector();
         for (Map.Entry<Integer, byte[]> myEntry : theMap.entrySet()) {
             final ASN1EncodableVector k = new ASN1EncodableVector();
             k.add(new ASN1Integer(myEntry.getKey()));
             k.add(new DEROctetString(myEntry.getValue()));
-            v.add(new DERSequence(k).toASN1Primitive());
+            ks.add(new DERSequence(k).toASN1Primitive());
         }
 
+        /* Build the overall sequence */
+        final ASN1EncodableVector v = new ASN1EncodableVector();
+        v.add(new GordianKeySetSpecASN1(theSpec).toASN1Primitive());
+        v.add(new DERSequence(ks));
         return new DERSequence(v);
     }
 
     /**
-     * Derive the keySet from the details.
-     * @param pKeySet the keySet to populate
+     * Build a keySet from the details.
+     * @param pFactory the keySet factory
      * @param pWrapper the wrapping keySet
+     * @return the new keySet
      * @throws OceanusException on error
      */
-    void populateKeySet(final GordianCoreKeySet pKeySet,
-                        final GordianKeySet pWrapper) throws OceanusException {
+    GordianCoreKeySet buildKeySet(final GordianCoreKeySetFactory pFactory,
+                                  final GordianKeySet pWrapper) throws OceanusException {
+        /* Create the new keySet */
+        final GordianCoreKeySet myKeySet = pFactory.createKeySet(theSpec);
+
+        /* Declare the keys */
         for (Map.Entry<Integer, byte[]> myEntry : theMap.entrySet()) {
             final GordianSymKeyType myKeyType = GordianSymKeyType.values()[myEntry.getKey() - 1];
-            final GordianSymKeySpec mySpec = new GordianSymKeySpec(myKeyType, GordianLength.LEN_128);
+            final GordianSymKeySpec mySpec = new GordianSymKeySpec(myKeyType, GordianLength.LEN_128, theSpec.getKeyLength());
             final GordianKey<GordianSymKeySpec> myKey = pWrapper.deriveKey(myEntry.getValue(), mySpec);
-            pKeySet.declareSymKey(myKey);
+            myKeySet.declareSymKey(myKey);
         }
+
+        /* Return the keySet */
+        return myKeySet;
     }
 
     /**
@@ -159,35 +188,64 @@ public class GordianKeySetEncoded
     static int getEncodedLength(final int pWrappedKeyLen,
                                 final int pNumKeys) {
         /* Key length is type + length + value */
-        int myLength = pWrappedKeyLen + 1 + getLengthLength(pWrappedKeyLen);
+        int myLength = getLengthByteArrayField(pWrappedKeyLen);
 
-        /* KeyType has type + length + value (all single byte) */
-        myLength += 2 + getLengthLength(1);
+        /* KeyType is guaranteed single byte value */
+        myLength += getLengthIntegerField(1);
 
-        /* Hdr has type + length */
-        myLength += 1 + getLengthLength(myLength);
+        /* Calculate the length of the sequence */
+        myLength = getLengthSequence(myLength);
 
-        /* We have pNumKeys of these */
-        myLength *= pNumKeys;
+        /* We have pNumKeys of these in a sequence */
+        myLength = getLengthSequence(myLength * pNumKeys);
 
-        /* Sequence hdr is type + length + data */
-        myLength += 1 + getLengthLength(myLength);
-        return myLength;
+        /* Return the sequence length */
+        return getLengthSequence(myLength + GordianKeySetSpecASN1.getEncodedLength());
     }
 
     /**
-     * Obtain the byte Length of an encoded length value.
-     * @param pLength the length
+     * Obtain the byte Length of an encoded sequence field.
+     * @param pLength the length of the sequence
      * @return the byte length
      */
-    private static int getLengthLength(final int pLength) {
+    static int getLengthSequence(final int pLength) {
+        /* Type + length + encoded length */
+        return 1 + pLength + getLengthValue(pLength);
+    }
+
+    /**
+     * Obtain the byte Length of an encoded byte array field.
+     * @param pLength the length of the field
+     * @return the byte length
+     */
+    static int getLengthByteArrayField(final int pLength) {
+        /* Type + length + encoded length */
+        return 1 + pLength + getLengthValue(pLength);
+    }
+
+    /**
+     * Obtain the byte Length of an encoded integer field.
+     * @param pValue the value
+     * @return the byte length
+     */
+    static int getLengthIntegerField(final int pValue) {
+        /* Type + length + encoded value */
+        return 2 + getLengthValue(pValue);
+    }
+
+    /**
+     * Obtain the byte Length of an encoded integer value.
+     * @param pValue the value
+     * @return the byte length
+     */
+    static int getLengthValue(final int pValue) {
         /* Handle small lengths */
-        if (pLength <= Byte.MAX_VALUE) {
+        if (pValue <= Byte.MAX_VALUE) {
             return 1;
         }
 
         /*  Loop while we work out the length */
-        int myLen = pLength >> Byte.SIZE;
+        int myLen = pValue >> Byte.SIZE;
         int myResult = 2;
         while (myLen > 0) {
             myResult++;

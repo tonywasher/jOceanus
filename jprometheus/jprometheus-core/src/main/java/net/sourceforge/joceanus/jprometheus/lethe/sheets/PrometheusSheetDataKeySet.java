@@ -44,6 +44,16 @@ public class PrometheusSheetDataKeySet
     private static final int COL_CREATEDATE = COL_CONTROL + 1;
 
     /**
+     * HashPrime column.
+     */
+    private static final int COL_HASHPRIME = COL_CREATEDATE + 1;
+
+    /**
+     * KeySetDef column.
+     */
+    private static final int COL_KEYSETDEF = COL_CREATEDATE + 1;
+
+    /**
      * Constructor for loading a spreadsheet.
      * @param pReader the spreadsheet reader
      */
@@ -75,6 +85,8 @@ public class PrometheusSheetDataKeySet
         final DataValues<CryptographyDataType> myValues = getRowValues(DataKeySet.OBJECT_NAME);
         myValues.addValue(DataKeySet.FIELD_CONTROLKEY, loadInteger(COL_CONTROL));
         myValues.addValue(DataKeySet.FIELD_CREATEDATE, loadDate(COL_CREATEDATE));
+        myValues.addValue(DataKeySet.FIELD_HASHPRIME, loadBoolean(COL_HASHPRIME));
+        myValues.addValue(DataKeySet.FIELD_KEYSETDEF, loadBytes(COL_KEYSETDEF));
 
         /* Return the values */
         return myValues;
@@ -86,11 +98,13 @@ public class PrometheusSheetDataKeySet
         super.insertSecureItem(pItem);
         writeInteger(COL_CONTROL, pItem.getControlKeyId());
         writeDate(COL_CREATEDATE, pItem.getCreationDate());
+        writeBoolean(COL_HASHPRIME, pItem.isHashPrime());
+        writeBytes(COL_KEYSETDEF, pItem.getSecuredKeySetDef());
     }
 
     @Override
     protected int getLastColumn() {
         /* Return the last column */
-        return COL_CREATEDATE;
+        return COL_KEYSETDEF;
     }
 }

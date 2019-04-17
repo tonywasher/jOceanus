@@ -24,6 +24,7 @@ import net.sourceforge.joceanus.jgordianknot.api.factory.GordianFactory;
 import net.sourceforge.joceanus.jgordianknot.api.factory.GordianParameters;
 import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianBadCredentialsException;
 import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetHash;
+import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetHashSpec;
 import net.sourceforge.joceanus.jgordianknot.api.mac.GordianMac;
 import net.sourceforge.joceanus.jgordianknot.api.mac.GordianMacFactory;
 import net.sourceforge.joceanus.jgordianknot.api.mac.GordianMacSpec;
@@ -32,10 +33,6 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.TethysDataConverter;
 
 import java.util.Arrays;
-
-import org.bouncycastle.asn1.ASN1ObjectIdentifier;
-import org.bouncycastle.asn1.DEROctetString;
-import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
 
 /**
  * Hash from which to derive KeySet.
@@ -48,11 +45,6 @@ public final class GordianCoreKeySetHash
     public static final int HASHLEN = GordianKeySetHashRecipe.HASHLEN;
 
     /**
-     * KeySetHash OID.
-     */
-    public static final ASN1ObjectIdentifier KEYSETOID = GordianCoreFactory.BASEOID.branch("10");
-
-    /**
      * Hash Recipe.
      */
     private final GordianKeySetHashRecipe theRecipe;
@@ -63,14 +55,14 @@ public final class GordianCoreKeySetHash
     private final GordianCoreFactory theFactory;
 
     /**
+     * keySetHashSpec.
+     */
+    private GordianKeySetHashSpec theSpec;
+
+    /**
      * The Hash.
      */
     private byte[] theHash;
-
-    /**
-     * Encrypted child password.
-     */
-    private byte[] theChildPassword;
 
     /**
      * CipherSet.
@@ -81,13 +73,16 @@ public final class GordianCoreKeySetHash
      * Constructor for a completely new keySetHash.
      *
      * @param pFactory the factory
+     * @param pSpec the keySetHashSpec
      */
-    private GordianCoreKeySetHash(final GordianCoreFactory pFactory) {
+    private GordianCoreKeySetHash(final GordianCoreFactory pFactory,
+                                  final GordianKeySetHashSpec pSpec) {
         /* Store the factory */
         theFactory = pFactory;
+        theSpec = pSpec;
 
         /* Create a random HashRecipe */
-        theRecipe = new GordianKeySetHashRecipe(theFactory);
+        theRecipe = new GordianKeySetHashRecipe(theFactory, pSpec);
     }
 
     /**
@@ -96,10 +91,11 @@ public final class GordianCoreKeySetHash
      * @param pFactory   the factory
      * @param pHashBytes the Hash bytes
      * @param pPassLen   the password length
+     * @throws OceanusException on error
      */
     private GordianCoreKeySetHash(final GordianCoreFactory pFactory,
                                   final byte[] pHashBytes,
-                                  final int pPassLen) {
+                                  final int pPassLen) throws OceanusException {
         /* Store the factory */
         theFactory = pFactory;
 
@@ -108,24 +104,27 @@ public final class GordianCoreKeySetHash
 
         /* Parse the hash */
         theRecipe = new GordianKeySetHashRecipe(theFactory, pPassLen, pHashBytes);
+        theSpec = theRecipe.getSpec();
     }
 
     /**
      * Create a new keySetHash for password.
      *
      * @param pFactory  the factory
+     * @param pSpec the keySetSpec
      * @param pPassword the password
      * @return the new keySetHash
      * @throws OceanusException on error
      */
     static GordianKeySetHash newKeySetHash(final GordianCoreFactory pFactory,
+                                           final GordianKeySetHashSpec pSpec,
                                            final char[] pPassword) throws OceanusException {
         /* Protect against exceptions */
         byte[] myPassword = null;
         try {
             /* Access bytes of password */
             myPassword = TethysDataConverter.charsToByteArray(pPassword);
-            return newKeySetHash(pFactory, myPassword);
+            return newKeySetHash(pFactory, pSpec, myPassword);
 
             /* Ensure intermediate password is reset */
         } finally {
@@ -139,14 +138,16 @@ public final class GordianCoreKeySetHash
      * Create a new keySetHash for password.
      *
      * @param pFactory  the factory
+     * @param pSpec the keySetHashSpec
      * @param pPassword the password
      * @return the new keySetHash
      * @throws OceanusException on error
      */
     static GordianKeySetHash newKeySetHash(final GordianFactory pFactory,
+                                           final GordianKeySetHashSpec pSpec,
                                            final byte[] pPassword) throws OceanusException {
         /* Create a new keySetHash */
-        final GordianCoreKeySetHash myHash = new GordianCoreKeySetHash((GordianCoreFactory) pFactory);
+        final GordianCoreKeySetHash myHash = new GordianCoreKeySetHash((GordianCoreFactory) pFactory, pSpec);
 
         /* Build hash from password */
         myHash.setPassword(pPassword);
@@ -217,50 +218,8 @@ public final class GordianCoreKeySetHash
      *
      * @return the Factory
      */
-    private GordianFactory getFactory() {
+    public GordianFactory getFactory() {
         return theFactory;
-    }
-
-    @Override
-    public GordianCoreKeySetHash childHash() throws OceanusException {
-        /* Protect against exceptions */
-        byte[] myPassword = null;
-        try {
-            /* Create a new keySetHash */
-            final GordianCoreKeySetHash myHash = new GordianCoreKeySetHash(theFactory);
-
-            /* Access the child password */
-            myPassword = theKeySet.decryptBytes(theChildPassword);
-
-            /* Build hash from password */
-            myHash.setPassword(myPassword);
-            return myHash;
-
-            /* Ensure password is reset */
-        } finally {
-            if (myPassword != null) {
-                Arrays.fill(myPassword, (byte) 0);
-            }
-        }
-    }
-
-    @Override
-    public GordianKeySetHash resolveChildHash(final byte[] pHash) throws OceanusException {
-        /* Protect against exceptions */
-        byte[] myPassword = null;
-        try {
-            /* Access the child password */
-            myPassword = theKeySet.decryptBytes(theChildPassword);
-
-            /* Resolve hash */
-            return resolveKeySetHash(theFactory, pHash, myPassword);
-
-            /* Ensure password is reset */
-        } finally {
-            if (myPassword != null) {
-                Arrays.fill(myPassword, (byte) 0);
-            }
-        }
     }
 
     /**
@@ -279,17 +238,13 @@ public final class GordianCoreKeySetHash
             theHash = myResults[iIndex++];
 
             /* Create the Key Set */
-            theKeySet = new GordianCoreKeySet(theFactory);
+            theKeySet = new GordianCoreKeySet(theFactory, theSpec.getKeySetSpec());
             theKeySet.buildFromSecret(myResults[iIndex++], myResults[iIndex++]);
-
-            /* Encrypt the passwords */
-            theChildPassword = theKeySet.encryptBytes(myResults[iIndex]);
 
         } finally {
             /* Clear out results */
             if (myResults != null) {
                 int iIndex = 1;
-                Arrays.fill(myResults[iIndex++], (byte) 0);
                 Arrays.fill(myResults[iIndex++], (byte) 0);
                 Arrays.fill(myResults[iIndex], (byte) 0);
             }
@@ -318,17 +273,13 @@ public final class GordianCoreKeySetHash
             }
 
             /* Create the Key Set */
-            theKeySet = new GordianCoreKeySet(theFactory);
+            theKeySet = new GordianCoreKeySet(theFactory, theSpec.getKeySetSpec());
             theKeySet.buildFromSecret(myResults[iIndex++], myResults[iIndex++]);
-
-            /* Encrypt the passwords*/
-            theChildPassword = theKeySet.encryptBytes(myResults[iIndex]);
 
         } finally {
             /* Clear out results */
             if (myResults != null) {
                 int iIndex = 1;
-                Arrays.fill(myResults[iIndex++], (byte) 0);
                 Arrays.fill(myResults[iIndex++], (byte) 0);
                 Arrays.fill(myResults[iIndex], (byte) 0);
             }
@@ -346,7 +297,7 @@ public final class GordianCoreKeySetHash
         /* Obtain configuration details */
         final GordianCoreKeySetFactory myFactory = (GordianCoreKeySetFactory) theFactory.getKeySetFactory();
         final GordianPersonalisation myPersonal = myFactory.getPersonalisation();
-        final int iIterations = theFactory.getNumIterations();
+        final int iIterations = theRecipe.getSpec().getNumIterations();
         final int iFinal = theRecipe.getAdjustment()
                 + iIterations;
 
@@ -427,15 +378,6 @@ public final class GordianCoreKeySetHash
             TethysDataConverter.buildHashResult(mySecretBytes, mySecretHash);
         }
 
-        /* Combine the Primary and Alternate hashes to form the childPassword */
-        myDigest.update(myPrimeHash);
-        myDigest.update(myAlternateHash);
-        myDigest.update(mySecretHash);
-        myDigest.update(myPrimeBytes);
-        myDigest.update(myAlternateBytes);
-        myDigest.update(mySecretBytes);
-        final byte[] myChildPassword = myDigest.finish();
-
         /* Combine the Primary and Alternate hashes to form the initVector */
         myDigest.update(myPrimeHash);
         myDigest.update(myAlternateHash);
@@ -451,7 +393,7 @@ public final class GordianCoreKeySetHash
 
         /* Return to caller */
         return new byte[][]
-                {myHashBytes, mySecretBytes, myInitVector, myChildPassword};
+                {myHashBytes, mySecretBytes, myInitVector};
     }
 
     @Override
@@ -481,13 +423,5 @@ public final class GordianCoreKeySetHash
     public int hashCode() {
         return GordianParameters.HASH_PRIME * theFactory.hashCode()
                 + Arrays.hashCode(theHash);
-    }
-
-    /**
-     * Obtain the algorithm identifier.
-     * @return the algorithm identifier.
-     */
-    public AlgorithmIdentifier getAlgorithmIdentifier() {
-        return new AlgorithmIdentifier(KEYSETOID, new DEROctetString(theHash));
     }
 }
