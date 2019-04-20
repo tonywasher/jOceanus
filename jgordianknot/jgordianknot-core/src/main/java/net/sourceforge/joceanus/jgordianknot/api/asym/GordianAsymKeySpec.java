@@ -124,7 +124,7 @@ public final class GordianAsymKeySpec {
      * @return the KeySpec
      */
     public static GordianAsymKeySpec dh(final GordianDHGroup pGroup) {
-        return new GordianAsymKeySpec(GordianAsymKeyType.DIFFIEHELLMAN, pGroup);
+        return new GordianAsymKeySpec(GordianAsymKeyType.DH, pGroup);
     }
 
     /**
@@ -407,7 +407,7 @@ public final class GordianAsymKeySpec {
                 return theSubKeyType instanceof GordianRSAModulus;
             case DSA:
                 return theSubKeyType instanceof GordianDSAKeyType;
-            case DIFFIEHELLMAN:
+            case DH:
                 return theSubKeyType instanceof GordianDHGroup;
             case EC:
                 return theSubKeyType instanceof GordianDSAElliptic;

@@ -18,9 +18,7 @@ package net.sourceforge.joceanus.jgordianknot.junit.regression;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.security.spec.KeySpec;
 
-import org.bouncycastle.asn1.ASN1Primitive;
 import org.bouncycastle.asn1.x500.X500Name;
 import org.bouncycastle.asn1.x500.X500NameBuilder;
 import org.bouncycastle.asn1.x500.style.BCStyle;
@@ -33,7 +31,6 @@ import net.sourceforge.joceanus.jgordianknot.api.asym.GordianDSAElliptic;
 import net.sourceforge.joceanus.jgordianknot.api.base.GordianLength;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianCipherFactory;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianStreamKeySpec;
-import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianStreamKeyType;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianSymKeySpec;
 import net.sourceforge.joceanus.jgordianknot.api.factory.GordianFactory;
 import net.sourceforge.joceanus.jgordianknot.api.factory.GordianFactoryType;
@@ -56,8 +53,6 @@ import net.sourceforge.joceanus.jgordianknot.api.keystore.GordianKeyStoreEntry.G
 import net.sourceforge.joceanus.jgordianknot.api.keystore.GordianKeyStoreFactory;
 import net.sourceforge.joceanus.jgordianknot.api.mac.GordianMacFactory;
 import net.sourceforge.joceanus.jgordianknot.api.mac.GordianMacSpec;
-import net.sourceforge.joceanus.jgordianknot.api.zip.GordianZipWriteFile;
-import net.sourceforge.joceanus.jgordianknot.impl.core.keystore.GordianKeyStoreDocument;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
@@ -206,8 +201,7 @@ public class KeyStoreTest {
      * Build X500Name.
      * @param pName the CN value.
      */
-    @Test
-    public X500Name buildX500Name(final String pName) throws OceanusException {
+    private X500Name buildX500Name(final String pName) throws OceanusException {
         /* Build the name */
         X500NameBuilder myBuilder = new X500NameBuilder(BCStyle.INSTANCE);
         myBuilder.addRDN(BCStyle.CN, pName);

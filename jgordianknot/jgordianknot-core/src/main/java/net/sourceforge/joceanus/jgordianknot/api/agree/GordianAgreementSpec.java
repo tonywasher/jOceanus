@@ -86,7 +86,7 @@ public final class GordianAgreementSpec {
      * @return the Spec
      */
     public static GordianAgreementSpec dhAnon(final GordianKDFType pKDFType) {
-        return new GordianAgreementSpec(GordianAsymKeyType.DIFFIEHELLMAN, GordianAgreementType.ANON, pKDFType);
+        return new GordianAgreementSpec(GordianAsymKeyType.DH, GordianAgreementType.ANON, pKDFType);
     }
 
     /**
@@ -95,7 +95,7 @@ public final class GordianAgreementSpec {
      * @return the Spec
      */
     public static GordianAgreementSpec dhBasic(final GordianKDFType pKDFType) {
-        return new GordianAgreementSpec(GordianAsymKeyType.DIFFIEHELLMAN, GordianAgreementType.BASIC, pKDFType);
+        return new GordianAgreementSpec(GordianAsymKeyType.DH, GordianAgreementType.BASIC, pKDFType);
     }
 
     /**
@@ -104,7 +104,7 @@ public final class GordianAgreementSpec {
      * @return the Spec
      */
     public static GordianAgreementSpec dhMQV(final GordianKDFType pKDFType) {
-        return new GordianAgreementSpec(GordianAsymKeyType.DIFFIEHELLMAN, GordianAgreementType.MQV, pKDFType);
+        return new GordianAgreementSpec(GordianAsymKeyType.DH, GordianAgreementType.MQV, pKDFType);
     }
 
     /**
@@ -113,7 +113,7 @@ public final class GordianAgreementSpec {
      * @return the Spec
      */
     public static GordianAgreementSpec dhUnified(final GordianKDFType pKDFType) {
-        return new GordianAgreementSpec(GordianAsymKeyType.DIFFIEHELLMAN, GordianAgreementType.UNIFIED, pKDFType);
+        return new GordianAgreementSpec(GordianAsymKeyType.DH, GordianAgreementType.UNIFIED, pKDFType);
     }
 
     /**
@@ -373,7 +373,7 @@ public final class GordianAgreementSpec {
             case EC:
             case GOST2012:
             case DSTU4145:
-            case DIFFIEHELLMAN:
+            case DH:
                 myAgreements.addAll(listAllKDFs(pKeyType, GordianAgreementType.KEM));
                 myAgreements.addAll(listAllKDFs(pKeyType, GordianAgreementType.ANON));
                 myAgreements.addAll(listAllKDFs(pKeyType, GordianAgreementType.BASIC));

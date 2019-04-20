@@ -82,7 +82,7 @@ public class BouncyAgreementFactory
             case DSTU4145:
             case SM2:
                 return getBCECAgreement(pSpec);
-            case DIFFIEHELLMAN:
+            case DH:
                 return getBCDHAgreement(pSpec);
             case NEWHOPE:
                 return new BouncyNewHopeAgreement(getFactory(), pSpec);

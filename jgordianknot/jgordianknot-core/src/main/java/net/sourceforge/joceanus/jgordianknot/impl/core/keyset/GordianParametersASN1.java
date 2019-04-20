@@ -18,51 +18,44 @@ package net.sourceforge.joceanus.jgordianknot.impl.core.keyset;
 
 import java.util.Enumeration;
 
+import org.bouncycastle.asn1.ASN1Boolean;
 import org.bouncycastle.asn1.ASN1EncodableVector;
+import org.bouncycastle.asn1.ASN1Integer;
 import org.bouncycastle.asn1.ASN1Object;
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
-import org.bouncycastle.asn1.ASN1OctetString;
 import org.bouncycastle.asn1.ASN1Primitive;
 import org.bouncycastle.asn1.ASN1Sequence;
-import org.bouncycastle.asn1.DEROctetString;
 import org.bouncycastle.asn1.DERSequence;
 import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
 
-import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetHashSpec;
+import net.sourceforge.joceanus.jgordianknot.api.factory.GordianFactoryType;
+import net.sourceforge.joceanus.jgordianknot.api.factory.GordianParameters;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianDataException;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianIOException;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
- * ASN1 Encoding of KeySetSpec.
+ * ASN1 Encoding of Parameters.
  */
-public class GordianKeySetHashASN1
+public class GordianParametersASN1
         extends ASN1Object {
     /**
      * Base our algorithmId off bouncyCastle.
      */
-    private static final ASN1ObjectIdentifier KEYSETHASHALGID = GordianCoreKeySetFactory.KEYSETOID.branch("2");
+    private static final ASN1ObjectIdentifier PARAMSALGID = GordianCoreKeySetFactory.KEYSETOID.branch("2");
 
     /**
-     * The KeySetSpec.
+     * The Parameters.
      */
-    private final GordianKeySetHashSpec theSpec;
-
-    /**
-     * The HashBytes.
-     */
-    private final byte[] theHashBytes;
+    private final GordianParameters theParams;
 
     /**
      * Create the ASN1 sequence.
-     * @param pKeySetHashSpec the keySetHashSpec
-     * @param pHashBytes the hashBytes
+     * @param pParameters the parameters
      */
-    public GordianKeySetHashASN1(final GordianKeySetHashSpec pKeySetHashSpec,
-                                 final byte[] pHashBytes) {
-        /* Store the parameters */
-        theSpec = pKeySetHashSpec;
-        theHashBytes = pHashBytes;
+    public GordianParametersASN1(final GordianParameters pParameters) {
+        /* Store the Params */
+        theParams = pParameters;
     }
 
     /**
@@ -70,13 +63,20 @@ public class GordianKeySetHashASN1
      * @param pSequence the Sequence
      * @throws OceanusException on error
      */
-    private GordianKeySetHashASN1(final ASN1Sequence pSequence) throws OceanusException {
+    private GordianParametersASN1(final ASN1Sequence pSequence) throws OceanusException {
         /* Protect against exceptions */
         try {
             /* Extract the parameters from the sequence */
             final Enumeration e = pSequence.getObjects();
-            theSpec = GordianKeySetHashSpecASN1.getInstance(e.nextElement()).getSpec();
-            theHashBytes = ASN1OctetString.getInstance(e.nextElement()).getOctets();
+            final boolean isBC = ASN1Boolean.getInstance(e.nextElement()).isTrue();
+            final int myIterations = ASN1Integer.getInstance(e.nextElement()).getValue().intValue();
+            final GordianFactoryType myType = isBC
+                                              ? GordianFactoryType.BC
+                                              : GordianFactoryType.JCA;
+
+            /* Create the parameters */
+            theParams = new GordianParameters(myType);
+            theParams.setKIterations(myIterations);
 
             /* handle exceptions */
         } catch (IllegalArgumentException e) {
@@ -90,37 +90,29 @@ public class GordianKeySetHashASN1
      * @return the parsed object
      * @throws OceanusException on error
      */
-    public static GordianKeySetHashASN1 getInstance(final Object pObject) throws OceanusException {
-        if (pObject instanceof GordianKeySetHashASN1) {
-            return (GordianKeySetHashASN1) pObject;
+    public static GordianParametersASN1 getInstance(final Object pObject) throws OceanusException {
+        if (pObject instanceof GordianParametersASN1) {
+            return (GordianParametersASN1) pObject;
         } else if (pObject != null) {
-            return new GordianKeySetHashASN1(ASN1Sequence.getInstance(pObject));
+            return new GordianParametersASN1(ASN1Sequence.getInstance(pObject));
         }
         throw new GordianDataException("Null sequence");
     }
 
     /**
-     * Obtain the spec.
-     * @return the Spec
+     * Obtain the parameters.
+     * @return the params
      */
-    GordianKeySetHashSpec getSpec() {
-        return theSpec;
-    }
-
-    /**
-     * Obtain the hashBytes.
-     * @return the hashBytes
-     */
-    byte[] getHashBytes() {
-        return theHashBytes;
+    public GordianParameters getParameters() {
+        return theParams;
     }
 
     /**
      * Produce an object suitable for an ASN1OutputStream.
      * <pre>
-     * GordianKeySetHashASN1 ::= SEQUENCE  {
-     *      spec GordianKeySetSpecASN1
-     *      hashBytes OCTET STRING
+     * GordianParametersASN1 ::= SEQUENCE  {
+     *      bouncyCastle BOOLEAN
+     *      numIterations INTEGER
      * }
      * </pre>
      * @return the ASN1 Encoding
@@ -128,20 +120,24 @@ public class GordianKeySetHashASN1
     @Override
     public ASN1Primitive toASN1Primitive() {
         final ASN1EncodableVector v = new ASN1EncodableVector();
-        v.add(new GordianKeySetHashSpecASN1(theSpec).toASN1Primitive());
-        v.add(new DEROctetString(theHashBytes));
+        v.add(theParams.getFactoryType() == GordianFactoryType.BC
+                    ? ASN1Boolean.TRUE
+                    : ASN1Boolean.FALSE);
+        v.add(new ASN1Integer(theParams.getKIterations()));
 
         return new DERSequence(v);
     }
 
     /**
-     * Obtain the byte length of the encoded a given wrapped keyLength and # of keys.
+     * Obtain the byte length of the encoded sequence.
      * @return the byte length
      */
-    public static int getEncodedLength() {
-        /* KeyType has type + length + value (all single byte) */
-        int myLength  =  GordianKeySetHashSpecASN1.getEncodedLength();
-        myLength += GordianKeySetASN1.getLengthByteArrayField(GordianKeySetHashRecipe.HASHLEN);
+    static int getEncodedLength() {
+        /* Factory Type has type  + value (all single byte) */
+        int myLength  = 2;
+
+        /* Iterations has type + length + value (all single byte) */
+        myLength += GordianKeySetASN1.getLengthIntegerField(1);
 
         /* Calculate the length of the sequence */
         return  GordianKeySetASN1.getLengthSequence(myLength);
@@ -152,6 +148,6 @@ public class GordianKeySetHashASN1
      * @return  the algorithmId
      */
     public AlgorithmIdentifier getAlgorithmId() {
-        return new AlgorithmIdentifier(KEYSETHASHALGID, toASN1Primitive());
+        return new AlgorithmIdentifier(PARAMSALGID, toASN1Primitive());
     }
 }

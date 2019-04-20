@@ -18,6 +18,8 @@ package net.sourceforge.joceanus.jgordianknot.impl.core.keyset;
 
 import java.util.function.Predicate;
 
+import org.bouncycastle.asn1.ASN1ObjectIdentifier;
+
 import net.sourceforge.joceanus.jgordianknot.api.base.GordianLength;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianSymKeySpec;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianSymKeyType;
@@ -37,6 +39,11 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
  */
 public class GordianCoreKeySetFactory
     implements GordianKeySetFactory {
+    /**
+     * Base our ids off bouncyCastle.
+     */
+    static final ASN1ObjectIdentifier KEYSETOID = GordianCoreFactory.BASEOID.branch("10");
+
     /**
      * The factory.
      */
@@ -158,7 +165,7 @@ public class GordianCoreKeySetFactory
 
     @Override
     public Predicate<GordianKeySetSpec> supportedKeySetSpecs() {
-        return this::validKeySetSpec;
+        return GordianCoreKeySetFactory::validKeySetSpec;
     }
 
     /**
@@ -204,7 +211,7 @@ public class GordianCoreKeySetFactory
      * @param pSpec the keySetSpec
      * @return true/false
      */
-    private boolean validKeySetSpec(final GordianKeySetSpec pSpec) {
+    private static boolean validKeySetSpec(final GordianKeySetSpec pSpec) {
         /* Check for invalid spec */
         if (pSpec == null || !pSpec.isValid()) {
             return false;

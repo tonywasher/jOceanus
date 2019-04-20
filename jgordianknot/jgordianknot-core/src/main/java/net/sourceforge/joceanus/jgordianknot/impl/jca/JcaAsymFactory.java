@@ -128,7 +128,7 @@ public class JcaAsymFactory
             case ED25519:
             case ED448:
                 return new JcaEdKeyPairGenerator(getFactory(), pKeySpec);
-            case DIFFIEHELLMAN:
+            case DH:
                 return new JcaDHKeyPairGenerator(getFactory(), pKeySpec);
             case SPHINCS:
                 return new JcaSPHINCSKeyPairGenerator(getFactory(), pKeySpec);

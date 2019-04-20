@@ -19,19 +19,23 @@ package net.sourceforge.joceanus.jgordianknot.impl.core.agree;
 import java.io.IOException;
 import java.security.spec.X509EncodedKeySpec;
 import java.util.Enumeration;
+import java.util.Objects;
 
 import org.bouncycastle.asn1.ASN1EncodableVector;
 import org.bouncycastle.asn1.ASN1OctetString;
 import org.bouncycastle.asn1.ASN1Sequence;
 import org.bouncycastle.asn1.DEROctetString;
 import org.bouncycastle.asn1.DERSequence;
+import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
 
 import net.sourceforge.joceanus.jgordianknot.api.agree.GordianAgreementSpec;
+import net.sourceforge.joceanus.jgordianknot.api.agree.GordianAnonymousAgreement;
 import net.sourceforge.joceanus.jgordianknot.api.agree.GordianEphemeralAgreement;
 import net.sourceforge.joceanus.jgordianknot.api.factory.GordianAsymFactory;
 import net.sourceforge.joceanus.jgordianknot.api.key.GordianKeyPair;
 import net.sourceforge.joceanus.jgordianknot.api.key.GordianKeyPairGenerator;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianCoreFactory;
+import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianDataException;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianIOException;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
@@ -105,9 +109,19 @@ public abstract class GordianCoreEphemeralAgreement
         final X509EncodedKeySpec myKeySpec = myGenerator.getX509Encoding(theEphemeral);
         final byte[] myKeyBytes = myKeySpec.getEncoded();
 
-        /* Build the sequence */
+        /* Build the sequence
+         * <pre>
+         * GordianEpheremalRequest ::= SEQUENCE  {
+         *      id AlgorithmIdentifier
+         *      initVector OCTET STRING
+         *      keyBytes OCTET STRING
+         * }
+         * </pre>
+         */
         try {
+            final GordianCoreAgreementFactory myFactory = getAgreementFactory();
             final ASN1EncodableVector v = new ASN1EncodableVector();
+            v.add(myFactory.getIdentifierForSpec(getAgreementSpec()));
             v.add(new DEROctetString(newInitVector()));
             v.add(new DEROctetString(myKeyBytes));
             return new DERSequence(v).getEncoded();
@@ -118,7 +132,13 @@ public abstract class GordianCoreEphemeralAgreement
     }
 
     /**
-     * Parse the incoming message.
+     * Parse the incoming request and create the response.
+     * <pre>
+     * GordianEphemeralResponse ::= SEQUENCE  {
+     *      id AlgorithmIdentifier
+     *      keyBytes OCTET STRING
+     * }
+     * </pre>
      * @param pResponder the responding keyPair
      * @param pMessage the incoming message
      * @return the ephemeral keySpec
@@ -138,11 +158,22 @@ public abstract class GordianCoreEphemeralAgreement
             final ASN1Sequence mySequence = ASN1Sequence.getInstance(pMessage);
             final Enumeration en = mySequence.getObjects();
 
+            /* Access message parts */
+            final AlgorithmIdentifier myAlgId = AlgorithmIdentifier.getInstance(en.nextElement());
+            final byte[] myInitVector = ASN1OctetString.getInstance(en.nextElement()).getOctets();
+            final byte[] myBase = ASN1OctetString.getInstance(en.nextElement()).getOctets();
+
+            /* Check agreementSpec */
+            final GordianCoreAgreementFactory myFactory = getAgreementFactory();
+            final GordianAgreementSpec mySpec = myFactory.getSpecForIdentifier(myAlgId);
+            if (!Objects.equals(mySpec, getAgreementSpec())) {
+                int i = 0;
+            }
+
             /* Store the initVector */
-            storeInitVector(ASN1OctetString.getInstance(en.nextElement()).getOctets());
+            storeInitVector(myInitVector);
 
             /* Parse the ephemeral encoding */
-            final byte[] myBase = ASN1OctetString.getInstance(en.nextElement()).getOctets();
             final X509EncodedKeySpec myKeySpec = new X509EncodedKeySpec(myBase);
 
             /* Create ephemeral key */
@@ -156,6 +187,7 @@ public abstract class GordianCoreEphemeralAgreement
             /* Build the ephemeral keySpec sequence */
             final byte[] myKeyBytes = myGenerator.getX509Encoding(theEphemeral).getEncoded();
             final ASN1EncodableVector v = new ASN1EncodableVector();
+            v.add(myAlgId);
             v.add(new DEROctetString(myKeyBytes));
             return new DERSequence(v).getEncoded();
 
@@ -178,8 +210,18 @@ public abstract class GordianCoreEphemeralAgreement
             final ASN1Sequence mySequence = ASN1Sequence.getInstance(pKeySpec);
             final Enumeration en = mySequence.getObjects();
 
-            /* Obtain keySpec */
+            /* Access message parts */
+            final AlgorithmIdentifier myAlgId = AlgorithmIdentifier.getInstance(en.nextElement());
             final byte[] myKeyBytes = ASN1OctetString.getInstance(en.nextElement()).getOctets();
+
+            /* Check agreementSpec */
+            final GordianCoreAgreementFactory myFactory = getAgreementFactory();
+            final GordianAgreementSpec mySpec = myFactory.getSpecForIdentifier(myAlgId);
+            if (!Objects.equals(mySpec, getAgreementSpec())) {
+                throw new GordianDataException(ERROR_INVSPEC);
+            }
+
+            /* Obtain keySpec */
             final X509EncodedKeySpec myKeySpec = new X509EncodedKeySpec(myKeyBytes);
 
             /* Derive partner ephemeral key */

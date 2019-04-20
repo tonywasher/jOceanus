@@ -230,7 +230,7 @@ public class BouncyCipherFactory
      * @return the Cipher
      * @throws OceanusException on error
      */
-    private StreamCipher getBCStreamCipher(final GordianStreamKeySpec pKeySpec) throws OceanusException {
+    private static StreamCipher getBCStreamCipher(final GordianStreamKeySpec pKeySpec) throws OceanusException {
         switch (pKeySpec.getStreamKeyType()) {
             case HC:
                 return GordianLength.LEN_128 == pKeySpec.getKeyLength()

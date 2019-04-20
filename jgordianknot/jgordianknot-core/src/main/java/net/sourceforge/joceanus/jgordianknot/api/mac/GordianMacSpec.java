@@ -403,12 +403,72 @@ public final class GordianMacSpec implements GordianKeySpec {
     }
 
     /**
+     * Obtain DigestStateLength.
+     * @return the StateLength
+     */
+    private GordianLength getDigestStateLength() {
+        return theSubSpec instanceof GordianDigestSpec
+               ? ((GordianDigestSpec) theSubSpec).getStateLength()
+               : null;
+    }
+
+    /**
+     * Obtain DigestLength.
+     * @return the Length
+     */
+    private GordianLength getDigestLength() {
+        return theSubSpec instanceof GordianDigestSpec
+               ? ((GordianDigestSpec) theSubSpec).getDigestLength()
+               : null;
+    }
+
+    /**
      * Obtain SymKeySpec.
      * @return the SymKeySpec
      */
     public GordianSymKeySpec getSymKeySpec() {
         return theSubSpec instanceof GordianSymKeySpec
                ? (GordianSymKeySpec) theSubSpec
+               : null;
+    }
+
+    /**
+     * Obtain SymKeyType.
+     * @return the Type
+     */
+    private GordianSymKeyType getSymKeyType() {
+        return theSubSpec instanceof GordianSymKeySpec
+               ? ((GordianSymKeySpec) theSubSpec).getSymKeyType()
+               : null;
+    }
+
+    /**
+     * Obtain SymKeyBlockLength.
+     * @return the BlockLength
+     */
+    private GordianLength getSymKeyBlockLength() {
+        return theSubSpec instanceof GordianSymKeySpec
+               ? ((GordianSymKeySpec) theSubSpec).getBlockLength()
+               : null;
+    }
+
+    /**
+     * Obtain SymKeyBlockLength.
+     * @return the BlockLength
+     */
+    private int getSymKeyBlockByteLength() {
+        return theSubSpec instanceof GordianSymKeySpec
+               ? ((GordianSymKeySpec) theSubSpec).getBlockLength().getByteLength()
+               : null;
+    }
+
+    /**
+     * Obtain SymKeyHalfBlockLength.
+     * @return the HalfBlockLength
+     */
+    private GordianLength getSymKeyHalfBlockLength() {
+        return theSubSpec instanceof GordianSymKeySpec
+               ? ((GordianSymKeySpec) theSubSpec).getHalfBlockLength()
                : null;
     }
 
@@ -432,16 +492,16 @@ public final class GordianMacSpec implements GordianKeySpec {
             case BLAKE:
             case SKEIN:
             case KUPYNA:
-                return getDigestSpec().getDigestLength();
+                return getDigestLength();
             case GMAC:
             case POLY1305:
                 return GordianLength.LEN_128;
             case CMAC:
             case KALYNA:
-                return getSymKeySpec().getBlockLength();
+                return getSymKeyBlockLength();
             case CBCMAC:
             case CFBMAC:
-                return getSymKeySpec().getHalfBlockLength();
+                return getSymKeyHalfBlockLength();
             case ZUC:
                 return ((GordianLength) theSubSpec);
             case VMPC:
@@ -466,14 +526,14 @@ public final class GordianMacSpec implements GordianKeySpec {
             case SKEIN:
                 return GordianLength.LEN_128.getByteLength();
             case BLAKE:
-                return GordianDigestType.isBlake2bState(getDigestSpec().getStateLength())
+                return GordianDigestType.isBlake2bState(getDigestStateLength())
                        ? GordianLength.LEN_128.getByteLength()
                        : GordianLength.LEN_64.getByteLength();
             case GMAC:
                 return GordianLength.LEN_96.getByteLength();
             case CBCMAC:
             case CFBMAC:
-                return getSymKeySpec().getBlockLength().getByteLength();
+                return getSymKeyBlockByteLength();
             case GOST:
                 return GordianLength.LEN_64.getByteLength();
             case ZUC:
@@ -631,8 +691,6 @@ public final class GordianMacSpec implements GordianKeySpec {
 
             /* Load the name */
             theName = theMacType.toString();
-            final GordianDigestSpec myDigest = getDigestSpec();
-            final GordianSymKeySpec mySymKey = getSymKeySpec();
             switch (theMacType) {
                 case SIPHASH:
                     theName += SEP + (getBoolean()
@@ -640,7 +698,7 @@ public final class GordianMacSpec implements GordianKeySpec {
                                       : "4-8");
                     break;
                 case POLY1305:
-                    theName += SEP + mySymKey.getSymKeyType();
+                    theName += SEP + getSymKeyType();
                     break;
                 case GMAC:
                 case CMAC:
@@ -649,21 +707,21 @@ public final class GordianMacSpec implements GordianKeySpec {
                     theName += SEP + theSubSpec.toString();
                     break;
                 case KALYNA:
-                    theName += theKeyLength + SEP + mySymKey.getBlockLength();
+                    theName += theKeyLength + SEP + getSymKeyBlockLength();
                     break;
                 case KUPYNA:
-                    theName += theKeyLength + SEP + myDigest.getDigestLength();
+                    theName += theKeyLength + SEP + getDigestLength();
                     break;
                 case SKEIN:
-                    theName += theKeyLength + SEP + myDigest.getStateLength() + SEP + myDigest.getDigestLength();
+                    theName += theKeyLength + SEP + getDigestStateLength() + SEP + getDigestLength();
                     break;
                 case HMAC:
                 case ZUC:
                     theName += theKeyLength + SEP + theSubSpec.toString();
                     break;
                 case BLAKE:
-                    theName = GordianDigestType.getBlakeAlgorithmForStateLength(myDigest.getStateLength())
-                                 + "Mac" + theKeyLength + SEP + myDigest.getDigestLength();
+                    theName = GordianDigestType.getBlakeAlgorithmForStateLength(getDigestStateLength())
+                                 + "Mac" + theKeyLength + SEP + getDigestLength();
                     break;
                 case VMPC:
                     theName += theKeyLength;

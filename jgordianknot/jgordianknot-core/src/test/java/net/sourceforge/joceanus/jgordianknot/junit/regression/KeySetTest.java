@@ -26,7 +26,6 @@ import org.junit.jupiter.api.TestFactory;
 
 import net.sourceforge.joceanus.jgordianknot.api.base.GordianLength;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianStreamKeySpec;
-import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianStreamKeyType;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianSymKeySpec;
 import net.sourceforge.joceanus.jgordianknot.api.factory.GordianFactory;
 import net.sourceforge.joceanus.jgordianknot.api.factory.GordianFactoryType;
@@ -41,7 +40,6 @@ import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetHashSpec;
 import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetSpec;
 import net.sourceforge.joceanus.jgordianknot.api.mac.GordianMac;
 import net.sourceforge.joceanus.jgordianknot.api.mac.GordianMacSpec;
-import net.sourceforge.joceanus.jgordianknot.api.mac.GordianMacType;
 import net.sourceforge.joceanus.jgordianknot.api.random.GordianRandomFactory;
 import net.sourceforge.joceanus.jgordianknot.impl.core.keyset.GordianCoreKeySet;
 import net.sourceforge.joceanus.jtethys.OceanusException;
@@ -88,13 +86,47 @@ public class KeySetTest {
     }
 
     /**
+     * Factory definition.
+     */
+    static class FactoryBase {
+        /**
+         * The Factory.
+         */
+        private final GordianFactory theFactory;
+
+        /**
+         * Constructor.
+         * @param pType the factoryType
+         * @throws OceanusException on error
+         */
+        FactoryBase(final GordianFactoryType pType) throws OceanusException {
+            /* Create the factory */
+            final GordianParameters myParams = new GordianParameters(pType);
+            theFactory = GordianGenerator.createFactory(myParams);
+        }
+
+        /**
+         * Obtain the factory.
+         * @return the factory
+         */
+        GordianFactory getFactory() {
+            return theFactory;
+        }
+
+        @Override
+        public String toString() {
+            return theFactory.getFactoryType().toString();
+        }
+    }
+
+    /**
      * Factory and KeySet definition.
      */
     static class FactoryKeySet {
         /**
          * The Factory.
          */
-        private final GordianFactory theFactory;
+        private final FactoryBase theFactory;
 
         /**
          * Maximum cipher steps?
@@ -128,28 +160,30 @@ public class KeySetTest {
 
         /**
          * Constructor.
+         * @param pFactory the factory
          * @param pKeyLen the factory keyLength
-         * @param pType the factoryType
          * @param pMaxSteps true/false use Max Cipher Steps (or else Min)
          * @throws OceanusException on error
          */
-        FactoryKeySet(final GordianLength pKeyLen,
-                      final GordianFactoryType pType,
+        FactoryKeySet(final FactoryBase pFactory,
+                      final GordianLength pKeyLen,
                       final boolean pMaxSteps) throws OceanusException {
-            /* Create the factory */
-            final GordianParameters myParams = new GordianParameters(pType);
-            final int myMaxSteps = pMaxSteps ? GordianKeySetSpec.MAXIMUM_CIPHER_STEPS
-                                             : GordianKeySetSpec.MINIMUM_CIPHER_STEPS;
-            theFactory = GordianGenerator.createFactory(myParams);
-            theSpec = new GordianKeySetHashSpec(new GordianKeySetSpec(pKeyLen, myMaxSteps));
+            /* Store parameters */
+            theFactory = pFactory;
             maxSteps = pMaxSteps;
 
+            /* Create the keySetHashSpec */
+            final int myMaxSteps = pMaxSteps ? GordianKeySetSpec.MAXIMUM_CIPHER_STEPS
+                                             : GordianKeySetSpec.MINIMUM_CIPHER_STEPS;
+            theSpec = new GordianKeySetHashSpec(new GordianKeySetSpec(pKeyLen, myMaxSteps));
+
             /* Generate the hash */
-            final GordianKeySetFactory myKeySets = theFactory.getKeySetFactory();
+            final GordianFactory myFactory = theFactory.getFactory();
+            final GordianKeySetFactory myKeySets = myFactory.getKeySetFactory();
             theKeySetHash = myKeySets.generateKeySetHash(theSpec, DEF_PASSWORD.clone());
 
             /* Initialise data */
-            final GordianRandomFactory myRandoms = theFactory.getRandomFactory();
+            final GordianRandomFactory myRandoms = myFactory.getRandomFactory();
             theSymKey = myRandoms.generateRandomSymKey(pKeyLen);
             theStreamKey = myRandoms.generateRandomStreamKey(pKeyLen, false);
             GordianMac myMac = myRandoms.generateRandomMac(pKeyLen, false);
@@ -161,7 +195,7 @@ public class KeySetTest {
          * @return the factory
          */
         GordianFactory getFactory() {
-            return theFactory;
+            return theFactory.getFactory();
         }
 
         /**
@@ -214,8 +248,7 @@ public class KeySetTest {
 
         @Override
         public String toString() {
-            return theFactory.getFactoryType().toString()
-                    + "-" + theSpec.getKeySetSpec().getKeyLength()
+            return theSpec.getKeySetSpec().getKeyLength()
                     + (maxSteps ? "-Max" : "-Min");
         }
     }
@@ -228,33 +261,44 @@ public class KeySetTest {
     @TestFactory
     public Stream<DynamicNode> keySetTests() throws OceanusException {
         /* Create tests */
-        Stream<DynamicNode> myStream = keySetTests(GordianLength.LEN_256, GordianFactoryType.BC, false);
-        myStream = Stream.concat(myStream, keySetTests(GordianLength.LEN_256, GordianFactoryType.BC, true));
-        myStream = Stream.concat(myStream, keySetTests(GordianLength.LEN_192, GordianFactoryType.BC, false));
-        myStream = Stream.concat(myStream, keySetTests(GordianLength.LEN_192, GordianFactoryType.BC, true));
-        myStream = Stream.concat(myStream, keySetTests(GordianLength.LEN_128, GordianFactoryType.BC, false));
-        myStream = Stream.concat(myStream, keySetTests(GordianLength.LEN_128, GordianFactoryType.BC, true));
-        myStream = Stream.concat(myStream, keySetTests(GordianLength.LEN_256, GordianFactoryType.JCA, false));
-        myStream = Stream.concat(myStream, keySetTests(GordianLength.LEN_256, GordianFactoryType.JCA, true));
-        myStream = Stream.concat(myStream, keySetTests(GordianLength.LEN_192, GordianFactoryType.JCA, false));
-        myStream = Stream.concat(myStream, keySetTests(GordianLength.LEN_192, GordianFactoryType.JCA, true));
-        myStream = Stream.concat(myStream, keySetTests(GordianLength.LEN_128, GordianFactoryType.JCA, false));
-        return Stream.concat(myStream, keySetTests(GordianLength.LEN_128, GordianFactoryType.JCA, true));
+        Stream<DynamicNode> myStream = keySetTests(GordianFactoryType.BC);
+        return Stream.concat(myStream, keySetTests(GordianFactoryType.JCA));
     }
 
     /**
-     * Create the keySet test suite for a factory.
-     * @param pKeyLen the factory keyLength
-     * @param pType the factoryType
+     * Create the keySet test suite for a factoryType.
+     * @param pFactoryType the factoryType
+     * @return the test stream
+     * @throws OceanusException on error
+     */
+    private Stream<DynamicNode> keySetTests(final GordianFactoryType pFactoryType) throws OceanusException {
+        /* Create the factory */
+        final FactoryBase myFactory = new FactoryBase(pFactoryType);
+
+        Stream<DynamicNode> myStream = keySetTests(myFactory, GordianLength.LEN_256, false);
+        myStream = Stream.concat(myStream, keySetTests(myFactory, GordianLength.LEN_256, true));
+        myStream = Stream.concat(myStream, keySetTests(myFactory, GordianLength.LEN_192, false));
+        myStream = Stream.concat(myStream, keySetTests(myFactory, GordianLength.LEN_192, true));
+        myStream = Stream.concat(myStream, keySetTests(myFactory, GordianLength.LEN_128, false));
+        myStream = Stream.concat(myStream, keySetTests(myFactory, GordianLength.LEN_128, true));
+
+        /* Return the stream */
+        return Stream.of(DynamicContainer.dynamicContainer(pFactoryType.toString(), myStream));
+    }
+
+    /**
+     * Create the keySet test suite for a factory/SpecSet.
+     * @param pFactory the factory
+     * @param pKeyLen the keyLength
      * @param pMaxSteps true/false use Max Cipher Steps (or else Min)
      * @return the test stream
      * @throws OceanusException on error
      */
-    private Stream<DynamicNode> keySetTests(final GordianLength pKeyLen,
-                                            final GordianFactoryType pType,
+    private Stream<DynamicNode> keySetTests(final FactoryBase pFactory,
+                                            final GordianLength pKeyLen,
                                             final boolean pMaxSteps) throws OceanusException {
         /* Create the factory */
-        final FactoryKeySet myKeySet = new FactoryKeySet(pKeyLen, pType, pMaxSteps);
+        final FactoryKeySet myKeySet = new FactoryKeySet(pFactory, pKeyLen, pMaxSteps);
 
         /* Return the stream */
         return Stream.of(DynamicContainer.dynamicContainer(myKeySet.toString(), Stream.of(

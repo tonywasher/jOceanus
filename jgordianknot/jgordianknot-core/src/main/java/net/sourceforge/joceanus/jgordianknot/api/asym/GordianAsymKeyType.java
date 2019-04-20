@@ -38,7 +38,7 @@ public enum GordianAsymKeyType {
     /**
      * DiffieHellman.
      */
-    DIFFIEHELLMAN,
+    DH,
 
     /**
      * SM2.
@@ -168,7 +168,6 @@ public enum GordianAsymKeyType {
      * @return true/false
      */
     public boolean differentDerivedKey() {
-        return this == DIFFIEHELLMAN;
+        return this == DH;
     }
 }
-

@@ -18,16 +18,19 @@ package net.sourceforge.joceanus.jgordianknot.impl.core.agree;
 
 import java.io.IOException;
 import java.util.Enumeration;
+import java.util.Objects;
 
 import org.bouncycastle.asn1.ASN1EncodableVector;
 import org.bouncycastle.asn1.ASN1OctetString;
 import org.bouncycastle.asn1.ASN1Sequence;
 import org.bouncycastle.asn1.DEROctetString;
 import org.bouncycastle.asn1.DERSequence;
+import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
 
 import net.sourceforge.joceanus.jgordianknot.api.agree.GordianAgreementSpec;
 import net.sourceforge.joceanus.jgordianknot.api.agree.GordianAnonymousAgreement;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianCoreFactory;
+import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianDataException;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianIOException;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
@@ -49,6 +52,13 @@ public abstract class GordianCoreAnonymousAgreement
 
     /**
      * Create the message.
+     * <pre>
+     * GordianAnonymousRequest ::= SEQUENCE  {
+     *      id AlgorithmIdentifier
+     *      initVector OCTET STRING
+     *      base OCTET STRING
+     * }
+     * </pre>
      * @param pBase the base message
      * @return the composite message
      * @throws OceanusException on error
@@ -56,7 +66,9 @@ public abstract class GordianCoreAnonymousAgreement
     protected byte[] createMessage(final byte[] pBase) throws OceanusException {
         /* Build the sequence */
         try {
+            final GordianCoreAgreementFactory myFactory = getAgreementFactory();
             final ASN1EncodableVector v = new ASN1EncodableVector();
+            v.add(myFactory.getIdentifierForSpec(getAgreementSpec()));
             v.add(new DEROctetString(newInitVector()));
             v.add(new DEROctetString(pBase));
             return new DERSequence(v).getEncoded();
@@ -79,11 +91,23 @@ public abstract class GordianCoreAnonymousAgreement
             final ASN1Sequence mySequence = ASN1Sequence.getInstance(pMessage);
             final Enumeration en = mySequence.getObjects();
 
-            /* Store the initVector */
-            storeInitVector(ASN1OctetString.getInstance(en.nextElement()).getOctets());
+            /* Access message parts */
+            final AlgorithmIdentifier myAlgId = AlgorithmIdentifier.getInstance(en.nextElement());
+            final byte[] myInitVector = ASN1OctetString.getInstance(en.nextElement()).getOctets();
+            final byte[] myMessage = ASN1OctetString.getInstance(en.nextElement()).getOctets();
+
+            /* Check agreementSpec */
+            final GordianCoreAgreementFactory myFactory = getAgreementFactory();
+            final GordianAgreementSpec mySpec = myFactory.getSpecForIdentifier(myAlgId);
+            if (!Objects.equals(mySpec, getAgreementSpec())) {
+                throw new GordianDataException(ERROR_INVSPEC);
+            }
+
+            /* Store initVector */
+            storeInitVector(myInitVector);
 
             /* Return the encoded message */
-            return ASN1OctetString.getInstance(en.nextElement()).getOctets();
+            return myMessage;
 
         } catch (IllegalArgumentException e) {
             throw new GordianIOException("Unable to parse ASN1 sequence", e);

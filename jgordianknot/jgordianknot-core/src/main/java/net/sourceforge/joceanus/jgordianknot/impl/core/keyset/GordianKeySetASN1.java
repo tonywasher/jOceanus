@@ -128,6 +128,7 @@ public class GordianKeySetASN1
      * GordianKeySetASN1 ::= SEQUENCE OF {
      *      keySetSpec GordianKeySetSpecASN1
      *      securedKeys securedKeySet
+     *      .....
      * } securedKey
      *
      * securedKeySet ::= SEQUENCE {

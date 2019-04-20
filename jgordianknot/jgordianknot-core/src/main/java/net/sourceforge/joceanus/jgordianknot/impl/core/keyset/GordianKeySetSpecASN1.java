@@ -21,9 +21,11 @@ import java.util.Enumeration;
 import org.bouncycastle.asn1.ASN1EncodableVector;
 import org.bouncycastle.asn1.ASN1Integer;
 import org.bouncycastle.asn1.ASN1Object;
+import org.bouncycastle.asn1.ASN1ObjectIdentifier;
 import org.bouncycastle.asn1.ASN1Primitive;
 import org.bouncycastle.asn1.ASN1Sequence;
 import org.bouncycastle.asn1.DERSequence;
+import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
 
 import net.sourceforge.joceanus.jgordianknot.api.base.GordianLength;
 import net.sourceforge.joceanus.jgordianknot.api.key.GordianKeyLengths;
@@ -37,6 +39,11 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
  */
 public class GordianKeySetSpecASN1
         extends ASN1Object {
+    /**
+     * Base our algorithmId off bouncyCastle.
+     */
+    private static final ASN1ObjectIdentifier KEYSETALGID = GordianCoreKeySetFactory.KEYSETOID.branch("1");
+
     /**
      * The KeySetSpec.
      */
@@ -127,5 +134,13 @@ public class GordianKeySetSpecASN1
 
         /* Calculate the length of the sequence */
         return  GordianKeySetASN1.getLengthSequence(myLength);
+    }
+
+    /**
+     * Obtain the algorithmId.
+     * @return  the algorithmId
+     */
+    public AlgorithmIdentifier getAlgorithmId() {
+        return new AlgorithmIdentifier(KEYSETALGID, toASN1Primitive());
     }
 }

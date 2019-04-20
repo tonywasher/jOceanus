@@ -73,7 +73,7 @@ public class JcaAgreementFactory
                 return getNHAgreement(pAgreementSpec);
             case EC:
                 return getECAgreement(pAgreementSpec);
-            case DIFFIEHELLMAN:
+            case DH:
                 return getDHAgreement(pAgreementSpec);
             case X25519:
             case X448:
@@ -216,7 +216,7 @@ public class JcaAgreementFactory
                 return true;
             case EC:
                 return !GordianAgreementType.KEM.equals(myType);
-            case DIFFIEHELLMAN:
+            case DH:
                 return !GordianAgreementType.KEM.equals(myType)
                         && !GordianAgreementType.SM2.equals(myType);
             case X25519:

@@ -66,9 +66,6 @@ public class GordianAgreementAlgId {
         /* Access the agreementFactory  */
         theFactory = pFactory.getAsymmetricFactory().getAgreementFactory();
 
-        /* Populate with the public standards */
-        addWellKnownAgreements();
-
         /* Loop through the possible AsymKeys */
         for (GordianAsymKeyType myKeyType : GordianAsymKeyType.values()) {
             /* Add any non-standard agreementSpecs */
@@ -97,17 +94,7 @@ public class GordianAgreementAlgId {
     }
 
     /**
-     * Add wellKnown agreements.
-     */
-    private void addWellKnownAgreements() {
-        //addToMaps(GordianAgreementSpec.rsaKEM(), new AlgorithmIdentifier(ISOIECObjectIdentifiers.id_kem_rsa));
-        //addToMaps(GordianAgreementSpec.newHope(), new AlgorithmIdentifier(BCObjectIdentifiers.newHope));
-        //addToMaps(GordianAgreementSpec.x25519(), new AlgorithmIdentifier(EdEcObjectIdentifiers.id_X25519));
-        //addToMaps(GordianAgreementSpec.x448(), new AlgorithmIdentifier(EdEcObjectIdentifiers.id_X448));
-    }
-
-    /**
-     * Create Identifiers for all valid AgreeementTypes.
+     * Create Identifiers for all valid AgreementTypes.
      * @param pKeyType the keyType
      */
     private void addAgreements(final GordianAsymKeyType pKeyType) {

@@ -449,9 +449,8 @@ public class GordianCoreKnuthObfuscater
      * Obtain encoded macSpecId.
      * @param pMacSpec the macSpec
      * @return the external id
-     * @throws OceanusException on error
      */
-    private static int deriveEncodedIdFromMacSpec(final GordianMacSpec pMacSpec) throws OceanusException {
+    private static int deriveEncodedIdFromMacSpec(final GordianMacSpec pMacSpec) {
         /* Build the encoded macId */
         final GordianMacType myMacType = pMacSpec.getMacType();
         int myCode = deriveEncodedIdFromMacType(myMacType);

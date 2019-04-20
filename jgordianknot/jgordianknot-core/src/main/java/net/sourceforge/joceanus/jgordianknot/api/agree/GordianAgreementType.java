@@ -102,7 +102,7 @@ public enum GordianAgreementType {
     public static boolean hasAnon(final GordianAsymKeyType pKeyType) {
         switch (pKeyType) {
             case NEWHOPE:
-            case DIFFIEHELLMAN:
+            case DH:
             case EC:
             case SM2:
             case GOST2012:
@@ -139,7 +139,7 @@ public enum GordianAgreementType {
      * @return true/false
      */
     public static boolean hasMQV(final GordianAsymKeyType pKeyType) {
-        return  pKeyType == GordianAsymKeyType.DIFFIEHELLMAN || isEC(pKeyType);
+        return  pKeyType == GordianAsymKeyType.DH || isEC(pKeyType);
     }
 
     /**
@@ -162,7 +162,7 @@ public enum GordianAgreementType {
             case EC:
             case GOST2012:
             case DSTU4145:
-            case DIFFIEHELLMAN:
+            case DH:
             case X25519:
             case X448:
                 return true;

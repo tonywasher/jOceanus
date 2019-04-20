@@ -121,7 +121,7 @@ public abstract class GordianCoreAgreementFactory
 
         /* Disallow MQV if group does not support it */
         final GordianAsymKeySpec myKeySpec = pKeyPair.getKeySpec();
-        if (GordianAsymKeyType.DIFFIEHELLMAN.equals(myKeySpec.getKeyType())
+        if (GordianAsymKeyType.DH.equals(myKeySpec.getKeyType())
                 && GordianAgreementType.MQV.equals(pAgreementSpec.getAgreementType())) {
             return myKeySpec.getDHGroup().isMQV();
         }

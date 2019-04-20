@@ -64,7 +64,7 @@ public enum GordianKDFType {
             case DSTU4145:
             case GOST2012:
                 return !isCKDF() || pAgreeType != GordianAgreementType.KEM;
-            case DIFFIEHELLMAN:
+            case DH:
                 return isSupported4DH(pAgreeType);
             case X25519:
                 return isSupported4X25519(pAgreeType);

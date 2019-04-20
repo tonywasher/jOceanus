@@ -57,7 +57,12 @@ public abstract class GordianCoreAgreement
     /**
      * InitVectorLength.
      */
-    static final int INITLEN = 32;
+    private static final int INITLEN = 32;
+
+    /**
+     * Invalid AgreementSpec message.
+     */
+    protected static final String ERROR_INVSPEC = "Incorrect AgreementSpec";
 
     /**
      * The factory.
@@ -101,6 +106,14 @@ public abstract class GordianCoreAgreement
      */
     protected GordianCoreFactory getFactory() {
         return theFactory;
+    }
+
+    /**
+     * Obtain the agreement factory.
+     * @return the factory
+     */
+    protected GordianCoreAgreementFactory getAgreementFactory() {
+        return (GordianCoreAgreementFactory) theFactory.getAsymmetricFactory().getAgreementFactory();
     }
 
     @Override

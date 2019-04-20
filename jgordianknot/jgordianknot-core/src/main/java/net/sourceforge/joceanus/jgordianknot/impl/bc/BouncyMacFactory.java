@@ -314,7 +314,7 @@ public class BouncyMacFactory
      * @param pMacSpec the macSpec
      * @return the MAC
      */
-    private Mac getBCZucMac(final GordianMacSpec pMacSpec) {
+    private static Mac getBCZucMac(final GordianMacSpec pMacSpec) {
         return GordianLength.LEN_128 == pMacSpec.getKeyLength()
                ? new Zuc128Mac()
                : new Zuc256Mac(pMacSpec.getMacLength().getLength());

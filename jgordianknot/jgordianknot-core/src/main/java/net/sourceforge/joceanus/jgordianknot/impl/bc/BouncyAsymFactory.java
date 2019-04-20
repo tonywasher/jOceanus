@@ -137,7 +137,7 @@ public class BouncyAsymFactory
                 return new BouncyEd448KeyPairGenerator(getFactory(), pKeySpec);
             case DSA:
                 return new BouncyDSAKeyPairGenerator(getFactory(), pKeySpec);
-            case DIFFIEHELLMAN:
+            case DH:
                 return new BouncyDHKeyPairGenerator(getFactory(), pKeySpec);
             case SPHINCS:
                 return new BouncySPHINCSKeyPairGenerator(getFactory(), pKeySpec);
