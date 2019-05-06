@@ -71,7 +71,7 @@
     <JUnitVersion>5.5.0-M1</JUnitVersion>
     <JSONVersion>20180813</JSONVersion>
     <ApacheMavenVersion>3.6.1</ApacheMavenVersion>
-    <MySQLVersion>8.0.15</MySQLVersion>
+    <MySQLVersion>8.0.16</MySQLVersion>
     <PostGreSQLVersion>42.2.5</PostGreSQLVersion>
     <JTDSVersion>1.3.1</JTDSVersion>
     <ApachePOIVersion>4.1.0</ApachePOIVersion>
@@ -79,16 +79,16 @@
     <JSoupVersion>1.11.3</JSoupVersion>
     <ZipSDKVersion>9.20</ZipSDKVersion>
     <JavaVersion>12</JavaVersion>
-    <JavaFXVersion>12</JavaFXVersion>
-    <CheckStyleVersion>8.19</CheckStyleVersion>
-    <PMDVersion>6.13.0</PMDVersion>
+    <JavaFXVersion>12.0.1</JavaFXVersion>
+    <CheckStyleVersion>8.20</CheckStyleVersion>
+    <PMDVersion>6.14.0</PMDVersion>
     <CleanPluginVersion>3.1.0</CleanPluginVersion>
     <ResourcesPluginVersion>3.1.0</ResourcesPluginVersion>
     <InstallPluginVersion>3.0.0-M1</InstallPluginVersion>
     <SitePluginVersion>3.7.1</SitePluginVersion>
     <DeployPluginVersion>3.0.0-M1</DeployPluginVersion>
     <EnforcerPluginVersion>3.0.0-M2</EnforcerPluginVersion>
-    <CompilerPluginVersion>3.8.0</CompilerPluginVersion>
+    <CompilerPluginVersion>3.8.1</CompilerPluginVersion>
     <ShadePluginVersion>3.2.1</ShadePluginVersion>
     <DependencyPluginVersion>3.1.1</DependencyPluginVersion>
     <SurefirePluginVersion>3.0.0-M3</SurefirePluginVersion>
@@ -100,7 +100,7 @@
     <JavaDocPluginVersion>3.1.0</JavaDocPluginVersion>
     <SonarQubePluginVersion>3.6.0.1398</SonarQubePluginVersion>
     <CheckStylePluginVersion>3.0.0</CheckStylePluginVersion>
-    <PMDPluginVersion>3.11.0</PMDPluginVersion>
+    <PMDPluginVersion>3.12.0</PMDPluginVersion>
     <JacocoPluginVersion>0.8.3</JacocoPluginVersion>
     <JetBrainsAnnotationsVersion>17.0.0</JetBrainsAnnotationsVersion>
     <FindBugsPluginVersion>3.0.5</FindBugsPluginVersion>
