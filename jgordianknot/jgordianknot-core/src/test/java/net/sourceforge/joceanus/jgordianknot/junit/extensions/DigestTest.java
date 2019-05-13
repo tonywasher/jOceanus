@@ -19,6 +19,8 @@ package net.sourceforge.joceanus.jgordianknot.junit.extensions;
 import java.util.stream.Stream;
 
 import org.bouncycastle.crypto.Digest;
+import org.bouncycastle.crypto.ext.digests.Blake2b;
+import org.bouncycastle.crypto.ext.digests.Blake2s;
 import org.bouncycastle.crypto.ext.digests.CubeHashDigest;
 import org.bouncycastle.crypto.ext.digests.GroestlDigest;
 import org.bouncycastle.crypto.ext.digests.JHDigest;
@@ -74,6 +76,18 @@ public class DigestTest {
                         DynamicTest.dynamicTest("256", () -> new CubeHash256Test().checkDigests()),
                         DynamicTest.dynamicTest("384", () -> new CubeHash384Test().checkDigests()),
                         DynamicTest.dynamicTest("512", () -> new CubeHash512Test().checkDigests())
+                )),
+                DynamicContainer.dynamicContainer("Blake2b", Stream.of(
+                        DynamicTest.dynamicTest("224", () -> new Blake2b224Test().checkDigests()),
+                        DynamicTest.dynamicTest("256", () -> new Blake2b256Test().checkDigests()),
+                        DynamicTest.dynamicTest("384", () -> new Blake2b384Test().checkDigests()),
+                        DynamicTest.dynamicTest("512", () -> new Blake2b512Test().checkDigests())
+                )),
+                DynamicContainer.dynamicContainer("Blake2s", Stream.of(
+                        DynamicTest.dynamicTest("128", () -> new Blake2s128Test().checkDigests()),
+                        DynamicTest.dynamicTest("160", () -> new Blake2s160Test().checkDigests()),
+                        DynamicTest.dynamicTest("224", () -> new Blake2s224Test().checkDigests()),
+                        DynamicTest.dynamicTest("256", () -> new Blake2s256Test().checkDigests())
                 ))
         )));
     }
@@ -102,6 +116,28 @@ public class DigestTest {
             /* Check the hash */
             final byte[] myExpected = TethysDataConverter.hexStringToBytes(pExpected[i]);
             Assertions.assertArrayEquals(myExpected, myOutput, "Result mismatch");
+        }
+    }
+
+    /**
+     * Print the Digests.
+     * @param pDigest the digest to test.
+     * @throws OceanusException on error
+     */
+    static void printDigestStrings(final Digest pDigest) throws OceanusException {
+        /* Create the output buffer */
+        final byte[] myOutput = new byte[pDigest.getDigestSize()];
+
+        /* Loop through the input strings */
+        for(int i=0; i < INPUTS.length; i++) {
+            /* Create the hash */
+            final String myInput = INPUTS[i];
+            pDigest.update(myInput.getBytes(), 0, myInput.length());
+            pDigest.doFinal(myOutput, 0);
+
+            /* Check the hash */
+            final String myHash = TethysDataConverter.bytesToHexString(myOutput);
+            System.out.println(myHash);
         }
     }
 
@@ -410,6 +446,182 @@ public class DigestTest {
 
         void checkDigests() throws OceanusException {
             checkDigestStrings(new CubeHashDigest(512), EXPECTED);
+        }
+    }
+
+    /**
+     * Blake2b224.
+     */
+    static class Blake2b224Test {
+        /**
+         * Expected results.
+         */
+        private static final String[] EXPECTED = {
+                "836cc68931c2e4e3e838602eca1902591d216837bafddfe6f0c8cb07",
+                "c05d5ea0257c7a4604122b8e99a0093f89d0797ef06a7f0af65a3560",
+                "9bd237b02a29e43bdd6738afa5b53ff0eee178d6210b618e4511aec8",
+                "f305a410b733771b7c5c8ad1041e356ff1da48c51792dfe319ba286b",
+                "7a04e26d7180b9c5e494558dab986f7e8243891a4bb50c45201a16c9",
+                "6116b617e7e51e0032dbd2b3db8b6004b15bda4916b19f2737d95e43",
+                "d353573a176b7034a9b3a1fa63b4a6fa0eb7bfb86ebfd1be9aaf0f58"
+        };
+
+        void checkDigests() throws OceanusException {
+            checkDigestStrings(new Blake2b(224), EXPECTED);
+        }
+    }
+
+    /**
+     * Blake2b256.
+     */
+    static class Blake2b256Test {
+        /**
+         * Expected results.
+         */
+        private static final String[] EXPECTED = {
+                "0e5751c026e543b2e8ab2eb06099daa1d1e5df47778f7787faab45cdf12fe3a8",
+                "8928aae63c84d87ea098564d1e03ad813f107add474e56aedd286349c0c03ea4",
+                "bddd813c634239723171ef3fee98579b94964e3bb1cb3e427262c8c068d52319",
+                "31a65b562925c6ffefdafa0ad830f4e33eff148856c2b4754de273814adf8b85",
+                "117ad6b940f5e8292c007d9c7e7350cd33cf85b5887e8da71c7957830f536e7c",
+                "63f74bf0df57c4fd10f949edbe1cb7f6e374ecab882616381d6d999fda748b93",
+                "a4705bbca1ae2e7a5d184a403a15f36c31c7e567adeae33f0f3e2f3ca9958198"
+        };
+
+        void checkDigests() throws OceanusException {
+            checkDigestStrings(new Blake2b(256), EXPECTED);
+        }
+    }
+
+    /**
+     * Blake2b384.
+     */
+    static class Blake2b384Test {
+        /**
+         * Expected results.
+         */
+        private static final String[] EXPECTED = {
+                "b32811423377f52d7862286ee1a72ee540524380fda1724a6f25d7978c6fd3244a6caf0498812673c5e05ef583825100",
+                "7d40de16ff771d4595bf70cbda0c4ea0a066a6046fa73d34471cd4d93d827d7c94c29399c50de86983af1ec61d5dcef0",
+                "6f56a82c8e7ef526dfe182eb5212f7db9df1317e57815dbda46083fc30f54ee6c66ba83be64b302d7cba6ce15bb556f4",
+                "44c3965bd8f02ed299ad52ffb5bba7c448df242073c5520dc091a0cc55d024cdd51569c339d0bf2b6cd746708683a0ef",
+                "5cad60ce23b9dc62eabdd149a16307ef916e0637506fa10cf8c688430da6c978a0cb7857fd138977bd281e8cfd5bfd1f",
+                "b4975ee19a4f559e3d3497df0db1e5c6b79988b7d7e85c1f064ceaa72a418c484e4418b775c77af8d2651872547c8e9f",
+                "1ce12d72189f06f1b95c16f4bf7e0685519bc1065eae2efd015a31db13bd123ea8f8bf83a8682ad29e3828a0a0af299c"
+        };
+
+        void checkDigests() throws OceanusException {
+            checkDigestStrings(new Blake2b(384), EXPECTED);
+        }
+    }
+
+    /**
+     * Blake2b512.
+     */
+    static class Blake2b512Test {
+        /**
+         * Expected results.
+         */
+        private static final String[] EXPECTED = {
+                "786a02f742015903c6c6fd852552d272912f4740e15847618a86e217f71f5419d25e1031afee585313896444934eb04b903a685b1448b755d56f701afe9be2ce",
+                "333fcb4ee1aa7c115355ec66ceac917c8bfd815bf7587d325aec1864edd24e34d5abe2c6b1b5ee3face62fed78dbef802f2a85cb91d455a8f5249d330853cb3c",
+                "ba80a53f981c4d0d6a2797b69f12f6e94c212f14685ac4b74b12bb6fdbffa2d17d87c5392aab792dc252d5de4533cc9518d38aa8dbf1925ab92386edd4009923",
+                "3c26ce487b1c0f062363afa3c675ebdbf5f4ef9bdc022cfbef91e3111cdc283840d8331fc30a8a0906cff4bcdbcd230c61aaec60fdfad457ed96b709a382359a",
+                "c68ede143e416eb7b4aaae0d8e48e55dd529eafed10b1df1a61416953a2b0a5666c761e7d412e6709e31ffe221b7a7a73908cb95a4d120b8b090a87d1fbedb4c",
+                "99964802e5c25e703722905d3fb80046b6bca698ca9e2cc7e49b4fe1fa087c2edf0312dfbb275cf250a1e542fd5dc2edd313f9c491127c2e8c0c9b24168e2d50",
+                "686f41ec5afff6e87e1f076f542aa466466ff5fbde162c48481ba48a748d842799f5b30f5b67fc684771b33b994206d05cc310f31914edd7b97e41860d77d282"
+        };
+
+        void checkDigests() throws OceanusException {
+            checkDigestStrings(new Blake2b(512), EXPECTED);
+        }
+    }
+
+    /**
+     * Blake2s128.
+     */
+    static class Blake2s128Test {
+        /**
+         * Expected results.
+         */
+        private static final String[] EXPECTED = {
+                "64550d6ffe2c0a01a14aba1eade0200c",
+                "854b9e9ba49bfd9457d4c3bf96e42523",
+                "aa4938119b1dc7b87cbad0ffd200d0ae",
+                "a120dbd782f5e524252ba9e77e69301b",
+                "6b5da6a19a600add9fada4c0b95bf6c9",
+                "ae8812ea7e3507014d764e3d1f57387e",
+                "d0b88b4a58efa805a1f7642865edd050"
+        };
+
+        void checkDigests() throws OceanusException {
+            checkDigestStrings(new Blake2s(128), EXPECTED);
+        }
+    }
+
+    /**
+     * Blake2s160.
+     */
+    static class Blake2s160Test {
+        /**
+         * Expected results.
+         */
+        private static final String[] EXPECTED = {
+                "354c9c33f735962418bdacb9479873429c34916f",
+                "d9cd2bec1a24404b6588a55b191c7833d630bad8",
+                "5ae3b99be29b01834c3b508521ede60438f8de17",
+                "bfba9d03326c0ba30fd98d8aad4ad43593c22127",
+                "d1dcf102967d7cd98323ee5208fa034f073fac8f",
+                "7bc244b9ef68e6901838213fe5dce91bc8f2195b",
+                "b81de34029b3fa85ac71db064d25a687377d27f5"
+        };
+
+        void checkDigests() throws OceanusException {
+            checkDigestStrings(new Blake2s(160), EXPECTED);
+        }
+    }
+
+    /**
+     * Blake2s224.
+     */
+    static class Blake2s224Test {
+        /**
+         * Expected results.
+         */
+        private static final String[] EXPECTED = {
+                "1fa1291e65248b37b3433475b2a0dd63d54a11ecc4e3e034e7bc1ef4",
+                "726ab9ea46d69ae3b4440d02255ab73b256df1afb5587fb38b92512e",
+                "0b033fc226df7abde29f67a05d3dc62cf271ef3dfea4d387407fbd55",
+                "ec7ac253d128c17e42fe2cfae74209e14f5b8bb57b1d26075b153a4e",
+                "8de6b28a9536f23725d9de3953de02ac58143fd4719adf2e11fb8a23",
+                "c4577776a9a8e0c83666bfe8c077ca9ae0271daf5e7433d965a5f787",
+                "9144fe48a93c7139b4f1b92ec3c87ee8d184e665eeeaf096b6218d51"
+        };
+
+        void checkDigests() throws OceanusException {
+            checkDigestStrings(new Blake2s(224), EXPECTED);
+        }
+    }
+
+    /**
+     * Blake2s256.
+     */
+    static class Blake2s256Test {
+        /**
+         * Expected results.
+         */
+        private static final String[] EXPECTED = {
+                "69217a3079908094e11121d042354a7c1f55b6482ca1a51e1b250dfd1ed0eef9",
+                "4a0d129873403037c2cd9b9048203687f6233fb6738956e0349bd4320fec3e90",
+                "508c5e8c327c14e2e1a72ba34eeb452f37458b209ed63a294d999b4c86675982",
+                "fa10ab775acf89b7d3c8a6e823d586f6b67bdbac4ce207fe145b7d3ac25cd28c",
+                "bdf88eb1f86a0cdf0e840ba88fa118508369df186c7355b4b16cf79fa2710a12",
+                "c75439ea17e1de6fa4510c335dc3d3f343e6f9e1ce2773e25b4174f1df8b119b",
+                "fdaedb290a0d5af9870864fec2e090200989dc9cd53a3c092129e8535e8b4f66"
+        };
+
+        void checkDigests() throws OceanusException {
+            checkDigestStrings(new Blake2s(256), EXPECTED);
         }
     }
 }
