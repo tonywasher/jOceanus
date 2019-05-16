@@ -55,6 +55,7 @@ public abstract class GordianCoreAnonymousAgreement
      * <pre>
      * GordianAnonymousRequest ::= SEQUENCE  {
      *      id AlgorithmIdentifier
+     *      result AlgorithmIdentifier
      *      initVector OCTET STRING
      *      base OCTET STRING
      * }
@@ -69,6 +70,7 @@ public abstract class GordianCoreAnonymousAgreement
             final GordianCoreAgreementFactory myFactory = getAgreementFactory();
             final ASN1EncodableVector v = new ASN1EncodableVector();
             v.add(myFactory.getIdentifierForSpec(getAgreementSpec()));
+            v.add(getIdentifierForResult());
             v.add(new DEROctetString(newInitVector()));
             v.add(new DEROctetString(pBase));
             return new DERSequence(v).getEncoded();
@@ -93,6 +95,7 @@ public abstract class GordianCoreAnonymousAgreement
 
             /* Access message parts */
             final AlgorithmIdentifier myAlgId = AlgorithmIdentifier.getInstance(en.nextElement());
+            final AlgorithmIdentifier myResId = AlgorithmIdentifier.getInstance(en.nextElement());
             final byte[] myInitVector = ASN1OctetString.getInstance(en.nextElement()).getOctets();
             final byte[] myMessage = ASN1OctetString.getInstance(en.nextElement()).getOctets();
 
@@ -102,6 +105,9 @@ public abstract class GordianCoreAnonymousAgreement
             if (!Objects.equals(mySpec, getAgreementSpec())) {
                 throw new GordianDataException(ERROR_INVSPEC);
             }
+
+            /* Process result identifier */
+            processResultIdentifier(myResId);
 
             /* Store initVector */
             storeInitVector(myInitVector);

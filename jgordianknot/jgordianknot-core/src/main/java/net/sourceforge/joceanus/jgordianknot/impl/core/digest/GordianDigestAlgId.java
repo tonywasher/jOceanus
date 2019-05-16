@@ -44,7 +44,7 @@ public class GordianDigestAlgId {
     /**
      * Base our digests off bouncyCastle.
      */
-    private static final ASN1ObjectIdentifier DIGESTOID = GordianCoreFactory.BASEOID.branch("1");
+    private static final ASN1ObjectIdentifier DIGESTOID = GordianCoreFactory.BASEOID.branch("10");
 
     /**
      * Map of DigestSpec to Identifier.

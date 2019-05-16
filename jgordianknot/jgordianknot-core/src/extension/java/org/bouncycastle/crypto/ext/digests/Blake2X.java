@@ -18,9 +18,11 @@ package org.bouncycastle.crypto.ext.digests;
 
 import org.bouncycastle.crypto.ExtendedDigest;
 import org.bouncycastle.crypto.Xof;
+import org.bouncycastle.util.Arrays;
+import org.bouncycastle.util.Memoable;
 
 public class Blake2X
-        implements ExtendedDigest, Xof {
+        implements ExtendedDigest, Memoable, Xof {
     /**
      * The underlying Blake instance.
      */
@@ -68,13 +70,26 @@ public class Blake2X
     public Blake2X(final boolean p2b) {
         /* Create the two digests */
         theUnderlying = p2b ? new Blake2b(512) : new Blake2s(256);
-        theComposite = p2b ? new Blake2b(512) : new Blake2s(256);
+        theComposite = (Blake2) theUnderlying.copy();
 
         /* Configure the composite */
         theComposite.setTreeConfig(0, 0, theUnderlying.getDigestSize());
         theComposite.setInnerLength(theUnderlying.getDigestSize());
         theComposite.setXofLen(-1);
         theXofLen = -1;
+    }
+
+    /**
+     * Constructor.
+     * @param pSource the source digest.
+     */
+    private Blake2X(final Blake2X pSource) {
+        /* Create hashes */
+        theUnderlying = pSource.theUnderlying instanceof Blake2b ? new Blake2b(512) : new Blake2s(256);
+        theComposite = (Blake2) theUnderlying.copy();
+
+        /* Initialise from source */
+        reset(pSource);
     }
 
     /**
@@ -115,12 +130,13 @@ public class Blake2X
 
     @Override
     public String getAlgorithmName() {
-        return "Blake2Xb";
+        final String myBase = theUnderlying instanceof Blake2b ? "Blake2Xb" : "Blake2Xs";
+        return myBase + (theXofLen == -1L ? "" : theXofLen);
     }
 
     @Override
     public int getDigestSize() {
-        return theUnderlying.getDigestSize();
+        return (int) theXofLen;
     }
 
     @Override
@@ -143,7 +159,7 @@ public class Blake2X
     @Override
     public int doFinal(final byte[] pOut,
                        final int pOutOffset) {
-        return doFinal(pOut, pOutOffset, getDigestSize());
+        return doFinal(pOut, pOutOffset, pOut.length);
     }
 
     @Override
@@ -226,12 +242,37 @@ public class Blake2X
         theCurrent = null;
     }
 
+    @Override
+    public void reset(final Memoable pSource) {
+        /* Access source */
+        final Blake2X mySource = (Blake2X) pSource;
+
+        /* Reset digests */
+        theUnderlying.reset(mySource.theUnderlying);
+        theComposite.reset(mySource.theComposite);
+
+        /* Clone hashes */
+        theRoot = Arrays.clone(mySource.theRoot);
+        theCurrent = Arrays.clone(mySource.theCurrent);
+
+        /* Copy state */
+        theXofLen = mySource.theXofLen;
+        theXofRemaining = mySource.theXofRemaining;
+        theHashIndex = mySource.theHashIndex;
+        theNodeIndex = mySource.theNodeIndex;
+    }
+
+    @Override
+    public Blake2X copy() {
+        return new Blake2X(this);
+    }
+
     /**
      * Obtain the next hash.
      */
     private void obtainNextHash() {
         /* Set the digestLength */
-        int digestLen = getDigestSize();
+        int digestLen = theUnderlying.getDigestSize();
         if (theXofRemaining < digestLen) {
             digestLen = (int) theXofRemaining;
         }

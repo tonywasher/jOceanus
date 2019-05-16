@@ -27,7 +27,6 @@ import org.bouncycastle.asn1.DEROctetString;
 import org.bouncycastle.asn1.DERSequence;
 import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
 
-import net.sourceforge.joceanus.jgordianknot.api.agree.GordianAgreementFactory;
 import net.sourceforge.joceanus.jgordianknot.api.agree.GordianAgreementSpec;
 import net.sourceforge.joceanus.jgordianknot.api.agree.GordianBasicAgreement;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianCoreFactory;
@@ -56,6 +55,7 @@ public abstract class GordianCoreBasicAgreement
      * <pre>
      * GordianBasicRequest ::= SEQUENCE  {
      *      id AlgorithmIdentifier
+     *      result AlgorithmIdentifier
      *      initVector OCTET STRING
      * }
      * </pre>
@@ -68,6 +68,7 @@ public abstract class GordianCoreBasicAgreement
             final GordianCoreAgreementFactory myFactory = getAgreementFactory();
             final ASN1EncodableVector v = new ASN1EncodableVector();
             v.add(myFactory.getIdentifierForSpec(getAgreementSpec()));
+            v.add(getIdentifierForResult());
             v.add(new DEROctetString(newInitVector()));
             return new DERSequence(v).getEncoded();
 
@@ -90,6 +91,7 @@ public abstract class GordianCoreBasicAgreement
 
             /* Access message parts */
             final AlgorithmIdentifier myAlgId = AlgorithmIdentifier.getInstance(en.nextElement());
+            final AlgorithmIdentifier myResId = AlgorithmIdentifier.getInstance(en.nextElement());
             final byte[] myInitVector = ASN1OctetString.getInstance(en.nextElement()).getOctets();
 
             /* Check agreementSpec */
@@ -98,6 +100,9 @@ public abstract class GordianCoreBasicAgreement
             if (!Objects.equals(mySpec, getAgreementSpec())) {
                 throw new GordianDataException(ERROR_INVSPEC);
             }
+
+            /* Process result identifier */
+            processResultIdentifier(myResId);
 
             /* Store initVector */
             storeInitVector(myInitVector);

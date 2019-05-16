@@ -29,7 +29,6 @@ import org.bouncycastle.asn1.DERSequence;
 import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
 
 import net.sourceforge.joceanus.jgordianknot.api.agree.GordianAgreementSpec;
-import net.sourceforge.joceanus.jgordianknot.api.agree.GordianAnonymousAgreement;
 import net.sourceforge.joceanus.jgordianknot.api.agree.GordianEphemeralAgreement;
 import net.sourceforge.joceanus.jgordianknot.api.factory.GordianAsymFactory;
 import net.sourceforge.joceanus.jgordianknot.api.key.GordianKeyPair;
@@ -113,6 +112,7 @@ public abstract class GordianCoreEphemeralAgreement
          * <pre>
          * GordianEpheremalRequest ::= SEQUENCE  {
          *      id AlgorithmIdentifier
+         *      result AlgorithmIdentifier
          *      initVector OCTET STRING
          *      keyBytes OCTET STRING
          * }
@@ -122,6 +122,7 @@ public abstract class GordianCoreEphemeralAgreement
             final GordianCoreAgreementFactory myFactory = getAgreementFactory();
             final ASN1EncodableVector v = new ASN1EncodableVector();
             v.add(myFactory.getIdentifierForSpec(getAgreementSpec()));
+            v.add(getIdentifierForResult());
             v.add(new DEROctetString(newInitVector()));
             v.add(new DEROctetString(myKeyBytes));
             return new DERSequence(v).getEncoded();
@@ -160,6 +161,7 @@ public abstract class GordianCoreEphemeralAgreement
 
             /* Access message parts */
             final AlgorithmIdentifier myAlgId = AlgorithmIdentifier.getInstance(en.nextElement());
+            final AlgorithmIdentifier myResId = AlgorithmIdentifier.getInstance(en.nextElement());
             final byte[] myInitVector = ASN1OctetString.getInstance(en.nextElement()).getOctets();
             final byte[] myBase = ASN1OctetString.getInstance(en.nextElement()).getOctets();
 
@@ -167,8 +169,11 @@ public abstract class GordianCoreEphemeralAgreement
             final GordianCoreAgreementFactory myFactory = getAgreementFactory();
             final GordianAgreementSpec mySpec = myFactory.getSpecForIdentifier(myAlgId);
             if (!Objects.equals(mySpec, getAgreementSpec())) {
-                int i = 0;
+                throw new GordianDataException(ERROR_INVSPEC);
             }
+
+            /* Process result identifier */
+            processResultIdentifier(myResId);
 
             /* Store the initVector */
             storeInitVector(myInitVector);

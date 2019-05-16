@@ -47,7 +47,7 @@ public class GordianMacAlgId {
     /**
      * Base our macs off bouncyCastle.
      */
-    private static final ASN1ObjectIdentifier MACOID = GordianCoreFactory.BASEOID.branch("3");
+    private static final ASN1ObjectIdentifier MACOID = GordianCoreFactory.BASEOID.branch("12");
 
     /**
      * Map of MacSpec to Identifier.

@@ -42,7 +42,7 @@ public class GordianCoreKeySetFactory
     /**
      * Base our ids off bouncyCastle.
      */
-    static final ASN1ObjectIdentifier KEYSETOID = GordianCoreFactory.BASEOID.branch("10");
+    static final ASN1ObjectIdentifier KEYSETOID = GordianCoreFactory.BASEOID.branch("30");
 
     /**
      * The factory.

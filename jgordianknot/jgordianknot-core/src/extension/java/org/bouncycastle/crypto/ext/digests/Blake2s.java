@@ -16,6 +16,7 @@
  ******************************************************************************/
 package org.bouncycastle.crypto.ext.digests;
 
+import org.bouncycastle.util.Memoable;
 import org.bouncycastle.util.Pack;
 
 /**
@@ -85,6 +86,18 @@ public class Blake2s
         setDigestLength(pLength / Byte.SIZE);
     }
 
+    /**
+     * Constructor.
+     * @param pSource the source digest.
+     */
+    private Blake2s(final Blake2s pSource) {
+        /* Initialise underlying class */
+        super(pSource);
+
+        /* Initialise from source */
+        reset(pSource);
+    }
+
     @Override
     public String getAlgorithmName() {
         return "Blake2s-" + getDigestSize() * Byte.SIZE;
@@ -103,6 +116,24 @@ public class Blake2s
         /* Reset counter */
         t0 = 0;
         t1 = 0;
+    }
+
+    @Override
+    public void reset(final Memoable pSource) {
+        /* Access source */
+        final Blake2s mySource = (Blake2s) pSource;
+
+        /* reset underlying class */
+        super.reset(mySource);
+
+        /* Reset counter */
+        t0 = mySource.t0;
+        t1 = mySource.t1;
+    }
+
+    @Override
+    public Blake2s copy() {
+        return new Blake2s(this);
     }
 
     @Override

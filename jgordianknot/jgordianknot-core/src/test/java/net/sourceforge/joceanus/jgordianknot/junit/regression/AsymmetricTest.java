@@ -36,6 +36,11 @@ import net.sourceforge.joceanus.jgordianknot.api.agree.GordianBasicAgreement;
 import net.sourceforge.joceanus.jgordianknot.api.agree.GordianAnonymousAgreement;
 import net.sourceforge.joceanus.jgordianknot.api.agree.GordianEphemeralAgreement;
 import net.sourceforge.joceanus.jgordianknot.api.asym.GordianAsymKeySpec;
+import net.sourceforge.joceanus.jgordianknot.api.base.GordianLength;
+import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianStreamCipherSpec;
+import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianStreamKeySpec;
+import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianSymCipherSpec;
+import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianSymKeySpec;
 import net.sourceforge.joceanus.jgordianknot.api.encrypt.GordianEncryptor;
 import net.sourceforge.joceanus.jgordianknot.api.encrypt.GordianEncryptorFactory;
 import net.sourceforge.joceanus.jgordianknot.api.encrypt.GordianEncryptorSpec;
@@ -87,6 +92,16 @@ public class AsymmetricTest {
      * KeySetSpec.
      */
     private static final GordianKeySetHashSpec KEYSETHASHSPEC = new GordianKeySetHashSpec();
+
+    /**
+     * SymCipherSpec.
+     */
+    private static final GordianSymCipherSpec SYMKEYSPEC = GordianSymCipherSpec.sic(GordianSymKeySpec.aes(GordianLength.LEN_256));
+
+    /**
+     * StreamCipherSpec.
+     */
+    private static final GordianStreamCipherSpec STREAMKEYSPEC = GordianStreamCipherSpec.stream(GordianStreamKeySpec.chacha(GordianLength.LEN_256));
 
     /**
      * Initialise Factories.
@@ -200,7 +215,11 @@ public class AsymmetricTest {
     private Stream<DynamicNode> agreementTests(final FactoryAgreement pAgreement,
                                                final GordianKeyPair pPartnerSelf) {
         /* Add self agreement test */
-        Stream<DynamicNode> myTests = Stream.of(DynamicTest.dynamicTest("SelfAgree", () -> checkSelfAgreement(pAgreement)));
+        Stream<DynamicNode> myTests = Stream.of(DynamicContainer.dynamicContainer("SelfAgree", Stream.of(
+                DynamicTest.dynamicTest("keySet", () -> checkSelfAgreement(pAgreement, KEYSETHASHSPEC.getKeySetSpec())),
+                DynamicTest.dynamicTest("symCipher", () -> checkSelfAgreement(pAgreement, SYMKEYSPEC)),
+                DynamicTest.dynamicTest("streamCipher", () -> checkSelfAgreement(pAgreement, STREAMKEYSPEC))
+        )));
 
         /* Add algorithmId test */
         myTests = Stream.concat(myTests, Stream.of(DynamicTest.dynamicTest("checkAlgId", () -> checkAgreementAlgId(pAgreement))));
@@ -363,9 +382,11 @@ public class AsymmetricTest {
     /**
      * Test Self Agreement.
      * @param pAgreement the agreementSpec
+     * @param pResultType the resultType
      * @throws OceanusException on error
      */
-    private void checkSelfAgreement(final FactoryAgreement pAgreement) throws OceanusException {
+    private void checkSelfAgreement(final FactoryAgreement pAgreement,
+                                    final Object pResultType) throws OceanusException {
         /* Access the KeySpec */
         final GordianAgreementSpec mySpec = pAgreement.getSpec();
         final FactoryKeyPairs myPairs = pAgreement.getOwner().getKeyPairs();
@@ -375,7 +396,9 @@ public class AsymmetricTest {
         /* Check the agreement */
         final GordianAgreementFactory myAgrees = pAgreement.getOwner().getFactory().getAgreementFactory();
         final GordianAgreement mySender = myAgrees.createAgreement(mySpec);
+        mySender.setResultType(pResultType);
         final GordianAgreement myResponder = myAgrees.createAgreement(mySpec);
+        myResponder.setResultType(pResultType);
 
         /* Access target if we are using one */
         if (!(mySender instanceof GordianAnonymousAgreement)) {
@@ -406,8 +429,8 @@ public class AsymmetricTest {
         }
 
         /* Check that the values match */
-        final GordianKeySet myFirst = mySender.deriveKeySet(KEYSETHASHSPEC.getKeySetSpec());
-        final GordianKeySet mySecond = myResponder.deriveKeySet(KEYSETHASHSPEC.getKeySetSpec());
+        final Object myFirst = mySender.getResult();
+        final Object mySecond = myResponder.getResult();
         Assertions.assertEquals(myFirst, mySecond, "Failed to agree keySet");
     }
 
@@ -429,7 +452,9 @@ public class AsymmetricTest {
         final GordianAgreementFactory mySrcAgrees = pAgreement.getOwner().getFactory().getAgreementFactory();
         final GordianAgreementFactory myPartnerAgrees = pAgreement.getOwner().getPartner().getAgreementFactory();
         final GordianAgreement mySender = mySrcAgrees.createAgreement(mySpec);
+        mySender.setResultType(GordianFactoryType.BC);
         final GordianAgreement myResponder = myPartnerAgrees.createAgreement(mySpec);
+        myResponder.setResultType(GordianFactoryType.BC);
 
         /* Handle Encapsulation */
         if (mySender instanceof GordianAnonymousAgreement
@@ -455,8 +480,8 @@ public class AsymmetricTest {
         }
 
         /* Check that the values match */
-        final GordianKeySet myFirst = mySender.deriveIndependentKeySet(KEYSETHASHSPEC.getKeySetSpec());
-        final GordianKeySet mySecond = myResponder.deriveIndependentKeySet(KEYSETHASHSPEC.getKeySetSpec());
+        final GordianFactory myFirst = (GordianFactory) mySender.getResult();
+        final GordianFactory mySecond = (GordianFactory) myResponder.getResult();
         Assertions.assertEquals(myFirst, mySecond, "Failed to agree crossFactory keySet");
     }
 

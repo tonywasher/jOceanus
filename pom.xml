@@ -2,7 +2,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>net.sourceforge.joceanus</groupId>
   <artifactId>joceanus</artifactId>
-  <version>v1.6.0-SNAPSHOT</version>
+  <version>1.6.0-SNAPSHOT</version>
   <packaging>pom</packaging>
   <name>Java Oceanus package</name>
   <description>Parent project for jOceanus</description>
@@ -94,7 +94,7 @@
     <SurefirePluginVersion>3.0.0-M3</SurefirePluginVersion>
     <BuildNumberPluginVersion>1.4</BuildNumberPluginVersion>
     <BuildHelperPluginVersion>3.0.0</BuildHelperPluginVersion>
-    <JarPluginVersion>3.1.1</JarPluginVersion>
+    <JarPluginVersion>3.1.2</JarPluginVersion>
     <ProjectInfoPluginVersion>3.0.0</ProjectInfoPluginVersion>
     <JxrPluginVersion>3.0.0</JxrPluginVersion>
     <JavaDocPluginVersion>3.1.0</JavaDocPluginVersion>

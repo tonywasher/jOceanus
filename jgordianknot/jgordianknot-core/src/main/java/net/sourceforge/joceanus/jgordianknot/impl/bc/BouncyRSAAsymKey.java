@@ -468,14 +468,17 @@ public final class BouncyRSAAsymKey {
             /* Create message */
             final GordianRSAModulus myModulus = myPublic.getKeySpec().getModulus();
             final int myLen = myModulus.getLength() / Byte.SIZE;
-            final byte[] myMessage = new byte[myLen];
-            final KeyParameter myParms = (KeyParameter) theAgreement.encrypt(myMessage, 0, myLen);
+            final byte[] myData = new byte[myLen];
+            final KeyParameter myParms = (KeyParameter) theAgreement.encrypt(myData, 0, myLen);
 
-            /* Store secret and cipherText */
+            /* Build the init Message */
+            final byte[] myMessage = createMessage(myData);
+
+            /* Store secret and create initVector */
             storeSecret(myParms.getKey());
 
-            /* Create the message  */
-            return createMessage(myMessage);
+            /* Return the message  */
+            return myMessage;
         }
 
         @Override

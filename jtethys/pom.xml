@@ -3,7 +3,7 @@
   <parent>
     <groupId>net.sourceforge.joceanus</groupId>
     <artifactId>joceanus</artifactId>
-    <version>v1.6.0-SNAPSHOT</version>
+    <version>1.6.0-SNAPSHOT</version>
   </parent>
   <artifactId>jtethys</artifactId>
   <name>Tethys Java Utilities</name>

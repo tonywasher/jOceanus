@@ -16,6 +16,7 @@
  ******************************************************************************/
 package org.bouncycastle.crypto.ext.digests;
 
+import org.bouncycastle.util.Memoable;
 import org.bouncycastle.util.Pack;
 
 /**
@@ -85,6 +86,18 @@ public class Blake2b
         setDigestLength(pLength / Byte.SIZE);
     }
 
+    /**
+     * Constructor.
+     * @param pSource the source digest.
+     */
+    private Blake2b(final Blake2b pSource) {
+        /* Initialise underlying class */
+        super(pSource);
+
+        /* Initialise from source */
+        reset(pSource);
+    }
+
     @Override
     public String getAlgorithmName() {
         return "Blake2b-" + getDigestSize() * Byte.SIZE;
@@ -93,6 +106,50 @@ public class Blake2b
     @Override
     public int getByteLength() {
         return BLOCK_LENGTH_BYTES;
+    }
+
+    @Override
+    public void reset() {
+        /* reset underlying class */
+        super.reset();
+
+        /* Reset counter */
+        t0 = 0L;
+        t1 = 0L;
+    }
+
+    @Override
+    public void reset(final Memoable pSource) {
+        /* Access source */
+        final Blake2b mySource = (Blake2b) pSource;
+
+        /* reset underlying class */
+        super.reset(mySource);
+
+        /* Reset counter */
+        t0 = mySource.t0;
+        t1 = mySource.t1;
+    }
+
+    @Override
+    public Blake2b copy() {
+        return new Blake2b(this);
+    }
+
+    @Override
+    void adjustCounter(int pCount) {
+        t0 += pCount;
+        if (t0 == 0) {
+            t1++;
+        }
+    }
+
+    @Override
+    void completeCounter(int pCount) {
+        t0 += pCount;
+        if (pCount > 0 && t0 == 0) {
+            t1++;
+        }
     }
 
     @Override
@@ -109,32 +166,6 @@ public class Blake2b
             } else {
                 System.arraycopy(bytes, 0, pOut, pOutOffset + j, myDigestLen - j);
             }
-        }
-    }
-
-    @Override
-    public void reset() {
-        /* reset underlying class */
-        super.reset();
-
-        /* Reset counter */
-        t0 = 0L;
-        t1 = 0L;
-    }
-
-    @Override
-    void adjustCounter(int pCount) {
-        t0 += pCount;
-        if (t0 == 0) {
-            t1++;
-        }
-    }
-
-    @Override
-    void completeCounter(int pCount) {
-        t0 += pCount;
-        if (pCount > 0 && t0 == 0) {
-            t1++;
         }
     }
 

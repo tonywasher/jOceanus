@@ -415,17 +415,18 @@ public final class BouncyXDHAsymKey {
             final GordianKeyPair myPair = myGenerator.generateKeyPair();
             final BouncyPrivateKey myPrivate = (BouncyPrivateKey) getPrivateKey(myPair);
 
+            /* Create the message  */
+            final X509EncodedKeySpec myKeySpec = myGenerator.getX509Encoding(myPair);
+            final byte[] myKeyBytes = myKeySpec.getEncoded();
+            final byte[] myMessage = createMessage(myKeyBytes);
+
             /* Derive the secret */
             theAgreement.init(myPrivate.getPrivateKey());
             final BouncyPublicKey myTarget = (BouncyPublicKey) getPublicKey(pTarget);
             final byte[] mySecret = new byte[theAgreement.getAgreementSize()];
             theAgreement.calculateAgreement(myTarget.getPublicKey(), mySecret, 0);
             storeSecret(mySecret);
-
-            /* Create the message  */
-            final X509EncodedKeySpec myKeySpec = myGenerator.getX509Encoding(myPair);
-            final byte[] myKeyBytes = myKeySpec.getEncoded();
-            return createMessage(myKeyBytes);
+            return myMessage;
         }
 
         @Override
@@ -487,6 +488,9 @@ public final class BouncyXDHAsymKey {
             checkKeyPair(pSource);
             checkKeyPair(pTarget);
 
+            /* Build the init Message */
+            final byte[] myMessage = createMessage();
+
             /* Derive the secret */
             final BouncyPrivateKey myPrivate = (BouncyPrivateKey) getPrivateKey(pSource);
             theAgreement.init(myPrivate.getPrivateKey());
@@ -496,7 +500,7 @@ public final class BouncyXDHAsymKey {
             storeSecret(mySecret);
 
             /* Create the message  */
-            return createMessage();
+            return myMessage;
         }
 
         @Override

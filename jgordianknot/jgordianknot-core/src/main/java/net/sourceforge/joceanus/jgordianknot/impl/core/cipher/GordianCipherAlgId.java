@@ -47,7 +47,7 @@ public class GordianCipherAlgId {
     /**
      * Base our ciphers off bouncyCastle.
      */
-    private static final ASN1ObjectIdentifier CIPHEROID = GordianCoreFactory.BASEOID.branch("2");
+    private static final ASN1ObjectIdentifier CIPHEROID = GordianCoreFactory.BASEOID.branch("11");
 
     /**
      * Map of SymCipherSpec to Identifier.

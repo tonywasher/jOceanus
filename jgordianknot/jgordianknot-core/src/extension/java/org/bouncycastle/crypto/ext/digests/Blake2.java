@@ -18,12 +18,13 @@ package org.bouncycastle.crypto.ext.digests;
 
 import org.bouncycastle.crypto.ExtendedDigest;
 import org.bouncycastle.util.Arrays;
+import org.bouncycastle.util.Memoable;
 
 /**
  * Blake2 Base class.
  */
 public abstract class Blake2
-        implements ExtendedDigest {
+        implements ExtendedDigest, Memoable {
     /**
      * Number of Words.
      */
@@ -155,6 +156,19 @@ public abstract class Blake2
 
         /* Determine maxXofLen */
         theMaxXofLen = this instanceof Blake2b ? 0xFFFFFFFEL : 0xFFFEL;
+    }
+
+    /**
+     * Constructor.
+     * @param pSource the source
+     */
+    Blake2(final Blake2 pSource) {
+        /* Store parameters */
+        theRounds = pSource.theRounds;
+        theBuffer = new byte[pSource.theBuffer.length];
+
+        /* Determine maxXofLen */
+        theMaxXofLen = pSource.theMaxXofLen;
     }
 
     /**
@@ -525,6 +539,35 @@ public abstract class Blake2
         /* Reset the data Buffer */
         thePos = 0;
         Arrays.fill(theBuffer, (byte) 0);
+    }
+
+    /**
+     * Copy state from source.
+     * @param pSource the source
+     */
+    void reset(final Blake2 pSource) {
+        /* Copy config */
+        theDigestLen = pSource.theDigestLen;
+        theInnerLen = pSource.theInnerLen;
+        theLeafLen = pSource.theLeafLen;
+        theXofLen = pSource.theXofLen;
+        theFanOut = pSource.theFanOut;
+        theMaxDepth = pSource.theMaxDepth;
+        theNodeDepth = pSource.theNodeDepth;
+        theNodeOffset = pSource.theNodeOffset;
+
+        /* Copy flags */
+        isActive = pSource.isActive;
+        isLastNode = pSource.isLastNode;
+
+        /* Clone arrays */
+        theKey = Arrays.clone(pSource.theKey);
+        theSalt = Arrays.clone(pSource.theSalt);
+        thePersonal = Arrays.clone(pSource.thePersonal);
+
+        /* Copy buffer */
+        System.arraycopy(theBuffer, 0, pSource.theBuffer, 0, theBuffer.length);
+        thePos = pSource.thePos;
     }
 
     /**

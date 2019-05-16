@@ -16,10 +16,6 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jgordianknot.api.agree;
 
-import net.sourceforge.joceanus.jgordianknot.api.base.GordianKeySpec;
-import net.sourceforge.joceanus.jgordianknot.api.key.GordianKey;
-import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySet;
-import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetSpec;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
@@ -31,29 +27,37 @@ public interface GordianAgreement {
      * @return the spec
      */
     GordianAgreementSpec getAgreementSpec();
-    /**
-     * Derive key.
-     * @param <T> the type of key
-     * @param pKeyType the key type
-     * @return the key
-     * @throws OceanusException on error
-     */
-    <T extends GordianKeySpec> GordianKey<T> deriveKey(T pKeyType) throws OceanusException;
 
     /**
-     * Derive keySet.
-     * @param pSpec the keySetSpec
-     * @return the keySet
-     * @throws OceanusException on error
+     * Set the result type of the agreement.
+     * <p>
+     *     This can be any of
+     * </p>
+     * <dl>
+     *     <dt>FactoryType</dt>
+     *     <dd>To agree a Factory</dd>
+     *     <dt>SymCipherSpec</dt>
+     *     <dd>To agree a symCipher</dd>
+     *     <dt>StreamCipherSpec</dt>
+     *     <dd>To agree a streamCipher</dd>
+     *     <dt>KeySetSpec</dt>
+     *     <dd>To agree a KeySet</dd>
+     * </dl>
+     * @param pResultType the resultType.
      */
-    GordianKeySet deriveKeySet(GordianKeySetSpec pSpec) throws OceanusException;
+    void setResultType(Object pResultType);
 
     /**
-     * Derive independent keySet.
-     * @param pSpec the keySetSpec
-     * @return the keySet
+     * Obtain resultType.
+     * @return the resultType
+     */
+    Object getResultType();
+
+    /**
+     * Obtain result.
+     * @return the result
      * @throws OceanusException on error
      */
-    GordianKeySet deriveIndependentKeySet(GordianKeySetSpec pSpec) throws OceanusException;
+    Object getResult() throws OceanusException;
 }
 

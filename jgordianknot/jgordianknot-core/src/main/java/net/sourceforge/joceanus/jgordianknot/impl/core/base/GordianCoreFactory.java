@@ -43,6 +43,21 @@ public abstract class GordianCoreFactory
     public static final ASN1ObjectIdentifier BASEOID = BCObjectIdentifiers.bc.branch("100");
 
     /**
+     *  Create the factoryId.
+     */
+    private static final ASN1ObjectIdentifier FACTORYOID = BASEOID.branch("1");
+
+    /**
+     *  Create the BC factoryId.
+     */
+    public static final ASN1ObjectIdentifier BCFACTORYOID = FACTORYOID.branch("1");
+
+    /**
+     *  Create the JCA factoryId.
+     */
+    public static final ASN1ObjectIdentifier JCAFACTORYOID = FACTORYOID.branch("2");
+
+    /**
      * RC5 rounds.
      */
     public static final int RC5_ROUNDS = 12;

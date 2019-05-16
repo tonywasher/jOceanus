@@ -92,12 +92,14 @@ public final class JcaAgreement {
                 theAgreement.init(null, getRandom());
                 final JcaPublicKey myTarget = (JcaPublicKey) getPublicKey(pTarget);
                 final PublicKey myKey = (PublicKey) theAgreement.doPhase(myTarget.getPublicKey(), true);
-                storeSecret(theAgreement.generateSecret());
 
                 /* Create the message  */
                 final X509EncodedKeySpec myKeySpec = new X509EncodedKeySpec(myKey.getEncoded());
                 final byte[] myKeySpecBytes = myKeySpec.getEncoded();
-                return createMessage(myKeySpecBytes);
+                final byte[] myMessage = createMessage(myKeySpecBytes);
+                storeSecret(theAgreement.generateSecret());
+                return myMessage;
+
             } catch (InvalidKeyException e) {
                 throw new GordianCryptoException(ERR_AGREEMENT, e);
             }
@@ -180,15 +182,17 @@ public final class JcaAgreement {
                     theAgreement.init(myPrivate.getPrivateKey(), new UserKeyingMaterialSpec(new byte[0]), getRandom());
                 }
 
+                /* Create the message  */
+                final X509EncodedKeySpec myKeySpec = myGenerator.getX509Encoding(myPair);
+                final byte[] myKeySpecBytes = myKeySpec.getEncoded();
+                final byte[] myMessage = createMessage(myKeySpecBytes);
+
                 /* Derive the secret */
                 final JcaPublicKey myTarget = (JcaPublicKey) getPublicKey(pTarget);
                 theAgreement.doPhase(myTarget.getPublicKey(), true);
                 storeSecret(theAgreement.generateSecret());
+                return myMessage;
 
-                /* Create the message  */
-                final X509EncodedKeySpec myKeySpec = myGenerator.getX509Encoding(myPair);
-                final byte[] myKeySpecBytes = myKeySpec.getEncoded();
-                return createMessage(myKeySpecBytes);
 
             } catch (InvalidKeyException
                     | InvalidAlgorithmParameterException e) {
@@ -276,13 +280,16 @@ public final class JcaAgreement {
                     theAgreement.init(myPrivate.getPrivateKey(), new UserKeyingMaterialSpec(new byte[0]), getRandom());
                 }
 
+                /* Create the message */
+                final byte[] myMessage = createMessage();
+
                 /* Derive the secret */
                 final JcaPublicKey myTarget = (JcaPublicKey) getPublicKey(pTarget);
                 theAgreement.doPhase(myTarget.getPublicKey(), true);
                 storeSecret(theAgreement.generateSecret());
 
                 /* Create the message  */
-                return createMessage();
+                return myMessage;
 
             } catch (InvalidKeyException
                     | InvalidAlgorithmParameterException e) {

@@ -504,14 +504,15 @@ public final class BouncyEllipticAsymKey {
             final int myLen = 2 * myFieldSize + 1;
 
             /* Create cipherText */
-            final byte[] myMessage = new byte[myLen];
-            final KeyParameter myParms = (KeyParameter) theAgreement.encrypt(myMessage, 0, myLen);
+            final byte[] myData = new byte[myLen];
+            final KeyParameter myParms = (KeyParameter) theAgreement.encrypt(myData, 0, myLen);
+            final byte[] myMessage = createMessage(myData);
 
             /* Store secret */
             storeSecret(myParms.getKey());
 
             /* Create the message  */
-            return createMessage(myMessage);
+            return myMessage;
         }
 
         @Override
@@ -574,16 +575,17 @@ public final class BouncyEllipticAsymKey {
             final GordianKeyPair myPair = myGenerator.generateKeyPair();
             final BouncyECPrivateKey myPrivate = (BouncyECPrivateKey) getPrivateKey(myPair);
 
+            /* Create the message  */
+            final X509EncodedKeySpec myKeySpec = myGenerator.getX509Encoding(myPair);
+            final byte[] myKeyBytes = myKeySpec.getEncoded();
+            final byte[] myMessage = createMessage(myKeyBytes);
+
             /* Derive the secret */
             theAgreement.init(myPrivate.getPrivateKey());
             final BouncyECPublicKey myTarget = (BouncyECPublicKey) getPublicKey(pTarget);
             final BigInteger mySecret = theAgreement.calculateAgreement(myTarget.getPublicKey());
             storeSecret(BigIntegers.asUnsignedByteArray(theAgreement.getFieldSize(), mySecret));
-
-            /* Create the message  */
-            final X509EncodedKeySpec myKeySpec = myGenerator.getX509Encoding(myPair);
-            final byte[] myKeyBytes = myKeySpec.getEncoded();
-            return createMessage(myKeyBytes);
+            return myMessage;
         }
 
         @Override
@@ -644,6 +646,9 @@ public final class BouncyEllipticAsymKey {
             checkKeyPair(pSource);
             checkKeyPair(pTarget);
 
+            /* Create the message  */
+            final byte[] myMessage = createMessage();
+
             /* Derive the secret */
             final BouncyECPrivateKey myPrivate = (BouncyECPrivateKey) getPrivateKey(pSource);
             theAgreement.init(myPrivate.getPrivateKey());
@@ -651,8 +656,8 @@ public final class BouncyEllipticAsymKey {
             final BigInteger mySecret = theAgreement.calculateAgreement(myTarget.getPublicKey());
             storeSecret(BigIntegers.asUnsignedByteArray(theAgreement.getFieldSize(), mySecret));
 
-            /* Create the message  */
-            return createMessage();
+            /* Return the message  */
+            return myMessage;
         }
 
         @Override

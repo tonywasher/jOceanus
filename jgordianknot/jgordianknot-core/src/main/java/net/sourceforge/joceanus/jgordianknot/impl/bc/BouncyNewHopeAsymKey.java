@@ -236,18 +236,22 @@ public final class BouncyNewHopeAsymKey {
                 final BouncyNewHopePublicKey myTarget = (BouncyNewHopePublicKey) getPublicKey(pTarget);
                 final ExchangePair myPair = myGenerator.GenerateExchange(myTarget.getPublicKey());
 
-                /* Derive the secret */
-                final byte[] mySecret = myPair.getSharedValue();
-                storeSecret(mySecret);
-
                 /* Obtain the encoded keySpec of the public key */
                 final NHPublicKeyParameters myParms = (NHPublicKeyParameters) myPair.getPublicKey();
                 final SubjectPublicKeyInfo myInfo = PqcSubjectPublicKeyInfoFactory.createSubjectPublicKeyInfo(myParms);
                 final X509EncodedKeySpec myKeySpec = new X509EncodedKeySpec(myInfo.getEncoded());
                 final byte[] myKeySpecBytes = myKeySpec.getEncoded();
 
-                /* Create the message  */
-                return createMessage(myKeySpecBytes);
+                /* Build the init Message */
+                final byte[] myMessage = createMessage(myKeySpecBytes);
+
+                /* Derive the secret */
+                final byte[] mySecret = myPair.getSharedValue();
+                storeSecret(mySecret);
+
+                /* Return the message  */
+                return myMessage;
+
             } catch (IOException e) {
                 throw new GordianCryptoException(BouncyKeyPairGenerator.ERROR_PARSE, e);
             }
