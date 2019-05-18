@@ -95,7 +95,7 @@ public class Blake2b
         super(pSource);
 
         /* Initialise from source */
-        reset(pSource);
+        reset((Memoable) pSource);
     }
 
     @Override
@@ -129,6 +129,9 @@ public class Blake2b
         /* Reset counter */
         t0 = mySource.t0;
         t1 = mySource.t1;
+
+        /* Copy state */
+        System.arraycopy(mySource.theH, 0, theH, 0, theH.length);
     }
 
     @Override

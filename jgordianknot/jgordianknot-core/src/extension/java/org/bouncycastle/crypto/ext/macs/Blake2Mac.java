@@ -21,47 +21,27 @@ import org.bouncycastle.crypto.Digest;
 import org.bouncycastle.crypto.Mac;
 import org.bouncycastle.crypto.digests.Blake2bDigest;
 import org.bouncycastle.crypto.digests.Blake2sDigest;
+import org.bouncycastle.crypto.ext.digests.Blake2;
 import org.bouncycastle.crypto.params.KeyParameter;
 import org.bouncycastle.crypto.params.ParametersWithIV;
 
 /**
  * Bouncy implementation of Blake2bMac.
  */
-public class Blake2Mac implements Mac {
-    /**
-     * Use Blake2b?
-     */
-    private final boolean useBlake2b;
-
-    /**
-     * MacSize.
-     */
-    private final int theMacSize;
-
+public class Blake2Mac
+        implements Mac {
     /**
      * Digest.
      */
-    private Digest theDigest;
+    private final Blake2 theDigest;
 
     /**
-     * Create a blake2Mac with the specified macSpec.
+     * Create a blake2Mac with the specified digest.
      * @param pDigest the base digest.
      */
-    public Blake2Mac(final Digest pDigest) {
-        /* Check parameter */
-        if (pDigest instanceof Blake2bDigest) {
-            useBlake2b = true;
-        } else if (pDigest instanceof Blake2sDigest) {
-            useBlake2b = false;
-        } else {
-            throw new IllegalArgumentException("Must supply a BlakeDigest variant");
-        }
-
+    public Blake2Mac(final Blake2 pDigest) {
         /* Store the digest */
         theDigest = pDigest;
-
-        /* Determine the macSize */
-        theMacSize = theDigest.getDigestSize();
     }
 
     @Override
@@ -86,15 +66,14 @@ public class Blake2Mac implements Mac {
         final KeyParameter keyParams = (KeyParameter) myParams;
         final byte[] myKey = keyParams.getKey();
 
-        /* Recreate the digest */
-        theDigest = useBlake2b
-                               ? new Blake2bDigest(myKey, theMacSize, myIV, null)
-                               : new Blake2sDigest(myKey, theMacSize, myIV, null);
+        /* Configure the digest */
+        theDigest.setKey(myKey);
+        theDigest.setSalt(myIV);
     }
 
     @Override
     public int getMacSize() {
-        return theMacSize;
+        return theDigest.getDigestSize();
     }
 
     @Override
@@ -116,4 +95,13 @@ public class Blake2Mac implements Mac {
     public void reset() {
         theDigest.reset();
     }
+
+    /**
+     * Set the personalisation.
+     * @param pPersonal the personalisation.
+     */
+    public void setPersonalisation(final byte[] pPersonal) {
+        theDigest.setPersonalisation(pPersonal);
+    }
 }
+

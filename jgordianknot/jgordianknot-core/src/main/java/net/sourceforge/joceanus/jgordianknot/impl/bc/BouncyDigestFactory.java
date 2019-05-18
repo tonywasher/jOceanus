@@ -17,8 +17,6 @@
 package net.sourceforge.joceanus.jgordianknot.impl.bc;
 
 import org.bouncycastle.crypto.Digest;
-import org.bouncycastle.crypto.digests.Blake2bDigest;
-import org.bouncycastle.crypto.digests.Blake2sDigest;
 import org.bouncycastle.crypto.digests.DSTU7564Digest;
 import org.bouncycastle.crypto.digests.GOST3411Digest;
 import org.bouncycastle.crypto.digests.GOST3411_2012_256Digest;
@@ -42,6 +40,9 @@ import org.bouncycastle.crypto.digests.SM3Digest;
 import org.bouncycastle.crypto.digests.SkeinDigest;
 import org.bouncycastle.crypto.digests.TigerDigest;
 import org.bouncycastle.crypto.digests.WhirlpoolDigest;
+import org.bouncycastle.crypto.ext.digests.Blake2;
+import org.bouncycastle.crypto.ext.digests.Blake2b;
+import org.bouncycastle.crypto.ext.digests.Blake2s;
 import org.bouncycastle.crypto.ext.digests.CubeHashDigest;
 import org.bouncycastle.crypto.ext.digests.GroestlDigest;
 import org.bouncycastle.crypto.ext.digests.JHDigest;
@@ -167,11 +168,11 @@ public class BouncyDigestFactory
      * @param pSpec the digest spec
      * @return the digest
      */
-    static Digest getBlake2Digest(final GordianDigestSpec pSpec) {
+    static Blake2 getBlake2Digest(final GordianDigestSpec pSpec) {
         final int myLength = pSpec.getDigestLength().getLength();
         return GordianDigestType.isBlake2bState(pSpec.getStateLength())
-               ? new Blake2bDigest(myLength)
-               : new Blake2sDigest(myLength);
+               ? new Blake2b(myLength)
+               : new Blake2s(myLength);
     }
 
     /**

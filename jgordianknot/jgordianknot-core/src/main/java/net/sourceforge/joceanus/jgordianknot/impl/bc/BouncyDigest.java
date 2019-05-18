@@ -42,8 +42,8 @@ public final class BouncyDigest
      * @param pDigestSpec the digestSpec
      * @param pDigest the digest
      */
-    protected BouncyDigest(final GordianDigestSpec pDigestSpec,
-                           final Digest pDigest) {
+    BouncyDigest(final GordianDigestSpec pDigestSpec,
+                 final Digest pDigest) {
         super(pDigestSpec);
         theDigest = pDigest;
         theXof = theDigest instanceof Xof

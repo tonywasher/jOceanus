@@ -16,6 +16,7 @@
  ******************************************************************************/
 package org.bouncycastle.crypto.ext.digests;
 
+import org.bouncycastle.util.Arrays;
 import org.bouncycastle.util.Memoable;
 import org.bouncycastle.util.Pack;
 
@@ -95,7 +96,7 @@ public class Blake2s
         super(pSource);
 
         /* Initialise from source */
-        reset(pSource);
+        reset((Memoable) pSource);
     }
 
     @Override
@@ -129,6 +130,9 @@ public class Blake2s
         /* Reset counter */
         t0 = mySource.t0;
         t1 = mySource.t1;
+
+        /* Copy state */
+        System.arraycopy(mySource.theH, 0, theH, 0, theH.length);
     }
 
     @Override

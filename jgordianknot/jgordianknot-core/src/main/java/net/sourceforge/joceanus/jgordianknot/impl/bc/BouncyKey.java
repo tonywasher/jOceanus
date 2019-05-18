@@ -41,8 +41,8 @@ public final class BouncyKey<T extends GordianKeySpec>
      * @param pKeyType the keyType
      * @param pKeyBytes the key bytes
      */
-    protected BouncyKey(final T pKeyType,
-                        final byte[] pKeyBytes) {
+    BouncyKey(final T pKeyType,
+              final byte[] pKeyBytes) {
         /* Initialise underlying class */
         super(pKeyType);
 

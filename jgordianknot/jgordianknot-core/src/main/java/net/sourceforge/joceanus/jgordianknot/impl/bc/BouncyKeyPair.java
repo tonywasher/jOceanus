@@ -25,7 +25,6 @@ import net.sourceforge.joceanus.jgordianknot.impl.core.keypair.GordianCoreKeyPai
 import net.sourceforge.joceanus.jgordianknot.impl.core.keypair.GordianPrivateKey;
 import net.sourceforge.joceanus.jgordianknot.impl.core.keypair.GordianPublicKey;
 
-
 /**
  * BouncyCastle Asymmetric KeyPair.
  */

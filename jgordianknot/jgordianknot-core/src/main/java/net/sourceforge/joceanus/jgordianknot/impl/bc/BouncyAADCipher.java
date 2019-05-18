@@ -46,9 +46,9 @@ public class BouncyAADCipher
      * @param pCipherSpec the cipherSpec
      * @param pCipher the cipher
      */
-    protected BouncyAADCipher(final BouncyFactory pFactory,
-                              final GordianSymCipherSpec pCipherSpec,
-                              final AEADBlockCipher pCipher) {
+    BouncyAADCipher(final BouncyFactory pFactory,
+                    final GordianSymCipherSpec pCipherSpec,
+                    final AEADBlockCipher pCipher) {
         super(pFactory, pCipherSpec);
         theCipher = pCipher;
     }

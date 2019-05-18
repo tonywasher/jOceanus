@@ -20,8 +20,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.bouncycastle.crypto.CipherKeyGenerator;
-import org.bouncycastle.crypto.Digest;
 import org.bouncycastle.crypto.Mac;
+import org.bouncycastle.crypto.ext.digests.Blake2;
 import org.bouncycastle.crypto.ext.macs.Blake2Mac;
 import org.bouncycastle.crypto.ext.macs.Zuc128Mac;
 import org.bouncycastle.crypto.ext.macs.Zuc256Mac;
@@ -253,7 +253,7 @@ public class BouncyMacFactory
      * @return the MAC
      */
     private static Mac getBCBlakeMac(final GordianMacSpec pSpec) {
-        final Digest myDigest = BouncyDigestFactory.getBlake2Digest(pSpec.getDigestSpec());
+        final Blake2 myDigest = BouncyDigestFactory.getBlake2Digest(pSpec.getDigestSpec());
         return new Blake2Mac(myDigest);
     }
 

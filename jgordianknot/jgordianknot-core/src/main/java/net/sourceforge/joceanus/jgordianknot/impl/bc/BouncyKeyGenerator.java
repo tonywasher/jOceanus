@@ -41,9 +41,9 @@ public final class BouncyKeyGenerator<T extends GordianKeySpec>
      * @param pKeyType the keyType
      * @param pGenerator the key generator
      */
-    protected BouncyKeyGenerator(final BouncyFactory pFactory,
-                                 final T pKeyType,
-                                 final CipherKeyGenerator pGenerator) {
+    BouncyKeyGenerator(final BouncyFactory pFactory,
+                       final T pKeyType,
+                       final CipherKeyGenerator pGenerator) {
         /* Initialise underlying class */
         super(pFactory, pKeyType);
 

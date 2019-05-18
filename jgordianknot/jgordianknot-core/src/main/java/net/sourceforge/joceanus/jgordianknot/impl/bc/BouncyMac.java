@@ -44,9 +44,9 @@ public final class BouncyMac
      * @param pMacSpec the MacSpec
      * @param pMac the MAC
      */
-    protected BouncyMac(final BouncyFactory pFactory,
-                        final GordianMacSpec pMacSpec,
-                        final Mac pMac) {
+    BouncyMac(final BouncyFactory pFactory,
+              final GordianMacSpec pMacSpec,
+              final Mac pMac) {
         super(pFactory, pMacSpec);
         theMac = pMac;
     }

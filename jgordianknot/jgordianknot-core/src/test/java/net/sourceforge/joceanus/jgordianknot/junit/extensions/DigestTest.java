@@ -19,11 +19,15 @@ package net.sourceforge.joceanus.jgordianknot.junit.extensions;
 import java.util.stream.Stream;
 
 import org.bouncycastle.crypto.Digest;
+import org.bouncycastle.crypto.Mac;
+import org.bouncycastle.crypto.ext.digests.Blake2X;
 import org.bouncycastle.crypto.ext.digests.Blake2b;
 import org.bouncycastle.crypto.ext.digests.Blake2s;
 import org.bouncycastle.crypto.ext.digests.CubeHashDigest;
 import org.bouncycastle.crypto.ext.digests.GroestlDigest;
 import org.bouncycastle.crypto.ext.digests.JHDigest;
+import org.bouncycastle.crypto.ext.macs.Blake2Mac;
+import org.bouncycastle.crypto.params.KeyParameter;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DynamicContainer;
 import org.junit.jupiter.api.DynamicNode;
@@ -49,6 +53,17 @@ public class DigestTest {
                 "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789",
                 "12345678901234567890123456789012345678901234567890123456789012345678901234567890"
     };
+
+    /**
+     * Blake2 Data.
+     */
+    private static final byte[] BLAKE2DATA = new byte[256];
+
+    static {
+        for (int i=0; i < BLAKE2DATA.length; i++) {
+            BLAKE2DATA[i] = (byte) i;
+        }
+    }
 
     /**
      * Create the blockCipher test suite.
@@ -81,13 +96,16 @@ public class DigestTest {
                         DynamicTest.dynamicTest("224", () -> new Blake2b224Test().checkDigests()),
                         DynamicTest.dynamicTest("256", () -> new Blake2b256Test().checkDigests()),
                         DynamicTest.dynamicTest("384", () -> new Blake2b384Test().checkDigests()),
-                        DynamicTest.dynamicTest("512", () -> new Blake2b512Test().checkDigests())
+                        DynamicTest.dynamicTest("512", () -> new Blake2b512Test().checkDigests()),
+                        DynamicTest.dynamicTest("Mac", () -> new Blake2bMacTest().checkMacs())
                 )),
                 DynamicContainer.dynamicContainer("Blake2s", Stream.of(
                         DynamicTest.dynamicTest("128", () -> new Blake2s128Test().checkDigests()),
                         DynamicTest.dynamicTest("160", () -> new Blake2s160Test().checkDigests()),
                         DynamicTest.dynamicTest("224", () -> new Blake2s224Test().checkDigests()),
-                        DynamicTest.dynamicTest("256", () -> new Blake2s256Test().checkDigests())
+                        DynamicTest.dynamicTest("256", () -> new Blake2s256Test().checkDigests()),
+                        DynamicTest.dynamicTest("Mac", () -> new Blake2sMacTest().checkMacs()),
+                        DynamicTest.dynamicTest("Xof", () -> new Blake2sXofTest().checkXofs())
                 ))
         )));
     }
@@ -116,6 +134,11 @@ public class DigestTest {
             /* Check the hash */
             final byte[] myExpected = TethysDataConverter.hexStringToBytes(pExpected[i]);
             Assertions.assertArrayEquals(myExpected, myOutput, "Result mismatch");
+            pDigest.update(myInput.getBytes(), 0, myInput.length());
+            pDigest.doFinal(myOutput, 0);
+
+            /* Check the hash */
+            Assertions.assertArrayEquals(myExpected, myOutput, "Result mismatch");
         }
     }
 
@@ -129,9 +152,8 @@ public class DigestTest {
         final byte[] myOutput = new byte[pDigest.getDigestSize()];
 
         /* Loop through the input strings */
-        for(int i=0; i < INPUTS.length; i++) {
+        for (String myInput : INPUTS) {
             /* Create the hash */
-            final String myInput = INPUTS[i];
             pDigest.update(myInput.getBytes(), 0, myInput.length());
             pDigest.doFinal(myOutput, 0);
 
@@ -139,6 +161,66 @@ public class DigestTest {
             final String myHash = TethysDataConverter.bytesToHexString(myOutput);
             System.out.println(myHash);
         }
+    }
+
+    /**
+     * Run the blake Mac tests.
+     * @param pMac the mac to test.
+     * @param pKeyLen the keyLength
+     * @param pDataLen the dataLength
+     * @param pResult the expected result
+     * @throws OceanusException on error
+     */
+    static void testBlakeMac(final Mac pMac,
+                             final int pKeyLen,
+                             final int pDataLen,
+                             final String pResult) throws OceanusException {
+        /* Create the key */
+        final byte[] myKey = new byte[pKeyLen];
+        System.arraycopy(BLAKE2DATA, 0, myKey, 0, pKeyLen);
+
+        /* Create the output buffer */
+        final byte[] myOutput = new byte[pMac.getMacSize()];
+
+        /* Initialise the mac */
+        pMac.init(new KeyParameter(myKey));
+        pMac.update(BLAKE2DATA, 0, pDataLen);
+        pMac.doFinal(myOutput, 0);
+
+        /* Check the result */
+        final byte[] myExpected = TethysDataConverter.hexStringToBytes(pResult);
+        Assertions.assertArrayEquals(myExpected, myOutput, "Result mismatch");
+    }
+
+    /**
+     * Run the blake Xof tests.
+     * @param pXof the Xof to test.
+     * @param pKeyLen the keyLength
+     * @param pResult the expected result
+     * @throws OceanusException on error
+     */
+    static void testBlakeXof(final Blake2X pXof,
+                             final int pKeyLen,
+                             final String pResult) throws OceanusException {
+        /* Access the expected result */
+        final byte[] myExpected = TethysDataConverter.hexStringToBytes(pResult);
+        final int myXofLen = myExpected.length;
+
+        /* Create the key */
+        final byte[] myKey = new byte[pKeyLen];
+        System.arraycopy(BLAKE2DATA, 0, myKey, 0, pKeyLen);
+
+        /* Create the output buffer */
+        final byte[] myOutput = new byte[myXofLen];
+
+        /* Calculate the Xof */
+        pXof.setKey(myKey);
+        pXof.setXofLen(myXofLen);
+        pXof.update(BLAKE2DATA, 0, BLAKE2DATA.length);
+        pXof.doFinal(myOutput, 0);
+
+        /* Check the result */
+        Assertions.assertArrayEquals(myExpected, myOutput, "Result mismatch");
     }
 
     /**
@@ -538,6 +620,33 @@ public class DigestTest {
     }
 
     /**
+     * Blake2bMacTest.
+     */
+    static class Blake2bMacTest {
+        /**
+         * Expected results.
+         */
+        private static final String[] EXPECTED = {
+                "10ebb67700b1868efb4417987acf4690ae9d972fb7a590c2f02871799aaa4786b5e996e8f0f4eb981fc214b005f42d2ff4233499391653df7aefcbc13fc51568",
+                "961f6dd1e4dd30f63901690c512e78e4b45e4742ed197c3c5e45c549fd25f2e4187b0bc9fe30492b16b0d0bc4ef9b0f34c7003fac09a5ef1532e69430234cebd",
+                "da2cfbe2d8409a0f38026113884f84b50156371ae304c4430173d08a99d9fb1b983164a3770706d537f49e0c916d9f32b95cc37a95b99d857436f0232c88a965",
+                "f1aa2b044f8f0c638a3f362e677b5d891d6fd2ab0765f6ee1e4987de057ead357883d9b405b9d609eea1b869d97fb16d9b51017c553f3b93c0a1e0f1296fedcd",
+                "c230f0802679cb33822ef8b3b21bf7a9a28942092901d7dac3760300831026cf354c9232df3e084d9903130c601f63c1f4a4a4b8106e468cd443bbe5a734f45f",
+                "142709d62e28fcccd0af97fad0f8465b971e82201dc51070faa0372aa43e92484be1c1e73ba10906d5d1853db6a4106e0a7bf9800d373d6dee2d46d62ef2a461"
+        };
+
+        void checkMacs() throws OceanusException {
+            final Blake2Mac myMac = new Blake2Mac(new Blake2b(512));
+            testBlakeMac(myMac, 64, 0, EXPECTED[0]);
+            testBlakeMac(myMac, 64, 1, EXPECTED[1]);
+            testBlakeMac(myMac, 64, 2, EXPECTED[2]);
+            testBlakeMac(myMac, 64, 78, EXPECTED[3]);
+            testBlakeMac(myMac, 64, 164, EXPECTED[4]);
+            testBlakeMac(myMac, 64, 255, EXPECTED[5]);
+        }
+    }
+
+    /**
      * Blake2s128.
      */
     static class Blake2s128Test {
@@ -622,6 +731,74 @@ public class DigestTest {
 
         void checkDigests() throws OceanusException {
             checkDigestStrings(new Blake2s(256), EXPECTED);
+        }
+    }
+
+    /**
+     * Blake2sMacTest.
+     */
+    static class Blake2sMacTest {
+        /**
+         * Expected results.
+         */
+        private static final String[] EXPECTED = {
+                "48a8997da407876b3d79c0d92325ad3b89cbb754d86ab71aee047ad345fd2c49",
+                "40d15fee7c328830166ac3f918650f807e7e01e177258cdc0a39b11f598066f1",
+                "6bb71300644cd3991b26ccd4d274acd1adeab8b1d7914546c1198bbe9fc9d803",
+                "172ffc67153d12e0ca76a8b6cd5d4731885b39ce0cac93a8972a18006c8b8baf",
+                "4f8ce1e51d2fe7f24043a904d898ebfc91975418753413aa099b795ecb35cedb",
+                "3fb735061abc519dfe979e54c1ee5bfad0a9d858b3315bad34bde999efd724dd"
+        };
+
+        void checkMacs() throws OceanusException {
+            final Blake2Mac myMac = new Blake2Mac(new Blake2s(256));
+            testBlakeMac(myMac, 32, 0, EXPECTED[0]);
+            testBlakeMac(myMac, 32, 1, EXPECTED[1]);
+            testBlakeMac(myMac, 32, 2, EXPECTED[2]);
+            testBlakeMac(myMac, 32, 78, EXPECTED[3]);
+            testBlakeMac(myMac, 32, 164, EXPECTED[4]);
+            testBlakeMac(myMac, 32, 255, EXPECTED[5]);
+        }
+    }
+
+    /**
+     * Blake2sXofTest.
+     */
+    static class Blake2sXofTest {
+        /**
+         * Expected unkeyed results.
+         */
+        private static final String[] EXPECTED = {
+                "57d5",
+                "8fe7cf0bedfc5c8a25c4",
+                "541e57a4988909ea2f81953f6ca1cb75",
+                "91cab802b466092897c7639a02acf529ca61864e5e8c8e422b3a9381a95154d1",
+                "d4a23a17b657fa3ddc2df61eefce362f048b9dd156809062997ab9d5b1fb26b8542b1a638f517fcbad72a6fb23de0754db7bb488b75c12ac826dcced9806d7873e6b31922097ef7b42506275ccc54caf86918f9d1c6cdb9bad2bacf123c0380b2e5dc3e98de83a159ee9e10a8444832c371e5b72039b31c38621261aa04d8271598b17dba0d28c20d1858d879038485ab069bdb58733b5495f934889658ae81b7536bcf601cfcc572060863c1ff2202d2ea84c800482dbe777335002204b7c1f70133e4d8a6b7516c66bb433ad31030a7a9a9a6b9ea69890aa40662d908a5acfe8328802595f0284c51a000ce274a985823de9ee74250063a879a3787fca23a6",
+        };
+
+        /**
+         * Expected keyed results.
+         */
+        private static final String[] KEYEDEXPECTED = {
+                "5196",
+                "08225082df0d2b0a815e",
+                "19b827f054b67a120f11efb0d690be70",
+                "a4fe2bd0f96a215fa7164ae1a405f4030a586c12b0c29806a099d7d7fdd8dd72",
+                "5784e614d538f7f26c803191deb464a884817002988c36448dcbecfad1997fe51ab0b3853c51ed49ce9f4e477522fb3f32cc50515b753c18fb89a8d965afcf1ed5e099b22c4225732baeb986f5c5bc88e4582d27915e2a19126d3d4555fab4f6516a6a156dbfeed9e982fc589e33ce2b9e1ba2b416e11852ddeab93025974267ac82c84f071c3d07f215f47e3565fd1d962c76e0d635892ea71488273765887d31f250a26c4ddc377ed89b17326e259f6cc1de0e63158e83aebb7f5a7c08c63c767876c8203639958a407acca096d1f606c04b4f4b3fd771781a5901b1c3cee7c04c3b6870226eee309b74f51edbf70a3817cc8da87875301e04d0416a65dc5d"
+        };
+
+        void checkXofs() throws OceanusException {
+            final Blake2X myXof = new Blake2X(false);
+            testBlakeXof(myXof, 0, EXPECTED[0]);
+            testBlakeXof(myXof, 0, EXPECTED[1]);
+            testBlakeXof(myXof, 0, EXPECTED[2]);
+            testBlakeXof(myXof, 0, EXPECTED[3]);
+            testBlakeXof(myXof, 0, EXPECTED[4]);
+            testBlakeXof(myXof, 32, KEYEDEXPECTED[0]);
+            testBlakeXof(myXof, 32, KEYEDEXPECTED[1]);
+            testBlakeXof(myXof, 32, KEYEDEXPECTED[2]);
+            testBlakeXof(myXof, 32, KEYEDEXPECTED[3]);
+            testBlakeXof(myXof, 32, KEYEDEXPECTED[4]);
         }
     }
 }

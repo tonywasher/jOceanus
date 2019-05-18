@@ -566,7 +566,7 @@ public abstract class Blake2
         thePersonal = Arrays.clone(pSource.thePersonal);
 
         /* Copy buffer */
-        System.arraycopy(theBuffer, 0, pSource.theBuffer, 0, theBuffer.length);
+        System.arraycopy(pSource.theBuffer, 0, theBuffer, 0, theBuffer.length);
         thePos = pSource.thePos;
     }
 
