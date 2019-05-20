@@ -264,6 +264,8 @@ public enum GordianSymKeyType {
             case XTEA:
             case IDEA:
                 return GordianLength.LEN_128 == pKeyLen;
+            case RC2:
+                return true;
             case DESEDE:
                 return GordianLength.LEN_128 == pKeyLen
                         || GordianLength.LEN_192 == pKeyLen;
