@@ -22,7 +22,7 @@ import net.sourceforge.joceanus.jgordianknot.api.base.GordianLength;
 /**
  * The StreamCipherSpec class.
  */
-public class GordianStreamCipherSpec
+public final class GordianStreamCipherSpec
         extends GordianCipherSpec<GordianStreamKeySpec>
         implements GordianIdSpec {
     /**
@@ -39,7 +39,7 @@ public class GordianStreamCipherSpec
      * Constructor.
      * @param pKeySpec the keySpec
      */
-    GordianStreamCipherSpec(final GordianStreamKeySpec pKeySpec) {
+    private GordianStreamCipherSpec(final GordianStreamKeySpec pKeySpec) {
         super(pKeySpec);
         isValid = checkValidity();
     }
