@@ -3,7 +3,7 @@
   <parent>
     <groupId>net.sourceforge.joceanus</groupId>
     <artifactId>jmetis</artifactId>
-    <version>1.6.0-SNAPSHOT</version>
+    <version>1.6.0-b2</version>
   </parent>
   <artifactId>jmetis-test</artifactId>
   <name>Metis Data Test Framework</name>
