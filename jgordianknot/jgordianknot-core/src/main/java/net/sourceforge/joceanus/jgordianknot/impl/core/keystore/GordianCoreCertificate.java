@@ -235,8 +235,8 @@ public class GordianCoreCertificate
      * @param pSequence   the DER representation of the certificate
      * @throws OceanusException on error
      */
-    GordianCoreCertificate(final GordianCoreFactory pFactory,
-                           final byte[] pSequence) throws OceanusException {
+    public GordianCoreCertificate(final GordianCoreFactory pFactory,
+                                  final byte[] pSequence) throws OceanusException {
         /* Store the parameters */
         theFactory = pFactory;
 
@@ -418,7 +418,7 @@ public class GordianCoreCertificate
      * @return valid? true/false
      * @throws OceanusException on error
      */
-    boolean validateCertificate(final GordianCoreCertificate pSigner) throws OceanusException {
+    public boolean validateCertificate(final GordianCoreCertificate pSigner) throws OceanusException {
         /* Check that the certificate is not self-signed */
         if (isSelfSigned) {
             throw new GordianDataException("Root certificate used as intermediary");
@@ -448,7 +448,7 @@ public class GordianCoreCertificate
      * @return valid? true/false
      * @throws OceanusException on error
      */
-    boolean validateRootCertificate() throws OceanusException {
+    public boolean validateRootCertificate() throws OceanusException {
         /* Check that the certificate is self-signed */
         if (!isSelfSigned) {
             throw new GordianDataException("Non-root certificate used as root");

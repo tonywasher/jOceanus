@@ -19,6 +19,7 @@ package net.sourceforge.joceanus.jgordianknot.impl.jca;
 import java.security.NoSuchAlgorithmException;
 import java.security.Signature;
 
+import net.sourceforge.joceanus.jgordianknot.api.base.GordianLength;
 import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigestSpec;
 import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigestType;
 import net.sourceforge.joceanus.jgordianknot.api.sign.GordianSignature;
@@ -177,9 +178,15 @@ public class JcaSignatureFactory
             case SHA2:
                 return true;
             case SHA3:
-                return GordianSignatureType.PSS.equals(pSpec.getSignatureType());
+                return GordianSignatureType.PSS.equals(pSpec.getSignatureType())
+                       || GordianSignatureType.PREHASH.equals(pSpec.getSignatureType());
             case WHIRLPOOL:
                 return !GordianSignatureType.PSS.equals(pSpec.getSignatureType());
+            case RIPEMD:
+            case MD2:
+            case MD4:
+            case MD5:
+                return GordianSignatureType.PREHASH.equals(pSpec.getSignatureType());
             default:
                 return false;
         }

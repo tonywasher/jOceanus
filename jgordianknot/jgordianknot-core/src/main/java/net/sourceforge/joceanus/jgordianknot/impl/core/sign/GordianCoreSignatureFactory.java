@@ -18,6 +18,7 @@ package net.sourceforge.joceanus.jgordianknot.impl.core.sign;
 
 import java.util.function.Predicate;
 
+import net.sourceforge.joceanus.jgordianknot.api.base.GordianLength;
 import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
 
 import net.sourceforge.joceanus.jgordianknot.api.asym.GordianAsymKeySpec;
@@ -166,6 +167,11 @@ public abstract class GordianCoreSignatureFactory
             return false;
         }
 
+        /* Check RSA signatures */
+        if (GordianAsymKeyType.RSA.equals(myType)) {
+            return validRSASignature(pSignSpec);
+        }
+
         /* Only allow SM3 for SM2 signature */
         if (GordianAsymKeyType.SM2.equals(myType)) {
             return GordianDigestType.SM3.equals(mySpec.getDigestType());
@@ -193,6 +199,35 @@ public abstract class GordianCoreSignatureFactory
     protected boolean validSignatureDigestSpec(final GordianDigestSpec pDigestSpec) {
         final GordianCoreDigestFactory myDigests = (GordianCoreDigestFactory) theFactory.getDigestFactory();
         return myDigests.validDigestSpec(pDigestSpec);
+    }
+
+    /**
+     * Check RSASignature.
+     * @param pSpec the signatureSpec
+     * @return true/false
+     */
+    private static boolean validRSASignature(final GordianSignatureSpec pSpec) {
+        /* Apply restrictions on PREHASH */
+        if (GordianSignatureType.PREHASH.equals(pSpec.getSignatureType())) {
+            /* Switch on DigestType */
+            final GordianDigestSpec myDigest = pSpec.getDigestSpec();
+            switch (myDigest.getDigestType()) {
+                case SHA1:
+                case SHA2:
+                case SHA3:
+                case MD2:
+                case MD4:
+                case MD5:
+                    return true;
+                case RIPEMD:
+                    return myDigest.getDigestLength().getLength() <= GordianLength.LEN_256.getLength();
+                default:
+                    return false;
+            }
+        }
+
+        /* Otherwise OK */
+        return true;
     }
 
     /**

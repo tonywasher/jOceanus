@@ -44,10 +44,7 @@ import org.bouncycastle.crypto.params.ParametersWithRandom;
 import org.bouncycastle.crypto.params.RSAKeyGenerationParameters;
 import org.bouncycastle.crypto.params.RSAKeyParameters;
 import org.bouncycastle.crypto.params.RSAPrivateCrtKeyParameters;
-import org.bouncycastle.crypto.signers.ISO9796d2Signer;
-import org.bouncycastle.crypto.signers.ISOTrailers;
-import org.bouncycastle.crypto.signers.PSSSigner;
-import org.bouncycastle.crypto.signers.X931Signer;
+import org.bouncycastle.crypto.signers.*;
 import org.bouncycastle.crypto.util.PrivateKeyFactory;
 import org.bouncycastle.crypto.util.PrivateKeyInfoFactory;
 import org.bouncycastle.crypto.util.PublicKeyFactory;
@@ -355,6 +352,8 @@ public final class BouncyRSAAsymKey {
                     return new ISO9796d2Signer(new RSABlindedEngine(), myDigest.getDigest(), ISOTrailers.noTrailerAvailable(myDigest.getDigest()));
                 case X931:
                     return new X931Signer(new RSABlindedEngine(), myDigest.getDigest(), ISOTrailers.noTrailerAvailable(myDigest.getDigest()));
+                case PREHASH:
+                    return new RSADigestSigner(myDigest.getDigest());
                 case PSS:
                 default:
                     return new PSSSigner(new RSABlindedEngine(), myDigest.getDigest(), mySaltLength);

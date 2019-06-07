@@ -63,6 +63,11 @@ public abstract class JcaSignature
     private static final String RSA_ISO9796D2_ALGOBASE = "withRSA/ISO9796-2";
 
     /**
+     * The RSA preHash Algorithm.
+     */
+    private static final String RSA_PREHASH_ALGOBASE = "withRSAEncryption";
+
+    /**
      * The ECDSA Signature.
      */
     private static final String EC_DSA_ALGOBASE = "withECDSA";
@@ -287,6 +292,8 @@ public abstract class JcaSignature
                 return RSA_X931_ALGOBASE;
             case ISO9796D2:
                 return RSA_ISO9796D2_ALGOBASE;
+            case PREHASH:
+                return RSA_PREHASH_ALGOBASE;
             case DSA:
                 return isDSA
                        ? DSA_ALGOBASE
