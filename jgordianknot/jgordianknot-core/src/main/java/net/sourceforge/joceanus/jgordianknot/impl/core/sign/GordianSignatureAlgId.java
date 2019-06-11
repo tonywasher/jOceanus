@@ -29,6 +29,7 @@ import org.bouncycastle.asn1.oiw.OIWObjectIdentifiers;
 import org.bouncycastle.asn1.pkcs.PKCSObjectIdentifiers;
 import org.bouncycastle.asn1.pkcs.RSASSAPSSparams;
 import org.bouncycastle.asn1.rosstandart.RosstandartObjectIdentifiers;
+import org.bouncycastle.asn1.teletrust.TeleTrusTObjectIdentifiers;
 import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
 import org.bouncycastle.asn1.x9.X9ObjectIdentifiers;
 import org.bouncycastle.pqc.asn1.PQCObjectIdentifiers;
@@ -195,6 +196,33 @@ public class GordianSignatureAlgId {
         addToMaps(GordianSignatureSpec.rsa(GordianSignatureType.PSS, GordianDigestSpec.sha3(GordianLength.LEN_512)),
                 new AlgorithmIdentifier(PKCSObjectIdentifiers.id_RSASSA_PSS,
                         createPSSParams(NISTObjectIdentifiers.id_sha3_512, GordianLength.LEN_512)));
+
+        addToMaps(GordianSignatureSpec.rsa(GordianSignatureType.PREHASH, GordianDigestSpec.sha2(GordianLength.LEN_224)),
+                new AlgorithmIdentifier(PKCSObjectIdentifiers.sha224WithRSAEncryption, DERNull.INSTANCE));
+        addToMaps(GordianSignatureSpec.rsa(GordianSignatureType.PREHASH, GordianDigestSpec.sha2(GordianLength.LEN_256)),
+                new AlgorithmIdentifier(PKCSObjectIdentifiers.sha256WithRSAEncryption, DERNull.INSTANCE));
+        addToMaps(GordianSignatureSpec.rsa(GordianSignatureType.PREHASH, GordianDigestSpec.sha2(GordianLength.LEN_384)),
+                new AlgorithmIdentifier(PKCSObjectIdentifiers.sha384WithRSAEncryption, DERNull.INSTANCE));
+        addToMaps(GordianSignatureSpec.rsa(GordianSignatureType.PREHASH, GordianDigestSpec.sha2(GordianLength.LEN_512)),
+                new AlgorithmIdentifier(PKCSObjectIdentifiers.sha512WithRSAEncryption, DERNull.INSTANCE));
+        addToMaps(GordianSignatureSpec.rsa(GordianSignatureType.PREHASH, GordianDigestSpec.sha2Alt(GordianLength.LEN_224)),
+                new AlgorithmIdentifier(PKCSObjectIdentifiers.sha512_224WithRSAEncryption, DERNull.INSTANCE));
+        addToMaps(GordianSignatureSpec.rsa(GordianSignatureType.PREHASH, GordianDigestSpec.sha2Alt(GordianLength.LEN_256)),
+                new AlgorithmIdentifier(PKCSObjectIdentifiers.sha512_256WithRSAEncryption, DERNull.INSTANCE));
+        addToMaps(GordianSignatureSpec.rsa(GordianSignatureType.PREHASH, GordianDigestSpec.sha3(GordianLength.LEN_224)),
+                new AlgorithmIdentifier(NISTObjectIdentifiers.id_rsassa_pkcs1_v1_5_with_sha3_224, DERNull.INSTANCE));
+        addToMaps(GordianSignatureSpec.rsa(GordianSignatureType.PREHASH, GordianDigestSpec.sha3(GordianLength.LEN_256)),
+                new AlgorithmIdentifier(NISTObjectIdentifiers.id_rsassa_pkcs1_v1_5_with_sha3_256, DERNull.INSTANCE));
+        addToMaps(GordianSignatureSpec.rsa(GordianSignatureType.PREHASH, GordianDigestSpec.sha3(GordianLength.LEN_384)),
+                new AlgorithmIdentifier(NISTObjectIdentifiers.id_rsassa_pkcs1_v1_5_with_sha3_384, DERNull.INSTANCE));
+        addToMaps(GordianSignatureSpec.rsa(GordianSignatureType.PREHASH, GordianDigestSpec.sha3(GordianLength.LEN_512)),
+                new AlgorithmIdentifier(NISTObjectIdentifiers.id_rsassa_pkcs1_v1_5_with_sha3_512, DERNull.INSTANCE));
+        addToMaps(GordianSignatureSpec.rsa(GordianSignatureType.PREHASH, GordianDigestSpec.ripemd(GordianLength.LEN_128)),
+                new AlgorithmIdentifier(TeleTrusTObjectIdentifiers.rsaSignatureWithripemd128, DERNull.INSTANCE));
+        addToMaps(GordianSignatureSpec.rsa(GordianSignatureType.PREHASH, GordianDigestSpec.ripemd(GordianLength.LEN_160)),
+                new AlgorithmIdentifier(TeleTrusTObjectIdentifiers.rsaSignatureWithripemd160, DERNull.INSTANCE));
+        addToMaps(GordianSignatureSpec.rsa(GordianSignatureType.PREHASH, GordianDigestSpec.ripemd(GordianLength.LEN_256)),
+                new AlgorithmIdentifier(TeleTrusTObjectIdentifiers.rsaSignatureWithripemd256, DERNull.INSTANCE));
     }
 
     /**
@@ -202,23 +230,23 @@ public class GordianSignatureAlgId {
      */
     private void addDSASignatures() {
         addToMaps(GordianSignatureSpec.dsa(GordianSignatureType.DSA, GordianDigestSpec.sha1()),
-                new AlgorithmIdentifier(X9ObjectIdentifiers.id_dsa_with_sha1));
+                new AlgorithmIdentifier(X9ObjectIdentifiers.id_dsa_with_sha1, DERNull.INSTANCE));
         addToMaps(GordianSignatureSpec.dsa(GordianSignatureType.DSA, GordianDigestSpec.sha2(GordianLength.LEN_224)),
-                new AlgorithmIdentifier(NISTObjectIdentifiers.dsa_with_sha224));
+                new AlgorithmIdentifier(NISTObjectIdentifiers.dsa_with_sha224, DERNull.INSTANCE));
         addToMaps(GordianSignatureSpec.dsa(GordianSignatureType.DSA, GordianDigestSpec.sha2(GordianLength.LEN_256)),
-                new AlgorithmIdentifier(NISTObjectIdentifiers.dsa_with_sha256));
+                new AlgorithmIdentifier(NISTObjectIdentifiers.dsa_with_sha256, DERNull.INSTANCE));
         addToMaps(GordianSignatureSpec.dsa(GordianSignatureType.DSA, GordianDigestSpec.sha2(GordianLength.LEN_384)),
-                new AlgorithmIdentifier(NISTObjectIdentifiers.dsa_with_sha384));
+                new AlgorithmIdentifier(NISTObjectIdentifiers.dsa_with_sha384, DERNull.INSTANCE));
         addToMaps(GordianSignatureSpec.dsa(GordianSignatureType.DSA, GordianDigestSpec.sha2(GordianLength.LEN_512)),
-                new AlgorithmIdentifier(NISTObjectIdentifiers.dsa_with_sha512));
+                new AlgorithmIdentifier(NISTObjectIdentifiers.dsa_with_sha512, DERNull.INSTANCE));
         addToMaps(GordianSignatureSpec.dsa(GordianSignatureType.DSA, GordianDigestSpec.sha3(GordianLength.LEN_224)),
-                new AlgorithmIdentifier(NISTObjectIdentifiers.id_dsa_with_sha3_224));
+                new AlgorithmIdentifier(NISTObjectIdentifiers.id_dsa_with_sha3_224, DERNull.INSTANCE));
         addToMaps(GordianSignatureSpec.dsa(GordianSignatureType.DSA, GordianDigestSpec.sha3(GordianLength.LEN_256)),
-                new AlgorithmIdentifier(NISTObjectIdentifiers.id_dsa_with_sha3_256));
+                new AlgorithmIdentifier(NISTObjectIdentifiers.id_dsa_with_sha3_256, DERNull.INSTANCE));
         addToMaps(GordianSignatureSpec.dsa(GordianSignatureType.DSA, GordianDigestSpec.sha3(GordianLength.LEN_384)),
-                new AlgorithmIdentifier(NISTObjectIdentifiers.id_dsa_with_sha3_384));
+                new AlgorithmIdentifier(NISTObjectIdentifiers.id_dsa_with_sha3_384, DERNull.INSTANCE));
         addToMaps(GordianSignatureSpec.dsa(GordianSignatureType.DSA, GordianDigestSpec.sha3(GordianLength.LEN_512)),
-                new AlgorithmIdentifier(NISTObjectIdentifiers.id_dsa_with_sha3_512));
+                new AlgorithmIdentifier(NISTObjectIdentifiers.id_dsa_with_sha3_512, DERNull.INSTANCE));
     }
 
     /**
@@ -226,23 +254,23 @@ public class GordianSignatureAlgId {
      */
     private void addECSignatures() {
         addToMaps(GordianSignatureSpec.ec(GordianSignatureType.DSA, GordianDigestSpec.sha1()),
-                new AlgorithmIdentifier(X9ObjectIdentifiers.ecdsa_with_SHA1));
+                new AlgorithmIdentifier(X9ObjectIdentifiers.ecdsa_with_SHA1, DERNull.INSTANCE));
         addToMaps(GordianSignatureSpec.ec(GordianSignatureType.DSA, GordianDigestSpec.sha2(GordianLength.LEN_224)),
-                new AlgorithmIdentifier(X9ObjectIdentifiers.ecdsa_with_SHA224));
+                new AlgorithmIdentifier(X9ObjectIdentifiers.ecdsa_with_SHA224, DERNull.INSTANCE));
         addToMaps(GordianSignatureSpec.ec(GordianSignatureType.DSA, GordianDigestSpec.sha2(GordianLength.LEN_256)),
-                new AlgorithmIdentifier(X9ObjectIdentifiers.ecdsa_with_SHA256));
+                new AlgorithmIdentifier(X9ObjectIdentifiers.ecdsa_with_SHA256, DERNull.INSTANCE));
         addToMaps(GordianSignatureSpec.ec(GordianSignatureType.DSA, GordianDigestSpec.sha2(GordianLength.LEN_384)),
-                new AlgorithmIdentifier(X9ObjectIdentifiers.ecdsa_with_SHA384));
+                new AlgorithmIdentifier(X9ObjectIdentifiers.ecdsa_with_SHA384, DERNull.INSTANCE));
         addToMaps(GordianSignatureSpec.ec(GordianSignatureType.DSA, GordianDigestSpec.sha2(GordianLength.LEN_512)),
-                new AlgorithmIdentifier(X9ObjectIdentifiers.ecdsa_with_SHA512));
+                new AlgorithmIdentifier(X9ObjectIdentifiers.ecdsa_with_SHA512, DERNull.INSTANCE));
         addToMaps(GordianSignatureSpec.ec(GordianSignatureType.DSA, GordianDigestSpec.sha3(GordianLength.LEN_224)),
-                new AlgorithmIdentifier(NISTObjectIdentifiers.id_ecdsa_with_sha3_224));
+                new AlgorithmIdentifier(NISTObjectIdentifiers.id_ecdsa_with_sha3_224, DERNull.INSTANCE));
         addToMaps(GordianSignatureSpec.ec(GordianSignatureType.DSA, GordianDigestSpec.sha3(GordianLength.LEN_256)),
-                new AlgorithmIdentifier(NISTObjectIdentifiers.id_ecdsa_with_sha3_256));
+                new AlgorithmIdentifier(NISTObjectIdentifiers.id_ecdsa_with_sha3_256, DERNull.INSTANCE));
         addToMaps(GordianSignatureSpec.ec(GordianSignatureType.DSA, GordianDigestSpec.sha3(GordianLength.LEN_384)),
-                new AlgorithmIdentifier(NISTObjectIdentifiers.id_ecdsa_with_sha3_384));
+                new AlgorithmIdentifier(NISTObjectIdentifiers.id_ecdsa_with_sha3_384, DERNull.INSTANCE));
         addToMaps(GordianSignatureSpec.ec(GordianSignatureType.DSA, GordianDigestSpec.sha3(GordianLength.LEN_512)),
-                new AlgorithmIdentifier(NISTObjectIdentifiers.id_ecdsa_with_sha3_512));
+                new AlgorithmIdentifier(NISTObjectIdentifiers.id_ecdsa_with_sha3_512, DERNull.INSTANCE));
     }
 
     /**
@@ -258,9 +286,9 @@ public class GordianSignatureAlgId {
      */
     private void addGOSTSignatures() {
         addToMaps(GordianSignatureSpec.gost2012(GordianLength.LEN_256),
-                new AlgorithmIdentifier(RosstandartObjectIdentifiers.id_tc26_signwithdigest_gost_3410_12_256));
+                new AlgorithmIdentifier(RosstandartObjectIdentifiers.id_tc26_signwithdigest_gost_3410_12_256, DERNull.INSTANCE));
         addToMaps(GordianSignatureSpec.gost2012(GordianLength.LEN_512),
-                new AlgorithmIdentifier(RosstandartObjectIdentifiers.id_tc26_signwithdigest_gost_3410_12_512));
+                new AlgorithmIdentifier(RosstandartObjectIdentifiers.id_tc26_signwithdigest_gost_3410_12_512, DERNull.INSTANCE));
     }
 
     /**
@@ -268,9 +296,9 @@ public class GordianSignatureAlgId {
      */
     private void addEdDSASignatures() {
         addToMaps(GordianSignatureSpec.ed25519(),
-                new AlgorithmIdentifier(EdECObjectIdentifiers.id_Ed25519));
+                new AlgorithmIdentifier(EdECObjectIdentifiers.id_Ed25519, DERNull.INSTANCE));
         addToMaps(GordianSignatureSpec.ed448(),
-                new AlgorithmIdentifier(EdECObjectIdentifiers.id_Ed448));
+                new AlgorithmIdentifier(EdECObjectIdentifiers.id_Ed448, DERNull.INSTANCE));
     }
 
     /**
@@ -278,63 +306,63 @@ public class GordianSignatureAlgId {
      */
     private void addPostQuantumSignatures() {
         addToMaps(GordianSignatureSpec.rainbow(GordianDigestSpec.sha1()),
-                new AlgorithmIdentifier(PQCObjectIdentifiers.rainbowWithSha1));
+                new AlgorithmIdentifier(PQCObjectIdentifiers.rainbowWithSha1, DERNull.INSTANCE));
         addToMaps(GordianSignatureSpec.rainbow(GordianDigestSpec.sha2(GordianLength.LEN_224)),
-                new AlgorithmIdentifier(PQCObjectIdentifiers.rainbowWithSha224));
+                new AlgorithmIdentifier(PQCObjectIdentifiers.rainbowWithSha224, DERNull.INSTANCE));
         addToMaps(GordianSignatureSpec.rainbow(GordianDigestSpec.sha2(GordianLength.LEN_256)),
-                new AlgorithmIdentifier(PQCObjectIdentifiers.rainbowWithSha256));
+                new AlgorithmIdentifier(PQCObjectIdentifiers.rainbowWithSha256, DERNull.INSTANCE));
         addToMaps(GordianSignatureSpec.rainbow(GordianDigestSpec.sha2(GordianLength.LEN_384)),
-                new AlgorithmIdentifier(PQCObjectIdentifiers.rainbowWithSha384));
+                new AlgorithmIdentifier(PQCObjectIdentifiers.rainbowWithSha384, DERNull.INSTANCE));
         addToMaps(GordianSignatureSpec.rainbow(GordianDigestSpec.sha2(GordianLength.LEN_512)),
-                new AlgorithmIdentifier(PQCObjectIdentifiers.rainbowWithSha512));
+                new AlgorithmIdentifier(PQCObjectIdentifiers.rainbowWithSha512, DERNull.INSTANCE));
 
         /* Note that we have multiple signatures oids per spec */
         addToMaps(GordianSignatureSpec.qTESLA(), GordianQTESLAKeyType.HEURISTIC_I,
-                new AlgorithmIdentifier(PQCObjectIdentifiers.qTESLA_I));
+                new AlgorithmIdentifier(PQCObjectIdentifiers.qTESLA_I, DERNull.INSTANCE));
         addToMaps(GordianSignatureSpec.qTESLA(), GordianQTESLAKeyType.HEURISTIC_III_SIZE,
-                new AlgorithmIdentifier(PQCObjectIdentifiers.qTESLA_III_size));
+                new AlgorithmIdentifier(PQCObjectIdentifiers.qTESLA_III_size, DERNull.INSTANCE));
         addToMaps(GordianSignatureSpec.qTESLA(), GordianQTESLAKeyType.HEURISTIC_III_SPEED,
-                new AlgorithmIdentifier(PQCObjectIdentifiers.qTESLA_III_speed));
+                new AlgorithmIdentifier(PQCObjectIdentifiers.qTESLA_III_speed, DERNull.INSTANCE));
         addToMaps(GordianSignatureSpec.qTESLA(), GordianQTESLAKeyType.PROVABLY_SECURE_I,
-                new AlgorithmIdentifier(PQCObjectIdentifiers.qTESLA_p_I));
+                new AlgorithmIdentifier(PQCObjectIdentifiers.qTESLA_p_I, DERNull.INSTANCE));
         addToMaps(GordianSignatureSpec.qTESLA(), GordianQTESLAKeyType.PROVABLY_SECURE_III,
-                new AlgorithmIdentifier(PQCObjectIdentifiers.qTESLA_p_III));
+                new AlgorithmIdentifier(PQCObjectIdentifiers.qTESLA_p_III, DERNull.INSTANCE));
         addToMaps(GordianSignatureSpec.sphincs(), GordianSPHINCSKeyType.SHA2,
-                new AlgorithmIdentifier(PQCObjectIdentifiers.sphincs256_with_SHA512));
+                new AlgorithmIdentifier(PQCObjectIdentifiers.sphincs256_with_SHA512, DERNull.INSTANCE));
         addToMaps(GordianSignatureSpec.sphincs(), GordianSPHINCSKeyType.SHA3,
-                new AlgorithmIdentifier(PQCObjectIdentifiers.sphincs256_with_SHA3_512));
+                new AlgorithmIdentifier(PQCObjectIdentifiers.sphincs256_with_SHA3_512, DERNull.INSTANCE));
         addToMaps(GordianSignatureSpec.xmss(), GordianXMSSKeyType.SHA256,
-                new AlgorithmIdentifier(PQCObjectIdentifiers.xmss_SHA256));
+                new AlgorithmIdentifier(PQCObjectIdentifiers.xmss_SHA256, DERNull.INSTANCE));
         addToMaps(GordianSignatureSpec.xmssph(), GordianXMSSKeyType.SHA256,
-                new AlgorithmIdentifier(PQCObjectIdentifiers.xmss_SHA256ph));
+                new AlgorithmIdentifier(PQCObjectIdentifiers.xmss_SHA256ph, DERNull.INSTANCE));
         addToMaps(GordianSignatureSpec.xmss(), GordianXMSSKeyType.SHA512,
-                new AlgorithmIdentifier(PQCObjectIdentifiers.xmss_SHA512));
+                new AlgorithmIdentifier(PQCObjectIdentifiers.xmss_SHA512, DERNull.INSTANCE));
         addToMaps(GordianSignatureSpec.xmssph(), GordianXMSSKeyType.SHA512,
-                new AlgorithmIdentifier(PQCObjectIdentifiers.xmss_SHA512ph));
+                new AlgorithmIdentifier(PQCObjectIdentifiers.xmss_SHA512ph, DERNull.INSTANCE));
         addToMaps(GordianSignatureSpec.xmss(), GordianXMSSKeyType.SHAKE128,
-                new AlgorithmIdentifier(PQCObjectIdentifiers.xmss_SHAKE128));
+                new AlgorithmIdentifier(PQCObjectIdentifiers.xmss_SHAKE128, DERNull.INSTANCE));
         addToMaps(GordianSignatureSpec.xmssph(), GordianXMSSKeyType.SHAKE128,
-                new AlgorithmIdentifier(PQCObjectIdentifiers.xmss_SHAKE128ph));
+                new AlgorithmIdentifier(PQCObjectIdentifiers.xmss_SHAKE128ph, DERNull.INSTANCE));
         addToMaps(GordianSignatureSpec.xmss(), GordianXMSSKeyType.SHAKE256,
-                new AlgorithmIdentifier(PQCObjectIdentifiers.xmss_SHAKE256));
+                new AlgorithmIdentifier(PQCObjectIdentifiers.xmss_SHAKE256, DERNull.INSTANCE));
         addToMaps(GordianSignatureSpec.xmssph(), GordianXMSSKeyType.SHAKE256,
-                new AlgorithmIdentifier(PQCObjectIdentifiers.xmss_SHAKE256ph));
+                new AlgorithmIdentifier(PQCObjectIdentifiers.xmss_SHAKE256ph, DERNull.INSTANCE));
         addToMaps(GordianSignatureSpec.xmssmt(), GordianXMSSKeyType.SHA256,
-                new AlgorithmIdentifier(PQCObjectIdentifiers.xmss_mt_SHA256));
+                new AlgorithmIdentifier(PQCObjectIdentifiers.xmss_mt_SHA256, DERNull.INSTANCE));
         addToMaps(GordianSignatureSpec.xmssmtph(), GordianXMSSKeyType.SHA256,
-                new AlgorithmIdentifier(PQCObjectIdentifiers.xmss_mt_SHA256ph));
+                new AlgorithmIdentifier(PQCObjectIdentifiers.xmss_mt_SHA256ph, DERNull.INSTANCE));
         addToMaps(GordianSignatureSpec.xmssmt(), GordianXMSSKeyType.SHA512,
-                new AlgorithmIdentifier(PQCObjectIdentifiers.xmss_mt_SHA512));
+                new AlgorithmIdentifier(PQCObjectIdentifiers.xmss_mt_SHA512, DERNull.INSTANCE));
         addToMaps(GordianSignatureSpec.xmssmtph(), GordianXMSSKeyType.SHA512,
-                new AlgorithmIdentifier(PQCObjectIdentifiers.xmss_mt_SHA512ph));
+                new AlgorithmIdentifier(PQCObjectIdentifiers.xmss_mt_SHA512ph, DERNull.INSTANCE));
         addToMaps(GordianSignatureSpec.xmssmt(), GordianXMSSKeyType.SHAKE128,
-                new AlgorithmIdentifier(PQCObjectIdentifiers.xmss_mt_SHAKE128));
+                new AlgorithmIdentifier(PQCObjectIdentifiers.xmss_mt_SHAKE128, DERNull.INSTANCE));
         addToMaps(GordianSignatureSpec.xmssmtph(), GordianXMSSKeyType.SHAKE128,
-                new AlgorithmIdentifier(PQCObjectIdentifiers.xmss_mt_SHAKE128ph));
+                new AlgorithmIdentifier(PQCObjectIdentifiers.xmss_mt_SHAKE128ph, DERNull.INSTANCE));
         addToMaps(GordianSignatureSpec.xmssmt(), GordianXMSSKeyType.SHAKE256,
-                new AlgorithmIdentifier(PQCObjectIdentifiers.xmss_mt_SHAKE256));
+                new AlgorithmIdentifier(PQCObjectIdentifiers.xmss_mt_SHAKE256, DERNull.INSTANCE));
         addToMaps(GordianSignatureSpec.xmssmtph(), GordianXMSSKeyType.SHAKE256,
-                new AlgorithmIdentifier(PQCObjectIdentifiers.xmss_mt_SHAKE256ph));
+                new AlgorithmIdentifier(PQCObjectIdentifiers.xmss_mt_SHAKE256ph, DERNull.INSTANCE));
     }
 
     /**
@@ -401,6 +429,6 @@ public class GordianSignatureAlgId {
         }
 
         /* Add the id to the maps */
-        addToMaps(pSigSpec,  new AlgorithmIdentifier(myId));
+        addToMaps(pSigSpec,  new AlgorithmIdentifier(myId, DERNull.INSTANCE));
     }
 }

@@ -135,7 +135,6 @@ for each algorithm as defined in <<Key Wrapping>>.
 | OFB  | GOFB Mode available for Magma\ |
 |      | K3413OFB Mode available for Kuznyechik |
 *------*--------------------------------*
-|      | Actually CFB8\                 |
 | CFB  | GCFB Mode available for Magma\ |
 |      | K3413CFB Mode available for Kuznyechik |
 *------*--------------------------------*

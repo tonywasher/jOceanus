@@ -302,7 +302,7 @@ public class JcaCipherFactory
                 return GordianCipherMode.CBC.name();
             case CFB:
             case G3413CFB:
-                return "CFB8";
+                return "CFB";
             case OFB:
             case G3413OFB:
                 return GordianCipherMode.OFB.name();

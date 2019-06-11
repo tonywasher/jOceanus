@@ -23,11 +23,7 @@ import java.util.stream.Stream;
 
 import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
 import org.bouncycastle.util.Arrays;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.DynamicContainer;
-import org.junit.jupiter.api.DynamicNode;
-import org.junit.jupiter.api.DynamicTest;
-import org.junit.jupiter.api.TestFactory;
+import org.junit.jupiter.api.*;
 
 import net.sourceforge.joceanus.jgordianknot.api.base.GordianIdSpec;
 import net.sourceforge.joceanus.jgordianknot.api.base.GordianLength;
@@ -117,6 +113,22 @@ public class SymmetricTest {
     }
 
     /**
+     * The factories.
+     */
+    private static GordianFactory BCFACTORY;
+    private static GordianFactory JCAFACTORY;
+
+    /**
+     * Initialise Factories.
+     * @throws OceanusException on error
+     */
+    @BeforeAll
+    public static void createSecurityFactories() throws OceanusException {
+        BCFACTORY = GordianGenerator.createFactory(new GordianParameters(GordianFactoryType.BC));
+        JCAFACTORY = GordianGenerator.createFactory(new GordianParameters(GordianFactoryType.JCA));
+    }
+
+    /**
      * The TestData.
      */
     private byte[] theTestData;
@@ -134,48 +146,47 @@ public class SymmetricTest {
     @TestFactory
     public Stream<DynamicNode> symmetricTests() throws OceanusException {
         /* Create tests */
-        Stream<DynamicNode> myStream = symmetricTests(GordianFactoryType.BC);
-        return Stream.concat(myStream, symmetricTests(GordianFactoryType.JCA));
+        final Stream<DynamicNode> myBC = symmetricTests(BCFACTORY, JCAFACTORY);
+        final Stream<DynamicNode> myJCA = symmetricTests(JCAFACTORY, BCFACTORY);
+        return Stream.concat(myBC, myJCA);
     }
 
     /**
      * Create the symmetric test suite for a factory.
-     * @param pType the factoryType
+     * @param pFactory the factory
+     * @param pPartner the partner
      * @return the test stream
      * @throws OceanusException on error
      */
-    private Stream<DynamicNode> symmetricTests(final GordianFactoryType pType) throws OceanusException {
-        /* Create the factory */
-        final GordianFactory myFactory = GordianGenerator.createFactory(new GordianParameters(pType));
-
+    private Stream<DynamicNode> symmetricTests(final GordianFactory pFactory,
+                                               final GordianFactory pPartner) throws OceanusException {
         /* Create an empty stream */
         Stream<DynamicNode> myStream = Stream.empty();
 
         /* Add digest Tests */
-        Stream<DynamicNode> mySubStream = digestTests(myFactory);
+        Stream<DynamicNode> mySubStream = digestTests(pFactory, pPartner);
         if (mySubStream != null) {
             myStream = Stream.concat(myStream, mySubStream);
         }
 
         /* Add mac Tests */
-        mySubStream = macTests(myFactory);
+        mySubStream = macTests(pFactory, pPartner);
         myStream = Stream.concat(myStream, mySubStream);
 
         /* Add symKey Tests */
-        mySubStream = symKeyTests(myFactory);
+        mySubStream = symKeyTests(pFactory, pPartner);
         myStream = Stream.concat(myStream, mySubStream);
 
-
         /* Add streamKey Tests */
-        mySubStream = streamKeyTests(myFactory);
+        mySubStream = streamKeyTests(pFactory, pPartner);
         myStream = Stream.concat(myStream, mySubStream);
 
         /* Add random Tests */
-        mySubStream = randomTests(myFactory);
+        mySubStream = randomTests(pFactory);
         myStream = Stream.concat(myStream, mySubStream);
 
         /* Return the stream */
-        final String myName = pType.toString();
+        final String myName = pFactory.getFactoryType().toString();
         myStream = Stream.of(DynamicContainer.dynamicContainer(myName, myStream));
         return myStream;
     }
@@ -183,17 +194,15 @@ public class SymmetricTest {
     /**
      * Create the digest test suite for a factory.
      * @param pFactory the factory
+     * @param pPartner the partner
      * @return the test stream or null
      */
-    private Stream<DynamicNode> digestTests(final GordianFactory pFactory) {
+    private Stream<DynamicNode> digestTests(final GordianFactory pFactory,
+                                            final GordianFactory pPartner) {
         /* Add digest Tests */
-        List<FactoryDigestSpec> myDigests = SymmetricStore.digestProvider(pFactory);
+        List<FactoryDigestSpec> myDigests = SymmetricStore.digestProvider(pFactory, pPartner);
         if (!myDigests.isEmpty()) {
-            Stream<DynamicNode> myTests = myDigests.stream().map(x -> DynamicContainer.dynamicContainer(x.toString(), Stream.of(
-                        DynamicTest.dynamicTest("profile", () -> profileDigest(x)),
-                        DynamicTest.dynamicTest("algID", () -> checkDigestAlgId(x)),
-                        DynamicTest.dynamicTest("externalID", () -> checkExternalId(x)))
-                     ));
+            Stream<DynamicNode> myTests = myDigests.stream().map(x -> DynamicContainer.dynamicContainer(x.toString(), digestTests(x)));
             return Stream.of(DynamicContainer.dynamicContainer("Digests", myTests));
         }
 
@@ -202,11 +211,37 @@ public class SymmetricTest {
     }
 
     /**
-     * Create the mac test suite for a factory.
-     * @param pFactory the factory
+     * Create the digest test suite for a digestSpec.
+     * @param pDigestSpec the digestSpec
      * @return the test stream
      */
-    private Stream<DynamicNode> macTests(final GordianFactory pFactory) {
+    private Stream<DynamicNode> digestTests(final FactoryDigestSpec pDigestSpec) {
+        /* Add profile test */
+        Stream<DynamicNode> myTests = Stream.of(DynamicTest.dynamicTest("profile", () -> profileDigest(pDigestSpec)));
+
+        /* Add algorithmId test */
+        myTests = Stream.concat(myTests, Stream.of(DynamicTest.dynamicTest("checkAlgId", () -> checkDigestAlgId(pDigestSpec))));
+
+        /* Add externalId test */
+        myTests = Stream.concat(myTests, Stream.of(DynamicTest.dynamicTest("externalId", () -> checkExternalId(pDigestSpec))));
+
+        /* Add partner test if the partner supports this digestSpec */
+        if (pDigestSpec.getPartner() != null) {
+            myTests = Stream.concat(myTests, Stream.of(DynamicTest.dynamicTest("Partner", () -> checkPartnerDigest(pDigestSpec))));
+        }
+
+        /* Return the tests */
+        return myTests;
+    }
+
+    /**
+     * Create the mac test suite for a factory.
+     * @param pFactory the factory
+     * @param pPartner the partner
+     * @return the test stream
+     */
+    private Stream<DynamicNode> macTests(final GordianFactory pFactory,
+                                         final GordianFactory pPartner) {
         /* Create the default stream */
         Stream<DynamicNode> myTests = Stream.empty();
 
@@ -216,7 +251,7 @@ public class SymmetricTest {
             final GordianLength myKeyLen = myIterator.next();
 
             /* Build tests for this keyLength */
-            final Stream<DynamicNode> myTest = macTests(pFactory, myKeyLen);
+            final Stream<DynamicNode> myTest = macTests(pFactory, pPartner, myKeyLen);
             if (myTest != null) {
                 myTests = Stream.concat(myTests, myTest);
             }
@@ -229,19 +264,17 @@ public class SymmetricTest {
     /**
      * Create the mac test suite for a factory.
      * @param pFactory the factory
+     * @param pPartner the partner
      * @param pKeyLen the keyLength
      * @return the test stream or null
      */
     private Stream<DynamicNode> macTests(final GordianFactory pFactory,
+                                         final GordianFactory pPartner,
                                          final GordianLength pKeyLen) {
         /* Add mac Tests */
-        List<FactoryMacSpec> myMacs = SymmetricStore.macProvider(pFactory, pKeyLen);
+        List<FactoryMacSpec> myMacs = SymmetricStore.macProvider(pFactory, pPartner, pKeyLen);
         if (!myMacs.isEmpty()) {
-            Stream<DynamicNode> myTests = myMacs.stream().map(x -> DynamicContainer.dynamicContainer(x.toString(), Stream.of(
-                    DynamicTest.dynamicTest("profile", () -> profileMac(x)),
-                    DynamicTest.dynamicTest("algID", () -> checkMacAlgId(x)),
-                    DynamicTest.dynamicTest("externalID", () -> checkExternalId(x)))
-            ));
+            Stream<DynamicNode> myTests = myMacs.stream().map(x -> DynamicContainer.dynamicContainer(x.toString(), macTests(x)));
             return Stream.of(DynamicContainer.dynamicContainer(pKeyLen.toString(), myTests));
         }
 
@@ -250,11 +283,36 @@ public class SymmetricTest {
     }
 
     /**
+     * Create the mac test suite for a macSpec.
+     * @param pMacSpec the macSpec
+     * @return the test stream
+     */
+    private Stream<DynamicNode> macTests(final FactoryMacSpec pMacSpec) {
+        /* Add profile test */
+        Stream<DynamicNode> myTests = Stream.of(DynamicTest.dynamicTest("profile", () -> profileMac(pMacSpec)));
+
+        /* Add algorithmId test */
+        myTests = Stream.concat(myTests, Stream.of(DynamicTest.dynamicTest("checkAlgId", () -> checkMacAlgId(pMacSpec))));
+
+        /* Add externalId test */
+        myTests = Stream.concat(myTests, Stream.of(DynamicTest.dynamicTest("externalId", () -> checkExternalId(pMacSpec))));
+
+        /* Add partner test if  the partner supports this macSpec */
+        if (pMacSpec.getPartner() != null) {
+            myTests = Stream.concat(myTests, Stream.of(DynamicTest.dynamicTest("Partner", () -> checkPartnerMac(pMacSpec))));
+        }
+
+        /* Return the tests */
+        return myTests;
+    }
+
+    /**
      * Create the symKey test suite for a factory.
      * @param pFactory the factory
      * @return the test stream or null
      */
-    private Stream<DynamicNode> symKeyTests(final GordianFactory pFactory) {
+    private Stream<DynamicNode> symKeyTests(final GordianFactory pFactory,
+                                            final GordianFactory pPartner) {
         /* Create the default stream */
         Stream<DynamicNode> myTests = Stream.empty();
 
@@ -264,7 +322,7 @@ public class SymmetricTest {
             final GordianLength myKeyLen = myIterator.next();
 
             /* Build tests for this keyLength */
-            final Stream<DynamicNode> myTest = symKeyTests(pFactory, myKeyLen);
+            final Stream<DynamicNode> myTest = symKeyTests(pFactory, pPartner, myKeyLen);
             if (myTest != null) {
                 myTests = Stream.concat(myTests, myTest);
             }
@@ -277,22 +335,17 @@ public class SymmetricTest {
     /**
      * Create the symKey test suite for a factory.
      * @param pFactory the factory
+     * @param pPartner the partner
      * @param pKeyLen the keyLength
      * @return the test stream or null
      */
     private Stream<DynamicNode> symKeyTests(final GordianFactory pFactory,
+                                            final GordianFactory pPartner,
                                             final GordianLength pKeyLen) {
         /* Add symKey Test */
-        List<FactorySymKeySpec> myKeys = SymmetricStore.symKeyProvider(pFactory, pKeyLen);
+        List<FactorySymKeySpec> myKeys = SymmetricStore.symKeyProvider(pFactory, pPartner, pKeyLen);
         if (!myKeys.isEmpty()) {
-            Stream<DynamicNode> myTests = myKeys.stream().map(x -> DynamicContainer.dynamicContainer(x.toString(), Stream.of(
-                    DynamicTest.dynamicTest("profile", () -> profileSymKey(x)),
-                    DynamicContainer.dynamicContainer("checkModes",
-                            SymmetricStore.symCipherProvider(x).stream().map(y -> DynamicTest.dynamicTest(y.toString(), () -> checkSymCipher(y)))
-                    ),
-                    DynamicTest.dynamicTest("checkWrapCipher", () -> checkWrapCipher(x)),
-                    DynamicTest.dynamicTest("externalID", () -> checkExternalId(x)))
-            ));
+            Stream<DynamicNode> myTests = myKeys.stream().map(x -> DynamicContainer.dynamicContainer(x.toString(), symKeyTests(x)));
             return Stream.of(DynamicContainer.dynamicContainer(pKeyLen.toString(), myTests));
         }
 
@@ -301,11 +354,66 @@ public class SymmetricTest {
     }
 
     /**
+     * Create the symKey test suite for a symKeySpec.
+     * @param pKeySpec the keySpec
+     * @return the test stream
+     */
+    private Stream<DynamicNode> symKeyTests(final FactorySymKeySpec pKeySpec) {
+        /* Add profile test */
+        Stream<DynamicNode> myTests = Stream.of(DynamicTest.dynamicTest("profile", () -> profileSymKey(pKeySpec)));
+
+        /* Add modes test */
+        myTests = Stream.concat(myTests, Stream.of(DynamicContainer.dynamicContainer("checkModes",
+                SymmetricStore.symCipherProvider(pKeySpec).stream().map(y -> DynamicContainer.dynamicContainer(y.toString(), symCipherTests(y)))
+        )));
+
+        /* Add externalId test */
+        myTests = Stream.concat(myTests, Stream.of(DynamicTest.dynamicTest("externalId", () -> checkExternalId(pKeySpec))));
+
+        /* Add wrapCipher test */
+        myTests = Stream.concat(myTests, Stream.of(DynamicTest.dynamicTest("wrapCipher", () -> checkWrapCipher(pKeySpec))));
+
+        /* Add partner test if  the partner supports this symKeySpec */
+        if (pKeySpec.getPartner() != null) {
+            myTests = Stream.concat(myTests, Stream.of(DynamicTest.dynamicTest("PartnerWrap", () -> checkPartnerWrapCipher(pKeySpec))));
+        }
+
+        /* Return the tests */
+        return myTests;
+    }
+
+    /**
+     * Create the symKey test suite for a symCipherSpec.
+     * @param pCipherSpec the cipherSpec
+     * @return the test stream
+     */
+    private Stream<DynamicNode> symCipherTests(final FactorySymCipherSpec pCipherSpec) {
+        /* Add profile test */
+        Stream<DynamicNode> myTests = Stream.of(DynamicTest.dynamicTest("cipher", () -> checkSymCipher(pCipherSpec)));
+
+        /* Add externalId test */
+        myTests = Stream.concat(myTests, Stream.of(DynamicTest.dynamicTest("externalId", () -> checkExternalId(pCipherSpec))));
+
+        /* Add algorithmId test */
+        myTests = Stream.concat(myTests, Stream.of(DynamicTest.dynamicTest("algorithmId", () -> checkSymCipherAlgId(pCipherSpec))));
+
+        /* Add partner test if  the partner supports this symCipherSpec */
+        if (pCipherSpec.getPartner() != null) {
+            myTests = Stream.concat(myTests, Stream.of(DynamicTest.dynamicTest("Partner", () -> checkPartnerSymCipher(pCipherSpec))));
+        }
+
+        /* Return the tests */
+        return myTests;
+    }
+
+    /**
      * Create the streamKey test suite for a factory.
      * @param pFactory the factory
+     * @param pPartner the partner
      * @return the test stream or null
      */
-    private Stream<DynamicNode> streamKeyTests(final GordianFactory pFactory) {
+    private Stream<DynamicNode> streamKeyTests(final GordianFactory pFactory,
+                                               final GordianFactory pPartner) {
         /* Create the default stream */
         Stream<DynamicNode> myTests = Stream.empty();
 
@@ -315,7 +423,7 @@ public class SymmetricTest {
             final GordianLength myKeyLen = myIterator.next();
 
             /* Build tests for this keyLength */
-            final Stream<DynamicNode> myTest = streamKeyTests(pFactory, myKeyLen);
+            final Stream<DynamicNode> myTest = streamKeyTests(pFactory, pPartner, myKeyLen);
             if (myTest != null) {
                 myTests = Stream.concat(myTests, myTest);
             }
@@ -328,24 +436,51 @@ public class SymmetricTest {
     /**
      * Create the streamKey test suite for a factory.
      * @param pFactory the factory
+     * @param pPartner the partner
      * @param pKeyLen the keyLength
      * @return the test stream or null
      */
     private Stream<DynamicNode> streamKeyTests(final GordianFactory pFactory,
+                                               final GordianFactory pPartner,
                                                final GordianLength pKeyLen) {
         /* Add streamKey Tests */
-        List<FactoryStreamKeySpec> myKeys = SymmetricStore.streamKeyProvider(pFactory, pKeyLen);
+        List<FactoryStreamKeySpec> myKeys = SymmetricStore.streamKeyProvider(pFactory, pPartner, pKeyLen);
         if (!myKeys.isEmpty()) {
-            Stream<DynamicNode> myTests = myKeys.stream().map(x -> DynamicContainer.dynamicContainer(x.toString(), Stream.of(
-                    DynamicTest.dynamicTest("profile", () -> profileStreamKey(x)),
-                    DynamicTest.dynamicTest("checkCipher", () -> checkCipher(x)),
-                    DynamicTest.dynamicTest("externalID", () -> checkExternalId(x)))
-            ));
+            Stream<DynamicNode> myTests = myKeys.stream().map(x -> DynamicContainer.dynamicContainer(x.toString(), streamKeyTests(x)));
             return Stream.of(DynamicContainer.dynamicContainer(pKeyLen.toString(), myTests));
         }
 
         /* No stream Tests */
         return null;
+    }
+
+    /**
+     * Create the streamKey test suite for a streamKeySpec.
+     * @param pKeySpec the keySpec
+     * @return the test stream
+     */
+    private Stream<DynamicNode> streamKeyTests(final FactoryStreamKeySpec pKeySpec) {
+        /* Add profile test */
+        Stream<DynamicNode> myTests = Stream.of(DynamicTest.dynamicTest("profile", () -> profileStreamKey(pKeySpec)));
+
+        /* Add cipher test */
+        final FactoryStreamCipherSpec myCipherSpec = new FactoryStreamCipherSpec(pKeySpec, GordianStreamCipherSpec.stream(pKeySpec.getSpec()));
+        myTests = Stream.concat(myTests, Stream.of(DynamicTest.dynamicTest("checkCipher", () -> checkCipher(myCipherSpec))));
+
+        /* Add externalId tests */
+        myTests = Stream.concat(myTests, Stream.of(DynamicTest.dynamicTest("externalKeyId", () -> checkExternalId(pKeySpec))));
+        myTests = Stream.concat(myTests, Stream.of(DynamicTest.dynamicTest("externalCipherId", () -> checkExternalId(myCipherSpec))));
+
+        /* Add algorithmId test */
+        myTests = Stream.concat(myTests, Stream.of(DynamicTest.dynamicTest("algorithmId", () -> checkStreamCipherAlgId(myCipherSpec))));
+
+        /* Add partner test if  the partner supports this streamKeySpec */
+        if (pKeySpec.getPartner() != null) {
+            myTests = Stream.concat(myTests, Stream.of(DynamicTest.dynamicTest("Partner", () -> checkPartnerStreamKey(pKeySpec))));
+        }
+
+        /* Return the tests */
+        return myTests;
     }
 
     /**
@@ -422,6 +557,31 @@ public class SymmetricTest {
     }
 
     /**
+     * Check partner digest.
+     * @param pDigestSpec the digest to check
+     */
+    private void checkPartnerDigest(final FactoryDigestSpec pDigestSpec) throws OceanusException {
+        /* Create the digests */
+        final GordianFactory myFactory = pDigestSpec.getFactory();
+        final GordianFactory myPartner = pDigestSpec.getPartner();
+        final GordianDigestSpec mySpec = pDigestSpec.getSpec();
+        final GordianDigestFactory myDigestFactory = myFactory.getDigestFactory();
+        final GordianDigest myDigest = myDigestFactory.createDigest(mySpec);
+        final GordianDigestFactory myPartnerFactory = myPartner.getDigestFactory();
+        final GordianDigest myPartnerDigest = myPartnerFactory.createDigest(mySpec);
+
+        /* Calculate digests */
+        final byte[] myBytes = "DigestInput".getBytes();
+        myDigest.update(myBytes);
+        final byte[] myFirst = myDigest.finish();
+        myPartnerDigest.update(myBytes);
+        final byte[] mySecond = myPartnerDigest.finish();
+
+        /* Check that the digests match */
+        Assertions.assertArrayEquals(myFirst, mySecond, "Digest misMatch");
+    }
+
+    /**
      * Profile mac.
      * @param pMacSpec the mac to profile
      * @throws OceanusException on error
@@ -479,6 +639,40 @@ public class SymmetricTest {
     }
 
     /**
+     * Check partner mac.
+     * @param pMacSpec the mac to check
+     */
+    private void checkPartnerMac(final FactoryMacSpec pMacSpec) throws OceanusException {
+        /* Create the macs */
+        final GordianFactory myFactory = pMacSpec.getFactory();
+        final GordianFactory myPartner = pMacSpec.getPartner();
+        final GordianMacSpec mySpec = pMacSpec.getSpec();
+        final GordianMacFactory myMacFactory = myFactory.getMacFactory();
+        final GordianMac myMac = myMacFactory.createMac(mySpec);
+        final GordianMacFactory myPartnerFactory = myPartner.getMacFactory();
+        final GordianMac myPartnerMac = myPartnerFactory.createMac(mySpec);
+        final GordianKey<GordianMacSpec> myKey = pMacSpec.getKey();
+        final GordianKey<GordianMacSpec> myPartnerKey = pMacSpec.getPartnerKey();
+
+        /* Calculate macs */
+        final byte[] myBytes = "MacInput".getBytes();
+        myMac.initMac(myKey);
+        final byte[] myIV = myMac.getInitVector();
+        myMac.update(myBytes);
+        final byte[] myFirst = myMac.finish();
+        if (myIV == null) {
+            myPartnerMac.initMac(myPartnerKey);
+        } else {
+            myPartnerMac.initMac(myPartnerKey, myIV);
+        }
+        myPartnerMac.update(myBytes);
+        final byte[] mySecond = myPartnerMac.finish();
+
+        /* Check that the macs match */
+        Assertions.assertArrayEquals(myFirst, mySecond, "Mac misMatch");
+    }
+
+    /**
      * Check symKey CipherMode.
      * @param pCipherSpec the cipherSpec
      * @throws OceanusException on error
@@ -514,10 +708,45 @@ public class SymmetricTest {
             /* Check that the blockLength is correct */
             Assertions.assertEquals(mySpec.getBlockLength().getByteLength(), myCipher.getBlockSize(), "BlockLength incorrect");
         }
+    }
 
-        /* Check the external ID */
-        checkExternalId(pCipherSpec);
-        checkSymCipherAlgId(pCipherSpec);
+    /**
+     * Check partner symKey CipherMode.
+     * @param pCipherSpec the cipherSpec
+     * @throws OceanusException on error
+     */
+    private void checkPartnerSymCipher(final FactorySymCipherSpec pCipherSpec) throws OceanusException {
+        /* Split out AAD cipher */
+        if (pCipherSpec.getSpec().isAAD()) {
+            checkPartnerAADCipher(pCipherSpec);
+            return;
+        }
+
+        /* Access details */
+        final GordianFactory myFactory = pCipherSpec.getFactory();
+        final GordianFactory myPartner = pCipherSpec.getPartner();
+        final GordianSymCipherSpec mySpec = pCipherSpec.getSpec();
+        final GordianCipherFactory myCipherFactory = myFactory.getCipherFactory();
+        final GordianCipherFactory myPartnerFactory = myPartner.getCipherFactory();
+        final GordianKey<GordianSymKeySpec> myKey = pCipherSpec.getKey();
+        final GordianKey<GordianSymKeySpec> myPartnerKey = pCipherSpec.getPartnerKey();
+
+        /* Access Data */
+        final byte[] myTestData = getTestData();
+
+        /* Create the Spec */
+        final GordianCoreCipher<GordianSymKeySpec> myCipher = (GordianCoreCipher<GordianSymKeySpec>) myCipherFactory.createSymKeyCipher(mySpec);
+        myCipher.initCipher(myKey);
+        if (!mySpec.getCipherMode().hasPadding()
+                || !GordianPadding.NONE.equals(mySpec.getPadding())) {
+            /* Check encryption */
+            final byte[] myIV = myCipher.getInitVector();
+            final byte[] myEncrypted = myCipher.finish(myTestData);
+            final GordianCoreCipher<GordianSymKeySpec> myPartnerCipher = (GordianCoreCipher<GordianSymKeySpec>) myPartnerFactory.createSymKeyCipher(mySpec);
+            myPartnerCipher.initCipher(myPartnerKey, myIV, false);
+            final byte[] myResult = myPartnerCipher.finish(myEncrypted);
+            Assertions.assertArrayEquals(myTestData, myResult, "Failed to encrypt/decrypt");
+        }
     }
 
     /**
@@ -544,21 +773,52 @@ public class SymmetricTest {
         myCipher.updateAAD(myAADData);
         final byte[] myResult = myCipher.finish(myEncrypted);
         Assertions.assertArrayEquals(myTestData, myResult, "Failed to encrypt/decrypt");
-        checkExternalId(pCipherSpec);
-        checkSymCipherAlgId(pCipherSpec);
+    }
+
+    /**
+     * Check Partner AAD cipher mode.
+     * @param pCipherSpec the cipherSpec
+     * @throws OceanusException on error
+     */
+    private void checkPartnerAADCipher(final FactorySymCipherSpec pCipherSpec) throws OceanusException {
+        /* Access details */
+        final GordianFactory myFactory = pCipherSpec.getFactory();
+        final GordianFactory myPartner = pCipherSpec.getPartner();
+        final GordianSymCipherSpec mySpec = pCipherSpec.getSpec();
+        final GordianCipherFactory myCipherFactory = myFactory.getCipherFactory();
+        final GordianCipherFactory myPartnerFactory = myPartner.getCipherFactory();
+        final GordianKey<GordianSymKeySpec> myKey = pCipherSpec.getKey();
+        final GordianKey<GordianSymKeySpec> myPartnerKey = pCipherSpec.getPartnerKey();
+
+        /* Encrypt Data */
+        final byte[] myTestData = getTestData();
+        final byte[] myAADData = getAADData();
+        final GordianAADCipher myCipher = myCipherFactory.createAADCipher(mySpec);
+        myCipher.initCipher(myKey);
+        final byte[] myIV = myCipher.getInitVector();
+        myCipher.updateAAD(myAADData);
+        final byte[] myEncrypted = myCipher.finish(myTestData);
+
+        /* Decrypt data at partner */
+        final GordianAADCipher myPartnerCipher = myPartnerFactory.createAADCipher(mySpec);
+        myPartnerCipher.initCipher(myPartnerKey, myIV, false);
+        myPartnerCipher.updateAAD(myAADData);
+        final byte[] myResult = myPartnerCipher.finish(myEncrypted);
+        Assertions.assertArrayEquals(myTestData, myResult, "Failed to encrypt/decrypt");
     }
 
     /**
      * Check stream cipher.
-     * @param pStreamKeySpec the keySpec
+     * @param pCipherSpec the keySpec
      * @throws OceanusException on error
      */
-    private void checkCipher(final FactoryStreamKeySpec pStreamKeySpec) throws OceanusException {
+    private void checkCipher(final FactoryStreamCipherSpec pCipherSpec) throws OceanusException {
         /* Access details */
-        final GordianFactory myFactory = pStreamKeySpec.getFactory();
-        final GordianStreamKeySpec myKeySpec = pStreamKeySpec.getSpec();
+        final FactoryStreamKeySpec myOwner = pCipherSpec.getOwner();
+        final GordianFactory myFactory = myOwner.getFactory();
+        final GordianStreamKeySpec myKeySpec = myOwner.getSpec();
         final GordianCipherFactory myCipherFactory = myFactory.getCipherFactory();
-        final GordianKey<GordianStreamKeySpec> myStreamKey = pStreamKeySpec.getKey();
+        final GordianKey<GordianStreamKeySpec> myStreamKey = myOwner.getKey();
 
         /* Access Data */
         final byte[] myTestData = getTestData();
@@ -572,9 +832,41 @@ public class SymmetricTest {
         myCipher.initCipher(myStreamKey, myIV, false);
         final byte[] myResult = myCipher.finish(myEncrypted);
         Assertions.assertArrayEquals(myTestData, myResult, "Failed to encrypt/decrypt");
-        final FactoryStreamCipherSpec myNewSpec = new FactoryStreamCipherSpec(pStreamKeySpec, myCipherSpec);
-        checkExternalId(myNewSpec);
-        checkStreamCipherAlgId(myNewSpec);
+    }
+
+    /**
+     * Check partner streamKey.
+     * @param pKeySpec the streamKey to check
+     */
+    private void checkPartnerStreamKey(final FactoryStreamKeySpec pKeySpec) throws OceanusException {
+        /* Create the macs */
+        final GordianFactory myFactory = pKeySpec.getFactory();
+        final GordianFactory myPartner = pKeySpec.getPartner();
+        final GordianStreamKeySpec mySpec = pKeySpec.getSpec();
+        final GordianStreamCipherSpec myCipherSpec = GordianStreamCipherSpec.stream(mySpec);
+        final GordianCipherFactory myCipherFactory = myFactory.getCipherFactory();
+        final GordianCipher<GordianStreamKeySpec> myCipher = myCipherFactory.createStreamKeyCipher(myCipherSpec);
+        final GordianCipherFactory myPartnerFactory = myPartner.getCipherFactory();
+        final GordianCipher<GordianStreamKeySpec> myPartnerCipher = myPartnerFactory.createStreamKeyCipher(myCipherSpec);
+        final GordianKey<GordianStreamKeySpec> myKey = pKeySpec.getKey();
+        final GordianKey<GordianStreamKeySpec> myPartnerKey = pKeySpec.getPartnerKey();
+
+        /* Create message and buffers  */
+        final byte[] myBytes = getTestData();
+
+        /* Encrypt and decrypt the message */
+        myCipher.initCipher(myKey);
+        final byte[] myIV = myCipher.getInitVector();
+        final byte[] myEncrypted = myCipher.finish(myBytes);
+        if (myIV == null) {
+            myPartnerCipher.initCipher(myPartnerKey);
+        } else {
+            myPartnerCipher.initCipher(myPartnerKey, myIV, false);
+        }
+        final byte[] myDecrypted = myPartnerCipher.finish(myEncrypted);
+
+        /* Check that the decryption worked */
+        Assertions.assertArrayEquals(myBytes, myDecrypted, "cipher misMatch");
     }
 
     /**
@@ -607,6 +899,39 @@ public class SymmetricTest {
     }
 
     /**
+     * Check partner wrap cipher.
+     * @param pKeySpec the keySpec
+     * @throws OceanusException on error
+     */
+    private void checkPartnerWrapCipher(final FactorySymKeySpec pKeySpec) throws OceanusException {
+        /* Access details */
+        final GordianFactory myFactory = pKeySpec.getFactory();
+        final GordianFactory myPartner = pKeySpec.getPartner();
+        final GordianSymKeySpec mySpec = pKeySpec.getSpec();
+        final GordianCipherFactory myCipherFactory = myFactory.getCipherFactory();
+        final GordianCipherFactory myPartnerFactory = myPartner.getCipherFactory();
+        final GordianKey<GordianSymKeySpec> mySymKey = pKeySpec.getKey();
+        final GordianKey<GordianSymKeySpec> myPartnerKey = pKeySpec.getPartnerKey();
+
+        /* Access Data */
+        final byte[] myTestData = getTestData();
+
+        /* Check wrapping bytes */
+        final GordianCoreWrapper myWrapper = (GordianCoreWrapper) myCipherFactory.createKeyWrapper(mySpec);
+        byte[] myWrapped = myWrapper.secureBytes(mySymKey, myTestData);
+        final GordianCoreWrapper myPartnerWrapper = (GordianCoreWrapper) myPartnerFactory.createKeyWrapper(mySpec);
+        final byte[] myResult = myPartnerWrapper.deriveBytes(myPartnerKey, myWrapped);
+        Assertions.assertArrayEquals(myTestData, myResult, "Failed to wrap/unwrap bytes");
+        Assertions.assertEquals(myWrapper.getDataWrapLength(myTestData.length), myWrapped.length, "Incorrect wrapped length");
+
+        /* Check wrapping key */
+        myWrapped = myWrapper.secureKey(mySymKey, mySymKey);
+        final GordianKey<GordianSymKeySpec> myResultKey = myPartnerWrapper.deriveKey(myPartnerKey, myWrapped, mySymKey.getKeyType());
+        Assertions.assertEquals(myPartnerKey, myResultKey, "Failed to wrap/unwrap key");
+        Assertions.assertEquals(myWrapper.getKeyWrapLength(pKeySpec.getSpec().getKeyLength()), myWrapped.length, "Incorrect wrapped length");
+    }
+
+    /**
      * Profile symKey.
      * @param pKeySpec the keySpec
      * @throws OceanusException on error
@@ -628,8 +953,7 @@ public class SymmetricTest {
         final long myStart = System.nanoTime();
         for (int i = 0; i < profileRepeat; i++) {
             myCipher.initCipher(mySymKey);
-            myCipher.update(myBytes);
-            myBytes = myCipher.finish();
+            myBytes = myCipher.finish(myBytes);
         }
         long myElapsed = System.nanoTime() - myStart;
         myElapsed /= MILLINANOS * profileRepeat;
@@ -649,14 +973,13 @@ public class SymmetricTest {
         final GordianCipherFactory myCipherFactory = myFactory.getCipherFactory();
         final GordianKey<GordianStreamKeySpec> myStreamKey = pStreamKeySpec.getKey();
         final int myLen = 128;
-        byte[] myBytes = new byte[myLen];
+        byte[] myBytes = getTestData();
         final GordianStreamCipherSpec myCipherSpec = GordianStreamCipherSpec.stream(myKeySpec);
         final GordianCipher<GordianStreamKeySpec> myCipher = myCipherFactory.createStreamKeyCipher(myCipherSpec);
         final long myStart = System.nanoTime();
         for (int i = 0; i < profileRepeat; i++) {
             myCipher.initCipher(myStreamKey);
-            myCipher.update(myBytes);
-            myBytes = myCipher.finish();
+            myBytes = myCipher.finish(myBytes);
         }
         long myElapsed = System.nanoTime() - myStart;
         myElapsed /= MILLINANOS * profileRepeat;

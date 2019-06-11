@@ -124,6 +124,7 @@ public enum GordianSignatureType {
             case XMSS:
             case XMSSMT:
             case SPHINCS:
+            case RSA:
                 return true;
             default:
                 return false;

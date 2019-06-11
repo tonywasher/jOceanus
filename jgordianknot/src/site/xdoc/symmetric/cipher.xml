@@ -63,7 +63,7 @@
                     <tr><td>OFB</td><td>Y</td><td>Jca maps to GOFB for Magma and K3413OFB for Kuznyechik</td></tr>
                     <tr><td>GOFB</td><td/><td>Only available for Magma</td></tr>
                     <tr><td>K3413OFB</td><td/><td>Only available for Kuznyechik</td></tr>
-                    <tr><td>CFB</td><td>Y</td><td>Actually requests CFB8. Jca maps to GCFB for Magma and K3413CFB for Kuznyechik</td></tr>
+                    <tr><td>CFB</td><td>Y</td><td>Jca maps to GCFB for Magma and K3413CFB for Kuznyechik</td></tr>
                     <tr><td>GCFB</td><td/><td>Only available for Magma</td></tr>
                     <tr><td>K3413CFB</td><td/><td>Only available for Kuznyechik</td></tr>
                     <tr><td>CCM</td><td>Y</td><td>Jca maps to KCCM for Kalyna</td></tr>

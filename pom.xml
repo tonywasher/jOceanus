@@ -65,7 +65,7 @@
     <packageName/>
     <appDir>${env.BACKUPDIR}</appDir>
     <appLibDir>lib/</appLibDir>
-    <BouncyCastleVersion>1.61</BouncyCastleVersion>
+    <BouncyCastleVersion>1.62</BouncyCastleVersion>
     <SvnKitVersion>1.10.0</SvnKitVersion>
     <JGitVersion>5.3.1.201904271842-r</JGitVersion>
     <JUnitVersion>5.5.0-M1</JUnitVersion>
@@ -80,8 +80,8 @@
     <ZipSDKVersion>9.20</ZipSDKVersion>
     <JavaVersion>12</JavaVersion>
     <JavaFXVersion>12.0.1</JavaFXVersion>
-    <CheckStyleVersion>8.20</CheckStyleVersion>
-    <PMDVersion>6.14.0</PMDVersion>
+    <CheckStyleVersion>8.21</CheckStyleVersion>
+    <PMDVersion>6.15.0</PMDVersion>
     <CleanPluginVersion>3.1.0</CleanPluginVersion>
     <ResourcesPluginVersion>3.1.0</ResourcesPluginVersion>
     <InstallPluginVersion>3.0.0-M1</InstallPluginVersion>
@@ -99,7 +99,7 @@
     <JxrPluginVersion>3.0.0</JxrPluginVersion>
     <JavaDocPluginVersion>3.1.0</JavaDocPluginVersion>
     <SonarQubePluginVersion>3.6.0.1398</SonarQubePluginVersion>
-    <CheckStylePluginVersion>3.0.0</CheckStylePluginVersion>
+    <CheckStylePluginVersion>3.1.0</CheckStylePluginVersion>
     <PMDPluginVersion>3.12.0</PMDPluginVersion>
     <JacocoPluginVersion>0.8.3</JacocoPluginVersion>
     <JetBrainsAnnotationsVersion>17.0.0</JetBrainsAnnotationsVersion>
@@ -317,9 +317,10 @@
               <mainClass>${packageMain}</mainClass>
               <packageName>${packageName}</packageName>
               <addClasspath>true</addClasspath>
-              <classpathLayoutType>simple</classpathLayoutType>
+              <classpathLayoutType>repository</classpathLayoutType>
               <classpathPrefix>${appLibDir}</classpathPrefix>
               <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
+              <addBuildEnvironmentEntries>true</addBuildEnvironmentEntries>
             </manifest>
             <manifestEntries>
               <Revision>sha-${buildNumber}</Revision>
@@ -366,6 +367,7 @@
               </goals>
               <configuration>
                 <outputDirectory>${appDir}/${appLibDir}</outputDirectory>
+                <useRepositoryLayout>true</useRepositoryLayout>
               </configuration>
             </execution>
           </executions>
