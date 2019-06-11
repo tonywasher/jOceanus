@@ -23,41 +23,7 @@ import org.bouncycastle.crypto.BlockCipher;
 import org.bouncycastle.crypto.BufferedBlockCipher;
 import org.bouncycastle.crypto.CipherKeyGenerator;
 import org.bouncycastle.crypto.StreamCipher;
-import org.bouncycastle.crypto.engines.AESEngine;
-import org.bouncycastle.crypto.engines.ARIAEngine;
-import org.bouncycastle.crypto.engines.BlowfishEngine;
-import org.bouncycastle.crypto.engines.CAST5Engine;
-import org.bouncycastle.crypto.engines.CAST6Engine;
-import org.bouncycastle.crypto.engines.CamelliaEngine;
-import org.bouncycastle.crypto.engines.ChaCha7539Engine;
-import org.bouncycastle.crypto.engines.ChaChaEngine;
-import org.bouncycastle.crypto.engines.DESedeEngine;
-import org.bouncycastle.crypto.engines.DSTU7624Engine;
-import org.bouncycastle.crypto.engines.GOST28147Engine;
-import org.bouncycastle.crypto.engines.GOST3412_2015Engine;
-import org.bouncycastle.crypto.engines.Grain128Engine;
-import org.bouncycastle.crypto.engines.HC128Engine;
-import org.bouncycastle.crypto.engines.HC256Engine;
-import org.bouncycastle.crypto.engines.IDEAEngine;
-import org.bouncycastle.crypto.engines.ISAACEngine;
-import org.bouncycastle.crypto.engines.NoekeonEngine;
-import org.bouncycastle.crypto.engines.RC2Engine;
-import org.bouncycastle.crypto.engines.RC4Engine;
-import org.bouncycastle.crypto.engines.RC532Engine;
-import org.bouncycastle.crypto.engines.RC564Engine;
-import org.bouncycastle.crypto.engines.RC6Engine;
-import org.bouncycastle.crypto.engines.SEEDEngine;
-import org.bouncycastle.crypto.engines.SM4Engine;
-import org.bouncycastle.crypto.engines.Salsa20Engine;
-import org.bouncycastle.crypto.engines.SerpentEngine;
-import org.bouncycastle.crypto.engines.Shacal2Engine;
-import org.bouncycastle.crypto.engines.SkipjackEngine;
-import org.bouncycastle.crypto.engines.TEAEngine;
-import org.bouncycastle.crypto.engines.ThreefishEngine;
-import org.bouncycastle.crypto.engines.TwofishEngine;
-import org.bouncycastle.crypto.engines.VMPCEngine;
-import org.bouncycastle.crypto.engines.XSalsa20Engine;
-import org.bouncycastle.crypto.engines.XTEAEngine;
+import org.bouncycastle.crypto.engines.*;
 import org.bouncycastle.crypto.ext.engines.AnubisEngine;
 import org.bouncycastle.crypto.ext.engines.MARSEngine;
 import org.bouncycastle.crypto.ext.engines.RabbitEngine;
@@ -247,7 +213,7 @@ public class BouncyCipherFactory
             case XSALSA20:
                 return new XSalsa20Engine();
             case VMPC:
-                return new VMPCEngine();
+                return new VMPCKSA3Engine();
             case GRAIN:
                 return new Grain128Engine();
             case ISAAC:
@@ -361,7 +327,7 @@ public class BouncyCipherFactory
             case KCTR:
                 return new KCTRBlockCipher(pEngine);
             case CFB:
-                return new CFBBlockCipher(pEngine, Byte.SIZE);
+                return new CFBBlockCipher(pEngine, Byte.SIZE * pEngine.getBlockSize());
             case GCFB:
                 return new GCFBBlockCipher(pEngine);
             case OFB:
@@ -373,7 +339,7 @@ public class BouncyCipherFactory
             case G3413CTR:
                 return new G3413CTRBlockCipher(pEngine);
             case G3413CFB:
-                return new G3413CFBBlockCipher(pEngine, Byte.SIZE);
+                return new G3413CFBBlockCipher(pEngine, Byte.SIZE * pEngine.getBlockSize());
             case G3413OFB:
                 return new G3413OFBBlockCipher(pEngine);
             default:

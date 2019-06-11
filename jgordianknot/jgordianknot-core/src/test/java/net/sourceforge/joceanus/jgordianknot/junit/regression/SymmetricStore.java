@@ -18,6 +18,8 @@ package net.sourceforge.joceanus.jgordianknot.junit.regression;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.BiPredicate;
+import java.util.function.Predicate;
 
 import net.sourceforge.joceanus.jgordianknot.api.base.GordianLength;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianCipherFactory;
@@ -35,6 +37,8 @@ import net.sourceforge.joceanus.jgordianknot.api.mac.GordianMacSpec;
 import net.sourceforge.joceanus.jgordianknot.api.random.GordianRandomFactory;
 import net.sourceforge.joceanus.jgordianknot.api.random.GordianRandomSpec;
 import net.sourceforge.joceanus.jgordianknot.api.random.GordianRandomType;
+import net.sourceforge.joceanus.jgordianknot.impl.core.key.GordianCoreKey;
+import net.sourceforge.joceanus.jgordianknot.impl.core.key.GordianCoreKeyGenerator;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
@@ -60,14 +64,31 @@ class SymmetricStore {
     }
 
     /**
+     * Partnered Spec interface.
+     */
+    @FunctionalInterface
+    interface PartneredSpec {
+        /**
+         * Obtain the partner.
+         * @return the partner.
+         */
+        GordianFactory getPartner();
+    }
+
+    /**
      * Factory and Digest definition.
      */
     static class FactoryDigestSpec
-            implements FactorySpec<GordianDigestSpec> {
+            implements FactorySpec<GordianDigestSpec>, PartneredSpec {
         /**
          * The factory.
          */
         private final GordianFactory theFactory;
+
+        /**
+         * The partner.
+         */
+        private final GordianFactory thePartner;
 
         /**
          * The digestSpec.
@@ -77,17 +98,25 @@ class SymmetricStore {
         /**
          * Constructor.
          * @param pFactory the factory
+         * @param pPartner the partner
          * @param pDigestSpec the digestSpec
          */
         FactoryDigestSpec(final GordianFactory pFactory,
+                          final GordianFactory pPartner,
                           final GordianDigestSpec pDigestSpec) {
             theFactory = pFactory;
+            thePartner = pPartner;
             theDigestSpec = pDigestSpec;
         }
 
         @Override
         public GordianFactory getFactory() {
             return theFactory;
+        }
+
+        @Override
+        public GordianFactory getPartner() {
+            return thePartner;
         }
 
         @Override
@@ -105,11 +134,16 @@ class SymmetricStore {
      * Factory and Mac definition.
      */
     static class FactoryMacSpec
-            implements FactorySpec<GordianMacSpec> {
+            implements FactorySpec<GordianMacSpec>, PartneredSpec {
         /**
          * The factory.
          */
         private final GordianFactory theFactory;
+
+        /**
+         * The partner.
+         */
+        private final GordianFactory thePartner;
 
         /**
          * The macSpec.
@@ -119,21 +153,29 @@ class SymmetricStore {
         /**
          * The key.
          */
-        private GordianKey<GordianMacSpec> theKey;
+        private GordianCoreKey<GordianMacSpec> theKey;
+
+        /**
+         * The partnerKey.
+         */
+        private GordianKey<GordianMacSpec> thePartnerKey;
 
         /**
          * Constructor.
          * @param pFactory the factory
+         * @param pPartner the partner
          * @param pMacSpec the macSpec
          */
         FactoryMacSpec(final GordianFactory pFactory,
+                       final GordianFactory pPartner,
                        final GordianMacSpec pMacSpec) {
             theFactory = pFactory;
+            thePartner = pPartner;
             theMacSpec = pMacSpec;
         }
 
         /**
-         * Obtain (or create) the key for the FactoryMacSpec
+         * Obtain (or create) the key for the FactoryMacSpec.
          * @return the key
          * @throws OceanusException on error
          */
@@ -153,14 +195,46 @@ class SymmetricStore {
                 /* Generate the key */
                 GordianMacFactory myFactory = theFactory.getMacFactory();
                 GordianKeyGenerator<GordianMacSpec> myGenerator = myFactory.getKeyGenerator(theMacSpec);
-                theKey = myGenerator.generateKey();
+                theKey = (GordianCoreKey<GordianMacSpec>) myGenerator.generateKey();
                 return theKey;
+            }
+        }
+
+        /**
+         * Obtain (or translate) the key for the Partner.
+         * @return the key
+         * @throws OceanusException on error
+         */
+        GordianKey<GordianMacSpec> getPartnerKey() throws OceanusException {
+            /* Return key if it exists */
+            if (thePartnerKey != null || thePartner == null) {
+                return thePartnerKey;
+            }
+
+            /* Synchronize access */
+            synchronized (this) {
+                /* Check for race condition */
+                if (thePartnerKey != null) {
+                    return thePartnerKey;
+                }
+
+                /* Build the key */
+                GordianMacFactory myFactory = thePartner.getMacFactory();
+                GordianCoreKeyGenerator<GordianMacSpec> myGenerator
+                        = (GordianCoreKeyGenerator<GordianMacSpec>) myFactory.getKeyGenerator(theMacSpec);
+                thePartnerKey = myGenerator.buildKeyFromBytes(theKey.getKeyBytes());
+                return thePartnerKey;
             }
         }
 
         @Override
         public GordianFactory getFactory() {
             return theFactory;
+        }
+
+        @Override
+        public GordianFactory getPartner() {
+            return thePartner;
         }
 
         @Override
@@ -178,11 +252,16 @@ class SymmetricStore {
      * Factory and symKey definition.
      */
     static class FactorySymKeySpec
-            implements FactorySpec<GordianSymKeySpec> {
+            implements FactorySpec<GordianSymKeySpec>, PartneredSpec {
         /**
          * The factory.
          */
         private final GordianFactory theFactory;
+
+        /**
+         * The partner.
+         */
+        private final GordianFactory thePartner;
 
         /**
          * The symKeySpec.
@@ -192,16 +271,24 @@ class SymmetricStore {
         /**
          * The key.
          */
-        private GordianKey<GordianSymKeySpec> theKey;
+        private GordianCoreKey<GordianSymKeySpec> theKey;
+
+        /**
+         * The partnerKey.
+         */
+        private GordianKey<GordianSymKeySpec> thePartnerKey;
 
         /**
          * Constructor.
          * @param pFactory the factory
+         * @param pPartner the partner
          * @param pSymKeySpec the symKeySpec
          */
         FactorySymKeySpec(final GordianFactory pFactory,
+                          final GordianFactory pPartner,
                           final GordianSymKeySpec pSymKeySpec) {
             theFactory = pFactory;
+            thePartner = pPartner;
             theSymKeySpec = pSymKeySpec;
         }
 
@@ -226,14 +313,46 @@ class SymmetricStore {
                 /* Generate the key */
                 GordianCipherFactory myFactory = theFactory.getCipherFactory();
                 GordianKeyGenerator<GordianSymKeySpec> myGenerator = myFactory.getKeyGenerator(theSymKeySpec);
-                theKey = myGenerator.generateKey();
+                theKey = (GordianCoreKey<GordianSymKeySpec>) myGenerator.generateKey();
                 return theKey;
+            }
+        }
+
+        /**
+         * Obtain (or translate) the key for the Partner.
+         * @return the key
+         * @throws OceanusException on error
+         */
+        GordianKey<GordianSymKeySpec> getPartnerKey() throws OceanusException {
+            /* Return key if it exists */
+            if (thePartnerKey != null || thePartner == null) {
+                return thePartnerKey;
+            }
+
+            /* Synchronize access */
+            synchronized (this) {
+                /* Check for race condition */
+                if (thePartnerKey != null) {
+                    return thePartnerKey;
+                }
+
+                /* Build the key */
+                GordianCipherFactory myFactory = thePartner.getCipherFactory();
+                GordianCoreKeyGenerator<GordianSymKeySpec> myGenerator
+                        = (GordianCoreKeyGenerator<GordianSymKeySpec>) myFactory.getKeyGenerator(theSymKeySpec);
+                thePartnerKey = myGenerator.buildKeyFromBytes(theKey.getKeyBytes());
+                return thePartnerKey;
             }
         }
 
         @Override
         public GordianFactory getFactory() {
             return theFactory;
+        }
+
+        @Override
+        public GordianFactory getPartner() {
+            return thePartner;
         }
 
         @Override
@@ -251,9 +370,9 @@ class SymmetricStore {
      * Factory and symCipher definition.
      */
     static class FactorySymCipherSpec
-            implements FactorySpec<GordianSymCipherSpec> {
+            implements FactorySpec<GordianSymCipherSpec>, PartneredSpec {
         /**
-         * The factory.
+         * The owner.
          */
         private final FactorySymKeySpec theOwner;
 
@@ -263,14 +382,25 @@ class SymmetricStore {
         private final GordianSymCipherSpec theCipherSpec;
 
         /**
+         * supported by partner?
+         */
+        private final boolean hasPartner;
+
+        /**
          * Constructor.
          * @param pOwner the owner
          * @param pCipherSpec the symCipherSpec
+         * @param pPredicate the partner predicate
          */
         FactorySymCipherSpec(final FactorySymKeySpec pOwner,
-                             final GordianSymCipherSpec pCipherSpec) {
+                             final GordianSymCipherSpec pCipherSpec,
+                             final BiPredicate<GordianSymCipherSpec, Boolean> pPredicate) {
+            /* Store parameters */
             theOwner = pOwner;
             theCipherSpec = pCipherSpec;
+
+            /* Determine whether we have partner support */
+            hasPartner = pPredicate != null && pPredicate.test(pCipherSpec, pCipherSpec.isAAD());
         }
 
         /**
@@ -282,9 +412,31 @@ class SymmetricStore {
             return theOwner.getKey();
         }
 
+        /**
+         * Obtain (or translate) the key for the Partner.
+         * @return the key
+         * @throws OceanusException on error
+         */
+        GordianKey<GordianSymKeySpec> getPartnerKey() throws OceanusException {
+            return theOwner.getPartnerKey();
+        }
+
+        /**
+         * Obtain the owner.
+         * @return the owner
+         */
+        public FactorySymKeySpec getOwner() {
+            return theOwner;
+        }
+
         @Override
         public GordianFactory getFactory() {
             return theOwner.getFactory();
+        }
+
+        @Override
+        public GordianFactory getPartner() {
+            return hasPartner ? theOwner.getPartner() : null;
         }
 
         @Override
@@ -302,11 +454,16 @@ class SymmetricStore {
      * Factory and streamKey definition.
      */
     static class FactoryStreamKeySpec
-            implements FactorySpec<GordianStreamKeySpec> {
+            implements FactorySpec<GordianStreamKeySpec>, PartneredSpec {
         /**
          * The factory.
          */
         private final GordianFactory theFactory;
+
+        /**
+         * The partner.
+         */
+        private final GordianFactory thePartner;
 
         /**
          * The streamKeyType.
@@ -316,16 +473,24 @@ class SymmetricStore {
         /**
          * The key.
          */
-        private GordianKey<GordianStreamKeySpec> theKey;
+        private GordianCoreKey<GordianStreamKeySpec> theKey;
+
+        /**
+         * The partnerKey.
+         */
+        private GordianKey<GordianStreamKeySpec> thePartnerKey;
 
         /**
          * Constructor.
          * @param pFactory the factory
+         * @param pPartner the partner
          * @param pKeySpec the keySpec
          */
         FactoryStreamKeySpec(final GordianFactory pFactory,
+                             final GordianFactory pPartner,
                              final GordianStreamKeySpec pKeySpec) {
             theFactory = pFactory;
+            thePartner = pPartner;
             theKeySpec = pKeySpec;
         }
 
@@ -350,14 +515,46 @@ class SymmetricStore {
                 /* Generate the key */
                 GordianCipherFactory myFactory = theFactory.getCipherFactory();
                 GordianKeyGenerator<GordianStreamKeySpec> myGenerator = myFactory.getKeyGenerator(theKeySpec);
-                theKey = myGenerator.generateKey();
+                theKey = (GordianCoreKey<GordianStreamKeySpec>) myGenerator.generateKey();
                 return theKey;
+            }
+        }
+
+        /**
+         * Obtain (or translate) the key for the Partner.
+         * @return the key
+         * @throws OceanusException on error
+         */
+        GordianKey<GordianStreamKeySpec> getPartnerKey() throws OceanusException {
+            /* Return key if it exists */
+            if (thePartnerKey != null || thePartner == null) {
+                return thePartnerKey;
+            }
+
+            /* Synchronize access */
+            synchronized (this) {
+                /* Check for race condition */
+                if (thePartnerKey != null) {
+                    return thePartnerKey;
+                }
+
+                /* Build the key */
+                GordianCipherFactory myFactory = thePartner.getCipherFactory();
+                GordianCoreKeyGenerator<GordianStreamKeySpec> myGenerator
+                        = (GordianCoreKeyGenerator<GordianStreamKeySpec>) myFactory.getKeyGenerator(theKeySpec);
+                thePartnerKey = myGenerator.buildKeyFromBytes(theKey.getKeyBytes());
+                return thePartnerKey;
             }
         }
 
         @Override
         public GordianFactory getFactory() {
             return theFactory;
+        }
+
+        @Override
+        public GordianFactory getPartner() {
+            return thePartner;
         }
 
         @Override
@@ -375,7 +572,7 @@ class SymmetricStore {
      * Factory and streamCipher definition.
      */
     static class FactoryStreamCipherSpec
-            implements FactorySpec<GordianStreamCipherSpec> {
+            implements FactorySpec<GordianStreamCipherSpec>, PartneredSpec {
         /**
          * The owner.
          */
@@ -397,9 +594,22 @@ class SymmetricStore {
             theCipherSpec = pCipherSpec;
         }
 
+        /**
+         * Obtain the owner.
+         * @return the owner
+         */
+        public FactoryStreamKeySpec getOwner() {
+            return theOwner;
+        }
+
         @Override
         public GordianFactory getFactory() {
             return theOwner.getFactory();
+        }
+
+        @Override
+        public GordianFactory getPartner() {
+            return theOwner.getPartner();
         }
 
         @Override
@@ -539,15 +749,21 @@ class SymmetricStore {
     /**
      * Obtain the list of digests to test.
      * @param pFactory the factory
+     * @param pPartner the partner factory
      * @return the list
      */
-    static List<FactoryDigestSpec> digestProvider(final GordianFactory pFactory) {
+    static List<FactoryDigestSpec> digestProvider(final GordianFactory pFactory,
+                                                  final GordianFactory pPartner) {
         /* Loop through the possible digestSpecs */
         final List<FactoryDigestSpec> myResult = new ArrayList<>();
         final GordianDigestFactory myDigestFactory = pFactory.getDigestFactory();
+        final Predicate<GordianDigestSpec> myPredicate = pPartner.getDigestFactory().supportedDigestSpecs();
         for (GordianDigestSpec mySpec : myDigestFactory.listAllSupportedSpecs()) {
+            /* Determine whether the digestSpec is supported by the partner */
+            GordianFactory myPartner = myPredicate.test(mySpec) ? pPartner : null;
+
             /* Add the digestSpec */
-            myResult.add(new FactoryDigestSpec(pFactory, mySpec));
+            myResult.add(new FactoryDigestSpec(pFactory, myPartner, mySpec));
         }
 
         /* Return the list */
@@ -557,17 +773,23 @@ class SymmetricStore {
     /**
      * Obtain the list of macs to test.
      * @param pFactory the factory
+     * @param pPartner the partner factory
      * @param pKeyLen the keyLength
      * @return the list
      */
     static List<FactoryMacSpec> macProvider(final GordianFactory pFactory,
+                                            final GordianFactory pPartner,
                                             final GordianLength pKeyLen) {
         /* Loop through the possible macSpecs */
         final List<FactoryMacSpec> myResult = new ArrayList<>();
         final GordianMacFactory myMacFactory = pFactory.getMacFactory();
+        final Predicate<GordianMacSpec> myPredicate = pPartner.getMacFactory().supportedMacSpecs();
         for (GordianMacSpec mySpec : myMacFactory.listAllSupportedSpecs(pKeyLen)) {
+            /* Determine whether the macSpec is supported by the partner */
+            GordianFactory myPartner = myPredicate.test(mySpec) ? pPartner : null;
+
             /* Add the macSpec */
-            myResult.add(new FactoryMacSpec(pFactory, mySpec));
+            myResult.add(new FactoryMacSpec(pFactory, myPartner, mySpec));
         }
 
         /* Return the list */
@@ -577,17 +799,23 @@ class SymmetricStore {
     /**
      * Obtain the list of symKeySpecs to test.
      * @param pFactory the factory
+     * @param pPartner the partner factory
      * @param pKeyLen the keyLength
      * @return the list
      */
     static List<FactorySymKeySpec> symKeyProvider(final GordianFactory pFactory,
+                                                  final GordianFactory pPartner,
                                                   final GordianLength pKeyLen) {
         /* Loop through the possible keySpecs */
         final List<FactorySymKeySpec> myResult = new ArrayList<>();
         final GordianCipherFactory myCipherFactory = pFactory.getCipherFactory();
+        final Predicate<GordianSymKeySpec> myPredicate = pPartner.getCipherFactory().supportedSymKeySpecs();
         for (GordianSymKeySpec mySpec : myCipherFactory.listAllSupportedSymKeySpecs(pKeyLen)) {
+            /* Determine whether the keySpec is supported by the partner */
+            GordianFactory myPartner = myPredicate.test(mySpec) ? pPartner : null;
+
             /* Add the symKeySpec */
-            myResult.add(new FactorySymKeySpec(pFactory, mySpec));
+            myResult.add(new FactorySymKeySpec(pFactory, myPartner, mySpec));
         }
 
         /* Return the list */
@@ -605,12 +833,15 @@ class SymmetricStore {
         final GordianSymKeySpec mySpec = pKeySpec.getSpec();
         final GordianCipherFactory myCipherFactory = myFactory.getCipherFactory();
         final List<FactorySymCipherSpec> myResult = new ArrayList<>();
+        final GordianFactory myPartner = pKeySpec.getPartner();
+        final BiPredicate<GordianSymCipherSpec, Boolean> myPredicate
+                = myPartner == null ? null : myPartner.getCipherFactory().supportedSymCipherSpecs();
 
         for (GordianSymCipherSpec myCipherSpec : myCipherFactory.listAllSupportedSymCipherSpecs(mySpec, false)) {
-            myResult.add(new FactorySymCipherSpec(pKeySpec, myCipherSpec));
+            myResult.add(new FactorySymCipherSpec(pKeySpec, myCipherSpec, myPredicate));
         }
         for (GordianSymCipherSpec myCipherSpec : myCipherFactory.listAllSupportedSymCipherSpecs(mySpec, true)) {
-            myResult.add(new FactorySymCipherSpec(pKeySpec, myCipherSpec));
+            myResult.add(new FactorySymCipherSpec(pKeySpec, myCipherSpec, myPredicate));
         }
 
         /* Return the list */
@@ -620,17 +851,23 @@ class SymmetricStore {
     /**
      * Obtain the list of streamKeySpecs to test.
      * @param pFactory the factory
+     * @param pPartner the partner factory
      * @param pKeyLen the keyLength
      * @return the list
      */
     static List<FactoryStreamKeySpec> streamKeyProvider(final GordianFactory pFactory,
+                                                        final GordianFactory pPartner,
                                                         final GordianLength pKeyLen) {
         /* Loop through the possible keySpecs */
         final List<FactoryStreamKeySpec> myResult = new ArrayList<>();
         final GordianCipherFactory myCipherFactory = pFactory.getCipherFactory();
+        final Predicate<GordianStreamKeySpec> myPredicate = pPartner.getCipherFactory().supportedStreamKeySpecs();
         for (GordianStreamKeySpec mySpec : myCipherFactory.listAllSupportedStreamKeySpecs(pKeyLen)) {
+            /* Determine whether the keySpec is supported by the partner */
+            GordianFactory myPartner = myPredicate.test(mySpec) ? pPartner : null;
+
             /* Add the streamKeySpec */
-            myResult.add(new FactoryStreamKeySpec(pFactory, mySpec));
+            myResult.add(new FactoryStreamKeySpec(pFactory, myPartner, mySpec));
         }
 
         /* Return the list */
