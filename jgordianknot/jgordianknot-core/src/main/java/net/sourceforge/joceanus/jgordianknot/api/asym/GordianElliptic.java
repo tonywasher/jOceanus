@@ -39,4 +39,12 @@ public interface GordianElliptic {
     default boolean canEncrypt() {
         return true;
     }
+
+    /**
+     * Does the curve have a custom implementation?
+     * @return true/false
+     */
+    default boolean hasCustomCurve() {
+        return false;
+    }
 }

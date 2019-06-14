@@ -398,7 +398,6 @@ public class AsymmetricTest {
         final GordianAgreement mySender = myAgrees.createAgreement(mySpec);
         mySender.setResultType(pResultType);
         final GordianAgreement myResponder = myAgrees.createAgreement(mySpec);
-        myResponder.setResultType(pResultType);
 
         /* Access target if we are using one */
         if (!(mySender instanceof GordianAnonymousAgreement)) {
@@ -452,9 +451,8 @@ public class AsymmetricTest {
         final GordianAgreementFactory mySrcAgrees = pAgreement.getOwner().getFactory().getAgreementFactory();
         final GordianAgreementFactory myPartnerAgrees = pAgreement.getOwner().getPartner().getAgreementFactory();
         final GordianAgreement mySender = mySrcAgrees.createAgreement(mySpec);
-        mySender.setResultType(GordianFactoryType.BC);
+        mySender.setResultType(null);
         final GordianAgreement myResponder = myPartnerAgrees.createAgreement(mySpec);
-        myResponder.setResultType(GordianFactoryType.BC);
 
         /* Handle Encapsulation */
         if (mySender instanceof GordianAnonymousAgreement
@@ -480,9 +478,9 @@ public class AsymmetricTest {
         }
 
         /* Check that the values match */
-        final GordianFactory myFirst = (GordianFactory) mySender.getResult();
-        final GordianFactory mySecond = (GordianFactory) myResponder.getResult();
-        Assertions.assertEquals(myFirst, mySecond, "Failed to agree crossFactory keySet");
+        final byte[] myFirst = (byte[]) mySender.getResult();
+        final byte[] mySecond = (byte[]) myResponder.getResult();
+        Assertions.assertArrayEquals(myFirst, mySecond, "Failed to agree crossFactory keySet");
     }
 
     /**

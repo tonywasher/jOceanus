@@ -80,5 +80,10 @@ public enum GordianSM2Elliptic implements GordianElliptic {
     public String toString() {
         return theName;
     }
+
+    @Override
+    public boolean hasCustomCurve() {
+        return this == SM2P256V1;
+    }
 }
 
