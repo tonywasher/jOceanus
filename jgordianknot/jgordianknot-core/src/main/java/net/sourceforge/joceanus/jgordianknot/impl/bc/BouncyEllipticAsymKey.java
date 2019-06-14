@@ -955,7 +955,8 @@ public final class BouncyEllipticAsymKey {
 
             /* Initialise for encryption */
             final ECPublicKeyParameters myParms = (ECPublicKeyParameters) getPublicKey().getPublicKey();
-            theEncryptor.initForEncrypt(myParms, getRandom());
+            final boolean prefixPadding = pKeyPair.getKeySpec().getElliptic().prefixPadding();
+            theEncryptor.initForEncrypt(myParms, prefixPadding, getRandom());
         }
 
         @Override
@@ -965,7 +966,8 @@ public final class BouncyEllipticAsymKey {
 
             /* Initialise for decryption */
             final ECPrivateKeyParameters myParms = (ECPrivateKeyParameters) getPrivateKey().getPrivateKey();
-            theEncryptor.initForDecrypt(myParms);
+            final boolean prefixPadding = pKeyPair.getKeySpec().getElliptic().prefixPadding();
+            theEncryptor.initForDecrypt(myParms, prefixPadding);
         }
 
         @Override
