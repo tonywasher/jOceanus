@@ -439,12 +439,6 @@ public class EllipticEncryptor {
     private int convertFromECPoint(final ECPoint pPoint,
                                    final byte[] pOutBuffer,
                                    final int pOutOff) throws InvalidCipherTextException {
-        /* Check length */
-        final int myLen = getBlockLength();
-        if (pOutBuffer.length - pOutOff < myLen - 2) {
-            throw new IllegalArgumentException("Output buffer too small");
-        }
-
         /* Obtain the X co-ordinate */
         final BigInteger myX = pPoint.getAffineXCoord().toBigInteger();
         final byte[] myBuf = myX.toByteArray();
@@ -471,7 +465,7 @@ public class EllipticEncryptor {
                 throw new InvalidCipherTextException("Invalid data");
             }
 
-            /* Set start position and dataLength */
+            /* Bump past padding */
             myStart++;
 
             /* else we are suffixing the padding */
@@ -480,8 +474,8 @@ public class EllipticEncryptor {
             myStart = 0;
             myEnd = -1;
 
-            /* Check for a buffer that has a prefixed zero */
-            if (myBuf.length == myLen + 1) {
+            /* Check for a buffer that has a prefixed zero (owing to top bit set) */
+            if (myBuf.length == getBlockLength() + 1) {
                 if (myBuf[0] != 0) {
                     throw new InvalidCipherTextException("Invalid data");
                 }
@@ -504,8 +498,13 @@ public class EllipticEncryptor {
             }
         }
 
-        /* Copy the data out */
+        /* Check length */
         final int myOutLen = myEnd - myStart;
+        if (pOutBuffer.length - pOutOff < myOutLen) {
+            throw new IllegalArgumentException("Output buffer too small");
+        }
+
+        /* Copy the data out */
         System.arraycopy(myBuf, myStart, pOutBuffer, pOutOff, myOutLen);
         return myOutLen;
     }
