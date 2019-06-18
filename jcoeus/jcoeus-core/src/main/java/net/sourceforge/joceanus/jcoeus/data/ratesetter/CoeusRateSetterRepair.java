@@ -58,6 +58,11 @@ public class CoeusRateSetterRepair {
     private static final int LONG_DELAY = 10;
 
     /**
+     * The Very Long delay (40 days - just in case).
+     */
+    private static final int VLONG_DELAY = 40;
+
+    /**
      * The Market.
      */
     private final CoeusRateSetterMarket theMarket;
@@ -109,6 +114,12 @@ public class CoeusRateSetterRepair {
 
         /* Handle severely delayed Split Matches next */
         handleSplitMatches(myLoans, LONG_DELAY);
+
+        /* Handle extremely delayed Exact Matches next */
+        handleExactMatches(myLoans, VLONG_DELAY);
+
+        /* Handle extremely delayed Split Matches next */
+        handleSplitMatches(myLoans, VLONG_DELAY);
 
         /* If we still have initial transactions */
         if (!theInitialLoans.isEmpty()) {

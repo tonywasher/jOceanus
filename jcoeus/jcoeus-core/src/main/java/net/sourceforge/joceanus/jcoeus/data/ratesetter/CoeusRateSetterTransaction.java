@@ -84,6 +84,11 @@ public class CoeusRateSetterTransaction
     private static final String PFIX_CBACK = "TaxableCashBack";
 
     /**
+     * RateSetter CashBack prefix2.
+     */
+    private static final String PFIX_CBACK2 = "RateSetter cash back";
+
+    /**
      * ZERO for BadDebt/CashBack.
      */
     protected static final TethysMoney ZERO_MONEY = new TethysMoney();
@@ -379,7 +384,8 @@ public class CoeusRateSetterTransaction
         }
 
         /* If the description is Interest */
-        if (PFIX_CBACK.equals(theDesc)) {
+        if (PFIX_CBACK.equals(theDesc)
+            || PFIX_CBACK2.equals(theDesc)) {
             return CoeusTransactionType.TAXABLECASHBACK;
         }
 
