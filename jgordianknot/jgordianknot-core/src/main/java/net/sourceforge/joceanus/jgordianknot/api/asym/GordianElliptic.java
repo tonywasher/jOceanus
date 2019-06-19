@@ -39,4 +39,20 @@ public interface GordianElliptic {
     default boolean canEncrypt() {
         return true;
     }
+
+    /**
+     * Does the curve have a custom implementation?
+     * @return true/false
+     */
+    default boolean hasCustomCurve() {
+        return false;
+    }
+
+    /**
+     * Does the curve use prefix padding for encryption?
+     * @return true/false
+     */
+    default boolean prefixPadding() {
+        return true;
+    }
 }

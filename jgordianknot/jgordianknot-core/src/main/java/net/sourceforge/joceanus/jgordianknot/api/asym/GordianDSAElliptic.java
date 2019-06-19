@@ -66,8 +66,9 @@ public enum GordianDSAElliptic implements GordianElliptic {
     SECP256K1("secp256k1", 256),
 
     /**
-     * secp256r1 (same curve as prime256v1).
+     * secp256r1.
      */
+    SECP256R1("secp256r1", 256),
 
     /**
      * sect239k1.
@@ -110,8 +111,9 @@ public enum GordianDSAElliptic implements GordianElliptic {
     SECP192K1("secp192k1", 192),
 
     /**
-     * secp192r1 (same curve as prime192v1).
+     * secp192r1.
      */
+    SECP192R1("secp192r1", 192),
 
     /**
      * sect163k1.
@@ -184,9 +186,8 @@ public enum GordianDSAElliptic implements GordianElliptic {
     SECP112R2("secp112r2", 112),
 
     /**
-     * prime256v1.
+     * prime256v1 (same curve as secp256r1).
      */
-    PRIME256V1("prime256v1", 256),
 
     /**
      * prime239v1.
@@ -204,9 +205,8 @@ public enum GordianDSAElliptic implements GordianElliptic {
     PRIME239V3("prime239v3", 239),
 
     /**
-     * prime192v1.
+     * prime192v1 (same curve as secp192r1)
      */
-    PRIME192V1("prime192v1", 192),
 
     /**
      * prime192v2.
@@ -433,6 +433,50 @@ public enum GordianDSAElliptic implements GordianElliptic {
             default:
                 return true;
         }
+    }
+
+    @Override
+    public boolean hasCustomCurve() {
+        switch (this) {
+            case SECP112R1:
+            case SECP128R1:
+            case SECP160K1:
+            case SECP160R1:
+            case SECP160R2:
+            case SECP192K1:
+            case SECP192R1:
+            case SECP224K1:
+            case SECP224R1:
+            case SECP256K1:
+            case SECP256R1:
+            case SECP384R1:
+            case SECP521R1:
+            case SECT113R1:
+            case SECT113R2:
+            case SECT131R1:
+            case SECT131R2:
+            case SECT163K1:
+            case SECT163R1:
+            case SECT163R2:
+            case SECT193R1:
+            case SECT193R2:
+            case SECT233K1:
+            case SECT233R1:
+            case SECT239K1:
+            case SECT283K1:
+            case SECT283R1:
+            case SECT409K1:
+            case SECT409R1:
+            case SECT571K1:
+            case SECT571R1:
+                return true;
+            default:
+                return false;
+        }
+    }
+    @Override
+    public boolean prefixPadding() {
+        return this != SECP128R1;
     }
 }
 

@@ -45,6 +45,7 @@ import org.bouncycastle.asn1.x9.DomainParameters;
 import org.bouncycastle.asn1.x9.ECNamedCurveTable;
 import org.bouncycastle.asn1.x9.X962Parameters;
 import org.bouncycastle.asn1.x9.X9ObjectIdentifiers;
+import org.bouncycastle.crypto.ec.CustomNamedCurves;
 import org.bouncycastle.crypto.params.DHParameters;
 import org.bouncycastle.crypto.params.ECDomainParameters;
 import org.bouncycastle.pqc.asn1.McElieceCCA2PrivateKey;
@@ -404,9 +405,12 @@ public class GordianAsymAlgId {
                 throw new GordianDataException(ERROR_NAMEDCURVE);
             }
 
-            /* Check for EC named surve */
+            /* Check for EC named curve */
             final ASN1ObjectIdentifier myId = (ASN1ObjectIdentifier) pParms.getParameters();
-            final String myName = ECNamedCurveTable.getName(myId);
+            String myName = CustomNamedCurves.getName(myId);
+            if (myName == null) {
+                myName = ECNamedCurveTable.getName(myId);
+            }
             if (myName != null) {
                 final GordianDSAElliptic myDSACurve = GordianDSAElliptic.getCurveForName(myName);
                 if (myDSACurve != null) {

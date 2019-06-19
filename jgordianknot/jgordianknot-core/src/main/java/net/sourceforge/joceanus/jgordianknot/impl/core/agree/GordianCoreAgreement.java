@@ -152,7 +152,8 @@ public abstract class GordianCoreAgreement
         if (pResultType instanceof GordianFactoryType
             || pResultType instanceof GordianKeySetSpec
             || pResultType instanceof GordianSymCipherSpec
-            || pResultType instanceof GordianStreamCipherSpec) {
+            || pResultType instanceof GordianStreamCipherSpec
+            || pResultType == null) {
             theResultType = pResultType;
         } else {
             throw new IllegalArgumentException("Invalid resultType");
@@ -281,6 +282,12 @@ public abstract class GordianCoreAgreement
             /* Derive the key */
             final GordianStreamCipherSpec myCipherSpec = (GordianStreamCipherSpec) theResultType;
             theResult = deriveKey(myCipherSpec.getKeyType(), pSecret);
+
+            /* If the resultType is a StreamCipherSpec */
+        } else if (theResultType == null) {
+            /* Derive the key */
+            final GordianStreamCipherSpec myCipherSpec = (GordianStreamCipherSpec) theResultType;
+            theResult = pSecret;
         }
     }
 
@@ -366,6 +373,9 @@ public abstract class GordianCoreAgreement
             final GordianCoreCipherFactory myCipherFactory = (GordianCoreCipherFactory) theFactory.getCipherFactory();
             return myCipherFactory.getIdentifierForSpec((GordianStreamCipherSpec) theResultType);
         }
+        if (theResultType == null) {
+            return new AlgorithmIdentifier(GordianCoreFactory.NULLFACTORYOID);
+        }
         throw new GordianDataException("No resultType set");
     }
 
@@ -383,6 +393,10 @@ public abstract class GordianCoreAgreement
         }
         if (GordianCoreFactory.JCAFACTORYOID.equals(myAlgId)) {
             theResultType = GordianFactoryType.JCA;
+            return;
+        }
+        if (GordianCoreFactory.NULLFACTORYOID.equals(myAlgId)) {
+            theResultType = null;
             return;
         }
 

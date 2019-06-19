@@ -22,7 +22,6 @@ import java.security.spec.PKCS8EncodedKeySpec;
 import java.security.spec.X509EncodedKeySpec;
 
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
-import org.bouncycastle.asn1.gm.GMNamedCurves;
 import org.bouncycastle.asn1.pkcs.PrivateKeyInfo;
 import org.bouncycastle.asn1.x509.SubjectPublicKeyInfo;
 import org.bouncycastle.asn1.x9.ECNamedCurveTable;
@@ -63,7 +62,7 @@ import org.bouncycastle.util.BigIntegers;
 
 import net.sourceforge.joceanus.jgordianknot.api.agree.GordianAgreementSpec;
 import net.sourceforge.joceanus.jgordianknot.api.asym.GordianAsymKeySpec;
-import net.sourceforge.joceanus.jgordianknot.api.asym.GordianAsymKeyType;
+import net.sourceforge.joceanus.jgordianknot.api.asym.GordianElliptic;
 import net.sourceforge.joceanus.jgordianknot.api.encrypt.GordianEncryptorSpec;
 import net.sourceforge.joceanus.jgordianknot.api.factory.GordianAsymFactory;
 import net.sourceforge.joceanus.jgordianknot.api.key.GordianKeyPair;
@@ -205,14 +204,14 @@ public final class BouncyEllipticAsymKey {
             super(pFactory, pKeySpec);
 
             /* Create the generator */
-            final GordianAsymKeyType myType = pKeySpec.getKeyType();
             theGenerator = new ECKeyPairGenerator();
-            final String myCurve = pKeySpec.getElliptic().getCurveName();
 
             /* Lookup the parameters */
-            final X9ECParameters x9 = GordianAsymKeyType.SM2.equals(myType)
-                                      ? GMNamedCurves.getByName(myCurve)
-                                      : ECNamedCurveTable.getByName(myCurve);
+            final GordianElliptic myElliptic = pKeySpec.getElliptic();
+            final String myCurve = myElliptic.getCurveName();
+            final X9ECParameters x9 = myElliptic.hasCustomCurve()
+                                ? ECUtil.getNamedCurveByName(myCurve)
+                                : ECNamedCurveTable.getByName(myCurve);
             if (x9 == null) {
                 throw new GordianLogicException("Invalid KeySpec - " + pKeySpec);
             }
@@ -956,7 +955,8 @@ public final class BouncyEllipticAsymKey {
 
             /* Initialise for encryption */
             final ECPublicKeyParameters myParms = (ECPublicKeyParameters) getPublicKey().getPublicKey();
-            theEncryptor.initForEncrypt(myParms, getRandom());
+            final boolean prefixPadding = pKeyPair.getKeySpec().getElliptic().prefixPadding();
+            theEncryptor.initForEncrypt(myParms, prefixPadding, getRandom());
         }
 
         @Override
@@ -966,7 +966,8 @@ public final class BouncyEllipticAsymKey {
 
             /* Initialise for decryption */
             final ECPrivateKeyParameters myParms = (ECPrivateKeyParameters) getPrivateKey().getPrivateKey();
-            theEncryptor.initForDecrypt(myParms);
+            final boolean prefixPadding = pKeyPair.getKeySpec().getElliptic().prefixPadding();
+            theEncryptor.initForDecrypt(myParms, prefixPadding);
         }
 
         @Override

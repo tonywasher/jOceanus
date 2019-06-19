@@ -67,6 +67,11 @@ public class EllipticEncryptor {
     private boolean isAvailable;
 
     /**
+     * Is padding prefixed (or else suffixed)?
+     */
+    private boolean paddingPrefixed;
+
+    /**
      * Are we encrypting or decrypting?
      */
     private boolean encrypting;
@@ -83,9 +88,11 @@ public class EllipticEncryptor {
     /**
      * Initialise for encryption.
      * @param pPublicKey the publicKey
+     * @param pPaddingPrefixed use prefixed padding
      * @param pRandom the secureRandom
      */
     public void initForEncrypt(final ECPublicKeyParameters pPublicKey,
+                               final boolean pPaddingPrefixed,
                                final SecureRandom pRandom) {
         /* Access domain parameters */
         final ECDomainParameters myDomain = pPublicKey.getParameters();
@@ -97,6 +104,7 @@ public class EllipticEncryptor {
         theCurve = myDomain.getCurve();
         isAvailable = true;
         encrypting = true;
+        paddingPrefixed = pPaddingPrefixed;
 
         /* Initialise for encryption */
         final ParametersWithRandom myParms = new ParametersWithRandom(pPublicKey, pRandom);
@@ -106,8 +114,10 @@ public class EllipticEncryptor {
     /**
      * Initialise for decryption.
      * @param pPrivateKey the privateKey
+     * @param pPaddingPrefixed use prefixed padding
      */
-    public void initForDecrypt(final ECPrivateKeyParameters pPrivateKey) {
+    public void initForDecrypt(final ECPrivateKeyParameters pPrivateKey,
+                               final boolean pPaddingPrefixed) {
         /* Access domain parameters */
         final ECDomainParameters myDomain = pPrivateKey.getParameters();
         if (isUnsupported(myDomain)) {
@@ -118,6 +128,7 @@ public class EllipticEncryptor {
         theCurve = myDomain.getCurve();
         isAvailable = true;
         encrypting = false;
+        paddingPrefixed = pPaddingPrefixed;
 
         /* Initialise for decryption */
         theDecryptor.init(pPrivateKey);
@@ -265,12 +276,23 @@ public class EllipticEncryptor {
         if (pInBuffer.length - pInOff < pInLen) {
             throw new IllegalArgumentException("Invalid input buffer");
         }
-        final int myStart = myLen - pInLen - 1;
 
         /* Create the work buffer and copy data in */
         final byte[] myX = new byte[myLen];
-        System.arraycopy(pInBuffer, pInOff, myX, myStart, pInLen);
-        myX[myStart - 1] = 1;
+
+        /* If we are prefixing the padding */
+        if (paddingPrefixed) {
+            /* Calculate the start position and place data and padding */
+            final int myStart = myLen - pInLen - 1;
+            System.arraycopy(pInBuffer, pInOff, myX, myStart, pInLen);
+            myX[myStart - 1] = 1;
+
+            /* else we are suffixing the padding */
+        } else {
+            /* Place data and padding */
+            System.arraycopy(pInBuffer, pInOff, myX, 0, pInLen);
+            myX[pInLen] = 1;
+        }
 
         /* Loop to obtain point on curve */
         for (int i = 0; i < MAXITERATION; i++) {
@@ -417,37 +439,72 @@ public class EllipticEncryptor {
     private int convertFromECPoint(final ECPoint pPoint,
                                    final byte[] pOutBuffer,
                                    final int pOutOff) throws InvalidCipherTextException {
-        /* Check length */
-        final int myLen = getBlockLength();
-        if (pOutBuffer.length - pOutOff < myLen - 2) {
-            throw new IllegalArgumentException("Output buffer too small");
-        }
-
         /* Obtain the X co-ordinate */
         final BigInteger myX = pPoint.getAffineXCoord().toBigInteger();
         final byte[] myBuf = myX.toByteArray();
+        int myStart;
+        int myEnd;
 
-        /* Count the padding */
-        final int myEnd = myBuf.length - 1;
-        int myStart = -1;
+        /* If we are prefixing the padding */
+        if (paddingPrefixed) {
+            /* Set defaults */
+            myStart = -1;
+            myEnd = myBuf.length - 1;
 
-        /* Loop through the data in fixed time */
-        for (int myIndex = 0; myIndex != myEnd; myIndex++) {
-            /* If the value is non-zero and we have not yet found start */
-            if (myBuf[myIndex] != 0
-                    && myStart == -1) {
-                myStart = myIndex;
+            /* Loop through the data in fixed time */
+            for (int myIndex = 0; myIndex < myEnd; myIndex++) {
+                /* If the value is non-zero and we have not yet found start */
+                if (myBuf[myIndex] != 0
+                        && myStart == -1) {
+                    myStart = myIndex;
+                }
+            }
+
+            /* Check validity */
+            if (myStart == -1 || myBuf[myStart] != 1) {
+                throw new InvalidCipherTextException("Invalid data");
+            }
+
+            /* Bump past padding */
+            myStart++;
+
+            /* else we are suffixing the padding */
+        } else {
+            /* Set data start */
+            myStart = 0;
+            myEnd = -1;
+
+            /* Check for a buffer that has a prefixed zero (owing to top bit set) */
+            if (myBuf.length == getBlockLength() + 1) {
+                if (myBuf[0] != 0) {
+                    throw new InvalidCipherTextException("Invalid data");
+                }
+
+                myStart = 1;
+            }
+
+            /* Loop through the data in fixed time */
+            for (int myIndex = myBuf.length - 2; myIndex > myStart; myIndex--) {
+                /* If the value is non-zero and we have not yet found end */
+                if (myBuf[myIndex] != 0
+                        && myEnd == -1) {
+                    myEnd = myIndex;
+                }
+            }
+
+            /* Check validity */
+            if (myEnd == -1 || myBuf[myEnd] != 1) {
+                throw new InvalidCipherTextException("Invalid data");
             }
         }
 
-        /* Check validity */
-        if (myStart == myEnd || myBuf[myStart] != 1) {
-            throw new InvalidCipherTextException("Invalid data");
+        /* Check length */
+        final int myOutLen = myEnd - myStart;
+        if (pOutBuffer.length - pOutOff < myOutLen) {
+            throw new IllegalArgumentException("Output buffer too small");
         }
 
         /* Copy the data out */
-        myStart++;
-        final int myOutLen = myEnd - myStart;
         System.arraycopy(myBuf, myStart, pOutBuffer, pOutOff, myOutLen);
         return myOutLen;
     }
