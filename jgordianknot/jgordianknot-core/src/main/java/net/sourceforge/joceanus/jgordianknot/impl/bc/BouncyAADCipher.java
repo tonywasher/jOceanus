@@ -23,6 +23,7 @@ import org.bouncycastle.crypto.modes.AEADBlockCipher;
 import org.bouncycastle.crypto.params.KeyParameter;
 import org.bouncycastle.crypto.params.ParametersWithIV;
 
+import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianSymAADCipher;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianSymCipherSpec;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianSymKeySpec;
 import net.sourceforge.joceanus.jgordianknot.api.key.GordianKey;
@@ -34,7 +35,8 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
  * Cipher for BouncyCastle AAD Symmetric Ciphers.
  */
 public class BouncyAADCipher
-        extends GordianCoreAADCipher {
+        extends GordianCoreAADCipher
+        implements GordianSymAADCipher {
     /**
      * Cipher.
      */

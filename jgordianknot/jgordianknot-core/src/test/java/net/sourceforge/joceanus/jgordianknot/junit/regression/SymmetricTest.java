@@ -21,6 +21,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.stream.Stream;
 
+import javax.crypto.Cipher;
+
 import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
 import org.bouncycastle.util.Arrays;
 import org.junit.jupiter.api.*;
@@ -33,8 +35,11 @@ import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianCipherFactory;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianCipherMode;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianCipherSpec;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianPadding;
+import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianStreamCipher;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianStreamCipherSpec;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianStreamKeySpec;
+import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianSymAADCipher;
+import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianSymCipher;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianSymCipherSpec;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianSymKeySpec;
 import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigest;
@@ -701,9 +706,13 @@ public class SymmetricTest {
             /* Check encryption */
             final byte[] myIV = myCipher.getInitVector();
             final byte[] myEncrypted = myCipher.finish(myTestData);
+            final byte[] myEncrypted2 = myCipher.finish(myTestData);
             myCipher.initCipher(myKey, myIV, false);
             final byte[] myResult = myCipher.finish(myEncrypted);
+            myCipher.initCipher(myKey, myIV, false);
+            final byte[] myResult2 = myCipher.finish(myEncrypted2);
             Assertions.assertArrayEquals(myTestData, myResult, "Failed to encrypt/decrypt");
+            Assertions.assertArrayEquals(myResult, myResult2, "Failed to reset properly");
         } else {
             /* Check that the blockLength is correct */
             Assertions.assertEquals(mySpec.getBlockLength().getByteLength(), myCipher.getBlockSize(), "BlockLength incorrect");
@@ -764,14 +773,25 @@ public class SymmetricTest {
         /* Access Data */
         final byte[] myTestData = getTestData();
         final byte[] myAADData = getAADData();
-        final GordianAADCipher myCipher = myCipherFactory.createAADCipher(mySpec);
+        final GordianSymAADCipher myCipher = myCipherFactory.createAADCipher(mySpec);
         myCipher.initCipher(myKey);
         final byte[] myIV = myCipher.getInitVector();
         myCipher.updateAAD(myAADData);
         final byte[] myEncrypted = myCipher.finish(myTestData);
+        byte[] myEncrypted2 = null;
+        if (!mySpec.getCipherMode().needsReInitialisation()) {
+            myCipher.updateAAD(myAADData);
+            myEncrypted2 = myCipher.finish(myTestData);
+        }
         myCipher.initCipher(myKey, myIV, false);
         myCipher.updateAAD(myAADData);
         final byte[] myResult = myCipher.finish(myEncrypted);
+        if (myEncrypted2 != null) {
+            myCipher.initCipher(myKey, myIV, false);
+            myCipher.updateAAD(myAADData);
+            final byte[] myResult2 = myCipher.finish(myEncrypted2);
+            Assertions.assertArrayEquals(myResult, myResult2, "Failed to reset properly");
+        }
         Assertions.assertArrayEquals(myTestData, myResult, "Failed to encrypt/decrypt");
     }
 
@@ -793,14 +813,14 @@ public class SymmetricTest {
         /* Encrypt Data */
         final byte[] myTestData = getTestData();
         final byte[] myAADData = getAADData();
-        final GordianAADCipher myCipher = myCipherFactory.createAADCipher(mySpec);
+        final GordianSymAADCipher myCipher = myCipherFactory.createAADCipher(mySpec);
         myCipher.initCipher(myKey);
         final byte[] myIV = myCipher.getInitVector();
         myCipher.updateAAD(myAADData);
         final byte[] myEncrypted = myCipher.finish(myTestData);
 
         /* Decrypt data at partner */
-        final GordianAADCipher myPartnerCipher = myPartnerFactory.createAADCipher(mySpec);
+        final GordianSymAADCipher myPartnerCipher = myPartnerFactory.createAADCipher(mySpec);
         myPartnerCipher.initCipher(myPartnerKey, myIV, false);
         myPartnerCipher.updateAAD(myAADData);
         final byte[] myResult = myPartnerCipher.finish(myEncrypted);
@@ -825,13 +845,17 @@ public class SymmetricTest {
 
         /* Create the Cipher */
         final GordianStreamCipherSpec myCipherSpec = GordianStreamCipherSpec.stream(myKeySpec);
-        final GordianCipher<GordianStreamKeySpec> myCipher = myCipherFactory.createStreamKeyCipher(myCipherSpec);
+        final GordianStreamCipher myCipher = myCipherFactory.createStreamKeyCipher(myCipherSpec);
         myCipher.initCipher(myStreamKey);
         final byte[] myIV = myCipher.getInitVector();
         final byte[] myEncrypted = myCipher.finish(myTestData);
+        final byte[] myEncrypted2 = myCipher.finish(myTestData);
         myCipher.initCipher(myStreamKey, myIV, false);
         final byte[] myResult = myCipher.finish(myEncrypted);
+        myCipher.initCipher(myStreamKey, myIV, false);
+        final byte[] myResult2 = myCipher.finish(myEncrypted);
         Assertions.assertArrayEquals(myTestData, myResult, "Failed to encrypt/decrypt");
+        Assertions.assertArrayEquals(myResult, myResult2, "Failed to reset properly");
     }
 
     /**
@@ -845,9 +869,9 @@ public class SymmetricTest {
         final GordianStreamKeySpec mySpec = pKeySpec.getSpec();
         final GordianStreamCipherSpec myCipherSpec = GordianStreamCipherSpec.stream(mySpec);
         final GordianCipherFactory myCipherFactory = myFactory.getCipherFactory();
-        final GordianCipher<GordianStreamKeySpec> myCipher = myCipherFactory.createStreamKeyCipher(myCipherSpec);
+        final GordianStreamCipher myCipher = myCipherFactory.createStreamKeyCipher(myCipherSpec);
         final GordianCipherFactory myPartnerFactory = myPartner.getCipherFactory();
-        final GordianCipher<GordianStreamKeySpec> myPartnerCipher = myPartnerFactory.createStreamKeyCipher(myCipherSpec);
+        final GordianStreamCipher myPartnerCipher = myPartnerFactory.createStreamKeyCipher(myCipherSpec);
         final GordianKey<GordianStreamKeySpec> myKey = pKeySpec.getKey();
         final GordianKey<GordianStreamKeySpec> myPartnerKey = pKeySpec.getPartnerKey();
 
@@ -947,7 +971,7 @@ public class SymmetricTest {
         /* Build the cipher */
         byte[] myBytes = new byte[myLen];
         final GordianSymCipherSpec myCipherSpec = new GordianSymCipherSpec(mySpec, GordianCipherMode.ECB, GordianPadding.NONE);
-        final GordianCipher<GordianSymKeySpec> myCipher = myCipherFactory.createSymKeyCipher(myCipherSpec);
+        final GordianSymCipher myCipher = myCipherFactory.createSymKeyCipher(myCipherSpec);
 
         /* Start loop */
         final long myStart = System.nanoTime();
@@ -975,7 +999,7 @@ public class SymmetricTest {
         final int myLen = 128;
         byte[] myBytes = getTestData();
         final GordianStreamCipherSpec myCipherSpec = GordianStreamCipherSpec.stream(myKeySpec);
-        final GordianCipher<GordianStreamKeySpec> myCipher = myCipherFactory.createStreamKeyCipher(myCipherSpec);
+        final GordianStreamCipher myCipher = myCipherFactory.createStreamKeyCipher(myCipherSpec);
         final long myStart = System.nanoTime();
         for (int i = 0; i < profileRepeat; i++) {
             myCipher.initCipher(myStreamKey);

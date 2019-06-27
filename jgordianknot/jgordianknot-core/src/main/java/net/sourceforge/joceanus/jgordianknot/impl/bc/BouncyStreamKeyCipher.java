@@ -22,6 +22,7 @@ import org.bouncycastle.crypto.StreamCipher;
 import org.bouncycastle.crypto.params.KeyParameter;
 import org.bouncycastle.crypto.params.ParametersWithIV;
 
+import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianStreamCipher;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianStreamCipherSpec;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianStreamKeySpec;
 import net.sourceforge.joceanus.jgordianknot.api.key.GordianKey;
@@ -33,7 +34,8 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
  * Cipher for BouncyCastle Stream Ciphers.
  */
 public final class BouncyStreamKeyCipher
-        extends GordianCoreCipher<GordianStreamKeySpec> {
+        extends GordianCoreCipher<GordianStreamKeySpec>
+        implements GordianStreamCipher {
     /**
      * Cipher.
      */

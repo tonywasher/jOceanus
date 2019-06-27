@@ -31,7 +31,10 @@ import javax.crypto.spec.RC5ParameterSpec;
 
 import net.sourceforge.joceanus.jgordianknot.api.base.GordianLength;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianCipherSpec;
+import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianStreamCipher;
+import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianStreamCipherSpec;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianStreamKeySpec;
+import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianSymCipher;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianSymCipherSpec;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianSymKeySpec;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianSymKeyType;
@@ -46,7 +49,7 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
  * Cipher for JCA BouncyCastle Ciphers.
  * @param <T> the key Type
  */
-public final class JcaCipher<T extends GordianKeySpec>
+public abstract class JcaCipher<T extends GordianKeySpec>
         extends GordianCoreCipher<T> {
     /**
      * Cipher.
@@ -59,9 +62,9 @@ public final class JcaCipher<T extends GordianKeySpec>
      * @param pCipherSpec the cipherSpec
      * @param pCipher the cipher
      */
-    protected JcaCipher(final JcaFactory pFactory,
-                        final GordianCipherSpec<T> pCipherSpec,
-                        final Cipher pCipher) {
+    JcaCipher(final JcaFactory pFactory,
+              final GordianCipherSpec<T> pCipherSpec,
+              final Cipher pCipher) {
         super(pFactory, pCipherSpec);
         theCipher = pCipher;
     }
@@ -145,9 +148,7 @@ public final class JcaCipher<T extends GordianKeySpec>
 
         /* Store key and initVector */
         setKey(pKey);
-        setInitVector(pIV != null
-                      ? pIV
-                      : null);
+        setInitVector(pIV);
     }
 
     /**
@@ -219,5 +220,43 @@ public final class JcaCipher<T extends GordianKeySpec>
         return (mySpec instanceof GordianSymCipherSpec
                         && ((GordianSymCipherSpec) mySpec).getCipherMode().hasPadding())
                ? theCipher.getBlockSize() : 0;
+    }
+
+    /**
+     * JcaSymCipher.
+     */
+    public static class JcaSymCipher
+            extends JcaCipher<GordianSymKeySpec>
+            implements GordianSymCipher {
+        /**
+         * Constructor.
+         * @param pFactory the Security Factory
+         * @param pCipherSpec the cipherSpec
+         * @param pCipher the cipher
+         */
+        JcaSymCipher(final JcaFactory pFactory,
+                     final GordianSymCipherSpec pCipherSpec,
+                     final Cipher pCipher) {
+            super(pFactory, pCipherSpec, pCipher);
+        }
+    }
+
+    /**
+     * JcaStreamCipher.
+     */
+    public static class JcaStreamCipher
+            extends JcaCipher<GordianStreamKeySpec>
+            implements GordianStreamCipher {
+        /**
+         * Constructor.
+         * @param pFactory the Security Factory
+         * @param pCipherSpec the cipherSpec
+         * @param pCipher the cipher
+         */
+        JcaStreamCipher(final JcaFactory pFactory,
+                        final GordianStreamCipherSpec pCipherSpec,
+                        final Cipher pCipher) {
+            super(pFactory, pCipherSpec, pCipher);
+        }
     }
 }

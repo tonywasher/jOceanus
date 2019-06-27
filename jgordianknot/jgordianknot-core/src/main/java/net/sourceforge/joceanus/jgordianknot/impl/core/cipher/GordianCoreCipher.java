@@ -19,9 +19,9 @@ package net.sourceforge.joceanus.jgordianknot.impl.core.cipher;
 import java.security.SecureRandom;
 
 import net.sourceforge.joceanus.jgordianknot.api.base.GordianLength;
-import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianCipher;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianCipherFactory;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianCipherSpec;
+import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianKeyedCipher;
 import net.sourceforge.joceanus.jgordianknot.api.key.GordianKey;
 import net.sourceforge.joceanus.jgordianknot.api.base.GordianKeySpec;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianLogicException;
@@ -35,7 +35,7 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
  * @param <T> the keyType
  */
 public abstract class GordianCoreCipher<T extends GordianKeySpec>
-    implements GordianCipher<T> {
+    implements GordianKeyedCipher<T> {
     /**
      * KeyType.
      */

@@ -25,6 +25,7 @@ import org.bouncycastle.crypto.params.ParametersWithIV;
 import org.bouncycastle.crypto.params.RC5Parameters;
 
 import net.sourceforge.joceanus.jgordianknot.api.base.GordianLength;
+import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianSymCipher;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianSymCipherSpec;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianSymKeySpec;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianSymKeyType;
@@ -38,7 +39,8 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
  * Cipher for BouncyCastle Symmetric Ciphers.
  */
 public final class BouncySymKeyCipher
-        extends GordianCoreCipher<GordianSymKeySpec> {
+        extends GordianCoreCipher<GordianSymKeySpec>
+        implements GordianSymCipher {
     /**
      * Cipher.
      */

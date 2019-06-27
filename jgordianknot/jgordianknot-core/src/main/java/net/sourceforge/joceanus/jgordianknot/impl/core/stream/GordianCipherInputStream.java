@@ -20,8 +20,8 @@ import java.io.InputStream;
 
 import org.bouncycastle.util.Arrays;
 
-import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianCipher;
 import net.sourceforge.joceanus.jgordianknot.api.base.GordianKeySpec;
+import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianKeyedCipher;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
@@ -35,7 +35,7 @@ class GordianCipherInputStream<T extends GordianKeySpec>
      * @param pCipher the decryption cipher
      * @param pInput the underlying input stream
      */
-    GordianCipherInputStream(final GordianCipher<T> pCipher,
+    GordianCipherInputStream(final GordianKeyedCipher<T> pCipher,
                              final InputStream pInput) {
         super(pInput);
         setProcessedBuffer(new GordianCipherBuffer<T>(pCipher));
@@ -50,7 +50,7 @@ class GordianCipherInputStream<T extends GordianKeySpec>
         /**
          * The cipher.
          */
-        private final GordianCipher<T> theCipher;
+        private final GordianKeyedCipher<T> theCipher;
 
         /**
          * The buffer.
@@ -61,7 +61,7 @@ class GordianCipherInputStream<T extends GordianKeySpec>
          * Constructor.
          * @param pCipher the decryption cipher
          */
-        GordianCipherBuffer(final GordianCipher<T> pCipher) {
+        GordianCipherBuffer(final GordianKeyedCipher<T> pCipher) {
             theCipher = pCipher;
         }
 

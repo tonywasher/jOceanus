@@ -18,64 +18,12 @@ package net.sourceforge.joceanus.jgordianknot.api.cipher;
 
 import java.util.Arrays;
 
-import net.sourceforge.joceanus.jgordianknot.api.base.GordianLength;
-import net.sourceforge.joceanus.jgordianknot.api.key.GordianKey;
-import net.sourceforge.joceanus.jgordianknot.api.base.GordianKeySpec;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
  * GordianKnot base for Cipher.
- * @param <T> the keyType
  */
-public interface GordianCipher<T extends GordianKeySpec> {
-    /**
-     * Obtain the keyType.
-     * @return the keyType
-     */
-    T getKeyType();
-
-    /**
-     * Obtain the cipherSpec.
-     * @return the spec
-     */
-    GordianCipherSpec<T> getCipherSpec();
-
-    /**
-     * Obtain the keyLength.
-     * @return the keyLength
-     */
-    GordianLength getKeyLength();
-
-    /**
-     * Obtain the key.
-     * @return the key
-     */
-    GordianKey<T> getKey();
-
-    /**
-     * Obtain the keyType.
-     * @return the keyType
-     */
-    byte[] getInitVector();
-
-    /**
-     * Initialise the cipher for encryption with random IV.
-     * @param pKey the key
-     * @throws OceanusException on error
-     */
-    void initCipher(GordianKey<T> pKey) throws OceanusException;
-
-    /**
-     * Initialise the cipher.
-     * @param pKey the key
-     * @param pIV the initialisation vector
-     * @param pEncrypt true/false
-     * @throws OceanusException on error
-     */
-    void initCipher(GordianKey<T> pKey,
-                    byte[] pIV,
-                    boolean pEncrypt) throws OceanusException;
-
+public interface GordianCipher {
     /**
      * Determine the maximum number of output bytes that will be produced for the given number of
      * input bytes.

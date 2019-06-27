@@ -18,9 +18,8 @@ package net.sourceforge.joceanus.jgordianknot.impl.core.random;
 
 import org.bouncycastle.crypto.prng.EntropySource;
 
-import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianCipher;
+import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianSymCipher;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianSymCipherSpec;
-import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianSymKeySpec;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianByteArrayInteger;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.TethysDataConverter;
@@ -65,7 +64,7 @@ public class GordianX931CipherDRBG
     /**
      * The Cipher.
      */
-    private final GordianCipher<GordianSymKeySpec> theCipher;
+    private final GordianSymCipher theCipher;
 
     /**
      * The Entropy Source.
@@ -103,7 +102,7 @@ public class GordianX931CipherDRBG
      * @param pEntropy source of entropy to use for seeding/reSeeding.
      * @param pInitVector nonce to further distinguish this DRBG.
      */
-    public GordianX931CipherDRBG(final GordianCipher<GordianSymKeySpec> pCipher,
+    public GordianX931CipherDRBG(final GordianSymCipher pCipher,
                                  final EntropySource pEntropy,
                                  final byte[] pInitVector) {
         /* Store parameters */

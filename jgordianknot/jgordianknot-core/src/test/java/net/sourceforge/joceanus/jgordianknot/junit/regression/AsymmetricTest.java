@@ -19,6 +19,7 @@ package net.sourceforge.joceanus.jgordianknot.junit.regression;
 import java.security.SecureRandom;
 import java.security.spec.PKCS8EncodedKeySpec;
 import java.security.spec.X509EncodedKeySpec;
+import java.util.Arrays;
 import java.util.stream.Stream;
 
 import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
@@ -491,7 +492,6 @@ public class AsymmetricTest {
     private void checkSelfEncryptor(final FactoryEncryptor pEncryptor) throws OceanusException {
         /* Create the data to encrypt */
         final byte[] mySrc = new byte[TESTLEN];
-        RANDOM.nextBytes(mySrc);
 
         /* Access the KeySpec */
         final GordianEncryptorSpec mySpec = pEncryptor.getSpec();
@@ -507,12 +507,28 @@ public class AsymmetricTest {
         mySender.initForEncrypt(myPair);
         myReceiver.initForDecrypt(myPair);
 
-        /* Perform the encryption and decryption */
-        final byte[] myEncrypted = mySender.encrypt(mySrc);
-        final byte[] myResult = myReceiver.decrypt(myEncrypted);
+        /* Perform the encryption and decryption for all zeros */
+        byte[] myEncrypted = mySender.encrypt(mySrc);
+        byte[] myResult = myReceiver.decrypt(myEncrypted);
 
         /* Check that the values match */
-        Assertions.assertArrayEquals(mySrc, myResult, "Failed self encryption");
+        Assertions.assertArrayEquals(mySrc, myResult, "Failed self encryption for all zeros");
+
+        /* Perform the encryption and decryption for all ones */
+        Arrays.fill(mySrc, (byte) 0xFF);
+        myEncrypted = mySender.encrypt(mySrc);
+        myResult = myReceiver.decrypt(myEncrypted);
+
+        /* Check that the values match */
+        Assertions.assertArrayEquals(mySrc, myResult, "Failed self encryption for all ones");
+
+        /* Perform the encryption and decryption for random data */
+        RANDOM.nextBytes(mySrc);
+        myEncrypted = mySender.encrypt(mySrc);
+        myResult = myReceiver.decrypt(myEncrypted);
+
+        /* Check that the values match */
+        Assertions.assertArrayEquals(mySrc, myResult, "Failed self encryption for random data");
     }
 
     /**
@@ -523,7 +539,6 @@ public class AsymmetricTest {
     private void checkPartnerEncryptor(final FactoryEncryptor pEncryptor) throws OceanusException {
         /* Create the data to encrypt */
         final byte[] mySrc = new byte[TESTLEN];
-        RANDOM.nextBytes(mySrc);
 
         /* Access the KeySpec */
         final GordianEncryptorSpec mySpec = pEncryptor.getSpec();
@@ -541,7 +556,8 @@ public class AsymmetricTest {
         mySender.initForEncrypt(myPair);
         myReceiver.initForDecrypt(myPartnerSelf);
 
-        /* Perform the encryption and decryption */
+        /* Perform the encryption and decryption on random data */
+        RANDOM.nextBytes(mySrc);
         final byte[] myEncrypted = mySender.encrypt(mySrc);
         final byte[] myResult = myReceiver.decrypt(myEncrypted);
 

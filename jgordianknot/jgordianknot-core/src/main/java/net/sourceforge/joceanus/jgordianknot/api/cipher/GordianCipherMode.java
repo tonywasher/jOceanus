@@ -205,4 +205,12 @@ public enum GordianCipherMode {
     public boolean needsIV() {
         return this != ECB;
     }
+
+    /**
+     * Needs re-initialisation after final.
+     * @return true/false
+     */
+    public boolean needsReInitialisation() {
+        return this == GCM;
+    }
 }

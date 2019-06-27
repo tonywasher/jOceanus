@@ -24,11 +24,11 @@ import org.bouncycastle.crypto.prng.EntropySource;
 import org.bouncycastle.crypto.prng.EntropySourceProvider;
 
 import net.sourceforge.joceanus.jgordianknot.api.base.GordianLength;
-import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianCipher;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianCipherFactory;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianPadding;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianStreamKeySpec;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianStreamKeyType;
+import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianSymCipher;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianSymCipherSpec;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianSymKeySpec;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianSymKeyType;
@@ -360,7 +360,8 @@ public class GordianCoreRandomFactory
      * @return a SecureRandom supported by a CTR DRBG.
      * @throws OceanusException on error
      */
-    private GordianSecureRandom buildCTR(final GordianCipher<GordianSymKeySpec> pCipher,
+    @SuppressWarnings("unchecked")
+    private GordianSecureRandom buildCTR(final GordianSymCipher pCipher,
                                          final boolean isPredictionResistant) throws OceanusException {
         /* Create initVector */
         final byte[] myInit = theRandom.generateSeed(NUM_ENTROPY_BYTES_REQUIRED);
@@ -381,7 +382,7 @@ public class GordianCoreRandomFactory
      * @return a SecureRandom supported by a HMAC DRBG.
      * @throws OceanusException on error
      */
-    private GordianSecureRandom buildX931(final GordianCipher<GordianSymKeySpec> pCipher,
+    private GordianSecureRandom buildX931(final GordianSymCipher pCipher,
                                           final boolean isPredictionResistant) throws OceanusException {
         /* Initialise the cipher with a random key */
         final GordianCipherFactory myCiphers = theFactory.getCipherFactory();

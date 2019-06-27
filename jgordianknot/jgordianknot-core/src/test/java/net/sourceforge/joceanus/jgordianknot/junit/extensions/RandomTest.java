@@ -30,6 +30,7 @@ import org.junit.jupiter.api.TestFactory;
 import net.sourceforge.joceanus.jgordianknot.api.base.GordianLength;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianCipherFactory;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianPadding;
+import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianSymCipher;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianSymCipherSpec;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianSymKeySpec;
 import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigest;
@@ -442,7 +443,7 @@ public class RandomTest {
         pCipher.initCipher(myKey);
 
         /* Create the provider */
-        final GordianX931CipherDRBG myProvider = new GordianX931CipherDRBG(pCipher, myEntropy.get(myEntropyLength), myNonce);
+        final GordianX931CipherDRBG myProvider = new GordianX931CipherDRBG((GordianSymCipher)pCipher, myEntropy.get(myEntropyLength), myNonce);
 
         /* Run the testCases */
         for(GordianTestCase myCase : pTestCases) {
