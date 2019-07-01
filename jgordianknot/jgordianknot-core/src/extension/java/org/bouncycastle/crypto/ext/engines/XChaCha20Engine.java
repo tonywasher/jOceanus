@@ -17,6 +17,7 @@
 package org.bouncycastle.crypto.ext.engines;
 
 import org.bouncycastle.crypto.engines.ChaChaEngine;
+import org.bouncycastle.crypto.engines.Salsa20Engine;
 import org.bouncycastle.util.Pack;
 
 /**
@@ -24,11 +25,13 @@ import org.bouncycastle.util.Pack;
  */
 public class XChaCha20Engine extends ChaChaEngine {
 
+    @Override
     public String getAlgorithmName()
     {
         return "XChaCha20";
     }
 
+    @Override
     protected int getNonceSize()
     {
         return 24;
@@ -39,27 +42,26 @@ public class XChaCha20Engine extends ChaChaEngine {
      * using a core ChaCha20 function without input addition to produce 256 bit working key
      * and use that with the remaining 64 bits of nonce to initialize a standard ChaCha20 engine state.
      */
-    protected void setKey(byte[] keyBytes, byte[] ivBytes)
-    {
-        if (keyBytes == null)
-        {
+    @Override
+    protected void setKey(final byte[] keyBytes,
+                          final byte[] ivBytes) {
+        if (keyBytes == null) {
             throw new IllegalArgumentException(getAlgorithmName() + " doesn't support re-init with null key");
         }
 
-        if (keyBytes.length != 32)
-        {
+        if (keyBytes.length != 32) {
             throw new IllegalArgumentException(getAlgorithmName() + " requires a 256 bit key");
         }
 
-        // Set key for HChaCha20
+        // Set key for ChaCha20
         super.setKey(keyBytes, ivBytes);
 
-        // Pack next 64 bits of IV into engine state instead of counter
-        Pack.littleEndianToInt(ivBytes, 8, engineState, 12, 2);
+        // Pack first 128 bits of IV into engine state
+        Pack.littleEndianToInt(ivBytes, 0, engineState, 12, 4);
 
         // Process engine state to generate ChaCha20 key
-        int[] hChaCha20Out = new int[engineState.length];
-        chachaCore(20, engineState, hChaCha20Out);
+        final int[] hChaCha20Out = new int[engineState.length];
+        chachaCore(Salsa20Engine.DEFAULT_ROUNDS, engineState, hChaCha20Out);
 
         // Set new key, removing addition in last round of chachaCore
         engineState[4] = hChaCha20Out[0] - engineState[0];

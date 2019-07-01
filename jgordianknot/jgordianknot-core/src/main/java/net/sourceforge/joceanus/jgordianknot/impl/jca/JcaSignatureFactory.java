@@ -19,7 +19,6 @@ package net.sourceforge.joceanus.jgordianknot.impl.jca;
 import java.security.NoSuchAlgorithmException;
 import java.security.Signature;
 
-import net.sourceforge.joceanus.jgordianknot.api.base.GordianLength;
 import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigestSpec;
 import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigestType;
 import net.sourceforge.joceanus.jgordianknot.api.sign.GordianSignature;

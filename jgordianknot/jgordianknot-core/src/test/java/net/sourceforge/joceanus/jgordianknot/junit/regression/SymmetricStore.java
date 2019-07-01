@@ -662,6 +662,7 @@ class SymmetricStore {
          * Constructor.
          * @param pFactory the factory
          * @param pRandomType the randomType
+         * @param pLength the keyLength
          */
         FactoryRandomType(final GordianFactory pFactory,
                           final GordianRandomType pRandomType,

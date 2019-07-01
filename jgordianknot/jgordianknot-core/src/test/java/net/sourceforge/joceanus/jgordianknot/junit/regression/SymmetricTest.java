@@ -853,7 +853,7 @@ public class SymmetricTest {
         myCipher.initCipher(myStreamKey, myIV, false);
         final byte[] myResult = myCipher.finish(myEncrypted);
         myCipher.initCipher(myStreamKey, myIV, false);
-        final byte[] myResult2 = myCipher.finish(myEncrypted);
+        final byte[] myResult2 = myCipher.finish(myEncrypted2);
         Assertions.assertArrayEquals(myTestData, myResult, "Failed to encrypt/decrypt");
         Assertions.assertArrayEquals(myResult, myResult2, "Failed to reset properly");
     }

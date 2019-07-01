@@ -283,10 +283,9 @@ public abstract class GordianCoreAgreement
             final GordianStreamCipherSpec myCipherSpec = (GordianStreamCipherSpec) theResultType;
             theResult = deriveKey(myCipherSpec.getKeyType(), pSecret);
 
-            /* If the resultType is a StreamCipherSpec */
+            /* If the resultType is pure bytes */
         } else if (theResultType == null) {
-            /* Derive the key */
-            final GordianStreamCipherSpec myCipherSpec = (GordianStreamCipherSpec) theResultType;
+            /* Return the secret */
             theResult = pSecret;
         }
     }
