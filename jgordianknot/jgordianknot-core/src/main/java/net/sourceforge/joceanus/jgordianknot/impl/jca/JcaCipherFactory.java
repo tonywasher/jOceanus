@@ -39,6 +39,8 @@ import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianCoreFactory;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianCryptoException;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianDataException;
 import net.sourceforge.joceanus.jgordianknot.impl.core.cipher.GordianCoreCipherFactory;
+import net.sourceforge.joceanus.jgordianknot.impl.jca.JcaCipher.JcaStreamCipher;
+import net.sourceforge.joceanus.jgordianknot.impl.jca.JcaCipher.JcaSymCipher;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
@@ -101,13 +103,13 @@ public class JcaCipherFactory
     }
 
     @Override
-    public JcaCipher<GordianSymKeySpec> createSymKeyCipher(final GordianSymCipherSpec pCipherSpec) throws OceanusException {
+    public JcaSymCipher createSymKeyCipher(final GordianSymCipherSpec pCipherSpec) throws OceanusException {
         /* Check validity of SymKeySpec */
         checkSymCipherSpec(pCipherSpec, false);
 
         /* Create the cipher */
         final Cipher myBCCipher = getJavaCipher(pCipherSpec);
-        return new JcaCipher<>(getFactory(), pCipherSpec, myBCCipher);
+        return new JcaSymCipher(getFactory(), pCipherSpec, myBCCipher);
     }
 
     @Override
@@ -121,13 +123,13 @@ public class JcaCipherFactory
     }
 
     @Override
-    public JcaCipher<GordianStreamKeySpec> createStreamKeyCipher(final GordianStreamCipherSpec pCipherSpec) throws OceanusException {
+    public JcaStreamCipher createStreamKeyCipher(final GordianStreamCipherSpec pCipherSpec) throws OceanusException {
         /* Check validity of StreamKeySpec */
         checkStreamCipherSpec(pCipherSpec);
 
         /* Create the cipher */
         final Cipher myJavaCipher = getJavaCipher(pCipherSpec.getKeyType());
-        return new JcaCipher<>(getFactory(), pCipherSpec, myJavaCipher);
+        return new JcaStreamCipher(getFactory(), pCipherSpec, myJavaCipher);
     }
 
     @Override
@@ -137,7 +139,7 @@ public class JcaCipherFactory
 
         /* Create the cipher */
         final GordianSymCipherSpec mySpec = GordianSymCipherSpec.ecb(pKeySpec, GordianPadding.NONE);
-        final JcaCipher<GordianSymKeySpec> myJcaCipher = createSymKeyCipher(mySpec);
+        final JcaSymCipher myJcaCipher = createSymKeyCipher(mySpec);
         return createKeyWrapper(myJcaCipher);
     }
 

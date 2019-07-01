@@ -77,7 +77,6 @@ public class KeyStoreTest {
     public static void createFactory() throws OceanusException {
         /* Create the factory */
         FACTORY = GordianGenerator.createFactory(new GordianParameters(GordianFactoryType.BC));
-
     }
 
     /**
@@ -85,7 +84,7 @@ public class KeyStoreTest {
      * @throws OceanusException on error
      */
     @Test
-    public void runSimpleTest() throws OceanusException {
+    public void keyStoreTest() throws OceanusException {
         /* Set up test parameters */
         final GordianLength myKeyLen = GordianLength.LEN_256;
         final GordianKeySetSpec myKeySetSpec = new GordianKeySetSpec(myKeyLen);
@@ -194,7 +193,9 @@ public class KeyStoreTest {
         myStore.deleteEntry("streamKey");
         myStore.deleteEntry("macKey");
 
+        /* Check that we have deleted all values */
         int mySize = myStore.size();
+        Assertions.assertEquals(0, mySize);
     }
 
     /**

@@ -60,12 +60,13 @@ public class G3413CTR {
 
             /* Catch general exceptions */
         } catch (NoSuchPaddingException
-                | NoSuchAlgorithmException
-                | InvalidAlgorithmParameterException e) {
-            System.out.println("Failed to create generator");
+                | NoSuchAlgorithmException e) {
+            System.out.println("General exception");
             e.printStackTrace();
+        } catch (InvalidAlgorithmParameterException e) {
+            System.out.println(pAlgorithm + " G3413CTR IV " + pIVLen + " rejected by JCA Wrapper");
         } catch (InvalidKeyException e) {
-            System.out.println(pAlgorithm + " G3413CTR JCA init Bug still exists");
+            System.out.println(pAlgorithm + " G3413CTR IV " + pIVLen + " rejected by CipherMode");
         }
     }
 }

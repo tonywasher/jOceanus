@@ -19,15 +19,19 @@ package net.sourceforge.joceanus.jgordianknot.junit.extensions;
 import java.util.Arrays;
 import java.util.stream.Stream;
 
+import org.bouncycastle.crypto.InvalidCipherTextException;
 import org.bouncycastle.crypto.Mac;
 import org.bouncycastle.crypto.StreamCipher;
+import org.bouncycastle.crypto.ext.engines.ChaChaPolyEngine;
 import org.bouncycastle.crypto.ext.engines.RabbitEngine;
 import org.bouncycastle.crypto.ext.engines.Snow3GEngine;
 import org.bouncycastle.crypto.ext.engines.SosemanukEngine;
+import org.bouncycastle.crypto.ext.engines.XChaCha20Engine;
 import org.bouncycastle.crypto.ext.engines.Zuc128Engine;
 import org.bouncycastle.crypto.ext.engines.Zuc256Engine;
 import org.bouncycastle.crypto.ext.macs.Zuc128Mac;
 import org.bouncycastle.crypto.ext.macs.Zuc256Mac;
+import org.bouncycastle.crypto.params.AEADParameters;
 import org.bouncycastle.crypto.params.KeyParameter;
 import org.bouncycastle.crypto.params.ParametersWithIV;
 import org.junit.jupiter.api.Assertions;
@@ -36,6 +40,7 @@ import org.junit.jupiter.api.DynamicNode;
 import org.junit.jupiter.api.DynamicTest;
 import org.junit.jupiter.api.TestFactory;
 
+import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianCryptoException;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.TethysDataConverter;
 
@@ -52,6 +57,8 @@ public class StreamCipherTest {
          */
         private final String theKey;
         private final String theIV;
+        private final String theAAD;
+        private final String thePlainText;
         private final String theExpected;
 
         /**
@@ -63,8 +70,40 @@ public class StreamCipherTest {
         TestCase(final String pKey,
                  final String pIV,
                  final String pExpected) {
+            this(pKey, pIV, null, null, pExpected);
+        }
+
+        /**
+         * Constructor.
+         * @param pKey the key
+         * @param pIV the IV
+         * @param pPlain the plainText
+         * @param pExpected the expected results.
+         */
+        TestCase(final String pKey,
+                 final String pIV,
+                 final String pPlain,
+                 final String pExpected) {
+            this(pKey, pIV, null, pPlain, pExpected);
+        }
+
+        /**
+         * Constructor.
+         * @param pKey the key
+         * @param pIV the IV
+         * @param pAAD the AAD
+         * @param pPlain the plainText
+         * @param pExpected the expected results.
+         */
+        TestCase(final String pKey,
+                 final String pIV,
+                 final String pAAD,
+                 final String pPlain,
+                 final String pExpected) {
             theKey = pKey;
             theIV = pIV;
+            theAAD = pAAD;
+            thePlainText = pPlain;
             theExpected = pExpected;
         }
     }
@@ -133,6 +172,12 @@ public class StreamCipherTest {
                 DynamicContainer.dynamicContainer("Zuc", Stream.of(
                         DynamicTest.dynamicTest("128", () -> new Zuc128Test().testTheCipher()),
                         DynamicTest.dynamicTest("256", () -> new Zuc256Test().testTheCipher())
+                )),
+                DynamicContainer.dynamicContainer("XChaCha20", Stream.of(
+                        DynamicTest.dynamicTest("256", () -> new XChaCha20Test().testTheCipher())
+                )),
+                DynamicContainer.dynamicContainer("ChaCha20Poly1305", Stream.of(
+                        DynamicTest.dynamicTest("256", () -> new ChaChaPolyTest().testTheCipher())
                 ))
         )));
     }
@@ -170,7 +215,11 @@ public class StreamCipherTest {
 
         /* Create the output buffer */
         final byte[] myOutput = new byte[myExpected.length];
-        final byte[] myData = new byte[myExpected.length];
+
+        /* Access plainText or nulls */
+        final byte[] myData = pTestCase.thePlainText != null
+                                    ? TethysDataConverter.hexStringToBytes(pTestCase.thePlainText)
+                                    : new byte[myExpected.length];
 
         /* Access the key and the iv */
         final KeyParameter myKey = new KeyParameter(TethysDataConverter.hexStringToBytes(pTestCase.theKey));
@@ -285,6 +334,85 @@ public class StreamCipherTest {
             pMac.update(myData, 0, 1);
             pMac.doFinal(myOutput, 0);
         }, "Limit failure");
+    }
+
+    /**
+     * Test the Cipher against the results.
+     * @param pCipher the cipher to test.
+     * @param pTestCase the testCase
+     * @throws OceanusException on error
+     */
+    static void testAADCipher(final ChaChaPolyEngine pCipher,
+                              final TestCase pTestCase) throws OceanusException {
+        try {
+            /* Access the expected bytes */
+            final byte[] myExpected = TethysDataConverter.hexStringToBytes(pTestCase.theExpected);
+
+            /* Access plainText */
+            final byte[] myData = TethysDataConverter.hexStringToBytes(pTestCase.thePlainText);
+
+            /* Access AAD */
+            final byte[] myAAD = TethysDataConverter.hexStringToBytes(pTestCase.theAAD);
+
+            /* Access the key and the iv */
+            final KeyParameter myKey = new KeyParameter(TethysDataConverter.hexStringToBytes(pTestCase.theKey));
+            final byte[] myIV = TethysDataConverter.hexStringToBytes(pTestCase.theIV);
+            final ParametersWithIV myIVParms = new ParametersWithIV(myKey, myIV);
+            final AEADParameters myAEADParms = new AEADParameters(myKey, 0, myIV, myAAD);
+
+            /* Initialise the cipher and encrypt the data */
+            pCipher.init(true, myAEADParms);
+            final byte[] myOutput = new byte[pCipher.getOutputSize(myData.length)];
+            int iProcessed = pCipher.processBytes(myData, 0, myData.length, myOutput, 0);
+            pCipher.finish(myOutput, iProcessed);
+
+            /* Check the encryption */
+            Assertions.assertArrayEquals(myExpected, myOutput, "Encryption mismatch");
+
+            /* Check that auto-reset worked */
+            iProcessed = pCipher.processBytes(myData, 0, myData.length, myOutput, 0);
+            pCipher.finish(myOutput, iProcessed);
+
+            /* Check the encryption */
+            Assertions.assertArrayEquals(myExpected, myOutput, "Encryption mismatch after reset");
+
+            /* Initialise the cipher and decrypt the data */
+            pCipher.init(false, myAEADParms);
+            final byte[] myResult = new byte[pCipher.getOutputSize(myExpected.length)];
+            iProcessed = pCipher.processBytes(myExpected, 0, myExpected.length, myResult, 0);
+            pCipher.finish(myResult, iProcessed);
+
+            /* Check the decryption */
+            Assertions.assertArrayEquals(myData, myResult, "Decryption mismatch");
+
+            /* Process the decryption one block at a time */
+            iProcessed = 0;
+            int iRemaining = myExpected.length;
+            int Block = 1; // Change the block size as required
+            final byte[] myResult2 = new byte[pCipher.getOutputSize(myExpected.length)];
+            for (int i = 0; iRemaining > 0; i += Block, iRemaining -= Block) {
+                int myLen = Math.min(Block, iRemaining);
+                iProcessed += pCipher.processBytes(myExpected, i, myLen, myResult2, iProcessed);
+            }
+            pCipher.finish(myResult2, iProcessed);
+
+            /* Check the decryption */
+            Assertions.assertArrayEquals(myData, myResult, "Block Decryption mismatch");
+
+            /* Initialise the cipher and encrypt the data pass AAD explicitly */
+            pCipher.init(true, myIVParms);
+            pCipher.processAADBytes(myAAD, 0, myAAD.length);
+            final byte[] myOutput2 = new byte[pCipher.getOutputSize(myData.length)];
+            iProcessed = pCipher.processBytes(myData, 0, myData.length, myOutput2, 0);
+            pCipher.finish(myOutput2, iProcessed);
+
+            /* Check the encryption */
+            Assertions.assertArrayEquals(myExpected, myOutput2, "Encryption mismatch");
+
+            /* Catch exceptions */
+        } catch (InvalidCipherTextException e) {
+            throw new GordianCryptoException("Failed to resolve mac", e);
+        }
     }
 
     /**
@@ -641,6 +769,91 @@ public class StreamCipherTest {
             testMac(myMac, false, TEST3);
             testMac(myMac, true, TEST4);
             testMacLimit(myMac, TEST4, SNOWLIMIT - (2 * myMac.getMacSize() * Byte.SIZE));
+        }
+    }
+
+    /**
+     * XChaCha20.
+     */
+    static class XChaCha20Test {
+        /**
+         * TestCases.
+         */
+        private static final String KEY = "808182838485868788898a8b8c8d8e8f909192939495969798999a9b9c9d9e9f";
+        private static final String IV = "404142434445464748494a4b4c4d4e4f5051525354555658";
+        private static final String PLAIN = "5468652064686f6c65202870726f6e6f756e6365642022646f6c652229206973" +
+                                            "20616c736f206b6e6f776e2061732074686520417369617469632077696c6420" +
+                                            "646f672c2072656420646f672c20616e642077686973746c696e6720646f672e" +
+                                            "2049742069732061626f7574207468652073697a65206f662061204765726d61" +
+                                            "6e20736865706865726420627574206c6f6f6b73206d6f7265206c696b652061" +
+                                            "206c6f6e672d6c656767656420666f782e205468697320686967686c7920656c" +
+                                            "757369766520616e6420736b696c6c6564206a756d70657220697320636c6173" +
+                                            "736966696564207769746820776f6c7665732c20636f796f7465732c206a6163" +
+                                            "6b616c732c20616e6420666f78657320696e20746865207461786f6e6f6d6963" +
+                                            "2066616d696c792043616e696461652e";
+        private static final String EXPECTED = "4559abba4e48c16102e8bb2c05e6947f50a786de162f9b0b7e592a9b53d0d4e9" +
+                                               "8d8d6410d540a1a6375b26d80dace4fab52384c731acbf16a5923c0c48d3575d" +
+                                               "4d0d2c673b666faa731061277701093a6bf7a158a8864292a41c48e3a9b4c0da" +
+                                               "ece0f8d98d0d7e05b37a307bbb66333164ec9e1b24ea0d6c3ffddcec4f68e744" +
+                                               "3056193a03c810e11344ca06d8ed8a2bfb1e8d48cfa6bc0eb4e2464b74814240" +
+                                               "7c9f431aee769960e15ba8b96890466ef2457599852385c661f752ce20f9da0c" +
+                                               "09ab6b19df74e76a95967446f8d0fd415e7bee2a12a114c20eb5292ae7a349ae" +
+                                               "577820d5520a1f3fb62a17ce6a7e68fa7c79111d8860920bc048ef43fe84486c" +
+                                               "cb87c25f0ae045f0cce1e7989a9aa220a28bdd4827e751a24a6d5c62d790a663" +
+                                               "93b93111c1a55dd7421a10184974c7c5";
+        private static final TestCase TEST = new TestCase(KEY, IV,
+                PLAIN, EXPECTED
+        );
+
+        /**
+         * Test Mac.
+         * @throws OceanusException on error
+         */
+        void testTheCipher() throws OceanusException {
+            final XChaCha20Engine myEngine = new XChaCha20Engine();
+            testCipher(myEngine, TEST);
+        }
+    }
+
+    /**
+     * ChaCha20Poly1305.
+     */
+    static class ChaChaPolyTest {
+        /**
+         * TestCases.
+         */
+        private static final String KEY = "808182838485868788898a8b8c8d8e8f909192939495969798999a9b9c9d9e9f";
+        private static final String IV = "070000004041424344454647";
+        private static final String AAD = "50515253c0c1c2c3c4c5c6c7";
+        private static final String PLAIN = "4c616469657320616e642047656e746c" +
+                "656d656e206f662074686520636c6173" +
+                "73206f66202739393a20496620492063" +
+                "6f756c64206f6666657220796f75206f" +
+                "6e6c79206f6e652074697020666f7220" +
+                "746865206675747572652c2073756e73" +
+                "637265656e20776f756c642062652069" +
+                "742e";
+        private static final String EXPECTED =
+                "d31a8d34648e60db7b86afbc53ef7ec2" +
+                "a4aded51296e08fea9e2b5a736ee62d6" +
+                "3dbea45e8ca9671282fafb69da92728b" +
+                "1a71de0a9e060b2905d6a5b67ecd3b36" +
+                "92ddbd7f2d778b8c9803aee328091b58" +
+                "fab324e4fad675945585808b4831d7bc" +
+                "3ff4def08e4b7a9de576d26586cec64b" +
+                "6116" +
+                "1ae10b594f09e26a7e902ecbd0600691";
+        private static final TestCase TEST = new TestCase(KEY, IV, AAD,
+                PLAIN, EXPECTED
+        );
+
+        /**
+         * Test Mac.
+         * @throws OceanusException on error
+         */
+        void testTheCipher() throws OceanusException {
+            final ChaChaPolyEngine myEngine = new ChaChaPolyEngine();
+            testAADCipher(myEngine, TEST);
         }
     }
 }

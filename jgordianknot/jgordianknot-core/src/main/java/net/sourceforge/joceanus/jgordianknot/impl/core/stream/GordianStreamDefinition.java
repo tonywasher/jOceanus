@@ -19,9 +19,11 @@ package net.sourceforge.joceanus.jgordianknot.impl.core.stream;
 import java.io.InputStream;
 import java.util.Arrays;
 
-import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianCipher;
+import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianKeyedCipher;
+import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianStreamCipher;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianStreamCipherSpec;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianStreamKeySpec;
+import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianSymCipher;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianSymCipherSpec;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianSymKeySpec;
 import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigest;
@@ -165,7 +167,7 @@ public final class GordianStreamDefinition {
         final GordianCoreKnuthObfuscater myKnuth = myKeySets.getObfuscater();
 
         /* Access CipherType */
-        final GordianCipher<?> myCipher = pStream.getCipher();
+        final GordianKeyedCipher<?> myCipher = pStream.getCipher();
         theType = pStream.isSymKeyStream()
                   ? StreamType.SYMMETRIC
                   : StreamType.STREAM;
@@ -354,7 +356,7 @@ public final class GordianStreamDefinition {
 
         /* Generate the Cipher */
         final GordianCoreCipherFactory myCiphers = (GordianCoreCipherFactory) myFactory.getCipherFactory();
-        final GordianCipher<GordianSymKeySpec> myCipher = myCiphers.createSymKeyCipher(mySpec);
+        final GordianSymCipher myCipher = myCiphers.createSymKeyCipher(mySpec);
         final GordianKey<GordianSymKeySpec> myKey = pKeySet.deriveKey(theTypeDefinition, myKeySpec);
         myCipher.initCipher(myKey, theInitVector, false);
 
@@ -382,7 +384,7 @@ public final class GordianStreamDefinition {
 
         /* Generate the Cipher */
         final GordianCoreCipherFactory myCiphers = (GordianCoreCipherFactory) myFactory.getCipherFactory();
-        final GordianCipher<GordianStreamKeySpec> myCipher = myCiphers.createStreamKeyCipher(mySpec);
+        final GordianStreamCipher myCipher = myCiphers.createStreamKeyCipher(mySpec);
         final GordianKey<GordianStreamKeySpec> myKey = pKeySet.deriveKey(theTypeDefinition, myType);
         myCipher.initCipher(myKey, theInitVector, false);
 

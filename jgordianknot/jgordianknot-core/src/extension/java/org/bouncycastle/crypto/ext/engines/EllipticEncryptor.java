@@ -267,7 +267,7 @@ public class EllipticEncryptor {
     private ECPoint convertToECPoint(final byte[] pInBuffer,
                                      final int pInOff,
                                      final int pInLen) throws InvalidCipherTextException {
-        /* Check length */
+        /* Check lengths */
         final int myLen = getBlockLength();
         if (pInLen > myLen - 2
                 || pInLen <= 0) {
@@ -441,7 +441,7 @@ public class EllipticEncryptor {
                                    final int pOutOff) throws InvalidCipherTextException {
         /* Obtain the X co-ordinate */
         final BigInteger myX = pPoint.getAffineXCoord().toBigInteger();
-        final byte[] myBuf = myX.toByteArray();
+        byte[] myBuf = myX.toByteArray();
         int myStart;
         int myEnd;
 
@@ -474,13 +474,19 @@ public class EllipticEncryptor {
             myStart = 0;
             myEnd = -1;
 
-            /* Check for a buffer that has a prefixed zero (owing to top bit set) */
-            if (myBuf.length == getBlockLength() + 1) {
-                if (myBuf[0] != 0) {
-                    throw new InvalidCipherTextException("Invalid data");
-                }
+            /* Check for a buffer that is too large (happens when the top bit is set) */
+            final int myBlockLen = getBlockLength();
+            final int myBufLen = myBuf.length;
+            if (myBufLen > myBlockLen) {
 
-                myStart = 1;
+                myStart = myBufLen - myBlockLen;
+
+                /* Check for a buffer that is too small (happens when the top bits are zero) */
+            } else if (myBuf.length < myBlockLen) {
+                /* Create new buffer with prefixed zeros */
+                final byte[] myOld = myBuf;
+                myBuf = new byte[myBlockLen];
+                System.arraycopy(myOld, 0, myBuf, myBlockLen - myBufLen, myBufLen);
             }
 
             /* Loop through the data in fixed time */

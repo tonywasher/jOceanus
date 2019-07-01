@@ -27,6 +27,7 @@ import javax.crypto.SecretKey;
 import javax.crypto.ShortBufferException;
 import javax.crypto.spec.IvParameterSpec;
 
+import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianSymAADCipher;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianSymCipherSpec;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianSymKeySpec;
 import net.sourceforge.joceanus.jgordianknot.api.key.GordianKey;
@@ -38,7 +39,8 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
  * Cipher for JCA BouncyCastle AAD Ciphers.
  */
 public class JcaAADCipher
-        extends GordianCoreAADCipher {
+        extends GordianCoreAADCipher
+        implements GordianSymAADCipher {
     /**
      * Cipher.
      */

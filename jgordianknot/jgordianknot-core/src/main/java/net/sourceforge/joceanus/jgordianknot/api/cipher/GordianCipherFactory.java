@@ -46,7 +46,7 @@ public interface GordianCipherFactory {
      * @return the new Cipher
      * @throws OceanusException on error
      */
-    GordianCipher<GordianSymKeySpec> createSymKeyCipher(GordianSymCipherSpec pCipherSpec) throws OceanusException;
+    GordianSymCipher createSymKeyCipher(GordianSymCipherSpec pCipherSpec) throws OceanusException;
 
     /**
      * create GordianAADCipher.
@@ -54,7 +54,7 @@ public interface GordianCipherFactory {
      * @return the new Cipher
      * @throws OceanusException on error
      */
-    GordianAADCipher createAADCipher(GordianSymCipherSpec pCipherSpec) throws OceanusException;
+    GordianSymAADCipher createAADCipher(GordianSymCipherSpec pCipherSpec) throws OceanusException;
 
     /**
      * create GordianStreamCipher.
@@ -62,7 +62,7 @@ public interface GordianCipherFactory {
      * @return the new Cipher
      * @throws OceanusException on error
      */
-    GordianCipher<GordianStreamKeySpec> createStreamKeyCipher(GordianStreamCipherSpec pCipherSpec) throws OceanusException;
+    GordianStreamCipher createStreamKeyCipher(GordianStreamCipherSpec pCipherSpec) throws OceanusException;
 
     /**
      * Obtain predicate for supported symKeySpecs.

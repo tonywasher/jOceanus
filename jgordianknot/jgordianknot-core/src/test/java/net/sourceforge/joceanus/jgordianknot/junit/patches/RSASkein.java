@@ -16,7 +16,7 @@ import java.security.SecureRandom;
 public class RSASkein {
     /**
      * Main entry.
-     * @params pArgs the arguments
+     * @param pArgs the arguments
      */
     public static void main(final String[] pArgs) {
         /* Create the generator */

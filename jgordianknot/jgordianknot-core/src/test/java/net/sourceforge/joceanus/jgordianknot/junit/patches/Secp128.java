@@ -42,7 +42,7 @@ public class Secp128 {
 
     /**
      * Main entry.
-     * @params pArgs the arguments
+     * @param pArgs the arguments
      */
     public static void main(final String[] pArgs) {
         try {
