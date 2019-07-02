@@ -51,6 +51,11 @@ public class ChaChaPolyEngine
     private final Poly1305 polyMac;
 
     /**
+     * Are we the XChaCha variant.
+     */
+    private final boolean xChaCha;
+
+    /**
      * The cachedBytes.
      */
     private final byte[] cachedBytes;
@@ -92,19 +97,22 @@ public class ChaChaPolyEngine
 
     /**
      * Constructor.
+     * @param pXChaCha are we the XChaCha variant?
      */
-    public ChaChaPolyEngine() {
+    public ChaChaPolyEngine(final boolean pXChaCha) {
+        xChaCha = pXChaCha;
         polyMac = new Poly1305();
         cachedBytes = new byte[MACSIZE];
     }
 
-    /**
-     * Obtain the algorithm name.
-     * @return the name
-     */
     @Override
     public String getAlgorithmName() {
-        return "ChaCha20Poly1305";
+        return (xChaCha ? "X" : "") + "ChaCha20Poly1305";
+    }
+
+    @Override
+    protected int getNonceSize() {
+        return xChaCha ? 24 : 12;
     }
 
     @Override
@@ -127,15 +135,40 @@ public class ChaChaPolyEngine
             throw new IllegalArgumentException(getAlgorithmName() + " doesn't support re-init with null key");
         }
 
-        // Set Key (and remember to set counter to zero)
+        /* Set Key and explicit set counter to zero */
         super.setKey(keyBytes, ivBytes);
         engineState[12] = 0;
 
-        // Process engine state to generate ChaCha20 key
+        /* If this is an XChaCha variant */
         final int[] hChaCha20Out = new int[engineState.length];
+        if (xChaCha) {
+            /* Pack first 128 bits of IV into engine state */
+            Pack.littleEndianToInt(ivBytes, 0, engineState, 12, 4);
+
+            /* Process engine state to generate ChaCha20 key */
+            ChaChaEngine.chachaCore(Salsa20Engine.DEFAULT_ROUNDS, engineState, hChaCha20Out);
+
+            /* Set new key, removing addition in last round of chachaCore */
+            engineState[4] = hChaCha20Out[0] - engineState[0];
+            engineState[5] = hChaCha20Out[1] - engineState[1];
+            engineState[6] = hChaCha20Out[2] - engineState[2];
+            engineState[7] = hChaCha20Out[3] - engineState[3];
+
+            engineState[8] = hChaCha20Out[12] - engineState[12];
+            engineState[9] = hChaCha20Out[13] - engineState[13];
+            engineState[10] = hChaCha20Out[14] - engineState[14];
+            engineState[11] = hChaCha20Out[15] - engineState[15];
+
+            /* Last 64 bits of input IV and reset counter */
+            Pack.littleEndianToInt(ivBytes, 16, engineState, 14, 2);
+            engineState[12] = 0;
+            engineState[13] = 0;
+        }
+
+        /* Process engine state to generate ChaCha20 key */
         ChaChaEngine.chachaCore(Salsa20Engine.DEFAULT_ROUNDS, engineState, hChaCha20Out);
 
-        // Access the key as a set of integers (reversing last step of chachaCore)
+        /* Access the key as a set of integers */
         final int[] keyInt = new int[8];
         keyInt[0] = hChaCha20Out[0];
         keyInt[1] = hChaCha20Out[1];
@@ -146,11 +179,11 @@ public class ChaChaPolyEngine
         keyInt[6] = hChaCha20Out[6];
         keyInt[7] = hChaCha20Out[7];
 
-        // Access the key as bytes
+        /* Access the key as bytes */
         final byte[] key = new byte[32];
         Pack.intToLittleEndian(keyInt, key, 0);
 
-        // Set the Poly1305 key
+        /* Set the Poly1305 key */
         polyMac.init(new KeyParameter(key));
     }
 
@@ -485,7 +518,7 @@ public class ChaChaPolyEngine
         }
 
         /* No bytes returned */
-        return  0;
+        return 0;
     }
 
     /**

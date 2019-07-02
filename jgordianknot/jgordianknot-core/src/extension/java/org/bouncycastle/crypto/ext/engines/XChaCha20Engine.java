@@ -53,17 +53,17 @@ public class XChaCha20Engine extends ChaChaEngine {
             throw new IllegalArgumentException(getAlgorithmName() + " requires a 256 bit key");
         }
 
-        // Set key for ChaCha20
+        /* Set key for ChaCha20 */
         super.setKey(keyBytes, ivBytes);
 
-        // Pack first 128 bits of IV into engine state
+        /* Pack first 128 bits of IV into engine state */
         Pack.littleEndianToInt(ivBytes, 0, engineState, 12, 4);
 
-        // Process engine state to generate ChaCha20 key
+        /* Process engine state to generate ChaCha20 key */
         final int[] hChaCha20Out = new int[engineState.length];
         chachaCore(Salsa20Engine.DEFAULT_ROUNDS, engineState, hChaCha20Out);
 
-        // Set new key, removing addition in last round of chachaCore
+        /* Set new key, removing addition in last round of chachaCore */
         engineState[4] = hChaCha20Out[0] - engineState[0];
         engineState[5] = hChaCha20Out[1] - engineState[1];
         engineState[6] = hChaCha20Out[2] - engineState[2];
@@ -74,7 +74,7 @@ public class XChaCha20Engine extends ChaChaEngine {
         engineState[10] = hChaCha20Out[14] - engineState[14];
         engineState[11] = hChaCha20Out[15] - engineState[15];
 
-        // Last 64 bits of input IV
+        /* Last 64 bits of input IV */
         Pack.littleEndianToInt(ivBytes, 16, engineState, 14, 2);
     }
 }
