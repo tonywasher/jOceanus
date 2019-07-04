@@ -33,7 +33,7 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
 /**
  * Cipher for BouncyCastle Stream Ciphers.
  */
-public final class BouncyStreamKeyCipher
+public class BouncyStreamKeyCipher
         extends GordianCoreCipher<GordianStreamKeySpec>
         implements GordianStreamCipher {
     /**
@@ -62,7 +62,7 @@ public final class BouncyStreamKeyCipher
     @Override
     public void initCipher(final GordianKey<GordianStreamKeySpec> pKey) throws OceanusException {
         /* Determine the required length of IV */
-        final int myLen = getKeyType().getIVLength();
+        final int myLen = pKey.getKeyType().getIVLength(false);
         byte[] myIV = null;
 
         /* If we need an IV */

@@ -106,7 +106,7 @@ public abstract class JcaCipher<T extends GordianKeySpec>
     private int getIVLength() {
         final T myType = getKeyType();
         if (myType instanceof GordianStreamKeySpec) {
-            return ((GordianStreamKeySpec) myType).getIVLength();
+            return ((GordianStreamKeySpec) myType).getIVLength(false);
         }
         return needsIV()
                ? getCipherSpec().getIVLength(GordianLength.LEN_128)

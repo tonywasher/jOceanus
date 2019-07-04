@@ -365,49 +365,51 @@ public class StreamCipherTest {
 
             /* Initialise the cipher and encrypt the data */
             pCipher.init(true, myAEADParms);
-            final byte[] myOutput = new byte[pCipher.getOutputSize(myData.length)];
+            final byte[] myOutput = new byte[pCipher.getOutputLength(myData.length)];
             int iProcessed = pCipher.processBytes(myData, 0, myData.length, myOutput, 0);
-            pCipher.finish(myOutput, iProcessed);
+            pCipher.doFinal(myOutput, iProcessed);
 
             /* Check the encryption */
             Assertions.assertArrayEquals(myExpected, myOutput, "Encryption mismatch");
 
             /* Check that auto-reset worked */
             iProcessed = pCipher.processBytes(myData, 0, myData.length, myOutput, 0);
-            pCipher.finish(myOutput, iProcessed);
+            pCipher.doFinal(myOutput, iProcessed);
 
             /* Check the encryption */
             Assertions.assertArrayEquals(myExpected, myOutput, "Encryption mismatch after reset");
 
             /* Initialise the cipher and decrypt the data */
             pCipher.init(false, myAEADParms);
-            final byte[] myResult = new byte[pCipher.getOutputSize(myExpected.length)];
+            final byte[] myResult = new byte[pCipher.getOutputLength(myExpected.length)];
             iProcessed = pCipher.processBytes(myExpected, 0, myExpected.length, myResult, 0);
-            pCipher.finish(myResult, iProcessed);
+            pCipher.doFinal(myResult, iProcessed);
 
             /* Check the decryption */
             Assertions.assertArrayEquals(myData, myResult, "Decryption mismatch");
 
-            /* Process the decryption one block at a time */
-            iProcessed = 0;
-            int iRemaining = myExpected.length;
-            int Block = 1; // Change the block size as required
-            final byte[] myResult2 = new byte[pCipher.getOutputSize(myExpected.length)];
-            for (int i = 0; iRemaining > 0; i += Block, iRemaining -= Block) {
-                int myLen = Math.min(Block, iRemaining);
-                iProcessed += pCipher.processBytes(myExpected, i, myLen, myResult2, iProcessed);
-            }
-            pCipher.finish(myResult2, iProcessed);
+            /* Loop to process differing block sizes */
+            for (int blockSize = 1; blockSize <= 64; blockSize <<= 1) {
+                /* Process the decryption one block at a time */
+                iProcessed = 0;
+                int iRemaining = myExpected.length;
+                final byte[] myResult2 = new byte[pCipher.getOutputLength(myExpected.length)];
+                for (int i = 0; iRemaining > 0; i += blockSize, iRemaining -= blockSize) {
+                    int myLen = Math.min(blockSize, iRemaining);
+                    iProcessed += pCipher.processBytes(myExpected, i, myLen, myResult2, iProcessed);
+                }
+                pCipher.doFinal(myResult2, iProcessed);
 
-            /* Check the decryption */
-            Assertions.assertArrayEquals(myData, myResult, "Block Decryption mismatch");
+                /* Check the decryption */
+                Assertions.assertArrayEquals(myData, myResult, "Block Decryption mismatch for size " + blockSize);
+            }
 
             /* Initialise the cipher and encrypt the data pass AAD explicitly */
             pCipher.init(true, myIVParms);
             pCipher.processAADBytes(myAAD, 0, myAAD.length);
-            final byte[] myOutput2 = new byte[pCipher.getOutputSize(myData.length)];
+            final byte[] myOutput2 = new byte[pCipher.getOutputLength(myData.length)];
             iProcessed = pCipher.processBytes(myData, 0, myData.length, myOutput2, 0);
-            pCipher.finish(myOutput2, iProcessed);
+            pCipher.doFinal(myOutput2, iProcessed);
 
             /* Check the encryption */
             Assertions.assertArrayEquals(myExpected, myOutput2, "Encryption mismatch");

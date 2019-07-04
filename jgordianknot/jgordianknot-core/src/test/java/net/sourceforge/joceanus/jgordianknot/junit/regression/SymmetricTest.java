@@ -34,7 +34,9 @@ import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianCipher;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianCipherFactory;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianCipherMode;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianCipherSpec;
+import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianKeyedCipher;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianPadding;
+import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianStreamAADCipher;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianStreamCipher;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianStreamCipherSpec;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianStreamKeySpec;
@@ -484,6 +486,14 @@ public class SymmetricTest {
             myTests = Stream.concat(myTests, Stream.of(DynamicTest.dynamicTest("Partner", () -> checkPartnerStreamKey(pKeySpec))));
         }
 
+        /* Add AAD cipher tests if required */
+        if (pKeySpec.hasAAD()) {
+            final FactoryStreamCipherSpec myAADSpec = new FactoryStreamCipherSpec(pKeySpec, GordianStreamCipherSpec.stream(pKeySpec.getSpec(), true));
+            myTests = Stream.concat(myTests, Stream.of(DynamicTest.dynamicTest("checkAADCipher", () -> checkAADCipher(myAADSpec))));
+            myTests = Stream.concat(myTests, Stream.of(DynamicTest.dynamicTest("externalAADCipherId", () -> checkExternalId(myAADSpec))));
+            myTests = Stream.concat(myTests, Stream.of(DynamicTest.dynamicTest("algorithmAADId", () -> checkStreamCipherAlgId(myAADSpec))));
+        }
+
         /* Return the tests */
         return myTests;
     }
@@ -744,14 +754,14 @@ public class SymmetricTest {
         final byte[] myTestData = getTestData();
 
         /* Create the Spec */
-        final GordianCoreCipher<GordianSymKeySpec> myCipher = (GordianCoreCipher<GordianSymKeySpec>) myCipherFactory.createSymKeyCipher(mySpec);
+        final GordianKeyedCipher<GordianSymKeySpec> myCipher = myCipherFactory.createSymKeyCipher(mySpec);
         myCipher.initCipher(myKey);
         if (!mySpec.getCipherMode().hasPadding()
                 || !GordianPadding.NONE.equals(mySpec.getPadding())) {
             /* Check encryption */
             final byte[] myIV = myCipher.getInitVector();
             final byte[] myEncrypted = myCipher.finish(myTestData);
-            final GordianCoreCipher<GordianSymKeySpec> myPartnerCipher = (GordianCoreCipher<GordianSymKeySpec>) myPartnerFactory.createSymKeyCipher(mySpec);
+            final GordianKeyedCipher<GordianSymKeySpec> myPartnerCipher = myPartnerFactory.createSymKeyCipher(mySpec);
             myPartnerCipher.initCipher(myPartnerKey, myIV, false);
             final byte[] myResult = myPartnerCipher.finish(myEncrypted);
             Assertions.assertArrayEquals(myTestData, myResult, "Failed to encrypt/decrypt");
@@ -856,6 +866,38 @@ public class SymmetricTest {
         final byte[] myResult2 = myCipher.finish(myEncrypted2);
         Assertions.assertArrayEquals(myTestData, myResult, "Failed to encrypt/decrypt");
         Assertions.assertArrayEquals(myResult, myResult2, "Failed to reset properly");
+    }
+
+    /**
+     * Check AAD cipher mode.
+     * @param pCipherSpec the cipherSpec
+     * @throws OceanusException on error
+     */
+    private void checkAADCipher(final FactoryStreamCipherSpec pCipherSpec) throws OceanusException {
+        /* Access details */
+        final GordianFactory myFactory = pCipherSpec.getFactory();
+        final GordianStreamCipherSpec mySpec = pCipherSpec.getSpec();
+        final GordianCipherFactory myCipherFactory = myFactory.getCipherFactory();
+        final GordianKey<GordianStreamKeySpec> myKey = pCipherSpec.getKey();
+
+        /* Access Data */
+        final byte[] myTestData = getTestData();
+        final byte[] myAADData = getAADData();
+        final GordianStreamAADCipher myCipher = (GordianStreamAADCipher) myCipherFactory.createStreamKeyCipher(mySpec);
+        myCipher.initCipher(myKey);
+        final byte[] myIV = myCipher.getInitVector();
+        myCipher.updateAAD(myAADData);
+        final byte[] myEncrypted = myCipher.finish(myTestData);
+        myCipher.updateAAD(myAADData);
+        final byte[] myEncrypted2 = myCipher.finish(myTestData);
+        myCipher.initCipher(myKey, myIV, false);
+        myCipher.updateAAD(myAADData);
+        final byte[] myResult = myCipher.finish(myEncrypted);
+        myCipher.initCipher(myKey, myIV, false);
+        myCipher.updateAAD(myAADData);
+        final byte[] myResult2 = myCipher.finish(myEncrypted2);
+        Assertions.assertArrayEquals(myResult, myResult2, "Failed to reset properly");
+        Assertions.assertArrayEquals(myTestData, myResult, "Failed to encrypt/decrypt");
     }
 
     /**
@@ -996,7 +1038,6 @@ public class SymmetricTest {
         final GordianStreamKeySpec myKeySpec = pStreamKeySpec.getSpec();
         final GordianCipherFactory myCipherFactory = myFactory.getCipherFactory();
         final GordianKey<GordianStreamKeySpec> myStreamKey = pStreamKeySpec.getKey();
-        final int myLen = 128;
         byte[] myBytes = getTestData();
         final GordianStreamCipherSpec myCipherSpec = GordianStreamCipherSpec.stream(myKeySpec);
         final GordianStreamCipher myCipher = myCipherFactory.createStreamKeyCipher(myCipherSpec);
@@ -1057,9 +1098,8 @@ public class SymmetricTest {
     /**
      * Check digestAlgId.
      * @param pSpec the Spec to check
-     * @throws OceanusException on error
      */
-    private void checkDigestAlgId(final FactoryDigestSpec pSpec) throws OceanusException {
+    private void checkDigestAlgId(final FactoryDigestSpec pSpec) {
         /* Access the factory */
         final GordianCoreDigestFactory myFactory = (GordianCoreDigestFactory) pSpec.getFactory().getDigestFactory();
 
@@ -1075,9 +1115,8 @@ public class SymmetricTest {
     /**
      * Check cipherAlgId.
      * @param pSpec the Spec to check
-     * @throws OceanusException on error
      */
-    private void checkSymCipherAlgId(final FactorySymCipherSpec pSpec) throws OceanusException {
+    private void checkSymCipherAlgId(final FactorySymCipherSpec pSpec) {
         /* Access the factory */
         final GordianCoreCipherFactory myFactory = (GordianCoreCipherFactory) pSpec.getFactory().getCipherFactory();
 
@@ -1093,9 +1132,8 @@ public class SymmetricTest {
     /**
      * Check streamCipherAlgId.
      * @param pSpec the Spec to check
-     * @throws OceanusException on error
      */
-    private void checkStreamCipherAlgId(final FactoryStreamCipherSpec pSpec) throws OceanusException {
+    private void checkStreamCipherAlgId(final FactoryStreamCipherSpec pSpec) {
         /* Access the factory */
         final GordianCoreCipherFactory myFactory = (GordianCoreCipherFactory) pSpec.getFactory().getCipherFactory();
 
@@ -1111,9 +1149,8 @@ public class SymmetricTest {
     /**
      * Check macAlgId.
      * @param pSpec the Spec to check
-     * @throws OceanusException on error
      */
-    private void checkMacAlgId(final FactoryMacSpec pSpec) throws OceanusException {
+    private void checkMacAlgId(final FactoryMacSpec pSpec) {
         /* Access the factory */
         final GordianCoreMacFactory myFactory = (GordianCoreMacFactory) pSpec.getFactory().getMacFactory();
 

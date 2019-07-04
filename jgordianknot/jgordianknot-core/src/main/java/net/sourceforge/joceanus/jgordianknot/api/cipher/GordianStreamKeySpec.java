@@ -17,6 +17,8 @@
 package net.sourceforge.joceanus.jgordianknot.api.cipher;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import net.sourceforge.joceanus.jgordianknot.api.base.GordianKeySpec;
@@ -45,6 +47,11 @@ public class GordianStreamKeySpec
     private final GordianLength theKeyLength;
 
     /**
+     * SubKeyType.
+     */
+    private final GordianStreamSubKeyType theSubKeyType;
+
+    /**
      * The Validity.
      */
     private final boolean isValid;
@@ -61,9 +68,22 @@ public class GordianStreamKeySpec
      */
     public GordianStreamKeySpec(final GordianStreamKeyType pStreamKeyType,
                                 final GordianLength pKeyLength) {
+        this(pStreamKeyType, pKeyLength, null);
+    }
+
+    /**
+     * Constructor.
+     * @param pStreamKeyType the streamKeyType
+     * @param pKeyLength the keyLength
+     * @param pSubKeyType the subKeyType
+     */
+    public GordianStreamKeySpec(final GordianStreamKeyType pStreamKeyType,
+                                final GordianLength pKeyLength,
+                                final GordianStreamSubKeyType pSubKeyType) {
         /* Store parameters */
         theStreamKeyType = pStreamKeyType;
         theKeyLength = pKeyLength;
+        theSubKeyType = pSubKeyType;
         isValid = checkValidity();
     }
 
@@ -82,16 +102,34 @@ public class GordianStreamKeySpec
      * @return the keySpec
      */
     public static GordianStreamKeySpec chacha(final GordianLength pKeyLength) {
-        return new GordianStreamKeySpec(GordianStreamKeyType.CHACHA, pKeyLength);
+        return new GordianStreamKeySpec(GordianStreamKeyType.CHACHA20, pKeyLength, GordianChaCha20Key.STD);
     }
 
     /**
-     * Create hcKeySpec.
+     * Create chacha7539KeySpec.
+     * @param pKeyLength the keyLength
+     * @return the keySpec
+     */
+    public static GordianStreamKeySpec chacha7539(final GordianLength pKeyLength) {
+        return new GordianStreamKeySpec(GordianStreamKeyType.CHACHA20, pKeyLength, GordianChaCha20Key.ISO7539);
+    }
+
+    /**
+     * Create xchachaKeySpec.
+     * @param pKeyLength the keyLength
+     * @return the keySpec
+     */
+    public static GordianStreamKeySpec xchacha(final GordianLength pKeyLength) {
+        return new GordianStreamKeySpec(GordianStreamKeyType.CHACHA20, pKeyLength, GordianChaCha20Key.XCHACHA);
+    }
+
+    /**
+     * Create salsaKeySpec.
      * @param pKeyLength the keyLength
      * @return the keySpec
      */
     public static GordianStreamKeySpec salsa(final GordianLength pKeyLength) {
-        return new GordianStreamKeySpec(GordianStreamKeyType.SALSA20, pKeyLength);
+        return new GordianStreamKeySpec(GordianStreamKeyType.SALSA20, pKeyLength, GordianSalsa20Key.STD);
     }
 
     /**
@@ -100,16 +138,7 @@ public class GordianStreamKeySpec
      * @return the keySpec
      */
     public static GordianStreamKeySpec xsalsa(final GordianLength pKeyLength) {
-        return new GordianStreamKeySpec(GordianStreamKeyType.XSALSA20, pKeyLength);
-    }
-
-    /**
-     * Create xsalsaKeySpec.
-     * @param pKeyLength the keyLength
-     * @return the keySpec
-     */
-    public static GordianStreamKeySpec xchacha(final GordianLength pKeyLength) {
-        return new GordianStreamKeySpec(GordianStreamKeyType.XCHACHA20, pKeyLength);
+        return new GordianStreamKeySpec(GordianStreamKeyType.SALSA20, pKeyLength, GordianSalsa20Key.XSALSA);
     }
 
     /**
@@ -136,7 +165,16 @@ public class GordianStreamKeySpec
      * @return the keySpec
      */
     public static GordianStreamKeySpec vmpc(final GordianLength pKeyLength) {
-        return new GordianStreamKeySpec(GordianStreamKeyType.VMPC, pKeyLength);
+        return new GordianStreamKeySpec(GordianStreamKeyType.VMPC, pKeyLength, GordianVMPCKey.STD);
+    }
+
+    /**
+     * Create vmpcKSAKeySpec.
+     * @param pKeyLength the keyLength
+     * @return the keySpec
+     */
+    public static GordianStreamKeySpec vmpcKSA(final GordianLength pKeyLength) {
+        return new GordianStreamKeySpec(GordianStreamKeyType.VMPC, pKeyLength, GordianVMPCKey.KSA);
     }
 
     /**
@@ -158,7 +196,7 @@ public class GordianStreamKeySpec
     }
 
     /**
-     * Create sosemaukKeySpec.
+     * Create sosemanukKeySpec.
      * @param pKeyLength the keyLength
      * @return the keySpec
      */
@@ -198,6 +236,14 @@ public class GordianStreamKeySpec
     }
 
     /**
+     * Obtain subKey Type.
+     * @return the subKeyType
+     */
+    public GordianStreamSubKeyType getSubKeyType() {
+        return theSubKeyType;
+    }
+
+    /**
      * Is the keySpec valid?
      * @return true/false.
      */
@@ -210,15 +256,31 @@ public class GordianStreamKeySpec
      * @return true/false
      */
     public boolean needsIV() {
-        return theStreamKeyType.getIVLength(theKeyLength) > 0;
+        return getIVLength(false) > 0;
     }
 
     /**
-     * Obtain the IV length for this cipher.
-     * @return the IV Length
+     * Obtain the IV Length.
+     * @param pAAD is this an AAD cipher
+     * @return the IV length.
      */
-    public int getIVLength() {
-        return theStreamKeyType.getIVLength(theKeyLength);
+    public int getIVLength(final boolean pAAD) {
+        switch (theStreamKeyType) {
+            case SALSA20:
+                return theSubKeyType != GordianSalsa20Key.STD
+                       ? GordianLength.LEN_192.getByteLength()
+                       : theStreamKeyType.getIVLength(theKeyLength);
+            case CHACHA20:
+                if (theSubKeyType == GordianChaCha20Key.XCHACHA
+                    || pAAD) {
+                    return GordianLength.LEN_192.getByteLength();
+                }
+                return theSubKeyType == GordianChaCha20Key.ISO7539
+                            ? GordianLength.LEN_96.getByteLength()
+                            : theStreamKeyType.getIVLength(theKeyLength);
+            default:
+                return theStreamKeyType.getIVLength(theKeyLength);
+        }
     }
 
     /**
@@ -226,9 +288,65 @@ public class GordianStreamKeySpec
      * @return valid true/false
      */
     private boolean checkValidity() {
-        /* Everything must be non-null */
+        /* Stream KeyType and Key length must be non-null */
         if (theStreamKeyType == null
                 || theKeyLength == null) {
+            return false;
+        }
+
+        /* Check subKeyTypes */
+        switch (theStreamKeyType) {
+            case SALSA20:
+                return checkSalsaValidity();
+            case CHACHA20:
+                return checkChaChaValidity();
+            case VMPC:
+                return checkVMPCValidity();
+            default:
+                return theSubKeyType == null
+                        && theStreamKeyType.validForKeyLength(theKeyLength);
+        }
+    }
+
+    /**
+     * Check salsa spec validity.
+     * @return valid true/false
+     */
+    private boolean checkSalsaValidity() {
+        /* SubKeyType must be a SalsaKey */
+        if (!(theSubKeyType instanceof GordianSalsa20Key)) {
+            return false;
+        }
+
+        /* Check keyLength validity */
+        return theSubKeyType != GordianSalsa20Key.STD
+               ? theKeyLength == GordianLength.LEN_256
+               : theStreamKeyType.validForKeyLength(theKeyLength);
+    }
+
+    /**
+     * Check chacha spec validity.
+     * @return valid true/false
+     */
+    private boolean checkChaChaValidity() {
+        /* SubKeyType must be a ChaChaKey */
+        if (!(theSubKeyType instanceof GordianChaCha20Key)) {
+            return false;
+        }
+
+        /* Check keyLength validity */
+        return theSubKeyType != GordianChaCha20Key.STD
+               ? theKeyLength == GordianLength.LEN_256
+               : theStreamKeyType.validForKeyLength(theKeyLength);
+    }
+
+    /**
+     * Check vmpc spec validity.
+     * @return valid true/false
+     */
+    private boolean checkVMPCValidity() {
+        /* SubKeyType must be a GordianVMPCKey */
+        if (!(theSubKeyType instanceof GordianVMPCKey)) {
             return false;
         }
 
@@ -243,7 +361,7 @@ public class GordianStreamKeySpec
             /* If the keySpec is valid */
             if (isValid) {
                 /* Load the name */
-                theName = theStreamKeyType.toString();
+                theName = getName();
                 theName += SEP + theKeyLength;
             }  else {
                 /* Report invalid spec */
@@ -253,6 +371,48 @@ public class GordianStreamKeySpec
 
         /* return the name */
         return theName;
+    }
+
+    /**
+     * Determine the name for the KeySpec.
+     * @return the name
+     */
+    private String getName() {
+        /* Handle VMPC-KSA */
+        if (theStreamKeyType == GordianStreamKeyType.VMPC
+            && theSubKeyType == GordianVMPCKey.KSA) {
+           return theStreamKeyType.toString() + "KSA3";
+        }
+
+        /* Handle XSalsa20 */
+        if (theStreamKeyType == GordianStreamKeyType.SALSA20
+                && theSubKeyType == GordianSalsa20Key.XSALSA) {
+            return "X" + theStreamKeyType.toString();
+        }
+
+        /* Handle XChaCha20 */
+        if (theStreamKeyType == GordianStreamKeyType.CHACHA20
+                && theSubKeyType == GordianChaCha20Key.XCHACHA) {
+            return "X" + theStreamKeyType.toString();
+        }
+
+        /* Handle ChaCha7539 */
+        if (theStreamKeyType == GordianStreamKeyType.CHACHA20
+                && theSubKeyType == GordianChaCha20Key.ISO7539) {
+            return "ChaCha7539";
+        }
+
+        /* return the name */
+        return theStreamKeyType.toString();
+    }
+
+    /**
+     * Determine the name for the KeySpec.
+     * @return the name
+     */
+    public boolean supportsAAD() {
+        return theStreamKeyType == GordianStreamKeyType.CHACHA20
+                 && theSubKeyType != GordianChaCha20Key.STD;
     }
 
     @Override
@@ -275,13 +435,17 @@ public class GordianStreamKeySpec
 
         /* Check subFields */
         return theStreamKeyType == myThat.getStreamKeyType()
-                && theKeyLength == myThat.getKeyLength();
+                && theKeyLength == myThat.getKeyLength()
+                && theSubKeyType == myThat.getSubKeyType();
     }
 
     @Override
     public int hashCode() {
         int hashCode = theStreamKeyType.ordinal() + 1 << TethysDataConverter.BYTE_SHIFT;
         hashCode += theKeyLength.ordinal() + 1;
+        if (theSubKeyType != null) {
+            hashCode += theSubKeyType.hashCode();
+        }
         return hashCode;
     }
 
@@ -301,13 +465,123 @@ public class GordianStreamKeySpec
 
         /* For each streamKey type */
         for (final GordianStreamKeyType myType : GordianStreamKeyType.values()) {
-            /* Add spec if valid for keyLength */
+            /* if valid for keyLength */
             if (myType.validForKeyLength(pKeyLen)) {
-                myList.add(new GordianStreamKeySpec(myType, pKeyLen));
+                /* If we need a subType */
+                if (myType.needsSubKeyType()) {
+                    /* Add all valid subKeyTypes */
+                    myList.addAll(listSubKeys(myType, pKeyLen));
+
+                    /* Else just add the spec */
+                } else {
+                    myList.add(new GordianStreamKeySpec(myType, pKeyLen));
+                }
             }
         }
 
         /* Return the list */
         return myList;
+    }
+
+    /**
+     * List all possible subKeyTypes Specs.
+     * @param pKeyType the keyType
+     * @param pKeyLen the keyLength
+     * @return the list
+     */
+    private static List<GordianStreamKeySpec> listSubKeys(final GordianStreamKeyType pKeyType,
+                                                          final GordianLength pKeyLen) {
+        /* Create the array list */
+        final List<GordianStreamKeySpec> myList = new ArrayList<>();
+
+        /* Loop through the subKeyTypes */
+        for (GordianStreamSubKeyType mySubKeyType : listSubKeys(pKeyType)) {
+            /* Add valid subKeySpec */
+            final GordianStreamKeySpec mySpec = new GordianStreamKeySpec(pKeyType, pKeyLen, mySubKeyType);
+            if (mySpec.isValid()) {
+                myList.add(mySpec);
+            }
+        }
+
+        /* Return the list */
+        return myList;
+    }
+
+    /**
+     * List all possible subKeyTypes.
+     * @param pKeyType the keyType
+     * @return the list
+     */
+    private static List<GordianStreamSubKeyType> listSubKeys(final GordianStreamKeyType pKeyType) {
+        /* Switch on keyType */
+        switch (pKeyType) {
+            case SALSA20:
+                return Arrays.asList(GordianSalsa20Key.values());
+            case CHACHA20:
+                return Arrays.asList(GordianChaCha20Key.values());
+            case VMPC:
+                return Arrays.asList(GordianVMPCKey.values());
+            default:
+                return Collections.emptyList();
+        }
+    }
+
+    /**
+     * SubKeyType.
+     */
+    public interface GordianStreamSubKeyType {
+    }
+
+    /**
+     * VMPC Key styles.
+     */
+    public enum GordianVMPCKey
+            implements GordianStreamSubKeyType {
+        /**
+         * VMPC.
+         */
+        STD,
+
+        /**
+         * VMPC-KSA.
+         */
+        KSA;
+    }
+
+    /**
+     * Salsa20 Key styles.
+     */
+    public enum GordianSalsa20Key
+            implements GordianStreamSubKeyType {
+        /**
+         * Salsa20.
+         */
+        STD,
+
+        /**
+         * XSalsa20.
+         */
+        XSALSA;
+    }
+
+    /**
+     * ChaCha20 Key styles.
+     */
+    public enum GordianChaCha20Key
+            implements GordianStreamSubKeyType {
+        /**
+         * ChaCha20.
+         */
+        STD,
+
+        /**
+         * ChaCha7539.
+         */
+        ISO7539,
+
+        /**
+         * XChaCha20.
+         */
+        XCHACHA;
     }
 }

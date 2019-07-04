@@ -16,6 +16,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jgordianknot.api.cipher;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.function.BiPredicate;
@@ -89,6 +90,12 @@ public interface GordianCipherFactory {
     Predicate<GordianStreamKeySpec> supportedStreamKeySpecs();
 
     /**
+     * Obtain predicate for supported streamCipherSpecs.
+     * @return the predicate
+     */
+    Predicate<GordianStreamCipherSpec> supportedStreamCipherSpecs();
+
+    /**
      * Obtain predicate for supported StreamKeyTypes.
      * @return the predicate
      */
@@ -136,6 +143,29 @@ public interface GordianCipherFactory {
         return Arrays.stream(GordianSymKeyType.values())
                 .filter(supportedSymKeyTypes())
                 .collect(Collectors.toList());
+    }
+
+    /**
+     * Obtain a list of supported streamCipherSpecs for the keyLength.
+     * @param pKeyLen the keyLength
+     * @return the list of supported streamCipherSpecs.
+     */
+    default List<GordianStreamCipherSpec> listAllSupportedStreamCipherSpecs(final GordianLength pKeyLen) {
+        final List<GordianStreamCipherSpec> myResult = new ArrayList<>();
+        for (GordianStreamKeySpec mySpec : listAllSupportedStreamKeySpecs(pKeyLen)) {
+            /* Add the standard cipher */
+            final GordianStreamCipherSpec myCipherSpec = GordianStreamCipherSpec.stream(mySpec);
+            myResult.add(myCipherSpec);
+
+            /* Add the AAD Cipher if supported */
+            if (mySpec.supportsAAD()) {
+                final GordianStreamCipherSpec myAADSpec = GordianStreamCipherSpec.stream(mySpec, true);
+                if (supportedStreamCipherSpecs().test(myAADSpec)) {
+                    myResult.add(myAADSpec);
+                }
+            }
+        }
+        return myResult;
     }
 
     /**

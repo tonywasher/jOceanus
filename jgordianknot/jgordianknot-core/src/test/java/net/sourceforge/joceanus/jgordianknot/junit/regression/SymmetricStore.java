@@ -39,6 +39,7 @@ import net.sourceforge.joceanus.jgordianknot.api.random.GordianRandomSpec;
 import net.sourceforge.joceanus.jgordianknot.api.random.GordianRandomType;
 import net.sourceforge.joceanus.jgordianknot.impl.core.key.GordianCoreKey;
 import net.sourceforge.joceanus.jgordianknot.impl.core.key.GordianCoreKeyGenerator;
+import net.sourceforge.joceanus.jgordianknot.junit.regression.AsymmetricStore.FactoryKeySpec;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
@@ -562,6 +563,18 @@ class SymmetricStore {
             return theKeySpec;
         }
 
+        /**
+         * Does this keySpec have an AAD Mode?
+         * @return true/false
+         */
+        public boolean hasAAD() {
+            if (theKeySpec.supportsAAD()) {
+                final GordianStreamCipherSpec myAADSpec = GordianStreamCipherSpec.stream(theKeySpec, true);
+                return theFactory.getCipherFactory().supportedStreamCipherSpecs().test(myAADSpec);
+            }
+            return false;
+        }
+
         @Override
         public String toString() {
             return theKeySpec.toString();
@@ -615,6 +628,15 @@ class SymmetricStore {
         @Override
         public GordianStreamCipherSpec getSpec() {
             return theCipherSpec;
+        }
+
+        /**
+         * Obtain (or create) the key for the FactoryStreamKeySpec
+         * @return the key
+         * @throws OceanusException on error
+         */
+        GordianKey<GordianStreamKeySpec> getKey() throws OceanusException {
+            return theOwner.getKey();
         }
 
         @Override

@@ -168,11 +168,6 @@ public enum GordianCipherResource implements TethysBundleId {
     SYMKEY_MARS("symKey.MARS"),
 
     /**
-     * StreamKey XSALSA20.
-     */
-    STREAMKEY_XSALSA20("streamKey.XSALSA20"),
-
-    /**
      * StreamKey SALSA20.
      */
     STREAMKEY_SALSA20("streamKey.SALSA20"),
@@ -186,11 +181,6 @@ public enum GordianCipherResource implements TethysBundleId {
      * StreamKey CHACHA.
      */
     STREAMKEY_CHACHA("streamKey.CHACHA"),
-
-    /**
-     * StreamKey XCHACHA20.
-     */
-    STREAMKEY_XCHACHA20("streamKey.XCHACHA20"),
 
     /**
      * StreamKey VMPC.
@@ -342,11 +332,9 @@ public enum GordianCipherResource implements TethysBundleId {
     private static Map<GordianStreamKeyType, TethysBundleId> buildStreamKeyMap() {
         /* Create the map and return it */
         final Map<GordianStreamKeyType, TethysBundleId> myMap = new EnumMap<>(GordianStreamKeyType.class);
-        myMap.put(GordianStreamKeyType.XSALSA20, STREAMKEY_XSALSA20);
         myMap.put(GordianStreamKeyType.SALSA20, STREAMKEY_SALSA20);
         myMap.put(GordianStreamKeyType.HC, STREAMKEY_HC);
-        myMap.put(GordianStreamKeyType.CHACHA, STREAMKEY_CHACHA);
-        myMap.put(GordianStreamKeyType.XCHACHA20, STREAMKEY_XCHACHA20);
+        myMap.put(GordianStreamKeyType.CHACHA20, STREAMKEY_CHACHA);
         myMap.put(GordianStreamKeyType.VMPC, STREAMKEY_VMPC);
         myMap.put(GordianStreamKeyType.ISAAC, STREAMKEY_ISAAC);
         myMap.put(GordianStreamKeyType.GRAIN, STREAMKEY_GRAIN);

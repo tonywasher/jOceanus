@@ -90,6 +90,11 @@ public abstract class GordianCoreCipherFactory
     }
 
     @Override
+    public Predicate<GordianStreamCipherSpec> supportedStreamCipherSpecs() {
+        return this::validStreamCipherSpec;
+    }
+
+    @Override
     public Predicate<GordianStreamKeyType> supportedStreamKeyTypes() {
         return this::validStreamKeyType;
     }
@@ -257,6 +262,11 @@ public abstract class GordianCoreCipherFactory
         if (!supportedStreamKeySpecs().test(myKeySpec)) {
             throw new GordianDataException(GordianCoreFactory.getInvalidText(myKeySpec));
         }
+
+        /* Check validity of Mode */
+        if (!validStreamCipherSpec(pCipherSpec)) {
+            throw new GordianDataException(GordianCoreFactory.getInvalidText(pCipherSpec));
+        }
     }
 
     /**
@@ -280,8 +290,17 @@ public abstract class GordianCoreCipherFactory
     }
 
     /**
+     * Check StreamCipherSpec.
+     * @param pCipherSpec the streamCipherSpec
+     * @return true/false
+     */
+    protected boolean validStreamCipherSpec(final GordianStreamCipherSpec pCipherSpec) {
+        return true;
+    }
+
+    /**
      * Check StreamKeySpec.
-     * @param pKeySpec the streamKeyType
+     * @param pKeySpec the streamKeySpec
      * @return true/false
      */
     protected boolean validStreamKeySpec(final GordianStreamKeySpec pKeySpec) {

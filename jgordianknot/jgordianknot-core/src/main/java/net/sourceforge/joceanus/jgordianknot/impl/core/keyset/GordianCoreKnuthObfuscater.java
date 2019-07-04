@@ -17,6 +17,7 @@
 package net.sourceforge.joceanus.jgordianknot.impl.core.keyset;
 
 import java.math.BigInteger;
+import java.security.Key;
 
 import net.sourceforge.joceanus.jgordianknot.api.base.GordianIdSpec;
 import net.sourceforge.joceanus.jgordianknot.api.base.GordianLength;
@@ -24,6 +25,10 @@ import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianCipherMode;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianPadding;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianStreamCipherSpec;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianStreamKeySpec;
+import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianStreamKeySpec.GordianChaCha20Key;
+import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianStreamKeySpec.GordianSalsa20Key;
+import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianStreamKeySpec.GordianStreamSubKeyType;
+import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianStreamKeySpec.GordianVMPCKey;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianStreamKeyType;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianSymCipherSpec;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianSymKeySpec;
@@ -389,14 +394,16 @@ public class GordianCoreKnuthObfuscater
 
     /**
      * Obtain encoded StreamKeySpecId.
-     * @param pSymKeySpec the streamKeySpec
+     * @param pStreamKeySpec the streamKeySpec
      * @return the encoded id
      */
-    private static int deriveEncodedIdFromStreamKeySpec(final GordianStreamKeySpec pSymKeySpec) {
+    private static int deriveEncodedIdFromStreamKeySpec(final GordianStreamKeySpec pStreamKeySpec) {
         /* Build the encoded id */
-        int myCode = deriveEncodedIdFromStreamKeyType(pSymKeySpec.getStreamKeyType());
+        int myCode = deriveEncodedIdFromStreamKeyType(pStreamKeySpec.getStreamKeyType());
         myCode <<= determineShiftForEnum(GordianLength.class);
-        myCode += deriveEncodedIdFromLength(pSymKeySpec.getKeyLength());
+        myCode += deriveEncodedIdFromLength(pStreamKeySpec.getKeyLength());
+        myCode <<= determineShiftForStreamKeySubType();
+        myCode += deriveEncodedIdFromStreamKeySubType(pStreamKeySpec);
 
         /* return the code */
         return myCode;
@@ -410,15 +417,18 @@ public class GordianCoreKnuthObfuscater
      */
     private static GordianStreamKeySpec deriveStreamKeySpecFromEncodedId(final int pEncodedId) throws OceanusException {
         /* Isolate id Components */
-        final int myKeyLenCode = pEncodedId & determineMaskForEnum(GordianLength.class);
-        final int myId = pEncodedId >> determineShiftForEnum(GordianLength.class);
+        final int mySubKeyCode = pEncodedId & determineMaskForStreamKeySubType();
+        final int myCode = pEncodedId >> determineShiftForStreamKeySubType();
+        final int myKeyLenCode = myCode & determineMaskForEnum(GordianLength.class);
+        final int myId = myCode >> determineShiftForEnum(GordianLength.class);
 
         /* Translate components */
         final GordianStreamKeyType myType = deriveStreamKeyTypeFromEncodedId(myId);
         final GordianLength myKeyLength = deriveLengthFromEncodedId(myKeyLenCode);
+        final GordianStreamSubKeyType mySubKeyType = deriveStreamSubKeyTypeFromEncodedId(myType, mySubKeyCode);
 
         /* Create StreamKeySpec */
-        return new GordianStreamKeySpec(myType, myKeyLength);
+        return new GordianStreamKeySpec(myType, myKeyLength, mySubKeyType);
     }
 
     /**
@@ -427,8 +437,13 @@ public class GordianCoreKnuthObfuscater
      * @return the external id
      */
     private static int deriveEncodedIdFromStreamCipherSpec(final GordianStreamCipherSpec pCipherSpec) {
-        /* Derive the encoded id */
-        return deriveEncodedIdFromStreamKeySpec(pCipherSpec.getKeyType());
+        /* Build the encoded id */
+        int myCode = deriveEncodedIdFromStreamKeySpec(pCipherSpec.getKeyType());
+        myCode <<= 1;
+        myCode += (pCipherSpec.isAAD() ? 1 : 0);
+
+        /* Return the encoded id */
+        return myCode;
     }
 
     /**
@@ -439,10 +454,71 @@ public class GordianCoreKnuthObfuscater
      */
     private static GordianStreamCipherSpec deriveStreamCipherSpecFromEncodedId(final int pEncodedId) throws OceanusException {
         /* Determine KeySpec */
-        final GordianStreamKeySpec mySpec = deriveStreamKeySpecFromEncodedId(pEncodedId);
+        final int myAAD = pEncodedId & 1;
+        final int myCode = pEncodedId >> 1;
+        final GordianStreamKeySpec mySpec = deriveStreamKeySpecFromEncodedId(myCode);
 
         /* Create the cipherSpec */
-        return GordianStreamCipherSpec.stream(mySpec);
+        return GordianStreamCipherSpec.stream(mySpec, myAAD != 0);
+    }
+
+    /**
+     * Obtain encoded StreamKeySpecId.
+     * @param pStreamKeySpec the streamKeySpec
+     * @return the encoded id
+     */
+    private static int deriveEncodedIdFromStreamKeySubType(final GordianStreamKeySpec pStreamKeySpec) {
+        /* Switch on keyType */
+        switch (pStreamKeySpec.getStreamKeyType()) {
+            case CHACHA20:
+                return deriveEncodedIdFromEnum((GordianChaCha20Key) pStreamKeySpec.getSubKeyType());
+            case SALSA20:
+                return deriveEncodedIdFromEnum((GordianSalsa20Key) pStreamKeySpec.getSubKeyType());
+            case VMPC:
+                return deriveEncodedIdFromEnum((GordianVMPCKey) pStreamKeySpec.getSubKeyType());
+            default:
+                return 0;
+        }
+    }
+
+    /**
+     * Obtain subKeyType from encoded streamSubKeyType.
+     * @param pKeyType the keyType
+     * @param pEncodedId the encodedId
+     * @return the subKeyType
+     * @throws OceanusException on error
+     */
+    private static GordianStreamSubKeyType deriveStreamSubKeyTypeFromEncodedId(final GordianStreamKeyType pKeyType,
+                                                                               final int pEncodedId) throws OceanusException {
+        /* Switch on keyType */
+        switch (pKeyType) {
+            case CHACHA20:
+                return deriveEnumFromEncodedId(pEncodedId, GordianChaCha20Key.class);
+            case SALSA20:
+                return deriveEnumFromEncodedId(pEncodedId, GordianSalsa20Key.class);
+            case VMPC:
+                return deriveEnumFromEncodedId(pEncodedId, GordianVMPCKey.class);
+            default:
+                return null;
+        }
+    }
+
+    /**
+     * Obtain mask for StreamKeySubType.
+     * @return the mask
+     */
+    private static int determineMaskForStreamKeySubType() {
+        return ~(-1 << determineShiftForStreamKeySubType());
+    }
+
+    /**
+     * Obtain shift for StreamKeySubType.
+     * @return the bit shift
+     */
+    private static int determineShiftForStreamKeySubType() {
+        int myShift = determineShiftForEnum(GordianVMPCKey.class);
+        myShift = Math.max(myShift, determineShiftForEnum(GordianSalsa20Key.class));
+        return Math.max(myShift, determineShiftForEnum(GordianChaCha20Key.class));
     }
 
     /**

@@ -26,7 +26,7 @@ public enum GordianStreamKeyType {
     /**
      * XSalsa20.
      */
-    XSALSA20(GordianLength.LEN_192),
+    //XSALSA20(GordianLength.LEN_192),
 
     /**
      * Salsa20.
@@ -39,14 +39,14 @@ public enum GordianStreamKeyType {
     HC(GordianLength.LEN_128, GordianLength.LEN_256),
 
     /**
-     * ChaCha.
+     * ChaCha20.
      */
-    CHACHA(GordianLength.LEN_64, GordianLength.LEN_96),
+    CHACHA20(GordianLength.LEN_64, GordianLength.LEN_96),
 
     /**
      * XChaCha.
      */
-    XCHACHA20(GordianLength.LEN_192),
+    //XCHACHA20(GordianLength.LEN_192),
 
     /**
      * VMPC.
@@ -136,19 +136,32 @@ public enum GordianStreamKeyType {
                 return pKeyLen.getByteLength();
             case HC:
             case ZUC:
-            case CHACHA:
                 return GordianLength.LEN_128 == pKeyLen
                        ? theShortIVLen.getByteLength()
                        : theLongIVLen.getByteLength();
-            case XSALSA20:
+            case CHACHA20:
             case SALSA20:
-            case XCHACHA20:
             case GRAIN:
             case SOSEMANUK:
             case RABBIT:
             case SNOW3G:
             default:
                 return theShortIVLen.getByteLength();
+        }
+    }
+
+    /**
+     * Does the keyType need a subKeyType?
+     * @return true/false.
+     */
+    public boolean needsSubKeyType() {
+        switch (this) {
+            case CHACHA20:
+            case SALSA20:
+            case VMPC:
+                return true;
+            default:
+                return false;
         }
     }
 
@@ -177,15 +190,12 @@ public enum GordianStreamKeyType {
 
         /* Switch on keyType */
         switch (this) {
-            case XSALSA20:
-            case XCHACHA20:
-                return GordianLength.LEN_256 == pKeyLen;
             case GRAIN:
             case RABBIT:
             case SNOW3G:
                 return GordianLength.LEN_128 == pKeyLen;
             case HC:
-            case CHACHA:
+            case CHACHA20:
             case SALSA20:
             case SOSEMANUK:
             case ZUC:
