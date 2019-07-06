@@ -14,8 +14,40 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  ******************************************************************************/
+package net.sourceforge.joceanus.jgordianknot.util;
 
 /**
- * External access to implementation.
+ * Dialogue Controller class.
  */
-package net.sourceforge.joceanus.jgordianknot.api.impl;
+public interface GordianDialogController {
+    /**
+     * Create the dialog.
+     * @param pTitle the title
+     * @param pNeedConfirm true/false
+     */
+    void createTheDialog(String pTitle,
+                         boolean pNeedConfirm);
+
+    /**
+     * Show the dialog under an invokeAndWait clause.
+     * @return successful dialog usage true/false
+     */
+    boolean showTheDialog();
+
+    /**
+     * Release dialog.
+     */
+    void releaseDialog();
+
+    /**
+     * Obtain the password.
+     * @return the password
+     */
+    char[] getPassword();
+
+    /**
+     * set the error for the dialog.
+     * @param pError the error to display
+     */
+    void setError(String pError);
+}

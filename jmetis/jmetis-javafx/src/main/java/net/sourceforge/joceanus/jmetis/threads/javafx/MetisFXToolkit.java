@@ -17,7 +17,7 @@
 package net.sourceforge.joceanus.jmetis.threads.javafx;
 
 import net.sourceforge.joceanus.jgordianknot.api.factory.GordianParameters;
-import net.sourceforge.joceanus.jgordianknot.api.impl.GordianSecurityManager;
+import net.sourceforge.joceanus.jgordianknot.util.GordianSecurityManager;
 import net.sourceforge.joceanus.jgordianknot.api.javafx.GordianFXSecurityManager;
 import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetHashSpec;
 import net.sourceforge.joceanus.jmetis.atlas.ui.javafx.MetisFXTableManager;
