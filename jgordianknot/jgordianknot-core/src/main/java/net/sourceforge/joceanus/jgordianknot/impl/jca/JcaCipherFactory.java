@@ -17,7 +17,6 @@
 package net.sourceforge.joceanus.jgordianknot.impl.jca;
 
 import java.security.NoSuchAlgorithmException;
-import java.security.spec.KeySpec;
 import java.util.HashMap;
 import java.util.Map;
 import javax.crypto.Cipher;
@@ -30,6 +29,7 @@ import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianStreamKeySpec;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianStreamKeySpec.GordianChaCha20Key;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianStreamKeySpec.GordianSalsa20Key;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianStreamKeySpec.GordianVMPCKey;
+import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianSymCipher;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianWrapper;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianPadding;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianStreamCipherSpec;
@@ -107,23 +107,22 @@ public class JcaCipherFactory
     }
 
     @Override
-    public JcaSymCipher createSymKeyCipher(final GordianSymCipherSpec pCipherSpec) throws OceanusException {
+    public GordianSymCipher createSymKeyCipher(final GordianSymCipherSpec pCipherSpec) throws OceanusException {
         /* Check validity of SymKeySpec */
-        checkSymCipherSpec(pCipherSpec, false);
+        checkSymCipherSpec(pCipherSpec);
 
-        /* Create the cipher */
-        final Cipher myBCCipher = getJavaCipher(pCipherSpec);
-        return new JcaSymCipher(getFactory(), pCipherSpec, myBCCipher);
-    }
+        /* If this is an AAD cipher */
+        if (pCipherSpec.isAAD()) {
+            /* Create the cipher */
+            final Cipher myBCCipher = getJavaCipher(pCipherSpec);
+            return new JcaAADCipher(getFactory(), pCipherSpec, myBCCipher);
 
-    @Override
-    public JcaAADCipher createAADCipher(final GordianSymCipherSpec pCipherSpec) throws OceanusException {
-        /* Check validity of SymKeySpec */
-        checkSymCipherSpec(pCipherSpec, true);
-
-        /* Create the cipher */
-        final Cipher myBCCipher = getJavaCipher(pCipherSpec);
-        return new JcaAADCipher(getFactory(), pCipherSpec, myBCCipher);
+            /* else create the standard cipher */
+        } else {
+            /* Create the cipher */
+            final Cipher myBCCipher = getJavaCipher(pCipherSpec);
+            return new JcaSymCipher(getFactory(), pCipherSpec, myBCCipher);
+        }
     }
 
     @Override
@@ -143,7 +142,7 @@ public class JcaCipherFactory
 
         /* Create the cipher */
         final GordianSymCipherSpec mySpec = GordianSymCipherSpec.ecb(pKeySpec, GordianPadding.NONE);
-        final JcaSymCipher myJcaCipher = createSymKeyCipher(mySpec);
+        final JcaSymCipher myJcaCipher = (JcaSymCipher) createSymKeyCipher(mySpec);
         return createKeyWrapper(myJcaCipher);
     }
 
@@ -437,10 +436,9 @@ public class JcaCipherFactory
     }
 
     @Override
-    protected boolean validSymCipherSpec(final GordianSymCipherSpec pCipherSpec,
-                                         final Boolean isAAD) {
+    protected boolean validSymCipherSpec(final GordianSymCipherSpec pCipherSpec) {
         /* Check standard features */
-        if (!super.validSymCipherSpec(pCipherSpec, isAAD)) {
+        if (!super.validSymCipherSpec(pCipherSpec)) {
             return false;
         }
 

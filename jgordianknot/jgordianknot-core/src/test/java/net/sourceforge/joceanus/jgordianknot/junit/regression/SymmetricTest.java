@@ -21,16 +21,17 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.stream.Stream;
 
-import javax.crypto.Cipher;
-
 import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
 import org.bouncycastle.util.Arrays;
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.DynamicContainer;
+import org.junit.jupiter.api.DynamicNode;
+import org.junit.jupiter.api.DynamicTest;
+import org.junit.jupiter.api.TestFactory;
 
 import net.sourceforge.joceanus.jgordianknot.api.base.GordianIdSpec;
 import net.sourceforge.joceanus.jgordianknot.api.base.GordianLength;
-import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianAADCipher;
-import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianCipher;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianCipherFactory;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianCipherMode;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianCipherSpec;
@@ -783,7 +784,7 @@ public class SymmetricTest {
         /* Access Data */
         final byte[] myTestData = getTestData();
         final byte[] myAADData = getAADData();
-        final GordianSymAADCipher myCipher = myCipherFactory.createAADCipher(mySpec);
+        final GordianSymAADCipher myCipher = (GordianSymAADCipher) myCipherFactory.createSymKeyCipher(mySpec);
         myCipher.initCipher(myKey);
         final byte[] myIV = myCipher.getInitVector();
         myCipher.updateAAD(myAADData);
@@ -823,14 +824,14 @@ public class SymmetricTest {
         /* Encrypt Data */
         final byte[] myTestData = getTestData();
         final byte[] myAADData = getAADData();
-        final GordianSymAADCipher myCipher = myCipherFactory.createAADCipher(mySpec);
+        final GordianSymAADCipher myCipher = (GordianSymAADCipher) myCipherFactory.createSymKeyCipher(mySpec);
         myCipher.initCipher(myKey);
         final byte[] myIV = myCipher.getInitVector();
         myCipher.updateAAD(myAADData);
         final byte[] myEncrypted = myCipher.finish(myTestData);
 
         /* Decrypt data at partner */
-        final GordianSymAADCipher myPartnerCipher = myPartnerFactory.createAADCipher(mySpec);
+        final GordianSymAADCipher myPartnerCipher = (GordianSymAADCipher) myPartnerFactory.createSymKeyCipher(mySpec);
         myPartnerCipher.initCipher(myPartnerKey, myIV, false);
         myPartnerCipher.updateAAD(myAADData);
         final byte[] myResult = myPartnerCipher.finish(myEncrypted);

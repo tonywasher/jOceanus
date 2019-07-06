@@ -68,7 +68,7 @@ public class GordianStreamKeySpec
      */
     public GordianStreamKeySpec(final GordianStreamKeyType pStreamKeyType,
                                 final GordianLength pKeyLength) {
-        this(pStreamKeyType, pKeyLength, null);
+        this(pStreamKeyType, pKeyLength, defaultSubKeyType(pStreamKeyType));
     }
 
     /**
@@ -523,6 +523,25 @@ public class GordianStreamKeySpec
                 return Arrays.asList(GordianVMPCKey.values());
             default:
                 return Collections.emptyList();
+        }
+    }
+
+    /**
+     * Default subKeyType.
+     * @param pKeyType the keyType
+     * @return the default
+     */
+    private static GordianStreamSubKeyType defaultSubKeyType(final GordianStreamKeyType pKeyType) {
+        /* Switch on keyType */
+        switch (pKeyType) {
+            case SALSA20:
+                return GordianSalsa20Key.STD;
+            case CHACHA20:
+                return GordianChaCha20Key.STD;
+            case VMPC:
+                return GordianVMPCKey.STD;
+            default:
+                return null;
         }
     }
 

@@ -102,6 +102,7 @@ import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianStreamKeySpec;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianStreamKeySpec.GordianChaCha20Key;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianStreamKeySpec.GordianSalsa20Key;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianStreamKeySpec.GordianVMPCKey;
+import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianSymCipher;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianWrapper;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianPadding;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianStreamCipherSpec;
@@ -159,23 +160,22 @@ public class BouncyCipherFactory
     }
 
     @Override
-    public BouncySymKeyCipher createSymKeyCipher(final GordianSymCipherSpec pCipherSpec) throws OceanusException {
+    public GordianSymCipher createSymKeyCipher(final GordianSymCipherSpec pCipherSpec) throws OceanusException {
         /* Check validity of SymKeySpec */
-        checkSymCipherSpec(pCipherSpec, false);
+        checkSymCipherSpec(pCipherSpec);
 
-        /* Create the cipher */
-        final BufferedBlockCipher myBCCipher = getBCBlockCipher(pCipherSpec);
-        return new BouncySymKeyCipher(getFactory(), pCipherSpec, myBCCipher);
-    }
+        /* If this is an AAD cipher */
+        if (pCipherSpec.isAAD()) {
+            /* Create the AAD cipher */
+            final AEADBlockCipher myBCCipher = getBCAADCipher(pCipherSpec);
+            return new BouncyAADCipher(getFactory(), pCipherSpec, myBCCipher);
 
-    @Override
-    public BouncyAADCipher createAADCipher(final GordianSymCipherSpec pCipherSpec) throws OceanusException {
-        /* Check validity of SymKeySpec */
-        checkSymCipherSpec(pCipherSpec, true);
-
-        /* Create the cipher */
-        final AEADBlockCipher myBCCipher = getBCAADCipher(pCipherSpec);
-        return new BouncyAADCipher(getFactory(), pCipherSpec, myBCCipher);
+            /* else create the standard cipher */
+        } else {
+            /* Create the cipher */
+            final BufferedBlockCipher myBCCipher = getBCBlockCipher(pCipherSpec);
+            return new BouncySymKeyCipher(getFactory(), pCipherSpec, myBCCipher);
+        }
     }
 
     @Override
@@ -197,7 +197,7 @@ public class BouncyCipherFactory
 
         /* Create the cipher */
         final GordianSymCipherSpec mySpec = GordianSymCipherSpec.ecb(pKeySpec, GordianPadding.NONE);
-        final BouncySymKeyCipher myBCCipher = createSymKeyCipher(mySpec);
+        final BouncySymKeyCipher myBCCipher = (BouncySymKeyCipher) createSymKeyCipher(mySpec);
         return createKeyWrapper(myBCCipher);
     }
 

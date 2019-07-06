@@ -19,7 +19,6 @@ package net.sourceforge.joceanus.jgordianknot.api.cipher;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.function.BiPredicate;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
@@ -50,14 +49,6 @@ public interface GordianCipherFactory {
     GordianSymCipher createSymKeyCipher(GordianSymCipherSpec pCipherSpec) throws OceanusException;
 
     /**
-     * create GordianAADCipher.
-     * @param pCipherSpec the cipherSpec
-     * @return the new Cipher
-     * @throws OceanusException on error
-     */
-    GordianSymAADCipher createAADCipher(GordianSymCipherSpec pCipherSpec) throws OceanusException;
-
-    /**
      * create GordianStreamCipher.
      * @param pCipherSpec the cipherSpec
      * @return the new Cipher
@@ -75,7 +66,7 @@ public interface GordianCipherFactory {
      * Obtain predicate for supported symCipherSpecs.
      * @return the predicate
      */
-    BiPredicate<GordianSymCipherSpec, Boolean> supportedSymCipherSpecs();
+    Predicate<GordianSymCipherSpec> supportedSymCipherSpecs();
 
     /**
      * Obtain predicate for supported SymKeyTypes.
@@ -124,14 +115,12 @@ public interface GordianCipherFactory {
     /**
      * Obtain a list of supported symCipherSpecs.
      * @param pSpec the symKeySpec
-     * @param isAAD are the cipherSpecs for an AADCipher?
      * @return the list of supported symCipherSpecs.
      */
-    default List<GordianSymCipherSpec> listAllSupportedSymCipherSpecs(final GordianSymKeySpec pSpec,
-                                                                      final boolean isAAD) {
+    default List<GordianSymCipherSpec> listAllSupportedSymCipherSpecs(final GordianSymKeySpec pSpec) {
         return GordianSymCipherSpec.listAll(pSpec)
                 .stream()
-                .filter(s -> supportedSymCipherSpecs().test(s, isAAD))
+                .filter(s -> supportedSymCipherSpecs().test(s))
                 .collect(Collectors.toList());
     }
 

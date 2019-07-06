@@ -189,7 +189,7 @@ public class ChaChaPolyEngine
         /* If we have AEAD parameters */
         if (params instanceof AEADParameters) {
             final AEADParameters param = (AEADParameters) params;
-            initialAEAD = param.getAssociatedText();
+            initialAEAD = Arrays.clone(param.getAssociatedText());
             final byte[] nonce = param.getNonce();
             final KeyParameter key = param.getKey();
             parms = new ParametersWithIV(key, nonce);

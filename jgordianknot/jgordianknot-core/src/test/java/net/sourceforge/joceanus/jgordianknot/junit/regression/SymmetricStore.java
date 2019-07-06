@@ -18,7 +18,6 @@ package net.sourceforge.joceanus.jgordianknot.junit.regression;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.BiPredicate;
 import java.util.function.Predicate;
 
 import net.sourceforge.joceanus.jgordianknot.api.base.GordianLength;
@@ -39,7 +38,6 @@ import net.sourceforge.joceanus.jgordianknot.api.random.GordianRandomSpec;
 import net.sourceforge.joceanus.jgordianknot.api.random.GordianRandomType;
 import net.sourceforge.joceanus.jgordianknot.impl.core.key.GordianCoreKey;
 import net.sourceforge.joceanus.jgordianknot.impl.core.key.GordianCoreKeyGenerator;
-import net.sourceforge.joceanus.jgordianknot.junit.regression.AsymmetricStore.FactoryKeySpec;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
@@ -395,13 +393,13 @@ class SymmetricStore {
          */
         FactorySymCipherSpec(final FactorySymKeySpec pOwner,
                              final GordianSymCipherSpec pCipherSpec,
-                             final BiPredicate<GordianSymCipherSpec, Boolean> pPredicate) {
+                             final Predicate<GordianSymCipherSpec> pPredicate) {
             /* Store parameters */
             theOwner = pOwner;
             theCipherSpec = pCipherSpec;
 
             /* Determine whether we have partner support */
-            hasPartner = pPredicate != null && pPredicate.test(pCipherSpec, pCipherSpec.isAAD());
+            hasPartner = pPredicate != null && pPredicate.test(pCipherSpec);
         }
 
         /**
@@ -857,13 +855,10 @@ class SymmetricStore {
         final GordianCipherFactory myCipherFactory = myFactory.getCipherFactory();
         final List<FactorySymCipherSpec> myResult = new ArrayList<>();
         final GordianFactory myPartner = pKeySpec.getPartner();
-        final BiPredicate<GordianSymCipherSpec, Boolean> myPredicate
+        final Predicate<GordianSymCipherSpec> myPredicate
                 = myPartner == null ? null : myPartner.getCipherFactory().supportedSymCipherSpecs();
 
-        for (GordianSymCipherSpec myCipherSpec : myCipherFactory.listAllSupportedSymCipherSpecs(mySpec, false)) {
-            myResult.add(new FactorySymCipherSpec(pKeySpec, myCipherSpec, myPredicate));
-        }
-        for (GordianSymCipherSpec myCipherSpec : myCipherFactory.listAllSupportedSymCipherSpecs(mySpec, true)) {
+        for (GordianSymCipherSpec myCipherSpec : myCipherFactory.listAllSupportedSymCipherSpecs(mySpec)) {
             myResult.add(new FactorySymCipherSpec(pKeySpec, myCipherSpec, myPredicate));
         }
 

@@ -96,15 +96,9 @@ public class GordianCipherAlgId {
 
             /* Loop through the possible SymKeySpecs */
             for (GordianSymKeySpec mySymKey : myFactory.listAllSupportedSymKeySpecs(myKeyLen)) {
-                /* Loop through the possible non-AAD CipherSpecs */
-                for (GordianSymCipherSpec mySpec : myFactory.listAllSupportedSymCipherSpecs(mySymKey, false)) {
+                /* Loop through the possible CipherSpecs */
+                for (GordianSymCipherSpec mySpec : myFactory.listAllSupportedSymCipherSpecs(mySymKey)) {
                     /* Add any non-standard symCiphers */
-                    ensureSymCipher(mySpec);
-                }
-
-                /* Loop through the possible AAD CipherSpecs */
-                for (GordianSymCipherSpec mySpec : myFactory.listAllSupportedSymCipherSpecs(mySymKey, true)) {
-                    /* Add any non-standard AAD symCiphers */
                     ensureSymCipher(mySpec);
                 }
             }
