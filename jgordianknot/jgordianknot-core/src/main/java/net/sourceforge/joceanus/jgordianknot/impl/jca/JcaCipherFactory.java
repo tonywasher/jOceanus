@@ -26,6 +26,10 @@ import javax.crypto.NoSuchPaddingException;
 import net.sourceforge.joceanus.jgordianknot.api.base.GordianLength;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianCipherMode;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianStreamKeySpec;
+import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianStreamKeySpec.GordianChaCha20Key;
+import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianStreamKeySpec.GordianSalsa20Key;
+import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianStreamKeySpec.GordianVMPCKey;
+import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianSymCipher;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianWrapper;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianPadding;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianStreamCipherSpec;
@@ -103,23 +107,22 @@ public class JcaCipherFactory
     }
 
     @Override
-    public JcaSymCipher createSymKeyCipher(final GordianSymCipherSpec pCipherSpec) throws OceanusException {
+    public GordianSymCipher createSymKeyCipher(final GordianSymCipherSpec pCipherSpec) throws OceanusException {
         /* Check validity of SymKeySpec */
-        checkSymCipherSpec(pCipherSpec, false);
+        checkSymCipherSpec(pCipherSpec);
 
-        /* Create the cipher */
-        final Cipher myBCCipher = getJavaCipher(pCipherSpec);
-        return new JcaSymCipher(getFactory(), pCipherSpec, myBCCipher);
-    }
+        /* If this is an AAD cipher */
+        if (pCipherSpec.isAAD()) {
+            /* Create the cipher */
+            final Cipher myBCCipher = getJavaCipher(pCipherSpec);
+            return new JcaAADCipher(getFactory(), pCipherSpec, myBCCipher);
 
-    @Override
-    public JcaAADCipher createAADCipher(final GordianSymCipherSpec pCipherSpec) throws OceanusException {
-        /* Check validity of SymKeySpec */
-        checkSymCipherSpec(pCipherSpec, true);
-
-        /* Create the cipher */
-        final Cipher myBCCipher = getJavaCipher(pCipherSpec);
-        return new JcaAADCipher(getFactory(), pCipherSpec, myBCCipher);
+            /* else create the standard cipher */
+        } else {
+            /* Create the cipher */
+            final Cipher myBCCipher = getJavaCipher(pCipherSpec);
+            return new JcaSymCipher(getFactory(), pCipherSpec, myBCCipher);
+        }
     }
 
     @Override
@@ -139,7 +142,7 @@ public class JcaCipherFactory
 
         /* Create the cipher */
         final GordianSymCipherSpec mySpec = GordianSymCipherSpec.ecb(pKeySpec, GordianPadding.NONE);
-        final JcaSymCipher myJcaCipher = createSymKeyCipher(mySpec);
+        final JcaSymCipher myJcaCipher = (JcaSymCipher) createSymKeyCipher(mySpec);
         return createKeyWrapper(myJcaCipher);
     }
 
@@ -349,22 +352,26 @@ public class JcaCipherFactory
      * @return the Algorithm
      * @throws OceanusException on error
      */
-    String getStreamKeyAlgorithm(final GordianStreamKeySpec pKeySpec) throws OceanusException {
+    private String getStreamKeyAlgorithm(final GordianStreamKeySpec pKeySpec) throws OceanusException {
         switch (pKeySpec.getStreamKeyType()) {
             case HC:
                 return GordianLength.LEN_128 == pKeySpec.getKeyLength()
                        ? "HC128"
                        : "HC256";
-            case CHACHA:
-                return GordianLength.LEN_128 == pKeySpec.getKeyLength()
-                       ? pKeySpec.getStreamKeyType().name()
+            case CHACHA20:
+                return pKeySpec.getSubKeyType() == GordianChaCha20Key.STD
+                       ? "CHACHA"
                        : "CHACHA7539";
+            case SALSA20:
+                return pKeySpec.getSubKeyType() == GordianSalsa20Key.STD
+                       ? pKeySpec.getStreamKeyType().name()
+                       : "XSALSA20";
             case VMPC:
-                return "VMPC-KSA3";
+                return pKeySpec.getSubKeyType() == GordianVMPCKey.STD
+                       ? pKeySpec.getStreamKeyType().name()
+                       : "VMPC-KSA3";
             case GRAIN:
                 return "Grain128";
-            case SALSA20:
-            case XSALSA20:
             case ISAAC:
             case RC4:
                 return pKeySpec.getStreamKeyType().name();
@@ -400,6 +407,18 @@ public class JcaCipherFactory
     }
 
     @Override
+    protected boolean validStreamKeySpec(final GordianStreamKeySpec pKeySpec) {
+        /* Check basic validity */
+        if (!super.validStreamKeySpec(pKeySpec)) {
+            return false;
+        }
+
+        /* Reject XChaCha20 */
+        return pKeySpec.getStreamKeyType() != GordianStreamKeyType.CHACHA20
+                || pKeySpec.getSubKeyType() != GordianChaCha20Key.XCHACHA;
+    }
+
+    @Override
     protected boolean validStreamKeyType(final GordianStreamKeyType pKeyType) {
         if (pKeyType == null) {
             return false;
@@ -407,7 +426,6 @@ public class JcaCipherFactory
         switch (pKeyType) {
             case ISAAC:
             case SOSEMANUK:
-            case XCHACHA20:
             case RABBIT:
             case SNOW3G:
             case ZUC:
@@ -418,10 +436,9 @@ public class JcaCipherFactory
     }
 
     @Override
-    protected boolean validSymCipherSpec(final GordianSymCipherSpec pCipherSpec,
-                                         final Boolean isAAD) {
+    protected boolean validSymCipherSpec(final GordianSymCipherSpec pCipherSpec) {
         /* Check standard features */
-        if (!super.validSymCipherSpec(pCipherSpec, isAAD)) {
+        if (!super.validSymCipherSpec(pCipherSpec)) {
             return false;
         }
 
@@ -449,5 +466,10 @@ public class JcaCipherFactory
             default:
                 return true;
         }
+    }
+
+    @Override
+    protected boolean validStreamCipherSpec(final GordianStreamCipherSpec pCipherSpec) {
+        return !pCipherSpec.isAAD();
     }
 }

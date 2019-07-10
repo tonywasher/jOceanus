@@ -123,7 +123,7 @@ public class GordianIdManager {
      * Obtain random hMacDigestType.
      * @return the random digestType
      */
-    private GordianDigestType generateRandomHMacDigestType() {
+    GordianDigestType generateRandomHMacDigestType() {
         /* Utilise the 128bit cache */
         final GordianIdCache myCache = theCacheMap.get(GordianLength.LEN_128);
         return myCache.generateRandomHMacDigestType();

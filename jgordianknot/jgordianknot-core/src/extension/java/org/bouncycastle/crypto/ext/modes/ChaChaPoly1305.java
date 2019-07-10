@@ -1,26 +1,10 @@
-/*******************************************************************************
- * GordianKnot: Security Suite
- * Copyright 2012,2019 Tony Washer
- *
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not
- * use this file except in compliance with the License.  You may obtain a copy
- * of the License at
- *
- *   http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
- * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
- * License for the specific language governing permissions and limitations under
- * the License.
- ******************************************************************************/
-package org.bouncycastle.crypto.ext.engines;
+package org.bouncycastle.crypto.ext.modes;
 
 import org.bouncycastle.crypto.CipherParameters;
 import org.bouncycastle.crypto.DataLengthException;
 import org.bouncycastle.crypto.InvalidCipherTextException;
 import org.bouncycastle.crypto.OutputLengthException;
-import org.bouncycastle.crypto.engines.ChaCha7539Engine;
+import org.bouncycastle.crypto.StreamCipher;
 import org.bouncycastle.crypto.engines.ChaChaEngine;
 import org.bouncycastle.crypto.engines.Salsa20Engine;
 import org.bouncycastle.crypto.macs.Poly1305;
@@ -33,8 +17,8 @@ import org.bouncycastle.util.Pack;
 /**
  * ChaCha20Poly1305 Engine.
  */
-public class ChaChaPolyEngine
-        extends ChaCha7539Engine {
+public class ChaChaPoly1305
+    implements StreamCipher {
     /**
      * The MacSize.
      */
@@ -44,6 +28,11 @@ public class ChaChaPolyEngine
      * The Zero padding.
      */
     private static final byte[] PADDING = new byte[MACSIZE - 1];
+
+    /**
+     * The Underlying cipher.
+     */
+    private final Salsa20Engine theCipher;
 
     /**
      * The Poly1305Mac.
@@ -92,66 +81,17 @@ public class ChaChaPolyEngine
 
     /**
      * Constructor.
+     * @param pChaChaEngine the ChaCha engine.
      */
-    public ChaChaPolyEngine() {
+    public ChaChaPoly1305(final Salsa20Engine pChaChaEngine) {
+        theCipher = pChaChaEngine;
         polyMac = new Poly1305();
         cachedBytes = new byte[MACSIZE];
     }
 
-    /**
-     * Obtain the algorithm name.
-     * @return the name
-     */
     @Override
     public String getAlgorithmName() {
-        return "ChaCha20Poly1305";
-    }
-
-    @Override
-    protected void resetCounter() {
-        engineState[12] = 1;
-    }
-
-    /**
-     * Poly1305 key generation: process 256 bit input key and 128 bits of the input nonce
-     * using a core ChaCha20 function without input addition to produce 256 bit working key
-     * and use that with the remaining 64 bits of nonce to initialize a standard ChaCha20 engine state.
-     * @param keyBytes the keyBytes
-     * @param ivBytes the ivBytes
-     */
-    @Override
-    protected void setKey(final byte[] keyBytes,
-                          final byte[] ivBytes) {
-        /* Check key */
-        if (keyBytes == null) {
-            throw new IllegalArgumentException(getAlgorithmName() + " doesn't support re-init with null key");
-        }
-
-        // Set Key (and remember to set counter to zero)
-        super.setKey(keyBytes, ivBytes);
-        engineState[12] = 0;
-
-        // Process engine state to generate ChaCha20 key
-        final int[] hChaCha20Out = new int[engineState.length];
-        ChaChaEngine.chachaCore(Salsa20Engine.DEFAULT_ROUNDS, engineState, hChaCha20Out);
-
-        // Access the key as a set of integers (reversing last step of chachaCore)
-        final int[] keyInt = new int[8];
-        keyInt[0] = hChaCha20Out[0];
-        keyInt[1] = hChaCha20Out[1];
-        keyInt[2] = hChaCha20Out[2];
-        keyInt[3] = hChaCha20Out[3];
-        keyInt[4] = hChaCha20Out[4];
-        keyInt[5] = hChaCha20Out[5];
-        keyInt[6] = hChaCha20Out[6];
-        keyInt[7] = hChaCha20Out[7];
-
-        // Access the key as bytes
-        final byte[] key = new byte[32];
-        Pack.intToLittleEndian(keyInt, key, 0);
-
-        // Set the Poly1305 key
-        polyMac.init(new KeyParameter(key));
+        return theCipher.getAlgorithmName() + "Poly1305";
     }
 
     /**
@@ -179,7 +119,10 @@ public class ChaChaPolyEngine
         }
 
         /* Initialise the cipher */
-        super.init(forEncryption, parms);
+        theCipher.init(forEncryption, parms);
+
+        /* Reset the cipher and init the Mac */
+        reset();
 
         /* Note that we are initialised */
         encrypting = forEncryption;
@@ -196,8 +139,13 @@ public class ChaChaPolyEngine
         aeadLength = 0;
         aeadComplete = false;
         cacheBytes = 0;
-        polyMac.reset();
-        super.reset();
+        theCipher.reset();
+
+        /* Run the cipher once to initialise the mac */
+        final byte[] firstBlock = new byte[64];
+        theCipher.processBytes(firstBlock, 0, 64, firstBlock, 0);
+        polyMac.init(new KeyParameter(firstBlock, 0, 32));
+        Arrays.fill(firstBlock, (byte) 0);
 
         /* If we have initial AEAD data */
         if (initialAEAD != null) {
@@ -268,6 +216,15 @@ public class ChaChaPolyEngine
     }
 
     /**
+     * process single byte.
+     * @param in the byte to process
+     * @return 0
+     */
+    public byte returnByte(final byte in) {
+        throw new UnsupportedOperationException();
+    }
+
+    /**
      * Process bytes.
      * @param in the input buffer
      * @param inOff the offset from which to start processing
@@ -307,14 +264,23 @@ public class ChaChaPolyEngine
     }
 
     /**
+     * Obtain the maximum output length for an update.
+     * @param len the data length to update
+     * @return the maximum output length
+     */
+    public int getUpdateOutputSize(final int len) {
+         return len;
+    }
+
+    /**
      * Finish processing.
      * @param out the output buffer
      * @param outOff the offset from which to start writing output
      * @return the length of data written out
      * @throws InvalidCipherTextException on mac misMatch
      */
-    public int finish(final byte[] out,
-                      final int outOff) throws InvalidCipherTextException {
+    public int doFinal(final byte[] out,
+                       final int outOff) throws InvalidCipherTextException {
         /* Check status */
         checkStatus();
 
@@ -353,7 +319,7 @@ public class ChaChaPolyEngine
         }
 
         /* Process the bytes */
-        super.processBytes(in, inOff, len, out, outOff);
+        theCipher.processBytes(in, inOff, len, out, outOff);
 
         /* Update the mac */
         polyMac.update(out, outOff, len);
@@ -417,7 +383,7 @@ public class ChaChaPolyEngine
                 dataLength += cacheBytes;
 
                 /* Process the cached bytes */
-                processed = super.processBytes(cachedBytes, 0, cacheBytes, out, outOff);
+                processed = theCipher.processBytes(cachedBytes, 0, cacheBytes, out, outOff);
             }
 
             /* Determine how many bytes to process */
@@ -428,7 +394,7 @@ public class ChaChaPolyEngine
                 dataLength += numBytes;
 
                 /* Process the input */
-                processed += super.processBytes(in, inOff, numBytes, out, outOff + processed);
+                processed += theCipher.processBytes(in, inOff, numBytes, out, outOff + processed);
             }
 
             /* Store the remaining input into the cache */
@@ -445,7 +411,7 @@ public class ChaChaPolyEngine
                 dataLength += numBytes;
 
                 /* Process the cached bytes */
-                processed = super.processBytes(cachedBytes, 0, numBytes, out, outOff);
+                processed = theCipher.processBytes(cachedBytes, 0, numBytes, out, outOff);
 
                 /* Move remaining cached bytes down */
                 cacheBytes -= numBytes;
@@ -485,7 +451,7 @@ public class ChaChaPolyEngine
         }
 
         /* No bytes returned */
-        return  0;
+        return 0;
     }
 
     /**

@@ -18,7 +18,6 @@ package net.sourceforge.joceanus.jgordianknot.junit.regression;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.BiPredicate;
 import java.util.function.Predicate;
 
 import net.sourceforge.joceanus.jgordianknot.api.base.GordianLength;
@@ -394,13 +393,13 @@ class SymmetricStore {
          */
         FactorySymCipherSpec(final FactorySymKeySpec pOwner,
                              final GordianSymCipherSpec pCipherSpec,
-                             final BiPredicate<GordianSymCipherSpec, Boolean> pPredicate) {
+                             final Predicate<GordianSymCipherSpec> pPredicate) {
             /* Store parameters */
             theOwner = pOwner;
             theCipherSpec = pCipherSpec;
 
             /* Determine whether we have partner support */
-            hasPartner = pPredicate != null && pPredicate.test(pCipherSpec, pCipherSpec.isAAD());
+            hasPartner = pPredicate != null && pPredicate.test(pCipherSpec);
         }
 
         /**
@@ -562,6 +561,18 @@ class SymmetricStore {
             return theKeySpec;
         }
 
+        /**
+         * Does this keySpec have an AAD Mode?
+         * @return true/false
+         */
+        public boolean hasAAD() {
+            if (theKeySpec.supportsAAD()) {
+                final GordianStreamCipherSpec myAADSpec = GordianStreamCipherSpec.stream(theKeySpec, true);
+                return theFactory.getCipherFactory().supportedStreamCipherSpecs().test(myAADSpec);
+            }
+            return false;
+        }
+
         @Override
         public String toString() {
             return theKeySpec.toString();
@@ -615,6 +626,15 @@ class SymmetricStore {
         @Override
         public GordianStreamCipherSpec getSpec() {
             return theCipherSpec;
+        }
+
+        /**
+         * Obtain (or create) the key for the FactoryStreamKeySpec
+         * @return the key
+         * @throws OceanusException on error
+         */
+        GordianKey<GordianStreamKeySpec> getKey() throws OceanusException {
+            return theOwner.getKey();
         }
 
         @Override
@@ -835,13 +855,10 @@ class SymmetricStore {
         final GordianCipherFactory myCipherFactory = myFactory.getCipherFactory();
         final List<FactorySymCipherSpec> myResult = new ArrayList<>();
         final GordianFactory myPartner = pKeySpec.getPartner();
-        final BiPredicate<GordianSymCipherSpec, Boolean> myPredicate
+        final Predicate<GordianSymCipherSpec> myPredicate
                 = myPartner == null ? null : myPartner.getCipherFactory().supportedSymCipherSpecs();
 
-        for (GordianSymCipherSpec myCipherSpec : myCipherFactory.listAllSupportedSymCipherSpecs(mySpec, false)) {
-            myResult.add(new FactorySymCipherSpec(pKeySpec, myCipherSpec, myPredicate));
-        }
-        for (GordianSymCipherSpec myCipherSpec : myCipherFactory.listAllSupportedSymCipherSpecs(mySpec, true)) {
+        for (GordianSymCipherSpec myCipherSpec : myCipherFactory.listAllSupportedSymCipherSpecs(mySpec)) {
             myResult.add(new FactorySymCipherSpec(pKeySpec, myCipherSpec, myPredicate));
         }
 

@@ -16,7 +16,6 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jgordianknot.impl.core.cipher;
 
-import java.util.function.BiPredicate;
 import java.util.function.Predicate;
 
 import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
@@ -75,7 +74,7 @@ public abstract class GordianCoreCipherFactory
     }
 
     @Override
-    public BiPredicate<GordianSymCipherSpec, Boolean> supportedSymCipherSpecs() {
+    public Predicate<GordianSymCipherSpec> supportedSymCipherSpecs() {
         return this::validSymCipherSpec;
     }
 
@@ -87,6 +86,11 @@ public abstract class GordianCoreCipherFactory
     @Override
     public Predicate<GordianStreamKeySpec> supportedStreamKeySpecs() {
         return this::validStreamKeySpec;
+    }
+
+    @Override
+    public Predicate<GordianStreamCipherSpec> supportedStreamCipherSpecs() {
+        return this::validStreamCipherSpec;
     }
 
     @Override
@@ -120,11 +124,9 @@ public abstract class GordianCoreCipherFactory
     /**
      * validate the symCipherSpec.
      * @param pCipherSpec the cipherSpec.
-     * @param isAAD is this cipherSpec for an AADCipher?
      * @return true/false
      */
-    protected boolean validSymCipherSpec(final GordianSymCipherSpec pCipherSpec,
-                                         final Boolean isAAD) {
+    protected boolean validSymCipherSpec(final GordianSymCipherSpec pCipherSpec) {
         /* Reject invalid cipherSpec */
         if (pCipherSpec == null || !pCipherSpec.isValid()) {
             return false;
@@ -135,10 +137,9 @@ public abstract class GordianCoreCipherFactory
             return false;
         }
 
-        /* Reject null modes and wrong AAD modes */
+        /* Reject null modes */
         final GordianCipherMode myMode = pCipherSpec.getCipherMode();
-        if (myMode == null
-                || isAAD != myMode.isAAD()) {
+        if (myMode == null) {
             return false;
         }
 
@@ -219,11 +220,9 @@ public abstract class GordianCoreCipherFactory
     /**
      * Check the symCipherSpec.
      * @param pCipherSpec the cipherSpec
-     * @param isAAD should the cipher be AAD or not?
      * @throws OceanusException on error
      */
-    public void checkSymCipherSpec(final GordianSymCipherSpec pCipherSpec,
-                                   final boolean isAAD) throws OceanusException {
+    public void checkSymCipherSpec(final GordianSymCipherSpec pCipherSpec) throws OceanusException {
         /* Reject invalid cipherSpec */
         if (pCipherSpec == null || !pCipherSpec.isValid()) {
             throw new GordianDataException(GordianCoreFactory.getInvalidText(pCipherSpec));
@@ -236,7 +235,7 @@ public abstract class GordianCoreCipherFactory
         }
 
         /* Check validity of Mode */
-        if (!validSymCipherSpec(pCipherSpec, isAAD)) {
+        if (!validSymCipherSpec(pCipherSpec)) {
             throw new GordianDataException(GordianCoreFactory.getInvalidText(pCipherSpec));
         }
     }
@@ -256,6 +255,11 @@ public abstract class GordianCoreCipherFactory
         final GordianStreamKeySpec myKeySpec = pCipherSpec.getKeyType();
         if (!supportedStreamKeySpecs().test(myKeySpec)) {
             throw new GordianDataException(GordianCoreFactory.getInvalidText(myKeySpec));
+        }
+
+        /* Check validity of Mode */
+        if (!validStreamCipherSpec(pCipherSpec)) {
+            throw new GordianDataException(GordianCoreFactory.getInvalidText(pCipherSpec));
         }
     }
 
@@ -280,8 +284,17 @@ public abstract class GordianCoreCipherFactory
     }
 
     /**
+     * Check StreamCipherSpec.
+     * @param pCipherSpec the streamCipherSpec
+     * @return true/false
+     */
+    protected boolean validStreamCipherSpec(final GordianStreamCipherSpec pCipherSpec) {
+        return true;
+    }
+
+    /**
      * Check StreamKeySpec.
-     * @param pKeySpec the streamKeyType
+     * @param pKeySpec the streamKeySpec
      * @return true/false
      */
     protected boolean validStreamKeySpec(final GordianStreamKeySpec pKeySpec) {

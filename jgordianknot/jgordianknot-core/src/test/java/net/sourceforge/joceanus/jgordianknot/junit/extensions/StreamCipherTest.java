@@ -22,7 +22,8 @@ import java.util.stream.Stream;
 import org.bouncycastle.crypto.InvalidCipherTextException;
 import org.bouncycastle.crypto.Mac;
 import org.bouncycastle.crypto.StreamCipher;
-import org.bouncycastle.crypto.ext.engines.ChaChaPolyEngine;
+import org.bouncycastle.crypto.engines.ChaCha7539Engine;
+import org.bouncycastle.crypto.ext.modes.ChaChaPoly1305;
 import org.bouncycastle.crypto.ext.engines.RabbitEngine;
 import org.bouncycastle.crypto.ext.engines.Snow3GEngine;
 import org.bouncycastle.crypto.ext.engines.SosemanukEngine;
@@ -178,6 +179,9 @@ public class StreamCipherTest {
                 )),
                 DynamicContainer.dynamicContainer("ChaCha20Poly1305", Stream.of(
                         DynamicTest.dynamicTest("256", () -> new ChaChaPolyTest().testTheCipher())
+                )),
+                DynamicContainer.dynamicContainer("XChaCha20Poly1305", Stream.of(
+                        DynamicTest.dynamicTest("256", () -> new XChaChaPolyTest().testTheCipher())
                 ))
         )));
     }
@@ -342,7 +346,7 @@ public class StreamCipherTest {
      * @param pTestCase the testCase
      * @throws OceanusException on error
      */
-    static void testAADCipher(final ChaChaPolyEngine pCipher,
+    static void testAADCipher(final ChaChaPoly1305 pCipher,
                               final TestCase pTestCase) throws OceanusException {
         try {
             /* Access the expected bytes */
@@ -364,14 +368,14 @@ public class StreamCipherTest {
             pCipher.init(true, myAEADParms);
             final byte[] myOutput = new byte[pCipher.getOutputSize(myData.length)];
             int iProcessed = pCipher.processBytes(myData, 0, myData.length, myOutput, 0);
-            pCipher.finish(myOutput, iProcessed);
+            pCipher.doFinal(myOutput, iProcessed);
 
             /* Check the encryption */
             Assertions.assertArrayEquals(myExpected, myOutput, "Encryption mismatch");
 
             /* Check that auto-reset worked */
             iProcessed = pCipher.processBytes(myData, 0, myData.length, myOutput, 0);
-            pCipher.finish(myOutput, iProcessed);
+            pCipher.doFinal(myOutput, iProcessed);
 
             /* Check the encryption */
             Assertions.assertArrayEquals(myExpected, myOutput, "Encryption mismatch after reset");
@@ -380,31 +384,33 @@ public class StreamCipherTest {
             pCipher.init(false, myAEADParms);
             final byte[] myResult = new byte[pCipher.getOutputSize(myExpected.length)];
             iProcessed = pCipher.processBytes(myExpected, 0, myExpected.length, myResult, 0);
-            pCipher.finish(myResult, iProcessed);
+            pCipher.doFinal(myResult, iProcessed);
 
             /* Check the decryption */
             Assertions.assertArrayEquals(myData, myResult, "Decryption mismatch");
 
-            /* Process the decryption one block at a time */
-            iProcessed = 0;
-            int iRemaining = myExpected.length;
-            int Block = 1; // Change the block size as required
-            final byte[] myResult2 = new byte[pCipher.getOutputSize(myExpected.length)];
-            for (int i = 0; iRemaining > 0; i += Block, iRemaining -= Block) {
-                int myLen = Math.min(Block, iRemaining);
-                iProcessed += pCipher.processBytes(myExpected, i, myLen, myResult2, iProcessed);
-            }
-            pCipher.finish(myResult2, iProcessed);
+            /* Loop to process differing block sizes */
+            for (int blockSize = 1; blockSize <= 64; blockSize <<= 1) {
+                /* Process the decryption one block at a time */
+                iProcessed = 0;
+                int iRemaining = myExpected.length;
+                final byte[] myResult2 = new byte[pCipher.getOutputSize(myExpected.length)];
+                for (int i = 0; iRemaining > 0; i += blockSize, iRemaining -= blockSize) {
+                    int myLen = Math.min(blockSize, iRemaining);
+                    iProcessed += pCipher.processBytes(myExpected, i, myLen, myResult2, iProcessed);
+                }
+                pCipher.doFinal(myResult2, iProcessed);
 
-            /* Check the decryption */
-            Assertions.assertArrayEquals(myData, myResult, "Block Decryption mismatch");
+                /* Check the decryption */
+                Assertions.assertArrayEquals(myData, myResult, "Block Decryption mismatch for size " + blockSize);
+            }
 
             /* Initialise the cipher and encrypt the data pass AAD explicitly */
             pCipher.init(true, myIVParms);
             pCipher.processAADBytes(myAAD, 0, myAAD.length);
             final byte[] myOutput2 = new byte[pCipher.getOutputSize(myData.length)];
             iProcessed = pCipher.processBytes(myData, 0, myData.length, myOutput2, 0);
-            pCipher.finish(myOutput2, iProcessed);
+            pCipher.doFinal(myOutput2, iProcessed);
 
             /* Check the encryption */
             Assertions.assertArrayEquals(myExpected, myOutput2, "Encryption mismatch");
@@ -806,7 +812,7 @@ public class StreamCipherTest {
         );
 
         /**
-         * Test Mac.
+         * Test Cipher.
          * @throws OceanusException on error
          */
         void testTheCipher() throws OceanusException {
@@ -848,11 +854,48 @@ public class StreamCipherTest {
         );
 
         /**
-         * Test Mac.
+         * Test Cipher.
          * @throws OceanusException on error
          */
         void testTheCipher() throws OceanusException {
-            final ChaChaPolyEngine myEngine = new ChaChaPolyEngine();
+            final ChaChaPoly1305 myEngine = new ChaChaPoly1305(new ChaCha7539Engine());
+            testAADCipher(myEngine, TEST);
+        }
+    }
+
+    /**
+     * ChaCha20Poly1305.
+     */
+    static class XChaChaPolyTest {
+        /**
+         * TestCases.
+         */
+        private static final String KEY = "808182838485868788898a8b8c8d8e8f909192939495969798999a9b9c9d9e9f";
+        private static final String IV = "404142434445464748494a4b4c4d4e4f5051525354555657";
+        private static final String AAD = "50515253c0c1c2c3c4c5c6c7";
+        private static final String PLAIN = "4c616469657320616e642047656e746c" +
+                "656d656e206f662074686520636c6173" +
+                "73206f66202739393a20496620492063" +
+                "6f756c64206f6666657220796f75206f" +
+                "6e6c79206f6e652074697020666f7220" +
+                "746865206675747572652c2073756e73" +
+                "637265656e20776f756c642062652069" +
+                "742e";
+        private static final String EXPECTED = "bd6d179d3e83d43b9576579493c0e939572a1700252bfaccbed2902c21396cbb" +
+                "731c7f1b0b4aa6440bf3a82f4eda7e39ae64c6708c54c216cb96b72e1213b452" +
+                "2f8c9ba40db5d945b11b69b982c1bb9e3f3fac2bc369488f76b2383565d3fff9" +
+                "21f9664c97637da9768812f615c68b13b52e" +
+                "c0875924c1c7987947deafd8780acf49";
+        private static final TestCase TEST = new TestCase(KEY, IV, AAD,
+                PLAIN, EXPECTED
+        );
+
+        /**
+         * Test Cipher.
+         * @throws OceanusException on error
+         */
+        void testTheCipher() throws OceanusException {
+            final ChaChaPoly1305 myEngine = new ChaChaPoly1305(new XChaCha20Engine());
             testAADCipher(myEngine, TEST);
         }
     }

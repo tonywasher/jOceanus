@@ -55,10 +55,12 @@ import org.bouncycastle.crypto.engines.SkipjackEngine;
 import org.bouncycastle.crypto.engines.TEAEngine;
 import org.bouncycastle.crypto.engines.ThreefishEngine;
 import org.bouncycastle.crypto.engines.TwofishEngine;
+import org.bouncycastle.crypto.engines.VMPCEngine;
 import org.bouncycastle.crypto.engines.VMPCKSA3Engine;
 import org.bouncycastle.crypto.engines.XSalsa20Engine;
 import org.bouncycastle.crypto.engines.XTEAEngine;
 import org.bouncycastle.crypto.ext.engines.AnubisEngine;
+import org.bouncycastle.crypto.ext.modes.ChaChaPoly1305;
 import org.bouncycastle.crypto.ext.engines.MARSEngine;
 import org.bouncycastle.crypto.ext.engines.RabbitEngine;
 import org.bouncycastle.crypto.ext.engines.SimonEngine;
@@ -97,6 +99,10 @@ import org.bouncycastle.crypto.patch.modes.KGCMXBlockCipher;
 import net.sourceforge.joceanus.jgordianknot.api.base.GordianLength;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianCipherMode;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianStreamKeySpec;
+import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianStreamKeySpec.GordianChaCha20Key;
+import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianStreamKeySpec.GordianSalsa20Key;
+import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianStreamKeySpec.GordianVMPCKey;
+import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianSymCipher;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianWrapper;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianPadding;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianStreamCipherSpec;
@@ -154,23 +160,22 @@ public class BouncyCipherFactory
     }
 
     @Override
-    public BouncySymKeyCipher createSymKeyCipher(final GordianSymCipherSpec pCipherSpec) throws OceanusException {
+    public GordianSymCipher createSymKeyCipher(final GordianSymCipherSpec pCipherSpec) throws OceanusException {
         /* Check validity of SymKeySpec */
-        checkSymCipherSpec(pCipherSpec, false);
+        checkSymCipherSpec(pCipherSpec);
 
-        /* Create the cipher */
-        final BufferedBlockCipher myBCCipher = getBCBlockCipher(pCipherSpec);
-        return new BouncySymKeyCipher(getFactory(), pCipherSpec, myBCCipher);
-    }
+        /* If this is an AAD cipher */
+        if (pCipherSpec.isAAD()) {
+            /* Create the AAD cipher */
+            final AEADBlockCipher myBCCipher = getBCAADCipher(pCipherSpec);
+            return new BouncyAADCipher(getFactory(), pCipherSpec, myBCCipher);
 
-    @Override
-    public BouncyAADCipher createAADCipher(final GordianSymCipherSpec pCipherSpec) throws OceanusException {
-        /* Check validity of SymKeySpec */
-        checkSymCipherSpec(pCipherSpec, true);
-
-        /* Create the cipher */
-        final AEADBlockCipher myBCCipher = getBCAADCipher(pCipherSpec);
-        return new BouncyAADCipher(getFactory(), pCipherSpec, myBCCipher);
+            /* else create the standard cipher */
+        } else {
+            /* Create the cipher */
+            final BufferedBlockCipher myBCCipher = getBCBlockCipher(pCipherSpec);
+            return new BouncySymKeyCipher(getFactory(), pCipherSpec, myBCCipher);
+        }
     }
 
     @Override
@@ -179,8 +184,10 @@ public class BouncyCipherFactory
         checkStreamCipherSpec(pCipherSpec);
 
         /* Create the cipher */
-        final StreamCipher myBCCipher = getBCStreamCipher(pCipherSpec.getKeyType());
-        return new BouncyStreamKeyCipher(getFactory(), pCipherSpec, myBCCipher);
+        final StreamCipher myBCCipher = getBCStreamCipher(pCipherSpec);
+        return myBCCipher instanceof ChaChaPoly1305
+               ? new BouncyStreamKeyAADCipher(getFactory(), pCipherSpec, (ChaChaPoly1305) myBCCipher)
+               : new BouncyStreamKeyCipher(getFactory(), pCipherSpec, myBCCipher);
     }
 
     @Override
@@ -190,7 +197,7 @@ public class BouncyCipherFactory
 
         /* Create the cipher */
         final GordianSymCipherSpec mySpec = GordianSymCipherSpec.ecb(pKeySpec, GordianPadding.NONE);
-        final BouncySymKeyCipher myBCCipher = createSymKeyCipher(mySpec);
+        final BouncySymKeyCipher myBCCipher = (BouncySymKeyCipher) createSymKeyCipher(mySpec);
         return createKeyWrapper(myBCCipher);
     }
 
@@ -226,28 +233,34 @@ public class BouncyCipherFactory
     /**
      * Create the BouncyCastle Stream Cipher.
      *
-     * @param pKeySpec the keySpec
+     * @param pCipherSpec the cipherSpec
      * @return the Cipher
      * @throws OceanusException on error
      */
-    private static StreamCipher getBCStreamCipher(final GordianStreamKeySpec pKeySpec) throws OceanusException {
-        switch (pKeySpec.getStreamKeyType()) {
+    private static StreamCipher getBCStreamCipher(final GordianStreamCipherSpec pCipherSpec) throws OceanusException {
+        final GordianStreamKeySpec mySpec = pCipherSpec.getKeyType();
+        switch (mySpec.getStreamKeyType()) {
             case HC:
-                return GordianLength.LEN_128 == pKeySpec.getKeyLength()
+                return GordianLength.LEN_128 == mySpec.getKeyLength()
                        ? new HC128Engine()
                        : new HC256Engine();
-            case CHACHA:
-                return GordianLength.LEN_128 == pKeySpec.getKeyLength()
-                       ? new ChaChaEngine()
-                       : new ChaCha7539Engine();
-            case XCHACHA20:
-                return new XChaCha20Engine();
+            case CHACHA20:
+                switch ((GordianChaCha20Key) mySpec.getSubKeyType()) {
+                    case XCHACHA:
+                        return pCipherSpec.isAAD() ? new ChaChaPoly1305(new XChaCha20Engine()) : new XChaCha20Engine();
+                    case ISO7539:
+                        return pCipherSpec.isAAD() ? new ChaChaPoly1305(new ChaCha7539Engine()) : new ChaCha7539Engine();
+                    default:
+                        return new ChaChaEngine();
+                }
             case SALSA20:
-                return new Salsa20Engine();
-            case XSALSA20:
-                return new XSalsa20Engine();
+                return mySpec.getSubKeyType() == GordianSalsa20Key.STD
+                        ? new Salsa20Engine()
+                        : new XSalsa20Engine();
             case VMPC:
-                return new VMPCKSA3Engine();
+                return mySpec.getSubKeyType() == GordianVMPCKey.STD
+                       ? new VMPCEngine()
+                       : new VMPCKSA3Engine();
             case GRAIN:
                 return new Grain128Engine();
             case ISAAC:
@@ -261,11 +274,11 @@ public class BouncyCipherFactory
             case SNOW3G:
                 return new Snow3GEngine();
             case ZUC:
-                return GordianLength.LEN_128 == pKeySpec.getKeyLength()
+                return GordianLength.LEN_128 == mySpec.getKeyLength()
                        ? new Zuc128Engine()
                        : new Zuc256Engine();
             default:
-                throw new GordianDataException(GordianCoreFactory.getInvalidText(pKeySpec));
+                throw new GordianDataException(GordianCoreFactory.getInvalidText(pCipherSpec));
         }
     }
 

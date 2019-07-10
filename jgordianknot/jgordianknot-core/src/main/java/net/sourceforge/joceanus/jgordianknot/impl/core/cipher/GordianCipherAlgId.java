@@ -96,23 +96,17 @@ public class GordianCipherAlgId {
 
             /* Loop through the possible SymKeySpecs */
             for (GordianSymKeySpec mySymKey : myFactory.listAllSupportedSymKeySpecs(myKeyLen)) {
-                /* Loop through the possible non-AAD CipherSpecs */
-                for (GordianSymCipherSpec mySpec : myFactory.listAllSupportedSymCipherSpecs(mySymKey, false)) {
+                /* Loop through the possible CipherSpecs */
+                for (GordianSymCipherSpec mySpec : myFactory.listAllSupportedSymCipherSpecs(mySymKey)) {
                     /* Add any non-standard symCiphers */
-                    ensureSymCipher(mySpec);
-                }
-
-                /* Loop through the possible AAD CipherSpecs */
-                for (GordianSymCipherSpec mySpec : myFactory.listAllSupportedSymCipherSpecs(mySymKey, true)) {
-                    /* Add any non-standard AAD symCiphers */
                     ensureSymCipher(mySpec);
                 }
             }
 
-            /* Loop through the possible StreamKeySpecs */
-            for (GordianStreamKeySpec mySpec : myFactory.listAllSupportedStreamKeySpecs(myKeyLen)) {
+            /* Loop through the possible StreamCipherSpecs */
+            for (GordianStreamCipherSpec mySpec : myFactory.listAllSupportedStreamCipherSpecs(myKeyLen)) {
                 /* Add any non-standard streamCiphers */
-                ensureStreamCipher(GordianStreamCipherSpec.stream(mySpec));
+                ensureStreamCipher(mySpec);
             }
         }
     }
@@ -381,6 +375,12 @@ public class GordianCipherAlgId {
         ASN1ObjectIdentifier myId = CIPHEROID.branch("2");
         myId = myId.branch(Integer.toString(mySpec.getKeyLength().ordinal() + 1));
         myId = myId.branch(Integer.toString(mySpec.getStreamKeyType().ordinal() + 1));
+        if (mySpec.getSubKeyType() != null) {
+            myId = myId.branch(Integer.toString(((Enum<?>) mySpec.getSubKeyType()).ordinal() + 1));
+            if (mySpec.supportsAAD()) {
+                myId = myId.branch(Integer.toString(pSpec.isAAD() ? 2 : 1));
+            }
+        }
 
         /* Add the spec to the maps */
         addToStreamMaps(pSpec, new AlgorithmIdentifier(myId));

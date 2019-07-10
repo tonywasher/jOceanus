@@ -31,6 +31,11 @@ public final class GordianStreamCipherSpec
     private final boolean isValid;
 
     /**
+     * Is this an AAD Spec.
+     */
+    private final boolean isAAD;
+
+    /**
      * The String name.
      */
     private String theName;
@@ -40,7 +45,18 @@ public final class GordianStreamCipherSpec
      * @param pKeySpec the keySpec
      */
     private GordianStreamCipherSpec(final GordianStreamKeySpec pKeySpec) {
+        this(pKeySpec, false);
+    }
+
+    /**
+     * Constructor.
+     * @param pKeySpec the keySpec
+     * @param pAAD is this an AAD cipher?
+     */
+    private GordianStreamCipherSpec(final GordianStreamKeySpec pKeySpec,
+                                    final boolean pAAD) {
         super(pKeySpec);
+        isAAD = pAAD;
         isValid = checkValidity();
     }
 
@@ -53,6 +69,17 @@ public final class GordianStreamCipherSpec
         return new GordianStreamCipherSpec(pKeySpec);
     }
 
+    /**
+     * Create a streamCipherSpec.
+     * @param pKeySpec the keySpec
+     * @param pAAD is this an AAD cipher?
+     * @return the cipherSpec
+     */
+    public static GordianStreamCipherSpec stream(final GordianStreamKeySpec pKeySpec,
+                                                 final boolean pAAD) {
+        return new GordianStreamCipherSpec(pKeySpec, pAAD);
+    }
+
     @Override
     public boolean needsIV() {
         return getKeyType().needsIV();
@@ -60,7 +87,15 @@ public final class GordianStreamCipherSpec
 
     @Override
     public int getIVLength(final GordianLength pKeyLen) {
-        return getKeyType().getIVLength();
+        return getKeyType().getIVLength(isAAD);
+    }
+
+    /**
+     * Is the keySpec an AAD cipher?
+     * @return true/false.
+     */
+    public boolean isAAD() {
+        return isAAD;
     }
 
     /**
@@ -76,8 +111,15 @@ public final class GordianStreamCipherSpec
      * @return valid true/false
      */
     private boolean checkValidity() {
-        return getKeyType() != null
-                && getKeyType().isValid();
+        /* KeyType must be non-null and valid */
+        final GordianStreamKeySpec mySpec = getKeyType();
+        if (mySpec == null
+                || !mySpec.isValid()) {
+            return false;
+        }
+
+        /* KeySpec must support AAD if requested */
+        return !isAAD || mySpec.supportsAAD();
     }
 
     @Override
@@ -88,6 +130,9 @@ public final class GordianStreamCipherSpec
             if (isValid) {
                 /* Load the name */
                 theName = super.toString();
+                if (isAAD) {
+                    theName += "Poly1305";
+                }
             }  else {
                 /* Report invalid spec */
                 theName = "InvalidStreamCipherSpec: " + getKeyType();
@@ -117,11 +162,12 @@ public final class GordianStreamCipherSpec
         final GordianStreamCipherSpec myThat = (GordianStreamCipherSpec) pThat;
 
         /* Check KeyType */
-        return getKeyType().equals(myThat.getKeyType());
+        return getKeyType().equals(myThat.getKeyType())
+                && isAAD == myThat.isAAD();
     }
 
     @Override
     public int hashCode() {
-       return getKeyType().hashCode();
+       return getKeyType().hashCode() + (isAAD() ? 1 : 0);
     }
 }

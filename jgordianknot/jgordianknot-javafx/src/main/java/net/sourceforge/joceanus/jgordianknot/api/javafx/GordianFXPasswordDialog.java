@@ -27,7 +27,7 @@ import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import javafx.stage.Window;
 
-import net.sourceforge.joceanus.jgordianknot.api.impl.GordianPasswordDialog;
+import net.sourceforge.joceanus.jgordianknot.util.GordianPasswordDialog;
 import net.sourceforge.joceanus.jtethys.logger.TethysLogManager;
 import net.sourceforge.joceanus.jtethys.logger.TethysLogger;
 import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXBorderPaneManager;
