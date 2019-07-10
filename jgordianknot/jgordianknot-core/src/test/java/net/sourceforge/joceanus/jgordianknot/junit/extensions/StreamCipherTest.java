@@ -22,7 +22,8 @@ import java.util.stream.Stream;
 import org.bouncycastle.crypto.InvalidCipherTextException;
 import org.bouncycastle.crypto.Mac;
 import org.bouncycastle.crypto.StreamCipher;
-import org.bouncycastle.crypto.ext.engines.ChaChaPolyEngine;
+import org.bouncycastle.crypto.engines.ChaCha7539Engine;
+import org.bouncycastle.crypto.ext.modes.ChaChaPoly1305;
 import org.bouncycastle.crypto.ext.engines.RabbitEngine;
 import org.bouncycastle.crypto.ext.engines.Snow3GEngine;
 import org.bouncycastle.crypto.ext.engines.SosemanukEngine;
@@ -345,7 +346,7 @@ public class StreamCipherTest {
      * @param pTestCase the testCase
      * @throws OceanusException on error
      */
-    static void testAADCipher(final ChaChaPolyEngine pCipher,
+    static void testAADCipher(final ChaChaPoly1305 pCipher,
                               final TestCase pTestCase) throws OceanusException {
         try {
             /* Access the expected bytes */
@@ -365,7 +366,7 @@ public class StreamCipherTest {
 
             /* Initialise the cipher and encrypt the data */
             pCipher.init(true, myAEADParms);
-            final byte[] myOutput = new byte[pCipher.getOutputLength(myData.length)];
+            final byte[] myOutput = new byte[pCipher.getOutputSize(myData.length)];
             int iProcessed = pCipher.processBytes(myData, 0, myData.length, myOutput, 0);
             pCipher.doFinal(myOutput, iProcessed);
 
@@ -381,7 +382,7 @@ public class StreamCipherTest {
 
             /* Initialise the cipher and decrypt the data */
             pCipher.init(false, myAEADParms);
-            final byte[] myResult = new byte[pCipher.getOutputLength(myExpected.length)];
+            final byte[] myResult = new byte[pCipher.getOutputSize(myExpected.length)];
             iProcessed = pCipher.processBytes(myExpected, 0, myExpected.length, myResult, 0);
             pCipher.doFinal(myResult, iProcessed);
 
@@ -393,7 +394,7 @@ public class StreamCipherTest {
                 /* Process the decryption one block at a time */
                 iProcessed = 0;
                 int iRemaining = myExpected.length;
-                final byte[] myResult2 = new byte[pCipher.getOutputLength(myExpected.length)];
+                final byte[] myResult2 = new byte[pCipher.getOutputSize(myExpected.length)];
                 for (int i = 0; iRemaining > 0; i += blockSize, iRemaining -= blockSize) {
                     int myLen = Math.min(blockSize, iRemaining);
                     iProcessed += pCipher.processBytes(myExpected, i, myLen, myResult2, iProcessed);
@@ -407,7 +408,7 @@ public class StreamCipherTest {
             /* Initialise the cipher and encrypt the data pass AAD explicitly */
             pCipher.init(true, myIVParms);
             pCipher.processAADBytes(myAAD, 0, myAAD.length);
-            final byte[] myOutput2 = new byte[pCipher.getOutputLength(myData.length)];
+            final byte[] myOutput2 = new byte[pCipher.getOutputSize(myData.length)];
             iProcessed = pCipher.processBytes(myData, 0, myData.length, myOutput2, 0);
             pCipher.doFinal(myOutput2, iProcessed);
 
@@ -857,7 +858,7 @@ public class StreamCipherTest {
          * @throws OceanusException on error
          */
         void testTheCipher() throws OceanusException {
-            final ChaChaPolyEngine myEngine = new ChaChaPolyEngine(false);
+            final ChaChaPoly1305 myEngine = new ChaChaPoly1305(new ChaCha7539Engine());
             testAADCipher(myEngine, TEST);
         }
     }
@@ -894,7 +895,7 @@ public class StreamCipherTest {
          * @throws OceanusException on error
          */
         void testTheCipher() throws OceanusException {
-            final ChaChaPolyEngine myEngine = new ChaChaPolyEngine(true);
+            final ChaChaPoly1305 myEngine = new ChaChaPoly1305(new XChaCha20Engine());
             testAADCipher(myEngine, TEST);
         }
     }

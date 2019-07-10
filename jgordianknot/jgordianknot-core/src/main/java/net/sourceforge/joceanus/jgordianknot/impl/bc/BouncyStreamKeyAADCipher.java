@@ -17,8 +17,7 @@
 package net.sourceforge.joceanus.jgordianknot.impl.bc;
 
 import org.bouncycastle.crypto.InvalidCipherTextException;
-import org.bouncycastle.crypto.StreamCipher;
-import org.bouncycastle.crypto.ext.engines.ChaChaPolyEngine;
+import org.bouncycastle.crypto.ext.modes.ChaChaPoly1305;
 
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianStreamAADCipher;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianStreamCipherSpec;
@@ -34,7 +33,7 @@ public class BouncyStreamKeyAADCipher
     /**
      * The cipher.
      */
-    private final ChaChaPolyEngine theCipher;
+    private final ChaChaPoly1305 theCipher;
 
     /**
      * Constructor.
@@ -44,7 +43,7 @@ public class BouncyStreamKeyAADCipher
      */
     protected BouncyStreamKeyAADCipher(final BouncyFactory pFactory,
                                        final GordianStreamCipherSpec pCipherSpec,
-                                       final ChaChaPolyEngine pCipher) {
+                                       final ChaChaPoly1305 pCipher) {
         super(pFactory, pCipherSpec, pCipher);
         theCipher = pCipher;
     }
@@ -59,7 +58,7 @@ public class BouncyStreamKeyAADCipher
 
     @Override
     public int getOutputLength(final int len) {
-        return theCipher.getOutputLength(len);
+        return theCipher.getOutputSize(len);
     }
 
     @Override

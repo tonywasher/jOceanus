@@ -60,7 +60,7 @@ import org.bouncycastle.crypto.engines.VMPCKSA3Engine;
 import org.bouncycastle.crypto.engines.XSalsa20Engine;
 import org.bouncycastle.crypto.engines.XTEAEngine;
 import org.bouncycastle.crypto.ext.engines.AnubisEngine;
-import org.bouncycastle.crypto.ext.engines.ChaChaPolyEngine;
+import org.bouncycastle.crypto.ext.modes.ChaChaPoly1305;
 import org.bouncycastle.crypto.ext.engines.MARSEngine;
 import org.bouncycastle.crypto.ext.engines.RabbitEngine;
 import org.bouncycastle.crypto.ext.engines.SimonEngine;
@@ -185,8 +185,8 @@ public class BouncyCipherFactory
 
         /* Create the cipher */
         final StreamCipher myBCCipher = getBCStreamCipher(pCipherSpec);
-        return myBCCipher instanceof ChaChaPolyEngine
-               ? new BouncyStreamKeyAADCipher(getFactory(), pCipherSpec, (ChaChaPolyEngine) myBCCipher)
+        return myBCCipher instanceof ChaChaPoly1305
+               ? new BouncyStreamKeyAADCipher(getFactory(), pCipherSpec, (ChaChaPoly1305) myBCCipher)
                : new BouncyStreamKeyCipher(getFactory(), pCipherSpec, myBCCipher);
     }
 
@@ -247,9 +247,9 @@ public class BouncyCipherFactory
             case CHACHA20:
                 switch ((GordianChaCha20Key) mySpec.getSubKeyType()) {
                     case XCHACHA:
-                        return pCipherSpec.isAAD() ? new ChaChaPolyEngine(true) : new XChaCha20Engine();
+                        return pCipherSpec.isAAD() ? new ChaChaPoly1305(new XChaCha20Engine()) : new XChaCha20Engine();
                     case ISO7539:
-                        return pCipherSpec.isAAD() ? new ChaChaPolyEngine(false) : new ChaCha7539Engine();
+                        return pCipherSpec.isAAD() ? new ChaChaPoly1305(new ChaCha7539Engine()) : new ChaCha7539Engine();
                     default:
                         return new ChaChaEngine();
                 }
