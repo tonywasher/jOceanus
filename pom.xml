@@ -96,7 +96,7 @@
     <JarPluginVersion>3.1.2</JarPluginVersion>
     <ProjectInfoPluginVersion>3.0.0</ProjectInfoPluginVersion>
     <JxrPluginVersion>3.0.0</JxrPluginVersion>
-    <JavaDocPluginVersion>3.1.0</JavaDocPluginVersion>
+    <JavaDocPluginVersion>3.1.1</JavaDocPluginVersion>
     <SonarQubePluginVersion>3.6.0.1398</SonarQubePluginVersion>
     <CheckStylePluginVersion>3.1.0</CheckStylePluginVersion>
     <PMDPluginVersion>3.12.0</PMDPluginVersion>

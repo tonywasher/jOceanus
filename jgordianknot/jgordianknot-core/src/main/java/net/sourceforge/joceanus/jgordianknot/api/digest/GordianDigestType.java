@@ -60,7 +60,7 @@ public enum GordianDigestType {
     /**
      * SHAKE.
      */
-    SHAKE(GordianLength.LEN_256, GordianLength.LEN_128, GordianLength.LEN_160, GordianLength.LEN_224, GordianLength.LEN_384, GordianLength.LEN_512),
+    SHAKE(GordianLength.LEN_128, GordianLength.LEN_160, GordianLength.LEN_224, GordianLength.LEN_256, GordianLength.LEN_384, GordianLength.LEN_512),
 
     /**
      * Skein.

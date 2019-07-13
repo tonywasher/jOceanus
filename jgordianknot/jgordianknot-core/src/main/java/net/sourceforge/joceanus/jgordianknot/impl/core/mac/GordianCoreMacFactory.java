@@ -207,6 +207,7 @@ public abstract class GordianCoreMacFactory
             case VMPC:
             case SIPHASH:
             case GOST:
+            case KMAC:
                 return true;
             default:
                 return false;

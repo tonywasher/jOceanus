@@ -18,6 +18,7 @@ package net.sourceforge.joceanus.jgordianknot.impl.bc;
 
 import org.bouncycastle.crypto.CipherParameters;
 import org.bouncycastle.crypto.Mac;
+import org.bouncycastle.crypto.ext.macs.KMAC;
 import org.bouncycastle.crypto.params.KeyParameter;
 import org.bouncycastle.crypto.params.ParametersWithIV;
 import org.bouncycastle.crypto.params.SkeinParameters.Builder;
@@ -74,7 +75,9 @@ public final class BouncyMac
 
     @Override
     public int getMacSize() {
-        return theMac.getMacSize();
+        return theMac instanceof KMAC
+               ? getMacSpec().getDigestSpec().getDigestLength().getByteLength()
+               : theMac.getMacSize();
     }
 
     /**

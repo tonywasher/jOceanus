@@ -17,16 +17,13 @@
 package org.bouncycastle.crypto.ext.macs;
 
 import org.bouncycastle.crypto.CipherParameters;
-import org.bouncycastle.crypto.Digest;
 import org.bouncycastle.crypto.Mac;
-import org.bouncycastle.crypto.digests.Blake2bDigest;
-import org.bouncycastle.crypto.digests.Blake2sDigest;
 import org.bouncycastle.crypto.ext.digests.Blake2;
 import org.bouncycastle.crypto.params.KeyParameter;
 import org.bouncycastle.crypto.params.ParametersWithIV;
 
 /**
- * Bouncy implementation of Blake2bMac.
+ * Bouncy implementation of Blake2Mac.
  */
 public class Blake2Mac
         implements Mac {

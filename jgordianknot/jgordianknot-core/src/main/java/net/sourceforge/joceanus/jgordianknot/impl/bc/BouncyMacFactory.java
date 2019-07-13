@@ -23,6 +23,7 @@ import org.bouncycastle.crypto.CipherKeyGenerator;
 import org.bouncycastle.crypto.Mac;
 import org.bouncycastle.crypto.ext.digests.Blake2;
 import org.bouncycastle.crypto.ext.macs.Blake2Mac;
+import org.bouncycastle.crypto.ext.macs.KMAC;
 import org.bouncycastle.crypto.ext.macs.Zuc128Mac;
 import org.bouncycastle.crypto.ext.macs.Zuc256Mac;
 import org.bouncycastle.crypto.generators.Poly1305KeyGenerator;
@@ -147,6 +148,8 @@ public class BouncyMacFactory
                 return getBCSkeinMac(pMacSpec.getDigestSpec());
             case BLAKE:
                 return getBCBlakeMac(pMacSpec);
+            case KMAC:
+                return getBCKMAC(pMacSpec);
             case KALYNA:
                 return getBCKalynaMac(pMacSpec.getSymKeySpec());
             case KUPYNA:
@@ -255,6 +258,17 @@ public class BouncyMacFactory
     private static Mac getBCBlakeMac(final GordianMacSpec pSpec) {
         final Blake2 myDigest = BouncyDigestFactory.getBlake2Digest(pSpec.getDigestSpec());
         return new Blake2Mac(myDigest);
+    }
+
+    /**
+     * Create the BouncyCastle KMAC.
+     *
+     * @param pSpec the digestSpec
+     * @return the MAC
+     */
+    private static Mac getBCKMAC(final GordianMacSpec pSpec) {
+        final GordianDigestSpec mySpec = pSpec.getDigestSpec();
+        return new KMAC(mySpec.getStateLength().getLength(), null);
     }
 
     /**

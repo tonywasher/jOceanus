@@ -199,6 +199,26 @@ public final class GordianMacSpec implements GordianKeySpec {
     }
 
     /**
+     * Create skeinMacSpec.
+     * @param pKeyLength the keyLength
+     * @return the MacSpec
+     */
+    public static GordianMacSpec kMac(final GordianLength pKeyLength) {
+        return kMac(pKeyLength, GordianDigestSpec.shake(GordianDigestType.SHAKE.getDefaultLength()));
+    }
+
+    /**
+     * Create KMACSpec.
+     * @param pKeyLength the keyLength
+     * @param pSpec the Shake Spec
+     * @return the MacSpec
+     */
+    public static GordianMacSpec kMac(final GordianLength pKeyLength,
+                                      final GordianDigestSpec pSpec) {
+        return new GordianMacSpec(GordianMacType.KMAC, pKeyLength, pSpec);
+    }
+
+    /**
      * Create poly1305MacSpec.
      * @param pSymKeySpec the symKeySpec
      * @return the MacSpec
@@ -492,6 +512,7 @@ public final class GordianMacSpec implements GordianKeySpec {
             case BLAKE:
             case SKEIN:
             case KUPYNA:
+            case KMAC:
                 return getDigestLength();
             case GMAC:
             case POLY1305:
@@ -565,6 +586,8 @@ public final class GordianMacSpec implements GordianKeySpec {
                 return checkBlakeValidity();
             case KALYNA:
                 return checkSymKeyValidity(GordianSymKeyType.KALYNA);
+            case KMAC:
+                return checkKMACValidity();
             case CMAC:
             case GMAC:
             case CBCMAC:
@@ -662,6 +685,32 @@ public final class GordianMacSpec implements GordianKeySpec {
     }
 
     /**
+     * Check blake validity.
+     * @return valid true/false
+     */
+    private boolean checkKMACValidity() {
+        /* Check that the spec is reasonable */
+        if  (!checkDigestValidity(GordianDigestType.SHAKE)) {
+            return false;
+        }
+
+        /* Check keyLength */
+        return checkKMACKeyLength(theKeyLength, (GordianDigestSpec) theSubSpec);
+    }
+
+    /**
+     * Check blake keyLength validity.
+     * @param pKeyLen the keyLength
+     * @param pSpec the digestSpec
+     * @return valid true/false
+     */
+    private static boolean checkKMACKeyLength(final GordianLength pKeyLen,
+                                              final GordianDigestSpec pSpec) {
+        /* Key length must be greater or equal to the stateLength */
+        return pKeyLen.getLength() >= pSpec.getStateLength().getLength();
+    }
+
+    /**
      * Check zuc validity.
      * @return valid true/false
      */
@@ -685,7 +734,7 @@ public final class GordianMacSpec implements GordianKeySpec {
             /* If the macSpec is invalid */
             if (!isValid) {
                 /* Report invalid spec */
-                theName = "InvalidMacSpec: " + theMacType + ":" + theKeyLength + ":" + theSubSpec;
+                theName = "InvalidMacSpec: " + theMacType + ":" + theSubSpec + ":" + theKeyLength;
                 return theName;
             }
 
@@ -707,21 +756,24 @@ public final class GordianMacSpec implements GordianKeySpec {
                     theName += SEP + theSubSpec.toString();
                     break;
                 case KALYNA:
-                    theName += theKeyLength + SEP + getSymKeyBlockLength();
+                    theName += getSymKeyBlockLength()  + SEP + theKeyLength;
                     break;
                 case KUPYNA:
-                    theName += theKeyLength + SEP + getDigestLength();
+                    theName += SEP + getDigestLength() + SEP + theKeyLength;
+                    break;
+                case KMAC:
+                    theName += getDigestStateLength() + SEP + getDigestLength() + SEP + theKeyLength;
                     break;
                 case SKEIN:
-                    theName += theKeyLength + SEP + getDigestStateLength() + SEP + getDigestLength();
+                    theName += SEP + getDigestStateLength() + SEP + getDigestLength() + SEP + theKeyLength;
                     break;
                 case HMAC:
                 case ZUC:
-                    theName += theKeyLength + SEP + theSubSpec.toString();
+                    theName += theSubSpec.toString() + SEP + theKeyLength;
                     break;
                 case BLAKE:
                     theName = GordianDigestType.getBlakeAlgorithmForStateLength(getDigestStateLength())
-                                 + "Mac" + theKeyLength + SEP + getDigestLength();
+                                 + "Mac" + getDigestLength() + SEP + theKeyLength;
                     break;
                 case VMPC:
                     theName += theKeyLength;
@@ -789,6 +841,11 @@ public final class GordianMacSpec implements GordianKeySpec {
         for (final GordianDigestSpec mySpec : GordianDigestSpec.listAll()) {
             /* Add the hMacSpec */
             myList.add(GordianMacSpec.hMac(mySpec, pKeyLen));
+
+            /* Add KMAC for digestType of SHAKE */
+            if (GordianDigestType.SHAKE == mySpec.getDigestType()) {
+                myList.add(GordianMacSpec.kMac(pKeyLen, mySpec));
+            }
         }
 
         /* For each SymKey */

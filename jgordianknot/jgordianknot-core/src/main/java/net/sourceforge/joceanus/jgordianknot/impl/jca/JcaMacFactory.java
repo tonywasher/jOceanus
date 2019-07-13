@@ -107,6 +107,7 @@ public class JcaMacFactory
             case ZUC:
             case CBCMAC:
             case CFBMAC:
+            case KMAC:
                 return false;
             default:
                 return super.validMacType(pMacType);
