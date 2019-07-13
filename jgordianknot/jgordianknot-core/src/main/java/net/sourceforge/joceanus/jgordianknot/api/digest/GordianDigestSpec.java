@@ -393,10 +393,10 @@ public class GordianDigestSpec
                         theName += SEP + theLength;
                         break;
                     case SHAKE:
+                        theName += theStateLength;
                         if (!theStateLength.equals(theLength)) {
-                            theName += SEP + theStateLength;
+                            theName += SEP + theLength;
                         }
-                        theName += SEP + theLength;
                         break;
                     case SKEIN:
                         theName += SEP + theStateLength;

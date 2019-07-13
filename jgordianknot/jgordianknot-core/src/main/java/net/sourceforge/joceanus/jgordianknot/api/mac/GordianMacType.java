@@ -91,6 +91,11 @@ public enum GordianMacType {
     SIPHASH,
 
     /**
+     * KMAC.
+     */
+    KMAC,
+
+    /**
      * GOST.
      */
     GOST;

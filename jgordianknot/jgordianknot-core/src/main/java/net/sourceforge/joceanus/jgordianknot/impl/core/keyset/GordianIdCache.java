@@ -296,6 +296,8 @@ public class GordianIdCache {
                 return generateRandomSymKeyMacSpec(myMacType);
             case SKEIN:
                 return GordianMacSpec.skeinMac(theKeyLength);
+            case KMAC:
+                return GordianMacSpec.kMac(theKeyLength);
             case BLAKE:
                 return GordianMacSpec.blakeMac(theKeyLength);
             case KUPYNA:

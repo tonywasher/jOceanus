@@ -44,6 +44,11 @@ public enum GordianMacResource implements TethysBundleId {
     MAC_CMAC("CMAC"),
 
     /**
+     * MAC KMAC.
+     */
+    MAC_KMAC("KMAC"),
+
+    /**
      * MAC POLY1305.
      */
     MAC_POLY("POLY1305"),
@@ -153,6 +158,7 @@ public enum GordianMacResource implements TethysBundleId {
         myMap.put(GordianMacType.HMAC, MAC_HMAC);
         myMap.put(GordianMacType.GMAC, MAC_GMAC);
         myMap.put(GordianMacType.CMAC, MAC_CMAC);
+        myMap.put(GordianMacType.KMAC, MAC_KMAC);
         myMap.put(GordianMacType.POLY1305, MAC_POLY);
         myMap.put(GordianMacType.SKEIN, MAC_SKEIN);
         myMap.put(GordianMacType.KALYNA, MAC_KALYNA);

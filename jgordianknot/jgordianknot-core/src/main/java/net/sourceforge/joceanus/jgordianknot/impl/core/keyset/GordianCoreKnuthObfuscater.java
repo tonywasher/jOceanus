@@ -17,7 +17,6 @@
 package net.sourceforge.joceanus.jgordianknot.impl.core.keyset;
 
 import java.math.BigInteger;
-import java.security.Key;
 
 import net.sourceforge.joceanus.jgordianknot.api.base.GordianIdSpec;
 import net.sourceforge.joceanus.jgordianknot.api.base.GordianLength;
@@ -540,6 +539,7 @@ public class GordianCoreKnuthObfuscater
             case SKEIN:
             case BLAKE:
             case KUPYNA:
+            case KMAC:
                 myCode += deriveEncodedIdFromDigestSpec(pMacSpec.getDigestSpec()) << myShift;
                 break;
             case GMAC:
@@ -598,6 +598,9 @@ public class GordianCoreKnuthObfuscater
             case BLAKE:
                 mySpec = deriveDigestSpecFromEncodedId(myId);
                 return GordianMacSpec.blakeMac(myKeyLen, mySpec);
+            case KMAC:
+                mySpec = deriveDigestSpecFromEncodedId(myId);
+                return GordianMacSpec.kMac(myKeyLen, mySpec);
             case KUPYNA:
                 mySpec = deriveDigestSpecFromEncodedId(myId);
                 return GordianMacSpec.kupynaMac(myKeyLen, mySpec.getDigestLength());
