@@ -28,6 +28,7 @@ import org.bouncycastle.crypto.ext.digests.GroestlDigest;
 import org.bouncycastle.crypto.ext.digests.JHDigest;
 import org.bouncycastle.crypto.ext.macs.Blake2Mac;
 import org.bouncycastle.crypto.params.KeyParameter;
+import org.bouncycastle.util.encoders.Hex;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DynamicContainer;
 import org.junit.jupiter.api.DynamicNode;
@@ -35,7 +36,6 @@ import org.junit.jupiter.api.DynamicTest;
 import org.junit.jupiter.api.TestFactory;
 
 import net.sourceforge.joceanus.jtethys.OceanusException;
-import net.sourceforge.joceanus.jtethys.TethysDataConverter;
 
 /**
  * Digest Tests.
@@ -132,7 +132,7 @@ public class DigestTest {
             pDigest.doFinal(myOutput, 0);
 
             /* Check the hash */
-            final byte[] myExpected = TethysDataConverter.hexStringToBytes(pExpected[i]);
+            final byte[] myExpected = Hex.decode(pExpected[i]);
             Assertions.assertArrayEquals(myExpected, myOutput, "Result mismatch");
             pDigest.update(myInput.getBytes(), 0, myInput.length());
             pDigest.doFinal(myOutput, 0);
@@ -158,7 +158,7 @@ public class DigestTest {
             pDigest.doFinal(myOutput, 0);
 
             /* Check the hash */
-            final String myHash = TethysDataConverter.bytesToHexString(myOutput);
+            final String myHash = Hex.toHexString(myOutput);
             System.out.println(myHash);
         }
     }
@@ -188,7 +188,7 @@ public class DigestTest {
         pMac.doFinal(myOutput, 0);
 
         /* Check the result */
-        final byte[] myExpected = TethysDataConverter.hexStringToBytes(pResult);
+        final byte[] myExpected = Hex.decode(pResult);
         Assertions.assertArrayEquals(myExpected, myOutput, "Result mismatch");
     }
 
@@ -203,7 +203,7 @@ public class DigestTest {
                              final int pKeyLen,
                              final String pResult) throws OceanusException {
         /* Access the expected result */
-        final byte[] myExpected = TethysDataConverter.hexStringToBytes(pResult);
+        final byte[] myExpected = Hex.decode(pResult);
         final int myXofLen = myExpected.length;
 
         /* Create the key */

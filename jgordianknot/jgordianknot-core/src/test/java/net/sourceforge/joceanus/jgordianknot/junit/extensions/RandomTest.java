@@ -20,6 +20,7 @@ import java.util.stream.Stream;
 
 import org.bouncycastle.crypto.prng.EntropySource;
 import org.bouncycastle.crypto.prng.EntropySourceProvider;
+import org.bouncycastle.util.encoders.Hex;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DynamicContainer;
@@ -50,7 +51,6 @@ import net.sourceforge.joceanus.jgordianknot.impl.core.random.GordianSP800HMacDR
 import net.sourceforge.joceanus.jgordianknot.impl.core.random.GordianSP800HashDRBG;
 import net.sourceforge.joceanus.jgordianknot.impl.core.random.GordianX931CipherDRBG;
 import net.sourceforge.joceanus.jtethys.OceanusException;
-import net.sourceforge.joceanus.jtethys.TethysDataConverter;
 
 /**
  * GordianKnot DRBG testCases.
@@ -192,7 +192,7 @@ public class RandomTest {
          */
         GordianEntropySourceProvider(final String pData,
                                      final boolean pResistant) throws OceanusException {
-            theData = TethysDataConverter.hexStringToBytes(pData);
+            theData = Hex.decode(pData);
             predictionResistant = pResistant;
         }
 
@@ -309,12 +309,12 @@ public class RandomTest {
                             final boolean pResistant,
                             final GordianTestCase pTestCase) throws OceanusException {
         /* Access the expected bytes */
-        final byte[] myExpected = TethysDataConverter.hexStringToBytes(pTestCase.theExpected);
+        final byte[] myExpected = Hex.decode(pTestCase.theExpected);
         final byte[] myActual = new byte[myExpected.length];
 
         /* Access the additional input */
         final String myAdditional = pTestCase.theAdditional;
-        final byte[] myXtra = myAdditional == null ? null : TethysDataConverter.hexStringToBytes(myAdditional);
+        final byte[] myXtra = myAdditional == null ? null : Hex.decode(myAdditional);
 
         /* Generate the bytes */
         pRandom.generate(myActual, myXtra, pResistant);
@@ -332,9 +332,9 @@ public class RandomTest {
                               final GordianDRBGInit pInit,
                               final GordianTestCase[] pTestCases) throws OceanusException {
         /* Access the nonce and personalisation */
-        final byte[] myNonce = TethysDataConverter.hexStringToBytes(pInit.theNonce);
+        final byte[] myNonce = Hex.decode(pInit.theNonce);
         final String myPers = pInit.thePersonal;
-        final byte[] myPersonal = myPers == null ? null : TethysDataConverter.hexStringToBytes(myPers);
+        final byte[] myPersonal = myPers == null ? null : Hex.decode(myPers);
 
         /* Create the entropy source provider */
         final EntropySourceProvider myEntropy = new GordianEntropySourceProvider(pInit.theEntropy, true);
@@ -364,9 +364,9 @@ public class RandomTest {
                               final GordianDRBGInit pInit,
                               final GordianTestCase[] pTestCases) throws OceanusException {
         /* Access the nonce and personalisation */
-        final byte[] myNonce = TethysDataConverter.hexStringToBytes(pInit.theNonce);
+        final byte[] myNonce = Hex.decode(pInit.theNonce);
         final String myPers = pInit.thePersonal;
-        final byte[] myPersonal = myPers == null ? null : TethysDataConverter.hexStringToBytes(myPers);
+        final byte[] myPersonal = myPers == null ? null : Hex.decode(myPers);
 
         /* Create the entropy source provider */
         final EntropySourceProvider myEntropy = new GordianEntropySourceProvider(pInit.theEntropy, true);
@@ -398,9 +398,9 @@ public class RandomTest {
                                    final GordianDRBGInit pInit,
                                    final GordianTestCase[] pTestCases) throws OceanusException {
         /* Access the nonce and personalisation */
-        final byte[] myNonce = TethysDataConverter.hexStringToBytes(pInit.theNonce);
+        final byte[] myNonce = Hex.decode(pInit.theNonce);
         final String myPers = pInit.thePersonal;
-        final byte[] myPersonal = myPers == null ? null : TethysDataConverter.hexStringToBytes(myPers);
+        final byte[] myPersonal = myPers == null ? null : Hex.decode(myPers);
 
         /* Create the entropy source provider */
         final EntropySourceProvider myEntropy = new GordianEntropySourceProvider(pInit.theEntropy, true);
@@ -430,8 +430,8 @@ public class RandomTest {
                                     final GordianDRBGInit pInit,
                                     final GordianTestCase[] pTestCases) throws OceanusException {
         /* Access the nonce and key */
-        final byte[] myNonce = TethysDataConverter.hexStringToBytes(pInit.theNonce);
-        final byte[] myKey = TethysDataConverter.hexStringToBytes(pKey);
+        final byte[] myNonce = Hex.decode(pInit.theNonce);
+        final byte[] myKey = Hex.decode(pKey);
 
         /* Create the entropy source provider */
         final EntropySourceProvider myEntropy = new GordianEntropySourceProvider(pInit.theEntropy, true);

@@ -90,6 +90,12 @@ public class KMAC
             throw new IllegalArgumentException(getAlgorithmName() + " requires a key of at least " + minKeyLen + " bytes.");
         }
 
+        /* If we currently have a key */
+        if (theKey != null) {
+            /* Clear it */
+            Arrays.fill(theKey, (byte) 0);
+        }
+
         /* Build the key details */
         theKey = bytepad(encodeString(myKey));
 
@@ -205,9 +211,9 @@ public class KMAC
     }
 
     /**
-     * Encode a string.
-     * @param str the string to encode
-     * @return the encoded string
+     * Bytepad a string.
+     * @param str the string to pad
+     * @return the padded string
      */
     private byte[] bytepad(final byte[] str) {
         /* Left encode the rate */

@@ -22,6 +22,7 @@ import org.bouncycastle.crypto.BlockCipher;
 import org.bouncycastle.crypto.ext.engines.AnubisEngine;
 import org.bouncycastle.crypto.ext.engines.MARSEngine;
 import org.bouncycastle.crypto.params.KeyParameter;
+import org.bouncycastle.util.encoders.Hex;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DynamicContainer;
 import org.junit.jupiter.api.DynamicNode;
@@ -29,7 +30,6 @@ import org.junit.jupiter.api.DynamicTest;
 import org.junit.jupiter.api.TestFactory;
 
 import net.sourceforge.joceanus.jtethys.OceanusException;
-import net.sourceforge.joceanus.jtethys.TethysDataConverter;
 
 /**
  * BlockCipher Tests.
@@ -94,15 +94,15 @@ public class BlockCipherTest {
         final byte[] myFinal = new byte[pCipher.getBlockSize()];
 
         /* Access the key and the data */
-        final KeyParameter myKey = new KeyParameter(TethysDataConverter.hexStringToBytes(pKey));
-        final byte[] myData = TethysDataConverter.hexStringToBytes(pData);
+        final KeyParameter myKey = new KeyParameter(Hex.decode(pKey));
+        final byte[] myData = Hex.decode(pData);
 
         /* Initialise the cipher */
         pCipher.init(true, myKey);
         pCipher.processBlock(myData, 0, myOutput, 0);
 
         /* Check the encryption */
-        final byte[] myExpected = TethysDataConverter.hexStringToBytes(pExpected);
+        final byte[] myExpected = Hex.decode(pExpected);
         Assertions.assertArrayEquals(myExpected, myOutput, "Encryption mismatch");
 
         /* Initialise the cipher */

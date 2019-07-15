@@ -36,6 +36,7 @@ import org.bouncycastle.crypto.ext.macs.Zuc256Mac;
 import org.bouncycastle.crypto.params.AEADParameters;
 import org.bouncycastle.crypto.params.KeyParameter;
 import org.bouncycastle.crypto.params.ParametersWithIV;
+import org.bouncycastle.util.encoders.Hex;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DynamicContainer;
 import org.junit.jupiter.api.DynamicNode;
@@ -44,7 +45,6 @@ import org.junit.jupiter.api.TestFactory;
 
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianCryptoException;
 import net.sourceforge.joceanus.jtethys.OceanusException;
-import net.sourceforge.joceanus.jtethys.TethysDataConverter;
 
 /**
  * Stream Cipher Tests.
@@ -220,19 +220,19 @@ public class StreamCipherTest {
     static void testCipher(final StreamCipher pCipher,
                            final TestCase pTestCase) throws OceanusException {
         /* Access the expected bytes */
-        final byte[] myExpected = TethysDataConverter.hexStringToBytes(pTestCase.theExpected);
+        final byte[] myExpected = Hex.decode(pTestCase.theExpected);
 
         /* Create the output buffer */
         final byte[] myOutput = new byte[myExpected.length];
 
         /* Access plainText or nulls */
         final byte[] myData = pTestCase.thePlainText != null
-                                    ? TethysDataConverter.hexStringToBytes(pTestCase.thePlainText)
+                                    ? Hex.decode(pTestCase.thePlainText)
                                     : new byte[myExpected.length];
 
         /* Access the key and the iv */
-        final KeyParameter myKey = new KeyParameter(TethysDataConverter.hexStringToBytes(pTestCase.theKey));
-        final byte[] myIV = TethysDataConverter.hexStringToBytes(pTestCase.theIV);
+        final KeyParameter myKey = new KeyParameter(Hex.decode(pTestCase.theKey));
+        final byte[] myIV = Hex.decode(pTestCase.theIV);
         final ParametersWithIV myParms = new ParametersWithIV(myKey, myIV);
 
         /* Initialise the cipher and create the keyStream */
@@ -254,7 +254,7 @@ public class StreamCipherTest {
                         final boolean pOnes,
                         final TestCase pTestCase) throws OceanusException {
         /* Access the expected bytes */
-        final byte[] myExpected = TethysDataConverter.hexStringToBytes(pTestCase.theExpected);
+        final byte[] myExpected = Hex.decode(pTestCase.theExpected);
 
         /* Create the output buffer and the data */
         final byte[] myOutput = new byte[pMac.getMacSize()];
@@ -262,8 +262,8 @@ public class StreamCipherTest {
         Arrays.fill(myData, (byte) (pOnes ? 0x11 : 0));
 
         /* Access the key and the iv */
-        final KeyParameter myKey = new KeyParameter(TethysDataConverter.hexStringToBytes(pTestCase.theKey));
-        final byte[] myIV = TethysDataConverter.hexStringToBytes(pTestCase.theIV);
+        final KeyParameter myKey = new KeyParameter(Hex.decode(pTestCase.theKey));
+        final byte[] myIV = Hex.decode(pTestCase.theIV);
         final ParametersWithIV myParms = new ParametersWithIV(myKey, myIV);
 
         /* Initialise the cipher and create the keyStream */
@@ -294,8 +294,8 @@ public class StreamCipherTest {
         final byte[] myOutput = new byte[myNumBytes];
 
         /* Access the key and the iv */
-        final KeyParameter myKey = new KeyParameter(TethysDataConverter.hexStringToBytes(pTestCase.theKey));
-        final byte[] myIV = TethysDataConverter.hexStringToBytes(pTestCase.theIV);
+        final KeyParameter myKey = new KeyParameter(Hex.decode(pTestCase.theKey));
+        final byte[] myIV = Hex.decode(pTestCase.theIV);
         final ParametersWithIV myParms = new ParametersWithIV(myKey, myIV);
 
         /* Initialise the cipher and create the keyStream */
@@ -325,8 +325,8 @@ public class StreamCipherTest {
         final byte[] myOutput = new byte[myNumBytes];
 
         /* Access the key and the iv */
-        final KeyParameter myKey = new KeyParameter(TethysDataConverter.hexStringToBytes(pTestCase.theKey));
-        final byte[] myIV = TethysDataConverter.hexStringToBytes(pTestCase.theIV);
+        final KeyParameter myKey = new KeyParameter(Hex.decode(pTestCase.theKey));
+        final byte[] myIV = Hex.decode(pTestCase.theIV);
         final ParametersWithIV myParms = new ParametersWithIV(myKey, myIV);
 
         /* Initialise the mac and create the result */
@@ -355,17 +355,17 @@ public class StreamCipherTest {
                               final TestCase pTestCase) throws OceanusException {
         try {
             /* Access the expected bytes */
-            final byte[] myExpected = TethysDataConverter.hexStringToBytes(pTestCase.theExpected);
+            final byte[] myExpected = Hex.decode(pTestCase.theExpected);
 
             /* Access plainText */
-            final byte[] myData = TethysDataConverter.hexStringToBytes(pTestCase.thePlainText);
+            final byte[] myData = Hex.decode(pTestCase.thePlainText);
 
             /* Access AAD */
-            final byte[] myAAD = TethysDataConverter.hexStringToBytes(pTestCase.theAAD);
+            final byte[] myAAD = Hex.decode(pTestCase.theAAD);
 
             /* Access the key and the iv */
-            final KeyParameter myKey = new KeyParameter(TethysDataConverter.hexStringToBytes(pTestCase.theKey));
-            final byte[] myIV = TethysDataConverter.hexStringToBytes(pTestCase.theIV);
+            final KeyParameter myKey = new KeyParameter(Hex.decode(pTestCase.theKey));
+            final byte[] myIV = Hex.decode(pTestCase.theIV);
             final ParametersWithIV myIVParms = new ParametersWithIV(myKey, myIV);
             final AEADParameters myAEADParms = new AEADParameters(myKey, 0, myIV, myAAD);
 
@@ -1061,14 +1061,14 @@ public class StreamCipherTest {
             final KMAC myMac = new KMAC(pTestCase.theStrength, myNameSpace);
 
             /* Access the data and expected bytes */
-            final byte[] myData = TethysDataConverter.hexStringToBytes(pTestCase.theData);
-            final byte[] myExpected = TethysDataConverter.hexStringToBytes(pTestCase.theExpected);
+            final byte[] myData = Hex.decode(pTestCase.theData);
+            final byte[] myExpected = Hex.decode(pTestCase.theExpected);
 
             /* Create the output buffer */
             final byte[] myOutput = new byte[myExpected.length];
 
             /* Access the key */
-            final KeyParameter myParam = new KeyParameter(TethysDataConverter.hexStringToBytes(pTestCase.theKey));
+            final KeyParameter myParam = new KeyParameter(Hex.decode(pTestCase.theKey));
 
             /* Initialise the cipher and create the keyStream */
             myMac.init(myParam);
@@ -1105,14 +1105,14 @@ public class StreamCipherTest {
             final KMAC myMac = new KMAC(pTestCase.theStrength, myNameSpace);
 
             /* Access the data and expected bytes */
-            final byte[] myData = TethysDataConverter.hexStringToBytes(pTestCase.theData);
-            final byte[] myExpected = TethysDataConverter.hexStringToBytes(pTestCase.theExpected);
+            final byte[] myData = Hex.decode(pTestCase.theData);
+            final byte[] myExpected = Hex.decode(pTestCase.theExpected);
 
             /* Create the output buffer */
             final byte[] myOutput = new byte[myExpected.length];
 
             /* Access the key */
-            final KeyParameter myParam = new KeyParameter(TethysDataConverter.hexStringToBytes(pTestCase.theKey));
+            final KeyParameter myParam = new KeyParameter(Hex.decode(pTestCase.theKey));
 
             /* Initialise the cipher and create the keyStream */
             myMac.init(myParam);

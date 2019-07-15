@@ -79,6 +79,7 @@
     <ZipSDKVersion>9.20</ZipSDKVersion>
     <JavaVersion>12</JavaVersion>
     <JavaFXVersion>12.0.1</JavaFXVersion>
+    <JavaLanguageVersion>11</JavaLanguageVersion>
     <CheckStyleVersion>8.22</CheckStyleVersion>
     <PMDVersion>6.16.0</PMDVersion>
     <CleanPluginVersion>3.1.0</CleanPluginVersion>
@@ -151,8 +152,8 @@
         <artifactId>maven-compiler-plugin</artifactId>
         <version>${CompilerPluginVersion}</version>
         <configuration>
-          <source>${JavaVersion}</source>
-          <target>${JavaVersion}</target>
+          <source>${JavaLanguageVersion}</source>
+          <target>${JavaLanguageVersion}</target>
           <compilerArgument>-Xlint:unchecked</compilerArgument>
           <annotationProcessorPaths>
             <annotationProcessorPath>
@@ -226,7 +227,7 @@
             <ruleset>src/main/pmd/pmd.xml</ruleset>
           </rulesets>
           <aggregate>true</aggregate>
-          <targetJdk>${JavaVersion}</targetJdk>
+          <targetJdk>${JavaLanguageVersion}</targetJdk>
           <excludes>
             <exclude>**/SevenZip/**/*.java</exclude>
             <exclude>**/org/**/*.java</exclude>
