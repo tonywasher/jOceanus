@@ -28,24 +28,34 @@ public enum GordianQTESLAKeyType {
     HEURISTIC_I(QTESLASecurityCategory.HEURISTIC_I),
 
     /**
-     * Provably Secure Category I.
+     * Heuristic Category II.
      */
-    PROVABLY_SECURE_I(QTESLASecurityCategory.PROVABLY_SECURE_I),
+    HEURISTIC_II(QTESLASecurityCategory.HEURISTIC_II),
 
     /**
-     * Heuristic Category III (Size).
+     * Heuristic Category III.
      */
-    HEURISTIC_III_SIZE(QTESLASecurityCategory.HEURISTIC_III_SIZE),
+    HEURISTIC_III(QTESLASecurityCategory.HEURISTIC_III),
 
     /**
-     * Heuristic Category III (Speed).
+     * Heuristic Category P I.
      */
-    HEURISTIC_III_SPEED(QTESLASecurityCategory.HEURISTIC_III_SPEED),
+    HEURISTIC_P_I(QTESLASecurityCategory.HEURISTIC_P_I),
 
     /**
-     * Provably Secure Category III.
+     * Heuristic Category P III.
      */
-    PROVABLY_SECURE_III(QTESLASecurityCategory.PROVABLY_SECURE_III);
+    HEURISTIC_P_III(QTESLASecurityCategory.HEURISTIC_P_III),
+
+    /**
+     * Heuristic Category V SIZE.
+     */
+    HEURISTIC_V(QTESLASecurityCategory.HEURISTIC_V),
+
+    /**
+     * Heuristic Category V SIZE.
+     */
+    HEURISTIC_V_SIZE(QTESLASecurityCategory.HEURISTIC_V_SIZE);
 
     /**
      * Security Category.

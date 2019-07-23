@@ -327,14 +327,18 @@ public class GordianSignatureAlgId {
         /* Note that we have multiple signatures oids per spec */
         addToMaps(GordianSignatureSpec.qTESLA(), GordianQTESLAKeyType.HEURISTIC_I,
                 new AlgorithmIdentifier(PQCObjectIdentifiers.qTESLA_I, DERNull.INSTANCE));
-        addToMaps(GordianSignatureSpec.qTESLA(), GordianQTESLAKeyType.HEURISTIC_III_SIZE,
-                new AlgorithmIdentifier(PQCObjectIdentifiers.qTESLA_III_size, DERNull.INSTANCE));
-        addToMaps(GordianSignatureSpec.qTESLA(), GordianQTESLAKeyType.HEURISTIC_III_SPEED,
-                new AlgorithmIdentifier(PQCObjectIdentifiers.qTESLA_III_speed, DERNull.INSTANCE));
-        addToMaps(GordianSignatureSpec.qTESLA(), GordianQTESLAKeyType.PROVABLY_SECURE_I,
+        addToMaps(GordianSignatureSpec.qTESLA(), GordianQTESLAKeyType.HEURISTIC_II,
+                new AlgorithmIdentifier(PQCObjectIdentifiers.qTESLA_II, DERNull.INSTANCE));
+        addToMaps(GordianSignatureSpec.qTESLA(), GordianQTESLAKeyType.HEURISTIC_III,
+                new AlgorithmIdentifier(PQCObjectIdentifiers.qTESLA_III, DERNull.INSTANCE));
+        addToMaps(GordianSignatureSpec.qTESLA(), GordianQTESLAKeyType.HEURISTIC_P_I,
                 new AlgorithmIdentifier(PQCObjectIdentifiers.qTESLA_p_I, DERNull.INSTANCE));
-        addToMaps(GordianSignatureSpec.qTESLA(), GordianQTESLAKeyType.PROVABLY_SECURE_III,
+        addToMaps(GordianSignatureSpec.qTESLA(), GordianQTESLAKeyType.HEURISTIC_P_III,
                 new AlgorithmIdentifier(PQCObjectIdentifiers.qTESLA_p_III, DERNull.INSTANCE));
+        addToMaps(GordianSignatureSpec.qTESLA(), GordianQTESLAKeyType.HEURISTIC_V,
+                new AlgorithmIdentifier(PQCObjectIdentifiers.qTESLA_V, DERNull.INSTANCE));
+        addToMaps(GordianSignatureSpec.qTESLA(), GordianQTESLAKeyType.HEURISTIC_V_SIZE,
+                new AlgorithmIdentifier(PQCObjectIdentifiers.qTESLA_V_SIZE, DERNull.INSTANCE));
         addToMaps(GordianSignatureSpec.sphincs(), GordianSPHINCSKeyType.SHA2,
                 new AlgorithmIdentifier(PQCObjectIdentifiers.sphincs256_with_SHA512, DERNull.INSTANCE));
         addToMaps(GordianSignatureSpec.sphincs(), GordianSPHINCSKeyType.SHA3,

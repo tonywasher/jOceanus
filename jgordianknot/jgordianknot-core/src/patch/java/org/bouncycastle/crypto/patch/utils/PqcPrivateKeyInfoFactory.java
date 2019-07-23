@@ -171,14 +171,18 @@ public final class PqcPrivateKeyInfoFactory {
         {
             case QTESLASecurityCategory.HEURISTIC_I:
                 return new AlgorithmIdentifier(PQCObjectIdentifiers.qTESLA_I);
-            case QTESLASecurityCategory.HEURISTIC_III_SIZE:
-                return new AlgorithmIdentifier(PQCObjectIdentifiers.qTESLA_III_size);
-            case QTESLASecurityCategory.HEURISTIC_III_SPEED:
-                return new AlgorithmIdentifier(PQCObjectIdentifiers.qTESLA_III_speed);
-            case QTESLASecurityCategory.PROVABLY_SECURE_I:
+            case QTESLASecurityCategory.HEURISTIC_II:
+                return new AlgorithmIdentifier(PQCObjectIdentifiers.qTESLA_II);
+            case QTESLASecurityCategory.HEURISTIC_III:
+                return new AlgorithmIdentifier(PQCObjectIdentifiers.qTESLA_III);
+            case QTESLASecurityCategory.HEURISTIC_P_I:
                 return new AlgorithmIdentifier(PQCObjectIdentifiers.qTESLA_p_I);
-            case QTESLASecurityCategory.PROVABLY_SECURE_III:
+            case QTESLASecurityCategory.HEURISTIC_P_III:
                 return new AlgorithmIdentifier(PQCObjectIdentifiers.qTESLA_p_III);
+            case QTESLASecurityCategory.HEURISTIC_V:
+                return new AlgorithmIdentifier(PQCObjectIdentifiers.qTESLA_V);
+            case QTESLASecurityCategory.HEURISTIC_V_SIZE:
+                return new AlgorithmIdentifier(PQCObjectIdentifiers.qTESLA_V_SIZE);
             default:
                 throw new IllegalArgumentException("unknown security category: " + securityCategory);
         }
