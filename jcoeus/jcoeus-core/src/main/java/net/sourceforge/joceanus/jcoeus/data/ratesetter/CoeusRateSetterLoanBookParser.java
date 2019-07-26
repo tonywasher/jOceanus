@@ -137,8 +137,12 @@ public class CoeusRateSetterLoanBookParser {
             /* Read the document from the stream and parse it */
             final Document myDocument = Jsoup.parse(pInput.toFile(), StandardCharsets.UTF_8.name());
 
-            /* Obtain the table rows */
-            final Elements myTables = myDocument.getElementsByClass("rsTable");
+            /* Look for the two types of tables */
+            final Elements myOldTables = myDocument.getElementsByClass("rsTable");
+            final Elements myNewTables = myDocument.getElementsByClass("novo-table-content");
+
+            /* Use old style tables if they are present */
+            final Elements myTables = myOldTables.isEmpty() ? myNewTables : myOldTables;
 
             /* select the body of the last of the tables */
             final boolean isRepaid = myTables.size() > 1;
