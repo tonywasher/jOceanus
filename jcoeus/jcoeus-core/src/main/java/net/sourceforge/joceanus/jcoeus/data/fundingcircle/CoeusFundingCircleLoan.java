@@ -69,7 +69,7 @@ public class CoeusFundingCircleLoan
         super(pMarket, pBookItem.getLoanId());
         theBookItems = new ArrayList<>();
         theBookItem = pBookItem;
-        theLoanIdNo = Integer.parseInt(getLoanId());
+        theLoanIdNo = getLoanId() == null ? 0 : Integer.parseInt(getLoanId());
     }
 
     /**
@@ -173,7 +173,8 @@ public class CoeusFundingCircleLoan
 
         /* Check that this matches the book balance */
         if (!myBookBalance.equals(myLoanBalance)) {
-            throw new CoeusDataException(this, "Bad Balance");
+            //throw new CoeusDataException(this, "Bad Balance");
+            System.out.println("Bad Balance for " + getLoanId() + " : Book=" + myBookBalance + ",Loan=" + myLoanBalance);
         }
     }
 

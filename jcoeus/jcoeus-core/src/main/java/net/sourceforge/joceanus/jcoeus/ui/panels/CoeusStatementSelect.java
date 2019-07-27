@@ -26,11 +26,13 @@ import net.sourceforge.joceanus.jcoeus.ui.CoeusDataEvent;
 import net.sourceforge.joceanus.jcoeus.ui.CoeusFilter;
 import net.sourceforge.joceanus.jcoeus.ui.CoeusMarketCache;
 import net.sourceforge.joceanus.jcoeus.ui.CoeusUIResource;
+import net.sourceforge.joceanus.jmetis.ui.MetisIcon;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
 import net.sourceforge.joceanus.jtethys.event.TethysEventManager;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventProvider;
 import net.sourceforge.joceanus.jtethys.ui.TethysBoxPaneManager;
+import net.sourceforge.joceanus.jtethys.ui.TethysButton;
 import net.sourceforge.joceanus.jtethys.ui.TethysCardPaneManager;
 import net.sourceforge.joceanus.jtethys.ui.TethysComponent;
 import net.sourceforge.joceanus.jtethys.ui.TethysDateButtonManager;
@@ -132,6 +134,11 @@ public final class CoeusStatementSelect
     private final TethysCardPaneManager<TethysBoxPaneManager> theCardPane;
 
     /**
+     * Save button.
+     */
+    private final TethysButton theSaveButton;
+
+    /**
      * Current state.
      */
     private CoeusStatementState theState;
@@ -170,6 +177,10 @@ public final class CoeusStatementSelect
 
         /* Create the DateButton */
         theDateButton = pFactory.newDateButton();
+
+        /* Create the save button */
+        theSaveButton = pFactory.newButton();
+        MetisIcon.configureSaveIconButton(theSaveButton);
 
         /* Create initial state */
         theState = new CoeusStatementState(this, pCache.getCalendar());
@@ -212,6 +223,8 @@ public final class CoeusStatementSelect
         thePanel.addSpacer();
         thePanel.addNode(myTotLabel);
         thePanel.addNode(theTotalsButton);
+        thePanel.addSpacer();
+        thePanel.addNode(theSaveButton);
 
         /* Initialise the current state */
         theState.setProvider(CoeusMarketProvider.FUNDINGCIRCLE);
@@ -230,6 +243,7 @@ public final class CoeusStatementSelect
         theLoanButton.getEventRegistrar().addEventListener(TethysUIEvent.NEWVALUE, e -> handleNewLoan());
         theLoanButton.setMenuConfigurator(this::handleLoanMenu);
         theDateButton.getEventRegistrar().addEventListener(TethysUIEvent.NEWVALUE, e -> handleNewDate());
+        theSaveButton.getEventRegistrar().addEventListener(e -> theEventManager.fireEvent(CoeusDataEvent.SAVETOFILE));
 
         /* Add the cache listener */
         theCache.getEventRegistrar().addEventListener(e -> refreshView());
@@ -383,6 +397,7 @@ public final class CoeusStatementSelect
         theDateButton.setEnabled(bEnable);
         theMarketButton.setEnabled(bEnable);
         theTotalsButton.setEnabled(bEnable);
+        theSaveButton.setEnabled(bEnable);
     }
 
     @Override

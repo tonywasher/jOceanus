@@ -155,9 +155,14 @@ public final class CoeusLendingWorksTransaction
         /* Parse the date */
         theDate = pParser.parseDate(myIterator.next());
 
-        /* Store IDs */
+        /* Store Description and LoanId */
         theDesc = myIterator.next();
         final String myLoanId = myIterator.next();
+
+        /* Skip Product */
+        myIterator.next();
+
+        /* Store LoanType */
         theLoanType = myIterator.next();
 
         /* Determine the transaction type */
