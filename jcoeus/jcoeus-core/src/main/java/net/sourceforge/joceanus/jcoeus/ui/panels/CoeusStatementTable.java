@@ -16,6 +16,12 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jcoeus.ui.panels;
 
+import java.io.File;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.nio.charset.StandardCharsets;
+import java.util.Iterator;
+
 import net.sourceforge.joceanus.jcoeus.data.CoeusLoan;
 import net.sourceforge.joceanus.jcoeus.data.CoeusTotals;
 import net.sourceforge.joceanus.jcoeus.data.CoeusTotalsField;
@@ -29,8 +35,13 @@ import net.sourceforge.joceanus.jmetis.atlas.ui.MetisTableManager;
 import net.sourceforge.joceanus.jmetis.list.MetisListBaseManager;
 import net.sourceforge.joceanus.jmetis.list.MetisListIndexed;
 import net.sourceforge.joceanus.jmetis.threads.MetisToolkit;
+import net.sourceforge.joceanus.jtethys.OceanusException;
+import net.sourceforge.joceanus.jtethys.TethysDataException;
+import net.sourceforge.joceanus.jtethys.logger.TethysLogManager;
+import net.sourceforge.joceanus.jtethys.logger.TethysLogger;
 import net.sourceforge.joceanus.jtethys.ui.TethysBorderPaneManager;
 import net.sourceforge.joceanus.jtethys.ui.TethysComponent;
+import net.sourceforge.joceanus.jtethys.ui.TethysFileSelector;
 import net.sourceforge.joceanus.jtethys.ui.TethysGuiFactory;
 import net.sourceforge.joceanus.jtethys.ui.TethysNode;
 
@@ -39,6 +50,16 @@ import net.sourceforge.joceanus.jtethys.ui.TethysNode;
  */
 public class CoeusStatementTable
         implements TethysComponent {
+    /**
+     * The logger.
+     */
+    private static final TethysLogger LOGGER = TethysLogManager.getLogger(CoeusStatementTable.class);
+
+    /**
+     * The logger.
+     */
+    private static final char COMMA = ',';
+
     /**
      * The List.
      */
@@ -70,6 +91,11 @@ public class CoeusStatementTable
     private final CoeusStatementCalculator theCalculator;
 
     /**
+     * The File Selector.
+     */
+    private final TethysFileSelector theFileSelector;
+
+    /**
      * Constructor.
      * @param pToolkit the Toolkit
      * @param pCache the market cache
@@ -95,6 +121,7 @@ public class CoeusStatementTable
         theSelector = new CoeusStatementSelect(myFactory, pCache);
         theSelector.getEventRegistrar().addEventListener(CoeusDataEvent.SELECTIONCHANGED, e -> updateStatement(theSelector.getFilter()));
         theSelector.getEventRegistrar().addEventListener(CoeusDataEvent.FILTERCHANGED, e -> filterChanged());
+        theSelector.getEventRegistrar().addEventListener(CoeusDataEvent.SAVETOFILE, e -> saveToFile());
 
         /* Create and configure the Pane */
         thePane = myFactory.newBorderPane();
@@ -103,6 +130,11 @@ public class CoeusStatementTable
 
         /* Create the calculator */
         theCalculator = new CoeusStatementCalculator(theList);
+
+        /* Create the file selector */
+        theFileSelector = myFactory.newFileSelector();
+        theFileSelector.setUseSave(true);
+        theFileSelector.setExtension(".csv");
     }
 
     @Override
@@ -161,5 +193,68 @@ public class CoeusStatementTable
 
         /* Declare the calculator */
         theTable.setCalculator(theCalculator);
+    }
+
+    /**
+     * Handle a changesaveToFile request.
+     */
+    private void saveToFile() {
+        /* Create the string Builder */
+        final StringBuilder myBuilder = new StringBuilder();
+
+        /* Loop through the view iterator */
+        final Iterator<CoeusTotals> myIterator = theTable.viewIterator();
+        while (myIterator.hasNext()) {
+            final CoeusTotals myTotals = myIterator.next();
+
+            /* Build the line */
+            myBuilder.append(myTotals.getDate());
+            myBuilder.append(COMMA);
+            myBuilder.append(myTotals.getTransType());
+            myBuilder.append(COMMA);
+            myBuilder.append(myTotals.getDescription());
+            myBuilder.append(COMMA);
+            myBuilder.append(myTotals.getDelta());
+            myBuilder.append(COMMA);
+            myBuilder.append(myTotals.getBalance());
+            myBuilder.append('\n');
+        }
+
+        /* Write the result to the file */
+        writeToFile(myBuilder.toString());
+    }
+
+    /**
+     * Write data to file.
+     * @param pData the string to write
+     */
+    private void writeToFile(final String pData) {
+        try {
+            /* Select File */
+            final File myFile = theFileSelector.selectFile();
+            if (myFile != null) {
+                writeDataToFile(pData, myFile);
+            }
+        } catch (OceanusException e) {
+            LOGGER.error("Failed to write to file", e);
+        }
+    }
+
+    /**
+     * Write String to file.
+     * @param pData the string to write
+     * @param pFile the file to write to
+     * @throws OceanusException on error
+     */
+    private static void writeDataToFile(final String pData,
+                                        final File pFile) throws OceanusException {
+        /* Protect the write */
+        try (PrintWriter myWriter = new PrintWriter(pFile, StandardCharsets.UTF_8.name())) {
+            /* Write to stream */
+            myWriter.print(pData);
+
+        } catch (IOException e) {
+            throw new TethysDataException("Failed to output XML", e);
+        }
     }
 }

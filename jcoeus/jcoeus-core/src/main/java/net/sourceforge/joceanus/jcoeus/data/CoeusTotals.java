@@ -193,7 +193,7 @@ public abstract class CoeusTotals
      * Obtain the TransactionType.
      * @return the transType
      */
-    private CoeusTransactionType getTransType() {
+    public CoeusTransactionType getTransType() {
         return theTransaction == null
                                       ? CoeusTransactionType.TOTALS
                                       : theTransaction.getTransType();
