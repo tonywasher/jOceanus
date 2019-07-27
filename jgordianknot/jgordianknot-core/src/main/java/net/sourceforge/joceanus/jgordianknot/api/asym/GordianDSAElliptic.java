@@ -439,6 +439,7 @@ public enum GordianDSAElliptic implements GordianElliptic {
     public boolean hasCustomCurve() {
         switch (this) {
             case SECP112R1:
+            case SECP128R1:
             case SECP160K1:
             case SECP160R1:
             case SECP160R2:
@@ -469,7 +470,6 @@ public enum GordianDSAElliptic implements GordianElliptic {
             case SECT571K1:
             case SECT571R1:
                 return true;
-            case SECP128R1:
             default:
                 return false;
         }
