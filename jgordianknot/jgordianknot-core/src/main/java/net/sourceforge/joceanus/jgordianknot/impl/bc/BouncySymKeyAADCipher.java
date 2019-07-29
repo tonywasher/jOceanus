@@ -20,13 +20,14 @@ import org.bouncycastle.crypto.CipherParameters;
 import org.bouncycastle.crypto.DataLengthException;
 import org.bouncycastle.crypto.InvalidCipherTextException;
 import org.bouncycastle.crypto.modes.AEADBlockCipher;
+import org.bouncycastle.crypto.params.AEADParameters;
 import org.bouncycastle.crypto.params.KeyParameter;
 import org.bouncycastle.crypto.params.ParametersWithIV;
 
+import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianCipherParameters;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianSymAADCipher;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianSymCipherSpec;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianSymKeySpec;
-import net.sourceforge.joceanus.jgordianknot.api.key.GordianKey;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianCryptoException;
 import net.sourceforge.joceanus.jgordianknot.impl.core.cipher.GordianCoreAADCipher;
 import net.sourceforge.joceanus.jtethys.OceanusException;
@@ -34,7 +35,7 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
 /**
  * Cipher for BouncyCastle AAD Symmetric Ciphers.
  */
-public class BouncyAADCipher
+public class BouncySymKeyAADCipher
         extends GordianCoreAADCipher
         implements GordianSymAADCipher {
     /**
@@ -48,9 +49,9 @@ public class BouncyAADCipher
      * @param pCipherSpec the cipherSpec
      * @param pCipher the cipher
      */
-    BouncyAADCipher(final BouncyFactory pFactory,
-                    final GordianSymCipherSpec pCipherSpec,
-                    final AEADBlockCipher pCipher) {
+    BouncySymKeyAADCipher(final BouncyFactory pFactory,
+                          final GordianSymCipherSpec pCipherSpec,
+                          final AEADBlockCipher pCipher) {
         super(pFactory, pCipherSpec);
         theCipher = pCipher;
     }
@@ -61,31 +62,19 @@ public class BouncyAADCipher
     }
 
     @Override
-    public void initCipher(final GordianKey<GordianSymKeySpec> pKey) throws OceanusException {
-        /* Create a random IV */
-        final byte[] myIV = new byte[GordianSymCipherSpec.AADIVLEN];
-        getRandom().nextBytes(myIV);
-
-        /* initialise with this IV */
-        initCipher(pKey, myIV, true);
-    }
-
-    @Override
-    public void initCipher(final GordianKey<GordianSymKeySpec> pKey,
-                           final byte[] pIV,
-                           final boolean pEncrypt) throws OceanusException {
-        /* Access and validate the key */
-        final BouncyKey<GordianSymKeySpec> myKey = BouncyKey.accessKey(pKey);
-        checkValidKey(pKey);
+    public void init(final boolean pEncrypt,
+                     final GordianCipherParameters pParams) throws OceanusException {
+        /* Process the parameters and access the key */
+        processParameters(pParams);
+        final BouncyKey<GordianSymKeySpec> myKey = BouncyKey.accessKey(getKey());
 
         /* Initialise the cipher */
-        CipherParameters myParms = new KeyParameter(myKey.getKey());
-        myParms = new ParametersWithIV(myParms, pIV);
+        final KeyParameter myKeyParms = new KeyParameter(myKey.getKey());
+        final byte[] myAEAD = getInitialAEAD();
+        final CipherParameters myParms = myAEAD == null
+                  ? new ParametersWithIV(myKeyParms, getInitVector())
+                  : new AEADParameters(myKeyParms, 16, getInitVector(), getInitialAEAD());
         theCipher.init(pEncrypt, myParms);
-
-        /* Store key and initVector */
-        setKey(pKey);
-        setInitVector(pIV);
     }
 
     @Override

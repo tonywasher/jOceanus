@@ -271,8 +271,7 @@ public class GordianStreamKeySpec
                        ? GordianLength.LEN_192.getByteLength()
                        : theStreamKeyType.getIVLength(theKeyLength);
             case CHACHA20:
-                if (theSubKeyType == GordianChaCha20Key.XCHACHA
-                    || pAAD) {
+                if (theSubKeyType == GordianChaCha20Key.XCHACHA) {
                     return GordianLength.LEN_192.getByteLength();
                 }
                 return theSubKeyType == GordianChaCha20Key.ISO7539

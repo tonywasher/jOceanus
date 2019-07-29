@@ -24,12 +24,11 @@ import org.bouncycastle.crypto.params.KeyParameter;
 import org.bouncycastle.crypto.params.ParametersWithIV;
 import org.bouncycastle.crypto.params.RC5Parameters;
 
-import net.sourceforge.joceanus.jgordianknot.api.base.GordianLength;
+import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianCipherParameters;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianSymCipher;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianSymCipherSpec;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianSymKeySpec;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianSymKeyType;
-import net.sourceforge.joceanus.jgordianknot.api.key.GordianKey;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianCryptoException;
 import net.sourceforge.joceanus.jgordianknot.impl.core.cipher.GordianCoreCipher;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianCoreFactory;
@@ -78,59 +77,44 @@ public final class BouncySymKeyCipher
     }
 
     @Override
-    public void initCipher(final GordianKey<GordianSymKeySpec> pKey) throws OceanusException {
-        /* IV bytes */
-        byte[] myIV = null;
-
-        /* If we need an IV */
-        if (needsIV()) {
-            /* Create a random IV */
-            final int myLen = getCipherSpec().getIVLength(GordianLength.LEN_128);
-            myIV = new byte[myLen];
-            getRandom().nextBytes(myIV);
-        }
-
-        /* initialise with this IV */
-        initCipher(pKey, myIV, true);
-    }
-
-    @Override
-    public void initCipher(final GordianKey<GordianSymKeySpec> pKey,
-                           final byte[] pIV,
-                           final boolean pEncrypt) throws OceanusException {
-        /* Access and validate the key */
-        final BouncyKey<GordianSymKeySpec> myKey = BouncyKey.accessKey(pKey);
-        checkValidKey(pKey);
-        final boolean useIV = needsIV();
+    public void init(final boolean pEncrypt,
+                     final GordianCipherParameters pParams) throws OceanusException {
+        /* Process the parameters and access the key */
+        processParameters(pParams);
+        final BouncyKey<GordianSymKeySpec> myKey = BouncyKey.accessKey(getKey());
 
         /* Initialise the cipher */
-        CipherParameters myParms = generateParameters(myKey);
-        if (useIV) {
-            myParms = new ParametersWithIV(myParms, pIV);
-        }
+        final CipherParameters myParms = generateParameters(myKey, getInitVector());
         theCipher.init(pEncrypt, myParms);
-
-        /* Store key and initVector */
-        setKey(pKey);
-        setInitVector(useIV
-                      ? pIV
-                      : null);
     }
 
     /**
      * Generate CipherParameters.
      * @param pKey the key
+     * @param pIV the initVector
      * @return the parameters
      */
-    static CipherParameters generateParameters(final BouncyKey<GordianSymKeySpec> pKey) {
+    private static CipherParameters generateParameters(final BouncyKey<GordianSymKeySpec> pKey,
+                                                       final byte[] pIV) {
+        /* Default parameter */
+        CipherParameters myParams = new KeyParameter(pKey.getKey());
+
+        /* Build Key parameter */
         final GordianSymKeySpec myKeySpec = pKey.getKeyType();
         if (myKeySpec != null) {
             final GordianSymKeyType myType = myKeySpec.getSymKeyType();
             if (GordianSymKeyType.RC5.equals(myType)) {
-                return new RC5Parameters(pKey.getKey(), GordianCoreFactory.RC5_ROUNDS);
+                myParams = new RC5Parameters(pKey.getKey(), GordianCoreFactory.RC5_ROUNDS);
             }
         }
-        return new KeyParameter(pKey.getKey());
+
+        /* Handle IV */
+        if (pIV != null) {
+            myParams = new ParametersWithIV(myParams, pIV);
+        }
+
+        /* Return the parameters */
+        return myParams;
     }
 
     @Override

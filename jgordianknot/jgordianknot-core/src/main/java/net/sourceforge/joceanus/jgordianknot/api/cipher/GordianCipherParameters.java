@@ -16,8 +16,6 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jgordianknot.api.cipher;
 
-import java.security.Key;
-
 import net.sourceforge.joceanus.jgordianknot.api.base.GordianKeySpec;
 import net.sourceforge.joceanus.jgordianknot.api.key.GordianKey;
 
@@ -48,15 +46,13 @@ public interface GordianCipherParameters {
     }
 
     /**
-     * Obtain aead Parameters.
+     * Obtain keyAndRandomNonce Parameters.
      * @param <T> the keyType
      * @param pKey the key
-     * @param pInitialAEAD the initialAEAD
      * @return the keySpec
      */
-    static <T extends GordianKeySpec> GordianAEADCipherParameters<T> aead(final GordianKey<T> pKey,
-                                                                          final byte[] pInitialAEAD) {
-        return new GordianAEADCipherParameters<>(pKey, null, pInitialAEAD);
+    static <T extends GordianKeySpec> GordianKeyCipherParameters<T> keyWithRandomNonce(final GordianKey<T> pKey) {
+        return new GordianKeyAndNonceCipherParameters<>(pKey);
     }
 
     /**
@@ -67,10 +63,22 @@ public interface GordianCipherParameters {
      * @param pNonce the nonce
      * @return the keySpec
      */
-    static <T extends GordianKeySpec> GordianAEADCipherParameters<T> aead(final GordianKey<T> pKey,
-                                                                          final byte[] pInitialAEAD,
-                                                                          final byte[] pNonce) {
+    static <T extends GordianKeySpec> GordianAEADCipherParameters<T> aeadAndNonce(final GordianKey<T> pKey,
+                                                                                  final byte[] pInitialAEAD,
+                                                                                  final byte[] pNonce) {
         return new GordianAEADCipherParameters<>(pKey, pNonce, pInitialAEAD);
+    }
+
+    /**
+     * Obtain aeadAndRandomNonce Parameters.
+     * @param <T> the keyType
+     * @param pKey the key
+     * @param pInitialAEAD the initialAEAD
+     * @return the keySpec
+     */
+    static <T extends GordianKeySpec> GordianAEADCipherParameters<T> aeadWithRandomNonce(final GordianKey<T> pKey,
+                                                                                         final byte[] pInitialAEAD) {
+        return new GordianAEADCipherParameters<>(pKey, null, pInitialAEAD);
     }
 
     /**
@@ -126,15 +134,48 @@ public interface GordianCipherParameters {
     }
 
     /**
+     * Nonce Parameters.
+     */
+    interface GordianNonceParameters {
+        /**
+         * Was a random Nonce requested?.
+         * @return true/false
+         */
+        boolean randomNonce();
+
+        /**
+         * Obtain the nonce.
+         * @return the nonce
+         */
+        byte[] getNonce();
+    }
+
+    /**
      * KeyAndNonce Parameters.
      * @param <T> the keyType
      */
     class GordianKeyAndNonceCipherParameters<T extends GordianKeySpec>
-            extends GordianKeyCipherParameters<T> {
+            extends GordianKeyCipherParameters<T>
+            implements GordianNonceParameters {
         /**
          * The Nonce.
          */
         private final byte[] theNonce;
+
+        /**
+         * Random Nonce requested?
+         */
+        private final boolean randomNonce;
+
+        /**
+         * Constructor for random nonce.
+         * @param pKey the key
+         */
+        GordianKeyAndNonceCipherParameters(final GordianKey<T> pKey) {
+            super(pKey);
+            theNonce = null;
+            randomNonce = true;
+        }
 
         /**
          * Constructor.
@@ -145,14 +186,17 @@ public interface GordianCipherParameters {
                                            final byte[] pNonce) {
             super(pKey);
             theNonce = pNonce;
+            randomNonce = false;
         }
 
-        /**
-         * Obtain the nonce.
-         * @return the nonce
-         */
+        @Override
         public byte[] getNonce() {
             return theNonce;
+        }
+
+        @Override
+        public boolean randomNonce() {
+            return randomNonce;
         }
     }
 
@@ -166,6 +210,17 @@ public interface GordianCipherParameters {
          * The InitialAEAD.
          */
         private final byte[] theInitialAEAD;
+
+        /**
+         * Constructor.
+         * @param pKey the key
+         * @param pInitialAEAD the initialAEAD
+         */
+        GordianAEADCipherParameters(final GordianKey<T> pKey,
+                                    final byte[] pInitialAEAD) {
+            super(pKey);
+            theInitialAEAD = pInitialAEAD;
+        }
 
         /**
          * Constructor.
@@ -193,7 +248,7 @@ public interface GordianCipherParameters {
      * PBE Parameters.
      */
     class GordianPBECipherParameters
-            implements GordianCipherParameters {
+            implements GordianCipherParameters, GordianNonceParameters {
         /**
          * The PBESpec.
          */
@@ -205,9 +260,27 @@ public interface GordianCipherParameters {
         private final byte[] theNonce;
 
         /**
+         * Random Nonce requested?
+         */
+        private final boolean randomNonce;
+
+        /**
          * The Password.
          */
         private final char[] thePassword;
+
+        /**
+         * Constructor for random nonce.
+         * @param pPBESpec the PBESpec
+         * @param pPassword the password
+         */
+        GordianPBECipherParameters(final GordianPBESpec pPBESpec,
+                                   final char[] pPassword) {
+            thePBESpec = pPBESpec;
+            theNonce = null;
+            randomNonce = true;
+            thePassword = pPassword;
+        }
 
         /**
          * Constructor.
@@ -220,6 +293,7 @@ public interface GordianCipherParameters {
                                    final char[] pPassword) {
             thePBESpec = pPBESpec;
             theNonce = pNonce;
+            randomNonce = false;
             thePassword = pPassword;
         }
 
@@ -231,12 +305,14 @@ public interface GordianCipherParameters {
             return thePBESpec;
         }
 
-        /**
-         * Obtain the nonce.
-         * @return the nonce
-         */
+        @Override
         public byte[] getNonce() {
             return theNonce;
+        }
+
+        @Override
+        public boolean randomNonce() {
+            return randomNonce;
         }
 
         /**

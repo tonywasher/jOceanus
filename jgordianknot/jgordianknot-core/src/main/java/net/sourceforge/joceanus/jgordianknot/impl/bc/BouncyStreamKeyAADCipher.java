@@ -16,11 +16,17 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jgordianknot.impl.bc;
 
+import org.bouncycastle.crypto.CipherParameters;
 import org.bouncycastle.crypto.InvalidCipherTextException;
 import org.bouncycastle.crypto.ext.modes.ChaChaPoly1305;
+import org.bouncycastle.crypto.params.AEADParameters;
+import org.bouncycastle.crypto.params.KeyParameter;
+import org.bouncycastle.crypto.params.ParametersWithIV;
 
+import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianCipherParameters;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianStreamAADCipher;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianStreamCipherSpec;
+import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianStreamKeySpec;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianCryptoException;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
@@ -46,6 +52,22 @@ public class BouncyStreamKeyAADCipher
                                        final ChaChaPoly1305 pCipher) {
         super(pFactory, pCipherSpec, pCipher);
         theCipher = pCipher;
+    }
+
+    @Override
+    public void init(final boolean pEncrypt,
+                     final GordianCipherParameters pParams) throws OceanusException {
+        /* Process the parameters and access the key */
+        processParameters(pParams);
+        final BouncyKey<GordianStreamKeySpec> myKey = BouncyKey.accessKey(getKey());
+
+        /* Initialise the cipher */
+        final KeyParameter myKeyParms = new KeyParameter(myKey.getKey());
+        final byte[] myAEAD = getInitialAEAD();
+        final CipherParameters myParms = myAEAD == null
+                                         ? new ParametersWithIV(myKeyParms, getInitVector())
+                                         : new AEADParameters(myKeyParms, 16, getInitVector(), myAEAD);
+        theCipher.init(pEncrypt, myParms);
     }
 
     @Override

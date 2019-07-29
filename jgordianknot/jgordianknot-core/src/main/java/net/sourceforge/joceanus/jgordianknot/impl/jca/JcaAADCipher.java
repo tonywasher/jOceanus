@@ -27,10 +27,12 @@ import javax.crypto.SecretKey;
 import javax.crypto.ShortBufferException;
 import javax.crypto.spec.IvParameterSpec;
 
+import org.bouncycastle.jcajce.spec.AEADParameterSpec;
+
+import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianCipherParameters;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianSymAADCipher;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianSymCipherSpec;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianSymKeySpec;
-import net.sourceforge.joceanus.jgordianknot.api.key.GordianKey;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianCryptoException;
 import net.sourceforge.joceanus.jgordianknot.impl.core.cipher.GordianCoreAADCipher;
 import net.sourceforge.joceanus.jtethys.OceanusException;
@@ -52,9 +54,9 @@ public class JcaAADCipher
      * @param pCipherSpec the cipherSpec
      * @param pCipher the cipher
      */
-    protected JcaAADCipher(final JcaFactory pFactory,
-                           final GordianSymCipherSpec pCipherSpec,
-                           final Cipher pCipher) {
+    JcaAADCipher(final JcaFactory pFactory,
+                 final GordianSymCipherSpec pCipherSpec,
+                 final Cipher pCipher) {
         super(pFactory, pCipherSpec);
         theCipher = pCipher;
     }
@@ -65,44 +67,30 @@ public class JcaAADCipher
     }
 
     @Override
-    public void initCipher(final GordianKey<GordianSymKeySpec> pKey) throws OceanusException {
-        /* Create a random IV */
-        final byte[] myIV = new byte[GordianSymCipherSpec.AADIVLEN];
-        getRandom().nextBytes(myIV);
-
-        /* initialise with this IV */
-        initCipher(pKey, myIV, true);
-    }
-
-    @Override
-    public void initCipher(final GordianKey<GordianSymKeySpec> pKey,
-                           final byte[] pIV,
-                           final boolean pEncrypt) throws OceanusException {
-        /* Access and validate the key */
-        final JcaKey<GordianSymKeySpec> myJcaKey = JcaKey.accessKey(pKey);
-        checkValidKey(pKey);
+    public void init(final boolean pEncrypt,
+                     final GordianCipherParameters pParams) throws OceanusException {
+        /* Process the parameters and access the key */
+        processParameters(pParams);
+        final JcaKey<GordianSymKeySpec> myJcaKey = JcaKey.accessKey(getKey());
 
         /* Access details */
         final int myMode = pEncrypt
                            ? Cipher.ENCRYPT_MODE
                            : Cipher.DECRYPT_MODE;
         final SecretKey myKey = myJcaKey.getKey();
+        final byte[] myAEAD = getInitialAEAD();
 
         /* Protect against exceptions */
         try {
             /* Initialise as required */
-            final AlgorithmParameterSpec myParms = new IvParameterSpec(pIV);
+            final AlgorithmParameterSpec myParms = myAEAD == null
+                                             ? new IvParameterSpec(getInitVector())
+                                             : new AEADParameterSpec(getInitVector(), 16, myAEAD);
             theCipher.init(myMode, myKey, myParms);
         } catch (InvalidKeyException
                 | InvalidAlgorithmParameterException e) {
             throw new GordianCryptoException("Failed to initialise cipher", e);
         }
-
-        /* Store key and initVector */
-        setKey(pKey);
-        setInitVector(pIV != null
-                      ? pIV
-                      : null);
     }
 
     @Override

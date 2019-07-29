@@ -58,20 +58,29 @@ public interface GordianKeyedCipher<T extends GordianKeySpec>
     byte[] getInitVector();
 
     /**
-     * Initialise the cipher for encryption with random IV.
-     * @param pKey the key
-     * @throws OceanusException on error
+     * Obtain the initialAEAD.
+     * @return the initialAEAD
      */
-    void initCipher(GordianKey<T> pKey) throws OceanusException;
+    byte[] getInitialAEAD();
 
     /**
-     * Initialise the cipher.
-     * @param pKey the key
-     * @param pIV the initialisation vector
-     * @param pEncrypt true/false
+     * Obtain the pbeSalt.
+     * @return the pbeSalt
+     */
+    byte[] getPBESalt();
+
+    /**
+     * Obtain the pbeSpec.
+     * @return the pbeSpec
+     */
+    GordianPBESpec getPBESpec();
+
+    /**
+     * Initialise the cipher for encryption.
+     * @param forEncryption for Encryption true/false
+     * @param pParams the parameters
      * @throws OceanusException on error
      */
-    void initCipher(GordianKey<T> pKey,
-                    byte[] pIV,
-                    boolean pEncrypt) throws OceanusException;
+    void init(boolean forEncryption,
+              GordianCipherParameters pParams) throws OceanusException;
 }

@@ -24,11 +24,6 @@ import net.sourceforge.joceanus.jgordianknot.api.key.GordianKeyLengths;
  */
 public enum GordianStreamKeyType {
     /**
-     * XSalsa20.
-     */
-    //XSALSA20(GordianLength.LEN_192),
-
-    /**
      * Salsa20.
      */
     SALSA20(GordianLength.LEN_64),
@@ -42,11 +37,6 @@ public enum GordianStreamKeyType {
      * ChaCha20.
      */
     CHACHA20(GordianLength.LEN_64, GordianLength.LEN_96),
-
-    /**
-     * XChaCha.
-     */
-    //XCHACHA20(GordianLength.LEN_192),
 
     /**
      * VMPC.
