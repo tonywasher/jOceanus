@@ -140,11 +140,11 @@ public class StreamCipherTest {
     private static final String IV128_3 = "288FF65DC42B92F960C72E95FC63CA31";
     private static final String IV128_4 = "00000000000000000000000000000000";
     private static final String IV128_5 = "FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF";
-    private static final String IV184_1 = "167DE44BB21980E74EB51C83EA51B81F00000000000000";
-    private static final String IV184_2 = "1F86ED54BB2289F057BE258CF35AC128123456789ABCDE";
-    private static final String IV184_3 = "288FF65DC42B92F960C72E95FC63CA31FFFFFFFFFFFFFF";
-    private static final String IV184_4 = "0000000000000000000000000000000000000000000000";
-    private static final String IV184_5 = "FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF";
+    private static final String IV184_1 = "167DE44BB21980E74EB51C83EA51B81F000000000000000000";
+    private static final String IV184_2 = "1F86ED54BB2289F057BE258CF35AC128123456789ABCDEF012";
+    private static final String IV184_3 = "288FF65DC42B92F960C72E95FC63CA31FF3F3F3F3F3F3F3F3F";
+    private static final String IV184_4 = "00000000000000000000000000000000000000000000000000";
+    private static final String IV184_5 = "FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF3F3F3F3F3F3F3F3F";
 
     /**
      * Define the bit limits for engines.
@@ -240,6 +240,9 @@ public class StreamCipherTest {
         pCipher.processBytes(myData, 0, myData.length, myOutput, 0);
 
         /* Check the encryption */
+        if (!Arrays.equals(myExpected, myOutput)) {
+            System.out.println(Hex.toHexString(myOutput, 0, myOutput.length));
+        }
         Assertions.assertArrayEquals(myExpected, myOutput, "Encryption mismatch");
     }
 
@@ -285,7 +288,7 @@ public class StreamCipherTest {
     static void testStreamLimit(final StreamCipher pCipher,
                                 final TestCase pTestCase,
                                 final int pLimit) throws OceanusException {
-        /* Check the limit is a whole numbet of integers */
+        /* Check the limit is a whole number of integers */
         Assertions.assertTrue((pLimit % Integer.SIZE == 0), "Invalid limit");
         final int myNumBytes = pLimit / Byte.SIZE;
 
@@ -619,7 +622,7 @@ public class StreamCipherTest {
                 "5a307e175b33de347b928b0bfee7ef34ac500c78b2d5636da4164edd450f6fa9cead94468e19f02400d94f170112a49757177adcbcfb27ef1bce8fb8ec59b5f4"
         );
         private static final TestCase TEST2 = new TestCase(KEY256_2, IV184_2,
-                "f215c465eb3d6ed56ce2b0d6f515514c6e3b639d7a6837972f00233aef6d182098639ee1925083f6e7d8fbedb33e8b3df9d434a4fb312fcc677cf1abdf16a100"
+                "fc989b632d5b3935aea73a40dfcaeb92c1f6b702b528e91f17610d1759e2cf44e29460cf677bfa0f6bd6033ed616871e31cbd38478f360ec829cac138a2639"
         );
         private static final TestCase TEST3 = new TestCase(KEY256_3, IV184_3,
                 "8b2befa4b2f733ac10bb5278d07ba5becc8f0ddfa1c4e7c55d128d9592cfca660e71a4b893f54686ac779e9b22d658f1eb5f0c266f6068a18d66352769150ec1"

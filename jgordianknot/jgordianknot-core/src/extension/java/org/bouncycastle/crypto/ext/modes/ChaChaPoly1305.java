@@ -5,8 +5,6 @@ import org.bouncycastle.crypto.DataLengthException;
 import org.bouncycastle.crypto.InvalidCipherTextException;
 import org.bouncycastle.crypto.OutputLengthException;
 import org.bouncycastle.crypto.StreamCipher;
-import org.bouncycastle.crypto.engines.ChaChaEngine;
-import org.bouncycastle.crypto.engines.Salsa20Engine;
 import org.bouncycastle.crypto.macs.Poly1305;
 import org.bouncycastle.crypto.params.AEADParameters;
 import org.bouncycastle.crypto.params.KeyParameter;
@@ -32,7 +30,7 @@ public class ChaChaPoly1305
     /**
      * The Underlying cipher.
      */
-    private final Salsa20Engine theCipher;
+    private final StreamCipher theCipher;
 
     /**
      * The Poly1305Mac.
@@ -65,7 +63,7 @@ public class ChaChaPoly1305
     private byte[] initialAEAD;
 
     /**
-     * Have we completed AEAD.
+     * Have we completed AEAD?
      */
     private boolean aeadComplete;
 
@@ -83,23 +81,26 @@ public class ChaChaPoly1305
      * Constructor.
      * @param pChaChaEngine the ChaCha engine.
      */
-    public ChaChaPoly1305(final Salsa20Engine pChaChaEngine) {
+    public ChaChaPoly1305(final StreamCipher pChaChaEngine) {
         theCipher = pChaChaEngine;
         polyMac = new Poly1305();
         cachedBytes = new byte[MACSIZE];
     }
 
+    /**
+     * Obtain algorithm name.
+     * @return the algorithm name
+     */
     @Override
     public String getAlgorithmName() {
         return theCipher.getAlgorithmName() + "Poly1305";
     }
 
     /**
-     * Intercept init to handle AEAD and encryption direction.
-     * @param forEncryption whether or not we are for encryption
-     * @param params the parameters required to set up the cipher
+     * Initialise the cipher.
+     * @param forEncryption true/false
+     * @param params the parameters
      */
-    @Override
     public void init(final boolean forEncryption,
                      final CipherParameters params) {
         /* Access parameters */
@@ -129,9 +130,6 @@ public class ChaChaPoly1305
         initialised = true;
     }
 
-    /**
-     * Reset the cipher.
-     */
     @Override
     public void reset() {
         /* Reset state */
@@ -142,9 +140,9 @@ public class ChaChaPoly1305
         theCipher.reset();
 
         /* Run the cipher once to initialise the mac */
-        final byte[] firstBlock = new byte[64];
-        theCipher.processBytes(firstBlock, 0, 64, firstBlock, 0);
-        polyMac.init(new KeyParameter(firstBlock, 0, 32));
+        final byte[] firstBlock = new byte[64]; // ChaCha stateLength
+        theCipher.processBytes(firstBlock, 0, firstBlock.length, firstBlock, 0);
+        polyMac.init(new KeyParameter(firstBlock, 0, 32)); // Poly1305 KeyLength
         Arrays.fill(firstBlock, (byte) 0);
 
         /* If we have initial AEAD data */
@@ -216,9 +214,9 @@ public class ChaChaPoly1305
     }
 
     /**
-     * process single byte.
-     * @param in the byte to process
-     * @return 0
+     * Process single byte (not supported).
+     * @param in the input byte
+     * @return the output byte
      */
     public byte returnByte(final byte in) {
         throw new UnsupportedOperationException();
@@ -227,13 +225,12 @@ public class ChaChaPoly1305
     /**
      * Process bytes.
      * @param in the input buffer
-     * @param inOff the offset from which to start processing
-     * @param len the length of data to process
+     * @param inOff the starting offset in the input buffer
+     * @param len the length of data in the input buffer
      * @param out the output buffer
-     * @param outOff the offset from which to start writing output
-     * @return the length of data written out
+     * @param outOff the starting offset in the output buffer
+     * @return the number of bytes returned in the output buffer
      */
-    @Override
     public int processBytes(final byte[] in,
                             final int inOff,
                             final int len,
@@ -374,7 +371,7 @@ public class ChaChaPoly1305
         /* Count how much we have processed */
         int processed = 0;
 
-        /* If we have sufficient data */
+        /* If we have at least MACSIZE data */
         if (len >= MACSIZE) {
             /* If we have cached mac bytes */
             if (cacheBytes > 0) {
@@ -479,10 +476,9 @@ public class ChaChaPoly1305
         }
 
         /* Write the lengths */
-        final byte[] len = new byte[8];
+        final byte[] len = new byte[16]; // 2 * Long.BYTES
         Pack.longToLittleEndian(aeadLength, len, 0);
-        polyMac.update(len, 0, 8);
-        Pack.longToLittleEndian(dataLength, len, 0);
-        polyMac.update(len, 0, 8);
+        Pack.longToLittleEndian(dataLength, len, 8); // Long.BYTES
+        polyMac.update(len, 0, len.length);
     }
 }

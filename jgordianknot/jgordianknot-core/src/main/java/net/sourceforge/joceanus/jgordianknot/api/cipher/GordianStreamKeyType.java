@@ -86,7 +86,7 @@ public enum GordianStreamKeyType {
     /**
      * Zuc.
      */
-    ZUC(GordianLength.LEN_128, GordianLength.LEN_184);
+    ZUC(GordianLength.LEN_128, GordianLength.LEN_200);
 
     /**
      * The IV Length.
