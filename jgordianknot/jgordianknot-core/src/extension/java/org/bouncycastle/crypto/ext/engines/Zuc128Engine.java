@@ -111,7 +111,7 @@ public class Zuc128Engine implements StreamCipher, Memoable {
      * Constructor.
      * @param pSource the source engine
      */
-    protected Zuc128Engine(Zuc128Engine pSource) {
+    Zuc128Engine(final Zuc128Engine pSource) {
         reset(pSource);
     }
 
@@ -159,12 +159,23 @@ public class Zuc128Engine implements StreamCipher, Memoable {
         return 2047;
     }
 
-    @Override
+    /**
+     * Obtain Algorithm Name.
+     * @return the name
+     */
     public String getAlgorithmName() {
         return "Zuc-128";
     }
 
-    @Override
+    /**
+     * Process bytes.
+     * @param in the input buffer
+     * @param inOff the starting offset in the input buffer
+     * @param len the length of data in the input buffer
+     * @param out the output buffer
+     * @param outOff the starting offset in the output buffer
+     * @return the number of bytes returned in the output buffer
+     */
     public int processBytes(final byte[] in,
                             final int inOff,
                             final int len,
@@ -188,14 +199,20 @@ public class Zuc128Engine implements StreamCipher, Memoable {
         return len;
     }
 
-    @Override
+    /**
+     * Reset the engine.
+     */
     public void reset() {
         if (theResetState != null) {
             reset(theResetState);
         }
     }
 
-    @Override
+    /**
+     * Process single byte.
+     * @param in the input byte
+     * @return the output byte
+     */
     public byte returnByte(final byte in) {
         /* Make the keyStream if required */
         if (theIndex == 0) {
@@ -225,23 +242,34 @@ public class Zuc128Engine implements StreamCipher, Memoable {
     }
 
     /* ——————————————————————- */
-    /* c = a + b mod (2^31 – 1) */
-    int AddM(int a, int b)
-    {
-        int c = a + b;
+    /**
+     * Modular add c = a + b mod (2^31 – 1).
+     * @param a value A
+     * @param b value B
+     * @return the result
+     */
+    private int AddM(final int a, final int b) {
+        final int c = a + b;
         return (c & 0x7FFFFFFF) + (c >>> 31);
     }
 
-    /* LFSR with initialization mode */
-    static int MulByPow2(int x, int k) {
+    /**
+     * Multiply by power of two.
+     * @param x input value
+     * @param k the power of two
+     * @return the result
+     */
+    private static int MulByPow2(final int x, final int k) {
         return ((((x) << k) | ((x) >>> (31 - k))) & 0x7FFFFFFF);
     }
 
-    void LFSRWithInitialisationMode(int u)
-    {
-        int f, v;
-        f = LFSR[0];
-        v = MulByPow2(LFSR[0], 8);
+    /**
+     * LFSR with initialisation mode.
+     * @param u
+     */
+    private void LFSRWithInitialisationMode(final int u) {
+        int f = LFSR[0];
+        int v = MulByPow2(LFSR[0], 8);
         f = AddM(f, v);
         v = MulByPow2(LFSR[4], 20);
         f = AddM(f, v);
@@ -272,9 +300,10 @@ public class Zuc128Engine implements StreamCipher, Memoable {
         LFSR[15] = f;
     }
 
-    /* LFSR with work mode */
-    void LFSRWithWorkMode()
-    {
+    /**
+     * LFSR with work mode.
+     */
+    private void LFSRWithWorkMode() {
         int f, v;
         f = LFSR[0];
         v = MulByPow2(LFSR[0], 8);
@@ -307,38 +336,63 @@ public class Zuc128Engine implements StreamCipher, Memoable {
         LFSR[15] = f;
     }
 
-    /* BitReorganization */
-    void BitReorganization()
-    {
+    /**
+     * BitReorganization.
+     */
+    private void BitReorganization() {
         BRC[0] = ((LFSR[15] & 0x7FFF8000) << 1) | (LFSR[14] & 0xFFFF);
         BRC[1] = ((LFSR[11] & 0xFFFF) << 16) | (LFSR[9] >>> 15);
         BRC[2] = ((LFSR[7] & 0xFFFF) << 16) | (LFSR[5] >>> 15);
         BRC[3] = ((LFSR[2] & 0xFFFF) << 16) | (LFSR[0] >>> 15);
     }
 
+    /**
+     * Rotate integer.
+     * @param a the integer
+     * @param k the shift
+     * @return the result
+     */
     static int ROT(int a, int k) {
         return (((a) << k) | ((a) >>> (32 - k)));
     }
 
-    /* L1 */
-    int L1(int X)
-    {
+    /**
+     * L1.
+     * @param X the input integer.
+     * @return the result
+     */
+    private static int L1(final int X) {
         return (X ^ ROT(X, 2) ^ ROT(X, 10) ^ ROT(X, 18) ^ ROT(X, 24));
     }
 
-    /* L2 */
-    int L2(int X)
-    {
+    /**
+     * L2.
+     * @param X the input integer.
+     * @return the result
+     */
+    private static int L2(final int X) {
         return (X ^ ROT(X, 8) ^ ROT(X, 14) ^ ROT(X, 22) ^ ROT(X, 30));
     }
 
-    static int MAKEU32(byte a, byte b, byte c, byte d) {
+    /**
+     * Build a 32-bit integer from constituent parts.
+     * @param a part A
+     * @param b part B
+     * @param c part C
+     * @param d part D
+     * @return the built integer
+     */
+    private static int MAKEU32(final byte a,
+                               final byte b,
+                               final byte c,
+                               final byte d) {
         return (((a & 0xFF) << 24) | ((b & 0xFF) << 16) | ((c & 0xFF) << 8) | ((d & 0xFF )));
     }
 
-    /* F */
-    int F()
-    {
+    /**
+     * F.
+     */
+    int F() {
         int W, W1, W2, u, v;
         W = (BRC[0] ^ F[0]) + F[1];
         W1 = F[0] + BRC[1];
@@ -352,13 +406,28 @@ public class Zuc128Engine implements StreamCipher, Memoable {
         return W;
     }
 
-    static int MAKEU31(byte a, short b, byte c) {
+    /**
+     * Build a 31-bit integer from constituent parts.
+     * @param a part A
+     * @param b part B
+     * @param c part C
+     * @return the built integer
+     */
+    private static int MAKEU31(final byte a,
+                               final short b,
+                               final byte c) {
         return (((a & 0xFF) << 23) | ((b & 0xFFFF) << 8) | (c & 0xFF));
     }
 
-    /* initialize */
-    protected void setKeyAndIV(int[] pLFSR, byte[] k, byte[] iv)
-    {
+    /**
+     * Process key and IV into LFSR.
+     * @param pLFSR the LFSR
+     * @param k the key
+     * @param iv the iv
+     */
+    protected void setKeyAndIV(final int[] pLFSR,
+                               final byte[] k,
+                               final byte[] iv) {
         /* Check lengths */
         if (k == null || k.length != 16) {
             throw new IllegalArgumentException("A key of 16 bytes is needed");
@@ -386,22 +455,23 @@ public class Zuc128Engine implements StreamCipher, Memoable {
         LFSR[15] = MAKEU31(k[15], EK_d[15], iv[15]);
     }
 
-    /* initialize */
-    public void setKeyAndIV(byte[] k, byte[] iv)
-    {
-        int w, nCount;
-
+    /**
+     * Process key and IV.
+     * @param k the key
+     * @param iv the IV
+     */
+    private void setKeyAndIV(final byte[] k,
+                             final byte [] iv) {
         /* Initialise LFSR */
         setKeyAndIV(LFSR, k, iv);
 
         /* set F_R1 and F_R2 to zero */
         F[0] = 0;
         F[1] = 0;
-        nCount = 32;
-        while (nCount > 0)
-        {
+        int nCount = 32;
+        while (nCount > 0) {
             BitReorganization();
-            w = F();
+            final int w = F();
             LFSRWithInitialisationMode(w >>> 1);
             nCount--;
         }
@@ -411,34 +481,38 @@ public class Zuc128Engine implements StreamCipher, Memoable {
     }
 
     /**
-     * Create the next byte keyStream
+     * Create the next byte keyStream.
      */
-    void makeKeyStream()
-    {
+    private void makeKeyStream() {
        encode32be(makeKeyStreamWord(), keyStream, 0);
     }
 
     /**
-     * Create the next keyStream word
+     * Create the next keyStream word.
      * @return the next word
      */
-    public int makeKeyStreamWord()
-    {
+    public int makeKeyStreamWord() {
         if (theIterations++ >= getMaxIterations()) {
             throw new IllegalStateException("Too much data processed by singleKey/IV");
         }
         BitReorganization();
-        int result = F() ^ BRC[3];
+        final int result = F() ^ BRC[3];
         LFSRWithWorkMode();
         return result;
     }
 
-    @Override
+    /**
+     * Create a copy of the engine.
+     * @return the copy
+     */
     public Zuc128Engine copy() {
         return new Zuc128Engine(this);
     }
 
-    @Override
+    /**
+     * Reset from saved engine state.
+     * @param pState teh state to restore
+     */
     public void reset(final Memoable pState) {
         final Zuc128Engine e = (Zuc128Engine) pState;
         System.arraycopy(e.LFSR, 0, LFSR, 0, LFSR.length);
@@ -447,5 +521,6 @@ public class Zuc128Engine implements StreamCipher, Memoable {
         System.arraycopy(e.keyStream, 0, keyStream, 0, keyStream.length);
         theIndex = e.theIndex;
         theIterations = e.theIterations;
+        theResetState = e;
     }
 }

@@ -46,14 +46,14 @@ public enum GordianLength {
     LEN_160(160),
 
     /**
-     * 184 bits.
-     */
-    LEN_184(184),
-
-    /**
      * 192 bits.
      */
     LEN_192(192),
+
+    /**
+     * 200 bits.
+     */
+    LEN_200(200),
 
     /**
      * 224 bits.

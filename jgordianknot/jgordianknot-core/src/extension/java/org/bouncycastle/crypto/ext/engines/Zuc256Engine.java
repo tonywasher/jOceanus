@@ -55,7 +55,7 @@ public class Zuc256Engine extends Zuc128Engine {
     /**
      * Constructor for streamCipher.
      */
-    public Zuc256Engine(){
+    public Zuc256Engine() {
         theD = EK_d;
     }
 
@@ -63,7 +63,7 @@ public class Zuc256Engine extends Zuc128Engine {
      * Constructor for Mac.
      * @param pLength the Mac length
      */
-    public Zuc256Engine(int pLength){
+    public Zuc256Engine(final int pLength) {
         switch (pLength) {
             case 32:
                 theD = EK_d32;
@@ -83,44 +83,54 @@ public class Zuc256Engine extends Zuc128Engine {
      * Constructor for Memoable.
      * @param pSource the source engine
      */
-    private Zuc256Engine(Zuc256Engine pSource){
+    private Zuc256Engine(final Zuc256Engine pSource){
         super(pSource);
     }
 
-    @Override
+    /**
+     * Obtain Max iterations.
+     * @return the maximum iterations
+     */
     protected int getMaxIterations() {
         return 625;
     }
 
-    @Override
+    /**
+     * Obtain Algorithm Name.
+     * @return the name
+     */
     public String getAlgorithmName() {
         return "Zuc-256";
     }
 
-    static int MAKEU31(byte a, byte b, byte c, byte d) {
+    /**
+     * Build a 31-bit integer from constituent parts.
+     * @param a part A
+     * @param b part B
+     * @param c part C
+     * @param d part D
+     * @return the built integer
+     */
+    private static int MAKEU31(byte a, byte b, byte c, byte d) {
         return (((a & 0xFF) << 23) | ((b & 0xFF) << 16) | ((c & 0xFF) << 8) | (d & 0xFF));
     }
 
-    /* initialize */
-    protected void setKeyAndIV(int[] pLFSR, byte[] k, byte[] iv)
-    {
+    /**
+     * Process key and IV into LFSR.
+     * @param pLFSR the LFSR
+     * @param k the key
+     * @param iv the iv
+     */
+    protected void setKeyAndIV(final int[] pLFSR,
+                               final byte[] k,
+                               final byte[] iv) {
         /* Check lengths */
         if (k == null || k.length != 32) {
             throw new IllegalArgumentException("A key of 32 bytes is needed");
         }
-        if (iv == null || iv.length != 23) {
-            throw new IllegalArgumentException("An IV of 23 bytes is needed");
+        if (iv == null || iv.length != 25) {
+            throw new IllegalArgumentException("An IV of 25 bytes is needed");
         }
-
-        /* Expand the 6bit part of the IV from 6 bytes to 8 bytes */
-        byte iv17 = (byte) ((iv[17] >>> 2) & 0x3F);
-        byte iv18 = (byte) (((iv[17] << 4) & 0x3F) | ((iv[18] >>> 4) & 0xF));
-        byte iv19 = (byte) (((iv[18] << 2) & 0x3F) | ((iv[19] >>> 6) & 0x3));
-        byte iv20 = (byte) (iv[19] & 0x3F);
-        byte iv21 = (byte) ((iv[20] >>> 2) & 0x3F);
-        byte iv22 = (byte) (((iv[20] << 4) & 0x3F) | ((iv[21] >>> 4) & 0xF));
-        byte iv23 = (byte) (((iv[21] << 2) & 0x3F) | ((iv[22] >>> 6) & 0x3));
-        byte iv24 = (byte) (iv[22] & 0x3F);
 
         /* expand key and IV */
         pLFSR[0] = MAKEU31(k[0], theD[0], k[21], k[16]);
@@ -128,25 +138,31 @@ public class Zuc256Engine extends Zuc128Engine {
         pLFSR[2] = MAKEU31(k[2], theD[2], k[23], k[18]);
         pLFSR[3] = MAKEU31(k[3], theD[3], k[24], k[19]);
         pLFSR[4] = MAKEU31(k[4], theD[4], k[25], k[20]);
-        pLFSR[5] = MAKEU31(iv[0], (byte)(theD[5] | iv17), k[5], k[26]);
-        pLFSR[6] = MAKEU31(iv[1], (byte)(theD[6] | iv18), k[6], k[27]);
-        pLFSR[7] = MAKEU31(iv[10], (byte)(theD[7] | iv19), k[7], iv[2]);
-        pLFSR[8] = MAKEU31(k[8], (byte)(theD[8] | iv20), iv[3], iv[11]);
-        pLFSR[9] = MAKEU31(k[9], (byte)(theD[9] | iv21), iv[12], iv[4]);
-        pLFSR[10] = MAKEU31(iv[5], (byte)(theD[10] | iv22), k[10], k[28]);
-        pLFSR[11] = MAKEU31(k[11], (byte)(theD[11] | iv23), iv[6], iv[13]);
-        pLFSR[12] = MAKEU31(k[12], (byte)(theD[12] | iv24), iv[7], iv[14]);
+        pLFSR[5] = MAKEU31(iv[0], (byte)(theD[5] | (iv[17] & 0x3F)), k[5], k[26]);
+        pLFSR[6] = MAKEU31(iv[1], (byte)(theD[6] | (iv[18] & 0x3F)), k[6], k[27]);
+        pLFSR[7] = MAKEU31(iv[10], (byte)(theD[7] | (iv[19] & 0x3F)), k[7], iv[2]);
+        pLFSR[8] = MAKEU31(k[8], (byte)(theD[8] | (iv[20] & 0x3F)), iv[3], iv[11]);
+        pLFSR[9] = MAKEU31(k[9], (byte)(theD[9] | (iv[21] & 0x3F)), iv[12], iv[4]);
+        pLFSR[10] = MAKEU31(iv[5], (byte)(theD[10] | (iv[22] & 0x3F)), k[10], k[28]);
+        pLFSR[11] = MAKEU31(k[11], (byte)(theD[11] | (iv[23] & 0x3F)), iv[6], iv[13]);
+        pLFSR[12] = MAKEU31(k[12], (byte)(theD[12] | (iv[24] & 0x3F)), iv[7], iv[14]);
         pLFSR[13] = MAKEU31(k[13], theD[13], iv[15], iv[8]);
         pLFSR[14] = MAKEU31(k[14], (byte)(theD[14] | ((k[31] >>> 4) & 0xF)), iv[16], iv[9]);
         pLFSR[15] = MAKEU31(k[15], (byte)(theD[15] | (k[31] & 0xF)), k[30], k[29]);
     }
 
-    @Override
+    /**
+     * Create a copy of the engine.
+     * @return the copy
+     */
     public Zuc256Engine copy() {
         return new Zuc256Engine(this);
     }
 
-    @Override
+    /**
+     * Reset from saved engine state.
+     * @param pState teh state to restore
+     */
     public void reset(final Memoable pState) {
         final Zuc256Engine e = (Zuc256Engine) pState;
         super.reset(pState);
