@@ -85,7 +85,7 @@ public class JcaAADCipher
             /* Initialise as required */
             final AlgorithmParameterSpec myParms = myAEAD == null
                                              ? new IvParameterSpec(getInitVector())
-                                             : new AEADParameterSpec(getInitVector(), 16, myAEAD);
+                                             : new AEADParameterSpec(getInitVector(), getAEADMacSize(), myAEAD);
             theCipher.init(myMode, myKey, myParms);
         } catch (InvalidKeyException
                 | InvalidAlgorithmParameterException e) {

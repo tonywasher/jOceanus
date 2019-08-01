@@ -66,7 +66,7 @@ public class BouncyStreamKeyAADCipher
         final byte[] myAEAD = getInitialAEAD();
         final CipherParameters myParms = myAEAD == null
                                          ? new ParametersWithIV(myKeyParms, getInitVector())
-                                         : new AEADParameters(myKeyParms, 16, getInitVector(), myAEAD);
+                                         : new AEADParameters(myKeyParms, getAEADMacSize(), getInitVector(), myAEAD);
         theCipher.init(pEncrypt, myParms);
     }
 

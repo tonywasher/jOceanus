@@ -16,9 +16,10 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jgordianknot.impl.core.cipher;
 
+import org.bouncycastle.crypto.CipherParameters;
 import org.bouncycastle.crypto.Digest;
+import org.bouncycastle.crypto.OutputLengthException;
 import org.bouncycastle.crypto.PBEParametersGenerator;
-import org.bouncycastle.crypto.digests.SHA512Digest;
 import org.bouncycastle.crypto.generators.Argon2BytesGenerator;
 import org.bouncycastle.crypto.generators.PKCS12ParametersGenerator;
 import org.bouncycastle.crypto.generators.PKCS5S2ParametersGenerator;
@@ -41,6 +42,7 @@ import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianPBESpec;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianPBESpec.GordianPBEArgon2Spec;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianPBESpec.GordianPBEDigestAndCountSpec;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianPBESpec.GordianPBESCryptSpec;
+import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigest;
 import net.sourceforge.joceanus.jgordianknot.api.key.GordianKey;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianCoreFactory;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianRandomSource;
@@ -52,6 +54,11 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
  * @param <T> the key type
  */
 public class GordianCoreCipherParameters<T extends GordianKeySpec> {
+    /**
+     * The PBESaltLength.
+     */
+    private static final int PBESALTLEN = GordianLength.LEN_256.getByteLength();
+
     /**
      * The factory.
      */
@@ -169,7 +176,7 @@ public class GordianCoreCipherParameters<T extends GordianKeySpec> {
 
             /* Access the key details */
             theKey = obtainKeyFromParameters(pParams);
-            theInitVector = obtainNonceFromParameters(pParams);
+            theInitVector = obtainNonceFromParameters(pParams, false);
             theInitialAEAD = obtainInitialAEADFromParameters(pParams);
         }
     }
@@ -182,10 +189,10 @@ public class GordianCoreCipherParameters<T extends GordianKeySpec> {
     private void processPBEParameters(final GordianPBECipherParameters pParams) throws OceanusException {
         /* Access PBE details */
         thePBESpec = pParams.getPBESpec();
-        thePBESalt = obtainNonceFromParameters(pParams);
+        thePBESalt = obtainNonceFromParameters(pParams, true);
 
         /* Switch on the PBE type */
-        final ParametersWithIV myParams;
+        CipherParameters myParams;
         switch (thePBESpec.getPBEType()) {
             case PBKDF2:
                 myParams = derivePBKDF2Parameters(pParams.getPassword());
@@ -204,8 +211,13 @@ public class GordianCoreCipherParameters<T extends GordianKeySpec> {
 
         /* Store details */
         theInitialAEAD = null;
-        theInitVector = myParams.getIV();
-        theKey = buildKeyFromBytes(((KeyParameter) myParams.getParameters()).getKey());
+        theInitVector = null;
+        if (myParams instanceof ParametersWithIV) {
+            final ParametersWithIV myIVParams = (ParametersWithIV) myParams;
+            theInitVector = myIVParams.getIV();
+            myParams = myIVParams.getParameters();
+        }
+        theKey = buildKeyFromBytes(((KeyParameter) myParams).getKey());
     }
 
     /**
@@ -246,9 +258,11 @@ public class GordianCoreCipherParameters<T extends GordianKeySpec> {
     /**
      * Obtain Nonce from CipherParameters.
      * @param pParams parameters
+     * @param pPBESalt is this a PBESalt
      * @return the nonce
      */
-    private byte[] obtainNonceFromParameters(final GordianCipherParameters pParams) {
+    private byte[] obtainNonceFromParameters(final GordianCipherParameters pParams,
+                                             final boolean pPBESalt) {
         /* Default IV is null */
         byte[] myIV = null;
 
@@ -257,16 +271,17 @@ public class GordianCoreCipherParameters<T extends GordianKeySpec> {
             /* Access the parameters */
             final GordianNonceParameters myParams = (GordianNonceParameters) pParams;
 
-            /* If we need a random Nonce */
-            if (myParams.randomNonce()) {
+            /* If we have an explicit Nonce */
+            if (!myParams.randomNonce()) {
+                /* access the nonce */
+                myIV = Arrays.clone(myParams.getNonce());
+
+                /* Else if we actually need a nonce */
+            } else if (pPBESalt || theSpec.needsIV()) {
                 /* Create a random IV */
-                final int myLen = theSpec.getIVLength(GordianLength.LEN_128);
+                final int myLen = pPBESalt ? PBESALTLEN : theSpec.getIVLength();
                 myIV = new byte[myLen];
                 theRandom.getRandom().nextBytes(myIV);
-
-                /* else access the nonce */
-            } else {
-                myIV = Arrays.clone(myParams.getNonce());
             }
         }
 
@@ -298,49 +313,98 @@ public class GordianCoreCipherParameters<T extends GordianKeySpec> {
      * derive PBKDF2 key and IV.
      * @param pPassword the password
      * @return the parameters
+     * @throws OceanusException on error
      */
-    private ParametersWithIV derivePBKDF2Parameters(final char[] pPassword)  {
-        /* Create the digest */
-        final GordianPBEDigestAndCountSpec mySpec = (GordianPBEDigestAndCountSpec) thePBESpec;
-        final Digest myDigest = new SHA512Digest();
-        final PKCS5S2ParametersGenerator myGenerator = new PKCS5S2ParametersGenerator(myDigest);
-        myGenerator.init(PBEParametersGenerator.PKCS5PasswordToUTF8Bytes(pPassword), thePBESalt, mySpec.getIterationCount());
-        final GordianLength myKeyLen = theSpec.getKeyType().getKeyLength();
-        final int myIVLen = theSpec.getIVLength(myKeyLen);
-        return (ParametersWithIV) myGenerator.generateDerivedParameters(myKeyLen.getByteLength(), myIVLen);
+    private CipherParameters derivePBKDF2Parameters(final char[] pPassword) throws OceanusException {
+        /* Protect password bytes */
+        byte[] myPassword = null;
+        try {
+            /* Create the digest */
+            final GordianPBEDigestAndCountSpec mySpec = (GordianPBEDigestAndCountSpec) thePBESpec;
+            final GordianDigest myBaseDigest = theFactory.getDigestFactory().createDigest(mySpec.getDigestSpec());
+            final Digest myDigest = new GordianDigestWrapper(myBaseDigest);
+
+            /* Create the generator and initialise it */
+            final PKCS5S2ParametersGenerator myGenerator = new PKCS5S2ParametersGenerator(myDigest);
+            myPassword = PBEParametersGenerator.PKCS5PasswordToUTF8Bytes(pPassword);
+            myGenerator.init(myPassword, thePBESalt, mySpec.getIterationCount());
+
+            /* Generate the parameters */
+            final int myKeyLen = theSpec.getKeyType().getKeyLength().getByteLength();
+            final int myIVLen = theSpec.needsIV() ? theSpec.getIVLength() : 0;
+            return myIVLen == 0
+                   ? myGenerator.generateDerivedParameters(myKeyLen)
+                   : myGenerator.generateDerivedParameters(myKeyLen, myIVLen);
+        } finally {
+            if (myPassword != null) {
+                Arrays.fill(myPassword, (byte) 0);
+            }
+        }
     }
 
     /**
      * derive PKCS12 key and IV.
      * @param pPassword the password
      * @return the parameters
+     * @throws OceanusException on error
      */
-    private ParametersWithIV derivePKCS12Parameters(final char[] pPassword)  {
-        /* Create the digest */
-        final GordianPBEDigestAndCountSpec mySpec = (GordianPBEDigestAndCountSpec) thePBESpec;
-        final Digest myDigest = new SHA512Digest();
-        final PKCS12ParametersGenerator myGenerator = new PKCS12ParametersGenerator(myDigest);
-        myGenerator.init(PBEParametersGenerator.PKCS12PasswordToBytes(pPassword), thePBESalt, mySpec.getIterationCount());
-        final GordianLength myKeyLen = theSpec.getKeyType().getKeyLength();
-        final int myIVLen = theSpec.getIVLength(myKeyLen);
-        return (ParametersWithIV) myGenerator.generateDerivedParameters(myKeyLen.getByteLength(), myIVLen);
+    private CipherParameters derivePKCS12Parameters(final char[] pPassword) throws OceanusException {
+        /* Protect password bytes */
+        byte[] myPassword = null;
+        try {
+            /* Create the digest */
+            final GordianPBEDigestAndCountSpec mySpec = (GordianPBEDigestAndCountSpec) thePBESpec;
+            final GordianDigest myBaseDigest = theFactory.getDigestFactory().createDigest(mySpec.getDigestSpec());
+            final Digest myDigest = new GordianDigestWrapper(myBaseDigest);
+
+            /* Create the generator and initialise it */
+            final PKCS12ParametersGenerator myGenerator = new PKCS12ParametersGenerator(myDigest);
+            myPassword = PBEParametersGenerator.PKCS12PasswordToBytes(pPassword);
+            myGenerator.init(myPassword, thePBESalt, mySpec.getIterationCount());
+
+            /* Generate the parameters */
+            final int myKeyLen = theSpec.getKeyType().getKeyLength().getByteLength();
+            final int myIVLen = theSpec.needsIV() ? theSpec.getIVLength() : 0;
+            return myIVLen == 0
+                   ? myGenerator.generateDerivedParameters(myKeyLen)
+                   : myGenerator.generateDerivedParameters(myKeyLen, myIVLen);
+        } finally {
+            if (myPassword != null) {
+                Arrays.fill(myPassword, (byte) 0);
+            }
+        }
     }
 
     /**
      * derive SCRYPT key and IV.
      * @param pPassword the password
      * @return the parameters
-#'#'p[     */
-    private ParametersWithIV deriveSCRYPTParameters(final char[] pPassword) {
-        /* Create the digest */
-        final GordianPBESCryptSpec mySpec = (GordianPBESCryptSpec) thePBESpec;
-        final byte[] myPass = PBEParametersGenerator.PKCS5PasswordToUTF8Bytes(pPassword);
-        final GordianLength myKeyLen = theSpec.getKeyType().getKeyLength();
-        final int myIVLen = theSpec.getIVLength(myKeyLen);
-        final int myBufLen = myIVLen + myKeyLen.getByteLength();
-        final byte[] myBuffer = SCrypt.generate(myPass, thePBESalt, mySpec.getCost(), mySpec.getBlockSize(), mySpec.getParallel(), myBufLen);
-        final KeyParameter myKeyParm = new KeyParameter(myBuffer, 0, myKeyLen.getByteLength());
-        return new ParametersWithIV(myKeyParm, myBuffer, myKeyLen.getByteLength(), myIVLen);
+     */
+    private CipherParameters deriveSCRYPTParameters(final char[] pPassword) {
+        /* Protect password bytes */
+        byte[] myPassword = null;
+        try {
+            /* Access the password as bytes */
+            final GordianPBESCryptSpec mySpec = (GordianPBESCryptSpec) thePBESpec;
+            myPassword = PBEParametersGenerator.PKCS5PasswordToUTF8Bytes(pPassword);
+
+            /* Generate the bytes */
+            final int myKeyLen = theSpec.getKeyType().getKeyLength().getByteLength();
+            final int myIVLen = theSpec.needsIV() ? theSpec.getIVLength() : 0;
+            final int myBufLen = myIVLen + myKeyLen;
+            final byte[] myBuffer = SCrypt.generate(myPassword, thePBESalt, mySpec.getCost(),
+                    mySpec.getBlockSize(), mySpec.getParallel(), myBufLen);
+
+            /* Convert to parameters */
+            final KeyParameter myKeyParm = new KeyParameter(myBuffer, 0, myKeyLen);
+            return myIVLen == 0
+                   ? myKeyParm
+                   : new ParametersWithIV(myKeyParm, myBuffer, myKeyLen, myIVLen);
+        } finally {
+            if (myPassword != null) {
+                Arrays.fill(myPassword, (byte) 0);
+            }
+        }
     }
 
     /**
@@ -348,8 +412,8 @@ public class GordianCoreCipherParameters<T extends GordianKeySpec> {
      * @param pPassword the password
      * @return the parameters
      */
-    private ParametersWithIV deriveArgon2Parameters(final char[] pPassword)  {
-        /* Create the digest */
+    private CipherParameters deriveArgon2Parameters(final char[] pPassword)  {
+        /* Create the parameters */
         final GordianPBEArgon2Spec mySpec = (GordianPBEArgon2Spec) thePBESpec;
         final Argon2Parameters.Builder myBuilder = new Argon2Parameters.Builder();
         myBuilder.withSalt(thePBESalt);
@@ -357,14 +421,76 @@ public class GordianCoreCipherParameters<T extends GordianKeySpec> {
         myBuilder.withParallelism(mySpec.getLanes());
         myBuilder.withMemoryAsKB(mySpec.getMemory());
         final Argon2Parameters myParams = myBuilder.build();
+
+        /* Generate the bytes */
         final Argon2BytesGenerator myGenerator = new Argon2BytesGenerator();
         myGenerator.init(myParams);
-        final GordianLength myKeyLen = theSpec.getKeyType().getKeyLength();
-        final int myIVLen = theSpec.getIVLength(myKeyLen);
-        final int myBufLen = myIVLen + myKeyLen.getByteLength();
+        final int myKeyLen = theSpec.getKeyType().getKeyLength().getByteLength();
+        final int myIVLen = theSpec.needsIV() ? theSpec.getIVLength() : 0;
+        final int myBufLen = myIVLen + myKeyLen;
         final byte[] myBuffer = new byte[myBufLen];
         myGenerator.generateBytes(pPassword, myBuffer);
-        final KeyParameter myKeyParm = new KeyParameter(myBuffer, 0, myKeyLen.getByteLength());
-        return new ParametersWithIV(myKeyParm, myBuffer, myKeyLen.getByteLength(), myIVLen);
+
+        /* Convert to parameters */
+        final KeyParameter myKeyParm = new KeyParameter(myBuffer, 0, myKeyLen);
+        return myIVLen == 0
+               ? myKeyParm
+               : new ParametersWithIV(myKeyParm, myBuffer, myKeyLen, myIVLen);
+    }
+
+    /**
+     * DigestWrapper.
+     */
+    private static class GordianDigestWrapper
+        implements Digest {
+        /**
+         * The underlying digest.
+         */
+        private final GordianDigest theDigest;
+
+        /**
+         * Constructor.
+         * @param pDigest the digest
+         */
+        GordianDigestWrapper(final GordianDigest pDigest) {
+            theDigest = pDigest;
+        }
+
+        @Override
+        public String getAlgorithmName() {
+            return theDigest.getDigestSpec().toString();
+        }
+
+        @Override
+        public int getDigestSize() {
+            return theDigest.getDigestSize();
+        }
+
+        @Override
+        public void update(final byte in) {
+            theDigest.update(in);
+        }
+
+        @Override
+        public void update(final byte[] pIn,
+                           final int pInOff,
+                           final int pLen) {
+            theDigest.update(pIn, pInOff, pLen);
+        }
+
+        @Override
+        public int doFinal(final byte[] pOut,
+                           final int pOutOff) {
+            try {
+                return theDigest.finish(pOut, pOutOff);
+            } catch (OceanusException e) {
+                throw new OutputLengthException("Bad length");
+            }
+        }
+
+        @Override
+        public void reset() {
+            theDigest.reset();
+        }
     }
 }

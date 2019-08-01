@@ -240,7 +240,7 @@ public class GordianSymCipherSpec
     }
 
     @Override
-    public int getIVLength(final GordianLength pKeyLen) {
+    public int getIVLength() {
         if (getCipherMode().isAAD()) {
             return AADIVLEN;
         }

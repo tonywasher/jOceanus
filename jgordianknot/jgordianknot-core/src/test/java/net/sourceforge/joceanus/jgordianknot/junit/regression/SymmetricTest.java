@@ -22,6 +22,7 @@ import java.util.List;
 import java.util.stream.Stream;
 
 import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
+import org.bouncycastle.crypto.CipherParameters;
 import org.bouncycastle.util.Arrays;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
@@ -711,19 +712,14 @@ public class SymmetricTest {
         final byte[] myTestData = getTestData();
 
         /* Create the Spec */
-        final boolean needsIV = pCipherSpec.getSpec().getCipherMode().needsIV();
         final GordianCoreCipher<GordianSymKeySpec> myCipher = (GordianCoreCipher<GordianSymKeySpec>) myCipherFactory.createSymKeyCipher(mySpec);
-        GordianCipherParameters myParms = needsIV
-                                          ? GordianCipherParameters.keyWithRandomNonce(myKey)
-                                          : GordianCipherParameters.key(myKey);
+        GordianCipherParameters myParms = GordianCipherParameters.keyWithRandomNonce(myKey);
         myCipher.init(true, myParms);
         if (!mySpec.getCipherMode().hasPadding()
                 || !GordianPadding.NONE.equals(mySpec.getPadding())) {
             /* Check encryption */
-            if (needsIV) {
-                final byte[] myIV = myCipher.getInitVector();
-                myParms = GordianCipherParameters.keyAndNonce(myKey, myIV);
-            }
+            final byte[] myIV = myCipher.getInitVector();
+            myParms = GordianCipherParameters.keyAndNonce(myKey, myIV);
             final byte[] myEncrypted = myCipher.finish(myTestData);
             final byte[] myEncrypted2 = myCipher.finish(myTestData);
             myCipher.init(false, myParms);
@@ -764,20 +760,13 @@ public class SymmetricTest {
 
         /* Create the Spec */
         final GordianKeyedCipher<GordianSymKeySpec> myCipher = myCipherFactory.createSymKeyCipher(mySpec);
-        final boolean needsIV = pCipherSpec.getSpec().getCipherMode().needsIV();
-        GordianCipherParameters myParms = needsIV
-                                          ? GordianCipherParameters.keyWithRandomNonce(myKey)
-                                          : GordianCipherParameters.key(myKey);
+        GordianCipherParameters myParms = GordianCipherParameters.keyWithRandomNonce(myKey);
         myCipher.init(true, myParms);
         if (!mySpec.getCipherMode().hasPadding()
                 || !GordianPadding.NONE.equals(mySpec.getPadding())) {
             /* Check encryption */
-            if (needsIV) {
-                final byte[] myIV = myCipher.getInitVector();
-                myParms = GordianCipherParameters.keyAndNonce(myPartnerKey, myIV);
-            } else {
-                myParms = GordianCipherParameters.key(myPartnerKey);
-            }
+            final byte[] myIV = myCipher.getInitVector();
+            myParms = GordianCipherParameters.keyAndNonce(myPartnerKey, myIV);
             final byte[] myEncrypted = myCipher.finish(myTestData);
             final GordianKeyedCipher<GordianSymKeySpec> myPartnerCipher = myPartnerFactory.createSymKeyCipher(mySpec);
             myPartnerCipher.init(false, myParms);
@@ -813,12 +802,11 @@ public class SymmetricTest {
             myCipher.updateAAD(myAADData);
             myEncrypted2 = myCipher.finish(myTestData);
         }
+        myParms = GordianCipherParameters.aeadAndNonce(myKey, myAADData, myIV);
         myCipher.init(false, myParms);
-        myCipher.updateAAD(myAADData);
         final byte[] myResult = myCipher.finish(myEncrypted);
         if (myEncrypted2 != null) {
             myCipher.init(false, myParms);
-            myCipher.updateAAD(myAADData);
             final byte[] myResult2 = myCipher.finish(myEncrypted2);
             Assertions.assertArrayEquals(myResult, myResult2, "Failed to reset properly");
         }
@@ -878,15 +866,10 @@ public class SymmetricTest {
         /* Create the Cipher */
         final GordianStreamCipherSpec myCipherSpec = GordianStreamCipherSpec.stream(myKeySpec);
         final GordianStreamCipher myCipher = myCipherFactory.createStreamKeyCipher(myCipherSpec);
-        final boolean needsIV = pCipherSpec.getSpec().needsIV();
-        GordianCipherParameters myParms = needsIV
-                                          ? GordianCipherParameters.keyWithRandomNonce(myStreamKey)
-                                          : GordianCipherParameters.key(myStreamKey);
+         GordianCipherParameters myParms = GordianCipherParameters.keyWithRandomNonce(myStreamKey);
         myCipher.init(true, myParms);
-        if (needsIV) {
-            final byte[] myIV = myCipher.getInitVector();
-            myParms = GordianCipherParameters.keyAndNonce(myStreamKey, myIV);
-        }
+        final byte[] myIV = myCipher.getInitVector();
+        myParms = GordianCipherParameters.keyAndNonce(myStreamKey, myIV);
         final byte[] myEncrypted = myCipher.finish(myTestData);
         final byte[] myEncrypted2 = myCipher.finish(myTestData);
         myCipher.init(false, myParms);
@@ -920,12 +903,10 @@ public class SymmetricTest {
         final byte[] myEncrypted = myCipher.finish(myTestData);
         myCipher.updateAAD(myAADData);
         final byte[] myEncrypted2 = myCipher.finish(myTestData);
-        myParms = GordianCipherParameters.keyAndNonce(myKey, myIV);
+        myParms = GordianCipherParameters.aeadAndNonce(myKey, myAADData, myIV);
         myCipher.init(false, myParms);
-        myCipher.updateAAD(myAADData);
         final byte[] myResult = myCipher.finish(myEncrypted);
         myCipher.init(false, myParms);
-        myCipher.updateAAD(myAADData);
         final byte[] myResult2 = myCipher.finish(myEncrypted2);
         Assertions.assertArrayEquals(myResult, myResult2, "Failed to reset properly");
         Assertions.assertArrayEquals(myTestData, myResult, "Failed to encrypt/decrypt");
@@ -952,18 +933,11 @@ public class SymmetricTest {
         final byte[] myBytes = getTestData();
 
         /* Encrypt and decrypt the message */
-        final boolean needsIV = myCipherSpec.needsIV();
-        GordianCipherParameters myParms = needsIV
-                                          ? GordianCipherParameters.keyWithRandomNonce(myKey)
-                                          : GordianCipherParameters.key(myKey);
+        GordianCipherParameters myParms = GordianCipherParameters.keyWithRandomNonce(myKey);
         myCipher.init(true, myParms);
         final byte[] myEncrypted = myCipher.finish(myBytes);
-        if (needsIV) {
-            final byte[] myIV = myCipher.getInitVector();
-            myPartnerCipher.init(false, GordianCipherParameters.keyAndNonce(myPartnerKey, myIV));
-        } else {
-            myPartnerCipher.init(false, GordianCipherParameters.key(myPartnerKey));
-        }
+        final byte[] myIV = myCipher.getInitVector();
+        myPartnerCipher.init(false, GordianCipherParameters.keyAndNonce(myPartnerKey, myIV));
         final byte[] myDecrypted = myPartnerCipher.finish(myEncrypted);
 
         /* Check that the decryption worked */
@@ -1077,10 +1051,7 @@ public class SymmetricTest {
         byte[] myBytes = getTestData();
         final GordianStreamCipherSpec myCipherSpec = GordianStreamCipherSpec.stream(myKeySpec);
         final GordianStreamCipher myCipher = myCipherFactory.createStreamKeyCipher(myCipherSpec);
-        final boolean needsIV = myCipherSpec.needsIV();
-        GordianCipherParameters myParms = needsIV
-                                          ? GordianCipherParameters.keyWithRandomNonce(myStreamKey)
-                                          : GordianCipherParameters.key(myStreamKey);
+        GordianCipherParameters myParms = GordianCipherParameters.keyWithRandomNonce(myStreamKey);
         final long myStart = System.nanoTime();
         for (int i = 0; i < profileRepeat; i++) {
             myCipher.init(true, myParms);

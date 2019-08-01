@@ -73,7 +73,7 @@ public class BouncySymKeyAADCipher
         final byte[] myAEAD = getInitialAEAD();
         final CipherParameters myParms = myAEAD == null
                   ? new ParametersWithIV(myKeyParms, getInitVector())
-                  : new AEADParameters(myKeyParms, 16, getInitVector(), getInitialAEAD());
+                  : new AEADParameters(myKeyParms, getAEADMacSize(), getInitVector(), getInitialAEAD());
         theCipher.init(pEncrypt, myParms);
     }
 

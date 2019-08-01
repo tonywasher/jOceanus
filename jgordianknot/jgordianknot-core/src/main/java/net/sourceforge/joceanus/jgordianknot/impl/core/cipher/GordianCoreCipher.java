@@ -23,6 +23,8 @@ import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianCipherParameters;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianCipherSpec;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianKeyedCipher;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianPBESpec;
+import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianStreamCipherSpec;
+import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianSymCipherSpec;
 import net.sourceforge.joceanus.jgordianknot.api.key.GordianKey;
 import net.sourceforge.joceanus.jgordianknot.api.base.GordianKeySpec;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianLogicException;
@@ -162,6 +164,39 @@ public abstract class GordianCoreCipher<T extends GordianKeySpec>
         /* Process the parameters */
         theParameters.processParameters(pParams);
         checkValidKey(getKey());
+    }
+
+    /**
+     * Obtain AEAD MacSize.
+     * @return the MacSize
+     */
+    public int getAEADMacSize() {
+        /* SymCipher depends on BlockSize */
+        if (theCipherSpec instanceof GordianSymCipherSpec) {
+            final GordianSymCipherSpec mySymSpec = (GordianSymCipherSpec) theCipherSpec;
+            final GordianLength myBlkLen = mySymSpec.getBlockLength();
+
+            /* Switch on cipher Mode */
+            switch (mySymSpec.getCipherMode()) {
+                case CCM:
+                case EAX:
+                    return myBlkLen.getLength() / 2;
+                case KCCM:
+                case KGCM:
+                case GCM:
+                case OCB:
+                    return myBlkLen.getLength();
+                default:
+                    return 0;
+            }
+
+            /* Stream Cipher uses Poly1305 */
+        } else if (theCipherSpec instanceof GordianStreamCipherSpec) {
+            return GordianLength.LEN_128.getLength();
+        }
+
+        /* No Mac */
+        return 0;
     }
 
     /**

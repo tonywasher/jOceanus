@@ -21,7 +21,7 @@ import org.bouncycastle.util.Arrays;
 import org.bouncycastle.util.Pack;
 
 /**
- * Implementation of DSTU7624 GCM mode
+ * Implementation of DSTU7624 GCM mode.
  */
 public class KGCMXBlockCipher
         implements AEADBlockCipher {
@@ -95,9 +95,6 @@ public class KGCMXBlockCipher
             macSize = macSizeBits >>> 3;
             engineParam = param.getKey();
 
-            if (initialAssociatedText != null) {
-                processAADBytes(initialAssociatedText, 0, initialAssociatedText.length);
-            }
         } else if (params instanceof ParametersWithIV) {
             ParametersWithIV param = (ParametersWithIV) params;
 
@@ -134,6 +131,7 @@ public class KGCMXBlockCipher
         this.macBlock = new byte[blockSize];
         ctrEngine.init(true, new ParametersWithIV(engineParam, this.iv));
         engine.init(true, engineParam);
+        reset();
     }
 
     public String getAlgorithmName() {
