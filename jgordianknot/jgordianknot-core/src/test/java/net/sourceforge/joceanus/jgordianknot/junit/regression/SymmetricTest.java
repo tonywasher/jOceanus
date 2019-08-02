@@ -22,7 +22,6 @@ import java.util.List;
 import java.util.stream.Stream;
 
 import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
-import org.bouncycastle.crypto.CipherParameters;
 import org.bouncycastle.util.Arrays;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
@@ -38,6 +37,7 @@ import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianCipherMode;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianCipherParameters;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianCipherSpec;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianKeyedCipher;
+import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianPBESpec;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianPadding;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianStreamAADCipher;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianStreamCipher;
@@ -53,6 +53,8 @@ import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigestSpec;
 import net.sourceforge.joceanus.jgordianknot.api.factory.GordianFactory;
 import net.sourceforge.joceanus.jgordianknot.api.factory.GordianFactoryType;
 import net.sourceforge.joceanus.jgordianknot.api.factory.GordianParameters;
+import net.sourceforge.joceanus.jgordianknot.junit.regression.SymmetricStore.FactoryStreamPBECipherSpec;
+import net.sourceforge.joceanus.jgordianknot.junit.regression.SymmetricStore.FactorySymPBECipherSpec;
 import net.sourceforge.joceanus.jgordianknot.util.GordianGenerator;
 import net.sourceforge.joceanus.jgordianknot.api.key.GordianKey;
 import net.sourceforge.joceanus.jgordianknot.api.key.GordianKeyLengths;
@@ -398,6 +400,8 @@ public class SymmetricTest {
      * @return the test stream
      */
     private Stream<DynamicNode> symCipherTests(final FactorySymCipherSpec pCipherSpec) {
+        final boolean isAAD = pCipherSpec.getSpec().isAAD();
+
         /* Add profile test */
         Stream<DynamicNode> myTests = Stream.of(DynamicTest.dynamicTest("cipher", () -> checkSymCipher(pCipherSpec)));
 
@@ -410,6 +414,29 @@ public class SymmetricTest {
         /* Add partner test if  the partner supports this symCipherSpec */
         if (pCipherSpec.getPartner() != null) {
             myTests = Stream.concat(myTests, Stream.of(DynamicTest.dynamicTest("Partner", () -> checkPartnerSymCipher(pCipherSpec))));
+        }
+
+        /* Add PBE tests, ignoring ECB/CBC with no padding */
+        final GordianSymCipherSpec mySpec = pCipherSpec.getSpec();
+        if (!mySpec.getCipherMode().hasPadding()
+                || !GordianPadding.NONE.equals(mySpec.getPadding())) {
+            myTests = Stream.concat(myTests, Stream.of(DynamicContainer.dynamicContainer("PBE", symPBECipherTests(pCipherSpec))));
+        }
+
+        /* Return the tests */
+        return myTests;
+    }
+
+    /**
+     * Create the symPBECipher test suite for a symCipherSpec.
+     * @param pCipherSpec the cipherSpec
+     * @return the test stream
+     */
+    private Stream<DynamicNode> symPBECipherTests(final FactorySymCipherSpec pCipherSpec) {
+        /* Add PBE  tests */
+        Stream<DynamicNode> myTests = Stream.empty();
+        for (FactorySymPBECipherSpec myPBESpec : SymmetricStore.symPBECipherProvider(pCipherSpec)) {
+            myTests = Stream.concat(myTests, Stream.of(DynamicTest.dynamicTest(myPBESpec.toString(), () -> checkSymPBECipher(myPBESpec))));
         }
 
         /* Return the tests */
@@ -489,13 +516,48 @@ public class SymmetricTest {
             myTests = Stream.concat(myTests, Stream.of(DynamicTest.dynamicTest("Partner", () -> checkPartnerStreamKey(pKeySpec))));
         }
 
+        /* Add PBE tests */
+        myTests = Stream.concat(myTests, Stream.of(DynamicContainer.dynamicContainer("PBE", streamPBECipherTests(myCipherSpec))));
+
         /* Add AAD cipher tests if required */
         if (pKeySpec.hasAAD()) {
             final FactoryStreamCipherSpec myAADSpec = new FactoryStreamCipherSpec(pKeySpec, GordianStreamCipherSpec.stream(pKeySpec.getSpec(), true));
-            myTests = Stream.concat(myTests, Stream.of(DynamicTest.dynamicTest("checkAADCipher", () -> checkAADCipher(myAADSpec))));
-            myTests = Stream.concat(myTests, Stream.of(DynamicTest.dynamicTest("externalAADCipherId", () -> checkExternalId(myAADSpec))));
-            myTests = Stream.concat(myTests, Stream.of(DynamicTest.dynamicTest("algorithmAADId", () -> checkStreamCipherAlgId(myAADSpec))));
+            myTests = Stream.concat(myTests, Stream.of(DynamicContainer.dynamicContainer("AAD", streamAADCipherTests(myAADSpec))));
         }
+
+        /* Return the tests */
+        return myTests;
+    }
+
+    /**
+     * Create the streamPBECipher test suite for a streamCipherSpec.
+     * @param pCipherSpec the cipherSpec
+     * @return the test stream
+     */
+    private Stream<DynamicNode> streamPBECipherTests(final FactoryStreamCipherSpec pCipherSpec) {
+        /* Add PBE  tests */
+        Stream<DynamicNode> myTests = Stream.empty();
+        for (FactoryStreamPBECipherSpec mySpec : SymmetricStore.streamPBECipherProvider(pCipherSpec)) {
+            myTests = Stream.concat(myTests, Stream.of(DynamicTest.dynamicTest(mySpec.toString(), () -> checkStreamPBECipher(mySpec))));
+        }
+
+        /* Return the tests */
+        return myTests;
+    }
+
+    /**
+     * Create the streamPBECipher test suite for a streamCipherSpec.
+     * @param pCipherSpec the cipherSpec
+     * @return the test stream
+     */
+    private Stream<DynamicNode> streamAADCipherTests(final FactoryStreamCipherSpec pCipherSpec) {
+        /* Build standard tests */
+        Stream<DynamicNode> myTests = Stream.of(DynamicTest.dynamicTest("checkCipher", () -> checkAADCipher(pCipherSpec)));
+        myTests = Stream.concat(myTests, Stream.of(DynamicTest.dynamicTest("externalCipherId", () -> checkExternalId(pCipherSpec))));
+        myTests = Stream.concat(myTests, Stream.of(DynamicTest.dynamicTest("algorithmId", () -> checkStreamCipherAlgId(pCipherSpec))));
+
+        /* Add PBE tests */
+        myTests = Stream.concat(myTests, Stream.of(DynamicContainer.dynamicContainer("PBE", streamPBECipherTests(pCipherSpec))));
 
         /* Return the tests */
         return myTests;
@@ -735,6 +797,37 @@ public class SymmetricTest {
     }
 
     /**
+     * Check symKey PBE CipherMode.
+     * @param pCipherSpec the cipherSpec
+     * @throws OceanusException on error
+     */
+    private void checkSymPBECipher(final FactorySymPBECipherSpec pCipherSpec) throws OceanusException {
+        /* Access details */
+        final GordianFactory myFactory = pCipherSpec.getFactory();
+        final FactorySymCipherSpec myOwner = pCipherSpec.getOwner();
+        final GordianSymCipherSpec myCipherSpec = myOwner.getSpec();
+        final GordianPBESpec myPBESpec = pCipherSpec.getSpec();
+        final GordianCipherFactory myCipherFactory = myFactory.getCipherFactory();
+
+        /* Access Data */
+        final byte[] myTestData = getTestData();
+        final char[] myPassword = "HelloThere".toCharArray();
+
+        /* Create the Spec */
+        final GordianSymCipher myCipher = myCipherFactory.createSymKeyCipher(myCipherSpec);
+        GordianCipherParameters myParms = GordianCipherParameters.pbe(myPBESpec, myPassword);
+        myCipher.init(true, myParms);
+
+        /* Check encryption */
+        final byte[] mySalt = myCipher.getPBESalt();
+        myParms = GordianCipherParameters.pbeAndNonce(myPBESpec, myPassword, mySalt);
+        final byte[] myEncrypted = myCipher.finish(myTestData);
+        myCipher.init(false, myParms);
+        final byte[] myResult = myCipher.finish(myEncrypted);
+        Assertions.assertArrayEquals(myTestData, myResult, "Failed to encrypt/decrypt");
+    }
+
+    /**
      * Check partner symKey CipherMode.
      * @param pCipherSpec the cipherSpec
      * @throws OceanusException on error
@@ -878,6 +971,37 @@ public class SymmetricTest {
         final byte[] myResult2 = myCipher.finish(myEncrypted2);
         Assertions.assertArrayEquals(myTestData, myResult, "Failed to encrypt/decrypt");
         Assertions.assertArrayEquals(myResult, myResult2, "Failed to reset properly");
+    }
+
+    /**
+     * Check streamKey PBE CipherMode.
+     * @param pCipherSpec the cipherSpec
+     * @throws OceanusException on error
+     */
+    private void checkStreamPBECipher(final FactoryStreamPBECipherSpec pCipherSpec) throws OceanusException {
+        /* Access details */
+        final GordianFactory myFactory = pCipherSpec.getFactory();
+        final FactoryStreamCipherSpec myOwner = pCipherSpec.getOwner();
+        final GordianStreamCipherSpec myCipherSpec = myOwner.getSpec();
+        final GordianPBESpec myPBESpec = pCipherSpec.getSpec();
+        final GordianCipherFactory myCipherFactory = myFactory.getCipherFactory();
+
+        /* Access Data */
+        final byte[] myTestData = getTestData();
+        final char[] myPassword = "HelloThere".toCharArray();
+
+        /* Create the Spec */
+        final GordianStreamCipher myCipher = myCipherFactory.createStreamKeyCipher(myCipherSpec);
+        GordianCipherParameters myParms = GordianCipherParameters.pbe(myPBESpec, myPassword);
+        myCipher.init(true, myParms);
+
+        /* Check encryption */
+        final byte[] mySalt = myCipher.getPBESalt();
+        myParms = GordianCipherParameters.pbeAndNonce(myPBESpec, myPassword, mySalt);
+        final byte[] myEncrypted = myCipher.finish(myTestData);
+        myCipher.init(false, myParms);
+        final byte[] myResult = myCipher.finish(myEncrypted);
+        Assertions.assertArrayEquals(myTestData, myResult, "Failed to encrypt/decrypt");
     }
 
     /**

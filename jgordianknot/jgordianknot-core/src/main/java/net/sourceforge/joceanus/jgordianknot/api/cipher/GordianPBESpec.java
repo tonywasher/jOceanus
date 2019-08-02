@@ -101,6 +101,18 @@ public abstract class GordianPBESpec {
     }
 
     /**
+     * Create an argonSpec.
+     * @param pLanes the Lanes
+     * @param pMemory the Memory
+     * @param pIterations the iterations
+     */
+    public static GordianPBEArgon2Spec argon2(final int pLanes,
+                                              final int pMemory,
+                                              final int pIterations) {
+        return new GordianPBEArgon2Spec(pLanes, pMemory, pIterations);
+    }
+
+    /**
      * DigestAndCountSpec.
      */
     public static class GordianPBEDigestAndCountSpec

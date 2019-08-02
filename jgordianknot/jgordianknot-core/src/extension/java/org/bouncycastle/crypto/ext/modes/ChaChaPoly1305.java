@@ -466,7 +466,7 @@ public class ChaChaPoly1305
         padToBoundary(aeadLength);
 
         /* Set flag */
-       aeadComplete = true;
+        aeadComplete = true;
     }
 
     /**

@@ -20,6 +20,7 @@ import org.bouncycastle.crypto.CipherParameters;
 import org.bouncycastle.crypto.Digest;
 import org.bouncycastle.crypto.OutputLengthException;
 import org.bouncycastle.crypto.PBEParametersGenerator;
+import org.bouncycastle.crypto.digests.SHA512Digest;
 import org.bouncycastle.crypto.generators.Argon2BytesGenerator;
 import org.bouncycastle.crypto.generators.PKCS12ParametersGenerator;
 import org.bouncycastle.crypto.generators.PKCS5S2ParametersGenerator;
@@ -321,8 +322,7 @@ public class GordianCoreCipherParameters<T extends GordianKeySpec> {
         try {
             /* Create the digest */
             final GordianPBEDigestAndCountSpec mySpec = (GordianPBEDigestAndCountSpec) thePBESpec;
-            final GordianDigest myBaseDigest = theFactory.getDigestFactory().createDigest(mySpec.getDigestSpec());
-            final Digest myDigest = new GordianDigestWrapper(myBaseDigest);
+            final Digest myDigest = new SHA512Digest();
 
             /* Create the generator and initialise it */
             final PKCS5S2ParametersGenerator myGenerator = new PKCS5S2ParametersGenerator(myDigest);
@@ -330,8 +330,8 @@ public class GordianCoreCipherParameters<T extends GordianKeySpec> {
             myGenerator.init(myPassword, thePBESalt, mySpec.getIterationCount());
 
             /* Generate the parameters */
-            final int myKeyLen = theSpec.getKeyType().getKeyLength().getByteLength();
-            final int myIVLen = theSpec.needsIV() ? theSpec.getIVLength() : 0;
+            final int myKeyLen = theSpec.getKeyType().getKeyLength().getLength();
+            final int myIVLen =  theSpec.needsIV() ? Byte.SIZE * theSpec.getIVLength() : 0;
             return myIVLen == 0
                    ? myGenerator.generateDerivedParameters(myKeyLen)
                    : myGenerator.generateDerivedParameters(myKeyLen, myIVLen);
@@ -354,8 +354,7 @@ public class GordianCoreCipherParameters<T extends GordianKeySpec> {
         try {
             /* Create the digest */
             final GordianPBEDigestAndCountSpec mySpec = (GordianPBEDigestAndCountSpec) thePBESpec;
-            final GordianDigest myBaseDigest = theFactory.getDigestFactory().createDigest(mySpec.getDigestSpec());
-            final Digest myDigest = new GordianDigestWrapper(myBaseDigest);
+            final Digest myDigest = new SHA512Digest();
 
             /* Create the generator and initialise it */
             final PKCS12ParametersGenerator myGenerator = new PKCS12ParametersGenerator(myDigest);
@@ -363,8 +362,8 @@ public class GordianCoreCipherParameters<T extends GordianKeySpec> {
             myGenerator.init(myPassword, thePBESalt, mySpec.getIterationCount());
 
             /* Generate the parameters */
-            final int myKeyLen = theSpec.getKeyType().getKeyLength().getByteLength();
-            final int myIVLen = theSpec.needsIV() ? theSpec.getIVLength() : 0;
+            final int myKeyLen = theSpec.getKeyType().getKeyLength().getLength();
+            final int myIVLen =  theSpec.needsIV() ? Byte.SIZE * theSpec.getIVLength() : 0;
             return myIVLen == 0
                    ? myGenerator.generateDerivedParameters(myKeyLen)
                    : myGenerator.generateDerivedParameters(myKeyLen, myIVLen);

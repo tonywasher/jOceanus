@@ -89,7 +89,7 @@ public interface GordianCipherParameters {
      */
     static GordianPBECipherParameters pbe(final GordianPBESpec pPBESpec,
                                           final char[] pPassword) {
-        return new GordianPBECipherParameters(pPBESpec, null, pPassword);
+        return new GordianPBECipherParameters(pPBESpec, pPassword);
     }
 
     /**

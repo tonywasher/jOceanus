@@ -22,6 +22,7 @@ import java.util.function.Predicate;
 
 import net.sourceforge.joceanus.jgordianknot.api.base.GordianLength;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianCipherFactory;
+import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianPBESpec;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianStreamCipherSpec;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianStreamKeySpec;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianSymCipherSpec;
@@ -450,6 +451,57 @@ class SymmetricStore {
     }
 
     /**
+     * Factory and symPBECipher definition.
+     */
+    static class FactorySymPBECipherSpec
+            implements FactorySpec<GordianPBESpec> {
+        /**
+         * The owner.
+         */
+        private final FactorySymCipherSpec theOwner;
+
+        /**
+         * The pbeSpec.
+         */
+        private final GordianPBESpec thePBESpec;
+
+        /**
+         * Constructor.
+         * @param pOwner the owner
+         * @param pPBESpec the symCipherSpec
+         */
+        FactorySymPBECipherSpec(final FactorySymCipherSpec pOwner,
+                                final GordianPBESpec pPBESpec) {
+            /* Store parameters */
+            theOwner = pOwner;
+            thePBESpec = pPBESpec;
+        }
+
+        /**
+         * Obtain the owner.
+         * @return the owner
+         */
+        public FactorySymCipherSpec getOwner() {
+            return theOwner;
+        }
+
+        @Override
+        public GordianFactory getFactory() {
+            return theOwner.getFactory();
+        }
+
+        @Override
+        public GordianPBESpec getSpec() {
+            return thePBESpec;
+        }
+
+        @Override
+        public String toString() {
+            return thePBESpec.toString();
+        }
+    }
+
+    /**
      * Factory and streamKey definition.
      */
     static class FactoryStreamKeySpec
@@ -640,6 +692,57 @@ class SymmetricStore {
         @Override
         public String toString() {
             return getFactory().getFactoryType() + ":" + theCipherSpec;
+        }
+    }
+
+    /**
+     * Factory and streamPBECipher definition.
+     */
+    static class FactoryStreamPBECipherSpec
+            implements FactorySpec<GordianPBESpec> {
+        /**
+         * The owner.
+         */
+        private final FactoryStreamCipherSpec theOwner;
+
+        /**
+         * The pbeSpec.
+         */
+        private final GordianPBESpec thePBESpec;
+
+        /**
+         * Constructor.
+         * @param pOwner the owner
+         * @param pPBESpec the symCipherSpec
+         */
+        FactoryStreamPBECipherSpec(final FactoryStreamCipherSpec pOwner,
+                                   final GordianPBESpec pPBESpec) {
+            /* Store parameters */
+            theOwner = pOwner;
+            thePBESpec = pPBESpec;
+        }
+
+        /**
+         * Obtain the owner.
+         * @return the owner
+         */
+        public FactoryStreamCipherSpec getOwner() {
+            return theOwner;
+        }
+
+        @Override
+        public GordianFactory getFactory() {
+            return theOwner.getFactory();
+        }
+
+        @Override
+        public GordianPBESpec getSpec() {
+            return thePBESpec;
+        }
+
+        @Override
+        public String toString() {
+            return thePBESpec.toString();
         }
     }
 
@@ -858,9 +961,36 @@ class SymmetricStore {
         final Predicate<GordianSymCipherSpec> myPredicate
                 = myPartner == null ? null : myPartner.getCipherFactory().supportedSymCipherSpecs();
 
+        /* Build the list */
         for (GordianSymCipherSpec myCipherSpec : myCipherFactory.listAllSupportedSymCipherSpecs(mySpec)) {
             myResult.add(new FactorySymCipherSpec(pKeySpec, myCipherSpec, myPredicate));
         }
+
+        /* Return the list */
+        return myResult;
+    }
+
+    /**
+     * Obtain the list of symPBEKeyCiphers to test.
+     * @param pCipherSpec the cipherSpec
+     * @return the list
+     */
+    static List<FactorySymPBECipherSpec> symPBECipherProvider(final FactorySymCipherSpec pCipherSpec) {
+        /* Access details */
+        final GordianFactory myFactory = pCipherSpec.getFactory();
+        final GordianSymCipherSpec mySpec = pCipherSpec.getSpec();
+        final GordianCipherFactory myCipherFactory = myFactory.getCipherFactory();
+        final List<FactorySymPBECipherSpec> myResult = new ArrayList<>();
+
+        /* Build the list */
+        GordianPBESpec myPBESpec = GordianPBESpec.pbKDF2(GordianDigestSpec.sha2(GordianLength.LEN_512), 2048);
+        myResult.add(new FactorySymPBECipherSpec(pCipherSpec, myPBESpec));
+        myPBESpec = GordianPBESpec.pkcs12(GordianDigestSpec.sha2(GordianLength.LEN_512), 2048);
+        myResult.add(new FactorySymPBECipherSpec(pCipherSpec, myPBESpec));
+        myPBESpec = GordianPBESpec.scrypt(16, 1, 1);
+        myResult.add(new FactorySymPBECipherSpec(pCipherSpec, myPBESpec));
+        myPBESpec = GordianPBESpec.argon2(1, 4096, 2);
+        myResult.add(new FactorySymPBECipherSpec(pCipherSpec, myPBESpec));
 
         /* Return the list */
         return myResult;
@@ -887,6 +1017,32 @@ class SymmetricStore {
             /* Add the streamKeySpec */
             myResult.add(new FactoryStreamKeySpec(pFactory, myPartner, mySpec));
         }
+
+        /* Return the list */
+        return myResult;
+    }
+
+    /**
+     * Obtain the list of streamPBEKeyCiphers to test.
+     * @param pCipherSpec the cipherSpec
+     * @return the list
+     */
+    static List<FactoryStreamPBECipherSpec> streamPBECipherProvider(final FactoryStreamCipherSpec pCipherSpec) {
+        /* Access details */
+        final GordianFactory myFactory = pCipherSpec.getFactory();
+        final GordianStreamCipherSpec mySpec = pCipherSpec.getSpec();
+        final GordianCipherFactory myCipherFactory = myFactory.getCipherFactory();
+        final List<FactoryStreamPBECipherSpec> myResult = new ArrayList<>();
+
+        /* Build the list */
+        GordianPBESpec myPBESpec = GordianPBESpec.pbKDF2(GordianDigestSpec.sha2(GordianLength.LEN_512), 2048);
+        myResult.add(new FactoryStreamPBECipherSpec(pCipherSpec, myPBESpec));
+        myPBESpec = GordianPBESpec.pkcs12(GordianDigestSpec.sha2(GordianLength.LEN_512), 2048);
+        myResult.add(new FactoryStreamPBECipherSpec(pCipherSpec, myPBESpec));
+        myPBESpec = GordianPBESpec.scrypt(16, 1, 1);
+        myResult.add(new FactoryStreamPBECipherSpec(pCipherSpec, myPBESpec));
+        myPBESpec = GordianPBESpec.argon2(1, 4096, 2);
+        myResult.add(new FactoryStreamPBECipherSpec(pCipherSpec, myPBESpec));
 
         /* Return the list */
         return myResult;
