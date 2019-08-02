@@ -17,6 +17,7 @@
 package net.sourceforge.joceanus.jgordianknot.impl.core.stream;
 
 import net.sourceforge.joceanus.jgordianknot.api.base.GordianLength;
+import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianCipherParameters;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianPadding;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianStreamCipher;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianStreamCipherSpec;
@@ -210,7 +211,7 @@ public final class GordianStreamManager {
 
             /* Build the cipher stream */
             final GordianSymCipher mySymCipher = myCiphers.createSymKeyCipher(mySymSpec);
-            mySymCipher.initCipher(myKey);
+            mySymCipher.init(true, GordianCipherParameters.keyWithRandomNonce(myKey));
             myCurrent = new GordianCipherOutputStream<>(mySymCipher, myCurrent);
 
             /* Note that this is no longer the first */
@@ -223,7 +224,7 @@ public final class GordianStreamManager {
         final GordianKeyGenerator<GordianStreamKeySpec> myStreamGenerator = myCiphers.getKeyGenerator(new GordianStreamKeySpec(myType, myKeyLen));
         final GordianKey<GordianStreamKeySpec> myStreamKey = myStreamGenerator.generateKey();
         final GordianStreamCipher myStreamCipher = myCiphers.createStreamKeyCipher(GordianStreamCipherSpec.stream(myStreamKey.getKeyType()));
-        myStreamCipher.initCipher(myStreamKey);
+        myStreamCipher.init(true, GordianCipherParameters.keyWithRandomNonce(myStreamKey));
         myCurrent = new GordianCipherOutputStream<>(myStreamCipher, myCurrent);
 
         /* If we are compressing */

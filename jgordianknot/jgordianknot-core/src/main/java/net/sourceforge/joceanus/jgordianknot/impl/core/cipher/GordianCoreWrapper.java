@@ -19,6 +19,7 @@ package net.sourceforge.joceanus.jgordianknot.impl.core.cipher;
 import net.sourceforge.joceanus.jgordianknot.api.asym.GordianAsymKeySpec;
 import net.sourceforge.joceanus.jgordianknot.api.base.GordianLength;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianCipherFactory;
+import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianCipherParameters;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianWrapper;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianSymKeySpec;
 import net.sourceforge.joceanus.jgordianknot.api.factory.GordianAsymFactory;
@@ -234,7 +235,7 @@ public class GordianCoreWrapper
         System.arraycopy(pBytesToSecure, 0, myData, myHdrLen, myDataLen);
 
         /* Initialise the cipher */
-        theCipher.initCipher(pKey, null, true);
+        theCipher.init(true, GordianCipherParameters.key(pKey));
 
         /* Loop WRAP_COUNT times */
         int myCount = 1;
@@ -287,7 +288,7 @@ public class GordianCoreWrapper
         final byte[] myResult = new byte[myBufferLen];
 
         /* Initialise the cipher */
-        theCipher.initCipher(pKey, null, false);
+        theCipher.init(false, GordianCipherParameters.key(pKey));
 
         /* Loop WRAP_COUNT times */
         int myCount = myNumBlocks * WRAP_COUNT;

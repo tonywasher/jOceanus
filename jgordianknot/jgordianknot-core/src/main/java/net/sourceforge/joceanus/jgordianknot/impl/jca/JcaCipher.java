@@ -30,6 +30,7 @@ import javax.crypto.spec.RC2ParameterSpec;
 import javax.crypto.spec.RC5ParameterSpec;
 
 import net.sourceforge.joceanus.jgordianknot.api.base.GordianLength;
+import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianCipherParameters;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianCipherSpec;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianStreamCipher;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianStreamCipherSpec;
@@ -38,7 +39,6 @@ import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianSymCipher;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianSymCipherSpec;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianSymKeySpec;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianSymKeyType;
-import net.sourceforge.joceanus.jgordianknot.api.key.GordianKey;
 import net.sourceforge.joceanus.jgordianknot.api.base.GordianKeySpec;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianCryptoException;
 import net.sourceforge.joceanus.jgordianknot.impl.core.cipher.GordianCoreCipher;
@@ -74,69 +74,30 @@ public abstract class JcaCipher<T extends GordianKeySpec>
         return (JcaKey<T>) super.getKey();
     }
 
-    /**
-     * Do we need an IV?
-     * @return true/false
-     */
-    private boolean needsIV() {
-        return getCipherSpec().needsIV();
-    }
-
     @Override
-    public void initCipher(final GordianKey<T> pKey) throws OceanusException {
-        /* Determine the required length of IV */
-        final int myLen = getIVLength();
-        byte[] myIV = null;
-
-        /* If we need an IV */
-        if (myLen > 0) {
-            /* Create a random IV */
-            myIV = new byte[myLen];
-            getRandom().nextBytes(myIV);
-        }
-
-        /* initialise with this IV */
-        initCipher(pKey, myIV, true);
-    }
-
-    /**
-     * Obtain IV length.
-     * @return the IV length
-     */
-    private int getIVLength() {
-        final T myType = getKeyType();
-        if (myType instanceof GordianStreamKeySpec) {
-            return ((GordianStreamKeySpec) myType).getIVLength(false);
-        }
-        return needsIV()
-               ? getCipherSpec().getIVLength(GordianLength.LEN_128)
-               : 0;
-    }
-
-    @Override
-    public void initCipher(final GordianKey<T> pKey,
-                           final byte[] pIV,
-                           final boolean pEncrypt) throws OceanusException {
-        /* Access and validate the key */
-        final JcaKey<T> myJcaKey = JcaKey.accessKey(pKey);
-        checkValidKey(pKey);
+    public void init(final boolean pEncrypt,
+                     final GordianCipherParameters pParams) throws OceanusException {
+        /* Process the parameters and access the key */
+        processParameters(pParams);
+        final JcaKey<T> myJcaKey = JcaKey.accessKey(getKey());
 
         /* Access details */
         final int myMode = pEncrypt
                            ? Cipher.ENCRYPT_MODE
                            : Cipher.DECRYPT_MODE;
         final SecretKey myKey = myJcaKey.getKey();
+        final byte[] myIV = getInitVector();
 
         /* Protect against exceptions */
         try {
             /* Careful of RC5 */
-            final T myKeyType = pKey.getKeyType();
+            final T myKeyType = myJcaKey.getKeyType();
             final boolean isRC5 = myKeyType instanceof GordianSymKeySpec
                     && GordianSymKeyType.RC5.equals(((GordianSymKeySpec) myKeyType).getSymKeyType());
 
             /* Initialise as required */
-            if (pIV != null || isRC5) {
-                final AlgorithmParameterSpec myParms = generateParameters(myJcaKey, pIV);
+            if (myIV != null || isRC5) {
+                final AlgorithmParameterSpec myParms = generateParameters(myJcaKey, myIV);
                 theCipher.init(myMode, myKey, myParms);
             } else {
                 theCipher.init(myMode, myKey);
@@ -145,10 +106,6 @@ public abstract class JcaCipher<T extends GordianKeySpec>
                 | InvalidAlgorithmParameterException e) {
             throw new GordianCryptoException("Failed to initialise cipher", e);
         }
-
-        /* Store key and initVector */
-        setKey(pKey);
-        setInitVector(pIV);
     }
 
     /**

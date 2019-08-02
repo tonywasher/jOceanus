@@ -18,7 +18,6 @@ package net.sourceforge.joceanus.jgordianknot.api.cipher;
 
 import net.sourceforge.joceanus.jgordianknot.api.base.GordianIdSpec;
 import net.sourceforge.joceanus.jgordianknot.api.base.GordianKeySpec;
-import net.sourceforge.joceanus.jgordianknot.api.base.GordianLength;
 
 /**
  * Cipher Specification.
@@ -60,10 +59,9 @@ public abstract class GordianCipherSpec<T extends GordianKeySpec>
 
     /**
      * Obtain the IV length for the cipher.
-     * @param pKeyLen the keyLength
      * @return the IV length
      */
-    public abstract int getIVLength(GordianLength pKeyLen);
+    public abstract int getIVLength();
 
     @Override
     public boolean equals(final Object pThat) {

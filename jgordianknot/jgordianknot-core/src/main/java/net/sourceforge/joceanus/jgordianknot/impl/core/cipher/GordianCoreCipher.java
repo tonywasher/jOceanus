@@ -19,15 +19,18 @@ package net.sourceforge.joceanus.jgordianknot.impl.core.cipher;
 import java.security.SecureRandom;
 
 import net.sourceforge.joceanus.jgordianknot.api.base.GordianLength;
-import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianCipherFactory;
+import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianCipherParameters;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianCipherSpec;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianKeyedCipher;
+import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianPBESpec;
+import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianStreamCipherSpec;
+import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianSymCipherSpec;
 import net.sourceforge.joceanus.jgordianknot.api.key.GordianKey;
 import net.sourceforge.joceanus.jgordianknot.api.base.GordianKeySpec;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianLogicException;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianRandomSource;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianCoreFactory;
-import net.sourceforge.joceanus.jgordianknot.impl.core.key.GordianCoreKeyGenerator;
+
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
@@ -52,11 +55,6 @@ public abstract class GordianCoreCipher<T extends GordianKeySpec>
     private final GordianCoreFactory theFactory;
 
     /**
-     * The KeyGenerator.
-     */
-    private GordianCoreKeyGenerator<T> theGenerator;
-
-    /**
      * KeyLength.
      */
     private final GordianLength theKeyLength;
@@ -67,14 +65,9 @@ public abstract class GordianCoreCipher<T extends GordianKeySpec>
     private final GordianRandomSource theRandom;
 
     /**
-     * Key.
+     * Parameters.
      */
-    private GordianKey<T> theKey;
-
-    /**
-     * InitialisationVector.
-     */
-    private byte[] theInitVector;
+    private GordianCoreCipherParameters<T> theParameters;
 
     /**
      * Constructor.
@@ -88,6 +81,7 @@ public abstract class GordianCoreCipher<T extends GordianKeySpec>
         theRandom = pFactory.getRandomSource();
         theFactory = pFactory;
         theKeyLength = pCipherSpec.getKeyType().getKeyLength();
+        theParameters = new GordianCoreCipherParameters<>(theFactory, theCipherSpec);
     }
 
     /**
@@ -125,28 +119,29 @@ public abstract class GordianCoreCipher<T extends GordianKeySpec>
      */
     public abstract int getBlockSize();
 
-    /**
-     * Obtain the key.
-     * @return the key
-     */
+    @Override
     public GordianKey<T> getKey() {
-        return theKey;
+        return theParameters.getKey();
     }
 
-    /**
-     * Obtain the keyType.
-     * @return the keyType
-     */
+    @Override
     public byte[] getInitVector() {
-        return theInitVector;
+        return theParameters.getInitVector();
     }
 
-    /**
-     * Store key.
-     * @param pKey the key
-     */
-    protected void setKey(final GordianKey<T> pKey) {
-        theKey = pKey;
+    @Override
+    public byte[] getInitialAEAD() {
+        return theParameters.getInitialAEAD();
+    }
+
+    @Override
+    public byte[] getPBESalt() {
+        return theParameters.getPBESalt();
+    }
+
+    @Override
+    public GordianPBESpec getPBESpec() {
+        return theParameters.getPBESpec();
     }
 
     /**
@@ -154,24 +149,54 @@ public abstract class GordianCoreCipher<T extends GordianKeySpec>
      * @param pKeyBytes the bytes to use
      * @throws OceanusException on error
      */
-    public void initCipher(final byte[] pKeyBytes) throws OceanusException {
-        /* Create generator if needed */
-        if (theGenerator == null) {
-            final GordianCipherFactory myFactory = theFactory.getCipherFactory();
-            theGenerator = (GordianCoreKeyGenerator<T>) myFactory.getKeyGenerator(theKeyType);
-        }
-
+    public void initKeyBytes(final byte[] pKeyBytes) throws OceanusException {
         /* Create the key and initialise */
-        final GordianKey<T> myKey = theGenerator.buildKeyFromBytes(pKeyBytes);
-        initCipher(myKey);
+        final GordianKey<T> myKey = theParameters.buildKeyFromBytes(pKeyBytes);
+        init(true, GordianCipherParameters.key(myKey));
     }
 
     /**
-     * Store initVector.
-     * @param pInitVector the initVector
+     * Process cipherParameters.
+     * @param pParams the cipher parameters
+     * @throws OceanusException on error
      */
-    protected void setInitVector(final byte[] pInitVector) {
-        theInitVector = pInitVector;
+    protected void processParameters(final GordianCipherParameters pParams) throws OceanusException {
+        /* Process the parameters */
+        theParameters.processParameters(pParams);
+        checkValidKey(getKey());
+    }
+
+    /**
+     * Obtain AEAD MacSize.
+     * @return the MacSize
+     */
+    public int getAEADMacSize() {
+        /* SymCipher depends on BlockSize */
+        if (theCipherSpec instanceof GordianSymCipherSpec) {
+            final GordianSymCipherSpec mySymSpec = (GordianSymCipherSpec) theCipherSpec;
+            final GordianLength myBlkLen = mySymSpec.getBlockLength();
+
+            /* Switch on cipher Mode */
+            switch (mySymSpec.getCipherMode()) {
+                case CCM:
+                case EAX:
+                    return myBlkLen.getLength() / 2;
+                case KCCM:
+                case KGCM:
+                case GCM:
+                case OCB:
+                    return myBlkLen.getLength();
+                default:
+                    return 0;
+            }
+
+            /* Stream Cipher uses Poly1305 */
+        } else if (theCipherSpec instanceof GordianStreamCipherSpec) {
+            return GordianLength.LEN_128.getLength();
+        }
+
+        /* No Mac */
+        return 0;
     }
 
     /**

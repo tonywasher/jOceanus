@@ -177,7 +177,7 @@ public class GordianSP800CTRDRBG
         myBuilt = 0;
         while (myBuilt < myTemp.length) {
             /* Encrypt the bytes */
-            theCipher.initCipher(myKey);
+            theCipher.initKeyBytes(myKey);
             theCipher.finish(myOut, 0, myOut.length, myOut, 0);
 
             /* Determine how many bytes of this hash should be used */
@@ -214,7 +214,7 @@ public class GordianSP800CTRDRBG
         final byte[] myIn  = new byte[theBlockLen];
 
         /* Encrypt the IV */
-        theCipher.initCipher(pKey);
+        theCipher.initKeyBytes(pKey);
         theCipher.finish(pIV, 0, theBlockLen, myChain, 0);
 
         /* Loop through the data */
@@ -248,7 +248,7 @@ public class GordianSP800CTRDRBG
         int myBuilt = 0;
         while (myBuilt < myResult.length) {
             /* Encrypt the bytes */
-            theCipher.initCipher(theKey);
+            theCipher.initKeyBytes(theKey);
             theV.iterate();
             theCipher.finish(theV.getBuffer(), 0, theBlockLen, myOut, 0);
 
@@ -337,7 +337,7 @@ public class GordianSP800CTRDRBG
             int myBuilt = 0;
             while (myBuilt < myResult.length) {
                 /* Encrypt the bytes */
-                theCipher.initCipher(theKey);
+                theCipher.initKeyBytes(theKey);
                 theV.iterate();
                 theCipher.finish(theV.getBuffer(), 0, theBlockLen, myOut, 0);
 

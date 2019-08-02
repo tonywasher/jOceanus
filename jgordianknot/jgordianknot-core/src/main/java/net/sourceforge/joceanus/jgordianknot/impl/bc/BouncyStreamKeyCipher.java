@@ -22,10 +22,10 @@ import org.bouncycastle.crypto.StreamCipher;
 import org.bouncycastle.crypto.params.KeyParameter;
 import org.bouncycastle.crypto.params.ParametersWithIV;
 
+import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianCipherParameters;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianStreamCipher;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianStreamCipherSpec;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianStreamKeySpec;
-import net.sourceforge.joceanus.jgordianknot.api.key.GordianKey;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianCryptoException;
 import net.sourceforge.joceanus.jgordianknot.impl.core.cipher.GordianCoreCipher;
 import net.sourceforge.joceanus.jtethys.OceanusException;
@@ -60,45 +60,35 @@ public class BouncyStreamKeyCipher
     }
 
     @Override
-    public void initCipher(final GordianKey<GordianStreamKeySpec> pKey) throws OceanusException {
-        /* Determine the required length of IV */
-        final int myLen = pKey.getKeyType().getIVLength(false);
-        byte[] myIV = null;
+    public void init(final boolean pEncrypt,
+                     final GordianCipherParameters pParams) throws OceanusException {
+        /* Process the parameters and access the key */
+        processParameters(pParams);
+        final BouncyKey<GordianStreamKeySpec> myKey = BouncyKey.accessKey(getKey());
 
-        /* If we need an IV */
-        if (myLen > 0) {
-            /* Create a random IV */
-            myIV = new byte[myLen];
-            getRandom().nextBytes(myIV);
-        }
-
-        /* initialise with this IV */
-        initCipher(pKey, myIV, true);
+        /* Initialise the cipher */
+        final CipherParameters myParms = generateParameters(myKey, getInitVector());
+        theCipher.init(pEncrypt, myParms);
     }
 
-    @Override
-    public void initCipher(final GordianKey<GordianStreamKeySpec> pKey,
-                           final byte[] pIV,
-                           final boolean pEncrypt) throws OceanusException {
-        /* Access and validate the key */
-        final BouncyKey<GordianStreamKeySpec> myKey = BouncyKey.accessKey(pKey);
-        checkValidKey(pKey);
+    /**
+     * Generate CipherParameters.
+     * @param pKey the key
+     * @param pIV the initVector
+     * @return the parameters
+     */
+    private static CipherParameters generateParameters(final BouncyKey<GordianStreamKeySpec> pKey,
+                                                       final byte[] pIV) {
+        /* Default parameter */
+        CipherParameters myParams = new KeyParameter(pKey.getKey());
 
-        /* Initialise the cipher */
-        CipherParameters myParms = new KeyParameter(myKey.getKey());
-
-        /* If we have an IV */
+        /* Handle IV */
         if (pIV != null) {
-            /* Adjust parameters */
-            myParms = new ParametersWithIV(myParms, pIV);
+            myParams = new ParametersWithIV(myParams, pIV);
         }
 
-        /* Initialise the cipher */
-        theCipher.init(pEncrypt, myParms);
-
-        /* Store key and initVector */
-        setKey(pKey);
-        setInitVector(pIV);
+        /* Return the parameters */
+        return myParams;
     }
 
     @Override

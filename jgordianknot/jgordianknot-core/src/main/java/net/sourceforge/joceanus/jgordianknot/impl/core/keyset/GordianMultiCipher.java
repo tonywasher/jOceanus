@@ -25,6 +25,8 @@ import org.bouncycastle.util.Arrays;
 import net.sourceforge.joceanus.jgordianknot.api.base.GordianConsumer;
 import net.sourceforge.joceanus.jgordianknot.api.base.GordianLength;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianCipherFactory;
+import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianCipherParameters;
+import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianCipherParameters.GordianKeyCipherParameters;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianPadding;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianSymCipher;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianSymCipherSpec;
@@ -482,7 +484,10 @@ final class GordianMultiCipher {
             final byte[] myIV = myCipher.getCipherSpec().needsIV()
                                 ? calculateInitVector(myInitVector, mySection++)
                                 : null;
-            myCipher.initCipher(mySymKey, myIV, pEncrypt);
+            final GordianKeyCipherParameters<GordianSymKeySpec> myParms = myIV == null
+                      ? GordianCipherParameters.key(mySymKey)
+                      : GordianCipherParameters.keyAndNonce(mySymKey, myIV);
+            myCipher.init(pEncrypt, myParms);
 
             /* Place into correct location */
             final int myLoc = pEncrypt
@@ -766,7 +771,8 @@ final class GordianMultiCipher {
         final GordianKey<GordianSymKeySpec> myStreamKey = theSymKeyMap.get(myStreamKeyType);
         final GordianSymCipher myStreamCipher = getCipher(myStreamKeyType, 0);
         final byte[] myIV = calculateInitVector(myInitVector, 0);
-        myStreamCipher.initCipher(myStreamKey, myIV, true);
+        final GordianKeyCipherParameters<GordianSymKeySpec> myParms = GordianCipherParameters.keyAndNonce(myStreamKey, myIV);
+        myStreamCipher.init(true, myParms);
 
         /* Process via the stream Cipher */
         byte[] myBytes = myStreamCipher.finish(pBytesToSecure);
@@ -813,7 +819,8 @@ final class GordianMultiCipher {
         final GordianKey<GordianSymKeySpec> myStreamKey = theSymKeyMap.get(myStreamKeyType);
         final GordianSymCipher myStreamCipher = getCipher(myStreamKeyType, 0);
         final byte[] myIV = calculateInitVector(myInitVector, 0);
-        myStreamCipher.initCipher(myStreamKey, myIV, false);
+        final GordianKeyCipherParameters<GordianSymKeySpec> myParms = GordianCipherParameters.keyAndNonce(myStreamKey, myIV);
+        myStreamCipher.init(false, myParms);
 
         /* Process via the stream Cipher */
         myBytes = myStreamCipher.finish(myBytes);

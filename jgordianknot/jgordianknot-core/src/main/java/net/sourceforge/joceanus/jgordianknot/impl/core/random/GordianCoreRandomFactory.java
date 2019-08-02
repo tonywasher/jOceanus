@@ -25,6 +25,7 @@ import org.bouncycastle.crypto.prng.EntropySourceProvider;
 
 import net.sourceforge.joceanus.jgordianknot.api.base.GordianLength;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianCipherFactory;
+import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianCipherParameters;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianPadding;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianStreamKeySpec;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianStreamKeyType;
@@ -388,7 +389,7 @@ public class GordianCoreRandomFactory
         final GordianCipherFactory myCiphers = theFactory.getCipherFactory();
         final GordianKeyGenerator<GordianSymKeySpec> myGenerator = myCiphers.getKeyGenerator(pCipher.getKeyType());
         final GordianKey<GordianSymKeySpec> myKey = myGenerator.generateKey();
-        pCipher.initCipher(myKey);
+        pCipher.init(true, GordianCipherParameters.key(myKey));
 
         /* Build DRBG */
         final EntropySource myEntropy = theEntropyProvider.get(pCipher.getKeyType().getBlockLength().getLength());

@@ -13,7 +13,7 @@ import org.bouncycastle.crypto.params.ParametersWithIV;
 import org.bouncycastle.util.Arrays;
 
 /**
- * Implementation of DSTU7624 CCM mode
+ * Implementation of DSTU7624 CCM mode.
  */
 public class KCCMXBlockCipher
         implements AEADBlockCipher {
@@ -124,12 +124,7 @@ public class KCCMXBlockCipher
         this.mac = new byte[macSize];
         this.forEncryption = forEncryption;
         engine.init(true, cipherParameters);
-
-        counter[0] = 0x01; // defined in standard
-
-        if (initialAssociatedText != null) {
-            processAADBytes(initialAssociatedText, 0, initialAssociatedText.length);
-        }
+        reset();
     }
 
     public String getAlgorithmName() {

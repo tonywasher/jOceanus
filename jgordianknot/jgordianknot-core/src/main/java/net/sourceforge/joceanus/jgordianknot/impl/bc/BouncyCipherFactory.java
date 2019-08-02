@@ -168,7 +168,7 @@ public class BouncyCipherFactory
         if (pCipherSpec.isAAD()) {
             /* Create the AAD cipher */
             final AEADBlockCipher myBCCipher = getBCAADCipher(pCipherSpec);
-            return new BouncyAADCipher(getFactory(), pCipherSpec, myBCCipher);
+            return new BouncySymKeyAADCipher(getFactory(), pCipherSpec, myBCCipher);
 
             /* else create the standard cipher */
         } else {

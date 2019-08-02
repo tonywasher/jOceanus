@@ -17,7 +17,6 @@
 package net.sourceforge.joceanus.jgordianknot.api.cipher;
 
 import net.sourceforge.joceanus.jgordianknot.api.base.GordianIdSpec;
-import net.sourceforge.joceanus.jgordianknot.api.base.GordianLength;
 
 /**
  * The StreamCipherSpec class.
@@ -86,7 +85,7 @@ public final class GordianStreamCipherSpec
     }
 
     @Override
-    public int getIVLength(final GordianLength pKeyLen) {
+    public int getIVLength() {
         return getKeyType().getIVLength(isAAD);
     }
 

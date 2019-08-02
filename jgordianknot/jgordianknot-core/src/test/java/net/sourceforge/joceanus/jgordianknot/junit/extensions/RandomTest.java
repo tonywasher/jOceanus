@@ -440,7 +440,7 @@ public class RandomTest {
         final int myEntropyLength = pCipher.getKeyType().getBlockLength().getLength();
 
         /* Initialise the cipher */
-        pCipher.initCipher(myKey);
+        pCipher.initKeyBytes(myKey);
 
         /* Create the provider */
         final GordianX931CipherDRBG myProvider = new GordianX931CipherDRBG((GordianSymCipher)pCipher, myEntropy.get(myEntropyLength), myNonce);
