@@ -97,10 +97,7 @@ public final class GordianStreamCipherSpec
         return isAAD;
     }
 
-    /**
-     * Is the keySpec valid?
-     * @return true/false.
-     */
+    @Override
     public boolean isValid() {
         return isValid;
     }

@@ -93,6 +93,12 @@ public interface GordianCipherFactory {
     Predicate<GordianStreamKeyType> supportedStreamKeyTypes();
 
     /**
+     * Obtain predicate for supported PBECipherSpecs.
+     * @return the predicate
+     */
+    Predicate<GordianPBECipherSpec<? extends GordianKeySpec>> supportedPBECipherSpecs();
+
+    /**
      * create GordianWrapper.
      * @param pKeySpec the KeySpec
      * @return the new wrapper
