@@ -537,10 +537,9 @@ public final class GordianMacSpec implements GordianKeySpec {
 
     /**
      * Obtain the IV length.
-     * @param pKeyLen the keyLength
      * @return the IV Length
      */
-    public int getIVLen(final GordianLength pKeyLen) {
+    public int getIVLen() {
         switch (theMacType) {
             case VMPC:
             case POLY1305:
@@ -558,7 +557,7 @@ public final class GordianMacSpec implements GordianKeySpec {
             case GOST:
                 return GordianLength.LEN_64.getByteLength();
             case ZUC:
-                return GordianStreamKeyType.ZUC.getIVLength(pKeyLen);
+                return GordianStreamKeyType.ZUC.getIVLength(theKeyLength);
             default:
                 return 0;
         }

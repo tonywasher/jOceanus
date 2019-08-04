@@ -19,8 +19,8 @@ package net.sourceforge.joceanus.jgordianknot.impl.core.random;
 import org.bouncycastle.crypto.prng.EntropySource;
 import org.bouncycastle.util.Arrays;
 
-import net.sourceforge.joceanus.jgordianknot.api.mac.GordianMac;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianByteArrayInteger;
+import net.sourceforge.joceanus.jgordianknot.impl.core.mac.GordianCoreMac;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.TethysDataConverter;
 
@@ -46,7 +46,7 @@ public final class GordianSP800HMacDRBG
     /**
      * The HMac.
      */
-    private final GordianMac theHMac;
+    private final GordianCoreMac theHMac;
 
     /**
      * The Entropy Source.
@@ -75,7 +75,7 @@ public final class GordianSP800HMacDRBG
      * @param pSecurityBytes personalisation string to distinguish this DRBG (may be null).
      * @param pInitVector nonce to further distinguish this DRBG (may be null).
      */
-    public GordianSP800HMacDRBG(final GordianMac pHMac,
+    public GordianSP800HMacDRBG(final GordianCoreMac pHMac,
                                 final EntropySource pEntropy,
                                 final byte[] pSecurityBytes,
                                 final byte[] pInitVector) {
@@ -126,7 +126,7 @@ public final class GordianSP800HMacDRBG
                              final byte[] pCycle) throws OceanusException {
 
         /* Initialise the hMac */
-        theHMac.initMac(theKey);
+        theHMac.initKeyBytes(theKey);
 
         /* Update with hash and cycle id */
         theHMac.update(theHash);
@@ -141,7 +141,7 @@ public final class GordianSP800HMacDRBG
         theHMac.finish(theKey, 0);
 
         /* Calculate new hash */
-        theHMac.initMac(theKey);
+        theHMac.initKeyBytes(theKey);
         theHMac.update(theHash);
         theHMac.finish(theHash, 0);
     }
@@ -198,7 +198,7 @@ public final class GordianSP800HMacDRBG
         /* Protect against exceptions */
         try {
             /* Initialise the hMac */
-            theHMac.initMac(theKey);
+            theHMac.initKeyBytes(theKey);
             final int mySize = theHMac.getMacSize();
 
             /* while we need to generate more bytes */

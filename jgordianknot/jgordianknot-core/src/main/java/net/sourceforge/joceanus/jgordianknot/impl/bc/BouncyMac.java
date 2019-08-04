@@ -23,7 +23,7 @@ import org.bouncycastle.crypto.params.KeyParameter;
 import org.bouncycastle.crypto.params.ParametersWithIV;
 import org.bouncycastle.crypto.params.SkeinParameters.Builder;
 
-import net.sourceforge.joceanus.jgordianknot.api.key.GordianKey;
+import net.sourceforge.joceanus.jgordianknot.api.mac.GordianMacParameters;
 import net.sourceforge.joceanus.jgordianknot.api.mac.GordianMacSpec;
 import net.sourceforge.joceanus.jgordianknot.api.mac.GordianMacType;
 import net.sourceforge.joceanus.jgordianknot.impl.core.mac.GordianCoreMac;
@@ -58,19 +58,14 @@ public final class BouncyMac
     }
 
     @Override
-    public void initMac(final GordianKey<GordianMacSpec> pKey,
-                        final byte[] pIV) throws OceanusException {
-        /* Access and validate the key */
-        final BouncyKey<GordianMacSpec> myKey = BouncyKey.accessKey(pKey);
-        checkValidKey(pKey);
+    public void init(final GordianMacParameters pParams) throws OceanusException {
+        /* Process the parameters and access the key */
+        processParameters(pParams);
+        final BouncyKey<GordianMacSpec> myKey = BouncyKey.accessKey(getKey());
 
         /* Initialise the cipher */
-        final CipherParameters myParms = buildInitParams(myKey, pIV);
+        final CipherParameters myParms = buildInitParams(myKey, getInitVector());
         theMac.init(myParms);
-
-        /* Store key and initVector */
-        setKey(pKey);
-        setInitVector(pIV);
     }
 
     @Override

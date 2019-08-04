@@ -20,6 +20,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
+import org.bouncycastle.asn1.DERNull;
 import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
 
 import net.sourceforge.joceanus.jgordianknot.api.agree.GordianAgreementFactory;
@@ -133,7 +134,7 @@ public class GordianAgreementAlgId {
         myId = myId.branch(Integer.toString(myKDFType.ordinal() + 1));
 
         /* Add the spec to the maps */
-        addToMaps(pSpec, new AlgorithmIdentifier(myId));
+        addToMaps(pSpec, new AlgorithmIdentifier(myId, DERNull.INSTANCE));
     }
 
     /**

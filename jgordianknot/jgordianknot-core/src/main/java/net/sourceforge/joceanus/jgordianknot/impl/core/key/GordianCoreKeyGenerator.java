@@ -152,11 +152,11 @@ public abstract class GordianCoreKeyGenerator<T extends GordianKeySpec>
         final GordianMac[] myMacs = new GordianMac[2];
         GordianMacSpec myMacSpec = GordianMacSpec.hMac(myDigestType[0]);
         GordianMac myMac = myFactory.createMac(myMacSpec);
-        myMac.initMac(pSecret);
+        initMacKeyBytes(myMac, pSecret);
         myMacs[0] = myMac;
         myMacSpec = GordianMacSpec.hMac(myDigestType[1]);
-        myMac = myFactory.createMac(myMacSpec);
-        myMac.initMac(pSecret);
+        myMac =  myFactory.createMac(myMacSpec);
+        initMacKeyBytes(myMac, pSecret);
         myMacs[1] = myMac;
 
         /* while we need to generate more bytes */
@@ -180,6 +180,14 @@ public abstract class GordianCoreKeyGenerator<T extends GordianKeySpec>
         /* Return the new key */
         return buildKeyFromBytes(myKeyBytes);
     }
+
+    /**
+     * Init Mac keyBytes.
+     * @param pMac the Mac.
+     * @param pKeyBytes the keyBytes
+     * @throws OceanusException on error
+     */
+    public abstract void initMacKeyBytes(GordianMac pMac, byte[] pKeyBytes) throws OceanusException;
 
     /**
      * Build Secret Key section (based on PBKDF2).
@@ -268,7 +276,7 @@ public abstract class GordianCoreKeyGenerator<T extends GordianKeySpec>
         final GordianMacSpec myMacSpec = GordianMacSpec.hMac(myDigestType[0]);
         final GordianMacFactory myFactory = theFactory.getMacFactory();
         final GordianMac myMac = myFactory.createMac(myMacSpec);
-        myMac.initMac(pSecret);
+        initMacKeyBytes(myMac, pSecret);
 
         /* Create the standard data */
         final byte[] myAlgo = TethysDataConverter.stringToByteArray(theKeyType.toString());

@@ -19,12 +19,10 @@ package net.sourceforge.joceanus.jgordianknot.impl.core.mac;
 import net.sourceforge.joceanus.jgordianknot.api.base.GordianLength;
 import net.sourceforge.joceanus.jgordianknot.api.key.GordianKey;
 import net.sourceforge.joceanus.jgordianknot.api.mac.GordianMac;
-import net.sourceforge.joceanus.jgordianknot.api.mac.GordianMacFactory;
+import net.sourceforge.joceanus.jgordianknot.api.mac.GordianMacParameters;
 import net.sourceforge.joceanus.jgordianknot.api.mac.GordianMacSpec;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianLogicException;
-import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianRandomSource;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianCoreFactory;
-import net.sourceforge.joceanus.jgordianknot.impl.core.key.GordianCoreKeyGenerator;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
@@ -38,34 +36,14 @@ public abstract class GordianCoreMac
     private final GordianMacSpec theMacSpec;
 
     /**
-     * The Security Factory.
-     */
-    private final GordianCoreFactory theFactory;
-
-    /**
-     * The Random Generator.
-     */
-    private final GordianRandomSource theRandom;
-
-    /**
-     * The KeyGenerator.
-     */
-    private GordianCoreKeyGenerator<GordianMacSpec> theGenerator;
-
-    /**
-     * keyLength.
+     * KeyLength.
      */
     private final GordianLength theKeyLength;
 
     /**
-     * Key.
+     * Parameters.
      */
-    private GordianKey<GordianMacSpec> theKey;
-
-    /**
-     * InitialisationVector.
-     */
-    private byte[] theInitVector;
+    private GordianCoreMacParameters theParameters;
 
     /**
      * Constructor.
@@ -76,9 +54,8 @@ public abstract class GordianCoreMac
     protected GordianCoreMac(final GordianCoreFactory pFactory,
                              final GordianMacSpec pMacSpec) {
         theMacSpec = pMacSpec;
-        theFactory = pFactory;
-        theRandom = pFactory.getRandomSource();
         theKeyLength = pMacSpec.getKeyLength();
+        theParameters = new GordianCoreMacParameters(pFactory, theMacSpec);
     }
 
     @Override
@@ -88,30 +65,12 @@ public abstract class GordianCoreMac
 
     @Override
     public GordianKey<GordianMacSpec> getKey() {
-        return theKey;
+        return theParameters.getKey();
     }
 
     @Override
     public byte[] getInitVector() {
-        return theInitVector;
-    }
-
-    /**
-     * Store key.
-     *
-     * @param pKey the key
-     */
-    protected void setKey(final GordianKey<GordianMacSpec> pKey) {
-        theKey = pKey;
-    }
-
-    /**
-     * Store initVector.
-     *
-     * @param pInitVector the initVector
-     */
-    protected void setInitVector(final byte[] pInitVector) {
-        theInitVector = pInitVector;
+        return theParameters.getInitVector();
     }
 
     /**
@@ -120,39 +79,31 @@ public abstract class GordianCoreMac
      * @param pKey the passed key.
      * @throws OceanusException on error
      */
-    protected void checkValidKey(final GordianKey<GordianMacSpec> pKey) throws OceanusException {
+    private void checkValidKey(final GordianKey<GordianMacSpec> pKey) throws OceanusException {
         if (!theMacSpec.equals(pKey.getKeyType())) {
             throw new GordianLogicException("MisMatch on macSpec");
         }
     }
 
-    @Override
-    public void initMac(final byte[] pKeyBytes) throws OceanusException {
-        /* Create generator if needed */
-        if (theGenerator == null) {
-            final GordianMacFactory myFactory = theFactory.getMacFactory();
-            theGenerator = (GordianCoreKeyGenerator<GordianMacSpec>) myFactory.getKeyGenerator(theMacSpec);
-        }
-
+    /**
+     * Init with bytes as key.
+     * @param pKeyBytes the bytes to use
+     * @throws OceanusException on error
+     */
+    public void initKeyBytes(final byte[] pKeyBytes) throws OceanusException {
         /* Create the key and initialise */
-        final GordianKey<GordianMacSpec> myKey = theGenerator.buildKeyFromBytes(pKeyBytes);
-        initMac(myKey);
+        final GordianKey<GordianMacSpec> myKey = theParameters.buildKeyFromBytes(pKeyBytes);
+        init(GordianMacParameters.key(myKey));
     }
 
-    @Override
-    public void initMac(final GordianKey<GordianMacSpec> pKey) throws OceanusException {
-        /* Determine the required length of IV */
-        final int myLen = getMacSpec().getIVLen(theKeyLength);
-        byte[] myIV = null;
-
-        /* If we need an IV */
-        if (myLen > 0) {
-            /* Create a random IV */
-            myIV = new byte[myLen];
-            theRandom.getRandom().nextBytes(myIV);
-        }
-
-        /* initialise with this IV */
-        initMac(pKey, myIV);
+    /**
+     * Process macParameters.
+     * @param pParams the mac parameters
+     * @throws OceanusException on error
+     */
+    protected void processParameters(final GordianMacParameters pParams) throws OceanusException {
+        /* Process the parameters */
+        theParameters.processParameters(pParams);
+        checkValidKey(getKey());
     }
 }

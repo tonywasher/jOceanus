@@ -50,27 +50,11 @@ public interface GordianMac
     int getMacSize();
 
     /**
-     * Initialise the MAC with KeyBytes and random IV (if needed).
-     * @param pKeyBytes the keyBytes
+     * Initialise the MAC with the given parameters.
+     * @param pParams the parameters
      * @throws OceanusException on error
      */
-    void initMac(byte[] pKeyBytes) throws OceanusException;
-
-    /**
-     * Initialise the MAC with Key and random IV (if needed).
-     * @param pKey the key
-     * @throws OceanusException on error
-     */
-    void initMac(GordianKey<GordianMacSpec> pKey) throws OceanusException;
-
-    /**
-     * Initialise with key.
-     * @param pKey the key to initialise with
-     * @param pIV the initialisation vector (or null)
-     * @throws OceanusException on error
-     */
-    void initMac(GordianKey<GordianMacSpec> pKey,
-                 byte[] pIV) throws OceanusException;
+    void init(GordianMacParameters pParams) throws OceanusException;
 
     /**
      * Calculate the MAC.

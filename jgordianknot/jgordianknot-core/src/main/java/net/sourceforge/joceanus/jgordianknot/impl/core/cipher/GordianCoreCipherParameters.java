@@ -51,7 +51,7 @@ import net.sourceforge.joceanus.jgordianknot.impl.core.key.GordianCoreKeyGenerat
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
- * Core Cipher implementation.
+ * Core Cipher parameters implementation.
  * @param <T> the key type
  */
 public class GordianCoreCipherParameters<T extends GordianKeySpec> {

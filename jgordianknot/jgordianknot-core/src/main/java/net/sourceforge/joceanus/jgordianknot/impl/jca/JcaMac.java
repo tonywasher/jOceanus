@@ -26,7 +26,7 @@ import javax.crypto.spec.IvParameterSpec;
 
 import org.bouncycastle.jcajce.spec.SkeinParameterSpec.Builder;
 
-import net.sourceforge.joceanus.jgordianknot.api.key.GordianKey;
+import net.sourceforge.joceanus.jgordianknot.api.mac.GordianMacParameters;
 import net.sourceforge.joceanus.jgordianknot.api.mac.GordianMacSpec;
 import net.sourceforge.joceanus.jgordianknot.api.mac.GordianMacType;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianCryptoException;
@@ -62,19 +62,19 @@ public final class JcaMac
     }
 
     @Override
-    public void initMac(final GordianKey<GordianMacSpec> pKey,
-                        final byte[] pIV) throws OceanusException {
-        /* Access and validate the key */
-        final JcaKey<GordianMacSpec> myKey = JcaKey.accessKey(pKey);
-        checkValidKey(pKey);
+    public void init(final GordianMacParameters pParams) throws OceanusException {
+        /* Process the parameters and access the key */
+        processParameters(pParams);
+        final JcaKey<GordianMacSpec> myKey = JcaKey.accessKey(getKey());
 
         /* Protect against exceptions */
         try {
             /* Initialise the MAC */
-            if (pIV == null) {
+            final byte[] myIV = getInitVector();
+            if (myIV == null) {
                 theMac.init(myKey.getKey());
             } else {
-                theMac.init(myKey.getKey(), buildInitParams(pIV));
+                theMac.init(myKey.getKey(), buildInitParams(myIV));
             }
 
             /* Catch exceptions */
@@ -83,10 +83,6 @@ public final class JcaMac
             /* Throw the exception */
             throw new GordianCryptoException("Failed to initialise Mac", e);
         }
-
-        /* Store key and initVector */
-        setKey(pKey);
-        setInitVector(pIV);
     }
 
     @Override

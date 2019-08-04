@@ -53,6 +53,7 @@ import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigestSpec;
 import net.sourceforge.joceanus.jgordianknot.api.factory.GordianFactory;
 import net.sourceforge.joceanus.jgordianknot.api.factory.GordianFactoryType;
 import net.sourceforge.joceanus.jgordianknot.api.factory.GordianParameters;
+import net.sourceforge.joceanus.jgordianknot.api.mac.GordianMacParameters;
 import net.sourceforge.joceanus.jgordianknot.junit.regression.SymmetricStore.FactoryStreamPBECipherSpec;
 import net.sourceforge.joceanus.jgordianknot.junit.regression.SymmetricStore.FactorySymPBECipherSpec;
 import net.sourceforge.joceanus.jgordianknot.util.GordianGenerator;
@@ -692,13 +693,13 @@ public class SymmetricTest {
         final long myStart = System.nanoTime();
         for (int i = 0; i < profileRepeat; i++) {
             /* Use first mac */
-            myMac1.initMac(myKey);
+            myMac1.init(GordianMacParameters.keyWithRandomNonce(myKey));
             myMac1.update(myBytes);
             final byte[] myFirst = myMac1.finish();
 
             /* If we need to reInitialise */
             if (needsReInit) {
-                myMac2.initMac(myKey, myMac1.getInitVector());
+                myMac2.init(GordianMacParameters.keyAndNonce(myKey, myMac1.getInitVector()));
             }
 
             /* Use second mac */
@@ -736,14 +737,14 @@ public class SymmetricTest {
 
         /* Calculate macs */
         final byte[] myBytes = "MacInput".getBytes();
-        myMac.initMac(myKey);
+        myMac.init(GordianMacParameters.keyWithRandomNonce(myKey));
         final byte[] myIV = myMac.getInitVector();
         myMac.update(myBytes);
         final byte[] myFirst = myMac.finish();
         if (myIV == null) {
-            myPartnerMac.initMac(myPartnerKey);
+            myPartnerMac.init(GordianMacParameters.key(myPartnerKey));
         } else {
-            myPartnerMac.initMac(myPartnerKey, myIV);
+            myPartnerMac.init(GordianMacParameters.keyAndNonce(myPartnerKey, myIV));
         }
         myPartnerMac.update(myBytes);
         final byte[] mySecond = myPartnerMac.finish();

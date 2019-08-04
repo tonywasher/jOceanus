@@ -50,11 +50,6 @@ public abstract class GordianCoreCipher<T extends GordianKeySpec>
     private final GordianCipherSpec<T> theCipherSpec;
 
     /**
-     * The Security Factory.
-     */
-    private final GordianCoreFactory theFactory;
-
-    /**
      * KeyLength.
      */
     private final GordianLength theKeyLength;
@@ -79,9 +74,8 @@ public abstract class GordianCoreCipher<T extends GordianKeySpec>
         theCipherSpec = pCipherSpec;
         theKeyType = theCipherSpec.getKeyType();
         theRandom = pFactory.getRandomSource();
-        theFactory = pFactory;
         theKeyLength = pCipherSpec.getKeyType().getKeyLength();
-        theParameters = new GordianCoreCipherParameters<>(theFactory, theCipherSpec);
+        theParameters = new GordianCoreCipherParameters<>(pFactory, theCipherSpec);
     }
 
     /**
@@ -150,6 +144,11 @@ public abstract class GordianCoreCipher<T extends GordianKeySpec>
      * @throws OceanusException on error
      */
     public void initKeyBytes(final byte[] pKeyBytes) throws OceanusException {
+        /* Check that the key length is correct */
+        if (theKeyLength.getByteLength() != pKeyBytes.length) {
+            throw new GordianLogicException("incorrect keyLength");
+        }
+
         /* Create the key and initialise */
         final GordianKey<T> myKey = theParameters.buildKeyFromBytes(pKeyBytes);
         init(true, GordianCipherParameters.key(myKey));
@@ -170,7 +169,7 @@ public abstract class GordianCoreCipher<T extends GordianKeySpec>
      * Obtain AEAD MacSize.
      * @return the MacSize
      */
-    public int getAEADMacSize() {
+    protected int getAEADMacSize() {
         /* SymCipher depends on BlockSize */
         if (theCipherSpec instanceof GordianSymCipherSpec) {
             final GordianSymCipherSpec mySymSpec = (GordianSymCipherSpec) theCipherSpec;
@@ -204,7 +203,7 @@ public abstract class GordianCoreCipher<T extends GordianKeySpec>
      * @param pKey the passed key.
      * @throws OceanusException on error
      */
-    protected void checkValidKey(final GordianKey<T> pKey) throws OceanusException {
+    void checkValidKey(final GordianKey<T> pKey) throws OceanusException {
         if (!theKeyType.equals(pKey.getKeyType())) {
             throw new GordianLogicException("MisMatch on keyType");
         }

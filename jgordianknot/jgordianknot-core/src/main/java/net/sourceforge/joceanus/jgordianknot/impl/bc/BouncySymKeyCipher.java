@@ -68,14 +68,6 @@ public final class BouncySymKeyCipher
         return (GordianSymCipherSpec) super.getCipherSpec();
     }
 
-    /**
-     * Do we need an initVector.
-     * @return true/false
-     */
-    private boolean needsIV() {
-        return getCipherSpec().needsIV();
-    }
-
     @Override
     public void init(final boolean pEncrypt,
                      final GordianCipherParameters pParams) throws OceanusException {

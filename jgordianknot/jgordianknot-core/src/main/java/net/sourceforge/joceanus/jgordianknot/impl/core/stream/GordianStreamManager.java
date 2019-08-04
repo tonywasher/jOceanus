@@ -33,6 +33,7 @@ import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigestType;
 import net.sourceforge.joceanus.jgordianknot.api.key.GordianKey;
 import net.sourceforge.joceanus.jgordianknot.api.key.GordianKeyGenerator;
 import net.sourceforge.joceanus.jgordianknot.api.mac.GordianMac;
+import net.sourceforge.joceanus.jgordianknot.api.mac.GordianMacParameters;
 import net.sourceforge.joceanus.jgordianknot.api.mac.GordianMacSpec;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianCoreFactory;
 import net.sourceforge.joceanus.jgordianknot.impl.core.cipher.GordianCoreCipherFactory;
@@ -185,7 +186,7 @@ public final class GordianStreamManager {
 
         /* Create and initialise the MAC */
         final GordianMac myMac = myMacs.createMac(myMacSpec);
-        myMac.initMac(myMacKey);
+        myMac.init(GordianMacParameters.keyWithRandomNonce(myMacKey));
         final GordianMacOutputStream myMacStream = new GordianMacOutputStream(myMac, myCurrent);
         myCurrent = myMacStream;
 
