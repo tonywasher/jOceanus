@@ -63,6 +63,12 @@ public abstract class GordianCipherSpec<T extends GordianKeySpec>
      */
     public abstract int getIVLength();
 
+    /**
+     * Is the keySpec valid?
+     * @return true/false.
+     */
+    public abstract boolean isValid();
+
     @Override
     public boolean equals(final Object pThat) {
         /* Handle the trivial cases */

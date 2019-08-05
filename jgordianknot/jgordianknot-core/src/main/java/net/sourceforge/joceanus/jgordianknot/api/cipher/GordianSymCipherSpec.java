@@ -218,10 +218,7 @@ public class GordianSymCipherSpec
         return thePadding;
     }
 
-    /**
-     * Is the keySpec valid?
-     * @return true/false.
-     */
+    @Override
     public boolean isValid() {
         return isValid;
     }

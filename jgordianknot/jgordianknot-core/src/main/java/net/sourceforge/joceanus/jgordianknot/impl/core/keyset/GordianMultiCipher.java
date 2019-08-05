@@ -40,7 +40,6 @@ import net.sourceforge.joceanus.jgordianknot.api.factory.GordianAsymFactory;
 import net.sourceforge.joceanus.jgordianknot.api.key.GordianKey;
 import net.sourceforge.joceanus.jgordianknot.api.base.GordianKeySpec;
 import net.sourceforge.joceanus.jgordianknot.api.key.GordianKeyPair;
-import net.sourceforge.joceanus.jgordianknot.api.mac.GordianMac;
 import net.sourceforge.joceanus.jgordianknot.api.mac.GordianMacFactory;
 import net.sourceforge.joceanus.jgordianknot.api.mac.GordianMacSpec;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianCoreFactory;
@@ -51,6 +50,7 @@ import net.sourceforge.joceanus.jgordianknot.impl.core.key.GordianCoreKey;
 import net.sourceforge.joceanus.jgordianknot.impl.core.key.GordianCoreKeyGenerator;
 import net.sourceforge.joceanus.jgordianknot.impl.core.keypair.GordianCoreKeyPairGenerator;
 import net.sourceforge.joceanus.jgordianknot.impl.core.keyset.GordianKeySetRecipe.GordianKeySetParameters;
+import net.sourceforge.joceanus.jgordianknot.impl.core.mac.GordianCoreMac;
 import net.sourceforge.joceanus.jgordianknot.impl.core.mac.GordianCoreMacFactory;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
@@ -106,7 +106,7 @@ final class GordianMultiCipher {
     /**
      * The Mac.
      */
-    private GordianMac theMac;
+    private GordianCoreMac theMac;
 
     /**
      * The initial Consumer.
@@ -505,11 +505,11 @@ final class GordianMultiCipher {
             final GordianDigestFactory myDigests = theFactory.getDigestFactory();
             theDigest = myDigests.createDigest(new GordianDigestSpec(myDigest));
             final GordianMacFactory myMacs = theFactory.getMacFactory();
-            theMac = myMacs.createMac(GordianMacSpec.hMac(myDigest));
+            theMac = (GordianCoreMac) myMacs.createMac(GordianMacSpec.hMac(myDigest));
 
             /* Initialise the digest and the Mac */
             theDigest.update(calculateInitVector(myInitVector, mySection++));
-            theMac.initMac(calculateInitVector(myInitVector, mySection));
+            theMac.initKeyBytes(calculateInitVector(myInitVector, mySection));
 
             /* Set the consumers inthe correct order */
             theInitial = pEncrypt

@@ -278,7 +278,7 @@ public class GordianSignatureAlgId {
      */
     private void addSM2Signatures() {
         addToMaps(GordianSignatureSpec.sm2(),
-                new AlgorithmIdentifier(GMObjectIdentifiers.sm2sign_with_sm3));
+                new AlgorithmIdentifier(GMObjectIdentifiers.sm2sign_with_sm3, DERNull.INSTANCE));
     }
 
     /**

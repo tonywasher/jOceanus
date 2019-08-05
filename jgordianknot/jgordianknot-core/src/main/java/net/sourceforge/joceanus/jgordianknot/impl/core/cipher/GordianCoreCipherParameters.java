@@ -18,7 +18,6 @@ package net.sourceforge.joceanus.jgordianknot.impl.core.cipher;
 
 import org.bouncycastle.crypto.CipherParameters;
 import org.bouncycastle.crypto.Digest;
-import org.bouncycastle.crypto.OutputLengthException;
 import org.bouncycastle.crypto.PBEParametersGenerator;
 import org.bouncycastle.crypto.digests.SHA512Digest;
 import org.bouncycastle.crypto.generators.Argon2BytesGenerator;
@@ -39,19 +38,20 @@ import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianCipherParameters.
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianCipherParameters.GordianNonceParameters;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianCipherParameters.GordianPBECipherParameters;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianCipherSpec;
+import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianPBECipherSpec;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianPBESpec;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianPBESpec.GordianPBEArgon2Spec;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianPBESpec.GordianPBEDigestAndCountSpec;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianPBESpec.GordianPBESCryptSpec;
-import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigest;
 import net.sourceforge.joceanus.jgordianknot.api.key.GordianKey;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianCoreFactory;
+import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianDataException;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianRandomSource;
 import net.sourceforge.joceanus.jgordianknot.impl.core.key.GordianCoreKeyGenerator;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
- * Core Cipher implementation.
+ * Core Cipher parameters implementation.
  * @param <T> the key type
  */
 public class GordianCoreCipherParameters<T extends GordianKeySpec> {
@@ -188,8 +188,15 @@ public class GordianCoreCipherParameters<T extends GordianKeySpec> {
      * @throws OceanusException on error
      */
     private void processPBEParameters(final GordianPBECipherParameters pParams) throws OceanusException {
+        /* Check that the PBE parameters are supported */
+        final GordianPBESpec myPBESpec = pParams.getPBESpec();
+        final GordianPBECipherSpec<T> myPBECipherSpec = new GordianPBECipherSpec<>(myPBESpec, theSpec);
+        if (!theFactory.getCipherFactory().supportedPBECipherSpecs().test(myPBECipherSpec)) {
+            throw new GordianDataException(GordianCoreFactory.getInvalidText(myPBECipherSpec));
+        }
+
         /* Access PBE details */
-        thePBESpec = pParams.getPBESpec();
+        thePBESpec = myPBESpec;
         thePBESalt = obtainNonceFromParameters(pParams, true);
 
         /* Switch on the PBE type */
@@ -435,61 +442,5 @@ public class GordianCoreCipherParameters<T extends GordianKeySpec> {
         return myIVLen == 0
                ? myKeyParm
                : new ParametersWithIV(myKeyParm, myBuffer, myKeyLen, myIVLen);
-    }
-
-    /**
-     * DigestWrapper.
-     */
-    private static class GordianDigestWrapper
-        implements Digest {
-        /**
-         * The underlying digest.
-         */
-        private final GordianDigest theDigest;
-
-        /**
-         * Constructor.
-         * @param pDigest the digest
-         */
-        GordianDigestWrapper(final GordianDigest pDigest) {
-            theDigest = pDigest;
-        }
-
-        @Override
-        public String getAlgorithmName() {
-            return theDigest.getDigestSpec().toString();
-        }
-
-        @Override
-        public int getDigestSize() {
-            return theDigest.getDigestSize();
-        }
-
-        @Override
-        public void update(final byte in) {
-            theDigest.update(in);
-        }
-
-        @Override
-        public void update(final byte[] pIn,
-                           final int pInOff,
-                           final int pLen) {
-            theDigest.update(pIn, pInOff, pLen);
-        }
-
-        @Override
-        public int doFinal(final byte[] pOut,
-                           final int pOutOff) {
-            try {
-                return theDigest.finish(pOut, pOutOff);
-            } catch (OceanusException e) {
-                throw new OutputLengthException("Bad length");
-            }
-        }
-
-        @Override
-        public void reset() {
-            theDigest.reset();
-        }
     }
 }

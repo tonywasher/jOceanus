@@ -41,6 +41,7 @@ import net.sourceforge.joceanus.jgordianknot.api.key.GordianKey;
 import net.sourceforge.joceanus.jgordianknot.api.key.GordianKeyGenerator;
 import net.sourceforge.joceanus.jgordianknot.api.mac.GordianMac;
 import net.sourceforge.joceanus.jgordianknot.api.mac.GordianMacFactory;
+import net.sourceforge.joceanus.jgordianknot.api.mac.GordianMacParameters;
 import net.sourceforge.joceanus.jgordianknot.api.mac.GordianMacSpec;
 import net.sourceforge.joceanus.jgordianknot.api.random.GordianRandomFactory;
 import net.sourceforge.joceanus.jgordianknot.api.random.GordianRandomSpec;
@@ -53,6 +54,7 @@ import net.sourceforge.joceanus.jgordianknot.impl.core.cipher.GordianCoreCipherF
 import net.sourceforge.joceanus.jgordianknot.impl.core.digest.GordianCoreDigestFactory;
 import net.sourceforge.joceanus.jgordianknot.impl.core.keyset.GordianCoreKeySetFactory;
 import net.sourceforge.joceanus.jgordianknot.impl.core.keyset.GordianIdManager;
+import net.sourceforge.joceanus.jgordianknot.impl.core.mac.GordianCoreMac;
 import net.sourceforge.joceanus.jgordianknot.impl.core.mac.GordianCoreMacFactory;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
@@ -161,7 +163,7 @@ public class GordianCoreRandomFactory
                 return buildHash(myDigests.createDigest(myDigest), isResistent);
             case HMAC:
                 final GordianMacSpec myMacSpec = GordianMacSpec.hMac(myDigest);
-                return buildHMAC(myMacs.createMac(myMacSpec), isResistent);
+                return buildHMAC((GordianCoreMac) myMacs.createMac(myMacSpec), isResistent);
             case CTR:
                 GordianSymCipherSpec myCipherSpec = GordianSymCipherSpec.ecb(pRandomSpec.getSymKeySpec(), GordianPadding.NONE);
                 return buildCTR(myCiphers.createSymKeyCipher(myCipherSpec), isResistent);
@@ -280,7 +282,7 @@ public class GordianCoreRandomFactory
 
         /* Create and initialise the MAC */
         final GordianMac myMac = myMacs.createMac(mySpec);
-        myMac.initMac(myKey);
+        myMac.init(GordianMacParameters.keyWithRandomNonce(myKey));
 
         /* Return it */
         return myMac;
@@ -342,7 +344,7 @@ public class GordianCoreRandomFactory
      * SecureRandom should re-seed on each request for bytes.
      * @return a SecureRandom supported by a HMAC DRBG.
      */
-    private GordianSecureRandom buildHMAC(final GordianMac hMac,
+    private GordianSecureRandom buildHMAC(final GordianCoreMac hMac,
                                           final boolean isPredictionResistant) {
         /* Create initVector */
         final byte[] myInit = theRandom.generateSeed(NUM_ENTROPY_BYTES_REQUIRED);

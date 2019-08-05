@@ -21,7 +21,9 @@ import org.bouncycastle.crypto.KeyGenerationParameters;
 
 import net.sourceforge.joceanus.jgordianknot.api.base.GordianKeySpec;
 import net.sourceforge.joceanus.jgordianknot.api.key.GordianKey;
+import net.sourceforge.joceanus.jgordianknot.api.mac.GordianMac;
 import net.sourceforge.joceanus.jgordianknot.impl.core.key.GordianCoreKeyGenerator;
+import net.sourceforge.joceanus.jgordianknot.impl.core.mac.GordianCoreMac;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
@@ -83,5 +85,11 @@ public final class BouncyKeyGenerator<T extends GordianKeySpec>
     public BouncyKey<T> generateKeyFromSecret(final byte[] pSecret,
                                               final byte[] pInitVector) throws OceanusException {
         return (BouncyKey<T>) super.generateKeyFromSecret(pSecret, pInitVector);
+    }
+
+    @Override
+    public void initMacKeyBytes(final GordianMac pMac,
+                                final byte[] pKeyBytes) throws OceanusException {
+        ((GordianCoreMac) pMac).initKeyBytes(pKeyBytes);
     }
 }

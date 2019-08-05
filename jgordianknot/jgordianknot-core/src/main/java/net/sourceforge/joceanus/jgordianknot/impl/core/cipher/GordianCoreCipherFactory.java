@@ -24,6 +24,9 @@ import net.sourceforge.joceanus.jgordianknot.api.base.GordianKeySpec;
 import net.sourceforge.joceanus.jgordianknot.api.base.GordianLength;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianCipherFactory;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianCipherMode;
+import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianPBECipherSpec;
+import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianPBESpec;
+import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianPBESpec.GordianPBEDigestAndCountSpec;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianStreamCipherSpec;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianStreamKeySpec;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianSymCipher;
@@ -33,6 +36,7 @@ import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianStreamKeyType;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianSymCipherSpec;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianSymKeySpec;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianSymKeyType;
+import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigestSpec;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianCoreFactory;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianDataException;
 import net.sourceforge.joceanus.jtethys.OceanusException;
@@ -96,6 +100,11 @@ public abstract class GordianCoreCipherFactory
     @Override
     public Predicate<GordianStreamKeyType> supportedStreamKeyTypes() {
         return this::validStreamKeyType;
+    }
+
+    @Override
+    public Predicate<GordianPBECipherSpec<? extends GordianKeySpec>> supportedPBECipherSpecs() {
+        return this::validPBECipherSpec;
     }
 
     /**
@@ -372,5 +381,27 @@ public abstract class GordianCoreCipherFactory
             theAlgIds = new GordianCipherAlgId(theFactory);
         }
         return theAlgIds;
+    }
+
+    /**
+     * Check SymCipherSpec and PBESpec combination.
+     * @param pPBECipherSpec the PBESpec
+     * @return true/false
+     */
+    public boolean validPBECipherSpec(final GordianPBECipherSpec<? extends GordianKeySpec> pPBECipherSpec) {
+        /* Check basic validity */
+        if (pPBECipherSpec == null || !pPBECipherSpec.isValid()) {
+            return false;
+        }
+
+        /* Digest if specified must be SHA512 currently */
+        final GordianPBESpec myPBESpec = pPBECipherSpec.getPBESpec();
+        if (myPBESpec instanceof GordianPBEDigestAndCountSpec) {
+            final GordianDigestSpec mySpec = ((GordianPBEDigestAndCountSpec) myPBESpec).getDigestSpec();
+            return GordianDigestSpec.sha2(GordianLength.LEN_512).equals(mySpec);
+        }
+
+        /* OK */
+        return true;
     }
 }

@@ -40,6 +40,7 @@ import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigestSpec;
 import net.sourceforge.joceanus.jgordianknot.api.factory.GordianFactory;
 import net.sourceforge.joceanus.jgordianknot.api.factory.GordianFactoryType;
 import net.sourceforge.joceanus.jgordianknot.api.factory.GordianParameters;
+import net.sourceforge.joceanus.jgordianknot.impl.core.mac.GordianCoreMac;
 import net.sourceforge.joceanus.jgordianknot.util.GordianGenerator;
 import net.sourceforge.joceanus.jgordianknot.api.mac.GordianMac;
 import net.sourceforge.joceanus.jgordianknot.api.mac.GordianMacFactory;
@@ -377,7 +378,7 @@ public class RandomTest {
                                     : GordianSP800HashDRBG.SHORT_SEED_LENGTH;
 
         /* Create the provider */
-        final GordianSP800HMacDRBG myProvider = new GordianSP800HMacDRBG(pMac, myEntropy.get(myEntropyLength), myPersonal, myNonce);
+        final GordianSP800HMacDRBG myProvider = new GordianSP800HMacDRBG((GordianCoreMac) pMac, myEntropy.get(myEntropyLength), myPersonal, myNonce);
 
         /* Run the testCases */
         for(GordianTestCase myCase : pTestCases) {
