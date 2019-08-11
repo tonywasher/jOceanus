@@ -16,6 +16,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jgordianknot.junit.extensions;
 
+import java.util.Arrays;
 import java.util.stream.Stream;
 
 import org.bouncycastle.crypto.Digest;
@@ -26,6 +27,7 @@ import org.bouncycastle.crypto.ext.digests.Blake2s;
 import org.bouncycastle.crypto.ext.digests.CubeHashDigest;
 import org.bouncycastle.crypto.ext.digests.GroestlDigest;
 import org.bouncycastle.crypto.ext.digests.JHDigest;
+import org.bouncycastle.crypto.ext.digests.Kangaroo.KangarooTwelve;
 import org.bouncycastle.crypto.ext.macs.Blake2Mac;
 import org.bouncycastle.crypto.params.KeyParameter;
 import org.bouncycastle.util.encoders.Hex;
@@ -105,8 +107,10 @@ public class DigestTest {
                         DynamicTest.dynamicTest("224", () -> new Blake2s224Test().checkDigests()),
                         DynamicTest.dynamicTest("256", () -> new Blake2s256Test().checkDigests()),
                         DynamicTest.dynamicTest("Mac", () -> new Blake2sMacTest().checkMacs()),
-                        DynamicTest.dynamicTest("Xof", () -> new Blake2sXofTest().checkXofs())
-                ))
+                        DynamicTest.dynamicTest("Xof", () -> new Blake2sXofTest().checkXofs()),
+                        DynamicTest.dynamicTest("Kangaroo", () -> new KangarooTest().checkDigests())
+                )),
+                DynamicTest.dynamicTest("Kangaroo", () -> new KangarooTest().checkDigests())
         )));
     }
 
@@ -221,6 +225,59 @@ public class DigestTest {
 
         /* Check the result */
         Assertions.assertArrayEquals(myExpected, myOutput, "Result mismatch");
+    }
+
+    /**
+     * Run the kangaroo tests.
+     * @param pMsgLen the messageLength
+     * @param pStdMsg is this a  standard message
+     * @param pPersLen the personalLength
+     * @param pResult the expected result
+     * @throws OceanusException on error
+     */
+    static void testKangaroo(final int pMsgLen,
+                             final boolean pStdMsg,
+                             final int pPersLen,
+                             final String pResult) throws OceanusException {
+        /* Access the expected result */
+        final byte[] myExpected = Hex.decode(pResult);
+        final int myXofLen = myExpected.length;
+
+        /* Create the message */
+        final byte[] myMsg = new byte[pMsgLen];
+        if (pStdMsg) {
+            buildStdBuffer(myMsg);
+        } else {
+            Arrays.fill(myMsg, (byte) 0xFF);
+        }
+
+        /* Create the personalisatione */
+        final byte[] myPers = pPersLen > 0 ? new byte[pPersLen] : null;
+        if (pPersLen > 0) {
+            buildStdBuffer(myPers);
+        }
+
+        /* Create the output buffer */
+        final byte[] myOutput = new byte[myXofLen];
+
+        /* Initialise the mac */
+        final KangarooTwelve myDigest = new KangarooTwelve(myPers);
+        myDigest.update(myMsg, 0, pMsgLen);
+        myDigest.doFinal(myOutput, 0, myXofLen);
+
+        /* Check the result */
+        Assertions.assertArrayEquals(myExpected, myOutput, "Result mismatch");
+    }
+
+    /**
+     * Build a standard byffer.
+     * @param pBuffer the buffer to build
+     */
+    private static void buildStdBuffer(final byte[] pBuffer) {
+        for (int i = 0; i < pBuffer.length; i += 251) {
+            final int myLen = Math.min(251, pBuffer.length - i);
+            System.arraycopy(BLAKE2DATA, 0, pBuffer, i, myLen);
+        }
     }
 
     /**
@@ -799,6 +856,46 @@ public class DigestTest {
             testBlakeXof(myXof, 32, KEYEDEXPECTED[2]);
             testBlakeXof(myXof, 32, KEYEDEXPECTED[3]);
             testBlakeXof(myXof, 32, KEYEDEXPECTED[4]);
+        }
+    }
+
+    /**
+     * KangarooTest.
+     */
+    static class KangarooTest {
+        /**
+         * Expected unkeyed results.
+         */
+        private static final String[] EXPECTED = {
+                "1AC2D450FC3B4205D19DA7BFCA1B37513C0803577AC7167F06FE2CE1F0EF39E5",
+                "1AC2D450FC3B4205D19DA7BFCA1B37513C0803577AC7167F06FE2CE1F0EF39E54269C056B8C82E48276038B6D292966CC07A3D4645272E31FF38508139EB0A71",
+                "2BDA92450E8B147F8A7CB629E784A058EFCA7CF7D8218E02D345DFAA65244A1F",
+                "6BF75FA2239198DB4772E36478F8E19B0F371205F6A9A93A273F51DF37122888",
+                "0C315EBCDEDBF61426DE7DCF8FB725D1E74675D7F5327A5067F367B108ECB67C",
+                "CB552E2EC77D9910701D578B457DDF772C12E322E4EE7FE417F92C758F0D59D0",
+                "8701045E22205345FF4DDA05555CBB5C3AF1A771C2B89BAEF37DB43D9998B9FE",
+                "844D610933B1B9963CBDEB5AE3B6B05CC7CBD67CEEDF883EB678A0A8E0371682",
+                "3C390782A8A4E89FA6367F72FEAAF13255C8D95878481D3CD8CE85F58E880AF8",
+                "FAB658DB63E94A246188BF7AF69A133045F46EE984C56E3C3328CAAF1AA1A583",
+                "D848C5068CED736F4462159B9867FD4C20B808ACC3D5BC48E0B06BA0A3762EC4",
+                "C389E5009AE57120854C2E8C64670AC01358CF4C1BAF89447A724234DC7CED74",
+                "75D2F86A2E644566726B4FBCFC5657B9DBCF070C7B0DCA06450AB291D7443BCF"
+        };
+
+        void checkDigests() throws OceanusException {
+            testKangaroo(0, true, 0, EXPECTED[0]);
+            testKangaroo(0, true, 0, EXPECTED[1]);
+            testKangaroo(1, true, 0, EXPECTED[2]);
+            testKangaroo(17, true, 0, EXPECTED[3]);
+            testKangaroo(17*17, true, 0, EXPECTED[4]);
+            testKangaroo(17*17*17, true, 0, EXPECTED[5]);
+            testKangaroo(17*17*17*17, true, 0, EXPECTED[6]);
+            testKangaroo(17*17*17*17*17, true, 0, EXPECTED[7]);
+            testKangaroo(17*17*17*17*17*17, true, 0, EXPECTED[8]);
+            testKangaroo(0, true, 1, EXPECTED[9]);
+            testKangaroo(1, false, 41, EXPECTED[10]);
+            testKangaroo(3, false, 41*41, EXPECTED[11]);
+            testKangaroo(7, false, 41*41*41, EXPECTED[12]);
         }
     }
 }

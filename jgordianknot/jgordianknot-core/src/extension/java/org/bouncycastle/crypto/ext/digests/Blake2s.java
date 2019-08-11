@@ -182,7 +182,7 @@ public class Blake2s
         theH[0] ^= getDigestSize() | (getKeyLen() << Byte.SIZE);
         theH[0] ^= (getFanOut() | (getMaxDepth() << Byte.SIZE)) << Short.SIZE;
 
-        /* Initialise seomd word */
+        /* Initialise second word */
         theH[1] ^= getLeafLen();
 
         /* Initialise third word */

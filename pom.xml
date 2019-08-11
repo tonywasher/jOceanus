@@ -68,7 +68,7 @@
     <BouncyCastleVersion>1.62</BouncyCastleVersion>
     <JGitVersion>5.4.0.201906121030-r</JGitVersion>
     <JUnitVersion>5.5.1</JUnitVersion>
-    <JSONVersion>20180813</JSONVersion>
+    <JSONVersion>20190722</JSONVersion>
     <ApacheMavenVersion>3.6.1</ApacheMavenVersion>
     <MySQLVersion>8.0.17</MySQLVersion>
     <PostGreSQLVersion>42.2.6</PostGreSQLVersion>

@@ -159,7 +159,7 @@ public class Blake2X
     @Override
     public int doFinal(final byte[] pOut,
                        final int pOutOffset) {
-        return doFinal(pOut, pOutOffset, pOut.length);
+        return doFinal(pOut, pOutOffset, pOut.length - pOutOffset);
     }
 
     @Override

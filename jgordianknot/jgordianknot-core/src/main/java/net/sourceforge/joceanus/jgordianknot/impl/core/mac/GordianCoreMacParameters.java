@@ -16,13 +16,9 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jgordianknot.impl.core.mac;
 
-import org.bouncycastle.util.Arrays;
-
-import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianCipherParameters.GordianNonceParameters;
 import net.sourceforge.joceanus.jgordianknot.api.key.GordianKey;
 import net.sourceforge.joceanus.jgordianknot.api.mac.GordianMacFactory;
 import net.sourceforge.joceanus.jgordianknot.api.mac.GordianMacParameters;
-import net.sourceforge.joceanus.jgordianknot.api.mac.GordianMacParameters.GordianKeyMacParameters;
 import net.sourceforge.joceanus.jgordianknot.api.mac.GordianMacSpec;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianCoreFactory;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianRandomSource;
@@ -98,7 +94,7 @@ public class GordianCoreMacParameters {
      */
     void processParameters(final GordianMacParameters pParams) throws OceanusException {
         /* Access the key details */
-        theKey = obtainKeyFromParameters(pParams);
+        theKey = pParams.getKey();
         theInitVector = obtainNonceFromParameters(pParams);
     }
 
@@ -120,48 +116,20 @@ public class GordianCoreMacParameters {
     }
 
     /**
-     * Obtain Key from MacParameters.
-     * @param pParams parameters
-     * @return the key
-     */
-    private GordianKey<GordianMacSpec> obtainKeyFromParameters(final GordianMacParameters pParams) {
-        /* If we have specified IV */
-        if (pParams instanceof GordianKeyMacParameters) {
-            /* Access the parameters */
-            final GordianKeyMacParameters myParams = (GordianKeyMacParameters) pParams;
-            return myParams.getKey();
-        }
-
-        /* No key */
-        return null;
-    }
-
-    /**
      * Obtain Nonce from MacParameters.
      * @param pParams parameters
      * @return the nonce
      */
     private byte[] obtainNonceFromParameters(final GordianMacParameters pParams) {
-        /* Default IV is null */
-        byte[] myIV = null;
+        /* Access IV */
+        byte[] myIV = pParams.getNonce();
+        final int myIVLen = theSpec.getIVLen();
 
-        /* If we have specified IV */
-        if (pParams instanceof GordianNonceParameters) {
-            /* Access the parameters */
-            final GordianNonceParameters myParams = (GordianNonceParameters) pParams;
-            final int myIVLen = theSpec.getIVLen();
-
-            /* If we have an explicit Nonce */
-            if (!myParams.randomNonce()) {
-                /* access the nonce */
-                myIV = Arrays.clone(myParams.getNonce());
-
-                /* Else if we actually need a nonce */
-            } else if (myIVLen != 0) {
-                /* Create a random IV */
-                myIV = new byte[myIVLen];
-                theRandom.getRandom().nextBytes(myIV);
-            }
+        /* If we need a random nonce */
+        if (pParams.randomNonce() && myIVLen != 0) {
+            /* Create a random IV */
+            myIV = new byte[myIVLen];
+            theRandom.getRandom().nextBytes(myIV);
         }
 
         /* return the IV */
