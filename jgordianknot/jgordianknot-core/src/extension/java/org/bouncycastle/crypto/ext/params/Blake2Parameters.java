@@ -16,17 +16,14 @@
  ******************************************************************************/
 package org.bouncycastle.crypto.ext.params;
 
+import org.bouncycastle.crypto.CipherParameters;
 import org.bouncycastle.util.Arrays;
-
-import net.sourceforge.joceanus.jgordianknot.api.key.GordianKey;
-import net.sourceforge.joceanus.jgordianknot.api.mac.GordianMacParameters;
-import net.sourceforge.joceanus.jgordianknot.api.mac.GordianMacParameters.GordianMacParametersBuilder;
-import net.sourceforge.joceanus.jgordianknot.api.mac.GordianMacSpec;
 
 /**
  * Blake2 Parameters.
  */
-public class Blake2Parameters {
+public class Blake2Parameters
+    implements CipherParameters {
     /**
      * The key.
      */
@@ -45,7 +42,7 @@ public class Blake2Parameters {
     /**
      * The maximum xofLen.
      */
-    private Long theMaxXofLen;
+    private long theMaxXofLen;
 
     /**
      * The fanOut.
@@ -61,16 +58,6 @@ public class Blake2Parameters {
      * The leafLength.
      */
     private int theLeafLen;
-
-    /**
-     * The nodeIndex.
-     */
-    private int theNodeIndex;
-
-    /**
-     * The nodeDepth.
-     */
-    private short theNodeDepth;
 
     /**
      * Constructor.
@@ -106,7 +93,7 @@ public class Blake2Parameters {
      * Obtain the maximum output length.
      * @return the output length
      */
-    public Long getMaxOutputLength() {
+    public long getMaxOutputLength() {
         return theMaxXofLen;
     }
 
@@ -135,22 +122,6 @@ public class Blake2Parameters {
     }
 
     /**
-     * Obtain the treeNodeDepth.
-     * @return the depth
-     */
-    public short getTreeNodeDepth() {
-        return theNodeDepth;
-    }
-
-    /**
-     * Obtain the treeNodeIndex.
-     * @return the index
-     */
-    public int getTreeNodeIndex() {
-        return theNodeIndex;
-    }
-
-    /**
      * Parameter Builder.
      */
     public static class Builder {
@@ -172,17 +143,17 @@ public class Blake2Parameters {
         /**
          * The maximum xofLen.
          */
-        private Long theMaxXofLen;
+        private long theMaxXofLen;
 
         /**
          * The fanOut.
          */
-        private short theFanOut;
+        private short theFanOut = 1;
 
         /**
          * The maxDepth.
          */
-        private short theMaxDepth;
+        private short theMaxDepth = 1;
 
         /**
          * The leafLength.
@@ -190,21 +161,11 @@ public class Blake2Parameters {
         private int theLeafLen;
 
         /**
-         * The nodeIndex.
-         */
-        private int theNodeIndex;
-
-        /**
-         * The nodeDepth.
-         */
-        private short theNodeDepth;
-
-        /**
          * Set the key.
          * @param pKey the key
          * @return the Builder
          */
-        Builder setKey(final byte[] pKey) {
+        public Builder setKey(final byte[] pKey) {
             theKey = Arrays.clone(pKey);
             return this;
         }
@@ -214,7 +175,7 @@ public class Blake2Parameters {
          * @param pSalt the salt
          * @return the Builder
          */
-        Builder setNonce(final byte[] pSalt) {
+        public Builder setSalt(final byte[] pSalt) {
             theSalt = Arrays.clone(pSalt);
             return this;
         }
@@ -224,17 +185,17 @@ public class Blake2Parameters {
          * @param pPersonal the personalisation
          * @return the Builder
          */
-        Builder setPersonalisation(final byte[] pPersonal) {
+        public Builder setPersonalisation(final byte[] pPersonal) {
             thePersonal = Arrays.clone(pPersonal);
             return this;
         }
 
         /**
-         * Set the maximum output length.
+         * Set the maximum output length. (-1 = unlimited)
          * @param pMaxXofLen the maximum output length
          * @return the Builder
          */
-        Builder setMaxXofLen(final long pMaxXofLen) {
+        public Builder setMaxXofLen(final long pMaxXofLen) {
             theMaxXofLen = pMaxXofLen;
             return this;
         }
@@ -252,19 +213,6 @@ public class Blake2Parameters {
             theFanOut = (short) pFanOut;
             theMaxDepth = (short) pMaxDepth;
             theLeafLen = pLeafLen;
-            return this;
-        }
-
-        /**
-         * Set the nodePosition.
-         * @param pOffset the offset.
-         * @param pDepth the depth.
-         * @return the Builder
-         */
-        public Builder setNodePosition(final int pOffset,
-                                       final int pDepth) {
-            theNodeIndex = pOffset;
-            theNodeDepth = (short) pDepth;
             return this;
         }
 
@@ -288,18 +236,12 @@ public class Blake2Parameters {
             if (thePersonal != null) {
                 myParams.thePersonal = thePersonal;
             }
-            if (theMaxXofLen != null) {
-                myParams.theMaxXofLen = theMaxXofLen;
-            }
+            myParams.theMaxXofLen = theMaxXofLen;
 
             /* Record tree details */
-            if (theFanOut != 0) {
-                myParams.theFanOut = theFanOut;
-                myParams.theMaxDepth = theMaxDepth;
-                myParams.theLeafLen = theLeafLen;
-                myParams.theNodeIndex = theNodeIndex;
-                myParams.theNodeDepth = theNodeDepth;
-            }
+            myParams.theFanOut = theFanOut;
+            myParams.theMaxDepth = theMaxDepth;
+            myParams.theLeafLen = theLeafLen;
 
             /* Return the parameters */
             return myParams;

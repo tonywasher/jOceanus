@@ -16,7 +16,6 @@
  ******************************************************************************/
 package org.bouncycastle.crypto.ext.digests;
 
-import org.bouncycastle.util.Arrays;
 import org.bouncycastle.util.Memoable;
 import org.bouncycastle.util.Pack;
 
@@ -85,6 +84,7 @@ public class Blake2s
             throw new IllegalArgumentException("Incorrect digest length");
         }
         setDigestLength(pLength / Byte.SIZE);
+        activateH();
     }
 
     /**
@@ -111,12 +111,12 @@ public class Blake2s
 
     @Override
     public void reset() {
-        /* reset underlying class */
-        super.reset();
-
         /* Reset counter */
         t0 = 0;
         t1 = 0;
+
+        /* reset underlying class */
+        super.reset();
     }
 
     @Override

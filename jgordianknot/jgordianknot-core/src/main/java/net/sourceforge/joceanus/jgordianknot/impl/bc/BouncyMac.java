@@ -19,9 +19,10 @@ package net.sourceforge.joceanus.jgordianknot.impl.bc;
 import org.bouncycastle.crypto.CipherParameters;
 import org.bouncycastle.crypto.Mac;
 import org.bouncycastle.crypto.ext.macs.KMAC;
+import org.bouncycastle.crypto.ext.params.Blake2Parameters;
 import org.bouncycastle.crypto.params.KeyParameter;
 import org.bouncycastle.crypto.params.ParametersWithIV;
-import org.bouncycastle.crypto.params.SkeinParameters.Builder;
+import org.bouncycastle.crypto.params.SkeinParameters;
 
 import net.sourceforge.joceanus.jgordianknot.api.mac.GordianMacParameters;
 import net.sourceforge.joceanus.jgordianknot.api.mac.GordianMacSpec;
@@ -85,10 +86,20 @@ public final class BouncyMac
                                              final byte[] pIV) {
         /* Handle Skein Parameters */
         if (GordianMacType.SKEIN.equals(getMacSpec().getMacType())) {
-            final Builder myBuilder = new Builder();
+            final SkeinParameters.Builder myBuilder = new SkeinParameters.Builder();
             myBuilder.setKey(pKey.getKey());
             if (pIV != null) {
                 myBuilder.setNonce(pIV);
+            }
+            return myBuilder.build();
+        }
+
+        /* Handle Blake Parameters */
+        if (GordianMacType.BLAKE.equals(getMacSpec().getMacType())) {
+            final Blake2Parameters.Builder myBuilder = new Blake2Parameters.Builder();
+            myBuilder.setKey(pKey.getKey());
+            if (pIV != null) {
+                myBuilder.setSalt(pIV);
             }
             return myBuilder.build();
         }

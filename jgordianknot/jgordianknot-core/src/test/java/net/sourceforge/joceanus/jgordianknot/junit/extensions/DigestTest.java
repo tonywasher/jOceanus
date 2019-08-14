@@ -29,6 +29,7 @@ import org.bouncycastle.crypto.ext.digests.GroestlDigest;
 import org.bouncycastle.crypto.ext.digests.JHDigest;
 import org.bouncycastle.crypto.ext.digests.Kangaroo.KangarooTwelve;
 import org.bouncycastle.crypto.ext.macs.Blake2Mac;
+import org.bouncycastle.crypto.ext.params.Blake2Parameters;
 import org.bouncycastle.crypto.params.KeyParameter;
 import org.bouncycastle.util.encoders.Hex;
 import org.junit.jupiter.api.Assertions;
@@ -107,8 +108,7 @@ public class DigestTest {
                         DynamicTest.dynamicTest("224", () -> new Blake2s224Test().checkDigests()),
                         DynamicTest.dynamicTest("256", () -> new Blake2s256Test().checkDigests()),
                         DynamicTest.dynamicTest("Mac", () -> new Blake2sMacTest().checkMacs()),
-                        DynamicTest.dynamicTest("Xof", () -> new Blake2sXofTest().checkXofs()),
-                        DynamicTest.dynamicTest("Kangaroo", () -> new KangarooTest().checkDigests())
+                        DynamicTest.dynamicTest("Xof", () -> new Blake2sXofTest().checkXofs())
                 )),
                 DynamicTest.dynamicTest("Kangaroo", () -> new KangarooTest().checkDigests())
         )));
@@ -218,8 +218,11 @@ public class DigestTest {
         final byte[] myOutput = new byte[myXofLen];
 
         /* Calculate the Xof */
-        pXof.setKey(myKey);
-        pXof.setXofLen(myXofLen);
+        final Blake2Parameters myParams = new Blake2Parameters.Builder()
+                .setKey(myKey)
+                .setMaxXofLen(myXofLen)
+                .build();
+        pXof.init(myParams);
         pXof.update(BLAKE2DATA, 0, BLAKE2DATA.length);
         pXof.doFinal(myOutput, 0);
 

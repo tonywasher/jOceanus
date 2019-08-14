@@ -47,17 +47,22 @@ public final class GordianMacParameters {
     /**
      * Output length.
      */
-    private Long theOutLen;
+    private long theOutLen;
 
     /**
-     * Tree Configuration.
+     * The fanOut.
      */
-    private GordianTreeConfiguration theTreeConfig;
+    private short theFanOut;
 
     /**
-     * Tree Node Location.
+     * The maxDepth.
      */
-    private GordianTreeNodeLocation theNodeLocation;
+    private short theMaxDepth;
+
+    /**
+     * The leafLength.
+     */
+    private int theLeafLen;
 
     /**
      * Constructor.
@@ -138,24 +143,32 @@ public final class GordianMacParameters {
      * Obtain the Output length.
      * @return the outLength
      */
-    public Long getOutputLength() {
+    public long getOutputLength() {
         return theOutLen;
     }
 
     /**
-     * Obtain the treeConfig.
-     * @return the treeConfig
+     * Obtain the treeLeafLength.
+     * @return the leafLength
      */
-    public GordianTreeConfiguration getTreeConfig() {
-        return theTreeConfig;
+    public int getTreeLeafLen() {
+        return theLeafLen;
     }
 
     /**
-     * Obtain the treeNodeLocation.
-     * @return the treeNodeLocation
+     * Obtain the treeFanOut.
+     * @return the fanOut
      */
-    public GordianTreeNodeLocation getTreeNodeLocation() {
-        return theNodeLocation;
+    public short getTreeFanOut() {
+        return theFanOut;
+    }
+
+    /**
+     * Obtain the treeMaxDepth.
+     * @return the maxDepth
+     */
+    public short getTreeMaxDepth() {
+        return theMaxDepth;
     }
 
     /**
@@ -185,17 +198,22 @@ public final class GordianMacParameters {
         /**
          * Output length.
          */
-        private Long theOutLen;
+        private long theOutLen;
 
         /**
-         * Tree Configuration.
+         * The fanOut.
          */
-        private GordianTreeConfiguration theTreeConfig;
+        private short theFanOut = 1;
 
         /**
-         * Tree Node Location.
+         * The maxDepth.
          */
-        private GordianTreeNodeLocation theNodeLocation;
+        private short theMaxDepth = 1;
+
+        /**
+         * The leafLength.
+         */
+        private int theLeafLen;
 
         /**
          * Set the key.
@@ -250,21 +268,17 @@ public final class GordianMacParameters {
 
         /**
          * Set the treeConfig.
-         * @param pConfig the config
+         * @param pFanOut the fanout.
+         * @param pMaxDepth the maxDepth.
+         * @param pLeafLen the leafLength.
          * @return the Builder
          */
-        GordianMacParametersBuilder setTreeConfig(final GordianTreeConfiguration pConfig) {
-            theTreeConfig = pConfig;
-            return this;
-        }
-
-        /**
-         * Set the treeLocation.
-         * @param pLocation the location
-         * @return the Builder
-         */
-        GordianMacParametersBuilder setTreeNodeLocation(final GordianTreeNodeLocation pLocation) {
-            theNodeLocation = pLocation;
+        public GordianMacParametersBuilder setTreeConfig(final int pFanOut,
+                                                         final int pMaxDepth,
+                                                         final int pLeafLen) {
+            theFanOut = (short) pFanOut;
+            theMaxDepth = (short) pMaxDepth;
+            theLeafLen = pLeafLen;
             return this;
         }
 
@@ -290,120 +304,15 @@ public final class GordianMacParameters {
             if (thePersonal != null) {
                 myParams.thePersonal = thePersonal;
             }
-            if (theOutLen != null) {
-                myParams.theOutLen = theOutLen;
-            }
+            myParams.theOutLen = theOutLen;
 
             /* Record tree details */
-            if (theTreeConfig != null) {
-                myParams.theTreeConfig = theTreeConfig;
-            }
-            if (theNodeLocation != null) {
-                myParams.theNodeLocation = theNodeLocation;
-            }
+            myParams.theFanOut = theFanOut;
+            myParams.theMaxDepth = theMaxDepth;
+            myParams.theLeafLen = theLeafLen;
 
             /* Return the parameters */
             return myParams;
-        }
-    }
-
-    /**
-     * TreeHash Configuration.
-     */
-    public static class GordianTreeConfiguration {
-        /**
-         * The LeafLength.
-         */
-        private final int theLeafLen;
-
-        /**
-         * The FanOut.
-         */
-        private final int theFanOut;
-
-        /**
-         * The MaxDepth.
-         */
-        private final int theMaxDepth;
-
-        /**
-         * Constructor.
-         * @param pLeafLen the leafLength
-         * @param pFanOut the fanOut
-         * @param pMaxDepth the maximumDepth
-         */
-        public GordianTreeConfiguration(final int pLeafLen,
-                                        final int pFanOut,
-                                        final int pMaxDepth) {
-            theLeafLen = pLeafLen;
-            theFanOut = pFanOut;
-            theMaxDepth = pMaxDepth;
-        }
-
-        /**
-         * Obtain the leafLen.
-         * @return the leafLen
-         */
-        public int getLeafLen() {
-            return theLeafLen;
-        }
-
-        /**
-         * Obtain the fanOut.
-         * @return the fanOut
-         */
-        public int getFanOut() {
-            return theFanOut;
-        }
-
-        /**
-         * Obtain the maxDepth.
-         * @return the maxDepth
-         */
-        public int getMaxDepth() {
-            return theMaxDepth;
-        }
-    }
-
-    /**
-     * TreeNodeLocation Configuration.
-     */
-    public static class GordianTreeNodeLocation {
-        /**
-         * The Level.
-         */
-        private final int theLevel;
-
-        /**
-         * The Index.
-         */
-        private final int theIndex;
-
-        /**
-         * Constructor.
-         * @param pLevel the level
-         * @param pIndex the index
-         */
-        public GordianTreeNodeLocation(final int pLevel,
-                                       final int pIndex) {
-            theLevel = pLevel;
-            theIndex = pIndex;
-        }
-
-        /**
-         * Obtain the level.
-         * @return the level
-         */
-        public int getLevel() {
-            return theLevel;
-        }
-
-        /**
-         * Obtain the index.
-         * @return the index
-         */
-        public int getIndex() {
-            return theIndex;
         }
     }
 }

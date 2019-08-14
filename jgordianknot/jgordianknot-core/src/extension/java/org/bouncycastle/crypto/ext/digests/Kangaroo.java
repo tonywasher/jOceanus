@@ -169,7 +169,7 @@ public abstract class Kangaroo
 
         @Override
         public int getByteLength() {
-            return theChainLen;
+            return theTree.theRateBytes;
         }
 
         @Override
@@ -224,7 +224,7 @@ public abstract class Kangaroo
         /**
          * Process data.
          * @param pIn the input buffer
-         * @param pInOffSet the staring offset in the input buffer
+         * @param pInOffSet the starting offset in the input buffer
          * @param pLen the length of data to process
          */
         private void processData(final byte[] pIn,

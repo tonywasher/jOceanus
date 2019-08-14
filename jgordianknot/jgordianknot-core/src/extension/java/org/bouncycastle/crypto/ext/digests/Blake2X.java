@@ -18,6 +18,7 @@ package org.bouncycastle.crypto.ext.digests;
 
 import org.bouncycastle.crypto.ExtendedDigest;
 import org.bouncycastle.crypto.Xof;
+import org.bouncycastle.crypto.ext.params.Blake2Parameters;
 import org.bouncycastle.util.Arrays;
 import org.bouncycastle.util.Memoable;
 
@@ -93,39 +94,30 @@ public class Blake2X
     }
 
     /**
-     * Set the key.
-     * @param pKey the key.
+     * Initialise.
+     * @param pParams the parameters.
      */
-    public void setKey(final byte[] pKey) {
-        theUnderlying.setKey(pKey);
-    }
+    public void init(final Blake2Parameters pParams) {
+        /* Reject a zero Xof length */
+        if (pParams.getMaxOutputLength() == 0) {
+            throw new IllegalArgumentException("Invalid output length");
+        }
 
-    /**
-     * Set the salt.
-     * @param pSalt the salt.
-     */
-    public void setSalt(final byte[] pSalt) {
-        theUnderlying.setSalt(pSalt);
-        theComposite.setSalt(pSalt);
-    }
+        /* Pass selective parameters to the underlying hash */
+        theUnderlying.setKey(pParams.getKey());
+        theUnderlying.setSalt(pParams.getSalt());
+        theUnderlying.setPersonalisation(pParams.getPersonalisation());
+        theUnderlying.setXofLen(pParams.getMaxOutputLength());
+        theUnderlying.reset();
 
-    /**
-     * Set the personalisation.
-     * @param pPersonal the personalisation.
-     */
-    public void setPersonalisation(final byte[] pPersonal) {
-        theUnderlying.setPersonalisation(pPersonal);
-        theComposite.setSalt(pPersonal);
-    }
+        /* Pass selective parameters to the underlying hash */
+        theComposite.setSalt(pParams.getSalt());
+        theComposite.setPersonalisation(pParams.getPersonalisation());
+        theComposite.setXofLen(pParams.getMaxOutputLength());
+        theComposite.reset();
 
-    /**
-     * Set the XofLength.
-     * @param pXofLen the XofLen.
-     */
-    public void setXofLen(final long pXofLen) {
-        theUnderlying.setXofLen(pXofLen);
-        theComposite.setXofLen(pXofLen);
-        theXofLen = pXofLen;
+        /* Adjust XofLength */
+        theXofLen = theUnderlying.getXofLen();
     }
 
     @Override
@@ -136,7 +128,7 @@ public class Blake2X
 
     @Override
     public int getDigestSize() {
-        return (int) theXofLen;
+        return theXofLen == -1 ? theUnderlying.getDigestSize() : (int) theXofLen;
     }
 
     @Override
@@ -159,7 +151,7 @@ public class Blake2X
     @Override
     public int doFinal(final byte[] pOut,
                        final int pOutOffset) {
-        return doFinal(pOut, pOutOffset, pOut.length - pOutOffset);
+        return doFinal(pOut, pOutOffset, getDigestSize());
     }
 
     @Override

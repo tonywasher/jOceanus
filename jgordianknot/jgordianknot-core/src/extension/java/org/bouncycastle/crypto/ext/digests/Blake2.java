@@ -17,6 +17,7 @@
 package org.bouncycastle.crypto.ext.digests;
 
 import org.bouncycastle.crypto.ExtendedDigest;
+import org.bouncycastle.crypto.ext.params.Blake2Parameters;
 import org.bouncycastle.util.Arrays;
 import org.bouncycastle.util.Memoable;
 
@@ -137,11 +138,6 @@ public abstract class Blake2
     private boolean isLastNode;
 
     /**
-     * Is the digest active?
-     */
-    private boolean isActive;
-
-    /**
      * Constructor.
      * @param pRounds the number of rounds.
      * @param pBlockLen the blockLength
@@ -176,7 +172,6 @@ public abstract class Blake2
      * @param pLength the digestLength.
      */
     void setDigestLength(final int pLength) {
-        checkActive();
         if (pLength < 0 || pLength > theBuffer.length << 2) {
             throw new IllegalArgumentException("DigestLength out of range");
         }
@@ -189,11 +184,26 @@ public abstract class Blake2
     }
 
     /**
+     * Initialise.
+     * @param pParams the parameters.
+     */
+    public void init(final Blake2Parameters pParams) {
+        /* Store parameters */
+        setKey(pParams.getKey());
+        setSalt(pParams.getSalt());
+        setPersonalisation(pParams.getPersonalisation());
+        setXofLen(pParams.getMaxOutputLength());
+        setTreeConfig(pParams.getTreeFanOut(), pParams.getTreeMaxDepth(), pParams.getTreeLeafLen());
+
+        /* Reset the cipher */
+        reset();
+    }
+
+    /**
      * Set the key.
      * @param pKey the key.
      */
-    public void setKey(final byte[] pKey) {
-        checkActive();
+    void setKey(final byte[] pKey) {
         if (pKey == null || pKey.length == 0) {
             clearKey();
             theKey = null;
@@ -205,6 +215,7 @@ public abstract class Blake2
             theKey = Arrays.copyOf(pKey, pKey.length);
         }
     }
+
     /**
      * Clear the key.
      */
@@ -215,7 +226,7 @@ public abstract class Blake2
     }
 
     /**
-     * Obtain the keyfLength.
+     * Obtain the keyLength.
      * @return the keyLength
      */
     int getKeyLen() {
@@ -226,8 +237,7 @@ public abstract class Blake2
      * Set the salt.
      * @param pSalt the salt.
      */
-    public void setSalt(final byte[] pSalt) {
-        checkActive();
+    void setSalt(final byte[] pSalt) {
         if (pSalt == null || pSalt.length == 0) {
             theSalt = null;
         } else {
@@ -250,8 +260,7 @@ public abstract class Blake2
      * Set the personalisation.
      * @param pPersonal the personalisation.
      */
-    public void setPersonalisation(final byte[] pPersonal) {
-        checkActive();
+    void setPersonalisation(final byte[] pPersonal) {
         if (pPersonal == null || pPersonal.length == 0) {
             thePersonal = null;
         } else {
@@ -275,8 +284,7 @@ public abstract class Blake2
      * @param pXofLen the xofLength.
      */
     void setXofLen(final long pXofLen) {
-        checkActive();
-        if (pXofLen < -1 || pXofLen == 0 || pXofLen > theMaxXofLen) {
+        if (pXofLen < -1 || pXofLen > theMaxXofLen) {
             throw new IllegalArgumentException("XofLength out of range");
         }
         theXofLen = (int) pXofLen;
@@ -292,24 +300,34 @@ public abstract class Blake2
 
     /**
      * Set the treeConfig.
-     * @param pFanOut the fanout.
+     * @param pFanOut the fanOut.
      * @param pMaxDepth the maxDepth.
      * @param pLeafLen the leafLength.
      */
-    public void setTreeConfig(final int pFanOut,
-                              final int pMaxDepth,
-                              final int pLeafLen) {
-        checkActive();
+    void setTreeConfig(final int pFanOut,
+                       final int pMaxDepth,
+                       final int pLeafLen) {
+        /* Check that fanOut value makes sense */
         if (pFanOut < 0 || pFanOut > MAXBYTE) {
             throw new IllegalArgumentException("FanOut out of range");
         }
         theFanOut = (short) pFanOut;
-        if (pMaxDepth < -1 || pMaxDepth > MAXBYTE - 1) {
+        final boolean seqMode = pFanOut == 1;
+
+        /* Check that maxDepth value makes sense */
+        if (pMaxDepth < 0 || pMaxDepth > MAXBYTE) {
             throw new IllegalArgumentException("MaxDepth out of range");
         }
+        if (seqMode != (pMaxDepth == 1)) {
+            throw new IllegalArgumentException("Inconsistent treeConfig for Depth and fanOut");
+        }
         theMaxDepth = (short) pMaxDepth;
+
         if (pLeafLen < 0) {
             throw new IllegalArgumentException("LeafLength out of range");
+        }
+        if (seqMode != (pLeafLen == 0)) {
+            throw new IllegalArgumentException("Inconsistent treeConfig for LeafLen and fanOut");
         }
         theLeafLen = pLeafLen;
     }
@@ -345,7 +363,6 @@ public abstract class Blake2
      */
     public void setNodePosition(final int pOffset,
                                 final short pDepth) {
-        checkActive();
         if (pOffset < 0) {
             throw new IllegalArgumentException("NodeOffset out of range");
         }
@@ -354,6 +371,7 @@ public abstract class Blake2
             throw new IllegalArgumentException("NodeDepth out of range");
         }
         theNodeDepth = (byte) pDepth;
+        reset();
     }
 
     /**
@@ -382,11 +400,11 @@ public abstract class Blake2
 
     /**
      * Set the lastNode indicator.
-     * @param pLast is this the last node at this depth?
      */
-    public void setLastNode(final boolean pLast) {
-        isLastNode = pLast;
+    void setLastNode() {
+        isLastNode = true;
     }
+
     /**
      * is this the last node?
      * @return true/false
@@ -400,7 +418,6 @@ public abstract class Blake2
      * @param pInnerLen the innerLength.
      */
     void setInnerLength(final int pInnerLen) {
-        checkActive();
         if (pInnerLen < 0 || pInnerLen > MAXBYTE) {
             throw new IllegalArgumentException("InnerLength out of range");
         }
@@ -415,20 +432,8 @@ public abstract class Blake2
         return theInnerLen;
     }
 
-    /**
-     * checkActive.
-     */
-    private void checkActive() {
-        if (isActive) {
-            throw new IllegalStateException("Cannot configure digest after update");
-        }
-    }
-
     @Override
     public void update(final byte b) {
-        /* Make sure that we are activated */
-        activateH();
-
         /* If the buffer is full */
         final int blockLen = theBuffer.length;
         final int remainingLength = blockLen - thePos;
@@ -455,9 +460,6 @@ public abstract class Blake2
         if (pMessage == null || pLen == 0) {
             return;
         }
-
-        /* Make sure that we are activated */
-        activate();
 
         /* Process any bytes currently in the buffer */
         final int blockLen = theBuffer.length;
@@ -508,9 +510,6 @@ public abstract class Blake2
     @Override
     public int doFinal(final byte[] pOut,
                        final int pOutOffset) {
-        /* Make sure that we are activated */
-        activate();
-
         /* Adjust flags and counter */
         isLastBlock = true;
         completeCounter(thePos);
@@ -532,13 +531,15 @@ public abstract class Blake2
     @Override
     public void reset() {
         /* Reset flags */
-        isActive = false;
         isLastBlock = false;
         isLastNode = false;
 
         /* Reset the data Buffer */
         thePos = 0;
         Arrays.fill(theBuffer, (byte) 0);
+
+        /* Activate */
+        activateH();
     }
 
     /**
@@ -557,7 +558,6 @@ public abstract class Blake2
         theNodeOffset = pSource.theNodeOffset;
 
         /* Copy flags */
-        isActive = pSource.isActive;
         isLastNode = pSource.isLastNode;
 
         /* Clone arrays */
@@ -589,22 +589,6 @@ public abstract class Blake2
      */
     abstract void outputDigest(byte[] pOut,
                                int pOutOffset);
-    /**
-     * Activate.
-     */
-    private void activate() {
-        /* If we are not active */
-        if (!isActive) {
-            /* Initialise H */
-            activateH();
-
-            /* Initialise any keyBlock */
-            initKeyBlock();
-
-            /* Set active flag */
-            isActive = true;
-        }
-    }
 
     /**
      * Init the keyBlock.
