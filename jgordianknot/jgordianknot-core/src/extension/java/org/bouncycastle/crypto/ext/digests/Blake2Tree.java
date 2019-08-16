@@ -107,7 +107,7 @@ public class Blake2Tree
 
     @Override
     public void reset() {
-        theDigest.setNodePosition(0, 1);
+        theDigest.setNodePosition(0, 0);
         theProcessed = 0;
         theStore.reset();
     }
@@ -164,7 +164,7 @@ public class Blake2Tree
                 /* Finalise the leaf and process the result */
                 theDigest.doFinal(theHash, 0);
                 theStore.addElement(theHash);
-                theDigest.setNodePosition(theDigest.getNodeOffset() + 1, 1);
+                theDigest.setNodePosition(theDigest.getNodeOffset() + 1, 0);
                 theProcessed = 0;
             }
 
@@ -194,7 +194,7 @@ public class Blake2Tree
         theDigest.setSalt(pParams.getSalt());
         theDigest.setPersonalisation(pParams.getPersonalisation());
         theDigest.setTreeConfig(pParams.getTreeFanOut(), pParams.getTreeMaxDepth(), pParams.getTreeLeafLen());
-        theDigest.setNodePosition(0, 1);
+        theDigest.setNodePosition(0, 0);
 
         /* Reset processed and init the store */
         theProcessed = 0;
@@ -216,7 +216,7 @@ public class Blake2Tree
         }
 
         /* Check index validity and look for last index */
-        theDigest.setNodePosition(pIndex, 1);
+        theDigest.setNodePosition(pIndex, 0);
         if (theStore.checkLeafIndex(pIndex)) {
             theDigest.setLastNode();
         }
@@ -227,14 +227,6 @@ public class Blake2Tree
 
         /* Replace the hash */
         theStore.replaceElement(pIndex, theHash);
-    }
-
-    /**
-     * Compare to another tree.
-     * @param pThat the tree to compare against
-     */
-    public boolean compareTree(final Blake2Tree pThat) {
-        return theStore.compareStore(pThat.theStore);
     }
 
     /**
@@ -295,7 +287,7 @@ public class Blake2Tree
          * Reset the store.
          */
         void reset() {
-            theDigest.setNodePosition(0, 2);
+            theDigest.setNodePosition(0, 1);
             theHashes.clear();
             treeBuilt = false;
         }
@@ -380,7 +372,7 @@ public class Blake2Tree
          */
         private SimpleVector calculateNextLevel(final SimpleVector pInput) {
             /* Set the depth of the tree */
-            final int myCurDepth = 1 + theHashes.size();
+            final int myCurDepth = theHashes.size();
             final int myMaxDepth = theDigest.getMaxDepth();
             final int myFanOut = theDigest.getFanOut();
             theDigest.setNodePosition(0, myCurDepth);
@@ -391,7 +383,7 @@ public class Blake2Tree
             /* Determine whether we are calculating the root node */
             final boolean lastStage = myFanOut == 0
                                         || pInput.size() <= myFanOut
-                                        || myCurDepth == myMaxDepth;
+                                        || myCurDepth == myMaxDepth - 1;
 
             /* Loop through all the elements */
             int myCount = 0;
@@ -504,7 +496,7 @@ public class Blake2Tree
             final int myMaxHash = lastStage ? myNumHashes : Math.min(myFanOut, myNumHashes - myIndex);
 
             /* Initialise the digest */
-            theDigest.setNodePosition(myParentIndex, pLevel + 1);
+            theDigest.setNodePosition(myParentIndex, pLevel);
 
             /* Loop through the input hashes */
             for (int i = 0; i < myMaxHash; i++) {
@@ -522,46 +514,6 @@ public class Blake2Tree
             theDigest.doFinal(theResult, 0);
             myLevel.setElementAt(Arrays.clone(theResult), myParentIndex);
             return myParentIndex;
-        }
-
-        /**
-         * Compare to another store.
-         * @param pThat the store to compare against
-         */
-        boolean compareStore(final Blake2TreeStore pThat) {
-            /* Check that hashStores are the same length */
-            if (theHashes.size() != pThat.theHashes.size()) {
-                return false;
-            }
-
-            /* Loop through the elements */
-            final Enumeration myThisLevelEnumeration = theHashes.elements();
-            final Enumeration myThatLevelEnumeration = pThat.theHashes.elements();
-            while (myThisLevelEnumeration.hasMoreElements()) {
-                final SimpleVector myThisLevel = (SimpleVector) myThisLevelEnumeration.nextElement();
-                final SimpleVector myThatLevel = (SimpleVector) myThatLevelEnumeration.nextElement();
-
-                /* Check that tree levels are the same length */
-                if (myThisLevel.size() != myThatLevel.size()) {
-                    return false;
-                }
-
-                /* Loop through the elements */
-                final Enumeration myThisEnumeration = myThisLevel.elements();
-                final Enumeration myThatEnumeration = myThatLevel.elements();
-                while (myThisEnumeration.hasMoreElements()) {
-                    final byte[] myThis = (byte[]) myThisEnumeration.nextElement();
-                    final byte[] myThat = (byte[]) myThatEnumeration.nextElement();
-
-                    /* Check byte arrays */
-                    if (!Arrays.areEqual(myThis, myThat)) {
-                        return false;
-                    }
-                }
-            }
-
-            /* Equal */
-            return true;
         }
     }
 

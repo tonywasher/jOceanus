@@ -338,7 +338,6 @@ public class DigestTest {
 
         /* Build the result */
         myAltTree.doFinal(myResult, 0);
-        Assertions.assertTrue(myAltTree.compareTree(myTree), "Tree mismatch");
         Assertions.assertArrayEquals(myResult, myLeafResult, "Result mismatch");
     }
 
