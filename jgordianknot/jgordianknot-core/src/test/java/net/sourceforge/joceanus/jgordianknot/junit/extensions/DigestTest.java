@@ -21,6 +21,7 @@ import java.util.stream.Stream;
 
 import org.bouncycastle.crypto.Digest;
 import org.bouncycastle.crypto.Mac;
+import org.bouncycastle.crypto.ext.digests.Blake2Tree;
 import org.bouncycastle.crypto.ext.digests.Blake2X;
 import org.bouncycastle.crypto.ext.digests.Blake2b;
 import org.bouncycastle.crypto.ext.digests.Blake2s;
@@ -36,6 +37,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DynamicContainer;
 import org.junit.jupiter.api.DynamicNode;
 import org.junit.jupiter.api.DynamicTest;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestFactory;
 
 import net.sourceforge.joceanus.jtethys.OceanusException;
@@ -110,6 +112,7 @@ public class DigestTest {
                         DynamicTest.dynamicTest("Mac", () -> new Blake2sMacTest().checkMacs()),
                         DynamicTest.dynamicTest("Xof", () -> new Blake2sXofTest().checkXofs())
                 )),
+                DynamicTest.dynamicTest("BlakeTree", () -> new Blake2TreeTest().runTest()),
                 DynamicTest.dynamicTest("Kangaroo", () -> new KangarooTest().checkDigests())
         )));
     }
@@ -254,7 +257,7 @@ public class DigestTest {
             Arrays.fill(myMsg, (byte) 0xFF);
         }
 
-        /* Create the personalisatione */
+        /* Create the personalisation */
         final byte[] myPers = pPersLen > 0 ? new byte[pPersLen] : null;
         if (pPersLen > 0) {
             buildStdBuffer(myPers);
@@ -281,6 +284,62 @@ public class DigestTest {
             final int myLen = Math.min(251, pBuffer.length - i);
             System.arraycopy(BLAKE2DATA, 0, pBuffer, i, myLen);
         }
+    }
+
+    /**
+     * Run the Blake2Tree tests.
+     * @param pNumLeaves the number of leaves
+     * @param pFanOut the fanOut
+     * @param pMaxDepth the max depth of the tree
+     * @throws OceanusException on error
+     */
+    static void testBlake2Tree(final int pNumLeaves,
+                               final int pFanOut,
+                               final int pMaxDepth) throws OceanusException {
+        /* Create the tree */
+        final Blake2Tree myTree = new Blake2Tree(new Blake2b(512));
+        final int myLeafLen = 4096;
+
+        /* Build the parameters */
+        final Blake2Parameters.Builder myBuilder = new Blake2Parameters.Builder();
+        myBuilder.setKey(Arrays.copyOf(BLAKE2DATA, 32));
+        myBuilder.setTreeConfig(pFanOut, pMaxDepth, myLeafLen);
+        myTree.init(myBuilder.build());
+
+        /* Build the leaf data */
+        final byte[] myLeaf = new byte[myLeafLen];
+
+        /* Loop through the leaves */
+        for (int i = 0; i < pNumLeaves; i++) {
+            Arrays.fill(myLeaf, (byte) i);
+            myTree.update(myLeaf, 0, myLeafLen);
+        }
+
+        /* Build the result */
+        final byte[] myResult = new byte[myTree.getDigestSize()];
+        myTree.doFinal(myResult, 0);
+
+        /* Replace each leaf with 1-filled buffer */
+        Arrays.fill(myLeaf, (byte) -1);
+        for (int i = 0; i < pNumLeaves; i++ ) {
+            myTree.updateLeaf(i, myLeaf, 0);
+        }
+
+        /* Obtain the updated result */
+        final byte[] myLeafResult = new byte[myTree.getDigestSize()];
+        myTree.obtainResult(myLeafResult, 0);
+
+        /* Recalculate the entire tree */
+        final Blake2Tree myAltTree = new Blake2Tree(new Blake2b(512));
+        myAltTree.init(myBuilder.build());
+        for (int i = 0; i < pNumLeaves; i++) {
+            myAltTree.update(myLeaf, 0, myLeafLen);
+        }
+
+        /* Build the result */
+        myAltTree.doFinal(myResult, 0);
+        Assertions.assertTrue(myAltTree.compareTree(myTree), "Tree mismatch");
+        Assertions.assertArrayEquals(myResult, myLeafResult, "Result mismatch");
     }
 
     /**
@@ -848,7 +907,7 @@ public class DigestTest {
         };
 
         void checkXofs() throws OceanusException {
-            final Blake2X myXof = new Blake2X(false);
+            final Blake2X myXof = new Blake2X(new Blake2s(256));
             testBlakeXof(myXof, 0, EXPECTED[0]);
             testBlakeXof(myXof, 0, EXPECTED[1]);
             testBlakeXof(myXof, 0, EXPECTED[2]);
@@ -899,6 +958,26 @@ public class DigestTest {
             testKangaroo(1, false, 41, EXPECTED[10]);
             testKangaroo(3, false, 41*41, EXPECTED[11]);
             testKangaroo(7, false, 41*41*41, EXPECTED[12]);
+        }
+    }
+
+    /**
+     * KangarooTest.
+     */
+    static class Blake2TreeTest {
+        /**
+         * Run the Blake2Tree tests.
+         *
+         * @throws OceanusException on error
+         */
+        void runTest() throws OceanusException {
+            /* Run standard test */
+            testBlake2Tree(1, 2, 3);
+            testBlake2Tree(4, 2, 3);
+            testBlake2Tree(53, 2, 3);
+            testBlake2Tree(53, 2, 255);
+            testBlake2Tree(53, 4, 255);
+            testBlake2Tree(53, 0, 255);
         }
     }
 }

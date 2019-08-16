@@ -18,8 +18,8 @@ package org.bouncycastle.crypto.ext.digests;
 
 import java.util.Enumeration;
 import java.util.NoSuchElementException;
-import java.util.Vector;
 
+import org.bouncycastle.crypto.DataLengthException;
 import org.bouncycastle.crypto.Digest;
 import org.bouncycastle.crypto.OutputLengthException;
 import org.bouncycastle.crypto.ext.params.Blake2Parameters;
@@ -30,6 +30,11 @@ import org.bouncycastle.util.Arrays;
  */
 public class Blake2Tree
         implements Digest {
+    /**
+     * Default leaf length.
+     */
+    private static final int DEFAULT_LEAFLEN = 4096;
+
     /**
      * The underlying Blake2 instance.
      */
@@ -52,13 +57,18 @@ public class Blake2Tree
 
     /**
      * Constructor.
-     * @param p2b use Blake2b?
+     * @param pDigest the underlying digest.
      */
-    public Blake2Tree(final boolean p2b) {
-        theDigest = p2b ? new Blake2b(512) : new Blake2s(256);
-        theStore = new Blake2TreeStore(p2b);
+    public Blake2Tree(final Blake2 pDigest) {
+        /* Store parameters and initialise store */
+        theDigest = pDigest;
+        theStore = new Blake2TreeStore(pDigest);
         theHash = new byte[theDigest.getDigestSize()];
-        reset();
+
+        /* Initialise to default values */
+        final Blake2Parameters.Builder myBuilder = new Blake2Parameters.Builder();
+        myBuilder.setTreeConfig(0, 2, DEFAULT_LEAFLEN);
+        init(myBuilder.build());
     }
 
     @Override
@@ -97,9 +107,21 @@ public class Blake2Tree
 
     @Override
     public void reset() {
-        theDigest.setNodePosition(0, (short) 1);
+        theDigest.setNodePosition(0, 1);
         theProcessed = 0;
         theStore.reset();
+    }
+
+    /**
+     * Obtain the tree result.
+     * @param pOut the output buffer
+     * @param pOutOffset the offset into the output buffer
+     * @return the number of bytes returned
+     */
+    public int obtainResult(final byte[] pOut,
+                            final int pOutOffset) {
+        /* Access result from store */
+        return theStore.obtainResult(pOut, pOutOffset);
     }
 
     /**
@@ -111,6 +133,11 @@ public class Blake2Tree
     private void processData(final byte[] pIn,
                              final int pInOffSet,
                              final int pLen) {
+        /* Cannot process further data once tree is built */
+        if (theStore.treeBuilt()) {
+            throw new IllegalStateException("Tree has been built");
+        }
+
         /* Determine space in current block */
         final int blkSize = theDigest.getLeafLen();
         final int mySpace = blkSize - theProcessed;
@@ -137,7 +164,8 @@ public class Blake2Tree
                 /* Finalise the leaf and process the result */
                 theDigest.doFinal(theHash, 0);
                 theStore.addElement(theHash);
-                theDigest.setNodePosition(theDigest.getNodeOffset() + 1, (short) 1);
+                theDigest.setNodePosition(theDigest.getNodeOffset() + 1, 1);
+                theProcessed = 0;
             }
 
             /* Process next block */
@@ -153,21 +181,60 @@ public class Blake2Tree
      * @param pParams the parameters.
      */
     public void init(final Blake2Parameters pParams) {
-        /* Check that we have a fanOut != 1 && MaxDepth != 1*/
-        if (pParams.getTreeFanOut() == 1 || pParams.getTreeMaxDepth() == 1) {
-            throw new IllegalArgumentException("FanOut/MaxDepth cannot be 1");
+        /* Check that we have a fanOut != 1 && MaxDepth >= 1*/
+        if (pParams.getTreeFanOut() == 1) {
+            throw new IllegalArgumentException("FanOut cannot be 1");
+        }
+        if (pParams.getTreeMaxDepth() < 2) {
+            throw new IllegalArgumentException("MaxDepth must be greater than 1");
         }
 
         /* Pass selective parameters to the underlying instance */
         theDigest.setKey(pParams.getKey());
-        theDigest.setSalt(pParams.getKey());
+        theDigest.setSalt(pParams.getSalt());
         theDigest.setPersonalisation(pParams.getPersonalisation());
         theDigest.setTreeConfig(pParams.getTreeFanOut(), pParams.getTreeMaxDepth(), pParams.getTreeLeafLen());
-        theDigest.setNodePosition(0, (short) 1);
+        theDigest.setNodePosition(0, 1);
 
         /* Reset processed and init the store */
         theProcessed = 0;
         theStore.init(pParams);
+    }
+
+    /**
+     * Update leaf.
+     * @param pIndex the index of the leaf
+     * @param pInput the input buffer
+     * @param pInOffSet the starting offset the the input buffer
+     */
+    public void updateLeaf(final int pIndex,
+                           final byte[] pInput,
+                           final int pInOffSet) {
+        /* Make sure that we have sufficient data */
+        if (theDigest.getLeafLen() + pInOffSet > pInput.length) {
+            throw new DataLengthException("Invalid input buffer");
+        }
+
+        /* Check index validity and look for last index */
+        theDigest.setNodePosition(pIndex, 1);
+        if (theStore.checkLeafIndex(pIndex)) {
+            theDigest.setLastNode();
+        }
+
+        /* Recalculate the digest */
+        theDigest.update(pInput, pInOffSet, theDigest.getLeafLen());
+        theDigest.doFinal(theHash, 0);
+
+        /* Replace the hash */
+        theStore.replaceElement(pIndex, theHash);
+    }
+
+    /**
+     * Compare to another tree.
+     * @param pThat the tree to compare against
+     */
+    public boolean compareTree(final Blake2Tree pThat) {
+        return theStore.compareStore(pThat.theStore);
     }
 
     /**
@@ -187,14 +254,19 @@ public class Blake2Tree
         /**
          * The Array of Hashes.
          */
-        private SimpleVector theHashes;
+        private final SimpleVector theHashes;
+
+        /**
+         * Has the tree been built?.
+         */
+        private boolean treeBuilt;
 
         /**
          * Constructor.
-         * @param p2b use Blake2b?
+         * @param pDigest the underlying digest.
          */
-        Blake2TreeStore(final boolean p2b) {
-            theDigest = p2b ? new Blake2b(512) : new Blake2s(256);
+        Blake2TreeStore(final Blake2 pDigest) {
+            theDigest = (Blake2) pDigest.copy();
             theResult = new byte[theDigest.getDigestSize()];
             theHashes = new SimpleVector();
         }
@@ -205,19 +277,27 @@ public class Blake2Tree
          */
         public void init(final Blake2Parameters pParams) {
             /* Pass selective parameters to the underlying instance */
-            theDigest.setSalt(pParams.getKey());
+            theDigest.setSalt(pParams.getSalt());
             theDigest.setPersonalisation(pParams.getPersonalisation());
             theDigest.setTreeConfig(pParams.getTreeFanOut(), pParams.getTreeMaxDepth(), pParams.getTreeLeafLen());
-            theDigest.setNodePosition(0, (short) 2);
-            theHashes.clear();
+            reset();
+        }
+
+        /**
+         * Has the tree been built?
+         * @return true/false
+         */
+        boolean treeBuilt() {
+            return treeBuilt;
         }
 
         /**
          * Reset the store.
          */
         void reset() {
-            theDigest.setNodePosition(0, (short) 2);
+            theDigest.setNodePosition(0, 2);
             theHashes.clear();
+            treeBuilt = false;
         }
 
         /**
@@ -225,14 +305,39 @@ public class Blake2Tree
          * @param pHash the intermediate hash
          */
         void addElement(final byte[] pHash) {
-            /* Access the base store */
+            /* Access the base level */
             if (theHashes.isEmpty()) {
-                theHashes.addElement(new Vector());
+                theHashes.addElement(new SimpleVector());
             }
             final SimpleVector myLevel = (SimpleVector) theHashes.firstElement();
 
             /* Add the element to the vector */
             myLevel.addElement(Arrays.clone(pHash));
+         }
+
+        /**
+         * Obtain the tree result.
+         * @param pOut the output buffer
+         * @param pOutOffset the offset into the output buffer
+         * @return the number of bytes returned
+         */
+        int obtainResult(final byte[] pOut,
+                         final int pOutOffset) {
+            /* Check parameters */
+            if (pOut.length < pOutOffset + theResult.length) {
+                throw new OutputLengthException("Insufficient output buffer");
+            }
+            if (!treeBuilt) {
+                throw new IllegalStateException("tree has not been built");
+            }
+
+            /* Access the final level */
+            final SimpleVector myLevel = (SimpleVector) theHashes.lastElement();
+            final byte[] myResult = (byte[]) myLevel.firstElement();
+
+            /* Return the final hash */
+            System.arraycopy(myResult, 0, pOut, pOutOffset, myResult.length);
+            return myResult.length;
         }
 
         /**
@@ -247,68 +352,60 @@ public class Blake2Tree
             if (pOut.length < pOutOffset + theResult.length) {
                 throw new OutputLengthException("Insufficient output buffer");
             }
-
-            /* Loop */
-            for (;;) {
-                /* Calculate next level and test for completion */
-                if (calculateNextLevel()) {
-                    /* Return the hash length */
-                    System.arraycopy(theResult, 0, pOut, pOutOffset, theResult.length);
-                    return theResult.length;
-                }
+            if (treeBuilt) {
+                throw new IllegalStateException("tree already built");
             }
+
+            /* Access the only level */
+            SimpleVector myLevel = (SimpleVector) theHashes.lastElement();
+
+            /* While we have elements that must be reduced */
+            while (myLevel.size() > 1) {
+                /* Calculate the next set of hashes */
+                myLevel = calculateNextLevel(myLevel);
+                theHashes.addElement(myLevel);
+            }
+
+            /* Note that the tree has been built */
+            treeBuilt = true;
+
+            /* Return the final hash */
+            return obtainResult(pOut, pOutOffset);
         }
 
         /**
          * Calculate next level.
-         * @return have we completed the tree true/false
+         * @param pInput the current set of hashes
+         * @return the next level
          */
-        private boolean calculateNextLevel() {
-            /* Access the current level */
-            final SimpleVector myInput = (SimpleVector) theHashes.lastElement();
-
+        private SimpleVector calculateNextLevel(final SimpleVector pInput) {
             /* Set the depth of the tree */
-            final int myCurDepth = (theHashes.size());
+            final int myCurDepth = 1 + theHashes.size();
             final int myMaxDepth = theDigest.getMaxDepth();
             final int myFanOut = theDigest.getFanOut();
-            theDigest.setNodePosition(0, (short) myCurDepth);
+            theDigest.setNodePosition(0, myCurDepth);
 
-            /* If we are at the top of the tree */
-            if (myFanOut == 0
-                    || myInput.size() <= myFanOut
-                    || myCurDepth == myMaxDepth) {
-                /* Loop through all the elements */
-                final Enumeration myEnumeration = myInput.elements();
-                while (myEnumeration.hasMoreElements()) {
-                    /* Fold hash into final node */
-                    final byte[] myHash = (byte[]) myEnumeration.nextElement();
-                    theDigest.update(myHash, 0, myHash.length);
-                }
-
-                /* Set flag and calculate the result */
-                theDigest.setLastNode();
-                theDigest.doFinal(theResult, 0);
-                return true;
-            }
-
-            /* Add a new level */
+            /* Create the new level */
             final SimpleVector myResults = new SimpleVector();
-            theHashes.addElement(myResults);
+
+            /* Determine whether we are calculating the root node */
+            final boolean lastStage = myFanOut == 0
+                                        || pInput.size() <= myFanOut
+                                        || myCurDepth == myMaxDepth;
 
             /* Loop through all the elements */
             int myCount = 0;
             int myOffSet = 0;
-            final Enumeration myEnumeration = myInput.elements();
+            final Enumeration myEnumeration = pInput.elements();
             while (myEnumeration.hasMoreElements()) {
                 /* If we need to move to the next node  */
-                if (myCount == myFanOut) {
+                if (!lastStage && myCount == myFanOut) {
                     /* Calculate node and add to level */
-                    theDigest.setLastNode();
                     theDigest.doFinal(theResult, 0);
                     myResults.addElement(Arrays.clone(theResult));
 
                     /* Switch to next node */
-                    theDigest.setNodePosition(++myOffSet, (short) myCurDepth);
+                    theDigest.setNodePosition(++myOffSet, myCurDepth);
                     myCount = 0;
                 }
 
@@ -323,8 +420,148 @@ public class Blake2Tree
             theDigest.doFinal(theResult, 0);
             myResults.addElement(Arrays.clone(theResult));
 
-            /* Keep going */
-            return false;
+            /* Return the results */
+            return myResults;
+        }
+
+        /**
+         * Check the leaf index.
+         * @param pIndex the index of the element
+         * @return is this the last element in the tree? true/false
+         */
+        boolean checkLeafIndex(final int pIndex) {
+            /* Cannot replace leaf if not built */
+            if (!treeBuilt) {
+                throw new IllegalStateException("Tree has not been built");
+            }
+
+            /* Check that the index is valid */
+            final SimpleVector myLevel = (SimpleVector) theHashes.firstElement();
+            if (pIndex < 0 || pIndex >= myLevel.size()) {
+                throw new IllegalArgumentException("Invalid index");
+            }
+
+            /* Return whether this is the last index */
+            return pIndex == myLevel.size() - 1;
+        }
+
+        /**
+         * Replace the hash for a leaf node.
+         * @param pIndex the index of the element
+         * @param pHash the new hashValue
+         */
+        void replaceElement(final int pIndex,
+                            final byte[] pHash) {
+            /* Check that the index is correct */
+            final SimpleVector myLevel = (SimpleVector) theHashes.firstElement();
+            if (pIndex < 0 || pIndex >= myLevel.size()) {
+                throw new IllegalArgumentException("Invalid index");
+            }
+
+            /* Replace the element */
+            myLevel.setElementAt(Arrays.clone(pHash), pIndex);
+
+            /* Loop through the levels */
+            int myIndex = pIndex;
+            for (int i = 1; i < theHashes.size(); i++) {
+                /* Recalculate the parent node */
+                myIndex = recalculateParent(i, myIndex);
+            }
+        }
+
+        /**
+         * Recalculate Node.
+         * @param pLevel the tree level of the node
+         * @param pIndex of the node
+         * @return the parent index
+         */
+        private int recalculateParent(final int pLevel,
+                                      final int pIndex) {
+            /* Make sure that the level is reasonable */
+            if (pLevel < 1 || pLevel >= theHashes.size()) {
+                throw new IllegalArgumentException("Invalid level");
+            }
+
+            /* Access the Vector for the parent and input levels */
+            final SimpleVector myInput = (SimpleVector) theHashes.elementAt(pLevel - 1);
+            final SimpleVector myLevel = (SimpleVector) theHashes.elementAt(pLevel);
+
+            /* Access treeConfig */
+            final int myFanOut = theDigest.getFanOut();
+            final int myMaxDepth = theDigest.getMaxDepth();
+
+            /* Determine whether we are calculating the root node */
+            final boolean lastStage = myFanOut == 0
+                                        || myInput.size() <= myFanOut
+                                        || pLevel == myMaxDepth - 1;
+
+            /* Calculate bounds */
+            final int myParentIndex = myFanOut == 0 || lastStage
+                                      ? 0
+                                      : pIndex / myFanOut;
+            final int myIndex = myParentIndex * myFanOut;
+            final int myNumHashes = myInput.size();
+            final int myMaxHash = lastStage ? myNumHashes : Math.min(myFanOut, myNumHashes - myIndex);
+
+            /* Initialise the digest */
+            theDigest.setNodePosition(myParentIndex, pLevel + 1);
+
+            /* Loop through the input hashes */
+            for (int i = 0; i < myMaxHash; i++) {
+                /* Fold into new hash */
+                final byte[] myHash = (byte[]) myInput.elementAt(i + myIndex);
+                theDigest.update(myHash, 0, myHash.length);
+            }
+
+            /* Note if we are the last of the level */
+            if (myIndex + myMaxHash == myNumHashes) {
+                theDigest.setLastNode();
+            }
+
+            /* Calculate new digest and replace it */
+            theDigest.doFinal(theResult, 0);
+            myLevel.setElementAt(Arrays.clone(theResult), myParentIndex);
+            return myParentIndex;
+        }
+
+        /**
+         * Compare to another store.
+         * @param pThat the store to compare against
+         */
+        boolean compareStore(final Blake2TreeStore pThat) {
+            /* Check that hashStores are the same length */
+            if (theHashes.size() != pThat.theHashes.size()) {
+                return false;
+            }
+
+            /* Loop through the elements */
+            final Enumeration myThisLevelEnumeration = theHashes.elements();
+            final Enumeration myThatLevelEnumeration = pThat.theHashes.elements();
+            while (myThisLevelEnumeration.hasMoreElements()) {
+                final SimpleVector myThisLevel = (SimpleVector) myThisLevelEnumeration.nextElement();
+                final SimpleVector myThatLevel = (SimpleVector) myThatLevelEnumeration.nextElement();
+
+                /* Check that tree levels are the same length */
+                if (myThisLevel.size() != myThatLevel.size()) {
+                    return false;
+                }
+
+                /* Loop through the elements */
+                final Enumeration myThisEnumeration = myThisLevel.elements();
+                final Enumeration myThatEnumeration = myThatLevel.elements();
+                while (myThisEnumeration.hasMoreElements()) {
+                    final byte[] myThis = (byte[]) myThisEnumeration.nextElement();
+                    final byte[] myThat = (byte[]) myThatEnumeration.nextElement();
+
+                    /* Check byte arrays */
+                    if (!Arrays.areEqual(myThis, myThat)) {
+                        return false;
+                    }
+                }
+            }
+
+            /* Equal */
+            return true;
         }
     }
 
@@ -394,6 +631,43 @@ public class Blake2Tree
                 throw new NoSuchElementException();
             }
             return elementData[elementCount - 1];
+        }
+
+        /**
+         * Returns the component at the specified index.
+         *
+         * @param      index   an index into this vector
+         * @return     the component at the specified index
+         * @throws ArrayIndexOutOfBoundsException if the index is out of range
+         *         ({@code index < 0 || index >= size()})
+         */
+        Object elementAt(final int index) {
+            if (index >= elementCount) {
+                throw new ArrayIndexOutOfBoundsException(index + " >= " + elementCount);
+            }
+
+            return elementData[index];
+        }
+
+        /**
+         * Sets the component at the specified {@code index} of this
+         * vector to be the specified object. The previous component at that
+         * position is discarded.
+         *
+         * <p>The index must be a value greater than or equal to {@code 0}
+         * and less than the current size of the vector.
+         *
+         * @param      obj     what the component is to be set to
+         * @param      index   the specified index
+         * @throws ArrayIndexOutOfBoundsException if the index is out of range
+         *         ({@code index < 0 || index >= size()})
+         */
+        void setElementAt(final Object obj,
+                          final int index) {
+            if (index >= elementCount) {
+                throw new ArrayIndexOutOfBoundsException(index + " >= " + elementCount);
+            }
+            elementData[index] = obj;
         }
 
         /**

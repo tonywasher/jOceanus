@@ -315,19 +315,24 @@ public abstract class Blake2
         final boolean seqMode = pFanOut == 1;
 
         /* Check that maxDepth value makes sense */
+        final boolean xofMode = pMaxDepth == 0;
         if (pMaxDepth < 0 || pMaxDepth > MAXBYTE) {
             throw new IllegalArgumentException("MaxDepth out of range");
         }
         if (seqMode != (pMaxDepth == 1)) {
-            throw new IllegalArgumentException("Inconsistent treeConfig for Depth and fanOut");
+            throw new IllegalArgumentException("Inconsistent treeConfig for sequentialMode");
         }
         theMaxDepth = (short) pMaxDepth;
 
+        /* Check that leaf value makes sense */
         if (pLeafLen < 0) {
             throw new IllegalArgumentException("LeafLength out of range");
         }
         if (seqMode != (pLeafLen == 0)) {
             throw new IllegalArgumentException("Inconsistent treeConfig for LeafLen and fanOut");
+        }
+        if (xofMode && pFanOut != 0) {
+            throw new IllegalArgumentException("Inconsistent treeConfig for xofMode");
         }
         theLeafLen = pLeafLen;
     }
@@ -361,8 +366,8 @@ public abstract class Blake2
      * @param pOffset the offset.
      * @param pDepth the depth.
      */
-    public void setNodePosition(final int pOffset,
-                                final short pDepth) {
+    void setNodePosition(final int pOffset,
+                         final int pDepth) {
         if (pOffset < 0) {
             throw new IllegalArgumentException("NodeOffset out of range");
         }

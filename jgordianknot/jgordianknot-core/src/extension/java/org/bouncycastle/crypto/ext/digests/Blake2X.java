@@ -66,11 +66,11 @@ public class Blake2X
 
     /**
      * Constructor.
-     * @param p2b use Blake2b?
+     * @param pDigest the underlying digest.
      */
-    public Blake2X(final boolean p2b) {
+    public Blake2X(final Blake2 pDigest) {
         /* Create the two digests */
-        theUnderlying = p2b ? new Blake2b(512) : new Blake2s(256);
+        theUnderlying = pDigest;
         theComposite = (Blake2) theUnderlying.copy();
 
         /* Configure the composite */
@@ -271,7 +271,7 @@ public class Blake2X
         theComposite.setDigestLength(digestLen);
 
         /* Calculate the hash */
-        theComposite.setNodePosition(theNodeIndex++, (short) 0);
+        theComposite.setNodePosition(theNodeIndex++, 0);
         theComposite.update(theRoot, 0, theRoot.length);
         theComposite.doFinal(theCurrent, 0);
         theHashIndex = 0;
