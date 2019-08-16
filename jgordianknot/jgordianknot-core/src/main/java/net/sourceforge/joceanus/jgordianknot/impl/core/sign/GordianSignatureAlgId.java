@@ -197,6 +197,14 @@ public class GordianSignatureAlgId {
                 new AlgorithmIdentifier(PKCSObjectIdentifiers.id_RSASSA_PSS,
                         createPSSParams(NISTObjectIdentifiers.id_sha3_512, GordianLength.LEN_512)));
 
+        addToMaps(GordianSignatureSpec.rsa(GordianSignatureType.PREHASH, GordianDigestSpec.md2()),
+                new AlgorithmIdentifier(PKCSObjectIdentifiers.md2WithRSAEncryption, DERNull.INSTANCE));
+        addToMaps(GordianSignatureSpec.rsa(GordianSignatureType.PREHASH, GordianDigestSpec.md4()),
+                new AlgorithmIdentifier(PKCSObjectIdentifiers.md4WithRSAEncryption, DERNull.INSTANCE));
+        addToMaps(GordianSignatureSpec.rsa(GordianSignatureType.PREHASH, GordianDigestSpec.md5()),
+                new AlgorithmIdentifier(PKCSObjectIdentifiers.md5WithRSAEncryption, DERNull.INSTANCE));
+        addToMaps(GordianSignatureSpec.rsa(GordianSignatureType.PREHASH, GordianDigestSpec.sha1()),
+                new AlgorithmIdentifier(PKCSObjectIdentifiers.sha1WithRSAEncryption, DERNull.INSTANCE));
         addToMaps(GordianSignatureSpec.rsa(GordianSignatureType.PREHASH, GordianDigestSpec.sha2(GordianLength.LEN_224)),
                 new AlgorithmIdentifier(PKCSObjectIdentifiers.sha224WithRSAEncryption, DERNull.INSTANCE));
         addToMaps(GordianSignatureSpec.rsa(GordianSignatureType.PREHASH, GordianDigestSpec.sha2(GordianLength.LEN_256)),

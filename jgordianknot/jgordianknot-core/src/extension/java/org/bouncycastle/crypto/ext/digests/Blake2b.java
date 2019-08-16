@@ -84,6 +84,7 @@ public class Blake2b
             throw new IllegalArgumentException("Incorrect digest length");
         }
         setDigestLength(pLength / Byte.SIZE);
+        activateH();
     }
 
     /**
@@ -110,12 +111,12 @@ public class Blake2b
 
     @Override
     public void reset() {
-        /* reset underlying class */
-        super.reset();
-
         /* Reset counter */
         t0 = 0L;
         t1 = 0L;
+
+        /* reset underlying class */
+        super.reset();
     }
 
     @Override

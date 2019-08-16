@@ -16,114 +16,303 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jgordianknot.api.mac;
 
-import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianCipherParameters.GordianNonceParameters;
+import org.bouncycastle.util.Arrays;
+
 import net.sourceforge.joceanus.jgordianknot.api.key.GordianKey;
 
 /**
  * Mac Parameters.
  */
-public interface GordianMacParameters {
+public final class GordianMacParameters {
     /**
-     * Obtain keySpec Parameters.
-     * @param pKey the key
-     * @return the keySpec
+     * The Key.
      */
-    static GordianKeyMacParameters key(final GordianKey<GordianMacSpec> pKey) {
-        return new GordianKeyMacParameters(pKey);
+    private GordianKey<GordianMacSpec> theKey;
+
+    /**
+     * The Nonce.
+     */
+    private byte[] theNonce;
+
+    /**
+     * Random Nonce requested?
+     */
+    private boolean randomNonce;
+
+    /**
+     * Personalisation.
+     */
+    private byte[] thePersonal;
+
+    /**
+     * Output length.
+     */
+    private long theOutLen;
+
+    /**
+     * The fanOut.
+     */
+    private short theFanOut;
+
+    /**
+     * The maxDepth.
+     */
+    private short theMaxDepth;
+
+    /**
+     * The leafLength.
+     */
+    private int theLeafLen;
+
+    /**
+     * Constructor.
+     */
+    private GordianMacParameters() {
+    }
+
+    /**
+     * Generate keyOnly Parameters.
+     * @param pKey the key
+     * @return the macParameters
+     */
+    public static GordianMacParameters key(final GordianKey<GordianMacSpec> pKey) {
+        final GordianMacParameters myParams = new GordianMacParameters();
+        myParams.theKey = pKey;
+        return myParams;
     }
 
     /**
      * Obtain keyAndNonce Parameters.
      * @param pKey the key
      * @param pNonce the nonce
-     * @return the keySpec
+     * @return the macParameters
      */
-    static GordianKeyMacParameters keyAndNonce(final GordianKey<GordianMacSpec> pKey,
-                                               final byte[] pNonce) {
-        return new GordianKeyAndNonceMacParameters(pKey, pNonce);
+    public static GordianMacParameters keyAndNonce(final GordianKey<GordianMacSpec> pKey,
+                                                   final byte[] pNonce) {
+        final GordianMacParameters myParams = new GordianMacParameters();
+        myParams.theKey = pKey;
+        myParams.theNonce = Arrays.clone(pNonce);
+        return myParams;
     }
 
     /**
      * Obtain keyAndRandomNonce Parameters.
      * @param pKey the key
-     * @return the keySpec
+     * @return the macParameters
      */
-    static GordianKeyMacParameters keyWithRandomNonce(final GordianKey<GordianMacSpec> pKey) {
-        return new GordianKeyAndNonceMacParameters(pKey);
+    public static GordianMacParameters keyWithRandomNonce(final GordianKey<GordianMacSpec> pKey) {
+        final GordianMacParameters myParams = new GordianMacParameters();
+        myParams.theKey = pKey;
+        myParams.randomNonce = true;
+        return myParams;
     }
+
     /**
-     * Key Parameters.
+     * Obtain the key.
+     * @return the key
      */
-    class GordianKeyMacParameters
-            implements GordianMacParameters {
+    public GordianKey<GordianMacSpec> getKey() {
+        return theKey;
+    }
+
+    /**
+     * Obtain the Nonce.
+     * @return the nonce
+     */
+    public byte[] getNonce() {
+        return Arrays.clone(theNonce);
+    }
+
+    /**
+     * Is the nonce randomly generated?
+     * @return true/false
+     */
+    public boolean randomNonce() {
+        return randomNonce;
+    }
+
+    /**
+     * Obtain the Personalisation.
+     * @return the personalisation
+     */
+    public byte[] getPersonal() {
+        return Arrays.clone(thePersonal);
+    }
+
+    /**
+     * Obtain the Output length.
+     * @return the outLength
+     */
+    public long getOutputLength() {
+        return theOutLen;
+    }
+
+    /**
+     * Obtain the treeLeafLength.
+     * @return the leafLength
+     */
+    public int getTreeLeafLen() {
+        return theLeafLen;
+    }
+
+    /**
+     * Obtain the treeFanOut.
+     * @return the fanOut
+     */
+    public short getTreeFanOut() {
+        return theFanOut;
+    }
+
+    /**
+     * Obtain the treeMaxDepth.
+     * @return the maxDepth
+     */
+    public short getTreeMaxDepth() {
+        return theMaxDepth;
+    }
+
+    /**
+     * Parameter Builder.
+     */
+    public static class GordianMacParametersBuilder {
         /**
          * The Key.
          */
-        private final GordianKey<GordianMacSpec> theKey;
+        private GordianKey<GordianMacSpec> theKey;
 
-        /**
-         * Constructor.
-         * @param pKey the key
-         */
-        GordianKeyMacParameters(final GordianKey<GordianMacSpec> pKey) {
-            theKey = pKey;
-        }
-
-        /**
-         * Obtain the key.
-         * @return the key
-         */
-        public GordianKey<GordianMacSpec> getKey() {
-            return theKey;
-        }
-    }
-
-    /**
-     * KeyAndNonce Parameters.
-     */
-    class GordianKeyAndNonceMacParameters
-            extends GordianKeyMacParameters
-            implements GordianNonceParameters {
         /**
          * The Nonce.
          */
-        private final byte[] theNonce;
+        private byte[] theNonce;
 
         /**
          * Random Nonce requested?
          */
-        private final boolean randomNonce;
+        private boolean randomNonce;
 
         /**
-         * Constructor for random nonce.
-         * @param pKey the key
+         * Personalisation.
          */
-        GordianKeyAndNonceMacParameters(final GordianKey<GordianMacSpec> pKey) {
-            super(pKey);
+        private byte[] thePersonal;
+
+        /**
+         * Output length.
+         */
+        private long theOutLen;
+
+        /**
+         * The fanOut.
+         */
+        private short theFanOut = 1;
+
+        /**
+         * The maxDepth.
+         */
+        private short theMaxDepth = 1;
+
+        /**
+         * The leafLength.
+         */
+        private int theLeafLen;
+
+        /**
+         * Set the key.
+         * @param pKey the key
+         * @return the Builder
+         */
+        GordianMacParametersBuilder setKey(final GordianKey<GordianMacSpec> pKey) {
+            theKey = pKey;
+            return this;
+        }
+
+        /**
+         * Set the nonce.
+         * @param pNonce the nonce
+         * @return the Builder
+         */
+        GordianMacParametersBuilder setNonce(final byte[] pNonce) {
+            theNonce = Arrays.clone(pNonce);
+            randomNonce = false;
+            return this;
+        }
+
+        /**
+         * Use random nonce.
+         * @return the Builder
+         */
+        GordianMacParametersBuilder withRandomNonce() {
             theNonce = null;
             randomNonce = true;
+            return this;
         }
 
         /**
-         * Constructor.
-         * @param pKey the key
-         * @param pNonce the nonce
+         * Set the personalisation.
+         * @param pPersonal the personalisation
+         * @return the Builder
          */
-        GordianKeyAndNonceMacParameters(final GordianKey<GordianMacSpec> pKey,
-                                        final byte[] pNonce) {
-            super(pKey);
-            theNonce = pNonce;
-            randomNonce = false;
+        GordianMacParametersBuilder setPersonalisation(final byte[] pPersonal) {
+            thePersonal = Arrays.clone(pPersonal);
+            return this;
         }
 
-        @Override
-        public byte[] getNonce() {
-            return theNonce;
+        /**
+         * Set the output length.
+         * @param pOutLen the outputLen
+         * @return the Builder
+         */
+        GordianMacParametersBuilder setOutputLength(final long pOutLen) {
+            theOutLen = pOutLen;
+            return this;
         }
 
-        @Override
-        public boolean randomNonce() {
-            return randomNonce;
+        /**
+         * Set the treeConfig.
+         * @param pFanOut the fanout.
+         * @param pMaxDepth the maxDepth.
+         * @param pLeafLen the leafLength.
+         * @return the Builder
+         */
+        public GordianMacParametersBuilder setTreeConfig(final int pFanOut,
+                                                         final int pMaxDepth,
+                                                         final int pLeafLen) {
+            theFanOut = (short) pFanOut;
+            theMaxDepth = (short) pMaxDepth;
+            theLeafLen = pLeafLen;
+            return this;
+        }
+
+        /**
+         * Build the parameters.
+         * @return the parameters
+         */
+        public GordianMacParameters build() {
+            /* Create params */
+            final GordianMacParameters myParams = new GordianMacParameters();
+
+            /* Record key and Nonce */
+            if (theKey != null) {
+                myParams.theKey = theKey;
+            }
+            if (theNonce != null) {
+                myParams.theNonce = theNonce;
+            } else if (randomNonce) {
+                myParams.randomNonce = true;
+            }
+
+            /* Record personalisation and output length */
+            if (thePersonal != null) {
+                myParams.thePersonal = thePersonal;
+            }
+            myParams.theOutLen = theOutLen;
+
+            /* Record tree details */
+            myParams.theFanOut = theFanOut;
+            myParams.theMaxDepth = theMaxDepth;
+            myParams.theLeafLen = theLeafLen;
+
+            /* Return the parameters */
+            return myParams;
         }
     }
 }

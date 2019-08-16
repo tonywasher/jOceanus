@@ -19,8 +19,8 @@ package org.bouncycastle.crypto.ext.macs;
 import org.bouncycastle.crypto.CipherParameters;
 import org.bouncycastle.crypto.Mac;
 import org.bouncycastle.crypto.ext.digests.Blake2;
+import org.bouncycastle.crypto.ext.params.Blake2Parameters;
 import org.bouncycastle.crypto.params.KeyParameter;
-import org.bouncycastle.crypto.params.ParametersWithIV;
 
 /**
  * Bouncy implementation of Blake2Mac.
@@ -49,23 +49,22 @@ public class Blake2Mac
     @Override
     public void init(final CipherParameters pParams) {
         CipherParameters myParams = pParams;
-        byte[] myIV = null;
-        if (myParams instanceof ParametersWithIV) {
-            final ParametersWithIV ivParams = (ParametersWithIV) myParams;
-            myIV = ivParams.getIV();
-            myParams = ivParams.getParameters();
+        if (myParams instanceof KeyParameter) {
+            myParams = new Blake2Parameters.Builder()
+                    .setKey(((KeyParameter) myParams).getKey())
+                    .build();
         }
-
-        /* Access the key */
-        if (!(myParams instanceof KeyParameter)) {
-            throw new IllegalArgumentException(getAlgorithmName() + " requires a key.");
+        if (!(myParams instanceof Blake2Parameters)) {
+            throw new IllegalArgumentException("Invalid parameter passed to Blake2Mac init - "
+                    + pParams.getClass().getName());
         }
-        final KeyParameter keyParams = (KeyParameter) myParams;
-        final byte[] myKey = keyParams.getKey();
+        final Blake2Parameters myBlakeParams = (Blake2Parameters) myParams;
+        if (myBlakeParams.getKey() == null) {
+            throw new IllegalArgumentException("Blake2Mac requires a key parameter.");
+        }
 
         /* Configure the digest */
-        theDigest.setKey(myKey);
-        theDigest.setSalt(myIV);
+        theDigest.init(myBlakeParams);
     }
 
     @Override
@@ -91,14 +90,6 @@ public class Blake2Mac
     @Override
     public void reset() {
         theDigest.reset();
-    }
-
-    /**
-     * Set the personalisation.
-     * @param pPersonal the personalisation.
-     */
-    public void setPersonalisation(final byte[] pPersonal) {
-        theDigest.setPersonalisation(pPersonal);
     }
 }
 
