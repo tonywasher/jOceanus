@@ -21,6 +21,7 @@ import java.util.stream.Stream;
 
 import org.bouncycastle.crypto.Digest;
 import org.bouncycastle.crypto.Mac;
+import org.bouncycastle.crypto.ext.digests.Blake2;
 import org.bouncycastle.crypto.ext.digests.Blake2Tree;
 import org.bouncycastle.crypto.ext.digests.Blake2X;
 import org.bouncycastle.crypto.ext.digests.Blake2b;
@@ -231,6 +232,35 @@ public class DigestTest {
 
         /* Check the result */
         Assertions.assertArrayEquals(myExpected, myOutput, "Result mismatch");
+    }
+
+    /**
+     * Run the blake Null Xof tests.
+     * @param pBase the base digest.
+     * @throws OceanusException on error
+     */
+    static void testBlakeNullXof(final Blake2 pBase) throws OceanusException {
+        /* Create a Blake2X instance */
+        final Blake2X myXof = new Blake2X((Blake2) pBase.copy());
+
+        /* Create output buffers */
+        final int myLen = pBase.getDigestSize();
+        final byte[] myBlake2 = new byte[myLen];
+        final byte[] myBlake2X = new byte[myLen];
+
+        /* Initialise the Xof */
+        final Blake2Parameters myParams = new Blake2Parameters.Builder()
+                .setMaxXofLen(0)
+                .build();
+        myXof.init(myParams);
+        myXof.update(BLAKE2DATA, 0, BLAKE2DATA.length);
+        myXof.doFinal(myBlake2X, 0);
+
+        pBase.update(BLAKE2DATA, 0, BLAKE2DATA.length);
+        pBase.doFinal(myBlake2, 0);
+
+        /* Check the result */
+        Assertions.assertArrayEquals(myBlake2X, myBlake2, "Result mismatch");
     }
 
     /**
@@ -917,6 +947,16 @@ public class DigestTest {
             testBlakeXof(myXof, 32, KEYEDEXPECTED[2]);
             testBlakeXof(myXof, 32, KEYEDEXPECTED[3]);
             testBlakeXof(myXof, 32, KEYEDEXPECTED[4]);
+
+            /* Test null Xofs */
+            testBlakeNullXof(new Blake2s(128));
+            testBlakeNullXof(new Blake2s(160));
+            testBlakeNullXof(new Blake2s(224));
+            testBlakeNullXof(new Blake2s(256));
+            testBlakeNullXof(new Blake2b(160));
+            testBlakeNullXof(new Blake2b(256));
+            testBlakeNullXof(new Blake2b(384));
+            testBlakeNullXof(new Blake2b(512));
         }
     }
 
@@ -970,7 +1010,7 @@ public class DigestTest {
          * @throws OceanusException on error
          */
         void runTest() throws OceanusException {
-            /* Run standard test */
+            /* Run standard tests */
             testBlake2Tree(1, 2, 3);
             testBlake2Tree(4, 2, 3);
             testBlake2Tree(53, 2, 3);

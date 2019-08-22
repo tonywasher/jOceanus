@@ -311,7 +311,6 @@ public abstract class Blake2
         if (pFanOut < 0 || pFanOut > MAXBYTE) {
             throw new IllegalArgumentException("FanOut out of range");
         }
-        theFanOut = (short) pFanOut;
         final boolean seqMode = pFanOut == 1;
 
         /* Check that maxDepth value makes sense */
@@ -322,7 +321,6 @@ public abstract class Blake2
         if (seqMode != (pMaxDepth == 1)) {
             throw new IllegalArgumentException("Inconsistent treeConfig for sequentialMode");
         }
-        theMaxDepth = (short) pMaxDepth;
 
         /* Check that leaf value makes sense */
         if (pLeafLen < 0) {
@@ -334,6 +332,10 @@ public abstract class Blake2
         if (xofMode && pFanOut != 0) {
             throw new IllegalArgumentException("Inconsistent treeConfig for xofMode");
         }
+
+        /* Record the values */
+        theFanOut = (short) pFanOut;
+        theMaxDepth = (short) pMaxDepth;
         theLeafLen = pLeafLen;
     }
 

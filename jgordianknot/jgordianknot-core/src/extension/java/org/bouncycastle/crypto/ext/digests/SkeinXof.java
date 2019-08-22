@@ -18,32 +18,29 @@ package org.bouncycastle.crypto.ext.digests;
 
 import org.bouncycastle.crypto.ExtendedDigest;
 import org.bouncycastle.crypto.Xof;
-import org.bouncycastle.crypto.ext.params.Blake2Parameters;
-import org.bouncycastle.util.Arrays;
+import org.bouncycastle.crypto.ext.digests.SkeinBase.Configuration;
+import org.bouncycastle.crypto.ext.params.SkeinXParameters;
 import org.bouncycastle.util.Memoable;
 
 /**
- * Blake2X implementation.
- * <p>This implementation supports the following elements of Blake2Parameters
+ * SkeinXof implementation.
+ * <p>This implementation supports the following elements of SkeinXParameters
  * <ul>
  *     <li>Key
  *     <li>Nonce
  *     <li>Personalisation
+ *     <li>PublicKey
+ *     <li>Key Identifier
  *     <li>Max Output length
  * </ul>
- * <p>If OutputLen is set to zero, then Blake2X defaults to the underlying digestLength.
+ * <p>If OutputLen is set to zero, then SkeinXof defaults to the underlying digestLength.
  */
-public class Blake2X
+public class SkeinXof
         implements ExtendedDigest, Memoable, Xof {
     /**
-     * The underlying Blake instance.
+     * The underlying Skein instance.
      */
-    private final Blake2 theUnderlying;
-
-    /**
-     * The combining Blake instance.
-     */
-    private final Blake2 theComposite;
+    private final SkeinBase theUnderlying;
 
     /**
      * The single byte buffer.
@@ -51,14 +48,14 @@ public class Blake2X
     private final byte[] singleByte = new byte[1];
 
     /**
+     * The next output index.
+     */
+    private byte[] outputCache;
+
+    /**
      * The XofLen.
      */
     private long theXofLen;
-
-    /**
-     * The Root hash.
-     */
-    private byte[] theRoot;
 
     /**
      * The XofRemaining.
@@ -66,33 +63,23 @@ public class Blake2X
     private long theXofRemaining;
 
     /**
-     * The current hash.
+     * The next output index.
      */
-    private byte[] theCurrent;
+    private long nextOutputIdx;
 
     /**
-     * The data index within the current hash.
+     * Bytes in cache.
      */
-    private int theHashIndex;
-
-    /**
-     * The Xof NodeIndex.
-     */
-    private int theNodeIndex;
+    private int bytesInCache;
 
     /**
      * Constructor.
      * @param pDigest the underlying digest.
      */
-    public Blake2X(final Blake2 pDigest) {
-        /* Create the two digests */
+    public SkeinXof(final SkeinBase pDigest) {
+        /* Store the digest */
         theUnderlying = pDigest;
-        theComposite = (Blake2) theUnderlying.copy();
-
-        /* Configure the composite */
-        theComposite.setTreeConfig(0, 0, theUnderlying.getDigestSize());
-        theComposite.setInnerLength(theUnderlying.getDigestSize());
-        theComposite.setXofLen(0);
+        outputCache = new byte[theUnderlying.getBlockSize()];
 
         /* Clear outputting flag */
         theXofRemaining = -1L;
@@ -102,10 +89,10 @@ public class Blake2X
      * Constructor.
      * @param pSource the source digest.
      */
-    private Blake2X(final Blake2X pSource) {
+    private SkeinXof(final SkeinXof pSource) {
         /* Create hashes */
-        theUnderlying = pSource.theUnderlying instanceof Blake2b ? new Blake2b(512) : new Blake2s(256);
-        theComposite = (Blake2) theUnderlying.copy();
+        theUnderlying = (SkeinBase) pSource.theUnderlying.copy();
+        outputCache = new byte[theUnderlying.getBlockSize()];
 
         /* Initialise from source */
         reset(pSource);
@@ -115,43 +102,50 @@ public class Blake2X
      * Initialise.
      * @param pParams the parameters.
      */
-    public void init(final Blake2Parameters pParams) {
-        /* Pass selective parameters to the underlying hash */
-        theUnderlying.setKey(pParams.getKey());
-        theUnderlying.setSalt(pParams.getSalt());
-        theUnderlying.setPersonalisation(pParams.getPersonalisation());
-        theUnderlying.setXofLen(pParams.getMaxOutputLength());
-        theUnderlying.reset();
+    public void init(final SkeinXParameters pParams) {
+        /* Reject a negative Xof length */
+        final long myXofLen = pParams.getMaxOutputLength();
+        if (myXofLen < -1) {
+            throw new IllegalArgumentException("Invalid output length");
+        }
+        theXofLen = myXofLen;
+
+        /* Declare the configuration */
+        declareConfig();
 
         /* Pass selective parameters to the underlying hash */
-        theComposite.setSalt(pParams.getSalt());
-        theComposite.setPersonalisation(pParams.getPersonalisation());
-        theComposite.setXofLen(pParams.getMaxOutputLength());
-        theComposite.reset();
-
-        /* Adjust XofLength */
-        theXofLen = theUnderlying.getXofLen();
+        theUnderlying.init(pParams);
         theXofRemaining = -1L;
+    }
+
+    /**
+     * Declare extended configuration.
+     */
+    private void declareConfig() {
+        /* Declare the configuration */
+        final long myLen = theXofLen == -1 ? -1L : theXofLen * 8;
+        final Configuration myConfig = new Configuration(myLen);
+        theUnderlying.setConfiguration(myConfig);
     }
 
     @Override
     public String getAlgorithmName() {
-        final String myBase = theUnderlying instanceof Blake2b ? "Blake2Xb" : "Blake2Xs";
+        final String myBase = "SkeinXof";
         if (theXofLen == -1) {
             return myBase;
         }
-        final long myLen = theXofLen == 0 ? theUnderlying.getDigestSize() : theXofLen;
-        return myBase + "-" + (myLen * 8);
+        final long myLen = theXofLen == 0 ? theUnderlying.getOutputSize() : theXofLen;
+        return myBase + "-" + (theUnderlying.getBlockSize() * 8) + "-" + (myLen * 8);
     }
 
     @Override
     public int getDigestSize() {
-        return theXofLen == 0 ? theUnderlying.getDigestSize() : (int) theXofLen;
+        return theXofLen == 0 ? theUnderlying.getOutputSize() : (int) theXofLen;
     }
 
     @Override
     public int getByteLength() {
-        return theUnderlying.getByteLength();
+        return theUnderlying.getBlockSize();
     }
 
     @Override
@@ -200,30 +194,27 @@ public class Blake2X
     public int doOutput(final byte[] pOut,
                         final int pOutOffset,
                         final int pOutLen) {
-        /* If we have not created the root hash yet */
-        if (theRoot == null) {
-            /* Calculate the underlying hash */
-            theRoot = new byte[theUnderlying.getDigestSize()];
-            theUnderlying.doFinal(theRoot, 0);
-            theNodeIndex = 0;
+        /* If wa are switching to output */
+        if (theXofRemaining == -1) {
+            /* Initialise values */
+            nextOutputIdx = 0;
+            bytesInCache = 0;
 
             /* If we have a null Xof */
             if (theXofLen == 0) {
                 /* Calculate the number of bytes available */
-                theXofRemaining = theUnderlying.getDigestSize();
-                theCurrent = theRoot;
+                theXofRemaining = theUnderlying.getOutputSize();
 
                 /* Else we are handling a normal Xof */
             } else {
                 /* Calculate the number of bytes available */
                 theXofRemaining = theXofLen == -1
-                                  ? (1L << Integer.SIZE) * theUnderlying.getDigestSize()
+                                  ? -2
                                   : theXofLen;
-
-                /* Allocate a new current hash buffer */
-                theCurrent = new byte[theUnderlying.getDigestSize()];
-                theHashIndex = theCurrent.length;
             }
+
+            /* Initiate output */
+            theUnderlying.initiateOutput();
         }
 
         /* Reject if there is insufficient Xof remaining */
@@ -231,33 +222,34 @@ public class Blake2X
             throw new IllegalArgumentException("Insufficient bytes remaining");
         }
 
-        /* If we have some remaining data in the current hash */
+        /* If we have some remaining data in the cache */
         int dataLeft = pOutLen;
         int outPos = pOutOffset;
-        if (theHashIndex < theCurrent.length) {
+        if (bytesInCache > 0) {
             /* Copy data from current hash */
-            final int dataToCopy = Math.min(dataLeft, theCurrent.length - theHashIndex);
-            System.arraycopy(theCurrent, theHashIndex, pOut, outPos, dataToCopy);
+            final int dataToCopy = Math.min(dataLeft, bytesInCache);
+            System.arraycopy(outputCache, outputCache.length - bytesInCache, pOut, outPos, dataToCopy);
 
             /* Adjust counters */
             theXofRemaining -= dataToCopy;
-            theHashIndex += dataToCopy;
+            bytesInCache -= dataToCopy;
             outPos += dataToCopy;
             dataLeft -= dataToCopy;
         }
 
         /* Loop until we have completed the request */
         while (dataLeft > 0) {
-            /* Calculate the next hash */
-            obtainNextHash();
+            /* Obtain the next set of output bytes */
+            theUnderlying.output(nextOutputIdx++, outputCache, 0, outputCache.length);
+            bytesInCache = outputCache.length;
 
             /* Copy data from current hash */
-            final int dataToCopy = Math.min(dataLeft, theCurrent.length);
-            System.arraycopy(theCurrent, 0, pOut, outPos, dataToCopy);
+            final int dataToCopy = Math.min(dataLeft, outputCache.length);
+            System.arraycopy(outputCache, 0, pOut, outPos, dataToCopy);
 
             /* Adjust counters */
             theXofRemaining -= dataToCopy;
-            theHashIndex += dataToCopy;
+            bytesInCache -= dataToCopy;
             outPos += dataToCopy;
             dataLeft -= dataToCopy;
         }
@@ -269,51 +261,33 @@ public class Blake2X
     @Override
     public void reset() {
         theUnderlying.reset();
-        theRoot = null;
-        theCurrent = null;
         theXofRemaining = -1L;
     }
 
     @Override
     public void reset(final Memoable pSource) {
         /* Access source */
-        final Blake2X mySource = (Blake2X) pSource;
+        final SkeinXof mySource = (SkeinXof) pSource;
 
         /* Reset digests */
         theUnderlying.reset(mySource.theUnderlying);
-        theComposite.reset(mySource.theComposite);
-
-        /* Clone hashes */
-        theRoot = Arrays.clone(mySource.theRoot);
-        theCurrent = Arrays.clone(mySource.theCurrent);
 
         /* Copy state */
         theXofLen = mySource.theXofLen;
         theXofRemaining = mySource.theXofRemaining;
-        theHashIndex = mySource.theHashIndex;
-        theNodeIndex = mySource.theNodeIndex;
+        bytesInCache = mySource.bytesInCache;
+        nextOutputIdx = mySource.nextOutputIdx;
+
+        /* Copy cache */
+        System.arraycopy(mySource.outputCache, 0, outputCache, 0, outputCache.length);
+
+        /* Declare extended configuration */
+        declareConfig();
     }
 
     @Override
-    public Blake2X copy() {
-        return new Blake2X(this);
-    }
-
-    /**
-     * Obtain the next hash.
-     */
-    private void obtainNextHash() {
-        /* Set the digestLength */
-        int digestLen = theUnderlying.getDigestSize();
-        if (theXofRemaining < digestLen) {
-            digestLen = (int) theXofRemaining;
-        }
-        theComposite.setDigestLength(digestLen);
-
-        /* Calculate the hash */
-        theComposite.setNodePosition(theNodeIndex++, 0);
-        theComposite.update(theRoot, 0, theRoot.length);
-        theComposite.doFinal(theCurrent, 0);
-        theHashIndex = 0;
+    public SkeinXof copy() {
+        return new SkeinXof(this);
     }
 }
+
