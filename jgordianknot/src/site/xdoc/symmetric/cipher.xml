@@ -101,11 +101,12 @@
         <section name="Stream Ciphers">
             <p>The following algorithms are supported.</p>
             <table class="defTable">
-                <tr><td class="defHdr">Algorithm</td><td class="defHdr">JCA</td><td class="defHdr">128</td><td class="defHdr">192</td><td class="defHdr">256</td>
-                    <td class="defHdr">512</td><td class="defHdr">1024</td><td class="defHdr">Notes</td></tr>
-                <tr><td>ChaCha</td><td>Y</td><td>Y</td><td/><td>Y</td><td/><td/><td>ChaCha7359 used for 256 keySize</td></tr>
-                <tr><td>Salsa20</td><td>Y</td><td>Y</td><td/><td>Y</td><td/><td/><td/></tr>
-                <tr><td>XChaCha</td><td/><td/><td/><td>Y</td><td/><td/><td/></tr>
+                <tr><td class="defHdr">Algorithm</td><td class="defHdr">Variant</td><td class="defHdr">JCA</td><td class="defHdr">128</td><td class="defHdr">192</td>
+                    <td class="defHdr">256</td><td class="defHdr">512</td><td class="defHdr">1024</td><td class="defHdr">Notes</td></tr>
+                <tr><td rowspan="3">ChaCha20</td><td>Standard</td><td>Y</td><td>Y</td><td/><td>Y</td><td/><td/><td/></tr>
+                <tr><td>ChaCha7359</td><td>Y</td><td/><td/><td>Y</td><td/><td/><td/></tr>
+                <tr><td>XChaCha20</td><td/><td/><td/><td>Y</td><td/><td/><td/></tr>
+                <tr><td rowspan="2">Salsa20</td><td>Standard</td><td>Y</td><td>Y</td><td/><td>Y</td><td/><td/><td/></tr>
                 <tr><td>XSalsa20</td><td>Y</td><td/><td/><td>Y</td><td/><td/><td/></tr>
                 <tr><td>HC</td><td>Y</td><td>Y</td><td/><td>Y</td><td/><td/><td>HC128/HC256 as appropriate</td></tr>
                 <tr><td>VMPC</td><td>Y</td><td>Y</td><td>Y</td><td>Y</td><td>Y</td><td>Y</td><td/></tr>

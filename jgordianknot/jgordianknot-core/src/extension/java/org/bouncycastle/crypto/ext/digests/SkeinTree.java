@@ -22,12 +22,13 @@ import java.util.NoSuchElementException;
 import org.bouncycastle.crypto.DataLengthException;
 import org.bouncycastle.crypto.Digest;
 import org.bouncycastle.crypto.OutputLengthException;
-import org.bouncycastle.crypto.ext.params.Blake2Parameters;
+import org.bouncycastle.crypto.ext.digests.SkeinBase.Configuration;
+import org.bouncycastle.crypto.ext.params.SkeinXParameters;
 import org.bouncycastle.util.Arrays;
 
 /**
- * Blake2 Tree Hash.
- * <p>This implementation will support all elements of Blake2Parameters except for Maximum OutputLength.
+ * Skein Tree Hash.
+ * <p>This implementation will support all elements of SkeinXParameters except for Maximum OutputLength.
  * This is restricted to the output length of the underlying digest.
  * <p>Tree configuration is required and defaults to unlimited fanOut, maxDepth of 2 and 4K leafLength.
  * <p>The implementation consumes a large message as a standard digest and builds the lowest level of the tree on the fly.
@@ -45,22 +46,32 @@ import org.bouncycastle.util.Arrays;
  * The recalculation will take place when the final result is requested, allowing several pages to be replaced before the tree is recalculated
  * </ul>
  */
-public class Blake2Tree
+public class SkeinTree
         implements Digest {
     /**
-     * Default leaf length.
+     * The maximum Byte.
      */
-    private static final int DEFAULT_LEAFLEN = 4096;
+    private static final int MAXBYTE = 255;
 
     /**
-     * The underlying Blake2 instance.
+     * The Byte shift.
      */
-    private final Blake2 theDigest;
+    private static final int BYTESHIFT = 3;
+
+    /**
+     * The underlying Skein instance.
+     */
+    private final SkeinBase theDigest;
 
     /**
      * The TreeStore.
      */
-    private final Blake2TreeStore theStore;
+    private final SkeinTreeStore theStore;
+
+    /**
+     * Hash buffer.
+     */
+    private final byte[] theHash;
 
     /**
      * The single byte buffer.
@@ -68,9 +79,19 @@ public class Blake2Tree
     private final byte[] singleByte = new byte[1];
 
     /**
-     * Hash buffer.
+     * The leafLength.
      */
-    private final byte[] theHash;
+    private int theLeafLen;
+
+    /**
+     * The shift.
+     */
+    private int theShift;
+
+    /**
+     * The leaf index.
+     */
+    private int theLeafIdx;
 
     /**
      * The data processed on current leaf.
@@ -81,26 +102,26 @@ public class Blake2Tree
      * Constructor.
      * @param pDigest the underlying digest.
      */
-    public Blake2Tree(final Blake2 pDigest) {
+    public SkeinTree(final SkeinBase pDigest) {
         /* Store parameters and initialise store */
         theDigest = pDigest;
-        theStore = new Blake2TreeStore(pDigest);
-        theHash = new byte[theDigest.getDigestSize()];
+        theStore = new SkeinTreeStore(pDigest);
+        theHash = new byte[theDigest.getOutputSize()];
 
         /* Initialise to default values */
-        final Blake2Parameters.Builder myBuilder = new Blake2Parameters.Builder();
-        myBuilder.setTreeConfig(0, 2, DEFAULT_LEAFLEN);
+        final SkeinXParameters.Builder myBuilder = new SkeinXParameters.Builder();
+        myBuilder.setTreeConfig(1, MAXBYTE, 1);
         init(myBuilder.build());
     }
 
     @Override
     public String getAlgorithmName() {
-        return theDigest.getAlgorithmName() + "Tree";
+        return "SkeinTree-" + (theDigest.getOutputSize() * 8);
     }
 
     @Override
     public int getDigestSize() {
-        return theDigest.getDigestSize();
+        return theDigest.getOutputSize();
     }
 
     @Override
@@ -119,19 +140,17 @@ public class Blake2Tree
     @Override
     public int doFinal(final byte[] pOut,
                        final int pOutOffset) {
-        /* Mark the entry as the last node */
-        theDigest.setLastNode();
-
         /* Finalise the leaf and process the result */
-        theDigest.doFinal(theHash, 0);
+        theDigest.calculateNode(theHash, 0);
         theStore.addElement(Arrays.clone(theHash));
         return theStore.calculateTree(pOut, pOutOffset);
     }
 
     @Override
     public void reset() {
-        theDigest.setNodePosition(0, 0);
+        theLeafIdx = 0;
         theProcessed = 0;
+        theDigest.initTreeNode(1, theLeafIdx, theShift);
         theStore.reset();
     }
 
@@ -152,7 +171,7 @@ public class Blake2Tree
      * @return the leafLength.
      */
     public int getLeafLen() {
-        return theDigest.getLeafLen();
+        return theDigest.getOutputSize() << theLeafLen;
     }
 
     /**
@@ -193,9 +212,9 @@ public class Blake2Tree
             /* If the current leaf is full */
             if (theProcessed == blkSize) {
                 /* Finalise the leaf and process the result */
-                theDigest.doFinal(theHash, 0);
+                theDigest.calculateNode(theHash, 0);
                 theStore.addElement(theHash);
-                theDigest.setNodePosition(theDigest.getNodeOffset() + 1, 0);
+                theDigest.initTreeNode(1, ++theLeafIdx, theShift);
                 theProcessed = 0;
             }
 
@@ -211,25 +230,53 @@ public class Blake2Tree
      * Initialise.
      * @param pParams the parameters.
      */
-    public void init(final Blake2Parameters pParams) {
-        /* Check that we have a fanOut != 1 && MaxDepth >= 1*/
-        if (pParams.getTreeFanOut() == 1) {
-            throw new IllegalArgumentException("FanOut cannot be 1");
-        }
-        if (pParams.getTreeMaxDepth() < 2) {
-            throw new IllegalArgumentException("MaxDepth must be greater than 1");
+    public void init(final SkeinXParameters pParams) {
+        /* Reject a bad leaf length length */
+        final int myLeafLen = pParams.getTreeLeafLen();
+        if (myLeafLen < 1 || myLeafLen > MAXBYTE) {
+            throw new IllegalArgumentException("Invalid leaf length");
         }
 
-        /* Pass selective parameters to the underlying instance */
-        theDigest.setKey(pParams.getKey());
-        theDigest.setSalt(pParams.getSalt());
-        theDigest.setPersonalisation(pParams.getPersonalisation());
-        theDigest.setTreeConfig(pParams.getTreeFanOut(), pParams.getTreeMaxDepth(), pParams.getTreeLeafLen());
-        theDigest.setNodePosition(0, 0);
+        /* Reject a bad fanOut */
+        final short myFanOut = pParams.getTreeFanOut();
+        if (myFanOut < 1 || myFanOut > MAXBYTE) {
+            throw new IllegalArgumentException("Invalid fanOut");
+        }
 
-        /* Reset processed and init the store */
-        theProcessed = 0;
-        theStore.init(pParams);
+        /* Reject a bad maxDepth */
+        final short myMaxDepth = pParams.getTreeMaxDepth();
+        if (myMaxDepth < 2 || myMaxDepth > MAXBYTE) {
+            throw new IllegalArgumentException("Invalid maxDepth");
+        }
+
+        /* Record the values */
+        theLeafLen = myLeafLen;
+        theShift = highestBitSet(theDigest.getOutputSize()) + theLeafLen - 1;
+
+        /* Declare the configuration */
+        declareConfig(myFanOut, myMaxDepth);
+
+        /* Pass selective parameters to the underlying hash */
+        theDigest.init(pParams);
+
+        /* Reset everything */
+        reset();
+    }
+
+    /**
+     * Declare extended configuration.
+     * @param pFanOut the fanOut
+     * @param pMaxDepth the max depth
+     */
+    private void declareConfig(final int pFanOut,
+                               final int pMaxDepth) {
+        /* Declare the configuration */
+        final long myLen = theDigest.getOutputSize() * 8L;
+        final Configuration myConfig = new TreeConfiguration(myLen, theLeafLen, pFanOut, pMaxDepth);
+        theDigest.setConfiguration(myConfig);
+
+        /* Update the store */
+        theStore.declareConfig(pFanOut, pMaxDepth);
     }
 
     /**
@@ -275,28 +322,40 @@ public class Blake2Tree
             throw new DataLengthException("Invalid input buffer");
         }
 
-        /* Initialise the node and note if last node */
-        theDigest.setNodePosition(pIndex, 0);
-        if (bLast) {
-            theDigest.setLastNode();
-        }
+        /* Initialise the treeNode */
+        theDigest.initTreeNode(1, pIndex, theShift);
 
         /* Recalculate the digest */
         theDigest.update(pInput, pInOffSet, pLen);
-        theDigest.doFinal(theHash, 0);
+        theDigest.calculateNode(theHash, 0);
 
         /* Replace the hash */
         theStore.replaceElement(pIndex, theHash);
     }
 
     /**
-     * The Blake tree.
+     * Calculate highestBitSet.
+     * @param pValue the value to examine
+     * @return the index of the highest but set
      */
-    private static class Blake2TreeStore {
+    private static int highestBitSet(final int pValue) {
+        int highestBit = 0;
+        int myValue = pValue;
+        while (myValue != 0) {
+            highestBit++;
+            myValue = myValue >>> 1;
+        }
+        return highestBit;
+    }
+
+    /**
+     * The Skein tree.
+     */
+    private static class SkeinTreeStore {
         /**
          * The underlying Blake2 instance.
          */
-        private final Blake2 theDigest;
+        private final SkeinBase theDigest;
 
         /**
          * The Hash Result.
@@ -309,6 +368,21 @@ public class Blake2Tree
         private final SimpleVector theHashes;
 
         /**
+         * The fanOut.
+         */
+        private short theFanOut;
+
+        /**
+         * The maxDepth.
+         */
+        private short theMaxDepth;
+
+        /**
+         * The shift.
+         */
+        private int theShift;
+
+        /**
          * Has the tree been built?.
          */
         private boolean treeBuilt;
@@ -317,22 +391,23 @@ public class Blake2Tree
          * Constructor.
          * @param pDigest the underlying digest.
          */
-        Blake2TreeStore(final Blake2 pDigest) {
-            theDigest = (Blake2) pDigest.copy();
-            theResult = new byte[theDigest.getDigestSize()];
+        SkeinTreeStore(final SkeinBase pDigest) {
+            /* Store details */
+            theDigest = pDigest;
+            theResult = new byte[theDigest.getOutputSize()];
             theHashes = new SimpleVector();
         }
 
         /**
-         * Initialise.
-         * @param pParams the parameters.
+         * Declare extended configuration.
+         * @param pFanOut the fanOut
+         * @param pMaxDepth the max depth
          */
-        public void init(final Blake2Parameters pParams) {
-            /* Pass selective parameters to the underlying instance */
-            theDigest.setSalt(pParams.getSalt());
-            theDigest.setPersonalisation(pParams.getPersonalisation());
-            theDigest.setTreeConfig(pParams.getTreeFanOut(), pParams.getTreeMaxDepth(), pParams.getTreeLeafLen());
-            reset();
+        void declareConfig(final int pFanOut,
+                           final int pMaxDepth) {
+            theFanOut = (short) pFanOut;
+            theMaxDepth = (short) pMaxDepth;
+            theShift = highestBitSet(theDigest.getOutputSize()) + theFanOut - 1;
         }
 
         /**
@@ -347,7 +422,6 @@ public class Blake2Tree
          * Reset the store.
          */
         void reset() {
-            theDigest.setNodePosition(0, 1);
             theHashes.clear();
             treeBuilt = false;
         }
@@ -365,7 +439,7 @@ public class Blake2Tree
 
             /* Add the element to the vector */
             myLevel.addElement(Arrays.clone(pHash));
-         }
+        }
 
         /**
          * Obtain the tree result.
@@ -385,11 +459,14 @@ public class Blake2Tree
 
             /* Access the final level */
             final SimpleVector myLevel = (SimpleVector) theHashes.lastElement();
-            final byte[] myResult = (byte[]) myLevel.firstElement();
+            final byte[] myState = (byte[]) myLevel.firstElement();
 
-            /* Return the final hash */
-            System.arraycopy(myResult, 0, pOut, pOutOffset, myResult.length);
-            return myResult.length;
+            /* Process the output */
+            theDigest.restoreForOutput(myState);
+            theDigest.output(0, pOut, pOutOffset, theResult.length);
+
+            /* Return the length */
+            return theResult.length;
         }
 
         /**
@@ -432,18 +509,18 @@ public class Blake2Tree
          */
         private SimpleVector calculateNextLevel(final SimpleVector pInput) {
             /* Set the depth of the tree */
-            final int myCurDepth = theHashes.size();
-            final int myMaxDepth = theDigest.getMaxDepth();
-            final int myFanOut = theDigest.getFanOut();
-            theDigest.setNodePosition(0, myCurDepth);
+            final int myCurDepth = theHashes.size() + 1;
+            theDigest.initTreeNode(myCurDepth, 0, theShift);
 
             /* Create the new level */
             final SimpleVector myResults = new SimpleVector();
 
+            /* Determine the number of nodes to combine */
+            final int myFanOut = 1 << theFanOut;
+
             /* Determine whether we are calculating the root node */
-            final boolean lastStage = myFanOut == 0
-                                        || pInput.size() <= myFanOut
-                                        || myCurDepth == myMaxDepth - 1;
+            final boolean lastStage =  pInput.size() <= myFanOut
+                    || myCurDepth == theMaxDepth;
 
             /* Loop through all the elements */
             int myCount = 0;
@@ -453,11 +530,11 @@ public class Blake2Tree
                 /* If we need to move to the next node  */
                 if (!lastStage && myCount == myFanOut) {
                     /* Calculate node and add to level */
-                    theDigest.doFinal(theResult, 0);
+                    theDigest.calculateNode(theResult, 0);
                     myResults.addElement(Arrays.clone(theResult));
 
                     /* Switch to next node */
-                    theDigest.setNodePosition(++myOffSet, myCurDepth);
+                    theDigest.initTreeNode(myCurDepth, ++myOffSet, theShift);
                     myCount = 0;
                 }
 
@@ -468,8 +545,7 @@ public class Blake2Tree
             }
 
             /* Calculate final node at this level */
-            theDigest.setLastNode();
-            theDigest.doFinal(theResult, 0);
+            theDigest.calculateNode(theResult, 0);
             myResults.addElement(Arrays.clone(theResult));
 
             /* Return the results */
@@ -515,7 +591,7 @@ public class Blake2Tree
 
             /* Loop through the levels */
             int myIndex = pIndex;
-            for (int i = 1; i < theHashes.size(); i++) {
+            for (int i = 2; i <= theHashes.size(); i++) {
                 /* Recalculate the parent node */
                 myIndex = recalculateParent(i, myIndex);
             }
@@ -530,22 +606,20 @@ public class Blake2Tree
         private int recalculateParent(final int pLevel,
                                       final int pIndex) {
             /* Make sure that the level is reasonable */
-            if (pLevel < 1 || pLevel >= theHashes.size()) {
+            if (pLevel < 2 || pLevel > theHashes.size()) {
                 throw new IllegalArgumentException("Invalid level");
             }
 
             /* Access the Vector for the parent and input levels */
-            final SimpleVector myInput = (SimpleVector) theHashes.elementAt(pLevel - 1);
-            final SimpleVector myLevel = (SimpleVector) theHashes.elementAt(pLevel);
+            final SimpleVector myInput = (SimpleVector) theHashes.elementAt(pLevel - 2);
+            final SimpleVector myLevel = (SimpleVector) theHashes.elementAt(pLevel - 1);
 
-            /* Access treeConfig */
-            final int myFanOut = theDigest.getFanOut();
-            final int myMaxDepth = theDigest.getMaxDepth();
+            /* Determine the number of nodes to combine */
+            final int myFanOut = 1 << theFanOut;
 
             /* Determine whether we are calculating the root node */
-            final boolean lastStage = myFanOut == 0
-                                        || myInput.size() <= myFanOut
-                                        || pLevel == myMaxDepth - 1;
+            final boolean lastStage = myInput.size() <= myFanOut
+                    || pLevel == theMaxDepth;
 
             /* Calculate bounds */
             final int myParentIndex = lastStage
@@ -556,7 +630,7 @@ public class Blake2Tree
             final int myMaxHash = lastStage ? myNumHashes : Math.min(myFanOut, myNumHashes - myIndex);
 
             /* Initialise the digest */
-            theDigest.setNodePosition(myParentIndex, pLevel);
+            theDigest.initTreeNode(pLevel, myParentIndex, theShift);
 
             /* Loop through the input hashes */
             for (int i = 0; i < myMaxHash; i++) {
@@ -565,13 +639,8 @@ public class Blake2Tree
                 theDigest.update(myHash, 0, myHash.length);
             }
 
-            /* Note if we are the last of the level */
-            if (myIndex + myMaxHash == myNumHashes) {
-                theDigest.setLastNode();
-            }
-
             /* Calculate new digest and replace it */
-            theDigest.doFinal(theResult, 0);
+            theDigest.calculateNode(theResult, 0);
             myLevel.setElementAt(Arrays.clone(theResult), myParentIndex);
             return myParentIndex;
         }
@@ -723,11 +792,31 @@ public class Blake2Tree
 
                 public Object nextElement() {
                     if (count < elementCount) {
-                       return elementData[count++];
+                        return elementData[count++];
                     }
                     throw new NoSuchElementException("Vector Enumeration");
                 }
             };
+        }
+    }
+    /**
+     * Extended configuration to include Tree details.
+     */
+    private static class TreeConfiguration
+        extends Configuration
+    {
+        public TreeConfiguration(long outputSizeBits,
+                                 int treeLeafLen,
+                                 int treeFanOut,
+                                 int treeMaxDepth)
+        {
+            /* Initialise main part of config */
+            super(outputSizeBits);
+
+            // 16..18 treeConfig
+            bytes[16] = (byte)treeLeafLen;
+            bytes[17] = (byte)treeFanOut;
+            bytes[18] = (byte)treeMaxDepth;
         }
     }
 }

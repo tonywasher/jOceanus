@@ -21,6 +21,8 @@ import java.util.stream.Stream;
 
 import org.bouncycastle.crypto.Digest;
 import org.bouncycastle.crypto.Mac;
+import org.bouncycastle.crypto.digests.SkeinDigest;
+import org.bouncycastle.crypto.ext.digests.Blake2;
 import org.bouncycastle.crypto.ext.digests.Blake2Tree;
 import org.bouncycastle.crypto.ext.digests.Blake2X;
 import org.bouncycastle.crypto.ext.digests.Blake2b;
@@ -29,15 +31,18 @@ import org.bouncycastle.crypto.ext.digests.CubeHashDigest;
 import org.bouncycastle.crypto.ext.digests.GroestlDigest;
 import org.bouncycastle.crypto.ext.digests.JHDigest;
 import org.bouncycastle.crypto.ext.digests.Kangaroo.KangarooTwelve;
+import org.bouncycastle.crypto.ext.digests.SkeinBase;
+import org.bouncycastle.crypto.ext.digests.SkeinTree;
+import org.bouncycastle.crypto.ext.digests.SkeinXof;
 import org.bouncycastle.crypto.ext.macs.Blake2Mac;
 import org.bouncycastle.crypto.ext.params.Blake2Parameters;
+import org.bouncycastle.crypto.ext.params.SkeinXParameters;
 import org.bouncycastle.crypto.params.KeyParameter;
 import org.bouncycastle.util.encoders.Hex;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DynamicContainer;
 import org.junit.jupiter.api.DynamicNode;
 import org.junit.jupiter.api.DynamicTest;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestFactory;
 
 import net.sourceforge.joceanus.jtethys.OceanusException;
@@ -111,6 +116,10 @@ public class DigestTest {
                         DynamicTest.dynamicTest("256", () -> new Blake2s256Test().checkDigests()),
                         DynamicTest.dynamicTest("Mac", () -> new Blake2sMacTest().checkMacs()),
                         DynamicTest.dynamicTest("Xof", () -> new Blake2sXofTest().checkXofs())
+                )),
+                DynamicContainer.dynamicContainer("Skein", Stream.of(
+                        DynamicTest.dynamicTest("Xof", () -> new SkeinXofTest().checkXofs()),
+                        DynamicTest.dynamicTest("Tree", () -> new SkeinTreeTest().runTest())
                 )),
                 DynamicTest.dynamicTest("BlakeTree", () -> new Blake2TreeTest().runTest()),
                 DynamicTest.dynamicTest("Kangaroo", () -> new KangarooTest().checkDigests())
@@ -234,6 +243,102 @@ public class DigestTest {
     }
 
     /**
+     * Run the blake Null Xof tests.
+     * @param pBase the base digest.
+     * @throws OceanusException on error
+     */
+    static void testBlakeNullXof(final Blake2 pBase) throws OceanusException {
+        /* Create a Blake2X instance */
+        final Blake2X myXof = new Blake2X((Blake2) pBase.copy());
+
+        /* Create output buffers */
+        final int myLen = pBase.getDigestSize();
+        final byte[] myBlake2 = new byte[myLen];
+        final byte[] myBlake2X = new byte[myLen];
+
+        /* Initialise the Xof */
+        final Blake2Parameters myParams = new Blake2Parameters.Builder()
+                .setMaxXofLen(0)
+                .build();
+        myXof.init(myParams);
+        myXof.update(BLAKE2DATA, 0, BLAKE2DATA.length);
+        myXof.doFinal(myBlake2X, 0);
+
+        pBase.update(BLAKE2DATA, 0, BLAKE2DATA.length);
+        pBase.doFinal(myBlake2, 0);
+
+        /* Check the result */
+        Assertions.assertArrayEquals(myBlake2X, myBlake2, "Result mismatch");
+    }
+
+    /**
+     * Run the skein Xof tests.
+     * @param pXof the Xof to test.
+     * @param pKeyLen the keyLength
+     * @param pResult the expected result
+     * @throws OceanusException on error
+     */
+    static void testSkeinXof(final SkeinXof pXof,
+                             final int pKeyLen,
+                             final String pResult) throws OceanusException {
+        /* Access the expected result */
+        final byte[] myExpected = Hex.decode(pResult);
+        final int myXofLen = myExpected.length;
+
+        /* Create the output buffer */
+        final byte[] myOutput = new byte[myXofLen];
+
+        /* Create the parameters */
+        final SkeinXParameters.Builder myBuilder = new SkeinXParameters.Builder()
+                .setMaxXofLen(myXofLen);
+        if (pKeyLen > 0) {
+            /* Create the key */
+            final byte[] myKey = new byte[pKeyLen];
+            System.arraycopy(BLAKE2DATA, 0, myKey, 0, pKeyLen);
+            myBuilder.setKey(myKey);
+        }
+        final SkeinXParameters myParams = myBuilder.build();
+
+        /* Calculate the Xof */
+        pXof.init(myParams);
+        pXof.update(BLAKE2DATA, 0, BLAKE2DATA.length);
+        pXof.doFinal(myOutput, 0);
+
+        /* Check the result */
+        Assertions.assertArrayEquals(myExpected, myOutput, "Result mismatch");
+    }
+
+    /**
+     * Run the skein Null Xof tests.
+     * @param pBase the base digest.
+     * @throws OceanusException on error
+     */
+    static void testSkeinNullXof(final SkeinBase pBase) throws OceanusException {
+        /* Create a Blake2X instance */
+        final SkeinXof myXof = new SkeinXof((SkeinBase) pBase.copy());
+        final SkeinDigest myDigest = new SkeinDigest(pBase.getBlockSize() * 8, pBase.getOutputSize() * 8);
+
+        /* Create output buffers */
+        final int myLen = pBase.getOutputSize();
+        final byte[] myDigestResult = new byte[myLen];
+        final byte[] myXofResult = new byte[myLen];
+
+        /* Initialise the Xof */
+        final SkeinXParameters myParams = new SkeinXParameters.Builder()
+                .setMaxXofLen(0)
+                .build();
+        myXof.init(myParams);
+        myXof.update(BLAKE2DATA, 0, BLAKE2DATA.length);
+        myXof.doFinal(myXofResult, 0);
+
+        myDigest.update(BLAKE2DATA, 0, BLAKE2DATA.length);
+        myDigest.doFinal(myDigestResult, 0);
+
+        /* Check the result */
+        Assertions.assertArrayEquals(myXofResult, myDigestResult, "Result mismatch");
+    }
+
+    /**
      * Run the kangaroo tests.
      * @param pMsgLen the messageLength
      * @param pStdMsg is this a  standard message
@@ -331,6 +436,62 @@ public class DigestTest {
 
         /* Recalculate the entire tree */
         final Blake2Tree myAltTree = new Blake2Tree(new Blake2b(512));
+        myAltTree.init(myBuilder.build());
+        for (int i = 0; i < pNumLeaves; i++) {
+            myAltTree.update(myLeaf, 0, myLeafLen);
+        }
+
+        /* Build the result */
+        myAltTree.doFinal(myResult, 0);
+        Assertions.assertArrayEquals(myResult, myLeafResult, "Result mismatch");
+    }
+
+    /**
+     * Run the SkeinTree tests.
+     * @param pNumLeaves the number of leaves
+     * @param pFanOut the fanOut
+     * @param pMaxDepth the max depth of the tree
+     * @throws OceanusException on error
+     */
+    static void testSkeinTree(final int pNumLeaves,
+                               final int pFanOut,
+                               final int pMaxDepth) throws OceanusException {
+        /* Create the tree */
+        final SkeinTree myTree = new SkeinTree(new SkeinBase(512, 512));
+        final int myLeafLen = 4096;
+        final int myLeafShift = 6;
+
+        /* Build the parameters */
+        final SkeinXParameters.Builder myBuilder = new SkeinXParameters.Builder();
+        myBuilder.setKey(Arrays.copyOf(BLAKE2DATA, 32));
+        myBuilder.setTreeConfig(pFanOut, pMaxDepth, myLeafShift);
+        myTree.init(myBuilder.build());
+
+        /* Build the leaf data */
+        final byte[] myLeaf = new byte[myLeafLen];
+
+        /* Loop through the leaves */
+        for (int i = 0; i < pNumLeaves; i++) {
+            Arrays.fill(myLeaf, (byte) i);
+            myTree.update(myLeaf, 0, myLeafLen);
+        }
+
+        /* Build the result */
+        final byte[] myResult = new byte[myTree.getDigestSize()];
+        myTree.doFinal(myResult, 0);
+
+        /* Replace each leaf with 1-filled buffer */
+        Arrays.fill(myLeaf, (byte) -1);
+        for (int i = 0; i < pNumLeaves; i++ ) {
+            myTree.updateLeaf(i, myLeaf, 0);
+        }
+
+        /* Obtain the updated result */
+        final byte[] myLeafResult = new byte[myTree.getDigestSize()];
+        myTree.obtainResult(myLeafResult, 0);
+
+        /* Recalculate the entire tree */
+        final SkeinTree myAltTree = new SkeinTree(new SkeinBase(512, 512));
         myAltTree.init(myBuilder.build());
         for (int i = 0; i < pNumLeaves; i++) {
             myAltTree.update(myLeaf, 0, myLeafLen);
@@ -891,7 +1052,7 @@ public class DigestTest {
                 "8fe7cf0bedfc5c8a25c4",
                 "541e57a4988909ea2f81953f6ca1cb75",
                 "91cab802b466092897c7639a02acf529ca61864e5e8c8e422b3a9381a95154d1",
-                "d4a23a17b657fa3ddc2df61eefce362f048b9dd156809062997ab9d5b1fb26b8542b1a638f517fcbad72a6fb23de0754db7bb488b75c12ac826dcced9806d7873e6b31922097ef7b42506275ccc54caf86918f9d1c6cdb9bad2bacf123c0380b2e5dc3e98de83a159ee9e10a8444832c371e5b72039b31c38621261aa04d8271598b17dba0d28c20d1858d879038485ab069bdb58733b5495f934889658ae81b7536bcf601cfcc572060863c1ff2202d2ea84c800482dbe777335002204b7c1f70133e4d8a6b7516c66bb433ad31030a7a9a9a6b9ea69890aa40662d908a5acfe8328802595f0284c51a000ce274a985823de9ee74250063a879a3787fca23a6",
+                "d4a23a17b657fa3ddc2df61eefce362f048b9dd156809062997ab9d5b1fb26b8542b1a638f517fcbad72a6fb23de0754db7bb488b75c12ac826dcced9806d7873e6b31922097ef7b42506275ccc54caf86918f9d1c6cdb9bad2bacf123c0380b2e5dc3e98de83a159ee9e10a8444832c371e5b72039b31c38621261aa04d8271598b17dba0d28c20d1858d879038485ab069bdb58733b5495f934889658ae81b7536bcf601cfcc572060863c1ff2202d2ea84c800482dbe777335002204b7c1f70133e4d8a6b7516c66bb433ad31030a7a9a9a6b9ea69890aa40662d908a5acfe8328802595f0284c51a000ce274a985823de9ee74250063a879a3787fca23a6"
         };
 
         /**
@@ -917,6 +1078,16 @@ public class DigestTest {
             testBlakeXof(myXof, 32, KEYEDEXPECTED[2]);
             testBlakeXof(myXof, 32, KEYEDEXPECTED[3]);
             testBlakeXof(myXof, 32, KEYEDEXPECTED[4]);
+
+            /* Test null Xofs */
+            testBlakeNullXof(new Blake2s(128));
+            testBlakeNullXof(new Blake2s(160));
+            testBlakeNullXof(new Blake2s(224));
+            testBlakeNullXof(new Blake2s(256));
+            testBlakeNullXof(new Blake2b(160));
+            testBlakeNullXof(new Blake2b(256));
+            testBlakeNullXof(new Blake2b(384));
+            testBlakeNullXof(new Blake2b(512));
         }
     }
 
@@ -961,7 +1132,7 @@ public class DigestTest {
     }
 
     /**
-     * KangarooTest.
+     * Blake2TreeTest.
      */
     static class Blake2TreeTest {
         /**
@@ -970,13 +1141,88 @@ public class DigestTest {
          * @throws OceanusException on error
          */
         void runTest() throws OceanusException {
-            /* Run standard test */
+            /* Run standard tests */
             testBlake2Tree(1, 2, 3);
             testBlake2Tree(4, 2, 3);
             testBlake2Tree(53, 2, 3);
             testBlake2Tree(53, 2, 255);
             testBlake2Tree(53, 4, 255);
             testBlake2Tree(53, 0, 255);
+        }
+    }
+
+    /**
+     * SkeinXofTest.
+     */
+    static class SkeinXofTest {
+        /**
+         * Expected unkeyed results.
+         */
+        private static final String[] EXPECTED = {
+                "756c",
+                "1229cfc756697e52c390",
+                "e4981752823f5bfeac4c39a8c491f5db",
+                "0f0ffa39161648d702f14ee4f36be3d82dfb9370e4dab85ddf5be063f585c910",
+                "cc13c2e5e85485489a7f9c1fd0061b74081e27f88dd7d280edbb9e229713de2bc83bacdd694dcdbd0c3758fc7602584e9e8338ac362f35f1aa5b334b48298a1feedff75dc344f2d247c07703d6f8412fe7192161b123abc7e4524a6aa14f9d4e0cbe34e4125b4e49377b5e78ee9f4387d6643b4cc39fee75e82093549e05b1124e27c7e6688181301cf21aaae3aaa0e37b1667789d658a5c9b8ee8ccf604fc3463ae2c1d8b8c35358e848f05c713489f0d3a1906c87416da0a2d2c2ffca656c765569e843f002e6827d0638f5c79c751a76d72035cde05b596a583732cf6859780152fa94b1b58ea0bc77c2f8b56c96ac45ae5959a02fa965765493b99f9aa6f"
+        };
+
+        /**
+         * Expected keyed results.
+         */
+        private static final String[] KEYEDEXPECTED = {
+                "3ebf",
+                "1b936ac926d498562a20",
+                "c4adacdb439f9cb5ec2637a3fce92b75",
+                "dc359f24990c8b87e035cb021c2af65646ea87191026c297764d43ee838750ea",
+                "6cc40b5d483f16212f3c6a5aed80db82c8a945884c784260f96da0ae1739d052fe7ec6eb991500c5b72aae5160ce4928f5fa8603e9ff220d52fe28c86fa092dd1d4bbd25d8247076394e9c9f0cd79b41a189b7e43233a5ac5ebc5993328d089f2bf954b9b3f71353be9273d349842e1929a268c83b11cfb576ec395cb69ab1783b3f9d6848e6f5da1a419e0a094f1002b190d731d8af7a9d659ab91790b22e9014d49c2e7c2cf672668ef186d5c979c603608333bb49affd339381cdec13bbf1bc944c7678627322f5fe68bded52c0380eb9bb17dbeade6b7eedc80b6e7b07758f68846e603e48316425ff9fcc76cccc8a08896234f1baa2d9834671c5f85123"
+        };
+
+        void checkXofs() throws OceanusException {
+            final SkeinXof myXof = new SkeinXof(new SkeinBase(256, 256));
+            testSkeinXof(myXof, 0, EXPECTED[0]);
+            testSkeinXof(myXof, 0, EXPECTED[1]);
+            testSkeinXof(myXof, 0, EXPECTED[2]);
+            testSkeinXof(myXof, 0, EXPECTED[3]);
+            testSkeinXof(myXof, 0, EXPECTED[4]);
+            testSkeinXof(myXof, 32, KEYEDEXPECTED[0]);
+            testSkeinXof(myXof, 32, KEYEDEXPECTED[1]);
+            testSkeinXof(myXof, 32, KEYEDEXPECTED[2]);
+            testSkeinXof(myXof, 32, KEYEDEXPECTED[3]);
+            testSkeinXof(myXof, 32, KEYEDEXPECTED[4]);
+
+            /* Test null Xofs */
+            testSkeinNullXof(new SkeinBase(256, 128));
+            testSkeinNullXof(new SkeinBase(256, 160));
+            testSkeinNullXof(new SkeinBase(256, 224));
+            testSkeinNullXof(new SkeinBase(256, 256));
+            testSkeinNullXof(new SkeinBase(512, 128));
+            testSkeinNullXof(new SkeinBase(512, 160));
+            testSkeinNullXof(new SkeinBase(512, 256));
+            testSkeinNullXof(new SkeinBase(512, 384));
+            testSkeinNullXof(new SkeinBase(512, 512));
+            testSkeinNullXof(new SkeinBase(1024, 384));
+            testSkeinNullXof(new SkeinBase(1024, 512));
+            testSkeinNullXof(new SkeinBase(1024, 1024));
+        }
+    }
+
+    /**
+     * SkeinTreeTest.
+     */
+    static class SkeinTreeTest {
+        /**
+         * Run the SkeinTree tests.
+         *
+         * @throws OceanusException on error
+         */
+        void runTest() throws OceanusException {
+            /* Run standard tests */
+            testSkeinTree(1, 1, 3);
+            testSkeinTree(4, 1, 3);
+            testSkeinTree(53, 2, 3);
+            testSkeinTree(53, 2, 255);
+            testSkeinTree(53, 4, 255);
+            testSkeinTree(53, 10, 255);
         }
     }
 }

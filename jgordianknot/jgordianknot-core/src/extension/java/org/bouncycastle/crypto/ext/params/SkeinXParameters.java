@@ -16,29 +16,18 @@
  ******************************************************************************/
 package org.bouncycastle.crypto.ext.params;
 
-import org.bouncycastle.crypto.CipherParameters;
-import org.bouncycastle.util.Arrays;
+import java.util.Date;
+import java.util.Enumeration;
+import java.util.Hashtable;
+import java.util.Locale;
+
+import org.bouncycastle.crypto.params.SkeinParameters;
 
 /**
- * Blake2 Parameters.
+ * Extended Skein Parameters.
  */
-public class Blake2Parameters
-    implements CipherParameters {
-    /**
-     * The key.
-     */
-    private byte[] theKey;
-
-    /**
-     * The salt.
-     */
-    private byte[] theSalt;
-
-    /**
-     * The personalisation.
-     */
-    private byte[] thePersonal;
-
+public class SkeinXParameters
+    extends SkeinParameters {
     /**
      * The maximum xofLen.
      */
@@ -58,36 +47,6 @@ public class Blake2Parameters
      * The leafLength.
      */
     private int theLeafLen;
-
-    /**
-     * Constructor.
-     */
-    public Blake2Parameters() {
-    }
-
-    /**
-     * Obtain the key.
-     * @return the key
-     */
-    public byte[] getKey() {
-        return Arrays.clone(theKey);
-    }
-
-    /**
-     * Obtain the salt.
-     * @return the salt
-     */
-    public byte[] getSalt() {
-        return Arrays.clone(theSalt);
-    }
-
-    /**
-     * Obtain the personalisation.
-     * @return the personalisation
-     */
-    public byte[] getPersonalisation() {
-        return Arrays.clone(thePersonal);
-    }
 
     /**
      * Obtain the maximum output length.
@@ -122,24 +81,11 @@ public class Blake2Parameters
     }
 
     /**
-     * Parameter Builder.
+     * A builder for {@link SkeinXParameters}.
      */
-    public static class Builder {
-        /**
-         * The key.
-         */
-        private byte[] theKey;
-
-        /**
-         * The salt.
-         */
-        private byte[] theSalt;
-
-        /**
-         * The personalisation.
-         */
-        private byte[] thePersonal;
-
+    public static class Builder
+            extends SkeinParameters.Builder
+    {
         /**
          * The maximum xofLen.
          */
@@ -148,50 +94,60 @@ public class Blake2Parameters
         /**
          * The fanOut.
          */
-        private short theFanOut = 1;
+        private short theFanOut;
 
         /**
          * The maxDepth.
          */
-        private short theMaxDepth = 1;
+        private short theMaxDepth;
 
         /**
          * The leafLength.
          */
         private int theLeafLen;
 
-        /**
-         * Set the key.
-         * @param pKey the key
-         * @return the Builder
-         */
-        public Builder setKey(final byte[] pKey) {
-            theKey = Arrays.clone(pKey);
-            return this;
+        @Override
+        public Builder set(int type, byte[] value) {
+            return (Builder) super.set(type, value);
+        }
+
+        @Override
+        public Builder setKey(byte[] key) {
+            return (Builder) super.setKey(key);
+        }
+
+        @Override
+        public Builder setPersonalisation(byte[] personalisation) {
+            return (Builder) super.setPersonalisation(personalisation);
+        }
+
+        @Override
+        public Builder setPersonalisation(Date date, String emailAddress, String distinguisher) {
+            return (Builder) super.setPersonalisation(date, emailAddress, distinguisher);
+        }
+
+        @Override
+        public Builder setPersonalisation(Date date, Locale dateLocale, String emailAddress, String distinguisher) {
+            return (Builder) super.setPersonalisation(date, dateLocale, emailAddress, distinguisher);
+        }
+
+        @Override
+        public Builder setPublicKey(byte[] publicKey) {
+            return (Builder) super.setPublicKey(publicKey);
+        }
+
+        @Override
+        public Builder setKeyIdentifier(byte[] keyId) {
+            return (Builder) super.setKeyIdentifier(keyId);
+        }
+
+        @Override
+        public Builder setNonce(byte[] nonce) {
+            return (Builder) super.setNonce(nonce);
         }
 
         /**
-         * Set the salt.
-         * @param pSalt the salt
-         * @return the Builder
-         */
-        public Builder setSalt(final byte[] pSalt) {
-            theSalt = Arrays.clone(pSalt);
-            return this;
-        }
-
-        /**
-         * Set the personalisation.
-         * @param pPersonal the personalisation
-         * @return the Builder
-         */
-        public Builder setPersonalisation(final byte[] pPersonal) {
-            thePersonal = Arrays.clone(pPersonal);
-            return this;
-        }
-
-        /**
-         * Set the maximum output length. (-1=unlimited)
+         * Set the maximum output length. (-1=unlimited, 0=underlying)
          * @param pMaxXofLen the maximum output length
          * @return the Builder
          */
@@ -202,9 +158,9 @@ public class Blake2Parameters
 
         /**
          * Set the treeConfig.
-         * @param pFanOut the fanOut (0=unlimited, 1-255).
+         * @param pFanOut the fanOut (powers of two - 1-255).
          * @param pMaxDepth the maxDepth (2-255).
-         * @param pLeafLen the leafLength (in bytes).
+         * @param pLeafLen the leafLength (powers of two times outputLength - 1-255).
          * @return the Builder
          */
         public Builder setTreeConfig(final int pFanOut,
@@ -216,34 +172,29 @@ public class Blake2Parameters
             return this;
         }
 
-        /**
-         * Build the parameters.
-         * @return the parameters
-         */
-        public Blake2Parameters build() {
-            /* Create params */
-            final Blake2Parameters myParams = new Blake2Parameters();
+        @Override
+        public SkeinXParameters build() {
+            /* Build base parameters */
+            final SkeinParameters myBaseParms = super.build();
+            final SkeinXParameters myParams = new SkeinXParameters();
 
-            /* Record key and Salt */
-            if (theKey != null) {
-                myParams.theKey = theKey;
-            }
-            if (theSalt != null) {
-                myParams.theSalt = theSalt;
+            /* Store base details */
+            final Hashtable myBaseStore = myBaseParms.getParameters();
+            final Hashtable myStore = myParams.getParameters();
+            final Enumeration keys = myBaseStore.keys();
+            while (keys.hasMoreElements())
+            {
+                Integer key = (Integer)keys.nextElement();
+                myStore.put(key, myBaseStore.get(key));
             }
 
-            /* Record personalisation and xof length */
-            if (thePersonal != null) {
-                myParams.thePersonal = thePersonal;
-            }
+            /* Record XofDetails */
             myParams.theMaxXofLen = theMaxXofLen;
 
             /* Record tree details */
             myParams.theFanOut = theFanOut;
             myParams.theMaxDepth = theMaxDepth;
             myParams.theLeafLen = theLeafLen;
-
-            /* Return the parameters */
             return myParams;
         }
     }
