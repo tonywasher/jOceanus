@@ -35,14 +35,12 @@ import org.bouncycastle.util.Arrays;
  * This tree is retained until an explicit {@link #reset()} is called. Further update calls are disabled while the tree is retained.
  * <p>While the tree is retained, each leaf may be explicitly replaced via {@link #updateLeaf(int, byte[], int)}, leading to a recalculation
  * of the tree node which may be obtained via {@link #obtainResult(byte[], int)}.
+ * <p>The last leaf at the bottom level of the tree can be any length from 1 to leafLen. It may be replaced by data that is between 1 to leafLen using the
+ * {@link #updateLeaf(int, byte[], int, int)} method where the new length does not have to be the same as the old length.
+ * Other leaves must be replaced by data of length leafLen.
+ * <p>The number of leaves cannot be increased/decreased once the tree has been built. If the length of data is changed, a new tree should be built.
  * <p>TODO
  * <ul>
- * <li>At present the number of leaves may not be increased or decreased, and all leaves must be leafLen in size if they are to be replaced.
- * This needs to change since the last leaf is allowed to be any length from 1 to leafLen. The replacement should also be allowed to be any length
- * from 1 to leafLen, and does not have to have the same length as the original.
- * <li>If the last leaf is fully defined (i.e. length = leafLen) then a replacement leaf can be supplied one beyond the last node.
- * This can be any length from 1 to leafLen.
- * <li>The tree should be capable of being be cut down by discarding trailing nodes at the lowest level.
  * <li>Replacing a node should not automatically trigger a recalculation of the tree. Instead leaves that need to be recalculated should be set to null.
  * The recalculation will take place when the final result is requested, allowing several pages to be replaced before the tree is recalculated
  * </ul>
@@ -150,6 +148,14 @@ public class Blake2Tree
     }
 
     /**
+     * Obtain the leaf length.
+     * @return the leafLength.
+     */
+    public int getLeafLen() {
+        return theDigest.getLeafLen();
+    }
+
+    /**
      * Process data.
      * @param pIn the input buffer
      * @param pInOffSet the starting offset in the input buffer
@@ -164,7 +170,7 @@ public class Blake2Tree
         }
 
         /* Determine space in current block */
-        final int blkSize = theDigest.getLeafLen();
+        final int blkSize = getLeafLen();
         final int mySpace = blkSize - theProcessed;
 
         /* If all data can be processed by the current leaf */
@@ -235,11 +241,37 @@ public class Blake2Tree
     public void updateLeaf(final int pIndex,
                            final byte[] pInput,
                            final int pInOffSet) {
+        /* Full leafLen */
+        updateLeaf(pIndex, pInput, pInOffSet, getLeafLen());
+    }
+
+    /**
+     * Update leaf.
+     * @param pIndex the index of the leaf
+     * @param pInput the input buffer
+     * @param pInOffSet the starting offset the the input buffer
+     * @param pLen the length of data
+     */
+    public void updateLeaf(final int pIndex,
+                           final byte[] pInput,
+                           final int pInOffSet,
+                           final int pLen) {
         /* Check index validity */
         final boolean bLast = theStore.checkLeafIndex(pIndex);
 
-        /* Make sure that we have sufficient data */
-        if (theDigest.getLeafLen() + pInOffSet > pInput.length) {
+        /* Validate the leaf length */
+        final int myLeafLen = getLeafLen();
+        if (pLen < 0 || pLen > myLeafLen) {
+            throw new DataLengthException("Invalid length");
+        }
+
+        /* Any leaf that is not the last must be leafLen in length */
+        if (!bLast && pLen != myLeafLen) {
+            throw new DataLengthException("All but the last leaf must have byteLength " + myLeafLen);
+        }
+
+        /* Make sure that the buffer is valid */
+        if (pLen + pInOffSet > pInput.length) {
             throw new DataLengthException("Invalid input buffer");
         }
 
@@ -250,7 +282,7 @@ public class Blake2Tree
         }
 
         /* Recalculate the digest */
-        theDigest.update(pInput, pInOffSet, theDigest.getLeafLen());
+        theDigest.update(pInput, pInOffSet, pLen);
         theDigest.doFinal(theHash, 0);
 
         /* Replace the hash */
