@@ -123,7 +123,8 @@ public class SkeinXof
      */
     private void declareConfig() {
         /* Declare the configuration */
-        final long myLen = theXofLen == -1 ? -1L : theXofLen * 8;
+        long myLen = theXofLen == 0 ? theUnderlying.getOutputSize() : theXofLen;
+        myLen = myLen == -1 ? -1L : myLen * 8;
         final Configuration myConfig = new Configuration(myLen);
         theUnderlying.setConfiguration(myConfig);
     }

@@ -641,7 +641,7 @@ public class SkeinBase
         if (params != null)
         {
             byte[] key = params.getKey();
-            if (key.length < 16)
+            if (key != null && key.length < 16)
             {
                 throw new IllegalArgumentException("Skein key must be at least 128 bits.");
             }

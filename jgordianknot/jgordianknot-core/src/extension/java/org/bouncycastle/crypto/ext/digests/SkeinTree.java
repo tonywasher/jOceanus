@@ -110,11 +110,10 @@ public class SkeinTree
         theStore = new SkeinTreeStore(pDigest);
         theHash = new byte[theDigest.getOutputSize()];
 
-        /* Set defaults */
-        theLeafLen = 1;
-        final int blkSize = theDigest.getBlockSize() << theLeafLen;
-        theShift = blkSize << BYTESHIFT;
-        reset();
+        /* Initialise to default values */
+        final SkeinXParameters.Builder myBuilder = new SkeinXParameters.Builder();
+        myBuilder.setTreeConfig(1, MAXBYTE, 1);
+        init(myBuilder.build());
     }
 
     @Override
@@ -246,8 +245,7 @@ public class SkeinTree
 
         /* Record the values */
         theLeafLen = myLeafLen;
-        final int blkSize = theDigest.getOutputSize() << theLeafLen;
-        theShift = blkSize << BYTESHIFT;
+        theShift = highestBitSet(theDigest.getOutputSize()) + theLeafLen - 1;
 
         /* Declare the configuration */
         declareConfig(myFanOut, myMaxDepth);
@@ -305,6 +303,21 @@ public class SkeinTree
     }
 
     /**
+     * Calculate highestBitSet.
+     * @param pValue the value to examine
+     * @return the index of the highest but set
+     */
+    private static int highestBitSet(final int pValue) {
+        int highestBit = 0;
+        int myValue = pValue;
+        while (myValue != 0) {
+            highestBit++;
+            myValue = myValue >>> 1;
+        }
+        return highestBit;
+    }
+
+    /**
      * The Skein tree.
      */
     private static class SkeinTreeStore {
@@ -352,11 +365,6 @@ public class SkeinTree
             theDigest = pDigest;
             theResult = new byte[theDigest.getOutputSize()];
             theHashes = new SimpleVector();
-
-            /* Set defaults */
-            theFanOut = 1;
-            theMaxDepth = MAXBYTE;
-            theShift = theDigest.getOutputSize() << theFanOut + BYTESHIFT;
         }
 
         /**
@@ -368,7 +376,7 @@ public class SkeinTree
                            final int pMaxDepth) {
             theFanOut = (short) pFanOut;
             theMaxDepth = (short) pMaxDepth;
-            theShift = theDigest.getOutputSize() << theFanOut + BYTESHIFT;
+            theShift = highestBitSet(theDigest.getOutputSize()) + theFanOut - 1;
         }
 
         /**
@@ -476,9 +484,11 @@ public class SkeinTree
             /* Create the new level */
             final SimpleVector myResults = new SimpleVector();
 
+            /* Determine the number of nodes to combine */
+            final int myFanOut = 1 << theFanOut;
+
             /* Determine whether we are calculating the root node */
-            final boolean lastStage = theFanOut == 0
-                    || pInput.size() <= theFanOut
+            final boolean lastStage =  pInput.size() <= myFanOut
                     || myCurDepth == theMaxDepth;
 
             /* Loop through all the elements */
@@ -487,7 +497,7 @@ public class SkeinTree
             final Enumeration myEnumeration = pInput.elements();
             while (myEnumeration.hasMoreElements()) {
                 /* If we need to move to the next node  */
-                if (!lastStage && myCount == theFanOut) {
+                if (!lastStage && myCount == myFanOut) {
                     /* Calculate node and add to level */
                     theDigest.calculateNode(theResult, 0);
                     myResults.addElement(Arrays.clone(theResult));
@@ -550,7 +560,7 @@ public class SkeinTree
 
             /* Loop through the levels */
             int myIndex = pIndex;
-            for (int i = 1; i < theHashes.size(); i++) {
+            for (int i = 2; i <= theHashes.size(); i++) {
                 /* Recalculate the parent node */
                 myIndex = recalculateParent(i, myIndex);
             }
@@ -573,18 +583,20 @@ public class SkeinTree
             final SimpleVector myInput = (SimpleVector) theHashes.elementAt(pLevel - 2);
             final SimpleVector myLevel = (SimpleVector) theHashes.elementAt(pLevel - 1);
 
+            /* Determine the number of nodes to combine */
+            final int myFanOut = 1 << theFanOut;
+
             /* Determine whether we are calculating the root node */
-            final boolean lastStage = theFanOut == 0
-                    || myInput.size() <= theFanOut
+            final boolean lastStage = myInput.size() <= myFanOut
                     || pLevel == theMaxDepth;
 
             /* Calculate bounds */
-            final int myParentIndex = theFanOut == 0 || lastStage
+            final int myParentIndex = lastStage
                                       ? 0
-                                      : pIndex / theFanOut;
-            final int myIndex = myParentIndex * theFanOut;
+                                      : pIndex / myFanOut;
+            final int myIndex = myParentIndex * myFanOut;
             final int myNumHashes = myInput.size();
-            final int myMaxHash = lastStage ? myNumHashes : Math.min(theFanOut, myNumHashes - myIndex);
+            final int myMaxHash = lastStage ? myNumHashes : Math.min(myFanOut, myNumHashes - myIndex);
 
             /* Initialise the digest */
             theDigest.initTreeNode(pLevel, myParentIndex, theShift);

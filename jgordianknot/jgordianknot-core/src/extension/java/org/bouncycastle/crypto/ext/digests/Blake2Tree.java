@@ -516,7 +516,7 @@ public class Blake2Tree
                                         || pLevel == myMaxDepth - 1;
 
             /* Calculate bounds */
-            final int myParentIndex = myFanOut == 0 || lastStage
+            final int myParentIndex = lastStage
                                       ? 0
                                       : pIndex / myFanOut;
             final int myIndex = myParentIndex * myFanOut;
