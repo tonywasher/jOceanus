@@ -22,7 +22,7 @@ import org.bouncycastle.util.Memoable;
  * Skein was designed by Niels Ferguson - Stefan Lucks - Bruce Schneier - Doug Whiting - Mihir
  * Bellare - Tadayoshi Kohno - Jon Callas - Jesse Walker.
  * <p>
- * This implementation is the basis for {@link SkeinDigest} and {@link SkeinMac}, implementing the
+ * This implementation is the basis for SkeinDigest and {@link SkeinMac}, implementing the
  * parameter based configuration system that allows Skein to be adapted to multiple applications. <br>
  * Initialising the engine with {@link SkeinParameters} allows standard and arbitrary parameters to
  * be applied during the Skein hash function.
@@ -561,6 +561,7 @@ public class SkeinBase
 
     /**
      * Creates a SkeinEngine as an exact copy of an existing instance.
+     * @param engine the base engine
      */
     public SkeinBase(SkeinBase engine)
     {

@@ -66,7 +66,7 @@
     <appDir>${env.BACKUPDIR}</appDir>
     <appLibDir>lib/</appLibDir>
     <BouncyCastleVersion>1.62</BouncyCastleVersion>
-    <JGitVersion>5.4.0.201906121030-r</JGitVersion>
+    <JGitVersion>5.4.2.201908231537-r</JGitVersion>
     <JUnitVersion>5.5.1</JUnitVersion>
     <JSONVersion>20190722</JSONVersion>
     <ApacheMavenVersion>3.6.1</ApacheMavenVersion>
@@ -495,9 +495,9 @@
     <profile>
       <id>fullBuild</id>
       <activation>
-      <property>
-        <name>fullBuild</name>
-      </property>
+        <property>
+          <name>fullBuild</name>
+        </property>
       </activation>
       <properties>
         <jOceanusEnv>-Djoceanus.fullBuild</jOceanusEnv>

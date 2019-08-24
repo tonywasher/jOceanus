@@ -302,7 +302,7 @@ public class GordianCoreCipherParameters<T extends GordianKeySpec> {
      * @param pParams parameters
      * @return the initialAEAD
      */
-    private byte[] obtainInitialAEADFromParameters(final GordianCipherParameters pParams) {
+    private static byte[] obtainInitialAEADFromParameters(final GordianCipherParameters pParams) {
         /* Default initialAEAD is null */
         byte[] myInitial = null;
 
@@ -321,9 +321,8 @@ public class GordianCoreCipherParameters<T extends GordianKeySpec> {
      * derive PBKDF2 key and IV.
      * @param pPassword the password
      * @return the parameters
-     * @throws OceanusException on error
      */
-    private CipherParameters derivePBKDF2Parameters(final char[] pPassword) throws OceanusException {
+    private CipherParameters derivePBKDF2Parameters(final char[] pPassword) {
         /* Protect password bytes */
         byte[] myPassword = null;
         try {
@@ -353,9 +352,8 @@ public class GordianCoreCipherParameters<T extends GordianKeySpec> {
      * derive PKCS12 key and IV.
      * @param pPassword the password
      * @return the parameters
-     * @throws OceanusException on error
      */
-    private CipherParameters derivePKCS12Parameters(final char[] pPassword) throws OceanusException {
+    private CipherParameters derivePKCS12Parameters(final char[] pPassword) {
         /* Protect password bytes */
         byte[] myPassword = null;
         try {

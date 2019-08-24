@@ -23,7 +23,7 @@ import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigestSpec;
  */
 public abstract class GordianPBESpec {
     /**
-     * The Seperator.
+     * The Separator.
      */
     private static final String SEP = "-";
 
@@ -72,6 +72,7 @@ public abstract class GordianPBESpec {
      * Create a pbkdf2Spec.
      * @param pDigestSpec the digestSpec.
      * @param pCount the iteration count
+     * @return the new spec
      */
     public static GordianPBEDigestAndCountSpec pbKDF2(final GordianDigestSpec pDigestSpec,
                                                       final int pCount) {
@@ -82,6 +83,7 @@ public abstract class GordianPBESpec {
      * Create a pbkdf2Spec.
      * @param pDigestSpec the digestSpec.
      * @param pCount the iteration count
+     * @return the new spec
      */
     public static GordianPBEDigestAndCountSpec pkcs12(final GordianDigestSpec pDigestSpec,
                                                       final int pCount) {
@@ -93,6 +95,7 @@ public abstract class GordianPBESpec {
      * @param pCost the cost
      * @param pBlockSize the blockSize
      * @param pParallel the parallelisation
+     * @return the new spec
      */
     public static GordianPBESCryptSpec scrypt(final int pCost,
                                               final int pBlockSize,
@@ -105,6 +108,7 @@ public abstract class GordianPBESpec {
      * @param pLanes the Lanes
      * @param pMemory the Memory
      * @param pIterations the iterations
+     * @return the new spec
      */
     public static GordianPBEArgon2Spec argon2(final int pLanes,
                                               final int pMemory,
@@ -222,6 +226,16 @@ public abstract class GordianPBESpec {
     public static class GordianPBESCryptSpec
             extends GordianPBESpec {
         /**
+         * Max Small Block Cost.
+         */
+        private static final int MAX_SMALL_COST = 0xFFFF;
+
+        /**
+         * Parallel limit.
+         */
+        private static final int PARALLEL_LIMIT = 128;
+
+        /**
          * The BlockSize.
          */
         private final int theBlockSize;
@@ -296,12 +310,12 @@ public abstract class GordianPBESpec {
 
             /* Check Cost restriction for BlockSize of 1 */
             if (theBlockSize == 1
-                    && theCost > 0xFFFF) {
+                    && theCost > MAX_SMALL_COST) {
                 return;
             }
 
             /* Check Parallel restriction */
-            final int maxParallel = Integer.MAX_VALUE / (128 * theBlockSize * 8);
+            final int maxParallel = Integer.MAX_VALUE / (PARALLEL_LIMIT * theBlockSize * Byte.SIZE);
             if (theParallel >= 1
                     && theParallel <= maxParallel) {
                 setValid();

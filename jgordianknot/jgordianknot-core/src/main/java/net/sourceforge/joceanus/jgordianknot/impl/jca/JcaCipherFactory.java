@@ -160,7 +160,7 @@ public class JcaCipherFactory
         if (pKeySpec instanceof GordianSymKeySpec) {
             return getSymKeyAlgorithm((GordianSymKeySpec) pKeySpec);
         }
-        throw new GordianDataException(JcaFactory.getInvalidText(pKeySpec));
+        throw new GordianDataException(GordianCoreFactory.getInvalidText(pKeySpec));
     }
 
     /**

@@ -391,6 +391,7 @@ public class Zuc128Engine implements StreamCipher, Memoable {
 
     /**
      * F.
+     * @return the new state
      */
     int F() {
         int W, W1, W2, u, v;
