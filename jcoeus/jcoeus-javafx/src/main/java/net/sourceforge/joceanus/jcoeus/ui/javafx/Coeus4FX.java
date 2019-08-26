@@ -70,6 +70,7 @@ public class Coeus4FX
             /* Handle Exceptions */
         } catch (OceanusException e) {
             LOGGER.error("createPanel didn't complete successfully", e);
+            System.exit(1);
         }
     }
 

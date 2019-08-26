@@ -145,10 +145,12 @@ public class CoeusRateSetterLoanBookParser {
             final Elements myTables = myNewTables.isEmpty() ? myOldTables : myNewTables;
 
             /* select the body of the last of the tables */
-            final boolean isRepaid = myTables.size() > 1;
             final Element myBody = myTables.last().select("tbody").first();
             final Element myFirstCol = myTables.last().select("th").first();
             final boolean isNewStyle = !"Contract".equals(myFirstCol.text());
+
+            /* Determine whether these loans are repaid or active */
+            final boolean isRepaid = !myBody.parent().hasClass("tablesorter");
 
             /* Obtain a list of rows */
             final List<Element> myRows = new ArrayList<>();
