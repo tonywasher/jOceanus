@@ -53,7 +53,7 @@ public class CoeusRateSetterTransactionParser
      * Constructor.
      * @param pMarket the market
      */
-    protected CoeusRateSetterTransactionParser(final CoeusRateSetterMarket pMarket) {
+    CoeusRateSetterTransactionParser(final CoeusRateSetterMarket pMarket) {
         /* Initialise the underlying class */
         super(pMarket.getFormatter(), HEADERS);
         theMarket = pMarket;
@@ -74,7 +74,7 @@ public class CoeusRateSetterTransactionParser
      * Obtain the transactions.
      * @return the transactions
      */
-    public ListIterator<CoeusRateSetterTransaction> reverseTransactionIterator() {
+    ListIterator<CoeusRateSetterTransaction> reverseTransactionIterator() {
         return theTransactions.listIterator(theTransactions.size());
     }
 

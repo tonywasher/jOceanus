@@ -50,8 +50,8 @@ public class CoeusRateSetterLoan
      * @param pMarket the market
      * @param pBookItem the loan book item
      */
-    protected CoeusRateSetterLoan(final CoeusRateSetterMarket pMarket,
-                                  final CoeusRateSetterLoanBookItem pBookItem) {
+    CoeusRateSetterLoan(final CoeusRateSetterMarket pMarket,
+                        final CoeusRateSetterLoanBookItem pBookItem) {
         super(pMarket, pBookItem.getLoanId());
         theBookItem = pBookItem;
     }
@@ -61,8 +61,8 @@ public class CoeusRateSetterLoan
      * @param pMarket the market
      * @param pId the loan id
      */
-    protected CoeusRateSetterLoan(final CoeusRateSetterMarket pMarket,
-                                  final String pId) {
+    CoeusRateSetterLoan(final CoeusRateSetterMarket pMarket,
+                        final String pId) {
         super(pMarket, pId);
         theBookItem = null;
     }
@@ -86,7 +86,7 @@ public class CoeusRateSetterLoan
      * Obtain the book item.
      * @return the book item
      */
-    public CoeusRateSetterLoanBookItem getLoanBookItem() {
+    CoeusRateSetterLoanBookItem getLoanBookItem() {
         return theBookItem;
     }
 

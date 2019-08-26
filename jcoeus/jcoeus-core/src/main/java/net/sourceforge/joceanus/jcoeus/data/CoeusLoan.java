@@ -152,7 +152,7 @@ public abstract class CoeusLoan
     /**
      * Clear the history.
      */
-    protected void clearHistory() {
+    void clearHistory() {
         theHistory.clear();
     }
 
@@ -209,7 +209,7 @@ public abstract class CoeusLoan
      * Add the transaction to the history.
      * @param pTrans the transaction
      */
-    protected void addTransactionToHistory(final CoeusTransaction pTrans) {
+    void addTransactionToHistory(final CoeusTransaction pTrans) {
         /* Adjust the history */
         theHistory.addTransactionToHistory(pTrans);
 

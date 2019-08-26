@@ -56,7 +56,7 @@ public class CoeusZopaMarket
     /**
      * The Decimal size.
      */
-    protected static final int DECIMAL_SIZE = 8;
+    static final int DECIMAL_SIZE = 8;
 
     /**
      * The LoanBook Parser.
@@ -97,7 +97,7 @@ public class CoeusZopaMarket
      * Constructor.
      * @param pFormatter the formatter
      */
-    public CoeusZopaMarket(final MetisDataFormatter pFormatter) {
+    CoeusZopaMarket(final MetisDataFormatter pFormatter) {
         /* Initialise underlying class */
         super(pFormatter, CoeusMarketProvider.ZOPA);
 
@@ -118,7 +118,7 @@ public class CoeusZopaMarket
      * @param pFile the file to parse
      * @throws OceanusException on error
      */
-    public void parseLoanBook(final Path pFile) throws OceanusException {
+    void parseLoanBook(final Path pFile) throws OceanusException {
         /* Parse the file */
         theBookParser.parseFile(pFile);
 
@@ -143,7 +143,7 @@ public class CoeusZopaMarket
      * Process the badDebt.
      * @throws OceanusException on error
      */
-    public void processBadDebt() throws OceanusException {
+    void processBadDebt() throws OceanusException {
         /* Loop through the loans */
         final Iterator<CoeusLoan> myIterator = loanIterator();
         while (myIterator.hasNext()) {
@@ -165,7 +165,7 @@ public class CoeusZopaMarket
      * @param pFile the file to parse
      * @throws OceanusException on error
      */
-    public void parseStatement(final Path pFile) throws OceanusException {
+    void parseStatement(final Path pFile) throws OceanusException {
         /* Parse the file */
         theXactionParser.parseFile(pFile);
 
@@ -270,7 +270,7 @@ public class CoeusZopaMarket
      * Record missing book details.
      * @param pMissing the missing amount
      */
-    protected void recordMissingBook(final TethysDecimal pMissing) {
+    void recordMissingBook(final TethysDecimal pMissing) {
         theMissingLoanBook.addValue(pMissing);
     }
 
@@ -278,7 +278,7 @@ public class CoeusZopaMarket
      * Record missing capital.
      * @param pMissing the missing amount
      */
-    protected void recordMissingCapital(final TethysDecimal pMissing) {
+    void recordMissingCapital(final TethysDecimal pMissing) {
         theMissingCapital.addValue(pMissing);
     }
 
@@ -286,7 +286,7 @@ public class CoeusZopaMarket
      * Record missing loan interest.
      * @param pMissing the missing amount
      */
-    protected void recordMissingInterest(final TethysDecimal pMissing) {
+    void recordMissingInterest(final TethysDecimal pMissing) {
         theMissingInterest.addValue(pMissing);
     }
 
@@ -294,7 +294,7 @@ public class CoeusZopaMarket
      * Record zombieLoan.
      * @param pZombie the zombie amount
      */
-    protected void recordZombieLoan(final TethysDecimal pZombie) {
+    void recordZombieLoan(final TethysDecimal pZombie) {
         theZombieLoans.addValue(pZombie);
     }
 
@@ -302,7 +302,7 @@ public class CoeusZopaMarket
      * Record interestingLoan.
      * @param pLoan the loan
      */
-    protected void recordInterestingLoan(final CoeusZopaLoan pLoan) {
+    void recordInterestingLoan(final CoeusZopaLoan pLoan) {
         theInterestingLoans.add(pLoan);
     }
 

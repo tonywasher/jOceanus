@@ -76,7 +76,7 @@ public final class CoeusRateSetterTotals
      * Constructor for zeroed totals.
      * @param pMarket the market
      */
-    protected CoeusRateSetterTotals(final CoeusRateSetterMarket pMarket) {
+    CoeusRateSetterTotals(final CoeusRateSetterMarket pMarket) {
         this(pMarket, null, null);
     }
 
@@ -85,8 +85,8 @@ public final class CoeusRateSetterTotals
      * @param pMarket the market
      * @param pDate the end date for the totals
      */
-    protected CoeusRateSetterTotals(final CoeusRateSetterMarket pMarket,
-                                    final TethysDate pDate) {
+    CoeusRateSetterTotals(final CoeusRateSetterMarket pMarket,
+                          final TethysDate pDate) {
         this(pMarket, null, pDate);
     }
 
@@ -94,7 +94,7 @@ public final class CoeusRateSetterTotals
      * Constructor for zeroed totals.
      * @param pLoan the loan
      */
-    protected CoeusRateSetterTotals(final CoeusRateSetterLoan pLoan) {
+    CoeusRateSetterTotals(final CoeusRateSetterLoan pLoan) {
         this(pLoan.getMarket(), pLoan, null);
     }
 
@@ -103,8 +103,8 @@ public final class CoeusRateSetterTotals
      * @param pLoan the loan
      * @param pDate the end date for the totals
      */
-    protected CoeusRateSetterTotals(final CoeusRateSetterLoan pLoan,
-                                    final TethysDate pDate) {
+    CoeusRateSetterTotals(final CoeusRateSetterLoan pLoan,
+                          final TethysDate pDate) {
         this(pLoan.getMarket(), pLoan, pDate);
     }
 
@@ -114,9 +114,9 @@ public final class CoeusRateSetterTotals
      * @param pLoan the loan
      * @param pDate the end date for the totals
      */
-    protected CoeusRateSetterTotals(final CoeusRateSetterMarket pMarket,
-                                    final CoeusRateSetterLoan pLoan,
-                                    final TethysDate pDate) {
+    CoeusRateSetterTotals(final CoeusRateSetterMarket pMarket,
+                          final CoeusRateSetterLoan pLoan,
+                          final TethysDate pDate) {
         /* Initialise underlying class */
         super(pMarket, pLoan, pDate);
 
@@ -136,8 +136,8 @@ public final class CoeusRateSetterTotals
      * @param pTotals the previous totals
      * @param pUnderlying the underlying transaction
      */
-    protected CoeusRateSetterTotals(final CoeusRateSetterTotals pTotals,
-                                    final CoeusRateSetterTransaction pUnderlying) {
+    CoeusRateSetterTotals(final CoeusRateSetterTotals pTotals,
+                          final CoeusRateSetterTransaction pUnderlying) {
         /* Initialise underlying class */
         super(pUnderlying, pTotals);
 

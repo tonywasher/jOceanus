@@ -56,97 +56,97 @@ public abstract class CoeusTransaction
     /**
      * Blank Character.
      */
-    protected static final char CHAR_BLANK = ' ';
+    static final char CHAR_BLANK = ' ';
 
     /**
      * Open Character.
      */
-    protected static final char CHAR_OPEN = '(';
+    static final char CHAR_OPEN = '(';
 
     /**
      * Close Character.
      */
-    protected static final char CHAR_CLOSE = ')';
+    static final char CHAR_CLOSE = ')';
 
     /**
      * Id For source value.
      */
-    protected static final String ID_SOURCEVALUE = "SV";
+    static final String ID_SOURCEVALUE = "SV";
 
     /**
      * Id For asset value.
      */
-    protected static final String ID_ASSETVALUE = "AV";
+    static final String ID_ASSETVALUE = "AV";
 
     /**
      * Id For holding.
      */
-    protected static final String ID_HOLDING = "H";
+    static final String ID_HOLDING = "H";
 
     /**
      * Id For loanBook.
      */
-    protected static final String ID_LOANBOOK = "LB";
+    static final String ID_LOANBOOK = "LB";
 
     /**
      * Id For earnings.
      */
-    protected static final String ID_EARNINGS = "E";
+    static final String ID_EARNINGS = "E";
 
     /**
      * Id For taxInterest.
      */
-    protected static final String ID_TAXEARNINGS = "TE";
+    static final String ID_TAXEARNINGS = "TE";
 
     /**
      * Id For interest.
      */
-    protected static final String ID_INTEREST = "I";
+    static final String ID_INTEREST = "I";
 
     /**
      * Id For nettInterest.
      */
-    protected static final String ID_NETTINTEREST = "NI";
+    static final String ID_NETTINTEREST = "NI";
 
     /**
      * Id For badDebtInterest.
      */
-    protected static final String ID_BDINTEREST = "DI";
+    static final String ID_BDINTEREST = "DI";
 
     /**
      * Id For badDebtCapital.
      */
-    protected static final String ID_BDCAPITAL = "DC";
+    static final String ID_BDCAPITAL = "DC";
 
     /**
      * Id For fees.
      */
-    protected static final String ID_FEES = "F";
+    static final String ID_FEES = "F";
 
     /**
      * Id For invested.
      */
-    protected static final String ID_INVESTED = "D";
+    static final String ID_INVESTED = "D";
 
     /**
      * Id For cashBack.
      */
-    protected static final String ID_CASHBACK = "CB";
+    static final String ID_CASHBACK = "CB";
 
     /**
      * Id For losses.
      */
-    protected static final String ID_LOSSES = "L";
+    static final String ID_LOSSES = "L";
 
     /**
      * Id For badDebt.
      */
-    protected static final String ID_BADDEBT = "BD";
+    static final String ID_BADDEBT = "BD";
 
     /**
      * Id For recovered.
      */
-    protected static final String ID_RECOVERED = "R";
+    static final String ID_RECOVERED = "R";
 
     /**
      * The id.
@@ -307,9 +307,9 @@ public abstract class CoeusTransaction
      * @param pPrefix the prefix
      * @param pValue the value
      */
-    protected static void formatValue(final StringBuilder pBuilder,
-                                      final String pPrefix,
-                                      final TethysDecimal pValue) {
+    static void formatValue(final StringBuilder pBuilder,
+                            final String pPrefix,
+                            final TethysDecimal pValue) {
         /* If the value is non-zero */
         if (pValue.isNonZero()) {
             /* If we are not the first value */

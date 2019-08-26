@@ -144,8 +144,8 @@ public final class CoeusLendingWorksTransaction
      * @param pFields the fields
      * @throws OceanusException on error
      */
-    protected CoeusLendingWorksTransaction(final CoeusLendingWorksTransactionParser pParser,
-                                           final List<String> pFields) throws OceanusException {
+    CoeusLendingWorksTransaction(final CoeusLendingWorksTransactionParser pParser,
+                                 final List<String> pFields) throws OceanusException {
         /* Initialise underlying class */
         super(pParser.getMarket());
 

@@ -144,8 +144,8 @@ public class CoeusZopaLoanBookItem
      * @param pFields the fields
      * @throws OceanusException on error
      */
-    protected CoeusZopaLoanBookItem(final CoeusZopaLoanBookParser pParser,
-                                    final List<String> pFields) throws OceanusException {
+    CoeusZopaLoanBookItem(final CoeusZopaLoanBookParser pParser,
+                          final List<String> pFields) throws OceanusException {
         /* Iterate through the fields */
         final Iterator<String> myIterator = pFields.iterator();
 
@@ -228,8 +228,8 @@ public class CoeusZopaLoanBookItem
      * @param pBase the base item
      * @param pNew the new item
      */
-    protected CoeusZopaLoanBookItem(final CoeusZopaLoanBookItem pBase,
-                                    final CoeusZopaLoanBookItem pNew) {
+    CoeusZopaLoanBookItem(final CoeusZopaLoanBookItem pBase,
+                          final CoeusZopaLoanBookItem pNew) {
         /* Obtain IDs */
         theLoanId = pBase.getLoanId();
 
@@ -277,7 +277,7 @@ public class CoeusZopaLoanBookItem
      * Obtain the risk.
      * @return the auction id
      */
-    public CoeusLoanRisk getRisk() {
+    private CoeusLoanRisk getRisk() {
         return theRisk;
     }
 
@@ -309,7 +309,7 @@ public class CoeusZopaLoanBookItem
      * Obtain the amount lent.
      * @return the balance
      */
-    public TethysDecimal getLent() {
+    private TethysDecimal getLent() {
         return theLent;
     }
 
@@ -333,7 +333,7 @@ public class CoeusZopaLoanBookItem
      * Obtain the capital repaid.
      * @return the capital repaid
      */
-    public TethysDecimal getCapitalRepaid() {
+    private TethysDecimal getCapitalRepaid() {
         return theCapital;
     }
 
@@ -341,7 +341,7 @@ public class CoeusZopaLoanBookItem
      * Obtain the interest repaid.
      * @return the interest repaid
      */
-    public TethysDecimal getInterestRepaid() {
+    TethysDecimal getInterestRepaid() {
         return theInterest;
     }
 
@@ -349,7 +349,7 @@ public class CoeusZopaLoanBookItem
      * Obtain the arrears.
      * @return the arrears
      */
-    public TethysDecimal getArrears() {
+    private TethysDecimal getArrears() {
         return theArrears;
     }
 
@@ -357,7 +357,7 @@ public class CoeusZopaLoanBookItem
      * Obtain the missing.
      * @return the missing capital
      */
-    public TethysDecimal getMissing() {
+    TethysDecimal getMissing() {
         return theMissing;
     }
 
@@ -365,7 +365,7 @@ public class CoeusZopaLoanBookItem
      * Obtain the portion repaid.
      * @return the portion repaid
      */
-    public TethysRate getPortionRepaid() {
+    private TethysRate getPortionRepaid() {
         return thePortionRepaid;
     }
 
@@ -373,7 +373,7 @@ public class CoeusZopaLoanBookItem
      * Obtain the badDebt date.
      * @return the badDebt date
      */
-    public TethysDate getBadDebtDate() {
+    TethysDate getBadDebtDate() {
         return theBadDebtDate;
     }
 
@@ -389,7 +389,7 @@ public class CoeusZopaLoanBookItem
      * Is the loan safeguarded?
      * @return true/false
      */
-    public boolean isSafeGuarded() {
+    private boolean isSafeGuarded() {
         return isSafeGuarded;
     }
 

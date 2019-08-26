@@ -77,7 +77,7 @@ public class CoeusFundingCircleMarket
      * Constructor.
      * @param pFormatter the formatter
      */
-    public CoeusFundingCircleMarket(final MetisDataFormatter pFormatter) {
+    CoeusFundingCircleMarket(final MetisDataFormatter pFormatter) {
         /* Initialise underlying class */
         super(pFormatter, CoeusMarketProvider.FUNDINGCIRCLE);
 
@@ -96,7 +96,7 @@ public class CoeusFundingCircleMarket
      * @param pFile the file to parse
      * @throws OceanusException on error
      */
-    public void parseLoanBook(final Path pFile) throws OceanusException {
+    void parseLoanBook(final Path pFile) throws OceanusException {
         /* Parse the file */
         theBookParser.parseFile(pFile);
 
@@ -115,7 +115,7 @@ public class CoeusFundingCircleMarket
      * @param pFile the file to parse
      * @throws OceanusException on error
      */
-    public void parseBadDebtBook(final Path pFile) throws OceanusException {
+    void parseBadDebtBook(final Path pFile) throws OceanusException {
         /* Parse the file */
         theDebtParser.parseFile(pFile);
 
@@ -134,7 +134,7 @@ public class CoeusFundingCircleMarket
      * @param pFile the file to parse
      * @throws OceanusException on error
      */
-    public void parseBidBook(final Path pFile) throws OceanusException {
+    void parseBidBook(final Path pFile) throws OceanusException {
         /* Parse the file */
         theBidsParser.parseFile(pFile);
 
@@ -156,7 +156,7 @@ public class CoeusFundingCircleMarket
      * @param pItem the bookItem to process
      * @throws OceanusException on error
      */
-    public void processBookItem(final CoeusFundingCircleLoanBookItem pItem) throws OceanusException {
+    private void processBookItem(final CoeusFundingCircleLoanBookItem pItem) throws OceanusException {
         /* Check to see whether this is a second loanPart */
         final String myAuctionId = pItem.getAuctionId();
         CoeusFundingCircleLoan myLoan = theAuctionMap.get(myAuctionId);
@@ -180,7 +180,7 @@ public class CoeusFundingCircleMarket
      * @param pFile the file to parse
      * @throws OceanusException on error
      */
-    public void parseStatement(final Path pFile) throws OceanusException {
+    void parseStatement(final Path pFile) throws OceanusException {
         /* Parse the file */
         theXactionParser.parseFile(pFile);
 
@@ -200,7 +200,7 @@ public class CoeusFundingCircleMarket
      * @return the loan
      * @throws OceanusException on error
      */
-    protected CoeusFundingCircleLoan findLoanByAuctionId(final String pId) throws OceanusException {
+    CoeusFundingCircleLoan findLoanByAuctionId(final String pId) throws OceanusException {
         final CoeusFundingCircleLoan myLoan = theAuctionMap.get(pId);
         if (myLoan == null) {
             throw new CoeusDataException(pId, "Unrecognised AuctionId");

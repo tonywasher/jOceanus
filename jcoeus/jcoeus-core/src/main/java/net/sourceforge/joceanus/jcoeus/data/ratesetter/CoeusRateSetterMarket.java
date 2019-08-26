@@ -57,7 +57,7 @@ public class CoeusRateSetterMarket
      * Constructor.
      * @param pFormatter the formatter
      */
-    public CoeusRateSetterMarket(final MetisDataFormatter pFormatter) {
+    CoeusRateSetterMarket(final MetisDataFormatter pFormatter) {
         /* Initialise underlying class */
         super(pFormatter, CoeusMarketProvider.RATESETTER);
 
@@ -73,7 +73,7 @@ public class CoeusRateSetterMarket
      * Add transaction.
      * @param pTrans the transaction to add
      */
-    protected void addTheTransaction(final CoeusRateSetterTransaction pTrans) {
+    void addTheTransaction(final CoeusRateSetterTransaction pTrans) {
         addTransaction(pTrans);
     }
 
@@ -81,7 +81,7 @@ public class CoeusRateSetterMarket
      * Add transaction to list.
      * @param pTrans the transaction
      */
-    protected void removeTransaction(final CoeusRateSetterTransaction pTrans) {
+    void removeTransaction(final CoeusRateSetterTransaction pTrans) {
         getTransactions().remove(pTrans);
     }
 
@@ -90,7 +90,7 @@ public class CoeusRateSetterMarket
      * @param pFile the file to parse
      * @throws OceanusException on error
      */
-    public void parseLoanBook(final Path pFile) throws OceanusException {
+    void parseLoanBook(final Path pFile) throws OceanusException {
         /* Parse the file */
         theBookParser.parseFile(pFile);
 
@@ -109,7 +109,7 @@ public class CoeusRateSetterMarket
      * @param pFile the file to parse
      * @throws OceanusException on error
      */
-    public void parseStatement(final Path pFile) throws OceanusException {
+    void parseStatement(final Path pFile) throws OceanusException {
         /* Parse the file */
         theXactionParser.parseFile(pFile);
 
@@ -134,7 +134,7 @@ public class CoeusRateSetterMarket
      * Repair loans such that original loan is known and original payments is associated.
      * @throws OceanusException on error
      */
-    public void repairLoans() throws OceanusException {
+    void repairLoans() throws OceanusException {
         /* Repair the loans */
         theRepairer.repairLoans();
     }

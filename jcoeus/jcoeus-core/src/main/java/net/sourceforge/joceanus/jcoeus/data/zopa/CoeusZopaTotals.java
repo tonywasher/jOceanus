@@ -116,7 +116,7 @@ public final class CoeusZopaTotals
      * Constructor for zeroed totals.
      * @param pMarket the market
      */
-    protected CoeusZopaTotals(final CoeusZopaMarket pMarket) {
+    CoeusZopaTotals(final CoeusZopaMarket pMarket) {
         this(pMarket, null, null);
     }
 
@@ -125,8 +125,8 @@ public final class CoeusZopaTotals
      * @param pMarket the market
      * @param pDate the end date for the totals
      */
-    protected CoeusZopaTotals(final CoeusZopaMarket pMarket,
-                              final TethysDate pDate) {
+    CoeusZopaTotals(final CoeusZopaMarket pMarket,
+                    final TethysDate pDate) {
         this(pMarket, null, pDate);
     }
 
@@ -134,7 +134,7 @@ public final class CoeusZopaTotals
      * Constructor for zeroed totals.
      * @param pLoan the loan
      */
-    protected CoeusZopaTotals(final CoeusZopaLoan pLoan) {
+    CoeusZopaTotals(final CoeusZopaLoan pLoan) {
         this(pLoan.getMarket(), pLoan, null);
     }
 
@@ -143,8 +143,8 @@ public final class CoeusZopaTotals
      * @param pLoan the loan
      * @param pDate the end date for the totals
      */
-    protected CoeusZopaTotals(final CoeusZopaLoan pLoan,
-                              final TethysDate pDate) {
+    CoeusZopaTotals(final CoeusZopaLoan pLoan,
+                    final TethysDate pDate) {
         this(pLoan.getMarket(), pLoan, pDate);
     }
 
@@ -154,9 +154,9 @@ public final class CoeusZopaTotals
      * @param pLoan the loan
      * @param pDate the end date for the totals
      */
-    protected CoeusZopaTotals(final CoeusZopaMarket pMarket,
-                              final CoeusZopaLoan pLoan,
-                              final TethysDate pDate) {
+    CoeusZopaTotals(final CoeusZopaMarket pMarket,
+                    final CoeusZopaLoan pLoan,
+                    final TethysDate pDate) {
         /* Initialise underlying class */
         super(pMarket, pLoan, pDate);
 
@@ -184,8 +184,8 @@ public final class CoeusZopaTotals
      * @param pTotals the previous totals
      * @param pUnderlying the underlying transaction
      */
-    protected CoeusZopaTotals(final CoeusZopaTotals pTotals,
-                              final CoeusZopaTransaction pUnderlying) {
+    CoeusZopaTotals(final CoeusZopaTotals pTotals,
+                    final CoeusZopaTransaction pUnderlying) {
         /* Initialise underlying class */
         super(pUnderlying, pTotals);
 

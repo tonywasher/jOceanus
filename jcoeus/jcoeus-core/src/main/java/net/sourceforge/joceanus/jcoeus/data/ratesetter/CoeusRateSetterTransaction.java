@@ -91,7 +91,7 @@ public class CoeusRateSetterTransaction
     /**
      * ZERO for BadDebt/CashBack.
      */
-    protected static final TethysMoney ZERO_MONEY = new TethysMoney();
+    static final TethysMoney ZERO_MONEY = new TethysMoney();
 
     /**
      * Date of transaction.
@@ -149,8 +149,8 @@ public class CoeusRateSetterTransaction
      * @param pFields the fields
      * @throws OceanusException on error
      */
-    protected CoeusRateSetterTransaction(final CoeusRateSetterTransactionParser pParser,
-                                         final List<String> pFields) throws OceanusException {
+    CoeusRateSetterTransaction(final CoeusRateSetterTransactionParser pParser,
+                               final List<String> pFields) throws OceanusException {
         /* Initialise underlying class */
         super(pParser.getMarket());
 
@@ -197,8 +197,8 @@ public class CoeusRateSetterTransaction
      * @param pLoan the loan
      * @throws OceanusException on error
      */
-    protected CoeusRateSetterTransaction(final CoeusRateSetterTransaction pBase,
-                                         final CoeusRateSetterLoan pLoan) throws OceanusException {
+    CoeusRateSetterTransaction(final CoeusRateSetterTransaction pBase,
+                               final CoeusRateSetterLoan pLoan) throws OceanusException {
         /* Initialise underlying class */
         super(pBase.getMarket());
 
@@ -270,7 +270,7 @@ public class CoeusRateSetterTransaction
      * Obtain the loanType.
      * @return the loanType
      */
-    public String getLoanType() {
+    private String getLoanType() {
         return theLoanType;
     }
 
@@ -300,7 +300,7 @@ public class CoeusRateSetterTransaction
      * Set the loan.
      * @param pLoan the loan
      */
-    protected void setLoan(final CoeusRateSetterLoan pLoan) {
+    void setLoan(final CoeusRateSetterLoan pLoan) {
         theLoan = pLoan;
     }
 

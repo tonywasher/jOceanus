@@ -96,9 +96,9 @@ public class CoeusMarketAnnual
      * @param pCalendar the calendar
      * @param pDate the annual date
      */
-    protected CoeusMarketAnnual(final CoeusMarket pMarket,
-                                final CoeusCalendar pCalendar,
-                                final TethysDate pDate) {
+    CoeusMarketAnnual(final CoeusMarket pMarket,
+                      final CoeusCalendar pCalendar,
+                      final TethysDate pDate) {
         /* Store parameters */
         theMarket = pMarket;
         theCalendar = pCalendar;

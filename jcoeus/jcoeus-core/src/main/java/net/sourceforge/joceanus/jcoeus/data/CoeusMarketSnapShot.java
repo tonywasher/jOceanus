@@ -81,8 +81,8 @@ public class CoeusMarketSnapShot
      * @param pMarket the market
      * @param pDate the snapshot date
      */
-    protected CoeusMarketSnapShot(final CoeusMarket pMarket,
-                                  final TethysDate pDate) {
+    CoeusMarketSnapShot(final CoeusMarket pMarket,
+                        final TethysDate pDate) {
         /* Store parameters */
         theMarket = pMarket;
         theDate = pDate;

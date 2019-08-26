@@ -64,8 +64,8 @@ public class CoeusFundingCircleLoan
      * @param pMarket the market
      * @param pBookItem the loan book item
      */
-    protected CoeusFundingCircleLoan(final CoeusFundingCircleMarket pMarket,
-                                     final CoeusFundingCircleLoanBookItem pBookItem) {
+    CoeusFundingCircleLoan(final CoeusFundingCircleMarket pMarket,
+                           final CoeusFundingCircleLoanBookItem pBookItem) {
         super(pMarket, pBookItem.getLoanId());
         theBookItems = new ArrayList<>();
         theBookItem = pBookItem;
@@ -77,8 +77,8 @@ public class CoeusFundingCircleLoan
      * @param pMarket the market
      * @param pId the loan id
      */
-    protected CoeusFundingCircleLoan(final CoeusFundingCircleMarket pMarket,
-                                     final String pId) {
+    CoeusFundingCircleLoan(final CoeusFundingCircleMarket pMarket,
+                           final String pId) {
         super(pMarket, pId);
         theBookItems = null;
         theBookItem = null;
@@ -94,7 +94,7 @@ public class CoeusFundingCircleLoan
      * Add a book item.
      * @param pBookItem the book item
      */
-    protected void addBookItem(final CoeusFundingCircleLoanBookItem pBookItem) {
+    void addBookItem(final CoeusFundingCircleLoanBookItem pBookItem) {
         /* If this is the first secondary item */
         if (theBookItems.isEmpty()) {
             /* Add the original to the list */
@@ -112,7 +112,7 @@ public class CoeusFundingCircleLoan
      * Obtain the book item.
      * @return the book item
      */
-    public CoeusFundingCircleLoanBookItem getLoanBookItem() {
+    CoeusFundingCircleLoanBookItem getLoanBookItem() {
         return theBookItem;
     }
 
@@ -173,8 +173,7 @@ public class CoeusFundingCircleLoan
 
         /* Check that this matches the book balance */
         if (!myBookBalance.equals(myLoanBalance)) {
-            //throw new CoeusDataException(this, "Bad Balance");
-            System.out.println("Bad Balance for " + getLoanId() + " : Book=" + myBookBalance + ",Loan=" + myLoanBalance);
+            throw new CoeusDataException(this, "Bad Balance");
         }
     }
 

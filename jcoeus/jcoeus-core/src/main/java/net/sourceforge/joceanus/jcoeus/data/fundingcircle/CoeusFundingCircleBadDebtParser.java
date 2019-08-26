@@ -53,7 +53,7 @@ public class CoeusFundingCircleBadDebtParser
      * Constructor.
      * @param pMarket the market
      */
-    protected CoeusFundingCircleBadDebtParser(final CoeusFundingCircleMarket pMarket) {
+    CoeusFundingCircleBadDebtParser(final CoeusFundingCircleMarket pMarket) {
         /* Initialise the underlying class */
         super(pMarket.getFormatter(), HEADERS);
         theMarket = pMarket;
@@ -74,7 +74,7 @@ public class CoeusFundingCircleBadDebtParser
      * Obtain the badDebts.
      * @return the badDebts
      */
-    public Iterator<CoeusFundingCircleTransaction> badDebtIterator() {
+    Iterator<CoeusFundingCircleTransaction> badDebtIterator() {
         return theBadDebts.iterator();
     }
 

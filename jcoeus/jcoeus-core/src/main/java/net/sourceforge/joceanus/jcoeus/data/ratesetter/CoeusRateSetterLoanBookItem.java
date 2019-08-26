@@ -102,10 +102,10 @@ public class CoeusRateSetterLoanBookItem
      * @param pCells the cells
      * @throws OceanusException on error
      */
-    protected CoeusRateSetterLoanBookItem(final CoeusRateSetterLoanBookParser pParser,
-                                          final boolean pNewStyle,
-                                          final boolean pRepaid,
-                                          final List<Element> pCells) throws OceanusException {
+    CoeusRateSetterLoanBookItem(final CoeusRateSetterLoanBookParser pParser,
+                                final boolean pNewStyle,
+                                final boolean pRepaid,
+                                final List<Element> pCells) throws OceanusException {
         /* Iterate through the cells */
         final Iterator<Element> myIterator = pCells.iterator();
 
@@ -166,7 +166,7 @@ public class CoeusRateSetterLoanBookItem
      * Obtain the startDate.
      * @return the startDate
      */
-    public TethysDate getStartDate() {
+    TethysDate getStartDate() {
         return theStartDate;
     }
 
@@ -174,7 +174,7 @@ public class CoeusRateSetterLoanBookItem
      * Obtain the lent amount.
      * @return the lent
      */
-    public TethysMoney getLent() {
+    TethysMoney getLent() {
         return theLent;
     }
 
@@ -198,7 +198,7 @@ public class CoeusRateSetterLoanBookItem
      * Obtain the lastDate.
      * @return the startDate
      */
-    public TethysDate getLastDate() {
+    private TethysDate getLastDate() {
         return theLastDate;
     }
 

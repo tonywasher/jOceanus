@@ -104,8 +104,8 @@ public class CoeusFundingCircleLoanBookItem
      * @param pFields the fields
      * @throws OceanusException on error
      */
-    protected CoeusFundingCircleLoanBookItem(final CoeusFundingCircleLoanBookParser pParser,
-                                             final List<String> pFields) throws OceanusException {
+    CoeusFundingCircleLoanBookItem(final CoeusFundingCircleLoanBookParser pParser,
+                                   final List<String> pFields) throws OceanusException {
         /* Iterate through the fields */
         final Iterator<String> myIterator = pFields.iterator();
 
@@ -144,8 +144,8 @@ public class CoeusFundingCircleLoanBookItem
      * @param pFields the fields
      * @throws OceanusException on error
      */
-    protected CoeusFundingCircleLoanBookItem(final CoeusFundingCircleBidBookParser pParser,
-                                             final List<String> pFields) throws OceanusException {
+    CoeusFundingCircleLoanBookItem(final CoeusFundingCircleBidBookParser pParser,
+                                   final List<String> pFields) throws OceanusException {
         /* Iterate through the fields */
         final Iterator<String> myIterator = pFields.iterator();
 
@@ -181,8 +181,8 @@ public class CoeusFundingCircleLoanBookItem
      * @param pBase the base item
      * @param pNew the new item
      */
-    protected CoeusFundingCircleLoanBookItem(final CoeusFundingCircleLoanBookItem pBase,
-                                             final CoeusFundingCircleLoanBookItem pNew) {
+    CoeusFundingCircleLoanBookItem(final CoeusFundingCircleLoanBookItem pBase,
+                                   final CoeusFundingCircleLoanBookItem pNew) {
         /* Obtain IDs */
         theLoanId = pBase.getLoanId();
 
@@ -218,7 +218,7 @@ public class CoeusFundingCircleLoanBookItem
      * Obtain the auctionId.
      * @return the auction id
      */
-    public String getAuctionId() {
+    String getAuctionId() {
         return theAuctionId;
     }
 
@@ -226,7 +226,7 @@ public class CoeusFundingCircleLoanBookItem
      * Obtain the risk.
      * @return the auction id
      */
-    public CoeusLoanRisk getRisk() {
+    CoeusLoanRisk getRisk() {
         return theRisk;
     }
 

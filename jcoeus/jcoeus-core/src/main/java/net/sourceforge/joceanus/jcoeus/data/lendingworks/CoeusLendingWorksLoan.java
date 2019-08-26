@@ -42,8 +42,8 @@ public class CoeusLendingWorksLoan
      * @param pMarket the market
      * @param pLoanId the loan id
      */
-    protected CoeusLendingWorksLoan(final CoeusLendingWorksMarket pMarket,
-                                    final String pLoanId) {
+    CoeusLendingWorksLoan(final CoeusLendingWorksMarket pMarket,
+                          final String pLoanId) {
         super(pMarket, pLoanId);
         theLoanIdNo = Integer.parseInt(pLoanId);
     }
