@@ -334,7 +334,7 @@ public abstract class CoeusTotals
     /**
      * Reset the totals.
      */
-    protected void resetTotals() {
+    void resetTotals() {
         getSourceValue().setZero();
         getAssetValue().setZero();
         getInvested().setZero();
@@ -416,7 +416,7 @@ public abstract class CoeusTotals
      * @param pTotalSet the totalSet
      * @return the balance field
      */
-    protected static CoeusTotalsField getBalanceField(final CoeusTotalSet pTotalSet) {
+    static CoeusTotalsField getBalanceField(final CoeusTotalSet pTotalSet) {
         switch (pTotalSet) {
             case INVESTED:
                 return CoeusTotalsField.INVESTED;

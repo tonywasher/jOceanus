@@ -198,8 +198,8 @@ public final class CoeusFundingCircleTransaction
      * @param pFields the fields
      * @throws OceanusException on error
      */
-    protected CoeusFundingCircleTransaction(final CoeusFundingCircleTransactionParser pParser,
-                                            final List<String> pFields) throws OceanusException {
+    CoeusFundingCircleTransaction(final CoeusFundingCircleTransactionParser pParser,
+                                  final List<String> pFields) throws OceanusException {
         /* Initialise underlying class */
         super(pParser.getMarket());
 
@@ -245,8 +245,8 @@ public final class CoeusFundingCircleTransaction
      * @param pFields the fields
      * @throws OceanusException on error
      */
-    protected CoeusFundingCircleTransaction(final CoeusFundingCircleBadDebtParser pParser,
-                                            final List<String> pFields) throws OceanusException {
+    CoeusFundingCircleTransaction(final CoeusFundingCircleBadDebtParser pParser,
+                                  final List<String> pFields) throws OceanusException {
         /* Initialise underlying class */
         super(pParser.getMarket());
 

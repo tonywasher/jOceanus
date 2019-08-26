@@ -116,7 +116,7 @@ public final class CoeusFundingCircleTotals
      * Constructor for zeroed totals.
      * @param pMarket the market
      */
-    protected CoeusFundingCircleTotals(final CoeusFundingCircleMarket pMarket) {
+    CoeusFundingCircleTotals(final CoeusFundingCircleMarket pMarket) {
         this(pMarket, null, null);
     }
 
@@ -125,8 +125,8 @@ public final class CoeusFundingCircleTotals
      * @param pMarket the market
      * @param pDate the end date for the totals
      */
-    protected CoeusFundingCircleTotals(final CoeusFundingCircleMarket pMarket,
-                                       final TethysDate pDate) {
+    CoeusFundingCircleTotals(final CoeusFundingCircleMarket pMarket,
+                             final TethysDate pDate) {
         this(pMarket, null, pDate);
     }
 
@@ -134,7 +134,7 @@ public final class CoeusFundingCircleTotals
      * Constructor for zeroed totals.
      * @param pLoan the loan
      */
-    protected CoeusFundingCircleTotals(final CoeusFundingCircleLoan pLoan) {
+    CoeusFundingCircleTotals(final CoeusFundingCircleLoan pLoan) {
         this(pLoan.getMarket(), pLoan, null);
     }
 
@@ -143,8 +143,8 @@ public final class CoeusFundingCircleTotals
      * @param pLoan the loan
      * @param pDate the end date for the totals
      */
-    protected CoeusFundingCircleTotals(final CoeusFundingCircleLoan pLoan,
-                                       final TethysDate pDate) {
+    CoeusFundingCircleTotals(final CoeusFundingCircleLoan pLoan,
+                             final TethysDate pDate) {
         this(pLoan.getMarket(), pLoan, pDate);
     }
 
@@ -184,8 +184,8 @@ public final class CoeusFundingCircleTotals
      * @param pTotals the previous totals
      * @param pUnderlying the underlying transaction
      */
-    protected CoeusFundingCircleTotals(final CoeusFundingCircleTotals pTotals,
-                                       final CoeusFundingCircleTransaction pUnderlying) {
+    CoeusFundingCircleTotals(final CoeusFundingCircleTotals pTotals,
+                             final CoeusFundingCircleTransaction pUnderlying) {
         /* Initialise underlying class */
         super(pUnderlying, pTotals);
 

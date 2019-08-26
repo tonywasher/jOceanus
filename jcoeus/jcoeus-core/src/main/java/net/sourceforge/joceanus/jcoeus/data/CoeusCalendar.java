@@ -72,7 +72,7 @@ public class CoeusCalendar {
      * @param pDate the date
      * @return the end of the month
      */
-    public TethysDate getEndOfMonth(final TethysDate pDate) {
+    TethysDate getEndOfMonth(final TethysDate pDate) {
         /* Determine the end of the month */
         return makeCalendarTotals
                                   ? getEndOfCalendarMonth(pDate)

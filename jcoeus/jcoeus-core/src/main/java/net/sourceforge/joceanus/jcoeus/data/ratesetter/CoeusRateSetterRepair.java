@@ -76,7 +76,7 @@ public class CoeusRateSetterRepair {
      * Constructor.
      * @param pMarket the market
      */
-    protected CoeusRateSetterRepair(final CoeusRateSetterMarket pMarket) {
+    CoeusRateSetterRepair(final CoeusRateSetterMarket pMarket) {
         theMarket = pMarket;
         theInitialLoans = new ArrayList<>();
     }
@@ -85,7 +85,7 @@ public class CoeusRateSetterRepair {
      * Record an initial loan.
      * @param pLoan the initial loan
      */
-    protected void recordInitialLoan(final CoeusRateSetterTransaction pLoan) {
+    void recordInitialLoan(final CoeusRateSetterTransaction pLoan) {
         theInitialLoans.add(pLoan);
     }
 
@@ -93,7 +93,7 @@ public class CoeusRateSetterRepair {
      * repair loans such that original loan is known and original payments is associated.
      * @throws OceanusException on error
      */
-    protected void repairLoans() throws OceanusException {
+    void repairLoans() throws OceanusException {
         /* Obtain the list of repaired loans */
         final List<CoeusRateSetterLoan> myLoans = getRepairedLoans();
 

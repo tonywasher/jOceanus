@@ -83,8 +83,8 @@ public class CoeusZopaLoan
      * @param pMarket the market
      * @param pBookItem the loanBookItem
      */
-    protected CoeusZopaLoan(final CoeusZopaMarket pMarket,
-                            final CoeusZopaLoanBookItem pBookItem) {
+    CoeusZopaLoan(final CoeusZopaMarket pMarket,
+                  final CoeusZopaLoanBookItem pBookItem) {
         this(pMarket, pBookItem.getLoanId(), pBookItem);
     }
 
@@ -93,8 +93,8 @@ public class CoeusZopaLoan
      * @param pMarket the market
      * @param pId the loanId
      */
-    protected CoeusZopaLoan(final CoeusZopaMarket pMarket,
-                            final String pId) {
+    CoeusZopaLoan(final CoeusZopaMarket pMarket,
+                  final String pId) {
         this(pMarket, pId, null);
     }
 
@@ -135,7 +135,7 @@ public class CoeusZopaLoan
      * Add a book item.
      * @param pBookItem the book item
      */
-    protected void addBookItem(final CoeusZopaLoanBookItem pBookItem) {
+    void addBookItem(final CoeusZopaLoanBookItem pBookItem) {
         /* If this is the first secondary item */
         if (theBookItems.isEmpty()) {
             /* Add the original to the list */
@@ -153,7 +153,7 @@ public class CoeusZopaLoan
      * Obtain the book item.
      * @return the item
      */
-    public CoeusZopaLoanBookItem getBookItem() {
+    private CoeusZopaLoanBookItem getBookItem() {
         return theBookItem;
     }
 
@@ -201,7 +201,7 @@ public class CoeusZopaLoan
      * Add upFrontInterest.
      * @param pInterest the upFrontInterest
      */
-    protected void addUpFrontInterest(final TethysDecimal pInterest) {
+    void addUpFrontInterest(final TethysDecimal pInterest) {
         theUpFrontInterest.addValue(pInterest);
     }
 

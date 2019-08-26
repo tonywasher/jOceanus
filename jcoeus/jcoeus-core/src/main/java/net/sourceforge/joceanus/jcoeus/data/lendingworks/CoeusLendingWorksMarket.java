@@ -39,7 +39,7 @@ public class CoeusLendingWorksMarket
     /**
      * The Decimal size.
      */
-    protected static final int DECIMAL_SIZE = 5;
+    static final int DECIMAL_SIZE = 5;
 
     /**
      * The Transaction Parser.
@@ -50,7 +50,7 @@ public class CoeusLendingWorksMarket
      * Constructor.
      * @param pFormatter the formatter
      */
-    public CoeusLendingWorksMarket(final MetisDataFormatter pFormatter) {
+    CoeusLendingWorksMarket(final MetisDataFormatter pFormatter) {
         /* Initialise underlying class */
         super(pFormatter, CoeusMarketProvider.LENDINGWORKS);
 
@@ -63,7 +63,7 @@ public class CoeusLendingWorksMarket
      * @param pFile the file to parse
      * @throws OceanusException on error
      */
-    public void parseStatement(final Path pFile) throws OceanusException {
+    void parseStatement(final Path pFile) throws OceanusException {
         /* Parse the file */
         theXactionParser.parseFile(pFile);
 

@@ -61,7 +61,7 @@ public class CoeusRateSetterLoanBookParser {
      * Constructor.
      * @param pFormatter the formatter
      */
-    protected CoeusRateSetterLoanBookParser(final MetisDataFormatter pFormatter) {
+    CoeusRateSetterLoanBookParser(final MetisDataFormatter pFormatter) {
         /* Create the loan list */
         theLoans = new ArrayList<>();
 
@@ -84,7 +84,7 @@ public class CoeusRateSetterLoanBookParser {
      * @return the parsed date
      * @throws OceanusException on error
      */
-    protected TethysDate parseDate(final String pInput) throws OceanusException {
+    TethysDate parseDate(final String pInput) throws OceanusException {
         try {
             return theDateParser.parseDate(pInput);
         } catch (IllegalArgumentException e) {
@@ -98,7 +98,7 @@ public class CoeusRateSetterLoanBookParser {
      * @return the parsed money
      * @throws OceanusException on error
      */
-    protected TethysMoney parseMoney(final String pInput) throws OceanusException {
+    TethysMoney parseMoney(final String pInput) throws OceanusException {
         try {
             return theDecimalParser.parseMoneyValue(pInput);
         } catch (IllegalArgumentException e) {
@@ -112,7 +112,7 @@ public class CoeusRateSetterLoanBookParser {
      * @return the parsed rate
      * @throws OceanusException on error
      */
-    protected TethysRate parseRate(final String pInput) throws OceanusException {
+    TethysRate parseRate(final String pInput) throws OceanusException {
         try {
             return theDecimalParser.parseRateValue(pInput);
         } catch (IllegalArgumentException e) {
@@ -125,7 +125,7 @@ public class CoeusRateSetterLoanBookParser {
      * @param pInput the input file
      * @throws OceanusException on error
      */
-    public void parseFile(final Path pInput) throws OceanusException {
+    void parseFile(final Path pInput) throws OceanusException {
         /* Protect against exceptions */
         try {
             /* Reset the list */
@@ -141,8 +141,8 @@ public class CoeusRateSetterLoanBookParser {
             final Elements myOldTables = myDocument.getElementsByClass("rsTable");
             final Elements myNewTables = myDocument.getElementsByClass("novo-table-content");
 
-            /* Use old style tables if they are present */
-            final Elements myTables = myOldTables.isEmpty() ? myNewTables : myOldTables;
+            /* Use new style tables if they are present */
+            final Elements myTables = myNewTables.isEmpty() ? myOldTables : myNewTables;
 
             /* select the body of the last of the tables */
             final boolean isRepaid = myTables.size() > 1;
@@ -209,7 +209,7 @@ public class CoeusRateSetterLoanBookParser {
      * @param pElement the parent element
      * @return the text
      */
-    protected String childElementText(final Element pElement) {
+    String childElementText(final Element pElement) {
         /* Reset string builder */
         final StringBuilder myBuilder = new StringBuilder();
         final Element myRow = pElement.select("tr").first();

@@ -55,7 +55,7 @@ public class CoeusZopaLoanBookParser
      * Constructor.
      * @param pMarket the market
      */
-    protected CoeusZopaLoanBookParser(final CoeusZopaMarket pMarket) {
+    CoeusZopaLoanBookParser(final CoeusZopaMarket pMarket) {
         /* Initialise the underlying class */
         super(pMarket.getFormatter(), HEADERS);
         theMarket = pMarket;

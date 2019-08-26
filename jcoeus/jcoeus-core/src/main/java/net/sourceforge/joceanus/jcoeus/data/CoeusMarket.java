@@ -136,7 +136,7 @@ public abstract class CoeusMarket
      * Obtain the transaction iterator.
      * @return the iterator
      */
-    public Iterator<CoeusTransaction> transactionIterator() {
+    Iterator<CoeusTransaction> transactionIterator() {
         return theTransactions.iterator();
     }
 
@@ -152,7 +152,7 @@ public abstract class CoeusMarket
      * Check loans.
      * @throws OceanusException on error
      */
-    public void checkLoans() throws OceanusException {
+    protected void checkLoans() throws OceanusException {
         /* Loop through the loans */
         final Iterator<CoeusLoan> myIterator = loanIterator();
         while (myIterator.hasNext()) {
@@ -201,8 +201,8 @@ public abstract class CoeusMarket
      * @param pLoan the loan
      * @throws OceanusException on error
      */
-    public void recordLoanIdMapping(final String pLoanId,
-                                    final CoeusLoan pLoan) throws OceanusException {
+    protected void recordLoanIdMapping(final String pLoanId,
+                                       final CoeusLoan pLoan) throws OceanusException {
         /* Ensure that the id is unique */
         if (theLoanMap.get(pLoanId) != null) {
             throw new CoeusDataException(pLoanId, "Duplicate LoanId");
@@ -216,7 +216,7 @@ public abstract class CoeusMarket
      * Obtain next transaction id.
      * @return the next transactionId
      */
-    public Integer getNextTransactionId() {
+    Integer getNextTransactionId() {
         final Integer myNext = theNextId;
         theNextId = theNextId + 1;
         return myNext;
@@ -280,7 +280,7 @@ public abstract class CoeusMarket
      * Obtain full history.
      * @return the full history
      */
-    public CoeusHistory getFullHistory() {
+    private CoeusHistory getFullHistory() {
         return theHistory;
     }
 
@@ -289,7 +289,7 @@ public abstract class CoeusMarket
      * @param pDate the date
      * @return the snapshot
      */
-    public CoeusMarketSnapShot getSnapshot(final TethysDate pDate) {
+    CoeusMarketSnapShot getSnapshot(final TethysDate pDate) {
         return new CoeusMarketSnapShot(this, pDate);
     }
 
@@ -299,8 +299,8 @@ public abstract class CoeusMarket
      * @param pDate the date
      * @return the annual
      */
-    public CoeusMarketAnnual getAnnual(final CoeusCalendar pCalendar,
-                                       final TethysDate pDate) {
+    CoeusMarketAnnual getAnnual(final CoeusCalendar pCalendar,
+                                final TethysDate pDate) {
         return new CoeusMarketAnnual(this, pCalendar, pDate);
     }
 

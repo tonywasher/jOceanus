@@ -145,7 +145,7 @@ public abstract class CoeusHistory
      * Add transaction to history.
      * @param pTrans the transaction to add
      */
-    public void addTransactionToHistory(final CoeusTransaction pTrans) {
+    void addTransactionToHistory(final CoeusTransaction pTrans) {
         /* Create the new entry and add to the list */
         final CoeusTotals myTotals = newTotals(theLastTotals, pTrans);
         myTotals.addTransactionToTotals(pTrans);

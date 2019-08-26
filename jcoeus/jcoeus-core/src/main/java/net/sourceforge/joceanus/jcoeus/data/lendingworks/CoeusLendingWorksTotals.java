@@ -76,7 +76,7 @@ public final class CoeusLendingWorksTotals
      * Constructor for zeroed totals.
      * @param pMarket the market
      */
-    protected CoeusLendingWorksTotals(final CoeusLendingWorksMarket pMarket) {
+    CoeusLendingWorksTotals(final CoeusLendingWorksMarket pMarket) {
         this(pMarket, null, null);
     }
 
@@ -85,8 +85,8 @@ public final class CoeusLendingWorksTotals
      * @param pMarket the market
      * @param pDate the end date for the totals
      */
-    protected CoeusLendingWorksTotals(final CoeusLendingWorksMarket pMarket,
-                                      final TethysDate pDate) {
+    CoeusLendingWorksTotals(final CoeusLendingWorksMarket pMarket,
+                            final TethysDate pDate) {
         this(pMarket, null, pDate);
     }
 
@@ -94,7 +94,7 @@ public final class CoeusLendingWorksTotals
      * Constructor for zeroed totals.
      * @param pLoan the loan
      */
-    protected CoeusLendingWorksTotals(final CoeusLendingWorksLoan pLoan) {
+    CoeusLendingWorksTotals(final CoeusLendingWorksLoan pLoan) {
         this(pLoan.getMarket(), pLoan, null);
     }
 
@@ -103,8 +103,8 @@ public final class CoeusLendingWorksTotals
      * @param pLoan the loan
      * @param pDate the end date for the totals
      */
-    protected CoeusLendingWorksTotals(final CoeusLendingWorksLoan pLoan,
-                                      final TethysDate pDate) {
+    CoeusLendingWorksTotals(final CoeusLendingWorksLoan pLoan,
+                            final TethysDate pDate) {
         this(pLoan.getMarket(), pLoan, pDate);
     }
 
@@ -114,9 +114,9 @@ public final class CoeusLendingWorksTotals
      * @param pLoan the loan
      * @param pDate the end date for the totals
      */
-    protected CoeusLendingWorksTotals(final CoeusLendingWorksMarket pMarket,
-                                      final CoeusLendingWorksLoan pLoan,
-                                      final TethysDate pDate) {
+    CoeusLendingWorksTotals(final CoeusLendingWorksMarket pMarket,
+                            final CoeusLendingWorksLoan pLoan,
+                            final TethysDate pDate) {
         /* Initialise underlying class */
         super(pMarket, pLoan, pDate);
 
@@ -136,8 +136,8 @@ public final class CoeusLendingWorksTotals
      * @param pTotals the previous totals
      * @param pUnderlying the underlying transaction
      */
-    protected CoeusLendingWorksTotals(final CoeusLendingWorksTotals pTotals,
-                                      final CoeusLendingWorksTransaction pUnderlying) {
+    CoeusLendingWorksTotals(final CoeusLendingWorksTotals pTotals,
+                            final CoeusLendingWorksTransaction pUnderlying) {
         /* Initialise underlying class */
         super(pUnderlying, pTotals);
 

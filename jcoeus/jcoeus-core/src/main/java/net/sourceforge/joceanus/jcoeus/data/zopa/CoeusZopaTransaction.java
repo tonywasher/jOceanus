@@ -208,8 +208,8 @@ public final class CoeusZopaTransaction
      * @param pFields the fields
      * @throws OceanusException on error
      */
-    protected CoeusZopaTransaction(final CoeusZopaTransactionParser pParser,
-                                   final List<String> pFields) throws OceanusException {
+    CoeusZopaTransaction(final CoeusZopaTransactionParser pParser,
+                         final List<String> pFields) throws OceanusException {
         /* Initialise underlying class */
         super(pParser.getMarket());
 
@@ -259,7 +259,7 @@ public final class CoeusZopaTransaction
      * @param pLoan the loan
      * @throws OceanusException on error
      */
-    protected CoeusZopaTransaction(final CoeusZopaLoan pLoan) throws OceanusException {
+    CoeusZopaTransaction(final CoeusZopaLoan pLoan) throws OceanusException {
         /* Initialise underlying class */
         super(pLoan.getMarket());
 
