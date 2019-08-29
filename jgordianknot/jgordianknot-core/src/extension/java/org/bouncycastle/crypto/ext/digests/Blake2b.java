@@ -16,6 +16,7 @@
  ******************************************************************************/
 package org.bouncycastle.crypto.ext.digests;
 
+import org.bouncycastle.crypto.ext.params.Blake2Parameters;
 import org.bouncycastle.util.Memoable;
 import org.bouncycastle.util.Pack;
 
@@ -70,6 +71,14 @@ public class Blake2b
      * High Counter.
      */
     private long t1;
+
+    /**
+     * Constructor.
+     */
+    public Blake2b() {
+        /* Default to 512 bits */
+        this(512);
+    }
 
     /**
      * Constructor.

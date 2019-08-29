@@ -33,6 +33,7 @@ import org.bouncycastle.crypto.ext.engines.Zuc128Engine;
 import org.bouncycastle.crypto.ext.engines.Zuc256Engine;
 import org.bouncycastle.crypto.ext.macs.Zuc128Mac;
 import org.bouncycastle.crypto.ext.macs.Zuc256Mac;
+import org.bouncycastle.crypto.ext.params.KeccakParameters;
 import org.bouncycastle.crypto.params.AEADParameters;
 import org.bouncycastle.crypto.params.KeyParameter;
 import org.bouncycastle.crypto.params.ParametersWithIV;
@@ -205,8 +206,8 @@ public class StreamCipherTest {
                         DynamicTest.dynamicTest("128", () -> new Zuc256Mac128Test().testTheMac())
                 )),
                 DynamicContainer.dynamicContainer("KMAC", Stream.of(
-                        DynamicTest.dynamicTest("128", () -> new KMAC128Test().testThe128Mac()),
-                        DynamicTest.dynamicTest("256", () -> new KMAC128Test().testThe256Mac())
+                        DynamicTest.dynamicTest("128", () -> new KMACTest().testThe128Mac()),
+                        DynamicTest.dynamicTest("256", () -> new KMACTest().testThe256Mac())
                 ))
         )));
     }
@@ -943,9 +944,9 @@ public class StreamCipherTest {
     }
 
     /**
-     * KMAC128.
+     * KMAC.
      */
-    static class KMAC128Test {
+    static class KMACTest {
         private static final String KEY256 =
                 "404142434445464748494A4B4C4D4E4F" +
                 "505152535455565758595A5B5C5D5E5F";
@@ -963,6 +964,7 @@ public class StreamCipherTest {
                 "A0A1A2A3A4A5A6A7A8A9AAABACADAEAF" +
                 "B0B1B2B3B4B5B6B7B8B9BABBBCBDBEBF" +
                 "C0C1C2C3C4C5C6C7";
+
         /**
          * TestCases.
          */
@@ -1061,7 +1063,7 @@ public class StreamCipherTest {
         void testMac(final KMACTestCase pTestCase) throws OceanusException {
             /* Create the KMAC */
             final byte[] myNameSpace = pTestCase.theNameSpace == null ? null : pTestCase.theNameSpace.getBytes();
-            final KMAC myMac = new KMAC(pTestCase.theStrength, myNameSpace);
+            final KMAC myMac = new KMAC(pTestCase.theStrength);
 
             /* Access the data and expected bytes */
             final byte[] myData = Hex.decode(pTestCase.theData);
@@ -1070,11 +1072,15 @@ public class StreamCipherTest {
             /* Create the output buffer */
             final byte[] myOutput = new byte[myExpected.length];
 
-            /* Access the key */
-            final KeyParameter myParam = new KeyParameter(Hex.decode(pTestCase.theKey));
+            /* Build the parameters */
+            final KeccakParameters myParams = new KeccakParameters.Builder()
+                    .setKey(Hex.decode(pTestCase.theKey))
+                    .setPersonalisation(myNameSpace)
+                    .setMaxOutputLen(myOutput.length)
+                    .build();
 
             /* Initialise the cipher and create the keyStream */
-            myMac.init(myParam);
+            myMac.init(myParams);
             myMac.update(myData, 0, myData.length);
             myMac.doFinal(myOutput, 0, myOutput.length);
 
@@ -1089,7 +1095,7 @@ public class StreamCipherTest {
             Assertions.assertArrayEquals(myExpected, myOutput, "Mac mismatch on auto-reset");
 
             /* Test re-init */
-            myMac.init(myParam);
+            myMac.init(myParams);
             myMac.update(myData, 0, myData.length);
             myMac.doFinal(myOutput, 0, myOutput.length);
 
@@ -1105,7 +1111,7 @@ public class StreamCipherTest {
         void testXof(final KMACTestCase pTestCase) throws OceanusException {
             /* Create the KMAC */
             final byte[] myNameSpace = pTestCase.theNameSpace == null ? null : pTestCase.theNameSpace.getBytes();
-            final KMAC myMac = new KMAC(pTestCase.theStrength, myNameSpace);
+            final KMAC myMac = new KMAC(pTestCase.theStrength);
 
             /* Access the data and expected bytes */
             final byte[] myData = Hex.decode(pTestCase.theData);
@@ -1114,11 +1120,15 @@ public class StreamCipherTest {
             /* Create the output buffer */
             final byte[] myOutput = new byte[myExpected.length];
 
-            /* Access the key */
-            final KeyParameter myParam = new KeyParameter(Hex.decode(pTestCase.theKey));
+            /* Build the parameters */
+            final KeccakParameters myParams = new KeccakParameters.Builder()
+                    .setKey(Hex.decode(pTestCase.theKey))
+                    .setPersonalisation(myNameSpace)
+                    .setMaxOutputLen(myOutput.length)
+                    .build();
 
             /* Initialise the cipher and create the keyStream */
-            myMac.init(myParam);
+            myMac.init(myParams);
             myMac.update(myData, 0, myData.length);
             myMac.doOutput(myOutput, 0, myOutput.length);
 
@@ -1126,7 +1136,7 @@ public class StreamCipherTest {
             Assertions.assertArrayEquals(myExpected, myOutput, "Mac mismatch");
 
             /* Test re-init */
-            myMac.init(myParam);
+            myMac.init(myParams);
             myMac.update(myData, 0, myData.length);
             myMac.doOutput(myOutput, 0, myOutput.length);
 

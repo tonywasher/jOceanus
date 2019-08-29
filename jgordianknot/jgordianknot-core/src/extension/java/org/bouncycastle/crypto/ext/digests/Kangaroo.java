@@ -18,6 +18,7 @@ package org.bouncycastle.crypto.ext.digests;
 
 import org.bouncycastle.crypto.Digest;
 import org.bouncycastle.crypto.Xof;
+import org.bouncycastle.crypto.ext.params.KeccakParameters;
 import org.bouncycastle.util.Arrays;
 import org.bouncycastle.util.Pack;
 
@@ -36,15 +37,7 @@ public abstract class Kangaroo
          * Constructor.
          */
         public KangarooTwelve() {
-            this(null);
-        }
-
-        /**
-         * Constructor.
-         * @param pPersonal the personalisation bytes
-         */
-        public KangarooTwelve(final byte[] pPersonal) {
-            super(128, 12, pPersonal);
+            super(128, 12);
         }
 
         @Override
@@ -62,15 +55,7 @@ public abstract class Kangaroo
          * Constructor.
          */
         public MarsupimalFourteen() {
-            this(null);
-        }
-
-        /**
-         * Constructor.
-         * @param pPersonal the personalisation bytes
-         */
-        public MarsupimalFourteen(final byte[] pPersonal) {
-            super(256, 14, pPersonal);
+            super(256, 14);
         }
 
         @Override
@@ -110,6 +95,11 @@ public abstract class Kangaroo
         private static final byte[] FIRST = new byte[] { 3, 0, 0, 0, 0, 0, 0, 0 };
 
         /**
+         * The single byte buffer.
+         */
+        private final byte[] singleByte = new byte[1];
+
+        /**
          * The Tree Sponge.
          */
         private final KangarooSponge theTree;
@@ -127,7 +117,17 @@ public abstract class Kangaroo
         /**
          * The personalisation.
          */
-        private final byte[] thePersonal;
+        private byte[] thePersonal;
+
+        /**
+         * The XofLen.
+         */
+        long theXofLen;
+
+        /**
+         * The XofRemaining.
+         */
+        long theXofRemaining;
 
         /**
          * Are we squeezing?.
@@ -148,22 +148,30 @@ public abstract class Kangaroo
          * Constructor.
          * @param pStrength the strength
          * @param pRounds the rounds.
-         * @param pPersonal the personalisation bytes
          */
         KangarooBase(final int pStrength,
-                     final int pRounds,
-                     final byte[] pPersonal) {
+                     final int pRounds) {
             /* Create underlying digests */
             theTree = new KangarooSponge(pStrength, pRounds);
             theLeaf = new KangarooSponge(pStrength, pRounds);
             theChainLen = pStrength >> 2;
+            theXofRemaining = -1L;
 
+            /* Build personalisation */
+            buildPersonal(null);
+        }
+
+        /**
+         * Constructor.
+         * @param pPersonal the personalisation
+         */
+        private void buildPersonal(final byte[] pPersonal) {
             /* Build personalisation */
             final int myLen = pPersonal == null ? 0 : pPersonal.length;
             final byte[] myEnc = lengthEncode(myLen);
             thePersonal = pPersonal  == null
-                            ? new byte[myLen + myEnc.length]
-                            : Arrays.copyOf(pPersonal, myLen + myEnc.length);
+                          ? new byte[myLen + myEnc.length]
+                          : Arrays.copyOf(pPersonal, myLen + myEnc.length);
             System.arraycopy(myEnc, 0, thePersonal, myLen, myEnc.length);
         }
 
@@ -174,12 +182,32 @@ public abstract class Kangaroo
 
         @Override
         public int getDigestSize() {
-            return theChainLen >> 1;
+            return theXofLen == 0 ? theChainLen >> 1 : (int) theXofLen;
+        }
+
+        /**
+         * Initialise the digest.
+         * @param pParams the parameters
+         */
+        public void init(final KeccakParameters pParams) {
+            /* Build the new personalisation */
+            buildPersonal(pParams.getPersonalisation());
+
+            /* Reject a negative Xof length */
+            final long myXofLen = pParams.getMaxOutputLength();
+            if (myXofLen < -1) {
+                throw new IllegalArgumentException("Invalid output length");
+            }
+            theXofLen = myXofLen;
+
+            /* Reset everything */
+            reset();
         }
 
         @Override
         public void update(final byte pIn) {
-            update(new byte[]{ pIn }, 0, 1);
+            singleByte[0] = pIn;
+            update(singleByte, 0, 1);
         }
 
         @Override
@@ -192,6 +220,12 @@ public abstract class Kangaroo
         @Override
         public int doFinal(final byte[] pOut,
                            final int pOutOffset) {
+            /* Check for defined output length */
+            if (getDigestSize() == -1) {
+                throw new IllegalStateException("No defined output length");
+            }
+
+            /* finalise the digest */
             return doFinal(pOut, pOutOffset, getDigestSize());
         }
 
@@ -199,6 +233,11 @@ public abstract class Kangaroo
         public int doFinal(final byte[] pOut,
                            final int pOutOffset,
                            final int pOutLen) {
+            /* Check that we are not already outputting */
+            if (squeezing) {
+                throw new IllegalStateException("Already outputting");
+            }
+
             /* Build the required output */
             final int length = doOutput(pOut, pOutOffset, pOutLen);
 
@@ -214,6 +253,12 @@ public abstract class Kangaroo
             /* If we are not currently squeezing, switch to squeezing */
             if (!squeezing) {
                 switchToSqueezing();
+            }
+
+            /* Reject if there is insufficient Xof remaining */
+            if (pOutLen < 0
+                    || (theXofRemaining > 0  && pOutLen > theXofRemaining)) {
+                throw new IllegalArgumentException("Insufficient bytes remaining");
             }
 
             /* Squeeze out the data and return the length */
@@ -277,6 +322,7 @@ public abstract class Kangaroo
             theLeaf.initSponge();
             theCurrNode = 0;
             theProcessed = 0;
+            theXofRemaining = -1L;
             squeezing = false;
         }
 
@@ -323,6 +369,19 @@ public abstract class Kangaroo
                 switchSingle();
             } else {
                 switchFinal();
+            }
+
+            /* If we have a null Xof */
+            if (theXofLen == 0) {
+                /* Calculate the number of bytes available */
+                theXofRemaining = getDigestSize();
+
+                /* Else we are handling a normal Xof */
+            } else {
+                /* Calculate the number of bytes available */
+                theXofRemaining = theXofLen == -1
+                                  ? -2
+                                  : theXofLen;
             }
         }
 

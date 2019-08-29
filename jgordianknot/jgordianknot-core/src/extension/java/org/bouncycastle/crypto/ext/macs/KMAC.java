@@ -19,7 +19,8 @@ package org.bouncycastle.crypto.ext.macs;
 import org.bouncycastle.crypto.CipherParameters;
 import org.bouncycastle.crypto.Mac;
 import org.bouncycastle.crypto.Xof;
-import org.bouncycastle.crypto.digests.CSHAKEDigest;
+import org.bouncycastle.crypto.ext.digests.CSHAKE;
+import org.bouncycastle.crypto.ext.params.KeccakParameters;
 import org.bouncycastle.crypto.params.KeyParameter;
 import org.bouncycastle.util.Arrays;
 
@@ -34,9 +35,14 @@ public class KMAC
     private static final String INIT_ERROR = "Not initialised";
 
     /**
+     * The single byte buffer.
+     */
+    private final byte[] singleByte = new byte[1];
+
+    /**
      * Digest.
      */
-    private final CSHAKEDigest theDigest;
+    private final CSHAKE theDigest;
 
     /**
      * The Rate.
@@ -61,12 +67,10 @@ public class KMAC
     /**
      * Create a KMAC.
      * @param bitLength bit length of the underlying SHAKE function, 128 or 256.
-     * @param customS the customization string - available for local use.
      */
-    public KMAC(final int bitLength,
-                final byte[] customS) {
+    public KMAC(final int bitLength) {
         /* Store the digest */
-        theDigest = new CSHAKEDigest(bitLength, "KMAC".getBytes(), customS);
+        theDigest = new CSHAKE(bitLength, "KMAC".getBytes());
         minKeyLen = bitLength / Byte.SIZE;
         theRate =  (1600 - (bitLength << 1)) / Byte.SIZE;
     }
@@ -78,12 +82,24 @@ public class KMAC
 
     @Override
     public void init(final CipherParameters pParams) {
-        /* Access the key */
-        if (!(pParams instanceof KeyParameter)) {
-            throw new IllegalArgumentException(getAlgorithmName() + " requires a key.");
+        /* defaults */
+        byte[] myKey = null;
+        KeccakParameters myParms = null;
+
+        /* If we have key parameters */
+        if (pParams instanceof KeyParameter) {
+            /* Access the key */
+            final KeyParameter keyParams = (KeyParameter) pParams;
+            myKey = keyParams.getKey();
+            theDigest.reset();
+
+            /* If we have keccakParameters */
+        } else if (pParams instanceof KeccakParameters) {
+            /* Access params and the key */
+            myParms = (KeccakParameters) pParams;
+            myKey = myParms.getKey();
+            theDigest.init(myParms);
         }
-        final KeyParameter keyParams = (KeyParameter) pParams;
-        final byte[] myKey = keyParams.getKey();
 
         /* Check that the key is of sufficient strength */
         if (myKey == null || myKey.length < minKeyLen) {
@@ -99,8 +115,11 @@ public class KMAC
         /* Build the key details */
         theKey = bytepad(encodeString(myKey));
 
-        /* Reset */
-        reset();
+        /* Initialise the key */
+        theDigest.update(theKey, 0, theKey.length);
+
+        /* Clear flag */
+        startedOutput = false;
     }
 
     @Override
@@ -118,15 +137,11 @@ public class KMAC
         return theDigest.getByteLength();
     }
 
+
     @Override
     public void update(final byte pIn) {
-        /* Check that we have a key */
-        if (theKey == null) {
-            throw new IllegalStateException(INIT_ERROR);
-        }
-
-        /* Update the digest */
-        theDigest.update(pIn);
+        singleByte[0] = pIn;
+        update(singleByte, 0, 1);
     }
 
     @Override
@@ -145,7 +160,12 @@ public class KMAC
     @Override
     public int doFinal(final byte[] pOut,
                        final int pOutOff) {
-        /* finalise the digest */
+        /* Check for defined output length */
+        if (getDigestSize() == -1) {
+            throw new IllegalStateException("No defined output length");
+        }
+
+        /* finalise the mac */
         return doFinal(pOut, pOutOff, getDigestSize());
     }
 
@@ -157,12 +177,12 @@ public class KMAC
         if (theKey == null) {
             throw new IllegalStateException(INIT_ERROR);
         }
-
-        /* If we have not started output */
-        if (!startedOutput) {
-            /* Write trailer for known length */
-            writeTrailer(pOutLen);
+        if (startedOutput) {
+            throw new IllegalStateException("Already outputting");
         }
+
+        /* Write trailer for known length */
+        writeTrailer(pOutLen);
 
         /* Perform the output */
         final int myResult = doOutput(pOut, pOutOff, pOutLen);
@@ -176,6 +196,11 @@ public class KMAC
     public int doOutput(final byte[] pOut,
                         final int pOutOff,
                         final int pOutLen) {
+        /* Check that we have a key */
+        if (theKey == null) {
+            throw new IllegalStateException(INIT_ERROR);
+        }
+
         /* If we have not started output */
         if (!startedOutput) {
             /* Write trailer for unknown length */
@@ -217,7 +242,7 @@ public class KMAC
      */
     private byte[] bytepad(final byte[] str) {
         /* Left encode the rate */
-        final byte[] myRate = leftEncode(theRate);
+        final byte[] myRate = CSHAKE.leftEncode(theRate);
 
         /* Determine length of buffer */
         int myLen = myRate.length + str.length;
@@ -240,37 +265,11 @@ public class KMAC
     private static byte[] encodeString(final byte[] str) {
         /* Handle null or zero length string */
         if (str == null || str.length == 0) {
-            return leftEncode(0);
+            return CSHAKE.leftEncode(0);
         }
 
         /* Concatenate the encoded length and the string */
-        return Arrays.concatenate(leftEncode(str.length * (long) Byte.SIZE), str);
-    }
-
-    /**
-     * left Encode a length.
-     * @param strLen the length to encode
-     * @return the encoded length
-     */
-    private static byte[] leftEncode(final long strLen) {
-        /* Calculate # of bytes required to hold length */
-        byte n = 1;
-        long v = strLen;
-        while ((v >>= Byte.SIZE) != 0) {
-            n++;
-        }
-
-        /* Allocate byte array and store length */
-        final byte[] b = new byte[n + 1];
-        b[0] = n;
-
-        /* Encode the length */
-        for (int i = 1; i <= n; i++) {
-            b[i] = (byte) (strLen >> (Byte.SIZE * (n - i)));
-        }
-
-        /* Return the encoded length */
-        return b;
+        return Arrays.concatenate(CSHAKE.leftEncode(str.length * (long) Byte.SIZE), str);
     }
 
     /**
