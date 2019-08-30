@@ -148,11 +148,11 @@ public class SkeinXParameters
 
         /**
          * Set the maximum output length. (-1=unlimited, 0=underlying)
-         * @param pMaxXofLen the maximum output length
+         * @param pMaxOutLen the maximum output length
          * @return the Builder
          */
-        public Builder setMaxXofLen(final long pMaxXofLen) {
-            theMaxXofLen = pMaxXofLen;
+        public Builder setMaxOutputLen(final long pMaxOutLen) {
+            theMaxXofLen = pMaxOutLen;
             return this;
         }
 

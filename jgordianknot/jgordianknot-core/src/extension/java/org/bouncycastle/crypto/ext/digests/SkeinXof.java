@@ -219,7 +219,8 @@ public class SkeinXof
         }
 
         /* Reject if there is insufficient Xof remaining */
-        if (pOutLen < 0 || pOutLen > theXofRemaining) {
+        if (pOutLen < 0
+                || (theXofRemaining > 0  && pOutLen > theXofRemaining)) {
             throw new IllegalArgumentException("Insufficient bytes remaining");
         }
 

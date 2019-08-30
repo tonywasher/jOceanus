@@ -20,19 +20,22 @@ import org.bouncycastle.crypto.CipherParameters;
 import org.bouncycastle.util.Arrays;
 
 /**
- * Blake2 Parameters.
+ * Keccak Parameters.
+ * <p>
+ * Used for the follwoing constructs
+ * <ul>
+ *     <li>SHAKE
+ *     <li>cSHAKE
+ *     <li>KMAC
+ *     <li>Kangaroo
+ * </ul>
  */
-public class Blake2Parameters
-    implements CipherParameters {
+public class KeccakParameters
+    implements CipherParameters  {
     /**
      * The key.
      */
     private byte[] theKey;
-
-    /**
-     * The salt.
-     */
-    private byte[] theSalt;
 
     /**
      * The personalisation.
@@ -45,34 +48,11 @@ public class Blake2Parameters
     private long theMaxXofLen;
 
     /**
-     * The fanOut.
-     */
-    private short theFanOut;
-
-    /**
-     * The maxDepth.
-     */
-    private short theMaxDepth;
-
-    /**
-     * The leafLength.
-     */
-    private int theLeafLen;
-
-    /**
      * Obtain the key.
      * @return the key
      */
     public byte[] getKey() {
         return Arrays.clone(theKey);
-    }
-
-    /**
-     * Obtain the salt.
-     * @return the salt
-     */
-    public byte[] getSalt() {
-        return Arrays.clone(theSalt);
     }
 
     /**
@@ -92,30 +72,6 @@ public class Blake2Parameters
     }
 
     /**
-     * Obtain the treeLeafLength.
-     * @return the leafLength
-     */
-    public int getTreeLeafLen() {
-        return theLeafLen;
-    }
-
-    /**
-     * Obtain the treeFanOut.
-     * @return the fanOut
-     */
-    public short getTreeFanOut() {
-        return theFanOut;
-    }
-
-    /**
-     * Obtain the treeMaxDepth.
-     * @return the maxDepth
-     */
-    public short getTreeMaxDepth() {
-        return theMaxDepth;
-    }
-
-    /**
      * Parameter Builder.
      */
     public static class Builder {
@@ -123,11 +79,6 @@ public class Blake2Parameters
          * The key.
          */
         private byte[] theKey;
-
-        /**
-         * The salt.
-         */
-        private byte[] theSalt;
 
         /**
          * The personalisation.
@@ -140,37 +91,12 @@ public class Blake2Parameters
         private long theMaxXofLen;
 
         /**
-         * The fanOut.
-         */
-        private short theFanOut = 1;
-
-        /**
-         * The maxDepth.
-         */
-        private short theMaxDepth = 1;
-
-        /**
-         * The leafLength.
-         */
-        private int theLeafLen;
-
-        /**
          * Set the key.
          * @param pKey the key
          * @return the Builder
          */
         public Builder setKey(final byte[] pKey) {
             theKey = Arrays.clone(pKey);
-            return this;
-        }
-
-        /**
-         * Set the salt.
-         * @param pSalt the salt
-         * @return the Builder
-         */
-        public Builder setSalt(final byte[] pSalt) {
-            theSalt = Arrays.clone(pSalt);
             return this;
         }
 
@@ -195,35 +121,16 @@ public class Blake2Parameters
         }
 
         /**
-         * Set the treeConfig.
-         * @param pFanOut the fanOut (0=unlimited, 1-255).
-         * @param pMaxDepth the maxDepth (2-255).
-         * @param pLeafLen the leafLength (in bytes).
-         * @return the Builder
-         */
-        public Builder setTreeConfig(final int pFanOut,
-                                     final int pMaxDepth,
-                                     final int pLeafLen) {
-            theFanOut = (short) pFanOut;
-            theMaxDepth = (short) pMaxDepth;
-            theLeafLen = pLeafLen;
-            return this;
-        }
-
-        /**
          * Build the parameters.
          * @return the parameters
          */
-        public Blake2Parameters build() {
+        public KeccakParameters build() {
             /* Create params */
-            final Blake2Parameters myParams = new Blake2Parameters();
+            final KeccakParameters myParams = new KeccakParameters();
 
-            /* Record key and Salt */
+            /* Record key */
             if (theKey != null) {
                 myParams.theKey = theKey;
-            }
-            if (theSalt != null) {
-                myParams.theSalt = theSalt;
             }
 
             /* Record personalisation and xof length */
@@ -231,11 +138,6 @@ public class Blake2Parameters
                 myParams.thePersonal = thePersonal;
             }
             myParams.theMaxXofLen = theMaxXofLen;
-
-            /* Record tree details */
-            myParams.theFanOut = theFanOut;
-            myParams.theMaxDepth = theMaxDepth;
-            myParams.theLeafLen = theLeafLen;
 
             /* Return the parameters */
             return myParams;
