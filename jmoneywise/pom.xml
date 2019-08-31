@@ -15,7 +15,7 @@
     <parent>
     <groupId>net.sourceforge.joceanus</groupId>
     <artifactId>joceanus</artifactId>
-    <version>1.6.0-SNAPSHOT</version>
+    <version>1.6.0-b3</version>
   </parent>
   <artifactId>jmoneywise</artifactId>
   <name>MoneyWise Personal Finance</name>
