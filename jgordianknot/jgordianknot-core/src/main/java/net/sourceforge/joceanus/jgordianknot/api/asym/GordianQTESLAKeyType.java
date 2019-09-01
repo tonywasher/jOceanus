@@ -23,39 +23,14 @@ import org.bouncycastle.pqc.crypto.qtesla.QTESLASecurityCategory;
  */
 public enum GordianQTESLAKeyType {
     /**
-     * Heuristic Category I.
+     * Provably Secure I.
      */
-    HEURISTIC_I(QTESLASecurityCategory.HEURISTIC_I),
+    PROVABLY_SECURE_I(QTESLASecurityCategory.PROVABLY_SECURE_I),
 
     /**
-     * Heuristic Category II.
+     * Provably Secure III.
      */
-    HEURISTIC_II(QTESLASecurityCategory.HEURISTIC_II),
-
-    /**
-     * Heuristic Category III.
-     */
-    HEURISTIC_III(QTESLASecurityCategory.HEURISTIC_III),
-
-    /**
-     * Heuristic Category P I.
-     */
-    HEURISTIC_P_I(QTESLASecurityCategory.HEURISTIC_P_I),
-
-    /**
-     * Heuristic Category P III.
-     */
-    HEURISTIC_P_III(QTESLASecurityCategory.HEURISTIC_P_III),
-
-    /**
-     * Heuristic Category V SIZE.
-     */
-    HEURISTIC_V(QTESLASecurityCategory.HEURISTIC_V),
-
-    /**
-     * Heuristic Category V SIZE.
-     */
-    HEURISTIC_V_SIZE(QTESLASecurityCategory.HEURISTIC_V_SIZE);
+    PROVABLY_SECURE_III(QTESLASecurityCategory.PROVABLY_SECURE_III);
 
     /**
      * Security Category.

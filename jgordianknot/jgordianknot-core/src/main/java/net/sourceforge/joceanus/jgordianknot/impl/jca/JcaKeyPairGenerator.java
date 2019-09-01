@@ -706,26 +706,11 @@ public abstract class JcaKeyPairGenerator
                 /* Create the parameters */
                 final String myCategory;
                 switch (pKeySpec.getQTESLAKeyType()) {
-                    case HEURISTIC_I:
-                        myCategory = QTESLAParameterSpec.HEURISTIC_I;
+                    case PROVABLY_SECURE_I:
+                        myCategory = QTESLAParameterSpec.PROVABLY_SECURE_I;
                         break;
-                    case HEURISTIC_II:
-                        myCategory = QTESLAParameterSpec.HEURISTIC_II;
-                        break;
-                    case HEURISTIC_III:
-                        myCategory = QTESLAParameterSpec.HEURISTIC_III;
-                        break;
-                    case HEURISTIC_P_I:
-                        myCategory = QTESLAParameterSpec.HEURISTIC_P_I;
-                        break;
-                    case HEURISTIC_P_III:
-                        myCategory = QTESLAParameterSpec.HEURISTIC_P_III;
-                        break;
-                    case HEURISTIC_V:
-                        myCategory = QTESLAParameterSpec.HEURISTIC_V;
-                        break;
-                    case HEURISTIC_V_SIZE:
-                        myCategory = QTESLAParameterSpec.HEURISTIC_V_SIZE;
+                    case PROVABLY_SECURE_III:
+                        myCategory = QTESLAParameterSpec.PROVABLY_SECURE_III;
                         break;
                     default:
                         throw new GordianLogicException("Invalid KeySpec" + pKeySpec);

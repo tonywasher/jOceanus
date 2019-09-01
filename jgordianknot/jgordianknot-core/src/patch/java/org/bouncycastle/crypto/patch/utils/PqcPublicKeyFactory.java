@@ -78,33 +78,13 @@ public final class PqcPublicKeyFactory {
         {
             return new NHPublicKeyParameters(keyInfo.getPublicKeyData().getBytes());
         }
-        else if (algOID.equals(PQCObjectIdentifiers.qTESLA_I))
-        {
-            return new QTESLAPublicKeyParameters(QTESLASecurityCategory.HEURISTIC_I, keyInfo.getPublicKeyData().getOctets());
-        }
-        else if (algOID.equals(PQCObjectIdentifiers.qTESLA_II))
-        {
-            return new QTESLAPublicKeyParameters(QTESLASecurityCategory.HEURISTIC_II, keyInfo.getPublicKeyData().getOctets());
-        }
-        else if (algOID.equals(PQCObjectIdentifiers.qTESLA_III))
-        {
-            return new QTESLAPublicKeyParameters(QTESLASecurityCategory.HEURISTIC_III, keyInfo.getPublicKeyData().getOctets());
-        }
         else if (algOID.equals(PQCObjectIdentifiers.qTESLA_p_I))
         {
-            return new QTESLAPublicKeyParameters(QTESLASecurityCategory.HEURISTIC_P_I, keyInfo.getPublicKeyData().getOctets());
+            return new QTESLAPublicKeyParameters(QTESLASecurityCategory.PROVABLY_SECURE_I, keyInfo.getPublicKeyData().getOctets());
         }
         else if (algOID.equals(PQCObjectIdentifiers.qTESLA_p_III))
         {
-            return new QTESLAPublicKeyParameters(QTESLASecurityCategory.HEURISTIC_P_III, keyInfo.getPublicKeyData().getOctets());
-        }
-        else if (algOID.equals(PQCObjectIdentifiers.qTESLA_V))
-        {
-            return new QTESLAPublicKeyParameters(QTESLASecurityCategory.HEURISTIC_V, keyInfo.getPublicKeyData().getOctets());
-        }
-        else if (algOID.equals(PQCObjectIdentifiers.qTESLA_V_SIZE))
-        {
-            return new QTESLAPublicKeyParameters(QTESLASecurityCategory.HEURISTIC_V_SIZE, keyInfo.getPublicKeyData().getOctets());
+            return new QTESLAPublicKeyParameters(QTESLASecurityCategory.PROVABLY_SECURE_III, keyInfo.getPublicKeyData().getOctets());
         }
         else if (algOID.equals(PQCObjectIdentifiers.rainbow))
         {
