@@ -38,6 +38,16 @@ public class CSHAKE
     }
 
     /**
+     * Copy constructor.
+     * @param pSource the source for the copy
+     */
+    public CSHAKE(final CSHAKE pSource) {
+        super(pSource);
+        nameSpace = Arrays.clone(pSource.nameSpace);
+        diff = Arrays.clone(pSource.diff);
+    }
+
+    /**
      * Build the diff construct.
      *
      * @param S the customization string - available for local use.

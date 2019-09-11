@@ -23,12 +23,13 @@ import org.bouncycastle.crypto.ext.digests.CSHAKE;
 import org.bouncycastle.crypto.ext.params.KeccakParameters;
 import org.bouncycastle.crypto.params.KeyParameter;
 import org.bouncycastle.util.Arrays;
+import org.bouncycastle.util.Memoable;
 
 /**
  * Bouncy implementation of KMAC.
  */
 public class KMAC
-        implements Mac, Xof {
+        implements Mac, Xof, Memoable {
     /**
      * Not initialised error.
      */
@@ -73,6 +74,19 @@ public class KMAC
         theDigest = new CSHAKE(bitLength, "KMAC".getBytes());
         minKeyLen = bitLength / Byte.SIZE;
         theRate =  (1600 - (bitLength << 1)) / Byte.SIZE;
+    }
+
+    /**
+     * Create a KMAC.
+     * @param pSource the base KMAC.
+     */
+    public KMAC(final KMAC pSource) {
+        /* Copy details */
+        theDigest = new CSHAKE(pSource.theDigest);
+        minKeyLen = pSource.minKeyLen;
+        theRate =  pSource.theRate;
+        theKey = Arrays.clone(pSource.theKey);
+        startedOutput = pSource.startedOutput;
     }
 
     @Override
@@ -223,6 +237,27 @@ public class KMAC
 
         /* Clear flag */
         startedOutput = false;
+    }
+
+    @Override
+    public void reset(final Memoable pSource) {
+        /* Access source */
+        final KMAC mySource = (KMAC) pSource;
+        if (theRate != mySource.theRate) {
+            throw new IllegalArgumentException();
+        }
+
+        /* Reset digests */
+        theDigest.reset(mySource.theDigest);
+
+        /* Clone key and copy flag */
+        theKey = Arrays.clone(mySource.theKey);
+        startedOutput = mySource.startedOutput;
+    }
+
+    @Override
+    public KMAC copy() {
+        return new KMAC(this);
     }
 
     /**

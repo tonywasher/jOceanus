@@ -3,6 +3,7 @@ package org.bouncycastle.crypto.ext.digests;
 import org.bouncycastle.crypto.Xof;
 import org.bouncycastle.crypto.digests.KeccakDigest;
 import org.bouncycastle.crypto.ext.params.KeccakParameters;
+import org.bouncycastle.util.Memoable;
 
 /**
  * implementation of SHAKE based on following KeccakNISTInterface.c from http://keccak.noekeon.org/
@@ -11,7 +12,7 @@ import org.bouncycastle.crypto.ext.params.KeccakParameters;
  */
 public class SHAKE
         extends KeccakDigest
-        implements Xof {
+        implements Xof, Memoable {
     /**
      * The single byte buffer.
      */
@@ -150,6 +151,30 @@ public class SHAKE
     public void reset() {
         super.reset();
         theXofRemaining = -1L;
+    }
+
+    @Override
+    public void reset(final Memoable pSource) {
+        /* Access source */
+        final SHAKE mySource = (SHAKE) pSource;
+        if (theBitLength != mySource.theBitLength) {
+            throw new IllegalArgumentException();
+        }
+
+        /* Reset underlying digest */
+        System.arraycopy(mySource.state, 0, this.state, 0, mySource.state.length);
+        System.arraycopy(mySource.dataQueue, 0, this.dataQueue, 0, mySource.dataQueue.length);
+        this.bitsInQueue = mySource.bitsInQueue;
+        this.squeezing = mySource.squeezing;
+
+        /* Copy counters */
+        theXofLen = mySource.theXofLen;
+        theXofRemaining = mySource.theXofRemaining;
+    }
+
+    @Override
+    public SHAKE copy() {
+        return new SHAKE(this);
     }
 
     @Override
