@@ -120,7 +120,17 @@ public enum GordianDigestResource implements TethysBundleId {
     /**
      * Digest CubeHash.
      */
-    DIGEST_CUBEHASH("CubeHash");
+    DIGEST_CUBEHASH("CubeHash"),
+
+    /**
+     * Digest Kangaroo.
+     */
+    DIGEST_KANGAROO("Kangaroo"),
+
+    /**
+     * Digest Marsupimal.
+     */
+    DIGEST_MARSUPIMAL("Marsupimal");
 
     /**
      * The Digest Map.
@@ -199,6 +209,7 @@ public enum GordianDigestResource implements TethysBundleId {
         myMap.put(GordianDigestType.JH, DIGEST_JH);
         myMap.put(GordianDigestType.GROESTL, DIGEST_GROESTL);
         myMap.put(GordianDigestType.CUBEHASH, DIGEST_CUBEHASH);
+        myMap.put(GordianDigestType.KANGAROO, DIGEST_KANGAROO);
         return myMap;
     }
 

@@ -102,9 +102,9 @@ public class Blake2X
      * Constructor.
      * @param pSource the source digest.
      */
-    private Blake2X(final Blake2X pSource) {
+    public Blake2X(final Blake2X pSource) {
         /* Create hashes */
-        theUnderlying = pSource.theUnderlying instanceof Blake2b ? new Blake2b(512) : new Blake2s(256);
+        theUnderlying = pSource.theUnderlying instanceof Blake2b ? new Blake2b() : new Blake2s();
         theComposite = (Blake2) theUnderlying.copy();
 
         /* Initialise from source */
@@ -132,6 +132,8 @@ public class Blake2X
         /* Adjust XofLength */
         theXofLen = theUnderlying.getXofLen();
         theXofRemaining = -1L;
+        theRoot = null;
+        theCurrent = null;
     }
 
     @Override

@@ -315,6 +315,24 @@ public class GordianDigestSpec
     }
 
     /**
+     * Create kangarooDigestSpec.
+     * @param pLength the length
+     * @return the DigestSpec
+     */
+    public static GordianDigestSpec kangaroo(final GordianLength pLength) {
+        return new GordianDigestSpec(GordianDigestType.KANGAROO, GordianLength.LEN_128, pLength);
+    }
+
+    /**
+     * Create marsupimalDigestSpec.
+     * @param pLength the length
+     * @return the DigestSpec
+     */
+    public static GordianDigestSpec marsupimal(final GordianLength pLength) {
+        return new GordianDigestSpec(GordianDigestType.KANGAROO, GordianLength.LEN_256, pLength);
+    }
+
+    /**
      * Obtain Digest Type.
      * @return the DigestType
      */
@@ -369,6 +387,7 @@ public class GordianDigestSpec
             case SKEIN:
             case BLAKE:
             case SHAKE:
+            case KANGAROO:
                 return theStateLength != null;
             case SHA2:
                 return true;
@@ -404,6 +423,10 @@ public class GordianDigestSpec
                         break;
                     case BLAKE:
                         theName = GordianDigestType.getBlakeAlgorithmForStateLength(theStateLength);
+                        theName += SEP + theLength;
+                        break;
+                    case KANGAROO:
+                        theName = GordianDigestType.getKangarooAlgorithmForStateLength(theStateLength);
                         theName += SEP + theLength;
                         break;
                     default:

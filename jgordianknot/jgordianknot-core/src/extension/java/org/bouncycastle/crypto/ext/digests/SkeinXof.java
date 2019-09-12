@@ -89,7 +89,7 @@ public class SkeinXof
      * Constructor.
      * @param pSource the source digest.
      */
-    private SkeinXof(final SkeinXof pSource) {
+    public SkeinXof(final SkeinXof pSource) {
         /* Create hashes */
         theUnderlying = (SkeinBase) pSource.theUnderlying.copy();
         outputCache = new byte[theUnderlying.getBlockSize()];
@@ -124,7 +124,7 @@ public class SkeinXof
     private void declareConfig() {
         /* Declare the configuration */
         long myLen = theXofLen == 0 ? theUnderlying.getOutputSize() : theXofLen;
-        myLen = myLen == -1 ? -1L : myLen * 8;
+        myLen = myLen == -1 ? -1L : myLen * Byte.SIZE;
         final Configuration myConfig = new Configuration(myLen);
         theUnderlying.setConfiguration(myConfig);
     }
@@ -136,7 +136,7 @@ public class SkeinXof
             return myBase;
         }
         final long myLen = theXofLen == 0 ? theUnderlying.getOutputSize() : theXofLen;
-        return myBase + "-" + (theUnderlying.getBlockSize() * 8) + "-" + (myLen * 8);
+        return myBase + "-" + (theUnderlying.getBlockSize() * Byte.SIZE) + "-" + (myLen * Byte.SIZE);
     }
 
     @Override

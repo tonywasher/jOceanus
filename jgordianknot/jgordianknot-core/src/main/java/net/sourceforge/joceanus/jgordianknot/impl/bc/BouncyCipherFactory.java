@@ -59,7 +59,14 @@ import org.bouncycastle.crypto.engines.VMPCEngine;
 import org.bouncycastle.crypto.engines.VMPCKSA3Engine;
 import org.bouncycastle.crypto.engines.XSalsa20Engine;
 import org.bouncycastle.crypto.engines.XTEAEngine;
+import org.bouncycastle.crypto.ext.digests.Blake2b;
+import org.bouncycastle.crypto.ext.digests.Blake2s;
+import org.bouncycastle.crypto.ext.digests.SkeinBase;
 import org.bouncycastle.crypto.ext.engines.AnubisEngine;
+import org.bouncycastle.crypto.ext.engines.Blake2XEngine;
+import org.bouncycastle.crypto.ext.engines.KMACEngine;
+import org.bouncycastle.crypto.ext.engines.SkeinXofEngine;
+import org.bouncycastle.crypto.ext.macs.KMAC;
 import org.bouncycastle.crypto.ext.modes.ChaChaPoly1305;
 import org.bouncycastle.crypto.ext.engines.MARSEngine;
 import org.bouncycastle.crypto.ext.engines.RabbitEngine;
@@ -99,8 +106,11 @@ import org.bouncycastle.crypto.patch.modes.KGCMXBlockCipher;
 import net.sourceforge.joceanus.jgordianknot.api.base.GordianLength;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianCipherMode;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianStreamKeySpec;
+import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianStreamKeySpec.GordianBlakeXofKey;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianStreamKeySpec.GordianChaCha20Key;
+import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianStreamKeySpec.GordianKMACXofKey;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianStreamKeySpec.GordianSalsa20Key;
+import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianStreamKeySpec.GordianSkeinXofKey;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianStreamKeySpec.GordianVMPCKey;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianSymCipher;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianWrapper;
@@ -277,6 +287,15 @@ public class BouncyCipherFactory
                 return GordianLength.LEN_128 == mySpec.getKeyLength()
                        ? new Zuc128Engine()
                        : new Zuc256Engine();
+            case SKEINXOF:
+                final GordianSkeinXofKey mySkeinKeyType = (GordianSkeinXofKey) mySpec.getSubKeyType();
+                return new SkeinXofEngine(mySkeinKeyType.getLength().getLength());
+            case BLAKEXOF:
+                final GordianBlakeXofKey myBlakeKeyType = (GordianBlakeXofKey) mySpec.getSubKeyType();
+                return new Blake2XEngine(GordianBlakeXofKey.BLAKE2XB == myBlakeKeyType ? new Blake2b() : new Blake2s());
+            case KMACXOF:
+                final GordianKMACXofKey myKMACKeyType = (GordianKMACXofKey) mySpec.getSubKeyType();
+                return new KMACEngine(myKMACKeyType.getLength().getLength());
             default:
                 throw new GordianDataException(GordianCoreFactory.getInvalidText(pCipherSpec));
         }

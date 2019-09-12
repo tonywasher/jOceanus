@@ -24,6 +24,7 @@ import org.bouncycastle.crypto.Mac;
 import org.bouncycastle.crypto.ext.digests.Blake2;
 import org.bouncycastle.crypto.ext.macs.Blake2Mac;
 import org.bouncycastle.crypto.ext.macs.KMAC;
+import org.bouncycastle.crypto.ext.macs.SkeinMac;
 import org.bouncycastle.crypto.ext.macs.Zuc128Mac;
 import org.bouncycastle.crypto.ext.macs.Zuc256Mac;
 import org.bouncycastle.crypto.generators.Poly1305KeyGenerator;
@@ -35,7 +36,6 @@ import org.bouncycastle.crypto.macs.GOST28147Mac;
 import org.bouncycastle.crypto.macs.HMac;
 import org.bouncycastle.crypto.macs.Poly1305;
 import org.bouncycastle.crypto.macs.SipHash;
-import org.bouncycastle.crypto.macs.SkeinMac;
 import org.bouncycastle.crypto.macs.VMPCMac;
 import org.bouncycastle.crypto.modes.GCMBlockCipher;
 import org.bouncycastle.crypto.patch.macs.DSTUX7564Mac;
@@ -268,7 +268,7 @@ public class BouncyMacFactory
      */
     private static Mac getBCKMAC(final GordianMacSpec pSpec) {
         final GordianDigestSpec mySpec = pSpec.getDigestSpec();
-        return new KMAC(mySpec.getStateLength().getLength());
+        return new KMAC(mySpec.getStateLength().getLength(), mySpec.getDigestLength().getByteLength());
     }
 
     /**

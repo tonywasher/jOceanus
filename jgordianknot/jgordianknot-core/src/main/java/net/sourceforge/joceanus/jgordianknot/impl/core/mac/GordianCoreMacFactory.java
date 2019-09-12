@@ -144,12 +144,6 @@ public abstract class GordianCoreMacFactory
         final GordianDigestType myType = pDigestSpec.getDigestType();
         final GordianDigestFactory myDigests = theFactory.getDigestFactory();
 
-        /* Reject a SHAKE Spec that uses Xof */
-        if (GordianDigestType.SHAKE.equals(myType)
-            && pDigestSpec.getStateLength() != pDigestSpec.getDigestLength()) {
-            return false;
-        }
-
         /* Check validity */
         return supportedHMacDigestTypes().test(myType)
                 && myDigests.supportedDigestSpecs().test(pDigestSpec);

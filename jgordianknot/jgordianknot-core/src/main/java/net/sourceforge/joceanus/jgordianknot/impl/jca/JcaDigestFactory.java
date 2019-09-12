@@ -88,6 +88,7 @@ public class JcaDigestFactory
             case GROESTL:
             case SHAKE:
             case CUBEHASH:
+            case KANGAROO:
                 return false;
             default:
                 return true;

@@ -24,8 +24,11 @@ import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianCipherMode;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianPadding;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianStreamCipherSpec;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianStreamKeySpec;
+import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianStreamKeySpec.GordianBlakeXofKey;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianStreamKeySpec.GordianChaCha20Key;
+import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianStreamKeySpec.GordianKMACXofKey;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianStreamKeySpec.GordianSalsa20Key;
+import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianStreamKeySpec.GordianSkeinXofKey;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianStreamKeySpec.GordianStreamSubKeyType;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianStreamKeySpec.GordianVMPCKey;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianStreamKeyType;
@@ -475,6 +478,12 @@ public class GordianCoreKnuthObfuscater
                 return deriveEncodedIdFromEnum((GordianSalsa20Key) pStreamKeySpec.getSubKeyType());
             case VMPC:
                 return deriveEncodedIdFromEnum((GordianVMPCKey) pStreamKeySpec.getSubKeyType());
+            case SKEINXOF:
+                return deriveEncodedIdFromEnum((GordianSkeinXofKey) pStreamKeySpec.getSubKeyType());
+            case BLAKEXOF:
+                return deriveEncodedIdFromEnum((GordianBlakeXofKey) pStreamKeySpec.getSubKeyType());
+            case KMACXOF:
+                return deriveEncodedIdFromEnum((GordianKMACXofKey) pStreamKeySpec.getSubKeyType());
             default:
                 return 0;
         }
@@ -497,6 +506,12 @@ public class GordianCoreKnuthObfuscater
                 return deriveEnumFromEncodedId(pEncodedId, GordianSalsa20Key.class);
             case VMPC:
                 return deriveEnumFromEncodedId(pEncodedId, GordianVMPCKey.class);
+            case SKEINXOF:
+                return deriveEnumFromEncodedId(pEncodedId, GordianSkeinXofKey.class);
+            case BLAKEXOF:
+                return deriveEnumFromEncodedId(pEncodedId, GordianBlakeXofKey.class);
+            case KMACXOF:
+                return deriveEnumFromEncodedId(pEncodedId, GordianKMACXofKey.class);
             default:
                 return null;
         }

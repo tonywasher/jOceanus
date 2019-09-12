@@ -76,7 +76,22 @@ public enum GordianStreamKeyType {
     /**
      * Zuc.
      */
-    ZUC(GordianLength.LEN_128, GordianLength.LEN_200);
+    ZUC(GordianLength.LEN_128, GordianLength.LEN_200),
+
+    /**
+     * SkeinXof.
+     */
+    SKEINXOF(GordianLength.LEN_128),
+
+    /**
+     * BlakeXof.
+     */
+    BLAKEXOF(GordianLength.LEN_128),
+
+    /**
+     * KMACXof.
+     */
+    KMACXOF(GordianLength.LEN_128);
 
     /**
      * The IV Length.
@@ -127,14 +142,17 @@ public enum GordianStreamKeyType {
             case HC:
             case ZUC:
                 return GordianLength.LEN_128 == pKeyLen
-                       ? theShortIVLen.getByteLength()
-                       : theLongIVLen.getByteLength();
+                        ? theShortIVLen.getByteLength()
+                        : theLongIVLen.getByteLength();
+            case BLAKEXOF:
             case CHACHA20:
             case SALSA20:
             case GRAIN:
             case SOSEMANUK:
             case RABBIT:
             case SNOW3G:
+            case SKEINXOF:
+            case KMACXOF:
             default:
                 return theShortIVLen.getByteLength();
         }
@@ -149,6 +167,9 @@ public enum GordianStreamKeyType {
             case CHACHA20:
             case SALSA20:
             case VMPC:
+            case SKEINXOF:
+            case BLAKEXOF:
+            case KMACXOF:
                 return true;
             default:
                 return false;
@@ -191,6 +212,8 @@ public enum GordianStreamKeyType {
             case ZUC:
                 return GordianLength.LEN_128 == pKeyLen
                         || GordianLength.LEN_256 == pKeyLen;
+            case BLAKEXOF:
+                return GordianLength.LEN_1024 != pKeyLen;
             default:
                 return true;
         }

@@ -429,6 +429,9 @@ public class JcaCipherFactory
             case RABBIT:
             case SNOW3G:
             case ZUC:
+            case SKEINXOF:
+            case BLAKEXOF:
+            case KMACXOF:
                 return false;
             default:
                 return super.validStreamKeyType(pKeyType);

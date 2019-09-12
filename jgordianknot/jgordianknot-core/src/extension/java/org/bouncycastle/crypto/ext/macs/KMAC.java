@@ -23,12 +23,13 @@ import org.bouncycastle.crypto.ext.digests.CSHAKE;
 import org.bouncycastle.crypto.ext.params.KeccakParameters;
 import org.bouncycastle.crypto.params.KeyParameter;
 import org.bouncycastle.util.Arrays;
+import org.bouncycastle.util.Memoable;
 
 /**
  * Bouncy implementation of KMAC.
  */
 public class KMAC
-        implements Mac, Xof {
+        implements Mac, Xof, Memoable {
     /**
      * Not initialised error.
      */
@@ -69,10 +70,33 @@ public class KMAC
      * @param bitLength bit length of the underlying SHAKE function, 128 or 256.
      */
     public KMAC(final int bitLength) {
+        this(bitLength, 0);
+    }
+
+    /**
+     * Create a KMAC.
+     * @param bitLength bit length of the underlying SHAKE function, 128 or 256.
+     * @param pXofLength the Xof length
+     */
+    public KMAC(final int bitLength,
+                final int pXofLength) {
         /* Store the digest */
-        theDigest = new CSHAKE(bitLength, "KMAC".getBytes());
+        theDigest = new CSHAKE(bitLength, pXofLength, "KMAC".getBytes());
         minKeyLen = bitLength / Byte.SIZE;
         theRate =  (1600 - (bitLength << 1)) / Byte.SIZE;
+    }
+
+    /**
+     * Create a KMAC.
+     * @param pSource the base KMAC.
+     */
+    public KMAC(final KMAC pSource) {
+        /* Copy details */
+        theDigest = new CSHAKE(pSource.theDigest);
+        minKeyLen = pSource.minKeyLen;
+        theRate =  pSource.theRate;
+        theKey = Arrays.clone(pSource.theKey);
+        startedOutput = pSource.startedOutput;
     }
 
     @Override
@@ -223,6 +247,27 @@ public class KMAC
 
         /* Clear flag */
         startedOutput = false;
+    }
+
+    @Override
+    public void reset(final Memoable pSource) {
+        /* Access source */
+        final KMAC mySource = (KMAC) pSource;
+        if (theRate != mySource.theRate) {
+            throw new IllegalArgumentException();
+        }
+
+        /* Reset digests */
+        theDigest.reset(mySource.theDigest);
+
+        /* Clone key and copy flag */
+        theKey = Arrays.clone(mySource.theKey);
+        startedOutput = mySource.startedOutput;
+    }
+
+    @Override
+    public KMAC copy() {
+        return new KMAC(this);
     }
 
     /**
