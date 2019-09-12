@@ -104,7 +104,7 @@ public class Blake2X
      */
     public Blake2X(final Blake2X pSource) {
         /* Create hashes */
-        theUnderlying = pSource.theUnderlying instanceof Blake2b ? new Blake2b(512) : new Blake2s(256);
+        theUnderlying = pSource.theUnderlying instanceof Blake2b ? new Blake2b() : new Blake2s();
         theComposite = (Blake2) theUnderlying.copy();
 
         /* Initialise from source */

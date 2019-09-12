@@ -108,15 +108,22 @@
                 <tr><td>XChaCha20</td><td/><td/><td/><td>Y</td><td/><td/><td/></tr>
                 <tr><td rowspan="2">Salsa20</td><td>Standard</td><td>Y</td><td>Y</td><td/><td>Y</td><td/><td/><td/></tr>
                 <tr><td>XSalsa20</td><td>Y</td><td/><td/><td>Y</td><td/><td/><td/></tr>
-                <tr><td>HC</td><td>Y</td><td>Y</td><td/><td>Y</td><td/><td/><td>HC128/HC256 as appropriate</td></tr>
-                <tr><td>VMPC</td><td>Y</td><td>Y</td><td>Y</td><td>Y</td><td>Y</td><td>Y</td><td/></tr>
-                <tr><td>ISAAC</td><td/><td>Y</td><td>Y</td><td>Y</td><td>Y</td><td>Y</td><td/></tr>
-                <tr><td>RC4</td><td>Y</td><td>Y</td><td>Y</td><td>Y</td><td>Y</td><td>Y</td><td/></tr>
-                <tr><td>Grain128</td><td>Y</td><td>Y</td><td/><td/><td/><td/><td/></tr>
-                <tr><td>Rabbit</td><td/><td>Y</td><td/><td/><td/><td/><td/></tr>
-                <tr><td>Sosemanuk</td><td/><td>Y</td><td/><td/><td/><td/><td/></tr>
-                <tr><td>Snow3G</td><td/><td>Y</td><td/><td/><td/><td/><td/></tr>
-                <tr><td>Zuc</td><td/><td>Y</td><td/><td>Y</td><td/><td/><td>Zuc-128/Zuc-256 as appropriate</td></tr>
+                <tr><td>HC</td><td/><td>Y</td><td>Y</td><td/><td>Y</td><td/><td/><td>HC128/HC256 as appropriate</td></tr>
+                <tr><td>VMPC</td><td/><td>Y</td><td>Y</td><td>Y</td><td>Y</td><td>Y</td><td>Y</td><td/></tr>
+                <tr><td>ISAAC</td><td/><td/><td>Y</td><td>Y</td><td>Y</td><td>Y</td><td>Y</td><td/></tr>
+                <tr><td>RC4</td><td/><td>Y</td><td>Y</td><td>Y</td><td>Y</td><td>Y</td><td>Y</td><td/></tr>
+                <tr><td>Grain128</td><td/><td>Y</td><td>Y</td><td/><td/><td/><td/><td/></tr>
+                <tr><td>Rabbit</td><td/><td/><td>Y</td><td/><td/><td/><td/><td/></tr>
+                <tr><td>Sosemanuk</td><td/><td/><td>Y</td><td/><td/><td/><td/><td/></tr>
+                <tr><td>Snow3G</td><td/><td/><td>Y</td><td/><td/><td/><td/><td/></tr>
+                <tr><td>Zuc</td><td/><td/><td>Y</td><td/><td>Y</td><td/><td/><td>Zuc-128/Zuc-256 as appropriate</td></tr>
+                <tr><td rowspan="3">SkeinXof</td><td>Skein-256</td><td/><td>Y</td><td>Y</td><td>Y</td><td>Y</td><td>Y</td><td/></tr>
+                <tr><td>Skein-512</td><td/><td>Y</td><td>Y</td><td>Y</td><td>Y</td><td>Y</td><td/></tr>
+                <tr><td>Skein-1024</td><td/><td>Y</td><td>Y</td><td>Y</td><td>Y</td><td>Y</td><td/></tr>
+                <tr><td rowspan="2">Blake2X</td><td>Blake2Xs</td><td/><td>Y</td><td>Y</td><td>Y</td><td/><td/><td/></tr>
+                <tr><td>Blake2Xb</td><td/><td>Y</td><td>Y</td><td>Y</td><td>Y</td><td/><td/></tr>
+                <tr><td rowspan="2">KMACXof</td><td>KMAC128</td><td/><td>Y</td><td>Y</td><td>Y</td><td>Y</td><td>Y</td><td/></tr>
+                <tr><td>KMAC256</td><td/><td/><td/><td>Y</td><td>Y</td><td>Y</td><td/></tr>
             </table>
         </section>
     </body>

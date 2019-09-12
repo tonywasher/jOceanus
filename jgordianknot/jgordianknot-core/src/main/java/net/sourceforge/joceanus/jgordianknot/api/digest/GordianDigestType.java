@@ -115,7 +115,12 @@ public enum GordianDigestType {
     /**
      * CubeHash.
      */
-    CUBEHASH(GordianLength.LEN_512, GordianLength.LEN_224, GordianLength.LEN_256, GordianLength.LEN_384);
+    CUBEHASH(GordianLength.LEN_512, GordianLength.LEN_224, GordianLength.LEN_256, GordianLength.LEN_384),
+
+    /**
+     * Kangaroo.
+     */
+    KANGAROO(GordianLength.LEN_128, GordianLength.LEN_160, GordianLength.LEN_224, GordianLength.LEN_256, GordianLength.LEN_384, GordianLength.LEN_512);
 
     /**
      * The Supported lengths.
@@ -190,6 +195,7 @@ public enum GordianDigestType {
                 return pStateLength == null
                         || pStateLength.equals(getAlternateSha2StateForLength(pLength));
             case SHAKE:
+            case KANGAROO:
                 return pStateLength != null
                         && (pStateLength.equals(getSHAKEStateForLength(pLength))
                         || pStateLength.equals(getAlternateSHAKEStateForLength(pLength)));
@@ -216,6 +222,7 @@ public enum GordianDigestType {
             case SKEIN:
                 return getSkeinStateForLength(pLength);
             case SHAKE:
+            case KANGAROO:
                 return getSHAKEStateForLength(pLength);
             case BLAKE:
                 return getBLAKEStateForLength(pLength);
@@ -296,6 +303,7 @@ public enum GordianDigestType {
             case SHA2:
                 return getAlternateSha2StateForLength(pLength);
             case SHAKE:
+            case KANGAROO:
                 return getAlternateSHAKEStateForLength(pLength);
             case SKEIN:
                 return getAlternateSkeinStateForLength(pLength);
@@ -385,6 +393,17 @@ public enum GordianDigestType {
         return BLAKE.toString() + "2" + (isBlake2bState(pLength)
                                          ? "b"
                                          : "s");
+    }
+
+    /**
+     * Obtain the blakeAlgorithm name for State.
+     * @param pLength the length
+     * @return the length
+     */
+    public static String getKangarooAlgorithmForStateLength(final GordianLength pLength) {
+        return GordianLength.LEN_256.equals(pLength)
+               ? GordianDigestResource.DIGEST_MARSUPIMAL.getValue()
+               : GordianDigestResource.DIGEST_KANGAROO.getValue();
     }
 
     /**

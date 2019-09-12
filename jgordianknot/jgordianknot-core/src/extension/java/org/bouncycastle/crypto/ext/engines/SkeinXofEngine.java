@@ -38,11 +38,12 @@ public class SkeinXofEngine
 
     /**
      * Constructor.
-     * @param pDigest the underlying digest
+     * @param pLength the underlying stateLength
      */
-    public SkeinXofEngine(final SkeinBase pDigest) {
-        theSkeinXof = new SkeinXof(pDigest);
-        theKeyStream = new byte[pDigest.getBlockSize()];
+    public SkeinXofEngine(final int pLength) {
+        final SkeinBase myBase = new SkeinBase(pLength, pLength);
+        theSkeinXof = new SkeinXof(myBase);
+        theKeyStream = new byte[myBase.getBlockSize()];
     }
 
     /**

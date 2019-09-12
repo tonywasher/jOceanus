@@ -70,8 +70,18 @@ public class KMAC
      * @param bitLength bit length of the underlying SHAKE function, 128 or 256.
      */
     public KMAC(final int bitLength) {
+        this(bitLength, 0);
+    }
+
+    /**
+     * Create a KMAC.
+     * @param bitLength bit length of the underlying SHAKE function, 128 or 256.
+     * @param pXofLength the Xof length
+     */
+    public KMAC(final int bitLength,
+                final int pXofLength) {
         /* Store the digest */
-        theDigest = new CSHAKE(bitLength, "KMAC".getBytes());
+        theDigest = new CSHAKE(bitLength, pXofLength, "KMAC".getBytes());
         minKeyLen = bitLength / Byte.SIZE;
         theRate =  (1600 - (bitLength << 1)) / Byte.SIZE;
     }

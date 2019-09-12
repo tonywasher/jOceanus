@@ -35,16 +35,19 @@ import org.bouncycastle.crypto.digests.SHA384Digest;
 import org.bouncycastle.crypto.digests.SHA3Digest;
 import org.bouncycastle.crypto.digests.SHA512Digest;
 import org.bouncycastle.crypto.digests.SHA512tDigest;
-import org.bouncycastle.crypto.digests.SHAKEDigest;
 import org.bouncycastle.crypto.digests.SM3Digest;
 import org.bouncycastle.crypto.digests.TigerDigest;
 import org.bouncycastle.crypto.digests.WhirlpoolDigest;
 import org.bouncycastle.crypto.ext.digests.Blake2;
 import org.bouncycastle.crypto.ext.digests.Blake2b;
 import org.bouncycastle.crypto.ext.digests.Blake2s;
+import org.bouncycastle.crypto.ext.digests.CSHAKE;
 import org.bouncycastle.crypto.ext.digests.CubeHashDigest;
 import org.bouncycastle.crypto.ext.digests.GroestlDigest;
 import org.bouncycastle.crypto.ext.digests.JHDigest;
+import org.bouncycastle.crypto.ext.digests.Kangaroo.KangarooBase;
+import org.bouncycastle.crypto.ext.digests.Kangaroo.KangarooTwelve;
+import org.bouncycastle.crypto.ext.digests.Kangaroo.MarsupimalFourteen;
 import org.bouncycastle.crypto.ext.digests.SkeinDigest;
 
 import net.sourceforge.joceanus.jgordianknot.api.base.GordianLength;
@@ -92,7 +95,7 @@ public class BouncyDigestFactory
      * @return the digest
      * @throws OceanusException on error
      */
-    static Digest getBCDigest(final GordianDigestSpec pDigestSpec) throws OceanusException {
+    private static Digest getBCDigest(final GordianDigestSpec pDigestSpec) throws OceanusException {
         /* Access digest details */
         final GordianDigestType myType = pDigestSpec.getDigestType();
         final GordianLength myLen = pDigestSpec.getDigestLength();
@@ -108,7 +111,9 @@ public class BouncyDigestFactory
             case SHA3:
                 return getSHA3Digest(myLen);
             case SHAKE:
-                return new SHAKEDigest(pDigestSpec.getStateLength().getLength());
+                return new CSHAKE(pDigestSpec.getStateLength().getLength(), pDigestSpec.getDigestLength().getByteLength(), null);
+            case KANGAROO:
+                return getKangarooDigest(pDigestSpec);
             case BLAKE:
                 return getBlake2Digest(pDigestSpec);
             case STREEBOG:
@@ -173,6 +178,19 @@ public class BouncyDigestFactory
         return GordianDigestType.isBlake2bState(pSpec.getStateLength())
                ? new Blake2b(myLength)
                : new Blake2s(myLength);
+    }
+
+    /**
+     * Create the BouncyCastle Kangaroo digest.
+     *
+     * @param pSpec the digest spec
+     * @return the digest
+     */
+    private static KangarooBase getKangarooDigest(final GordianDigestSpec pSpec) {
+        final int myLength = pSpec.getDigestLength().getByteLength();
+        return GordianLength.LEN_128 == pSpec.getStateLength()
+               ? new KangarooTwelve(myLength)
+               : new MarsupimalFourteen(myLength);
     }
 
     /**

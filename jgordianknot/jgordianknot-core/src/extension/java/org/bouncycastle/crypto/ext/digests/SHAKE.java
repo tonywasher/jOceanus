@@ -60,11 +60,22 @@ public class SHAKE
      * @param bitLength the bit length
      */
     public SHAKE(final int bitLength) {
+        this(bitLength, 0);
+    }
+
+    /**
+     * Constructor for specified bitLength.
+     * @param bitLength the bit length
+     * @param pXofLength the Xof length
+     */
+    public SHAKE(final int bitLength,
+                 final int pXofLength) {
         /* Create the underlying digest */
         super(checkBitLength(bitLength));
         theBitLength = bitLength;
 
-        /* Clear outputting flag */
+        /* Set Xof details */
+        theXofLen = pXofLength;
         theXofRemaining = -1L;
     }
 

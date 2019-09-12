@@ -241,8 +241,7 @@ public class XofStreamCipher {
          */
         void runTests(final int pState) {
             /* Create the cipher and Xof */
-            final SkeinBase myBase = new SkeinBase(pState, pState);
-            final SkeinXofEngine myCipher = new SkeinXofEngine(myBase);
+            final SkeinXofEngine myCipher = new SkeinXofEngine(pState);
             final SkeinXof myXof = new SkeinXof(new SkeinBase(pState, pState));
 
             /* Run tests */
@@ -264,8 +263,7 @@ public class XofStreamCipher {
          */
         void runTests(final int pState) {
             /* Create the cipher and Xof */
-            final KMAC myMac = new KMAC(pState);
-            final KMACEngine myCipher = new KMACEngine(myMac);
+            final KMACEngine myCipher = new KMACEngine(pState);
             final KMAC myXof = new KMAC(pState);
 
             /* Run tests */

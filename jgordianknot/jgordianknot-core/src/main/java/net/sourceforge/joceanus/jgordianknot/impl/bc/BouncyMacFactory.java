@@ -268,7 +268,7 @@ public class BouncyMacFactory
      */
     private static Mac getBCKMAC(final GordianMacSpec pSpec) {
         final GordianDigestSpec mySpec = pSpec.getDigestSpec();
-        return new KMAC(mySpec.getStateLength().getLength());
+        return new KMAC(mySpec.getStateLength().getLength(), mySpec.getDigestLength().getByteLength());
     }
 
     /**

@@ -37,11 +37,11 @@ public class KMACEngine
 
     /**
      * Constructor.
-     * @param pMac the underlying mac
+     * @param pStrength the strength of the underlyuing mac
      */
-    public KMACEngine(final KMAC pMac) {
-        theKMAC = pMac;
-        theKeyStream = new byte[pMac.getMacSize()];
+    public KMACEngine(final int pStrength) {
+        theKMAC = new KMAC(pStrength);
+        theKeyStream = new byte[theKMAC.getMacSize()];
     }
 
     /**

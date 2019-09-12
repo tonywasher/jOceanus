@@ -27,6 +27,10 @@ import org.bouncycastle.util.Pack;
  */
 public abstract class Kangaroo
         implements Digest  {
+    /**
+     * Default digest length.
+     */
+    private static final int DIGESTLEN = 32;
 
     /**
      * KangarooTwelve.
@@ -37,7 +41,15 @@ public abstract class Kangaroo
          * Constructor.
          */
         public KangarooTwelve() {
-            super(128, 12);
+            this(DIGESTLEN);
+        }
+
+        /**
+         * Constructor.
+         * @param pLength the digest length
+         */
+        public KangarooTwelve(final int pLength) {
+            super(128, 12, pLength);
         }
 
         @Override
@@ -55,7 +67,15 @@ public abstract class Kangaroo
          * Constructor.
          */
         public MarsupimalFourteen() {
-            super(256, 14);
+            this(DIGESTLEN);
+        }
+
+        /**
+         * Constructor.
+         * @param pLength the digest length
+         */
+        public MarsupimalFourteen(final int pLength) {
+            super(256, 14, pLength);
         }
 
         @Override
@@ -67,7 +87,7 @@ public abstract class Kangaroo
     /**
      * The Kangaroo Base.
      */
-    private abstract static class KangarooBase
+    public abstract static class KangarooBase
             implements Digest, Xof {
         /**
          * Block Size.
@@ -148,13 +168,16 @@ public abstract class Kangaroo
          * Constructor.
          * @param pStrength the strength
          * @param pRounds the rounds.
+         * @param pLength the digest length
          */
         KangarooBase(final int pStrength,
-                     final int pRounds) {
+                     final int pRounds,
+                     final int pLength) {
             /* Create underlying digests */
             theTree = new KangarooSponge(pStrength, pRounds);
             theLeaf = new KangarooSponge(pStrength, pRounds);
             theChainLen = pStrength >> 2;
+            theXofLen = pLength;
             theXofRemaining = -1L;
 
             /* Build personalisation */

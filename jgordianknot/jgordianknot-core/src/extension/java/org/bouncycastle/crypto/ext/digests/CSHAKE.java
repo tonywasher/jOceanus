@@ -31,7 +31,20 @@ public class CSHAKE
      */
     public CSHAKE(final int bitLength,
                   final byte[] N) {
-        super(bitLength);
+        this(bitLength, 0, N);
+    }
+
+    /**
+     * Base constructor.
+     *
+     * @param bitLength bit length of the underlying SHAKE function, 128 or 256.
+     * @param pXofLength the Xof length
+     * @param N the function name string, note this is reserved for use by NIST. Avoid using it if not required.
+     */
+    public CSHAKE(final int bitLength,
+                  final int pXofLength,
+                  final byte[] N) {
+        super(bitLength, pXofLength);
         nameSpace = Arrays.clone(N);
         buildDiff(null);
         diffPadAndAbsorb();

@@ -16,6 +16,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jgordianknot.api.cipher;
 
+import java.security.Key;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -223,6 +224,37 @@ public class GordianStreamKeySpec
     }
 
     /**
+     * Create skeinKeySpec.
+     * @param pKeyLength the keyLength
+     * @param pStateLength the stateLength
+     * @return the keySpec
+     */
+    public static GordianStreamKeySpec skeinXof(final GordianLength pKeyLength,
+                                                final GordianLength pStateLength) {
+        return new GordianStreamKeySpec(GordianStreamKeyType.SKEINXOF, pKeyLength, GordianSkeinXofKey.getKeyTypeForLength(pStateLength));
+    }
+
+    /**
+     * Create blakeKeySpec.
+     * @param pKeyLength the keyLength
+     * @return the keySpec
+     */
+    public static GordianStreamKeySpec blakeXof(final GordianLength pKeyLength) {
+        return new GordianStreamKeySpec(GordianStreamKeyType.BLAKEXOF, pKeyLength);
+    }
+
+    /**
+     * Create kmacKeySpec.
+     * @param pKeyLength the keyLength
+     * @param pStateLength the stateLength
+     * @return the keySpec
+     */
+    public static GordianStreamKeySpec kmacXof(final GordianLength pKeyLength,
+                                               final GordianLength pStateLength) {
+        return new GordianStreamKeySpec(GordianStreamKeyType.KMACXOF, pKeyLength, GordianKMACXofKey.getKeyTypeForLength(pStateLength));
+    }
+
+    /**
      * Obtain streamKey Type.
      * @return the streamKeyType
      */
@@ -277,6 +309,10 @@ public class GordianStreamKeySpec
                 return theSubKeyType == GordianChaCha20Key.ISO7539
                             ? GordianLength.LEN_96.getByteLength()
                             : theStreamKeyType.getIVLength(theKeyLength);
+            case BLAKEXOF:
+                return theSubKeyType == GordianBlakeXofKey.BLAKE2XS
+                       ? GordianLength.LEN_64.getByteLength()
+                       : GordianLength.LEN_128.getByteLength();
             default:
                 return theStreamKeyType.getIVLength(theKeyLength);
         }
@@ -301,6 +337,12 @@ public class GordianStreamKeySpec
                 return checkChaChaValidity();
             case VMPC:
                 return checkVMPCValidity();
+            case SKEINXOF:
+                return checkSkeinValidity();
+            case BLAKEXOF:
+                return checkBlakeValidity();
+            case KMACXOF:
+                return checkKMACValidity();
             default:
                 return theSubKeyType == null
                         && theStreamKeyType.validForKeyLength(theKeyLength);
@@ -353,6 +395,53 @@ public class GordianStreamKeySpec
         return theStreamKeyType.validForKeyLength(theKeyLength);
     }
 
+    /**
+     * Check skein spec validity.
+     * @return valid true/false
+     */
+    private boolean checkSkeinValidity() {
+        /* SubKeyType must be a GordianSkeinXofKey */
+        if (!(theSubKeyType instanceof GordianSkeinXofKey)) {
+            return false;
+        }
+
+        /* Check keyLength validity */
+        return theStreamKeyType.validForKeyLength(theKeyLength);
+    }
+
+    /**
+     * Check skein spec validity.
+     * @return valid true/false
+     */
+    private boolean checkBlakeValidity() {
+        /* SubKeyType must be a GordianBlakeXofKey */
+        if (!(theSubKeyType instanceof GordianBlakeXofKey)) {
+            return false;
+        }
+
+        /* Check keyLength validity */
+        final GordianBlakeXofKey myType = (GordianBlakeXofKey) theSubKeyType;
+        return  theStreamKeyType.validForKeyLength(theKeyLength)
+                && (myType != GordianBlakeXofKey.BLAKE2XS
+                    || theKeyLength != GordianLength.LEN_512);
+    }
+
+    /**
+     * Check skein spec validity.
+     * @return valid true/false
+     */
+    private boolean checkKMACValidity() {
+        /* SubKeyType must be a GordianKMACXofKey */
+        if (!(theSubKeyType instanceof GordianKMACXofKey)) {
+            return false;
+        }
+
+        /* Check keyLength validity */
+        final GordianKMACXofKey myType = (GordianKMACXofKey) theSubKeyType;
+        return myType.getLength().getLength() <= theKeyLength.getLength()
+               && theStreamKeyType.validForKeyLength(theKeyLength);
+    }
+
     @Override
     public String toString() {
         /* If we have not yet loaded the name */
@@ -399,6 +488,21 @@ public class GordianStreamKeySpec
         if (theStreamKeyType == GordianStreamKeyType.CHACHA20
                 && theSubKeyType == GordianChaCha20Key.ISO7539) {
             return "ChaCha7539";
+        }
+
+        /* Handle Skein */
+        if (theStreamKeyType == GordianStreamKeyType.SKEINXOF) {
+            return theStreamKeyType.toString() + SEP + theSubKeyType.toString();
+        }
+
+        /* Handle Blake */
+        if (theStreamKeyType == GordianStreamKeyType.BLAKEXOF) {
+            return theSubKeyType.toString();
+        }
+
+        /* Handle KMAC */
+        if (theStreamKeyType == GordianStreamKeyType.KMACXOF) {
+            return theStreamKeyType.toString() + theSubKeyType.toString();
         }
 
         /* return the name */
@@ -520,6 +624,12 @@ public class GordianStreamKeySpec
                 return Arrays.asList(GordianChaCha20Key.values());
             case VMPC:
                 return Arrays.asList(GordianVMPCKey.values());
+            case SKEINXOF:
+                return Arrays.asList(GordianSkeinXofKey.values());
+            case BLAKEXOF:
+                return Arrays.asList(GordianBlakeXofKey.values());
+            case KMACXOF:
+                return Arrays.asList(GordianKMACXofKey.values());
             default:
                 return Collections.emptyList();
         }
@@ -539,6 +649,12 @@ public class GordianStreamKeySpec
                 return GordianChaCha20Key.STD;
             case VMPC:
                 return GordianVMPCKey.STD;
+            case SKEINXOF:
+                return GordianSkeinXofKey.STATE1024;
+            case BLAKEXOF:
+                return GordianBlakeXofKey.BLAKE2XB;
+            case KMACXOF:
+                return GordianKMACXofKey.STATE128;
             default:
                 return null;
         }
@@ -601,5 +717,143 @@ public class GordianStreamKeySpec
          * XChaCha20.
          */
         XCHACHA;
+    }
+
+    /**
+     * SkeinXof Key styles.
+     */
+    public enum GordianSkeinXofKey
+            implements GordianStreamSubKeyType {
+        /**
+         * 256State.
+         */
+        STATE256(GordianLength.LEN_256),
+
+        /**
+         * 512State.
+         */
+        STATE512(GordianLength.LEN_512),
+
+        /**
+         * 1024State.
+         */
+        STATE1024(GordianLength.LEN_1024);
+
+        /**
+         * The length.
+         */
+        private final GordianLength theLength;
+
+        /**
+         * Constructor.
+         * @param pLength the stateLength
+         */
+        GordianSkeinXofKey(final GordianLength pLength) {
+            theLength = pLength;
+        }
+
+        /**
+         * Obtain length.
+         * @return the length.
+         */
+        public GordianLength getLength() {
+            return theLength;
+        }
+
+        @Override
+        public String toString() {
+            return theLength.toString();
+        }
+
+        /**
+         * Obtain subKeyType for length.
+         * @param pLength the length
+         * @return the subKeyType
+         */
+        public static GordianSkeinXofKey getKeyTypeForLength(final GordianLength pLength) {
+            for (GordianSkeinXofKey myType : values()) {
+                if (pLength == myType.theLength) {
+                    return myType;
+                }
+            }
+            throw new IllegalArgumentException("Unsupported state length");
+        }
+    }
+
+    /**
+     * BlakeXof Key styles.
+     */
+    public enum GordianBlakeXofKey
+            implements GordianStreamSubKeyType {
+        /**
+         * Blake2S.
+         */
+        BLAKE2XS,
+
+        /**
+         * Blake2B.
+         */
+        BLAKE2XB;
+
+        @Override
+        public String toString() {
+            return this == BLAKE2XB ? "Blake2Xb" : "Blake2Xs";
+        }
+    }
+
+    /**
+     * KMACXof Key styles.
+     */
+    public enum GordianKMACXofKey
+            implements GordianStreamSubKeyType {
+        /**
+         * 128State.
+         */
+        STATE128(GordianLength.LEN_128),
+
+        /**
+         * 256State.
+         */
+        STATE256(GordianLength.LEN_256);
+
+        /**
+         * The length.
+         */
+        private final GordianLength theLength;
+
+        /**
+         * Constructor.
+         * @param pLength the stateLength
+         */
+        GordianKMACXofKey(final GordianLength pLength) {
+            theLength = pLength;
+        }
+
+        /**
+         * Obtain length.
+         * @return the length.
+         */
+        public GordianLength getLength() {
+            return theLength;
+        }
+
+        @Override
+        public String toString() {
+            return theLength.toString();
+        }
+
+        /**
+         * Obtain subKeyType for length.
+         * @param pLength the length
+         * @return the subKeyType
+         */
+        public static GordianKMACXofKey getKeyTypeForLength(final GordianLength pLength) {
+            for (GordianKMACXofKey myType : values()) {
+                if (pLength == myType.theLength) {
+                    return myType;
+                }
+            }
+            throw new IllegalArgumentException("Unsupported state length");
+        }
     }
 }
