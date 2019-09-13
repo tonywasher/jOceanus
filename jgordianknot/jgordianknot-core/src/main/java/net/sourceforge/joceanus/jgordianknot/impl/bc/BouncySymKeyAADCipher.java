@@ -29,14 +29,14 @@ import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianSymAADCipher;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianSymCipherSpec;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianSymKeySpec;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianCryptoException;
-import net.sourceforge.joceanus.jgordianknot.impl.core.cipher.GordianCoreAADCipher;
+import net.sourceforge.joceanus.jgordianknot.impl.core.cipher.GordianCoreCipher;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
  * Cipher for BouncyCastle AAD Symmetric Ciphers.
  */
 public class BouncySymKeyAADCipher
-        extends GordianCoreAADCipher
+        extends GordianCoreCipher<GordianSymKeySpec>
         implements GordianSymAADCipher {
     /**
      * Cipher.

@@ -47,9 +47,9 @@ public class BouncyStreamKeyAADCipher
      * @param pCipherSpec the cipherSpec
      * @param pCipher the cipher
      */
-    protected BouncyStreamKeyAADCipher(final BouncyFactory pFactory,
-                                       final GordianStreamCipherSpec pCipherSpec,
-                                       final ChaChaPoly1305 pCipher) {
+    BouncyStreamKeyAADCipher(final BouncyFactory pFactory,
+                             final GordianStreamCipherSpec pCipherSpec,
+                             final ChaChaPoly1305 pCipher) {
         super(pFactory, pCipherSpec, pCipher);
         theCipher = pCipher;
     }

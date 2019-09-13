@@ -29,20 +29,27 @@ import javax.crypto.spec.IvParameterSpec;
 
 import org.bouncycastle.jcajce.spec.AEADParameterSpec;
 
+import net.sourceforge.joceanus.jgordianknot.api.base.GordianKeySpec;
+import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianAADCipher;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianCipherParameters;
+import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianCipherSpec;
+import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianStreamAADCipher;
+import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianStreamCipherSpec;
+import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianStreamKeySpec;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianSymAADCipher;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianSymCipherSpec;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianSymKeySpec;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianCryptoException;
-import net.sourceforge.joceanus.jgordianknot.impl.core.cipher.GordianCoreAADCipher;
+import net.sourceforge.joceanus.jgordianknot.impl.core.cipher.GordianCoreCipher;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
  * Cipher for JCA BouncyCastle AAD Ciphers.
+ * @param <T> the key Type
  */
-public class JcaAADCipher
-        extends GordianCoreAADCipher
-        implements GordianSymAADCipher {
+public class JcaAADCipher<T extends GordianKeySpec>
+        extends GordianCoreCipher<T>
+        implements GordianAADCipher {
     /**
      * Cipher.
      */
@@ -55,15 +62,20 @@ public class JcaAADCipher
      * @param pCipher the cipher
      */
     JcaAADCipher(final JcaFactory pFactory,
-                 final GordianSymCipherSpec pCipherSpec,
+                 final GordianCipherSpec<T> pCipherSpec,
                  final Cipher pCipher) {
         super(pFactory, pCipherSpec);
         theCipher = pCipher;
     }
 
     @Override
-    public JcaKey<GordianSymKeySpec> getKey() {
-        return (JcaKey<GordianSymKeySpec>) super.getKey();
+    public JcaKey<T> getKey() {
+        return (JcaKey<T>) super.getKey();
+    }
+
+    @Override
+    public GordianCipherSpec<T> getCipherSpec() {
+        return (GordianCipherSpec<T>) super.getCipherSpec();
     }
 
     @Override
@@ -71,7 +83,7 @@ public class JcaAADCipher
                      final GordianCipherParameters pParams) throws OceanusException {
         /* Process the parameters and access the key */
         processParameters(pParams);
-        final JcaKey<GordianSymKeySpec> myJcaKey = JcaKey.accessKey(getKey());
+        final JcaKey<T> myJcaKey = JcaKey.accessKey(getKey());
 
         /* Access details */
         final int myMode = pEncrypt
@@ -149,5 +161,43 @@ public class JcaAADCipher
     @Override
     public int getBlockSize() {
         return 0;
+    }
+
+    /**
+     * JcaSymAADCipher.
+     */
+    public static class JcaSymAADCipher
+            extends JcaAADCipher<GordianSymKeySpec>
+            implements GordianSymAADCipher {
+        /**
+         * Constructor.
+         * @param pFactory the Security Factory
+         * @param pCipherSpec the cipherSpec
+         * @param pCipher the cipher
+         */
+        JcaSymAADCipher(final JcaFactory pFactory,
+                        final GordianSymCipherSpec pCipherSpec,
+                        final Cipher pCipher) {
+            super(pFactory, pCipherSpec, pCipher);
+        }
+    }
+
+    /**
+     * JcaStreamAADCipher.
+     */
+    public static class JcaStreamAADCipher
+            extends JcaAADCipher<GordianStreamKeySpec>
+            implements GordianStreamAADCipher {
+        /**
+         * Constructor.
+         * @param pFactory the Security Factory
+         * @param pCipherSpec the cipherSpec
+         * @param pCipher the cipher
+         */
+        JcaStreamAADCipher(final JcaFactory pFactory,
+                           final GordianStreamCipherSpec pCipherSpec,
+                           final Cipher pCipher) {
+            super(pFactory, pCipherSpec, pCipher);
+        }
     }
 }

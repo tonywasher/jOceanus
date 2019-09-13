@@ -1026,13 +1026,11 @@ public class SymmetricTest {
         final byte[] myIV = myCipher.getInitVector();
         myCipher.updateAAD(myAADData);
         final byte[] myEncrypted = myCipher.finish(myTestData);
-        myCipher.updateAAD(myAADData);
-        final byte[] myEncrypted2 = myCipher.finish(myTestData);
         myParms = GordianCipherParameters.aeadAndNonce(myKey, myAADData, myIV);
         myCipher.init(false, myParms);
         final byte[] myResult = myCipher.finish(myEncrypted);
         myCipher.init(false, myParms);
-        final byte[] myResult2 = myCipher.finish(myEncrypted2);
+        final byte[] myResult2 = myCipher.finish(myEncrypted);
         Assertions.assertArrayEquals(myResult, myResult2, "Failed to reset properly");
         Assertions.assertArrayEquals(myTestData, myResult, "Failed to encrypt/decrypt");
     }

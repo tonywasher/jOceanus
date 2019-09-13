@@ -25,20 +25,20 @@ import org.bouncycastle.crypto.ext.digests.Blake2;
 import org.bouncycastle.crypto.ext.macs.Blake2Mac;
 import org.bouncycastle.crypto.ext.macs.KMAC;
 import org.bouncycastle.crypto.ext.macs.SkeinMac;
-import org.bouncycastle.crypto.ext.macs.Zuc128Mac;
-import org.bouncycastle.crypto.ext.macs.Zuc256Mac;
 import org.bouncycastle.crypto.generators.Poly1305KeyGenerator;
 import org.bouncycastle.crypto.macs.CBCBlockCipherMac;
 import org.bouncycastle.crypto.macs.CFBBlockCipherMac;
 import org.bouncycastle.crypto.macs.CMac;
+import org.bouncycastle.crypto.macs.DSTU7564Mac;
 import org.bouncycastle.crypto.macs.GMac;
 import org.bouncycastle.crypto.macs.GOST28147Mac;
 import org.bouncycastle.crypto.macs.HMac;
 import org.bouncycastle.crypto.macs.Poly1305;
 import org.bouncycastle.crypto.macs.SipHash;
 import org.bouncycastle.crypto.macs.VMPCMac;
+import org.bouncycastle.crypto.macs.Zuc128Mac;
+import org.bouncycastle.crypto.macs.Zuc256Mac;
 import org.bouncycastle.crypto.modes.GCMBlockCipher;
-import org.bouncycastle.crypto.patch.macs.DSTUX7564Mac;
 import org.bouncycastle.crypto.patch.macs.DSTUX7624Mac;
 import org.bouncycastle.crypto.patch.macs.KXGMac;
 import org.bouncycastle.crypto.patch.modes.KGCMXBlockCipher;
@@ -246,7 +246,7 @@ public class BouncyMacFactory
      * @return the MAC
      */
     private static Mac getBCKupynaMac(final GordianDigestSpec pSpec) {
-        return new DSTUX7564Mac(pSpec.getDigestLength().getLength());
+        return new DSTU7564Mac(pSpec.getDigestLength().getLength());
     }
 
     /**
