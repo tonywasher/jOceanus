@@ -325,12 +325,6 @@ public class GordianSignatureAlgId {
                 new AlgorithmIdentifier(PQCObjectIdentifiers.rainbowWithSha512, DERNull.INSTANCE));
 
         /* Note that we have multiple signatures oids per spec */
-        addToMaps(GordianSignatureSpec.qTESLA(), GordianQTESLAKeyType.HEURISTIC_I,
-                new AlgorithmIdentifier(PQCObjectIdentifiers.qTESLA_I, DERNull.INSTANCE));
-        addToMaps(GordianSignatureSpec.qTESLA(), GordianQTESLAKeyType.HEURISTIC_III_SIZE,
-                new AlgorithmIdentifier(PQCObjectIdentifiers.qTESLA_III_size, DERNull.INSTANCE));
-        addToMaps(GordianSignatureSpec.qTESLA(), GordianQTESLAKeyType.HEURISTIC_III_SPEED,
-                new AlgorithmIdentifier(PQCObjectIdentifiers.qTESLA_III_speed, DERNull.INSTANCE));
         addToMaps(GordianSignatureSpec.qTESLA(), GordianQTESLAKeyType.PROVABLY_SECURE_I,
                 new AlgorithmIdentifier(PQCObjectIdentifiers.qTESLA_p_I, DERNull.INSTANCE));
         addToMaps(GordianSignatureSpec.qTESLA(), GordianQTESLAKeyType.PROVABLY_SECURE_III,

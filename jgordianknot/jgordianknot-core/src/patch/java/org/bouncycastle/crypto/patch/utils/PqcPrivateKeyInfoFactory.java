@@ -169,12 +169,6 @@ public final class PqcPrivateKeyInfoFactory {
     {
         switch (securityCategory)
         {
-            case QTESLASecurityCategory.HEURISTIC_I:
-                return new AlgorithmIdentifier(PQCObjectIdentifiers.qTESLA_I);
-            case QTESLASecurityCategory.HEURISTIC_III_SIZE:
-                return new AlgorithmIdentifier(PQCObjectIdentifiers.qTESLA_III_size);
-            case QTESLASecurityCategory.HEURISTIC_III_SPEED:
-                return new AlgorithmIdentifier(PQCObjectIdentifiers.qTESLA_III_speed);
             case QTESLASecurityCategory.PROVABLY_SECURE_I:
                 return new AlgorithmIdentifier(PQCObjectIdentifiers.qTESLA_p_I);
             case QTESLASecurityCategory.PROVABLY_SECURE_III:

@@ -706,17 +706,8 @@ public abstract class JcaKeyPairGenerator
                 /* Create the parameters */
                 final String myCategory;
                 switch (pKeySpec.getQTESLAKeyType()) {
-                    case HEURISTIC_I:
-                        myCategory = QTESLAParameterSpec.HEURISTIC_I;
-                        break;
                     case PROVABLY_SECURE_I:
                         myCategory = QTESLAParameterSpec.PROVABLY_SECURE_I;
-                        break;
-                    case HEURISTIC_III_SIZE:
-                        myCategory = QTESLAParameterSpec.HEURISTIC_III_SIZE;
-                        break;
-                    case HEURISTIC_III_SPEED:
-                        myCategory = QTESLAParameterSpec.HEURISTIC_III_SPEED;
                         break;
                     case PROVABLY_SECURE_III:
                         myCategory = QTESLAParameterSpec.PROVABLY_SECURE_III;

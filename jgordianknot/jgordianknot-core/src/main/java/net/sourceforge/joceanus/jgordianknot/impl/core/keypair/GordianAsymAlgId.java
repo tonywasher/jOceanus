@@ -907,10 +907,7 @@ public class GordianAsymAlgId {
          * @param pIdManager the idManager
          */
         static void register(final GordianAsymAlgId pIdManager) {
-            pIdManager.registerParser(PQCObjectIdentifiers.qTESLA_I, new GordianQTESLAEncodedParser(GordianQTESLAKeyType.HEURISTIC_I));
             pIdManager.registerParser(PQCObjectIdentifiers.qTESLA_p_I, new GordianQTESLAEncodedParser(GordianQTESLAKeyType.PROVABLY_SECURE_I));
-            pIdManager.registerParser(PQCObjectIdentifiers.qTESLA_III_size, new GordianQTESLAEncodedParser(GordianQTESLAKeyType.HEURISTIC_III_SIZE));
-            pIdManager.registerParser(PQCObjectIdentifiers.qTESLA_III_speed, new GordianQTESLAEncodedParser(GordianQTESLAKeyType.HEURISTIC_III_SPEED));
             pIdManager.registerParser(PQCObjectIdentifiers.qTESLA_p_III, new GordianQTESLAEncodedParser(GordianQTESLAKeyType.PROVABLY_SECURE_III));
         }
 

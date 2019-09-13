@@ -23,6 +23,7 @@ import java.util.Map;
 import javax.crypto.KeyGenerator;
 import javax.crypto.Mac;
 
+import net.sourceforge.joceanus.jgordianknot.api.base.GordianLength;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianSymKeySpec;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianSymKeyType;
 import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigestSpec;
@@ -45,6 +46,16 @@ public class JcaMacFactory
      * CMAC algorithm name.
      */
     private static final String CMAC_ALGORITHM = "CMAC";
+
+    /**
+     * GOST algorithm name.
+     */
+    private static final String GOST_ALGORITHM = "GOST28147";
+
+    /**
+     * ZUC-128 algorithm name.
+     */
+    private static final String ZUC256_ALGORITHM = "ZUC-256";
 
     /**
      * KeyGenerator Cache.
@@ -103,8 +114,6 @@ public class JcaMacFactory
         switch (pMacType) {
             case BLAKE:
             case KALYNA:
-            case KUPYNA:
-            case ZUC:
             case CBCMAC:
             case CFBMAC:
             case KMAC:
@@ -130,6 +139,7 @@ public class JcaMacFactory
             case KUPYNA:
             case SIPHASH:
             case GOST:
+            case ZUC:
                 return getJavaMac(getMacSpecAlgorithm(pMacSpec));
             case VMPC:
                 return getJavaMac("VMPC-MAC");
@@ -175,8 +185,13 @@ public class JcaMacFactory
             }
 
             /* GOST generators use the GOST28147 key generator */
-            if (myAlgorithm.startsWith("GOST28147")) {
-                myAlgorithm = "GOST28147";
+            if (myAlgorithm.startsWith(GOST_ALGORITHM)) {
+                myAlgorithm = GOST_ALGORITHM;
+            }
+
+            /* ZUC-256 generators use the ZUC-256 key generator */
+            if (myAlgorithm.startsWith(ZUC256_ALGORITHM)) {
+                myAlgorithm = ZUC256_ALGORITHM;
             }
 
             /* Return a KeyGenerator for the algorithm */
@@ -209,6 +224,8 @@ public class JcaMacFactory
                 return getSkeinMacAlgorithm(pMacSpec.getDigestSpec());
             case KUPYNA:
                 return getKupynaMacAlgorithm(pMacSpec.getDigestSpec());
+            case ZUC:
+                return getZucMacAlgorithm(pMacSpec);
             case SIPHASH:
                 return pMacSpec.toString();
             case GOST:
@@ -276,6 +293,24 @@ public class JcaMacFactory
                 .append(myState)
                 .append('-')
                 .append(myLen);
+        return myBuilder.toString();
+    }
+
+    /**
+     * Obtain the Skein MAC algorithm.
+     * @param pSpec the digestSpec
+     * @return the algorithm
+     */
+    private static String getZucMacAlgorithm(final GordianMacSpec pSpec) {
+        final String myKeyLen = Integer.toString(pSpec.getKeyLength().getLength());
+        final String myMacLen = Integer.toString(pSpec.getMacLength().getLength());
+        final StringBuilder myBuilder = new StringBuilder();
+        myBuilder.append("ZUC-")
+                .append(myKeyLen);
+        if (GordianLength.LEN_256 == pSpec.getKeyLength()) {
+                myBuilder.append('-')
+                        .append(myMacLen);
+        }
         return myBuilder.toString();
     }
 

@@ -25,6 +25,7 @@ import javax.crypto.NoSuchPaddingException;
 
 import net.sourceforge.joceanus.jgordianknot.api.base.GordianLength;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianCipherMode;
+import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianStreamCipher;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianStreamKeySpec;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianStreamKeySpec.GordianChaCha20Key;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianStreamKeySpec.GordianSalsa20Key;
@@ -43,6 +44,8 @@ import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianCoreFactory;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianCryptoException;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianDataException;
 import net.sourceforge.joceanus.jgordianknot.impl.core.cipher.GordianCoreCipherFactory;
+import net.sourceforge.joceanus.jgordianknot.impl.jca.JcaAADCipher.JcaStreamAADCipher;
+import net.sourceforge.joceanus.jgordianknot.impl.jca.JcaAADCipher.JcaSymAADCipher;
 import net.sourceforge.joceanus.jgordianknot.impl.jca.JcaCipher.JcaStreamCipher;
 import net.sourceforge.joceanus.jgordianknot.impl.jca.JcaCipher.JcaSymCipher;
 import net.sourceforge.joceanus.jtethys.OceanusException;
@@ -115,7 +118,7 @@ public class JcaCipherFactory
         if (pCipherSpec.isAAD()) {
             /* Create the cipher */
             final Cipher myBCCipher = getJavaCipher(pCipherSpec);
-            return new JcaAADCipher(getFactory(), pCipherSpec, myBCCipher);
+            return new JcaSymAADCipher(getFactory(), pCipherSpec, myBCCipher);
 
             /* else create the standard cipher */
         } else {
@@ -126,13 +129,14 @@ public class JcaCipherFactory
     }
 
     @Override
-    public JcaStreamCipher createStreamKeyCipher(final GordianStreamCipherSpec pCipherSpec) throws OceanusException {
+    public GordianStreamCipher createStreamKeyCipher(final GordianStreamCipherSpec pCipherSpec) throws OceanusException {
         /* Check validity of StreamKeySpec */
         checkStreamCipherSpec(pCipherSpec);
 
-        /* Create the cipher */
-        final Cipher myJavaCipher = getJavaCipher(pCipherSpec.getKeyType());
-        return new JcaStreamCipher(getFactory(), pCipherSpec, myJavaCipher);
+        final Cipher myJCACipher = getJavaCipher(pCipherSpec);
+        return pCipherSpec.isAAD()
+               ? new JcaStreamAADCipher(getFactory(), pCipherSpec, myJCACipher)
+               : new JcaStreamCipher(getFactory(), pCipherSpec, myJCACipher);
     }
 
     @Override
@@ -208,12 +212,18 @@ public class JcaCipherFactory
 
     /**
      * Create the BouncyCastle StreamKey Cipher via JCA.
-     * @param pKeySpec the StreamKeySpec
+     * @param pCipherSpec the StreamCipherSpec
      * @return the Cipher
      * @throws OceanusException on error
      */
-    private Cipher getJavaCipher(final GordianStreamKeySpec pKeySpec) throws OceanusException {
-        return getJavaCipher(getStreamKeyAlgorithm(pKeySpec));
+    private Cipher getJavaCipher(final GordianStreamCipherSpec pCipherSpec) throws OceanusException {
+        final GordianStreamKeySpec myKeySpec = pCipherSpec.getKeyType();
+        String myAlgo = getStreamKeyAlgorithm(myKeySpec);
+        if (pCipherSpec.isAAD()
+                && GordianStreamKeyType.CHACHA20 == myKeySpec.getStreamKeyType()) {
+            myAlgo = "CHACHA20-POLY1305";
+        }
+        return getJavaCipher(myAlgo);
     }
 
     /**
@@ -358,6 +368,10 @@ public class JcaCipherFactory
                 return GordianLength.LEN_128 == pKeySpec.getKeyLength()
                        ? "HC128"
                        : "HC256";
+            case ZUC:
+                return GordianLength.LEN_128 == pKeySpec.getKeyLength()
+                       ? "ZUC-128"
+                       : "ZUC-256";
             case CHACHA20:
                 return pKeySpec.getSubKeyType() == GordianChaCha20Key.STD
                        ? "CHACHA"
@@ -428,7 +442,6 @@ public class JcaCipherFactory
             case SOSEMANUK:
             case RABBIT:
             case SNOW3G:
-            case ZUC:
             case SKEINXOF:
             case BLAKEXOF:
             case KMACXOF:
@@ -463,16 +476,10 @@ public class JcaCipherFactory
                 /* Disallow OCB, OFB, CFB and CBC */
                 return !GordianCipherMode.OCB.equals(myMode)
                         && !GordianCipherMode.OFB.equals(myMode)
-                        && !GordianCipherMode.G3413CTR.equals(myMode)
                         && !GordianCipherMode.CFB.equals(myMode)
                         && !GordianCipherMode.CBC.equals(myMode);
             default:
                 return true;
         }
-    }
-
-    @Override
-    protected boolean validStreamCipherSpec(final GordianStreamCipherSpec pCipherSpec) {
-        return !pCipherSpec.isAAD();
     }
 }

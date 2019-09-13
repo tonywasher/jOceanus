@@ -22,6 +22,9 @@ import java.security.NoSuchAlgorithmException;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.bouncycastle.math.ec.rfc7748.X25519;
+import org.bouncycastle.math.ec.rfc7748.X448;
+
 import net.sourceforge.joceanus.jgordianknot.api.asym.GordianAsymKeySpec;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianCryptoException;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianDataException;
@@ -191,26 +194,6 @@ public class JcaAsymFactory
         } catch (NoSuchAlgorithmException e) {
             /* Throw the exception */
             throw new GordianCryptoException("Failed to create KeyPairGenerator", e);
-        }
-    }
-
-    @Override
-    public boolean validAsymKeySpec(final GordianAsymKeySpec pKeySpec) {
-        /* Perform standard checks */
-        if (!super.validAsymKeySpec(pKeySpec)) {
-            return false;
-        }
-
-        /* Disable EdwardsCurves and qTESLA */
-        switch (pKeySpec.getKeyType()) {
-            case QTESLA:
-            case ED25519:
-            case ED448:
-            case X25519:
-            case X448:
-                return false;
-            default:
-                return true;
         }
     }
 }

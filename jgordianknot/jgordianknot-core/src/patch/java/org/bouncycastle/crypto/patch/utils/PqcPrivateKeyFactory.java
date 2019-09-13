@@ -95,24 +95,6 @@ public final class PqcPrivateKeyFactory {
         {
             return new NHPrivateKeyParameters(convert(ASN1OctetString.getInstance(keyInfo.parsePrivateKey()).getOctets()));
         }
-        else if (algOID.equals(PQCObjectIdentifiers.qTESLA_I))
-        {
-            ASN1OctetString qTESLAPriv = ASN1OctetString.getInstance(keyInfo.parsePrivateKey());
-
-            return new QTESLAPrivateKeyParameters(QTESLASecurityCategory.HEURISTIC_I, qTESLAPriv.getOctets());
-        }
-        else if (algOID.equals(PQCObjectIdentifiers.qTESLA_III_size))
-        {
-            ASN1OctetString qTESLAPriv = ASN1OctetString.getInstance(keyInfo.parsePrivateKey());
-
-            return new QTESLAPrivateKeyParameters(QTESLASecurityCategory.HEURISTIC_III_SIZE, qTESLAPriv.getOctets());
-        }
-        else if (algOID.equals(PQCObjectIdentifiers.qTESLA_III_speed))
-        {
-            ASN1OctetString qTESLAPriv = ASN1OctetString.getInstance(keyInfo.parsePrivateKey());
-
-            return new QTESLAPrivateKeyParameters(QTESLASecurityCategory.HEURISTIC_III_SPEED, qTESLAPriv.getOctets());
-        }
         else if (algOID.equals(PQCObjectIdentifiers.qTESLA_p_I))
         {
             ASN1OctetString qTESLAPriv = ASN1OctetString.getInstance(keyInfo.parsePrivateKey());
