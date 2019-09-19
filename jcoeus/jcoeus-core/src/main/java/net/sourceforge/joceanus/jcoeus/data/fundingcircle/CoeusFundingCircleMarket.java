@@ -41,7 +41,7 @@ public class CoeusFundingCircleMarket
      */
     private static final MetisFieldSet<CoeusFundingCircleMarket> FIELD_DEFS = MetisFieldSet.newFieldSet(CoeusFundingCircleMarket.class);
 
-    /**
+    /*
      * AuctionMap Field Id.
      */
     static {

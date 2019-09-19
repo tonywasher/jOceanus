@@ -39,7 +39,7 @@ public abstract class CoeusMarket
      */
     private static final MetisFieldSet<CoeusMarket> FIELD_DEFS = MetisFieldSet.newFieldSet(CoeusMarket.class);
 
-    /**
+    /*
      * Declare Fields.
      */
     static {

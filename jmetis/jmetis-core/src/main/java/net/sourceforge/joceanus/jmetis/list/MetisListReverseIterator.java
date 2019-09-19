@@ -34,7 +34,7 @@ public class MetisListReverseIterator<T> implements Iterator<T> {
      * Constructor.
      * @param pIterator the iterator
      */
-    public MetisListReverseIterator(final ListIterator<T> pIterator) {
+    MetisListReverseIterator(final ListIterator<T> pIterator) {
         theIterator = pIterator;
     }
 

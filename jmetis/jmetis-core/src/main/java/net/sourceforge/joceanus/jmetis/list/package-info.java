@@ -1,4 +1,4 @@
-/*******************************************************************************
+/* *****************************************************************************
  * Metis: Java Data Framework
  * Copyright 2012,2019 Tony Washer
  *
@@ -14,6 +14,7 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  ******************************************************************************/
+
 /**
  * Java Indexed List.
  */

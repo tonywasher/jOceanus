@@ -40,7 +40,7 @@ public class MetisListEditSession
      */
     private static final MetisFieldSet<MetisListEditSession> FIELD_DEFS = MetisFieldSet.newFieldSet(MetisListEditSession.class);
 
-    /**
+    /*
      * Field Id.
      */
     static {

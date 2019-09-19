@@ -38,7 +38,7 @@ public class CoeusZopaLoan
      */
     private static final MetisFieldSet<CoeusZopaLoan> FIELD_DEFS = MetisFieldSet.newFieldSet(CoeusZopaLoan.class);
 
-    /**
+    /*
      * Fields.
      */
     static {

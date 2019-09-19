@@ -34,7 +34,7 @@ public class MetisFieldVersionedItem
      */
     private static final MetisFieldVersionedSet<MetisFieldVersionedItem> FIELD_DEFS = MetisFieldVersionedSet.newVersionedFieldSet(MetisFieldVersionedItem.class);
 
-    /**
+    /*
      * FieldIds.
      */
     static {

@@ -45,7 +45,7 @@ public class MetisListSetChange {
      * Constructor.
      * @param pEventType the event type
      */
-    protected MetisListSetChange(final MetisListEvent pEventType) {
+    MetisListSetChange(final MetisListEvent pEventType) {
         this(pEventType, 0);
     }
 
@@ -53,7 +53,7 @@ public class MetisListSetChange {
      * Constructor.
      * @param pVersion the version
      */
-    protected MetisListSetChange(final int pVersion) {
+    MetisListSetChange(final int pVersion) {
         this(MetisListEvent.VERSION, pVersion);
     }
 

@@ -35,7 +35,7 @@ public class CoeusMarketAnnual
      */
     private static final MetisFieldSet<CoeusMarketAnnual> FIELD_DEFS = MetisFieldSet.newFieldSet(CoeusMarketAnnual.class);
 
-    /**
+    /*
      * Field IDs.
      */
     static {

@@ -46,7 +46,7 @@ public class CoeusRateSetterLoanBookItem
      */
     private static final int BUFFER_LEN = 100;
 
-    /**
+    /*
      * FieldIds.
      */
     static {

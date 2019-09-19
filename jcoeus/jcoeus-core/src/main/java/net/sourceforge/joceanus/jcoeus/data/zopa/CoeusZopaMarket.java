@@ -42,7 +42,7 @@ public class CoeusZopaMarket
      */
     private static final MetisFieldSet<CoeusZopaMarket> FIELD_DEFS = MetisFieldSet.newFieldSet(CoeusZopaMarket.class);
 
-    /**
+    /*
      * Fields.
      */
     static {

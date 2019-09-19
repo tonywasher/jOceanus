@@ -47,7 +47,7 @@ public class MetisListSetVersioned
      */
     private static final MetisFieldSet<MetisListSetVersioned> FIELD_DEFS = MetisFieldSet.newFieldSet(MetisListSetVersioned.class);
 
-    /**
+    /*
      * Field Id.
      */
     static {
@@ -376,14 +376,32 @@ public class MetisListSetVersioned
     }
 
     /**
+     * Obtain itemTypeId from ItemId.
+     * @param pId the itemId
+     * @return the itemTypeId
+     */
+    static Integer getItemTypeFromId(final Integer pId) {
+        return pId >>> (Integer.SIZE - ITEMTYPEBITS);
+    }
+
+    /**
+     * Obtain indexedId from ItemId.
+     * @param pId the itemId
+     * @return the indexedId
+     */
+    static Integer getIndexedIdFromId(final Integer pId) {
+        return pId & (-1 >>> ITEMTYPEBITS);
+    }
+
+    /**
      * Obtain item for ItemId.
      * @param pId the itemId
      * @return the item
      */
     protected MetisFieldVersionedItem getItemForId(final Integer pId) {
         /* Split Id into the two parts */
-        final int myItemType = pId >>> (Integer.SIZE - ITEMTYPEBITS);
-        final int myItemId = pId & (-1 >>> ITEMTYPEBITS);
+        final int myItemType = getItemTypeFromId(pId);
+        final int myIndexedId = getIndexedIdFromId(pId);
 
         /* Determine the list */
         final MetisListKey myKey = theKeyMap.get(myItemType);
@@ -392,7 +410,7 @@ public class MetisListSetVersioned
         /* Access the item */
         final MetisFieldVersionedItem myItem = myList == null
                                                               ? null
-                                                              : myList.getItemById(myItemId);
+                                                              : myList.getItemById(myIndexedId);
         if (myItem == null) {
             throw new IllegalArgumentException("Invalid Id: " + Integer.toHexString(pId));
         }
@@ -419,7 +437,28 @@ public class MetisListSetVersioned
         }
 
         /* Build the id */
-        return myItemId | myItemType << (Integer.SIZE - ITEMTYPEBITS);
+        return buildItemId(myItemType, myItemId);
+    }
+
+    /**
+     * Obtain itemId from constituent parts.
+     * @param pItemType the itemType
+     * @param pIndexedId the indexedId
+     * @return the itemId
+     */
+    static Integer buildItemId(final Integer pItemType,
+                               final Integer pIndexedId) {
+        return pIndexedId | pItemType << (Integer.SIZE - ITEMTYPEBITS);
+    }
+
+    /**
+     * Obtain itemId from item.
+     * @param pItem the item
+     * @return the itemId
+     */
+    static Integer buildItemId(final MetisFieldVersionedItem pItem) {
+        final MetisListKey myKey = (MetisListKey) pItem.getItemType();
+        return buildItemId(myKey.getItemId(), pItem.getIndexedId());
     }
 
     /**

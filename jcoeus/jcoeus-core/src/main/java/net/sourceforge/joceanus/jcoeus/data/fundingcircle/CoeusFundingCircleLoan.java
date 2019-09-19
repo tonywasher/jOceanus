@@ -37,7 +37,7 @@ public class CoeusFundingCircleLoan
      */
     private static final MetisFieldSet<CoeusFundingCircleLoan> FIELD_DEFS = MetisFieldSet.newFieldSet(CoeusFundingCircleLoan.class);
 
-    /**
+    /*
      * Fields.
      */
     static {

@@ -36,7 +36,7 @@ public class CoeusMarketSnapShot
      */
     private static final MetisFieldSet<CoeusMarketSnapShot> FIELD_DEFS = MetisFieldSet.newFieldSet(CoeusMarketSnapShot.class);
 
-    /**
+    /*
      * Field Ids.
      */
     static {

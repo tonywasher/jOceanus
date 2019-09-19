@@ -33,7 +33,7 @@ public class MetisFieldVersionDelta
      */
     private static final MetisFieldSet<MetisFieldVersionDelta> FIELD_SET = MetisFieldSet.newFieldSet(MetisFieldVersionDelta.class);
 
-    /**
+    /*
      * Initialise the Version Field.
      */
     static {

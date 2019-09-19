@@ -46,7 +46,7 @@ public class CoeusZopaLoanBookItem
      */
     private static final int BUFFER_LEN = 100;
 
-    /**
+    /*
      * Fields.
      */
     static {
