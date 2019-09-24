@@ -23,7 +23,7 @@ import net.sourceforge.joceanus.jmetis.field.MetisFieldVersionedItem;
  */
 public class PrometheusEncryptedItem
         extends MetisFieldVersionedItem {
-    /**
+    /*
      * Report fields.
      */
     static {

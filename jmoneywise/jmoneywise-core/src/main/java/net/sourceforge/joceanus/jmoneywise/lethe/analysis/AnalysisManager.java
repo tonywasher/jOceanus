@@ -55,7 +55,7 @@ public class AnalysisManager
      */
     private static final MetisFieldSet<AnalysisManager> FIELD_DEFS = MetisFieldSet.newFieldSet(AnalysisManager.class);
 
-    /**
+    /*
      * Declare Fields.
      */
     static {

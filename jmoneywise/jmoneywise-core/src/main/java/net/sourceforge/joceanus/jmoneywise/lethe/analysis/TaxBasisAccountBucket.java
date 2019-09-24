@@ -44,7 +44,7 @@ public final class TaxBasisAccountBucket
      */
     private static final MetisFieldSet<TaxBasisAccountBucket> FIELD_DEFS = MetisFieldSet.newFieldSet(TaxBasisAccountBucket.class);
 
-    /**
+    /*
      * Declare Fields.
      */
     static {
@@ -190,7 +190,7 @@ public final class TaxBasisAccountBucket
          */
         private static final MetisFieldSet<TaxBasisAccountBucketList> FIELD_DEFS = MetisFieldSet.newFieldSet(TaxBasisAccountBucketList.class);
 
-        /**
+        /*
          * Declare Fields.
          */
         static {

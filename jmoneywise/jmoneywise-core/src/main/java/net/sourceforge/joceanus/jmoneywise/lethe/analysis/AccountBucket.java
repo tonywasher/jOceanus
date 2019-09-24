@@ -60,7 +60,7 @@ public abstract class AccountBucket<T extends AssetBase<T>>
     @SuppressWarnings("rawtypes")
     private static final MetisFieldSet<AccountBucket> FIELD_DEFS = MetisFieldSet.newFieldSet(AccountBucket.class);
 
-    /**
+    /*
      * Declare Fields.
      */
     static {
@@ -793,7 +793,7 @@ public abstract class AccountBucket<T extends AssetBase<T>>
         @SuppressWarnings("rawtypes")
         private static final MetisFieldSet<AccountBucketList> FIELD_DEFS = MetisFieldSet.newFieldSet(AccountBucketList.class);
 
-        /**
+        /*
          * Field IDs.
          */
         static {

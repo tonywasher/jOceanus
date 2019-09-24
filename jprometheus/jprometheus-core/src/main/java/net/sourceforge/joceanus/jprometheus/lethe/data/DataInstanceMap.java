@@ -38,7 +38,7 @@ public abstract class DataInstanceMap<T extends DataItem<E>, E extends Enum<E>, 
     @SuppressWarnings("rawtypes")
     private static final MetisFieldSet<DataInstanceMap> FIELD_DEFS = MetisFieldSet.newFieldSet(DataInstanceMap.class);
 
-    /**
+    /*
      * Declare Fields.
      */
     static {

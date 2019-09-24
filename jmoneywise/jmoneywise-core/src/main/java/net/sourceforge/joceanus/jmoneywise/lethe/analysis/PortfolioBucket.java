@@ -53,7 +53,7 @@ public final class PortfolioBucket
      */
     private static final MetisFieldSet<PortfolioBucket> FIELD_DEFS = MetisFieldSet.newFieldSet(PortfolioBucket.class);
 
-    /**
+    /*
      * Declare Fields.
      */
     static {
@@ -641,7 +641,7 @@ public final class PortfolioBucket
          */
         private static final MetisFieldSet<PortfolioBucketList> FIELD_DEFS = MetisFieldSet.newFieldSet(PortfolioBucketList.class);
 
-        /**
+        /*
          * Declare Fields.
          */
         static {

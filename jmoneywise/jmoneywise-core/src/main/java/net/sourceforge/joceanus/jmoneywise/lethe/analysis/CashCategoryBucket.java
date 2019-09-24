@@ -41,7 +41,7 @@ public final class CashCategoryBucket
      */
     private static final MetisFieldSet<CashCategoryBucket> FIELD_DEFS = MetisFieldSet.newFieldSet(CashCategoryBucket.class);
 
-    /**
+    /*
      * Declare Fields.
      */
     static {
@@ -125,7 +125,7 @@ public final class CashCategoryBucket
          */
         private static final MetisFieldSet<CashCategoryBucketList> FIELD_DEFS = MetisFieldSet.newFieldSet(CashCategoryBucketList.class);
 
-        /**
+        /*
          * Declare Fields.
          */
         static {

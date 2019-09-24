@@ -39,7 +39,7 @@ public class ThemisSfTicketSet
      */
     private static final MetisFieldSet<ThemisSfTicketSet> FIELD_DEFS = MetisFieldSet.newFieldSet(ThemisSfTicketSet.class);
 
-    /**
+    /*
      * Repository field id.
      */
     static {

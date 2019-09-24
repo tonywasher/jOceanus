@@ -37,7 +37,7 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
  */
 public class JcaFactory
     extends GordianCoreFactory {
-    /**
+    /*
      * Static Constructor.
      */
     static {

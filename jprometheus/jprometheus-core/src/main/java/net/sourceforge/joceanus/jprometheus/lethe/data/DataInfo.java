@@ -953,7 +953,7 @@ public abstract class DataInfo<T extends DataInfo<T, O, I, S, E>,
                                               S extends Enum<S> & DataInfoClass,
                                               E extends Enum<E>>
             extends EncryptedList<T, E> {
-        /**
+        /*
          * Report fields.
          */
         static {

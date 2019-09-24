@@ -74,7 +74,7 @@ public final class ThemisGitBranch
      */
     private static final MetisFieldSet<ThemisGitBranch> FIELD_DEFS = MetisFieldSet.newFieldSet(ThemisGitBranch.class);
 
-    /**
+    /*
      * Repository field id.
      */
     static {

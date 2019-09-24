@@ -1038,7 +1038,7 @@ public abstract class TransactionBase<T extends TransactionBase<T>>
      */
     public abstract static class TransactionBaseList<T extends TransactionBase<T>>
             extends EncryptedList<T, MoneyWiseDataType> {
-        /**
+        /*
          * Report fields.
          */
         static {

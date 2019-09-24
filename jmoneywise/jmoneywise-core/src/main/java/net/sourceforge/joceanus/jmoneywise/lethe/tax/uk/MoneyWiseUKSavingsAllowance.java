@@ -35,7 +35,7 @@ public class MoneyWiseUKSavingsAllowance
      */
     private static final MetisFieldSet<MoneyWiseUKSavingsAllowance> FIELD_DEFS = MetisFieldSet.newFieldSet(MoneyWiseUKSavingsAllowance.class);
 
-    /**
+    /*
      * Declare Fields.
      */
     static {

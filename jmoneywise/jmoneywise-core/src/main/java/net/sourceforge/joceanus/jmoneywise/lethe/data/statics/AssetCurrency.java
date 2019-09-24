@@ -517,7 +517,7 @@ public class AssetCurrency
          */
         private static final MetisFieldSet<CurrencyDataMap> FIELD_DEFS = MetisFieldSet.newFieldSet(CurrencyDataMap.class);
 
-        /**
+        /*
          * Declare Fields.
          */
         static {

@@ -38,7 +38,7 @@ public class ThemisSfUser
      */
     private static final MetisFieldSet<ThemisSfUser> FIELD_DEFS = MetisFieldSet.newFieldSet(ThemisSfUser.class);
 
-    /**
+    /*
      * Repository field id.
      */
     static {

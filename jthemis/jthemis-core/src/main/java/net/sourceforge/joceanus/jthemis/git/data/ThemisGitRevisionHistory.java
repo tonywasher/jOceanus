@@ -54,7 +54,7 @@ public class ThemisGitRevisionHistory
      */
     private static final MetisFieldSet<ThemisGitRevisionHistory> FIELD_DEFS = MetisFieldSet.newFieldSet(ThemisGitRevisionHistory.class);
 
-    /**
+    /*
      * fieldIds.
      */
     static {
@@ -276,7 +276,7 @@ public class ThemisGitRevisionHistory
          */
         private static final MetisFieldSet<ThemisGitRevision> FIELD_DEFS = MetisFieldSet.newFieldSet(ThemisGitRevision.class);
 
-        /**
+        /*
          * fieldIds.
          */
         static {

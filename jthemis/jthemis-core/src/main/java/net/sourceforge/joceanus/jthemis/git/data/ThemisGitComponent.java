@@ -78,7 +78,7 @@ public final class ThemisGitComponent
      */
     private static final MetisFieldSet<ThemisGitComponent> FIELD_DEFS = MetisFieldSet.newFieldSet(ThemisGitComponent.class);
 
-    /**
+    /*
      * Base field id.
      */
     static {

@@ -82,7 +82,7 @@ public class MoneyWiseData
      */
     private static final MetisFieldSet<MoneyWiseData> FIELD_DEFS = MetisFieldSet.newFieldSet(MoneyWiseData.class);
 
-    /**
+    /*
      * Declare Fields.
      */
     static {

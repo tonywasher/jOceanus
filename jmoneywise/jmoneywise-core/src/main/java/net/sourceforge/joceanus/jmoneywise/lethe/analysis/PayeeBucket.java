@@ -51,7 +51,7 @@ public final class PayeeBucket
      */
     private static final MetisFieldSet<PayeeBucket> FIELD_DEFS = MetisFieldSet.newFieldSet(PayeeBucket.class);
 
-    /**
+    /*
      * Declare Fields.
      */
     static {
@@ -797,7 +797,7 @@ public final class PayeeBucket
          */
         private static final MetisFieldSet<PayeeBucketList> FIELD_DEFS = MetisFieldSet.newFieldSet(PayeeBucketList.class);
 
-        /**
+        /*
          * Declare Fields.
          */
         static {

@@ -39,7 +39,7 @@ public class MoneyWiseTaxDueBucket
      */
     private static final MetisFieldSet<MoneyWiseTaxDueBucket> FIELD_DEFS = MetisFieldSet.newFieldSet(MoneyWiseTaxDueBucket.class);
 
-    /**
+    /*
      * Declare Fields.
      */
     static {
@@ -216,7 +216,7 @@ public class MoneyWiseTaxDueBucket
          */
         private static final MetisFieldSet<MoneyWiseTaxBandBucket> FIELD_DEFS = MetisFieldSet.newFieldSet(MoneyWiseTaxBandBucket.class);
 
-        /**
+        /*
          * Declare Fields.
          */
         static {

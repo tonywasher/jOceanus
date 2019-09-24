@@ -643,7 +643,7 @@ public class ExchangeRate
      */
     public abstract static class ExchangeRateBaseList<T extends ExchangeRate>
             extends DataList<T, MoneyWiseDataType> {
-        /**
+        /*
          * Report fields.
          */
         static {
@@ -693,7 +693,7 @@ public class ExchangeRate
          */
         private static final MetisFieldSet<ExchangeRateList> FIELD_DEFS = MetisFieldSet.newFieldSet(ExchangeRateList.class);
 
-        /**
+        /*
          * Declare Fields.
          */
         static {
@@ -927,7 +927,7 @@ public class ExchangeRate
         @SuppressWarnings("rawtypes")
         private static final MetisFieldSet<ExchangeRateDataMap> FIELD_DEFS = MetisFieldSet.newFieldSet(ExchangeRateDataMap.class);
 
-        /**
+        /*
          * UnderlyingMap Field Id.
          */
         static {
@@ -1146,7 +1146,7 @@ public class ExchangeRate
              */
             private static final MetisFieldSet<RateList> FIELD_DEFS = MetisFieldSet.newFieldSet(RateList.class);
 
-            /**
+            /*
              * UnderlyingMap Field Id.
              */
             static {

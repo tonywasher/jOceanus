@@ -583,7 +583,7 @@ public final class TransactionCategory
          */
         private static final MetisFieldSet<TransCategoryDataMap> FIELD_DEFS = MetisFieldSet.newFieldSet(TransCategoryDataMap.class);
 
-        /**
+        /*
          * Declare Fields.
          */
         static {

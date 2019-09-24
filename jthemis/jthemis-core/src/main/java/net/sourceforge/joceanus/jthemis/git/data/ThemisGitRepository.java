@@ -46,7 +46,7 @@ public class ThemisGitRepository
      */
     private static final MetisFieldSet<ThemisGitRepository> FIELD_DEFS = MetisFieldSet.newFieldSet(ThemisGitRepository.class);
 
-    /**
+    /*
      * fieldIds.
      */
     static {

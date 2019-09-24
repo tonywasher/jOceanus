@@ -1295,7 +1295,7 @@ public class Deposit
          */
         private static final MetisFieldSet<DepositDataMap> FIELD_DEFS = MetisFieldSet.newFieldSet(DepositDataMap.class);
 
-        /**
+        /*
          * UnderlyingMap Field Id.
          */
         static {

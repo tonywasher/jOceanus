@@ -59,7 +59,7 @@ public final class TransactionCategoryBucket
      */
     private static final MetisFieldSet<TransactionCategoryBucket> FIELD_DEFS = MetisFieldSet.newFieldSet(TransactionCategoryBucket.class);
 
-    /**
+    /*
      * Declare Fields.
      */
     static {
@@ -661,7 +661,7 @@ public final class TransactionCategoryBucket
          */
         private static final MetisFieldSet<TransactionCategoryBucketList> FIELD_DEFS = MetisFieldSet.newFieldSet(TransactionCategoryBucketList.class);
 
-        /**
+        /*
          * Declare Fields.
          */
         static {

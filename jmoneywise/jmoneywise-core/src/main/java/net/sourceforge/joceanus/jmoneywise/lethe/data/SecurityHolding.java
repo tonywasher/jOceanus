@@ -69,7 +69,7 @@ public final class SecurityHolding
      */
     private static final MetisFieldSet<SecurityHolding> FIELD_DEFS = MetisFieldSet.newFieldSet(SecurityHolding.class);
 
-    /**
+    /*
      * UnderlyingMap Field Id.
      */
     static {

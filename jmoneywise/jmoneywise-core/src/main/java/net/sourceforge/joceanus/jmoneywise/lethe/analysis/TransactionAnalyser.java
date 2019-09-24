@@ -87,7 +87,7 @@ public class TransactionAnalyser
      */
     private static final MetisFieldSet<TransactionAnalyser> FIELD_DEFS = MetisFieldSet.newFieldSet(TransactionAnalyser.class);
 
-    /**
+    /*
      * Declare Fields.
      */
     static {

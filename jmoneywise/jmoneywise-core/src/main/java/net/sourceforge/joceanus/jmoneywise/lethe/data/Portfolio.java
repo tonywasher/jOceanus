@@ -1303,7 +1303,7 @@ public class Portfolio
          */
         private static final MetisFieldSet<PortfolioDataMap> FIELD_DEFS = MetisFieldSet.newFieldSet(PortfolioDataMap.class);
 
-        /**
+        /*
          * UnderlyingMap Field Id.
          */
         static {

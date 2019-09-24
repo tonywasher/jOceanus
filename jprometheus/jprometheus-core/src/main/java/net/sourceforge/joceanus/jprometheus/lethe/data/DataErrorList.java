@@ -38,7 +38,7 @@ public class DataErrorList<E extends Enum<E>>
     @SuppressWarnings("rawtypes")
     private static final MetisFieldSet<DataErrorList> FIELD_DEFS = MetisFieldSet.newFieldSet(DataErrorList.class);
 
-    /**
+    /*
      * Declare Fields.
      */
     static {

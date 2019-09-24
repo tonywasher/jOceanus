@@ -41,7 +41,7 @@ public final class LoanCategoryBucket
      */
     private static final MetisFieldSet<LoanCategoryBucket> FIELD_DEFS = MetisFieldSet.newFieldSet(LoanCategoryBucket.class);
 
-    /**
+    /*
      * Declare Fields.
      */
     static {
@@ -125,7 +125,7 @@ public final class LoanCategoryBucket
          */
         private static final MetisFieldSet<LoanCategoryBucketList> FIELD_DEFS = MetisFieldSet.newFieldSet(LoanCategoryBucketList.class);
 
-        /**
+        /*
          * Declare Fields.
          */
         static {

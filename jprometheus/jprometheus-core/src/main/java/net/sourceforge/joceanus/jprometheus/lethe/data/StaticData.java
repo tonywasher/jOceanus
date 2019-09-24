@@ -740,7 +740,7 @@ public abstract class StaticData<T extends StaticData<T, S, E>, S extends Enum<S
      */
     public abstract static class StaticList<T extends StaticData<T, S, E>, S extends Enum<S> & StaticInterface, E extends Enum<E>>
             extends EncryptedList<T, E> {
-        /**
+        /*
          * Report fields.
          */
         static {
@@ -915,7 +915,7 @@ public abstract class StaticData<T extends StaticData<T, S, E>, S extends Enum<S
         @SuppressWarnings("rawtypes")
         private static final MetisFieldSet<StaticDataMap> FIELD_DEFS = MetisFieldSet.newFieldSet(StaticDataMap.class);
 
-        /**
+        /*
          * Declare Fields.
          */
         static {

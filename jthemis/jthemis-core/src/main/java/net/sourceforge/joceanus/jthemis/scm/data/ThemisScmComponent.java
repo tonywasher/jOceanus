@@ -37,7 +37,7 @@ public abstract class ThemisScmComponent
      */
     private static final MetisFieldSet<ThemisScmComponent> FIELD_DEFS = MetisFieldSet.newFieldSet(ThemisScmComponent.class);
 
-    /**
+    /*
      * fieldIds.
      */
     static {
@@ -184,7 +184,7 @@ public abstract class ThemisScmComponent
          */
         private static final MetisFieldSet<ThemisScmComponentList> FIELD_DEFS = MetisFieldSet.newFieldSet(ThemisScmComponentList.class);
 
-        /**
+        /*
          * Size field id.
          */
         static {
