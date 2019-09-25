@@ -28,9 +28,9 @@ import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.AssetCurrency;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.PayeeTypeClass;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataValues;
 import net.sourceforge.joceanus.jprometheus.lethe.sheets.PrometheusSheetEncrypted;
-import net.sourceforge.joceanus.jprometheus.service.sheet.MetisSheetCell;
-import net.sourceforge.joceanus.jprometheus.service.sheet.MetisSheetRow;
-import net.sourceforge.joceanus.jprometheus.service.sheet.MetisSheetView;
+import net.sourceforge.joceanus.jprometheus.service.sheet.PrometheusSheetCell;
+import net.sourceforge.joceanus.jprometheus.service.sheet.PrometheusSheetRow;
+import net.sourceforge.joceanus.jprometheus.service.sheet.PrometheusSheetView;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
@@ -136,8 +136,8 @@ public class SheetCash
      */
     protected static void processCash(final ArchiveLoader pLoader,
                                       final MoneyWiseData pData,
-                                      final MetisSheetView pView,
-                                      final MetisSheetRow pRow) throws OceanusException {
+                                      final PrometheusSheetView pView,
+                                      final PrometheusSheetRow pRow) throws OceanusException {
         /* Access name and type */
         int iAdjust = -1;
         final String myName = pView.getRowCellByIndex(pRow, ++iAdjust).getString();
@@ -147,7 +147,7 @@ public class SheetCash
         ++iAdjust;
 
         /* Handle closed which may be missing */
-        MetisSheetCell myCell = pView.getRowCellByIndex(pRow, ++iAdjust);
+        PrometheusSheetCell myCell = pView.getRowCellByIndex(pRow, ++iAdjust);
         Boolean isClosed = Boolean.FALSE;
         if (myCell != null) {
             isClosed = myCell.getBoolean();
@@ -218,8 +218,8 @@ public class SheetCash
      */
     protected static void processCashPayee(final ArchiveLoader pLoader,
                                            final MoneyWiseData pData,
-                                           final MetisSheetView pView,
-                                           final MetisSheetRow pRow) throws OceanusException {
+                                           final PrometheusSheetView pView,
+                                           final PrometheusSheetRow pRow) throws OceanusException {
         /* Access name */
         int iAdjust = -1;
         final String myName = pView.getRowCellByIndex(pRow, ++iAdjust).getString();
@@ -229,7 +229,7 @@ public class SheetCash
         ++iAdjust;
 
         /* Handle closed which may be missing */
-        MetisSheetCell myCell = pView.getRowCellByIndex(pRow, ++iAdjust);
+        PrometheusSheetCell myCell = pView.getRowCellByIndex(pRow, ++iAdjust);
         Boolean isClosed = Boolean.FALSE;
         if (myCell != null) {
             isClosed = myCell.getBoolean();

@@ -29,10 +29,10 @@ import net.sourceforge.joceanus.jmoneywise.lethe.data.LoanCategory;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.LoanCategory.LoanCategoryList;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.MoneyWiseData;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataValues;
-import net.sourceforge.joceanus.jprometheus.service.sheet.MetisSheetCell;
-import net.sourceforge.joceanus.jprometheus.service.sheet.MetisSheetRow;
-import net.sourceforge.joceanus.jprometheus.service.sheet.MetisSheetView;
-import net.sourceforge.joceanus.jprometheus.service.sheet.MetisSheetWorkBook;
+import net.sourceforge.joceanus.jprometheus.service.sheet.PrometheusSheetCell;
+import net.sourceforge.joceanus.jprometheus.service.sheet.PrometheusSheetRow;
+import net.sourceforge.joceanus.jprometheus.service.sheet.PrometheusSheetView;
+import net.sourceforge.joceanus.jprometheus.service.sheet.PrometheusSheetWorkBook;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
@@ -59,12 +59,12 @@ public final class SheetAccountCategory {
      * @throws OceanusException on error
      */
     protected static void loadArchive(final MetisThreadStatusReport pReport,
-                                      final MetisSheetWorkBook pWorkBook,
+                                      final PrometheusSheetWorkBook pWorkBook,
                                       final MoneyWiseData pData) throws OceanusException {
         /* Protect against exceptions */
         try {
             /* Find the range of cells */
-            final MetisSheetView myView = pWorkBook.getRangeView(AREA_ACTCATEGORIES);
+            final PrometheusSheetView myView = pWorkBook.getRangeView(AREA_ACTCATEGORIES);
 
             /* Declare the new stage */
             pReport.setNewStage(AREA_ACTCATEGORIES);
@@ -78,7 +78,7 @@ public final class SheetAccountCategory {
             /* Loop through the rows of the table */
             for (int i = 0; i < myTotal; i++) {
                 /* Access the cell by reference */
-                final MetisSheetRow myRow = myView.getRowByIndex(i);
+                final PrometheusSheetRow myRow = myView.getRowByIndex(i);
 
                 /* Process category */
                 processCategory(pData, myView, myRow);
@@ -106,15 +106,15 @@ public final class SheetAccountCategory {
      * @throws OceanusException on error
      */
     private static void processCategory(final MoneyWiseData pData,
-                                        final MetisSheetView pView,
-                                        final MetisSheetRow pRow) throws OceanusException {
+                                        final PrometheusSheetView pView,
+                                        final PrometheusSheetRow pRow) throws OceanusException {
         /* Access name */
         int iAdjust = -1;
         final String myName = pView.getRowCellByIndex(pRow, ++iAdjust).getString();
         ++iAdjust;
 
         /* Access parent */
-        MetisSheetCell myCell = pView.getRowCellByIndex(pRow, ++iAdjust);
+        PrometheusSheetCell myCell = pView.getRowCellByIndex(pRow, ++iAdjust);
         String myParent = myCell == null
                                          ? null
                                          : myCell.getString();

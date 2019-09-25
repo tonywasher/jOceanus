@@ -23,13 +23,13 @@ import net.sourceforge.joceanus.jprometheus.PrometheusIOException;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataItem;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataList;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataValues;
-import net.sourceforge.joceanus.jprometheus.service.sheet.MetisSheetCell;
-import net.sourceforge.joceanus.jprometheus.service.sheet.MetisSheetCellPosition;
-import net.sourceforge.joceanus.jprometheus.service.sheet.MetisSheetCellStyleType;
-import net.sourceforge.joceanus.jprometheus.service.sheet.MetisSheetRow;
-import net.sourceforge.joceanus.jprometheus.service.sheet.MetisSheetSheet;
-import net.sourceforge.joceanus.jprometheus.service.sheet.MetisSheetView;
-import net.sourceforge.joceanus.jprometheus.service.sheet.MetisSheetWorkBook;
+import net.sourceforge.joceanus.jprometheus.service.sheet.PrometheusSheetCell;
+import net.sourceforge.joceanus.jprometheus.service.sheet.PrometheusSheetCellPosition;
+import net.sourceforge.joceanus.jprometheus.service.sheet.PrometheusSheetCellStyleType;
+import net.sourceforge.joceanus.jprometheus.service.sheet.PrometheusSheetRow;
+import net.sourceforge.joceanus.jprometheus.service.sheet.PrometheusSheetSheet;
+import net.sourceforge.joceanus.jprometheus.service.sheet.PrometheusSheetView;
+import net.sourceforge.joceanus.jprometheus.service.sheet.PrometheusSheetWorkBook;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
 import net.sourceforge.joceanus.jtethys.decimal.TethysDecimal;
@@ -65,7 +65,7 @@ public abstract class PrometheusSheetDataItem<T extends DataItem<E> & Comparable
     /**
      * The workbook.
      */
-    private MetisSheetWorkBook theWorkBook;
+    private PrometheusSheetWorkBook theWorkBook;
 
     /**
      * The DataList.
@@ -80,17 +80,17 @@ public abstract class PrometheusSheetDataItem<T extends DataItem<E> & Comparable
     /**
      * The WorkSheet of the range.
      */
-    private MetisSheetSheet theWorkSheet;
+    private PrometheusSheetSheet theWorkSheet;
 
     /**
      * The Active row.
      */
-    private MetisSheetRow theActiveRow;
+    private PrometheusSheetRow theActiveRow;
 
     /**
      * The Active view.
      */
-    private MetisSheetView theActiveView;
+    private PrometheusSheetView theActiveView;
 
     /**
      * The last loaded item.
@@ -168,7 +168,7 @@ public abstract class PrometheusSheetDataItem<T extends DataItem<E> & Comparable
             /* Access the view of the range */
             theActiveView = theWorkBook.getRangeView(theRangeName);
             if (theActiveView != null) {
-                final Iterator<MetisSheetRow> myIterator = theActiveView.rowIterator();
+                final Iterator<PrometheusSheetRow> myIterator = theActiveView.rowIterator();
 
                 /* Declare the new stage */
                 theReport.setNewStage(theRangeName);
@@ -307,8 +307,8 @@ public abstract class PrometheusSheetDataItem<T extends DataItem<E> & Comparable
         final int myCol = getLastColumn();
 
         /* Name the range */
-        final MetisSheetCellPosition myFirst = new MetisSheetCellPosition(0, theBaseRow);
-        final MetisSheetCellPosition myLast = new MetisSheetCellPosition(myCol, theCurrRow - 1);
+        final PrometheusSheetCellPosition myFirst = new PrometheusSheetCellPosition(0, theBaseRow);
+        final PrometheusSheetCellPosition myLast = new PrometheusSheetCellPosition(myCol, theCurrRow - 1);
         theWorkSheet.declareRange(theRangeName, myFirst, myLast);
     }
 
@@ -321,8 +321,8 @@ public abstract class PrometheusSheetDataItem<T extends DataItem<E> & Comparable
     protected void nameColumnRange(final int pOffset,
                                    final String pName) throws OceanusException {
         /* Name the range */
-        final MetisSheetCellPosition myFirst = new MetisSheetCellPosition(pOffset, theBaseRow);
-        final MetisSheetCellPosition myLast = new MetisSheetCellPosition(pOffset, theCurrRow - 1);
+        final PrometheusSheetCellPosition myFirst = new PrometheusSheetCellPosition(pOffset, theBaseRow);
+        final PrometheusSheetCellPosition myLast = new PrometheusSheetCellPosition(pOffset, theCurrRow - 1);
         theWorkSheet.declareRange(pName, myFirst, myLast);
     }
 
@@ -335,8 +335,8 @@ public abstract class PrometheusSheetDataItem<T extends DataItem<E> & Comparable
     public void applyDataValidation(final int pOffset,
                                     final String pList) throws OceanusException {
         /* Name the range */
-        final MetisSheetCellPosition myFirst = new MetisSheetCellPosition(pOffset, theBaseRow);
-        final MetisSheetCellPosition myLast = new MetisSheetCellPosition(pOffset, theCurrRow - 1);
+        final PrometheusSheetCellPosition myFirst = new PrometheusSheetCellPosition(pOffset, theBaseRow);
+        final PrometheusSheetCellPosition myLast = new PrometheusSheetCellPosition(pOffset, theCurrRow - 1);
         theWorkSheet.applyDataValidation(myFirst, myLast, pList);
     }
 
@@ -345,7 +345,7 @@ public abstract class PrometheusSheetDataItem<T extends DataItem<E> & Comparable
      */
     protected void freezeTitles() {
         /* Freeze the top row */
-        final MetisSheetCellPosition myPoint = new MetisSheetCellPosition(2, theBaseRow);
+        final PrometheusSheetCellPosition myPoint = new PrometheusSheetCellPosition(2, theBaseRow);
         theWorkSheet.createFreezePane(myPoint);
     }
 
@@ -356,7 +356,7 @@ public abstract class PrometheusSheetDataItem<T extends DataItem<E> & Comparable
      */
     protected void applyDataFilter(final int pOffset) throws OceanusException {
         /* Freeze the top row */
-        final MetisSheetCellPosition myPoint = new MetisSheetCellPosition(pOffset, 0);
+        final PrometheusSheetCellPosition myPoint = new PrometheusSheetCellPosition(pOffset, 0);
         theWorkSheet.applyDataFilter(myPoint, theCurrRow);
     }
 
@@ -375,7 +375,7 @@ public abstract class PrometheusSheetDataItem<T extends DataItem<E> & Comparable
      */
     protected void setDateColumn(final int pOffset) {
         /* Apply the style to the sheet */
-        theWorkSheet.getMutableColumnByIndex(pOffset).setDefaultCellStyle(MetisSheetCellStyleType.DATE);
+        theWorkSheet.getMutableColumnByIndex(pOffset).setDefaultCellStyle(PrometheusSheetCellStyleType.DATE);
     }
 
     /**
@@ -384,7 +384,7 @@ public abstract class PrometheusSheetDataItem<T extends DataItem<E> & Comparable
      */
     protected void setStringColumn(final int pOffset) {
         /* Apply the style to the sheet */
-        theWorkSheet.getMutableColumnByIndex(pOffset).setDefaultCellStyle(MetisSheetCellStyleType.STRING);
+        theWorkSheet.getMutableColumnByIndex(pOffset).setDefaultCellStyle(PrometheusSheetCellStyleType.STRING);
     }
 
     /**
@@ -393,7 +393,7 @@ public abstract class PrometheusSheetDataItem<T extends DataItem<E> & Comparable
      */
     protected void setMoneyColumn(final int pOffset) {
         /* Apply the style to the sheet */
-        theWorkSheet.getMutableColumnByIndex(pOffset).setDefaultCellStyle(MetisSheetCellStyleType.MONEY);
+        theWorkSheet.getMutableColumnByIndex(pOffset).setDefaultCellStyle(PrometheusSheetCellStyleType.MONEY);
     }
 
     /**
@@ -402,7 +402,7 @@ public abstract class PrometheusSheetDataItem<T extends DataItem<E> & Comparable
      */
     protected void setPriceColumn(final int pOffset) {
         /* Apply the style to the sheet */
-        theWorkSheet.getMutableColumnByIndex(pOffset).setDefaultCellStyle(MetisSheetCellStyleType.PRICE);
+        theWorkSheet.getMutableColumnByIndex(pOffset).setDefaultCellStyle(PrometheusSheetCellStyleType.PRICE);
     }
 
     /**
@@ -411,7 +411,7 @@ public abstract class PrometheusSheetDataItem<T extends DataItem<E> & Comparable
      */
     protected void setUnitsColumn(final int pOffset) {
         /* Apply the style to the sheet */
-        theWorkSheet.getMutableColumnByIndex(pOffset).setDefaultCellStyle(MetisSheetCellStyleType.UNITS);
+        theWorkSheet.getMutableColumnByIndex(pOffset).setDefaultCellStyle(PrometheusSheetCellStyleType.UNITS);
     }
 
     /**
@@ -420,7 +420,7 @@ public abstract class PrometheusSheetDataItem<T extends DataItem<E> & Comparable
      */
     protected void setRateColumn(final int pOffset) {
         /* Apply the style to the sheet */
-        theWorkSheet.getMutableColumnByIndex(pOffset).setDefaultCellStyle(MetisSheetCellStyleType.RATE);
+        theWorkSheet.getMutableColumnByIndex(pOffset).setDefaultCellStyle(PrometheusSheetCellStyleType.RATE);
     }
 
     /**
@@ -429,7 +429,7 @@ public abstract class PrometheusSheetDataItem<T extends DataItem<E> & Comparable
      */
     protected void setDilutionColumn(final int pOffset) {
         /* Apply the style to the sheet */
-        theWorkSheet.getMutableColumnByIndex(pOffset).setDefaultCellStyle(MetisSheetCellStyleType.DILUTION);
+        theWorkSheet.getMutableColumnByIndex(pOffset).setDefaultCellStyle(PrometheusSheetCellStyleType.DILUTION);
     }
 
     /**
@@ -438,7 +438,7 @@ public abstract class PrometheusSheetDataItem<T extends DataItem<E> & Comparable
      */
     protected void setRatioColumn(final int pOffset) {
         /* Apply the style to the sheet */
-        theWorkSheet.getMutableColumnByIndex(pOffset).setDefaultCellStyle(MetisSheetCellStyleType.RATIO);
+        theWorkSheet.getMutableColumnByIndex(pOffset).setDefaultCellStyle(PrometheusSheetCellStyleType.RATIO);
     }
 
     /**
@@ -447,7 +447,7 @@ public abstract class PrometheusSheetDataItem<T extends DataItem<E> & Comparable
      */
     protected void setBooleanColumn(final int pOffset) {
         /* Apply the style to the sheet */
-        theWorkSheet.getMutableColumnByIndex(pOffset).setDefaultCellStyle(MetisSheetCellStyleType.BOOLEAN);
+        theWorkSheet.getMutableColumnByIndex(pOffset).setDefaultCellStyle(PrometheusSheetCellStyleType.BOOLEAN);
     }
 
     /**
@@ -456,7 +456,7 @@ public abstract class PrometheusSheetDataItem<T extends DataItem<E> & Comparable
      */
     protected void setIntegerColumn(final int pOffset) {
         /* Apply the style to the sheet */
-        theWorkSheet.getMutableColumnByIndex(pOffset).setDefaultCellStyle(MetisSheetCellStyleType.INTEGER);
+        theWorkSheet.getMutableColumnByIndex(pOffset).setDefaultCellStyle(PrometheusSheetCellStyleType.INTEGER);
     }
 
     /**
@@ -467,7 +467,7 @@ public abstract class PrometheusSheetDataItem<T extends DataItem<E> & Comparable
      */
     protected Integer loadInteger(final int pOffset) throws OceanusException {
         /* Access the cells by reference */
-        final MetisSheetCell myCell = theActiveView.getRowCellByIndex(theActiveRow, pOffset);
+        final PrometheusSheetCell myCell = theActiveView.getRowCellByIndex(theActiveRow, pOffset);
 
         /* Return the value */
         return myCell != null
@@ -483,7 +483,7 @@ public abstract class PrometheusSheetDataItem<T extends DataItem<E> & Comparable
      */
     protected Long loadLong(final int pOffset) throws OceanusException {
         /* Access the cells by reference */
-        final MetisSheetCell myCell = theActiveView.getRowCellByIndex(theActiveRow, pOffset);
+        final PrometheusSheetCell myCell = theActiveView.getRowCellByIndex(theActiveRow, pOffset);
 
         /* Return the value */
         return myCell != null
@@ -498,7 +498,7 @@ public abstract class PrometheusSheetDataItem<T extends DataItem<E> & Comparable
      */
     protected Boolean loadBoolean(final int pOffset) {
         /* Access the cells by reference */
-        final MetisSheetCell myCell = theActiveView.getRowCellByIndex(theActiveRow, pOffset);
+        final PrometheusSheetCell myCell = theActiveView.getRowCellByIndex(theActiveRow, pOffset);
 
         /* Return the value */
         return myCell != null
@@ -514,7 +514,7 @@ public abstract class PrometheusSheetDataItem<T extends DataItem<E> & Comparable
      */
     protected TethysDate loadDate(final int pOffset) throws OceanusException {
         /* Access the cells by reference */
-        final MetisSheetCell myCell = theActiveView.getRowCellByIndex(theActiveRow, pOffset);
+        final PrometheusSheetCell myCell = theActiveView.getRowCellByIndex(theActiveRow, pOffset);
 
         /* Return the value */
         return myCell != null
@@ -530,7 +530,7 @@ public abstract class PrometheusSheetDataItem<T extends DataItem<E> & Comparable
      */
     protected TethysMoney loadMoney(final int pOffset) throws OceanusException {
         /* Access the cells by reference */
-        final MetisSheetCell myCell = theActiveView.getRowCellByIndex(theActiveRow, pOffset);
+        final PrometheusSheetCell myCell = theActiveView.getRowCellByIndex(theActiveRow, pOffset);
 
         /* Return the value */
         return myCell != null
@@ -546,7 +546,7 @@ public abstract class PrometheusSheetDataItem<T extends DataItem<E> & Comparable
      */
     protected TethysPrice loadPrice(final int pOffset) throws OceanusException {
         /* Access the cells by reference */
-        final MetisSheetCell myCell = theActiveView.getRowCellByIndex(theActiveRow, pOffset);
+        final PrometheusSheetCell myCell = theActiveView.getRowCellByIndex(theActiveRow, pOffset);
 
         /* Return the value */
         return myCell != null
@@ -562,7 +562,7 @@ public abstract class PrometheusSheetDataItem<T extends DataItem<E> & Comparable
      */
     protected TethysRate loadRate(final int pOffset) throws OceanusException {
         /* Access the cells by reference */
-        final MetisSheetCell myCell = theActiveView.getRowCellByIndex(theActiveRow, pOffset);
+        final PrometheusSheetCell myCell = theActiveView.getRowCellByIndex(theActiveRow, pOffset);
 
         /* Return the value */
         return myCell != null
@@ -578,7 +578,7 @@ public abstract class PrometheusSheetDataItem<T extends DataItem<E> & Comparable
      */
     protected TethysUnits loadUnits(final int pOffset) throws OceanusException {
         /* Access the cells by reference */
-        final MetisSheetCell myCell = theActiveView.getRowCellByIndex(theActiveRow, pOffset);
+        final PrometheusSheetCell myCell = theActiveView.getRowCellByIndex(theActiveRow, pOffset);
 
         /* Return the value */
         return myCell != null
@@ -594,7 +594,7 @@ public abstract class PrometheusSheetDataItem<T extends DataItem<E> & Comparable
      */
     protected TethysDilution loadDilution(final int pOffset) throws OceanusException {
         /* Access the cells by reference */
-        final MetisSheetCell myCell = theActiveView.getRowCellByIndex(theActiveRow, pOffset);
+        final PrometheusSheetCell myCell = theActiveView.getRowCellByIndex(theActiveRow, pOffset);
 
         /* Return the value */
         return myCell != null
@@ -610,7 +610,7 @@ public abstract class PrometheusSheetDataItem<T extends DataItem<E> & Comparable
      */
     protected TethysRatio loadRatio(final int pOffset) throws OceanusException {
         /* Access the cells by reference */
-        final MetisSheetCell myCell = theActiveView.getRowCellByIndex(theActiveRow, pOffset);
+        final PrometheusSheetCell myCell = theActiveView.getRowCellByIndex(theActiveRow, pOffset);
 
         /* Return the value */
         return myCell != null
@@ -625,7 +625,7 @@ public abstract class PrometheusSheetDataItem<T extends DataItem<E> & Comparable
      */
     protected String loadString(final int pOffset) {
         /* Access the cells by reference */
-        final MetisSheetCell myCell = theActiveView.getRowCellByIndex(theActiveRow, pOffset);
+        final PrometheusSheetCell myCell = theActiveView.getRowCellByIndex(theActiveRow, pOffset);
 
         /* Return the value */
         return myCell != null
@@ -640,7 +640,7 @@ public abstract class PrometheusSheetDataItem<T extends DataItem<E> & Comparable
      */
     protected byte[] loadBytes(final int pOffset) {
         /* Access the cells by reference */
-        final MetisSheetCell myCell = theActiveView.getRowCellByIndex(theActiveRow, pOffset);
+        final PrometheusSheetCell myCell = theActiveView.getRowCellByIndex(theActiveRow, pOffset);
 
         /* Return the value */
         return myCell != null
@@ -656,7 +656,7 @@ public abstract class PrometheusSheetDataItem<T extends DataItem<E> & Comparable
      */
     protected char[] loadChars(final int pOffset) throws OceanusException {
         /* Access the cells by reference */
-        final MetisSheetCell myCell = theActiveView.getRowCellByIndex(theActiveRow, pOffset);
+        final PrometheusSheetCell myCell = theActiveView.getRowCellByIndex(theActiveRow, pOffset);
 
         /* Return the value */
         return myCell != null
@@ -675,7 +675,7 @@ public abstract class PrometheusSheetDataItem<T extends DataItem<E> & Comparable
         /* If we have non-null value */
         if (pValue != null) {
             /* Create the cell and set its value */
-            final MetisSheetCell myCell = theActiveRow.getMutableCellByIndex(pOffset);
+            final PrometheusSheetCell myCell = theActiveRow.getMutableCellByIndex(pOffset);
             myCell.setInteger(pValue);
         }
     }
@@ -691,7 +691,7 @@ public abstract class PrometheusSheetDataItem<T extends DataItem<E> & Comparable
         /* If we have non-null value */
         if (pValue != null) {
             /* Create the cell and set its value */
-            final MetisSheetCell myCell = theActiveRow.getMutableCellByIndex(pOffset);
+            final PrometheusSheetCell myCell = theActiveRow.getMutableCellByIndex(pOffset);
             myCell.setLong(pValue);
         }
     }
@@ -707,7 +707,7 @@ public abstract class PrometheusSheetDataItem<T extends DataItem<E> & Comparable
         /* If we have non-null value */
         if (pValue != null) {
             /* Create the cell and set its value */
-            final MetisSheetCell myCell = theActiveRow.getMutableCellByIndex(pOffset);
+            final PrometheusSheetCell myCell = theActiveRow.getMutableCellByIndex(pOffset);
             myCell.setBoolean(pValue);
         }
     }
@@ -723,7 +723,7 @@ public abstract class PrometheusSheetDataItem<T extends DataItem<E> & Comparable
         /* If we have non-null value */
         if (pValue != null) {
             /* Create the cell and set its value */
-            final MetisSheetCell myCell = theActiveRow.getMutableCellByIndex(pOffset);
+            final PrometheusSheetCell myCell = theActiveRow.getMutableCellByIndex(pOffset);
             myCell.setDate(pValue);
         }
     }
@@ -739,7 +739,7 @@ public abstract class PrometheusSheetDataItem<T extends DataItem<E> & Comparable
         /* If we have non-null value */
         if (pValue != null) {
             /* Create the cell and set its value */
-            final MetisSheetCell myCell = theActiveRow.getMutableCellByIndex(pOffset);
+            final PrometheusSheetCell myCell = theActiveRow.getMutableCellByIndex(pOffset);
             myCell.setDecimal(pValue);
         }
     }
@@ -755,7 +755,7 @@ public abstract class PrometheusSheetDataItem<T extends DataItem<E> & Comparable
         /* If we have non-null value */
         if (pHeader != null) {
             /* Create the cell and set its value */
-            final MetisSheetCell myCell = theActiveRow.getMutableCellByIndex(pOffset);
+            final PrometheusSheetCell myCell = theActiveRow.getMutableCellByIndex(pOffset);
             myCell.setHeader(pHeader);
         }
     }
@@ -771,7 +771,7 @@ public abstract class PrometheusSheetDataItem<T extends DataItem<E> & Comparable
         /* If we have non-null value */
         if (pValue != null) {
             /* Create the cell and set its value */
-            final MetisSheetCell myCell = theActiveRow.getMutableCellByIndex(pOffset);
+            final PrometheusSheetCell myCell = theActiveRow.getMutableCellByIndex(pOffset);
             myCell.setString(pValue);
         }
     }
@@ -787,7 +787,7 @@ public abstract class PrometheusSheetDataItem<T extends DataItem<E> & Comparable
         /* If we have non-null bytes */
         if (pBytes != null) {
             /* Create the cell and set its value */
-            final MetisSheetCell myCell = theActiveRow.getMutableCellByIndex(pOffset);
+            final PrometheusSheetCell myCell = theActiveRow.getMutableCellByIndex(pOffset);
             myCell.setBytes(pBytes);
         }
     }
@@ -803,7 +803,7 @@ public abstract class PrometheusSheetDataItem<T extends DataItem<E> & Comparable
         /* If we have non-null chars */
         if (pChars != null) {
             /* Create the cell and set its value */
-            final MetisSheetCell myCell = theActiveRow.getMutableCellByIndex(pOffset);
+            final PrometheusSheetCell myCell = theActiveRow.getMutableCellByIndex(pOffset);
             myCell.setCharArray(pChars);
         }
     }

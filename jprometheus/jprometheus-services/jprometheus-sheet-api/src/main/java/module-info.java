@@ -14,6 +14,9 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  ******************************************************************************/
+
+import net.sourceforge.joceanus.jprometheus.service.sheet.PrometheusSheetFactory;
+
 /**
  * Prometheus Sheet API.
  */
@@ -25,5 +28,5 @@ module net.sourceforge.joceanus.jprometheus.sheet.api {
     exports net.sourceforge.joceanus.jprometheus.service.sheet;
 
     /* Services */
-    uses net.sourceforge.joceanus.jprometheus.service.sheet.MetisSheetFactory;
+    uses PrometheusSheetFactory;
 }

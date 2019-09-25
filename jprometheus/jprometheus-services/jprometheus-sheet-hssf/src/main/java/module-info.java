@@ -14,6 +14,10 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  ******************************************************************************/
+
+import net.sourceforge.joceanus.jprometheus.service.sheet.PrometheusSheetFactory;
+import net.sourceforge.joceanus.jprometheus.service.sheet.hssf.PrometheusExcelHSSFFactory;
+
 /**
  * Prometheus Sheet HSSF.
  */
@@ -26,6 +30,6 @@ module net.sourceforge.joceanus.jprometheus.sheet.hssf {
     requires net.sourceforge.joceanus.jprometheus.sheet.api;
 
     /* Services provided */
-    provides net.sourceforge.joceanus.jprometheus.service.sheet.MetisSheetFactory
-            with net.sourceforge.joceanus.jprometheus.service.sheet.hssf.MetisExcelHSSFFactory;
+    provides PrometheusSheetFactory
+            with PrometheusExcelHSSFFactory;
 }

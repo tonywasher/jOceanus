@@ -25,10 +25,10 @@ import net.sourceforge.joceanus.jmoneywise.lethe.data.SecurityPrice;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.SecurityPrice.SecurityPriceList;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataValues;
 import net.sourceforge.joceanus.jprometheus.lethe.sheets.PrometheusSheetEncrypted;
-import net.sourceforge.joceanus.jprometheus.service.sheet.MetisSheetCell;
-import net.sourceforge.joceanus.jprometheus.service.sheet.MetisSheetRow;
-import net.sourceforge.joceanus.jprometheus.service.sheet.MetisSheetView;
-import net.sourceforge.joceanus.jprometheus.service.sheet.MetisSheetWorkBook;
+import net.sourceforge.joceanus.jprometheus.service.sheet.PrometheusSheetCell;
+import net.sourceforge.joceanus.jprometheus.service.sheet.PrometheusSheetRow;
+import net.sourceforge.joceanus.jprometheus.service.sheet.PrometheusSheetView;
+import net.sourceforge.joceanus.jprometheus.service.sheet.PrometheusSheetWorkBook;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
 
@@ -120,7 +120,7 @@ public class SheetSecurityPrice
      * @throws OceanusException on error
      */
     protected static void loadArchive(final MetisThreadStatusReport pReport,
-                                      final MetisSheetWorkBook pWorkBook,
+                                      final PrometheusSheetWorkBook pWorkBook,
                                       final MoneyWiseData pData,
                                       final ArchiveLoader pLoader) throws OceanusException {
         /* Access the list of prices */
@@ -129,7 +129,7 @@ public class SheetSecurityPrice
         /* Protect against exceptions */
         try {
             /* Find the range of cells */
-            final MetisSheetView myView = pWorkBook.getRangeView(AREA_PRICES);
+            final PrometheusSheetView myView = pWorkBook.getRangeView(AREA_PRICES);
 
             /* Declare the new stage */
             pReport.setNewStage(AREA_PRICES);
@@ -144,10 +144,10 @@ public class SheetSecurityPrice
             pReport.setNumSteps(myTotal);
 
             /* Load the securities */
-            final MetisSheetRow myActRow = myView.getRowByIndex(0);
+            final PrometheusSheetRow myActRow = myView.getRowByIndex(0);
             for (int j = 1; j < myCols; j++) {
                 /* Access account */
-                final MetisSheetCell myAct = myView.getRowCellByIndex(myActRow, j);
+                final PrometheusSheetCell myAct = myView.getRowCellByIndex(myActRow, j);
                 if (myAct != null) {
                     mySecurities[j] = myAct.getString();
                 }
@@ -156,10 +156,10 @@ public class SheetSecurityPrice
             /* Loop through the rows of the table */
             for (int i = myRows - 1; i > 0; i--) {
                 /* Access the cell by reference */
-                final MetisSheetRow myRow = myView.getRowByIndex(i);
+                final PrometheusSheetRow myRow = myView.getRowByIndex(i);
 
                 /* Access date */
-                MetisSheetCell myCell = myView.getRowCellByIndex(myRow, 0);
+                PrometheusSheetCell myCell = myView.getRowCellByIndex(myRow, 0);
                 final TethysDate myDate = myCell.getDate();
 
                 /* If the price is too late */

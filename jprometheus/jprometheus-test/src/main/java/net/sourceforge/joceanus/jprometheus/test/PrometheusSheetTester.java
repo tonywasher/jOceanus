@@ -24,14 +24,14 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Currency;
 
-import net.sourceforge.joceanus.jprometheus.service.sheet.MetisSheetCell;
-import net.sourceforge.joceanus.jprometheus.service.sheet.MetisSheetCellStyleType;
-import net.sourceforge.joceanus.jprometheus.service.sheet.MetisSheetProvider;
-import net.sourceforge.joceanus.jprometheus.service.sheet.MetisSheetRow;
-import net.sourceforge.joceanus.jprometheus.service.sheet.MetisSheetSheet;
-import net.sourceforge.joceanus.jprometheus.service.sheet.MetisSheetView;
-import net.sourceforge.joceanus.jprometheus.service.sheet.MetisSheetWorkBook;
-import net.sourceforge.joceanus.jprometheus.service.sheet.MetisSheetWorkBookType;
+import net.sourceforge.joceanus.jprometheus.service.sheet.PrometheusSheetCell;
+import net.sourceforge.joceanus.jprometheus.service.sheet.PrometheusSheetCellStyleType;
+import net.sourceforge.joceanus.jprometheus.service.sheet.PrometheusSheetProvider;
+import net.sourceforge.joceanus.jprometheus.service.sheet.PrometheusSheetRow;
+import net.sourceforge.joceanus.jprometheus.service.sheet.PrometheusSheetSheet;
+import net.sourceforge.joceanus.jprometheus.service.sheet.PrometheusSheetView;
+import net.sourceforge.joceanus.jprometheus.service.sheet.PrometheusSheetWorkBook;
+import net.sourceforge.joceanus.jprometheus.service.sheet.PrometheusSheetWorkBookType;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
 import net.sourceforge.joceanus.jtethys.decimal.TethysDecimal;
@@ -60,9 +60,9 @@ public final class PrometheusSheetTester {
     public static void main(final String[] args) {
         /* Test a SpreadSheet for each type */
         // loadRange();
-        writeSample(MetisSheetWorkBookType.OASIS,  "TestOasis.ods");
-        writeSample(MetisSheetWorkBookType.EXCELXLS,  "TestExcel.xls");
-        writeSample(MetisSheetWorkBookType.EXCELXLSX,  "TestExcel.xlsx");
+        writeSample(PrometheusSheetWorkBookType.OASIS,  "TestOasis.ods");
+        writeSample(PrometheusSheetWorkBookType.EXCELXLS,  "TestExcel.xls");
+        writeSample(PrometheusSheetWorkBookType.EXCELXLSX,  "TestExcel.xlsx");
     }
 
     /**
@@ -76,7 +76,7 @@ public final class PrometheusSheetTester {
      * @param pType the workBookType
      * @param pName the workBookName
      */
-    private static void writeSample(final MetisSheetWorkBookType pType,
+    private static void writeSample(final PrometheusSheetWorkBookType pType,
                                     final String pName) {
         /**
          * Write a sample ODS Spreadsheet.
@@ -84,8 +84,8 @@ public final class PrometheusSheetTester {
         try {
             /* Create workBook and sheet */
             System.out.println("Building " + pName);
-            MetisSheetWorkBook myBook = MetisSheetProvider.newWorkBook(pType);
-            MetisSheetSheet mySheet = myBook.newSheet("TestData");
+            PrometheusSheetWorkBook myBook = PrometheusSheetProvider.newWorkBook(pType);
+            PrometheusSheetSheet mySheet = myBook.newSheet("TestData");
 
             /* Build the Sheet */
             CellDataType.buildSheet(mySheet);
@@ -107,7 +107,7 @@ public final class PrometheusSheetTester {
             System.out.println("Loading " + pName);
             try (FileInputStream myInFile = new FileInputStream(myXFile);
                  BufferedInputStream myInBuffer = new BufferedInputStream(myInFile)) {
-                myBook = MetisSheetProvider.loadFromStream(pType, myInBuffer);
+                myBook = PrometheusSheetProvider.loadFromStream(pType, myInBuffer);
                 mySheet = myBook.getSheet("TestData");            } catch (IOException
                     | OceanusException e) {
                 LOGGER.fatal("Failed to load file", e);
@@ -132,13 +132,13 @@ public final class PrometheusSheetTester {
         final File myFile = new File("C:\\Users\\Tony\\Documents\\MoneywiseNI.ods");
         try (FileInputStream myInFile = new FileInputStream(myFile);
              BufferedInputStream myInBuffer = new BufferedInputStream(myInFile)) {
-            final MetisSheetWorkBook myBook = MetisSheetProvider.loadFromStream(MetisSheetWorkBookType.OASIS, myInBuffer);
-            final MetisSheetView myView = myBook.getRangeView("Finance82");
+            final PrometheusSheetWorkBook myBook = PrometheusSheetProvider.loadFromStream(PrometheusSheetWorkBookType.OASIS, myInBuffer);
+            final PrometheusSheetView myView = myBook.getRangeView("Finance82");
             final int iNumRows = myView.getRowCount();
             final int iNumCols = myView.getColumnCount();
-            for (MetisSheetRow myRow = myView.getRowByIndex(0); myRow != null; myRow = myRow.getNextRow()) {
+            for (PrometheusSheetRow myRow = myView.getRowByIndex(0); myRow != null; myRow = myRow.getNextRow()) {
                 int myIndex = 0;
-                MetisSheetCell myCell = myView.getRowCellByIndex(myRow, myIndex++);
+                PrometheusSheetCell myCell = myView.getRowCellByIndex(myRow, myIndex++);
                 final String myType = myCell.getString();
                 myCell = myView.getRowCellByIndex(myRow, myIndex++);
                 final String myParent = myCell == null
@@ -283,8 +283,8 @@ public final class PrometheusSheetTester {
          * @param pRow the row
          * @throws OceanusException on error
          */
-        void setHeader(final MetisSheetRow pRow) throws OceanusException {
-            final MetisSheetCell myCell = pRow.getMutableCellByIndex(ordinal());
+        void setHeader(final PrometheusSheetRow pRow) throws OceanusException {
+            final PrometheusSheetCell myCell = pRow.getMutableCellByIndex(ordinal());
             myCell.setHeader(theHeader);
         }
 
@@ -293,8 +293,8 @@ public final class PrometheusSheetTester {
          * @param pRow the row
          * @throws OceanusException on error
          */
-        void setValue(final MetisSheetRow pRow) throws OceanusException {
-            final MetisSheetCell myCell = pRow.getMutableCellByIndex(ordinal());
+        void setValue(final PrometheusSheetRow pRow) throws OceanusException {
+            final PrometheusSheetCell myCell = pRow.getMutableCellByIndex(ordinal());
             switch (this) {
                 case BOOLEAN:
                     myCell.setBoolean((Boolean) theValue);
@@ -327,8 +327,8 @@ public final class PrometheusSheetTester {
          * @param pRow the row
          * @throws OceanusException on error
          */
-        void setAltValue(final MetisSheetRow pRow) throws OceanusException {
-            final MetisSheetCell myCell = pRow.getMutableCellByIndex(ordinal());
+        void setAltValue(final PrometheusSheetRow pRow) throws OceanusException {
+            final PrometheusSheetCell myCell = pRow.getMutableCellByIndex(ordinal());
             switch (this) {
                 case MONEYGB:
                 case MONEYUS:
@@ -346,7 +346,7 @@ public final class PrometheusSheetTester {
          * @param pRow the row
          * @throws OceanusException on error
          */
-        public void checkCellValue(final MetisSheetRow pRow) throws OceanusException {
+        public void checkCellValue(final PrometheusSheetRow pRow) throws OceanusException {
             final Object myValue = getCellValue(pRow);
             if (!theValue.equals(myValue)) {
                 LOGGER.error(theHeader + " differs");
@@ -359,8 +359,8 @@ public final class PrometheusSheetTester {
          * @return the value
          * @throws OceanusException on error
          */
-        private Object getCellValue(final MetisSheetRow pRow) throws OceanusException {
-            final MetisSheetCell myCell = pRow.getReadOnlyCellByIndex(ordinal());
+        private Object getCellValue(final PrometheusSheetRow pRow) throws OceanusException {
+            final PrometheusSheetCell myCell = pRow.getReadOnlyCellByIndex(ordinal());
             switch (this) {
                 case BOOLEAN:
                     return myCell.getBoolean();
@@ -392,31 +392,31 @@ public final class PrometheusSheetTester {
          * Get StyleType.
          * @return the styleType
          */
-        private MetisSheetCellStyleType getStyleType() {
+        private PrometheusSheetCellStyleType getStyleType() {
             switch (this) {
                 case BOOLEAN:
-                    return MetisSheetCellStyleType.BOOLEAN;
+                    return PrometheusSheetCellStyleType.BOOLEAN;
                 case INTEGER:
-                    return MetisSheetCellStyleType.INTEGER;
+                    return PrometheusSheetCellStyleType.INTEGER;
                 case DATE:
-                    return MetisSheetCellStyleType.DATE;
+                    return PrometheusSheetCellStyleType.DATE;
                 case RATE:
-                    return MetisSheetCellStyleType.RATE;
+                    return PrometheusSheetCellStyleType.RATE;
                 case RATIO:
-                    return MetisSheetCellStyleType.RATIO;
+                    return PrometheusSheetCellStyleType.RATIO;
                 case UNITS:
-                    return MetisSheetCellStyleType.UNITS;
+                    return PrometheusSheetCellStyleType.UNITS;
                 case DILUTION:
-                    return MetisSheetCellStyleType.DILUTION;
+                    return PrometheusSheetCellStyleType.DILUTION;
                 case MONEYGB:
                 case MONEYUS:
-                    return MetisSheetCellStyleType.MONEY;
+                    return PrometheusSheetCellStyleType.MONEY;
                 case PRICEJPY:
                 case PRICEEUR:
-                    return MetisSheetCellStyleType.PRICE;
+                    return PrometheusSheetCellStyleType.PRICE;
                 case STRING:
                 default:
-                    return MetisSheetCellStyleType.STRING;
+                    return PrometheusSheetCellStyleType.STRING;
             }
         }
 
@@ -425,7 +425,7 @@ public final class PrometheusSheetTester {
          * @param pSheet the sheet.
          * @throws OceanusException on error
          */
-        public static void buildSheet(final MetisSheetSheet pSheet) throws OceanusException {
+        public static void buildSheet(final PrometheusSheetSheet pSheet) throws OceanusException {
             /* Loop through the cellTypes */
             for (CellDataType myType: CellDataType.values()) {
                 /* Define the columns */
@@ -433,9 +433,9 @@ public final class PrometheusSheetTester {
             }
 
             /* Access the rows */
-            final MetisSheetRow myHdrRow = pSheet.getMutableRowByIndex(0);
-            final MetisSheetRow myDataRow = pSheet.getMutableRowByIndex(1);
-            final MetisSheetRow myAltRow = pSheet.getMutableRowByIndex(2);
+            final PrometheusSheetRow myHdrRow = pSheet.getMutableRowByIndex(0);
+            final PrometheusSheetRow myDataRow = pSheet.getMutableRowByIndex(1);
+            final PrometheusSheetRow myAltRow = pSheet.getMutableRowByIndex(2);
 
             /* Loop through the cellTypes */
             for (CellDataType myType: CellDataType.values()) {
@@ -453,10 +453,10 @@ public final class PrometheusSheetTester {
          * @param pSheet the sheet.
          * @throws OceanusException on error
          */
-        public static void checkSheet(final MetisSheetSheet pSheet) throws OceanusException {
+        public static void checkSheet(final PrometheusSheetSheet pSheet) throws OceanusException {
             /* Access the rows */
-            final MetisSheetRow myDataRow = pSheet.getReadOnlyRowByIndex(1);
-            final MetisSheetRow myAltRow = pSheet.getReadOnlyRowByIndex(2);
+            final PrometheusSheetRow myDataRow = pSheet.getReadOnlyRowByIndex(1);
+            final PrometheusSheetRow myAltRow = pSheet.getReadOnlyRowByIndex(2);
 
             /* Loop through the cellTypes */
             for (CellDataType myType: CellDataType.values()) {

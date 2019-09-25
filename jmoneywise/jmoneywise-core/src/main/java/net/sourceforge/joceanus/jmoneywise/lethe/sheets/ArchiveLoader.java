@@ -72,11 +72,11 @@ import net.sourceforge.joceanus.jprometheus.atlas.preference.PrometheusBackup.Pr
 import net.sourceforge.joceanus.jprometheus.lethe.data.ControlData.ControlDataList;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataItem;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataValues;
-import net.sourceforge.joceanus.jprometheus.service.sheet.MetisSheetCell;
-import net.sourceforge.joceanus.jprometheus.service.sheet.MetisSheetProvider;
-import net.sourceforge.joceanus.jprometheus.service.sheet.MetisSheetView;
-import net.sourceforge.joceanus.jprometheus.service.sheet.MetisSheetWorkBook;
-import net.sourceforge.joceanus.jprometheus.service.sheet.MetisSheetWorkBookType;
+import net.sourceforge.joceanus.jprometheus.service.sheet.PrometheusSheetCell;
+import net.sourceforge.joceanus.jprometheus.service.sheet.PrometheusSheetProvider;
+import net.sourceforge.joceanus.jprometheus.service.sheet.PrometheusSheetView;
+import net.sourceforge.joceanus.jprometheus.service.sheet.PrometheusSheetWorkBook;
+import net.sourceforge.joceanus.jprometheus.service.sheet.PrometheusSheetWorkBookType;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
 import net.sourceforge.joceanus.jtethys.date.TethysFiscalYear;
@@ -222,7 +222,7 @@ public class ArchiveLoader {
         try (FileInputStream myInFile = new FileInputStream(myArchive);
              InputStream myStream = new BufferedInputStream(myInFile)) {
             /* Determine the WorkBookType */
-            final MetisSheetWorkBookType myType = MetisSheetWorkBookType.determineType(myName);
+            final PrometheusSheetWorkBookType myType = PrometheusSheetWorkBookType.determineType(myName);
 
             /* Load the data from the stream */
             loadArchiveStream(pReport, pData, myStream, myType);
@@ -247,15 +247,15 @@ public class ArchiveLoader {
      * @throws OceanusException on error
      */
     private void loadArchive(final MetisThreadStatusReport pReport,
-                             final MetisSheetWorkBook pWorkBook,
+                             final PrometheusSheetWorkBook pWorkBook,
                              final MoneyWiseData pData) throws OceanusException {
         /* Find the range of cells */
-        final MetisSheetView myView = pWorkBook.getRangeView(AREA_YEARRANGE);
+        final PrometheusSheetView myView = pWorkBook.getRangeView(AREA_YEARRANGE);
 
         /* Loop through the cells */
         for (int myIndex = 0; myIndex < myView.getColumnCount(); myIndex++) {
             /* Access the cell and add year to the list */
-            final MetisSheetCell myCell = myView.getCellByPosition(myIndex, 0);
+            final PrometheusSheetCell myCell = myView.getCellByPosition(myIndex, 0);
             addYear(myCell.getString());
         }
 
@@ -283,7 +283,7 @@ public class ArchiveLoader {
     private void loadArchiveStream(final MetisThreadStatusReport pReport,
                                    final MoneyWiseData pData,
                                    final InputStream pStream,
-                                   final MetisSheetWorkBookType pType) throws OceanusException {
+                                   final PrometheusSheetWorkBookType pType) throws OceanusException {
         /* Protect the workbook retrieval */
         try {
             /* Access current profile */
@@ -295,7 +295,7 @@ public class ArchiveLoader {
             theParentCache = new ParentCache(pData);
 
             /* Access the workbook from the stream */
-            final MetisSheetWorkBook myWorkbook = MetisSheetProvider.loadFromStream(pType, pStream);
+            final PrometheusSheetWorkBook myWorkbook = PrometheusSheetProvider.loadFromStream(pType, pStream);
             pReport.checkForCancellation();
 
             /* Determine Year Range */

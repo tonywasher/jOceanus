@@ -25,10 +25,10 @@ import net.sourceforge.joceanus.jmoneywise.lethe.data.TransactionTag;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.TransactionTag.TransactionTagList;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataValues;
 import net.sourceforge.joceanus.jprometheus.lethe.sheets.PrometheusSheetEncrypted;
-import net.sourceforge.joceanus.jprometheus.service.sheet.MetisSheetCell;
-import net.sourceforge.joceanus.jprometheus.service.sheet.MetisSheetRow;
-import net.sourceforge.joceanus.jprometheus.service.sheet.MetisSheetView;
-import net.sourceforge.joceanus.jprometheus.service.sheet.MetisSheetWorkBook;
+import net.sourceforge.joceanus.jprometheus.service.sheet.PrometheusSheetCell;
+import net.sourceforge.joceanus.jprometheus.service.sheet.PrometheusSheetRow;
+import net.sourceforge.joceanus.jprometheus.service.sheet.PrometheusSheetView;
+import net.sourceforge.joceanus.jprometheus.service.sheet.PrometheusSheetWorkBook;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
@@ -111,7 +111,7 @@ public class SheetTransTag
      * @throws OceanusException on error
      */
     protected static void loadArchive(final MetisThreadStatusReport pReport,
-                                      final MetisSheetWorkBook pWorkBook,
+                                      final PrometheusSheetWorkBook pWorkBook,
                                       final MoneyWiseData pData) throws OceanusException {
         /* Access the list of tags */
         final TransactionTagList myList = pData.getTransactionTags();
@@ -119,7 +119,7 @@ public class SheetTransTag
         /* Protect against exceptions */
         try {
             /* Find the range of cells */
-            final MetisSheetView myView = pWorkBook.getRangeView(AREA_TRANSTAGS);
+            final PrometheusSheetView myView = pWorkBook.getRangeView(AREA_TRANSTAGS);
 
             /* Declare the new stage */
             pReport.setNewStage(TransactionTag.LIST_NAME);
@@ -133,11 +133,11 @@ public class SheetTransTag
             /* Loop through the rows of the table */
             for (int i = 0; i < myTotal; i++) {
                 /* Access the cell by reference */
-                final MetisSheetRow myRow = myView.getRowByIndex(i);
+                final PrometheusSheetRow myRow = myView.getRowByIndex(i);
                 int iAdjust = -1;
 
                 /* Access name */
-                final MetisSheetCell myCell = myView.getRowCellByIndex(myRow, ++iAdjust);
+                final PrometheusSheetCell myCell = myView.getRowCellByIndex(myRow, ++iAdjust);
                 final String myName = myCell.getString();
 
                 /* Build data values */

@@ -21,7 +21,7 @@ import java.io.File;
 import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceKey;
 import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceManager;
 import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceSet;
-import net.sourceforge.joceanus.jprometheus.service.sheet.MetisSheetWorkBookType;
+import net.sourceforge.joceanus.jprometheus.service.sheet.PrometheusSheetWorkBookType;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
 
@@ -118,7 +118,7 @@ public interface PrometheusBackup {
         protected void definePreferences() {
             defineDirectoryPreference(PrometheusBackupPreferenceKey.BACKUPDIR);
             defineStringPreference(PrometheusBackupPreferenceKey.BACKUPPFIX);
-            defineEnumPreference(PrometheusBackupPreferenceKey.BACKUPTYPE, MetisSheetWorkBookType.class);
+            defineEnumPreference(PrometheusBackupPreferenceKey.BACKUPTYPE, PrometheusSheetWorkBookType.class);
             defineFilePreference(PrometheusBackupPreferenceKey.ARCHIVE);
             defineDatePreference(PrometheusBackupPreferenceKey.LASTEVENT);
             defineBooleanPreference(PrometheusBackupPreferenceKey.BACKUPTIME);
@@ -145,9 +145,9 @@ public interface PrometheusBackup {
             }
 
             /* Make sure that the enum is specified */
-            final MetisEnumPreference<PrometheusBackupPreferenceKey, MetisSheetWorkBookType> myTypePref = getEnumPreference(PrometheusBackupPreferenceKey.BACKUPTYPE, MetisSheetWorkBookType.class);
+            final MetisEnumPreference<PrometheusBackupPreferenceKey, PrometheusSheetWorkBookType> myTypePref = getEnumPreference(PrometheusBackupPreferenceKey.BACKUPTYPE, PrometheusSheetWorkBookType.class);
             if (!myTypePref.isAvailable()) {
-                myTypePref.setValue(MetisSheetWorkBookType.OASIS);
+                myTypePref.setValue(PrometheusSheetWorkBookType.OASIS);
             }
 
             /* Make sure that the date is specified */

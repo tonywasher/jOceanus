@@ -25,10 +25,10 @@ import net.sourceforge.joceanus.jmoneywise.lethe.data.DepositRate.DepositRateLis
 import net.sourceforge.joceanus.jmoneywise.lethe.data.MoneyWiseData;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataValues;
 import net.sourceforge.joceanus.jprometheus.lethe.sheets.PrometheusSheetEncrypted;
-import net.sourceforge.joceanus.jprometheus.service.sheet.MetisSheetCell;
-import net.sourceforge.joceanus.jprometheus.service.sheet.MetisSheetRow;
-import net.sourceforge.joceanus.jprometheus.service.sheet.MetisSheetView;
-import net.sourceforge.joceanus.jprometheus.service.sheet.MetisSheetWorkBook;
+import net.sourceforge.joceanus.jprometheus.service.sheet.PrometheusSheetCell;
+import net.sourceforge.joceanus.jprometheus.service.sheet.PrometheusSheetRow;
+import net.sourceforge.joceanus.jprometheus.service.sheet.PrometheusSheetView;
+import net.sourceforge.joceanus.jprometheus.service.sheet.PrometheusSheetWorkBook;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
 
@@ -126,12 +126,12 @@ public class SheetDepositRate
      * @throws OceanusException on error
      */
     protected static void loadArchive(final MetisThreadStatusReport pReport,
-                                      final MetisSheetWorkBook pWorkBook,
+                                      final PrometheusSheetWorkBook pWorkBook,
                                       final MoneyWiseData pData) throws OceanusException {
         /* Protect against exceptions */
         try {
             /* Find the range of cells */
-            final MetisSheetView myView = pWorkBook.getRangeView(AREA_RATES);
+            final PrometheusSheetView myView = pWorkBook.getRangeView(AREA_RATES);
 
             /* If the view is present */
             if (myView != null) {
@@ -156,7 +156,7 @@ public class SheetDepositRate
      */
     protected static void loadArchiveRows(final MetisThreadStatusReport pReport,
                                           final MoneyWiseData pData,
-                                          final MetisSheetView pView) throws OceanusException {
+                                          final PrometheusSheetView pView) throws OceanusException {
         /* Access the list of rates */
         final DepositRateList myList = pData.getDepositRates();
 
@@ -172,11 +172,11 @@ public class SheetDepositRate
         /* Loop through the rows of the table */
         for (int i = 0; i < myTotal; i++) {
             /* Access the cell by reference */
-            final MetisSheetRow myRow = pView.getRowByIndex(i);
+            final PrometheusSheetRow myRow = pView.getRowByIndex(i);
             int iAdjust = -1;
 
             /* Access deposit */
-            MetisSheetCell myCell = pView.getRowCellByIndex(myRow, ++iAdjust);
+            PrometheusSheetCell myCell = pView.getRowCellByIndex(myRow, ++iAdjust);
             final String myDeposit = myCell.getString();
 
             /* Handle Rate */
