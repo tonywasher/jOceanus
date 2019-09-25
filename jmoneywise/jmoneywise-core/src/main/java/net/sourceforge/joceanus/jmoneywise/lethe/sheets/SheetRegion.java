@@ -16,10 +16,6 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.lethe.sheets;
 
-import net.sourceforge.joceanus.jmetis.service.sheet.MetisSheetCell;
-import net.sourceforge.joceanus.jmetis.service.sheet.MetisSheetRow;
-import net.sourceforge.joceanus.jmetis.service.sheet.MetisSheetView;
-import net.sourceforge.joceanus.jmetis.service.sheet.MetisSheetWorkBook;
 import net.sourceforge.joceanus.jmetis.threads.MetisThreadCancelException;
 import net.sourceforge.joceanus.jmetis.threads.MetisThreadStatusReport;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
@@ -29,6 +25,10 @@ import net.sourceforge.joceanus.jmoneywise.lethe.data.Region;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.Region.RegionList;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataValues;
 import net.sourceforge.joceanus.jprometheus.lethe.sheets.PrometheusSheetEncrypted;
+import net.sourceforge.joceanus.jprometheus.service.sheet.MetisSheetCell;
+import net.sourceforge.joceanus.jprometheus.service.sheet.MetisSheetRow;
+import net.sourceforge.joceanus.jprometheus.service.sheet.MetisSheetView;
+import net.sourceforge.joceanus.jprometheus.service.sheet.MetisSheetWorkBook;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**

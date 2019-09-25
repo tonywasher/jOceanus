@@ -30,12 +30,12 @@ import net.sourceforge.joceanus.jgordianknot.api.zip.GordianZipFileContents;
 import net.sourceforge.joceanus.jgordianknot.api.zip.GordianZipFileEntry;
 import net.sourceforge.joceanus.jgordianknot.api.zip.GordianZipReadFile;
 import net.sourceforge.joceanus.jmetis.profile.MetisProfile;
-import net.sourceforge.joceanus.jmetis.service.sheet.MetisSheetProvider;
-import net.sourceforge.joceanus.jmetis.service.sheet.MetisSheetWorkBook;
-import net.sourceforge.joceanus.jmetis.service.sheet.MetisSheetWorkBookType;
 import net.sourceforge.joceanus.jmetis.threads.MetisThreadStatusReport;
 import net.sourceforge.joceanus.jprometheus.PrometheusIOException;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataSet;
+import net.sourceforge.joceanus.jprometheus.service.sheet.MetisSheetProvider;
+import net.sourceforge.joceanus.jprometheus.service.sheet.MetisSheetWorkBook;
+import net.sourceforge.joceanus.jprometheus.service.sheet.MetisSheetWorkBookType;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
