@@ -37,7 +37,7 @@ import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
  */
 public class MetisListSetTouchMap {
     /**
-     * The map of touchMaps for this list.
+     * The underlying listSet.
      */
     private final MetisListSetVersioned theListSet;
 
@@ -62,11 +62,11 @@ public class MetisListSetTouchMap {
     }
 
     /**
-     * Is the item deletable?
+     * Is the item referenced?
      * @param pItem the item
      * @return true/false
      */
-    public boolean isDeletable(final MetisFieldVersionedItem pItem) {
+    public boolean isReferenced(final MetisFieldVersionedItem pItem) {
         /* Obtain the id for this item */
         final Integer myId = MetisListSetVersioned.buildItemId(pItem);
 
@@ -76,7 +76,7 @@ public class MetisListSetTouchMap {
 
         /* Pass call on to correct ListTouchMap */
         final MetisListTouchMap myListMap = theListMap.get(myItemType);
-        return myListMap == null || myListMap.isDeletable(myIndexedId);
+        return myListMap == null || myListMap.isReferenced(myIndexedId);
     }
 
     /**
@@ -87,12 +87,18 @@ public class MetisListSetTouchMap {
         theListMap.clear();
 
         /* Loop through the lists */
-        final Iterator<MetisListVersioned<MetisFieldVersionedItem>> myListIterator = theListSet.listIterator();
-        while (myListIterator.hasNext()) {
-            final MetisListVersioned<MetisFieldVersionedItem> myList = myListIterator.next();
+        final Iterator<MetisListKey> myIterator = theListSet.keyIterator();
+        while (myIterator.hasNext()) {
+            final MetisListKey myKey = myIterator.next();
 
-            /* Process each item in the list */
-            processNewItems(myList.iterator());
+            /* If the list has references */
+            if (myKey.hasReferences()) {
+                /* Access the list */
+                final MetisListVersioned<MetisFieldVersionedItem> myList = theListSet.getList(myKey);
+
+                /* Process each item in the list */
+                processNewItems(myList.iterator());
+            }
         }
     }
 
@@ -109,13 +115,16 @@ public class MetisListSetTouchMap {
         while (myIterator.hasNext()) {
             final MetisListKey myKey = myIterator.next();
 
-            /* Obtain the associated change */
-            final MetisListChange<MetisFieldVersionedItem> myChange = myChanges.getListChange(myKey);
+            /* If the list has references */
+            if (myKey.hasReferences()) {
+                /* Obtain the associated change */
+                final MetisListChange<MetisFieldVersionedItem> myChange = myChanges.getListChange(myKey);
 
-            /* If there are changes */
-            if (myChange != null) {
-                /* handle changes in the base list */
-                processVersionChanges(myChange);
+                /* If there are changes */
+                if (myChange != null) {
+                    /* handle changes in the base list */
+                    processVersionChanges(myChange);
+                }
             }
         }
     }
@@ -125,16 +134,16 @@ public class MetisListSetTouchMap {
      * @param pChange the change event
      */
     private void processVersionChanges(final MetisListChange<MetisFieldVersionedItem> pChange) {
-        /* Process new items */
-        processNewItems(pChange.addedIterator());
-        processNewItems(pChange.restoredIterator());
+        /* Process deleted items */
+        processDeletedItems(pChange.hiddenIterator());
+        processDeletedItems(pChange.deletedIterator());
 
         /* Process changed items */
         processChangedItems(pChange.changedIterator());
 
-        /* Process deleted items */
-        processDeletedItems(pChange.hiddenIterator());
-        processDeletedItems(pChange.deletedIterator());
+        /* Process new items */
+        processNewItems(pChange.addedIterator());
+        processNewItems(pChange.restoredIterator());
     }
 
     /**
@@ -201,7 +210,7 @@ public class MetisListSetTouchMap {
             setTouchedItem(myId, myTouched);
         }
 
-        /* Process old toucuhes */
+        /* Process old touches */
         final List<Integer> myOldTouches = obtainUniqueElements(myPreviousTouches, myCurrentTouches);
         for (Integer myTouched : myOldTouches) {
             /* Clear the touch */
@@ -434,14 +443,14 @@ public class MetisListSetTouchMap {
         }
 
         /**
-         * Is the item deletable?
+         * Is the item referenced?
          * @param pIndexedId the itemId
          * @return true/false
          */
-        boolean isDeletable(final Integer pIndexedId) {
+        boolean isReferenced(final Integer pIndexedId) {
             /* Pass call on to correct ItemTouchMap */
             final MetisItemTouchMap myItemMap = theItemMap.get(pIndexedId);
-            return myItemMap == null || myItemMap.isDeletable();
+            return myItemMap == null || myItemMap.isReferenced();
         }
 
         /**
@@ -541,10 +550,10 @@ public class MetisListSetTouchMap {
         }
 
         /**
-         * Is the item deletable?
+         * Is the item referenced?
          * @return true/false
          */
-        boolean isDeletable() {
+        boolean isReferenced() {
             return theTouching.isEmpty();
         }
 

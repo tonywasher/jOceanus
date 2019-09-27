@@ -37,6 +37,22 @@ public interface MetisListKey
     String getListName();
 
     /**
+     * Do the list items reference another list?
+     * @return true/false
+     */
+    default boolean hasReferences() {
+        return false;
+    }
+
+    /**
+     * Obtain the nameSpace listKey (if any).
+     * @return the listKey for the nameSpace or null
+     */
+    default MetisListKey getNameSpace() {
+        return null;
+    }
+
+    /**
      * Create a new item for the list.
      * @param <T> the item type
      * @param pListSet the listSet
