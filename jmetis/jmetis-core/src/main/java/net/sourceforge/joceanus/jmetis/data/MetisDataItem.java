@@ -104,6 +104,28 @@ public final class MetisDataItem {
     }
 
     /**
+     * Interface for items that have a potentially singular value.
+     */
+    public interface MetisDataSingularItem {
+        /**
+         * Obtain the singular value.
+         * @return the value
+         */
+        MetisDataSingularValue getSingularValue();
+    }
+
+    /**
+     * Interface for items that have a potentially singular value.
+     */
+    public interface MetisDataSingularValue {
+        /**
+         * Is the value singular?
+         * @return true/false
+         */
+        boolean isSingular();
+    }
+
+    /**
      * List interface.
      * @param <T> the list element type
      */

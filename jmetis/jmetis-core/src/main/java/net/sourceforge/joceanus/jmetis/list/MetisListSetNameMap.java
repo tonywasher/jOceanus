@@ -19,6 +19,8 @@ package net.sourceforge.joceanus.jmetis.list;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import net.sourceforge.joceanus.jmetis.data.MetisDataItem.MetisDataNamedItem;
 import net.sourceforge.joceanus.jmetis.field.MetisFieldVersionedItem;
@@ -29,6 +31,12 @@ import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
  * Name Map.
  */
 public class MetisListSetNameMap {
+    /**
+     * List of illegal characters.
+     */
+    private static final Pattern INVALID_CHARS_PATTERN =
+            Pattern.compile("^.*[~#@*+%{}<>\\[\\]|\"_:].*$");
+
     /**
      * The underlying listSet.
      */
@@ -74,7 +82,7 @@ public class MetisListSetNameMap {
      */
     public MetisFieldVersionedItem getItemForName(final String pName,
                                                   final MetisListKey pKey) {
-        /* Obtain the nameSpace for this item */
+        /* Obtain the nameSpace for this list */
         final MetisListKey myNameSpace = pKey.getNameSpace();
         final MetisListNameMap myNameMap = theListMap.get(myNameSpace);
 
@@ -90,12 +98,75 @@ public class MetisListSetNameMap {
      */
     public boolean isValidName(final MetisFieldVersionedItem pItem,
                                final MetisListKey pKey) {
-        /* Obtain the nameSpace for this item */
+        /* Obtain the nameSpace for this list */
         final MetisListKey myNameSpace = pKey.getNameSpace();
         final MetisListNameMap myNameMap = theListMap.get(myNameSpace);
 
         /* Determine whether the name is valid */
-        return myNameMap != null && myNameMap.isValidName(pItem);
+        return myNameMap == null
+                || myNameMap.isValidName(pItem);
+    }
+
+    /**
+     * Is the name available for this item?
+     * @param pItem the item
+     * @param pName the proposed name
+     * @param pKey the list key
+     * @return true/false
+     */
+    public boolean isAvailableName(final MetisFieldVersionedItem pItem,
+                                   final String pName,
+                                   final MetisListKey pKey) {
+        /* Handle trivial case of current name */
+        final MetisDataNamedItem myItem = (MetisDataNamedItem) pItem;
+        final String myName = myItem.getName();
+        if (pName.equals(myName)) {
+            return true;
+        }
+
+        /* Obtain the nameSpace for this item */
+        final MetisListKey myNameSpace = pKey.getNameSpace();
+        final MetisListNameMap myNameMap = theListMap.get(myNameSpace);
+
+        /* Determine whether the name is available */
+        return myNameMap == null
+                || myNameMap.getItemForName(pName) == null;
+    }
+
+    /**
+     * Is the name valid (contents)?
+     * @param pName the name
+     * @return true/false
+     */
+    public static boolean isValidName(final String pName) {
+        /* Check for null */
+        if (pName == null) {
+            return false;
+        }
+
+        /* Check for invalid characters */
+        final Matcher matcher = INVALID_CHARS_PATTERN.matcher(pName);
+        return pName.length() > 0
+                && !matcher.find();
+    }
+
+    /**
+     * Obtain a new unique name for the list.
+     * @param pKey the list key
+     * @return a new unused name
+     */
+    public String getUniqueName(final MetisListKey pKey) {
+        /* Obtain the nameSpace for this item */
+        final MetisListKey myNameSpace = pKey.getNameSpace();
+        final MetisListNameMap myNameMap = theListMap.get(myNameSpace);
+
+        /* Build the base name */
+        final String myBase = "New" + pKey.getItemName();
+
+        /* Obtain the new unique name */
+        return myNameMap == null
+                ? myBase
+                : myNameMap.getUniqueName(myBase);
     }
 
     /**
@@ -187,8 +258,8 @@ public class MetisListSetNameMap {
      * @param pKey the list key
      * @param pItem the item
      */
-    private void processNewItem(final MetisListKey pKey,
-                                final MetisFieldVersionedItem pItem) {
+    public void processNewItem(final MetisListKey pKey,
+                               final MetisFieldVersionedItem pItem) {
         /* Obtain the nameSpace for this item */
         final MetisListKey myNameSpace = pKey.getNameSpace();
         final MetisListNameMap myNameMap = theListMap.computeIfAbsent(myNameSpace, x -> new MetisListNameMap(isSession));
@@ -250,17 +321,20 @@ public class MetisListSetNameMap {
         final MetisListNameMap myNameMap = theListMap.get(myNameSpace);
 
         /* Clear name for item */
-        myNameMap.clearNameForItem(pItem);
+        if (myNameMap != null) {
+            myNameMap.clearNameForItem(pItem);
+        }
     }
 
     /**
-     * NameMap for Item.
+     * NameMap for List(s).
      */
     static class MetisListNameMap {
         /**
          * Standard integer ONE.
          */
-        public static final Integer ONE = 1;
+        private static final Integer ONE = 1;
+
         /**
          * The name map for this list/lists.
          */
@@ -328,7 +402,7 @@ public class MetisListSetNameMap {
             final String myName = myItem.getName();
 
             /* Sanity checks */
-            if (theNameMap.get(myName) != null) {
+            if (theCountMap == null && theNameMap.get(myName) != null) {
                 throw new IllegalArgumentException(myName);
             }
             if (theReverseMap.get(myId) != null) {
@@ -411,12 +485,34 @@ public class MetisListSetNameMap {
                     throw new IllegalArgumentException(myName);
                 }
 
-                /* Store the name */
+                /* Remove the name */
                 theNameMap.remove(myName);
             }
 
             /* Remove the reverse reference */
             theReverseMap.remove(myId);
+        }
+
+        /**
+         * Obtain unique name.
+         * @param pBase the base name
+         * @return The new name
+         */
+        String getUniqueName(final String pBase) {
+            /* Set up base constraints */
+            int iNextId = 1;
+
+            /* Loop until we found a name */
+            String myName = pBase;
+            for (;;) {
+                /* try out the name */
+                if (getItemForName(myName) == null) {
+                    return myName;
+                }
+
+                /* Build next name */
+                myName = pBase.concat(Integer.toString(iNextId++));
+            }
         }
     }
 }
