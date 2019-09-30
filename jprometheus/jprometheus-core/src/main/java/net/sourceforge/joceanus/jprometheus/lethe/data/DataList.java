@@ -65,7 +65,7 @@ public abstract class DataList<T extends DataItem<E> & Comparable<? super T>, E 
     @SuppressWarnings("rawtypes")
     private static final MetisFieldSet<DataList> FIELD_DEFS = MetisFieldSet.newFieldSet(DataList.class);
 
-    /**
+    /*
      * Declare Fields.
      */
     static {

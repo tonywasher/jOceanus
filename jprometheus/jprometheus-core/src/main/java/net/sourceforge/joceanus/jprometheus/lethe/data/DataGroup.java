@@ -37,7 +37,7 @@ public abstract class DataGroup<T extends DataItem<E> & Comparable<? super T>, E
     @SuppressWarnings("rawtypes")
     private static final MetisFieldSet<DataGroup> FIELD_DEFS = MetisFieldSet.newFieldSet(DataGroup.class);
 
-    /**
+    /*
      * Declare Fields.
      */
     static {

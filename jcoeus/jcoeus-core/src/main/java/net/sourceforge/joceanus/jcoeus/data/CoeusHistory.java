@@ -34,7 +34,7 @@ public abstract class CoeusHistory
      */
     private static final MetisFieldSet<CoeusHistory> FIELD_DEFS = MetisFieldSet.newFieldSet(CoeusHistory.class);
 
-    /**
+    /*
      * Declare Fields.
      */
     static {

@@ -36,7 +36,7 @@ public class MetisViewerErrorList
      */
     private static final MetisFieldSet<MetisViewerErrorList> FIELD_DEFS = MetisFieldSet.newFieldSet(MetisViewerErrorList.class);
 
-    /**
+    /*
      * Declare Fields.
      */
     static {

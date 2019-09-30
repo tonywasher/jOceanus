@@ -51,7 +51,7 @@ public class UpdateSet<E extends Enum<E>>
     @SuppressWarnings("rawtypes")
     private static final MetisFieldSet<UpdateSet> FIELD_DEFS = MetisFieldSet.newFieldSet(UpdateSet.class);
 
-    /**
+    /*
      * Declare Fields.
      */
     static {

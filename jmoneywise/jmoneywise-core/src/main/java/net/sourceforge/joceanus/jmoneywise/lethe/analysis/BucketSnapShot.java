@@ -41,7 +41,7 @@ public class BucketSnapShot<T extends BucketValues<T, E>, E extends Enum<E> & Bu
     @SuppressWarnings("rawtypes")
     private static final MetisFieldSet<BucketSnapShot> FIELD_DEFS = MetisFieldSet.newFieldSet(BucketSnapShot.class);
 
-    /**
+    /*
      * Declare Fields.
      */
     static {

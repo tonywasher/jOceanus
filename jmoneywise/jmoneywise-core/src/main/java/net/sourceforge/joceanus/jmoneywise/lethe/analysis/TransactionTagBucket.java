@@ -43,7 +43,7 @@ public final class TransactionTagBucket
      */
     private static final MetisFieldSet<TransactionTagBucket> FIELD_DEFS = MetisFieldSet.newFieldSet(TransactionTagBucket.class);
 
-    /**
+    /*
      * Declare Fields.
      */
     static {
@@ -242,7 +242,7 @@ public final class TransactionTagBucket
          */
         private static final MetisFieldSet<TransactionTagBucketList> FIELD_DEFS = MetisFieldSet.newFieldSet(TransactionTagBucketList.class);
 
-        /**
+        /*
          * Declare Fields.
          */
         static {

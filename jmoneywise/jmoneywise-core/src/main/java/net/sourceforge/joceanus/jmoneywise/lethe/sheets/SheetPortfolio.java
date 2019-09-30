@@ -16,9 +16,6 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.lethe.sheets;
 
-import net.sourceforge.joceanus.jmetis.service.sheet.MetisSheetCell;
-import net.sourceforge.joceanus.jmetis.service.sheet.MetisSheetRow;
-import net.sourceforge.joceanus.jmetis.service.sheet.MetisSheetView;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseLogicException;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.MoneyWiseData;
@@ -28,6 +25,9 @@ import net.sourceforge.joceanus.jmoneywise.lethe.data.TransactionCategory;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.AssetCurrency;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataValues;
 import net.sourceforge.joceanus.jprometheus.lethe.sheets.PrometheusSheetEncrypted;
+import net.sourceforge.joceanus.jprometheus.service.sheet.PrometheusSheetCell;
+import net.sourceforge.joceanus.jprometheus.service.sheet.PrometheusSheetRow;
+import net.sourceforge.joceanus.jprometheus.service.sheet.PrometheusSheetView;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
@@ -146,8 +146,8 @@ public class SheetPortfolio
      */
     protected static void processPortfolio(final ArchiveLoader pLoader,
                                            final MoneyWiseData pData,
-                                           final MetisSheetView pView,
-                                           final MetisSheetRow pRow) throws OceanusException {
+                                           final PrometheusSheetView pView,
+                                           final PrometheusSheetRow pRow) throws OceanusException {
         /* Access name */
         int iAdjust = -1;
         final String myName = pView.getRowCellByIndex(pRow, ++iAdjust).getString();
@@ -168,7 +168,7 @@ public class SheetPortfolio
         ++iAdjust;
 
         /* Handle closed which may be missing */
-        MetisSheetCell myCell = pView.getRowCellByIndex(pRow, ++iAdjust);
+        PrometheusSheetCell myCell = pView.getRowCellByIndex(pRow, ++iAdjust);
         Boolean isClosed = Boolean.FALSE;
         if (myCell != null) {
             isClosed = myCell.getBoolean();

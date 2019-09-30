@@ -32,7 +32,7 @@ public abstract class CoeusLoan
      */
     private static final MetisFieldSet<CoeusLoan> FIELD_DEFS = MetisFieldSet.newFieldSet(CoeusLoan.class);
 
-    /**
+    /*
      * Declare Fields.
      */
     static {

@@ -16,10 +16,6 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.lethe.sheets;
 
-import net.sourceforge.joceanus.jmetis.service.sheet.MetisSheetCell;
-import net.sourceforge.joceanus.jmetis.service.sheet.MetisSheetRow;
-import net.sourceforge.joceanus.jmetis.service.sheet.MetisSheetView;
-import net.sourceforge.joceanus.jmetis.service.sheet.MetisSheetWorkBook;
 import net.sourceforge.joceanus.jmetis.threads.MetisThreadCancelException;
 import net.sourceforge.joceanus.jmetis.threads.MetisThreadStatusReport;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
@@ -29,6 +25,10 @@ import net.sourceforge.joceanus.jmoneywise.lethe.data.TransactionCategory;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.TransactionCategory.TransactionCategoryList;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataValues;
 import net.sourceforge.joceanus.jprometheus.lethe.sheets.PrometheusSheetEncrypted;
+import net.sourceforge.joceanus.jprometheus.service.sheet.PrometheusSheetCell;
+import net.sourceforge.joceanus.jprometheus.service.sheet.PrometheusSheetRow;
+import net.sourceforge.joceanus.jprometheus.service.sheet.PrometheusSheetView;
+import net.sourceforge.joceanus.jprometheus.service.sheet.PrometheusSheetWorkBook;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
@@ -126,7 +126,7 @@ public class SheetTransCategory
      * @throws OceanusException on error
      */
     protected static void loadArchive(final MetisThreadStatusReport pReport,
-                                      final MetisSheetWorkBook pWorkBook,
+                                      final PrometheusSheetWorkBook pWorkBook,
                                       final MoneyWiseData pData,
                                       final ArchiveLoader pLoader) throws OceanusException {
         /* Access the list of categories */
@@ -135,7 +135,7 @@ public class SheetTransCategory
         /* Protect against exceptions */
         try {
             /* Find the range of cells */
-            final MetisSheetView myView = pWorkBook.getRangeView(AREA_TRANSCATEGORIES);
+            final PrometheusSheetView myView = pWorkBook.getRangeView(AREA_TRANSCATEGORIES);
 
             /* Declare the new stage */
             pReport.setNewStage(TransactionCategory.LIST_NAME);
@@ -149,11 +149,11 @@ public class SheetTransCategory
             /* Loop through the rows of the table */
             for (int i = 0; i < myTotal; i++) {
                 /* Access the cell by reference */
-                final MetisSheetRow myRow = myView.getRowByIndex(i);
+                final PrometheusSheetRow myRow = myView.getRowByIndex(i);
                 int iAdjust = -1;
 
                 /* Access name */
-                MetisSheetCell myCell = myView.getRowCellByIndex(myRow, ++iAdjust);
+                PrometheusSheetCell myCell = myView.getRowCellByIndex(myRow, ++iAdjust);
                 final String myName = myCell.getString();
 
                 /* Access Type */

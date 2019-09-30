@@ -29,7 +29,7 @@ import net.sourceforge.joceanus.jmetis.data.MetisDataResource;
  */
 public class MetisFieldVersionHistory
         implements MetisFieldItem {
-    /**
+    /*
      * FieldSet definitions.
      */
     static {

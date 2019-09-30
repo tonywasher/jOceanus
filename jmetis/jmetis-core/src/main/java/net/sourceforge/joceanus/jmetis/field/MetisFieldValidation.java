@@ -27,7 +27,7 @@ import net.sourceforge.joceanus.jmetis.data.MetisDataFormatter;
  */
 public class MetisFieldValidation
         implements MetisFieldItem {
-    /**
+    /*
      * FieldSet definitions.
      */
     static {

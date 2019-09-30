@@ -28,7 +28,6 @@ module net.sourceforge.joceanus.jmetis.test.core {
     /* jOceanus */
     requires net.sourceforge.joceanus.jmetis.core;
     requires net.sourceforge.joceanus.jmetis.javafx;
-    requires net.sourceforge.joceanus.jmetis.sheet.api;
     requires net.sourceforge.joceanus.jmetis.swing;
     requires net.sourceforge.joceanus.jtethys.core;
     requires net.sourceforge.joceanus.jtethys.javafx;

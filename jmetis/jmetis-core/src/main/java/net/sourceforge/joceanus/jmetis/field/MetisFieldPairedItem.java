@@ -27,7 +27,7 @@ public class MetisFieldPairedItem implements MetisFieldItem {
      */
     private static final MetisFieldSet<MetisFieldPairedItem> FIELD_DEFS = MetisFieldSet.newFieldSet(MetisFieldPairedItem.class);
 
-    /**
+    /*
      * Field IDs.
      */
     static {
@@ -50,16 +50,6 @@ public class MetisFieldPairedItem implements MetisFieldItem {
      * The child.
      */
     private final MetisFieldVersionedItem theChild;
-
-    /**
-     * Constructor.
-     * @param pParent the parent
-     * @param pId the id
-     */
-    protected MetisFieldPairedItem(final MetisFieldVersionedItem pParent,
-                                   final Long pId) {
-        this(pParent, null, pId);
-    }
 
     /**
      * Constructor.
@@ -89,9 +79,8 @@ public class MetisFieldPairedItem implements MetisFieldItem {
      * @return true/false
      */
     public boolean referencesId(final Integer pId) {
-        final Long myId = Integer.toUnsignedLong(pId);
-        return myId.equals(theExternalId >>> Integer.SIZE)
-               || myId.equals(theExternalId & (-1 >>> Integer.SIZE));
+        return pId.equals(getChildIdFromPairedId(theExternalId))
+               || pId.equals(getParentIdFromPairedId(theExternalId));
     }
 
     /**
@@ -103,6 +92,15 @@ public class MetisFieldPairedItem implements MetisFieldItem {
     }
 
     /**
+     * Obtain the parentId from the pairedId.
+     * @param pPairedId the paired Id
+     * @return the parentId
+     */
+    public static int getParentIdFromPairedId(final Long pPairedId) {
+        return (int) (pPairedId & (-1L >>> Integer.SIZE));
+    }
+
+    /**
      * Obtain the child.
      * @return the child
      */
@@ -110,7 +108,29 @@ public class MetisFieldPairedItem implements MetisFieldItem {
         return theChild;
     }
 
+    /**
+     * Obtain the childId from the pairedId.
+     * @param pPairedId the paired id
+     * @return the childId
+     */
+    public static int getChildIdFromPairedId(final Long pPairedId) {
+        return (int) (pPairedId >>> Integer.SIZE);
+    }
+
+    /**
+     * Obtain the pairedId from the parentId and childId.
+     * @param pParentId the parent id
+     * @param pChildId the childId
+     * @return the pairedId
+     */
+    public static Long getPairedIdFromParentAndChild(final Integer pParentId,
+                                                     final Integer pChildId) {
+        return (((long) pChildId) << Integer.SIZE) | Integer.toUnsignedLong(pParentId);
+    }
+
     @Override
+
+
     public MetisFieldSetDef getDataFieldSet() {
         return FIELD_DEFS;
     }

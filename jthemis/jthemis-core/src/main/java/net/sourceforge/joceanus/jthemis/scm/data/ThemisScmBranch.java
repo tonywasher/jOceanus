@@ -63,7 +63,7 @@ public abstract class ThemisScmBranch
      */
     private static final MetisFieldSet<ThemisScmBranch> FIELD_DEFS = MetisFieldSet.newFieldSet(ThemisScmBranch.class);
 
-    /**
+    /*
      * fieldIds.
      */
     static {
@@ -442,7 +442,7 @@ public abstract class ThemisScmBranch
          */
         private static final MetisFieldSet<ThemisScmBranchList> FIELD_DEFS = MetisFieldSet.newFieldSet(ThemisScmBranchList.class);
 
-        /**
+        /*
          * Size field id.
          */
         static {

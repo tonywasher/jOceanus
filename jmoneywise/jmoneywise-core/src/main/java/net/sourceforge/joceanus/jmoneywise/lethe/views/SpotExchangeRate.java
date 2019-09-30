@@ -195,7 +195,7 @@ public final class SpotExchangeRate
         @SuppressWarnings("rawtypes")
         private static final MetisFieldSet<SpotExchangeList> FIELD_DEFS = MetisFieldSet.newFieldSet(SpotExchangeList.class);
 
-        /**
+        /*
          * The currency field Id.
          */
         static {

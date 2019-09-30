@@ -12,6 +12,8 @@
   <modules>
     <module>jprometheus-swing</module>
     <module>jprometheus-core</module>
+    <module>jprometheus-services</module>
+    <module>jprometheus-test</module>
   </modules>
   <properties>
     <scmComponent>jprometheus</scmComponent>

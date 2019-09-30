@@ -32,7 +32,7 @@ public abstract class CoeusTotals
      */
     private static final MetisFieldSet<CoeusTotals> FIELD_DEFS = MetisFieldSet.newFieldSet(CoeusTotals.class);
 
-    /**
+    /*
      * Declare Fields.
      */
     static {

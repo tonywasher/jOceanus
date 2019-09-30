@@ -33,7 +33,7 @@ public abstract class MoneyWiseTaxYear
      */
     private static final MetisFieldSet<MoneyWiseTaxYear> FIELD_DEFS = MetisFieldSet.newFieldSet(MoneyWiseTaxYear.class);
 
-    /**
+    /*
      * Declare Fields.
      */
     static {

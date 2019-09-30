@@ -1003,7 +1003,7 @@ public class Payee
          */
         private static final MetisFieldSet<PayeeDataMap> FIELD_DEFS = MetisFieldSet.newFieldSet(PayeeDataMap.class);
 
-        /**
+        /*
          * UnderlyingMap Field Id.
          */
         static {

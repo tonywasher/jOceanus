@@ -16,6 +16,10 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmetis.list;
 
+import java.util.Collections;
+import java.util.List;
+
+import net.sourceforge.joceanus.jmetis.data.MetisDataItem.MetisDataFieldId;
 import net.sourceforge.joceanus.jmetis.field.MetisFieldItem.MetisFieldItemType;
 import net.sourceforge.joceanus.jmetis.field.MetisFieldVersionedItem;
 
@@ -37,10 +41,49 @@ public interface MetisListKey
     String getListName();
 
     /**
+     * Do the list items reference another list?
+     * @return true/false
+     */
+    default boolean hasReferences() {
+        return false;
+    }
+
+    /**
+     * Obtain the nameSpace listKey (if any).
+     * @return the listKey for the nameSpace or null
+     */
+    default MetisListKey getNameSpace() {
+        return null;
+    }
+
+    /**
+     * Obtain the list of Unique fieldIds (if any).
+     * @return the list of fieldIds
+     */
+    default List<MetisDataFieldId> getUniqueFields() {
+        return Collections.emptyList();
+    }
+
+    /**
+     * Obtain the list of Dingular fieldIds (if any).
+     * @return the list of fieldIds
+     */
+    default List<MetisDataFieldId> getSingularFields() {
+        return Collections.emptyList();
+    }
+
+    /**
      * Create a new item for the list.
      * @param <T> the item type
      * @param pListSet the listSet
      * @return the new item
      */
     <T extends MetisFieldVersionedItem> T newItem(MetisListSetVersioned pListSet);
+
+    /**
+     * Obtain the Clazz of the item.
+     * @param <T> the item type
+     * @return the class of the item
+     */
+    <T extends MetisFieldVersionedItem> Class<T> getClazz();
 }

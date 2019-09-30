@@ -32,7 +32,7 @@ import net.sourceforge.joceanus.jtethys.decimal.TethysRate;
  */
 public abstract class MoneyWiseUKInterestScheme
         extends MoneyWiseUKIncomeScheme {
-    /**
+    /*
      * Local Report fields.
      */
     static {
@@ -176,7 +176,7 @@ public abstract class MoneyWiseUKInterestScheme
          */
         private static final MetisFieldSet<MoneyWiseUKInterestBaseRateScheme> FIELD_DEFS = MetisFieldSet.newFieldSet(MoneyWiseUKInterestBaseRateScheme.class);
 
-        /**
+        /*
          * Declare Fields.
          */
         static {

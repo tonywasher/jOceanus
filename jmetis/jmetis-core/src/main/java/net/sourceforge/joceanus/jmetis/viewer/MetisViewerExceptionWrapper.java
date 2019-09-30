@@ -31,7 +31,7 @@ public class MetisViewerExceptionWrapper
      */
     private static final MetisFieldSet<MetisViewerExceptionWrapper> FIELD_DEFS = MetisFieldSet.newFieldSet(MetisViewerExceptionWrapper.class);
 
-    /**
+    /*
      * Declare Fields.
      */
     static {

@@ -50,7 +50,7 @@ public class CoeusFundingCircleLoanBookItem
      */
     private static final MetisFieldSet<CoeusFundingCircleLoanBookItem> FIELD_DEFS = MetisFieldSet.newFieldSet(CoeusFundingCircleLoanBookItem.class);
 
-    /**
+    /*
      * Fields.
      */
     static {

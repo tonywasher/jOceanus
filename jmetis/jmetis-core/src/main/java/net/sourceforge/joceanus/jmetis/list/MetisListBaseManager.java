@@ -201,10 +201,6 @@ public final class MetisListBaseManager {
     }
 
     /**
-     * Refresh content of listSets.
-     * @param pListSet the listSet
-     */
-    /**
      * Reset the content of a listSet.
      * @param pTarget the target listSet
      * @param pSource the source content to reset to

@@ -49,7 +49,7 @@ public class MoneyWiseUKTaxAnalysis
      */
     private static final MetisFieldSet<MoneyWiseUKTaxAnalysis> FIELD_DEFS = MetisFieldSet.newFieldSet(MoneyWiseUKTaxAnalysis.class);
 
-    /**
+    /*
      * Declare Fields.
      */
     static {

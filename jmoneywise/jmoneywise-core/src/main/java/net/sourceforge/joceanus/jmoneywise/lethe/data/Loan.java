@@ -1167,7 +1167,7 @@ public class Loan
          */
         private static final MetisFieldSet<LoanDataMap> FIELD_DEFS = MetisFieldSet.newFieldSet(LoanDataMap.class);
 
-        /**
+        /*
          * UnderlyingMap Field Id.
          */
         static {

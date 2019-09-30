@@ -38,7 +38,7 @@ public class MoneyWiseUKIncomeScheme
      */
     private static final MetisFieldSet<MoneyWiseUKIncomeScheme> FIELD_DEFS = MetisFieldSet.newFieldSet(MoneyWiseUKIncomeScheme.class);
 
-    /**
+    /*
      * Declare Fields.
      */
     static {

@@ -61,7 +61,7 @@ public final class SecurityBucket
      */
     private static final MetisFieldSet<SecurityBucket> FIELD_DEFS = MetisFieldSet.newFieldSet(SecurityBucket.class);
 
-    /**
+    /*
      * Declare Fields.
      */
     static {
@@ -893,7 +893,7 @@ public final class SecurityBucket
          */
         private static final MetisFieldSet<SecurityBucketList> FIELD_DEFS = MetisFieldSet.newFieldSet(SecurityBucketList.class);
 
-        /**
+        /*
          * Declare Fields.
          */
         static {

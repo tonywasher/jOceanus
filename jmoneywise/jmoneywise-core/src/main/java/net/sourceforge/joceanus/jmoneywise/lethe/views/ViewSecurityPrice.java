@@ -228,7 +228,7 @@ public class ViewSecurityPrice
          */
         private static final MetisFieldSet<ViewSecurityPriceList> FIELD_DEFS = MetisFieldSet.newFieldSet(ViewSecurityPriceList.class);
 
-        /**
+        /*
          * The fields.
          */
         static {

@@ -999,7 +999,7 @@ public class Cash
          */
         private static final MetisFieldSet<CashDataMap> FIELD_DEFS = MetisFieldSet.newFieldSet(CashDataMap.class);
 
-        /**
+        /*
          * UnderlyingMap Field Id.
          */
         static {

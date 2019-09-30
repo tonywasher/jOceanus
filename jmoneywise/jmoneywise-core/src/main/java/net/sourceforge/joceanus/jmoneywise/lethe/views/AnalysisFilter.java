@@ -65,7 +65,7 @@ public abstract class AnalysisFilter<B, T extends Enum<T> & BucketAttribute>
     @SuppressWarnings("rawtypes")
     private static final MetisFieldSet<AnalysisFilter> FIELD_DEFS = MetisFieldSet.newFieldSet(AnalysisFilter.class);
 
-    /**
+    /*
      * Declare Fields.
      */
     static {

@@ -16,10 +16,6 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.lethe.sheets;
 
-import net.sourceforge.joceanus.jmetis.service.sheet.MetisSheetCell;
-import net.sourceforge.joceanus.jmetis.service.sheet.MetisSheetRow;
-import net.sourceforge.joceanus.jmetis.service.sheet.MetisSheetView;
-import net.sourceforge.joceanus.jmetis.service.sheet.MetisSheetWorkBook;
 import net.sourceforge.joceanus.jmetis.threads.MetisThreadCancelException;
 import net.sourceforge.joceanus.jmetis.threads.MetisThreadStatusReport;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
@@ -29,6 +25,10 @@ import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.LoanCategoryType;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.LoanCategoryType.LoanCategoryTypeList;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataValues;
 import net.sourceforge.joceanus.jprometheus.lethe.sheets.PrometheusSheetStaticData;
+import net.sourceforge.joceanus.jprometheus.service.sheet.PrometheusSheetCell;
+import net.sourceforge.joceanus.jprometheus.service.sheet.PrometheusSheetRow;
+import net.sourceforge.joceanus.jprometheus.service.sheet.PrometheusSheetView;
+import net.sourceforge.joceanus.jprometheus.service.sheet.PrometheusSheetWorkBook;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
@@ -82,7 +82,7 @@ public class SheetLoanCategoryType
      * @throws OceanusException on error
      */
     protected static void loadArchive(final MetisThreadStatusReport pReport,
-                                      final MetisSheetWorkBook pWorkBook,
+                                      final PrometheusSheetWorkBook pWorkBook,
                                       final MoneyWiseData pData) throws OceanusException {
         /* Access the list of loan types */
         final LoanCategoryTypeList myList = pData.getLoanCategoryTypes();
@@ -90,7 +90,7 @@ public class SheetLoanCategoryType
         /* Protect against exceptions */
         try {
             /* Find the range of cells */
-            final MetisSheetView myView = pWorkBook.getRangeView(AREA_LOANCATTYPES);
+            final PrometheusSheetView myView = pWorkBook.getRangeView(AREA_LOANCATTYPES);
 
             /* Declare the new stage */
             pReport.setNewStage(AREA_LOANCATTYPES);
@@ -104,8 +104,8 @@ public class SheetLoanCategoryType
             /* Loop through the rows of the single column range */
             for (int i = 0; i < myTotal; i++) {
                 /* Access the cell by reference */
-                final MetisSheetRow myRow = myView.getRowByIndex(i);
-                final MetisSheetCell myCell = myView.getRowCellByIndex(myRow, 0);
+                final PrometheusSheetRow myRow = myView.getRowByIndex(i);
+                final PrometheusSheetCell myCell = myView.getRowCellByIndex(myRow, 0);
 
                 /* Add the value into the tables */
                 myList.addBasicItem(myCell.getString());

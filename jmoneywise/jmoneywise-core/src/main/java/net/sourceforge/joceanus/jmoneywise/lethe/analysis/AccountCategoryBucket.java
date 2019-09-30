@@ -42,7 +42,7 @@ public abstract class AccountCategoryBucket<T extends AssetBase<T>, C>
     @SuppressWarnings("rawtypes")
     private static final MetisFieldSet<AccountCategoryBucket> FIELD_DEFS = MetisFieldSet.newFieldSet(AccountCategoryBucket.class);
 
-    /**
+    /*
      * Declare Fields.
      */
     static {

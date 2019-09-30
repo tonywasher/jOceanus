@@ -16,10 +16,6 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.lethe.sheets;
 
-import net.sourceforge.joceanus.jmetis.service.sheet.MetisSheetCell;
-import net.sourceforge.joceanus.jmetis.service.sheet.MetisSheetRow;
-import net.sourceforge.joceanus.jmetis.service.sheet.MetisSheetView;
-import net.sourceforge.joceanus.jmetis.service.sheet.MetisSheetWorkBook;
 import net.sourceforge.joceanus.jmetis.threads.MetisThreadCancelException;
 import net.sourceforge.joceanus.jmetis.threads.MetisThreadStatusReport;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
@@ -29,6 +25,10 @@ import net.sourceforge.joceanus.jmoneywise.lethe.data.Region;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.Region.RegionList;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataValues;
 import net.sourceforge.joceanus.jprometheus.lethe.sheets.PrometheusSheetEncrypted;
+import net.sourceforge.joceanus.jprometheus.service.sheet.PrometheusSheetCell;
+import net.sourceforge.joceanus.jprometheus.service.sheet.PrometheusSheetRow;
+import net.sourceforge.joceanus.jprometheus.service.sheet.PrometheusSheetView;
+import net.sourceforge.joceanus.jprometheus.service.sheet.PrometheusSheetWorkBook;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
@@ -110,7 +110,7 @@ public class SheetRegion
      * @throws OceanusException on error
      */
     protected static void loadArchive(final MetisThreadStatusReport pReport,
-                                      final MetisSheetWorkBook pWorkBook,
+                                      final PrometheusSheetWorkBook pWorkBook,
                                       final MoneyWiseData pData) throws OceanusException {
         /* Access the list of regions */
         final RegionList myList = pData.getRegions();
@@ -118,7 +118,7 @@ public class SheetRegion
         /* Protect against exceptions */
         try {
             /* Find the range of cells */
-            final MetisSheetView myView = pWorkBook.getRangeView(AREA_REGIONS);
+            final PrometheusSheetView myView = pWorkBook.getRangeView(AREA_REGIONS);
 
             /* Declare the new stage */
             pReport.setNewStage(Region.LIST_NAME);
@@ -132,11 +132,11 @@ public class SheetRegion
             /* Loop through the rows of the table */
             for (int i = 0; i < myTotal; i++) {
                 /* Access the cell by reference */
-                final MetisSheetRow myRow = myView.getRowByIndex(i);
+                final PrometheusSheetRow myRow = myView.getRowByIndex(i);
                 int iAdjust = -1;
 
                 /* Access name */
-                final MetisSheetCell myCell = myView.getRowCellByIndex(myRow, ++iAdjust);
+                final PrometheusSheetCell myCell = myView.getRowCellByIndex(myRow, ++iAdjust);
                 final String myName = myCell.getString();
 
                 /* Build data values */

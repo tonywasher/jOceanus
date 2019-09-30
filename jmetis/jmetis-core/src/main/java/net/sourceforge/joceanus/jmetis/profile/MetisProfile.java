@@ -41,7 +41,7 @@ public class MetisProfile
      */
     private static final MetisFieldSet<MetisProfile> FIELD_DEFS = MetisFieldSet.newFieldSet(MetisProfile.class);
 
-    /**
+    /*
      * FieldIds.
      */
     static {

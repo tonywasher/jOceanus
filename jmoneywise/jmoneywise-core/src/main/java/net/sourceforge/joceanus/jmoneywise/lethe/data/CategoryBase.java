@@ -717,7 +717,7 @@ public abstract class CategoryBase<T extends CategoryBase<T, S, C>, S extends St
      */
     public abstract static class CategoryBaseList<T extends CategoryBase<T, S, C>, S extends StaticData<S, C, MoneyWiseDataType>, C extends Enum<C> & CategoryInterface>
             extends EncryptedList<T, MoneyWiseDataType> {
-        /**
+        /*
          * Report fields.
          */
         static {

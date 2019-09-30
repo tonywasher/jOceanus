@@ -55,7 +55,7 @@ public final class ThemisGitTag
      */
     private static final MetisFieldSet<ThemisGitTag> FIELD_DEFS = MetisFieldSet.newFieldSet(ThemisGitTag.class);
 
-    /**
+    /*
      * Repository field id.
      */
     static {

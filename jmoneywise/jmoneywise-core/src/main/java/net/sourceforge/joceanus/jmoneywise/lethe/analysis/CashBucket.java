@@ -36,7 +36,7 @@ public final class CashBucket
      */
     private static final MetisFieldSet<CashBucket> FIELD_DEFS = MetisFieldSet.newFieldSet(CashBucket.class);
 
-    /**
+    /*
      * Declare Fields.
      */
     static {

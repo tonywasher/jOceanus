@@ -41,7 +41,7 @@ public abstract class ThemisScmTag
      */
     private static final MetisFieldSet<ThemisScmTag> FIELD_DEFS = MetisFieldSet.newFieldSet(ThemisScmTag.class);
 
-    /**
+    /*
      * fieldIds.
      */
     static {
@@ -194,7 +194,7 @@ public abstract class ThemisScmTag
          */
         private static final MetisFieldSet<ThemisScmTagList> FIELD_DEFS = MetisFieldSet.newFieldSet(ThemisScmTagList.class);
 
-        /**
+        /*
          * fieldIds.
          */
         static {

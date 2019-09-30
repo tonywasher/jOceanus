@@ -32,7 +32,7 @@ import net.sourceforge.joceanus.jtethys.decimal.TethysRate;
  */
 public abstract class MoneyWiseUKDividendScheme
         extends MoneyWiseUKIncomeScheme {
-    /**
+    /*
      * Local Report fields.
      */
     static {
@@ -215,7 +215,7 @@ public abstract class MoneyWiseUKDividendScheme
          */
         private static final MetisFieldSet<MoneyWiseUKDividendBaseRateScheme> FIELD_DEFS = MetisFieldSet.newFieldSet(MoneyWiseUKDividendBaseRateScheme.class);
 
-        /**
+        /*
          * Declare Fields.
          */
         static {
@@ -272,7 +272,7 @@ public abstract class MoneyWiseUKDividendScheme
          */
         private static final MetisFieldSet<MoneyWiseUKDividendHigherRateScheme> FIELD_DEFS = MetisFieldSet.newFieldSet(MoneyWiseUKDividendHigherRateScheme.class);
 
-        /**
+        /*
          * Declare Fields.
          */
         static {
@@ -354,7 +354,7 @@ public abstract class MoneyWiseUKDividendScheme
          */
         private static final MetisFieldSet<MoneyWiseUKDividendAdditionalRateScheme> FIELD_DEFS = MetisFieldSet.newFieldSet(MoneyWiseUKDividendAdditionalRateScheme.class);
 
-        /**
+        /*
          * Declare Fields.
          */
         static {

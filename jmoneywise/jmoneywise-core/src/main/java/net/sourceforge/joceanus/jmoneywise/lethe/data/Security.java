@@ -1292,7 +1292,7 @@ public class Security
          */
         private static final MetisFieldSet<SecurityDataMap> FIELD_DEFS = MetisFieldSet.newFieldSet(SecurityDataMap.class);
 
-        /**
+        /*
          * Declare Fields.
          */
         static {

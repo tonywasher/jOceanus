@@ -48,7 +48,7 @@ public class CoeusMarketCache
      */
     private static final MetisFieldSet<CoeusMarketCache> FIELD_DEFS = MetisFieldSet.newFieldSet(CoeusMarketCache.class);
 
-    /**
+    /*
      * FieldIds.
      */
     static {

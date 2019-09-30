@@ -56,7 +56,7 @@ public class ThemisMvnProjectDefinition
      */
     private static final MetisFieldSet<ThemisMvnProjectDefinition> FIELD_DEFS = MetisFieldSet.newFieldSet(ThemisMvnProjectDefinition.class);
 
-    /**
+    /*
      * Id field id.
      */
     static {
@@ -292,7 +292,7 @@ public class ThemisMvnProjectDefinition
          */
         private static final MetisFieldSet<ThemisMvnSubModule> FIELD_DEFS = MetisFieldSet.newFieldSet(ThemisMvnSubModule.class);
 
-        /**
+        /*
          * Id field id.
          */
         static {

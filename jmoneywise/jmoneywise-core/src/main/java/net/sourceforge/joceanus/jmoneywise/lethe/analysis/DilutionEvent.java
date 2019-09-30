@@ -53,7 +53,7 @@ public final class DilutionEvent
      */
     private static final MetisFieldSet<DilutionEvent> FIELD_DEFS = MetisFieldSet.newFieldSet(DilutionEvent.class);
 
-    /**
+    /*
      * Declare Fields.
      */
     static {
@@ -221,7 +221,7 @@ public final class DilutionEvent
          */
         private static final MetisFieldSet<DilutionEventList> FIELD_DEFS = MetisFieldSet.newFieldSet(DilutionEventList.class);
 
-        /**
+        /*
          * Declare Fields.
          */
         static {

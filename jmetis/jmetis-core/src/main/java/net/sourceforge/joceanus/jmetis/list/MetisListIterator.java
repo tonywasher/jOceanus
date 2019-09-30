@@ -45,7 +45,7 @@ public class MetisListIterator<T extends MetisDataIndexedItem>
      * Constructor.
      * @param pList the list
      */
-    protected MetisListIterator(final MetisListIndexed<T> pList) {
+    MetisListIterator(final MetisListIndexed<T> pList) {
         /* Store parameters */
         theList = pList;
 

@@ -324,7 +324,7 @@ public abstract class EncryptedItem<E extends Enum<E>>
      */
     public abstract static class EncryptedList<T extends EncryptedItem<E> & Comparable<? super T>, E extends Enum<E>>
             extends DataList<T, E> {
-        /**
+        /*
          * Report fields.
          */
         static {

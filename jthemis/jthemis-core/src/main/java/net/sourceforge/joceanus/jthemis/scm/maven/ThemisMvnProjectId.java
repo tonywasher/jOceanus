@@ -51,7 +51,7 @@ public final class ThemisMvnProjectId
      */
     private static final MetisFieldSet<ThemisMvnProjectId> FIELD_DEFS = MetisFieldSet.newFieldSet(ThemisMvnProjectId.class);
 
-    /**
+    /*
      * Group field id.
      */
     static {

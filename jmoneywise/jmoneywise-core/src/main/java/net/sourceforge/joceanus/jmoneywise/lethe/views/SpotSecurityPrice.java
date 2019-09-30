@@ -235,7 +235,7 @@ public final class SpotSecurityPrice
         @SuppressWarnings("rawtypes")
         private static final MetisFieldSet<SpotSecurityList> FIELD_DEFS = MetisFieldSet.newFieldSet(SpotSecurityList.class);
 
-        /**
+        /*
          * The fields.
          */
         static {

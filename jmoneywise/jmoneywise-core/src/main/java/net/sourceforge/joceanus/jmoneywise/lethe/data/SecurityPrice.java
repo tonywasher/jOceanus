@@ -599,7 +599,7 @@ public class SecurityPrice
      */
     public abstract static class SecurityPriceBaseList<T extends SecurityPrice>
             extends EncryptedList<T, MoneyWiseDataType> {
-        /**
+        /*
          * Report fields.
          */
         static {
@@ -748,7 +748,7 @@ public class SecurityPrice
         @SuppressWarnings("rawtypes")
         private static final MetisFieldSet<SecurityPriceDataMap> FIELD_DEFS = MetisFieldSet.newFieldSet(SecurityPriceDataMap.class);
 
-        /**
+        /*
          * UnderlyingMap Field Id.
          */
         static {
@@ -969,7 +969,7 @@ public class SecurityPrice
              */
             private static final MetisFieldSet<PriceList> FIELD_DEFS = MetisFieldSet.newFieldSet(PriceList.class);
 
-            /**
+            /*
              * UnderlyingMap Field Id.
              */
             static {

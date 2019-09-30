@@ -18,10 +18,6 @@ package net.sourceforge.joceanus.jmoneywise.lethe.sheets;
 
 import java.util.ListIterator;
 
-import net.sourceforge.joceanus.jmetis.service.sheet.MetisSheetCell;
-import net.sourceforge.joceanus.jmetis.service.sheet.MetisSheetRow;
-import net.sourceforge.joceanus.jmetis.service.sheet.MetisSheetView;
-import net.sourceforge.joceanus.jmetis.service.sheet.MetisSheetWorkBook;
 import net.sourceforge.joceanus.jmetis.threads.MetisThreadCancelException;
 import net.sourceforge.joceanus.jmetis.threads.MetisThreadStatusReport;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
@@ -35,6 +31,10 @@ import net.sourceforge.joceanus.jmoneywise.lethe.sheets.ArchiveLoader.ArchiveYea
 import net.sourceforge.joceanus.jmoneywise.lethe.sheets.ArchiveLoader.ParentCache;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataValues;
 import net.sourceforge.joceanus.jprometheus.lethe.sheets.PrometheusSheetEncrypted;
+import net.sourceforge.joceanus.jprometheus.service.sheet.PrometheusSheetCell;
+import net.sourceforge.joceanus.jprometheus.service.sheet.PrometheusSheetRow;
+import net.sourceforge.joceanus.jprometheus.service.sheet.PrometheusSheetView;
+import net.sourceforge.joceanus.jprometheus.service.sheet.PrometheusSheetWorkBook;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
 import net.sourceforge.joceanus.jtethys.ui.TethysListButtonManager;
@@ -155,7 +155,7 @@ public class SheetTransaction
      * @throws OceanusException on error
      */
     protected static void loadArchive(final MetisThreadStatusReport pReport,
-                                      final MetisSheetWorkBook pWorkBook,
+                                      final PrometheusSheetWorkBook pWorkBook,
                                       final MoneyWiseData pData,
                                       final ArchiveLoader pLoader) throws OceanusException {
         /* Access the list of transactions */
@@ -173,7 +173,7 @@ public class SheetTransaction
                 final ArchiveYear myYear = myIterator.previous();
 
                 /* Find the range of cells */
-                final MetisSheetView myView = pWorkBook.getRangeView(myYear.getRangeName());
+                final PrometheusSheetView myView = pWorkBook.getRangeView(myYear.getRangeName());
 
                 /* Declare the new stage */
                 pReport.setNewStage("Events from " + myYear.getDate().getYear());
@@ -187,7 +187,7 @@ public class SheetTransaction
                 /* Loop through the rows of the table */
                 for (int i = 0; i < myTotal; i++) {
                     /* Access the row */
-                    final MetisSheetRow myRow = myView.getRowByIndex(i);
+                    final PrometheusSheetRow myRow = myView.getRowByIndex(i);
 
                     /* Process transaction and break loop if requested */
                     if (!processTransaction(pLoader, pData, myView, myRow)) {
@@ -234,14 +234,14 @@ public class SheetTransaction
      */
     private static boolean processTransaction(final ArchiveLoader pLoader,
                                               final MoneyWiseData pData,
-                                              final MetisSheetView pView,
-                                              final MetisSheetRow pRow) throws OceanusException {
+                                              final PrometheusSheetView pView,
+                                              final PrometheusSheetRow pRow) throws OceanusException {
         /* Access parent cache */
         final ParentCache myCache = pLoader.getParentCache();
         int iAdjust = -1;
 
         /* Access date */
-        MetisSheetCell myCell = pView.getRowCellByIndex(pRow, ++iAdjust);
+        PrometheusSheetCell myCell = pView.getRowCellByIndex(pRow, ++iAdjust);
         final TethysDate myDate = (myCell != null)
                                                    ? myCell.getDate()
                                                    : null;
@@ -298,13 +298,13 @@ public class SheetTransaction
      */
     private static void processTransInfo(final MoneyWiseData pData,
                                          final ParentCache pCache,
-                                         final MetisSheetView pView,
-                                         final MetisSheetRow pRow,
+                                         final PrometheusSheetView pView,
+                                         final PrometheusSheetRow pRow,
                                          final Transaction pTrans,
                                          final int pAdjust) throws OceanusException {
         /* Handle Description which may be missing */
         int iAdjust = pAdjust;
-        MetisSheetCell myCell = pView.getRowCellByIndex(pRow, ++iAdjust);
+        PrometheusSheetCell myCell = pView.getRowCellByIndex(pRow, ++iAdjust);
         String myDesc = null;
         if (myCell != null) {
             myDesc = myCell.getString();

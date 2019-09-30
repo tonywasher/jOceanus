@@ -857,7 +857,7 @@ public class DepositRate
          */
         private static final MetisFieldSet<DepositRateDataMap> FIELD_DEFS = MetisFieldSet.newFieldSet(DepositRateDataMap.class);
 
-        /**
+        /*
          * UnderlyingMap Field Id.
          */
         static {
@@ -1017,7 +1017,7 @@ public class DepositRate
              */
             private static final MetisFieldSet<RateList> FIELD_DEFS = MetisFieldSet.newFieldSet(RateList.class);
 
-            /**
+            /*
              * UnderlyingMap Field Id.
              */
             static {

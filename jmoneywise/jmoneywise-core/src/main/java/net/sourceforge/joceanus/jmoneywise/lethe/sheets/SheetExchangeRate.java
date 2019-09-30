@@ -16,10 +16,6 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.lethe.sheets;
 
-import net.sourceforge.joceanus.jmetis.service.sheet.MetisSheetCell;
-import net.sourceforge.joceanus.jmetis.service.sheet.MetisSheetRow;
-import net.sourceforge.joceanus.jmetis.service.sheet.MetisSheetView;
-import net.sourceforge.joceanus.jmetis.service.sheet.MetisSheetWorkBook;
 import net.sourceforge.joceanus.jmetis.threads.MetisThreadCancelException;
 import net.sourceforge.joceanus.jmetis.threads.MetisThreadStatusReport;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
@@ -29,6 +25,10 @@ import net.sourceforge.joceanus.jmoneywise.lethe.data.ExchangeRate.ExchangeRateL
 import net.sourceforge.joceanus.jmoneywise.lethe.data.MoneyWiseData;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataValues;
 import net.sourceforge.joceanus.jprometheus.lethe.sheets.PrometheusSheetDataItem;
+import net.sourceforge.joceanus.jprometheus.service.sheet.PrometheusSheetCell;
+import net.sourceforge.joceanus.jprometheus.service.sheet.PrometheusSheetRow;
+import net.sourceforge.joceanus.jprometheus.service.sheet.PrometheusSheetView;
+import net.sourceforge.joceanus.jprometheus.service.sheet.PrometheusSheetWorkBook;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
 
@@ -127,7 +127,7 @@ public class SheetExchangeRate
      * @throws OceanusException on error
      */
     protected static void loadArchive(final MetisThreadStatusReport pReport,
-                                      final MetisSheetWorkBook pWorkBook,
+                                      final PrometheusSheetWorkBook pWorkBook,
                                       final MoneyWiseData pData,
                                       final ArchiveLoader pLoader) throws OceanusException {
         /* Access the list of rates */
@@ -136,7 +136,7 @@ public class SheetExchangeRate
         /* Protect against exceptions */
         try {
             /* Find the range of cells */
-            final MetisSheetView myView = pWorkBook.getRangeView(AREA_XCHGRATES);
+            final PrometheusSheetView myView = pWorkBook.getRangeView(AREA_XCHGRATES);
 
             /* Declare the new stage */
             pReport.setNewStage(AREA_XCHGRATES);
@@ -153,13 +153,13 @@ public class SheetExchangeRate
             final String myDefCurrency = pData.getDefaultCurrency().getName();
 
             /* Loop through the rows of the table */
-            final MetisSheetRow myActRow = myView.getRowByIndex(0);
+            final PrometheusSheetRow myActRow = myView.getRowByIndex(0);
             for (int i = myRows - 1; i > 0; i--) {
                 /* Access the cell by reference */
-                final MetisSheetRow myRow = myView.getRowByIndex(i);
+                final PrometheusSheetRow myRow = myView.getRowByIndex(i);
 
                 /* Access date */
-                MetisSheetCell myCell = myView.getRowCellByIndex(myRow, 0);
+                PrometheusSheetCell myCell = myView.getRowCellByIndex(myRow, 0);
                 final TethysDate myDate = myCell.getDate();
 
                 /* If the rate is too late */

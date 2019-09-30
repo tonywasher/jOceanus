@@ -53,7 +53,7 @@ public class AnalysisView
      */
     private static final MetisFieldSet<AnalysisView> FIELD_DEFS = MetisFieldSet.newFieldSet(AnalysisView.class);
 
-    /**
+    /*
      * Declare Fields.
      */
     static {

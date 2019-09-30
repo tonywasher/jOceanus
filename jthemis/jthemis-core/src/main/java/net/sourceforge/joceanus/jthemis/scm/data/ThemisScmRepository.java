@@ -44,7 +44,7 @@ public abstract class ThemisScmRepository
      */
     private static final MetisFieldSet<ThemisScmRepository> FIELD_DEFS = MetisFieldSet.newFieldSet(ThemisScmRepository.class);
 
-    /**
+    /*
      * fieldIds.
      */
     static {

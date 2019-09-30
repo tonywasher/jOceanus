@@ -59,7 +59,7 @@ public abstract class DataSet<T extends DataSet<T, E>, E extends Enum<E>>
     @SuppressWarnings("rawtypes")
     private static final MetisFieldSet<DataSet> FIELD_DEFS = MetisFieldSet.newFieldSet(DataSet.class);
 
-    /**
+    /*
      * Declare Fields.
      */
     static {

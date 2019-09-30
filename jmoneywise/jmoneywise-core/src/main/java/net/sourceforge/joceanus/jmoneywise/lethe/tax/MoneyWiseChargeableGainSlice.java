@@ -43,7 +43,7 @@ public class MoneyWiseChargeableGainSlice
      */
     private static final MetisFieldSet<MoneyWiseChargeableGainSlice> FIELD_DEFS = MetisFieldSet.newFieldSet(MoneyWiseChargeableGainSlice.class);
 
-    /**
+    /*
      * Declare Fields.
      */
     static {

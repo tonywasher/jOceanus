@@ -36,7 +36,7 @@ public class MoneyWiseUKTaxBands
      */
     private static final MetisFieldSet<MoneyWiseUKTaxBands> FIELD_DEFS = MetisFieldSet.newFieldSet(MoneyWiseUKTaxBands.class);
 
-    /**
+    /*
      * Declare Fields.
      */
     static {

@@ -33,7 +33,7 @@ public class CoeusRateSetterLoan
      */
     private static final MetisFieldSet<CoeusRateSetterLoan> FIELD_DEFS = MetisFieldSet.newFieldSet(CoeusRateSetterLoan.class);
 
-    /**
+    /*
      * Fields.
      */
     static {

@@ -39,7 +39,7 @@ public final class LoanBucket
      */
     private static final MetisFieldSet<LoanBucket> FIELD_DEFS = MetisFieldSet.newFieldSet(LoanBucket.class);
 
-    /**
+    /*
      * Declare Fields.
      */
     static {

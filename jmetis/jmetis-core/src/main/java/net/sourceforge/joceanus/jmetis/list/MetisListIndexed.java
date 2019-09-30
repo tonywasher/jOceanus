@@ -45,7 +45,7 @@ public class MetisListIndexed<T extends MetisDataIndexedItem>
     @SuppressWarnings("rawtypes")
     private static final MetisFieldSet<MetisListIndexed> FIELD_DEFS = MetisFieldSet.newFieldSet(MetisListIndexed.class);
 
-    /**
+    /*
      * FieldIds.
      */
     static {

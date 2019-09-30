@@ -794,7 +794,7 @@ public final class ControlKey
          */
         private static final MetisFieldSet<DataKeySetResource> FIELD_DEFS = MetisFieldSet.newFieldSet(DataKeySetResource.class);
 
-        /**
+        /*
          * Size Field Id.
          */
         static {

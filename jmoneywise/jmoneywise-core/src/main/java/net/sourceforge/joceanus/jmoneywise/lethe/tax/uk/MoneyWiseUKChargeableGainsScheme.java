@@ -51,7 +51,7 @@ public class MoneyWiseUKChargeableGainsScheme
          */
         private static final MetisFieldSet<MoneyWiseUKSlicedTaxDueBucket> FIELD_DEFS = MetisFieldSet.newFieldSet(MoneyWiseUKSlicedTaxDueBucket.class);
 
-        /**
+        /*
          * Declare Fields.
          */
         static {

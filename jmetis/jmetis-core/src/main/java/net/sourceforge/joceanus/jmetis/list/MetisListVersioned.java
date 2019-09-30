@@ -40,7 +40,7 @@ public class MetisListVersioned<T extends MetisFieldVersionedItem>
     @SuppressWarnings("rawtypes")
     private static final MetisFieldSet<MetisListVersioned> FIELD_DEFS = MetisFieldSet.newFieldSet(MetisListVersioned.class);
 
-    /**
+    /*
      * FieldIds.
      */
     static {

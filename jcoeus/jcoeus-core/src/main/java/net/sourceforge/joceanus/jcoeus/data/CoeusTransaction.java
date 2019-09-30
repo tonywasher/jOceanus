@@ -31,7 +31,7 @@ public abstract class CoeusTransaction
      */
     private static final MetisFieldSet<CoeusTransaction> FIELD_DEFS = MetisFieldSet.newFieldSet(CoeusTransaction.class);
 
-    /**
+    /*
      * Declare Fields.
      */
     static {

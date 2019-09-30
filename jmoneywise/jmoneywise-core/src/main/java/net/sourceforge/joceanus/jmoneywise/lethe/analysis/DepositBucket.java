@@ -43,7 +43,7 @@ public final class DepositBucket
      */
     private static final MetisFieldSet<DepositBucket> FIELD_DEFS = MetisFieldSet.newFieldSet(DepositBucket.class);
 
-    /**
+    /*
      * Declare Fields.
      */
     static {

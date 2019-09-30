@@ -830,7 +830,7 @@ public abstract class AssetBase<T extends AssetBase<T>>
      */
     public abstract static class AssetBaseList<T extends AssetBase<T>>
             extends EncryptedList<T, MoneyWiseDataType> {
-        /**
+        /*
          * Report fields.
          */
         static {
