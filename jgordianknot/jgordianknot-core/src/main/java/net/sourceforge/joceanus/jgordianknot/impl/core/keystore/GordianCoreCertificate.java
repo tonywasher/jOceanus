@@ -26,8 +26,8 @@ import java.util.Objects;
 
 import org.bouncycastle.asn1.ASN1EncodableVector;
 import org.bouncycastle.asn1.ASN1Integer;
+import org.bouncycastle.asn1.ASN1OutputStream;
 import org.bouncycastle.asn1.DERBitString;
-import org.bouncycastle.asn1.DEROutputStream;
 import org.bouncycastle.asn1.DERSequence;
 import org.bouncycastle.asn1.x500.X500Name;
 import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
@@ -597,7 +597,7 @@ public class GordianCoreCertificate
             final GordianSignature mySigner = mySigns.createSigner(theSigSpec);
             mySigner.initForSigning(pSigner);
             final GordianStreamConsumer myConsumer = new GordianStreamConsumer(mySigner);
-            final DEROutputStream myOut = new DEROutputStream(myConsumer);
+            final ASN1OutputStream myOut = ASN1OutputStream.create(myConsumer);
             myOut.writeObject(theTbsCertificate);
             myOut.close();
 
@@ -640,7 +640,7 @@ public class GordianCoreCertificate
             final GordianSignature myValidator = mySigns.createSigner(theSigSpec);
             myValidator.initForVerify(pSigner);
             final GordianStreamConsumer myConsumer = new GordianStreamConsumer(myValidator);
-            final DEROutputStream myOut = new DEROutputStream(myConsumer);
+            final ASN1OutputStream myOut = ASN1OutputStream.create(myConsumer);
             myOut.writeObject(theTbsCertificate);
             myOut.close();
 

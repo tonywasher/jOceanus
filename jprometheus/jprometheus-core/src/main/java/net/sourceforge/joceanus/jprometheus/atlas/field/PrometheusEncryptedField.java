@@ -52,7 +52,7 @@ public class PrometheusEncryptedField<T extends PrometheusEncryptedItem>
         /* Check underlying options */
         super.checkValidity();
 
-        /* Object/ByteArray are not valid for Encryption */
+        /* Object/ByteArray/Links are not valid for Encryption */
         switch (getDataType()) {
             case OBJECT:
             case BYTEARRAY:

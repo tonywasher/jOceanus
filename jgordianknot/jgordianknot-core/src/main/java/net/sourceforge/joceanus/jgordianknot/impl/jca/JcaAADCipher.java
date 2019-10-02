@@ -74,11 +74,6 @@ public class JcaAADCipher<T extends GordianKeySpec>
     }
 
     @Override
-    public GordianCipherSpec<T> getCipherSpec() {
-        return (GordianCipherSpec<T>) super.getCipherSpec();
-    }
-
-    @Override
     public void init(final boolean pEncrypt,
                      final GordianCipherParameters pParams) throws OceanusException {
         /* Process the parameters and access the key */

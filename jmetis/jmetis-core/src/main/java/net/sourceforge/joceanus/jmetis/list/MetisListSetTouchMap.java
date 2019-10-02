@@ -353,8 +353,8 @@ public class MetisListSetTouchMap {
      * @param pFields the field definitions
      * @return the list of touches
      */
-    private List<Integer> obtainTouchedItems(final MetisFieldVersionedItem pItem,
-                                             final MetisFieldSetDef pFields) {
+    private static List<Integer> obtainTouchedItems(final MetisFieldVersionedItem pItem,
+                                                    final MetisFieldSetDef pFields) {
         /* Create the new list */
         final List<Integer> myItems = new ArrayList<>();
 

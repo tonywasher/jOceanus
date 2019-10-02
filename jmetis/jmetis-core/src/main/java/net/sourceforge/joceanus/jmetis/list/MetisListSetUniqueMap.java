@@ -485,7 +485,7 @@ public class MetisListSetUniqueMap {
     }
 
     /**
-     * UniqueMap for List & Field.
+     * UniqueMap for List/Field.
      * @param <T> the object type
      */
     abstract static class MetisFieldUniqueMap<T> {
@@ -678,7 +678,7 @@ public class MetisListSetUniqueMap {
     }
 
     /**
-     * UniqueMap for List & StringField.
+     * UniqueMap for List/StringField.
      */
     static class MetisFieldUniqueStringMap
         extends MetisFieldUniqueMap<String> {
@@ -713,7 +713,7 @@ public class MetisListSetUniqueMap {
     }
 
     /**
-     * UniqueMap for List & IntegerField.
+     * UniqueMap for List/IntegerField.
      */
     static class MetisFieldUniqueIntegerMap
             extends MetisFieldUniqueMap<Integer> {

@@ -138,7 +138,7 @@ public final class BouncyGOSTAsymKey {
 
             /* Perform conversion */
             final ECCurve myCurve = EC5Util.convertCurve(theSpec.getCurve());
-            final ECPoint myG = EC5Util.convertPoint(myCurve, theSpec.getGenerator(), false);
+            final ECPoint myG = EC5Util.convertPoint(myCurve, theSpec.getGenerator());
 
             /* Initialise the generator */
             final ECKeyGenerationParameters myParams = new ECKeyGenerationParameters(
