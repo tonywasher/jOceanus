@@ -22,11 +22,11 @@ import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceManager;
 import net.sourceforge.joceanus.jmetis.threads.MetisThread;
 import net.sourceforge.joceanus.jmetis.threads.MetisThreadEvent;
 import net.sourceforge.joceanus.jmetis.threads.MetisThreadManager;
-import net.sourceforge.joceanus.jmetis.threads.MetisToolkit;
 import net.sourceforge.joceanus.jmetis.viewer.MetisViewerEntry;
 import net.sourceforge.joceanus.jmetis.viewer.MetisViewerManager;
 import net.sourceforge.joceanus.jmetis.viewer.MetisViewerStandardEntry;
 import net.sourceforge.joceanus.jmetis.viewer.MetisViewerWindow;
+import net.sourceforge.joceanus.jprometheus.lethe.PrometheusToolkit;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.ui.TethysAbout;
 import net.sourceforge.joceanus.jtethys.ui.TethysGuiFactory;
@@ -105,13 +105,13 @@ public abstract class ThemisSvnManager {
      * @param pToolkit the toolkit
      * @throws OceanusException on error
      */
-    protected ThemisSvnManager(final MetisToolkit pToolkit) throws OceanusException {
+    protected ThemisSvnManager(final PrometheusToolkit pToolkit) throws OceanusException {
         /* Access GuiFactory/Preference Manager */
         theGuiFactory = pToolkit.getGuiFactory();
         thePrefMgr = pToolkit.getPreferenceManager();
 
         /* Access the Security/Viewer Manager */
-        theSecureMgr = pToolkit.getSecurityManager();
+        theSecureMgr = pToolkit.getSecureManager();
         theViewerMgr = pToolkit.getViewerManager();
 
         /* Access the thread manager */
@@ -155,7 +155,7 @@ public abstract class ThemisSvnManager {
         theMenuBar.setEnabled(ThemisThreadId.CREATEGITREPO, false);
 
         /* Create the data window */
-        theDataWdw = pToolkit.newViewerWindow();
+        theDataWdw = pToolkit.getToolkit().newViewerWindow();
         theDataWdw.getEventRegistrar().addEventListener(TethysUIEvent.WINDOWCLOSED, e -> theMenuBar.setEnabled(ThemisSvnMenuItem.DATAVIEWER, true));
 
         /* Create the aboutBox */

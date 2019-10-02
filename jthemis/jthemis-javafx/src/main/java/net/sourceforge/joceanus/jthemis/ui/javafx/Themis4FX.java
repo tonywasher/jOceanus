@@ -20,7 +20,7 @@ import javafx.application.Application;
 import javafx.stage.Stage;
 import net.sourceforge.joceanus.jmetis.profile.MetisProgram;
 import net.sourceforge.joceanus.jmetis.profile.MetisProgram.MetisApplication;
-import net.sourceforge.joceanus.jmetis.threads.javafx.MetisFXToolkit;
+import net.sourceforge.joceanus.jprometheus.javafx.PrometheusFXToolkit;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.logger.TethysLogManager;
 import net.sourceforge.joceanus.jtethys.logger.TethysLogger;
@@ -62,7 +62,7 @@ public class Themis4FX
             }
 
             /* Create the Toolkit */
-            final MetisFXToolkit myToolkit = new MetisFXToolkit(theInfo, false);
+            final PrometheusFXToolkit myToolkit = new PrometheusFXToolkit(theInfo, false);
 
             /* Create the main panel */
             thePanel = new ThemisFXSvnManager(myToolkit);

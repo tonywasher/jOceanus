@@ -21,11 +21,13 @@ import java.io.File;
 import net.sourceforge.joceanus.jgordianknot.util.GordianSecurityManager;
 import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceManager;
 import net.sourceforge.joceanus.jmetis.threads.MetisThread;
+import net.sourceforge.joceanus.jmetis.threads.MetisThreadData;
 import net.sourceforge.joceanus.jmetis.threads.MetisThreadManager;
 import net.sourceforge.joceanus.jmetis.threads.MetisToolkit;
 import net.sourceforge.joceanus.jprometheus.PrometheusDataException;
 import net.sourceforge.joceanus.jprometheus.atlas.preference.PrometheusBackup.PrometheusBackupPreferenceKey;
 import net.sourceforge.joceanus.jprometheus.atlas.preference.PrometheusBackup.PrometheusBackupPreferences;
+import net.sourceforge.joceanus.jprometheus.lethe.PrometheusToolkit;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataSet;
 import net.sourceforge.joceanus.jprometheus.lethe.sheets.PrometheusSpreadSheet;
 import net.sourceforge.joceanus.jprometheus.lethe.views.DataControl;
@@ -70,10 +72,11 @@ public class PrometheusThreadCreateBackup<T extends DataSet<T, E>, E extends Enu
     }
 
     @Override
-    public Void performTask(final MetisToolkit pToolkit) throws OceanusException {
+    public Void performTask(final MetisThreadData pThreadData) throws OceanusException {
         /* Access the thread manager */
-        final MetisThreadManager myManager = pToolkit.getThreadManager();
-        final GordianSecurityManager mySecurityMgr = pToolkit.getSecurityManager();
+        final PrometheusToolkit myToolkit = (PrometheusToolkit) pThreadData;
+        final MetisThreadManager myManager = myToolkit.getThreadManager();
+        final GordianSecurityManager mySecurityMgr = myToolkit.getSecureManager();
         boolean doDelete = false;
         File myFile = null;
 
@@ -88,7 +91,7 @@ public class PrometheusThreadCreateBackup<T extends DataSet<T, E>, E extends Enu
             /* Determine the archive name */
             final String myBackupDir = myProperties.getStringValue(PrometheusBackupPreferenceKey.BACKUPDIR);
             final String myPrefix = myProperties.getStringValue(PrometheusBackupPreferenceKey.BACKUPPFIX);
-            final Boolean doTimeStamp = myProperties.getBooleanValue(PrometheusBackupPreferenceKey.BACKUPTIME);
+            final boolean doTimeStamp = myProperties.getBooleanValue(PrometheusBackupPreferenceKey.BACKUPTIME);
             final PrometheusSheetWorkBookType myType = myProperties.getEnumValue(PrometheusBackupPreferenceKey.BACKUPTYPE, PrometheusSheetWorkBookType.class);
 
             /* Create the name of the file */

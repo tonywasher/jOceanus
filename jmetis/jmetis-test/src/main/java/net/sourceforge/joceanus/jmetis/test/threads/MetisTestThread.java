@@ -17,6 +17,7 @@
 package net.sourceforge.joceanus.jmetis.test.threads;
 
 import net.sourceforge.joceanus.jmetis.threads.MetisThread;
+import net.sourceforge.joceanus.jmetis.threads.MetisThreadData;
 import net.sourceforge.joceanus.jmetis.threads.MetisThreadManager;
 import net.sourceforge.joceanus.jmetis.threads.MetisToolkit;
 import net.sourceforge.joceanus.jtethys.OceanusException;
@@ -35,9 +36,10 @@ public class MetisTestThread
     }
 
     @Override
-    public Void performTask(final MetisToolkit pToolkit) throws OceanusException {
+    public Void performTask(final MetisThreadData pThreadData) throws OceanusException {
         /* Access the Thread Manager */
-        MetisThreadManager myManager = pToolkit.getThreadManager();
+        final MetisToolkit myToolkit = (MetisToolkit) pThreadData;
+        final MetisThreadManager myManager = myToolkit.getThreadManager();
 
         /* Set stages */
         myManager.setNumStages(2);

@@ -213,7 +213,7 @@ public final class SpotExchangeRate
         /**
          * The view.
          */
-        private final View theView;
+        private final MoneyWiseView theView;
 
         /**
          * The currency.
@@ -235,7 +235,7 @@ public final class SpotExchangeRate
          * @param pView the view
          * @param pDate the date
          */
-        public SpotExchangeList(final View pView,
+        public SpotExchangeList(final MoneyWiseView pView,
                                 final TethysDate pDate) {
             /* Build initial list */
             super(pView.getData(), SpotExchangeRate.class, MoneyWiseDataType.SECURITYPRICE);

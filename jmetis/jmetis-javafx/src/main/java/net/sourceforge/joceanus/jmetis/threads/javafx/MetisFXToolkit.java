@@ -16,10 +16,6 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmetis.threads.javafx;
 
-import net.sourceforge.joceanus.jgordianknot.api.factory.GordianParameters;
-import net.sourceforge.joceanus.jgordianknot.util.GordianSecurityManager;
-import net.sourceforge.joceanus.jgordianknot.api.javafx.GordianFXSecurityManager;
-import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetHashSpec;
 import net.sourceforge.joceanus.jmetis.atlas.ui.javafx.MetisFXTableManager;
 import net.sourceforge.joceanus.jmetis.field.MetisFieldItem.MetisFieldTableItem;
 import net.sourceforge.joceanus.jmetis.list.MetisListEditSession;
@@ -86,11 +82,11 @@ public class MetisFXToolkit
         return new MetisFXThreadManager(this, pSlider);
     }
 
-    @Override
-    protected GordianSecurityManager newSecurityManager(final GordianParameters pParameters,
-                                                        final GordianKeySetHashSpec pKeySetSpec) throws OceanusException {
-        return new GordianFXSecurityManager(getGuiFactory(), pParameters, pKeySetSpec);
-    }
+    //@Override
+    //protected GordianSecurityManager newSecurityManager(final GordianParameters pParameters,
+      //                                                  final GordianKeySetHashSpec pKeySetSpec) throws OceanusException {
+        //return new GordianFXSecurityManager(getGuiFactory(), pParameters, pKeySetSpec);
+    //}
 
     @Override
     public TethysFXHelpWindow newHelpWindow() {

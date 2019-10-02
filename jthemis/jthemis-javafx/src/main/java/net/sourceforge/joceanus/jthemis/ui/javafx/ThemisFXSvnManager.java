@@ -23,7 +23,7 @@ import javafx.scene.image.Image;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
 
-import net.sourceforge.joceanus.jmetis.threads.javafx.MetisFXToolkit;
+import net.sourceforge.joceanus.jprometheus.javafx.PrometheusFXToolkit;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.ui.TethysIconId;
 import net.sourceforge.joceanus.jtethys.ui.TethysProgram;
@@ -41,7 +41,7 @@ public class ThemisFXSvnManager
     /**
      * The Toolkit.
      */
-    private final MetisFXToolkit theToolkit;
+    private final PrometheusFXToolkit theToolkit;
 
     /**
      * The Panel.
@@ -54,7 +54,7 @@ public class ThemisFXSvnManager
      * @param pToolkit the toolkit
      * @throws OceanusException on error
      */
-    protected ThemisFXSvnManager(final MetisFXToolkit pToolkit) throws OceanusException {
+    protected ThemisFXSvnManager(final PrometheusFXToolkit pToolkit) throws OceanusException {
         /* Initialise underlying class */
         super(pToolkit);
 

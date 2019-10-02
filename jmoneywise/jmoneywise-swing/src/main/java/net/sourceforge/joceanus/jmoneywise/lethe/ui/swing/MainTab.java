@@ -23,7 +23,7 @@ import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseIOException;
 import net.sourceforge.joceanus.jmoneywise.help.MoneyWiseHelp;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.MoneyWiseData;
-import net.sourceforge.joceanus.jmoneywise.lethe.swing.SwingView;
+import net.sourceforge.joceanus.jmoneywise.lethe.swing.MoneyWiseSwingView;
 import net.sourceforge.joceanus.jmoneywise.lethe.threads.MoneyWiseThreadId;
 import net.sourceforge.joceanus.jmoneywise.lethe.threads.MoneyWiseThreadLoadArchive;
 import net.sourceforge.joceanus.jmoneywise.lethe.threads.MoneyWiseThreadWriteQIF;
@@ -78,7 +78,7 @@ public class MainTab
     /**
      * The data view.
      */
-    private final SwingView theView;
+    private final MoneyWiseSwingView theView;
 
     /**
      * The tabs.
@@ -115,7 +115,7 @@ public class MainTab
      * @param pView the view
      * @throws OceanusException on error
      */
-    public MainTab(final SwingView pView) throws OceanusException {
+    public MainTab(final MoneyWiseSwingView pView) throws OceanusException {
         /* Record the view */
         theView = pView;
 
@@ -124,7 +124,7 @@ public class MainTab
     }
 
     @Override
-    public SwingView getView() {
+    public MoneyWiseSwingView getView() {
         return theView;
     }
 

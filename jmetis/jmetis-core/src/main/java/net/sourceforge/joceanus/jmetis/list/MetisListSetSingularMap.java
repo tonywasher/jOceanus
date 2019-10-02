@@ -36,11 +36,6 @@ import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
  */
 public class MetisListSetSingularMap {
     /**
-     * Standard integer ONE.
-     */
-    static final Integer ONE = 1;
-
-    /**
      * The underlying listSet.
      */
     private final MetisListSetVersioned theListSet;
@@ -425,9 +420,14 @@ public class MetisListSetSingularMap {
     }
 
     /**
-     * UniqueMap for List & Field.
+     * UniqueMap for List/Field.
      */
     static class MetisFieldSingularMap {
+        /**
+         * Standard integer ONE.
+         */
+        private static final Integer ONE = 1;
+
         /**
          * The field.
          */

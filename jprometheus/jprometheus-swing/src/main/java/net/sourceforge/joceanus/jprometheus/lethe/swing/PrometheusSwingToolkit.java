@@ -16,6 +16,10 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jprometheus.lethe.swing;
 
+import net.sourceforge.joceanus.jgordianknot.api.factory.GordianParameters;
+import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetHashSpec;
+import net.sourceforge.joceanus.jgordianknot.api.swing.GordianSwingSecurityManager;
+import net.sourceforge.joceanus.jgordianknot.util.GordianSecurityManager;
 import net.sourceforge.joceanus.jmetis.atlas.ui.MetisFieldColours.MetisColorPreferences;
 import net.sourceforge.joceanus.jmetis.lethe.field.swing.MetisSwingFieldConfig;
 import net.sourceforge.joceanus.jmetis.lethe.field.swing.MetisSwingFieldManager;
@@ -23,16 +27,16 @@ import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceEvent;
 import net.sourceforge.joceanus.jmetis.profile.MetisProgram;
 import net.sourceforge.joceanus.jmetis.threads.swing.MetisSwingThreadManager;
 import net.sourceforge.joceanus.jmetis.threads.swing.MetisSwingToolkit;
-import net.sourceforge.joceanus.jprometheus.lethe.JOceanusUtilitySet;
+import net.sourceforge.joceanus.jprometheus.lethe.PrometheusToolkit;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingGuiFactory;
 
 /**
- * JOceanus Swing Utility Set.
+ * Prometheus Swing Toolkit.
  */
-public class JOceanusSwingUtilitySet
-        extends JOceanusUtilitySet {
+public class PrometheusSwingToolkit
+        extends PrometheusToolkit {
     /**
      * Field Manager.
      */
@@ -45,12 +49,31 @@ public class JOceanusSwingUtilitySet
 
     /**
      * Constructor.
-     * @param pInfo the program info
      * @throws OceanusException on error
      */
-    public JOceanusSwingUtilitySet(final MetisProgram pInfo) throws OceanusException {
+    public PrometheusSwingToolkit() throws OceanusException {
+        this(null, true);
+    }
+
+    /**
+     * Constructor.
+     * @param pSlider use slider status
+     * @throws OceanusException on error
+     */
+    public PrometheusSwingToolkit(final boolean pSlider) throws OceanusException {
+        this(null, pSlider);
+    }
+
+    /**
+     * Constructor.
+     * @param pInfo the program info
+     * @param pSlider use slider status
+     * @throws OceanusException on error
+     */
+    public PrometheusSwingToolkit(final MetisProgram pInfo,
+                                  final boolean pSlider) throws OceanusException {
         /* Create Toolkit */
-        super(new MetisSwingToolkit(pInfo, true));
+        super(new MetisSwingToolkit(pInfo, pSlider));
 
         /* Access the Colour Preferences */
         theColorPreferences = getPreferenceManager().getPreferenceSet(MetisColorPreferences.class);
@@ -95,5 +118,11 @@ public class JOceanusSwingUtilitySet
      */
     public MetisSwingFieldManager getFieldManager() {
         return theEosFieldManager;
+    }
+
+    @Override
+    protected GordianSecurityManager newSecurityManager(final GordianParameters pParameters,
+                                                        final GordianKeySetHashSpec pKeySetSpec) throws OceanusException {
+        return new GordianSwingSecurityManager(getGuiFactory(), pParameters, pKeySetSpec);
     }
 }

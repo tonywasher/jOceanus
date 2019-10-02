@@ -56,7 +56,7 @@ import net.sourceforge.joceanus.jmoneywise.lethe.data.TransactionCategory;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.TransactionInfoSet;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.TransactionTag;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.TransactionInfoClass;
-import net.sourceforge.joceanus.jmoneywise.lethe.swing.SwingView;
+import net.sourceforge.joceanus.jmoneywise.lethe.swing.MoneyWiseSwingView;
 import net.sourceforge.joceanus.jmoneywise.lethe.ui.AnalysisColumnSet;
 import net.sourceforge.joceanus.jmoneywise.lethe.ui.MoneyWiseIcon;
 import net.sourceforge.joceanus.jmoneywise.lethe.ui.MoneyWiseUIResource;
@@ -244,7 +244,7 @@ public class TransactionTable
     /**
      * The data view.
      */
-    private final SwingView theView;
+    private final MoneyWiseSwingView theView;
 
     /**
      * The updateSet.
@@ -345,7 +345,7 @@ public class TransactionTable
      * Constructor.
      * @param pView the data view
      */
-    public TransactionTable(final SwingView pView) {
+    public TransactionTable(final MoneyWiseSwingView pView) {
         /* initialise the underlying class */
         super(pView.getGuiFactory());
 

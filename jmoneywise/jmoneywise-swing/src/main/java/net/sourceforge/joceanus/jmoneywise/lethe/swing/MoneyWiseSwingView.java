@@ -20,28 +20,28 @@ import net.sourceforge.joceanus.jmetis.lethe.field.swing.MetisSwingFieldManager;
 import net.sourceforge.joceanus.jmetis.profile.MetisProgram;
 import net.sourceforge.joceanus.jmetis.threads.swing.MetisSwingToolkit;
 import net.sourceforge.joceanus.jmoneywise.lethe.tax.uk.MoneyWiseUKTaxYearCache;
-import net.sourceforge.joceanus.jmoneywise.lethe.views.View;
-import net.sourceforge.joceanus.jprometheus.lethe.swing.JOceanusSwingUtilitySet;
+import net.sourceforge.joceanus.jmoneywise.lethe.views.MoneyWiseView;
+import net.sourceforge.joceanus.jprometheus.lethe.swing.PrometheusSwingToolkit;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingGuiFactory;
 
 /**
  * Extension of view to cast utilities properly.
  */
-public class SwingView
-        extends View {
+public class MoneyWiseSwingView
+        extends MoneyWiseView {
     /**
      * Constructor.
      * @param pInfo the program info
      * @throws OceanusException on error
      */
-    public SwingView(final MetisProgram pInfo) throws OceanusException {
-        super(new JOceanusSwingUtilitySet(pInfo), new MoneyWiseUKTaxYearCache());
+    public MoneyWiseSwingView(final MetisProgram pInfo) throws OceanusException {
+        super(new PrometheusSwingToolkit(pInfo, true), new MoneyWiseUKTaxYearCache());
     }
 
     @Override
-    public JOceanusSwingUtilitySet getUtilitySet() {
-        return (JOceanusSwingUtilitySet) super.getUtilitySet();
+    public PrometheusSwingToolkit getUtilitySet() {
+        return (PrometheusSwingToolkit) super.getUtilitySet();
     }
 
     /**

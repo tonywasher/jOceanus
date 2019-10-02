@@ -11,6 +11,7 @@
   <packaging>pom</packaging>
   <modules>
     <module>jprometheus-swing</module>
+    <module>jprometheus-javafx</module>
     <module>jprometheus-core</module>
     <module>jprometheus-services</module>
     <module>jprometheus-test</module>

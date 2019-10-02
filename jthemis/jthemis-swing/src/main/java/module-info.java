@@ -23,6 +23,8 @@ module net.sourceforge.joceanus.jthemis.swing {
     requires java.desktop;
 
     /* jOceanus */
+    requires net.sourceforge.joceanus.jprometheus.core;
+    requires net.sourceforge.joceanus.jprometheus.swing;
     requires net.sourceforge.joceanus.jmetis.core;
     requires net.sourceforge.joceanus.jmetis.swing;
     requires net.sourceforge.joceanus.jtethys.core;

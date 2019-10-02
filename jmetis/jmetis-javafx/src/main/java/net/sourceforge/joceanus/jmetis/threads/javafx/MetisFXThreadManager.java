@@ -68,7 +68,7 @@ public class MetisFXThreadManager
     @Override
     protected <T> Runnable wrapThread(final MetisThread<T> pThread) {
         /* Create the wrapped thread and listen to state transition */
-        theWorker = new MetisFXThread<>(theToolkit, pThread);
+        theWorker = new MetisFXThread<>(getThreadData(), pThread);
         theWorker.stateProperty().addListener((v, o, n) -> handleThreadState(n));
         theWorker.valueProperty().addListener((v, o, n) -> processStatus());
 

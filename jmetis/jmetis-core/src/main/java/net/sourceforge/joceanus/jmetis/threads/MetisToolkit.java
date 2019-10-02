@@ -16,9 +16,6 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmetis.threads;
 
-import net.sourceforge.joceanus.jgordianknot.api.factory.GordianParameters;
-import net.sourceforge.joceanus.jgordianknot.util.GordianSecurityManager;
-import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetHashSpec;
 import net.sourceforge.joceanus.jmetis.atlas.ui.MetisErrorPanel;
 import net.sourceforge.joceanus.jmetis.atlas.ui.MetisFieldColours.MetisColorPreferences;
 import net.sourceforge.joceanus.jmetis.atlas.ui.MetisFieldSetPanelPair;
@@ -31,7 +28,6 @@ import net.sourceforge.joceanus.jmetis.list.MetisListIndexed;
 import net.sourceforge.joceanus.jmetis.list.MetisListKey;
 import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceEvent;
 import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceManager;
-import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceSecurity.MetisSecurityPreferences;
 import net.sourceforge.joceanus.jmetis.profile.MetisProfile;
 import net.sourceforge.joceanus.jmetis.profile.MetisProgram;
 import net.sourceforge.joceanus.jmetis.viewer.MetisViewerEntry;
@@ -55,7 +51,8 @@ import java.nio.file.Path;
 /**
  * Metis Toolkit.
  */
-public abstract class MetisToolkit {
+public abstract class MetisToolkit
+        implements MetisThreadData {
     /**
      * Logger.
      */
@@ -80,11 +77,6 @@ public abstract class MetisToolkit {
      * GUI Factory.
      */
     private final TethysGuiFactory theGuiFactory;
-
-    /**
-     * Security Manager.
-     */
-    private final GordianSecurityManager theHashManager;
 
     /**
      * Thread Manager.
@@ -144,10 +136,6 @@ public abstract class MetisToolkit {
         /* Create the guiFactory */
         theGuiFactory = newGuiFactory();
 
-        /* Create the hashManager */
-        final MetisSecurityPreferences myPreferences = thePreferenceManager.getPreferenceSet(MetisSecurityPreferences.class);
-        theHashManager = newSecurityManager(myPreferences.getParameters(), myPreferences.getKeySetHashSpec());
-
         /* create the thread manager */
         theThreadManager = newThreadManager(pSlider);
 
@@ -203,14 +191,6 @@ public abstract class MetisToolkit {
     }
 
     /**
-     * Obtain the Security Manager.
-     * @return the security manager
-     */
-    public GordianSecurityManager getSecurityManager() {
-        return theHashManager;
-    }
-
-    /**
      * Obtain the Thread Manager.
      * @return the factory
      */
@@ -246,16 +226,6 @@ public abstract class MetisToolkit {
     protected MetisThreadTextAreaStatus newThreadTextAreaStatus(final MetisThreadManager pManager) {
         return new MetisThreadTextAreaStatus(pManager, theGuiFactory);
     }
-
-    /**
-     * Create a Security Manager.
-     * @param pParameters the parameters
-     * @param pKeySetSpec the keySetHashSpec
-     * @return the manager
-     * @throws OceanusException on error
-     */
-    protected abstract GordianSecurityManager newSecurityManager(GordianParameters pParameters,
-                                                                 GordianKeySetHashSpec pKeySetSpec) throws OceanusException;
 
     /**
      * Create a Help Window.

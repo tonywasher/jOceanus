@@ -58,7 +58,7 @@ public class MetisSwingThreadManager
     @Override
     protected <T> Runnable wrapThread(final MetisThread<T> pThread) {
         /* Create the wrapped thread and listen to state transition */
-        theWorker = new MetisSwingThread<>(theToolkit, pThread);
+        theWorker = new MetisSwingThread<>(theToolkit, getThreadData(), pThread);
 
         /* Return the worker to the caller */
         return theWorker;

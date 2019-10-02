@@ -29,7 +29,7 @@ import net.sourceforge.joceanus.jmetis.viewer.MetisViewerErrorList;
 import net.sourceforge.joceanus.jmetis.viewer.MetisViewerExceptionWrapper;
 import net.sourceforge.joceanus.jmetis.viewer.MetisViewerManager;
 import net.sourceforge.joceanus.jmetis.viewer.MetisViewerStandardEntry;
-import net.sourceforge.joceanus.jprometheus.lethe.JOceanusUtilitySet;
+import net.sourceforge.joceanus.jprometheus.lethe.PrometheusToolkit;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataSet;
 import net.sourceforge.joceanus.jprometheus.lethe.database.PrometheusDataStore;
 import net.sourceforge.joceanus.jprometheus.lethe.sheets.PrometheusSpreadSheet;
@@ -67,14 +67,14 @@ public abstract class DataControl<T extends DataSet<T, E>, E extends Enum<E>>
     private final MetisViewerErrorList theErrors;
 
     /**
-     * The UtilitySet.
+     * The toolkit.
      */
-    private final JOceanusUtilitySet theUtilitySet;
+    private final PrometheusToolkit theToolkit;
 
     /**
-     * The Toolkit.
+     * The metisToolkit.
      */
-    private final MetisToolkit theToolkit;
+    private final MetisToolkit theMetisToolkit;
 
     /**
      * The Viewer Entry hashMap.
@@ -83,12 +83,12 @@ public abstract class DataControl<T extends DataSet<T, E>, E extends Enum<E>>
 
     /**
      * Constructor for default control.
-     * @param pUtilitySet the utility set
+     * @param pToolkit the toolkit
      */
-    protected DataControl(final JOceanusUtilitySet pUtilitySet) {
+    protected DataControl(final PrometheusToolkit pToolkit) {
         /* Store the parameters */
-        theUtilitySet = pUtilitySet;
-        theToolkit = pUtilitySet.getToolkit();
+        theToolkit = pToolkit;
+        theMetisToolkit = pToolkit.getToolkit();
 
         /* Create the Viewer Map and initialise it */
         theViewerMap = new EnumMap<>(PrometheusViewerEntryId.class);
@@ -196,8 +196,8 @@ public abstract class DataControl<T extends DataSet<T, E>, E extends Enum<E>>
      * Obtain UtilitySet.
      * @return the UtilitySet
      */
-    public JOceanusUtilitySet getUtilitySet() {
-        return theUtilitySet;
+    public PrometheusToolkit getUtilitySet() {
+        return theToolkit;
     }
 
     /**
@@ -205,7 +205,7 @@ public abstract class DataControl<T extends DataSet<T, E>, E extends Enum<E>>
      * @return the DataFormatter
      */
     public MetisDataFormatter getDataFormatter() {
-        return theToolkit.getFormatter();
+        return theMetisToolkit.getFormatter();
     }
 
     /**
@@ -213,7 +213,7 @@ public abstract class DataControl<T extends DataSet<T, E>, E extends Enum<E>>
      * @return the SecurityManager
      */
     public GordianSecurityManager getSecurityManager() {
-        return theToolkit.getSecurityManager();
+        return theToolkit.getSecureManager();
     }
 
     /**
@@ -221,7 +221,7 @@ public abstract class DataControl<T extends DataSet<T, E>, E extends Enum<E>>
      * @return the PreferenceManager
      */
     public MetisPreferenceManager getPreferenceManager() {
-        return theToolkit.getPreferenceManager();
+        return theMetisToolkit.getPreferenceManager();
     }
 
     /**
@@ -229,7 +229,7 @@ public abstract class DataControl<T extends DataSet<T, E>, E extends Enum<E>>
      * @return the ViewerManager
      */
     public MetisViewerManager getViewerManager() {
-        return theToolkit.getViewerManager();
+        return theMetisToolkit.getViewerManager();
     }
 
     /**
@@ -237,7 +237,7 @@ public abstract class DataControl<T extends DataSet<T, E>, E extends Enum<E>>
      * @return the GuiFactory
      */
     public TethysGuiFactory getGuiFactory() {
-        return theToolkit.getGuiFactory();
+        return theMetisToolkit.getGuiFactory();
     }
 
     /**
@@ -245,7 +245,7 @@ public abstract class DataControl<T extends DataSet<T, E>, E extends Enum<E>>
      * @return the Toolkit
      */
     public MetisToolkit getToolkit() {
-        return theToolkit;
+        return theMetisToolkit;
     }
 
     /**
@@ -379,7 +379,7 @@ public abstract class DataControl<T extends DataSet<T, E>, E extends Enum<E>>
      * @return the new profile
      */
     public MetisProfile getNewProfile(final String pTask) {
-        return theToolkit.getNewProfile(pTask);
+        return theMetisToolkit.getNewProfile(pTask);
     }
 
     /**
@@ -387,7 +387,7 @@ public abstract class DataControl<T extends DataSet<T, E>, E extends Enum<E>>
      * @return the active profile
      */
     public MetisProfile getActiveProfile() {
-        return theToolkit.getActiveProfile();
+        return theMetisToolkit.getActiveProfile();
     }
 
     /**
@@ -395,6 +395,6 @@ public abstract class DataControl<T extends DataSet<T, E>, E extends Enum<E>>
      * @return the active task
      */
     public MetisProfile getActiveTask() {
-        return theToolkit.getActiveTask();
+        return theMetisToolkit.getActiveTask();
     }
 }

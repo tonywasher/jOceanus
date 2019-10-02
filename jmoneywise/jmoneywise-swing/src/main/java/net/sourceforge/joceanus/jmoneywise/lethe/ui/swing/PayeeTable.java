@@ -44,7 +44,7 @@ import net.sourceforge.joceanus.jmoneywise.lethe.data.PayeeInfo;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.PayeeInfo.PayeeInfoList;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.Transaction;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.PayeeType;
-import net.sourceforge.joceanus.jmoneywise.lethe.swing.SwingView;
+import net.sourceforge.joceanus.jmoneywise.lethe.swing.MoneyWiseSwingView;
 import net.sourceforge.joceanus.jmoneywise.lethe.ui.MoneyWiseIcon;
 import net.sourceforge.joceanus.jmoneywise.lethe.ui.MoneyWiseUIResource;
 import net.sourceforge.joceanus.jmoneywise.lethe.ui.dialog.swing.PayeePanel;
@@ -110,7 +110,7 @@ public class PayeeTable
     /**
      * The data view.
      */
-    private final SwingView theView;
+    private final MoneyWiseSwingView theView;
 
     /**
      * The field manager.
@@ -188,7 +188,7 @@ public class PayeeTable
      * @param pUpdateSet the update set
      * @param pError the error panel
      */
-    public PayeeTable(final SwingView pView,
+    public PayeeTable(final MoneyWiseSwingView pView,
                       final UpdateSet<MoneyWiseDataType> pUpdateSet,
                       final MetisErrorPanel pError) {
         /* initialise the underlying class */

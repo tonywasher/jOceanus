@@ -25,6 +25,7 @@ import java.nio.charset.StandardCharsets;
 
 import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceManager;
 import net.sourceforge.joceanus.jmetis.threads.MetisThread;
+import net.sourceforge.joceanus.jmetis.threads.MetisThreadData;
 import net.sourceforge.joceanus.jmetis.threads.MetisThreadManager;
 import net.sourceforge.joceanus.jmetis.threads.MetisToolkit;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseIOException;
@@ -36,7 +37,8 @@ import net.sourceforge.joceanus.jmoneywise.lethe.quicken.file.QIFFile;
 import net.sourceforge.joceanus.jmoneywise.lethe.quicken.file.QIFParser;
 import net.sourceforge.joceanus.jmoneywise.lethe.quicken.file.QIFStreamWriter;
 import net.sourceforge.joceanus.jmoneywise.lethe.quicken.file.QIFWriter;
-import net.sourceforge.joceanus.jmoneywise.lethe.views.View;
+import net.sourceforge.joceanus.jmoneywise.lethe.views.MoneyWiseView;
+import net.sourceforge.joceanus.jprometheus.lethe.PrometheusToolkit;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.logger.TethysLogManager;
 import net.sourceforge.joceanus.jtethys.logger.TethysLogger;
@@ -54,13 +56,13 @@ public class MoneyWiseThreadWriteQIF
     /**
      * Data View.
      */
-    private final View theView;
+    private final MoneyWiseView theView;
 
     /**
      * Constructor (Event Thread).
      * @param pView the view
      */
-    public MoneyWiseThreadWriteQIF(final View pView) {
+    public MoneyWiseThreadWriteQIF(final MoneyWiseView pView) {
         theView = pView;
     }
 
@@ -70,9 +72,10 @@ public class MoneyWiseThreadWriteQIF
     }
 
     @Override
-    public Void performTask(final MetisToolkit pToolkit) throws OceanusException {
+    public Void performTask(final MetisThreadData pThreadData) throws OceanusException {
         /* Access the thread manager */
-        final MetisThreadManager myManager = pToolkit.getThreadManager();
+        final PrometheusToolkit myToolkit = (PrometheusToolkit) pThreadData;
+        final MetisThreadManager myManager = myToolkit.getThreadManager();
 
         /* Initialise the status window */
         myManager.initTask("Analysing Data");

@@ -253,7 +253,7 @@ public final class SpotSecurityPrice
         /**
          * The view.
          */
-        private final View theView;
+        private final MoneyWiseView theView;
 
         /**
          * The portfolio.
@@ -276,7 +276,7 @@ public final class SpotSecurityPrice
          * @param pPortfolio the portfolio
          * @param pDate the date
          */
-        public SpotSecurityList(final View pView,
+        public SpotSecurityList(final MoneyWiseView pView,
                                 final Portfolio pPortfolio,
                                 final TethysDate pDate) {
             /* Build initial list */

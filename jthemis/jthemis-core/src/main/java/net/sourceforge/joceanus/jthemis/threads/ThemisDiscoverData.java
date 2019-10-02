@@ -21,9 +21,10 @@ import java.io.File;
 import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceManager;
 import net.sourceforge.joceanus.jmetis.profile.MetisProfile;
 import net.sourceforge.joceanus.jmetis.threads.MetisThread;
+import net.sourceforge.joceanus.jmetis.threads.MetisThreadData;
 import net.sourceforge.joceanus.jmetis.threads.MetisThreadManager;
 import net.sourceforge.joceanus.jmetis.threads.MetisThreadStatusReport;
-import net.sourceforge.joceanus.jmetis.threads.MetisToolkit;
+import net.sourceforge.joceanus.jprometheus.lethe.PrometheusToolkit;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jthemis.git.data.ThemisGitBundle;
 import net.sourceforge.joceanus.jthemis.git.data.ThemisGitRepository;
@@ -59,10 +60,11 @@ public class ThemisDiscoverData
 
 
     @Override
-    public Void performTask(final MetisToolkit pToolkit) throws OceanusException {
+    public Void performTask(final MetisThreadData pThreadData) throws OceanusException {
         /* Access the thread manager */
-        final MetisThreadManager myManager = pToolkit.getThreadManager();
-        final MetisPreferenceManager myPreferences = pToolkit.getPreferenceManager();
+        final PrometheusToolkit myToolkit = (PrometheusToolkit) pThreadData;
+        final MetisThreadManager myManager = myToolkit.getThreadManager();
+        final MetisPreferenceManager myPreferences = myToolkit.getPreferenceManager();
 
         /* Start the analyse svnRepository task */
         final MetisProfile myBaseTask = myManager.getActiveTask();

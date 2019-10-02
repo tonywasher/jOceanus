@@ -38,7 +38,7 @@ import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.TaxBasis.TaxBasisL
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.TransactionCategoryType.TransactionCategoryTypeList;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.TransactionInfoType.TransactionInfoTypeList;
 import net.sourceforge.joceanus.jmoneywise.lethe.quicken.definitions.QIFPreference.MoneyWiseQIFPreferences;
-import net.sourceforge.joceanus.jmoneywise.lethe.swing.SwingView;
+import net.sourceforge.joceanus.jmoneywise.lethe.swing.MoneyWiseSwingView;
 import net.sourceforge.joceanus.jmoneywise.lethe.ui.MoneyWiseGoToId;
 import net.sourceforge.joceanus.jmoneywise.lethe.ui.MoneyWiseUIResource;
 import net.sourceforge.joceanus.jprometheus.atlas.preference.PrometheusBackup.PrometheusBackupPreferences;
@@ -99,7 +99,7 @@ public class MaintenanceTab
     /**
      * The Data View.
      */
-    private final SwingView theView;
+    private final MoneyWiseSwingView theView;
 
     /**
      * The Parent.
@@ -260,7 +260,7 @@ public class MaintenanceTab
      * Obtain the view.
      * @return the view
      */
-    protected SwingView getView() {
+    protected MoneyWiseSwingView getView() {
         return theView;
     }
 

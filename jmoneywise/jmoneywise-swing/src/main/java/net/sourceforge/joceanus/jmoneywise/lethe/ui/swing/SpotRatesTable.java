@@ -38,7 +38,7 @@ import net.sourceforge.joceanus.jmetis.viewer.MetisViewerEntry;
 import net.sourceforge.joceanus.jmetis.viewer.MetisViewerManager;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.ExchangeRate;
-import net.sourceforge.joceanus.jmoneywise.lethe.swing.SwingView;
+import net.sourceforge.joceanus.jmoneywise.lethe.swing.MoneyWiseSwingView;
 import net.sourceforge.joceanus.jmoneywise.lethe.ui.MoneyWiseUIResource;
 import net.sourceforge.joceanus.jmoneywise.lethe.ui.controls.MoneyWiseSpotRatesSelect;
 import net.sourceforge.joceanus.jmoneywise.lethe.views.SpotExchangeRate;
@@ -106,7 +106,7 @@ public class SpotRatesTable
     /**
      * The data view.
      */
-    private final SwingView theView;
+    private final MoneyWiseSwingView theView;
 
     /**
      * The field manager.
@@ -172,7 +172,7 @@ public class SpotRatesTable
      * Constructor.
      * @param pView the data view
      */
-    public SpotRatesTable(final SwingView pView) {
+    public SpotRatesTable(final MoneyWiseSwingView pView) {
         /* initialise the underlying class */
         super(pView.getGuiFactory());
 

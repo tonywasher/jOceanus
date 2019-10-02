@@ -74,6 +74,11 @@ public abstract class MetisThreadManager
     private final MetisViewerEntry theErrorEntry;
 
     /**
+     * The ThreadData.
+     */
+    private MetisThreadData theThreadData;
+
+    /**
      * The Active thread.
      */
     private MetisThread<?> theThread;
@@ -129,6 +134,9 @@ public abstract class MetisThreadManager
         final MetisPreferenceManager myMgr = theToolkit.getPreferenceManager();
         final MetisThreadPreferences myPreferences = myMgr.getPreferenceSet(MetisThreadPreferences.class);
         theReportingSteps = myPreferences.getIntegerValue(MetisThreadPreferenceKey.REPSTEPS);
+
+        /* Default ThreadData is the toolkit */
+        theThreadData = theToolkit;
     }
 
     @Override
@@ -164,6 +172,22 @@ public abstract class MetisThreadManager
      */
     public boolean hasWorker() {
         return theThread != null;
+    }
+
+    /**
+     * Set the thread Data.
+     * @param pThreadData the threadData
+     */
+    public void setThreadData(final MetisThreadData pThreadData) {
+        theThreadData = pThreadData;
+    }
+
+    /**
+     * Get the thread Data.
+     * @return the threadData
+     */
+    protected MetisThreadData getThreadData() {
+        return theThreadData;
     }
 
     /**
@@ -203,7 +227,7 @@ public abstract class MetisThreadManager
         boolean myResult = true;
         try {
             /* Prepare the task and continue */
-            theThread.prepareTask(theToolkit);
+            theThread.prepareTask(theThreadData);
 
             /* Catch exceptions */
         } catch (OceanusException e) {

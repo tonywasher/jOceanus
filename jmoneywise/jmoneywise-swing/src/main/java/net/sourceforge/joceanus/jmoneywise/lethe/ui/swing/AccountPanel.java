@@ -28,7 +28,7 @@ import net.sourceforge.joceanus.jmoneywise.lethe.data.Loan;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.Payee;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.Portfolio;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.Security;
-import net.sourceforge.joceanus.jmoneywise.lethe.swing.SwingView;
+import net.sourceforge.joceanus.jmoneywise.lethe.swing.MoneyWiseSwingView;
 import net.sourceforge.joceanus.jmoneywise.lethe.ui.MoneyWiseGoToId;
 import net.sourceforge.joceanus.jmoneywise.lethe.ui.MoneyWiseUIResource;
 import net.sourceforge.joceanus.jprometheus.lethe.ui.PrometheusActionButtons;
@@ -86,7 +86,7 @@ public class AccountPanel
     /**
      * The Data View.
      */
-    private final SwingView theView;
+    private final MoneyWiseSwingView theView;
 
     /**
      * The Panel.
@@ -177,7 +177,7 @@ public class AccountPanel
      * Constructor.
      * @param pView the data view
      */
-    public AccountPanel(final SwingView pView) {
+    public AccountPanel(final MoneyWiseSwingView pView) {
         /* Store details */
         theView = pView;
 

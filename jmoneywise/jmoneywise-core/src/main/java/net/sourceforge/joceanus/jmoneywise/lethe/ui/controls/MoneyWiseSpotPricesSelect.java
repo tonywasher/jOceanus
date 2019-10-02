@@ -27,7 +27,7 @@ import net.sourceforge.joceanus.jmoneywise.lethe.analysis.PortfolioBucket;
 import net.sourceforge.joceanus.jmoneywise.lethe.analysis.PortfolioBucket.PortfolioBucketList;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.Portfolio;
 import net.sourceforge.joceanus.jmoneywise.lethe.ui.MoneyWiseUIResource;
-import net.sourceforge.joceanus.jmoneywise.lethe.views.View;
+import net.sourceforge.joceanus.jmoneywise.lethe.views.MoneyWiseView;
 import net.sourceforge.joceanus.jprometheus.lethe.views.PrometheusDataEvent;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
 import net.sourceforge.joceanus.jtethys.date.TethysDateRange;
@@ -96,7 +96,7 @@ public class MoneyWiseSpotPricesSelect
     /**
      * The data view.
      */
-    private final View theView;
+    private final MoneyWiseView theView;
 
     /**
      * The date button.
@@ -159,7 +159,7 @@ public class MoneyWiseSpotPricesSelect
      * @param pView the data view
      */
     public MoneyWiseSpotPricesSelect(final TethysGuiFactory pFactory,
-                                     final View pView) {
+                                     final MoneyWiseView pView) {
         /* Store table and view details */
         theView = pView;
 

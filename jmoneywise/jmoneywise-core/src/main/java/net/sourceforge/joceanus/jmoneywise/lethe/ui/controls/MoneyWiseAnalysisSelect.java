@@ -29,7 +29,7 @@ import net.sourceforge.joceanus.jmoneywise.lethe.ui.MoneyWiseUIResource;
 import net.sourceforge.joceanus.jmoneywise.lethe.views.AnalysisFilter;
 import net.sourceforge.joceanus.jmoneywise.lethe.views.AnalysisFilter.AllFilter;
 import net.sourceforge.joceanus.jmoneywise.lethe.views.AnalysisView;
-import net.sourceforge.joceanus.jmoneywise.lethe.views.View;
+import net.sourceforge.joceanus.jmoneywise.lethe.views.MoneyWiseView;
 import net.sourceforge.joceanus.jprometheus.lethe.views.PrometheusDataEvent;
 import net.sourceforge.joceanus.jtethys.date.TethysDateRange;
 import net.sourceforge.joceanus.jtethys.date.TethysDateResource;
@@ -107,7 +107,7 @@ public class MoneyWiseAnalysisSelect
     /**
      * View.
      */
-    private final View theView;
+    private final MoneyWiseView theView;
 
     /**
      * Panel.
@@ -282,7 +282,7 @@ public class MoneyWiseAnalysisSelect
      * @param pNewButton the new button
      */
     public MoneyWiseAnalysisSelect(final TethysGuiFactory pFactory,
-                                   final View pView,
+                                   final MoneyWiseView pView,
                                    final AnalysisView pAnalysisView,
                                    final TethysButton pNewButton) {
         /* Access the analysis manager */

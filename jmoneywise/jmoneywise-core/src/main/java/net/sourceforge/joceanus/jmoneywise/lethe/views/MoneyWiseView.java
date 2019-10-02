@@ -29,7 +29,7 @@ import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.AssetCurrency;
 import net.sourceforge.joceanus.jmoneywise.lethe.database.MoneyWiseDatabase;
 import net.sourceforge.joceanus.jmoneywise.lethe.sheets.MoneyWiseSheet;
 import net.sourceforge.joceanus.jprometheus.atlas.preference.PrometheusDatabase.PrometheusDatabasePreferences;
-import net.sourceforge.joceanus.jprometheus.lethe.JOceanusUtilitySet;
+import net.sourceforge.joceanus.jprometheus.lethe.PrometheusToolkit;
 import net.sourceforge.joceanus.jprometheus.lethe.database.PrometheusDataStore;
 import net.sourceforge.joceanus.jprometheus.lethe.sheets.PrometheusSpreadSheet;
 import net.sourceforge.joceanus.jprometheus.lethe.views.DataControl;
@@ -40,7 +40,7 @@ import net.sourceforge.joceanus.jtethys.date.TethysDateRange;
 /**
  * Data Control for MoneyWiseApp.
  */
-public class View
+public class MoneyWiseView
         extends DataControl<MoneyWiseData, MoneyWiseDataType> {
     /**
      * The TaxFactory.
@@ -77,8 +77,8 @@ public class View
      * @param pUtilitySet the utility set
      * @param pTaxFactory the tax factory
      */
-    public View(final JOceanusUtilitySet pUtilitySet,
-                final MoneyWiseTaxFactory pTaxFactory) {
+    public MoneyWiseView(final PrometheusToolkit pUtilitySet,
+                         final MoneyWiseTaxFactory pTaxFactory) {
         /* Call super-constructor */
         super(pUtilitySet);
 
@@ -87,14 +87,6 @@ public class View
 
         /* Create an empty data set */
         setData(getNewData());
-    }
-
-    /**
-     * Obtain Tax Factory.
-     * @return the taxFactory
-     */
-    public MoneyWiseTaxFactory getTaxFactory() {
-        return theTaxFactory;
     }
 
     /**
