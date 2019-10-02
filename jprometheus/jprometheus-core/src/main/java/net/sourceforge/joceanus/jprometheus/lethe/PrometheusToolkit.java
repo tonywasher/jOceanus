@@ -16,18 +16,25 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jprometheus.lethe;
 
+import net.sourceforge.joceanus.jgordianknot.api.factory.GordianParameters;
+import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetHashSpec;
 import net.sourceforge.joceanus.jgordianknot.util.GordianSecurityManager;
 import net.sourceforge.joceanus.jmetis.data.MetisDataFormatter;
 import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceManager;
+import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceSecurity.MetisSecurityPreferences;
+import net.sourceforge.joceanus.jmetis.threads.MetisThreadData;
 import net.sourceforge.joceanus.jmetis.threads.MetisThreadManager;
 import net.sourceforge.joceanus.jmetis.threads.MetisToolkit;
 import net.sourceforge.joceanus.jmetis.viewer.MetisViewerManager;
+import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.ui.TethysGuiFactory;
+import net.sourceforge.joceanus.jtethys.ui.TethysProgram;
 
 /**
- * JOceanus Utility Set.
+ * Prometheus Toolkit.
  */
-public abstract class JOceanusUtilitySet {
+public abstract class PrometheusToolkit
+        implements MetisThreadData {
     /**
      * Toolkit.
      */
@@ -66,16 +73,23 @@ public abstract class JOceanusUtilitySet {
     /**
      * Constructor.
      * @param pToolkit the toolkit
+     * @throws OceanusException on error
      */
-    protected JOceanusUtilitySet(final MetisToolkit pToolkit) {
+    protected PrometheusToolkit(final MetisToolkit pToolkit) throws OceanusException {
         /* Access components */
         theToolkit = pToolkit;
-        theSecureMgr = pToolkit.getSecurityManager();
         thePreferenceMgr = pToolkit.getPreferenceManager();
         theFormatter = pToolkit.getFormatter();
         theGuiFactory = pToolkit.getGuiFactory();
         theViewerMgr = pToolkit.getViewerManager();
         theThreadMgr = pToolkit.getThreadManager();
+
+        /* Create the hashManager */
+        final MetisSecurityPreferences myPreferences = thePreferenceMgr.getPreferenceSet(MetisSecurityPreferences.class);
+        theSecureMgr = newSecurityManager(myPreferences.getParameters(), myPreferences.getKeySetHashSpec());
+
+        /* Set this as the threadData */
+        theThreadMgr.setThreadData(this);
     }
 
     /**
@@ -127,10 +141,28 @@ public abstract class JOceanusUtilitySet {
     }
 
     /**
+     * Obtain the Program Definitions.
+     * @return the definitions
+     */
+    public TethysProgram getProgramDefinitions() {
+        return theToolkit.getProgramDefinitions();
+    }
+
+    /**
      * Obtain the Toolkit.
      * @return the toolkit
      */
     public MetisToolkit getToolkit() {
         return theToolkit;
     }
+
+    /**
+     * Create a Security Manager.
+     * @param pParameters the parameters
+     * @param pKeySetSpec the keySetHashSpec
+     * @return the manager
+     * @throws OceanusException on error
+     */
+    protected abstract GordianSecurityManager newSecurityManager(GordianParameters pParameters,
+                                                                 GordianKeySetHashSpec pKeySetSpec) throws OceanusException;
 }

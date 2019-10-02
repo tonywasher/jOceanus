@@ -23,7 +23,7 @@ import net.sourceforge.joceanus.jmetis.threads.swing.MetisSwingThreadManager;
 import net.sourceforge.joceanus.jmetis.threads.swing.MetisSwingToolkit;
 import net.sourceforge.joceanus.jmetis.viewer.swing.MetisSwingViewerWindow;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataSet;
-import net.sourceforge.joceanus.jprometheus.lethe.swing.JOceanusSwingUtilitySet;
+import net.sourceforge.joceanus.jprometheus.lethe.swing.PrometheusSwingToolkit;
 import net.sourceforge.joceanus.jprometheus.lethe.threads.PrometheusThreadCreateBackup;
 import net.sourceforge.joceanus.jprometheus.lethe.threads.PrometheusThreadCreateDatabase;
 import net.sourceforge.joceanus.jprometheus.lethe.threads.PrometheusThreadCreateXmlFile;
@@ -197,7 +197,7 @@ public abstract class PrometheusMainWindow<T extends DataSet<T, E>, E extends En
      * @throws OceanusException on error
      */
     public void buildMainWindow(final DataControl<T, E> pView,
-                                final JOceanusSwingUtilitySet pUtilitySet) throws OceanusException {
+                                final PrometheusSwingToolkit pUtilitySet) throws OceanusException {
         /* Store the view */
         theView = pView;
         theToolkit = pUtilitySet.getToolkit();

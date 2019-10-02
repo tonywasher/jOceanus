@@ -41,7 +41,7 @@ import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.lethe.analysis.DilutionEvent.DilutionEventMap;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.Security;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.SecurityPrice;
-import net.sourceforge.joceanus.jmoneywise.lethe.swing.SwingView;
+import net.sourceforge.joceanus.jmoneywise.lethe.swing.MoneyWiseSwingView;
 import net.sourceforge.joceanus.jmoneywise.lethe.ui.MoneyWiseUIResource;
 import net.sourceforge.joceanus.jmoneywise.lethe.views.ViewSecurityPrice;
 import net.sourceforge.joceanus.jmoneywise.lethe.views.ViewSecurityPrice.ViewSecurityPriceList;
@@ -93,7 +93,7 @@ public class SecurityPriceTable
     /**
      * The data view.
      */
-    private final SwingView theView;
+    private final MoneyWiseSwingView theView;
 
     /**
      * The field manager.
@@ -162,7 +162,7 @@ public class SecurityPriceTable
      * @param pUpdateSet the update set
      * @param pError the error panel
      */
-    protected SecurityPriceTable(final SwingView pView,
+    protected SecurityPriceTable(final MoneyWiseSwingView pView,
                                  final MetisSwingFieldManager pFieldMgr,
                                  final UpdateSet<MoneyWiseDataType> pUpdateSet,
                                  final MetisErrorPanel pError) {

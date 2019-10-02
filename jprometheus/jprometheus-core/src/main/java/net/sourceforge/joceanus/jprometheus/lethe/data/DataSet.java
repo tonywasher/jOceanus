@@ -32,7 +32,7 @@ import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceSecurity.MetisS
 import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceSecurity.MetisSecurityPreferences;
 import net.sourceforge.joceanus.jmetis.profile.MetisProfile;
 import net.sourceforge.joceanus.jmetis.threads.MetisThreadStatusReport;
-import net.sourceforge.joceanus.jprometheus.lethe.JOceanusUtilitySet;
+import net.sourceforge.joceanus.jprometheus.lethe.PrometheusToolkit;
 import net.sourceforge.joceanus.jprometheus.lethe.data.ControlData.ControlDataList;
 import net.sourceforge.joceanus.jprometheus.lethe.data.ControlKey.ControlKeyList;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataKeySet.DataKeySetList;
@@ -161,7 +161,7 @@ public abstract class DataSet<T extends DataSet<T, E>, E extends Enum<E>>
      * @param pUtilitySet the utility set
      */
     protected DataSet(final Class<E> pEnumClass,
-                      final JOceanusUtilitySet pUtilitySet) {
+                      final PrometheusToolkit pUtilitySet) {
         /* Store the security manager and Enum class */
         theSecurity = pUtilitySet.getSecureManager();
         theEnumClass = pEnumClass;

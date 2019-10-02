@@ -20,7 +20,7 @@ import javax.swing.JFrame;
 import javax.swing.SwingUtilities;
 
 import net.sourceforge.joceanus.jmetis.profile.MetisProgram;
-import net.sourceforge.joceanus.jmetis.threads.swing.MetisSwingToolkit;
+import net.sourceforge.joceanus.jprometheus.lethe.swing.PrometheusSwingToolkit;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.logger.TethysLogManager;
 import net.sourceforge.joceanus.jtethys.logger.TethysLogger;
@@ -50,7 +50,7 @@ public final class Themis4Swing {
     private static void createAndShowGUI(final MetisProgram pInfo) {
         try {
             /* Create the Toolkit */
-            final MetisSwingToolkit myToolkit = new MetisSwingToolkit(pInfo, false);
+            final PrometheusSwingToolkit myToolkit = new PrometheusSwingToolkit(pInfo, false);
 
             /* Create the frame and declare it */
             final JFrame myFrame = new JFrame();

@@ -46,7 +46,7 @@ import net.sourceforge.joceanus.jmoneywise.lethe.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.Payee;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.Transaction;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.AssetCurrency;
-import net.sourceforge.joceanus.jmoneywise.lethe.swing.SwingView;
+import net.sourceforge.joceanus.jmoneywise.lethe.swing.MoneyWiseSwingView;
 import net.sourceforge.joceanus.jmoneywise.lethe.ui.MoneyWiseIcon;
 import net.sourceforge.joceanus.jmoneywise.lethe.ui.MoneyWiseUIResource;
 import net.sourceforge.joceanus.jmoneywise.lethe.ui.dialog.swing.LoanPanel;
@@ -122,7 +122,7 @@ public class LoanTable
     /**
      * The data view.
      */
-    private final SwingView theView;
+    private final MoneyWiseSwingView theView;
 
     /**
      * The field manager.
@@ -200,7 +200,7 @@ public class LoanTable
      * @param pUpdateSet the update set
      * @param pError the error panel
      */
-    public LoanTable(final SwingView pView,
+    public LoanTable(final MoneyWiseSwingView pView,
                      final UpdateSet<MoneyWiseDataType> pUpdateSet,
                      final MetisErrorPanel pError) {
         /* initialise the underlying class */

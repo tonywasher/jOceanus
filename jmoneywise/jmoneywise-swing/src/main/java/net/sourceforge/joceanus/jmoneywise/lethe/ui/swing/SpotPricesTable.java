@@ -42,7 +42,7 @@ import net.sourceforge.joceanus.jmoneywise.lethe.data.Portfolio;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.Security;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.SecurityPrice;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.AssetCurrency;
-import net.sourceforge.joceanus.jmoneywise.lethe.swing.SwingView;
+import net.sourceforge.joceanus.jmoneywise.lethe.swing.MoneyWiseSwingView;
 import net.sourceforge.joceanus.jmoneywise.lethe.ui.MoneyWiseUIResource;
 import net.sourceforge.joceanus.jmoneywise.lethe.ui.controls.MoneyWiseSpotPricesSelect;
 import net.sourceforge.joceanus.jmoneywise.lethe.views.SpotSecurityPrice;
@@ -105,7 +105,7 @@ public class SpotPricesTable
     /**
      * The data view.
      */
-    private final SwingView theView;
+    private final MoneyWiseSwingView theView;
 
     /**
      * The field manager.
@@ -176,7 +176,7 @@ public class SpotPricesTable
      * Constructor.
      * @param pView the data view
      */
-    public SpotPricesTable(final SwingView pView) {
+    public SpotPricesTable(final MoneyWiseSwingView pView) {
         /* initialise the underlying class */
         super(pView.getGuiFactory());
 

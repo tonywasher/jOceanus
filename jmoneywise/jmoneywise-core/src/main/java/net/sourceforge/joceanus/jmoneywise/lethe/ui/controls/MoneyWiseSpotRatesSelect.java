@@ -21,7 +21,7 @@ import net.sourceforge.joceanus.jmetis.ui.MetisIcon;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.AssetCurrency;
 import net.sourceforge.joceanus.jmoneywise.lethe.ui.MoneyWiseUIResource;
-import net.sourceforge.joceanus.jmoneywise.lethe.views.View;
+import net.sourceforge.joceanus.jmoneywise.lethe.views.MoneyWiseView;
 import net.sourceforge.joceanus.jprometheus.lethe.views.PrometheusDataEvent;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
 import net.sourceforge.joceanus.jtethys.date.TethysDateRange;
@@ -81,7 +81,7 @@ public class MoneyWiseSpotRatesSelect
     /**
      * The data view.
      */
-    private final View theView;
+    private final MoneyWiseView theView;
 
     /**
      * The currency label.
@@ -124,7 +124,7 @@ public class MoneyWiseSpotRatesSelect
      * @param pView the data view
      */
     public MoneyWiseSpotRatesSelect(final TethysGuiFactory pFactory,
-                                    final View pView) {
+                                    final MoneyWiseView pView) {
         /* Store table and view details */
         theView = pView;
 

@@ -34,7 +34,7 @@ public interface MetisThread<T> {
      * @param pToolkit the toolkit
      * @throws OceanusException on error
      */
-    default void prepareTask(final MetisToolkit pToolkit) throws OceanusException {
+    default void prepareTask(final MetisThreadData pToolkit) throws OceanusException {
         /*
          * Overridden as needed
          */
@@ -46,7 +46,7 @@ public interface MetisThread<T> {
      * @return the result
      * @throws OceanusException on error
      */
-    T performTask(MetisToolkit pToolkit) throws OceanusException;
+    T performTask(MetisThreadData pToolkit) throws OceanusException;
 
     /**
      * process result.

@@ -42,7 +42,7 @@ import net.sourceforge.joceanus.jmoneywise.lethe.data.LoanCategory.LoanCategoryL
 import net.sourceforge.joceanus.jmoneywise.lethe.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.LoanCategoryClass;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.LoanCategoryType;
-import net.sourceforge.joceanus.jmoneywise.lethe.swing.SwingView;
+import net.sourceforge.joceanus.jmoneywise.lethe.swing.MoneyWiseSwingView;
 import net.sourceforge.joceanus.jmoneywise.lethe.ui.MoneyWiseUIResource;
 import net.sourceforge.joceanus.jmoneywise.lethe.ui.dialog.swing.LoanCategoryPanel;
 import net.sourceforge.joceanus.jprometheus.lethe.ui.PrometheusUIResource;
@@ -111,7 +111,7 @@ public class LoanCategoryTable
     /**
      * The data view.
      */
-    private final SwingView theView;
+    private final MoneyWiseSwingView theView;
 
     /**
      * The field manager.
@@ -194,7 +194,7 @@ public class LoanCategoryTable
      * @param pUpdateSet the update set
      * @param pError the error panel
      */
-    public LoanCategoryTable(final SwingView pView,
+    public LoanCategoryTable(final MoneyWiseSwingView pView,
                              final UpdateSet<MoneyWiseDataType> pUpdateSet,
                              final MetisErrorPanel pError) {
         /* initialise the underlying class */

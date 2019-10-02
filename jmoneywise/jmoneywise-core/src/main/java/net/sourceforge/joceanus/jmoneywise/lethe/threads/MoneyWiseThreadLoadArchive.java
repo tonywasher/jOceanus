@@ -18,12 +18,13 @@ package net.sourceforge.joceanus.jmoneywise.lethe.threads;
 
 import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceManager;
 import net.sourceforge.joceanus.jmetis.threads.MetisThread;
+import net.sourceforge.joceanus.jmetis.threads.MetisThreadData;
 import net.sourceforge.joceanus.jmetis.threads.MetisThreadManager;
-import net.sourceforge.joceanus.jmetis.threads.MetisToolkit;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.lethe.sheets.ArchiveLoader;
-import net.sourceforge.joceanus.jmoneywise.lethe.views.View;
+import net.sourceforge.joceanus.jmoneywise.lethe.views.MoneyWiseView;
 import net.sourceforge.joceanus.jprometheus.atlas.preference.PrometheusBackup.PrometheusBackupPreferences;
+import net.sourceforge.joceanus.jprometheus.lethe.PrometheusToolkit;
 import net.sourceforge.joceanus.jprometheus.lethe.database.PrometheusDataStore;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
@@ -35,13 +36,13 @@ public class MoneyWiseThreadLoadArchive
     /**
      * Data Control.
      */
-    private final View theView;
+    private final MoneyWiseView theView;
 
     /**
      * Constructor (Event Thread).
      * @param pView the view
      */
-    public MoneyWiseThreadLoadArchive(final View pView) {
+    public MoneyWiseThreadLoadArchive(final MoneyWiseView pView) {
         theView = pView;
     }
 
@@ -51,15 +52,16 @@ public class MoneyWiseThreadLoadArchive
     }
 
     @Override
-    public MoneyWiseData performTask(final MetisToolkit pToolkit) throws OceanusException {
+    public MoneyWiseData performTask(final MetisThreadData pThreadData) throws OceanusException {
         /* Access the thread manager */
-        final MetisThreadManager myManager = pToolkit.getThreadManager();
+        final PrometheusToolkit myToolkit = (PrometheusToolkit) pThreadData;
+        final MetisThreadManager myManager = myToolkit.getThreadManager();
 
         /* Initialise the status window */
         myManager.initTask(getTaskName());
 
         /* Load workbook */
-        final MetisPreferenceManager myMgr = pToolkit.getPreferenceManager();
+        final MetisPreferenceManager myMgr = myToolkit.getPreferenceManager();
         final ArchiveLoader myLoader = new ArchiveLoader();
         final MoneyWiseData myData = theView.getNewData();
         myLoader.loadArchive(myManager, myData, myMgr.getPreferenceSet(PrometheusBackupPreferences.class));

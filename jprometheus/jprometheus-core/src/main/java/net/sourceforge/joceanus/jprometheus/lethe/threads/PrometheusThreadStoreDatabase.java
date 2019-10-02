@@ -17,9 +17,10 @@
 package net.sourceforge.joceanus.jprometheus.lethe.threads;
 
 import net.sourceforge.joceanus.jmetis.threads.MetisThread;
+import net.sourceforge.joceanus.jmetis.threads.MetisThreadData;
 import net.sourceforge.joceanus.jmetis.threads.MetisThreadManager;
-import net.sourceforge.joceanus.jmetis.threads.MetisToolkit;
 import net.sourceforge.joceanus.jprometheus.PrometheusDataException;
+import net.sourceforge.joceanus.jprometheus.lethe.PrometheusToolkit;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataSet;
 import net.sourceforge.joceanus.jprometheus.lethe.database.PrometheusDataStore;
 import net.sourceforge.joceanus.jprometheus.lethe.views.DataControl;
@@ -51,9 +52,10 @@ public class PrometheusThreadStoreDatabase<T extends DataSet<T, E>, E extends En
     }
 
     @Override
-    public Void performTask(final MetisToolkit pToolkit) throws OceanusException {
+    public Void performTask(final MetisThreadData pThreadData) throws OceanusException {
         /* Access the thread manager */
-        final MetisThreadManager myManager = pToolkit.getThreadManager();
+        final PrometheusToolkit myToolkit = (PrometheusToolkit) pThreadData;
+        final MetisThreadManager myManager = myToolkit.getThreadManager();
 
         /* Initialise the status window */
         myManager.initTask(getTaskName());

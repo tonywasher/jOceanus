@@ -27,7 +27,7 @@ import net.sourceforge.joceanus.jmetis.viewer.MetisViewerEntry;
 import net.sourceforge.joceanus.jprometheus.lethe.data.StaticData;
 import net.sourceforge.joceanus.jprometheus.lethe.data.StaticData.StaticList;
 import net.sourceforge.joceanus.jprometheus.lethe.data.StaticInterface;
-import net.sourceforge.joceanus.jprometheus.lethe.swing.JOceanusSwingUtilitySet;
+import net.sourceforge.joceanus.jprometheus.lethe.swing.PrometheusSwingToolkit;
 import net.sourceforge.joceanus.jprometheus.lethe.ui.PrometheusActionButtons;
 import net.sourceforge.joceanus.jprometheus.lethe.ui.PrometheusUIResource;
 import net.sourceforge.joceanus.jprometheus.lethe.views.DataControl;
@@ -82,7 +82,7 @@ public class PrometheusStaticDataPanel<E extends Enum<E> & MetisLetheFieldEnum>
     /**
      * The UtilitySet.
      */
-    private final JOceanusSwingUtilitySet theUtilitySet;
+    private final PrometheusSwingToolkit theUtilitySet;
 
     /**
      * The data control.
@@ -156,7 +156,7 @@ public class PrometheusStaticDataPanel<E extends Enum<E> & MetisLetheFieldEnum>
      * @param pClass the dataType class
      */
     public PrometheusStaticDataPanel(final DataControl<?, E> pControl,
-                                     final JOceanusSwingUtilitySet pUtilitySet,
+                                     final PrometheusSwingToolkit pUtilitySet,
                                      final Class<E> pClass) {
         /* Store control */
         theControl = pControl;

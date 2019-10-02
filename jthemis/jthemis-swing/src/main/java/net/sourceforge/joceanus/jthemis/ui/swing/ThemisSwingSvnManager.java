@@ -24,7 +24,7 @@ import java.util.Arrays;
 import javax.swing.JFrame;
 import javax.swing.WindowConstants;
 
-import net.sourceforge.joceanus.jmetis.threads.swing.MetisSwingToolkit;
+import net.sourceforge.joceanus.jprometheus.lethe.swing.PrometheusSwingToolkit;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.ui.TethysIconId;
 import net.sourceforge.joceanus.jtethys.ui.TethysProgram;
@@ -48,7 +48,7 @@ public class ThemisSwingSvnManager
      * @param pToolkit the toolkit
      * @throws OceanusException on error
      */
-    protected ThemisSwingSvnManager(final MetisSwingToolkit pToolkit) throws OceanusException {
+    protected ThemisSwingSvnManager(final PrometheusSwingToolkit pToolkit) throws OceanusException {
         /* Initialise underlying class */
         super(pToolkit);
         theFrame = pToolkit.getGuiFactory().getFrame();

@@ -46,7 +46,7 @@ import net.sourceforge.joceanus.jmoneywise.lethe.data.SecurityInfoSet;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.AccountInfoClass;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.AssetCurrency;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.SecurityType;
-import net.sourceforge.joceanus.jmoneywise.lethe.swing.SwingView;
+import net.sourceforge.joceanus.jmoneywise.lethe.swing.MoneyWiseSwingView;
 import net.sourceforge.joceanus.jmoneywise.lethe.ui.MoneyWiseIcon;
 import net.sourceforge.joceanus.jmoneywise.lethe.ui.MoneyWiseUIResource;
 import net.sourceforge.joceanus.jmoneywise.lethe.ui.dialog.swing.SecurityPanel;
@@ -124,7 +124,7 @@ public class SecurityTable
     /**
      * The data view.
      */
-    private final SwingView theView;
+    private final MoneyWiseSwingView theView;
 
     /**
      * The field manager.
@@ -207,7 +207,7 @@ public class SecurityTable
      * @param pUpdateSet the update set
      * @param pError the error panel
      */
-    public SecurityTable(final SwingView pView,
+    public SecurityTable(final MoneyWiseSwingView pView,
                          final UpdateSet<MoneyWiseDataType> pUpdateSet,
                          final MetisErrorPanel pError) {
         /* initialise the underlying class */

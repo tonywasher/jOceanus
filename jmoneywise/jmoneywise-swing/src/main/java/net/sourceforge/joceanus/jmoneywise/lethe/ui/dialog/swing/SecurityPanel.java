@@ -41,7 +41,7 @@ import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.AssetCurrency.Asse
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.SecurityType;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.SecurityType.SecurityTypeList;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.SecurityTypeClass;
-import net.sourceforge.joceanus.jmoneywise.lethe.swing.SwingView;
+import net.sourceforge.joceanus.jmoneywise.lethe.swing.MoneyWiseSwingView;
 import net.sourceforge.joceanus.jmoneywise.lethe.ui.MoneyWiseIcon;
 import net.sourceforge.joceanus.jmoneywise.lethe.ui.MoneyWiseUIResource;
 import net.sourceforge.joceanus.jprometheus.lethe.views.UpdateSet;
@@ -90,7 +90,7 @@ public class SecurityPanel
      * @param pError the error panel
      */
     public SecurityPanel(final TethysSwingGuiFactory pFactory,
-                         final SwingView pView,
+                         final MoneyWiseSwingView pView,
                          final MetisSwingFieldManager pFieldMgr,
                          final UpdateSet<MoneyWiseDataType> pUpdateSet,
                          final MetisErrorPanel pError) {

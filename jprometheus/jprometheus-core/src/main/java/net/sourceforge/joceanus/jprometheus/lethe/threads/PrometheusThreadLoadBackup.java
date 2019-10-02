@@ -21,10 +21,11 @@ import java.io.File;
 import net.sourceforge.joceanus.jgordianknot.util.GordianSecurityManager;
 import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceManager;
 import net.sourceforge.joceanus.jmetis.threads.MetisThread;
+import net.sourceforge.joceanus.jmetis.threads.MetisThreadData;
 import net.sourceforge.joceanus.jmetis.threads.MetisThreadManager;
-import net.sourceforge.joceanus.jmetis.threads.MetisToolkit;
 import net.sourceforge.joceanus.jprometheus.atlas.preference.PrometheusBackup.PrometheusBackupPreferenceKey;
 import net.sourceforge.joceanus.jprometheus.atlas.preference.PrometheusBackup.PrometheusBackupPreferences;
+import net.sourceforge.joceanus.jprometheus.lethe.PrometheusToolkit;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataSet;
 import net.sourceforge.joceanus.jprometheus.lethe.database.PrometheusDataStore;
 import net.sourceforge.joceanus.jprometheus.lethe.sheets.PrometheusSpreadSheet;
@@ -67,10 +68,11 @@ public class PrometheusThreadLoadBackup<T extends DataSet<T, E>, E extends Enum<
     }
 
     @Override
-    public T performTask(final MetisToolkit pToolkit) throws OceanusException {
+    public T performTask(final MetisThreadData pThreadData) throws OceanusException {
         /* Access the thread manager */
-        final MetisThreadManager myManager = pToolkit.getThreadManager();
-        final GordianSecurityManager mySecurityMgr = pToolkit.getSecurityManager();
+        final PrometheusToolkit myToolkit = (PrometheusToolkit) pThreadData;
+        final MetisThreadManager myManager = myToolkit.getThreadManager();
+        final GordianSecurityManager mySecurityMgr = myToolkit.getSecureManager();
 
         /* Initialise the status window */
         myManager.initTask(getTaskName());
@@ -83,7 +85,7 @@ public class PrometheusThreadLoadBackup<T extends DataSet<T, E>, E extends Enum<
         final File myBackupDir = new File(myProperties.getStringValue(PrometheusBackupPreferenceKey.BACKUPDIR));
 
         /* Determine the name of the file to load */
-        final TethysFileSelector myDialog = pToolkit.getGuiFactory().newFileSelector();
+        final TethysFileSelector myDialog = myToolkit.getGuiFactory().newFileSelector();
         myDialog.setTitle(TASK_SELECTFILE);
         myDialog.setInitialDirectory(myBackupDir);
         myDialog.setExtension(GordianSecurityManager.SECUREZIPFILE_EXT);

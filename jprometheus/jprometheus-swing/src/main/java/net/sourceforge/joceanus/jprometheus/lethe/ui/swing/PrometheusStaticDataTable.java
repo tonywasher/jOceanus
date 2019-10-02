@@ -36,7 +36,7 @@ import net.sourceforge.joceanus.jprometheus.lethe.data.DataSet;
 import net.sourceforge.joceanus.jprometheus.lethe.data.StaticData;
 import net.sourceforge.joceanus.jprometheus.lethe.data.StaticData.StaticList;
 import net.sourceforge.joceanus.jprometheus.lethe.data.StaticInterface;
-import net.sourceforge.joceanus.jprometheus.lethe.swing.JOceanusSwingUtilitySet;
+import net.sourceforge.joceanus.jprometheus.lethe.swing.PrometheusSwingToolkit;
 import net.sourceforge.joceanus.jprometheus.lethe.ui.PrometheusIcon;
 import net.sourceforge.joceanus.jprometheus.lethe.ui.PrometheusUIResource;
 import net.sourceforge.joceanus.jprometheus.lethe.ui.swing.PrometheusDataTableColumn.PrometheusDataTableColumnModel;
@@ -162,7 +162,7 @@ public class PrometheusStaticDataTable<L extends StaticList<T, S, E>, T extends 
      */
     public PrometheusStaticDataTable(final DataControl<?, E> pControl,
                                      final UpdateSet<E> pUpdateSet,
-                                     final JOceanusSwingUtilitySet pUtilitySet,
+                                     final PrometheusSwingToolkit pUtilitySet,
                                      final MetisErrorPanel pError,
                                      final E pItemType,
                                      final Class<L> pListClass) {

@@ -19,6 +19,7 @@ package net.sourceforge.joceanus.jmetis.threads.javafx;
 import javafx.concurrent.Task;
 
 import net.sourceforge.joceanus.jmetis.threads.MetisThread;
+import net.sourceforge.joceanus.jmetis.threads.MetisThreadData;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
@@ -29,9 +30,9 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
 public class MetisFXThread<T>
         extends Task<Integer> {
     /**
-     * The Toolkit.
+     * The ThreadData.
      */
-    private final MetisFXToolkit theToolkit;
+    private final MetisThreadData theThreadData;
 
     /**
      * The wrapped thread.
@@ -56,13 +57,13 @@ public class MetisFXThread<T>
     /**
      * Constructor.
      *
-     * @param pToolkit the toolkit
+     * @param pThreadData the threadData
      * @param pThread  the thread to wrap
      */
-    protected MetisFXThread(final MetisFXToolkit pToolkit,
+    protected MetisFXThread(final MetisThreadData pThreadData,
                             final MetisThread<T> pThread) {
         /* Store parameters */
-        theToolkit = pToolkit;
+        theThreadData = pThreadData;
         theThread = pThread;
         theTask = pThread.getTaskName();
     }
@@ -85,7 +86,7 @@ public class MetisFXThread<T>
 
     @Override
     protected Integer call() throws Exception {
-        theResult = theThread.performTask(theToolkit);
+        theResult = theThread.performTask(theThreadData);
         return null;
     }
 

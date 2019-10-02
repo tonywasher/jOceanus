@@ -29,6 +29,7 @@ module net.sourceforge.joceanus.jthemis.core {
     requires plexus.utils;
 
     /* jOceanus */
+    requires net.sourceforge.joceanus.jprometheus.core;
     requires net.sourceforge.joceanus.jgordianknot.core;
     requires net.sourceforge.joceanus.jmetis.core;
     requires net.sourceforge.joceanus.jtethys.core;

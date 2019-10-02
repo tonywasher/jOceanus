@@ -23,6 +23,8 @@ module net.sourceforge.joceanus.jthemis.javafx {
     requires javafx.graphics;
 
     /* jOceanus */
+    requires net.sourceforge.joceanus.jprometheus.core;
+    requires net.sourceforge.joceanus.jprometheus.javafx;
     requires net.sourceforge.joceanus.jmetis.core;
     requires net.sourceforge.joceanus.jmetis.javafx;
     requires net.sourceforge.joceanus.jtethys.core;

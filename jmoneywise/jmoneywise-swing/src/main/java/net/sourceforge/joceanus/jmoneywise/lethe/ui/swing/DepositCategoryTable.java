@@ -42,7 +42,7 @@ import net.sourceforge.joceanus.jmoneywise.lethe.data.DepositCategory.DepositCat
 import net.sourceforge.joceanus.jmoneywise.lethe.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.DepositCategoryClass;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.DepositCategoryType;
-import net.sourceforge.joceanus.jmoneywise.lethe.swing.SwingView;
+import net.sourceforge.joceanus.jmoneywise.lethe.swing.MoneyWiseSwingView;
 import net.sourceforge.joceanus.jmoneywise.lethe.ui.MoneyWiseUIResource;
 import net.sourceforge.joceanus.jmoneywise.lethe.ui.dialog.swing.DepositCategoryPanel;
 import net.sourceforge.joceanus.jprometheus.lethe.ui.PrometheusUIResource;
@@ -111,7 +111,7 @@ public class DepositCategoryTable
     /**
      * The data view.
      */
-    private final SwingView theView;
+    private final MoneyWiseSwingView theView;
 
     /**
      * The field manager.
@@ -194,7 +194,7 @@ public class DepositCategoryTable
      * @param pUpdateSet the update set
      * @param pError the error panel
      */
-    public DepositCategoryTable(final SwingView pView,
+    public DepositCategoryTable(final MoneyWiseSwingView pView,
                                 final UpdateSet<MoneyWiseDataType> pUpdateSet,
                                 final MetisErrorPanel pError) {
         /* initialise the underlying class */

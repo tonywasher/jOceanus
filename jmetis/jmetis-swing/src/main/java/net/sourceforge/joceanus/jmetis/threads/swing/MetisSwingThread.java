@@ -23,6 +23,7 @@ import java.util.concurrent.ExecutionException;
 import javax.swing.SwingWorker;
 
 import net.sourceforge.joceanus.jmetis.threads.MetisThread;
+import net.sourceforge.joceanus.jmetis.threads.MetisThreadData;
 import net.sourceforge.joceanus.jmetis.threads.MetisThreadStatus;
 import net.sourceforge.joceanus.jmetis.threads.MetisThreadStatusManager;
 import net.sourceforge.joceanus.jtethys.OceanusException;
@@ -34,9 +35,9 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
 public class MetisSwingThread<T>
         extends SwingWorker<Void, MetisThreadStatus> {
     /**
-     * The Toolkit.
+     * The ThreadData.
      */
-    private final MetisSwingToolkit theToolkit;
+    private final MetisThreadData theThreadData;
 
     /**
      * The ThreadManager.
@@ -66,12 +67,14 @@ public class MetisSwingThread<T>
     /**
      * Constructor.
      * @param pToolkit the toolkit
+     * @param pThreadData the thread data
      * @param pThread the thread to wrap
      */
     protected MetisSwingThread(final MetisSwingToolkit pToolkit,
+                               final MetisThreadData pThreadData,
                                final MetisThread<T> pThread) {
-        theToolkit = pToolkit;
-        theManager = theToolkit.getThreadManager();
+        theThreadData = pThreadData;
+        theManager = pToolkit.getThreadManager();
         theStatusMgr = theManager.getStatusManager();
         theThread = pThread;
         theTask = pThread.getTaskName();
@@ -87,7 +90,7 @@ public class MetisSwingThread<T>
 
     @Override
     public Void doInBackground() throws OceanusException {
-        theResult = theThread.performTask(theToolkit);
+        theResult = theThread.performTask(theThreadData);
         return null;
     }
 

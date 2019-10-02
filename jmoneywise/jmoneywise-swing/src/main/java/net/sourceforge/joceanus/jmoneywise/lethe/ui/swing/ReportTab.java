@@ -32,7 +32,7 @@ import net.sourceforge.joceanus.jmoneywise.lethe.analysis.SecurityBucket;
 import net.sourceforge.joceanus.jmoneywise.lethe.reports.MoneyWiseReportBuilder;
 import net.sourceforge.joceanus.jmoneywise.lethe.reports.MoneyWiseReportStyleSheet;
 import net.sourceforge.joceanus.jmoneywise.lethe.reports.MoneyWiseReportType;
-import net.sourceforge.joceanus.jmoneywise.lethe.swing.SwingView;
+import net.sourceforge.joceanus.jmoneywise.lethe.swing.MoneyWiseSwingView;
 import net.sourceforge.joceanus.jmoneywise.lethe.ui.MoneyWiseGoToId;
 import net.sourceforge.joceanus.jmoneywise.lethe.ui.MoneyWiseUIResource;
 import net.sourceforge.joceanus.jmoneywise.lethe.ui.controls.MoneyWiseAnalysisSelect.StatementSelect;
@@ -75,7 +75,7 @@ public class ReportTab
     /**
      * The Data View.
      */
-    private final SwingView theView;
+    private final MoneyWiseSwingView theView;
 
     /**
      * The Panel.
@@ -117,7 +117,7 @@ public class ReportTab
      * @param pView the data view
      * @throws OceanusException on error
      */
-    public ReportTab(final SwingView pView) throws OceanusException {
+    public ReportTab(final MoneyWiseSwingView pView) throws OceanusException {
         /* Store the view */
         theView = pView;
 

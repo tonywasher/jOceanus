@@ -25,7 +25,7 @@ import javax.swing.SwingUtilities;
 
 import net.sourceforge.joceanus.jmetis.profile.MetisProgram;
 import net.sourceforge.joceanus.jmetis.threads.swing.MetisSwingToolkit;
-import net.sourceforge.joceanus.jmoneywise.lethe.swing.SwingView;
+import net.sourceforge.joceanus.jmoneywise.lethe.swing.MoneyWiseSwingView;
 import net.sourceforge.joceanus.jmoneywise.lethe.ui.MoneyWiseApp;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.logger.TethysLogManager;
@@ -57,7 +57,7 @@ public final class Control {
     private static void createAndShowGUI(final MetisProgram pInfo) {
         try {
             /* Create the view */
-            final SwingView myView = new SwingView(pInfo);
+            final MoneyWiseSwingView myView = new MoneyWiseSwingView(pInfo);
             final MetisSwingToolkit myToolkit = myView.getToolkit();
 
             /* Obtain program details */
