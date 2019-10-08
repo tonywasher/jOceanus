@@ -116,7 +116,11 @@ public final class BouncyXMSSAsymKey {
          */
         private static boolean compareKeys(final XMSSPublicKeyParameters pFirst,
                                            final XMSSPublicKeyParameters pSecond) {
-            return Arrays.equals(pFirst.toByteArray(), pSecond.toByteArray());
+            try {
+                return Arrays.equals(pFirst.getEncoded(), pSecond.getEncoded());
+            } catch (IOException e) {
+                throw new IllegalArgumentException(e);
+            }
         }
     }
 
@@ -141,6 +145,11 @@ public final class BouncyXMSSAsymKey {
         }
 
         @Override
+        public BouncyXMSSPrivateKey getKeyShard(final int pNumUsages) {
+            return new BouncyXMSSPrivateKey(getKeySpec(), getPrivateKey().extractKeyShard(pNumUsages));
+        }
+
+        @Override
         protected boolean matchKey(final AsymmetricKeyParameter pThat) {
             /* Access keys */
             final XMSSPrivateKeyParameters myThis = getPrivateKey();
@@ -158,7 +167,11 @@ public final class BouncyXMSSAsymKey {
          */
         private static boolean compareKeys(final XMSSPrivateKeyParameters pFirst,
                                            final XMSSPrivateKeyParameters pSecond) {
-            return Arrays.equals(pFirst.toByteArray(), pSecond.toByteArray());
+            try {
+                return Arrays.equals(pFirst.getEncoded(), pSecond.getEncoded());
+            } catch (IOException e) {
+                throw new IllegalArgumentException(e);
+            }
         }
     }
 
@@ -359,7 +372,11 @@ public final class BouncyXMSSAsymKey {
          */
         private static boolean compareKeys(final XMSSMTPublicKeyParameters pFirst,
                                            final XMSSMTPublicKeyParameters pSecond) {
-            return Arrays.equals(pFirst.toByteArray(), pSecond.toByteArray());
+            try {
+                return Arrays.equals(pFirst.getEncoded(), pSecond.getEncoded());
+            } catch (IOException e) {
+                throw new IllegalArgumentException(e);
+            }
         }
     }
 
@@ -384,6 +401,11 @@ public final class BouncyXMSSAsymKey {
         }
 
         @Override
+        public BouncyXMSSMTPrivateKey getKeyShard(final int pNumUsages) {
+            return new BouncyXMSSMTPrivateKey(getKeySpec(), getPrivateKey().extractKeyShard(pNumUsages));
+        }
+
+        @Override
         protected boolean matchKey(final AsymmetricKeyParameter pThat) {
             /* Access keys */
             final XMSSMTPrivateKeyParameters myThis = getPrivateKey();
@@ -401,7 +423,11 @@ public final class BouncyXMSSAsymKey {
          */
         private static boolean compareKeys(final XMSSMTPrivateKeyParameters pFirst,
                                            final XMSSMTPrivateKeyParameters pSecond) {
-            return Arrays.equals(pFirst.toByteArray(), pSecond.toByteArray());
+            try {
+                return Arrays.equals(pFirst.getEncoded(), pSecond.getEncoded());
+            } catch (IOException e) {
+                throw new IllegalArgumentException(e);
+            }
         }
     }
 
@@ -589,16 +615,7 @@ public final class BouncyXMSSAsymKey {
             checkMode(GordianSignatureMode.SIGN);
 
             /* Sign the message */
-            final byte[] mySign = theSigner.generateSignature(getDigest());
-
-            /* Update the privateKey */
-            final XMSSPrivateKeyParameters myParms = (XMSSPrivateKeyParameters) theSigner.getUpdatedPrivateKey();
-            final BouncyXMSSPrivateKey myPrivate = (BouncyXMSSPrivateKey) getKeyPair().getPrivateKey();
-            myPrivate.updatePrivateKey(myParms);
-            theSigner.init(true, myParms);
-
-            /* Return the signature */
-            return mySign;
+            return theSigner.generateSignature(getDigest());
         }
 
         @Override
@@ -678,16 +695,7 @@ public final class BouncyXMSSAsymKey {
             checkMode(GordianSignatureMode.SIGN);
 
             /* Sign the message */
-            final byte[] mySign = theSigner.generateSignature(getDigest());
-
-            /* Update the privateKey */
-            final XMSSMTPrivateKeyParameters myParms = (XMSSMTPrivateKeyParameters) theSigner.getUpdatedPrivateKey();
-            final BouncyXMSSMTPrivateKey myPrivate = (BouncyXMSSMTPrivateKey) getKeyPair().getPrivateKey();
-            myPrivate.updatePrivateKey(myParms);
-            theSigner.init(true, myParms);
-
-            /* Return the signature */
-            return mySign;
+            return theSigner.generateSignature(getDigest());
         }
 
         @Override

@@ -17,11 +17,8 @@
 package net.sourceforge.joceanus.jgordianknot.impl.jca;
 
 import java.security.InvalidKeyException;
-import java.security.PrivateKey;
 import java.security.Signature;
 import java.security.SignatureException;
-
-import org.bouncycastle.pqc.jcajce.interfaces.StateAwareSignature;
 
 import net.sourceforge.joceanus.jgordianknot.api.asym.GordianAsymKeySpec;
 import net.sourceforge.joceanus.jgordianknot.api.asym.GordianAsymKeyType;
@@ -33,8 +30,6 @@ import net.sourceforge.joceanus.jgordianknot.api.sign.GordianSignatureType;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianCoreFactory;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianCryptoException;
 import net.sourceforge.joceanus.jgordianknot.impl.core.sign.GordianCoreSignature;
-import net.sourceforge.joceanus.jgordianknot.impl.jca.JcaKeyPair.JcaStateAwareKeyPair;
-import net.sourceforge.joceanus.jgordianknot.impl.jca.JcaKeyPair.JcaStateAwarePrivateKey;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
@@ -529,20 +524,6 @@ public abstract class JcaSignature
         public byte[] sign() throws OceanusException {
             /* Create the signature */
             final byte[] mySign = super.sign();
-
-            /* Protect against ewxceptions */
-            try {
-                /* Update the privateKey */
-                final StateAwareSignature mySigner = (StateAwareSignature) getSigner();
-                final PrivateKey myNewKey = mySigner.getUpdatedPrivateKey();
-                final JcaStateAwarePrivateKey myPrivate = ((JcaStateAwareKeyPair) getKeyPair()).getPrivateKey();
-                myPrivate.updatePrivateKey(myNewKey);
-                mySigner.initSign(myNewKey);
-
-                /* Catch exceptions */
-            } catch (InvalidKeyException e) {
-                throw new GordianCryptoException(SIG_ERROR, e);
-            }
 
             /* Return the signature */
             return mySign;
