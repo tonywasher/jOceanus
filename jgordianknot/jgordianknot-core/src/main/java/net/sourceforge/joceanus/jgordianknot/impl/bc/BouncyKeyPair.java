@@ -20,7 +20,7 @@ import org.bouncycastle.crypto.params.AsymmetricKeyParameter;
 
 import net.sourceforge.joceanus.jgordianknot.api.asym.GordianAsymKeySpec;
 import net.sourceforge.joceanus.jgordianknot.api.factory.GordianParameters;
-import net.sourceforge.joceanus.jgordianknot.api.key.GordianStateAwareSigner;
+import net.sourceforge.joceanus.jgordianknot.api.key.GordianStateAwareKeyPair;
 import net.sourceforge.joceanus.jgordianknot.impl.core.keypair.GordianCoreKeyPair;
 import net.sourceforge.joceanus.jgordianknot.impl.core.keypair.GordianPrivateKey;
 import net.sourceforge.joceanus.jgordianknot.impl.core.keypair.GordianPublicKey;
@@ -62,6 +62,7 @@ public class BouncyKeyPair
     public BouncyKeyPair getPublicOnly() {
         return new BouncyKeyPair(getPublicKey());
     }
+
     /**
      * Bouncy PublicKey.
      * @param <T> parameter type
@@ -201,8 +202,7 @@ public class BouncyKeyPair
      * @param <T> parameter type
      */
     public abstract static class BouncyStateAwarePrivateKey<T extends AsymmetricKeyParameter>
-            extends BouncyPrivateKey<T>
-            implements GordianStateAwareSigner {
+            extends BouncyPrivateKey<T> {
         /**
          * The private key.
          */
@@ -225,12 +225,18 @@ public class BouncyKeyPair
         }
 
         /**
-         * Update the privateKey.
-         * @param pKey the updated privateKey
+         * Obtain number of signatures remaining.
+         * @return the number of signatures remaining
          */
-        void updatePrivateKey(final T pKey) {
-            thePrivateKey = pKey;
-        }
+        public abstract long getUsagesRemaining();
+
+        /**
+         * Obtain a keyShard from the number of usages.
+         * @param pNumUsages the number of usage for the shard
+         * @return the keyShard
+         */
+        public abstract BouncyStateAwarePrivateKey<T> getKeyShard(int pNumUsages);
+
         @Override
         public boolean equals(final Object pThat) {
             /* Handle the trivial cases */
@@ -266,7 +272,7 @@ public class BouncyKeyPair
       */
     public static class BouncyStateAwareKeyPair
             extends BouncyKeyPair
-            implements GordianStateAwareSigner {
+            implements GordianStateAwareKeyPair {
         /**
          * Constructor.
          * @param pPublic the public key
@@ -285,6 +291,11 @@ public class BouncyKeyPair
         @Override
         public long getUsagesRemaining() {
             return getPrivateKey().getUsagesRemaining();
+        }
+
+        @Override
+        public BouncyStateAwareKeyPair getKeyPairShard(final int pNumUsages) {
+            return new BouncyStateAwareKeyPair(getPublicKey(), getPrivateKey().getKeyShard(pNumUsages));
         }
     }
 }

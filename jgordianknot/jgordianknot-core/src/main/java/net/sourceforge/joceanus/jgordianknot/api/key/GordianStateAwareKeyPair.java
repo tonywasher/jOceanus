@@ -19,10 +19,17 @@ package net.sourceforge.joceanus.jgordianknot.api.key;
 /**
  * Asymmetric StateAware KeyPair.
  */
-public interface GordianStateAwareSigner {
+public interface GordianStateAwareKeyPair {
     /**
      * Obtain number of signatures remaining.
      * @return the number of signatures remaining
      */
     long getUsagesRemaining();
+
+    /**
+     * Obtain a subKeyPair shard with the required number of usages, and update this keyPair's usage count.
+     * @param pNumUsages the number of usage for the shard
+     * @return the subKeyPair
+     */
+    GordianKeyPair getKeyPairShard(int pNumUsages);
 }

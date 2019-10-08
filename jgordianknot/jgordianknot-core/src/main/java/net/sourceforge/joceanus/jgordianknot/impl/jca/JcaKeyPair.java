@@ -24,7 +24,7 @@ import org.bouncycastle.pqc.jcajce.interfaces.XMSSPrivateKey;
 
 import net.sourceforge.joceanus.jgordianknot.api.asym.GordianAsymKeySpec;
 import net.sourceforge.joceanus.jgordianknot.api.factory.GordianParameters;
-import net.sourceforge.joceanus.jgordianknot.api.key.GordianStateAwareSigner;
+import net.sourceforge.joceanus.jgordianknot.api.key.GordianStateAwareKeyPair;
 import net.sourceforge.joceanus.jgordianknot.impl.core.keypair.GordianCoreKeyPair;
 import net.sourceforge.joceanus.jgordianknot.impl.core.keypair.GordianPrivateKey;
 import net.sourceforge.joceanus.jgordianknot.impl.core.keypair.GordianPublicKey;
@@ -189,8 +189,7 @@ public class JcaKeyPair
      * Bouncy StateAware PrivateKey.
      */
     public static class JcaStateAwarePrivateKey
-            extends JcaPrivateKey
-            implements GordianStateAwareSigner {
+            extends JcaPrivateKey {
         /**
          * The private key.
          */
@@ -201,8 +200,8 @@ public class JcaKeyPair
          * @param pKeySpec the key spec
          * @param pKey the key
          */
-        protected JcaStateAwarePrivateKey(final GordianAsymKeySpec pKeySpec,
-                                          final PrivateKey pKey) {
+        JcaStateAwarePrivateKey(final GordianAsymKeySpec pKeySpec,
+                                final PrivateKey pKey) {
             super(pKeySpec, pKey);
             thePrivateKey = pKey;
         }
@@ -213,14 +212,9 @@ public class JcaKeyPair
         }
 
         /**
-         * Update the privateKey.
-         * @param pKey the updated privateKey
+         * Obtain number of signatures remaining.
+         * @return the number of signatures remaining
          */
-        void updatePrivateKey(final PrivateKey pKey) {
-            thePrivateKey = pKey;
-        }
-
-        @Override
         public long getUsagesRemaining() {
             if (thePrivateKey instanceof XMSSMTPrivateKey) {
                 return ((XMSSMTPrivateKey) getPrivateKey()).getUsagesRemaining();
@@ -229,6 +223,21 @@ public class JcaKeyPair
                     ? ((XMSSPrivateKey) getPrivateKey()).getUsagesRemaining()
                     : 0;
         }
+
+        /**
+         * Obtain a keyShard from the number of usages.
+         * @param pNumUsages the number of usage for the shard
+         * @return the keyShard
+         */
+        public JcaStateAwarePrivateKey getKeyShard(final int pNumUsages) {
+            if (thePrivateKey instanceof XMSSMTPrivateKey) {
+                return new JcaStateAwarePrivateKey(getKeySpec(), ((XMSSMTPrivateKey) getPrivateKey()).extractKeyShard(pNumUsages));
+            }
+            return thePrivateKey instanceof XMSSPrivateKey
+                   ? new JcaStateAwarePrivateKey(getKeySpec(), ((XMSSPrivateKey) getPrivateKey()).extractKeyShard(pNumUsages))
+                   : null;
+        }
+
         @Override
         public boolean equals(final Object pThat) {
             /* Handle the trivial cases */
@@ -264,7 +273,7 @@ public class JcaKeyPair
      */
     public static class JcaStateAwareKeyPair
             extends JcaKeyPair
-            implements GordianStateAwareSigner {
+            implements GordianStateAwareKeyPair {
         /**
          * Constructor.
          * @param pPublic the public key
@@ -283,6 +292,11 @@ public class JcaKeyPair
         @Override
         public long getUsagesRemaining() {
             return getPrivateKey().getUsagesRemaining();
+        }
+
+        @Override
+        public JcaStateAwareKeyPair getKeyPairShard(final int pNumUsages) {
+            return new JcaStateAwareKeyPair(getPublicKey(), getPrivateKey().getKeyShard(pNumUsages));
         }
     }
 }
