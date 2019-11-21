@@ -29,7 +29,6 @@ import net.sourceforge.joceanus.jmetis.data.MetisDataFieldValue;
 import net.sourceforge.joceanus.jmetis.field.MetisFieldItem.MetisFieldDef;
 import net.sourceforge.joceanus.jmetis.field.MetisFieldItem.MetisFieldTableItem;
 import net.sourceforge.joceanus.jmetis.field.MetisFieldStorage;
-import net.sourceforge.joceanus.jmetis.field.MetisFieldVersionValues.MetisFieldEncryptedValue;
 
 /**
  * Table FieldSet.
@@ -192,9 +191,6 @@ public class MetisFXTableFieldSet<R extends MetisFieldTableItem> {
         Object myValue = pField.getFieldValue(theItem);
         if (myValue == MetisDataFieldValue.SKIP) {
             myValue = null;
-        }
-        if (myValue instanceof MetisFieldEncryptedValue) {
-            myValue = ((MetisFieldEncryptedValue) myValue).getValue();
         }
 
         /* Store into the property */

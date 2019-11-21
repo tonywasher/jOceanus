@@ -16,8 +16,11 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jprometheus.atlas.field;
 
-import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySet;
+import java.util.Iterator;
+import java.util.Set;
+
 import net.sourceforge.joceanus.jmetis.field.MetisFieldItem.MetisFieldDef;
+import net.sourceforge.joceanus.jmetis.field.MetisFieldItem.MetisFieldSetDef;
 import net.sourceforge.joceanus.jmetis.field.MetisFieldVersionValues;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
@@ -27,9 +30,9 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
 public class PrometheusEncryptedValues
         extends MetisFieldVersionValues {
     /**
-     * The KeySet.
+     * The Encryptor.
      */
-    private GordianKeySet theKeySet;
+    private PrometheusEncryptor theEncryptor;
 
     /**
      * Constructor.
@@ -60,25 +63,91 @@ public class PrometheusEncryptedValues
         /* Copy the keySet */
         if (pPrevious instanceof PrometheusEncryptedValues) {
             final PrometheusEncryptedValues myPrevious = (PrometheusEncryptedValues) pPrevious;
-            theKeySet = myPrevious.theKeySet;
+            theEncryptor = myPrevious.theEncryptor;
         }
     }
 
     @Override
-    protected void checkValueType(final MetisFieldDef pField,
-                                  final Object pValue) throws OceanusException {
-        /* Allow byteArray */
-        if (pValue instanceof byte[]) {
-            return;
+    public Object getValue(final MetisFieldDef pField) {
+        /* Access the underlying object */
+        final Object myValue = super.getValue(pField);
+
+        /* If this is an encrypted value */
+        return myValue instanceof PrometheusEncryptedPair
+                ? ((PrometheusEncryptedPair) myValue).getValue()
+                : myValue;
+    }
+
+    /**
+     * Obtain the encrypted bytes.
+     * @param pField the field
+     * @return the encrypted bytes
+     */
+    public byte[] getEncryptedBytes(final MetisFieldDef pField) {
+        /* Access the underlying object */
+        final Object myValue = super.getValue(pField);
+
+        /* If this is an encrypted value */
+        return myValue instanceof PrometheusEncryptedPair
+               ? ((PrometheusEncryptedPair) myValue).getBytes()
+               : null;
+    }
+
+    @Override
+    public void setValue(final MetisFieldDef pField,
+                         final Object pValue) throws OceanusException {
+        /* Reject if not in valueSet */
+        if (!pField.getStorage().isVersioned()) {
+            throw new IllegalArgumentException(ERROR_NOTVERSIONED);
         }
 
-        /* Allow EncryptedValue if we have a keySet */
-        if (pValue instanceof MetisFieldEncryptedValue
-            && theKeySet != null) {
-            return;
+        /* check the value type */
+        checkValueType(pField, pValue);
+
+        /* If this is an encrypted field */
+        Object myValue = pValue;
+        if (pField instanceof PrometheusEncryptedField
+                && theEncryptor != null
+                && myValue != null) {
+            /* Encrypt the value */
+            myValue = theEncryptor.encryptValue(pValue, pField);
         }
 
-        /* Pass on */
-        super.checkValueType(pField, pValue);
+        /* Store the value */
+        setUncheckedValue(pField, myValue);
+    }
+
+    /**
+     * Set the encryptor.
+     * @param pEncryptor the encryptor
+     * @throws OceanusException on error
+     */
+    void setEncryptor(final PrometheusEncryptor pEncryptor) throws OceanusException {
+        /* Record the encryptor */
+        theEncryptor = pEncryptor;
+
+        /* Loop through the fields */
+        final MetisFieldSetDef myFieldSet = getFields();
+        final Iterator<MetisFieldDef> myIterator = myFieldSet.fieldIterator();
+        while (myIterator.hasNext()) {
+            final MetisFieldDef myField = myIterator.next();
+
+            /* Ignore non-encrypted fields */
+            if (!(myField instanceof PrometheusEncryptedField)) {
+                continue;
+            }
+
+            /* Access the value */
+            final Object myValue = getValue(myField);
+
+            /* If this is a byte array */
+            if (myValue instanceof byte[]) {
+                /* Decrypt the value */
+                setUncheckedValue(myField, theEncryptor.decryptValue((byte[]) myValue, myField));
+            } else if (myValue != null) {
+                /* Encrypt the value */
+                setUncheckedValue(myField, theEncryptor.encryptValue(myValue, myField));
+            }
+        }
     }
 }
