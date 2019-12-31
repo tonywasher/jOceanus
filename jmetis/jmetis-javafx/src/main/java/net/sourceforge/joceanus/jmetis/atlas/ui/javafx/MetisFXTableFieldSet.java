@@ -28,7 +28,7 @@ import net.sourceforge.joceanus.jmetis.atlas.ui.MetisTableCalculator;
 import net.sourceforge.joceanus.jmetis.data.MetisDataFieldValue;
 import net.sourceforge.joceanus.jmetis.field.MetisFieldItem.MetisFieldDef;
 import net.sourceforge.joceanus.jmetis.field.MetisFieldItem.MetisFieldTableItem;
-import net.sourceforge.joceanus.jmetis.field.MetisFieldStorage;
+import net.sourceforge.joceanus.jmetis.field.MetisFieldItem.MetisFieldVersionedDef;
 
 /**
  * Table FieldSet.
@@ -138,9 +138,8 @@ public class MetisFXTableFieldSet<R extends MetisFieldTableItem> {
             final MetisFieldDef myField = myEntry.getKey();
 
             /* If the field is changeable */
-            final MetisFieldStorage myStorage = myField.getStorage();
-            if (myStorage.isVersioned()
-                || myStorage.isCalculated()) {
+            if (myField instanceof MetisFieldVersionedDef
+                || myField.isCalculated()) {
                 /* Set the value */
                 setValue(myField, myEntry.getValue());
             }
@@ -158,8 +157,7 @@ public class MetisFXTableFieldSet<R extends MetisFieldTableItem> {
             final MetisFieldDef myField = myEntry.getKey();
 
             /* If the field is calculated */
-            final MetisFieldStorage myStorage = myField.getStorage();
-            if (myStorage.isCalculated()) {
+            if (myField.isCalculated()) {
                 /* Set the value */
                 setCalculatedValue(myField, myEntry.getValue());
             }
@@ -173,7 +171,7 @@ public class MetisFXTableFieldSet<R extends MetisFieldTableItem> {
      */
     private void setValue(final MetisFieldDef pField,
                           final ObjectProperty<Object> pProperty) {
-        if (pField.getStorage().isCalculated()) {
+        if (pField.isCalculated()) {
             setCalculatedValue(pField, pProperty);
         } else {
             setStandardValue(pField, pProperty);

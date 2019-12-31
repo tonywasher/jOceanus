@@ -82,12 +82,6 @@ public class MetisFXToolkit
         return new MetisFXThreadManager(this, pSlider);
     }
 
-    //@Override
-    //protected GordianSecurityManager newSecurityManager(final GordianParameters pParameters,
-      //                                                  final GordianKeySetHashSpec pKeySetSpec) throws OceanusException {
-        //return new GordianFXSecurityManager(getGuiFactory(), pParameters, pKeySetSpec);
-    //}
-
     @Override
     public TethysFXHelpWindow newHelpWindow() {
         return new TethysFXHelpWindow(getGuiFactory());

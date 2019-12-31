@@ -18,10 +18,8 @@ package net.sourceforge.joceanus.jprometheus.atlas.field;
 
 import net.sourceforge.joceanus.jmetis.data.MetisDataItem.MetisDataFieldId;
 import net.sourceforge.joceanus.jmetis.data.MetisDataType;
-import net.sourceforge.joceanus.jmetis.field.MetisFieldEquality;
 import net.sourceforge.joceanus.jmetis.field.MetisFieldItem.MetisFieldSetDef;
 import net.sourceforge.joceanus.jmetis.field.MetisFieldSet;
-import net.sourceforge.joceanus.jmetis.field.MetisFieldStorage;
 import net.sourceforge.joceanus.jmetis.field.MetisFieldVersionedSet;
 
 /**
@@ -209,7 +207,7 @@ public class PrometheusEncryptedFieldSet<T extends PrometheusEncryptedItem>
                                                          final MetisDataType pDataType,
                                                          final Integer pMaxLength) {
         /* Create the field */
-        final PrometheusEncryptedField<T> myField = new PrometheusEncryptedField<>(this, pId, pDataType, pMaxLength, MetisFieldEquality.EQUALITY, MetisFieldStorage.VERSIONED);
+        final PrometheusEncryptedField<T> myField = new PrometheusEncryptedField<>(this, pId, pDataType, pMaxLength);
 
         /* Register the field */
         registerField(myField);

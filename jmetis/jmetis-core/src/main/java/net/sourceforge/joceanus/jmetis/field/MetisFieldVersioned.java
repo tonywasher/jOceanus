@@ -29,27 +29,56 @@ public class MetisFieldVersioned<T extends MetisFieldVersionedItem>
         extends MetisField<T>
         implements MetisFieldVersionedDef {
     /**
+     * Index of value.
+     */
+    private final Integer theIndex;
+
+    /**
+     * The field equality type.
+     */
+    private final boolean isEquality;
+
+    /**
      * Constructor.
      * @param pAnchor the anchor
      * @param pId the fieldId
      * @param pDataType the dataType of the field
      * @param pMaxLength the maximum length of the field
      * @param pEquality the field equality type
-     * @param pStorage the field storage type
      */
     protected MetisFieldVersioned(final MetisFieldVersionedSet<T> pAnchor,
                                   final MetisDataFieldId pId,
                                   final MetisDataType pDataType,
                                   final Integer pMaxLength,
-                                  final MetisFieldEquality pEquality,
-                                  final MetisFieldStorage pStorage) {
+                                  final boolean pEquality) {
         /* initialise underlying class */
-        super(pAnchor, pId, pDataType, pMaxLength, pEquality, pStorage);
+        super(pAnchor, pId, pDataType, pMaxLength);
+
+        /* Store equality indication */
+        isEquality = pEquality;
+
+        /* Allocate value index */
+        theIndex = pAnchor.getNextIndex();
     }
 
     @Override
     public MetisFieldVersionedSet<T> getAnchor() {
         return (MetisFieldVersionedSet<T>) super.getAnchor();
+    }
+
+    @Override
+    public Integer getIndex() {
+        return theIndex;
+    }
+
+    @Override
+    public boolean isEquality() {
+        return isEquality;
+    }
+
+    @Override
+    public boolean isCalculated() {
+        return false;
     }
 
     @Override
@@ -73,5 +102,35 @@ public class MetisFieldVersioned<T extends MetisFieldVersionedItem>
         final T myObject = getAnchor().getFieldClass().cast(pObject);
         final MetisFieldVersionValues myValues = myObject.getValueSet();
         myValues.setUncheckedValue(this, pValue);
+    }
+    @Override
+    public boolean equals(final Object pThat) {
+        /* Handle trivial cases */
+        if (this == pThat) {
+            return true;
+        }
+        if (pThat == null) {
+            return false;
+        }
+
+        /* Check class */
+        if (!(pThat instanceof MetisFieldVersioned)) {
+            return false;
+        }
+
+        /* Access as MetisFieldVersioned */
+        final MetisFieldVersioned<?> myThat = (MetisFieldVersioned<?>) pThat;
+
+        /* Check index and equality */
+        return theIndex.equals(myThat.getIndex())
+                && isEquality != myThat.isEquality()
+                && super.equals(pThat);
+    }
+
+    @Override
+    public int hashCode() {
+        return theIndex.hashCode()
+                + (MetisFieldSet.HASH_PRIME * super.hashCode())
+                + (isEquality ? 1 : 0);
     }
 }

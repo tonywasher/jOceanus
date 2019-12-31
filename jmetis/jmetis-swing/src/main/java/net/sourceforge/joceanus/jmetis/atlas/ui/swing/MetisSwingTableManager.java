@@ -158,9 +158,9 @@ public class MetisSwingTableManager<R extends MetisFieldTableItem>
     private <T> T getItemFieldValue(final R pItem,
                                     final MetisFieldDef pField,
                                     final Class<T> pClazz) {
-        return pField.getStorage().isCalculated()
-                                                  ? getCalculatedFieldValue(pItem, pField, pClazz)
-                                                  : getStandardFieldValue(pItem, pField, pClazz);
+        return pField.isCalculated()
+                                     ? getCalculatedFieldValue(pItem, pField, pClazz)
+                                     : getStandardFieldValue(pItem, pField, pClazz);
     }
 
     /**

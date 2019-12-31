@@ -66,12 +66,12 @@
     <appDir>${env.BACKUPDIR}</appDir>
     <appLibDir>lib/</appLibDir>
     <BouncyCastleVersion>1.64</BouncyCastleVersion>
-    <JGitVersion>5.5.1.201910021850-r</JGitVersion>
+    <JGitVersion>5.6.0.201912101111-r</JGitVersion>
     <JUnitVersion>5.5.2</JUnitVersion>
     <JSONVersion>20190722</JSONVersion>
-    <ApacheMavenVersion>3.6.2</ApacheMavenVersion>
+    <ApacheMavenVersion>3.6.3</ApacheMavenVersion>
     <MySQLVersion>8.0.18</MySQLVersion>
-    <PostGreSQLVersion>42.2.8</PostGreSQLVersion>
+    <PostGreSQLVersion>42.2.9</PostGreSQLVersion>
     <JTDSVersion>1.3.1</JTDSVersion>
     <ApachePOIVersion>4.1.1</ApachePOIVersion>
     <SLF4JVersion>1.8.0-beta4</SLF4JVersion>
@@ -80,8 +80,8 @@
     <JavaVersion>12</JavaVersion>
     <JavaFXVersion>13.0.1</JavaFXVersion>
     <JavaLanguageVersion>11</JavaLanguageVersion>
-    <CheckStyleVersion>8.26</CheckStyleVersion>
-    <PMDVersion>6.19.0</PMDVersion>
+    <CheckStyleVersion>8.28</CheckStyleVersion>
+    <PMDVersion>6.20.0</PMDVersion>
     <CleanPluginVersion>3.1.0</CleanPluginVersion>
     <ResourcesPluginVersion>3.1.0</ResourcesPluginVersion>
     <InstallPluginVersion>3.0.0-M1</InstallPluginVersion>

@@ -339,7 +339,7 @@ public class MetisListSetTouchMap {
      * @param pItem the item
      * @return the list of touches
      */
-    private List<Integer> obtainTouchedItems(final MetisFieldVersionedItem pItem) {
+    private static List<Integer> obtainTouchedItems(final MetisFieldVersionedItem pItem) {
         /* Process links if they exist */
         final MetisFieldSetDef myFields = pItem.getDataFieldSet();
         return  (myFields.hasLinks() || myFields.hasPairedLinks())

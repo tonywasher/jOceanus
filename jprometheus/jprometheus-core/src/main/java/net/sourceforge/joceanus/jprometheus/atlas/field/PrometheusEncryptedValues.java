@@ -17,10 +17,10 @@
 package net.sourceforge.joceanus.jprometheus.atlas.field;
 
 import java.util.Iterator;
-import java.util.Set;
 
 import net.sourceforge.joceanus.jmetis.field.MetisFieldItem.MetisFieldDef;
 import net.sourceforge.joceanus.jmetis.field.MetisFieldItem.MetisFieldSetDef;
+import net.sourceforge.joceanus.jmetis.field.MetisFieldItem.MetisFieldVersionedDef;
 import net.sourceforge.joceanus.jmetis.field.MetisFieldVersionValues;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
@@ -97,7 +97,7 @@ public class PrometheusEncryptedValues
     public void setValue(final MetisFieldDef pField,
                          final Object pValue) throws OceanusException {
         /* Reject if not in valueSet */
-        if (!pField.getStorage().isVersioned()) {
+        if (!(pField instanceof MetisFieldVersionedDef)) {
             throw new IllegalArgumentException(ERROR_NOTVERSIONED);
         }
 

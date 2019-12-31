@@ -23,6 +23,7 @@ import net.sourceforge.joceanus.jmetis.data.MetisDataDifference;
 import net.sourceforge.joceanus.jmetis.data.MetisDataType;
 import net.sourceforge.joceanus.jmetis.field.MetisFieldItem.MetisFieldDef;
 import net.sourceforge.joceanus.jmetis.field.MetisFieldItem.MetisFieldSetDef;
+import net.sourceforge.joceanus.jmetis.field.MetisFieldItem.MetisFieldVersionedDef;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
@@ -153,8 +154,7 @@ public class MetisFieldVersionValues {
         /* Copy deletion flag */
         isDeletion = pPrevious.isDeletion();
 
-        /* Create the values array */
-        final Object[] mySrc = pPrevious.theValues;
+        /* Determine the copyLength */
         int myCopyLen = pPrevious.theNumValues;
         if (myCopyLen > theNumValues) {
             myCopyLen = theNumValues;
@@ -162,7 +162,7 @@ public class MetisFieldVersionValues {
 
         /* Copy values */
         if (myCopyLen > 0) {
-            System.arraycopy(mySrc, 0, theValues, 0, myCopyLen);
+            System.arraycopy(pPrevious.theValues, 0, theValues, 0, myCopyLen);
         }
     }
 
@@ -175,7 +175,7 @@ public class MetisFieldVersionValues {
     public void setValue(final MetisFieldDef pField,
                          final Object pValue) throws OceanusException {
         /* Reject if not in valueSet */
-        if (!pField.getStorage().isVersioned()) {
+        if (!(pField instanceof MetisFieldVersionedDef)) {
             throw new IllegalArgumentException(ERROR_NOTVERSIONED);
         }
 
@@ -183,7 +183,7 @@ public class MetisFieldVersionValues {
         checkValueType(pField, pValue);
 
         /* Store the value */
-        theValues[pField.getIndex()] = pValue;
+        theValues[((MetisFieldVersionedDef) pField).getIndex()] = pValue;
     }
 
     /**
@@ -194,12 +194,12 @@ public class MetisFieldVersionValues {
     public void setUncheckedValue(final MetisFieldDef pField,
                                   final Object pValue) {
         /* Reject if not in valueSet */
-        if (!pField.getStorage().isVersioned()) {
+        if (!(pField instanceof MetisFieldVersionedDef)) {
             throw new IllegalArgumentException(ERROR_NOTVERSIONED);
         }
 
         /* Store the value */
-        theValues[pField.getIndex()] = pValue;
+        theValues[((MetisFieldVersionedDef) pField).getIndex()] = pValue;
     }
 
     /**
@@ -209,12 +209,12 @@ public class MetisFieldVersionValues {
      */
     public Object getValue(final MetisFieldDef pField) {
         /* Reject if not in valueSet */
-        if (!pField.getStorage().isVersioned()) {
+        if (!(pField instanceof MetisFieldVersionedDef)) {
             throw new IllegalArgumentException(ERROR_NOTVERSIONED);
         }
 
         /* Return the value */
-        return theValues[pField.getIndex()];
+        return theValues[((MetisFieldVersionedDef) pField).getIndex()];
     }
 
     /**
@@ -227,7 +227,7 @@ public class MetisFieldVersionValues {
     public <X> X getValue(final MetisFieldDef pField,
                           final Class<X> pClazz) {
         /* Access the value */
-        Object myValue = getValue(pField);
+        final Object myValue = getValue(pField);
 
         /* Return the value */
         return pClazz.cast(myValue);
@@ -263,13 +263,13 @@ public class MetisFieldVersionValues {
         while (myIterator.hasNext()) {
             /* Ignore non-equality and non-versioned fields */
             final MetisFieldDef myField = myIterator.next();
-            if (!myField.getEquality().isEquality()
-                || !myField.getStorage().isVersioned()) {
+            if (!(myField instanceof MetisFieldVersionedDef)
+                    || !((MetisFieldVersionedDef) myField).isEquality()) {
                 continue;
             }
 
             /* Not equal if the value is different */
-            final int iIndex = myField.getIndex();
+            final int iIndex = ((MetisFieldVersionedDef) myField).getIndex();
             if (MetisDataDifference.difference(theValues[iIndex], myObj[iIndex]).isDifferent()) {
                 return false;
             }
@@ -291,8 +291,8 @@ public class MetisFieldVersionValues {
         while (myIterator.hasNext()) {
             /* Ignore non-equality and non-versioned fields */
             final MetisFieldDef myField = myIterator.next();
-            if (!myField.getEquality().isEquality()
-                || !myField.getStorage().isVersioned()) {
+            if (!(myField instanceof MetisFieldVersionedDef)
+                    || !((MetisFieldVersionedDef) myField).isEquality()) {
                 continue;
             }
 
@@ -300,7 +300,8 @@ public class MetisFieldVersionValues {
             iHashCode *= MetisFieldSet.HASH_PRIME;
 
             /* Access value and add hash if non-null */
-            final Object o = theValues[myField.getIndex()];
+            final int iIndex = ((MetisFieldVersionedDef) myField).getIndex();
+            final Object o = theValues[iIndex];
             if (o != null) {
                 iHashCode += o.hashCode();
             }
@@ -332,13 +333,13 @@ public class MetisFieldVersionValues {
         while (myIterator.hasNext()) {
             /* Ignore non-equality and non-versioned fields */
             final MetisFieldDef myField = myIterator.next();
-            if (!myField.getEquality().isEquality()
-                || !myField.getStorage().isVersioned()) {
+            if (!(myField instanceof MetisFieldVersionedDef)
+                 || !((MetisFieldVersionedDef) myField).isEquality()) {
                 continue;
             }
 
             /* Check the field */
-            final int iIndex = myField.getIndex();
+            final int iIndex = ((MetisFieldVersionedDef) myField).getIndex();
             final MetisDataDifference myDiff = MetisDataDifference.difference(theValues[iIndex], myObj[iIndex]);
             if (myDiff == MetisDataDifference.DIFFERENT) {
                 return myDiff;
@@ -363,14 +364,13 @@ public class MetisFieldVersionValues {
     public MetisDataDifference fieldChanged(final MetisFieldDef pField,
                                             final MetisFieldVersionValues pOriginal) {
         /* No difference if field does not exist, is not-equality or is not versioned */
-        if (pField == null
-            || !pField.getEquality().isEquality()
-            || !pField.getStorage().isVersioned()) {
+        if (!(pField instanceof MetisFieldVersionedDef)
+            || !((MetisFieldVersionedDef) pField).isEquality()) {
             return MetisDataDifference.IDENTICAL;
         }
 
         /* Determine the difference */
-        final int iIndex = pField.getIndex();
+        final int iIndex = ((MetisFieldVersionedDef) pField).getIndex();
         return MetisDataDifference.difference(theValues[iIndex], pOriginal.theValues[iIndex]);
     }
 
