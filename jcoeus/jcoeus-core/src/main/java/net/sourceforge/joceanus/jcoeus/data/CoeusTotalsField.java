@@ -124,6 +124,11 @@ public enum CoeusTotalsField
     CASHBACK(CoeusResource.DATA_CASHBACK),
 
     /**
+     * XferPayment.
+     */
+    XFERPAYMENT(CoeusResource.DATA_XFERPAYMENT),
+
+    /**
      * Losses.
      */
     LOSSES(CoeusResource.DATA_LOSSES),

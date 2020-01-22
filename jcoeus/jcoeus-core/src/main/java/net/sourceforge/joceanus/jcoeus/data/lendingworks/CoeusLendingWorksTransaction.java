@@ -290,6 +290,11 @@ public final class CoeusLendingWorksTransaction
     }
 
     @Override
+    public TethysDecimal getXferPayment() {
+        return ZERO_MONEY;
+    }
+
+    @Override
     public TethysDecimal getBadDebtInterest() {
         return ZERO_MONEY;
     }

@@ -123,6 +123,11 @@ public final class CoeusFundingCircleTransaction
     private static final String PFIX_RECOVERY4 = "Additional principal recovery payment for loan part ";
 
     /**
+     * Xfer Prefix.
+     */
+    private static final String PFIX_XFERPAY = "Transfer Payment ";
+
+    /**
      * ZERO for BadDebt/CashBack.
      */
     static final TethysMoney ZERO_MONEY = new TethysMoney();
@@ -171,6 +176,11 @@ public final class CoeusFundingCircleTransaction
      * Interest.
      */
     private final TethysMoney theInterest;
+
+    /**
+     * XferPayment.
+     */
+    private final TethysMoney theXferPayment;
 
     /**
      * Fees.
@@ -228,8 +238,9 @@ public final class CoeusFundingCircleTransaction
 
         /* Determine the Deltas */
         theInvested = determineInvestedDelta();
-        theLoanBook = determineLoanBookDelta();
-        theInterest = determineInterestDelta();
+        theLoanBook = determineLoanBookDelta(pParser);
+        theInterest = determineInterestDelta(pParser);
+        theXferPayment = determineXferDelta(pParser);
         theFees = determineFeesDelta();
         theCashBack = determineCashBackDelta();
         theBadDebt = determineBadDebtDelta();
@@ -293,6 +304,7 @@ public final class CoeusFundingCircleTransaction
         theHolding = ZERO_MONEY;
         theInvested = ZERO_MONEY;
         theInterest = ZERO_MONEY;
+        theXferPayment = ZERO_MONEY;
         theFees = ZERO_MONEY;
         theCashBack = ZERO_MONEY;
         theRecovered = ZERO_MONEY;
@@ -316,6 +328,7 @@ public final class CoeusFundingCircleTransaction
         myMoney.subtractAmount(theInterest);
         myMoney.subtractAmount(theFees);
         myMoney.subtractAmount(theInvested);
+        myMoney.subtractAmount(theXferPayment);
         myMoney.subtractAmount(theCashBack);
         myMoney.subtractAmount(theBadDebt);
         myMoney.subtractAmount(theRecovered);
@@ -414,6 +427,11 @@ public final class CoeusFundingCircleTransaction
     @Override
     public TethysMoney getCashBack() {
         return theCashBack;
+    }
+
+    @Override
+    public TethysMoney getXferPayment() {
+        return theXferPayment;
     }
 
     @Override
@@ -550,9 +568,11 @@ public final class CoeusFundingCircleTransaction
 
     /**
      * determine loanBook delta.
+     * @param pParser the parser
      * @return the delta
+     * @throws OceanusException on error
      */
-    private TethysMoney determineLoanBookDelta() {
+    private TethysMoney determineLoanBookDelta(final CoeusFundingCircleTransactionParser pParser) throws OceanusException {
         /* Switch on transactionType */
         switch (theTransType) {
             case CAPITALLOAN:
@@ -561,7 +581,7 @@ public final class CoeusFundingCircleTransaction
                 myCapital.negate();
                 return myCapital;
             case BUYLOAN:
-                return determineFCBuyLoan(true);
+                return determineFCBuyLoan(pParser, FCLoan.CAPITAL);
             default:
                 myCapital = new TethysMoney(theHolding);
                 myCapital.setZero();
@@ -571,19 +591,38 @@ public final class CoeusFundingCircleTransaction
 
     /**
      * determine interest delta.
+     * @param pParser the parser
      * @return the delta
+     * @throws OceanusException on error
      */
-    private TethysMoney determineInterestDelta() {
+    private TethysMoney determineInterestDelta(final CoeusFundingCircleTransactionParser pParser) throws OceanusException {
         /* Switch on transactionType */
         switch (theTransType) {
             case INTEREST:
                 return new TethysMoney(theHolding);
             case BUYLOAN:
-                return determineFCBuyLoan(false);
+                return determineFCBuyLoan(pParser, FCLoan.INTEREST);
             default:
                 final TethysMoney myInterest = new TethysMoney(theHolding);
                 myInterest.setZero();
                 return myInterest;
+        }
+    }
+
+    /**
+     * determine xfer delta.
+     * @param pParser the parser
+     * @return the delta
+     * @throws OceanusException on error
+     */
+    private TethysMoney determineXferDelta(final CoeusFundingCircleTransactionParser pParser) throws OceanusException {
+        /* Switch on transactionType */
+        if (theTransType == CoeusTransactionType.BUYLOAN) {
+            return determineFCBuyLoan(pParser, FCLoan.XFER);
+        } else {
+            final TethysMoney myXfer = new TethysMoney(theHolding);
+            myXfer.setZero();
+            return myXfer;
         }
     }
 
@@ -703,57 +742,113 @@ public final class CoeusFundingCircleTransaction
 
     /**
      * determine FCBuyLoan value.
-     * @param pCapital are we looking for capital rather than interest
+     * @param pParser the parser
+     * @param pLoanPart the loan part that we are looking for
      * @return the value
+     * @throws OceanusException on error
      */
-    private TethysMoney determineFCBuyLoan(final boolean pCapital) {
+    private TethysMoney determineFCBuyLoan(final CoeusFundingCircleTransactionParser pParser,
+                                           final FCLoan pLoanPart) throws OceanusException {
         /* Strip off the prefix */
         int myIndex = theDesc.indexOf(':');
-        String myPrincipal = theDesc.substring(myIndex + 2);
+        String myLine = theDesc.substring(myIndex + 2);
 
-        /* Strip off interest from Principal */
-        myIndex = myPrincipal.indexOf(',');
-        String myInterest = myPrincipal.substring(myIndex + 2);
+        /* Isolate Principal */
+        myIndex = myLine.indexOf(',');
+        String myItem = myLine.substring(0, myIndex);
+        myLine = myLine.substring(myIndex + 2);
+        myIndex = myItem.indexOf(' ');
+        myItem = myItem.substring(myIndex + 1);
+        final TethysMoney myPrincipal = pParser.parseMoney(myItem);
 
-        /* Isolate principal */
-        myPrincipal = myPrincipal.substring(0, myIndex);
-        myIndex = myPrincipal.indexOf(' ');
-        myPrincipal = myPrincipal.substring(myIndex + 1);
+        /* Isolate Interest */
+        myIndex = myLine.indexOf(',');
+        myItem = myLine.substring(0, myIndex);
+        myLine = myLine.substring(myIndex + 2);
+        myIndex = myItem.indexOf(' ');
+        myItem = myItem.substring(myIndex + 1);
+        final TethysMoney myInterest = pParser.parseMoney(myItem);
 
-        /* Isolate index */
-        myIndex = myInterest.indexOf(',');
-        myInterest = myInterest.substring(0, myIndex);
-        myIndex = myInterest.indexOf(' ');
-        myInterest = myInterest.substring(myIndex + 1);
+        /* Isolate Xfer */
+        myIndex = myLine.indexOf(',');
+        myItem = myLine.substring(0, myIndex);
+        TethysMoney myXfer = new TethysMoney(ZERO_MONEY);
+        if (myItem.startsWith(PFIX_XFERPAY)) {
+            myItem = myItem.substring(PFIX_XFERPAY.length() + 1);
+            myXfer = pParser.parseMoney(myItem);
+        }
+
+        /* Determine combined value */
+        final TethysMoney myCombo = new TethysMoney(myInterest);
+        myCombo.addAmount(myXfer);
 
         /* Access cash value */
         final TethysMoney myCash = new TethysMoney(theHolding);
         myCash.negate();
-        final String myValue = myCash.toString();
 
         /* If we are looking at the Principal */
-        if (pCapital) {
-            /* Determine whether this is the principal entry */
-            if (!myPrincipal.equals(myValue)) {
-                myCash.setZero();
-            }
+        switch (pLoanPart) {
+            case CAPITAL:
+                /* Determine whether this is the principal entry */
+                if (!myPrincipal.equals(myCash)) {
+                    myCash.addAmount(myPrincipal);
+                    if (myCash.isZero()) {
+                        myPrincipal.negate();
+                    } else {
+                        myPrincipal.setZero();
+                    }
+                }
+                return myPrincipal;
 
-            /* Else looking at interest */
-        } else {
-            /* Determine whether this is the interest entry */
-            if (myInterest.equals(myValue)) {
-                myCash.negate();
-            } else {
-                myCash.setZero();
-            }
+            case INTEREST:
+                /* Determine whether this is the interest entry */
+                if (!myCombo.equals(myCash)) {
+                    myCash.addAmount(myInterest);
+                    if (!myCash.isZero()) {
+                        myInterest.setZero();
+                    }
+                } else {
+                    myInterest.negate();
+                }
+                return myInterest;
+
+            case XFER:
+                /* Determine whether this is the interest entry */
+                if (!myCombo.equals(myCash)) {
+                    myXfer.setZero();
+                } else {
+                    myXfer.negate();
+                }
+                return myXfer;
+
+            /* Else throw exception */
+            default:
+                throw new IllegalArgumentException();
         }
-
-        /* Return value */
-        return myCash;
     }
 
     @Override
     public MetisFieldSet<CoeusFundingCircleTransaction> getDataFieldSet() {
         return FIELD_DEFS;
+    }
+
+    /**
+     * FC Loan Type.
+     */
+    private enum FCLoan {
+        /**
+         * Capital.
+         */
+        CAPITAL,
+
+        /**
+         * Interest.
+         */
+        INTEREST,
+
+        /**
+         * Xfer.
+         */
+        XFER
     }
 }

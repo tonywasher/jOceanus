@@ -350,6 +350,11 @@ public final class CoeusZopaTotals
     }
 
     @Override
+    public TethysDecimal getXferPayment() {
+        return getZero();
+    }
+
+    @Override
     public TethysDecimal getLosses() {
         return theLosses;
     }

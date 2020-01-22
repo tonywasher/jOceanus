@@ -56,6 +56,7 @@ public abstract class CoeusTotals
         FIELD_DEFS.declareLocalField(CoeusTotalsField.BADDEBTCAPITAL, CoeusTotals::getBadDebtCapital);
         FIELD_DEFS.declareLocalField(CoeusTotalsField.FEES, CoeusTotals::getFees);
         FIELD_DEFS.declareLocalField(CoeusTotalsField.CASHBACK, CoeusTotals::getCashBack);
+        FIELD_DEFS.declareLocalField(CoeusTotalsField.XFERPAYMENT, CoeusTotals::getXferPayment);
         FIELD_DEFS.declareLocalField(CoeusTotalsField.LOSSES, CoeusTotals::getLosses);
         FIELD_DEFS.declareLocalField(CoeusTotalsField.BADDEBT, CoeusTotals::getBadDebt);
         FIELD_DEFS.declareLocalField(CoeusTotalsField.RECOVERED, CoeusTotals::getRecovered);
@@ -286,6 +287,12 @@ public abstract class CoeusTotals
     public abstract TethysDecimal getCashBack();
 
     /**
+     * Obtain the total xferPayment.
+     * @return the xferPayment
+     */
+    public abstract TethysDecimal getXferPayment();
+
+    /**
      * Obtain the total losses.
      * @return the losses
      */
@@ -432,6 +439,8 @@ public abstract class CoeusTotals
                 return CoeusTotalsField.FEES;
             case CASHBACK:
                 return CoeusTotalsField.CASHBACK;
+            case XFERPAYMENT:
+                return CoeusTotalsField.XFERPAYMENT;
             case BADDEBTCAPITAL:
                 return CoeusTotalsField.BADDEBTCAPITAL;
             case BADDEBTINTEREST:
@@ -475,6 +484,7 @@ public abstract class CoeusTotals
         CoeusTransaction.formatValue(myBuilder, CoeusTransaction.ID_BDCAPITAL, getBadDebtCapital());
         CoeusTransaction.formatValue(myBuilder, CoeusTransaction.ID_FEES, getFees());
         CoeusTransaction.formatValue(myBuilder, CoeusTransaction.ID_CASHBACK, getCashBack());
+        CoeusTransaction.formatValue(myBuilder, CoeusTransaction.ID_XFERPAYMENT, getXferPayment());
         CoeusTransaction.formatValue(myBuilder, CoeusTransaction.ID_LOSSES, getLosses());
         CoeusTransaction.formatValue(myBuilder, CoeusTransaction.ID_BADDEBT, getBadDebt());
         CoeusTransaction.formatValue(myBuilder, CoeusTransaction.ID_RECOVERED, getRecovered());

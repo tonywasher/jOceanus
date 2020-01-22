@@ -98,6 +98,11 @@ public final class CoeusFundingCircleTotals
     private final TethysMoney theCashBack;
 
     /**
+     * XferPayment.
+     */
+    private final TethysMoney theXferPayment;
+
+    /**
      * Losses.
      */
     private final TethysMoney theLosses;
@@ -174,6 +179,7 @@ public final class CoeusFundingCircleTotals
         theBadDebtCapital = new TethysMoney(getZero());
         theFees = new TethysMoney(getZero());
         theCashBack = new TethysMoney(getZero());
+        theXferPayment = new TethysMoney(getZero());
         theLosses = new TethysMoney(getZero());
         theBadDebt = new TethysMoney(getZero());
         theRecovered = new TethysMoney(getZero());
@@ -203,6 +209,7 @@ public final class CoeusFundingCircleTotals
         theBadDebtCapital = new TethysMoney(pTotals.getBadDebtCapital());
         theFees = new TethysMoney(pTotals.getFees());
         theCashBack = new TethysMoney(pTotals.getCashBack());
+        theXferPayment = new TethysMoney(pTotals.getXferPayment());
         theLosses = new TethysMoney(pTotals.getLosses());
         theBadDebt = new TethysMoney(pTotals.getBadDebt());
         theRecovered = new TethysMoney(pTotals.getRecovered());
@@ -227,6 +234,7 @@ public final class CoeusFundingCircleTotals
         theBadDebtCapital.addAmount(myTotals.getBadDebtCapital());
         theFees.addAmount(myTotals.getFees());
         theCashBack.addAmount(myTotals.getCashBack());
+        theXferPayment.addAmount(myTotals.getXferPayment());
         theLosses.addAmount(myTotals.getLosses());
         theBadDebt.addAmount(myTotals.getBadDebt());
         theRecovered.addAmount(myTotals.getRecovered());
@@ -246,6 +254,7 @@ public final class CoeusFundingCircleTotals
         theBadDebtCapital.addAmount(myTransaction.getBadDebtCapital());
         theFees.addAmount(myTransaction.getFees());
         theCashBack.addAmount(myTransaction.getCashBack());
+        theXferPayment.addAmount(myTransaction.getXferPayment());
         theBadDebt.addAmount(myTransaction.getBadDebt());
         theRecovered.addAmount(myTransaction.getRecovered());
 
@@ -253,6 +262,7 @@ public final class CoeusFundingCircleTotals
         theEarnings.addAmount(myTransaction.getInterest());
         theEarnings.addAmount(myTransaction.getFees());
         theEarnings.addAmount(myTransaction.getCashBack());
+        theEarnings.addAmount(myTransaction.getXferPayment());
 
         /* Adjust taxable earnings */
         theTaxableEarnings.addAmount(myTransaction.getInterest());
@@ -275,6 +285,7 @@ public final class CoeusFundingCircleTotals
         theSourceValue.addAmount(myTransaction.getInvested());
         theSourceValue.addAmount(myTransaction.getInterest());
         theSourceValue.addAmount(myTransaction.getCashBack());
+        theSourceValue.addAmount(myTransaction.getXferPayment());
         theSourceValue.addAmount(myTransaction.getFees());
         theSourceValue.addAmount(myTransaction.getBadDebt());
         theSourceValue.addAmount(myTransaction.getRecovered());
@@ -353,6 +364,11 @@ public final class CoeusFundingCircleTotals
     @Override
     public TethysMoney getCashBack() {
         return theCashBack;
+    }
+
+    @Override
+    public TethysMoney getXferPayment() {
+        return theXferPayment;
     }
 
     @Override

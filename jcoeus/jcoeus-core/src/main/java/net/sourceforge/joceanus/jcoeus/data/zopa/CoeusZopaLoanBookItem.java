@@ -161,22 +161,30 @@ public class CoeusZopaLoanBookItem
         /* Derive the risk */
         theRisk = determineRisk(myIterator.next());
 
-        /* Skip Term and Loan Size */
+        /* Skip Type of Loan, Term and Loan Size */
+        myIterator.next();
         myIterator.next();
         myIterator.next();
 
         /* Derive the status */
         theStatus = determineStatus(myIterator.next());
 
+        /* Skip Borrower Rate/Borrower Fee/Loan Servicing Fee */
+        myIterator.next();
+        myIterator.next();
+        myIterator.next();
+
         /* Parse the rate */
         theRate = pParser.parseRate(myIterator.next());
 
-        /* Skip Borrower Rate */
+        /* Skip Transaction Price/Date */
+        myIterator.next();
         myIterator.next();
 
         /* Parse the outstanding balances */
         theLent = pParser.parseDecimal(myIterator.next());
         theBalance = pParser.parseDecimal(myIterator.next());
+        myIterator.next(); // Interest Outstanding
         theRepaid = pParser.parseDecimal(myIterator.next());
         theCapital = pParser.parseDecimal(myIterator.next());
         theInterest = pParser.parseDecimal(myIterator.next());
@@ -198,13 +206,15 @@ public class CoeusZopaLoanBookItem
         /* Add to the total missing book */
         pParser.getMarket().recordMissingBook(theMissing);
 
-        /* Skip Payment Day */
+        /* Skip Days In Arrears/Payment Day */
+        myIterator.next();
         myIterator.next();
 
         /* Determine whether the loan is safeGuarded */
         isSafeGuarded = Boolean.valueOf(myIterator.next());
 
-        /* Skip Comment and loan start/end dates */
+        /* Skip Comment and loan start/end dates/Default Price */
+        myIterator.next();
         myIterator.next();
         myIterator.next();
         myIterator.next();
@@ -215,7 +225,8 @@ public class CoeusZopaLoanBookItem
                                              ? pParser.parseDate(myDate)
                                              : null;
 
-        /* Skip Monthly rePayment and Purpose */
+        /* Skip Monthly rePayment/Type of Asset and Purpose */
+        myIterator.next();
         myIterator.next();
         myIterator.next();
 
