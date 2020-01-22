@@ -326,6 +326,11 @@ public enum CoeusResource
     DATA_CASHBACK("data.cashback"),
 
     /**
+     * Data XferPayment.
+     */
+    DATA_XFERPAYMENT("data.xferpayment"),
+
+    /**
      * Data Losses.
      */
     DATA_LOSSES("data.losses"),
@@ -693,6 +698,7 @@ public enum CoeusResource
         myMap.put(CoeusTotalSet.BADDEBTINTEREST, DATA_BADDEBTINTEREST);
         myMap.put(CoeusTotalSet.BADDEBTCAPITAL, DATA_BADDEBTCAPITAL);
         myMap.put(CoeusTotalSet.FEES, DATA_FEES);
+        myMap.put(CoeusTotalSet.XFERPAYMENT, DATA_XFERPAYMENT);
         myMap.put(CoeusTotalSet.CASHBACK, DATA_CASHBACK);
         myMap.put(CoeusTotalSet.LOSSES, DATA_LOSSES);
         myMap.put(CoeusTotalSet.BADDEBT, DATA_BADDEBT);

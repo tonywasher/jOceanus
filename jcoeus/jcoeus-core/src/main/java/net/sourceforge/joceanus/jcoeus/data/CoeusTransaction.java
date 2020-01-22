@@ -49,6 +49,7 @@ public abstract class CoeusTransaction
         FIELD_DEFS.declareLocalField(CoeusResource.DATA_BADDEBTCAPITAL, CoeusTransaction::getBadDebtCapital);
         FIELD_DEFS.declareLocalField(CoeusResource.DATA_FEES, CoeusTransaction::getFees);
         FIELD_DEFS.declareLocalField(CoeusResource.DATA_CASHBACK, CoeusTransaction::getCashBack);
+        FIELD_DEFS.declareLocalField(CoeusResource.DATA_XFERPAYMENT, CoeusTransaction::getXferPayment);
         FIELD_DEFS.declareLocalField(CoeusResource.DATA_BADDEBT, CoeusTransaction::getBadDebt);
         FIELD_DEFS.declareLocalField(CoeusResource.DATA_RECOVERED, CoeusTransaction::getRecovered);
     }
@@ -132,6 +133,11 @@ public abstract class CoeusTransaction
      * Id For cashBack.
      */
     static final String ID_CASHBACK = "CB";
+
+    /**
+     * Id For xferPayment.
+     */
+    static final String ID_XFERPAYMENT = "X";
 
     /**
      * Id For losses.
@@ -258,6 +264,12 @@ public abstract class CoeusTransaction
      * @return the cashBack
      */
     public abstract TethysDecimal getCashBack();
+
+    /**
+     * Obtain the xferPayment.
+     * @return the xferPayment
+     */
+    public abstract TethysDecimal getXferPayment();
 
     /**
      * Obtain the badDebt.

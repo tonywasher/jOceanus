@@ -73,6 +73,11 @@ public enum CoeusTotalSet {
     CASHBACK,
 
     /**
+     * XferPayment.
+     */
+    XFERPAYMENT,
+
+    /**
      * BadDebt.
      */
     BADDEBT,

@@ -411,6 +411,11 @@ public final class CoeusZopaTransaction
     }
 
     @Override
+    public TethysDecimal getXferPayment() {
+        return ZERO_MONEY;
+    }
+
+    @Override
     public TethysDecimal getBadDebt() {
         return theBadDebt;
     }

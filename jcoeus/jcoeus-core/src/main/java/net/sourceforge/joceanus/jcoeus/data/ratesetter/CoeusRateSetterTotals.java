@@ -265,6 +265,11 @@ public final class CoeusRateSetterTotals
     }
 
     @Override
+    public TethysMoney getXferPayment() {
+        return getZero();
+    }
+
+    @Override
     public TethysMoney getLosses() {
         return getZero();
     }

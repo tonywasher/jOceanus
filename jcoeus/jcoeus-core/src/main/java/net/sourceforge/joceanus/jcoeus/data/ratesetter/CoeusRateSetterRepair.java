@@ -215,6 +215,7 @@ public class CoeusRateSetterRepair {
         while (myInitIterator.hasNext()) {
             final CoeusRateSetterTransaction myTrans = myInitIterator.next();
             final TethysDate myDate = myTrans.getDate();
+            TethysDate myMatch = null;
 
             /* Look for loans on the same date */
             myLoans.clear();
@@ -226,20 +227,20 @@ public class CoeusRateSetterRepair {
                 final TethysDate myStartDate = myBookItem.getStartDate();
                 final long myDays = myDate.daysUntil(myStartDate);
 
-                /* If there is a possible match */
+                /* If the loan has a start date later than the initial loan */
                 if (myDays >= 0) {
-                    /* If we have a matching date */
-                    if (myDays <= pNumDays) {
-                        /* Switch it to the list */
-                        myLoans.add(myLoan);
-                        myLoanIterator.remove();
-                        myLoanAmount.addAmount(myBookItem.getLent());
-
-                        /* Break loop if we are not going to get a match */
-                    } else {
+                    /* We have finished the loop if we are beyond the limit or have split dates */
+                    if (myDays > pNumDays
+                        || (myMatch != null && !myMatch.equals(myStartDate))) {
                         break;
                     }
-                }
+
+                    /* Switch it to the list */
+                    myMatch = myStartDate;
+                    myLoans.add(myLoan);
+                    myLoanIterator.remove();
+                    myLoanAmount.addAmount(myBookItem.getLent());
+               }
             }
 
             /* If we have matched the amount */

@@ -260,6 +260,11 @@ public final class CoeusLendingWorksTotals
     }
 
     @Override
+    public TethysDecimal getXferPayment() {
+        return getZero();
+    }
+
+    @Override
     public TethysDecimal getLosses() {
         return getZero();
     }

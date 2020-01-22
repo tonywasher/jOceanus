@@ -100,6 +100,9 @@ public class CoeusReportBalanceSheet
 
         /* Create the CashBack row */
         makeTableFilterRow(mySubTable, CoeusTotalSet.CASHBACK, myTotals.getCashBack());
+
+        /* Create the XferPayment row */
+        makeTableFilterRow(mySubTable, CoeusTotalSet.XFERPAYMENT, myTotals.getXferPayment());
         theBuilder.embedTable(mySubTable);
 
         /* If we have badDebt */

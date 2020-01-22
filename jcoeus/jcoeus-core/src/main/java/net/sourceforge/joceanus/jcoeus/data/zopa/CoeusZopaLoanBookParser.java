@@ -32,9 +32,11 @@ public class CoeusZopaLoanBookParser
      * Header fields.
      */
     private static final String[] HEADERS =
-    { "Borrower", "Product", "Acquired", "Market", "Term", "Loan size", "Status", "Investor rate", "Borrower rate", "Lent", "Outstanding",
-            "Repaid", "Capital repaid", "Interest repaid", "Arrears", "Repayment day", "Safeguard", "Comment", "Loan start date",
-            "Scheduled end date", "Default date", "Expected Repayment", "Loan purpose", "Repaid %" };
+    { "Borrower ID", "Product", "Acquired", "Market", "Type of loan", "Term", "Loan size", "Loan status", "Borrower origination fee", "Borrower rate",
+            "Loan servicing fee", "Investor rate", "Transaction price", "Transaction date", "Amount invested", "Capital outstanding",
+            "Interest outstanding", "Amount repaid", "Capital repaid", "Interest repaid", "Amount in arrears", "Days in arrears", "Repayment day",
+            "Covered by Safeguard", "Comment", "Loan start date", "Last repayment date", "Default price", "Default date", "Monthly repayment amount",
+            "Type of asset", "Loan purpose", "Percentage repaid" };
 
     /**
      * The market.

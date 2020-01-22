@@ -55,7 +55,7 @@ public class CoeusLendingWorksLoader {
     /**
      * The StatementDatePattern.
      */
-    private static final String DATEPATTERN = "yyyy";
+    private static final String DATEPATTERN = "yyyy-MM";
 
     /**
      * The formatter.

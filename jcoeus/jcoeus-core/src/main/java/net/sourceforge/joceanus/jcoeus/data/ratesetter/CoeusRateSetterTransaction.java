@@ -345,6 +345,11 @@ public class CoeusRateSetterTransaction
     }
 
     @Override
+    public TethysMoney getXferPayment() {
+        return ZERO_MONEY;
+    }
+
+    @Override
     public TethysMoney getBadDebt() {
         return ZERO_MONEY;
     }
