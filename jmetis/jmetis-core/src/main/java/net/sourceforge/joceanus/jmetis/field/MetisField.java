@@ -18,7 +18,6 @@ package net.sourceforge.joceanus.jmetis.field;
 
 import java.util.function.Function;
 
-import net.sourceforge.joceanus.jmetis.data.MetisDataFieldValue;
 import net.sourceforge.joceanus.jmetis.data.MetisDataItem.MetisDataFieldId;
 import net.sourceforge.joceanus.jmetis.data.MetisDataType;
 import net.sourceforge.joceanus.jmetis.field.MetisFieldItem.MetisFieldDef;
@@ -33,11 +32,6 @@ public class MetisField<T extends MetisFieldItem>
      * Anchor.
      */
     private final MetisFieldSet<T> theAnchor;
-
-    /**
-     * Index of value.
-     */
-    private final Integer theIndex;
 
     /**
      * Id of field.
@@ -55,16 +49,6 @@ public class MetisField<T extends MetisFieldItem>
     private final Integer theMaxLength;
 
     /**
-     * The field equality type.
-     */
-    private final MetisFieldEquality theEquality;
-
-    /**
-     * The field storage type.
-     */
-    private final MetisFieldStorage theStorage;
-
-    /**
      * The field value function.
      */
     private final Function<T, Object> theValue;
@@ -75,28 +59,17 @@ public class MetisField<T extends MetisFieldItem>
      * @param pId the id of the field
      * @param pDataType the dataType of the field
      * @param pMaxLength the maximum length of the field
-     * @param pEquality the field equality type
-     * @param pStorage the field storage type
      */
     MetisField(final MetisFieldSet<T> pAnchor,
                final MetisDataFieldId pId,
                final MetisDataType pDataType,
-               final Integer pMaxLength,
-               final MetisFieldEquality pEquality,
-               final MetisFieldStorage pStorage) {
+               final Integer pMaxLength) {
         /* Store parameters */
         theAnchor = pAnchor;
         theId = pId;
         theDataType = pDataType;
         theMaxLength = pMaxLength;
-        theEquality = pEquality;
-        theStorage = pStorage;
         theValue = null;
-
-        /* Allocate value index if required */
-        theIndex = theStorage.isVersioned()
-                                            ? theAnchor.getNextIndex()
-                                            : null;
 
         /* Check Validity */
         checkValidity();
@@ -106,33 +79,30 @@ public class MetisField<T extends MetisFieldItem>
      * Constructor.
      * @param pAnchor the anchor
      * @param pId the id of the field
+     */
+    MetisField(final MetisFieldSet<T> pAnchor,
+               final MetisDataFieldId pId) {
+        this(pAnchor, pId, null);
+    }
+
+    /**
+     * Constructor.
+     * @param pAnchor the anchor
+     * @param pId the id of the field
      * @param pValue the value supplier
-     * @param pStorage the field storage type
      */
     MetisField(final MetisFieldSet<T> pAnchor,
                final MetisDataFieldId pId,
-               final Function<T, Object> pValue,
-               final MetisFieldStorage pStorage) {
+               final Function<T, Object> pValue) {
         /* Store parameters */
         theAnchor = pAnchor;
         theId = pId;
         theDataType = MetisDataType.OBJECT;
         theMaxLength = MetisFieldSet.FIELD_NO_MAXLENGTH;
-        theEquality = MetisFieldEquality.DERIVED;
-        theStorage = pStorage;
         theValue = pValue;
-        theIndex = null;
 
         /* Check Validity */
         checkValidity();
-    }
-
-    /**
-     * Get the index.
-     * @return the index
-     */
-    public Integer getIndex() {
-        return theIndex;
     }
 
     @Override
@@ -150,30 +120,17 @@ public class MetisField<T extends MetisFieldItem>
         return theMaxLength;
     }
 
-    @Override
-    public MetisFieldEquality getEquality() {
-        return theEquality;
-    }
-
-    @Override
-    public MetisFieldStorage getStorage() {
-        return theStorage;
-    }
-
-    /**
-     * Is this a versioned field?
-     * @return true/false
-     */
-    public boolean isVersioned() {
-        return theIndex != null;
-    }
-
     /**
      * Obtain the anchor for the field.
      * @return the anchor
      */
     public MetisFieldSet<T> getAnchor() {
         return theAnchor;
+    }
+
+    @Override
+    public boolean isCalculated() {
+        return theValue == null;
     }
 
     /**
@@ -194,13 +151,6 @@ public class MetisField<T extends MetisFieldItem>
                     throw new IllegalArgumentException("Length allowed only for String/Array");
                 }
                 break;
-        }
-
-        /* Disallow object on Storage */
-        if (isVersioned()
-            && theEquality.isEquality()
-            && MetisDataType.OBJECT.equals(theDataType)) {
-            throw new IllegalArgumentException("Object DataType not allowed on equality/versioned");
         }
     }
 
@@ -227,9 +177,8 @@ public class MetisField<T extends MetisFieldItem>
             return false;
         }
 
-        /* Check the id and index is the same */
-        return theIndex == myThat.theIndex
-               && theId.equals(myThat.theId);
+        /* Check the id  is the same */
+        return theId.equals(myThat.theId);
     }
 
     @Override
@@ -246,9 +195,7 @@ public class MetisField<T extends MetisFieldItem>
     @Override
     public Object getFieldValue(final Object pObject) {
         final T myObject = theAnchor.getFieldClass().cast(pObject);
-        return isVersioned()
-                             ? MetisDataFieldValue.UNKNOWN
-                             : theValue.apply(myObject);
+        return theValue.apply(myObject);
     }
 
     @Override

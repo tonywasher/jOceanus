@@ -519,15 +519,6 @@ public abstract class JcaSignature
             /* Build the algorithm */
             return myBuilder.toString();
         }
-
-        @Override
-        public byte[] sign() throws OceanusException {
-            /* Create the signature */
-            final byte[] mySign = super.sign();
-
-            /* Return the signature */
-            return mySign;
-        }
     }
 
     /**

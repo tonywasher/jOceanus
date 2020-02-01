@@ -286,7 +286,6 @@ public class TethysFXScrollContextMenu<T>
      * CloseOnFocusLoss.
      */
     private void closeOnFocusLoss() {
-        /* If we have lost focus */
         /* Pass call on to parent if it exists */
         if (theParentContext != null) {
             theParentContext.closeOnFocusLoss();
@@ -608,7 +607,7 @@ public class TethysFXScrollContextMenu<T>
     public void removeAllItems() {
         /* Check state */
         if (isShowing()) {
-            throw new IllegalStateException();
+            closeMenu();
         }
 
         /* Clear menuItems */

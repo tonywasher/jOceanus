@@ -89,7 +89,7 @@ public class MetisFieldVersionDelta
             final MetisFieldDef myField = myIterator.next();
 
             /* Skip if the field is not versioned */
-            if (!myField.getStorage().isVersioned()) {
+            if (!(myField instanceof MetisFieldVersionedDef)) {
                 continue;
             }
 
@@ -144,7 +144,7 @@ public class MetisFieldVersionDelta
             final MetisFieldDef myField = myIterator.next();
 
             /* Skip if the field is not versioned */
-            if (!myField.getStorage().isVersioned()) {
+            if (!(myField instanceof MetisFieldVersionedDef)) {
                 continue;
             }
 

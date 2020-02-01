@@ -251,10 +251,10 @@ public class MetisFieldVersionHistory
      */
     protected MetisDataDifference fieldChanged(final MetisFieldDef pField) {
         /* Handle irrelevant cases */
-        if (!pField.getStorage().isVersioned()) {
+        if (!(pField instanceof MetisFieldVersionedDef)) {
             return MetisDataDifference.IDENTICAL;
         }
-        if (!pField.getEquality().isEquality()) {
+        if (!((MetisFieldVersionedDef) pField).isEquality()) {
             return MetisDataDifference.IDENTICAL;
         }
 

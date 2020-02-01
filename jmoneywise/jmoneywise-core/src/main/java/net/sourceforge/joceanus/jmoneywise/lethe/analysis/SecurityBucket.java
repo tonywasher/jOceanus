@@ -755,6 +755,7 @@ public final class SecurityBucket
 
             /* Adjust invested */
             adjustCounter(SecurityAttribute.INVESTED, myAmount);
+            adjustCounter(SecurityAttribute.RESIDUALCOST, myAmount);
 
             /* Register the transaction in the history */
             registerTransaction(pTrans);

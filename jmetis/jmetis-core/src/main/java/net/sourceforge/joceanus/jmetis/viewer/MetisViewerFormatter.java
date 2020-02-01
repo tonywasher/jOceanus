@@ -27,7 +27,7 @@ import net.sourceforge.joceanus.jmetis.data.MetisDataItem.MetisDataMap;
 import net.sourceforge.joceanus.jmetis.field.MetisFieldItem;
 import net.sourceforge.joceanus.jmetis.field.MetisFieldItem.MetisFieldDef;
 import net.sourceforge.joceanus.jmetis.field.MetisFieldItem.MetisFieldSetDef;
-import net.sourceforge.joceanus.jmetis.field.MetisFieldStorage;
+import net.sourceforge.joceanus.jmetis.field.MetisFieldItem.MetisFieldVersionedDef;
 import net.sourceforge.joceanus.jmetis.field.MetisFieldValidation;
 import net.sourceforge.joceanus.jmetis.field.MetisFieldVersionHistory;
 import net.sourceforge.joceanus.jmetis.field.MetisFieldVersionedItem;
@@ -234,10 +234,9 @@ public class MetisViewerFormatter {
         while (myIterator.hasNext()) {
             /* Access Field */
             final MetisFieldDef myField = myIterator.next();
-            final MetisFieldStorage myStorage = myField.getStorage();
 
             /* Access the value */
-            final Object myValue = myStorage.isCalculated()
+            final Object myValue = myField.isCalculated()
                                                             ? MetisDataFieldValue.SKIP
                                                             : myField.getFieldValue(pItem);
 
@@ -250,7 +249,7 @@ public class MetisViewerFormatter {
             theBuilder.newTableRow();
             theBuilder.newDataCell(myField.getFieldId().getId());
             if (myItem != null
-                && myStorage.isVersioned()
+                && myField instanceof MetisFieldVersionedDef
                 && myItem.fieldChanged(myField).isDifferent()) {
                 theBuilder.newDataCell(myValue, true);
             } else {

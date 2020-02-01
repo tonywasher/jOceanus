@@ -43,7 +43,6 @@ import net.sourceforge.joceanus.jmetis.field.MetisFieldItem.MetisFieldDef;
 import net.sourceforge.joceanus.jmetis.field.MetisFieldItem.MetisFieldTableItem;
 import net.sourceforge.joceanus.jmetis.field.MetisFieldItem.MetisFieldVersionedDef;
 import net.sourceforge.joceanus.jmetis.field.MetisFieldSet;
-import net.sourceforge.joceanus.jmetis.field.MetisFieldVersionValues.MetisFieldEncryptedValue;
 import net.sourceforge.joceanus.jmetis.field.MetisFieldVersionedItem;
 import net.sourceforge.joceanus.jmetis.list.MetisListEditSession;
 import net.sourceforge.joceanus.jmetis.list.MetisListIndexed;
@@ -159,9 +158,9 @@ public class MetisSwingTableManager<R extends MetisFieldTableItem>
     private <T> T getItemFieldValue(final R pItem,
                                     final MetisFieldDef pField,
                                     final Class<T> pClazz) {
-        return pField.getStorage().isCalculated()
-                                                  ? getCalculatedFieldValue(pItem, pField, pClazz)
-                                                  : getStandardFieldValue(pItem, pField, pClazz);
+        return pField.isCalculated()
+                                     ? getCalculatedFieldValue(pItem, pField, pClazz)
+                                     : getStandardFieldValue(pItem, pField, pClazz);
     }
 
     /**
@@ -178,9 +177,6 @@ public class MetisSwingTableManager<R extends MetisFieldTableItem>
         Object myValue = pField.getFieldValue(pItem);
         if (myValue == MetisDataFieldValue.SKIP) {
             myValue = null;
-        }
-        if (myValue instanceof MetisFieldEncryptedValue) {
-            myValue = ((MetisFieldEncryptedValue) myValue).getValue();
         }
         return pClazz.cast(myValue);
     }

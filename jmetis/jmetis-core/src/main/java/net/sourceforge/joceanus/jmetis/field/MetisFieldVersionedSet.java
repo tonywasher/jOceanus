@@ -252,7 +252,7 @@ public class MetisFieldVersionedSet<T extends MetisFieldVersionedItem>
      * @return the field
      */
     public MetisFieldVersioned<T> declareDerivedVersionedField(final MetisDataFieldId pId) {
-        return declareVersionedField(pId, MetisDataType.OBJECT, FIELD_NO_MAXLENGTH, MetisFieldEquality.DERIVED, MetisFieldStorage.VERSIONED);
+        return declareVersionedField(pId, MetisDataType.OBJECT, FIELD_NO_MAXLENGTH, false);
     }
 
     /**
@@ -276,7 +276,7 @@ public class MetisFieldVersionedSet<T extends MetisFieldVersionedItem>
     public MetisFieldVersioned<T> declareEqualityVersionedField(final MetisDataFieldId pId,
                                                                 final MetisDataType pDataType,
                                                                 final Integer pMaxLength) {
-        return declareVersionedField(pId, pDataType, pMaxLength, MetisFieldEquality.EQUALITY, MetisFieldStorage.VERSIONED);
+        return declareVersionedField(pId, pDataType, pMaxLength, true);
     }
 
     /**
@@ -285,16 +285,14 @@ public class MetisFieldVersionedSet<T extends MetisFieldVersionedItem>
      * @param pDataType the dataType of the field
      * @param pMaxLength the maximum length of the field
      * @param pEquality the equality class
-     * @param pStorage the field storage type
      * @return the field
      */
     private MetisFieldVersioned<T> declareVersionedField(final MetisDataFieldId pId,
                                                          final MetisDataType pDataType,
                                                          final Integer pMaxLength,
-                                                         final MetisFieldEquality pEquality,
-                                                         final MetisFieldStorage pStorage) {
+                                                         final boolean pEquality) {
         /* Create the field */
-        final MetisFieldVersioned<T> myField = new MetisFieldVersioned<>(this, pId, pDataType, pMaxLength, pEquality, pStorage);
+        final MetisFieldVersioned<T> myField = new MetisFieldVersioned<>(this, pId, pDataType, pMaxLength, pEquality);
 
         /* Register the field */
         registerField(myField);

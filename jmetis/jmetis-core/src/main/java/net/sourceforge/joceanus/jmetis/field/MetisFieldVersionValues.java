@@ -16,17 +16,14 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmetis.field;
 
-import java.util.Arrays;
 import java.util.Iterator;
 
 import net.sourceforge.joceanus.jmetis.MetisDataException;
 import net.sourceforge.joceanus.jmetis.data.MetisDataDifference;
-import net.sourceforge.joceanus.jmetis.data.MetisDataDifference.MetisDataDiffers;
-import net.sourceforge.joceanus.jmetis.data.MetisDataFormatter;
-import net.sourceforge.joceanus.jmetis.data.MetisDataItem.MetisDataObjectFormat;
 import net.sourceforge.joceanus.jmetis.data.MetisDataType;
 import net.sourceforge.joceanus.jmetis.field.MetisFieldItem.MetisFieldDef;
 import net.sourceforge.joceanus.jmetis.field.MetisFieldItem.MetisFieldSetDef;
+import net.sourceforge.joceanus.jmetis.field.MetisFieldItem.MetisFieldVersionedDef;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
@@ -41,7 +38,7 @@ public class MetisFieldVersionValues {
     /**
      * The versioned error.
      */
-    private static final String ERROR_NOTVERSIONED = "Field is not versioned";
+    protected static final String ERROR_NOTVERSIONED = "Field is not versioned";
 
     /**
      * The valueType error.
@@ -157,8 +154,7 @@ public class MetisFieldVersionValues {
         /* Copy deletion flag */
         isDeletion = pPrevious.isDeletion();
 
-        /* Create the values array */
-        final Object[] mySrc = pPrevious.theValues;
+        /* Determine the copyLength */
         int myCopyLen = pPrevious.theNumValues;
         if (myCopyLen > theNumValues) {
             myCopyLen = theNumValues;
@@ -166,7 +162,7 @@ public class MetisFieldVersionValues {
 
         /* Copy values */
         if (myCopyLen > 0) {
-            System.arraycopy(mySrc, 0, theValues, 0, myCopyLen);
+            System.arraycopy(pPrevious.theValues, 0, theValues, 0, myCopyLen);
         }
     }
 
@@ -179,7 +175,7 @@ public class MetisFieldVersionValues {
     public void setValue(final MetisFieldDef pField,
                          final Object pValue) throws OceanusException {
         /* Reject if not in valueSet */
-        if (!pField.getStorage().isVersioned()) {
+        if (!(pField instanceof MetisFieldVersionedDef)) {
             throw new IllegalArgumentException(ERROR_NOTVERSIONED);
         }
 
@@ -187,7 +183,7 @@ public class MetisFieldVersionValues {
         checkValueType(pField, pValue);
 
         /* Store the value */
-        theValues[pField.getIndex()] = pValue;
+        theValues[((MetisFieldVersionedDef) pField).getIndex()] = pValue;
     }
 
     /**
@@ -198,12 +194,12 @@ public class MetisFieldVersionValues {
     public void setUncheckedValue(final MetisFieldDef pField,
                                   final Object pValue) {
         /* Reject if not in valueSet */
-        if (!pField.getStorage().isVersioned()) {
+        if (!(pField instanceof MetisFieldVersionedDef)) {
             throw new IllegalArgumentException(ERROR_NOTVERSIONED);
         }
 
         /* Store the value */
-        theValues[pField.getIndex()] = pValue;
+        theValues[((MetisFieldVersionedDef) pField).getIndex()] = pValue;
     }
 
     /**
@@ -213,12 +209,12 @@ public class MetisFieldVersionValues {
      */
     public Object getValue(final MetisFieldDef pField) {
         /* Reject if not in valueSet */
-        if (!pField.getStorage().isVersioned()) {
+        if (!(pField instanceof MetisFieldVersionedDef)) {
             throw new IllegalArgumentException(ERROR_NOTVERSIONED);
         }
 
         /* Return the value */
-        return theValues[pField.getIndex()];
+        return theValues[((MetisFieldVersionedDef) pField).getIndex()];
     }
 
     /**
@@ -231,16 +227,7 @@ public class MetisFieldVersionValues {
     public <X> X getValue(final MetisFieldDef pField,
                           final Class<X> pClazz) {
         /* Access the value */
-        Object myValue = getValue(pField);
-
-        /* If this is an encrypted value */
-        if (myValue instanceof MetisFieldEncryptedValue) {
-            /* Access correct part of pair */
-            final MetisFieldEncryptedValue myEncrypted = (MetisFieldEncryptedValue) myValue;
-            myValue = byte[].class.equals(pClazz)
-                                                  ? myEncrypted.getEncryption()
-                                                  : myEncrypted.getValue(pClazz);
-        }
+        final Object myValue = getValue(pField);
 
         /* Return the value */
         return pClazz.cast(myValue);
@@ -276,13 +263,13 @@ public class MetisFieldVersionValues {
         while (myIterator.hasNext()) {
             /* Ignore non-equality and non-versioned fields */
             final MetisFieldDef myField = myIterator.next();
-            if (!myField.getEquality().isEquality()
-                || !myField.getStorage().isVersioned()) {
+            if (!(myField instanceof MetisFieldVersionedDef)
+                    || !((MetisFieldVersionedDef) myField).isEquality()) {
                 continue;
             }
 
             /* Not equal if the value is different */
-            final int iIndex = myField.getIndex();
+            final int iIndex = ((MetisFieldVersionedDef) myField).getIndex();
             if (MetisDataDifference.difference(theValues[iIndex], myObj[iIndex]).isDifferent()) {
                 return false;
             }
@@ -304,8 +291,8 @@ public class MetisFieldVersionValues {
         while (myIterator.hasNext()) {
             /* Ignore non-equality and non-versioned fields */
             final MetisFieldDef myField = myIterator.next();
-            if (!myField.getEquality().isEquality()
-                || !myField.getStorage().isVersioned()) {
+            if (!(myField instanceof MetisFieldVersionedDef)
+                    || !((MetisFieldVersionedDef) myField).isEquality()) {
                 continue;
             }
 
@@ -313,7 +300,8 @@ public class MetisFieldVersionValues {
             iHashCode *= MetisFieldSet.HASH_PRIME;
 
             /* Access value and add hash if non-null */
-            final Object o = theValues[myField.getIndex()];
+            final int iIndex = ((MetisFieldVersionedDef) myField).getIndex();
+            final Object o = theValues[iIndex];
             if (o != null) {
                 iHashCode += o.hashCode();
             }
@@ -345,13 +333,13 @@ public class MetisFieldVersionValues {
         while (myIterator.hasNext()) {
             /* Ignore non-equality and non-versioned fields */
             final MetisFieldDef myField = myIterator.next();
-            if (!myField.getEquality().isEquality()
-                || !myField.getStorage().isVersioned()) {
+            if (!(myField instanceof MetisFieldVersionedDef)
+                 || !((MetisFieldVersionedDef) myField).isEquality()) {
                 continue;
             }
 
             /* Check the field */
-            final int iIndex = myField.getIndex();
+            final int iIndex = ((MetisFieldVersionedDef) myField).getIndex();
             final MetisDataDifference myDiff = MetisDataDifference.difference(theValues[iIndex], myObj[iIndex]);
             if (myDiff == MetisDataDifference.DIFFERENT) {
                 return myDiff;
@@ -376,14 +364,13 @@ public class MetisFieldVersionValues {
     public MetisDataDifference fieldChanged(final MetisFieldDef pField,
                                             final MetisFieldVersionValues pOriginal) {
         /* No difference if field does not exist, is not-equality or is not versioned */
-        if (pField == null
-            || !pField.getEquality().isEquality()
-            || !pField.getStorage().isVersioned()) {
+        if (!(pField instanceof MetisFieldVersionedDef)
+            || !((MetisFieldVersionedDef) pField).isEquality()) {
             return MetisDataDifference.IDENTICAL;
         }
 
         /* Determine the difference */
-        final int iIndex = pField.getIndex();
+        final int iIndex = ((MetisFieldVersionedDef) pField).getIndex();
         return MetisDataDifference.difference(theValues[iIndex], pOriginal.theValues[iIndex]);
     }
 
@@ -415,134 +402,6 @@ public class MetisFieldVersionValues {
         /* If we are not allowed */
         if (!bAllowed) {
             throw new MetisDataException(ERROR_VALUETYPE);
-        }
-    }
-
-    /**
-     * EncryptedValue.
-     */
-    public static final class MetisFieldEncryptedValue
-            implements MetisDataObjectFormat, MetisDataDiffers {
-        /**
-         * The value.
-         */
-        private final Object theValue;
-
-        /**
-         * The encryption.
-         */
-        private final byte[] theEncryption;
-
-        /**
-         * Constructor.
-         * @param pValue the value
-         * @param pEncryption the encryption
-         */
-        protected MetisFieldEncryptedValue(final Object pValue,
-                                           final byte[] pEncryption) {
-            theValue = pValue;
-            theEncryption = pEncryption;
-        }
-
-        /**
-         * Obtain the value.
-         * @return the value
-         */
-        public Object getValue() {
-            return theValue;
-        }
-
-        /**
-         * Get the value as an object type.
-         * @param <X> the required type
-         * @param pClazz the class
-         * @return the value
-         */
-        public <X> X getValue(final Class<X> pClazz) {
-            return pClazz.cast(theValue);
-        }
-
-        /**
-         * Obtain the encryption.
-         * @return the encryption
-         */
-        public byte[] getEncryption() {
-            return theEncryption;
-        }
-
-        @Override
-        public String toString() {
-            return theValue.toString();
-        }
-
-        @Override
-        public String formatObject(final MetisDataFormatter pFormatter) {
-            return pFormatter.formatObject(theValue);
-        }
-
-        @Override
-        public boolean equals(final Object pThat) {
-            /* Handle the trivial cases */
-            if (this == pThat) {
-                return true;
-            }
-            if (pThat == null) {
-                return false;
-            }
-
-            /* Make sure that the object is the same class */
-            if (!(pThat instanceof MetisFieldEncryptedValue)) {
-                return false;
-            }
-
-            /* Access the target field */
-            final MetisFieldEncryptedValue myThat = (MetisFieldEncryptedValue) pThat;
-
-            /* Check differences */
-            if (MetisDataDifference.difference(getValue(), myThat.getValue()).isDifferent()) {
-                return false;
-            }
-
-            /* Check encryption */
-            return Arrays.equals(getEncryption(), myThat.getEncryption());
-        }
-
-        @Override
-        public int hashCode() {
-            /* Calculate hash allowing for field that has not been encrypted yet */
-            int myHashCode = MetisFieldSet.HASH_PRIME
-                             * getValue().hashCode();
-            myHashCode += Arrays.hashCode(getEncryption());
-            return myHashCode;
-        }
-
-        @Override
-        public MetisDataDifference differs(final Object pThat) {
-            /* Reject if null */
-            if (pThat == null) {
-                return MetisDataDifference.DIFFERENT;
-            }
-
-            /* Reject if wrong class */
-            if (!(pThat instanceof MetisFieldEncryptedValue)) {
-                return MetisDataDifference.DIFFERENT;
-            }
-
-            /* Access as correct class */
-            final MetisFieldEncryptedValue myThat = (MetisFieldEncryptedValue) pThat;
-
-            /* Compare value */
-            if (MetisDataDifference.difference(getValue(), myThat.getValue()).isDifferent()) {
-                return MetisDataDifference.DIFFERENT;
-            }
-
-            /* Compare Encrypted value */
-            if (!Arrays.equals(getEncryption(), myThat.getEncryption())) {
-                return MetisDataDifference.SECURITY;
-            }
-
-            /* Item is the Same */
-            return MetisDataDifference.IDENTICAL;
         }
     }
 }

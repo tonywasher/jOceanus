@@ -22,6 +22,7 @@ import net.sourceforge.joceanus.jmetis.data.MetisDataItem.MetisDataFieldId;
 import net.sourceforge.joceanus.jmetis.data.MetisDataItem.MetisDataIndexedItem;
 import net.sourceforge.joceanus.jmetis.data.MetisDataItem.MetisDataObjectFormat;
 import net.sourceforge.joceanus.jmetis.data.MetisDataType;
+import net.sourceforge.joceanus.jmetis.field.MetisFieldItem.MetisFieldDef;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
@@ -46,12 +47,6 @@ public interface MetisFieldItem
         MetisDataFieldId getFieldId();
 
         /**
-         * Obtain the index of the field.
-         * @return the index of the field.
-         */
-        Integer getIndex();
-
-        /**
          * Get the dataType of the field.
          * @return the dataType
          */
@@ -64,16 +59,10 @@ public interface MetisFieldItem
         Integer getMaxLength();
 
         /**
-         * Obtain the equality type.
-         * @return equalityType
+         * Is the field calculated?
+         * @return true/false
          */
-        MetisFieldEquality getEquality();
-
-        /**
-         * Obtain the storage type.
-         * @return storageType
-         */
-        MetisFieldStorage getStorage();
+        boolean isCalculated();
 
         /**
          * Obtain the value of a field.
@@ -98,6 +87,18 @@ public interface MetisFieldItem
      */
     interface MetisFieldVersionedDef
             extends MetisFieldDef {
+        /**
+         * Obtain the index of the field.
+         * @return the index of the field.
+         */
+        Integer getIndex();
+
+        /**
+         * Is this an equality field?
+         * @return true/false
+         */
+        boolean isEquality();
+
         /**
          * Set the value of a field.
          * @param pObject the object

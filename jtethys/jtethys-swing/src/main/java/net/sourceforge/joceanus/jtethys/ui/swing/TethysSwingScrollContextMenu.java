@@ -662,7 +662,7 @@ public class TethysSwingScrollContextMenu<T>
         /* Check state */
         if (theDialog != null
             && theDialog.isVisible()) {
-            throw new IllegalStateException();
+            theDialog.setVisible(false);
         }
 
         /* Clear menuItems */

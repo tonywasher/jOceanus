@@ -31,11 +31,6 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
 public class MetisFXThreadManager
         extends MetisThreadManager {
     /**
-     * The Toolkit.
-     */
-    private final MetisFXToolkit theToolkit;
-
-    /**
      * The Active status.
      */
     private final AtomicReference<MetisThreadStatus> theActiveStatus;
@@ -54,7 +49,6 @@ public class MetisFXThreadManager
     MetisFXThreadManager(final MetisFXToolkit pToolkit,
                          final boolean pSlider) {
         super(pToolkit, pSlider);
-        theToolkit = pToolkit;
         theActiveStatus = new AtomicReference<>();
     }
 

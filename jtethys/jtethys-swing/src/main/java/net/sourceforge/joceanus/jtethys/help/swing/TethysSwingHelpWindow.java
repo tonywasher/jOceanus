@@ -16,6 +16,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jtethys.help.swing;
 
+import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
@@ -124,6 +125,7 @@ public class TethysSwingHelpWindow
 
             /* Create the help panel */
             final JPanel myPanel = new JPanel();
+            myPanel.setLayout(new BorderLayout());
             final JComponent mySplit = TethysSwingNode.getComponent(getSplitTreeManager());
             myPanel.add(mySplit);
             mySplit.setPreferredSize(new Dimension(WINDOW_WIDTH, WINDOW_HEIGHT));

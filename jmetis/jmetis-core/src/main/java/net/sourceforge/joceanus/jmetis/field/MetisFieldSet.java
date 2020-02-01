@@ -31,6 +31,7 @@ import net.sourceforge.joceanus.jmetis.data.MetisDataItem.MetisDataFieldId;
 import net.sourceforge.joceanus.jmetis.field.MetisFieldItem.MetisFieldDef;
 import net.sourceforge.joceanus.jmetis.field.MetisFieldItem.MetisFieldItemType;
 import net.sourceforge.joceanus.jmetis.field.MetisFieldItem.MetisFieldSetDef;
+import net.sourceforge.joceanus.jmetis.field.MetisFieldItem.MetisFieldVersionedDef;
 
 /**
  * Metis Data FieldSet.
@@ -127,7 +128,7 @@ public class MetisFieldSet<T extends MetisFieldItem>
                                    ? null
                                    : pParent.getItemType();
         } else {
-            theNextIndex = Integer.valueOf(0);
+            theNextIndex = 0;
         }
 
         /* Store the anchorId */
@@ -330,7 +331,7 @@ public class MetisFieldSet<T extends MetisFieldItem>
      */
     public MetisField<T> declareLocalField(final MetisDataFieldId pId,
                                            final Function<T, Object> pValue) {
-        return declareDataField(pId, pValue, MetisFieldStorage.LOCAL);
+        return declareDataField(pId, pValue);
     }
 
     /**
@@ -347,7 +348,7 @@ public class MetisFieldSet<T extends MetisFieldItem>
         for (E myValue : pClazz.getEnumConstants()) {
             /* Create an id and callback for the value */
             final MetisDataFieldId myId = new MetisFieldSimpleId(myValue.toString());
-            final MetisField<T> myField = declareDataField(myId, t -> pValue.apply(t, myValue), MetisFieldStorage.LOCAL);
+            final MetisField<T> myField = declareDataField(myId, t -> pValue.apply(t, myValue));
 
             /* Store into the map */
             myMap.put(myValue, myField);
@@ -363,7 +364,7 @@ public class MetisFieldSet<T extends MetisFieldItem>
      * @return the field
      */
     public MetisField<T> declareCalculatedField(final MetisDataFieldId pId) {
-        return declareDataField(pId, null, MetisFieldStorage.CALCULATED);
+        return declareDataField(pId, null);
     }
 
     /**
@@ -385,14 +386,12 @@ public class MetisFieldSet<T extends MetisFieldItem>
      * Declare non-versioned field.
      * @param pId the fieldId
      * @param pValue the value supplier
-     * @param pStorage the field storage type
      * @return the field
      */
     private MetisField<T> declareDataField(final MetisDataFieldId pId,
-                                           final Function<T, Object> pValue,
-                                           final MetisFieldStorage pStorage) {
+                                           final Function<T, Object> pValue) {
         /* Create the field */
-        final MetisField<T> myField = new MetisField<>(this, pId, pValue, pStorage);
+        final MetisField<T> myField = new MetisField<>(this, pId, pValue);
 
         /* Register the field */
         registerField(myField);
@@ -412,7 +411,7 @@ public class MetisFieldSet<T extends MetisFieldItem>
         }
 
         /* Reject if we are local and versioned */
-        if (!isStatic && pField.getStorage().isVersioned()) {
+        if (!isStatic && pField instanceof MetisFieldVersionedDef) {
             throw new IllegalStateException("Can't declare versioned field on local fieldSet");
         }
 
@@ -425,7 +424,7 @@ public class MetisFieldSet<T extends MetisFieldItem>
             theFields.add(pField);
 
             /* Adjust indications */
-            if (pField.getStorage().isVersioned()) {
+            if (pField instanceof MetisFieldVersionedDef) {
                 hasVersions = true;
             }
         }
@@ -484,11 +483,11 @@ public class MetisFieldSet<T extends MetisFieldItem>
             return false;
         }
 
-        /* Access as MetisDataFieldSet */
+        /* Access as MetisFieldSet */
         final MetisFieldSet<?> myThat = (MetisFieldSet<?>) pThat;
 
         /* Must have same anchor id */
-        return theAnchorId == myThat.getAnchorId();
+        return theAnchorId.equals(myThat.getAnchorId());
     }
 
     @Override
