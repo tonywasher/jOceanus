@@ -756,6 +756,7 @@ public class TransactionAnalyser
         SecurityValues mySourceValues = pSource.getValues();
         TethysUnits myUnits = mySourceValues.getUnitsValue(SecurityAttribute.UNITS);
         TethysMoney myCost = mySourceValues.getMoneyValue(SecurityAttribute.RESIDUALCOST);
+        TethysMoney myGains = mySourceValues.getMoneyValue(SecurityAttribute.REALISEDGAINS);
         TethysMoney myInvested = mySourceValues.getMoneyValue(SecurityAttribute.INVESTED);
         TethysMoney myForeignInvested = mySourceValues.getMoneyValue(SecurityAttribute.FOREIGNINVESTED);
         final boolean isForeign = pSource.isForeignCurrency();
@@ -786,6 +787,7 @@ public class TransactionAnalyser
         pTarget.adjustCounter(SecurityAttribute.UNITS, myUnits);
         pTarget.adjustCounter(SecurityAttribute.RESIDUALCOST, myCost);
         pTarget.adjustCounter(SecurityAttribute.INVESTED, myInvested);
+        pTarget.adjustCounter(SecurityAttribute.REALISEDGAINS, myGains);
         final SecurityValues myTargetValues = pTarget.registerTransaction(theHelper);
         myTargetValues.setValue(SecurityAttribute.PRICE, myPrice);
         myTargetValues.setValue(SecurityAttribute.VALUATION, myStockValue);
@@ -807,6 +809,9 @@ public class TransactionAnalyser
         myInvested = new TethysMoney(myInvested);
         myInvested.negate();
         pSource.adjustCounter(SecurityAttribute.INVESTED, myInvested);
+        myGains = new TethysMoney(myGains);
+        myGains.negate();
+        pSource.adjustCounter(SecurityAttribute.REALISEDGAINS, myGains);
         mySourceValues = pSource.registerTransaction(theHelper);
         mySourceValues.setValue(SecurityAttribute.PRICE, myPrice);
         mySourceValues.setValue(SecurityAttribute.VALUATION, myStockValue);
