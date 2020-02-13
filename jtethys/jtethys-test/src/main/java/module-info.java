@@ -25,6 +25,7 @@ module net.sourceforge.joceanus.jtethys.test.core {
     /* javaFX runTime */
     requires javafx.controls;
     requires javafx.graphics;
+    requires jfreechart;
 
     /* jOceanus */
     requires net.sourceforge.joceanus.jtethys.core;
