@@ -24,6 +24,11 @@
       <artifactId>jtethys-swing</artifactId>
       <version>${project.version}</version>
     </dependency>
+    <dependency>
+      <groupId>org.jfree</groupId>
+      <artifactId>jfreechart</artifactId>
+      <version>${JFreeChartVersion}</version>
+    </dependency>
   </dependencies>
   <properties>
     <svnComponent>jtethys-test</svnComponent>
