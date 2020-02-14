@@ -16,15 +16,15 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jtethys.test.ui.javafx;
 
+import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import javafx.application.Application;
 import javafx.collections.ObservableList;
 import javafx.scene.Scene;
-import javafx.scene.chart.CategoryAxis;
 import javafx.scene.chart.NumberAxis;
-import javafx.scene.chart.StackedBarChart;
+import javafx.scene.chart.StackedAreaChart;
 import javafx.scene.chart.XYChart;
 import javafx.scene.chart.XYChart.Data;
 import javafx.scene.chart.XYChart.Series;
@@ -34,16 +34,17 @@ import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
 import javafx.util.StringConverter;
 
+import net.sourceforge.joceanus.jtethys.date.TethysDate;
 import net.sourceforge.joceanus.jtethys.decimal.TethysDecimalFormatter;
 import net.sourceforge.joceanus.jtethys.decimal.TethysMoney;
-import net.sourceforge.joceanus.jtethys.test.ui.TethysBarChartData;
-import net.sourceforge.joceanus.jtethys.test.ui.TethysBarChartData.TethysBarChartDataSection;
-import net.sourceforge.joceanus.jtethys.test.ui.TethysBarChartData.TethysBarChartSeries;
+import net.sourceforge.joceanus.jtethys.test.ui.TethysAreaChartData;
+import net.sourceforge.joceanus.jtethys.test.ui.TethysAreaChartData.TethysAreaChartDataPoint;
+import net.sourceforge.joceanus.jtethys.test.ui.TethysAreaChartData.TethysAreaChartSeries;
 
 /**
- * JavaFX BarChart Example.
+ * JavaFX AreaChart Example.
  */
-public class TethysFXBarChartExample extends Application {
+public class TethysFXAreaChartExample extends Application {
     /**
      * The formatter.
      */
@@ -52,12 +53,12 @@ public class TethysFXBarChartExample extends Application {
     /**
      * The chart.
      */
-    private final StackedBarChart<String, Number> theChart;
+    private final StackedAreaChart<Number, Number> theChart;
 
     /**
      * The sectionMap.
      */
-    private final Map<String, TethysBarChartDataSection> theSectionMap;
+    private final Map<String, TethysAreaChartSeries> theSeriesMap;
 
     /**
      * Main entry point.
@@ -70,10 +71,24 @@ public class TethysFXBarChartExample extends Application {
     /**
      * Constructor.
      */
-    public TethysFXBarChartExample() {
-        theSectionMap = new HashMap<>();
-        final CategoryAxis myXAxis = new CategoryAxis();
+    public TethysFXAreaChartExample() {
+        theSeriesMap = new HashMap<>();
+        final NumberAxis myXAxis = new NumberAxis();
         myXAxis.setLabel("Date");
+        myXAxis.setAutoRanging(true);
+        myXAxis.setForceZeroInRange(false);
+        myXAxis.setTickLabelFormatter(new StringConverter<Number>() {
+            @Override
+            public String toString(final Number pValue) {
+                final LocalDate myDate = LocalDate.ofEpochDay(((Double) pValue).longValue());
+                return new TethysDate(myDate).toString();
+            }
+
+            @Override
+            public Number fromString(final String pValue) {
+                return null;
+            }
+        });
         final NumberAxis myYAxis = new NumberAxis();
         myYAxis.setLabel("Value");
         myYAxis.setTickLabelFormatter(new StringConverter<Number>() {
@@ -88,66 +103,72 @@ public class TethysFXBarChartExample extends Application {
                 return null;
             }
         });
-        theChart = new StackedBarChart<>(myXAxis, myYAxis);
+        theChart = new StackedAreaChart<>(myXAxis, myYAxis);
     }
 
     @Override
     public void start(final Stage pStage) {
         /* Create the panel */
-        updateBarChart(TethysBarChartData.createTestData());
+        updateAreaChart(TethysAreaChartData.createTestData());
 
         /* Create scene */
         final BorderPane myPane = new BorderPane();
         final Scene myScene = new Scene(myPane);
         myPane.setCenter(theChart);
-        pStage.setTitle("JavaFX BarChart Demo");
+        pStage.setTitle("JavaFX AreaChart Demo");
         pStage.setScene(myScene);
         pStage.show();
     }
 
     /**
-     * Update BarChart with data.
+     * Update AreaChart with data.
      * @param pData the data
      */
-    private void updateBarChart(final TethysBarChartData pData) {
+    private void updateAreaChart(final TethysAreaChartData pData) {
         /* Set the chart title */
         theChart.setTitle(pData.getTitle());
 
         /* Access and clear the data */
-        final ObservableList<XYChart.Series<String, Number>> myData = theChart.getData();
+        final ObservableList<XYChart.Series<Number, Number>> myData = theChart.getData();
         myData.clear();
-        theSectionMap.clear();
+        theSeriesMap.clear();
 
         /* Iterate through the sections */
-        final Iterator<TethysBarChartSeries> myIterator = pData.seriesIterator();
+        final Iterator<TethysAreaChartSeries> myIterator = pData.seriesIterator();
         while (myIterator.hasNext()) {
-            final TethysBarChartSeries myBase = myIterator.next();
-            final Series<String, Number> mySeries = new XYChart.Series<>();
-            mySeries.setName(myBase.getName());
-            final ObservableList<Data<String, Number>> mySections = mySeries.getData();
+            final TethysAreaChartSeries myBase = myIterator.next();
+            final Series<Number, Number> mySeries = new XYChart.Series<>();
+            final String myKey = myBase.getName();
+            mySeries.setName(myKey);
+            final ObservableList<Data<Number, Number>> myPoints = mySeries.getData();
             myData.add(mySeries);
+            theSeriesMap.put(myKey, myBase);
 
             /* Iterate through the sections */
-            final Iterator<TethysBarChartDataSection> mySectIterator = myBase.sectionIterator();
-            while (mySectIterator.hasNext()) {
-                final TethysBarChartDataSection mySection = mySectIterator.next();
+            final Iterator<TethysAreaChartDataPoint> myPointIterator = myBase.pointIterator();
+            while (myPointIterator.hasNext()) {
+                final TethysAreaChartDataPoint myPoint = myPointIterator.next();
 
                 /* Add the section */
-                mySections.add(new Data<>(mySection.getReference(), mySection.getValue().doubleValue()));
-                final String myKey = myBase.getName() + ":" + mySection.getReference();
-                theSectionMap.put(myKey, mySection);
+                myPoints.add(new Data<>(dateToEpoch(myPoint.getDate()), myPoint.getValue().doubleValue()));
             }
         }
 
-        /* Add Click handlers and toolTips */
+        myData.forEach(s -> s.getNode().addEventHandler(MouseEvent.MOUSE_CLICKED, e -> System.out.println(s.getName())));
         myData.forEach(s -> s.getData().forEach(d -> {
-            final String myKey = s.getName() + ":" + d.getXValue();
-            final TethysBarChartDataSection mySection = theSectionMap.get(myKey);
-            final TethysMoney myValue = mySection.getValue();
-            d.getNode().addEventHandler(MouseEvent.MOUSE_CLICKED, e -> System.out.println(myKey));
-            final Tooltip myTip = new Tooltip(myKey + " = " + theFormatter.formatMoney(myValue));
+            final TethysAreaChartSeries mySeries = theSeriesMap.get(s.getName());
+            final TethysMoney myValue = new TethysMoney(d.getYValue().toString());
+            final Tooltip myTip = new Tooltip(mySeries.getName() + " = " + theFormatter.formatMoney(myValue));
             Tooltip.install(d.getNode(), myTip);
         }));
     }
-}
 
+    /**
+     * Convert date to epoch.
+     * @param pDate the date
+     * @return the epoch
+     */
+    private long dateToEpoch(final TethysDate pDate) {
+        return pDate.getDate().toEpochDay();
+    }
+}

@@ -46,6 +46,17 @@ public class TethysRate
     }
 
     /**
+     * Construct a new Ratio by the ratio between two decimals.
+     * @param pFirst the first decimal
+     * @param pSecond the second decimal
+     */
+    public TethysRate(final TethysDecimal pFirst,
+                      final TethysDecimal pSecond) {
+        recordScale(NUM_DECIMALS);
+        calculateQuotient(pFirst, pSecond);
+    }
+
+    /**
      * Construct a new Rate from a ratio.
      * @param pRatio the Ratio
      */
