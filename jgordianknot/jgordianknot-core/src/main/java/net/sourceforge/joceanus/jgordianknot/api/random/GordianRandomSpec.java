@@ -24,6 +24,7 @@ import java.util.Objects;
 import net.sourceforge.joceanus.jgordianknot.api.base.GordianLength;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianSymKeySpec;
 import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigestSpec;
+import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigestType;
 import net.sourceforge.joceanus.jgordianknot.api.key.GordianKeyLengths;
 import net.sourceforge.joceanus.jtethys.TethysDataConverter;
 
@@ -212,7 +213,8 @@ public class GordianRandomSpec {
             case HMAC:
             case HASH:
                 return theSubSpec instanceof GordianDigestSpec
-                        && ((GordianDigestSpec) theSubSpec).isValid();
+                        && ((GordianDigestSpec) theSubSpec).isValid()
+                        && !((GordianDigestSpec) theSubSpec).getDigestType().stateAsInputLength();
             case CTR:
             case X931:
                 return theSubSpec instanceof GordianSymKeySpec

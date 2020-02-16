@@ -338,7 +338,7 @@ public final class GordianSignatureSpec {
             case GOST2012:
             case SM2:
             case RAINBOW:
-                return theDigestSpec != null && theDigestSpec.isValid();
+                return theDigestSpec != null && theDigestSpec.isValid() && !theDigestSpec.getDigestType().stateAsInputLength();
             case ED25519:
             case ED448:
             case SPHINCS:

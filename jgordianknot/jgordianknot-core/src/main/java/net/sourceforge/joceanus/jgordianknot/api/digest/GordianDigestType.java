@@ -120,7 +120,12 @@ public enum GordianDigestType {
     /**
      * Kangaroo.
      */
-    KANGAROO(GordianLength.LEN_128, GordianLength.LEN_160, GordianLength.LEN_224, GordianLength.LEN_256, GordianLength.LEN_384, GordianLength.LEN_512);
+    KANGAROO(GordianLength.LEN_128, GordianLength.LEN_160, GordianLength.LEN_224, GordianLength.LEN_256, GordianLength.LEN_384, GordianLength.LEN_512),
+
+    /**
+     * Haraka.
+     */
+    HARAKA(GordianLength.LEN_256);
 
     /**
      * The Supported lengths.
@@ -207,6 +212,10 @@ public enum GordianDigestType {
                 return pStateLength != null
                         && (pStateLength.equals(getBLAKEStateForLength(pLength))
                         || pStateLength.equals(getAlternateBLAKEStateForLength(pLength)));
+            case HARAKA:
+                return pStateLength != null
+                        && (pStateLength.equals(getDefaultHarakaState())
+                        || pStateLength.equals(getAlternateHarakaState()));
             default:
                 return pStateLength == null;
         }
@@ -226,6 +235,8 @@ public enum GordianDigestType {
                 return getSHAKEStateForLength(pLength);
             case BLAKE:
                 return getBLAKEStateForLength(pLength);
+            case HARAKA:
+                return getDefaultHarakaState();
             default:
                 return null;
         }
@@ -294,6 +305,14 @@ public enum GordianDigestType {
     }
 
     /**
+     * Obtain the standard harakaState length.
+     * @return the length
+     */
+    private static GordianLength getDefaultHarakaState() {
+        return GordianLength.LEN_256;
+    }
+
+    /**
      * Obtain the alternate stateLength for this length?
      * @param pLength the length
      * @return the length (null if not supported)
@@ -309,6 +328,8 @@ public enum GordianDigestType {
                 return getAlternateSkeinStateForLength(pLength);
             case BLAKE:
                 return getAlternateBLAKEStateForLength(pLength);
+            case HARAKA:
+                return getAlternateHarakaState();
             default:
                 return null;
         }
@@ -376,6 +397,14 @@ public enum GordianDigestType {
     }
 
     /**
+     * Obtain the alternate harakaState length.
+     * @return the length
+     */
+    private static GordianLength getAlternateHarakaState() {
+        return GordianLength.LEN_512;
+    }
+
+    /**
      * Is this the Blake2b algorithm?
      * @param pLength the length
      * @return true/false
@@ -407,6 +436,14 @@ public enum GordianDigestType {
     }
 
     /**
+     * does this digest required defined input length equal to state length?
+     * @return true/false
+     */
+    public boolean stateAsInputLength() {
+        return this == HARAKA;
+    }
+
+    /**
      * is this available as an external hashDigest?
      * @return true/false
      */
@@ -419,6 +456,7 @@ public enum GordianDigestType {
      * @return true/false
      */
     public boolean isCombinedHashDigest() {
-        return getDefaultLength().getLength() >= GordianLength.LEN_256.getLength();
+        return getDefaultLength().getLength() >= GordianLength.LEN_256.getLength()
+                && !stateAsInputLength();
     }
 }

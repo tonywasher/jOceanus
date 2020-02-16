@@ -333,6 +333,22 @@ public class GordianDigestSpec
     }
 
     /**
+     * Create haraka256DigestSpec.
+     * @return the DigestSpec
+     */
+    public static GordianDigestSpec haraka256() {
+        return new GordianDigestSpec(GordianDigestType.HARAKA, GordianLength.LEN_256);
+    }
+
+    /**
+     * Create haraka512DigestSpec.
+     * @return the DigestSpec
+     */
+    public static GordianDigestSpec haraka512() {
+        return new GordianDigestSpec(GordianDigestType.HARAKA, GordianLength.LEN_512, GordianLength.LEN_256);
+    }
+
+    /**
      * Obtain Digest Type.
      * @return the DigestType
      */
@@ -388,6 +404,7 @@ public class GordianDigestSpec
             case BLAKE:
             case SHAKE:
             case KANGAROO:
+            case HARAKA:
                 return theStateLength != null;
             case SHA2:
                 return true;
@@ -428,6 +445,9 @@ public class GordianDigestSpec
                     case KANGAROO:
                         theName = GordianDigestType.getKangarooAlgorithmForStateLength(theStateLength);
                         theName += SEP + theLength;
+                        break;
+                    case HARAKA:
+                        theName += SEP + theStateLength;
                         break;
                     default:
                         if (theDigestType.getSupportedLengths().length > 1) {

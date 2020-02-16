@@ -21,6 +21,8 @@ import org.bouncycastle.crypto.digests.DSTU7564Digest;
 import org.bouncycastle.crypto.digests.GOST3411Digest;
 import org.bouncycastle.crypto.digests.GOST3411_2012_256Digest;
 import org.bouncycastle.crypto.digests.GOST3411_2012_512Digest;
+import org.bouncycastle.crypto.digests.Haraka256Digest;
+import org.bouncycastle.crypto.digests.Haraka512Digest;
 import org.bouncycastle.crypto.digests.MD2Digest;
 import org.bouncycastle.crypto.digests.MD4Digest;
 import org.bouncycastle.crypto.digests.MD5Digest;
@@ -49,6 +51,7 @@ import org.bouncycastle.crypto.ext.digests.Kangaroo.KangarooBase;
 import org.bouncycastle.crypto.ext.digests.Kangaroo.KangarooTwelve;
 import org.bouncycastle.crypto.ext.digests.Kangaroo.MarsupimalFourteen;
 import org.bouncycastle.crypto.ext.digests.SkeinDigest;
+import org.bouncycastle.jcajce.provider.digest.Haraka;
 
 import net.sourceforge.joceanus.jgordianknot.api.base.GordianLength;
 import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigestSpec;
@@ -114,6 +117,8 @@ public class BouncyDigestFactory
                 return new CSHAKE(pDigestSpec.getStateLength().getLength(), pDigestSpec.getDigestLength().getByteLength(), null);
             case KANGAROO:
                 return getKangarooDigest(pDigestSpec);
+            case HARAKA:
+                return getHarakaDigest(pDigestSpec);
             case BLAKE:
                 return getBlake2Digest(pDigestSpec);
             case STREEBOG:
@@ -191,6 +196,18 @@ public class BouncyDigestFactory
         return GordianLength.LEN_128 == pSpec.getStateLength()
                ? new KangarooTwelve(myLength)
                : new MarsupimalFourteen(myLength);
+    }
+
+    /**
+     * Create the BouncyCastle Haraka digest.
+     *
+     * @param pSpec the digest spec
+     * @return the digest
+     */
+    private static Digest getHarakaDigest(final GordianDigestSpec pSpec) {
+        return GordianLength.LEN_256 == pSpec.getStateLength()
+               ? new Haraka256Digest()
+               : new Haraka512Digest();
     }
 
     /**

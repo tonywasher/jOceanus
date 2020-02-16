@@ -620,8 +620,10 @@ public final class GordianMacSpec implements GordianKeySpec {
         }
 
         /* Check for digestType restrictions */
+        final GordianDigestType myType = ((GordianDigestSpec) theSubSpec).getDigestType();
         return  pDigestType == null
-                || ((GordianDigestSpec) theSubSpec).getDigestType() == pDigestType;
+                ? !myType.stateAsInputLength()
+                : myType == pDigestType;
     }
 
     /**

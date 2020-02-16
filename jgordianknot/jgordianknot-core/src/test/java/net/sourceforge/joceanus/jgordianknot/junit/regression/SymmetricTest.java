@@ -622,7 +622,7 @@ public class SymmetricTest {
         Assertions.assertEquals(mySpec.getDigestLength().getByteLength(), myDigest.getDigestSize(), "DigestLength incorrect");
 
         /* Loop 100 times */
-        final byte[] myBytes = "DigestInput".getBytes();
+        final byte[] myBytes = getDigestInput(mySpec);
         final long myStart = System.nanoTime();
         for (int i = 0; i < profileRepeat; i++) {
             myDigest.update(myBytes);
@@ -652,7 +652,7 @@ public class SymmetricTest {
         final GordianDigest myPartnerDigest = myPartnerFactory.createDigest(mySpec);
 
         /* Calculate digests */
-        final byte[] myBytes = "DigestInput".getBytes();
+        final byte[] myBytes = getDigestInput(mySpec);
         myDigest.update(myBytes);
         final byte[] myFirst = myDigest.finish();
         myPartnerDigest.update(myBytes);
@@ -661,6 +661,19 @@ public class SymmetricTest {
         /* Check that the digests match */
         Assertions.assertArrayEquals(myFirst, mySecond, "Digest misMatch");
     }
+
+    /**
+     * Obtain digest test input.
+     * @param pDigestSpec the digestSpec
+     * @return the input
+     */
+    private byte[] getDigestInput(final GordianDigestSpec pDigestSpec) {
+        /* Obtain basic input */
+        final byte[] myBytes = "DigestInput".getBytes();
+        return pDigestSpec.getDigestType().stateAsInputLength()
+                ? Arrays.copyOf(myBytes, pDigestSpec.getStateLength().getByteLength())
+                : myBytes;
+     }
 
     /**
      * Profile mac.
