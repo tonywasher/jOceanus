@@ -221,6 +221,15 @@ public final class GordianAsymKeySpec {
     }
 
     /**
+     * Create lmsKey.
+     * @param pKeySpec the keySpec
+     * @return the KeySpec
+     */
+    public static GordianAsymKeySpec lms(final GordianLMSKeySpec pKeySpec) {
+        return new GordianAsymKeySpec(GordianAsymKeyType.LMS, pKeySpec);
+    }
+
+    /**
      * Obtain the keyType.
      * @return the keyType.
      */
@@ -301,6 +310,16 @@ public final class GordianAsymKeySpec {
     public GordianMcElieceKeySpec getMcElieceSpec() {
         return theSubKeyType instanceof GordianMcElieceKeySpec
                ? (GordianMcElieceKeySpec) theSubKeyType
+               : null;
+    }
+
+    /**
+     * Obtain the lms keySpec.
+     * @return the keySpec.
+     */
+    public GordianLMSKeySpec getLMSSpec() {
+        return theSubKeyType instanceof GordianLMSKeySpec
+               ? (GordianLMSKeySpec) theSubKeyType
                : null;
     }
 
@@ -427,6 +446,9 @@ public final class GordianAsymKeySpec {
                 return theSubKeyType instanceof GordianXMSSKeyType;
             case QTESLA:
                 return theSubKeyType instanceof GordianQTESLAKeyType;
+            case LMS:
+                return theSubKeyType instanceof GordianLMSKeySpec
+                        && ((GordianLMSKeySpec) theSubKeyType).isValid();
             case ED25519:
             case ED448:
             case X25519:
@@ -494,6 +516,9 @@ public final class GordianAsymKeySpec {
 
         /* Add McEliece */
         GordianMcElieceKeySpec.listPossibleKeySpecs().forEach(t -> mySpecs.add(GordianAsymKeySpec.mcEliece(t)));
+
+        /* Add LMS */
+        GordianLMSKeySpec.listPossibleKeySpecs().forEach(t -> mySpecs.add(GordianAsymKeySpec.lms(t)));
 
         /* Return the list */
         return mySpecs;

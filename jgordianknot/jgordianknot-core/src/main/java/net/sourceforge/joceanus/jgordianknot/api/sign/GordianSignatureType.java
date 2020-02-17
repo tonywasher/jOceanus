@@ -106,6 +106,7 @@ public enum GordianSignatureType {
             case XMSS:
             case XMSSMT:
             case QTESLA:
+            case LMS:
                 return true;
             default:
                 return false;

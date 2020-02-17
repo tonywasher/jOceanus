@@ -54,6 +54,12 @@ import org.bouncycastle.pqc.asn1.PQCObjectIdentifiers;
 import org.bouncycastle.pqc.asn1.SPHINCS256KeyParams;
 import org.bouncycastle.pqc.asn1.XMSSKeyParams;
 import org.bouncycastle.pqc.asn1.XMSSMTKeyParams;
+import org.bouncycastle.pqc.crypto.lms.LMOtsParameters;
+import org.bouncycastle.pqc.crypto.lms.LMSPrivateKeyParameters;
+import org.bouncycastle.pqc.crypto.lms.LMSPublicKeyParameters;
+import org.bouncycastle.pqc.crypto.lms.LMSigParameters;
+import org.bouncycastle.pqc.crypto.util.PrivateKeyFactory;
+import org.bouncycastle.pqc.crypto.util.PublicKeyFactory;
 
 import net.sourceforge.joceanus.jgordianknot.api.asym.GordianAsymKeySpec;
 import net.sourceforge.joceanus.jgordianknot.api.asym.GordianDHGroup;
@@ -61,6 +67,9 @@ import net.sourceforge.joceanus.jgordianknot.api.asym.GordianDSAElliptic;
 import net.sourceforge.joceanus.jgordianknot.api.asym.GordianDSAKeyType;
 import net.sourceforge.joceanus.jgordianknot.api.asym.GordianDSTU4145Elliptic;
 import net.sourceforge.joceanus.jgordianknot.api.asym.GordianGOSTElliptic;
+import net.sourceforge.joceanus.jgordianknot.api.asym.GordianLMSKeySpec;
+import net.sourceforge.joceanus.jgordianknot.api.asym.GordianLMSKeySpec.GordianLMSOtsType;
+import net.sourceforge.joceanus.jgordianknot.api.asym.GordianLMSKeySpec.GordianLMSSigType;
 import net.sourceforge.joceanus.jgordianknot.api.asym.GordianMcElieceKeySpec;
 import net.sourceforge.joceanus.jgordianknot.api.asym.GordianMcElieceKeySpec.GordianMcElieceDigestType;
 import net.sourceforge.joceanus.jgordianknot.api.asym.GordianQTESLAKeyType;
@@ -127,6 +136,7 @@ public class GordianAsymAlgId {
         GordianMcElieceEncodedParser.register(this);
         GordianMcElieceCCA2EncodedParser.register(this);
         GordianQTESLAEncodedParser.register(this);
+        GordianLMSEncodedParser.register(this);
     }
 
     /**
@@ -919,6 +929,87 @@ public class GordianAsymAlgId {
         @Override
         public GordianAsymKeySpec determineKeySpec(final PrivateKeyInfo pInfo) throws OceanusException {
             return GordianAsymKeySpec.qTESLA(theKeyType);
+        }
+    }
+
+    /**
+     * LMS Encoded parser.
+     */
+    private static class GordianLMSEncodedParser implements GordianEncodedParser {
+        /**
+         * Registrar.
+         * @param pIdManager the idManager
+         */
+        static void register(final GordianAsymAlgId pIdManager) {
+            pIdManager.registerParser(PKCSObjectIdentifiers.id_alg_hss_lms_hashsig, new GordianLMSEncodedParser());
+        }
+
+        @Override
+        public GordianAsymKeySpec determineKeySpec(final SubjectPublicKeyInfo pInfo) throws OceanusException {
+            /* Protect against exceptions */
+            try {
+                /* Parse public key */
+                final LMSPublicKeyParameters myPublic = (LMSPublicKeyParameters) PublicKeyFactory.createKey(pInfo);
+                final GordianLMSSigType mySigType = determineSigType(myPublic.getSigParameters());
+                final GordianLMSOtsType myOtsType = determineOtsType(myPublic.getOtsParameters());
+                return GordianAsymKeySpec.lms(new GordianLMSKeySpec(mySigType, myOtsType));
+
+                /* Handle exceptions */
+            } catch (IOException e) {
+                throw new GordianDataException(ERROR_PARSE);
+            }
+         }
+
+        @Override
+        public GordianAsymKeySpec determineKeySpec(final PrivateKeyInfo pInfo) throws OceanusException {
+            /* Protect against exceptions */
+            try {
+                /* Parse public key */
+                final LMSPrivateKeyParameters myPrivate = (LMSPrivateKeyParameters) PrivateKeyFactory.createKey(pInfo);
+                final GordianLMSSigType mySigType = determineSigType(myPrivate.getSigParameters());
+                final GordianLMSOtsType myOtsType = determineOtsType(myPrivate.getOtsParameters());
+                return GordianAsymKeySpec.lms(new GordianLMSKeySpec(mySigType, myOtsType));
+
+                /* Handle exceptions */
+            } catch (IOException e) {
+                throw new GordianDataException(ERROR_PARSE);
+            }
+        }
+
+        /**
+         * Obtain sigType from params.
+         * @param pParams the Params
+         * @return the sigType
+         * @throws OceanusException on error
+         */
+        static GordianLMSSigType determineSigType(final LMSigParameters pParams) throws OceanusException {
+            /* Loop through the sigTypes */
+            for (final GordianLMSSigType myType : GordianLMSSigType.values()) {
+                if (myType.getParameter().equals(pParams)) {
+                    return myType;
+                }
+            }
+
+            /* Parameter not recognised */
+            throw new GordianDataException(ERROR_TREEDIGEST);
+        }
+
+        /**
+         * Obtain otsType from params.
+         * @param pParams the Params
+         * @return the sigType
+         * @throws OceanusException on error
+         */
+        static GordianLMSOtsType determineOtsType(final LMOtsParameters pParams) throws OceanusException {
+            /* Loop through the sigTypes */
+            for (final GordianLMSOtsType myType : GordianLMSOtsType.values()) {
+                if (myType.getParameter().equals(pParams)) {
+                    return myType;
+                }
+            }
+
+            /* Parameter not recognised */
+            throw new GordianDataException(ERROR_TREEDIGEST);
         }
     }
 }

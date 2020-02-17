@@ -26,6 +26,7 @@ import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyEdDSAAsymKey.BouncyEd
 import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyEllipticAsymKey.BouncyECSignature;
 import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyEllipticAsymKey.BouncySM2Signature;
 import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyGOSTAsymKey.BouncyGOSTSignature;
+import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyLMSAsymKey.BouncyLMSSignature;
 import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyQTESLAAsymKey.BouncyQTESLASignature;
 import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyRSAAsymKey.BouncyRSASignature;
 import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyRainbowAsymKey.BouncyRainbowSignature;
@@ -104,6 +105,8 @@ public class BouncySignatureFactory
                 return new BouncyXMSSMTSignature(getFactory(), pSignatureSpec);
             case QTESLA:
                 return new BouncyQTESLASignature(getFactory(), pSignatureSpec);
+            case LMS:
+                return new BouncyLMSSignature(getFactory(), pSignatureSpec);
             default:
                 throw new GordianDataException(BouncyFactory.getInvalidText(pSignatureSpec.getAsymKeyType()));
         }

@@ -16,6 +16,8 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jgordianknot.api.asym;
 
+import org.bouncycastle.pqc.jcajce.provider.QTESLA;
+
 /**
  * Asymmetric KeyTypes.
  */
@@ -108,7 +110,12 @@ public enum GordianAsymKeyType {
     /**
      * qTESLA.
      */
-    QTESLA;
+    QTESLA,
+
+    /**
+     * LMS.
+     */
+    LMS;
 
     /**
      * use random for signatures?
@@ -139,6 +146,7 @@ public enum GordianAsymKeyType {
             case ED25519:
             case ED448:
             case QTESLA:
+            case LMS:
                 return true;
             default:
                 return false;
@@ -162,7 +170,7 @@ public enum GordianAsymKeyType {
     }
 
     /**
-     * Dow we skipped derived key equality check?
+     * Do we skip derived key equality check?
      * <p>
      * Temporary fix for DH JCA bug where the derived key does not equal the original key
      * @return true/false

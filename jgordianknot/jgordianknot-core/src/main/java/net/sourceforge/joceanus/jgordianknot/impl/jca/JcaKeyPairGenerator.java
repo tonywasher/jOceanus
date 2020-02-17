@@ -30,6 +30,8 @@ import org.bouncycastle.crypto.params.DHParameters;
 import org.bouncycastle.jcajce.spec.DHDomainParameterSpec;
 import org.bouncycastle.jcajce.spec.EdDSAParameterSpec;
 import org.bouncycastle.jcajce.spec.XDHParameterSpec;
+import org.bouncycastle.pqc.crypto.lms.LMSParameters;
+import org.bouncycastle.pqc.jcajce.spec.LMSParameterSpec;
 import org.bouncycastle.pqc.jcajce.spec.McElieceCCA2KeyGenParameterSpec;
 import org.bouncycastle.pqc.jcajce.spec.McElieceKeyGenParameterSpec;
 import org.bouncycastle.pqc.jcajce.spec.QTESLAParameterSpec;
@@ -41,6 +43,7 @@ import net.sourceforge.joceanus.jgordianknot.api.asym.GordianAsymKeySpec;
 import net.sourceforge.joceanus.jgordianknot.api.asym.GordianAsymKeyType;
 import net.sourceforge.joceanus.jgordianknot.api.asym.GordianDHGroup;
 import net.sourceforge.joceanus.jgordianknot.api.asym.GordianDSAKeyType;
+import net.sourceforge.joceanus.jgordianknot.api.asym.GordianLMSKeySpec;
 import net.sourceforge.joceanus.jgordianknot.api.asym.GordianMcElieceKeySpec;
 import net.sourceforge.joceanus.jgordianknot.api.asym.GordianMcElieceKeySpec.GordianMcElieceDigestType;
 import net.sourceforge.joceanus.jgordianknot.api.asym.GordianRSAModulus;
@@ -477,12 +480,7 @@ public abstract class JcaKeyPairGenerator
                                   : MCELIECE_ALGO;
             theGenerator = JcaAsymFactory.getJavaKeyPairGenerator(myAlgo, true);
 
-            /*
-             * Note that we should create McEliece parameters and initialise using them, but that
-             * call is not yet supported and is a No-OP leading to a NullPointer exception when we
-             * try to generate the keyPair. Note also that obtaining PKCS8 and X509 encoding also
-             * leads to NullPointer exceptions, since this is also not yet supported.
-             */
+            /* Protect against exceptions */
             try {
                 if (myKeyType.isCCA2()) {
                     final GordianMcElieceDigestType myDigestType = myKeyType.getDigestType();
@@ -727,6 +725,54 @@ public abstract class JcaKeyPairGenerator
             } catch (InvalidAlgorithmParameterException e) {
                 throw new GordianCryptoException("Failed to create qTESLAgenerator", e);
             }
+        }
+
+        @Override
+        public JcaKeyPair generateKeyPair() {
+            final KeyPair myPair = theGenerator.generateKeyPair();
+            final JcaPublicKey myPublic = new JcaPublicKey(getKeySpec(), myPair.getPublic());
+            final JcaPrivateKey myPrivate = new JcaPrivateKey(getKeySpec(), myPair.getPrivate());
+            return new JcaKeyPair(myPublic, myPrivate);
+        }
+    }
+
+    /**
+     * Jca LMS KeyPair generator.
+     */
+    public static class JcaLMSKeyPairGenerator
+            extends JcaKeyPairGenerator {
+        /**
+         * Generator.
+         */
+        private final KeyPairGenerator theGenerator;
+
+        /**
+         * Constructor.
+         * @param pFactory the Security Factory
+         * @param pKeySpec the keySpec
+         * @throws OceanusException on error
+         */
+        JcaLMSKeyPairGenerator(final JcaFactory pFactory,
+                               final GordianAsymKeySpec pKeySpec) throws OceanusException {
+            /* Initialise underlying class */
+            super(pFactory, pKeySpec);
+
+            /* Create and initialise the generator */
+            final String myJavaType = pKeySpec.getKeyType().toString();
+            theGenerator = JcaAsymFactory.getJavaKeyPairGenerator(myJavaType, true);
+
+            /* Protect against exceptions */
+            try {
+                final GordianLMSKeySpec myKeySpec = pKeySpec.getLMSSpec();
+                final LMSParameters myParms = myKeySpec.getParameters();
+                final LMSParameterSpec mySpec = new LMSParameterSpec(myParms.getLmsParam(), myParms.getLmOTSParam());
+                theGenerator.initialize(mySpec, getRandom());
+             } catch (InvalidAlgorithmParameterException e) {
+                throw new GordianCryptoException("Failed to initialise generator", e);
+            }
+
+            /* Create the factory */
+            setKeyFactory(JcaAsymFactory.getJavaKeyFactory(myJavaType, true));
         }
 
         @Override

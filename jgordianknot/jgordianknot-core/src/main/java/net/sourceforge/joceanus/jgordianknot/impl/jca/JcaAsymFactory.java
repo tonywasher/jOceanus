@@ -22,10 +22,8 @@ import java.security.NoSuchAlgorithmException;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.bouncycastle.math.ec.rfc7748.X25519;
-import org.bouncycastle.math.ec.rfc7748.X448;
-
 import net.sourceforge.joceanus.jgordianknot.api.asym.GordianAsymKeySpec;
+import net.sourceforge.joceanus.jgordianknot.api.asym.GordianAsymKeyType;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianCryptoException;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianDataException;
 import net.sourceforge.joceanus.jgordianknot.impl.core.keypair.GordianCoreAsymFactory;
@@ -34,6 +32,7 @@ import net.sourceforge.joceanus.jgordianknot.impl.jca.JcaKeyPairGenerator.JcaDHK
 import net.sourceforge.joceanus.jgordianknot.impl.jca.JcaKeyPairGenerator.JcaDSAKeyPairGenerator;
 import net.sourceforge.joceanus.jgordianknot.impl.jca.JcaKeyPairGenerator.JcaECKeyPairGenerator;
 import net.sourceforge.joceanus.jgordianknot.impl.jca.JcaKeyPairGenerator.JcaEdKeyPairGenerator;
+import net.sourceforge.joceanus.jgordianknot.impl.jca.JcaKeyPairGenerator.JcaLMSKeyPairGenerator;
 import net.sourceforge.joceanus.jgordianknot.impl.jca.JcaKeyPairGenerator.JcaMcElieceKeyPairGenerator;
 import net.sourceforge.joceanus.jgordianknot.impl.jca.JcaKeyPairGenerator.JcaNewHopeKeyPairGenerator;
 import net.sourceforge.joceanus.jgordianknot.impl.jca.JcaKeyPairGenerator.JcaQTESLAKeyPairGenerator;
@@ -146,6 +145,8 @@ public class JcaAsymFactory
                 return new JcaXMSSKeyPairGenerator(getFactory(), pKeySpec);
             case QTESLA:
                 return new JcaQTESLAKeyPairGenerator(getFactory(), pKeySpec);
+            case LMS:
+                return new JcaLMSKeyPairGenerator(getFactory(), pKeySpec);
             default:
                 throw new GordianDataException(JcaFactory.getInvalidText(pKeySpec.getKeyType()));
         }
@@ -195,5 +196,14 @@ public class JcaAsymFactory
             /* Throw the exception */
             throw new GordianCryptoException("Failed to create KeyPairGenerator", e);
         }
+    }
+
+    /**
+     * Valid keySpec.
+     * @param pKeySpec the asymKeySpec
+     * @return true/false
+     */
+    public boolean validAsymKeySpec(final GordianAsymKeySpec pKeySpec) {
+        return super.validAsymKeySpec(pKeySpec) && pKeySpec.getKeyType() != GordianAsymKeyType.LMS;
     }
 }

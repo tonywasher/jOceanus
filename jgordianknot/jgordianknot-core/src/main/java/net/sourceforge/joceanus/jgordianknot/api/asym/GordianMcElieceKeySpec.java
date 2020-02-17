@@ -170,7 +170,7 @@ public final class GordianMcElieceKeySpec {
             return false;
         }
 
-        /* Make sure that the object is a mEliecesSpec */
+        /* Make sure that the object is a mElieceSpec */
         if (pThat.getClass() != this.getClass()) {
             return false;
         }

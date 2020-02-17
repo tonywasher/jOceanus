@@ -253,6 +253,14 @@ public final class GordianSignatureSpec {
     }
 
     /**
+     * Create lmsSpec.
+     * @return the SignatureSpec
+     */
+    public static GordianSignatureSpec lms() {
+        return new GordianSignatureSpec(GordianAsymKeyType.LMS, GordianSignatureType.PURE);
+    }
+
+    /**
      * Create default signatureSpec for key.
      * @param pKeySpec the keySpec
      * @return the SignatureSpec
@@ -285,6 +293,8 @@ public final class GordianSignatureSpec {
                 return xmssmt();
             case QTESLA:
                 return qTESLA();
+            case LMS:
+                return lms();
             default:
                 return null;
         }
@@ -345,6 +355,7 @@ public final class GordianSignatureSpec {
             case QTESLA:
             case XMSS:
             case XMSSMT:
+            case LMS:
                 return theDigestSpec == null;
             default:
                 return false;
