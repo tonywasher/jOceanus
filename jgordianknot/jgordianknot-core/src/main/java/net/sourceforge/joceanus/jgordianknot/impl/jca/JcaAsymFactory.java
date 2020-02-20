@@ -197,13 +197,4 @@ public class JcaAsymFactory
             throw new GordianCryptoException("Failed to create KeyPairGenerator", e);
         }
     }
-
-    /**
-     * Valid keySpec.
-     * @param pKeySpec the asymKeySpec
-     * @return true/false
-     */
-    public boolean validAsymKeySpec(final GordianAsymKeySpec pKeySpec) {
-        return super.validAsymKeySpec(pKeySpec) && pKeySpec.getKeyType() != GordianAsymKeyType.LMS;
-    }
 }

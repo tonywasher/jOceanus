@@ -779,8 +779,20 @@ public abstract class JcaKeyPairGenerator
         public JcaKeyPair generateKeyPair() {
             final KeyPair myPair = theGenerator.generateKeyPair();
             final JcaPublicKey myPublic = new JcaPublicKey(getKeySpec(), myPair.getPublic());
-            final JcaPrivateKey myPrivate = new JcaPrivateKey(getKeySpec(), myPair.getPrivate());
-            return new JcaKeyPair(myPublic, myPrivate);
+            final JcaStateAwarePrivateKey myPrivate = new JcaStateAwarePrivateKey(getKeySpec(), myPair.getPrivate());
+            return new JcaStateAwareKeyPair(myPublic, myPrivate);
+        }
+
+        @Override
+        public JcaKeyPair deriveKeyPair(final X509EncodedKeySpec pPublicKey,
+                                        final PKCS8EncodedKeySpec pPrivateKey) throws OceanusException {
+            try {
+                final JcaPublicKey myPublic = derivePublicKey(pPublicKey);
+                final JcaStateAwarePrivateKey myPrivate = new JcaStateAwarePrivateKey(getKeySpec(), getKeyFactory().generatePrivate(pPrivateKey));
+                return new JcaStateAwareKeyPair(myPublic, myPrivate);
+            } catch (InvalidKeySpecException e) {
+                throw new GordianCryptoException(PARSE_ERROR, e);
+            }
         }
     }
 }

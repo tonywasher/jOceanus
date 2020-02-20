@@ -30,6 +30,7 @@ import net.sourceforge.joceanus.jgordianknot.impl.core.sign.GordianCoreSignature
 import net.sourceforge.joceanus.jgordianknot.impl.jca.JcaSignature.JcaDSASignature;
 import net.sourceforge.joceanus.jgordianknot.impl.jca.JcaSignature.JcaEdDSASignature;
 import net.sourceforge.joceanus.jgordianknot.impl.jca.JcaSignature.JcaGOSTSignature;
+import net.sourceforge.joceanus.jgordianknot.impl.jca.JcaSignature.JcaLMSSignature;
 import net.sourceforge.joceanus.jgordianknot.impl.jca.JcaSignature.JcaQTESLASignature;
 import net.sourceforge.joceanus.jgordianknot.impl.jca.JcaSignature.JcaRSASignature;
 import net.sourceforge.joceanus.jgordianknot.impl.jca.JcaSignature.JcaRainbowSignature;
@@ -118,6 +119,8 @@ public class JcaSignatureFactory
                 return new JcaRainbowSignature(getFactory(), pSignatureSpec);
             case QTESLA:
                 return new JcaQTESLASignature(getFactory(), pSignatureSpec);
+            case LMS:
+                return new JcaLMSSignature(getFactory(), pSignatureSpec);
             default:
                 throw new GordianDataException(JcaFactory.getInvalidText(pSignatureSpec.getAsymKeyType()));
         }
@@ -149,6 +152,7 @@ public class JcaSignatureFactory
             case XMSSMT:
             case SPHINCS:
             case QTESLA:
+            case LMS:
                 return true;
             case ED448:
                 return GordianSignatureType.PURE.equals(pSpec.getSignatureType());

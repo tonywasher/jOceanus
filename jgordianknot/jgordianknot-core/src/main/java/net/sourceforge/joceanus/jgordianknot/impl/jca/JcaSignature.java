@@ -581,4 +581,25 @@ public abstract class JcaSignature
             setSigner(JcaSignatureFactory.getJavaSignature("QTESLA", true));
         }
     }
+
+    /**
+     * LMS signature.
+     */
+    static class JcaLMSSignature
+            extends JcaSignature {
+        /**
+         * Constructor.
+         * @param pFactory the factory
+         * @param pSignatureSpec the signatureSpec
+         * @throws OceanusException on error
+         */
+        JcaLMSSignature(final GordianCoreFactory pFactory,
+                        final GordianSignatureSpec pSignatureSpec) throws OceanusException {
+            /* Initialise class */
+            super(pFactory, pSignatureSpec);
+
+            /* Create the signature class */
+            setSigner(JcaSignatureFactory.getJavaSignature("LMS", true));
+        }
+    }
 }
