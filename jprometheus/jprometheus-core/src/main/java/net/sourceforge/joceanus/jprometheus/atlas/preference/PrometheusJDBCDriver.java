@@ -36,7 +36,12 @@ public enum PrometheusJDBCDriver {
     /**
      * PostgreSQL.
      */
-    MYSQL;
+    MYSQL,
+
+    /**
+     * H2.
+     */
+    H2;
 
     /**
      * Buffer length.
@@ -70,6 +75,8 @@ public enum PrometheusJDBCDriver {
                 return "net.sourceforge.jtds.jdbc.Driver";
             case MYSQL:
                 return "com.mysql.jdbc.Driver";
+            case H2:
+                return "org.h2.Driver";
             case POSTGRESQL:
             default:
                 return "org.postgresql.Driver";
@@ -85,6 +92,7 @@ public enum PrometheusJDBCDriver {
             case SQLSERVER:
                 return true;
             case MYSQL:
+            case H2:
             case POSTGRESQL:
             default:
                 return false;
@@ -101,6 +109,8 @@ public enum PrometheusJDBCDriver {
                 return "jdbc:jtds:sqlserver://";
             case MYSQL:
                 return "jdbc:mysql://";
+            case H2:
+                return "jdbc:h2:mem:";
             case POSTGRESQL:
             default:
                 return "jdbc:postgresql://";
@@ -116,9 +126,14 @@ public enum PrometheusJDBCDriver {
         /* Create the buffer */
         final StringBuilder myBuilder = new StringBuilder(BUFFER_LEN);
         myBuilder.append(getPrefix());
-        myBuilder.append(pPreferences.getStringValue(PrometheusDatabasePreferenceKey.DBSERVER));
-        myBuilder.append("/");
+        if (this != H2) {
+            myBuilder.append(pPreferences.getStringValue(PrometheusDatabasePreferenceKey.DBSERVER));
+            myBuilder.append("/");
+        }
         myBuilder.append(pPreferences.getStringValue(PrometheusDatabasePreferenceKey.DBNAME));
+        if (this == H2) {
+            myBuilder.append(";DB_CLOSE_DELAY=-1");
+        }
 
         /* Return the string */
         return myBuilder.toString();
@@ -179,6 +194,7 @@ public enum PrometheusJDBCDriver {
         switch (this) {
             case MYSQL:
             case SQLSERVER:
+            case H2:
                 return true;
             case POSTGRESQL:
             default:
@@ -194,6 +210,7 @@ public enum PrometheusJDBCDriver {
         switch (this) {
             case POSTGRESQL:
             case SQLSERVER:
+            case H2:
                 return true;
             case MYSQL:
             default:
