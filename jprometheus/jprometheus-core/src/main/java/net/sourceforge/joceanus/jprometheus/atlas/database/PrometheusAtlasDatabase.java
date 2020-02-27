@@ -95,7 +95,7 @@ public abstract class PrometheusAtlasDatabase {
     private boolean prefixToLower;
 
     /**
-     * Do we convert prefixes to lowerCase?
+     * Do we convert prefixes to upperCase?
      */
     private boolean prefixToUpper;
 
@@ -124,6 +124,14 @@ public abstract class PrometheusAtlasDatabase {
      */
     String getPrefix() {
         return thePrefix;
+    }
+
+    /**
+     * Obtain the connection.
+     * @return the connection
+     */
+    protected Connection getConnection() {
+        return theConnection;
     }
 
     /**

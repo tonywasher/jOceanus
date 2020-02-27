@@ -33,6 +33,11 @@ public enum PrometheusAtlasDatabaseType {
     MYSQL,
 
     /**
+     * H2.
+     */
+    H2,
+
+    /**
      * SQLServer.
      */
     SQLSERVER;
@@ -50,6 +55,8 @@ public enum PrometheusAtlasDatabaseType {
                 return new PrometheusAtlasMySQLDatabase(pPreferences);
             case SQLSERVER:
                 return new PrometheusAtlasSQLServerDatabase(pPreferences);
+            case H2:
+                return new PrometheusAtlasH2Database(pPreferences);
             default:
                 throw new IllegalArgumentException();
         }
