@@ -670,10 +670,10 @@ public class SymmetricTest {
     private byte[] getDigestInput(final GordianDigestSpec pDigestSpec) {
         /* Obtain basic input */
         final byte[] myBytes = "DigestInput".getBytes();
-        return pDigestSpec.getDigestType().stateAsInputLength()
-                ? Arrays.copyOf(myBytes, pDigestSpec.getStateLength().getByteLength())
-                : myBytes;
-     }
+        return pDigestSpec.getDigestType().supportsLargeData()
+               ? myBytes
+               : Arrays.copyOf(myBytes, pDigestSpec.getStateLength().getByteLength());
+      }
 
     /**
      * Profile mac.

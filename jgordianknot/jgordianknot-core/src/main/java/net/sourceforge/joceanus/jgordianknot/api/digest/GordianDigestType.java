@@ -436,11 +436,11 @@ public enum GordianDigestType {
     }
 
     /**
-     * does this digest required defined input length equal to state length?
+     * does this digest support large amounts of data?
      * @return true/false
      */
-    public boolean stateAsInputLength() {
-        return this == HARAKA;
+    public boolean supportsLargeData() {
+        return this != HARAKA;
     }
 
     /**
@@ -457,6 +457,6 @@ public enum GordianDigestType {
      */
     public boolean isCombinedHashDigest() {
         return getDefaultLength().getLength() >= GordianLength.LEN_256.getLength()
-                && !stateAsInputLength();
+                && supportsLargeData();
     }
 }

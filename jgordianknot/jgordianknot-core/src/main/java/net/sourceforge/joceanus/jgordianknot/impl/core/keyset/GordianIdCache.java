@@ -154,7 +154,6 @@ public class GordianIdCache {
         final GordianMacFactory myMacs = theFactory.getMacFactory();
 
         /* Create shuffled and filtered lists */
-
         theSymKeys = shuffleTypes(GordianSymKeyType.values(), GordianPersonalId.SYMKEY,
                 myCiphers.supportedSymKeyTypes().and(t -> GordianCoreCipherFactory.validSymKeyTypeForKeyLength(t, theKeyLength)));
         theKeySetSymKeys = shuffleTypes(GordianSymKeyType.values(), GordianPersonalId.SYMKEY,
@@ -177,7 +176,7 @@ public class GordianIdCache {
                 myCiphers.supportedStreamKeyTypes().and(t -> t.validForKeyLength(theKeyLength)).and(GordianStreamKeyType::supportsLargeData));
 
         /* Create shuffled digest lists */
-        theDigests = shuffleTypes(GordianDigestType.values(), GordianPersonalId.DIGEST, myDigests.supportedDigestTypes());
+        theDigests = shuffleTypes(GordianDigestType.values(), GordianPersonalId.DIGEST, myDigests.supportedDigestTypes().and(GordianDigestType::supportsLargeData));
         theExternalDigests = shuffleTypes(GordianDigestType.values(), GordianPersonalId.DIGEST, myDigests.supportedExternalDigestTypes());
         theKeySetDigests = shuffleTypes(GordianDigestType.values(), GordianPersonalId.DIGEST, pKeySetFactory.supportedKeySetDigestTypes());
         theHMacDigests = shuffleTypes(GordianDigestType.values(), GordianPersonalId.DIGEST, myMacs.supportedHMacDigestTypes());

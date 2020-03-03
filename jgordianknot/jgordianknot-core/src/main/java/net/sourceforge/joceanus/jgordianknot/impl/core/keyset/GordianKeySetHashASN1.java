@@ -119,7 +119,7 @@ public class GordianKeySetHashASN1
      * Produce an object suitable for an ASN1OutputStream.
      * <pre>
      * GordianKeySetHashASN1 ::= SEQUENCE  {
-     *      spec GordianKeySetSpecASN1
+     *      spec GordianKeySetHashSpecASN1
      *      hashBytes OCTET STRING
      * }
      * </pre>

@@ -51,7 +51,6 @@ import org.bouncycastle.crypto.ext.digests.Kangaroo.KangarooBase;
 import org.bouncycastle.crypto.ext.digests.Kangaroo.KangarooTwelve;
 import org.bouncycastle.crypto.ext.digests.Kangaroo.MarsupimalFourteen;
 import org.bouncycastle.crypto.ext.digests.SkeinDigest;
-import org.bouncycastle.jcajce.provider.digest.Haraka;
 
 import net.sourceforge.joceanus.jgordianknot.api.base.GordianLength;
 import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigestSpec;

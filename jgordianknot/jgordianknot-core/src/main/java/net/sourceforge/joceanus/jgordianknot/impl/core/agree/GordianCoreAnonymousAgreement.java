@@ -91,7 +91,7 @@ public abstract class GordianCoreAnonymousAgreement
         try {
             /* Access the sequence */
             final ASN1Sequence mySequence = ASN1Sequence.getInstance(pMessage);
-            final Enumeration en = mySequence.getObjects();
+            final Enumeration<Object> en = mySequence.getObjects();
 
             /* Access message parts */
             final AlgorithmIdentifier myAlgId = AlgorithmIdentifier.getInstance(en.nextElement());

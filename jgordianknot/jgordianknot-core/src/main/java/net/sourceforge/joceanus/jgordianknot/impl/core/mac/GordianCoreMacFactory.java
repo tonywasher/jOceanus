@@ -131,7 +131,7 @@ public abstract class GordianCoreMacFactory
      */
     protected boolean validHMacDigestType(final GordianDigestType pDigestType) {
         final GordianCoreDigestFactory myDigests = (GordianCoreDigestFactory) theFactory.getDigestFactory();
-        return myDigests.validDigestType(pDigestType);
+        return myDigests.validDigestType(pDigestType) && pDigestType.supportsLargeData();
     }
 
     /**

@@ -165,7 +165,7 @@ public class GordianPersonalisation {
         /* Finally build the initVector mask */
         final byte[] myInitVec = new byte[HASH_LEN.getByteLength()];
         for (int i = 0; i < myDigests.length; i++) {
-            TethysDataConverter.buildHashResult(myConfig, myHashes[i]);
+            TethysDataConverter.buildHashResult(myInitVec, myHashes[i]);
         }
 
         /* Return the array */
@@ -184,7 +184,8 @@ public class GordianPersonalisation {
 
     /**
      * Update a MAC with personalisation.
-     * @param pMac the MAC*/
+     * @param pMac the MAC
+     */
     public void updateMac(final GordianMac pMac) {
         pMac.update(thePersonalisation);
         pMac.update(theInitVector);

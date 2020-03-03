@@ -27,8 +27,7 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
 /**
  * GordianKnot SignatureFactory API.
  */
-public interface
-GordianSignatureFactory {
+public interface GordianSignatureFactory {
     /**
      * Create signer.
      * @param pSignatureSpec the signatureSpec

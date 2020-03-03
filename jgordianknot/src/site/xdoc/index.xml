@@ -1,0 +1,26 @@
+<document>
+    <properties>
+        <title>GordianKnot</title>
+        <author email="Tony.Washer@yahoo.co.uk">Tony Washer</author>
+    </properties>
+    <body>
+        <section name="Overview">
+            <p>GordianKnot provides a layer over the BouncyCastle encryption library and builds additional support on top</p>
+        </section>
+        <section name="Vanilla API">
+            <ol>
+                <li><a href="cipher.html">Ciphers</a></li>
+                <li><a href="digestMac.html">Digests and MACs</a></li>
+                <li><a href="random.html">Randoms</a></li>
+                <li><a href="asym.html">Asymmetric</a></li>
+            </ol>
+        </section>
+        <section name="Extended API">
+            <ol>
+                <li><a href="personal.html">Personalisation</a></li>
+                <li><a href="keyset.html">KeySets</a></li>
+                <li><a href="zip.html">Secure ZipFile</a></li>
+            </ol>
+        </section>
+    </body>
+</document>

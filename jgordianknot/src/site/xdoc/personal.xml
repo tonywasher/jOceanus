@@ -1,0 +1,55 @@
+<document>
+    <properties>
+        <title>GordianKnot Personalisation</title>
+        <author email="Tony.Washer@yahoo.co.uk">Tony Washer</author>
+    </properties>
+    <body>
+        <section name="Overview">
+            <p>GordianKnot can be personalised to ensure differing securitySpaces. The personalisation is achieved via a SecurityPhrase which is processed
+                via a set of digests to produce two 512-bit arrays (<strong>I</strong> and <strong>IV</strong>) which are then utilised in the various algorithms.</p>
+            <p><strong>I</strong> is often split into 16 integers written as <strong>I<sub>1</sub></strong> through <strong>I<sub>16</sub></strong>. Similarly
+                <strong>IV</strong> is often split into 4 128-bit arrays written as <strong>I<sub>1</sub></strong> through <strong>IV<sub>4</sub></strong></p>
+        </section>
+        <section name="Generation">
+            <p>The personalisation algorithm is as follows.</p>
+            <ol>
+                <li>Create an array of all available digests that have an output length of 512-bits.</li>
+                <li>Initialise all digests with a constant value followed by the security phrase</li>
+                <li>Finish all digests, creating an array of the hashes and xor these hashes into <strong>I</strong></li>
+                <li>Loop for a configured # of iterations (default 2K).
+                    <ol>
+                        <li>Update each digest with <strong>ALL</strong> the other hashes</li>
+                        <li>Finish each digest, updating its hash and xor-ing into <strong>I</strong></li>
+                    </ol>
+                </li>
+                <li>Build <strong>IV</strong> as the xor of all the final digest hashes</li>
+            </ol>
+        </section>
+        <section name="Key Derivation">
+            <p>The key derivation algorithm that generates a key <strong>K<sub>A</sub></strong> for an algorithm <strong>A</strong> from a secret <strong>S</strong>
+                and vector <strong>V</strong> is as follows.</p>
+            <ol>
+                <li>Obtain a seed <strong>X</strong> from the first 4 bytes of <strong>V</strong></li>
+                <li>Obtain a set two distinct HMACs <strong>H<sub>M</sub></strong> and <strong>H<sub>A</sub></strong> from the seed <strong>X</strong></li>
+                <li>Initialise both HMac with a key of secret <strong>S</strong></li>
+                <li>Repeat the following loop until sufficient bits have been generated. Start with <strong>C</strong> = 0
+                    <ol>
+                        <li>Update both Macs with <strong>I</strong> and <strong>IV</strong></li>
+                        <li>Update both Macs with <strong>A</strong>, keyLength and <strong>C</strong></li>
+                        <li>Set input <strong>D<sub>M</sub></strong> and <strong>D<sub>A</sub></strong> to <strong>V</strong></li>
+                        <li>Loop for a configured # of iterations (default 2K).
+                            <ol>
+                                <li>Update <strong>H<sub>A</sub></strong> with <strong>D<sub>A</sub></strong></li>
+                                <li>Calculate <strong>D<sub>A</sub></strong> as the hash of <strong>M<sub>A</sub></strong></li>
+                                <li>Update <strong>H<sub>M</sub></strong> with <strong>D<sub>M</sub></strong> and with <strong>D<sub>A</sub></strong></li>
+                                <li>Calculate <strong>D<sub>M</sub></strong> as the hash of <strong>M<sub>M</sub></strong></li>
+                                <li>Xor <strong>D<sub>M</sub></strong> into the result</li>
+                            </ol>
+                        </li>
+                        <li>Increment <strong>C</strong></li>
+                    </ol>
+                </li>
+            </ol>
+        </section>
+    </body>
+</document>

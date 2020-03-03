@@ -1,0 +1,36 @@
+<document>
+    <properties>
+        <title>GordianKnot SecureRandom</title>
+        <author email="Tony.Washer@yahoo.co.uk">Tony Washer</author>
+    </properties>
+    <body>
+        <section name="Overview">
+            <p>GordianKnot supports the <strong>SP800-90A</strong> and <strong>X931</strong> DRBG constructs.</p>
+        </section>
+        <section name="Randoms">
+            <p>A secureRandom is created by specifying a <strong>GordianRandomSpec</strong>.</p>
+            <subsection name="Sample">
+                <source>
+                    /* Access factory */
+                    final GordianParameters myParams = new GordianParameters();
+                    final GordianFactory myBaseFactory = GordianGenerator.createFactory(myParams);
+                    final GordianRandomFactory myRandomFactory = myBaseFactory.getRandomFactory();
+
+                    /* Create secureRandom */
+                    final GordianRandomSpec mySpec = GordianRandomSpec.hash(GordianDigestSpec.sha2(GordianLength.LEN_256));
+                    final SecureRandom myRandom = myRandomFactory.createRandom(mySpec);
+                </source>
+            </subsection>
+            <subsection name="Algorithms">
+                <p>The following algorithms are supported.</p>
+                <table class="defTable">
+                    <tr><td class="defHdr">Algorithm</td></tr>
+                    <tr><td>SP800-HASH</td></tr>
+                    <tr><td>SP800-HMAC</td></tr>
+                    <tr><td>SP800-CTR</td></tr>
+                    <tr><td>X9.31</td></tr>
+                </table>
+            </subsection>
+        </section>
+    </body>
+</document>
