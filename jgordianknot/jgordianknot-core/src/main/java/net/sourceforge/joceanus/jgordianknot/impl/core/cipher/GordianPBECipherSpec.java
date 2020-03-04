@@ -14,11 +14,13 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  ******************************************************************************/
-package net.sourceforge.joceanus.jgordianknot.api.cipher;
+package net.sourceforge.joceanus.jgordianknot.impl.core.cipher;
 
 import java.util.Objects;
 
 import net.sourceforge.joceanus.jgordianknot.api.base.GordianKeySpec;
+import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianCipherSpec;
+import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianPBESpec;
 
 /**
  * PBE Cipher Specification.

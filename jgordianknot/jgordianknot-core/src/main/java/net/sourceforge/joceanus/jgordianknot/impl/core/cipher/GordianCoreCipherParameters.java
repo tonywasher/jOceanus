@@ -38,7 +38,6 @@ import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianCipherParameters.
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianCipherParameters.GordianNonceParameters;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianCipherParameters.GordianPBECipherParameters;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianCipherSpec;
-import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianPBECipherSpec;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianPBESpec;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianPBESpec.GordianPBEArgon2Spec;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianPBESpec.GordianPBEDigestAndCountSpec;
@@ -191,7 +190,8 @@ public class GordianCoreCipherParameters<T extends GordianKeySpec> {
         /* Check that the PBE parameters are supported */
         final GordianPBESpec myPBESpec = pParams.getPBESpec();
         final GordianPBECipherSpec<T> myPBECipherSpec = new GordianPBECipherSpec<>(myPBESpec, theSpec);
-        if (!theFactory.getCipherFactory().supportedPBECipherSpecs().test(myPBECipherSpec)) {
+        final GordianCoreCipherFactory myCipherFactory = (GordianCoreCipherFactory) theFactory.getCipherFactory();
+        if (!myCipherFactory.supportedPBECipherSpecs().test(myPBECipherSpec)) {
             throw new GordianDataException(GordianCoreFactory.getInvalidText(myPBECipherSpec));
         }
 

@@ -991,7 +991,7 @@ public class GordianAsymAlgId {
             }
 
             /* Parameter not recognised */
-            throw new GordianDataException(ERROR_TREEDIGEST);
+            throw new GordianDataException(ERROR_PARSE);
         }
 
         /**
@@ -1009,7 +1009,7 @@ public class GordianAsymAlgId {
             }
 
             /* Parameter not recognised */
-            throw new GordianDataException(ERROR_TREEDIGEST);
+            throw new GordianDataException(ERROR_PARSE);
         }
     }
 }

@@ -85,14 +85,6 @@ public class GordianLMSKeySpec {
     }
 
     /**
-     * Create McElieceSpec.
-     * @return the keySpec
-     */
-    public static GordianMcElieceKeySpec standard() {
-        return new GordianMcElieceKeySpec(GordianMcElieceKeySpec.GordianMcElieceKeyType.STANDARD, null);
-    }
-
-    /**
      * Create McEliece CCA2 keySpec.
      * @param pSigType the sigType
      * @param pOtsType the otsType

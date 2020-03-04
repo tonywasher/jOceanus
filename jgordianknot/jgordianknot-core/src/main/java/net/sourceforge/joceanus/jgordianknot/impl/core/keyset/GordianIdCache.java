@@ -26,6 +26,7 @@ import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianSymKeySpec;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianSymKeyType;
 import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigestFactory;
 import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigestType;
+import net.sourceforge.joceanus.jgordianknot.api.factory.GordianParameters;
 import net.sourceforge.joceanus.jgordianknot.api.mac.GordianMacFactory;
 import net.sourceforge.joceanus.jgordianknot.api.mac.GordianMacSpec;
 import net.sourceforge.joceanus.jgordianknot.api.mac.GordianMacType;
@@ -154,37 +155,42 @@ public class GordianIdCache {
         final GordianMacFactory myMacs = theFactory.getMacFactory();
 
         /* Create shuffled and filtered lists */
-        theSymKeys = shuffleTypes(GordianSymKeyType.values(), GordianPersonalId.SYMKEY,
+        int myIndex = 0;
+        theSymKeys = shuffleTypes(GordianSymKeyType.values(), GordianPersonalId.SYMKEY, myIndex++,
                 myCiphers.supportedSymKeyTypes().and(t -> GordianCoreCipherFactory.validSymKeyTypeForKeyLength(t, theKeyLength)));
-        theKeySetSymKeys = shuffleTypes(GordianSymKeyType.values(), GordianPersonalId.SYMKEY,
+        theKeySetSymKeys = shuffleTypes(GordianSymKeyType.values(), GordianPersonalId.SYMKEY, myIndex++,
                 pKeySetFactory.supportedKeySetSymKeyTypes(theKeyLength));
-        theCMacSymKeys = shuffleTypes(GordianSymKeyType.values(), GordianPersonalId.SYMKEY,
+        theCMacSymKeys = shuffleTypes(GordianSymKeyType.values(), GordianPersonalId.SYMKEY, myIndex++,
                 t -> validSymKeyTypeForMacType(GordianMacType.CMAC, t));
-        theGMacSymKeys = shuffleTypes(GordianSymKeyType.values(), GordianPersonalId.SYMKEY,
+        theGMacSymKeys = shuffleTypes(GordianSymKeyType.values(), GordianPersonalId.SYMKEY, myIndex++,
                 t -> validSymKeyTypeForMacType(GordianMacType.GMAC, t));
-        thePolySymKeys = shuffleTypes(GordianSymKeyType.values(), GordianPersonalId.SYMKEY,
+        thePolySymKeys = shuffleTypes(GordianSymKeyType.values(), GordianPersonalId.SYMKEY, myIndex++,
                 this::validSymKeyTypeForPoly1305);
-        theCBCMacSymKeys = shuffleTypes(GordianSymKeyType.values(), GordianPersonalId.SYMKEY,
+        theCBCMacSymKeys = shuffleTypes(GordianSymKeyType.values(), GordianPersonalId.SYMKEY, myIndex++,
                 t -> validSymKeyTypeForMacType(GordianMacType.CBCMAC, t));
-        theCFBMacSymKeys = shuffleTypes(GordianSymKeyType.values(), GordianPersonalId.SYMKEY,
+        theCFBMacSymKeys = shuffleTypes(GordianSymKeyType.values(), GordianPersonalId.SYMKEY, myIndex++,
                 t -> validSymKeyTypeForMacType(GordianMacType.CFBMAC, t));
 
         /* Create shuffled streamKey lists */
-        theStreamKeys = shuffleTypes(GordianStreamKeyType.values(), GordianPersonalId.STREAMKEY,
+        theStreamKeys = shuffleTypes(GordianStreamKeyType.values(), GordianPersonalId.STREAMKEY, myIndex++,
                 myCiphers.supportedStreamKeyTypes().and(t -> t.validForKeyLength(theKeyLength)));
-        theLargeDataStreamKeys = shuffleTypes(GordianStreamKeyType.values(), GordianPersonalId.STREAMKEY,
+        theLargeDataStreamKeys = shuffleTypes(GordianStreamKeyType.values(), GordianPersonalId.STREAMKEY, myIndex++,
                 myCiphers.supportedStreamKeyTypes().and(t -> t.validForKeyLength(theKeyLength)).and(GordianStreamKeyType::supportsLargeData));
 
         /* Create shuffled digest lists */
-        theDigests = shuffleTypes(GordianDigestType.values(), GordianPersonalId.DIGEST, myDigests.supportedDigestTypes().and(GordianDigestType::supportsLargeData));
-        theExternalDigests = shuffleTypes(GordianDigestType.values(), GordianPersonalId.DIGEST, myDigests.supportedExternalDigestTypes());
-        theKeySetDigests = shuffleTypes(GordianDigestType.values(), GordianPersonalId.DIGEST, pKeySetFactory.supportedKeySetDigestTypes());
-        theHMacDigests = shuffleTypes(GordianDigestType.values(), GordianPersonalId.DIGEST, myMacs.supportedHMacDigestTypes());
+        theDigests = shuffleTypes(GordianDigestType.values(), GordianPersonalId.DIGEST, myIndex++,
+                myDigests.supportedDigestTypes().and(GordianDigestType::supportsLargeData));
+        theExternalDigests = shuffleTypes(GordianDigestType.values(), GordianPersonalId.DIGEST, myIndex++,
+                myDigests.supportedExternalDigestTypes());
+        theKeySetDigests = shuffleTypes(GordianDigestType.values(), GordianPersonalId.DIGEST, myIndex++,
+                pKeySetFactory.supportedKeySetDigestTypes());
+        theHMacDigests = shuffleTypes(GordianDigestType.values(), GordianPersonalId.DIGEST, myIndex++,
+                myMacs.supportedHMacDigestTypes());
 
         /* Create shuffled MacType lists */
-        theMacs = shuffleTypes(GordianMacType.values(), GordianPersonalId.MAC,
+        theMacs = shuffleTypes(GordianMacType.values(), GordianPersonalId.MAC, myIndex++,
                 myMacs.supportedMacTypes().and(t -> t.validForKeyLength(theKeyLength)));
-        theLargeDataMacs = shuffleTypes(GordianMacType.values(), GordianPersonalId.MAC,
+        theLargeDataMacs = shuffleTypes(GordianMacType.values(), GordianPersonalId.MAC, myIndex,
                 myMacs.supportedMacTypes().and(t -> t.validForKeyLength(theKeyLength)).and(GordianMacType::supportsLargeData));
     }
 
@@ -385,11 +391,13 @@ public class GordianIdCache {
      * @param <E> the data type
      * @param pTypes the types to be shuffled.
      * @param pId the relevant id
+     * @param pIndex the index
      * @param pFilter the filter
      * @return the shuffled types
      */
     private <E extends Enum<E>> E[] shuffleTypes(final E[] pTypes,
                                                  final GordianPersonalId pId,
+                                                 final int pIndex,
                                                  final Predicate<E> pFilter) {
         /* Filter the types */
         final E[] myTypes = filterTypes(pTypes, pFilter);
@@ -398,8 +406,9 @@ public class GordianIdCache {
         final int myLen = myTypes.length;
         int myNumTypes = myLen;
 
-        /* Obtain the personalised integer */
-        int mySeed = thePersonalisation.getPersonalisedInteger(pId);
+        /* Obtain the personalised integer and modify it according to the index to obtain differing seeds for id re-use */
+        int mySeed = thePersonalisation.getPersonalisedInteger(pId) * (GordianParameters.HASH_PRIME + pIndex);
+        mySeed = GordianPersonalisation.sanitiseValue(mySeed);
 
         /* Loop through the types */
         for (int i = 0; i < myLen - 1; i++) {

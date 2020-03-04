@@ -24,7 +24,6 @@ import net.sourceforge.joceanus.jgordianknot.api.base.GordianKeySpec;
 import net.sourceforge.joceanus.jgordianknot.api.base.GordianLength;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianCipherFactory;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianCipherMode;
-import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianPBECipherSpec;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianPBESpec;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianPBESpec.GordianPBEDigestAndCountSpec;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianStreamCipherSpec;
@@ -102,7 +101,10 @@ public abstract class GordianCoreCipherFactory
         return this::validStreamKeyType;
     }
 
-    @Override
+    /**
+     * Obtain predicate for supported PBECipherSpecs.
+     * @return the predicate
+     */
     public Predicate<GordianPBECipherSpec<? extends GordianKeySpec>> supportedPBECipherSpecs() {
         return this::validPBECipherSpec;
     }

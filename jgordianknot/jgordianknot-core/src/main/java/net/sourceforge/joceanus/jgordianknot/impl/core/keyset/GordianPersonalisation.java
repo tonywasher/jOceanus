@@ -262,7 +262,7 @@ public class GordianPersonalisation {
      * @param pValue the value to sanitise
      * @return the sanitised value
      */
-    private static int sanitiseValue(final int pValue) {
+    static int sanitiseValue(final int pValue) {
         /* Ensure that the value is positive */
         final int myVal = pValue < 0
                                 ? -pValue
