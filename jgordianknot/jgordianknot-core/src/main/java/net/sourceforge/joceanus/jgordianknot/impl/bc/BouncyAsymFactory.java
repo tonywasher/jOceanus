@@ -151,9 +151,9 @@ public class BouncyAsymFactory
             case NEWHOPE:
                 return new BouncyNewHopeKeyPairGenerator(getFactory(), pKeySpec);
             case XMSS:
-                return new BouncyXMSSKeyPairGenerator(getFactory(), pKeySpec);
-            case XMSSMT:
-                return new BouncyXMSSMTKeyPairGenerator(getFactory(), pKeySpec);
+                return pKeySpec.getXMSSKeySpec().isMT()
+                       ? new BouncyXMSSMTKeyPairGenerator(getFactory(), pKeySpec)
+                       : new BouncyXMSSKeyPairGenerator(getFactory(), pKeySpec);
             case QTESLA:
                 return new BouncyQTESLAKeyPairGenerator(getFactory(), pKeySpec);
             case LMS:

@@ -20,8 +20,8 @@ import java.security.InvalidKeyException;
 import java.security.Signature;
 import java.security.SignatureException;
 
-import net.sourceforge.joceanus.jgordianknot.api.asym.GordianAsymKeySpec;
 import net.sourceforge.joceanus.jgordianknot.api.asym.GordianAsymKeyType;
+import net.sourceforge.joceanus.jgordianknot.api.asym.GordianXMSSKeySpec;
 import net.sourceforge.joceanus.jgordianknot.api.base.GordianLength;
 import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigestSpec;
 import net.sourceforge.joceanus.jgordianknot.api.key.GordianKeyPair;
@@ -502,13 +502,13 @@ public abstract class JcaSignature
          */
         private String getAlgorithmForKeyPair(final GordianKeyPair pKeyPair) throws OceanusException {
             /* Determine the required signer */
-            final GordianDigestSpec myDigestSpec = pKeyPair.getKeySpec().getXMSSDigestType().getDigestSpec();
+            final GordianXMSSKeySpec myXMSSKeySpec = pKeyPair.getKeySpec().getXMSSKeySpec();
+            final GordianDigestSpec myDigestSpec = myXMSSKeySpec.getDigestType().getDigestSpec();
             final String myDigest = JcaDigest.getAlgorithm(myDigestSpec);
 
             /* Create builder */
-            final GordianAsymKeySpec myKeySpec = pKeyPair.getKeySpec();
             final StringBuilder myBuilder = new StringBuilder();
-            myBuilder.append(myKeySpec.getKeyType())
+            myBuilder.append(myXMSSKeySpec.getKeyType())
                     .append('-')
                     .append(myDigest);
             if (preHash) {

@@ -98,11 +98,6 @@ public enum GordianAsymKeyType {
     XMSS,
 
     /**
-     * XMSSMT.
-     */
-    XMSSMT,
-
-    /**
      * NewHope.
      */
     NEWHOPE,
@@ -125,7 +120,6 @@ public enum GordianAsymKeyType {
         switch (this) {
             case SPHINCS:
             case XMSS:
-            case XMSSMT:
             case ED25519:
             case ED448:
                 return false;
@@ -142,7 +136,6 @@ public enum GordianAsymKeyType {
         switch (this) {
             case SPHINCS:
             case XMSS:
-            case XMSSMT:
             case ED25519:
             case ED448:
             case QTESLA:
@@ -161,7 +154,6 @@ public enum GordianAsymKeyType {
         switch (this) {
             case SPHINCS:
             case XMSS:
-            case XMSSMT:
             case QTESLA:
                 return true;
             default:

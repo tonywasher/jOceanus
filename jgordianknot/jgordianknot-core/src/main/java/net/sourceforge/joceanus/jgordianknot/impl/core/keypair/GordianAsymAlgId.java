@@ -76,7 +76,7 @@ import net.sourceforge.joceanus.jgordianknot.api.asym.GordianQTESLAKeyType;
 import net.sourceforge.joceanus.jgordianknot.api.asym.GordianRSAModulus;
 import net.sourceforge.joceanus.jgordianknot.api.asym.GordianSM2Elliptic;
 import net.sourceforge.joceanus.jgordianknot.api.asym.GordianSPHINCSDigestType;
-import net.sourceforge.joceanus.jgordianknot.api.asym.GordianXMSSDigestType;
+import net.sourceforge.joceanus.jgordianknot.api.asym.GordianXMSSKeySpec.GordianXMSSDigestType;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianDataException;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 

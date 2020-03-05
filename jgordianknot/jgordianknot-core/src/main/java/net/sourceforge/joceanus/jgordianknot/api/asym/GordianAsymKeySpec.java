@@ -21,6 +21,7 @@ import java.util.EnumSet;
 import java.util.List;
 import java.util.Objects;
 
+import net.sourceforge.joceanus.jgordianknot.api.asym.GordianXMSSKeySpec.GordianXMSSDigestType;
 import net.sourceforge.joceanus.jtethys.TethysDataConverter;
 
 /**
@@ -199,7 +200,7 @@ public final class GordianAsymKeySpec {
      * @return the KeySpec
      */
     public static GordianAsymKeySpec xmss(final GordianXMSSDigestType pDigestType) {
-        return new GordianAsymKeySpec(GordianAsymKeyType.XMSS, pDigestType);
+        return new GordianAsymKeySpec(GordianAsymKeyType.XMSS, GordianXMSSKeySpec.xmss(pDigestType));
     }
 
     /**
@@ -208,7 +209,7 @@ public final class GordianAsymKeySpec {
      * @return the KeySpec
      */
     public static GordianAsymKeySpec xmssmt(final GordianXMSSDigestType pDigestType) {
-        return new GordianAsymKeySpec(GordianAsymKeyType.XMSSMT, pDigestType);
+        return new GordianAsymKeySpec(GordianAsymKeyType.XMSS, GordianXMSSKeySpec.xmssmt(pDigestType));
     }
 
     /**
@@ -324,12 +325,22 @@ public final class GordianAsymKeySpec {
     }
 
     /**
-     * Obtain the XMSS keyType.
-     * @return the keyType.
+     * Obtain the XMSS keySpec.
+     * @return the keySpec.
+     */
+    public GordianXMSSKeySpec getXMSSKeySpec() {
+        return theSubKeyType instanceof GordianXMSSKeySpec
+               ? (GordianXMSSKeySpec) theSubKeyType
+               : null;
+    }
+
+    /**
+     * Obtain the XMSS digestType.
+     * @return the digestType.
      */
     public GordianXMSSDigestType getXMSSDigestType() {
-        return theSubKeyType instanceof GordianXMSSDigestType
-               ? (GordianXMSSDigestType) theSubKeyType
+        return theSubKeyType instanceof GordianXMSSKeySpec
+               ? ((GordianXMSSKeySpec) theSubKeyType).getDigestType()
                : null;
     }
 
@@ -362,7 +373,11 @@ public final class GordianAsymKeySpec {
                 /* Load the name */
                 theName = theKeyType.toString();
                 if (theSubKeyType != null) {
-                    theName += SEP + theSubKeyType.toString();
+                    if (theKeyType == GordianAsymKeyType.XMSS) {
+                        theName = theSubKeyType.toString();
+                    } else {
+                        theName += SEP + theSubKeyType.toString();
+                    }
                 }
             }  else {
                 /* Report invalid spec */
@@ -442,8 +457,8 @@ public final class GordianAsymKeySpec {
                 return theSubKeyType instanceof GordianMcElieceKeySpec
                         && ((GordianMcElieceKeySpec) theSubKeyType).isValid();
             case XMSS:
-            case XMSSMT:
-                return theSubKeyType instanceof GordianXMSSDigestType;
+                return theSubKeyType instanceof GordianXMSSKeySpec
+                        && ((GordianXMSSKeySpec) theSubKeyType).isValid();
             case QTESLA:
                 return theSubKeyType instanceof GordianQTESLAKeyType;
             case LMS:

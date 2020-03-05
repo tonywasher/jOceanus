@@ -50,7 +50,8 @@ import org.bouncycastle.pqc.crypto.xmss.XMSSPublicKeyParameters;
 import org.bouncycastle.pqc.crypto.xmss.XMSSSigner;
 
 import net.sourceforge.joceanus.jgordianknot.api.asym.GordianAsymKeySpec;
-import net.sourceforge.joceanus.jgordianknot.api.asym.GordianXMSSDigestType;
+import net.sourceforge.joceanus.jgordianknot.api.asym.GordianXMSSKeySpec;
+import net.sourceforge.joceanus.jgordianknot.api.asym.GordianXMSSKeySpec.GordianXMSSDigestType;
 import net.sourceforge.joceanus.jgordianknot.api.base.GordianLength;
 import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigestSpec;
 import net.sourceforge.joceanus.jgordianknot.api.key.GordianKeyPair;
@@ -186,11 +187,6 @@ public final class BouncyXMSSAsymKey {
         private final XMSSKeyPairGenerator theGenerator;
 
         /**
-         * TreeDigest.
-         */
-        private final ASN1ObjectIdentifier theTreeDigest;
-
-        /**
          * Constructor.
          * @param pFactory the Security Factory
          * @param pKeySpec the keySpec
@@ -199,12 +195,11 @@ public final class BouncyXMSSAsymKey {
                                    final GordianAsymKeySpec pKeySpec) {
             /* Initialise underlying class */
             super(pFactory, pKeySpec);
-            theTreeDigest = getOID(pKeySpec.getXMSSDigestType());
 
             /* Create and initialise the generator */
             theGenerator = new XMSSKeyPairGenerator();
             final KeyGenerationParameters myParams = new XMSSKeyGenerationParameters(
-                    new XMSSParameters(GordianXMSSDigestType.DEFAULT_HEIGHT, createDigest(getKeyType())), getRandom());
+                    new XMSSParameters(GordianXMSSKeySpec.DEFAULT_HEIGHT, createDigest(getKeyType())), getRandom());
             theGenerator.init(myParams);
         }
 
@@ -442,11 +437,6 @@ public final class BouncyXMSSAsymKey {
         private final XMSSMTKeyPairGenerator theGenerator;
 
         /**
-         * TreeDigest.
-         */
-        private final ASN1ObjectIdentifier theTreeDigest;
-
-        /**
          * Constructor.
          * @param pFactory the Security Factory
          * @param pKeySpec the keySpec
@@ -455,12 +445,11 @@ public final class BouncyXMSSAsymKey {
                                      final GordianAsymKeySpec pKeySpec) {
             /* Initialise underlying class */
             super(pFactory, pKeySpec);
-            theTreeDigest = getOID(pKeySpec.getXMSSDigestType());
 
             /* Create and initialise the generator */
             theGenerator = new XMSSMTKeyPairGenerator();
             final KeyGenerationParameters myParams = new XMSSMTKeyGenerationParameters(
-                    new XMSSMTParameters(GordianXMSSDigestType.DEFAULT_HEIGHT, GordianXMSSDigestType.DEFAULT_LAYERS,
+                    new XMSSMTParameters(GordianXMSSKeySpec.DEFAULT_HEIGHT, GordianXMSSKeySpec.DEFAULT_LAYERS,
                             createDigest(getKeyType())), getRandom());
             theGenerator.init(myParams);
         }
@@ -563,6 +552,16 @@ public final class BouncyXMSSAsymKey {
         private final XMSSSigner theSigner;
 
         /**
+         * The XMSSMT Signer.
+         */
+        private final XMSSMTSigner theMTSigner;
+
+        /**
+         * Are we using the MT signer?
+         */
+        private boolean isMT;
+
+        /**
          * Constructor.
          * @param pFactory the factory
          * @param pSpec the signatureSpec.
@@ -573,89 +572,9 @@ public final class BouncyXMSSAsymKey {
             /* Initialise underlying class */
             super(pFactory, pSpec);
 
-            /* Create the signer */
+            /* Create the signers */
             theSigner = new XMSSSigner();
-
-            /* Determine preHash */
-            preHash = GordianSignatureType.PREHASH.equals(pSpec.getSignatureType());
-        }
-
-
-        @Override
-        public void initForSigning(final GordianKeyPair pKeyPair) throws OceanusException {
-            /* Initialise detail */
-            super.initForSigning(pKeyPair);
-
-            /* Set the digest */
-            final GordianDigestSpec myDigestSpec = pKeyPair.getKeySpec().getXMSSDigestType().getDigestSpec();
-            setDigest(preHash ? myDigestSpec : null);
-
-            /* Initialise and set the signer */
-            final BouncyXMSSPrivateKey myPrivate = (BouncyXMSSPrivateKey) getKeyPair().getPrivateKey();
-            theSigner.init(true, myPrivate.getPrivateKey());
-        }
-
-        @Override
-        public void initForVerify(final GordianKeyPair pKeyPair) throws OceanusException {
-            /* Initialise detail */
-            super.initForVerify(pKeyPair);
-
-            /* Set the digest */
-            final GordianDigestSpec myDigestSpec = pKeyPair.getKeySpec().getXMSSDigestType().getDigestSpec();
-            setDigest(preHash ? myDigestSpec : null);
-
-            /* Initialise and set the signer */
-            final BouncyXMSSPublicKey myPublic = (BouncyXMSSPublicKey) getKeyPair().getPublicKey();
-            theSigner.init(false, myPublic.getPublicKey());
-        }
-
-        @Override
-        public byte[] sign() throws OceanusException {
-            /* Check that we are in signing mode */
-            checkMode(GordianSignatureMode.SIGN);
-
-            /* Sign the message */
-            return theSigner.generateSignature(getDigest());
-        }
-
-        @Override
-        public boolean verify(final byte[] pSignature) throws OceanusException {
-            /* Check that we are in verify mode */
-            checkMode(GordianSignatureMode.VERIFY);
-
-            /* Verify the message */
-            return theSigner.verifySignature(getDigest(), pSignature);
-        }
-    }
-
-    /**
-     * XMSSMT signature.
-     */
-    public static class BouncyXMSSMTSignature
-            extends BouncyDigestSignature {
-        /**
-         * Is this a preHash signature?
-         */
-        private final boolean preHash;
-
-        /**
-         * The XMSS Signer.
-         */
-        private final XMSSMTSigner theSigner;
-
-        /**
-         * Constructor.
-         * @param pFactory the factory
-         * @param pSpec the signatureSpec.
-         * @throws OceanusException on error
-         */
-        BouncyXMSSMTSignature(final BouncyFactory pFactory,
-                              final GordianSignatureSpec pSpec) throws OceanusException {
-            /* Initialise underlying class */
-            super(pFactory, pSpec);
-
-            /* Create the signer */
-            theSigner = new XMSSMTSigner();
+            theMTSigner = new XMSSMTSigner();
 
             /* Determine preHash */
             preHash = GordianSignatureType.PREHASH.equals(pSpec.getSignatureType());
@@ -667,12 +586,19 @@ public final class BouncyXMSSAsymKey {
             super.initForSigning(pKeyPair);
 
             /* Set the digest */
-            final GordianDigestSpec myDigestSpec = pKeyPair.getKeySpec().getXMSSDigestType().getDigestSpec();
+            final GordianXMSSKeySpec myKeySpec = pKeyPair.getKeySpec().getXMSSKeySpec();
+            final GordianDigestSpec myDigestSpec = myKeySpec.getDigestType().getDigestSpec();
             setDigest(preHash ? myDigestSpec : null);
 
             /* Initialise and set the signer */
-            final BouncyXMSSMTPrivateKey myPrivate = (BouncyXMSSMTPrivateKey) getKeyPair().getPrivateKey();
-            theSigner.init(true, myPrivate.getPrivateKey());
+            isMT = myKeySpec.isMT();
+            if (isMT) {
+                final BouncyXMSSMTPrivateKey myPrivate = (BouncyXMSSMTPrivateKey) getKeyPair().getPrivateKey();
+                theMTSigner.init(true, myPrivate.getPrivateKey());
+            } else {
+                final BouncyXMSSPrivateKey myPrivate = (BouncyXMSSPrivateKey) getKeyPair().getPrivateKey();
+                theSigner.init(true, myPrivate.getPrivateKey());
+            }
         }
 
         @Override
@@ -681,12 +607,19 @@ public final class BouncyXMSSAsymKey {
             super.initForVerify(pKeyPair);
 
             /* Set the digest */
-            final GordianDigestSpec myDigestSpec = pKeyPair.getKeySpec().getXMSSDigestType().getDigestSpec();
+            final GordianXMSSKeySpec myKeySpec = pKeyPair.getKeySpec().getXMSSKeySpec();
+            final GordianDigestSpec myDigestSpec = myKeySpec.getDigestType().getDigestSpec();
             setDigest(preHash ? myDigestSpec : null);
 
             /* Initialise and set the signer */
-            final BouncyXMSSMTPublicKey myPublic = (BouncyXMSSMTPublicKey) getKeyPair().getPublicKey();
-            theSigner.init(false, myPublic.getPublicKey());
+            isMT = myKeySpec.isMT();
+            if (isMT) {
+                final BouncyXMSSMTPublicKey myPublic = (BouncyXMSSMTPublicKey) getKeyPair().getPublicKey();
+                theMTSigner.init(false, myPublic.getPublicKey());
+            } else {
+                final BouncyXMSSPublicKey myPublic = (BouncyXMSSPublicKey) getKeyPair().getPublicKey();
+                theSigner.init(false, myPublic.getPublicKey());
+            }
         }
 
         @Override
@@ -695,7 +628,9 @@ public final class BouncyXMSSAsymKey {
             checkMode(GordianSignatureMode.SIGN);
 
             /* Sign the message */
-            return theSigner.generateSignature(getDigest());
+            return isMT
+                   ? theMTSigner.generateSignature(getDigest())
+                   : theSigner.generateSignature(getDigest());
         }
 
         @Override
@@ -704,7 +639,9 @@ public final class BouncyXMSSAsymKey {
             checkMode(GordianSignatureMode.VERIFY);
 
             /* Verify the message */
-            return theSigner.verifySignature(getDigest(), pSignature);
+            return isMT
+                   ? theMTSigner.verifySignature(getDigest(), pSignature)
+                   : theSigner.verifySignature(getDigest(), pSignature);
         }
     }
 }

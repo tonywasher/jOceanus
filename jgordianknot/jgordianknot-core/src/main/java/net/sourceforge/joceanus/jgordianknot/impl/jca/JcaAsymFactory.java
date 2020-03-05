@@ -140,7 +140,6 @@ public class JcaAsymFactory
             case NEWHOPE:
                 return new JcaNewHopeKeyPairGenerator(getFactory(), pKeySpec);
             case XMSS:
-            case XMSSMT:
                 return new JcaXMSSKeyPairGenerator(getFactory(), pKeySpec);
             case QTESLA:
                 return new JcaQTESLAKeyPairGenerator(getFactory(), pKeySpec);

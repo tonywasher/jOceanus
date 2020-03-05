@@ -229,22 +229,6 @@ public final class GordianSignatureSpec {
     }
 
     /**
-     * Create xmssSpec.
-     * @return the SignatureSpec
-     */
-    public static GordianSignatureSpec xmssmt() {
-        return new GordianSignatureSpec(GordianAsymKeyType.XMSSMT, GordianSignatureType.PURE);
-    }
-
-    /**
-     * Create xmssMTPHSpec.
-     * @return the SignatureSpec
-     */
-    public static GordianSignatureSpec xmssmtph() {
-        return new GordianSignatureSpec(GordianAsymKeyType.XMSSMT, GordianSignatureType.PREHASH);
-    }
-
-    /**
      * Create qTESLASpec.
      * @return the SignatureSpec
      */
@@ -289,8 +273,6 @@ public final class GordianSignatureSpec {
                 return sphincs();
             case XMSS:
                 return xmss();
-            case XMSSMT:
-                return xmssmt();
             case QTESLA:
                 return qTESLA();
             case LMS:
@@ -354,7 +336,6 @@ public final class GordianSignatureSpec {
             case SPHINCS:
             case QTESLA:
             case XMSS:
-            case XMSSMT:
             case LMS:
                 return theDigestSpec == null;
             default:

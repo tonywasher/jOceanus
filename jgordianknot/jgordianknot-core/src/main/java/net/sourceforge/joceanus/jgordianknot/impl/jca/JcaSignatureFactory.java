@@ -111,7 +111,6 @@ public class JcaSignatureFactory
             case DSTU4145:
                 return new JcaGOSTSignature(getFactory(), pSignatureSpec);
             case XMSS:
-            case XMSSMT:
                 return new JcaXMSSSignature(getFactory(), pSignatureSpec);
             case SPHINCS:
                 return new JcaSPHINCSSignature(getFactory(), pSignatureSpec);
@@ -149,7 +148,6 @@ public class JcaSignatureFactory
             case RAINBOW:
                 return validRainbowSignature(myDigest);
             case XMSS:
-            case XMSSMT:
             case SPHINCS:
             case QTESLA:
             case LMS:

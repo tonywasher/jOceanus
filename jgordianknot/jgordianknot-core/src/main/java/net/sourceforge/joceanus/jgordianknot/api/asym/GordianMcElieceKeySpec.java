@@ -25,7 +25,7 @@ import org.bouncycastle.pqc.jcajce.spec.McElieceCCA2KeyGenParameterSpec;
 import net.sourceforge.joceanus.jtethys.TethysDataConverter;
 
 /**
- * McEliece KeyTypes.
+ * McEliece KeySpec.
  */
 public final class GordianMcElieceKeySpec {
     /**
@@ -170,7 +170,7 @@ public final class GordianMcElieceKeySpec {
             return false;
         }
 
-        /* Make sure that the object is a mElieceSpec */
+        /* Make sure that the object is a mcElieceSpec */
         if (pThat.getClass() != this.getClass()) {
             return false;
         }

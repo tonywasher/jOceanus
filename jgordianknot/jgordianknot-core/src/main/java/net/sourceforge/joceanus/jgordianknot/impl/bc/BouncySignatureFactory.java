@@ -31,7 +31,6 @@ import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyQTESLAAsymKey.BouncyQ
 import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyRSAAsymKey.BouncyRSASignature;
 import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyRainbowAsymKey.BouncyRainbowSignature;
 import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncySPHINCSAsymKey.BouncySPHINCSSignature;
-import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyXMSSAsymKey.BouncyXMSSMTSignature;
 import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyXMSSAsymKey.BouncyXMSSSignature;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianDataException;
 import net.sourceforge.joceanus.jgordianknot.impl.core.sign.GordianCoreSignatureFactory;
@@ -101,8 +100,6 @@ public class BouncySignatureFactory
                 return new BouncyRainbowSignature(getFactory(), pSignatureSpec);
             case XMSS:
                 return new BouncyXMSSSignature(getFactory(), pSignatureSpec);
-            case XMSSMT:
-                return new BouncyXMSSMTSignature(getFactory(), pSignatureSpec);
             case QTESLA:
                 return new BouncyQTESLASignature(getFactory(), pSignatureSpec);
             case LMS:

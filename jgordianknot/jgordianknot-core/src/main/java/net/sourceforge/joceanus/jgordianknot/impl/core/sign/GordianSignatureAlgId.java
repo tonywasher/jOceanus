@@ -37,7 +37,8 @@ import org.bouncycastle.pqc.asn1.PQCObjectIdentifiers;
 import net.sourceforge.joceanus.jgordianknot.api.asym.GordianAsymKeyType;
 import net.sourceforge.joceanus.jgordianknot.api.asym.GordianQTESLAKeyType;
 import net.sourceforge.joceanus.jgordianknot.api.asym.GordianSPHINCSDigestType;
-import net.sourceforge.joceanus.jgordianknot.api.asym.GordianXMSSDigestType;
+import net.sourceforge.joceanus.jgordianknot.api.asym.GordianXMSSKeySpec;
+import net.sourceforge.joceanus.jgordianknot.api.asym.GordianXMSSKeySpec.GordianXMSSDigestType;
 import net.sourceforge.joceanus.jgordianknot.api.base.GordianLength;
 import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigestSpec;
 import net.sourceforge.joceanus.jgordianknot.api.key.GordianKeyPair;
@@ -335,37 +336,37 @@ public class GordianSignatureAlgId {
                 new AlgorithmIdentifier(PQCObjectIdentifiers.sphincs256_with_SHA512, DERNull.INSTANCE));
         addToMaps(GordianSignatureSpec.sphincs(), GordianSPHINCSDigestType.SHA3,
                 new AlgorithmIdentifier(PQCObjectIdentifiers.sphincs256_with_SHA3_512, DERNull.INSTANCE));
-        addToMaps(GordianSignatureSpec.xmss(), GordianXMSSDigestType.SHA256,
+        addToMaps(GordianSignatureSpec.xmss(), GordianXMSSKeySpec.xmss(GordianXMSSDigestType.SHA256),
                 new AlgorithmIdentifier(PQCObjectIdentifiers.xmss_SHA256, DERNull.INSTANCE));
-        addToMaps(GordianSignatureSpec.xmssph(), GordianXMSSDigestType.SHA256,
+        addToMaps(GordianSignatureSpec.xmssph(), GordianXMSSKeySpec.xmss(GordianXMSSDigestType.SHA256),
                 new AlgorithmIdentifier(PQCObjectIdentifiers.xmss_SHA256ph, DERNull.INSTANCE));
-        addToMaps(GordianSignatureSpec.xmss(), GordianXMSSDigestType.SHA512,
+        addToMaps(GordianSignatureSpec.xmss(), GordianXMSSKeySpec.xmss(GordianXMSSDigestType.SHA512),
                 new AlgorithmIdentifier(PQCObjectIdentifiers.xmss_SHA512, DERNull.INSTANCE));
-        addToMaps(GordianSignatureSpec.xmssph(), GordianXMSSDigestType.SHA512,
+        addToMaps(GordianSignatureSpec.xmssph(), GordianXMSSKeySpec.xmss(GordianXMSSDigestType.SHA512),
                 new AlgorithmIdentifier(PQCObjectIdentifiers.xmss_SHA512ph, DERNull.INSTANCE));
-        addToMaps(GordianSignatureSpec.xmss(), GordianXMSSDigestType.SHAKE128,
+        addToMaps(GordianSignatureSpec.xmss(), GordianXMSSKeySpec.xmss(GordianXMSSDigestType.SHAKE128),
                 new AlgorithmIdentifier(PQCObjectIdentifiers.xmss_SHAKE128, DERNull.INSTANCE));
-        addToMaps(GordianSignatureSpec.xmssph(), GordianXMSSDigestType.SHAKE128,
+        addToMaps(GordianSignatureSpec.xmssph(), GordianXMSSKeySpec.xmss(GordianXMSSDigestType.SHAKE128),
                 new AlgorithmIdentifier(PQCObjectIdentifiers.xmss_SHAKE128ph, DERNull.INSTANCE));
-        addToMaps(GordianSignatureSpec.xmss(), GordianXMSSDigestType.SHAKE256,
+        addToMaps(GordianSignatureSpec.xmss(), GordianXMSSKeySpec.xmss(GordianXMSSDigestType.SHAKE256),
                 new AlgorithmIdentifier(PQCObjectIdentifiers.xmss_SHAKE256, DERNull.INSTANCE));
-        addToMaps(GordianSignatureSpec.xmssph(), GordianXMSSDigestType.SHAKE256,
+        addToMaps(GordianSignatureSpec.xmssph(), GordianXMSSKeySpec.xmss(GordianXMSSDigestType.SHAKE256),
                 new AlgorithmIdentifier(PQCObjectIdentifiers.xmss_SHAKE256ph, DERNull.INSTANCE));
-        addToMaps(GordianSignatureSpec.xmssmt(), GordianXMSSDigestType.SHA256,
+        addToMaps(GordianSignatureSpec.xmss(), GordianXMSSKeySpec.xmssmt(GordianXMSSDigestType.SHA256),
                 new AlgorithmIdentifier(PQCObjectIdentifiers.xmss_mt_SHA256, DERNull.INSTANCE));
-        addToMaps(GordianSignatureSpec.xmssmtph(), GordianXMSSDigestType.SHA256,
+        addToMaps(GordianSignatureSpec.xmssph(), GordianXMSSKeySpec.xmssmt(GordianXMSSDigestType.SHA256),
                 new AlgorithmIdentifier(PQCObjectIdentifiers.xmss_mt_SHA256ph, DERNull.INSTANCE));
-        addToMaps(GordianSignatureSpec.xmssmt(), GordianXMSSDigestType.SHA512,
+        addToMaps(GordianSignatureSpec.xmss(), GordianXMSSKeySpec.xmssmt(GordianXMSSDigestType.SHA512),
                 new AlgorithmIdentifier(PQCObjectIdentifiers.xmss_mt_SHA512, DERNull.INSTANCE));
-        addToMaps(GordianSignatureSpec.xmssmtph(), GordianXMSSDigestType.SHA512,
+        addToMaps(GordianSignatureSpec.xmssph(), GordianXMSSKeySpec.xmssmt(GordianXMSSDigestType.SHA512),
                 new AlgorithmIdentifier(PQCObjectIdentifiers.xmss_mt_SHA512ph, DERNull.INSTANCE));
-        addToMaps(GordianSignatureSpec.xmssmt(), GordianXMSSDigestType.SHAKE128,
+        addToMaps(GordianSignatureSpec.xmss(), GordianXMSSKeySpec.xmssmt(GordianXMSSDigestType.SHAKE128),
                 new AlgorithmIdentifier(PQCObjectIdentifiers.xmss_mt_SHAKE128, DERNull.INSTANCE));
-        addToMaps(GordianSignatureSpec.xmssmtph(), GordianXMSSDigestType.SHAKE128,
+        addToMaps(GordianSignatureSpec.xmssph(), GordianXMSSKeySpec.xmssmt(GordianXMSSDigestType.SHAKE128),
                 new AlgorithmIdentifier(PQCObjectIdentifiers.xmss_mt_SHAKE128ph, DERNull.INSTANCE));
-        addToMaps(GordianSignatureSpec.xmssmt(), GordianXMSSDigestType.SHAKE256,
+        addToMaps(GordianSignatureSpec.xmss(), GordianXMSSKeySpec.xmssmt(GordianXMSSDigestType.SHAKE256),
                 new AlgorithmIdentifier(PQCObjectIdentifiers.xmss_mt_SHAKE256, DERNull.INSTANCE));
-        addToMaps(GordianSignatureSpec.xmssmtph(), GordianXMSSDigestType.SHAKE256,
+        addToMaps(GordianSignatureSpec.xmssph(), GordianXMSSKeySpec.xmssmt(GordianXMSSDigestType.SHAKE256),
                 new AlgorithmIdentifier(PQCObjectIdentifiers.xmss_mt_SHAKE256ph, DERNull.INSTANCE));
     }
 

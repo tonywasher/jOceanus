@@ -104,7 +104,6 @@ public enum GordianSignatureType {
             case ED25519:
             case ED448:
             case XMSS:
-            case XMSSMT:
             case QTESLA:
             case LMS:
                 return true;
@@ -123,7 +122,6 @@ public enum GordianSignatureType {
             case ED25519:
             case ED448:
             case XMSS:
-            case XMSSMT:
             case SPHINCS:
             case RSA:
                 return true;

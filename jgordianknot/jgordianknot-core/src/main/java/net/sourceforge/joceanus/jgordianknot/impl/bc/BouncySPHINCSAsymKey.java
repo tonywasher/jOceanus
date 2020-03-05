@@ -21,8 +21,6 @@ import java.security.spec.PKCS8EncodedKeySpec;
 import java.security.spec.X509EncodedKeySpec;
 import java.util.Arrays;
 
-import org.bouncycastle.asn1.ASN1ObjectIdentifier;
-import org.bouncycastle.asn1.nist.NISTObjectIdentifiers;
 import org.bouncycastle.asn1.pkcs.PrivateKeyInfo;
 import org.bouncycastle.asn1.x509.SubjectPublicKeyInfo;
 import org.bouncycastle.crypto.AsymmetricCipherKeyPair;
@@ -148,11 +146,6 @@ public final class BouncySPHINCSAsymKey {
         private final SPHINCS256KeyPairGenerator theGenerator;
 
         /**
-         * TreeDigest.
-         */
-        private final ASN1ObjectIdentifier theTreeDigest;
-
-        /**
          * Constructor.
          * @param pFactory the Security Factory
          * @param pKeySpec the keySpec
@@ -163,13 +156,10 @@ public final class BouncySPHINCSAsymKey {
             super(pFactory, pKeySpec);
 
             /* Determine the algorithm Id */
-            final GordianSPHINCSDigestType myKeyType = pKeySpec.getSPHINCSDigestType();
-            theTreeDigest = GordianSPHINCSDigestType.SHA3.equals(myKeyType)
-                            ? NISTObjectIdentifiers.id_sha3_256
-                            : NISTObjectIdentifiers.id_sha512_256;
+            final GordianSPHINCSDigestType myDigestType = pKeySpec.getSPHINCSDigestType();
 
             /* Determine the digest */
-            final Digest myDigest = GordianSPHINCSDigestType.SHA3.equals(myKeyType)
+            final Digest myDigest = GordianSPHINCSDigestType.SHA3.equals(myDigestType)
                                     ? new SHA3Digest(GordianLength.LEN_256.getLength())
                                     : new SHA512tDigest(GordianLength.LEN_256.getLength());
 
@@ -273,7 +263,7 @@ public final class BouncySPHINCSAsymKey {
         }
 
         /**
-         * Constructor.
+         * Set the signer according to the keyPair.
          * @param pKeyPair the keyPair
          * @throws OceanusException on error
          */
