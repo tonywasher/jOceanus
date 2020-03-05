@@ -145,7 +145,7 @@ public class BouncyAsymFactory
             case RAINBOW:
                 return new BouncyRainbowKeyPairGenerator(getFactory(), pKeySpec);
             case MCELIECE:
-                return pKeySpec.getMcElieceSpec().isCCA2()
+                return pKeySpec.getMcElieceKeySpec().isCCA2()
                        ? new BouncyMcElieceCCA2KeyPairGenerator(getFactory(), pKeySpec)
                        : new BouncyMcElieceKeyPairGenerator(getFactory(), pKeySpec);
             case NEWHOPE:

@@ -414,7 +414,7 @@ public abstract class JcaSignature
          */
         private static String getAlgorithmForKeyPair(final GordianKeyPair pKeyPair) throws OceanusException {
             /* Determine the required signer */
-            final GordianDigestSpec myDigestSpec = pKeyPair.getKeySpec().getSPHINCSType().getDigestSpec();
+            final GordianDigestSpec myDigestSpec = pKeyPair.getKeySpec().getSPHINCSDigestType().getDigestSpec();
             final String myDigest = JcaDigest.getAlgorithm(myDigestSpec);
 
             /* Create builder */
@@ -502,7 +502,7 @@ public abstract class JcaSignature
          */
         private String getAlgorithmForKeyPair(final GordianKeyPair pKeyPair) throws OceanusException {
             /* Determine the required signer */
-            final GordianDigestSpec myDigestSpec = pKeyPair.getKeySpec().getXMSSKeyType().getDigestSpec();
+            final GordianDigestSpec myDigestSpec = pKeyPair.getKeySpec().getXMSSDigestType().getDigestSpec();
             final String myDigest = JcaDigest.getAlgorithm(myDigestSpec);
 
             /* Create builder */

@@ -139,7 +139,7 @@ public final class BouncyLMSAsymKey {
 
             /* Create and initialise the generator */
             theGenerator = new LMSKeyPairGenerator();
-            final GordianLMSKeySpec mySpec = pKeySpec.getLMSSpec();
+            final GordianLMSKeySpec mySpec = pKeySpec.getLMSKeySpec();
             final KeyGenerationParameters myParams = new LMSKeyGenerationParameters(mySpec.getParameters(), getRandom());
             theGenerator.init(myParams);
         }

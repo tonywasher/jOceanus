@@ -119,7 +119,7 @@ public abstract class GordianCoreSignatureFactory
                 /* The digest length cannot be too large wrt to the modulus */
                 int myLen = pSignSpec.getDigestSpec().getDigestLength().getLength();
                 myLen += Byte.SIZE;
-                if (myKeySpec.getModulus().getLength() < (myLen << 1)) {
+                if (myKeySpec.getRSAModulus().getLength() < (myLen << 1)) {
                     return false;
                 }
             }
@@ -128,7 +128,7 @@ public abstract class GordianCoreSignatureFactory
             /* The digest length cannot be too large wrt to the modulus */
             int myLen = pSignSpec.getDigestSpec().getDigestLength().getLength();
             myLen += Integer.SIZE;
-            if (myKeySpec.getModulus().getLength() < myLen) {
+            if (myKeySpec.getRSAModulus().getLength() < myLen) {
                 return false;
             }
         }

@@ -209,7 +209,7 @@ public final class BouncyRSAAsymKey {
 
             /* Create and initialise the generator */
             theGenerator = new RSAKeyPairGenerator();
-            final RSAKeyGenerationParameters myParams = new RSAKeyGenerationParameters(RSA_EXPONENT, getRandom(), pKeySpec.getModulus().getLength(), PRIME_CERTAINTY);
+            final RSAKeyGenerationParameters myParams = new RSAKeyGenerationParameters(RSA_EXPONENT, getRandom(), pKeySpec.getRSAModulus().getLength(), PRIME_CERTAINTY);
             theGenerator.init(myParams);
         }
 
@@ -469,7 +469,7 @@ public final class BouncyRSAAsymKey {
             theAgreement.init(myPublic.getPublicKey());
 
             /* Create message */
-            final GordianRSAModulus myModulus = myPublic.getKeySpec().getModulus();
+            final GordianRSAModulus myModulus = myPublic.getKeySpec().getRSAModulus();
             final int myLen = myModulus.getLength() / Byte.SIZE;
             final byte[] myData = new byte[myLen];
             final KeyParameter myParms = (KeyParameter) theAgreement.encrypt(myData, 0, myLen);
@@ -495,7 +495,7 @@ public final class BouncyRSAAsymKey {
             theAgreement.init(myPrivate.getPrivateKey());
 
             /* Parse source message */
-            final GordianRSAModulus myModulus = myPrivate.getKeySpec().getModulus();
+            final GordianRSAModulus myModulus = myPrivate.getKeySpec().getRSAModulus();
             final int myLen = myModulus.getLength() / Byte.SIZE;
             final byte[] myMessage = parseMessage(pMessage);
             final KeyParameter myParms = (KeyParameter) theAgreement.decrypt(myMessage, 0, myMessage.length, myLen);

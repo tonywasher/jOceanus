@@ -50,7 +50,7 @@ import org.bouncycastle.pqc.crypto.xmss.XMSSPublicKeyParameters;
 import org.bouncycastle.pqc.crypto.xmss.XMSSSigner;
 
 import net.sourceforge.joceanus.jgordianknot.api.asym.GordianAsymKeySpec;
-import net.sourceforge.joceanus.jgordianknot.api.asym.GordianXMSSKeyType;
+import net.sourceforge.joceanus.jgordianknot.api.asym.GordianXMSSDigestType;
 import net.sourceforge.joceanus.jgordianknot.api.base.GordianLength;
 import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigestSpec;
 import net.sourceforge.joceanus.jgordianknot.api.key.GordianKeyPair;
@@ -199,12 +199,12 @@ public final class BouncyXMSSAsymKey {
                                    final GordianAsymKeySpec pKeySpec) {
             /* Initialise underlying class */
             super(pFactory, pKeySpec);
-            theTreeDigest = getOID(pKeySpec.getXMSSKeyType());
+            theTreeDigest = getOID(pKeySpec.getXMSSDigestType());
 
             /* Create and initialise the generator */
             theGenerator = new XMSSKeyPairGenerator();
             final KeyGenerationParameters myParams = new XMSSKeyGenerationParameters(
-                    new XMSSParameters(GordianXMSSKeyType.DEFAULT_HEIGHT, createDigest(getKeyType())), getRandom());
+                    new XMSSParameters(GordianXMSSDigestType.DEFAULT_HEIGHT, createDigest(getKeyType())), getRandom());
             theGenerator.init(myParams);
         }
 
@@ -212,8 +212,8 @@ public final class BouncyXMSSAsymKey {
          * Obtain the keyTypeType.
          * @return the keyTypeType
          */
-        private GordianXMSSKeyType getKeyType() {
-            return getKeySpec().getXMSSKeyType();
+        private GordianXMSSDigestType getKeyType() {
+            return getKeySpec().getXMSSDigestType();
         }
 
         @Override
@@ -295,7 +295,7 @@ public final class BouncyXMSSAsymKey {
      * @param pKeyType the key type
      * @return the digest
      */
-    static Digest createDigest(final GordianXMSSKeyType pKeyType) {
+    static Digest createDigest(final GordianXMSSDigestType pKeyType) {
         switch (pKeyType) {
             case SHAKE128:
                 return new SHAKEDigest(GordianLength.LEN_128.getLength());
@@ -314,7 +314,7 @@ public final class BouncyXMSSAsymKey {
      * @param pKeyType the keyType
      * @return the OIDt
      */
-    static ASN1ObjectIdentifier getOID(final GordianXMSSKeyType pKeyType) {
+    static ASN1ObjectIdentifier getOID(final GordianXMSSDigestType pKeyType) {
         switch (pKeyType) {
             case SHAKE128:
                 return NISTObjectIdentifiers.id_shake128;
@@ -455,12 +455,12 @@ public final class BouncyXMSSAsymKey {
                                      final GordianAsymKeySpec pKeySpec) {
             /* Initialise underlying class */
             super(pFactory, pKeySpec);
-            theTreeDigest = getOID(pKeySpec.getXMSSKeyType());
+            theTreeDigest = getOID(pKeySpec.getXMSSDigestType());
 
             /* Create and initialise the generator */
             theGenerator = new XMSSMTKeyPairGenerator();
             final KeyGenerationParameters myParams = new XMSSMTKeyGenerationParameters(
-                    new XMSSMTParameters(GordianXMSSKeyType.DEFAULT_HEIGHT, GordianXMSSKeyType.DEFAULT_LAYERS,
+                    new XMSSMTParameters(GordianXMSSDigestType.DEFAULT_HEIGHT, GordianXMSSDigestType.DEFAULT_LAYERS,
                             createDigest(getKeyType())), getRandom());
             theGenerator.init(myParams);
         }
@@ -469,8 +469,8 @@ public final class BouncyXMSSAsymKey {
          * Obtain the digestType.
          * @return the digestType
          */
-        private GordianXMSSKeyType getKeyType() {
-            return getKeySpec().getXMSSKeyType();
+        private GordianXMSSDigestType getKeyType() {
+            return getKeySpec().getXMSSDigestType();
         }
 
         @Override
@@ -587,7 +587,7 @@ public final class BouncyXMSSAsymKey {
             super.initForSigning(pKeyPair);
 
             /* Set the digest */
-            final GordianDigestSpec myDigestSpec = pKeyPair.getKeySpec().getXMSSKeyType().getDigestSpec();
+            final GordianDigestSpec myDigestSpec = pKeyPair.getKeySpec().getXMSSDigestType().getDigestSpec();
             setDigest(preHash ? myDigestSpec : null);
 
             /* Initialise and set the signer */
@@ -601,7 +601,7 @@ public final class BouncyXMSSAsymKey {
             super.initForVerify(pKeyPair);
 
             /* Set the digest */
-            final GordianDigestSpec myDigestSpec = pKeyPair.getKeySpec().getXMSSKeyType().getDigestSpec();
+            final GordianDigestSpec myDigestSpec = pKeyPair.getKeySpec().getXMSSDigestType().getDigestSpec();
             setDigest(preHash ? myDigestSpec : null);
 
             /* Initialise and set the signer */
@@ -667,7 +667,7 @@ public final class BouncyXMSSAsymKey {
             super.initForSigning(pKeyPair);
 
             /* Set the digest */
-            final GordianDigestSpec myDigestSpec = pKeyPair.getKeySpec().getXMSSKeyType().getDigestSpec();
+            final GordianDigestSpec myDigestSpec = pKeyPair.getKeySpec().getXMSSDigestType().getDigestSpec();
             setDigest(preHash ? myDigestSpec : null);
 
             /* Initialise and set the signer */
@@ -681,7 +681,7 @@ public final class BouncyXMSSAsymKey {
             super.initForVerify(pKeyPair);
 
             /* Set the digest */
-            final GordianDigestSpec myDigestSpec = pKeyPair.getKeySpec().getXMSSKeyType().getDigestSpec();
+            final GordianDigestSpec myDigestSpec = pKeyPair.getKeySpec().getXMSSDigestType().getDigestSpec();
             setDigest(preHash ? myDigestSpec : null);
 
             /* Initialise and set the signer */

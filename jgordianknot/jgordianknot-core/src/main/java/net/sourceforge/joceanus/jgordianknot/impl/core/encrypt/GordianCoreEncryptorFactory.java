@@ -119,7 +119,7 @@ public abstract class GordianCoreEncryptorFactory
 
         /* Disallow McEliece if it is the wrong style key */
         if (GordianAsymKeyType.MCELIECE.equals(myKeySpec.getKeyType())) {
-            return GordianMcElieceKeySpec.checkValidEncryptionType(myKeySpec.getMcElieceSpec(), pEncryptorSpec.getMcElieceType());
+            return GordianMcElieceKeySpec.checkValidEncryptionType(myKeySpec.getMcElieceKeySpec(), pEncryptorSpec.getMcElieceType());
         }
 
         /* If this is a RSA encryption */
@@ -127,7 +127,7 @@ public abstract class GordianCoreEncryptorFactory
             /* The digest length cannot be too large wrt to the modulus */
             int myLen = pEncryptorSpec.getDigestSpec().getDigestLength().getByteLength();
             myLen = (myLen + 1) * Byte.SIZE;
-            return myKeySpec.getModulus().getLength() >= (myLen << 1);
+            return myKeySpec.getRSAModulus().getLength() >= (myLen << 1);
         }
 
         /* OK */

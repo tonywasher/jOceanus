@@ -47,8 +47,8 @@ import net.sourceforge.joceanus.jgordianknot.api.asym.GordianLMSKeySpec;
 import net.sourceforge.joceanus.jgordianknot.api.asym.GordianMcElieceKeySpec;
 import net.sourceforge.joceanus.jgordianknot.api.asym.GordianMcElieceKeySpec.GordianMcElieceDigestType;
 import net.sourceforge.joceanus.jgordianknot.api.asym.GordianRSAModulus;
-import net.sourceforge.joceanus.jgordianknot.api.asym.GordianSPHINCSKeyType;
-import net.sourceforge.joceanus.jgordianknot.api.asym.GordianXMSSKeyType;
+import net.sourceforge.joceanus.jgordianknot.api.asym.GordianSPHINCSDigestType;
+import net.sourceforge.joceanus.jgordianknot.api.asym.GordianXMSSDigestType;
 import net.sourceforge.joceanus.jgordianknot.api.key.GordianKeyPair;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianCryptoException;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianLogicException;
@@ -173,7 +173,7 @@ public abstract class JcaKeyPairGenerator
 
             /* Create and initialise the generator */
             theGenerator = JcaAsymFactory.getJavaKeyPairGenerator(RSA_ALGO, false);
-            theGenerator.initialize(pKeySpec.getModulus().getLength(), getRandom());
+            theGenerator.initialize(pKeySpec.getRSAModulus().getLength(), getRandom());
 
             /* Create the factory */
             setKeyFactory(JcaAsymFactory.getJavaKeyFactory(RSA_ALGO, false));
@@ -374,7 +374,7 @@ public abstract class JcaKeyPairGenerator
             /* Protect against exceptions */
             try {
                 /* Determine the type */
-                final String myType = GordianSPHINCSKeyType.SHA3.equals(pKeySpec.getSPHINCSType())
+                final String myType = GordianSPHINCSDigestType.SHA3.equals(pKeySpec.getSPHINCSDigestType())
                                       ? SPHINCS256KeyGenParameterSpec.SHA3_256
                                       : SPHINCS256KeyGenParameterSpec.SHA512_256;
 
@@ -474,7 +474,7 @@ public abstract class JcaKeyPairGenerator
             super(pFactory, pKeySpec);
 
             /* Create and initialise the generator */
-            final GordianMcElieceKeySpec myKeyType = pKeySpec.getMcElieceSpec();
+            final GordianMcElieceKeySpec myKeyType = pKeySpec.getMcElieceKeySpec();
             final String myAlgo = myKeyType.isCCA2()
                                   ? MCELIECECCA2_ALGO
                                   : MCELIECE_ALGO;
@@ -574,13 +574,13 @@ public abstract class JcaKeyPairGenerator
             try {
                 /* Access the algorithm */
                 final boolean isXMSSMT = GordianAsymKeyType.XMSSMT.equals(pKeySpec.getKeyType());
-                final GordianXMSSKeyType myType = pKeySpec.getXMSSKeyType();
+                final GordianXMSSDigestType myType = pKeySpec.getXMSSDigestType();
 
                 /* Create the parameters */
                 final AlgorithmParameterSpec myAlgo = isXMSSMT
-                                                      ? new XMSSMTParameterSpec(GordianXMSSKeyType.DEFAULT_HEIGHT,
-                        GordianXMSSKeyType.DEFAULT_LAYERS, myType.name())
-                                                      : new XMSSParameterSpec(GordianXMSSKeyType.DEFAULT_HEIGHT, myType.name());
+                                                      ? new XMSSMTParameterSpec(GordianXMSSDigestType.DEFAULT_HEIGHT,
+                        GordianXMSSDigestType.DEFAULT_LAYERS, myType.name())
+                                                      : new XMSSParameterSpec(GordianXMSSDigestType.DEFAULT_HEIGHT, myType.name());
 
                 /* Create and initialise the generator */
                 final String myJavaType = pKeySpec.getKeyType().toString();
@@ -763,7 +763,7 @@ public abstract class JcaKeyPairGenerator
 
             /* Protect against exceptions */
             try {
-                final GordianLMSKeySpec myKeySpec = pKeySpec.getLMSSpec();
+                final GordianLMSKeySpec myKeySpec = pKeySpec.getLMSKeySpec();
                 final LMSParameters myParms = myKeySpec.getParameters();
                 final LMSParameterSpec mySpec = new LMSParameterSpec(myParms.getLmsParam(), myParms.getLmOTSParam());
                 theGenerator.initialize(mySpec, getRandom());

@@ -20,38 +20,18 @@ import net.sourceforge.joceanus.jgordianknot.api.base.GordianLength;
 import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigestSpec;
 
 /**
- * XMSS keyType.
+ * SPHINCS digestTypes.
  */
-public enum GordianXMSSKeyType {
+public enum GordianSPHINCSDigestType {
     /**
-     * SHA256.
+     * sha2.
      */
-    SHA256,
+    SHA2,
 
     /**
-     * SHA512.
+     * sha3.
      */
-    SHA512,
-
-    /**
-     * SHAKE128.
-     */
-    SHAKE128,
-
-    /**
-     * SHAKE256.
-     */
-    SHAKE256;
-
-    /**
-     * Default height for XMSS key.
-     */
-    public static final int DEFAULT_HEIGHT = 6;
-
-    /**
-     * Default layers for XMSS key.
-     */
-    public static final int DEFAULT_LAYERS = 3;
+    SHA3;
 
     /**
      * Obtain the required digestSpec.
@@ -59,17 +39,12 @@ public enum GordianXMSSKeyType {
      */
     public GordianDigestSpec getDigestSpec() {
         switch (this) {
-            case SHA256:
-                return GordianDigestSpec.sha2(GordianLength.LEN_256);
-            case SHA512:
+            case SHA2:
                 return GordianDigestSpec.sha2(GordianLength.LEN_512);
-            case SHAKE128:
-                return GordianDigestSpec.shakeAlt(GordianLength.LEN_256);
-            case SHAKE256:
-                return GordianDigestSpec.shake(GordianLength.LEN_512);
+            case SHA3:
+                return GordianDigestSpec.sha3(GordianLength.LEN_512);
             default:
                 throw new IllegalStateException();
         }
     }
 }
-

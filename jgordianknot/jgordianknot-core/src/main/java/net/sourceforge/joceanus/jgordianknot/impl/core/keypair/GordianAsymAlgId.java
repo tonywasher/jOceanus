@@ -75,8 +75,8 @@ import net.sourceforge.joceanus.jgordianknot.api.asym.GordianMcElieceKeySpec.Gor
 import net.sourceforge.joceanus.jgordianknot.api.asym.GordianQTESLAKeyType;
 import net.sourceforge.joceanus.jgordianknot.api.asym.GordianRSAModulus;
 import net.sourceforge.joceanus.jgordianknot.api.asym.GordianSM2Elliptic;
-import net.sourceforge.joceanus.jgordianknot.api.asym.GordianSPHINCSKeyType;
-import net.sourceforge.joceanus.jgordianknot.api.asym.GordianXMSSKeyType;
+import net.sourceforge.joceanus.jgordianknot.api.asym.GordianSPHINCSDigestType;
+import net.sourceforge.joceanus.jgordianknot.api.asym.GordianXMSSDigestType;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianDataException;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
@@ -641,10 +641,10 @@ public class GordianAsymAlgId {
         private static  GordianAsymKeySpec determineKeySpec(final SPHINCS256KeyParams pParms) throws OceanusException {
             final ASN1ObjectIdentifier myDigest = pParms.getTreeDigest().getAlgorithm();
             if (myDigest.equals(NISTObjectIdentifiers.id_sha512_256)) {
-                return GordianAsymKeySpec.sphincs(GordianSPHINCSKeyType.SHA2);
+                return GordianAsymKeySpec.sphincs(GordianSPHINCSDigestType.SHA2);
             }
             if (myDigest.equals(NISTObjectIdentifiers.id_sha3_256)) {
-                return GordianAsymKeySpec.sphincs(GordianSPHINCSKeyType.SHA3);
+                return GordianAsymKeySpec.sphincs(GordianSPHINCSDigestType.SHA3);
             }
 
             /* Tree Digest is not supported */
@@ -696,18 +696,18 @@ public class GordianAsymAlgId {
          * @return the keyType
          * @throws OceanusException on error
          */
-        static GordianXMSSKeyType determineKeyType(final ASN1ObjectIdentifier pDigest) throws OceanusException {
+        static GordianXMSSDigestType determineKeyType(final ASN1ObjectIdentifier pDigest) throws OceanusException {
             if (pDigest.equals(NISTObjectIdentifiers.id_sha256)) {
-                return GordianXMSSKeyType.SHA256;
+                return GordianXMSSDigestType.SHA256;
             }
             if (pDigest.equals(NISTObjectIdentifiers.id_sha512)) {
-                return GordianXMSSKeyType.SHA512;
+                return GordianXMSSDigestType.SHA512;
             }
             if (pDigest.equals(NISTObjectIdentifiers.id_shake128)) {
-                return GordianXMSSKeyType.SHAKE128;
+                return GordianXMSSDigestType.SHAKE128;
             }
             if (pDigest.equals(NISTObjectIdentifiers.id_shake256)) {
-                return GordianXMSSKeyType.SHAKE256;
+                return GordianXMSSDigestType.SHAKE256;
             }
 
             /* Tree Digest is not supported */
