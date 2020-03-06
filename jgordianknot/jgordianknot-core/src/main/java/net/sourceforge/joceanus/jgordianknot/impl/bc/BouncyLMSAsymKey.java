@@ -25,8 +25,14 @@ import org.bouncycastle.asn1.x509.SubjectPublicKeyInfo;
 import org.bouncycastle.crypto.AsymmetricCipherKeyPair;
 import org.bouncycastle.crypto.KeyGenerationParameters;
 import org.bouncycastle.crypto.params.AsymmetricKeyParameter;
+import org.bouncycastle.pqc.crypto.lms.HSSKeyGenerationParameters;
+import org.bouncycastle.pqc.crypto.lms.HSSKeyPairGenerator;
+import org.bouncycastle.pqc.crypto.lms.HSSPrivateKeyParameters;
+import org.bouncycastle.pqc.crypto.lms.HSSPublicKeyParameters;
+import org.bouncycastle.pqc.crypto.lms.HSSSigner;
 import org.bouncycastle.pqc.crypto.lms.LMSKeyGenerationParameters;
 import org.bouncycastle.pqc.crypto.lms.LMSKeyPairGenerator;
+import org.bouncycastle.pqc.crypto.lms.LMSParameters;
 import org.bouncycastle.pqc.crypto.lms.LMSPrivateKeyParameters;
 import org.bouncycastle.pqc.crypto.lms.LMSPublicKeyParameters;
 import org.bouncycastle.pqc.crypto.lms.LMSSigner;
@@ -37,12 +43,16 @@ import org.bouncycastle.pqc.crypto.util.SubjectPublicKeyInfoFactory;
 
 import net.sourceforge.joceanus.jgordianknot.api.asym.GordianAsymKeySpec;
 import net.sourceforge.joceanus.jgordianknot.api.asym.GordianLMSKeySpec;
+import net.sourceforge.joceanus.jgordianknot.api.asym.GordianLMSKeySpec.GordianHSSKeySpec;
 import net.sourceforge.joceanus.jgordianknot.api.key.GordianKeyPair;
 import net.sourceforge.joceanus.jgordianknot.api.sign.GordianSignatureSpec;
 import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyKeyPair.BouncyPublicKey;
 import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyKeyPair.BouncyStateAwarePrivateKey;
+import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyLMSAsymKey.BouncyLMSPrivateKey;
+import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyLMSAsymKey.BouncyLMSPublicKey;
 import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncySignature.BouncyDigestSignature;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianCryptoException;
+import net.sourceforge.joceanus.jgordianknot.impl.core.sign.GordianCoreSignature.GordianSignatureMode;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
@@ -216,14 +226,198 @@ public final class BouncyLMSAsymKey {
     }
 
     /**
+     * Bouncy HSS PublicKey.
+     */
+    public static class BouncyHSSPublicKey
+            extends BouncyPublicKey<HSSPublicKeyParameters> {
+        /**
+         * Constructor.
+         * @param pKeySpec the keySpec
+         * @param pPublicKey the public key
+         */
+        BouncyHSSPublicKey(final GordianAsymKeySpec pKeySpec,
+                           final HSSPublicKeyParameters pPublicKey) {
+            super(pKeySpec, pPublicKey);
+        }
+
+        @Override
+        protected boolean matchKey(final AsymmetricKeyParameter pThat) {
+            /* Access keys */
+            final HSSPublicKeyParameters myThis = getPublicKey();
+            final HSSPublicKeyParameters myThat = (HSSPublicKeyParameters) pThat;
+
+            /* Check equality */
+            return myThis.equals(myThat);
+        }
+    }
+
+    /**
+     * Bouncy HSS PrivateKey.
+     */
+    public static class BouncyHSSPrivateKey
+            extends BouncyStateAwarePrivateKey<HSSPrivateKeyParameters> {
+        /**
+         * Constructor.
+         * @param pKeySpec the keySpec
+         * @param pPrivateKey the private key
+         */
+        BouncyHSSPrivateKey(final GordianAsymKeySpec pKeySpec,
+                            final HSSPrivateKeyParameters pPrivateKey) {
+            super(pKeySpec, pPrivateKey);
+        }
+
+        @Override
+        public long getUsagesRemaining() {
+            return getPrivateKey().getUsagesRemaining();
+        }
+
+        @Override
+        public BouncyHSSPrivateKey getKeyShard(final int pNumUsages) {
+            return new BouncyHSSPrivateKey(getKeySpec(), getPrivateKey().extractKeyShard(pNumUsages));
+        }
+
+        @Override
+        protected boolean matchKey(final AsymmetricKeyParameter pThat) {
+            /* Access keys */
+            final HSSPrivateKeyParameters myThis = getPrivateKey();
+            final HSSPrivateKeyParameters myThat = (HSSPrivateKeyParameters) pThat;
+
+            /* Check equality */
+            return myThis.equals(myThat);
+        }
+    }
+
+    /**
+     * BouncyCastle HSS KeyPair generator.
+     */
+    public static class BouncyHSSKeyPairGenerator
+            extends BouncyKeyPairGenerator {
+        /**
+         * Generator.
+         */
+        private final HSSKeyPairGenerator theGenerator;
+
+        /**
+         * Constructor.
+         * @param pFactory the Security Factory
+         * @param pKeySpec the keySpec
+         */
+        BouncyHSSKeyPairGenerator(final BouncyFactory pFactory,
+                                  final GordianAsymKeySpec pKeySpec) {
+            /* Initialise underlying class */
+            super(pFactory, pKeySpec);
+
+            /* Create and initialise the generator */
+            theGenerator = new HSSKeyPairGenerator();
+            final GordianHSSKeySpec myKeySpec = pKeySpec.getHSSKeySpec();
+            final KeyGenerationParameters myParams = new HSSKeyGenerationParameters(deriveParameters(myKeySpec), getRandom());
+            theGenerator.init(myParams);
+        }
+
+        /**
+         * Derive the parameters.
+         * @param pKeySpec the keySPec
+         * @return the parameters.
+         */
+        private static LMSParameters[] deriveParameters(final GordianHSSKeySpec pKeySpec) {
+            final GordianLMSKeySpec[] myKeySpecs = pKeySpec.getParameters();
+            final LMSParameters[] myParams = new LMSParameters[myKeySpecs.length];
+            for (int i = 0; i < myKeySpecs.length; i++) {
+                myParams[i] = myKeySpecs[i].getParameters();
+            }
+            return myParams;
+        }
+
+        @Override
+        public BouncyKeyPair generateKeyPair() {
+            final AsymmetricCipherKeyPair myPair = theGenerator.generateKeyPair();
+            final BouncyHSSPublicKey myPublic = new BouncyHSSPublicKey(getKeySpec(), (HSSPublicKeyParameters) myPair.getPublic());
+            final BouncyHSSPrivateKey myPrivate = new BouncyHSSPrivateKey(getKeySpec(), (HSSPrivateKeyParameters) myPair.getPrivate());
+            return new BouncyKeyPair(myPublic, myPrivate);
+        }
+
+        @Override
+        public PKCS8EncodedKeySpec getPKCS8Encoding(final GordianKeyPair pKeyPair) throws OceanusException {
+            try {
+                final BouncyHSSPrivateKey myPrivateKey = (BouncyHSSPrivateKey) getPrivateKey(pKeyPair);
+                final HSSPrivateKeyParameters myParms = myPrivateKey.getPrivateKey();
+                final PrivateKeyInfo myInfo = PrivateKeyInfoFactory.createPrivateKeyInfo(myParms, null);
+                return new PKCS8EncodedKeySpec(myInfo.getEncoded());
+            } catch (IOException e) {
+                throw new GordianCryptoException(ERROR_PARSE, e);
+            }
+        }
+
+        @Override
+        public BouncyKeyPair deriveKeyPair(final X509EncodedKeySpec pPublicKey,
+                                           final PKCS8EncodedKeySpec pPrivateKey) throws OceanusException {
+            try {
+                checkKeySpec(pPrivateKey);
+                final BouncyHSSPublicKey myPublic = derivePublicKey(pPublicKey);
+                final PrivateKeyInfo myInfo = PrivateKeyInfo.getInstance(pPrivateKey.getEncoded());
+                final HSSPrivateKeyParameters myParms = (HSSPrivateKeyParameters) PrivateKeyFactory.createKey(myInfo);
+                final BouncyHSSPrivateKey myPrivate = new BouncyHSSPrivateKey(getKeySpec(), myParms);
+                return new BouncyKeyPair(myPublic, myPrivate);
+            } catch (IOException e) {
+                throw new GordianCryptoException(ERROR_PARSE, e);
+            }
+        }
+
+        @Override
+        public X509EncodedKeySpec getX509Encoding(final GordianKeyPair pKeyPair) throws OceanusException {
+            try {
+                final BouncyHSSPublicKey myPublicKey = (BouncyHSSPublicKey) getPublicKey(pKeyPair);
+                final HSSPublicKeyParameters myParms = myPublicKey.getPublicKey();
+                final SubjectPublicKeyInfo myInfo = SubjectPublicKeyInfoFactory.createSubjectPublicKeyInfo(myParms);
+                return new X509EncodedKeySpec(myInfo.getEncoded());
+            } catch (IOException e) {
+                throw new GordianCryptoException(ERROR_PARSE, e);
+            }
+        }
+
+        @Override
+        public BouncyKeyPair derivePublicOnlyKeyPair(final X509EncodedKeySpec pEncodedKey) throws OceanusException {
+            final BouncyHSSPublicKey myPublic = derivePublicKey(pEncodedKey);
+            return new BouncyKeyPair(myPublic);
+        }
+
+        /**
+         * Derive public key from encoded.
+         * @param pEncodedKey the encoded key
+         * @return the public key
+         * @throws OceanusException on error
+         */
+        private BouncyHSSPublicKey derivePublicKey(final X509EncodedKeySpec pEncodedKey) throws OceanusException {
+            try {
+                checkKeySpec(pEncodedKey);
+                final SubjectPublicKeyInfo myInfo = SubjectPublicKeyInfo.getInstance(pEncodedKey.getEncoded());
+                final HSSPublicKeyParameters myParms = (HSSPublicKeyParameters) PublicKeyFactory.createKey(myInfo);
+                return new BouncyHSSPublicKey(getKeySpec(), myParms);
+            } catch (IOException e) {
+                throw new GordianCryptoException(ERROR_PARSE, e);
+            }
+        }
+    }
+
+    /**
      * LMS signature.
      */
     public static class BouncyLMSSignature
             extends BouncyDigestSignature {
         /**
-         * The XMSS Signer.
+         * The LMS Signer.
          */
         private final LMSSigner theSigner;
+
+        /**
+         * The HSS Signer.
+         */
+        private final HSSSigner theHSSSigner;
+
+        /**
+         * Are we using the HSS signer?
+         */
+        private boolean isHSS;
 
         /**
          * Constructor.
@@ -238,6 +432,7 @@ public final class BouncyLMSAsymKey {
 
             /* Create the signer */
             theSigner = new LMSSigner();
+            theHSSSigner = new HSSSigner();
         }
 
 
@@ -247,8 +442,14 @@ public final class BouncyLMSAsymKey {
             super.initForSigning(pKeyPair);
 
             /* Initialise and set the signer */
-            final BouncyLMSPrivateKey myPrivate = (BouncyLMSPrivateKey) getKeyPair().getPrivateKey();
-            theSigner.init(true, myPrivate.getPrivateKey());
+            isHSS = pKeyPair.getKeySpec().getSubKeyType() instanceof GordianHSSKeySpec;
+            if (isHSS) {
+                final BouncyHSSPrivateKey myPrivate = (BouncyHSSPrivateKey) getKeyPair().getPrivateKey();
+                theHSSSigner.init(true, myPrivate.getPrivateKey());
+            } else {
+                final BouncyLMSPrivateKey myPrivate = (BouncyLMSPrivateKey) getKeyPair().getPrivateKey();
+                theSigner.init(true, myPrivate.getPrivateKey());
+            }
         }
 
         @Override
@@ -257,8 +458,14 @@ public final class BouncyLMSAsymKey {
             super.initForVerify(pKeyPair);
 
             /* Initialise and set the signer */
-            final BouncyLMSPublicKey myPublic = (BouncyLMSPublicKey) getKeyPair().getPublicKey();
-            theSigner.init(false, myPublic.getPublicKey());
+            isHSS = pKeyPair.getKeySpec().getSubKeyType() instanceof GordianHSSKeySpec;
+            if (isHSS) {
+                final BouncyHSSPublicKey myPublic = (BouncyHSSPublicKey) getKeyPair().getPublicKey();
+                theHSSSigner.init(false, myPublic.getPublicKey());
+            } else {
+                final BouncyLMSPublicKey myPublic = (BouncyLMSPublicKey) getKeyPair().getPublicKey();
+                theSigner.init(false, myPublic.getPublicKey());
+            }
         }
 
         @Override
@@ -267,7 +474,9 @@ public final class BouncyLMSAsymKey {
             checkMode(GordianSignatureMode.SIGN);
 
             /* Sign the message */
-            return theSigner.generateSignature(getDigest());
+            return isHSS
+                   ? theHSSSigner.generateSignature(getDigest())
+                   : theSigner.generateSignature(getDigest());
         }
 
         @Override
@@ -276,7 +485,9 @@ public final class BouncyLMSAsymKey {
             checkMode(GordianSignatureMode.VERIFY);
 
             /* Verify the message */
-            return theSigner.verifySignature(getDigest(), pSignature);
+            return  isHSS
+                    ? theHSSSigner.verifySignature(getDigest(), pSignature)
+                    : theSigner.verifySignature(getDigest(), pSignature);
         }
     }
 }

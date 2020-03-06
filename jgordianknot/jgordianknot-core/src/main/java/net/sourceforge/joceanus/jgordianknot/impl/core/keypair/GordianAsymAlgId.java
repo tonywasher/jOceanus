@@ -54,7 +54,10 @@ import org.bouncycastle.pqc.asn1.PQCObjectIdentifiers;
 import org.bouncycastle.pqc.asn1.SPHINCS256KeyParams;
 import org.bouncycastle.pqc.asn1.XMSSKeyParams;
 import org.bouncycastle.pqc.asn1.XMSSMTKeyParams;
+import org.bouncycastle.pqc.crypto.lms.HSSPrivateKeyParameters;
+import org.bouncycastle.pqc.crypto.lms.HSSPublicKeyParameters;
 import org.bouncycastle.pqc.crypto.lms.LMOtsParameters;
+import org.bouncycastle.pqc.crypto.lms.LMSKeyParameters;
 import org.bouncycastle.pqc.crypto.lms.LMSPrivateKeyParameters;
 import org.bouncycastle.pqc.crypto.lms.LMSPublicKeyParameters;
 import org.bouncycastle.pqc.crypto.lms.LMSigParameters;
@@ -949,10 +952,18 @@ public class GordianAsymAlgId {
             /* Protect against exceptions */
             try {
                 /* Parse public key */
-                final LMSPublicKeyParameters myPublic = (LMSPublicKeyParameters) PublicKeyFactory.createKey(pInfo);
-                final GordianLMSSigType mySigType = determineSigType(myPublic.getSigParameters());
-                final GordianLMSOtsType myOtsType = determineOtsType(myPublic.getOtsParameters());
-                return GordianAsymKeySpec.lms(new GordianLMSKeySpec(mySigType, myOtsType));
+                final LMSKeyParameters myParms = (LMSKeyParameters) PublicKeyFactory.createKey(pInfo);
+                if (myParms instanceof HSSPublicKeyParameters) {
+                    /* Note that we cannot currently extract this information from the key so support is disabled */
+                    final GordianLMSSigType mySigType = GordianLMSSigType.H5;
+                    final GordianLMSOtsType myOtsType = GordianLMSOtsType.W1;
+                    return GordianAsymKeySpec.hss(new GordianLMSKeySpec(mySigType, myOtsType), new GordianLMSKeySpec(mySigType, myOtsType));
+                } else {
+                    final LMSPublicKeyParameters myPublic = (LMSPublicKeyParameters) myParms;
+                    final GordianLMSSigType mySigType = determineSigType(myPublic.getSigParameters());
+                    final GordianLMSOtsType myOtsType = determineOtsType(myPublic.getOtsParameters());
+                    return GordianAsymKeySpec.lms(new GordianLMSKeySpec(mySigType, myOtsType));
+                }
 
                 /* Handle exceptions */
             } catch (IOException e) {
@@ -965,10 +976,19 @@ public class GordianAsymAlgId {
             /* Protect against exceptions */
             try {
                 /* Parse public key */
-                final LMSPrivateKeyParameters myPrivate = (LMSPrivateKeyParameters) PrivateKeyFactory.createKey(pInfo);
-                final GordianLMSSigType mySigType = determineSigType(myPrivate.getSigParameters());
-                final GordianLMSOtsType myOtsType = determineOtsType(myPrivate.getOtsParameters());
-                return GordianAsymKeySpec.lms(new GordianLMSKeySpec(mySigType, myOtsType));
+                final LMSKeyParameters myParms = (LMSKeyParameters) PrivateKeyFactory.createKey(pInfo);
+                if (myParms instanceof HSSPrivateKeyParameters) {
+                    /* Note that we cannot currently extract this information from the key so support is disabled */
+                    final GordianLMSSigType mySigType = GordianLMSSigType.H5;
+                    final GordianLMSOtsType myOtsType = GordianLMSOtsType.W1;
+                    return GordianAsymKeySpec.hss(new GordianLMSKeySpec(mySigType, myOtsType), new GordianLMSKeySpec(mySigType, myOtsType));
+
+                } else {
+                    final LMSPrivateKeyParameters myPrivate = (LMSPrivateKeyParameters) PrivateKeyFactory.createKey(pInfo);
+                    final GordianLMSSigType mySigType = determineSigType(myPrivate.getSigParameters());
+                    final GordianLMSOtsType myOtsType = determineOtsType(myPrivate.getOtsParameters());
+                    return GordianAsymKeySpec.lms(new GordianLMSKeySpec(mySigType, myOtsType));
+                }
 
                 /* Handle exceptions */
             } catch (IOException e) {

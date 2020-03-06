@@ -20,6 +20,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import net.sourceforge.joceanus.jgordianknot.api.asym.GordianAsymKeySpec;
+import net.sourceforge.joceanus.jgordianknot.api.asym.GordianLMSKeySpec.GordianHSSKeySpec;
 import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyDHAsymKey.BouncyDHKeyPairGenerator;
 import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyDSAAsymKey.BouncyDSAKeyPairGenerator;
 import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyDSTUAsymKey.BouncyDSTUKeyPairGenerator;
@@ -27,6 +28,7 @@ import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyEdDSAAsymKey.BouncyEd
 import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyEdDSAAsymKey.BouncyEd448KeyPairGenerator;
 import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyEllipticAsymKey.BouncyECKeyPairGenerator;
 import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyGOSTAsymKey.BouncyGOSTKeyPairGenerator;
+import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyLMSAsymKey.BouncyHSSKeyPairGenerator;
 import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyLMSAsymKey.BouncyLMSKeyPairGenerator;
 import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyMcElieceAsymKey.BouncyMcElieceCCA2KeyPairGenerator;
 import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyMcElieceAsymKey.BouncyMcElieceKeyPairGenerator;
@@ -157,7 +159,9 @@ public class BouncyAsymFactory
             case QTESLA:
                 return new BouncyQTESLAKeyPairGenerator(getFactory(), pKeySpec);
             case LMS:
-                return new BouncyLMSKeyPairGenerator(getFactory(), pKeySpec);
+                return pKeySpec.getSubKeyType() instanceof GordianHSSKeySpec
+                       ? new BouncyHSSKeyPairGenerator(getFactory(), pKeySpec)
+                       : new BouncyLMSKeyPairGenerator(getFactory(), pKeySpec);
             default:
                 throw new GordianDataException(BouncyFactory.getInvalidText(pKeySpec.getKeyType()));
         }

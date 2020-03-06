@@ -21,6 +21,7 @@ import java.util.EnumSet;
 import java.util.List;
 import java.util.Objects;
 
+import net.sourceforge.joceanus.jgordianknot.api.asym.GordianLMSKeySpec.GordianHSSKeySpec;
 import net.sourceforge.joceanus.jgordianknot.api.asym.GordianXMSSKeySpec.GordianXMSSDigestType;
 import net.sourceforge.joceanus.jtethys.TethysDataConverter;
 
@@ -231,6 +232,15 @@ public final class GordianAsymKeySpec {
     }
 
     /**
+     * Create hssKey.
+     * @param pKeySpec the keySpec
+     * @return the KeySpec
+     */
+    public static GordianAsymKeySpec hss(final GordianLMSKeySpec... pKeySpec) {
+        return new GordianAsymKeySpec(GordianAsymKeyType.LMS, new GordianHSSKeySpec(pKeySpec));
+    }
+
+    /**
      * Obtain the keyType.
      * @return the keyType.
      */
@@ -321,6 +331,16 @@ public final class GordianAsymKeySpec {
     public GordianLMSKeySpec getLMSKeySpec() {
         return theSubKeyType instanceof GordianLMSKeySpec
                ? (GordianLMSKeySpec) theSubKeyType
+               : null;
+    }
+
+    /**
+     * Obtain the hss keySpec.
+     * @return the keySpec.
+     */
+    public GordianHSSKeySpec getHSSKeySpec() {
+        return theSubKeyType instanceof GordianHSSKeySpec
+               ? (GordianHSSKeySpec) theSubKeyType
                : null;
     }
 
@@ -462,8 +482,8 @@ public final class GordianAsymKeySpec {
             case QTESLA:
                 return theSubKeyType instanceof GordianQTESLAKeyType;
             case LMS:
-                return theSubKeyType instanceof GordianLMSKeySpec
-                        && ((GordianLMSKeySpec) theSubKeyType).isValid();
+                return (theSubKeyType instanceof GordianLMSKeySpec
+                         && ((GordianLMSKeySpec) theSubKeyType).isValid());
             case ED25519:
             case ED448:
             case X25519:

@@ -17,6 +17,7 @@
 package net.sourceforge.joceanus.jgordianknot.api.asym;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.bouncycastle.pqc.crypto.lms.LMOtsParameters;
@@ -167,6 +168,133 @@ public class GordianLMSKeySpec {
 
         /* Return the list */
         return mySpecs;
+    }
+
+    /**
+     * HSS keySpec.
+     */
+    public static class GordianHSSKeySpec {
+        /**
+         * The array of keySpecs.
+         */
+        private final GordianLMSKeySpec[] theKeySpecs;
+
+        /**
+         * The Validity.
+         */
+        private final boolean isValid;
+
+        /**
+         * The String name.
+         */
+        private String theName;
+
+        /**
+         * Constructor.
+         * @param pKeySpecs the keySpecs
+         */
+        GordianHSSKeySpec(final GordianLMSKeySpec... pKeySpecs) {
+            /* Create the list of keySpecs */
+            theKeySpecs = Arrays.copyOf(pKeySpecs, pKeySpecs.length);
+            isValid = checkValidity();
+        }
+
+        /**
+         * Obtain the parameters.
+         * @return the parameters.
+         */
+        public GordianLMSKeySpec[] getParameters() {
+            /* If we are valid */
+            return isValid
+                   ? Arrays.copyOf(theKeySpecs, theKeySpecs.length)
+                   : null;
+        }
+
+        /**
+         * Is the keySpec valid?
+         * @return true/false.
+         */
+        public boolean isValid() {
+            return isValid;
+        }
+
+        /**
+         * Check spec validity.
+         * @return valid true/false
+         */
+        private boolean checkValidity() {
+            /* Must have at least two elements */
+            if (theKeySpecs.length <= 1) {
+                return false;
+            }
+
+            /* Check each keySpec */
+            for (GordianLMSKeySpec myKeySpec : theKeySpecs) {
+                if (myKeySpec == null || !myKeySpec.isValid) {
+                    return false;
+                }
+            }
+
+            /* valid */
+            return true;
+        }
+
+        @Override
+        public String toString() {
+            /* If we have not yet loaded the name */
+            if (theName == null) {
+                /* If the keySpec is valid */
+                if (isValid) {
+                    /* Load the name */
+                    final StringBuilder myBuilder = new StringBuilder("(");
+                    boolean mySkip = true;
+                    for (GordianLMSKeySpec myKeySpec : theKeySpecs) {
+                        if (mySkip) {
+                            mySkip = false;
+                        } else {
+                            myBuilder.append(",");
+                        }
+                        myBuilder.append(myKeySpec.toString());
+                    }
+                    myBuilder.append(")");
+                    theName = myBuilder.toString();
+
+                }  else {
+                    /* Report invalid spec */
+                    theName = "InvalidHSSKeySpec ";
+                }
+            }
+
+            /* return the name */
+            return theName;
+        }
+
+        @Override
+        public boolean equals(final Object pThat) {
+            /* Handle the trivial cases */
+            if (this == pThat) {
+                return true;
+            }
+            if (pThat == null) {
+                return false;
+            }
+
+            /* Make sure that the object is hssSpec */
+            if (pThat.getClass() != this.getClass()) {
+                return false;
+            }
+
+            /* Access the target hssSpec */
+            final GordianHSSKeySpec myThat = (GordianHSSKeySpec) pThat;
+
+            /* Check lists are identical */
+            return Arrays.equals(theKeySpecs, myThat.theKeySpecs);
+        }
+
+        @Override
+        public int hashCode() {
+            return theKeySpecs.hashCode();
+        }
     }
 
     /**

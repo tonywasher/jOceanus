@@ -31,6 +31,7 @@ import org.bouncycastle.jcajce.spec.DHDomainParameterSpec;
 import org.bouncycastle.jcajce.spec.EdDSAParameterSpec;
 import org.bouncycastle.jcajce.spec.XDHParameterSpec;
 import org.bouncycastle.pqc.crypto.lms.LMSParameters;
+import org.bouncycastle.pqc.jcajce.spec.LMSHSSParameterSpec;
 import org.bouncycastle.pqc.jcajce.spec.LMSParameterSpec;
 import org.bouncycastle.pqc.jcajce.spec.McElieceCCA2KeyGenParameterSpec;
 import org.bouncycastle.pqc.jcajce.spec.McElieceKeyGenParameterSpec;
@@ -43,6 +44,7 @@ import net.sourceforge.joceanus.jgordianknot.api.asym.GordianAsymKeySpec;
 import net.sourceforge.joceanus.jgordianknot.api.asym.GordianDHGroup;
 import net.sourceforge.joceanus.jgordianknot.api.asym.GordianDSAKeyType;
 import net.sourceforge.joceanus.jgordianknot.api.asym.GordianLMSKeySpec;
+import net.sourceforge.joceanus.jgordianknot.api.asym.GordianLMSKeySpec.GordianHSSKeySpec;
 import net.sourceforge.joceanus.jgordianknot.api.asym.GordianMcElieceKeySpec;
 import net.sourceforge.joceanus.jgordianknot.api.asym.GordianMcElieceKeySpec.GordianMcElieceDigestType;
 import net.sourceforge.joceanus.jgordianknot.api.asym.GordianRSAModulus;
@@ -764,16 +766,40 @@ public abstract class JcaKeyPairGenerator
 
             /* Protect against exceptions */
             try {
-                final GordianLMSKeySpec myKeySpec = pKeySpec.getLMSKeySpec();
-                final LMSParameters myParms = myKeySpec.getParameters();
-                final LMSParameterSpec mySpec = new LMSParameterSpec(myParms.getLmsParam(), myParms.getLmOTSParam());
-                theGenerator.initialize(mySpec, getRandom());
+                final AlgorithmParameterSpec myParms = pKeySpec.getSubKeyType() instanceof GordianHSSKeySpec
+                        ? deriveParameters(pKeySpec.getHSSKeySpec())
+                        : deriveParameters(pKeySpec.getLMSKeySpec());
+                theGenerator.initialize(myParms, getRandom());
              } catch (InvalidAlgorithmParameterException e) {
                 throw new GordianCryptoException("Failed to initialise generator", e);
             }
 
             /* Create the factory */
             setKeyFactory(JcaAsymFactory.getJavaKeyFactory(myJavaType, true));
+        }
+
+        /**
+         * Derive the parameters.
+         * @param pKeySpec the keySPec
+         * @return the parameters.
+         */
+        private static LMSHSSParameterSpec deriveParameters(final GordianHSSKeySpec pKeySpec) {
+            final GordianLMSKeySpec[] myKeySpecs = pKeySpec.getParameters();
+            final LMSParameterSpec[] myParams = new LMSParameterSpec[myKeySpecs.length];
+            for (int i = 0; i < myKeySpecs.length; i++) {
+                myParams[i] = deriveParameters(myKeySpecs[i]);
+            }
+            return new LMSHSSParameterSpec(myParams);
+        }
+
+        /**
+         * Derive the parameters.
+         * @param pKeySpec the keySpec
+         * @return the parameters.
+         */
+        private static LMSParameterSpec deriveParameters(final GordianLMSKeySpec pKeySpec) {
+            final LMSParameters myParms = pKeySpec.getParameters();
+            return new LMSParameterSpec(myParms.getLmsParam(), myParms.getLmOTSParam());
         }
 
         @Override
