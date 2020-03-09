@@ -184,8 +184,8 @@ public final class GordianAgreementSpec {
      * @param pKDFType the KDF type
      * @return the Spec
      */
-    public static GordianAgreementSpec x25519Anon(final GordianKDFType pKDFType) {
-        return new GordianAgreementSpec(GordianAsymKeyType.X25519, GordianAgreementType.ANON, pKDFType);
+    public static GordianAgreementSpec xdhAnon(final GordianKDFType pKDFType) {
+        return new GordianAgreementSpec(GordianAsymKeyType.XDH, GordianAgreementType.ANON, pKDFType);
     }
 
     /**
@@ -193,8 +193,8 @@ public final class GordianAgreementSpec {
      * @param pKDFType the KDF type
      * @return the Spec
      */
-    public static GordianAgreementSpec x25519Basic(final GordianKDFType pKDFType) {
-        return new GordianAgreementSpec(GordianAsymKeyType.X25519, GordianAgreementType.BASIC, pKDFType);
+    public static GordianAgreementSpec xdhBasic(final GordianKDFType pKDFType) {
+        return new GordianAgreementSpec(GordianAsymKeyType.XDH, GordianAgreementType.BASIC, pKDFType);
     }
 
     /**
@@ -202,35 +202,8 @@ public final class GordianAgreementSpec {
      * @param pKDFType the KDF type
      * @return the Spec
      */
-    public static GordianAgreementSpec x25519Unified(final GordianKDFType pKDFType) {
-        return new GordianAgreementSpec(GordianAsymKeyType.X25519, GordianAgreementType.UNIFIED, pKDFType);
-    }
-
-    /**
-     * Create the x448Basic agreementSpec.
-     * @param pKDFType the KDF type
-     * @return the Spec
-     */
-    public static GordianAgreementSpec x448Anon(final GordianKDFType pKDFType) {
-        return new GordianAgreementSpec(GordianAsymKeyType.X448, GordianAgreementType.ANON, pKDFType);
-    }
-
-    /**
-     * Create the x448Basic agreementSpec.
-     * @param pKDFType the KDF type
-     * @return the Spec
-     */
-    public static GordianAgreementSpec x448Basic(final GordianKDFType pKDFType) {
-        return new GordianAgreementSpec(GordianAsymKeyType.X448, GordianAgreementType.BASIC, pKDFType);
-    }
-
-    /**
-     * Create the x25519Basic agreementSpec.
-     * @param pKDFType the KDF type
-     * @return the Spec
-     */
-    public static GordianAgreementSpec x448Unified(final GordianKDFType pKDFType) {
-        return new GordianAgreementSpec(GordianAsymKeyType.X448, GordianAgreementType.UNIFIED, pKDFType);
+    public static GordianAgreementSpec xdhUnified(final GordianKDFType pKDFType) {
+        return new GordianAgreementSpec(GordianAsymKeyType.XDH, GordianAgreementType.UNIFIED, pKDFType);
     }
 
     /**
@@ -380,8 +353,7 @@ public final class GordianAgreementSpec {
                 myAgreements.addAll(listAllKDFs(pKeyType, GordianAgreementType.UNIFIED));
                 myAgreements.addAll(listAllKDFs(pKeyType, GordianAgreementType.MQV));
                 break;
-            case X25519:
-            case X448:
+            case XDH:
                 myAgreements.addAll(listAllKDFs(pKeyType, GordianAgreementType.ANON));
                 myAgreements.addAll(listAllKDFs(pKeyType, GordianAgreementType.BASIC));
                 myAgreements.addAll(listAllKDFs(pKeyType, GordianAgreementType.UNIFIED));

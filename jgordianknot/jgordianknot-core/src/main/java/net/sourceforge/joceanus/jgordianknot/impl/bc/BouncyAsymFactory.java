@@ -130,14 +130,14 @@ public class BouncyAsymFactory
                 return new BouncyDSTUKeyPairGenerator(getFactory(), pKeySpec);
             case GOST2012:
                 return new BouncyGOSTKeyPairGenerator(getFactory(), pKeySpec);
-            case X25519:
-                return new BouncyX25519KeyPairGenerator(getFactory(), pKeySpec);
-            case X448:
-                return new BouncyX448KeyPairGenerator(getFactory(), pKeySpec);
-            case ED25519:
-                return new BouncyEd25519KeyPairGenerator(getFactory(), pKeySpec);
-            case ED448:
-                return new BouncyEd448KeyPairGenerator(getFactory(), pKeySpec);
+            case XDH:
+                return pKeySpec.getEdwardsElliptic().is25519()
+                       ?  new BouncyX25519KeyPairGenerator(getFactory(), pKeySpec)
+                       :  new BouncyX448KeyPairGenerator(getFactory(), pKeySpec);
+            case EDDSA:
+                return pKeySpec.getEdwardsElliptic().is25519()
+                       ? new BouncyEd25519KeyPairGenerator(getFactory(), pKeySpec)
+                       : new BouncyEd448KeyPairGenerator(getFactory(), pKeySpec);
             case DSA:
                 return new BouncyDSAKeyPairGenerator(getFactory(), pKeySpec);
             case DH:

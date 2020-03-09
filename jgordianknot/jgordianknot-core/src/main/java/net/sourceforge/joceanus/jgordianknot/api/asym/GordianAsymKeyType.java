@@ -16,8 +16,6 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jgordianknot.api.asym;
 
-import org.bouncycastle.pqc.jcajce.provider.QTESLA;
-
 /**
  * Asymmetric KeyTypes.
  */
@@ -58,24 +56,14 @@ public enum GordianAsymKeyType {
     GOST2012,
 
     /**
-     * EdwardsXDH25519.
+     * EdwardsXDH.
      */
-    X25519,
+    XDH,
 
     /**
-     * EdwardsXDH448.
+     * EdwardsDSA.
      */
-    X448,
-
-    /**
-     * EdwardsDSA25519.
-     */
-    ED25519,
-
-    /**
-     * EdwardsDSA448.
-     */
-    ED448,
+    EDDSA,
 
     /**
      * SPHINCS.
@@ -120,8 +108,7 @@ public enum GordianAsymKeyType {
         switch (this) {
             case SPHINCS:
             case XMSS:
-            case ED25519:
-            case ED448:
+            case EDDSA:
                 return false;
             default:
                 return true;
@@ -136,8 +123,7 @@ public enum GordianAsymKeyType {
         switch (this) {
             case SPHINCS:
             case XMSS:
-            case ED25519:
-            case ED448:
+            case EDDSA:
             case QTESLA:
             case LMS:
                 return true;

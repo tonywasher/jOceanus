@@ -107,8 +107,7 @@ public enum GordianAgreementType {
             case SM2:
             case GOST2012:
             case DSTU4145:
-            case X25519:
-            case X448:
+            case XDH:
                 return true;
             default:
                 return false;
@@ -163,8 +162,7 @@ public enum GordianAgreementType {
             case GOST2012:
             case DSTU4145:
             case DH:
-            case X25519:
-            case X448:
+            case XDH:
                 return true;
             default:
                 return false;

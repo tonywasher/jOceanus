@@ -586,7 +586,7 @@ public abstract class JcaKeyPairGenerator
                                                       : new XMSSParameterSpec(GordianXMSSKeySpec.DEFAULT_HEIGHT, myType.name());
 
                 /* Create and initialise the generator */
-                final String myJavaType = myXMSSKeySpec.getKeyType().toString();
+                final String myJavaType = myXMSSKeySpec.getKeyType().name();
                 theGenerator = JcaAsymFactory.getJavaKeyPairGenerator(myJavaType, true);
                 theGenerator.initialize(myAlgo, getRandom());
 
@@ -643,30 +643,30 @@ public abstract class JcaKeyPairGenerator
             try {
                 /* Create the parameters */
                 final AlgorithmParameterSpec myAlgo;
+                final boolean is25519 = pKeySpec.getEdwardsElliptic().is25519();
                 switch (pKeySpec.getKeyType()) {
-                    case X25519:
-                        myAlgo = new XDHParameterSpec(XDHParameterSpec.X25519);
+                    case XDH:
+                        myAlgo = is25519
+                                 ? new XDHParameterSpec(XDHParameterSpec.X25519)
+                                 : new XDHParameterSpec(XDHParameterSpec.X448);
                         break;
-                    case X448:
-                        myAlgo = new XDHParameterSpec(XDHParameterSpec.X448);
-                        break;
-                    case ED25519:
-                        myAlgo = new EdDSAParameterSpec(EdDSAParameterSpec.Ed25519);
-                        break;
-                    case ED448:
-                        myAlgo = new EdDSAParameterSpec(EdDSAParameterSpec.Ed448);
+                    case EDDSA:
+                        myAlgo = is25519
+                                 ? new EdDSAParameterSpec(EdDSAParameterSpec.Ed25519)
+                                 : new EdDSAParameterSpec(EdDSAParameterSpec.Ed448);
                         break;
                     default:
                         throw new GordianLogicException("Invalid KeySpec" + pKeySpec);
                 }
 
                 /* Create and initialise the generator */
-                final String myJavaType = pKeySpec.getKeyType().toString();
+                final String myJavaType = pKeySpec.toString();
                 theGenerator = JcaAsymFactory.getJavaKeyPairGenerator(myJavaType, false);
                 theGenerator.initialize(myAlgo, getRandom());
 
                 /* Create the factory */
                 setKeyFactory(JcaAsymFactory.getJavaKeyFactory(myJavaType, false));
+
             } catch (InvalidAlgorithmParameterException e) {
                 throw new GordianCryptoException("Failed to create EdwardsGenerator", e);
             }

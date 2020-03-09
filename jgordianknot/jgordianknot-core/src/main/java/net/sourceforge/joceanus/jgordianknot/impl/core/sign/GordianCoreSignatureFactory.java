@@ -18,6 +18,7 @@ package net.sourceforge.joceanus.jgordianknot.impl.core.sign;
 
 import java.util.function.Predicate;
 
+import net.sourceforge.joceanus.jgordianknot.api.asym.GordianEdwardsElliptic;
 import net.sourceforge.joceanus.jgordianknot.api.base.GordianLength;
 import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
 
@@ -110,6 +111,12 @@ public abstract class GordianCoreSignatureFactory
         if (GordianAsymKeyType.GOST2012.equals(myKeySpec.getKeyType())) {
             final int myDigestLen = pSignSpec.getDigestSpec().getDigestLength().getLength();
             return myKeySpec.getElliptic().getKeySize() == myDigestLen;
+        }
+
+        /* Disallow NATIVE signature for ed448 */
+        if (GordianAsymKeyType.EDDSA.equals(myKeySpec.getKeyType())) {
+            return pSignSpec.getSignatureType() != GordianSignatureType.NATIVE
+                    || myKeySpec.getEdwardsElliptic() == GordianEdwardsElliptic.CURVE25519;
         }
 
         /* If this is a RSA Signature */

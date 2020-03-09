@@ -86,8 +86,7 @@ public class BouncyAgreementFactory
                 return getBCDHAgreement(pSpec);
             case NEWHOPE:
                 return new BouncyNewHopeAgreement(getFactory(), pSpec);
-            case X25519:
-            case X448:
+            case XDH:
                 return getBCXDHAgreement(pSpec);
             default:
                 throw new GordianDataException(BouncyFactory.getInvalidText(pSpec));

@@ -124,10 +124,8 @@ public class JcaAsymFactory
                 return new JcaECKeyPairGenerator(getFactory(), pKeySpec);
             case DSA:
                 return new JcaDSAKeyPairGenerator(getFactory(), pKeySpec);
-            case X25519:
-            case X448:
-            case ED25519:
-            case ED448:
+            case XDH:
+            case EDDSA:
                 return new JcaEdKeyPairGenerator(getFactory(), pKeySpec);
             case DH:
                 return new JcaDHKeyPairGenerator(getFactory(), pKeySpec);

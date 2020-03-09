@@ -34,6 +34,7 @@ import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
 import org.bouncycastle.asn1.x9.X9ObjectIdentifiers;
 import org.bouncycastle.pqc.asn1.PQCObjectIdentifiers;
 
+import net.sourceforge.joceanus.jgordianknot.api.asym.GordianAsymKeySpec;
 import net.sourceforge.joceanus.jgordianknot.api.asym.GordianAsymKeyType;
 import net.sourceforge.joceanus.jgordianknot.api.asym.GordianQTESLAKeyType;
 import net.sourceforge.joceanus.jgordianknot.api.asym.GordianSPHINCSDigestType;
@@ -304,9 +305,9 @@ public class GordianSignatureAlgId {
      * Add EdDSA signatures.
      */
     private void addEdDSASignatures() {
-        addToMaps(GordianSignatureSpec.ed25519(),
+        addToMaps(GordianSignatureSpec.edDSA(), GordianAsymKeySpec.ed25519(),
                 new AlgorithmIdentifier(EdECObjectIdentifiers.id_Ed25519, DERNull.INSTANCE));
-        addToMaps(GordianSignatureSpec.ed448(),
+        addToMaps(GordianSignatureSpec.edDSA(), GordianAsymKeySpec.ed448(),
                 new AlgorithmIdentifier(EdECObjectIdentifiers.id_Ed448, DERNull.INSTANCE));
     }
 

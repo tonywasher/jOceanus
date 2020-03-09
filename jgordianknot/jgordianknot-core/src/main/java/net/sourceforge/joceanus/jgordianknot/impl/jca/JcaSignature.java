@@ -21,6 +21,7 @@ import java.security.Signature;
 import java.security.SignatureException;
 
 import net.sourceforge.joceanus.jgordianknot.api.asym.GordianAsymKeyType;
+import net.sourceforge.joceanus.jgordianknot.api.asym.GordianEdwardsElliptic;
 import net.sourceforge.joceanus.jgordianknot.api.asym.GordianXMSSKeySpec;
 import net.sourceforge.joceanus.jgordianknot.api.base.GordianLength;
 import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigestSpec;
@@ -508,7 +509,7 @@ public abstract class JcaSignature
 
             /* Create builder */
             final StringBuilder myBuilder = new StringBuilder();
-            myBuilder.append(myXMSSKeySpec.getKeyType())
+            myBuilder.append(myXMSSKeySpec.getKeyType().name())
                     .append('-')
                     .append(myDigest);
             if (preHash) {
@@ -536,28 +537,40 @@ public abstract class JcaSignature
                           final GordianSignatureSpec pSignatureSpec) throws OceanusException {
             /* Initialise class */
             super(pFactory, pSignatureSpec);
+        }
 
-            /* Create the signature class */
-            final boolean is25519 = GordianAsymKeyType.ED25519.equals(pSignatureSpec.getAsymKeyType());
-            final String myAlgo;
-            switch (pSignatureSpec.getSignatureType()) {
-                case PREHASH:
-                    myAlgo = is25519
-                             ? "Ed25519ph"
-                             : "Ed448ph";
-                    break;
-                case PURE:
-                    myAlgo = is25519
-                             ? "Ed25519ctx"
-                             : "Ed448";
-                    break;
-                case NATIVE:
-                    myAlgo = "Ed25519";
-                    break;
-                default:
-                    throw new IllegalArgumentException("Invalid Signature Type: " + pSignatureSpec.getSignatureType());
-            }
-            setSigner(JcaSignatureFactory.getJavaSignature(myAlgo, false));
+        @Override
+        public void initForSigning(final GordianKeyPair pKeyPair) throws OceanusException {
+            /* Determine the required signer */
+            final String mySignName = getAlgorithmForKeyPair(pKeyPair);
+            setSigner(JcaSignatureFactory.getJavaSignature(mySignName, false));
+
+            /* pass on call */
+            super.initForSigning(pKeyPair);
+        }
+
+        @Override
+        public void initForVerify(final GordianKeyPair pKeyPair) throws OceanusException {
+            /* Determine the required signer */
+            final String mySignName = getAlgorithmForKeyPair(pKeyPair);
+            setSigner(JcaSignatureFactory.getJavaSignature(mySignName, false));
+
+            /* pass on call */
+            super.initForVerify(pKeyPair);
+        }
+
+        /**
+         * Obtain algorithmName for keyPair.
+         * @param pKeyPair the keyPair
+         * @return the name
+         */
+        private String getAlgorithmForKeyPair(final GordianKeyPair pKeyPair) {
+            /* Determine the required signer */
+            final GordianEdwardsElliptic myEdwards = pKeyPair.getKeySpec().getEdwardsElliptic();
+            final boolean is25519 = myEdwards.is25519();
+
+            /* Build the algorithm */
+            return is25519 ? "Ed25519" : "Ed448";
         }
     }
 

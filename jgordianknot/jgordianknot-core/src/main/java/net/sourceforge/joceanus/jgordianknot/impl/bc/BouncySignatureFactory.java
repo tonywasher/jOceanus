@@ -89,8 +89,7 @@ public class BouncySignatureFactory
                 return new BouncyGOSTSignature(getFactory(), pSignatureSpec);
             case SM2:
                 return new BouncySM2Signature(getFactory(), pSignatureSpec);
-            case ED25519:
-            case ED448:
+            case EDDSA:
                 return new BouncyEdDSASignature(getFactory(), pSignatureSpec);
             case DSA:
                 return new BouncyDSASignature(getFactory(), pSignatureSpec);

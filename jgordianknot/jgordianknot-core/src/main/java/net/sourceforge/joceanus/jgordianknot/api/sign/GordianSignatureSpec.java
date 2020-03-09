@@ -156,43 +156,27 @@ public final class GordianSignatureSpec {
     }
 
     /**
-     * Create EdDSA25519Spec.
+     * Create EdDSActxSpec.
      * @return the SignatureSpec
      */
-    public static GordianSignatureSpec ed25519ctx() {
-        return new GordianSignatureSpec(GordianAsymKeyType.ED25519, GordianSignatureType.NATIVE);
+    public static GordianSignatureSpec edDSActx() {
+        return new GordianSignatureSpec(GordianAsymKeyType.EDDSA, GordianSignatureType.NATIVE);
     }
 
     /**
-     * Create EdDSA25519Spec.
+     * Create EdDSASpec.
      * @return the SignatureSpec
      */
-    public static GordianSignatureSpec ed25519() {
-        return new GordianSignatureSpec(GordianAsymKeyType.ED25519, GordianSignatureType.PURE);
+    public static GordianSignatureSpec edDSA() {
+        return new GordianSignatureSpec(GordianAsymKeyType.EDDSA, GordianSignatureType.PURE);
     }
 
     /**
-     * Create EdDSA25519phSpec.
+     * Create EdDSAphSpec.
      * @return the SignatureSpec
      */
-    public static GordianSignatureSpec ed25519ph() {
-        return new GordianSignatureSpec(GordianAsymKeyType.ED25519, GordianSignatureType.PREHASH);
-    }
-
-    /**
-     * Create EdDSA448Spec.
-     * @return the SignatureSpec
-     */
-    public static GordianSignatureSpec ed448() {
-        return new GordianSignatureSpec(GordianAsymKeyType.ED448, GordianSignatureType.PURE);
-    }
-
-    /**
-     * Create EdDSA448phSpec.
-     * @return the SignatureSpec
-     */
-    public static GordianSignatureSpec ed448ph() {
-        return new GordianSignatureSpec(GordianAsymKeyType.ED448, GordianSignatureType.PREHASH);
+    public static GordianSignatureSpec edDSAph() {
+        return new GordianSignatureSpec(GordianAsymKeyType.EDDSA, GordianSignatureType.PREHASH);
     }
 
     /**
@@ -263,10 +247,8 @@ public final class GordianSignatureSpec {
                 return dstu4145();
             case GOST2012:
                 return gost2012(GordianLength.LEN_512);
-            case ED25519:
-                return ed25519ctx();
-            case ED448:
-                return ed448();
+            case EDDSA:
+                return edDSA();
             case RAINBOW:
                 return rainbow(GordianDigestSpec.sha2(GordianLength.LEN_512));
             case SPHINCS:
@@ -331,8 +313,7 @@ public final class GordianSignatureSpec {
             case SM2:
             case RAINBOW:
                 return theDigestSpec != null && theDigestSpec.isValid() && theDigestSpec.getDigestType().supportsLargeData();
-            case ED25519:
-            case ED448:
+            case EDDSA:
             case SPHINCS:
             case QTESLA:
             case XMSS:

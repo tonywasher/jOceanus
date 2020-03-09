@@ -29,6 +29,7 @@ import org.bouncycastle.jcajce.spec.UserKeyingMaterialSpec;
 
 import net.sourceforge.joceanus.jgordianknot.api.agree.GordianAgreementSpec;
 import net.sourceforge.joceanus.jgordianknot.api.agree.GordianKDFType;
+import net.sourceforge.joceanus.jgordianknot.api.asym.GordianAsymKeyType;
 import net.sourceforge.joceanus.jgordianknot.api.factory.GordianAsymFactory;
 import net.sourceforge.joceanus.jgordianknot.api.key.GordianKeyPair;
 import net.sourceforge.joceanus.jgordianknot.api.key.GordianKeyPairGenerator;
@@ -144,7 +145,7 @@ public final class JcaAgreement {
         /**
          * Key Agreement.
          */
-        private final KeyAgreement theAgreement;
+        private KeyAgreement theAgreement;
 
         /**
          * Constructor.
@@ -168,6 +169,9 @@ public final class JcaAgreement {
             try {
                 /* Check keyPairs */
                 checkKeyPair(pTarget);
+
+                /* Establish agreement */
+                establishAgreement(pTarget);
 
                 /* Create an ephemeral keyPair */
                 final GordianAsymFactory myAsym = getFactory().getAsymmetricFactory();
@@ -208,6 +212,9 @@ public final class JcaAgreement {
                 /* Check keyPair */
                 checkKeyPair(pSelf);
 
+                /* Establish agreement */
+                establishAgreement(pSelf);
+
                 /* Obtain keySpec */
                 final byte[] myX509bytes = parseMessage(pMessage);
                 final X509EncodedKeySpec myKeySpec = new X509EncodedKeySpec(myX509bytes);
@@ -235,6 +242,19 @@ public final class JcaAgreement {
                 throw new GordianCryptoException(ERR_AGREEMENT, e);
             }
         }
+
+        /**
+         * Establish the agreement.
+         * @param pKeyPair the keyPair
+         * @throws OceanusException on error
+         */
+        private void establishAgreement(final GordianKeyPair pKeyPair) throws OceanusException {
+            if (getAgreementSpec().getAsymKeyType() == GordianAsymKeyType.XDH) {
+                final String myBase = pKeyPair.getKeySpec().toString();
+                final String myName = JcaAgreementFactory.getFullAgreementName(myBase, getAgreementSpec());
+                theAgreement = JcaAgreementFactory.getJavaKeyAgreement(myName, false);
+            }
+        }
     }
 
     /**
@@ -245,7 +265,7 @@ public final class JcaAgreement {
         /**
          * Key Agreement.
          */
-        private final KeyAgreement theAgreement;
+        private KeyAgreement theAgreement;
 
         /**
          * Constructor.
@@ -271,6 +291,9 @@ public final class JcaAgreement {
                 /* Check keyPairs */
                 checkKeyPair(pSource);
                 checkKeyPair(pTarget);
+
+                /* Establish agreement */
+                establishAgreement(pSource);
 
                 /* Initialise the agreement taking care in case of null parameters */
                 final JcaPrivateKey myPrivate = (JcaPrivateKey) getPrivateKey(pSource);
@@ -307,6 +330,9 @@ public final class JcaAgreement {
                 checkKeyPair(pSource);
                 checkKeyPair(pSelf);
 
+                /* Establish agreement */
+                establishAgreement(pSource);
+
                 /* Determine initVector */
                 parseMessage(pMessage);
                 final JcaPrivateKey myPrivate = (JcaPrivateKey) getPrivateKey(pSelf);
@@ -328,6 +354,19 @@ public final class JcaAgreement {
                 throw new GordianCryptoException(ERR_AGREEMENT, e);
             }
         }
+
+        /**
+         * Establish the agreement.
+         * @param pKeyPair the keyPair
+         * @throws OceanusException on error
+         */
+        private void establishAgreement(final GordianKeyPair pKeyPair) throws OceanusException {
+            if (getAgreementSpec().getAsymKeyType() == GordianAsymKeyType.XDH) {
+                final String myBase = pKeyPair.getKeySpec().toString();
+                final String myName = JcaAgreementFactory.getFullAgreementName(myBase, getAgreementSpec());
+                theAgreement = JcaAgreementFactory.getJavaKeyAgreement(myName, false);
+            }
+        }
     }
 
     /**
@@ -338,7 +377,7 @@ public final class JcaAgreement {
         /**
          * Key Agreement.
          */
-        private final KeyAgreement theAgreement;
+        private KeyAgreement theAgreement;
 
         /**
          * Constructor.
@@ -362,6 +401,13 @@ public final class JcaAgreement {
                                       final byte[] pMessage) throws OceanusException {
             /* Protect against exceptions */
             try {
+                /* Check keyPair */
+                checkKeyPair(pSource);
+                checkKeyPair(pResponder);
+
+                /* Establish agreement */
+                establishAgreement(pResponder);
+
                 /* process message */
                 final byte[] myResponse = parseMessage(pResponder, pMessage);
 
@@ -395,6 +441,9 @@ public final class JcaAgreement {
                 /* Check keyPair */
                 checkKeyPair(pResponder);
 
+                /* Establish agreement */
+                establishAgreement(pResponder);
+
                 /* parse the ephemeral message */
                 parseEphemeral(pMessage);
 
@@ -416,6 +465,19 @@ public final class JcaAgreement {
             } catch (InvalidKeyException
                     | InvalidAlgorithmParameterException e) {
                 throw new GordianCryptoException(ERR_AGREEMENT, e);
+            }
+        }
+
+        /**
+         * Establish the agreement.
+         * @param pKeyPair the keyPair
+         * @throws OceanusException on error
+         */
+        private void establishAgreement(final GordianKeyPair pKeyPair) throws OceanusException {
+            if (getAgreementSpec().getAsymKeyType() == GordianAsymKeyType.XDH) {
+                final String myBase = pKeyPair.getKeySpec().toString();
+                final String myName = JcaAgreementFactory.getFullAgreementName(myBase + "U", getAgreementSpec());
+                theAgreement = JcaAgreementFactory.getJavaKeyAgreement(myName, false);
             }
         }
     }
@@ -452,6 +514,9 @@ public final class JcaAgreement {
                                       final byte[] pMessage) throws OceanusException {
             /* Protect against exceptions */
             try {
+                /* Check keyPair */
+                checkKeyPair(pResponder);
+
                 /* process message */
                 final byte[] myResponse = parseMessage(pResponder, pMessage);
 

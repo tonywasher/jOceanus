@@ -19,8 +19,10 @@ package net.sourceforge.joceanus.jgordianknot.impl.jca;
 import java.security.NoSuchAlgorithmException;
 import java.security.Signature;
 
+import net.sourceforge.joceanus.jgordianknot.api.asym.GordianEdwardsElliptic;
 import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigestSpec;
 import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigestType;
+import net.sourceforge.joceanus.jgordianknot.api.key.GordianKeyPair;
 import net.sourceforge.joceanus.jgordianknot.api.sign.GordianSignature;
 import net.sourceforge.joceanus.jgordianknot.api.sign.GordianSignatureSpec;
 import net.sourceforge.joceanus.jgordianknot.api.sign.GordianSignatureType;
@@ -104,8 +106,7 @@ public class JcaSignatureFactory
             case SM2:
             case DSA:
                 return new JcaDSASignature(getFactory(), pSignatureSpec);
-            case ED25519:
-            case ED448:
+            case EDDSA:
                 return new JcaEdDSASignature(getFactory(), pSignatureSpec);
             case GOST2012:
             case DSTU4145:
@@ -152,15 +153,12 @@ public class JcaSignatureFactory
             case QTESLA:
             case LMS:
                 return true;
-            case ED448:
-                return GordianSignatureType.PURE.equals(pSpec.getSignatureType());
-            case ED25519:
-                return GordianSignatureType.NATIVE.equals(pSpec.getSignatureType());
+            case EDDSA:
+                return !GordianSignatureType.PREHASH.equals(pSpec.getSignatureType());
             case DH:
             case NEWHOPE:
             case MCELIECE:
-            case X25519:
-            case X448:
+            case XDH:
             default:
                 return false;
         }
@@ -238,5 +236,20 @@ public class JcaSignatureFactory
     private static boolean validRainbowSignature(final GordianDigestSpec pSpec) {
         return pSpec.getDigestType() == GordianDigestType.SHA2
                 && pSpec.getStateLength() == null;
+    }
+
+    @Override
+    public boolean validSignatureSpecForKeyPair(final GordianKeyPair pKeyPair,
+                                                final GordianSignatureSpec pSpec) {
+        /* validate the signatureSpec/keyPair */
+        if (!super.validSignatureSpecForKeyPair(pKeyPair, pSpec)) {
+            return false;
+        }
+
+        /* Disallow EdDSA 25519 PURE */
+        final GordianEdwardsElliptic myEdwards = pKeyPair.getKeySpec().getEdwardsElliptic();
+        return myEdwards == null
+                || !myEdwards.is25519()
+                || pSpec.getSignatureType() != GordianSignatureType.PURE;
     }
 }

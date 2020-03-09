@@ -222,6 +222,11 @@ public class GordianXMSSKeySpec {
         public boolean isMT() {
             return this == XMSSMT;
         }
+
+        @Override
+        public String toString() {
+            return this == XMSSMT ? "XMSS^MT" : "XMSS";
+        }
     }
 
     /**

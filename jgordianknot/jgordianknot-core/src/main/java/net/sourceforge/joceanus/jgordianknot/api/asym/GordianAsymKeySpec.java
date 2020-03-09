@@ -134,7 +134,7 @@ public final class GordianAsymKeySpec {
      * @return the KeySpec
      */
     public static GordianAsymKeySpec x25519() {
-        return new GordianAsymKeySpec(GordianAsymKeyType.X25519, null);
+        return new GordianAsymKeySpec(GordianAsymKeyType.XDH, GordianEdwardsElliptic.CURVE25519);
     }
 
     /**
@@ -142,7 +142,7 @@ public final class GordianAsymKeySpec {
      * @return the KeySpec
      */
     public static GordianAsymKeySpec x448() {
-        return new GordianAsymKeySpec(GordianAsymKeyType.X448, null);
+        return new GordianAsymKeySpec(GordianAsymKeyType.XDH, GordianEdwardsElliptic.CURVE448);
     }
 
     /**
@@ -150,7 +150,7 @@ public final class GordianAsymKeySpec {
      * @return the KeySpec
      */
     public static GordianAsymKeySpec ed25519() {
-        return new GordianAsymKeySpec(GordianAsymKeyType.ED25519, null);
+        return new GordianAsymKeySpec(GordianAsymKeyType.EDDSA, GordianEdwardsElliptic.CURVE25519);
     }
 
     /**
@@ -158,7 +158,7 @@ public final class GordianAsymKeySpec {
      * @return the KeySpec
      */
     public static GordianAsymKeySpec ed448() {
-        return new GordianAsymKeySpec(GordianAsymKeyType.ED448, null);
+        return new GordianAsymKeySpec(GordianAsymKeyType.EDDSA, GordianEdwardsElliptic.CURVE448);
     }
 
     /**
@@ -305,6 +305,16 @@ public final class GordianAsymKeySpec {
     }
 
     /**
+     * Obtain the elliptic curve.
+     * @return the curve.
+     */
+    public GordianEdwardsElliptic getEdwardsElliptic() {
+        return theSubKeyType instanceof GordianEdwardsElliptic
+               ? (GordianEdwardsElliptic) theSubKeyType
+               : null;
+    }
+
+    /**
      * Obtain the SPHINCS digestType.
      * @return the digestType.
      */
@@ -390,15 +400,8 @@ public final class GordianAsymKeySpec {
         if (theName == null) {
             /* If the keySpec is valid */
             if (isValid) {
-                /* Load the name */
-                theName = theKeyType.toString();
-                if (theSubKeyType != null) {
-                    if (theKeyType == GordianAsymKeyType.XMSS) {
-                        theName = theSubKeyType.toString();
-                    } else {
-                        theName += SEP + theSubKeyType.toString();
-                    }
-                }
+                /* Derive the name */
+                deriveName();
             }  else {
                 /* Report invalid spec */
                 theName = "InvalidAsymKeySpec: " + theKeyType + ":" + theSubKeyType;
@@ -407,6 +410,30 @@ public final class GordianAsymKeySpec {
 
         /* return the name */
         return theName;
+    }
+
+    /**
+     * Derive name.
+     */
+    private void deriveName() {
+        /* Load the name */
+        theName = theKeyType.toString();
+        if (theSubKeyType != null) {
+            switch (theKeyType) {
+                case XMSS:
+                    theName = theSubKeyType.toString();
+                    break;
+                case EDDSA:
+                    theName = "Ed" + ((GordianEdwardsElliptic) theSubKeyType).getSuffix();
+                    break;
+                case XDH:
+                    theName = "X" + ((GordianEdwardsElliptic) theSubKeyType).getSuffix();
+                    break;
+                default:
+                    theName += SEP + theSubKeyType.toString();
+                    break;
+            }
+        }
     }
 
     @Override
@@ -484,10 +511,9 @@ public final class GordianAsymKeySpec {
             case LMS:
                 return (theSubKeyType instanceof GordianLMSKeySpec
                          && ((GordianLMSKeySpec) theSubKeyType).isValid());
-            case ED25519:
-            case ED448:
-            case X25519:
-            case X448:
+            case EDDSA:
+            case XDH:
+                return theSubKeyType instanceof GordianEdwardsElliptic;
             case RAINBOW:
             case NEWHOPE:
                 return theSubKeyType == null;
@@ -526,12 +552,12 @@ public final class GordianAsymKeySpec {
         EnumSet.allOf(GordianDSTU4145Elliptic.class).forEach(c -> mySpecs.add(GordianAsymKeySpec.dstu4145(c)));
 
         /* Add Ed25519/Ed448 */
-        mySpecs.add(GordianAsymKeySpec.ed25519());
         mySpecs.add(GordianAsymKeySpec.ed448());
+        mySpecs.add(GordianAsymKeySpec.ed25519());
 
         /* Add X25519/X448 */
-        mySpecs.add(GordianAsymKeySpec.x25519());
         mySpecs.add(GordianAsymKeySpec.x448());
+        mySpecs.add(GordianAsymKeySpec.x25519());
 
         /* Add Rainbow */
         mySpecs.add(GordianAsymKeySpec.rainbow());

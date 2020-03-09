@@ -75,8 +75,7 @@ public class JcaAgreementFactory
                 return getECAgreement(pAgreementSpec);
             case DH:
                 return getDHAgreement(pAgreementSpec);
-            case X25519:
-            case X448:
+            case XDH:
                 return getXDHAgreement(pAgreementSpec);
             default:
                 throw new GordianDataException(JcaFactory.getInvalidText(pAgreementSpec.getAsymKeyType()));
@@ -141,14 +140,13 @@ public class JcaAgreementFactory
      * @throws OceanusException on error
      */
     private GordianAgreement getXDHAgreement(final GordianAgreementSpec pAgreementSpec) throws OceanusException {
-        final String myBase = pAgreementSpec.getAsymKeyType().toString();
         switch (pAgreementSpec.getAgreementType()) {
             case ANON:
-                return new JcaAnonymousAgreement(getFactory(), pAgreementSpec, getJavaKeyAgreement(getFullAgreementName(myBase, pAgreementSpec), false));
+                return new JcaAnonymousAgreement(getFactory(), pAgreementSpec, null);
             case BASIC:
-                return new JcaBasicAgreement(getFactory(), pAgreementSpec, getJavaKeyAgreement(getFullAgreementName(myBase, pAgreementSpec), false));
+                return new JcaBasicAgreement(getFactory(), pAgreementSpec, null);
             case UNIFIED:
-                return new JcaUnifiedAgreement(getFactory(), pAgreementSpec, getJavaKeyAgreement(getFullAgreementName(myBase + "U", pAgreementSpec), false));
+                return new JcaUnifiedAgreement(getFactory(), pAgreementSpec, null);
             default:
                 throw new GordianDataException(JcaFactory.getInvalidText(pAgreementSpec));
         }
@@ -161,8 +159,8 @@ public class JcaAgreementFactory
      * @return the full agreement name
      * @throws OceanusException on error
      */
-    private static String getFullAgreementName(final String pBase,
-                                               final GordianAgreementSpec pAgreementSpec) throws OceanusException {
+    static String getFullAgreementName(final String pBase,
+                                       final GordianAgreementSpec pAgreementSpec) throws OceanusException {
         switch (pAgreementSpec.getKDFType()) {
             case NONE:
                 return pBase;
@@ -186,8 +184,8 @@ public class JcaAgreementFactory
      * @return the KeyFactory
      * @throws OceanusException on error
      */
-    private static KeyAgreement getJavaKeyAgreement(final String pAlgorithm,
-                                                    final boolean postQuantum) throws OceanusException {
+    static KeyAgreement getJavaKeyAgreement(final String pAlgorithm,
+                                            final boolean postQuantum) throws OceanusException {
         /* Protect against exceptions */
         try {
             /* Return a KeyAgreement for the algorithm */
@@ -219,8 +217,7 @@ public class JcaAgreementFactory
             case DH:
                 return !GordianAgreementType.KEM.equals(myType)
                         && !GordianAgreementType.SM2.equals(myType);
-            case X25519:
-            case X448:
+            case XDH:
                 return GordianAgreementType.ANON.equals(myType)
                         || GordianAgreementType.BASIC.equals(myType)
                         || GordianAgreementType.UNIFIED.equals(myType);
