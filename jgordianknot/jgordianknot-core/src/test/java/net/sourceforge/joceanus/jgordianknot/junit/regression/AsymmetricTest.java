@@ -49,6 +49,8 @@ import net.sourceforge.joceanus.jgordianknot.api.factory.GordianAsymFactory;
 import net.sourceforge.joceanus.jgordianknot.api.factory.GordianFactory;
 import net.sourceforge.joceanus.jgordianknot.api.factory.GordianFactoryType;
 import net.sourceforge.joceanus.jgordianknot.api.factory.GordianParameters;
+import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySet;
+import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetSpec;
 import net.sourceforge.joceanus.jgordianknot.util.GordianGenerator;
 import net.sourceforge.joceanus.jgordianknot.api.key.GordianKeyPair;
 import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetFactory;
@@ -451,7 +453,7 @@ public class AsymmetricTest {
         final GordianAgreementFactory mySrcAgrees = pAgreement.getOwner().getFactory().getAgreementFactory();
         final GordianAgreementFactory myPartnerAgrees = pAgreement.getOwner().getPartner().getAgreementFactory();
         final GordianAgreement mySender = mySrcAgrees.createAgreement(mySpec);
-        mySender.setResultType(null);
+        mySender.setResultType(new GordianKeySetSpec());
         final GordianAgreement myResponder = myPartnerAgrees.createAgreement(mySpec);
 
         /* Handle Encapsulation */
@@ -478,9 +480,9 @@ public class AsymmetricTest {
         }
 
         /* Check that the values match */
-        final byte[] myFirst = (byte[]) mySender.getResult();
-        final byte[] mySecond = (byte[]) myResponder.getResult();
-        Assertions.assertArrayEquals(myFirst, mySecond, "Failed to agree crossFactory keySet");
+        final GordianKeySet myFirst = (GordianKeySet) mySender.getResult();
+        final GordianKeySet mySecond = (GordianKeySet) myResponder.getResult();
+        Assertions.assertEquals(myFirst, mySecond, "Failed to agree crossFactory keySet");
     }
 
     /**

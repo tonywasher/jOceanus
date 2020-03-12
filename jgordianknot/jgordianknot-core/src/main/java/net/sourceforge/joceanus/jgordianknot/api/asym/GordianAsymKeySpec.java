@@ -234,10 +234,12 @@ public final class GordianAsymKeySpec {
     /**
      * Create hssKey.
      * @param pKeySpec the keySpec
+     * @param pDepth the treeDepth
      * @return the KeySpec
      */
-    public static GordianAsymKeySpec hss(final GordianLMSKeySpec... pKeySpec) {
-        return new GordianAsymKeySpec(GordianAsymKeyType.LMS, new GordianHSSKeySpec(pKeySpec));
+    public static GordianAsymKeySpec hss(final GordianLMSKeySpec pKeySpec,
+                                         final int pDepth) {
+        return new GordianAsymKeySpec(GordianAsymKeyType.LMS, new GordianHSSKeySpec(pKeySpec, pDepth));
     }
 
     /**
@@ -510,7 +512,9 @@ public final class GordianAsymKeySpec {
                 return theSubKeyType instanceof GordianQTESLAKeyType;
             case LMS:
                 return (theSubKeyType instanceof GordianLMSKeySpec
-                         && ((GordianLMSKeySpec) theSubKeyType).isValid());
+                         && ((GordianLMSKeySpec) theSubKeyType).isValid())
+                        || (theSubKeyType instanceof GordianHSSKeySpec
+                            && ((GordianHSSKeySpec) theSubKeyType).isValid());
             case EDDSA:
             case XDH:
                 return theSubKeyType instanceof GordianEdwardsElliptic;
@@ -580,6 +584,7 @@ public final class GordianAsymKeySpec {
 
         /* Add LMS */
         GordianLMSKeySpec.listPossibleKeySpecs().forEach(t -> mySpecs.add(GordianAsymKeySpec.lms(t)));
+        GordianLMSKeySpec.listPossibleKeySpecs().forEach(t -> mySpecs.add(GordianAsymKeySpec.hss(t, 2)));
 
         /* Return the list */
         return mySpecs;

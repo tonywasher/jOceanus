@@ -17,8 +17,8 @@
 package net.sourceforge.joceanus.jgordianknot.api.asym;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 
 import org.bouncycastle.pqc.crypto.lms.LMOtsParameters;
 import org.bouncycastle.pqc.crypto.lms.LMSParameters;
@@ -75,6 +75,14 @@ public class GordianLMSKeySpec {
         return isValid
                ? new LMSParameters(theSigType.getParameter(), theOtsType.getParameter())
                : null;
+    }
+
+    /**
+     * Is the keySpec high (height > 15)?
+     * @return true/false.
+     */
+    public boolean isHigh() {
+        return isValid && theSigType.isHigh();
     }
 
     /**
@@ -175,9 +183,19 @@ public class GordianLMSKeySpec {
      */
     public static class GordianHSSKeySpec {
         /**
-         * The array of keySpecs.
+         * Max depth for HSS key.
          */
-        private final GordianLMSKeySpec[] theKeySpecs;
+        public static final int MAX_DEPTH = 8;
+
+        /**
+         * The top level keySpec.
+         */
+        private final GordianLMSKeySpec theKeySpec;
+
+        /**
+         * The tree depth.
+         */
+        private final int theDepth;
 
         /**
          * The Validity.
@@ -191,11 +209,14 @@ public class GordianLMSKeySpec {
 
         /**
          * Constructor.
-         * @param pKeySpecs the keySpecs
+         * @param pKeySpec the keySpecs
+         * @param pDepth the tree depth
          */
-        GordianHSSKeySpec(final GordianLMSKeySpec... pKeySpecs) {
+        GordianHSSKeySpec(final GordianLMSKeySpec pKeySpec,
+                          final int pDepth) {
             /* Create the list of keySpecs */
-            theKeySpecs = Arrays.copyOf(pKeySpecs, pKeySpecs.length);
+            theKeySpec = pKeySpec;
+            theDepth = pDepth;
             isValid = checkValidity();
         }
 
@@ -203,11 +224,22 @@ public class GordianLMSKeySpec {
          * Obtain the parameters.
          * @return the parameters.
          */
-        public GordianLMSKeySpec[] getParameters() {
+        public GordianLMSKeySpec getKeySpec() {
             /* If we are valid */
             return isValid
-                   ? Arrays.copyOf(theKeySpecs, theKeySpecs.length)
+                   ? theKeySpec
                    : null;
+        }
+
+        /**
+         * Obtain the treeDepth.
+         * @return the treeDepth.
+         */
+        public int getTreeDepth() {
+            /* If we are valid */
+            return isValid
+                   ? theDepth
+                   : -1;
         }
 
         /**
@@ -223,20 +255,13 @@ public class GordianLMSKeySpec {
          * @return valid true/false
          */
         private boolean checkValidity() {
-            /* Must have at least two elements */
-            if (theKeySpecs.length <= 1) {
+            /* Depth must be at least 2 and  no more that MAX */
+            if (theDepth <= 1 || theDepth > MAX_DEPTH) {
                 return false;
             }
 
-            /* Check each keySpec */
-            for (GordianLMSKeySpec myKeySpec : theKeySpecs) {
-                if (myKeySpec == null || !myKeySpec.isValid) {
-                    return false;
-                }
-            }
-
-            /* valid */
-            return true;
+            /* Check keySpec */
+            return theKeySpec != null && theKeySpec.isValid;
         }
 
         @Override
@@ -246,22 +271,11 @@ public class GordianLMSKeySpec {
                 /* If the keySpec is valid */
                 if (isValid) {
                     /* Load the name */
-                    final StringBuilder myBuilder = new StringBuilder("(");
-                    boolean mySkip = true;
-                    for (GordianLMSKeySpec myKeySpec : theKeySpecs) {
-                        if (mySkip) {
-                            mySkip = false;
-                        } else {
-                            myBuilder.append(",");
-                        }
-                        myBuilder.append(myKeySpec.toString());
-                    }
-                    myBuilder.append(")");
-                    theName = myBuilder.toString();
+                    theName = "HSS-" + theDepth + "-" + theKeySpec;
 
                 }  else {
                     /* Report invalid spec */
-                    theName = "InvalidHSSKeySpec ";
+                    theName = "InvalidHSSKeySpec: " + theDepth + ":" + theKeySpec;
                 }
             }
 
@@ -287,13 +301,14 @@ public class GordianLMSKeySpec {
             /* Access the target hssSpec */
             final GordianHSSKeySpec myThat = (GordianHSSKeySpec) pThat;
 
-            /* Check lists are identical */
-            return Arrays.equals(theKeySpecs, myThat.theKeySpecs);
+            /* Check depth and keySpec are identical */
+            return theDepth == myThat.theDepth
+                    && Objects.equals(theKeySpec, myThat.theKeySpec);
         }
 
         @Override
         public int hashCode() {
-            return theKeySpecs.hashCode();
+            return theKeySpec.hashCode() + theDepth;
         }
     }
 
@@ -345,6 +360,21 @@ public class GordianLMSKeySpec {
          */
         public LMSigParameters getParameter() {
             return theParm;
+        }
+
+        /**
+         * Is the parameter high (height > 15)?
+         * @return true/false.
+         */
+        public boolean isHigh() {
+            switch (this) {
+                case H15:
+                case H20:
+                case H25:
+                    return true;
+                default:
+                    return false;
+            }
         }
     }
 

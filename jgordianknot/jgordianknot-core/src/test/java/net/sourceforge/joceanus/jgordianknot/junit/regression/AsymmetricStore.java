@@ -25,6 +25,7 @@ import net.sourceforge.joceanus.jgordianknot.api.agree.GordianAgreementFactory;
 import net.sourceforge.joceanus.jgordianknot.api.agree.GordianAgreementSpec;
 import net.sourceforge.joceanus.jgordianknot.api.asym.GordianAsymKeySpec;
 import net.sourceforge.joceanus.jgordianknot.api.asym.GordianAsymKeyType;
+import net.sourceforge.joceanus.jgordianknot.api.asym.GordianLMSKeySpec;
 import net.sourceforge.joceanus.jgordianknot.api.encrypt.GordianEncryptorFactory;
 import net.sourceforge.joceanus.jgordianknot.api.encrypt.GordianEncryptorSpec;
 import net.sourceforge.joceanus.jgordianknot.api.factory.GordianAsymFactory;
@@ -653,6 +654,20 @@ class AsymmetricStore {
         final GordianAsymFactory myFactory = pFactory.getAsymmetricFactory();
         List<GordianAsymKeySpec> mySpecs = myFactory.listAllSupportedAsymSpecs(pKeyType);
         for (GordianAsymKeySpec myKeySpec : mySpecs) {
+            /* If the keyType is LMS */
+            if (pKeyType == GordianAsymKeyType.LMS) {
+                /* Access the tree height */
+                GordianLMSKeySpec myLMSSpec = myKeySpec.getLMSKeySpec();
+                if (myLMSSpec == null) {
+                    myLMSSpec = myKeySpec.getHSSKeySpec().getKeySpec();
+                }
+
+                /* Ignore high configs for performance */
+                if (myLMSSpec.isHigh()) {
+                    continue;
+                }
+            }
+
             /* Add the keySpec */
             myResult.add(new FactoryKeySpec(pFactory, pPartner, myKeySpec));
 

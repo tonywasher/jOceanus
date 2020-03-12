@@ -1,5 +1,6 @@
 <document>
     <properties>
+
         <title>GordianKnot Asymmetric</title>
         <author email="Tony.Washer@yahoo.co.uk">Tony Washer</author>
     </properties>
@@ -64,9 +65,10 @@
                     <tr><td>NewHope</td><td/></tr>
                     <tr><td>SPHINCS256</td><td>SHA2, SHA3</td></tr>
                     <tr><td>Rainbow</td><td/></tr>
-                    <tr><td>XMSS</td><td>XMSS(SHA256,SHA512,SHAKE128,SHAKE256), XMSSMT(SHA256,SHA512,SHAKE128,SHAKE256)</td></tr>
+                    <tr><td>XMSS</td><td>XMSS(SHA256,SHA512,SHAKE128,SHAKE256), XMSS^MT(SHA256,SHA512,SHAKE128,SHAKE256)</td></tr>
                     <tr><td>QTESLA</td><td>PROVABLY_SECURE_I,III</td></tr>
-                    <tr><td>LMS</td><td>SIG(H5,H10,H25,H20,H25) * OTS(W1,W2,W4,W8)</td></tr>
+                    <tr><td rowspan="2">LMS</td><td>SIG(H5,H10,H25,H20,H25) * OTS(W1,W2,W4,W8)</td></tr>
+                    <tr><td>HSS(LMS * DEPTH(2..8)</td></tr>
                 </table>
             </subsection>
         </section>
@@ -126,7 +128,17 @@
         </section>
         <section name="Agreements">
             <p>Algorithms are represented by <b>GordianAgreementSpec</b>. A <b>GordianAgreement</b> is obtained via the agreementSpec,
-                and then agreements are created between the two parties depending on the type of the agreement and the resultType</p>
+                and then agreements are created between the two parties depending on the type of the agreement and the resultType.
+                The resultTypes can be any of the following</p>
+            <dl>
+                <dt>GordianParameters</dt><dd>The underlying agreement is used as the security phrase with the rest of the supplied parameters to generate a
+                    new personalised <strong>GordianFactory</strong></dd>
+                <dt>GordianKeySetSpec</dt><dd>The underlying agreement is used to generate a new GordianKeySet of the specified type, belonging to an agreed BC factory.</dd>
+                <dt>GordianSymCipherSpec</dt><dd>The agreement is used to generate a new GordianSymCipher Key and InitVector (if required). A pair of GordianSymCiphers are
+                    returned as the result, one for encryption and one for decryption</dd>
+                <dt>GordianStreamCipherSpec</dt><dd>Similar to SymKeySpec.</dd>
+                <dt>null</dt><dd>The raw agreement bytes are returned.</dd>
+            </dl>
             <subsection name="Sample">
                 <source>
                     /* Access factory */

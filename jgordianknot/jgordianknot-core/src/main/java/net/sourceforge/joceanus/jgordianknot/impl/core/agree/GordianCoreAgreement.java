@@ -299,7 +299,11 @@ public abstract class GordianCoreAgreement
      */
     private GordianKeySet deriveKeySet(final GordianKeySetSpec pSpec,
                                        final byte[] pSecret) throws OceanusException {
-        final GordianCoreKeySetFactory myKeySets = (GordianCoreKeySetFactory) theFactory.getKeySetFactory();
+        /* Derive a shared factory */
+        final GordianFactory myFactory = deriveFactory(GordianFactoryType.BC, pSecret);
+
+        /* Derive the keySet */
+        final GordianCoreKeySetFactory myKeySets = (GordianCoreKeySetFactory) myFactory.getKeySetFactory();
         final GordianCoreKeySet myKeySet = myKeySets.createKeySet(pSpec);
         myKeySet.buildFromSecret(pSecret, theInitVector);
         return myKeySet;
@@ -315,7 +319,11 @@ public abstract class GordianCoreAgreement
      */
     private <T extends GordianKeySpec> GordianKey<T> deriveKey(final T pKeyType,
                                                                final byte[] pSecret) throws OceanusException {
-        final GordianCipherFactory myCiphers = theFactory.getCipherFactory();
+        /* Derive a shared factory */
+        final GordianFactory myFactory = deriveFactory(GordianFactoryType.BC, pSecret);
+
+        /* Derive the key */
+        final GordianCipherFactory myCiphers = myFactory.getCipherFactory();
         final GordianCoreKeyGenerator<T> myGenerator = (GordianCoreKeyGenerator<T>) myCiphers.getKeyGenerator(pKeyType);
         return myGenerator.generateKeyFromSecret(pSecret, theInitVector);
     }
@@ -342,6 +350,7 @@ public abstract class GordianCoreAgreement
             /* Create a new Factory using the phrase */
             final GordianParameters myParms = new GordianParameters(pFactoryType);
             myParms.setSecurityPhrase(myPhrase);
+            myParms.setKIterations(1);
             return theFactory.newFactory(myParms);
         } finally {
             Arrays.fill(myPhrase, (byte) 0);

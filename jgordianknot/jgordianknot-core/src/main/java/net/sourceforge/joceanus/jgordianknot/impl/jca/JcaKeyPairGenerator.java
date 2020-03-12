@@ -25,6 +25,7 @@ import java.security.spec.ECGenParameterSpec;
 import java.security.spec.InvalidKeySpecException;
 import java.security.spec.PKCS8EncodedKeySpec;
 import java.security.spec.X509EncodedKeySpec;
+import java.util.Arrays;
 
 import org.bouncycastle.crypto.params.DHParameters;
 import org.bouncycastle.jcajce.spec.DHDomainParameterSpec;
@@ -784,11 +785,9 @@ public abstract class JcaKeyPairGenerator
          * @return the parameters.
          */
         private static LMSHSSParameterSpec deriveParameters(final GordianHSSKeySpec pKeySpec) {
-            final GordianLMSKeySpec[] myKeySpecs = pKeySpec.getParameters();
-            final LMSParameterSpec[] myParams = new LMSParameterSpec[myKeySpecs.length];
-            for (int i = 0; i < myKeySpecs.length; i++) {
-                myParams[i] = deriveParameters(myKeySpecs[i]);
-            }
+            final GordianLMSKeySpec myKeySpec = pKeySpec.getKeySpec();
+            final LMSParameterSpec[] myParams = new LMSParameterSpec[pKeySpec.getTreeDepth()];
+            Arrays.fill(myParams, deriveParameters(myKeySpec));
             return new LMSHSSParameterSpec(myParams);
         }
 
@@ -799,7 +798,7 @@ public abstract class JcaKeyPairGenerator
          */
         private static LMSParameterSpec deriveParameters(final GordianLMSKeySpec pKeySpec) {
             final LMSParameters myParms = pKeySpec.getParameters();
-            return new LMSParameterSpec(myParms.getLmsParam(), myParms.getLmOTSParam());
+            return new LMSParameterSpec(myParms.getLMSigParam(), myParms.getLMOTSParam());
         }
 
         @Override

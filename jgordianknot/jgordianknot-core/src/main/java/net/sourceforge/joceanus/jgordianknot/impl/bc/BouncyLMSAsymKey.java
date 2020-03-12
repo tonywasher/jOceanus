@@ -19,6 +19,7 @@ package net.sourceforge.joceanus.jgordianknot.impl.bc;
 import java.io.IOException;
 import java.security.spec.PKCS8EncodedKeySpec;
 import java.security.spec.X509EncodedKeySpec;
+import java.util.Arrays;
 
 import org.bouncycastle.asn1.pkcs.PrivateKeyInfo;
 import org.bouncycastle.asn1.x509.SubjectPublicKeyInfo;
@@ -320,11 +321,9 @@ public final class BouncyLMSAsymKey {
          * @return the parameters.
          */
         private static LMSParameters[] deriveParameters(final GordianHSSKeySpec pKeySpec) {
-            final GordianLMSKeySpec[] myKeySpecs = pKeySpec.getParameters();
-            final LMSParameters[] myParams = new LMSParameters[myKeySpecs.length];
-            for (int i = 0; i < myKeySpecs.length; i++) {
-                myParams[i] = myKeySpecs[i].getParameters();
-            }
+            final GordianLMSKeySpec myKeySpec = pKeySpec.getKeySpec();
+            final LMSParameters[] myParams = new LMSParameters[pKeySpec.getTreeDepth()];
+            Arrays.fill(myParams, myKeySpec.getParameters());
             return myParams;
         }
 

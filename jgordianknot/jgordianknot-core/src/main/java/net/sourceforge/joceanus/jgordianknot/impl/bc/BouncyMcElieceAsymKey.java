@@ -497,13 +497,13 @@ public final class BouncyMcElieceAsymKey {
         }
 
         @Override
-        protected BouncyPublicKey getPublicKey() {
-            return (BouncyPublicKey) super.getPublicKey();
+        protected BouncyPublicKey<?> getPublicKey() {
+            return (BouncyPublicKey<?>) super.getPublicKey();
         }
 
         @Override
-        protected BouncyPrivateKey getPrivateKey() {
-            return (BouncyPrivateKey) super.getPrivateKey();
+        protected BouncyPrivateKey<?> getPrivateKey() {
+            return (BouncyPrivateKey<?>) super.getPrivateKey();
         }
 
         @Override
@@ -669,13 +669,13 @@ public final class BouncyMcElieceAsymKey {
         }
 
         @Override
-        protected BouncyPublicKey getPublicKey() {
-            return (BouncyPublicKey) super.getPublicKey();
+        protected BouncyPublicKey<?> getPublicKey() {
+            return (BouncyPublicKey<?>) super.getPublicKey();
         }
 
         @Override
-        protected BouncyPrivateKey getPrivateKey() {
-            return (BouncyPrivateKey) super.getPrivateKey();
+        protected BouncyPrivateKey<?> getPrivateKey() {
+            return (BouncyPrivateKey<?>) super.getPrivateKey();
         }
 
         @Override

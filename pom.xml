@@ -65,7 +65,7 @@
     <packageName/>
     <appDir>${env.BACKUPDIR}</appDir>
     <appLibDir>lib/</appLibDir>
-    <BouncyCastleVersion>165b07</BouncyCastleVersion>
+    <BouncyCastleVersion>165b09</BouncyCastleVersion>
     <JGitVersion>5.6.1.202002131546-r</JGitVersion>
     <JUnitVersion>5.6.0</JUnitVersion>
     <JSONVersion>20190722</JSONVersion>
@@ -80,19 +80,19 @@
     <JFreeChartVersion>1.5.0</JFreeChartVersion>
     <ZipSDKVersion>9.20</ZipSDKVersion>
     <JavaVersion>13</JavaVersion>
-    <JavaFXVersion>13.0.2</JavaFXVersion>
+    <JavaFXVersion>14</JavaFXVersion>
     <JavaLanguageVersion>11</JavaLanguageVersion>
     <CheckStyleVersion>8.30</CheckStyleVersion>
     <PMDVersion>6.21.0</PMDVersion>
     <CleanPluginVersion>3.1.0</CleanPluginVersion>
     <ResourcesPluginVersion>3.1.0</ResourcesPluginVersion>
     <InstallPluginVersion>3.0.0-M1</InstallPluginVersion>
-    <SitePluginVersion>3.8.2</SitePluginVersion>
+    <SitePluginVersion>3.9.0</SitePluginVersion>
     <DeployPluginVersion>3.0.0-M1</DeployPluginVersion>
     <EnforcerPluginVersion>3.0.0-M3</EnforcerPluginVersion>
     <CompilerPluginVersion>3.8.1</CompilerPluginVersion>
     <ShadePluginVersion>3.2.2</ShadePluginVersion>
-    <DependencyPluginVersion>3.1.1</DependencyPluginVersion>
+    <DependencyPluginVersion>3.1.2</DependencyPluginVersion>
     <SurefirePluginVersion>3.0.0-M4</SurefirePluginVersion>
     <BuildNumberPluginVersion>1.4</BuildNumberPluginVersion>
     <BuildHelperPluginVersion>3.0.0</BuildHelperPluginVersion>
