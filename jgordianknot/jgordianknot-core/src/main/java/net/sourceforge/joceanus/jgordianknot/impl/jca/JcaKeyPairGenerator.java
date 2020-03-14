@@ -582,9 +582,9 @@ public abstract class JcaKeyPairGenerator
 
                 /* Create the parameters */
                 final AlgorithmParameterSpec myAlgo = isXMSSMT
-                                                      ? new XMSSMTParameterSpec(GordianXMSSKeySpec.DEFAULT_HEIGHT,
-                                                                                GordianXMSSKeySpec.DEFAULT_LAYERS, myType.name())
-                                                      : new XMSSParameterSpec(GordianXMSSKeySpec.DEFAULT_HEIGHT, myType.name());
+                                                      ? new XMSSMTParameterSpec(myXMSSKeySpec.getHeight().getHeight(),
+                                                                                myXMSSKeySpec.getLayers().getLayers(), myType.name())
+                                                      : new XMSSParameterSpec(myXMSSKeySpec.getHeight().getHeight(), myType.name());
 
                 /* Create and initialise the generator */
                 final String myJavaType = myXMSSKeySpec.getKeyType().name();

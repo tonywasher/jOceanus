@@ -198,8 +198,9 @@ public final class BouncyXMSSAsymKey {
 
             /* Create and initialise the generator */
             theGenerator = new XMSSKeyPairGenerator();
+            final GordianXMSSKeySpec mySpec = pKeySpec.getXMSSKeySpec();
             final KeyGenerationParameters myParams = new XMSSKeyGenerationParameters(
-                    new XMSSParameters(GordianXMSSKeySpec.DEFAULT_HEIGHT, createDigest(getKeyType())), getRandom());
+                    new XMSSParameters(mySpec.getHeight().getHeight(), createDigest(getKeyType())), getRandom());
             theGenerator.init(myParams);
         }
 
@@ -448,8 +449,9 @@ public final class BouncyXMSSAsymKey {
 
             /* Create and initialise the generator */
             theGenerator = new XMSSMTKeyPairGenerator();
+            final GordianXMSSKeySpec mySpec = pKeySpec.getXMSSKeySpec();
             final KeyGenerationParameters myParams = new XMSSMTKeyGenerationParameters(
-                    new XMSSMTParameters(GordianXMSSKeySpec.DEFAULT_HEIGHT, GordianXMSSKeySpec.DEFAULT_LAYERS,
+                    new XMSSMTParameters(mySpec.getHeight().getHeight(), mySpec.getLayers().getLayers(),
                             createDigest(getKeyType())), getRandom());
             theGenerator.init(myParams);
         }

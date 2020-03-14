@@ -26,6 +26,7 @@ import net.sourceforge.joceanus.jgordianknot.api.agree.GordianAgreementSpec;
 import net.sourceforge.joceanus.jgordianknot.api.asym.GordianAsymKeySpec;
 import net.sourceforge.joceanus.jgordianknot.api.asym.GordianAsymKeyType;
 import net.sourceforge.joceanus.jgordianknot.api.asym.GordianLMSKeySpec;
+import net.sourceforge.joceanus.jgordianknot.api.asym.GordianXMSSKeySpec;
 import net.sourceforge.joceanus.jgordianknot.api.encrypt.GordianEncryptorFactory;
 import net.sourceforge.joceanus.jgordianknot.api.encrypt.GordianEncryptorSpec;
 import net.sourceforge.joceanus.jgordianknot.api.factory.GordianAsymFactory;
@@ -656,7 +657,7 @@ class AsymmetricStore {
         for (GordianAsymKeySpec myKeySpec : mySpecs) {
             /* If the keyType is LMS */
             if (pKeyType == GordianAsymKeyType.LMS) {
-                /* Access the tree height */
+                /* Access the keySpec */
                 GordianLMSKeySpec myLMSSpec = myKeySpec.getLMSKeySpec();
                 if (myLMSSpec == null) {
                     myLMSSpec = myKeySpec.getHSSKeySpec().getKeySpec();
@@ -664,6 +665,17 @@ class AsymmetricStore {
 
                 /* Ignore high configs for performance */
                 if (myLMSSpec.isHigh()) {
+                    continue;
+                }
+            }
+
+            /* If the keyType is XMSS */
+            if (pKeyType == GordianAsymKeyType.XMSS) {
+                /* Access the keySpec */
+                GordianXMSSKeySpec myXMSSSpec = myKeySpec.getXMSSKeySpec();
+
+                /* Ignore high configs for performance */
+                if (myXMSSSpec.isHigh()) {
                     continue;
                 }
             }

@@ -28,16 +28,6 @@ import net.sourceforge.joceanus.jtethys.TethysDataConverter;
  */
 public class GordianXMSSKeySpec {
     /**
-     * Default height for XMSS key.
-     */
-    public static final int DEFAULT_HEIGHT = 6;
-
-    /**
-     * Default layers for XMSS key.
-     */
-    public static final int DEFAULT_LAYERS = 3;
-
-    /**
      * The Separator.
      */
     private static final String SEP = "-";
@@ -53,6 +43,16 @@ public class GordianXMSSKeySpec {
     private final GordianXMSSDigestType theDigestType;
 
     /**
+     * The height.
+     */
+    private final GordianXMSSHeight theHeight;
+
+    /**
+     * The layers.
+     */
+    private final GordianXMSSMTLayers theLayers;
+
+    /**
      * The Validity.
      */
     private final boolean isValid;
@@ -64,13 +64,41 @@ public class GordianXMSSKeySpec {
 
     /**
      * Constructor.
+     * @param pDigestType the digestType
+     * @param pHeight the height
+     */
+    public GordianXMSSKeySpec(final GordianXMSSDigestType pDigestType,
+                              final GordianXMSSHeight pHeight) {
+        this(GordianXMSSKeyType.XMSS, pDigestType, pHeight, null);
+    }
+
+    /**
+     * Constructor.
+     * @param pDigestType the digestType
+     * @param pHeight the height
+     * @param pLayers the layers
+     */
+    public GordianXMSSKeySpec(final GordianXMSSDigestType pDigestType,
+                              final GordianXMSSHeight pHeight,
+                              final GordianXMSSMTLayers pLayers) {
+        this(GordianXMSSKeyType.XMSSMT, pDigestType, pHeight, pLayers);
+    }
+
+    /**
+     * Constructor.
      * @param pKeyType the keyType
      * @param pDigestType the digestType
+     * @param pHeight the height
+     * @param pLayers the layers
      */
     public GordianXMSSKeySpec(final GordianXMSSKeyType pKeyType,
-                              final GordianXMSSDigestType pDigestType) {
+                              final GordianXMSSDigestType pDigestType,
+                              final GordianXMSSHeight pHeight,
+                              final GordianXMSSMTLayers pLayers) {
         theKeyType = pKeyType;
         theDigestType = pDigestType;
+        theHeight = pHeight;
+        theLayers = pLayers;
         isValid = checkValidity();
     }
 
@@ -99,6 +127,22 @@ public class GordianXMSSKeySpec {
     }
 
     /**
+     * Obtain the height.
+     * @return the height
+     */
+    public GordianXMSSHeight getHeight() {
+        return theHeight;
+    }
+
+    /**
+     * Obtain the layers.
+     * @return the layers
+     */
+    public GordianXMSSMTLayers getLayers() {
+        return theLayers;
+    }
+
+    /**
      * Is the keySpec valid?
      * @return true/false.
      */
@@ -107,21 +151,35 @@ public class GordianXMSSKeySpec {
     }
 
     /**
-     * Create XMSS keySpec.
-     * @param pDigestType the digestType
-     * @return the keySpec
+     * Is the keySpec high (height > 15)?
+     * @return true/false.
      */
-    public static GordianXMSSKeySpec xmss(final GordianXMSSDigestType pDigestType) {
-        return new GordianXMSSKeySpec(GordianXMSSKeyType.XMSS, pDigestType);
+    public boolean isHigh() {
+        return isValid && theHeight.isHigh(theKeyType);
     }
 
     /**
      * Create XMSS keySpec.
      * @param pDigestType the digestType
+     * @param pHeight the height
      * @return the keySpec
      */
-    public static GordianXMSSKeySpec xmssmt(final GordianXMSSDigestType pDigestType) {
-        return new GordianXMSSKeySpec(GordianXMSSKeyType.XMSSMT, pDigestType);
+    public static GordianXMSSKeySpec xmss(final GordianXMSSDigestType pDigestType,
+                                          final GordianXMSSHeight pHeight) {
+        return new GordianXMSSKeySpec(pDigestType, pHeight);
+    }
+
+    /**
+     * Create XMSS keySpec.
+     * @param pDigestType the digestType
+     * @param pHeight the height
+     * @param pLayers the layers
+     * @return the keySpec
+     */
+    public static GordianXMSSKeySpec xmssmt(final GordianXMSSDigestType pDigestType,
+                                            final GordianXMSSHeight pHeight,
+                                            final GordianXMSSMTLayers pLayers) {
+        return new GordianXMSSKeySpec(pDigestType, pHeight, pLayers);
     }
 
     /**
@@ -129,8 +187,20 @@ public class GordianXMSSKeySpec {
      * @return valid true/false
      */
     private boolean checkValidity() {
-        /* Both elements must be present */
-        return theKeyType != null && theDigestType != null;
+        /* Check that required elements are present */
+        if (theKeyType == null || theDigestType == null || theHeight == null) {
+            return false;
+        }
+
+        /* Check that the height is valid for the keyType */
+        if (!theHeight.validForKeyType(theKeyType)) {
+            return false;
+        }
+
+        /* Check layers is valid for keyType/height */
+        return theKeyType == GordianXMSSKeyType.XMSS
+               ? theLayers == null
+               : theLayers != null && theHeight.hasValidLayers(theLayers);
     }
 
     @Override
@@ -140,11 +210,17 @@ public class GordianXMSSKeySpec {
             /* If the keySpec is valid */
             if (isValid) {
                 /* Load the name */
-                theName = theKeyType.toString() + SEP + theDigestType.toString();
+                theName = theKeyType.toString()
+                            + SEP + theDigestType.toString()
+                            + SEP + theHeight.toString();
+                if (isMT()) {
+                    theName += SEP + theLayers.toString();
+                }
 
             }  else {
                 /* Report invalid spec */
-                theName = "InvalidXMSSKeySpec: " + theKeyType + ":" + theDigestType;
+                theName = "InvalidXMSSKeySpec: " + theKeyType + ":" + theDigestType
+                        + ":" + theHeight + ":" + theLayers;
             }
         }
 
@@ -170,17 +246,24 @@ public class GordianXMSSKeySpec {
         /* Access the target xmssSpec */
         final GordianXMSSKeySpec myThat = (GordianXMSSKeySpec) pThat;
 
-        /* Check KeyType and digestType */
+        /* Check KeyType, digestType, height and layers */
         return theKeyType == myThat.getKeyType()
-                && theDigestType == myThat.getDigestType();
+                && theDigestType == myThat.getDigestType()
+                && theHeight == myThat.getHeight()
+                && theLayers == myThat.getLayers();
     }
 
     @Override
     public int hashCode() {
-        final int hashCode = theKeyType.hashCode() << TethysDataConverter.BYTE_SHIFT;
-        return theDigestType == null
-               ? hashCode
-               : hashCode + theDigestType.hashCode();
+        int hashCode = theKeyType.hashCode() << TethysDataConverter.BYTE_SHIFT;
+        hashCode += theDigestType.hashCode();
+        hashCode <<= TethysDataConverter.BYTE_SHIFT;
+        hashCode += theHeight.hashCode();
+        hashCode <<= TethysDataConverter.BYTE_SHIFT;
+        if (theLayers != null) {
+            hashCode += theLayers.hashCode();
+        }
+        return hashCode;
     }
 
     /**
@@ -193,8 +276,36 @@ public class GordianXMSSKeySpec {
 
         /* Add the specs */
         for (final GordianXMSSDigestType myType : GordianXMSSDigestType.values()) {
-            mySpecs.add(GordianXMSSKeySpec.xmss(myType));
-            mySpecs.add(GordianXMSSKeySpec.xmssmt(myType));
+            mySpecs.addAll(listPossibleKeySpecs(myType));
+        }
+
+        /* Return the list */
+        return mySpecs;
+    }
+
+    /**
+     * Obtain a list of all possible specs.
+     * @param pDigestType the digestType
+     * @return the list
+     */
+    public static List<GordianXMSSKeySpec> listPossibleKeySpecs(final GordianXMSSDigestType pDigestType) {
+        /* Create the list */
+        final List<GordianXMSSKeySpec> mySpecs = new ArrayList<>();
+
+        /* For all heights */
+        for (final GordianXMSSHeight myHeight : GordianXMSSHeight.values()) {
+            /* Add XMSS Spec if valid */
+            if (myHeight.validForKeyType(GordianXMSSKeyType.XMSS)) {
+                mySpecs.add(GordianXMSSKeySpec.xmss(pDigestType, myHeight));
+            }
+
+            /* Add XMSSMT Specs if valid */
+            if (myHeight.validForKeyType(GordianXMSSKeyType.XMSSMT)) {
+                /* For all heights */
+                for (final GordianXMSSMTLayers myLayers : myHeight.getValidLayers()) {
+                    mySpecs.add(GordianXMSSKeySpec.xmssmt(pDigestType, myHeight, myLayers));
+                }
+            }
         }
 
         /* Return the list */
@@ -270,6 +381,189 @@ public class GordianXMSSKeySpec {
                 default:
                     throw new IllegalStateException();
             }
+        }
+    }
+
+    /**
+     * XMSS Height.
+     */
+    public enum GordianXMSSHeight {
+        /**
+         * 10.
+         */
+        H10(10),
+
+        /**
+         * 16.
+         */
+        H16(16),
+
+        /**
+         * 20.
+         */
+        H20(20, new GordianXMSSMTLayers[] { GordianXMSSMTLayers.L2, GordianXMSSMTLayers.L4 }),
+
+        /**
+         * 40.
+         */
+        H40(40, new GordianXMSSMTLayers[] { GordianXMSSMTLayers.L2, GordianXMSSMTLayers.L4, GordianXMSSMTLayers.L8 }),
+
+        /**
+         * 12.
+         */
+        H60(12, new GordianXMSSMTLayers[] { GordianXMSSMTLayers.L3, GordianXMSSMTLayers.L6, GordianXMSSMTLayers.L12 });
+
+        /**
+         * The Height.
+         */
+        private final int theHeight;
+
+        /**
+         * The Layers.
+         */
+        private final GordianXMSSMTLayers[] theLayers;
+
+        /**
+         * Constructor.
+         * @param pHeight the height
+         */
+        GordianXMSSHeight(final int pHeight) {
+            this(pHeight, null);
+        }
+
+        /**
+         * Constructor.
+         * @param pHeight the height
+         * @param pLayers the layers
+         */
+        GordianXMSSHeight(final int pHeight,
+                          final GordianXMSSMTLayers[] pLayers) {
+            theHeight = pHeight;
+            theLayers = pLayers;
+        }
+
+        /**
+         * Obtain the height.
+         * @return the height
+         */
+        public int getHeight() {
+            return theHeight;
+        }
+
+
+        /**
+         * Is the height valid for the keyType.
+         * @param pKeyType the keyType
+         * @return true/false
+         */
+        boolean validForKeyType(final GordianXMSSKeyType pKeyType) {
+            switch (this) {
+                case H10:
+                case H16:
+                    return pKeyType == GordianXMSSKeyType.XMSS;
+                case H40:
+                case H60:
+                    return pKeyType == GordianXMSSKeyType.XMSSMT;
+                default:
+                    return true;
+            }
+        }
+
+        /**
+         * Is the layers valid for the height.
+         * @param pLayers the layers
+         * @return true/false
+         */
+        boolean hasValidLayers(final GordianXMSSMTLayers pLayers) {
+            if (theLayers != null) {
+                for (GordianXMSSMTLayers myLayers : theLayers) {
+                    if (myLayers == pLayers) {
+                        return true;
+                    }
+                }
+            }
+            return false;
+        }
+
+        /**
+         * Obtain the valid XMSSMT layers.
+         * @return the height
+         */
+        GordianXMSSMTLayers[] getValidLayers() {
+            return theLayers;
+        }
+        /**
+         * Is the parameter high?
+         * @param pKeyType the keyTypoe
+         * @return true/false.
+         */
+        public boolean isHigh(final GordianXMSSKeyType pKeyType) {
+            switch (this) {
+                case H16:
+                case H20:
+                    return pKeyType == GordianXMSSKeyType.XMSS;
+                case H40:
+                case H60:
+                    return true;
+                default:
+                    return false;
+            }
+        }
+    }
+
+    /**
+     * XMSSMT Layers.
+     */
+    public enum GordianXMSSMTLayers {
+        /**
+         * 2.
+         */
+        L2(2),
+
+        /**
+         * 3.
+         */
+        L3(3),
+
+        /**
+         * 4.
+         */
+        L4(4),
+
+        /**
+         * 6.
+         */
+        L6(6),
+
+        /**
+         * 40.
+         */
+        L8(8),
+
+        /**
+         * 12.
+         */
+        L12(12);
+
+        /**
+         * The layers.
+         */
+        private final int theLayers;
+
+        /**
+         * Constructor.
+         * @param pLayers the layers
+         */
+        GordianXMSSMTLayers(final int pLayers) {
+            theLayers = pLayers;
+        }
+
+        /**
+         * Obtain the layers.
+         * @return the layers
+         */
+        public int getLayers() {
+            return theLayers;
         }
     }
 }

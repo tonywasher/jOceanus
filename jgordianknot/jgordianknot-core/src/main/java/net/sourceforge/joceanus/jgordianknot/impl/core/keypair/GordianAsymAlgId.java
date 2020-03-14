@@ -24,6 +24,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
+import org.bouncycastle.asn1.ASN1OctetString;
 import org.bouncycastle.asn1.cryptopro.ECGOST3410NamedCurves;
 import org.bouncycastle.asn1.cryptopro.GOST3410PublicKeyAlgParameters;
 import org.bouncycastle.asn1.edec.EdECObjectIdentifiers;
@@ -58,12 +59,14 @@ import org.bouncycastle.pqc.crypto.lms.HSSPrivateKeyParameters;
 import org.bouncycastle.pqc.crypto.lms.HSSPublicKeyParameters;
 import org.bouncycastle.pqc.crypto.lms.LMOtsParameters;
 import org.bouncycastle.pqc.crypto.lms.LMSKeyParameters;
-import org.bouncycastle.pqc.crypto.lms.LMSParameters;
 import org.bouncycastle.pqc.crypto.lms.LMSPrivateKeyParameters;
 import org.bouncycastle.pqc.crypto.lms.LMSPublicKeyParameters;
 import org.bouncycastle.pqc.crypto.lms.LMSigParameters;
 import org.bouncycastle.pqc.crypto.util.PrivateKeyFactory;
 import org.bouncycastle.pqc.crypto.util.PublicKeyFactory;
+import org.bouncycastle.pqc.crypto.xmss.XMSSMTParameters;
+import org.bouncycastle.pqc.crypto.xmss.XMSSParameters;
+import org.bouncycastle.util.Pack;
 
 import net.sourceforge.joceanus.jgordianknot.api.asym.GordianAsymKeySpec;
 import net.sourceforge.joceanus.jgordianknot.api.asym.GordianDHGroup;
@@ -81,7 +84,10 @@ import net.sourceforge.joceanus.jgordianknot.api.asym.GordianRSAModulus;
 import net.sourceforge.joceanus.jgordianknot.api.asym.GordianSM2Elliptic;
 import net.sourceforge.joceanus.jgordianknot.api.asym.GordianSPHINCSDigestType;
 import net.sourceforge.joceanus.jgordianknot.api.asym.GordianXMSSKeySpec.GordianXMSSDigestType;
+import net.sourceforge.joceanus.jgordianknot.api.asym.GordianXMSSKeySpec.GordianXMSSHeight;
+import net.sourceforge.joceanus.jgordianknot.api.asym.GordianXMSSKeySpec.GordianXMSSMTLayers;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianDataException;
+import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianIOException;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
@@ -654,6 +660,8 @@ public class GordianAsymAlgId {
             /* Tree Digest is not supported */
             throw new GordianDataException(ERROR_TREEDIGEST + myDigest.toString());
         }
+
+
     }
 
     /**
@@ -661,11 +669,22 @@ public class GordianAsymAlgId {
      */
     private static class GordianXMSSEncodedParser implements GordianEncodedParser {
         /**
+         * From Isara.
+         */
+        private static final ASN1ObjectIdentifier ISARA_XMSS = new ASN1ObjectIdentifier("0.4.0.127.0.15.1.1.13.0");
+
+        /**
+         * # of standard configs per digestType.
+         */
+        private static final int NUM_CONFIGS = 3;
+
+        /**
          * Registrar.
          * @param pIdManager the idManager
          */
         static void register(final GordianAsymAlgId pIdManager) {
             pIdManager.registerParser(PQCObjectIdentifiers.xmss, new GordianXMSSEncodedParser());
+            pIdManager.registerParser(ISARA_XMSS, new GordianXMSSEncodedParser());
         }
 
 
@@ -673,7 +692,20 @@ public class GordianAsymAlgId {
         public GordianAsymKeySpec determineKeySpec(final SubjectPublicKeyInfo pInfo) throws OceanusException {
             final AlgorithmIdentifier myId = pInfo.getAlgorithm();
             final XMSSKeyParams myParms = XMSSKeyParams.getInstance(myId.getParameters());
-            return determineKeySpec(myParms);
+            if (myParms != null) {
+                return determineKeySpec(myParms);
+            }
+
+            /* Protect against exceptions */
+            try {
+                final byte[] keyEnc = ASN1OctetString.getInstance(pInfo.parsePublicKey()).getOctets();
+                final int myOID = Pack.bigEndianToInt(keyEnc, 0);
+                final GordianXMSSDigestType myDigest = GordianXMSSDigestType.class.getEnumConstants()[(myOID - 1) / NUM_CONFIGS];
+                final XMSSParameters myParams = XMSSParameters.lookupByOID(myOID);
+                return GordianAsymKeySpec.xmss(myDigest, determineHeight(myParams.getHeight()));
+            } catch (IOException e) {
+                throw new GordianIOException("Failed to resolve key",  e);
+            }
         }
 
         @Override
@@ -691,7 +723,8 @@ public class GordianAsymAlgId {
          */
         private static  GordianAsymKeySpec determineKeySpec(final XMSSKeyParams pParms) throws OceanusException {
             final ASN1ObjectIdentifier myDigest = pParms.getTreeDigest().getAlgorithm();
-            return GordianAsymKeySpec.xmss(determineKeyType(myDigest));
+            final GordianXMSSHeight myHeight = determineHeight(pParms.getHeight());
+            return GordianAsymKeySpec.xmss(determineKeyType(myDigest), myHeight);
         }
 
         /**
@@ -717,6 +750,24 @@ public class GordianAsymAlgId {
             /* Tree Digest is not supported */
             throw new GordianDataException(ERROR_TREEDIGEST + pDigest.toString());
         }
+
+        /**
+         * Obtain height.
+         * @param pHeight the height
+         * @return the xmssHeight
+         * @throws OceanusException on error
+         */
+        static GordianXMSSHeight determineHeight(final int pHeight) throws OceanusException {
+            /* Loo through the heights */
+            for (GordianXMSSHeight myHeight : GordianXMSSHeight.values()) {
+                if (myHeight.getHeight() == pHeight) {
+                    return myHeight;
+                }
+            }
+
+            /* Height is not supported */
+            throw new GordianDataException("Inavlid height: " + pHeight);
+        }
     }
 
     /**
@@ -724,18 +775,43 @@ public class GordianAsymAlgId {
      */
     private static class GordianXMSSMTEncodedParser implements GordianEncodedParser {
         /**
+         * From Isara.
+         */
+        private static final ASN1ObjectIdentifier ISARA_XMSSMT = new ASN1ObjectIdentifier("0.4.0.127.0.15.1.1.14.0");
+
+        /**
+         * # of standard configs per digestType.
+         */
+        private static final int NUM_CONFIGS = 8;
+
+        /**
          * Registrar.
          * @param pIdManager the idManager
          */
         static void register(final GordianAsymAlgId pIdManager) {
             pIdManager.registerParser(PQCObjectIdentifiers.xmss_mt, new GordianXMSSMTEncodedParser());
+            pIdManager.registerParser(ISARA_XMSSMT, new GordianXMSSMTEncodedParser());
         }
 
         @Override
         public GordianAsymKeySpec determineKeySpec(final SubjectPublicKeyInfo pInfo) throws OceanusException {
             final AlgorithmIdentifier myId = pInfo.getAlgorithm();
             final XMSSMTKeyParams myParms = XMSSMTKeyParams.getInstance(myId.getParameters());
-            return determineKeySpec(myParms);
+            if (myParms != null) {
+                return determineKeySpec(myParms);
+            }
+
+            /* Protect against exceptions */
+            try {
+                final byte[] keyEnc = ASN1OctetString.getInstance(pInfo.parsePublicKey()).getOctets();
+                final int myOID = Pack.bigEndianToInt(keyEnc, 0);
+                final GordianXMSSDigestType myDigest = GordianXMSSDigestType.class.getEnumConstants()[(myOID - 1) / NUM_CONFIGS];
+                final XMSSMTParameters myParams = XMSSMTParameters.lookupByOID(myOID);
+                return GordianAsymKeySpec.xmssmt(myDigest, GordianXMSSEncodedParser.determineHeight(myParams.getHeight()),
+                        determineLayers(myParams.getLayers()));
+            } catch (IOException e) {
+                throw new GordianIOException("Failed to resolve key",  e);
+            }
         }
 
         @Override
@@ -753,7 +829,27 @@ public class GordianAsymAlgId {
          */
         private static  GordianAsymKeySpec determineKeySpec(final XMSSMTKeyParams pParms) throws OceanusException {
             final ASN1ObjectIdentifier myDigest = pParms.getTreeDigest().getAlgorithm();
-            return GordianAsymKeySpec.xmssmt(GordianXMSSEncodedParser.determineKeyType(myDigest));
+            final GordianXMSSHeight myHeight = GordianXMSSEncodedParser.determineHeight(pParms.getHeight());
+            final GordianXMSSMTLayers myLayers = determineLayers(pParms.getLayers());
+            return GordianAsymKeySpec.xmssmt(GordianXMSSEncodedParser.determineKeyType(myDigest), myHeight, myLayers);
+        }
+
+        /**
+         * Obtain layers.
+         * @param pLayers the layers
+         * @return the xmssMTLayers
+         * @throws OceanusException on error
+         */
+        static GordianXMSSMTLayers determineLayers(final int pLayers) throws OceanusException {
+            /* Loo through the heights */
+            for (GordianXMSSMTLayers myLayers : GordianXMSSMTLayers.values()) {
+                if (myLayers.getLayers() == pLayers) {
+                    return myLayers;
+                }
+            }
+
+            /* Layers is not supported */
+            throw new GordianDataException("Invalid layers: " + pLayers);
         }
     }
 

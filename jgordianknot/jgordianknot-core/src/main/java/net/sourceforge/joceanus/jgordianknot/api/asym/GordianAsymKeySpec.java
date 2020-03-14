@@ -23,6 +23,8 @@ import java.util.Objects;
 
 import net.sourceforge.joceanus.jgordianknot.api.asym.GordianLMSKeySpec.GordianHSSKeySpec;
 import net.sourceforge.joceanus.jgordianknot.api.asym.GordianXMSSKeySpec.GordianXMSSDigestType;
+import net.sourceforge.joceanus.jgordianknot.api.asym.GordianXMSSKeySpec.GordianXMSSHeight;
+import net.sourceforge.joceanus.jgordianknot.api.asym.GordianXMSSKeySpec.GordianXMSSMTLayers;
 import net.sourceforge.joceanus.jtethys.TethysDataConverter;
 
 /**
@@ -198,19 +200,25 @@ public final class GordianAsymKeySpec {
     /**
      * Create xmssKey.
      * @param pDigestType the xmss digestType
+     * @param pHeight the height
      * @return the KeySpec
      */
-    public static GordianAsymKeySpec xmss(final GordianXMSSDigestType pDigestType) {
-        return new GordianAsymKeySpec(GordianAsymKeyType.XMSS, GordianXMSSKeySpec.xmss(pDigestType));
+    public static GordianAsymKeySpec xmss(final GordianXMSSDigestType pDigestType,
+                                          final GordianXMSSHeight pHeight) {
+        return new GordianAsymKeySpec(GordianAsymKeyType.XMSS, GordianXMSSKeySpec.xmss(pDigestType, pHeight));
     }
 
     /**
      * Create xmssMTKey.
      * @param pDigestType the xmss digestType
+     * @param pHeight the height
+     * @param pLayers the layers
      * @return the KeySpec
      */
-    public static GordianAsymKeySpec xmssmt(final GordianXMSSDigestType pDigestType) {
-        return new GordianAsymKeySpec(GordianAsymKeyType.XMSS, GordianXMSSKeySpec.xmssmt(pDigestType));
+    public static GordianAsymKeySpec xmssmt(final GordianXMSSDigestType pDigestType,
+                                            final GordianXMSSHeight pHeight,
+                                            final GordianXMSSMTLayers pLayers) {
+        return new GordianAsymKeySpec(GordianAsymKeyType.XMSS, GordianXMSSKeySpec.xmssmt(pDigestType, pHeight, pLayers));
     }
 
     /**
@@ -576,8 +584,7 @@ public final class GordianAsymKeySpec {
         EnumSet.allOf(GordianSPHINCSDigestType.class).forEach(t -> mySpecs.add(GordianAsymKeySpec.sphincs(t)));
 
         /* Add XMSS/XMSSMT */
-        EnumSet.allOf(GordianXMSSDigestType.class).forEach(t -> mySpecs.add(GordianAsymKeySpec.xmss(t)));
-        EnumSet.allOf(GordianXMSSDigestType.class).forEach(t -> mySpecs.add(GordianAsymKeySpec.xmssmt(t)));
+        GordianXMSSKeySpec.listPossibleKeySpecs().forEach(t -> mySpecs.add(new GordianAsymKeySpec(GordianAsymKeyType.XMSS, t)));
 
         /* Add McEliece */
         GordianMcElieceKeySpec.listPossibleKeySpecs().forEach(t -> mySpecs.add(GordianAsymKeySpec.mcEliece(t)));

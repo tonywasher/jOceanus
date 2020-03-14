@@ -337,38 +337,74 @@ public class GordianSignatureAlgId {
                 new AlgorithmIdentifier(PQCObjectIdentifiers.sphincs256_with_SHA512, DERNull.INSTANCE));
         addToMaps(GordianSignatureSpec.sphincs(), GordianSPHINCSDigestType.SHA3,
                 new AlgorithmIdentifier(PQCObjectIdentifiers.sphincs256_with_SHA3_512, DERNull.INSTANCE));
-        addToMaps(GordianSignatureSpec.xmss(), GordianXMSSKeySpec.xmss(GordianXMSSDigestType.SHA256),
-                new AlgorithmIdentifier(PQCObjectIdentifiers.xmss_SHA256, DERNull.INSTANCE));
-        addToMaps(GordianSignatureSpec.xmssph(), GordianXMSSKeySpec.xmss(GordianXMSSDigestType.SHA256),
-                new AlgorithmIdentifier(PQCObjectIdentifiers.xmss_SHA256ph, DERNull.INSTANCE));
-        addToMaps(GordianSignatureSpec.xmss(), GordianXMSSKeySpec.xmss(GordianXMSSDigestType.SHA512),
-                new AlgorithmIdentifier(PQCObjectIdentifiers.xmss_SHA512, DERNull.INSTANCE));
-        addToMaps(GordianSignatureSpec.xmssph(), GordianXMSSKeySpec.xmss(GordianXMSSDigestType.SHA512),
-                new AlgorithmIdentifier(PQCObjectIdentifiers.xmss_SHA512ph, DERNull.INSTANCE));
-        addToMaps(GordianSignatureSpec.xmss(), GordianXMSSKeySpec.xmss(GordianXMSSDigestType.SHAKE128),
-                new AlgorithmIdentifier(PQCObjectIdentifiers.xmss_SHAKE128, DERNull.INSTANCE));
-        addToMaps(GordianSignatureSpec.xmssph(), GordianXMSSKeySpec.xmss(GordianXMSSDigestType.SHAKE128),
-                new AlgorithmIdentifier(PQCObjectIdentifiers.xmss_SHAKE128ph, DERNull.INSTANCE));
-        addToMaps(GordianSignatureSpec.xmss(), GordianXMSSKeySpec.xmss(GordianXMSSDigestType.SHAKE256),
-                new AlgorithmIdentifier(PQCObjectIdentifiers.xmss_SHAKE256, DERNull.INSTANCE));
-        addToMaps(GordianSignatureSpec.xmssph(), GordianXMSSKeySpec.xmss(GordianXMSSDigestType.SHAKE256),
-                new AlgorithmIdentifier(PQCObjectIdentifiers.xmss_SHAKE256ph, DERNull.INSTANCE));
-        addToMaps(GordianSignatureSpec.xmss(), GordianXMSSKeySpec.xmssmt(GordianXMSSDigestType.SHA256),
-                new AlgorithmIdentifier(PQCObjectIdentifiers.xmss_mt_SHA256, DERNull.INSTANCE));
-        addToMaps(GordianSignatureSpec.xmssph(), GordianXMSSKeySpec.xmssmt(GordianXMSSDigestType.SHA256),
-                new AlgorithmIdentifier(PQCObjectIdentifiers.xmss_mt_SHA256ph, DERNull.INSTANCE));
-        addToMaps(GordianSignatureSpec.xmss(), GordianXMSSKeySpec.xmssmt(GordianXMSSDigestType.SHA512),
-                new AlgorithmIdentifier(PQCObjectIdentifiers.xmss_mt_SHA512, DERNull.INSTANCE));
-        addToMaps(GordianSignatureSpec.xmssph(), GordianXMSSKeySpec.xmssmt(GordianXMSSDigestType.SHA512),
-                new AlgorithmIdentifier(PQCObjectIdentifiers.xmss_mt_SHA512ph, DERNull.INSTANCE));
-        addToMaps(GordianSignatureSpec.xmss(), GordianXMSSKeySpec.xmssmt(GordianXMSSDigestType.SHAKE128),
-                new AlgorithmIdentifier(PQCObjectIdentifiers.xmss_mt_SHAKE128, DERNull.INSTANCE));
-        addToMaps(GordianSignatureSpec.xmssph(), GordianXMSSKeySpec.xmssmt(GordianXMSSDigestType.SHAKE128),
-                new AlgorithmIdentifier(PQCObjectIdentifiers.xmss_mt_SHAKE128ph, DERNull.INSTANCE));
-        addToMaps(GordianSignatureSpec.xmss(), GordianXMSSKeySpec.xmssmt(GordianXMSSDigestType.SHAKE256),
-                new AlgorithmIdentifier(PQCObjectIdentifiers.xmss_mt_SHAKE256, DERNull.INSTANCE));
-        addToMaps(GordianSignatureSpec.xmssph(), GordianXMSSKeySpec.xmssmt(GordianXMSSDigestType.SHAKE256),
-                new AlgorithmIdentifier(PQCObjectIdentifiers.xmss_mt_SHAKE256ph, DERNull.INSTANCE));
+
+        /* List XMSS Sha256 signatures */
+        for (GordianXMSSKeySpec mySpec : GordianXMSSKeySpec.listPossibleKeySpecs(GordianXMSSDigestType.SHA256)) {
+            /* If this is an XMSSMT spec */
+            if (mySpec.isMT()) {
+                addToMaps(GordianSignatureSpec.xmss(), mySpec,
+                        new AlgorithmIdentifier(PQCObjectIdentifiers.xmss_mt_SHA256, DERNull.INSTANCE));
+                addToMaps(GordianSignatureSpec.xmssph(), mySpec,
+                        new AlgorithmIdentifier(PQCObjectIdentifiers.xmss_mt_SHA256ph, DERNull.INSTANCE));
+
+            } else {
+                addToMaps(GordianSignatureSpec.xmss(), mySpec,
+                        new AlgorithmIdentifier(PQCObjectIdentifiers.xmss_SHA256, DERNull.INSTANCE));
+                addToMaps(GordianSignatureSpec.xmssph(), mySpec,
+                        new AlgorithmIdentifier(PQCObjectIdentifiers.xmss_SHA256ph, DERNull.INSTANCE));
+            }
+        }
+
+        /* List XMSS Sha512 signatures */
+        for (GordianXMSSKeySpec mySpec : GordianXMSSKeySpec.listPossibleKeySpecs(GordianXMSSDigestType.SHA512)) {
+            /* If this is an XMSSMT spec */
+            if (mySpec.isMT()) {
+                addToMaps(GordianSignatureSpec.xmss(), mySpec,
+                        new AlgorithmIdentifier(PQCObjectIdentifiers.xmss_mt_SHA512, DERNull.INSTANCE));
+                addToMaps(GordianSignatureSpec.xmssph(), mySpec,
+                        new AlgorithmIdentifier(PQCObjectIdentifiers.xmss_mt_SHA512ph, DERNull.INSTANCE));
+
+            } else {
+                addToMaps(GordianSignatureSpec.xmss(), mySpec,
+                        new AlgorithmIdentifier(PQCObjectIdentifiers.xmss_SHA512, DERNull.INSTANCE));
+                addToMaps(GordianSignatureSpec.xmssph(), mySpec,
+                        new AlgorithmIdentifier(PQCObjectIdentifiers.xmss_SHA512ph, DERNull.INSTANCE));
+            }
+        }
+
+        /* List XMSS Shake128 signatures */
+        for (GordianXMSSKeySpec mySpec : GordianXMSSKeySpec.listPossibleKeySpecs(GordianXMSSDigestType.SHAKE128)) {
+            /* If this is an XMSSMT spec */
+            if (mySpec.isMT()) {
+                addToMaps(GordianSignatureSpec.xmss(), mySpec,
+                        new AlgorithmIdentifier(PQCObjectIdentifiers.xmss_mt_SHAKE128, DERNull.INSTANCE));
+                addToMaps(GordianSignatureSpec.xmssph(), mySpec,
+                        new AlgorithmIdentifier(PQCObjectIdentifiers.xmss_mt_SHAKE128ph, DERNull.INSTANCE));
+
+            } else {
+                addToMaps(GordianSignatureSpec.xmss(), mySpec,
+                        new AlgorithmIdentifier(PQCObjectIdentifiers.xmss_SHAKE128, DERNull.INSTANCE));
+                addToMaps(GordianSignatureSpec.xmssph(), mySpec,
+                        new AlgorithmIdentifier(PQCObjectIdentifiers.xmss_SHAKE128ph, DERNull.INSTANCE));
+            }
+        }
+
+        /* List XMSS Shake128 signatures */
+        for (GordianXMSSKeySpec mySpec : GordianXMSSKeySpec.listPossibleKeySpecs(GordianXMSSDigestType.SHAKE256)) {
+            /* If this is an XMSSMT spec */
+            if (mySpec.isMT()) {
+                addToMaps(GordianSignatureSpec.xmss(), mySpec,
+                        new AlgorithmIdentifier(PQCObjectIdentifiers.xmss_mt_SHAKE256, DERNull.INSTANCE));
+                addToMaps(GordianSignatureSpec.xmssph(), mySpec,
+                        new AlgorithmIdentifier(PQCObjectIdentifiers.xmss_mt_SHAKE256ph, DERNull.INSTANCE));
+
+            } else {
+                addToMaps(GordianSignatureSpec.xmss(), mySpec,
+                        new AlgorithmIdentifier(PQCObjectIdentifiers.xmss_SHAKE256, DERNull.INSTANCE));
+                addToMaps(GordianSignatureSpec.xmssph(), mySpec,
+                        new AlgorithmIdentifier(PQCObjectIdentifiers.xmss_SHAKE256ph, DERNull.INSTANCE));
+            }
+        }
     }
 
     /**
