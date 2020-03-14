@@ -409,11 +409,6 @@ public class LMSPerformance {
         private final LMSSigner theSigner;
 
         /**
-         * The Signatures.
-         */
-        private byte[][] theSignatures;
-
-        /**
          * The Elapsed.
          */
         private long theElapsed;
@@ -439,8 +434,8 @@ public class LMSPerformance {
             theSigner.init(false, pKeyPair.thePublicKey);
 
             /* Loop through the signatures */
-            theSignatures = pSignature.theSignatures;
-            for (byte[] mySignature : theSignatures) {
+            final byte[][] mySignatures = pSignature.theSignatures;
+            for (byte[] mySignature : mySignatures) {
                 /* Sign the message */
                 if (!theSigner.verifySignature(MESSAGE, mySignature)) {
                     throw new IllegalStateException();
@@ -449,7 +444,7 @@ public class LMSPerformance {
 
             /* Complete the timeStamp */
             theElapsed = System.nanoTime() - myStart;
-            theElapsed /= theSignatures.length;
+            theElapsed /= mySignatures.length;
         }
     }
 
@@ -589,11 +584,6 @@ public class LMSPerformance {
         private final HSSSigner theSigner;
 
         /**
-         * The Signatures.
-         */
-        private byte[][] theSignatures;
-
-        /**
          * The Elapsed.
          */
         private long theElapsed;
@@ -619,8 +609,8 @@ public class LMSPerformance {
             theSigner.init(false, pKeyPair.thePublicKey);
 
             /* Loop through the signatures */
-            theSignatures = pSignature.theSignatures;
-            for (byte[] mySignature : theSignatures) {
+            final byte[][] mySignatures = pSignature.theSignatures;
+            for (byte[] mySignature : mySignatures) {
                 /* Sign the message */
                 if (!theSigner.verifySignature(MESSAGE, mySignature)) {
                     throw new IllegalStateException();
@@ -629,7 +619,7 @@ public class LMSPerformance {
 
             /* Complete the timeStamp */
             theElapsed = System.nanoTime() - myStart;
-            theElapsed /= theSignatures.length;
+            theElapsed /= mySignatures.length;
         }
     }
 }

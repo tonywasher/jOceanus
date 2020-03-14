@@ -25,7 +25,6 @@ import net.sourceforge.joceanus.jgordianknot.api.asym.GordianAsymKeyType;
 import net.sourceforge.joceanus.jgordianknot.api.asym.GordianMcElieceKeySpec;
 import net.sourceforge.joceanus.jgordianknot.api.encrypt.GordianEncryptorFactory;
 import net.sourceforge.joceanus.jgordianknot.api.encrypt.GordianEncryptorSpec;
-import net.sourceforge.joceanus.jgordianknot.api.key.GordianKeyPair;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianCoreFactory;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianDataException;
 import net.sourceforge.joceanus.jtethys.OceanusException;
@@ -94,7 +93,7 @@ public abstract class GordianCoreEncryptorFactory
     }
 
     @Override
-    public boolean validEncryptorSpecForKeyPair(final GordianKeyPair pKeyPair,
+    public boolean validEncryptorSpecForKeySpec(final GordianAsymKeySpec pKeySpec,
                                                 final GordianEncryptorSpec pEncryptorSpec) {
         /* Reject invalid encryptorSpec */
         if (pEncryptorSpec == null || !pEncryptorSpec.isValid()) {
@@ -102,7 +101,7 @@ public abstract class GordianCoreEncryptorFactory
         }
 
         /* Check encryptor matches keyPair */
-        if (pEncryptorSpec.getKeyType() != pKeyPair.getKeySpec().getKeyType()) {
+        if (pEncryptorSpec.getKeyType() != pKeySpec.getKeyType()) {
             return false;
         }
 
@@ -112,22 +111,21 @@ public abstract class GordianCoreEncryptorFactory
         }
 
         /* Disallow EC if the curve does not support encryption */
-        final GordianAsymKeySpec myKeySpec = pKeyPair.getKeySpec();
-        if (GordianAsymKeyType.EC.equals(myKeySpec.getKeyType())) {
-            return myKeySpec.getElliptic().canEncrypt();
+        if (GordianAsymKeyType.EC.equals(pKeySpec.getKeyType())) {
+            return pKeySpec.getElliptic().canEncrypt();
         }
 
         /* Disallow McEliece if it is the wrong style key */
-        if (GordianAsymKeyType.MCELIECE.equals(myKeySpec.getKeyType())) {
-            return GordianMcElieceKeySpec.checkValidEncryptionType(myKeySpec.getMcElieceKeySpec(), pEncryptorSpec.getMcElieceType());
+        if (GordianAsymKeyType.MCELIECE.equals(pKeySpec.getKeyType())) {
+            return GordianMcElieceKeySpec.checkValidEncryptionType(pKeySpec.getMcElieceKeySpec(), pEncryptorSpec.getMcElieceType());
         }
 
         /* If this is a RSA encryption */
-        if (GordianAsymKeyType.RSA.equals(myKeySpec.getKeyType())) {
+        if (GordianAsymKeyType.RSA.equals(pKeySpec.getKeyType())) {
             /* The digest length cannot be too large wrt to the modulus */
             int myLen = pEncryptorSpec.getDigestSpec().getDigestLength().getByteLength();
             myLen = (myLen + 1) * Byte.SIZE;
-            return myKeySpec.getRSAModulus().getLength() >= (myLen << 1);
+            return pKeySpec.getRSAModulus().getLength() >= (myLen << 1);
         }
 
         /* OK */

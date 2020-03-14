@@ -20,6 +20,7 @@ import java.util.List;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
+import net.sourceforge.joceanus.jgordianknot.api.asym.GordianAsymKeySpec;
 import net.sourceforge.joceanus.jgordianknot.api.asym.GordianAsymKeyType;
 import net.sourceforge.joceanus.jgordianknot.api.key.GordianKeyPair;
 import net.sourceforge.joceanus.jtethys.OceanusException;
@@ -60,7 +61,18 @@ public interface GordianAgreementFactory {
      * @param pAgreementSpec the macSpec
      * @return true/false
      */
-    boolean validAgreementSpecForKeyPair(GordianKeyPair pKeyPair,
+    default boolean validAgreementSpecForKeyPair(GordianKeyPair pKeyPair,
+                                                 GordianAgreementSpec pAgreementSpec) {
+        return validAgreementSpecForKeySpec(pKeyPair.getKeySpec(), pAgreementSpec);
+    }
+
+    /**
+     * Check AgreementSpec and KeySpec combination.
+     * @param pKeySpec the keySpec
+     * @param pAgreementSpec the macSpec
+     * @return true/false
+     */
+    boolean validAgreementSpecForKeySpec(GordianAsymKeySpec pKeySpec,
                                          GordianAgreementSpec pAgreementSpec);
 
     /**
@@ -69,9 +81,18 @@ public interface GordianAgreementFactory {
      * @return the list of supported agreementSpecs.
      */
     default List<GordianAgreementSpec> listAllSupportedAgreements(final GordianKeyPair pKeyPair) {
-        return GordianAgreementSpec.listPossibleAgreements(pKeyPair.getKeySpec().getKeyType())
+        return listAllSupportedAgreements(pKeyPair.getKeySpec());
+    }
+
+    /**
+     * Obtain a list of supported agreementSpecs.
+     * @param pKeySpec the keySpec
+     * @return the list of supported agreementSpecs.
+     */
+    default List<GordianAgreementSpec> listAllSupportedAgreements(final GordianAsymKeySpec pKeySpec) {
+        return GordianAgreementSpec.listPossibleAgreements(pKeySpec.getKeyType())
                 .stream()
-                .filter(s -> validAgreementSpecForKeyPair(pKeyPair, s))
+                .filter(s -> validAgreementSpecForKeySpec(pKeySpec, s))
                 .collect(Collectors.toList());
     }
 }

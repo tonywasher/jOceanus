@@ -712,8 +712,7 @@ class AsymmetricStore {
             return;
         }
 
-        /* Access keyPair and loop through the possible signatures */
-        final GordianKeyPair myKeyPair = pKeySpec.getKeyPairs().getKeyPair();
+        /* Loop through the possible signatures */
         for (GordianSignatureSpec mySign : mySignSpecs) {
             /* If we are testing a single sigType, make sure this is the right one */
             if (theSigType != null
@@ -722,7 +721,7 @@ class AsymmetricStore {
             }
 
             /* Add the signature if it is supported */
-            if (mySignFactory.validSignatureSpecForKeyPair(myKeyPair, mySign)) {
+            if (mySignFactory.validSignatureSpecForKeySpec(pKeySpec.getKeySpec(), mySign)) {
                 myResult.add(new FactorySignature(pKeySpec, mySign));
             }
         }
@@ -747,11 +746,10 @@ class AsymmetricStore {
             return;
         }
 
-        /* Access keyPair and loop through the possible agreements */
-        final GordianKeyPair myKeyPair = pKeySpec.getKeyPairs().getKeyPair();
+        /* Loop through the possible agreements */
         for (GordianAgreementSpec myAgree : myAgreeSpecs) {
             /* Add the agreement if it is supported */
-            if (myAgreeFactory.validAgreementSpecForKeyPair(myKeyPair, myAgree)) {
+            if (myAgreeFactory.validAgreementSpecForKeySpec(pKeySpec.getKeySpec(), myAgree)) {
                 myResult.add(new FactoryAgreement(pKeySpec, myAgree));
             }
         }
@@ -776,11 +774,10 @@ class AsymmetricStore {
             return;
         }
 
-        /* Access keyPair and loop through the possible encryptors */
-        final GordianKeyPair myKeyPair = pKeySpec.getKeyPairs().getKeyPair();
+        /* Loop through the possible encryptors */
         for (GordianEncryptorSpec myEncrypt : mySpecs) {
             /* Add the encryptor if it is supported */
-            if (myEncryptFactory.validEncryptorSpecForKeyPair(myKeyPair, myEncrypt)) {
+            if (myEncryptFactory.validEncryptorSpecForKeySpec(pKeySpec.getKeySpec(), myEncrypt)) {
                 myResult.add(new FactoryEncryptor(pKeySpec, myEncrypt));
             }
         }

@@ -19,10 +19,10 @@ package net.sourceforge.joceanus.jgordianknot.impl.jca;
 import java.security.NoSuchAlgorithmException;
 import java.security.Signature;
 
+import net.sourceforge.joceanus.jgordianknot.api.asym.GordianAsymKeySpec;
 import net.sourceforge.joceanus.jgordianknot.api.asym.GordianEdwardsElliptic;
 import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigestSpec;
 import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigestType;
-import net.sourceforge.joceanus.jgordianknot.api.key.GordianKeyPair;
 import net.sourceforge.joceanus.jgordianknot.api.sign.GordianSignature;
 import net.sourceforge.joceanus.jgordianknot.api.sign.GordianSignatureSpec;
 import net.sourceforge.joceanus.jgordianknot.api.sign.GordianSignatureType;
@@ -239,15 +239,15 @@ public class JcaSignatureFactory
     }
 
     @Override
-    public boolean validSignatureSpecForKeyPair(final GordianKeyPair pKeyPair,
+    public boolean validSignatureSpecForKeySpec(final GordianAsymKeySpec pKeySpec,
                                                 final GordianSignatureSpec pSpec) {
-        /* validate the signatureSpec/keyPair */
-        if (!super.validSignatureSpecForKeyPair(pKeyPair, pSpec)) {
+        /* validate the signatureSpec/keySpecr */
+        if (!super.validSignatureSpecForKeySpec(pKeySpec, pSpec)) {
             return false;
         }
 
         /* Disallow EdDSA 25519 PURE */
-        final GordianEdwardsElliptic myEdwards = pKeyPair.getKeySpec().getEdwardsElliptic();
+        final GordianEdwardsElliptic myEdwards = pKeySpec.getEdwardsElliptic();
         return myEdwards == null
                 || !myEdwards.is25519()
                 || pSpec.getSignatureType() != GordianSignatureType.PURE;

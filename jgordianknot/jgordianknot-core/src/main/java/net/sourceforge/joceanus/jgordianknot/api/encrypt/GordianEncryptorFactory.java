@@ -20,6 +20,7 @@ import java.util.List;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
+import net.sourceforge.joceanus.jgordianknot.api.asym.GordianAsymKeySpec;
 import net.sourceforge.joceanus.jgordianknot.api.asym.GordianAsymKeyType;
 import net.sourceforge.joceanus.jgordianknot.api.key.GordianKeyPair;
 import net.sourceforge.joceanus.jtethys.OceanusException;
@@ -53,13 +54,25 @@ public interface GordianEncryptorFactory {
                 .filter(supportedEncryptors())
                 .collect(Collectors.toList());
     }
+
     /**
      * Check EncryptorSpec and KeyPair combination.
      * @param pKeyPair the keyPair
      * @param pEncryptorSpec the macSpec
      * @return true/false
      */
-    boolean validEncryptorSpecForKeyPair(GordianKeyPair pKeyPair,
+    default boolean validEncryptorSpecForKeyPair(GordianKeyPair pKeyPair,
+                                                 GordianEncryptorSpec pEncryptorSpec) {
+        return validEncryptorSpecForKeySpec(pKeyPair.getKeySpec(), pEncryptorSpec);
+    }
+
+    /**
+     * Check EncryptorSpec and KeySpec combination.
+     * @param pKeySpec the keySpec
+     * @param pEncryptorSpec the macSpec
+     * @return true/false
+     */
+    boolean validEncryptorSpecForKeySpec(GordianAsymKeySpec pKeySpec,
                                          GordianEncryptorSpec pEncryptorSpec);
 
     /**
@@ -68,9 +81,18 @@ public interface GordianEncryptorFactory {
      * @return the list of supported encryptorSpecs.
      */
     default List<GordianEncryptorSpec> listAllSupportedEncryptors(final GordianKeyPair pKeyPair) {
-        return GordianEncryptorSpec.listPossibleEncryptors(pKeyPair.getKeySpec().getKeyType())
+        return listAllSupportedEncryptors(pKeyPair.getKeySpec());
+    }
+
+    /**
+     * Obtain a list of supported encryptorSpecs.
+     * @param pKeySpec the keySpec
+     * @return the list of supported encryptorSpecs.
+     */
+    default List<GordianEncryptorSpec> listAllSupportedEncryptors(final GordianAsymKeySpec pKeySpec) {
+        return GordianEncryptorSpec.listPossibleEncryptors(pKeySpec.getKeyType())
                 .stream()
-                .filter(s -> validEncryptorSpecForKeyPair(pKeyPair, s))
+                .filter(s -> validEncryptorSpecForKeySpec(pKeySpec, s))
                 .collect(Collectors.toList());
     }
 }

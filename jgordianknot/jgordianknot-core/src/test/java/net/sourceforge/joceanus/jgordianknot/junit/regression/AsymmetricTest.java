@@ -143,14 +143,14 @@ public class AsymmetricTest {
         /* Loop through the possible keySpecs */
         for (final FactoryKeySpec myKeySpec : AsymmetricStore.keySpecProvider(pFactory, pPartner)) {
             /* Create a stream */
-            Stream<DynamicNode> myKeyStream = Stream.of(DynamicTest.dynamicTest("keySpec", () -> checkKeyPair(myKeySpec)));
+            Stream<DynamicNode> myKeyStream = Stream.of(DynamicTest.dynamicTest("generate", () -> generateKeyPairs(myKeySpec)));
+            myKeyStream = Stream.concat(myKeyStream, Stream.of(DynamicTest.dynamicTest("keySpec", () -> checkKeyPair(myKeySpec))));
             myKeyStream = Stream.concat(myKeyStream, Stream.of(DynamicTest.dynamicTest("keyWrap", () -> checkKeyWrap(myKeySpec))));
 
             /* Add signature Tests */
             AsymmetricStore.signatureProvider(myKeySpec);
             if (!myKeySpec.getSignatures().isEmpty()) {
-                final GordianKeyPair myPartnerSelf = myKeySpec.getKeyPairs().getPartnerSelfKeyPair();
-                Stream<DynamicNode> myTests = myKeySpec.getSignatures().stream().map(x -> DynamicContainer.dynamicContainer(x.toString(), signatureTests(x, myPartnerSelf)));
+                Stream<DynamicNode> myTests = myKeySpec.getSignatures().stream().map(x -> DynamicContainer.dynamicContainer(x.toString(), signatureTests(x)));
                 myTests = Stream.of(DynamicContainer.dynamicContainer("Signatures", myTests));
                 myKeyStream = Stream.concat(myKeyStream, myTests);
             }
@@ -158,8 +158,7 @@ public class AsymmetricTest {
             /* Add agreement Tests */
             AsymmetricStore.agreementProvider(myKeySpec);
             if (!myKeySpec.getAgreements().isEmpty()) {
-                final GordianKeyPair myPartnerSelf = myKeySpec.getKeyPairs().getPartnerSelfKeyPair();
-                Stream<DynamicNode> myTests = myKeySpec.getAgreements().stream().map(x -> DynamicContainer.dynamicContainer(x.toString(), agreementTests(x, myPartnerSelf)));
+                Stream<DynamicNode> myTests = myKeySpec.getAgreements().stream().map(x -> DynamicContainer.dynamicContainer(x.toString(), agreementTests(x)));
                 myTests = Stream.of(DynamicContainer.dynamicContainer("Agreements", myTests));
                 myKeyStream = Stream.concat(myKeyStream, myTests);
             }
@@ -167,8 +166,7 @@ public class AsymmetricTest {
             /* Add encryptor Tests */
             AsymmetricStore.encryptorProvider(myKeySpec);
             if (!myKeySpec.getEncryptors().isEmpty()) {
-                final GordianKeyPair myPartnerSelf = myKeySpec.getKeyPairs().getPartnerSelfKeyPair();
-                Stream<DynamicNode> myTests = myKeySpec.getEncryptors().stream().map(x -> DynamicContainer.dynamicContainer(x.toString(), encryptorTests(x, myPartnerSelf)));
+                Stream<DynamicNode> myTests = myKeySpec.getEncryptors().stream().map(x -> DynamicContainer.dynamicContainer(x.toString(), encryptorTests(x)));
                 myTests = Stream.of(DynamicContainer.dynamicContainer("Encryptors", myTests));
                 myKeyStream = Stream.concat(myKeyStream, myTests);
             }
@@ -187,8 +185,7 @@ public class AsymmetricTest {
      * @param pSignature the signature
      * @return the test stream or null
      */
-    private Stream<DynamicNode> signatureTests(final FactorySignature pSignature,
-                                               final GordianKeyPair pPartnerSelf) {
+    private Stream<DynamicNode> signatureTests(final FactorySignature pSignature) {
         /* Add self signature test */
         Stream<DynamicNode> myTests = Stream.of(DynamicTest.dynamicTest("SelfSign", () -> checkSelfSignature(pSignature)));
 
@@ -200,7 +197,7 @@ public class AsymmetricTest {
         if (myTgtAsym != null) {
             /* Add partner test if the partner supports this signature */
             final GordianSignatureFactory myTgtSigns = myTgtAsym.getSignatureFactory();
-            if (myTgtSigns.validSignatureSpecForKeyPair(pPartnerSelf, pSignature.getSpec())) {
+            if (myTgtSigns.validSignatureSpecForKeySpec(pSignature.getOwner().getKeySpec(), pSignature.getSpec())) {
                 myTests = Stream.concat(myTests, Stream.of(DynamicTest.dynamicTest("PartnerSign", () -> checkPartnerSignature(pSignature))));
             }
         }
@@ -214,8 +211,7 @@ public class AsymmetricTest {
      * @param pAgreement the agreement
      * @return the test stream or null
      */
-    private Stream<DynamicNode> agreementTests(final FactoryAgreement pAgreement,
-                                               final GordianKeyPair pPartnerSelf) {
+    private Stream<DynamicNode> agreementTests(final FactoryAgreement pAgreement) {
         /* Add self agreement test */
         Stream<DynamicNode> myTests = Stream.of(DynamicContainer.dynamicContainer("SelfAgree", Stream.of(
                 DynamicTest.dynamicTest("keySet", () -> checkSelfAgreement(pAgreement, KEYSETHASHSPEC.getKeySetSpec())),
@@ -231,7 +227,7 @@ public class AsymmetricTest {
         if (myTgtAsym != null) {
             /* Add partner test if the partner supports this agreement */
             final GordianAgreementFactory myTgtAgrees = pAgreement.getOwner().getPartner().getAgreementFactory();
-            if (myTgtAgrees.validAgreementSpecForKeyPair(pPartnerSelf, pAgreement.getSpec())) {
+            if (myTgtAgrees.validAgreementSpecForKeySpec(pAgreement.getOwner().getKeySpec(), pAgreement.getSpec())) {
                 myTests = Stream.concat(myTests, Stream.of(DynamicTest.dynamicTest("PartnerAgree", () -> checkPartnerAgreement(pAgreement))));
             }
         }
@@ -245,8 +241,7 @@ public class AsymmetricTest {
      * @param pEncryptor the encryptor
      * @return the test stream or null
      */
-    private Stream<DynamicNode> encryptorTests(final FactoryEncryptor pEncryptor,
-                                               final GordianKeyPair pPartnerSelf) {
+    private Stream<DynamicNode> encryptorTests(final FactoryEncryptor pEncryptor) {
         /* Add self encrypt test */
         Stream<DynamicNode> myTests = Stream.of(DynamicTest.dynamicTest("SelfEncrypt", () -> checkSelfEncryptor(pEncryptor)));
 
@@ -258,7 +253,7 @@ public class AsymmetricTest {
         if (myTgtAsym != null) {
             /* Add partner test if the partner supports this encryptore */
             final GordianEncryptorFactory myTgtEncrypts = pEncryptor.getOwner().getPartner().getEncryptorFactory();
-            if (myTgtEncrypts.validEncryptorSpecForKeyPair(pPartnerSelf, pEncryptor.getSpec())) {
+            if (myTgtEncrypts.validEncryptorSpecForKeySpec(pEncryptor.getOwner().getKeySpec(), pEncryptor.getSpec())) {
                 myTests = Stream.concat(myTests, Stream.of(DynamicTest.dynamicTest("PartnerEncrypt", () -> checkPartnerEncryptor(pEncryptor))));
             }
         }
@@ -266,6 +261,25 @@ public class AsymmetricTest {
         /* Return the test stream */
         return myTests;
     }
+
+    /**
+     * Generate KeyPairs.
+     * @param pKeySpec the keySpec
+     * @throws OceanusException on error
+     */
+    private void generateKeyPairs(final FactoryKeySpec pKeySpec) throws OceanusException {
+        /* Access the keyPairs */
+        final FactoryKeyPairs myPairs = pKeySpec.getKeyPairs();
+        final GordianAsymFactory myFactory = pKeySpec.getFactory();
+        final GordianAsymKeySpec mySpec = pKeySpec.getKeySpec();
+
+        /* Force creation of the pairs */
+        myPairs.getKeyPair();
+        myPairs.getMirrorKeyPair();
+        myPairs.getPartnerSelfKeyPair();
+        myPairs.getPartnerTargetKeyPair();
+        myPairs.getTargetKeyPair();
+     }
 
     /**
      * Check KeyPair.

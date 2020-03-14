@@ -65,13 +65,13 @@
     <packageName/>
     <appDir>${env.BACKUPDIR}</appDir>
     <appLibDir>lib/</appLibDir>
-    <BouncyCastleVersion>165b09</BouncyCastleVersion>
-    <JGitVersion>5.6.1.202002131546-r</JGitVersion>
+    <BouncyCastleVersion>165b10</BouncyCastleVersion>
+    <JGitVersion>5.7.0.202003110725-r</JGitVersion>
     <JUnitVersion>5.6.0</JUnitVersion>
     <JSONVersion>20190722</JSONVersion>
     <ApacheMavenVersion>3.6.3</ApacheMavenVersion>
     <MySQLVersion>8.0.19</MySQLVersion>
-    <PostGreSQLVersion>42.2.10</PostGreSQLVersion>
+    <PostGreSQLVersion>42.2.11</PostGreSQLVersion>
     <JTDSVersion>1.3.1</JTDSVersion>
     <H2Version>1.4.200</H2Version>
     <ApachePOIVersion>4.1.2</ApachePOIVersion>
@@ -83,7 +83,7 @@
     <JavaFXVersion>14</JavaFXVersion>
     <JavaLanguageVersion>11</JavaLanguageVersion>
     <CheckStyleVersion>8.30</CheckStyleVersion>
-    <PMDVersion>6.21.0</PMDVersion>
+    <PMDVersion>6.22.0</PMDVersion>
     <CleanPluginVersion>3.1.0</CleanPluginVersion>
     <ResourcesPluginVersion>3.1.0</ResourcesPluginVersion>
     <InstallPluginVersion>3.0.0-M1</InstallPluginVersion>

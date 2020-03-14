@@ -20,6 +20,7 @@ import java.util.List;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
+import net.sourceforge.joceanus.jgordianknot.api.asym.GordianAsymKeySpec;
 import net.sourceforge.joceanus.jgordianknot.api.asym.GordianAsymKeyType;
 import net.sourceforge.joceanus.jgordianknot.api.key.GordianKeyPair;
 import net.sourceforge.joceanus.jtethys.OceanusException;
@@ -60,7 +61,18 @@ public interface GordianSignatureFactory {
      * @param pSignSpec the signSpec
      * @return true/false
      */
-    boolean validSignatureSpecForKeyPair(GordianKeyPair pKeyPair,
+    default boolean validSignatureSpecForKeyPair(GordianKeyPair pKeyPair,
+                                                 GordianSignatureSpec pSignSpec) {
+        return validSignatureSpecForKeySpec(pKeyPair.getKeySpec(), pSignSpec);
+    }
+
+    /**
+     * Check SignatureSpec and KeySpec combination.
+     * @param pKeySpec the keyPair
+     * @param pSignSpec the signSpec
+     * @return true/false
+     */
+    boolean validSignatureSpecForKeySpec(GordianAsymKeySpec pKeySpec,
                                          GordianSignatureSpec pSignSpec);
 
     /**
@@ -69,9 +81,18 @@ public interface GordianSignatureFactory {
      * @return the list of supported signatureSpecs.
      */
     default List<GordianSignatureSpec> listAllSupportedSignatures(final GordianKeyPair pKeyPair) {
-        return GordianSignatureSpec.listPossibleSignatures(pKeyPair.getKeySpec().getKeyType())
+        return listAllSupportedSignatures(pKeyPair.getKeySpec());
+    }
+
+    /**
+     * Obtain a list of supported signatureSpecs.
+     * @param pKeySpec the keySpec
+     * @return the list of supported signatureSpecs.
+     */
+    default List<GordianSignatureSpec> listAllSupportedSignatures(final GordianAsymKeySpec pKeySpec) {
+        return GordianSignatureSpec.listPossibleSignatures(pKeySpec.getKeyType())
                 .stream()
-                .filter(s -> validSignatureSpecForKeyPair(pKeyPair, s))
+                .filter(s -> validSignatureSpecForKeySpec(pKeySpec, s))
                 .collect(Collectors.toList());
     }
 }

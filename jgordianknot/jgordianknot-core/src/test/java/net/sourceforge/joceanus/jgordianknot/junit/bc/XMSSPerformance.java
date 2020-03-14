@@ -19,11 +19,6 @@ import org.bouncycastle.pqc.crypto.xmss.XMSSPrivateKeyParameters;
 import org.bouncycastle.pqc.crypto.xmss.XMSSPublicKeyParameters;
 import org.bouncycastle.pqc.crypto.xmss.XMSSSigner;
 
-import net.sourceforge.joceanus.jgordianknot.api.asym.GordianXMSSKeySpec;
-import net.sourceforge.joceanus.jgordianknot.api.asym.GordianXMSSKeySpec.GordianXMSSDigestType;
-import net.sourceforge.joceanus.jgordianknot.api.asym.GordianXMSSKeySpec.GordianXMSSHeight;
-import net.sourceforge.joceanus.jgordianknot.api.asym.GordianXMSSKeySpec.GordianXMSSMTLayers;
-
 /**
  * XMSS performance tests.
  */
@@ -65,28 +60,28 @@ public class XMSSPerformance {
      * Constructor
      */
     public XMSSPerformance() {
-        runXMSSTestCase(GordianXMSSHeight.H10);
-        runXMSSTestCase(GordianXMSSHeight.H16);
-        runXMSSTestCase(GordianXMSSHeight.H20);
-        runXMSSMTTestCase(GordianXMSSHeight.H20, GordianXMSSMTLayers.L2);
-        runXMSSMTTestCase(GordianXMSSHeight.H20, GordianXMSSMTLayers.L4);
-        runXMSSMTTestCase(GordianXMSSHeight.H40, GordianXMSSMTLayers.L2);
-        runXMSSMTTestCase(GordianXMSSHeight.H40, GordianXMSSMTLayers.L4);
-        runXMSSMTTestCase(GordianXMSSHeight.H40, GordianXMSSMTLayers.L8);
-        runXMSSMTTestCase(GordianXMSSHeight.H60, GordianXMSSMTLayers.L3);
-        runXMSSMTTestCase(GordianXMSSHeight.H60, GordianXMSSMTLayers.L6);
-        runXMSSMTTestCase(GordianXMSSHeight.H60, GordianXMSSMTLayers.L12);
+        runXMSSTestCase(10);
+        runXMSSTestCase(16);
+        runXMSSTestCase(20);
+        runXMSSMTTestCase(20, 2);
+        runXMSSMTTestCase(20, 4);
+        runXMSSMTTestCase(40, 2);
+        runXMSSMTTestCase(40, 4);
+        runXMSSMTTestCase(40, 8);
+        runXMSSMTTestCase(60, 3);
+        runXMSSMTTestCase(60, 6);
+        runXMSSMTTestCase(60, 12);
     }
 
     /**
      * run XMSS testCase.
      * @param pHeight the height
      */
-    void runXMSSTestCase(final GordianXMSSHeight pHeight) {
-        runXMSSTestCase(GordianXMSSDigestType.SHA256, pHeight);
-        runXMSSTestCase(GordianXMSSDigestType.SHA512, pHeight);
-        runXMSSTestCase(GordianXMSSDigestType.SHAKE128, pHeight);
-        runXMSSTestCase(GordianXMSSDigestType.SHAKE256, pHeight);
+    void runXMSSTestCase(final int pHeight) {
+        runXMSSTestCase("SHA256", pHeight);
+        runXMSSTestCase("SHA512", pHeight);
+        runXMSSTestCase("SHAKE128", pHeight);
+        runXMSSTestCase("SHAKE256", pHeight);
     }
 
     /**
@@ -94,8 +89,8 @@ public class XMSSPerformance {
      * @param pDigestType the digest
      * @param pHeight the height
      */
-    void runXMSSTestCase(final GordianXMSSDigestType pDigestType,
-                         final GordianXMSSHeight pHeight) {
+    void runXMSSTestCase(final String pDigestType,
+                         final int pHeight) {
         final XMSSTestCase myTest = new XMSSTestCase(pDigestType, pHeight);
         myTest.runTest();
         System.out.println(myTest);
@@ -106,12 +101,12 @@ public class XMSSPerformance {
      * @param pHeight the height
      * @param pLayers the layers
      */
-    void runXMSSMTTestCase(final GordianXMSSHeight pHeight,
-                           final GordianXMSSMTLayers pLayers) {
-        runXMSSMTTestCase(GordianXMSSDigestType.SHA256, pHeight, pLayers);
-        runXMSSMTTestCase(GordianXMSSDigestType.SHA512, pHeight, pLayers);
-        runXMSSMTTestCase(GordianXMSSDigestType.SHAKE128, pHeight, pLayers);
-        runXMSSMTTestCase(GordianXMSSDigestType.SHAKE256, pHeight, pLayers);
+    void runXMSSMTTestCase(final int pHeight,
+                           final int pLayers) {
+        runXMSSMTTestCase("SHA256", pHeight, pLayers);
+        runXMSSMTTestCase("SHA512", pHeight, pLayers);
+        runXMSSMTTestCase("SHAKE128", pHeight, pLayers);
+        runXMSSMTTestCase("SHAKE256", pHeight, pLayers);
     }
 
     /**
@@ -120,9 +115,9 @@ public class XMSSPerformance {
      * @param pHeight the height
      * @param pLayers the layers
       */
-    void runXMSSMTTestCase(final GordianXMSSDigestType pDigestType,
-                           final GordianXMSSHeight pHeight,
-                           final GordianXMSSMTLayers pLayers) {
+    void runXMSSMTTestCase(final String pDigestType,
+                           final int pHeight,
+                           final int pLayers) {
         final XMSSMTTestCase myTest = new XMSSMTTestCase(pDigestType, pHeight, pLayers);
         myTest.runTest();
         System.out.println(myTest);
@@ -133,15 +128,15 @@ public class XMSSPerformance {
      * @param pKeyType the keyType
      * @return the OIDt
      */
-    static ASN1ObjectIdentifier getOID(final GordianXMSSDigestType pKeyType) {
+    static ASN1ObjectIdentifier getOID(final String pKeyType) {
         switch (pKeyType) {
-            case SHAKE128:
+            case "SHAKE128":
                 return NISTObjectIdentifiers.id_shake128;
-            case SHAKE256:
+            case "SHAKE256":
                 return NISTObjectIdentifiers.id_shake256;
-            case SHA256:
+            case "SHA256":
                 return NISTObjectIdentifiers.id_sha256;
-            case SHA512:
+            case "SHA512":
             default:
                 return NISTObjectIdentifiers.id_sha512;
         }
@@ -185,8 +180,8 @@ public class XMSSPerformance {
          * @param pDigest the digestType
          * @param pHeight the height
          */
-        XMSSTestCase(final GordianXMSSDigestType pDigest,
-                     final GordianXMSSHeight pHeight) {
+        XMSSTestCase(final String pDigest,
+                     final int pHeight) {
             theKeyPair = new XMSSKeyPair(pDigest, pHeight);
             theSigner = new XMSSSign();
             theVerify = new XMSSVerify();
@@ -234,9 +229,9 @@ public class XMSSPerformance {
          * @param pHeight the height
          * @param pLayers the Layers
          */
-        XMSSMTTestCase(final GordianXMSSDigestType pDigest,
-                       final GordianXMSSHeight pHeight,
-                       final GordianXMSSMTLayers pLayers) {
+        XMSSMTTestCase(final String pDigest,
+                       final int pHeight,
+                       final int pLayers) {
             theKeyPair = new XMSSMTKeyPair(pDigest, pHeight, pLayers);
             theSigner = new XMSSMTSign();
             theVerify = new XMSSMTVerify();
@@ -271,7 +266,7 @@ public class XMSSPerformance {
         /**
          * The KeySpec.
          */
-        private final GordianXMSSKeySpec theKeySpec;
+        private final String theKeySpec;
 
         /**
          * The XMSSPublicKey.
@@ -293,10 +288,10 @@ public class XMSSPerformance {
          * @param pDigest the digestType
          * @param pHeight the height
          */
-        XMSSKeyPair(final GordianXMSSDigestType pDigest,
-                    final GordianXMSSHeight pHeight) {
-            theKeySpec = GordianXMSSKeySpec.xmss(pDigest, pHeight);
-            theParms = new XMSSParameters(pHeight.getHeight(), getOID(pDigest));
+        XMSSKeyPair(final String pDigest,
+                    final int pHeight) {
+            theKeySpec = "XMSS-" + pDigest + "-H=" + pHeight;
+            theParms = new XMSSParameters(pHeight, getOID(pDigest));
         }
 
         /**
@@ -325,7 +320,7 @@ public class XMSSPerformance {
 
         @Override
         public String toString() {
-            return theKeySpec.toString();
+            return theKeySpec;
         }
     }
 
@@ -391,11 +386,6 @@ public class XMSSPerformance {
         private final XMSSSigner theSigner;
 
         /**
-         * The Signatures.
-         */
-        private byte[][] theSignatures;
-
-        /**
          * The Elapsed.
          */
         private long theElapsed;
@@ -421,8 +411,8 @@ public class XMSSPerformance {
             theSigner.init(false, pKeyPair.thePublicKey);
 
             /* Loop through the signatures */
-            theSignatures = pSignature.theSignatures;
-            for (byte[] mySignature : theSignatures) {
+            final byte[][] mySignatures = pSignature.theSignatures;
+            for (byte[] mySignature : mySignatures) {
                 /* Sign the message */
                 if (!theSigner.verifySignature(MESSAGE, mySignature)) {
                     throw new IllegalStateException();
@@ -431,7 +421,7 @@ public class XMSSPerformance {
 
             /* Complete the timeStamp */
             theElapsed = System.nanoTime() - myStart;
-            theElapsed /= theSignatures.length;
+            theElapsed /= mySignatures.length;
         }
     }
 
@@ -447,7 +437,7 @@ public class XMSSPerformance {
         /**
          * The KeySpec.
          */
-        private final GordianXMSSKeySpec theKeySpec;
+        private final String theKeySpec;
 
         /**
          * The XMSSMTPublicKey.
@@ -470,11 +460,11 @@ public class XMSSPerformance {
          * @param pHeight the height
          * @param pLayers the Layers
          */
-        XMSSMTKeyPair(final GordianXMSSDigestType pDigest,
-                      final GordianXMSSHeight pHeight,
-                      final GordianXMSSMTLayers pLayers) {
-            theKeySpec = GordianXMSSKeySpec.xmssmt(pDigest, pHeight, pLayers);
-            theParms = new XMSSMTParameters(pHeight.getHeight(), pLayers.getLayers(), getOID(pDigest));
+        XMSSMTKeyPair(final String pDigest,
+                      final int pHeight,
+                      final int pLayers) {
+            theKeySpec = "XMSS^MT-" + pDigest + "-H=" + pHeight + "-L" + pLayers;
+            theParms = new XMSSMTParameters(pHeight, pLayers, getOID(pDigest));
         }
 
         /**
@@ -503,7 +493,7 @@ public class XMSSPerformance {
 
         @Override
         public String toString() {
-            return theKeySpec.toString();
+            return theKeySpec;
         }
     }
 
@@ -569,11 +559,6 @@ public class XMSSPerformance {
         private final XMSSMTSigner theSigner;
 
         /**
-         * The Signatures.
-         */
-        private byte[][] theSignatures;
-
-        /**
          * The Elapsed.
          */
         private long theElapsed;
@@ -599,8 +584,8 @@ public class XMSSPerformance {
             theSigner.init(false, pKeyPair.thePublicKey);
 
             /* Loop through the signatures */
-            theSignatures = pSignature.theSignatures;
-            for (byte[] mySignature : theSignatures) {
+            final byte[][] mySignatures = pSignature.theSignatures;
+            for (byte[] mySignature : mySignatures) {
                 /* Sign the message */
                 if (!theSigner.verifySignature(MESSAGE, mySignature)) {
                     throw new IllegalStateException();
@@ -609,7 +594,7 @@ public class XMSSPerformance {
 
             /* Complete the timeStamp */
             theElapsed = System.nanoTime() - myStart;
-            theElapsed /= theSignatures.length;
+            theElapsed /= mySignatures.length;
         }
     }
 }
