@@ -28,6 +28,7 @@ import org.bouncycastle.asn1.ASN1OctetString;
 import org.bouncycastle.asn1.cryptopro.ECGOST3410NamedCurves;
 import org.bouncycastle.asn1.cryptopro.GOST3410PublicKeyAlgParameters;
 import org.bouncycastle.asn1.edec.EdECObjectIdentifiers;
+import org.bouncycastle.asn1.isara.IsaraObjectIdentifiers;
 import org.bouncycastle.asn1.nist.NISTObjectIdentifiers;
 import org.bouncycastle.asn1.oiw.OIWObjectIdentifiers;
 import org.bouncycastle.asn1.pkcs.DHParameter;
@@ -669,22 +670,12 @@ public class GordianAsymAlgId {
      */
     private static class GordianXMSSEncodedParser implements GordianEncodedParser {
         /**
-         * From Isara.
-         */
-        private static final ASN1ObjectIdentifier ISARA_XMSS = new ASN1ObjectIdentifier("0.4.0.127.0.15.1.1.13.0");
-
-        /**
-         * # of standard configs per digestType.
-         */
-        private static final int NUM_CONFIGS = 3;
-
-        /**
          * Registrar.
          * @param pIdManager the idManager
          */
         static void register(final GordianAsymAlgId pIdManager) {
             pIdManager.registerParser(PQCObjectIdentifiers.xmss, new GordianXMSSEncodedParser());
-            pIdManager.registerParser(ISARA_XMSS, new GordianXMSSEncodedParser());
+            pIdManager.registerParser(IsaraObjectIdentifiers.id_alg_xmss, new GordianXMSSEncodedParser());
         }
 
 
@@ -700,9 +691,9 @@ public class GordianAsymAlgId {
             try {
                 final byte[] keyEnc = ASN1OctetString.getInstance(pInfo.parsePublicKey()).getOctets();
                 final int myOID = Pack.bigEndianToInt(keyEnc, 0);
-                final GordianXMSSDigestType myDigest = GordianXMSSDigestType.class.getEnumConstants()[(myOID - 1) / NUM_CONFIGS];
                 final XMSSParameters myParams = XMSSParameters.lookupByOID(myOID);
-                return GordianAsymKeySpec.xmss(myDigest, determineHeight(myParams.getHeight()));
+                return GordianAsymKeySpec.xmss(determineKeyType(myParams.getTreeDigestOID()),
+                        determineHeight(myParams.getHeight()));
             } catch (IOException e) {
                 throw new GordianIOException("Failed to resolve key",  e);
             }
@@ -775,22 +766,12 @@ public class GordianAsymAlgId {
      */
     private static class GordianXMSSMTEncodedParser implements GordianEncodedParser {
         /**
-         * From Isara.
-         */
-        private static final ASN1ObjectIdentifier ISARA_XMSSMT = new ASN1ObjectIdentifier("0.4.0.127.0.15.1.1.14.0");
-
-        /**
-         * # of standard configs per digestType.
-         */
-        private static final int NUM_CONFIGS = 8;
-
-        /**
          * Registrar.
          * @param pIdManager the idManager
          */
         static void register(final GordianAsymAlgId pIdManager) {
             pIdManager.registerParser(PQCObjectIdentifiers.xmss_mt, new GordianXMSSMTEncodedParser());
-            pIdManager.registerParser(ISARA_XMSSMT, new GordianXMSSMTEncodedParser());
+            pIdManager.registerParser(IsaraObjectIdentifiers.id_alg_xmssmt, new GordianXMSSMTEncodedParser());
         }
 
         @Override
@@ -805,10 +786,9 @@ public class GordianAsymAlgId {
             try {
                 final byte[] keyEnc = ASN1OctetString.getInstance(pInfo.parsePublicKey()).getOctets();
                 final int myOID = Pack.bigEndianToInt(keyEnc, 0);
-                final GordianXMSSDigestType myDigest = GordianXMSSDigestType.class.getEnumConstants()[(myOID - 1) / NUM_CONFIGS];
                 final XMSSMTParameters myParams = XMSSMTParameters.lookupByOID(myOID);
-                return GordianAsymKeySpec.xmssmt(myDigest, GordianXMSSEncodedParser.determineHeight(myParams.getHeight()),
-                        determineLayers(myParams.getLayers()));
+                return GordianAsymKeySpec.xmssmt(GordianXMSSEncodedParser.determineKeyType(myParams.getTreeDigestOID()),
+                        GordianXMSSEncodedParser.determineHeight(myParams.getHeight()), determineLayers(myParams.getLayers()));
             } catch (IOException e) {
                 throw new GordianIOException("Failed to resolve key",  e);
             }
