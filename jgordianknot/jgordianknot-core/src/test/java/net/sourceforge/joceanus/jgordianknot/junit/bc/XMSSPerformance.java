@@ -200,7 +200,10 @@ public class XMSSPerformance {
         public String toString() {
             return theKeyPair.toString() + " generate=" + elapsedToString(theKeyPair.theElapsed)
                     + " sign=" + elapsedToString(theSigner.theElapsed)
-                    + " verify=" + elapsedToString(theVerify.theElapsed);
+                    + " verify=" + elapsedToString(theVerify.theElapsed)
+                    + " #sigs=" + theKeyPair.theNumSigs
+                    + theKeyPair.calculateKeySizes()
+                    + theSigner.getSigSize();
         }
     }
 
@@ -250,7 +253,10 @@ public class XMSSPerformance {
         public String toString() {
             return theKeyPair.toString() + " generate=" + elapsedToString( theKeyPair.theElapsed)
                     + " sign=" + elapsedToString(theSigner.theElapsed)
-                    + " verify=" + elapsedToString(theVerify.theElapsed);
+                    + " verify=" + elapsedToString(theVerify.theElapsed)
+                    + " #sigs=" + theKeyPair.theNumSigs
+                    + theKeyPair.calculateKeySizes()
+                    + theSigner.getSigSize();
         }
     }
 
@@ -277,6 +283,11 @@ public class XMSSPerformance {
          * The XMSSPrivateKey.
          */
         private XMSSPrivateKeyParameters thePrivateKey;
+
+        /**
+         * The Signature Space.
+         */
+        private long theNumSigs;
 
         /**
          * The Elapsed.
@@ -310,12 +321,26 @@ public class XMSSPerformance {
             final AsymmetricCipherKeyPair myPair = myGenerator.generateKeyPair();
             thePublicKey = (XMSSPublicKeyParameters) myPair.getPublic();
             thePrivateKey = (XMSSPrivateKeyParameters) myPair.getPrivate();
+            theNumSigs = thePrivateKey.getUsagesRemaining();
 
             /* Extract a keyShard of 32 signatures */
             thePrivateKey = thePrivateKey.extractKeyShard(NUMSIGNS);
 
             /* Complete the timeStamp */
             theElapsed = System.nanoTime() - myStart;
+        }
+
+        /**
+         * Obtain keySizes
+         */
+        String calculateKeySizes() {
+            try {
+                byte[] myPublic = thePublicKey.getEncoded();
+                byte[] myPrivate = thePrivateKey.getEncoded();
+                return " Prv=" + myPrivate.length + " Pub=" + myPublic.length;
+            } catch (Exception e) {
+                throw new IllegalStateException();
+            }
         }
 
         @Override
@@ -373,6 +398,13 @@ public class XMSSPerformance {
             /* Complete the timeStamp */
             theElapsed = System.nanoTime() - myStart;
             theElapsed /= theSignatures.length;
+        }
+
+        /**
+         * Obtain sigSize
+         */
+        String getSigSize() {
+            return " Sig=" + theSignatures[0].length;
         }
     }
 
@@ -450,6 +482,11 @@ public class XMSSPerformance {
         private XMSSMTPrivateKeyParameters thePrivateKey;
 
         /**
+         * The Signature Space.
+         */
+        private long theNumSigs;
+
+        /**
          * The Elapsed.
          */
         private long theElapsed;
@@ -483,12 +520,26 @@ public class XMSSPerformance {
             final AsymmetricCipherKeyPair myPair = myGenerator.generateKeyPair();
             thePublicKey = (XMSSMTPublicKeyParameters) myPair.getPublic();
             thePrivateKey = (XMSSMTPrivateKeyParameters) myPair.getPrivate();
+            theNumSigs = thePrivateKey.getUsagesRemaining();
 
             /* Extract a keyShard of NUMSIGNS signatures */
             thePrivateKey = thePrivateKey.extractKeyShard(NUMSIGNS);
 
             /* Complete the timeStamp */
             theElapsed = System.nanoTime() - myStart;
+        }
+
+        /**
+         * Obtain keySizes
+         */
+        String calculateKeySizes() {
+            try {
+                byte[] myPublic = thePublicKey.getEncoded();
+                byte[] myPrivate = thePrivateKey.getEncoded();
+                return " Prv=" + myPrivate.length + " Pub=" + myPublic.length;
+            } catch (Exception e) {
+                throw new IllegalStateException();
+            }
         }
 
         @Override
@@ -546,6 +597,13 @@ public class XMSSPerformance {
             /* Complete the timeStamp */
             theElapsed = System.nanoTime() - myStart;
             theElapsed /= theSignatures.length;
+        }
+
+        /**
+         * Obtain sigSize
+         */
+        String getSigSize() {
+            return " Sig=" + theSignatures[0].length;
         }
     }
 

@@ -152,8 +152,7 @@ public abstract class GordianCoreAgreement
         if (pResultType instanceof GordianFactoryType
             || pResultType instanceof GordianKeySetSpec
             || pResultType instanceof GordianSymCipherSpec
-            || pResultType instanceof GordianStreamCipherSpec
-            || pResultType == null) {
+            || pResultType instanceof GordianStreamCipherSpec) {
             theResultType = pResultType;
         } else {
             throw new IllegalArgumentException("Invalid resultType");
@@ -208,9 +207,8 @@ public abstract class GordianCoreAgreement
     /**
      * Create and return a new initVector.
      * @return the initVector
-     * @throws OceanusException on error
      */
-    byte[] newInitVector() throws OceanusException {
+    byte[] newInitVector() {
         /* Create a new initVector */
         theInitVector = new byte[INITLEN];
         getRandom().nextBytes(theInitVector);
@@ -330,7 +328,7 @@ public abstract class GordianCoreAgreement
 
     /**
      * Derive factory from the secret.
-     * @param pFactoryType the factory type
+     * @param pFactoryType the factoryType
      * @param pSecret the secret
      * @return the factory
      * @throws OceanusException on error
@@ -348,10 +346,9 @@ public abstract class GordianCoreAgreement
             System.arraycopy(theInitVector, 0, myPhrase, pSecret.length, theInitVector.length);
 
             /* Create a new Factory using the phrase */
-            final GordianParameters myParms = new GordianParameters(pFactoryType);
-            myParms.setSecurityPhrase(myPhrase);
-            myParms.setKIterations(1);
-            return theFactory.newFactory(myParms);
+            final GordianParameters myParams = new GordianParameters(pFactoryType);
+            myParams.setSecurityPhrase(myPhrase);
+            return theFactory.newFactory(myParams);
         } finally {
             Arrays.fill(myPhrase, (byte) 0);
         }
@@ -364,10 +361,10 @@ public abstract class GordianCoreAgreement
      */
     AlgorithmIdentifier getIdentifierForResult() throws OceanusException {
         if (theResultType instanceof GordianFactoryType) {
-            final ASN1ObjectIdentifier myId = GordianFactoryType.BC == theResultType
-                                                   ? GordianCoreFactory.BCFACTORYOID
-                                                   : GordianCoreFactory.JCAFACTORYOID;
-            return new AlgorithmIdentifier(myId);
+            final ASN1ObjectIdentifier myOID = theResultType == GordianFactoryType.BC
+                                           ? GordianCoreFactory.BCFACTORYOID
+                                             : GordianCoreFactory.JCAFACTORYOID;
+            return new AlgorithmIdentifier(myOID, null);
         }
         if (theResultType instanceof GordianKeySetSpec) {
             final GordianKeySetSpecASN1 myParms = new GordianKeySetSpecASN1((GordianKeySetSpec) theResultType);
@@ -380,9 +377,6 @@ public abstract class GordianCoreAgreement
         if (theResultType instanceof GordianStreamCipherSpec) {
             final GordianCoreCipherFactory myCipherFactory = (GordianCoreCipherFactory) theFactory.getCipherFactory();
             return myCipherFactory.getIdentifierForSpec((GordianStreamCipherSpec) theResultType);
-        }
-        if (theResultType == null) {
-            return new AlgorithmIdentifier(GordianCoreFactory.NULLFACTORYOID);
         }
         throw new GordianDataException("No resultType set");
     }
@@ -403,10 +397,6 @@ public abstract class GordianCoreAgreement
             theResultType = GordianFactoryType.JCA;
             return;
         }
-        if (GordianCoreFactory.NULLFACTORYOID.equals(myAlgId)) {
-            theResultType = null;
-            return;
-        }
 
         /* Look for a keySet Spec */
         if (GordianKeySetSpecASN1.KEYSETALGID.equals(myAlgId)) {
@@ -416,18 +406,19 @@ public abstract class GordianCoreAgreement
 
         /* Look for a symCipher Spec */
         final GordianCoreCipherFactory myCipherFactory = (GordianCoreCipherFactory) theFactory.getCipherFactory();
-        Object myType = myCipherFactory.getSymSpecForIdentifier(pResId);
+        Object myType = myCipherFactory.getSymCipherSpecForIdentifier(pResId);
         if (myType != null) {
             theResultType = myType;
             return;
         }
 
         /* Look for a streamCipher Spec */
-        myType = myCipherFactory.getStreamSpecForIdentifier(pResId);
+        myType = myCipherFactory.getStreamCipherSpecForIdentifier(pResId);
         if (myType != null) {
             theResultType = myType;
             return;
         }
+        throw new GordianDataException("No resultType set");
     }
 
     /**

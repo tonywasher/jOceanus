@@ -17,14 +17,8 @@
 package net.sourceforge.joceanus.jgordianknot.impl.core.agree;
 
 import java.io.IOException;
-import java.util.Enumeration;
 import java.util.Objects;
 
-import org.bouncycastle.asn1.ASN1EncodableVector;
-import org.bouncycastle.asn1.ASN1OctetString;
-import org.bouncycastle.asn1.ASN1Sequence;
-import org.bouncycastle.asn1.DEROctetString;
-import org.bouncycastle.asn1.DERSequence;
 import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
 
 import net.sourceforge.joceanus.jgordianknot.api.agree.GordianAgreementSpec;
@@ -52,25 +46,18 @@ public abstract class GordianCoreBasicAgreement
 
     /**
      * Create the message.
-     * <pre>
-     * GordianBasicRequest ::= SEQUENCE  {
-     *      id AlgorithmIdentifier
-     *      result AlgorithmIdentifier
-     *      initVector OCTET STRING
-     * }
-     * </pre>
      * @return the message
      * @throws OceanusException on error
      */
     protected byte[] createMessage() throws OceanusException {
         /* Build the sequence */
         try {
+            /* Create the request */
             final GordianCoreAgreementFactory myFactory = getAgreementFactory();
-            final ASN1EncodableVector v = new ASN1EncodableVector();
-            v.add(myFactory.getIdentifierForSpec(getAgreementSpec()));
-            v.add(getIdentifierForResult());
-            v.add(new DEROctetString(newInitVector()));
-            return new DERSequence(v).getEncoded();
+            final AlgorithmIdentifier myAlgId = myFactory.getIdentifierForSpec(getAgreementSpec());
+            final AlgorithmIdentifier myResId = getIdentifierForResult();
+            final GordianAgreementRequestASN1 myRequest = new GordianAgreementRequestASN1(myAlgId, myResId, newInitVector());
+            return myRequest.getEncoded();
 
         } catch (IOException e) {
             throw new GordianIOException("Unable to build ASN1 sequence", e);
@@ -86,13 +73,12 @@ public abstract class GordianCoreBasicAgreement
         /* Parse the sequence */
         try {
             /* Access the sequence */
-            final ASN1Sequence mySequence = ASN1Sequence.getInstance(pMessage);
-            final Enumeration en = mySequence.getObjects();
+            final GordianAgreementRequestASN1 myRequest = GordianAgreementRequestASN1.getInstance(pMessage);
 
             /* Access message parts */
-            final AlgorithmIdentifier myAlgId = AlgorithmIdentifier.getInstance(en.nextElement());
-            final AlgorithmIdentifier myResId = AlgorithmIdentifier.getInstance(en.nextElement());
-            final byte[] myInitVector = ASN1OctetString.getInstance(en.nextElement()).getOctets();
+            final AlgorithmIdentifier myAlgId = myRequest.getAgreementId();
+            final AlgorithmIdentifier myResId = myRequest.getResultId();
+            final byte[] myInitVector = myRequest.getInitVector();
 
             /* Check agreementSpec */
             final GordianCoreAgreementFactory myFactory = getAgreementFactory();

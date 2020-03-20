@@ -37,8 +37,9 @@ import net.sourceforge.joceanus.jgordianknot.api.key.GordianKeyLengths;
 import net.sourceforge.joceanus.jgordianknot.api.mac.GordianMacFactory;
 import net.sourceforge.joceanus.jgordianknot.api.mac.GordianMacSpec;
 import net.sourceforge.joceanus.jgordianknot.api.mac.GordianMacType;
+import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianASN1Util;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianCoreFactory;
-import net.sourceforge.joceanus.jgordianknot.impl.core.cipher.GordianCipherAlgId;
+import net.sourceforge.joceanus.jgordianknot.impl.core.cipher.GordianKeyAlgId;
 import net.sourceforge.joceanus.jgordianknot.impl.core.digest.GordianDigestAlgId;
 
 /**
@@ -46,9 +47,9 @@ import net.sourceforge.joceanus.jgordianknot.impl.core.digest.GordianDigestAlgId
  */
 public class GordianMacAlgId {
     /**
-     * Base our macs off bouncyCastle.
+     * MacOID branch.
      */
-    private static final ASN1ObjectIdentifier MACOID = GordianCoreFactory.BASEOID.branch("12");
+    private static final ASN1ObjectIdentifier MACOID = GordianASN1Util.SYMOID.branch("4");
 
     /**
      * Map of MacSpec to Identifier.
@@ -163,7 +164,7 @@ public class GordianMacAlgId {
         if (mySubSpec instanceof GordianDigestSpec) {
             myId = GordianDigestAlgId.appendDigestOID(myId, (GordianDigestSpec) mySubSpec);
         } else if (mySubSpec instanceof GordianSymKeySpec) {
-            myId = GordianCipherAlgId.appendSymKeyOID(myId, false, (GordianSymKeySpec) mySubSpec);
+            myId = GordianKeyAlgId.appendSymKeyOID(myId, false, (GordianSymKeySpec) mySubSpec);
         } else if (mySubSpec instanceof GordianLength) {
             myId = myId.branch(Integer.toString(((GordianLength) mySubSpec).ordinal() + 1));
         } else if (mySubSpec instanceof Boolean) {

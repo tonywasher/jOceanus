@@ -39,6 +39,16 @@ public class GordianPersonalisation {
     private static final String BASE_PERSONAL = "jG0rd1anKn0t";
 
     /**
+     * The Additional personalisation.
+     */
+    private static final String ADDTNL_PERSONAL = "ASimplePhrase2Try2ShuffleThePersona1isati0nSomewhat";
+
+    /**
+     * Default iterations.
+     */
+    public static final Integer DEFAULT_ITERATIONS = 2048;
+
+    /**
      * The hash length.
      */
     private static final GordianLength HASH_LEN = GordianLength.LEN_512;
@@ -124,7 +134,10 @@ public class GordianPersonalisation {
 
         /* Obtain configuration */
         final byte[] myPersonalBytes = TethysDataConverter.stringToByteArray(BASE_PERSONAL);
-        final byte[] myPhraseBytes = pFactory.getSecurityPhrase();
+        byte[] myPhraseBytes = pFactory.getSecurityPhrase();
+        if (myPhraseBytes == null) {
+            myPhraseBytes = TethysDataConverter.stringToByteArray(ADDTNL_PERSONAL);
+        }
 
         /* Initialise hashes */
         final byte[] myConfig = new byte[HASH_LEN.getByteLength()];
@@ -132,9 +145,7 @@ public class GordianPersonalisation {
             /* Initialise the digests */
             final GordianDigest myDigest = myDigests[i];
             myDigest.update(myPersonalBytes);
-            if (myPhraseBytes != null) {
-                myDigest.update(myPhraseBytes);
-            }
+            myDigest.update(myPhraseBytes);
 
             /* Finish the update and store the buffer */
             final byte[] myResult = myDigest.finish();
@@ -143,7 +154,7 @@ public class GordianPersonalisation {
         }
 
         /* Loop the configured amount of times to cross-fertilise */
-        for (int i = 0; i < pFactory.getNumIterations(); i++) {
+        for (int i = 0; i < DEFAULT_ITERATIONS; i++) {
             /* Update all the digests */
             for (final GordianDigest myDigest : myDigests) {
                 /* Update with the results */

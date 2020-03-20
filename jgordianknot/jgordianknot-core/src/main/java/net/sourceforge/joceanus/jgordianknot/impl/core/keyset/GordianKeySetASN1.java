@@ -35,6 +35,7 @@ import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianSymKeyType;
 import net.sourceforge.joceanus.jgordianknot.api.key.GordianKey;
 import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySet;
 import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetSpec;
+import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianASN1Util;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianDataException;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianIOException;
 import net.sourceforge.joceanus.jtethys.OceanusException;
@@ -128,10 +129,11 @@ public class GordianKeySetASN1
      * GordianKeySetASN1 ::= SEQUENCE OF {
      *      keySetSpec GordianKeySetSpecASN1
      *      securedKeys securedKeySet
-     *      .....
      * } securedKey
      *
-     * securedKeySet ::= SEQUENCE {
+     * securedKeySet ::= SEQUENCE OF securedKey
+     *
+     * securedKey ::= SEQUENCE {
      *      wrappedKeyId INTEGER
      *      wrappedKey OCTET STRING
      * }
@@ -189,71 +191,18 @@ public class GordianKeySetASN1
     static int getEncodedLength(final int pWrappedKeyLen,
                                 final int pNumKeys) {
         /* Key length is type + length + value */
-        int myLength = getLengthByteArrayField(pWrappedKeyLen);
+        int myLength = GordianASN1Util.getLengthByteArrayField(pWrappedKeyLen);
 
         /* KeyType is guaranteed single byte value */
-        myLength += getLengthIntegerField(1);
+        myLength += GordianASN1Util.getLengthIntegerField(1);
 
         /* Calculate the length of the sequence */
-        myLength = getLengthSequence(myLength);
+        myLength = GordianASN1Util.getLengthSequence(myLength);
 
         /* We have pNumKeys of these in a sequence */
-        myLength = getLengthSequence(myLength * pNumKeys);
+        myLength = GordianASN1Util.getLengthSequence(myLength * pNumKeys);
 
         /* Return the sequence length */
-        return getLengthSequence(myLength + GordianKeySetSpecASN1.getEncodedLength());
-    }
-
-    /**
-     * Obtain the byte Length of an encoded sequence field.
-     * @param pLength the length of the sequence
-     * @return the byte length
-     */
-    static int getLengthSequence(final int pLength) {
-        /* Type + length + encoded length */
-        return 1 + pLength + getLengthValue(pLength);
-    }
-
-    /**
-     * Obtain the byte Length of an encoded byte array field.
-     * @param pLength the length of the field
-     * @return the byte length
-     */
-    static int getLengthByteArrayField(final int pLength) {
-        /* Type + length + encoded length */
-        return 1 + pLength + getLengthValue(pLength);
-    }
-
-    /**
-     * Obtain the byte Length of an encoded integer field.
-     * @param pValue the value
-     * @return the byte length
-     */
-    static int getLengthIntegerField(final int pValue) {
-        /* Type + length + encoded value */
-        return 2 + getLengthValue(pValue);
-    }
-
-    /**
-     * Obtain the byte Length of an encoded integer value.
-     * @param pValue the value
-     * @return the byte length
-     */
-    static int getLengthValue(final int pValue) {
-        /* Handle small lengths */
-        if (pValue <= Byte.MAX_VALUE) {
-            return 1;
-        }
-
-        /*  Loop while we work out the length */
-        int myLen = pValue >> Byte.SIZE;
-        int myResult = 2;
-        while (myLen > 0) {
-            myResult++;
-            myLen >>= Byte.SIZE;
-        }
-
-        /* Return the length */
-        return myResult;
+        return GordianASN1Util.getLengthSequence(myLength + GordianKeySetSpecASN1.getEncodedLength());
     }
 }

@@ -26,49 +26,14 @@ import net.sourceforge.joceanus.jtethys.TethysDataConverter;
  */
 public class GordianParameters {
     /**
-     * The Hash Prime.
-     */
-    public static final int HASH_PRIME = 37;
-
-    /**
      * Default Factory.
      */
     public static final GordianFactoryType DEFAULT_FACTORY = GordianFactoryType.BC;
 
     /**
-     * Minimum iterations.
-     */
-    public static final Integer MINIMUM_ITERATIONS = 1;
-
-    /**
-     * Maximum iterations.
-     */
-    public static final Integer MAXIMUM_ITERATIONS = 64;
-
-    /**
-     * Default iterations.
-     */
-    public static final Integer DEFAULT_ITERATIONS = 2;
-
-    /**
-     * 1K Multiplier.
-     */
-    private static final int K_MULTIPLIER = 1024;
-
-    /**
-     * Default Security Phrase.
-     */
-    private static final String DEFAULT_SECURITY_PHRASE = "PleaseChangeMeToSomethingMoreUnique";
-
-    /**
      * The Factory Type.
      */
     private GordianFactoryType theFactoryType;
-
-    /**
-     * The Number of iterations (x 1K).
-     */
-    private int theKIterations;
 
     /**
      * The Security phrase.
@@ -89,7 +54,6 @@ public class GordianParameters {
     public GordianParameters(final GordianFactoryType pFactoryType) {
         /* Store parameters */
         theFactoryType = pFactoryType;
-        theKIterations = DEFAULT_ITERATIONS;
         theSecurityPhrase = null;
     }
 
@@ -99,22 +63,6 @@ public class GordianParameters {
      */
     public GordianFactoryType getFactoryType() {
         return theFactoryType;
-    }
-
-    /**
-     * Access the number of Iterations.
-     * @return the number of iterations
-     */
-    public int getNumIterations() {
-        return theKIterations * K_MULTIPLIER;
-    }
-
-    /**
-     * Access the number of Hash Iterations (x 1K).
-     * @return the number of hash iterations
-     */
-    public int getKIterations() {
-        return theKIterations;
     }
 
     /**
@@ -134,14 +82,6 @@ public class GordianParameters {
     }
 
     /**
-     * Set number of iterations.
-     * @param pKIterations the number of iterations (x 1K)
-     */
-    public void setKIterations(final int pKIterations) {
-        theKIterations = pKIterations;
-    }
-
-    /**
      * Set security phrase.
      * @param pSecurityPhrase the security phrase (or null)
      * @throws OceanusException on error
@@ -155,15 +95,9 @@ public class GordianParameters {
      * @param pSecurityPhrase the security phrase (or null)
      */
     public void setSecurityPhrase(final byte[] pSecurityPhrase) {
-        theSecurityPhrase = pSecurityPhrase;
-    }
-
-    /**
-     * Get default security phrase.
-     * @return the default security phrase
-     */
-    public static char[] getDefaultSecurityPhrase() {
-        return DEFAULT_SECURITY_PHRASE.toCharArray();
+        theSecurityPhrase = pSecurityPhrase == null
+                            ? null
+                            : Arrays.copyOf(pSecurityPhrase, pSecurityPhrase.length);
     }
 
     /**
@@ -172,13 +106,7 @@ public class GordianParameters {
      */
     public boolean validate() {
         /* Check factory type */
-        if (theFactoryType == null) {
-            return false;
-        }
-
-        /* Check iterations is in range */
-        return (theKIterations >= MINIMUM_ITERATIONS
-                && theKIterations <= MAXIMUM_ITERATIONS);
+        return theFactoryType != null;
     }
 
     @Override
@@ -200,9 +128,6 @@ public class GordianParameters {
         final GordianParameters myThat = (GordianParameters) pThat;
 
         /* Check Differences */
-        if (theKIterations != myThat.getKIterations()) {
-            return false;
-        }
         if (theFactoryType != myThat.getFactoryType()) {
             return false;
         }
@@ -216,14 +141,10 @@ public class GordianParameters {
     @Override
     public int hashCode() {
         /* Access multiplier */
-        final int myPrime = HASH_PRIME;
-
-        /* Calculate hash from simple values */
-        int myCode = theKIterations;
-        myCode *= myPrime;
+        final int myPrime = 47;
 
         /* Calculate hash from types */
-        myCode += theFactoryType.hashCode();
+        int myCode = theFactoryType.hashCode();
         myCode *= myPrime;
 
         /* Calculate hash from phrase */

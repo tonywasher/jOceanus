@@ -29,6 +29,7 @@ import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetHash;
 import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetHashSpec;
 import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetSpec;
 import net.sourceforge.joceanus.jgordianknot.api.mac.GordianMacFactory;
+import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianASN1Util;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianCoreFactory;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianDataException;
 import net.sourceforge.joceanus.jgordianknot.impl.core.cipher.GordianCoreCipherFactory;
@@ -40,9 +41,9 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
 public class GordianCoreKeySetFactory
     implements GordianKeySetFactory {
     /**
-     * Base our ids off bouncyCastle.
+     * KeySetOID branch.
      */
-    static final ASN1ObjectIdentifier KEYSETOID = GordianCoreFactory.BASEOID.branch("30");
+    static final ASN1ObjectIdentifier KEYSETOID = GordianASN1Util.EXTOID.branch("1");
 
     /**
      * The factory.

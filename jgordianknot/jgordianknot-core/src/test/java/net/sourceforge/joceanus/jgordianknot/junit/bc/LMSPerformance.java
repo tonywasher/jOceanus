@@ -63,13 +63,13 @@ public class LMSPerformance {
         runLMSTestCase(LMSigParameters.lms_sha256_n32_h5);
         runHSSTestCase(LMSigParameters.lms_sha256_n32_h5, 2);
         runHSSTestCase(LMSigParameters.lms_sha256_n32_h5, 3);
+        runHSSTestCase(LMSigParameters.lms_sha256_n32_h5, 4);
+        runHSSTestCase(LMSigParameters.lms_sha256_n32_h5, 5);
         runLMSTestCase(LMSigParameters.lms_sha256_n32_h10);
         runHSSTestCase(LMSigParameters.lms_sha256_n32_h10, 2);
         runHSSTestCase(LMSigParameters.lms_sha256_n32_h10, 3);
         runLMSTestCase(LMSigParameters.lms_sha256_n32_h15);
         runHSSTestCase(LMSigParameters.lms_sha256_n32_h15, 2);
-
-        /* Currently fails on keySharding */
         runHSSTestCase(LMSigParameters.lms_sha256_n32_h15, 3);
 
         /* Don't bother yet with the remaining tests */
@@ -229,7 +229,10 @@ public class LMSPerformance {
         public String toString() {
             return theKeyPair.toString() + " generate=" + elapsedToString(theKeyPair.theElapsed)
                     + " sign=" + elapsedToString(theSigner.theElapsed)
-                    + " verify=" + elapsedToString(theVerify.theElapsed);
+                    + " verify=" + elapsedToString(theVerify.theElapsed)
+                    + " #sigs=" + theKeyPair.theNumSigs
+                    + theKeyPair.calculateKeySizes()
+                    + theSigner.getSigSize();
         }
     }
 
@@ -277,8 +280,12 @@ public class LMSPerformance {
         @Override
         public String toString() {
             return theKeyPair.toString() + " generate=" + elapsedToString( theKeyPair.theElapsed)
+                    + " initsign=" + elapsedToString(theSigner.theInitial)
                     + " sign=" + elapsedToString(theSigner.theElapsed)
-                    + " verify=" + elapsedToString(theVerify.theElapsed);
+                    + " verify=" + elapsedToString(theVerify.theElapsed)
+                    + " #sigs=" + theKeyPair.theNumSigs
+                    + theKeyPair.calculateKeySizes()
+                    + theSigner.getSigSize();
         }
     }
 
@@ -300,6 +307,11 @@ public class LMSPerformance {
          * The LMSPrivateKey.
          */
         private LMSPrivateKeyParameters thePrivateKey;
+
+        /**
+         * The Signature Space.
+         */
+        private long theNumSigs;
 
         /**
          * The Elapsed.
@@ -332,12 +344,26 @@ public class LMSPerformance {
             final AsymmetricCipherKeyPair myPair = myGenerator.generateKeyPair();
             thePublicKey = (LMSPublicKeyParameters) myPair.getPublic();
             thePrivateKey = (LMSPrivateKeyParameters) myPair.getPrivate();
+            theNumSigs = thePrivateKey.getUsagesRemaining();
 
-            /* Extract a keyShard of 32 signatures */
+            /* Extract a keyShard of NUMSIGNS signatures */
             thePrivateKey = thePrivateKey.extractKeyShard(NUMSIGNS);
 
             /* Complete the timeStamp */
             theElapsed = System.nanoTime() - myStart;
+        }
+
+        /**
+         * Obtain keySizes
+         */
+        String calculateKeySizes() {
+            try {
+                byte[] myPublic = thePublicKey.getEncoded();
+                byte[] myPrivate = thePrivateKey.getEncoded();
+                return " Prv=" + myPrivate.length + " Pub=" + myPublic.length;
+            } catch (Exception e) {
+                throw new IllegalStateException();
+            }
         }
 
         @Override
@@ -396,6 +422,13 @@ public class LMSPerformance {
             /* Complete the timeStamp */
             theElapsed = System.nanoTime() - myStart;
             theElapsed /= theSignatures.length;
+        }
+
+        /**
+         * Obtain sigSize
+         */
+        String getSigSize() {
+            return " Sig=" + theSignatures[0].length;
         }
     }
 
@@ -473,6 +506,11 @@ public class LMSPerformance {
         private HSSPrivateKeyParameters thePrivateKey;
 
         /**
+         * The Signature Space.
+         */
+        private long theNumSigs;
+
+        /**
          * The Elapsed.
          */
         private long theElapsed;
@@ -507,12 +545,26 @@ public class LMSPerformance {
             final AsymmetricCipherKeyPair myPair = myGenerator.generateKeyPair();
             thePublicKey = (HSSPublicKeyParameters) myPair.getPublic();
             thePrivateKey = (HSSPrivateKeyParameters) myPair.getPrivate();
+            theNumSigs = thePrivateKey.getUsagesRemaining();
 
-            /* Extract a keyShard of NUMSIGNS signatures */
-            thePrivateKey = thePrivateKey.extractKeyShard(NUMSIGNS);
+            /* Extract a keyShard of NUMSIGNS+1 signatures */
+            thePrivateKey = thePrivateKey.extractKeyShard(NUMSIGNS+1);
 
             /* Complete the timeStamp */
             theElapsed = System.nanoTime() - myStart;
+        }
+
+        /**
+         * Obtain keySizes
+         */
+        String calculateKeySizes() {
+            try {
+                byte[] myPublic = thePublicKey.getEncoded();
+                byte[] myPrivate = thePrivateKey.getEncoded();
+                return " Prv=" + myPrivate.length + " Pub=" + myPublic.length;
+            } catch (Exception e) {
+                throw new IllegalStateException();
+            }
         }
 
         @Override
@@ -537,6 +589,11 @@ public class LMSPerformance {
         private byte[][] theSignatures;
 
         /**
+         * The Initial.
+         */
+        private long theInitial;
+
+        /**
          * The Elapsed.
          */
         private long theElapsed;
@@ -557,10 +614,17 @@ public class LMSPerformance {
             final long myStart = System.nanoTime();
 
             /* Create the results array */
-            theSignatures = new byte[(int) pKeyPair.thePrivateKey.getUsagesRemaining()][];
+            theSignatures = new byte[(int) pKeyPair.thePrivateKey.getUsagesRemaining() - 1][];
 
             /* Initialise the signer */
             theSigner.init(true, pKeyPair.thePrivateKey);
+
+            /* Do an initial sign */
+            theSignatures[0] =  theSigner.generateSignature(MESSAGE);
+
+            /* Complete the timeStamp */
+            final long myBase = System.nanoTime();
+            theInitial = myBase - myStart;
 
             /* Loop through the signatures */
             for (int i = 0; i < theSignatures.length; i++) {
@@ -569,8 +633,15 @@ public class LMSPerformance {
             }
 
             /* Complete the timeStamp */
-            theElapsed = System.nanoTime() - myStart;
+            theElapsed = System.nanoTime() - myBase;
             theElapsed /= theSignatures.length;
+        }
+
+        /**
+         * Obtain sigSize
+         */
+        String getSigSize() {
+            return " Sig=" + theSignatures[0].length;
         }
     }
 

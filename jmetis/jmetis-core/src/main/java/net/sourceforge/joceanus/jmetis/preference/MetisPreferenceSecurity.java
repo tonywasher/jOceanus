@@ -16,25 +16,25 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmetis.preference;
 
+import java.net.InetAddress;
+import java.net.UnknownHostException;
+import java.util.EnumSet;
+import java.util.Set;
+
 import net.sourceforge.joceanus.jgordianknot.api.base.GordianLength;
 import net.sourceforge.joceanus.jgordianknot.api.factory.GordianFactory;
 import net.sourceforge.joceanus.jgordianknot.api.factory.GordianFactoryType;
 import net.sourceforge.joceanus.jgordianknot.api.factory.GordianParameters;
-import net.sourceforge.joceanus.jgordianknot.util.GordianGenerator;
 import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySet;
 import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetFactory;
 import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetHash;
 import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetHashSpec;
 import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetSpec;
+import net.sourceforge.joceanus.jgordianknot.util.GordianGenerator;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.TethysDataConverter;
 import net.sourceforge.joceanus.jtethys.logger.TethysLogManager;
 import net.sourceforge.joceanus.jtethys.logger.TethysLogger;
-
-import java.net.InetAddress;
-import java.net.UnknownHostException;
-import java.util.EnumSet;
-import java.util.Set;
 
 /**
  * Security for Preferences.
@@ -247,6 +247,11 @@ public class MetisPreferenceSecurity {
         private static final Set<GordianLength> VALID_LENGTHS = EnumSet.of(GordianLength.LEN_128, GordianLength.LEN_192, GordianLength.LEN_256);
 
         /**
+         * Default Security Phrase.
+         */
+        private static final String DEFAULT_SECURITY_PHRASE = "PleaseChangeMeToSomethingMoreUnique";
+
+        /**
          * Minimum Number of Active KeySets.
          */
         private static final int MINIMUM_ACTIVE_KEYSETS = 2;
@@ -281,7 +286,6 @@ public class MetisPreferenceSecurity {
 
             /* Set other parameters */
             myParms.setFactoryType(getEnumValue(MetisSecurityPreferenceKey.FACTORY, GordianFactoryType.class));
-            myParms.setKIterations(getIntegerValue(MetisSecurityPreferenceKey.HASHITERATIONS));
             myParms.setSecurityPhrase(getCharArrayValue(MetisSecurityPreferenceKey.SECURITYPHRASE));
 
             /* return the parameters */
@@ -333,7 +337,7 @@ public class MetisPreferenceSecurity {
             /* Make sure that the security phrase is specified */
             final MetisCharArrayPreference<MetisSecurityPreferenceKey> myPhrasePref = getCharArrayPreference(MetisSecurityPreferenceKey.SECURITYPHRASE);
             if (!myPhrasePref.isAvailable()) {
-                myPhrasePref.setValue(GordianParameters.getDefaultSecurityPhrase());
+                myPhrasePref.setValue(DEFAULT_SECURITY_PHRASE.toCharArray());
             }
 
             /* Make sure that the cipherSteps is specified */
@@ -351,13 +355,13 @@ public class MetisPreferenceSecurity {
             /* Make sure that the hashIterations is specified */
             myPref = getIntegerPreference(MetisSecurityPreferenceKey.HASHITERATIONS);
             if (!myPref.isAvailable()) {
-                myPref.setValue(GordianParameters.DEFAULT_ITERATIONS);
+                myPref.setValue(GordianKeySetHashSpec.DEFAULT_ITERATIONS);
             }
 
             /* Define the range */
-            myPref.setRange(GordianParameters.MINIMUM_ITERATIONS, GordianParameters.MAXIMUM_ITERATIONS);
+            myPref.setRange(GordianKeySetHashSpec.MINIMUM_ITERATIONS, GordianKeySetHashSpec.MAXIMUM_ITERATIONS);
             if (!myPref.validate()) {
-                myPref.setValue(GordianParameters.DEFAULT_ITERATIONS);
+                myPref.setValue(GordianKeySetHashSpec.DEFAULT_ITERATIONS);
             }
 
             /* Make sure that the activeKeySets is specified */

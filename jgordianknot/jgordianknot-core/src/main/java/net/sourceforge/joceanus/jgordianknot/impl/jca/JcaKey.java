@@ -20,9 +20,9 @@ import javax.crypto.SecretKey;
 
 import org.bouncycastle.util.Arrays;
 
-import net.sourceforge.joceanus.jgordianknot.api.factory.GordianParameters;
 import net.sourceforge.joceanus.jgordianknot.api.key.GordianKey;
 import net.sourceforge.joceanus.jgordianknot.api.base.GordianKeySpec;
+import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianCoreFactory;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianDataException;
 import net.sourceforge.joceanus.jgordianknot.impl.core.key.GordianCoreKey;
 import net.sourceforge.joceanus.jtethys.OceanusException;
@@ -114,7 +114,7 @@ public final class JcaKey<T extends GordianKeySpec>
 
     @Override
     public int hashCode() {
-        return GordianParameters.HASH_PRIME * getKeyType().hashCode()
+        return GordianCoreFactory.HASH_PRIME * getKeyType().hashCode()
                 + Arrays.hashCode(getKey().getEncoded());
     }
 }

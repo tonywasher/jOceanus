@@ -24,8 +24,8 @@ import org.bouncycastle.pqc.jcajce.interfaces.XMSSMTPrivateKey;
 import org.bouncycastle.pqc.jcajce.interfaces.XMSSPrivateKey;
 
 import net.sourceforge.joceanus.jgordianknot.api.asym.GordianAsymKeySpec;
-import net.sourceforge.joceanus.jgordianknot.api.factory.GordianParameters;
 import net.sourceforge.joceanus.jgordianknot.api.key.GordianStateAwareKeyPair;
+import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianCoreFactory;
 import net.sourceforge.joceanus.jgordianknot.impl.core.keypair.GordianCoreKeyPair;
 import net.sourceforge.joceanus.jgordianknot.impl.core.keypair.GordianPrivateKey;
 import net.sourceforge.joceanus.jgordianknot.impl.core.keypair.GordianPublicKey;
@@ -122,7 +122,7 @@ public class JcaKeyPair
 
         @Override
         public int hashCode() {
-            return GordianParameters.HASH_PRIME * getKeySpec().hashCode()
+            return GordianCoreFactory.HASH_PRIME * getKeySpec().hashCode()
                     + theKey.hashCode();
         }
     }
@@ -181,7 +181,7 @@ public class JcaKeyPair
 
         @Override
         public int hashCode() {
-            return GordianParameters.HASH_PRIME * getKeySpec().hashCode()
+            return GordianCoreFactory.HASH_PRIME * getKeySpec().hashCode()
                     + theKey.hashCode();
         }
     }
@@ -270,7 +270,7 @@ public class JcaKeyPair
 
         @Override
         public int hashCode() {
-            return GordianParameters.HASH_PRIME * getKeySpec().hashCode()
+            return GordianCoreFactory.HASH_PRIME * getKeySpec().hashCode()
                     + thePrivateKey.hashCode();
         }
     }

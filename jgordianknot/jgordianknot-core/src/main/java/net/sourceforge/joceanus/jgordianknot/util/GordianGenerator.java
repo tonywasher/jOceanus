@@ -28,6 +28,12 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
  * Factory generator.
  */
 public class GordianGenerator implements GordianFactoryGenerator {
+    /**
+     * Constructor.
+     */
+    GordianGenerator() {
+    }
+
     @Override
     public GordianFactory newFactory(final GordianParameters pParameters) throws OceanusException {
         /* Allocate the factory */

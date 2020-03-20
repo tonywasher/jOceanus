@@ -51,9 +51,14 @@ public abstract class GordianCoreCipherFactory
     private final GordianCoreFactory theFactory;
 
     /**
-     * The Digest AlgIds.
+     * The Key AlgIds.
      */
-    private GordianCipherAlgId theAlgIds;
+    private GordianKeyAlgId theKeyAlgIds;
+
+    /**
+     * The Cipher AlgIds.
+     */
+    private GordianCipherAlgId theCipherAlgIds;
 
     /**
      * Constructor.
@@ -339,50 +344,98 @@ public abstract class GordianCoreCipherFactory
     }
 
     /**
-     * Obtain Identifier for CipherSpec.
+     * Obtain Identifier for symKeySpec.
+     * @param pSpec the keySpec.
+     * @return the Identifier
+     */
+    public AlgorithmIdentifier getIdentifierForSpec(final GordianSymKeySpec pSpec) {
+        return getKeyAlgIds().getIdentifierForSpec(pSpec);
+    }
+
+    /**
+     * Obtain symKeySpec for Identifier.
+     * @param pIdentifier the identifier.
+     * @return the keySpec (or null if not found)
+     */
+    public GordianSymKeySpec getSymKeySpecForIdentifier(final AlgorithmIdentifier pIdentifier) {
+        return getKeyAlgIds().getSymKeySpecForIdentifier(pIdentifier);
+    }
+
+    /**
+     * Obtain Identifier for streamKeySpec.
+     * @param pSpec the keySpec.
+     * @return the Identifier
+     */
+    public AlgorithmIdentifier getIdentifierForSpec(final GordianStreamKeySpec pSpec) {
+        return getKeyAlgIds().getIdentifierForSpec(pSpec);
+    }
+
+    /**
+     * Obtain streamKeySpec for Identifier.
+     * @param pIdentifier the identifier.
+     * @return the keySpec (or null if not found)
+     */
+    public GordianStreamKeySpec getStreamKeySpecForIdentifier(final AlgorithmIdentifier pIdentifier) {
+        return getKeyAlgIds().getStreamKeySpecForIdentifier(pIdentifier);
+    }
+
+    /**
+     * Obtain the key algorithm Ids.
+     * @return the key Algorithm Ids
+     */
+    private GordianKeyAlgId getKeyAlgIds() {
+        if (theKeyAlgIds == null) {
+            theKeyAlgIds = new GordianKeyAlgId(theFactory);
+        }
+        return theKeyAlgIds;
+    }
+
+
+    /**
+     * Obtain Identifier for symCipherSpec.
      * @param pSpec the cipherSpec.
      * @return the Identifier
      */
     public AlgorithmIdentifier getIdentifierForSpec(final GordianSymCipherSpec pSpec) {
-        return getAlgorithmIds().getIdentifierForSpec(pSpec);
+        return getCipherAlgIds().getIdentifierForSpec(pSpec);
     }
 
     /**
-     * Obtain CipherSpec for Identifier.
+     * Obtain symCipherSpec for Identifier.
      * @param pIdentifier the identifier.
      * @return the cipherSpec (or null if not found)
      */
-    public GordianSymCipherSpec getSymSpecForIdentifier(final AlgorithmIdentifier pIdentifier) {
-        return getAlgorithmIds().getSymSpecForIdentifier(pIdentifier);
+    public GordianSymCipherSpec getSymCipherSpecForIdentifier(final AlgorithmIdentifier pIdentifier) {
+        return getCipherAlgIds().getSymCipherSpecForIdentifier(pIdentifier);
     }
 
     /**
-     * Obtain Identifier for CipherSpec.
+     * Obtain Identifier for streamCipherSpec.
      * @param pSpec the cipherSpec.
      * @return the Identifier
      */
     public AlgorithmIdentifier getIdentifierForSpec(final GordianStreamCipherSpec pSpec) {
-        return getAlgorithmIds().getIdentifierForSpec(pSpec);
+        return getCipherAlgIds().getIdentifierForSpec(pSpec);
     }
 
     /**
-     * Obtain CipherSpec for Identifier.
+     * Obtain streamCipherSpec for Identifier.
      * @param pIdentifier the identifier.
      * @return the cipherSpec (or null if not found)
      */
-    public GordianStreamCipherSpec getStreamSpecForIdentifier(final AlgorithmIdentifier pIdentifier) {
-        return getAlgorithmIds().getStreamSpecForIdentifier(pIdentifier);
+    public GordianStreamCipherSpec getStreamCipherSpecForIdentifier(final AlgorithmIdentifier pIdentifier) {
+        return getCipherAlgIds().getStreamCipherSpecForIdentifier(pIdentifier);
     }
 
     /**
      * Obtain the cipher algorithm Ids.
      * @return the cipher Algorithm Ids
      */
-    private GordianCipherAlgId getAlgorithmIds() {
-        if (theAlgIds == null) {
-            theAlgIds = new GordianCipherAlgId(theFactory);
+    private GordianCipherAlgId getCipherAlgIds() {
+        if (theCipherAlgIds == null) {
+            theCipherAlgIds = new GordianCipherAlgId(theFactory);
         }
-        return theAlgIds;
+        return theCipherAlgIds;
     }
 
     /**

@@ -30,6 +30,7 @@ import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
 import net.sourceforge.joceanus.jgordianknot.api.base.GordianLength;
 import net.sourceforge.joceanus.jgordianknot.api.key.GordianKeyLengths;
 import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetSpec;
+import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianASN1Util;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianDataException;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianIOException;
 import net.sourceforge.joceanus.jtethys.OceanusException;
@@ -40,7 +41,7 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
 public class GordianKeySetSpecASN1
         extends ASN1Object {
     /**
-     * Base our algorithmId off bouncyCastle.
+     * KeySetSpecOID.
      */
     public static final ASN1ObjectIdentifier KEYSETALGID = GordianCoreKeySetFactory.KEYSETOID.branch("1");
 
@@ -67,9 +68,9 @@ public class GordianKeySetSpecASN1
         /* Protect against exceptions */
         try {
            /* Extract the parameters from the sequence */
-            final Enumeration e = pSequence.getObjects();
-            final int myId = ASN1Integer.getInstance(e.nextElement()).getValue().intValue();
-            final int myNumSteps = ASN1Integer.getInstance(e.nextElement()).getValue().intValue();
+            final Enumeration<?> en = pSequence.getObjects();
+            final int myId = ASN1Integer.getInstance(en.nextElement()).getValue().intValue();
+            final int myNumSteps = ASN1Integer.getInstance(en.nextElement()).getValue().intValue();
             final GordianLength myLen = GordianKeyLengths.getKeyLengthForId(myId);
 
             /* Create the keySpec */
@@ -129,11 +130,11 @@ public class GordianKeySetSpecASN1
      */
     static int getEncodedLength() {
         /* KeyType has type + length + value (all single byte) */
-        int myLength  =  GordianKeySetASN1.getLengthIntegerField(1);
-        myLength += GordianKeySetASN1.getLengthIntegerField(1);
+        int myLength  =  GordianASN1Util.getLengthIntegerField(1);
+        myLength += GordianASN1Util.getLengthIntegerField(1);
 
         /* Calculate the length of the sequence */
-        return  GordianKeySetASN1.getLengthSequence(myLength);
+        return GordianASN1Util.getLengthSequence(myLength);
     }
 
     /**

@@ -31,6 +31,7 @@ import net.sourceforge.joceanus.jgordianknot.api.base.GordianLength;
 import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigestSpec;
 import net.sourceforge.joceanus.jgordianknot.api.encrypt.GordianEncryptorFactory;
 import net.sourceforge.joceanus.jgordianknot.api.encrypt.GordianEncryptorSpec;
+import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianASN1Util;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianCoreFactory;
 import net.sourceforge.joceanus.jgordianknot.impl.core.digest.GordianDigestAlgId;
 
@@ -39,9 +40,9 @@ import net.sourceforge.joceanus.jgordianknot.impl.core.digest.GordianDigestAlgId
  */
 public class GordianEncryptorAlgId {
     /**
-     * Base our encryptors off bouncyCastle.
+     * EncryptorOID branch.
      */
-    private static final ASN1ObjectIdentifier ENCRYPTOID = GordianCoreFactory.BASEOID.branch("22");
+    private static final ASN1ObjectIdentifier ENCRYPTOID = GordianASN1Util.ASYMOID.branch("3");
 
     /**
      * Map of EncryptorSpec to Identifier.

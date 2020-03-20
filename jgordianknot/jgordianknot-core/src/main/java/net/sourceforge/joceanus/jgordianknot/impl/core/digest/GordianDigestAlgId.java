@@ -36,6 +36,7 @@ import net.sourceforge.joceanus.jgordianknot.api.base.GordianLength;
 import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigestFactory;
 import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigestSpec;
 import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigestType;
+import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianASN1Util;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianCoreFactory;
 
 /**
@@ -43,9 +44,9 @@ import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianCoreFactory;
  */
 public class GordianDigestAlgId {
     /**
-     * Base our digests off bouncyCastle.
+     * DigestOID branch.
      */
-    private static final ASN1ObjectIdentifier DIGESTOID = GordianCoreFactory.BASEOID.branch("10");
+    private static final ASN1ObjectIdentifier DIGESTOID = GordianASN1Util.SYMOID.branch("1");
 
     /**
      * Map of DigestSpec to Identifier.

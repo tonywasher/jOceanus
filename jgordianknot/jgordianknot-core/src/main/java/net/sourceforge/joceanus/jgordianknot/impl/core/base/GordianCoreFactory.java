@@ -19,7 +19,6 @@ package net.sourceforge.joceanus.jgordianknot.impl.core.base;
 import java.security.SecureRandom;
 
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
-import org.bouncycastle.asn1.bc.BCObjectIdentifiers;
 
 import net.sourceforge.joceanus.jgordianknot.api.base.GordianLength;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianCipherFactory;
@@ -38,29 +37,19 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
 public abstract class GordianCoreFactory
     implements GordianFactory, GordianFactoryGenerator {
     /**
-     *  Base our ids off bouncyCastle.
+     *  BCFactoryOID.
      */
-    public static final ASN1ObjectIdentifier BASEOID = BCObjectIdentifiers.bc.branch("100");
+    public static final ASN1ObjectIdentifier BCFACTORYOID = GordianASN1Util.FACTORYOID.branch("1");
 
     /**
-     *  Create the factoryId.
+     *  JCAFactoryOID.
      */
-    private static final ASN1ObjectIdentifier FACTORYOID = BASEOID.branch("1");
+    public static final ASN1ObjectIdentifier JCAFACTORYOID = GordianASN1Util.FACTORYOID.branch("2");
 
     /**
-     *  Create the BC factoryId.
+     * The prime hash.
      */
-    public static final ASN1ObjectIdentifier BCFACTORYOID = FACTORYOID.branch("1");
-
-    /**
-     *  Create the JCA factoryId.
-     */
-    public static final ASN1ObjectIdentifier JCAFACTORYOID = FACTORYOID.branch("2");
-
-    /**
-     *  Create the NULL factoryId.
-     */
-    public static final ASN1ObjectIdentifier NULLFACTORYOID = FACTORYOID.branch("3");
+    public static final int HASH_PRIME = 47;
 
     /**
      * RC5 rounds.
@@ -149,14 +138,6 @@ public abstract class GordianCoreFactory
     @Override
     public GordianFactoryType getFactoryType() {
         return theParameters.getFactoryType();
-    }
-
-    /**
-     * Obtain the number of iterations.
-     * @return the number of iterations
-     */
-    public int getNumIterations() {
-        return theParameters.getNumIterations();
     }
 
     /**

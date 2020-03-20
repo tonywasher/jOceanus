@@ -27,6 +27,7 @@ import org.bouncycastle.asn1.DERSequence;
 
 import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetHashSpec;
 import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetSpec;
+import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianASN1Util;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianDataException;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianIOException;
 import net.sourceforge.joceanus.jtethys.OceanusException;
@@ -59,9 +60,9 @@ public class GordianKeySetHashSpecASN1
         /* Protect against exceptions */
         try {
             /* Extract the parameters from the sequence */
-            final Enumeration e = pSequence.getObjects();
-            final int myIterations = ASN1Integer.getInstance(e.nextElement()).getValue().intValue();
-            final GordianKeySetSpec mySpec = GordianKeySetSpecASN1.getInstance(e.nextElement()).getSpec();
+            final Enumeration<?> en = pSequence.getObjects();
+            final GordianKeySetSpec mySpec = GordianKeySetSpecASN1.getInstance(en.nextElement()).getSpec();
+            final int myIterations = ASN1Integer.getInstance(en.nextElement()).getValue().intValue();
 
             /* Create the keySpec */
             theSpec = new GordianKeySetHashSpec(myIterations, mySpec);
@@ -99,8 +100,8 @@ public class GordianKeySetHashSpecASN1
      * Produce an object suitable for an ASN1OutputStream.
      * <pre>
      * GordianKeySetHashSpecASN1 ::= SEQUENCE  {
-     *      iterations INTEGER
      *      keySetSpec GordianKeySetSpecASN1
+     *      iterations INTEGER
      * }
      * </pre>
      * @return the ASN1 Encoding
@@ -108,8 +109,8 @@ public class GordianKeySetHashSpecASN1
     @Override
     public ASN1Primitive toASN1Primitive() {
         final ASN1EncodableVector v = new ASN1EncodableVector();
-        v.add(new ASN1Integer(theSpec.getKIterations()));
         v.add(new GordianKeySetSpecASN1(theSpec.getKeySetSpec()).toASN1Primitive());
+        v.add(new ASN1Integer(theSpec.getKIterations()));
         return new DERSequence(v);
     }
 
@@ -119,10 +120,10 @@ public class GordianKeySetHashSpecASN1
      */
     static int getEncodedLength() {
         /* KeyType has type + length + value (all single byte) */
-        int myLength  =  GordianKeySetASN1.getLengthIntegerField(1);
+        int myLength  =  GordianASN1Util.getLengthIntegerField(1);
         myLength += GordianKeySetSpecASN1.getEncodedLength();
 
         /* Calculate the length of the sequence */
-        return  GordianKeySetASN1.getLengthSequence(myLength);
+        return GordianASN1Util.getLengthSequence(myLength);
     }
 }

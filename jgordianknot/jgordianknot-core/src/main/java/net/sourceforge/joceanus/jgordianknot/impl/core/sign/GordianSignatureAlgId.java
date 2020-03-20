@@ -46,6 +46,7 @@ import net.sourceforge.joceanus.jgordianknot.api.key.GordianKeyPair;
 import net.sourceforge.joceanus.jgordianknot.api.sign.GordianSignatureFactory;
 import net.sourceforge.joceanus.jgordianknot.api.sign.GordianSignatureSpec;
 import net.sourceforge.joceanus.jgordianknot.api.sign.GordianSignatureType;
+import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianASN1Util;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianCoreFactory;
 
 /**
@@ -53,9 +54,9 @@ import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianCoreFactory;
  */
 public class GordianSignatureAlgId {
     /**
-     *  Base our signatures off bouncyCastle.
+     *  SignatureOID branch.
      */
-    private static final ASN1ObjectIdentifier SIGOID = GordianCoreFactory.BASEOID.branch("20");
+    private static final ASN1ObjectIdentifier SIGOID = GordianASN1Util.ASYMOID.branch("1");
 
     /**
      * Map of SignatureSpec to Identifier.

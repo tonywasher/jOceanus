@@ -37,8 +37,8 @@ import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianStreamCipherSpec;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianStreamKeySpec;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianSymCipherSpec;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianSymKeySpec;
-import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianSymKeyType;
 import net.sourceforge.joceanus.jgordianknot.api.key.GordianKeyLengths;
+import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianASN1Util;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianCoreFactory;
 
 /**
@@ -46,9 +46,9 @@ import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianCoreFactory;
  */
 public class GordianCipherAlgId {
     /**
-     * Base our ciphers off bouncyCastle.
+     * CipherOID branch.
      */
-    private static final ASN1ObjectIdentifier CIPHEROID = GordianCoreFactory.BASEOID.branch("11");
+    private static final ASN1ObjectIdentifier CIPHEROID = GordianASN1Util.SYMOID.branch("3");
 
     /**
      * Map of SymCipherSpec to Identifier.
@@ -138,17 +138,17 @@ public class GordianCipherAlgId {
      * @param pIdentifier the identifier.
      * @return the cipherSpec (or null if not found)
      */
-    GordianSymCipherSpec getSymSpecForIdentifier(final AlgorithmIdentifier pIdentifier) {
+    GordianSymCipherSpec getSymCipherSpecForIdentifier(final AlgorithmIdentifier pIdentifier) {
         return theSymIdentifierMap.get(pIdentifier);
     }
 
     /**
-     * Obtain symCipherSpec for Identifier.
+     * Obtain streamCipherSpec for Identifier.
      *
      * @param pIdentifier the identifier.
      * @return the cipherSpec (or null if not found)
      */
-    GordianStreamCipherSpec getStreamSpecForIdentifier(final AlgorithmIdentifier pIdentifier) {
+    GordianStreamCipherSpec getStreamCipherSpecForIdentifier(final AlgorithmIdentifier pIdentifier) {
         return theStreamIdentifierMap.get(pIdentifier);
     }
 
@@ -310,7 +310,7 @@ public class GordianCipherAlgId {
      */
     private void addSymCipher(final GordianSymCipherSpec pSpec) {
         /* Build SymKey id */
-        ASN1ObjectIdentifier myId = appendSymKeyOID(CIPHEROID.branch("1"), true, pSpec.getKeyType());
+        ASN1ObjectIdentifier myId = GordianKeyAlgId.appendSymKeyOID(CIPHEROID.branch("1"), true, pSpec.getKeyType());
 
         /* Add mode */
         final GordianCipherMode myMode = pSpec.getCipherMode();
@@ -326,34 +326,6 @@ public class GordianCipherAlgId {
     }
 
     /**
-     * Append Identifier for a symCipherSpec.
-     * @param pBaseOID the base OID
-     * @param pAddLength add length to id true/false
-     * @param pSpec the cipherSpec
-     * @return the resulting OID
-     */
-    public static ASN1ObjectIdentifier appendSymKeyOID(final ASN1ObjectIdentifier pBaseOID,
-                                                       final boolean pAddLength,
-                                                       final GordianSymKeySpec pSpec) {
-        /* Create a branch for cipher based on the KeyType */
-        final GordianSymKeyType myType = pSpec.getSymKeyType();
-        ASN1ObjectIdentifier myId = pBaseOID.branch(Integer.toString(myType.ordinal() + 1));
-
-        /* Add blockLength */
-        final GordianLength myBlockLength = pSpec.getBlockLength();
-        myId = myId.branch(Integer.toString(myBlockLength.ordinal() + 1));
-
-        /* Add length if required */
-        if (pAddLength) {
-            final GordianLength myKeyLength = pSpec.getKeyLength();
-            myId = myId.branch(Integer.toString(myKeyLength.ordinal() + 1));
-        }
-
-        /* Return the id */
-        return myId;
-    }
-
-    /**
      * Add streamCipherSpec to map if supported and not already present.
      *
      * @param pSpec the streamCipherSpec
@@ -366,21 +338,16 @@ public class GordianCipherAlgId {
     }
 
     /**
-     * Create Identifier for a cipherSpec.
+     * Create Identifier for a streamCipherSpec.
      *
      * @param pSpec the cipherSpec
      */
     private void addStreamCipher(final GordianStreamCipherSpec pSpec) {
         /* Create a branch for cipher based on the KeyType */
         final GordianStreamKeySpec mySpec = pSpec.getKeyType();
-        ASN1ObjectIdentifier myId = CIPHEROID.branch("2");
-        myId = myId.branch(Integer.toString(mySpec.getKeyLength().ordinal() + 1));
-        myId = myId.branch(Integer.toString(mySpec.getStreamKeyType().ordinal() + 1));
-        if (mySpec.getSubKeyType() != null) {
-            myId = myId.branch(Integer.toString(((Enum<?>) mySpec.getSubKeyType()).ordinal() + 1));
-            if (mySpec.supportsAAD()) {
-                myId = myId.branch(Integer.toString(pSpec.isAAD() ? 2 : 1));
-            }
+        ASN1ObjectIdentifier myId = GordianKeyAlgId.appendStreamKeyOID(CIPHEROID.branch("2"), mySpec);
+        if (mySpec.supportsAAD()) {
+            myId = myId.branch(Integer.toString(pSpec.isAAD() ? 2 : 1));
         }
 
         /* Add the spec to the maps */
@@ -388,7 +355,7 @@ public class GordianCipherAlgId {
     }
 
     /**
-     * Add spec to maps.
+     * Add symCipherSpec to maps.
      * @param pSpec the cipherSpec
      * @param pIdentifier the identifier
      */
@@ -399,7 +366,7 @@ public class GordianCipherAlgId {
     }
 
     /**
-     * Add spec to maps.
+     * Add streamCipherSpec to maps.
      * @param pSpec the cipherSpec
      * @param pIdentifier the identifier
      */

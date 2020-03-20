@@ -30,7 +30,6 @@ import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianCipherFactory;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianSymKeySpec;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianSymKeyType;
 import net.sourceforge.joceanus.jgordianknot.api.factory.GordianAsymFactory;
-import net.sourceforge.joceanus.jgordianknot.api.factory.GordianParameters;
 import net.sourceforge.joceanus.jgordianknot.api.key.GordianKey;
 import net.sourceforge.joceanus.jgordianknot.api.base.GordianKeySpec;
 import net.sourceforge.joceanus.jgordianknot.api.key.GordianKeyGenerator;
@@ -564,7 +563,7 @@ public final class GordianCoreKeySet
 
     @Override
     public int hashCode() {
-        return GordianParameters.HASH_PRIME * theFactory.hashCode()
+        return GordianCoreFactory.HASH_PRIME * theFactory.hashCode()
                 + theSpec.hashCode()
                 + theSymKeyMap.hashCode();
     }

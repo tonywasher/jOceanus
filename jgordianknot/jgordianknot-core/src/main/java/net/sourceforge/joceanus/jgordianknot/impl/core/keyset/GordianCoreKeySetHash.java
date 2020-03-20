@@ -21,7 +21,6 @@ import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigest;
 import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigestFactory;
 import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigestSpec;
 import net.sourceforge.joceanus.jgordianknot.api.factory.GordianFactory;
-import net.sourceforge.joceanus.jgordianknot.api.factory.GordianParameters;
 import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianBadCredentialsException;
 import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetHash;
 import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetHashSpec;
@@ -39,11 +38,6 @@ import java.util.Arrays;
  */
 public final class GordianCoreKeySetHash
     implements GordianKeySetHash {
-    /**
-     * Hash size for password hash.
-     */
-    public static final int HASHLEN = GordianKeySetHashRecipe.HASHLEN;
-
     /**
      * Hash Recipe.
      */
@@ -161,8 +155,7 @@ public final class GordianCoreKeySetHash
      * @param pHash     the hash
      * @param pPassword the password
      * @return the resolved keySetHash
-     * @throws GordianBadCredentialsException if wrong password is given
-     * @throws OceanusException               on error
+     * @throws OceanusException on error
      */
     static GordianKeySetHash resolveKeySetHash(final GordianCoreFactory pFactory,
                                                final byte[] pHash,
@@ -189,8 +182,7 @@ public final class GordianCoreKeySetHash
      * @param pHash     the hash
      * @param pPassword the password
      * @return the new keySetHash
-     * @throws GordianBadCredentialsException if wrong password is given
-     * @throws OceanusException               on error
+     * @throws OceanusException on error
      */
     private static GordianKeySetHash resolveKeySetHash(final GordianCoreFactory pFactory,
                                                        final byte[] pHash,
@@ -239,7 +231,7 @@ public final class GordianCoreKeySetHash
 
             /* Create the Key Set */
             theKeySet = new GordianCoreKeySet(theFactory, theSpec.getKeySetSpec());
-            theKeySet.buildFromSecret(myResults[iIndex++], myResults[iIndex++]);
+            theKeySet.buildFromSecret(myResults[iIndex++], myResults[iIndex]);
 
         } finally {
             /* Clear out results */
@@ -255,8 +247,7 @@ public final class GordianCoreKeySetHash
      * Attempt to match the password hash with the password.
      *
      * @param pPassword the password
-     * @throws GordianBadCredentialsException on wrong password
-     * @throws OceanusException               on error
+     * @throws OceanusException on error
      */
     private void attemptPassword(final byte[] pPassword) throws OceanusException {
         /* Protect against exceptions */
@@ -274,7 +265,7 @@ public final class GordianCoreKeySetHash
 
             /* Create the Key Set */
             theKeySet = new GordianCoreKeySet(theFactory, theSpec.getKeySetSpec());
-            theKeySet.buildFromSecret(myResults[iIndex++], myResults[iIndex++]);
+            theKeySet.buildFromSecret(myResults[iIndex++], myResults[iIndex]);
 
         } finally {
             /* Clear out results */
@@ -421,7 +412,7 @@ public final class GordianCoreKeySetHash
 
     @Override
     public int hashCode() {
-        return GordianParameters.HASH_PRIME * theFactory.hashCode()
+        return GordianCoreFactory.HASH_PRIME * theFactory.hashCode()
                 + Arrays.hashCode(theHash);
     }
 }

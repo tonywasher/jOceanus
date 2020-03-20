@@ -383,6 +383,9 @@ public class SymmetricTest {
         /* Add externalId test */
         myTests = Stream.concat(myTests, Stream.of(DynamicTest.dynamicTest("externalId", () -> checkExternalId(pKeySpec))));
 
+        /* Add algorithmId test */
+        myTests = Stream.concat(myTests, Stream.of(DynamicTest.dynamicTest("algorithmId", () -> checkSymKeyAlgId(pKeySpec))));
+
         /* Add wrapCipher test */
         myTests = Stream.concat(myTests, Stream.of(DynamicTest.dynamicTest("wrapCipher", () -> checkWrapCipher(pKeySpec))));
 
@@ -509,8 +512,9 @@ public class SymmetricTest {
         myTests = Stream.concat(myTests, Stream.of(DynamicTest.dynamicTest("externalKeyId", () -> checkExternalId(pKeySpec))));
         myTests = Stream.concat(myTests, Stream.of(DynamicTest.dynamicTest("externalCipherId", () -> checkExternalId(myCipherSpec))));
 
-        /* Add algorithmId test */
-        myTests = Stream.concat(myTests, Stream.of(DynamicTest.dynamicTest("algorithmId", () -> checkStreamCipherAlgId(myCipherSpec))));
+        /* Add algorithmId tests */
+        myTests = Stream.concat(myTests, Stream.of(DynamicTest.dynamicTest("algorithmKeyId", () -> checkStreamKeyAlgId(pKeySpec))));
+        myTests = Stream.concat(myTests, Stream.of(DynamicTest.dynamicTest("algorithmCipherId", () -> checkStreamCipherAlgId(myCipherSpec))));
 
         /* Add partner test if  the partner supports this streamKeySpec */
         if (pKeySpec.getPartner() != null) {
@@ -1260,6 +1264,23 @@ public class SymmetricTest {
     }
 
     /**
+     * Check keyAlgId.
+     * @param pSpec the Spec to check
+     */
+    private void checkSymKeyAlgId(final FactorySymKeySpec pSpec) {
+        /* Access the factory */
+        final GordianCoreCipherFactory myFactory = (GordianCoreCipherFactory) pSpec.getFactory().getCipherFactory();
+
+        /* Check that we have an id */
+        final AlgorithmIdentifier myId = myFactory.getIdentifierForSpec(pSpec.getSpec());
+        Assertions.assertNotNull(myId,  "Unknown AlgorithmId for " + pSpec.getSpec());
+
+        /* Check unique mapping */
+        final GordianSymKeySpec mySpec = myFactory.getSymKeySpecForIdentifier(myId);
+        Assertions.assertEquals(pSpec.getSpec(), mySpec, "Invalid mapping for  " + pSpec.getSpec());
+    }
+
+    /**
      * Check cipherAlgId.
      * @param pSpec the Spec to check
      */
@@ -1272,7 +1293,24 @@ public class SymmetricTest {
         Assertions.assertNotNull(myId,  "Unknown AlgorithmId for " + pSpec.getSpec());
 
         /* Check unique mapping */
-        final GordianCipherSpec<?> mySpec = myFactory.getSymSpecForIdentifier(myId);
+        final GordianCipherSpec<?> mySpec = myFactory.getSymCipherSpecForIdentifier(myId);
+        Assertions.assertEquals(pSpec.getSpec(), mySpec, "Invalid mapping for  " + pSpec.getSpec());
+    }
+
+    /**
+     * Check keyAlgId.
+     * @param pSpec the Spec to check
+     */
+    private void checkStreamKeyAlgId(final FactoryStreamKeySpec pSpec) {
+        /* Access the factory */
+        final GordianCoreCipherFactory myFactory = (GordianCoreCipherFactory) pSpec.getFactory().getCipherFactory();
+
+        /* Check that we have an id */
+        final AlgorithmIdentifier myId = myFactory.getIdentifierForSpec(pSpec.getSpec());
+        Assertions.assertNotNull(myId,  "Unknown AlgorithmId for " + pSpec.getSpec());
+
+        /* Check unique mapping */
+        final GordianStreamKeySpec mySpec = myFactory.getStreamKeySpecForIdentifier(myId);
         Assertions.assertEquals(pSpec.getSpec(), mySpec, "Invalid mapping for  " + pSpec.getSpec());
     }
 
@@ -1289,7 +1327,7 @@ public class SymmetricTest {
         Assertions.assertNotNull(myId,  "Unknown AlgorithmId for " + pSpec.getSpec());
 
         /* Check unique mapping */
-        final GordianCipherSpec<?> mySpec = myFactory.getStreamSpecForIdentifier(myId);
+        final GordianCipherSpec<?> mySpec = myFactory.getStreamCipherSpecForIdentifier(myId);
         Assertions.assertEquals(pSpec.getSpec(), mySpec, "Invalid mapping for  " + pSpec.getSpec());
     }
 

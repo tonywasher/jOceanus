@@ -590,8 +590,12 @@ public final class GordianAsymKeySpec {
         GordianMcElieceKeySpec.listPossibleKeySpecs().forEach(t -> mySpecs.add(GordianAsymKeySpec.mcEliece(t)));
 
         /* Add LMS */
-        GordianLMSKeySpec.listPossibleKeySpecs().forEach(t -> mySpecs.add(GordianAsymKeySpec.lms(t)));
-        GordianLMSKeySpec.listPossibleKeySpecs().forEach(t -> mySpecs.add(GordianAsymKeySpec.hss(t, 2)));
+        GordianLMSKeySpec.listPossibleKeySpecs().forEach(t -> {
+            mySpecs.add(GordianAsymKeySpec.lms(t));
+            for (int i = 2; i < GordianHSSKeySpec.MAX_DEPTH; i++) {
+                mySpecs.add(GordianAsymKeySpec.hss(t, i));
+            }
+        });
 
         /* Return the list */
         return mySpecs;

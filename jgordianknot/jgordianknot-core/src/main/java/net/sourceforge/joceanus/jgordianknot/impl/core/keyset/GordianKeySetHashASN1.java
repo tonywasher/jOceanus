@@ -29,6 +29,7 @@ import org.bouncycastle.asn1.DERSequence;
 import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
 
 import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetHashSpec;
+import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianASN1Util;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianDataException;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianIOException;
 import net.sourceforge.joceanus.jtethys.OceanusException;
@@ -135,16 +136,16 @@ public class GordianKeySetHashASN1
     }
 
     /**
-     * Obtain the byte length of the encoded a given wrapped keyLength and # of keys.
+     * Obtain the byte length of the encoded object.
      * @return the byte length
      */
     public static int getEncodedLength() {
         /* KeyType has type + length + value (all single byte) */
         int myLength  =  GordianKeySetHashSpecASN1.getEncodedLength();
-        myLength += GordianKeySetASN1.getLengthByteArrayField(GordianKeySetHashRecipe.HASHLEN);
+        myLength += GordianASN1Util.getLengthByteArrayField(GordianKeySetHashRecipe.HASHLEN);
 
         /* Calculate the length of the sequence */
-        return  GordianKeySetASN1.getLengthSequence(myLength);
+        return GordianASN1Util.getLengthSequence(myLength);
     }
 
     /**

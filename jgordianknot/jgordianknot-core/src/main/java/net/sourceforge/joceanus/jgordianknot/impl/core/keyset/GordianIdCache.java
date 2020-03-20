@@ -26,7 +26,6 @@ import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianSymKeySpec;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianSymKeyType;
 import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigestFactory;
 import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigestType;
-import net.sourceforge.joceanus.jgordianknot.api.factory.GordianParameters;
 import net.sourceforge.joceanus.jgordianknot.api.mac.GordianMacFactory;
 import net.sourceforge.joceanus.jgordianknot.api.mac.GordianMacSpec;
 import net.sourceforge.joceanus.jgordianknot.api.mac.GordianMacType;
@@ -407,7 +406,7 @@ public class GordianIdCache {
         int myNumTypes = myLen;
 
         /* Obtain the personalised integer and modify it according to the index to obtain differing seeds for id re-use */
-        int mySeed = thePersonalisation.getPersonalisedInteger(pId) * (GordianParameters.HASH_PRIME + pIndex);
+        int mySeed = thePersonalisation.getPersonalisedInteger(pId) * (GordianCoreFactory.HASH_PRIME + pIndex);
         mySeed = GordianPersonalisation.sanitiseValue(mySeed);
 
         /* Loop through the types */
