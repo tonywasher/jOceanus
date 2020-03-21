@@ -16,7 +16,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jprometheus.lethe;
 
-import net.sourceforge.joceanus.jgordianknot.api.factory.GordianParameters;
+import net.sourceforge.joceanus.jgordianknot.api.factory.GordianFactoryType;
 import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetHashSpec;
 import net.sourceforge.joceanus.jgordianknot.util.GordianSecurityManager;
 import net.sourceforge.joceanus.jmetis.data.MetisDataFormatter;
@@ -86,7 +86,8 @@ public abstract class PrometheusToolkit
 
         /* Create the hashManager */
         final MetisSecurityPreferences myPreferences = thePreferenceMgr.getPreferenceSet(MetisSecurityPreferences.class);
-        theSecureMgr = newSecurityManager(myPreferences.getParameters(), myPreferences.getKeySetHashSpec());
+        theSecureMgr = newSecurityManager(myPreferences.getFactoryType(),
+                myPreferences.getSecurityPhrase(), myPreferences.getKeySetHashSpec());
 
         /* Set this as the threadData */
         theThreadMgr.setThreadData(this);
@@ -158,11 +159,13 @@ public abstract class PrometheusToolkit
 
     /**
      * Create a Security Manager.
-     * @param pParameters the parameters
+     * @param pFactoryType the factoryType
+     * @param pSecurityPhrase the security phrase
      * @param pKeySetSpec the keySetHashSpec
      * @return the manager
      * @throws OceanusException on error
      */
-    protected abstract GordianSecurityManager newSecurityManager(GordianParameters pParameters,
+    protected abstract GordianSecurityManager newSecurityManager(GordianFactoryType pFactoryType,
+                                                                 char[] pSecurityPhrase,
                                                                  GordianKeySetHashSpec pKeySetSpec) throws OceanusException;
 }

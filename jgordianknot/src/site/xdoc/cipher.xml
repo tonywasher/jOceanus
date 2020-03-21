@@ -21,8 +21,7 @@
                 <h4 name="Sample">
                     <source>
                         /* Access factory */
-                        final GordianParameters myParams = new GordianParameters();
-                        final GordianFactory myBaseFactory = GordianGenerator.createFactory(myParams);
+                        final GordianFactory myBaseFactory = GordianGenerator.createFactory();
                         final GordianCipherFactory myCipherFactory = myBaseFactory.getCipherFactory();
 
                         /* Access keyGenerator */
@@ -77,8 +76,7 @@
                 <h4 name="Sample">
                     <source>
                         /* Access factory */
-                        final GordianParameters myParams = new GordianParameters();
-                        final GordianFactory myBaseFactory = GordianGenerator.createFactory(myParams);
+                        final GordianFactory myBaseFactory = GordianGenerator.createFactory();
                         final GordianCipherFactory myCipherFactory = myBaseFactory.getCipherFactory();
 
                         /* Create key */
@@ -159,8 +157,7 @@
                 <h4 name="Sample">
                     <source>
                         /* Access factory */
-                        final GordianParameters myParams = new GordianParameters();
-                        final GordianFactory myBaseFactory = GordianGenerator.createFactory(myParams);
+                        final GordianFactory myBaseFactory = GordianGenerator.createFactory();
                         final GordianCipherFactory myCipherFactory = myBaseFactory.getCipherFactory();
 
                         /* Create keys */
@@ -188,8 +185,7 @@
                 <h4 name="Sample">
                     <source>
                         /* Access factory */
-                        final GordianParameters myParams = new GordianParameters();
-                        final GordianFactory myBaseFactory = GordianGenerator.createFactory(myParams);
+                        final GordianFactory myBaseFactory = GordianGenerator.createFactory();
                         final GordianCipherFactory myCipherFactory = myBaseFactory.getCipherFactory();
 
                         /* Access keyGenerator */
@@ -233,8 +229,7 @@
                 <h4 name="Sample">
                     <source>
                         /* Access factory */
-                        final GordianParameters myParams = new GordianParameters();
-                        final GordianFactory myBaseFactory = GordianGenerator.createFactory(myParams);
+                        final GordianFactory myBaseFactory = GordianGenerator.createFactory();
                         final GordianCipherFactory myCipherFactory = myBaseFactory.getCipherFactory();
 
                         /* Create key */
@@ -272,8 +267,7 @@
             <subsection name="Sample">
                 <source>
                     /* Access factory */
-                    final GordianParameters myParams = new GordianParameters();
-                    final GordianFactory myBaseFactory = GordianGenerator.createFactory(myParams);
+                    final GordianFactory myBaseFactory = GordianGenerator.createFactory();
                     final GordianCipherFactory myCipherFactory = myBaseFactory.getCipherFactory();
 
                     /* Create cipher */

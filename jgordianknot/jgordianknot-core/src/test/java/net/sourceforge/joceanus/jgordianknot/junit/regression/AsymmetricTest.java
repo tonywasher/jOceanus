@@ -48,7 +48,6 @@ import net.sourceforge.joceanus.jgordianknot.api.encrypt.GordianEncryptorSpec;
 import net.sourceforge.joceanus.jgordianknot.api.factory.GordianAsymFactory;
 import net.sourceforge.joceanus.jgordianknot.api.factory.GordianFactory;
 import net.sourceforge.joceanus.jgordianknot.api.factory.GordianFactoryType;
-import net.sourceforge.joceanus.jgordianknot.api.factory.GordianParameters;
 import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySet;
 import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetSpec;
 import net.sourceforge.joceanus.jgordianknot.util.GordianGenerator;
@@ -111,8 +110,8 @@ public class AsymmetricTest {
      */
     @BeforeAll
     public static void createSecurityFactories() throws OceanusException {
-        BCFACTORY = GordianGenerator.createFactory(new GordianParameters(GordianFactoryType.BC));
-        JCAFACTORY = GordianGenerator.createFactory(new GordianParameters(GordianFactoryType.JCA));
+        BCFACTORY = GordianGenerator.createFactory(GordianFactoryType.BC);
+        JCAFACTORY = GordianGenerator.createFactory(GordianFactoryType.JCA);
     }
 
     /**

@@ -594,9 +594,7 @@ public final class BouncyRSAAsymKey {
                 int myOutOff = 0;
                 while (myInLen > 0) {
                     /* Process the data */
-                    final int myLen = myInLen >= myInBlockLength
-                                      ? myInBlockLength
-                                      : myInLen;
+                    final int myLen = Math.min(myInLen, myInBlockLength);
                     final byte[] myBlock = theEncryptor.processBlock(pData, myInOff, myLen);
 
                     /* Copy to the output buffer */

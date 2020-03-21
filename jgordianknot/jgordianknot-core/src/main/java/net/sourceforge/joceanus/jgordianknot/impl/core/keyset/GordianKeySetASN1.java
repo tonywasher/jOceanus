@@ -42,6 +42,19 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
  * ASN1 Encoding of KeySet.
+ * <pre>
+ * GordianKeySetASN1 ::= SEQUENCE OF {
+ *      keySetSpec GordianKeySetSpecASN1
+ *      securedKeys securedKeySet
+ * } securedKey
+ *
+ * securedKeySet ::= SEQUENCE OF securedKey
+ *
+ * securedKey ::= SEQUENCE {
+ *      wrappedKeyId INTEGER
+ *      wrappedKey OCTET STRING
+ * }
+ * </pre>
  */
 public class GordianKeySetASN1
         extends ASN1Object {
@@ -89,15 +102,15 @@ public class GordianKeySetASN1
             theMap = new LinkedHashMap<>();
 
             /* Build the map from the sequence */
-            Enumeration e = pSequence.getObjects();
-            theSpec = GordianKeySetSpecASN1.getInstance(e.nextElement()).getSpec();
-            final ASN1Sequence myKeySet = ASN1Sequence.getInstance(e.nextElement());
+            Enumeration<?> en = pSequence.getObjects();
+            theSpec = GordianKeySetSpecASN1.getInstance(en.nextElement()).getSpec();
+            final ASN1Sequence myKeySet = ASN1Sequence.getInstance(en.nextElement());
 
             /* Build the map from the keySet sequence */
-            e = myKeySet.getObjects();
-            while (e.hasMoreElements()) {
-                final ASN1Sequence k = ASN1Sequence.getInstance(e.nextElement());
-                final Enumeration ek = k.getObjects();
+            en = myKeySet.getObjects();
+            while (en.hasMoreElements()) {
+                final ASN1Sequence k = ASN1Sequence.getInstance(en.nextElement());
+                final Enumeration<?> ek = k.getObjects();
                 theMap.put(ASN1Integer.getInstance(ek.nextElement()).getValue().intValue(),
                         ASN1OctetString.getInstance(ek.nextElement()).getOctets());
             }
@@ -123,23 +136,6 @@ public class GordianKeySetASN1
         throw new GordianDataException("Null sequence");
     }
 
-    /**
-     * Produce an object suitable for an ASN1OutputStream.
-     * <pre>
-     * GordianKeySetASN1 ::= SEQUENCE OF {
-     *      keySetSpec GordianKeySetSpecASN1
-     *      securedKeys securedKeySet
-     * } securedKey
-     *
-     * securedKeySet ::= SEQUENCE OF securedKey
-     *
-     * securedKey ::= SEQUENCE {
-     *      wrappedKeyId INTEGER
-     *      wrappedKey OCTET STRING
-     * }
-     * </pre>
-     * @return the ASN1 Encoding
-     */
     @Override
     public ASN1Primitive toASN1Primitive() {
         /* Build the keySetSequence */

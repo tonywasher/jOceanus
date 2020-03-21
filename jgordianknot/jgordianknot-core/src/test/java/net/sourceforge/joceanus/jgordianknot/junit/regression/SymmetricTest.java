@@ -52,7 +52,6 @@ import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigestFactory;
 import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigestSpec;
 import net.sourceforge.joceanus.jgordianknot.api.factory.GordianFactory;
 import net.sourceforge.joceanus.jgordianknot.api.factory.GordianFactoryType;
-import net.sourceforge.joceanus.jgordianknot.api.factory.GordianParameters;
 import net.sourceforge.joceanus.jgordianknot.api.mac.GordianMacParameters;
 import net.sourceforge.joceanus.jgordianknot.junit.regression.SymmetricStore.FactoryStreamPBECipherSpec;
 import net.sourceforge.joceanus.jgordianknot.junit.regression.SymmetricStore.FactorySymPBECipherSpec;
@@ -137,8 +136,8 @@ public class SymmetricTest {
      */
     @BeforeAll
     public static void createSecurityFactories() throws OceanusException {
-        BCFACTORY = GordianGenerator.createFactory(new GordianParameters(GordianFactoryType.BC));
-        JCAFACTORY = GordianGenerator.createFactory(new GordianParameters(GordianFactoryType.JCA));
+        BCFACTORY = GordianGenerator.createFactory(GordianFactoryType.BC);
+        JCAFACTORY = GordianGenerator.createFactory(GordianFactoryType.JCA);
     }
 
     /**

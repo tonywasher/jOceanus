@@ -75,9 +75,9 @@ public class GordianKeySetHashASN1
         /* Protect against exceptions */
         try {
             /* Extract the parameters from the sequence */
-            final Enumeration e = pSequence.getObjects();
-            theSpec = GordianKeySetHashSpecASN1.getInstance(e.nextElement()).getSpec();
-            theHashBytes = ASN1OctetString.getInstance(e.nextElement()).getOctets();
+            final Enumeration<?> en = pSequence.getObjects();
+            theSpec = GordianKeySetHashSpecASN1.getInstance(en.nextElement()).getSpec();
+            theHashBytes = ASN1OctetString.getInstance(en.nextElement()).getOctets();
 
             /* handle exceptions */
         } catch (IllegalArgumentException e) {

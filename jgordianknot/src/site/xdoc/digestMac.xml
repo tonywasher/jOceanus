@@ -14,8 +14,7 @@
             <subsection name="Sample">
                 <source>
                     /* Access factory */
-                    final GordianParameters myParams = new GordianParameters();
-                    final GordianFactory myBaseFactory = GordianGenerator.createFactory(myParams);
+                    final GordianFactory myBaseFactory = GordianGenerator.createFactory();
                     final GordianDigestFactory myDigestFactory = myBaseFactory.getDigestFactory();
 
                     /* Create digest */
@@ -72,8 +71,7 @@
             <subsection name="Sample">
                 <source>
                     /* Access factory */
-                    final GordianParameters myParams = new GordianParameters();
-                    final GordianFactory myBaseFactory = GordianGenerator.createFactory(myParams);
+                    final GordianFactory myBaseFactory = GordianGenerator.createFactory();
                     final GordianMacFactory myMacFactory = myBaseFactory.getMacFactory();
 
                     /* Create mac */

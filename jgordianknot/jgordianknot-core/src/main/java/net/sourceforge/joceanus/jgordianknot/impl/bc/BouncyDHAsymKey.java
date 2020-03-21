@@ -293,6 +293,8 @@ public final class BouncyDHAsymKey {
 
             /* Create the agreement */
             theAgreement = new DHBasicAgreement();
+
+            /* Add in the derivation function */
             enableDerivation();
         }
 

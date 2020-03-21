@@ -12,8 +12,7 @@
             <subsection name="Sample">
                 <source>
                     /* Access factory */
-                    final GordianParameters myParams = new GordianParameters();
-                    final GordianFactory myBaseFactory = GordianGenerator.createFactory(myParams);
+                    final GordianFactory myBaseFactory = GordianGenerator.createFactory();
                     final GordianRandomFactory myRandomFactory = myBaseFactory.getRandomFactory();
 
                     /* Create secureRandom */

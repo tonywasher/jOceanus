@@ -14,10 +14,11 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  ******************************************************************************/
-package net.sourceforge.joceanus.jgordianknot.api.factory;
+package net.sourceforge.joceanus.jgordianknot.impl.core.base;
 
 import java.util.Arrays;
 
+import net.sourceforge.joceanus.jgordianknot.api.factory.GordianFactoryType;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.TethysDataConverter;
 
@@ -41,6 +42,11 @@ public class GordianParameters {
     private byte[] theSecurityPhrase;
 
     /**
+     * Is this an internal set?
+     */
+    private boolean isInternal;
+
+    /**
      * Default Constructor.
      */
     public GordianParameters() {
@@ -54,7 +60,6 @@ public class GordianParameters {
     public GordianParameters(final GordianFactoryType pFactoryType) {
         /* Store parameters */
         theFactoryType = pFactoryType;
-        theSecurityPhrase = null;
     }
 
     /**
@@ -71,6 +76,14 @@ public class GordianParameters {
      */
     public byte[] getSecurityPhrase() {
         return theSecurityPhrase;
+    }
+
+    /**
+     * Is this an internal set of parameters.
+     * @return true/false
+     */
+    public boolean isInternal() {
+        return isInternal;
     }
 
     /**
@@ -101,6 +114,13 @@ public class GordianParameters {
     }
 
     /**
+     * Set internal.
+     */
+    public void setInternal() {
+        isInternal = true;
+    }
+
+    /**
      * Validate the Parameters.
      * @return valid true/false
      */
@@ -128,7 +148,8 @@ public class GordianParameters {
         final GordianParameters myThat = (GordianParameters) pThat;
 
         /* Check Differences */
-        if (theFactoryType != myThat.getFactoryType()) {
+        if (theFactoryType != myThat.getFactoryType()
+            || isInternal != myThat.isInternal()) {
             return false;
         }
 
@@ -141,10 +162,13 @@ public class GordianParameters {
     @Override
     public int hashCode() {
         /* Access multiplier */
-        final int myPrime = 47;
+        final int myPrime = GordianCoreFactory.HASH_PRIME;
 
         /* Calculate hash from types */
         int myCode = theFactoryType.hashCode();
+        if (isInternal) {
+            myCode++;
+        }
         myCode *= myPrime;
 
         /* Calculate hash from phrase */

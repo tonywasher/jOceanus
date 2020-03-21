@@ -10,13 +10,20 @@
             <p><strong>I</strong> is often split into 16 integers written as <strong>I<sub>1</sub></strong> through <strong>I<sub>16</sub></strong>. Similarly
                 <strong>IV</strong> is often split into 4 128-bit arrays written as <strong>I<sub>1</sub></strong> through <strong>IV<sub>4</sub></strong></p>
         </section>
+        <subsection name="Sample">
+            <source>
+                /* Access factory using security phrase */
+                final char[] mySecurityPhrase = ...
+                final GordianFactory myBaseFactory = GordianGenerator.createFactory(mySecurityPhrase);
+            </source>
+        </subsection>
         <section name="Generation">
             <p>The personalisation algorithm is as follows.</p>
             <ol>
                 <li>Create an array of all available digests that have an output length of 512-bits.</li>
                 <li>Initialise all digests with a constant value followed by the security phrase</li>
                 <li>Finish all digests, creating an array of the hashes and xor these hashes into <strong>I</strong></li>
-                <li>Loop for a configured # of iterations (default 2K).
+                <li>Loop for 2K iterations.
                     <ol>
                         <li>Update each digest with <strong>ALL</strong> the other hashes</li>
                         <li>Finish each digest, updating its hash and xor-ing into <strong>I</strong></li>
@@ -37,7 +44,7 @@
                         <li>Update both Macs with <strong>I</strong> and <strong>IV</strong></li>
                         <li>Update both Macs with <strong>A</strong>, keyLength and <strong>C</strong></li>
                         <li>Set input <strong>D<sub>M</sub></strong> and <strong>D<sub>A</sub></strong> to <strong>V</strong></li>
-                        <li>Loop for a configured # of iterations (default 2K).
+                        <li>Loop for 32 iterations.
                             <ol>
                                 <li>Update <strong>H<sub>A</sub></strong> with <strong>D<sub>A</sub></strong></li>
                                 <li>Calculate <strong>D<sub>A</sub></strong> as the hash of <strong>M<sub>A</sub></strong></li>

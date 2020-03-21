@@ -569,7 +569,7 @@ public final class BouncyXDHAsymKey {
             /* Initialise underlying class */
             super(pFactory, pSpec);
 
-            /* Create the agreement */
+            /* Add in the derivation function */
             enableDerivation();
         }
 

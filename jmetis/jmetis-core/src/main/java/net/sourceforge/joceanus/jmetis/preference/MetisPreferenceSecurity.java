@@ -24,7 +24,6 @@ import java.util.Set;
 import net.sourceforge.joceanus.jgordianknot.api.base.GordianLength;
 import net.sourceforge.joceanus.jgordianknot.api.factory.GordianFactory;
 import net.sourceforge.joceanus.jgordianknot.api.factory.GordianFactoryType;
-import net.sourceforge.joceanus.jgordianknot.api.factory.GordianParameters;
 import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySet;
 import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetFactory;
 import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetHash;
@@ -61,21 +60,22 @@ public class MetisPreferenceSecurity {
      * @throws OceanusException on error
      */
     MetisPreferenceSecurity(final MetisPreferenceManager pManager) throws OceanusException {
-        /* Create the Bouncy Parameters */
-        final GordianParameters myParms = new GordianParameters();
-        myParms.setFactoryType(GordianFactoryType.BC);
-        myParms.setSecurityPhrase(getHostName());
-
         /* Create a Security Factory */
-        final GordianFactory myFactory = GordianGenerator.createFactory(myParms);
+        final GordianFactory myFactory = GordianGenerator.createFactory(GordianFactoryType.BC);
         final GordianKeySetFactory myKeySets = myFactory.getKeySetFactory();
 
         /* Obtain the hash as a preference */
         final MetisBaseSecurityPreferences myPrefs = pManager.getPreferenceSet(MetisBaseSecurityPreferences.class);
         final byte[] myHash = myPrefs.getByteArrayValue(MetisSecurityPreferenceKey.HASH);
 
+        /* Derive the password */
+        final char[] myHost = getHostName();
+        final char[] myUser = System.getProperty("user.name").toCharArray();
+        final char[] myPassword = new char[myHost.length + myUser.length];
+        System.arraycopy(myHost, 0, myPassword, 0, myHost.length);
+        System.arraycopy(myUser, 0, myPassword, myHost.length, myUser.length);
+
         /* Derive or create the hash */
-        final char[] myPassword = System.getProperty("user.name").toCharArray();
         final GordianKeySetHash myKeySetHash = myHash == null
                                                               ? myKeySets.generateKeySetHash(new GordianKeySetHashSpec(), myPassword)
                                                               : myKeySets.deriveKeySetHash(myHash, myPassword);
@@ -226,7 +226,7 @@ public class MetisPreferenceSecurity {
         }
 
         @Override
-        protected void definePreferences() throws OceanusException {
+        protected void definePreferences() {
             defineByteArrayPreference(MetisSecurityPreferenceKey.HASH);
         }
 
@@ -276,28 +276,26 @@ public class MetisPreferenceSecurity {
         }
 
         /**
-         * Get Security Parameters.
-         * @return the parameters
-         * @throws OceanusException on error
+         * Get FactoryType.
+         * @return the factoryType
          */
-        public GordianParameters getParameters() throws OceanusException {
-            /* Create default preferences */
-            final GordianParameters myParms = new GordianParameters();
+        public GordianFactoryType getFactoryType() {
+            return getEnumValue(MetisSecurityPreferenceKey.FACTORY, GordianFactoryType.class);
+        }
 
-            /* Set other parameters */
-            myParms.setFactoryType(getEnumValue(MetisSecurityPreferenceKey.FACTORY, GordianFactoryType.class));
-            myParms.setSecurityPhrase(getCharArrayValue(MetisSecurityPreferenceKey.SECURITYPHRASE));
-
-            /* return the parameters */
-            return myParms;
+        /**
+         * Get Security Phrase.
+         * @return the phrase
+         */
+        public char[] getSecurityPhrase() {
+            return getCharArrayValue(MetisSecurityPreferenceKey.SECURITYPHRASE);
         }
 
         /**
          * Get KeySetHashSpec.
          * @return the parameters
-         * @throws OceanusException on error
          */
-        public GordianKeySetHashSpec getKeySetHashSpec() throws OceanusException {
+        public GordianKeySetHashSpec getKeySetHashSpec() {
             /* Build and return keySetSpec */
             final GordianLength myKeyLen = getEnumValue(MetisSecurityPreferenceKey.KEYLENGTH, GordianLength.class);
             final int myIterations = getIntegerValue(MetisSecurityPreferenceKey.HASHITERATIONS);
@@ -321,7 +319,7 @@ public class MetisPreferenceSecurity {
             final MetisEnumPreference<MetisSecurityPreferenceKey, GordianFactoryType> myFactPref
                     = getEnumPreference(MetisSecurityPreferenceKey.FACTORY, GordianFactoryType.class);
             if (!myFactPref.isAvailable()) {
-                myFactPref.setValue(GordianParameters.DEFAULT_FACTORY);
+                myFactPref.setValue(GordianFactoryType.BC);
             }
 
             /* Make sure that the restricted state is specified */

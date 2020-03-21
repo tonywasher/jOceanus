@@ -17,7 +17,7 @@
 package net.sourceforge.joceanus.jgordianknot.impl.bc;
 
 import net.sourceforge.joceanus.jgordianknot.api.factory.GordianAsymFactory;
-import net.sourceforge.joceanus.jgordianknot.api.factory.GordianParameters;
+import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianParameters;
 import net.sourceforge.joceanus.jgordianknot.api.zip.GordianZipFactory;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianCoreFactory;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianFactoryGenerator;

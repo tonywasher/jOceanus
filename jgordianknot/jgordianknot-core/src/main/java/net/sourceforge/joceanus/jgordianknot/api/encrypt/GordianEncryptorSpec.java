@@ -193,7 +193,6 @@ public final class GordianEncryptorSpec {
                         || (theEncryptorType instanceof GordianDigestSpec
                             && ((GordianDigestSpec) theEncryptorType).isValid());
             case EC:
-            case DSTU4145:
             case GOST2012:
                 return theEncryptorType == null;
             case MCELIECE:
@@ -255,7 +254,6 @@ public final class GordianEncryptorSpec {
                         theName += SEP + theEncryptorType;
                         break;
                     case EC:
-                    case DSTU4145:
                     case GOST2012:
                         theName += SEP + ECELGAMAL;
                         break;

@@ -29,8 +29,7 @@
             <p>The following sample reads a designated file directory and creates an encrypted zipFile of the contents</p>
             <source>
                 /* Access factory */
-                final GordianParameters myParams = new GordianParameters();
-                final GordianFactory myBaseFactory = GordianGenerator.createFactory(myParams);
+                final GordianFactory myBaseFactory = GordianGenerator.createFactory();
                 final GordianZipFactory myZipFactory = myBaseFactory.getZipFactory();
                 final GordianKeySetFactory myKeySets = pFactory.getKeySetFactory();
 
@@ -80,8 +79,7 @@
             <p>The following sample reads the contents of an encrypted zipFile</p>
             <source>
                 /* Access factory */
-                final GordianParameters myParams = new GordianParameters();
-                final GordianFactory myBaseFactory = GordianGenerator.createFactory(myParams);
+                final GordianFactory myBaseFactory = GordianGenerator.createFactory();
                 final GordianZipFactory myZipFactory = myBaseFactory.getZipFactory();
                 final GordianKeySetFactory myKeySets = pFactory.getKeySetFactory();
 

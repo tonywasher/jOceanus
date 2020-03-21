@@ -16,7 +16,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jprometheus.javafx;
 
-import net.sourceforge.joceanus.jgordianknot.api.factory.GordianParameters;
+import net.sourceforge.joceanus.jgordianknot.api.factory.GordianFactoryType;
 import net.sourceforge.joceanus.jgordianknot.api.javafx.GordianFXSecurityManager;
 import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetHashSpec;
 import net.sourceforge.joceanus.jgordianknot.util.GordianSecurityManager;
@@ -77,8 +77,9 @@ public class PrometheusFXToolkit
     }
 
     @Override
-    protected GordianSecurityManager newSecurityManager(final GordianParameters pParameters,
+    protected GordianSecurityManager newSecurityManager(final GordianFactoryType pFactoryType,
+                                                        final char[] pSecurityPhrase,
                                                         final GordianKeySetHashSpec pKeySetSpec) throws OceanusException {
-        return new GordianFXSecurityManager(getGuiFactory(), pParameters, pKeySetSpec);
+        return new GordianFXSecurityManager(getGuiFactory(), pFactoryType, pSecurityPhrase, pKeySetSpec);
     }
 }

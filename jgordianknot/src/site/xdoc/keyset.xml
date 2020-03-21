@@ -13,8 +13,7 @@
             <subsection name="Sample">
                 <source>
                     /* Access factory */
-                    final GordianParameters myParams = new GordianParameters();
-                    final GordianFactory myBaseFactory = GordianGenerator.createFactory(myParams);
+                    final GordianFactory myBaseFactory = GordianGenerator.createFactory();
                     final GordianKeySetFactory myKeySetFactory = myBaseFactory.getKeySetFactory();
 
                     /* Create keySet */
@@ -47,8 +46,7 @@
             <subsection name="Sample">
                 <source>
                     /* Access factory */
-                    final GordianParameters myParams = new GordianParameters();
-                    final GordianFactory myBaseFactory = GordianGenerator.createFactory(myParams);
+                    final GordianFactory myBaseFactory = GordianGenerator.createFactory();
                     final GordianKeySetFactory myKeySetFactory = myBaseFactory.getKeySetFactory();
 
                     /* Create keySet */
@@ -80,8 +78,7 @@
             <subsection name="Sample">
                 <source>
                     /* Access factory */
-                    final GordianParameters myParams = new GordianParameters();
-                    final GordianFactory myBaseFactory = GordianGenerator.createFactory(myParams);
+                    final GordianFactory myBaseFactory = GordianGenerator.createFactory();
                     final GordianKeySetFactory myKeySetFactory = myBaseFactory.getKeySetFactory();
 
                     /* Create keySet */
@@ -133,10 +130,18 @@
             <subsection name="Sample">
                 <source>
                     /* Access factory */
-                    final GordianParameters myParams = new GordianParameters();
-                    final GordianFactory myBaseFactory = GordianGenerator.createFactory(myParams);
+                    final GordianFactory myBaseFactory = GordianGenerator.createFactory();
                     final GordianKeySetFactory myKeySetFactory = myBaseFactory.getKeySetFactory();
 
+                    /* Create the hash and access the resultant keySet */
+                    final GordianKeySetSpec mySpec = new GordianKeySetHashSpec(new GordianKeySetSpec(GordianLength.LEN_256));
+                    final char[] myPassword = ...
+                    final GordianKeySetHash myKeySetHash = myKeySetFactory.generateKeySetHash(mySpec, myPassword);
+                    final GordianKeySet myKeySet = myKeySetHash.getKeySet();
+
+                    /* Access hash and derive keySet from hash and password */
+                    final byte[] myHash = myKeySetHash.getHash();
+                    final GordianKeySetHash myResolved = myKeySetFactory.deriveKeySetHash(myHash, myPassword);
                </source>
             </subsection>
         </section>

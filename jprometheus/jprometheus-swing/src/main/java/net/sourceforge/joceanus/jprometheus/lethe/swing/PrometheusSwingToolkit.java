@@ -16,7 +16,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jprometheus.lethe.swing;
 
-import net.sourceforge.joceanus.jgordianknot.api.factory.GordianParameters;
+import net.sourceforge.joceanus.jgordianknot.api.factory.GordianFactoryType;
 import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetHashSpec;
 import net.sourceforge.joceanus.jgordianknot.api.swing.GordianSwingSecurityManager;
 import net.sourceforge.joceanus.jgordianknot.util.GordianSecurityManager;
@@ -121,8 +121,9 @@ public class PrometheusSwingToolkit
     }
 
     @Override
-    protected GordianSecurityManager newSecurityManager(final GordianParameters pParameters,
+    protected GordianSecurityManager newSecurityManager(final GordianFactoryType pFactoryType,
+                                                        final char[] pSecurityPhrase,
                                                         final GordianKeySetHashSpec pKeySetSpec) throws OceanusException {
-        return new GordianSwingSecurityManager(getGuiFactory(), pParameters, pKeySetSpec);
+        return new GordianSwingSecurityManager(getGuiFactory(), pFactoryType, pSecurityPhrase, pKeySetSpec);
     }
 }

@@ -39,7 +39,7 @@ import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianSymCipherSpec;
 import net.sourceforge.joceanus.jgordianknot.api.factory.GordianAsymFactory;
 import net.sourceforge.joceanus.jgordianknot.api.factory.GordianFactory;
 import net.sourceforge.joceanus.jgordianknot.api.factory.GordianFactoryType;
-import net.sourceforge.joceanus.jgordianknot.api.factory.GordianParameters;
+import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianParameters;
 import net.sourceforge.joceanus.jgordianknot.api.key.GordianKey;
 import net.sourceforge.joceanus.jgordianknot.api.base.GordianKeySpec;
 import net.sourceforge.joceanus.jgordianknot.api.key.GordianKeyPair;
@@ -348,6 +348,7 @@ public abstract class GordianCoreAgreement
             /* Create a new Factory using the phrase */
             final GordianParameters myParams = new GordianParameters(pFactoryType);
             myParams.setSecurityPhrase(myPhrase);
+            myParams.setInternal();
             return theFactory.newFactory(myParams);
         } finally {
             Arrays.fill(myPhrase, (byte) 0);

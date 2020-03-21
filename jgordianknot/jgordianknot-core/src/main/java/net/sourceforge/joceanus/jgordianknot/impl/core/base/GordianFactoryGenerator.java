@@ -17,7 +17,6 @@
 package net.sourceforge.joceanus.jgordianknot.impl.core.base;
 
 import net.sourceforge.joceanus.jgordianknot.api.factory.GordianFactory;
-import net.sourceforge.joceanus.jgordianknot.api.factory.GordianParameters;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**

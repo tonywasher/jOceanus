@@ -29,7 +29,7 @@ import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianStreamKeySpec;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianSymKeySpec;
 import net.sourceforge.joceanus.jgordianknot.api.factory.GordianFactory;
 import net.sourceforge.joceanus.jgordianknot.api.factory.GordianFactoryType;
-import net.sourceforge.joceanus.jgordianknot.api.factory.GordianParameters;
+import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianParameters;
 import net.sourceforge.joceanus.jgordianknot.util.GordianGenerator;
 import net.sourceforge.joceanus.jgordianknot.util.GordianSecurityManager;
 import net.sourceforge.joceanus.jgordianknot.api.key.GordianKey;
@@ -101,8 +101,7 @@ public class KeySetTest {
          */
         FactoryBase(final GordianFactoryType pType) throws OceanusException {
             /* Create the factory */
-            final GordianParameters myParams = new GordianParameters(pType);
-            theFactory = GordianGenerator.createFactory(myParams);
+            theFactory = GordianGenerator.createFactory(pType);
         }
 
         /**

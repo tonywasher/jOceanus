@@ -25,7 +25,6 @@ import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianCipherFactory;
 import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigestFactory;
 import net.sourceforge.joceanus.jgordianknot.api.factory.GordianFactory;
 import net.sourceforge.joceanus.jgordianknot.api.factory.GordianFactoryType;
-import net.sourceforge.joceanus.jgordianknot.api.factory.GordianParameters;
 import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetFactory;
 import net.sourceforge.joceanus.jgordianknot.api.mac.GordianMacFactory;
 import net.sourceforge.joceanus.jgordianknot.api.random.GordianRandomFactory;
@@ -146,6 +145,14 @@ public abstract class GordianCoreFactory
      */
     public byte[] getSecurityPhrase() {
         return theParameters.getSecurityPhrase();
+    }
+
+    /**
+     * Is this an internal factory?
+     * @return true/false
+     */
+    public boolean isInternal() {
+        return theParameters.isInternal();
     }
 
     @Override

@@ -27,7 +27,7 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import net.sourceforge.joceanus.jgordianknot.api.factory.GordianFactoryType;
-import net.sourceforge.joceanus.jgordianknot.api.factory.GordianParameters;
+import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianParameters;
 import net.sourceforge.joceanus.jgordianknot.util.GordianDialogController;
 import net.sourceforge.joceanus.jgordianknot.util.GordianSecurityManager;
 import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetHash;
@@ -218,9 +218,8 @@ public class HashManagerTest {
     @BeforeAll
     public static void setUpHashes() throws OceanusException {
         /* Create the security manager */
-        final GordianParameters myParams = new GordianParameters(GordianFactoryType.BC);
         final GordianKeySetHashSpec mySpec = new GordianKeySetHashSpec();
-        final GordianSecurityManager myManager = new GordianSecurityManager(myParams, mySpec, new DialogController());
+        final GordianSecurityManager myManager = new GordianSecurityManager(GordianFactoryType.BC, mySpec, new DialogController());
 
         /* For each NAME */
         for (int i = 0; i < NAMES.length; i++) {
@@ -248,7 +247,7 @@ public class HashManagerTest {
         final GordianParameters myParams = new GordianParameters(GordianFactoryType.BC);
         final GordianKeySetHashSpec mySpec = new GordianKeySetHashSpec();
         final DialogController myController = new DialogController();
-        final GordianSecurityManager myManager = new GordianSecurityManager(myParams, mySpec, myController);
+        final GordianSecurityManager myManager = new GordianSecurityManager(GordianFactoryType.BC, mySpec, myController);
 
         /* Loop through the hashes in the list */
         for (HashIndex myHash : HASHES) {

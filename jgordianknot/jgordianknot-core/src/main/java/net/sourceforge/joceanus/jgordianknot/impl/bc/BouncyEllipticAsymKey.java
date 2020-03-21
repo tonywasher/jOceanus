@@ -188,11 +188,6 @@ public final class BouncyEllipticAsymKey {
         private final ECKeyPairGenerator theGenerator;
 
         /**
-         * Domain.
-         */
-        private final ECNamedDomainParameters theDomain;
-
-        /**
          * Constructor.
          * @param pFactory the Security Factory
          * @param pKeySpec the keySpec
@@ -218,8 +213,8 @@ public final class BouncyEllipticAsymKey {
 
             /* Initialise the generator */
             final ASN1ObjectIdentifier myOid = ECUtil.getNamedCurveOid(myCurve);
-            theDomain = new ECNamedDomainParameters(myOid, x9.getCurve(), x9.getG(), x9.getN(), x9.getH(), x9.getSeed());
-            final ECKeyGenerationParameters myParams = new ECKeyGenerationParameters(theDomain, getRandom());
+            final ECNamedDomainParameters myDomain = new ECNamedDomainParameters(myOid, x9.getCurve(), x9.getG(), x9.getN(), x9.getH(), x9.getSeed());
+            final ECKeyGenerationParameters myParams = new ECKeyGenerationParameters(myDomain, getRandom());
             theGenerator.init(myParams);
         }
 
@@ -381,10 +376,9 @@ public final class BouncyEllipticAsymKey {
          * Constructor.
          * @param pFactory the factory
          * @param pSpec the signatureSpec.
-         * @throws OceanusException on error
          */
         BouncySM2Signature(final BouncyFactory pFactory,
-                           final GordianSignatureSpec pSpec) throws OceanusException {
+                           final GordianSignatureSpec pSpec) {
             /* Initialise underlying class */
             super(pFactory, pSpec);
 
@@ -560,6 +554,8 @@ public final class BouncyEllipticAsymKey {
 
             /* Create the agreement */
             theAgreement = new ECDHCBasicAgreement();
+
+            /* Add in the derivation function */
             enableDerivation();
         }
 
@@ -635,6 +631,8 @@ public final class BouncyEllipticAsymKey {
 
             /* Derive the secret */
             theAgreement = new ECDHCBasicAgreement();
+
+            /* Add in the derivation function */
             enableDerivation();
         }
 
@@ -703,6 +701,8 @@ public final class BouncyEllipticAsymKey {
 
             /* Create Key Agreement */
             theAgreement = new ECDHCUnifiedAgreement();
+
+            /* Add in the derivation function */
             enableDerivation();
         }
 
@@ -780,6 +780,8 @@ public final class BouncyEllipticAsymKey {
 
             /* Create Key Agreement */
             theAgreement = new ECMQVBasicAgreement();
+
+            /* Add in the derivation function */
             enableDerivation();
         }
 
@@ -929,10 +931,9 @@ public final class BouncyEllipticAsymKey {
          * Constructor.
          * @param pFactory the factory
          * @param pSpec the encryptorSpec
-         * @throws OceanusException on error
          */
         BouncyECEncryptor(final BouncyFactory pFactory,
-                          final GordianEncryptorSpec pSpec) throws OceanusException {
+                          final GordianEncryptorSpec pSpec) {
             /* Initialise underlying cipher */
             super(pFactory, pSpec);
             theEncryptor = new EllipticEncryptor();

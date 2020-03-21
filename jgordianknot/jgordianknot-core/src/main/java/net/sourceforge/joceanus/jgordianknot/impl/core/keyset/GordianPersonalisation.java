@@ -16,6 +16,8 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jgordianknot.impl.core.keyset;
 
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.util.Arrays;
 
 import net.sourceforge.joceanus.jgordianknot.api.base.GordianLength;
@@ -39,14 +41,14 @@ public class GordianPersonalisation {
     private static final String BASE_PERSONAL = "jG0rd1anKn0t";
 
     /**
-     * The Additional personalisation.
-     */
-    private static final String ADDTNL_PERSONAL = "ASimplePhrase2Try2ShuffleThePersona1isati0nSomewhat";
-
-    /**
      * Default iterations.
      */
     public static final Integer DEFAULT_ITERATIONS = 2048;
+
+    /**
+     * Internal iterations.
+     */
+    public static final Integer INTERNAL_ITERATIONS = 32;
 
     /**
      * The hash length.
@@ -122,6 +124,21 @@ public class GordianPersonalisation {
     }
 
     /**
+     * determine hostName.
+     * @return the hostName
+     */
+    private static String getHostName() {
+        /* Protect against exceptions */
+        try {
+            final InetAddress myAddr = InetAddress.getLocalHost();
+            return myAddr.getHostName();
+
+        } catch (UnknownHostException e) {
+            return "localhost";
+        }
+    }
+
+    /**
      * Create an array of hashes from personalisation.
      * @param pFactory the factory
      * @return the hashes
@@ -136,7 +153,7 @@ public class GordianPersonalisation {
         final byte[] myPersonalBytes = TethysDataConverter.stringToByteArray(BASE_PERSONAL);
         byte[] myPhraseBytes = pFactory.getSecurityPhrase();
         if (myPhraseBytes == null) {
-            myPhraseBytes = TethysDataConverter.stringToByteArray(ADDTNL_PERSONAL);
+            myPhraseBytes = TethysDataConverter.stringToByteArray(getHostName());
         }
 
         /* Initialise hashes */
@@ -153,8 +170,13 @@ public class GordianPersonalisation {
             myHashes[i] = myResult;
         }
 
-        /* Loop the configured amount of times to cross-fertilise */
-        for (int i = 0; i < DEFAULT_ITERATIONS; i++) {
+        /* Determine the number of iterations */
+        final int myIterations = pFactory.isInternal()
+                                 ? INTERNAL_ITERATIONS
+                                 : DEFAULT_ITERATIONS;
+
+        /* Loop the required amount of times to cross-fertilise */
+        for (int i = 0; i < myIterations; i++) {
             /* Update all the digests */
             for (final GordianDigest myDigest : myDigests) {
                 /* Update with the results */

@@ -19,8 +19,7 @@
             <subsection name="Sample">
                 <source>
                     /* Access factory */
-                    final GordianParameters myParams = new GordianParameters();
-                    final GordianFactory myBaseFactory = GordianGenerator.createFactory(myParams);
+                    final GordianFactory myBaseFactory = GordianGenerator.createFactory();
                     final GordianAsymFactory myKeyPairFactory = myBaseFactory.getAsymmetricFactory();
 
                     /* Access keyPairGenerator */
@@ -80,8 +79,7 @@
             <subsection name="Sample">
                 <source>
                     /* Access factory */
-                    final GordianParameters myParams = new GordianParameters();
-                    final GordianFactory myBaseFactory = GordianGenerator.createFactory(myParams);
+                    final GordianFactory myBaseFactory = GordianGenerator.createFactory();
                     final GordianAsymFactory myKeyPairFactory = myBase.getAsymmetricFactory();
                     final GordianSignatureFactory mySignatureFactory = myKeyPairFactory.getSignatureFactory();
 
@@ -142,8 +140,7 @@
             <subsection name="Sample">
                 <source>
                     /* Access factory */
-                    final GordianParameters myParams = new GordianParameters();
-                    final GordianFactory myBaseFactory = GordianGenerator.createFactory(myParams);
+                    final GordianFactory myBaseFactory = GordianGenerator.createFactory();
                     final GordianAsymFactory myKeyPairFactory = myBase.getAsymmetricFactory();
                     final GordianAgreementFactory myAgreementFactory = myKeyPairFactory.getSignatureFactory();
 
@@ -230,8 +227,7 @@
             <subsection name="Sample">
                 <source>
                     /* Access factory */
-                    final GordianParameters myParams = new GordianParameters();
-                    final GordianFactory myBaseFactory = GordianGenerator.createFactory(myParams);
+                    final GordianFactory myBaseFactory = GordianGenerator.createFactory();
                     final GordianAsymFactory myKeyPairFactory = myBase.getAsymmetricFactory();
                     final GordianEncryptorFactory myEncryptorFactory = myKeyPairFactory.getEncryptorFactory();
 
