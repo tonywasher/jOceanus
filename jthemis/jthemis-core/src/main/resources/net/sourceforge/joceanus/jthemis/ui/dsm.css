@@ -1,0 +1,60 @@
+body {
+	font-family: Verdana, sans-serif;
+	color: black;
+}
+
+table {
+	align: center;
+	table-layout: fixed;
+	border-top: solid;
+	border-bottom: solid;
+	margin-left: auto;
+	margin-right: auto;
+	page-break-inside:avoid;
+}
+
+h1,h2 {
+	text-align: center;
+}
+
+th {
+	font-weight: bold;
+}
+
+th.dsm-col-count {
+	width: 30px;
+}
+
+td {
+	text-align: center;
+}
+
+td.dsm-cell-name-right {
+	text-align: right;
+	width: 150px;
+}
+
+td.dsm-cell-name-left {
+	text-align: left;
+	width: 150px;
+}
+
+td.dsm-cell-self {
+	background-color: black;
+}
+
+td.dsm-cell-circular {
+	background-color: red;
+}
+
+tr.dsm-row-header {
+	background-color: LightGray;
+}
+
+tr.dsm-row-even  {
+	background-color: White;
+}
+
+tr.dsm-row-odd  {
+	background-color: Lavender;
+}

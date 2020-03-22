@@ -16,7 +16,6 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jgordianknot.impl.core.mac;
 
-import net.sourceforge.joceanus.jgordianknot.api.base.GordianLength;
 import net.sourceforge.joceanus.jgordianknot.api.key.GordianKey;
 import net.sourceforge.joceanus.jgordianknot.api.mac.GordianMac;
 import net.sourceforge.joceanus.jgordianknot.api.mac.GordianMacParameters;
@@ -36,11 +35,6 @@ public abstract class GordianCoreMac
     private final GordianMacSpec theMacSpec;
 
     /**
-     * KeyLength.
-     */
-    private final GordianLength theKeyLength;
-
-    /**
      * Parameters.
      */
     private GordianCoreMacParameters theParameters;
@@ -54,7 +48,6 @@ public abstract class GordianCoreMac
     protected GordianCoreMac(final GordianCoreFactory pFactory,
                              final GordianMacSpec pMacSpec) {
         theMacSpec = pMacSpec;
-        theKeyLength = pMacSpec.getKeyLength();
         theParameters = new GordianCoreMacParameters(pFactory, theMacSpec);
     }
 
