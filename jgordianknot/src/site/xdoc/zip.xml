@@ -89,7 +89,7 @@
 
                 /* Unlock the file */
                 final byte[] myHashBytes = myZipFile.getHashBytes();
-                final char[] myPassword = ....
+                final char[] myPassword = ....op
                 final GordianKeySetHash myHash = myKeySets.deriveKeySetHash(myHashBytes, myPassword);
                 myZipFile.setKeySetHash(myHash);
 

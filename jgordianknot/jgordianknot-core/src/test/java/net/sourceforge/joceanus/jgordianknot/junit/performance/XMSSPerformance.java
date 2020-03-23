@@ -1,4 +1,4 @@
-package net.sourceforge.joceanus.jgordianknot.junit.bc;
+package net.sourceforge.joceanus.jgordianknot.junit.performance;
 
 import java.security.SecureRandom;
 

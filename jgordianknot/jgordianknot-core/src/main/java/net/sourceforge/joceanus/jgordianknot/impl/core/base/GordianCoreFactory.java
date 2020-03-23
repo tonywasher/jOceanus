@@ -17,12 +17,16 @@
 package net.sourceforge.joceanus.jgordianknot.impl.core.base;
 
 import java.security.SecureRandom;
+import java.util.function.Predicate;
 
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
 
 import net.sourceforge.joceanus.jgordianknot.api.base.GordianLength;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianCipherFactory;
+import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianSymKeySpec;
+import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianSymKeyType;
 import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigestFactory;
+import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigestType;
 import net.sourceforge.joceanus.jgordianknot.api.factory.GordianFactory;
 import net.sourceforge.joceanus.jgordianknot.api.factory.GordianFactoryType;
 import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetFactory;
@@ -74,6 +78,16 @@ public abstract class GordianCoreFactory
      * Random Source.
      */
     private final GordianRandomSource theRandom;
+
+    /**
+     * Personalisation.
+     */
+    private GordianPersonalisation thePersonalisation;
+
+    /**
+     * IdManager.
+     */
+    private GordianIdManager theIdManager;
 
     /**
      * Digest Factory.
@@ -155,6 +169,30 @@ public abstract class GordianCoreFactory
         return theParameters.isInternal();
     }
 
+    /**
+     * Obtain the personalisation.
+     * @return the personalisation
+     * @throws OceanusException on error
+     */
+    public GordianPersonalisation getPersonalisation() throws OceanusException {
+        if (thePersonalisation == null) {
+            thePersonalisation = new GordianPersonalisation(this);
+        }
+        return thePersonalisation;
+    }
+
+    /**
+     * Obtain the idManager.
+     * @return the idManager
+     * @throws OceanusException on error
+     */
+    public GordianIdManager getIdManager() throws OceanusException {
+        if (theIdManager == null) {
+            theIdManager = new GordianIdManager(this);
+        }
+        return theIdManager;
+    }
+
     @Override
     public void reSeedRandom() {
         /* Access the random */
@@ -233,6 +271,75 @@ public abstract class GordianCoreFactory
      */
     protected void setKeySetFactory(final GordianKeySetFactory pFactory) {
         theKeySetFactory = pFactory;
+    }
+
+    Predicate<GordianDigestType> supportedKeySetDigestTypes() {
+        final GordianMacFactory myMacs = getMacFactory();
+        return myMacs.supportedHMacDigestTypes().and(GordianDigestType::isCombinedHashDigest);
+    }
+
+
+    /**
+     * Obtain predicate for supported keySet symKeySpecs.
+     * @param pKeyLen the keyLength
+     * @return the predicate
+     */
+    public Predicate<GordianSymKeySpec> supportedKeySetSymKeySpecs(final GordianLength pKeyLen) {
+        return s -> supportedKeySetSymKeyTypes(pKeyLen).test(s.getSymKeyType())
+                && s.getBlockLength() == GordianLength.LEN_128;
+    }
+
+    /**
+     * Obtain predicate for keySet SymKeyTypes.
+     * @param pKeyLen the keyLength
+     * @return the predicate
+     */
+    public Predicate<GordianSymKeyType> supportedKeySetSymKeyTypes(final GordianLength pKeyLen) {
+        return t -> validKeySetSymKeyType(t, pKeyLen);
+    }
+
+    /**
+     * check valid keySet symKeyType.
+     * @param pKeyType the symKeyType
+     * @param pKeyLen the keyLength
+     * @return true/false
+     */
+    private boolean validKeySetSymKeyType(final GordianSymKeyType pKeyType,
+                                          final GordianLength pKeyLen) {
+        return validSymKeyType(pKeyType)
+                && validStdBlockSymKeyTypeForKeyLength(pKeyType, pKeyLen);
+    }
+
+    /**
+     * Check standard block symKeyType.
+     * @param pKeyType the symKeyType
+     * @param pKeyLen the keyLength
+     * @return true/false
+     */
+    public static boolean validStdBlockSymKeyTypeForKeyLength(final GordianSymKeyType pKeyType,
+                                                              final GordianLength pKeyLen) {
+        return validSymKeyTypeForKeyLength(pKeyType, pKeyLen)
+                && pKeyType.getDefaultBlockLength().equals(GordianLength.LEN_128);
+    }
+
+    /**
+     * Check SymKeyType.
+     * @param pKeyType the symKeyType
+     * @param pKeyLen the keyLength
+     * @return true/false
+     */
+    public static boolean validSymKeyTypeForKeyLength(final GordianSymKeyType pKeyType,
+                                                      final GordianLength pKeyLen) {
+        return pKeyType.validForKeyLength(pKeyLen);
+    }
+
+    /**
+     * Check SymKeyType.
+     * @param pKeyType the symKeyType
+     * @return true/false
+     */
+    public boolean validSymKeyType(final GordianSymKeyType pKeyType) {
+        return pKeyType != null;
     }
 
     @Override

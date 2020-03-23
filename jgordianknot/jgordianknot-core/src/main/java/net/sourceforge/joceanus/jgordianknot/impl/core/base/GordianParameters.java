@@ -100,7 +100,9 @@ public class GordianParameters {
      * @throws OceanusException on error
      */
     public void setSecurityPhrase(final char[] pSecurityPhrase) throws OceanusException {
-        theSecurityPhrase = TethysDataConverter.charsToByteArray(pSecurityPhrase);
+        theSecurityPhrase = pSecurityPhrase == null
+                                ? null
+                                : TethysDataConverter.charsToByteArray(pSecurityPhrase);
     }
 
     /**

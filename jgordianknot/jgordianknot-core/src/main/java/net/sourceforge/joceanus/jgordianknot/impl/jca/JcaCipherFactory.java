@@ -394,18 +394,12 @@ public class JcaCipherFactory
         }
     }
 
-    @Override
-    public boolean validSymKeyType(final GordianSymKeyType pKeyType) {
-        return supportedSymKeyType(pKeyType)
-                && super.validSymKeyType(pKeyType);
-    }
-
     /**
      * Is this symKeyType supported by Jca?
      * @param pKeyType the keyType
      * @return true/false
      */
-    private static boolean supportedSymKeyType(final GordianSymKeyType pKeyType) {
+    static boolean supportedSymKeyType(final GordianSymKeyType pKeyType) {
         if (pKeyType == null) {
             return false;
         }

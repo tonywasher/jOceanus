@@ -23,6 +23,9 @@ import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianSymKeyType;
 import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigestType;
 import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetSpec;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianCoreFactory;
+import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianIdManager;
+import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianPersonalisation;
+import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.TethysDataConverter;
 
 /**
@@ -69,10 +72,11 @@ public final class GordianKeySetRecipe {
      * @param pFactory the factory
      * @param pSpec the keySetSpec
      * @param pAEAD true/false is AEAD in use?
+     * @throws OceanusException on error
      */
     private GordianKeySetRecipe(final GordianCoreFactory pFactory,
                                 final GordianKeySetSpec pSpec,
-                                final boolean pAEAD) {
+                                final boolean pAEAD) throws OceanusException {
         /* Allocate new set of parameters */
         theParams = new GordianKeySetParameters(pFactory, pSpec, pAEAD);
         theRecipe = theParams.getRecipe();
@@ -86,11 +90,12 @@ public final class GordianKeySetRecipe {
      * @param pSpec the keySetSpec
      * @param pExternal the external form
      * @param pAEAD true/false is AEAD in use?
+     * @throws OceanusException on error
      */
     private GordianKeySetRecipe(final GordianCoreFactory pFactory,
                                 final GordianKeySetSpec pSpec,
                                 final byte[] pExternal,
-                                final boolean pAEAD) {
+                                final boolean pAEAD) throws OceanusException {
         /* Determine data length */
         final int myLen = pExternal.length;
         int myDataLen = myLen
@@ -127,10 +132,11 @@ public final class GordianKeySetRecipe {
      * @param pSpec the keySetSpec
      * @param pAEAD true/false is AEAD in use?
      * @return the recipe
+     * @throws OceanusException on error
      */
     static GordianKeySetRecipe newRecipe(final GordianCoreFactory pFactory,
                                          final GordianKeySetSpec pSpec,
-                                         final boolean pAEAD) {
+                                         final boolean pAEAD) throws OceanusException {
         return new GordianKeySetRecipe(pFactory, pSpec, pAEAD);
     }
 
@@ -141,11 +147,12 @@ public final class GordianKeySetRecipe {
      * @param pExternal the external form
      * @param pAEAD true/false is AEAD in use?
      * @return the recipe
+     * @throws OceanusException on error
      */
     static GordianKeySetRecipe parseRecipe(final GordianCoreFactory pFactory,
                                            final GordianKeySetSpec pSpec,
                                            final byte[] pExternal,
-                                           final boolean pAEAD) {
+                                           final boolean pAEAD) throws OceanusException {
         return new GordianKeySetRecipe(pFactory, pSpec, pExternal, pAEAD);
     }
 
@@ -233,14 +240,14 @@ public final class GordianKeySetRecipe {
          * @param pFactory the factory
          * @param pSpec the keySetSpec
          * @param pAEAD true/false is AEAD in use?
+         * @throws OceanusException on error
          */
         GordianKeySetParameters(final GordianCoreFactory pFactory,
                                 final GordianKeySetSpec pSpec,
-                                final boolean pAEAD) {
+                                final boolean pAEAD) throws OceanusException  {
             /* Obtain Id manager and random */
-            final GordianCoreKeySetFactory myFactory = (GordianCoreKeySetFactory) pFactory.getKeySetFactory();
-            final GordianIdManager myManager = myFactory.getIdManager();
-            final GordianPersonalisation myPersonal = myFactory.getPersonalisation();
+            final GordianIdManager myManager = pFactory.getIdManager();
+            final GordianPersonalisation myPersonal = pFactory.getPersonalisation();
             final SecureRandom myRandom = pFactory.getRandomSource().getRandom();
 
             /* Allocate the initVector */
@@ -272,16 +279,16 @@ public final class GordianKeySetRecipe {
          * @param pRecipe the recipe bytes
          * @param pSalt the salt
          * @param pMac the Mac
+         * @throws OceanusException on error
          */
         GordianKeySetParameters(final GordianCoreFactory pFactory,
                                 final GordianKeySetSpec pSpec,
                                 final byte[] pRecipe,
                                 final byte[] pSalt,
-                                final byte[] pMac) {
+                                final byte[] pMac) throws OceanusException {
             /* Obtain Id manager */
-            final GordianCoreKeySetFactory myFactory = (GordianCoreKeySetFactory) pFactory.getKeySetFactory();
-            final GordianIdManager myManager = myFactory.getIdManager();
-            final GordianPersonalisation myPersonal = myFactory.getPersonalisation();
+            final GordianIdManager myManager = pFactory.getIdManager();
+            final GordianPersonalisation myPersonal = pFactory.getPersonalisation();
 
             /* Store recipe, salt and Mac */
             theRecipe = pRecipe;

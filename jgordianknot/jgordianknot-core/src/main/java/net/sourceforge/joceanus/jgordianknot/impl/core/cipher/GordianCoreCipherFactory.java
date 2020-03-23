@@ -88,7 +88,7 @@ public abstract class GordianCoreCipherFactory
 
     @Override
     public Predicate<GordianSymKeyType> supportedSymKeyTypes() {
-        return this::validSymKeyType;
+        return theFactory::validSymKeyType;
     }
 
     @Override
@@ -280,26 +280,6 @@ public abstract class GordianCoreCipherFactory
     }
 
     /**
-     * Check SymKeyType.
-     * @param pKeyType the symKeyType
-     * @return true/false
-     */
-    public boolean validSymKeyType(final GordianSymKeyType pKeyType) {
-        return pKeyType != null;
-    }
-
-    /**
-     * Check SymKeyType.
-     * @param pKeyType the symKeyType
-     * @param pKeyLen the keyLength
-     * @return true/false
-     */
-    public static boolean validSymKeyTypeForKeyLength(final GordianSymKeyType pKeyType,
-                                                      final GordianLength pKeyLen) {
-        return pKeyType.validForKeyLength(pKeyLen);
-    }
-
-    /**
      * Check StreamCipherSpec.
      * @param pCipherSpec the streamCipherSpec
      * @return true/false
@@ -329,18 +309,6 @@ public abstract class GordianCoreCipherFactory
      */
     protected boolean validStreamKeyType(final GordianStreamKeyType pKeyType) {
         return pKeyType != null;
-    }
-
-    /**
-     * Check standard block symKeyType.
-     * @param pKeyType the symKeyType
-     * @param pKeyLen the keyLength
-     * @return true/false
-     */
-    public static boolean validStdBlockSymKeyTypeForKeyLength(final GordianSymKeyType pKeyType,
-                                                              final GordianLength pKeyLen) {
-        return validSymKeyTypeForKeyLength(pKeyType, pKeyLen)
-                && pKeyType.getDefaultBlockLength().equals(GordianLength.LEN_128);
     }
 
     /**

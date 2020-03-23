@@ -14,7 +14,7 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  ******************************************************************************/
-package net.sourceforge.joceanus.jgordianknot.impl.core.keyset;
+package net.sourceforge.joceanus.jgordianknot.impl.core.base;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;
@@ -27,7 +27,6 @@ import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigestSpec;
 import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigestType;
 import net.sourceforge.joceanus.jgordianknot.api.factory.GordianFactory;
 import net.sourceforge.joceanus.jgordianknot.api.mac.GordianMac;
-import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianCoreFactory;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.TethysDataConverter;
 
@@ -85,7 +84,7 @@ public class GordianPersonalisation {
      * @param pFactory the factory
      * @throws OceanusException on error
      */
-    protected GordianPersonalisation(final GordianCoreFactory pFactory) throws OceanusException {
+    GordianPersonalisation(final GordianCoreFactory pFactory) throws OceanusException {
         /* Calculate personalisation bytes */
         final byte[][] myArrays = personalise(pFactory);
         thePersonalisation = myArrays[0];
@@ -211,7 +210,7 @@ public class GordianPersonalisation {
      * @param pIV the input IV
      * @return the adjusted IV
      */
-    byte[] adjustIV(final byte[] pIV) {
+    public byte[] adjustIV(final byte[] pIV) {
         return TethysDataConverter.combineHashes(pIV, theInitVector);
     }
 
@@ -238,17 +237,8 @@ public class GordianPersonalisation {
      * @param pId the id of the integer
      * @return the result
      */
-    int getPersonalisedInteger(final GordianPersonalId pId) {
+    public int getPersonalisedInteger(final GordianPersonalId pId) {
         return sanitiseValue(getPersonalisedMask(getOffsetForId(pId)));
-    }
-
-    /**
-     * Obtain byte from personalisation.
-     * @param pId the id of the byte
-     * @return the result
-     */
-    protected int getPersonalisedByte(final GordianPersonalId pId) {
-        return getPersonalisedByte(getOffsetForId(pId));
     }
 
     /**
@@ -315,19 +305,9 @@ public class GordianPersonalisation {
         SYMKEY,
 
         /**
-         * StreamKey.
-         */
-        STREAMKEY,
-
-        /**
          * Digest.
          */
         DIGEST,
-
-        /**
-         * MAC.
-         */
-        MAC,
 
         /**
          * Recipe.

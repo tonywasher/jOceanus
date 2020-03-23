@@ -40,8 +40,10 @@ import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigestType;
 import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKnuthObfuscater;
 import net.sourceforge.joceanus.jgordianknot.api.mac.GordianMacSpec;
 import net.sourceforge.joceanus.jgordianknot.api.mac.GordianMacType;
+import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianCoreFactory;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianDataException;
-import net.sourceforge.joceanus.jgordianknot.impl.core.keyset.GordianPersonalisation.GordianPersonalId;
+import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianPersonalisation;
+import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianPersonalisation.GordianPersonalId;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
@@ -66,11 +68,12 @@ public class GordianCoreKnuthObfuscater
 
     /**
      * Constructor.
-     * @param pKeySetFactory the keySet factory
+     * @param pFactory the factory
+     * @throws OceanusException on error
      */
-    GordianCoreKnuthObfuscater(final GordianCoreKeySetFactory pKeySetFactory) {
+    GordianCoreKnuthObfuscater(final GordianCoreFactory pFactory) throws OceanusException {
         /* Generate Knuth Prime/Inverse */
-        final GordianPersonalisation myPersonal = pKeySetFactory.getPersonalisation();
+        final GordianPersonalisation myPersonal = pFactory.getPersonalisation();
         final BigInteger[] myKnuth = generatePrime(myPersonal.getPersonalisedInteger(GordianPersonalId.KNUTHPRIME));
         thePrime = myKnuth[0].intValue();
         theInverse = myKnuth[1].intValue();

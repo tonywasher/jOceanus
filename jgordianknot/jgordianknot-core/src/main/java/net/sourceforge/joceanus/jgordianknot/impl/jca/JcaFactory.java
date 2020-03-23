@@ -22,6 +22,7 @@ import java.security.Security;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.pqc.jcajce.provider.BouncyCastlePQCProvider;
 
+import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianSymKeyType;
 import net.sourceforge.joceanus.jgordianknot.api.factory.GordianAsymFactory;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianParameters;
 import net.sourceforge.joceanus.jgordianknot.api.zip.GordianZipFactory;
@@ -113,5 +114,11 @@ public class JcaFactory
             theAsymFactory = new JcaAsymFactory(this);
         }
         return theAsymFactory;
+    }
+
+    @Override
+    public boolean validSymKeyType(final GordianSymKeyType pKeyType) {
+        return JcaCipherFactory.supportedSymKeyType(pKeyType)
+                && super.validSymKeyType(pKeyType);
     }
 }

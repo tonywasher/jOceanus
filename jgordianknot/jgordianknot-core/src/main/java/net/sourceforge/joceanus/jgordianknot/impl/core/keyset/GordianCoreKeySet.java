@@ -35,13 +35,11 @@ import net.sourceforge.joceanus.jgordianknot.api.base.GordianKeySpec;
 import net.sourceforge.joceanus.jgordianknot.api.key.GordianKeyGenerator;
 import net.sourceforge.joceanus.jgordianknot.api.key.GordianKeyPair;
 import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySet;
-import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetFactory;
 import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetSpec;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianCoreFactory;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianDataException;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianIOException;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianLogicException;
-import net.sourceforge.joceanus.jgordianknot.impl.core.cipher.GordianCoreCipherFactory;
 import net.sourceforge.joceanus.jgordianknot.impl.core.cipher.GordianCoreWrapper;
 import net.sourceforge.joceanus.jgordianknot.impl.core.key.GordianCoreKeyGenerator;
 import net.sourceforge.joceanus.jgordianknot.impl.core.keypair.GordianCoreKeyPairGenerator;
@@ -224,7 +222,7 @@ public final class GordianCoreKeySet
         /* Count the number of KeySetSymTypes for 256 bit keys */
         int myCount = 0;
         for (GordianSymKeyType myType : GordianSymKeyType.values()) {
-            if (GordianCoreCipherFactory.validStdBlockSymKeyTypeForKeyLength(myType, pKeyLen)) {
+            if (GordianCoreFactory.validStdBlockSymKeyTypeForKeyLength(myType, pKeyLen)) {
                 myCount++;
             }
         }
@@ -249,8 +247,7 @@ public final class GordianCoreKeySet
     @Override
     public int getKeySetWrapLength() {
         /* Obtain the count of valid symKeyTypes */
-        final GordianKeySetFactory myFactory = theFactory.getKeySetFactory();
-        final Predicate<GordianSymKeyType> myPredicate = myFactory.supportedKeySetSymKeyTypes(theSpec.getKeyLength());
+        final Predicate<GordianSymKeyType> myPredicate = theFactory.supportedKeySetSymKeyTypes(theSpec.getKeyLength());
         final int myCount = (int) Arrays.stream(GordianSymKeyType.values()).filter(myPredicate).count();
 
         /* Determine the size of the encoded ASN1 keySet */
@@ -438,8 +435,7 @@ public final class GordianCoreKeySet
      * @throws OceanusException on error
      */
     void declareSymKey(final GordianKey<GordianSymKeySpec> pKey) throws OceanusException {
-        final GordianKeySetFactory myFactory = theFactory.getKeySetFactory();
-        declareKey(pKey, myFactory.supportedKeySetSymKeySpecs(theSpec.getKeyLength()), theSymKeyMap);
+        declareKey(pKey, theFactory.supportedKeySetSymKeySpecs(theSpec.getKeyLength()), theSymKeyMap);
     }
 
     /**
@@ -482,9 +478,8 @@ public final class GordianCoreKeySet
      */
     void buildFromRandom() throws OceanusException {
         /* Loop through the symmetricKeys values */
-        final GordianKeySetFactory myFactory = theFactory.getKeySetFactory();
         final GordianLength myKeyLen = theSpec.getKeyLength();
-        final Predicate<GordianSymKeyType> mySymPredicate = myFactory.supportedKeySetSymKeyTypes(myKeyLen);
+        final Predicate<GordianSymKeyType> mySymPredicate = theFactory.supportedKeySetSymKeyTypes(myKeyLen);
         for (final GordianSymKeyType myType : GordianSymKeyType.values()) {
             /* If this is supported for a keySet */
             if (mySymPredicate.test(myType)) {
@@ -506,9 +501,8 @@ public final class GordianCoreKeySet
     public void buildFromSecret(final byte[] pSecret,
                                 final byte[] pInitVector) throws OceanusException {
         /* Loop through the symmetricKeys values */
-        final GordianKeySetFactory myKeySetFactory = theFactory.getKeySetFactory();
         final GordianLength myKeyLen = theSpec.getKeyLength();
-        final Predicate<GordianSymKeyType> mySymPredicate = myKeySetFactory.supportedKeySetSymKeyTypes(myKeyLen);
+        final Predicate<GordianSymKeyType> mySymPredicate = theFactory.supportedKeySetSymKeyTypes(myKeyLen);
         for (final GordianSymKeyType myType : GordianSymKeyType.values()) {
             /* If this is supported for a keySet */
             if (mySymPredicate.test(myType)) {

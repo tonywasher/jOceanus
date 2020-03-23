@@ -27,6 +27,7 @@ import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetHashSpec;
 import net.sourceforge.joceanus.jgordianknot.api.mac.GordianMacFactory;
 import net.sourceforge.joceanus.jgordianknot.api.mac.GordianMacSpec;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianCoreFactory;
+import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianPersonalisation;
 import net.sourceforge.joceanus.jgordianknot.impl.core.mac.GordianCoreMac;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.TethysDataConverter;
@@ -68,9 +69,10 @@ public final class GordianCoreKeySetHash
      *
      * @param pFactory the factory
      * @param pSpec the keySetHashSpec
+     * @throws OceanusException on error
      */
     private GordianCoreKeySetHash(final GordianCoreFactory pFactory,
-                                  final GordianKeySetHashSpec pSpec) {
+                                  final GordianKeySetHashSpec pSpec) throws OceanusException {
         /* Store the factory */
         theFactory = pFactory;
         theSpec = pSpec;
@@ -286,8 +288,7 @@ public final class GordianCoreKeySetHash
      */
     private byte[][] generateHash(final byte[] pPassword) throws OceanusException {
         /* Obtain configuration details */
-        final GordianCoreKeySetFactory myFactory = (GordianCoreKeySetFactory) theFactory.getKeySetFactory();
-        final GordianPersonalisation myPersonal = myFactory.getPersonalisation();
+        final GordianPersonalisation myPersonal = theFactory.getPersonalisation();
         final int iIterations = theRecipe.getSpec().getNumIterations();
         final int iFinal = theRecipe.getAdjustment()
                 + iIterations;

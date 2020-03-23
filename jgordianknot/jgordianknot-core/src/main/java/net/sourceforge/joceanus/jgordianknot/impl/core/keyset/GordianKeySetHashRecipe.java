@@ -25,6 +25,8 @@ import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigestType;
 import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetHashSpec;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianCoreFactory;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianIOException;
+import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianIdManager;
+import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianPersonalisation;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.TethysDataConverter;
 
@@ -91,9 +93,10 @@ public final class GordianKeySetHashRecipe {
      * Constructor for random choices.
      * @param pFactory the factory
      * @param pSpec the keySetHashSpec
+     * @throws OceanusException on error
      */
     GordianKeySetHashRecipe(final GordianCoreFactory pFactory,
-                            final GordianKeySetHashSpec pSpec) {
+                            final GordianKeySetHashSpec pSpec) throws OceanusException {
         /* Access the secureRandom */
         final SecureRandom myRandom = pFactory.getRandomSource().getRandom();
 
@@ -102,8 +105,7 @@ public final class GordianKeySetHashRecipe {
         myRandom.nextBytes(theSalt);
 
         /* Calculate the initVector */
-        final GordianCoreKeySetFactory myFactory = (GordianCoreKeySetFactory) pFactory.getKeySetFactory();
-        final GordianPersonalisation myPersonal = myFactory.getPersonalisation();
+        final GordianPersonalisation myPersonal = pFactory.getPersonalisation();
         theInitVector = myPersonal.adjustIV(theSalt);
 
         /* Allocate new set of parameters */
@@ -155,8 +157,7 @@ public final class GordianKeySetHashRecipe {
                 - myOffSet);
 
         /* Calculate the initVector */
-        final GordianCoreKeySetFactory myFactory = (GordianCoreKeySetFactory) pFactory.getKeySetFactory();
-        final GordianPersonalisation myPersonal = myFactory.getPersonalisation();
+        final GordianPersonalisation myPersonal = pFactory.getPersonalisation();
         theInitVector = myPersonal.adjustIV(theSalt);
 
         /* Allocate new set of parameters */
@@ -301,12 +302,12 @@ public final class GordianKeySetHashRecipe {
         /**
          * Construct the parameters from random.
          * @param pFactory the factory
+         * @throws OceanusException on error
          */
-        GordianHashParameters(final GordianCoreFactory pFactory) {
+        GordianHashParameters(final GordianCoreFactory pFactory) throws OceanusException {
             /* Obtain Id manager and random */
-            final GordianCoreKeySetFactory myFactory = (GordianCoreKeySetFactory) pFactory.getKeySetFactory();
-            final GordianIdManager myManager = myFactory.getIdManager();
-            final GordianPersonalisation myPersonal = myFactory.getPersonalisation();
+            final GordianIdManager myManager = pFactory.getIdManager();
+            final GordianPersonalisation myPersonal = pFactory.getPersonalisation();
             final SecureRandom myRandom = pFactory.getRandomSource().getRandom();
 
             /* Allocate the arrays */
@@ -328,13 +329,13 @@ public final class GordianKeySetHashRecipe {
          * Construct the parameters from recipe.
          * @param pFactory the factory
          * @param pRecipe the recipe bytes
+         * @throws OceanusException on error
          */
         GordianHashParameters(final GordianCoreFactory pFactory,
-                              final byte[] pRecipe) {
+                              final byte[] pRecipe) throws OceanusException {
             /* Obtain Id manager */
-            final GordianCoreKeySetFactory myFactory = (GordianCoreKeySetFactory) pFactory.getKeySetFactory();
-            final GordianIdManager myManager = myFactory.getIdManager();
-            final GordianPersonalisation myPersonal = myFactory.getPersonalisation();
+            final GordianIdManager myManager = pFactory.getIdManager();
+            final GordianPersonalisation myPersonal = pFactory.getPersonalisation();
 
             /* Allocate the arrays */
             theExternalDigest = new GordianDigestType[1];

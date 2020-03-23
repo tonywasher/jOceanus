@@ -28,11 +28,9 @@ import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianCipherFactory;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianCipherParameters;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianPadding;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianStreamKeySpec;
-import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianStreamKeyType;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianSymCipher;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianSymCipherSpec;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianSymKeySpec;
-import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianSymKeyType;
 import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigest;
 import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigestFactory;
 import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigestSpec;
@@ -52,8 +50,7 @@ import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianRandomSource;
 import net.sourceforge.joceanus.jgordianknot.impl.core.cipher.GordianCoreCipher;
 import net.sourceforge.joceanus.jgordianknot.impl.core.cipher.GordianCoreCipherFactory;
 import net.sourceforge.joceanus.jgordianknot.impl.core.digest.GordianCoreDigestFactory;
-import net.sourceforge.joceanus.jgordianknot.impl.core.keyset.GordianCoreKeySetFactory;
-import net.sourceforge.joceanus.jgordianknot.impl.core.keyset.GordianIdManager;
+import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianIdManager;
 import net.sourceforge.joceanus.jgordianknot.impl.core.mac.GordianCoreMac;
 import net.sourceforge.joceanus.jgordianknot.impl.core.mac.GordianCoreMacFactory;
 import net.sourceforge.joceanus.jtethys.OceanusException;
@@ -249,20 +246,14 @@ public class GordianCoreRandomFactory
     }
 
     @Override
-    public GordianDigest generateRandomDigest() throws OceanusException {
+    public GordianDigest generateRandomDigest(final boolean pLargeData) throws OceanusException {
         /* Access Digest Factory and IdManager */
         final GordianDigestFactory myDigests = theFactory.getDigestFactory();
-        final GordianCoreKeySetFactory myKeySets = (GordianCoreKeySetFactory) theFactory.getKeySetFactory();
-        final GordianIdManager myIds = myKeySets.getIdManager();
+        final GordianIdManager myIds = theFactory.getIdManager();
 
-        /* Keep looping until we find a valid digest */
-        for (;;) {
-            final GordianDigestType myType = myIds.generateRandomDigestType();
-            final GordianDigestSpec mySpec = new GordianDigestSpec(myType);
-            if (myDigests.supportedDigestSpecs().test(mySpec)) {
-                return myDigests.createDigest(new GordianDigestSpec(myType));
-            }
-        }
+        /* Determine a random specification and create it */
+        final GordianDigestSpec mySpec = myIds.generateRandomDigestSpec(pLargeData);
+        return myDigests.createDigest(mySpec);
     }
 
     @Override
@@ -270,8 +261,7 @@ public class GordianCoreRandomFactory
                                         final boolean pLargeData) throws OceanusException {
         /* Access Mac Factory and IdManager */
         final GordianMacFactory myMacs = theFactory.getMacFactory();
-        final GordianCoreKeySetFactory myKeySets = (GordianCoreKeySetFactory) theFactory.getKeySetFactory();
-        final GordianIdManager myIds = myKeySets.getIdManager();
+        final GordianIdManager myIds = theFactory.getIdManager();
 
         /* Determine a random specification */
         final GordianMacSpec mySpec = myIds.generateRandomMacSpec(pKeyLen, pLargeData);
@@ -292,14 +282,13 @@ public class GordianCoreRandomFactory
     public GordianKey<GordianSymKeySpec> generateRandomSymKey(final GordianLength pKeyLen) throws OceanusException {
         /* Access Cipher Factory and IdManager */
         final GordianCipherFactory myCiphers = theFactory.getCipherFactory();
-        final GordianCoreKeySetFactory myKeySets = (GordianCoreKeySetFactory) theFactory.getKeySetFactory();
-        final GordianIdManager myIds = myKeySets.getIdManager();
+        final GordianIdManager myIds = theFactory.getIdManager();
 
-        /* Determine a random keyType */
-        final GordianSymKeyType myType = myIds.generateRandomSymKeyType(pKeyLen);
+        /* Determine a random keySpec */
+        final GordianSymKeySpec mySpec = myIds.generateRandomSymKeySpec(pKeyLen);
 
         /* Generate a random key */
-        final GordianKeyGenerator<GordianSymKeySpec> myGenerator = myCiphers.getKeyGenerator(new GordianSymKeySpec(myType, pKeyLen));
+        final GordianKeyGenerator<GordianSymKeySpec> myGenerator = myCiphers.getKeyGenerator(mySpec);
         return myGenerator.generateKey();
     }
 
@@ -308,14 +297,13 @@ public class GordianCoreRandomFactory
                                                                     final boolean pLargeData) throws OceanusException {
         /* Access Cipher Factory and IdManager */
         final GordianCipherFactory myCiphers = theFactory.getCipherFactory();
-        final GordianCoreKeySetFactory myKeySets = (GordianCoreKeySetFactory) theFactory.getKeySetFactory();
-        final GordianIdManager myIds = myKeySets.getIdManager();
+        final GordianIdManager myIds = theFactory.getIdManager();
+
+        /* Generate a random keySpec */
+        final GordianStreamKeySpec mySpec = myIds.generateRandomStreamKeySpec(pKeyLen, pLargeData);
 
         /* Generate a random key */
-        final GordianStreamKeyType myType =  myIds.generateRandomStreamKeyType(pKeyLen, pLargeData);
-
-        /* Generate a random key */
-        final GordianKeyGenerator<GordianStreamKeySpec> myGenerator = myCiphers.getKeyGenerator(new GordianStreamKeySpec(myType, pKeyLen));
+        final GordianKeyGenerator<GordianStreamKeySpec> myGenerator = myCiphers.getKeyGenerator(mySpec);
         return myGenerator.generateKey();
     }
 
