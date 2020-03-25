@@ -31,11 +31,6 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
  */
 public class GordianIdCache {
     /**
-     * The SecureRandom.
-     */
-    private final GordianRandomSource theRandom;
-
-    /**
      * The personalisation.
      */
     private final GordianPersonalisation thePersonalisation;
@@ -64,7 +59,6 @@ public class GordianIdCache {
     GordianIdCache(final GordianCoreFactory pFactory,
                    final GordianLength pKeyLen) throws OceanusException {
         /* Store the details */
-        theRandom = pFactory.getRandomSource();
         thePersonalisation = pFactory.getPersonalisation();
 
         /* Access factories */
@@ -80,16 +74,6 @@ public class GordianIdCache {
                 myDigests.supportedExternalDigestTypes());
         theKeySetDigests = shuffleTypes(GordianDigestType.values(), GordianPersonalId.DIGEST, myIndex,
                 pFactory.supportedKeySetDigestTypes());
-    }
-
-    /**
-     * Obtain set of random keySet SymKeyTypes.
-     * @param pCount the count
-     * @return the random symKeyTypes
-     */
-    GordianSymKeyType[] generateRandomKeySetSymKeyTypes(final int pCount) {
-        /* Determine random symKeyTypes */
-        return getRandomTypes(theKeySetSymKeys, pCount);
     }
 
     /**
@@ -205,21 +189,6 @@ public class GordianIdCache {
 
         /* Return the filtered types as a new array */
         return Arrays.copyOf(myTypes, myNumAvailable);
-    }
-
-    /**
-     * Generate random subSet of Types.
-     * @param <E> the data type
-     * @param pTypes the source types.
-     * @param pCount the count of types to be returned
-     * @return the subSet of types
-     */
-    private <E extends Enum<E>> E[] getRandomTypes(final E[] pTypes,
-                                                   final int pCount) {
-        /* Use a random seed */
-        final E[] myResult = Arrays.copyOf(pTypes, pCount);
-        getSeededTypes(pTypes, myResult, theRandom.getRandom().nextInt());
-        return myResult;
     }
 
     /**

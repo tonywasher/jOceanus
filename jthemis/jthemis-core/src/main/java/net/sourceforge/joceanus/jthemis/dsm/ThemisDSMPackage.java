@@ -23,7 +23,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
 
@@ -143,6 +142,14 @@ public class ThemisDSMPackage {
     }
 
     /**
+     * Does the package have references?
+     * @return true/false
+     */
+    boolean hasReferences() {
+        return !theDirectReferences.isEmpty();
+    }
+
+    /**
      * Add a reference to the list.
      * @param pReference the reference
      */
@@ -153,19 +160,19 @@ public class ThemisDSMPackage {
     }
 
     /**
-     * Obtain an iterator of the references.
-     * @return the iterator
+     * Obtain a list of all direct references.
+     * @return the list
      */
-    Iterator<ThemisDSMPackage> referenceIterator() {
-        return theDirectReferences.iterator();
+    public List<ThemisDSMPackage> listReferences() {
+        return new ArrayList<>(theDirectReferences);
     }
 
     /**
-     * Obtain an iterator of the class.
-     * @return the iterator
+     * Obtain the default reference.
+     * @return the default
      */
-    Iterator<ThemisDSMClass> classIterator() {
-        return theClasses.iterator();
+    public ThemisDSMPackage getDefaultReference() {
+        return theDirectReferences.isEmpty() ? null : theDirectReferences.get(0);
     }
 
     @Override
@@ -374,7 +381,7 @@ public class ThemisDSMPackage {
 
     /**
      * Compare this package to another package for sort order.
-     * @param pThat the oother package to compare to
+     * @param pThat the other package to compare to
      * @return true/false
      */
     public int compareTo(final ThemisDSMPackage pThat) {

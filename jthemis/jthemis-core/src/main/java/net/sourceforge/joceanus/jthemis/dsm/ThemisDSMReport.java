@@ -25,84 +25,49 @@ import javax.swing.text.html.HTML.Tag;
  */
 public final class ThemisDSMReport {
     /**
+     * The reference separator.
+     */
+    public static final String SEP_REF = "-";
+
+    /**
      * Private constructor.
      */
     private ThemisDSMReport() {
     }
 
     /**
-     * report on a project.
-     * @param pProject the project to report on
+     * report on a module.
+     * @param pModule the module to report on
      * @return the report
      */
-    static String reportOnProject(final ThemisDSMProject pProject) {
-        /* Build title */
+    public static String reportOnModule(final ThemisDSMModule pModule) {
+        /* Create a stringBuilder */
         final StringBuilder myBuilder = new StringBuilder();
+
+        /* Start document */
         addStartElement(myBuilder, Tag.HTML);
-        addStartElement(myBuilder, Tag.HEAD);
-        myBuilder.append("<link REL=\"StyleSheet\" HREF=\"dsm.css\" TYPE=\"text/css\" MEDIA=\"screen, print\">");
-        addEndElement(myBuilder, Tag.HEAD);
         addStartElement(myBuilder, Tag.BODY);
-        addElement(myBuilder, Tag.H1, pProject.getProjectName());
 
-        /* Loop through the modules */
-        final Iterator<ThemisDSMModule> myIterator = pProject.moduleIterator();
+        /* Build table */
+        addStartElement(myBuilder, Tag.TABLE);
+        buildTableHeader(myBuilder, pModule);
+
+        /* Loop through the packages */
+        int myKey = 0;
+        int myRowNo = 0;
+        final Iterator<ThemisDSMPackage> myIterator = pModule.packageIterator();
         while (myIterator.hasNext()) {
-            final ThemisDSMModule myModule = myIterator.next();
-
-            /* Process the module */
-            reportOnModule(myBuilder, myModule);
+            final ThemisDSMPackage myPackage = myIterator.next();
+            buildTableRow(myBuilder, pModule, myPackage, myRowNo++, myKey++);
         }
+
+        /* Finish the table */
+        addEndElement(myBuilder, Tag.TABLE);
 
         /* Finish document */
         addEndElement(myBuilder, Tag.BODY);
         addEndElement(myBuilder, Tag.HTML);
-
-        /* Return the report */
         return myBuilder.toString();
-    }
-
-    /**
-     * report on a module.
-     * @param pBuilder the builder
-     * @param pModule the module to report on
-     */
-    private static void reportOnModule(final StringBuilder pBuilder,
-                                       final ThemisDSMModule pModule) {
-        /* If the Module has packages */
-        if (pModule.hasPackages()) {
-            /* Create a stringBuilder */
-            final StringBuilder myBuilder = new StringBuilder();
-
-            /* Build title */
-            addElement(pBuilder, Tag.H2, pModule.getModuleName());
-
-            /* Build table */
-            addStartElement(pBuilder, Tag.TABLE);
-            buildTableHeader(pBuilder, pModule);
-
-            /* Loop through the packages */
-            int myKey = 0;
-            int myRowNo = 0;
-            final Iterator<ThemisDSMPackage> myIterator = pModule.packageIterator();
-            while (myIterator.hasNext()) {
-                final ThemisDSMPackage myPackage = myIterator.next();
-                myBuilder.append(buildTableRow(pBuilder, pModule, myPackage, myRowNo++, myKey++));
-            }
-
-            /* Finish the table */
-            addEndElement(pBuilder, Tag.TABLE);
-            pBuilder.append(myBuilder);
-        }
-
-        /* Loop through the submodules */
-        final Iterator<ThemisDSMModule> myIterator = pModule.moduleIterator();
-        while (myIterator.hasNext()) {
-            final ThemisDSMModule myModule = myIterator.next();
-
-            /* Process the module */
-            reportOnModule(pBuilder, myModule);
-        }
     }
 
     /**
@@ -113,18 +78,18 @@ public final class ThemisDSMReport {
     private static void buildTableHeader(final StringBuilder pBuilder,
                                         final ThemisDSMModule pModule) {
         /* Start the row */
-        addStartElement(pBuilder, Tag.TR, "dsm-row-header");
+        addStartElementWithClass(pBuilder, Tag.TR, "dsm-row-header");
 
         /* Build the initial headers */
-        addElement(pBuilder, Tag.TH, "Package");
-        addElement(pBuilder, Tag.TH, "Key");
+        addTextElement(pBuilder, Tag.TH, "Package");
+        addTextElement(pBuilder, Tag.TH, "Key");
 
         /* Loop through the packages */
         int myKey = 0;
         final int myCount = pModule.getPackageCount();
         for (int i = 0; i < myCount; i++) {
             /* Add the key */
-            addElement(pBuilder, Tag.TH, "dsm-col-count", getKeyForIndex(myKey++));
+            addTextElementWithClass(pBuilder, Tag.TH, "dsm-col-count", getKeyForIndex(myKey++));
         }
 
         /* Complete the row */
@@ -139,23 +104,22 @@ public final class ThemisDSMReport {
      * @param pRowNo the row number
      * @param pKey the package key
      */
-    private static StringBuilder buildTableRow(final StringBuilder pBuilder,
-                                               final ThemisDSMModule pModule,
-                                               final ThemisDSMPackage pPackage,
-                                               final int pRowNo,
-                                               final int pKey) {
-        /* Create a stringBuilder */
-        final StringBuilder myBuilder = new StringBuilder();
-
+    private static void buildTableRow(final StringBuilder pBuilder,
+                                      final ThemisDSMModule pModule,
+                                      final ThemisDSMPackage pPackage,
+                                      final int pRowNo,
+                                      final int pKey) {
         /* Start the row */
         final String myClass = (pRowNo % 2 == 0) ? "dsm-row-even" : "dsm-row-odd";
-        addStartElement(pBuilder, Tag.TR, myClass);
+        addStartElementWithClass(pBuilder, Tag.TR, myClass);
 
         /* Build the initial cells */
-        addElement(pBuilder, Tag.TD, "dsm-cell-name-left", pPackage.getPackageName());
-        addElement(pBuilder, Tag.TD, getKeyForIndex(pKey));
+        addTextElementWithClass(pBuilder, Tag.TD, "dsm-cell-name-left", pPackage.getPackageName());
+        final String myKeyTo = getKeyForIndex(pKey);
+        addTextElement(pBuilder, Tag.TD, myKeyTo);
 
         /* Loop through the packages */
+        int myKey = 0;
         final Iterator<ThemisDSMPackage> myIterator = pModule.packageIterator();
         while (myIterator.hasNext()) {
             final ThemisDSMPackage myPackage = myIterator.next();
@@ -166,18 +130,19 @@ public final class ThemisDSMReport {
             final int myCount = myPackage.getReferencesTo(pPackage).size();
             if (isSelf) {
                 final String myCellClass = isCircular ? "dsm-cell-circular" : "dsm-cell-self";
-                addElement(pBuilder, Tag.TD, myCellClass, "");
+                addTextElementWithClass(pBuilder, Tag.TD, myCellClass, "");
             } else if (myCount == 0) {
-                addElement(pBuilder, Tag.TD, "");
+                addTextElement(pBuilder, Tag.TD, "");
             } else {
-                addElement(pBuilder, Tag.TD, Integer.toString(myCount));
-                reportOnPackageLinks(myBuilder, myPackage, pPackage);
+                final String myKeyFrom = getKeyForIndex(myKey);
+                addTextElementWithLink(pBuilder, Tag.TD, Integer.toString(myCount),
+                        myKeyFrom + SEP_REF + myKeyTo);
             }
+            myKey++;
         }
 
         /* Complete the row */
         addEndElement(pBuilder, Tag.TR);
-        return myBuilder;
     }
 
     /**
@@ -199,24 +164,42 @@ public final class ThemisDSMReport {
     }
 
     /**
-     * report on a module.
-     * @param pBuilder the builder
+     * Obtain index for key.
+     * @param pKey the key
+     * @return the index
+     */
+    public static int getIndexForKey(final String pKey) {
+        /* Handle simple key */
+        if (pKey.length() == 1) {
+            return pKey.charAt(0) - 'A';
+        }
+
+        /* Handle double index */
+        final int myRadix = 'Z' - 'A' + 1;
+        final int myFirst = pKey.charAt(0) - 'A' + 1;
+        final int mySecond = pKey.charAt(0) - 'A';
+        return myFirst * myRadix + mySecond;
+    }
+
+    /**
+     * report on package links.
      * @param pSource the source package to report on
      * @param pTarget the target package to report on
+     * @return the report
      */
-    private static void reportOnPackageLinks(final StringBuilder pBuilder,
-                                             final ThemisDSMPackage pSource,
-                                             final ThemisDSMPackage pTarget) {
+    public static String reportOnPackageLinks(final ThemisDSMPackage pSource,
+                                              final ThemisDSMPackage pTarget) {
+        /* Create a stringBuilder */
+        final StringBuilder myBuilder = new StringBuilder();
+
         /* Build table */
-        addStartElement(pBuilder, Tag.BR);
-        addEndElement(pBuilder, Tag.BR);
-        addStartElement(pBuilder, Tag.TABLE);
+        addStartElement(myBuilder, Tag.TABLE);
 
         /* Table header */
-        addStartElement(pBuilder, Tag.TR, "dsm-row-header");
-        addElement(pBuilder, Tag.TH, pSource.getPackageName());
-        addElement(pBuilder, Tag.TH, pTarget.getPackageName());
-        addEndElement(pBuilder, Tag.TR);
+        addStartElementWithClass(myBuilder, Tag.TR, "dsm-row-header");
+        addTextElement(myBuilder, Tag.TH, "Class");
+        addTextElement(myBuilder, Tag.TH, "References");
+        addEndElement(myBuilder, Tag.TR);
 
         /* Loop through the packages */
         int myRowNo = 0;
@@ -226,21 +209,26 @@ public final class ThemisDSMReport {
 
             /* Table header */
             final String myRowClass = (myRowNo++ % 2 == 0) ? "dsm-row-even" : "dsm-row-odd";
-            addStartElement(pBuilder, Tag.TR, myRowClass);
-            addElement(pBuilder, Tag.TD, myClass.getClassName(), myClasses.size());
+            addStartElementWithClass(myBuilder, Tag.TR, myRowClass);
+            addTextElementWithSpan(myBuilder, Tag.TD, myClass.getClassName(), myClasses.size());
             boolean bFirst = true;
             for (ThemisDSMClass myRef : myClasses) {
                 if (!bFirst) {
-                    addStartElement(pBuilder, Tag.TR, myRowClass);
+                    addStartElementWithClass(myBuilder, Tag.TR, myRowClass);
                 }
                 bFirst = false;
-                addElement(pBuilder, Tag.TD, myRef.getClassName());
-                addEndElement(pBuilder, Tag.TR);
+                addTextElement(myBuilder, Tag.TD, myRef.getClassName());
+                addEndElement(myBuilder, Tag.TR);
             }
         }
 
         /* Finish the table */
-        addEndElement(pBuilder, Tag.TABLE);
+        addEndElement(myBuilder, Tag.TABLE);
+
+        /* Finish document */
+        addEndElement(myBuilder, Tag.BODY);
+        addEndElement(myBuilder, Tag.HTML);
+        return myBuilder.toString();
     }
 
     /**
@@ -249,9 +237,9 @@ public final class ThemisDSMReport {
      * @param pElement the element
      * @param pText the text
      */
-    private static void addElement(final StringBuilder pBuilder,
-                                   final Tag pElement,
-                                   final String pText) {
+    private static void addTextElement(final StringBuilder pBuilder,
+                                       final Tag pElement,
+                                       final String pText) {
         /* Add the text element */
         addStartElement(pBuilder, pElement);
         pBuilder.append(pText);
@@ -262,45 +250,63 @@ public final class ThemisDSMReport {
      * Add text element.
      * @param pBuilder the builder
      * @param pElement the element
+     * @param pText the text
+     * @param pLink the link
+     */
+    private static void addTextElementWithLink(final StringBuilder pBuilder,
+                                               final Tag pElement,
+                                               final String pText,
+                                               final String pLink) {
+        /* Add the text element */
+        addStartElement(pBuilder, pElement);
+        addStartElementWithLink(pBuilder, Tag.A, pLink);
+        pBuilder.append(pText);
+        addEndElement(pBuilder, Tag.A);
+        addEndElement(pBuilder, pElement);
+    }
+    /**
+     * Add text element with Clas.
+     * @param pBuilder the builder
+     * @param pElement the element
      * @param pClass the class of the element
      * @param pText the text
      */
-    private static void addElement(final StringBuilder pBuilder,
-                                   final Tag pElement,
-                                   final String pClass,
-                                   final String pText) {
+    private static void addTextElementWithClass(final StringBuilder pBuilder,
+                                                final Tag pElement,
+                                                final String pClass,
+                                                final String pText) {
         /* Add the text element */
-        addStartElement(pBuilder, pElement, pClass);
+        addStartElementWithClass(pBuilder, pElement, pClass);
         pBuilder.append(pText);
         addEndElement(pBuilder, pElement);
     }
 
     /**
-     * Add spanning text element.
+     * Add text element with span.
      * @param pBuilder the builder
      * @param pElement the element
      * @param pText the text
      * @param pSpan the span count
      */
-    private static void addElement(final StringBuilder pBuilder,
-                                   final Tag pElement,
-                                   final String pText,
-                                   final int pSpan) {
+    private static void addTextElementWithSpan(final StringBuilder pBuilder,
+                                               final Tag pElement,
+                                               final String pText,
+                                               final int pSpan) {
         /* Add the text element */
-        addStartElement(pBuilder, pElement, pSpan);
+        addStartElementWithSpan(pBuilder, pElement, pSpan);
         pBuilder.append(pText);
         addEndElement(pBuilder, pElement);
     }
 
     /**
-     * Add start element.
+     * Add start element with class.
      * @param pBuilder the builder
      * @param pElement the element
      * @param pClass the class of the element
      */
-    private static void addStartElement(final StringBuilder pBuilder,
-                                        final Tag pElement,
-                                        final String pClass) {
+    private static void addStartElementWithClass(final StringBuilder pBuilder,
+                                                 final Tag pElement,
+                                                 final String pClass) {
         /* Start the element */
         pBuilder.append("<");
         pBuilder.append(pElement);
@@ -310,14 +316,31 @@ public final class ThemisDSMReport {
     }
 
     /**
-     * Add start element.
+     * Add start element with link.
+     * @param pBuilder the builder
+     * @param pElement the element
+     * @param pLink the link
+     */
+    private static void addStartElementWithLink(final StringBuilder pBuilder,
+                                                final Tag pElement,
+                                                final String pLink) {
+        /* Start the element */
+        pBuilder.append("<");
+        pBuilder.append(pElement);
+        pBuilder.append(" href=\"");
+        pBuilder.append(pLink);
+        pBuilder.append("\">");
+    }
+
+    /**
+     * Add start element with span.
      * @param pBuilder the builder
      * @param pElement the element
      * @param pSpan the span count
      */
-    private static void addStartElement(final StringBuilder pBuilder,
-                                        final Tag pElement,
-                                        final int pSpan) {
+    private static void addStartElementWithSpan(final StringBuilder pBuilder,
+                                                final Tag pElement,
+                                                final int pSpan) {
         /* Start the element */
         pBuilder.append("<");
         pBuilder.append(pElement);

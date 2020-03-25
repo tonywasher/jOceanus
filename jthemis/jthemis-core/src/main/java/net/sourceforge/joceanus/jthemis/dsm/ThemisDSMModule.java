@@ -145,6 +145,46 @@ public class ThemisDSMModule {
         return thePackages.iterator();
     }
 
+    /**
+     * Obtain an iterator of the imports.
+     * @return the iterator
+     */
+    public ThemisDSMPackage getDefaultPackage() {
+        final List<ThemisDSMPackage> myList = listPackages();
+        return myList.isEmpty() ? null : myList.get(0);
+    }
+
+    /**
+     * Obtain an indexed package.
+     * @param pIndex the index of the package
+     * @return the package
+     */
+    public ThemisDSMPackage getIndexedPackage(final int pIndex) {
+        final List<ThemisDSMPackage> myList = listPackages();
+        return myList.size() <= pIndex || pIndex < 0 ? null : myList.get(pIndex);
+    }
+
+    /**
+     * Obtain a list of all modules and submodules that contain packages.
+     * @return the list
+     */
+    List<ThemisDSMModule> listModules() {
+        /* Create result list and loop through the modules */
+        final List<ThemisDSMModule> myList = new ArrayList<>();
+        for (ThemisDSMModule myModule : theSubModules) {
+            /* Only add the module if it has packages */
+            if (myModule.hasPackages()) {
+                myList.add(myModule);
+            }
+
+            /* Add any subModules */
+            myList.addAll(myModule.listModules());
+        }
+
+        /* Return the list */
+        return myList;
+    }
+
     @Override
     public boolean equals(final Object pThat) {
         /* Handle the trivial cases */
@@ -282,6 +322,53 @@ public class ThemisDSMModule {
 
         /* No match */
         return null;
+    }
+
+    /**
+     * Does this module contain circular package references?
+     * @return true/false
+     */
+    public boolean isCircular() {
+        /* Loop through the dependencies */
+        for (ThemisDSMPackage myPackage : thePackages) {
+            if (myPackage.isCircular()) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Obtain a list of all packages that have dependencies.
+     * @return the list
+     */
+    public List<ThemisDSMPackage> listPackages() {
+        /* Create result list and loop through the modules */
+        final List<ThemisDSMPackage> myList = new ArrayList<>();
+        for (ThemisDSMPackage myPackage : thePackages) {
+            /* Only add the module if it has packages */
+            if (myPackage.hasReferences()) {
+                myList.add(myPackage);
+            }
+        }
+
+        /* Return the list */
+        return myList;
+    }
+
+    /**
+     * Compare this package to another module for sort order.
+     * @param pThat the other module to compare to
+     * @return true/false
+     */
+    public int compareTo(final ThemisDSMModule pThat) {
+        /* Handle circular status */
+        if (isCircular() != pThat.isCircular()) {
+            return isCircular() ? -1 : 1;
+        }
+
+        /* If all else fails rely on alphabetical */
+        return theModule.compareTo(pThat.getModuleName());
     }
 
     @Override

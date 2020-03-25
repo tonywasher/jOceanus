@@ -25,7 +25,6 @@ import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianStreamKeySpec;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianSymCipher;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianSymCipherSpec;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianSymKeySpec;
-import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianSymKeyType;
 import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigest;
 import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigestSpec;
 import net.sourceforge.joceanus.jgordianknot.api.key.GordianKey;
@@ -268,14 +267,13 @@ public final class GordianStreamManager {
         /* Determine a random set of keyType */
         final int myCount = theKeySet.getKeySetSpec().getCipherSteps() - 1;
         final GordianLength myKeyLen = theKeySet.getKeySetSpec().getKeyLength();
-        final GordianSymKeyType[] myTypes = myIdMgr.generateRandomKeySetSymKeyTypes(myKeyLen, myCount);
+        final GordianSymKeySpec[] mySpecs = myIdMgr.generateRandomKeySetSymKeySpecs(myKeyLen, myCount);
 
         /* Loop through the keys */
         final List<GordianKey<GordianSymKeySpec>> myKeyList = new ArrayList<>();
         for (int i = 0; i < myCount; i++) {
             /* Generate a random key */
-            final GordianSymKeyType myType = myTypes[i];
-            final GordianKeyGenerator<GordianSymKeySpec> myGenerator = myCiphers.getKeyGenerator(new GordianSymKeySpec(myType, myKeyLen));
+            final GordianKeyGenerator<GordianSymKeySpec> myGenerator = myCiphers.getKeyGenerator(mySpecs[0]);
             myKeyList.add(myGenerator.generateKey());
         }
 

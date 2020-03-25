@@ -19,7 +19,6 @@ package net.sourceforge.joceanus.jthemis.dsm;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Comparator;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
 
@@ -61,10 +60,14 @@ public class ThemisDSMProject {
      * Constructor.
      * @param pLocation the location of the project
      */
-    ThemisDSMProject(final File pLocation) {
+    public ThemisDSMProject(final File pLocation) {
+        /* Store values */
         theLocation = pLocation;
         theProject = pLocation.getName();
         theModules = new ArrayList<>();
+
+        /* Process the modules */
+        processModules();
     }
 
     /**
@@ -84,17 +87,25 @@ public class ThemisDSMProject {
     }
 
     /**
-     * Obtain an iterator of the modules.
-     * @return the iterator
+     * Obtain the default module.
+     * @return the default
      */
-    Iterator<ThemisDSMModule> moduleIterator() {
-        return theModules.iterator();
+    public ThemisDSMModule getDefaultModule() {
+        return theModules.isEmpty() ? null : theModules.get(0);
+    }
+
+    /**
+     * Does the project have modules.
+     * @return true/false
+     */
+    public boolean hasModules() {
+        return !theModules.isEmpty();
     }
 
     /**
      * Process modules.
      */
-    void processModules() {
+    private void processModules() {
         /* Loop through the entries in the directory */
         for (File myFile: Objects.requireNonNull(theLocation.listFiles())) {
             /* Ignore files */
@@ -127,13 +138,26 @@ public class ThemisDSMProject {
     }
 
     /**
-     * main entry.
-     * @param pArgs the program arguments
+     * Obtain a list of all modules and submodules that contain packages.
+     * @return the list
      */
-    public static void main(final String[] pArgs) {
-        final ThemisDSMProject myProject = new ThemisDSMProject(new File("c:\\Users\\Tony\\gitNew\\jOceanus"));
-        myProject.processModules();
-        final String myReport = ThemisDSMReport.reportOnProject(myProject);
-        System.out.println(myReport);
+    public List<ThemisDSMModule> listModules() {
+        /* Create result list and loop through the modules */
+        final List<ThemisDSMModule> myList = new ArrayList<>();
+        for (ThemisDSMModule myModule : theModules) {
+            /* Only add the module if it has packages */
+            if (myModule.hasPackages()) {
+                myList.add(myModule);
+            }
+
+            /* Add any subModules */
+            myList.addAll(myModule.listModules());
+        }
+
+        /* Sort the modules */
+        myList.sort(ThemisDSMModule::compareTo);
+
+        /* Return the list */
+        return myList;
     }
 }

@@ -21,7 +21,6 @@ import java.util.EnumMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 import net.sourceforge.joceanus.jgordianknot.api.base.GordianLength;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianCipherFactory;
@@ -89,16 +88,47 @@ public class GordianIdManager {
     }
 
     /**
-     * Obtain set of random keySet SymKeyTypes.
+     * Obtain set of random keySet SymKeySpecs.
      * @param pKeyLen the keyLength
      * @param pCount the count
-     * @return the random symKeyTypes
+     * @return the random symKeySpecs
      */
-    public GordianSymKeyType[] generateRandomKeySetSymKeyTypes(final GordianLength pKeyLen,
+    public GordianSymKeySpec[] generateRandomKeySetSymKeySpecs(final GordianLength pKeyLen,
                                                                final int pCount) {
-        /* Utilise the relevant cache */
-        final GordianIdCache myCache = theCacheMap.get(pKeyLen);
-        return myCache.generateRandomKeySetSymKeyTypes(pCount);
+        /* Access the list to select from */
+        final GordianCipherFactory myCiphers = theFactory.getCipherFactory();
+        final List<GordianSymKeySpec> myValid = myCiphers.listAllSupportedSymKeySpecs(pKeyLen);
+
+        /* Remove the short block specs that cannot support SIC Mode */
+        myValid.removeIf(s -> s.getBlockLength() == GordianLength.LEN_64);
+
+        /* Create the Access list and loop to populate */
+        final GordianSymKeySpec[] myResult = new GordianSymKeySpec[pCount];
+        for (int i = 0; i < pCount; i++) {
+             myResult[i] = selectSymKeySpecFromList(myValid);
+        }
+
+        /* Return the result  */
+        return myResult;
+    }
+
+    /**
+     * Obtain a random symKeySpec and remove all of the same symKeyType.
+     * @param pList the list of symKeySpecs
+     * @return the random symKeySpec
+     */
+    public GordianSymKeySpec selectSymKeySpecFromList(final List<GordianSymKeySpec> pList) {
+        /* Select the random Spec */
+        final SecureRandom myRandom = theFactory.getRandomSource().getRandom();
+        final int myIndex = myRandom.nextInt(pList.size());
+        final GordianSymKeySpec myResult = pList.get(myIndex);
+
+        /* Remove all similar specs */
+        final GordianSymKeyType myType = myResult.getSymKeyType();
+        pList.removeIf(mySpec -> mySpec.getSymKeyType() == myType);
+
+        /* Return the result */
+        return myResult;
     }
 
     /**
@@ -126,9 +156,9 @@ public class GordianIdManager {
                                                             final boolean pLargeData) {
         /* Access the list to select from */
         final GordianCipherFactory myCiphers = theFactory.getCipherFactory();
-        List<GordianStreamKeySpec> myValid = myCiphers.listAllSupportedStreamKeySpecs(pKeyLen);
+        final List<GordianStreamKeySpec> myValid = myCiphers.listAllSupportedStreamKeySpecs(pKeyLen);
         if (pLargeData) {
-            myValid = myValid.stream().filter(s -> s.getStreamKeyType().supportsLargeData()).collect(Collectors.toList());
+            myValid.removeIf(s -> !s.getStreamKeyType().supportsLargeData());
         }
 
         /* Determine a random index into the list and return the spec */
@@ -145,9 +175,9 @@ public class GordianIdManager {
     public GordianDigestSpec generateRandomDigestSpec(final boolean pLargeData) {
         /* Access the list to select from */
         final GordianDigestFactory myDigests = theFactory.getDigestFactory();
-        List<GordianDigestSpec> myValid = myDigests.listAllSupportedSpecs();
+        final List<GordianDigestSpec> myValid = myDigests.listAllSupportedSpecs();
         if (pLargeData) {
-            myValid = myValid.stream().filter(s -> s.getDigestType().supportsLargeData()).collect(Collectors.toList());
+            myValid.removeIf(s -> !s.getDigestType().supportsLargeData());
         }
 
         /* Determine a random index into the list and return the spec */
@@ -192,9 +222,9 @@ public class GordianIdManager {
                                                 final boolean pLargeData) {
         /* Access the list to select from */
         final GordianMacFactory myMacs = theFactory.getMacFactory();
-        List<GordianMacSpec> myValid = myMacs.listAllSupportedSpecs(pKeyLen);
+        final List<GordianMacSpec> myValid = myMacs.listAllSupportedSpecs(pKeyLen);
         if (pLargeData) {
-            myValid = myValid.stream().filter(s -> s.getMacType().supportsLargeData()).collect(Collectors.toList());
+            myValid.removeIf(s -> !s.getMacType().supportsLargeData());
         }
 
         /* Determine a random index into the list and return the spec */
