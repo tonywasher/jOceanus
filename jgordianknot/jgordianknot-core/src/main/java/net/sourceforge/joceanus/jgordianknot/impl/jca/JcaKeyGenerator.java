@@ -21,7 +21,6 @@ import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
 
 import net.sourceforge.joceanus.jgordianknot.api.base.GordianKeySpec;
-import net.sourceforge.joceanus.jgordianknot.api.key.GordianKey;
 import net.sourceforge.joceanus.jgordianknot.api.mac.GordianMac;
 import net.sourceforge.joceanus.jgordianknot.impl.core.key.GordianCoreKeyGenerator;
 import net.sourceforge.joceanus.jgordianknot.impl.core.mac.GordianCoreMac;
@@ -64,15 +63,6 @@ public final class JcaKeyGenerator<T extends GordianKeySpec>
 
         /* Build the new key */
         return new JcaKey<>(getKeyType(), myKey);
-    }
-
-    @Override
-    protected JcaKey<T> translateKey(final GordianKey<?> pSource) throws OceanusException {
-        /* Access key correctly */
-        final JcaKey<?> mySource = JcaKey.accessKey(pSource);
-
-        /* Build the new key */
-        return buildKeyFromBytes(mySource.getKey().getEncoded());
     }
 
     @Override

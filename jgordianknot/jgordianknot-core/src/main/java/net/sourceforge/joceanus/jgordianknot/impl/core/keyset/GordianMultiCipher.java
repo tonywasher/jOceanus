@@ -694,7 +694,6 @@ final class GordianMultiCipher {
      * @return the derived key
      * @throws OceanusException on error
      */
-    @SuppressWarnings("unchecked")
     <T extends GordianKeySpec> GordianKey<T> deriveKey(final GordianKeySetParameters pParams,
                                                        final byte[] pSecuredKey,
                                                        final T pKeyType) throws OceanusException {
@@ -782,7 +781,7 @@ final class GordianMultiCipher {
             final GordianSymKeyType myKeyType = mySymKeyTypes[i];
             final SymKeyCiphers myCiphers = getKeyCiphers(myKeyType);
             final GordianCoreWrapper myCipher = myCiphers.getWrapCipher();
-            myBytes = myCipher.secureBytes(myCiphers.getKey(), myBytes);
+            myBytes = myCipher.secureBytes(myBytes);
         }
 
         /* return the secured bytes */
@@ -811,7 +810,7 @@ final class GordianMultiCipher {
             final GordianSymKeyType myKeyType = mySymKeyTypes[i];
             final SymKeyCiphers myCiphers = getKeyCiphers(myKeyType);
             final GordianCoreWrapper myCipher = myCiphers.getWrapCipher();
-            myBytes = myCipher.deriveBytes(myCiphers.getKey(), myBytes);
+            myBytes = myCipher.deriveBytes(myBytes);
         }
 
         /* Access and initialise the streamCipher */
@@ -832,7 +831,7 @@ final class GordianMultiCipher {
     /**
      * Class to contain the symmetric key ciphers.
      */
-    private final class SymKeyCiphers {
+    private static final class SymKeyCiphers {
         /**
          * Key.
          */
@@ -877,7 +876,7 @@ final class GordianMultiCipher {
             theStreamCipher = myFactory.createSymKeyCipher(GordianSymCipherSpec.sic(myKeySpec));
 
             /* Create the wrap cipher */
-            theWrapCipher = (GordianCoreWrapper) myFactory.createKeyWrapper(myKeySpec);
+            theWrapCipher = (GordianCoreWrapper) myFactory.createKeyWrapper(theKey);
         }
 
         /**

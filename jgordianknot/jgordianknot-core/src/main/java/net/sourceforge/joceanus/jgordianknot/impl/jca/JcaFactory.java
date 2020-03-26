@@ -23,7 +23,6 @@ import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.pqc.jcajce.provider.BouncyCastlePQCProvider;
 
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianSymKeyType;
-import net.sourceforge.joceanus.jgordianknot.api.factory.GordianAsymFactory;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianParameters;
 import net.sourceforge.joceanus.jgordianknot.api.zip.GordianZipFactory;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianCoreFactory;
@@ -76,7 +75,10 @@ public class JcaFactory
                       final GordianParameters pParameters) throws OceanusException {
         /* initialise underlying factory */
         super(pGenerator, pParameters);
+    }
 
+    @Override
+    protected void declareFactories() throws OceanusException {
         /* Create the factories */
         setDigestFactory(new JcaDigestFactory(this));
         setCipherFactory(new JcaCipherFactory(this));
@@ -109,7 +111,7 @@ public class JcaFactory
     }
 
     @Override
-    public GordianAsymFactory getAsymmetricFactory() {
+    public JcaAsymFactory getAsymmetricFactory() {
         if (theAsymFactory == null) {
             theAsymFactory = new JcaAsymFactory(this);
         }

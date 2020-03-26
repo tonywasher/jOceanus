@@ -75,6 +75,11 @@ public class GordianCoreWrapper
     private final GordianCoreFactory theFactory;
 
     /**
+     * Underlying key.
+     */
+    private final GordianKey<GordianSymKeySpec> theKey;
+
+    /**
      * Underlying cipher.
      */
     private final GordianCoreCipher<GordianSymKeySpec> theCipher;
@@ -87,11 +92,14 @@ public class GordianCoreWrapper
     /**
      * Constructor.
      * @param pFactory the Security Factory
+     * @param pKey the key
      * @param pCipher the underlying cipher
      */
     GordianCoreWrapper(final GordianCoreFactory pFactory,
+                       final GordianKey<GordianSymKeySpec> pKey,
                        final GordianCoreCipher<GordianSymKeySpec> pCipher) {
         theFactory = pFactory;
+        theKey = pKey;
         theCipher = pCipher;
         theBlockLen = getKeySpec().getBlockLength().getByteLength() >> 1;
     }
@@ -110,19 +118,16 @@ public class GordianCoreWrapper
     }
 
     @Override
-    public byte[] secureKey(final GordianKey<GordianSymKeySpec> pKey,
-                            final GordianKey<?> pKeyToSecure) throws OceanusException {
+    public byte[] secureKey(final GordianKey<?> pKeyToSecure) throws OceanusException {
         /* Secure the bytes */
-        return secureBytes(pKey, ((GordianCoreKey<?>) pKeyToSecure).getKeyBytes());
+        return secureBytes(((GordianCoreKey<?>) pKeyToSecure).getKeyBytes());
     }
 
     @Override
-    @SuppressWarnings("unchecked")
-    public <T extends GordianKeySpec> GordianKey<T> deriveKey(final GordianKey<GordianSymKeySpec> pKey,
-                                                              final byte[] pSecuredKey,
+    public <T extends GordianKeySpec> GordianKey<T> deriveKey(final byte[] pSecuredKey,
                                                               final T pKeyType) throws OceanusException {
         /* Unwrap the bytes */
-        final byte[] myBytes = deriveBytes(pKey, pSecuredKey);
+        final byte[] myBytes = deriveBytes(pSecuredKey);
 
         /* Handle the macSpec separately */
         if (pKeyType instanceof GordianMacSpec) {
@@ -138,21 +143,19 @@ public class GordianCoreWrapper
     }
 
     @Override
-    public byte[] securePrivateKey(final GordianKey<GordianSymKeySpec> pKey,
-                                   final GordianKeyPair pKeyPairToSecure) throws OceanusException {
+    public byte[] securePrivateKey(final GordianKeyPair pKeyPairToSecure) throws OceanusException {
         /* Access the KeyPair Generator */
         final GordianAsymFactory myAsym = theFactory.getAsymmetricFactory();
         final GordianCoreKeyPairGenerator myGenerator = (GordianCoreKeyPairGenerator) myAsym.getKeyPairGenerator(pKeyPairToSecure.getKeySpec());
         final PKCS8EncodedKeySpec myPKCS8Key = myGenerator.getPKCS8Encoding(pKeyPairToSecure);
-        return secureBytes(pKey, myPKCS8Key.getEncoded());
+        return secureBytes(myPKCS8Key.getEncoded());
     }
 
     @Override
-    public GordianKeyPair deriveKeyPair(final GordianKey<GordianSymKeySpec> pKey,
-                                        final X509EncodedKeySpec pPublicKeySpec,
+    public GordianKeyPair deriveKeyPair(final X509EncodedKeySpec pPublicKeySpec,
                                         final byte[] pSecuredPrivateKey) throws OceanusException {
         /* Access the PKCS8Encoding */
-        final PKCS8EncodedKeySpec myPrivate = derivePrivateKeySpec(pKey, pSecuredPrivateKey);
+        final PKCS8EncodedKeySpec myPrivate = derivePrivateKeySpec(pSecuredPrivateKey);
 
         /* Determine and check the keySpec */
         final GordianAsymFactory myAsym = theFactory.getAsymmetricFactory();
@@ -168,24 +171,18 @@ public class GordianCoreWrapper
 
     /**
      * derive private key.
-     * @param pKey the key to use to derive the key
-     * @param pSecuredPrivateKey the secured privateKey
+      * @param pSecuredPrivateKey the secured privateKey
      * @return the derived key
      * @throws OceanusException on error
      */
-    private PKCS8EncodedKeySpec derivePrivateKeySpec(final GordianKey<GordianSymKeySpec> pKey,
-                                                     final byte[] pSecuredPrivateKey) throws OceanusException {
+    private PKCS8EncodedKeySpec derivePrivateKeySpec(final byte[] pSecuredPrivateKey) throws OceanusException {
         /* Derive the keySpec */
-        final byte[] myBytes = deriveBytes(pKey, pSecuredPrivateKey);
+        final byte[] myBytes = deriveBytes(pSecuredPrivateKey);
         return new PKCS8EncodedKeySpec(myBytes);
     }
 
     @Override
-    public byte[] secureBytes(final GordianKey<GordianSymKeySpec> pKey,
-                              final byte[] pBytesToSecure) throws OceanusException {
-        /* Check validity of key */
-        theCipher.checkValidKey(pKey);
-
+    public byte[] secureBytes(final byte[] pBytesToSecure) throws OceanusException {
         /* Determine number of blocks */
         final int myDataLen = pBytesToSecure.length;
         int myNumBlocks = myDataLen
@@ -235,7 +232,7 @@ public class GordianCoreWrapper
         System.arraycopy(pBytesToSecure, 0, myData, myHdrLen, myDataLen);
 
         /* Initialise the cipher */
-        theCipher.init(true, GordianCipherParameters.key(pKey));
+        theCipher.init(true, GordianCipherParameters.key(theKey));
 
         /* Loop WRAP_COUNT times */
         int myCount = 1;
@@ -265,11 +262,7 @@ public class GordianCoreWrapper
     }
 
     @Override
-    public byte[] deriveBytes(final GordianKey<GordianSymKeySpec> pKey,
-                              final byte[] pSecuredBytes) throws OceanusException {
-        /* Check validity of key */
-        theCipher.checkValidKey(pKey);
-
+    public byte[] deriveBytes(final byte[] pSecuredBytes) throws OceanusException {
         /* Determine number of blocks */
         int myDataLen = pSecuredBytes.length
                 - theBlockLen;
@@ -288,7 +281,7 @@ public class GordianCoreWrapper
         final byte[] myResult = new byte[myBufferLen];
 
         /* Initialise the cipher */
-        theCipher.init(false, GordianCipherParameters.key(pKey));
+        theCipher.init(false, GordianCipherParameters.key(theKey));
 
         /* Loop WRAP_COUNT times */
         int myCount = myNumBlocks * WRAP_COUNT;

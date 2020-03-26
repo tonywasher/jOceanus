@@ -107,14 +107,6 @@ public abstract class GordianCoreKeyGenerator<T extends GordianKeySpec>
     }
 
     /**
-     * Translate a Key.
-     * @param pSource the source key.
-     * @return the new Key
-     * @throws OceanusException on error
-     */
-    protected abstract GordianKey<T> translateKey(GordianKey<?> pSource) throws OceanusException;
-
-    /**
      * Generate a new Key.
      * @param pBytes the bytes for the key.
      * @return the new Key

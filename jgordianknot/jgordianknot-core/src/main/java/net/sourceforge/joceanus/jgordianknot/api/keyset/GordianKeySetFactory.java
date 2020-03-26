@@ -54,12 +54,6 @@ public interface GordianKeySetFactory {
                                        char[] pPassword) throws OceanusException;
 
     /**
-     * Obtain the obfuscater.
-     * @return the obfuscater
-     */
-    GordianKnuthObfuscater getObfuscater();
-
-    /**
      * Obtain predicate for supported KeySetSpecs.
      * @return the predicate
      */

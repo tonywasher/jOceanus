@@ -1,4 +1,4 @@
-/*******************************************************************************
+/* ******************************************************************************
  * Themis: Java Project Framework
  * Copyright 2012,2019 Tony Washer
  *
@@ -14,7 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ******************************************************************************/
-
 /**
  * Dependency Structure Matrix Analysis.
  */

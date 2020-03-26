@@ -65,11 +65,6 @@ public final class JcaKey<T extends GordianKeySpec>
         return theKey.getEncoded();
     }
 
-    @Override
-    public <X extends GordianKeySpec> JcaKey<X> convertToKeyType(final X pKeyType) {
-        return new JcaKey<>(pKeyType, theKey);
-    }
-
     /**
      * Access Key correctly.
      * @param <X> the key type

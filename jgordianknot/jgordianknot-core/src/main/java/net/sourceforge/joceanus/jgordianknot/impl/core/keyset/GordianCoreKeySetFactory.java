@@ -45,18 +45,12 @@ public class GordianCoreKeySetFactory
     private final GordianCoreFactory theFactory;
 
     /**
-     * Obfuscater.
-     */
-    private final GordianCoreKnuthObfuscater theObfuscater;
-
-    /**
      * Constructor.
      * @param pFactory the factory.
      * @throws OceanusException on error
      */
     public GordianCoreKeySetFactory(final GordianCoreFactory pFactory) throws OceanusException {
         theFactory = pFactory;
-        theObfuscater = new GordianCoreKnuthObfuscater(pFactory);
     }
 
     /**
@@ -65,11 +59,6 @@ public class GordianCoreKeySetFactory
      */
     public GordianCoreFactory getFactory() {
         return theFactory;
-    }
-
-    @Override
-    public GordianCoreKnuthObfuscater getObfuscater() {
-        return theObfuscater;
     }
 
     /**

@@ -63,11 +63,6 @@ public final class BouncyKey<T extends GordianKeySpec>
         return theKey;
     }
 
-    @Override
-    public <X extends GordianKeySpec> BouncyKey<X> convertToKeyType(final X pKeyType) {
-        return new BouncyKey<>(pKeyType, theKey);
-    }
-
     /**
      * Access Key correctly.
      * @param <X> the key type

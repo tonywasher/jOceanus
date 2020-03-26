@@ -23,6 +23,7 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import net.sourceforge.joceanus.jgordianknot.api.base.GordianLength;
+import net.sourceforge.joceanus.jgordianknot.api.key.GordianKey;
 import net.sourceforge.joceanus.jgordianknot.api.key.GordianKeyGenerator;
 import net.sourceforge.joceanus.jgordianknot.api.base.GordianKeySpec;
 import net.sourceforge.joceanus.jtethys.OceanusException;
@@ -94,11 +95,11 @@ public interface GordianCipherFactory {
 
     /**
      * create GordianWrapper.
-     * @param pKeySpec the KeySpec
+     * @param pKey the Key
      * @return the new wrapper
      * @throws OceanusException on error
      */
-    GordianWrapper createKeyWrapper(GordianSymKeySpec pKeySpec) throws OceanusException;
+    GordianWrapper createKeyWrapper(GordianKey<GordianSymKeySpec> pKey) throws OceanusException;
 
     /**
      * Obtain a list of supported symKeySpecs for the keyLength.

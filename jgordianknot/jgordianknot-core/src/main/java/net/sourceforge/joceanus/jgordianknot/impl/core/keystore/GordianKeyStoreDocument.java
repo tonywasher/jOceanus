@@ -33,7 +33,7 @@ import org.w3c.dom.Node;
 
 import net.sourceforge.joceanus.jgordianknot.api.base.GordianKeySpec;
 import net.sourceforge.joceanus.jgordianknot.api.factory.GordianFactory;
-import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKnuthObfuscater;
+import net.sourceforge.joceanus.jgordianknot.api.factory.GordianKnuthObfuscater;
 import net.sourceforge.joceanus.jgordianknot.api.keystore.GordianCertificateId;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianCoreFactory;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianDataException;
@@ -271,7 +271,7 @@ public final class GordianKeyStoreDocument {
             /* Switch on element type */
             switch (myType) {
                 case KEY:
-                    buildKeyElement(myAliasEl, (GordianKeyStoreKeyElement) myElement);
+                    buildKeyElement(myAliasEl, (GordianKeyStoreKeyElement<?>) myElement);
                     break;
                 case KEYSET:
                     buildKeySetElement(myAliasEl, (GordianKeyStoreSetElement) myElement);
@@ -328,14 +328,14 @@ public final class GordianKeyStoreDocument {
      * @throws OceanusException on error
      */
     private void buildKeyElement(final Element pNode,
-                                 final GordianKeyStoreKeyElement pEntry) throws OceanusException {
+                                 final GordianKeyStoreKeyElement<?> pEntry) throws OceanusException {
         /* Build securedKey entry */
         final Element myKeyEl = theDocument.createElement(ELEMENT_SECUREDKEY);
         pNode.appendChild(myKeyEl);
         myKeyEl.setTextContent(TethysDataConverter.byteArrayToBase64(pEntry.getSecuredKey()));
 
         /* Add the keySpec */
-        final GordianKnuthObfuscater myObfuscater = theKeyStore.getFactory().getKeySetFactory().getObfuscater();
+        final GordianKnuthObfuscater myObfuscater = theKeyStore.getFactory().getObfuscater();
         final int myId = myObfuscater.deriveExternalIdFromType(pEntry.getKeyType());
         myKeyEl.setAttribute(ATTR_KEYSPEC, Integer.toString(myId));
 
@@ -589,7 +589,7 @@ public final class GordianKeyStoreDocument {
                 mySecuredKey = TethysDataConverter.base64ToByteArray(myNode.getTextContent());
 
                 /* Obtain the keySpec */
-                final GordianKnuthObfuscater myObfuscater = theKeyStore.getFactory().getKeySetFactory().getObfuscater();
+                final GordianKnuthObfuscater myObfuscater = theKeyStore.getFactory().getObfuscater();
                 final String mySpecId = ((Element) myNode).getAttribute(ATTR_KEYSPEC);
                 mySpec = (GordianKeySpec) myObfuscater.deriveTypeFromExternalId(Integer.parseInt(mySpecId));
             }

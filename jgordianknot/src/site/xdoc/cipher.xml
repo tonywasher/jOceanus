@@ -167,13 +167,13 @@
                         final GordianKey&lt;GordianSymKeySpec&gt; myKeyToWrap = myGenerator.generateKey();
 
                         /* Create keyWrapper */
-                        final GordianKeyWrapper myWrapper = myCipherFactory.createSymKeyCipher(myKeySpec);
+                        final GordianKeyWrapper myWrapper = myCipherFactory.createSymKeyCipher(myKey);
 
                         /* Secure key */
-                        final byte[] myWrapped = myWrapper.secureKey(myKey, myKeyToWrap);
+                        final byte[] myWrapped = myWrapper.secureKey(myKeyToWrap);
 
                         /* Derive Key */
-                        final GordianKey&lt;GordianSymKeySpec&gt; myResult = myWrapper.deriveKey(myKey, myWrapped, myKeySpec);
+                        final GordianKey&lt;GordianSymKeySpec&gt; myResult = myWrapper.deriveKey(myWrapped, myKeySpec);
                     </source>
                 </h4>
             </subsection>

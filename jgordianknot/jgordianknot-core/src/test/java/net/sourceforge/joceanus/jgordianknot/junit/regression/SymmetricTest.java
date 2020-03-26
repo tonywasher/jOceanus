@@ -61,7 +61,7 @@ import net.sourceforge.joceanus.jgordianknot.util.GordianGenerator;
 import net.sourceforge.joceanus.jgordianknot.api.key.GordianKey;
 import net.sourceforge.joceanus.jgordianknot.api.key.GordianKeyLengths;
 import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetFactory;
-import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKnuthObfuscater;
+import net.sourceforge.joceanus.jgordianknot.api.factory.GordianKnuthObfuscater;
 import net.sourceforge.joceanus.jgordianknot.api.mac.GordianMac;
 import net.sourceforge.joceanus.jgordianknot.api.mac.GordianMacFactory;
 import net.sourceforge.joceanus.jgordianknot.api.mac.GordianMacSpec;
@@ -72,7 +72,6 @@ import net.sourceforge.joceanus.jgordianknot.api.random.GordianRandomType;
 import net.sourceforge.joceanus.jgordianknot.impl.core.cipher.GordianCoreCipher;
 import net.sourceforge.joceanus.jgordianknot.impl.core.cipher.GordianCoreCipherFactory;
 import net.sourceforge.joceanus.jgordianknot.impl.core.cipher.GordianCoreWrapper;
-import net.sourceforge.joceanus.jgordianknot.impl.core.digest.GordianCoreDigestFactory;
 import net.sourceforge.joceanus.jgordianknot.junit.regression.SymmetricStore.FactoryDigestSpec;
 import net.sourceforge.joceanus.jgordianknot.junit.regression.SymmetricStore.FactoryMacSpec;
 import net.sourceforge.joceanus.jgordianknot.junit.regression.SymmetricStore.FactoryRandomSpec;
@@ -154,10 +153,9 @@ public class SymmetricTest {
     /**
      * Create the symmetric test suite.
      * @return the test stream
-     * @throws OceanusException on error
      */
     @TestFactory
-    public Stream<DynamicNode> symmetricTests() throws OceanusException {
+    public Stream<DynamicNode> symmetricTests() {
         /* Create tests */
         final Stream<DynamicNode> myBC = symmetricTests(BCFACTORY, JCAFACTORY);
         final Stream<DynamicNode> myJCA = symmetricTests(JCAFACTORY, BCFACTORY);
@@ -169,10 +167,9 @@ public class SymmetricTest {
      * @param pFactory the factory
      * @param pPartner the partner
      * @return the test stream
-     * @throws OceanusException on error
      */
     private Stream<DynamicNode> symmetricTests(final GordianFactory pFactory,
-                                               final GordianFactory pPartner) throws OceanusException {
+                                               final GordianFactory pPartner) {
         /* Create an empty stream */
         Stream<DynamicNode> myStream = Stream.empty();
 
@@ -404,8 +401,6 @@ public class SymmetricTest {
      * @return the test stream
      */
     private Stream<DynamicNode> symCipherTests(final FactorySymCipherSpec pCipherSpec) {
-        final boolean isAAD = pCipherSpec.getSpec().isAAD();
-
         /* Add profile test */
         Stream<DynamicNode> myTests = Stream.of(DynamicTest.dynamicTest("cipher", () -> checkSymCipher(pCipherSpec)));
 
@@ -907,7 +902,6 @@ public class SymmetricTest {
         final byte[] myIV = myCipher.getInitVector();
         myCipher.updateAAD(myAADData);
         final byte[] myEncrypted = myCipher.finish(myTestData);
-        myParms = GordianCipherParameters.keyAndNonce(myKey, myIV);
         byte[] myEncrypted2 = null;
         if (!mySpec.getCipherMode().needsReInitialisation()) {
             myCipher.updateAAD(myAADData);
@@ -1092,7 +1086,6 @@ public class SymmetricTest {
     private void checkWrapCipher(final FactorySymKeySpec pKeySpec) throws OceanusException {
         /* Access details */
         final GordianFactory myFactory = pKeySpec.getFactory();
-        final GordianSymKeySpec mySpec = pKeySpec.getSpec();
         final GordianCipherFactory myCipherFactory = myFactory.getCipherFactory();
         final GordianKey<GordianSymKeySpec> mySymKey = pKeySpec.getKey();
 
@@ -1100,15 +1093,15 @@ public class SymmetricTest {
         final byte[] myTestData = getTestData();
 
         /* Check wrapping bytes */
-        final GordianCoreWrapper myWrapper = (GordianCoreWrapper) myCipherFactory.createKeyWrapper(mySpec);
-        byte[] myWrapped = myWrapper.secureBytes(mySymKey, myTestData);
-        final byte[] myResult = myWrapper.deriveBytes(mySymKey, myWrapped);
+        final GordianCoreWrapper myWrapper = (GordianCoreWrapper) myCipherFactory.createKeyWrapper(mySymKey);
+        byte[] myWrapped = myWrapper.secureBytes( myTestData);
+        final byte[] myResult = myWrapper.deriveBytes(myWrapped);
         Assertions.assertArrayEquals(myTestData, myResult, "Failed to wrap/unwrap bytes");
         Assertions.assertEquals(myWrapper.getDataWrapLength(myTestData.length), myWrapped.length, "Incorrect wrapped length");
 
         /* Check wrapping key */
-        myWrapped = myWrapper.secureKey(mySymKey, mySymKey);
-        final GordianKey<GordianSymKeySpec> myResultKey = myWrapper.deriveKey(mySymKey, myWrapped, mySymKey.getKeyType());
+        myWrapped = myWrapper.secureKey(mySymKey);
+        final GordianKey<GordianSymKeySpec> myResultKey = myWrapper.deriveKey(myWrapped, mySymKey.getKeyType());
         Assertions.assertEquals(mySymKey, myResultKey, "Failed to wrap/unwrap key");
         Assertions.assertEquals(myWrapper.getKeyWrapLength(pKeySpec.getSpec().getKeyLength()), myWrapped.length, "Incorrect wrapped length");
     }
@@ -1122,7 +1115,6 @@ public class SymmetricTest {
         /* Access details */
         final GordianFactory myFactory = pKeySpec.getFactory();
         final GordianFactory myPartner = pKeySpec.getPartner();
-        final GordianSymKeySpec mySpec = pKeySpec.getSpec();
         final GordianCipherFactory myCipherFactory = myFactory.getCipherFactory();
         final GordianCipherFactory myPartnerFactory = myPartner.getCipherFactory();
         final GordianKey<GordianSymKeySpec> mySymKey = pKeySpec.getKey();
@@ -1132,16 +1124,16 @@ public class SymmetricTest {
         final byte[] myTestData = getTestData();
 
         /* Check wrapping bytes */
-        final GordianCoreWrapper myWrapper = (GordianCoreWrapper) myCipherFactory.createKeyWrapper(mySpec);
-        byte[] myWrapped = myWrapper.secureBytes(mySymKey, myTestData);
-        final GordianCoreWrapper myPartnerWrapper = (GordianCoreWrapper) myPartnerFactory.createKeyWrapper(mySpec);
-        final byte[] myResult = myPartnerWrapper.deriveBytes(myPartnerKey, myWrapped);
+        final GordianCoreWrapper myWrapper = (GordianCoreWrapper) myCipherFactory.createKeyWrapper(mySymKey);
+        byte[] myWrapped = myWrapper.secureBytes(myTestData);
+        final GordianCoreWrapper myPartnerWrapper = (GordianCoreWrapper) myPartnerFactory.createKeyWrapper(myPartnerKey);
+        final byte[] myResult = myPartnerWrapper.deriveBytes(myWrapped);
         Assertions.assertArrayEquals(myTestData, myResult, "Failed to wrap/unwrap bytes");
         Assertions.assertEquals(myWrapper.getDataWrapLength(myTestData.length), myWrapped.length, "Incorrect wrapped length");
 
         /* Check wrapping key */
-        myWrapped = myWrapper.secureKey(mySymKey, mySymKey);
-        final GordianKey<GordianSymKeySpec> myResultKey = myPartnerWrapper.deriveKey(myPartnerKey, myWrapped, mySymKey.getKeyType());
+        myWrapped = myWrapper.secureKey(mySymKey);
+        final GordianKey<GordianSymKeySpec> myResultKey = myPartnerWrapper.deriveKey(myWrapped, mySymKey.getKeyType());
         Assertions.assertEquals(myPartnerKey, myResultKey, "Failed to wrap/unwrap key");
         Assertions.assertEquals(myWrapper.getKeyWrapLength(pKeySpec.getSpec().getKeyLength()), myWrapped.length, "Incorrect wrapped length");
     }
@@ -1229,8 +1221,7 @@ public class SymmetricTest {
      */
     private void checkExternalId(final FactorySpec<? extends GordianIdSpec> pSpec) throws OceanusException {
         /* Access the factories */
-        final GordianKeySetFactory myKeySets = pSpec.getFactory().getKeySetFactory();
-        final GordianKnuthObfuscater myKnuth = myKeySets.getObfuscater();
+        final GordianKnuthObfuscater myKnuth = pSpec.getFactory().getObfuscater();
 
         /* Check standard obfuscation */
         int myId = myKnuth.deriveExternalIdFromType(pSpec.getSpec());

@@ -85,12 +85,17 @@ public abstract class GordianCoreFactory
     /**
      * Personalisation.
      */
-    private GordianPersonalisation thePersonalisation;
+    private final GordianPersonalisation thePersonalisation;
 
     /**
      * IdManager.
      */
-    private GordianIdManager theIdManager;
+    private final GordianIdManager theIdManager;
+
+    /**
+     * Obfuscater.
+     */
+    private final GordianCoreKnuthObfuscater theObfuscater;
 
     /**
      * Digest Factory.
@@ -146,7 +151,21 @@ public abstract class GordianCoreFactory
 
         /* Create the random source */
         theRandom = new GordianRandomSource();
+
+        /* Declare factories */
+        declareFactories();
+
+        /* Declare personalisation */
+        thePersonalisation = new GordianPersonalisation(this);
+        theIdManager = new GordianIdManager(this);
+        theObfuscater = new GordianCoreKnuthObfuscater(this);
     }
+
+    /**
+     * Declare factories.
+     * @throws OceanusException on error
+     */
+    protected abstract void declareFactories() throws OceanusException;
 
     @Override
     public GordianFactory newFactory(final GordianParameters pParameters) throws OceanusException {
@@ -185,25 +204,22 @@ public abstract class GordianCoreFactory
     /**
      * Obtain the personalisation.
      * @return the personalisation
-     * @throws OceanusException on error
      */
-    public GordianPersonalisation getPersonalisation() throws OceanusException {
-        if (thePersonalisation == null) {
-            thePersonalisation = new GordianPersonalisation(this);
-        }
+    public GordianPersonalisation getPersonalisation() {
         return thePersonalisation;
     }
 
     /**
      * Obtain the idManager.
      * @return the idManager
-     * @throws OceanusException on error
      */
-    public GordianIdManager getIdManager() throws OceanusException {
-        if (theIdManager == null) {
-            theIdManager = new GordianIdManager(this);
-        }
+    public GordianIdManager getIdManager() {
         return theIdManager;
+    }
+
+    @Override
+    public GordianCoreKnuthObfuscater getObfuscater() {
+        return theObfuscater;
     }
 
     @Override

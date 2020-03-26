@@ -93,10 +93,9 @@ public final class GordianKeySetHashRecipe {
      * Constructor for random choices.
      * @param pFactory the factory
      * @param pSpec the keySetHashSpec
-     * @throws OceanusException on error
      */
     GordianKeySetHashRecipe(final GordianCoreFactory pFactory,
-                            final GordianKeySetHashSpec pSpec) throws OceanusException {
+                            final GordianKeySetHashSpec pSpec) {
         /* Access the secureRandom */
         final SecureRandom myRandom = pFactory.getRandomSource().getRandom();
 
@@ -302,9 +301,8 @@ public final class GordianKeySetHashRecipe {
         /**
          * Construct the parameters from random.
          * @param pFactory the factory
-         * @throws OceanusException on error
          */
-        GordianHashParameters(final GordianCoreFactory pFactory) throws OceanusException {
+        GordianHashParameters(final GordianCoreFactory pFactory) {
             /* Obtain Id manager and random */
             final GordianIdManager myManager = pFactory.getIdManager();
             final GordianPersonalisation myPersonal = pFactory.getPersonalisation();
@@ -329,10 +327,9 @@ public final class GordianKeySetHashRecipe {
          * Construct the parameters from recipe.
          * @param pFactory the factory
          * @param pRecipe the recipe bytes
-         * @throws OceanusException on error
          */
         GordianHashParameters(final GordianCoreFactory pFactory,
-                              final byte[] pRecipe) throws OceanusException {
+                              final byte[] pRecipe) {
             /* Obtain Id manager */
             final GordianIdManager myManager = pFactory.getIdManager();
             final GordianPersonalisation myPersonal = pFactory.getPersonalisation();
