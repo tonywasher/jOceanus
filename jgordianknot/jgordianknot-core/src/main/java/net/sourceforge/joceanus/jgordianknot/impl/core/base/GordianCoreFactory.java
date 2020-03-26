@@ -20,12 +20,15 @@ import java.security.SecureRandom;
 import java.util.function.Predicate;
 
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
+import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
 
+import net.sourceforge.joceanus.jgordianknot.api.base.GordianKeySpec;
 import net.sourceforge.joceanus.jgordianknot.api.base.GordianLength;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianCipherFactory;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianSymKeySpec;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianSymKeyType;
 import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigestFactory;
+import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigestSpec;
 import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigestType;
 import net.sourceforge.joceanus.jgordianknot.api.factory.GordianFactory;
 import net.sourceforge.joceanus.jgordianknot.api.factory.GordianFactoryType;
@@ -113,6 +116,16 @@ public abstract class GordianCoreFactory
      * KeySet Factory.
      */
     private GordianKeySetFactory theKeySetFactory;
+
+    /**
+     * The Key AlgIds.
+     */
+    private GordianKeyAlgId theKeyAlgIds;
+
+    /**
+     * The Digest AlgIds.
+     */
+    private GordianDigestAlgId theDigestAlgIds;
 
     /**
      * Constructor.
@@ -340,6 +353,64 @@ public abstract class GordianCoreFactory
      */
     public boolean validSymKeyType(final GordianSymKeyType pKeyType) {
         return pKeyType != null;
+    }
+
+    /**
+     * Obtain Identifier for keySpec.
+     * @param pSpec the keySpec.
+     * @return the Identifier
+     */
+    public AlgorithmIdentifier getIdentifierForSpec(final GordianKeySpec pSpec) {
+        return getKeyAlgIds().getIdentifierForSpec(pSpec);
+    }
+
+    /**
+     * Obtain keySpec for Identifier.
+     * @param pIdentifier the identifier.
+     * @return the keySpec (or null if not found)
+     */
+    public GordianKeySpec getKeySpecForIdentifier(final AlgorithmIdentifier pIdentifier) {
+        return getKeyAlgIds().getKeySpecForIdentifier(pIdentifier);
+    }
+
+    /**
+     * Obtain the key algorithm Ids.
+     * @return the key Algorithm Ids
+     */
+    private GordianKeyAlgId getKeyAlgIds() {
+        if (theKeyAlgIds == null) {
+            theKeyAlgIds = new GordianKeyAlgId(this);
+        }
+        return theKeyAlgIds;
+    }
+
+    /**
+     * Obtain Identifier for DigestSpec.
+     * @param pSpec the digestSpec.
+     * @return the Identifier
+     */
+    public AlgorithmIdentifier getIdentifierForSpec(final GordianDigestSpec pSpec) {
+        return getDigestAlgIds().getIdentifierForSpec(pSpec);
+    }
+
+    /**
+     * Obtain DigestSpec for Identifier.
+     * @param pIdentifier the identifier.
+     * @return the digestSpec (or null if not found)
+     */
+    public GordianDigestSpec getDigestSpecForIdentifier(final AlgorithmIdentifier pIdentifier) {
+        return getDigestAlgIds().getSpecForIdentifier(pIdentifier);
+    }
+
+    /**
+     * Obtain the digest algorithm Ids.
+     * @return the digest Algorithm Ids
+     */
+    private GordianDigestAlgId getDigestAlgIds() {
+        if (theDigestAlgIds == null) {
+            theDigestAlgIds = new GordianDigestAlgId(this);
+        }
+        return theDigestAlgIds;
     }
 
     @Override

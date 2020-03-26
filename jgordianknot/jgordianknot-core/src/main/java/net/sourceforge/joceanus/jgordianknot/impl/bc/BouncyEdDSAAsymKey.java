@@ -399,9 +399,8 @@ public final class BouncyEdDSAAsymKey {
          * Create the signer according to the keyPair.
          * @param pKeyPair the keyPair
          * @return the signer
-         * @throws OceanusException on error
          */
-        private Signer createSigner(final GordianKeyPair pKeyPair) throws OceanusException {
+        private Signer createSigner(final GordianKeyPair pKeyPair) {
             /* Determine the EdwardsCurve */
             final boolean is25519 = pKeyPair.getKeySpec().getEdwardsElliptic().is25519();
             final byte[] myContext =  new byte[0];

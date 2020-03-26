@@ -26,6 +26,7 @@ import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigestType;
 import net.sourceforge.joceanus.jgordianknot.api.sign.GordianSignature;
 import net.sourceforge.joceanus.jgordianknot.api.sign.GordianSignatureSpec;
 import net.sourceforge.joceanus.jgordianknot.api.sign.GordianSignatureType;
+import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianCoreFactory;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianCryptoException;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianDataException;
 import net.sourceforge.joceanus.jgordianknot.impl.core.sign.GordianCoreSignatureFactory;
@@ -122,7 +123,7 @@ public class JcaSignatureFactory
             case LMS:
                 return new JcaLMSSignature(getFactory(), pSignatureSpec);
             default:
-                throw new GordianDataException(JcaFactory.getInvalidText(pSignatureSpec.getAsymKeyType()));
+                throw new GordianDataException(GordianCoreFactory.getInvalidText(pSignatureSpec.getAsymKeyType()));
         }
     }
 

@@ -61,14 +61,6 @@ public class TethysFXAreaChartExample extends Application {
     private final Map<String, TethysAreaChartSeries> theSeriesMap;
 
     /**
-     * Main entry point.
-     * @param args the parameters
-     */
-    public static void main(final String[] args) {
-        launch(args);
-    }
-
-    /**
      * Constructor.
      */
     public TethysFXAreaChartExample() {

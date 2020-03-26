@@ -24,6 +24,7 @@ import net.sourceforge.joceanus.jgordianknot.api.base.GordianKeySpec;
 import net.sourceforge.joceanus.jgordianknot.api.base.GordianLength;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianCipherFactory;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianCipherMode;
+import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianCipherSpec;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianPBESpec;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianPBESpec.GordianPBEDigestAndCountSpec;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianStreamCipherSpec;
@@ -49,11 +50,6 @@ public abstract class GordianCoreCipherFactory
      * The factory.
      */
     private final GordianCoreFactory theFactory;
-
-    /**
-     * The Key AlgIds.
-     */
-    private GordianKeyAlgId theKeyAlgIds;
 
     /**
      * The Cipher AlgIds.
@@ -312,87 +308,21 @@ public abstract class GordianCoreCipherFactory
     }
 
     /**
-     * Obtain Identifier for symKeySpec.
-     * @param pSpec the keySpec.
-     * @return the Identifier
-     */
-    public AlgorithmIdentifier getIdentifierForSpec(final GordianSymKeySpec pSpec) {
-        return getKeyAlgIds().getIdentifierForSpec(pSpec);
-    }
-
-    /**
-     * Obtain symKeySpec for Identifier.
-     * @param pIdentifier the identifier.
-     * @return the keySpec (or null if not found)
-     */
-    public GordianSymKeySpec getSymKeySpecForIdentifier(final AlgorithmIdentifier pIdentifier) {
-        return getKeyAlgIds().getSymKeySpecForIdentifier(pIdentifier);
-    }
-
-    /**
-     * Obtain Identifier for streamKeySpec.
-     * @param pSpec the keySpec.
-     * @return the Identifier
-     */
-    public AlgorithmIdentifier getIdentifierForSpec(final GordianStreamKeySpec pSpec) {
-        return getKeyAlgIds().getIdentifierForSpec(pSpec);
-    }
-
-    /**
-     * Obtain streamKeySpec for Identifier.
-     * @param pIdentifier the identifier.
-     * @return the keySpec (or null if not found)
-     */
-    public GordianStreamKeySpec getStreamKeySpecForIdentifier(final AlgorithmIdentifier pIdentifier) {
-        return getKeyAlgIds().getStreamKeySpecForIdentifier(pIdentifier);
-    }
-
-    /**
-     * Obtain the key algorithm Ids.
-     * @return the key Algorithm Ids
-     */
-    private GordianKeyAlgId getKeyAlgIds() {
-        if (theKeyAlgIds == null) {
-            theKeyAlgIds = new GordianKeyAlgId(theFactory);
-        }
-        return theKeyAlgIds;
-    }
-
-
-    /**
-     * Obtain Identifier for symCipherSpec.
+     * Obtain Identifier for cipherSpec.
      * @param pSpec the cipherSpec.
      * @return the Identifier
      */
-    public AlgorithmIdentifier getIdentifierForSpec(final GordianSymCipherSpec pSpec) {
+    public AlgorithmIdentifier getIdentifierForSpec(final GordianCipherSpec<?> pSpec) {
         return getCipherAlgIds().getIdentifierForSpec(pSpec);
     }
 
     /**
-     * Obtain symCipherSpec for Identifier.
+     * Obtain cipherSpec for Identifier.
      * @param pIdentifier the identifier.
      * @return the cipherSpec (or null if not found)
      */
-    public GordianSymCipherSpec getSymCipherSpecForIdentifier(final AlgorithmIdentifier pIdentifier) {
-        return getCipherAlgIds().getSymCipherSpecForIdentifier(pIdentifier);
-    }
-
-    /**
-     * Obtain Identifier for streamCipherSpec.
-     * @param pSpec the cipherSpec.
-     * @return the Identifier
-     */
-    public AlgorithmIdentifier getIdentifierForSpec(final GordianStreamCipherSpec pSpec) {
-        return getCipherAlgIds().getIdentifierForSpec(pSpec);
-    }
-
-    /**
-     * Obtain streamCipherSpec for Identifier.
-     * @param pIdentifier the identifier.
-     * @return the cipherSpec (or null if not found)
-     */
-    public GordianStreamCipherSpec getStreamCipherSpecForIdentifier(final AlgorithmIdentifier pIdentifier) {
-        return getCipherAlgIds().getStreamCipherSpecForIdentifier(pIdentifier);
+    public GordianCipherSpec<?> getCipherSpecForIdentifier(final AlgorithmIdentifier pIdentifier) {
+        return getCipherAlgIds().getCipherSpecForIdentifier(pIdentifier);
     }
 
     /**

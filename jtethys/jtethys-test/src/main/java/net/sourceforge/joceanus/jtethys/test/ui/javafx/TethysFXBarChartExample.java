@@ -60,14 +60,6 @@ public class TethysFXBarChartExample extends Application {
     private final Map<String, TethysBarChartDataSection> theSectionMap;
 
     /**
-     * Main entry point.
-     * @param args the parameters
-     */
-    public static void main(final String[] args) {
-        launch(args);
-    }
-
-    /**
      * Constructor.
      */
     public TethysFXBarChartExample() {

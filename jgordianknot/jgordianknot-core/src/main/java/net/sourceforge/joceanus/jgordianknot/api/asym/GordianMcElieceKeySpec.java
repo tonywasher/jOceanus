@@ -19,7 +19,7 @@ package net.sourceforge.joceanus.jgordianknot.api.asym;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.bouncycastle.pqc.crypto.mceliece.McElieceCCA2Parameters;
+import org.bouncycastle.pqc.crypto.mceliece.McElieceParameters;
 import org.bouncycastle.pqc.jcajce.spec.McElieceCCA2KeyGenParameterSpec;
 
 import net.sourceforge.joceanus.jtethys.TethysDataConverter;
@@ -309,11 +309,11 @@ public final class GordianMcElieceKeySpec {
         public int getM() {
             switch (this) {
                 case SHA512:
-                    return McElieceCCA2Parameters.DEFAULT_M + SHIFT_SHA512;
+                    return McElieceParameters.DEFAULT_M + SHIFT_SHA512;
                 case SHA384:
-                    return McElieceCCA2Parameters.DEFAULT_M + SHIFT_SHA384;
+                    return McElieceParameters.DEFAULT_M + SHIFT_SHA384;
                 default:
-                    return McElieceCCA2Parameters.DEFAULT_M;
+                    return McElieceParameters.DEFAULT_M;
             }
         }
     }

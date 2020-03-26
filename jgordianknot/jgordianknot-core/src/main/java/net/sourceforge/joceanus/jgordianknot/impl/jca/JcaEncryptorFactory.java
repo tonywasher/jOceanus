@@ -23,6 +23,7 @@ import javax.crypto.NoSuchPaddingException;
 import net.sourceforge.joceanus.jgordianknot.api.asym.GordianMcElieceKeySpec.GordianMcElieceEncryptionType;
 import net.sourceforge.joceanus.jgordianknot.api.encrypt.GordianEncryptor;
 import net.sourceforge.joceanus.jgordianknot.api.encrypt.GordianEncryptorSpec;
+import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianCoreFactory;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianCryptoException;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianDataException;
 import net.sourceforge.joceanus.jgordianknot.impl.core.encrypt.GordianCoreEncryptorFactory;
@@ -76,7 +77,7 @@ public class JcaEncryptorFactory
                        ? new JcaBlockEncryptor(getFactory(), pEncryptorSpec)
                        : new JcaHybridEncryptor(getFactory(), pEncryptorSpec);
             default:
-                throw new GordianDataException(JcaFactory.getInvalidText(pEncryptorSpec.getKeyType()));
+                throw new GordianDataException(GordianCoreFactory.getInvalidText(pEncryptorSpec.getKeyType()));
         }
     }
 

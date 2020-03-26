@@ -233,6 +233,8 @@ public class GordianCoreZipReadFile
             /* Create a Document builder */
             final DocumentBuilderFactory myFactory = DocumentBuilderFactory.newInstance();
             myFactory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
+            myFactory.setAttribute(XMLConstants.ACCESS_EXTERNAL_DTD, "");
+            myFactory.setAttribute(XMLConstants.ACCESS_EXTERNAL_SCHEMA, "");
             final DocumentBuilder myBuilder = myFactory.newDocumentBuilder();
 
             /* Build the document from the input stream */

@@ -91,7 +91,8 @@ public class ThemisDSMProject {
      * @return the default
      */
     public ThemisDSMModule getDefaultModule() {
-        return theModules.isEmpty() ? null : theModules.get(0);
+        final List<ThemisDSMModule> myList = listModules();
+        return myList.isEmpty() ? null : myList.get(0);
     }
 
     /**

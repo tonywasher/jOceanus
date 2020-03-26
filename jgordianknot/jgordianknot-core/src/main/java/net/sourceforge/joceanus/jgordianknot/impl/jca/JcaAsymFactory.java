@@ -23,6 +23,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import net.sourceforge.joceanus.jgordianknot.api.asym.GordianAsymKeySpec;
+import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianCoreFactory;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianCryptoException;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianDataException;
 import net.sourceforge.joceanus.jgordianknot.impl.core.keypair.GordianCoreAsymFactory;
@@ -144,7 +145,7 @@ public class JcaAsymFactory
             case LMS:
                 return new JcaLMSKeyPairGenerator(getFactory(), pKeySpec);
             default:
-                throw new GordianDataException(JcaFactory.getInvalidText(pKeySpec.getKeyType()));
+                throw new GordianDataException(GordianCoreFactory.getInvalidText(pKeySpec.getKeyType()));
         }
     }
 

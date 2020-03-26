@@ -220,14 +220,6 @@ public final class TethysFXDateExample
     }
 
     /**
-     * Main function.
-     * @param args the arguments
-     */
-    public static void main(final String[] args) {
-        launch(args);
-    }
-
-    /**
      * Create the panel.
      * @return the panel
      */

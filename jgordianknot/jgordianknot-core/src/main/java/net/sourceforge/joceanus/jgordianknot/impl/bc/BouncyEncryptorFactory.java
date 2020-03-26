@@ -24,6 +24,7 @@ import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyEllipticAsymKey.Bounc
 import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyMcElieceAsymKey.BouncyMcElieceCCA2Encryptor;
 import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyMcElieceAsymKey.BouncyMcElieceEncryptor;
 import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyRSAAsymKey.BouncyRSAEncryptor;
+import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianCoreFactory;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianDataException;
 import net.sourceforge.joceanus.jgordianknot.impl.core.encrypt.GordianCoreEncryptorFactory;
 import net.sourceforge.joceanus.jtethys.OceanusException;
@@ -80,7 +81,7 @@ public class BouncyEncryptorFactory
                        ? new BouncyMcElieceEncryptor(getFactory(), pSpec)
                        : new BouncyMcElieceCCA2Encryptor(getFactory(), pSpec);
             default:
-                throw new GordianDataException(BouncyFactory.getInvalidText(pSpec));
+                throw new GordianDataException(GordianCoreFactory.getInvalidText(pSpec));
         }
     }
 }

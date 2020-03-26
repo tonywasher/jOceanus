@@ -14,7 +14,7 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  ******************************************************************************/
-package net.sourceforge.joceanus.jgordianknot.impl.core.digest;
+package net.sourceforge.joceanus.jgordianknot.impl.core.base;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -36,8 +36,6 @@ import net.sourceforge.joceanus.jgordianknot.api.base.GordianLength;
 import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigestFactory;
 import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigestSpec;
 import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigestType;
-import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianASN1Util;
-import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianCoreFactory;
 
 /**
  * Mappings from EncodedId to DigestSpec.

@@ -64,12 +64,4 @@ public class ThemisDSM4FX
             pStage.show();
         }
     }
-
-    /**
-     * Main function.
-     * @param args the arguments
-     */
-    public static void main(final String[] args) {
-        launch(args);
-    }
 }

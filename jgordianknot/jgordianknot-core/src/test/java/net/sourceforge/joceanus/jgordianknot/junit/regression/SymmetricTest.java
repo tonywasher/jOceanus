@@ -31,6 +31,7 @@ import org.junit.jupiter.api.DynamicTest;
 import org.junit.jupiter.api.TestFactory;
 
 import net.sourceforge.joceanus.jgordianknot.api.base.GordianIdSpec;
+import net.sourceforge.joceanus.jgordianknot.api.base.GordianKeySpec;
 import net.sourceforge.joceanus.jgordianknot.api.base.GordianLength;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianCipherFactory;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianCipherMode;
@@ -53,6 +54,7 @@ import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigestSpec;
 import net.sourceforge.joceanus.jgordianknot.api.factory.GordianFactory;
 import net.sourceforge.joceanus.jgordianknot.api.factory.GordianFactoryType;
 import net.sourceforge.joceanus.jgordianknot.api.mac.GordianMacParameters;
+import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianCoreFactory;
 import net.sourceforge.joceanus.jgordianknot.junit.regression.SymmetricStore.FactoryStreamPBECipherSpec;
 import net.sourceforge.joceanus.jgordianknot.junit.regression.SymmetricStore.FactorySymPBECipherSpec;
 import net.sourceforge.joceanus.jgordianknot.util.GordianGenerator;
@@ -71,7 +73,6 @@ import net.sourceforge.joceanus.jgordianknot.impl.core.cipher.GordianCoreCipher;
 import net.sourceforge.joceanus.jgordianknot.impl.core.cipher.GordianCoreCipherFactory;
 import net.sourceforge.joceanus.jgordianknot.impl.core.cipher.GordianCoreWrapper;
 import net.sourceforge.joceanus.jgordianknot.impl.core.digest.GordianCoreDigestFactory;
-import net.sourceforge.joceanus.jgordianknot.impl.core.mac.GordianCoreMacFactory;
 import net.sourceforge.joceanus.jgordianknot.junit.regression.SymmetricStore.FactoryDigestSpec;
 import net.sourceforge.joceanus.jgordianknot.junit.regression.SymmetricStore.FactoryMacSpec;
 import net.sourceforge.joceanus.jgordianknot.junit.regression.SymmetricStore.FactoryRandomSpec;
@@ -1251,14 +1252,14 @@ public class SymmetricTest {
      */
     private void checkDigestAlgId(final FactoryDigestSpec pSpec) {
         /* Access the factory */
-        final GordianCoreDigestFactory myFactory = (GordianCoreDigestFactory) pSpec.getFactory().getDigestFactory();
+        final GordianCoreFactory myFactory = (GordianCoreFactory) pSpec.getFactory();
 
         /* Check that we have an id */
         final AlgorithmIdentifier myId = myFactory.getIdentifierForSpec(pSpec.getSpec());
         Assertions.assertNotNull(myId,  "Unknown AlgorithmId for " + pSpec.getSpec());
 
         /* Check unique mapping */
-        final GordianDigestSpec mySpec = myFactory.getSpecForIdentifier(myId);
+        final GordianDigestSpec mySpec = myFactory.getDigestSpecForIdentifier(myId);
         Assertions.assertEquals(pSpec.getSpec(), mySpec, "Invalid mapping for  " + pSpec.getSpec());
     }
 
@@ -1268,14 +1269,14 @@ public class SymmetricTest {
      */
     private void checkSymKeyAlgId(final FactorySymKeySpec pSpec) {
         /* Access the factory */
-        final GordianCoreCipherFactory myFactory = (GordianCoreCipherFactory) pSpec.getFactory().getCipherFactory();
+        final GordianCoreFactory myFactory = (GordianCoreFactory) pSpec.getFactory();
 
         /* Check that we have an id */
         final AlgorithmIdentifier myId = myFactory.getIdentifierForSpec(pSpec.getSpec());
         Assertions.assertNotNull(myId,  "Unknown AlgorithmId for " + pSpec.getSpec());
 
         /* Check unique mapping */
-        final GordianSymKeySpec mySpec = myFactory.getSymKeySpecForIdentifier(myId);
+        final GordianKeySpec mySpec = myFactory.getKeySpecForIdentifier(myId);
         Assertions.assertEquals(pSpec.getSpec(), mySpec, "Invalid mapping for  " + pSpec.getSpec());
     }
 
@@ -1292,7 +1293,7 @@ public class SymmetricTest {
         Assertions.assertNotNull(myId,  "Unknown AlgorithmId for " + pSpec.getSpec());
 
         /* Check unique mapping */
-        final GordianCipherSpec<?> mySpec = myFactory.getSymCipherSpecForIdentifier(myId);
+        final GordianCipherSpec<?> mySpec = myFactory.getCipherSpecForIdentifier(myId);
         Assertions.assertEquals(pSpec.getSpec(), mySpec, "Invalid mapping for  " + pSpec.getSpec());
     }
 
@@ -1302,14 +1303,14 @@ public class SymmetricTest {
      */
     private void checkStreamKeyAlgId(final FactoryStreamKeySpec pSpec) {
         /* Access the factory */
-        final GordianCoreCipherFactory myFactory = (GordianCoreCipherFactory) pSpec.getFactory().getCipherFactory();
+        final GordianCoreFactory myFactory = (GordianCoreFactory) pSpec.getFactory();
 
         /* Check that we have an id */
         final AlgorithmIdentifier myId = myFactory.getIdentifierForSpec(pSpec.getSpec());
         Assertions.assertNotNull(myId,  "Unknown AlgorithmId for " + pSpec.getSpec());
 
         /* Check unique mapping */
-        final GordianStreamKeySpec mySpec = myFactory.getStreamKeySpecForIdentifier(myId);
+        final GordianKeySpec mySpec = myFactory.getKeySpecForIdentifier(myId);
         Assertions.assertEquals(pSpec.getSpec(), mySpec, "Invalid mapping for  " + pSpec.getSpec());
     }
 
@@ -1326,7 +1327,7 @@ public class SymmetricTest {
         Assertions.assertNotNull(myId,  "Unknown AlgorithmId for " + pSpec.getSpec());
 
         /* Check unique mapping */
-        final GordianCipherSpec<?> mySpec = myFactory.getStreamCipherSpecForIdentifier(myId);
+        final GordianCipherSpec<?> mySpec = myFactory.getCipherSpecForIdentifier(myId);
         Assertions.assertEquals(pSpec.getSpec(), mySpec, "Invalid mapping for  " + pSpec.getSpec());
     }
 
@@ -1336,14 +1337,14 @@ public class SymmetricTest {
      */
     private void checkMacAlgId(final FactoryMacSpec pSpec) {
         /* Access the factory */
-        final GordianCoreMacFactory myFactory = (GordianCoreMacFactory) pSpec.getFactory().getMacFactory();
+        final GordianCoreFactory myFactory = (GordianCoreFactory) pSpec.getFactory();
 
         /* Check that we have an id */
         final AlgorithmIdentifier myId = myFactory.getIdentifierForSpec(pSpec.getSpec());
         Assertions.assertNotNull(myId,  "Unknown AlgorithmId for " + pSpec.getSpec());
 
         /* Check unique mapping */
-        final GordianMacSpec mySpec = myFactory.getSpecForIdentifier(myId);
+        final GordianKeySpec mySpec = myFactory.getKeySpecForIdentifier(myId);
         Assertions.assertEquals(pSpec.getSpec(), mySpec, "Invalid mapping for  " + pSpec.getSpec());
     }
 

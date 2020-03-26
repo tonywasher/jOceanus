@@ -32,6 +32,7 @@ import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyRSAAsymKey.BouncyRSAS
 import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyRainbowAsymKey.BouncyRainbowSignature;
 import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncySPHINCSAsymKey.BouncySPHINCSSignature;
 import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyXMSSAsymKey.BouncyXMSSSignature;
+import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianCoreFactory;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianDataException;
 import net.sourceforge.joceanus.jgordianknot.impl.core.sign.GordianCoreSignatureFactory;
 import net.sourceforge.joceanus.jtethys.OceanusException;
@@ -104,7 +105,7 @@ public class BouncySignatureFactory
             case LMS:
                 return new BouncyLMSSignature(getFactory(), pSignatureSpec);
             default:
-                throw new GordianDataException(BouncyFactory.getInvalidText(pSignatureSpec.getAsymKeyType()));
+                throw new GordianDataException(GordianCoreFactory.getInvalidText(pSignatureSpec.getAsymKeyType()));
         }
     }
 

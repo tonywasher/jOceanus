@@ -61,14 +61,6 @@ public class MetisFXTestTable extends Application {
         theTable = new MetisTestDataTable(theToolkit);
     }
 
-    /**
-     * Main function.
-     * @param args the arguments
-     */
-    public static void main(final String[] args) {
-        launch(args);
-    }
-
     @Override
     public void start(final Stage pStage) {
         /* Create parent panel */

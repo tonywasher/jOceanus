@@ -564,7 +564,7 @@ public abstract class JcaSignature
          * @param pKeyPair the keyPair
          * @return the name
          */
-        private String getAlgorithmForKeyPair(final GordianKeyPair pKeyPair) {
+        private static String getAlgorithmForKeyPair(final GordianKeyPair pKeyPair) {
             /* Determine the required signer */
             final GordianEdwardsElliptic myEdwards = pKeyPair.getKeySpec().getEdwardsElliptic();
             final boolean is25519 = myEdwards.is25519();

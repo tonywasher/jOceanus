@@ -247,6 +247,8 @@ public class MetisReportHTMLBuilder {
             /* Create the document builder */
             final DocumentBuilderFactory myDocFactory = DocumentBuilderFactory.newInstance();
             myDocFactory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
+            myDocFactory.setAttribute(XMLConstants.ACCESS_EXTERNAL_DTD, "");
+            myDocFactory.setAttribute(XMLConstants.ACCESS_EXTERNAL_SCHEMA, "");
             theBuilder = myDocFactory.newDocumentBuilder();
 
         } catch (Exception e) {

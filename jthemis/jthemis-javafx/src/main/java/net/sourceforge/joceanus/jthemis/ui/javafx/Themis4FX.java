@@ -85,12 +85,4 @@ public class Themis4FX
             pStage.setOnCloseRequest(e -> thePanel.handleWindowClosed());
         }
     }
-
-    /**
-     * Main function.
-     * @param args the arguments
-     */
-    public static void main(final String[] args) {
-        launch(args);
-    }
 }

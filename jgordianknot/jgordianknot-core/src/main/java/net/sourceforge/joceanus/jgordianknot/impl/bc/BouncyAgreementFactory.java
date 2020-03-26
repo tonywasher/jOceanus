@@ -34,6 +34,7 @@ import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyXDHAsymKey.BouncyXDHA
 import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyXDHAsymKey.BouncyXDHBasicAgreement;
 import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyXDHAsymKey.BouncyXDHUnifiedAgreement;
 import net.sourceforge.joceanus.jgordianknot.impl.core.agree.GordianCoreAgreementFactory;
+import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianCoreFactory;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianDataException;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
@@ -89,7 +90,7 @@ public class BouncyAgreementFactory
             case XDH:
                 return getBCXDHAgreement(pSpec);
             default:
-                throw new GordianDataException(BouncyFactory.getInvalidText(pSpec));
+                throw new GordianDataException(GordianCoreFactory.getInvalidText(pSpec));
         }
     }
 
@@ -115,7 +116,7 @@ public class BouncyAgreementFactory
             case SM2:
                 return new BouncyECSM2Agreement(getFactory(), pSpec);
             default:
-                throw new GordianDataException(BouncyFactory.getInvalidText(pSpec));
+                throw new GordianDataException(GordianCoreFactory.getInvalidText(pSpec));
         }
     }
 
@@ -137,7 +138,7 @@ public class BouncyAgreementFactory
             case UNIFIED:
                 return new BouncyDHUnifiedAgreement(getFactory(), pSpec);
             default:
-                throw new GordianDataException(BouncyFactory.getInvalidText(pSpec));
+                throw new GordianDataException(GordianCoreFactory.getInvalidText(pSpec));
         }
     }
 
@@ -157,7 +158,7 @@ public class BouncyAgreementFactory
             case UNIFIED:
                 return new BouncyXDHUnifiedAgreement(getFactory(), pSpec);
             default:
-                throw new GordianDataException(BouncyFactory.getInvalidText(pSpec));
+                throw new GordianDataException(GordianCoreFactory.getInvalidText(pSpec));
         }
     }
 }

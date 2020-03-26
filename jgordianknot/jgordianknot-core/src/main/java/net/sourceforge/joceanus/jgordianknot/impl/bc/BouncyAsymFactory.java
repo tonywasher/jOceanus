@@ -41,6 +41,7 @@ import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyXDHAsymKey.BouncyX255
 import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyXDHAsymKey.BouncyX448KeyPairGenerator;
 import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyXMSSAsymKey.BouncyXMSSKeyPairGenerator;
 import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyXMSSAsymKey.BouncyXMSSMTKeyPairGenerator;
+import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianCoreFactory;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianDataException;
 import net.sourceforge.joceanus.jgordianknot.impl.core.keypair.GordianCoreAsymFactory;
 import net.sourceforge.joceanus.jgordianknot.impl.core.keystore.GordianCoreKeyStoreFactory;
@@ -163,7 +164,7 @@ public class BouncyAsymFactory
                        ? new BouncyHSSKeyPairGenerator(getFactory(), pKeySpec)
                        : new BouncyLMSKeyPairGenerator(getFactory(), pKeySpec);
             default:
-                throw new GordianDataException(BouncyFactory.getInvalidText(pKeySpec.getKeyType()));
+                throw new GordianDataException(GordianCoreFactory.getInvalidText(pKeySpec.getKeyType()));
         }
     }
 

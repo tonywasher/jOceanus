@@ -33,7 +33,7 @@ import net.sourceforge.joceanus.jgordianknot.api.encrypt.GordianEncryptorFactory
 import net.sourceforge.joceanus.jgordianknot.api.encrypt.GordianEncryptorSpec;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianASN1Util;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianCoreFactory;
-import net.sourceforge.joceanus.jgordianknot.impl.core.digest.GordianDigestAlgId;
+import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianDigestAlgId;
 
 /**
  * Mappings from EncodedId to EncryptorSpec.

@@ -34,6 +34,7 @@ import net.sourceforge.joceanus.jgordianknot.api.agree.GordianAgreementFactory;
 import net.sourceforge.joceanus.jgordianknot.api.agree.GordianAgreementSpec;
 import net.sourceforge.joceanus.jgordianknot.api.agree.GordianKDFType;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianCipherFactory;
+import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianCipherSpec;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianStreamCipherSpec;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianSymCipherSpec;
 import net.sourceforge.joceanus.jgordianknot.api.factory.GordianAsymFactory;
@@ -407,18 +408,12 @@ public abstract class GordianCoreAgreement
 
         /* Look for a symCipher Spec */
         final GordianCoreCipherFactory myCipherFactory = (GordianCoreCipherFactory) theFactory.getCipherFactory();
-        Object myType = myCipherFactory.getSymCipherSpecForIdentifier(pResId);
-        if (myType != null) {
-            theResultType = myType;
+        final GordianCipherSpec<?> mySpec = myCipherFactory.getCipherSpecForIdentifier(pResId);
+        if (mySpec != null) {
+            theResultType = mySpec;
             return;
         }
 
-        /* Look for a streamCipher Spec */
-        myType = myCipherFactory.getStreamCipherSpecForIdentifier(pResId);
-        if (myType != null) {
-            theResultType = myType;
-            return;
-        }
         throw new GordianDataException("No resultType set");
     }
 

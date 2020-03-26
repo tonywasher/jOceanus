@@ -111,14 +111,6 @@ public class MetisFXThreadTester
         theMainPanel = theGuiFactory.newBorderPane();
     }
 
-    /**
-     * Main function.
-     * @param args the arguments
-     */
-    public static void main(final String[] args) {
-        launch(args);
-    }
-
     @Override
     public void start(final Stage pStage) {
         /* Record the stage */

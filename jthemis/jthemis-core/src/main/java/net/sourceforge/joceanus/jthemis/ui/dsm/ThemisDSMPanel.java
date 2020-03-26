@@ -146,7 +146,6 @@ public class ThemisDSMPanel {
         final TethysBorderPaneManager myMatrixPanel = theGuiFactory.newBorderPane();
         myMatrixPanel.setCentre(theMatrixHTML);
         myMatrixPanel.setNorth(myMatrixControl);
-        theMatrixHTML.setHTMLContent("<html><body>Hello</body></html>", "");
 
         /* Create the from selection panel */
         final TethysBoxPaneManager myFromSelect = theGuiFactory.newHBoxPane();
@@ -176,7 +175,6 @@ public class ThemisDSMPanel {
         final TethysBorderPaneManager myDependencyPanel = theGuiFactory.newBorderPane();
         myDependencyPanel.setCentre(theDependencyHTML);
         myDependencyPanel.setNorth(myDependencyControl);
-        theMatrixHTML.setHTMLContent("<html><body>HelloAgain</body></html>", "");
 
         /* Create the TabPane */
         theTabPane = theGuiFactory.newTabPane();

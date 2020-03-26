@@ -204,14 +204,6 @@ public class TethysFXTableExample
         theTable.setDisabled(r -> r.booleanProperty().getValue());
     }
 
-    /**
-     * Main entry point.
-     * @param args the parameters
-     */
-    public static void main(final String[] args) {
-        launch(args);
-    }
-
     @Override
     public void start(final Stage pStage) {
         /* Create scene */
