@@ -19,7 +19,6 @@ package net.sourceforge.joceanus.jgordianknot.impl.core.keyset;
 import java.util.Enumeration;
 
 import org.bouncycastle.asn1.ASN1EncodableVector;
-import org.bouncycastle.asn1.ASN1Object;
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
 import org.bouncycastle.asn1.ASN1OctetString;
 import org.bouncycastle.asn1.ASN1Primitive;
@@ -30,15 +29,22 @@ import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
 
 import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetHashSpec;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianASN1Util;
+import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianASN1Util.GordianASN1Object;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianDataException;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianIOException;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
  * ASN1 Encoding of KeySetSpec.
+ * <pre>
+ * GordianKeySetHashASN1 ::= SEQUENCE  {
+ *      spec GordianKeySetHashSpecASN1
+ *      hashBytes OCTET STRING
+ * }
+ * </pre>
  */
 public class GordianKeySetHashASN1
-        extends ASN1Object {
+        extends GordianASN1Object {
     /**
      * Base our algorithmId off bouncyCastle.
      */
@@ -116,16 +122,6 @@ public class GordianKeySetHashASN1
         return theHashBytes;
     }
 
-    /**
-     * Produce an object suitable for an ASN1OutputStream.
-     * <pre>
-     * GordianKeySetHashASN1 ::= SEQUENCE  {
-     *      spec GordianKeySetHashSpecASN1
-     *      hashBytes OCTET STRING
-     * }
-     * </pre>
-     * @return the ASN1 Encoding
-     */
     @Override
     public ASN1Primitive toASN1Primitive() {
         final ASN1EncodableVector v = new ASN1EncodableVector();

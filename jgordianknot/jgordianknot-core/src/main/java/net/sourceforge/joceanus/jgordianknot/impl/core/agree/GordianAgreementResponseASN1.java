@@ -19,7 +19,6 @@ package net.sourceforge.joceanus.jgordianknot.impl.core.agree;
 import java.util.Enumeration;
 
 import org.bouncycastle.asn1.ASN1EncodableVector;
-import org.bouncycastle.asn1.ASN1Object;
 import org.bouncycastle.asn1.ASN1OctetString;
 import org.bouncycastle.asn1.ASN1Primitive;
 import org.bouncycastle.asn1.ASN1Sequence;
@@ -27,6 +26,7 @@ import org.bouncycastle.asn1.BEROctetString;
 import org.bouncycastle.asn1.DERSequence;
 import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
 
+import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianASN1Util.GordianASN1Object;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianDataException;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianIOException;
 import net.sourceforge.joceanus.jtethys.OceanusException;
@@ -41,7 +41,7 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
  * </pre>
  */
 public class GordianAgreementResponseASN1
-        extends ASN1Object {
+        extends GordianASN1Object {
     /**
      * The AgreementSpec.
      */
@@ -117,10 +117,6 @@ public class GordianAgreementResponseASN1
         return theData;
     }
 
-    /**
-     * Produce an object suitable for an ASN1OutputStream.
-     * @return the ASN1 Encoding
-     */
     @Override
     public ASN1Primitive toASN1Primitive() {
         final ASN1EncodableVector v = new ASN1EncodableVector();

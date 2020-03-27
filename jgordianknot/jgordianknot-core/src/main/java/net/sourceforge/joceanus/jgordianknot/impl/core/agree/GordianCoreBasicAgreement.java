@@ -16,7 +16,6 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jgordianknot.impl.core.agree;
 
-import java.io.IOException;
 import java.util.Objects;
 
 import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
@@ -50,18 +49,12 @@ public abstract class GordianCoreBasicAgreement
      * @throws OceanusException on error
      */
     protected byte[] createMessage() throws OceanusException {
-        /* Build the sequence */
-        try {
-            /* Create the request */
-            final GordianCoreAgreementFactory myFactory = getAgreementFactory();
-            final AlgorithmIdentifier myAlgId = myFactory.getIdentifierForSpec(getAgreementSpec());
-            final AlgorithmIdentifier myResId = getIdentifierForResult();
-            final GordianAgreementRequestASN1 myRequest = new GordianAgreementRequestASN1(myAlgId, myResId, newInitVector());
-            return myRequest.getEncoded();
-
-        } catch (IOException e) {
-            throw new GordianIOException("Unable to build ASN1 sequence", e);
-        }
+        /* Create the request */
+        final GordianCoreAgreementFactory myFactory = getAgreementFactory();
+        final AlgorithmIdentifier myAlgId = myFactory.getIdentifierForSpec(getAgreementSpec());
+        final AlgorithmIdentifier myResId = getIdentifierForResult();
+        final GordianAgreementRequestASN1 myRequest = new GordianAgreementRequestASN1(myAlgId, myResId, newInitVector());
+        return myRequest.getEncodedBytes();
     }
 
     /**

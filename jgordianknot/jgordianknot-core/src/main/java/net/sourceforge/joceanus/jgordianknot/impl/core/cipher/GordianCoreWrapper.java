@@ -36,6 +36,8 @@ import net.sourceforge.joceanus.jgordianknot.impl.core.key.GordianCoreKeyGenerat
 import net.sourceforge.joceanus.jgordianknot.impl.core.keypair.GordianCoreKeyPairGenerator;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.TethysDataConverter;
+
+import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
 import org.bouncycastle.util.Arrays;
 
 import java.security.spec.PKCS8EncodedKeySpec;
@@ -120,14 +122,30 @@ public class GordianCoreWrapper
     @Override
     public byte[] secureKey(final GordianKey<?> pKeyToSecure) throws OceanusException {
         /* Secure the bytes */
-        return secureBytes(((GordianCoreKey<?>) pKeyToSecure).getKeyBytes());
+        final byte[] myBytes = secureBytes(((GordianCoreKey<?>) pKeyToSecure).getKeyBytes());
+
+        /* Create the ASN1 */
+        final AlgorithmIdentifier myAlgId = theFactory.getIdentifierForSpec(pKeyToSecure.getKeyType());
+        final GordianWrappedKeyASN1 myASN1 = new GordianWrappedKeyASN1(myAlgId, myBytes);
+        return myASN1.getEncodedBytes();
     }
 
     @Override
     public <T extends GordianKeySpec> GordianKey<T> deriveKey(final byte[] pSecuredKey,
                                                               final T pKeyType) throws OceanusException {
+        /* Parse the ASN1 */
+        final GordianWrappedKeyASN1 myASN1 = GordianWrappedKeyASN1.getInstance(pSecuredKey);
+        final AlgorithmIdentifier myAlgId = myASN1.getKeySpecId();
+        final byte[] myWrappedKey = myASN1.getWrappedKey();
+
+        /* Check the algorithmId */
+        final GordianKeySpec mySpec = theFactory.getKeySpecForIdentifier(myAlgId);
+        if (mySpec == null || !mySpec.equals(pKeyType)) {
+            throw new GordianDataException("Incorrect KeySpec");
+        }
+
         /* Unwrap the bytes */
-        final byte[] myBytes = deriveBytes(pSecuredKey);
+        final byte[] myBytes = deriveBytes(myWrappedKey);
 
         /* Handle the macSpec separately */
         if (pKeyType instanceof GordianMacSpec) {
@@ -368,8 +386,16 @@ public class GordianCoreWrapper
     }
 
     @Override
-    public int getKeyWrapLength(final GordianLength pKeyLen) {
-        return getDataWrapLength(pKeyLen.getByteLength());
+    public int getKeyWrapLength(final GordianKey<?> pKey) {
+        /* Obtain the id of the keySpec */
+        final GordianKeySpec mySpec = pKey.getKeyType();
+        final AlgorithmIdentifier myAlgId = theFactory.getIdentifierForSpec(mySpec);
+
+        /* Determine wrapped key length */
+        final int myDataLen = getDataWrapLength(mySpec.getKeyLength().getByteLength());
+
+        /* return the calculated length */
+        return GordianWrappedKeyASN1.getEncodedLength(myAlgId, myDataLen);
     }
 
     @Override

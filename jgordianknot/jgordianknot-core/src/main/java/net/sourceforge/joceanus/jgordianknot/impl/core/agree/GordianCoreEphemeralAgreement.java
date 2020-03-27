@@ -102,18 +102,12 @@ public abstract class GordianCoreEphemeralAgreement
         final X509EncodedKeySpec myKeySpec = myGenerator.getX509Encoding(theEphemeral);
         final byte[] myKeyBytes = myKeySpec.getEncoded();
 
-        /* Build the sequence */
-        try {
-            /* Create the request */
-            final GordianCoreAgreementFactory myFactory = getAgreementFactory();
-            final AlgorithmIdentifier myAlgId = myFactory.getIdentifierForSpec(getAgreementSpec());
-            final AlgorithmIdentifier myResId = getIdentifierForResult();
-            final GordianAgreementRequestASN1 myRequest = new GordianAgreementRequestASN1(myAlgId, myResId, newInitVector(), myKeyBytes);
-            return myRequest.getEncoded();
-
-        } catch (IOException e) {
-            throw new GordianIOException("Unable to build ASN1 sequence", e);
-        }
+        /* Create the request */
+        final GordianCoreAgreementFactory myFactory = getAgreementFactory();
+        final AlgorithmIdentifier myAlgId = myFactory.getIdentifierForSpec(getAgreementSpec());
+        final AlgorithmIdentifier myResId = getIdentifierForResult();
+        final GordianAgreementRequestASN1 myRequest = new GordianAgreementRequestASN1(myAlgId, myResId, newInitVector(), myKeyBytes);
+        return myRequest.getEncodedBytes();
     }
 
     /**

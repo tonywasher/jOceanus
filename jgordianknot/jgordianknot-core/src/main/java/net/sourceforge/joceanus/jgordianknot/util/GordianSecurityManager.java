@@ -40,7 +40,7 @@ import net.sourceforge.joceanus.jtethys.logger.TethysLogManager;
 import net.sourceforge.joceanus.jtethys.logger.TethysLogger;
 
 /**
- * PasswordHash Manager class which holds a cache of all resolved password hashes. For password
+ * Security Manager class which holds a cache of all resolved password hashes. For password
  * hashes that were not previously resolved, previously used passwords will be attempted. If no
  * match is found, then the user will be prompted for the password.
  */

@@ -16,8 +16,14 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jgordianknot.impl.core.base;
 
+import java.io.IOException;
+
+import org.bouncycastle.asn1.ASN1Object;
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
 import org.bouncycastle.asn1.bc.BCObjectIdentifiers;
+import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
+
+import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
  * ASN1 Utilities.
@@ -105,5 +111,44 @@ public final class GordianASN1Util {
 
         /* Return the length */
         return myResult;
+    }
+
+    /**
+     * Obtain the Length of an algorithmId field.
+     * @param pValue the value
+     * @return the byte length
+     */
+    public static int getLengthAlgorithmField(final AlgorithmIdentifier pValue) {
+        /* Protect against exceptions */
+        try {
+            /* Get the encoded length */
+            final byte[] myEncoded = pValue.toASN1Primitive().getEncoded();
+
+            /* Type + encoded value */
+            return myEncoded.length;
+
+            /* handle exceptions */
+        } catch (IOException e) {
+            throw new IllegalArgumentException(e);
+        }
+    }
+
+    /**
+     * Extension class for ASN1Object.
+     */
+    public abstract static class GordianASN1Object
+            extends ASN1Object {
+        /**
+         * Obtain encodedBytes.
+         * @return the bytes
+         * @throws OceanusException on error
+         */
+        public byte[] getEncodedBytes() throws OceanusException {
+            try {
+                return toASN1Primitive().getEncoded();
+            } catch (IOException e) {
+                throw new GordianIOException("Failed to generate ASN1", e);
+            }
+        }
     }
 }

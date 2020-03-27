@@ -167,7 +167,7 @@ public final class GordianKeyStoreDocument {
 
             /* Record the keySetSpec */
             final GordianKeySetHashSpecASN1 mySpecASN1 = new GordianKeySetHashSpecASN1(pKeyStore.getKeySetSpec());
-            final String myAttrSpec = TethysDataConverter.byteArrayToBase64(mySpecASN1.toASN1Primitive().getEncoded());
+            final String myAttrSpec = TethysDataConverter.byteArrayToBase64(mySpecASN1.getEncodedBytes());
             myMain.setAttribute(ATTR_KEYSETSPEC, myAttrSpec);
 
             /* Create the aliases */
@@ -180,8 +180,7 @@ public final class GordianKeyStoreDocument {
             myMain.appendChild(myCerts);
             buildCertificates(myCerts);
 
-        } catch (ParserConfigurationException
-                 | IOException e) {
+        } catch (ParserConfigurationException e) {
             throw new GordianIOException("Failed to initialise author", e);
         }
     }

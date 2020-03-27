@@ -14,18 +14,18 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  ******************************************************************************/
-package net.sourceforge.joceanus.jgordianknot.impl.core.keyset;
+package net.sourceforge.joceanus.jgordianknot.impl.core.cipher;
 
 import java.util.Enumeration;
 
 import org.bouncycastle.asn1.ASN1EncodableVector;
-import org.bouncycastle.asn1.ASN1Integer;
+import org.bouncycastle.asn1.ASN1OctetString;
 import org.bouncycastle.asn1.ASN1Primitive;
 import org.bouncycastle.asn1.ASN1Sequence;
+import org.bouncycastle.asn1.BEROctetString;
 import org.bouncycastle.asn1.DERSequence;
+import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
 
-import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetHashSpec;
-import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetSpec;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianASN1Util;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianASN1Util.GordianASN1Object;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianDataException;
@@ -33,28 +33,36 @@ import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianIOException;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
- * ASN1 Encoding of KeySetHashSpec.
+ * ASN1 Encoding of WrappedKey Request.
  * <pre>
- * GordianKeySetHashSpecASN1 ::= SEQUENCE  {
- *      keySetSpec GordianKeySetSpecASN1
- *      iterations INTEGER
+ * GordianAgreementRequestASN1 ::= SEQUENCE  {
+ *      id AlgorithmIdentifier
+ *      wrappedKey OCTET STRING OPTIONAL
  * }
  * </pre>
  */
-public class GordianKeySetHashSpecASN1
+public class GordianWrappedKeyASN1
         extends GordianASN1Object {
     /**
-     * The KeySetHashSpec.
+     * The AgreementSpec.
      */
-    private final GordianKeySetHashSpec theSpec;
+    private final AlgorithmIdentifier theKeySpec;
+
+    /**
+     * The WrappedKey.
+     */
+    private final byte[] theWrappedKey;
 
     /**
      * Create the ASN1 sequence.
-     * @param pKeySetHashSpec the keySetHashSpec
+     * @param pKeySpec the keySpec
+     * @param pWrappedKey the wrappedKey
      */
-    public GordianKeySetHashSpecASN1(final GordianKeySetHashSpec pKeySetHashSpec) {
-        /* Store the Spec */
-        theSpec = pKeySetHashSpec;
+    public GordianWrappedKeyASN1(final AlgorithmIdentifier pKeySpec,
+                                 final byte[] pWrappedKey) {
+        /* Store the Details */
+        theKeySpec = pKeySpec;
+        theWrappedKey = pWrappedKey;
     }
 
     /**
@@ -62,16 +70,16 @@ public class GordianKeySetHashSpecASN1
      * @param pSequence the Sequence
      * @throws OceanusException on error
      */
-    private GordianKeySetHashSpecASN1(final ASN1Sequence pSequence) throws OceanusException {
+    private GordianWrappedKeyASN1(final ASN1Sequence pSequence) throws OceanusException {
         /* Protect against exceptions */
         try {
-            /* Extract the parameters from the sequence */
-            final Enumeration<?> en = pSequence.getObjects();
-            final GordianKeySetSpec mySpec = GordianKeySetSpecASN1.getInstance(en.nextElement()).getSpec();
-            final int myIterations = ASN1Integer.getInstance(en.nextElement()).getValue().intValue();
+            /* Access the sequence */
+            final ASN1Sequence mySequence = ASN1Sequence.getInstance(pSequence);
+            final Enumeration<?> en = mySequence.getObjects();
 
-            /* Create the keySpec */
-            theSpec = new GordianKeySetHashSpec(myIterations, mySpec);
+            /* Access message parts */
+            theKeySpec = AlgorithmIdentifier.getInstance(en.nextElement());
+            theWrappedKey = ASN1OctetString.getInstance(en.nextElement()).getOctets();
 
             /* handle exceptions */
         } catch (IllegalArgumentException e) {
@@ -85,11 +93,11 @@ public class GordianKeySetHashSpecASN1
      * @return the parsed object
      * @throws OceanusException on error
      */
-    public static GordianKeySetHashSpecASN1 getInstance(final Object pObject) throws OceanusException {
-        if (pObject instanceof GordianKeySetHashSpecASN1) {
-            return (GordianKeySetHashSpecASN1) pObject;
+    public static GordianWrappedKeyASN1 getInstance(final Object pObject) throws OceanusException {
+        if (pObject instanceof GordianWrappedKeyASN1) {
+            return (GordianWrappedKeyASN1) pObject;
         } else if (pObject != null) {
-            return new GordianKeySetHashSpecASN1(ASN1Sequence.getInstance(pObject));
+            return new GordianWrappedKeyASN1(ASN1Sequence.getInstance(pObject));
         }
         throw new GordianDataException("Null sequence");
     }
@@ -98,26 +106,40 @@ public class GordianKeySetHashSpecASN1
      * Obtain the spec.
      * @return the Spec
      */
-    public GordianKeySetHashSpec getSpec() {
-        return theSpec;
+    public AlgorithmIdentifier getKeySpecId() {
+        return theKeySpec;
+    }
+
+    /**
+     * Obtain the wrappedKey.
+     * @return the wrappedKey
+     */
+    public byte[] getWrappedKey() {
+        return theWrappedKey;
     }
 
     @Override
     public ASN1Primitive toASN1Primitive() {
         final ASN1EncodableVector v = new ASN1EncodableVector();
-        v.add(new GordianKeySetSpecASN1(theSpec.getKeySetSpec()).toASN1Primitive());
-        v.add(new ASN1Integer(theSpec.getKIterations()));
+        v.add(theKeySpec);
+        v.add(new BEROctetString(theWrappedKey));
+
         return new DERSequence(v);
     }
 
     /**
-     * Obtain the byte length of the encoded sequence.
+     * Obtain the byte length for a given wrapped keyLength and keyAlgId.
+     * @param pAlgId the algorithmId
+     * @param pWrappedKeyLen the wrapped keyLength
      * @return the byte length
      */
-    static int getEncodedLength() {
-        /* KeyType has type + length + value (all single byte) */
-        int myLength  =  GordianASN1Util.getLengthIntegerField(1);
-        myLength += GordianKeySetSpecASN1.getEncodedLength();
+    static int getEncodedLength(final AlgorithmIdentifier pAlgId,
+                                final int pWrappedKeyLen) {
+        /* Key length is type + length + value */
+        int myLength = GordianASN1Util.getLengthByteArrayField(pWrappedKeyLen);
+
+        /* AlgorithmId length  */
+        myLength += GordianASN1Util.getLengthAlgorithmField(pAlgId);
 
         /* Calculate the length of the sequence */
         return GordianASN1Util.getLengthSequence(myLength);

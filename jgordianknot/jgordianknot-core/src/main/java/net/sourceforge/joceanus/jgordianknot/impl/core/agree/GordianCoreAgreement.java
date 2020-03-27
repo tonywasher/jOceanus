@@ -365,7 +365,7 @@ public abstract class GordianCoreAgreement
         if (theResultType instanceof GordianFactoryType) {
             final ASN1ObjectIdentifier myOID = theResultType == GordianFactoryType.BC
                                            ? GordianCoreFactory.BCFACTORYOID
-                                             : GordianCoreFactory.JCAFACTORYOID;
+                                           : GordianCoreFactory.JCAFACTORYOID;
             return new AlgorithmIdentifier(myOID, null);
         }
         if (theResultType instanceof GordianKeySetSpec) {
@@ -413,7 +413,6 @@ public abstract class GordianCoreAgreement
             theResultType = mySpec;
             return;
         }
-
         throw new GordianDataException("No resultType set");
     }
 
