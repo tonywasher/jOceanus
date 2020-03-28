@@ -309,10 +309,10 @@ public final class BouncyDHAsymKey {
             final GordianKeyPair myPair = myGenerator.generateKeyPair();
             final BouncyDHPrivateKey myPrivate = (BouncyDHPrivateKey) getPrivateKey(myPair);
 
-            /* Create the message  */
+            /* Create the request */
             final X509EncodedKeySpec myKeySpec = myGenerator.getX509Encoding(myPair);
             final byte[] myKeyBytes = myKeySpec.getEncoded();
-            final byte[] myMessage = createMessage(myKeyBytes);
+            final byte[] myMessage = createRequest(myKeyBytes);
 
             /* Derive the secret */
             theAgreement.init(myPrivate.getPrivateKey());
@@ -328,8 +328,8 @@ public final class BouncyDHAsymKey {
             /* Check keyPair */
             checkKeyPair(pSelf);
 
-            /* Obtain source keySpec */
-            final byte[] myKeyBytes = parseMessage(pMessage);
+            /* Parse the request */
+            final byte[] myKeyBytes = parseRequest(pMessage);
             final X509EncodedKeySpec myKeySpec = new X509EncodedKeySpec(myKeyBytes);
             final GordianAsymFactory myAsym = getFactory().getAsymmetricFactory();
             final GordianKeyPairGenerator myGenerator = myAsym.getKeyPairGenerator(pSelf.getKeySpec());
@@ -378,8 +378,8 @@ public final class BouncyDHAsymKey {
             checkKeyPair(pSource);
             checkKeyPair(pTarget);
 
-            /* Build the init Message */
-            final byte[] myMessage = createMessage();
+            /* Build the request */
+            final byte[] myMessage = createRequest();
 
             /* Derive the secret */
             final BouncyDHPrivateKey myPrivate = (BouncyDHPrivateKey) getPrivateKey(pSource);
@@ -400,8 +400,8 @@ public final class BouncyDHAsymKey {
             checkKeyPair(pSource);
             checkKeyPair(pSelf);
 
-            /* Determine initVector */
-            parseMessage(pMessage);
+            /* Parse the request */
+            parseRequest(pMessage);
             final BouncyDHPrivateKey myPrivate = (BouncyDHPrivateKey) getPrivateKey(pSelf);
             final BouncyDHPublicKey myPublic = (BouncyDHPublicKey) getPublicKey(pSource);
 
@@ -444,7 +444,7 @@ public final class BouncyDHAsymKey {
                                       final GordianKeyPair pResponder,
                                       final byte[] pMessage) throws OceanusException {
             /* process message */
-            final byte[] myResponse = parseMessage(pResponder, pMessage);
+            final byte[] myResponse = parseRequest(pResponder, pMessage);
 
             /* Initialise agreement */
             final BouncyDHPrivateKey myPrivate = (BouncyDHPrivateKey) getPrivateKey(pResponder);
@@ -520,8 +520,8 @@ public final class BouncyDHAsymKey {
         public byte[] acceptAgreement(final GordianKeyPair pSource,
                                       final GordianKeyPair pResponder,
                                       final byte[] pMessage) throws OceanusException {
-            /* process message */
-            final byte[] myResponse = parseMessage(pResponder, pMessage);
+            /* process request */
+            final byte[] myResponse = parseRequest(pResponder, pMessage);
 
             /* Initialise agreement */
             final BouncyDHPrivateKey myPrivate = (BouncyDHPrivateKey) getPrivateKey(pResponder);

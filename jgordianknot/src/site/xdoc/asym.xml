@@ -129,14 +129,26 @@
                 and then agreements are created between the two parties depending on the type of the agreement and the resultType.
                 The resultTypes can be any of the following</p>
             <dl>
-                <dt>GordianParameters</dt><dd>The underlying agreement is used as the security phrase with the rest of the supplied parameters to generate a
-                    new personalised <strong>GordianFactory</strong></dd>
-                <dt>GordianKeySetSpec</dt><dd>The underlying agreement is used to generate a new GordianKeySet of the specified type, belonging to an agreed BC factory.</dd>
-                <dt>GordianSymCipherSpec</dt><dd>The agreement is used to generate a new GordianSymCipher Key and InitVector (if required). A pair of GordianSymCiphers are
-                    returned as the result, one for encryption and one for decryption</dd>
+                <dt>GordianParameters</dt><dd>The underlying agreement is used as the security phrase with the rest of the supplied parameters to
+                    generate a new personalised <strong>GordianFactory</strong></dd>
+                <dt>GordianKeySetSpec</dt><dd>The underlying agreement is used to generate a new GordianKeySet of the specified type,
+                    belonging to an agreed BC factory.</dd>
+                <dt>GordianSymCipherSpec</dt><dd>The agreement is used to generate a new GordianSymCipher Key and InitVector (if required),
+                    belonging to an agreed BC factory. A pair of GordianSymCiphers are returned as the result, one for encryption
+                    and one for decryption</dd>
                 <dt>GordianStreamCipherSpec</dt><dd>Similar to SymKeySpec.</dd>
                 <dt>null</dt><dd>The raw agreement bytes are returned.</dd>
             </dl>
+            <p>Agreements are always targeted at a partner with a known publicKey. It must be of a type that supports the AgreementSpec.
+                The <strong>GordianAgreement</strong> that is produced will implement an appropriate interface as follows</p>
+            <dl>
+                <dt>GordianAnonymousAgreement</dt><dd>An anonymous agreement is a oneShot process where the initiator will generate a random
+                    keyPair and send the publicKey to the target. The target knows nothing about the initiator</dd>
+                <dt>GordianBasicAgreement</dt><dd>For a Basic Agreement, the initiator must have a publicKey that is known to the target.</dd>
+                <dt>GordianEphemeralAgreement</dt><dd>The Ephemeral Agreement is the same as a Basic Agreement but in additiona each partner
+                    generates an ephemeral keyPair and exchanges the ephemeral publicKeys. As such this is a TwoShotProcess where two
+                    messages are exchanged.</dd>
+             </dl>
             <subsection name="Sample">
                 <source>
                     /* Access factory */

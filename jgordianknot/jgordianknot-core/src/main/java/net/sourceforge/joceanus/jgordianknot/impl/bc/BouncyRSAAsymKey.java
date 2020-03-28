@@ -474,8 +474,8 @@ public final class BouncyRSAAsymKey {
             final byte[] myData = new byte[myLen];
             final KeyParameter myParms = (KeyParameter) theAgreement.encrypt(myData, 0, myLen);
 
-            /* Build the init Message */
-            final byte[] myMessage = createMessage(myData);
+            /* Build the request Message */
+            final byte[] myMessage = createRequest(myData);
 
             /* Store secret and create initVector */
             storeSecret(myParms.getKey());
@@ -497,7 +497,7 @@ public final class BouncyRSAAsymKey {
             /* Parse source message */
             final GordianRSAModulus myModulus = myPrivate.getKeySpec().getRSAModulus();
             final int myLen = myModulus.getLength() / Byte.SIZE;
-            final byte[] myMessage = parseMessage(pMessage);
+            final byte[] myMessage = parseRequest(pMessage);
             final KeyParameter myParms = (KeyParameter) theAgreement.decrypt(myMessage, 0, myMessage.length, myLen);
             storeSecret(myParms.getKey());
         }

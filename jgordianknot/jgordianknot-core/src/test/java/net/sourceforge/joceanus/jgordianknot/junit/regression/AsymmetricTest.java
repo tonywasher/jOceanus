@@ -20,6 +20,7 @@ import java.security.SecureRandom;
 import java.security.spec.PKCS8EncodedKeySpec;
 import java.security.spec.X509EncodedKeySpec;
 import java.util.Arrays;
+import java.util.Objects;
 import java.util.stream.Stream;
 
 import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
@@ -213,10 +214,12 @@ public class AsymmetricTest {
     private Stream<DynamicNode> agreementTests(final FactoryAgreement pAgreement) {
         /* Add self agreement test */
         Stream<DynamicNode> myTests = Stream.of(DynamicContainer.dynamicContainer("SelfAgree", Stream.of(
+                DynamicTest.dynamicTest("factory", () -> checkSelfAgreement(pAgreement, GordianFactoryType.BC)),
                 DynamicTest.dynamicTest("keySet", () -> checkSelfAgreement(pAgreement, KEYSETHASHSPEC.getKeySetSpec())),
                 DynamicTest.dynamicTest("symCipher", () -> checkSelfAgreement(pAgreement, SYMKEYSPEC)),
-                DynamicTest.dynamicTest("streamCipher", () -> checkSelfAgreement(pAgreement, STREAMKEYSPEC))
-        )));
+                DynamicTest.dynamicTest("streamCipher", () -> checkSelfAgreement(pAgreement, STREAMKEYSPEC)),
+                DynamicTest.dynamicTest("basic", () -> checkSelfAgreement(pAgreement, null))
+         )));
 
         /* Add algorithmId test */
         myTests = Stream.concat(myTests, Stream.of(DynamicTest.dynamicTest("checkAlgId", () -> checkAgreementAlgId(pAgreement))));
@@ -445,7 +448,8 @@ public class AsymmetricTest {
         /* Check that the values match */
         final Object myFirst = mySender.getResult();
         final Object mySecond = myResponder.getResult();
-        Assertions.assertEquals(myFirst, mySecond, "Failed to agree keySet");
+        final boolean isEqual = Objects.deepEquals(myFirst, mySecond);
+        Assertions.assertTrue(isEqual, "Failed to agree result");
     }
 
     /**
@@ -469,7 +473,7 @@ public class AsymmetricTest {
         mySender.setResultType(new GordianKeySetSpec());
         final GordianAgreement myResponder = myPartnerAgrees.createAgreement(mySpec);
 
-        /* Handle Encapsulation */
+        /* Handle Anonymous */
         if (mySender instanceof GordianAnonymousAgreement
                 && myResponder instanceof GordianAnonymousAgreement) {
             final byte[] myMsg = ((GordianAnonymousAgreement) mySender).initiateAgreement(myTarget);

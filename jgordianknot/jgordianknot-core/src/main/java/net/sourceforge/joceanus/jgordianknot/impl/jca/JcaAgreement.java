@@ -94,10 +94,10 @@ public final class JcaAgreement {
                 final JcaPublicKey myTarget = (JcaPublicKey) getPublicKey(pTarget);
                 final PublicKey myKey = (PublicKey) theAgreement.doPhase(myTarget.getPublicKey(), true);
 
-                /* Create the message  */
+                /* Create the request */
                 final X509EncodedKeySpec myKeySpec = new X509EncodedKeySpec(myKey.getEncoded());
                 final byte[] myKeySpecBytes = myKeySpec.getEncoded();
-                final byte[] myMessage = createMessage(myKeySpecBytes);
+                final byte[] myMessage = createRequest(myKeySpecBytes);
                 storeSecret(theAgreement.generateSecret());
                 return myMessage;
 
@@ -115,7 +115,7 @@ public final class JcaAgreement {
                 checkKeyPair(pSelf);
 
                 /* Obtain keySpec */
-                final byte[] myX509bytes = parseMessage(pMessage);
+                final byte[] myX509bytes = parseRequest(pMessage);
                 final X509EncodedKeySpec myKeySpec = new X509EncodedKeySpec(myX509bytes);
 
                 /* Derive ephemeral Public key */
@@ -186,10 +186,10 @@ public final class JcaAgreement {
                     theAgreement.init(myPrivate.getPrivateKey(), new UserKeyingMaterialSpec(new byte[0]), getRandom());
                 }
 
-                /* Create the message  */
+                /* Create the request */
                 final X509EncodedKeySpec myKeySpec = myGenerator.getX509Encoding(myPair);
                 final byte[] myKeySpecBytes = myKeySpec.getEncoded();
-                final byte[] myMessage = createMessage(myKeySpecBytes);
+                final byte[] myMessage = createRequest(myKeySpecBytes);
 
                 /* Derive the secret */
                 final JcaPublicKey myTarget = (JcaPublicKey) getPublicKey(pTarget);
@@ -216,7 +216,7 @@ public final class JcaAgreement {
                 establishAgreement(pSelf);
 
                 /* Obtain keySpec */
-                final byte[] myX509bytes = parseMessage(pMessage);
+                final byte[] myX509bytes = parseRequest(pMessage);
                 final X509EncodedKeySpec myKeySpec = new X509EncodedKeySpec(myX509bytes);
 
                 /* Derive ephemeral Public key */
@@ -303,8 +303,8 @@ public final class JcaAgreement {
                     theAgreement.init(myPrivate.getPrivateKey(), new UserKeyingMaterialSpec(new byte[0]), getRandom());
                 }
 
-                /* Create the message */
-                final byte[] myMessage = createMessage();
+                /* Create the request */
+                final byte[] myMessage = createRequest();
 
                 /* Derive the secret */
                 final JcaPublicKey myTarget = (JcaPublicKey) getPublicKey(pTarget);
@@ -333,8 +333,8 @@ public final class JcaAgreement {
                 /* Establish agreement */
                 establishAgreement(pSource);
 
-                /* Determine initVector */
-                parseMessage(pMessage);
+                /* Parse the request */
+                parseRequest(pMessage);
                 final JcaPrivateKey myPrivate = (JcaPrivateKey) getPrivateKey(pSelf);
 
                 /* Initialise the agreement taking care in case of null parameters */
@@ -409,7 +409,7 @@ public final class JcaAgreement {
                 establishAgreement(pResponder);
 
                 /* process message */
-                final byte[] myResponse = parseMessage(pResponder, pMessage);
+                final byte[] myResponse = parseRequest(pResponder, pMessage);
 
                 /* Initialise agreement */
                 final JcaPrivateKey myPrivate = (JcaPrivateKey) getPrivateKey(pResponder);
@@ -518,7 +518,7 @@ public final class JcaAgreement {
                 checkKeyPair(pResponder);
 
                 /* process message */
-                final byte[] myResponse = parseMessage(pResponder, pMessage);
+                final byte[] myResponse = parseRequest(pResponder, pMessage);
 
                 /* Initialise agreement */
                 final JcaPrivateKey myPrivate = (JcaPrivateKey) getPrivateKey(pResponder);

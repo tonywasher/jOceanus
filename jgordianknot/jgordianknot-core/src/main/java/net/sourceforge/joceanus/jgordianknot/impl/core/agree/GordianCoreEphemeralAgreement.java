@@ -16,11 +16,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jgordianknot.impl.core.agree;
 
-import java.io.IOException;
 import java.security.spec.X509EncodedKeySpec;
-import java.util.Objects;
-
-import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
 
 import net.sourceforge.joceanus.jgordianknot.api.agree.GordianAgreementSpec;
 import net.sourceforge.joceanus.jgordianknot.api.agree.GordianEphemeralAgreement;
@@ -28,8 +24,6 @@ import net.sourceforge.joceanus.jgordianknot.api.factory.GordianAsymFactory;
 import net.sourceforge.joceanus.jgordianknot.api.key.GordianKeyPair;
 import net.sourceforge.joceanus.jgordianknot.api.key.GordianKeyPairGenerator;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianCoreFactory;
-import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianDataException;
-import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianIOException;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
@@ -103,27 +97,17 @@ public abstract class GordianCoreEphemeralAgreement
         final byte[] myKeyBytes = myKeySpec.getEncoded();
 
         /* Create the request */
-        final GordianCoreAgreementFactory myFactory = getAgreementFactory();
-        final AlgorithmIdentifier myAlgId = myFactory.getIdentifierForSpec(getAgreementSpec());
-        final AlgorithmIdentifier myResId = getIdentifierForResult();
-        final GordianAgreementRequestASN1 myRequest = new GordianAgreementRequestASN1(myAlgId, myResId, newInitVector(), myKeyBytes);
-        return myRequest.getEncodedBytes();
+        return createRequest(myKeyBytes);
     }
 
     /**
      * Parse the incoming request and create the response.
-     * <pre>
-     * GordianEphemeralResponse ::= SEQUENCE  {
-     *      id AlgorithmIdentifier
-     *      keyBytes OCTET STRING
-     * }
-     * </pre>
      * @param pResponder the responding keyPair
      * @param pMessage the incoming message
-     * @return the ephemeral keySpec
+     * @return the response message
      * @throws OceanusException on error
      */
-    protected byte[] parseMessage(final GordianKeyPair pResponder,
+    protected byte[] parseRequest(final GordianKeyPair pResponder,
                                   final byte[] pMessage) throws OceanusException {
         /* Check the keyPair */
         checkKeyPair(pResponder);
@@ -131,86 +115,36 @@ public abstract class GordianCoreEphemeralAgreement
         /* Store the keyPair */
         theOwner = pResponder;
 
-        /* Parse the sequence */
-        try {
-            /* Access the sequence */
-            final GordianAgreementRequestASN1 myRequest = GordianAgreementRequestASN1.getInstance(pMessage);
+        /* Parse the request */
+        final byte[] myKeyBytes = parseRequest(pMessage);
 
-            /* Access message parts */
-            final AlgorithmIdentifier myAlgId = myRequest.getAgreementId();
-            final AlgorithmIdentifier myResId = myRequest.getResultId();
-            final byte[] myInitVector = myRequest.getInitVector();
-            byte[] myKeyBytes = myRequest.getData();
+        /* Parse the ephemeral encoding */
+        final X509EncodedKeySpec myKeySpec = new X509EncodedKeySpec(myKeyBytes);
 
-            /* Check agreementSpec */
-            final GordianCoreAgreementFactory myFactory = getAgreementFactory();
-            final GordianAgreementSpec mySpec = myFactory.getSpecForIdentifier(myAlgId);
-            if (!Objects.equals(mySpec, getAgreementSpec())) {
-                throw new GordianDataException(ERROR_INVSPEC);
-            }
+        /* Create ephemeral key */
+        final GordianAsymFactory myAsym = getFactory().getAsymmetricFactory();
+        final GordianKeyPairGenerator myGenerator = myAsym.getKeyPairGenerator(theOwner.getKeySpec());
+        theEphemeral = myGenerator.generateKeyPair();
 
-            /* Process result identifier */
-            processResultIdentifier(myResId);
+        /* Derive partner ephemeral key */
+        thePartnerEphemeral = myGenerator.derivePublicOnlyKeyPair(myKeySpec);
 
-            /* Store the initVector */
-            storeInitVector(myInitVector);
-
-            /* Parse the ephemeral encoding */
-            final X509EncodedKeySpec myKeySpec = new X509EncodedKeySpec(myKeyBytes);
-
-            /* Create ephemeral key */
-            final GordianAsymFactory myAsym = getFactory().getAsymmetricFactory();
-            final GordianKeyPairGenerator myGenerator = myAsym.getKeyPairGenerator(theOwner.getKeySpec());
-            theEphemeral = myGenerator.generateKeyPair();
-
-            /* Derive partner ephemeral key */
-            thePartnerEphemeral = myGenerator.derivePublicOnlyKeyPair(myKeySpec);
-
-            /* Create the response */
-            myKeyBytes = myGenerator.getX509Encoding(theEphemeral).getEncoded();
-            final GordianAgreementResponseASN1 myResponse = new GordianAgreementResponseASN1(myAlgId, myKeyBytes);
-            return myResponse.getEncoded();
-
-            /* Catch exceptions */
-        } catch (IllegalArgumentException
-                 | IOException e) {
-            throw new GordianIOException("Unable to parse ASN1 sequence", e);
-        }
+        /* Create the response */
+        return createResponse(myGenerator.getX509Encoding(theEphemeral).getEncoded());
     }
 
     /**
      * Parse the ephemeral keySpec.
-     * @param pKeySpec the target ephemeral keySpec
+     * @param pResponse the response message
      * @throws OceanusException on error
      */
-    protected void parseEphemeral(final byte[] pKeySpec) throws OceanusException {
-        /* Parse the sequence */
-        try {
-            /* Access the sequence */
-            final GordianAgreementResponseASN1 myRequest = GordianAgreementResponseASN1.getInstance(pKeySpec);
+    protected void parseEphemeral(final byte[] pResponse) throws OceanusException {
+        /* Obtain keySpec */
+        final X509EncodedKeySpec myKeySpec = parseResponse(pResponse);
 
-            /* Access message parts */
-            final AlgorithmIdentifier myAlgId = myRequest.getAgreementId();
-            final byte[] myKeyBytes = myRequest.getData();
-
-            /* Check agreementSpec */
-            final GordianCoreAgreementFactory myFactory = getAgreementFactory();
-            final GordianAgreementSpec mySpec = myFactory.getSpecForIdentifier(myAlgId);
-            if (!Objects.equals(mySpec, getAgreementSpec())) {
-                throw new GordianDataException(ERROR_INVSPEC);
-            }
-
-            /* Obtain keySpec */
-            final X509EncodedKeySpec myKeySpec = new X509EncodedKeySpec(myKeyBytes);
-
-            /* Derive partner ephemeral key */
-            final GordianAsymFactory myAsym = getFactory().getAsymmetricFactory();
-            final GordianKeyPairGenerator myGenerator = myAsym.getKeyPairGenerator(theOwner.getKeySpec());
-            thePartnerEphemeral = myGenerator.derivePublicOnlyKeyPair(myKeySpec);
-
-            /* Catch exceptions */
-        } catch (IllegalArgumentException e) {
-            throw new GordianIOException("Unable to parse ASN1 sequence", e);
-        }
+        /* Derive partner ephemeral key */
+        final GordianAsymFactory myAsym = getFactory().getAsymmetricFactory();
+        final GordianKeyPairGenerator myGenerator = myAsym.getKeyPairGenerator(theOwner.getKeySpec());
+        thePartnerEphemeral = myGenerator.derivePublicOnlyKeyPair(myKeySpec);
     }
 }

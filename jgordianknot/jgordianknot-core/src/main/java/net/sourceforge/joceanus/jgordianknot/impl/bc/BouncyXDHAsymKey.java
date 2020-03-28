@@ -414,10 +414,10 @@ public final class BouncyXDHAsymKey {
             final GordianKeyPair myPair = myGenerator.generateKeyPair();
             final BouncyPrivateKey<?> myPrivate = (BouncyPrivateKey<?>) getPrivateKey(myPair);
 
-            /* Create the message  */
+            /* Create the request  */
             final X509EncodedKeySpec myKeySpec = myGenerator.getX509Encoding(myPair);
             final byte[] myKeyBytes = myKeySpec.getEncoded();
-            final byte[] myMessage = createMessage(myKeyBytes);
+            final byte[] myMessage = createRequest(myKeyBytes);
 
             /* Derive the secret */
             theAgreement.init(myPrivate.getPrivateKey());
@@ -437,8 +437,8 @@ public final class BouncyXDHAsymKey {
             /* Establish agreement */
             establishAgreement(pSelf);
 
-            /* Obtain source keySpec */
-            final byte[] myKeyBytes = parseMessage(pMessage);
+            /* Parse request */
+            final byte[] myKeyBytes = parseRequest(pMessage);
             final BouncyPrivateKey<?> myPrivate = (BouncyPrivateKey<?>) getPrivateKey(pSelf);
             final X509EncodedKeySpec myKeySpec = new X509EncodedKeySpec(myKeyBytes);
             final GordianAsymFactory myAsym = getFactory().getAsymmetricFactory();
@@ -500,8 +500,8 @@ public final class BouncyXDHAsymKey {
             /* Establish agreement */
             establishAgreement(pSource);
 
-            /* Build the init Message */
-            final byte[] myMessage = createMessage();
+            /* Build the request */
+            final byte[] myMessage = createRequest();
 
             /* Derive the secret */
             final BouncyPrivateKey<?> myPrivate = (BouncyPrivateKey<?>) getPrivateKey(pSource);
@@ -526,8 +526,8 @@ public final class BouncyXDHAsymKey {
             /* Establish agreement */
             establishAgreement(pSource);
 
-            /* Determine initVector */
-            parseMessage(pMessage);
+            /* Parse request */
+            parseRequest(pMessage);
             final BouncyPrivateKey<?> myPrivate = (BouncyPrivateKey<?>) getPrivateKey(pSelf);
             final BouncyPublicKey<?> myPublic = (BouncyPublicKey<?>) getPublicKey(pSource);
 
@@ -580,8 +580,8 @@ public final class BouncyXDHAsymKey {
             /* Establish agreement */
             establishAgreement(pSource);
 
-            /* process message */
-            final byte[] myResponse = parseMessage(pResponder, pMessage);
+            /* parse request */
+            final byte[] myResponse = parseRequest(pResponder, pMessage);
 
             /* Initialise agreement */
             final BouncyPrivateKey<?> myPrivate = (BouncyPrivateKey<?>) getPrivateKey(pResponder);

@@ -496,10 +496,10 @@ public final class BouncyEllipticAsymKey {
             myFieldSize = (myFieldSize + Byte.SIZE - 1) / Byte.SIZE;
             final int myLen = 2 * myFieldSize + 1;
 
-            /* Create cipherText */
+            /* Create request message */
             final byte[] myData = new byte[myLen];
             final KeyParameter myParms = (KeyParameter) theAgreement.encrypt(myData, 0, myLen);
-            final byte[] myMessage = createMessage(myData);
+            final byte[] myMessage = createRequest(myData);
 
             /* Store secret */
             storeSecret(myParms.getKey());
@@ -524,7 +524,7 @@ public final class BouncyEllipticAsymKey {
             final int myLen = 2 * myFieldSize + 1;
 
             /* Parse message */
-            final byte[] myMessage = parseMessage(pMessage);
+            final byte[] myMessage = parseRequest(pMessage);
             final KeyParameter myParms = (KeyParameter) theAgreement.decrypt(myMessage, 0, myMessage.length, myLen);
 
             /* Store secret */
@@ -570,10 +570,10 @@ public final class BouncyEllipticAsymKey {
             final GordianKeyPair myPair = myGenerator.generateKeyPair();
             final BouncyECPrivateKey myPrivate = (BouncyECPrivateKey) getPrivateKey(myPair);
 
-            /* Create the message  */
+            /* Create the request  */
             final X509EncodedKeySpec myKeySpec = myGenerator.getX509Encoding(myPair);
             final byte[] myKeyBytes = myKeySpec.getEncoded();
-            final byte[] myMessage = createMessage(myKeyBytes);
+            final byte[] myMessage = createRequest(myKeyBytes);
 
             /* Derive the secret */
             theAgreement.init(myPrivate.getPrivateKey());
@@ -590,7 +590,7 @@ public final class BouncyEllipticAsymKey {
             checkKeyPair(pSelf);
 
             /* Obtain source keySpec */
-            final byte[] myKeyBytes = parseMessage(pMessage);
+            final byte[] myKeyBytes = parseRequest(pMessage);
             final BouncyECPrivateKey myPrivate = (BouncyECPrivateKey) getPrivateKey(pSelf);
             final X509EncodedKeySpec myKeySpec = new X509EncodedKeySpec(myKeyBytes);
             final GordianAsymFactory myAsym = getFactory().getAsymmetricFactory();
@@ -643,8 +643,8 @@ public final class BouncyEllipticAsymKey {
             checkKeyPair(pSource);
             checkKeyPair(pTarget);
 
-            /* Create the message  */
-            final byte[] myMessage = createMessage();
+            /* Create the request  */
+            final byte[] myMessage = createRequest();
 
             /* Derive the secret */
             final BouncyECPrivateKey myPrivate = (BouncyECPrivateKey) getPrivateKey(pSource);
@@ -665,8 +665,8 @@ public final class BouncyEllipticAsymKey {
             checkKeyPair(pSource);
             checkKeyPair(pSelf);
 
-            /* Determine initVector */
-            parseMessage(pMessage);
+            /* Parse the request */
+            parseRequest(pMessage);
             final BouncyECPrivateKey myPrivate = (BouncyECPrivateKey) getPrivateKey(pSelf);
             final BouncyECPublicKey myPublic = (BouncyECPublicKey) getPublicKey(pSource);
 
@@ -711,7 +711,7 @@ public final class BouncyEllipticAsymKey {
                                       final GordianKeyPair pResponder,
                                       final byte[] pMessage) throws OceanusException {
             /* process message */
-            final byte[] myResponse = parseMessage(pResponder, pMessage);
+            final byte[] myResponse = parseRequest(pResponder, pMessage);
 
             /* Initialise agreement */
             final BouncyECPrivateKey myPrivate = (BouncyECPrivateKey) getPrivateKey(pResponder);
@@ -790,7 +790,7 @@ public final class BouncyEllipticAsymKey {
                                       final GordianKeyPair pResponder,
                                       final byte[] pMessage) throws OceanusException {
             /* process message */
-            final byte[] myResponse = parseMessage(pResponder, pMessage);
+            final byte[] myResponse = parseRequest(pResponder, pMessage);
 
             /* Initialise agreement */
             final BouncyECPrivateKey myPrivate = (BouncyECPrivateKey) getPrivateKey(pResponder);
@@ -871,7 +871,7 @@ public final class BouncyEllipticAsymKey {
                                       final GordianKeyPair pResponder,
                                       final byte[] pMessage) throws OceanusException {
             /* process message */
-            final byte[] myResponse = parseMessage(pResponder, pMessage);
+            final byte[] myResponse = parseRequest(pResponder, pMessage);
 
             /* Initialise agreement */
             final BouncyECPrivateKey myPrivate = (BouncyECPrivateKey) getPrivateKey(pResponder);

@@ -16,6 +16,8 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jgordianknot.impl.bc;
 
+import java.util.Arrays;
+
 import org.bouncycastle.crypto.CipherParameters;
 import org.bouncycastle.crypto.DataLengthException;
 import org.bouncycastle.crypto.InvalidCipherTextException;
@@ -42,6 +44,11 @@ public class BouncySymKeyAADCipher
      * Cipher.
      */
     private final AEADBlockCipher theCipher;
+
+    /**
+     * is the cipher encrypting?
+     */
+    private boolean isEncrypting;
 
     /**
      * Constructor.
@@ -75,6 +82,7 @@ public class BouncySymKeyAADCipher
                   ? new ParametersWithIV(myKeyParms, getInitVector())
                   : new AEADParameters(myKeyParms, getAEADMacSize(), getInitVector(), getInitialAEAD());
         theCipher.init(pEncrypt, myParms);
+        isEncrypting = pEncrypt;
     }
 
     @Override
@@ -135,5 +143,34 @@ public class BouncySymKeyAADCipher
     @Override
     public int getBlockSize() {
         return 0;
+    }
+
+    @Override
+    public boolean equals(final Object pThat) {
+        /* Handle trivial cases */
+        if (this == pThat) {
+            return true;
+        }
+        if (pThat == null) {
+            return false;
+        }
+
+        /* Make sure that the classes are the same */
+        if (!(pThat instanceof BouncySymKeyAADCipher)) {
+            return false;
+        }
+        final BouncySymKeyAADCipher myThat = (BouncySymKeyAADCipher) pThat;
+
+        /* Check that the fields are equal */
+        return isEncrypting == myThat.isEncrypting
+                && Arrays.equals(getInitialAEAD(), myThat.getInitialAEAD())
+                && super.equals(myThat);
+    }
+
+    @Override
+    public int hashCode() {
+        return super.hashCode()
+                + Arrays.hashCode(getInitialAEAD())
+                + (isEncrypting ? 1 : 0);
     }
 }

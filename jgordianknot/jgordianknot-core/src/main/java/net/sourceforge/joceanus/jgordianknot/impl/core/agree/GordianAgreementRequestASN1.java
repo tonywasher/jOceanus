@@ -69,18 +69,6 @@ public class GordianAgreementRequestASN1
      * @param pAgreement the agreementId
      * @param pResult the resultId
      * @param pInitVector theInitVector
-     */
-    public GordianAgreementRequestASN1(final AlgorithmIdentifier pAgreement,
-                                       final AlgorithmIdentifier pResult,
-                                       final byte[] pInitVector) {
-        this(pAgreement, pResult, pInitVector, null);
-    }
-
-    /**
-     * Create the ASN1 sequence.
-     * @param pAgreement the agreementId
-     * @param pResult the resultId
-     * @param pInitVector theInitVector
      * @param pData the associated data
      */
     public GordianAgreementRequestASN1(final AlgorithmIdentifier pAgreement,

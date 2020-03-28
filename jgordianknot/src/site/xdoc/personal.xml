@@ -20,16 +20,18 @@
         <section name="Generation">
             <p>The personalisation algorithm is as follows.</p>
             <ol>
+                <li>Initialise <strong>I</strong> and <strong>IV</strong> to all zeroes</li>
                 <li>Create an array of all available digests that have an output length of 512-bits.</li>
                 <li>Initialise all digests with a constant value followed by the security phrase</li>
-                <li>Finish all digests, creating an array of the hashes and xor these hashes into <strong>I</strong></li>
+                <li>Finish all digests, creating an array <strong>R</strong> of the hashResults and xor each of
+                    these hashes into <strong>I</strong></li>
                 <li>Loop for 2K iterations.
                     <ol>
-                        <li>Update each digest with <strong>ALL</strong> the other hashes</li>
+                        <li>Update each digest with <strong>ALL</strong> the elements of <strong>R</strong></li>
                         <li>Finish each digest, updating its hash and xor-ing into <strong>I</strong></li>
                     </ol>
                 </li>
-                <li>Build <strong>IV</strong> as the xor of all the final digest hashes</li>
+                <li>Build <strong>IV</strong> as the xor of all the final elements of <strong>R</strong></li>
             </ol>
         </section>
         <section name="Key Derivation">
@@ -41,15 +43,16 @@
                 <li>Initialise both HMac with a key of secret <strong>S</strong></li>
                 <li>Repeat the following loop until sufficient bits have been generated. Start with <strong>C</strong> = 0
                     <ol>
+                        <li>Initialise result to all zeros</li>
                         <li>Update both Macs with <strong>I</strong> and <strong>IV</strong></li>
                         <li>Update both Macs with <strong>A</strong>, keyLength and <strong>C</strong></li>
                         <li>Set input <strong>D<sub>M</sub></strong> and <strong>D<sub>A</sub></strong> to <strong>V</strong></li>
-                        <li>Loop for 32 iterations.
+                        <li>Loop for 16 iterations.
                             <ol>
                                 <li>Update <strong>H<sub>A</sub></strong> with <strong>D<sub>A</sub></strong></li>
-                                <li>Calculate <strong>D<sub>A</sub></strong> as the hash of <strong>M<sub>A</sub></strong></li>
+                                <li>Calculate <strong>D<sub>A</sub></strong> as the hash result of <strong>H<sub>A</sub></strong></li>
                                 <li>Update <strong>H<sub>M</sub></strong> with <strong>D<sub>M</sub></strong> and with <strong>D<sub>A</sub></strong></li>
-                                <li>Calculate <strong>D<sub>M</sub></strong> as the hash of <strong>M<sub>M</sub></strong></li>
+                                <li>Calculate <strong>D<sub>M</sub></strong> as the hash result of <strong>H<sub>M</sub></strong></li>
                                 <li>Xor <strong>D<sub>M</sub></strong> into the result</li>
                             </ol>
                         </li>

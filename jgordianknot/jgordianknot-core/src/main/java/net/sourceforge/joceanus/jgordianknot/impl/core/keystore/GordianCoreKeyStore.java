@@ -176,16 +176,7 @@ public class GordianCoreKeyStore
         return myCertMap == null ? null : myCertMap.get(pKey.getIssuer());
     }
 
-    /**
-     * Create a new keyPair with root certificate.
-     *
-     * @param pKeySpec the spec of the new keyPair
-     * @param pSubject the name of the entity
-     * @param pAlias the alias
-     * @param pPassword the password
-     * @return the new keyPair entry
-     * @throws OceanusException on error
-     */
+    @Override
     public GordianKeyStorePair createRootKeyPair(final GordianAsymKeySpec pKeySpec,
                                                  final X500Name pSubject,
                                                  final String pAlias,
@@ -205,18 +196,7 @@ public class GordianCoreKeyStore
     }
 
 
-    /**
-     * Create a new keyPair with certificate.
-     *
-     * @param pKeySpec the spec of the new keyPair
-     * @param pSubject the name of the entity
-     * @param pUsage   the key usage
-     * @param pSigner the signer
-     * @param pAlias the alias
-     * @param pPassword the password
-     * @return the new keyPair entry
-     * @throws OceanusException on error
-     */
+    @Override
     public GordianKeyStorePair createKeyPair(final GordianAsymKeySpec pKeySpec,
                                              final X500Name pSubject,
                                              final GordianKeyPairUsage pUsage,
@@ -242,17 +222,7 @@ public class GordianCoreKeyStore
         return getKeyPair(pAlias, pPassword);
     }
 
-    /**
-     * Create an alternate certificate for keyPair.
-     *
-     * @param pKeyPair the existing keyPair record
-     * @param pUsage   the key usage
-     * @param pSigner the signer
-     * @param pAlias the alias
-     * @param pPassword the password
-     * @return the new keyPair entry
-     * @throws OceanusException on error
-     */
+    @Override
     public GordianKeyStorePair createAlternate(final GordianKeyStorePair pKeyPair,
                                                final GordianKeyPairUsage pUsage,
                                                final GordianKeyStorePair pSigner,

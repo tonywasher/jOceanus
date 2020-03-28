@@ -17,6 +17,8 @@
 package net.sourceforge.joceanus.jgordianknot.impl.core.agree;
 
 import java.security.SecureRandom;
+import java.security.spec.X509EncodedKeySpec;
+import java.util.Objects;
 
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
 import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
@@ -33,13 +35,24 @@ import net.sourceforge.joceanus.jgordianknot.api.agree.GordianAgreement;
 import net.sourceforge.joceanus.jgordianknot.api.agree.GordianAgreementFactory;
 import net.sourceforge.joceanus.jgordianknot.api.agree.GordianAgreementSpec;
 import net.sourceforge.joceanus.jgordianknot.api.agree.GordianKDFType;
+import net.sourceforge.joceanus.jgordianknot.api.base.GordianLength;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianCipherFactory;
+import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianCipherParameters;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianCipherSpec;
+import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianStreamCipher;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianStreamCipherSpec;
+import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianStreamKeySpec;
+import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianSymCipher;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianSymCipherSpec;
+import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianSymKeySpec;
+import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigest;
+import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigestSpec;
+import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigestType;
 import net.sourceforge.joceanus.jgordianknot.api.factory.GordianAsymFactory;
 import net.sourceforge.joceanus.jgordianknot.api.factory.GordianFactory;
 import net.sourceforge.joceanus.jgordianknot.api.factory.GordianFactoryType;
+import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianIOException;
+import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianLogicException;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianParameters;
 import net.sourceforge.joceanus.jgordianknot.api.key.GordianKey;
 import net.sourceforge.joceanus.jgordianknot.api.base.GordianKeySpec;
@@ -148,16 +161,50 @@ public abstract class GordianCoreAgreement
     }
 
     @Override
-    public void setResultType(final Object pResultType) {
-        /* Handle Factory request */
+    public void setResultType(final Object pResultType) throws OceanusException {
+        /* Check result Type */
+        checkResultType(pResultType);
+        theResultType = pResultType;
+    }
+
+    /**
+     * Check the resultType is valid.
+     * @param pResultType the resultType
+     * @throws OceanusException on error
+     */
+    private void checkResultType(final Object pResultType) throws OceanusException {
+        /* No need to check FactoryType or null */
         if (pResultType instanceof GordianFactoryType
-            || pResultType instanceof GordianKeySetSpec
-            || pResultType instanceof GordianSymCipherSpec
-            || pResultType instanceof GordianStreamCipherSpec) {
-            theResultType = pResultType;
-        } else {
-            throw new IllegalArgumentException("Invalid resultType");
+            || pResultType == null) {
+            return;
         }
+
+        /* Validate a keySetSpec */
+        if (pResultType instanceof GordianKeySetSpec) {
+            /* Check Spec */
+            final GordianCoreKeySetFactory myKeySetFactory = (GordianCoreKeySetFactory) theFactory.getKeySetFactory();
+            myKeySetFactory.checkKeySetSpec((GordianKeySetSpec) pResultType);
+            return;
+        }
+
+        /* Validate a symCipherSpec */
+        if (pResultType instanceof GordianSymCipherSpec) {
+            /* Check Spec */
+            final GordianCoreCipherFactory myCipherFactory = (GordianCoreCipherFactory) theFactory.getCipherFactory();
+            myCipherFactory.checkSymCipherSpec((GordianSymCipherSpec) pResultType);
+            return;
+        }
+
+        /* Validate a streamCipherSpec */
+        if (pResultType instanceof GordianStreamCipherSpec) {
+            /* Check Spec */
+            final GordianCoreCipherFactory myCipherFactory = (GordianCoreCipherFactory) theFactory.getCipherFactory();
+            myCipherFactory.checkStreamCipherSpec((GordianStreamCipherSpec) pResultType);
+            return;
+        }
+
+        /* Invalid resultType */
+        throw new GordianLogicException("Invalid resultType");
     }
 
     /**
@@ -231,27 +278,32 @@ public abstract class GordianCoreAgreement
      * @throws OceanusException on error
      */
     protected void storeSecret(final byte[] pSecret) throws OceanusException {
-        /* If we have a kdf */
-        if (theKDF != null) {
-            /* Create KDF Parameters */
-            final KDFParameters myParms = new KDFParameters(pSecret, new byte[0]);
-            theKDF.init(myParms);
+        /* Protect against failure */
+        final byte[] mySecret = new byte[pSecret.length];
+        try {
+            /* If we have a kdf */
+            if (theKDF != null) {
+                /* Create KDF Parameters */
+                final KDFParameters myParms = new KDFParameters(pSecret, new byte[0]);
+                theKDF.init(myParms);
 
-            /* Create the secret */
-            final byte[] mySecret = new byte[pSecret.length];
-            theKDF.generateBytes(mySecret, 0, mySecret.length);
-            processSecret(mySecret);
+                /* Create the secret */
+                theKDF.generateBytes(mySecret, 0, mySecret.length);
+                processSecret(mySecret);
+
+            } else {
+                /* Just process the secret */
+                processSecret(pSecret);
+            }
+
+            /* Clear buffers */
+        } finally {
+            /* Clear the secret */
             Arrays.fill(mySecret, (byte) 0);
-
-        } else {
-            /* Just process the secret */
-            processSecret(pSecret);
+            Arrays.fill(pSecret, (byte) 0);
+            Arrays.fill(theInitVector, (byte) 0);
+            theInitVector = null;
         }
-
-        /* Clear the secret */
-        Arrays.fill(pSecret, (byte) 0);
-        Arrays.fill(theInitVector, (byte) 0);
-        theInitVector = null;
     }
 
     /**
@@ -274,18 +326,18 @@ public abstract class GordianCoreAgreement
         } else if (theResultType instanceof GordianSymCipherSpec) {
             /* Derive the key */
             final GordianSymCipherSpec myCipherSpec = (GordianSymCipherSpec) theResultType;
-            theResult = deriveKey(myCipherSpec.getKeyType(), pSecret);
+            theResult = deriveCipher(myCipherSpec, pSecret);
 
             /* If the resultType is a StreamCipherSpec */
         } else if (theResultType instanceof GordianStreamCipherSpec) {
             /* Derive the key */
             final GordianStreamCipherSpec myCipherSpec = (GordianStreamCipherSpec) theResultType;
-            theResult = deriveKey(myCipherSpec.getKeyType(), pSecret);
+            theResult = deriveCipher(myCipherSpec, pSecret);
 
             /* If the resultType is pure bytes */
         } else if (theResultType == null) {
-            /* Return the secret */
-            theResult = pSecret;
+            /* Derive the secret */
+            theResult = deriveBasicResult(pSecret);
         }
     }
 
@@ -301,30 +353,137 @@ public abstract class GordianCoreAgreement
         /* Derive a shared factory */
         final GordianFactory myFactory = deriveFactory(GordianFactoryType.BC, pSecret);
 
-        /* Derive the keySet */
-        final GordianCoreKeySetFactory myKeySets = (GordianCoreKeySetFactory) myFactory.getKeySetFactory();
-        final GordianCoreKeySet myKeySet = myKeySets.createKeySet(pSpec);
-        myKeySet.buildFromSecret(pSecret, theInitVector);
-        return myKeySet;
+        /* Allocate the buffers */
+        final int myLen = GordianLength.LEN_256.getByteLength();
+        final byte[] myBase = new byte[GordianLength.LEN_512.getByteLength()];
+        final byte[] mySecret = new byte[myLen];
+        final byte[] myIV = new byte[myLen];
+
+        /* Ensure that we clear out the phrase */
+        try {
+            /* Calculate the secret */
+            calculateDerivedSecret(GordianDigestType.SHA3, pSecret, myBase);
+
+            /* Split into secret and IV */
+            System.arraycopy(myBase, 0, mySecret, 0, myLen);
+            System.arraycopy(myBase, myLen, myIV, 0, myLen);
+
+            /* Derive the keySet */
+            final GordianCoreKeySetFactory myKeySets = (GordianCoreKeySetFactory) myFactory.getKeySetFactory();
+            final GordianCoreKeySet myKeySet = myKeySets.createKeySet(pSpec);
+            myKeySet.buildFromSecret(mySecret, myIV);
+            return myKeySet;
+
+            /* Clear buffers */
+        } finally {
+            Arrays.fill(myBase, (byte) 0);
+            Arrays.fill(mySecret, (byte) 0);
+            Arrays.fill(myIV, (byte) 0);
+        }
+    }
+
+    /**
+     * Derive a symKeyCipher pair from the secret.
+     * @param pCipherSpec the cipherSpec
+     * @param pSecret the secret
+     * @return the ciphers
+     * @throws OceanusException on error
+     */
+    private GordianSymCipher[] deriveCipher(final GordianSymCipherSpec pCipherSpec,
+                                            final byte[] pSecret) throws OceanusException {
+        /* Derive a shared factory */
+        final GordianFactory myFactory = deriveFactory(GordianFactoryType.BC, pSecret);
+
+        /* Generate the key */
+        final GordianKey<GordianSymKeySpec> myKey = deriveKey(myFactory, pCipherSpec.getKeyType(), pSecret);
+
+        /* Create the cipher and initialise with key */
+        final GordianCipherFactory myCiphers = myFactory.getCipherFactory();
+        final GordianSymCipher myOutCipher = myCiphers.createSymKeyCipher(pCipherSpec);
+        final GordianSymCipher myInCipher = myCiphers.createSymKeyCipher(pCipherSpec);
+        if (pCipherSpec.needsIV()) {
+            /* Calculate the IV */
+            final byte[] myIV = new byte[pCipherSpec.getIVLength()];
+            calculateDerivedIV(pSecret, myIV);
+            myOutCipher.init(true, GordianCipherParameters.keyAndNonce(myKey, myIV));
+            myInCipher.init(false, GordianCipherParameters.keyAndNonce(myKey, myIV));
+        } else {
+            myOutCipher.init(true, GordianCipherParameters.key(myKey));
+            myInCipher.init(true, GordianCipherParameters.key(myKey));
+        }
+        return new GordianSymCipher[] { myOutCipher, myInCipher };
+    }
+
+    /**
+     * Derive a streamKeyCipher pair from the secret.
+     * @param pCipherSpec the cipherSpec
+     * @param pSecret the secret
+     * @return the ciphers
+     * @throws OceanusException on error
+     */
+    private GordianStreamCipher[] deriveCipher(final GordianStreamCipherSpec pCipherSpec,
+                                               final byte[] pSecret) throws OceanusException {
+        /* Derive a shared factory */
+        final GordianFactory myFactory = deriveFactory(GordianFactoryType.BC, pSecret);
+
+        /* Generate the key */
+        final GordianKey<GordianStreamKeySpec> myKey = deriveKey(myFactory, pCipherSpec.getKeyType(), pSecret);
+
+        /* Create the cipher and initialise with key */
+        final GordianCipherFactory myCiphers = myFactory.getCipherFactory();
+        final GordianStreamCipher myOutCipher = myCiphers.createStreamKeyCipher(pCipherSpec);
+        final GordianStreamCipher myInCipher = myCiphers.createStreamKeyCipher(pCipherSpec);
+        if (pCipherSpec.needsIV()) {
+            /* Calculate the IV */
+            final byte[] myIV = new byte[pCipherSpec.getIVLength()];
+            calculateDerivedIV(pSecret, myIV);
+            myOutCipher.init(true, GordianCipherParameters.keyAndNonce(myKey, myIV));
+            myInCipher.init(false, GordianCipherParameters.keyAndNonce(myKey, myIV));
+        } else {
+            myOutCipher.init(true, GordianCipherParameters.key(myKey));
+            myInCipher.init(true, GordianCipherParameters.key(myKey));
+        }
+        return new GordianStreamCipher[] { myOutCipher, myInCipher };
     }
 
     /**
      * Derive a key from the secret.
      * @param <T> the key type
+     * @param pFactory the factory
      * @param pKeyType the keyType
      * @param pSecret the secret
      * @return the key
      * @throws OceanusException on error
      */
-    private <T extends GordianKeySpec> GordianKey<T> deriveKey(final T pKeyType,
+    private <T extends GordianKeySpec> GordianKey<T> deriveKey(final GordianFactory pFactory,
+                                                               final T pKeyType,
                                                                final byte[] pSecret) throws OceanusException {
-        /* Derive a shared factory */
-        final GordianFactory myFactory = deriveFactory(GordianFactoryType.BC, pSecret);
+        /* Allocate the buffers */
+        final int myLen = GordianLength.LEN_256.getByteLength();
+        final byte[] myBase = new byte[GordianLength.LEN_512.getByteLength()];
+        final byte[] mySecret = new byte[myLen];
+        final byte[] myIV = new byte[myLen];
 
-        /* Derive the key */
-        final GordianCipherFactory myCiphers = myFactory.getCipherFactory();
-        final GordianCoreKeyGenerator<T> myGenerator = (GordianCoreKeyGenerator<T>) myCiphers.getKeyGenerator(pKeyType);
-        return myGenerator.generateKeyFromSecret(pSecret, theInitVector);
+        /* Ensure that we clear out the phrase */
+        try {
+            /* Calculate the secret */
+            calculateDerivedSecret(GordianDigestType.SKEIN, pSecret, myBase);
+
+            /* Split into secret and IV */
+            System.arraycopy(myBase, 0, mySecret, 0, myLen);
+            System.arraycopy(myBase, myLen, myIV, 0, myLen);
+
+            /* Derive the key */
+            final GordianCipherFactory myCiphers = pFactory.getCipherFactory();
+            final GordianCoreKeyGenerator<T> myGenerator = (GordianCoreKeyGenerator<T>) myCiphers.getKeyGenerator(pKeyType);
+            return myGenerator.generateKeyFromSecret(mySecret, myIV);
+
+            /* Clear buffers */
+        } finally {
+            Arrays.fill(myBase, (byte) 0);
+            Arrays.fill(mySecret, (byte) 0);
+            Arrays.fill(myIV, (byte) 0);
+        }
     }
 
     /**
@@ -336,24 +495,41 @@ public abstract class GordianCoreAgreement
      */
     private GordianFactory deriveFactory(final GordianFactoryType pFactoryType,
                                          final byte[] pSecret) throws OceanusException {
-        /* The phrase is built from the combination of secret and initVector */
-        final int myPhraseLen = pSecret.length + theInitVector.length;
-        final byte[] myPhrase = new byte[myPhraseLen];
+        /* Allocate the buffer */
+        final byte[] myPhrase = new byte[GordianLength.LEN_512.getByteLength()];
 
         /* Ensure that we clear out the phrase */
         try {
-            /* Build the phrase */
-            System.arraycopy(pSecret, 0, myPhrase, 0, pSecret.length);
-            System.arraycopy(theInitVector, 0, myPhrase, pSecret.length, theInitVector.length);
+            /* Calculate the phrase */
+            calculateDerivedSecret(GordianDigestType.BLAKE, pSecret, myPhrase);
 
             /* Create a new Factory using the phrase */
             final GordianParameters myParams = new GordianParameters(pFactoryType);
             myParams.setSecurityPhrase(myPhrase);
             myParams.setInternal();
             return theFactory.newFactory(myParams);
+
+            /* Clear buffer */
         } finally {
             Arrays.fill(myPhrase, (byte) 0);
         }
+    }
+
+    /**
+     * Derive basic result.
+     * @param pSecret the secret
+     * @return the factory
+     * @throws OceanusException on error
+     */
+    private byte[] deriveBasicResult(final byte[] pSecret) throws OceanusException {
+        /* Allocate the buffer */
+        final byte[] mySecret = new byte[GordianLength.LEN_512.getByteLength()];
+
+        /* Calculate the phrase */
+        calculateDerivedSecret(GordianDigestType.STREEBOG, pSecret, mySecret);
+
+        /* Return the secret */
+        return mySecret;
     }
 
     /**
@@ -380,7 +556,10 @@ public abstract class GordianCoreAgreement
             final GordianCoreCipherFactory myCipherFactory = (GordianCoreCipherFactory) theFactory.getCipherFactory();
             return myCipherFactory.getIdentifierForSpec((GordianStreamCipherSpec) theResultType);
         }
-        throw new GordianDataException("No resultType set");
+        if (theResultType == null) {
+            return new AlgorithmIdentifier(GordianAgreementAlgId.NULLRESULTOID, null);
+        }
+        throw new GordianDataException("Illegal resultType set");
     }
 
     /**
@@ -406,14 +585,20 @@ public abstract class GordianCoreAgreement
             return;
         }
 
-        /* Look for a symCipher Spec */
+        /* Look for a cipher Spec */
         final GordianCoreCipherFactory myCipherFactory = (GordianCoreCipherFactory) theFactory.getCipherFactory();
         final GordianCipherSpec<?> mySpec = myCipherFactory.getCipherSpecForIdentifier(pResId);
         if (mySpec != null) {
             theResultType = mySpec;
             return;
         }
-        throw new GordianDataException("No resultType set");
+
+        /* Look for a Factory */
+        if (GordianAgreementAlgId.NULLRESULTOID.equals(myAlgId)) {
+            theResultType = null;
+            return;
+        }
+        throw new GordianDataException("Unrecognised resultType");
     }
 
     /**
@@ -443,6 +628,170 @@ public abstract class GordianCoreAgreement
             case NONE:
             default:
                 return new GordianNullKeyDerivation();
+        }
+    }
+
+    /**
+     * Create request.
+     * @return the request message
+     * @throws OceanusException on error
+     */
+    protected byte[] createRequest() throws OceanusException {
+        return createRequest(null);
+    }
+
+    /**
+     * Create request.
+     * @param pBase the base message
+     * @return the request message
+     * @throws OceanusException on error
+     */
+    protected byte[] createRequest(final byte[] pBase) throws OceanusException {
+        /* Create the request */
+        final GordianCoreAgreementFactory myFactory = getAgreementFactory();
+        final AlgorithmIdentifier myAlgId = myFactory.getIdentifierForSpec(getAgreementSpec());
+        final AlgorithmIdentifier myResId = getIdentifierForResult();
+        final GordianAgreementRequestASN1 myRequest = new GordianAgreementRequestASN1(myAlgId, myResId, newInitVector(), pBase);
+        return myRequest.getEncodedBytes();
+    }
+
+    /**
+     * Parse the incoming request message.
+     * @param pMessage the incoming request message
+     * @return the base message
+     * @throws OceanusException on error
+     */
+    protected byte[] parseRequest(final byte[] pMessage) throws OceanusException {
+        /* Parse the sequence */
+        try {
+            /* Access the sequence */
+            final GordianAgreementRequestASN1 myRequest = GordianAgreementRequestASN1.getInstance(pMessage);
+
+            /* Access message parts */
+            final AlgorithmIdentifier myAlgId = myRequest.getAgreementId();
+            final AlgorithmIdentifier myResId = myRequest.getResultId();
+            final byte[] myInitVector = myRequest.getInitVector();
+            final byte[] myData = myRequest.getData();
+
+            /* Check agreementSpec */
+            final GordianCoreAgreementFactory myFactory = getAgreementFactory();
+            final GordianAgreementSpec mySpec = myFactory.getSpecForIdentifier(myAlgId);
+            if (!Objects.equals(mySpec, getAgreementSpec())) {
+                throw new GordianDataException(ERROR_INVSPEC);
+            }
+
+            /* Process result identifier */
+            processResultIdentifier(myResId);
+
+            /* Store initVector */
+            storeInitVector(myInitVector);
+
+            /* Return the encoded message */
+            return myData;
+
+        } catch (IllegalArgumentException e) {
+            throw new GordianIOException("Unable to parse ASN1 sequence", e);
+        }
+    }
+
+    /**
+     * Create response.
+     * @param pBase the base message
+     * @return the response message
+     * @throws OceanusException on error
+     */
+    protected byte[] createResponse(final byte[] pBase) throws OceanusException {
+        /* Create the response */
+        final GordianCoreAgreementFactory myFactory = getAgreementFactory();
+        final AlgorithmIdentifier myAlgId = myFactory.getIdentifierForSpec(getAgreementSpec());
+        final GordianAgreementResponseASN1 myResponse = new GordianAgreementResponseASN1(myAlgId, pBase);
+        return myResponse.getEncodedBytes();
+    }
+
+    /**
+     * Parse the incoming response message.
+     * @param pResponse the response message
+     * @return the ephemeral keySpec
+     * @throws OceanusException on error
+     */
+    protected X509EncodedKeySpec parseResponse(final byte[] pResponse) throws OceanusException {
+        /* Access the sequence */
+        final GordianAgreementResponseASN1 myResponse = GordianAgreementResponseASN1.getInstance(pResponse);
+
+        /* Access message parts */
+        final AlgorithmIdentifier myAlgId = myResponse.getAgreementId();
+        final byte[] myKeyBytes = myResponse.getData();
+
+        /* Check agreementSpec */
+        final GordianCoreAgreementFactory myFactory = getAgreementFactory();
+        final GordianAgreementSpec mySpec = myFactory.getSpecForIdentifier(myAlgId);
+        if (!Objects.equals(mySpec, getAgreementSpec())) {
+            throw new GordianDataException(ERROR_INVSPEC);
+        }
+
+        /* Return the keySpec */
+        return new X509EncodedKeySpec(myKeyBytes);
+    }
+
+    /**
+     * Calculate the derived secret.
+     * @param pDigestType the digestType
+     * @param pSecret the secret
+     * @param pResult the result buffer
+     * @throws OceanusException on error
+     */
+    protected void calculateDerivedSecret(final GordianDigestType pDigestType,
+                                          final byte[] pSecret,
+                                          final byte[] pResult) throws OceanusException {
+        /* Check that the Result is the correct length */
+        if (pResult.length != GordianLength.LEN_512.getByteLength()) {
+            throw new IllegalArgumentException("Invalid buffer");
+        }
+
+        /* Access the required digest */
+        final GordianDigestSpec myDigestSpec = new GordianDigestSpec(pDigestType, GordianLength.LEN_512);
+        final GordianDigest myDigest = theFactory.getDigestFactory().createDigest(myDigestSpec);
+
+        /* Update the digest appropriately */
+        myDigest.update(pSecret);
+        myDigest.update(theInitVector);
+
+        /* Calculate the result */
+        myDigest.finish(pResult, 0);
+    }
+
+    /**
+     * Calculate the derived IV.
+     * @param pSecret the secret
+     * @param pResult the result buffer
+     * @throws OceanusException on error
+     */
+    protected void calculateDerivedIV(final byte[] pSecret,
+                                      final byte[] pResult) throws OceanusException {
+        /* Access the required digest */
+        final GordianDigestSpec myDigestSpec = new GordianDigestSpec(GordianDigestType.KUPYNA, GordianLength.LEN_512);
+        final GordianDigest myDigest = theFactory.getDigestFactory().createDigest(myDigestSpec);
+        final byte[] myBuffer = new byte[GordianLength.LEN_512.getByteLength()];
+
+        /* Update the digest appropriately */
+        myDigest.update(pSecret);
+        myDigest.update(theInitVector);
+
+        /* Calculate the result and copy to result */
+        myDigest.finish(myBuffer, 0);
+        int bytesLeft = pResult.length;
+        int bytesToCopy = Math.min(myBuffer.length, bytesLeft);
+        System.arraycopy(myBuffer, 0, pResult, 0, bytesToCopy);
+        bytesLeft -= bytesToCopy;
+
+        /* While we need more bytes */
+        while (bytesLeft > 0) {
+            /* Extend the digest */
+            myDigest.update(myBuffer);
+            myDigest.finish(myBuffer, 0);
+            bytesToCopy = Math.min(myBuffer.length, bytesLeft);
+            System.arraycopy(myBuffer, 0, pResult, 0, bytesToCopy);
+            bytesLeft -= bytesToCopy;
         }
     }
 

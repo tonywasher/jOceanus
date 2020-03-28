@@ -44,8 +44,9 @@ public interface GordianAgreement {
      *     <dd>To agree a KeySet</dd>
      * </dl>
      * @param pResultType the resultType.
+     * @throws OceanusException on error
      */
-    void setResultType(Object pResultType);
+    void setResultType(Object pResultType) throws OceanusException;
 
     /**
      * Obtain resultType.

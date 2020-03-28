@@ -244,8 +244,8 @@ public final class BouncyNewHopeAsymKey {
                 final X509EncodedKeySpec myKeySpec = new X509EncodedKeySpec(myInfo.getEncoded());
                 final byte[] myKeySpecBytes = myKeySpec.getEncoded();
 
-                /* Build the init Message */
-                final byte[] myMessage = createMessage(myKeySpecBytes);
+                /* Build the request Message */
+                final byte[] myMessage = createRequest(myKeySpecBytes);
 
                 /* Derive the secret */
                 final byte[] mySecret = myPair.getSharedValue();
@@ -266,7 +266,7 @@ public final class BouncyNewHopeAsymKey {
             checkKeyPair(pSelf);
 
             /* Obtain keySpec */
-            final byte[] myX509bytes = parseMessage(pMessage);
+            final byte[] myX509bytes = parseRequest(pMessage);
             final X509EncodedKeySpec myKeySpec = new X509EncodedKeySpec(myX509bytes);
 
             /* Derive ephemeral Public key */

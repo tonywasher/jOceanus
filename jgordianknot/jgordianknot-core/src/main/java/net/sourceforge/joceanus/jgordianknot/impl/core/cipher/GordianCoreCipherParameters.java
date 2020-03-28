@@ -255,8 +255,8 @@ public class GordianCoreCipherParameters<T extends GordianKeySpec> {
         /* If we have specified IV */
         if (pParams instanceof GordianKeyCipherParameters) {
             /* Access the parameters */
-            final GordianKeyCipherParameters myParams = (GordianKeyCipherParameters) pParams;
-            return (net.sourceforge.joceanus.jgordianknot.api.key.GordianKey<T>) myParams.getKey();
+            final GordianKeyCipherParameters<?> myParams = (GordianKeyCipherParameters<?>) pParams;
+            return (GordianKey<T>) myParams.getKey();
         }
 
         /* No key */
@@ -309,7 +309,7 @@ public class GordianCoreCipherParameters<T extends GordianKeySpec> {
         /* If we have specified IV */
         if (pParams instanceof GordianAEADCipherParameters) {
             /* Access the parameters */
-            final GordianAEADCipherParameters myParams = (GordianAEADCipherParameters) pParams;
+            final GordianAEADCipherParameters<?> myParams = (GordianAEADCipherParameters<?>) pParams;
             myInitial = Arrays.clone(myParams.getInitialAEAD());
         }
 
