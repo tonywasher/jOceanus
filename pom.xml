@@ -82,7 +82,7 @@
     <JavaVersion>13</JavaVersion>
     <JavaFXVersion>14</JavaFXVersion>
     <JavaLanguageVersion>11</JavaLanguageVersion>
-    <CheckStyleVersion>8.30</CheckStyleVersion>
+    <CheckStyleVersion>8.31</CheckStyleVersion>
     <PMDVersion>6.22.0</PMDVersion>
     <CleanPluginVersion>3.1.0</CleanPluginVersion>
     <ResourcesPluginVersion>3.1.0</ResourcesPluginVersion>

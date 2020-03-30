@@ -268,8 +268,8 @@
                     <tr><td class="defHdr">Algorithm</td><td class="defHdr">Variants</td></tr>
                     <tr><td>RSA</td><td/></tr>
                     <tr><td>EC</td><td/></tr>
-                    <tr><td>SM2</td><td/></tr>
-                    <tr><td>McEliece</td><td>Standard, KobaraImai, Fujisaki, Pointcheval, </td></tr>
+                    <tr><td>SM2</td><td/>C1C2C3, C1C3C2</tr>
+                    <tr><td>McEliece</td><td>Standard, KobaraImai, Fujisaki, Pointcheval</td></tr>
                 </table>
             </subsection>
         </section>

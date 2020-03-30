@@ -42,6 +42,7 @@ import net.sourceforge.joceanus.jgordianknot.api.key.GordianKeyLengths;
 import net.sourceforge.joceanus.jgordianknot.api.mac.GordianMacFactory;
 import net.sourceforge.joceanus.jgordianknot.api.mac.GordianMacSpec;
 import net.sourceforge.joceanus.jgordianknot.api.mac.GordianMacType;
+import net.sourceforge.joceanus.jgordianknot.api.mac.GordianSipHashSpec;
 
 /**
  * Mappings from EncodedId to KeySpec.
@@ -310,8 +311,8 @@ public class GordianKeyAlgId {
             myId = GordianKeyAlgId.appendSymKeyOID(myId, false, (GordianSymKeySpec) mySubSpec);
         } else if (mySubSpec instanceof GordianLength) {
             myId = myId.branch(Integer.toString(((GordianLength) mySubSpec).ordinal() + 1));
-        } else if (mySubSpec instanceof Boolean) {
-            myId = myId.branch(Boolean.TRUE.equals(mySubSpec) ? "1" : "2");
+        } else if (mySubSpec instanceof GordianSipHashSpec) {
+            myId = myId.branch(Integer.toString(((GordianSipHashSpec) mySubSpec).ordinal() + 1));
         }
 
         /* Add the spec to the maps */

@@ -22,9 +22,9 @@ import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
 
 import net.sourceforge.joceanus.jgordianknot.api.asym.GordianAsymKeySpec;
 import net.sourceforge.joceanus.jgordianknot.api.asym.GordianAsymKeyType;
-import net.sourceforge.joceanus.jgordianknot.api.asym.GordianMcElieceKeySpec;
 import net.sourceforge.joceanus.jgordianknot.api.encrypt.GordianEncryptorFactory;
 import net.sourceforge.joceanus.jgordianknot.api.encrypt.GordianEncryptorSpec;
+import net.sourceforge.joceanus.jgordianknot.api.encrypt.GordianMcElieceEncryptionType;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianCoreFactory;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianDataException;
 import net.sourceforge.joceanus.jtethys.OceanusException;
@@ -117,7 +117,7 @@ public abstract class GordianCoreEncryptorFactory
 
         /* Disallow McEliece if it is the wrong style key */
         if (GordianAsymKeyType.MCELIECE.equals(pKeySpec.getKeyType())) {
-            return GordianMcElieceKeySpec.checkValidEncryptionType(pKeySpec.getMcElieceKeySpec(), pEncryptorSpec.getMcElieceType());
+            return GordianMcElieceEncryptionType.checkValidEncryptionType(pKeySpec.getMcElieceKeySpec(), pEncryptorSpec.getMcElieceType());
         }
 
         /* If this is a RSA encryption */

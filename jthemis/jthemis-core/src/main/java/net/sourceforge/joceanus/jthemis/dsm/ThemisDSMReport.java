@@ -177,7 +177,7 @@ public final class ThemisDSMReport {
         /* Handle double index */
         final int myRadix = 'Z' - 'A' + 1;
         final int myFirst = pKey.charAt(0) - 'A' + 1;
-        final int mySecond = pKey.charAt(0) - 'A';
+        final int mySecond = pKey.charAt(1) - 'A';
         return myFirst * myRadix + mySecond;
     }
 

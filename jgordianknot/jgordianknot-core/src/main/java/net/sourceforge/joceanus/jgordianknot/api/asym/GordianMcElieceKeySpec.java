@@ -192,26 +192,6 @@ public final class GordianMcElieceKeySpec {
     }
 
     /**
-     * Check valid encryption type.
-     * @param pKeySpec the McElieceKeySpec
-     * @param pEncryptorType the encryptorType
-     * @return true/false
-     */
-    public static boolean checkValidEncryptionType(final GordianMcElieceKeySpec pKeySpec,
-                                                   final GordianMcElieceEncryptionType pEncryptorType) {
-        switch (pEncryptorType) {
-            case STANDARD:
-                return GordianMcElieceKeyType.STANDARD.equals(pKeySpec.getKeyType());
-            case FUJISAKI:
-            case KOBARAIMAI:
-            case POINTCHEVAL:
-                return !GordianMcElieceKeyType.STANDARD.equals(pKeySpec.getKeyType());
-            default:
-                throw new IllegalArgumentException();
-        }
-    }
-
-    /**
      * Obtain a list of all possible specs.
      * @return the list
      */
@@ -315,49 +295,6 @@ public final class GordianMcElieceKeySpec {
                 default:
                     return McElieceParameters.DEFAULT_M;
             }
-        }
-    }
-
-    /**
-     * McEliece encryptionType.
-     */
-    public enum GordianMcElieceEncryptionType {
-        /**
-         * Standard.
-         */
-        STANDARD("Standard"),
-
-        /**
-         * KobaraImai.
-         */
-        KOBARAIMAI("KobaraImai"),
-
-        /**
-         * Fujisaki.
-         */
-        FUJISAKI("Fujisaki"),
-
-        /**
-         * Pointcheval.
-         */
-        POINTCHEVAL("Pointcheval");
-
-        /**
-         * The name.
-         */
-        private final String theName;
-
-        /**
-         * Constructor.
-         * @param pName the name of the encryption
-         */
-        GordianMcElieceEncryptionType(final String pName) {
-            theName = pName;
-        }
-
-        @Override
-        public String toString() {
-            return theName;
         }
     }
 }

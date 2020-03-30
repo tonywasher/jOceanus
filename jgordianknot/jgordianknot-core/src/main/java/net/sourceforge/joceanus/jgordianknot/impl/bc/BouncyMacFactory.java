@@ -35,6 +35,7 @@ import org.bouncycastle.crypto.macs.GOST28147Mac;
 import org.bouncycastle.crypto.macs.HMac;
 import org.bouncycastle.crypto.macs.Poly1305;
 import org.bouncycastle.crypto.macs.SipHash;
+import org.bouncycastle.crypto.macs.SipHash128;
 import org.bouncycastle.crypto.macs.VMPCMac;
 import org.bouncycastle.crypto.macs.Zuc128Mac;
 import org.bouncycastle.crypto.macs.Zuc256Mac;
@@ -49,6 +50,7 @@ import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianSymKeyType;
 import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigestSpec;
 import net.sourceforge.joceanus.jgordianknot.api.mac.GordianMacSpec;
 import net.sourceforge.joceanus.jgordianknot.api.mac.GordianMacType;
+import net.sourceforge.joceanus.jgordianknot.api.mac.GordianSipHashSpec;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianCoreFactory;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianDataException;
 import net.sourceforge.joceanus.jgordianknot.impl.core.mac.GordianCoreMacFactory;
@@ -59,11 +61,6 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
  */
 public class BouncyMacFactory
     extends GordianCoreMacFactory {
-    /**
-     * SipHash standard constant.
-     */
-    private static final int SIPHASH_STD = 4;
-
     /**
      * KeyPairGenerator Cache.
      */
@@ -161,7 +158,7 @@ public class BouncyMacFactory
             case CFBMAC:
                 return getBCCFBMac(pMacSpec.getSymKeySpec());
             case SIPHASH:
-                return getBCSipHash(pMacSpec.getBoolean());
+                return getBCSipHash(pMacSpec.getSipHashSpec());
             case GOST:
                 return getBCGOSTMac();
             case ZUC:
@@ -305,12 +302,13 @@ public class BouncyMacFactory
     /**
      * Create the BouncyCastle SipHash.
      *
-     * @param pFast use fast sipHas?
+     * @param pSpec the SipHashSpec
      * @return the MAC
      */
-    private static Mac getBCSipHash(final Boolean pFast) {
-        return pFast ? new SipHash()
-                     : new SipHash(SIPHASH_STD, SIPHASH_STD << 1);
+    private static Mac getBCSipHash(final GordianSipHashSpec pSpec) {
+        return pSpec.isLong()
+                ? new SipHash128(pSpec.getCompression(), pSpec.getFinalisation())
+                : new SipHash(pSpec.getCompression(), pSpec.getFinalisation());
     }
 
     /**

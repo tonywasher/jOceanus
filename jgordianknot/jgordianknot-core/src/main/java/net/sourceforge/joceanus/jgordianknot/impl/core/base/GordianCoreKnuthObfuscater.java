@@ -40,6 +40,7 @@ import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigestType;
 import net.sourceforge.joceanus.jgordianknot.api.factory.GordianKnuthObfuscater;
 import net.sourceforge.joceanus.jgordianknot.api.mac.GordianMacSpec;
 import net.sourceforge.joceanus.jgordianknot.api.mac.GordianMacType;
+import net.sourceforge.joceanus.jgordianknot.api.mac.GordianSipHashSpec;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianPersonalisation.GordianPersonalId;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
@@ -569,7 +570,7 @@ public class GordianCoreKnuthObfuscater
                 myCode += deriveEncodedIdFromLength(pMacSpec.getMacLength()) << myShift;
                 break;
             case SIPHASH:
-                myCode += (pMacSpec.getBoolean() ? 1 : 0) << myShift;
+                myCode += deriveEncodedIdFromSipHashSpec(pMacSpec.getSipHashSpec()) << myShift;
                 break;
             default:
                 break;
@@ -623,10 +624,29 @@ public class GordianCoreKnuthObfuscater
                 final GordianLength myLength = deriveLengthFromEncodedId(myId);
                 return GordianMacSpec.zucMac(myKeyLen, myLength);
             case SIPHASH:
-                return new GordianMacSpec(GordianMacType.SIPHASH, myId != 0);
+                return new GordianMacSpec(GordianMacType.SIPHASH, deriveSipHashSpecFromEncodedId(myId));
             default:
                 return new GordianMacSpec(myMacType, myKeyLen);
         }
+    }
+
+    /**
+     * Obtain encoded SipHashId.
+     * @param pSpec the sipHashSpec
+     * @return the encoded id
+     */
+    private static int deriveEncodedIdFromSipHashSpec(final GordianSipHashSpec pSpec) {
+        return deriveEncodedIdFromEnum(pSpec);
+    }
+
+    /**
+     * Obtain sipHashSpec from encoded Id.
+     * @param pEncodedId the encoded id
+     * @return the sipHashSpec
+     * @throws OceanusException on error
+     */
+    private static GordianSipHashSpec deriveSipHashSpecFromEncodedId(final int pEncodedId) throws OceanusException {
+        return deriveEnumFromEncodedId(pEncodedId, GordianSipHashSpec.class);
     }
 
     /**

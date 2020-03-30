@@ -36,6 +36,7 @@ import org.bouncycastle.crypto.agreement.ECDHCUnifiedAgreement;
 import org.bouncycastle.crypto.agreement.ECMQVBasicAgreement;
 import org.bouncycastle.crypto.agreement.SM2KeyExchange;
 import org.bouncycastle.crypto.engines.SM2Engine;
+import org.bouncycastle.crypto.engines.SM2Engine.Mode;
 import org.bouncycastle.crypto.ext.engines.EllipticEncryptor;
 import org.bouncycastle.crypto.generators.ECKeyPairGenerator;
 import org.bouncycastle.crypto.kems.ECIESKeyEncapsulation;
@@ -64,6 +65,8 @@ import net.sourceforge.joceanus.jgordianknot.api.agree.GordianAgreementSpec;
 import net.sourceforge.joceanus.jgordianknot.api.asym.GordianAsymKeySpec;
 import net.sourceforge.joceanus.jgordianknot.api.asym.GordianElliptic;
 import net.sourceforge.joceanus.jgordianknot.api.encrypt.GordianEncryptorSpec;
+import net.sourceforge.joceanus.jgordianknot.api.encrypt.GordianSM2EncryptionSpec;
+import net.sourceforge.joceanus.jgordianknot.api.encrypt.GordianSM2EncryptionSpec.GordianSM2EncryptionType;
 import net.sourceforge.joceanus.jgordianknot.api.factory.GordianAsymFactory;
 import net.sourceforge.joceanus.jgordianknot.api.key.GordianKeyPair;
 import net.sourceforge.joceanus.jgordianknot.api.key.GordianKeyPairGenerator;
@@ -1019,8 +1022,11 @@ public final class BouncyEllipticAsymKey {
             /* Initialise underlying cipher */
             super(pFactory, pSpec);
             final BouncyDigestFactory myFactory = pFactory.getDigestFactory();
-            final BouncyDigest myDigest = myFactory.createDigest(pSpec.getDigestSpec());
-            theEncryptor = new SM2Engine(myDigest.getDigest());
+            final GordianSM2EncryptionSpec mySpec = pSpec.getSM2EncryptionSpec();
+            final BouncyDigest myDigest = myFactory.createDigest(mySpec.getDigestSpec());
+            final Mode mySM2Mode = mySpec.getEncryptionType() == GordianSM2EncryptionType.C1C2C3
+                    ? Mode.C1C2C3 : Mode.C1C3C2;
+            theEncryptor = new SM2Engine(myDigest.getDigest(), mySM2Mode);
         }
 
         @Override

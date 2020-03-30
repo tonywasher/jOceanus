@@ -16,9 +16,9 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jgordianknot.impl.bc;
 
-import net.sourceforge.joceanus.jgordianknot.api.asym.GordianMcElieceKeySpec.GordianMcElieceEncryptionType;
 import net.sourceforge.joceanus.jgordianknot.api.encrypt.GordianEncryptor;
 import net.sourceforge.joceanus.jgordianknot.api.encrypt.GordianEncryptorSpec;
+import net.sourceforge.joceanus.jgordianknot.api.encrypt.GordianMcElieceEncryptionType;
 import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyEllipticAsymKey.BouncyECEncryptor;
 import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyEllipticAsymKey.BouncySM2Encryptor;
 import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyMcElieceAsymKey.BouncyMcElieceCCA2Encryptor;
@@ -73,7 +73,7 @@ public class BouncyEncryptorFactory
             case GOST2012:
                 return new BouncyECEncryptor(getFactory(), pSpec);
             case SM2:
-                return pSpec.getDigestSpec() == null
+                return pSpec.getSM2EncryptionSpec() == null
                        ? new BouncyECEncryptor(getFactory(), pSpec)
                        : new BouncySM2Encryptor(getFactory(), pSpec);
             case MCELIECE:

@@ -20,9 +20,11 @@ import java.security.NoSuchAlgorithmException;
 import javax.crypto.Cipher;
 import javax.crypto.NoSuchPaddingException;
 
-import net.sourceforge.joceanus.jgordianknot.api.asym.GordianMcElieceKeySpec.GordianMcElieceEncryptionType;
 import net.sourceforge.joceanus.jgordianknot.api.encrypt.GordianEncryptor;
 import net.sourceforge.joceanus.jgordianknot.api.encrypt.GordianEncryptorSpec;
+import net.sourceforge.joceanus.jgordianknot.api.encrypt.GordianMcElieceEncryptionType;
+import net.sourceforge.joceanus.jgordianknot.api.encrypt.GordianSM2EncryptionSpec;
+import net.sourceforge.joceanus.jgordianknot.api.encrypt.GordianSM2EncryptionSpec.GordianSM2EncryptionType;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianCoreFactory;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianCryptoException;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianDataException;
@@ -118,7 +120,8 @@ public class JcaEncryptorFactory
             case MCELIECE:
                 return true;
             case SM2:
-                return pSpec.getDigestSpec() != null;
+                final GordianSM2EncryptionSpec mySpec = pSpec.getSM2EncryptionSpec();
+                return mySpec != null && mySpec.getEncryptionType() == GordianSM2EncryptionType.C1C2C3;
             default:
                 return false;
         }
