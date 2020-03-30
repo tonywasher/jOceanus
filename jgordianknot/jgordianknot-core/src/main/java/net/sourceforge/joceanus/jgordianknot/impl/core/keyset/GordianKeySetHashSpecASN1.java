@@ -17,6 +17,7 @@
 package net.sourceforge.joceanus.jgordianknot.impl.core.keyset;
 
 import java.util.Enumeration;
+import java.util.Objects;
 
 import org.bouncycastle.asn1.ASN1EncodableVector;
 import org.bouncycastle.asn1.ASN1Integer;
@@ -70,6 +71,11 @@ public class GordianKeySetHashSpecASN1
             final GordianKeySetSpec mySpec = GordianKeySetSpecASN1.getInstance(en.nextElement()).getSpec();
             final int myIterations = ASN1Integer.getInstance(en.nextElement()).getValue().intValue();
 
+            /* Make sure that we have completed the sequence */
+            if (en.hasMoreElements()) {
+                throw new GordianDataException("Unexpected additional values in ASN1 sequence");
+            }
+
             /* Create the keySpec */
             theSpec = new GordianKeySetHashSpec(myIterations, mySpec);
 
@@ -121,5 +127,30 @@ public class GordianKeySetHashSpecASN1
 
         /* Calculate the length of the sequence */
         return GordianASN1Util.getLengthSequence(myLength);
+    }
+
+    @Override
+    public boolean equals(final Object pThat) {
+        /* Handle trivial cases */
+        if (this == pThat) {
+            return true;
+        }
+        if (pThat == null) {
+            return false;
+        }
+
+        /* Make sure that the classes are the same */
+        if (!(pThat instanceof GordianKeySetHashSpecASN1)) {
+            return false;
+        }
+        final GordianKeySetHashSpecASN1 myThat = (GordianKeySetHashSpecASN1) pThat;
+
+        /* Check that the fields are equal */
+        return Objects.equals(theSpec, myThat.getSpec());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getSpec());
     }
 }

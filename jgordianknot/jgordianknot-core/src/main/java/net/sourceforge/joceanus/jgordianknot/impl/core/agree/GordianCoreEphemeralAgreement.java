@@ -19,7 +19,7 @@ package net.sourceforge.joceanus.jgordianknot.impl.core.agree;
 import java.security.spec.X509EncodedKeySpec;
 
 import net.sourceforge.joceanus.jgordianknot.api.agree.GordianAgreementSpec;
-import net.sourceforge.joceanus.jgordianknot.api.agree.GordianEphemeralAgreement;
+import net.sourceforge.joceanus.jgordianknot.api.agree.GordianHandshakeAgreement;
 import net.sourceforge.joceanus.jgordianknot.api.factory.GordianAsymFactory;
 import net.sourceforge.joceanus.jgordianknot.api.key.GordianKeyPair;
 import net.sourceforge.joceanus.jgordianknot.api.key.GordianKeyPairGenerator;
@@ -31,7 +31,7 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
  */
 public abstract class GordianCoreEphemeralAgreement
         extends GordianCoreAgreement
-        implements GordianEphemeralAgreement {
+        implements GordianHandshakeAgreement {
     /**
      * The owning KeyPair.
      */
@@ -82,12 +82,12 @@ public abstract class GordianCoreEphemeralAgreement
     }
 
     @Override
-    public byte[] initiateAgreement(final GordianKeyPair pInitiator) throws OceanusException {
+    public byte[] createClientHello(final GordianKeyPair pClient) throws OceanusException {
         /* Check the keyPair */
-        checkKeyPair(pInitiator);
+        checkKeyPair(pClient);
 
         /* Store the keyPair */
-        theOwner = pInitiator;
+        theOwner = pClient;
 
         /* Create ephemeral key */
         final GordianAsymFactory myAsym = getFactory().getAsymmetricFactory();
@@ -96,27 +96,26 @@ public abstract class GordianCoreEphemeralAgreement
         final X509EncodedKeySpec myKeySpec = myGenerator.getX509Encoding(theEphemeral);
         final byte[] myKeyBytes = myKeySpec.getEncoded();
 
-        /* Create the request */
-        return createRequest(myKeyBytes);
+        /* Create the clientHello message */
+        return buildClientHello(myKeyBytes);
     }
 
     /**
-     * Parse the incoming request and create the response.
-     * @param pResponder the responding keyPair
-     * @param pMessage the incoming message
-     * @return the response message
+     * Parse the incoming clientHello message request.
+     * @param pServer the server keyPair
+     * @param pClientHello the incoming clientHello message
      * @throws OceanusException on error
      */
-    protected byte[] parseRequest(final GordianKeyPair pResponder,
-                                  final byte[] pMessage) throws OceanusException {
+    protected void processClientHello(final GordianKeyPair pServer,
+                                      final byte[] pClientHello) throws OceanusException {
         /* Check the keyPair */
-        checkKeyPair(pResponder);
+        checkKeyPair(pServer);
 
         /* Store the keyPair */
-        theOwner = pResponder;
+        theOwner = pServer;
 
         /* Parse the request */
-        final byte[] myKeyBytes = parseRequest(pMessage);
+        final byte[] myKeyBytes = parseClientHello(pClientHello);
 
         /* Parse the ephemeral encoding */
         final X509EncodedKeySpec myKeySpec = new X509EncodedKeySpec(myKeyBytes);
@@ -129,18 +128,30 @@ public abstract class GordianCoreEphemeralAgreement
         /* Derive partner ephemeral key */
         thePartnerEphemeral = myGenerator.derivePublicOnlyKeyPair(myKeySpec);
 
-        /* Create the response */
-        return createResponse(myGenerator.getX509Encoding(theEphemeral).getEncoded());
+        /* Create the new serverIV */
+        newServerIV();
     }
 
     /**
-     * Parse the ephemeral keySpec.
-     * @param pResponse the response message
+     * Build the serverHello.
+     * @return the serverHello message
      * @throws OceanusException on error
      */
-    protected void parseEphemeral(final byte[] pResponse) throws OceanusException {
+    protected byte[] buildServerHello() throws OceanusException {
+        final GordianAsymFactory myAsym = getFactory().getAsymmetricFactory();
+        final GordianKeyPairGenerator myGenerator = myAsym.getKeyPairGenerator(theEphemeral.getKeySpec());
+        return buildServerHello(myGenerator.getX509Encoding(theEphemeral).getEncoded());
+    }
+
+    /**
+     * Parse the serverHello.
+     * @param pServerHello the serverHello message
+     * @throws OceanusException on error
+     */
+    protected void processServerHello(final byte[] pServerHello) throws OceanusException {
         /* Obtain keySpec */
-        final X509EncodedKeySpec myKeySpec = parseResponse(pResponse);
+        final byte[] myBytes = parseServerHello(pServerHello);
+        final X509EncodedKeySpec myKeySpec = new X509EncodedKeySpec(myBytes);
 
         /* Derive partner ephemeral key */
         final GordianAsymFactory myAsym = getFactory().getAsymmetricFactory();

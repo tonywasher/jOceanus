@@ -20,36 +20,36 @@ import net.sourceforge.joceanus.jgordianknot.api.key.GordianKeyPair;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
- * Ephemeral Agreement.
+ * Handshake TwoShot Agreement.
  */
-public interface GordianEphemeralAgreement
+public interface GordianHandshakeAgreement
         extends GordianAgreement {
     /**
-     * Initiate the agreement.
-     * @param pInitiator the initiating keyPair
-     * @return the composite message
+     * create the clientHello.
+     * @param pClient the client keyPair
+     * @return the clientHello message
      * @throws OceanusException on error
      */
-    byte[] initiateAgreement(GordianKeyPair pInitiator) throws OceanusException;
+    byte[] createClientHello(GordianKeyPair pClient) throws OceanusException;
 
     /**
-     * Parse the incoming message.
-     * @param pSource the source keyPair
-     * @param pResponder the responding keyPair
-     * @param pMessage the incoming message
-     * @return the ephemeral keySpec
+     * Accept the clientHello.
+     * @param pClient the client keyPair
+     * @param pServer the server keyPair
+     * @param pClientHello the incoming clientHello message
+     * @return the serverHello message
      * @throws OceanusException on error
      */
-    byte[] acceptAgreement(GordianKeyPair pSource,
-                           GordianKeyPair pResponder,
-                           byte[] pMessage) throws OceanusException;
+    byte[] acceptClientHello(GordianKeyPair pClient,
+                             GordianKeyPair pServer,
+                             byte[] pClientHello) throws OceanusException;
 
     /**
-     * Confirm the agreement.
-     * @param pResponder the responding keyPair
-     * @param pKeySpec the target ephemeral keyPair
+     * Accept the serverHello.
+     * @param pServer the server keyPair
+     * @param pServerHello the serverHello message
      * @throws OceanusException on error
      */
-    void confirmAgreement(GordianKeyPair pResponder,
-                          byte[] pKeySpec) throws OceanusException;
+    void acceptServerHello(GordianKeyPair pServer,
+                           byte[] pServerHello) throws OceanusException;
 }

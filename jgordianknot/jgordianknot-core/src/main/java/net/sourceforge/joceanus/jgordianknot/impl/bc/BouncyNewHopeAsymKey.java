@@ -228,14 +228,14 @@ public final class BouncyNewHopeAsymKey {
         }
 
         @Override
-        public byte[] initiateAgreement(final GordianKeyPair pTarget) throws OceanusException {
+        public byte[] createClientHello(final GordianKeyPair pServer) throws OceanusException {
             try {
                 /* Check keyPair */
-                checkKeyPair(pTarget);
+                checkKeyPair(pServer);
 
                 /* Generate an Exchange KeyPair */
                 final NHExchangePairGenerator myGenerator = new NHExchangePairGenerator(getRandom());
-                final BouncyNewHopePublicKey myTarget = (BouncyNewHopePublicKey) getPublicKey(pTarget);
+                final BouncyNewHopePublicKey myTarget = (BouncyNewHopePublicKey) getPublicKey(pServer);
                 final ExchangePair myPair = myGenerator.GenerateExchange(myTarget.getPublicKey());
 
                 /* Obtain the encoded keySpec of the public key */
@@ -244,15 +244,15 @@ public final class BouncyNewHopeAsymKey {
                 final X509EncodedKeySpec myKeySpec = new X509EncodedKeySpec(myInfo.getEncoded());
                 final byte[] myKeySpecBytes = myKeySpec.getEncoded();
 
-                /* Build the request Message */
-                final byte[] myMessage = createRequest(myKeySpecBytes);
+                /* Build the clientHello Message */
+                final byte[] myClientHello = buildClientHello(myKeySpecBytes);
 
                 /* Derive the secret */
                 final byte[] mySecret = myPair.getSharedValue();
                 storeSecret(mySecret);
 
-                /* Return the message  */
-                return myMessage;
+                /* Return the clientHello  */
+                return myClientHello;
 
             } catch (IOException e) {
                 throw new GordianCryptoException(BouncyKeyPairGenerator.ERROR_PARSE, e);
@@ -260,23 +260,23 @@ public final class BouncyNewHopeAsymKey {
         }
 
         @Override
-        public void acceptAgreement(final GordianKeyPair pSelf,
-                                    final byte[] pMessage) throws OceanusException {
+        public void acceptClientHello(final GordianKeyPair pServer,
+                                      final byte[] pClientHello) throws OceanusException {
             /* Check keyPair */
-            checkKeyPair(pSelf);
+            checkKeyPair(pServer);
 
             /* Obtain keySpec */
-            final byte[] myX509bytes = parseRequest(pMessage);
+            final byte[] myX509bytes = parseClientHello(pClientHello);
             final X509EncodedKeySpec myKeySpec = new X509EncodedKeySpec(myX509bytes);
 
             /* Derive ephemeral Public key */
             final GordianAsymFactory myAsym = getFactory().getAsymmetricFactory();
-            final GordianKeyPairGenerator myGenerator = myAsym.getKeyPairGenerator(pSelf.getKeySpec());
+            final GordianKeyPairGenerator myGenerator = myAsym.getKeyPairGenerator(pServer.getKeySpec());
             final GordianKeyPair myPair = myGenerator.derivePublicOnlyKeyPair(myKeySpec);
             final BouncyNewHopePublicKey myPublic = (BouncyNewHopePublicKey) getPublicKey(myPair);
 
             /* Derive the secret */
-            final BouncyNewHopePrivateKey myPrivate = (BouncyNewHopePrivateKey) getPrivateKey(pSelf);
+            final BouncyNewHopePrivateKey myPrivate = (BouncyNewHopePrivateKey) getPrivateKey(pServer);
             final NHAgreement myAgreement = new NHAgreement();
             myAgreement.init(myPrivate.getPrivateKey());
             final byte[] mySecret = myAgreement.calculateAgreement(myPublic.getPublicKey());

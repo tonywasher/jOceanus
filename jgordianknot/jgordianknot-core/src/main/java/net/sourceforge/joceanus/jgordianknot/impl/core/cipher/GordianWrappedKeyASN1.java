@@ -16,7 +16,9 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jgordianknot.impl.core.cipher;
 
+import java.util.Arrays;
 import java.util.Enumeration;
+import java.util.Objects;
 
 import org.bouncycastle.asn1.ASN1EncodableVector;
 import org.bouncycastle.asn1.ASN1OctetString;
@@ -33,9 +35,9 @@ import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianIOException;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
- * ASN1 Encoding of WrappedKey Request.
+ * ASN1 Encoding of WrappedKey.
  * <pre>
- * GordianAgreementRequestASN1 ::= SEQUENCE  {
+ * GordianWrappedKeyASN1 ::= SEQUENCE  {
  *      id AlgorithmIdentifier
  *      wrappedKey OCTET STRING OPTIONAL
  * }
@@ -80,6 +82,11 @@ public class GordianWrappedKeyASN1
             /* Access message parts */
             theKeySpec = AlgorithmIdentifier.getInstance(en.nextElement());
             theWrappedKey = ASN1OctetString.getInstance(en.nextElement()).getOctets();
+
+            /* Make sure that we have completed the sequence */
+            if (en.hasMoreElements()) {
+                throw new GordianDataException("Unexpected additional values in ASN1 sequence");
+            }
 
             /* handle exceptions */
         } catch (IllegalArgumentException e) {
@@ -143,5 +150,32 @@ public class GordianWrappedKeyASN1
 
         /* Calculate the length of the sequence */
         return GordianASN1Util.getLengthSequence(myLength);
+    }
+
+    @Override
+    public boolean equals(final Object pThat) {
+        /* Handle trivial cases */
+        if (this == pThat) {
+            return true;
+        }
+        if (pThat == null) {
+            return false;
+        }
+
+        /* Make sure that the classes are the same */
+        if (!(pThat instanceof GordianWrappedKeyASN1)) {
+            return false;
+        }
+        final GordianWrappedKeyASN1 myThat = (GordianWrappedKeyASN1) pThat;
+
+        /* Check that the fields are equal */
+        return Objects.equals(theKeySpec, myThat.getKeySpecId())
+                && Arrays.equals(getWrappedKey(), myThat.getWrappedKey());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getKeySpecId())
+                + Arrays.hashCode(getWrappedKey());
     }
 }

@@ -36,7 +36,7 @@ import net.sourceforge.joceanus.jgordianknot.api.agree.GordianAgreementFactory;
 import net.sourceforge.joceanus.jgordianknot.api.agree.GordianAgreementSpec;
 import net.sourceforge.joceanus.jgordianknot.api.agree.GordianBasicAgreement;
 import net.sourceforge.joceanus.jgordianknot.api.agree.GordianAnonymousAgreement;
-import net.sourceforge.joceanus.jgordianknot.api.agree.GordianEphemeralAgreement;
+import net.sourceforge.joceanus.jgordianknot.api.agree.GordianHandshakeAgreement;
 import net.sourceforge.joceanus.jgordianknot.api.asym.GordianAsymKeySpec;
 import net.sourceforge.joceanus.jgordianknot.api.base.GordianLength;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianStreamCipherSpec;
@@ -272,8 +272,6 @@ public class AsymmetricTest {
     private void generateKeyPairs(final FactoryKeySpec pKeySpec) throws OceanusException {
         /* Access the keyPairs */
         final FactoryKeyPairs myPairs = pKeySpec.getKeyPairs();
-        final GordianAsymFactory myFactory = pKeySpec.getFactory();
-        final GordianAsymKeySpec mySpec = pKeySpec.getKeySpec();
 
         /* Force creation of the pairs */
         myPairs.getKeyPair();
@@ -425,21 +423,21 @@ public class AsymmetricTest {
         /* Handle Encapsulation */
         if (mySender instanceof GordianAnonymousAgreement
                 && myResponder instanceof GordianAnonymousAgreement) {
-            final byte[] myMsg = ((GordianAnonymousAgreement) mySender).initiateAgreement(myPair);
-            ((GordianAnonymousAgreement) myResponder).acceptAgreement(myPair, myMsg);
+            final byte[] myClientHello = ((GordianAnonymousAgreement) mySender).createClientHello(myPair);
+            ((GordianAnonymousAgreement) myResponder).acceptClientHello(myPair, myClientHello);
 
             /* Handle Basic */
         } else if (mySender instanceof GordianBasicAgreement
                 && myResponder instanceof GordianBasicAgreement) {
-            final byte[] myMsg = ((GordianBasicAgreement) mySender).initiateAgreement(myTarget, myPair);
-            ((GordianBasicAgreement) myResponder).acceptAgreement(myTarget, myPair, myMsg);
+            final byte[] myClientHello = ((GordianBasicAgreement) mySender).createClientHello(myTarget, myPair);
+            ((GordianBasicAgreement) myResponder).acceptClientHello(myTarget, myPair, myClientHello);
 
             /* Handle ephemeral */
-        } else if (mySender instanceof GordianEphemeralAgreement
-                && myResponder instanceof GordianEphemeralAgreement) {
-            final byte[] myMsg = ((GordianEphemeralAgreement) mySender).initiateAgreement(myTarget);
-            final byte[] myResp = ((GordianEphemeralAgreement) myResponder).acceptAgreement(myTarget, myPair, myMsg);
-            ((GordianEphemeralAgreement) mySender).confirmAgreement(myPair, myResp);
+        } else if (mySender instanceof GordianHandshakeAgreement
+                && myResponder instanceof GordianHandshakeAgreement) {
+            final byte[] myClientHello = ((GordianHandshakeAgreement) mySender).createClientHello(myTarget);
+            final byte[] myServerHello = ((GordianHandshakeAgreement) myResponder).acceptClientHello(myTarget, myPair, myClientHello);
+            ((GordianHandshakeAgreement) mySender).acceptServerHello(myPair, myServerHello);
 
         } else {
             Assertions.fail("Invalid Agreement");
@@ -476,21 +474,21 @@ public class AsymmetricTest {
         /* Handle Anonymous */
         if (mySender instanceof GordianAnonymousAgreement
                 && myResponder instanceof GordianAnonymousAgreement) {
-            final byte[] myMsg = ((GordianAnonymousAgreement) mySender).initiateAgreement(myTarget);
-            ((GordianAnonymousAgreement) myResponder).acceptAgreement(myPartnerTarget, myMsg);
+            final byte[] myClientHello = ((GordianAnonymousAgreement) mySender).createClientHello(myTarget);
+            ((GordianAnonymousAgreement) myResponder).acceptClientHello(myPartnerTarget, myClientHello);
 
             /* Handle Basic */
         } else if (mySender instanceof GordianBasicAgreement
                 && myResponder instanceof GordianBasicAgreement) {
-            final byte[] myMsg = ((GordianBasicAgreement) mySender).initiateAgreement(myPair, myTarget);
-            ((GordianBasicAgreement) myResponder).acceptAgreement(myPartnerSelf, myPartnerTarget, myMsg);
+            final byte[] myClientHello = ((GordianBasicAgreement) mySender).createClientHello(myPair, myTarget);
+            ((GordianBasicAgreement) myResponder).acceptClientHello(myPartnerSelf, myPartnerTarget, myClientHello);
 
             /* Handle ephemeral */
-        } else if (mySender instanceof GordianEphemeralAgreement
-                && myResponder instanceof GordianEphemeralAgreement) {
-            final byte[] myMsg = ((GordianEphemeralAgreement) mySender).initiateAgreement(myPair);
-            final byte[] myResp = ((GordianEphemeralAgreement) myResponder).acceptAgreement(myPartnerSelf, myPartnerTarget, myMsg);
-            ((GordianEphemeralAgreement) mySender).confirmAgreement(myTarget, myResp);
+        } else if (mySender instanceof GordianHandshakeAgreement
+                && myResponder instanceof GordianHandshakeAgreement) {
+            final byte[] myClientHello = ((GordianHandshakeAgreement) mySender).createClientHello(myPair);
+            final byte[] myServerHello = ((GordianHandshakeAgreement) myResponder).acceptClientHello(myPartnerSelf, myPartnerTarget, myClientHello);
+            ((GordianHandshakeAgreement) mySender).acceptServerHello(myTarget, myServerHello);
 
         } else {
             Assertions.fail("Invalid Agreement");

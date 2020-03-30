@@ -16,7 +16,9 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jgordianknot.impl.core.agree;
 
+import java.util.Arrays;
 import java.util.Enumeration;
+import java.util.Objects;
 
 import org.bouncycastle.asn1.ASN1EncodableVector;
 import org.bouncycastle.asn1.ASN1OctetString;
@@ -32,54 +34,42 @@ import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianIOException;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
- * ASN1 Encoding of Agreement Request.
+ * ASN1 Encoding of Agreement ClientConfirm.
  * <pre>
- * GordianAgreementRequestASN1 ::= SEQUENCE  {
- *      id AlgorithmIdentifier
- *      result AlgorithmIdentifier
- *      initVector OCTET STRING
- *      data OCTET STRING OPTIONAL
+ * GordianAgreementClientConfirmASN1 ::= SEQUENCE  {
+ *      id OCTET STRING
+ *      agreeId AlgorithmIdentifier
+ *      confirmation OCTET STRING
  * }
  * </pre>
  */
-public class GordianAgreementRequestASN1
+public class GordianAgreementClientConfirmASN1
         extends GordianASN1Object {
+    /**
+     * The MessageId.
+     */
+    static final byte[] MSG_ID = new byte[] { 'C', 'C' };
+
     /**
      * The AgreementSpec.
      */
     private final AlgorithmIdentifier theAgreement;
 
     /**
-     * The ResultType.
+     * The Confirmation.
      */
-    private final AlgorithmIdentifier theResultType;
-
-    /**
-     * The initVector.
-     */
-    private final byte[] theInitVector;
-
-    /**
-     * The Associated Data.
-     */
-    private final byte[] theData;
+    private final byte[] theConfirmation;
 
     /**
      * Create the ASN1 sequence.
      * @param pAgreement the agreementId
-     * @param pResult the resultId
-     * @param pInitVector theInitVector
-     * @param pData the associated data
+     * @param pConfirmation the confirmation
      */
-    public GordianAgreementRequestASN1(final AlgorithmIdentifier pAgreement,
-                                       final AlgorithmIdentifier pResult,
-                                       final byte[] pInitVector,
-                                       final byte[] pData) {
+    public GordianAgreementClientConfirmASN1(final AlgorithmIdentifier pAgreement,
+                                            final byte[] pConfirmation) {
         /* Store the Details */
         theAgreement = pAgreement;
-        theResultType = pResult;
-        theInitVector = pInitVector;
-        theData = pData;
+        theConfirmation = pConfirmation;
     }
 
     /**
@@ -87,20 +77,27 @@ public class GordianAgreementRequestASN1
      * @param pSequence the Sequence
      * @throws OceanusException on error
      */
-    private GordianAgreementRequestASN1(final ASN1Sequence pSequence) throws OceanusException {
+    private GordianAgreementClientConfirmASN1(final ASN1Sequence pSequence) throws OceanusException {
         /* Protect against exceptions */
         try {
             /* Access the sequence */
             final ASN1Sequence mySequence = ASN1Sequence.getInstance(pSequence);
             final Enumeration<?> en = mySequence.getObjects();
 
+            /* Check MessageId */
+            final byte[] myId = ASN1OctetString.getInstance(en.nextElement()).getOctets();
+            if (!Arrays.equals(myId, MSG_ID)) {
+                throw new GordianDataException("Incorrect message type");
+            }
+
             /* Access message parts */
             theAgreement = AlgorithmIdentifier.getInstance(en.nextElement());
-            theResultType = AlgorithmIdentifier.getInstance(en.nextElement());
-            theInitVector = ASN1OctetString.getInstance(en.nextElement()).getOctets();
-            theData = en.hasMoreElements()
-                      ? ASN1OctetString.getInstance(en.nextElement()).getOctets()
-                      : null;
+            theConfirmation = ASN1OctetString.getInstance(en.nextElement()).getOctets();
+
+            /* Make sure that we have completed the sequence */
+            if (en.hasMoreElements()) {
+                throw new GordianDataException("Unexpected additional values in ASN1 sequence");
+            }
 
             /* handle exceptions */
         } catch (IllegalArgumentException e) {
@@ -114,11 +111,11 @@ public class GordianAgreementRequestASN1
      * @return the parsed object
      * @throws OceanusException on error
      */
-    public static GordianAgreementRequestASN1 getInstance(final Object pObject) throws OceanusException {
-        if (pObject instanceof GordianAgreementRequestASN1) {
-            return (GordianAgreementRequestASN1) pObject;
+    public static GordianAgreementClientConfirmASN1 getInstance(final Object pObject) throws OceanusException {
+        if (pObject instanceof GordianAgreementClientConfirmASN1) {
+            return (GordianAgreementClientConfirmASN1) pObject;
         } else if (pObject != null) {
-            return new GordianAgreementRequestASN1(ASN1Sequence.getInstance(pObject));
+            return new GordianAgreementClientConfirmASN1(ASN1Sequence.getInstance(pObject));
         }
         throw new GordianDataException("Null sequence");
     }
@@ -132,39 +129,47 @@ public class GordianAgreementRequestASN1
     }
 
     /**
-     * Obtain the resultId.
-     * @return the resultId
+     * Obtain the confirmation.
+     * @return the confirmation
      */
-    public AlgorithmIdentifier getResultId() {
-        return theResultType;
-    }
-
-    /**
-     * Obtain the initVector.
-     * @return the initVector
-     */
-    public byte[] getInitVector() {
-        return theInitVector;
-    }
-
-    /**
-     * Obtain the data.
-     * @return the data
-     */
-    public byte[] getData() {
-        return theData;
+    public byte[] getConfirmation() {
+        return theConfirmation;
     }
 
     @Override
     public ASN1Primitive toASN1Primitive() {
         final ASN1EncodableVector v = new ASN1EncodableVector();
+        v.add(new BEROctetString(MSG_ID));
         v.add(theAgreement);
-        v.add(theResultType);
-        v.add(new BEROctetString(theInitVector));
-        if (theData != null) {
-            v.add(new BEROctetString(theData));
-        }
+        v.add(new BEROctetString(theConfirmation));
 
         return new DERSequence(v);
+    }
+
+    @Override
+    public boolean equals(final Object pThat) {
+        /* Handle trivial cases */
+        if (this == pThat) {
+            return true;
+        }
+        if (pThat == null) {
+            return false;
+        }
+
+        /* Make sure that the classes are the same */
+        if (!(pThat instanceof GordianAgreementClientConfirmASN1)) {
+            return false;
+        }
+        final GordianAgreementClientConfirmASN1 myThat = (GordianAgreementClientConfirmASN1) pThat;
+
+        /* Check that the fields are equal */
+        return Objects.equals(theAgreement, myThat.getAgreementId())
+                && Arrays.equals(getConfirmation(), myThat.getConfirmation());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getAgreementId())
+                + Arrays.hashCode(getConfirmation());
     }
 }

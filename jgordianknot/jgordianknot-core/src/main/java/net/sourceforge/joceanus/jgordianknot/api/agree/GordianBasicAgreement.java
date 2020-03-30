@@ -25,23 +25,23 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
 public interface GordianBasicAgreement
         extends GordianAgreement {
     /**
-     * Initiate the agreement.
-     * @param pSelf the source keyPair
-     * @param pTarget the target keyPair
-     * @return the message
+     * Create the clientHello message.
+     * @param pClient the client keyPair
+     * @param pServer the server keyPair
+     * @return the clientHello message
      * @throws OceanusException on error
      */
-    byte[] initiateAgreement(GordianKeyPair pSelf,
-                             GordianKeyPair pTarget) throws OceanusException;
+    byte[] createClientHello(GordianKeyPair pClient,
+                             GordianKeyPair pServer) throws OceanusException;
 
     /**
-     * Accept the agreement.
-     * @param pSource the source keyPair
-     * @param pTarget the target keyPair
-     * @param pMessage the incoming message
+     * Accept the clientHello.
+     * @param pClient the client keyPair
+     * @param pServer the server keyPair
+     * @param pClientHello the incoming clientHello message
      * @throws OceanusException on error
      */
-    void acceptAgreement(GordianKeyPair pSource,
-                         GordianKeyPair pTarget,
-                         byte[] pMessage)  throws OceanusException;
+    void acceptClientHello(GordianKeyPair pClient,
+                           GordianKeyPair pServer,
+                           byte[] pClientHello)  throws OceanusException;
 }

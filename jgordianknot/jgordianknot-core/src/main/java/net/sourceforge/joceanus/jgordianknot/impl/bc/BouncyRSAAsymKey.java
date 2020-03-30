@@ -209,7 +209,8 @@ public final class BouncyRSAAsymKey {
 
             /* Create and initialise the generator */
             theGenerator = new RSAKeyPairGenerator();
-            final RSAKeyGenerationParameters myParams = new RSAKeyGenerationParameters(RSA_EXPONENT, getRandom(), pKeySpec.getRSAModulus().getLength(), PRIME_CERTAINTY);
+            final RSAKeyGenerationParameters myParams
+                    = new RSAKeyGenerationParameters(RSA_EXPONENT, getRandom(), pKeySpec.getRSAModulus().getLength(), PRIME_CERTAINTY);
             theGenerator.init(myParams);
         }
 
@@ -460,12 +461,12 @@ public final class BouncyRSAAsymKey {
         }
 
         @Override
-        public byte[] initiateAgreement(final GordianKeyPair pTarget) throws OceanusException {
+        public byte[] createClientHello(final GordianKeyPair pServer) throws OceanusException {
             /* Check keyPair */
-            checkKeyPair(pTarget);
+            checkKeyPair(pServer);
 
             /* Initialise Key Encapsulation */
-            final BouncyRSAPublicKey myPublic = (BouncyRSAPublicKey) getPublicKey(pTarget);
+            final BouncyRSAPublicKey myPublic = (BouncyRSAPublicKey) getPublicKey(pServer);
             theAgreement.init(myPublic.getPublicKey());
 
             /* Create message */
@@ -474,30 +475,30 @@ public final class BouncyRSAAsymKey {
             final byte[] myData = new byte[myLen];
             final KeyParameter myParms = (KeyParameter) theAgreement.encrypt(myData, 0, myLen);
 
-            /* Build the request Message */
-            final byte[] myMessage = createRequest(myData);
+            /* Build the clientHello Message */
+            final byte[] myClientHello = buildClientHello(myData);
 
             /* Store secret and create initVector */
             storeSecret(myParms.getKey());
 
             /* Return the message  */
-            return myMessage;
+            return myClientHello;
         }
 
         @Override
-        public void acceptAgreement(final GordianKeyPair pSelf,
-                                    final byte[] pMessage) throws OceanusException {
+        public void acceptClientHello(final GordianKeyPair pServer,
+                                      final byte[] pClientHello) throws OceanusException {
             /* Check keyPair */
-            checkKeyPair(pSelf);
+            checkKeyPair(pServer);
 
             /* Initialise Key Encapsulation */
-            final BouncyRSAPrivateKey myPrivate = (BouncyRSAPrivateKey) getPrivateKey(pSelf);
+            final BouncyRSAPrivateKey myPrivate = (BouncyRSAPrivateKey) getPrivateKey(pServer);
             theAgreement.init(myPrivate.getPrivateKey());
 
-            /* Parse source message */
+            /* Parse clientHello message and store secret */
             final GordianRSAModulus myModulus = myPrivate.getKeySpec().getRSAModulus();
             final int myLen = myModulus.getLength() / Byte.SIZE;
-            final byte[] myMessage = parseRequest(pMessage);
+            final byte[] myMessage = parseClientHello(pClientHello);
             final KeyParameter myParms = (KeyParameter) theAgreement.decrypt(myMessage, 0, myMessage.length, myLen);
             storeSecret(myParms.getKey());
         }

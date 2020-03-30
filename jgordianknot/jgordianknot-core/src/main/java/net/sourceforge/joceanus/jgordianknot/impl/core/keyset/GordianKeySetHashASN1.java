@@ -16,7 +16,9 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jgordianknot.impl.core.keyset;
 
+import java.util.Arrays;
 import java.util.Enumeration;
+import java.util.Objects;
 
 import org.bouncycastle.asn1.ASN1EncodableVector;
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
@@ -35,7 +37,7 @@ import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianIOException;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
- * ASN1 Encoding of KeySetSpec.
+ * ASN1 Encoding of KeySetHash.
  * <pre>
  * GordianKeySetHashASN1 ::= SEQUENCE  {
  *      spec GordianKeySetHashSpecASN1
@@ -84,6 +86,11 @@ public class GordianKeySetHashASN1
             final Enumeration<?> en = pSequence.getObjects();
             theSpec = GordianKeySetHashSpecASN1.getInstance(en.nextElement()).getSpec();
             theHashBytes = ASN1OctetString.getInstance(en.nextElement()).getOctets();
+
+            /* Make sure that we have completed the sequence */
+            if (en.hasMoreElements()) {
+                throw new GordianDataException("Unexpected additional values in ASN1 sequence");
+            }
 
             /* handle exceptions */
         } catch (IllegalArgumentException e) {
@@ -150,5 +157,32 @@ public class GordianKeySetHashASN1
      */
     public AlgorithmIdentifier getAlgorithmId() {
         return new AlgorithmIdentifier(KEYSETHASHALGID, toASN1Primitive());
+    }
+
+    @Override
+    public boolean equals(final Object pThat) {
+        /* Handle trivial cases */
+        if (this == pThat) {
+            return true;
+        }
+        if (pThat == null) {
+            return false;
+        }
+
+        /* Make sure that the classes are the same */
+        if (!(pThat instanceof GordianKeySetHashASN1)) {
+            return false;
+        }
+        final GordianKeySetHashASN1 myThat = (GordianKeySetHashASN1) pThat;
+
+        /* Check that the fields are equal */
+        return Objects.equals(theSpec, myThat.getSpec())
+                && Arrays.equals(getHashBytes(), myThat.getHashBytes());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getSpec())
+                + Arrays.hashCode(getHashBytes());
     }
 }

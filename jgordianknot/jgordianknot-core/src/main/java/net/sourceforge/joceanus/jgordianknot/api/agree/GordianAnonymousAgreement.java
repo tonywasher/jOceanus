@@ -20,25 +20,25 @@ import net.sourceforge.joceanus.jgordianknot.api.key.GordianKeyPair;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
- * Encapsulation Agreement.
+ * Anonymous OneShot Agreement.
  */
 public interface GordianAnonymousAgreement
         extends GordianAgreement {
     /**
-     * Initiate the agreement.
-     * @param pTarget the target keyPair
-     * @return the message
+     * Create the clientHello message.
+     * @param pServer the server keyPair
+     * @return the clientHello message
      * @throws OceanusException on error
      */
-    byte[] initiateAgreement(GordianKeyPair pTarget) throws OceanusException;
+    byte[] createClientHello(GordianKeyPair pServer) throws OceanusException;
 
 
     /**
-     * Accept the agreement.
-     * @param pTarget the target keyPair
-     * @param pMessage the incoming message
+     * Accept the clientHello.
+     * @param pServer the server keyPair
+     * @param pClientHello the incoming clientHello message
      * @throws OceanusException on error
      */
-    void acceptAgreement(GordianKeyPair pTarget,
-                         byte[] pMessage)  throws OceanusException;
+    void acceptClientHello(GordianKeyPair pServer,
+                           byte[] pClientHello)  throws OceanusException;
 }
