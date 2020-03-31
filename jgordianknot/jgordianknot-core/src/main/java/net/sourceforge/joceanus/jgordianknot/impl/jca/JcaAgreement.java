@@ -284,46 +284,9 @@ public final class JcaAgreement {
         }
 
         @Override
-        public byte[] createClientHello(final GordianKeyPair pClient,
-                                        final GordianKeyPair pServer) throws OceanusException {
-            /* Protect against exceptions */
-            try {
-                /* Check keyPairs */
-                checkKeyPair(pClient);
-                checkKeyPair(pServer);
-
-                /* Establish agreement */
-                establishAgreement(pClient);
-
-                /* Initialise the agreement taking care in case of null parameters */
-                final JcaPrivateKey myPrivate = (JcaPrivateKey) getPrivateKey(pClient);
-                if (getAgreementSpec().getKDFType() == GordianKDFType.NONE) {
-                    theAgreement.init(myPrivate.getPrivateKey(), getRandom());
-                } else {
-                    theAgreement.init(myPrivate.getPrivateKey(), new UserKeyingMaterialSpec(new byte[0]), getRandom());
-                }
-
-                /* Create the clientHello */
-                final byte[] myClientHello = buildClientHello();
-
-                /* Derive the secret */
-                final JcaPublicKey myTarget = (JcaPublicKey) getPublicKey(pServer);
-                theAgreement.doPhase(myTarget.getPublicKey(), true);
-                storeSecret(theAgreement.generateSecret());
-
-                /* return the clientHello */
-                return myClientHello;
-
-            } catch (InvalidKeyException
-                    | InvalidAlgorithmParameterException e) {
-                throw new GordianCryptoException(ERR_AGREEMENT, e);
-            }
-        }
-
-        @Override
-        public void acceptClientHello(final GordianKeyPair pClient,
-                                      final GordianKeyPair pServer,
-                                      final byte[] pClientHello) throws OceanusException {
+        public byte[] acceptClientHello(final GordianKeyPair pClient,
+                                        final GordianKeyPair pServer,
+                                        final byte[] pClientHello) throws OceanusException {
             /* Protect against exceptions */
             try {
                 /* Check keyPair */
@@ -333,8 +296,8 @@ public final class JcaAgreement {
                 /* Establish agreement */
                 establishAgreement(pClient);
 
-                /* Parse the clientHello */
-                parseClientHello(pClientHello);
+                /* Process the clientHello */
+                processClientHello(pServer, pClientHello);
                 final JcaPrivateKey myPrivate = (JcaPrivateKey) getPrivateKey(pServer);
 
                 /* Initialise the agreement taking care in case of null parameters */
@@ -347,6 +310,42 @@ public final class JcaAgreement {
                 /* Derive the secret */
                 final JcaPublicKey myPublic = (JcaPublicKey) getPublicKey(pClient);
                 theAgreement.doPhase(myPublic.getPublicKey(), true);
+                storeSecret(theAgreement.generateSecret());
+
+                /* Return the serverHello */
+                return buildServerHello();
+
+            } catch (InvalidKeyException
+                    | InvalidAlgorithmParameterException e) {
+                throw new GordianCryptoException(ERR_AGREEMENT, e);
+            }
+        }
+
+        @Override
+        public void acceptServerHello(final GordianKeyPair pServer,
+                                      final byte[] pServerHello) throws OceanusException {
+            /* Protect against exceptions */
+            try {
+                /* Check keyPair */
+                checkKeyPair(pServer);
+
+                /* Establish agreement */
+                establishAgreement(pServer);
+
+                /* process the serverHello */
+                processServerHello(pServerHello);
+                final JcaPrivateKey myPrivate = (JcaPrivateKey) getPrivateKey(getOwnerKeyPair());
+
+                /* Initialise the agreement taking care in case of null parameters */
+                if (getAgreementSpec().getKDFType() == GordianKDFType.NONE) {
+                    theAgreement.init(myPrivate.getPrivateKey(), getRandom());
+                } else {
+                    theAgreement.init(myPrivate.getPrivateKey(), new UserKeyingMaterialSpec(new byte[0]), getRandom());
+                }
+
+                /* Calculate agreement */
+                final JcaPublicKey myTarget = (JcaPublicKey) getPublicKey(pServer);
+                theAgreement.doPhase(myTarget.getPublicKey(), true);
                 storeSecret(theAgreement.generateSecret());
 
             } catch (InvalidKeyException

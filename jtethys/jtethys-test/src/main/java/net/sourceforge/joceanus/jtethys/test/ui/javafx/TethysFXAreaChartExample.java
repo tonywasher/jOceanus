@@ -160,7 +160,7 @@ public class TethysFXAreaChartExample extends Application {
      * @param pDate the date
      * @return the epoch
      */
-    private long dateToEpoch(final TethysDate pDate) {
+    private static long dateToEpoch(final TethysDate pDate) {
         return pDate.getDate().toEpochDay();
     }
 }

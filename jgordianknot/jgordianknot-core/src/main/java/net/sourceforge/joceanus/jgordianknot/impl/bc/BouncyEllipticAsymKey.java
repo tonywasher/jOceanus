@@ -640,36 +640,15 @@ public final class BouncyEllipticAsymKey {
         }
 
         @Override
-        public byte[] createClientHello(final GordianKeyPair pClient,
-                                        final GordianKeyPair pServer) throws OceanusException {
-            /* Check keyPairs */
-            checkKeyPair(pClient);
-            checkKeyPair(pServer);
-
-            /* Create the clientHello  */
-            final byte[] myClientHello = buildClientHello();
-
-            /* Derive the secret */
-            final BouncyECPrivateKey myPrivate = (BouncyECPrivateKey) getPrivateKey(pClient);
-            theAgreement.init(myPrivate.getPrivateKey());
-            final BouncyECPublicKey myTarget = (BouncyECPublicKey) getPublicKey(pServer);
-            final BigInteger mySecret = theAgreement.calculateAgreement(myTarget.getPublicKey());
-            storeSecret(BigIntegers.asUnsignedByteArray(theAgreement.getFieldSize(), mySecret));
-
-            /* Return the clientHello  */
-            return myClientHello;
-        }
-
-        @Override
-        public void acceptClientHello(final GordianKeyPair pClient,
-                                      final GordianKeyPair pServer,
-                                      final byte[] pClientHello) throws OceanusException {
+        public byte[] acceptClientHello(final GordianKeyPair pClient,
+                                        final GordianKeyPair pServer,
+                                        final byte[] pClientHello) throws OceanusException {
             /* Check keyPair */
             checkKeyPair(pClient);
             checkKeyPair(pServer);
 
-            /* Parse the clientHello */
-            parseClientHello(pClientHello);
+            /* Process the clientHello */
+            processClientHello(pServer, pClientHello);
             final BouncyECPrivateKey myPrivate = (BouncyECPrivateKey) getPrivateKey(pServer);
             final BouncyECPublicKey myPublic = (BouncyECPublicKey) getPublicKey(pClient);
 
@@ -678,6 +657,26 @@ public final class BouncyEllipticAsymKey {
             final BigInteger mySecret = theAgreement.calculateAgreement(myPublic.getPublicKey());
 
             /* Store secret */
+            storeSecret(BigIntegers.asUnsignedByteArray(theAgreement.getFieldSize(), mySecret));
+
+            /* Return the serverHello */
+            return buildServerHello();
+        }
+
+        @Override
+        public void acceptServerHello(final GordianKeyPair pServer,
+                                      final byte[] pServerHello) throws OceanusException {
+            /* Check keyPair */
+            checkKeyPair(pServer);
+
+            /* process the serverHello */
+            processServerHello(pServerHello);
+            final BouncyPrivateKey<?> myPrivate = (BouncyPrivateKey<?>) getPrivateKey(getOwnerKeyPair());
+
+            /* Calculate agreement */
+            theAgreement.init(myPrivate.getPrivateKey());
+            final BouncyPublicKey<?> mySrcPublic = (BouncyPublicKey<?>) getPublicKey(pServer);
+            final BigInteger mySecret = theAgreement.calculateAgreement(mySrcPublic.getPublicKey());
             storeSecret(BigIntegers.asUnsignedByteArray(theAgreement.getFieldSize(), mySecret));
         }
     }

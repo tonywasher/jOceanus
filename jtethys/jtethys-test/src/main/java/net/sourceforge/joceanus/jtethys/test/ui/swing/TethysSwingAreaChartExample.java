@@ -187,7 +187,7 @@ public class TethysSwingAreaChartExample {
         }
     }
 
-    private Day dateToDay(final TethysDate pDate) {
+    private static Day dateToDay(final TethysDate pDate) {
         return new Day(pDate.getDay(), pDate.getMonth(), pDate.getYear());
     }
 

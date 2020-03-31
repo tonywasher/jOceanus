@@ -33,6 +33,7 @@ import org.bouncycastle.util.Arrays;
 import net.sourceforge.joceanus.jgordianknot.api.agree.GordianAgreement;
 import net.sourceforge.joceanus.jgordianknot.api.agree.GordianAgreementFactory;
 import net.sourceforge.joceanus.jgordianknot.api.agree.GordianAgreementSpec;
+import net.sourceforge.joceanus.jgordianknot.api.agree.GordianAgreementStatus;
 import net.sourceforge.joceanus.jgordianknot.api.agree.GordianKDFType;
 import net.sourceforge.joceanus.jgordianknot.api.base.GordianLength;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianCipherFactory;
@@ -100,9 +101,9 @@ public abstract class GordianCoreAgreement
     private DerivationFunction theKDF;
 
     /**
-     * The resultType.
+     * The status.
      */
-    private Object theResultType;
+    private GordianAgreementStatus theStatus;
 
     /**
      * The client initVector.
@@ -113,6 +114,11 @@ public abstract class GordianCoreAgreement
      * The server initVector.
      */
     private byte[] theServerIV;
+
+    /**
+     * The resultType.
+     */
+    private Object theResultType;
 
     /**
      * The agreed result.
@@ -128,6 +134,7 @@ public abstract class GordianCoreAgreement
                          final GordianAgreementSpec pSpec) {
         theFactory = pFactory;
         theSpec = pSpec;
+        theStatus = GordianAgreementStatus.CLEAN;
     }
 
     /**
@@ -152,14 +159,33 @@ public abstract class GordianCoreAgreement
     }
 
     @Override
+    public GordianAgreementStatus getStatus() {
+        return theStatus;
+    }
+
+    /**
+     * Set the status.
+     * @param pStatus the status
+     */
+    protected void setStatus(final GordianAgreementStatus pStatus) {
+        theStatus = pStatus;
+    }
+
+    @Override
     public Object getResultType() {
         return theResultType;
     }
 
     @Override
     public Object getResult() {
+        /* Must be in result available state */
+        checkStatus(GordianAgreementStatus.RESULT_AVAILABLE);
+
+        /* Obtainresult to rreturnand reset the agreement */
         final Object myResult = theResult;
         reset();
+
+        /* return the result */
         return myResult;
     }
 
@@ -174,8 +200,9 @@ public abstract class GordianCoreAgreement
      * Reset.
      */
     public void reset() {
-        /* Rest the result */
+        /* Reset the result and status */
         theResult = null;
+        setStatus(GordianAgreementStatus.CLEAN);
 
         /* Reset the client and serverIVs */
         if (theClientIV != null) {
@@ -237,6 +264,17 @@ public abstract class GordianCoreAgreement
     }
 
     /**
+     * Check status.
+     * @param pStatus the required status
+     */
+    protected void checkStatus(final GordianAgreementStatus pStatus) {
+        /* If we are in the wrong state */
+        if (theStatus != pStatus) {
+            throw new IllegalStateException("Invalid State: " + theStatus);
+        }
+    }
+
+    /**
      * CheckKeyPair.
      * @param pKeyPair the keyPair
      * @throws OceanusException on error
@@ -294,14 +332,12 @@ public abstract class GordianCoreAgreement
     }
 
     /**
-     * Create and return a new serverIV.
-     * @return the initVector
+     * Create a new serverIV.
      */
-    protected byte[] newServerIV() {
+    void newServerIV() {
         /* Create a new initVector */
         theServerIV = new byte[INITLEN];
         getRandom().nextBytes(theServerIV);
-        return theServerIV;
     }
 
     /**
@@ -378,6 +414,9 @@ public abstract class GordianCoreAgreement
             /* Derive the secret */
             theResult = deriveBasicResult(pSecret);
         }
+
+        /* Set status */
+        setStatus(GordianAgreementStatus.RESULT_AVAILABLE);
     }
 
     /**
@@ -695,6 +734,9 @@ public abstract class GordianCoreAgreement
      * @throws OceanusException on error
      */
     protected byte[] buildClientHello(final byte[] pEncapsulated) throws OceanusException {
+        /* Must be in clean state */
+        checkStatus(GordianAgreementStatus.CLEAN);
+
         /* Create the request */
         final GordianCoreAgreementFactory myFactory = getAgreementFactory();
         final AlgorithmIdentifier myAlgId = myFactory.getIdentifierForSpec(getAgreementSpec());
@@ -711,6 +753,9 @@ public abstract class GordianCoreAgreement
      * @throws OceanusException on error
      */
     protected byte[] parseClientHello(final byte[] pClientHello) throws OceanusException {
+        /* Must be in clean state */
+        checkStatus(GordianAgreementStatus.CLEAN);
+
         /* Access the sequence */
         final GordianAgreementClientHelloASN1 myClientHello = GordianAgreementClientHelloASN1.getInstance(pClientHello);
 
@@ -759,6 +804,9 @@ public abstract class GordianCoreAgreement
      * @throws OceanusException on error
      */
     protected byte[] parseServerHello(final byte[] pServerHello) throws OceanusException {
+        /* Must be in awaiting serverHello state */
+        checkStatus(GordianAgreementStatus.AWAITING_SERVERHELLO);
+
         /* Access the sequence */
         final GordianAgreementServerHelloASN1 myResponse = GordianAgreementServerHelloASN1.getInstance(pServerHello);
 

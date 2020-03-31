@@ -151,7 +151,7 @@ public class GordianXMSSKeySpec {
     }
 
     /**
-     * Is the keySpec high (height > 15)?
+     * Is the keySpec high (height &gt; 15)?
      * @return true/false.
      */
     public boolean isHigh() {

@@ -363,7 +363,7 @@ public class GordianLMSKeySpec {
         }
 
         /**
-         * Is the parameter high (height > 15)?
+         * Is the parameter high (height &gt; 15)?
          * @return true/false.
          */
         public boolean isHigh() {

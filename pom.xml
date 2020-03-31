@@ -65,7 +65,7 @@
     <packageName/>
     <appDir>${env.BACKUPDIR}</appDir>
     <appLibDir>lib/</appLibDir>
-    <BouncyCastleVersion>165b16</BouncyCastleVersion>
+    <BouncyCastleVersion>1.65</BouncyCastleVersion>
     <JGitVersion>5.7.0.202003110725-r</JGitVersion>
     <JUnitVersion>5.6.1</JUnitVersion>
     <JSONVersion>20190722</JSONVersion>

@@ -17,15 +17,23 @@
 package net.sourceforge.joceanus.jgordianknot.impl.core.agree;
 
 import net.sourceforge.joceanus.jgordianknot.api.agree.GordianAgreementSpec;
-import net.sourceforge.joceanus.jgordianknot.api.agree.GordianBasicAgreement;
+import net.sourceforge.joceanus.jgordianknot.api.agree.GordianAgreementStatus;
+import net.sourceforge.joceanus.jgordianknot.api.agree.GordianHandshakeAgreement;
+import net.sourceforge.joceanus.jgordianknot.api.key.GordianKeyPair;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianCoreFactory;
+import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
- * Basic Agreement.
+ * New Handshake Basic Agreement.
  */
 public abstract class GordianCoreBasicAgreement
         extends GordianCoreAgreement
-        implements GordianBasicAgreement {
+        implements GordianHandshakeAgreement {
+    /**
+     * The owning KeyPair.
+     */
+    private GordianKeyPair theOwner;
+
     /**
      * Constructor.
      * @param pFactory the factory
@@ -34,6 +42,69 @@ public abstract class GordianCoreBasicAgreement
     protected GordianCoreBasicAgreement(final GordianCoreFactory pFactory,
                                         final GordianAgreementSpec pSpec) {
         super(pFactory, pSpec);
+    }
+
+    /**
+     * Obtain the Ephemeral keyPair.
+     * @return  the keyPair
+     */
+    protected GordianKeyPair getOwnerKeyPair() {
+        return theOwner;
+    }
+
+    @Override
+    public byte[] createClientHello(final GordianKeyPair pClient) throws OceanusException {
+        /* Check the keyPair */
+        checkKeyPair(pClient);
+
+        /* Store the keyPair */
+        theOwner = pClient;
+
+        /* Create the clientHello message */
+        final byte[] myClientHello = buildClientHello();
+
+        /* Set status */
+        setStatus(GordianAgreementStatus.AWAITING_SERVERHELLO);
+
+        /* Return the clientHello */
+        return myClientHello;
+    }
+
+    /**
+     * Process the incoming clientHello message request.
+     * @param pServer the server keyPair
+     * @param pClientHello the incoming clientHello message
+     * @throws OceanusException on error
+     */
+    protected void processClientHello(final GordianKeyPair pServer,
+                                      final byte[] pClientHello) throws OceanusException {
+        /* Check the keyPair */
+        checkKeyPair(pServer);
+
+        /* Parse the request */
+        parseClientHello(pClientHello);
+
+        /* Create the new serverIV */
+        newServerIV();
+    }
+
+    /**
+     * Build the serverHello.
+     * @return the serverHello message
+     * @throws OceanusException on error
+     */
+    protected byte[] buildServerHello() throws OceanusException {
+        return buildServerHello(null);
+    }
+
+    /**
+     * Process the serverHello.
+     * @param pServerHello the serverHello message
+     * @throws OceanusException on error
+     */
+    protected void processServerHello(final byte[] pServerHello) throws OceanusException {
+        /* Parse the server hello */
+        parseServerHello(pServerHello);
     }
 }
 

@@ -1,11 +1,11 @@
 <document>
     <properties>
-        <title>GordianKnot Digests and Macs</title>
+        <title>GordianKnot Digests</title>
         <author email="Tony.Washer@yahoo.co.uk">Tony Washer</author>
     </properties>
     <body>
         <section name="Overview">
-            <p>GordianKnot supports most Digests and Macs available from BouncyCastle plus some additional algorithms.</p>
+            <p>GordianKnot supports most Digests available from BouncyCastle plus some additional algorithms.</p>
             <p>JCA provides a subset of available algorithms as indicated</p>
         </section>
         <section name="Digests">
@@ -61,55 +61,6 @@
                     <tr><td rowspan="2">Kangaroo</td><td>128</td><td>128,160,224,256</td><td/><td>Kangaroo12</td></tr>
                     <tr><td>256</td><td>256,384,512</td><td/><td>Marsupimal14</td></tr>
                     <tr><td>Haraka</td><td>256, 512</td><td>256</td><td>Y</td><td>Note that input must be same length as stateLength</td></tr>
-                </table>
-            </subsection>
-        </section>
-        <section name="Macs">
-            <p>A mac is created by specifying a macSpec which comprises the macType plus additional configuration (e.g. digestSpec/symKeySpec) as appropriate.
-                The mac can be used in much the same way as a JCA Mac, allowing init, reset, update and finalise methods.</p>
-            <p>A keyGenerator for a macSpec can be created, which can be used to generate random keys for the mac</p>
-            <subsection name="Sample">
-                <source>
-                    /* Access factory */
-                    final GordianFactory myBaseFactory = GordianGenerator.createFactory();
-                    final GordianMacFactory myMacFactory = myBaseFactory.getMacFactory();
-
-                    /* Create mac */
-                    final GordianMacSpec mySpec = GordianMacSpec.poly1305(GordianSymKeySpec.aes(GordianLength.LEN_256));
-                    final GordianMac myMac = myMacFactory.createMac(mySpec);
-
-                    /* Create key */
-                    final GordianKeyGenerator&lt;GordianMacSpec&gt; myGenerator = myMacFactory.getKeyGenerator(mySpec);
-                    final GordianKey&lt;GordianMacSpec&gt; myKey = myGenerator.generateKey();
-
-                    /* Calculate mac */
-                    final byte[] myMessage = ...
-                    final GordianMacParameters myParams = GordianMacParameters.keyWithRandomNonce(myKey);
-                    myMac.init(myParams);
-                    myMac.update(myMessage);
-                    final byte[] myResult = myMac.finish();
-                </source>
-            </subsection>
-            <subsection name="Algorithms">
-                <p>The following algorithms are supported, with the JCA subset indicated.</p>
-                <table class="defTable">
-                    <tr><td class="defHdr">Algorithm</td><td class="defHdr">OutputLengths</td><td class="defHdr">KeyLengths</td>
-                        <td class="defHdr">JCA</td><td class="defHdr">Notes</td></tr>
-                    <tr><td>HMac</td><td>digest length</td><td>All</td><td>Y</td><td>Jca does not support SM3, BLAKE, SHAKE, JH, Groestl, CubeHash or Kupyna</td></tr>
-                    <tr><td>GMac</td><td>128</td><td>As per cipher</td><td>Y</td><td>For all supported 128 bit block ciphers except Kalyna (BUG). Jca does not support Kuznyechik</td></tr>
-                    <tr><td>CMac</td><td>cipher block length</td><td>As per cipher</td><td>Y</td><td>Jca has limited  set of supported ciphers</td></tr>
-                    <tr><td>Poly1305Mac</td><td>128</td><td>256</td><td>Y</td><td>For all supported 128 bit block ciphers with 128 bit keys. JCA does not support Kalyna.</td></tr>
-                    <tr><td>SkeinMac</td><td>digest length</td><td>All</td><td>Y</td><td/></tr>
-                    <tr><td>VMPCMac</td><td>160</td><td>All</td><td>Y</td><td/></tr>
-                    <tr><td>BlakeMac</td><td>digest length</td><td>less or equal to stateLength</td><td/><td/></tr>
-                    <tr><td>KupynaMac</td><td>digest length</td><td/><td/><td/></tr>
-                    <tr><td>KalynaMac</td><td>cipher block length</td><td>As per cipher</td><td/><td/></tr>
-                    <tr><td>CBCMac</td><td>cipher block length</td><td>As per cipher</td><td/><td/></tr>
-                    <tr><td>CFBMac</td><td>cipher block length</td><td>As per cipher</td><td/><td/></tr>
-                    <tr><td>GOSTMac</td><td>32</td><td>256</td><td>Y</td><td/></tr>
-                    <tr><td>SipHash</td><td>64, 128</td><td>128</td><td>Y</td><td/></tr>
-                    <tr><td>ZucMac</td><td>32,64,128</td><td>128,256</td><td/><td>For 128 bit keys the only output length supported is 32</td></tr>
-                    <tr><td>KMAC</td><td>as per SHAKE</td><td>All</td><td/><td>Key Length must be at least as long as the underlying SHAKE state length</td></tr>
                 </table>
             </subsection>
         </section>

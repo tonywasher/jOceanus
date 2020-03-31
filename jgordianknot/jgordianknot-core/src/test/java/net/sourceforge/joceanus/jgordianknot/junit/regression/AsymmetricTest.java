@@ -34,7 +34,6 @@ import org.junit.jupiter.api.TestFactory;
 import net.sourceforge.joceanus.jgordianknot.api.agree.GordianAgreement;
 import net.sourceforge.joceanus.jgordianknot.api.agree.GordianAgreementFactory;
 import net.sourceforge.joceanus.jgordianknot.api.agree.GordianAgreementSpec;
-import net.sourceforge.joceanus.jgordianknot.api.agree.GordianBasicAgreement;
 import net.sourceforge.joceanus.jgordianknot.api.agree.GordianAnonymousAgreement;
 import net.sourceforge.joceanus.jgordianknot.api.agree.GordianHandshakeAgreement;
 import net.sourceforge.joceanus.jgordianknot.api.asym.GordianAsymKeySpec;
@@ -420,17 +419,11 @@ public class AsymmetricTest {
             myTarget = myPairs.getTargetKeyPair();
         }
 
-        /* Handle Encapsulation */
+        /* Handle Anonymous */
         if (mySender instanceof GordianAnonymousAgreement
                 && myResponder instanceof GordianAnonymousAgreement) {
             final byte[] myClientHello = ((GordianAnonymousAgreement) mySender).createClientHello(myPair);
             ((GordianAnonymousAgreement) myResponder).acceptClientHello(myPair, myClientHello);
-
-            /* Handle Basic */
-        } else if (mySender instanceof GordianBasicAgreement
-                && myResponder instanceof GordianBasicAgreement) {
-            final byte[] myClientHello = ((GordianBasicAgreement) mySender).createClientHello(myTarget, myPair);
-            ((GordianBasicAgreement) myResponder).acceptClientHello(myTarget, myPair, myClientHello);
 
             /* Handle ephemeral */
         } else if (mySender instanceof GordianHandshakeAgreement
@@ -476,12 +469,6 @@ public class AsymmetricTest {
                 && myResponder instanceof GordianAnonymousAgreement) {
             final byte[] myClientHello = ((GordianAnonymousAgreement) mySender).createClientHello(myTarget);
             ((GordianAnonymousAgreement) myResponder).acceptClientHello(myPartnerTarget, myClientHello);
-
-            /* Handle Basic */
-        } else if (mySender instanceof GordianBasicAgreement
-                && myResponder instanceof GordianBasicAgreement) {
-            final byte[] myClientHello = ((GordianBasicAgreement) mySender).createClientHello(myPair, myTarget);
-            ((GordianBasicAgreement) myResponder).acceptClientHello(myPartnerSelf, myPartnerTarget, myClientHello);
 
             /* Handle ephemeral */
         } else if (mySender instanceof GordianHandshakeAgreement

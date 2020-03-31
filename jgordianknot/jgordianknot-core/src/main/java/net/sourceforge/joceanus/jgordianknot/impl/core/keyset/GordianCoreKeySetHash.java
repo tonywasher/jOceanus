@@ -69,10 +69,9 @@ public final class GordianCoreKeySetHash
      *
      * @param pFactory the factory
      * @param pSpec the keySetHashSpec
-     * @throws OceanusException on error
      */
     private GordianCoreKeySetHash(final GordianCoreFactory pFactory,
-                                  final GordianKeySetHashSpec pSpec) throws OceanusException {
+                                  final GordianKeySetHashSpec pSpec) {
         /* Store the factory */
         theFactory = pFactory;
         theSpec = pSpec;

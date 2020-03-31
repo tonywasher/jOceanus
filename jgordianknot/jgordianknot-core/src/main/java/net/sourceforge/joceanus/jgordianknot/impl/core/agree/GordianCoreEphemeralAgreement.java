@@ -19,6 +19,7 @@ package net.sourceforge.joceanus.jgordianknot.impl.core.agree;
 import java.security.spec.X509EncodedKeySpec;
 
 import net.sourceforge.joceanus.jgordianknot.api.agree.GordianAgreementSpec;
+import net.sourceforge.joceanus.jgordianknot.api.agree.GordianAgreementStatus;
 import net.sourceforge.joceanus.jgordianknot.api.agree.GordianHandshakeAgreement;
 import net.sourceforge.joceanus.jgordianknot.api.factory.GordianAsymFactory;
 import net.sourceforge.joceanus.jgordianknot.api.key.GordianKeyPair;
@@ -97,11 +98,17 @@ public abstract class GordianCoreEphemeralAgreement
         final byte[] myKeyBytes = myKeySpec.getEncoded();
 
         /* Create the clientHello message */
-        return buildClientHello(myKeyBytes);
+        final byte[] myClientHello = buildClientHello(myKeyBytes);
+
+        /* Set status */
+        setStatus(GordianAgreementStatus.AWAITING_SERVERHELLO);
+
+        /* Return the clientHello */
+        return myClientHello;
     }
 
     /**
-     * Parse the incoming clientHello message request.
+     * Process the incoming clientHello message request.
      * @param pServer the server keyPair
      * @param pClientHello the incoming clientHello message
      * @throws OceanusException on error
@@ -144,7 +151,7 @@ public abstract class GordianCoreEphemeralAgreement
     }
 
     /**
-     * Parse the serverHello.
+     * Process the serverHello.
      * @param pServerHello the serverHello message
      * @throws OceanusException on error
      */
