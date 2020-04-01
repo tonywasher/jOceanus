@@ -1,6 +1,6 @@
 /*******************************************************************************
  * GordianKnot: Security Suite
- * Copyright 2012,2019 Tony Washer
+ * Copyright 2012,2020 Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License.  You may obtain a copy
@@ -137,7 +137,7 @@ public abstract class GordianCoreEphemeralAgreement
     protected void processSecret(final byte[] pSecret) throws OceanusException {
         /* If we are using confirmation and are not SM2 */
         final GordianAgreementSpec mySpec = getAgreementSpec();
-        if (mySpec.withConfirm()
+        if (Boolean.TRUE.equals(mySpec.withConfirm())
                 && mySpec.getAgreementType() != GordianAgreementType.SM2) {
             /* calculate the confirmation tags */
             calculateConfirmationTags(pSecret);

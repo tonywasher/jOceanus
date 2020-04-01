@@ -1,6 +1,6 @@
 /*******************************************************************************
  * GordianKnot: Security Suite
- * Copyright 2012,2019 Tony Washer
+ * Copyright 2012,2020 Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License.  You may obtain a copy
@@ -355,7 +355,7 @@ public final class GordianAgreementSpec {
         }
 
         /* Confirmation is restricted to certain agreement types */
-        if (withConfirm) {
+        if (Boolean.TRUE.equals(withConfirm)) {
             switch (theAgreementType) {
                 case UNIFIED:
                 case MQV:
@@ -427,7 +427,7 @@ public final class GordianAgreementSpec {
     @Override
     public int hashCode() {
         int hashCode = theAsymKeyType.hashCode() << TethysDataConverter.BYTE_SHIFT;
-        hashCode += theAgreementType.hashCode() + (withConfirm ? 1 : 0);
+        hashCode += theAgreementType.hashCode() + (Boolean.TRUE.equals(withConfirm) ? 1 : 0);
         return (hashCode << TethysDataConverter.BYTE_SHIFT) + theKDFType.hashCode();
     }
 

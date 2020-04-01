@@ -3,7 +3,7 @@
   <parent>
     <groupId>net.sourceforge.joceanus</groupId>
     <artifactId>jprometheus</artifactId>
-    <version>1.6.0-SNAPSHOT</version>
+    <version>1.6.1-b1</version>
   </parent>
   <artifactId>jprometheus-javafx</artifactId>
   <name>Prometheus javaFX Application Framework</name>

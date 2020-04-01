@@ -8,7 +8,7 @@
             <p>Algorithms are represented by <b>GordianAgreementSpec</b>. A <b>GordianAgreement</b> is obtained via the agreementSpec,
                 and then agreements are created between the two parties depending on the type of the agreement and the resultType.
                 The resultTypes can be any of the following</p>
-            <table>
+            <table class="defTable">
                 <tr><th>ResultType</th><th>Description</th></tr>
                 <tr><td>GordianParameters</td><td>The underlying agreement is used as the security phrase with the rest of the supplied parameters to
                     generate a new personalised <strong>GordianFactory</strong></td></tr>
