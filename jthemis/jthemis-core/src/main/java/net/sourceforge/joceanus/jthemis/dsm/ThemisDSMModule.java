@@ -16,12 +16,23 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jthemis.dsm;
 
+import java.io.BufferedInputStream;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
+
+import org.apache.maven.model.Model;
+import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
+import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
+
+import net.sourceforge.joceanus.jtethys.OceanusException;
+import net.sourceforge.joceanus.jthemis.ThemisIOException;
 
 /**
  * DSM Module.
@@ -30,7 +41,7 @@ public class ThemisDSMModule {
     /**
      * The java directory.
      */
-    private static final String DIR_JAVA = "main/java";
+    private static final String DIR_JAVA = "src/main/java";
 
     /**
      * The location of the module.
@@ -51,6 +62,11 @@ public class ThemisDSMModule {
      * The list of packages.
      */
     private final List<ThemisDSMPackage> thePackages;
+
+    /**
+     * The error.
+     */
+    private OceanusException theError;
 
     /**
      * Constructor.
@@ -77,19 +93,6 @@ public class ThemisDSMModule {
      */
     String getModuleName() {
         return theModule;
-    }
-
-    /**
-     * Add a subModule to the list.
-     * @param pModule the subModule
-     */
-    void registerSubModule(final ThemisDSMModule pModule) {
-        if (theSubModules.contains(pModule)) {
-            throw new IllegalArgumentException("Already included");
-        }
-
-        /* Add the module */
-        theSubModules.add(pModule);
     }
 
     /**
@@ -135,6 +138,14 @@ public class ThemisDSMModule {
      */
     int getPackageCount() {
         return thePackages.size();
+    }
+
+    /**
+     * Obtain the error.
+     * @return error
+     */
+    public OceanusException getError() {
+        return theError;
     }
 
     /**
@@ -216,38 +227,15 @@ public class ThemisDSMModule {
      * process modules and packages.
      */
     void processModulesAndPackages() {
-        /* Loop through the entries in the directory */
-        for (File myFile: Objects.requireNonNull(theLocation.listFiles())) {
-            /* Ignore files */
-            if (!myFile.isDirectory()) {
-                continue;
-            }
+        /* Process the project */
+        parseProjectFile(new File(theLocation, ThemisDSMProject.POM));
 
-            /* Access the name of the file */
-            final String myName = myFile.getName();
-
-            /* Ignore special files and target */
-            if (myName.equals(ThemisDSMProject.DIR_SRC)) {
-                final File myRoot = new File(myFile, DIR_JAVA);
-                if (myRoot.exists()) {
-                    processPackages(myRoot);
-                }
-
-                /* Ignore special files and target */
-            } else if (!myName.startsWith(ThemisDSMProject.PFXDIR_SPECIAL)
-                && !myName.equals(ThemisDSMProject.DIR_TARGET)) {
-                /* Process the submodule */
-                final ThemisDSMModule myModule = new ThemisDSMModule(myFile);
-                myModule.processModulesAndPackages();
-                if (myModule.getPackageCount() > 1
-                    || myModule.hasSubModules()) {
-                    theSubModules.add(myModule);
-                }
-            }
+        /* Look for the source directory */
+        final File mySrc = new File(theLocation, DIR_JAVA);
+        if (mySrc.isDirectory()) {
+            /* Process any packages */
+            processPackages(mySrc);
         }
-
-        /* Sort the modules */
-        theSubModules.sort(Comparator.comparing(ThemisDSMModule::getModuleName));
 
         /* Process the classes */
         processClasses();
@@ -374,5 +362,46 @@ public class ThemisDSMModule {
     @Override
     public String toString() {
         return getModuleName();
+    }
+
+    /**
+     * Parse the maven project file.
+     * @param pPom the project file
+     */
+    private void parseProjectFile(final File pPom) {
+        /* If the pom file does not exist, just return */
+        if (!pPom.exists()) {
+            return;
+        }
+
+        /* Protect against exceptions */
+        try (InputStream myInFile = new FileInputStream(pPom);
+             BufferedInputStream myInBuffer = new BufferedInputStream(myInFile)) {
+            /* Parse the Project definition file */
+            final MavenXpp3Reader myReader = new MavenXpp3Reader();
+            final Model myModel = myReader.read(myInBuffer);
+
+            /* Loop through the modules */
+            for (final String myModuleName : myModel.getModules()) {
+                final File myModuleDir = new File(pPom.getParentFile(), myModuleName);
+
+                final ThemisDSMModule myModule = new ThemisDSMModule(myModuleDir);
+                myModule.processModulesAndPackages();
+                if (myModule.getPackageCount() > 1
+                      || myModule.hasSubModules()) {
+                    theSubModules.add(myModule);
+                }
+            }
+
+            /* Sort the modules */
+            theSubModules.sort(Comparator.comparing(ThemisDSMModule::getModuleName));
+
+            /* Catch exceptions */
+        } catch (IOException
+                | XmlPullParserException e) {
+            /* Save Exception */
+            theSubModules.clear();
+            theError = new ThemisIOException("Failed to parse Project file", e);
+        }
     }
 }

@@ -71,7 +71,7 @@
     <JSONVersion>20190722</JSONVersion>
     <ApacheMavenVersion>3.6.3</ApacheMavenVersion>
     <MySQLVersion>8.0.19</MySQLVersion>
-    <PostGreSQLVersion>42.2.11</PostGreSQLVersion>
+    <PostGreSQLVersion>42.2.12</PostGreSQLVersion>
     <JTDSVersion>1.3.1</JTDSVersion>
     <H2Version>1.4.200</H2Version>
     <ApachePOIVersion>4.1.2</ApachePOIVersion>

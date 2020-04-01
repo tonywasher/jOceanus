@@ -21,6 +21,7 @@
 module net.sourceforge.joceanus.jthemis.core {
     /* java */
     requires java.desktop;
+    requires java.prefs;
 
     /* External libraries */
     requires maven.model;

@@ -16,31 +16,30 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jthemis.dsm;
 
+import java.io.BufferedInputStream;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
-import java.util.Objects;
+
+import org.apache.maven.model.Model;
+import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
+import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
+
+import net.sourceforge.joceanus.jtethys.OceanusException;
+import net.sourceforge.joceanus.jthemis.ThemisIOException;
 
 /**
  * DSM Project.
  */
 public class ThemisDSMProject {
     /**
-     * The special directory prefix.
+     * Project filename.
      */
-    static final String PFXDIR_SPECIAL = ".";
-
-    /**
-     * The source directory.
-     */
-    static final String DIR_SRC = "src";
-
-    /**
-     * The target directory.
-     */
-    static final String DIR_TARGET = "target";
-
+    static final String POM = "pom.xml";
     /**
      * The location of the project.
      */
@@ -57,6 +56,11 @@ public class ThemisDSMProject {
     private final List<ThemisDSMModule> theModules;
 
     /**
+     * The error.
+     */
+    private OceanusException theError;
+
+    /**
      * Constructor.
      * @param pLocation the location of the project
      */
@@ -66,8 +70,8 @@ public class ThemisDSMProject {
         theProject = pLocation.getName();
         theModules = new ArrayList<>();
 
-        /* Process the modules */
-        processModules();
+        /* Process the project */
+        parseProjectFile(new File(theLocation, POM));
     }
 
     /**
@@ -104,34 +108,12 @@ public class ThemisDSMProject {
     }
 
     /**
-     * Process modules.
+     * Obtain the error.
+     * @return error
      */
-    private void processModules() {
-        /* Loop through the entries in the directory */
-        for (File myFile: Objects.requireNonNull(theLocation.listFiles())) {
-            /* Ignore files */
-            if (!myFile.isDirectory()) {
-                continue;
-            }
-
-            /* Access the name of the file */
-            final String myName = myFile.getName();
-
-            /* Ignore special dircectories and src/target */
-            if (!myName.startsWith(PFXDIR_SPECIAL)
-                && !myName.equals(DIR_SRC)
-                && !myName.equals(DIR_TARGET)) {
-                /* Process the module */
-                final ThemisDSMModule myModule = new ThemisDSMModule(myFile);
-                theModules.add(myModule);
-                myModule.processModulesAndPackages();
-            }
-        }
-
-        /* Sort the modules */
-        theModules.sort(Comparator.comparing(ThemisDSMModule::getModuleName));
+    public OceanusException getError() {
+        return theError;
     }
-
 
     @Override
     public String toString() {
@@ -160,5 +142,43 @@ public class ThemisDSMProject {
 
         /* Return the list */
         return myList;
+    }
+
+    /**
+     * Parse the maven top-level project file.
+     * @param pPom the project file
+     */
+    private void parseProjectFile(final File pPom) {
+        /* If the pom file does not exist, just return */
+        if (!pPom.exists()) {
+            return;
+        }
+
+        /* Protect against exceptions */
+        try (InputStream myInFile = new FileInputStream(pPom);
+             BufferedInputStream myInBuffer = new BufferedInputStream(myInFile)) {
+            /* Parse the Project definition file */
+            final MavenXpp3Reader myReader = new MavenXpp3Reader();
+            final Model myModel = myReader.read(myInBuffer);
+
+            /* Loop through the modules */
+            for (final String myModuleName : myModel.getModules()) {
+                final File myModuleDir = new File(pPom.getParentFile(), myModuleName);
+
+                final ThemisDSMModule myModule = new ThemisDSMModule(myModuleDir);
+                theModules.add(myModule);
+                myModule.processModulesAndPackages();
+            }
+
+            /* Sort the modules */
+            theModules.sort(Comparator.comparing(ThemisDSMModule::getModuleName));
+
+            /* Catch exceptions */
+        } catch (IOException
+                | XmlPullParserException e) {
+            /* Save Exception */
+            theModules.clear();
+            theError = new ThemisIOException("Failed to parse Project file", e);
+        }
     }
 }

@@ -17,6 +17,8 @@
 package net.sourceforge.joceanus.jthemis.ui.dsm;
 
 import java.io.File;
+import java.util.prefs.BackingStoreException;
+import java.util.prefs.Preferences;
 
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.ui.TethysBorderPaneManager;
@@ -30,6 +32,7 @@ import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollM
 import net.sourceforge.joceanus.jtethys.ui.TethysTabPaneManager;
 import net.sourceforge.joceanus.jtethys.ui.TethysTabPaneManager.TethysTabItem;
 import net.sourceforge.joceanus.jtethys.ui.TethysUIEvent;
+import net.sourceforge.joceanus.jthemis.ThemisIOException;
 import net.sourceforge.joceanus.jthemis.dsm.ThemisDSMModule;
 import net.sourceforge.joceanus.jthemis.dsm.ThemisDSMPackage;
 import net.sourceforge.joceanus.jthemis.dsm.ThemisDSMProject;
@@ -98,6 +101,11 @@ public class ThemisDSMPanel {
      * The current from package.
      */
     private ThemisDSMPackage theFrom;
+
+    /**
+     * The error.
+     */
+    private OceanusException theError;
 
     /**
      * Constructor.
@@ -187,6 +195,12 @@ public class ThemisDSMPanel {
         theModuleButton.setEnabled(false);
         theFromButton.setEnabled(false);
         theToButton.setEnabled(false);
+
+        /* Handle the default location */
+        final File myLocation = getDefaultLocation();
+        if (myLocation != null) {
+            handleNewProject(myLocation);
+        }
     }
 
     /**
@@ -222,6 +236,9 @@ public class ThemisDSMPanel {
         /* Parse the project*/
         final ThemisDSMProject myProject  = new ThemisDSMProject(pProjectDir);
         if (myProject.hasModules()) {
+            /* Save details */
+            storeDefaultLocation(pProjectDir);
+
             /* Store details */
             theProject = myProject;
             theProjectButton.setText(theProject.toString());
@@ -360,5 +377,50 @@ public class ThemisDSMPanel {
             /* Select the tab */
             theDependencyTab.selectItem();
         }
+    }
+
+    /**
+     * Obtain the default location.
+     * @return the default location
+     */
+    private File getDefaultLocation() {
+        final Preferences myPreferences = deriveHandle();
+        final String myLocation = myPreferences.get("DefaultProject", null);
+        return myLocation == null ? null : new File(myLocation);
+    }
+
+    /**
+     * Store the default location.
+     * @param pLocation the default location
+     */
+    private void storeDefaultLocation(final File pLocation) {
+        /* Protect against exceptions */
+        try {
+            final Preferences myPreferences = deriveHandle();
+            myPreferences.put("DefaultProject", pLocation.getAbsolutePath());
+            myPreferences.flush();
+        } catch (BackingStoreException e) {
+            theError = new ThemisIOException("Failed to save preference", e);
+        }
+    }
+
+    /**
+     * Derive handle for node.
+     * @return the class name
+     */
+    private Preferences deriveHandle() {
+        /* Obtain the class name */
+        final Class<?> myClass = this.getClass();
+        String myName = myClass.getCanonicalName();
+
+        /* Obtain the package name */
+        final String myPackage = myClass.getPackage().getName();
+
+        /* Strip off the package name */
+        myName = myName.substring(myPackage.length() + 1);
+
+        /* Derive the handle */
+        final Preferences myHandle = Preferences.userNodeForPackage(myClass);
+        return myHandle.node(myName);
     }
 }
