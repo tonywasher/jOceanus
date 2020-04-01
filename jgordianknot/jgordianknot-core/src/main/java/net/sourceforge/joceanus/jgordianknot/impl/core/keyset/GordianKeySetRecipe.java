@@ -23,6 +23,8 @@ import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianSymKeyType;
 import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigestType;
 import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetSpec;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianCoreFactory;
+import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianIdManager;
+import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianPersonalisation;
 import net.sourceforge.joceanus.jtethys.TethysDataConverter;
 
 /**
@@ -238,9 +240,8 @@ public final class GordianKeySetRecipe {
                                 final GordianKeySetSpec pSpec,
                                 final boolean pAEAD) {
             /* Obtain Id manager and random */
-            final GordianCoreKeySetFactory myFactory = (GordianCoreKeySetFactory) pFactory.getKeySetFactory();
-            final GordianIdManager myManager = myFactory.getIdManager();
-            final GordianPersonalisation myPersonal = myFactory.getPersonalisation();
+            final GordianIdManager myManager = pFactory.getIdManager();
+            final GordianPersonalisation myPersonal = pFactory.getPersonalisation();
             final SecureRandom myRandom = pFactory.getRandomSource().getRandom();
 
             /* Allocate the initVector */
@@ -279,9 +280,8 @@ public final class GordianKeySetRecipe {
                                 final byte[] pSalt,
                                 final byte[] pMac) {
             /* Obtain Id manager */
-            final GordianCoreKeySetFactory myFactory = (GordianCoreKeySetFactory) pFactory.getKeySetFactory();
-            final GordianIdManager myManager = myFactory.getIdManager();
-            final GordianPersonalisation myPersonal = myFactory.getPersonalisation();
+            final GordianIdManager myManager = pFactory.getIdManager();
+            final GordianPersonalisation myPersonal = pFactory.getPersonalisation();
 
             /* Store recipe, salt and Mac */
             theRecipe = pRecipe;

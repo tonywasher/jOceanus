@@ -19,13 +19,13 @@ package net.sourceforge.joceanus.jgordianknot.api.asym;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.bouncycastle.pqc.crypto.mceliece.McElieceCCA2Parameters;
+import org.bouncycastle.pqc.crypto.mceliece.McElieceParameters;
 import org.bouncycastle.pqc.jcajce.spec.McElieceCCA2KeyGenParameterSpec;
 
 import net.sourceforge.joceanus.jtethys.TethysDataConverter;
 
 /**
- * McEliece KeyTypes.
+ * McEliece KeySpec.
  */
 public final class GordianMcElieceKeySpec {
     /**
@@ -170,7 +170,7 @@ public final class GordianMcElieceKeySpec {
             return false;
         }
 
-        /* Make sure that the object is a mEliecesSpec */
+        /* Make sure that the object is a mcElieceSpec */
         if (pThat.getClass() != this.getClass()) {
             return false;
         }
@@ -189,26 +189,6 @@ public final class GordianMcElieceKeySpec {
         return theDigestType == null
                ? hashCode
                : hashCode + theDigestType.hashCode();
-    }
-
-    /**
-     * Check valid encryption type.
-     * @param pKeySpec the McElieceKeySpec
-     * @param pEncryptorType the encryptorType
-     * @return true/false
-     */
-    public static boolean checkValidEncryptionType(final GordianMcElieceKeySpec pKeySpec,
-                                                   final GordianMcElieceEncryptionType pEncryptorType) {
-        switch (pEncryptorType) {
-            case STANDARD:
-                return GordianMcElieceKeyType.STANDARD.equals(pKeySpec.getKeyType());
-            case FUJISAKI:
-            case KOBARAIMAI:
-            case POINTCHEVAL:
-                return !GordianMcElieceKeyType.STANDARD.equals(pKeySpec.getKeyType());
-            default:
-                throw new IllegalArgumentException();
-        }
     }
 
     /**
@@ -309,55 +289,12 @@ public final class GordianMcElieceKeySpec {
         public int getM() {
             switch (this) {
                 case SHA512:
-                    return McElieceCCA2Parameters.DEFAULT_M + SHIFT_SHA512;
+                    return McElieceParameters.DEFAULT_M + SHIFT_SHA512;
                 case SHA384:
-                    return McElieceCCA2Parameters.DEFAULT_M + SHIFT_SHA384;
+                    return McElieceParameters.DEFAULT_M + SHIFT_SHA384;
                 default:
-                    return McElieceCCA2Parameters.DEFAULT_M;
+                    return McElieceParameters.DEFAULT_M;
             }
-        }
-    }
-
-    /**
-     * McEliece encryptionType.
-     */
-    public enum GordianMcElieceEncryptionType {
-        /**
-         * Standard.
-         */
-        STANDARD("Standard"),
-
-        /**
-         * KobaraImai.
-         */
-        KOBARAIMAI("KobaraImai"),
-
-        /**
-         * Fujisaki.
-         */
-        FUJISAKI("Fujisaki"),
-
-        /**
-         * Pointcheval.
-         */
-        POINTCHEVAL("Pointcheval");
-
-        /**
-         * The name.
-         */
-        private final String theName;
-
-        /**
-         * Constructor.
-         * @param pName the name of the encryption
-         */
-        GordianMcElieceEncryptionType(final String pName) {
-            theName = pName;
-        }
-
-        @Override
-        public String toString() {
-            return theName;
         }
     }
 }

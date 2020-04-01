@@ -199,11 +199,15 @@ public class MetisViewerBuilder {
             /* Create the document builder */
             final DocumentBuilderFactory myDocFactory = DocumentBuilderFactory.newInstance();
             myDocFactory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
+            myDocFactory.setAttribute(XMLConstants.ACCESS_EXTERNAL_DTD, "");
+            myDocFactory.setAttribute(XMLConstants.ACCESS_EXTERNAL_SCHEMA, "");
             theBuilder = myDocFactory.newDocumentBuilder();
 
             /* Create the transformer */
             final TransformerFactory myXformFactory = TransformerFactory.newInstance();
             myXformFactory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
+            myXformFactory.setAttribute(XMLConstants.ACCESS_EXTERNAL_DTD, "");
+            myXformFactory.setAttribute(XMLConstants.ACCESS_EXTERNAL_STYLESHEET, "");
             theXformer = myXformFactory.newTransformer();
 
             /* Create the document */

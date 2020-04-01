@@ -17,16 +17,21 @@
 package net.sourceforge.joceanus.jgordianknot.impl.core.base;
 
 import java.security.SecureRandom;
+import java.util.function.Predicate;
 
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
-import org.bouncycastle.asn1.bc.BCObjectIdentifiers;
+import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
 
+import net.sourceforge.joceanus.jgordianknot.api.base.GordianKeySpec;
 import net.sourceforge.joceanus.jgordianknot.api.base.GordianLength;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianCipherFactory;
+import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianSymKeySpec;
+import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianSymKeyType;
 import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigestFactory;
+import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigestSpec;
+import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigestType;
 import net.sourceforge.joceanus.jgordianknot.api.factory.GordianFactory;
 import net.sourceforge.joceanus.jgordianknot.api.factory.GordianFactoryType;
-import net.sourceforge.joceanus.jgordianknot.api.factory.GordianParameters;
 import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetFactory;
 import net.sourceforge.joceanus.jgordianknot.api.mac.GordianMacFactory;
 import net.sourceforge.joceanus.jgordianknot.api.random.GordianRandomFactory;
@@ -38,29 +43,19 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
 public abstract class GordianCoreFactory
     implements GordianFactory, GordianFactoryGenerator {
     /**
-     *  Base our ids off bouncyCastle.
+     *  BCFactoryOID.
      */
-    public static final ASN1ObjectIdentifier BASEOID = BCObjectIdentifiers.bc.branch("100");
+    public static final ASN1ObjectIdentifier BCFACTORYOID = GordianASN1Util.FACTORYOID.branch("1");
 
     /**
-     *  Create the factoryId.
+     *  JCAFactoryOID.
      */
-    private static final ASN1ObjectIdentifier FACTORYOID = BASEOID.branch("1");
+    public static final ASN1ObjectIdentifier JCAFACTORYOID = GordianASN1Util.FACTORYOID.branch("2");
 
     /**
-     *  Create the BC factoryId.
+     * The prime hash.
      */
-    public static final ASN1ObjectIdentifier BCFACTORYOID = FACTORYOID.branch("1");
-
-    /**
-     *  Create the JCA factoryId.
-     */
-    public static final ASN1ObjectIdentifier JCAFACTORYOID = FACTORYOID.branch("2");
-
-    /**
-     *  Create the NULL factoryId.
-     */
-    public static final ASN1ObjectIdentifier NULLFACTORYOID = FACTORYOID.branch("3");
+    public static final int HASH_PRIME = 47;
 
     /**
      * RC5 rounds.
@@ -88,6 +83,21 @@ public abstract class GordianCoreFactory
     private final GordianRandomSource theRandom;
 
     /**
+     * Personalisation.
+     */
+    private final GordianPersonalisation thePersonalisation;
+
+    /**
+     * IdManager.
+     */
+    private final GordianIdManager theIdManager;
+
+    /**
+     * Obfuscater.
+     */
+    private final GordianCoreKnuthObfuscater theObfuscater;
+
+    /**
      * Digest Factory.
      */
     private GordianDigestFactory theDigestFactory;
@@ -113,6 +123,16 @@ public abstract class GordianCoreFactory
     private GordianKeySetFactory theKeySetFactory;
 
     /**
+     * The Key AlgIds.
+     */
+    private GordianKeyAlgId theKeyAlgIds;
+
+    /**
+     * The Digest AlgIds.
+     */
+    private GordianDigestAlgId theDigestAlgIds;
+
+    /**
      * Constructor.
      * @param pGenerator the factory generator
      * @param pParameters the parameters
@@ -131,7 +151,21 @@ public abstract class GordianCoreFactory
 
         /* Create the random source */
         theRandom = new GordianRandomSource();
+
+        /* Declare factories */
+        declareFactories();
+
+        /* Declare personalisation */
+        thePersonalisation = new GordianPersonalisation(this);
+        theIdManager = new GordianIdManager(this);
+        theObfuscater = new GordianCoreKnuthObfuscater(this);
     }
+
+    /**
+     * Declare factories.
+     * @throws OceanusException on error
+     */
+    protected abstract void declareFactories() throws OceanusException;
 
     @Override
     public GordianFactory newFactory(final GordianParameters pParameters) throws OceanusException {
@@ -152,19 +186,40 @@ public abstract class GordianCoreFactory
     }
 
     /**
-     * Obtain the number of iterations.
-     * @return the number of iterations
-     */
-    public int getNumIterations() {
-        return theParameters.getNumIterations();
-    }
-
-    /**
      * Obtain the security phrase.
      * @return the security phrase
      */
     public byte[] getSecurityPhrase() {
         return theParameters.getSecurityPhrase();
+    }
+
+    /**
+     * Is this an internal factory?
+     * @return true/false
+     */
+    public boolean isInternal() {
+        return theParameters.isInternal();
+    }
+
+    /**
+     * Obtain the personalisation.
+     * @return the personalisation
+     */
+    public GordianPersonalisation getPersonalisation() {
+        return thePersonalisation;
+    }
+
+    /**
+     * Obtain the idManager.
+     * @return the idManager
+     */
+    public GordianIdManager getIdManager() {
+        return theIdManager;
+    }
+
+    @Override
+    public GordianCoreKnuthObfuscater getObfuscater() {
+        return theObfuscater;
     }
 
     @Override
@@ -245,6 +300,133 @@ public abstract class GordianCoreFactory
      */
     protected void setKeySetFactory(final GordianKeySetFactory pFactory) {
         theKeySetFactory = pFactory;
+    }
+
+    Predicate<GordianDigestType> supportedKeySetDigestTypes() {
+        final GordianMacFactory myMacs = getMacFactory();
+        return myMacs.supportedHMacDigestTypes().and(GordianDigestType::isCombinedHashDigest);
+    }
+
+
+    /**
+     * Obtain predicate for supported keySet symKeySpecs.
+     * @param pKeyLen the keyLength
+     * @return the predicate
+     */
+    public Predicate<GordianSymKeySpec> supportedKeySetSymKeySpecs(final GordianLength pKeyLen) {
+        return s -> supportedKeySetSymKeyTypes(pKeyLen).test(s.getSymKeyType())
+                && s.getBlockLength() == GordianLength.LEN_128;
+    }
+
+    /**
+     * Obtain predicate for keySet SymKeyTypes.
+     * @param pKeyLen the keyLength
+     * @return the predicate
+     */
+    public Predicate<GordianSymKeyType> supportedKeySetSymKeyTypes(final GordianLength pKeyLen) {
+        return t -> validKeySetSymKeyType(t, pKeyLen);
+    }
+
+    /**
+     * check valid keySet symKeyType.
+     * @param pKeyType the symKeyType
+     * @param pKeyLen the keyLength
+     * @return true/false
+     */
+    private boolean validKeySetSymKeyType(final GordianSymKeyType pKeyType,
+                                          final GordianLength pKeyLen) {
+        return validSymKeyType(pKeyType)
+                && validStdBlockSymKeyTypeForKeyLength(pKeyType, pKeyLen);
+    }
+
+    /**
+     * Check standard block symKeyType.
+     * @param pKeyType the symKeyType
+     * @param pKeyLen the keyLength
+     * @return true/false
+     */
+    public static boolean validStdBlockSymKeyTypeForKeyLength(final GordianSymKeyType pKeyType,
+                                                              final GordianLength pKeyLen) {
+        return validSymKeyTypeForKeyLength(pKeyType, pKeyLen)
+                && pKeyType.getDefaultBlockLength().equals(GordianLength.LEN_128);
+    }
+
+    /**
+     * Check SymKeyType.
+     * @param pKeyType the symKeyType
+     * @param pKeyLen the keyLength
+     * @return true/false
+     */
+    public static boolean validSymKeyTypeForKeyLength(final GordianSymKeyType pKeyType,
+                                                      final GordianLength pKeyLen) {
+        return pKeyType.validForKeyLength(pKeyLen);
+    }
+
+    /**
+     * Check SymKeyType.
+     * @param pKeyType the symKeyType
+     * @return true/false
+     */
+    public boolean validSymKeyType(final GordianSymKeyType pKeyType) {
+        return pKeyType != null;
+    }
+
+    /**
+     * Obtain Identifier for keySpec.
+     * @param pSpec the keySpec.
+     * @return the Identifier
+     */
+    public AlgorithmIdentifier getIdentifierForSpec(final GordianKeySpec pSpec) {
+        return getKeyAlgIds().getIdentifierForSpec(pSpec);
+    }
+
+    /**
+     * Obtain keySpec for Identifier.
+     * @param pIdentifier the identifier.
+     * @return the keySpec (or null if not found)
+     */
+    public GordianKeySpec getKeySpecForIdentifier(final AlgorithmIdentifier pIdentifier) {
+        return getKeyAlgIds().getKeySpecForIdentifier(pIdentifier);
+    }
+
+    /**
+     * Obtain the key algorithm Ids.
+     * @return the key Algorithm Ids
+     */
+    private GordianKeyAlgId getKeyAlgIds() {
+        if (theKeyAlgIds == null) {
+            theKeyAlgIds = new GordianKeyAlgId(this);
+        }
+        return theKeyAlgIds;
+    }
+
+    /**
+     * Obtain Identifier for DigestSpec.
+     * @param pSpec the digestSpec.
+     * @return the Identifier
+     */
+    public AlgorithmIdentifier getIdentifierForSpec(final GordianDigestSpec pSpec) {
+        return getDigestAlgIds().getIdentifierForSpec(pSpec);
+    }
+
+    /**
+     * Obtain DigestSpec for Identifier.
+     * @param pIdentifier the identifier.
+     * @return the digestSpec (or null if not found)
+     */
+    public GordianDigestSpec getDigestSpecForIdentifier(final AlgorithmIdentifier pIdentifier) {
+        return getDigestAlgIds().getSpecForIdentifier(pIdentifier);
+    }
+
+    /**
+     * Obtain the digest algorithm Ids.
+     * @return the digest Algorithm Ids
+     */
+    private GordianDigestAlgId getDigestAlgIds() {
+        if (theDigestAlgIds == null) {
+            theDigestAlgIds = new GordianDigestAlgId(this);
+        }
+        return theDigestAlgIds;
     }
 
     @Override

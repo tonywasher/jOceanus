@@ -16,6 +16,8 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jgordianknot.impl.bc;
 
+import java.util.Arrays;
+
 import org.bouncycastle.crypto.CipherParameters;
 import org.bouncycastle.crypto.InvalidCipherTextException;
 import org.bouncycastle.crypto.ext.modes.ChaChaPoly1305;
@@ -40,6 +42,11 @@ public class BouncyStreamKeyAADCipher
      * The cipher.
      */
     private final ChaChaPoly1305 theCipher;
+
+    /**
+     * is the cipher encrypting?
+     */
+    private boolean isEncrypting;
 
     /**
      * Constructor.
@@ -68,6 +75,7 @@ public class BouncyStreamKeyAADCipher
                                          ? new ParametersWithIV(myKeyParms, getInitVector())
                                          : new AEADParameters(myKeyParms, getAEADMacSize(), getInitVector(), myAEAD);
         theCipher.init(pEncrypt, myParms);
+        isEncrypting = pEncrypt;
     }
 
     @Override
@@ -91,5 +99,33 @@ public class BouncyStreamKeyAADCipher
         } catch (InvalidCipherTextException e) {
             throw new GordianCryptoException("Mac mismatch", e);
         }
+    }
+    @Override
+    public boolean equals(final Object pThat) {
+        /* Handle trivial cases */
+        if (this == pThat) {
+            return true;
+        }
+        if (pThat == null) {
+            return false;
+        }
+
+        /* Make sure that the classes are the same */
+        if (!(pThat instanceof BouncyStreamKeyAADCipher)) {
+            return false;
+        }
+        final BouncyStreamKeyAADCipher myThat = (BouncyStreamKeyAADCipher) pThat;
+
+        /* Check that the fields are equal */
+        return isEncrypting == myThat.isEncrypting
+                && Arrays.equals(getInitialAEAD(), myThat.getInitialAEAD())
+                && super.equals(myThat);
+    }
+
+    @Override
+    public int hashCode() {
+        return super.hashCode()
+                + Arrays.hashCode(getInitialAEAD())
+                + (isEncrypting ? 1 : 0);
     }
 }

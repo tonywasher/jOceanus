@@ -39,7 +39,7 @@ import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigestFactory;
 import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigestSpec;
 import net.sourceforge.joceanus.jgordianknot.api.factory.GordianFactory;
 import net.sourceforge.joceanus.jgordianknot.api.factory.GordianFactoryType;
-import net.sourceforge.joceanus.jgordianknot.api.factory.GordianParameters;
+import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianParameters;
 import net.sourceforge.joceanus.jgordianknot.impl.core.mac.GordianCoreMac;
 import net.sourceforge.joceanus.jgordianknot.util.GordianGenerator;
 import net.sourceforge.joceanus.jgordianknot.api.mac.GordianMac;
@@ -270,7 +270,7 @@ public class RandomTest {
      */
     @BeforeAll
     public static void createSecurityFactories() throws OceanusException {
-        BCFACTORY = GordianGenerator.createFactory(new GordianParameters(GordianFactoryType.BC));
+        BCFACTORY = GordianGenerator.createFactory(GordianFactoryType.BC);
     }
 
     /**

@@ -56,24 +56,14 @@ public enum GordianAsymKeyType {
     GOST2012,
 
     /**
-     * EdwardsXDH25519.
+     * EdwardsXDH.
      */
-    X25519,
+    XDH,
 
     /**
-     * EdwardsXDH448.
+     * EdwardsDSA.
      */
-    X448,
-
-    /**
-     * EdwardsDSA25519.
-     */
-    ED25519,
-
-    /**
-     * EdwardsDSA448.
-     */
-    ED448,
+    EDDSA,
 
     /**
      * SPHINCS.
@@ -96,11 +86,6 @@ public enum GordianAsymKeyType {
     XMSS,
 
     /**
-     * XMSSMT.
-     */
-    XMSSMT,
-
-    /**
      * NewHope.
      */
     NEWHOPE,
@@ -108,7 +93,12 @@ public enum GordianAsymKeyType {
     /**
      * qTESLA.
      */
-    QTESLA;
+    QTESLA,
+
+    /**
+     * LMS.
+     */
+    LMS;
 
     /**
      * use random for signatures?
@@ -118,9 +108,7 @@ public enum GordianAsymKeyType {
         switch (this) {
             case SPHINCS:
             case XMSS:
-            case XMSSMT:
-            case ED25519:
-            case ED448:
+            case EDDSA:
                 return false;
             default:
                 return true;
@@ -135,10 +123,9 @@ public enum GordianAsymKeyType {
         switch (this) {
             case SPHINCS:
             case XMSS:
-            case XMSSMT:
-            case ED25519:
-            case ED448:
+            case EDDSA:
             case QTESLA:
+            case LMS:
                 return true;
             default:
                 return false;
@@ -153,7 +140,6 @@ public enum GordianAsymKeyType {
         switch (this) {
             case SPHINCS:
             case XMSS:
-            case XMSSMT:
             case QTESLA:
                 return true;
             default:
@@ -162,7 +148,7 @@ public enum GordianAsymKeyType {
     }
 
     /**
-     * Dow we skipped derived key equality check?
+     * Do we skip derived key equality check?
      * <p>
      * Temporary fix for DH JCA bug where the derived key does not equal the original key
      * @return true/false

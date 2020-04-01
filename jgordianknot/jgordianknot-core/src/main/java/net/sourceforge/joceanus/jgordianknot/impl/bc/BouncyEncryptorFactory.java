@@ -16,14 +16,15 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jgordianknot.impl.bc;
 
-import net.sourceforge.joceanus.jgordianknot.api.asym.GordianMcElieceKeySpec.GordianMcElieceEncryptionType;
 import net.sourceforge.joceanus.jgordianknot.api.encrypt.GordianEncryptor;
 import net.sourceforge.joceanus.jgordianknot.api.encrypt.GordianEncryptorSpec;
+import net.sourceforge.joceanus.jgordianknot.api.encrypt.GordianMcElieceEncryptionType;
 import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyEllipticAsymKey.BouncyECEncryptor;
-import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyEllipticAsymKey.BouncySM2Encryptor;
 import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyMcElieceAsymKey.BouncyMcElieceCCA2Encryptor;
 import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyMcElieceAsymKey.BouncyMcElieceEncryptor;
 import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyRSAAsymKey.BouncyRSAEncryptor;
+import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncySM2AsymKey.BouncySM2Encryptor;
+import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianCoreFactory;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianDataException;
 import net.sourceforge.joceanus.jgordianknot.impl.core.encrypt.GordianCoreEncryptorFactory;
 import net.sourceforge.joceanus.jtethys.OceanusException;
@@ -72,7 +73,7 @@ public class BouncyEncryptorFactory
             case GOST2012:
                 return new BouncyECEncryptor(getFactory(), pSpec);
             case SM2:
-                return pSpec.getDigestSpec() == null
+                return pSpec.getSM2EncryptionSpec() == null
                        ? new BouncyECEncryptor(getFactory(), pSpec)
                        : new BouncySM2Encryptor(getFactory(), pSpec);
             case MCELIECE:
@@ -80,7 +81,7 @@ public class BouncyEncryptorFactory
                        ? new BouncyMcElieceEncryptor(getFactory(), pSpec)
                        : new BouncyMcElieceCCA2Encryptor(getFactory(), pSpec);
             default:
-                throw new GordianDataException(BouncyFactory.getInvalidText(pSpec));
+                throw new GordianDataException(GordianCoreFactory.getInvalidText(pSpec));
         }
     }
 }

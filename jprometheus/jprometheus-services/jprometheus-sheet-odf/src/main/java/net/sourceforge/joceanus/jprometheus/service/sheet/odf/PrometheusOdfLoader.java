@@ -170,6 +170,8 @@ public final class PrometheusOdfLoader {
             /* Create the Document builder */
             final DocumentBuilderFactory myFactory = DocumentBuilderFactory.newInstance();
             myFactory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
+            myFactory.setAttribute(XMLConstants.ACCESS_EXTERNAL_DTD, "");
+            myFactory.setAttribute(XMLConstants.ACCESS_EXTERNAL_SCHEMA, "");
             myFactory.setNamespaceAware(true);
             final DocumentBuilder myBuilder = myFactory.newDocumentBuilder();
 
@@ -236,6 +238,8 @@ public final class PrometheusOdfLoader {
             /* Create the transformer */
             final TransformerFactory myXformFactory = TransformerFactory.newInstance();
             myXformFactory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
+            myXformFactory.setAttribute(XMLConstants.ACCESS_EXTERNAL_DTD, "");
+            myXformFactory.setAttribute(XMLConstants.ACCESS_EXTERNAL_STYLESHEET, "");
             final Transformer myXformer = myXformFactory.newTransformer();
 
             /* Loop through the Zip file entries */
@@ -285,6 +289,8 @@ public final class PrometheusOdfLoader {
             /* Create the transformer */
             final TransformerFactory myXformFactory = TransformerFactory.newInstance();
             myXformFactory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
+            myXformFactory.setAttribute(XMLConstants.ACCESS_EXTERNAL_DTD, "");
+            myXformFactory.setAttribute(XMLConstants.ACCESS_EXTERNAL_STYLESHEET, "");
             final Transformer myXformer = myXformFactory.newTransformer();
 
             /* Create the new output entry */

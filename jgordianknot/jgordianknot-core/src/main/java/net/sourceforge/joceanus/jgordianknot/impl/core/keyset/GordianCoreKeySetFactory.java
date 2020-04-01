@@ -20,18 +20,13 @@ import java.util.function.Predicate;
 
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
 
-import net.sourceforge.joceanus.jgordianknot.api.base.GordianLength;
-import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianSymKeySpec;
-import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianSymKeyType;
-import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigestType;
 import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetFactory;
 import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetHash;
 import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetHashSpec;
 import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetSpec;
-import net.sourceforge.joceanus.jgordianknot.api.mac.GordianMacFactory;
+import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianASN1Util;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianCoreFactory;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianDataException;
-import net.sourceforge.joceanus.jgordianknot.impl.core.cipher.GordianCoreCipherFactory;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
@@ -40,29 +35,14 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
 public class GordianCoreKeySetFactory
     implements GordianKeySetFactory {
     /**
-     * Base our ids off bouncyCastle.
+     * KeySetOID branch.
      */
-    static final ASN1ObjectIdentifier KEYSETOID = GordianCoreFactory.BASEOID.branch("30");
+    static final ASN1ObjectIdentifier KEYSETOID = GordianASN1Util.EXTOID.branch("1");
 
     /**
      * The factory.
      */
     private final GordianCoreFactory theFactory;
-
-    /**
-     * Personalisation.
-     */
-    private final GordianPersonalisation thePersonalisation;
-
-    /**
-     * IdManager.
-     */
-    private final GordianIdManager theIdManager;
-
-    /**
-     * Obfuscater.
-     */
-    private final GordianCoreKnuthObfuscater theObfuscater;
 
     /**
      * Constructor.
@@ -71,9 +51,6 @@ public class GordianCoreKeySetFactory
      */
     public GordianCoreKeySetFactory(final GordianCoreFactory pFactory) throws OceanusException {
         theFactory = pFactory;
-        thePersonalisation = new GordianPersonalisation(theFactory);
-        theIdManager = new GordianIdManager(theFactory, this);
-        theObfuscater = new GordianCoreKnuthObfuscater(this);
     }
 
     /**
@@ -82,27 +59,6 @@ public class GordianCoreKeySetFactory
      */
     public GordianCoreFactory getFactory() {
         return theFactory;
-    }
-
-    /**
-     * Obtain the personalisation bytes.
-     * @return the personalisation
-     */
-    public GordianPersonalisation getPersonalisation() {
-        return thePersonalisation;
-    }
-
-    /**
-     * Obtain the idManager.
-     * @return the idManager
-     */
-    public GordianIdManager getIdManager() {
-        return theIdManager;
-    }
-
-    @Override
-    public GordianCoreKnuthObfuscater getObfuscater() {
-        return theObfuscater;
     }
 
     /**
@@ -147,39 +103,8 @@ public class GordianCoreKeySetFactory
     }
 
     @Override
-    public Predicate<GordianDigestType> supportedKeySetDigestTypes() {
-        final GordianMacFactory myMacs = getFactory().getMacFactory();
-        return myMacs.supportedHMacDigestTypes().and(GordianDigestType::isCombinedHashDigest);
-    }
-
-    @Override
-    public Predicate<GordianSymKeyType> supportedKeySetSymKeyTypes(final GordianLength pKeyLen) {
-        return t -> validKeySetSymKeyType(t, pKeyLen);
-    }
-
-    @Override
-    public Predicate<GordianSymKeySpec> supportedKeySetSymKeySpecs(final GordianLength pKeyLen) {
-        return s -> supportedKeySetSymKeyTypes(pKeyLen).test(s.getSymKeyType())
-                && s.getBlockLength() == GordianLength.LEN_128;
-    }
-
-    @Override
     public Predicate<GordianKeySetSpec> supportedKeySetSpecs() {
         return GordianCoreKeySetFactory::validKeySetSpec;
-    }
-
-    /**
-     * check valid keySet symKeyType.
-     * @param pKeyType the symKeyType
-     * @param pKeyLen the keyLength
-     * @return true/false
-     */
-    private boolean validKeySetSymKeyType(final GordianSymKeyType pKeyType,
-                                          final GordianLength pKeyLen) {
-        final GordianCoreFactory myFactory = getFactory();
-        final GordianCoreCipherFactory myCiphers = (GordianCoreCipherFactory) myFactory.getCipherFactory();
-        return myCiphers.validSymKeyType(pKeyType)
-                && GordianCoreCipherFactory.validStdBlockSymKeyTypeForKeyLength(pKeyType, pKeyLen);
     }
 
     /**

@@ -130,9 +130,10 @@ public class GordianRandomSource {
         /* Create the source arrays */
         final byte[] myThread = TethysDataConverter.longToByteArray(Thread.currentThread().getId());
         final byte[] myTime = TethysDataConverter.longToByteArray(System.currentTimeMillis());
+        final byte[] myNanos = TethysDataConverter.longToByteArray(System.nanoTime());
 
         /* Create the final initVector */
-        int myLen = myThread.length + myTime.length;
+        int myLen = myThread.length + myTime.length + myNanos.length;
         if (pSeed != null) {
             myLen += pSeed.length;
         }
@@ -141,8 +142,9 @@ public class GordianRandomSource {
         /* Build the vector */
         System.arraycopy(myThread, 0, myVector, 0, myThread.length);
         System.arraycopy(myTime, 0, myVector, myThread.length, myTime.length);
+        System.arraycopy(myNanos, 0, myVector, myThread.length + myTime.length, myNanos.length);
         if (pSeed != null) {
-            System.arraycopy(pSeed, 0, myVector, myThread.length + myTime.length, pSeed.length);
+            System.arraycopy(pSeed, 0, myVector, myThread.length + myTime.length + myNanos.length, pSeed.length);
         }
 
         /* return it */

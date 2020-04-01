@@ -38,6 +38,7 @@ import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianStreamKeyType;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianSymCipherSpec;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianSymKeySpec;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianSymKeyType;
+import net.sourceforge.joceanus.jgordianknot.api.key.GordianKey;
 import net.sourceforge.joceanus.jgordianknot.api.key.GordianKeyGenerator;
 import net.sourceforge.joceanus.jgordianknot.api.base.GordianKeySpec;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianCoreFactory;
@@ -140,14 +141,12 @@ public class JcaCipherFactory
     }
 
     @Override
-    public GordianWrapper createKeyWrapper(final GordianSymKeySpec pKeySpec) throws OceanusException {
-        /* Check validity of SymKey */
-        checkSymKeySpec(pKeySpec);
-
+    public GordianWrapper createKeyWrapper(final GordianKey<GordianSymKeySpec> pKey) throws OceanusException {
         /* Create the cipher */
-        final GordianSymCipherSpec mySpec = GordianSymCipherSpec.ecb(pKeySpec, GordianPadding.NONE);
+        final JcaKey<GordianSymKeySpec> myKey = JcaKey.accessKey(pKey);
+        final GordianSymCipherSpec mySpec = GordianSymCipherSpec.ecb(myKey.getKeyType(), GordianPadding.NONE);
         final JcaSymCipher myJcaCipher = (JcaSymCipher) createSymKeyCipher(mySpec);
-        return createKeyWrapper(myJcaCipher);
+        return createKeyWrapper(myKey, myJcaCipher);
     }
 
     /**
@@ -394,18 +393,12 @@ public class JcaCipherFactory
         }
     }
 
-    @Override
-    public boolean validSymKeyType(final GordianSymKeyType pKeyType) {
-        return supportedSymKeyType(pKeyType)
-                && super.validSymKeyType(pKeyType);
-    }
-
     /**
      * Is this symKeyType supported by Jca?
      * @param pKeyType the keyType
      * @return true/false
      */
-    private static boolean supportedSymKeyType(final GordianSymKeyType pKeyType) {
+    static boolean supportedSymKeyType(final GordianSymKeyType pKeyType) {
         if (pKeyType == null) {
             return false;
         }

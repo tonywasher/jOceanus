@@ -20,7 +20,6 @@ import org.bouncycastle.crypto.CipherKeyGenerator;
 import org.bouncycastle.crypto.KeyGenerationParameters;
 
 import net.sourceforge.joceanus.jgordianknot.api.base.GordianKeySpec;
-import net.sourceforge.joceanus.jgordianknot.api.key.GordianKey;
 import net.sourceforge.joceanus.jgordianknot.api.mac.GordianMac;
 import net.sourceforge.joceanus.jgordianknot.impl.core.key.GordianCoreKeyGenerator;
 import net.sourceforge.joceanus.jgordianknot.impl.core.mac.GordianCoreMac;
@@ -64,15 +63,6 @@ public final class BouncyKeyGenerator<T extends GordianKeySpec>
 
         /* Build the new key */
         return buildKeyFromBytes(myKeyBytes);
-    }
-
-    @Override
-    protected BouncyKey<T> translateKey(final GordianKey<?> pSource) throws OceanusException {
-        /* Access key correctly */
-        final BouncyKey<?> mySource = BouncyKey.accessKey(pSource);
-
-        /* Build the new key */
-        return buildKeyFromBytes(mySource.getKey());
     }
 
     @Override

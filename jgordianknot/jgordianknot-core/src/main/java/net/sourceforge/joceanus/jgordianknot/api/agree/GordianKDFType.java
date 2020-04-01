@@ -66,10 +66,8 @@ public enum GordianKDFType {
                 return !isCKDF() || pAgreeType != GordianAgreementType.KEM;
             case DH:
                 return isSupported4DH(pAgreeType);
-            case X25519:
-                return isSupported4X25519(pAgreeType);
-            case X448:
-                return isSupported4X448(pAgreeType);
+            case XDH:
+                return isSupported4XDH(pAgreeType);
             default:
                 return true;
         }
@@ -97,34 +95,18 @@ public enum GordianKDFType {
     }
 
     /**
-     * Determine whether this is a supported kdfType for X25519.
+     * Determine whether this is a supported kdfType for XDH.
      * @param pAgreeType the agreement type
      * @return true/false
      */
-    private boolean isSupported4X25519(final GordianAgreementType pAgreeType) {
-        /* Switch on keyType */
-        switch (this) {
-            case SHA256KDF:
-                return true;
-            case SHA256CKDF:
-            case NONE:
-                return pAgreeType != GordianAgreementType.UNIFIED;
-            default:
-                return false;
-        }
-    }
-
-    /**
-     * Determine whether this is a supported kdfType for X25519.
-     * @param pAgreeType the agreement type
-     * @return true/false
-     */
-    private boolean isSupported4X448(final GordianAgreementType pAgreeType) {
+    private boolean isSupported4XDH(final GordianAgreementType pAgreeType) {
         /* Switch on keyType */
         switch (this) {
             case SHA512KDF:
+            case SHA256KDF:
                 return true;
             case SHA512CKDF:
+            case SHA256CKDF:
             case NONE:
                 return pAgreeType != GordianAgreementType.UNIFIED;
             default:

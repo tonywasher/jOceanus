@@ -36,7 +36,7 @@ public final class GordianMacSpec implements GordianKeySpec {
     /**
      * The Separator.
      */
-    private static final String SEP = "-";
+    static final String SEP = "-";
 
     /**
      * The Mac Type.
@@ -116,14 +116,14 @@ public final class GordianMacSpec implements GordianKeySpec {
     /**
      * sipHash Constructor.
      * @param pMacType the macType
-     * @param pFast use fast hash true/false
+     * @param pSpec the SipHashSpec
      */
     public GordianMacSpec(final GordianMacType pMacType,
-                          final Boolean pFast) {
+                          final GordianSipHashSpec pSpec) {
         /* Store parameters */
         theMacType = pMacType;
         theKeyLength = GordianLength.LEN_128;
-        theSubSpec = pFast;
+        theSubSpec = pSpec;
         isValid = checkValidity();
     }
 
@@ -340,18 +340,11 @@ public final class GordianMacSpec implements GordianKeySpec {
 
     /**
      * Create sipHashSpec.
+     * @param pSpec the sipHashSpec
      * @return the MacSpec
      */
-    public static GordianMacSpec sipHash() {
-        return new GordianMacSpec(GordianMacType.SIPHASH, Boolean.FALSE);
-    }
-
-    /**
-     * Create sipHashFastSpec.
-     * @return the MacSpec
-     */
-    public static GordianMacSpec sipHashFast() {
-        return new GordianMacSpec(GordianMacType.SIPHASH, Boolean.TRUE);
+    public static GordianMacSpec sipHash(final GordianSipHashSpec pSpec) {
+        return new GordianMacSpec(GordianMacType.SIPHASH, pSpec);
     }
 
     /**
@@ -493,13 +486,13 @@ public final class GordianMacSpec implements GordianKeySpec {
     }
 
     /**
-     * Obtain Boolean.
-     * @return the Boolean
+     * Obtain SipHashSpec.
+     * @return the Spec
      */
-    public Boolean getBoolean() {
-        return theSubSpec instanceof Boolean
-               ? (Boolean) theSubSpec
-               : Boolean.FALSE;
+    public GordianSipHashSpec getSipHashSpec() {
+        return theSubSpec instanceof GordianSipHashSpec
+               ? (GordianSipHashSpec) theSubSpec
+               : null;
     }
 
     /**
@@ -530,6 +523,7 @@ public final class GordianMacSpec implements GordianKeySpec {
             case GOST:
                 return GordianLength.LEN_32;
             case SIPHASH:
+                return ((GordianSipHashSpec) theSubSpec).getOutLength();
             default:
                 return GordianLength.LEN_64;
         }
@@ -597,9 +591,11 @@ public final class GordianMacSpec implements GordianKeySpec {
             case ZUC:
                 return checkZucValidity();
             case SIPHASH:
-                return theSubSpec instanceof Boolean && theKeyLength == GordianLength.LEN_128;
+                return theSubSpec instanceof GordianSipHashSpec
+                        && theKeyLength == GordianLength.LEN_128;
             case GOST:
-                return theSubSpec == null && theKeyLength == GordianLength.LEN_256;
+                return theSubSpec == null
+                        && theKeyLength == GordianLength.LEN_256;
             case VMPC:
                  return theSubSpec == null;
             default:
@@ -620,8 +616,10 @@ public final class GordianMacSpec implements GordianKeySpec {
         }
 
         /* Check for digestType restrictions */
+        final GordianDigestType myType = ((GordianDigestSpec) theSubSpec).getDigestType();
         return  pDigestType == null
-                || ((GordianDigestSpec) theSubSpec).getDigestType() == pDigestType;
+                ? myType.supportsLargeData()
+                : myType == pDigestType;
     }
 
     /**
@@ -741,9 +739,7 @@ public final class GordianMacSpec implements GordianKeySpec {
             theName = theMacType.toString();
             switch (theMacType) {
                 case SIPHASH:
-                    theName += SEP + (getBoolean()
-                                      ? "2-4"
-                                      : "4-8");
+                    theName = theSubSpec.toString();
                     break;
                 case POLY1305:
                     theName += SEP + getSymKeyType();
@@ -901,8 +897,9 @@ public final class GordianMacSpec implements GordianKeySpec {
 
         /* Add sipHash for 128bit keys */
         if (GordianLength.LEN_128 == pKeyLen) {
-            myList.add(GordianMacSpec.sipHashFast());
-            myList.add(GordianMacSpec.sipHash());
+            for (final GordianSipHashSpec mySpec : GordianSipHashSpec.values()) {
+                myList.add(GordianMacSpec.sipHash(mySpec));
+            }
         }
 
         /* Add gostHash for 256bit keys */

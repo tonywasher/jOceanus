@@ -34,18 +34,21 @@ public interface GordianAgreement {
      *     This can be any of
      * </p>
      * <dl>
-     *     <dt>FactoryType</dt>
+     *     <dt>GordianFactoryType</dt>
      *     <dd>To agree a Factory</dd>
-     *     <dt>SymCipherSpec</dt>
+     *     <dt>GordianSymCipherSpec</dt>
      *     <dd>To agree a symCipher</dd>
-     *     <dt>StreamCipherSpec</dt>
+     *     <dt>GordianStreamCipherSpec</dt>
      *     <dd>To agree a streamCipher</dd>
-     *     <dt>KeySetSpec</dt>
+     *     <dt>GordianKeySetSpec</dt>
      *     <dd>To agree a KeySet</dd>
+     *     <dt>null</dt>
+     *     <dd>To agree a byte array</dd>
      * </dl>
      * @param pResultType the resultType.
+     * @throws OceanusException on error
      */
-    void setResultType(Object pResultType);
+    void setResultType(Object pResultType) throws OceanusException;
 
     /**
      * Obtain resultType.
@@ -59,5 +62,16 @@ public interface GordianAgreement {
      * @throws OceanusException on error
      */
     Object getResult() throws OceanusException;
+
+    /**
+     * Obtain agreement status.
+     * @return the agreement state
+     */
+    GordianAgreementStatus getStatus();
+
+    /**
+     * Reset agreement.
+     */
+    void reset();
 }
 

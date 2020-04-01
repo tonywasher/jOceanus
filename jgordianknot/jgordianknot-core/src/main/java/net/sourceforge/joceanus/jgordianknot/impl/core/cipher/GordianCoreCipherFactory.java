@@ -24,12 +24,11 @@ import net.sourceforge.joceanus.jgordianknot.api.base.GordianKeySpec;
 import net.sourceforge.joceanus.jgordianknot.api.base.GordianLength;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianCipherFactory;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianCipherMode;
-import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianPBECipherSpec;
+import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianCipherSpec;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianPBESpec;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianPBESpec.GordianPBEDigestAndCountSpec;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianStreamCipherSpec;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianStreamKeySpec;
-import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianSymCipher;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianWrapper;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianPadding;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianStreamKeyType;
@@ -37,6 +36,7 @@ import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianSymCipherSpec;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianSymKeySpec;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianSymKeyType;
 import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigestSpec;
+import net.sourceforge.joceanus.jgordianknot.api.key.GordianKey;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianCoreFactory;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianDataException;
 import net.sourceforge.joceanus.jtethys.OceanusException;
@@ -52,9 +52,9 @@ public abstract class GordianCoreCipherFactory
     private final GordianCoreFactory theFactory;
 
     /**
-     * The Digest AlgIds.
+     * The Cipher AlgIds.
      */
-    private GordianCipherAlgId theAlgIds;
+    private GordianCipherAlgId theCipherAlgIds;
 
     /**
      * Constructor.
@@ -84,7 +84,7 @@ public abstract class GordianCoreCipherFactory
 
     @Override
     public Predicate<GordianSymKeyType> supportedSymKeyTypes() {
-        return this::validSymKeyType;
+        return theFactory::validSymKeyType;
     }
 
     @Override
@@ -102,18 +102,23 @@ public abstract class GordianCoreCipherFactory
         return this::validStreamKeyType;
     }
 
-    @Override
+    /**
+     * Obtain predicate for supported PBECipherSpecs.
+     * @return the predicate
+     */
     public Predicate<GordianPBECipherSpec<? extends GordianKeySpec>> supportedPBECipherSpecs() {
         return this::validPBECipherSpec;
     }
 
     /**
      * Create a wrapCipher.
+     * @param pKey the key
      * @param pBlockCipher the underlying block cipher
      * @return the wrapCipher
      */
-    protected GordianWrapper createKeyWrapper(final GordianSymCipher pBlockCipher) {
-        return new GordianCoreWrapper(theFactory, (GordianCoreCipher<GordianSymKeySpec>) pBlockCipher);
+    protected GordianWrapper createKeyWrapper(final GordianKey<GordianSymKeySpec> pKey,
+                                              final GordianCoreCipher<GordianSymKeySpec> pBlockCipher) {
+        return new GordianCoreWrapper(theFactory, pKey, pBlockCipher);
     }
 
     /**
@@ -273,26 +278,6 @@ public abstract class GordianCoreCipherFactory
     }
 
     /**
-     * Check SymKeyType.
-     * @param pKeyType the symKeyType
-     * @return true/false
-     */
-    public boolean validSymKeyType(final GordianSymKeyType pKeyType) {
-        return pKeyType != null;
-    }
-
-    /**
-     * Check SymKeyType.
-     * @param pKeyType the symKeyType
-     * @param pKeyLen the keyLength
-     * @return true/false
-     */
-    public static boolean validSymKeyTypeForKeyLength(final GordianSymKeyType pKeyType,
-                                                      final GordianLength pKeyLen) {
-        return pKeyType.validForKeyLength(pKeyLen);
-    }
-
-    /**
      * Check StreamCipherSpec.
      * @param pCipherSpec the streamCipherSpec
      * @return true/false
@@ -325,62 +310,32 @@ public abstract class GordianCoreCipherFactory
     }
 
     /**
-     * Check standard block symKeyType.
-     * @param pKeyType the symKeyType
-     * @param pKeyLen the keyLength
-     * @return true/false
-     */
-    public static boolean validStdBlockSymKeyTypeForKeyLength(final GordianSymKeyType pKeyType,
-                                                              final GordianLength pKeyLen) {
-        return validSymKeyTypeForKeyLength(pKeyType, pKeyLen)
-                && pKeyType.getDefaultBlockLength().equals(GordianLength.LEN_128);
-    }
-
-    /**
-     * Obtain Identifier for CipherSpec.
+     * Obtain Identifier for cipherSpec.
      * @param pSpec the cipherSpec.
      * @return the Identifier
      */
-    public AlgorithmIdentifier getIdentifierForSpec(final GordianSymCipherSpec pSpec) {
-        return getAlgorithmIds().getIdentifierForSpec(pSpec);
+    public AlgorithmIdentifier getIdentifierForSpec(final GordianCipherSpec<?> pSpec) {
+        return getCipherAlgIds().getIdentifierForSpec(pSpec);
     }
 
     /**
-     * Obtain CipherSpec for Identifier.
+     * Obtain cipherSpec for Identifier.
      * @param pIdentifier the identifier.
      * @return the cipherSpec (or null if not found)
      */
-    public GordianSymCipherSpec getSymSpecForIdentifier(final AlgorithmIdentifier pIdentifier) {
-        return getAlgorithmIds().getSymSpecForIdentifier(pIdentifier);
-    }
-
-    /**
-     * Obtain Identifier for CipherSpec.
-     * @param pSpec the cipherSpec.
-     * @return the Identifier
-     */
-    public AlgorithmIdentifier getIdentifierForSpec(final GordianStreamCipherSpec pSpec) {
-        return getAlgorithmIds().getIdentifierForSpec(pSpec);
-    }
-
-    /**
-     * Obtain CipherSpec for Identifier.
-     * @param pIdentifier the identifier.
-     * @return the cipherSpec (or null if not found)
-     */
-    public GordianStreamCipherSpec getStreamSpecForIdentifier(final AlgorithmIdentifier pIdentifier) {
-        return getAlgorithmIds().getStreamSpecForIdentifier(pIdentifier);
+    public GordianCipherSpec<?> getCipherSpecForIdentifier(final AlgorithmIdentifier pIdentifier) {
+        return getCipherAlgIds().getCipherSpecForIdentifier(pIdentifier);
     }
 
     /**
      * Obtain the cipher algorithm Ids.
      * @return the cipher Algorithm Ids
      */
-    private GordianCipherAlgId getAlgorithmIds() {
-        if (theAlgIds == null) {
-            theAlgIds = new GordianCipherAlgId(theFactory);
+    private GordianCipherAlgId getCipherAlgIds() {
+        if (theCipherAlgIds == null) {
+            theCipherAlgIds = new GordianCipherAlgId(theFactory);
         }
-        return theAlgIds;
+        return theCipherAlgIds;
     }
 
     /**

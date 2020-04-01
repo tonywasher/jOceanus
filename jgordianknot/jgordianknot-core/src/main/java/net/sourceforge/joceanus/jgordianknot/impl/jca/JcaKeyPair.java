@@ -19,12 +19,13 @@ package net.sourceforge.joceanus.jgordianknot.impl.jca;
 import java.security.PrivateKey;
 import java.security.PublicKey;
 
+import org.bouncycastle.pqc.jcajce.interfaces.LMSPrivateKey;
 import org.bouncycastle.pqc.jcajce.interfaces.XMSSMTPrivateKey;
 import org.bouncycastle.pqc.jcajce.interfaces.XMSSPrivateKey;
 
 import net.sourceforge.joceanus.jgordianknot.api.asym.GordianAsymKeySpec;
-import net.sourceforge.joceanus.jgordianknot.api.factory.GordianParameters;
 import net.sourceforge.joceanus.jgordianknot.api.key.GordianStateAwareKeyPair;
+import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianCoreFactory;
 import net.sourceforge.joceanus.jgordianknot.impl.core.keypair.GordianCoreKeyPair;
 import net.sourceforge.joceanus.jgordianknot.impl.core.keypair.GordianPrivateKey;
 import net.sourceforge.joceanus.jgordianknot.impl.core.keypair.GordianPublicKey;
@@ -121,7 +122,7 @@ public class JcaKeyPair
 
         @Override
         public int hashCode() {
-            return GordianParameters.HASH_PRIME * getKeySpec().hashCode()
+            return GordianCoreFactory.HASH_PRIME * getKeySpec().hashCode()
                     + theKey.hashCode();
         }
     }
@@ -180,7 +181,7 @@ public class JcaKeyPair
 
         @Override
         public int hashCode() {
-            return GordianParameters.HASH_PRIME * getKeySpec().hashCode()
+            return GordianCoreFactory.HASH_PRIME * getKeySpec().hashCode()
                     + theKey.hashCode();
         }
     }
@@ -216,6 +217,9 @@ public class JcaKeyPair
          * @return the number of signatures remaining
          */
         public long getUsagesRemaining() {
+            if (thePrivateKey instanceof LMSPrivateKey) {
+                return ((LMSPrivateKey) getPrivateKey()).getUsagesRemaining();
+            }
             if (thePrivateKey instanceof XMSSMTPrivateKey) {
                 return ((XMSSMTPrivateKey) getPrivateKey()).getUsagesRemaining();
             }
@@ -230,6 +234,9 @@ public class JcaKeyPair
          * @return the keyShard
          */
         public JcaStateAwarePrivateKey getKeyShard(final int pNumUsages) {
+            if (thePrivateKey instanceof LMSPrivateKey) {
+                return new JcaStateAwarePrivateKey(getKeySpec(), ((LMSPrivateKey) getPrivateKey()).extractKeyShard(pNumUsages));
+            }
             if (thePrivateKey instanceof XMSSMTPrivateKey) {
                 return new JcaStateAwarePrivateKey(getKeySpec(), ((XMSSMTPrivateKey) getPrivateKey()).extractKeyShard(pNumUsages));
             }
@@ -263,7 +270,7 @@ public class JcaKeyPair
 
         @Override
         public int hashCode() {
-            return GordianParameters.HASH_PRIME * getKeySpec().hashCode()
+            return GordianCoreFactory.HASH_PRIME * getKeySpec().hashCode()
                     + thePrivateKey.hashCode();
         }
     }

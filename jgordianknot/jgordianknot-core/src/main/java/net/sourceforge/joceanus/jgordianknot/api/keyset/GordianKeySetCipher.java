@@ -28,5 +28,4 @@ public interface GordianKeySetCipher
      * @return the keySet
      */
     GordianKeySet getKeySet();
-
 }

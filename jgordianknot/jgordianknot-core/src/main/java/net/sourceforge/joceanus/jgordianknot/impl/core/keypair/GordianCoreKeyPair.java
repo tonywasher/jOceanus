@@ -17,8 +17,8 @@
 package net.sourceforge.joceanus.jgordianknot.impl.core.keypair;
 
 import net.sourceforge.joceanus.jgordianknot.api.asym.GordianAsymKeySpec;
-import net.sourceforge.joceanus.jgordianknot.api.factory.GordianParameters;
 import net.sourceforge.joceanus.jgordianknot.api.key.GordianKeyPair;
+import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianCoreFactory;
 
 /**
  * KeyPair implementation.
@@ -130,9 +130,9 @@ public abstract class GordianCoreKeyPair
         int myHash = isPublicOnly()
                      ? 1
                      : thePrivateKey.hashCode();
-        myHash *= GordianParameters.HASH_PRIME;
+        myHash *= GordianCoreFactory.HASH_PRIME;
         myHash += getKeySpec().hashCode();
-        myHash *= GordianParameters.HASH_PRIME;
+        myHash *= GordianCoreFactory.HASH_PRIME;
         return myHash + thePublicKey.hashCode();
     }
 }

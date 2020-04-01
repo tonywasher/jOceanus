@@ -24,15 +24,15 @@ import org.bouncycastle.asn1.pkcs.PrivateKeyInfo;
 import org.bouncycastle.asn1.x509.SubjectPublicKeyInfo;
 import org.bouncycastle.crypto.AsymmetricCipherKeyPair;
 import org.bouncycastle.crypto.params.AsymmetricKeyParameter;
-import org.bouncycastle.crypto.patch.utils.PqcPrivateKeyFactory;
-import org.bouncycastle.crypto.patch.utils.PqcPrivateKeyInfoFactory;
-import org.bouncycastle.crypto.patch.utils.PqcPublicKeyFactory;
-import org.bouncycastle.crypto.patch.utils.PqcSubjectPublicKeyInfoFactory;
 import org.bouncycastle.pqc.crypto.qtesla.QTESLAKeyGenerationParameters;
 import org.bouncycastle.pqc.crypto.qtesla.QTESLAKeyPairGenerator;
 import org.bouncycastle.pqc.crypto.qtesla.QTESLAPrivateKeyParameters;
 import org.bouncycastle.pqc.crypto.qtesla.QTESLAPublicKeyParameters;
 import org.bouncycastle.pqc.crypto.qtesla.QTESLASigner;
+import org.bouncycastle.pqc.crypto.util.PrivateKeyFactory;
+import org.bouncycastle.pqc.crypto.util.PrivateKeyInfoFactory;
+import org.bouncycastle.pqc.crypto.util.PublicKeyFactory;
+import org.bouncycastle.pqc.crypto.util.SubjectPublicKeyInfoFactory;
 
 import net.sourceforge.joceanus.jgordianknot.api.asym.GordianAsymKeySpec;
 import net.sourceforge.joceanus.jgordianknot.api.key.GordianKeyPair;
@@ -146,7 +146,7 @@ public final class BouncyQTESLAAsymKey {
             try {
                 final BouncyQTESLAPrivateKey myPrivateKey = (BouncyQTESLAPrivateKey) getPrivateKey(pKeyPair);
                 final QTESLAPrivateKeyParameters myParms = myPrivateKey.getPrivateKey();
-                final PrivateKeyInfo myInfo = PqcPrivateKeyInfoFactory.createPrivateKeyInfo(myParms, null);
+                final PrivateKeyInfo myInfo = PrivateKeyInfoFactory.createPrivateKeyInfo(myParms, null);
                 return new PKCS8EncodedKeySpec(myInfo.getEncoded());
             } catch (IOException e) {
                 throw new GordianCryptoException(ERROR_PARSE, e);
@@ -160,7 +160,7 @@ public final class BouncyQTESLAAsymKey {
                 checkKeySpec(pPrivateKey);
                 final BouncyQTESLAPublicKey myPublic = derivePublicKey(pPublicKey);
                 final PrivateKeyInfo myInfo = PrivateKeyInfo.getInstance(pPrivateKey.getEncoded());
-                final QTESLAPrivateKeyParameters myParms = (QTESLAPrivateKeyParameters) PqcPrivateKeyFactory.createKey(myInfo);
+                final QTESLAPrivateKeyParameters myParms = (QTESLAPrivateKeyParameters) PrivateKeyFactory.createKey(myInfo);
                 final BouncyQTESLAPrivateKey myPrivate = new BouncyQTESLAPrivateKey(getKeySpec(), myParms);
                 return new BouncyKeyPair(myPublic, myPrivate);
             } catch (IOException e) {
@@ -173,7 +173,7 @@ public final class BouncyQTESLAAsymKey {
             try {
                 final BouncyQTESLAPublicKey myPublicKey = (BouncyQTESLAPublicKey) getPublicKey(pKeyPair);
                 final QTESLAPublicKeyParameters myParms = myPublicKey.getPublicKey();
-                final SubjectPublicKeyInfo myInfo = PqcSubjectPublicKeyInfoFactory.createSubjectPublicKeyInfo(myParms);
+                final SubjectPublicKeyInfo myInfo = SubjectPublicKeyInfoFactory.createSubjectPublicKeyInfo(myParms);
                 return new X509EncodedKeySpec(myInfo.getEncoded());
             } catch (IOException e) {
                 throw new GordianCryptoException(ERROR_PARSE, e);
@@ -196,7 +196,7 @@ public final class BouncyQTESLAAsymKey {
             try {
                 checkKeySpec(pEncodedKey);
                 final SubjectPublicKeyInfo myInfo = SubjectPublicKeyInfo.getInstance(pEncodedKey.getEncoded());
-                final QTESLAPublicKeyParameters myParms = (QTESLAPublicKeyParameters) PqcPublicKeyFactory.createKey(myInfo);
+                final QTESLAPublicKeyParameters myParms = (QTESLAPublicKeyParameters) PublicKeyFactory.createKey(myInfo);
                 return new BouncyQTESLAPublicKey(getKeySpec(), myParms);
             } catch (IOException e) {
                 throw new GordianCryptoException(ERROR_PARSE, e);

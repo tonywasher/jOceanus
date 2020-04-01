@@ -25,6 +25,8 @@ import net.sourceforge.joceanus.jgordianknot.api.agree.GordianAgreementFactory;
 import net.sourceforge.joceanus.jgordianknot.api.agree.GordianAgreementSpec;
 import net.sourceforge.joceanus.jgordianknot.api.asym.GordianAsymKeySpec;
 import net.sourceforge.joceanus.jgordianknot.api.asym.GordianAsymKeyType;
+import net.sourceforge.joceanus.jgordianknot.api.asym.GordianLMSKeySpec;
+import net.sourceforge.joceanus.jgordianknot.api.asym.GordianXMSSKeySpec;
 import net.sourceforge.joceanus.jgordianknot.api.encrypt.GordianEncryptorFactory;
 import net.sourceforge.joceanus.jgordianknot.api.encrypt.GordianEncryptorSpec;
 import net.sourceforge.joceanus.jgordianknot.api.factory.GordianAsymFactory;
@@ -653,6 +655,31 @@ class AsymmetricStore {
         final GordianAsymFactory myFactory = pFactory.getAsymmetricFactory();
         List<GordianAsymKeySpec> mySpecs = myFactory.listAllSupportedAsymSpecs(pKeyType);
         for (GordianAsymKeySpec myKeySpec : mySpecs) {
+            /* If the keyType is LMS */
+            if (pKeyType == GordianAsymKeyType.LMS) {
+                /* Access the keySpec */
+                GordianLMSKeySpec myLMSSpec = myKeySpec.getLMSKeySpec();
+                if (myLMSSpec == null) {
+                    myLMSSpec = myKeySpec.getHSSKeySpec().getKeySpec();
+                }
+
+                /* Ignore high configs for performance */
+                if (myLMSSpec.isHigh()) {
+                    continue;
+                }
+            }
+
+            /* If the keyType is XMSS */
+            if (pKeyType == GordianAsymKeyType.XMSS) {
+                /* Access the keySpec */
+                GordianXMSSKeySpec myXMSSSpec = myKeySpec.getXMSSKeySpec();
+
+                /* Ignore high configs for performance */
+                if (myXMSSSpec.isHigh()) {
+                    continue;
+                }
+            }
+
             /* Add the keySpec */
             myResult.add(new FactoryKeySpec(pFactory, pPartner, myKeySpec));
 
@@ -685,8 +712,7 @@ class AsymmetricStore {
             return;
         }
 
-        /* Access keyPair and loop through the possible signatures */
-        final GordianKeyPair myKeyPair = pKeySpec.getKeyPairs().getKeyPair();
+        /* Loop through the possible signatures */
         for (GordianSignatureSpec mySign : mySignSpecs) {
             /* If we are testing a single sigType, make sure this is the right one */
             if (theSigType != null
@@ -695,7 +721,7 @@ class AsymmetricStore {
             }
 
             /* Add the signature if it is supported */
-            if (mySignFactory.validSignatureSpecForKeyPair(myKeyPair, mySign)) {
+            if (mySignFactory.validSignatureSpecForKeySpec(pKeySpec.getKeySpec(), mySign)) {
                 myResult.add(new FactorySignature(pKeySpec, mySign));
             }
         }
@@ -720,11 +746,10 @@ class AsymmetricStore {
             return;
         }
 
-        /* Access keyPair and loop through the possible agreements */
-        final GordianKeyPair myKeyPair = pKeySpec.getKeyPairs().getKeyPair();
+        /* Loop through the possible agreements */
         for (GordianAgreementSpec myAgree : myAgreeSpecs) {
             /* Add the agreement if it is supported */
-            if (myAgreeFactory.validAgreementSpecForKeyPair(myKeyPair, myAgree)) {
+            if (myAgreeFactory.validAgreementSpecForKeySpec(pKeySpec.getKeySpec(), myAgree)) {
                 myResult.add(new FactoryAgreement(pKeySpec, myAgree));
             }
         }
@@ -749,11 +774,10 @@ class AsymmetricStore {
             return;
         }
 
-        /* Access keyPair and loop through the possible encryptors */
-        final GordianKeyPair myKeyPair = pKeySpec.getKeyPairs().getKeyPair();
+        /* Loop through the possible encryptors */
         for (GordianEncryptorSpec myEncrypt : mySpecs) {
             /* Add the encryptor if it is supported */
-            if (myEncryptFactory.validEncryptorSpecForKeyPair(myKeyPair, myEncrypt)) {
+            if (myEncryptFactory.validEncryptorSpecForKeySpec(pKeySpec.getKeySpec(), myEncrypt)) {
                 myResult.add(new FactoryEncryptor(pKeySpec, myEncrypt));
             }
         }

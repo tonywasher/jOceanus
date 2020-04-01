@@ -276,7 +276,7 @@ public final class BouncyDSTUAsymKey {
             /* Protect against exceptions */
             try {
                 /* Access the bytes */
-                final byte[] bytes = ((ASN1OctetString) ASN1OctetString.fromByteArray(pEncoded)).getOctets();
+                final byte[] bytes = ((ASN1OctetString) ASN1Primitive.fromByteArray(pEncoded)).getOctets();
 
                 /* Build the value arrays */
                 final byte[] myFirst = new byte[bytes.length / 2];

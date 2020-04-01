@@ -46,6 +46,11 @@ public final class BouncySymKeyCipher
     private final BufferedBlockCipher theCipher;
 
     /**
+     * is the cipher encrypting?
+     */
+    private boolean isEncrypting;
+
+    /**
      * Constructor.
      * @param pFactory the Security Factory
      * @param pCipherSpec the cipherSpec
@@ -78,6 +83,7 @@ public final class BouncySymKeyCipher
         /* Initialise the cipher */
         final CipherParameters myParms = generateParameters(myKey, getInitVector());
         theCipher.init(pEncrypt, myParms);
+        isEncrypting = pEncrypt;
     }
 
     /**
@@ -152,5 +158,32 @@ public final class BouncySymKeyCipher
     public int getBlockSize() {
         return getCipherSpec().getCipherMode().hasPadding()
                ? theCipher.getBlockSize() : 0;
+    }
+
+    @Override
+    public boolean equals(final Object pThat) {
+        /* Handle trivial cases */
+        if (this == pThat) {
+            return true;
+        }
+        if (pThat == null) {
+            return false;
+        }
+
+        /* Make sure that the classes are the same */
+        if (!(pThat instanceof BouncySymKeyCipher)) {
+            return false;
+        }
+        final BouncySymKeyCipher myThat = (BouncySymKeyCipher) pThat;
+
+        /* Check that the fields are equal */
+        return isEncrypting == myThat.isEncrypting
+                && super.equals(myThat);
+    }
+
+    @Override
+    public int hashCode() {
+        return super.hashCode()
+                + (isEncrypting ? 1 : 0);
     }
 }

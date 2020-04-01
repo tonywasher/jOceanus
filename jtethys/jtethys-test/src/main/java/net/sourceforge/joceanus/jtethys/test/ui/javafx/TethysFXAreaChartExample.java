@@ -61,14 +61,6 @@ public class TethysFXAreaChartExample extends Application {
     private final Map<String, TethysAreaChartSeries> theSeriesMap;
 
     /**
-     * Main entry point.
-     * @param args the parameters
-     */
-    public static void main(final String[] args) {
-        launch(args);
-    }
-
-    /**
      * Constructor.
      */
     public TethysFXAreaChartExample() {
@@ -168,7 +160,7 @@ public class TethysFXAreaChartExample extends Application {
      * @param pDate the date
      * @return the epoch
      */
-    private long dateToEpoch(final TethysDate pDate) {
+    private static long dateToEpoch(final TethysDate pDate) {
         return pDate.getDate().toEpochDay();
     }
 }

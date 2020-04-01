@@ -19,8 +19,8 @@ package net.sourceforge.joceanus.jgordianknot.impl.bc;
 import org.bouncycastle.crypto.params.AsymmetricKeyParameter;
 
 import net.sourceforge.joceanus.jgordianknot.api.asym.GordianAsymKeySpec;
-import net.sourceforge.joceanus.jgordianknot.api.factory.GordianParameters;
 import net.sourceforge.joceanus.jgordianknot.api.key.GordianStateAwareKeyPair;
+import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianCoreFactory;
 import net.sourceforge.joceanus.jgordianknot.impl.core.keypair.GordianCoreKeyPair;
 import net.sourceforge.joceanus.jgordianknot.impl.core.keypair.GordianPrivateKey;
 import net.sourceforge.joceanus.jgordianknot.impl.core.keypair.GordianPublicKey;
@@ -34,7 +34,7 @@ public class BouncyKeyPair
      * Constructor.
      * @param pPublic the public key
      */
-    protected BouncyKeyPair(final BouncyPublicKey pPublic) {
+    protected BouncyKeyPair(final BouncyPublicKey<?> pPublic) {
         this(pPublic, null);
     }
 
@@ -50,12 +50,12 @@ public class BouncyKeyPair
 
     @Override
     public BouncyPublicKey<?> getPublicKey() {
-        return (BouncyPublicKey) super.getPublicKey();
+        return (BouncyPublicKey<?>) super.getPublicKey();
     }
 
     @Override
     public BouncyPrivateKey<?> getPrivateKey() {
-        return (BouncyPrivateKey) super.getPrivateKey();
+        return (BouncyPrivateKey<?>) super.getPrivateKey();
     }
 
     @Override
@@ -125,7 +125,7 @@ public class BouncyKeyPair
 
         @Override
         public int hashCode() {
-            return GordianParameters.HASH_PRIME * getKeySpec().hashCode()
+            return GordianCoreFactory.HASH_PRIME * getKeySpec().hashCode()
                     + theKey.hashCode();
         }
     }
@@ -192,7 +192,7 @@ public class BouncyKeyPair
 
         @Override
         public int hashCode() {
-            return GordianParameters.HASH_PRIME * getKeySpec().hashCode()
+            return GordianCoreFactory.HASH_PRIME * getKeySpec().hashCode()
                     + theKey.hashCode();
         }
     }
@@ -262,7 +262,7 @@ public class BouncyKeyPair
 
         @Override
         public int hashCode() {
-            return GordianParameters.HASH_PRIME * getKeySpec().hashCode()
+            return GordianCoreFactory.HASH_PRIME * getKeySpec().hashCode()
                     + thePrivateKey.hashCode();
         }
     }
@@ -285,7 +285,7 @@ public class BouncyKeyPair
 
         @Override
         public BouncyStateAwarePrivateKey<?> getPrivateKey() {
-            return (BouncyStateAwarePrivateKey) super.getPrivateKey();
+            return (BouncyStateAwarePrivateKey<?>) super.getPrivateKey();
         }
 
         @Override

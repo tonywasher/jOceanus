@@ -136,6 +136,7 @@ public class GordianKeySetHashSpec {
         return (theKIterations >= MINIMUM_ITERATIONS
                 && theKIterations <= MAXIMUM_ITERATIONS);
     }
+
     @Override
     public boolean equals(final Object pThat) {
         /* Handle the trivial cases */

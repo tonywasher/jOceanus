@@ -22,10 +22,8 @@ import java.security.NoSuchAlgorithmException;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.bouncycastle.math.ec.rfc7748.X25519;
-import org.bouncycastle.math.ec.rfc7748.X448;
-
 import net.sourceforge.joceanus.jgordianknot.api.asym.GordianAsymKeySpec;
+import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianCoreFactory;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianCryptoException;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianDataException;
 import net.sourceforge.joceanus.jgordianknot.impl.core.keypair.GordianCoreAsymFactory;
@@ -34,6 +32,7 @@ import net.sourceforge.joceanus.jgordianknot.impl.jca.JcaKeyPairGenerator.JcaDHK
 import net.sourceforge.joceanus.jgordianknot.impl.jca.JcaKeyPairGenerator.JcaDSAKeyPairGenerator;
 import net.sourceforge.joceanus.jgordianknot.impl.jca.JcaKeyPairGenerator.JcaECKeyPairGenerator;
 import net.sourceforge.joceanus.jgordianknot.impl.jca.JcaKeyPairGenerator.JcaEdKeyPairGenerator;
+import net.sourceforge.joceanus.jgordianknot.impl.jca.JcaKeyPairGenerator.JcaLMSKeyPairGenerator;
 import net.sourceforge.joceanus.jgordianknot.impl.jca.JcaKeyPairGenerator.JcaMcElieceKeyPairGenerator;
 import net.sourceforge.joceanus.jgordianknot.impl.jca.JcaKeyPairGenerator.JcaNewHopeKeyPairGenerator;
 import net.sourceforge.joceanus.jgordianknot.impl.jca.JcaKeyPairGenerator.JcaQTESLAKeyPairGenerator;
@@ -126,10 +125,8 @@ public class JcaAsymFactory
                 return new JcaECKeyPairGenerator(getFactory(), pKeySpec);
             case DSA:
                 return new JcaDSAKeyPairGenerator(getFactory(), pKeySpec);
-            case X25519:
-            case X448:
-            case ED25519:
-            case ED448:
+            case XDH:
+            case EDDSA:
                 return new JcaEdKeyPairGenerator(getFactory(), pKeySpec);
             case DH:
                 return new JcaDHKeyPairGenerator(getFactory(), pKeySpec);
@@ -142,12 +139,13 @@ public class JcaAsymFactory
             case NEWHOPE:
                 return new JcaNewHopeKeyPairGenerator(getFactory(), pKeySpec);
             case XMSS:
-            case XMSSMT:
                 return new JcaXMSSKeyPairGenerator(getFactory(), pKeySpec);
             case QTESLA:
                 return new JcaQTESLAKeyPairGenerator(getFactory(), pKeySpec);
+            case LMS:
+                return new JcaLMSKeyPairGenerator(getFactory(), pKeySpec);
             default:
-                throw new GordianDataException(JcaFactory.getInvalidText(pKeySpec.getKeyType()));
+                throw new GordianDataException(GordianCoreFactory.getInvalidText(pKeySpec.getKeyType()));
         }
     }
 

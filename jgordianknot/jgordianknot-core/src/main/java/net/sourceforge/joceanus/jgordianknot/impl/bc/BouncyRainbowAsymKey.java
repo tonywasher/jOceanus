@@ -48,7 +48,7 @@ import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianCryptoExcepti
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
- * RSA AsymKey classes.
+ * Rainbow AsymKey classes.
  */
 public final class BouncyRainbowAsymKey {
     /**

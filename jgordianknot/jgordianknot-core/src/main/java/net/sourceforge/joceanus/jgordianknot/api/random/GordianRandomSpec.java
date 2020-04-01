@@ -212,7 +212,8 @@ public class GordianRandomSpec {
             case HMAC:
             case HASH:
                 return theSubSpec instanceof GordianDigestSpec
-                        && ((GordianDigestSpec) theSubSpec).isValid();
+                        && ((GordianDigestSpec) theSubSpec).isValid()
+                        && ((GordianDigestSpec) theSubSpec).getDigestType().supportsLargeData();
             case CTR:
             case X931:
                 return theSubSpec instanceof GordianSymKeySpec

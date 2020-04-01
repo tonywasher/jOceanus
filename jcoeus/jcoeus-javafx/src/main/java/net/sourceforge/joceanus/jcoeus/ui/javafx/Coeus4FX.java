@@ -86,12 +86,4 @@ public class Coeus4FX
             pStage.setOnCloseRequest(e -> thePanel.handleAppClose());
         }
     }
-
-    /**
-     * Main function.
-     * @param args the arguments
-     */
-    public static void main(final String[] args) {
-        launch(args);
-    }
 }

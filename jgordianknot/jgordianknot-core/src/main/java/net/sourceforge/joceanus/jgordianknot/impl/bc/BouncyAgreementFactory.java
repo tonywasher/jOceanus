@@ -26,14 +26,15 @@ import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyEllipticAsymKey.Bounc
 import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyEllipticAsymKey.BouncyECBasicAgreement;
 import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyEllipticAsymKey.BouncyECIESAgreement;
 import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyEllipticAsymKey.BouncyECMQVAgreement;
-import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyEllipticAsymKey.BouncyECSM2Agreement;
 import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyEllipticAsymKey.BouncyECUnifiedAgreement;
 import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyNewHopeAsymKey.BouncyNewHopeAgreement;
 import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyRSAAsymKey.BouncyRSAEncapsulationAgreement;
+import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncySM2AsymKey.BouncyECSM2Agreement;
 import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyXDHAsymKey.BouncyXDHAnonymousAgreement;
 import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyXDHAsymKey.BouncyXDHBasicAgreement;
 import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyXDHAsymKey.BouncyXDHUnifiedAgreement;
 import net.sourceforge.joceanus.jgordianknot.impl.core.agree.GordianCoreAgreementFactory;
+import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianCoreFactory;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianDataException;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
@@ -86,11 +87,10 @@ public class BouncyAgreementFactory
                 return getBCDHAgreement(pSpec);
             case NEWHOPE:
                 return new BouncyNewHopeAgreement(getFactory(), pSpec);
-            case X25519:
-            case X448:
+            case XDH:
                 return getBCXDHAgreement(pSpec);
             default:
-                throw new GordianDataException(BouncyFactory.getInvalidText(pSpec));
+                throw new GordianDataException(GordianCoreFactory.getInvalidText(pSpec));
         }
     }
 
@@ -116,7 +116,7 @@ public class BouncyAgreementFactory
             case SM2:
                 return new BouncyECSM2Agreement(getFactory(), pSpec);
             default:
-                throw new GordianDataException(BouncyFactory.getInvalidText(pSpec));
+                throw new GordianDataException(GordianCoreFactory.getInvalidText(pSpec));
         }
     }
 
@@ -138,7 +138,7 @@ public class BouncyAgreementFactory
             case UNIFIED:
                 return new BouncyDHUnifiedAgreement(getFactory(), pSpec);
             default:
-                throw new GordianDataException(BouncyFactory.getInvalidText(pSpec));
+                throw new GordianDataException(GordianCoreFactory.getInvalidText(pSpec));
         }
     }
 
@@ -158,7 +158,7 @@ public class BouncyAgreementFactory
             case UNIFIED:
                 return new BouncyXDHUnifiedAgreement(getFactory(), pSpec);
             default:
-                throw new GordianDataException(BouncyFactory.getInvalidText(pSpec));
+                throw new GordianDataException(GordianCoreFactory.getInvalidText(pSpec));
         }
     }
 }

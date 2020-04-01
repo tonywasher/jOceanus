@@ -194,6 +194,8 @@ public class GordianCoreZipWriteFile
             /* Create the transformer */
             final TransformerFactory myXformFactory = TransformerFactory.newInstance();
             myXformFactory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
+            myXformFactory.setAttribute(XMLConstants.ACCESS_EXTERNAL_DTD, "");
+            myXformFactory.setAttribute(XMLConstants.ACCESS_EXTERNAL_STYLESHEET, "");
             final Transformer myXformer = myXformFactory.newTransformer();
 
             /* Format the XML and write to stream */

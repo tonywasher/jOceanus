@@ -16,30 +16,24 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jgordianknot.impl.core.agree;
 
-import java.io.IOException;
-import java.util.Enumeration;
-import java.util.Objects;
-
-import org.bouncycastle.asn1.ASN1EncodableVector;
-import org.bouncycastle.asn1.ASN1OctetString;
-import org.bouncycastle.asn1.ASN1Sequence;
-import org.bouncycastle.asn1.DEROctetString;
-import org.bouncycastle.asn1.DERSequence;
-import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
-
 import net.sourceforge.joceanus.jgordianknot.api.agree.GordianAgreementSpec;
-import net.sourceforge.joceanus.jgordianknot.api.agree.GordianBasicAgreement;
+import net.sourceforge.joceanus.jgordianknot.api.agree.GordianAgreementStatus;
+import net.sourceforge.joceanus.jgordianknot.api.agree.GordianHandshakeAgreement;
+import net.sourceforge.joceanus.jgordianknot.api.key.GordianKeyPair;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianCoreFactory;
-import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianDataException;
-import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianIOException;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
- * Basic Agreement.
+ * New Handshake Basic Agreement.
  */
 public abstract class GordianCoreBasicAgreement
         extends GordianCoreAgreement
-        implements GordianBasicAgreement {
+        implements GordianHandshakeAgreement {
+    /**
+     * The client KeyPair.
+     */
+    private GordianKeyPair theClient;
+
     /**
      * Constructor.
      * @param pFactory the factory
@@ -51,65 +45,73 @@ public abstract class GordianCoreBasicAgreement
     }
 
     /**
-     * Create the message.
-     * <pre>
-     * GordianBasicRequest ::= SEQUENCE  {
-     *      id AlgorithmIdentifier
-     *      result AlgorithmIdentifier
-     *      initVector OCTET STRING
-     * }
-     * </pre>
-     * @return the message
-     * @throws OceanusException on error
+     * Obtain the Client keyPair.
+     * @return  the keyPair
      */
-    protected byte[] createMessage() throws OceanusException {
-        /* Build the sequence */
-        try {
-            final GordianCoreAgreementFactory myFactory = getAgreementFactory();
-            final ASN1EncodableVector v = new ASN1EncodableVector();
-            v.add(myFactory.getIdentifierForSpec(getAgreementSpec()));
-            v.add(getIdentifierForResult());
-            v.add(new DEROctetString(newInitVector()));
-            return new DERSequence(v).getEncoded();
+    protected GordianKeyPair getClientKeyPair() {
+        return theClient;
+    }
 
-        } catch (IOException e) {
-            throw new GordianIOException("Unable to build ASN1 sequence", e);
-        }
+    @Override
+    public byte[] createClientHello(final GordianKeyPair pClient) throws OceanusException {
+        /* Check the keyPair */
+        checkKeyPair(pClient);
+
+        /* Store the keyPair */
+        theClient = pClient;
+
+        /* Create the clientHello message */
+        final byte[] myClientHello = buildClientHello();
+
+        /* Set status */
+        setStatus(GordianAgreementStatus.AWAITING_SERVERHELLO);
+
+        /* Return the clientHello */
+        return myClientHello;
     }
 
     /**
-     * Parse the incoming message.
-     * @param pMessage the incoming message
+     * Process the incoming clientHello message request.
+     * @param pServer the server keyPair
+     * @param pClientHello the incoming clientHello message
      * @throws OceanusException on error
      */
-    protected void parseMessage(final byte[] pMessage) throws OceanusException {
-        /* Parse the sequence */
-        try {
-            /* Access the sequence */
-            final ASN1Sequence mySequence = ASN1Sequence.getInstance(pMessage);
-            final Enumeration en = mySequence.getObjects();
+    protected void processClientHello(final GordianKeyPair pServer,
+                                      final byte[] pClientHello) throws OceanusException {
+        /* Check the keyPair */
+        checkKeyPair(pServer);
 
-            /* Access message parts */
-            final AlgorithmIdentifier myAlgId = AlgorithmIdentifier.getInstance(en.nextElement());
-            final AlgorithmIdentifier myResId = AlgorithmIdentifier.getInstance(en.nextElement());
-            final byte[] myInitVector = ASN1OctetString.getInstance(en.nextElement()).getOctets();
+        /* Parse the request */
+        parseClientHello(pClientHello);
 
-            /* Check agreementSpec */
-            final GordianCoreAgreementFactory myFactory = getAgreementFactory();
-            final GordianAgreementSpec mySpec = myFactory.getSpecForIdentifier(myAlgId);
-            if (!Objects.equals(mySpec, getAgreementSpec())) {
-                throw new GordianDataException(ERROR_INVSPEC);
-            }
+        /* Create the new serverIV */
+        newServerIV();
+    }
 
-            /* Process result identifier */
-            processResultIdentifier(myResId);
+    /**
+     * Process the serverHello.
+     * @param pServerHello the serverHello message
+     * @throws OceanusException on error
+     */
+    protected void processServerHello(final byte[] pServerHello) throws OceanusException {
+        /* Parse the server hello */
+        parseServerHello(pServerHello);
+    }
 
-            /* Store initVector */
-            storeInitVector(myInitVector);
+    /**
+     * Build clientConfirm message.
+     * @return the clientConfirm message
+     * @throws OceanusException on error
+     */
+    protected byte[] buildClientConfirm() throws OceanusException {
+        /* There is never a client confirm */
+        return null;
+    }
 
-        } catch (IllegalArgumentException e) {
-            throw new GordianIOException("Unable to parse ASN1 sequence", e);
-        }
+    @Override
+    public void acceptClientConfirm(final byte[] pClientConfirm) throws OceanusException {
+        /* We will never hit this status so this will reject the request */
+        checkStatus(GordianAgreementStatus.AWAITING_CLIENTCONFIRM);
     }
 }
 

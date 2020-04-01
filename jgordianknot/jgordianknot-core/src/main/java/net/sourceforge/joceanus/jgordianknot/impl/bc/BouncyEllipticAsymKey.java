@@ -27,15 +27,12 @@ import org.bouncycastle.asn1.x509.SubjectPublicKeyInfo;
 import org.bouncycastle.asn1.x9.ECNamedCurveTable;
 import org.bouncycastle.asn1.x9.X9ECParameters;
 import org.bouncycastle.crypto.AsymmetricCipherKeyPair;
-import org.bouncycastle.crypto.CryptoException;
 import org.bouncycastle.crypto.DSA;
 import org.bouncycastle.crypto.DerivationFunction;
 import org.bouncycastle.crypto.InvalidCipherTextException;
 import org.bouncycastle.crypto.agreement.ECDHCBasicAgreement;
 import org.bouncycastle.crypto.agreement.ECDHCUnifiedAgreement;
 import org.bouncycastle.crypto.agreement.ECMQVBasicAgreement;
-import org.bouncycastle.crypto.agreement.SM2KeyExchange;
-import org.bouncycastle.crypto.engines.SM2Engine;
 import org.bouncycastle.crypto.ext.engines.EllipticEncryptor;
 import org.bouncycastle.crypto.generators.ECKeyPairGenerator;
 import org.bouncycastle.crypto.kems.ECIESKeyEncapsulation;
@@ -50,9 +47,6 @@ import org.bouncycastle.crypto.params.KeyParameter;
 import org.bouncycastle.crypto.params.MQVPrivateParameters;
 import org.bouncycastle.crypto.params.MQVPublicParameters;
 import org.bouncycastle.crypto.params.ParametersWithRandom;
-import org.bouncycastle.crypto.params.SM2KeyExchangePrivateParameters;
-import org.bouncycastle.crypto.params.SM2KeyExchangePublicParameters;
-import org.bouncycastle.crypto.signers.SM2Signer;
 import org.bouncycastle.crypto.util.PrivateKeyFactory;
 import org.bouncycastle.crypto.util.PrivateKeyInfoFactory;
 import org.bouncycastle.crypto.util.PublicKeyFactory;
@@ -78,7 +72,6 @@ import net.sourceforge.joceanus.jgordianknot.impl.core.agree.GordianCoreEphemera
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianCryptoException;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianLogicException;
 import net.sourceforge.joceanus.jgordianknot.impl.core.encrypt.GordianCoreEncryptor;
-import net.sourceforge.joceanus.jgordianknot.impl.core.sign.GordianCoreSignature;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
@@ -188,11 +181,6 @@ public final class BouncyEllipticAsymKey {
         private final ECKeyPairGenerator theGenerator;
 
         /**
-         * Domain.
-         */
-        private final ECNamedDomainParameters theDomain;
-
-        /**
          * Constructor.
          * @param pFactory the Security Factory
          * @param pKeySpec the keySpec
@@ -218,8 +206,8 @@ public final class BouncyEllipticAsymKey {
 
             /* Initialise the generator */
             final ASN1ObjectIdentifier myOid = ECUtil.getNamedCurveOid(myCurve);
-            theDomain = new ECNamedDomainParameters(myOid, x9.getCurve(), x9.getG(), x9.getN(), x9.getH(), x9.getSeed());
-            final ECKeyGenerationParameters myParams = new ECKeyGenerationParameters(theDomain, getRandom());
+            final ECNamedDomainParameters myDomain = new ECNamedDomainParameters(myOid, x9.getCurve(), x9.getG(), x9.getN(), x9.getH(), x9.getSeed());
+            final ECKeyGenerationParameters myParams = new ECKeyGenerationParameters(myDomain, getRandom());
             theGenerator.init(myParams);
         }
 
@@ -368,102 +356,6 @@ public final class BouncyEllipticAsymKey {
     }
 
     /**
-     * SM2 signature.
-     */
-    public static class BouncySM2Signature
-            extends GordianCoreSignature {
-        /**
-         * The Signer.
-         */
-        private final SM2Signer theSigner;
-
-        /**
-         * Constructor.
-         * @param pFactory the factory
-         * @param pSpec the signatureSpec.
-         * @throws OceanusException on error
-         */
-        BouncySM2Signature(final BouncyFactory pFactory,
-                           final GordianSignatureSpec pSpec) throws OceanusException {
-            /* Initialise underlying class */
-            super(pFactory, pSpec);
-
-            /* Create the signer */
-            theSigner = new SM2Signer();
-        }
-
-        @Override
-        public void update(final byte[] pBytes,
-                           final int pOffset,
-                           final int pLength) {
-            theSigner.update(pBytes, pOffset, pLength);
-        }
-
-        @Override
-        public void update(final byte pByte) {
-            theSigner.update(pByte);
-        }
-
-        @Override
-        public void update(final byte[] pBytes) {
-            theSigner.update(pBytes, 0, pBytes.length);
-        }
-
-        @Override
-        public void reset() {
-            theSigner.reset();
-        }
-
-        @Override
-        protected BouncyKeyPair getKeyPair() {
-            return (BouncyKeyPair) super.getKeyPair();
-        }
-
-        @Override
-        public void initForSigning(final GordianKeyPair pKeyPair) throws OceanusException {
-            /* Initialise detail */
-            super.initForSigning(pKeyPair);
-
-            /* Initialise and set the signer */
-            final BouncyECPrivateKey myPrivate = (BouncyECPrivateKey) getKeyPair().getPrivateKey();
-            final ParametersWithRandom myParms = new ParametersWithRandom(myPrivate.getPrivateKey(), getRandom());
-            theSigner.init(true, myParms);
-        }
-
-        @Override
-        public void initForVerify(final GordianKeyPair pKeyPair) throws OceanusException {
-            /* Initialise detail */
-            super.initForVerify(pKeyPair);
-
-            /* Initialise and set the signer */
-            final BouncyECPublicKey myPublic = (BouncyECPublicKey) getKeyPair().getPublicKey();
-            theSigner.init(false, myPublic.getPublicKey());
-        }
-
-        @Override
-        public byte[] sign() throws OceanusException {
-            /* Check that we are in signing mode */
-            checkMode(GordianSignatureMode.SIGN);
-
-            /* Sign the message */
-            try {
-                return theSigner.generateSignature();
-            } catch (CryptoException e) {
-                throw new GordianCryptoException(BouncySignature.ERROR_SIGGEN, e);
-            }
-        }
-
-        @Override
-        public boolean verify(final byte[] pSignature) throws OceanusException {
-            /* Check that we are in verify mode */
-            checkMode(GordianSignatureMode.VERIFY);
-
-            /* Verify the message */
-            return theSigner.verifySignature(pSignature);
-        }
-    }
-
-    /**
      * ECIES Encapsulation.
      */
     public static class BouncyECIESAgreement
@@ -489,12 +381,12 @@ public final class BouncyEllipticAsymKey {
         }
 
         @Override
-        public byte[] initiateAgreement(final GordianKeyPair pTarget) throws OceanusException {
+        public byte[] createClientHello(final GordianKeyPair pServer) throws OceanusException {
             /* Check keyPair */
-            checkKeyPair(pTarget);
+            checkKeyPair(pServer);
 
             /* initialise Key Encapsulation */
-            final BouncyECPublicKey myPublic = (BouncyECPublicKey) getPublicKey(pTarget);
+            final BouncyECPublicKey myPublic = (BouncyECPublicKey) getPublicKey(pServer);
             theAgreement.init(myPublic.getPublicKey());
 
             /* Determine key length */
@@ -502,26 +394,26 @@ public final class BouncyEllipticAsymKey {
             myFieldSize = (myFieldSize + Byte.SIZE - 1) / Byte.SIZE;
             final int myLen = 2 * myFieldSize + 1;
 
-            /* Create cipherText */
+            /* Create clientHello message */
             final byte[] myData = new byte[myLen];
             final KeyParameter myParms = (KeyParameter) theAgreement.encrypt(myData, 0, myLen);
-            final byte[] myMessage = createMessage(myData);
+            final byte[] myClientHello = buildClientHello(myData);
 
             /* Store secret */
             storeSecret(myParms.getKey());
 
-            /* Create the message  */
-            return myMessage;
+            /* Return the clientHello message  */
+            return myClientHello;
         }
 
         @Override
-        public void acceptAgreement(final GordianKeyPair pSelf,
-                                    final byte[] pMessage) throws OceanusException {
+        public void acceptClientHello(final GordianKeyPair pServer,
+                                      final byte[] pClientHello) throws OceanusException {
             /* Check keyPair */
-            checkKeyPair(pSelf);
+            checkKeyPair(pServer);
 
             /* initialise Key Encapsulation */
-            final BouncyECPrivateKey myPrivate = (BouncyECPrivateKey) getPrivateKey(pSelf);
+            final BouncyECPrivateKey myPrivate = (BouncyECPrivateKey) getPrivateKey(pServer);
             theAgreement.init(myPrivate.getPrivateKey());
 
             /* Determine key length */
@@ -529,8 +421,8 @@ public final class BouncyEllipticAsymKey {
             myFieldSize = (myFieldSize + Byte.SIZE - 1) / Byte.SIZE;
             final int myLen = 2 * myFieldSize + 1;
 
-            /* Parse message */
-            final byte[] myMessage = parseMessage(pMessage);
+            /* Parse clientHello */
+            final byte[] myMessage = parseClientHello(pClientHello);
             final KeyParameter myParms = (KeyParameter) theAgreement.decrypt(myMessage, 0, myMessage.length, myLen);
 
             /* Store secret */
@@ -560,41 +452,43 @@ public final class BouncyEllipticAsymKey {
 
             /* Create the agreement */
             theAgreement = new ECDHCBasicAgreement();
+
+            /* Add in the derivation function */
             enableDerivation();
         }
 
         @Override
-        public byte[] initiateAgreement(final GordianKeyPair pTarget) throws OceanusException {
+        public byte[] createClientHello(final GordianKeyPair pServer) throws OceanusException {
             /* Check keyPair */
-            checkKeyPair(pTarget);
+            checkKeyPair(pServer);
 
             /* Create an ephemeral keyPair */
             final GordianAsymFactory myAsym = getFactory().getAsymmetricFactory();
-            final GordianKeyPairGenerator myGenerator = myAsym.getKeyPairGenerator(pTarget.getKeySpec());
+            final GordianKeyPairGenerator myGenerator = myAsym.getKeyPairGenerator(pServer.getKeySpec());
             final GordianKeyPair myPair = myGenerator.generateKeyPair();
             final BouncyECPrivateKey myPrivate = (BouncyECPrivateKey) getPrivateKey(myPair);
 
-            /* Create the message  */
+            /* Create the request  */
             final X509EncodedKeySpec myKeySpec = myGenerator.getX509Encoding(myPair);
             final byte[] myKeyBytes = myKeySpec.getEncoded();
-            final byte[] myMessage = createMessage(myKeyBytes);
+            final byte[] myClientHello = buildClientHello(myKeyBytes);
 
             /* Derive the secret */
             theAgreement.init(myPrivate.getPrivateKey());
-            final BouncyECPublicKey myTarget = (BouncyECPublicKey) getPublicKey(pTarget);
+            final BouncyECPublicKey myTarget = (BouncyECPublicKey) getPublicKey(pServer);
             final BigInteger mySecret = theAgreement.calculateAgreement(myTarget.getPublicKey());
             storeSecret(BigIntegers.asUnsignedByteArray(theAgreement.getFieldSize(), mySecret));
-            return myMessage;
+            return myClientHello;
         }
 
         @Override
-        public void acceptAgreement(final GordianKeyPair pSelf,
-                                    final byte[] pMessage) throws OceanusException {
+        public void acceptClientHello(final GordianKeyPair pSelf,
+                                      final byte[] pClientHello) throws OceanusException {
             /* Check keyPair */
             checkKeyPair(pSelf);
 
             /* Obtain source keySpec */
-            final byte[] myKeyBytes = parseMessage(pMessage);
+            final byte[] myKeyBytes = parseClientHello(pClientHello);
             final BouncyECPrivateKey myPrivate = (BouncyECPrivateKey) getPrivateKey(pSelf);
             final X509EncodedKeySpec myKeySpec = new X509EncodedKeySpec(myKeyBytes);
             final GordianAsymFactory myAsym = getFactory().getAsymmetricFactory();
@@ -635,42 +529,23 @@ public final class BouncyEllipticAsymKey {
 
             /* Derive the secret */
             theAgreement = new ECDHCBasicAgreement();
+
+            /* Add in the derivation function */
             enableDerivation();
         }
 
         @Override
-        public byte[] initiateAgreement(final GordianKeyPair pSource,
-                                        final GordianKeyPair pTarget) throws OceanusException {
-            /* Check keyPairs */
-            checkKeyPair(pSource);
-            checkKeyPair(pTarget);
-
-            /* Create the message  */
-            final byte[] myMessage = createMessage();
-
-            /* Derive the secret */
-            final BouncyECPrivateKey myPrivate = (BouncyECPrivateKey) getPrivateKey(pSource);
-            theAgreement.init(myPrivate.getPrivateKey());
-            final BouncyECPublicKey myTarget = (BouncyECPublicKey) getPublicKey(pTarget);
-            final BigInteger mySecret = theAgreement.calculateAgreement(myTarget.getPublicKey());
-            storeSecret(BigIntegers.asUnsignedByteArray(theAgreement.getFieldSize(), mySecret));
-
-            /* Return the message  */
-            return myMessage;
-        }
-
-        @Override
-        public void acceptAgreement(final GordianKeyPair pSource,
-                                    final GordianKeyPair pSelf,
-                                    final byte[] pMessage) throws OceanusException {
+        public byte[] acceptClientHello(final GordianKeyPair pClient,
+                                        final GordianKeyPair pServer,
+                                        final byte[] pClientHello) throws OceanusException {
             /* Check keyPair */
-            checkKeyPair(pSource);
-            checkKeyPair(pSelf);
+            checkKeyPair(pClient);
+            checkKeyPair(pServer);
 
-            /* Determine initVector */
-            parseMessage(pMessage);
-            final BouncyECPrivateKey myPrivate = (BouncyECPrivateKey) getPrivateKey(pSelf);
-            final BouncyECPublicKey myPublic = (BouncyECPublicKey) getPublicKey(pSource);
+            /* Process the clientHello */
+            processClientHello(pServer, pClientHello);
+            final BouncyECPrivateKey myPrivate = (BouncyECPrivateKey) getPrivateKey(pServer);
+            final BouncyECPublicKey myPublic = (BouncyECPublicKey) getPublicKey(pClient);
 
             /* Derive the secret */
             theAgreement.init(myPrivate.getPrivateKey());
@@ -678,6 +553,29 @@ public final class BouncyEllipticAsymKey {
 
             /* Store secret */
             storeSecret(BigIntegers.asUnsignedByteArray(theAgreement.getFieldSize(), mySecret));
+
+            /* Return the serverHello */
+            return buildServerHello();
+        }
+
+        @Override
+        public byte[] acceptServerHello(final GordianKeyPair pServer,
+                                        final byte[] pServerHello) throws OceanusException {
+            /* Check keyPair */
+            checkKeyPair(pServer);
+
+            /* process the serverHello */
+            processServerHello(pServerHello);
+            final BouncyPrivateKey<?> myPrivate = (BouncyPrivateKey<?>) getPrivateKey(getClientKeyPair());
+
+            /* Calculate agreement */
+            theAgreement.init(myPrivate.getPrivateKey());
+            final BouncyPublicKey<?> mySrcPublic = (BouncyPublicKey<?>) getPublicKey(pServer);
+            final BigInteger mySecret = theAgreement.calculateAgreement(mySrcPublic.getPublicKey());
+            storeSecret(BigIntegers.asUnsignedByteArray(theAgreement.getFieldSize(), mySecret));
+
+            /* Return confirmation if needed */
+            return buildClientConfirm();
         }
     }
 
@@ -703,58 +601,63 @@ public final class BouncyEllipticAsymKey {
 
             /* Create Key Agreement */
             theAgreement = new ECDHCUnifiedAgreement();
+
+            /* Add in the derivation function */
             enableDerivation();
         }
 
         @Override
-        public byte[] acceptAgreement(final GordianKeyPair pSource,
-                                      final GordianKeyPair pResponder,
-                                      final byte[] pMessage) throws OceanusException {
-            /* process message */
-            final byte[] myResponse = parseMessage(pResponder, pMessage);
+        public byte[] acceptClientHello(final GordianKeyPair pClient,
+                                        final GordianKeyPair pServer,
+                                        final byte[] pClientHello) throws OceanusException {
+            /* process clientHello */
+            processClientHello(pClient, pServer, pClientHello);
 
             /* Initialise agreement */
-            final BouncyECPrivateKey myPrivate = (BouncyECPrivateKey) getPrivateKey(pResponder);
-            final BouncyECPrivateKey myEphPrivate = (BouncyECPrivateKey) getPrivateKey(getEphemeralKeyPair());
-            final BouncyECPublicKey myEphPublic = (BouncyECPublicKey) getPublicKey(getEphemeralKeyPair());
+            final BouncyECPrivateKey myPrivate = (BouncyECPrivateKey) getPrivateKey(pServer);
+            final BouncyECPrivateKey myEphPrivate = (BouncyECPrivateKey) getPrivateKey(getServerEphemeralKeyPair());
+            final BouncyECPublicKey myEphPublic = (BouncyECPublicKey) getPublicKey(getServerEphemeralKeyPair());
             final ECDHUPrivateParameters myPrivParams = new ECDHUPrivateParameters(myPrivate.getPrivateKey(),
                     myEphPrivate.getPrivateKey(), myEphPublic.getPublicKey());
             theAgreement.init(myPrivParams);
 
             /* Calculate agreement */
-            final BouncyECPublicKey mySrcPublic = (BouncyECPublicKey) getPublicKey(pSource);
-            final BouncyECPublicKey mySrcEphPublic = (BouncyECPublicKey) getPublicKey(getPartnerEphemeralKeyPair());
+            final BouncyECPublicKey mySrcPublic = (BouncyECPublicKey) getPublicKey(pClient);
+            final BouncyECPublicKey mySrcEphPublic = (BouncyECPublicKey) getPublicKey(getClientEphemeralKeyPair());
             final ECDHUPublicParameters myPubParams = new ECDHUPublicParameters(mySrcPublic.getPublicKey(),
                     mySrcEphPublic.getPublicKey());
             storeSecret(theAgreement.calculateAgreement(myPubParams));
 
-            /* Return the response */
-            return myResponse;
+            /* Return the serverHello */
+            return buildServerHello();
         }
 
         @Override
-        public void confirmAgreement(final GordianKeyPair pResponder,
-                                     final byte[] pMessage) throws OceanusException {
+        public byte[] acceptServerHello(final GordianKeyPair pServer,
+                                        final byte[] pServerHello) throws OceanusException {
             /* Check keyPair */
-            checkKeyPair(pResponder);
+            checkKeyPair(pServer);
 
-            /* parse the ephemeral message */
-            parseEphemeral(pMessage);
+            /* process the serverHello */
+            processServerHello(pServer, pServerHello);
 
             /* Initialise agreement */
-            final BouncyECPrivateKey myPrivate = (BouncyECPrivateKey) getPrivateKey(getOwnerKeyPair());
-            final BouncyECPrivateKey myEphPrivate = (BouncyECPrivateKey) getPrivateKey(getEphemeralKeyPair());
-            final BouncyECPublicKey myEphPublic = (BouncyECPublicKey) getPublicKey(getEphemeralKeyPair());
+            final BouncyECPrivateKey myPrivate = (BouncyECPrivateKey) getPrivateKey(getClientKeyPair());
+            final BouncyECPrivateKey myEphPrivate = (BouncyECPrivateKey) getPrivateKey(getClientEphemeralKeyPair());
+            final BouncyECPublicKey myEphPublic = (BouncyECPublicKey) getPublicKey(getClientEphemeralKeyPair());
             final ECDHUPrivateParameters myPrivParams = new ECDHUPrivateParameters(myPrivate.getPrivateKey(),
                     myEphPrivate.getPrivateKey(), myEphPublic.getPublicKey());
             theAgreement.init(myPrivParams);
 
             /* Calculate agreement */
-            final BouncyECPublicKey mySrcPublic = (BouncyECPublicKey) getPublicKey(pResponder);
-            final BouncyECPublicKey mySrcEphPublic = (BouncyECPublicKey) getPublicKey(getPartnerEphemeralKeyPair());
+            final BouncyECPublicKey mySrcPublic = (BouncyECPublicKey) getPublicKey(pServer);
+            final BouncyECPublicKey mySrcEphPublic = (BouncyECPublicKey) getPublicKey(getServerEphemeralKeyPair());
             final ECDHUPublicParameters myPubParams = new ECDHUPublicParameters(mySrcPublic.getPublicKey(),
                     mySrcEphPublic.getPublicKey());
             storeSecret(theAgreement.calculateAgreement(myPubParams));
+
+            /* Return confirmation if needed */
+            return buildClientConfirm();
         }
     }
 
@@ -780,140 +683,65 @@ public final class BouncyEllipticAsymKey {
 
             /* Create Key Agreement */
             theAgreement = new ECMQVBasicAgreement();
+
+            /* Add in the derivation function */
             enableDerivation();
         }
 
         @Override
-        public byte[] acceptAgreement(final GordianKeyPair pSource,
-                                      final GordianKeyPair pResponder,
-                                      final byte[] pMessage) throws OceanusException {
-            /* process message */
-            final byte[] myResponse = parseMessage(pResponder, pMessage);
+        public byte[] acceptClientHello(final GordianKeyPair pClient,
+                                        final GordianKeyPair pServer,
+                                        final byte[] pClientHello) throws OceanusException {
+            /* process clientHello */
+            processClientHello(pClient, pServer, pClientHello);
 
             /* Initialise agreement */
-            final BouncyECPrivateKey myPrivate = (BouncyECPrivateKey) getPrivateKey(pResponder);
-            final BouncyECPrivateKey myEphPrivate = (BouncyECPrivateKey) getPrivateKey(getEphemeralKeyPair());
-            final BouncyECPublicKey myEphPublic = (BouncyECPublicKey) getPublicKey(getEphemeralKeyPair());
+            final BouncyECPrivateKey myPrivate = (BouncyECPrivateKey) getPrivateKey(pServer);
+            final BouncyECPrivateKey myEphPrivate = (BouncyECPrivateKey) getPrivateKey(getServerEphemeralKeyPair());
+            final BouncyECPublicKey myEphPublic = (BouncyECPublicKey) getPublicKey(getServerEphemeralKeyPair());
             final MQVPrivateParameters myPrivParams = new MQVPrivateParameters(myPrivate.getPrivateKey(),
                     myEphPrivate.getPrivateKey(), myEphPublic.getPublicKey());
             theAgreement.init(myPrivParams);
 
             /* Calculate agreement */
-            final BouncyECPublicKey mySrcPublic = (BouncyECPublicKey) getPublicKey(pSource);
-            final BouncyECPublicKey mySrcEphPublic = (BouncyECPublicKey) getPublicKey(getPartnerEphemeralKeyPair());
+            final BouncyECPublicKey mySrcPublic = (BouncyECPublicKey) getPublicKey(pClient);
+            final BouncyECPublicKey mySrcEphPublic = (BouncyECPublicKey) getPublicKey(getClientEphemeralKeyPair());
             final MQVPublicParameters myPubParams = new MQVPublicParameters(mySrcPublic.getPublicKey(),
                     mySrcEphPublic.getPublicKey());
             storeSecret(BigIntegers.asUnsignedByteArray(theAgreement.getFieldSize(), theAgreement.calculateAgreement(myPubParams)));
 
-            /* Return the response */
-            return myResponse;
+            /* Return the serverHello */
+            return buildServerHello();
         }
 
         @Override
-        public void confirmAgreement(final GordianKeyPair pResponder,
-                                     final byte[] pMessage) throws OceanusException {
+        public byte[] acceptServerHello(final GordianKeyPair pServer,
+                                        final byte[] pServerHello) throws OceanusException {
             /* Check keyPair */
-            checkKeyPair(pResponder);
+            checkKeyPair(pServer);
 
-            /* parse the ephemeral message */
-            parseEphemeral(pMessage);
+            /* process the serverHello */
+            processServerHello(pServer, pServerHello);
 
             /* Initialise agreement */
-            final BouncyECPrivateKey myPrivate = (BouncyECPrivateKey) getPrivateKey(getOwnerKeyPair());
-            final BouncyECPrivateKey myEphPrivate = (BouncyECPrivateKey) getPrivateKey(getEphemeralKeyPair());
-            final BouncyECPublicKey myEphPublic = (BouncyECPublicKey) getPublicKey(getEphemeralKeyPair());
+            final BouncyECPrivateKey myPrivate = (BouncyECPrivateKey) getPrivateKey(getClientKeyPair());
+            final BouncyECPrivateKey myEphPrivate = (BouncyECPrivateKey) getPrivateKey(getClientEphemeralKeyPair());
+            final BouncyECPublicKey myEphPublic = (BouncyECPublicKey) getPublicKey(getClientEphemeralKeyPair());
             final MQVPrivateParameters myPrivParams = new MQVPrivateParameters(myPrivate.getPrivateKey(),
                     myEphPrivate.getPrivateKey(), myEphPublic.getPublicKey());
             theAgreement.init(myPrivParams);
 
             /* Calculate agreement */
-            final BouncyECPublicKey mySrcPublic = (BouncyECPublicKey) getPublicKey(pResponder);
-            final BouncyECPublicKey mySrcEphPublic = (BouncyECPublicKey) getPublicKey(getPartnerEphemeralKeyPair());
+            final BouncyECPublicKey mySrcPublic = (BouncyECPublicKey) getPublicKey(pServer);
+            final BouncyECPublicKey mySrcEphPublic = (BouncyECPublicKey) getPublicKey(getServerEphemeralKeyPair());
             final MQVPublicParameters myPubParams = new MQVPublicParameters(mySrcPublic.getPublicKey(),
                     mySrcEphPublic.getPublicKey());
             storeSecret(BigIntegers.asUnsignedByteArray(theAgreement.getFieldSize(), theAgreement.calculateAgreement(myPubParams)));
+
+            /* Return confirmation if needed */
+            return buildClientConfirm();
         }
     }
-
-    /**
-     * EC SM2 Agreement.
-     */
-    public static class BouncyECSM2Agreement
-            extends GordianCoreEphemeralAgreement {
-        /**
-         * Key length.
-         */
-        private static final int KEYLEN = 32;
-
-        /**
-         * Key Agreement.
-         */
-        private final SM2KeyExchange theAgreement;
-
-        /**
-         * Constructor.
-         * @param pFactory the security factory
-         * @param pSpec the agreementSpec
-         */
-        BouncyECSM2Agreement(final BouncyFactory pFactory,
-                             final GordianAgreementSpec pSpec) {
-            /* Initialise underlying class */
-            super(pFactory, pSpec);
-
-            /* Create the agreement */
-            theAgreement = new SM2KeyExchange();
-        }
-
-        @Override
-        public byte[] acceptAgreement(final GordianKeyPair pSource,
-                                      final GordianKeyPair pResponder,
-                                      final byte[] pMessage) throws OceanusException {
-            /* process message */
-            final byte[] myResponse = parseMessage(pResponder, pMessage);
-
-            /* Initialise agreement */
-            final BouncyECPrivateKey myPrivate = (BouncyECPrivateKey) getPrivateKey(pResponder);
-            final BouncyECPrivateKey myEphPrivate = (BouncyECPrivateKey) getPrivateKey(getEphemeralKeyPair());
-            final SM2KeyExchangePrivateParameters myPrivParams = new SM2KeyExchangePrivateParameters(false,
-                    myPrivate.getPrivateKey(), myEphPrivate.getPrivateKey());
-            theAgreement.init(myPrivParams);
-
-            /* Calculate agreement */
-            final BouncyECPublicKey mySrcPublic = (BouncyECPublicKey) getPublicKey(pSource);
-            final BouncyECPublicKey mySrcEphPublic = (BouncyECPublicKey) getPublicKey(getPartnerEphemeralKeyPair());
-            final SM2KeyExchangePublicParameters myPubParams = new SM2KeyExchangePublicParameters(mySrcPublic.getPublicKey(),
-                    mySrcEphPublic.getPublicKey());
-            storeSecret(theAgreement.calculateKey(KEYLEN, myPubParams));
-
-            /* Return the response */
-            return myResponse;
-        }
-
-        @Override
-        public void confirmAgreement(final GordianKeyPair pResponder,
-                                     final byte[] pMessage) throws OceanusException {
-            /* Check keyPair */
-            checkKeyPair(pResponder);
-
-            /* parse the ephemeral message */
-            parseEphemeral(pMessage);
-
-            /* Initialise agreement */
-            final BouncyECPrivateKey myPrivate = (BouncyECPrivateKey) getPrivateKey(getOwnerKeyPair());
-            final BouncyECPrivateKey myEphPrivate = (BouncyECPrivateKey) getPrivateKey(getEphemeralKeyPair());
-            final SM2KeyExchangePrivateParameters myPrivParams = new SM2KeyExchangePrivateParameters(true,
-                    myPrivate.getPrivateKey(), myEphPrivate.getPrivateKey());
-            theAgreement.init(myPrivParams);
-
-            /* Calculate agreement */
-            final BouncyECPublicKey mySrcPublic = (BouncyECPublicKey) getPublicKey(pResponder);
-            final BouncyECPublicKey mySrcEphPublic = (BouncyECPublicKey) getPublicKey(getPartnerEphemeralKeyPair());
-            final SM2KeyExchangePublicParameters myPubParams = new SM2KeyExchangePublicParameters(mySrcPublic.getPublicKey(),
-                    mySrcEphPublic.getPublicKey());
-            storeSecret(theAgreement.calculateKey(KEYLEN, myPubParams));
-        }
-    }
-
 
     /**
      * EC Encryptor.
@@ -929,23 +757,22 @@ public final class BouncyEllipticAsymKey {
          * Constructor.
          * @param pFactory the factory
          * @param pSpec the encryptorSpec
-         * @throws OceanusException on error
          */
         BouncyECEncryptor(final BouncyFactory pFactory,
-                          final GordianEncryptorSpec pSpec) throws OceanusException {
+                          final GordianEncryptorSpec pSpec) {
             /* Initialise underlying cipher */
             super(pFactory, pSpec);
             theEncryptor = new EllipticEncryptor();
         }
 
         @Override
-        protected BouncyPublicKey getPublicKey() {
-            return (BouncyPublicKey) super.getPublicKey();
+        protected BouncyPublicKey<?> getPublicKey() {
+            return (BouncyPublicKey<?>) super.getPublicKey();
         }
 
         @Override
-        protected BouncyPrivateKey getPrivateKey() {
-            return (BouncyPrivateKey) super.getPrivateKey();
+        protected BouncyPrivateKey<?> getPrivateKey() {
+            return (BouncyPrivateKey<?>) super.getPrivateKey();
         }
 
         @Override
@@ -993,87 +820,6 @@ public final class BouncyEllipticAsymKey {
                 return theEncryptor.decrypt(pBytes);
             } catch (InvalidCipherTextException e) {
                 throw new GordianCryptoException("Failed to process data", e);
-            }
-        }
-    }
-
-    /**
-     * SM2 Encryptor.
-     */
-    public static class BouncySM2Encryptor
-            extends GordianCoreEncryptor {
-        /**
-         * The underlying encryptor.
-         */
-        private final SM2Engine theEncryptor;
-
-        /**
-         * Constructor.
-         * @param pFactory the factory
-         * @param pSpec the encryptorSpec
-         * @throws OceanusException on error
-         */
-        BouncySM2Encryptor(final BouncyFactory pFactory,
-                           final GordianEncryptorSpec pSpec) throws OceanusException {
-            /* Initialise underlying cipher */
-            super(pFactory, pSpec);
-            final BouncyDigestFactory myFactory = pFactory.getDigestFactory();
-            final BouncyDigest myDigest = myFactory.createDigest(pSpec.getDigestSpec());
-            theEncryptor = new SM2Engine(myDigest.getDigest());
-        }
-
-        @Override
-        protected BouncyPublicKey getPublicKey() {
-            return (BouncyPublicKey) super.getPublicKey();
-        }
-
-        @Override
-        protected BouncyPrivateKey getPrivateKey() {
-            return (BouncyPrivateKey) super.getPrivateKey();
-        }
-
-        @Override
-        public void initForEncrypt(final GordianKeyPair pKeyPair) throws OceanusException {
-            /* Initialise underlying cipher */
-            super.initForEncrypt(pKeyPair);
-
-            /* Initialise for encryption */
-            final ParametersWithRandom myParms = new ParametersWithRandom(getPublicKey().getPublicKey(), getRandom());
-            theEncryptor.init(true, myParms);
-        }
-
-        @Override
-        public void initForDecrypt(final GordianKeyPair pKeyPair) throws OceanusException {
-            /* Initialise underlying cipher */
-            super.initForDecrypt(pKeyPair);
-
-            /* Initialise for decryption */
-            theEncryptor.init(false, getPrivateKey().getPrivateKey());
-        }
-
-        @Override
-        public byte[] encrypt(final byte[] pBytes) throws OceanusException {
-            try {
-                /* Check that we are in encryption mode */
-                checkMode(GordianEncryptMode.ENCRYPT);
-
-                /* Encrypt the message */
-                return theEncryptor.processBlock(pBytes, 0, pBytes.length);
-            } catch (InvalidCipherTextException e) {
-                throw new GordianCryptoException("Failed to encrypt data", e);
-            }
-        }
-
-        @Override
-        public byte[] decrypt(final byte[] pBytes) throws OceanusException {
-            try {
-                /* Check that we are in decryption mode */
-                checkMode(GordianEncryptMode.DECRYPT);
-
-                /* Decrypt the message */
-                return theEncryptor.processBlock(pBytes, 0, pBytes.length);
-            } catch (InvalidCipherTextException e) {
-                throw new GordianCryptoException("Failed to decrypt data", e);
             }
         }
     }

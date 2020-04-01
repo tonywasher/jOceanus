@@ -109,11 +109,15 @@ public class DataValuesFormatter<T extends DataSet<T, E>, E extends Enum<E>> {
             /* Create a Document builder */
             final DocumentBuilderFactory myFactory = DocumentBuilderFactory.newInstance();
             myFactory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
+            myFactory.setAttribute(XMLConstants.ACCESS_EXTERNAL_DTD, "");
+            myFactory.setAttribute(XMLConstants.ACCESS_EXTERNAL_SCHEMA, "");
             theBuilder = myFactory.newDocumentBuilder();
 
             /* Create the transformer */
             final TransformerFactory myXformFactory = TransformerFactory.newInstance();
             myXformFactory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
+            myXformFactory.setAttribute(XMLConstants.ACCESS_EXTERNAL_DTD, "");
+            myXformFactory.setAttribute(XMLConstants.ACCESS_EXTERNAL_STYLESHEET, "");
             theXformer = myXformFactory.newTransformer();
 
         } catch (ParserConfigurationException | TransformerConfigurationException e) {

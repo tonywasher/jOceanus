@@ -18,10 +18,6 @@ package net.sourceforge.joceanus.jgordianknot.api.keyset;
 
 import java.util.function.Predicate;
 
-import net.sourceforge.joceanus.jgordianknot.api.base.GordianLength;
-import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianSymKeySpec;
-import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianSymKeyType;
-import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigestType;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
@@ -58,34 +54,8 @@ public interface GordianKeySetFactory {
                                        char[] pPassword) throws OceanusException;
 
     /**
-     * Obtain the obfuscater.
-     * @return the obfuscater
-     */
-    GordianKnuthObfuscater getObfuscater();
-
-    /**
      * Obtain predicate for supported KeySetSpecs.
      * @return the predicate
      */
     Predicate<GordianKeySetSpec> supportedKeySetSpecs();
-
-    /**
-     * Obtain predicate for supported KeyHash digests.
-     * @return the predicate
-     */
-    Predicate<GordianDigestType> supportedKeySetDigestTypes();
-
-    /**
-     * Obtain predicate for keySet SymKeyTypes.
-     * @param pKeyLen the keyLength
-     * @return the predicate
-     */
-    Predicate<GordianSymKeyType> supportedKeySetSymKeyTypes(GordianLength pKeyLen);
-
-    /**
-     * Obtain predicate for supported keySet symKeySpecs.
-     * @param pKeyLen the keyLength
-     * @return the predicate
-     */
-    Predicate<GordianSymKeySpec> supportedKeySetSymKeySpecs(GordianLength pKeyLen);
 }

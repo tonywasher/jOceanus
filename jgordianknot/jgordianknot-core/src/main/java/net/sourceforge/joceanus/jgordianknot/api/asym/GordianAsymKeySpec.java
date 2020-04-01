@@ -21,6 +21,10 @@ import java.util.EnumSet;
 import java.util.List;
 import java.util.Objects;
 
+import net.sourceforge.joceanus.jgordianknot.api.asym.GordianLMSKeySpec.GordianHSSKeySpec;
+import net.sourceforge.joceanus.jgordianknot.api.asym.GordianXMSSKeySpec.GordianXMSSDigestType;
+import net.sourceforge.joceanus.jgordianknot.api.asym.GordianXMSSKeySpec.GordianXMSSHeight;
+import net.sourceforge.joceanus.jgordianknot.api.asym.GordianXMSSKeySpec.GordianXMSSMTLayers;
 import net.sourceforge.joceanus.jtethys.TethysDataConverter;
 
 /**
@@ -132,7 +136,7 @@ public final class GordianAsymKeySpec {
      * @return the KeySpec
      */
     public static GordianAsymKeySpec x25519() {
-        return new GordianAsymKeySpec(GordianAsymKeyType.X25519, null);
+        return new GordianAsymKeySpec(GordianAsymKeyType.XDH, GordianEdwardsElliptic.CURVE25519);
     }
 
     /**
@@ -140,7 +144,7 @@ public final class GordianAsymKeySpec {
      * @return the KeySpec
      */
     public static GordianAsymKeySpec x448() {
-        return new GordianAsymKeySpec(GordianAsymKeyType.X448, null);
+        return new GordianAsymKeySpec(GordianAsymKeyType.XDH, GordianEdwardsElliptic.CURVE448);
     }
 
     /**
@@ -148,7 +152,7 @@ public final class GordianAsymKeySpec {
      * @return the KeySpec
      */
     public static GordianAsymKeySpec ed25519() {
-        return new GordianAsymKeySpec(GordianAsymKeyType.ED25519, null);
+        return new GordianAsymKeySpec(GordianAsymKeyType.EDDSA, GordianEdwardsElliptic.CURVE25519);
     }
 
     /**
@@ -156,16 +160,16 @@ public final class GordianAsymKeySpec {
      * @return the KeySpec
      */
     public static GordianAsymKeySpec ed448() {
-        return new GordianAsymKeySpec(GordianAsymKeyType.ED448, null);
+        return new GordianAsymKeySpec(GordianAsymKeyType.EDDSA, GordianEdwardsElliptic.CURVE448);
     }
 
     /**
      * Create SPHINCSKey.
-     * @param pKeyType the SPHINCS keyType
+     * @param pDigestType the SPHINCS digestType
      * @return the KeySpec
      */
-    public static GordianAsymKeySpec sphincs(final GordianSPHINCSKeyType pKeyType) {
-        return new GordianAsymKeySpec(GordianAsymKeyType.SPHINCS, pKeyType);
+    public static GordianAsymKeySpec sphincs(final GordianSPHINCSDigestType pDigestType) {
+        return new GordianAsymKeySpec(GordianAsymKeyType.SPHINCS, pDigestType);
     }
 
     /**
@@ -195,29 +199,55 @@ public final class GordianAsymKeySpec {
 
     /**
      * Create xmssKey.
-     * @param pKeySpec the xmss keyType
+     * @param pDigestType the xmss digestType
+     * @param pHeight the height
      * @return the KeySpec
      */
-    public static GordianAsymKeySpec xmss(final GordianXMSSKeyType pKeySpec) {
-        return new GordianAsymKeySpec(GordianAsymKeyType.XMSS, pKeySpec);
+    public static GordianAsymKeySpec xmss(final GordianXMSSDigestType pDigestType,
+                                          final GordianXMSSHeight pHeight) {
+        return new GordianAsymKeySpec(GordianAsymKeyType.XMSS, GordianXMSSKeySpec.xmss(pDigestType, pHeight));
     }
 
     /**
      * Create xmssMTKey.
-     * @param pKeySpec the xmssMT keyType
+     * @param pDigestType the xmss digestType
+     * @param pHeight the height
+     * @param pLayers the layers
      * @return the KeySpec
      */
-    public static GordianAsymKeySpec xmssmt(final GordianXMSSKeyType pKeySpec) {
-        return new GordianAsymKeySpec(GordianAsymKeyType.XMSSMT, pKeySpec);
+    public static GordianAsymKeySpec xmssmt(final GordianXMSSDigestType pDigestType,
+                                            final GordianXMSSHeight pHeight,
+                                            final GordianXMSSMTLayers pLayers) {
+        return new GordianAsymKeySpec(GordianAsymKeyType.XMSS, GordianXMSSKeySpec.xmssmt(pDigestType, pHeight, pLayers));
     }
 
     /**
      * Create qTESLAKey.
+     * @param pKeyType the keyType
+     * @return the KeySpec
+     */
+    public static GordianAsymKeySpec qTESLA(final GordianQTESLAKeyType pKeyType) {
+        return new GordianAsymKeySpec(GordianAsymKeyType.QTESLA, pKeyType);
+    }
+
+    /**
+     * Create lmsKey.
      * @param pKeySpec the keySpec
      * @return the KeySpec
      */
-    public static GordianAsymKeySpec qTESLA(final GordianQTESLAKeyType pKeySpec) {
-        return new GordianAsymKeySpec(GordianAsymKeyType.QTESLA, pKeySpec);
+    public static GordianAsymKeySpec lms(final GordianLMSKeySpec pKeySpec) {
+        return new GordianAsymKeySpec(GordianAsymKeyType.LMS, pKeySpec);
+    }
+
+    /**
+     * Create hssKey.
+     * @param pKeySpec the keySpec
+     * @param pDepth the treeDepth
+     * @return the KeySpec
+     */
+    public static GordianAsymKeySpec hss(final GordianLMSKeySpec pKeySpec,
+                                         final int pDepth) {
+        return new GordianAsymKeySpec(GordianAsymKeyType.LMS, new GordianHSSKeySpec(pKeySpec, pDepth));
     }
 
     /**
@@ -248,7 +278,7 @@ public final class GordianAsymKeySpec {
      * Obtain the RSAmodulus.
      * @return the modulus.
      */
-    public GordianRSAModulus getModulus() {
+    public GordianRSAModulus getRSAModulus() {
         return theSubKeyType instanceof GordianRSAModulus
                ? (GordianRSAModulus) theSubKeyType
                : null;
@@ -265,8 +295,8 @@ public final class GordianAsymKeySpec {
     }
 
     /**
-     * Obtain the DSA keyType.
-     * @return the keyType.
+     * Obtain the DH Group.
+     * @return the dhGroup.
      */
     public GordianDHGroup getDHGroup() {
         return theSubKeyType instanceof GordianDHGroup
@@ -285,12 +315,22 @@ public final class GordianAsymKeySpec {
     }
 
     /**
-     * Obtain the SPHINCS keyType.
-     * @return the keyType.
+     * Obtain the elliptic curve.
+     * @return the curve.
      */
-    public GordianSPHINCSKeyType getSPHINCSType() {
-        return theSubKeyType instanceof GordianSPHINCSKeyType
-               ? (GordianSPHINCSKeyType) theSubKeyType
+    public GordianEdwardsElliptic getEdwardsElliptic() {
+        return theSubKeyType instanceof GordianEdwardsElliptic
+               ? (GordianEdwardsElliptic) theSubKeyType
+               : null;
+    }
+
+    /**
+     * Obtain the SPHINCS digestType.
+     * @return the digestType.
+     */
+    public GordianSPHINCSDigestType getSPHINCSDigestType() {
+        return theSubKeyType instanceof GordianSPHINCSDigestType
+               ? (GordianSPHINCSDigestType) theSubKeyType
                : null;
     }
 
@@ -298,19 +338,49 @@ public final class GordianAsymKeySpec {
      * Obtain the mcEliece keySpec.
      * @return the keySpec.
      */
-    public GordianMcElieceKeySpec getMcElieceSpec() {
+    public GordianMcElieceKeySpec getMcElieceKeySpec() {
         return theSubKeyType instanceof GordianMcElieceKeySpec
                ? (GordianMcElieceKeySpec) theSubKeyType
                : null;
     }
 
     /**
-     * Obtain the XMSS keyType.
-     * @return the keyType.
+     * Obtain the lms keySpec.
+     * @return the keySpec.
      */
-    public GordianXMSSKeyType getXMSSKeyType() {
-        return theSubKeyType instanceof GordianXMSSKeyType
-               ? (GordianXMSSKeyType) theSubKeyType
+    public GordianLMSKeySpec getLMSKeySpec() {
+        return theSubKeyType instanceof GordianLMSKeySpec
+               ? (GordianLMSKeySpec) theSubKeyType
+               : null;
+    }
+
+    /**
+     * Obtain the hss keySpec.
+     * @return the keySpec.
+     */
+    public GordianHSSKeySpec getHSSKeySpec() {
+        return theSubKeyType instanceof GordianHSSKeySpec
+               ? (GordianHSSKeySpec) theSubKeyType
+               : null;
+    }
+
+    /**
+     * Obtain the XMSS keySpec.
+     * @return the keySpec.
+     */
+    public GordianXMSSKeySpec getXMSSKeySpec() {
+        return theSubKeyType instanceof GordianXMSSKeySpec
+               ? (GordianXMSSKeySpec) theSubKeyType
+               : null;
+    }
+
+    /**
+     * Obtain the XMSS digestType.
+     * @return the digestType.
+     */
+    public GordianXMSSDigestType getXMSSDigestType() {
+        return theSubKeyType instanceof GordianXMSSKeySpec
+               ? ((GordianXMSSKeySpec) theSubKeyType).getDigestType()
                : null;
     }
 
@@ -340,11 +410,8 @@ public final class GordianAsymKeySpec {
         if (theName == null) {
             /* If the keySpec is valid */
             if (isValid) {
-                /* Load the name */
-                theName = theKeyType.toString();
-                if (theSubKeyType != null) {
-                    theName += SEP + theSubKeyType.toString();
-                }
+                /* Derive the name */
+                deriveName();
             }  else {
                 /* Report invalid spec */
                 theName = "InvalidAsymKeySpec: " + theKeyType + ":" + theSubKeyType;
@@ -353,6 +420,30 @@ public final class GordianAsymKeySpec {
 
         /* return the name */
         return theName;
+    }
+
+    /**
+     * Derive name.
+     */
+    private void deriveName() {
+        /* Load the name */
+        theName = theKeyType.toString();
+        if (theSubKeyType != null) {
+            switch (theKeyType) {
+                case XMSS:
+                    theName = theSubKeyType.toString();
+                    break;
+                case EDDSA:
+                    theName = "Ed" + ((GordianEdwardsElliptic) theSubKeyType).getSuffix();
+                    break;
+                case XDH:
+                    theName = "X" + ((GordianEdwardsElliptic) theSubKeyType).getSuffix();
+                    break;
+                default:
+                    theName += SEP + theSubKeyType.toString();
+                    break;
+            }
+        }
     }
 
     @Override
@@ -418,19 +509,23 @@ public final class GordianAsymKeySpec {
             case DSTU4145:
                 return theSubKeyType instanceof GordianDSTU4145Elliptic;
             case SPHINCS:
-                return theSubKeyType instanceof GordianSPHINCSKeyType;
+                return theSubKeyType instanceof GordianSPHINCSDigestType;
             case MCELIECE:
                 return theSubKeyType instanceof GordianMcElieceKeySpec
                         && ((GordianMcElieceKeySpec) theSubKeyType).isValid();
             case XMSS:
-            case XMSSMT:
-                return theSubKeyType instanceof GordianXMSSKeyType;
+                return theSubKeyType instanceof GordianXMSSKeySpec
+                        && ((GordianXMSSKeySpec) theSubKeyType).isValid();
             case QTESLA:
                 return theSubKeyType instanceof GordianQTESLAKeyType;
-            case ED25519:
-            case ED448:
-            case X25519:
-            case X448:
+            case LMS:
+                return (theSubKeyType instanceof GordianLMSKeySpec
+                         && ((GordianLMSKeySpec) theSubKeyType).isValid())
+                        || (theSubKeyType instanceof GordianHSSKeySpec
+                            && ((GordianHSSKeySpec) theSubKeyType).isValid());
+            case EDDSA:
+            case XDH:
+                return theSubKeyType instanceof GordianEdwardsElliptic;
             case RAINBOW:
             case NEWHOPE:
                 return theSubKeyType == null;
@@ -469,12 +564,12 @@ public final class GordianAsymKeySpec {
         EnumSet.allOf(GordianDSTU4145Elliptic.class).forEach(c -> mySpecs.add(GordianAsymKeySpec.dstu4145(c)));
 
         /* Add Ed25519/Ed448 */
-        mySpecs.add(GordianAsymKeySpec.ed25519());
         mySpecs.add(GordianAsymKeySpec.ed448());
+        mySpecs.add(GordianAsymKeySpec.ed25519());
 
         /* Add X25519/X448 */
-        mySpecs.add(GordianAsymKeySpec.x25519());
         mySpecs.add(GordianAsymKeySpec.x448());
+        mySpecs.add(GordianAsymKeySpec.x25519());
 
         /* Add Rainbow */
         mySpecs.add(GordianAsymKeySpec.rainbow());
@@ -486,14 +581,21 @@ public final class GordianAsymKeySpec {
         EnumSet.allOf(GordianQTESLAKeyType.class).forEach(t -> mySpecs.add(GordianAsymKeySpec.qTESLA(t)));
 
         /* Add SPHINCS */
-        EnumSet.allOf(GordianSPHINCSKeyType.class).forEach(t -> mySpecs.add(GordianAsymKeySpec.sphincs(t)));
+        EnumSet.allOf(GordianSPHINCSDigestType.class).forEach(t -> mySpecs.add(GordianAsymKeySpec.sphincs(t)));
 
         /* Add XMSS/XMSSMT */
-        EnumSet.allOf(GordianXMSSKeyType.class).forEach(t -> mySpecs.add(GordianAsymKeySpec.xmss(t)));
-        EnumSet.allOf(GordianXMSSKeyType.class).forEach(t -> mySpecs.add(GordianAsymKeySpec.xmssmt(t)));
+        GordianXMSSKeySpec.listPossibleKeySpecs().forEach(t -> mySpecs.add(new GordianAsymKeySpec(GordianAsymKeyType.XMSS, t)));
 
         /* Add McEliece */
         GordianMcElieceKeySpec.listPossibleKeySpecs().forEach(t -> mySpecs.add(GordianAsymKeySpec.mcEliece(t)));
+
+        /* Add LMS */
+        GordianLMSKeySpec.listPossibleKeySpecs().forEach(t -> {
+            mySpecs.add(GordianAsymKeySpec.lms(t));
+            for (int i = 2; i < GordianHSSKeySpec.MAX_DEPTH; i++) {
+                mySpecs.add(GordianAsymKeySpec.hss(t, i));
+            }
+        });
 
         /* Return the list */
         return mySpecs;

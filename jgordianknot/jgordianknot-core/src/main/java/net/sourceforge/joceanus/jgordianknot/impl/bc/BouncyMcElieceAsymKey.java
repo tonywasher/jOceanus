@@ -384,7 +384,7 @@ public final class BouncyMcElieceAsymKey {
             super(pFactory, pKeySpec);
 
             /* Create and initialise the generator */
-            final GordianMcElieceDigestType myType = pKeySpec.getMcElieceSpec().getDigestType();
+            final GordianMcElieceDigestType myType = pKeySpec.getMcElieceKeySpec().getDigestType();
             theGenerator = new McElieceCCA2KeyPairGenerator();
             final KeyGenerationParameters myParams = new McElieceCCA2KeyGenerationParameters(getRandom(),
                     new McElieceCCA2Parameters(myType.getM(), McElieceParameters.DEFAULT_T, myType.getParameter()));
@@ -497,13 +497,13 @@ public final class BouncyMcElieceAsymKey {
         }
 
         @Override
-        protected BouncyPublicKey getPublicKey() {
-            return (BouncyPublicKey) super.getPublicKey();
+        protected BouncyPublicKey<?> getPublicKey() {
+            return (BouncyPublicKey<?>) super.getPublicKey();
         }
 
         @Override
-        protected BouncyPrivateKey getPrivateKey() {
-            return (BouncyPrivateKey) super.getPrivateKey();
+        protected BouncyPrivateKey<?> getPrivateKey() {
+            return (BouncyPrivateKey<?>) super.getPrivateKey();
         }
 
         @Override
@@ -669,13 +669,13 @@ public final class BouncyMcElieceAsymKey {
         }
 
         @Override
-        protected BouncyPublicKey getPublicKey() {
-            return (BouncyPublicKey) super.getPublicKey();
+        protected BouncyPublicKey<?> getPublicKey() {
+            return (BouncyPublicKey<?>) super.getPublicKey();
         }
 
         @Override
-        protected BouncyPrivateKey getPrivateKey() {
-            return (BouncyPrivateKey) super.getPrivateKey();
+        protected BouncyPrivateKey<?> getPrivateKey() {
+            return (BouncyPrivateKey<?>) super.getPrivateKey();
         }
 
         @Override

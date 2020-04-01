@@ -209,7 +209,8 @@ public final class BouncyRSAAsymKey {
 
             /* Create and initialise the generator */
             theGenerator = new RSAKeyPairGenerator();
-            final RSAKeyGenerationParameters myParams = new RSAKeyGenerationParameters(RSA_EXPONENT, getRandom(), pKeySpec.getModulus().getLength(), PRIME_CERTAINTY);
+            final RSAKeyGenerationParameters myParams
+                    = new RSAKeyGenerationParameters(RSA_EXPONENT, getRandom(), pKeySpec.getRSAModulus().getLength(), PRIME_CERTAINTY);
             theGenerator.init(myParams);
         }
 
@@ -460,44 +461,44 @@ public final class BouncyRSAAsymKey {
         }
 
         @Override
-        public byte[] initiateAgreement(final GordianKeyPair pTarget) throws OceanusException {
+        public byte[] createClientHello(final GordianKeyPair pServer) throws OceanusException {
             /* Check keyPair */
-            checkKeyPair(pTarget);
+            checkKeyPair(pServer);
 
             /* Initialise Key Encapsulation */
-            final BouncyRSAPublicKey myPublic = (BouncyRSAPublicKey) getPublicKey(pTarget);
+            final BouncyRSAPublicKey myPublic = (BouncyRSAPublicKey) getPublicKey(pServer);
             theAgreement.init(myPublic.getPublicKey());
 
             /* Create message */
-            final GordianRSAModulus myModulus = myPublic.getKeySpec().getModulus();
+            final GordianRSAModulus myModulus = myPublic.getKeySpec().getRSAModulus();
             final int myLen = myModulus.getLength() / Byte.SIZE;
             final byte[] myData = new byte[myLen];
             final KeyParameter myParms = (KeyParameter) theAgreement.encrypt(myData, 0, myLen);
 
-            /* Build the init Message */
-            final byte[] myMessage = createMessage(myData);
+            /* Build the clientHello Message */
+            final byte[] myClientHello = buildClientHello(myData);
 
             /* Store secret and create initVector */
             storeSecret(myParms.getKey());
 
             /* Return the message  */
-            return myMessage;
+            return myClientHello;
         }
 
         @Override
-        public void acceptAgreement(final GordianKeyPair pSelf,
-                                    final byte[] pMessage) throws OceanusException {
+        public void acceptClientHello(final GordianKeyPair pServer,
+                                      final byte[] pClientHello) throws OceanusException {
             /* Check keyPair */
-            checkKeyPair(pSelf);
+            checkKeyPair(pServer);
 
             /* Initialise Key Encapsulation */
-            final BouncyRSAPrivateKey myPrivate = (BouncyRSAPrivateKey) getPrivateKey(pSelf);
+            final BouncyRSAPrivateKey myPrivate = (BouncyRSAPrivateKey) getPrivateKey(pServer);
             theAgreement.init(myPrivate.getPrivateKey());
 
-            /* Parse source message */
-            final GordianRSAModulus myModulus = myPrivate.getKeySpec().getModulus();
+            /* Parse clientHello message and store secret */
+            final GordianRSAModulus myModulus = myPrivate.getKeySpec().getRSAModulus();
             final int myLen = myModulus.getLength() / Byte.SIZE;
-            final byte[] myMessage = parseMessage(pMessage);
+            final byte[] myMessage = parseClientHello(pClientHello);
             final KeyParameter myParms = (KeyParameter) theAgreement.decrypt(myMessage, 0, myMessage.length, myLen);
             storeSecret(myParms.getKey());
         }
@@ -528,13 +529,13 @@ public final class BouncyRSAAsymKey {
         }
 
         @Override
-        protected BouncyPublicKey getPublicKey() {
-            return (BouncyPublicKey) super.getPublicKey();
+        protected BouncyPublicKey<?> getPublicKey() {
+            return (BouncyPublicKey<?>) super.getPublicKey();
         }
 
         @Override
-        protected BouncyPrivateKey getPrivateKey() {
-            return (BouncyPrivateKey) super.getPrivateKey();
+        protected BouncyPrivateKey<?> getPrivateKey() {
+            return (BouncyPrivateKey<?>) super.getPrivateKey();
         }
 
         @Override
@@ -594,9 +595,7 @@ public final class BouncyRSAAsymKey {
                 int myOutOff = 0;
                 while (myInLen > 0) {
                     /* Process the data */
-                    final int myLen = myInLen >= myInBlockLength
-                                      ? myInBlockLength
-                                      : myInLen;
+                    final int myLen = Math.min(myInLen, myInBlockLength);
                     final byte[] myBlock = theEncryptor.processBlock(pData, myInOff, myLen);
 
                     /* Copy to the output buffer */

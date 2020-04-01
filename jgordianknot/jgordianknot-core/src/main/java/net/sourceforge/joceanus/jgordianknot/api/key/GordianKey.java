@@ -28,12 +28,4 @@ public interface GordianKey<T extends GordianKeySpec> {
      * @return the keyType
      */
     T getKeyType();
-
-    /**
-     * Convert key to different type with the same keyBytes.
-     * @param <X> the keyClass
-     * @param pKeyType the new keyType
-     * @return the new key
-     */
-    <X extends GordianKeySpec> GordianKey<X> convertToKeyType(X pKeyType);
 }

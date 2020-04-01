@@ -55,14 +55,6 @@ public class TethysFXPieChartExample extends Application {
     private final Map<String, TethysPieChartSection> theSectionMap;
 
     /**
-     * Main entry point.
-     * @param args the parameters
-     */
-    public static void main(final String[] args) {
-        launch(args);
-    }
-
-    /**
      * Constructor.
      */
     public TethysFXPieChartExample() {

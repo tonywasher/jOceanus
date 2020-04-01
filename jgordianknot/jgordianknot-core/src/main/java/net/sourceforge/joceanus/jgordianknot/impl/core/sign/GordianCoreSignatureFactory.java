@@ -18,6 +18,7 @@ package net.sourceforge.joceanus.jgordianknot.impl.core.sign;
 
 import java.util.function.Predicate;
 
+import net.sourceforge.joceanus.jgordianknot.api.asym.GordianEdwardsElliptic;
 import net.sourceforge.joceanus.jgordianknot.api.base.GordianLength;
 import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
 
@@ -83,15 +84,15 @@ public abstract class GordianCoreSignatureFactory
     }
 
     @Override
-    public boolean validSignatureSpecForKeyPair(final GordianKeyPair pKeyPair,
+    public boolean validSignatureSpecForKeySpec(final GordianAsymKeySpec pKeySpec,
                                                 final GordianSignatureSpec pSignSpec) {
         /* Reject invalid signatureSpec */
         if (pSignSpec == null || !pSignSpec.isValid()) {
             return false;
         }
 
-        /* Check signature matches keyPair */
-        if (pSignSpec.getAsymKeyType() != pKeyPair.getKeySpec().getKeyType()) {
+        /* Check signature matches keySpec */
+        if (pSignSpec.getAsymKeyType() != pKeySpec.getKeyType()) {
             return false;
         }
 
@@ -101,25 +102,30 @@ public abstract class GordianCoreSignatureFactory
         }
 
         /* Disallow ECNR if keySize is smaller than digestSize */
-        final GordianAsymKeySpec myKeySpec = pKeyPair.getKeySpec();
         if (GordianSignatureType.NR.equals(pSignSpec.getSignatureType())) {
-            return myKeySpec.getElliptic().getKeySize() > pSignSpec.getDigestSpec().getDigestLength().getLength();
+            return pKeySpec.getElliptic().getKeySize() > pSignSpec.getDigestSpec().getDigestLength().getLength();
         }
 
         /* Disallow incorrectly sized digest for GOST */
-        if (GordianAsymKeyType.GOST2012.equals(myKeySpec.getKeyType())) {
+        if (GordianAsymKeyType.GOST2012.equals(pKeySpec.getKeyType())) {
             final int myDigestLen = pSignSpec.getDigestSpec().getDigestLength().getLength();
-            return myKeySpec.getElliptic().getKeySize() == myDigestLen;
+            return pKeySpec.getElliptic().getKeySize() == myDigestLen;
+        }
+
+        /* Disallow NATIVE signature for ed448 */
+        if (GordianAsymKeyType.EDDSA.equals(pKeySpec.getKeyType())) {
+            return pSignSpec.getSignatureType() != GordianSignatureType.NATIVE
+                    || pKeySpec.getEdwardsElliptic() == GordianEdwardsElliptic.CURVE25519;
         }
 
         /* If this is a RSA Signature */
-        if (GordianAsymKeyType.RSA.equals(myKeySpec.getKeyType())) {
+        if (GordianAsymKeyType.RSA.equals(pKeySpec.getKeyType())) {
             /* If this is a PSS signature */
             if (GordianSignatureType.PSS.equals(pSignSpec.getSignatureType())) {
                 /* The digest length cannot be too large wrt to the modulus */
                 int myLen = pSignSpec.getDigestSpec().getDigestLength().getLength();
                 myLen += Byte.SIZE;
-                if (myKeySpec.getModulus().getLength() < (myLen << 1)) {
+                if (pKeySpec.getRSAModulus().getLength() < (myLen << 1)) {
                     return false;
                 }
             }
@@ -128,7 +134,7 @@ public abstract class GordianCoreSignatureFactory
             /* The digest length cannot be too large wrt to the modulus */
             int myLen = pSignSpec.getDigestSpec().getDigestLength().getLength();
             myLen += Integer.SIZE;
-            if (myKeySpec.getModulus().getLength() < myLen) {
+            if (pKeySpec.getRSAModulus().getLength() < myLen) {
                 return false;
             }
         }

@@ -28,6 +28,7 @@ import net.sourceforge.joceanus.jgordianknot.api.base.GordianLength;
 import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigestSpec;
 import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigestType;
 import net.sourceforge.joceanus.jgordianknot.api.encrypt.GordianEncryptorSpec;
+import net.sourceforge.joceanus.jgordianknot.api.encrypt.GordianSM2EncryptionSpec;
 import net.sourceforge.joceanus.jgordianknot.api.key.GordianKeyPair;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianCryptoException;
 import net.sourceforge.joceanus.jgordianknot.impl.core.encrypt.GordianCoreEncryptor;
@@ -149,9 +150,7 @@ public final class JcaEncryptor {
                 int myOutOff = 0;
                 while (myInLen > 0) {
                     /* Process the data */
-                    final int myLen = myInLen >= myInBlockLength
-                                      ? myInBlockLength
-                                      : myInLen;
+                    final int myLen = Math.min(myInLen, myInBlockLength);
                     final byte[] myBlock = theEncryptor.doFinal(pData, myInOff, myLen);
 
                     /* Copy to the output buffer */
@@ -317,7 +316,8 @@ public final class JcaEncryptor {
             /* If this is an SM2 encryptor */
             if (GordianAsymKeyType.SM2.equals(pSpec.getKeyType())) {
                 /* Switch on encryptor type */
-                final GordianDigestSpec myDigestSpec = pSpec.getDigestSpec();
+                final GordianSM2EncryptionSpec mySpec = pSpec.getSM2EncryptionSpec();
+                final GordianDigestSpec myDigestSpec = mySpec.getDigestSpec();
                 final GordianDigestType myDigestType = myDigestSpec.getDigestType();
                 switch (myDigestType) {
                     case SHA2:

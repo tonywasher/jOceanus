@@ -28,6 +28,7 @@ import net.sourceforge.joceanus.jgordianknot.api.agree.GordianAgreementSpec;
 import net.sourceforge.joceanus.jgordianknot.api.agree.GordianAgreementType;
 import net.sourceforge.joceanus.jgordianknot.api.agree.GordianKDFType;
 import net.sourceforge.joceanus.jgordianknot.api.asym.GordianAsymKeyType;
+import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianASN1Util;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianCoreFactory;
 
 /**
@@ -35,9 +36,19 @@ import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianCoreFactory;
  */
 public class GordianAgreementAlgId {
     /**
-     * Base our agreements off bouncyCastle.
+     * AgreementOID branch.
      */
-    private static final ASN1ObjectIdentifier AGREEOID = GordianCoreFactory.BASEOID.branch("21");
+    private static final ASN1ObjectIdentifier AGREEOID = GordianASN1Util.ASYMOID.branch("2");
+
+    /**
+     * AgreementSpec OID branch.
+     */
+    private static final ASN1ObjectIdentifier AGREESPECOID = AGREEOID.branch("1");
+
+    /**
+     * Null Result OID branch.
+     */
+    static final ASN1ObjectIdentifier NULLRESULTOID = AGREEOID.branch("2");
 
     /**
      * Map of DigestSpec to Identifier.
@@ -123,7 +134,7 @@ public class GordianAgreementAlgId {
     private void addAgreement(final GordianAgreementSpec pSpec) {
         /* Create a branch for mac based on the AgreementType */
         final GordianAsymKeyType myKeyType = pSpec.getAsymKeyType();
-        ASN1ObjectIdentifier myId = AGREEOID.branch(Integer.toString(myKeyType.ordinal() + 1));
+        ASN1ObjectIdentifier myId = AGREESPECOID.branch(Integer.toString(myKeyType.ordinal() + 1));
 
         /* Add branch for agreementType */
         final GordianAgreementType myType = pSpec.getAgreementType();
@@ -132,6 +143,11 @@ public class GordianAgreementAlgId {
         /* Add branch for kdfType */
         final GordianKDFType myKDFType = pSpec.getKDFType();
         myId = myId.branch(Integer.toString(myKDFType.ordinal() + 1));
+
+        /* Add branch for confirm (if present) */
+        if (pSpec.withConfirm()) {
+            myId = myId.branch("1");
+        }
 
         /* Add the spec to the maps */
         addToMaps(pSpec, new AlgorithmIdentifier(myId, DERNull.INSTANCE));

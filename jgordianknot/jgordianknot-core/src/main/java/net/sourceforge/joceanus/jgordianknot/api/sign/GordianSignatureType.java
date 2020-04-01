@@ -1,3 +1,5 @@
+
+
 /*******************************************************************************
  * GordianKnot: Security Suite
  * Copyright 2012,2019 Tony Washer
@@ -101,11 +103,10 @@ public enum GordianSignatureType {
      */
     public static boolean hasPure(final GordianAsymKeyType pKeyType) {
         switch (pKeyType) {
-            case ED25519:
-            case ED448:
+            case EDDSA:
             case XMSS:
-            case XMSSMT:
             case QTESLA:
+            case LMS:
                 return true;
             default:
                 return false;
@@ -119,10 +120,8 @@ public enum GordianSignatureType {
      */
     public static boolean hasPreHash(final GordianAsymKeyType pKeyType) {
         switch (pKeyType) {
-            case ED25519:
-            case ED448:
+            case EDDSA:
             case XMSS:
-            case XMSSMT:
             case SPHINCS:
             case RSA:
                 return true;
@@ -154,7 +153,7 @@ public enum GordianSignatureType {
     public static boolean hasNative(final GordianAsymKeyType pKeyType) {
         switch (pKeyType) {
             case SM2:
-            case ED25519:
+            case EDDSA:
             case DSTU4145:
             case GOST2012:
             case RAINBOW:

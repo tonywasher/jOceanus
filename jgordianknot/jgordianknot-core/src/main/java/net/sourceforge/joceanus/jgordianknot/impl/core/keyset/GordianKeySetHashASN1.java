@@ -16,10 +16,11 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jgordianknot.impl.core.keyset;
 
+import java.util.Arrays;
 import java.util.Enumeration;
+import java.util.Objects;
 
 import org.bouncycastle.asn1.ASN1EncodableVector;
-import org.bouncycastle.asn1.ASN1Object;
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
 import org.bouncycastle.asn1.ASN1OctetString;
 import org.bouncycastle.asn1.ASN1Primitive;
@@ -29,15 +30,23 @@ import org.bouncycastle.asn1.DERSequence;
 import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
 
 import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetHashSpec;
+import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianASN1Util;
+import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianASN1Util.GordianASN1Object;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianDataException;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianIOException;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
- * ASN1 Encoding of KeySetSpec.
+ * ASN1 Encoding of KeySetHash.
+ * <pre>
+ * GordianKeySetHashASN1 ::= SEQUENCE  {
+ *      spec GordianKeySetHashSpecASN1
+ *      hashBytes OCTET STRING
+ * }
+ * </pre>
  */
 public class GordianKeySetHashASN1
-        extends ASN1Object {
+        extends GordianASN1Object {
     /**
      * Base our algorithmId off bouncyCastle.
      */
@@ -74,9 +83,14 @@ public class GordianKeySetHashASN1
         /* Protect against exceptions */
         try {
             /* Extract the parameters from the sequence */
-            final Enumeration e = pSequence.getObjects();
-            theSpec = GordianKeySetHashSpecASN1.getInstance(e.nextElement()).getSpec();
-            theHashBytes = ASN1OctetString.getInstance(e.nextElement()).getOctets();
+            final Enumeration<?> en = pSequence.getObjects();
+            theSpec = GordianKeySetHashSpecASN1.getInstance(en.nextElement()).getSpec();
+            theHashBytes = ASN1OctetString.getInstance(en.nextElement()).getOctets();
+
+            /* Make sure that we have completed the sequence */
+            if (en.hasMoreElements()) {
+                throw new GordianDataException("Unexpected additional values in ASN1 sequence");
+            }
 
             /* handle exceptions */
         } catch (IllegalArgumentException e) {
@@ -115,16 +129,6 @@ public class GordianKeySetHashASN1
         return theHashBytes;
     }
 
-    /**
-     * Produce an object suitable for an ASN1OutputStream.
-     * <pre>
-     * GordianKeySetHashASN1 ::= SEQUENCE  {
-     *      spec GordianKeySetSpecASN1
-     *      hashBytes OCTET STRING
-     * }
-     * </pre>
-     * @return the ASN1 Encoding
-     */
     @Override
     public ASN1Primitive toASN1Primitive() {
         final ASN1EncodableVector v = new ASN1EncodableVector();
@@ -135,16 +139,16 @@ public class GordianKeySetHashASN1
     }
 
     /**
-     * Obtain the byte length of the encoded a given wrapped keyLength and # of keys.
+     * Obtain the byte length of the encoded object.
      * @return the byte length
      */
     public static int getEncodedLength() {
         /* KeyType has type + length + value (all single byte) */
         int myLength  =  GordianKeySetHashSpecASN1.getEncodedLength();
-        myLength += GordianKeySetASN1.getLengthByteArrayField(GordianKeySetHashRecipe.HASHLEN);
+        myLength += GordianASN1Util.getLengthByteArrayField(GordianKeySetHashRecipe.HASHLEN);
 
         /* Calculate the length of the sequence */
-        return  GordianKeySetASN1.getLengthSequence(myLength);
+        return GordianASN1Util.getLengthSequence(myLength);
     }
 
     /**
@@ -153,5 +157,32 @@ public class GordianKeySetHashASN1
      */
     public AlgorithmIdentifier getAlgorithmId() {
         return new AlgorithmIdentifier(KEYSETHASHALGID, toASN1Primitive());
+    }
+
+    @Override
+    public boolean equals(final Object pThat) {
+        /* Handle trivial cases */
+        if (this == pThat) {
+            return true;
+        }
+        if (pThat == null) {
+            return false;
+        }
+
+        /* Make sure that the classes are the same */
+        if (!(pThat instanceof GordianKeySetHashASN1)) {
+            return false;
+        }
+        final GordianKeySetHashASN1 myThat = (GordianKeySetHashASN1) pThat;
+
+        /* Check that the fields are equal */
+        return Objects.equals(theSpec, myThat.getSpec())
+                && Arrays.equals(getHashBytes(), myThat.getHashBytes());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getSpec())
+                + Arrays.hashCode(getHashBytes());
     }
 }

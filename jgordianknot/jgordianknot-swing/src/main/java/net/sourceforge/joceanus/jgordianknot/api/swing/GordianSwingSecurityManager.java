@@ -16,7 +16,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jgordianknot.api.swing;
 
-import net.sourceforge.joceanus.jgordianknot.api.factory.GordianParameters;
+import net.sourceforge.joceanus.jgordianknot.api.factory.GordianFactoryType;
 import net.sourceforge.joceanus.jgordianknot.util.GordianDialogController;
 import net.sourceforge.joceanus.jgordianknot.util.GordianSecurityManager;
 import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetHashSpec;
@@ -33,14 +33,16 @@ public class GordianSwingSecurityManager
     /**
      * Constructor.
      * @param pFactory the GUI Factory
-     * @param pParameters the Security parameters
+     * @param pFactoryType the Security factoryType
+     * @param pSecurityPhrase the security phrase
      * @param pKeySetSpec the keySetSpec
      * @throws OceanusException on error
      */
     public GordianSwingSecurityManager(final TethysSwingGuiFactory pFactory,
-                                       final GordianParameters pParameters,
+                                       final GordianFactoryType pFactoryType,
+                                       final char[] pSecurityPhrase,
                                        final GordianKeySetHashSpec pKeySetSpec) throws OceanusException {
-        super(pParameters, pKeySetSpec, new GordianSwingDialogControl(pFactory));
+        super(pFactoryType, pSecurityPhrase, pKeySetSpec, new GordianSwingDialogControl(pFactory));
     }
 
     /**

@@ -79,4 +79,10 @@ public interface GordianFactory {
      * ReSeed the random number generator.
      */
     void reSeedRandom();
+
+    /**
+     * Obtain the obfuscater.
+     * @return the obfuscater
+     */
+    GordianKnuthObfuscater getObfuscater();
 }

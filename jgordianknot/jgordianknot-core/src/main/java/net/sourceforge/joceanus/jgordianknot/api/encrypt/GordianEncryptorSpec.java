@@ -21,7 +21,6 @@ import java.util.List;
 import java.util.Objects;
 
 import net.sourceforge.joceanus.jgordianknot.api.asym.GordianAsymKeyType;
-import net.sourceforge.joceanus.jgordianknot.api.asym.GordianMcElieceKeySpec.GordianMcElieceEncryptionType;
 import net.sourceforge.joceanus.jgordianknot.api.base.GordianLength;
 import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigestSpec;
 import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigestType;
@@ -39,7 +38,7 @@ public final class GordianEncryptorSpec {
     /**
      * The Separator.
      */
-    private static final String SEP = "-";
+    static final String SEP = "-";
 
     /**
      * AsymKeyType.
@@ -116,10 +115,10 @@ public final class GordianEncryptorSpec {
 
     /**
      * Create SM2 Encryptor.
-     * @param pSpec the digestSpec
+     * @param pSpec the sm2EncryptionSpec
      * @return the encryptorSpec
      */
-    public static GordianEncryptorSpec sm2(final GordianDigestSpec pSpec) {
+    public static GordianEncryptorSpec sm2(final GordianSM2EncryptionSpec pSpec) {
         return new GordianEncryptorSpec(GordianAsymKeyType.SM2, pSpec);
     }
 
@@ -169,6 +168,16 @@ public final class GordianEncryptorSpec {
     }
 
     /**
+     * Obtain the SM2 encryption Spec.
+     * @return the encryptionSpec.
+     */
+    public GordianSM2EncryptionSpec getSM2EncryptionSpec() {
+        return theEncryptorType instanceof GordianSM2EncryptionSpec
+               ? (GordianSM2EncryptionSpec) theEncryptorType
+               : null;
+    }
+
+    /**
      * Is the encryptorSpec valid?
      * @return true/false.
      */
@@ -190,10 +199,9 @@ public final class GordianEncryptorSpec {
                         && ((GordianDigestSpec) theEncryptorType).isValid();
             case SM2:
                 return theEncryptorType == null
-                        || (theEncryptorType instanceof GordianDigestSpec
-                            && ((GordianDigestSpec) theEncryptorType).isValid());
+                        || (theEncryptorType instanceof GordianSM2EncryptionSpec
+                            && ((GordianSM2EncryptionSpec) theEncryptorType).isValid());
             case EC:
-            case DSTU4145:
             case GOST2012:
                 return theEncryptorType == null;
             case MCELIECE:
@@ -215,32 +223,14 @@ public final class GordianEncryptorSpec {
             case EC:
             case GOST2012:
             case MCELIECE:
-                return true;
             case SM2:
-                return mySpec == null || isSM2Supported(mySpec);
+                return true;
             default:
                 return false;
         }
     }
 
-    /**
-     * Is the SM2 digestSpec supported?
-     * @param pDigestSpec the digestSpec
-     * @return true/false
-     */
-    private static boolean isSM2Supported(final GordianDigestSpec pDigestSpec) {
-        switch (pDigestSpec.getDigestType()) {
-            case SHA2:
-                return pDigestSpec.getStateLength() == null;
-            case WHIRLPOOL:
-            case SM3:
-                return true;
-            case BLAKE:
-                return pDigestSpec.getDigestLength().equals(pDigestSpec.getStateLength());
-            default:
-                return false;
-        }
-    }
+
     @Override
     public String toString() {
         /* If we have not yet loaded the name */
@@ -255,7 +245,6 @@ public final class GordianEncryptorSpec {
                         theName += SEP + theEncryptorType;
                         break;
                     case EC:
-                    case DSTU4145:
                     case GOST2012:
                         theName += SEP + ECELGAMAL;
                         break;
@@ -293,13 +282,9 @@ public final class GordianEncryptorSpec {
         /* Access the target encryptorSpec */
         final GordianEncryptorSpec myThat = (GordianEncryptorSpec) pThat;
 
-        /* Check KeyType */
-        if (theAsymKeyType != myThat.getKeyType()) {
-            return false;
-        }
-
-        /* Match subfields */
-        return Objects.equals(theEncryptorType, myThat.theEncryptorType);
+        /* Match fields */
+        return theAsymKeyType == myThat.getKeyType()
+                && Objects.equals(theEncryptorType, myThat.theEncryptorType);
     }
 
     @Override
@@ -312,7 +297,7 @@ public final class GordianEncryptorSpec {
     }
 
     /**
-     * Obtain a list of all possible agreements for the keyType.
+     * Obtain a list of all possible encryptors for the keyType.
      * @param pKeyType the keyType
      * @return the list
      */
@@ -330,14 +315,10 @@ public final class GordianEncryptorSpec {
                 break;
             case SM2:
                 myEncryptors.add(GordianEncryptorSpec.sm2());
-                myEncryptors.add(GordianEncryptorSpec.sm2(GordianDigestSpec.sm3()));
-                myEncryptors.add(GordianEncryptorSpec.sm2(GordianDigestSpec.sha2(GordianLength.LEN_224)));
-                myEncryptors.add(GordianEncryptorSpec.sm2(GordianDigestSpec.sha2(GordianLength.LEN_256)));
-                myEncryptors.add(GordianEncryptorSpec.sm2(GordianDigestSpec.sha2(GordianLength.LEN_384)));
-                myEncryptors.add(GordianEncryptorSpec.sm2(GordianDigestSpec.sha2(GordianLength.LEN_512)));
-                myEncryptors.add(GordianEncryptorSpec.sm2(GordianDigestSpec.blakeAlt(GordianLength.LEN_256)));
-                myEncryptors.add(GordianEncryptorSpec.sm2(GordianDigestSpec.blake(GordianLength.LEN_512)));
-                myEncryptors.add(GordianEncryptorSpec.sm2(GordianDigestSpec.whirlpool()));
+                /* Loop through the encryptionSpecs */
+                for (GordianSM2EncryptionSpec mySpec : GordianSM2EncryptionSpec.listPossibleSpecs()) {
+                    myEncryptors.add(GordianEncryptorSpec.sm2(mySpec));
+                }
                 break;
             case EC:
                 myEncryptors.add(GordianEncryptorSpec.ec());

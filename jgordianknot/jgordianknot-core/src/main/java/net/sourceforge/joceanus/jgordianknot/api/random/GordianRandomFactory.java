@@ -49,15 +49,16 @@ public interface GordianRandomFactory {
 
     /**
      * generate random GordianDigest.
+     * @param pLargeData only generate a digest that is suitable for processing large amounts of data
      * @return the new Digest
      * @throws OceanusException on error
      */
-    GordianDigest generateRandomDigest() throws OceanusException;
+    GordianDigest generateRandomDigest(boolean pLargeData) throws OceanusException;
 
     /**
      * generate random GordianMac.
      * @param pKeyLen the keyLength
-     * @param pLargeData only generate a Mac that is suitable for for parsing large amounts of data
+     * @param pLargeData only generate a Mac that is suitable for parsing large amounts of data
      * @return the new MAC
      * @throws OceanusException on error
      */
@@ -75,7 +76,7 @@ public interface GordianRandomFactory {
     /**
      * generate random GordianStreamKey.
      * @param pKeyLen the keyLength
-     * @param pLargeData only generate a Mac that is suitable for for parsing large amounts of data
+     * @param pLargeData only generate a Mac that is suitable for parsing large amounts of data
      * @return the new StreamKey
      * @throws OceanusException on error
      */

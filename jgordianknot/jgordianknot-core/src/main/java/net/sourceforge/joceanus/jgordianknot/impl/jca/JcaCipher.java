@@ -57,6 +57,11 @@ public abstract class JcaCipher<T extends GordianKeySpec>
     private final Cipher theCipher;
 
     /**
+     * is the cipher encrypting?
+     */
+    private boolean isEncrypting;
+
+    /**
      * Constructor.
      * @param pFactory the Security Factory
      * @param pCipherSpec the cipherSpec
@@ -102,6 +107,7 @@ public abstract class JcaCipher<T extends GordianKeySpec>
             } else {
                 theCipher.init(myMode, myKey);
             }
+            isEncrypting = pEncrypt;
         } catch (InvalidKeyException
                 | InvalidAlgorithmParameterException e) {
             throw new GordianCryptoException("Failed to initialise cipher", e);
@@ -215,5 +221,32 @@ public abstract class JcaCipher<T extends GordianKeySpec>
                         final Cipher pCipher) {
             super(pFactory, pCipherSpec, pCipher);
         }
+    }
+
+    @Override
+    public boolean equals(final Object pThat) {
+        /* Handle trivial cases */
+        if (this == pThat) {
+            return true;
+        }
+        if (pThat == null) {
+            return false;
+        }
+
+        /* Make sure that the classes are the same */
+        if (!(pThat instanceof JcaCipher)) {
+            return false;
+        }
+        final JcaCipher<?> myThat = (JcaCipher<?>) pThat;
+
+        /* Check that the fields are equal */
+        return isEncrypting == myThat.isEncrypting
+                && super.equals(myThat);
+    }
+
+    @Override
+    public int hashCode() {
+        return super.hashCode()
+                + (isEncrypting ? 1 : 0);
     }
 }

@@ -162,6 +162,8 @@ public final class JcaDigest
                 return getKupynaAlgorithm(myLen);
             case SHAKE:
                 return getSHAKEAlgorithm(pDigestSpec.getStateLength());
+            case HARAKA:
+                return pDigestSpec.toString();
             case GOST:
                 return "GOST3411";
             case WHIRLPOOL:

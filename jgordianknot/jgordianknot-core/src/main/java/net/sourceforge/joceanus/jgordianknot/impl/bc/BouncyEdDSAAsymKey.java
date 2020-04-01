@@ -47,7 +47,6 @@ import org.bouncycastle.crypto.util.PublicKeyFactory;
 import org.bouncycastle.crypto.util.SubjectPublicKeyInfoFactory;
 
 import net.sourceforge.joceanus.jgordianknot.api.asym.GordianAsymKeySpec;
-import net.sourceforge.joceanus.jgordianknot.api.asym.GordianAsymKeyType;
 import net.sourceforge.joceanus.jgordianknot.api.key.GordianKeyPair;
 import net.sourceforge.joceanus.jgordianknot.api.sign.GordianSignatureSpec;
 import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyKeyPair.BouncyPrivateKey;
@@ -382,7 +381,7 @@ public final class BouncyEdDSAAsymKey {
         /**
          * The Signer.
          */
-        private final Signer theSigner;
+        private Signer theSigner;
 
         /**
          * Constructor.
@@ -394,21 +393,20 @@ public final class BouncyEdDSAAsymKey {
                              final GordianSignatureSpec pSpec) throws OceanusException {
             /* Initialise underlying class */
             super(pFactory, pSpec);
-
-            /* Create the signer */
-            theSigner = createSigner(pSpec);
         }
 
         /**
-         * Create signer.
-         * @param pSpec the signatureSpec.
+         * Create the signer according to the keyPair.
+         * @param pKeyPair the keyPair
          * @return the signer
          */
-        private static Signer createSigner(final GordianSignatureSpec pSpec) {
-            /* Create the signer */
+        private Signer createSigner(final GordianKeyPair pKeyPair) {
+            /* Determine the EdwardsCurve */
+            final boolean is25519 = pKeyPair.getKeySpec().getEdwardsElliptic().is25519();
             final byte[] myContext =  new byte[0];
-            final boolean is25519 = GordianAsymKeyType.ED25519.equals(pSpec.getAsymKeyType());
-            switch (pSpec.getSignatureType()) {
+
+            /* Create the internal digests */
+            switch (getSignatureSpec().getSignatureType()) {
                 case PREHASH:
                     return is25519
                            ? new Ed25519phSigner(myContext)
@@ -420,7 +418,7 @@ public final class BouncyEdDSAAsymKey {
                 case NATIVE:
                     return new Ed25519Signer();
                 default:
-                    throw new IllegalArgumentException("Invalid SignatureType: " + pSpec.getSignatureType());
+                    throw new IllegalArgumentException("Invalid SignatureType: " + getSignatureSpec().getSignatureType());
             }
         }
 
@@ -430,7 +428,8 @@ public final class BouncyEdDSAAsymKey {
             super.initForSigning(pKeyPair);
 
             /* Initialise and set the signer */
-            final BouncyPrivateKey myPrivate = getKeyPair().getPrivateKey();
+            theSigner = createSigner(pKeyPair);
+            final BouncyPrivateKey<?> myPrivate = getKeyPair().getPrivateKey();
             theSigner.init(true, myPrivate.getPrivateKey());
         }
 
@@ -440,7 +439,8 @@ public final class BouncyEdDSAAsymKey {
             super.initForVerify(pKeyPair);
 
             /* Initialise and set the signer */
-            final BouncyPublicKey myPublic = getKeyPair().getPublicKey();
+            theSigner = createSigner(pKeyPair);
+            final BouncyPublicKey<?> myPublic = getKeyPair().getPublicKey();
             theSigner.init(false, myPublic.getPublicKey());
         }
 

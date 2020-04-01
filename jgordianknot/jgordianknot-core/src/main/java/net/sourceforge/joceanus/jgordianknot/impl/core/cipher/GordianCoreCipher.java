@@ -17,6 +17,8 @@
 package net.sourceforge.joceanus.jgordianknot.impl.core.cipher;
 
 import java.security.SecureRandom;
+import java.util.Arrays;
+import java.util.Objects;
 
 import net.sourceforge.joceanus.jgordianknot.api.base.GordianLength;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianCipherParameters;
@@ -40,19 +42,9 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
 public abstract class GordianCoreCipher<T extends GordianKeySpec>
     implements GordianKeyedCipher<T> {
     /**
-     * KeyType.
-     */
-    private final T theKeyType;
-
-    /**
      * CipherSpec.
      */
     private final GordianCipherSpec<T> theCipherSpec;
-
-    /**
-     * KeyLength.
-     */
-    private final GordianLength theKeyLength;
 
     /**
      * The Random Generator.
@@ -72,9 +64,7 @@ public abstract class GordianCoreCipher<T extends GordianKeySpec>
     protected GordianCoreCipher(final GordianCoreFactory pFactory,
                                 final GordianCipherSpec<T> pCipherSpec) {
         theCipherSpec = pCipherSpec;
-        theKeyType = theCipherSpec.getKeyType();
         theRandom = pFactory.getRandomSource();
-        theKeyLength = pCipherSpec.getKeyType().getKeyLength();
         theParameters = new GordianCoreCipherParameters<>(pFactory, theCipherSpec);
     }
 
@@ -83,7 +73,7 @@ public abstract class GordianCoreCipher<T extends GordianKeySpec>
      * @return the keyType
      */
     public T getKeyType() {
-        return theKeyType;
+        return theCipherSpec.getKeyType();
     }
 
     /**
@@ -104,7 +94,7 @@ public abstract class GordianCoreCipher<T extends GordianKeySpec>
 
     @Override
     public GordianLength getKeyLength() {
-        return theKeyLength;
+        return getKeyType().getKeyLength();
     }
 
     /**
@@ -145,7 +135,7 @@ public abstract class GordianCoreCipher<T extends GordianKeySpec>
      */
     public void initKeyBytes(final byte[] pKeyBytes) throws OceanusException {
         /* Check that the key length is correct */
-        if (theKeyLength.getByteLength() != pKeyBytes.length) {
+        if (getKeyLength().getByteLength() != pKeyBytes.length) {
             throw new GordianLogicException("incorrect keyLength");
         }
 
@@ -204,8 +194,36 @@ public abstract class GordianCoreCipher<T extends GordianKeySpec>
      * @throws OceanusException on error
      */
     void checkValidKey(final GordianKey<T> pKey) throws OceanusException {
-        if (!theKeyType.equals(pKey.getKeyType())) {
+        if (!getKeyType().equals(pKey.getKeyType())) {
             throw new GordianLogicException("MisMatch on keyType");
         }
+    }
+
+    @Override
+    public boolean equals(final Object pThat) {
+        /* Handle trivial cases */
+        if (this == pThat) {
+            return true;
+        }
+        if (pThat == null) {
+            return false;
+        }
+
+        /* Make sure that the classes are the same */
+        if (!(pThat instanceof GordianCoreCipher)) {
+            return false;
+        }
+        final GordianCoreCipher<?> myThat = (GordianCoreCipher<?>) pThat;
+
+        /* Check that the fields are equal */
+        return Objects.equals(theCipherSpec, myThat.getCipherSpec())
+                && Objects.equals(getKey(), myThat.getKey())
+                && Arrays.equals(getInitVector(), myThat.getInitVector());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getKey(), getCipherSpec())
+                + Arrays.hashCode(getInitVector());
     }
 }

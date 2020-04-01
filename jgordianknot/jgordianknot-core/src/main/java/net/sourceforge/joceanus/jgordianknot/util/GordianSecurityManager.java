@@ -23,7 +23,7 @@ import java.util.List;
 
 import net.sourceforge.joceanus.jgordianknot.api.base.GordianLength;
 import net.sourceforge.joceanus.jgordianknot.api.factory.GordianFactory;
-import net.sourceforge.joceanus.jgordianknot.api.factory.GordianParameters;
+import net.sourceforge.joceanus.jgordianknot.api.factory.GordianFactoryType;
 import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianBadCredentialsException;
 import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySet;
 import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetFactory;
@@ -31,7 +31,6 @@ import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetHash;
 import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetHashSpec;
 import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetSpec;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianDataException;
-import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianFactoryGenerator;
 import net.sourceforge.joceanus.jgordianknot.impl.core.keyset.GordianCoreKeySet;
 import net.sourceforge.joceanus.jgordianknot.impl.core.keyset.GordianCoreKeySetHash;
 import net.sourceforge.joceanus.jgordianknot.impl.core.keyset.GordianKeySetHashASN1;
@@ -41,7 +40,7 @@ import net.sourceforge.joceanus.jtethys.logger.TethysLogManager;
 import net.sourceforge.joceanus.jtethys.logger.TethysLogger;
 
 /**
- * PasswordHash Manager class which holds a cache of all resolved password hashes. For password
+ * Security Manager class which holds a cache of all resolved password hashes. For password
  * hashes that were not previously resolved, previously used passwords will be attempted. If no
  * match is found, then the user will be prompted for the password.
  */
@@ -103,17 +102,32 @@ public class GordianSecurityManager {
 
     /**
      * Constructor.
-     * @param pParameters the Security parameters
+     * @param pFactoryType the factory type
      * @param pKeySetHashSpec the keySetHashSpec
      * @param pDialog the dialog controller
      * @throws OceanusException on error
      */
-    public GordianSecurityManager(final GordianParameters pParameters,
+    public GordianSecurityManager(final GordianFactoryType pFactoryType,
                                   final GordianKeySetHashSpec pKeySetHashSpec,
                                   final GordianDialogController pDialog) throws OceanusException {
         /* Allocate the factory */
-        final GordianFactoryGenerator myGenerator = new GordianGenerator();
-        theFactory = myGenerator.newFactory(pParameters);
+        this(pFactoryType, null, pKeySetHashSpec, pDialog);
+    }
+
+    /**
+     * Constructor.
+     * @param pFactoryType the factory type
+     * @param pSecurityPhrase the security phrase
+     * @param pKeySetHashSpec the keySetHashSpec
+     * @param pDialog the dialog controller
+     * @throws OceanusException on error
+     */
+    public GordianSecurityManager(final GordianFactoryType pFactoryType,
+                                  final char[] pSecurityPhrase,
+                                  final GordianKeySetHashSpec pKeySetHashSpec,
+                                  final GordianDialogController pDialog) throws OceanusException {
+        /* Allocate the factory */
+        theFactory = GordianGenerator.createFactory(pFactoryType, pSecurityPhrase);
         theDialog = pDialog;
         theKeySetHashSpec = pKeySetHashSpec;
 

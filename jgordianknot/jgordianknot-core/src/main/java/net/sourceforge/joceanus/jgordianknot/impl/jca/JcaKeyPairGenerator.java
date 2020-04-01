@@ -25,11 +25,15 @@ import java.security.spec.ECGenParameterSpec;
 import java.security.spec.InvalidKeySpecException;
 import java.security.spec.PKCS8EncodedKeySpec;
 import java.security.spec.X509EncodedKeySpec;
+import java.util.Arrays;
 
 import org.bouncycastle.crypto.params.DHParameters;
 import org.bouncycastle.jcajce.spec.DHDomainParameterSpec;
 import org.bouncycastle.jcajce.spec.EdDSAParameterSpec;
 import org.bouncycastle.jcajce.spec.XDHParameterSpec;
+import org.bouncycastle.pqc.crypto.lms.LMSParameters;
+import org.bouncycastle.pqc.jcajce.spec.LMSHSSParameterSpec;
+import org.bouncycastle.pqc.jcajce.spec.LMSParameterSpec;
 import org.bouncycastle.pqc.jcajce.spec.McElieceCCA2KeyGenParameterSpec;
 import org.bouncycastle.pqc.jcajce.spec.McElieceKeyGenParameterSpec;
 import org.bouncycastle.pqc.jcajce.spec.QTESLAParameterSpec;
@@ -38,14 +42,16 @@ import org.bouncycastle.pqc.jcajce.spec.XMSSMTParameterSpec;
 import org.bouncycastle.pqc.jcajce.spec.XMSSParameterSpec;
 
 import net.sourceforge.joceanus.jgordianknot.api.asym.GordianAsymKeySpec;
-import net.sourceforge.joceanus.jgordianknot.api.asym.GordianAsymKeyType;
 import net.sourceforge.joceanus.jgordianknot.api.asym.GordianDHGroup;
 import net.sourceforge.joceanus.jgordianknot.api.asym.GordianDSAKeyType;
+import net.sourceforge.joceanus.jgordianknot.api.asym.GordianLMSKeySpec;
+import net.sourceforge.joceanus.jgordianknot.api.asym.GordianLMSKeySpec.GordianHSSKeySpec;
 import net.sourceforge.joceanus.jgordianknot.api.asym.GordianMcElieceKeySpec;
 import net.sourceforge.joceanus.jgordianknot.api.asym.GordianMcElieceKeySpec.GordianMcElieceDigestType;
 import net.sourceforge.joceanus.jgordianknot.api.asym.GordianRSAModulus;
-import net.sourceforge.joceanus.jgordianknot.api.asym.GordianSPHINCSKeyType;
-import net.sourceforge.joceanus.jgordianknot.api.asym.GordianXMSSKeyType;
+import net.sourceforge.joceanus.jgordianknot.api.asym.GordianSPHINCSDigestType;
+import net.sourceforge.joceanus.jgordianknot.api.asym.GordianXMSSKeySpec;
+import net.sourceforge.joceanus.jgordianknot.api.asym.GordianXMSSKeySpec.GordianXMSSDigestType;
 import net.sourceforge.joceanus.jgordianknot.api.key.GordianKeyPair;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianCryptoException;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianLogicException;
@@ -170,7 +176,7 @@ public abstract class JcaKeyPairGenerator
 
             /* Create and initialise the generator */
             theGenerator = JcaAsymFactory.getJavaKeyPairGenerator(RSA_ALGO, false);
-            theGenerator.initialize(pKeySpec.getModulus().getLength(), getRandom());
+            theGenerator.initialize(pKeySpec.getRSAModulus().getLength(), getRandom());
 
             /* Create the factory */
             setKeyFactory(JcaAsymFactory.getJavaKeyFactory(RSA_ALGO, false));
@@ -371,7 +377,7 @@ public abstract class JcaKeyPairGenerator
             /* Protect against exceptions */
             try {
                 /* Determine the type */
-                final String myType = GordianSPHINCSKeyType.SHA3.equals(pKeySpec.getSPHINCSType())
+                final String myType = GordianSPHINCSDigestType.SHA3.equals(pKeySpec.getSPHINCSDigestType())
                                       ? SPHINCS256KeyGenParameterSpec.SHA3_256
                                       : SPHINCS256KeyGenParameterSpec.SHA512_256;
 
@@ -471,18 +477,13 @@ public abstract class JcaKeyPairGenerator
             super(pFactory, pKeySpec);
 
             /* Create and initialise the generator */
-            final GordianMcElieceKeySpec myKeyType = pKeySpec.getMcElieceSpec();
+            final GordianMcElieceKeySpec myKeyType = pKeySpec.getMcElieceKeySpec();
             final String myAlgo = myKeyType.isCCA2()
                                   ? MCELIECECCA2_ALGO
                                   : MCELIECE_ALGO;
             theGenerator = JcaAsymFactory.getJavaKeyPairGenerator(myAlgo, true);
 
-            /*
-             * Note that we should create McEliece parameters and initialise using them, but that
-             * call is not yet supported and is a No-OP leading to a NullPointer exception when we
-             * try to generate the keyPair. Note also that obtaining PKCS8 and X509 encoding also
-             * leads to NullPointer exceptions, since this is also not yet supported.
-             */
+            /* Protect against exceptions */
             try {
                 if (myKeyType.isCCA2()) {
                     final GordianMcElieceDigestType myDigestType = myKeyType.getDigestType();
@@ -575,17 +576,18 @@ public abstract class JcaKeyPairGenerator
             /* Protect against exceptions */
             try {
                 /* Access the algorithm */
-                final boolean isXMSSMT = GordianAsymKeyType.XMSSMT.equals(pKeySpec.getKeyType());
-                final GordianXMSSKeyType myType = pKeySpec.getXMSSKeyType();
+                final GordianXMSSKeySpec myXMSSKeySpec = pKeySpec.getXMSSKeySpec();
+                final boolean isXMSSMT = myXMSSKeySpec.isMT();
+                final GordianXMSSDigestType myType = myXMSSKeySpec.getDigestType();
 
                 /* Create the parameters */
                 final AlgorithmParameterSpec myAlgo = isXMSSMT
-                                                      ? new XMSSMTParameterSpec(GordianXMSSKeyType.DEFAULT_HEIGHT,
-                        GordianXMSSKeyType.DEFAULT_LAYERS, myType.name())
-                                                      : new XMSSParameterSpec(GordianXMSSKeyType.DEFAULT_HEIGHT, myType.name());
+                                                      ? new XMSSMTParameterSpec(myXMSSKeySpec.getHeight().getHeight(),
+                                                                                myXMSSKeySpec.getLayers().getLayers(), myType.name())
+                                                      : new XMSSParameterSpec(myXMSSKeySpec.getHeight().getHeight(), myType.name());
 
                 /* Create and initialise the generator */
-                final String myJavaType = pKeySpec.getKeyType().toString();
+                final String myJavaType = myXMSSKeySpec.getKeyType().name();
                 theGenerator = JcaAsymFactory.getJavaKeyPairGenerator(myJavaType, true);
                 theGenerator.initialize(myAlgo, getRandom());
 
@@ -642,30 +644,30 @@ public abstract class JcaKeyPairGenerator
             try {
                 /* Create the parameters */
                 final AlgorithmParameterSpec myAlgo;
+                final boolean is25519 = pKeySpec.getEdwardsElliptic().is25519();
                 switch (pKeySpec.getKeyType()) {
-                    case X25519:
-                        myAlgo = new XDHParameterSpec(XDHParameterSpec.X25519);
+                    case XDH:
+                        myAlgo = is25519
+                                 ? new XDHParameterSpec(XDHParameterSpec.X25519)
+                                 : new XDHParameterSpec(XDHParameterSpec.X448);
                         break;
-                    case X448:
-                        myAlgo = new XDHParameterSpec(XDHParameterSpec.X448);
-                        break;
-                    case ED25519:
-                        myAlgo = new EdDSAParameterSpec(EdDSAParameterSpec.Ed25519);
-                        break;
-                    case ED448:
-                        myAlgo = new EdDSAParameterSpec(EdDSAParameterSpec.Ed448);
+                    case EDDSA:
+                        myAlgo = is25519
+                                 ? new EdDSAParameterSpec(EdDSAParameterSpec.Ed25519)
+                                 : new EdDSAParameterSpec(EdDSAParameterSpec.Ed448);
                         break;
                     default:
                         throw new GordianLogicException("Invalid KeySpec" + pKeySpec);
                 }
 
                 /* Create and initialise the generator */
-                final String myJavaType = pKeySpec.getKeyType().toString();
+                final String myJavaType = pKeySpec.toString();
                 theGenerator = JcaAsymFactory.getJavaKeyPairGenerator(myJavaType, false);
                 theGenerator.initialize(myAlgo, getRandom());
 
                 /* Create the factory */
                 setKeyFactory(JcaAsymFactory.getJavaKeyFactory(myJavaType, false));
+
             } catch (InvalidAlgorithmParameterException e) {
                 throw new GordianCryptoException("Failed to create EdwardsGenerator", e);
             }
@@ -735,6 +737,88 @@ public abstract class JcaKeyPairGenerator
             final JcaPublicKey myPublic = new JcaPublicKey(getKeySpec(), myPair.getPublic());
             final JcaPrivateKey myPrivate = new JcaPrivateKey(getKeySpec(), myPair.getPrivate());
             return new JcaKeyPair(myPublic, myPrivate);
+        }
+    }
+
+    /**
+     * Jca LMS KeyPair generator.
+     */
+    public static class JcaLMSKeyPairGenerator
+            extends JcaKeyPairGenerator {
+        /**
+         * Generator.
+         */
+        private final KeyPairGenerator theGenerator;
+
+        /**
+         * Constructor.
+         * @param pFactory the Security Factory
+         * @param pKeySpec the keySpec
+         * @throws OceanusException on error
+         */
+        JcaLMSKeyPairGenerator(final JcaFactory pFactory,
+                               final GordianAsymKeySpec pKeySpec) throws OceanusException {
+            /* Initialise underlying class */
+            super(pFactory, pKeySpec);
+
+            /* Create and initialise the generator */
+            final String myJavaType = pKeySpec.getKeyType().toString();
+            theGenerator = JcaAsymFactory.getJavaKeyPairGenerator(myJavaType, true);
+
+            /* Protect against exceptions */
+            try {
+                final AlgorithmParameterSpec myParms = pKeySpec.getSubKeyType() instanceof GordianHSSKeySpec
+                        ? deriveParameters(pKeySpec.getHSSKeySpec())
+                        : deriveParameters(pKeySpec.getLMSKeySpec());
+                theGenerator.initialize(myParms, getRandom());
+             } catch (InvalidAlgorithmParameterException e) {
+                throw new GordianCryptoException("Failed to initialise generator", e);
+            }
+
+            /* Create the factory */
+            setKeyFactory(JcaAsymFactory.getJavaKeyFactory(myJavaType, true));
+        }
+
+        /**
+         * Derive the parameters.
+         * @param pKeySpec the keySPec
+         * @return the parameters.
+         */
+        private static LMSHSSParameterSpec deriveParameters(final GordianHSSKeySpec pKeySpec) {
+            final GordianLMSKeySpec myKeySpec = pKeySpec.getKeySpec();
+            final LMSParameterSpec[] myParams = new LMSParameterSpec[pKeySpec.getTreeDepth()];
+            Arrays.fill(myParams, deriveParameters(myKeySpec));
+            return new LMSHSSParameterSpec(myParams);
+        }
+
+        /**
+         * Derive the parameters.
+         * @param pKeySpec the keySpec
+         * @return the parameters.
+         */
+        private static LMSParameterSpec deriveParameters(final GordianLMSKeySpec pKeySpec) {
+            final LMSParameters myParms = pKeySpec.getParameters();
+            return new LMSParameterSpec(myParms.getLMSigParam(), myParms.getLMOTSParam());
+        }
+
+        @Override
+        public JcaKeyPair generateKeyPair() {
+            final KeyPair myPair = theGenerator.generateKeyPair();
+            final JcaPublicKey myPublic = new JcaPublicKey(getKeySpec(), myPair.getPublic());
+            final JcaStateAwarePrivateKey myPrivate = new JcaStateAwarePrivateKey(getKeySpec(), myPair.getPrivate());
+            return new JcaStateAwareKeyPair(myPublic, myPrivate);
+        }
+
+        @Override
+        public JcaKeyPair deriveKeyPair(final X509EncodedKeySpec pPublicKey,
+                                        final PKCS8EncodedKeySpec pPrivateKey) throws OceanusException {
+            try {
+                final JcaPublicKey myPublic = derivePublicKey(pPublicKey);
+                final JcaStateAwarePrivateKey myPrivate = new JcaStateAwarePrivateKey(getKeySpec(), getKeyFactory().generatePrivate(pPrivateKey));
+                return new JcaStateAwareKeyPair(myPublic, myPrivate);
+            } catch (InvalidKeySpecException e) {
+                throw new GordianCryptoException(PARSE_ERROR, e);
+            }
         }
     }
 }

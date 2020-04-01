@@ -21,6 +21,7 @@
 module net.sourceforge.joceanus.jthemis.core {
     /* java */
     requires java.desktop;
+    requires java.prefs;
 
     /* External libraries */
     requires maven.model;
@@ -36,6 +37,7 @@ module net.sourceforge.joceanus.jthemis.core {
 
     /* Exports */
     exports net.sourceforge.joceanus.jthemis.ui;
+    exports net.sourceforge.joceanus.jthemis.ui.dsm;
     exports net.sourceforge.joceanus.jthemis.git.data to net.sourceforge.joceanus.jmetis.core;
     exports net.sourceforge.joceanus.jthemis.sf.data to net.sourceforge.joceanus.jmetis.core;
     exports net.sourceforge.joceanus.jthemis.jira.data to net.sourceforge.joceanus.jmetis.core;
