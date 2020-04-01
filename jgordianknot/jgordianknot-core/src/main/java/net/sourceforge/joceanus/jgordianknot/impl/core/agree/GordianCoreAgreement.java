@@ -116,6 +116,11 @@ public abstract class GordianCoreAgreement
     private byte[] theServerIV;
 
     /**
+     * The confirmationTag.
+     */
+    private byte[] theConfirmationTag;
+
+    /**
      * The resultType.
      */
     private Object theResultType;
@@ -171,13 +176,21 @@ public abstract class GordianCoreAgreement
         theStatus = pStatus;
     }
 
+    /**
+     * Obtain the confirmation tag.
+     * @return the confirmationTag
+     */
+    protected byte[] getConfirmationTag() {
+        return theConfirmationTag;
+    }
+
     @Override
     public Object getResultType() {
         return theResultType;
     }
 
     @Override
-    public Object getResult() {
+    public Object getResult() throws OceanusException {
         /* Must be in result available state */
         checkStatus(GordianAgreementStatus.RESULT_AVAILABLE);
 
@@ -196,9 +209,7 @@ public abstract class GordianCoreAgreement
         theResultType = pResultType;
     }
 
-    /**
-     * Reset.
-     */
+    @Override
     public void reset() {
         /* Reset the result and status */
         theResult = null;
@@ -213,6 +224,9 @@ public abstract class GordianCoreAgreement
             Arrays.fill(theServerIV, (byte) 0);
             theServerIV = null;
         }
+
+        /* Reset the confirmation tag */
+        theConfirmationTag = null;
     }
 
     /**
@@ -266,11 +280,12 @@ public abstract class GordianCoreAgreement
     /**
      * Check status.
      * @param pStatus the required status
+     * @throws OceanusException on error
      */
-    protected void checkStatus(final GordianAgreementStatus pStatus) {
+    protected void checkStatus(final GordianAgreementStatus pStatus) throws OceanusException {
         /* If we are in the wrong state */
         if (theStatus != pStatus) {
-            throw new IllegalStateException("Invalid State: " + theStatus);
+            throw new GordianLogicException("Invalid State: " + theStatus);
         }
     }
 
@@ -386,7 +401,7 @@ public abstract class GordianCoreAgreement
      * @param pSecret the secret
      * @throws OceanusException on error
      */
-    private void processSecret(final byte[] pSecret) throws OceanusException {
+    protected void processSecret(final byte[] pSecret) throws OceanusException {
         /* If the resultType is a FactoryType */
         if (theResultType instanceof GordianFactoryType) {
             /* derive the factory */
@@ -737,7 +752,7 @@ public abstract class GordianCoreAgreement
         /* Must be in clean state */
         checkStatus(GordianAgreementStatus.CLEAN);
 
-        /* Create the request */
+        /* Create the clientHello */
         final GordianCoreAgreementFactory myFactory = getAgreementFactory();
         final AlgorithmIdentifier myAlgId = myFactory.getIdentifierForSpec(getAgreementSpec());
         final AlgorithmIdentifier myResId = getIdentifierForResult();
@@ -784,17 +799,35 @@ public abstract class GordianCoreAgreement
 
     /**
      * Build serverHello message.
-     * @param pEncapsulated the encapsulated data
      * @return the serverHello message
      * @throws OceanusException on error
      */
-    protected byte[] buildServerHello(final byte[] pEncapsulated) throws OceanusException {
-        /* Create the response */
+    protected byte[] buildServerHello() throws OceanusException {
+        return buildServerHello(null, null);
+    }
+
+    /**
+     * Build serverHello message.
+     * @param pEncapsulated the encapsulated data
+     * @param pConfirmation the confirmationTag
+     * @return the serverHello message
+     * @throws OceanusException on error
+     */
+    protected byte[] buildServerHello(final byte[] pEncapsulated,
+                                      final byte[] pConfirmation) throws OceanusException {
+        /* Create the serverHello */
         final GordianCoreAgreementFactory myFactory = getAgreementFactory();
         final AlgorithmIdentifier myAlgId = myFactory.getIdentifierForSpec(getAgreementSpec());
-        final GordianAgreementServerHelloASN1 myResponse
-                = new GordianAgreementServerHelloASN1(myAlgId, theServerIV, pEncapsulated, null);
-        return myResponse.getEncodedBytes();
+        final GordianAgreementServerHelloASN1 myServerHello
+                = new GordianAgreementServerHelloASN1(myAlgId, theServerIV, pEncapsulated, pConfirmation);
+
+        /* If there is a server confirmation, set status */
+        if (pConfirmation != null) {
+            setStatus(GordianAgreementStatus.AWAITING_CLIENTCONFIRM);
+        }
+
+        /* return the serverHello */
+        return myServerHello.getEncodedBytes();
     }
 
     /**
@@ -808,12 +841,13 @@ public abstract class GordianCoreAgreement
         checkStatus(GordianAgreementStatus.AWAITING_SERVERHELLO);
 
         /* Access the sequence */
-        final GordianAgreementServerHelloASN1 myResponse = GordianAgreementServerHelloASN1.getInstance(pServerHello);
+        final GordianAgreementServerHelloASN1 myServerHello = GordianAgreementServerHelloASN1.getInstance(pServerHello);
 
         /* Access message parts */
-        final AlgorithmIdentifier myAlgId = myResponse.getAgreementId();
-        final byte[] myInitVector = myResponse.getInitVector();
-        final byte[] myKeyBytes = myResponse.getData();
+        final AlgorithmIdentifier myAlgId = myServerHello.getAgreementId();
+        final byte[] myInitVector = myServerHello.getInitVector();
+        final byte[] myKeyBytes = myServerHello.getData();
+        theConfirmationTag = myServerHello.getConfirmation();
 
         /* Check agreementSpec */
         final GordianCoreAgreementFactory myFactory = getAgreementFactory();

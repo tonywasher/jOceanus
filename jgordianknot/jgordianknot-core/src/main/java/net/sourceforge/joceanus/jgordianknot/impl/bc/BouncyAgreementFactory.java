@@ -26,10 +26,10 @@ import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyEllipticAsymKey.Bounc
 import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyEllipticAsymKey.BouncyECBasicAgreement;
 import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyEllipticAsymKey.BouncyECIESAgreement;
 import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyEllipticAsymKey.BouncyECMQVAgreement;
-import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyEllipticAsymKey.BouncyECSM2Agreement;
 import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyEllipticAsymKey.BouncyECUnifiedAgreement;
 import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyNewHopeAsymKey.BouncyNewHopeAgreement;
 import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyRSAAsymKey.BouncyRSAEncapsulationAgreement;
+import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncySM2AsymKey.BouncyECSM2Agreement;
 import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyXDHAsymKey.BouncyXDHAnonymousAgreement;
 import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyXDHAsymKey.BouncyXDHBasicAgreement;
 import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyXDHAsymKey.BouncyXDHUnifiedAgreement;

@@ -18,10 +18,22 @@ package net.sourceforge.joceanus.jtethys.logger;
 
 import java.io.PrintStream;
 
+import net.sourceforge.joceanus.jtethys.TethysDataConverter;
+
 /**
  * Log Manager.
  */
 public final class TethysLogManager {
+    /**
+     * The data section length.
+     */
+    private static final int DATA_SECTION = 32;
+
+    /**
+     * The data advance.
+     */
+    private static final int DATA_ADVANCE = 3;
+
     /**
      * The output stream.
      */
@@ -67,14 +79,43 @@ public final class TethysLogManager {
     String formatMessage(final Class<?> pOwner,
                          final TethysLogLevel pLevel,
                          final String pMessage) {
+        return (System.nanoTime() - theTimeZero)
+                + " "
+                + pLevel.name()
+                + ": "
+                + pOwner.getSimpleName()
+                + "- "
+                + pMessage;
+    }
+
+    /**
+     * Format data.
+     * @param pData the data to format
+     * @return the formatted data
+     */
+    public static String formatData(final byte[] pData) {
+        /* Handle null data */
+        if (pData == null) {
+            return "\rnull";
+        }
+
+        /* Format the data */
+        final String myData = TethysDataConverter.bytesToHexString(pData);
+
+        /* Place it into StringBuilder buffer */
         final StringBuilder myBuilder = new StringBuilder();
-        myBuilder.append(System.nanoTime() - theTimeZero);
-        myBuilder.append(" ");
-        myBuilder.append(pLevel.name());
-        myBuilder.append(": ");
-        myBuilder.append(pOwner.getSimpleName());
-        myBuilder.append("- ");
-        myBuilder.append(pMessage);
+        myBuilder.append(myData);
+
+        /* Loop through the data */
+        int myOffSet = 0;
+        for (int i = 0; i < pData.length; i++) {
+            /* Insert blank/newLine between each HexPair */
+            final char myChar = (i % DATA_SECTION) == 0 ? '\n' : ' ';
+            myBuilder.insert(myOffSet, myChar);
+            myOffSet += DATA_ADVANCE;
+        }
+
+        /* Return the data */
         return myBuilder.toString();
     }
 

@@ -8,15 +8,24 @@
             <p>GordianKnot provides a layer over the BouncyCastle encryption library and builds additional support on top</p>
         </section>
         <section name="Vanilla API">
-            <ol>
-                <li><a href="blockCipher.html">Block Ciphers</a></li>
-                <li><a href="streamCipher.html">Stream Ciphers</a></li>
-                <li><a href="pbe.html">Password Based Ciphers</a></li>
-                <li><a href="digest.html">Digests</a></li>
-                <li><a href="mac.html">MACs</a></li>
-                <li><a href="random.html">Randoms</a></li>
-                <li><a href="asym.html">Asymmetric</a></li>
-            </ol>
+            <subsection name="Symmetric API">
+                <ol>
+                    <li><a href="blockCipher.html">Block Ciphers</a></li>
+                    <li><a href="streamCipher.html">Stream Ciphers</a></li>
+                    <li><a href="pbe.html">Password Based Ciphers</a></li>
+                    <li><a href="digest.html">Digests</a></li>
+                    <li><a href="mac.html">MACs</a></li>
+                    <li><a href="random.html">Randoms</a></li>
+                </ol>
+            </subsection>
+            <subsection name="Asymmetric API">
+                <ol>
+                    <li><a href="asymKeyPair.html">KeyPairs</a></li>
+                    <li><a href="signature.html">Signatures</a></li>
+                    <li><a href="agreement.html">Agreements</a></li>
+                    <li><a href="encryptor.html">Encryptors</a></li>
+                </ol>
+            </subsection>
         </section>
         <section name="Extended API">
             <ol>

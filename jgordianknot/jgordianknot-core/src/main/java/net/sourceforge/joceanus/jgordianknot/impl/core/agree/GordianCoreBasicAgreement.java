@@ -30,9 +30,9 @@ public abstract class GordianCoreBasicAgreement
         extends GordianCoreAgreement
         implements GordianHandshakeAgreement {
     /**
-     * The owning KeyPair.
+     * The client KeyPair.
      */
-    private GordianKeyPair theOwner;
+    private GordianKeyPair theClient;
 
     /**
      * Constructor.
@@ -45,11 +45,11 @@ public abstract class GordianCoreBasicAgreement
     }
 
     /**
-     * Obtain the Ephemeral keyPair.
+     * Obtain the Client keyPair.
      * @return  the keyPair
      */
-    protected GordianKeyPair getOwnerKeyPair() {
-        return theOwner;
+    protected GordianKeyPair getClientKeyPair() {
+        return theClient;
     }
 
     @Override
@@ -58,7 +58,7 @@ public abstract class GordianCoreBasicAgreement
         checkKeyPair(pClient);
 
         /* Store the keyPair */
-        theOwner = pClient;
+        theClient = pClient;
 
         /* Create the clientHello message */
         final byte[] myClientHello = buildClientHello();
@@ -89,15 +89,6 @@ public abstract class GordianCoreBasicAgreement
     }
 
     /**
-     * Build the serverHello.
-     * @return the serverHello message
-     * @throws OceanusException on error
-     */
-    protected byte[] buildServerHello() throws OceanusException {
-        return buildServerHello(null);
-    }
-
-    /**
      * Process the serverHello.
      * @param pServerHello the serverHello message
      * @throws OceanusException on error
@@ -105,6 +96,22 @@ public abstract class GordianCoreBasicAgreement
     protected void processServerHello(final byte[] pServerHello) throws OceanusException {
         /* Parse the server hello */
         parseServerHello(pServerHello);
+    }
+
+    /**
+     * Build clientConfirm message.
+     * @return the clientConfirm message
+     * @throws OceanusException on error
+     */
+    protected byte[] buildClientConfirm() throws OceanusException {
+        /* There is never a client confirm */
+        return null;
+    }
+
+    @Override
+    public void acceptClientConfirm(final byte[] pClientConfirm) throws OceanusException {
+        /* We will never hit this status so this will reject the request */
+        checkStatus(GordianAgreementStatus.AWAITING_CLIENTCONFIRM);
     }
 }
 

@@ -68,6 +68,7 @@ import net.sourceforge.joceanus.jgordianknot.junit.regression.AsymmetricStore.Fa
 import net.sourceforge.joceanus.jgordianknot.junit.regression.AsymmetricStore.FactoryKeySpec;
 import net.sourceforge.joceanus.jgordianknot.junit.regression.AsymmetricStore.FactorySignature;
 import net.sourceforge.joceanus.jtethys.OceanusException;
+import net.sourceforge.joceanus.jtethys.logger.TethysLogManager;
 
 /**
  * Security Test suite - Test Asymmetric functionality.
@@ -430,7 +431,10 @@ public class AsymmetricTest {
                 && myResponder instanceof GordianHandshakeAgreement) {
             final byte[] myClientHello = ((GordianHandshakeAgreement) mySender).createClientHello(myTarget);
             final byte[] myServerHello = ((GordianHandshakeAgreement) myResponder).acceptClientHello(myTarget, myPair, myClientHello);
-            ((GordianHandshakeAgreement) mySender).acceptServerHello(myPair, myServerHello);
+            final byte[] myClientConfirm = ((GordianHandshakeAgreement) mySender).acceptServerHello(myPair, myServerHello);
+            if (myClientConfirm != null) {
+                ((GordianHandshakeAgreement) myResponder).acceptClientConfirm(myClientConfirm);
+            }
 
         } else {
             Assertions.fail("Invalid Agreement");
@@ -475,7 +479,10 @@ public class AsymmetricTest {
                 && myResponder instanceof GordianHandshakeAgreement) {
             final byte[] myClientHello = ((GordianHandshakeAgreement) mySender).createClientHello(myPair);
             final byte[] myServerHello = ((GordianHandshakeAgreement) myResponder).acceptClientHello(myPartnerSelf, myPartnerTarget, myClientHello);
-            ((GordianHandshakeAgreement) mySender).acceptServerHello(myTarget, myServerHello);
+            final byte[] myClientConfirm = ((GordianHandshakeAgreement) mySender).acceptServerHello(myTarget, myServerHello);
+            if (myClientConfirm != null) {
+                ((GordianHandshakeAgreement) myResponder).acceptClientConfirm(myClientConfirm);
+            }
 
         } else {
             Assertions.fail("Invalid Agreement");

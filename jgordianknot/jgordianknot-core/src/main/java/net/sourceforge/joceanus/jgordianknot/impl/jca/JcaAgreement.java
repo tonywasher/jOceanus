@@ -322,8 +322,8 @@ public final class JcaAgreement {
         }
 
         @Override
-        public void acceptServerHello(final GordianKeyPair pServer,
-                                      final byte[] pServerHello) throws OceanusException {
+        public byte[] acceptServerHello(final GordianKeyPair pServer,
+                                        final byte[] pServerHello) throws OceanusException {
             /* Protect against exceptions */
             try {
                 /* Check keyPair */
@@ -334,7 +334,7 @@ public final class JcaAgreement {
 
                 /* process the serverHello */
                 processServerHello(pServerHello);
-                final JcaPrivateKey myPrivate = (JcaPrivateKey) getPrivateKey(getOwnerKeyPair());
+                final JcaPrivateKey myPrivate = (JcaPrivateKey) getPrivateKey(getClientKeyPair());
 
                 /* Initialise the agreement taking care in case of null parameters */
                 if (getAgreementSpec().getKDFType() == GordianKDFType.NONE) {
@@ -347,6 +347,9 @@ public final class JcaAgreement {
                 final JcaPublicKey myTarget = (JcaPublicKey) getPublicKey(pServer);
                 theAgreement.doPhase(myTarget.getPublicKey(), true);
                 storeSecret(theAgreement.generateSecret());
+
+                /* Return confirmation if needed */
+                return buildClientConfirm();
 
             } catch (InvalidKeyException
                     | InvalidAlgorithmParameterException e) {
@@ -400,21 +403,17 @@ public final class JcaAgreement {
                                         final byte[] pClientHello) throws OceanusException {
             /* Protect against exceptions */
             try {
-                /* Check keyPair */
-                checkKeyPair(pClient);
-                checkKeyPair(pServer);
-
                 /* Establish agreement */
                 establishAgreement(pServer);
 
                 /* process clientHello */
-                processClientHello(pServer, pClientHello);
+                processClientHello(pClient, pServer, pClientHello);
 
                 /* Initialise agreement */
                 final JcaPrivateKey myPrivate = (JcaPrivateKey) getPrivateKey(pServer);
-                final JcaPrivateKey myEphPrivate = (JcaPrivateKey) getPrivateKey(getEphemeralKeyPair());
-                final JcaPublicKey myEphPublic = (JcaPublicKey) getPublicKey(getEphemeralKeyPair());
-                final JcaPublicKey mySrcEphPublic = (JcaPublicKey) getPublicKey(getPartnerEphemeralKeyPair());
+                final JcaPrivateKey myEphPrivate = (JcaPrivateKey) getPrivateKey(getServerEphemeralKeyPair());
+                final JcaPublicKey myEphPublic = (JcaPublicKey) getPublicKey(getServerEphemeralKeyPair());
+                final JcaPublicKey mySrcEphPublic = (JcaPublicKey) getPublicKey(getClientEphemeralKeyPair());
                 final DHUParameterSpec myParams = new DHUParameterSpec(myEphPublic.getPublicKey(),
                         myEphPrivate.getPrivateKey(), mySrcEphPublic.getPublicKey(), new byte[0]);
                 theAgreement.init(myPrivate.getPrivateKey(), myParams, getRandom());
@@ -434,24 +433,21 @@ public final class JcaAgreement {
         }
 
         @Override
-        public void acceptServerHello(final GordianKeyPair pServer,
-                                      final byte[] pServerHello) throws OceanusException {
+        public byte[] acceptServerHello(final GordianKeyPair pServer,
+                                        final byte[] pServerHello) throws OceanusException {
             /* Protect against exceptions */
             try {
-                /* Check keyPair */
-                checkKeyPair(pServer);
-
                 /* Establish agreement */
                 establishAgreement(pServer);
 
                 /* parse the serverHello */
-                processServerHello(pServerHello);
+                processServerHello(pServer, pServerHello);
 
                 /* Initialise agreement */
-                final JcaPrivateKey myPrivate = (JcaPrivateKey) getPrivateKey(getOwnerKeyPair());
-                final JcaPrivateKey myEphPrivate = (JcaPrivateKey) getPrivateKey(getEphemeralKeyPair());
-                final JcaPublicKey myEphPublic = (JcaPublicKey) getPublicKey(getEphemeralKeyPair());
-                final JcaPublicKey mySrcEphPublic = (JcaPublicKey) getPublicKey(getPartnerEphemeralKeyPair());
+                final JcaPrivateKey myPrivate = (JcaPrivateKey) getPrivateKey(getClientKeyPair());
+                final JcaPrivateKey myEphPrivate = (JcaPrivateKey) getPrivateKey(getClientEphemeralKeyPair());
+                final JcaPublicKey myEphPublic = (JcaPublicKey) getPublicKey(getClientEphemeralKeyPair());
+                final JcaPublicKey mySrcEphPublic = (JcaPublicKey) getPublicKey(getServerEphemeralKeyPair());
                 final DHUParameterSpec myParams = new DHUParameterSpec(myEphPublic.getPublicKey(),
                         myEphPrivate.getPrivateKey(), mySrcEphPublic.getPublicKey(), new byte[0]);
                 theAgreement.init(myPrivate.getPrivateKey(), myParams);
@@ -462,6 +458,9 @@ public final class JcaAgreement {
 
                 /* Store secret */
                 storeSecret(theAgreement.generateSecret());
+
+                /* Return confirmation if needed */
+                return buildClientConfirm();
 
             } catch (InvalidKeyException
                     | InvalidAlgorithmParameterException e) {
@@ -515,17 +514,14 @@ public final class JcaAgreement {
                                         final byte[] pClientHello) throws OceanusException {
             /* Protect against exceptions */
             try {
-                /* Check keyPair */
-                checkKeyPair(pServer);
-
                 /* process clientHello */
-                processClientHello(pServer, pClientHello);
+                processClientHello(pClient, pServer, pClientHello);
 
                 /* Initialise agreement */
                 final JcaPrivateKey myPrivate = (JcaPrivateKey) getPrivateKey(pServer);
-                final JcaPrivateKey myEphPrivate = (JcaPrivateKey) getPrivateKey(getEphemeralKeyPair());
-                final JcaPublicKey myEphPublic = (JcaPublicKey) getPublicKey(getEphemeralKeyPair());
-                final JcaPublicKey mySrcEphPublic = (JcaPublicKey) getPublicKey(getPartnerEphemeralKeyPair());
+                final JcaPrivateKey myEphPrivate = (JcaPrivateKey) getPrivateKey(getServerEphemeralKeyPair());
+                final JcaPublicKey myEphPublic = (JcaPublicKey) getPublicKey(getServerEphemeralKeyPair());
+                final JcaPublicKey mySrcEphPublic = (JcaPublicKey) getPublicKey(getClientEphemeralKeyPair());
                 final MQVParameterSpec myParams = new MQVParameterSpec(myEphPublic.getPublicKey(),
                         myEphPrivate.getPrivateKey(), mySrcEphPublic.getPublicKey(), new byte[0]);
                 theAgreement.init(myPrivate.getPrivateKey(), myParams);
@@ -545,21 +541,18 @@ public final class JcaAgreement {
         }
 
         @Override
-        public void acceptServerHello(final GordianKeyPair pServer,
-                                      final byte[] pServerHello) throws OceanusException {
+        public byte[] acceptServerHello(final GordianKeyPair pServer,
+                                        final byte[] pServerHello) throws OceanusException {
             /* Protect against exceptions */
             try {
-                /* Check keyPair */
-                checkKeyPair(pServer);
-
                 /* process the serverHello */
-                processServerHello(pServerHello);
+                processServerHello(pServer, pServerHello);
 
                 /* Initialise agreement */
-                final JcaPrivateKey myPrivate = (JcaPrivateKey) getPrivateKey(getOwnerKeyPair());
-                final JcaPrivateKey myEphPrivate = (JcaPrivateKey) getPrivateKey(getEphemeralKeyPair());
-                final JcaPublicKey myEphPublic = (JcaPublicKey) getPublicKey(getEphemeralKeyPair());
-                final JcaPublicKey mySrcEphPublic = (JcaPublicKey) getPublicKey(getPartnerEphemeralKeyPair());
+                final JcaPrivateKey myPrivate = (JcaPrivateKey) getPrivateKey(getClientKeyPair());
+                final JcaPrivateKey myEphPrivate = (JcaPrivateKey) getPrivateKey(getClientEphemeralKeyPair());
+                final JcaPublicKey myEphPublic = (JcaPublicKey) getPublicKey(getClientEphemeralKeyPair());
+                final JcaPublicKey mySrcEphPublic = (JcaPublicKey) getPublicKey(getServerEphemeralKeyPair());
                 final MQVParameterSpec myParams = new MQVParameterSpec(myEphPublic.getPublicKey(),
                         myEphPrivate.getPrivateKey(), mySrcEphPublic.getPublicKey(), new byte[0]);
                 theAgreement.init(myPrivate.getPrivateKey(), myParams);
@@ -570,6 +563,9 @@ public final class JcaAgreement {
 
                 /* Store secret */
                 storeSecret(theAgreement.generateSecret());
+
+                /* Return confirmation if needed */
+                return buildClientConfirm();
 
             } catch (InvalidKeyException
                     | InvalidAlgorithmParameterException e) {

@@ -144,6 +144,11 @@ public class GordianAgreementAlgId {
         final GordianKDFType myKDFType = pSpec.getKDFType();
         myId = myId.branch(Integer.toString(myKDFType.ordinal() + 1));
 
+        /* Add branch for confirm (if present) */
+        if (pSpec.withConfirm()) {
+            myId = myId.branch("1");
+        }
+
         /* Add the spec to the maps */
         addToMaps(pSpec, new AlgorithmIdentifier(myId, DERNull.INSTANCE));
     }

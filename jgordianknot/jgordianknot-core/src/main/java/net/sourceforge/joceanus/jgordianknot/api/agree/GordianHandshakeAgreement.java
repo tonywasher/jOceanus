@@ -48,8 +48,16 @@ public interface GordianHandshakeAgreement
      * Accept the serverHello.
      * @param pServer the server keyPair
      * @param pServerHello the serverHello message
+     * @return the clientConfirm (or null if no confirmation)
      * @throws OceanusException on error
      */
-    void acceptServerHello(GordianKeyPair pServer,
-                           byte[] pServerHello) throws OceanusException;
+    byte[] acceptServerHello(GordianKeyPair pServer,
+                             byte[] pServerHello) throws OceanusException;
+
+    /**
+     * Accept the clientConfirm.
+     * @param pClientConfirm the clientConfirm message
+     * @throws OceanusException on error
+     */
+    void acceptClientConfirm(byte[] pClientConfirm) throws OceanusException;
 }
