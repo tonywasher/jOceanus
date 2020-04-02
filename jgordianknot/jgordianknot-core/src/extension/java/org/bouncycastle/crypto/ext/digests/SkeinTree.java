@@ -34,7 +34,7 @@ import org.bouncycastle.util.Arrays;
  * <p>The implementation consumes a large message as a standard digest and builds the lowest level of the tree on the fly.
  * On the {@link #doFinal(byte[], int)} call, the remainder of the tree is calculated and the topmost tree node is returned as the hash.
  * This tree is retained until an explicit {@link #reset()} is called. Further update calls are disabled while the tree is retained.
- * <p>While the tree is retained, each leaf may be explicitly replaced via {@link #updateLeaf(int, byte[], int)}, leading to a recalculation
+ * <p>While the tree is retained, each leaf may be explicitly replaced via {@link #updateLeaf(int, byte[], int, int)}, leading to a recalculation
  * of the tree node which may be obtained via {@link #obtainResult(byte[], int)}.
  * <p>The last leaf at the bottom level of the tree can be any length from 1 to leafLen. It may be replaced by data that is between 1 to leafLen using the
  * {@link #updateLeaf(int, byte[], int, int)} method where the new length does not have to be the same as the old length.
@@ -42,8 +42,13 @@ import org.bouncycastle.util.Arrays;
  * <p>The number of leaves cannot be increased/decreased once the tree has been built. If the length of data is changed, a new tree should be built.
  * <p>TODO
  * <ul>
- * <li>Replacing a node should not automatically trigger a recalculation of the tree. Instead leaves that need to be recalculated should be set to null.
- * The recalculation will take place when the final result is requested, allowing several pages to be replaced before the tree is recalculated
+ * <li>Replacing a leaf should not automatically trigger a recalculation of the tree. Instead the updated leaves should be left in an update list.
+ * This update list will be processed only when the final result is requested, allowing several leaves to be replaced before the tree is recalculated.
+ * <li>A duplicate leaf in the update list will replace the earlier leaf.
+ * <li>On recalculation the updateList will be validated. The tree can be extended if all additional leaves are present in the update list and the previously last
+ * leaf was either leafLen long or is now present as a full leaf in the update list. Only the last leaf may be shorter than the leafLen.
+ * <li>A new call should be provided to truncate the tree at a total length. This must be shorter than the current length and will form part of the update list
+ * to be processed when calculating the result.
  * </ul>
  */
 public class SkeinTree
@@ -54,9 +59,9 @@ public class SkeinTree
     private static final int MAXBYTE = 255;
 
     /**
-     * The Byte shift.
+     * The base for the treeConfig.
      */
-    private static final int BYTESHIFT = 3;
+    private static final int CONFIGBASE = 16;
 
     /**
      * The underlying Skein instance.
@@ -116,7 +121,7 @@ public class SkeinTree
 
     @Override
     public String getAlgorithmName() {
-        return "SkeinTree-" + (theDigest.getOutputSize() * 8);
+        return "SkeinTree-" + (theDigest.getOutputSize() * Byte.SIZE);
     }
 
     @Override
@@ -803,20 +808,18 @@ public class SkeinTree
      * Extended configuration to include Tree details.
      */
     private static class TreeConfiguration
-        extends Configuration
-    {
-        public TreeConfiguration(long outputSizeBits,
-                                 int treeLeafLen,
-                                 int treeFanOut,
-                                 int treeMaxDepth)
-        {
+        extends Configuration {
+        TreeConfiguration(final long outputSizeBits,
+                          final int treeLeafLen,
+                          final int treeFanOut,
+                          final int treeMaxDepth) {
             /* Initialise main part of config */
             super(outputSizeBits);
 
             // 16..18 treeConfig
-            bytes[16] = (byte)treeLeafLen;
-            bytes[17] = (byte)treeFanOut;
-            bytes[18] = (byte)treeMaxDepth;
+            bytes[CONFIGBASE] = (byte) treeLeafLen;
+            bytes[CONFIGBASE + 1] = (byte) treeFanOut;
+            bytes[CONFIGBASE + 2] = (byte) treeMaxDepth;
         }
     }
 }

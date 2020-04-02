@@ -16,48 +16,41 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jgordianknot.api.agree;
 
+import net.sourceforge.joceanus.jgordianknot.api.asym.GordianAsymKeySpec;
 import net.sourceforge.joceanus.jgordianknot.api.key.GordianKeyPair;
+import net.sourceforge.joceanus.jgordianknot.api.sign.GordianSignatureSpec;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
- * Handshake Two/ThreeShot Agreement.
+ * Signed TwoShot Agreement.
  */
-public interface GordianHandshakeAgreement
-        extends GordianAgreement {
+public interface GordianSignedAgreement {
     /**
-     * create the clientHello.
-     * @param pClient the client keyPair
+     * Create the clientHello message.
+     * @param pKeySpec the keySpec for the ephemeral keys
      * @return the clientHello message
      * @throws OceanusException on error
      */
-    byte[] createClientHello(GordianKeyPair pClient) throws OceanusException;
+    byte[] createClientHello(GordianAsymKeySpec pKeySpec) throws OceanusException;
 
     /**
      * Accept the clientHello.
-     * @param pClient the client keyPair
      * @param pServer the server keyPair
+     * @param pSignSpec the signature spec
      * @param pClientHello the incoming clientHello message
      * @return the serverHello message
      * @throws OceanusException on error
      */
-    byte[] acceptClientHello(GordianKeyPair pClient,
-                             GordianKeyPair pServer,
-                             byte[] pClientHello) throws OceanusException;
+    byte[] acceptClientHello(GordianKeyPair pServer,
+                             GordianSignatureSpec pSignSpec,
+                             byte[] pClientHello)  throws OceanusException;
 
     /**
      * Accept the serverHello.
      * @param pServer the server keyPair
      * @param pServerHello the serverHello message
-     * @return the clientConfirm (or null if no confirmation)
      * @throws OceanusException on error
      */
-    byte[] acceptServerHello(GordianKeyPair pServer,
-                             byte[] pServerHello) throws OceanusException;
-
-    /**
-     * Accept the clientConfirm.
-     * @param pClientConfirm the clientConfirm message
-     * @throws OceanusException on error
-     */
-    void acceptClientConfirm(byte[] pClientConfirm) throws OceanusException;
+    void acceptServerHello(GordianKeyPair pServer,
+                           byte[] pServerHello) throws OceanusException;
 }

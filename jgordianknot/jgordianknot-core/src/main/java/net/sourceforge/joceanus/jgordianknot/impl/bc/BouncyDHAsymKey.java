@@ -54,11 +54,13 @@ import net.sourceforge.joceanus.jgordianknot.api.asym.GordianDHGroup;
 import net.sourceforge.joceanus.jgordianknot.api.factory.GordianAsymFactory;
 import net.sourceforge.joceanus.jgordianknot.api.key.GordianKeyPair;
 import net.sourceforge.joceanus.jgordianknot.api.key.GordianKeyPairGenerator;
+import net.sourceforge.joceanus.jgordianknot.api.sign.GordianSignatureSpec;
 import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyKeyPair.BouncyPrivateKey;
 import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyKeyPair.BouncyPublicKey;
 import net.sourceforge.joceanus.jgordianknot.impl.core.agree.GordianCoreBasicAgreement;
 import net.sourceforge.joceanus.jgordianknot.impl.core.agree.GordianCoreAnonymousAgreement;
 import net.sourceforge.joceanus.jgordianknot.impl.core.agree.GordianCoreEphemeralAgreement;
+import net.sourceforge.joceanus.jgordianknot.impl.core.agree.GordianCoreSignedAgreement;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianCryptoException;
 import net.sourceforge.joceanus.jgordianknot.impl.core.keypair.GordianAsymAlgId.GordianDHEncodedParser;
 import net.sourceforge.joceanus.jtethys.OceanusException;
@@ -420,6 +422,70 @@ public final class BouncyDHAsymKey {
 
             /* Return confirmation if needed */
             return buildClientConfirm();
+        }
+    }
+
+    /**
+     * DH Signed Agreement.
+     */
+    public static class BouncyDHSignedAgreement
+            extends GordianCoreSignedAgreement {
+        /**
+         * Agreement.
+         */
+        private final DHBasicAgreement theAgreement;
+
+        /**
+         * Constructor.
+         * @param pFactory the security factory
+         * @param pSpec the agreementSpec
+         */
+        BouncyDHSignedAgreement(final BouncyFactory pFactory,
+                                final GordianAgreementSpec pSpec) {
+            /* Initialise underlying class */
+            super(pFactory, pSpec);
+
+            /* Create the agreement */
+            theAgreement = new DHBasicAgreement();
+            enableDerivation();
+        }
+
+        @Override
+        public byte[] acceptClientHello(final GordianKeyPair pServer,
+                                        final GordianSignatureSpec pSignSpec,
+                                        final byte[] pClientHello) throws OceanusException {
+            /* Process clientHello */
+            processClientHello(pClientHello);
+            final BouncyPrivateKey<?> myPrivate = (BouncyPrivateKey<?>) getPrivateKey(getServerEphemeralKeyPair());
+            final BouncyPublicKey<?> myPublic = (BouncyPublicKey<?>) getPublicKey(getClientEphemeralKeyPair());
+
+            /* Derive the secret */
+            theAgreement.init(myPrivate.getPrivateKey());
+            final BigInteger mySecretInt = theAgreement.calculateAgreement(myPublic.getPublicKey());
+            final byte[] mySecret = BigIntegers.asUnsignedByteArray(theAgreement.getFieldSize(), mySecretInt);
+
+            /* Store secret */
+            storeSecret(mySecret);
+
+            /* Return the serverHello */
+            return buildServerHello(pServer, pSignSpec);
+        }
+
+        @Override
+        public void acceptServerHello(final GordianKeyPair pServer,
+                                      final byte[] pServerHello) throws OceanusException {
+            /* process the serverHello */
+            processServerHello(pServer, pServerHello);
+            final BouncyPrivateKey<?> myPrivate = (BouncyPrivateKey<?>) getPrivateKey(getClientEphemeralKeyPair());
+
+            /* Calculate agreement */
+            theAgreement.init(myPrivate.getPrivateKey());
+            final BouncyPublicKey<?> myPublic = (BouncyPublicKey<?>) getPublicKey(getServerEphemeralKeyPair());
+            final BigInteger mySecretInt = theAgreement.calculateAgreement(myPublic.getPublicKey());
+            final byte[] mySecret = BigIntegers.asUnsignedByteArray(theAgreement.getFieldSize(), mySecretInt);
+
+            /* Store secret */
+            storeSecret(mySecret);
         }
     }
 

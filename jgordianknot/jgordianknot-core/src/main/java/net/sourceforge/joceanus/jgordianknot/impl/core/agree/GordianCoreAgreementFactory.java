@@ -20,6 +20,7 @@ import java.util.function.Predicate;
 
 import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
 
+import net.sourceforge.joceanus.jgordianknot.api.agree.GordianAgreement;
 import net.sourceforge.joceanus.jgordianknot.api.agree.GordianAgreementFactory;
 import net.sourceforge.joceanus.jgordianknot.api.agree.GordianAgreementSpec;
 import net.sourceforge.joceanus.jgordianknot.api.agree.GordianAgreementType;
@@ -60,6 +61,15 @@ public abstract class GordianCoreAgreementFactory
      */
     protected GordianCoreFactory getFactory() {
         return theFactory;
+    }
+
+    @Override
+    public GordianAgreement createAgreement(final byte[] pClientHello) throws OceanusException {
+        /* Parse the client hello message */
+        final GordianAgreementClientHelloASN1 myASN1 = GordianAgreementClientHelloASN1.getInstance(pClientHello);
+        final AlgorithmIdentifier myAlgId = myASN1.getAgreementId();
+        final GordianAgreementSpec mySpec = getSpecForIdentifier(myAlgId);
+        return createAgreement(mySpec);
     }
 
     @Override

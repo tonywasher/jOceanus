@@ -41,6 +41,15 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
  *      agreeId AlgorithmIdentifier
  *      initVector OCTET STRING
  *      data OCTET STRING OPTIONAL
+ *      extra CHOICE {
+ *          confirmation OCTET STRING
+ *          signature signatureASN1
+ *      } OPTIONAL
+ * }
+ *
+ * signatureASN1 ::- SEQUENCE {
+ *      signId AlgorithmIdentifier
+ *      signature OCTET STRING signature
  * }
  * </pre>
  */
@@ -52,9 +61,9 @@ public class GordianAgreementServerHelloASN1
     static final byte[] MSG_ID = new byte[] { 'S', 'H' };
 
     /**
-     * The AgreementSpec.
+     * The AgreementId.
      */
-    private final AlgorithmIdentifier theAgreement;
+    private final AlgorithmIdentifier theAgreementId;
 
     /**
      * The InitVector.
@@ -72,6 +81,16 @@ public class GordianAgreementServerHelloASN1
     private final byte[] theConfirmation;
 
     /**
+     * The signatureId.
+     */
+    private final AlgorithmIdentifier theSignId;
+
+    /**
+     * The Signature.
+     */
+    private final byte[] theSignature;
+
+    /**
      * Create the ASN1 sequence.
      * @param pAgreement the agreementId
      * @param pInitVector theInitVector
@@ -83,10 +102,34 @@ public class GordianAgreementServerHelloASN1
                                            final byte[] pData,
                                            final byte[] pConfirmation) {
         /* Store the Details */
-        theAgreement = pAgreement;
+        theAgreementId = pAgreement;
         theInitVector = pInitVector;
         theData = pData;
         theConfirmation = pConfirmation;
+        theSignId = null;
+        theSignature = null;
+    }
+
+    /**
+     * Create the ASN1 sequence.
+     * @param pAgreement the agreementId
+     * @param pInitVector theInitVector
+     * @param pData the associated data
+     * @param pSignId the signatureId
+     * @param pSignature the signature
+     */
+    public GordianAgreementServerHelloASN1(final AlgorithmIdentifier pAgreement,
+                                           final byte[] pInitVector,
+                                           final byte[] pData,
+                                           final AlgorithmIdentifier pSignId,
+                                           final byte[] pSignature) {
+        /* Store the Details */
+        theAgreementId = pAgreement;
+        theInitVector = pInitVector;
+        theData = pData;
+        theConfirmation = null;
+        theSignId = pSignId;
+        theSignature = pSignature;
     }
 
     /**
@@ -107,15 +150,43 @@ public class GordianAgreementServerHelloASN1
                 throw new GordianDataException("Incorrect message type");
             }
 
-            /* Access message parts */
-            theAgreement = AlgorithmIdentifier.getInstance(en.nextElement());
+            /* Access standard message parts */
+            theAgreementId = AlgorithmIdentifier.getInstance(en.nextElement());
             theInitVector = ASN1OctetString.getInstance(en.nextElement()).getOctets();
             theData = en.hasMoreElements()
                       ? ASN1OctetString.getInstance(en.nextElement()).getOctets()
                       : null;
-            theConfirmation = en.hasMoreElements()
-                      ? ASN1OctetString.getInstance(en.nextElement()).getOctets()
-                      : null;
+
+            /* If there are more elements */
+            if (en.hasMoreElements()) {
+                /* Access next item */
+                final Object myItem = en.nextElement();
+
+                /* Look for confirmation */
+                if (myItem instanceof ASN1OctetString) {
+                    theConfirmation = ASN1OctetString.getInstance(myItem).getOctets();
+                    theSignId = null;
+                    theSignature = null;
+
+                    /* Look for signature */
+                } else if (myItem instanceof ASN1Sequence) {
+                    final ASN1Sequence mySignature = ASN1Sequence.getInstance(myItem);
+                    theConfirmation = null;
+                    final Enumeration<?> es = mySignature.getObjects();
+                    theSignId = AlgorithmIdentifier.getInstance(es.nextElement());
+                    theSignature = ASN1OctetString.getInstance(es.nextElement()).getOctets();
+
+                    /* Unknown */
+                } else {
+                    throw new GordianDataException("Unexpected value in ASN1 sequence");
+                }
+
+                /* No extra */
+            } else {
+                theConfirmation = null;
+                theSignId = null;
+                theSignature = null;
+            }
 
             /* Make sure that we have completed the sequence */
             if (en.hasMoreElements()) {
@@ -148,7 +219,7 @@ public class GordianAgreementServerHelloASN1
      * @return the Spec
      */
     public AlgorithmIdentifier getAgreementId() {
-        return theAgreement;
+        return theAgreementId;
     }
 
     /**
@@ -160,14 +231,6 @@ public class GordianAgreementServerHelloASN1
     }
 
     /**
-     * Obtain the confirmation.
-     * @return the data
-     */
-    public byte[] getConfirmation() {
-        return theConfirmation;
-    }
-
-    /**
      * Obtain the data.
      * @return the data
      */
@@ -175,19 +238,56 @@ public class GordianAgreementServerHelloASN1
         return theData;
     }
 
+    /**
+     * Obtain the confirmation.
+     * @return the confirmation
+     */
+    public byte[] getConfirmation() {
+        return theConfirmation;
+    }
+
+    /**
+     * Obtain the signatureId.
+     * @return the signatureId
+     */
+    public AlgorithmIdentifier getSignatureId() {
+        return theSignId;
+    }
+
+    /**
+     * Obtain the signature.
+     * @return the signature
+     */
+    public byte[] getSignature() {
+        return theSignature;
+    }
+
     @Override
     public ASN1Primitive toASN1Primitive() {
+        /* Build basic part */
         final ASN1EncodableVector v = new ASN1EncodableVector();
         v.add(new BEROctetString(MSG_ID));
-        v.add(theAgreement);
+        v.add(theAgreementId);
         v.add(new BEROctetString(theInitVector));
+
+        /* Add data if present */
         if (theData != null) {
             v.add(new BEROctetString(theData));
         }
+
+        /* Add confirmation if present */
         if (theConfirmation != null) {
             v.add(new BEROctetString(theConfirmation));
+
+            /* else add signature if present */
+        } else if (theSignId != null) {
+            final ASN1EncodableVector sv = new ASN1EncodableVector();
+            sv.add(theSignId);
+            sv.add(new BEROctetString(theSignature));
+            v.add(new DERSequence(sv).toASN1Primitive());
         }
 
+        /* return the sequence */
         return new DERSequence(v);
     }
 
@@ -208,17 +308,20 @@ public class GordianAgreementServerHelloASN1
         final GordianAgreementServerHelloASN1 myThat = (GordianAgreementServerHelloASN1) pThat;
 
         /* Check that the fields are equal */
-        return Objects.equals(theAgreement, myThat.getAgreementId())
+        return Objects.equals(getAgreementId(), myThat.getAgreementId())
+                && Objects.equals(getSignatureId(), myThat.getSignatureId())
                 && Arrays.equals(getData(), myThat.getData())
                 && Arrays.equals(getConfirmation(), myThat.getConfirmation())
+                && Arrays.equals(getSignature(), myThat.getSignature())
                 && Arrays.equals(getInitVector(), myThat.getInitVector());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getAgreementId())
+        return Objects.hash(getAgreementId(), getSignatureId())
                 + Arrays.hashCode(getData())
                 + Arrays.hashCode(getConfirmation())
+                + Arrays.hashCode(getSignature())
                 + Arrays.hashCode(getInitVector());
     }
 }

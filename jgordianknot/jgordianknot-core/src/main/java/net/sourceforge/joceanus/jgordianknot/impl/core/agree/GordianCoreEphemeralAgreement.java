@@ -117,6 +117,14 @@ public abstract class GordianCoreEphemeralAgreement
         return theServerEphemeral;
     }
 
+    /**
+     * Obtain the server Confirmation Tag.
+     * @return  the tag
+     */
+    protected byte[] getServerConfirmationTag() {
+        return theServerConfirmation;
+    }
+
     @Override
     public void reset() {
         /* Reset underlying details */
@@ -229,6 +237,7 @@ public abstract class GordianCoreEphemeralAgreement
 
     @Override
     protected byte[] buildServerHello() throws OceanusException {
+        /* Add server ephemeral and any server confirmation tag to the serverHello */
         final GordianAsymFactory myAsym = getFactory().getAsymmetricFactory();
         final GordianKeyPairGenerator myGenerator = myAsym.getKeyPairGenerator(theServerEphemeral.getKeySpec());
         return buildServerHello(myGenerator.getX509Encoding(theServerEphemeral).getEncoded(), theServerConfirmation);
@@ -248,9 +257,11 @@ public abstract class GordianCoreEphemeralAgreement
         /* Store the server keyPair */
         theServer = pServer;
 
-        /* Obtain keySpec */
-        final byte[] myBytes = parseServerHello(pServerHello);
-        final X509EncodedKeySpec myKeySpec = new X509EncodedKeySpec(myBytes);
+        /* Obtain details from the serverHello */
+        final GordianAgreementServerHelloASN1 myASN1 = parseServerHello(pServerHello);
+        theServerConfirmation = myASN1.getConfirmation();
+        final byte[] myData = myASN1.getData();
+        final X509EncodedKeySpec myKeySpec = new X509EncodedKeySpec(myData);
 
         /* Derive partner ephemeral key */
         final GordianAsymFactory myAsym = getFactory().getAsymmetricFactory();
@@ -336,14 +347,14 @@ public abstract class GordianCoreEphemeralAgreement
         myMac.update(myClient);
         myMac.update(myServerEphemeral);
         myMac.update(myClientEphemeral);
-        theServerConfirmation = myMac.finish();
+        final byte[] myServerConfirmation = myMac.finish();
 
         /* Check that the server value matches any sent value */
-        final byte[] myReceivedTag = getConfirmationTag();
-        if (myReceivedTag != null
-                && !Arrays.constantTimeAreEqual(myReceivedTag, theServerConfirmation)) {
+        if (theServerConfirmation != null
+                && !Arrays.constantTimeAreEqual(myServerConfirmation, theServerConfirmation)) {
             throw new GordianDataException("Confirmation failed");
         }
+        theServerConfirmation = myServerConfirmation;
 
         /* Build Client Confirmation tag */
         myMac.update(GordianAgreementClientConfirmASN1.MSG_ID);

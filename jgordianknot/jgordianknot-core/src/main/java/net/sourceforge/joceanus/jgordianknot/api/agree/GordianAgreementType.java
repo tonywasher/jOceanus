@@ -38,6 +38,11 @@ public enum GordianAgreementType {
     BASIC,
 
     /**
+     * Signed.
+     */
+    SIGNED,
+
+    /**
      * SM2.
      */
     SM2,
@@ -64,6 +69,7 @@ public enum GordianAgreementType {
             case ANON:
                 return hasAnon(pKeyType);
             case BASIC:
+            case SIGNED:
                 return hasBasic(pKeyType);
             case SM2:
                 return hasSM2(pKeyType);

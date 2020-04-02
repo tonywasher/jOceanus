@@ -243,7 +243,7 @@ public final class BouncySM2AsymKey {
             /* If we are confirming */
             if (Boolean.TRUE.equals(getAgreementSpec().withConfirm())) {
                 /* Obtain confirmationTag in serverHello */
-                final byte[] myConfirm = getConfirmationTag();
+                final byte[] myConfirm = getServerConfirmationTag();
 
                 /* Protect against exception */
                 try {
