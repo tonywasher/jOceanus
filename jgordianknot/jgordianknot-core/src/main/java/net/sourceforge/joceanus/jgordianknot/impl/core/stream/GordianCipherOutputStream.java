@@ -22,6 +22,7 @@ import java.io.OutputStream;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianKeyedCipher;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianSymKeySpec;
 import net.sourceforge.joceanus.jgordianknot.api.base.GordianKeySpec;
+import net.sourceforge.joceanus.jgordianknot.impl.core.cipher.GordianCoreCipher;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
@@ -38,7 +39,7 @@ class GordianCipherOutputStream<T extends GordianKeySpec>
     /**
      * The cipher.
      */
-    private final GordianKeyedCipher<T> theCipher;
+    private final GordianCoreCipher<T> theCipher;
 
     /**
      * The result.
@@ -53,14 +54,14 @@ class GordianCipherOutputStream<T extends GordianKeySpec>
     GordianCipherOutputStream(final GordianKeyedCipher<T> pCipher,
                               final OutputStream pOutput) {
         super(pOutput);
-        theCipher = pCipher;
+        theCipher = (GordianCoreCipher<T>) pCipher;
     }
 
     /**
      * Obtain the Cipher.
      * @return the cipher
      */
-    public GordianKeyedCipher<T> getCipher() {
+    public GordianCoreCipher<T> getCipher() {
         return theCipher;
     }
 

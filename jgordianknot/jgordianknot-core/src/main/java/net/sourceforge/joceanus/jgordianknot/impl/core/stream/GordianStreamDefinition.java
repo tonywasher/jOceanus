@@ -20,7 +20,6 @@ import java.io.InputStream;
 import java.util.Arrays;
 
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianCipherParameters;
-import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianKeyedCipher;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianStreamCipher;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianStreamCipherSpec;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianStreamKeySpec;
@@ -35,6 +34,7 @@ import net.sourceforge.joceanus.jgordianknot.api.mac.GordianMacParameters;
 import net.sourceforge.joceanus.jgordianknot.api.mac.GordianMacSpec;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianCoreFactory;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianDataException;
+import net.sourceforge.joceanus.jgordianknot.impl.core.cipher.GordianCoreCipher;
 import net.sourceforge.joceanus.jgordianknot.impl.core.cipher.GordianCoreCipherFactory;
 import net.sourceforge.joceanus.jgordianknot.impl.core.digest.GordianCoreDigestFactory;
 import net.sourceforge.joceanus.jgordianknot.impl.core.keyset.GordianCoreKeySet;
@@ -165,7 +165,7 @@ public final class GordianStreamDefinition {
         final GordianCoreKnuthObfuscater myKnuth = myFactory.getObfuscater();
 
         /* Access CipherType */
-        final GordianKeyedCipher<?> myCipher = pStream.getCipher();
+        final GordianCoreCipher<?> myCipher = pStream.getCipher();
         theType = pStream.isSymKeyStream()
                   ? StreamType.SYMMETRIC
                   : StreamType.STREAM;
@@ -353,7 +353,7 @@ public final class GordianStreamDefinition {
         final GordianCoreCipherFactory myCiphers = (GordianCoreCipherFactory) myFactory.getCipherFactory();
         final GordianSymCipher myCipher = myCiphers.createSymKeyCipher(mySpec);
         final GordianKey<GordianSymKeySpec> myKey = pKeySet.deriveKey(theTypeDefinition, myKeySpec);
-        myCipher.init(false, GordianCipherParameters.keyAndNonce(myKey, theInitVector));
+        myCipher.initForDecrypt(GordianCipherParameters.keyAndNonce(myKey, theInitVector));
 
         /* Create the stream */
         return new GordianCipherInputStream<>(myCipher, pCurrent);
@@ -380,7 +380,7 @@ public final class GordianStreamDefinition {
         final GordianCoreCipherFactory myCiphers = (GordianCoreCipherFactory) myFactory.getCipherFactory();
         final GordianStreamCipher myCipher = myCiphers.createStreamKeyCipher(mySpec);
         final GordianKey<GordianStreamKeySpec> myKey = pKeySet.deriveKey(theTypeDefinition, myType);
-        myCipher.init(false, GordianCipherParameters.keyAndNonce(myKey, theInitVector));
+        myCipher.initForDecrypt(GordianCipherParameters.keyAndNonce(myKey, theInitVector));
 
         /* Create the stream */
         return new GordianCipherInputStream<>(myCipher, pCurrent);

@@ -498,11 +498,11 @@ public abstract class GordianCoreAgreement
             /* Calculate the IV */
             final byte[] myIV = new byte[pCipherSpec.getIVLength()];
             calculateDerivedIV(pSecret, myIV);
-            myOutCipher.init(true, GordianCipherParameters.keyAndNonce(myKey, myIV));
-            myInCipher.init(false, GordianCipherParameters.keyAndNonce(myKey, myIV));
+            myOutCipher.initForEncrypt(GordianCipherParameters.keyAndNonce(myKey, myIV));
+            myInCipher.initForDecrypt(GordianCipherParameters.keyAndNonce(myKey, myIV));
         } else {
-            myOutCipher.init(true, GordianCipherParameters.key(myKey));
-            myInCipher.init(true, GordianCipherParameters.key(myKey));
+            myOutCipher.initForEncrypt(GordianCipherParameters.key(myKey));
+            myInCipher.initForDecrypt(GordianCipherParameters.key(myKey));
         }
         return new GordianSymCipher[] { myOutCipher, myInCipher };
     }
@@ -535,15 +535,15 @@ public abstract class GordianCoreAgreement
 
             /* Initialise the ciphers */
             final GordianCipherParameters myParms = GordianCipherParameters.keyAndNonce(myKey, myIV);
-            myOutCipher.init(true, myParms);
-            myInCipher.init(false, myParms);
+            myOutCipher.initForEncrypt(myParms);
+            myInCipher.initForDecrypt(myParms);
 
             /* else no IV */
         } else {
             /* Initialise the ciphers */
             final GordianCipherParameters myParms = GordianCipherParameters.key(myKey);
-            myOutCipher.init(true, myParms);
-            myInCipher.init(true, myParms);
+            myOutCipher.initForEncrypt(myParms);
+            myInCipher.initForDecrypt(myParms);
         }
         return new GordianStreamCipher[] { myOutCipher, myInCipher };
     }

@@ -244,7 +244,7 @@ public class GordianCoreZipLock
      * @param pKeySpec the keySpec
      * @return the agreementSpec
      */
-    private GordianAgreementSpec getAgreementSpec(final GordianAsymKeySpec pKeySpec) {
+    private static GordianAgreementSpec getAgreementSpec(final GordianAsymKeySpec pKeySpec) {
         final GordianAsymKeyType myKeyType = pKeySpec.getKeyType();
         final GordianEdwardsElliptic myEdwards = pKeySpec.getEdwardsElliptic();
         final GordianKDFType myKDFType = GordianEdwardsElliptic.CURVE25519.equals(myEdwards)

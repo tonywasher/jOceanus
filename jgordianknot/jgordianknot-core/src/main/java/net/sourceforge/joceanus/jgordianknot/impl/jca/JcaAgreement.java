@@ -51,6 +51,7 @@ public final class JcaAgreement {
      * Failed agreement message.
      */
     private static final String ERR_AGREEMENT = "Failed Agreement";
+
     /**
      * Private constructor.
      */

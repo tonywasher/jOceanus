@@ -275,7 +275,7 @@ public class KMAC
      * @param pLen the length
      */
     private void writeTrailer(final int pLen) {
-        final byte[] myTrailer = rightEncode(pLen * Byte.SIZE);
+        final byte[] myTrailer = rightEncode(pLen * (long) Byte.SIZE);
         theDigest.update(myTrailer, 0, myTrailer.length);
         startedOutput = true;
     }

@@ -22,6 +22,7 @@ import org.bouncycastle.util.Arrays;
 
 import net.sourceforge.joceanus.jgordianknot.api.base.GordianKeySpec;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianKeyedCipher;
+import net.sourceforge.joceanus.jgordianknot.impl.core.cipher.GordianCoreCipher;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
@@ -50,7 +51,7 @@ class GordianCipherInputStream<T extends GordianKeySpec>
         /**
          * The cipher.
          */
-        private final GordianKeyedCipher<T> theCipher;
+        private final GordianCoreCipher<T> theCipher;
 
         /**
          * The buffer.
@@ -62,7 +63,7 @@ class GordianCipherInputStream<T extends GordianKeySpec>
          * @param pCipher the decryption cipher
          */
         GordianCipherBuffer(final GordianKeyedCipher<T> pCipher) {
-            theCipher = pCipher;
+            theCipher = (GordianCoreCipher<T>) pCipher;
         }
 
         /**

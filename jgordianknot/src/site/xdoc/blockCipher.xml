@@ -89,7 +89,7 @@
 
                     /* Encrypt message with random nonce */
                     GordianCipherParameters myParams = GordianCipherParameters.keyWithRandomNonce(myKey);
-                    myCipher.init(true, myParams);
+                    myCipher.initForEncrypt(myParams);
                     final byte[] myMessage = ...
                     int myOutLen = myCipher.getOutputLength(myMessage.length);
                     final byte[] myEncrypted = new byte[myOutLen];
@@ -98,7 +98,7 @@
 
                     /* Decrypt message */
                     myParams = GordianCipherParameters.keyWithNonce(myKey, myCipher.getNonce());
-                    myCipher.init(false, myParams);
+                    myCipher.initForDecrypt(myParams);
                     myOutLen = myCipher.getOutputLength(myEncrypted.length);
                     final byte[] myResult = new byte[myOutLen];
                     myProcessed = myCipher.update(myEncrypted, 0, myEncrypted.length, myResult);

@@ -49,6 +49,11 @@ public class GordianPasswordCache {
     private static final TethysLogger LOGGER = TethysLogManager.getLogger(GordianPasswordCache.class);
 
     /**
+     * Password failed message.
+     */
+    private static final String PASSWORD_FAIL = "Password attempt failed";
+
+    /**
      * List of resolved password hashes.
      */
     private final List<GordianKeySetHashCache> theHashes;
@@ -221,7 +226,7 @@ public class GordianPasswordCache {
 
             /* Catch Exceptions */
         } catch (OceanusException e) {
-            LOGGER.error("Password attempt failed", e);
+            LOGGER.error(PASSWORD_FAIL, e);
             return null;
 
         } catch (GordianBadCredentialsException e) {
@@ -278,7 +283,7 @@ public class GordianPasswordCache {
 
             /* Catch Exceptions */
         } catch (OceanusException e) {
-            LOGGER.error("Password attempt failed", e);
+            LOGGER.error(PASSWORD_FAIL, e);
             return false;
 
         } catch (GordianBadCredentialsException e) {
@@ -339,7 +344,7 @@ public class GordianPasswordCache {
 
             /* Catch Exceptions */
         } catch (OceanusException e) {
-            LOGGER.error("Password attempt failed", e);
+            LOGGER.error(PASSWORD_FAIL, e);
             return false;
 
         } catch (GordianBadCredentialsException e) {

@@ -379,7 +379,7 @@ public class GordianCoreRandomFactory
         final GordianCipherFactory myCiphers = theFactory.getCipherFactory();
         final GordianKeyGenerator<GordianSymKeySpec> myGenerator = myCiphers.getKeyGenerator(pCipher.getKeyType());
         final GordianKey<GordianSymKeySpec> myKey = myGenerator.generateKey();
-        pCipher.init(true, GordianCipherParameters.key(myKey));
+        pCipher.initForEncrypt(GordianCipherParameters.key(myKey));
 
         /* Build DRBG */
         final EntropySource myEntropy = theEntropyProvider.get(pCipher.getKeyType().getBlockLength().getLength());
