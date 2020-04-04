@@ -5,6 +5,7 @@
     </properties>
     <body>
         <section name="Overview">
+            <p>Block Ciphers are supported via the <strong>GordianCipherFactory</strong> interface.</p>
             <p>GordianKnot supports most Symmetric Block Ciphers available from BouncyCastle plus some additional ciphers.</p>
             <p>A cipher for block encryption/decryption is created by specifying a <strong>GordianSymCipherSpec</strong> which comprises
                 the <strong>GordianSymKeySpec</strong> (algorithm/blockSize/keySize) with the cipherMode and padding (if required).

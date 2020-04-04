@@ -21,8 +21,8 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import net.sourceforge.joceanus.jgordianknot.util.GordianSecurityManager;
 import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetHash;
+import net.sourceforge.joceanus.jgordianknot.api.password.GordianPasswordManager;
 import net.sourceforge.joceanus.jmetis.data.MetisDataFieldValue;
 import net.sourceforge.joceanus.jmetis.data.MetisDataFormatter;
 import net.sourceforge.joceanus.jmetis.field.MetisFieldItem;
@@ -101,9 +101,9 @@ public abstract class DataSet<T extends DataSet<T, E>, E extends Enum<E>>
     private static final String TASK_DATADIFF = PrometheusDataResource.TASK_DATA_DIFF.getValue();
 
     /**
-     * Security Manager.
+     * Password Manager.
      */
-    private final GordianSecurityManager theSecurity;
+    private final GordianPasswordManager thePasswordMgr;
 
     /**
      * Enum class.
@@ -162,8 +162,8 @@ public abstract class DataSet<T extends DataSet<T, E>, E extends Enum<E>>
      */
     protected DataSet(final Class<E> pEnumClass,
                       final PrometheusToolkit pUtilitySet) {
-        /* Store the security manager and Enum class */
-        theSecurity = pUtilitySet.getSecureManager();
+        /* Store the password manager and Enum class */
+        thePasswordMgr = pUtilitySet.getPasswordManager();
         theEnumClass = pEnumClass;
 
         /* Access the SecurityPreferences */
@@ -194,8 +194,8 @@ public abstract class DataSet<T extends DataSet<T, E>, E extends Enum<E>>
         /* Access the #activeKeySets */
         theNumActiveKeySets = pSource.getNumActiveKeySets();
 
-        /* Store the security manager and class */
-        theSecurity = pSource.getSecurity();
+        /* Store the password manager */
+        thePasswordMgr = pSource.getPasswordMgr();
 
         /* Create the map of additional DataLists */
         theListMap = new EnumMap<>(theEnumClass);
@@ -218,11 +218,11 @@ public abstract class DataSet<T extends DataSet<T, E>, E extends Enum<E>>
     }
 
     /**
-     * Get Security Manager.
-     * @return the security manager
+     * Get Password Manager.
+     * @return the password manager
      */
-    public GordianSecurityManager getSecurity() {
-        return theSecurity;
+    public GordianPasswordManager getPasswordMgr() {
+        return thePasswordMgr;
     }
 
     /**
@@ -931,7 +931,7 @@ public abstract class DataSet<T extends DataSet<T, E>, E extends Enum<E>>
     public void updatePasswordHash(final MetisThreadStatusReport pReport,
                                    final String pSource) throws OceanusException {
         /* Obtain a new keySet hash */
-        final GordianKeySetHash myHash = theSecurity.newKeySetHash(pSource);
+        final GordianKeySetHash myHash = thePasswordMgr.newKeySetHash(pSource);
 
         /* Update the control details */
         getControlKey().updatePasswordHash(myHash);

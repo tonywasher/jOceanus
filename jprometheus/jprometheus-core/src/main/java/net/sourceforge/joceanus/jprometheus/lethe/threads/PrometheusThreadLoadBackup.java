@@ -18,7 +18,8 @@ package net.sourceforge.joceanus.jprometheus.lethe.threads;
 
 import java.io.File;
 
-import net.sourceforge.joceanus.jgordianknot.util.GordianSecurityManager;
+import net.sourceforge.joceanus.jgordianknot.api.password.GordianPasswordManager;
+import net.sourceforge.joceanus.jgordianknot.util.GordianUtilities;
 import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceManager;
 import net.sourceforge.joceanus.jmetis.threads.MetisThread;
 import net.sourceforge.joceanus.jmetis.threads.MetisThreadData;
@@ -72,7 +73,7 @@ public class PrometheusThreadLoadBackup<T extends DataSet<T, E>, E extends Enum<
         /* Access the thread manager */
         final PrometheusToolkit myToolkit = (PrometheusToolkit) pThreadData;
         final MetisThreadManager myManager = myToolkit.getThreadManager();
-        final GordianSecurityManager mySecurityMgr = myToolkit.getSecureManager();
+        final GordianPasswordManager myPasswordMgr = myToolkit.getPasswordManager();
 
         /* Initialise the status window */
         myManager.initTask(getTaskName());
@@ -88,7 +89,7 @@ public class PrometheusThreadLoadBackup<T extends DataSet<T, E>, E extends Enum<
         final TethysFileSelector myDialog = myToolkit.getGuiFactory().newFileSelector();
         myDialog.setTitle(TASK_SELECTFILE);
         myDialog.setInitialDirectory(myBackupDir);
-        myDialog.setExtension(GordianSecurityManager.SECUREZIPFILE_EXT);
+        myDialog.setExtension(GordianUtilities.SECUREZIPFILE_EXT);
         final File myFile = myDialog.selectFile();
 
         /* If we did not select a file */
@@ -100,7 +101,7 @@ public class PrometheusThreadLoadBackup<T extends DataSet<T, E>, E extends Enum<
         /* Load workbook */
         final PrometheusSpreadSheet<T> mySheet = theControl.getSpreadSheet();
         final T myData = theControl.getNewData();
-        mySheet.loadBackup(myManager, mySecurityMgr, myData, myFile);
+        mySheet.loadBackup(myManager, myPasswordMgr, myData, myFile);
 
         /* Create interface */
         final PrometheusDataStore<T> myDatabase = theControl.getDatabase();

@@ -5,6 +5,7 @@
     </properties>
     <body>
         <section name="Overview">
+            <p>SecureRandoms are supported via the <strong>GordianRandomFactory</strong> interface.</p>
             <p>GordianKnot supports the <strong>SP800-90A</strong> and <strong>X931</strong> DRBG constructs.</p>
         </section>
         <section name="Randoms">

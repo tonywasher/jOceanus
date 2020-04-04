@@ -16,7 +16,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.lethe.sheets;
 
-import net.sourceforge.joceanus.jgordianknot.util.GordianSecurityManager;
+import net.sourceforge.joceanus.jgordianknot.api.password.GordianPasswordManager;
 import net.sourceforge.joceanus.jmetis.threads.MetisThreadStatusReport;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.MoneyWiseData;
 import net.sourceforge.joceanus.jprometheus.lethe.sheets.PrometheusSheetReader;
@@ -31,9 +31,9 @@ public class MoneyWiseSheet
         extends PrometheusSpreadSheet<MoneyWiseData> {
     @Override
     protected PrometheusSheetReader<MoneyWiseData> getSheetReader(final MetisThreadStatusReport pReport,
-                                                                  final GordianSecurityManager pSecureMgr) {
+                                                                  final GordianPasswordManager pPasswordMgr) {
         /* Create a MoneyWise Reader object and return it */
-        return new MoneyWiseReader(pReport, pSecureMgr);
+        return new MoneyWiseReader(pReport, pPasswordMgr);
     }
 
     @Override

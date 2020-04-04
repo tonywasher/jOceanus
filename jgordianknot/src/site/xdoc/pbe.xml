@@ -5,6 +5,7 @@
     </properties>
     <body>
         <section name="Overview">
+            <p>PBE Ciphers are supported via the <strong>GordianCipherFactory</strong> interface.</p>
             <p>Password-based encryption is available for both Block and Stream Ciphers. To use Password-based, the parameters for the
                 init call are modified to provide a <strong>GordianPBESpec</strong> rather than a key</p>
         </section>

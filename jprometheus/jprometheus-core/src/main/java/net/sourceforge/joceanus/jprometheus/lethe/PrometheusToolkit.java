@@ -18,7 +18,7 @@ package net.sourceforge.joceanus.jprometheus.lethe;
 
 import net.sourceforge.joceanus.jgordianknot.api.factory.GordianFactoryType;
 import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetHashSpec;
-import net.sourceforge.joceanus.jgordianknot.util.GordianSecurityManager;
+import net.sourceforge.joceanus.jgordianknot.api.password.GordianPasswordManager;
 import net.sourceforge.joceanus.jmetis.data.MetisDataFormatter;
 import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceManager;
 import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceSecurity.MetisSecurityPreferences;
@@ -41,9 +41,9 @@ public abstract class PrometheusToolkit
     private final MetisToolkit theToolkit;
 
     /**
-     * Secure Manager.
+     * Password Manager.
      */
-    private final GordianSecurityManager theSecureMgr;
+    private final GordianPasswordManager thePasswordMgr;
 
     /**
      * Preference Manager.
@@ -84,9 +84,9 @@ public abstract class PrometheusToolkit
         theViewerMgr = pToolkit.getViewerManager();
         theThreadMgr = pToolkit.getThreadManager();
 
-        /* Create the hashManager */
+        /* Create the passwordManager */
         final MetisSecurityPreferences myPreferences = thePreferenceMgr.getPreferenceSet(MetisSecurityPreferences.class);
-        theSecureMgr = newSecurityManager(myPreferences.getFactoryType(),
+        thePasswordMgr = newPasswordManager(myPreferences.getFactoryType(),
                 myPreferences.getSecurityPhrase(), myPreferences.getKeySetHashSpec());
 
         /* Set this as the threadData */
@@ -94,11 +94,11 @@ public abstract class PrometheusToolkit
     }
 
     /**
-     * Obtain the secure manager.
-     * @return the secure manager
+     * Obtain the password manager.
+     * @return the password manager
      */
-    public GordianSecurityManager getSecureManager() {
-        return theSecureMgr;
+    public GordianPasswordManager getPasswordManager() {
+        return thePasswordMgr;
     }
 
     /**
@@ -158,14 +158,14 @@ public abstract class PrometheusToolkit
     }
 
     /**
-     * Create a Security Manager.
+     * Create a Password Manager.
      * @param pFactoryType the factoryType
      * @param pSecurityPhrase the security phrase
      * @param pKeySetSpec the keySetHashSpec
      * @return the manager
      * @throws OceanusException on error
      */
-    protected abstract GordianSecurityManager newSecurityManager(GordianFactoryType pFactoryType,
+    protected abstract GordianPasswordManager newPasswordManager(GordianFactoryType pFactoryType,
                                                                  char[] pSecurityPhrase,
                                                                  GordianKeySetHashSpec pKeySetSpec) throws OceanusException;
 }

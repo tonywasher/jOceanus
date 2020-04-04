@@ -5,6 +5,7 @@
     </properties>
     <body>
         <section name="Overview">
+            <p>ZipFiles are supported via the <strong>GordianZipFactory</strong> interface.</p>
             <p>GordianKnot provides support for to creating and reading encrypted ZipFiles.
                 This is built on top of the Java ZipFile support and utilises the encryption facilities of GordianKnot to encrypt and
                 decrypt each file entry. LZMA compression is also provided (based on the 7-Zip LZMA SDK), which provides significantly
@@ -31,16 +32,15 @@
                 /* Access factory */
                 final GordianFactory myBaseFactory = GordianGenerator.createFactory();
                 final GordianZipFactory myZipFactory = myBaseFactory.getZipFactory();
-                final GordianKeySetFactory myKeySets = pFactory.getKeySetFactory();
 
-                /* Create new Password Hash */
+                /* Create new ZipLock */
                 final char[] myPassword = .....
                 final GordianKeySetHashSpec mySpec = new GordianKeySetHashSpec(new GordianKeySetSpec(pKeyLen));
-                final GordianKeySetHash myHash = myKeySets.generateKeySetHash(mySpec, myPassword);
+                final GordianZipLock myLock = myZipFactory.createZipLock(mySpec, myPassword);
 
                 /* Initialise the Zip file */
                 final ByteArrayOutputStream myZipStream = new ByteArrayOutputStream();
-                final GordianZipWriteFile myZipFile = myZipFactory.createZipFile(myHash, myZipStream);
+                final GordianZipWriteFile myZipFile = myZipFactory.createZipFile(myLock, myZipStream);
 
                 /* Obtain list of files */
                 file File myDirectory = ....
@@ -81,17 +81,15 @@
                 /* Access factory */
                 final GordianFactory myBaseFactory = GordianGenerator.createFactory();
                 final GordianZipFactory myZipFactory = myBaseFactory.getZipFactory();
-                final GordianKeySetFactory myKeySets = pFactory.getKeySetFactory();
 
                 /* Access the file (bytes from previous sample) */
                 final ByteArrayInputStream myInputStream = new ByteArrayInputStream(myBytes);
                 final GordianZipReadFile myZipFile = myZipMgr.openZipFile(myInputStream);
 
                 /* Unlock the file */
-                final byte[] myHashBytes = myZipFile.getHashBytes();
-                final char[] myPassword = ....op
-                final GordianKeySetHash myHash = myKeySets.deriveKeySetHash(myHashBytes, myPassword);
-                myZipFile.setKeySetHash(myHash);
+                final GoprdianZipLock myLock = myZipFile.getLock();
+                final char[] myPassword = ....
+                myLock.unlock(myPassword);
 
                 /* Access the contents */
                 final GordianZipFileContents myContents = myZipFile.getContents();

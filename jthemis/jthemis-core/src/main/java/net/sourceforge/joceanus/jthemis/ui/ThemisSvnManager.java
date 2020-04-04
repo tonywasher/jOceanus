@@ -16,7 +16,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jthemis.ui;
 
-import net.sourceforge.joceanus.jgordianknot.util.GordianSecurityManager;
+import net.sourceforge.joceanus.jgordianknot.api.password.GordianPasswordManager;
 import net.sourceforge.joceanus.jmetis.atlas.ui.MetisPreferenceView;
 import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceManager;
 import net.sourceforge.joceanus.jmetis.threads.MetisThread;
@@ -61,9 +61,9 @@ public abstract class ThemisSvnManager {
     private final MetisViewerManager theViewerMgr;
 
     /**
-     * The Security Manager.
+     * The Password Manager.
      */
-    private final GordianSecurityManager theSecureMgr;
+    private final GordianPasswordManager thePasswordMgr;
 
     /**
      * The Thread Manager.
@@ -110,8 +110,8 @@ public abstract class ThemisSvnManager {
         theGuiFactory = pToolkit.getGuiFactory();
         thePrefMgr = pToolkit.getPreferenceManager();
 
-        /* Access the Security/Viewer Manager */
-        theSecureMgr = pToolkit.getSecureManager();
+        /* Access the Password/Viewer Manager */
+        thePasswordMgr = pToolkit.getPasswordManager();
         theViewerMgr = pToolkit.getViewerManager();
 
         /* Access the thread manager */
@@ -178,11 +178,11 @@ public abstract class ThemisSvnManager {
     }
 
     /**
-     * Obtain secure manager.
-     * @return the secure manager
+     * Obtain password manager.
+     * @return the password manager
      */
-    protected GordianSecurityManager getSecureMgr() {
-        return theSecureMgr;
+    protected GordianPasswordManager getPasswordMgr() {
+        return thePasswordMgr;
     }
 
     /**

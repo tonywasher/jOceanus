@@ -17,10 +17,11 @@
 package net.sourceforge.joceanus.jprometheus.lethe.data;
 
 import net.sourceforge.joceanus.jgordianknot.api.factory.GordianFactory;
-import net.sourceforge.joceanus.jgordianknot.util.GordianSecurityManager;
 import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySet;
 import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetFactory;
 import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetHash;
+import net.sourceforge.joceanus.jgordianknot.api.password.GordianPasswordManager;
+import net.sourceforge.joceanus.jgordianknot.util.GordianUtilities;
 import net.sourceforge.joceanus.jmetis.data.MetisDataFormatter;
 import net.sourceforge.joceanus.jmetis.data.MetisDataType;
 import net.sourceforge.joceanus.jmetis.field.MetisFieldSet;
@@ -54,7 +55,7 @@ public class DataKeySet
     /**
      * KeySetWrapLength.
      */
-    public static final int WRAPLEN = GordianSecurityManager.getMaximumKeySetWrapLength();
+    public static final int WRAPLEN = GordianUtilities.getMaximumKeySetWrapLength();
 
     /**
      * Report fields.
@@ -115,8 +116,6 @@ public class DataKeySet
         switch (getStyle()) {
             case CLONE:
                 theSecurityFactory = pSource.theSecurityFactory;
-                final GordianSecurityManager mySecure = getDataSet().getSecurity();
-                final GordianKeySetFactory myKeySets = theSecurityFactory.getKeySetFactory();
                 theKeySet = pSource.theKeySet.cloneIt();
                 theFieldGenerator = new MetisEncryptionGenerator(theKeySet, getDataSet().getDataFormatter());
                 break;
@@ -136,9 +135,9 @@ public class DataKeySet
         /* Initialise the item */
         super(pList, pValues);
 
-        /* Access the Security manager */
+        /* Access the Password manager */
         final DataSet<?, ?> myData = getDataSet();
-        final GordianSecurityManager mySecure = myData.getSecurity();
+        final GordianPasswordManager mySecure = myData.getPasswordMgr();
         final MetisDataFormatter myFormatter = myData.getDataFormatter();
 
         /* Record the security factory */
@@ -206,7 +205,7 @@ public class DataKeySet
 
             /* Access the Security manager */
             final DataSet<?, ?> myData = getDataSet();
-            final GordianSecurityManager mySecure = myData.getSecurity();
+            final GordianPasswordManager mySecure = myData.getPasswordMgr();
             final MetisDataFormatter myFormatter = myData.getDataFormatter();
 
             /* Record the security factory */

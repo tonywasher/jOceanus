@@ -29,6 +29,7 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 import java.util.stream.Stream;
+import java.util.zip.ZipFile;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DynamicContainer;
@@ -46,6 +47,7 @@ import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetSpec;
 import net.sourceforge.joceanus.jgordianknot.api.zip.GordianZipFactory;
 import net.sourceforge.joceanus.jgordianknot.api.zip.GordianZipFileContents;
 import net.sourceforge.joceanus.jgordianknot.api.zip.GordianZipFileEntry;
+import net.sourceforge.joceanus.jgordianknot.api.zip.GordianZipLock;
 import net.sourceforge.joceanus.jgordianknot.api.zip.GordianZipReadFile;
 import net.sourceforge.joceanus.jgordianknot.api.zip.GordianZipWriteFile;
 import net.sourceforge.joceanus.jgordianknot.util.GordianGenerator;
@@ -168,22 +170,21 @@ public class ZipFileTest {
                                               final OutputStream pZipStream,
                                               final GordianLength pKeyLen) throws OceanusException {
         /* Access ZipManager */
-        final GordianZipFactory myZipMgr = pFactory.getZipFactory();
-        final GordianKeySetFactory myKeySets = pFactory.getKeySetFactory();
+        final GordianZipFactory myZipFactory = pFactory.getZipFactory();
 
         /* If we are creating a secure zip file */
         if (pKeyLen != null) {
             /* Create new Password Hash */
             final GordianKeySetHashSpec mySpec = new GordianKeySetHashSpec(new GordianKeySetSpec(pKeyLen));
-            final GordianKeySetHash myHash = myKeySets.generateKeySetHash(mySpec, DEF_PASSWORD.clone());
+            final GordianZipLock myLock = myZipFactory.createZipLock(mySpec, DEF_PASSWORD.clone());
 
             /* Initialise the Zip file */
-            return myZipMgr.createZipFile(myHash, pZipStream);
+            return myZipFactory.createZipFile(myLock, pZipStream);
 
             /* else */
         } else {
             /* Just create a standard zip file */
-            return myZipMgr.createZipFile(pZipStream);
+            return myZipFactory.createZipFile(pZipStream);
         }
     }
 
@@ -198,18 +199,16 @@ public class ZipFileTest {
                                 final File pDirectory) throws OceanusException {
         /* Access ZipManager */
         final GordianZipFactory myZipMgr = pFactory.getZipFactory();
-        final GordianKeySetFactory myKeySets = pFactory.getKeySetFactory();
 
         /* Access the file */
         final ByteArrayInputStream myInputStream = new ByteArrayInputStream(pZipFile);
         final GordianZipReadFile myZipFile = myZipMgr.openZipFile(myInputStream);
 
         /* Check for security */
-        final byte[] myHashBytes = myZipFile.getHashBytes();
-        if (myHashBytes != null) {
-            /* Resolve security and unlock file */
-            final GordianKeySetHash myHash = myKeySets.deriveKeySetHash(myHashBytes, DEF_PASSWORD.clone());
-            myZipFile.setKeySetHash(myHash);
+        final GordianZipLock myLock = myZipFile.getLock();
+        if (myLock != null) {
+            /* unlock file */
+            myLock.unlock(DEF_PASSWORD.clone());
         }
 
         /* Access the contents */

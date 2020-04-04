@@ -5,9 +5,18 @@
     </properties>
     <body>
         <section name="Overview">
-            <p>GordianKnot provides a layer over the BouncyCastle encryption library and builds additional support on top</p>
+            <p><strong>GordianKnot</strong> provides an layer over the BouncyCastle encryption library,
+                and adds significant additional functionality, via a <strong>GordianFactory</strong> object.
+                Two flavours of factory are provided, one that access BouncyCastle via the JCA provider interface, and
+                one that accesses the BouncyCastle lightweight API. This second flavour supports additional algorithms
+                not currently available in the JCA interface, or for that matter in BouncyCastle itself.</p>
+            <p>The factory provides a number of subFactories (e.g. <strong>GordianDigestFactory</strong>) to simplify the API.</p>
         </section>
         <section name="Vanilla API">
+            <p>The Vanilla API provides access to cryptographic primitives. Each primitive is identified by a
+                <strong>Spec</strong> object such as <strong>GordianDigestSpec</strong> which identifies the algorithm variant
+                that is required.</p>
+            <p>Each type of primitive </p>
             <subsection name="Symmetric API">
                 <ol>
                     <li><a href="blockCipher.html">Block Ciphers</a></li>
@@ -28,6 +37,7 @@
             </subsection>
         </section>
         <section name="Extended API">
+            <p>The Extended API provides access to additional features that are not provided by BouncyCastle.</p>
             <ol>
                 <li><a href="personal.html">Personalisation</a></li>
                 <li><a href="keyset.html">KeySets</a></li>

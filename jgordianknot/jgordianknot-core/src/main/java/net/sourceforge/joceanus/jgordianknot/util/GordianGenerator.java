@@ -18,9 +18,13 @@ package net.sourceforge.joceanus.jgordianknot.util;
 
 import net.sourceforge.joceanus.jgordianknot.api.factory.GordianFactory;
 import net.sourceforge.joceanus.jgordianknot.api.factory.GordianFactoryType;
-import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianParameters;
+import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetHashSpec;
+import net.sourceforge.joceanus.jgordianknot.api.password.GordianDialogController;
+import net.sourceforge.joceanus.jgordianknot.api.password.GordianPasswordManager;
 import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyFactory;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianFactoryGenerator;
+import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianParameters;
+import net.sourceforge.joceanus.jgordianknot.impl.core.password.GordianCorePasswordManager;
 import net.sourceforge.joceanus.jgordianknot.impl.jca.JcaFactory;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
@@ -80,6 +84,20 @@ public final class GordianGenerator {
         final GordianParameters myParams = new GordianParameters(pFactoryType);
         myParams.setSecurityPhrase(pSecurityPhrase);
         return myGenerator.newFactory(myParams);
+    }
+
+    /**
+     * Create a new passwordManager.
+     * @param pFactory the factory
+     * @param pKeySetSpec the keySetSpec
+     * @param pDialog the dialog controller
+     * @return the new factory
+     * @throws OceanusException on error
+     */
+    public static GordianPasswordManager newPasswordManager(final GordianFactory pFactory,
+                                                            final GordianKeySetHashSpec pKeySetSpec,
+                                                            final GordianDialogController pDialog) throws OceanusException {
+        return new GordianCorePasswordManager(pFactory, pKeySetSpec, pDialog);
     }
 
     /**

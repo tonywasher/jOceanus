@@ -38,11 +38,12 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.xml.sax.SAXException;
 
-import net.sourceforge.joceanus.jgordianknot.util.GordianSecurityManager;
+import net.sourceforge.joceanus.jgordianknot.api.password.GordianPasswordManager;
 import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetHash;
 import net.sourceforge.joceanus.jgordianknot.api.zip.GordianZipFactory;
 import net.sourceforge.joceanus.jgordianknot.api.zip.GordianZipFileContents;
 import net.sourceforge.joceanus.jgordianknot.api.zip.GordianZipFileEntry;
+import net.sourceforge.joceanus.jgordianknot.api.zip.GordianZipLock;
 import net.sourceforge.joceanus.jgordianknot.api.zip.GordianZipReadFile;
 import net.sourceforge.joceanus.jgordianknot.api.zip.GordianZipWriteFile;
 import net.sourceforge.joceanus.jmetis.data.MetisDataDifference;
@@ -73,9 +74,9 @@ public class DataValuesFormatter<T extends DataSet<T, E>, E extends Enum<E>> {
     private final MetisThreadStatusReport theReport;
 
     /**
-     * The security manager.
+     * The password manager.
      */
-    private final GordianSecurityManager theSecurityMgr;
+    private final GordianPasswordManager thePasswordMgr;
 
     /**
      * The document builder.
@@ -95,14 +96,14 @@ public class DataValuesFormatter<T extends DataSet<T, E>, E extends Enum<E>> {
     /**
      * Constructor.
      * @param pReport the report
-     * @param pSecureMgr the security manager
+     * @param pPasswordMgr the password manager
      * @throws PrometheusIOException on error
      */
     public DataValuesFormatter(final MetisThreadStatusReport pReport,
-                               final GordianSecurityManager pSecureMgr) throws PrometheusIOException {
+                               final GordianPasswordManager pPasswordMgr) throws PrometheusIOException {
         /* Store values */
         theReport = pReport;
-        theSecurityMgr = pSecureMgr;
+        thePasswordMgr = pPasswordMgr;
 
         /* protect against exceptions */
         try {
@@ -138,10 +139,10 @@ public class DataValuesFormatter<T extends DataSet<T, E>, E extends Enum<E>> {
         final MetisProfile myStage = myTask.startTask("Writing");
 
         /* Create a similar security control */
-        final GordianSecurityManager mySecure = pData.getSecurity();
+        final GordianPasswordManager myPasswordMgr = pData.getPasswordMgr();
         final GordianKeySetHash myBase = pData.getKeySetHash();
-        final GordianKeySetHash myHash = mySecure.similarKeySetHash(myBase);
-        final GordianZipFactory myZips = mySecure.getSecurityFactory().getZipFactory();
+        final GordianZipLock myLock = myPasswordMgr.similarZipLock(myBase);
+        final GordianZipFactory myZips = myPasswordMgr.getSecurityFactory().getZipFactory();
 
         /* Access the data version */
         theVersion = pData.getControl().getDataVersion();
@@ -151,7 +152,7 @@ public class DataValuesFormatter<T extends DataSet<T, E>, E extends Enum<E>> {
 
         /* Protect the workbook access */
         boolean writeFailed = false;
-        try (GordianZipWriteFile myZipFile = myZips.createZipFile(myHash, pFile)) {
+        try (GordianZipWriteFile myZipFile = myZips.createZipFile(myLock, pFile)) {
             /* Loop through the data lists */
             final Iterator<DataList<?, E>> myIterator = pData.iterator();
             while (myIterator.hasNext()) {
@@ -200,7 +201,7 @@ public class DataValuesFormatter<T extends DataSet<T, E>, E extends Enum<E>> {
 
         /* Declare the number of stages */
         theReport.setNumStages(pData.getListMap().size());
-        final GordianZipFactory myZips = theSecurityMgr.getSecurityFactory().getZipFactory();
+        final GordianZipFactory myZips = thePasswordMgr.getSecurityFactory().getZipFactory();
 
         /* Protect the workbook access */
         boolean writeFailed = false;
@@ -337,19 +338,16 @@ public class DataValuesFormatter<T extends DataSet<T, E>, E extends Enum<E>> {
         myStage.startTask("Parsing");
 
         /* Access the zip file */
-        final GordianZipFactory myZips = theSecurityMgr.getSecurityFactory().getZipFactory();
+        final GordianZipFactory myZips = thePasswordMgr.getSecurityFactory().getZipFactory();
         final GordianZipReadFile myZipFile = myZips.openZipFile(pFile);
 
         /* Obtain the hash bytes from the file */
-        final byte[] myHashBytes = myZipFile.getHashBytes();
+        final GordianZipLock myLock = myZipFile.getLock();
 
         /* If this is a secure ZipFile */
-        if (myHashBytes != null) {
-            /* Obtain the initialised password hash */
-            final GordianKeySetHash myHash = theSecurityMgr.resolveKeySetHash(myHashBytes, pFile.getName());
-
-            /* Associate this keySetHash with the ZipFile */
-            myZipFile.setKeySetHash(myHash);
+        if (myLock != null) {
+            /* Resolve the lock */
+            thePasswordMgr.resolveZipLock(myLock, pFile.getName());
         }
 
         /* Parse the Zip File */

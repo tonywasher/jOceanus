@@ -5,6 +5,7 @@
     </properties>
     <body>
         <section name="Overview">
+            <p>Agreements are supported via the <strong>GordianAgreementFactory</strong> interface.</p>
             <p>Algorithms are represented by <b>GordianAgreementSpec</b>. A <b>GordianAgreement</b> is obtained via the agreementSpec,
                 and then agreements are created between the two parties depending on the type of the agreement and the resultType.
                 The resultTypes can be any of the following</p>

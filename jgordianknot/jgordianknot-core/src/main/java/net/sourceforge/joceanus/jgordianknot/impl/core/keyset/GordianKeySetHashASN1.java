@@ -125,7 +125,7 @@ public class GordianKeySetHashASN1
      * Obtain the hashBytes.
      * @return the hashBytes
      */
-    byte[] getHashBytes() {
+    public byte[] getHashBytes() {
         return theHashBytes;
     }
 

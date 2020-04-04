@@ -25,7 +25,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import net.sourceforge.joceanus.jgordianknot.util.GordianSecurityManager;
+import net.sourceforge.joceanus.jgordianknot.util.GordianUtilities;
 import net.sourceforge.joceanus.jmetis.data.MetisDataFormatter;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisField;
 import net.sourceforge.joceanus.jprometheus.PrometheusLogicException;
@@ -433,7 +433,7 @@ public class PrometheusTableDefinition {
     public BinaryColumn addEncryptedColumn(final MetisField pId,
                                            final int pLength) {
         /* Create the new binary column */
-        final BinaryColumn myColumn = new BinaryColumn(this, pId, GordianSecurityManager.getKeySetEncryptionLength(pLength, false));
+        final BinaryColumn myColumn = new BinaryColumn(this, pId, GordianUtilities.getKeySetEncryptionLength(pLength, false));
 
         /* Add it to the list and return it */
         theList.add(myColumn);

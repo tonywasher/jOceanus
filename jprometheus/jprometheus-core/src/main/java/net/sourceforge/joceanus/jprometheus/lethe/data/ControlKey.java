@@ -21,8 +21,9 @@ import java.util.Iterator;
 import java.util.List;
 
 import net.sourceforge.joceanus.jgordianknot.api.factory.GordianFactory;
-import net.sourceforge.joceanus.jgordianknot.util.GordianSecurityManager;
 import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetHash;
+import net.sourceforge.joceanus.jgordianknot.api.password.GordianPasswordManager;
+import net.sourceforge.joceanus.jgordianknot.util.GordianUtilities;
 import net.sourceforge.joceanus.jmetis.data.MetisDataFormatter;
 import net.sourceforge.joceanus.jmetis.data.MetisDataItem.MetisDataList;
 import net.sourceforge.joceanus.jmetis.data.MetisDataResource;
@@ -58,7 +59,7 @@ public final class ControlKey
     /**
      * KeySetHash Length.
      */
-    public static final int HASHLEN = GordianSecurityManager.getKeySetHashLen();
+    public static final int HASHLEN = GordianUtilities.getKeySetHashLen();
 
     /**
      * Report fields.
@@ -158,10 +159,10 @@ public final class ControlKey
         try {
             /* Access the Security manager */
             final DataSet<?, ?> myData = getDataSet();
-            final GordianSecurityManager mySecure = myData.getSecurity();
+            final GordianPasswordManager myPasswordMgr = myData.getPasswordMgr();
 
             /* Create a new keySetHash with new password */
-            final GordianKeySetHash myHash = mySecure.newKeySetHash(NAME_DATABASE);
+            final GordianKeySetHash myHash = myPasswordMgr.newKeySetHash(NAME_DATABASE);
 
             /* Store the password hash */
             setValueHashPrime(Boolean.TRUE);
@@ -192,14 +193,14 @@ public final class ControlKey
         try {
             /* Access the Security manager */
             final DataSet<?, ?> myData = getDataSet();
-            final GordianSecurityManager mySecure = myData.getSecurity();
+            final GordianPasswordManager myPasswordMgr = myData.getPasswordMgr();
 
             /* ReSeed the security generator */
-            final GordianFactory myFactory = mySecure.getSecurityFactory();
+            final GordianFactory myFactory = myPasswordMgr.getSecurityFactory();
             myFactory.reSeedRandom();
 
             /* Create a similar keySetHash */
-            final GordianKeySetHash myHash = mySecure.similarKeySetHash(myData.getKeySetHash());
+            final GordianKeySetHash myHash = myPasswordMgr.similarKeySetHash(myData.getKeySetHash());
 
             /* Store the password Hash */
             setValueHashPrime(Boolean.TRUE);
@@ -426,10 +427,10 @@ public final class ControlKey
     private GordianKeySetHash resolvePrimeHash() throws OceanusException {
         /* Access the Security manager */
         final DataSet<?, ?> myData = getDataSet();
-        final GordianSecurityManager mySecure = myData.getSecurity();
+        final GordianPasswordManager myPasswordMgr = myData.getPasswordMgr();
 
         /* Resolve the keySetHash */
-        final GordianKeySetHash myHash = mySecure.resolveKeySetHash(getPrimeHashBytes(), NAME_DATABASE);
+        final GordianKeySetHash myHash = myPasswordMgr.resolveKeySetHash(getPrimeHashBytes(), NAME_DATABASE);
 
         /* Store the keySetHash */
         setValuePrimeKeySetHash(myHash);
@@ -444,10 +445,10 @@ public final class ControlKey
     private GordianKeySetHash resolveAltHash() throws OceanusException {
         /* Access the Security manager */
         final DataSet<?, ?> myData = getDataSet();
-        final GordianSecurityManager mySecure = myData.getSecurity();
+        final GordianPasswordManager myPasswordMgr = myData.getPasswordMgr();
 
         /* Resolve the keySetHash */
-        final GordianKeySetHash myHash = mySecure.resolveKeySetHash(getAltHashBytes(), NAME_DATABASE);
+        final GordianKeySetHash myHash = myPasswordMgr.resolveKeySetHash(getAltHashBytes(), NAME_DATABASE);
 
         /* Store the keySetHash */
         setValueAltKeySetHash(myHash);

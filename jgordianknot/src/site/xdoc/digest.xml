@@ -5,6 +5,7 @@
     </properties>
     <body>
         <section name="Overview">
+            <p>Digests are supported via the <strong>GordianDigestFactory</strong> interface.</p>
             <p>GordianKnot supports most Digests available from BouncyCastle plus some additional algorithms.</p>
             <p>JCA provides a subset of available algorithms as indicated</p>
         </section>

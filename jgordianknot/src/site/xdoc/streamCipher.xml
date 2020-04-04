@@ -5,6 +5,7 @@
     </properties>
     <body>
         <section name="Overview">
+            <p>Stream Ciphers are supported via the <strong>GordianCipherFactory</strong> interface.</p>
             <p>GordianKnot supports most Symmetric Stream Ciphers available from BouncyCastle plus some additional ciphers.</p>
             <p>A key for stream encryption is created by specifying the algorithm and keySize as a <strong>GordianStreamKeySpec</strong>.</p>
             <p>A cipher for stream encryption is created by specifying the <strong>GordianStreamKeySpec</strong> (plus variant details eg AEAD)

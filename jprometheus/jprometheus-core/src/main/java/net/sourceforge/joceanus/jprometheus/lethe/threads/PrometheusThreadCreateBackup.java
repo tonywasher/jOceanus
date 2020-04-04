@@ -18,7 +18,8 @@ package net.sourceforge.joceanus.jprometheus.lethe.threads;
 
 import java.io.File;
 
-import net.sourceforge.joceanus.jgordianknot.util.GordianSecurityManager;
+import net.sourceforge.joceanus.jgordianknot.api.password.GordianPasswordManager;
+import net.sourceforge.joceanus.jgordianknot.util.GordianUtilities;
 import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceManager;
 import net.sourceforge.joceanus.jmetis.threads.MetisThread;
 import net.sourceforge.joceanus.jmetis.threads.MetisThreadData;
@@ -76,7 +77,7 @@ public class PrometheusThreadCreateBackup<T extends DataSet<T, E>, E extends Enu
         /* Access the thread manager */
         final PrometheusToolkit myToolkit = (PrometheusToolkit) pThreadData;
         final MetisThreadManager myManager = myToolkit.getThreadManager();
-        final GordianSecurityManager mySecurityMgr = myToolkit.getSecureManager();
+        final GordianPasswordManager myPasswordMgr = myToolkit.getPasswordManager();
         boolean doDelete = false;
         File myFile = null;
 
@@ -117,7 +118,7 @@ public class PrometheusThreadCreateBackup<T extends DataSet<T, E>, E extends Enu
             }
 
             /* Set the standard backup name */
-            myFile = new File(myName.toString() + GordianSecurityManager.SECUREZIPFILE_EXT);
+            myFile = new File(myName.toString() + GordianUtilities.SECUREZIPFILE_EXT);
 
             /* Create backup */
             final PrometheusSpreadSheet<T> mySheet = theControl.getSpreadSheet();
@@ -132,7 +133,7 @@ public class PrometheusThreadCreateBackup<T extends DataSet<T, E>, E extends Enu
 
             /* Load workbook */
             final T myNewData = theControl.getNewData();
-            mySheet.loadBackup(myManager, mySecurityMgr, myNewData, myFile);
+            mySheet.loadBackup(myManager, myPasswordMgr, myNewData, myFile);
 
             /* Create a difference set between the two data copies */
             final DataSet<T, ?> myDiff = myNewData.getDifferenceSet(myManager, myOldData);

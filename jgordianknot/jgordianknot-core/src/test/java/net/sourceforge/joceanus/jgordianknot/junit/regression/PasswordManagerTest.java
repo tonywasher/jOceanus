@@ -26,10 +26,11 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
+import net.sourceforge.joceanus.jgordianknot.api.factory.GordianFactory;
 import net.sourceforge.joceanus.jgordianknot.api.factory.GordianFactoryType;
-import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianParameters;
-import net.sourceforge.joceanus.jgordianknot.util.GordianDialogController;
-import net.sourceforge.joceanus.jgordianknot.util.GordianSecurityManager;
+import net.sourceforge.joceanus.jgordianknot.api.password.GordianDialogController;
+import net.sourceforge.joceanus.jgordianknot.util.GordianGenerator;
+import net.sourceforge.joceanus.jgordianknot.impl.core.password.GordianCorePasswordManager;
 import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetHash;
 import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetHashSpec;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianDataException;
@@ -38,7 +39,7 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
 /**
  * Security Test suite - Test SecurityManager functionality.
  */
-public class HashManagerTest {
+public class PasswordManagerTest {
     /**
      * The List of password names.
      */
@@ -124,7 +125,7 @@ public class HashManagerTest {
         }
 
         @Override
-        public void setError(String pError) {
+        public void reportBadPassword() {
         }
 
         /**
@@ -133,7 +134,7 @@ public class HashManagerTest {
          * @param pHash the hashIndex
          * @throws OceanusException on error
          */
-        GordianKeySetHash resolveHash(final GordianSecurityManager pManager,
+        GordianKeySetHash resolveHash(final GordianCorePasswordManager pManager,
                                       final HashIndex pHash) throws OceanusException {
             final int myIndex = pHash.theIndex;
             final boolean isKnown = myIndex != UNKNOWN;
@@ -190,7 +191,7 @@ public class HashManagerTest {
      * @return the new Hash
      * @throws OceanusException on error
      */
-    static HashIndex createNewHash(final GordianSecurityManager pManager,
+    static HashIndex createNewHash(final GordianCorePasswordManager pManager,
                                    final int pIndex) throws OceanusException {
         final HashIndex myHash = new HashIndex(pManager.newKeySetHash(NAMES[pIndex]), pIndex);
         HASHES.add(myHash);
@@ -204,7 +205,7 @@ public class HashManagerTest {
      * @return the new Hash
      * @throws OceanusException on error
      */
-    static HashIndex createSimilarHash(final GordianSecurityManager pManager,
+    static HashIndex createSimilarHash(final GordianCorePasswordManager pManager,
                                        final HashIndex pHash) throws OceanusException {
         final HashIndex myHash = new HashIndex(pManager.similarKeySetHash(pHash.theHash), pHash.theIndex);
         HASHES.add(myHash);
@@ -219,7 +220,8 @@ public class HashManagerTest {
     public static void setUpHashes() throws OceanusException {
         /* Create the security manager */
         final GordianKeySetHashSpec mySpec = new GordianKeySetHashSpec();
-        final GordianSecurityManager myManager = new GordianSecurityManager(GordianFactoryType.BC, mySpec, new DialogController());
+        final GordianFactory myFactory = GordianGenerator.createFactory(GordianFactoryType.BC);
+        final GordianCorePasswordManager myManager = new GordianCorePasswordManager(myFactory, mySpec, new DialogController());
 
         /* For each NAME */
         for (int i = 0; i < NAMES.length; i++) {
@@ -242,12 +244,12 @@ public class HashManagerTest {
      * @throws OceanusException on error
      */
     @Test
-    public void SecurityManagerTest() throws OceanusException {
+    public void PasswordManagerTest() throws OceanusException {
         /* Create the security manager */
-        final GordianParameters myParams = new GordianParameters(GordianFactoryType.BC);
         final GordianKeySetHashSpec mySpec = new GordianKeySetHashSpec();
         final DialogController myController = new DialogController();
-        final GordianSecurityManager myManager = new GordianSecurityManager(GordianFactoryType.BC, mySpec, myController);
+        final GordianFactory myFactory = GordianGenerator.createFactory(GordianFactoryType.BC);
+        final GordianCorePasswordManager myManager = new GordianCorePasswordManager(myFactory, mySpec, myController);
 
         /* Loop through the hashes in the list */
         for (HashIndex myHash : HASHES) {

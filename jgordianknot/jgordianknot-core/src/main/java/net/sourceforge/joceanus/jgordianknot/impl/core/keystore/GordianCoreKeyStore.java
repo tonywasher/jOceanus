@@ -34,7 +34,6 @@ import net.sourceforge.joceanus.jgordianknot.api.key.GordianKey;
 import net.sourceforge.joceanus.jgordianknot.api.key.GordianKeyPair;
 import net.sourceforge.joceanus.jgordianknot.api.key.GordianKeyPairGenerator;
 import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySet;
-import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetFactory;
 import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetHash;
 import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetHashSpec;
 import net.sourceforge.joceanus.jgordianknot.api.keystore.GordianCertificate;
@@ -48,6 +47,7 @@ import net.sourceforge.joceanus.jgordianknot.api.keystore.GordianKeyStoreEntry.G
 import net.sourceforge.joceanus.jgordianknot.api.keystore.GordianKeyStoreEntry.GordianKeyStorePair;
 import net.sourceforge.joceanus.jgordianknot.api.keystore.GordianKeyStoreEntry.GordianKeyStoreSet;
 import net.sourceforge.joceanus.jgordianknot.api.zip.GordianZipFactory;
+import net.sourceforge.joceanus.jgordianknot.api.zip.GordianZipLock;
 import net.sourceforge.joceanus.jgordianknot.api.zip.GordianZipWriteFile;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianCoreFactory;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianDataException;
@@ -678,13 +678,12 @@ public class GordianCoreKeyStore
                               final char[] pPassword) throws OceanusException {
         /* Access the Factories */
         final GordianZipFactory myZipFactory = theFactory.getZipFactory();
-        final GordianKeySetFactory myKeySetFactory = theFactory.getKeySetFactory();
 
-        /* Create the securing hash */
-        final GordianKeySetHash myHash = myKeySetFactory.generateKeySetHash(theKeySetSpec, pPassword);
+        /* Create the lock */
+        final GordianZipLock myLock = myZipFactory.createZipLock(theKeySetSpec, pPassword);
 
         /* Create the Zip file */
-        try (GordianZipWriteFile myZipFile = myZipFactory.createZipFile(myHash, pOutputStream)) {
+        try (GordianZipWriteFile myZipFile = myZipFactory.createZipFile(myLock, pOutputStream)) {
             /* Create the XML representation */
             final GordianKeyStoreDocument myDocument = new GordianKeyStoreDocument(this);
 

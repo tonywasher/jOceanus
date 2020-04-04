@@ -18,7 +18,7 @@ package net.sourceforge.joceanus.jprometheus.lethe.sheets;
 
 import java.io.File;
 
-import net.sourceforge.joceanus.jgordianknot.util.GordianSecurityManager;
+import net.sourceforge.joceanus.jgordianknot.api.password.GordianPasswordManager;
 import net.sourceforge.joceanus.jmetis.threads.MetisThreadStatusReport;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataSet;
 import net.sourceforge.joceanus.jprometheus.service.sheet.PrometheusSheetWorkBookType;
@@ -38,11 +38,11 @@ public abstract class PrometheusSpreadSheet<T extends DataSet<T, ?>> {
     /**
      * Obtain a sheet reader.
      * @param pReport the report
-     * @param pSecureMgr the security manager
+     * @param pPasswordMgr the password manager
      * @return the sheet reader
      */
     protected abstract PrometheusSheetReader<T> getSheetReader(MetisThreadStatusReport pReport,
-                                                               GordianSecurityManager pSecureMgr);
+                                                               GordianPasswordManager pPasswordMgr);
 
     /**
      * Obtain a sheet writer.
@@ -54,17 +54,17 @@ public abstract class PrometheusSpreadSheet<T extends DataSet<T, ?>> {
     /**
      * Load a Backup Workbook.
      * @param pReport the report
-     * @param pSecureMgr the security manager
+     * @param pPasswordMgr the password manager
      * @param pData the data to load into
      * @param pFile the backup file to load from
      * @throws OceanusException on error
      */
     public void loadBackup(final MetisThreadStatusReport pReport,
-                           final GordianSecurityManager pSecureMgr,
+                           final GordianPasswordManager pPasswordMgr,
                            final T pData,
                            final File pFile) throws OceanusException {
         /* Create a sheet reader object */
-        final PrometheusSheetReader<T> myReader = getSheetReader(pReport, pSecureMgr);
+        final PrometheusSheetReader<T> myReader = getSheetReader(pReport, pPasswordMgr);
 
         /* Load the backup */
         myReader.loadBackup(pFile, pData);

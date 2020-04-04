@@ -16,47 +16,44 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jgordianknot.api.zip;
 
-import java.io.InputStream;
-
-import org.w3c.dom.Document;
-
+import net.sourceforge.joceanus.jgordianknot.api.key.GordianKeyPair;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
- * GordianKnot Zip ReadFile API.
+ * ZipLock interface.
  */
-public interface GordianZipReadFile {
+public interface GordianZipLock {
     /**
-     * Obtain the contents.
-     * @return the contents
-     */
-    GordianZipFileContents getContents();
-
-    /**
-     * Is the zip file encrypted?
+     * Is this still locked?
      * @return true/false
      */
-    boolean isEncrypted();
+    boolean isLocked();
 
     /**
-     * Obtain the lock for the file.
-     * @return the lock
+     * Is this available to lock a zipFile?
+     * @return true/false
      */
-    GordianZipLock getLock();
+    boolean isFresh();
 
     /**
-     * Obtain an input stream for an entry in the zip file.
-     * @param pFile the file details for the new zip entry
-     * @return the input stream
+     * Obtain lockType.
+     * @return the lockType
+     */
+    GordianZipLockType getLockType();
+
+    /**
+     * Unlock with password.
+     * @param pPassword the password
      * @throws OceanusException on error
      */
-    InputStream createInputStream(GordianZipFileEntry pFile) throws OceanusException;
+    void unlock(char[] pPassword) throws OceanusException;
 
     /**
-     * Read an entry in the zip file and parse as an XML Document.
-     * @param pFile the file details for the new zip entry
-     * @return the parsed XML Document
+     * Unlock with keyPair and password.
+     * @param pKeyPair the keyPair
+     * @param pPassword the password
      * @throws OceanusException on error
      */
-    Document readXMLDocument(GordianZipFileEntry pFile) throws OceanusException;
+    void unlock(GordianKeyPair pKeyPair,
+                char[] pPassword) throws OceanusException;
 }

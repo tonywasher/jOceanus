@@ -17,6 +17,7 @@
 package net.sourceforge.joceanus.jthemis.ui.javafx;
 
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.stage.Stage;
 
 import net.sourceforge.joceanus.jtethys.OceanusException;
@@ -61,6 +62,11 @@ public class ThemisDSM4FX
         if (thePanel != null) {
             /* Attach to the stage and show */
             thePanel.attachToStage(pStage);
+            Platform.setImplicitExit(true);
+            pStage.setOnCloseRequest(ae -> {
+                Platform.exit();
+                System.exit(0);
+            });
             pStage.show();
         }
     }

@@ -18,7 +18,8 @@ package net.sourceforge.joceanus.jprometheus.lethe.threads;
 
 import java.io.File;
 
-import net.sourceforge.joceanus.jgordianknot.util.GordianSecurityManager;
+import net.sourceforge.joceanus.jgordianknot.api.password.GordianPasswordManager;
+import net.sourceforge.joceanus.jgordianknot.util.GordianUtilities;
 import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceManager;
 import net.sourceforge.joceanus.jmetis.threads.MetisThread;
 import net.sourceforge.joceanus.jmetis.threads.MetisThreadData;
@@ -68,7 +69,7 @@ public class PrometheusThreadLoadXmlFile<T extends DataSet<T, E>, E extends Enum
         /* Access the thread manager */
         final PrometheusToolkit myToolkit = (PrometheusToolkit) pThreadData;
         final MetisThreadManager myManager = myToolkit.getThreadManager();
-        final GordianSecurityManager mySecurity = myToolkit.getSecureManager();
+        final GordianPasswordManager myPasswordMgr = myToolkit.getPasswordManager();
 
         /* Initialise the status window */
         myManager.initTask(getTaskName());
@@ -84,7 +85,7 @@ public class PrometheusThreadLoadXmlFile<T extends DataSet<T, E>, E extends Enum
         final TethysFileSelector myDialog = myToolkit.getGuiFactory().newFileSelector();
         myDialog.setTitle(TASK_SELECTFILE);
         myDialog.setInitialDirectory(myBackupDir);
-        myDialog.setExtension(GordianSecurityManager.SECUREZIPFILE_EXT);
+        myDialog.setExtension(GordianUtilities.SECUREZIPFILE_EXT);
         final File myFile = myDialog.selectFile();
 
         /* If we did not select a file */
@@ -94,7 +95,7 @@ public class PrometheusThreadLoadXmlFile<T extends DataSet<T, E>, E extends Enum
         }
 
         /* Create a new formatter */
-        final DataValuesFormatter<T, E> myFormatter = new DataValuesFormatter<>(myManager, mySecurity);
+        final DataValuesFormatter<T, E> myFormatter = new DataValuesFormatter<>(myManager, myPasswordMgr);
 
         /* Load data */
         final T myNewData = theControl.getNewData();
