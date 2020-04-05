@@ -17,7 +17,10 @@
 package net.sourceforge.joceanus.jgordianknot.impl.core.random;
 
 import java.security.SecureRandom;
+import java.util.List;
+import java.util.function.BiPredicate;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 import org.bouncycastle.crypto.prng.BasicEntropySourceProvider;
 import org.bouncycastle.crypto.prng.EntropySource;
@@ -31,6 +34,7 @@ import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianStreamKeySpec;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianSymCipher;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianSymCipherSpec;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianSymKeySpec;
+import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianSymKeyType;
 import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigest;
 import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigestFactory;
 import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigestSpec;
@@ -134,10 +138,8 @@ public class GordianCoreRandomFactory
         /* Store parameters and create an entropy provider */
         theEntropyProvider = new BasicEntropySourceProvider(theRandom, true);
 
-        /* Create a random secureRandom and register it */
-        final GordianRandomSpec mySpec = generateRandomSpec();
-        final GordianSecureRandom myRandom = createRandom(mySpec);
-        theRandomSource.setRandom(myRandom);
+        /* Create a random combinedRandom and register it */
+        theRandomSource.setRandom(generateRandomCombined());
     }
 
     @Override
@@ -173,8 +175,30 @@ public class GordianCoreRandomFactory
     }
 
     @Override
+    public GordianCombinedRandom createRandom(final GordianRandomSpec pCtrSpec,
+                                              final GordianRandomSpec pHashSpec) throws OceanusException {
+        /* Check validity of ctrSpecs */
+        if (!validCombinedSpec(pCtrSpec, pHashSpec)) {
+            throw new GordianDataException(GordianCoreFactory.getInvalidText(pCtrSpec)
+                    + "-" + pHashSpec);
+        }
+
+        /* Build pair of randoms */
+        final GordianSecureRandom myCtr = createRandom(pCtrSpec);
+        final GordianSecureRandom myHash = createRandom(pHashSpec);
+
+        /* return the combined random */
+        return new GordianCombinedRandom(myCtr, myHash);
+    }
+
+    @Override
     public Predicate<GordianRandomSpec> supportedRandomSpecs() {
         return this::validRandomSpec;
+    }
+
+    @Override
+    public BiPredicate<GordianRandomSpec, GordianRandomSpec> supportedCombinedSpecs() {
+        return this::validCombinedSpec;
     }
 
     /**
@@ -211,38 +235,89 @@ public class GordianCoreRandomFactory
     }
 
     /**
-     * Create a random randomSpec.
-     * @return the randomSpec
+     * Check combined RandomSpec.
+     * @param pCtrSpec the Counter Spec.
+     * @param pHashSpec the Hash Spec
+     * @return true/false
      */
-    private GordianRandomSpec generateRandomSpec() {
-        /* Access factories */
-        final GordianCoreDigestFactory myDigests = (GordianCoreDigestFactory) theFactory.getDigestFactory();
-        final GordianCoreMacFactory myMacs = (GordianCoreMacFactory) theFactory.getMacFactory();
-
-        /* Determine the type of random generator */
-        final boolean isHMac = theRandom.nextBoolean();
-        final GordianRandomType myType = isHMac
-                                         ? GordianRandomType.HMAC
-                                         : GordianRandomType.HASH;
-        final Predicate<GordianDigestSpec> myPredicate = isHMac
-                                                         ? myMacs.supportedHMacDigestSpecs()
-                                                         : myDigests.supportedDigestSpecs();
-
-        /* Access the digestTypes */
-        final GordianDigestType[] myDigestTypes = GordianDigestType.values();
-
-        /* Keep looping until we find a valid digest */
-        for (;;) {
-            /* Obtain the candidate DigestSpec */
-            final int myInt = theRandom.nextInt(myDigestTypes.length);
-            final GordianDigestType myDigestType = myDigestTypes[myInt];
-            final GordianDigestSpec mySpec = new GordianDigestSpec(myDigestType, GordianLength.LEN_512);
-
-            /* If this is a valid digestSpec, return it */
-            if (myPredicate.test(mySpec)) {
-                return new GordianRandomSpec(myType, new GordianDigestSpec(myDigestTypes[myInt]), false);
-            }
+    private boolean validCombinedSpec(final GordianRandomSpec pCtrSpec,
+                                      final GordianRandomSpec pHashSpec) {
+        /* Check validity of ctrSpecs */
+        if (!supportedRandomSpecs().test(pCtrSpec)
+                || pCtrSpec.getRandomType() != GordianRandomType.CTR
+                || pCtrSpec.getSymKeySpec().getKeyLength() != GordianLength.LEN_128
+                || pCtrSpec.getSymKeySpec().getBlockLength() != GordianLength.LEN_128) {
+            return false;
         }
+
+        /* Validate the hashSpec */
+        return supportedRandomSpecs().test(pHashSpec)
+                && pHashSpec.getRandomType() == GordianRandomType.HASH
+                && pHashSpec.getDigestSpec().getDigestLength() == GordianLength.LEN_512;
+    }
+
+    /**
+     * Create a random combinedRandom.
+     * @return the combinedRandom
+     * @throws OceanusException on error
+     */
+    GordianCombinedRandom generateRandomCombined() throws OceanusException {
+        /* Create a random ctrSpec */
+        final GordianSymKeySpec mySymKeySpec = generateRandomSymKeySpec();
+        final GordianRandomSpec myCtrSpec = GordianRandomSpec.ctr(mySymKeySpec);
+
+        /* Create a random hashSpec */
+        final GordianDigestSpec myDigestSpec = generateRandomDigestSpec();
+        final GordianRandomSpec myHashSpec = GordianRandomSpec.hash(myDigestSpec);
+
+        /* Build the combinedRandom */
+        return createRandom(myCtrSpec, myHashSpec);
+    }
+
+    /**
+     * Obtain random SymKeySpec with blockLength/keySize of 128 bits.
+     * @return the random symKeySpec
+     */
+    private GordianSymKeySpec generateRandomSymKeySpec() {
+        /* Access the list of symKeySpecs and unique symKeyTypes */
+        final GordianCipherFactory myCiphers = theFactory.getCipherFactory();
+        final List<GordianSymKeySpec> mySpecs = myCiphers.listAllSupportedSymKeySpecs(GordianLength.LEN_128);
+
+        /* Remove the specs that are wrong block size and obtain keyTypes */
+        mySpecs.removeIf(s -> s.getBlockLength() != GordianLength.LEN_128);
+        final List<GordianSymKeyType> myTypes = mySpecs.stream().map(GordianSymKeySpec::getSymKeyType).collect(Collectors.toList());
+
+        /* Determine a random index into the list and obtain the symKeyType */
+        int myIndex = theRandom.nextInt(myTypes.size());
+        final GordianSymKeyType myKeyType = myTypes.get(myIndex);
+
+        /* Select from among possible keySpecs of this type */
+        mySpecs.removeIf(s -> s.getSymKeyType() != myKeyType);
+        myIndex = theRandom.nextInt(mySpecs.size());
+        return mySpecs.get(myIndex);
+    }
+
+    /**
+     * Obtain random DigestSpec for a large data output length of 512-bits.
+     * @return the random digestSpec
+     */
+    private GordianDigestSpec generateRandomDigestSpec() {
+        /* Access the list to select from */
+        final GordianDigestFactory myDigests = theFactory.getDigestFactory();
+        final List<GordianDigestSpec> mySpecs = myDigests.listAllSupportedSpecs();
+        mySpecs.removeIf(s -> !s.getDigestType().supportsLargeData()
+                || s.getDigestLength() != GordianLength.LEN_512);
+        final List<GordianDigestType> myTypes = mySpecs.stream().map(GordianDigestSpec::getDigestType).collect(Collectors.toList());
+
+        /* Determine a random index into the list and obtain the digestType */
+        final SecureRandom myRandom = theFactory.getRandomSource().getRandom();
+        int myIndex = myRandom.nextInt(myTypes.size());
+        final GordianDigestType myDigestType = myTypes.get(myIndex);
+
+        /* Select from among possible digestSpecs of this type */
+        mySpecs.removeIf(s -> s.getDigestType() != myDigestType);
+        myIndex = myRandom.nextInt(mySpecs.size());
+        return mySpecs.get(myIndex);
     }
 
     @Override

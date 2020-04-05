@@ -248,8 +248,8 @@ public class GordianCoreZipLock
         final GordianAsymKeyType myKeyType = pKeySpec.getKeyType();
         final GordianEdwardsElliptic myEdwards = pKeySpec.getEdwardsElliptic();
         final GordianKDFType myKDFType = GordianEdwardsElliptic.CURVE25519.equals(myEdwards)
-                    ? GordianKDFType.SHA512KDF
-                    : GordianKDFType.SHA256KDF;
+                    ? GordianKDFType.SHA256KDF
+                    : GordianKDFType.SHA512KDF;
         return new GordianAgreementSpec(myKeyType, GordianAgreementType.ANON, myKDFType);
     }
 

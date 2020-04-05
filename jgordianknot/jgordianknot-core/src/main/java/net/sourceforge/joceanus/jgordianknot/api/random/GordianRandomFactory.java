@@ -18,6 +18,7 @@ package net.sourceforge.joceanus.jgordianknot.api.random;
 
 import java.security.SecureRandom;
 import java.util.List;
+import java.util.function.BiPredicate;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
@@ -42,10 +43,26 @@ public interface GordianRandomFactory {
     SecureRandom createRandom(GordianRandomSpec pRandomSpec) throws OceanusException;
 
     /**
+     * create CombinedRandom.
+     * @param pCtrSpec the ctrRandomSpec
+     * @param pHashSpec the hashRandomSpec
+     * @return the new SecureRandom
+     * @throws OceanusException on error
+     */
+    SecureRandom createRandom(GordianRandomSpec pCtrSpec,
+                              GordianRandomSpec pHashSpec) throws OceanusException;
+
+    /**
      * Obtain predicate for supported randomSpecs.
      * @return the predicate
      */
     Predicate<GordianRandomSpec> supportedRandomSpecs();
+
+    /**
+     * Obtain predicate for supported combined randomSpecs.
+     * @return the predicate
+     */
+    BiPredicate<GordianRandomSpec, GordianRandomSpec> supportedCombinedSpecs();
 
     /**
      * generate random GordianDigest.

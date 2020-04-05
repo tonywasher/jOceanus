@@ -21,10 +21,12 @@ import java.util.EnumMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import net.sourceforge.joceanus.jgordianknot.api.base.GordianLength;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianCipherFactory;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianStreamKeySpec;
+import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianStreamKeyType;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianSymKeySpec;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianSymKeyType;
 import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigestFactory;
@@ -33,6 +35,7 @@ import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigestType;
 import net.sourceforge.joceanus.jgordianknot.api.key.GordianKeyLengths;
 import net.sourceforge.joceanus.jgordianknot.api.mac.GordianMacFactory;
 import net.sourceforge.joceanus.jgordianknot.api.mac.GordianMacSpec;
+import net.sourceforge.joceanus.jgordianknot.api.mac.GordianMacType;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
@@ -77,14 +80,20 @@ public class GordianIdManager {
      * @return the random symKeySpec
      */
     public GordianSymKeySpec generateRandomSymKeySpec(final GordianLength pKeyLen) {
-        /* Access the list to select from */
+        /* Access the list of symKeySpecs and unique symKeyTypes */
         final GordianCipherFactory myCiphers = theFactory.getCipherFactory();
-        final List<GordianSymKeySpec> myValid = myCiphers.listAllSupportedSymKeySpecs(pKeyLen);
+        final List<GordianSymKeySpec> mySpecs = myCiphers.listAllSupportedSymKeySpecs(pKeyLen);
+        final List<GordianSymKeyType> myTypes = mySpecs.stream().map(GordianSymKeySpec::getSymKeyType).collect(Collectors.toList());
 
-        /* Determine a random index into the list and return the spec */
+        /* Determine a random index into the list and obtain the symKeyType */
         final SecureRandom myRandom = theFactory.getRandomSource().getRandom();
-        final int myIndex = myRandom.nextInt(myValid.size());
-        return myValid.get(myIndex);
+        int myIndex = myRandom.nextInt(myTypes.size());
+        final GordianSymKeyType myKeyType = myTypes.get(myIndex);
+
+        /* Select from among possible keySpecs of this type */
+        mySpecs.removeIf(s -> s.getSymKeyType() != myKeyType);
+        myIndex = myRandom.nextInt(mySpecs.size());
+        return mySpecs.get(myIndex);
     }
 
     /**
@@ -97,15 +106,15 @@ public class GordianIdManager {
                                                                final int pCount) {
         /* Access the list to select from */
         final GordianCipherFactory myCiphers = theFactory.getCipherFactory();
-        final List<GordianSymKeySpec> myValid = myCiphers.listAllSupportedSymKeySpecs(pKeyLen);
+        final List<GordianSymKeySpec> mySpecs = myCiphers.listAllSupportedSymKeySpecs(pKeyLen);
 
         /* Remove the short block specs that cannot support SIC Mode */
-        myValid.removeIf(s -> s.getBlockLength() == GordianLength.LEN_64);
+        mySpecs.removeIf(s -> s.getBlockLength() == GordianLength.LEN_64);
 
         /* Create the Access list and loop to populate */
         final GordianSymKeySpec[] myResult = new GordianSymKeySpec[pCount];
         for (int i = 0; i < pCount; i++) {
-             myResult[i] = selectSymKeySpecFromList(myValid);
+             myResult[i] = selectSymKeySpecFromList(mySpecs);
         }
 
         /* Return the result  */
@@ -119,16 +128,18 @@ public class GordianIdManager {
      */
     public GordianSymKeySpec selectSymKeySpecFromList(final List<GordianSymKeySpec> pList) {
         /* Select the random Spec */
+        final List<GordianSymKeyType> myTypes = pList.stream().map(GordianSymKeySpec::getSymKeyType).collect(Collectors.toList());
         final SecureRandom myRandom = theFactory.getRandomSource().getRandom();
-        final int myIndex = myRandom.nextInt(pList.size());
-        final GordianSymKeySpec myResult = pList.get(myIndex);
+        int myIndex = myRandom.nextInt(pList.size());
+        final GordianSymKeyType myType = myTypes.get(myIndex);
 
-        /* Remove all similar specs */
-        final GordianSymKeyType myType = myResult.getSymKeyType();
+        /* Strip out the possible specs */
+        final List<GordianSymKeySpec> mySpecs = pList.stream().filter(mySpec -> mySpec.getSymKeyType() == myType).collect(Collectors.toList());
         pList.removeIf(mySpec -> mySpec.getSymKeyType() == myType);
 
         /* Return the result */
-        return myResult;
+        myIndex = myRandom.nextInt(mySpecs.size());
+        return mySpecs.get(myIndex);
     }
 
     /**
@@ -156,15 +167,21 @@ public class GordianIdManager {
                                                             final boolean pLargeData) {
         /* Access the list to select from */
         final GordianCipherFactory myCiphers = theFactory.getCipherFactory();
-        final List<GordianStreamKeySpec> myValid = myCiphers.listAllSupportedStreamKeySpecs(pKeyLen);
+        final List<GordianStreamKeySpec> mySpecs = myCiphers.listAllSupportedStreamKeySpecs(pKeyLen);
         if (pLargeData) {
-            myValid.removeIf(s -> !s.getStreamKeyType().supportsLargeData());
+            mySpecs.removeIf(s -> !s.getStreamKeyType().supportsLargeData());
         }
+        final List<GordianStreamKeyType> myTypes = mySpecs.stream().map(GordianStreamKeySpec::getStreamKeyType).collect(Collectors.toList());
 
-        /* Determine a random index into the list and return the spec */
+        /* Determine a random index into the list and obtain the streamKeyType */
         final SecureRandom myRandom = theFactory.getRandomSource().getRandom();
-        final int myIndex = myRandom.nextInt(myValid.size());
-        return myValid.get(myIndex);
+        int myIndex = myRandom.nextInt(myTypes.size());
+        final GordianStreamKeyType myKeyType = myTypes.get(myIndex);
+
+        /* Select from among possible keySpecs of this type */
+        mySpecs.removeIf(s -> s.getStreamKeyType() != myKeyType);
+        myIndex = myRandom.nextInt(mySpecs.size());
+        return mySpecs.get(myIndex);
      }
 
     /**
@@ -175,15 +192,21 @@ public class GordianIdManager {
     public GordianDigestSpec generateRandomDigestSpec(final boolean pLargeData) {
         /* Access the list to select from */
         final GordianDigestFactory myDigests = theFactory.getDigestFactory();
-        final List<GordianDigestSpec> myValid = myDigests.listAllSupportedSpecs();
+        final List<GordianDigestSpec> mySpecs = myDigests.listAllSupportedSpecs();
         if (pLargeData) {
-            myValid.removeIf(s -> !s.getDigestType().supportsLargeData());
+            mySpecs.removeIf(s -> !s.getDigestType().supportsLargeData());
         }
+        final List<GordianDigestType> myTypes = mySpecs.stream().map(GordianDigestSpec::getDigestType).collect(Collectors.toList());
 
-        /* Determine a random index into the list and return the spec */
+        /* Determine a random index into the list and obtain the digestType */
         final SecureRandom myRandom = theFactory.getRandomSource().getRandom();
-        final int myIndex = myRandom.nextInt(myValid.size());
-        return myValid.get(myIndex);
+        int myIndex = myRandom.nextInt(myTypes.size());
+        final GordianDigestType myDigestType = myTypes.get(myIndex);
+
+        /* Select from among possible digestSpecs of this type */
+        mySpecs.removeIf(s -> s.getDigestType() != myDigestType);
+        myIndex = myRandom.nextInt(mySpecs.size());
+        return mySpecs.get(myIndex);
     }
 
     /**
@@ -222,14 +245,20 @@ public class GordianIdManager {
                                                 final boolean pLargeData) {
         /* Access the list to select from */
         final GordianMacFactory myMacs = theFactory.getMacFactory();
-        final List<GordianMacSpec> myValid = myMacs.listAllSupportedSpecs(pKeyLen);
+        final List<GordianMacSpec> mySpecs = myMacs.listAllSupportedSpecs(pKeyLen);
         if (pLargeData) {
-            myValid.removeIf(s -> !s.getMacType().supportsLargeData());
+            mySpecs.removeIf(s -> !s.getMacType().supportsLargeData());
         }
+        final List<GordianMacType> myTypes = mySpecs.stream().map(GordianMacSpec::getMacType).collect(Collectors.toList());
 
-        /* Determine a random index into the list and return the spec */
+        /* Determine a random index into the list and obtain the macType */
         final SecureRandom myRandom = theFactory.getRandomSource().getRandom();
-        final int myIndex = myRandom.nextInt(myValid.size());
-        return myValid.get(myIndex);
+        int myIndex = myRandom.nextInt(myTypes.size());
+        final GordianMacType myMacType = myTypes.get(myIndex);
+
+        /* Select from among possible macSpecs of this type */
+        mySpecs.removeIf(s -> s.getMacType() != myMacType);
+        myIndex = myRandom.nextInt(mySpecs.size());
+        return mySpecs.get(myIndex);
     }
 }

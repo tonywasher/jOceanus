@@ -18,41 +18,29 @@ package net.sourceforge.joceanus.jgordianknot.impl.core.random;
 
 import java.security.SecureRandom;
 
-import org.bouncycastle.crypto.prng.EntropySource;
-import org.bouncycastle.crypto.prng.EntropyUtil;
-
+import net.sourceforge.joceanus.jgordianknot.api.base.GordianLength;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianSeededRandom;
 
 /**
- * SecureRandom wrapper class.
+ * Combined Random.
  */
-public class GordianSecureRandom
+public class GordianCombinedRandom
         extends SecureRandom
         implements GordianSeededRandom {
     /**
-     * Serial Id.
+     * SerialId.
      */
-    private static final long serialVersionUID = -6422187120154720941L;
+    private static final long serialVersionUID = -7229182850521659615L;
 
     /**
-     * The Basic Secure Random instance.
+     * The ctr random.
      */
-    private final SecureRandom theRandom;
+    private final GordianSecureRandom theCtrRandom;
 
     /**
-     * The DRBG generator.
+     * The hash Random.
      */
-    private final transient GordianDRBGenerator theGenerator;
-
-    /**
-     * The DRBG provider.
-     */
-    private final transient EntropySource theEntropy;
-
-    /**
-     * Is this instance prediction resistant?
-     */
-    private final boolean predictionResistant;
+    private final GordianSecureRandom theHashRandom;
 
     /**
      * The pre-calculated buffer.
@@ -66,21 +54,14 @@ public class GordianSecureRandom
 
     /**
      * Constructor.
-     * @param pGenerator the random generator
-     * @param pRandom the secure random instance
-     * @param pEntropy the entropy source
-     * @param isPredictionResistant true/false
+     * @param pCtr the ctrRandom
+     * @param pHash the hashRandom
      */
-    GordianSecureRandom(final GordianDRBGenerator pGenerator,
-                        final SecureRandom pRandom,
-                        final EntropySource pEntropy,
-                        final boolean isPredictionResistant) {
-        /* Store parameters */
-        theGenerator = pGenerator;
-        theRandom = pRandom;
-        theEntropy = pEntropy;
-        predictionResistant = isPredictionResistant;
-        theBuffer = new byte[pGenerator.getBlockSize()];
+    GordianCombinedRandom(final GordianSecureRandom pCtr,
+                          final GordianSecureRandom pHash) {
+        theHashRandom = pHash;
+        theCtrRandom = pCtr;
+        theBuffer = new byte[GordianLength.LEN_512.getByteLength()];
     }
 
     @Override
@@ -91,8 +72,8 @@ public class GordianSecureRandom
     @Override
     public void setSeed(final byte[] seed) {
         synchronized (this) {
-            /* Pass the call on */
-            theRandom.setSeed(seed);
+            /* Pass the call on to the ctrRandom */
+            theCtrRandom.setSeed(seed);
             bytesAvailable = 0;
         }
     }
@@ -100,8 +81,9 @@ public class GordianSecureRandom
     @Override
     public void setSeed(final long seed) {
         synchronized (this) {
-            if (theRandom != null) {
-                theRandom.setSeed(seed);
+            if (theCtrRandom != null) {
+                /* Pass the call on to the ctrRandom */
+                theCtrRandom.setSeed(seed);
                 bytesAvailable = 0;
             }
         }
@@ -110,11 +92,8 @@ public class GordianSecureRandom
     @Override
     public void nextBytes(final byte[] bytes) {
         synchronized (this) {
-            /* Fill buffer directly if we are prediction resistant */
-            if (predictionResistant) {
-                fillBuffer(bytes);
-                return;
-            }
+            /* Obtain the required random bytes from the hashRandom */
+            theHashRandom.nextBytes(bytes);
 
             /* Determine how many bytes are needed */
             int bytesNeeded = bytes.length;
@@ -124,7 +103,7 @@ public class GordianSecureRandom
             if (bytesAvailable > 0) {
                 /* Fulfil the request from the buffer as much as possible */
                 final int bytesToTransfer = Math.min(bytesNeeded, bytesAvailable);
-                System.arraycopy(theBuffer, theBuffer.length - bytesAvailable, bytes, 0, bytesToTransfer);
+                processBuffer(theBuffer.length - bytesAvailable, bytes, 0, bytesToTransfer);
                 bytesAvailable -= bytesToTransfer;
                 bytesNeeded -= bytesToTransfer;
                 bytesBuilt += bytesToTransfer;
@@ -133,11 +112,12 @@ public class GordianSecureRandom
             /* Loop to fulfil remaining bytes */
             while (bytesNeeded > 0) {
                 /* Fill the buffer again */
-                nextBuffer();
+                theHashRandom.nextBytes(theBuffer);
+                bytesAvailable = theBuffer.length;
 
                 /* Fulfil the request from the buffer as much as possible */
                 final int bytesToTransfer = Math.min(bytesNeeded, bytesAvailable);
-                System.arraycopy(theBuffer, 0, bytes, bytesBuilt, bytesToTransfer);
+                processBuffer(0, bytes, bytesBuilt, bytesToTransfer);
                 bytesAvailable -= bytesToTransfer;
                 bytesNeeded -= bytesToTransfer;
                 bytesBuilt += bytesToTransfer;
@@ -146,40 +126,31 @@ public class GordianSecureRandom
     }
 
     /**
-     * Next buffer of random data.
+     * Xor bytes from buffer into output bytes.
+     * @param pBufPos the starting positionin the buffer
+     * @param pOutput the output buffer,
+     * @param pOutPos the starting position in the output buffer
+     * @param pNumBytes the number of bytes to process
      */
-    private void nextBuffer() {
-        /* Generate, checking for reSeed request */
-        if (theGenerator.generate(theBuffer, null, predictionResistant) < 0) {
-            /* ReSeed and regenerate */
-            theGenerator.reseed(null);
-            theGenerator.generate(theBuffer, null, predictionResistant);
+    private void processBuffer(final int pBufPos,
+                               final byte[] pOutput,
+                               final int pOutPos,
+                               final int pNumBytes) {
+        /* Loop through the bytes */
+        for (int i = 0; i < pNumBytes; i++) {
+            pOutput[i + pOutPos] ^= theBuffer[i + pBufPos];
         }
-        bytesAvailable = theBuffer.length;
-    }
-
-    /**
-     * Next buffer of random data.
-     * @param pBuffer the buffer to fill
-     */
-    private void fillBuffer(final byte[] pBuffer) {
-        /* Generate, checking for reSeed request */
-        if (theGenerator.generate(pBuffer, null, predictionResistant) < 0) {
-            /* ReSeed and regenerate */
-            theGenerator.reseed(null);
-            theGenerator.generate(pBuffer, null, predictionResistant);
-        }
-        bytesAvailable = 0;
     }
 
     @Override
     public byte[] generateSeed(final int numBytes) {
-        return EntropyUtil.generateSeed(theEntropy, numBytes);
+        return theCtrRandom.generateSeed(numBytes);
     }
 
     @Override
     public String getAlgorithm() {
-        return theGenerator.getAlgorithm();
+        return theCtrRandom.getAlgorithm()
+                + "-" + theHashRandom.getAlgorithm();
     }
 
     @Override
@@ -190,7 +161,8 @@ public class GordianSecureRandom
     @Override
     public void reseed(final byte[] pXtraInput) {
         synchronized (this) {
-            theGenerator.reseed(pXtraInput);
+            theCtrRandom.reseed(pXtraInput);
+            theHashRandom.reseed(pXtraInput);
             bytesAvailable = 0;
         }
     }
