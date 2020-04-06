@@ -5,6 +5,7 @@
     </properties>
     <body>
         <section name="Overview">
+            <p>Agreements are supported via the <strong>GordianAgreementFactory</strong> interface.</p>
             <p>Algorithms are represented by <b>GordianAgreementSpec</b>. A <b>GordianAgreement</b> is obtained via the agreementSpec,
                 and then agreements are created between the two parties depending on the type of the agreement and the resultType.
                 The resultTypes can be any of the following</p>
@@ -63,7 +64,7 @@
         <section name="Handshake Agreement">
             <p><strong>GordianHandshakeAgreement</strong> requires the <strong>Client</strong> to generate a <strong>ClientHello</strong>
                 message that is sent to the <strong>Server</strong>. The <strong>Server</strong> will process the <strong>ClientHello</strong> and generate
-                a <strong>ServerHello</strong> messages in response which is returned to the <strong>Client</strong>. Generally both parties should know
+                a <strong>ServerHello</strong> message in response which is returned to the <strong>Client</strong>. Generally both parties should know
                 the publicKey of the partner, and it is expected that the user would pass the certificates for the publicKeys along with the
                 <strong>ClientHello</strong> and <strong>ServerHello</strong> messages.</p>
             <p>Confirmation can also be required by the agreementSpec. In this case the <strong>Client</strong> will send an additional <strong>ClientConfirm</strong> message to the <strong>Server</strong>
@@ -120,18 +121,59 @@
                 </source>
             </subsection>
         </section>
+        <section name="Signed Agreement">
+            <p><strong>GordianSignedAgreement</strong> works similarly to the Handshake agreement without the confirmation message. The difference is that
+                the keys used in the agreement are ephemeral and the only well-known key is the publicKey of the server which is used to authenticate teh
+                <strong>ServerHello</strong> message.</p>
+            <subsection name="Sample">
+                <source>
+                    /* Access factory */
+                    final GordianFactory myBaseFactory = GordianGenerator.createFactory();
+                    final GordianAsymFactory myKeyPairFactory = myBase.getAsymmetricFactory();
+                    final GordianAgreementFactory myAgreementFactory = myKeyPairFactory.getAgreementFactory();
+
+                    /* Access keyPairGenerator and create server pair */
+                    final GordianAsymKeySpec mySpec = GordianAsymKeySpec.ed448();
+                    final GordianKeyPairGenerator myGenerator = myKeyPairFactory.getKeyPairGenerator(mySpec);
+                    final GordianKeyPair myServerPair = myGenerator.generateKeyPair();
+
+                    /* Create signed agreement */
+                    final GordianAgreementSpec myAgreeSpec = GordianAgreementSpec.dhSigned(GordianKDFType.SHA256KDF);
+                    final GordianKeySetSpec myKeySetSpec = new GordianKeySetSpec(GordianLength.LEN_256);
+                    final GordianSignedAgreement myHandshakeClient = (GordianSignedAgreement) myAgreementFactory.createAgreement(myAgreeSpec);
+                    final GordianSignedAgreement myHandshakeServer = (GordianSignedAgreement) myAgreementFactory.createAgreement(myAgreeSpec);
+
+                    /* Client side */
+                    myHandshakeClient.setResultType(myKeySetSpec);
+                    final byte[] myClientHello = myHandshakeClient.createClientHello(GordianAsymKeySpec.dh(GordianDHGroup.rfc7919_ffdhe2048));
+
+                    /* Send myClientHello (plus Client Certificate) to server */
+
+                    /* Server side */
+                    final byte[] myServerHello = myHandshakeServer.acceptClientHello(myServerPair, GordianSignatureSpec.edDSA(), myClientHello);
+                    final GordianKeySetSpec myResultKeySetSpec = (GordianKeySetSpec) myHandshakeServer.getResultType();
+                    final GordianKeySet myServerKeySet = (GordianKeySet) myHandshakeServer.getResult();
+
+                    /* Send myServerHello (plus Server Certificate) to server */
+
+                    /* Client side */
+                    myHandshakeClient.acceptServerHello(myServerPair, myServerHello);
+                    final GordianKeySet myClientKeySet = (GordianKeySet) myHandshakeClient.getResult();
+                 </source>
+            </subsection>
+        </section>
         <section name="Algorithms">
             <p>The following agreement algorithms are supported.</p>
             <table class="defTable">
-                <tr><td class="defHdr">Algorithm</td><td class="defHdr">Variants</td></tr>
-                <tr><td>RSA</td><td>RSA-KEM</td></tr>
-                <tr><td>DH</td><td>Anonymous, Basic, MQV, Unified</td></tr>
-                <tr><td>EC</td><td>ECIES, Anonymous, Basic, MQV, Unified</td></tr>
-                <tr><td>GOST2012</td><td>ECIES, Anonymous, Basic, MQV, Unified</td></tr>
-                <tr><td>DSTU4145</td><td>ECIES, Anonymous, Basic, MQV, Unified</td></tr>
-                <tr><td>SM2</td><td>ECIES, Anonymous, Basic, MQV, Unified, SM2</td></tr>
-                <tr><td>XDH</td><td>Anonymous, Basic, Unified</td></tr>
-                <tr><td>NewHope</td><td>Anonymous</td></tr>
+                <tr><th class="defHdr">Algorithm</th><th class="defHdr">Variants</th><th>Notes</th></tr>
+                <tr><td>RSA</td><td>RSA-KEM</td><td>Not available on JCA</td></tr>
+                <tr><td>DH</td><td>Anonymous, Basic, Signed, MQV, Unified</td><td>ECIES not available on JCA</td></tr>
+                <tr><td>EC</td><td>ECIES, Anonymous, Basic, Signed, MQV, Unified</td><td/></tr>
+                <tr><td>GOST2012</td><td>ECIES, Anonymous, Basic, Signed, MQV, Unified</td><td>Not available on JCA</td></tr>
+                <tr><td>DSTU4145</td><td>ECIES, Anonymous, Basic, Signed, MQV, Unified</td><td>Not available on JCA</td></tr>
+                <tr><td>SM2</td><td>ECIES, Anonymous, Basic, Signed, MQV, Unified, SM2</td><td>Not available on JCA</td></tr>
+                <tr><td>XDH</td><td>Anonymous, Basic, Signed, Unified</td><td/></tr>
+                <tr><td>NewHope</td><td>Anonymous</td><td/></tr>
             </table>
             <p>The RSA-KEM, ECIES and Anonymous variants use Anonymous Agreements. All others use Handshake agreements.</p>
             <p>The Unified, MQV and SM2 variants support keyConfirmation.</p>

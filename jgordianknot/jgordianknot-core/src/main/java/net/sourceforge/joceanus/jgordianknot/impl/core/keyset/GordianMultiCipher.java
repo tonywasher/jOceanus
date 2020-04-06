@@ -487,7 +487,11 @@ final class GordianMultiCipher {
             final GordianKeyCipherParameters<GordianSymKeySpec> myParms = myIV == null
                       ? GordianCipherParameters.key(mySymKey)
                       : GordianCipherParameters.keyAndNonce(mySymKey, myIV);
-            myCipher.init(pEncrypt, myParms);
+            if (pEncrypt) {
+                myCipher.initForEncrypt(myParms);
+            } else {
+                myCipher.initForDecrypt(myParms);
+            }
 
             /* Place into correct location */
             final int myLoc = pEncrypt
@@ -771,7 +775,7 @@ final class GordianMultiCipher {
         final GordianSymCipher myStreamCipher = getCipher(myStreamKeyType, 0);
         final byte[] myIV = calculateInitVector(myInitVector, 0);
         final GordianKeyCipherParameters<GordianSymKeySpec> myParms = GordianCipherParameters.keyAndNonce(myStreamKey, myIV);
-        myStreamCipher.init(true, myParms);
+        myStreamCipher.initForEncrypt(myParms);
 
         /* Process via the stream Cipher */
         byte[] myBytes = myStreamCipher.finish(pBytesToSecure);
@@ -819,7 +823,7 @@ final class GordianMultiCipher {
         final GordianSymCipher myStreamCipher = getCipher(myStreamKeyType, 0);
         final byte[] myIV = calculateInitVector(myInitVector, 0);
         final GordianKeyCipherParameters<GordianSymKeySpec> myParms = GordianCipherParameters.keyAndNonce(myStreamKey, myIV);
-        myStreamCipher.init(false, myParms);
+        myStreamCipher.initForDecrypt(myParms);
 
         /* Process via the stream Cipher */
         myBytes = myStreamCipher.finish(myBytes);

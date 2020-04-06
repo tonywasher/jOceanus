@@ -62,7 +62,7 @@ public class CoeusCalendar {
      */
     public TethysDate getEndOfYear(final TethysDate pDate) {
         /* Determine the end of the year */
-        return makeCalendarTotals
+        return Boolean.TRUE.equals(makeCalendarTotals)
                                   ? getEndOfCalendarYear(pDate)
                                   : theFiscalYear.endOfYear(pDate);
     }
@@ -74,7 +74,7 @@ public class CoeusCalendar {
      */
     TethysDate getEndOfMonth(final TethysDate pDate) {
         /* Determine the end of the month */
-        return makeCalendarTotals
+        return Boolean.TRUE.equals(makeCalendarTotals)
                                   ? getEndOfCalendarMonth(pDate)
                                   : theFiscalYear.endOfMonth(pDate);
     }

@@ -5,6 +5,7 @@
     </properties>
     <body>
         <section name="Overview">
+            <p>MACs are supported via the <strong>GordianMacFactory</strong> interface.</p>
             <p>GordianKnot supports most Macs available from BouncyCastle plus some additional algorithms.</p>
             <p>JCA provides a subset of available algorithms as indicated</p>
         </section>

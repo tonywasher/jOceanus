@@ -250,7 +250,7 @@ public class GordianCoreWrapper
         System.arraycopy(pBytesToSecure, 0, myData, myHdrLen, myDataLen);
 
         /* Initialise the cipher */
-        theCipher.init(true, GordianCipherParameters.key(theKey));
+        theCipher.initForEncrypt(GordianCipherParameters.key(theKey));
 
         /* Loop WRAP_COUNT times */
         int myCount = 1;
@@ -299,7 +299,7 @@ public class GordianCoreWrapper
         final byte[] myResult = new byte[myBufferLen];
 
         /* Initialise the cipher */
-        theCipher.init(false, GordianCipherParameters.key(theKey));
+        theCipher.initForDecrypt(GordianCipherParameters.key(theKey));
 
         /* Loop WRAP_COUNT times */
         int myCount = myNumBlocks * WRAP_COUNT;

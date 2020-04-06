@@ -38,6 +38,14 @@ public interface GordianAgreementFactory {
     GordianAgreement createAgreement(GordianAgreementSpec pSpec) throws OceanusException;
 
     /**
+     * Create Agreement for clientHello message.
+     * @param pClientHello the clientHello message
+     * @return the Agreement
+     * @throws OceanusException on error
+     */
+    GordianAgreement createAgreement(byte[] pClientHello) throws OceanusException;
+
+    /**
      * Obtain predicate for keyAgreement.
      * @return the predicate
      */

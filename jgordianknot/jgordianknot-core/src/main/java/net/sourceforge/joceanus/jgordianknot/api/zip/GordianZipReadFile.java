@@ -20,7 +20,6 @@ import java.io.InputStream;
 
 import org.w3c.dom.Document;
 
-import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetHash;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
@@ -34,17 +33,16 @@ public interface GordianZipReadFile {
     GordianZipFileContents getContents();
 
     /**
-     * Obtain the hash bytes for the file.
-     * @return the hash bytes
+     * Is the zip file encrypted?
+     * @return true/false
      */
-    byte[] getHashBytes();
+    boolean isEncrypted();
 
     /**
-     * Set the keySet hash.
-     * @param pHash the keySet hash
-     * @throws OceanusException on error
+     * Obtain the lock for the file.
+     * @return the lock
      */
-    void setKeySetHash(GordianKeySetHash pHash) throws OceanusException;
+    GordianZipLock getLock();
 
     /**
      * Obtain an input stream for an entry in the zip file.

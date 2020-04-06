@@ -5,6 +5,7 @@
     </properties>
     <body>
         <section name="Overview">
+            <p>Encryptors are supported via the <strong>GordianEncryptorFactory</strong> interface.</p>
             <p>Algorithms are represented by <b>GordianEncryptorSpec</b>. A <b>GordianEncryptor</b> is obtained via the encryptorSpec,
                 and then messages are encrypted/decrypted by the encryptor.</p>
         </section>

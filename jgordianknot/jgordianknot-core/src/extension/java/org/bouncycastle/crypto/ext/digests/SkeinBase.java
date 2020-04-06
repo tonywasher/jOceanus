@@ -731,7 +731,7 @@ public class SkeinBase
             }
 
             // Process configuration block
-            Configuration myConfig = xtendedConfig ? theConfig : new Configuration(outputSizeBytes * 8);
+            Configuration myConfig = xtendedConfig ? theConfig : new Configuration(outputSizeBytes * 8L);
             ubiComplete(PARAM_TYPE_CONFIG, myConfig.getBytes());
         }
 

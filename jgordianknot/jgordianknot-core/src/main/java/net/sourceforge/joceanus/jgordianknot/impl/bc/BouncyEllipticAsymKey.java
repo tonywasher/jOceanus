@@ -69,6 +69,7 @@ import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncySignature.BouncyDiges
 import net.sourceforge.joceanus.jgordianknot.impl.core.agree.GordianCoreBasicAgreement;
 import net.sourceforge.joceanus.jgordianknot.impl.core.agree.GordianCoreAnonymousAgreement;
 import net.sourceforge.joceanus.jgordianknot.impl.core.agree.GordianCoreEphemeralAgreement;
+import net.sourceforge.joceanus.jgordianknot.impl.core.agree.GordianCoreSignedAgreement;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianCryptoException;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianLogicException;
 import net.sourceforge.joceanus.jgordianknot.impl.core.encrypt.GordianCoreEncryptor;
@@ -576,6 +577,70 @@ public final class BouncyEllipticAsymKey {
 
             /* Return confirmation if needed */
             return buildClientConfirm();
+        }
+    }
+
+    /**
+     * EC Signed Agreement.
+     */
+    public static class BouncyECSignedAgreement
+            extends GordianCoreSignedAgreement {
+        /**
+         * Agreement.
+         */
+        private final ECDHCBasicAgreement theAgreement;
+
+        /**
+         * Constructor.
+         * @param pFactory the security factory
+         * @param pSpec the agreementSpec
+         */
+        BouncyECSignedAgreement(final BouncyFactory pFactory,
+                                final GordianAgreementSpec pSpec) {
+            /* Initialise underlying class */
+            super(pFactory, pSpec);
+
+            /* Create the agreement */
+            theAgreement = new ECDHCBasicAgreement();
+            enableDerivation();
+        }
+
+        @Override
+        public byte[] acceptClientHello(final GordianKeyPair pServer,
+                                        final GordianSignatureSpec pSignSpec,
+                                        final byte[] pClientHello) throws OceanusException {
+            /* Process clientHello */
+            processClientHello(pClientHello);
+            final BouncyPrivateKey<?> myPrivate = (BouncyPrivateKey<?>) getPrivateKey(getServerEphemeralKeyPair());
+            final BouncyPublicKey<?> myPublic = (BouncyPublicKey<?>) getPublicKey(getClientEphemeralKeyPair());
+
+            /* Derive the secret */
+            theAgreement.init(myPrivate.getPrivateKey());
+            final BigInteger mySecretInt = theAgreement.calculateAgreement(myPublic.getPublicKey());
+            final byte[] mySecret = BigIntegers.asUnsignedByteArray(theAgreement.getFieldSize(), mySecretInt);
+
+            /* Store secret */
+            storeSecret(mySecret);
+
+            /* Return the serverHello */
+            return buildServerHello(pServer, pSignSpec);
+        }
+
+        @Override
+        public void acceptServerHello(final GordianKeyPair pServer,
+                                      final byte[] pServerHello) throws OceanusException {
+            /* process the serverHello */
+            processServerHello(pServer, pServerHello);
+            final BouncyPrivateKey<?> myPrivate = (BouncyPrivateKey<?>) getPrivateKey(getClientEphemeralKeyPair());
+
+            /* Calculate agreement */
+            theAgreement.init(myPrivate.getPrivateKey());
+            final BouncyPublicKey<?> myPublic = (BouncyPublicKey<?>) getPublicKey(getServerEphemeralKeyPair());
+            final BigInteger mySecretInt = theAgreement.calculateAgreement(myPublic.getPublicKey());
+            final byte[] mySecret = BigIntegers.asUnsignedByteArray(theAgreement.getFieldSize(), mySecretInt);
+
+            /* Store secret */
+            storeSecret(mySecret);
         }
     }
 

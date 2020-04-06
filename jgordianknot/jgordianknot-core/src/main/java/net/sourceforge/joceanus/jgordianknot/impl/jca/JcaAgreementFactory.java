@@ -30,6 +30,7 @@ import net.sourceforge.joceanus.jgordianknot.impl.jca.JcaAgreement.JcaAnonymousA
 import net.sourceforge.joceanus.jgordianknot.impl.jca.JcaAgreement.JcaBasicAgreement;
 import net.sourceforge.joceanus.jgordianknot.impl.jca.JcaAgreement.JcaEncapsulationAgreement;
 import net.sourceforge.joceanus.jgordianknot.impl.jca.JcaAgreement.JcaMQVAgreement;
+import net.sourceforge.joceanus.jgordianknot.impl.jca.JcaAgreement.JcaSignedAgreement;
 import net.sourceforge.joceanus.jgordianknot.impl.jca.JcaAgreement.JcaUnifiedAgreement;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
@@ -38,6 +39,16 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
  */
 public class JcaAgreementFactory
     extends GordianCoreAgreementFactory {
+    /**
+     * DH algorithm.
+     */
+    private static final String DH_ALGO = "DH";
+
+    /**
+     * ECCDH algorithm.
+     */
+    private static final String ECCDH_ALGO = "ECCDH";
+
     /**
      * Constructor.
      *
@@ -101,11 +112,13 @@ public class JcaAgreementFactory
     private GordianAgreement getECAgreement(final GordianAgreementSpec pAgreementSpec) throws OceanusException {
         switch (pAgreementSpec.getAgreementType()) {
             case ANON:
-                return new JcaAnonymousAgreement(getFactory(), pAgreementSpec, getJavaKeyAgreement(getFullAgreementName("ECCDH", pAgreementSpec), false));
+                return new JcaAnonymousAgreement(getFactory(), pAgreementSpec, getJavaKeyAgreement(getFullAgreementName(ECCDH_ALGO, pAgreementSpec), false));
             case BASIC:
-                return new JcaBasicAgreement(getFactory(), pAgreementSpec, getJavaKeyAgreement(getFullAgreementName("ECCDH", pAgreementSpec), false));
+                return new JcaBasicAgreement(getFactory(), pAgreementSpec, getJavaKeyAgreement(getFullAgreementName(ECCDH_ALGO, pAgreementSpec), false));
+            case SIGNED:
+                return new JcaSignedAgreement(getFactory(), pAgreementSpec, getJavaKeyAgreement(getFullAgreementName(ECCDH_ALGO, pAgreementSpec), false));
             case UNIFIED:
-                return new JcaUnifiedAgreement(getFactory(), pAgreementSpec, getJavaKeyAgreement(getFullAgreementName("ECCDHU", pAgreementSpec), false));
+                return new JcaUnifiedAgreement(getFactory(), pAgreementSpec, getJavaKeyAgreement(getFullAgreementName(ECCDH_ALGO + "U", pAgreementSpec), false));
             case MQV:
                 return new JcaMQVAgreement(getFactory(), pAgreementSpec, getJavaKeyAgreement(getFullAgreementName("ECMQV", pAgreementSpec), false));
             default:
@@ -122,11 +135,13 @@ public class JcaAgreementFactory
     private GordianAgreement getDHAgreement(final GordianAgreementSpec pAgreementSpec) throws OceanusException {
         switch (pAgreementSpec.getAgreementType()) {
             case ANON:
-                return new JcaAnonymousAgreement(getFactory(), pAgreementSpec, getJavaKeyAgreement(getFullAgreementName("DH", pAgreementSpec), false));
+                return new JcaAnonymousAgreement(getFactory(), pAgreementSpec, getJavaKeyAgreement(getFullAgreementName(DH_ALGO, pAgreementSpec), false));
             case BASIC:
-                return new JcaBasicAgreement(getFactory(), pAgreementSpec, getJavaKeyAgreement(getFullAgreementName("DH", pAgreementSpec), false));
+                return new JcaBasicAgreement(getFactory(), pAgreementSpec, getJavaKeyAgreement(getFullAgreementName(DH_ALGO, pAgreementSpec), false));
+            case SIGNED:
+                return new JcaSignedAgreement(getFactory(), pAgreementSpec, getJavaKeyAgreement(getFullAgreementName(DH_ALGO, pAgreementSpec), false));
             case UNIFIED:
-                return new JcaUnifiedAgreement(getFactory(), pAgreementSpec, getJavaKeyAgreement(getFullAgreementName("DHU", pAgreementSpec), false));
+                return new JcaUnifiedAgreement(getFactory(), pAgreementSpec, getJavaKeyAgreement(getFullAgreementName(DH_ALGO + "U", pAgreementSpec), false));
             case MQV:
                 return new JcaMQVAgreement(getFactory(), pAgreementSpec, getJavaKeyAgreement(getFullAgreementName("MQV", pAgreementSpec), false));
             default:
@@ -146,6 +161,8 @@ public class JcaAgreementFactory
                 return new JcaAnonymousAgreement(getFactory(), pAgreementSpec, null);
             case BASIC:
                 return new JcaBasicAgreement(getFactory(), pAgreementSpec, null);
+            case SIGNED:
+                return new JcaSignedAgreement(getFactory(), pAgreementSpec, null);
             case UNIFIED:
                 return new JcaUnifiedAgreement(getFactory(), pAgreementSpec, null);
             default:
@@ -219,9 +236,9 @@ public class JcaAgreementFactory
                 return !GordianAgreementType.KEM.equals(myType)
                         && !GordianAgreementType.SM2.equals(myType);
             case XDH:
-                return GordianAgreementType.ANON.equals(myType)
-                        || GordianAgreementType.BASIC.equals(myType)
-                        || GordianAgreementType.UNIFIED.equals(myType);
+                return !GordianAgreementType.KEM.equals(myType)
+                        && !GordianAgreementType.MQV.equals(myType)
+                        && !GordianAgreementType.SM2.equals(myType);
             case RSA:
             case DSTU4145:
             case GOST2012:

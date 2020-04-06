@@ -18,7 +18,7 @@ package net.sourceforge.joceanus.jthemis.scm.data;
 
 import javax.swing.JFrame;
 
-import net.sourceforge.joceanus.jgordianknot.util.GordianSecurityManager;
+import net.sourceforge.joceanus.jgordianknot.api.password.GordianPasswordManager;
 import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceManager;
 import net.sourceforge.joceanus.jthemis.scm.tasks.ThemisScmStatus;
 
@@ -97,10 +97,10 @@ public final class ThemisScmReporter {
         MetisPreferenceManager getPreferenceMgr();
 
         /**
-         * Obtain secure manager.
-         * @return the secure manager
+         * Obtain password manager.
+         * @return the password manager
          */
-        GordianSecurityManager getSecureMgr();
+        GordianPasswordManager getPasswordMgr();
 
         /**
          * Obtain frame.

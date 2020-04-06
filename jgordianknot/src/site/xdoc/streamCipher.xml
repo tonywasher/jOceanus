@@ -5,6 +5,7 @@
     </properties>
     <body>
         <section name="Overview">
+            <p>Stream Ciphers are supported via the <strong>GordianCipherFactory</strong> interface.</p>
             <p>GordianKnot supports most Symmetric Stream Ciphers available from BouncyCastle plus some additional ciphers.</p>
             <p>A key for stream encryption is created by specifying the algorithm and keySize as a <strong>GordianStreamKeySpec</strong>.</p>
             <p>A cipher for stream encryption is created by specifying the <strong>GordianStreamKeySpec</strong> (plus variant details eg AEAD)
@@ -76,7 +77,7 @@
 
                     /* Encrypt message with random nonce */
                     GordianCipherParameters myParams = GordianCipherParameters.keyWithRandomNonce(myKey);
-                    myCipher.init(true, myParams);
+                    myCipher.initForEncrypt(myParams);
                     final byte[] myMessage = ...
                     int myOutLen = myCipher.getOutputLength(myMessage.length);
                     final byte[] myEncrypted = new byte[myOutLen];
@@ -85,7 +86,7 @@
 
                     /* Decrypt message */
                     myParams = GordianCipherParameters.keyWithNonce(myKey, myCipher.getNonce());
-                    myCipher.init(false, myParams);
+                    myCipher.initForDecrypt(myParams);
                     myOutLen = myCipher.getOutputLength(myEncrypted.length);
                     final byte[] myResult = new byte[myOutLen];
                     myProcessed = myCipher.update(myEncrypted, 0, myEncrypted.length, myResult);

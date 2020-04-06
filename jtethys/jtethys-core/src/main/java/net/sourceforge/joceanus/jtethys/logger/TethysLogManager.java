@@ -96,7 +96,7 @@ public final class TethysLogManager {
     public static String formatData(final byte[] pData) {
         /* Handle null data */
         if (pData == null) {
-            return "\rnull";
+            return "\nnull";
         }
 
         /* Format the data */

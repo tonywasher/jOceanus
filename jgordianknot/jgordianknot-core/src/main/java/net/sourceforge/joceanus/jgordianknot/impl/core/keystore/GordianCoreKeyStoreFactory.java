@@ -23,13 +23,12 @@ import java.io.InputStream;
 
 import org.w3c.dom.Document;
 
-import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetFactory;
-import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetHash;
 import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetHashSpec;
 import net.sourceforge.joceanus.jgordianknot.api.keystore.GordianKeyStore;
 import net.sourceforge.joceanus.jgordianknot.api.keystore.GordianKeyStoreFactory;
 import net.sourceforge.joceanus.jgordianknot.api.zip.GordianZipFactory;
 import net.sourceforge.joceanus.jgordianknot.api.zip.GordianZipFileEntry;
+import net.sourceforge.joceanus.jgordianknot.api.zip.GordianZipLock;
 import net.sourceforge.joceanus.jgordianknot.api.zip.GordianZipReadFile;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianCoreFactory;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianDataException;
@@ -78,15 +77,13 @@ public class GordianCoreKeyStoreFactory
         final GordianZipReadFile myZipFile = myZipFactory.openZipFile(pInputStream);
 
         /* Reject if there is no hash */
-        final GordianKeySetFactory myKeySetFactory = theFactory.getKeySetFactory();
-        final byte[] myHashBytes = myZipFile.getHashBytes();
-        if (myHashBytes == null) {
+        final GordianZipLock myLock = myZipFile.getLock();
+        if (myLock == null) {
             throw new GordianDataException("Unsecured keyStore");
         }
 
-        /* Derive the keySetHash */
-        final GordianKeySetHash myHash = myKeySetFactory.deriveKeySetHash(myHashBytes, pPassword);
-        myZipFile.setKeySetHash(myHash);
+        /* Unlock the file */
+        myLock.unlock(pPassword);
 
         /* Locate the entry */
         final GordianZipFileEntry myEntry = myZipFile.getContents().findFileEntry(GordianCoreKeyStore.ZIPENTRY);

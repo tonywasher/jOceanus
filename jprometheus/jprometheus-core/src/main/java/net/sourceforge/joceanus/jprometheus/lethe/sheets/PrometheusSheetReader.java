@@ -23,11 +23,11 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import net.sourceforge.joceanus.jgordianknot.util.GordianSecurityManager;
-import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetHash;
+import net.sourceforge.joceanus.jgordianknot.api.password.GordianPasswordManager;
 import net.sourceforge.joceanus.jgordianknot.api.zip.GordianZipFactory;
 import net.sourceforge.joceanus.jgordianknot.api.zip.GordianZipFileContents;
 import net.sourceforge.joceanus.jgordianknot.api.zip.GordianZipFileEntry;
+import net.sourceforge.joceanus.jgordianknot.api.zip.GordianZipLock;
 import net.sourceforge.joceanus.jgordianknot.api.zip.GordianZipReadFile;
 import net.sourceforge.joceanus.jmetis.profile.MetisProfile;
 import net.sourceforge.joceanus.jmetis.threads.MetisThreadStatusReport;
@@ -50,9 +50,9 @@ public abstract class PrometheusSheetReader<T extends DataSet<T, ?>> {
     private final MetisThreadStatusReport theReport;
 
     /**
-     * The security manager.
+     * The password manager.
      */
-    private final GordianSecurityManager theSecurityMgr;
+    private final GordianPasswordManager thePasswordMgr;
 
     /**
      * Spreadsheet.
@@ -72,12 +72,12 @@ public abstract class PrometheusSheetReader<T extends DataSet<T, ?>> {
     /**
      * Constructor.
      * @param pReport the report
-     * @param pSecureMgr the security manager
+     * @param pPasswordMgr the password manager
      */
     public PrometheusSheetReader(final MetisThreadStatusReport pReport,
-                                 final GordianSecurityManager pSecureMgr) {
+                                 final GordianPasswordManager pPasswordMgr) {
         theReport = pReport;
-        theSecurityMgr = pSecureMgr;
+        thePasswordMgr = pPasswordMgr;
     }
 
     /**
@@ -126,17 +126,14 @@ public abstract class PrometheusSheetReader<T extends DataSet<T, ?>> {
         theData = pData;
 
         /* Access the zip file */
-        final GordianZipFactory myZips = theSecurityMgr.getSecurityFactory().getZipFactory();
+        final GordianZipFactory myZips = thePasswordMgr.getSecurityFactory().getZipFactory();
         final GordianZipReadFile myFile = myZips.openZipFile(pFile);
 
-        /* Obtain the hash bytes from the file */
-        final byte[] myHashBytes = myFile.getHashBytes();
+        /* Obtain the lock from the file */
+        final GordianZipLock myLock = myFile.getLock();
 
-        /* Obtain the initialised keySetHash */
-        final GordianKeySetHash myHash = theSecurityMgr.resolveKeySetHash(myHashBytes, pFile.getName());
-
-        /* Associate this keySetHash with the ZipFile */
-        myFile.setKeySetHash(myHash);
+        /* Resolve the lock */
+        thePasswordMgr.resolveZipLock(myLock, pFile.getName());
 
         /* Access ZipFile contents */
         final GordianZipFileContents myContents = myFile.getContents();

@@ -20,7 +20,7 @@ import net.sourceforge.joceanus.jgordianknot.api.key.GordianKeyPair;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
- * Handshake TwoShot Agreement.
+ * Handshake Two/ThreeShot Agreement.
  */
 public interface GordianHandshakeAgreement
         extends GordianAgreement {

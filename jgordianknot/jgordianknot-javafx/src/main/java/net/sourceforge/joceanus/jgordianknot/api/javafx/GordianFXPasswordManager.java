@@ -14,73 +14,80 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  ******************************************************************************/
-package net.sourceforge.joceanus.jgordianknot.api.swing;
+package net.sourceforge.joceanus.jgordianknot.api.javafx;
 
+import net.sourceforge.joceanus.jgordianknot.api.factory.GordianFactory;
 import net.sourceforge.joceanus.jgordianknot.api.factory.GordianFactoryType;
-import net.sourceforge.joceanus.jgordianknot.util.GordianDialogController;
-import net.sourceforge.joceanus.jgordianknot.util.GordianSecurityManager;
+import net.sourceforge.joceanus.jgordianknot.api.password.GordianDialogController;
+import net.sourceforge.joceanus.jgordianknot.api.password.GordianPasswordManager;
+import net.sourceforge.joceanus.jgordianknot.util.GordianGenerator;
 import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetHashSpec;
 import net.sourceforge.joceanus.jtethys.OceanusException;
-import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingGuiFactory;
+import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXGuiFactory;
 
 /**
  * PasswordHash Manager class which holds a cache of all resolved password hashes. For password
  * hashes that were not previously resolved, previously used passwords will be attempted. If no
  * match is found, then the user will be prompted for the password.
  */
-public class GordianSwingSecurityManager
-        extends GordianSecurityManager {
+public final class GordianFXPasswordManager {
     /**
-     * Constructor.
-     * @param pFactory the GUI Factory
-     * @param pFactoryType the Security factoryType
-     * @param pSecurityPhrase the security phrase
-     * @param pKeySetSpec the keySetSpec
-     * @throws OceanusException on error
+     * Private Constructor.
      */
-    public GordianSwingSecurityManager(final TethysSwingGuiFactory pFactory,
-                                       final GordianFactoryType pFactoryType,
-                                       final char[] pSecurityPhrase,
-                                       final GordianKeySetHashSpec pKeySetSpec) throws OceanusException {
-        super(pFactoryType, pSecurityPhrase, pKeySetSpec, new GordianSwingDialogControl(pFactory));
+    private GordianFXPasswordManager() {
     }
 
     /**
-     * swing DialogControl.
+     * Create a password manager.
+     * @param pFactory the GUI Factory
+     * @param pFactoryType the factoryType
+     * @param pSecurityPhrase the security phrase
+     * @param pKeySetSpec the keySetSpec
+     * @return the password Manager
+     * @throws OceanusException on error
      */
-    private static class GordianSwingDialogControl
+    public static GordianPasswordManager newPasswordManager(final TethysFXGuiFactory pFactory,
+                                                            final GordianFactoryType pFactoryType,
+                                                            final char[] pSecurityPhrase,
+                                                            final GordianKeySetHashSpec pKeySetSpec) throws OceanusException {
+        final GordianFactory myFactory = GordianGenerator.createFactory(pFactoryType, pSecurityPhrase);
+        final GordianDialogController myController = new GordianFXDialogControl(pFactory);
+        return GordianGenerator.newPasswordManager(myFactory, pKeySetSpec, myController);
+    }
+
+    /**
+     * javaFX DialogControl.
+     */
+    private static class GordianFXDialogControl
             implements GordianDialogController {
         /**
          * GUI factory.
          */
-        private final TethysSwingGuiFactory theFactory;
+        private final TethysFXGuiFactory theFactory;
 
         /**
          * Password dialog.
          */
-        private GordianSwingPasswordDialog theDialog;
+        private GordianFXPasswordDialog theDialog;
 
         /**
          * Constructor.
          * @param pFactory the factory
          */
-        GordianSwingDialogControl(final TethysSwingGuiFactory pFactory) {
+        GordianFXDialogControl(final TethysFXGuiFactory pFactory) {
             theFactory = pFactory;
         }
 
         @Override
         public void createTheDialog(final String pTitle,
                                     final boolean pNeedConfirm) {
-            /* Create the title for the window */
-            final String myTitle = pNeedConfirm
-                                   ? NLS_TITLENEWPASS + " " + pTitle
-                                   : NLS_TITLEPASS + " " + pTitle;
-            theDialog = new GordianSwingPasswordDialog(theFactory, myTitle, pNeedConfirm);
+            /* Create the dialog */
+            theDialog = GordianFXPasswordDialog.createTheDialog(theFactory, pTitle, pNeedConfirm);
         }
 
         @Override
         public boolean showTheDialog() {
-            return GordianSwingPasswordDialog.showTheDialog(theDialog);
+            return GordianFXPasswordDialog.showTheDialog(theDialog);
         }
 
         @Override
@@ -89,8 +96,8 @@ public class GordianSwingSecurityManager
         }
 
         @Override
-        public void setError(final String pError) {
-            theDialog.setError(pError);
+        public void reportBadPassword() {
+            theDialog.reportBadPassword();
         }
 
         @Override

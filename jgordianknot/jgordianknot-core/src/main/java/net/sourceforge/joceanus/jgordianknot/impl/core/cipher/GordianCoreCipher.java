@@ -88,11 +88,14 @@ public abstract class GordianCoreCipher<T extends GordianKeySpec>
      * Obtain random generator.
      * @return the generator
      */
-    protected SecureRandom getRandom() {
+    public SecureRandom getRandom() {
         return theRandom.getRandom();
     }
 
-    @Override
+    /**
+     * Obtain the keyLength.
+     * @return the keyLength
+     */
     public GordianLength getKeyLength() {
         return getKeyType().getKeyLength();
     }
@@ -103,7 +106,10 @@ public abstract class GordianCoreCipher<T extends GordianKeySpec>
      */
     public abstract int getBlockSize();
 
-    @Override
+    /**
+     * Obtain the key.
+     * @return the key
+     */
     public GordianKey<T> getKey() {
         return theParameters.getKey();
     }
@@ -128,6 +134,25 @@ public abstract class GordianCoreCipher<T extends GordianKeySpec>
         return theParameters.getPBESpec();
     }
 
+    @Override
+    public void initForEncrypt(final GordianCipherParameters pParams) throws OceanusException {
+        init(true, pParams);
+    }
+
+    @Override
+    public void initForDecrypt(final GordianCipherParameters pParams) throws OceanusException {
+        init(false, pParams);
+    }
+
+    /**
+     * Initialise the cipher for encryption or decryption.
+     * @param pEncrypt true/false
+     * @param pParams the parameters
+     * @throws OceanusException on error
+     */
+    public abstract void init(boolean pEncrypt,
+                              GordianCipherParameters pParams) throws OceanusException;
+
     /**
      * Init with bytes as key.
      * @param pKeyBytes the bytes to use
@@ -141,7 +166,7 @@ public abstract class GordianCoreCipher<T extends GordianKeySpec>
 
         /* Create the key and initialise */
         final GordianKey<T> myKey = theParameters.buildKeyFromBytes(pKeyBytes);
-        init(true, GordianCipherParameters.key(myKey));
+        initForEncrypt(GordianCipherParameters.key(myKey));
     }
 
     /**

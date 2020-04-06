@@ -5,6 +5,7 @@
     </properties>
     <body>
         <section name="Overview">
+            <p>Signatures are supported via the <strong>GordianSignatureFactory</strong> interface.</p>
             <p>Algorithms are represented by <b>GordianSignatureSpec</b>. A <b>GordianSignature</b> is obtained via the signatureSpec,
                 and then signatures are generated or verified  by the signer.</p>
             <p>The <b>LMS</b> and <b>XMSS</b> signature schemes are stateful signature schemes and as such their keyPairs support the

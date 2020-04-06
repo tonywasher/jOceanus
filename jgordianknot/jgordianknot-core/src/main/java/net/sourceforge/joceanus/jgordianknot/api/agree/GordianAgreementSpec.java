@@ -119,6 +119,15 @@ public final class GordianAgreementSpec {
     }
 
     /**
+     * Create the dhSigned agreementSpec.
+     * @param pKDFType the KDF type
+     * @return the Spec
+     */
+    public static GordianAgreementSpec dhSigned(final GordianKDFType pKDFType) {
+        return new GordianAgreementSpec(GordianAsymKeyType.DH, GordianAgreementType.SIGNED, pKDFType);
+    }
+
+    /**
      * Create the dhMQV agreementSpec.
      * @param pKDFType the KDF type
      * @return the Spec
@@ -175,6 +184,7 @@ public final class GordianAgreementSpec {
                                               final GordianKDFType pKDFType) {
         return new GordianAgreementSpec(pKeyType, GordianAgreementType.ANON, pKDFType);
     }
+
     /**
      * Create the ecdhBasic agreementSpec.
      * @param pKeyType the asymKeyType
@@ -184,6 +194,17 @@ public final class GordianAgreementSpec {
     public static GordianAgreementSpec ecdhBasic(final GordianAsymKeyType pKeyType,
                                                  final GordianKDFType pKDFType) {
         return new GordianAgreementSpec(pKeyType, GordianAgreementType.BASIC, pKDFType);
+    }
+
+    /**
+     * Create the ecdhSigned agreementSpec.
+     * @param pKeyType the asymKeyType
+     * @param pKDFType the KDF type
+     * @return the Spec
+     */
+    public static GordianAgreementSpec ecdhSigned(final GordianAsymKeyType pKeyType,
+                                                  final GordianKDFType pKDFType) {
+        return new GordianAgreementSpec(pKeyType, GordianAgreementType.SIGNED, pKDFType);
     }
 
     /**
@@ -264,6 +285,15 @@ public final class GordianAgreementSpec {
      */
     public static GordianAgreementSpec xdhBasic(final GordianKDFType pKDFType) {
         return new GordianAgreementSpec(GordianAsymKeyType.XDH, GordianAgreementType.BASIC, pKDFType);
+    }
+
+    /**
+     * Create the xdhSigned agreementSpec.
+     * @param pKDFType the KDF type
+     * @return the Spec
+     */
+    public static GordianAgreementSpec xdhSigned(final GordianKDFType pKDFType) {
+        return new GordianAgreementSpec(GordianAsymKeyType.XDH, GordianAgreementType.SIGNED, pKDFType);
     }
 
     /**
@@ -452,6 +482,7 @@ public final class GordianAgreementSpec {
                 myAgreements.addAll(listAllKDFs(pKeyType, GordianAgreementType.KEM));
                 myAgreements.addAll(listAllKDFs(pKeyType, GordianAgreementType.ANON));
                 myAgreements.addAll(listAllKDFs(pKeyType, GordianAgreementType.BASIC));
+                myAgreements.addAll(listAllKDFs(pKeyType, GordianAgreementType.SIGNED));
                 myAgreements.addAll(listAllKDFs(pKeyType, GordianAgreementType.UNIFIED));
                 myAgreements.addAll(listAllKDFs(pKeyType, GordianAgreementType.UNIFIED, Boolean.TRUE));
                 myAgreements.addAll(listAllKDFs(pKeyType, GordianAgreementType.MQV));
@@ -466,6 +497,7 @@ public final class GordianAgreementSpec {
                 myAgreements.addAll(listAllKDFs(pKeyType, GordianAgreementType.KEM));
                 myAgreements.addAll(listAllKDFs(pKeyType, GordianAgreementType.ANON));
                 myAgreements.addAll(listAllKDFs(pKeyType, GordianAgreementType.BASIC));
+                myAgreements.addAll(listAllKDFs(pKeyType, GordianAgreementType.SIGNED));
                 myAgreements.addAll(listAllKDFs(pKeyType, GordianAgreementType.UNIFIED));
                 myAgreements.addAll(listAllKDFs(pKeyType, GordianAgreementType.UNIFIED, Boolean.TRUE));
                 myAgreements.addAll(listAllKDFs(pKeyType, GordianAgreementType.MQV));
@@ -474,6 +506,7 @@ public final class GordianAgreementSpec {
             case XDH:
                 myAgreements.addAll(listAllKDFs(pKeyType, GordianAgreementType.ANON));
                 myAgreements.addAll(listAllKDFs(pKeyType, GordianAgreementType.BASIC));
+                myAgreements.addAll(listAllKDFs(pKeyType, GordianAgreementType.SIGNED));
                 myAgreements.addAll(listAllKDFs(pKeyType, GordianAgreementType.UNIFIED));
                 myAgreements.addAll(listAllKDFs(pKeyType, GordianAgreementType.UNIFIED, Boolean.TRUE));
                 break;

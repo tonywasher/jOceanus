@@ -5,6 +5,7 @@
     </properties>
     <body>
         <section name="Overview">
+            <p>Asymmetric functions are supported via the <strong>GordianAsymFactory</strong> interface.</p>
             <p>GordianKnot supports most Asymmetric algorithms that are available from BouncyCastle through the JCA.</p>
             <p>A keyPairGenerator can be created for an asymKeySpec (algorithm plus additional configuration)
                 This will allow generation of a random keyPair plus translation to/from PKCS8/X509 encodings,

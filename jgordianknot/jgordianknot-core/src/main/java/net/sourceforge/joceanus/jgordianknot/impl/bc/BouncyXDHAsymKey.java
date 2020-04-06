@@ -50,11 +50,13 @@ import net.sourceforge.joceanus.jgordianknot.api.asym.GordianAsymKeySpec;
 import net.sourceforge.joceanus.jgordianknot.api.factory.GordianAsymFactory;
 import net.sourceforge.joceanus.jgordianknot.api.key.GordianKeyPair;
 import net.sourceforge.joceanus.jgordianknot.api.key.GordianKeyPairGenerator;
+import net.sourceforge.joceanus.jgordianknot.api.sign.GordianSignatureSpec;
 import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyKeyPair.BouncyPrivateKey;
 import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyKeyPair.BouncyPublicKey;
 import net.sourceforge.joceanus.jgordianknot.impl.core.agree.GordianCoreAnonymousAgreement;
 import net.sourceforge.joceanus.jgordianknot.impl.core.agree.GordianCoreBasicAgreement;
 import net.sourceforge.joceanus.jgordianknot.impl.core.agree.GordianCoreEphemeralAgreement;
+import net.sourceforge.joceanus.jgordianknot.impl.core.agree.GordianCoreSignedAgreement;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianCryptoException;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
@@ -377,6 +379,17 @@ public final class BouncyXDHAsymKey {
     }
 
     /**
+     * Establish the agreement.
+     * @param pKeyPair the keyPair
+     * @return the agreement
+     */
+    private static RawAgreement establishAgreement(final GordianKeyPair pKeyPair) {
+        return pKeyPair.getKeySpec().getEdwardsElliptic().is25519()
+                       ? new X25519Agreement()
+                       : new X448Agreement();
+    }
+
+    /**
      * XDH Anonymous.
      */
     public static class BouncyXDHAnonymousAgreement
@@ -406,7 +419,7 @@ public final class BouncyXDHAsymKey {
             checkKeyPair(pServer);
 
             /* Establish agreement */
-            establishAgreement(pServer);
+            theAgreement = establishAgreement(pServer);
 
             /* Create an ephemeral keyPair */
             final GordianAsymFactory myAsym = getFactory().getAsymmetricFactory();
@@ -435,7 +448,7 @@ public final class BouncyXDHAsymKey {
             checkKeyPair(pServer);
 
             /* Establish agreement */
-            establishAgreement(pServer);
+            theAgreement = establishAgreement(pServer);
 
             /* Parse request */
             final byte[] myKeyBytes = parseClientHello(pClientHello);
@@ -453,16 +466,6 @@ public final class BouncyXDHAsymKey {
             final byte[] mySecret = new byte[theAgreement.getAgreementSize()];
             theAgreement.calculateAgreement(myPublic.getPublicKey(), mySecret, 0);
             storeSecret(mySecret);
-        }
-
-        /**
-         * Establish the agreement.
-         * @param pKeyPair the keyPair
-         */
-        private void establishAgreement(final GordianKeyPair pKeyPair) {
-            theAgreement = pKeyPair.getKeySpec().getEdwardsElliptic().is25519()
-                           ? new X25519Agreement()
-                           : new X448Agreement();
         }
     }
 
@@ -499,7 +502,7 @@ public final class BouncyXDHAsymKey {
             checkKeyPair(pServer);
 
             /* Establish agreement */
-            establishAgreement(pClient);
+            theAgreement = establishAgreement(pServer);
 
             /* Process clientHello */
             processClientHello(pServer, pClientHello);
@@ -523,7 +526,7 @@ public final class BouncyXDHAsymKey {
             checkKeyPair(pServer);
 
             /* Establish agreement */
-            establishAgreement(pServer);
+            theAgreement = establishAgreement(pServer);
 
             /* process the serverHello */
             processServerHello(pServerHello);
@@ -539,15 +542,70 @@ public final class BouncyXDHAsymKey {
             /* Return confirmation if needed */
             return buildClientConfirm();
         }
+    }
+
+    /**
+     * XDH Signed Agreement.
+     */
+    public static class BouncyXDHSignedAgreement
+            extends GordianCoreSignedAgreement {
+        /**
+         * Agreement.
+         */
+        private RawAgreement theAgreement;
 
         /**
-         * Establish the agreement.
-         * @param pKeyPair the keyPair
+         * Constructor.
+         * @param pFactory the security factory
+         * @param pSpec the agreementSpec
          */
-        private void establishAgreement(final GordianKeyPair pKeyPair) {
-            theAgreement = pKeyPair.getKeySpec().getEdwardsElliptic().is25519()
-                           ? new X25519Agreement()
-                           : new X448Agreement();
+        BouncyXDHSignedAgreement(final BouncyFactory pFactory,
+                                final GordianAgreementSpec pSpec) {
+            /* Initialise underlying class */
+            super(pFactory, pSpec);
+
+            /* Create the agreement */
+            enableDerivation();
+        }
+
+        @Override
+        public byte[] acceptClientHello(final GordianKeyPair pServer,
+                                        final GordianSignatureSpec pSignSpec,
+                                        final byte[] pClientHello) throws OceanusException {
+            /* Process clientHello */
+            processClientHello(pClientHello);
+            final BouncyPrivateKey<?> myPrivate = (BouncyPrivateKey<?>) getPrivateKey(getServerEphemeralKeyPair());
+            final BouncyPublicKey<?> myPublic = (BouncyPublicKey<?>) getPublicKey(getClientEphemeralKeyPair());
+
+            /* Establish agreement */
+            theAgreement = establishAgreement(getServerEphemeralKeyPair());
+
+            /* Derive the secret */
+            theAgreement.init(myPrivate.getPrivateKey());
+            final byte[] mySecret = new byte[theAgreement.getAgreementSize()];
+            theAgreement.calculateAgreement(myPublic.getPublicKey(), mySecret, 0);
+            storeSecret(mySecret);
+
+            /* Return the serverHello */
+            return buildServerHello(pServer, pSignSpec);
+        }
+
+        @Override
+        public void acceptServerHello(final GordianKeyPair pServer,
+                                      final byte[] pServerHello) throws OceanusException {
+            /* process the serverHello */
+            processServerHello(pServer, pServerHello);
+            final BouncyPrivateKey<?> myPrivate = (BouncyPrivateKey<?>) getPrivateKey(getClientEphemeralKeyPair());
+            final BouncyPublicKey<?> mySrcPublic = (BouncyPublicKey<?>) getPublicKey(getServerEphemeralKeyPair());
+
+            /* Establish agreement */
+            theAgreement = establishAgreement(getServerEphemeralKeyPair());
+
+            /* Calculate agreement */
+            theAgreement.init(myPrivate.getPrivateKey());
+            final byte[] mySecret = new byte[theAgreement.getAgreementSize()];
+            theAgreement.calculateAgreement(mySrcPublic.getPublicKey(), mySecret, 0);
+            storeSecret(mySecret);
         }
     }
 
@@ -580,7 +638,7 @@ public final class BouncyXDHAsymKey {
                                         final GordianKeyPair pServer,
                                         final byte[] pClientHello) throws OceanusException {
             /* Establish agreement */
-            establishAgreement(pClient);
+            theAgreement = new XDHUnifiedAgreement(establishAgreement(pServer));
 
             /* process clientHello */
             processClientHello(pClient, pServer, pClientHello);
@@ -613,7 +671,7 @@ public final class BouncyXDHAsymKey {
             checkKeyPair(pServer);
 
             /* Establish agreement */
-            establishAgreement(pServer);
+            theAgreement = new XDHUnifiedAgreement(establishAgreement(pServer));
 
             /* process the serverHello */
             processServerHello(pServer, pServerHello);
@@ -637,17 +695,6 @@ public final class BouncyXDHAsymKey {
 
             /* Return confirmation if needed */
             return buildClientConfirm();
-        }
-
-        /**
-         * Establish the agreement.
-         * @param pKeyPair the keyPair
-         */
-        private void establishAgreement(final GordianKeyPair pKeyPair) {
-            final RawAgreement myAgreement = pKeyPair.getKeySpec().getEdwardsElliptic().is25519()
-                           ? new X25519Agreement()
-                           : new X448Agreement();
-            theAgreement = new XDHUnifiedAgreement(myAgreement);
         }
     }
 }

@@ -80,7 +80,7 @@ public class GordianSecureRandom
         theRandom = pRandom;
         theEntropy = pEntropy;
         predictionResistant = isPredictionResistant;
-        theBuffer = new byte[pGenerator.getBlockSize() >> 2];
+        theBuffer = new byte[pGenerator.getBlockSize()];
     }
 
     @Override
@@ -187,10 +187,7 @@ public class GordianSecureRandom
         return getAlgorithm();
     }
 
-    /**
-     * Force a reSeed of the DRBG.
-     * @param pXtraInput optional additional input
-     */
+    @Override
     public void reseed(final byte[] pXtraInput) {
         synchronized (this) {
             theGenerator.reseed(pXtraInput);

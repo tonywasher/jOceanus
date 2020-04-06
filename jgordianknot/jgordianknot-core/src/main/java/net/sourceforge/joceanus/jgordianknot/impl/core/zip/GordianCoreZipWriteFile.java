@@ -35,9 +35,9 @@ import org.w3c.dom.Document;
 
 import net.sourceforge.joceanus.jgordianknot.api.factory.GordianFactory;
 import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySet;
-import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetHash;
 import net.sourceforge.joceanus.jgordianknot.api.zip.GordianZipFileEntry;
 import net.sourceforge.joceanus.jgordianknot.api.zip.GordianZipWriteFile;
+import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianDataException;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianIOException;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianLogicException;
 import net.sourceforge.joceanus.jgordianknot.impl.core.keyset.GordianCoreKeySet;
@@ -58,14 +58,14 @@ public class GordianCoreZipWriteFile
     private static final String FILE_PREFIX = "File";
 
     /**
-     * Security Hash for this zip file.
+     * Security Lock for this zip file.
      */
-    private final GordianCoreKeySetHash theHash;
+    private final GordianCoreZipLock theLock;
 
     /**
-     * HashBytes for this zip file.
+     * securedKeySet for this zip file.
      */
-    private final byte[] theHashBytes;
+    private final byte[] theSecuredKeySet;
 
     /**
      * KeySet for this zip file.
@@ -114,19 +114,26 @@ public class GordianCoreZipWriteFile
 
     /**
      * Constructor for new output zip file with security.
-     * @param pHash the password hash to use
+     * @param pLock the lock to use
      * @param pOutputStream the output stream to write to
      * @throws OceanusException on error
      */
-    GordianCoreZipWriteFile(final GordianKeySetHash pHash,
+    GordianCoreZipWriteFile(final GordianCoreZipLock pLock,
                             final OutputStream pOutputStream) throws OceanusException {
-        /* Record hash */
-        theHash = (GordianCoreKeySetHash) pHash;
+        /* Check that the lock is usable */
+        if (pLock == null || !pLock.isFresh()) {
+            throw new GordianDataException("Invalid lock");
+        }
+
+        /* Record lock and mark as used */
+        theLock = pLock;
+        pLock.markAsUsed();
 
         /* Create a child hash and record details */
-        final GordianFactory myFactory = theHash.getFactory();
-        theKeySet = (GordianCoreKeySet) myFactory.getKeySetFactory().generateKeySet(theHash.getKeySet().getKeySetSpec());
-        theHashBytes = theHash.getKeySet().secureKeySet(theKeySet);
+        final GordianCoreKeySetHash myHash = (GordianCoreKeySetHash) theLock.getKeySetHash();
+        final GordianFactory myFactory = myHash.getFactory();
+        theKeySet = (GordianCoreKeySet) myFactory.getKeySetFactory().generateKeySet(myHash.getKeySet().getKeySetSpec());
+        theSecuredKeySet = myHash.getKeySet().secureKeySet(theKeySet);
 
         /* Create the Stream Manager */
         theStreamFactory = new GordianStreamManager(theKeySet);
@@ -155,8 +162,8 @@ public class GordianCoreZipWriteFile
      */
     GordianCoreZipWriteFile(final OutputStream pOutputStream) {
         /* record null security */
-        theHash = null;
-        theHashBytes = null;
+        theLock = null;
+        theSecuredKeySet = null;
         theKeySet = null;
         theStreamFactory = null;
 
@@ -173,7 +180,7 @@ public class GordianCoreZipWriteFile
      * @return is the Zip File encrypted
      */
     private boolean isEncrypted() {
-        return theHash != null;
+        return theLock != null;
     }
 
     @Override
@@ -308,15 +315,15 @@ public class GordianCoreZipWriteFile
                         && isEncrypted()) {
                     /* Create a new zipFileEntry */
                     final GordianCoreZipFileEntry myEntry = theContents.addZipFileHeader();
-                    myEntry.setHash(theHashBytes);
+                    myEntry.setHash(theSecuredKeySet);
 
                     /* Create the header entry */
                     ++theFileNo;
                     theEntry = new ZipEntry(FILE_PREFIX
                             + theFileNo);
 
-                    /* Declare the password hash and encrypt the header */
-                    theEntry.setExtra(theHash.getHash());
+                    /* Declare the lock and encrypt the header */
+                    theEntry.setExtra(theLock.getEncodedBytes());
 
                     /* Start the new entry */
                     theStream.putNextEntry(theEntry);
@@ -329,7 +336,7 @@ public class GordianCoreZipWriteFile
 
                     /* Write the bytes to the Zip file and close the entry */
                     final byte[] myBytes = TethysDataConverter.stringToByteArray(myHeader);
-                    final GordianKeySet myKeySet = theHash.getKeySet();
+                    final GordianKeySet myKeySet = theLock.getKeySetHash().getKeySet();
                     theStream.write(myKeySet.encryptBytes(myBytes));
                     theStream.closeEntry();
                 }

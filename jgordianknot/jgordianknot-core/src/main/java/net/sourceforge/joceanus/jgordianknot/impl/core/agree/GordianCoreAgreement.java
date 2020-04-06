@@ -116,11 +116,6 @@ public abstract class GordianCoreAgreement
     private byte[] theServerIV;
 
     /**
-     * The confirmationTag.
-     */
-    private byte[] theConfirmationTag;
-
-    /**
      * The resultType.
      */
     private Object theResultType;
@@ -176,14 +171,6 @@ public abstract class GordianCoreAgreement
         theStatus = pStatus;
     }
 
-    /**
-     * Obtain the confirmation tag.
-     * @return the confirmationTag
-     */
-    protected byte[] getConfirmationTag() {
-        return theConfirmationTag;
-    }
-
     @Override
     public Object getResultType() {
         return theResultType;
@@ -224,9 +211,6 @@ public abstract class GordianCoreAgreement
             Arrays.fill(theServerIV, (byte) 0);
             theServerIV = null;
         }
-
-        /* Reset the confirmation tag */
-        theConfirmationTag = null;
     }
 
     /**
@@ -347,6 +331,14 @@ public abstract class GordianCoreAgreement
     }
 
     /**
+     * Obtain the clientIV.
+     * @return the clientIV
+     */
+    protected byte[] getClientIV() {
+        return theClientIV;
+    }
+
+    /**
      * Create a new serverIV.
      */
     void newServerIV() {
@@ -362,6 +354,14 @@ public abstract class GordianCoreAgreement
     private void storeServerIV(final byte[] pInitVector) {
         /* Store the initVector */
         theServerIV = pInitVector;
+    }
+
+    /**
+     * Obtain the serverIV.
+     * @return the serverIV
+     */
+    protected byte[] getServerIV() {
+        return theServerIV;
     }
 
     /**
@@ -498,11 +498,11 @@ public abstract class GordianCoreAgreement
             /* Calculate the IV */
             final byte[] myIV = new byte[pCipherSpec.getIVLength()];
             calculateDerivedIV(pSecret, myIV);
-            myOutCipher.init(true, GordianCipherParameters.keyAndNonce(myKey, myIV));
-            myInCipher.init(false, GordianCipherParameters.keyAndNonce(myKey, myIV));
+            myOutCipher.initForEncrypt(GordianCipherParameters.keyAndNonce(myKey, myIV));
+            myInCipher.initForDecrypt(GordianCipherParameters.keyAndNonce(myKey, myIV));
         } else {
-            myOutCipher.init(true, GordianCipherParameters.key(myKey));
-            myInCipher.init(true, GordianCipherParameters.key(myKey));
+            myOutCipher.initForEncrypt(GordianCipherParameters.key(myKey));
+            myInCipher.initForDecrypt(GordianCipherParameters.key(myKey));
         }
         return new GordianSymCipher[] { myOutCipher, myInCipher };
     }
@@ -535,15 +535,15 @@ public abstract class GordianCoreAgreement
 
             /* Initialise the ciphers */
             final GordianCipherParameters myParms = GordianCipherParameters.keyAndNonce(myKey, myIV);
-            myOutCipher.init(true, myParms);
-            myInCipher.init(false, myParms);
+            myOutCipher.initForEncrypt(myParms);
+            myInCipher.initForDecrypt(myParms);
 
             /* else no IV */
         } else {
             /* Initialise the ciphers */
             final GordianCipherParameters myParms = GordianCipherParameters.key(myKey);
-            myOutCipher.init(true, myParms);
-            myInCipher.init(true, myParms);
+            myOutCipher.initForEncrypt(myParms);
+            myInCipher.initForDecrypt(myParms);
         }
         return new GordianStreamCipher[] { myOutCipher, myInCipher };
     }
@@ -831,12 +831,33 @@ public abstract class GordianCoreAgreement
     }
 
     /**
-     * Parse the incoming serverHello message.
-     * @param pServerHello the serverHello message
-     * @return the encapsulated data
+     * Build serverHello message.
+     * @param pEncapsulated the encapsulated data
+     * @param pSignId the signatureId
+     * @param pSignature the signature
+     * @return the serverHello message
      * @throws OceanusException on error
      */
-    protected byte[] parseServerHello(final byte[] pServerHello) throws OceanusException {
+    protected byte[] buildServerHello(final byte[] pEncapsulated,
+                                      final AlgorithmIdentifier pSignId,
+                                      final byte[] pSignature) throws OceanusException {
+        /* Create the serverHello */
+        final GordianCoreAgreementFactory myFactory = getAgreementFactory();
+        final AlgorithmIdentifier myAlgId = myFactory.getIdentifierForSpec(getAgreementSpec());
+        final GordianAgreementServerHelloASN1 myServerHello
+                = new GordianAgreementServerHelloASN1(myAlgId, theServerIV, pEncapsulated, pSignId, pSignature);
+
+        /* return the serverHello */
+        return myServerHello.getEncodedBytes();
+    }
+
+    /**
+     * Parse the incoming serverHello message.
+     * @param pServerHello the serverHello message
+     * @return the parsed ASN1
+     * @throws OceanusException on error
+     */
+    protected GordianAgreementServerHelloASN1 parseServerHello(final byte[] pServerHello) throws OceanusException {
         /* Must be in awaiting serverHello state */
         checkStatus(GordianAgreementStatus.AWAITING_SERVERHELLO);
 
@@ -846,8 +867,6 @@ public abstract class GordianCoreAgreement
         /* Access message parts */
         final AlgorithmIdentifier myAlgId = myServerHello.getAgreementId();
         final byte[] myInitVector = myServerHello.getInitVector();
-        final byte[] myKeyBytes = myServerHello.getData();
-        theConfirmationTag = myServerHello.getConfirmation();
 
         /* Check agreementSpec */
         final GordianCoreAgreementFactory myFactory = getAgreementFactory();
@@ -859,8 +878,8 @@ public abstract class GordianCoreAgreement
         /* Store server initVector */
         storeServerIV(myInitVector);
 
-        /* Return the keyBytes */
-        return myKeyBytes;
+        /* Return the ASN1 */
+        return myServerHello;
     }
 
     /**

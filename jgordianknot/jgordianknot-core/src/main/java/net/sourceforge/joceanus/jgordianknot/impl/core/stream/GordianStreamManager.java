@@ -207,7 +207,7 @@ public final class GordianStreamManager {
 
             /* Build the cipher stream */
             final GordianSymCipher mySymCipher = myCiphers.createSymKeyCipher(mySymSpec);
-            mySymCipher.init(true, GordianCipherParameters.keyWithRandomNonce(myKey));
+            mySymCipher.initForEncrypt(GordianCipherParameters.keyWithRandomNonce(myKey));
             myCurrent = new GordianCipherOutputStream<>(mySymCipher, myCurrent);
 
             /* Note that this is no longer the first */
@@ -220,7 +220,7 @@ public final class GordianStreamManager {
         final GordianKeyGenerator<GordianStreamKeySpec> myStreamGenerator = myCiphers.getKeyGenerator(myStreamKeySpec);
         final GordianKey<GordianStreamKeySpec> myStreamKey = myStreamGenerator.generateKey();
         final GordianStreamCipher myStreamCipher = myCiphers.createStreamKeyCipher(GordianStreamCipherSpec.stream(myStreamKey.getKeyType()));
-        myStreamCipher.init(true, GordianCipherParameters.keyWithRandomNonce(myStreamKey));
+        myStreamCipher.initForEncrypt(GordianCipherParameters.keyWithRandomNonce(myStreamKey));
         myCurrent = new GordianCipherOutputStream<>(myStreamCipher, myCurrent);
 
         /* If we are compressing */

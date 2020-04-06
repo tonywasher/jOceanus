@@ -5,6 +5,7 @@
     </properties>
     <body>
         <section name="Overview">
+            <p>KeySets are supported via the <strong>GordianKeySetFactory</strong> interface.</p>
             <p>GordianKnot supports the notion of a KeySet, which is a set of keys of each available algorithm with a 128-bit blockSize.
             The keySet may be used to encrypt/decrypt and to secure/derive keys or keySets</p>
         </section>

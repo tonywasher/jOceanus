@@ -24,6 +24,7 @@ import org.bouncycastle.asn1.pkcs.PrivateKeyInfo;
 import org.bouncycastle.asn1.x509.SubjectPublicKeyInfo;
 import org.bouncycastle.crypto.AsymmetricCipherKeyPair;
 import org.bouncycastle.crypto.params.AsymmetricKeyParameter;
+import org.bouncycastle.crypto.params.ParametersWithRandom;
 import org.bouncycastle.pqc.crypto.qtesla.QTESLAKeyGenerationParameters;
 import org.bouncycastle.pqc.crypto.qtesla.QTESLAKeyPairGenerator;
 import org.bouncycastle.pqc.crypto.qtesla.QTESLAPrivateKeyParameters;
@@ -237,7 +238,8 @@ public final class BouncyQTESLAAsymKey {
 
             /* Initialise and set the signer */
             final BouncyQTESLAPrivateKey myPrivate = (BouncyQTESLAPrivateKey) getKeyPair().getPrivateKey();
-            theSigner.init(true, myPrivate.getPrivateKey());
+            final ParametersWithRandom myParms = new ParametersWithRandom(myPrivate.getPrivateKey(), getRandom());
+            theSigner.init(true, myParms);
         }
 
         @Override

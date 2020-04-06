@@ -17,8 +17,6 @@
 package net.sourceforge.joceanus.jgordianknot.api.cipher;
 
 import net.sourceforge.joceanus.jgordianknot.api.base.GordianKeySpec;
-import net.sourceforge.joceanus.jgordianknot.api.base.GordianLength;
-import net.sourceforge.joceanus.jgordianknot.api.key.GordianKey;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
@@ -38,18 +36,6 @@ public interface GordianKeyedCipher<T extends GordianKeySpec>
      * @return the spec
      */
     GordianCipherSpec<T> getCipherSpec();
-
-    /**
-     * Obtain the keyLength.
-     * @return the keyLength
-     */
-    GordianLength getKeyLength();
-
-    /**
-     * Obtain the key.
-     * @return the key
-     */
-    GordianKey<T> getKey();
 
     /**
      * Obtain the initVector.
@@ -76,11 +62,16 @@ public interface GordianKeyedCipher<T extends GordianKeySpec>
     GordianPBESpec getPBESpec();
 
     /**
-     * Initialise the cipher for encryption.
-     * @param forEncryption for Encryption true/false
+     * Initialise the cipher for encryption/decryption.
      * @param pParams the parameters
      * @throws OceanusException on error
      */
-    void init(boolean forEncryption,
-              GordianCipherParameters pParams) throws OceanusException;
+    void initForEncrypt(GordianCipherParameters pParams) throws OceanusException;
+
+    /**
+     * Initialise the cipher for encryption/decryption.
+     * @param pParams the parameters
+     * @throws OceanusException on error
+     */
+    void initForDecrypt(GordianCipherParameters pParams) throws OceanusException;
 }

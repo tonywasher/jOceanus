@@ -72,12 +72,17 @@ public class GordianFXPasswordDialog
         /* Initialise underlying class */
         super(pFactory, pNeedConfirm);
 
+        /* Determine title */
+        final String myTitle = pNeedConfirm
+                               ? NLS_TITLENEWPASS + " " + pTitle
+                               : NLS_TITLEPASS + " " + pTitle;
+
         /* Initialise the stage */
         theStage = new Stage();
         theStage.initStyle(StageStyle.UTILITY);
         theStage.initModality(Modality.WINDOW_MODAL);
         theStage.initOwner(pFactory.getStage());
-        theStage.setTitle(pTitle);
+        theStage.setTitle(myTitle);
 
         /* Create the scene */
         final Scene myScene = new Scene((Region) TethysFXNode.getNode(getContainer()));

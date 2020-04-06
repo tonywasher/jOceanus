@@ -29,9 +29,7 @@ import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianStreamKeySpec;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianSymKeySpec;
 import net.sourceforge.joceanus.jgordianknot.api.factory.GordianFactory;
 import net.sourceforge.joceanus.jgordianknot.api.factory.GordianFactoryType;
-import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianParameters;
 import net.sourceforge.joceanus.jgordianknot.util.GordianGenerator;
-import net.sourceforge.joceanus.jgordianknot.util.GordianSecurityManager;
 import net.sourceforge.joceanus.jgordianknot.api.key.GordianKey;
 import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySet;
 import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetFactory;
@@ -42,6 +40,7 @@ import net.sourceforge.joceanus.jgordianknot.api.mac.GordianMac;
 import net.sourceforge.joceanus.jgordianknot.api.mac.GordianMacSpec;
 import net.sourceforge.joceanus.jgordianknot.api.random.GordianRandomFactory;
 import net.sourceforge.joceanus.jgordianknot.impl.core.keyset.GordianCoreKeySet;
+import net.sourceforge.joceanus.jgordianknot.util.GordianUtilities;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.TethysDataConverter;
 
@@ -325,7 +324,7 @@ public class KeySetTest {
         Assertions.assertEquals(pKeySet.getKeySet(), myKeySet, "Failed to derive keySet");
 
         /* Check the keySet Hash is the correct length */
-        Assertions.assertEquals(GordianSecurityManager.getKeySetHashLen(), myHash.getHash().length, "Hash is incorrect length");
+        Assertions.assertEquals(GordianUtilities.getKeySetHashLen(), myHash.getHash().length, "Hash is incorrect length");
     }
 
     /**

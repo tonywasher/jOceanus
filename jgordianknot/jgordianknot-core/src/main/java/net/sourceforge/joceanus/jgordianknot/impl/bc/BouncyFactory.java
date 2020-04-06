@@ -80,7 +80,7 @@ public class BouncyFactory
     @Override
     public GordianZipFactory getZipFactory() {
         if (theZipFactory == null) {
-            theZipFactory = new GordianCoreZipFactory();
+            theZipFactory = new GordianCoreZipFactory(this);
         }
         return theZipFactory;
     }

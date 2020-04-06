@@ -18,8 +18,8 @@ package net.sourceforge.joceanus.jprometheus.lethe.swing;
 
 import net.sourceforge.joceanus.jgordianknot.api.factory.GordianFactoryType;
 import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetHashSpec;
-import net.sourceforge.joceanus.jgordianknot.api.swing.GordianSwingSecurityManager;
-import net.sourceforge.joceanus.jgordianknot.util.GordianSecurityManager;
+import net.sourceforge.joceanus.jgordianknot.api.password.GordianPasswordManager;
+import net.sourceforge.joceanus.jgordianknot.api.swing.GordianSwingPasswordManager;
 import net.sourceforge.joceanus.jmetis.atlas.ui.MetisFieldColours.MetisColorPreferences;
 import net.sourceforge.joceanus.jmetis.lethe.field.swing.MetisSwingFieldConfig;
 import net.sourceforge.joceanus.jmetis.lethe.field.swing.MetisSwingFieldManager;
@@ -121,9 +121,9 @@ public class PrometheusSwingToolkit
     }
 
     @Override
-    protected GordianSecurityManager newSecurityManager(final GordianFactoryType pFactoryType,
+    protected GordianPasswordManager newPasswordManager(final GordianFactoryType pFactoryType,
                                                         final char[] pSecurityPhrase,
                                                         final GordianKeySetHashSpec pKeySetSpec) throws OceanusException {
-        return new GordianSwingSecurityManager(getGuiFactory(), pFactoryType, pSecurityPhrase, pKeySetSpec);
+        return GordianSwingPasswordManager.newPasswordManager(getGuiFactory(), pFactoryType, pSecurityPhrase, pKeySetSpec);
     }
 }

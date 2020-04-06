@@ -33,13 +33,13 @@ import javax.xml.parsers.ParserConfigurationException;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 
-import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetHash;
+import net.sourceforge.joceanus.jgordianknot.api.factory.GordianFactory;
 import net.sourceforge.joceanus.jgordianknot.api.zip.GordianZipFileContents;
 import net.sourceforge.joceanus.jgordianknot.api.zip.GordianZipFileEntry;
+import net.sourceforge.joceanus.jgordianknot.api.zip.GordianZipLock;
 import net.sourceforge.joceanus.jgordianknot.api.zip.GordianZipReadFile;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianDataException;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianIOException;
-import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianLogicException;
 import net.sourceforge.joceanus.jgordianknot.impl.core.keyset.GordianCoreKeySet;
 import net.sourceforge.joceanus.jgordianknot.impl.core.stream.GordianStreamManager;
 import net.sourceforge.joceanus.jtethys.OceanusException;
@@ -56,9 +56,9 @@ public class GordianCoreZipReadFile
     private static final int BUFFERSIZE = 1024;
 
     /**
-     * HashBytes for this zip file.
+     * Lock for this zip file.
      */
-    private final byte[] theHashBytes;
+    private final GordianCoreZipLock theLock;
 
     /**
      * The contents of this zip file.
@@ -82,10 +82,12 @@ public class GordianCoreZipReadFile
 
     /**
      * Constructor.
+     * @param pFactory the factory
      * @param pInputStream the input stream to read
      * @throws OceanusException on error
      */
-    GordianCoreZipReadFile(final InputStream pInputStream) throws OceanusException {
+    GordianCoreZipReadFile(final GordianFactory pFactory,
+                           final InputStream pInputStream) throws OceanusException {
         /* Protect against exceptions */
         try (BufferedInputStream myInBuffer = new BufferedInputStream(pInputStream);
              ByteArrayOutputStream myOutBuffer = new ByteArrayOutputStream()) {
@@ -122,12 +124,12 @@ public class GordianCoreZipReadFile
 
             /* If we have a header */
             if (myEntry != null) {
-                /* Pick up security detail */
-                theHashBytes = myEntry.getExtra();
+                /* Pick up security lock */
+                theLock = new GordianCoreZipLock(pFactory, this, myEntry.getExtra());
                 theHeader = readHeader(myHdrStream);
             } else {
                 /* Record no security */
-                theHashBytes = null;
+                theLock = null;
                 theHeader = null;
             }
 
@@ -137,12 +139,9 @@ public class GordianCoreZipReadFile
         }
     }
 
-    /**
-     * Is the ZipFile encrypted.
-     * @return is the Zip File encrypted
-     */
-    private boolean isEncrypted() {
-        return theHashBytes != null;
+    @Override
+    public boolean isEncrypted() {
+        return theLock != null;
     }
 
     @Override
@@ -151,29 +150,20 @@ public class GordianCoreZipReadFile
     }
 
     @Override
-    public byte[] getHashBytes() {
-        return (theHashBytes == null)
-               ? null
-               : Arrays.copyOf(theHashBytes, theHashBytes.length);
+    public GordianZipLock getLock() {
+        return theLock;
     }
 
-    @Override
-    public void setKeySetHash(final GordianKeySetHash pHash) throws OceanusException {
-        /* Ignore if we have no security */
-        if (!isEncrypted()) {
-            return;
-        }
-
-        /* Reject this is the wrong security control */
-        if (!Arrays.equals(pHash.getHash(), theHashBytes)) {
-            throw new GordianLogicException("Hash does not match ZipFile Security.");
-        }
-
+    /**
+     * Unlock the file.
+     * @throws OceanusException on error
+     */
+    void unlockFile() throws OceanusException {
         /* Access the keySet */
-        final GordianCoreKeySet myHashKeySet = (GordianCoreKeySet) pHash.getKeySet();
+        final GordianCoreKeySet myKeySet = (GordianCoreKeySet) theLock.getKeySetHash().getKeySet();
 
         /* Parse the decrypted header */
-        final byte[] myBytes = myHashKeySet.decryptBytes(theHeader);
+        final byte[] myBytes = myKeySet.decryptBytes(theHeader);
         theContents = new GordianCoreZipFileContents(TethysDataConverter.byteArrayToString(myBytes));
 
         /* Access the security details */
@@ -185,8 +175,8 @@ public class GordianCoreZipReadFile
         }
 
         /* Obtain encoded keySet */
-        final byte[] myHashBytes = myHeader.getHash();
-        theKeySet = myHashKeySet.deriveKeySet(myHashBytes);
+        final byte[] mySecuredKeySet = myHeader.getHash();
+        theKeySet = myKeySet.deriveKeySet(mySecuredKeySet);
    }
 
     /**

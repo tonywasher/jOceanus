@@ -47,6 +47,16 @@ public abstract class GordianPasswordDialog {
     private static final int PADDING_SIZE = 5;
 
     /**
+     * Text for Password title.
+     */
+    protected static final String NLS_TITLEPASS = GordianMgrResource.TITLE_PASSWORD.getValue();
+
+    /**
+     * Text for New Password title.
+     */
+    protected static final String NLS_TITLENEWPASS = GordianMgrResource.TITLE_NEWPASS.getValue();
+
+    /**
      * Text for Password Label.
      */
     private static final String NLS_PASSWORD = GordianMgrResource.LABEL_PASSWORD.getValue();
@@ -70,6 +80,11 @@ public abstract class GordianPasswordDialog {
      * Text for Error Panel.
      */
     private static final String NLS_ERROR = GordianMgrResource.TITLE_ERROR.getValue();
+
+    /**
+     * Text for Bad Password Error.
+     */
+    private static final String NLS_ERRORPASS = GordianMgrResource.ERROR_BADPASS.getValue();
 
     /**
      * Text for Error Panel.
@@ -340,10 +355,16 @@ public abstract class GordianPasswordDialog {
     }
 
     /**
+     * report a bad password.
+     */
+    public void reportBadPassword() {
+        setError(NLS_ERRORPASS);
+    }
+    /**
      * set the error.
      * @param pError the error to display
      */
-    public void setError(final String pError) {
+    private void setError(final String pError) {
         /* Set the string to the error field */
         theErrorField.setText(pError);
 
