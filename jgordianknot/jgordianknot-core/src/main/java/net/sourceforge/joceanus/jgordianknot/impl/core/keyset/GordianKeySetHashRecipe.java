@@ -18,6 +18,7 @@ package net.sourceforge.joceanus.jgordianknot.impl.core.keyset;
 
 import java.security.SecureRandom;
 import java.util.Arrays;
+import java.util.Random;
 
 import net.sourceforge.joceanus.jgordianknot.api.base.GordianLength;
 import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigestType;
@@ -25,6 +26,7 @@ import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetHashSpec;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianCoreFactory;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianIdManager;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianPersonalisation;
+import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianPersonalisation.GordianPersonalId;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.TethysDataConverter;
 
@@ -280,9 +282,9 @@ public final class GordianKeySetHashRecipe {
         private final GordianDigestType[] theDigests;
 
         /**
-         * The external Digest types.
+         * The external Digest type.
          */
-        private final GordianDigestType[] theExternalDigest;
+        private final GordianDigestType theExternalDigest;
 
         /**
          * The Adjustment.
@@ -299,19 +301,15 @@ public final class GordianKeySetHashRecipe {
             final GordianPersonalisation myPersonal = pFactory.getPersonalisation();
             final SecureRandom myRandom = pFactory.getRandomSource().getRandom();
 
-            /* Allocate the arrays */
-            theExternalDigest = new GordianDigestType[1];
-            theDigests = new GordianDigestType[NUM_DIGESTS];
-
             /* Generate recipe and derive digestTypes */
-            int mySeed = myRandom.nextInt();
+            final int mySeed = myRandom.nextInt();
             theRecipe = TethysDataConverter.integerToByteArray(mySeed);
-            mySeed = myPersonal.convertRecipe(mySeed);
-            mySeed = myManager.deriveKeyHashDigestTypesFromSeed(mySeed, theDigests);
-            mySeed = myManager.deriveExternalDigestTypesFromSeed(mySeed, theExternalDigest);
+            final Random mySeededRandom = myPersonal.getSeededRandom(GordianPersonalId.HASHRANDOM, theRecipe);
+            theDigests = myManager.deriveKeyHashDigestTypesFromSeed(mySeededRandom, NUM_DIGESTS);
+            theExternalDigest = myManager.deriveExternalDigestTypeFromSeed(mySeededRandom);
 
             /* Derive random adjustment value */
-            theAdjust = mySeed & TethysDataConverter.NYBBLE_MASK;
+            theAdjust = mySeededRandom.nextInt(TethysDataConverter.NYBBLE_MASK + 1);
         }
 
         /**
@@ -325,19 +323,14 @@ public final class GordianKeySetHashRecipe {
             final GordianIdManager myManager = pFactory.getIdManager();
             final GordianPersonalisation myPersonal = pFactory.getPersonalisation();
 
-            /* Allocate the arrays */
-            theExternalDigest = new GordianDigestType[1];
-            theDigests = new GordianDigestType[NUM_DIGESTS];
-
-            /* Store recipe and derive symKeyTypes */
+            /* Store recipe and derive digestTypes */
             theRecipe = pRecipe;
-            int mySeed = TethysDataConverter.byteArrayToInteger(theRecipe);
-            mySeed = myPersonal.convertRecipe(mySeed);
-            mySeed = myManager.deriveKeyHashDigestTypesFromSeed(mySeed, theDigests);
-            mySeed = myManager.deriveExternalDigestTypesFromSeed(mySeed, theExternalDigest);
+            final Random mySeededRandom = myPersonal.getSeededRandom(GordianPersonalId.HASHRANDOM, theRecipe);
+            theDigests = myManager.deriveKeyHashDigestTypesFromSeed(mySeededRandom, NUM_DIGESTS);
+            theExternalDigest = myManager.deriveExternalDigestTypeFromSeed(mySeededRandom);
 
             /* Derive random adjustment value */
-            theAdjust = mySeed & TethysDataConverter.NYBBLE_MASK;
+            theAdjust = mySeededRandom.nextInt(TethysDataConverter.NYBBLE_MASK + 1);
         }
 
         /**
@@ -377,7 +370,7 @@ public final class GordianKeySetHashRecipe {
          * @return the digest type
          */
         GordianDigestType getExternalDigest() {
-            return theExternalDigest[0];
+            return theExternalDigest;
         }
 
         /**

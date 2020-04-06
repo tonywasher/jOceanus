@@ -17,6 +17,7 @@
 package net.sourceforge.joceanus.jgordianknot.impl.core.keyset;
 
 import java.security.SecureRandom;
+import java.util.Random;
 
 import net.sourceforge.joceanus.jgordianknot.api.base.GordianLength;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianSymKeyType;
@@ -25,6 +26,7 @@ import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetSpec;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianCoreFactory;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianIdManager;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianPersonalisation;
+import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianPersonalisation.GordianPersonalId;
 import net.sourceforge.joceanus.jtethys.TethysDataConverter;
 
 /**
@@ -252,18 +254,14 @@ public final class GordianKeySetRecipe {
             /* Calculate the initVector */
             theInitVector = myPersonal.adjustIV(theSalt);
 
-            /* Allocate the arrays */
-            theSymKeyTypes = new GordianSymKeyType[pSpec.getCipherSteps()];
-            theDigestType = pAEAD ? new GordianDigestType[1] : null;
-
             /* Generate recipe and derive parameters */
-            int mySeed = myRandom.nextInt();
+            final int mySeed = myRandom.nextInt();
             theRecipe = TethysDataConverter.integerToByteArray(mySeed);
-            mySeed = myPersonal.convertRecipe(mySeed);
-            mySeed = myManager.deriveKeySetSymKeyTypesFromSeed(pSpec.getKeyLength(), mySeed, theSymKeyTypes);
-            if (pAEAD) {
-                myManager.deriveKeyHashDigestTypesFromSeed(mySeed, theDigestType);
-            }
+            final Random mySeededRandom = myPersonal.getSeededRandom(GordianPersonalId.KEYSETRANDOM, theRecipe);
+            theSymKeyTypes = myManager.deriveKeySetSymKeyTypesFromSeed(mySeededRandom, pSpec.getKeyLength(), pSpec.getCipherSteps());
+            theDigestType = pAEAD
+                            ? myManager.deriveKeyHashDigestTypesFromSeed(mySeededRandom, 1)
+                            : null;
         }
 
         /**
@@ -292,17 +290,12 @@ public final class GordianKeySetRecipe {
             /* Calculate the initVector */
             theInitVector = myPersonal.adjustIV(theSalt);
 
-            /* Allocate the arrays */
-            theSymKeyTypes = new GordianSymKeyType[pSpec.getCipherSteps()];
-            theDigestType = forAEAD ? new GordianDigestType[1] : null;
-
             /* derive parameters */
-            int mySeed = TethysDataConverter.byteArrayToInteger(theRecipe);
-            mySeed = myPersonal.convertRecipe(mySeed);
-            mySeed = myManager.deriveKeySetSymKeyTypesFromSeed(pSpec.getKeyLength(), mySeed, theSymKeyTypes);
-            if (forAEAD) {
-                myManager.deriveKeyHashDigestTypesFromSeed(mySeed, theDigestType);
-            }
+            final Random mySeededRandom = myPersonal.getSeededRandom(GordianPersonalId.KEYSETRANDOM, theRecipe);
+            theSymKeyTypes = myManager.deriveKeySetSymKeyTypesFromSeed(mySeededRandom, pSpec.getKeyLength(), pSpec.getCipherSteps());
+            theDigestType = forAEAD
+                            ? myManager.deriveKeyHashDigestTypesFromSeed(mySeededRandom, 1)
+                            : null;
         }
 
         /**

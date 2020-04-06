@@ -307,7 +307,6 @@ public abstract class GordianCoreFactory
         return myMacs.supportedHMacDigestTypes().and(GordianDigestType::isCombinedHashDigest);
     }
 
-
     /**
      * Obtain predicate for supported keySet symKeySpecs.
      * @param pKeyLen the keyLength
