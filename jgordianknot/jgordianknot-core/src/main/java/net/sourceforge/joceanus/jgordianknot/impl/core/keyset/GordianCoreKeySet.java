@@ -35,6 +35,7 @@ import net.sourceforge.joceanus.jgordianknot.api.base.GordianKeySpec;
 import net.sourceforge.joceanus.jgordianknot.api.key.GordianKeyGenerator;
 import net.sourceforge.joceanus.jgordianknot.api.key.GordianKeyPair;
 import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySet;
+import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetAADCipher;
 import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetCipher;
 import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetSpec;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianCoreFactory;
@@ -232,6 +233,11 @@ public final class GordianCoreKeySet
     @Override
     public GordianKeySetCipher createCipher() throws OceanusException {
         return new GordianCoreKeySetCipher(this, false);
+    }
+
+    @Override
+    public GordianKeySetAADCipher createAADCipher() throws OceanusException {
+        return new GordianCoreKeySetAADCipher(this);
     }
 
     @Override

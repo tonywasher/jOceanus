@@ -21,12 +21,13 @@ import java.util.Random;
 
 import net.sourceforge.joceanus.jgordianknot.api.base.GordianLength;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianSymKeyType;
-import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigestType;
 import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetSpec;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianCoreFactory;
+import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianDataException;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianIdManager;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianPersonalisation;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianPersonalisation.GordianPersonalId;
+import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.TethysDataConverter;
 
 /**
@@ -59,11 +60,6 @@ public final class GordianKeySetRecipe {
     private final GordianKeySetParameters theParams;
 
     /**
-     * Is this recipe for AEAD?
-     */
-    private final boolean forAEAD;
-
-    /**
      * Constructor for new recipe.
      * @param pFactory the factory
      * @param pSpec the keySetSpec
@@ -75,7 +71,6 @@ public final class GordianKeySetRecipe {
         /* Allocate new set of parameters */
         theParams = new GordianKeySetParameters(pFactory, pSpec, pAEAD);
         theRecipe = theParams.getRecipe();
-        forAEAD = pAEAD;
     }
 
     /**
@@ -90,7 +85,6 @@ public final class GordianKeySetRecipe {
                                 final byte[] pHeader,
                                 final boolean pAEAD) {
          /* Allocate buffers */
-        forAEAD = pAEAD;
         theRecipe = new byte[RECIPELEN];
         final byte[] mySalt = new byte[SALTLEN];
 
@@ -122,11 +116,18 @@ public final class GordianKeySetRecipe {
      * @param pHeader the header
      * @param pAEAD true/false is AEAD in use?
      * @return the recipe
+     * @throws OceanusException on error
      */
     static GordianKeySetRecipe parseRecipe(final GordianCoreFactory pFactory,
                                            final GordianKeySetSpec pSpec,
                                            final byte[] pHeader,
-                                           final boolean pAEAD) {
+                                           final boolean pAEAD) throws OceanusException {
+        /* Check that the input data is long enough */
+        if (pHeader.length < HDRLEN) {
+            throw new GordianDataException("Header too short");
+        }
+
+        /* Process the recipe */
         return new GordianKeySetRecipe(pFactory, pSpec, pHeader, pAEAD);
     }
 
@@ -163,9 +164,9 @@ public final class GordianKeySetRecipe {
         private final GordianSymKeyType[] theSymKeyTypes;
 
         /**
-         * The DigestType.
+         * The Poly1305 SymKeyType.
          */
-        private final GordianDigestType[] theDigestType;
+        private final GordianSymKeyType thePoly1305SymKeyType;
 
         /**
          * The Salt.
@@ -203,8 +204,8 @@ public final class GordianKeySetRecipe {
             theRecipe = TethysDataConverter.integerToByteArray(mySeed);
             final Random mySeededRandom = myPersonal.getSeededRandom(GordianPersonalId.KEYSETRANDOM, theRecipe);
             theSymKeyTypes = myManager.deriveKeySetSymKeyTypesFromSeed(mySeededRandom, pSpec.getKeyLength(), pSpec.getCipherSteps());
-            theDigestType = pAEAD
-                            ? myManager.deriveKeyHashDigestTypesFromSeed(mySeededRandom, 1)
+            thePoly1305SymKeyType = pAEAD
+                            ? myManager.deriveKeySetSymKeyTypesFromSeed(mySeededRandom, pSpec.getKeyLength(), 1)[0]
                             : null;
         }
 
@@ -235,8 +236,8 @@ public final class GordianKeySetRecipe {
             /* derive parameters */
             final Random mySeededRandom = myPersonal.getSeededRandom(GordianPersonalId.KEYSETRANDOM, theRecipe);
             theSymKeyTypes = myManager.deriveKeySetSymKeyTypesFromSeed(mySeededRandom, pSpec.getKeyLength(), pSpec.getCipherSteps());
-            theDigestType = pAEAD
-                            ? myManager.deriveKeyHashDigestTypesFromSeed(mySeededRandom, 1)
+            thePoly1305SymKeyType = pAEAD
+                            ? myManager.deriveKeySetSymKeyTypesFromSeed(mySeededRandom, pSpec.getKeyLength(), 1)[0]
                             : null;
         }
 
@@ -257,11 +258,11 @@ public final class GordianKeySetRecipe {
         }
 
         /**
-         * Obtain the Digest Type.
-         * @return the digestType
+         * Obtain the Poly1305 symKeyType.
+         * @return the symKeyType
          */
-        GordianDigestType getDigestType() {
-            return theDigestType != null ? theDigestType[0] : null;
+        GordianSymKeyType getPoly1305SymKeyType() {
+            return thePoly1305SymKeyType;
         }
 
         /**

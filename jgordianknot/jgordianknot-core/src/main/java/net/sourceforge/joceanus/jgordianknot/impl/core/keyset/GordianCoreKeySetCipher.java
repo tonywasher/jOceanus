@@ -19,6 +19,7 @@ package net.sourceforge.joceanus.jgordianknot.impl.core.keyset;
 import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetCipher;
 import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetSpec;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianCoreFactory;
+import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianDataException;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianLogicException;
 import net.sourceforge.joceanus.jgordianknot.impl.core.keyset.GordianKeySetRecipe.GordianKeySetParameters;
 import net.sourceforge.joceanus.jtethys.OceanusException;
@@ -44,14 +45,14 @@ public class GordianCoreKeySetCipher
     private final GordianMultiCipher theCipher;
 
     /**
-     * The cachedBytes.
+     * The cached header.
      */
-    private final byte[] cachedBytes;
+    private final byte[] theHeader;
 
     /**
-     * number of bytes in the cache.
+     * number of bytes in the header cache.
      */
-    private int cacheBytes;
+    private int hdrBytes;
 
     /**
      * Are we in AEAD mode?
@@ -85,7 +86,31 @@ public class GordianCoreKeySetCipher
         aead = pAead;
         theSpec = pKeySet.getKeySetSpec();
         theCipher = new GordianMultiCipher(pKeySet);
-        cachedBytes = new byte[GordianKeySetRecipe.HDRLEN];
+        theHeader = new byte[GordianKeySetRecipe.HDRLEN];
+    }
+
+    /**
+     * Is the cipher initialised?
+     * @return true/false
+     */
+    protected boolean isInitialised() {
+        return initialised;
+    }
+
+    /**
+     * Is the cipher encrypting?
+     * @return true/false
+     */
+    protected boolean isEncrypting() {
+        return encrypting;
+    }
+
+    /**
+     * Obtain the multi-cipher.
+     * @return the cipher
+     */
+    protected GordianMultiCipher getMultiCipher() {
+        return theCipher;
     }
 
     @Override
@@ -104,31 +129,28 @@ public class GordianCoreKeySetCipher
      * Reset the cipher.
      * @throws OceanusException on error
      */
-    public void reset() throws OceanusException {
-        /* If we are encrypting */
-        if (encrypting) {
-            /* Generate a new KeySetRecipe */
-            final GordianKeySetRecipe myRecipe = GordianKeySetRecipe.newRecipe(theFactory, theSpec, aead);
-            final GordianKeySetParameters myParams = myRecipe.getParameters();
-            myRecipe.buildHeader(cachedBytes);
-            cacheBytes = GordianKeySetRecipe.HDRLEN;
-
-            /* Initialise the ciphers */
-            theCipher.initCiphers(myParams, encrypting);
-        } else {
-            cacheBytes = 0;
-        }
-
+    protected void reset() throws OceanusException {
         /* Set flags */
+        hdrBytes = 0;
         initialised = true;
         hdrProcessed = false;
+    }
+
+    /**
+     * Initialise the ciphers.
+     * @param pParams the keySet parameters
+     * @throws OceanusException on error
+     */
+    protected void initCiphers(final GordianKeySetParameters pParams) throws OceanusException {
+        /* Initialise the ciphers */
+        theCipher.initCiphers(pParams, encrypting);
     }
 
     /**
      * check status.
      * @throws OceanusException on error
      */
-    private void checkStatus() throws OceanusException {
+    protected void checkStatus() throws OceanusException {
         /* Check we are initialised */
         if (!initialised) {
             throw new GordianLogicException("Cipher is not initialised");
@@ -136,14 +158,24 @@ public class GordianCoreKeySetCipher
     }
 
     @Override
-    public int getOutputLength(final int len) {
+    public int getOutputLength(final int pLength) {
+        return getCipherOutputLength(pLength);
+    }
+
+    /**
+     * Obtain the cipher output length.
+     * @param pLength pInput data
+     * @return the length
+     */
+    private int getCipherOutputLength(final int pLength) {
+        /* Handle encryption */
         if (encrypting) {
-            return theCipher.getOutputLength(len) + cacheBytes;
+            return GordianCoreKeySet.getEncryptionLength(pLength);
         }
 
         /* Allow for cacheSpace */
-        final int cacheSpace = GordianKeySetRecipe.HDRLEN - cacheBytes;
-        return len < cacheSpace ? 0 : len - cacheSpace;
+        final int cacheSpace = GordianKeySetRecipe.HDRLEN - hdrBytes;
+        return pLength < cacheSpace ? 0 : pLength - cacheSpace;
     }
 
     @Override
@@ -171,11 +203,11 @@ public class GordianCoreKeySetCipher
      * @return the length of data written out
      * @throws OceanusException on error
      */
-    private int updateEncryption(final byte[] pBytes,
-                                 final int pOffset,
-                                 final int pLength,
-                                 final byte[] pOutput,
-                                 final int pOutOffset) throws OceanusException {
+    protected int updateEncryption(final byte[] pBytes,
+                                   final int pOffset,
+                                   final int pLength,
+                                   final byte[] pOutput,
+                                   final int pOutOffset) throws OceanusException {
         /* Check that the buffers are sufficient */
         if (pBytes.length < (pLength + pOffset)) {
             throw new GordianLogicException("Input buffer too short.");
@@ -184,13 +216,25 @@ public class GordianCoreKeySetCipher
             throw new GordianLogicException("Output buffer too short.");
         }
 
-        /* Process any header bytes */
+        /* If we have not initialised the ciphers yet */
+        if (hdrBytes == 0) {
+            /* Generate a new KeySetRecipe */
+            final GordianKeySetRecipe myRecipe = GordianKeySetRecipe.newRecipe(theFactory, theSpec, aead);
+            final GordianKeySetParameters myParams = myRecipe.getParameters();
+            myRecipe.buildHeader(theHeader);
+            hdrBytes = GordianKeySetRecipe.HDRLEN;
+
+            /* Initialise the ciphers */
+            initCiphers(myParams);
+        }
+
+        /* If we have not processed the header yet */
         int bytesWritten = 0;
         if (!hdrProcessed) {
-            System.arraycopy(cachedBytes, 0, pOutput, pOutOffset, cacheBytes);
+            /* Process the header */
+            System.arraycopy(theHeader, 0, pOutput, pOutOffset, hdrBytes);
             hdrProcessed = true;
-            bytesWritten = cacheBytes;
-            cacheBytes = 0;
+            bytesWritten = hdrBytes;
         }
 
         /* Process the bytes */
@@ -199,6 +243,7 @@ public class GordianCoreKeySetCipher
         /* Return the number of bytes processed */
         return bytesWritten;
     }
+
 
     /**
      * Process decryption bytes.
@@ -210,11 +255,11 @@ public class GordianCoreKeySetCipher
      * @return the length of data written out
      * @throws OceanusException on error
      */
-    private int updateDecryption(final byte[] pBytes,
-                                 final int pOffset,
-                                 final int pLength,
-                                 final byte[] pOutput,
-                                 final int pOutOffset) throws OceanusException {
+    protected int updateDecryption(final byte[] pBytes,
+                                   final int pOffset,
+                                   final int pLength,
+                                   final byte[] pOutput,
+                                   final int pOutOffset) throws OceanusException {
         /* Check that the buffers are sufficient */
         if (pBytes.length < (pLength + pOffset)) {
             throw new GordianLogicException("Input buffer too short.");
@@ -226,20 +271,22 @@ public class GordianCoreKeySetCipher
         /* If we have not yet processed the header*/
         int numRead = 0;
         if (!hdrProcessed) {
-            /* Note how many bytes to copy to cache */
-            final int cacheSpace = GordianKeySetRecipe.HDRLEN - cacheBytes;
+            /* Work out how many bytes to copy to cache */
+            final int cacheSpace = GordianKeySetRecipe.HDRLEN - hdrBytes;
             numRead = Math.min(cacheSpace, pLength);
-            System.arraycopy(pBytes, 0, cachedBytes, cacheBytes, numRead);
-            cacheBytes += numRead;
+
+            /* Copy to the header */
+            System.arraycopy(pBytes, 0, theHeader, hdrBytes, numRead);
+            hdrBytes += numRead;
 
             /* If we have a complete header */
-            if (cacheBytes == GordianKeySetRecipe.HDRLEN) {
+            if (hdrBytes == GordianKeySetRecipe.HDRLEN) {
                 /* Process the recipe */
-                final GordianKeySetRecipe myRecipe = GordianKeySetRecipe.parseRecipe(theFactory, theSpec, cachedBytes, aead);
+                final GordianKeySetRecipe myRecipe = GordianKeySetRecipe.parseRecipe(theFactory, theSpec, theHeader, aead);
                 final GordianKeySetParameters myParams = myRecipe.getParameters();
 
                 /* Initialise the ciphers */
-                theCipher.initCiphers(myParams, encrypting);
+                initCiphers(myParams);
                 hdrProcessed = true;
             }
         }
@@ -251,16 +298,34 @@ public class GordianCoreKeySetCipher
     @Override
     public int finish(final byte[] pOutput,
                       final int pOutOffset) throws OceanusException {
-        /* Check status */
-        checkStatus();
-
         /* Finish the cipher */
-        final int myLen = theCipher.finish(pOutput, pOutOffset);
+        final int myLen = finishCipher(pOutput, pOutOffset);
 
         /* Reset the cipher */
         reset();
 
         /* return the number of bytes processed */
         return myLen;
+    }
+
+    /**
+     * Finish underlying cipher.
+     * @param pOutput the output buffer to receive processed data
+     * @param pOutOffset offset within pOutput to write bytes to
+     * @return the length of data processed
+     * @throws OceanusException on error
+     */
+    protected int finishCipher(final byte[] pOutput,
+                               final int pOutOffset) throws OceanusException {
+        /* Check status */
+        checkStatus();
+
+        /* Reject if we have not fully processed the header on decrypt */
+        if (!encrypting && !hdrProcessed) {
+            throw new GordianDataException("data too short");
+        }
+
+        /* Finish the cipher */
+        return theCipher.finish(pOutput, pOutOffset);
     }
 }

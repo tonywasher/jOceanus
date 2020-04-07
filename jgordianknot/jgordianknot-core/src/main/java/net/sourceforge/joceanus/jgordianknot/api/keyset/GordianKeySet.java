@@ -42,6 +42,13 @@ public interface GordianKeySet {
     GordianKeySetCipher createCipher() throws OceanusException;
 
     /**
+     * Create a keySetAADCipher.
+     * @return the keySetCipher
+     * @throws OceanusException on error
+     */
+    GordianKeySetAADCipher createAADCipher() throws OceanusException;
+
+    /**
      * Encrypt bytes.
      * @param pBytesToEncrypt the bytes to encrypt
      * @return the encrypted bytes

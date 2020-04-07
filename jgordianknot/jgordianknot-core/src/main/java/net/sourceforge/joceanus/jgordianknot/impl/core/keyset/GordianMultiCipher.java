@@ -36,6 +36,7 @@ import net.sourceforge.joceanus.jgordianknot.api.factory.GordianAsymFactory;
 import net.sourceforge.joceanus.jgordianknot.api.key.GordianKey;
 import net.sourceforge.joceanus.jgordianknot.api.base.GordianKeySpec;
 import net.sourceforge.joceanus.jgordianknot.api.key.GordianKeyPair;
+import net.sourceforge.joceanus.jgordianknot.api.mac.GordianMacFactory;
 import net.sourceforge.joceanus.jgordianknot.api.mac.GordianMacSpec;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianCoreFactory;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianDataException;
@@ -507,6 +508,52 @@ final class GordianMultiCipher
 
         /* Process via the stream Cipher */
         return myStreamCipher.finish(myBytes);
+    }
+
+    /**
+     * Derive PolyMac key.
+     * @param pParams the parameters
+     * @return the key
+     * @throws OceanusException on error
+     */
+    public GordianKey<GordianMacSpec> derivePoly1305Key(final GordianKeySetParameters pParams) throws OceanusException {
+        /* Access keyType from parameters */
+        final GordianSymKeyType myKeyType = pParams.getPoly1305SymKeyType();
+
+        /* Access the required cipher */
+        final SymKeyCiphers myCiphers = theCipherMap.get(myKeyType);
+        final GordianSymCipher myCipher = myCiphers.getStandardCipher();
+        myCipher.initForEncrypt(GordianCipherParameters.key(myCiphers.getKey()));
+
+        /* First part is from IV section 2 */
+        final byte[] myIV = pParams.getInitVector();
+        final byte[] myIV1 = calculateInitVector(myIV, 2);
+        final byte[] myIV2 = calculateInitVector(myIV, 3);
+        final byte[] myKeyBytes = Arrays.concatenate(myIV1, myIV2);
+
+        /* Obtain the keyGenerator */
+        final GordianMacFactory myMacs = theFactory.getMacFactory();
+        final GordianMacSpec mySpec = GordianMacSpec.poly1305Mac();
+        final GordianCoreKeyGenerator<GordianMacSpec> myGenerator = (GordianCoreKeyGenerator<GordianMacSpec>) myMacs.getKeyGenerator(mySpec);
+        return myGenerator.buildKeyFromBytes(myKeyBytes);
+    }
+
+    /**
+     * Encrypt Mac.
+     * @param pSymKeyType teh symKeyType to use
+     * @param pMac the mac to encrypt
+     * @return the encrypted Mac
+     * @throws OceanusException on error
+     */
+    public byte[] encryptMac(final GordianSymKeyType pSymKeyType,
+                             final byte[] pMac) throws OceanusException {
+        /* Access the required cipher */
+        final SymKeyCiphers myCiphers = theCipherMap.get(pSymKeyType);
+        final GordianSymCipher myCipher = myCiphers.getStandardCipher();
+        myCipher.initForEncrypt(GordianCipherParameters.key(myCiphers.getKey()));
+
+        /* encrypt the mac*/
+        return myCipher.finish(pMac);
     }
 
     /**

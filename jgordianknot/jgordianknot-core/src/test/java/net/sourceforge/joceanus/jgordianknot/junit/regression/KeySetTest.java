@@ -16,6 +16,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jgordianknot.junit.regression;
 
+import java.util.Arrays;
 import java.util.stream.Stream;
 
 import org.junit.jupiter.api.Assertions;
@@ -30,6 +31,9 @@ import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianSymKeySpec;
 import net.sourceforge.joceanus.jgordianknot.api.factory.GordianFactory;
 import net.sourceforge.joceanus.jgordianknot.api.factory.GordianFactoryType;
 import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetCipher;
+import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianDataException;
+import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianLogicException;
+import net.sourceforge.joceanus.jgordianknot.impl.core.keyset.GordianKeySetRecipe;
 import net.sourceforge.joceanus.jgordianknot.util.GordianGenerator;
 import net.sourceforge.joceanus.jgordianknot.api.key.GordianKey;
 import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySet;
@@ -424,8 +428,12 @@ public class KeySetTest {
         /* Encrypt string */
         final byte[] myBytes = TethysDataConverter.stringToByteArray(pData);
         final byte[] myEncrypted = myKeySet.encryptBytes(myBytes);
+
+        /* Check encryption length */
         Assertions.assertEquals(GordianCoreKeySet.getEncryptionLength(myBytes.length),
                 myEncrypted.length, "Incorrect encrypted length");
+
+        /* return the result */
         return myEncrypted;
     }
 
@@ -446,8 +454,12 @@ public class KeySetTest {
         myCipher.initForEncrypt();
         final byte[] myBytes = TethysDataConverter.stringToByteArray(pData);
         final byte[] myEncrypted = myCipher.finish(myBytes, 0, myBytes.length);
+
+        /* Check encryption length */
         Assertions.assertEquals(GordianCoreKeySet.getEncryptionLength(myBytes.length),
                 myEncrypted.length, "Incorrect encrypted length");
+
+        /* return the result */
         return myEncrypted;
     }
 
@@ -468,9 +480,19 @@ public class KeySetTest {
         myCipher.initForEncrypt();
         final byte[] myBytes = TethysDataConverter.stringToByteArray(pData);
         final byte[] myEncrypted = myCipher.finish(myBytes, 0, myBytes.length);
+
+        /* Check that a second decryption works */
         final byte[] myEncrypted2 = myCipher.finish(myBytes, 0, myBytes.length);
+
+        /* Check encryption length */
         Assertions.assertEquals(GordianCoreKeySet.getEncryptionLength(myBytes.length),
                 myEncrypted.length, "Incorrect encrypted length");
+
+        /* Check for short output buffer */
+        Assertions.assertThrows(GordianLogicException.class,
+                () -> myCipher.finish(myBytes,0, myBytes.length, myEncrypted2, 1), "Short output");
+
+       /* return the result */
         return myEncrypted2;
     }
 
@@ -526,8 +548,20 @@ public class KeySetTest {
         /* Decrypt string */
         myCipher.initForDecrypt();
         final byte[] myResult = myCipher.finish(pData, 0, pData.length);
+
+        /* Check that a second decryption matches */
         final byte[] myResult2 = myCipher.finish(pData, 0, pData.length);
         Assertions.assertArrayEquals(myResult, myResult2, "Incorrect reset");
+
+        /* Check for short input buffer */
+        Assertions.assertThrows(GordianDataException.class,
+                () -> myCipher.finish(pData,0, 16, myResult2, 0), "Short input");
+
+        /* Check for short output buffer */
+        Assertions.assertThrows(GordianLogicException.class,
+                () -> myCipher.finish(pData,0, pData.length, myResult2, 1), "Short output");
+
+        /* return the result */
         return TethysDataConverter.byteArrayToString(myResult);
     }
 
