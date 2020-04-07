@@ -74,11 +74,9 @@ public final class GordianUtilities {
      * Obtain Encryption length.
      *
      * @param pDataLength the length of data to be encrypted
-     * @param pAEAD true/false is AEAD in use?
      * @return the length of encrypted data
      */
-    public static int getKeySetEncryptionLength(final int pDataLength,
-                                                final boolean pAEAD) {
-        return GordianCoreKeySet.getEncryptionLength(pDataLength, pAEAD);
+    public static int getKeySetEncryptionLength(final int pDataLength) {
+        return GordianCoreKeySet.getEncryptionLength(pDataLength);
     }
 }

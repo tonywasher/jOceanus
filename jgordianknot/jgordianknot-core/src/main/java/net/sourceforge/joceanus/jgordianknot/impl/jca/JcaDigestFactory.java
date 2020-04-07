@@ -19,6 +19,7 @@ package net.sourceforge.joceanus.jgordianknot.impl.jca;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
+import net.sourceforge.joceanus.jgordianknot.api.base.GordianLength;
 import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigestSpec;
 import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigestType;
 import net.sourceforge.joceanus.jgordianknot.impl.core.digest.GordianCoreDigestFactory;
@@ -66,7 +67,7 @@ public class JcaDigestFactory
         /* Protect against exceptions */
         try {
             /* Return a digest for the algorithm */
-            return MessageDigest.getInstance(JcaDigest.getAlgorithm(pDigestSpec), JcaFactory.BCPROV);
+            return MessageDigest.getInstance(JcaDigest.getFullAlgorithm(pDigestSpec), JcaFactory.BCPROV);
 
             /* Catch exceptions */
         } catch (NoSuchAlgorithmException e) {
@@ -86,12 +87,29 @@ public class JcaDigestFactory
         switch (pDigestType) {
             case JH:
             case GROESTL:
-            case SHAKE:
             case CUBEHASH:
             case KANGAROO:
                 return false;
             default:
                 return true;
         }
+    }
+
+    @Override
+    public boolean validDigestSpec(final GordianDigestSpec pDigestSpec) {
+        /* Perform standard checks */
+        if (!super.validDigestSpec(pDigestSpec)) {
+            return false;
+        }
+
+        /* Additional restrictions on SHAKE */
+        if (pDigestSpec.getDigestType() == GordianDigestType.SHAKE) {
+            final GordianLength myStateLen = pDigestSpec.getStateLength();
+            final GordianLength myLen = pDigestSpec.getDigestLength();
+            return myLen.getByteLength() == 2 * myStateLen.getByteLength();
+        }
+
+        /* OK */
+        return true;
     }
 }

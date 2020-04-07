@@ -573,11 +573,15 @@ public class GordianCoreKnuthObfuscater
                 break;
             case GMAC:
             case CMAC:
-            case POLY1305:
             case KALYNA:
             case CBCMAC:
             case CFBMAC:
                 myCode += deriveEncodedIdFromSymKeySpec(pMacSpec.getSymKeySpec()) << myShift;
+                break;
+            case POLY1305:
+                if (pMacSpec.getSymKeySpec() != null) {
+                    myCode += deriveEncodedIdFromSymKeySpec(pMacSpec.getSymKeySpec()) << myShift;
+                }
                 break;
             case ZUC:
                 myCode += deriveEncodedIdFromLength(pMacSpec.getMacLength()) << myShift;
@@ -616,11 +620,14 @@ public class GordianCoreKnuthObfuscater
                 return GordianMacSpec.hMac(deriveDigestSpecFromEncodedId(myId), myKeyLen);
             case GMAC:
             case CMAC:
-            case POLY1305:
             case KALYNA:
             case CFBMAC:
             case CBCMAC:
                 return new GordianMacSpec(myMacType, deriveSymKeySpecFromEncodedId(myId));
+            case POLY1305:
+                return myId == 0
+                            ? GordianMacSpec.poly1305Mac()
+                            : new GordianMacSpec(myMacType, deriveSymKeySpecFromEncodedId(myId));
             case SKEIN:
                 GordianDigestSpec mySpec = deriveDigestSpecFromEncodedId(myId);
                 return GordianMacSpec.skeinMac(myKeyLen, mySpec);

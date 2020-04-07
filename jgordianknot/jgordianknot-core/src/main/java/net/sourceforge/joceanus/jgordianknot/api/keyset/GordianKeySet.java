@@ -35,6 +35,13 @@ public interface GordianKeySet {
     GordianKeySetSpec getKeySetSpec();
 
     /**
+     * Create a keySetCipher.
+     * @return the keySetCipher
+     * @throws OceanusException on error
+     */
+    GordianKeySetCipher createCipher() throws OceanusException;
+
+    /**
      * Encrypt bytes.
      * @param pBytesToEncrypt the bytes to encrypt
      * @return the encrypted bytes
@@ -120,14 +127,6 @@ public interface GordianKeySet {
                                  byte[] pSecuredPrivateKey) throws OceanusException;
 
     /**
-     * Encryption length.
-     *
-     * @param pDataLength the length of data to be encrypted
-     * @return the length of encrypted data
-     */
-    int getEncryptionLength(int pDataLength);
-
-    /**
      * Obtain wrapped size of a key.
      * @param pKeyLen the keyLength
      * @return the wrapped length
@@ -156,20 +155,9 @@ public interface GordianKeySet {
     int getKeySetWrapLength();
 
     /**
-     * Is the keySet in AEAD mode?
-     * @return true/false
-     */
-    boolean isAEAD();
-
-    /**
-     * Set the AEAD mode.
-     * @param pAEAD true/false
-     */
-    void setAEAD(boolean pAEAD);
-
-    /**
      * Clone the keySet.
      * @return the cloned keySet
+     * @throws OceanusException on error
      */
-    GordianKeySet cloneIt();
+    GordianKeySet cloneIt() throws OceanusException;
 }

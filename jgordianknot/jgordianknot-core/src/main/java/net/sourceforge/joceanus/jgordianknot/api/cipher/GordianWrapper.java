@@ -84,7 +84,19 @@ public interface GordianWrapper {
      * @return the derivedBytes
      * @throws OceanusException on error
      */
-    byte[] deriveBytes(byte[] pSecuredBytes) throws OceanusException;
+    default byte[] deriveBytes(byte[] pSecuredBytes) throws OceanusException {
+        return deriveBytes(pSecuredBytes, 0);
+    }
+
+    /**
+     * derive bytes.
+     * @param pSecuredBytes the secured bytes
+     * @param pOffset the offset within the secured bytes
+     * @return the derivedBytes
+     * @throws OceanusException on error
+     */
+    byte[] deriveBytes(byte[] pSecuredBytes,
+                       int pOffset) throws OceanusException;
 
     /**
      * Obtain wrapped size of a key.

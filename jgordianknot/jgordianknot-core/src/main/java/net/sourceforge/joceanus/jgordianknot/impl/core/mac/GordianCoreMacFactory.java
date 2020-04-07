@@ -81,8 +81,9 @@ public abstract class GordianCoreMacFactory
 
     @Override
     public Predicate<GordianSymKeySpec> supportedPoly1305SymKeySpecs() {
-        return p -> validPoly1305SymKeySpec(p)
-                && p.getBlockLength() == GordianLength.LEN_128;
+        return p -> p == null
+                        || (validPoly1305SymKeySpec(p)
+                             && p.getBlockLength() == GordianLength.LEN_128);
     }
 
     @Override

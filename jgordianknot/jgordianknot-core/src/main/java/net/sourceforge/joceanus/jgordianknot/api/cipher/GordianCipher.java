@@ -201,7 +201,7 @@ public interface GordianCipher {
         final int myLen = update(pBytes, pOffset, pLength, pOutput, pOutOffset);
 
         /* Complete the operation */
-        return myLen + finish(pOutput, myLen);
+        return myLen + finish(pOutput, pOutOffset + myLen);
     }
 
     /**

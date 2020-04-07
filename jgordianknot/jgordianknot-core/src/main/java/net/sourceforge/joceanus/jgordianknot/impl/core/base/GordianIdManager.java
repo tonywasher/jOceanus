@@ -262,9 +262,16 @@ public class GordianIdManager {
         /* Access the list to select from */
         final GordianMacFactory myMacs = theFactory.getMacFactory();
         final List<GordianMacSpec> mySpecs = myMacs.listAllSupportedSpecs(pKeyLen);
+
+        /* Modify list (if required) to remove macs that do not support largeData */
         if (pLargeData) {
             mySpecs.removeIf(s -> !s.getMacType().supportsLargeData());
         }
+
+        /* Modify list to remove rawPoly1305 */
+        mySpecs.remove(GordianMacSpec.poly1305Mac());
+
+        /* Extract the macTypes */
         final List<GordianMacType> myTypes = mySpecs.stream().map(GordianMacSpec::getMacType).collect(Collectors.toList());
 
         /* Determine a random index into the list and obtain the macType */

@@ -134,6 +134,21 @@ public final class JcaDigest
     }
 
     /**
+     * Obtain the full algorithm name.
+     * @param pDigestSpec the digestSpec
+     * @return the name
+     * @throws OceanusException on error
+     */
+    static String getFullAlgorithm(final GordianDigestSpec pDigestSpec) throws OceanusException {
+        /* Access standard name */
+        final String myAlgorithm = getAlgorithm(pDigestSpec);
+
+        return pDigestSpec.getDigestType() == GordianDigestType.SHAKE
+               ? myAlgorithm + "-" + pDigestSpec.getDigestLength()
+               : myAlgorithm;
+    }
+
+    /**
      * Obtain the algorithm name.
      * @param pDigestSpec the digestSpec
      * @return the name

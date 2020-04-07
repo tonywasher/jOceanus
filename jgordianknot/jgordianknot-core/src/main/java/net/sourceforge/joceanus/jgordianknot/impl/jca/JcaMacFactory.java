@@ -277,7 +277,9 @@ public class JcaMacFactory
      */
     private static String getPoly1305Algorithm(final GordianSymKeySpec pKeySpec) throws OceanusException {
         /* Return algorithm name */
-        return "POLY1305-" + JcaCipherFactory.getSymKeyAlgorithm(pKeySpec);
+        return pKeySpec == null
+               ? "POLY1305"
+               : "POLY1305-" + JcaCipherFactory.getSymKeyAlgorithm(pKeySpec);
     }
 
     /**

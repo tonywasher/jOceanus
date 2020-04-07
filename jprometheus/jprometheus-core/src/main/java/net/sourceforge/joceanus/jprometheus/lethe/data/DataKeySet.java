@@ -116,7 +116,7 @@ public class DataKeySet
         switch (getStyle()) {
             case CLONE:
                 theSecurityFactory = pSource.theSecurityFactory;
-                theKeySet = pSource.theKeySet.cloneIt();
+                theKeySet = pSource.theKeySet;
                 theFieldGenerator = new MetisEncryptionGenerator(theKeySet, getDataSet().getDataFormatter());
                 break;
             default:

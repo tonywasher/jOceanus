@@ -212,7 +212,9 @@ public class BouncyMacFactory
      * @throws OceanusException on error
      */
     private static Mac getBCPoly1305Mac(final GordianSymKeySpec pSymKeySpec) throws OceanusException {
-        return new Poly1305(BouncyCipherFactory.getBCSymEngine(pSymKeySpec));
+        return pSymKeySpec == null
+               ? new Poly1305()
+               : new Poly1305(BouncyCipherFactory.getBCSymEngine(pSymKeySpec));
     }
 
     /**
