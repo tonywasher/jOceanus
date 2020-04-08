@@ -599,7 +599,7 @@ final class GordianMultiCipher
             final GordianCipherFactory myFactory = pFactory.getCipherFactory();
 
             /* Create the standard ciphers */
-            thePaddingCipher = myFactory.createSymKeyCipher(GordianSymCipherSpec.ecb(myKeySpec, GordianPadding.ISO7816D4));
+            thePaddingCipher = myFactory.createSymKeyCipher(GordianSymCipherSpec.ecb(myKeySpec, GordianPadding.TBC));
             theStandardCipher = myFactory.createSymKeyCipher(GordianSymCipherSpec.ecb(myKeySpec, GordianPadding.NONE));
             theStreamCipher = myFactory.createSymKeyCipher(GordianSymCipherSpec.sic(myKeySpec));
 

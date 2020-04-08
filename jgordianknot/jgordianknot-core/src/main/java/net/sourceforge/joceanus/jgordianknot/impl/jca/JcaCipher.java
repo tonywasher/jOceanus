@@ -145,11 +145,11 @@ public abstract class JcaCipher<T extends GordianKeySpec>
     }
 
     @Override
-    public int update(final byte[] pBytes,
-                      final int pOffset,
-                      final int pLength,
-                      final byte[] pOutput,
-                      final int pOutOffset) throws OceanusException {
+    public int doUpdate(final byte[] pBytes,
+                        final int pOffset,
+                        final int pLength,
+                        final byte[] pOutput,
+                        final int pOutOffset) throws OceanusException {
         /* Protect against exceptions */
         try {
             /* Process the bytes */

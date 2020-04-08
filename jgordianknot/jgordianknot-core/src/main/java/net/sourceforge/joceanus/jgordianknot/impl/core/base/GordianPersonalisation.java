@@ -248,10 +248,10 @@ public class GordianPersonalisation {
      */
     public Random getSeededRandom(final GordianPersonalId pPrefixId,
                                   final byte[] pBaseSeed) {
-        /* Build the seed and return the seeded random */
-        final long myPrefix = ((long) getPersonalisedInteger(pPrefixId)) << Integer.SIZE;
+        /* Build the 48-bit seed and return the seeded random */
+        final long myPrefix = ((long) getPersonalisedInteger(pPrefixId)) << Short.SIZE;
         final long myBaseSeed = Integer.toUnsignedLong(TethysDataConverter.byteArrayToInteger(pBaseSeed));
-        final long mySeed = myPrefix + myBaseSeed;
+        final long mySeed = myPrefix ^ myBaseSeed;
         return new Random(mySeed);
     }
 
@@ -260,9 +260,9 @@ public class GordianPersonalisation {
      */
     public enum GordianPersonalId {
         /**
-         * HashRandom Prefix.
+         * KeyRandom Prefix.
          */
-        HASHRANDOM,
+        KEYRANDOM,
 
         /**
          * KeySetRandom Prefix.
@@ -270,9 +270,9 @@ public class GordianPersonalisation {
         KEYSETRANDOM,
 
         /**
-         * KeyRandom Prefix.
+         * HashRandom Prefix.
          */
-        KEYRANDOM,
+        HASHRANDOM,
 
         /**
          * KnuthPrime.

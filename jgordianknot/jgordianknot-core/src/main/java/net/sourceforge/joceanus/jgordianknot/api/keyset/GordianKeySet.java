@@ -42,13 +42,6 @@ public interface GordianKeySet {
     GordianKeySetCipher createCipher() throws OceanusException;
 
     /**
-     * Create a keySetAADCipher.
-     * @return the keySetCipher
-     * @throws OceanusException on error
-     */
-    GordianKeySetAADCipher createAADCipher() throws OceanusException;
-
-    /**
      * Encrypt bytes.
      * @param pBytesToEncrypt the bytes to encrypt
      * @return the encrypted bytes
@@ -63,6 +56,53 @@ public interface GordianKeySet {
      * @throws OceanusException on error
      */
     byte[] decryptBytes(byte[] pBytesToDecrypt) throws OceanusException;
+
+    /**
+     * Create a keySetAADCipher.
+     * @return the keySetCipher
+     * @throws OceanusException on error
+     */
+    GordianKeySetAADCipher createAADCipher() throws OceanusException;
+
+    /**
+     * Encrypt AAD bytes.
+     * @param pBytesToEncrypt the bytes to encrypt
+     * @return the encrypted bytes
+     * @throws OceanusException on error
+     */
+    default byte[] encryptAADBytes(byte[] pBytesToEncrypt) throws OceanusException {
+        return encryptAADBytes(pBytesToEncrypt, null);
+    }
+
+    /**
+     * Encrypt AAD bytes.
+     * @param pBytesToEncrypt the bytes to encrypt
+     * @param pAAD the AAD data
+     * @return the encrypted bytes
+     * @throws OceanusException on error
+     */
+    byte[] encryptAADBytes(byte[] pBytesToEncrypt,
+                           byte[] pAAD) throws OceanusException;
+
+    /**
+     * Decrypt AAD bytes.
+     * @param pBytesToDecrypt the bytes to decrypt
+     * @return the decrypted bytes
+     * @throws OceanusException on error
+     */
+    default byte[] decryptAADBytes(byte[] pBytesToDecrypt) throws OceanusException {
+        return decryptAADBytes(pBytesToDecrypt, null);
+    }
+
+    /**
+     * Decrypt AAD bytes.
+     * @param pBytesToDecrypt the bytes to decrypt
+     * @param pAAD the AAD data
+     * @return the decrypted bytes
+     * @throws OceanusException on error
+     */
+    byte[] decryptAADBytes(byte[] pBytesToDecrypt,
+                           byte[] pAAD) throws OceanusException;
 
     /**
      * secure bytes.

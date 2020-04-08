@@ -28,18 +28,25 @@
                 <li>Loop for 2K iterations.
                     <ol>
                         <li>Update each digest with <strong>ALL</strong> the elements of <strong>R</strong></li>
-                        <li>Finish each digest, updating its hash and xor-ing into <strong>I</strong></li>
+                        <li>Finish each digest, updating its hash in <strong>R</strong> and xor-ing into <strong>I</strong></li>
                     </ol>
                 </li>
                 <li>Build <strong>IV</strong> as the xor of all the final elements of <strong>R</strong></li>
             </ol>
         </section>
+        <section name="Seeded Random">
+            <p>Several algorithms in <strong>GordianKnot</strong> require slection of various algorithms in a deterministic fashion based
+                on a 4-byte seed <strong>S</strong>. This is performed by creating a 6-byte seed from the combination of the 4-byte seed and
+                one of the <strong>I<sub>n</sub></strong> values, specific to the algorithm. This 6-byte seed in used to instantiate an instance of
+                the deterministic <strong>Random</strong> class and algorithm selection is performed via this seeded Random instance.</p>
+        </section>
         <section name="Key Derivation">
-            <p>The key derivation algorithm that generates a key <strong>K<sub>A</sub></strong> for an algorithm <strong>A</strong> from a secret <strong>S</strong>
-                and vector <strong>V</strong> is as follows.</p>
+            <p>The key derivation algorithm that generates a key <strong>K<sub>A</sub></strong> for an algorithm <strong>A</strong>
+                from a secret <strong>S</strong> and vector <strong>V</strong> is as follows.</p>
             <ol>
-                <li>Obtain a seed <strong>X</strong> from the first 4 bytes of <strong>V</strong></li>
-                <li>Obtain a set two distinct HMACs <strong>H<sub>M</sub></strong> and <strong>H<sub>A</sub></strong> from the seed <strong>X</strong></li>
+                <li>Obtain a seed <strong>X</strong> from the first 4 bytes of <strong>V</strong> and obtain a seeded random <strong>R</strong> using
+                    <strong>X</strong> and <strong>I<sub>1</sub></strong></li>
+                <li>Obtain a set of two distinct HMACs <strong>H<sub>M</sub></strong> and <strong>H<sub>A</sub></strong> from the seededRandom <strong>R</strong></li>
                 <li>Initialise both HMac with a key of secret <strong>S</strong></li>
                 <li>Repeat the following loop until sufficient bits have been generated. Start with <strong>C</strong> = 0
                     <ol>
@@ -56,7 +63,7 @@
                                 <li>Xor <strong>D<sub>M</sub></strong> into the result</li>
                             </ol>
                         </li>
-                        <li>Increment <strong>C</strong></li>
+                        <li>Increment <strong>C</strong> and repeat if necessary.</li>
                     </ol>
                 </li>
             </ol>

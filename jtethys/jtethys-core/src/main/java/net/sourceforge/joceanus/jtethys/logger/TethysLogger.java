@@ -66,6 +66,21 @@ public class TethysLogger {
     }
 
     /**
+     * Write a debug message with hex data.
+     * @param pMessage the message
+     * @param pData the data
+     * @param pOffset the offset
+     * @param pLength the length of data
+     */
+    public void debug(final String pMessage,
+                      final byte[] pData,
+                      final int pOffset,
+                      final int pLength) {
+        final String myLogMessage = theManager.formatMessage(theOwner, TethysLogLevel.DEBUG, pMessage);
+        final String myLogData = TethysLogManager.formatData(pData, pOffset, pLength);
+        theManager.writeLogMessage(myLogMessage + myLogData);
+    }
+    /**
      * Write an information message with parameters.
      * @param pFormat the format
      * @param pArgs the arguments

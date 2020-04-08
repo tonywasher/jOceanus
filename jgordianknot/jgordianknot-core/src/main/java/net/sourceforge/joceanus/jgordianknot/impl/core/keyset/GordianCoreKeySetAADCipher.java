@@ -21,6 +21,11 @@ import java.io.ByteArrayOutputStream;
 import org.bouncycastle.util.Arrays;
 import org.bouncycastle.util.Pack;
 
+import net.sourceforge.joceanus.jgordianknot.api.base.GordianLength;
+import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianSymKeyType;
+import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigest;
+import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigestFactory;
+import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigestSpec;
 import net.sourceforge.joceanus.jgordianknot.api.key.GordianKey;
 import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetAADCipher;
 import net.sourceforge.joceanus.jgordianknot.api.mac.GordianMac;
@@ -41,7 +46,7 @@ public class GordianCoreKeySetAADCipher
     /**
      * The MacSize.
      */
-    private static final int MACSIZE = 16;
+    static final int MACSIZE = 16;
 
     /**
      * The Zero padding.
@@ -79,6 +84,21 @@ public class GordianCoreKeySetAADCipher
     private long dataLength;
 
     /**
+     * The encryptedLength.
+     */
+    private long encryptedLength;
+
+    /**
+     * The Digest.
+     */
+    private GordianDigest theDigest;
+
+    /**
+     * The SymKeyType.
+     */
+    private GordianSymKeyType theSymKeyType;
+
+    /**
      * The cachedBytes.
      */
     private final byte[] cachedBytes;
@@ -108,13 +128,23 @@ public class GordianCoreKeySetAADCipher
     @Override
     public void initForEncrypt(final byte[] pAAD) throws OceanusException {
         initialAEAD = Arrays.clone(pAAD);
-        initForEncrypt();
+        super.initForEncrypt();
     }
 
     @Override
     public void initForDecrypt(final byte[] pAAD) throws OceanusException {
         initialAEAD = Arrays.clone(pAAD);
-        initForDecrypt();
+        super.initForDecrypt();
+    }
+
+    @Override
+    public void initForEncrypt() throws OceanusException {
+        initForEncrypt(null);
+    }
+
+    @Override
+    public void initForDecrypt() throws OceanusException {
+        initForDecrypt(null);
     }
 
     @Override
@@ -175,9 +205,17 @@ public class GordianCoreKeySetAADCipher
         /* Pass call on */
         super.initCiphers(pParams);
 
+        /* Create the digest */
+        final GordianDigestFactory myDigests = getFactory().getDigestFactory();
+        final GordianDigestSpec myDigestSpec = new GordianDigestSpec(pParams.getDigestType(), GordianLength.LEN_512);
+        theDigest = myDigests.createDigest(myDigestSpec);
+
         /* initialise the Mac */
         final GordianKey<GordianMacSpec> myKey = getMultiCipher().derivePoly1305Key(pParams);
         theMac.init(GordianMacParameters.key(myKey));
+
+        /* Stash the symKeyType */
+        theSymKeyType = pParams.getPoly1305SymKeyType();
 
         /* Update the Mac with the AEAD data */
         final byte[] myAEAD = theAEAD.toByteArray();
@@ -185,6 +223,7 @@ public class GordianCoreKeySetAADCipher
         aeadLength = myAEAD.length;
         completeAEADMac();
         dataLength = 0;
+        encryptedLength = 0;
     }
 
     @Override
@@ -211,9 +250,11 @@ public class GordianCoreKeySetAADCipher
         /* Process the bytes */
         final int myLen = super.updateEncryption(pBytes, pOffset, pLength, pOutput, pOutOffset);
 
-        /* Update the mac */
+        /* Process data into mac and  digest */
         theMac.update(pOutput, pOutOffset, myLen);
-        dataLength += myLen;
+        encryptedLength += myLen;
+        theDigest.update(pBytes, pOffset, pLength);
+        dataLength += pLength;
 
         /* Return the number of bytes processed */
         return myLen;
@@ -225,14 +266,6 @@ public class GordianCoreKeySetAADCipher
                                    final int pLength,
                                    final byte[] pOutput,
                                    final int pOutOffset) throws OceanusException {
-        /* Check that the buffers are sufficient */
-        if (pBytes.length < (pLength + pOffset)) {
-            throw new GordianLogicException("Input buffer too short.");
-        }
-        if (pOutput.length < (getOutputLength(pLength) + pOutOffset + cacheBytes - MACSIZE)) {
-            throw new GordianLogicException("Output buffer too short.");
-        }
-
         /* Count how much we have processed */
         int processed = 0;
 
@@ -243,12 +276,14 @@ public class GordianCoreKeySetAADCipher
 
         /* If we should process bytes from the cache */
         if (numCacheBytes > 0) {
-            /* Process any required cachedBytes */
-            theMac.update(cachedBytes, 0, numCacheBytes);
-            dataLength += numCacheBytes;
-
             /* Process the cached bytes */
             processed = super.updateDecryption(cachedBytes, 0, numCacheBytes, pOutput, pOutOffset);
+
+            /* Process data into mac and  digest */
+            theMac.update(cachedBytes, 0, numCacheBytes);
+            encryptedLength += numCacheBytes;
+            theDigest.update(pOutput, pOutOffset, processed);
+            dataLength += processed;
 
             /* Move any remaining cached bytes down in the buffer */
             cacheBytes -= numCacheBytes;
@@ -259,12 +294,15 @@ public class GordianCoreKeySetAADCipher
 
         /* Process any excess bytes from the input buffer */
         if (numInputBytes > 0) {
-            /* Process the data */
-            theMac.update(pBytes, pOffset, numInputBytes);
-            dataLength += numInputBytes;
-
             /* Process the input */
-            processed += super.updateDecryption(pBytes, pOffset, numInputBytes, pOutput, pOutOffset + processed);
+            final int numProcessed = super.updateDecryption(pBytes, pOffset, numInputBytes, pOutput, pOutOffset + processed);
+
+            /* Process data into mac and  digest */
+            theMac.update(pBytes, pOffset, numInputBytes);
+            encryptedLength += numInputBytes;
+            theDigest.update(pOutput, pOutOffset + processed, numProcessed);
+            dataLength += numProcessed;
+            processed += numProcessed;
         }
 
         /* Store the remaining input into the cache */
@@ -283,10 +321,17 @@ public class GordianCoreKeySetAADCipher
         int myLen = finishCipher(pOutput, pOutOffset);
 
         /* Update mac if we have output data on encryption */
-        if (isEncrypting() && myLen > 0) {
-            /* Update the mac */
-            theMac.update(pOutput, pOutOffset, myLen);
-            dataLength += myLen;
+        if (myLen > 0) {
+            /* Update Mac/digest as appropriate */
+            if (isEncrypting()) {
+                /* Update the mac */
+                theMac.update(pOutput, pOutOffset, myLen);
+                encryptedLength += myLen;
+            } else {
+                /* Update the digest */
+                theDigest.update(pOutput, pOutOffset, myLen);
+                dataLength += myLen;
+            }
         }
 
         /* finish the mac */
@@ -311,11 +356,6 @@ public class GordianCoreKeySetAADCipher
      */
     private int finishEncryptionMac(final byte[] pOutput,
                                     final int pOutOffset) throws OceanusException {
-        /* Check that the output buffer is sufficient */
-        if (pOutput.length < (MACSIZE + pOutOffset)) {
-            throw new GordianLogicException("Output buffer too short.");
-        }
-
         /* Complete the dataMac */
         completeDataMac();
 
@@ -323,8 +363,11 @@ public class GordianCoreKeySetAADCipher
         final byte[] myMac = new byte[MACSIZE];
         theMac.finish(myMac, 0);
 
-        /* Update and return the mac in the output buffer */
-        System.arraycopy(myMac, 0, pOutput, pOutOffset, MACSIZE);
+        /* Encrypt the Mac */
+        final byte[] myResult = getMultiCipher().encryptMac(theSymKeyType, myMac);
+
+        /* return the encrypted mac in the output buffer */
+        System.arraycopy(myResult, 0, pOutput, pOutOffset, MACSIZE);
         return MACSIZE;
     }
 
@@ -347,8 +390,11 @@ public class GordianCoreKeySetAADCipher
         final byte[] myMac = new byte[MACSIZE];
         theMac.finish(myMac, 0);
 
-        /* Check that the calculated Mac is identical to that contained in the cache */
-        if (!Arrays.constantTimeAreEqual(myMac, cachedBytes)) {
+        /* Encrypt the Mac */
+        final byte[] myResult = getMultiCipher().encryptMac(theSymKeyType, myMac);
+
+        /* Check that the encrypted Mac is identical to that contained in the cache */
+        if (!Arrays.constantTimeAreEqual(myResult, cachedBytes)) {
             throw new GordianDataException("mac check failed");
         }
 
@@ -372,13 +418,17 @@ public class GordianCoreKeySetAADCipher
      */
     private void completeDataMac() {
         /* Pad to boundary */
-        padToBoundary(dataLength);
+        padToBoundary(encryptedLength);
 
         /* Write the lengths */
         final byte[] len = new byte[Long.BYTES << 1];
         Pack.longToLittleEndian(aeadLength, len, 0);
         Pack.longToLittleEndian(dataLength, len, Long.BYTES);
         theMac.update(len, 0, len.length);
+
+        /* Calculate the digest and update the mac */
+        final byte[] myDigest = theDigest.finish();
+        theMac.update(myDigest);
     }
 
     /**

@@ -17,10 +17,12 @@
 package net.sourceforge.joceanus.jgordianknot.impl.core.keyset;
 
 import java.security.SecureRandom;
+import java.util.Arrays;
 import java.util.Random;
 
 import net.sourceforge.joceanus.jgordianknot.api.base.GordianLength;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianSymKeyType;
+import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigestType;
 import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetSpec;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianCoreFactory;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianDataException;
@@ -159,24 +161,29 @@ public final class GordianKeySetRecipe {
         private final byte[] theRecipe;
 
         /**
-         * The SymKeySet.
-         */
-        private final GordianSymKeyType[] theSymKeyTypes;
-
-        /**
-         * The Poly1305 SymKeyType.
-         */
-        private final GordianSymKeyType thePoly1305SymKeyType;
-
-        /**
          * The Salt.
          */
         private final byte[] theSalt;
 
         /**
+         * The SymKeySet.
+         */
+        private GordianSymKeyType[] theSymKeyTypes;
+
+        /**
+         * The DigestType.
+         */
+        private GordianDigestType theDigestType;
+
+        /**
+         * The Poly1305 SymKeyType.
+         */
+        private GordianSymKeyType thePoly1305SymKeyType;
+
+         /**
          * The Initialisation Vector.
          */
-        private final byte[] theInitVector;
+        private byte[] theInitVector;
 
         /**
          * Construct the parameters from random.
@@ -187,26 +194,19 @@ public final class GordianKeySetRecipe {
         GordianKeySetParameters(final GordianCoreFactory pFactory,
                                 final GordianKeySetSpec pSpec,
                                 final boolean pAEAD) {
-            /* Obtain Id manager and random */
-            final GordianIdManager myManager = pFactory.getIdManager();
-            final GordianPersonalisation myPersonal = pFactory.getPersonalisation();
+            /* Obtain random */
             final SecureRandom myRandom = pFactory.getRandomSource().getRandom();
 
             /* Allocate the initVector */
             theSalt = new byte[SALTLEN];
             myRandom.nextBytes(theSalt);
 
-            /* Calculate the initVector */
-            theInitVector = myPersonal.adjustIV(theSalt);
-
-            /* Generate recipe and derive parameters */
+            /* Generate recipe */
             final int mySeed = myRandom.nextInt();
             theRecipe = TethysDataConverter.integerToByteArray(mySeed);
-            final Random mySeededRandom = myPersonal.getSeededRandom(GordianPersonalId.KEYSETRANDOM, theRecipe);
-            theSymKeyTypes = myManager.deriveKeySetSymKeyTypesFromSeed(mySeededRandom, pSpec.getKeyLength(), pSpec.getCipherSteps());
-            thePoly1305SymKeyType = pAEAD
-                            ? myManager.deriveKeySetSymKeyTypesFromSeed(mySeededRandom, pSpec.getKeyLength(), 1)[0]
-                            : null;
+
+            /* Process the recipe */
+            processRecipe(pFactory, pSpec, pAEAD);
         }
 
         /**
@@ -222,23 +222,43 @@ public final class GordianKeySetRecipe {
                                 final byte[] pRecipe,
                                 final byte[] pSalt,
                                 final boolean pAEAD) {
-            /* Obtain Id manager */
-            final GordianIdManager myManager = pFactory.getIdManager();
-            final GordianPersonalisation myPersonal = pFactory.getPersonalisation();
-
             /* Store recipe, salt and Mac */
             theRecipe = pRecipe;
             theSalt = pSalt;
 
+            /* Process the recipe */
+            processRecipe(pFactory, pSpec, pAEAD);
+        }
+
+        /**
+         * Process the recipe and salt.
+         * @param pFactory the factory
+         * @param pSpec the keySetSpec
+         * @param pAEAD true/false is AEAD in use?
+         */
+        private void processRecipe(final GordianCoreFactory pFactory,
+                                   final GordianKeySetSpec pSpec,
+                                   final boolean pAEAD) {
+            /* Obtain Id manager and random */
+            final GordianIdManager myManager = pFactory.getIdManager();
+            final GordianPersonalisation myPersonal = pFactory.getPersonalisation();
+
             /* Calculate the initVector */
             theInitVector = myPersonal.adjustIV(theSalt);
 
-            /* derive parameters */
+            /* Generate seededRandom */
             final Random mySeededRandom = myPersonal.getSeededRandom(GordianPersonalId.KEYSETRANDOM, theRecipe);
-            theSymKeyTypes = myManager.deriveKeySetSymKeyTypesFromSeed(mySeededRandom, pSpec.getKeyLength(), pSpec.getCipherSteps());
-            thePoly1305SymKeyType = pAEAD
-                            ? myManager.deriveKeySetSymKeyTypesFromSeed(mySeededRandom, pSpec.getKeyLength(), 1)[0]
-                            : null;
+
+            /* Ask for the relevant number of keys */
+            final int myNumKeys = pSpec.getCipherSteps() + (pAEAD ? 1 : 0);
+            theSymKeyTypes = myManager.deriveKeySetSymKeyTypesFromSeed(mySeededRandom, pSpec.getKeyLength(), myNumKeys);
+
+            /* Adjust for AEAD */
+            if (pAEAD) {
+                theDigestType = myManager.deriveExternalDigestTypeFromSeed(mySeededRandom);
+                thePoly1305SymKeyType = theSymKeyTypes[myNumKeys - 1];
+                theSymKeyTypes = Arrays.copyOf(theSymKeyTypes, myNumKeys - 1);
+            }
         }
 
         /**
@@ -255,6 +275,14 @@ public final class GordianKeySetRecipe {
          */
         GordianSymKeyType[] getSymKeyTypes() {
             return theSymKeyTypes;
+        }
+
+        /**
+         * Obtain the digestType.
+         * @return the digestType
+         */
+        GordianDigestType getDigestType() {
+            return theDigestType;
         }
 
         /**

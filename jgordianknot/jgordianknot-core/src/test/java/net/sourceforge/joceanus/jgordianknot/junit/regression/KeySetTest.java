@@ -30,9 +30,11 @@ import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianStreamKeySpec;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianSymKeySpec;
 import net.sourceforge.joceanus.jgordianknot.api.factory.GordianFactory;
 import net.sourceforge.joceanus.jgordianknot.api.factory.GordianFactoryType;
+import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetAADCipher;
 import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetCipher;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianDataException;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianLogicException;
+import net.sourceforge.joceanus.jgordianknot.impl.core.keyset.GordianCoreKeySetAADCipher;
 import net.sourceforge.joceanus.jgordianknot.impl.core.keyset.GordianKeySetRecipe;
 import net.sourceforge.joceanus.jgordianknot.util.GordianGenerator;
 import net.sourceforge.joceanus.jgordianknot.api.key.GordianKey;
@@ -48,6 +50,8 @@ import net.sourceforge.joceanus.jgordianknot.impl.core.keyset.GordianCoreKeySet;
 import net.sourceforge.joceanus.jgordianknot.util.GordianUtilities;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.TethysDataConverter;
+import net.sourceforge.joceanus.jtethys.logger.TethysLogManager;
+import net.sourceforge.joceanus.jtethys.logger.TethysLogger;
 
 /**
  * Security Test suite - Test KeySet functionality.
@@ -72,6 +76,11 @@ public class KeySetTest {
      * TestString3.
      */
     private static final String TEST_STRING3 = "TestString1234567";
+
+    /**
+     * AAD.
+     */
+    private static final String TEST_AAD = "SomeAAD";
 
     /**
      * Run full profiles.
@@ -167,6 +176,11 @@ public class KeySetTest {
         private final GordianKeySetCipher theKeySetCipher;
 
         /**
+         * The keySet AAD Cipher.
+         */
+        private final GordianKeySetAADCipher theKeySetAADCipher;
+
+        /**
          * The symKey.
          */
         private final GordianKey<GordianSymKeySpec> theSymKey;
@@ -205,8 +219,9 @@ public class KeySetTest {
             final GordianKeySetFactory myKeySets = myFactory.getKeySetFactory();
             theKeySetHash = myKeySets.generateKeySetHash(theSpec, DEF_PASSWORD.clone());
 
-            /* Create the cipher */
+            /* Create the ciphers */
             theKeySetCipher = theKeySetHash.getKeySet().createCipher();
+            theKeySetAADCipher = theKeySetHash.getKeySet().createAADCipher();
 
             /* Initialise data */
             final GordianRandomFactory myRandoms = myFactory.getRandomFactory();
@@ -246,6 +261,14 @@ public class KeySetTest {
          */
         GordianKeySetCipher getKeySetCipher() {
             return theKeySetCipher;
+        }
+
+        /**
+         * Obtain the keySetAADCipher.
+         * @return the keySetAADCipher
+         */
+        GordianKeySetAADCipher getKeySetAADCipher() {
+            return theKeySetAADCipher;
         }
 
         /**
@@ -338,6 +361,7 @@ public class KeySetTest {
         return Stream.of(DynamicContainer.dynamicContainer(myKeySet.toString(), Stream.of(
                 DynamicTest.dynamicTest("keySet", () -> checkKeySetHash(myKeySet)),
                 DynamicTest.dynamicTest("encrypt", () -> checkEncrypt(myKeySet)),
+                DynamicTest.dynamicTest("encryptAAD", () -> checkEncryptAAD(myKeySet)),
                 DynamicTest.dynamicTest("wrap", () -> checkWrap(myKeySet)),
                 DynamicTest.dynamicTest("profile", () -> profileEncrypt(myKeySet))
         )));
@@ -378,6 +402,22 @@ public class KeySetTest {
     }
 
     /**
+     * Check encryptAAD.
+     * @param pKeySet the keySet
+     * @throws OceanusException on error
+     */
+    private void checkEncryptAAD(final FactoryKeySet pKeySet) throws OceanusException {
+        /* Check short string */
+        checkEncryptAAD(pKeySet, TEST_STRING1);
+
+        /* Check full block */
+        checkEncryptAAD(pKeySet, TEST_STRING2);
+
+        /* Check multi-block */
+        checkEncryptAAD(pKeySet, TEST_STRING3);
+    }
+
+    /**
      * Check encrypt.
      * @param pKeySet the keySet
      * @param pTest the test string
@@ -411,6 +451,43 @@ public class KeySetTest {
         Assertions.assertEquals(pTest, myAnswer, "Failed cache-cipher decrypt "+ pTest);
         myAnswer = decryptCacheCipher(pKeySet, myEncrypt);
         Assertions.assertEquals(pTest, myAnswer, "Failed cache-cache decrypt "+ pTest);
+    }
+
+    /**
+     * Check encrypt.
+     * @param pKeySet the keySet
+     * @param pTest the test string
+     * @throws OceanusException on error
+     */
+    private void checkEncryptAAD(final FactoryKeySet pKeySet,
+                                 final String pTest) throws OceanusException {
+        /* Encrypt cipher string */
+        byte[] myEncrypt = encryptOneOffAADCipher(pKeySet, pTest, null);
+        String myAnswer = decryptOneOffAADCipher(pKeySet, myEncrypt, null);
+        Assertions.assertEquals(pTest, myAnswer, "Failed nullAAD cipher-cipher decrypt "+ pTest);
+        myAnswer = decryptCacheAADCipher(pKeySet, myEncrypt, null);
+        Assertions.assertEquals(pTest, myAnswer, "Failed nullAAD cipher-cache decrypt "+ pTest);
+
+        /* Encrypt cache string */
+        myEncrypt = encryptCacheAADCipher(pKeySet, pTest, null);
+        myAnswer = decryptOneOffAADCipher(pKeySet, myEncrypt, null);
+        Assertions.assertEquals(pTest, myAnswer, "Failed nullAAD cache-cipher decrypt "+ pTest);
+        myAnswer = decryptCacheAADCipher(pKeySet, myEncrypt, null);
+        Assertions.assertEquals(pTest, myAnswer, "Failed nullAAD cache-cache decrypt "+ pTest);
+
+        /* Encrypt cipher string */
+        myEncrypt = encryptOneOffAADCipher(pKeySet, pTest, TEST_AAD);
+        myAnswer = decryptOneOffAADCipher(pKeySet, myEncrypt, TEST_AAD);
+        Assertions.assertEquals(pTest, myAnswer, "Failed AAD cipher-cipher decrypt "+ pTest);
+        myAnswer = decryptCacheAADCipher(pKeySet, myEncrypt, TEST_AAD);
+        Assertions.assertEquals(pTest, myAnswer, "Failed AAD cipher-cache decrypt "+ pTest);
+
+        /* Encrypt cache string */
+        myEncrypt = encryptCacheAADCipher(pKeySet, pTest, TEST_AAD);
+        myAnswer = decryptOneOffAADCipher(pKeySet, myEncrypt, TEST_AAD);
+        Assertions.assertEquals(pTest, myAnswer, "Failed AAD cache-cipher decrypt "+ pTest);
+        myAnswer = decryptCacheAADCipher(pKeySet, myEncrypt, TEST_AAD);
+        Assertions.assertEquals(pTest, myAnswer, "Failed AAD cache-cache decrypt "+ pTest);
     }
 
     /**
@@ -473,7 +550,6 @@ public class KeySetTest {
     private byte[] encryptCacheCipher(final FactoryKeySet pKeySet,
                                       final String pData) throws OceanusException {
         /* Access the keySet */
-        final GordianCoreKeySet myKeySet = (GordianCoreKeySet) pKeySet.getKeySet();
         final GordianKeySetCipher myCipher = pKeySet.getKeySetCipher();
 
         /* Encrypt string */
@@ -493,6 +569,73 @@ public class KeySetTest {
                 () -> myCipher.finish(myBytes,0, myBytes.length, myEncrypted2, 1), "Short output");
 
        /* return the result */
+        return myEncrypted2;
+    }
+
+    /**
+     * encrypt data via oneOff cipher.
+     * @param pKeySet the keySet
+     * @param pData the data to encrypt
+     * @param pAAD the AAD
+     * @return the encrypted data
+     * @throws OceanusException on error
+     */
+    private byte[] encryptOneOffAADCipher(final FactoryKeySet pKeySet,
+                                          final String pData,
+                                          final String pAAD) throws OceanusException {
+        /* Access the keySet */
+        final GordianCoreKeySet myKeySet = (GordianCoreKeySet) pKeySet.getKeySet();
+        final GordianKeySetAADCipher myCipher = myKeySet.createAADCipher();
+        final byte[] myAAD = pAAD == null
+                             ? null
+                             : TethysDataConverter.stringToByteArray(pAAD);
+
+        /* Encrypt string */
+        myCipher.initForEncrypt(myAAD);
+        final byte[] myBytes = TethysDataConverter.stringToByteArray(pData);
+        final byte[] myEncrypted = myCipher.finish(myBytes, 0, myBytes.length);
+
+        /* Check encryption length */
+        Assertions.assertEquals(GordianCoreKeySet.getAADEncryptionLength(myBytes.length),
+                    myEncrypted.length, "Incorrect encrypted length");
+
+        /* return the result */
+        return myEncrypted;
+    }
+
+    /**
+     * encrypt data via cached cipher.
+     * @param pKeySet the keySet
+     * @param pData the data to encrypt
+     * @return the encrypted data
+     * @throws OceanusException on error
+     */
+    private byte[] encryptCacheAADCipher(final FactoryKeySet pKeySet,
+                                         final String pData,
+                                         final String pAAD) throws OceanusException {
+        /* Access the keySet */
+        final GordianKeySetAADCipher myCipher = pKeySet.getKeySetAADCipher();
+        final byte[] myAAD = pAAD == null
+                             ? null
+                             : TethysDataConverter.stringToByteArray(pAAD);
+
+        /* Encrypt string */
+        myCipher.initForEncrypt(myAAD);
+        final byte[] myBytes = TethysDataConverter.stringToByteArray(pData);
+        final byte[] myEncrypted = myCipher.finish(myBytes, 0, myBytes.length);
+
+        /* Check that a second decryption works */
+        final byte[] myEncrypted2 = myCipher.finish(myBytes, 0, myBytes.length);
+
+        /* Check encryption length */
+        Assertions.assertEquals(GordianCoreKeySet.getAADEncryptionLength(myBytes.length),
+                myEncrypted.length, "Incorrect encrypted length");
+
+        /* Check for short output buffer */
+        Assertions.assertThrows(GordianLogicException.class,
+                () -> myCipher.finish(myBytes,0, myBytes.length, myEncrypted, 1), "Short output");
+
+        /* return the result */
         return myEncrypted2;
     }
 
@@ -542,8 +685,7 @@ public class KeySetTest {
     private String decryptCacheCipher(final FactoryKeySet pKeySet,
                                       final byte[] pData) throws OceanusException {
         /* Access the keySet */
-        final GordianCoreKeySet myKeySet = (GordianCoreKeySet) pKeySet.getKeySet();
-        final GordianKeySetCipher myCipher = myKeySet.createCipher();
+        final GordianKeySetCipher myCipher = pKeySet.getKeySetCipher();
 
         /* Decrypt string */
         myCipher.initForDecrypt();
@@ -555,7 +697,68 @@ public class KeySetTest {
 
         /* Check for short input buffer */
         Assertions.assertThrows(GordianDataException.class,
-                () -> myCipher.finish(pData,0, 16, myResult2, 0), "Short input");
+                () -> myCipher.finish(pData,0, myResult.length - 1, myResult2, 0), "Short input");
+
+        /* Check for short output buffer */
+        Assertions.assertThrows(GordianLogicException.class,
+                () -> myCipher.finish(pData,0, pData.length, myResult2, 1), "Short output");
+
+        /* return the result */
+        return TethysDataConverter.byteArrayToString(myResult);
+    }
+
+    /**
+     * decrypt data via oneOff cipher.
+     * @param pKeySet the keySet
+     * @param pData the data to decrypt
+     * @param pAAD the AAD
+     * @return the decrypted string
+     * @throws OceanusException on error
+     */
+    private String decryptOneOffAADCipher(final FactoryKeySet pKeySet,
+                                          final byte[] pData,
+                                          final String pAAD) throws OceanusException {
+        /* Access the keySet */
+        final GordianCoreKeySet myKeySet = (GordianCoreKeySet) pKeySet.getKeySet();
+        final GordianKeySetAADCipher myCipher = myKeySet.createAADCipher();
+        final byte[] myAAD = pAAD == null
+                             ? null
+                             : TethysDataConverter.stringToByteArray(pAAD);
+
+        /* Decrypt string */
+        myCipher.initForDecrypt(myAAD);
+        final byte[] myResult = myCipher.finish(pData, 0, pData.length);
+        return TethysDataConverter.byteArrayToString(myResult);
+    }
+
+    /**
+     * decrypt data via cached AAD cipher.
+     * @param pKeySet the keySet
+     * @param pData the data to decrypt
+     * @param pAAD the AAD
+     * @return the decrypted string
+     * @throws OceanusException on error
+     */
+    private String decryptCacheAADCipher(final FactoryKeySet pKeySet,
+                                         final byte[] pData,
+                                         final String pAAD) throws OceanusException {
+        /* Access the keySet */
+        final GordianKeySetAADCipher myCipher = pKeySet.getKeySetAADCipher();
+        final byte[] myAAD = pAAD == null
+                             ? null
+                             : TethysDataConverter.stringToByteArray(pAAD);
+
+        /* Decrypt string */
+        myCipher.initForDecrypt(myAAD);
+        final byte[] myResult = myCipher.finish(pData, 0, pData.length);
+
+        /* Check that a second decryption matches */
+        final byte[] myResult2 = myCipher.finish(pData, 0, pData.length);
+        Assertions.assertArrayEquals(myResult, myResult2, "Incorrect reset");
+
+        /* Check for short input buffer */
+        Assertions.assertThrows(GordianDataException.class,
+                () -> myCipher.finish(pData,0, myResult.length - 1, myResult2, 0), "Short input");
 
         /* Check for short output buffer */
         Assertions.assertThrows(GordianLogicException.class,

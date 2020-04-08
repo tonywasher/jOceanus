@@ -155,6 +155,15 @@ public final class GordianCoreKeySet
     }
 
     /**
+     * Obtain the encryption length for a length of data.
+     * @param pDataLength the dataLength
+     * @return the encryption length
+     */
+    public static int getAADEncryptionLength(final int pDataLength) {
+        return getEncryptionLength(pDataLength) + GordianCoreKeySetAADCipher.MACSIZE;
+    }
+
+    /**
      * Encryption overhead.
      * @return the encryption overhead
      */
@@ -274,6 +283,42 @@ public final class GordianCoreKeySet
         return myLen == myOutLen
                 ? myOutput
                 : Arrays.copyOf(myOutput, myLen);
+    }
+
+    @Override
+    public byte[] encryptAADBytes(final byte[] pBytes,
+                                  final byte[] pAAD) throws OceanusException {
+        /* Creat cipher and initialise to encrypt */
+        final GordianKeySetAADCipher myCipher = createAADCipher();
+        myCipher.initForEncrypt(pAAD);
+
+        /* Build the output buffer */
+        final int myOutLen = myCipher.getOutputLength(pBytes.length);
+        final byte[] myOutput = new byte[myOutLen];
+
+        /* build the and return the output */
+        final int myLen = theCipher.finish(pBytes, 0, pBytes.length, myOutput, 0);
+        return myLen == myOutLen
+               ? myOutput
+               : Arrays.copyOf(myOutput, myLen);
+    }
+
+    @Override
+    public byte[] decryptAADBytes(final byte[] pBytes,
+                                  final byte[] pAAD) throws OceanusException {
+        /* Creat cipher and initialise to encrypt */
+        final GordianKeySetAADCipher myCipher = createAADCipher();
+        myCipher.initForDecrypt(pAAD);
+
+        /* Build the output buffer */
+        final int myOutLen = myCipher.getOutputLength(pBytes.length);
+        final byte[] myOutput = new byte[myOutLen];
+
+        /* build the and return the output */
+        final int myLen = theCipher.finish(pBytes, 0, pBytes.length, myOutput, 0);
+        return myLen == myOutLen
+               ? myOutput
+               : Arrays.copyOf(myOutput, myLen);
     }
 
     @Override
