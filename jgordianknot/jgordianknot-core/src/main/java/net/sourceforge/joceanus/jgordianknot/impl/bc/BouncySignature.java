@@ -89,11 +89,10 @@ public final class BouncySignature {
          * @param pFactory the factory
          * @param pSpec the signatureSpec.
          * @param pDigest the digest
-         * @throws OceanusException on error
          */
         BouncyDigestSignature(final BouncyFactory pFactory,
                               final GordianSignatureSpec pSpec,
-                              final Digest pDigest) throws OceanusException {
+                              final Digest pDigest) {
             super(pFactory, pSpec);
             theDigest = new BouncyDigest(pSpec.getDigestSpec(), pDigest);
         }
@@ -119,11 +118,6 @@ public final class BouncySignature {
         @Override
         public void update(final byte pByte) {
             theDigest.update(pByte);
-        }
-
-        @Override
-        public void update(final byte[] pBytes) {
-            theDigest.update(pBytes, 0, pBytes.length);
         }
 
         @Override

@@ -168,18 +168,10 @@ public class GordianCoreKeySetCipher
 
     @Override
     public int getOutputLength(final int pLength) {
-        return getCipherOutputLength(pLength);
-    }
-
-    /**
-     * Obtain the cipher output length.
-     * @param pLength pInput data
-     * @return the length
-     */
-    private int getCipherOutputLength(final int pLength) {
         /* Handle encryption */
         if (encrypting) {
-            return GordianCoreKeySet.getEncryptionLength(pLength);
+            return hdrProcessed ? theCipher.getOutputLength(pLength)
+                                : GordianCoreKeySet.getEncryptionLength(pLength);
         }
 
         /* Allow for cacheSpace */
@@ -227,10 +219,12 @@ public class GordianCoreKeySetCipher
                                         final byte[] pOutput,
                                         final int pOutOffset) throws OceanusException {
         /* Check that the buffers are sufficient */
-        if (pBytes.length < (pLength + pOffset)) {
+        final int myInBufLen = pBytes == null ? 0 : pBytes.length;
+        if (myInBufLen < (pLength + pOffset)) {
             throw new GordianLogicException("Input buffer too short.");
         }
-        if (pOutput.length < (getOutputLength(pLength) + pOutOffset)) {
+        final int myOutBufLen = pOutput == null ? 0 : pOutput.length;
+        if (myOutBufLen < (getOutputLength(pLength) + pOutOffset)) {
             throw new GordianLogicException("Output buffer too short.");
         }
 
@@ -334,6 +328,25 @@ public class GordianCoreKeySetCipher
     @Override
     public int finish(final byte[] pOutput,
                       final int pOutOffset) throws OceanusException {
+        /* Check that the buffers are sufficient */
+        final int myOutBufLen = pOutput == null ? 0 : pOutput.length;
+        if (myOutBufLen < (getOutputLength(0) + pOutOffset)) {
+            throw new GordianLogicException("Output buffer too short.");
+        }
+
+        /* finish the cipher */
+        return doFinish(pOutput, pOutOffset);
+    }
+
+    /**
+     * Complete the Cipher operation and return final results.
+     * @param pOutput the output buffer to receive processed data
+     * @param pOutOffset offset within pOutput to write bytes to
+     * @return the number of bytes transferred to the output buffer
+     * @throws OceanusException on error
+     */
+    public int doFinish(final byte[] pOutput,
+                        final int pOutOffset) throws OceanusException {
         /* Finish the cipher */
         final int myLen = finishCipher(pOutput, pOutOffset);
 

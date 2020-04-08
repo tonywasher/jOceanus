@@ -40,7 +40,9 @@ public interface GordianConsumer {
      * Update the consumer with a byte array.
      * @param pBytes the bytes to update with.
      */
-    void update(byte[] pBytes);
+    default void update(final byte[] pBytes)  {
+        update(pBytes, 0, pBytes == null ? 0 : pBytes.length);
+    }
 
     /**
      * Reset the Consumer.

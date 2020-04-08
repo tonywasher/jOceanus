@@ -120,8 +120,8 @@ public class BouncyStreamKeyCipher
     }
 
     @Override
-    public int finish(final byte[] pOutput,
-                      final int pOutOffset) throws OceanusException {
+    public int doFinish(final byte[] pOutput,
+                        final int pOutOffset) throws OceanusException {
         /* Reset the cipher */
         theCipher.reset();
         return 0;

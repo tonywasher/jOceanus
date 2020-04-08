@@ -146,8 +146,8 @@ public class JcaAADCipher<T extends GordianKeySpec>
     }
 
     @Override
-    public int finish(final byte[] pOutput,
-                      final int pOutOffset) throws OceanusException {
+    public int doFinish(final byte[] pOutput,
+                        final int pOutOffset) throws OceanusException {
         /* Protect against exceptions */
         try {
             /* Finish the operation */

@@ -76,8 +76,9 @@ public interface GordianMac
      * Update the MAC, calculate and reset it.
      * @param pBytes the bytes to update with.
      * @return the MAC
+     * @throws OceanusException on error
      */
-    default byte[] finish(final byte[] pBytes) {
+    default byte[] finish(final byte[] pBytes) throws OceanusException {
         update(pBytes);
         return finish();
     }

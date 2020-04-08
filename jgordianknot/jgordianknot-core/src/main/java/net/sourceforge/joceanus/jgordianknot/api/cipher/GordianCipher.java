@@ -39,7 +39,7 @@ public interface GordianCipher {
      * @throws OceanusException on error
      */
     default byte[] update(final byte[] pBytes) throws OceanusException {
-        return update(pBytes, 0, pBytes.length);
+        return update(pBytes, 0, pBytes == null ? 0 : pBytes.length);
     }
 
     /**
@@ -134,7 +134,7 @@ public interface GordianCipher {
      * @throws OceanusException on error
      */
     default byte[] finish(final byte[] pBytes) throws OceanusException {
-        return finish(pBytes, 0, pBytes.length);
+        return finish(pBytes, 0, pBytes == null ? 0 : pBytes.length);
     }
 
     /**

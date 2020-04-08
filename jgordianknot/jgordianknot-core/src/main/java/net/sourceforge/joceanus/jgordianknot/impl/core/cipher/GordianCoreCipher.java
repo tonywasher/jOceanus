@@ -264,10 +264,12 @@ public abstract class GordianCoreCipher<T extends GordianKeySpec>
                                        final byte[] pOutput,
                                        final int pOutOffset) throws OceanusException {
         /* Check that the buffers are sufficient */
-        if (pBytes.length < (pLength + pOffset)) {
+        final int myInBufLen = pBytes == null ? 0 : pBytes.length;
+        if (myInBufLen < (pLength + pOffset)) {
             throw new GordianLogicException("Input buffer too short.");
         }
-        if (pOutput.length < (getOutputLength(pLength) + pOutOffset)) {
+        final int myOutBufLen = pOutput == null ? 0 : pOutput.length;
+        if (myOutBufLen < (getOutputLength(pLength) + pOutOffset)) {
             throw new GordianLogicException("Output buffer too short.");
         }
 
@@ -280,6 +282,29 @@ public abstract class GordianCoreCipher<T extends GordianKeySpec>
         return pOutOffset < pOffset + pLength
             && pOffset < pOutOffset + getOutputLength(pLength);
     }
+
+    @Override
+    public int finish(final byte[] pOutput,
+                      final int pOutOffset) throws OceanusException {
+        /* Check that the buffers are sufficient */
+        final int myOutBufLen = pOutput == null ? 0 : pOutput.length;
+        if (myOutBufLen < (getOutputLength(0) + pOutOffset)) {
+            throw new GordianLogicException("Output buffer too short.");
+        }
+
+        /* finish the cipher */
+        return doFinish(pOutput, pOutOffset);
+    }
+
+    /**
+     * Complete the Cipher operation and return final results.
+     * @param pOutput the output buffer to receive processed data
+     * @param pOutOffset offset within pOutput to write bytes to
+     * @return the number of bytes transferred to the output buffer
+     * @throws OceanusException on error
+     */
+    public abstract int doFinish(byte[] pOutput,
+                                 int pOutOffset) throws OceanusException;
 
     /**
      * Check that the key matches the keyType.

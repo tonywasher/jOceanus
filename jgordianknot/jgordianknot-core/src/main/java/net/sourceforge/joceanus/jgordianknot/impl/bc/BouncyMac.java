@@ -113,21 +113,15 @@ public final class BouncyMac
     }
 
     @Override
-    public void update(final byte[] pBytes,
-                       final int pOffset,
-                       final int pLength) {
+    public void doUpdate(final byte[] pBytes,
+                         final int pOffset,
+                         final int pLength) {
         theMac.update(pBytes, pOffset, pLength);
     }
 
     @Override
     public void update(final byte pByte) {
         theMac.update(pByte);
-    }
-
-    @Override
-    public void update(final byte[] pBytes) {
-        final int myLen = pBytes.length;
-        theMac.update(pBytes, 0, myLen);
     }
 
     @Override
@@ -143,8 +137,8 @@ public final class BouncyMac
     }
 
     @Override
-    public int finish(final byte[] pBuffer,
-                      final int pOffset) {
+    public int doFinish(final byte[] pBuffer,
+                        final int pOffset) {
         return theMac.doFinal(pBuffer, pOffset);
     }
 }

@@ -199,16 +199,6 @@ public abstract class JcaSignature
     }
 
     @Override
-    public void update(final byte[] pBytes) {
-        try {
-            theSigner.update(pBytes, 0, pBytes.length);
-        } catch (SignatureException e) {
-            throw new IllegalArgumentException(e);
-        }
-    }
-
-
-    @Override
     public byte[] sign() throws OceanusException {
         /* Check that we are in signing mode */
         checkMode(GordianSignatureMode.SIGN);

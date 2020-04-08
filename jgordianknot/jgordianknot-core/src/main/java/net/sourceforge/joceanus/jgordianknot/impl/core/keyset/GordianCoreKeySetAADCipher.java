@@ -315,8 +315,8 @@ public class GordianCoreKeySetAADCipher
     }
 
     @Override
-    public int finish(final byte[] pOutput,
-                      final int pOutOffset) throws OceanusException {
+    public int doFinish(final byte[] pOutput,
+                        final int pOutOffset) throws OceanusException {
         /* Finish the cipher */
         int myLen = finishCipher(pOutput, pOutOffset);
 
@@ -404,8 +404,9 @@ public class GordianCoreKeySetAADCipher
 
     /**
      * Complete AEAD Mac input.
+     * @throws OceanusException on error
      */
-    private void completeAEADMac() {
+    private void completeAEADMac() throws OceanusException {
         /* Pad to boundary */
         padToBoundary(aeadLength);
 
@@ -415,8 +416,9 @@ public class GordianCoreKeySetAADCipher
 
     /**
      * Complete Mac data input.
+     * @throws OceanusException on error
      */
-    private void completeDataMac() {
+    private void completeDataMac() throws OceanusException {
         /* Pad to boundary */
         padToBoundary(encryptedLength);
 
@@ -435,8 +437,9 @@ public class GordianCoreKeySetAADCipher
      * Pad to boundary.
      *
      * @param pDataLen the length of the data to pad
+     * @throws OceanusException on error
      */
-    private void padToBoundary(final long pDataLen) {
+    private void padToBoundary(final long pDataLen) throws OceanusException {
         /* Pad to boundary */
         final int xtra = (int) pDataLen % MACSIZE;
         if (xtra != 0) {

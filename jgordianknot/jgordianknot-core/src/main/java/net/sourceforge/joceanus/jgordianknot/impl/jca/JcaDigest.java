@@ -54,15 +54,10 @@ public final class JcaDigest
     }
 
     @Override
-    public void update(final byte[] pBytes,
-                       final int pOffset,
-                       final int pLength) {
+    public void doUpdate(final byte[] pBytes,
+                         final int pOffset,
+                         final int pLength) {
         theDigest.update(pBytes, pOffset, pLength);
-    }
-
-    @Override
-    public void update(final byte[] pBytes) {
-        theDigest.update(pBytes);
     }
 
     @Override
@@ -86,8 +81,8 @@ public final class JcaDigest
     }
 
     @Override
-    public int finish(final byte[] pBuffer,
-                      final int pOffset) throws OceanusException {
+    public int doFinish(final byte[] pBuffer,
+                        final int pOffset) throws OceanusException {
         try {
             return theDigest.digest(pBuffer, pOffset, getDigestSize());
         } catch (DigestException e) {

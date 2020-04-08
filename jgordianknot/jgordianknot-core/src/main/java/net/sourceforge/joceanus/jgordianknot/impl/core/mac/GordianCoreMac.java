@@ -99,4 +99,49 @@ public abstract class GordianCoreMac
         theParameters.processParameters(pParams);
         checkValidKey(getKey());
     }
+
+    @Override
+    public void update(final byte[] pBytes,
+                       final int pOffset,
+                       final int pLength) {
+        /* Check that the buffers are sufficient */
+        final int myInBufLen = pBytes == null ? 0 : pBytes.length;
+        if (myInBufLen < (pLength + pOffset)) {
+            throw new IllegalArgumentException("Input buffer too short.");
+        }
+
+        /* Process the bytes */
+        doUpdate(pBytes, pOffset, pLength);
+    }
+
+    /**
+     * Update the mac with a portion of a byte array.
+     * @param pBytes the bytes to update with.
+     * @param pOffset the offset of the data within the byte array
+     * @param pLength the length of the data to use
+     */
+    public abstract void doUpdate(byte[] pBytes,
+                                  int pOffset,
+                                  int pLength);
+    @Override
+    public int finish(final byte[] pBuffer,
+                      final int pOffset) throws OceanusException {
+        /* Check that the buffers are sufficient */
+        if (pBuffer.length < (getMacSize() + pOffset)) {
+            throw new IllegalArgumentException("Output buffer too short.");
+        }
+
+        /* Finish the digest */
+        return doFinish(pBuffer, pOffset);
+    }
+
+    /**
+     * Calculate the Mac, and return it in the buffer provided.
+     * @param pBuffer the buffer to return the digest in.
+     * @param pOffset the offset in the buffer to store the digest.
+     * @return the number of bytes placed into buffer
+     * @throws OceanusException on error
+     */
+    public abstract int doFinish(byte[] pBuffer,
+                                 int pOffset) throws OceanusException;
 }
