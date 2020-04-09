@@ -137,54 +137,63 @@ public class GordianPersonalisation {
             myPhraseBytes = TethysDataConverter.stringToByteArray(getHostName());
         }
 
-        /* Initialise hashes */
-        final byte[] myConfig = new byte[HASH_LEN.getByteLength()];
-        for (int i = 0; i < myDigests.length; i++) {
-            /* Initialise the digests */
-            final GordianDigest myDigest = myDigests[i];
-            myDigest.update(myPersonalBytes);
-            myDigest.update(myPhraseBytes);
+        /* Protect against exceptions */
+        try {
+            /* Initialise hashes */
+            final byte[] myConfig = new byte[HASH_LEN.getByteLength()];
+            for (int i = 0; i < myDigests.length; i++) {
+                /* Initialise the digests */
+                final GordianDigest myDigest = myDigests[i];
+                myDigest.update(myPersonalBytes);
+                myDigest.update(myPhraseBytes);
 
-            /* Finish the update and store the buffer */
-            final byte[] myResult = myDigest.finish();
-            TethysDataConverter.buildHashResult(myConfig, myResult);
-            myHashes[i] = myResult;
-        }
+                /* Finish the update and store the buffer */
+                final byte[] myResult = myDigest.finish();
+                TethysDataConverter.buildHashResult(myConfig, myResult);
+                myHashes[i] = myResult;
+            }
 
-        /* Determine the number of iterations */
-        final int myIterations = pFactory.isInternal()
-                                 ? INTERNAL_ITERATIONS
-                                 : DEFAULT_ITERATIONS;
+            /* Determine the number of iterations */
+            final int myIterations = pFactory.isInternal()
+                                     ? INTERNAL_ITERATIONS
+                                     : DEFAULT_ITERATIONS;
 
-        /* Loop the required amount of times to cross-fertilise */
-        for (int i = 0; i < myIterations; i++) {
-            /* Update all the digests */
-            for (final GordianDigest myDigest : myDigests) {
-                /* Update with the results */
-                for (int k = 0; k < myDigests.length; k++) {
-                    myDigest.update(myHashes[k]);
+            /* Loop the required amount of times to cross-fertilise */
+            for (int i = 0; i < myIterations; i++) {
+                /* Update all the digests */
+                for (final GordianDigest myDigest : myDigests) {
+                    /* Update with the results */
+                    for (int k = 0; k < myDigests.length; k++) {
+                        myDigest.update(myHashes[k]);
+                    }
+                }
+
+                /* Finish all the digests */
+                for (int j = 0; j < myDigests.length; j++) {
+                    /* Update with the results */
+                    final GordianDigest myDigest = myDigests[j];
+                    final byte[] myResult = myHashes[j];
+                    myDigest.finish(myResult, 0);
+                    TethysDataConverter.buildHashResult(myConfig, myResult);
                 }
             }
 
-            /* Finish all the digests */
-            for (int j = 0; j < myDigests.length; j++) {
-                /* Update with the results */
-                final GordianDigest myDigest = myDigests[j];
-                final byte[] myResult = myHashes[j];
-                myDigest.finish(myResult, 0);
-                TethysDataConverter.buildHashResult(myConfig, myResult);
+            /* Finally build the initVector mask */
+            final byte[] myInitVec = new byte[HASH_LEN.getByteLength()];
+            for (int i = 0; i < myDigests.length; i++) {
+                TethysDataConverter.buildHashResult(myInitVec, myHashes[i]);
+            }
+
+            /* Return the array */
+            return new byte[][]
+                    {myConfig, myInitVec};
+
+            /* Clear intermediate arrays */
+        } finally {
+            for (int i = 0; i < myDigests.length; i++) {
+                Arrays.fill(myHashes[i], (byte) 0);
             }
         }
-
-        /* Finally build the initVector mask */
-        final byte[] myInitVec = new byte[HASH_LEN.getByteLength()];
-        for (int i = 0; i < myDigests.length; i++) {
-            TethysDataConverter.buildHashResult(myInitVec, myHashes[i]);
-        }
-
-        /* Return the array */
-        return new byte[][]
-                { myConfig, myInitVec };
     }
 
     /**
@@ -199,9 +208,8 @@ public class GordianPersonalisation {
     /**
      * Update a MAC with personalisation.
      * @param pMac the MAC
-     * @throws OceanusException on error
-     */
-    public void updateMac(final GordianMac pMac) throws OceanusException {
+      */
+    public void updateMac(final GordianMac pMac) {
         pMac.update(thePersonalisation);
         pMac.update(theInitVector);
     }

@@ -53,7 +53,7 @@ public final class JcaKeyGenerator<T extends GordianKeySpec>
         theGenerator = pGenerator;
 
         /* Initialise the generator */
-        theGenerator.init(getKeyLength(), getRandom());
+        theGenerator.init(pKeyType.getKeyLength().getLength(), getRandom());
     }
 
     @Override

@@ -17,6 +17,7 @@
 package net.sourceforge.joceanus.jgordianknot.impl.core.key;
 
 import java.security.SecureRandom;
+import java.util.Arrays;
 import java.util.Random;
 
 import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigestType;
@@ -27,6 +28,7 @@ import net.sourceforge.joceanus.jgordianknot.api.mac.GordianMac;
 import net.sourceforge.joceanus.jgordianknot.api.mac.GordianMacFactory;
 import net.sourceforge.joceanus.jgordianknot.api.mac.GordianMacSpec;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianByteArrayInteger;
+import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianDataException;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianPersonalisation;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianPersonalisation.GordianPersonalId;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianRandomSource;
@@ -86,11 +88,6 @@ public abstract class GordianCoreKeyGenerator<T extends GordianKeySpec>
         return theKeyType;
     }
 
-    @Override
-    public int getKeyLength() {
-        return theKeyLength;
-    }
-
     /**
      * Obtain random generator.
      * @return the generator
@@ -147,26 +144,46 @@ public abstract class GordianCoreKeyGenerator<T extends GordianKeySpec>
         initMacKeyBytes(myMac, pSecret);
         myMacs[1] = myMac;
 
-        /* while we need to generate more bytes */
-        final GordianByteArrayInteger mySection = new GordianByteArrayInteger();
-        while (myBuilt < myKeyLen) {
-            /* Build the key part */
-            final byte[] myKeyPart = buildCipherSection(myMacs, mySection.iterate(), pInitVector);
+        /* Protect against exceptions */
+        try {
+            /* while we need to generate more bytes */
+            final GordianByteArrayInteger mySection = new GordianByteArrayInteger();
+            while (myBuilt < myKeyLen) {
+                /* Build the key part */
+                final byte[] myKeyPart = buildCipherSection(myMacs, mySection.iterate(), pInitVector);
 
-            /* Determine how many bytes of this hash should be used */
-            int myNeeded = myKeyLen
-                    - myBuilt;
-            if (myNeeded > myKeyPart.length) {
-                myNeeded = myKeyPart.length;
+                /* Determine how many bytes of this hash should be used */
+                int myNeeded = myKeyLen
+                        - myBuilt;
+                if (myNeeded > myKeyPart.length) {
+                    myNeeded = myKeyPart.length;
+                }
+
+                /* Copy bytes across */
+                System.arraycopy(myKeyPart, 0, myKeyBytes, myBuilt, myNeeded);
+                myBuilt += myNeeded;
+                Arrays.fill(myKeyPart, (byte) 0);
             }
 
-            /* Copy bytes across */
-            System.arraycopy(myKeyPart, 0, myKeyBytes, myBuilt, myNeeded);
-            myBuilt += myNeeded;
+            /* Return the new key */
+            return buildKeyFromBytes(myKeyBytes);
+
+            /* Clear build buffer */
+        } finally {
+            Arrays.fill(myKeyBytes, (byte) 0);
+        }
+    }
+
+    @Override
+    public <X extends GordianKeySpec> GordianKey<T> translateKey(final GordianKey<X> pSource) throws OceanusException {
+        /* Check that the keyLengths are compatible */
+        if (pSource.getKeyType().getKeyLength() != theKeyType.getKeyLength()) {
+            throw new GordianDataException("Incorrect length for key");
         }
 
-        /* Return the new key */
-        return buildKeyFromBytes(myKeyBytes);
+        /* Build the key */
+        final GordianCoreKey<X> mySource = (GordianCoreKey<X>) pSource;
+        return buildKeyFromBytes(mySource.getKeyBytes());
     }
 
     /**
@@ -204,38 +221,46 @@ public abstract class GordianCoreKeyGenerator<T extends GordianKeySpec>
         final GordianPersonalisation myPersonal = theFactory.getPersonalisation();
         final byte[] myKeyLen = TethysDataConverter.integerToByteArray(theKeyLength);
 
-        /* Update prime with personalisation, algorithm and section */
-        myPersonal.updateMac(myPrime);
-        myPrime.update(myAlgo);
-        myPrime.update(myKeyLen);
-        myPrime.update(pSection);
+        /* Protect against exceptions */
+        try {
+            /* Update prime with personalisation, algorithm and section */
+            myPersonal.updateMac(myPrime);
+            myPrime.update(myAlgo);
+            myPrime.update(myKeyLen);
+            myPrime.update(pSection);
 
-        /* Update alt with personalisation, algorithm and section */
-        myPersonal.updateMac(myAlt);
-        myAlt.update(myAlgo);
-        myAlt.update(myKeyLen);
-        myAlt.update(pSection);
+            /* Update alt with personalisation, algorithm and section */
+            myPersonal.updateMac(myAlt);
+            myAlt.update(myAlgo);
+            myAlt.update(myKeyLen);
+            myAlt.update(pSection);
 
-        /* Loop through the iterations */
-        for (int i = 0; i < BUILD_ITERATIONS; i++) {
-            /* Calculate alternate hash */
-            myAlt.update(myAltInput);
-            myAltInput = myAltHash;
-            myAlt.finish(myAltHash, 0);
+            /* Loop through the iterations */
+            for (int i = 0; i < BUILD_ITERATIONS; i++) {
+                /* Calculate alternate hash */
+                myAlt.update(myAltInput);
+                myAltInput = myAltHash;
+                myAlt.finish(myAltHash, 0);
 
-            /* Add the existing result to hash */
-            myPrime.update(myPrimeInput);
-            myPrime.update(myAltHash);
-            myPrimeInput = myPrimeHash;
+                /* Add the existing result to hash */
+                myPrime.update(myPrimeInput);
+                myPrime.update(myAltHash);
+                myPrimeInput = myPrimeHash;
 
-            /* Calculate MAC and place results into hash */
-            myPrime.finish(myPrimeHash, 0);
+                /* Calculate MAC and place results into hash */
+                myPrime.finish(myPrimeHash, 0);
 
-            /* Fold into results */
-            TethysDataConverter.buildHashResult(myResult, myPrimeHash);
+                /* Fold into results */
+                TethysDataConverter.buildHashResult(myResult, myPrimeHash);
+            }
+
+            /* Return the result */
+            return myResult;
+
+            /* Clear the intermediate buffers */
+        } finally {
+            Arrays.fill(myPrimeHash, (byte) 0);
+            Arrays.fill(myAltHash, (byte) 0);
         }
-
-        /* Return the result */
-        return myResult;
     }
 }

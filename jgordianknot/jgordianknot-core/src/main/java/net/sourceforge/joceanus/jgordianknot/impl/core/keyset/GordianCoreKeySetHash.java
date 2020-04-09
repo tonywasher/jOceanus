@@ -332,59 +332,70 @@ public final class GordianCoreKeySetHash
         byte[] myAlternateInput = mySaltBytes;
         byte[] mySecretInput = mySaltBytes;
 
-        /* Update each Hash with the personalisation */
-        myPersonal.updateMac(myPrimeMac);
-        myPersonal.updateMac(myAlternateMac);
-        myPersonal.updateMac(mySecretMac);
+        /* Protect from exceptions */
+        try {
+            /* Update each Hash with the personalisation */
+            myPersonal.updateMac(myPrimeMac);
+            myPersonal.updateMac(myAlternateMac);
+            myPersonal.updateMac(mySecretMac);
 
-        /* Update each Hash with the loops */
-        myPrimeMac.update(myLoops);
-        myAlternateMac.update(myLoops);
-        mySecretMac.update(myLoops);
+            /* Update each Hash with the loops */
+            myPrimeMac.update(myLoops);
+            myAlternateMac.update(myLoops);
+            mySecretMac.update(myLoops);
 
-        /* Loop through the iterations */
-        for (int iPass = 0; iPass < iFinal; iPass++) {
-            /* Update the prime Mac */
-            myPrimeMac.update(myPrimeInput);
+            /* Loop through the iterations */
+            for (int iPass = 0; iPass < iFinal; iPass++) {
+                /* Update the prime Mac */
+                myPrimeMac.update(myPrimeInput);
 
-            /* Update the alternate Mac */
-            myAlternateMac.update(myAlternateInput);
+                /* Update the alternate Mac */
+                myAlternateMac.update(myAlternateInput);
 
-            /* Update the secret Mac */
-            mySecretMac.update(mySecretInput);
-            mySecretMac.update(myPrimeInput);
-            mySecretMac.update(myAlternateInput);
+                /* Update the secret Mac */
+                mySecretMac.update(mySecretInput);
+                mySecretMac.update(myPrimeInput);
+                mySecretMac.update(myAlternateInput);
 
-            /* Update inputs */
-            myPrimeInput = myPrimeHash;
-            myAlternateInput = myAlternateHash;
-            mySecretInput = mySecretHash;
+                /* Update inputs */
+                myPrimeInput = myPrimeHash;
+                myAlternateInput = myAlternateHash;
+                mySecretInput = mySecretHash;
 
-            /* Recalculate hashes and combine them */
-            myPrimeMac.finish(myPrimeHash, 0);
-            TethysDataConverter.buildHashResult(myPrimeBytes, myPrimeHash);
-            myAlternateMac.finish(myAlternateHash, 0);
-            TethysDataConverter.buildHashResult(myAlternateBytes, myAlternateHash);
-            mySecretMac.finish(mySecretHash, 0);
-            TethysDataConverter.buildHashResult(mySecretBytes, mySecretHash);
+                /* Recalculate hashes and combine them */
+                myPrimeMac.finish(myPrimeHash, 0);
+                TethysDataConverter.buildHashResult(myPrimeBytes, myPrimeHash);
+                myAlternateMac.finish(myAlternateHash, 0);
+                TethysDataConverter.buildHashResult(myAlternateBytes, myAlternateHash);
+                mySecretMac.finish(mySecretHash, 0);
+                TethysDataConverter.buildHashResult(mySecretBytes, mySecretHash);
+            }
+
+            /* Combine the Primary and Alternate hashes to form the initVector */
+            myDigest.update(myPrimeHash);
+            myDigest.update(myAlternateHash);
+            final byte[] myInitVector = myDigest.finish();
+
+            /* Combine the Primary and Alternate bytes to form the external hash */
+            myDigest.update(myPrimeBytes);
+            myDigest.update(myAlternateBytes);
+            final byte[] myExternalHash = myDigest.finish();
+
+            /* Create the external hash */
+            final byte[] myHashBytes = theRecipe.buildExternal(pPassword.length, myExternalHash);
+
+            /* Return to caller */
+            return new byte[][]
+                    {myHashBytes, mySecretBytes, myInitVector};
+
+            /* Clear intermediate arrays */
+        } finally {
+            Arrays.fill(myPrimeHash, (byte) 0);
+            Arrays.fill(myPrimeBytes, (byte) 0);
+            Arrays.fill(myAlternateHash, (byte) 0);
+            Arrays.fill(myAlternateBytes, (byte) 0);
+            Arrays.fill(mySecretHash, (byte) 0);
         }
-
-        /* Combine the Primary and Alternate hashes to form the initVector */
-        myDigest.update(myPrimeHash);
-        myDigest.update(myAlternateHash);
-        final byte[] myInitVector = myDigest.finish();
-
-        /* Combine the Primary and Alternate bytes to form the external hash */
-        myDigest.update(myPrimeBytes);
-        myDigest.update(myAlternateBytes);
-        final byte[] myExternalHash = myDigest.finish();
-
-        /* Create the external hash */
-        final byte[] myHashBytes = theRecipe.buildExternal(pPassword.length, myExternalHash);
-
-        /* Return to caller */
-        return new byte[][]
-                {myHashBytes, mySecretBytes, myInitVector};
     }
 
     @Override
