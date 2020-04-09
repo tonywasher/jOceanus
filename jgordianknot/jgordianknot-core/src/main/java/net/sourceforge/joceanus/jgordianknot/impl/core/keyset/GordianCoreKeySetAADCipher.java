@@ -437,9 +437,8 @@ public class GordianCoreKeySetAADCipher
      * Pad to boundary.
      *
      * @param pDataLen the length of the data to pad
-     * @throws OceanusException on error
      */
-    private void padToBoundary(final long pDataLen) throws OceanusException {
+    private void padToBoundary(final long pDataLen) {
         /* Pad to boundary */
         final int xtra = (int) pDataLen % MACSIZE;
         if (xtra != 0) {

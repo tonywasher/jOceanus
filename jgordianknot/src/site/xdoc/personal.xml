@@ -8,7 +8,7 @@
             <p>GordianKnot can be personalised to ensure differing securitySpaces. The personalisation is achieved via a SecurityPhrase which is processed
                 via a set of digests to produce two 512-bit arrays (<strong>I</strong> and <strong>IV</strong>) which are then utilised in the various algorithms.</p>
             <p><strong>I</strong> is often split into 16 integers written as <strong>I<sub>1</sub></strong> through <strong>I<sub>16</sub></strong>. Similarly
-                <strong>IV</strong> is often split into 4 128-bit arrays written as <strong>I<sub>1</sub></strong> through <strong>IV<sub>4</sub></strong></p>
+                <strong>IV</strong> is often split into 4 128-bit arrays written as <strong>IV<sub>1</sub></strong> through <strong>IV<sub>4</sub></strong></p>
         </section>
         <subsection name="Sample">
             <source>
@@ -35,7 +35,7 @@
             </ol>
         </section>
         <section name="Seeded Random">
-            <p>Several algorithms in <strong>GordianKnot</strong> require slection of various algorithms in a deterministic fashion based
+            <p>Several algorithms in <strong>GordianKnot</strong> require selection of various algorithms in a deterministic fashion based
                 on a 4-byte seed <strong>S</strong>. This is performed by creating a 6-byte seed from the combination of the 4-byte seed and
                 one of the <strong>I<sub>n</sub></strong> values, specific to the algorithm. This 6-byte seed in used to instantiate an instance of
                 the deterministic <strong>Random</strong> class and algorithm selection is performed via this seeded Random instance.</p>

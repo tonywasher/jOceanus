@@ -458,8 +458,8 @@ public final class GordianCoreKeySet
      * @param pBytes the output bytes
      * @return the external form
      */
-    private byte[] buildExternal(final GordianKeySetRecipe pRecipe,
-                                 final byte[] pBytes) {
+    private static byte[] buildExternal(final GordianKeySetRecipe pRecipe,
+                                        final byte[] pBytes) {
         final byte[] myOutput = new byte[GordianKeySetRecipe.HDRLEN + pBytes.length];
         pRecipe.buildHeader(myOutput);
         System.arraycopy(pBytes, 0, myOutput, GordianKeySetRecipe.HDRLEN, pBytes.length);

@@ -16,6 +16,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jgordianknot.junit.regression;
 
+import java.security.SecureRandom;
 import java.util.Arrays;
 import java.util.stream.Stream;
 
@@ -815,8 +816,9 @@ public class KeySetTest {
         /* Access the keys */
         final GordianKeySet myKeySet = pKeySet.getKeySet();
 
-        /* Creat the test data */
+        /* Create the test data */
         final byte[] myData = new byte[1000];
+        new SecureRandom().nextBytes(myData);
 
         /* Loop through encrypt/decrypt */
         final long myStart = System.nanoTime();

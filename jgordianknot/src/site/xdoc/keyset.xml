@@ -36,7 +36,7 @@
                     <li>The first encryption is performed on the message <strong>M</strong> using <strong>K<sub>1</sub></strong> in <strong>SIC</strong> mode
                         using <strong>V<sub>1</sub></strong> as the initialisation vector to create <strong>C<sub>1</sub></strong></li>
                     <li>The second encryption is performed on <strong>C<sub>1</sub></strong> using <strong>K<sub>2</sub></strong> in
-                        <strong>ECB</strong> mode with <strong>TBC</strong> padding to create <strong>C<sub>2</sub></strong>.</li>
+                        <strong>ECB</strong> mode with <strong>PKCS7</strong> padding to create <strong>C<sub>2</sub></strong>.</li>
                     <li>Further intermediate encryptions are performed on <strong>C<sub>x-1</sub></strong> using <strong>K<sub>x</sub></strong>
                         in <strong>ECB</strong> mode with no padding to produce <strong>C<sub>x</sub></strong>.</li>
                     <li>The final encryption is performed on <strong>C<sub>n-1</sub></strong> using <strong>K<sub>n</sub></strong> in <strong>SIC</strong> mode
@@ -75,8 +75,8 @@
                     The Mac used is a raw <strong>Poly1305</strong> instance, and the algorithm is as follows.</p>
                 <ol>
                     <li>A random 512-bit digest <strong>D</strong> is selected from the seededRandom used to select keys for the keySet algorithm.</li>
-                    <li>A random SymKey <strong>K<sub>S</sub></strong> is selected from the keySet via the seededRandom.
-                        Note that this is distinct from those used for encryption.</li>
+                    <li>A random SymKey <strong>K<sub>S</sub></strong> is selected via the seededRandom from the keys in the keySet that have not been
+                        used for the encryption.</li>
                     <li>Two input values <strong>X<sub>1</sub></strong> and <strong>X<sub>2</sub></strong> are calculated by xor-ing <strong>V</strong> with
                         <strong>IV<sub>3</sub></strong> and <strong>IV<sub>4</sub></strong> respectively</li>
                     <li>The input values are encrypted using <strong>K<sub>S</sub></strong> in <strong>ECB</strong> mode with no padding to produce
@@ -85,16 +85,17 @@
                     <li>The digest <strong>D</strong> is calculated on the plainText</li>
                     <li>The Mac is calculated on data in a similar fashion to ChaCha20Poly1305 with minor differences as follows
                         <ul>
-                            <li>The AAD data</li>
+                            <li>The AAD data <strong>A</strong></li>
                             <li>From 0 to 15 zeroes to bring data up to 16-byte boundary</li>
-                            <li>The cipherText</li>
+                            <li>The cipherText <strong>C</strong></li>
                             <li>From 0 to 15 zeroes to bring data up to 16-byte boundary</li>
                             <li>AAD dataLength as 8-byte big-endian long</li>
                             <li>PlainText dataLength as 8-byte big-endian long</li>
                             <li>The result of the digest <strong>D</strong></li>
                         </ul>
                     </li>
-                    <li>Finally the Mac result is encrypted using <strong>K<sub>S</sub></strong> in <strong>ECB</strong> mode with no padding.</li>
+                    <li>Finally the Mac result <strong>M</strong> is encrypted using <strong>K<sub>S</sub></strong> in <strong>ECB</strong> mode with no padding
+                        to produce <strong>M<sub>K</sub></strong>, and the result in the concatenation of <strong>C||M<sub>K</sub></strong></li>
                 </ol>
             </subsection>
             <subsection name="Sample">

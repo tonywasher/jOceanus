@@ -57,7 +57,7 @@ final class GordianMultiCipher
     /**
      * The default buffer size.
      */
-    private static final int BUFSIZE = 128;
+    private static final int BUFSIZE = GordianLength.LEN_128.getByteLength();
 
     /**
      * The factory.
@@ -82,7 +82,7 @@ final class GordianMultiCipher
     /**
      * The processing buffers.
      */
-    private final byte[][] theBuffers = new byte[2][BUFSIZE];
+    private final byte[][] theBuffers = new byte[2][BUFSIZE << 1];
 
     /**
      * Constructor.
@@ -119,6 +119,54 @@ final class GordianMultiCipher
                       final int pLength,
                       final byte[] pOutput,
                       final int pOutOffset) throws OceanusException {
+        /* Protect against exceptions */
+        try {
+            /* Initialise counters */
+            int myRemaining = pLength;
+            int myOffset = pOffset;
+            int myOutOffset = pOutOffset;
+            int myProcessed = 0;
+
+            /* While we have more data to process */
+            while (myRemaining > 0) {
+                /* Determine how many bytes to process */
+                final int myInputLen = Math.min(myRemaining, BUFSIZE);
+
+                /* update the next block */
+                final int myDataLen = processBlock(pBytes, myOffset, myInputLen, pOutput, myOutOffset);
+
+                /* Update counters */
+                myOffset += myInputLen;
+                myRemaining -= myInputLen;
+                myOutOffset += myDataLen;
+                myProcessed += myDataLen;
+            }
+
+            /* Return the number of bytes that were output */
+            return myProcessed;
+
+        } finally {
+            /* Clear the work buffers */
+            Arrays.fill(theBuffers[0], (byte) 0);
+            Arrays.fill(theBuffers[1], (byte) 0);
+        }
+    }
+
+    /**
+     * Process a block of data through the ciphers.
+     * @param pBytes Bytes to update cipher with
+     * @param pOffset offset within pBytes to read bytes from
+     * @param pLength length of data to update with
+     * @param pOutput the output buffer to receive processed data
+     * @param pOutOffset offset within pOutput to write bytes to
+     * @return the length of data written to the output buffer
+     * @throws OceanusException on error
+     */
+    private int processBlock(final byte[] pBytes,
+                             final int pOffset,
+                             final int pLength,
+                             final byte[] pOutput,
+                             final int pOutOffset) throws OceanusException {
         /* Access initial buffer */
         byte[] mySource = pBytes;
         int myBufIndex = 0;
@@ -154,17 +202,10 @@ final class GordianMultiCipher
             myOutput = theBuffers[myBufIndex];
         }
 
-        /* Check bounds of output array */
-        if (pOutput.length < pOutOffset + myDataLen) {
-            Arrays.fill(mySource, (byte) 0);
-            throw new GordianDataException("Buffer too short");
-        }
-
         /* If we have data */
         if (myDataLen > 0) {
             /* Copy data to final buffer */
             System.arraycopy(mySource, 0, pOutput, pOutOffset, myDataLen);
-            Arrays.fill(mySource, (byte) 0);
         }
 
         /* Return the number of bytes that were output */
@@ -174,53 +215,54 @@ final class GordianMultiCipher
     @Override
     public int finish(final byte[] pOutput,
                       final int pOutOffset) throws OceanusException {
-        /* Access initial buffers */
+            /* Access initial buffers */
         int myDataLen = 0;
         int myBufIndex = 0;
         byte[] myOutput = theBuffers[myBufIndex];
         byte[] mySource = myOutput;
 
-        /* Loop through the ciphers */
-        for (final GordianSymCipher myCipher : theCiphers) {
-            /* Determine length of next output */
-            final int myNextLen = myCipher.getOutputLength(myDataLen);
+        /* Protect against exceptions */
+        try {
+            /* Loop through the ciphers */
+            for (final GordianSymCipher myCipher : theCiphers) {
+                /* Determine length of next output */
+                final int myNextLen = myCipher.getOutputLength(myDataLen);
 
-            /* If there is no possible output then skip to next cipher */
-            if (myNextLen == 0) {
-                myDataLen = 0;
-                continue;
+                /* If there is no possible output then skip to next cipher */
+                if (myNextLen == 0) {
+                    myDataLen = 0;
+                    continue;
+                }
+
+                /* Expand buffer if required */
+                if (myNextLen > myOutput.length) {
+                    myOutput = new byte[myNextLen];
+                    theBuffers[myBufIndex] = myOutput;
+                }
+
+                /* finish via this cipher */
+                myDataLen = myCipher.finish(mySource, 0, myDataLen, myOutput, 0);
+
+                /* Adjust variables */
+                mySource = myOutput;
+                myBufIndex = (myBufIndex + 1) % 2;
+                myOutput = theBuffers[myBufIndex];
             }
 
-            /* Expand buffer if required */
-            if (myNextLen > myOutput.length) {
-                myOutput = new byte[myNextLen];
-                theBuffers[myBufIndex] = myOutput;
+            /* If we have data  */
+            if (myDataLen > 0) {
+                /* Copy data to final buffer */
+                System.arraycopy(mySource, 0, pOutput, pOutOffset, myDataLen);
             }
 
-            /* finish via this cipher */
-            myDataLen = myCipher.finish(mySource, 0, myDataLen, myOutput, 0);
+            /* Return the number of bytes that were output */
+            return myDataLen;
 
-            /* Adjust variables */
-            mySource = myOutput;
-            myBufIndex = (myBufIndex + 1) % 2;
-            myOutput = theBuffers[myBufIndex];
+        } finally {
+            /* Clear the work buffers */
+            Arrays.fill(theBuffers[0], (byte) 0);
+            Arrays.fill(theBuffers[1], (byte) 0);
         }
-
-        /* Check bounds of output array */
-        if (pOutput.length < pOutOffset + myDataLen) {
-            Arrays.fill(mySource, (byte) 0);
-            throw new GordianDataException("Buffer too short");
-        }
-
-        /* If we have data  */
-        if (myDataLen > 0) {
-            /* Copy data to final buffer */
-            System.arraycopy(mySource, 0, pOutput, pOutOffset, myDataLen);
-            Arrays.fill(mySource, (byte) 0);
-        }
-
-        /* Return the number of bytes that were output */
-        return myDataLen;
     }
 
     /**
@@ -599,7 +641,7 @@ final class GordianMultiCipher
             final GordianCipherFactory myFactory = pFactory.getCipherFactory();
 
             /* Create the standard ciphers */
-            thePaddingCipher = myFactory.createSymKeyCipher(GordianSymCipherSpec.ecb(myKeySpec, GordianPadding.TBC));
+            thePaddingCipher = myFactory.createSymKeyCipher(GordianSymCipherSpec.ecb(myKeySpec, GordianPadding.PKCS7));
             theStandardCipher = myFactory.createSymKeyCipher(GordianSymCipherSpec.ecb(myKeySpec, GordianPadding.NONE));
             theStreamCipher = myFactory.createSymKeyCipher(GordianSymCipherSpec.sic(myKeySpec));
 
