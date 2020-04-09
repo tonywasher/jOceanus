@@ -62,14 +62,14 @@ public interface GordianKeyedCipher<T extends GordianKeySpec>
     GordianPBESpec getPBESpec();
 
     /**
-     * Initialise the cipher for encryption/decryption.
+     * Initialise the cipher for encryption.
      * @param pParams the parameters
      * @throws OceanusException on error
      */
     void initForEncrypt(GordianCipherParameters pParams) throws OceanusException;
 
     /**
-     * Initialise the cipher for encryption/decryption.
+     * Initialise the cipher for decryption.
      * @param pParams the parameters
      * @throws OceanusException on error
      */

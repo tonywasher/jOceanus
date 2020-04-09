@@ -47,7 +47,7 @@ public final class BouncyKey<T extends GordianKeySpec>
         super(pKeyType);
 
         /* Store parameters */
-        theKey = pKeyBytes;
+        theKey = Arrays.clone(pKeyBytes);
     }
 
     /**
@@ -60,7 +60,7 @@ public final class BouncyKey<T extends GordianKeySpec>
 
     @Override
     public byte[] getKeyBytes() {
-        return theKey;
+        return getKey();
     }
 
     /**

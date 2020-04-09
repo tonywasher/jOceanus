@@ -94,21 +94,43 @@ public final class TethysLogManager {
      * @return the formatted data
      */
     public static String formatData(final byte[] pData) {
+        return pData == null
+                ? "\nnull"
+                : formatData(pData, 0, pData.length);
+    }
+
+    /**
+     * Format data.
+     * @param pData the data to format
+     * @param pOffset the offset
+     * @param pLength the length of data
+     * @return the formatted data
+     */
+    public static String formatData(final byte[] pData,
+                                    final int pOffset,
+                                    final int pLength) {
         /* Handle null data */
         if (pData == null) {
             return "\nnull";
         }
 
+        /* Handle partial buffer */
+        byte[] myData = pData;
+        if (pOffset != 0 || pLength != pData.length) {
+            myData = new byte[pLength];
+            System.arraycopy(pData, pOffset, myData, 0, pLength);
+        }
+
         /* Format the data */
-        final String myData = TethysDataConverter.bytesToHexString(pData);
+        final String myFormatted = TethysDataConverter.bytesToHexString(myData);
 
         /* Place it into StringBuilder buffer */
         final StringBuilder myBuilder = new StringBuilder();
-        myBuilder.append(myData);
+        myBuilder.append(myFormatted);
 
         /* Loop through the data */
         int myOffSet = 0;
-        for (int i = 0; i < pData.length; i++) {
+        for (int i = 0; i < pLength; i++) {
             /* Insert blank/newLine between each HexPair */
             final char myChar = (i % DATA_SECTION) == 0 ? '\n' : ' ';
             myBuilder.insert(myOffSet, myChar);

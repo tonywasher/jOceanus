@@ -248,6 +248,7 @@ public class RandomSpecTest {
         final GordianRandomFactory myRandom = pFactory.getRandomFactory();
         final GordianMacFactory myMacs = pFactory.getMacFactory();
         final List<GordianMacSpec> myValid = myMacs.listAllSupportedSpecs(pLength);
+        myValid.remove(GordianMacSpec.poly1305Mac());
 
         /* Loop a large number of times to ensure that all macs are generated */
         for (int i = 0; i < 10000 && !myValid.isEmpty(); i++) {

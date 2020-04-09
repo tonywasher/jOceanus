@@ -92,14 +92,15 @@ public class BouncyStreamKeyAADCipher
     }
 
     @Override
-    public int finish(final byte[] out,
-                      final int outOff) throws OceanusException {
+    public int doFinish(final byte[] out,
+                        final int outOff) throws OceanusException {
         try {
             return theCipher.doFinal(out, outOff);
         } catch (InvalidCipherTextException e) {
             throw new GordianCryptoException("Mac mismatch", e);
         }
     }
+
     @Override
     public boolean equals(final Object pThat) {
         /* Handle trivial cases */

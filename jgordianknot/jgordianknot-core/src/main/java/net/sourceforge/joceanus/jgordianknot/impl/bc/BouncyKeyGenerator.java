@@ -52,7 +52,7 @@ public final class BouncyKeyGenerator<T extends GordianKeySpec>
         theGenerator = pGenerator;
 
         /* Initialise the generator */
-        final KeyGenerationParameters myParms = new KeyGenerationParameters(getRandom(), getKeyLength());
+        final KeyGenerationParameters myParms = new KeyGenerationParameters(getRandom(), pKeyType.getKeyLength().getLength());
         theGenerator.init(myParms);
     }
 

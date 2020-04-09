@@ -50,6 +50,11 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
 public class GordianCoreKnuthObfuscater
     implements GordianKnuthObfuscater {
     /**
+     * Make sure that the top positive bit is set for the Knuth Prime.
+     */
+    private static final int VALUE_MASK = 0x40000000;
+
+    /**
      * Knuth Prime.
      */
     private final int thePrime;
@@ -84,8 +89,16 @@ public class GordianCoreKnuthObfuscater
      * @return the encoded value
      */
     private static BigInteger[] generatePrime(final int pBase) {
+        /* Ensure that the value is positive */
+        int myVal = pBase < 0
+                      ? -pBase
+                      : pBase;
+
+        /* Ensure that the top positive bit is set */
+        myVal |= VALUE_MASK;
+
         /* Make sure that the value is prime */
-        BigInteger myValue = BigInteger.valueOf(pBase);
+        BigInteger myValue = BigInteger.valueOf(myVal);
         if (!myValue.isProbablePrime(Integer.SIZE)) {
             myValue = myValue.nextProbablePrime();
         }
@@ -560,11 +573,15 @@ public class GordianCoreKnuthObfuscater
                 break;
             case GMAC:
             case CMAC:
-            case POLY1305:
             case KALYNA:
             case CBCMAC:
             case CFBMAC:
                 myCode += deriveEncodedIdFromSymKeySpec(pMacSpec.getSymKeySpec()) << myShift;
+                break;
+            case POLY1305:
+                if (pMacSpec.getSymKeySpec() != null) {
+                    myCode += deriveEncodedIdFromSymKeySpec(pMacSpec.getSymKeySpec()) << myShift;
+                }
                 break;
             case ZUC:
                 myCode += deriveEncodedIdFromLength(pMacSpec.getMacLength()) << myShift;
@@ -603,11 +620,14 @@ public class GordianCoreKnuthObfuscater
                 return GordianMacSpec.hMac(deriveDigestSpecFromEncodedId(myId), myKeyLen);
             case GMAC:
             case CMAC:
-            case POLY1305:
             case KALYNA:
             case CFBMAC:
             case CBCMAC:
                 return new GordianMacSpec(myMacType, deriveSymKeySpecFromEncodedId(myId));
+            case POLY1305:
+                return myId == 0
+                            ? GordianMacSpec.poly1305Mac()
+                            : new GordianMacSpec(myMacType, deriveSymKeySpecFromEncodedId(myId));
             case SKEIN:
                 GordianDigestSpec mySpec = deriveDigestSpecFromEncodedId(myId);
                 return GordianMacSpec.skeinMac(myKeyLen, mySpec);

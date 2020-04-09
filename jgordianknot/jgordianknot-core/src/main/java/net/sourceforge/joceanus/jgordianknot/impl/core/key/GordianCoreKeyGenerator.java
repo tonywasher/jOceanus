@@ -18,6 +18,7 @@ package net.sourceforge.joceanus.jgordianknot.impl.core.key;
 
 import java.security.SecureRandom;
 import java.util.Arrays;
+import java.util.Random;
 
 import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigestType;
 import net.sourceforge.joceanus.jgordianknot.api.key.GordianKey;
@@ -27,7 +28,9 @@ import net.sourceforge.joceanus.jgordianknot.api.mac.GordianMac;
 import net.sourceforge.joceanus.jgordianknot.api.mac.GordianMacFactory;
 import net.sourceforge.joceanus.jgordianknot.api.mac.GordianMacSpec;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianByteArrayInteger;
+import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianDataException;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianPersonalisation;
+import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianPersonalisation.GordianPersonalId;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianRandomSource;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianCoreFactory;
 import net.sourceforge.joceanus.jtethys.OceanusException;
@@ -85,11 +88,6 @@ public abstract class GordianCoreKeyGenerator<T extends GordianKeySpec>
         return theKeyType;
     }
 
-    @Override
-    public int getKeyLength() {
-        return theKeyLength;
-    }
-
     /**
      * Obtain random generator.
      * @return the generator
@@ -130,44 +128,62 @@ public abstract class GordianCoreKeyGenerator<T extends GordianKeySpec>
         final byte[] myKeyBytes = new byte[myKeyLen];
         int myBuilt = 0;
 
-        /* Determine an initialSeed and work out hash type and iterations */
-        int mySeed = determineSecretSeed(pSecret, pInitVector);
-        mySeed = theFactory.getPersonalisation().convertRecipe(mySeed);
-        final GordianDigestType[] myDigestType = new GordianDigestType[2];
-        theFactory.getIdManager().deriveKeyHashDigestTypesFromSeed(mySeed, myDigestType);
+        /* Derive the two digestTypes from the initVector */
+        final Random mySeededRandom = theFactory.getPersonalisation().getSeededRandom(GordianPersonalId.HASHRANDOM, pInitVector);
+        final GordianDigestType[] myDigestTypes = theFactory.getIdManager().deriveKeyHashDigestTypesFromSeed(mySeededRandom, 2);
 
         /* Create the MACs and initialise them */
         final GordianMacFactory myFactory = theFactory.getMacFactory();
         final GordianMac[] myMacs = new GordianMac[2];
-        GordianMacSpec myMacSpec = GordianMacSpec.hMac(myDigestType[0]);
+        GordianMacSpec myMacSpec = GordianMacSpec.hMac(myDigestTypes[0]);
         GordianMac myMac = myFactory.createMac(myMacSpec);
         initMacKeyBytes(myMac, pSecret);
         myMacs[0] = myMac;
-        myMacSpec = GordianMacSpec.hMac(myDigestType[1]);
+        myMacSpec = GordianMacSpec.hMac(myDigestTypes[1]);
         myMac =  myFactory.createMac(myMacSpec);
         initMacKeyBytes(myMac, pSecret);
         myMacs[1] = myMac;
 
-        /* while we need to generate more bytes */
-        final GordianByteArrayInteger mySection = new GordianByteArrayInteger();
-        while (myBuilt < myKeyLen) {
-            /* Build the key part */
-            final byte[] myKeyPart = buildCipherSection(myMacs, mySection.iterate(), pInitVector);
+        /* Protect against exceptions */
+        try {
+            /* while we need to generate more bytes */
+            final GordianByteArrayInteger mySection = new GordianByteArrayInteger();
+            while (myBuilt < myKeyLen) {
+                /* Build the key part */
+                final byte[] myKeyPart = buildCipherSection(myMacs, mySection.iterate(), pInitVector);
 
-            /* Determine how many bytes of this hash should be used */
-            int myNeeded = myKeyLen
-                    - myBuilt;
-            if (myNeeded > myKeyPart.length) {
-                myNeeded = myKeyPart.length;
+                /* Determine how many bytes of this hash should be used */
+                int myNeeded = myKeyLen
+                        - myBuilt;
+                if (myNeeded > myKeyPart.length) {
+                    myNeeded = myKeyPart.length;
+                }
+
+                /* Copy bytes across */
+                System.arraycopy(myKeyPart, 0, myKeyBytes, myBuilt, myNeeded);
+                myBuilt += myNeeded;
+                Arrays.fill(myKeyPart, (byte) 0);
             }
 
-            /* Copy bytes across */
-            System.arraycopy(myKeyPart, 0, myKeyBytes, myBuilt, myNeeded);
-            myBuilt += myNeeded;
+            /* Return the new key */
+            return buildKeyFromBytes(myKeyBytes);
+
+            /* Clear build buffer */
+        } finally {
+            Arrays.fill(myKeyBytes, (byte) 0);
+        }
+    }
+
+    @Override
+    public <X extends GordianKeySpec> GordianKey<T> translateKey(final GordianKey<X> pSource) throws OceanusException {
+        /* Check that the keyLengths are compatible */
+        if (pSource.getKeyType().getKeyLength() != theKeyType.getKeyLength()) {
+            throw new GordianDataException("Incorrect length for key");
         }
 
-        /* Return the new key */
-        return buildKeyFromBytes(myKeyBytes);
+        /* Build the key */
+        final GordianCoreKey<X> mySource = (GordianCoreKey<X>) pSource;
+        return buildKeyFromBytes(mySource.getKeyBytes());
     }
 
     /**
@@ -205,76 +221,46 @@ public abstract class GordianCoreKeyGenerator<T extends GordianKeySpec>
         final GordianPersonalisation myPersonal = theFactory.getPersonalisation();
         final byte[] myKeyLen = TethysDataConverter.integerToByteArray(theKeyLength);
 
-        /* Update prime with personalisation, algorithm and section */
-        myPersonal.updateMac(myPrime);
-        myPrime.update(myAlgo);
-        myPrime.update(myKeyLen);
-        myPrime.update(pSection);
+        /* Protect against exceptions */
+        try {
+            /* Update prime with personalisation, algorithm and section */
+            myPersonal.updateMac(myPrime);
+            myPrime.update(myAlgo);
+            myPrime.update(myKeyLen);
+            myPrime.update(pSection);
 
-        /* Update alt with personalisation, algorithm and section */
-        myPersonal.updateMac(myAlt);
-        myAlt.update(myAlgo);
-        myAlt.update(myKeyLen);
-        myAlt.update(pSection);
+            /* Update alt with personalisation, algorithm and section */
+            myPersonal.updateMac(myAlt);
+            myAlt.update(myAlgo);
+            myAlt.update(myKeyLen);
+            myAlt.update(pSection);
 
-        /* Loop through the iterations */
-        for (int i = 0; i < BUILD_ITERATIONS; i++) {
-            /* Calculate alternate hash */
-            myAlt.update(myAltInput);
-            myAltInput = myAltHash;
-            myAlt.finish(myAltHash, 0);
+            /* Loop through the iterations */
+            for (int i = 0; i < BUILD_ITERATIONS; i++) {
+                /* Calculate alternate hash */
+                myAlt.update(myAltInput);
+                myAltInput = myAltHash;
+                myAlt.finish(myAltHash, 0);
 
-            /* Add the existing result to hash */
-            myPrime.update(myPrimeInput);
-            myPrime.update(myAltHash);
-            myPrimeInput = myPrimeHash;
+                /* Add the existing result to hash */
+                myPrime.update(myPrimeInput);
+                myPrime.update(myAltHash);
+                myPrimeInput = myPrimeHash;
 
-            /* Calculate MAC and place results into hash */
-            myPrime.finish(myPrimeHash, 0);
+                /* Calculate MAC and place results into hash */
+                myPrime.finish(myPrimeHash, 0);
 
-            /* Fold into results */
-            TethysDataConverter.buildHashResult(myResult, myPrimeHash);
+                /* Fold into results */
+                TethysDataConverter.buildHashResult(myResult, myPrimeHash);
+            }
+
+            /* Return the result */
+            return myResult;
+
+            /* Clear the intermediate buffers */
+        } finally {
+            Arrays.fill(myPrimeHash, (byte) 0);
+            Arrays.fill(myAltHash, (byte) 0);
         }
-
-        /* Return the result */
-        return myResult;
-    }
-
-    /**
-     * Determine initialSeed.
-     * @param pSecret the secret
-     * @param pInitVector the initialisation vector
-     * @return the seed
-     * @throws OceanusException on error
-     */
-    private int determineSecretSeed(final byte[] pSecret,
-                                    final byte[] pInitVector) throws OceanusException {
-        /* Determine a digestType to use based on the first four bytes of the initVector */
-        int mySeed = TethysDataConverter.byteArrayToInteger(Arrays.copyOf(pInitVector, Integer.SIZE));
-        final GordianPersonalisation myPersonal = theFactory.getPersonalisation();
-        mySeed = myPersonal.convertRecipe(mySeed);
-        final GordianDigestType[] myDigestType = new GordianDigestType[1];
-        theFactory.getIdManager().deriveKeyHashDigestTypesFromSeed(mySeed, myDigestType);
-
-        /* Create the MAC and initialise it */
-        final GordianMacSpec myMacSpec = GordianMacSpec.hMac(myDigestType[0]);
-        final GordianMacFactory myFactory = theFactory.getMacFactory();
-        final GordianMac myMac = myFactory.createMac(myMacSpec);
-        initMacKeyBytes(myMac, pSecret);
-
-        /* Create the standard data */
-        final byte[] myAlgo = TethysDataConverter.stringToByteArray(theKeyType.toString());
-
-        /* Update with personalisation, algorithm and initVector */
-        myPersonal.updateMac(myMac);
-        myMac.update(myAlgo);
-        myMac.update(pInitVector);
-
-        /* Determine result */
-        final byte[] myResult = new byte[myMac.getMacSize()];
-        myMac.finish(myResult, 0);
-
-        /* Return the first few bytes as the seed */
-        return TethysDataConverter.byteArrayToInteger(Arrays.copyOf(myResult, Integer.SIZE));
     }
 }

@@ -19,6 +19,7 @@ package net.sourceforge.joceanus.jgordianknot.impl.core.base;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.Arrays;
+import java.util.Random;
 
 import net.sourceforge.joceanus.jgordianknot.api.base.GordianLength;
 import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigest;
@@ -55,11 +56,6 @@ public class GordianPersonalisation {
     private static final GordianLength HASH_LEN = GordianLength.LEN_512;
 
     /**
-     * Make sure that the top positive bit is set for all integer masks.
-     */
-    private static final int VALUE_MASK = 0x40000000;
-
-    /**
      * Personalisation bytes.
      */
     private final byte[] thePersonalisation;
@@ -68,16 +64,6 @@ public class GordianPersonalisation {
      * InitVector bytes.
      */
     private final byte[] theInitVector;
-
-    /**
-     * The personalisation length.
-     */
-    private final int thePersonalLen;
-
-    /**
-     * The recipe mask.
-     */
-    private final int theRecipeMask;
 
     /**
      * Constructor.
@@ -89,10 +75,6 @@ public class GordianPersonalisation {
         final byte[][] myArrays = personalise(pFactory);
         thePersonalisation = myArrays[0];
         theInitVector = myArrays[1];
-        thePersonalLen = thePersonalisation.length;
-
-        /* Obtain the recipe mask */
-        theRecipeMask = getPersonalisedInteger(GordianPersonalId.RECIPE);
     }
 
     /**
@@ -155,54 +137,63 @@ public class GordianPersonalisation {
             myPhraseBytes = TethysDataConverter.stringToByteArray(getHostName());
         }
 
-        /* Initialise hashes */
-        final byte[] myConfig = new byte[HASH_LEN.getByteLength()];
-        for (int i = 0; i < myDigests.length; i++) {
-            /* Initialise the digests */
-            final GordianDigest myDigest = myDigests[i];
-            myDigest.update(myPersonalBytes);
-            myDigest.update(myPhraseBytes);
+        /* Protect against exceptions */
+        try {
+            /* Initialise hashes */
+            final byte[] myConfig = new byte[HASH_LEN.getByteLength()];
+            for (int i = 0; i < myDigests.length; i++) {
+                /* Initialise the digests */
+                final GordianDigest myDigest = myDigests[i];
+                myDigest.update(myPersonalBytes);
+                myDigest.update(myPhraseBytes);
 
-            /* Finish the update and store the buffer */
-            final byte[] myResult = myDigest.finish();
-            TethysDataConverter.buildHashResult(myConfig, myResult);
-            myHashes[i] = myResult;
-        }
+                /* Finish the update and store the buffer */
+                final byte[] myResult = myDigest.finish();
+                TethysDataConverter.buildHashResult(myConfig, myResult);
+                myHashes[i] = myResult;
+            }
 
-        /* Determine the number of iterations */
-        final int myIterations = pFactory.isInternal()
-                                 ? INTERNAL_ITERATIONS
-                                 : DEFAULT_ITERATIONS;
+            /* Determine the number of iterations */
+            final int myIterations = pFactory.isInternal()
+                                     ? INTERNAL_ITERATIONS
+                                     : DEFAULT_ITERATIONS;
 
-        /* Loop the required amount of times to cross-fertilise */
-        for (int i = 0; i < myIterations; i++) {
-            /* Update all the digests */
-            for (final GordianDigest myDigest : myDigests) {
-                /* Update with the results */
-                for (int k = 0; k < myDigests.length; k++) {
-                    myDigest.update(myHashes[k]);
+            /* Loop the required amount of times to cross-fertilise */
+            for (int i = 0; i < myIterations; i++) {
+                /* Update all the digests */
+                for (final GordianDigest myDigest : myDigests) {
+                    /* Update with the results */
+                    for (int k = 0; k < myDigests.length; k++) {
+                        myDigest.update(myHashes[k]);
+                    }
+                }
+
+                /* Finish all the digests */
+                for (int j = 0; j < myDigests.length; j++) {
+                    /* Update with the results */
+                    final GordianDigest myDigest = myDigests[j];
+                    final byte[] myResult = myHashes[j];
+                    myDigest.finish(myResult, 0);
+                    TethysDataConverter.buildHashResult(myConfig, myResult);
                 }
             }
 
-            /* Finish all the digests */
-            for (int j = 0; j < myDigests.length; j++) {
-                /* Update with the results */
-                final GordianDigest myDigest = myDigests[j];
-                final byte[] myResult = myHashes[j];
-                myDigest.finish(myResult, 0);
-                TethysDataConverter.buildHashResult(myConfig, myResult);
+            /* Finally build the initVector mask */
+            final byte[] myInitVec = new byte[HASH_LEN.getByteLength()];
+            for (int i = 0; i < myDigests.length; i++) {
+                TethysDataConverter.buildHashResult(myInitVec, myHashes[i]);
+            }
+
+            /* Return the array */
+            return new byte[][]
+                    {myConfig, myInitVec};
+
+            /* Clear intermediate arrays */
+        } finally {
+            for (int i = 0; i < myDigests.length; i++) {
+                Arrays.fill(myHashes[i], (byte) 0);
             }
         }
-
-        /* Finally build the initVector mask */
-        final byte[] myInitVec = new byte[HASH_LEN.getByteLength()];
-        for (int i = 0; i < myDigests.length; i++) {
-            TethysDataConverter.buildHashResult(myInitVec, myHashes[i]);
-        }
-
-        /* Return the array */
-        return new byte[][]
-                { myConfig, myInitVec };
     }
 
     /**
@@ -217,19 +208,10 @@ public class GordianPersonalisation {
     /**
      * Update a MAC with personalisation.
      * @param pMac the MAC
-     */
+      */
     public void updateMac(final GordianMac pMac) {
         pMac.update(thePersonalisation);
         pMac.update(theInitVector);
-    }
-
-    /**
-     * Convert the recipe.
-     * @param pRecipe the recipe
-     * @return the converted recipe
-     */
-    public int convertRecipe(final int pRecipe) {
-        return sanitiseValue(pRecipe ^ theRecipeMask);
     }
 
     /**
@@ -238,7 +220,7 @@ public class GordianPersonalisation {
      * @return the result
      */
     public int getPersonalisedInteger(final GordianPersonalId pId) {
-        return sanitiseValue(getPersonalisedMask(getOffsetForId(pId)));
+        return getPersonalisedMask(getOffsetForId(pId));
     }
 
     /**
@@ -260,7 +242,7 @@ public class GordianPersonalisation {
         int myVal = 0;
         for (int i = 0, myOffSet = pOffSet; i < Integer.BYTES; i++, myOffSet++) {
             myVal <<= Byte.SIZE;
-            myVal |= getPersonalisedByte(myOffSet);
+            myVal |= thePersonalisation[myOffSet] & TethysDataConverter.BYTE_MASK;
         }
 
         /* Return the value */
@@ -268,31 +250,18 @@ public class GordianPersonalisation {
     }
 
     /**
-     * Obtain byte from personalisation.
-     * @param pOffSet the offset within the array
-     * @return the result
+     * Obtain seeded random.
+     * @param pPrefixId the prefixId
+     * @param pBaseSeed the seed.
+     * @return the random
      */
-    private int getPersonalisedByte(final int pOffSet) {
-        int myOffSet = pOffSet;
-        if (myOffSet >= thePersonalLen) {
-            myOffSet %= thePersonalLen;
-        }
-        return thePersonalisation[myOffSet] & TethysDataConverter.BYTE_MASK;
-    }
-
-    /**
-     * Sanitise an integer value.
-     * @param pValue the value to sanitise
-     * @return the sanitised value
-     */
-    static int sanitiseValue(final int pValue) {
-        /* Ensure that the value is positive */
-        final int myVal = pValue < 0
-                                ? -pValue
-                                : pValue;
-
-        /* Return the sanitised value */
-        return myVal | VALUE_MASK;
+    public Random getSeededRandom(final GordianPersonalId pPrefixId,
+                                  final byte[] pBaseSeed) {
+        /* Build the 48-bit seed and return the seeded random */
+        final long myPrefix = ((long) getPersonalisedInteger(pPrefixId)) << Short.SIZE;
+        final long myBaseSeed = Integer.toUnsignedLong(TethysDataConverter.byteArrayToInteger(pBaseSeed));
+        final long mySeed = myPrefix ^ myBaseSeed;
+        return new Random(mySeed);
     }
 
     /**
@@ -300,19 +269,19 @@ public class GordianPersonalisation {
      */
     public enum GordianPersonalId {
         /**
-         * SymKey.
+         * KeyRandom Prefix.
          */
-        SYMKEY,
+        KEYRANDOM,
 
         /**
-         * Digest.
+         * KeySetRandom Prefix.
          */
-        DIGEST,
+        KEYSETRANDOM,
 
         /**
-         * Recipe.
+         * HashRandom Prefix.
          */
-        RECIPE,
+        HASHRANDOM,
 
         /**
          * KnuthPrime.
@@ -322,6 +291,6 @@ public class GordianPersonalisation {
         /**
          * KnuthMask.
          */
-        KNUTHMASK;
+        KNUTHMASK
     }
 }

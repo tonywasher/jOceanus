@@ -280,10 +280,11 @@ public class GordianCoreWrapper
     }
 
     @Override
-    public byte[] deriveBytes(final byte[] pSecuredBytes) throws OceanusException {
+    public byte[] deriveBytes(final byte[] pSecuredBytes,
+                              final int pOffset) throws OceanusException {
         /* Determine number of blocks */
         int myDataLen = pSecuredBytes.length
-                - theBlockLen;
+                - theBlockLen - pOffset;
         final int myNumBlocks = myDataLen
                 / theBlockLen;
 
@@ -294,7 +295,8 @@ public class GordianCoreWrapper
 
         /* Allocate buffers for data and encryption */
         final int myBufferLen = theBlockLen << 1;
-        final byte[] myData = Arrays.copyOf(pSecuredBytes, pSecuredBytes.length);
+        final byte[] myData = new byte[pSecuredBytes.length - pOffset];
+        System.arraycopy(pSecuredBytes, pOffset, myData, 0, pSecuredBytes.length - pOffset);
         final byte[] myBuffer = new byte[myBufferLen];
         final byte[] myResult = new byte[myBufferLen];
 

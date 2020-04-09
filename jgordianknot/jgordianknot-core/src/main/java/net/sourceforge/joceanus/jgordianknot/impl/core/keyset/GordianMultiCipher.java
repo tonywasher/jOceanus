@@ -22,8 +22,8 @@ import java.util.Map;
 
 import org.bouncycastle.util.Arrays;
 
-import net.sourceforge.joceanus.jgordianknot.api.base.GordianConsumer;
 import net.sourceforge.joceanus.jgordianknot.api.base.GordianLength;
+import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianCipher;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianCipherFactory;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianCipherParameters;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianCipherParameters.GordianKeyCipherParameters;
@@ -32,10 +32,6 @@ import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianSymCipher;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianSymCipherSpec;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianSymKeySpec;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianSymKeyType;
-import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigest;
-import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigestFactory;
-import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigestSpec;
-import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigestType;
 import net.sourceforge.joceanus.jgordianknot.api.factory.GordianAsymFactory;
 import net.sourceforge.joceanus.jgordianknot.api.key.GordianKey;
 import net.sourceforge.joceanus.jgordianknot.api.base.GordianKeySpec;
@@ -50,18 +46,18 @@ import net.sourceforge.joceanus.jgordianknot.impl.core.key.GordianCoreKey;
 import net.sourceforge.joceanus.jgordianknot.impl.core.key.GordianCoreKeyGenerator;
 import net.sourceforge.joceanus.jgordianknot.impl.core.keypair.GordianCoreKeyPairGenerator;
 import net.sourceforge.joceanus.jgordianknot.impl.core.keyset.GordianKeySetRecipe.GordianKeySetParameters;
-import net.sourceforge.joceanus.jgordianknot.impl.core.mac.GordianCoreMac;
 import net.sourceforge.joceanus.jgordianknot.impl.core.mac.GordianCoreMacFactory;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
  * MultiKey Cipher.
  */
-final class GordianMultiCipher {
+final class GordianMultiCipher
+    implements GordianCipher {
     /**
      * The default buffer size.
      */
-    private static final int BUFSIZE = 128;
+    private static final int BUFSIZE = GordianLength.LEN_128.getByteLength();
 
     /**
      * The factory.
@@ -79,81 +75,37 @@ final class GordianMultiCipher {
     private final GordianSymCipher[] theCiphers;
 
     /**
-     * Map of KeyType to symKey.
-     */
-    private final Map<GordianSymKeyType, GordianKey<GordianSymKeySpec>> theSymKeyMap;
-
-    /**
      * Map of KeyType to SymKeyCiphers.
      */
-    private final Map<GordianSymKeyType, SymKeyCiphers> theSymCipherMap;
+    private final Map<GordianSymKeyType, SymKeyCiphers> theCipherMap;
 
     /**
      * The processing buffers.
      */
-    private final byte[][] theBuffers = new byte[2][BUFSIZE];
-
-    /**
-     * The keySet.
-     */
-    private final GordianCoreKeySet theKeySet;
-
-    /**
-     * The digest.
-     */
-    private GordianDigest theDigest;
-
-    /**
-     * The Mac.
-     */
-    private GordianCoreMac theMac;
-
-    /**
-     * The initial Consumer.
-     */
-    private GordianConsumer theInitial;
-
-    /**
-     * The final Consumer.
-     */
-    private GordianConsumer theFinal;
-
-    /**
-     * Have we initialised the map yet?
-     */
-    private boolean initKeys;
+    private final byte[][] theBuffers = new byte[2][BUFSIZE << 1];
 
     /**
      * Constructor.
      * @param pKeySet the keySet
+     * @throws OceanusException on error
      */
-    GordianMultiCipher(final GordianCoreKeySet pKeySet) {
+    GordianMultiCipher(final GordianCoreKeySet pKeySet) throws OceanusException {
         /* Access the factory and determine number of steps */
-        theKeySet = pKeySet;
         theFactory = pKeySet.getFactory();
         theNumSteps = pKeySet.getKeySetSpec().getCipherSteps();
         theCiphers = new GordianSymCipher[theNumSteps];
 
-        /* Create symmetric maps */
-        theSymKeyMap = new EnumMap<>(GordianSymKeyType.class);
-        theSymCipherMap = new EnumMap<>(GordianSymKeyType.class);
+        /* Create symmetric map */
+        theCipherMap = new EnumMap<>(GordianSymKeyType.class);
+
+        /* Loop copying any existing symKeys */
+        for (GordianKey<GordianSymKeySpec> myKey : pKeySet.getSymKeyMap().values()) {
+            declareSymKey(myKey);
+        }
     }
 
-    /**
-     * Obtain the number of steps.
-     * @return the number of steps
-     */
-    int getNumSteps() {
-        return theNumSteps;
-    }
-
-    /**
-     * Determine the maximum number of output bytes that will be produced for the given number of
-     * input bytes.
-     * @param pLength the number of input bytes
-     * @return # of output bytes
-     */
-    int getOutputLength(final int pLength) {
+    @Override
+    public int getOutputLength(final int pLength) {
         int myLen = pLength;
         for (final GordianSymCipher myCipher : theCiphers) {
             myLen = myCipher.getOutputLength(myLen);
@@ -161,87 +113,66 @@ final class GordianMultiCipher {
         return myLen;
     }
 
-    /**
-     * Process the passed data and return intermediate results.
-     * @param pBytes Bytes to update cipher with
-     * @return the intermediate processed data
-     * @throws OceanusException on error
-     */
-    byte[] update(final byte[] pBytes) throws OceanusException {
-        return update(pBytes, 0, pBytes.length);
-    }
+    @Override
+    public int update(final byte[] pBytes,
+                      final int pOffset,
+                      final int pLength,
+                      final byte[] pOutput,
+                      final int pOutOffset) throws OceanusException {
+        /* Protect against exceptions */
+        try {
+            /* Initialise counters */
+            int myRemaining = pLength;
+            int myOffset = pOffset;
+            int myOutOffset = pOutOffset;
+            int myProcessed = 0;
 
-    /**
-     * Process the passed data and return intermediate results.
-     * @param pBytes Bytes to update cipher with
-     * @param pOffset offset within pBytes to read bytes from
-     * @param pLength length of data to update with
-     * @return the intermediate processed data
-     * @throws OceanusException on error
-     */
-    byte[] update(final byte[] pBytes,
-                  final int pOffset,
-                  final int pLength) throws OceanusException {
-        /* Create output buffer */
-        final int myLen = getOutputLength(pLength);
-        final byte[] myOutput = new byte[myLen];
+            /* While we have more data to process */
+            while (myRemaining > 0) {
+                /* Determine how many bytes to process */
+                final int myInputLen = Math.min(myRemaining, BUFSIZE);
 
-        /* Process the data */
-        final int myOut = update(pBytes, pOffset, pLength, myOutput, 0);
+                /* update the next block */
+                final int myDataLen = processBlock(pBytes, myOffset, myInputLen, pOutput, myOutOffset);
 
-        /* Return full buffer if possible */
-        if (myOut == myLen) {
-            return myOutput;
+                /* Update counters */
+                myOffset += myInputLen;
+                myRemaining -= myInputLen;
+                myOutOffset += myDataLen;
+                myProcessed += myDataLen;
+            }
+
+            /* Return the number of bytes that were output */
+            return myProcessed;
+
+        } finally {
+            /* Clear the work buffers */
+            Arrays.fill(theBuffers[0], (byte) 0);
+            Arrays.fill(theBuffers[1], (byte) 0);
         }
-
-        /* Cut down buffer */
-        final byte[] myReturn = Arrays.copyOf(myOutput, myOut);
-        Arrays.fill(myOutput, (byte) 0);
-        return myReturn;
     }
 
     /**
-     * Process the passed data and return intermediate results.
-     * @param pBytes Bytes to update cipher with
-     * @param pOffset offset within pBytes to read bytes from
-     * @param pLength length of data to update with
-     * @param pOutput the output buffer to receive processed data
-     * @return the number of bytes transferred to the output buffer
-     * @throws OceanusException on error
-     */
-    int update(final byte[] pBytes,
-               final int pOffset,
-               final int pLength,
-               final byte[] pOutput) throws OceanusException {
-        return update(pBytes, pOffset, pLength, pOutput, 0);
-    }
-
-    /**
-     * Process the passed data and return intermediate results.
+     * Process a block of data through the ciphers.
      * @param pBytes Bytes to update cipher with
      * @param pOffset offset within pBytes to read bytes from
      * @param pLength length of data to update with
      * @param pOutput the output buffer to receive processed data
      * @param pOutOffset offset within pOutput to write bytes to
-     * @return the number of bytes transferred to the output buffer
+     * @return the length of data written to the output buffer
      * @throws OceanusException on error
      */
-    int update(final byte[] pBytes,
-               final int pOffset,
-               final int pLength,
-               final byte[] pOutput,
-               final int pOutOffset) throws OceanusException {
+    private int processBlock(final byte[] pBytes,
+                             final int pOffset,
+                             final int pLength,
+                             final byte[] pOutput,
+                             final int pOutOffset) throws OceanusException {
         /* Access initial buffer */
         byte[] mySource = pBytes;
         int myBufIndex = 0;
         byte[] myOutput = theBuffers[myBufIndex];
         int myOffset = pOffset;
         int myDataLen = pLength;
-
-        /* Update the initial consumer */
-        if (theInitial != null) {
-            theInitial.update(pBytes, pOffset, pLength);
-        }
 
         /* Loop through the ciphers */
         for (final GordianSymCipher myCipher : theCiphers) {
@@ -271,190 +202,67 @@ final class GordianMultiCipher {
             myOutput = theBuffers[myBufIndex];
         }
 
-        /* Check bounds of output array */
-        if (pOutput.length < pOutOffset + myDataLen) {
-            Arrays.fill(mySource, (byte) 0);
-            throw new GordianDataException("Buffer too short");
-        }
-
         /* If we have data */
         if (myDataLen > 0) {
-            /* Update the final consumer */
-            if (theFinal != null) {
-                theFinal.update(mySource, 0, myDataLen);
-            }
-
             /* Copy data to final buffer */
             System.arraycopy(mySource, 0, pOutput, pOutOffset, myDataLen);
-            Arrays.fill(mySource, (byte) 0);
         }
 
         /* Return the number of bytes that were output */
         return myDataLen;
     }
 
-    /**
-     * Complete the Cipher operation and return final results.
-     * @return the remaining processed data
-     * @throws OceanusException on error
-     */
-    byte[] finish() throws OceanusException {
-        /* Create output buffer */
-        final int myLen = getOutputLength(0);
-        final byte[] myOutput = new byte[myLen];
-
-        /* Process the data */
-        final int myOut = finish(myOutput, 0);
-
-        /* Return full buffer if possible */
-        if (myOut == myLen) {
-            return myOutput;
-        }
-
-        /* Cut down buffer */
-        final byte[] myReturn = Arrays.copyOf(myOutput, myOut);
-        Arrays.fill(myOutput, (byte) 0);
-        return myReturn;
-    }
-
-    /**
-     * Process the passed data and return final results.
-     * @param pBytes Bytes to update cipher with
-     * @return the remaining processed data
-     * @throws OceanusException on error
-     */
-    byte[] finish(final byte[] pBytes) throws OceanusException {
-        return finish(pBytes, 0, pBytes.length);
-    }
-
-    /**
-     * Process the passed data and return final results.
-     * @param pBytes Bytes to update cipher with
-     * @param pOffset offset within pBytes to read bytes from
-     * @param pLength length of data to update with
-     * @return the remaining processed data
-     * @throws OceanusException on error
-     */
-    byte[] finish(final byte[] pBytes,
-                  final int pOffset,
-                  final int pLength) throws OceanusException {
-        /* Create output buffer */
-        final int myLen = getOutputLength(pLength);
-        final byte[] myOutput = new byte[myLen];
-
-        /* Process the data */
-        final int myOut = finish(pBytes, pOffset, pLength, myOutput, 0);
-
-        /* Return full buffer if possible */
-        if (myOut == myLen) {
-            return myOutput;
-        }
-
-        /* Cut down buffer */
-        final byte[] myReturn = Arrays.copyOf(myOutput, myOut);
-        Arrays.fill(myOutput, (byte) 0);
-        return myReturn;
-    }
-
-    /**
-     * Process the passed data and return final results.
-     * @param pBytes Bytes to update cipher with
-     * @param pOffset offset within pBytes to read bytes from
-     * @param pLength length of data to update with
-     * @param pOutput the output buffer to receive processed data
-     * @return the number of bytes transferred to the output buffer
-     * @throws OceanusException on error
-     */
-    int finish(final byte[] pBytes,
-               final int pOffset,
-               final int pLength,
-               final byte[] pOutput) throws OceanusException {
-        return finish(pBytes, pOffset, pLength, pOutput, 0);
-    }
-
-    /**
-     * Process the passed data and return final results.
-     * @param pBytes Bytes to update cipher with
-     * @param pOffset offset within pBytes to read bytes from
-     * @param pLength length of data to update with
-     * @param pOutput the output buffer to receive processed data
-     * @param pOutOffset offset within pOutput to write bytes to
-     * @return the number of bytes transferred to the output buffer
-     * @throws OceanusException on error
-     */
-    int finish(final byte[] pBytes,
-               final int pOffset,
-               final int pLength,
-               final byte[] pOutput,
-               final int pOutOffset) throws OceanusException {
-        /* Update the data */
-        final int myLen = update(pBytes, pOffset, pLength, pOutput, pOutOffset);
-
-        /* Complete the operation */
-        return myLen + finish(pOutput, pOutOffset + myLen);
-    }
-
-    /**
-     * Complete the Cipher operation and return final results.
-     * @param pOutput the output buffer to receive processed data
-     * @param pOutOffset offset within pOutput to write bytes to
-     * @return the number of bytes transferred to the output buffer
-     * @throws OceanusException on error
-     */
-    int finish(final byte[] pOutput,
-               final int pOutOffset) throws OceanusException {
-        /* Access initial buffers */
+    @Override
+    public int finish(final byte[] pOutput,
+                      final int pOutOffset) throws OceanusException {
+            /* Access initial buffers */
         int myDataLen = 0;
         int myBufIndex = 0;
         byte[] myOutput = theBuffers[myBufIndex];
         byte[] mySource = myOutput;
 
-        /* Loop through the ciphers */
-        for (final GordianSymCipher myCipher : theCiphers) {
-            /* Determine length of next output */
-            final int myNextLen = myCipher.getOutputLength(myDataLen);
+        /* Protect against exceptions */
+        try {
+            /* Loop through the ciphers */
+            for (final GordianSymCipher myCipher : theCiphers) {
+                /* Determine length of next output */
+                final int myNextLen = myCipher.getOutputLength(myDataLen);
 
-            /* If there is no possible output then skip to next cipher */
-            if (myNextLen == 0) {
-                myDataLen = 0;
-                continue;
+                /* If there is no possible output then skip to next cipher */
+                if (myNextLen == 0) {
+                    myDataLen = 0;
+                    continue;
+                }
+
+                /* Expand buffer if required */
+                if (myNextLen > myOutput.length) {
+                    myOutput = new byte[myNextLen];
+                    theBuffers[myBufIndex] = myOutput;
+                }
+
+                /* finish via this cipher */
+                myDataLen = myCipher.finish(mySource, 0, myDataLen, myOutput, 0);
+
+                /* Adjust variables */
+                mySource = myOutput;
+                myBufIndex = (myBufIndex + 1) % 2;
+                myOutput = theBuffers[myBufIndex];
             }
 
-            /* Expand buffer if required */
-            if (myNextLen > myOutput.length) {
-                myOutput = new byte[myNextLen];
-                theBuffers[myBufIndex] = myOutput;
+            /* If we have data  */
+            if (myDataLen > 0) {
+                /* Copy data to final buffer */
+                System.arraycopy(mySource, 0, pOutput, pOutOffset, myDataLen);
             }
 
-            /* finish via this cipher */
-            myDataLen = myCipher.finish(mySource, 0, myDataLen, myOutput, 0);
+            /* Return the number of bytes that were output */
+            return myDataLen;
 
-            /* Adjust variables */
-            mySource = myOutput;
-            myBufIndex = (myBufIndex + 1) % 2;
-            myOutput = theBuffers[myBufIndex];
+        } finally {
+            /* Clear the work buffers */
+            Arrays.fill(theBuffers[0], (byte) 0);
+            Arrays.fill(theBuffers[1], (byte) 0);
         }
-
-        /* Check bounds of output array */
-        if (pOutput.length < pOutOffset + myDataLen) {
-            Arrays.fill(mySource, (byte) 0);
-            throw new GordianDataException("Buffer too short");
-        }
-
-        /* If we have data  */
-        if (myDataLen > 0) {
-            /* Update the final consumer */
-            if (theFinal != null) {
-                theFinal.update(mySource, 0, myDataLen);
-            }
-
-            /* Copy data to final buffer */
-            System.arraycopy(mySource, 0, pOutput, pOutOffset, myDataLen);
-            Arrays.fill(mySource, (byte) 0);
-        }
-
-        /* Return the number of bytes that were output */
-        return myDataLen;
     }
 
     /**
@@ -480,7 +288,7 @@ final class GordianMultiCipher {
             final GordianSymCipher myCipher = getCipher(myKeyType, i);
 
             /* Initialise the cipher */
-            final GordianKey<GordianSymKeySpec> mySymKey = theSymKeyMap.get(myKeyType);
+            final GordianKey<GordianSymKeySpec> mySymKey = theCipherMap.get(myKeyType).getKey();
             final byte[] myIV = myCipher.getCipherSpec().needsIV()
                                 ? calculateInitVector(myInitVector, mySection++)
                                 : null;
@@ -499,77 +307,16 @@ final class GordianMultiCipher {
                               : theNumSteps - i - 1;
             theCiphers[myLoc] = myCipher;
         }
-
-        /* Determine whether we are using AEAD */
-        final GordianDigestType myDigest = pParams.getDigestType();
-
-        /* If we are using AEAD */
-        if (myDigest != null) {
-            /* Create the the digest and the Mac */
-            final GordianDigestFactory myDigests = theFactory.getDigestFactory();
-            theDigest = myDigests.createDigest(new GordianDigestSpec(myDigest));
-            final GordianMacFactory myMacs = theFactory.getMacFactory();
-            theMac = (GordianCoreMac) myMacs.createMac(GordianMacSpec.hMac(myDigest));
-
-            /* Initialise the digest and the Mac */
-            theDigest.update(calculateInitVector(myInitVector, mySection++));
-            theMac.initKeyBytes(calculateInitVector(myInitVector, mySection));
-
-            /* Set the consumers inthe correct order */
-            theInitial = pEncrypt
-                         ? theDigest
-                         : theMac;
-            theFinal = pEncrypt
-                       ? theMac
-                       : theDigest;
-
-            /* Else set up for no AEAD */
-        } else {
-            theDigest = null;
-            theMac = null;
-            theInitial = null;
-            theFinal = null;
-        }
     }
 
     /**
-     * Calculate Mac.
-     * @param pParams the parameters.
-     */
-    void calculateMac(final GordianKeySetParameters pParams) {
-        /* Calculate the digest */
-        theMac.update(theDigest.finish());
-
-        /* Calculate the mac and store the required bytes */
-        final byte[] myResult = theMac.finish();
-        System.arraycopy(myResult, 0, pParams.getMac(), 0, GordianKeySetRecipe.MACLEN);
-    }
-
-    /**
-     * validate Mac.
-     * @param pParams the parameters.
+     * Declare symmetricKey.
+     * @param pKey the key
      * @throws OceanusException on error
      */
-    void validateMac(final GordianKeySetParameters pParams) throws OceanusException {
-        /* Calculate the digest */
-        theMac.update(theDigest.finish());
-
-        /* Calculate the mac */
-        final byte[] myResult = theMac.finish();
-        final byte[] myExpected = pParams.getMac();
-
-        /* Validate the mac */
-        boolean bFailed = false;
-        for (int i = 0; i < GordianKeySetRecipe.MACLEN; i++) {
-            if (myResult[i] != myExpected[i]) {
-                bFailed = true;
-            }
-        }
-
-        /* Throw exception on error */
-        if (bFailed) {
-            throw new GordianDataException("Invalid Mac");
-        }
+    void declareSymKey(final GordianKey<GordianSymKeySpec> pKey) throws OceanusException {
+        final SymKeyCiphers myCiphers = new SymKeyCiphers(theFactory, pKey);
+        theCipherMap.put(pKey.getKeyType().getSymKeyType(), myCiphers);
     }
 
     /**
@@ -578,17 +325,6 @@ final class GordianMultiCipher {
      * @throws OceanusException on error
      */
     private void checkParameters(final GordianKeySetParameters pParams) throws OceanusException {
-        /* If we have not yet initialised the keys */
-        if (!initKeys) {
-            /* Initialise the keyMap */
-            for (final GordianKey<GordianSymKeySpec> myKey : theKeySet.getSymKeyMap().values()) {
-                theSymKeyMap.put(myKey.getKeyType().getSymKeyType(), myKey);
-            }
-
-            /* Set the flag */
-            initKeys = true;
-        }
-
         /* Check length */
         final GordianSymKeyType[] mySymKeyTypes = pParams.getSymKeyTypes();
         if (mySymKeyTypes.length != theNumSteps) {
@@ -602,7 +338,7 @@ final class GordianMultiCipher {
             final GordianSymKeyType myKeyType = mySymKeyTypes[i];
 
             /* Check non-null */
-            if (!theSymKeyMap.containsKey(myKeyType)) {
+            if (!theCipherMap.containsKey(myKeyType)) {
                 throw new GordianDataException("Unsupported keyType:- " + myKeyType);
             }
 
@@ -620,12 +356,11 @@ final class GordianMultiCipher {
      * @param pKeyType the keyType
      * @param pIndex the index of the cipher
      * @return the Cipher
-     * @throws OceanusException on error
      */
     private GordianSymCipher getCipher(final GordianSymKeyType pKeyType,
-                                       final int pIndex) throws OceanusException {
+                                       final int pIndex) {
         /* Obtain the ciphers */
-        final SymKeyCiphers myCiphers = getKeyCiphers(pKeyType);
+        final SymKeyCiphers myCiphers = theCipherMap.get(pKeyType);
 
         /* Return Stream cipher if required */
         if (pIndex == 0 || pIndex == theNumSteps - 1) {
@@ -636,26 +371,6 @@ final class GordianMultiCipher {
         return pIndex == 1
                ? myCiphers.getPaddingCipher()
                : myCiphers.getStandardCipher();
-    }
-
-    /**
-     * Obtain KeyCipher from map.
-     * @param pKeyType the keyType
-     * @return the KeyCipher
-     * @throws OceanusException on error
-     */
-    private SymKeyCiphers getKeyCiphers(final GordianSymKeyType pKeyType) throws OceanusException {
-        /* Look up existing ciphers */
-        SymKeyCiphers myCiphers = theSymCipherMap.get(pKeyType);
-        if (myCiphers == null) {
-            /* Create new ciphers */
-            final GordianKey<GordianSymKeySpec> myKey = theSymKeyMap.get(pKeyType);
-            myCiphers = new SymKeyCiphers(theFactory, myKey);
-            theSymCipherMap.put(pKeyType, myCiphers);
-        }
-
-        /* Return the ciphers */
-        return myCiphers;
     }
 
     /**
@@ -694,18 +409,20 @@ final class GordianMultiCipher {
      * @param <T> type of key to be unwrapped
      * @param pParams the parameters
      * @param pSecuredKey the securedKey
+     * @param pOffset the offset within the secured key buffer
      * @param pKeyType the type of key to be derived
      * @return the derived key
      * @throws OceanusException on error
      */
     <T extends GordianKeySpec> GordianKey<T> deriveKey(final GordianKeySetParameters pParams,
                                                        final byte[] pSecuredKey,
+                                                       final int pOffset,
                                                        final T pKeyType) throws OceanusException {
         /* Check the parameters */
         checkParameters(pParams);
 
         /* Derive the bytes */
-        final byte[] myBytes = deriveBytes(pParams, pSecuredKey);
+        final byte[] myBytes = deriveBytes(pParams, pSecuredKey, pOffset);
 
         /* Handle the macSpec separately */
         if (pKeyType instanceof GordianMacSpec) {
@@ -743,16 +460,18 @@ final class GordianMultiCipher {
      * derive privateKeySpec.
      * @param pParams the parameters
      * @param pSecuredPrivateKey the securedPrivateKey
+     * @param pOffset the offset within the secured key
      * @return the derived keySpec
      * @throws OceanusException on error
      */
     PKCS8EncodedKeySpec derivePrivateKeySpec(final GordianKeySetParameters pParams,
-                                             final byte[] pSecuredPrivateKey) throws OceanusException {
+                                             final byte[] pSecuredPrivateKey,
+                                             final int pOffset) throws OceanusException {
         /* Check the parameters */
         checkParameters(pParams);
 
         /* Derive the keySpec */
-        final byte[] myBytes = deriveBytes(pParams, pSecuredPrivateKey);
+        final byte[] myBytes = deriveBytes(pParams, pSecuredPrivateKey, pOffset);
         return new PKCS8EncodedKeySpec(myBytes);
     }
 
@@ -771,7 +490,7 @@ final class GordianMultiCipher {
 
         /* Access and initialise the streamCipher */
         final GordianSymKeyType myStreamKeyType = mySymKeyTypes[0];
-        final GordianKey<GordianSymKeySpec> myStreamKey = theSymKeyMap.get(myStreamKeyType);
+        final GordianKey<GordianSymKeySpec> myStreamKey = theCipherMap.get(myStreamKeyType).getKey();
         final GordianSymCipher myStreamCipher = getCipher(myStreamKeyType, 0);
         final byte[] myIV = calculateInitVector(myInitVector, 0);
         final GordianKeyCipherParameters<GordianSymKeySpec> myParms = GordianCipherParameters.keyAndNonce(myStreamKey, myIV);
@@ -783,7 +502,7 @@ final class GordianMultiCipher {
         /* Loop through the keys */
         for (int i = 1; i < theNumSteps; i++) {
             final GordianSymKeyType myKeyType = mySymKeyTypes[i];
-            final SymKeyCiphers myCiphers = getKeyCiphers(myKeyType);
+            final SymKeyCiphers myCiphers = theCipherMap.get(myKeyType);
             final GordianCoreWrapper myCipher = myCiphers.getWrapCipher();
             myBytes = myCipher.secureBytes(myBytes);
         }
@@ -796,11 +515,13 @@ final class GordianMultiCipher {
      * derive Bytes.
      * @param pParams the parameters
      * @param pSecuredBytes the securedBytes
+     * @param pOffset the offset within the secured key
      * @return the derived bytes
      * @throws OceanusException on error
      */
     byte[] deriveBytes(final GordianKeySetParameters pParams,
-                       final byte[] pSecuredBytes) throws OceanusException {
+                       final byte[] pSecuredBytes,
+                       final int pOffset) throws OceanusException {
         /* Check the parameters */
         checkParameters(pParams);
 
@@ -810,26 +531,71 @@ final class GordianMultiCipher {
 
         /* Loop through the keys */
         byte[] myBytes = pSecuredBytes;
+        int myOffset = pOffset;
         for (int i = theNumSteps - 1; i >= 1; i--) {
             final GordianSymKeyType myKeyType = mySymKeyTypes[i];
-            final SymKeyCiphers myCiphers = getKeyCiphers(myKeyType);
+            final SymKeyCiphers myCiphers = theCipherMap.get(myKeyType);
             final GordianCoreWrapper myCipher = myCiphers.getWrapCipher();
-            myBytes = myCipher.deriveBytes(myBytes);
+            myBytes = myCipher.deriveBytes(myBytes, myOffset);
+            myOffset = 0;
         }
 
         /* Access and initialise the streamCipher */
         final GordianSymKeyType myStreamKeyType = mySymKeyTypes[0];
-        final GordianKey<GordianSymKeySpec> myStreamKey = theSymKeyMap.get(myStreamKeyType);
+        final GordianKey<GordianSymKeySpec> myStreamKey = theCipherMap.get(myStreamKeyType).getKey();
         final GordianSymCipher myStreamCipher = getCipher(myStreamKeyType, 0);
         final byte[] myIV = calculateInitVector(myInitVector, 0);
         final GordianKeyCipherParameters<GordianSymKeySpec> myParms = GordianCipherParameters.keyAndNonce(myStreamKey, myIV);
         myStreamCipher.initForDecrypt(myParms);
 
         /* Process via the stream Cipher */
-        myBytes = myStreamCipher.finish(myBytes);
+        return myStreamCipher.finish(myBytes);
+    }
 
-        /* Return the derived bytes */
-        return myBytes;
+    /**
+     * Derive PolyMac key.
+     * @param pParams the parameters
+     * @return the key
+     * @throws OceanusException on error
+     */
+    public GordianKey<GordianMacSpec> derivePoly1305Key(final GordianKeySetParameters pParams) throws OceanusException {
+        /* Access keyType from parameters */
+        final GordianSymKeyType myKeyType = pParams.getPoly1305SymKeyType();
+
+        /* Access the required cipher */
+        final SymKeyCiphers myCiphers = theCipherMap.get(myKeyType);
+        final GordianSymCipher myCipher = myCiphers.getStandardCipher();
+        myCipher.initForEncrypt(GordianCipherParameters.key(myCiphers.getKey()));
+
+        /* First part is from IV section 2 */
+        final byte[] myIV = pParams.getInitVector();
+        final byte[] myIV1 = calculateInitVector(myIV, 2);
+        final byte[] myIV2 = calculateInitVector(myIV, 3);
+        final byte[] myKeyBytes = Arrays.concatenate(myIV1, myIV2);
+
+        /* Obtain the keyGenerator */
+        final GordianMacFactory myMacs = theFactory.getMacFactory();
+        final GordianMacSpec mySpec = GordianMacSpec.poly1305Mac();
+        final GordianCoreKeyGenerator<GordianMacSpec> myGenerator = (GordianCoreKeyGenerator<GordianMacSpec>) myMacs.getKeyGenerator(mySpec);
+        return myGenerator.buildKeyFromBytes(myKeyBytes);
+    }
+
+    /**
+     * Encrypt Mac.
+     * @param pSymKeyType teh symKeyType to use
+     * @param pMac the mac to encrypt
+     * @return the encrypted Mac
+     * @throws OceanusException on error
+     */
+    public byte[] encryptMac(final GordianSymKeyType pSymKeyType,
+                             final byte[] pMac) throws OceanusException {
+        /* Access the required cipher */
+        final SymKeyCiphers myCiphers = theCipherMap.get(pSymKeyType);
+        final GordianSymCipher myCipher = myCiphers.getStandardCipher();
+        myCipher.initForEncrypt(GordianCipherParameters.key(myCiphers.getKey()));
+
+        /* encrypt the mac*/
+        return myCipher.finish(pMac);
     }
 
     /**
@@ -875,7 +641,7 @@ final class GordianMultiCipher {
             final GordianCipherFactory myFactory = pFactory.getCipherFactory();
 
             /* Create the standard ciphers */
-            thePaddingCipher = myFactory.createSymKeyCipher(GordianSymCipherSpec.ecb(myKeySpec, GordianPadding.ISO7816D4));
+            thePaddingCipher = myFactory.createSymKeyCipher(GordianSymCipherSpec.ecb(myKeySpec, GordianPadding.PKCS7));
             theStandardCipher = myFactory.createSymKeyCipher(GordianSymCipherSpec.ecb(myKeySpec, GordianPadding.NONE));
             theStreamCipher = myFactory.createSymKeyCipher(GordianSymCipherSpec.sic(myKeySpec));
 

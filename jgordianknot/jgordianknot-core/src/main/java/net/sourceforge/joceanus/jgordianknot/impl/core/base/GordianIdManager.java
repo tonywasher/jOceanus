@@ -17,10 +17,8 @@
 package net.sourceforge.joceanus.jgordianknot.impl.core.base;
 
 import java.security.SecureRandom;
-import java.util.EnumMap;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
+import java.util.Random;
 import java.util.stream.Collectors;
 
 import net.sourceforge.joceanus.jgordianknot.api.base.GordianLength;
@@ -32,7 +30,6 @@ import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianSymKeyType;
 import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigestFactory;
 import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigestSpec;
 import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigestType;
-import net.sourceforge.joceanus.jgordianknot.api.key.GordianKeyLengths;
 import net.sourceforge.joceanus.jgordianknot.api.mac.GordianMacFactory;
 import net.sourceforge.joceanus.jgordianknot.api.mac.GordianMacSpec;
 import net.sourceforge.joceanus.jgordianknot.api.mac.GordianMacType;
@@ -48,11 +45,6 @@ public class GordianIdManager {
     private final GordianCoreFactory theFactory;
 
     /**
-     * The Id Cache Map.
-     */
-    private final Map<GordianLength, GordianIdCache> theCacheMap;
-
-    /**
      * Constructor.
      * @param pFactory the security factory
      * @throws OceanusException on error
@@ -60,18 +52,6 @@ public class GordianIdManager {
     GordianIdManager(final GordianCoreFactory pFactory) throws OceanusException  {
         /* Store the factory */
         theFactory = pFactory;
-
-        /* Create the map */
-        theCacheMap = new EnumMap<>(GordianLength.class);
-
-        /* Loop through the KeyLengths */
-        final Iterator<GordianLength> myIterator = GordianKeyLengths.iterator();
-        while (myIterator.hasNext()) {
-            /* Build the appropriate cache */
-            final GordianLength myLength = myIterator.next();
-            final GordianIdCache myCache = new GordianIdCache(pFactory, myLength);
-            theCacheMap.put(myLength, myCache);
-        }
     }
 
     /**
@@ -143,21 +123,6 @@ public class GordianIdManager {
     }
 
     /**
-     * Derive set of keySet SymKeyTypes from seed.
-     * @param pKeyLen the keyLength
-     * @param pSeed the seed
-     * @param pKeyTypes the array of symKeyTypes to be filled in
-     * @return the remaining seed
-     */
-    public int deriveKeySetSymKeyTypesFromSeed(final GordianLength pKeyLen,
-                                               final int pSeed,
-                                               final GordianSymKeyType[] pKeyTypes) {
-        /* Utilise the relevant cache */
-        final GordianIdCache myCache = theCacheMap.get(pKeyLen);
-        return myCache.deriveKeySetSymKeyTypesFromSeed(pSeed, pKeyTypes);
-    }
-
-    /**
      * Obtain random StreamKeySpec.
      * @param pKeyLen the keyLength
      * @param pLargeData only generate a Key that is suitable for processing large amounts of data
@@ -210,29 +175,80 @@ public class GordianIdManager {
     }
 
     /**
-     * Derive set of keyHashDigestTypes from seed.
-     * @param pSeed the seed
-     * @param pDigestTypes the array of digestTypes to be filled in
+     * Derive set of keySet SymKeyTypes from seed.
+     * @param pRandom the seeded random
+     * @param pKeyLen the keyLength
+     * @param pCount the number of distinct digestTypes to select
      * @return the remaining seed
      */
-    public int deriveKeyHashDigestTypesFromSeed(final int pSeed,
-                                                final GordianDigestType[] pDigestTypes) {
-        /* Utilise the 128bit cache */
-        final GordianIdCache myCache = theCacheMap.get(GordianLength.LEN_128);
-        return myCache.deriveKeyHashDigestTypesFromSeed(pSeed, pDigestTypes);
+    public GordianSymKeyType[] deriveKeySetSymKeyTypesFromSeed(final Random pRandom,
+                                                               final GordianLength pKeyLen,
+                                                               final int pCount) {
+        /* Access the list to select from */
+        final GordianCipherFactory myCiphers = theFactory.getCipherFactory();
+        final List<GordianSymKeyType> myTypes = myCiphers.listAllSupportedSymKeyTypes().stream()
+                .filter(theFactory.supportedKeySetSymKeyTypes(pKeyLen))
+                .collect(Collectors.toList());
+
+        /* Allocate the array to return */
+        final GordianSymKeyType[] myResult = new GordianSymKeyType[pCount];
+
+        /* Loop selecting digestTypes */
+        for (int i = 0; i < pCount; i++) {
+            /* Select from the list and remove the selected item */
+            final int myIndex = pRandom.nextInt(myTypes.size());
+            final GordianSymKeyType myType = myTypes.get(myIndex);
+            myTypes.removeIf(t -> t == myType);
+            myResult[i] = myType;
+        }
+
+        /* return the selected symKeyTypes */
+        return myResult;
     }
 
     /**
-     * Derive set of standard externalDigestTypes from seed.
-     * @param pSeed the seed
-     * @param pDigestTypes the array of digestTypes to be filled in
-     * @return the remaining seed
+     * Derive set of keyHashDigestTypes from seed.
+     * @param pRandom the seeded random
+     * @param pCount the number of distinct digestTypes to select
+     * @return the selected keyHashDigestTypes
      */
-    public int deriveExternalDigestTypesFromSeed(final int pSeed,
-                                                 final GordianDigestType[] pDigestTypes) {
-        /* Utilise the 128bit cache */
-        final GordianIdCache myCache = theCacheMap.get(GordianLength.LEN_128);
-        return myCache.deriveExternalDigestTypesFromSeed(pSeed, pDigestTypes);
+    public GordianDigestType[] deriveKeyHashDigestTypesFromSeed(final Random pRandom,
+                                                                final int pCount) {
+        /* Access the list to select from */
+        final GordianDigestFactory myDigests = theFactory.getDigestFactory();
+        final List<GordianDigestType> myTypes = myDigests.listAllSupportedTypes().stream()
+                .filter(theFactory.supportedKeySetDigestTypes())
+                .collect(Collectors.toList());
+
+        /* Allocate the array to return */
+        final GordianDigestType[] myResult = new GordianDigestType[pCount];
+
+        /* Loop selecting digestTypes */
+        for (int i = 0; i < pCount; i++) {
+            /* Select from the list and remove the selected item */
+            final int myIndex = pRandom.nextInt(myTypes.size());
+            final GordianDigestType myType = myTypes.get(myIndex);
+            myTypes.removeIf(t -> t == myType);
+            myResult[i] = myType;
+        }
+
+        /* return the selected digestTypes */
+        return myResult;
+    }
+
+    /**
+     * Derive an externalDigestTypes from seededRandom.
+     * @param pRandom the seeded random
+     * @return the selected externalDigestType
+     */
+    public GordianDigestType deriveExternalDigestTypeFromSeed(final Random pRandom) {
+        /* Access the list to select from */
+        final GordianDigestFactory myDigests = theFactory.getDigestFactory();
+        final List<GordianDigestType> myTypes = myDigests.listAllExternalTypes();
+
+         /* Select from the list */
+        final int myIndex = pRandom.nextInt(myTypes.size());
+        return myTypes.get(myIndex);
     }
 
     /**
@@ -246,9 +262,16 @@ public class GordianIdManager {
         /* Access the list to select from */
         final GordianMacFactory myMacs = theFactory.getMacFactory();
         final List<GordianMacSpec> mySpecs = myMacs.listAllSupportedSpecs(pKeyLen);
+
+        /* Modify list (if required) to remove macs that do not support largeData */
         if (pLargeData) {
             mySpecs.removeIf(s -> !s.getMacType().supportsLargeData());
         }
+
+        /* Modify list to remove rawPoly1305 */
+        mySpecs.remove(GordianMacSpec.poly1305Mac());
+
+        /* Extract the macTypes */
         final List<GordianMacType> myTypes = mySpecs.stream().map(GordianMacSpec::getMacType).collect(Collectors.toList());
 
         /* Determine a random index into the list and obtain the macType */

@@ -35,6 +35,13 @@ public interface GordianKeySet {
     GordianKeySetSpec getKeySetSpec();
 
     /**
+     * Create a keySetCipher.
+     * @return the keySetCipher
+     * @throws OceanusException on error
+     */
+    GordianKeySetCipher createCipher() throws OceanusException;
+
+    /**
      * Encrypt bytes.
      * @param pBytesToEncrypt the bytes to encrypt
      * @return the encrypted bytes
@@ -49,6 +56,53 @@ public interface GordianKeySet {
      * @throws OceanusException on error
      */
     byte[] decryptBytes(byte[] pBytesToDecrypt) throws OceanusException;
+
+    /**
+     * Create a keySetAADCipher.
+     * @return the keySetCipher
+     * @throws OceanusException on error
+     */
+    GordianKeySetAADCipher createAADCipher() throws OceanusException;
+
+    /**
+     * Encrypt AAD bytes.
+     * @param pBytesToEncrypt the bytes to encrypt
+     * @return the encrypted bytes
+     * @throws OceanusException on error
+     */
+    default byte[] encryptAADBytes(byte[] pBytesToEncrypt) throws OceanusException {
+        return encryptAADBytes(pBytesToEncrypt, null);
+    }
+
+    /**
+     * Encrypt AAD bytes.
+     * @param pBytesToEncrypt the bytes to encrypt
+     * @param pAAD the AAD data
+     * @return the encrypted bytes
+     * @throws OceanusException on error
+     */
+    byte[] encryptAADBytes(byte[] pBytesToEncrypt,
+                           byte[] pAAD) throws OceanusException;
+
+    /**
+     * Decrypt AAD bytes.
+     * @param pBytesToDecrypt the bytes to decrypt
+     * @return the decrypted bytes
+     * @throws OceanusException on error
+     */
+    default byte[] decryptAADBytes(byte[] pBytesToDecrypt) throws OceanusException {
+        return decryptAADBytes(pBytesToDecrypt, null);
+    }
+
+    /**
+     * Decrypt AAD bytes.
+     * @param pBytesToDecrypt the bytes to decrypt
+     * @param pAAD the AAD data
+     * @return the decrypted bytes
+     * @throws OceanusException on error
+     */
+    byte[] decryptAADBytes(byte[] pBytesToDecrypt,
+                           byte[] pAAD) throws OceanusException;
 
     /**
      * secure bytes.
@@ -120,14 +174,6 @@ public interface GordianKeySet {
                                  byte[] pSecuredPrivateKey) throws OceanusException;
 
     /**
-     * Encryption length.
-     *
-     * @param pDataLength the length of data to be encrypted
-     * @return the length of encrypted data
-     */
-    int getEncryptionLength(int pDataLength);
-
-    /**
      * Obtain wrapped size of a key.
      * @param pKeyLen the keyLength
      * @return the wrapped length
@@ -156,20 +202,9 @@ public interface GordianKeySet {
     int getKeySetWrapLength();
 
     /**
-     * Is the keySet in AEAD mode?
-     * @return true/false
-     */
-    boolean isAEAD();
-
-    /**
-     * Set the AEAD mode.
-     * @param pAEAD true/false
-     */
-    void setAEAD(boolean pAEAD);
-
-    /**
      * Clone the keySet.
      * @return the cloned keySet
+     * @throws OceanusException on error
      */
-    GordianKeySet cloneIt();
+    GordianKeySet cloneIt() throws OceanusException;
 }

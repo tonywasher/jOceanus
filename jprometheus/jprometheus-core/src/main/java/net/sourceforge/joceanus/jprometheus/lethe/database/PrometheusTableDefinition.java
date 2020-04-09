@@ -433,7 +433,7 @@ public class PrometheusTableDefinition {
     public BinaryColumn addEncryptedColumn(final MetisField pId,
                                            final int pLength) {
         /* Create the new binary column */
-        final BinaryColumn myColumn = new BinaryColumn(this, pId, GordianUtilities.getKeySetEncryptionLength(pLength, false));
+        final BinaryColumn myColumn = new BinaryColumn(this, pId, GordianUtilities.getKeySetEncryptionLength(pLength));
 
         /* Add it to the list and return it */
         theList.add(myColumn);

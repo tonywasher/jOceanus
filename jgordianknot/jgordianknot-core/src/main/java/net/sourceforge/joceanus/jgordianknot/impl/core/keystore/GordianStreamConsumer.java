@@ -16,7 +16,6 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jgordianknot.impl.core.keystore;
 
-import java.io.IOException;
 import java.io.OutputStream;
 
 import net.sourceforge.joceanus.jgordianknot.api.base.GordianConsumer;
@@ -39,19 +38,19 @@ public class GordianStreamConsumer extends OutputStream {
     }
 
     @Override
-    public void write(final byte[] pBytes) throws IOException {
-        theConsumer.update(pBytes);
+    public void write(final byte[] pBytes) {
+        write(pBytes, 0, pBytes == null ? 0 : pBytes.length);
     }
 
     @Override
-    public void write(final int pByte) throws IOException {
+    public void write(final int pByte) {
         theConsumer.update((byte) pByte);
     }
 
     @Override
     public void write(final byte[] pBytes,
                       final int pOffset,
-                      final int pLength) throws IOException {
+                      final int pLength) {
         theConsumer.update(pBytes, pOffset, pLength);
     }
 }

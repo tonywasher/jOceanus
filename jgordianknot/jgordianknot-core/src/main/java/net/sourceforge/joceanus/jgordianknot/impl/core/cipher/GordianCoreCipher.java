@@ -213,6 +213,99 @@ public abstract class GordianCoreCipher<T extends GordianKeySpec>
         return 0;
     }
 
+    @Override
+    public int update(final byte[] pBytes,
+                      final int pOffset,
+                      final int pLength,
+                      final byte[] pOutput,
+                      final int pOutOffset) throws OceanusException {
+        /* Make sure that there is no overlap between buffers */
+        byte[] myInput = pBytes;
+        int myOffset = pOffset;
+        if (check4UpdateOverLap(pBytes, pOffset, pLength, pOutput, pOutOffset)) {
+            myInput = new byte[pLength];
+            myOffset = 0;
+            System.arraycopy(pBytes, pOffset, myInput, myOffset, pLength);
+        }
+
+        /* process the bytes */
+        return doUpdate(myInput, myOffset, pLength, pOutput, pOutOffset);
+    }
+
+    /**
+     * Perform update operation.
+     * @param pBytes Bytes to update cipher with
+     * @param pOffset offset within pBytes to read bytes from
+     * @param pLength length of data to update with
+     * @param pOutput the output buffer to receive processed data
+     * @param pOutOffset offset within pOutput to write bytes to
+     * @return the number of bytes transferred to the output buffer
+     * @throws OceanusException on error
+     */
+    public abstract int doUpdate(byte[] pBytes,
+                                 int pOffset,
+                                 int pLength,
+                                 byte[] pOutput,
+                                 int pOutOffset) throws OceanusException;
+
+    /**
+     * Check for buffer overlap in update.
+     * @param pBytes Bytes to update cipher with
+     * @param pOffset offset within pBytes to read bytes from
+     * @param pLength length of data to update with
+     * @param pOutput the output buffer to receive processed data
+     * @param pOutOffset offset within pOutput to write bytes to
+     * @return is there overlap between the two buffers? true/false overlap
+     * @throws OceanusException on error
+     */
+    public boolean check4UpdateOverLap(final byte[] pBytes,
+                                       final int pOffset,
+                                       final int pLength,
+                                       final byte[] pOutput,
+                                       final int pOutOffset) throws OceanusException {
+        /* Check that the buffers are sufficient */
+        final int myInBufLen = pBytes == null ? 0 : pBytes.length;
+        if (myInBufLen < (pLength + pOffset)) {
+            throw new GordianLogicException("Input buffer too short.");
+        }
+        final int myOutBufLen = pOutput == null ? 0 : pOutput.length;
+        if (myOutBufLen < (getOutputLength(pLength) + pOutOffset)) {
+            throw new GordianLogicException("Output buffer too short.");
+        }
+
+        /* Only relevant when the two buffers are the same */
+        if (pBytes != pOutput) {
+            return false;
+        }
+
+        /* Check for overlap */
+        return pOutOffset < pOffset + pLength
+            && pOffset < pOutOffset + getOutputLength(pLength);
+    }
+
+    @Override
+    public int finish(final byte[] pOutput,
+                      final int pOutOffset) throws OceanusException {
+        /* Check that the buffers are sufficient */
+        final int myOutBufLen = pOutput == null ? 0 : pOutput.length;
+        if (myOutBufLen < (getOutputLength(0) + pOutOffset)) {
+            throw new GordianLogicException("Output buffer too short.");
+        }
+
+        /* finish the cipher */
+        return doFinish(pOutput, pOutOffset);
+    }
+
+    /**
+     * Complete the Cipher operation and return final results.
+     * @param pOutput the output buffer to receive processed data
+     * @param pOutOffset offset within pOutput to write bytes to
+     * @return the number of bytes transferred to the output buffer
+     * @throws OceanusException on error
+     */
+    public abstract int doFinish(byte[] pOutput,
+                                 int pOutOffset) throws OceanusException;
+
     /**
      * Check that the key matches the keyType.
      * @param pKey the passed key.

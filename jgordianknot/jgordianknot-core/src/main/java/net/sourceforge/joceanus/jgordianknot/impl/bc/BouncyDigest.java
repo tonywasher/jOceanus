@@ -68,20 +68,15 @@ public final class BouncyDigest
     }
 
     @Override
-    public void update(final byte[] pBytes,
-                       final int pOffset,
-                       final int pLength) {
+    public void doUpdate(final byte[] pBytes,
+                         final int pOffset,
+                         final int pLength) {
         theDigest.update(pBytes, pOffset, pLength);
     }
 
     @Override
     public void update(final byte pByte) {
         theDigest.update(pByte);
-    }
-
-    @Override
-    public void update(final byte[] pBytes) {
-        theDigest.update(pBytes, 0, pBytes.length);
     }
 
     @Override
@@ -92,13 +87,13 @@ public final class BouncyDigest
     @Override
     public byte[] finish() {
         final byte[] myResult = new byte[getDigestSize()];
-        finish(myResult, 0);
+        doFinish(myResult, 0);
         return myResult;
     }
 
     @Override
-    public int finish(final byte[] pBuffer,
-                      final int pOffset) {
+    public int doFinish(final byte[] pBuffer,
+                        final int pOffset) {
         return theXof == null
                ? theDigest.doFinal(pBuffer, pOffset)
                : theXof.doFinal(pBuffer, pOffset, getDigestSize());
