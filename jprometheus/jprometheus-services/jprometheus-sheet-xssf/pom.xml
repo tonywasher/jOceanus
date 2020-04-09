@@ -3,7 +3,7 @@
   <parent>
     <groupId>net.sourceforge.joceanus</groupId>
     <artifactId>jprometheus-services</artifactId>
-    <version>1.6.1-SNAPSHOT</version>
+    <version>1.6.1-b2</version>
   </parent>
   <artifactId>jprometheus-sheet-xssf</artifactId>
   <name>Prometheus Sheet XSSF Service</name>

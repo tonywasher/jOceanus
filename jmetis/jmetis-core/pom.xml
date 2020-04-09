@@ -3,7 +3,7 @@
   <parent>
     <groupId>net.sourceforge.joceanus</groupId>
     <artifactId>jmetis</artifactId>
-    <version>1.6.1-SNAPSHOT</version>
+    <version>1.6.1-b2</version>
   </parent>
   <artifactId>jmetis-core</artifactId>
   <name>Metis Core Data Framework</name>

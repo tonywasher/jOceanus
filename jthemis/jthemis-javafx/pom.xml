@@ -3,7 +3,7 @@
   <parent>
     <groupId>net.sourceforge.joceanus</groupId>
     <artifactId>jthemis</artifactId>
-    <version>1.6.1-SNAPSHOT</version>
+    <version>1.6.1-b2</version>
   </parent>
   <artifactId>jthemis-javafx</artifactId>
   <name>Themis JavaFX Project Framework</name>
