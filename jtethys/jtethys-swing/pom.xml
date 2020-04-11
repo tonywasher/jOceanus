@@ -3,7 +3,7 @@
   <parent>
     <groupId>net.sourceforge.joceanus</groupId>
     <artifactId>jtethys</artifactId>
-    <version>1.6.1-b2</version>
+    <version>1.6.1-SNAPSHOT</version>
   </parent>
   <artifactId>jtethys-swing</artifactId>
   <name>Tethys Java Swing Utilities</name>

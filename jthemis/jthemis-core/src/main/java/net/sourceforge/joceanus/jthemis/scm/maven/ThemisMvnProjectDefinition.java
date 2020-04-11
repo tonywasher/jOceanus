@@ -281,7 +281,7 @@ public class ThemisMvnProjectDefinition
             myRef.setNewVersion(pProjectId);
         }
     }
-
+fd
     /**
      * SubModule.
      */

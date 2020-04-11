@@ -52,7 +52,7 @@ public final class GordianCoreKeySetHash
     /**
      * keySetHashSpec.
      */
-    private GordianKeySetHashSpec theSpec;
+    private final GordianKeySetHashSpec theSpec;
 
     /**
      * The Hash.
@@ -364,11 +364,11 @@ public final class GordianCoreKeySetHash
 
                 /* Recalculate hashes and combine them */
                 myPrimeMac.finish(myPrimeHash, 0);
-                TethysDataConverter.buildHashResult(myPrimeBytes, myPrimeHash);
+                GordianPersonalisation.buildHashResult(myPrimeBytes, myPrimeHash);
                 myAlternateMac.finish(myAlternateHash, 0);
-                TethysDataConverter.buildHashResult(myAlternateBytes, myAlternateHash);
+                GordianPersonalisation.buildHashResult(myAlternateBytes, myAlternateHash);
                 mySecretMac.finish(mySecretHash, 0);
-                TethysDataConverter.buildHashResult(mySecretBytes, mySecretHash);
+                GordianPersonalisation.buildHashResult(mySecretBytes, mySecretHash);
             }
 
             /* Combine the Primary and Alternate hashes to form the initVector */

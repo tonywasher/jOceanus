@@ -486,68 +486,6 @@ public final class TethysDataConverter {
     }
 
     /**
-     * Simple function to combine hashes. Hashes are simply XORed together.
-     * @param pFirst the first Hash
-     * @param pSecond the second Hash
-     * @return the combined hash
-     */
-    public static byte[] combineHashes(final byte[] pFirst,
-                                       final byte[] pSecond) {
-        /* Handle nulls */
-        if (pFirst == null) {
-            return pSecond;
-        }
-        if (pSecond == null) {
-            return pFirst;
-        }
-
-        /* If the target is smaller than the source */
-        byte[] myTarget = pSecond;
-        byte[] mySource = pFirst;
-        if (myTarget.length < mySource.length) {
-            /* Reverse the order to make use of all bits */
-            myTarget = pFirst;
-            mySource = pSecond;
-        }
-
-        /* Allocate the target as a copy of the input */
-        myTarget = Arrays.copyOf(myTarget, myTarget.length);
-
-        /* Determine length of operation */
-        final int myLen = mySource.length;
-
-        /* Loop through the array bytes */
-        for (int i = 0; i < myTarget.length; i++) {
-            /* Combine the bytes */
-            myTarget[i] ^= mySource[i
-                                    % myLen];
-        }
-
-        /* return the array */
-        return myTarget;
-    }
-
-    /**
-     * Simple function to build a hash result.
-     * @param pResult the result Hash
-     * @param pHash the calculated Hash
-     * @throws OceanusException on error
-     */
-    public static void buildHashResult(final byte[] pResult,
-                                       final byte[] pHash) throws OceanusException {
-        /* If the target is smaller than the source */
-        final int myLen = pResult.length;
-        if (myLen != pHash.length) {
-            throw new TethysDataException("Hashes are different lengths");
-        }
-        /* Loop through the array bytes */
-        for (int i = 0; i < myLen; i++) {
-            /* Combine the bytes */
-            pResult[i] ^= pHash[i];
-        }
-    }
-
-    /**
      * Convert a byte array to a Base64 string.
      * @param pBytes the byte array (not null)
      * @return the translated Base64 string (not null)

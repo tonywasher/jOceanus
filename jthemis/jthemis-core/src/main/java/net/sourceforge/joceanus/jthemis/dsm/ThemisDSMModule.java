@@ -16,7 +16,6 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jthemis.dsm;
 
-import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -26,10 +25,6 @@ import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
-
-import org.apache.maven.model.Model;
-import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
-import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jthemis.ThemisIOException;
@@ -228,7 +223,7 @@ public class ThemisDSMModule {
      */
     void processModulesAndPackages() {
         /* Process the project */
-        parseProjectFile(new File(theLocation, ThemisDSMProject.POM));
+        parseProjectFile(new File(theLocation, ThemisDSMMaven.POM));
 
         /* Look for the source directory */
         final File mySrc = new File(theLocation, DIR_JAVA);
@@ -375,14 +370,12 @@ public class ThemisDSMModule {
         }
 
         /* Protect against exceptions */
-        try (InputStream myInFile = new FileInputStream(pPom);
-             BufferedInputStream myInBuffer = new BufferedInputStream(myInFile)) {
+        try (InputStream myInStream = new FileInputStream(pPom)) {
             /* Parse the Project definition file */
-            final MavenXpp3Reader myReader = new MavenXpp3Reader();
-            final Model myModel = myReader.read(myInBuffer);
+            final ThemisDSMMaven myPom = new ThemisDSMMaven(myInStream);
 
             /* Loop through the modules */
-            for (final String myModuleName : myModel.getModules()) {
+            for (final String myModuleName : myPom.getModules()) {
                 final File myModuleDir = new File(pPom.getParentFile(), myModuleName);
 
                 final ThemisDSMModule myModule = new ThemisDSMModule(myModuleDir);
@@ -398,7 +391,7 @@ public class ThemisDSMModule {
 
             /* Catch exceptions */
         } catch (IOException
-                | XmlPullParserException e) {
+                | OceanusException e) {
             /* Save Exception */
             theSubModules.clear();
             theError = new ThemisIOException("Failed to parse Project file", e);
