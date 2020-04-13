@@ -17,7 +17,6 @@
 package net.sourceforge.joceanus.jthemis.dsm;
 
 import org.w3c.dom.Element;
-import org.w3c.dom.Node;
 
 /**
  * Maven Module Id.
