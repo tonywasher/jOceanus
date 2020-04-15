@@ -23,7 +23,7 @@ import java.util.List;
  * Annotation.
  */
 public class ThemisAnalysisAnnotation
-        implements ThemisAnalysisElement {
+        implements ThemisAnalysisProcessed {
     /**
      * The blankLines.
      */
@@ -43,7 +43,7 @@ public class ThemisAnalysisAnnotation
         /* While there are further lines */
         while (pParser.hasLines()) {
             /* Access next line */
-            final ThemisAnalysisLine myLine = pParser.peekNextLine();
+            final ThemisAnalysisLine myLine = (ThemisAnalysisLine) pParser.peekNextLine();
 
             /* It it is also an annotation */
             if (isAnnotation(myLine)) {

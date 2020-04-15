@@ -17,12 +17,13 @@
 package net.sourceforge.joceanus.jthemis.analysis;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * Enum representation.
  */
 public class ThemisAnalysisEnum
-        implements ThemisAnalysisElement {
+        implements ThemisAnalysisElement, ThemisAnalysisDataType {
     /**
      * The name of the class.
      */
@@ -36,17 +37,17 @@ public class ThemisAnalysisEnum
     /**
      * The headers.
      */
-    private final List<ThemisAnalysisLine> theHeaders;
+    private final List<ThemisAnalysisElement> theHeaders;
 
     /**
      * The lines.
      */
-    private final List<ThemisAnalysisLine> theLines;
+    private final List<ThemisAnalysisElement> theLines;
 
     /**
      * Constructor.
      * @param pParser the parser
-     * @param pLine the initial comment line
+     * @param pLine the initial enum line
      */
     ThemisAnalysisEnum(final ThemisAnalysisParser pParser,
                        final ThemisAnalysisLine pLine) {
@@ -57,6 +58,10 @@ public class ThemisAnalysisEnum
         /* Create the arrays */
         theHeaders = ThemisAnalysisBody.processHeaders(pParser, pLine);
         theLines = ThemisAnalysisBody.processBody(pParser);
+
+        /* add/replace the enum in the map */
+        final Map<String, ThemisAnalysisDataType> myMap = pParser.getDataTypes();
+        myMap.put(theName, this);
     }
 
     /**
@@ -73,5 +78,10 @@ public class ThemisAnalysisEnum
      */
     public int getNumLines() {
         return theLines.size();
+    }
+
+    @Override
+    public String toString() {
+        return getName();
     }
 }

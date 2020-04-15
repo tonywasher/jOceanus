@@ -18,16 +18,17 @@ package net.sourceforge.joceanus.jthemis.analysis;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Catch construct.
  */
 public class ThemisAnalysisCatch
-        implements ThemisAnalysisElement {
+        implements ThemisAnalysisContainer {
     /**
      * The headers.
      */
-    private final List<ThemisAnalysisLine> theHeaders;
+    private final List<ThemisAnalysisElement> theHeaders;
 
     /**
      * The elements.
@@ -38,6 +39,11 @@ public class ThemisAnalysisCatch
      * The catch clause(s).
      */
     private final ThemisAnalysisCatch theCatch;
+
+    /**
+     * The dataTypes.
+     */
+    private final Map<String, ThemisAnalysisDataType> theDataTypes;
 
     /**
      * The number of lines in the class.
@@ -51,9 +57,12 @@ public class ThemisAnalysisCatch
      */
     ThemisAnalysisCatch(final ThemisAnalysisParser pParser,
                         final ThemisAnalysisLine pLine) {
+        /* Store dataTypes */
+        theDataTypes = pParser.getDataTypes();
+
         /* Create the arrays */
         theHeaders = ThemisAnalysisBody.processHeaders(pParser, pLine);
-        final List<ThemisAnalysisLine> myLines = ThemisAnalysisBody.processBody(pParser);
+        final List<ThemisAnalysisElement> myLines = ThemisAnalysisBody.processBody(pParser);
         theNumLines = myLines.size();
 
         /* Look for catch clauses */
@@ -61,8 +70,26 @@ public class ThemisAnalysisCatch
 
         /* Create a parser */
         theProcessed = new ArrayList<>();
-        final ThemisAnalysisParser myParser = new ThemisAnalysisParser(myLines, theProcessed, pParser);
+        final ThemisAnalysisParser myParser = new ThemisAnalysisParser(myLines, theProcessed, theDataTypes);
         myParser.postProcessLines();
+    }
+
+    @Override
+    public Map<String, ThemisAnalysisDataType> getDataTypes() {
+        return theDataTypes;
+    }
+
+    @Override
+    public List<ThemisAnalysisElement> getProcessed() {
+        return theProcessed;
+    }
+
+    @Override
+    public void postProcessExtras() {
+        /* Process the catch clause if required */
+        if (theCatch != null) {
+            theCatch.postProcessLines();
+        }
     }
 
     /**

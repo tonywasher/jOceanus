@@ -25,6 +25,7 @@ import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jthemis.ThemisDataException;
@@ -32,7 +33,8 @@ import net.sourceforge.joceanus.jthemis.ThemisDataException;
 /**
  * Analysis representation of a java file.
  */
-public class ThemisAnalysisFile {
+public class ThemisAnalysisFile
+    implements ThemisAnalysisDataType {
     /**
      * The lineFeed character.
      */
@@ -52,6 +54,11 @@ public class ThemisAnalysisFile {
      * The location of the file.
      */
     private final File theLocation;
+
+    /**
+     * The name of the file.
+     */
+    private final String theName;
 
     /**
      * The package file.
@@ -78,9 +85,18 @@ public class ThemisAnalysisFile {
         /* Store the parameters */
         thePackage = pPackage;
         theLocation = pFile;
+        theName = pFile.getName().replace(ThemisAnalysisPackage.SFX_JAVA, "");
 
         /* Create the array */
         theProcessed = new ArrayList<>();
+    }
+
+    /**
+     * Obtain the name of the fileClass.
+     * @return the name
+     */
+    public String getName() {
+        return theName;
     }
 
     /**
@@ -89,7 +105,7 @@ public class ThemisAnalysisFile {
      */
     void processFile() throws OceanusException {
         /* Create the array */
-        final List<ThemisAnalysisLine> myLines = new ArrayList<>();
+        final List<ThemisAnalysisElement> myLines = new ArrayList<>();
 
         /* create a read buffer */
         final char[] myBuffer = new char[BUFLEN];
@@ -141,7 +157,7 @@ public class ThemisAnalysisFile {
      * @param pNumChars the number of characters in the buffer
      * @return the remaining characters in the buffer
      */
-    private int processLines(final List<ThemisAnalysisLine> pLines,
+    private int processLines(final List<ThemisAnalysisElement> pLines,
                              final char[] pBuffer,
                              final int pNumChars) {
         /* The start of the current line */
@@ -214,21 +230,21 @@ public class ThemisAnalysisFile {
      * Post-process the lines.
      * @param pLines the lines to process
      */
-    void postProcessLines(final List<ThemisAnalysisLine> pLines) {
+    void postProcessLines(final List<ThemisAnalysisElement> pLines) {
         /* Create the parser */
         final ThemisAnalysisParser myParser = new ThemisAnalysisParser(pLines, theProcessed);
 
         /* Loop through the lines */
         while (myParser.hasLines()) {
             /* Access next line */
-            final ThemisAnalysisLine myLine = myParser.popNextLine();
+            final ThemisAnalysisLine myLine = (ThemisAnalysisLine) myParser.popNextLine();
 
             /* Process comments and blanks */
             boolean processed = myParser.processCommentsAndBlanks(myLine);
 
             /* Process package */
             if (!processed) {
-                processed = processPackage(myLine);
+                processed = processPackage(myParser, myLine);
             }
 
             /* Process imports */
@@ -251,10 +267,12 @@ public class ThemisAnalysisFile {
 
     /**
      * Process a potential import line.
+     * @param pParser the parser
      * @param pLine the line
      * @return have we processed the line?
      */
-    private boolean processPackage(final ThemisAnalysisLine pLine) {
+    private boolean processPackage(final ThemisAnalysisParser pParser,
+                                   final ThemisAnalysisLine pLine) {
         /* If this is a package line */
         if (ThemisAnalysisPackage.isPackage(pLine)) {
             /* Check that the package is correct named */
@@ -262,9 +280,10 @@ public class ThemisAnalysisFile {
                 throw new IllegalStateException("Bad package");
             }
 
-            /* Loop through the package classes */
+            /* Add the class name of each of the packages to the dataTypes */
+            final Map<String, ThemisAnalysisDataType> myMap = pParser.getDataTypes();
             for (ThemisAnalysisFile myFile : thePackage.getClasses()) {
-
+                myMap.put(myFile.getName(), myFile);
             }
 
             /* Process the package line */
@@ -276,5 +295,10 @@ public class ThemisAnalysisFile {
 
         /* return false */
         return false;
+    }
+
+    @Override
+    public String toString() {
+        return getName();
     }
 }

@@ -56,6 +56,11 @@ public enum ThemisAnalysisKeyWord {
     IMPLEMENTS("implements"),
 
     /**
+     * Super.
+     */
+    SUPER("super"),
+
+    /**
      * Throws.
      */
     THROWS("throws"),
@@ -114,6 +119,11 @@ public enum ThemisAnalysisKeyWord {
      * RETURN.
      */
     RETURN("return"),
+
+    /**
+     * THROW.
+     */
+    THROW("throw"),
 
     /**
      * Switch.

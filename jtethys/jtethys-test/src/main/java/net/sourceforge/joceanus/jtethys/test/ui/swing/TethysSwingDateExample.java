@@ -353,7 +353,7 @@ public class TethysSwingDateExample {
         /* Create the date column */
         final TethysSwingTableDateColumn<String, DateItem> myDateColumn = theTable.declareDateColumn(DateItem.PROP_DATE);
         myDateColumn.setCellValueFactory(DateItem::getDate);
-        myDateColumn.setOnCommit((p, v) -> p.setDate(v));
+        myDateColumn.setOnCommit(DateItem::setDate);
         myDateColumn.setColumnWidth(COL_1_WIDTH);
         myDateColumn.setDateConfigurator((r, c) -> {
             c.setEarliestDate(theStartDate.getSelectedDate());
@@ -364,7 +364,7 @@ public class TethysSwingDateExample {
         /* Create the comments column */
         final TethysSwingTableStringColumn<String, DateItem> myCommentsColumn = theTable.declareStringColumn(DateItem.PROP_COMMENTS);
         myCommentsColumn.setCellValueFactory(DateItem::getComments);
-        myCommentsColumn.setOnCommit((p, v) -> p.setComments(v));
+        myCommentsColumn.setOnCommit(DateItem::setComments);
         myCommentsColumn.setColumnWidth(COL_2_WIDTH);
     }
 
@@ -450,13 +450,9 @@ public class TethysSwingDateExample {
         theRangeSelect = theGuiFactory.newDateRangeSelector(true);
         theRangeSelect.getEventRegistrar().addEventListener(TethysUIEvent.NEWVALUE, e -> handleNewRange());
 
-        /* Initialise the values */
-        final TethysDate myStart = DATE_START;
-        final TethysDate myEnd = DATE_END;
-
         /* Set the values */
-        theStartDate.setSelectedDate(myStart);
-        theEndDate.setSelectedDate(myEnd);
+        theStartDate.setSelectedDate(DATE_START);
+        theEndDate.setSelectedDate(DATE_END);
 
         /* Apply the range */
         applyRange();

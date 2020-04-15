@@ -17,6 +17,7 @@
 package net.sourceforge.joceanus.jtethys.test.ui;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.EnumMap;
 import java.util.Iterator;
 import java.util.List;
@@ -178,12 +179,7 @@ public class TethysScrollUITestHelper {
      */
     public Iterator<TethysListId> buildSelectableList() {
         /* Create the list */
-        final List<TethysListId> myValues = new ArrayList<>();
-
-        /* Loop through the items */
-        for (TethysListId myValue : TethysListId.values()) {
-            myValues.add(myValue);
-        }
+        final List<TethysListId> myValues = new ArrayList<>(Arrays.asList(TethysListId.values()));
 
         /* Set the value */
         return myValues.iterator();

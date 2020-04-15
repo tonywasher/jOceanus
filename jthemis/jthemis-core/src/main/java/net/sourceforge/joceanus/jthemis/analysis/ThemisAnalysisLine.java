@@ -41,6 +41,18 @@ public class ThemisAnalysisLine
     static final char PARENTHESIS_CLOSE = ')';
 
     /**
+     * The token terminators.
+     */
+    private static final char[] TERMINATORS = {
+            PARENTHESIS_OPEN,
+            PARENTHESIS_CLOSE,
+            ThemisAnalysisGeneric.GENERIC_OPEN,
+            ThemisAnalysisBody.STATEMENT_SEP,
+            ThemisAnalysisBody.STATEMENT_TERM,
+            ThemisAnalysisArray.ARRAY_OPEN
+    };
+
+    /**
      * The line buffer.
      */
     private List<ThemisAnalysisPrefix> theModifiers;
@@ -235,9 +247,7 @@ public class ThemisAnalysisLine
         for (int i = 0; i < theLength; i++) {
             /* if we have hit whiteSpace or GENERIC/PARENTHESIS OPEN */
             final char myChar = theBuffer[i + theOffset];
-            if (Character.isWhitespace(myChar)
-                    || myChar == ThemisAnalysisGeneric.GENERIC_OPEN
-                    || myChar == PARENTHESIS_OPEN) {
+            if (isTerminator(myChar)) {
                 /* Strip out the characters */
                 final char[] myChars = Arrays.copyOfRange(theBuffer, theOffset, i + theOffset);
                 return new String(myChars);
@@ -246,6 +256,52 @@ public class ThemisAnalysisLine
 
         /* Whole buffer is the token */
         return toString();
+    }
+
+    /**
+     * Is the character a token terminator?
+     * @param pChar the character
+     * @return true/false
+     */
+    private static boolean isTerminator(final char pChar) {
+        /* WhiteSpace is a terminator */
+        if (Character.isWhitespace(pChar)) {
+            return true;
+        }
+
+        /* Loop through the terminators */
+        for (char terminator : TERMINATORS) {
+            /* if we have hit a terminator */
+            if (pChar == terminator) {
+                return true;
+            }
+        }
+
+        /* Whole buffer is the token */
+        return false;
+    }
+
+    /**
+     * Strip data up to char.
+     * @param pChar the end character
+     * @return the stripped token
+     */
+    String stripUpToChar(final char pChar) {
+        /* Loop through the buffer */
+        for (int i = 0; i < theLength; i++) {
+            /* if we have hit the char */
+            final char myChar = theBuffer[i + theOffset];
+            if (myChar == pChar) {
+                /* Strip out the characters */
+                final char[] myChars = Arrays.copyOfRange(theBuffer, theOffset, i + theOffset);
+                theOffset += i + 1;
+                theLength -= i + 1;
+                return new String(myChars);
+            }
+        }
+
+        /* Didn't find the end character */
+        throw new IllegalStateException("end character not found");
     }
 
     /**

@@ -25,9 +25,14 @@ import java.util.Map;
  */
 public class ThemisAnalysisParser {
     /**
+     * The keyWordMap.
+     */
+    private static final Map<String, Object> KEYWORDS = createKeyWordMap();
+
+    /**
      * The list of source lines.
      */
-    private final List<ThemisAnalysisLine> theLines;
+    private final List<ThemisAnalysisElement> theLines;
 
     /**
      * The list of output lines.
@@ -35,21 +40,16 @@ public class ThemisAnalysisParser {
     private final List<ThemisAnalysisElement> theProcessed;
 
     /**
-     * The keyWordMap.
-     */
-    private final Map<String, Object> theKeyWords;
-
-    /**
      * The dataTypeMap.
      */
-    private final Map<String, Object> theDataTypes;
+    private final Map<String, ThemisAnalysisDataType> theDataTypes;
 
     /**
      * Constructor.
      * @param pLines the lines.
      * @param pProcessed the processed output
      */
-    ThemisAnalysisParser(final List<ThemisAnalysisLine> pLines,
+    ThemisAnalysisParser(final List<ThemisAnalysisElement> pLines,
                          final List<ThemisAnalysisElement> pProcessed) {
         this(pLines, pProcessed, null);
     }
@@ -58,24 +58,19 @@ public class ThemisAnalysisParser {
      * Constructor.
      * @param pLines the lines.
      * @param pProcessed the processed output
-     * @param pParser the underlying parser
+     * @param pDataTypes the dataType map
      */
-    ThemisAnalysisParser(final List<ThemisAnalysisLine> pLines,
+    ThemisAnalysisParser(final List<ThemisAnalysisElement> pLines,
                          final List<ThemisAnalysisElement> pProcessed,
-                         final ThemisAnalysisParser pParser) {
+                         final Map<String, ThemisAnalysisDataType> pDataTypes) {
         /* Store parameters */
         theLines = pLines;
         theProcessed = pProcessed;
 
-        /* Create the keyWordMap */
-        theKeyWords = pParser == null
-                        ? createKeyWordMap()
-                        : pParser.getKeyWords();
-
         /* Create the dataTypeMap */
-        theDataTypes = pParser == null
+        theDataTypes = pDataTypes == null
                       ? createDataTypeMap()
-                      : pParser.getDataTypes();
+                      : pDataTypes;
     }
 
     /**
@@ -91,14 +86,14 @@ public class ThemisAnalysisParser {
      * @return the keyWordMap
      */
     Map<String, Object> getKeyWords() {
-        return theKeyWords;
+        return KEYWORDS;
     }
 
     /**
      * Obtain the dataTypes map?
      * @return the dataTypesMap
      */
-    Map<String, Object> getDataTypes() {
+    Map<String, ThemisAnalysisDataType> getDataTypes() {
         return theDataTypes;
     }
 
@@ -106,14 +101,14 @@ public class ThemisAnalysisParser {
      * Pop next line from list.
      * @return the next line
      */
-    ThemisAnalysisLine popNextLine() {
+    ThemisAnalysisElement popNextLine() {
         /* Check that there is a line to pop */
         if (theLines.isEmpty()) {
             throw new IllegalStateException();
         }
 
         /* Access the first line and remove from the list */
-        final ThemisAnalysisLine myLine = theLines.get(0);
+        final ThemisAnalysisElement myLine = theLines.get(0);
         theLines.remove(0);
 
         /* return the line */
@@ -124,7 +119,7 @@ public class ThemisAnalysisParser {
      * Peek next line from list.
      * @return the next line
      */
-    ThemisAnalysisLine peekNextLine() {
+    ThemisAnalysisElement peekNextLine() {
         /* Check that there is a line to pop */
         if (theLines.isEmpty()) {
             throw new IllegalStateException();
@@ -138,7 +133,7 @@ public class ThemisAnalysisParser {
      * Push line back onto stack.
      * @param pLine to line to push onto stack
      */
-    void pushLine(final ThemisAnalysisLine pLine) {
+    void pushLine(final ThemisAnalysisElement pLine) {
         /* Insert the line at the front of the stack */
         theLines.add(0, pLine);
     }
@@ -203,7 +198,7 @@ public class ThemisAnalysisParser {
     boolean processClass(final ThemisAnalysisLine pLine) {
         /* Access class type */
         final String myToken = pLine.peekNextToken();
-        final Object myType = theKeyWords.get(myToken);
+        final Object myType = KEYWORDS.get(myToken);
 
         /* If we have a keyWord */
         if (myType instanceof ThemisAnalysisKeyWord) {
@@ -212,7 +207,7 @@ public class ThemisAnalysisParser {
                 case CLASS:
                     /* Create the class */
                     pLine.stripStartSequence(myToken);
-                     theProcessed.add(new ThemisAnalysisClass(this, pLine));
+                    theProcessed.add(new ThemisAnalysisClass(this, pLine));
                     return true;
 
                 /* If this is an interface */
@@ -246,7 +241,7 @@ public class ThemisAnalysisParser {
     boolean processLanguage(final ThemisAnalysisLine pLine) {
         /* Access class type */
         final String myToken = pLine.peekNextToken();
-        final Object myType = theKeyWords.get(myToken);
+        final Object myType = KEYWORDS.get(myToken);
 
         /* If we have a keyWord */
         if (myType instanceof ThemisAnalysisKeyWord) {
@@ -315,9 +310,9 @@ public class ThemisAnalysisParser {
         }
 
         /* Access keyWord */
-        final ThemisAnalysisLine myLine = popNextLine();
+        final ThemisAnalysisLine myLine = (ThemisAnalysisLine) popNextLine();
         final String myToken = myLine.peekNextToken();
-        final Object myType = theKeyWords.get(myToken);
+        final Object myType = KEYWORDS.get(myToken);
 
         /* If we have a keyWord */
         if (pKeyWord.equals(myType)) {
@@ -352,13 +347,70 @@ public class ThemisAnalysisParser {
     }
 
     /**
-     * Post-process the lines.
+     * Process field and method constructs.
+     * @param pLine the line
+     * @return have we processed the line?
+     */
+    boolean processFieldsAndMethods(final ThemisAnalysisLine pLine) {
+        /* Look for a reference */
+        final ThemisAnalysisReference myReference = parseDataType(pLine);
+        if (myReference != null) {
+            /* Access the name of the field or method */
+            final String myName = pLine.stripNextToken();
+            final boolean isMethod = pLine.startsWithSequence("(");
+            final boolean isInitializer = myName.length() == 0;
+            if (!isMethod) {
+                System.out.println("Field " + myName + " of type " + myReference);
+            } else if (isInitializer) {
+                System.out.println("Initializer for " + myReference);
+            } else {
+                System.out.println("Method " + myName + " returning " + myReference);
+            }
+        }
+
+        /* Not processed */
+        return false;
+    }
+
+    /**
+     * Process field and method constructs.
+     * @param pLine the line
+     * @return have we processed the line?
+     */
+    ThemisAnalysisReference parseDataType(final ThemisAnalysisLine pLine) {
+        /* Make sure that we are not started by a keyword */
+        final String myToken = pLine.peekNextToken();
+        if (KEYWORDS.get(myToken) != null) {
+            return null;
+        }
+
+        /* Look to for a valid daatType */
+        final ThemisAnalysisDataType myType = theDataTypes.get(myToken);
+        if (myType == null) {
+            return null;
+        }
+        pLine.stripStartSequence(myToken);
+
+        /* Access any generic/array detail */
+        final ThemisAnalysisGeneric myGeneric = ThemisAnalysisGeneric.isGeneric(pLine)
+                                                ? new ThemisAnalysisGeneric(pLine)
+                                                : null;
+        final ThemisAnalysisArray myArray = ThemisAnalysisArray.isArray(pLine)
+                                                ? new ThemisAnalysisArray(pLine)
+                                                : null;
+
+        /* Return the reference */
+        return new ThemisAnalysisReference(myType, myGeneric, myArray);
+    }
+
+    /**
+     * process the lines.
      */
     void postProcessLines() {
         /* Loop through the lines */
         while (hasLines()) {
             /* Access next line */
-            final ThemisAnalysisLine myLine = popNextLine();
+            final ThemisAnalysisLine myLine = (ThemisAnalysisLine) popNextLine();
 
             /* Process comments and blanks */
             boolean processed = processCommentsAndBlanks(myLine);
@@ -394,14 +446,6 @@ public class ThemisAnalysisParser {
             myMap.put(myKeyWord.toString(), myKeyWord);
         }
 
-        /* Add the primitives */
-        for (ThemisAnalysisPrimitive myPrimitive : ThemisAnalysisPrimitive.values()) {
-            myMap.put(myPrimitive.toString(), myPrimitive);
-            if (myPrimitive.getBoxed() != null) {
-                myMap.put(myPrimitive.getBoxed(), myPrimitive);
-            }
-        }
-
         /* return the map */
         return myMap;
     }
@@ -410,9 +454,9 @@ public class ThemisAnalysisParser {
      * Create the dataTypeMap.
      * @return the new map
      */
-    private static Map<String, Object> createDataTypeMap() {
+    private static Map<String, ThemisAnalysisDataType> createDataTypeMap() {
         /* create the map */
-        final Map<String, Object> myMap = new HashMap<>();
+        final Map<String, ThemisAnalysisDataType> myMap = new HashMap<>();
 
         /* Add the primitives */
         for (ThemisAnalysisPrimitive myPrimitive : ThemisAnalysisPrimitive.values()) {

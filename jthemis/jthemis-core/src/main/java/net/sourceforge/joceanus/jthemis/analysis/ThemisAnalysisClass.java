@@ -18,12 +18,13 @@ package net.sourceforge.joceanus.jthemis.analysis;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Class representation.
  */
 public class ThemisAnalysisClass
-    implements ThemisAnalysisElement {
+    implements ThemisAnalysisContainer, ThemisAnalysisDataType {
     /**
      * The name of the class.
      */
@@ -37,12 +38,17 @@ public class ThemisAnalysisClass
     /**
      * The headers.
      */
-    private final List<ThemisAnalysisLine> theHeaders;
+    private final List<ThemisAnalysisElement> theHeaders;
 
     /**
      * The elements.
      */
     private final List<ThemisAnalysisElement> theProcessed;
+
+    /**
+     * The dataTypes.
+     */
+    private final Map<String, ThemisAnalysisDataType> theDataTypes;
 
     /**
      * The number of lines in the class.
@@ -59,32 +65,37 @@ public class ThemisAnalysisClass
         /* Store parameters */
         theName = pLine.stripNextToken();
         theModifiers = pLine.getModifiers();
+        theDataTypes = pParser.getDataTypes();
 
         /* Create the arrays */
         theHeaders = ThemisAnalysisBody.processHeaders(pParser, pLine);
-        final List<ThemisAnalysisLine> myLines = ThemisAnalysisBody.processBody(pParser);
+        final List<ThemisAnalysisElement> myLines = ThemisAnalysisBody.processBody(pParser);
         theNumLines = myLines.size();
+
+        /* add/replace the class in the map */
+        final Map<String, ThemisAnalysisDataType> myMap = pParser.getDataTypes();
+        myMap.put(theName, this);
 
         /* Create a parser */
         theProcessed = new ArrayList<>();
-        final ThemisAnalysisParser myParser = new ThemisAnalysisParser(myLines, theProcessed, pParser);
-        postProcessLines(myParser);
-    }
+        final ThemisAnalysisParser myParser = new ThemisAnalysisParser(myLines, theProcessed, theDataTypes);
+        processLines(myParser);
+     }
 
     /**
-     * Post-process the lines.
+     * process the lines.
      * @param pParser the parser
      */
-    void postProcessLines(final ThemisAnalysisParser pParser) {
+    void processLines(final ThemisAnalysisParser pParser) {
        /* Loop through the lines */
         while (pParser.hasLines()) {
             /* Access next line */
-            final ThemisAnalysisLine myLine = pParser.popNextLine();
+            final ThemisAnalysisLine myLine = (ThemisAnalysisLine) pParser.popNextLine();
 
             /* Process comments and blanks */
             boolean processed = pParser.processCommentsAndBlanks(myLine);
 
-            /* Process imbedded classes */
+            /* Process embedded classes */
             if (!processed) {
                 processed = pParser.processClass(myLine);
             }
@@ -92,6 +103,10 @@ public class ThemisAnalysisClass
             /* Process language constructs */
             if (!processed) {
                 processed = pParser.processLanguage(myLine);
+            }
+
+            if (!processed) {
+                processed = pParser.processFieldsAndMethods(myLine);
             }
 
             /* If we haven't processed yet */
@@ -116,5 +131,20 @@ public class ThemisAnalysisClass
      */
     public int getNumLines() {
         return theNumLines;
+    }
+
+    @Override
+    public Map<String, ThemisAnalysisDataType> getDataTypes() {
+        return theDataTypes;
+    }
+
+    @Override
+    public List<ThemisAnalysisElement> getProcessed() {
+        return theProcessed;
+    }
+
+    @Override
+    public String toString() {
+        return getName();
     }
 }

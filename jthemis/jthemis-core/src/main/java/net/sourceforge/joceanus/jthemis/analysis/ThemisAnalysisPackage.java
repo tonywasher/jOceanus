@@ -31,7 +31,7 @@ public class ThemisAnalysisPackage
     /**
      * The java suffix.
      */
-    private static final String SFX_JAVA = ".java";
+    static final String SFX_JAVA = ".java";
 
     /**
      * The package-info file.
@@ -147,5 +147,10 @@ public class ThemisAnalysisPackage
 
         /* return false */
         return false;
+    }
+
+    @Override
+    public String toString() {
+        return thePackage;
     }
 }

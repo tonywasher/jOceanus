@@ -18,21 +18,27 @@ package net.sourceforge.joceanus.jthemis.analysis;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * While construct.
  */
 public class ThemisAnalysisWhile
-        implements ThemisAnalysisElement {
+        implements ThemisAnalysisContainer {
     /**
      * The headers.
      */
-    private final List<ThemisAnalysisLine> theHeaders;
+    private final List<ThemisAnalysisElement> theHeaders;
 
     /**
      * The elements.
      */
     private final List<ThemisAnalysisElement> theProcessed;
+
+    /**
+     * The dataTypes.
+     */
+    private final Map<String, ThemisAnalysisDataType> theDataTypes;
 
     /**
      * The number of lines in the class.
@@ -46,15 +52,28 @@ public class ThemisAnalysisWhile
      */
     ThemisAnalysisWhile(final ThemisAnalysisParser pParser,
                         final ThemisAnalysisLine pLine) {
+        /* Store dataTypes */
+        theDataTypes = pParser.getDataTypes();
+
         /* Create the arrays */
         theHeaders = ThemisAnalysisBody.processHeaders(pParser, pLine);
-        final List<ThemisAnalysisLine> myLines = ThemisAnalysisBody.processBody(pParser);
+        final List<ThemisAnalysisElement> myLines = ThemisAnalysisBody.processBody(pParser);
         theNumLines = myLines.size();
 
         /* Create a parser */
         theProcessed = new ArrayList<>();
-        final ThemisAnalysisParser myParser = new ThemisAnalysisParser(myLines, theProcessed, pParser);
+        final ThemisAnalysisParser myParser = new ThemisAnalysisParser(myLines, theProcessed, theDataTypes);
         myParser.postProcessLines();
+    }
+
+    @Override
+    public Map<String, ThemisAnalysisDataType> getDataTypes() {
+        return theDataTypes;
+    }
+
+    @Override
+    public List<ThemisAnalysisElement> getProcessed() {
+        return theProcessed;
     }
 
     /**

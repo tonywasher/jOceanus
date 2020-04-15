@@ -55,12 +55,7 @@ public final class TestSwingHelpWindow {
      * @param args the arguments
      */
     public static void main(final String[] args) {
-        SwingUtilities.invokeLater(new Runnable() {
-            @Override
-            public void run() {
-                createAndShowGUI();
-            }
-        });
+        SwingUtilities.invokeLater(TestSwingHelpWindow::createAndShowGUI);
     }
 
     /**

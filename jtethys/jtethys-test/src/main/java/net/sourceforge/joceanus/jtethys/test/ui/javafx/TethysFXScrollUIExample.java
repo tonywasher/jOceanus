@@ -384,7 +384,7 @@ public class TethysFXScrollUIExample
      */
     private void setStateIconValue(final Boolean pValue) {
         /* Record the value */
-        theStateIconValue.setText(theStateButtonMgr.getValue().toString() + ":" + Boolean.toString(pValue));
+        theStateIconValue.setText(theStateButtonMgr.getValue().toString() + ":" + pValue);
     }
 
     /**

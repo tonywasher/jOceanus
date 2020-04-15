@@ -23,7 +23,7 @@ import java.util.List;
  * A series of blank lines.
  */
 public class ThemisAnalysisBlank
-    implements ThemisAnalysisElement {
+    implements ThemisAnalysisProcessed {
     /**
      * The blankLines.
      */
@@ -43,7 +43,7 @@ public class ThemisAnalysisBlank
         /* While there are further lines */
         while (pParser.hasLines()) {
             /* Access next line */
-            final ThemisAnalysisLine myLine = pParser.peekNextLine();
+            final ThemisAnalysisLine myLine = (ThemisAnalysisLine) pParser.peekNextLine();
 
             /* It it is also blank */
             if (isBlank(myLine)) {

@@ -675,7 +675,7 @@ public class TethysSwingEditUIExample {
         } else if (pResults instanceof Boolean) {
             theValue.setText(pResults.toString());
         } else if (pResults instanceof List) {
-            theValue.setText(((List<?>) pResults).toString());
+            theValue.setText(pResults.toString());
         } else if (pResults instanceof TethysDate) {
             theValue.setText(theDateFormatter.formatDate((TethysDate) pResults));
         } else {

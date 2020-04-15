@@ -19,7 +19,8 @@ package net.sourceforge.joceanus.jthemis.analysis;
 /**
  * Primitive.
  */
-public enum ThemisAnalysisPrimitive {
+public enum ThemisAnalysisPrimitive
+        implements ThemisAnalysisDataType {
     /**
      * byte.
      */
@@ -64,6 +65,16 @@ public enum ThemisAnalysisPrimitive {
      * Object.
      */
     OBJECT("Object"),
+
+    /**
+     * Enum.
+     */
+    ENUM("Enum"),
+
+    /**
+     * String.
+     */
+    STRING("String"),
 
     /**
      * Void.

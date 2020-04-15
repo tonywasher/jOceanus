@@ -18,12 +18,13 @@ package net.sourceforge.joceanus.jthemis.analysis;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * The set of imports.
  */
 public class ThemisAnalysisImports
-    implements ThemisAnalysisElement {
+    implements ThemisAnalysisProcessed {
     /**
      * Period separator.
      */
@@ -48,14 +49,17 @@ public class ThemisAnalysisImports
         theImports.add(new ThemisAnalysisImport(pLine.toString()));
 
         /* While there are further lines */
+        final Map<String, ThemisAnalysisDataType> myMap = pParser.getDataTypes();
         while (pParser.hasLines()) {
             /* Access next line */
-            final ThemisAnalysisLine myLine = pParser.peekNextLine();
+            final ThemisAnalysisLine myLine = (ThemisAnalysisLine) pParser.peekNextLine();
 
             /* It it is also an import */
             if (isImport(myLine)) {
                 /* Add the import line and remove from input */
-                theImports.add(new ThemisAnalysisImport(myLine.toString()));
+                final ThemisAnalysisImport myImport = new ThemisAnalysisImport(myLine.toString());
+                theImports.add(myImport);
+                myMap.put(myImport.getSimpleName(), myImport);
                 pParser.popNextLine();
 
                 /* else break loop */
@@ -95,7 +99,7 @@ public class ThemisAnalysisImports
      * Import line.
      */
     static class ThemisAnalysisImport
-            implements ThemisAnalysisElement {
+            implements ThemisAnalysisElement, ThemisAnalysisDataType {
         /**
          * The full name.
          */
@@ -133,6 +137,11 @@ public class ThemisAnalysisImports
          */
         public String getSimpleName() {
             return theSimpleName;
+        }
+
+        @Override
+        public String toString() {
+            return getSimpleName();
         }
     }
 }

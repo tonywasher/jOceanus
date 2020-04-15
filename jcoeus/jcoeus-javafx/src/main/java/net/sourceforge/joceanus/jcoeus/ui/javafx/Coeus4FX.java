@@ -17,6 +17,7 @@
 package net.sourceforge.joceanus.jcoeus.ui.javafx;
 
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.stage.Stage;
 import net.sourceforge.joceanus.jcoeus.ui.CoeusApp;
 import net.sourceforge.joceanus.jmetis.profile.MetisProgram;
@@ -80,10 +81,13 @@ public class Coeus4FX
         if (thePanel != null) {
             /* Attach to the stage and show */
             thePanel.attachToStage(pStage);
+            Platform.setImplicitExit(true);
+            pStage.setOnCloseRequest(ae -> {
+                thePanel.handleAppClose();
+                Platform.exit();
+                System.exit(0);
+            });
             pStage.show();
-
-            /* Close child windows on close */
-            pStage.setOnCloseRequest(e -> thePanel.handleAppClose());
         }
     }
 }

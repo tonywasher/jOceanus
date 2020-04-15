@@ -147,7 +147,7 @@ public class TethysFXTableItem {
         theRatio.set(TethysScrollUITestHelper.RATIO_DEF);
         theDilution.set(TethysScrollUITestHelper.DILUTION_DEF);
         theList.setValue(pHelper.buildSelectedList());
-        theUpdates.setValue(Integer.valueOf(0));
+        theUpdates.setValue(0);
     }
 
     /**

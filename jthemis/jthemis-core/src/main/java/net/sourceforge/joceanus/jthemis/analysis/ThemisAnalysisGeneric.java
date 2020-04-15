@@ -30,4 +30,43 @@ public class ThemisAnalysisGeneric {
      */
     static final char GENERIC_CLOSE = '>';
 
+    /**
+     * Start generic.
+     */
+    static final String GENERIC_START = Character.toString(GENERIC_OPEN);
+
+    /**
+     * End generic.
+     */
+    static final String GENERIC_END = Character.toString(GENERIC_CLOSE);
+
+    /**
+     * The contents of the generic.
+     */
+    private final String theContents;
+
+    /**
+     * Constructor.
+     * @param pLine the line
+     */
+    ThemisAnalysisGeneric(final ThemisAnalysisLine pLine) {
+        pLine.stripStartSequence(GENERIC_START);
+        theContents = pLine.stripUpToChar(GENERIC_CLOSE);
+        pLine.stripLeadingWhiteSpace();
+    }
+
+    /**
+     * Is the line a generic?
+     * @param pLine the line
+     * @return true/false
+     */
+    static boolean isGeneric(final ThemisAnalysisLine pLine) {
+        /* If we are started with a GENERIC_OPEN */
+        return pLine.startsWithSequence(GENERIC_START);
+    }
+
+    @Override
+    public String toString() {
+        return GENERIC_START + theContents + GENERIC_END;
+    }
 }

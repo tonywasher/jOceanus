@@ -369,7 +369,7 @@ public final class TethysSwingDemoFilter {
         public void setSortItems(final boolean doSort) {
             /* Set the sort details */
             theFilter.setComparator(doSort
-                                           ? (l, r) -> l.compareTo(r)
+                                           ? RowData::compareTo
                                            : null);
             sortItems = doSort;
         }

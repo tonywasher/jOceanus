@@ -23,7 +23,7 @@ import java.util.List;
  * A series of comment lines.
  */
 public class ThemisAnalysisComment
-        implements ThemisAnalysisElement {
+        implements ThemisAnalysisProcessed {
     /**
      * The commentLines.
      */
@@ -44,7 +44,7 @@ public class ThemisAnalysisComment
         ThemisAnalysisLine myLine = pLine;
         while (!isEndComment(myLine)) {
             /* Pop next line and add it */
-            myLine = pParser.popNextLine();
+            myLine = (ThemisAnalysisLine) pParser.popNextLine();
             theComments.add(myLine);
         }
     }

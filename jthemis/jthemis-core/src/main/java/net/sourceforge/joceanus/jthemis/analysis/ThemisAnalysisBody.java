@@ -34,9 +34,19 @@ public final class ThemisAnalysisBody {
     static final String BRACE_CLOSE = "}";
 
     /**
+     * Statement separator.
+     */
+    static final char STATEMENT_SEP = ',';
+
+    /**
      * Statement terminator.
      */
-    static final String STATEMENT_END = ";";
+    static final char STATEMENT_TERM = ';';
+
+    /**
+     * Statement terminator.
+     */
+    static final String STATEMENT_END = Character.toString(STATEMENT_TERM);
 
     /**
      * Constructor.
@@ -50,10 +60,10 @@ public final class ThemisAnalysisBody {
      * @param pLine the current line
      * @return the headers
      */
-    static List<ThemisAnalysisLine> processHeaders(final ThemisAnalysisParser pParser,
-                                                   final ThemisAnalysisLine pLine) {
+    static List<ThemisAnalysisElement> processHeaders(final ThemisAnalysisParser pParser,
+                                                      final ThemisAnalysisLine pLine) {
         /* Allocate array */
-        final List<ThemisAnalysisLine> myHeaders = new ArrayList<>();
+        final List<ThemisAnalysisElement> myHeaders = new ArrayList<>();
 
         /* Read headers */
         ThemisAnalysisLine myLine = pLine;
@@ -62,7 +72,7 @@ public final class ThemisAnalysisBody {
             if (!pParser.hasLines()) {
                 break;
             }
-            myLine = pParser.popNextLine();
+            myLine = (ThemisAnalysisLine) pParser.popNextLine();
         }
 
         /* If we never found a start sequence. shout */
@@ -85,17 +95,17 @@ public final class ThemisAnalysisBody {
      * @param pParser the parser
      * @return the trailers
      */
-    static List<ThemisAnalysisLine> processTrailers(final ThemisAnalysisParser pParser) {
+    static List<ThemisAnalysisElement> processTrailers(final ThemisAnalysisParser pParser) {
         /* Just return if there are no more lines */
         if (!pParser.hasLines()) {
             return null;
         }
 
         /* Allocate array */
-        final List<ThemisAnalysisLine> myTrailers = new ArrayList<>();
+        final List<ThemisAnalysisElement> myTrailers = new ArrayList<>();
 
         /* Access keyWord */
-        ThemisAnalysisLine myLine = pParser.popNextLine();
+        ThemisAnalysisLine myLine = (ThemisAnalysisLine) pParser.popNextLine();
 
         /* Read Trailers */
         while (!myLine.endsWithSequence(STATEMENT_END)) {
@@ -103,7 +113,7 @@ public final class ThemisAnalysisBody {
             if (!pParser.hasLines()) {
                 break;
             }
-            myLine = pParser.popNextLine();
+            myLine = (ThemisAnalysisLine) pParser.popNextLine();
         }
 
         /* If we never found an end sequence. shout */
@@ -124,15 +134,15 @@ public final class ThemisAnalysisBody {
      * @param pParser the parser
      * @return the body
      */
-    static List<ThemisAnalysisLine> processBody(final ThemisAnalysisParser pParser) {
+    static List<ThemisAnalysisElement> processBody(final ThemisAnalysisParser pParser) {
         /* Allocate array */
-        final List<ThemisAnalysisLine> myBody = new ArrayList<>();
+        final List<ThemisAnalysisElement> myBody = new ArrayList<>();
 
         /* Loop through the lines */
         int myNest = 1;
         while (pParser.hasLines()) {
             /* Access next line */
-            final ThemisAnalysisLine myLine = pParser.popNextLine();
+            final ThemisAnalysisLine myLine = (ThemisAnalysisLine) pParser.popNextLine();
 
             /* If we have a closing brace */
             if (myLine.startsWithSequence(BRACE_CLOSE)) {
