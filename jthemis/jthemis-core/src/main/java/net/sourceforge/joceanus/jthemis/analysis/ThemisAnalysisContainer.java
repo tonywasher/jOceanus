@@ -38,6 +38,12 @@ public interface ThemisAnalysisContainer
     List<ThemisAnalysisElement> getProcessed();
 
     /**
+     * Obtain the parent of this container.
+     * @return the parent
+     */
+    ThemisAnalysisContainer getParent();
+
+    /**
      * Post process lines.
      */
     default void postProcessLines() {
@@ -47,7 +53,7 @@ public interface ThemisAnalysisContainer
         myProcessed.clear();
 
         /* Create the new input parser */
-        final ThemisAnalysisParser myParser = new ThemisAnalysisParser(myLines, myProcessed, getDataTypes());
+        final ThemisAnalysisParser myParser = new ThemisAnalysisParser(myLines, myProcessed, getParent());
 
         /* Loop through the lines */
         while (myParser.hasLines()) {
@@ -72,19 +78,28 @@ public interface ThemisAnalysisContainer
             }
 
             /* Everything should now be a line. */
-            if (!(myElement instanceof ThemisAnalysisLine)) {
+            if (!processed
+                 && !(myElement instanceof ThemisAnalysisLine)) {
                 throw new IllegalStateException("Unexpected dataType");
             }
 
             /* process fields and methods */
-            final ThemisAnalysisLine myLine = (ThemisAnalysisLine) myElement;
             if (!processed) {
-                processed = myParser.processFieldsAndMethods(myLine);
+                final ThemisAnalysisLine myLine = (ThemisAnalysisLine) myElement;
+                final ThemisAnalysisElement myEl = myParser.processFieldsAndMethods(myLine);
+                if (myEl != null) {
+                    myProcessed.add(myEl);
+                    if (myEl instanceof ThemisAnalysisContainer) {
+                        ((ThemisAnalysisContainer) myEl).postProcessLines();
+                    }
+                    processed = true;
+                }
             }
 
-            /* process fields and methods */
+            /* process statements */
             if (!processed) {
-                //processed = myParser.processLines(myLine);
+                /* Just add the line for the moment */
+                myProcessed.add(myElement);
             }
         }
 

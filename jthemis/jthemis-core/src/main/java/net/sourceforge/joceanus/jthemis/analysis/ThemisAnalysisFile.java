@@ -132,7 +132,8 @@ public class ThemisAnalysisFile
             theNumLines = myLines.size();
 
             /* Post process the lines */
-            postProcessLines(myLines);
+            firstPassProcessLines(myLines);
+            secondPassProcessLines();
 
             /* Catch exceptions */
         } catch (IOException e) {
@@ -227,10 +228,10 @@ public class ThemisAnalysisFile
     }
 
     /**
-     * Post-process the lines.
+     * Post-process the lines as first Pass.
      * @param pLines the lines to process
      */
-    void postProcessLines(final List<ThemisAnalysisElement> pLines) {
+    void firstPassProcessLines(final List<ThemisAnalysisElement> pLines) {
         /* Create the parser */
         final ThemisAnalysisParser myParser = new ThemisAnalysisParser(pLines, theProcessed);
 
@@ -261,6 +262,21 @@ public class ThemisAnalysisFile
                 if (!processed || myParser.hasLines()) {
                     throw new IllegalStateException();
                 }
+            }
+        }
+    }
+
+    /**
+     * Post-process the lines as second Pass.
+     */
+    void secondPassProcessLines() {
+        /* Loop through the lines */
+        for (ThemisAnalysisElement myElement : theProcessed) {
+            /* If the element is a container */
+            if (myElement instanceof ThemisAnalysisContainer) {
+                /* Access and process the container */
+                final ThemisAnalysisContainer myContainer = (ThemisAnalysisContainer) myElement;
+                myContainer.postProcessLines();
             }
         }
     }

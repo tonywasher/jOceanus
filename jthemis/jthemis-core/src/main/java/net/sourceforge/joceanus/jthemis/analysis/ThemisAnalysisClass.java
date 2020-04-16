@@ -78,7 +78,7 @@ public class ThemisAnalysisClass
 
         /* Create a parser */
         theProcessed = new ArrayList<>();
-        final ThemisAnalysisParser myParser = new ThemisAnalysisParser(myLines, theProcessed, theDataTypes);
+        final ThemisAnalysisParser myParser = new ThemisAnalysisParser(myLines, theProcessed, this);
         processLines(myParser);
      }
 
@@ -103,10 +103,6 @@ public class ThemisAnalysisClass
             /* Process language constructs */
             if (!processed) {
                 processed = pParser.processLanguage(myLine);
-            }
-
-            if (!processed) {
-                processed = pParser.processFieldsAndMethods(myLine);
             }
 
             /* If we haven't processed yet */
@@ -141,6 +137,11 @@ public class ThemisAnalysisClass
     @Override
     public List<ThemisAnalysisElement> getProcessed() {
         return theProcessed;
+    }
+
+    @Override
+    public ThemisAnalysisContainer getParent() {
+        return this;
     }
 
     @Override

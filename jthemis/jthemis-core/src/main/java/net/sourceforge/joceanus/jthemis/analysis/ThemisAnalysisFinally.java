@@ -26,6 +26,11 @@ import java.util.Map;
 public class ThemisAnalysisFinally
         implements ThemisAnalysisContainer {
     /**
+     * The parent.
+     */
+    private final ThemisAnalysisContainer theParent;
+
+    /**
      * The headers.
      */
     private final List<ThemisAnalysisElement> theHeaders;
@@ -52,18 +57,22 @@ public class ThemisAnalysisFinally
      */
     ThemisAnalysisFinally(final ThemisAnalysisParser pParser,
                           final ThemisAnalysisLine pLine) {
-        /* Store dataTypes */
+        /* Access details from parser */
         theDataTypes = pParser.getDataTypes();
+        theParent = pParser.getParent();
 
         /* Create the arrays */
         theHeaders = ThemisAnalysisBody.processHeaders(pParser, pLine);
         final List<ThemisAnalysisElement> myLines = ThemisAnalysisBody.processBody(pParser);
-        theNumLines = myLines.size();
+        final int myBaseLines = myLines.size();
 
         /* Create a parser */
         theProcessed = new ArrayList<>();
-        final ThemisAnalysisParser myParser = new ThemisAnalysisParser(myLines, theProcessed, theDataTypes);
-        myParser.postProcessLines();
+        final ThemisAnalysisParser myParser = new ThemisAnalysisParser(myLines, theProcessed, theParent);
+        myParser.processLines();
+
+        /* Calculate the number of lines */
+        theNumLines = calculateNumLines(myBaseLines);
     }
 
     @Override
@@ -76,11 +85,26 @@ public class ThemisAnalysisFinally
         return theProcessed;
     }
 
+    @Override
+    public ThemisAnalysisContainer getParent() {
+        return theParent;
+    }
+
     /**
      * Obtain the number of lines in the block.
      * @return the number of lines
      */
     public int getNumLines() {
         return theNumLines;
+    }
+
+    /**
+     * Calculate the number of lines for the construct.
+     * @param pBaseCount the baseCount
+     * @return the number of lines
+     */
+    public int calculateNumLines(final int pBaseCount) {
+        /* Add 1 line for the header */
+        return pBaseCount + 1;
     }
 }

@@ -16,5 +16,77 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jthemis.analysis;
 
-public class ThemisAnalysisField {
+import java.util.List;
+
+/**
+ * Field Representation.
+ */
+public class ThemisAnalysisField
+    implements ThemisAnalysisProcessed {
+    /**
+     * The name of the class.
+     */
+    private final String theName;
+
+    /**
+     * The dataType of the field.
+     */
+    private final ThemisAnalysisReference theDataType;
+
+    /**
+     * The modifiers.
+     */
+    private final List<ThemisAnalysisPrefix> theModifiers;
+
+    /**
+     * The trailers.
+     */
+    private final List<ThemisAnalysisElement> theTrailers;
+
+    /**
+     * The number of lines in the field.
+     */
+    private final int theNumLines;
+
+    /**
+     * Constructor.
+     * @param pParser the parser
+     * @param pName the method name
+     * @param pDataType the dataType
+     * @param pLine the initial class line
+     */
+    ThemisAnalysisField(final ThemisAnalysisParser pParser,
+                        final String pName,
+                        final ThemisAnalysisReference pDataType,
+                        final ThemisAnalysisLine pLine) {
+        /* Store parameters */
+        theName = pName;
+        theDataType = pDataType;
+        theModifiers = pLine.getModifiers();
+
+        /* Create the arrays */
+        theTrailers = ThemisAnalysisBody.processHeaderTrailers(pParser, pLine);
+        theNumLines = theTrailers.size();
+    }
+
+    /**
+     * Obtain the name.
+     * @return the name
+     */
+    public String getName() {
+        return theName;
+    }
+
+    /**
+     * Obtain the number of lines in the class.
+     * @return the number of lines
+     */
+    public int getNumLines() {
+        return theNumLines;
+    }
+
+    @Override
+    public String toString() {
+        return theDataType.toString() + " " + getName();
+    }
 }

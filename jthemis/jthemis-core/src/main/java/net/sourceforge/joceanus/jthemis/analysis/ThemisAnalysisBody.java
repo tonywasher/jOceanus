@@ -34,19 +34,29 @@ public final class ThemisAnalysisBody {
     static final String BRACE_CLOSE = "}";
 
     /**
+     * Case terminator.
+     */
+    static final char CASE_COLON = ':';
+
+    /**
      * Statement separator.
      */
-    static final char STATEMENT_SEP = ',';
+    static final char STATEMENT_COMMA = ',';
 
     /**
      * Statement terminator.
      */
-    static final char STATEMENT_TERM = ';';
+    static final String STATEMENT_SEP = Character.toString(STATEMENT_COMMA);
 
     /**
      * Statement terminator.
      */
-    static final String STATEMENT_END = Character.toString(STATEMENT_TERM);
+    static final char STATEMENT_SEMI = ';';
+
+    /**
+     * Statement terminator.
+     */
+    static final String STATEMENT_END = Character.toString(STATEMENT_SEMI);
 
     /**
      * Constructor.
@@ -130,6 +140,45 @@ public final class ThemisAnalysisBody {
     }
 
     /**
+     * Process headers/trailers.
+     * @param pParser the parser
+     * @param pLine the current line
+     * @return the trailers
+     */
+    static List<ThemisAnalysisElement> processHeaderTrailers(final ThemisAnalysisParser pParser,
+                                                             final ThemisAnalysisLine pLine) {
+        /* Allocate array */
+        final List<ThemisAnalysisElement> myTrailers = new ArrayList<>();
+
+        /* Access keyWord */
+        ThemisAnalysisLine myLine = pLine;
+
+        /* Read Headers/Trailers */
+        while (!myLine.endsWithSequence(BRACE_OPEN)
+               && !myLine.endsWithSequence(STATEMENT_END)) {
+            myTrailers.add(myLine);
+            if (!pParser.hasLines()) {
+                break;
+            }
+            myLine = (ThemisAnalysisLine) pParser.popNextLine();
+        }
+
+        /* If we never found an end sequence. shout */
+        if (!myLine.endsWithSequence(BRACE_OPEN)
+                && !myLine.endsWithSequence(STATEMENT_END)) {
+            throw new IllegalStateException("Never found end Block");
+        }
+
+        /* Add the current line */
+        myLine.stripEndSequence(BRACE_OPEN);
+        myLine.stripEndSequence(STATEMENT_END);
+        myTrailers.add(myLine);
+
+        /* return the trailers */
+        return myTrailers;
+    }
+
+    /**
      * Process body.
      * @param pParser the parser
      * @return the body
@@ -142,7 +191,15 @@ public final class ThemisAnalysisBody {
         int myNest = 1;
         while (pParser.hasLines()) {
             /* Access next line */
-            final ThemisAnalysisLine myLine = (ThemisAnalysisLine) pParser.popNextLine();
+            final ThemisAnalysisElement myElement = pParser.popNextLine();
+
+            /* Skip already processed items */
+            if (myElement instanceof ThemisAnalysisProcessed
+                || myElement instanceof ThemisAnalysisContainer) {
+                myBody.add(myElement);
+                continue;
+            }
+            final ThemisAnalysisLine myLine = (ThemisAnalysisLine) myElement;
 
             /* If we have a closing brace */
             if (myLine.startsWithSequence(BRACE_CLOSE)) {

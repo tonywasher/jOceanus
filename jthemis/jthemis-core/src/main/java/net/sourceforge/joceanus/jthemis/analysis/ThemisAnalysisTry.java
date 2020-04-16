@@ -26,6 +26,11 @@ import java.util.Map;
 public class ThemisAnalysisTry
         implements ThemisAnalysisContainer {
     /**
+     * The parent.
+     */
+    private final ThemisAnalysisContainer theParent;
+
+    /**
      * The headers.
      */
     private final List<ThemisAnalysisElement> theHeaders;
@@ -62,13 +67,14 @@ public class ThemisAnalysisTry
      */
     ThemisAnalysisTry(final ThemisAnalysisParser pParser,
                       final ThemisAnalysisLine pLine) {
-        /* Store dataTypes */
+        /* Access details from parser */
         theDataTypes = pParser.getDataTypes();
+        theParent = pParser.getParent();
 
         /* Create the arrays */
         theHeaders = ThemisAnalysisBody.processHeaders(pParser, pLine);
         final List<ThemisAnalysisElement> myLines = ThemisAnalysisBody.processBody(pParser);
-        theNumLines = myLines.size();
+        final int myBaseLines = myLines.size();
 
         /* Look for catch clauses */
         theCatch = (ThemisAnalysisCatch) pParser.processExtra(ThemisAnalysisKeyWord.CATCH);
@@ -78,8 +84,11 @@ public class ThemisAnalysisTry
 
         /* Create a parser */
         theProcessed = new ArrayList<>();
-        final ThemisAnalysisParser myParser = new ThemisAnalysisParser(myLines, theProcessed, theDataTypes);
-        myParser.postProcessLines();
+        final ThemisAnalysisParser myParser = new ThemisAnalysisParser(myLines, theProcessed, theParent);
+        myParser.processLines();
+
+        /* Calculate the number of lines */
+        theNumLines = calculateNumLines(myBaseLines);
     }
 
     @Override
@@ -105,11 +114,39 @@ public class ThemisAnalysisTry
         }
     }
 
+    @Override
+    public ThemisAnalysisContainer getParent() {
+        return theParent;
+    }
+
     /**
      * Obtain the number of lines in the block.
      * @return the number of lines
      */
     public int getNumLines() {
         return theNumLines;
+    }
+
+    /**
+     * Calculate the number of lines for the construct.
+     * @param pBaseCount the baseCount
+     * @return the number of lines
+     */
+    public int calculateNumLines(final int pBaseCount) {
+        /* Add 1+ line(s) for the if headers  */
+        int myNumLines = pBaseCount + Math.max(theHeaders.size() - 1, 1);
+
+        /* Add lines for additional catch clauses */
+        if (theCatch != null) {
+            myNumLines += theCatch.getNumLines();
+        }
+
+        /* Add lines for additional finally clauses */
+        if (theFinally != null) {
+            myNumLines += theFinally.getNumLines();
+        }
+
+        /* Add one for the clause terminator */
+        return myNumLines + 1;
     }
 }

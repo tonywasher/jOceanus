@@ -43,7 +43,7 @@ public class ThemisAnalysisGeneric {
     /**
      * The contents of the generic.
      */
-    private final String theContents;
+    private final ThemisAnalysisLine theContents;
 
     /**
      * Constructor.

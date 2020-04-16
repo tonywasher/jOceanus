@@ -31,25 +31,21 @@ public class ThemisAnalysisLine
     private static final char COMMENT = '/';
 
     /**
-     * Open parenthesis.
+     * The null character.
      */
-    static final char PARENTHESIS_OPEN = '(';
-
-    /**
-     * Close parenthesis.
-     */
-    static final char PARENTHESIS_CLOSE = ')';
+    static final char CHAR_NULL = (char) 0;
 
     /**
      * The token terminators.
      */
     private static final char[] TERMINATORS = {
-            PARENTHESIS_OPEN,
-            PARENTHESIS_CLOSE,
-            ThemisAnalysisGeneric.GENERIC_OPEN,
-            ThemisAnalysisBody.STATEMENT_SEP,
-            ThemisAnalysisBody.STATEMENT_TERM,
-            ThemisAnalysisArray.ARRAY_OPEN
+        ThemisAnalysisParenthesis.PARENTHESIS_OPEN,
+        ThemisAnalysisParenthesis.PARENTHESIS_CLOSE,
+        ThemisAnalysisGeneric.GENERIC_OPEN,
+        ThemisAnalysisBody.STATEMENT_COMMA,
+        ThemisAnalysisBody.STATEMENT_SEMI,
+        ThemisAnalysisBody.CASE_COLON,
+        ThemisAnalysisArray.ARRAY_OPEN
     };
 
     /**
@@ -71,6 +67,11 @@ public class ThemisAnalysisLine
      * The length of valid data in the buffer.
      */
     private int theLength;
+
+    /**
+     * The rollback mark.
+     */
+    private int[] theMark;
 
     /**
      * Constructor.
@@ -98,6 +99,17 @@ public class ThemisAnalysisLine
 
         /* Strip Modifiers */
         stripModifiers();
+    }
+
+    /**
+     * Constructor.
+     * @param pBuffer the buffer
+     */
+    private ThemisAnalysisLine(final char[] pBuffer) {
+        /* Store values */
+        theLength = pBuffer.length;
+        theBuffer = pBuffer;
+        theOffset = 0;
     }
 
     /**
@@ -173,6 +185,27 @@ public class ThemisAnalysisLine
     }
 
     /**
+     * Mark the line.
+     */
+    void mark() {
+        /* Set the mark */
+        theMark = new int[] { theOffset, theLength};
+    }
+
+    /**
+     * Reset the line.
+     */
+    void reset() {
+        /* If we have a mark */
+        if (theMark != null) {
+            /* Reset values and release mark */
+            theOffset = theMark[0];
+            theLength = theMark[1];
+            theMark = null;
+        }
+    }
+
+    /**
      * Strip Modifiers.
      */
     private void stripModifiers() {
@@ -245,7 +278,7 @@ public class ThemisAnalysisLine
     String peekNextToken() {
         /* Loop through the buffer */
         for (int i = 0; i < theLength; i++) {
-            /* if we have hit whiteSpace or GENERIC/PARENTHESIS OPEN */
+            /* if we have hit whiteSpace or a terminator */
             final char myChar = theBuffer[i + theOffset];
             if (isTerminator(myChar)) {
                 /* Strip out the characters */
@@ -269,15 +302,27 @@ public class ThemisAnalysisLine
             return true;
         }
 
-        /* Loop through the terminators */
-        for (char terminator : TERMINATORS) {
-            /* if we have hit a terminator */
-            if (pChar == terminator) {
+        /* Check whether char is any of the terminators */
+        return isInList(pChar, TERMINATORS);
+    }
+
+    /**
+     * Is the character in the list?
+     * @param pChar the character
+     * @param pList the list of characters
+     * @return true/false
+     */
+    private static boolean isInList(final char pChar,
+                                    final char[] pList) {
+        /* Loop through the list */
+        for (char myChar : pList) {
+            /* if we have matched */
+            if (pChar == myChar) {
                 return true;
             }
         }
 
-        /* Whole buffer is the token */
+        /* Not a terminator */
         return false;
     }
 
@@ -286,7 +331,7 @@ public class ThemisAnalysisLine
      * @param pChar the end character
      * @return the stripped token
      */
-    String stripUpToChar(final char pChar) {
+    ThemisAnalysisLine stripUpToChar(final char pChar) {
         /* Loop through the buffer */
         for (int i = 0; i < theLength; i++) {
             /* if we have hit the char */
@@ -296,12 +341,31 @@ public class ThemisAnalysisLine
                 final char[] myChars = Arrays.copyOfRange(theBuffer, theOffset, i + theOffset);
                 theOffset += i + 1;
                 theLength -= i + 1;
-                return new String(myChars);
+                return new ThemisAnalysisLine(myChars);
             }
         }
 
         /* Didn't find the end character */
         throw new IllegalStateException("end character not found");
+    }
+
+    /**
+     * find next char in set.
+     * @param pChars the characters to search for
+     * @return the next character (or CHAR_NULL)
+     */
+    char findNextCharInSet(final char[] pChars) {
+        /* Loop through the buffer */
+        for (int i = 0; i < theLength; i++) {
+            /* if we have hit the char */
+            final char myChar = theBuffer[i + theOffset];
+            if (isInList(myChar, pChars)) {
+                return myChar;
+            }
+        }
+
+        /* Didn't find the end character */
+        return CHAR_NULL;
     }
 
     /**
@@ -354,9 +418,9 @@ public class ThemisAnalysisLine
             /* If we found the sequence */
             if (found) {
                 /* Check that it is at the end */
-                if (i != theLength - myLen) {
-                    throw new IllegalStateException("EndSequence found midLine");
-                }
+                //if (i != theLength - myLen) {
+                //    throw new IllegalStateException("EndSequence found midLine");
+                //}
 
                 /* found it */
                 return true;

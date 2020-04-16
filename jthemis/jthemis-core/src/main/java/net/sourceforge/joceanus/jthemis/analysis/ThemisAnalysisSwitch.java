@@ -26,6 +26,11 @@ import java.util.Map;
 public class ThemisAnalysisSwitch
         implements ThemisAnalysisContainer {
     /**
+     * The parent.
+     */
+    private final ThemisAnalysisContainer theParent;
+
+    /**
      * The headers.
      */
     private final List<ThemisAnalysisElement> theHeaders;
@@ -52,8 +57,9 @@ public class ThemisAnalysisSwitch
      */
     ThemisAnalysisSwitch(final ThemisAnalysisParser pParser,
                          final ThemisAnalysisLine pLine) {
-        /* Store dataTypes */
+        /* Access details from parser */
         theDataTypes = pParser.getDataTypes();
+        theParent = pParser.getParent();
 
         /* Create the arrays */
         theHeaders = ThemisAnalysisBody.processHeaders(pParser, pLine);
@@ -62,8 +68,34 @@ public class ThemisAnalysisSwitch
 
         /* Create a parser */
         theProcessed = new ArrayList<>();
-        final ThemisAnalysisParser myParser = new ThemisAnalysisParser(myLines, theProcessed, theDataTypes);
-        myParser.postProcessLines();
+        final ThemisAnalysisParser myParser = new ThemisAnalysisParser(myLines, theProcessed, theParent);
+        processLines(myParser);
+    }
+
+    /**
+     * process the lines.
+     * @param pParser the parser
+     */
+    void processLines(final ThemisAnalysisParser pParser) {
+        /* Loop through the lines */
+        while (pParser.hasLines()) {
+            /* Access next line */
+            final ThemisAnalysisLine myLine = (ThemisAnalysisLine) pParser.popNextLine();
+
+            /* Process comments and blanks */
+            boolean processed = pParser.processCommentsAndBlanks(myLine);
+
+            /* Process default/case statements */
+            if (!processed) {
+                processed = pParser.processCase(myLine);
+            }
+
+            /* If we haven't processed yet */
+            if (!processed) {
+                /* We should never reach here */
+                throw new IllegalStateException("Unexpected code in switch");
+            }
+        }
     }
 
     @Override
@@ -74,6 +106,11 @@ public class ThemisAnalysisSwitch
     @Override
     public List<ThemisAnalysisElement> getProcessed() {
         return theProcessed;
+    }
+
+    @Override
+    public ThemisAnalysisContainer getParent() {
+        return theParent;
     }
 
     /**
