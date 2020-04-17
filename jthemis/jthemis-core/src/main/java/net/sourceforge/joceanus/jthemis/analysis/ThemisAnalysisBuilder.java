@@ -20,9 +20,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Block structure.
+ * Builder utilities.
  */
-public final class ThemisAnalysisBody {
+public final class ThemisAnalysisBuilder {
     /**
      * Open body.
      */
@@ -61,7 +61,7 @@ public final class ThemisAnalysisBody {
     /**
      * Constructor.
      */
-    private ThemisAnalysisBody() {
+    private ThemisAnalysisBuilder() {
     }
 
     /**
@@ -189,17 +189,9 @@ public final class ThemisAnalysisBody {
 
         /* Loop through the lines */
         int myNest = 1;
-        while (pParser.hasLines()) {
-            /* Access next line */
-            final ThemisAnalysisElement myElement = pParser.popNextLine();
-
-            /* Skip already processed items */
-            if (myElement instanceof ThemisAnalysisProcessed
-                || myElement instanceof ThemisAnalysisContainer) {
-                myBody.add(myElement);
-                continue;
-            }
-            final ThemisAnalysisLine myLine = (ThemisAnalysisLine) myElement;
+        while (myNest > 0 && pParser.hasLines()) {
+            /* Access as line */
+            final ThemisAnalysisLine myLine = (ThemisAnalysisLine) pParser.popNextLine();
 
             /* If we have a closing brace */
             if (myLine.startsWithSequence(BRACE_CLOSE)) {
@@ -226,6 +218,50 @@ public final class ThemisAnalysisBody {
 
             /* Add the line */
             myBody.add(myLine);
+        }
+
+        /* return the body */
+        return myBody;
+    }
+
+    /**
+     * Process method body.
+     * @param pParser the parser
+     * @return the body
+     */
+    static List<ThemisAnalysisElement> processMethodBody(final ThemisAnalysisParser pParser) {
+        /* Allocate array */
+        final List<ThemisAnalysisElement> myBody = new ArrayList<>();
+
+        /* Loop through the lines */
+        boolean keepLooking = true;
+        while (keepLooking && pParser.hasLines()) {
+            /* Access next line */
+            final ThemisAnalysisElement myElement = pParser.popNextLine();
+
+            /* Skip already processed items */
+            if (myElement instanceof ThemisAnalysisProcessed) {
+                myBody.add(myElement);
+                continue;
+            }
+
+            /* Access as line */
+            final ThemisAnalysisLine myLine = (ThemisAnalysisLine) myElement;
+
+            /* If we have a closing brace */
+            if (myLine.startsWithSequence(BRACE_CLOSE)) {
+                /* Strip start sequence from line */
+                myLine.stripStartSequence(BRACE_CLOSE);
+                keepLooking = false;
+
+                /* Return a non-blank line to the stack and break loop */
+                if (!ThemisAnalysisBlank.isBlank(myLine)) {
+                    pParser.pushLine(myLine);
+                }
+            } else {
+                /* Add the line */
+                myBody.add(myLine);
+            }
         }
 
         /* return the body */

@@ -36,9 +36,9 @@ public class ThemisAnalysisIf
     private final List<ThemisAnalysisElement> theHeaders;
 
     /**
-     * The elements.
+     * The contents.
      */
-    private final List<ThemisAnalysisElement> theProcessed;
+    private final List<ThemisAnalysisElement> theContents;
 
     /**
      * The else clause.
@@ -51,7 +51,7 @@ public class ThemisAnalysisIf
     private final Map<String, ThemisAnalysisDataType> theDataTypes;
 
     /**
-     * The number of lines in the class.
+     * The number of lines.
      */
     private final int theNumLines;
 
@@ -67,16 +67,16 @@ public class ThemisAnalysisIf
         theParent = pParser.getParent();
 
         /* Create the arrays */
-        theHeaders = ThemisAnalysisBody.processHeaders(pParser, pLine);
-        final List<ThemisAnalysisElement> myLines = ThemisAnalysisBody.processBody(pParser);
+        theHeaders = ThemisAnalysisBuilder.processHeaders(pParser, pLine);
+        final List<ThemisAnalysisElement> myLines = ThemisAnalysisBuilder.processBody(pParser);
         final int myBaseLines = myLines.size();
 
         /* Look for else clauses */
         theElse = (ThemisAnalysisElse) pParser.processExtra(ThemisAnalysisKeyWord.ELSE);
 
         /* Create a parser */
-        theProcessed = new ArrayList<>();
-        final ThemisAnalysisParser myParser = new ThemisAnalysisParser(myLines, theProcessed, theParent);
+        theContents = new ArrayList<>();
+        final ThemisAnalysisParser myParser = new ThemisAnalysisParser(myLines, theContents, theParent);
         myParser.processLines();
 
         /* Calculate the number of lines */
@@ -89,8 +89,8 @@ public class ThemisAnalysisIf
     }
 
     @Override
-    public List<ThemisAnalysisElement> getProcessed() {
-        return theProcessed;
+    public List<ThemisAnalysisElement> getContents() {
+        return theContents;
     }
 
     @Override
@@ -107,9 +107,14 @@ public class ThemisAnalysisIf
     }
 
     /**
-     * Obtain the number of lines in the else block.
-     * @return the number of lines
+     * Obtain the additional else clause (if any).
+     * @return the else clause
      */
+    public ThemisAnalysisElse getElse() {
+        return theElse;
+    }
+
+    @Override
     public int getNumLines() {
         return theNumLines;
     }

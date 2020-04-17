@@ -136,11 +136,11 @@ public class ThemisAnalysisPackage
      */
     static boolean isPackage(final ThemisAnalysisLine pLine) {
         /* If we are ended by a semi-colon */
-        if (pLine.endsWithSequence(ThemisAnalysisBody.STATEMENT_END)) {
+        if (pLine.endsWithSequence(ThemisAnalysisBuilder.STATEMENT_END)) {
             /* If this is a package line */
             if (pLine.isStartedBy(ThemisAnalysisKeyWord.PACKAGE.getKeyWord())) {
                 /* Strip the semi-colon and return true */
-                pLine.stripEndSequence(ThemisAnalysisBody.STATEMENT_END);
+                pLine.stripEndSequence(ThemisAnalysisBuilder.STATEMENT_END);
                 return true;
             }
         }

@@ -31,9 +31,9 @@ public class ThemisAnalysisCase
     private final ThemisAnalysisContainer theParent;
 
     /**
-     * The elements.
+     * The contents.
      */
-    private final List<ThemisAnalysisElement> theProcessed;
+    private final List<ThemisAnalysisElement> theContents;
 
     /**
      * The dataTypes.
@@ -44,6 +44,11 @@ public class ThemisAnalysisCase
      * The case values.
      */
     private final List<Object> theCases;
+
+    /**
+     * The number of lines.
+     */
+    private final int theNumLines;
 
     /**
      * Constructor.
@@ -61,9 +66,12 @@ public class ThemisAnalysisCase
         theCases.add(pCase);
 
         /* Create a parser */
-        theProcessed = new ArrayList<>();
-        final ThemisAnalysisParser myParser = new ThemisAnalysisParser(pParser, theProcessed);
+        theContents = new ArrayList<>();
+        final ThemisAnalysisParser myParser = new ThemisAnalysisParser(pParser, theContents);
         processLines(myParser);
+
+        /* Calculate the number of lines */
+        theNumLines = theContents.size() + theCases.size();
     }
 
     /**
@@ -111,8 +119,8 @@ public class ThemisAnalysisCase
                 /* Have finished looking for cases */
                 look4Case = false;
 
-                /* Just add the line to processed at present */
-                theProcessed.add(myLine);
+                /* Just add the line to contents at present */
+                theContents.add(myLine);
             }
         }
     }
@@ -123,12 +131,17 @@ public class ThemisAnalysisCase
     }
 
     @Override
-    public List<ThemisAnalysisElement> getProcessed() {
-        return theProcessed;
+    public List<ThemisAnalysisElement> getContents() {
+        return theContents;
     }
 
     @Override
     public ThemisAnalysisContainer getParent() {
         return theParent;
+    }
+
+    @Override
+    public int getNumLines() {
+        return theNumLines;
     }
 }

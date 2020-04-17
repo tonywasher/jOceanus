@@ -36,9 +36,9 @@ public class ThemisAnalysisTry
     private final List<ThemisAnalysisElement> theHeaders;
 
     /**
-     * The elements.
+     * The contents.
      */
-    private final List<ThemisAnalysisElement> theProcessed;
+    private final List<ThemisAnalysisElement> theContents;
 
     /**
      * The catch clause(s).
@@ -56,7 +56,7 @@ public class ThemisAnalysisTry
     private final Map<String, ThemisAnalysisDataType> theDataTypes;
 
     /**
-     * The number of lines in the class.
+     * The number of lines.
      */
     private final int theNumLines;
 
@@ -72,8 +72,8 @@ public class ThemisAnalysisTry
         theParent = pParser.getParent();
 
         /* Create the arrays */
-        theHeaders = ThemisAnalysisBody.processHeaders(pParser, pLine);
-        final List<ThemisAnalysisElement> myLines = ThemisAnalysisBody.processBody(pParser);
+        theHeaders = ThemisAnalysisBuilder.processHeaders(pParser, pLine);
+        final List<ThemisAnalysisElement> myLines = ThemisAnalysisBuilder.processBody(pParser);
         final int myBaseLines = myLines.size();
 
         /* Look for catch clauses */
@@ -83,8 +83,8 @@ public class ThemisAnalysisTry
         theFinally = (ThemisAnalysisFinally) pParser.processExtra(ThemisAnalysisKeyWord.FINALLY);
 
         /* Create a parser */
-        theProcessed = new ArrayList<>();
-        final ThemisAnalysisParser myParser = new ThemisAnalysisParser(myLines, theProcessed, theParent);
+        theContents = new ArrayList<>();
+        final ThemisAnalysisParser myParser = new ThemisAnalysisParser(myLines, theContents, theParent);
         myParser.processLines();
 
         /* Calculate the number of lines */
@@ -97,8 +97,8 @@ public class ThemisAnalysisTry
     }
 
     @Override
-    public List<ThemisAnalysisElement> getProcessed() {
-        return theProcessed;
+    public List<ThemisAnalysisElement> getContents() {
+        return theContents;
     }
 
     @Override
@@ -120,9 +120,22 @@ public class ThemisAnalysisTry
     }
 
     /**
-     * Obtain the number of lines in the block.
-     * @return the number of lines
+     * Obtain the additional catch clause (if any).
+     * @return the catch clause
      */
+    public ThemisAnalysisCatch getCatch() {
+        return theCatch;
+    }
+
+    /**
+     * Obtain the additional finally clause (if any).
+     * @return the finally clause
+     */
+    public ThemisAnalysisFinally getFinally() {
+        return theFinally;
+    }
+
+    @Override
     public int getNumLines() {
         return theNumLines;
     }

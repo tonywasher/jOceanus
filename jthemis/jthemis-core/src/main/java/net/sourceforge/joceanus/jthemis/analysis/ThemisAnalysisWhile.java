@@ -36,9 +36,9 @@ public class ThemisAnalysisWhile
     private final List<ThemisAnalysisElement> theHeaders;
 
     /**
-     * The elements.
+     * The contents.
      */
-    private final List<ThemisAnalysisElement> theProcessed;
+    private final List<ThemisAnalysisElement> theContents;
 
     /**
      * The dataTypes.
@@ -46,7 +46,7 @@ public class ThemisAnalysisWhile
     private final Map<String, ThemisAnalysisDataType> theDataTypes;
 
     /**
-     * The number of lines in the class.
+     * The number of lines.
      */
     private final int theNumLines;
 
@@ -62,13 +62,13 @@ public class ThemisAnalysisWhile
         theParent = pParser.getParent();
 
         /* Create the arrays */
-        theHeaders = ThemisAnalysisBody.processHeaders(pParser, pLine);
-        final List<ThemisAnalysisElement> myLines = ThemisAnalysisBody.processBody(pParser);
+        theHeaders = ThemisAnalysisBuilder.processHeaders(pParser, pLine);
+        final List<ThemisAnalysisElement> myLines = ThemisAnalysisBuilder.processBody(pParser);
         final int myBaseLines = myLines.size();
 
         /* Create a parser */
-        theProcessed = new ArrayList<>();
-        final ThemisAnalysisParser myParser = new ThemisAnalysisParser(myLines, theProcessed, theParent);
+        theContents = new ArrayList<>();
+        final ThemisAnalysisParser myParser = new ThemisAnalysisParser(myLines, theContents, theParent);
         myParser.processLines();
 
         /* Calculate the number of lines */
@@ -81,8 +81,8 @@ public class ThemisAnalysisWhile
     }
 
     @Override
-    public List<ThemisAnalysisElement> getProcessed() {
-        return theProcessed;
+    public List<ThemisAnalysisElement> getContents() {
+        return theContents;
     }
 
     @Override
@@ -90,10 +90,7 @@ public class ThemisAnalysisWhile
         return theParent;
     }
 
-    /**
-     * Obtain the number of lines in the block.
-     * @return the number of lines
-     */
+    @Override
     public int getNumLines() {
         return theNumLines;
     }

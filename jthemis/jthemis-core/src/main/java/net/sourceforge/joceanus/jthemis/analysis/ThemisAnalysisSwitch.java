@@ -36,9 +36,9 @@ public class ThemisAnalysisSwitch
     private final List<ThemisAnalysisElement> theHeaders;
 
     /**
-     * The elements.
+     * The contents.
      */
-    private final List<ThemisAnalysisElement> theProcessed;
+    private final List<ThemisAnalysisElement> theContents;
 
     /**
      * The dataTypes.
@@ -46,7 +46,7 @@ public class ThemisAnalysisSwitch
     private final Map<String, ThemisAnalysisDataType> theDataTypes;
 
     /**
-     * The number of lines in the class.
+     * The number of lines.
      */
     private final int theNumLines;
 
@@ -62,14 +62,17 @@ public class ThemisAnalysisSwitch
         theParent = pParser.getParent();
 
         /* Create the arrays */
-        theHeaders = ThemisAnalysisBody.processHeaders(pParser, pLine);
-        final List<ThemisAnalysisElement> myLines = ThemisAnalysisBody.processBody(pParser);
-        theNumLines = myLines.size();
+        theHeaders = ThemisAnalysisBuilder.processHeaders(pParser, pLine);
+        final List<ThemisAnalysisElement> myLines = ThemisAnalysisBuilder.processBody(pParser);
+        final int myBaseLines = myLines.size();
 
         /* Create a parser */
-        theProcessed = new ArrayList<>();
-        final ThemisAnalysisParser myParser = new ThemisAnalysisParser(myLines, theProcessed, theParent);
+        theContents = new ArrayList<>();
+        final ThemisAnalysisParser myParser = new ThemisAnalysisParser(myLines, theContents, theParent);
         processLines(myParser);
+
+        /* Calculate the number of lines */
+        theNumLines = calculateNumLines(myBaseLines);
     }
 
     /**
@@ -104,8 +107,8 @@ public class ThemisAnalysisSwitch
     }
 
     @Override
-    public List<ThemisAnalysisElement> getProcessed() {
-        return theProcessed;
+    public List<ThemisAnalysisElement> getContents() {
+        return theContents;
     }
 
     @Override
@@ -113,11 +116,21 @@ public class ThemisAnalysisSwitch
         return theParent;
     }
 
-    /**
-     * Obtain the number of lines in the block.
-     * @return the number of lines
-     */
+    @Override
     public int getNumLines() {
         return theNumLines;
+    }
+
+    /**
+     * Calculate the number of lines for the construct.
+     * @param pBaseCount the baseCount
+     * @return the number of lines
+     */
+    public int calculateNumLines(final int pBaseCount) {
+        /* Add 1+ line(s) for the switch headers  */
+        final int myNumLines = pBaseCount + Math.max(theHeaders.size() - 1, 1);
+
+        /* Add one for the clause terminator */
+        return myNumLines + 1;
     }
 }

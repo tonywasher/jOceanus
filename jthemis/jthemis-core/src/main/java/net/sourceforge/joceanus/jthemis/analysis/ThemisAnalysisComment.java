@@ -49,11 +49,8 @@ public class ThemisAnalysisComment
         }
     }
 
-    /**
-     * Obtain the number of comment lines.
-     * @return the number of comments
-     */
-    public int getNumComments() {
+    @Override
+    public int getNumLines() {
         return theComments.size();
     }
 

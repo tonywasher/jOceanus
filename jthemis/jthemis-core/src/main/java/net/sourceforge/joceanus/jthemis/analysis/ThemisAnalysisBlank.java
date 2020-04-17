@@ -58,11 +58,8 @@ public class ThemisAnalysisBlank
         }
     }
 
-    /**
-     * Obtain the number of blank lines.
-     * @return the number of blanks
-     */
-    public int getNumBlanks() {
+    @Override
+    public int getNumLines() {
         return theBlanks.size();
     }
 

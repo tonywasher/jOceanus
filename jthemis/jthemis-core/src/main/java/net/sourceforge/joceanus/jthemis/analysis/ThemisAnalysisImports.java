@@ -69,11 +69,8 @@ public class ThemisAnalysisImports
         }
     }
 
-    /**
-     * Obtain the number of imports.
-     * @return the number of imports
-     */
-    public int getNumImports() {
+    @Override
+    public int getNumLines() {
         return theImports.size();
     }
 
@@ -84,10 +81,10 @@ public class ThemisAnalysisImports
      */
     static boolean isImport(final ThemisAnalysisLine pLine) {
         /* If we are ended by a semi-colon and is an import line*/
-        if (pLine.endsWithSequence(ThemisAnalysisBody.STATEMENT_END)
+        if (pLine.endsWithSequence(ThemisAnalysisBuilder.STATEMENT_END)
                 && pLine.isStartedBy(ThemisAnalysisKeyWord.IMPORT.getKeyWord())) {
             /* Strip the semi-colon and return true */
-            pLine.stripEndSequence(ThemisAnalysisBody.STATEMENT_END);
+            pLine.stripEndSequence(ThemisAnalysisBuilder.STATEMENT_END);
             return true;
         }
 

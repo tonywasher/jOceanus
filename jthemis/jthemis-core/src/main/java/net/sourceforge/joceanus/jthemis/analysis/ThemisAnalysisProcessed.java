@@ -21,4 +21,9 @@ package net.sourceforge.joceanus.jthemis.analysis;
  */
 public interface ThemisAnalysisProcessed
     extends ThemisAnalysisElement {
+    /**
+     * Obtain the number of lines.
+     * @return the number of lines
+     */
+    int getNumLines();
 }

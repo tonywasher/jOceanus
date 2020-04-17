@@ -41,9 +41,9 @@ public class ThemisAnalysisClass
     private final List<ThemisAnalysisElement> theHeaders;
 
     /**
-     * The elements.
+     * The contents.
      */
-    private final List<ThemisAnalysisElement> theProcessed;
+    private final List<ThemisAnalysisElement> theContents;
 
     /**
      * The dataTypes.
@@ -51,7 +51,7 @@ public class ThemisAnalysisClass
     private final Map<String, ThemisAnalysisDataType> theDataTypes;
 
     /**
-     * The number of lines in the class.
+     * The number of lines.
      */
     private final int theNumLines;
 
@@ -68,19 +68,22 @@ public class ThemisAnalysisClass
         theDataTypes = pParser.getDataTypes();
 
         /* Create the arrays */
-        theHeaders = ThemisAnalysisBody.processHeaders(pParser, pLine);
-        final List<ThemisAnalysisElement> myLines = ThemisAnalysisBody.processBody(pParser);
-        theNumLines = myLines.size();
+        theHeaders = ThemisAnalysisBuilder.processHeaders(pParser, pLine);
+        final List<ThemisAnalysisElement> myLines = ThemisAnalysisBuilder.processBody(pParser);
+        final int myBaseLines = myLines.size();
 
         /* add/replace the class in the map */
         final Map<String, ThemisAnalysisDataType> myMap = pParser.getDataTypes();
         myMap.put(theName, this);
 
         /* Create a parser */
-        theProcessed = new ArrayList<>();
-        final ThemisAnalysisParser myParser = new ThemisAnalysisParser(myLines, theProcessed, this);
+        theContents = new ArrayList<>();
+        final ThemisAnalysisParser myParser = new ThemisAnalysisParser(myLines, theContents, this);
         processLines(myParser);
-     }
+
+        /* Calculate the number of lines */
+        theNumLines = calculateNumLines(myBaseLines);
+    }
 
     /**
      * process the lines.
@@ -107,8 +110,8 @@ public class ThemisAnalysisClass
 
             /* If we haven't processed yet */
             if (!processed) {
-                /* Just add the line to processed at present */
-                theProcessed.add(myLine);
+                /* Just add the line to contents at present */
+                theContents.add(myLine);
             }
         }
     }
@@ -121,27 +124,37 @@ public class ThemisAnalysisClass
         return theName;
     }
 
-    /**
-     * Obtain the number of lines in the class.
-     * @return the number of lines
-     */
-    public int getNumLines() {
-        return theNumLines;
-    }
-
     @Override
     public Map<String, ThemisAnalysisDataType> getDataTypes() {
         return theDataTypes;
     }
 
     @Override
-    public List<ThemisAnalysisElement> getProcessed() {
-        return theProcessed;
+    public List<ThemisAnalysisElement> getContents() {
+        return theContents;
     }
 
     @Override
     public ThemisAnalysisContainer getParent() {
         return this;
+    }
+
+    @Override
+    public int getNumLines() {
+        return theNumLines;
+    }
+
+    /**
+     * Calculate the number of lines for the construct.
+     * @param pBaseCount the baseCount
+     * @return the number of lines
+     */
+    public int calculateNumLines(final int pBaseCount) {
+        /* Add 1+ line(s) for the class headers  */
+        final int myNumLines = pBaseCount + Math.max(theHeaders.size() - 1, 1);
+
+        /* Add one for the clause terminator */
+        return myNumLines + 1;
     }
 
     @Override

@@ -36,9 +36,9 @@ public class ThemisAnalysisDoWhile
     private final List<ThemisAnalysisElement> theTrailers;
 
     /**
-     * The elements.
+     * The contents.
      */
-    private final List<ThemisAnalysisElement> theProcessed;
+    private final List<ThemisAnalysisElement> theContents;
 
     /**
      * The dataTypes.
@@ -46,7 +46,7 @@ public class ThemisAnalysisDoWhile
     private final Map<String, ThemisAnalysisDataType> theDataTypes;
 
     /**
-     * The number of lines in the class.
+     * The number of lines.
      */
     private final int theNumLines;
 
@@ -60,15 +60,15 @@ public class ThemisAnalysisDoWhile
         theParent = pParser.getParent();
 
         /* Create the arrays */
-        final List<ThemisAnalysisElement> myLines = ThemisAnalysisBody.processBody(pParser);
+        final List<ThemisAnalysisElement> myLines = ThemisAnalysisBuilder.processBody(pParser);
         final int myBaseLines =  myLines.size();
 
         /* Parse trailers */
-        theTrailers = ThemisAnalysisBody.processTrailers(pParser);
+        theTrailers = ThemisAnalysisBuilder.processTrailers(pParser);
 
         /* Create a parser */
-        theProcessed = new ArrayList<>();
-        final ThemisAnalysisParser myParser = new ThemisAnalysisParser(myLines, theProcessed, theParent);
+        theContents = new ArrayList<>();
+        final ThemisAnalysisParser myParser = new ThemisAnalysisParser(myLines, theContents, theParent);
         myParser.processLines();
 
         /* Calculate the number of lines */
@@ -81,8 +81,8 @@ public class ThemisAnalysisDoWhile
     }
 
     @Override
-    public List<ThemisAnalysisElement> getProcessed() {
-        return theProcessed;
+    public List<ThemisAnalysisElement> getContents() {
+        return theContents;
     }
 
     @Override
@@ -90,13 +90,11 @@ public class ThemisAnalysisDoWhile
         return theParent;
     }
 
-    /**
-     * Obtain the number of lines in the block.
-     * @return the number of lines
-     */
+    @Override
     public int getNumLines() {
         return theNumLines;
     }
+
     /**
      * Calculate the number of lines for the construct.
      * @param pBaseCount the baseCount

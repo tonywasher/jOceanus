@@ -66,9 +66,9 @@ public class ThemisAnalysisFile
     private final ThemisAnalysisPackage thePackage;
 
     /**
-     * The array of processed lines.
+     * The contents.
      */
-    private final List<ThemisAnalysisElement> theProcessed;
+    private final List<ThemisAnalysisElement> theContents;
 
     /**
      * The number of lines in the file.
@@ -87,8 +87,8 @@ public class ThemisAnalysisFile
         theLocation = pFile;
         theName = pFile.getName().replace(ThemisAnalysisPackage.SFX_JAVA, "");
 
-        /* Create the array */
-        theProcessed = new ArrayList<>();
+        /* Create the list */
+        theContents = new ArrayList<>();
     }
 
     /**
@@ -233,7 +233,7 @@ public class ThemisAnalysisFile
      */
     void firstPassProcessLines(final List<ThemisAnalysisElement> pLines) {
         /* Create the parser */
-        final ThemisAnalysisParser myParser = new ThemisAnalysisParser(pLines, theProcessed);
+        final ThemisAnalysisParser myParser = new ThemisAnalysisParser(pLines, theContents);
 
         /* Loop through the lines */
         while (myParser.hasLines()) {
@@ -271,7 +271,7 @@ public class ThemisAnalysisFile
      */
     void secondPassProcessLines() {
         /* Loop through the lines */
-        for (ThemisAnalysisElement myElement : theProcessed) {
+        for (ThemisAnalysisElement myElement : theContents) {
             /* If the element is a container */
             if (myElement instanceof ThemisAnalysisContainer) {
                 /* Access and process the container */
@@ -303,7 +303,7 @@ public class ThemisAnalysisFile
             }
 
             /* Process the package line */
-            theProcessed.add(thePackage);
+            theContents.add(thePackage);
 
             /* Processed */
             return true;

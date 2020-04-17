@@ -58,11 +58,8 @@ public class ThemisAnalysisAnnotation
         }
     }
 
-    /**
-     * Obtain the number of annotations.
-     * @return the number of annotations
-     */
-    public int getNumAnnotations() {
+    @Override
+    public int getNumLines() {
         return theAnnotations.size();
     }
 

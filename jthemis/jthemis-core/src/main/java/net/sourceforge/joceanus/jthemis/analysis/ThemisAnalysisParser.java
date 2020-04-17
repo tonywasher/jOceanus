@@ -40,9 +40,9 @@ public class ThemisAnalysisParser {
     private final List<ThemisAnalysisElement> theLines;
 
     /**
-     * The list of output lines.
+     * The list of output contents lines.
      */
-    private final List<ThemisAnalysisElement> theProcessed;
+    private final List<ThemisAnalysisElement> theContents;
 
     /**
      * The dataTypeMap.
@@ -51,26 +51,26 @@ public class ThemisAnalysisParser {
 
     /**
      * Constructor.
-     * @param pLines the lines.
-     * @param pProcessed the processed output
+     * @param pLines the source lines.
+     * @param pContents the processed contents
      */
     ThemisAnalysisParser(final List<ThemisAnalysisElement> pLines,
-                         final List<ThemisAnalysisElement> pProcessed) {
-        this(pLines, pProcessed, null);
+                         final List<ThemisAnalysisElement> pContents) {
+        this(pLines, pContents, null);
     }
 
     /**
      * Constructor.
-     * @param pLines the lines.
-     * @param pProcessed the processed output
+     * @param pLines the source lines.
+     * @param pContents the processed contents
      * @param pContainer the container
      */
     ThemisAnalysisParser(final List<ThemisAnalysisElement> pLines,
-                         final List<ThemisAnalysisElement> pProcessed,
+                         final List<ThemisAnalysisElement> pContents,
                          final ThemisAnalysisContainer pContainer) {
         /* Store parameters */
         theLines = pLines;
-        theProcessed = pProcessed;
+        theContents = pContents;
         theParent = pContainer;
 
         /* Create the dataTypeMap */
@@ -164,7 +164,7 @@ public class ThemisAnalysisParser {
         if (ThemisAnalysisComment.isStartComment(pLine)) {
             /* Process the comment lines */
             final ThemisAnalysisComment myComment = new ThemisAnalysisComment(this, pLine);
-            theProcessed.add(myComment);
+            theContents.add(myComment);
             return true;
         }
 
@@ -172,7 +172,7 @@ public class ThemisAnalysisParser {
         if (ThemisAnalysisBlank.isBlank(pLine)) {
             /* Process the blank lines */
             final ThemisAnalysisBlank myBlank = new ThemisAnalysisBlank(this, pLine);
-            theProcessed.add(myBlank);
+            theContents.add(myBlank);
             return true;
         }
 
@@ -180,7 +180,7 @@ public class ThemisAnalysisParser {
         if (ThemisAnalysisAnnotation.isAnnotation(pLine)) {
             /* Process the annotation lines */
             final ThemisAnalysisAnnotation myAnnotation = new ThemisAnalysisAnnotation(this, pLine);
-            theProcessed.add(myAnnotation);
+            theContents.add(myAnnotation);
             return true;
         }
 
@@ -198,7 +198,7 @@ public class ThemisAnalysisParser {
         if (ThemisAnalysisImports.isImport(pLine)) {
             /* Process the import lines */
             final ThemisAnalysisImports myImports = new ThemisAnalysisImports(this, pLine);
-            theProcessed.add(myImports);
+            theContents.add(myImports);
             return true;
         }
 
@@ -223,26 +223,97 @@ public class ThemisAnalysisParser {
                 case CLASS:
                     /* Create the class */
                     pLine.stripStartSequence(myToken);
-                    theProcessed.add(new ThemisAnalysisClass(this, pLine));
+                    theContents.add(new ThemisAnalysisClass(this, pLine));
                     return true;
 
                 /* If this is an interface */
                 case INTERFACE:
                     /* Create the interface */
                     pLine.stripStartSequence(myToken);
-                    theProcessed.add(new ThemisAnalysisInterface(this, pLine));
+                    theContents.add(new ThemisAnalysisInterface(this, pLine));
                     return true;
 
                 /* If this is an enum */
                 case ENUM:
                     /* Create the enum */
                     pLine.stripStartSequence(myToken);
-                    theProcessed.add(new ThemisAnalysisEnum(this, pLine));
+                    theContents.add(new ThemisAnalysisEnum(this, pLine));
                     return true;
 
                 default:
                     break;
             }
+        }
+
+        /* Not processed */
+        return false;
+    }
+
+    /**
+     * Process language constructs.
+     * @param pLine the line
+     * @return have we processed the line?
+     */
+    boolean processLanguage(final ThemisAnalysisLine pLine) {
+        /* Access class type */
+        final String myToken = pLine.peekNextToken();
+        final Object myType = KEYWORDS.get(myToken);
+
+        /* If we have a keyWord */
+        if (myType instanceof ThemisAnalysisKeyWord) {
+            /* Switch on the type */
+            switch ((ThemisAnalysisKeyWord) myType) {
+                /* If this is a while */
+                case WHILE:
+                    /* Create the while */
+                    pLine.stripStartSequence(myToken);
+                    theContents.add(new ThemisAnalysisWhile(this, pLine));
+                    return true;
+
+                /* If this is a doWhile */
+                case DO:
+                    /* Create the while */
+                    pLine.stripStartSequence(myToken);
+                    theContents.add(new ThemisAnalysisDoWhile(this));
+                    return true;
+
+                /* If this is a switch */
+                case SWITCH:
+                    /* Create the switch */
+                    pLine.stripStartSequence(myToken);
+                    theContents.add(new ThemisAnalysisSwitch(this, pLine));
+                    return true;
+
+                /* If this is a for */
+                case FOR:
+                    /* Create the for */
+                    pLine.stripStartSequence(myToken);
+                    theContents.add(new ThemisAnalysisFor(this, pLine));
+                    return true;
+
+                /* If this is an if */
+                case IF:
+                    /* Create the if */
+                    pLine.stripStartSequence(myToken);
+                    theContents.add(new ThemisAnalysisIf(this, pLine));
+                    return true;
+
+                /* If this is a try */
+                case TRY:
+                    /* Create the try */
+                    pLine.stripStartSequence(myToken);
+                    theContents.add(new ThemisAnalysisTry(this, pLine));
+                    return true;
+
+                default:
+                    break;
+            }
+
+            /* Else handle an initializer block */
+        } else if (ThemisAnalysisBuilder.BRACE_OPEN.equals(myToken)) {
+            /* Create the block */
+            theContents.add(new ThemisAnalysisBlock(this, pLine));
+            return true;
         }
 
         /* Not processed */
@@ -260,7 +331,7 @@ public class ThemisAnalysisParser {
 
         /* If we have a case */
         if (myCase != null) {
-            theProcessed.add(new ThemisAnalysisCase(this, myCase));
+            theContents.add(new ThemisAnalysisCase(this, myCase));
             return true;
         }
 
@@ -299,71 +370,6 @@ public class ThemisAnalysisParser {
 
         /* Not processed */
         return null;
-    }
-
-    /**
-     * Process language constructs.
-     * @param pLine the line
-     * @return have we processed the line?
-     */
-    boolean processLanguage(final ThemisAnalysisLine pLine) {
-        /* Access class type */
-        final String myToken = pLine.peekNextToken();
-        final Object myType = KEYWORDS.get(myToken);
-
-        /* If we have a keyWord */
-        if (myType instanceof ThemisAnalysisKeyWord) {
-            /* Switch on the type */
-            switch ((ThemisAnalysisKeyWord) myType) {
-                /* If this is a while */
-                case WHILE:
-                    /* Create the while */
-                    pLine.stripStartSequence(myToken);
-                    theProcessed.add(new ThemisAnalysisWhile(this, pLine));
-                    return true;
-
-                /* If this is a doWhile */
-                case DO:
-                    /* Create the while */
-                    pLine.stripStartSequence(myToken);
-                    theProcessed.add(new ThemisAnalysisDoWhile(this));
-                    return true;
-
-                /* If this is a switch */
-                case SWITCH:
-                    /* Create the switch */
-                    pLine.stripStartSequence(myToken);
-                    theProcessed.add(new ThemisAnalysisSwitch(this, pLine));
-                    return true;
-
-                /* If this is a for */
-                case FOR:
-                    /* Create the for */
-                    pLine.stripStartSequence(myToken);
-                    theProcessed.add(new ThemisAnalysisFor(this, pLine));
-                    return true;
-
-                /* If this is an if */
-                case IF:
-                    /* Create the if */
-                    pLine.stripStartSequence(myToken);
-                    theProcessed.add(new ThemisAnalysisIf(this, pLine));
-                    return true;
-
-                /* If this is a try */
-                case TRY:
-                    /* Create the try */
-                    pLine.stripStartSequence(myToken);
-                    theProcessed.add(new ThemisAnalysisTry(this, pLine));
-                    return true;
-
-                default:
-                    break;
-            }
-        }
-
-        /* Not processed */
-        return false;
     }
 
     /**
@@ -487,8 +493,8 @@ public class ThemisAnalysisParser {
 
             /* If we haven't processed yet */
             if (!processed) {
-                /* Just add the line to processed at present */
-                theProcessed.add(myLine);
+                /* Just add the line to contents at present */
+                theContents.add(myLine);
             }
         }
     }

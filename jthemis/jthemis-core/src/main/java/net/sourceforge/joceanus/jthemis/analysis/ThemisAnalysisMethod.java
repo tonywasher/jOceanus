@@ -51,9 +51,9 @@ public class ThemisAnalysisMethod
     private final List<ThemisAnalysisElement> theHeaders;
 
     /**
-     * The elements.
+     * The contents.
      */
-    private final List<ThemisAnalysisElement> theProcessed;
+    private final List<ThemisAnalysisElement> theContents;
 
     /**
      * The dataTypes.
@@ -61,7 +61,7 @@ public class ThemisAnalysisMethod
     private final Map<String, ThemisAnalysisDataType> theDataTypes;
 
     /**
-     * The number of lines in the class.
+     * The number of lines.
      */
     private final int theNumLines;
 
@@ -92,7 +92,7 @@ public class ThemisAnalysisMethod
         theParent = pParser.getParent();
 
         /* Create the arrays */
-        theHeaders = ThemisAnalysisBody.processHeaderTrailers(pParser, pLine);
+        theHeaders = ThemisAnalysisBuilder.processHeaderTrailers(pParser, pLine);
 
         /* Determine whether this method is abstract */
         final boolean hasModifiers = theModifiers != null;
@@ -102,13 +102,16 @@ public class ThemisAnalysisMethod
         final boolean isAbstract = markedAbstract || (isInterface && !markedDefault);
 
         /* Process the body if we have one */
-        theProcessed = isAbstract
+        theContents = isAbstract
                        ? new ArrayList<>()
-                       : ThemisAnalysisBody.processBody(pParser);
-        theNumLines = theProcessed.size();
+                       : ThemisAnalysisBuilder.processMethodBody(pParser);
+        final int myBaseLines = theContents.size();
 
         /* Post process the lines */
         postProcessLines();
+
+        /* Calculate the number of lines */
+        theNumLines = calculateNumLines(myBaseLines);
     }
 
     /**
@@ -119,27 +122,44 @@ public class ThemisAnalysisMethod
         return theName;
     }
 
-    /**
-     * Obtain the number of lines in the class.
-     * @return the number of lines
-     */
-    public int getNumLines() {
-        return theNumLines;
-    }
-
     @Override
     public Map<String, ThemisAnalysisDataType> getDataTypes() {
         return theDataTypes;
     }
 
     @Override
-    public List<ThemisAnalysisElement> getProcessed() {
-        return theProcessed;
+    public List<ThemisAnalysisElement> getContents() {
+        return theContents;
     }
 
     @Override
     public ThemisAnalysisContainer getParent() {
         return theParent;
+    }
+
+    @Override
+    public int getNumLines() {
+        return theNumLines;
+    }
+
+    /**
+     * Calculate the number of lines for the construct.
+     * @param pBaseCount the baseCount
+     * @return the number of lines
+     */
+    public int calculateNumLines(final int pBaseCount) {
+        /* Add 1+ line(s) for the class headers  */
+        int myNumLines = pBaseCount + Math.max(theHeaders.size() - 1, 1);
+
+        /* Loop through the contents */
+        for (ThemisAnalysisElement myElement : theContents) {
+            if (myElement instanceof ThemisAnalysisProcessed) {
+                myNumLines += ((ThemisAnalysisProcessed) myElement).getNumLines() - 1;
+            }
+        }
+
+        /* Add one for the clause terminator */
+        return myNumLines + 1;
     }
 
     @Override

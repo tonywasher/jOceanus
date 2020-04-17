@@ -42,9 +42,9 @@ public class ThemisAnalysisLine
         ThemisAnalysisParenthesis.PARENTHESIS_OPEN,
         ThemisAnalysisParenthesis.PARENTHESIS_CLOSE,
         ThemisAnalysisGeneric.GENERIC_OPEN,
-        ThemisAnalysisBody.STATEMENT_COMMA,
-        ThemisAnalysisBody.STATEMENT_SEMI,
-        ThemisAnalysisBody.CASE_COLON,
+        ThemisAnalysisBuilder.STATEMENT_COMMA,
+        ThemisAnalysisBuilder.STATEMENT_SEMI,
+        ThemisAnalysisBuilder.CASE_COLON,
         ThemisAnalysisArray.ARRAY_OPEN
     };
 

@@ -44,7 +44,7 @@ public class ThemisAnalysisField
     private final List<ThemisAnalysisElement> theTrailers;
 
     /**
-     * The number of lines in the field.
+     * The number of lines.
      */
     private final int theNumLines;
 
@@ -65,7 +65,7 @@ public class ThemisAnalysisField
         theModifiers = pLine.getModifiers();
 
         /* Create the arrays */
-        theTrailers = ThemisAnalysisBody.processHeaderTrailers(pParser, pLine);
+        theTrailers = ThemisAnalysisBuilder.processHeaderTrailers(pParser, pLine);
         theNumLines = theTrailers.size();
     }
 
@@ -77,10 +77,7 @@ public class ThemisAnalysisField
         return theName;
     }
 
-    /**
-     * Obtain the number of lines in the class.
-     * @return the number of lines
-     */
+    @Override
     public int getNumLines() {
         return theNumLines;
     }

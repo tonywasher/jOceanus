@@ -24,7 +24,7 @@ import java.util.Map;
  * Interface for containers that require postProcessing.
  */
 public interface ThemisAnalysisContainer
-    extends ThemisAnalysisElement {
+    extends ThemisAnalysisProcessed {
     /**
      * Obtain the dataType Map.
      * @return the map
@@ -32,10 +32,10 @@ public interface ThemisAnalysisContainer
     Map<String, ThemisAnalysisDataType> getDataTypes();
 
     /**
-     * Obtain the list of processed elements.
-     * @return the list
+     * Obtain the contents.
+     * @return the contents
      */
-    List<ThemisAnalysisElement> getProcessed();
+    List<ThemisAnalysisElement> getContents();
 
     /**
      * Obtain the parent of this container.
@@ -47,13 +47,13 @@ public interface ThemisAnalysisContainer
      * Post process lines.
      */
     default void postProcessLines() {
-        /* Create a copy of the processed list and clear original */
-        final List<ThemisAnalysisElement> myProcessed = getProcessed();
-        final List<ThemisAnalysisElement> myLines = new ArrayList<>(myProcessed);
-        myProcessed.clear();
+        /* Create a copy of the contents list and clear original */
+        final List<ThemisAnalysisElement> myContents = getContents();
+        final List<ThemisAnalysisElement> myLines = new ArrayList<>(myContents);
+        myContents.clear();
 
         /* Create the new input parser */
-        final ThemisAnalysisParser myParser = new ThemisAnalysisParser(myLines, myProcessed, getParent());
+        final ThemisAnalysisParser myParser = new ThemisAnalysisParser(myLines, myContents, getParent());
 
         /* Loop through the lines */
         while (myParser.hasLines()) {
@@ -61,19 +61,19 @@ public interface ThemisAnalysisContainer
             final ThemisAnalysisElement myElement = myParser.popNextLine();
             boolean processed = false;
 
-            /* If the element is already fully processed */
-            if (myElement instanceof ThemisAnalysisProcessed) {
-                myProcessed.add(myElement);
-                processed = true;
-            }
-
             /* If the element is a container */
-            if (!processed
-                    && myElement instanceof ThemisAnalysisContainer) {
+            if (myElement instanceof ThemisAnalysisContainer) {
                 /* Access and process the container */
                 final ThemisAnalysisContainer myContainer = (ThemisAnalysisContainer) myElement;
                 myContainer.postProcessLines();
-                myProcessed.add(myContainer);
+                myContents.add(myContainer);
+                processed = true;
+            }
+
+            /* If the element is already fully processed */
+            if (!processed
+                    && myElement instanceof ThemisAnalysisProcessed) {
+                myContents.add(myElement);
                 processed = true;
             }
 
@@ -86,11 +86,14 @@ public interface ThemisAnalysisContainer
             /* process fields and methods */
             if (!processed) {
                 final ThemisAnalysisLine myLine = (ThemisAnalysisLine) myElement;
-                final ThemisAnalysisElement myEl = myParser.processFieldsAndMethods(myLine);
-                if (myEl != null) {
-                    myProcessed.add(myEl);
-                    if (myEl instanceof ThemisAnalysisContainer) {
-                        ((ThemisAnalysisContainer) myEl).postProcessLines();
+                final ThemisAnalysisElement myResult = myParser.processFieldsAndMethods(myLine);
+
+                /* If we have a field/method */
+                if (myResult != null) {
+                    /* Add the element and postProcess any Containers */
+                    myContents.add(myResult);
+                    if (myResult instanceof ThemisAnalysisContainer) {
+                        ((ThemisAnalysisContainer) myResult).postProcessLines();
                     }
                     processed = true;
                 }
@@ -99,7 +102,7 @@ public interface ThemisAnalysisContainer
             /* process statements */
             if (!processed) {
                 /* Just add the line for the moment */
-                myProcessed.add(myElement);
+                myContents.add(myElement);
             }
         }
 

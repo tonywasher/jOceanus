@@ -21,24 +21,19 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Interface representation.
+ * Block construct.
  */
-public class ThemisAnalysisInterface
-        implements ThemisAnalysisContainer, ThemisAnalysisDataType {
+public class ThemisAnalysisBlock
+        implements ThemisAnalysisContainer {
     /**
-     * The name of the class.
+     * The parent.
      */
-    private final String theName;
+    private final ThemisAnalysisContainer theParent;
 
     /**
      * The modifiers.
      */
     private final List<ThemisAnalysisPrefix> theModifiers;
-
-    /**
-     * The headers.
-     */
-    private final List<ThemisAnalysisElement> theHeaders;
 
     /**
      * The contents.
@@ -58,70 +53,26 @@ public class ThemisAnalysisInterface
     /**
      * Constructor.
      * @param pParser the parser
-     * @param pLine the initial interface line
+     * @param pLine the initial class line
      */
-    ThemisAnalysisInterface(final ThemisAnalysisParser pParser,
-                            final ThemisAnalysisLine pLine) {
+    ThemisAnalysisBlock(final ThemisAnalysisParser pParser,
+                        final ThemisAnalysisLine pLine) {
         /* Store parameters */
-        theName = pLine.stripNextToken();
         theModifiers = pLine.getModifiers();
         theDataTypes = pParser.getDataTypes();
+        theParent = pParser.getParent();
 
         /* Create the arrays */
-        theHeaders = ThemisAnalysisBuilder.processHeaders(pParser, pLine);
         final List<ThemisAnalysisElement> myLines = ThemisAnalysisBuilder.processBody(pParser);
         final int myBaseLines = myLines.size();
-
-        /* add/replace the interface in the map */
-        final Map<String, ThemisAnalysisDataType> myMap = pParser.getDataTypes();
-        myMap.put(theName, this);
 
         /* Create a parser */
         theContents = new ArrayList<>();
         final ThemisAnalysisParser myParser = new ThemisAnalysisParser(myLines, theContents, this);
-        processLines(myParser);
+        myParser.processLines();
 
         /* Calculate the number of lines */
         theNumLines = calculateNumLines(myBaseLines);
-    }
-
-    /**
-     * process the lines.
-     * @param pParser the parser
-     */
-    void processLines(final ThemisAnalysisParser pParser) {
-        /* Loop through the lines */
-        while (pParser.hasLines()) {
-            /* Access next line */
-            final ThemisAnalysisLine myLine = (ThemisAnalysisLine) pParser.popNextLine();
-
-            /* Process comments and blanks */
-            boolean processed = pParser.processCommentsAndBlanks(myLine);
-
-            /* Process embedded classes */
-            if (!processed) {
-                processed = pParser.processClass(myLine);
-            }
-
-            /* Process language constructs */
-            if (!processed) {
-                processed = pParser.processLanguage(myLine);
-            }
-
-            /* If we haven't processed yet */
-            if (!processed) {
-                /* Just add the line to contents at present */
-                theContents.add(myLine);
-            }
-        }
-    }
-
-    /**
-     * Obtain the name.
-     * @return the name
-     */
-    public String getName() {
-        return theName;
     }
 
     @Override
@@ -136,7 +87,7 @@ public class ThemisAnalysisInterface
 
     @Override
     public ThemisAnalysisContainer getParent() {
-        return this;
+        return theParent;
     }
 
     @Override
@@ -150,15 +101,7 @@ public class ThemisAnalysisInterface
      * @return the number of lines
      */
     public int calculateNumLines(final int pBaseCount) {
-        /* Add 1+ line(s) for the while headers  */
-        final int myNumLines = pBaseCount + Math.max(theHeaders.size() - 1, 1);
-
-        /* Add one for the clause terminator */
-        return myNumLines + 1;
-    }
-
-    @Override
-    public String toString() {
-        return getName();
+        /* Add one for the clause start and terminator */
+        return pBaseCount + 2;
     }
 }
