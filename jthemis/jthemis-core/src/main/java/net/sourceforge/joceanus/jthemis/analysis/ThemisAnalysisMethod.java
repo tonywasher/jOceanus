@@ -16,7 +16,8 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jthemis.analysis;
 
-import java.util.ArrayList;
+import java.util.ArrayDeque;
+import java.util.Deque;
 import java.util.List;
 import java.util.Map;
 
@@ -48,12 +49,12 @@ public class ThemisAnalysisMethod
     /**
      * The headers.
      */
-    private final List<ThemisAnalysisElement> theHeaders;
+    private final Deque<ThemisAnalysisElement> theHeaders;
 
     /**
      * The contents.
      */
-    private final List<ThemisAnalysisElement> theContents;
+    private final Deque<ThemisAnalysisElement> theContents;
 
     /**
      * The dataTypes.
@@ -95,15 +96,14 @@ public class ThemisAnalysisMethod
         theHeaders = ThemisAnalysisBuilder.processHeaderTrailers(pParser, pLine);
 
         /* Determine whether this method is abstract */
-        final boolean hasModifiers = theModifiers != null;
         final boolean isInterface = theParent instanceof ThemisAnalysisInterface;
-        final boolean markedDefault = hasModifiers && theModifiers.contains(ThemisAnalysisModifier.DEFAULT);
-        final boolean markedAbstract = hasModifiers && theModifiers.contains(ThemisAnalysisModifier.ABSTRACT);
+        final boolean markedDefault = theModifiers.contains(ThemisAnalysisModifier.DEFAULT);
+        final boolean markedAbstract = theModifiers.contains(ThemisAnalysisModifier.ABSTRACT);
         final boolean isAbstract = markedAbstract || (isInterface && !markedDefault);
 
         /* Process the body if we have one */
         theContents = isAbstract
-                       ? new ArrayList<>()
+                       ? new ArrayDeque<>()
                        : ThemisAnalysisBuilder.processMethodBody(pParser);
         final int myBaseLines = theContents.size();
 
@@ -128,7 +128,7 @@ public class ThemisAnalysisMethod
     }
 
     @Override
-    public List<ThemisAnalysisElement> getContents() {
+    public Deque<ThemisAnalysisElement> getContents() {
         return theContents;
     }
 

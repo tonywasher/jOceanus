@@ -16,6 +16,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jthemis.analysis;
 
+import java.util.Deque;
 import java.util.List;
 
 /**
@@ -41,7 +42,7 @@ public class ThemisAnalysisField
     /**
      * The trailers.
      */
-    private final List<ThemisAnalysisElement> theTrailers;
+    private final Deque<ThemisAnalysisElement> theTrailers;
 
     /**
      * The number of lines.

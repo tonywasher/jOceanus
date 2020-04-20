@@ -16,8 +16,8 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jthemis.analysis;
 
+import java.util.Deque;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -37,12 +37,12 @@ public class ThemisAnalysisParser {
     /**
      * The list of source lines.
      */
-    private final List<ThemisAnalysisElement> theLines;
+    private final Deque<ThemisAnalysisElement> theLines;
 
     /**
      * The list of output contents lines.
      */
-    private final List<ThemisAnalysisElement> theContents;
+    private final Deque<ThemisAnalysisElement> theContents;
 
     /**
      * The dataTypeMap.
@@ -54,8 +54,8 @@ public class ThemisAnalysisParser {
      * @param pLines the source lines.
      * @param pContents the processed contents
      */
-    ThemisAnalysisParser(final List<ThemisAnalysisElement> pLines,
-                         final List<ThemisAnalysisElement> pContents) {
+    ThemisAnalysisParser(final Deque<ThemisAnalysisElement> pLines,
+                         final Deque<ThemisAnalysisElement> pContents) {
         this(pLines, pContents, null);
     }
 
@@ -65,8 +65,8 @@ public class ThemisAnalysisParser {
      * @param pContents the processed contents
      * @param pContainer the container
      */
-    ThemisAnalysisParser(final List<ThemisAnalysisElement> pLines,
-                         final List<ThemisAnalysisElement> pContents,
+    ThemisAnalysisParser(final Deque<ThemisAnalysisElement> pLines,
+                         final Deque<ThemisAnalysisElement> pContents,
                          final ThemisAnalysisContainer pContainer) {
         /* Store parameters */
         theLines = pLines;
@@ -85,7 +85,7 @@ public class ThemisAnalysisParser {
      * @param pProcessed the processed output
      */
     ThemisAnalysisParser(final ThemisAnalysisParser pParser,
-                         final List<ThemisAnalysisElement> pProcessed) {
+                         final Deque<ThemisAnalysisElement> pProcessed) {
         this(pParser.theLines, pProcessed, pParser.getParent());
     }
 
@@ -124,11 +124,7 @@ public class ThemisAnalysisParser {
         }
 
         /* Access the first line and remove from the list */
-        final ThemisAnalysisElement myLine = theLines.get(0);
-        theLines.remove(0);
-
-        /* return the line */
-        return myLine;
+        return theLines.removeFirst();
     }
 
     /**
@@ -142,7 +138,7 @@ public class ThemisAnalysisParser {
         }
 
         /* Return the first line in the list */
-        return theLines.get(0);
+        return theLines.getFirst();
     }
 
     /**
@@ -151,7 +147,7 @@ public class ThemisAnalysisParser {
      */
     void pushLine(final ThemisAnalysisElement pLine) {
         /* Insert the line at the front of the stack */
-        theLines.add(0, pLine);
+        theLines.offerFirst(pLine);
     }
 
     /**

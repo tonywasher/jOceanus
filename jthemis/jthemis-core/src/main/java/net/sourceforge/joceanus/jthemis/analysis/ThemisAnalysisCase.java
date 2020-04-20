@@ -16,7 +16,9 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jthemis.analysis;
 
+import java.util.ArrayDeque;
 import java.util.ArrayList;
+import java.util.Deque;
 import java.util.List;
 import java.util.Map;
 
@@ -33,7 +35,7 @@ public class ThemisAnalysisCase
     /**
      * The contents.
      */
-    private final List<ThemisAnalysisElement> theContents;
+    private final Deque<ThemisAnalysisElement> theContents;
 
     /**
      * The dataTypes.
@@ -66,7 +68,7 @@ public class ThemisAnalysisCase
         theCases.add(pCase);
 
         /* Create a parser */
-        theContents = new ArrayList<>();
+        theContents = new ArrayDeque<>();
         final ThemisAnalysisParser myParser = new ThemisAnalysisParser(pParser, theContents);
         processLines(myParser);
 
@@ -131,7 +133,7 @@ public class ThemisAnalysisCase
     }
 
     @Override
-    public List<ThemisAnalysisElement> getContents() {
+    public Deque<ThemisAnalysisElement> getContents() {
         return theContents;
     }
 

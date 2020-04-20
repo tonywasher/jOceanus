@@ -16,8 +16,8 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jthemis.analysis;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.ArrayDeque;
+import java.util.Deque;
 import java.util.Map;
 
 /**
@@ -35,7 +35,7 @@ public interface ThemisAnalysisContainer
      * Obtain the contents.
      * @return the contents
      */
-    List<ThemisAnalysisElement> getContents();
+    Deque<ThemisAnalysisElement> getContents();
 
     /**
      * Obtain the parent of this container.
@@ -48,8 +48,8 @@ public interface ThemisAnalysisContainer
      */
     default void postProcessLines() {
         /* Create a copy of the contents list and clear original */
-        final List<ThemisAnalysisElement> myContents = getContents();
-        final List<ThemisAnalysisElement> myLines = new ArrayList<>(myContents);
+        final Deque<ThemisAnalysisElement> myContents = getContents();
+        final Deque<ThemisAnalysisElement> myLines = new ArrayDeque<>(myContents);
         myContents.clear();
 
         /* Create the new input parser */

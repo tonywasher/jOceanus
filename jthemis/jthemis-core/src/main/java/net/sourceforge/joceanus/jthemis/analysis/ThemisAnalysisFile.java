@@ -23,8 +23,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.ArrayDeque;
+import java.util.Collections;
+import java.util.Deque;
 import java.util.Map;
 
 import net.sourceforge.joceanus.jtethys.OceanusException;
@@ -34,7 +35,7 @@ import net.sourceforge.joceanus.jthemis.ThemisDataException;
  * Analysis representation of a java file.
  */
 public class ThemisAnalysisFile
-    implements ThemisAnalysisDataType {
+    implements ThemisAnalysisContainer, ThemisAnalysisDataType {
     /**
      * The lineFeed character.
      */
@@ -48,7 +49,7 @@ public class ThemisAnalysisFile
     /**
      * The buffer length (must be longer than longest line).
      */
-    private static final int BUFLEN = 200;
+    private static final int BUFLEN = 1024;
 
     /**
      * The location of the file.
@@ -68,7 +69,7 @@ public class ThemisAnalysisFile
     /**
      * The contents.
      */
-    private final List<ThemisAnalysisElement> theContents;
+    private final Deque<ThemisAnalysisElement> theContents;
 
     /**
      * The number of lines in the file.
@@ -88,7 +89,7 @@ public class ThemisAnalysisFile
         theName = pFile.getName().replace(ThemisAnalysisPackage.SFX_JAVA, "");
 
         /* Create the list */
-        theContents = new ArrayList<>();
+        theContents = new ArrayDeque<>();
     }
 
     /**
@@ -104,8 +105,8 @@ public class ThemisAnalysisFile
       * @throws OceanusException on error
      */
     void processFile() throws OceanusException {
-        /* Create the array */
-        final List<ThemisAnalysisElement> myLines = new ArrayList<>();
+        /* Create the queue */
+        final Deque<ThemisAnalysisElement> myLines = new ArrayDeque<>();
 
         /* create a read buffer */
         final char[] myBuffer = new char[BUFLEN];
@@ -143,10 +144,22 @@ public class ThemisAnalysisFile
         }
     }
 
-    /**
-     * Obtain the number of lines.
-     * @return the number of lines
-     */
+    @Override
+    public Map<String, ThemisAnalysisDataType> getDataTypes() {
+        return Collections.emptyMap();
+    }
+
+    @Override
+    public Deque<ThemisAnalysisElement> getContents() {
+        return theContents;
+    }
+
+    @Override
+    public ThemisAnalysisContainer getParent() {
+        return this;
+    }
+
+    @Override
     public int getNumLines() {
         return theNumLines;
     }
@@ -158,9 +171,9 @@ public class ThemisAnalysisFile
      * @param pNumChars the number of characters in the buffer
      * @return the remaining characters in the buffer
      */
-    private int processLines(final List<ThemisAnalysisElement> pLines,
-                             final char[] pBuffer,
-                             final int pNumChars) {
+    private static int processLines(final Deque<ThemisAnalysisElement> pLines,
+                                    final char[] pBuffer,
+                                    final int pNumChars) {
         /* The start of the current line */
         int myOffset = 0;
 
@@ -231,7 +244,7 @@ public class ThemisAnalysisFile
      * Post-process the lines as first Pass.
      * @param pLines the lines to process
      */
-    void firstPassProcessLines(final List<ThemisAnalysisElement> pLines) {
+    void firstPassProcessLines(final Deque<ThemisAnalysisElement> pLines) {
         /* Create the parser */
         final ThemisAnalysisParser myParser = new ThemisAnalysisParser(pLines, theContents);
 

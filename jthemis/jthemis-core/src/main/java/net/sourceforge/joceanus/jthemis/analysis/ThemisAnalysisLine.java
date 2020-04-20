@@ -16,8 +16,8 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jthemis.analysis;
 
+import java.nio.CharBuffer;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -51,27 +51,12 @@ public class ThemisAnalysisLine
     /**
      * The line buffer.
      */
-    private List<ThemisAnalysisPrefix> theModifiers;
+    private final List<ThemisAnalysisPrefix> theModifiers;
 
     /**
      * The line buffer.
      */
-    private final char[] theBuffer;
-
-    /**
-     * The starting offset within the line buffer.
-     */
-    private int theOffset;
-
-    /**
-     * The length of valid data in the buffer.
-     */
-    private int theLength;
-
-    /**
-     * The rollback mark.
-     */
-    private int[] theMark;
+    private final CharBuffer theBuffer;
 
     /**
      * Constructor.
@@ -82,13 +67,10 @@ public class ThemisAnalysisLine
     ThemisAnalysisLine(final char[] pBuffer,
                        final int pOffset,
                        final int pLen) {
-        /* Store values */
-        theLength = pLen;
-        theBuffer = new char[theLength];
-        theOffset = 0;
-
-        /* copy the data */
-        System.arraycopy(pBuffer, pOffset, theBuffer, theOffset, theLength);
+        /* create the buffer */
+        final char[] myBuffer = new char[pLen];
+        System.arraycopy(pBuffer, pOffset, myBuffer, 0, pLen);
+        theBuffer = CharBuffer.wrap(myBuffer);
 
         /* Strip any trailing comments */
         stripTrailingComments();
@@ -98,6 +80,7 @@ public class ThemisAnalysisLine
         stripTrailingWhiteSpace();
 
         /* Strip Modifiers */
+        theModifiers = new ArrayList<>();
         stripModifiers();
     }
 
@@ -105,11 +88,10 @@ public class ThemisAnalysisLine
      * Constructor.
      * @param pBuffer the buffer
      */
-    private ThemisAnalysisLine(final char[] pBuffer) {
+    private ThemisAnalysisLine(final CharBuffer pBuffer) {
         /* Store values */
-        theLength = pBuffer.length;
         theBuffer = pBuffer;
-        theOffset = 0;
+        theModifiers = new ArrayList<>();
     }
 
     /**
@@ -117,7 +99,23 @@ public class ThemisAnalysisLine
      * @return the length
      */
     public int getLength() {
-        return theLength;
+        return theBuffer.remaining();
+    }
+
+    /**
+     * Set the new length.
+     * @param pLen the length
+     */
+    private void setLength(final int pLen) {
+        theBuffer.limit(theBuffer.position() + pLen);
+    }
+
+    /**
+     * Adjust the position.
+     * @param pAdjust the adjustment
+     */
+    private void adjustPosition(final int pAdjust) {
+        theBuffer.position(theBuffer.position() + pAdjust);
     }
 
     /**
@@ -133,12 +131,14 @@ public class ThemisAnalysisLine
      */
     private void stripTrailingComments() {
         /* Loop through the characters */
-        for (int i = 0; i < theLength - 1; i++) {
+        final int myLength = getLength();
+        for (int i = 0; i < myLength - 1; i++) {
             /* If we have a line comment */
-            if (theBuffer[i + theOffset] == COMMENT
-                && theBuffer[i + theOffset + 1] == COMMENT) {
+            if (theBuffer.charAt(i) == COMMENT
+                && theBuffer.charAt(i + 1) == COMMENT) {
                 /* Reset the length */
-                theLength = i;
+                setLength(i);
+                break;
             }
         }
     }
@@ -149,9 +149,10 @@ public class ThemisAnalysisLine
     void stripLeadingWhiteSpace() {
         /* Loop through the characters */
         int myWhiteSpace = 0;
-        for (int i = 0; i < theLength; i++) {
+        final int myLength = getLength();
+        for (int i = 0; i < myLength; i++) {
             /* Break loop if not whiteSpace */
-            if (!Character.isWhitespace(theBuffer[i + theOffset])) {
+            if (!Character.isWhitespace(theBuffer.charAt(i))) {
                 break;
             }
 
@@ -159,9 +160,8 @@ public class ThemisAnalysisLine
             myWhiteSpace++;
         }
 
-        /* Adjust counts */
-        theOffset += myWhiteSpace;
-        theLength -= myWhiteSpace;
+        /* Adjust position */
+        adjustPosition(myWhiteSpace);
     }
 
     /**
@@ -170,9 +170,10 @@ public class ThemisAnalysisLine
     private void stripTrailingWhiteSpace() {
         /* Loop through the characters */
         int myWhiteSpace = 0;
-        for (int i = theLength - 1; i >= 0; i--) {
+        final int myLength = getLength();
+        for (int i = myLength - 1; i >= 0; i--) {
             /* Break loop if not whiteSpace */
-            if (!Character.isWhitespace(theBuffer[i + theOffset])) {
+            if (!Character.isWhitespace(theBuffer.charAt(i))) {
                 break;
             }
 
@@ -180,29 +181,22 @@ public class ThemisAnalysisLine
             myWhiteSpace++;
         }
 
-        /* Adjust counts */
-        theLength -= myWhiteSpace;
+        /* Adjust length */
+        setLength(myLength - myWhiteSpace);
     }
 
     /**
      * Mark the line.
      */
     void mark() {
-        /* Set the mark */
-        theMark = new int[] { theOffset, theLength};
+        theBuffer.mark();
     }
 
     /**
      * Reset the line.
      */
     void reset() {
-        /* If we have a mark */
-        if (theMark != null) {
-            /* Reset values and release mark */
-            theOffset = theMark[0];
-            theLength = theMark[1];
-            theMark = null;
-        }
+        theBuffer.reset();
     }
 
     /**
@@ -212,10 +206,7 @@ public class ThemisAnalysisLine
         /* Loop through the modifiers */
         for (ThemisAnalysisModifier myModifier : ThemisAnalysisModifier.values()) {
             if (isStartedBy(myModifier.getModifier())) {
-                /* Allocate array if needed and add modifier */
-                if (theModifiers == null) {
-                    theModifiers = new ArrayList<>();
-                }
+                /* Add modifier */
                 theModifiers.add(myModifier);
 
                 /* Try for more modifiers */
@@ -231,27 +222,27 @@ public class ThemisAnalysisLine
      */
     boolean isStartedBy(final String pIdentifier) {
         /* If the line is too short, just return */
-        final int myLen = pIdentifier.length();
-        if (myLen > theLength) {
+        final int myIdLen = pIdentifier.length();
+        final int myLength = getLength();
+        if (myIdLen > myLength) {
             return false;
         }
 
-        /* Loop through the modifier */
-        for (int i = 0; i < myLen; i++) {
-            if (theBuffer[i + theOffset] != pIdentifier.charAt(i)) {
+        /* Loop through the identifier */
+        for (int i = 0; i < myIdLen; i++) {
+            if (theBuffer.charAt(i) != pIdentifier.charAt(i)) {
                 return false;
             }
         }
 
         /* Catch any solo modifiers */
-        if (myLen == theLength) {
+        if (myIdLen == myLength) {
             throw new IllegalStateException("Modifier found without object");
         }
 
         /* The next character must be whitespace */
-        if (Character.isWhitespace(theBuffer[myLen + theOffset])) {
-            theLength -= myLen + 1;
-            theOffset += myLen + 1;
+        if (Character.isWhitespace(theBuffer.charAt(myIdLen))) {
+            adjustPosition(myIdLen + 1);
             stripLeadingWhiteSpace();
             return true;
         }
@@ -277,13 +268,14 @@ public class ThemisAnalysisLine
      */
     String peekNextToken() {
         /* Loop through the buffer */
-        for (int i = 0; i < theLength; i++) {
+        final int myLength = getLength();
+        for (int i = 0; i < myLength; i++) {
             /* if we have hit whiteSpace or a terminator */
-            final char myChar = theBuffer[i + theOffset];
+            final char myChar = theBuffer.charAt(i);
             if (isTerminator(myChar)) {
                 /* Strip out the characters */
-                final char[] myChars = Arrays.copyOfRange(theBuffer, theOffset, i + theOffset);
-                return new String(myChars);
+                final CharBuffer myToken = theBuffer.subSequence(0, i);
+                return myToken.toString();
             }
         }
 
@@ -333,14 +325,14 @@ public class ThemisAnalysisLine
      */
     ThemisAnalysisLine stripUpToChar(final char pChar) {
         /* Loop through the buffer */
-        for (int i = 0; i < theLength; i++) {
+        final int myLength = getLength();
+        for (int i = 0; i < myLength; i++) {
             /* if we have hit the char */
-            final char myChar = theBuffer[i + theOffset];
+            final char myChar = theBuffer.charAt(i);
             if (myChar == pChar) {
                 /* Strip out the characters */
-                final char[] myChars = Arrays.copyOfRange(theBuffer, theOffset, i + theOffset);
-                theOffset += i + 1;
-                theLength -= i + 1;
+                final CharBuffer myChars = theBuffer.subSequence(0, i);
+                adjustPosition(i + 1);
                 return new ThemisAnalysisLine(myChars);
             }
         }
@@ -356,9 +348,10 @@ public class ThemisAnalysisLine
      */
     char findNextCharInSet(final char[] pChars) {
         /* Loop through the buffer */
-        for (int i = 0; i < theLength; i++) {
+        final int myLength = getLength();
+        for (int i = 0; i < myLength; i++) {
             /* if we have hit the char */
-            final char myChar = theBuffer[i + theOffset];
+            final char myChar = theBuffer.charAt(i);
             if (isInList(myChar, pChars)) {
                 return myChar;
             }
@@ -375,14 +368,15 @@ public class ThemisAnalysisLine
      */
     boolean startsWithSequence(final CharSequence pSequence) {
         /* If the line is too short, just return */
-        final int myLen = pSequence.length();
-        if (myLen > theLength) {
+        final int mySeqLen = pSequence.length();
+        final int myLength = getLength();
+        if (mySeqLen > myLength) {
             return false;
         }
 
         /* Loop through the sequence */
-        for (int i = 0; i < myLen; i++) {
-            if (theBuffer[i + theOffset] != pSequence.charAt(i)) {
+        for (int i = 0; i < mySeqLen; i++) {
+            if (theBuffer.charAt(i) != pSequence.charAt(i)) {
                 return false;
             }
         }
@@ -398,37 +392,24 @@ public class ThemisAnalysisLine
      */
     boolean endsWithSequence(final CharSequence pSequence) {
         /* If the line is too short, just return */
-        final int myLen = pSequence.length();
-        if (myLen > theLength) {
+        final int mySeqLen = pSequence.length();
+        final int myLength = getLength();
+        if (mySeqLen > myLength) {
             return false;
         }
 
         /* Loop through the buffer */
-        for (int i = 0; i <= theLength - myLen; i++) {
+        final int myBase = myLength - mySeqLen;
+        for (int i = 0; i < mySeqLen; i++) {
             /* Loop through the sequence */
-            boolean found = true;
-            for (int j = 0; j < myLen; j++) {
-                if (theBuffer[i + j + theOffset] != pSequence.charAt(j)) {
-                    /* Not found */
-                    found = false;
-                    break;
-                }
-            }
-
-            /* If we found the sequence */
-            if (found) {
-                /* Check that it is at the end */
-                //if (i != theLength - myLen) {
-                //    throw new IllegalStateException("EndSequence found midLine");
-                //}
-
-                /* found it */
-                return true;
+            if (theBuffer.charAt(i + myBase) != pSequence.charAt(i)) {
+                /* Not found */
+                return false;
             }
         }
 
-        /* Not found */
-        return false;
+        /* found */
+        return true;
     }
 
     /**
@@ -439,8 +420,7 @@ public class ThemisAnalysisLine
         /* If the line starts with the sequence */
         if (startsWithSequence(pSequence)) {
             /* adjust the length */
-            theLength -= pSequence.length();
-            theOffset += pSequence.length();
+            adjustPosition(pSequence.length());
             stripLeadingWhiteSpace();
         }
     }
@@ -453,14 +433,13 @@ public class ThemisAnalysisLine
         /* If the line ends with the sequence */
         if (endsWithSequence(pSequence)) {
             /* adjust the length */
-            theLength -= pSequence.length();
+            setLength(getLength() - pSequence.length());
             stripTrailingWhiteSpace();
         }
     }
 
     @Override
     public String toString() {
-        final char[] myChars = Arrays.copyOfRange(theBuffer, theOffset, theOffset + theLength);
-        return new String(myChars);
+        return theBuffer.toString();
     }
 }

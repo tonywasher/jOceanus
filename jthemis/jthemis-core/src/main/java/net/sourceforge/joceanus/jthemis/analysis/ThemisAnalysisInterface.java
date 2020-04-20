@@ -16,7 +16,8 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jthemis.analysis;
 
-import java.util.ArrayList;
+import java.util.ArrayDeque;
+import java.util.Deque;
 import java.util.List;
 import java.util.Map;
 
@@ -38,12 +39,12 @@ public class ThemisAnalysisInterface
     /**
      * The headers.
      */
-    private final List<ThemisAnalysisElement> theHeaders;
+    private final Deque<ThemisAnalysisElement> theHeaders;
 
     /**
      * The contents.
      */
-    private final List<ThemisAnalysisElement> theContents;
+    private final Deque<ThemisAnalysisElement> theContents;
 
     /**
      * The dataTypes.
@@ -69,7 +70,7 @@ public class ThemisAnalysisInterface
 
         /* Create the arrays */
         theHeaders = ThemisAnalysisBuilder.processHeaders(pParser, pLine);
-        final List<ThemisAnalysisElement> myLines = ThemisAnalysisBuilder.processBody(pParser);
+        final Deque<ThemisAnalysisElement> myLines = ThemisAnalysisBuilder.processBody(pParser);
         final int myBaseLines = myLines.size();
 
         /* add/replace the interface in the map */
@@ -77,7 +78,7 @@ public class ThemisAnalysisInterface
         myMap.put(theName, this);
 
         /* Create a parser */
-        theContents = new ArrayList<>();
+        theContents = new ArrayDeque<>();
         final ThemisAnalysisParser myParser = new ThemisAnalysisParser(myLines, theContents, this);
         processLines(myParser);
 
@@ -130,7 +131,7 @@ public class ThemisAnalysisInterface
     }
 
     @Override
-    public List<ThemisAnalysisElement> getContents() {
+    public Deque<ThemisAnalysisElement> getContents() {
         return theContents;
     }
 

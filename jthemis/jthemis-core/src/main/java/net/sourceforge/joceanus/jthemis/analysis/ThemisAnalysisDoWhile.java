@@ -16,8 +16,8 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jthemis.analysis;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.ArrayDeque;
+import java.util.Deque;
 import java.util.Map;
 
 /**
@@ -33,12 +33,12 @@ public class ThemisAnalysisDoWhile
     /**
      * The trailers.
      */
-    private final List<ThemisAnalysisElement> theTrailers;
+    private final Deque<ThemisAnalysisElement> theTrailers;
 
     /**
      * The contents.
      */
-    private final List<ThemisAnalysisElement> theContents;
+    private final Deque<ThemisAnalysisElement> theContents;
 
     /**
      * The dataTypes.
@@ -60,14 +60,14 @@ public class ThemisAnalysisDoWhile
         theParent = pParser.getParent();
 
         /* Create the arrays */
-        final List<ThemisAnalysisElement> myLines = ThemisAnalysisBuilder.processBody(pParser);
+        final Deque<ThemisAnalysisElement> myLines = ThemisAnalysisBuilder.processBody(pParser);
         final int myBaseLines =  myLines.size();
 
         /* Parse trailers */
         theTrailers = ThemisAnalysisBuilder.processTrailers(pParser);
 
         /* Create a parser */
-        theContents = new ArrayList<>();
+        theContents = new ArrayDeque<>();
         final ThemisAnalysisParser myParser = new ThemisAnalysisParser(myLines, theContents, theParent);
         myParser.processLines();
 
@@ -81,7 +81,7 @@ public class ThemisAnalysisDoWhile
     }
 
     @Override
-    public List<ThemisAnalysisElement> getContents() {
+    public Deque<ThemisAnalysisElement> getContents() {
         return theContents;
     }
 

@@ -16,8 +16,8 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jthemis.analysis;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.ArrayDeque;
+import java.util.Deque;
 import java.util.Map;
 
 /**
@@ -33,12 +33,12 @@ public class ThemisAnalysisElse
     /**
      * The headers.
      */
-    private final List<ThemisAnalysisElement> theHeaders;
+    private final Deque<ThemisAnalysisElement> theHeaders;
 
     /**
      * The contents.
      */
-    private final List<ThemisAnalysisElement> theContents;
+    private final Deque<ThemisAnalysisElement> theContents;
 
     /**
      * The else clause(s).
@@ -68,14 +68,14 @@ public class ThemisAnalysisElse
 
         /* Create the arrays */
         theHeaders = ThemisAnalysisBuilder.processHeaders(pParser, pLine);
-        final List<ThemisAnalysisElement> myLines = ThemisAnalysisBuilder.processBody(pParser);
+        final Deque<ThemisAnalysisElement> myLines = ThemisAnalysisBuilder.processBody(pParser);
         final int myBaseLines = myLines.size();
 
         /* Look for else clauses */
         theElse = (ThemisAnalysisElse) pParser.processExtra(ThemisAnalysisKeyWord.ELSE);
 
         /* Create a parser */
-        theContents = new ArrayList<>();
+        theContents = new ArrayDeque<>();
         final ThemisAnalysisParser myParser = new ThemisAnalysisParser(myLines, theContents, theParent);
         myParser.processLines();
 
@@ -89,7 +89,7 @@ public class ThemisAnalysisElse
     }
 
     @Override
-    public List<ThemisAnalysisElement> getContents() {
+    public Deque<ThemisAnalysisElement> getContents() {
         return theContents;
     }
 

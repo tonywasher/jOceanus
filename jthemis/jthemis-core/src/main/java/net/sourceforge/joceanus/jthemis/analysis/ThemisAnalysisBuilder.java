@@ -16,13 +16,18 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jthemis.analysis;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.ArrayDeque;
+import java.util.Deque;
 
 /**
  * Builder utilities.
  */
 public final class ThemisAnalysisBuilder {
+    /**
+     * Empty Deque.
+     */
+    static final Deque<ThemisAnalysisElement> EMPTY_DEQUE = new ArrayDeque<>();
+
     /**
      * Open body.
      */
@@ -70,10 +75,10 @@ public final class ThemisAnalysisBuilder {
      * @param pLine the current line
      * @return the headers
      */
-    static List<ThemisAnalysisElement> processHeaders(final ThemisAnalysisParser pParser,
-                                                      final ThemisAnalysisLine pLine) {
-        /* Allocate array */
-        final List<ThemisAnalysisElement> myHeaders = new ArrayList<>();
+    static Deque<ThemisAnalysisElement> processHeaders(final ThemisAnalysisParser pParser,
+                                                       final ThemisAnalysisLine pLine) {
+        /* Allocate queue */
+        final Deque<ThemisAnalysisElement> myHeaders = new ArrayDeque<>();
 
         /* Read headers */
         ThemisAnalysisLine myLine = pLine;
@@ -105,14 +110,14 @@ public final class ThemisAnalysisBuilder {
      * @param pParser the parser
      * @return the trailers
      */
-    static List<ThemisAnalysisElement> processTrailers(final ThemisAnalysisParser pParser) {
-        /* Just return if there are no more lines */
+    static Deque<ThemisAnalysisElement> processTrailers(final ThemisAnalysisParser pParser) {
+        /* Just return empty if there are no more lines */
         if (!pParser.hasLines()) {
-            return null;
+            return EMPTY_DEQUE;
         }
 
         /* Allocate array */
-        final List<ThemisAnalysisElement> myTrailers = new ArrayList<>();
+        final Deque<ThemisAnalysisElement> myTrailers = new ArrayDeque<>();
 
         /* Access keyWord */
         ThemisAnalysisLine myLine = (ThemisAnalysisLine) pParser.popNextLine();
@@ -145,10 +150,10 @@ public final class ThemisAnalysisBuilder {
      * @param pLine the current line
      * @return the trailers
      */
-    static List<ThemisAnalysisElement> processHeaderTrailers(final ThemisAnalysisParser pParser,
-                                                             final ThemisAnalysisLine pLine) {
+    static Deque<ThemisAnalysisElement> processHeaderTrailers(final ThemisAnalysisParser pParser,
+                                                              final ThemisAnalysisLine pLine) {
         /* Allocate array */
-        final List<ThemisAnalysisElement> myTrailers = new ArrayList<>();
+        final Deque<ThemisAnalysisElement> myTrailers = new ArrayDeque<>();
 
         /* Access keyWord */
         ThemisAnalysisLine myLine = pLine;
@@ -183,9 +188,9 @@ public final class ThemisAnalysisBuilder {
      * @param pParser the parser
      * @return the body
      */
-    static List<ThemisAnalysisElement> processBody(final ThemisAnalysisParser pParser) {
-        /* Allocate array */
-        final List<ThemisAnalysisElement> myBody = new ArrayList<>();
+    static Deque<ThemisAnalysisElement> processBody(final ThemisAnalysisParser pParser) {
+        /* Allocate queue */
+        final Deque<ThemisAnalysisElement> myBody = new ArrayDeque<>();
 
         /* Loop through the lines */
         int myNest = 1;
@@ -229,9 +234,9 @@ public final class ThemisAnalysisBuilder {
      * @param pParser the parser
      * @return the body
      */
-    static List<ThemisAnalysisElement> processMethodBody(final ThemisAnalysisParser pParser) {
-        /* Allocate array */
-        final List<ThemisAnalysisElement> myBody = new ArrayList<>();
+    static Deque<ThemisAnalysisElement> processMethodBody(final ThemisAnalysisParser pParser) {
+        /* Allocate queue */
+        final Deque<ThemisAnalysisElement> myBody = new ArrayDeque<>();
 
         /* Loop through the lines */
         boolean keepLooking = true;
