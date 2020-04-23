@@ -24,19 +24,14 @@ import java.util.Deque;
  */
 public final class ThemisAnalysisBuilder {
     /**
-     * Empty Deque.
-     */
-    static final Deque<ThemisAnalysisElement> EMPTY_DEQUE = new ArrayDeque<>();
-
-    /**
      * Open body.
      */
-    static final String BRACE_OPEN = "\u007B";
+    static final char BRACE_OPEN = '{';
 
     /**
      * Close body.
      */
-    static final String BRACE_CLOSE = "}";
+    static final char BRACE_CLOSE = '}';
 
     /**
      * Case terminator.
@@ -46,22 +41,12 @@ public final class ThemisAnalysisBuilder {
     /**
      * Statement separator.
      */
-    static final char STATEMENT_COMMA = ',';
+    static final char STATEMENT_SEP = ',';
 
     /**
      * Statement terminator.
      */
-    static final String STATEMENT_SEP = Character.toString(STATEMENT_COMMA);
-
-    /**
-     * Statement terminator.
-     */
-    static final char STATEMENT_SEMI = ';';
-
-    /**
-     * Statement terminator.
-     */
-    static final String STATEMENT_END = Character.toString(STATEMENT_SEMI);
+    static final char STATEMENT_END = ';';
 
     /**
      * Constructor.
@@ -70,117 +55,29 @@ public final class ThemisAnalysisBuilder {
     }
 
     /**
-     * Process headers.
+     * Parse headers.
      * @param pParser the parser
      * @param pLine the current line
      * @return the headers
      */
-    static Deque<ThemisAnalysisElement> processHeaders(final ThemisAnalysisParser pParser,
-                                                       final ThemisAnalysisLine pLine) {
-        /* Allocate queue */
-        final Deque<ThemisAnalysisElement> myHeaders = new ArrayDeque<>();
-
-        /* Read headers */
-        ThemisAnalysisLine myLine = pLine;
-        while (!myLine.endsWithSequence(BRACE_OPEN)) {
-            myHeaders.add(myLine);
-            if (!pParser.hasLines()) {
-                break;
-            }
-            myLine = (ThemisAnalysisLine) pParser.popNextLine();
-        }
-
-        /* If we never found a start sequence. shout */
-        if (!myLine.endsWithSequence(BRACE_OPEN)) {
-            throw new IllegalStateException("Never found start Block");
-        }
-
-        /* Add the current line if it is non blank */
-        myLine.stripEndSequence(BRACE_OPEN);
-        if (!ThemisAnalysisBlank.isBlank(myLine)) {
-            myHeaders.add(myLine);
-        }
-
-        /* return the headers */
-        return myHeaders;
+    static Deque<ThemisAnalysisElement> parseHeaders(final ThemisAnalysisParser pParser,
+                                                     final ThemisAnalysisLine pLine) {
+        /* Allocate scanner */
+        final ThemisAnalysisScanner myScanner = new ThemisAnalysisScanner(pParser);
+        return myScanner.scanForTerminator(pLine, BRACE_OPEN);
     }
 
     /**
      * Process trailers.
      * @param pParser the parser
-     * @return the trailers
-     */
-    static Deque<ThemisAnalysisElement> processTrailers(final ThemisAnalysisParser pParser) {
-        /* Just return empty if there are no more lines */
-        if (!pParser.hasLines()) {
-            return EMPTY_DEQUE;
-        }
-
-        /* Allocate array */
-        final Deque<ThemisAnalysisElement> myTrailers = new ArrayDeque<>();
-
-        /* Access keyWord */
-        ThemisAnalysisLine myLine = (ThemisAnalysisLine) pParser.popNextLine();
-
-        /* Read Trailers */
-        while (!myLine.endsWithSequence(STATEMENT_END)) {
-            myTrailers.add(myLine);
-            if (!pParser.hasLines()) {
-                break;
-            }
-            myLine = (ThemisAnalysisLine) pParser.popNextLine();
-        }
-
-        /* If we never found an end sequence. shout */
-        if (!myLine.endsWithSequence(STATEMENT_END)) {
-            throw new IllegalStateException("Never found end Block");
-        }
-
-        /* Add the current line */
-        myLine.stripEndSequence(STATEMENT_END);
-        myTrailers.add(myLine);
-
-        /* return the trailers */
-        return myTrailers;
-    }
-
-    /**
-     * Process headers/trailers.
-     * @param pParser the parser
      * @param pLine the current line
      * @return the trailers
      */
-    static Deque<ThemisAnalysisElement> processHeaderTrailers(final ThemisAnalysisParser pParser,
-                                                              final ThemisAnalysisLine pLine) {
-        /* Allocate array */
-        final Deque<ThemisAnalysisElement> myTrailers = new ArrayDeque<>();
-
-        /* Access keyWord */
-        ThemisAnalysisLine myLine = pLine;
-
-        /* Read Headers/Trailers */
-        while (!myLine.endsWithSequence(BRACE_OPEN)
-               && !myLine.endsWithSequence(STATEMENT_END)) {
-            myTrailers.add(myLine);
-            if (!pParser.hasLines()) {
-                break;
-            }
-            myLine = (ThemisAnalysisLine) pParser.popNextLine();
-        }
-
-        /* If we never found an end sequence. shout */
-        if (!myLine.endsWithSequence(BRACE_OPEN)
-                && !myLine.endsWithSequence(STATEMENT_END)) {
-            throw new IllegalStateException("Never found end Block");
-        }
-
-        /* Add the current line */
-        myLine.stripEndSequence(BRACE_OPEN);
-        myLine.stripEndSequence(STATEMENT_END);
-        myTrailers.add(myLine);
-
-        /* return the trailers */
-        return myTrailers;
+    static Deque<ThemisAnalysisElement> parseTrailers(final ThemisAnalysisParser pParser,
+                                                      final ThemisAnalysisLine pLine) {
+        /* Allocate scanner */
+        final ThemisAnalysisScanner myScanner = new ThemisAnalysisScanner(pParser);
+        return myScanner.scanForTerminator(pLine, STATEMENT_END);
     }
 
     /**
@@ -199,14 +96,14 @@ public final class ThemisAnalysisBuilder {
             final ThemisAnalysisLine myLine = (ThemisAnalysisLine) pParser.popNextLine();
 
             /* If we have a closing brace */
-            if (myLine.startsWithSequence(BRACE_CLOSE)) {
+            if (myLine.startsWithChar(BRACE_CLOSE)) {
                 /* Decrement nesting */
                 myNest--;
 
                 /* If we have finished the class */
                 if (myNest == 0) {
                     /* Strip start sequence from line */
-                    myLine.stripStartSequence(BRACE_CLOSE);
+                    myLine.stripStartChar(BRACE_CLOSE);
 
                     /* Return a non-blank line to the stack and break loop */
                     if (!ThemisAnalysisBlank.isBlank(myLine)) {
@@ -217,7 +114,7 @@ public final class ThemisAnalysisBuilder {
             }
 
             /* Handle start of nested sequence */
-            if (myLine.endsWithSequence(BRACE_OPEN)) {
+            if (myLine.endsWithChar(BRACE_OPEN)) {
                 myNest++;
             }
 
@@ -254,9 +151,9 @@ public final class ThemisAnalysisBuilder {
             final ThemisAnalysisLine myLine = (ThemisAnalysisLine) myElement;
 
             /* If we have a closing brace */
-            if (myLine.startsWithSequence(BRACE_CLOSE)) {
+            if (myLine.startsWithChar(BRACE_CLOSE)) {
                 /* Strip start sequence from line */
-                myLine.stripStartSequence(BRACE_CLOSE);
+                myLine.stripStartChar(BRACE_CLOSE);
                 keepLooking = false;
 
                 /* Return a non-blank line to the stack and break loop */

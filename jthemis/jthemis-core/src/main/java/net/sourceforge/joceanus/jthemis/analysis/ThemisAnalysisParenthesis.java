@@ -31,16 +31,6 @@ public final class ThemisAnalysisParenthesis {
     static final char PARENTHESIS_CLOSE = ')';
 
     /**
-     * Start parenthesis.
-     */
-    static final String PARENTHESIS_START = Character.toString(PARENTHESIS_OPEN);
-
-    /**
-     * End parenthesis.
-     */
-    static final String PARENTHESIS_END = Character.toString(PARENTHESIS_CLOSE);
-
-    /**
      * Private constructor.
      */
     private ThemisAnalysisParenthesis() {
@@ -52,10 +42,16 @@ public final class ThemisAnalysisParenthesis {
      * @return the content
      */
     static ThemisAnalysisLine stripParenthesisContents(final ThemisAnalysisLine pLine) {
-        /* Strip the parenthesis start */
-        pLine.stripStartSequence(PARENTHESIS_START);
-        final ThemisAnalysisLine myContent = pLine.stripUpToChar(PARENTHESIS_CLOSE);
-        pLine.stripStartSequence(PARENTHESIS_END);
-        return myContent;
+        /* Find the end of the generic sequence */
+        final int myEnd = pLine.findEndOfNestedSequence(0, 0,  PARENTHESIS_CLOSE, PARENTHESIS_OPEN);
+        if (myEnd < 0) {
+            throw new IllegalStateException("End character not found");
+        }
+
+        /* Obtain the contents */
+        final ThemisAnalysisLine myContents = pLine.stripUpToPosition(myEnd);
+        myContents.stripStartChar(PARENTHESIS_OPEN);
+        myContents.stripEndChar(PARENTHESIS_CLOSE);
+        return myContents;
     }
 }

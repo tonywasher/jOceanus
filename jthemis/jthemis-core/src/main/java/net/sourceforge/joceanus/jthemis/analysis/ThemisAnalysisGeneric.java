@@ -31,16 +31,6 @@ public class ThemisAnalysisGeneric {
     static final char GENERIC_CLOSE = '>';
 
     /**
-     * Start generic.
-     */
-    static final String GENERIC_START = Character.toString(GENERIC_OPEN);
-
-    /**
-     * End generic.
-     */
-    static final String GENERIC_END = Character.toString(GENERIC_CLOSE);
-
-    /**
      * The contents of the generic.
      */
     private final ThemisAnalysisLine theContents;
@@ -50,9 +40,16 @@ public class ThemisAnalysisGeneric {
      * @param pLine the line
      */
     ThemisAnalysisGeneric(final ThemisAnalysisLine pLine) {
-        pLine.stripStartSequence(GENERIC_START);
-        theContents = pLine.stripUpToChar(GENERIC_CLOSE);
-        pLine.stripLeadingWhiteSpace();
+        /* Find the end of the generic sequence */
+        final int myEnd = pLine.findEndOfNestedSequence(0, 0,  GENERIC_CLOSE, GENERIC_OPEN);
+        if (myEnd < 0) {
+            throw new IllegalStateException("End character not found");
+        }
+
+        /* Obtain the contents */
+        theContents = pLine.stripUpToPosition(myEnd);
+        theContents.stripStartChar(GENERIC_OPEN);
+        theContents.stripEndChar(GENERIC_CLOSE);
     }
 
     /**
@@ -62,11 +59,11 @@ public class ThemisAnalysisGeneric {
      */
     static boolean isGeneric(final ThemisAnalysisLine pLine) {
         /* If we are started with a GENERIC_OPEN */
-        return pLine.startsWithSequence(GENERIC_START);
+        return pLine.startsWithChar(GENERIC_OPEN);
     }
 
     @Override
     public String toString() {
-        return GENERIC_START + theContents + GENERIC_END;
+        return "" + GENERIC_OPEN + theContents + GENERIC_CLOSE;
     }
 }

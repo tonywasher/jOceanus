@@ -97,6 +97,24 @@ public enum ThemisAnalysisModifier
         return theModifier;
     }
 
+    /**
+     * Obtain modifier for token.
+     * @param pToken the token
+     * @return the modifier (or null)
+     */
+    static ThemisAnalysisModifier findModifier(final String pToken) {
+        /* Loop through the modifiers */
+        for (ThemisAnalysisModifier myModifier : values())    {
+            /* If we found a modifier */
+            if (pToken.equals(myModifier.getModifier())) {
+                return myModifier;
+            }
+        }
+
+        /* Not found */
+        return null;
+    }
+
     @Override
     public String toString() {
         return getModifier();

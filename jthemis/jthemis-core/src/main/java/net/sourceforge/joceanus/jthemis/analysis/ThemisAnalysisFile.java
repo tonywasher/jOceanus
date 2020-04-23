@@ -211,8 +211,14 @@ public class ThemisAnalysisFile
                                             final int pNumChars) {
         /* Loop through the buffer */
         for (int i = pOffset; i < pNumChars; i++) {
-            if (pBuffer[i] == LF) {
-                return i;
+            /* Check for LF and NULL */
+            switch (pBuffer[i])  {
+                case LF:
+                    return i;
+                case ThemisAnalysisLine.CHAR_NULL:
+                    throw new IllegalStateException("Null character in file");
+                default:
+                    break;
             }
         }
 

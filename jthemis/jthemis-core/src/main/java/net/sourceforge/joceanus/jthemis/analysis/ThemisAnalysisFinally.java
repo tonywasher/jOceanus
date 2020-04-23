@@ -62,7 +62,7 @@ public class ThemisAnalysisFinally
         theParent = pParser.getParent();
 
         /* Create the arrays */
-        theHeaders = ThemisAnalysisBuilder.processHeaders(pParser, pLine);
+        theHeaders = ThemisAnalysisBuilder.parseHeaders(pParser, pLine);
         final Deque<ThemisAnalysisElement> myLines = ThemisAnalysisBuilder.processBody(pParser);
         final int myBaseLines = myLines.size();
 

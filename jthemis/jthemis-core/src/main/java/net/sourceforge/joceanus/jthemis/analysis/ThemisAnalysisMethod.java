@@ -92,14 +92,16 @@ public class ThemisAnalysisMethod
         theDataTypes = pParser.getDataTypes();
         theParent = pParser.getParent();
 
-        /* Create the arrays */
-        theHeaders = ThemisAnalysisBuilder.processHeaderTrailers(pParser, pLine);
-
         /* Determine whether this method is abstract */
         final boolean isInterface = theParent instanceof ThemisAnalysisInterface;
         final boolean markedDefault = theModifiers.contains(ThemisAnalysisModifier.DEFAULT);
         final boolean markedAbstract = theModifiers.contains(ThemisAnalysisModifier.ABSTRACT);
         final boolean isAbstract = markedAbstract || (isInterface && !markedDefault);
+
+        /* Parse the headers */
+        theHeaders = isAbstract
+                        ? ThemisAnalysisBuilder.parseTrailers(pParser, pLine)
+                        : ThemisAnalysisBuilder.parseHeaders(pParser, pLine);
 
         /* Process the body if we have one */
         theContents = isAbstract

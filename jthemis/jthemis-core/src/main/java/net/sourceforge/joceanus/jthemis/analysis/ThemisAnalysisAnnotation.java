@@ -25,7 +25,12 @@ import java.util.List;
 public class ThemisAnalysisAnnotation
         implements ThemisAnalysisProcessed {
     /**
-     * The blankLines.
+     * The annotation character.
+     */
+    private static final char ANNOTATION = '@';
+
+    /**
+     * The annotationLines.
      */
     private final List<ThemisAnalysisLine> theAnnotations;
 
@@ -69,6 +74,6 @@ public class ThemisAnalysisAnnotation
      * @return true/false
      */
     static boolean isAnnotation(final ThemisAnalysisLine pLine) {
-        return pLine.startsWithSequence("@");
+        return pLine.startsWithChar(ANNOTATION);
     }
 }

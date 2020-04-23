@@ -64,7 +64,9 @@ public class ThemisAnalysisDoWhile
         final int myBaseLines =  myLines.size();
 
         /* Parse trailers */
-        theTrailers = ThemisAnalysisBuilder.processTrailers(pParser);
+        final ThemisAnalysisLine myLine = (ThemisAnalysisLine) pParser.popNextLine();
+        myLine.stripStartSequence(ThemisAnalysisKeyWord.WHILE.toString());
+        theTrailers = ThemisAnalysisBuilder.parseTrailers(pParser, myLine);
 
         /* Create a parser */
         theContents = new ArrayDeque<>();

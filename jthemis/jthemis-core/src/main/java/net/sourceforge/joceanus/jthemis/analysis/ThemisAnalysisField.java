@@ -66,7 +66,7 @@ public class ThemisAnalysisField
         theModifiers = pLine.getModifiers();
 
         /* Create the arrays */
-        theTrailers = ThemisAnalysisBuilder.processHeaderTrailers(pParser, pLine);
+        theTrailers = ThemisAnalysisBuilder.parseTrailers(pParser, pLine);
         theNumLines = theTrailers.size();
     }
 

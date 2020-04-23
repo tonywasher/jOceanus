@@ -81,10 +81,10 @@ public class ThemisAnalysisImports
      */
     static boolean isImport(final ThemisAnalysisLine pLine) {
         /* If we are ended by a semi-colon and is an import line*/
-        if (pLine.endsWithSequence(ThemisAnalysisBuilder.STATEMENT_END)
+        if (pLine.endsWithChar(ThemisAnalysisBuilder.STATEMENT_END)
                 && pLine.isStartedBy(ThemisAnalysisKeyWord.IMPORT.getKeyWord())) {
             /* Strip the semi-colon and return true */
-            pLine.stripEndSequence(ThemisAnalysisBuilder.STATEMENT_END);
+            pLine.stripEndChar(ThemisAnalysisBuilder.STATEMENT_END);
             return true;
         }
 

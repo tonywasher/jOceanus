@@ -31,6 +31,21 @@ public class ThemisAnalysisLine
     private static final char COMMENT = '/';
 
     /**
+     * The escape character.
+     */
+    private static final char ESCAPE = '\\';
+
+    /**
+     * The single quote character.
+     */
+    static final char SINGLEQUOTE = '\'';
+
+    /**
+     * The double quote character.
+     */
+    static final char DOUBLEQUOTE = '"';
+
+    /**
      * The null character.
      */
     static final char CHAR_NULL = (char) 0;
@@ -42,8 +57,8 @@ public class ThemisAnalysisLine
         ThemisAnalysisParenthesis.PARENTHESIS_OPEN,
         ThemisAnalysisParenthesis.PARENTHESIS_CLOSE,
         ThemisAnalysisGeneric.GENERIC_OPEN,
-        ThemisAnalysisBuilder.STATEMENT_COMMA,
-        ThemisAnalysisBuilder.STATEMENT_SEMI,
+        ThemisAnalysisBuilder.STATEMENT_SEP,
+        ThemisAnalysisBuilder.STATEMENT_END,
         ThemisAnalysisBuilder.CASE_COLON,
         ThemisAnalysisArray.ARRAY_OPEN
     };
@@ -72,23 +87,19 @@ public class ThemisAnalysisLine
         System.arraycopy(pBuffer, pOffset, myBuffer, 0, pLen);
         theBuffer = CharBuffer.wrap(myBuffer);
 
-        /* Strip any trailing comments */
-        stripTrailingComments();
-
         /* Strip any leading/trailing whiteSpace */
         stripLeadingWhiteSpace();
         stripTrailingWhiteSpace();
 
-        /* Strip Modifiers */
+        /* Allocate modifier list */
         theModifiers = new ArrayList<>();
-        stripModifiers();
     }
 
     /**
      * Constructor.
      * @param pBuffer the buffer
      */
-    private ThemisAnalysisLine(final CharBuffer pBuffer) {
+    ThemisAnalysisLine(final CharBuffer pBuffer) {
         /* Store values */
         theBuffer = pBuffer;
         theModifiers = new ArrayList<>();
@@ -119,6 +130,15 @@ public class ThemisAnalysisLine
     }
 
     /**
+     * Obtain the character at the given position.
+     * @param pIndex the position of the character
+     * @return the character
+     */
+    char charAt(final int pIndex) {
+        return theBuffer.charAt(pIndex);
+    }
+
+    /**
      * Obtain the modifiers.
      * @return the modifiers
      */
@@ -129,15 +149,27 @@ public class ThemisAnalysisLine
     /**
      * Strip trailing comments.
      */
-    private void stripTrailingComments() {
+    void stripTrailingComments() {
         /* Loop through the characters */
         final int myLength = getLength();
-        for (int i = 0; i < myLength - 1; i++) {
+        int mySkipped = 0;
+        for (int i = 0; i < myLength - mySkipped - 1; i++) {
+            /* Access position and current character */
+            final int myPos = i + mySkipped;
+            final char myChar = theBuffer.charAt(myPos);
+
+            /* If this is a single/double quote */
+            if (myChar == SINGLEQUOTE
+                    || myChar == DOUBLEQUOTE) {
+                final int myEnd = findEndOfQuotedSequence(myPos);
+                mySkipped += myEnd - myPos;
+
             /* If we have a line comment */
-            if (theBuffer.charAt(i) == COMMENT
-                && theBuffer.charAt(i + 1) == COMMENT) {
+            } else if (myChar == COMMENT
+                && theBuffer.charAt(myPos + 1) == COMMENT) {
                 /* Reset the length */
-                setLength(i);
+                setLength(myPos);
+                stripTrailingWhiteSpace();
                 break;
             }
         }
@@ -202,15 +234,21 @@ public class ThemisAnalysisLine
     /**
      * Strip Modifiers.
      */
-    private void stripModifiers() {
-        /* Loop through the modifiers */
-        for (ThemisAnalysisModifier myModifier : ThemisAnalysisModifier.values()) {
-            if (isStartedBy(myModifier.getModifier())) {
+    void stripModifiers() {
+        /* Loop while we find a modifier */
+        boolean bContinue = true;
+        while (bContinue) {
+            /* Access the next token */
+            final String nextToken = peekNextToken();
+            bContinue = false;
+
+            /* Loop through the modifiers */
+            final ThemisAnalysisModifier myModifier = ThemisAnalysisModifier.findModifier(nextToken);
+            if (myModifier != null) {
                 /* Add modifier */
                 theModifiers.add(myModifier);
-
-                /* Try for more modifiers */
-                stripModifiers();
+                stripStartSequence(nextToken);
+                bContinue = true;
             }
         }
     }
@@ -319,46 +357,16 @@ public class ThemisAnalysisLine
     }
 
     /**
-     * Strip data up to char.
-     * @param pChar the end character
-     * @return the stripped token
+     * Strip data up to position.
+     * @param pPosition the position to strip to (inclusive)
+     * @return the stripped line
      */
-    ThemisAnalysisLine stripUpToChar(final char pChar) {
-        /* Loop through the buffer */
-        final int myLength = getLength();
-        for (int i = 0; i < myLength; i++) {
-            /* if we have hit the char */
-            final char myChar = theBuffer.charAt(i);
-            if (myChar == pChar) {
-                /* Strip out the characters */
-                final CharBuffer myChars = theBuffer.subSequence(0, i);
-                adjustPosition(i + 1);
-                return new ThemisAnalysisLine(myChars);
-            }
-        }
-
-        /* Didn't find the end character */
-        throw new IllegalStateException("end character not found");
-    }
-
-    /**
-     * find next char in set.
-     * @param pChars the characters to search for
-     * @return the next character (or CHAR_NULL)
-     */
-    char findNextCharInSet(final char[] pChars) {
-        /* Loop through the buffer */
-        final int myLength = getLength();
-        for (int i = 0; i < myLength; i++) {
-            /* if we have hit the char */
-            final char myChar = theBuffer.charAt(i);
-            if (isInList(myChar, pChars)) {
-                return myChar;
-            }
-        }
-
-        /* Didn't find the end character */
-        return CHAR_NULL;
+    ThemisAnalysisLine stripUpToPosition(final int pPosition) {
+        /* Obtain the new buffer */
+        final CharBuffer myChars = theBuffer.subSequence(0, pPosition + 1);
+        adjustPosition(pPosition + 1);
+        stripLeadingWhiteSpace();
+        return new ThemisAnalysisLine(myChars);
     }
 
     /**
@@ -383,6 +391,48 @@ public class ThemisAnalysisLine
 
         /* True */
         return true;
+    }
+
+    /**
+     * Does line start with the character?
+     * @param pChar the character
+     * @return true/false
+     */
+    boolean startsWithChar(final char pChar) {
+        /* If the line is too short, just return false */
+        final int myLength = getLength();
+        if (myLength == 0) {
+            return false;
+        }
+
+        /* Test the character */
+        return theBuffer.charAt(0) == pChar;
+    }
+
+    /**
+     * Strip the starting sequence.
+     * @param pSequence the sequence
+     */
+    void stripStartSequence(final CharSequence pSequence) {
+        /* If the line starts with the sequence */
+        if (startsWithSequence(pSequence)) {
+            /* adjust the length */
+            adjustPosition(pSequence.length());
+            stripLeadingWhiteSpace();
+        }
+    }
+
+    /**
+     * Strip the starting character.
+     * @param pChar the character
+     */
+    void stripStartChar(final char pChar) {
+        /* If the line starts with the character */
+        if (startsWithChar(pChar)) {
+            /* adjust the length */
+            adjustPosition(1);
+            stripLeadingWhiteSpace();
+        }
     }
 
     /**
@@ -413,29 +463,116 @@ public class ThemisAnalysisLine
     }
 
     /**
-     * Strip the ending sequence.
-     * @param pSequence the sequence
+     * Does line end with the character?
+     * @param pChar the character
+     * @return true/false
      */
-    void stripStartSequence(final CharSequence pSequence) {
-        /* If the line starts with the sequence */
-        if (startsWithSequence(pSequence)) {
+    boolean endsWithChar(final char pChar) {
+        /* If the line is too short, just return false */
+        final int myLength = getLength();
+        if (myLength == 0) {
+            return false;
+        }
+
+        /* Test the character */
+        return theBuffer.charAt(myLength - 1) == pChar;
+    }
+
+    /**
+     * Strip the ending character.
+     * @param pChar the character
+     */
+    void stripEndChar(final char pChar) {
+        /* If the line ends with the sequence */
+        if (endsWithChar(pChar)) {
             /* adjust the length */
-            adjustPosition(pSequence.length());
-            stripLeadingWhiteSpace();
+            setLength(getLength() - 1);
+            stripTrailingWhiteSpace();
         }
     }
 
     /**
-     * Strip the ending sequence.
-     * @param pSequence the sequence
+     * Find end of nested sequence, allowing for escaped quotes.
+     * <p>
+     *     To enable distinction between finding the end of the sequence from still being nested, the nestLevel
+     *     is negative. Hence a result that is negative indicates that the sequence is continuing.
+     * </p>
+     * @param pStart the start position
+     * @param pLevel the current nestLevel (negative value)
+     * @param pTerm the end nest character
+     * @param pNest the start nest character
+     * @return the position of the end of the nest if (non-negative), or nestLevel (negative) if not terminated.
      */
-    void stripEndSequence(final CharSequence pSequence) {
-        /* If the line ends with the sequence */
-        if (endsWithSequence(pSequence)) {
-            /* adjust the length */
-            setLength(getLength() - pSequence.length());
-            stripTrailingWhiteSpace();
+    int findEndOfNestedSequence(final int pStart,
+                                final int pLevel,
+                                final char pTerm,
+                                final char pNest) {
+        /* Access details of quote */
+        final int myLength = getLength();
+
+        /* Loop through the line */
+        int myNested = pLevel;
+        int mySkipped = 0;
+        for (int i = pStart; i < myLength - mySkipped; i++) {
+            /* Access position and current character */
+            final int myPos = i + mySkipped;
+            final char myChar = theBuffer.charAt(myPos);
+
+            /* If this is a single/double quote */
+            if (myChar == SINGLEQUOTE
+                    || myChar == DOUBLEQUOTE) {
+                /* Find the end of the sequence and skip the quotes */
+                final int myEnd = findEndOfQuotedSequence(myPos);
+                mySkipped += myEnd - myPos;
+
+                /* If we should be increasing the nest level */
+            } else if (myChar == pNest) {
+                myNested--;
+
+                /* If we should be decreasing the nest level */
+            } else if (myChar == pTerm) {
+                myNested++;
+
+                /* Return current position if we have finished */
+                if (myNested == 0) {
+                    return myPos;
+                }
+            }
         }
+
+        /* Return the new nest level */
+        return myNested;
+    }
+
+    /**
+     * Find end of single/double quoted sequence, allowing for escaped quote.
+     * @param pStart the start position of the quote
+     * @return the end position of the sequence.
+     */
+    int findEndOfQuotedSequence(final int pStart) {
+        /* Access details of single/double quote */
+        final int myLength = getLength();
+        final char myQuote = theBuffer.charAt(pStart);
+
+        /* Loop through the characters */
+        int mySkipped = 0;
+        for (int i = pStart + 1; i < myLength - mySkipped; i++) {
+            /* Access position and current character */
+            final int myPos = i + mySkipped;
+            final char myChar = theBuffer.charAt(myPos);
+
+            /* Skip escaped character */
+            if (myChar == ESCAPE) {
+                mySkipped++;
+
+                /* Return current position if we have finished */
+            } else if (myChar == myQuote) {
+                return myPos;
+            }
+        }
+
+        /* We should always be terminated */
+        throw new IllegalStateException("Unable to find end of quote in line");
     }
 
     @Override

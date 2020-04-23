@@ -76,7 +76,7 @@ public class ThemisAnalysisEnum
         theValues = new ArrayList<>();
 
         /* Create the arrays */
-        theHeaders = ThemisAnalysisBuilder.processHeaders(pParser, pLine);
+        theHeaders = ThemisAnalysisBuilder.parseHeaders(pParser, pLine);
         final Deque<ThemisAnalysisElement> myLines = ThemisAnalysisBuilder.processBody(pParser);
         final int myBaseLines = myLines.size();
 
@@ -141,11 +141,11 @@ public class ThemisAnalysisEnum
     private boolean processEnumValue(final ThemisAnalysisLine pLine) {
         /* Access the token */
         final String myToken = pLine.stripNextToken();
-        if (pLine.startsWithSequence(ThemisAnalysisParenthesis.PARENTHESIS_START)) {
+        if (pLine.startsWithChar(ThemisAnalysisParenthesis.PARENTHESIS_OPEN)) {
             ThemisAnalysisParenthesis.stripParenthesisContents(pLine);
         }
         theValues.add(myToken);
-        return pLine.endsWithSequence(ThemisAnalysisBuilder.STATEMENT_SEP);
+        return pLine.endsWithChar(ThemisAnalysisBuilder.STATEMENT_SEP);
     }
 
     /**

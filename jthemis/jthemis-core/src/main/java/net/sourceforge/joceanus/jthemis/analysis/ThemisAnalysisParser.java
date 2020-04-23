@@ -164,6 +164,10 @@ public class ThemisAnalysisParser {
             return true;
         }
 
+        /* Strip Trailing comments and modifiers */
+        pLine.stripTrailingComments();
+        pLine.stripModifiers();
+
         /* If this is a blank line */
         if (ThemisAnalysisBlank.isBlank(pLine)) {
             /* Process the blank lines */
@@ -306,7 +310,8 @@ public class ThemisAnalysisParser {
             }
 
             /* Else handle an initializer block */
-        } else if (ThemisAnalysisBuilder.BRACE_OPEN.equals(myToken)) {
+        } else if (myToken.length() == 1
+                && myToken.charAt(0) == ThemisAnalysisBuilder.BRACE_OPEN) {
             /* Create the block */
             theContents.add(new ThemisAnalysisBlock(this, pLine));
             return true;
@@ -427,7 +432,7 @@ public class ThemisAnalysisParser {
         if (myReference != null) {
             /* Access the name of the field or method */
             final String myName = pLine.stripNextToken();
-            final boolean isMethod = pLine.startsWithSequence("(");
+            final boolean isMethod = pLine.startsWithChar(ThemisAnalysisParenthesis.PARENTHESIS_OPEN);
             if (!isMethod) {
                 return new ThemisAnalysisField(this, myName, myReference, pLine);
             } else {
