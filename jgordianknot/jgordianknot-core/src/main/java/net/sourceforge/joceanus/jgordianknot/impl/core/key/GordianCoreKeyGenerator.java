@@ -251,7 +251,7 @@ public abstract class GordianCoreKeyGenerator<T extends GordianKeySpec>
                 myPrime.finish(myPrimeHash, 0);
 
                 /* Fold into results */
-                TethysDataConverter.buildHashResult(myResult, myPrimeHash);
+                GordianPersonalisation.buildHashResult(myResult, myPrimeHash);
             }
 
             /* Return the result */

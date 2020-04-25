@@ -49,6 +49,7 @@ import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXTableManager.TethysFXT
 import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXTableManager.TethysFXTableStringColumn;
 import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXTableManager.TethysFXTableUnitsColumn;
 
+import java.util.Comparator;
 import java.util.Map;
 
 /**
@@ -89,7 +90,7 @@ public class TethysFXTableExample
         theTable = theGuiFactory.newTable();
         theTable.setItems(myData);
         theTable.setRepaintRowOnCommit(true);
-        theTable.setComparator((l, r) -> l.nameProperty().getValue().compareTo(r.nameProperty().getValue()));
+        theTable.setComparator(Comparator.comparing(l -> l.nameProperty().getValue()));
         theTable.setOnCommit(TethysFXTableItem::incrementUpdates);
 
         /* Create the name column */

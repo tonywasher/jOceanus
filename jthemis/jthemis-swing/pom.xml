@@ -19,7 +19,7 @@
   <parent>
     <groupId>net.sourceforge.joceanus</groupId>
     <artifactId>jthemis</artifactId>
-    <version>1.6.1-b2</version>
+    <version>1.6.1-SNAPSHOT</version>
   </parent>
   <artifactId>jthemis-swing</artifactId>
   <name>Themis Swing Project Framework</name>

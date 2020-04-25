@@ -17,8 +17,6 @@
 package net.sourceforge.joceanus.jtethys.test.help.javafx;
 
 import javafx.application.Application;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.Scene;
@@ -79,12 +77,7 @@ public class TestFXHelpWindow
         myPane.setLeft(myButton);
 
         /* Add listener for the button */
-        myButton.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(final ActionEvent event) {
-                myWindow.showDialog();
-            }
-        });
+        myButton.setOnAction(event -> myWindow.showDialog());
 
         /* Protect against exceptions */
         try {

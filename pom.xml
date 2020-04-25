@@ -2,7 +2,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>net.sourceforge.joceanus</groupId>
   <artifactId>joceanus</artifactId>
-  <version>1.6.1-b2</version>
+  <version>1.6.1-SNAPSHOT</version>
   <packaging>pom</packaging>
   <name>Java Oceanus package</name>
   <description>Parent project for jOceanus</description>
@@ -67,7 +67,7 @@
     <appLibDir>lib/</appLibDir>
     <BouncyCastleVersion>1.65</BouncyCastleVersion>
     <JGitVersion>5.7.0.202003110725-r</JGitVersion>
-    <JUnitVersion>5.6.1</JUnitVersion>
+    <JUnitVersion>5.6.2</JUnitVersion>
     <JSONVersion>20190722</JSONVersion>
     <ApacheMavenVersion>3.6.3</ApacheMavenVersion>
     <MySQLVersion>8.0.19</MySQLVersion>
@@ -79,7 +79,7 @@
     <JSoupVersion>1.13.1</JSoupVersion>
     <JFreeChartVersion>1.5.0</JFreeChartVersion>
     <ZipSDKVersion>9.20</ZipSDKVersion>
-    <JavaVersion>13</JavaVersion>
+    <JavaVersion>11</JavaVersion>
     <JavaFXVersion>14</JavaFXVersion>
     <JavaLanguageVersion>11</JavaLanguageVersion>
     <CheckStyleVersion>8.31</CheckStyleVersion>
@@ -91,7 +91,7 @@
     <DeployPluginVersion>3.0.0-M1</DeployPluginVersion>
     <EnforcerPluginVersion>3.0.0-M3</EnforcerPluginVersion>
     <CompilerPluginVersion>3.8.1</CompilerPluginVersion>
-    <ShadePluginVersion>3.2.2</ShadePluginVersion>
+    <ShadePluginVersion>3.2.3</ShadePluginVersion>
     <DependencyPluginVersion>3.1.2</DependencyPluginVersion>
     <SurefirePluginVersion>3.0.0-M4</SurefirePluginVersion>
     <BuildNumberPluginVersion>1.4</BuildNumberPluginVersion>
@@ -156,7 +156,9 @@
         <configuration>
           <source>${JavaLanguageVersion}</source>
           <target>${JavaLanguageVersion}</target>
-          <compilerArgument>-Xlint:unchecked</compilerArgument>
+	  <compilerArgs>
+            <arg>-Xlint:unchecked</arg>
+          </compilerArgs>
           <annotationProcessorPaths>
             <annotationProcessorPath>
               <groupId>org.jetbrains</groupId>

@@ -16,7 +16,6 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jthemis.dsm;
 
-import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -25,10 +24,6 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
-import org.apache.maven.model.Model;
-import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
-import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
-
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jthemis.ThemisIOException;
 
@@ -36,10 +31,6 @@ import net.sourceforge.joceanus.jthemis.ThemisIOException;
  * DSM Project.
  */
 public class ThemisDSMProject {
-    /**
-     * Project filename.
-     */
-    static final String POM = "pom.xml";
     /**
      * The location of the project.
      */
@@ -71,7 +62,7 @@ public class ThemisDSMProject {
         theModules = new ArrayList<>();
 
         /* Process the project */
-        parseProjectFile(new File(theLocation, POM));
+        parseProjectFile(new File(theLocation, ThemisDSMMaven.POM));
     }
 
     /**
@@ -155,15 +146,13 @@ public class ThemisDSMProject {
         }
 
         /* Protect against exceptions */
-        try (InputStream myInFile = new FileInputStream(pPom);
-             BufferedInputStream myInBuffer = new BufferedInputStream(myInFile)) {
+        try (InputStream myInStream = new FileInputStream(pPom)) {
             /* Parse the Project definition file */
-            final MavenXpp3Reader myReader = new MavenXpp3Reader();
-            final Model myModel = myReader.read(myInBuffer);
+            final ThemisDSMMaven myPom = new ThemisDSMMaven(myInStream);
 
             /* Loop through the modules */
-            for (final String myModuleName : myModel.getModules()) {
-                final File myModuleDir = new File(pPom.getParentFile(), myModuleName);
+            for (final String myModuleName : myPom.getModules()) {
+                 final File myModuleDir = new File(pPom.getParentFile(), myModuleName);
 
                 final ThemisDSMModule myModule = new ThemisDSMModule(myModuleDir);
                 theModules.add(myModule);
@@ -175,7 +164,7 @@ public class ThemisDSMProject {
 
             /* Catch exceptions */
         } catch (IOException
-                | XmlPullParserException e) {
+                | OceanusException e) {
             /* Save Exception */
             theModules.clear();
             theError = new ThemisIOException("Failed to parse Project file", e);

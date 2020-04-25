@@ -149,7 +149,7 @@ public class GordianPersonalisation {
 
                 /* Finish the update and store the buffer */
                 final byte[] myResult = myDigest.finish();
-                TethysDataConverter.buildHashResult(myConfig, myResult);
+                buildHashResult(myConfig, myResult);
                 myHashes[i] = myResult;
             }
 
@@ -174,14 +174,14 @@ public class GordianPersonalisation {
                     final GordianDigest myDigest = myDigests[j];
                     final byte[] myResult = myHashes[j];
                     myDigest.finish(myResult, 0);
-                    TethysDataConverter.buildHashResult(myConfig, myResult);
+                    buildHashResult(myConfig, myResult);
                 }
             }
 
             /* Finally build the initVector mask */
             final byte[] myInitVec = new byte[HASH_LEN.getByteLength()];
             for (int i = 0; i < myDigests.length; i++) {
-                TethysDataConverter.buildHashResult(myInitVec, myHashes[i]);
+                buildHashResult(myInitVec, myHashes[i]);
             }
 
             /* Return the array */
@@ -202,7 +202,7 @@ public class GordianPersonalisation {
      * @return the adjusted IV
      */
     public byte[] adjustIV(final byte[] pIV) {
-        return TethysDataConverter.combineHashes(pIV, theInitVector);
+        return combineHashes(pIV, theInitVector);
     }
 
     /**
@@ -262,6 +262,68 @@ public class GordianPersonalisation {
         final long myBaseSeed = Integer.toUnsignedLong(TethysDataConverter.byteArrayToInteger(pBaseSeed));
         final long mySeed = myPrefix ^ myBaseSeed;
         return new Random(mySeed);
+    }
+
+    /**
+     * Simple function to combine hashes. Hashes are simply XORed together.
+     * @param pFirst the first Hash
+     * @param pSecond the second Hash
+     * @return the combined hash
+     */
+    public static byte[] combineHashes(final byte[] pFirst,
+                                       final byte[] pSecond) {
+        /* Handle nulls */
+        if (pFirst == null) {
+            return pSecond;
+        }
+        if (pSecond == null) {
+            return pFirst;
+        }
+
+        /* If the target is smaller than the source */
+        byte[] myTarget = pSecond;
+        byte[] mySource = pFirst;
+        if (myTarget.length < mySource.length) {
+            /* Reverse the order to make use of all bits */
+            myTarget = pFirst;
+            mySource = pSecond;
+        }
+
+        /* Allocate the target as a copy of the input */
+        myTarget = Arrays.copyOf(myTarget, myTarget.length);
+
+        /* Determine length of operation */
+        final int myLen = mySource.length;
+
+        /* Loop through the array bytes */
+        for (int i = 0; i < myTarget.length; i++) {
+            /* Combine the bytes */
+            myTarget[i] ^= mySource[i
+                    % myLen];
+        }
+
+        /* return the array */
+        return myTarget;
+    }
+
+    /**
+     * Simple function to build a hash result.
+     * @param pResult the result Hash
+     * @param pHash the calculated Hash
+     * @throws OceanusException on error
+     */
+    public static void buildHashResult(final byte[] pResult,
+                                       final byte[] pHash) throws OceanusException {
+        /* If the target is smaller than the source */
+        final int myLen = pResult.length;
+        if (myLen != pHash.length) {
+            throw new GordianDataException("Hashes are different lengths");
+        }
+        /* Loop through the array bytes */
+        for (int i = 0; i < myLen; i++) {
+            /* Combine the bytes */
+            pResult[i] ^= pHash[i];
+        }
     }
 
     /**

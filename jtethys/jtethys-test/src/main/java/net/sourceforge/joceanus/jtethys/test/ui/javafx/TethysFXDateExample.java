@@ -530,7 +530,7 @@ public final class TethysFXDateExample
         /* Create the date column */
         final TethysFXTableDateColumn<String, DateItem> myDateColumn = theTable.declareDateColumn(DateItem.PROP_DATE);
         myDateColumn.setCellValueFactory(p -> p.getValue().dateProperty());
-        myDateColumn.setOnCommit((p, v) -> p.setDate(v));
+        myDateColumn.setOnCommit(DateItem::setDate);
         myDateColumn.setColumnWidth(COL_DATE_WIDTH);
         myDateColumn.setDateConfigurator((r, c) -> {
             c.setEarliestDate(theStartDate.getSelectedDate());
