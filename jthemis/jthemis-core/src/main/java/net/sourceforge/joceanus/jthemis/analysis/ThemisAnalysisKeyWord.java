@@ -126,6 +126,11 @@ public enum ThemisAnalysisKeyWord {
     THROW("throw"),
 
     /**
+     * NEW.
+     */
+    NEW("new"),
+
+    /**
      * Switch.
      */
     SWITCH("switch"),

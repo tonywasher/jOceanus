@@ -32,6 +32,14 @@ public interface ThemisAnalysisContainer
     Map<String, ThemisAnalysisDataType> getDataTypes();
 
     /**
+     * Obtain the classMap.
+     * @return the map
+     */
+    default Map<String, ThemisAnalysisDataType> getClassMap() {
+        return getParent().getClassMap();
+    }
+
+    /**
      * Obtain the contents.
      * @return the contents
      */
@@ -42,6 +50,14 @@ public interface ThemisAnalysisContainer
      * @return the parent
      */
     ThemisAnalysisContainer getParent();
+
+    /**
+     * Obtain the package of this container.
+     * @return the package
+     */
+    default String getPackage() {
+        return getParent().getPackage();
+    }
 
     /**
      * Post process lines.
@@ -59,7 +75,6 @@ public interface ThemisAnalysisContainer
         while (myParser.hasLines()) {
             /* Access next line */
             final ThemisAnalysisElement myElement = myParser.popNextLine();
-            boolean processed = false;
 
             /* If the element is a container */
             if (myElement instanceof ThemisAnalysisContainer) {
@@ -67,24 +82,13 @@ public interface ThemisAnalysisContainer
                 final ThemisAnalysisContainer myContainer = (ThemisAnalysisContainer) myElement;
                 myContainer.postProcessLines();
                 myContents.add(myContainer);
-                processed = true;
-            }
 
-            /* If the element is already fully processed */
-            if (!processed
-                    && myElement instanceof ThemisAnalysisProcessed) {
+                /* If the element is already fully processed */
+            } else if (myElement instanceof ThemisAnalysisProcessed) {
                 myContents.add(myElement);
-                processed = true;
-            }
 
-            /* Everything should now be a line. */
-            if (!processed
-                 && !(myElement instanceof ThemisAnalysisLine)) {
-                throw new IllegalStateException("Unexpected dataType");
-            }
-
-            /* process fields and methods */
-            if (!processed) {
+                /* process lines */
+            } else if (myElement instanceof ThemisAnalysisLine) {
                 final ThemisAnalysisLine myLine = (ThemisAnalysisLine) myElement;
                 final ThemisAnalysisElement myResult = myParser.processFieldsAndMethods(myLine);
 
@@ -95,14 +99,16 @@ public interface ThemisAnalysisContainer
                     if (myResult instanceof ThemisAnalysisContainer) {
                         ((ThemisAnalysisContainer) myResult).postProcessLines();
                     }
-                    processed = true;
-                }
-            }
 
-            /* process statements */
-            if (!processed) {
-                /* Just add the line for the moment */
-                myContents.add(myElement);
+                    /* Process statements */
+                } else {
+                    /* Just add the line for the moment */
+                    myContents.add(myElement);
+                }
+
+                /* Everything should now be a line. */
+            } else {
+                throw new IllegalStateException("Unexpected dataType");
             }
         }
 

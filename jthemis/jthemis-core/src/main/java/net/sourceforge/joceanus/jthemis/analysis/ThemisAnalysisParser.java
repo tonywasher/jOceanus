@@ -27,7 +27,7 @@ public class ThemisAnalysisParser {
     /**
      * The keyWordMap.
      */
-    private static final Map<String, Object> KEYWORDS = createKeyWordMap();
+    static final Map<String, Object> KEYWORDS = createKeyWordMap();
 
     /**
      * The parent container.
@@ -53,16 +53,6 @@ public class ThemisAnalysisParser {
      * Constructor.
      * @param pLines the source lines.
      * @param pContents the processed contents
-     */
-    ThemisAnalysisParser(final Deque<ThemisAnalysisElement> pLines,
-                         final Deque<ThemisAnalysisElement> pContents) {
-        this(pLines, pContents, null);
-    }
-
-    /**
-     * Constructor.
-     * @param pLines the source lines.
-     * @param pContents the processed contents
      * @param pContainer the container
      */
     ThemisAnalysisParser(final Deque<ThemisAnalysisElement> pLines,
@@ -74,9 +64,7 @@ public class ThemisAnalysisParser {
         theParent = pContainer;
 
         /* Create the dataTypeMap */
-        theDataTypes = pContainer == null
-                      ? createDataTypeMap()
-                      : pContainer.getDataTypes();
+        theDataTypes = pContainer.getDataTypes();
     }
 
     /**
@@ -516,26 +504,6 @@ public class ThemisAnalysisParser {
         /* Add the keyWords */
         for (ThemisAnalysisKeyWord myKeyWord : ThemisAnalysisKeyWord.values()) {
             myMap.put(myKeyWord.toString(), myKeyWord);
-        }
-
-        /* return the map */
-        return myMap;
-    }
-
-    /**
-     * Create the dataTypeMap.
-     * @return the new map
-     */
-    private static Map<String, ThemisAnalysisDataType> createDataTypeMap() {
-        /* create the map */
-        final Map<String, ThemisAnalysisDataType> myMap = new HashMap<>();
-
-        /* Add the primitives */
-        for (ThemisAnalysisPrimitive myPrimitive : ThemisAnalysisPrimitive.values()) {
-            myMap.put(myPrimitive.toString(), myPrimitive);
-            if (myPrimitive.getBoxed() != null) {
-                myMap.put(myPrimitive.getBoxed(), myPrimitive);
-            }
         }
 
         /* return the map */

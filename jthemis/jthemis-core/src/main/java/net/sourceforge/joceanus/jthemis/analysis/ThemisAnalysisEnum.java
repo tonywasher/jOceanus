@@ -28,9 +28,19 @@ import java.util.Map;
 public class ThemisAnalysisEnum
         implements ThemisAnalysisContainer, ThemisAnalysisDataType {
     /**
-     * The name of the class.
+     * The short name of the class.
      */
-    private final String theName;
+    private final String theShortName;
+
+    /**
+     * The full name of the class.
+     */
+    private final String theFullName;
+
+    /**
+     * The parent.
+     */
+    private final ThemisAnalysisContainer theParent;
 
     /**
      * The modifiers.
@@ -53,6 +63,11 @@ public class ThemisAnalysisEnum
     private final Map<String, ThemisAnalysisDataType> theDataTypes;
 
     /**
+     * The classMap.
+     */
+    private final Map<String, ThemisAnalysisDataType> theClassMap;
+
+    /**
      * The values.
      */
     private final List<String> theValues;
@@ -70,10 +85,15 @@ public class ThemisAnalysisEnum
     ThemisAnalysisEnum(final ThemisAnalysisParser pParser,
                        final ThemisAnalysisLine pLine) {
         /* Store parameters */
-        theName = pLine.stripNextToken();
+        theShortName = pLine.stripNextToken();
         theModifiers = pLine.getModifiers();
         theDataTypes = pParser.getDataTypes();
         theValues = new ArrayList<>();
+        theParent = pParser.getParent();
+        theClassMap = theParent.getClassMap();
+
+        /* Determine the full name */
+        theFullName = theParent.getPackage() + ThemisAnalysisImports.PERIOD_SEP + theShortName;
 
         /* Create the arrays */
         theHeaders = ThemisAnalysisBuilder.parseHeaders(pParser, pLine);
@@ -82,7 +102,8 @@ public class ThemisAnalysisEnum
 
         /* add/replace the enum in the map */
         final Map<String, ThemisAnalysisDataType> myMap = pParser.getDataTypes();
-        myMap.put(theName, this);
+        myMap.put(theShortName, this);
+        theClassMap.put(theFullName, this);
 
         /* Create a parser */
         theContents = new ArrayDeque<>();
@@ -149,16 +170,29 @@ public class ThemisAnalysisEnum
     }
 
     /**
-     * Obtain the name.
+     * Obtain the short name.
      * @return the name
      */
-    public String getName() {
-        return theName;
+    public String getShortName() {
+        return theShortName;
+    }
+
+    /**
+     * Obtain the full name.
+     * @return the name
+     */
+    public String getFullName() {
+        return theFullName;
     }
 
     @Override
     public Map<String, ThemisAnalysisDataType> getDataTypes() {
         return theDataTypes;
+    }
+
+    @Override
+    public Map<String, ThemisAnalysisDataType> getClassMap() {
+        return theClassMap;
     }
 
     @Override
@@ -191,6 +225,6 @@ public class ThemisAnalysisEnum
 
     @Override
     public String toString() {
-        return getName();
+        return getShortName();
     }
 }

@@ -18,7 +18,9 @@ package net.sourceforge.joceanus.jthemis.analysis;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 import net.sourceforge.joceanus.jtethys.OceanusException;
@@ -49,6 +51,11 @@ public class ThemisAnalysisPackage
     private final List<ThemisAnalysisFile> theClasses;
 
     /**
+     * The map of classes in this package.
+     */
+    private final Map<String, ThemisAnalysisDataType> theClassMap;
+
+    /**
      * Constructor.
      * @param pLocation the base location
      * @param pPackage the package name.
@@ -66,6 +73,9 @@ public class ThemisAnalysisPackage
         /* Build list of classes */
         theClasses = listClasses(myLocation);
 
+        /* Create the class hashMap */
+        theClassMap = new HashMap<>();
+
         /* Process the classes */
         processClasses();
     }
@@ -76,6 +86,14 @@ public class ThemisAnalysisPackage
      */
     List<ThemisAnalysisFile> getClasses() {
         return theClasses;
+    }
+
+    /**
+     * Obtain the classMap.
+     * @return the map
+     */
+    Map<String, ThemisAnalysisDataType> getClassMap() {
+        return theClassMap;
     }
 
     /**

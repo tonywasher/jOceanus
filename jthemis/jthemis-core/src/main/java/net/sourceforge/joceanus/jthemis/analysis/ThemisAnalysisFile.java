@@ -24,8 +24,8 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayDeque;
-import java.util.Collections;
 import java.util.Deque;
+import java.util.HashMap;
 import java.util.Map;
 
 import net.sourceforge.joceanus.jtethys.OceanusException;
@@ -67,6 +67,11 @@ public class ThemisAnalysisFile
     private final ThemisAnalysisPackage thePackage;
 
     /**
+     * The dataTypeMap.
+     */
+    private final Map<String, ThemisAnalysisDataType> theDataTypes;
+
+    /**
      * The contents.
      */
     private final Deque<ThemisAnalysisElement> theContents;
@@ -87,6 +92,7 @@ public class ThemisAnalysisFile
         thePackage = pPackage;
         theLocation = pFile;
         theName = pFile.getName().replace(ThemisAnalysisPackage.SFX_JAVA, "");
+        theDataTypes = createDataTypeMap();
 
         /* Create the list */
         theContents = new ArrayDeque<>();
@@ -146,7 +152,12 @@ public class ThemisAnalysisFile
 
     @Override
     public Map<String, ThemisAnalysisDataType> getDataTypes() {
-        return Collections.emptyMap();
+        return theDataTypes;
+    }
+
+    @Override
+    public Map<String, ThemisAnalysisDataType> getClassMap() {
+        return thePackage.getClassMap();
     }
 
     @Override
@@ -157,6 +168,11 @@ public class ThemisAnalysisFile
     @Override
     public ThemisAnalysisContainer getParent() {
         return this;
+    }
+
+    @Override
+    public String getPackage() {
+        return thePackage.getPackage();
     }
 
     @Override
@@ -252,7 +268,7 @@ public class ThemisAnalysisFile
      */
     void firstPassProcessLines(final Deque<ThemisAnalysisElement> pLines) {
         /* Create the parser */
-        final ThemisAnalysisParser myParser = new ThemisAnalysisParser(pLines, theContents);
+        final ThemisAnalysisParser myParser = new ThemisAnalysisParser(pLines, theContents, this);
 
         /* Loop through the lines */
         while (myParser.hasLines()) {
@@ -335,5 +351,25 @@ public class ThemisAnalysisFile
     @Override
     public String toString() {
         return getName();
+    }
+
+    /**
+     * Create the dataTypeMap.
+     * @return the new map
+     */
+    private static Map<String, ThemisAnalysisDataType> createDataTypeMap() {
+        /* create the map */
+        final Map<String, ThemisAnalysisDataType> myMap = new HashMap<>();
+
+        /* Add the primitives */
+        for (ThemisAnalysisPrimitive myPrimitive : ThemisAnalysisPrimitive.values()) {
+            myMap.put(myPrimitive.toString(), myPrimitive);
+            if (myPrimitive.getBoxed() != null) {
+                myMap.put(myPrimitive.getBoxed(), myPrimitive);
+            }
+        }
+
+        /* return the map */
+        return myMap;
     }
 }

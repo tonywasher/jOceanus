@@ -26,27 +26,6 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
  */
 public class TestAnalysis {
     /**
-     * Lines.
-     */
-    private static String[] STD_LINES = {
-      "\"A standard \"line",
-      "\"A line with an embedded \\\"single quote \"",
-      "\"A line with an embedded double quote \\\"Hello\\\" and \"more",
-    };
-
-    /**
-     * Lines.
-     */
-    private static String[] XTRA_LINES = {
-            "{ An extended brace",
-            "that contains a quoted \"}\" end-brace }",
-            "{A line with a start brace",
-            "and another brace { followed by",
-            "a close } and then start { brace",
-            "and finally two close }} braces"
-    };
-
-    /**
      * Main.
      */
     public static void main(final String[] pArgs) {
