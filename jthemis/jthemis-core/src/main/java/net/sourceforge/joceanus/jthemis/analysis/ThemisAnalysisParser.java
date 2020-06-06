@@ -16,8 +16,10 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jthemis.analysis;
 
+import java.util.ArrayList;
 import java.util.Deque;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -444,7 +446,7 @@ public class ThemisAnalysisParser {
             return null;
         }
 
-        /* Look to for a valid daatType */
+        /* Look to for a valid dataType */
         final ThemisAnalysisDataType myType = theDataTypes.get(myToken);
         if (myType == null) {
             return null;
@@ -508,5 +510,60 @@ public class ThemisAnalysisParser {
 
         /* return the map */
         return myMap;
+    }
+
+    /**
+     * Parse ancestors.
+     * @param pHeaders the headers
+     * @return the list of ancestors
+     */
+    List<ThemisAnalysisReference> parseAncestors(final Deque<ThemisAnalysisElement> pHeaders) {
+        /* Create the list */
+        final List<ThemisAnalysisReference> myAncestors = new ArrayList<>();
+
+        /* Loop through the headers */
+        for (ThemisAnalysisElement myElement : pHeaders) {
+            final ThemisAnalysisLine myLine = (ThemisAnalysisLine) myElement;
+
+            /* Process ancestors in this line */
+            processAncestors(myAncestors, myLine);
+        }
+
+        /* return the list */
+        return myAncestors;
+    }
+
+    /**
+     * Process ancestors.
+     * @param pAncestors the list of ancestors
+     * @param pLine the line
+     */
+    void processAncestors(final List<ThemisAnalysisReference> pAncestors,
+                          final ThemisAnalysisLine pLine) {
+        /* Loop through the line */
+        for (;;) {
+            /* Strip leading comma */
+            if (pLine.startsWithChar(ThemisAnalysisBuilder.STATEMENT_SEP)) {
+                pLine.stripStartChar(ThemisAnalysisBuilder.STATEMENT_SEP);
+            }
+
+            /* Access first token */
+            final String myToken = pLine.peekNextToken();
+            if (myToken.length() == 0) {
+                return;
+            }
+
+            /* Ignore keywords */
+            if (KEYWORDS.get(myToken) != null) {
+                /* Strip the token from the line */
+                pLine.stripNextToken();
+            } else {
+                final ThemisAnalysisReference myReference = parseDataType(pLine);
+                if (myReference == null) {
+                    throw new IllegalStateException("Illegal implements/extends clause");
+                }
+                pAncestors.add(myReference);
+            }
+        }
     }
 }

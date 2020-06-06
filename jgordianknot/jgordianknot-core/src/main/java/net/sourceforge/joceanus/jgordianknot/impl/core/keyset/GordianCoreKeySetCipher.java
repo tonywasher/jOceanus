@@ -204,6 +204,15 @@ public class GordianCoreKeySetCipher
     }
 
     /**
+     * Obtain buffer length (allowing for null).
+     * @param pBuffer the buffere
+     * @return the length
+     */
+    private static int bufLength(final byte[] pBuffer) {
+        return pBuffer == null ? 0 : pBuffer.length;
+    }
+
+    /**
      * Check for buffer overlap in update.
      * @param pBytes Bytes to update cipher with
      * @param pOffset offset within pBytes to read bytes from
@@ -219,12 +228,10 @@ public class GordianCoreKeySetCipher
                                         final byte[] pOutput,
                                         final int pOutOffset) throws OceanusException {
         /* Check that the buffers are sufficient */
-        final int myInBufLen = pBytes == null ? 0 : pBytes.length;
-        if (myInBufLen < (pLength + pOffset)) {
+        if (bufLength(pBytes) < (pLength + pOffset)) {
             throw new GordianLogicException("Input buffer too short.");
         }
-        final int myOutBufLen = pOutput == null ? 0 : pOutput.length;
-        if (myOutBufLen < (getOutputLength(pLength) + pOutOffset)) {
+        if (bufLength(pOutput) < (getOutputLength(pLength) + pOutOffset)) {
             throw new GordianLogicException("Output buffer too short.");
         }
 
@@ -329,8 +336,7 @@ public class GordianCoreKeySetCipher
     public int finish(final byte[] pOutput,
                       final int pOutOffset) throws OceanusException {
         /* Check that the buffers are sufficient */
-        final int myOutBufLen = pOutput == null ? 0 : pOutput.length;
-        if (myOutBufLen < (getOutputLength(0) + pOutOffset)) {
+        if (bufLength(pOutput) < (getOutputLength(0) + pOutOffset)) {
             throw new GordianLogicException("Output buffer too short.");
         }
 

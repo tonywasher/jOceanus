@@ -47,9 +47,9 @@ public class ThemisAnalysisInterface
     private final List<ThemisAnalysisPrefix> theModifiers;
 
     /**
-     * The headers.
+     * The ancestors.
      */
-    private final Deque<ThemisAnalysisElement> theHeaders;
+    private final List<ThemisAnalysisReference> theAncestors;
 
     /**
      * The contents.
@@ -88,8 +88,11 @@ public class ThemisAnalysisInterface
         /* Determine the full name */
         theFullName = theParent.getPackage() + ThemisAnalysisImports.PERIOD_SEP + theShortName;
 
-        /* Create the arrays */
-        theHeaders = ThemisAnalysisBuilder.parseHeaders(pParser, pLine);
+        /* Parse the headers */
+        final Deque<ThemisAnalysisElement> myHeaders = ThemisAnalysisBuilder.parseHeaders(pParser, pLine);
+        theAncestors = pParser.parseAncestors(myHeaders);
+
+        /* Parse the body */
         final Deque<ThemisAnalysisElement> myLines = ThemisAnalysisBuilder.processBody(pParser);
         final int myBaseLines = myLines.size();
 
@@ -104,7 +107,7 @@ public class ThemisAnalysisInterface
         processLines(myParser);
 
         /* Calculate the number of lines */
-        theNumLines = calculateNumLines(myBaseLines);
+        theNumLines = calculateNumLines(myBaseLines, myHeaders.size());
     }
 
     /**
@@ -182,11 +185,13 @@ public class ThemisAnalysisInterface
     /**
      * Calculate the number of lines for the construct.
      * @param pBaseCount the baseCount
+     * @param pHdrCount the header line count
      * @return the number of lines
      */
-    public int calculateNumLines(final int pBaseCount) {
+    public int calculateNumLines(final int pBaseCount,
+                                 final int pHdrCount) {
         /* Add 1+ line(s) for the while headers  */
-        final int myNumLines = pBaseCount + Math.max(theHeaders.size() - 1, 1);
+        final int myNumLines = pBaseCount + Math.max(pHdrCount - 1, 1);
 
         /* Add one for the clause terminator */
         return myNumLines + 1;

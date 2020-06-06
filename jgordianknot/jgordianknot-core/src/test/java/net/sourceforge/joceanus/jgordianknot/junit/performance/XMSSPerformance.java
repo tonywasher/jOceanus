@@ -331,7 +331,8 @@ public class XMSSPerformance {
         }
 
         /**
-         * Obtain keySizes
+         * Obtain keySizes.
+         * @return the keySizes
          */
         String calculateKeySizes() {
             try {
@@ -401,7 +402,8 @@ public class XMSSPerformance {
         }
 
         /**
-         * Obtain sigSize
+         * Obtain sigSize.
+         * @return the signature size
          */
         String getSigSize() {
             return " Sig=" + theSignatures[0].length;
@@ -530,7 +532,8 @@ public class XMSSPerformance {
         }
 
         /**
-         * Obtain keySizes
+         * Obtain keySizes.
+         * @return the keySizes.
          */
         String calculateKeySizes() {
             try {
@@ -600,7 +603,8 @@ public class XMSSPerformance {
         }
 
         /**
-         * Obtain sigSize
+         * Obtain sigSize.
+         * @return the signature size
          */
         String getSigSize() {
             return " Sig=" + theSignatures[0].length;

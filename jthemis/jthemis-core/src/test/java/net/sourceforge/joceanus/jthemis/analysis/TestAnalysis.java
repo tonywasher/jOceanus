@@ -27,6 +27,7 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
 public class TestAnalysis {
     /**
      * Main.
+     * @param pArgs the arguments
      */
     public static void main(final String[] pArgs) {
         try {
