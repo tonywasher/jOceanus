@@ -18,7 +18,6 @@ package net.sourceforge.joceanus.jthemis.analysis;
 
 import java.util.ArrayDeque;
 import java.util.Deque;
-import java.util.Map;
 
 /**
  * Switch construct.
@@ -41,11 +40,6 @@ public class ThemisAnalysisSwitch
     private final Deque<ThemisAnalysisElement> theContents;
 
     /**
-     * The dataTypes.
-     */
-    private final Map<String, ThemisAnalysisDataType> theDataTypes;
-
-    /**
      * The number of lines.
      */
     private final int theNumLines;
@@ -58,7 +52,6 @@ public class ThemisAnalysisSwitch
     ThemisAnalysisSwitch(final ThemisAnalysisParser pParser,
                          final ThemisAnalysisLine pLine) {
         /* Access details from parser */
-        theDataTypes = pParser.getDataTypes();
         theParent = pParser.getParent();
 
         /* Create the arrays */
@@ -99,11 +92,6 @@ public class ThemisAnalysisSwitch
                 throw new IllegalStateException("Unexpected code in switch");
             }
         }
-    }
-
-    @Override
-    public Map<String, ThemisAnalysisDataType> getDataTypes() {
-        return theDataTypes;
     }
 
     @Override

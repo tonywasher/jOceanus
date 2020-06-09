@@ -17,11 +17,11 @@
 package net.sourceforge.joceanus.jprometheus.lethe.database;
 
 import java.math.BigDecimal;
+import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Types;
-import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
@@ -825,8 +825,8 @@ public abstract class PrometheusColumnDefinition {
             if (myValue == null) {
                 pStatement.setNull(pIndex, Types.DATE);
             } else {
-                final Date myDateValue = myValue.toDate();
-                final java.sql.Date myDate = new java.sql.Date(myDateValue.getTime());
+                final long myDateValue = myValue.toDate().getTime();
+                final Date myDate = new Date(myDateValue);
                 pStatement.setDate(pIndex, myDate);
             }
         }

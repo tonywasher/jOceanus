@@ -19,7 +19,6 @@ package net.sourceforge.joceanus.jthemis.analysis;
 import java.util.ArrayDeque;
 import java.util.Deque;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Method Representation.
@@ -57,9 +56,9 @@ public class ThemisAnalysisMethod
     private final Deque<ThemisAnalysisElement> theContents;
 
     /**
-     * The dataTypes.
+     * The dataMap.
      */
-    private final Map<String, ThemisAnalysisDataType> theDataTypes;
+    private final ThemisAnalysisDataMap theDataMap;
 
     /**
      * The number of lines.
@@ -89,8 +88,8 @@ public class ThemisAnalysisMethod
         theModifiers = pLine.getModifiers();
 
         /* Access details from parser */
-        theDataTypes = pParser.getDataTypes();
         theParent = pParser.getParent();
+        theDataMap = new ThemisAnalysisDataMap(theParent.getDataMap());
 
         /* Determine whether this method is abstract */
         final boolean isInterface = theParent instanceof ThemisAnalysisInterface;
@@ -125,11 +124,6 @@ public class ThemisAnalysisMethod
     }
 
     @Override
-    public Map<String, ThemisAnalysisDataType> getDataTypes() {
-        return theDataTypes;
-    }
-
-    @Override
     public Deque<ThemisAnalysisElement> getContents() {
         return theContents;
     }
@@ -137,6 +131,11 @@ public class ThemisAnalysisMethod
     @Override
     public ThemisAnalysisContainer getParent() {
         return theParent;
+    }
+
+    @Override
+    public ThemisAnalysisDataMap getDataMap() {
+        return theDataMap;
     }
 
     @Override

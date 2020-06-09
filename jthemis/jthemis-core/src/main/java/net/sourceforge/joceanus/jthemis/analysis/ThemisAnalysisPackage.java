@@ -18,9 +18,7 @@ package net.sourceforge.joceanus.jthemis.analysis;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 
 import net.sourceforge.joceanus.jtethys.OceanusException;
@@ -46,14 +44,14 @@ public class ThemisAnalysisPackage
     private final String thePackage;
 
     /**
-     * The list of classes in this package.
+     * The list of files in this package.
      */
-    private final List<ThemisAnalysisFile> theClasses;
+    private final List<ThemisAnalysisFile> theFiles;
 
     /**
-     * The map of classes in this package.
+     * The initial dataMap.
      */
-    private final Map<String, ThemisAnalysisDataType> theClassMap;
+    private final ThemisAnalysisDataMap theDataMap;
 
     /**
      * Constructor.
@@ -70,39 +68,42 @@ public class ThemisAnalysisPackage
         final String myPath = pPackage.replace(ThemisAnalysisImports.PERIOD_SEP, File.separatorChar);
         final File myLocation = new File(pLocation, myPath);
 
-        /* Build list of classes */
-        theClasses = listClasses(myLocation);
+        /* Create the dataMap */
+        theDataMap = new ThemisAnalysisDataMap();
 
-        /* Create the class hashMap */
-        theClassMap = new HashMap<>();
+        /* Build list of files */
+        theFiles = listFiles(myLocation);
 
-        /* Process the classes */
-        processClasses();
+        /* Process the files */
+        processFiles();
+
+        /* Update from the class map */
+        updateFromClassMap();
     }
 
     /**
-     * Obtain the classes.
-     * @return the classes
+     * Obtain the files.
+     * @return the files
      */
-    List<ThemisAnalysisFile> getClasses() {
-        return theClasses;
+    List<ThemisAnalysisFile> getFiles() {
+        return theFiles;
     }
 
     /**
-     * Obtain the classMap.
+     * Obtain the dataMap.
      * @return the map
      */
-    Map<String, ThemisAnalysisDataType> getClassMap() {
-        return theClassMap;
+    ThemisAnalysisDataMap getDataMap() {
+        return theDataMap;
     }
 
     /**
-     * Build list of classes.
+     * Build list of files.
      * @param pLocation the location
-     * @return the list of classes
+     * @return the list of files
      * @throws OceanusException on error
      */
-    List<ThemisAnalysisFile> listClasses(final File pLocation) throws OceanusException  {
+    List<ThemisAnalysisFile> listFiles(final File pLocation) throws OceanusException  {
         /* Allocate the list */
         final List<ThemisAnalysisFile> myClasses = new ArrayList<>();
 
@@ -128,12 +129,12 @@ public class ThemisAnalysisPackage
     }
 
     /**
-     * process classes.
+     * process files.
      * @throws OceanusException on error
      */
-    private void processClasses() throws OceanusException {
+    private void processFiles() throws OceanusException {
         /* Loop through the classes */
-        for (ThemisAnalysisFile myFile : theClasses) {
+        for (ThemisAnalysisFile myFile : theFiles) {
             /* Process the class */
             myFile.processFile();
         }
@@ -145,6 +146,17 @@ public class ThemisAnalysisPackage
      */
     public String getPackage() {
         return thePackage;
+    }
+
+    /**
+     * Update from classMap.
+     */
+    void updateFromClassMap() {
+        /* Loop through the files */
+        for (ThemisAnalysisFile myFile : theFiles) {
+            /* Update the file */
+            myFile.updateFromClassMap();
+        }
     }
 
     /**

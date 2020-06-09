@@ -18,7 +18,6 @@ package net.sourceforge.joceanus.jthemis.analysis;
 
 import java.util.ArrayDeque;
 import java.util.Deque;
-import java.util.Map;
 
 /**
  * Interface for containers that require postProcessing.
@@ -26,17 +25,11 @@ import java.util.Map;
 public interface ThemisAnalysisContainer
     extends ThemisAnalysisProcessed {
     /**
-     * Obtain the dataType Map.
+     * Obtain the dataMap.
      * @return the map
      */
-    Map<String, ThemisAnalysisDataType> getDataTypes();
-
-    /**
-     * Obtain the classMap.
-     * @return the map
-     */
-    default Map<String, ThemisAnalysisDataType> getClassMap() {
-        return getParent().getClassMap();
+    default ThemisAnalysisDataMap getDataMap() {
+        return getParent().getDataMap();
     }
 
     /**

@@ -20,7 +20,6 @@ import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Deque;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Enum representation.
@@ -58,14 +57,9 @@ public class ThemisAnalysisEnum
     private final Deque<ThemisAnalysisElement> theContents;
 
     /**
-     * The dataTypes.
+     * The dataMap.
      */
-    private final Map<String, ThemisAnalysisDataType> theDataTypes;
-
-    /**
-     * The classMap.
-     */
-    private final Map<String, ThemisAnalysisDataType> theClassMap;
+    private final ThemisAnalysisDataMap theDataMap;
 
     /**
      * The values.
@@ -87,10 +81,9 @@ public class ThemisAnalysisEnum
         /* Store parameters */
         theShortName = pLine.stripNextToken();
         theModifiers = pLine.getModifiers();
-        theDataTypes = pParser.getDataTypes();
         theValues = new ArrayList<>();
         theParent = pParser.getParent();
-        theClassMap = theParent.getClassMap();
+        theDataMap = new ThemisAnalysisDataMap(theParent.getDataMap());
 
         /* Determine the full name */
         theFullName = theParent.getPackage() + ThemisAnalysisImports.PERIOD_SEP + theShortName;
@@ -103,10 +96,8 @@ public class ThemisAnalysisEnum
         final Deque<ThemisAnalysisElement> myLines = ThemisAnalysisBuilder.processBody(pParser);
         final int myBaseLines = myLines.size();
 
-        /* add/replace the enum in the map */
-        final Map<String, ThemisAnalysisDataType> myMap = pParser.getDataTypes();
-        myMap.put(theShortName, this);
-        theClassMap.put(theFullName, this);
+        /* declare the enum */
+        theDataMap.declareEnum(this);
 
         /* Create a parser */
         theContents = new ArrayDeque<>();
@@ -189,13 +180,8 @@ public class ThemisAnalysisEnum
     }
 
     @Override
-    public Map<String, ThemisAnalysisDataType> getDataTypes() {
-        return theDataTypes;
-    }
-
-    @Override
-    public Map<String, ThemisAnalysisDataType> getClassMap() {
-        return theClassMap;
+    public ThemisAnalysisDataMap getDataMap() {
+        return theDataMap;
     }
 
     @Override

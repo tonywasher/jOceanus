@@ -25,8 +25,6 @@ import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayDeque;
 import java.util.Deque;
-import java.util.HashMap;
-import java.util.Map;
 
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jthemis.ThemisDataException;
@@ -67,9 +65,9 @@ public class ThemisAnalysisFile
     private final ThemisAnalysisPackage thePackage;
 
     /**
-     * The dataTypeMap.
+     * The dataMap.
      */
-    private final Map<String, ThemisAnalysisDataType> theDataTypes;
+    private final ThemisAnalysisDataMap theDataMap;
 
     /**
      * The contents.
@@ -92,7 +90,7 @@ public class ThemisAnalysisFile
         thePackage = pPackage;
         theLocation = pFile;
         theName = pFile.getName().replace(ThemisAnalysisPackage.SFX_JAVA, "");
-        theDataTypes = createDataTypeMap();
+        theDataMap = new ThemisAnalysisDataMap(thePackage.getDataMap());
 
         /* Create the list */
         theContents = new ArrayDeque<>();
@@ -151,13 +149,8 @@ public class ThemisAnalysisFile
     }
 
     @Override
-    public Map<String, ThemisAnalysisDataType> getDataTypes() {
-        return theDataTypes;
-    }
-
-    @Override
-    public Map<String, ThemisAnalysisDataType> getClassMap() {
-        return thePackage.getClassMap();
+    public ThemisAnalysisDataMap getDataMap() {
+        return theDataMap;
     }
 
     @Override
@@ -331,10 +324,9 @@ public class ThemisAnalysisFile
                 throw new IllegalStateException("Bad package");
             }
 
-            /* Add the class name of each of the packages to the dataTypes */
-            final Map<String, ThemisAnalysisDataType> myMap = pParser.getDataTypes();
-            for (ThemisAnalysisFile myFile : thePackage.getClasses()) {
-                myMap.put(myFile.getName(), myFile);
+            /* Declare all the files in this package to the dataMap */
+            for (ThemisAnalysisFile myFile : thePackage.getFiles()) {
+                theDataMap.declareFile(myFile);
             }
 
             /* Process the package line */
@@ -348,28 +340,15 @@ public class ThemisAnalysisFile
         return false;
     }
 
+    /**
+     * Update from classMap.
+     */
+    void updateFromClassMap() {
+        theDataMap.updateFromClassMap();
+    }
+
     @Override
     public String toString() {
         return getName();
-    }
-
-    /**
-     * Create the dataTypeMap.
-     * @return the new map
-     */
-    private static Map<String, ThemisAnalysisDataType> createDataTypeMap() {
-        /* create the map */
-        final Map<String, ThemisAnalysisDataType> myMap = new HashMap<>();
-
-        /* Add the primitives */
-        for (ThemisAnalysisPrimitive myPrimitive : ThemisAnalysisPrimitive.values()) {
-            myMap.put(myPrimitive.toString(), myPrimitive);
-            if (myPrimitive.getBoxed() != null) {
-                myMap.put(myPrimitive.getBoxed(), myPrimitive);
-            }
-        }
-
-        /* return the map */
-        return myMap;
     }
 }

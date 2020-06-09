@@ -18,7 +18,6 @@ package net.sourceforge.joceanus.jthemis.analysis;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 /**
  * The set of imports.
@@ -46,10 +45,12 @@ public class ThemisAnalysisImports
         theImports = new ArrayList<>();
 
         /* Add import to list */
-        theImports.add(new ThemisAnalysisImport(pLine.toString()));
+        ThemisAnalysisImport myImport = new ThemisAnalysisImport(pLine.toString());
+        theImports.add(myImport);
+        final ThemisAnalysisDataMap myDataMap = pParser.getDataMap();
+        myDataMap.declareImport(myImport);
 
         /* While there are further lines */
-        final Map<String, ThemisAnalysisDataType> myMap = pParser.getDataTypes();
         while (pParser.hasLines()) {
             /* Access next line */
             final ThemisAnalysisLine myLine = (ThemisAnalysisLine) pParser.peekNextLine();
@@ -57,9 +58,9 @@ public class ThemisAnalysisImports
             /* It it is also an import */
             if (isImport(myLine)) {
                 /* Add the import line and remove from input */
-                final ThemisAnalysisImport myImport = new ThemisAnalysisImport(myLine.toString());
+                myImport = new ThemisAnalysisImport(myLine.toString());
                 theImports.add(myImport);
-                myMap.put(myImport.getSimpleName(), myImport);
+                myDataMap.declareImport(myImport);
                 pParser.popNextLine();
 
                 /* else break loop */

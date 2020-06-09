@@ -47,9 +47,9 @@ public class ThemisAnalysisParser {
     private final Deque<ThemisAnalysisElement> theContents;
 
     /**
-     * The dataTypeMap.
+     * The dataMap.
      */
-    private final Map<String, ThemisAnalysisDataType> theDataTypes;
+    private final ThemisAnalysisDataMap theDataMap;
 
     /**
      * Constructor.
@@ -66,7 +66,7 @@ public class ThemisAnalysisParser {
         theParent = pContainer;
 
         /* Create the dataTypeMap */
-        theDataTypes = pContainer.getDataTypes();
+        theDataMap = pContainer.getDataMap();
     }
 
     /**
@@ -99,8 +99,8 @@ public class ThemisAnalysisParser {
      * Obtain the dataTypes map.
      * @return the dataTypesMap
      */
-    Map<String, ThemisAnalysisDataType> getDataTypes() {
-        return theDataTypes;
+    ThemisAnalysisDataMap getDataMap() {
+        return theDataMap;
     }
 
     /**
@@ -446,8 +446,8 @@ public class ThemisAnalysisParser {
             return null;
         }
 
-        /* Look to for a valid dataType */
-        final ThemisAnalysisDataType myType = theDataTypes.get(myToken);
+        /* Look for a valid dataType */
+        final ThemisAnalysisDataType myType = theDataMap.lookUpDataType(myToken);
         if (myType == null) {
             return null;
         }

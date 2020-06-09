@@ -18,7 +18,6 @@ package net.sourceforge.joceanus.jthemis.analysis;
 
 import java.util.ArrayDeque;
 import java.util.Deque;
-import java.util.Map;
 
 /**
  * If construct.
@@ -46,11 +45,6 @@ public class ThemisAnalysisIf
     private final ThemisAnalysisElse theElse;
 
     /**
-     * The dataTypes.
-     */
-    private final Map<String, ThemisAnalysisDataType> theDataTypes;
-
-    /**
      * The number of lines.
      */
     private final int theNumLines;
@@ -63,7 +57,6 @@ public class ThemisAnalysisIf
     ThemisAnalysisIf(final ThemisAnalysisParser pParser,
                      final ThemisAnalysisLine pLine) {
         /* Access details from parser */
-        theDataTypes = pParser.getDataTypes();
         theParent = pParser.getParent();
 
         /* Create the arrays */
@@ -81,11 +74,6 @@ public class ThemisAnalysisIf
 
         /* Calculate the number of lines */
         theNumLines = calculateNumLines(myBaseLines);
-    }
-
-    @Override
-    public Map<String, ThemisAnalysisDataType> getDataTypes() {
-        return theDataTypes;
     }
 
     @Override

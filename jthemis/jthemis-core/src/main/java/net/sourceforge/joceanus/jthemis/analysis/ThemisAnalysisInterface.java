@@ -19,7 +19,6 @@ package net.sourceforge.joceanus.jthemis.analysis;
 import java.util.ArrayDeque;
 import java.util.Deque;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Interface representation.
@@ -57,14 +56,9 @@ public class ThemisAnalysisInterface
     private final Deque<ThemisAnalysisElement> theContents;
 
     /**
-     * The dataTypes.
+     * The dataMap.
      */
-    private final Map<String, ThemisAnalysisDataType> theDataTypes;
-
-    /**
-     * The classMap.
-     */
-    private final Map<String, ThemisAnalysisDataType> theClassMap;
+    private final ThemisAnalysisDataMap theDataMap;
 
     /**
      * The number of lines.
@@ -81,9 +75,8 @@ public class ThemisAnalysisInterface
         /* Store parameters */
         theShortName = pLine.stripNextToken();
         theModifiers = pLine.getModifiers();
-        theDataTypes = pParser.getDataTypes();
         theParent = pParser.getParent();
-        theClassMap = theParent.getClassMap();
+        theDataMap = new ThemisAnalysisDataMap(theParent.getDataMap());
 
         /* Determine the full name */
         theFullName = theParent.getPackage() + ThemisAnalysisImports.PERIOD_SEP + theShortName;
@@ -96,10 +89,8 @@ public class ThemisAnalysisInterface
         final Deque<ThemisAnalysisElement> myLines = ThemisAnalysisBuilder.processBody(pParser);
         final int myBaseLines = myLines.size();
 
-        /* add/replace the interface in the map */
-        final Map<String, ThemisAnalysisDataType> myMap = pParser.getDataTypes();
-        myMap.put(theShortName, this);
-        theClassMap.put(theFullName, this);
+        /* declare the interface */
+        theDataMap.declareInterface(this);
 
         /* Create a parser */
         theContents = new ArrayDeque<>();
@@ -158,13 +149,8 @@ public class ThemisAnalysisInterface
     }
 
     @Override
-    public Map<String, ThemisAnalysisDataType> getDataTypes() {
-        return theDataTypes;
-    }
-
-    @Override
-    public Map<String, ThemisAnalysisDataType> getClassMap() {
-        return theClassMap;
+    public ThemisAnalysisDataMap getDataMap() {
+        return theDataMap;
     }
 
     @Override

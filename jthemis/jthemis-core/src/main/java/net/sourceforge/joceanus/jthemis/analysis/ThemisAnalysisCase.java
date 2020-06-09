@@ -20,7 +20,6 @@ import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Deque;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Case construct.
@@ -36,11 +35,6 @@ public class ThemisAnalysisCase
      * The contents.
      */
     private final Deque<ThemisAnalysisElement> theContents;
-
-    /**
-     * The dataTypes.
-     */
-    private final Map<String, ThemisAnalysisDataType> theDataTypes;
 
     /**
      * The case values.
@@ -60,7 +54,6 @@ public class ThemisAnalysisCase
     ThemisAnalysisCase(final ThemisAnalysisParser pParser,
                        final Object pCase) {
         /* Access details from parser */
-        theDataTypes = pParser.getDataTypes();
         theParent = pParser.getParent();
 
         /* Initialise the case value */
@@ -125,11 +118,6 @@ public class ThemisAnalysisCase
                 theContents.add(myLine);
             }
         }
-    }
-
-    @Override
-    public Map<String, ThemisAnalysisDataType> getDataTypes() {
-        return theDataTypes;
     }
 
     @Override
