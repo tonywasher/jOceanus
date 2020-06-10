@@ -21,16 +21,6 @@ package net.sourceforge.joceanus.jthemis.analysis;
  */
 public class ThemisAnalysisArray {
     /**
-     * Start array.
-     */
-    static final char ARRAY_OPEN = '[';
-
-    /**
-     * End array.
-     */
-    static final char ARRAY_CLOSE = ']';
-
-    /**
      * The array notation.
      */
     private final String theNotation;
@@ -42,12 +32,12 @@ public class ThemisAnalysisArray {
     ThemisAnalysisArray(final ThemisAnalysisLine pLine) {
         /* Loop while we have an array start */
         int myDepth = 0;
-        while (pLine.startsWithChar(ARRAY_OPEN)) {
-            pLine.stripStartChar(ARRAY_OPEN);
-            if (!pLine.startsWithChar(ARRAY_CLOSE)) {
+        while (pLine.startsWithChar(ThemisAnalysisChar.ARRAY_OPEN)) {
+            pLine.stripStartChar(ThemisAnalysisChar.ARRAY_OPEN);
+            if (!pLine.startsWithChar(ThemisAnalysisChar.ARRAY_CLOSE)) {
                 throw new IllegalStateException("Bad array notation");
             }
-            pLine.stripStartChar(ARRAY_CLOSE);
+            pLine.stripStartChar(ThemisAnalysisChar.ARRAY_CLOSE);
             myDepth++;
         }
         pLine.stripLeadingWhiteSpace();
@@ -55,7 +45,7 @@ public class ThemisAnalysisArray {
         /* Build the array notation */
         final StringBuilder myBuilder = new StringBuilder();
         for (int i = 0; i < myDepth; i++) {
-            myBuilder.append(ARRAY_OPEN).append(ARRAY_CLOSE);
+            myBuilder.append(ThemisAnalysisChar.ARRAY_OPEN).append(ThemisAnalysisChar.ARRAY_CLOSE);
         }
         theNotation = myBuilder.toString();
     }
@@ -67,7 +57,7 @@ public class ThemisAnalysisArray {
      */
     static boolean isArray(final ThemisAnalysisLine pLine) {
         /* If we are started with an ARRAY_OPEN */
-        return pLine.startsWithChar(ARRAY_OPEN);
+        return pLine.startsWithChar(ThemisAnalysisChar.ARRAY_OPEN);
     }
 
     @Override

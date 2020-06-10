@@ -18,13 +18,12 @@ package net.sourceforge.joceanus.jthemis.analysis;
 
 import java.util.ArrayDeque;
 import java.util.Deque;
-import java.util.List;
 
 /**
  * Method Representation.
  */
 public class ThemisAnalysisMethod
-        implements ThemisAnalysisContainer, ThemisAnalysisDataType {
+        implements ThemisAnalysisContainer {
     /**
      * The name of the class.
      */
@@ -41,9 +40,9 @@ public class ThemisAnalysisMethod
     private final ThemisAnalysisContainer theParent;
 
     /**
-     * The modifiers.
+     * The properties.
      */
-    private final List<ThemisAnalysisPrefix> theModifiers;
+    private final ThemisAnalysisProperties theProperties;
 
     /**
      * The headers.
@@ -85,7 +84,7 @@ public class ThemisAnalysisMethod
         isInitializer = pName.length() == 0;
         theName = isInitializer ? pReference.toString() : pName;
         theReference = pReference;
-        theModifiers = pLine.getModifiers();
+        theProperties = pLine.getProperties();
 
         /* Access details from parser */
         theParent = pParser.getParent();
@@ -93,8 +92,8 @@ public class ThemisAnalysisMethod
 
         /* Determine whether this method is abstract */
         final boolean isInterface = theParent instanceof ThemisAnalysisInterface;
-        final boolean markedDefault = theModifiers.contains(ThemisAnalysisModifier.DEFAULT);
-        final boolean markedAbstract = theModifiers.contains(ThemisAnalysisModifier.ABSTRACT);
+        final boolean markedDefault = theProperties.hasModifier(ThemisAnalysisModifier.DEFAULT);
+        final boolean markedAbstract = theProperties.hasModifier(ThemisAnalysisModifier.ABSTRACT);
         final boolean isAbstract = markedAbstract || (isInterface && !markedDefault);
 
         /* Parse the headers */

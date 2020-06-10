@@ -26,6 +26,12 @@ import net.sourceforge.joceanus.jthemis.analysis.ThemisAnalysisImports.ThemisAna
  */
 public class ThemisAnalysisDataMap {
     /**
+     * Marker interface for dataType.
+     */
+    interface ThemisAnalysisDataType {
+    }
+
+    /**
      * The base dataTypes.
      */
     private static final Map<String, ThemisAnalysisDataType> BASETYPES = createDataTypeMap();
@@ -196,7 +202,7 @@ public class ThemisAnalysisDataMap {
          */
         ThemisAnalysisDataTypeWrapper(final ThemisAnalysisFile pFile) {
             theName = pFile.getName();
-            theFullName = pFile.getPackage() + ThemisAnalysisImports.PERIOD_SEP + theName;
+            theFullName = pFile.getPackage() + ThemisAnalysisChar.PERIOD + theName;
             theDataType = pFile;
         }
 

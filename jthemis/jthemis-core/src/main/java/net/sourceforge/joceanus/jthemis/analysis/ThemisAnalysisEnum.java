@@ -21,6 +21,8 @@ import java.util.ArrayList;
 import java.util.Deque;
 import java.util.List;
 
+import net.sourceforge.joceanus.jthemis.analysis.ThemisAnalysisDataMap.ThemisAnalysisDataType;
+
 /**
  * Enum representation.
  */
@@ -37,14 +39,9 @@ public class ThemisAnalysisEnum
     private final String theFullName;
 
     /**
-     * The parent.
+     * The properties.
      */
-    private final ThemisAnalysisContainer theParent;
-
-    /**
-     * The modifiers.
-     */
-    private final List<ThemisAnalysisPrefix> theModifiers;
+    private final ThemisAnalysisProperties theProperties;
 
     /**
      * The ancestors.
@@ -80,13 +77,13 @@ public class ThemisAnalysisEnum
                        final ThemisAnalysisLine pLine) {
         /* Store parameters */
         theShortName = pLine.stripNextToken();
-        theModifiers = pLine.getModifiers();
+        theProperties = pLine.getProperties();
         theValues = new ArrayList<>();
-        theParent = pParser.getParent();
-        theDataMap = new ThemisAnalysisDataMap(theParent.getDataMap());
+        final ThemisAnalysisContainer myParent = pParser.getParent();
+        theDataMap = new ThemisAnalysisDataMap(myParent.getDataMap());
 
         /* Determine the full name */
-        theFullName = theParent.getPackage() + ThemisAnalysisImports.PERIOD_SEP + theShortName;
+        theFullName = myParent.getPackage() + ThemisAnalysisChar.PERIOD + theShortName;
 
         /* Parse the headers */
         final Deque<ThemisAnalysisElement> myHeaders = ThemisAnalysisBuilder.parseHeaders(pParser, pLine);
@@ -156,11 +153,11 @@ public class ThemisAnalysisEnum
     private boolean processEnumValue(final ThemisAnalysisLine pLine) {
         /* Access the token */
         final String myToken = pLine.stripNextToken();
-        if (pLine.startsWithChar(ThemisAnalysisParenthesis.PARENTHESIS_OPEN)) {
+        if (pLine.startsWithChar(ThemisAnalysisChar.PARENTHESIS_OPEN)) {
             ThemisAnalysisParenthesis.stripParenthesisContents(pLine);
         }
         theValues.add(myToken);
-        return pLine.endsWithChar(ThemisAnalysisBuilder.STATEMENT_SEP);
+        return pLine.endsWithChar(ThemisAnalysisChar.COMMA);
     }
 
     /**

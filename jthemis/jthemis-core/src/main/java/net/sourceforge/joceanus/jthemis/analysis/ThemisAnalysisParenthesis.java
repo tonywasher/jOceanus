@@ -21,16 +21,6 @@ package net.sourceforge.joceanus.jthemis.analysis;
  */
 public final class ThemisAnalysisParenthesis {
     /**
-     * Open parenthesis.
-     */
-    static final char PARENTHESIS_OPEN = '(';
-
-    /**
-     * Close parenthesis.
-     */
-    static final char PARENTHESIS_CLOSE = ')';
-
-    /**
      * Private constructor.
      */
     private ThemisAnalysisParenthesis() {
@@ -43,15 +33,15 @@ public final class ThemisAnalysisParenthesis {
      */
     static ThemisAnalysisLine stripParenthesisContents(final ThemisAnalysisLine pLine) {
         /* Find the end of the generic sequence */
-        final int myEnd = pLine.findEndOfNestedSequence(0, 0,  PARENTHESIS_CLOSE, PARENTHESIS_OPEN);
+        final int myEnd = pLine.findEndOfNestedSequence(0, 0,  ThemisAnalysisChar.PARENTHESIS_CLOSE, ThemisAnalysisChar.PARENTHESIS_OPEN);
         if (myEnd < 0) {
             throw new IllegalStateException("End character not found");
         }
 
         /* Obtain the contents */
         final ThemisAnalysisLine myContents = pLine.stripUpToPosition(myEnd);
-        myContents.stripStartChar(PARENTHESIS_OPEN);
-        myContents.stripEndChar(PARENTHESIS_CLOSE);
+        myContents.stripStartChar(ThemisAnalysisChar.PARENTHESIS_OPEN);
+        myContents.stripEndChar(ThemisAnalysisChar.PARENTHESIS_CLOSE);
         return myContents;
     }
 }

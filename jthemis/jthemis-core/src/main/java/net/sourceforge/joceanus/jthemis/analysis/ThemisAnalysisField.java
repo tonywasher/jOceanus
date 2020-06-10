@@ -17,7 +17,6 @@
 package net.sourceforge.joceanus.jthemis.analysis;
 
 import java.util.Deque;
-import java.util.List;
 
 /**
  * Field Representation.
@@ -35,9 +34,9 @@ public class ThemisAnalysisField
     private final ThemisAnalysisReference theDataType;
 
     /**
-     * The modifiers.
+     * The properties.
      */
-    private final List<ThemisAnalysisPrefix> theModifiers;
+    private final ThemisAnalysisProperties theProperties;
 
     /**
      * The trailers.
@@ -63,7 +62,7 @@ public class ThemisAnalysisField
         /* Store parameters */
         theName = pName;
         theDataType = pDataType;
-        theModifiers = pLine.getModifiers();
+        theProperties = pLine.getProperties();
 
         /* Create the arrays */
         theTrailers = ThemisAnalysisBuilder.parseTrailers(pParser, pLine);

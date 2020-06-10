@@ -28,22 +28,13 @@ import java.util.Deque;
 
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jthemis.ThemisDataException;
+import net.sourceforge.joceanus.jthemis.analysis.ThemisAnalysisDataMap.ThemisAnalysisDataType;
 
 /**
  * Analysis representation of a java file.
  */
 public class ThemisAnalysisFile
     implements ThemisAnalysisContainer, ThemisAnalysisDataType {
-    /**
-     * The lineFeed character.
-     */
-    private static final char LF = '\n';
-
-    /**
-     * The carriageReturn character.
-     */
-    private static final char CR = '\r';
-
     /**
      * The buffer length (must be longer than longest line).
      */
@@ -222,9 +213,9 @@ public class ThemisAnalysisFile
         for (int i = pOffset; i < pNumChars; i++) {
             /* Check for LF and NULL */
             switch (pBuffer[i])  {
-                case LF:
+                case ThemisAnalysisChar.LF:
                     return i;
-                case ThemisAnalysisLine.CHAR_NULL:
+                case ThemisAnalysisChar.NULL:
                     throw new IllegalStateException("Null character in file");
                 default:
                     break;
@@ -247,7 +238,7 @@ public class ThemisAnalysisFile
                                                 final int pLineFeed) {
         /* Strip any trailing cr */
         int myLen = pLineFeed - pOffset;
-        if (myLen > 0 && pBuffer[pOffset + myLen - 1] == CR) {
+        if (myLen > 0 && pBuffer[pOffset + myLen - 1] == ThemisAnalysisChar.CR) {
             myLen--;
         }
 

@@ -18,7 +18,6 @@ package net.sourceforge.joceanus.jthemis.analysis;
 
 import java.util.ArrayDeque;
 import java.util.Deque;
-import java.util.List;
 
 /**
  * Block construct.
@@ -31,9 +30,9 @@ public class ThemisAnalysisBlock
     private final ThemisAnalysisContainer theParent;
 
     /**
-     * The modifiers.
+     * The properties.
      */
-    private final List<ThemisAnalysisPrefix> theModifiers;
+    private final ThemisAnalysisProperties theProperties;
 
     /**
      * The contents.
@@ -53,7 +52,7 @@ public class ThemisAnalysisBlock
     ThemisAnalysisBlock(final ThemisAnalysisParser pParser,
                         final ThemisAnalysisLine pLine) {
         /* Store parameters */
-        theModifiers = pLine.getModifiers();
+        theProperties = pLine.getProperties();
         theParent = pParser.getParent();
 
         /* Create the arrays */

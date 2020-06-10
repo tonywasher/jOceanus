@@ -20,6 +20,8 @@ import java.util.ArrayDeque;
 import java.util.Deque;
 import java.util.List;
 
+import net.sourceforge.joceanus.jthemis.analysis.ThemisAnalysisDataMap.ThemisAnalysisDataType;
+
 /**
  * Interface representation.
  */
@@ -36,14 +38,9 @@ public class ThemisAnalysisInterface
     private final String theFullName;
 
     /**
-     * The parent.
+     * The properties.
      */
-    private final ThemisAnalysisContainer theParent;
-
-    /**
-     * The modifiers.
-     */
-    private final List<ThemisAnalysisPrefix> theModifiers;
+    private final ThemisAnalysisProperties theProperties;
 
     /**
      * The ancestors.
@@ -74,12 +71,12 @@ public class ThemisAnalysisInterface
                             final ThemisAnalysisLine pLine) {
         /* Store parameters */
         theShortName = pLine.stripNextToken();
-        theModifiers = pLine.getModifiers();
-        theParent = pParser.getParent();
-        theDataMap = new ThemisAnalysisDataMap(theParent.getDataMap());
+        theProperties = pLine.getProperties();
+        final ThemisAnalysisContainer myParent = pParser.getParent();
+        theDataMap = new ThemisAnalysisDataMap(myParent.getDataMap());
 
         /* Determine the full name */
-        theFullName = theParent.getPackage() + ThemisAnalysisImports.PERIOD_SEP + theShortName;
+        theFullName = myParent.getPackage() + ThemisAnalysisChar.PERIOD + theShortName;
 
         /* Parse the headers */
         final Deque<ThemisAnalysisElement> myHeaders = ThemisAnalysisBuilder.parseHeaders(pParser, pLine);

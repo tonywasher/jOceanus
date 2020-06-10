@@ -36,7 +36,7 @@ public class ThemisAnalysisPackage
     /**
      * The package-info file.
      */
-    private static final String PACKAGE_INFO = "package-info.java";
+    private static final String PACKAGE_INFO = "package-info" + SFX_JAVA;
 
     /**
      * The package name.
@@ -65,7 +65,7 @@ public class ThemisAnalysisPackage
         thePackage = pPackage;
 
         /* Create directory path and record the location */
-        final String myPath = pPackage.replace(ThemisAnalysisImports.PERIOD_SEP, File.separatorChar);
+        final String myPath = pPackage.replace(ThemisAnalysisChar.PERIOD, File.separatorChar);
         final File myLocation = new File(pLocation, myPath);
 
         /* Create the dataMap */
@@ -166,10 +166,10 @@ public class ThemisAnalysisPackage
      */
     static boolean isPackage(final ThemisAnalysisLine pLine) {
         /* If we are ended by a semi-colon and this is a package line */
-        if (pLine.endsWithChar(ThemisAnalysisBuilder.STATEMENT_END)
+        if (pLine.endsWithChar(ThemisAnalysisChar.SEMICOLON)
              && pLine.isStartedBy(ThemisAnalysisKeyWord.PACKAGE.getKeyWord())) {
             /* Strip the semi-colon and return true */
-            pLine.stripEndChar(ThemisAnalysisBuilder.STATEMENT_END);
+            pLine.stripEndChar(ThemisAnalysisChar.SEMICOLON);
             return true;
         }
 

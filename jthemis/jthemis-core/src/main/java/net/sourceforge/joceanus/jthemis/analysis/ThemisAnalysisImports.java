@@ -19,16 +19,13 @@ package net.sourceforge.joceanus.jthemis.analysis;
 import java.util.ArrayList;
 import java.util.List;
 
+import net.sourceforge.joceanus.jthemis.analysis.ThemisAnalysisDataMap.ThemisAnalysisDataType;
+
 /**
  * The set of imports.
  */
 public class ThemisAnalysisImports
     implements ThemisAnalysisProcessed {
-    /**
-     * Period separator.
-     */
-    static final char PERIOD_SEP = '.';
-
     /**
      * The imports.
      */
@@ -82,10 +79,10 @@ public class ThemisAnalysisImports
      */
     static boolean isImport(final ThemisAnalysisLine pLine) {
         /* If we are ended by a semi-colon and is an import line*/
-        if (pLine.endsWithChar(ThemisAnalysisBuilder.STATEMENT_END)
+        if (pLine.endsWithChar(ThemisAnalysisChar.SEMICOLON)
                 && pLine.isStartedBy(ThemisAnalysisKeyWord.IMPORT.getKeyWord())) {
             /* Strip the semi-colon and return true */
-            pLine.stripEndChar(ThemisAnalysisBuilder.STATEMENT_END);
+            pLine.stripEndChar(ThemisAnalysisChar.SEMICOLON);
             return true;
         }
 
@@ -117,7 +114,7 @@ public class ThemisAnalysisImports
             theFullName = pImport;
 
             /* Strip out the simple name */
-            final int myIndex = theFullName.lastIndexOf(PERIOD_SEP);
+            final int myIndex = theFullName.lastIndexOf(ThemisAnalysisChar.PERIOD);
             theSimpleName = myIndex == -1 ? theFullName : theFullName.substring(myIndex + 1);
         }
 

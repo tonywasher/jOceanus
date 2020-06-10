@@ -22,6 +22,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import net.sourceforge.joceanus.jthemis.analysis.ThemisAnalysisDataMap.ThemisAnalysisDataType;
+
 /**
  * Parser.
  */
@@ -301,7 +303,7 @@ public class ThemisAnalysisParser {
 
             /* Else handle an initializer block */
         } else if (myToken.length() == 1
-                && myToken.charAt(0) == ThemisAnalysisBuilder.BRACE_OPEN) {
+                && myToken.charAt(0) == ThemisAnalysisChar.BRACE_OPEN) {
             /* Create the block */
             theContents.add(new ThemisAnalysisBlock(this, pLine));
             return true;
@@ -422,7 +424,7 @@ public class ThemisAnalysisParser {
         if (myReference != null) {
             /* Access the name of the field or method */
             final String myName = pLine.stripNextToken();
-            final boolean isMethod = pLine.startsWithChar(ThemisAnalysisParenthesis.PARENTHESIS_OPEN);
+            final boolean isMethod = pLine.startsWithChar(ThemisAnalysisChar.PARENTHESIS_OPEN);
             if (!isMethod) {
                 return new ThemisAnalysisField(this, myName, myReference, pLine);
             } else {
@@ -543,8 +545,8 @@ public class ThemisAnalysisParser {
         /* Loop through the line */
         for (;;) {
             /* Strip leading comma */
-            if (pLine.startsWithChar(ThemisAnalysisBuilder.STATEMENT_SEP)) {
-                pLine.stripStartChar(ThemisAnalysisBuilder.STATEMENT_SEP);
+            if (pLine.startsWithChar(ThemisAnalysisChar.COMMA)) {
+                pLine.stripStartChar(ThemisAnalysisChar.COMMA);
             }
 
             /* Access first token */

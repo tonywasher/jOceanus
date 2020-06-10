@@ -1,0 +1,74 @@
+/*******************************************************************************
+ * Themis: Java Project Framework
+ * Copyright 2012,2020 Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ ******************************************************************************/
+package net.sourceforge.joceanus.jthemis.analysis;
+
+import java.util.EnumMap;
+import java.util.Map;
+
+/**
+ * Properties for an element.
+ */
+public final class ThemisAnalysisProperties {
+    /**
+     * Null properties.
+     */
+    static final ThemisAnalysisProperties NULL = new ThemisAnalysisProperties(true);
+
+    /**
+     * The map of Modifiers.
+     */
+    private final Map<ThemisAnalysisModifier, Boolean> theModifiers;
+
+    /**
+     * Constructor.
+     */
+    private ThemisAnalysisProperties() {
+        this(false);
+    }
+
+    /**
+     * Constructor.
+     * @param pNull is this the null element?
+     */
+    private ThemisAnalysisProperties(final boolean pNull) {
+        theModifiers = pNull
+                       ? null
+                       : new EnumMap<>(ThemisAnalysisModifier.class);
+    }
+
+    /**
+     * Is the modifier present?
+     * @param pModifier the modifier
+     * @return true/false
+     */
+    boolean hasModifier(final ThemisAnalysisModifier pModifier) {
+        return theModifiers != null && theModifiers.containsKey(pModifier);
+    }
+
+    /**
+     * Set modifier.
+     * @param pModifier the modifier
+     * @return the updated properties
+     */
+    ThemisAnalysisProperties setModifier(final ThemisAnalysisModifier pModifier) {
+        final ThemisAnalysisProperties myProps = theModifiers == null
+                                                 ? new ThemisAnalysisProperties()
+                                                 : this;
+        myProps.theModifiers.put(pModifier, Boolean.TRUE);
+        return myProps;
+    }
+}

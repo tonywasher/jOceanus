@@ -84,8 +84,8 @@ public class ThemisAnalysisScanner {
             final char myChar = theCurLine.charAt(theCurPos);
 
             /* If this is a single/double quote */
-            if (myChar == ThemisAnalysisLine.SINGLEQUOTE
-                    || myChar == ThemisAnalysisLine.DOUBLEQUOTE) {
+            if (myChar == ThemisAnalysisChar.SINGLEQUOTE
+                    || myChar == ThemisAnalysisChar.DOUBLEQUOTE) {
                 /* Find the end of the sequence and skip the quotes */
                 final int myEnd = theCurLine.findEndOfQuotedSequence(theCurPos);
                 theCurPos = myEnd + 1;
@@ -103,14 +103,14 @@ public class ThemisAnalysisScanner {
                 break;
 
                 /* If this is a parenthesisOpen character */
-            } else if (myChar == ThemisAnalysisParenthesis.PARENTHESIS_OPEN) {
+            } else if (myChar == ThemisAnalysisChar.PARENTHESIS_OPEN) {
                 /* Handle the nested sequence */
-                handleNestedSequence(ThemisAnalysisParenthesis.PARENTHESIS_CLOSE);
+                handleNestedSequence(ThemisAnalysisChar.PARENTHESIS_CLOSE);
 
                 /* If this is a braceOpen character */
-            } else if (myChar == ThemisAnalysisBuilder.BRACE_OPEN) {
+            } else if (myChar == ThemisAnalysisChar.BRACE_OPEN) {
                 /* Handle the nested sequence */
-                handleNestedSequence(ThemisAnalysisBuilder.BRACE_CLOSE);
+                handleNestedSequence(ThemisAnalysisChar.BRACE_CLOSE);
 
                 /* else move to next character */
             } else {

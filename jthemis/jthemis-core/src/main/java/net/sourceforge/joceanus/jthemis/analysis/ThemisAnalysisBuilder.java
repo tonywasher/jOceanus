@@ -24,31 +24,6 @@ import java.util.Deque;
  */
 public final class ThemisAnalysisBuilder {
     /**
-     * Open body.
-     */
-    static final char BRACE_OPEN = '{';
-
-    /**
-     * Close body.
-     */
-    static final char BRACE_CLOSE = '}';
-
-    /**
-     * Case terminator.
-     */
-    static final char CASE_COLON = ':';
-
-    /**
-     * Statement separator.
-     */
-    static final char STATEMENT_SEP = ',';
-
-    /**
-     * Statement terminator.
-     */
-    static final char STATEMENT_END = ';';
-
-    /**
      * Constructor.
      */
     private ThemisAnalysisBuilder() {
@@ -64,7 +39,7 @@ public final class ThemisAnalysisBuilder {
                                                      final ThemisAnalysisLine pLine) {
         /* Allocate scanner */
         final ThemisAnalysisScanner myScanner = new ThemisAnalysisScanner(pParser);
-        return myScanner.scanForTerminator(pLine, BRACE_OPEN);
+        return myScanner.scanForTerminator(pLine, ThemisAnalysisChar.BRACE_OPEN);
     }
 
     /**
@@ -77,7 +52,7 @@ public final class ThemisAnalysisBuilder {
                                                       final ThemisAnalysisLine pLine) {
         /* Allocate scanner */
         final ThemisAnalysisScanner myScanner = new ThemisAnalysisScanner(pParser);
-        return myScanner.scanForTerminator(pLine, STATEMENT_END);
+        return myScanner.scanForTerminator(pLine, ThemisAnalysisChar.SEMICOLON);
     }
 
     /**
@@ -96,14 +71,14 @@ public final class ThemisAnalysisBuilder {
             final ThemisAnalysisLine myLine = (ThemisAnalysisLine) pParser.popNextLine();
 
             /* If we have a closing brace */
-            if (myLine.startsWithChar(BRACE_CLOSE)) {
+            if (myLine.startsWithChar(ThemisAnalysisChar.BRACE_CLOSE)) {
                 /* Decrement nesting */
                 myNest--;
 
                 /* If we have finished the class */
                 if (myNest == 0) {
                     /* Strip start sequence from line */
-                    myLine.stripStartChar(BRACE_CLOSE);
+                    myLine.stripStartChar(ThemisAnalysisChar.BRACE_CLOSE);
 
                     /* Return a non-blank line to the stack and break loop */
                     if (!ThemisAnalysisBlank.isBlank(myLine)) {
@@ -114,7 +89,7 @@ public final class ThemisAnalysisBuilder {
             }
 
             /* Handle start of nested sequence */
-            if (myLine.endsWithChar(BRACE_OPEN)) {
+            if (myLine.endsWithChar(ThemisAnalysisChar.BRACE_OPEN)) {
                 myNest++;
             }
 
@@ -151,9 +126,9 @@ public final class ThemisAnalysisBuilder {
             final ThemisAnalysisLine myLine = (ThemisAnalysisLine) myElement;
 
             /* If we have a closing brace */
-            if (myLine.startsWithChar(BRACE_CLOSE)) {
+            if (myLine.startsWithChar(ThemisAnalysisChar.BRACE_CLOSE)) {
                 /* Strip start sequence from line */
-                myLine.stripStartChar(BRACE_CLOSE);
+                myLine.stripStartChar(ThemisAnalysisChar.BRACE_CLOSE);
                 keepLooking = false;
 
                 /* Return a non-blank line to the stack and break loop */
