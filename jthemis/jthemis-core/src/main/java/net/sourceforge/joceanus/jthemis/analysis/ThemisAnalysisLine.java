@@ -17,6 +17,9 @@
 package net.sourceforge.joceanus.jthemis.analysis;
 
 import java.nio.CharBuffer;
+import java.util.Deque;
+
+import net.sourceforge.joceanus.jthemis.analysis.ThemisAnalysisGeneric.ThemisAnalysisGenericBase;
 
 /**
  * Line buffer.
@@ -75,6 +78,42 @@ public class ThemisAnalysisLine
     ThemisAnalysisLine(final CharBuffer pBuffer) {
         /* Store values */
         theBuffer = pBuffer;
+
+        /* Set null properties */
+        theProperties = ThemisAnalysisProperties.NULL;
+    }
+
+    /**
+     * Constructor.
+     * @param pLine the line
+     */
+    ThemisAnalysisLine(final ThemisAnalysisLine pLine) {
+        /* Store values */
+        final CharBuffer myBuffer = pLine.theBuffer;
+        theBuffer = myBuffer.subSequence(0, myBuffer.length());
+
+        /* Set null properties */
+        theProperties = ThemisAnalysisProperties.NULL;
+    }
+
+    /**
+     * Constructor.
+     * @param pLines the lines
+     */
+    ThemisAnalysisLine(final Deque<ThemisAnalysisElement> pLines) {
+        /* Create a stringBuilder */
+        final StringBuilder myBuilder = new StringBuilder();
+
+        /* Loop through the lines */
+        for (ThemisAnalysisElement myLine : pLines) {
+            myBuilder.append(((ThemisAnalysisLine) myLine).theBuffer);
+            myBuilder.append(ThemisAnalysisChar.BLANK);
+        }
+
+        /* Create the buffer */
+        theBuffer = CharBuffer.wrap(myBuilder.toString());
+        stripLeadingWhiteSpace();
+        stripTrailingWhiteSpace();
 
         /* Set null properties */
         theProperties = ThemisAnalysisProperties.NULL;
@@ -213,11 +252,17 @@ public class ThemisAnalysisLine
         /* Loop while we find a modifier */
         boolean bContinue = true;
         while (bContinue) {
+            /* If we have a generic variable list */
+            if (ThemisAnalysisGeneric.isGeneric(this)) {
+                /* Declare them to the properties */
+                theProperties = theProperties.setGenericVariables(new ThemisAnalysisGenericBase(this));
+            }
+
             /* Access the next token */
             final String nextToken = peekNextToken();
             bContinue = false;
 
-            /* Loop through the modifiers */
+            /* If this is a modifier */
             final ThemisAnalysisModifier myModifier = ThemisAnalysisModifier.findModifier(nextToken);
             if (myModifier != null) {
                 /* Set modifier */

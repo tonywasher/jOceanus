@@ -19,10 +19,12 @@ package net.sourceforge.joceanus.jthemis.analysis;
 import java.util.ArrayList;
 import java.util.Deque;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
 import net.sourceforge.joceanus.jthemis.analysis.ThemisAnalysisDataMap.ThemisAnalysisDataType;
+import net.sourceforge.joceanus.jthemis.analysis.ThemisAnalysisGeneric.ThemisAnalysisGenericBase;
 
 /**
  * Parser.
@@ -426,6 +428,7 @@ public class ThemisAnalysisParser {
             final String myName = pLine.stripNextToken();
             final boolean isMethod = pLine.startsWithChar(ThemisAnalysisChar.PARENTHESIS_OPEN);
             if (!isMethod) {
+                myReference.resolveGeneric(this);
                 return new ThemisAnalysisField(this, myName, myReference, pLine);
             } else {
                 return new ThemisAnalysisMethod(this, myName, myReference, pLine);
@@ -457,11 +460,11 @@ public class ThemisAnalysisParser {
 
         /* Access any generic/array detail */
         final ThemisAnalysisGeneric myGeneric = ThemisAnalysisGeneric.isGeneric(pLine)
-                                                ? new ThemisAnalysisGeneric(pLine)
+                                                ? new ThemisAnalysisGenericBase(pLine)
                                                 : null;
         final ThemisAnalysisArray myArray = ThemisAnalysisArray.isArray(pLine)
-                                                ? new ThemisAnalysisArray(pLine)
-                                                : null;
+                                            ? new ThemisAnalysisArray(pLine)
+                                            : null;
 
         /* Return the reference */
         return new ThemisAnalysisReference(myType, myGeneric, myArray);
@@ -522,49 +525,72 @@ public class ThemisAnalysisParser {
     List<ThemisAnalysisReference> parseAncestors(final Deque<ThemisAnalysisElement> pHeaders) {
         /* Create the list */
         final List<ThemisAnalysisReference> myAncestors = new ArrayList<>();
+        final ThemisAnalysisLine myHeader = new ThemisAnalysisLine(pHeaders);
 
-        /* Loop through the headers */
-        for (ThemisAnalysisElement myElement : pHeaders) {
-            final ThemisAnalysisLine myLine = (ThemisAnalysisLine) myElement;
-
-            /* Process ancestors in this line */
-            processAncestors(myAncestors, myLine);
-        }
-
-        /* return the list */
-        return myAncestors;
-    }
-
-    /**
-     * Process ancestors.
-     * @param pAncestors the list of ancestors
-     * @param pLine the line
-     */
-    void processAncestors(final List<ThemisAnalysisReference> pAncestors,
-                          final ThemisAnalysisLine pLine) {
         /* Loop through the line */
         for (;;) {
             /* Strip leading comma */
-            if (pLine.startsWithChar(ThemisAnalysisChar.COMMA)) {
-                pLine.stripStartChar(ThemisAnalysisChar.COMMA);
+            if (myHeader.startsWithChar(ThemisAnalysisChar.COMMA)) {
+                myHeader.stripStartChar(ThemisAnalysisChar.COMMA);
             }
 
             /* Access first token */
-            final String myToken = pLine.peekNextToken();
+            final String myToken = myHeader.peekNextToken();
             if (myToken.length() == 0) {
-                return;
+                return myAncestors;
             }
 
             /* Ignore keywords */
             if (KEYWORDS.get(myToken) != null) {
                 /* Strip the token from the line */
-                pLine.stripNextToken();
+                myHeader.stripNextToken();
             } else {
-                final ThemisAnalysisReference myReference = parseDataType(pLine);
+                /* Process the ancestor */
+                final ThemisAnalysisReference myReference = parseDataType(myHeader);
                 if (myReference == null) {
                     throw new IllegalStateException("Illegal implements/extends clause");
                 }
-                pAncestors.add(myReference);
+                myReference.resolveGeneric(this);
+                myAncestors.add(myReference);
+            }
+        }
+    }
+
+    /**
+     * Parse parameters.
+     * @param pParams the parameters
+     * @return the parameter map
+     */
+    Map<String, ThemisAnalysisReference> parseParameters(final ThemisAnalysisLine pParams) {
+        /* Create the list */
+        final Map<String, ThemisAnalysisReference> myParams = new LinkedHashMap<>();
+
+        /* Loop through the line */
+        for (;;) {
+            /* Strip leading comma */
+            if (pParams.startsWithChar(ThemisAnalysisChar.COMMA)) {
+                pParams.stripStartChar(ThemisAnalysisChar.COMMA);
+            }
+
+            /* Access first token */
+            final String myToken = pParams.peekNextToken();
+            if (myToken.length() == 0) {
+                return myParams;
+            }
+
+            /* Ignore keywords */
+            if (KEYWORDS.get(myToken) != null) {
+                /* Strip the token from the line */
+                pParams.stripNextToken();
+            } else {
+                /* Process the parameter */
+                final ThemisAnalysisReference myReference = parseDataType(pParams);
+                if (myReference == null) {
+                    throw new IllegalStateException("Illegal parameter");
+                }
+                myReference.resolveGeneric(this);
+                final String myVar = pParams.stripNextToken();
+                myParams.put(myVar, myReference);
             }
         }
     }

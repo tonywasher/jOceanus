@@ -19,6 +19,7 @@ package net.sourceforge.joceanus.jthemis.analysis;
 import java.util.HashMap;
 import java.util.Map;
 
+import net.sourceforge.joceanus.jthemis.analysis.ThemisAnalysisGeneric.ThemisAnalysisGenericVar;
 import net.sourceforge.joceanus.jthemis.analysis.ThemisAnalysisImports.ThemisAnalysisImport;
 
 /**
@@ -140,6 +141,14 @@ public class ThemisAnalysisDataMap {
     }
 
     /**
+     * declare generic variable.
+     * @param pVar the generic variable
+     */
+    void declareGenericVar(final ThemisAnalysisGenericVar pVar) {
+        theLocalTypes.put(pVar.getName(), pVar);
+    }
+
+    /**
      * Loop through the localTypes and update from classMap.
      */
     void updateFromClassMap() {
@@ -202,7 +211,7 @@ public class ThemisAnalysisDataMap {
          */
         ThemisAnalysisDataTypeWrapper(final ThemisAnalysisFile pFile) {
             theName = pFile.getName();
-            theFullName = pFile.getPackage() + ThemisAnalysisChar.PERIOD + theName;
+            theFullName = pFile.getPackageName() + ThemisAnalysisChar.PERIOD + theName;
             theDataType = pFile;
         }
 

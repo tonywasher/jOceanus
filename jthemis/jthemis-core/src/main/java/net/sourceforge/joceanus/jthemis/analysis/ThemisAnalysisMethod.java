@@ -45,11 +45,6 @@ public class ThemisAnalysisMethod
     private final ThemisAnalysisProperties theProperties;
 
     /**
-     * The headers.
-     */
-    private final Deque<ThemisAnalysisElement> theHeaders;
-
-    /**
      * The contents.
      */
     private final Deque<ThemisAnalysisElement> theContents;
@@ -58,6 +53,11 @@ public class ThemisAnalysisMethod
      * The dataMap.
      */
     private final ThemisAnalysisDataMap theDataMap;
+
+    /**
+     * The parameters.
+     */
+    private final ThemisAnalysisParameters theParameters;
 
     /**
      * The number of lines.
@@ -93,11 +93,12 @@ public class ThemisAnalysisMethod
         /* Determine whether this method is abstract */
         final boolean isInterface = theParent instanceof ThemisAnalysisInterface;
         final boolean markedDefault = theProperties.hasModifier(ThemisAnalysisModifier.DEFAULT);
+        final boolean markedStatic = theProperties.hasModifier(ThemisAnalysisModifier.STATIC);
         final boolean markedAbstract = theProperties.hasModifier(ThemisAnalysisModifier.ABSTRACT);
-        final boolean isAbstract = markedAbstract || (isInterface && !markedDefault);
+        final boolean isAbstract = markedAbstract || (isInterface && !markedDefault && !markedStatic);
 
         /* Parse the headers */
-        theHeaders = isAbstract
+        final Deque<ThemisAnalysisElement> myHeaders = isAbstract
                         ? ThemisAnalysisBuilder.parseTrailers(pParser, pLine)
                         : ThemisAnalysisBuilder.parseHeaders(pParser, pLine);
 
@@ -107,11 +108,21 @@ public class ThemisAnalysisMethod
                        : ThemisAnalysisBuilder.processMethodBody(pParser);
         final int myBaseLines = theContents.size();
 
+        /* Create a parser */
+        final ThemisAnalysisParser myParser = new ThemisAnalysisParser(myHeaders, theContents, this);
+
+        /* Resolve the generics */
+        theProperties.resolveGeneric(myParser);
+        theReference.resolveGeneric(myParser);
+
+        /* resolve the parameters */
+        theParameters = new ThemisAnalysisParameters(myParser, myHeaders);
+
         /* Post process the lines */
         postProcessLines();
 
         /* Calculate the number of lines */
-        theNumLines = calculateNumLines(myBaseLines);
+        theNumLines = calculateNumLines(myBaseLines, myHeaders.size());
     }
 
     /**
@@ -129,7 +140,7 @@ public class ThemisAnalysisMethod
 
     @Override
     public ThemisAnalysisContainer getParent() {
-        return theParent;
+        return this;
     }
 
     @Override
@@ -145,11 +156,13 @@ public class ThemisAnalysisMethod
     /**
      * Calculate the number of lines for the construct.
      * @param pBaseCount the baseCount
+     * @param pHdrCount the header line count
      * @return the number of lines
      */
-    public int calculateNumLines(final int pBaseCount) {
+    public int calculateNumLines(final int pBaseCount,
+                                 final int pHdrCount) {
         /* Add 1+ line(s) for the class headers  */
-        int myNumLines = pBaseCount + Math.max(theHeaders.size() - 1, 1);
+        int myNumLines = pBaseCount + Math.max(pHdrCount - 1, 1);
 
         /* Loop through the contents */
         for (ThemisAnalysisElement myElement : theContents) {
@@ -165,7 +178,7 @@ public class ThemisAnalysisMethod
     @Override
     public String toString() {
         return isInitializer
-               ? getName() + "()"
-               : theReference.toString() + " " + getName() + "()";
+               ? getName() + theParameters.toString()
+               : theReference.toString() + " " + getName() + theParameters.toString();
     }
 }

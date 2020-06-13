@@ -79,9 +79,24 @@ public enum ThemisAnalysisPrimitive
     STRING("String"),
 
     /**
+     * CharSequence.
+     */
+    CHARSEQ("CharSequence"),
+
+    /**
+     * StringBuilder.
+     */
+    STRINGBLDR("StringBuilder"),
+
+    /**
+     * Comparable.
+     */
+    COMPARABLE("Comparable"),
+
+    /**
      * Void.
      */
-    VOID("void");
+    VOID("void", "Void");
 
     /**
      * The modifier.

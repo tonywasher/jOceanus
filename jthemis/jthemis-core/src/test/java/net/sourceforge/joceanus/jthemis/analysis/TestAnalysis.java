@@ -26,14 +26,46 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
  */
 public class TestAnalysis {
     /**
+     * The path base.
+     */
+    private static final String PATH_BASE = "c:/Users/Tony/gitNew/jOceanus/";
+
+    /**
+     * The path xtra.
+     */
+    private static final String PATH_XTRA = "/src/main/java";
+
+    /**
+     * The package base.
+     */
+    private static final String PACKAGE_BASE = "net.sourceforge.joceanus.";
+
+    /**
      * Main.
      * @param pArgs the arguments
      */
     public static void main(final String[] pArgs) {
+        testPackage("jthemis-core", "analysis");
+    }
+
+    /**
+     * Test a package.
+     * @param pModule the module name.
+     * @param pPackage the package name
+     */
+    private static void testPackage(final String pModule,
+                                    final String pPackage) {
+        /* Determine the module root */
+        final int myIndex = pModule.indexOf('-');
+        final String myRoot = pModule.substring(0, myIndex);
+
+        /* Determine full module/package names */
+        final String myModule = PATH_BASE + myRoot + ThemisAnalysisChar.COMMENT + pModule + PATH_XTRA;
+        final String myPackage = PACKAGE_BASE + myRoot + ThemisAnalysisChar.PERIOD + pPackage;
+
+        /* Protect against exceptions */
         try {
-            final String myBase = "c:/Users/Tony/gitNew/jOceanus/jthemis/jthemis-core/src/main/java";
-            final String myName = "net.sourceforge.joceanus.jthemis.analysis";
-            final ThemisAnalysisPackage myPackage = new ThemisAnalysisPackage(new File(myBase), myName);
+            final ThemisAnalysisPackage myPack = new ThemisAnalysisPackage(new File(myModule), myPackage);
             int i = 0;
         } catch (OceanusException e) {
             e.printStackTrace();

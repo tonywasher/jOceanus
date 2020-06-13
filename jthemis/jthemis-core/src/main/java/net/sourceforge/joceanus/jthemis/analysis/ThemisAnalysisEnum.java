@@ -22,12 +22,14 @@ import java.util.Deque;
 import java.util.List;
 
 import net.sourceforge.joceanus.jthemis.analysis.ThemisAnalysisDataMap.ThemisAnalysisDataType;
+import net.sourceforge.joceanus.jthemis.analysis.ThemisAnalysisFile.ThemisAnalysisObject;
+import net.sourceforge.joceanus.jthemis.analysis.ThemisAnalysisGeneric.ThemisAnalysisGenericBase;
 
 /**
  * Enum representation.
  */
 public class ThemisAnalysisEnum
-        implements ThemisAnalysisContainer, ThemisAnalysisDataType {
+        implements ThemisAnalysisContainer, ThemisAnalysisObject, ThemisAnalysisDataType {
     /**
      * The short name of the class.
      */
@@ -37,11 +39,6 @@ public class ThemisAnalysisEnum
      * The full name of the class.
      */
     private final String theFullName;
-
-    /**
-     * The properties.
-     */
-    private final ThemisAnalysisProperties theProperties;
 
     /**
      * The ancestors.
@@ -69,6 +66,11 @@ public class ThemisAnalysisEnum
     private final int theNumLines;
 
     /**
+     * The properties.
+     */
+    private ThemisAnalysisProperties theProperties;
+
+    /**
      * Constructor.
      * @param pParser the parser
      * @param pLine the initial enum line
@@ -82,23 +84,34 @@ public class ThemisAnalysisEnum
         final ThemisAnalysisContainer myParent = pParser.getParent();
         theDataMap = new ThemisAnalysisDataMap(myParent.getDataMap());
 
+        /* Handle generic variables */
+        if (ThemisAnalysisGeneric.isGeneric(pLine)) {
+            /* Declare them to the properties */
+            theProperties = theProperties.setGenericVariables(new ThemisAnalysisGenericBase(pLine));
+        }
+
         /* Determine the full name */
-        theFullName = myParent.getPackage() + ThemisAnalysisChar.PERIOD + theShortName;
+        theFullName = myParent.determineFullChildName(theShortName);
+
+        /* declare the enum */
+        theDataMap.declareEnum(this);
 
         /* Parse the headers */
         final Deque<ThemisAnalysisElement> myHeaders = ThemisAnalysisBuilder.parseHeaders(pParser, pLine);
-        theAncestors = pParser.parseAncestors(myHeaders);
 
         /* Parse the body */
         final Deque<ThemisAnalysisElement> myLines = ThemisAnalysisBuilder.processBody(pParser);
         final int myBaseLines = myLines.size();
 
-        /* declare the enum */
-        theDataMap.declareEnum(this);
-
         /* Create a parser */
         theContents = new ArrayDeque<>();
         final ThemisAnalysisParser myParser = new ThemisAnalysisParser(myLines, theContents, this);
+
+        /* Resolve the generics */
+        theProperties.resolveGeneric(myParser);
+
+        /* Parse the ancestors and lines */
+        theAncestors = myParser.parseAncestors(myHeaders);
         processLines(myParser);
 
         /* Calculate the number of lines */
@@ -168,10 +181,7 @@ public class ThemisAnalysisEnum
         return theShortName;
     }
 
-    /**
-     * Obtain the full name.
-     * @return the name
-     */
+    @Override
     public String getFullName() {
         return theFullName;
     }

@@ -36,6 +36,17 @@ import net.sourceforge.joceanus.jthemis.analysis.ThemisAnalysisDataMap.ThemisAna
 public class ThemisAnalysisFile
     implements ThemisAnalysisContainer, ThemisAnalysisDataType {
     /**
+     * Object class.
+     */
+    interface ThemisAnalysisObject {
+        /**
+         * Obtain the full name of the object.
+         * @return the fullName
+         */
+        String getFullName();
+    }
+
+    /**
      * The buffer length (must be longer than longest line).
      */
     private static final int BUFLEN = 1024;
@@ -154,8 +165,11 @@ public class ThemisAnalysisFile
         return this;
     }
 
-    @Override
-    public String getPackage() {
+    /**
+     * Obtain the package.
+     * @return the package
+     */
+    String getPackageName() {
         return thePackage.getPackage();
     }
 

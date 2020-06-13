@@ -16,32 +16,16 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jthemis.analysis;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.ListIterator;
+
+import net.sourceforge.joceanus.jthemis.analysis.ThemisAnalysisDataMap.ThemisAnalysisDataType;
+
 /**
  * Generic construct.
  */
-public class ThemisAnalysisGeneric {
-    /**
-     * The contents of the generic.
-     */
-    private final ThemisAnalysisLine theContents;
-
-    /**
-     * Constructor.
-     * @param pLine the line
-     */
-    ThemisAnalysisGeneric(final ThemisAnalysisLine pLine) {
-        /* Find the end of the generic sequence */
-        final int myEnd = pLine.findEndOfNestedSequence(0, 0,  ThemisAnalysisChar.GENERIC_CLOSE, ThemisAnalysisChar.GENERIC_OPEN);
-        if (myEnd < 0) {
-            throw new IllegalStateException("End character not found");
-        }
-
-        /* Obtain the contents */
-        theContents = pLine.stripUpToPosition(myEnd);
-        theContents.stripStartChar(ThemisAnalysisChar.GENERIC_OPEN);
-        theContents.stripEndChar(ThemisAnalysisChar.GENERIC_CLOSE);
-    }
-
+public interface ThemisAnalysisGeneric {
     /**
      * Is the line a generic?
      * @param pLine the line
@@ -52,8 +36,242 @@ public class ThemisAnalysisGeneric {
         return pLine.startsWithChar(ThemisAnalysisChar.GENERIC_OPEN);
     }
 
-    @Override
-    public String toString() {
-        return "" + ThemisAnalysisChar.GENERIC_OPEN + theContents + ThemisAnalysisChar.GENERIC_CLOSE;
+    /**
+     * Generic Base.
+     */
+    class ThemisAnalysisGenericBase
+            implements ThemisAnalysisGeneric {
+        /**
+         * The contents of the generic.
+         */
+        private final ThemisAnalysisLine theContents;
+
+        /**
+         * Constructor.
+         * @param pLine the line
+         */
+        ThemisAnalysisGenericBase(final ThemisAnalysisLine pLine) {
+            /* Find the end of the generic sequence */
+            final int myEnd = pLine.findEndOfNestedSequence(0, 0,  ThemisAnalysisChar.GENERIC_CLOSE, ThemisAnalysisChar.GENERIC_OPEN);
+            if (myEnd < 0) {
+                throw new IllegalStateException("End character not found");
+            }
+
+            /* Obtain the contents */
+            theContents = pLine.stripUpToPosition(myEnd);
+            theContents.stripStartChar(ThemisAnalysisChar.GENERIC_OPEN);
+            theContents.stripEndChar(ThemisAnalysisChar.GENERIC_CLOSE);
+        }
+
+        /**
+         * Obtain the line.
+         * @return the line
+         */
+        ThemisAnalysisLine getLine() {
+            return theContents;
+        }
+
+        @Override
+        public String toString() {
+            return "" + ThemisAnalysisChar.GENERIC_OPEN + theContents + ThemisAnalysisChar.GENERIC_CLOSE;
+        }
+    }
+
+    /**
+     * Generic Reference.
+     */
+    class ThemisAnalysisGenericRef
+            implements ThemisAnalysisGeneric {
+        /**
+         * The base generic.
+         */
+        private final ThemisAnalysisGenericBase theBase;
+
+        /**
+         * The list of references.
+         */
+        private final List<ThemisAnalysisReference> theReferences;
+
+        /**
+         * Constructor.
+         * @param pParser the parser
+         * @param pBase the base generic line
+         */
+        ThemisAnalysisGenericRef(final ThemisAnalysisParser pParser,
+                                 final ThemisAnalysisGenericBase pBase) {
+            /* Create the list */
+            theBase = pBase;
+            theReferences = new ArrayList<>();
+
+            /* Take a copy of the buffer */
+            final ThemisAnalysisLine myLine = new ThemisAnalysisLine(theBase.getLine());
+
+            /* Loop through the line */
+            for (;;) {
+                /* Strip leading comma */
+                if (myLine.startsWithChar(ThemisAnalysisChar.COMMA)) {
+                    myLine.stripStartChar(ThemisAnalysisChar.COMMA);
+                }
+
+                /* Access first token */
+                final String myToken = myLine.peekNextToken();
+                if (myToken.length() == 0) {
+                    return;
+                }
+
+                final ThemisAnalysisReference myReference = pParser.parseDataType(myLine);
+                if (myReference == null) {
+                    throw new IllegalStateException("Illegal generic parameter");
+                }
+                myReference.resolveGeneric(pParser);
+                theReferences.add(myReference);
+            }
+        }
+
+        /**
+         * Obtain the list of references.
+         * @return the list
+         */
+        public List<ThemisAnalysisReference> getReferences() {
+            return theReferences;
+        }
+
+        @Override
+        public String toString() {
+            return theBase.toString();
+        }
+    }
+
+    /**
+     * Generic Variable List.
+     */
+    class ThemisAnalysisGenericVarList
+            implements ThemisAnalysisGeneric {
+        /**
+         * The base generic.
+         */
+        private final ThemisAnalysisGenericBase theBase;
+
+        /**
+         * The list of variables.
+         */
+        private final List<ThemisAnalysisGenericVar> theVariables;
+
+        /**
+         * Constructor.
+         * @param pParser the parser
+         * @param pBase the base generic line
+         */
+        ThemisAnalysisGenericVarList(final ThemisAnalysisParser pParser,
+                                     final ThemisAnalysisGenericBase pBase) {
+            /* Create the list */
+            theBase = pBase;
+            theVariables = new ArrayList<>();
+
+            /* Take a copy of the buffer */
+            final ThemisAnalysisLine myLine = new ThemisAnalysisLine(theBase.getLine());
+
+            /* Loop through the line */
+            for (;;) {
+                /* Strip leading comma */
+                if (myLine.startsWithChar(ThemisAnalysisChar.COMMA)) {
+                    myLine.stripStartChar(ThemisAnalysisChar.COMMA);
+                }
+
+                /* Access name of variable */
+                final String myName = myLine.stripNextToken();
+                if (myName.length() == 0) {
+                    addToDataList(pParser);
+                    return;
+                }
+
+                /* Create list */
+                final List<ThemisAnalysisReference> myRefs = new ArrayList<>();
+
+                /* If we have an extension */
+                final String myNext = myLine.peekNextToken();
+                if (myNext.equals(ThemisAnalysisKeyWord.EXTENDS.getKeyWord())) {
+                    /* Access data type */
+                    myLine.stripNextToken();
+                    final ThemisAnalysisReference myRef = pParser.parseDataType(myLine);
+                    myRefs.add(myRef);
+                }
+
+                /* Create the variable */
+                final ThemisAnalysisGenericVar myVar = new ThemisAnalysisGenericVar(myName, myRefs);
+                theVariables.add(myVar);
+            }
+        }
+
+        /**
+         * Add to dataList.
+         * @param pParser the parser
+         */
+        private void addToDataList(final ThemisAnalysisParser pParser) {
+            /* Access the dataMap */
+            final ThemisAnalysisDataMap myMap = pParser.getDataMap();
+
+            /* Loop through the variables in reverse order */
+            final ListIterator<ThemisAnalysisGenericVar> myIterator = theVariables.listIterator(theVariables.size());
+            while (myIterator.hasPrevious()) {
+                final ThemisAnalysisGenericVar myVar = myIterator.previous();
+
+                /* Resolve generic details and add to dataMap */
+                myVar.resolveGeneric(pParser);
+                myMap.declareGenericVar(myVar);
+            }
+        }
+
+        @Override
+        public String toString() {
+            return theBase.toString();
+        }
+    }
+
+    /**
+     * Generic Variable.
+     */
+    class ThemisAnalysisGenericVar
+            implements ThemisAnalysisGeneric, ThemisAnalysisDataType {
+        /**
+         * The name of the variable.
+         */
+        private final String theName;
+
+        /**
+         * The list of references.
+         */
+        private final List<ThemisAnalysisReference> theReferences;
+
+        /**
+         * Constructor.
+         * @param pName the name
+         * @param pReferences the references
+         */
+        ThemisAnalysisGenericVar(final String pName,
+                                 final List<ThemisAnalysisReference> pReferences) {
+            /* Record parameters */
+            theName = pName;
+            theReferences = pReferences;
+        }
+
+        /**
+         * Obtain the name.
+         * @return the name
+         */
+        String getName() {
+            return theName;
+        }
+
+        /**
+         * Resolve the generic references.
+         * @param pParser the parser
+         */
+        public void resolveGeneric(final ThemisAnalysisParser pParser) {
+            /* Loop through resolving the references */
+            for (ThemisAnalysisReference myRef : theReferences) {
+                myRef.resolveGeneric(pParser);
+            }
+        }
     }
 }

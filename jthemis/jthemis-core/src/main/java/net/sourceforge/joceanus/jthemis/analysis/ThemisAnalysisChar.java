@@ -126,4 +126,23 @@ public final class ThemisAnalysisChar {
      */
     static final char ARRAY_CLOSE = ']';
 
+    /**
+     * Blank.
+     */
+    static final char BLANK = ' ';
+
+    /**
+     * QuestionMark.
+     */
+    static final char QUESTION = '?';
+
+    /**
+     * And symbol.
+     */
+    static final char AND = '&';
+
+    /**
+     * Or symbol.
+     */
+    static final char OR = '|';
 }

@@ -17,6 +17,8 @@
 package net.sourceforge.joceanus.jthemis.analysis;
 
 import net.sourceforge.joceanus.jthemis.analysis.ThemisAnalysisDataMap.ThemisAnalysisDataType;
+import net.sourceforge.joceanus.jthemis.analysis.ThemisAnalysisGeneric.ThemisAnalysisGenericBase;
+import net.sourceforge.joceanus.jthemis.analysis.ThemisAnalysisGeneric.ThemisAnalysisGenericRef;
 
 /**
  * Reference structure.
@@ -30,7 +32,7 @@ public class ThemisAnalysisReference {
     /**
      * The generic.
      */
-    private final ThemisAnalysisGeneric theGeneric;
+    private ThemisAnalysisGeneric theGeneric;
 
     /**
      * The array.
@@ -50,6 +52,17 @@ public class ThemisAnalysisReference {
         theDataType = pDataType;
         theGeneric = pGeneric;
         theArray = pArray;
+    }
+
+    /**
+     * Resolve the generic reference.
+     * @param pParser the parser
+     */
+    void resolveGeneric(final ThemisAnalysisParser pParser) {
+        /* Resolve any generic base instance */
+        if (theGeneric instanceof ThemisAnalysisGenericBase) {
+            theGeneric = new ThemisAnalysisGenericRef(pParser, (ThemisAnalysisGenericBase) theGeneric);
+        }
     }
 
     @Override

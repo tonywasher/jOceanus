@@ -19,6 +19,8 @@ package net.sourceforge.joceanus.jthemis.analysis;
 import java.util.ArrayDeque;
 import java.util.Deque;
 
+import net.sourceforge.joceanus.jthemis.analysis.ThemisAnalysisFile.ThemisAnalysisObject;
+
 /**
  * Interface for containers that require postProcessing.
  */
@@ -45,11 +47,22 @@ public interface ThemisAnalysisContainer
     ThemisAnalysisContainer getParent();
 
     /**
-     * Obtain the package of this container.
-     * @return the package
+     * Determine the full name of the child object.
+     * @param pChildName the child name
+     * @return the fullName
      */
-    default String getPackage() {
-        return getParent().getPackage();
+    default String determineFullChildName(final String pChildName) {
+        /* Loop */
+        ThemisAnalysisContainer myContainer = this;
+        for (;;) {
+            if (myContainer instanceof ThemisAnalysisObject) {
+                return ((ThemisAnalysisObject) myContainer).getFullName() + ThemisAnalysisChar.PERIOD + pChildName;
+            }
+            if (myContainer instanceof ThemisAnalysisFile) {
+                return ((ThemisAnalysisFile) myContainer).getPackageName() + ThemisAnalysisChar.PERIOD + pChildName;
+            }
+            myContainer = myContainer.getParent();
+        }
     }
 
     /**

@@ -19,6 +19,9 @@ package net.sourceforge.joceanus.jthemis.analysis;
 import java.util.EnumMap;
 import java.util.Map;
 
+import net.sourceforge.joceanus.jthemis.analysis.ThemisAnalysisGeneric.ThemisAnalysisGenericBase;
+import net.sourceforge.joceanus.jthemis.analysis.ThemisAnalysisGeneric.ThemisAnalysisGenericVarList;
+
 /**
  * Properties for an element.
  */
@@ -29,9 +32,19 @@ public final class ThemisAnalysisProperties {
     static final ThemisAnalysisProperties NULL = new ThemisAnalysisProperties(true);
 
     /**
+     * Is this the null entry?
+     */
+    private final boolean isNull;
+
+    /**
      * The map of Modifiers.
      */
     private final Map<ThemisAnalysisModifier, Boolean> theModifiers;
+
+    /**
+     * The generic variable list.
+     */
+    private ThemisAnalysisGeneric theGenericVars;
 
     /**
      * Constructor.
@@ -45,7 +58,8 @@ public final class ThemisAnalysisProperties {
      * @param pNull is this the null element?
      */
     private ThemisAnalysisProperties(final boolean pNull) {
-        theModifiers = pNull
+        isNull = pNull;
+        theModifiers = isNull
                        ? null
                        : new EnumMap<>(ThemisAnalysisModifier.class);
     }
@@ -56,7 +70,7 @@ public final class ThemisAnalysisProperties {
      * @return true/false
      */
     boolean hasModifier(final ThemisAnalysisModifier pModifier) {
-        return theModifiers != null && theModifiers.containsKey(pModifier);
+        return !isNull && theModifiers.containsKey(pModifier);
     }
 
     /**
@@ -65,10 +79,34 @@ public final class ThemisAnalysisProperties {
      * @return the updated properties
      */
     ThemisAnalysisProperties setModifier(final ThemisAnalysisModifier pModifier) {
-        final ThemisAnalysisProperties myProps = theModifiers == null
+        final ThemisAnalysisProperties myProps = isNull
                                                  ? new ThemisAnalysisProperties()
                                                  : this;
         myProps.theModifiers.put(pModifier, Boolean.TRUE);
         return myProps;
+    }
+
+    /**
+     * Set the generic variable list.
+     * @param pGeneric the generic variables
+     * @return the updated properties
+     */
+    ThemisAnalysisProperties setGenericVariables(final ThemisAnalysisGeneric pGeneric) {
+        final ThemisAnalysisProperties myProps = isNull
+                                                 ? new ThemisAnalysisProperties()
+                                                 : this;
+        myProps.theGenericVars = pGeneric;
+        return myProps;
+    }
+
+    /**
+     * Resolve the generic variables.
+     * @param pParser the parser
+     */
+    void resolveGeneric(final ThemisAnalysisParser pParser) {
+        /* Resolve any generic base instance */
+        if (theGenericVars instanceof ThemisAnalysisGenericBase) {
+            theGenericVars = new ThemisAnalysisGenericVarList(pParser, (ThemisAnalysisGenericBase) theGenericVars);
+        }
     }
 }
