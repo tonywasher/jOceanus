@@ -94,6 +94,11 @@ public enum ThemisAnalysisPrimitive
     COMPARABLE("Comparable"),
 
     /**
+     * Throwable.
+     */
+    THROWABLE("Throwable"),
+
+    /**
      * Void.
      */
     VOID("void", "Void");

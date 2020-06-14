@@ -119,12 +119,21 @@ public interface ThemisAnalysisGeneric {
                     return;
                 }
 
-                final ThemisAnalysisReference myReference = pParser.parseDataType(myLine);
-                if (myReference == null) {
-                    throw new IllegalStateException("Illegal generic parameter");
+                /* Handle generic wildcard */
+                if (myToken.length() == 1 && myToken.charAt(0) == ThemisAnalysisChar.QUESTION) {
+                    myLine.stripNextToken();
+                    final ThemisAnalysisGenericVar myVar = new ThemisAnalysisGenericVar(myToken,new ArrayList<>());
+                    theReferences.add(new ThemisAnalysisReference(myVar, null, null));
+
+                    /* else handle standard generic */
+                } else {
+                    final ThemisAnalysisReference myReference = pParser.parseDataType(myLine);
+                    if (myReference == null) {
+                        throw new IllegalStateException("Illegal generic parameter");
+                    }
+                    myReference.resolveGeneric(pParser);
+                    theReferences.add(myReference);
                 }
-                myReference.resolveGeneric(pParser);
-                theReferences.add(myReference);
             }
         }
 
@@ -195,6 +204,10 @@ public interface ThemisAnalysisGeneric {
                     myLine.stripNextToken();
                     final ThemisAnalysisReference myRef = pParser.parseDataType(myLine);
                     myRefs.add(myRef);
+
+                    if (myLine.getLength() > 0) {
+                        throw new IllegalStateException("Additional data for generic");
+                    }
                 }
 
                 /* Create the variable */
