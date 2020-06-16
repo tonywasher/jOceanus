@@ -19,7 +19,7 @@ package net.sourceforge.joceanus.jthemis.analysis;
 import java.util.ArrayList;
 import java.util.List;
 
-import net.sourceforge.joceanus.jthemis.analysis.ThemisAnalysisDataMap.ThemisAnalysisDataType;
+import net.sourceforge.joceanus.jthemis.analysis.ThemisAnalysisDataMap.ThemisAnalysisIntermediate;
 
 /**
  * The set of imports.
@@ -94,7 +94,7 @@ public class ThemisAnalysisImports
      * Import line.
      */
     static class ThemisAnalysisImport
-            implements ThemisAnalysisElement, ThemisAnalysisDataType {
+            implements ThemisAnalysisElement, ThemisAnalysisIntermediate {
         /**
          * The full name.
          */

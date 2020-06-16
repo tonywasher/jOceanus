@@ -287,7 +287,7 @@ public class TestAnalysis {
      * PrometheusServices.
      */
     private static void testPrometheusServices() {
-        //testPackage("jprometheus-services/jprometheus-sheet-api", "service.sheet");
+        testPackage("jprometheus-services/jprometheus-sheet-api", "service.sheet");
         testPackage("jprometheus-services/jprometheus-sheet-hssf", "service.sheet.hssf");
         testPackage("jprometheus-services/jprometheus-sheet-odf", "service.sheet.odf");
         testPackage("jprometheus-services/jprometheus-sheet-xssf", "service.sheet.xssf");

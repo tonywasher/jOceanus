@@ -249,8 +249,9 @@ public class ThemisAnalysisParser {
                     theContents.add(new ThemisAnalysisClass(this, pLine));
                     return true;
 
-                /* If this is an interface */
+                /* If this is an interface/annotation */
                 case INTERFACE:
+                case ANNOTATION:
                     /* Create the interface */
                     pLine.stripStartSequence(myToken);
                     theContents.add(new ThemisAnalysisInterface(this, pLine));
@@ -514,9 +515,15 @@ public class ThemisAnalysisParser {
      */
     ThemisAnalysisReference parseDataType(final ThemisAnalysisLine pLine) {
         /* Cannot be started by a keyWord */
-        final String myToken = pLine.peekNextToken();
+        String myToken = pLine.peekNextToken();
         if (KEYWORDS.get(myToken) != null) {
             throw new IllegalStateException("DataType required but keyWord found");
+        }
+
+        /* If the token ends with the VARARGS indication */
+        if (myToken.endsWith(ThemisAnalysisArray.VARARGS)) {
+            /* Strip the varArgs indication */
+            myToken = myToken.substring(0, myToken.length() - ThemisAnalysisArray.VARARGS.length());
         }
 
         /* Look for a valid dataType */
@@ -548,7 +555,9 @@ public class ThemisAnalysisParser {
                                             : null;
 
         /* Return the reference */
-        return new ThemisAnalysisReference(pType, myGeneric, myArray);
+        final ThemisAnalysisReference myRef = new ThemisAnalysisReference(pType, myGeneric, myArray);
+        theDataMap.declareReference(myRef);
+        return myRef;
     }
 
     /**

@@ -28,13 +28,13 @@ import java.util.Deque;
 
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jthemis.ThemisDataException;
-import net.sourceforge.joceanus.jthemis.analysis.ThemisAnalysisDataMap.ThemisAnalysisDataType;
+import net.sourceforge.joceanus.jthemis.analysis.ThemisAnalysisDataMap.ThemisAnalysisIntermediate;
 
 /**
  * Analysis representation of a java file.
  */
 public class ThemisAnalysisFile
-    implements ThemisAnalysisContainer, ThemisAnalysisDataType {
+    implements ThemisAnalysisContainer, ThemisAnalysisIntermediate {
     /**
      * Object class.
      */
@@ -334,6 +334,9 @@ public class ThemisAnalysisFile
             if (!thePackage.getPackage().equals(pLine.toString())) {
                 throw new IllegalStateException("Bad package");
             }
+
+            /* Setup the file resources */
+            theDataMap.setUpFileResoureces();
 
             /* Declare all the files in this package to the dataMap */
             for (ThemisAnalysisFile myFile : thePackage.getFiles()) {

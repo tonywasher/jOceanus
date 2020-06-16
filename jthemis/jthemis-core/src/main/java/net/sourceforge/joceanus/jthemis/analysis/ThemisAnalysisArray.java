@@ -21,6 +21,11 @@ package net.sourceforge.joceanus.jthemis.analysis;
  */
 public class ThemisAnalysisArray {
     /**
+     * The varArgs notation.
+     */
+    static final String VARARGS = "...";
+
+    /**
      * The array notation.
      */
     private final String theNotation;
@@ -30,6 +35,13 @@ public class ThemisAnalysisArray {
      * @param pLine the line
      */
     ThemisAnalysisArray(final ThemisAnalysisLine pLine) {
+        /* If the token is VARARGS */
+        if (pLine.peekNextToken().equals(VARARGS)) {
+            pLine.stripNextToken();
+            theNotation = VARARGS;
+            return;
+        }
+
         /* Loop while we have an array start */
         int myDepth = 0;
         while (pLine.startsWithChar(ThemisAnalysisChar.ARRAY_OPEN)) {
@@ -56,8 +68,9 @@ public class ThemisAnalysisArray {
      * @return true/false
      */
     static boolean isArray(final ThemisAnalysisLine pLine) {
-        /* If we are started with an ARRAY_OPEN */
-        return pLine.startsWithChar(ThemisAnalysisChar.ARRAY_OPEN);
+        /* If we are started with an ARRAY_OPEN or we have args */
+        return pLine.startsWithChar(ThemisAnalysisChar.ARRAY_OPEN)
+                || pLine.peekNextToken().equals(VARARGS);
     }
 
     @Override

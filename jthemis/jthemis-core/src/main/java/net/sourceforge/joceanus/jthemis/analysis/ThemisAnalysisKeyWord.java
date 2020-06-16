@@ -46,6 +46,11 @@ public enum ThemisAnalysisKeyWord {
     INTERFACE("interface"),
 
     /**
+     * Annotation.
+     */
+    ANNOTATION("@interface"),
+
+    /**
      * Extends.
      */
     EXTENDS("extends"),

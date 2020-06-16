@@ -25,11 +25,6 @@ import net.sourceforge.joceanus.jthemis.analysis.ThemisAnalysisGeneric.ThemisAna
  */
 public class ThemisAnalysisReference {
     /**
-     * The dataType.
-     */
-    private final ThemisAnalysisDataType theDataType;
-
-    /**
      * The generic.
      */
     private ThemisAnalysisGeneric theGeneric;
@@ -38,6 +33,11 @@ public class ThemisAnalysisReference {
      * The array.
      */
     private final ThemisAnalysisArray theArray;
+
+    /**
+     * The dataType.
+     */
+    private ThemisAnalysisDataType theDataType;
 
     /**
      * Constructor.
@@ -55,6 +55,14 @@ public class ThemisAnalysisReference {
     }
 
     /**
+     * Obtain the dataType.
+     * @return the dataType
+     */
+    ThemisAnalysisDataType getDataType() {
+        return theDataType;
+    }
+
+    /**
      * Resolve the generic reference.
      * @param pParser the parser
      */
@@ -63,6 +71,14 @@ public class ThemisAnalysisReference {
         if (theGeneric instanceof ThemisAnalysisGenericBase) {
             theGeneric = new ThemisAnalysisGenericRef(pParser, (ThemisAnalysisGenericBase) theGeneric);
         }
+    }
+
+    /**
+     * Update the dataType.
+     * @param pType the updated type
+     */
+    void updateDataType(final ThemisAnalysisDataType pType) {
+        theDataType = pType;
     }
 
     @Override

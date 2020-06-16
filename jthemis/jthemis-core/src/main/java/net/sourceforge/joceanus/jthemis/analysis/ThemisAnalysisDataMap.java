@@ -16,8 +16,11 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jthemis.analysis;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import net.sourceforge.joceanus.jthemis.analysis.ThemisAnalysisGeneric.ThemisAnalysisGenericVar;
 import net.sourceforge.joceanus.jthemis.analysis.ThemisAnalysisImports.ThemisAnalysisImport;
@@ -30,6 +33,12 @@ public class ThemisAnalysisDataMap {
      * Marker interface for dataType.
      */
     interface ThemisAnalysisDataType {
+    }
+
+    /**
+     * Marker interface for intermediate.
+     */
+    interface ThemisAnalysisIntermediate extends ThemisAnalysisDataType {
     }
 
     /**
@@ -58,13 +67,17 @@ public class ThemisAnalysisDataMap {
     private Map<String, ThemisAnalysisDataType> theFileTypes;
 
     /**
+     * The list of all references.
+     */
+    private List<ThemisAnalysisReference> theReferences;
+
+    /**
      * Base constructor.
      */
     ThemisAnalysisDataMap() {
         theParent = null;
         theClassMap = new HashMap<>();
         theLocalTypes = new HashMap<>();
-        theFileTypes = theLocalTypes;
     }
 
     /**
@@ -76,6 +89,7 @@ public class ThemisAnalysisDataMap {
         theClassMap = pParent.theClassMap;
         theLocalTypes = new HashMap<>();
         theFileTypes = pParent.theFileTypes;
+        theReferences = pParent.theReferences;
     }
 
     /**
@@ -124,12 +138,22 @@ public class ThemisAnalysisDataMap {
     }
 
     /**
+     * Set up file resources.
+     */
+    void setUpFileResoureces() {
+        /* Local types are file wide */
+        theFileTypes = theLocalTypes;
+
+        /* Allocate the references list */
+        theReferences = new ArrayList<>();
+    }
+
+    /**
      * declare file.
      * @param pFile the file
      */
     void declareFile(final ThemisAnalysisFile pFile) {
-        theFileTypes = theLocalTypes;
-        theLocalTypes.put(pFile.getName(), new ThemisAnalysisDataTypeWrapper(pFile));
+        theLocalTypes.put(pFile.getName(), pFile);
     }
 
     /**
@@ -137,7 +161,7 @@ public class ThemisAnalysisDataMap {
      * @param pImport the import
      */
     void declareImport(final ThemisAnalysisImport pImport) {
-        theLocalTypes.put(pImport.getSimpleName(), new ThemisAnalysisDataTypeWrapper(pImport));
+        theLocalTypes.put(pImport.getSimpleName(), pImport);
     }
 
     /**
@@ -160,26 +184,77 @@ public class ThemisAnalysisDataMap {
     }
 
     /**
+     * declare reference.
+     * @param pRef the reference
+     */
+    void declareReference(final ThemisAnalysisReference pRef) {
+        theReferences.add(pRef);
+    }
+
+    /**
      * Loop through the localTypes and update from classMap.
      */
     void updateFromClassMap() {
         /* Loop through the localDataTypes */
-        for (ThemisAnalysisDataType myType : theLocalTypes.values()) {
-            /* If this is a wrapped value */
-            if (myType instanceof ThemisAnalysisDataTypeWrapper) {
-                final ThemisAnalysisDataTypeWrapper myWrapper = (ThemisAnalysisDataTypeWrapper) myType;
-                final ThemisAnalysisDataType myActual = theClassMap.get(myWrapper.getFullName());
+        for (Entry<String, ThemisAnalysisDataType> myEntry : theLocalTypes.entrySet()) {
+            /* Access the value */
+            final ThemisAnalysisDataType myType = myEntry.getValue();
+
+            /* If this is an intermediate */
+            if (myType instanceof ThemisAnalysisIntermediate) {
+                /* Look up actual value */
+                final ThemisAnalysisDataType myActual = lookUpActualDataType((ThemisAnalysisIntermediate) myType);
                 if (myActual != null) {
-                    /* update it */
-                    myWrapper.updateItem(myActual);
+                    myEntry.setValue(myActual);
                 }
             }
-            /* If this is an unknownvalue */
+
+            /* If this is an unknown value */
             if (myType instanceof ThemisAnalysisDataTypeUnknown) {
                 final ThemisAnalysisDataTypeUnknown myUnknown = (ThemisAnalysisDataTypeUnknown) myType;
                 System.out.println("Unknown: " + myUnknown.toString());
             }
         }
+
+        /* Loop through the References */
+        for (ThemisAnalysisReference myRef : theReferences) {
+            /* Access the dataType */
+            final ThemisAnalysisDataType myType = myRef.getDataType();
+
+            /* If this is an intermediate */
+            if (myType instanceof ThemisAnalysisIntermediate) {
+                /* Look up actual value */
+                final ThemisAnalysisDataType myActual = lookUpActualDataType((ThemisAnalysisIntermediate) myType);
+                if (myActual != null) {
+                    myRef.updateDataType(myActual);
+                }
+            }
+        }
+    }
+
+    /**
+     * Look up actual dataType.
+     * @param pIntermediate the intermediate dataType.
+     * @return the actual dataType (or null)
+     */
+    ThemisAnalysisDataType lookUpActualDataType(final ThemisAnalysisIntermediate pIntermediate) {
+        /* If this is an import */
+        if (pIntermediate instanceof ThemisAnalysisImport) {
+            /* Replace it with actual object if known */
+            final ThemisAnalysisImport myImport = (ThemisAnalysisImport) pIntermediate;
+            return theClassMap.get(myImport.getFullName());
+        }
+
+        /* If this is a file */
+        if (pIntermediate instanceof ThemisAnalysisFile) {
+            /* Replace it with actual object if known */
+            final ThemisAnalysisFile myFile = (ThemisAnalysisFile) pIntermediate;
+            final String myFullName = myFile.getPackageName() + ThemisAnalysisChar.PERIOD + myFile.getName();
+            return theClassMap.get(myFullName);
+        }
+
+        /* No change */
+        return null;
     }
 
     /**
@@ -205,75 +280,6 @@ public class ThemisAnalysisDataMap {
 
         /* return the map */
         return myMap;
-    }
-
-    /**
-     * DataType Wrapper.
-     */
-    public static class ThemisAnalysisDataTypeWrapper implements ThemisAnalysisDataType {
-        /**
-         * The Name.
-         */
-        private final String theName;
-
-        /**
-         * The fullName.
-         */
-        private final String theFullName;
-
-        /**
-         * The dataType.
-         */
-        private ThemisAnalysisDataType theDataType;
-
-        /**
-         * Constructor.
-         * @param pFile the file
-         */
-        ThemisAnalysisDataTypeWrapper(final ThemisAnalysisFile pFile) {
-            theName = pFile.getName();
-            theFullName = pFile.getPackageName() + ThemisAnalysisChar.PERIOD + theName;
-            theDataType = pFile;
-        }
-
-        /**
-         * Constructor.
-         * @param pImport the import
-         */
-        ThemisAnalysisDataTypeWrapper(final ThemisAnalysisImport pImport) {
-            theName = pImport.getSimpleName();
-            theFullName = pImport.getFullName();
-            theDataType = pImport;
-        }
-
-        /**
-         * Update the wrapped item.
-         * @param pType the updated type
-         */
-        void updateItem(final ThemisAnalysisDataType pType) {
-            theDataType = pType;
-        }
-
-        /**
-         * Obtain the fullName.
-         * @return the fullName
-         */
-        String getFullName() {
-            return theFullName;
-        }
-
-        /**
-         * Obtain the dataType.
-         * @return the dataType
-         */
-        public ThemisAnalysisDataType getDataType() {
-            return theDataType;
-        }
-
-        @Override
-        public String toString() {
-            return theName;
-        }
     }
 
     /**

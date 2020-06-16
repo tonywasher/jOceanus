@@ -99,6 +99,26 @@ public enum ThemisAnalysisJavaLang
     STACKTRACE("StackTraceElement"),
 
     /**
+     * Override.
+     */
+    OVERRIDE("Override"),
+
+    /**
+     * SuppressWarnings.
+     */
+    SUPPRESSWARNINGS("SuppressWarnings"),
+
+    /**
+     * Deprecated.
+     */
+    DEPRECATED("Deprecated"),
+
+    /**
+     * FunctionalInterface.
+     */
+    FUNCTIONALINTERFACE("FunctionalInterface"),
+
+    /**
      * AutoCloseable.
      */
     AUTOCLOSEABLE("AutoCloseable");

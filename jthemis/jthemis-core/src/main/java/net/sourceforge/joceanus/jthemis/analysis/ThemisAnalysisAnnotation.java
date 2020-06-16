@@ -27,7 +27,7 @@ public class ThemisAnalysisAnnotation
     /**
      * The annotationLines.
      */
-    private final List<ThemisAnalysisLine> theAnnotations;
+    private final List<ThemisAnalysisAnnotationRef> theAnnotations;
 
     /**
      * Constructor.
@@ -38,7 +38,7 @@ public class ThemisAnalysisAnnotation
                              final ThemisAnalysisLine pLine) {
         /* Create the list of annotation lines */
         theAnnotations = new ArrayList<>();
-        theAnnotations.add(pLine);
+        theAnnotations.add(new ThemisAnalysisAnnotationRef(pParser, pLine));
 
         /* While there are further lines */
         while (pParser.hasLines()) {
@@ -48,7 +48,7 @@ public class ThemisAnalysisAnnotation
             /* It it is also an annotation */
             if (isAnnotation(myLine)) {
                 /* Add the annotation line and remove from input */
-                theAnnotations.add(myLine);
+                theAnnotations.add(new ThemisAnalysisAnnotationRef(pParser, myLine));
                 pParser.popNextLine();
 
                 /* else break loop */
@@ -69,6 +69,28 @@ public class ThemisAnalysisAnnotation
      * @return true/false
      */
     static boolean isAnnotation(final ThemisAnalysisLine pLine) {
-        return pLine.startsWithChar(ThemisAnalysisChar.ANNOTATION);
+        return pLine.startsWithChar(ThemisAnalysisChar.ANNOTATION)
+                && !pLine.peekNextToken().equals(ThemisAnalysisKeyWord.ANNOTATION.getKeyWord());
+    }
+
+    /**
+     * AnnotationReference.
+     */
+    static class ThemisAnalysisAnnotationRef {
+        /**
+         * The annotationClass.
+         */
+        private final ThemisAnalysisReference theAnnotation;
+
+        /**
+         * Constructor.
+         * @param pParser the parser
+         * @param pLine the initial annotation line
+         */
+        ThemisAnalysisAnnotationRef(final ThemisAnalysisParser pParser,
+                                    final ThemisAnalysisLine pLine) {
+            pLine.stripStartChar(ThemisAnalysisChar.ANNOTATION);
+            theAnnotation = pParser.parseDataType(pLine);
+        }
     }
 }
