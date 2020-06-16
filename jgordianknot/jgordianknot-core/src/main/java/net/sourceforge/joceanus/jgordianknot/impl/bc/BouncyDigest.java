@@ -99,4 +99,3 @@ public final class BouncyDigest
                : theXof.doFinal(pBuffer, pOffset, getDigestSize());
     }
 }
-

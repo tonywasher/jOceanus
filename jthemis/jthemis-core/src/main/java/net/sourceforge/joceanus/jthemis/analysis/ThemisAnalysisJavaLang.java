@@ -19,94 +19,108 @@ package net.sourceforge.joceanus.jthemis.analysis;
 import net.sourceforge.joceanus.jthemis.analysis.ThemisAnalysisDataMap.ThemisAnalysisDataType;
 
 /**
- * Primitive.
+ * Well-known java.lang classes.
  */
-public enum ThemisAnalysisPrimitive
+public enum ThemisAnalysisJavaLang
         implements ThemisAnalysisDataType {
     /**
-     * byte.
+     * Object.
      */
-    BYTE("byte", "Byte"),
+    OBJECT("Object"),
 
     /**
-     * Char.
+     * Enum.
      */
-    CHAR("char", "Character"),
+    ENUM("Enum"),
 
     /**
-     * Short.
+     * String.
      */
-    SHORT("short", "Short"),
+    STRING("String"),
 
     /**
-     * Int.
+     * CharSequence.
      */
-    INT("int", "Integer"),
+    CHARSEQ("CharSequence"),
 
     /**
-     * Long.
+     * StringBuilder.
      */
-    LONG("long", "Long"),
+    STRINGBLDR("StringBuilder"),
 
     /**
-     * Boolean.
+     * Comparable.
      */
-    BOOLEAN("boolean", "Boolean"),
+    COMPARABLE("Comparable"),
 
     /**
-     * Float.
+     * Throwable.
      */
-    FLOAT("float", "Float"),
+    THROWABLE("Throwable"),
 
     /**
-     * Double.
+     * Number.
      */
-    DOUBLE("double", "Double"),
+    NUMBER("Number"),
 
     /**
-     * Void.
+     * Thread.
      */
-    VOID("void", "Void");
+    THREAD("Thread"),
 
     /**
-     * The primitive.
+     * Runnable.
      */
-    private final String thePrimitive;
+    RUNNABLE("Runnable"),
 
     /**
-     * The boxed.
+     * Class.
      */
-    private final String theBoxed;
+    CLASS("Class"),
+
+    /**
+     * Iterable.
+     */
+    ITERABLE("Iterable"),
+
+    /**
+     * Exception.
+     */
+    EXCEPT("Exception"),
+
+    /**
+     * RunTimeException.
+     */
+    RUNTIMEXCEPT("RuntimeException"),
+
+    /**
+     * AutoCloseable.
+     */
+    AUTOCLOSEABLE("AutoCloseable");
+
+    /**
+     * The class name.
+     */
+    private final String theName;
 
     /**
      * Constructor.
-     * @param pPrimitive the primitive
-     * @param pBoxed the boxed
+     * @param pName the className
      */
-    ThemisAnalysisPrimitive(final String pPrimitive,
-                            final String pBoxed) {
-        thePrimitive = pPrimitive;
-        theBoxed = pBoxed;
+    ThemisAnalysisJavaLang(final String pName) {
+        theName = pName;
     }
 
     /**
-     * Obtain the primitive.
-     * @return the primitive
+     * Obtain the className.
+     * @return the name
      */
-    String getPrimitive() {
-        return thePrimitive;
-    }
-
-    /**
-     * Obtain the boxed.
-     * @return the boxed
-     */
-    String getBoxed() {
-        return theBoxed;
+    String getName() {
+        return theName;
     }
 
     @Override
     public String toString() {
-        return getPrimitive();
+        return getName();
     }
 }

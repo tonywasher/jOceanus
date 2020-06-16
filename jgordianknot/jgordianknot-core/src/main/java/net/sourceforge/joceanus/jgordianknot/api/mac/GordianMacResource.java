@@ -182,4 +182,3 @@ public enum GordianMacResource implements TethysBundleId {
         return TethysBundleLoader.getKeyForEnum(MAC_MAP, pMac);
     }
 }
-

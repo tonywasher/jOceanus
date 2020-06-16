@@ -31,8 +31,9 @@ public class CoeusFundingCircleBidBookParser
     /**
      * Header fields.
      */
-    private static final String[] HEADERS =
-    { "Loan title", "Risk", "%Funded", "Bid Amount", "Rate", "Bid Time", "Time left", "Status" };
+    private static final String[] HEADERS = {
+            "Loan title", "Risk", "%Funded", "Bid Amount", "Rate", "Bid Time", "Time left", "Status"
+    };
 
     /**
      * The market.

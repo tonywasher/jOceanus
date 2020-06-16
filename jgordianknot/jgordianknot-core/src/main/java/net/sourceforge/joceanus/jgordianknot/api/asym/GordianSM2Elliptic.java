@@ -86,4 +86,3 @@ public enum GordianSM2Elliptic implements GordianElliptic {
         return this == SM2P256V1;
     }
 }
-

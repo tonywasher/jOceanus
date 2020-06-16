@@ -74,7 +74,7 @@ public class TestAnalysis {
         testPackage("jcoeus-core", "data.zopa");
         testPackage("jcoeus-core", "ui");
         testPackage("jcoeus-core", "ui.panels");
-        testPackage("jcoeus-core", "ui.dsm");
+        testPackage("jcoeus-core", "ui.report");
         testPackage("jcoeus-core", null);
     }
 
@@ -129,9 +129,9 @@ public class TestAnalysis {
         testPackage("jgordianknot-core", "impl.core.key");
         testPackage("jgordianknot-core", "impl.core.keypair");
         testPackage("jgordianknot-core", "impl.core.keyset");
-        testPackage("jgordianknot-core", "impl.core.keystore");
+        //testPackage("jgordianknot-core", "impl.core.keystore");
         testPackage("jgordianknot-core", "impl.core.mac");
-        testPackage("jgordianknot-core", "impl.core.pssword");
+        testPackage("jgordianknot-core", "impl.core.password");
         testPackage("jgordianknot-core", "impl.core.random");
         testPackage("jgordianknot-core", "impl.core.sign");
         testPackage("jgordianknot-core", "impl.core.stream");
@@ -236,9 +236,9 @@ public class TestAnalysis {
      * MoneyWiseSwing.
      */
     private static void testMoneyWiseSwing() {
-        testPackage("jmoneywise-swing", "swing");
-        testPackage("jmoneywise-swing", "ui.dialog.swing");
-        testPackage("jmoneywise-swing", "ui.swing");
+        testPackage("jmoneywise-swing", "lethe.swing");
+        testPackage("jmoneywise-swing", "lethe.ui.dialog.swing");
+        testPackage("jmoneywise-swing", "lethe.ui.swing");
     }
 
     /**
@@ -259,7 +259,7 @@ public class TestAnalysis {
         testPackage("jprometheus-core", "atlas.field");
         testPackage("jprometheus-core", "atlas.preference");
         testPackage("jprometheus-core", "lethe");
-        testPackage("jprometheus-core", "lethe.data");
+        //testPackage("jprometheus-core", "lethe.data");
         testPackage("jprometheus-core", "lethe.database");
         testPackage("jprometheus-core", "lethe.sheets");
         testPackage("jprometheus-core", "lethe.threads");
@@ -272,7 +272,7 @@ public class TestAnalysis {
      * PrometheusSwing.
      */
     private static void testPrometheusSwing() {
-        testPackage("jprometheus-swing", "lethe.swing");
+        //testPackage("jprometheus-swing", "lethe.swing");
         testPackage("jprometheus-swing", "lethe.ui.swing");
     }
 
@@ -287,7 +287,7 @@ public class TestAnalysis {
      * PrometheusServices.
      */
     private static void testPrometheusServices() {
-        testPackage("jprometheus-services/jprometheus-sheet-api", "service.sheet");
+        //testPackage("jprometheus-services/jprometheus-sheet-api", "service.sheet");
         testPackage("jprometheus-services/jprometheus-sheet-hssf", "service.sheet.hssf");
         testPackage("jprometheus-services/jprometheus-sheet-odf", "service.sheet.odf");
         testPackage("jprometheus-services/jprometheus-sheet-xssf", "service.sheet.xssf");

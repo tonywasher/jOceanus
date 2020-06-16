@@ -74,6 +74,14 @@ public final class ThemisAnalysisProperties {
     }
 
     /**
+     * Are generic variables present?
+     * @return true/false
+     */
+    boolean hasGeneric() {
+        return theGenericVars != null;
+    }
+
+    /**
      * Set modifier.
      * @param pModifier the modifier
      * @return the updated properties
@@ -106,7 +114,13 @@ public final class ThemisAnalysisProperties {
     void resolveGeneric(final ThemisAnalysisParser pParser) {
         /* Resolve any generic base instance */
         if (theGenericVars instanceof ThemisAnalysisGenericBase) {
-            theGenericVars = new ThemisAnalysisGenericVarList(pParser, (ThemisAnalysisGenericBase) theGenericVars);
+            /* Resolve the variables */
+            final ThemisAnalysisGeneric myVars = new ThemisAnalysisGenericVarList(pParser, (ThemisAnalysisGenericBase) theGenericVars);
+
+            /* Only record the parsed variables if the parser is nonTemporary */
+            if (!pParser.isTemporary()) {
+                theGenericVars = myVars;
+            }
         }
     }
 }

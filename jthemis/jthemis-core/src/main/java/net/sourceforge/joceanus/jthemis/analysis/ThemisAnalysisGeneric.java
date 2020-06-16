@@ -121,8 +121,30 @@ public interface ThemisAnalysisGeneric {
 
                 /* Handle generic wildcard */
                 if (myToken.length() == 1 && myToken.charAt(0) == ThemisAnalysisChar.QUESTION) {
+                    /* Strip the wildcard */
                     myLine.stripNextToken();
-                    final ThemisAnalysisGenericVar myVar = new ThemisAnalysisGenericVar(myToken,new ArrayList<>());
+
+                    /* Create reference list */
+                    final List<ThemisAnalysisReference> myRefs = new ArrayList<>();
+
+                    /* If we have an extension/subtype */
+                    final String myNext = myLine.peekNextToken();
+                    if (myNext.equals(ThemisAnalysisKeyWord.EXTENDS.getKeyWord())
+                        || myNext.equals(ThemisAnalysisKeyWord.SUPER.getKeyWord())) {
+                        /* Access data type */
+                        myLine.stripNextToken();
+                        ThemisAnalysisReference myRef = pParser.parseDataType(myLine);
+                        myRefs.add(myRef);
+
+                        /* Loop for additional extends */
+                        while (myLine.getLength() > 0 && myLine.startsWithChar(ThemisAnalysisChar.AND)) {
+                            myLine.stripStartChar(ThemisAnalysisChar.AND);
+                            myRef = pParser.parseDataType(myLine);
+                            myRefs.add(myRef);
+                        }
+                    }
+
+                    final ThemisAnalysisGenericVar myVar = new ThemisAnalysisGenericVar(myToken, myRefs);
                     theReferences.add(new ThemisAnalysisReference(myVar, null, null));
 
                     /* else handle standard generic */
@@ -202,11 +224,14 @@ public interface ThemisAnalysisGeneric {
                 if (myNext.equals(ThemisAnalysisKeyWord.EXTENDS.getKeyWord())) {
                     /* Access data type */
                     myLine.stripNextToken();
-                    final ThemisAnalysisReference myRef = pParser.parseDataType(myLine);
+                    ThemisAnalysisReference myRef = pParser.parseDataType(myLine);
                     myRefs.add(myRef);
 
-                    if (myLine.getLength() > 0) {
-                        throw new IllegalStateException("Additional data for generic");
+                    /* Loop for additional extends */
+                    while (myLine.getLength() > 0 && myLine.startsWithChar(ThemisAnalysisChar.AND)) {
+                        myLine.stripStartChar(ThemisAnalysisChar.AND);
+                        myRef = pParser.parseDataType(myLine);
+                        myRefs.add(myRef);
                     }
                 }
 
@@ -285,6 +310,11 @@ public interface ThemisAnalysisGeneric {
             for (ThemisAnalysisReference myRef : theReferences) {
                 myRef.resolveGeneric(pParser);
             }
+        }
+
+        @Override
+        public String toString() {
+            return theName;
         }
     }
 }

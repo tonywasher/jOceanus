@@ -59,4 +59,3 @@ public interface GordianEncryptor {
      */
     byte[] decrypt(byte[] pEncrypted) throws OceanusException;
 }
-

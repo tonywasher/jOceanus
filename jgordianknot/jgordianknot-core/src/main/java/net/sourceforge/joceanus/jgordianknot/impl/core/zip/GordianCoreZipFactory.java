@@ -113,4 +113,3 @@ public class GordianCoreZipFactory
         return new GordianCoreZipReadFile(theFactory, pInputStream);
     }
 }
-

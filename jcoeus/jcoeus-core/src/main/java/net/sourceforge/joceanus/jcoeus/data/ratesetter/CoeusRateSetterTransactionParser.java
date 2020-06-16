@@ -31,8 +31,9 @@ public class CoeusRateSetterTransactionParser
     /**
      * Header fields.
      */
-    private static final String[] HEADERS =
-    { "Date", "Market", "Type", "Item", "Amount", "Capital", "Interest", "Fee" };
+    private static final String[] HEADERS = {
+            "Date", "Market", "Type", "Item", "Amount", "Capital", "Interest", "Fee"
+    };
 
     /**
      * The market.

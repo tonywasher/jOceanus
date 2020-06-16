@@ -480,4 +480,3 @@ public enum GordianDSAElliptic implements GordianElliptic {
         return true;
     }
 }
-

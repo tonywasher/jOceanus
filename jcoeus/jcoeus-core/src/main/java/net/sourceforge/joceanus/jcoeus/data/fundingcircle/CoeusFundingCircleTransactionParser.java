@@ -31,8 +31,9 @@ public class CoeusFundingCircleTransactionParser
     /**
      * Header fields.
      */
-    private static final String[] HEADERS =
-    { "Date", "Description", "Paid In", "Paid Out" };
+    private static final String[] HEADERS = {
+            "Date", "Description", "Paid In", "Paid Out"
+    };
 
     /**
      * The market.

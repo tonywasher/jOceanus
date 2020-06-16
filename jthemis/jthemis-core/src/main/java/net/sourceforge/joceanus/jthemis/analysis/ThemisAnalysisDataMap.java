@@ -149,6 +149,17 @@ public class ThemisAnalysisDataMap {
     }
 
     /**
+     * declare unknown type.
+     * @param pName the name
+     * @return the new type
+     */
+    ThemisAnalysisDataType declareUnknown(final String pName) {
+        final ThemisAnalysisDataType myType = new ThemisAnalysisDataTypeUnknown(pName);
+        theFileTypes.put(pName, myType);
+        return myType;
+    }
+
+    /**
      * Loop through the localTypes and update from classMap.
      */
     void updateFromClassMap() {
@@ -162,6 +173,11 @@ public class ThemisAnalysisDataMap {
                     /* update it */
                     myWrapper.updateItem(myActual);
                 }
+            }
+            /* If this is an unknownvalue */
+            if (myType instanceof ThemisAnalysisDataTypeUnknown) {
+                final ThemisAnalysisDataTypeUnknown myUnknown = (ThemisAnalysisDataTypeUnknown) myType;
+                System.out.println("Unknown: " + myUnknown.toString());
             }
         }
     }
@@ -180,6 +196,11 @@ public class ThemisAnalysisDataMap {
             if (myPrimitive.getBoxed() != null) {
                 myMap.put(myPrimitive.getBoxed(), myPrimitive);
             }
+        }
+
+        /* Add the java.lang classes */
+        for (ThemisAnalysisJavaLang myClass : ThemisAnalysisJavaLang.values()) {
+            myMap.put(myClass.toString(), myClass);
         }
 
         /* return the map */
@@ -247,6 +268,29 @@ public class ThemisAnalysisDataMap {
          */
         public ThemisAnalysisDataType getDataType() {
             return theDataType;
+        }
+
+        @Override
+        public String toString() {
+            return theName;
+        }
+    }
+
+    /**
+     * DataType Unknown.
+     */
+    public static class ThemisAnalysisDataTypeUnknown implements ThemisAnalysisDataType {
+        /**
+         * The Name.
+         */
+        private final String theName;
+
+        /**
+         * Constructor.
+         * @param pName the name
+         */
+        ThemisAnalysisDataTypeUnknown(final String pName) {
+            theName = pName;
         }
 
         @Override

@@ -95,4 +95,3 @@ public abstract class GordianCoreDigest
     public abstract int doFinish(byte[] pBuffer,
                                  int pOffset) throws OceanusException;
 }
-

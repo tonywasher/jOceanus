@@ -56,6 +56,11 @@ public class ThemisAnalysisParser {
     private final ThemisAnalysisDataMap theDataMap;
 
     /**
+     * Temporary parser?
+     */
+    private final boolean isTemporary;
+
+    /**
      * Constructor.
      * @param pLines the source lines.
      * @param pContents the processed contents
@@ -71,6 +76,7 @@ public class ThemisAnalysisParser {
 
         /* Create the dataTypeMap */
         theDataMap = pContainer.getDataMap();
+        isTemporary = false;
     }
 
     /**
@@ -84,11 +90,34 @@ public class ThemisAnalysisParser {
     }
 
     /**
+     * Temporary parser constructor.
+     * @param pParser the base parser.
+     */
+    ThemisAnalysisParser(final ThemisAnalysisParser pParser) {
+        /* Store parameters */
+        theLines = pParser.theLines;
+        theContents = pParser.theContents;
+        theParent = pParser.theParent;
+
+        /* Create the dataTypeMap */
+        theDataMap = new ThemisAnalysisDataMap(pParser.getDataMap());
+        isTemporary = true;
+    }
+
+    /**
      * Are there more lines to process?
      * @return true/false
      */
     boolean hasLines() {
         return !theLines.isEmpty();
+    }
+
+    /**
+     * Is this a temporary parser?
+     * @return true/false
+     */
+    boolean isTemporary() {
+        return isTemporary;
     }
 
     /**
@@ -422,7 +451,7 @@ public class ThemisAnalysisParser {
      */
     ThemisAnalysisElement processFieldsAndMethods(final ThemisAnalysisLine pLine) {
         /* Look for a reference */
-        final ThemisAnalysisReference myReference = parseDataType(pLine);
+        final ThemisAnalysisReference myReference = parsePotentialDataType(pLine);
         if (myReference != null) {
             /* Access the name of the field or method */
             final String myName = pLine.stripNextToken();
@@ -440,24 +469,72 @@ public class ThemisAnalysisParser {
     }
 
     /**
-     * Process field and method constructs.
+     * Parse a possible dataType.
      * @param pLine the line
-     * @return have we processed the line?
+     * @return the dataType or null
      */
-    ThemisAnalysisReference parseDataType(final ThemisAnalysisLine pLine) {
-        /* Make sure that we are not started by a keyword */
+    ThemisAnalysisReference parsePotentialDataType(final ThemisAnalysisLine pLine) {
+        /* Not a dataType if we start with a keyWord */
         final String myToken = pLine.peekNextToken();
         if (KEYWORDS.get(myToken) != null) {
             return null;
         }
 
-        /* Look for a valid dataType */
-        final ThemisAnalysisDataType myType = theDataMap.lookUpDataType(myToken);
+        /* Look for a valid, existing dataType */
+        ThemisAnalysisDataType myType = theDataMap.lookUpDataType(myToken);
         if (myType == null) {
-            return null;
+            /* If the line has generic definitions */
+            final ThemisAnalysisProperties myProps = pLine.getProperties();
+            if (myProps.hasGeneric()) {
+                /* Create a temporary parser and resolve against the generics */
+                final ThemisAnalysisParser myTempParser = new ThemisAnalysisParser(this);
+                myProps.resolveGeneric(myTempParser);
+                myType = myTempParser.getDataMap().lookUpDataType(myToken);
+            }
+
+            /* Return null if we haven't resolved it */
+            if (myType == null) {
+                return null;
+            }
         }
         pLine.stripStartSequence(myToken);
 
+        /* Return the reference */
+        return buildReference(pLine, myType);
+    }
+
+    /**
+     * Parse a dataType.
+     * @param pLine the line
+     * @return the dataType or null
+     */
+    ThemisAnalysisReference parseDataType(final ThemisAnalysisLine pLine) {
+        /* Cannot be started by a keyWord */
+        final String myToken = pLine.peekNextToken();
+        if (KEYWORDS.get(myToken) != null) {
+            throw new IllegalStateException("DataType required but keyWord found");
+        }
+
+        /* Look for a valid dataType */
+        ThemisAnalysisDataType myType = theDataMap.lookUpDataType(myToken);
+        if (myType == null) {
+            /* Declare the unrecognised dataType */
+            myType = theDataMap.declareUnknown(myToken);
+        }
+        pLine.stripStartSequence(myToken);
+
+        /* Return the reference */
+        return buildReference(pLine, myType);
+    }
+
+    /**
+     * Create the reference.
+     * @param pLine the line
+     * @param pType the dataType
+     * @return the dataType or null
+     */
+    private ThemisAnalysisReference buildReference(final ThemisAnalysisLine pLine,
+                                                   final ThemisAnalysisDataType pType) {
         /* Access any generic/array detail */
         final ThemisAnalysisGeneric myGeneric = ThemisAnalysisGeneric.isGeneric(pLine)
                                                 ? new ThemisAnalysisGenericBase(pLine)
@@ -467,7 +544,7 @@ public class ThemisAnalysisParser {
                                             : null;
 
         /* Return the reference */
-        return new ThemisAnalysisReference(myType, myGeneric, myArray);
+        return new ThemisAnalysisReference(pType, myGeneric, myArray);
     }
 
     /**

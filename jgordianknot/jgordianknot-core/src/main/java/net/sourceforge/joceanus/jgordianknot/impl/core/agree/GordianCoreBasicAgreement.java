@@ -114,4 +114,3 @@ public abstract class GordianCoreBasicAgreement
         checkStatus(GordianAgreementStatus.AWAITING_CLIENTCONFIRM);
     }
 }
-

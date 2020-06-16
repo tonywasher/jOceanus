@@ -214,4 +214,3 @@ public interface GordianCipher {
     int finish(byte[] pOutput,
                int pOutOffset) throws OceanusException;
 }
-

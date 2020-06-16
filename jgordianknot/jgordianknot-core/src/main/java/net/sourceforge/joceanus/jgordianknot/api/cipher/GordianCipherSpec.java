@@ -96,4 +96,3 @@ public abstract class GordianCipherSpec<T extends GordianKeySpec>
         return theKeyType.hashCode();
     }
 }
-

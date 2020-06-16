@@ -49,4 +49,3 @@ public interface GordianConsumer {
      */
     void reset();
 }
-
