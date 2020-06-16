@@ -49,12 +49,14 @@ public class ThemisAnalysisCase
     /**
      * Constructor.
      * @param pParser the parser
+     * @param pOwner the owning switch
      * @param pCase the case
      */
     ThemisAnalysisCase(final ThemisAnalysisParser pParser,
+                       final ThemisAnalysisContainer pOwner,
                        final Object pCase) {
-        /* Access details from parser */
-        theParent = pParser.getParent();
+        /* Record the parent */
+        theParent = pOwner;
 
         /* Initialise the case value */
         theCases = new ArrayList<>();

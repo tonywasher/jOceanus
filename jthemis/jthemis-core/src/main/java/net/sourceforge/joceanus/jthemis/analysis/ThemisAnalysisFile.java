@@ -271,7 +271,7 @@ public class ThemisAnalysisFile
         /* Loop through the lines */
         while (myParser.hasLines()) {
             /* Access next line */
-            final ThemisAnalysisLine myLine = (ThemisAnalysisLine) myParser.popNextLine();
+            ThemisAnalysisLine myLine = (ThemisAnalysisLine) myParser.popNextLine();
 
             /* Process comments and blanks */
             boolean processed = myParser.processCommentsAndBlanks(myLine);
@@ -290,10 +290,16 @@ public class ThemisAnalysisFile
             if (!processed) {
                 /* Process the class */
                 processed = myParser.processClass(myLine);
-
-                /* Must have finished by now */
-                if (!processed || myParser.hasLines()) {
+                if (!processed) {
                     throw new IllegalStateException();
+                }
+
+                /* Process any trailing blanks/comments */
+                while (myParser.hasLines()) {
+                    myLine = (ThemisAnalysisLine) myParser.popNextLine();
+                    if (!myParser.processCommentsAndBlanks(myLine)) {
+                        throw new IllegalStateException();
+                    }
                 }
             }
         }

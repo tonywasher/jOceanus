@@ -19,16 +19,13 @@ package net.sourceforge.joceanus.jthemis.analysis;
 import java.util.ArrayDeque;
 import java.util.Deque;
 
+import net.sourceforge.joceanus.jthemis.analysis.ThemisAnalysisContainer.ThemisAnalysisAdoptable;
+
 /**
  * Switch construct.
  */
 public class ThemisAnalysisSwitch
-        implements ThemisAnalysisContainer {
-    /**
-     * The parent.
-     */
-    private final ThemisAnalysisContainer theParent;
-
+        implements ThemisAnalysisContainer, ThemisAnalysisAdoptable {
     /**
      * The headers.
      */
@@ -43,6 +40,11 @@ public class ThemisAnalysisSwitch
      * The number of lines.
      */
     private final int theNumLines;
+
+    /**
+     * The parent.
+     */
+    private ThemisAnalysisContainer theParent;
 
     /**
      * Constructor.
@@ -83,7 +85,7 @@ public class ThemisAnalysisSwitch
 
             /* Process default/case statements */
             if (!processed) {
-                processed = pParser.processCase(myLine);
+                processed = pParser.processCase(this, myLine);
             }
 
             /* If we haven't processed yet */
@@ -102,6 +104,11 @@ public class ThemisAnalysisSwitch
     @Override
     public ThemisAnalysisContainer getParent() {
         return theParent;
+    }
+
+    @Override
+    public void setParent(final ThemisAnalysisContainer pParent) {
+        theParent = pParent;
     }
 
     @Override

@@ -19,16 +19,13 @@ package net.sourceforge.joceanus.jthemis.analysis;
 import java.util.ArrayDeque;
 import java.util.Deque;
 
+import net.sourceforge.joceanus.jthemis.analysis.ThemisAnalysisContainer.ThemisAnalysisAdoptable;
+
 /**
  * For construct.
  */
 public class ThemisAnalysisFor
-        implements ThemisAnalysisContainer {
-    /**
-     * The parent.
-     */
-    private final ThemisAnalysisContainer theParent;
-
+        implements ThemisAnalysisContainer, ThemisAnalysisAdoptable {
     /**
      * The headers.
      */
@@ -43,6 +40,11 @@ public class ThemisAnalysisFor
      * The number of lines.
      */
     private final int theNumLines;
+
+    /**
+     * The parent.
+     */
+    private ThemisAnalysisContainer theParent;
 
     /**
      * Constructor.
@@ -76,6 +78,11 @@ public class ThemisAnalysisFor
     @Override
     public ThemisAnalysisContainer getParent() {
         return theParent;
+    }
+
+    @Override
+    public void setParent(final ThemisAnalysisContainer pParent) {
+        theParent = pParent;
     }
 
     @Override

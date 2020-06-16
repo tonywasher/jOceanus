@@ -52,12 +52,14 @@ public class ThemisAnalysisElse
     /**
      * Constructor.
      * @param pParser the parser
+     * @param pOwner the owning if
      * @param pLine the initial else line
      */
     ThemisAnalysisElse(final ThemisAnalysisParser pParser,
+                       final ThemisAnalysisContainer pOwner,
                        final ThemisAnalysisLine pLine) {
-        /* Access details from parser */
-        theParent = pParser.getParent();
+        /* Record the parent */
+        theParent = pOwner;
 
         /* Create the arrays */
         theHeaders = ThemisAnalysisBuilder.parseHeaders(pParser, pLine);
@@ -65,7 +67,7 @@ public class ThemisAnalysisElse
         final int myBaseLines = myLines.size();
 
         /* Look for else clauses */
-        theElse = (ThemisAnalysisElse) pParser.processExtra(ThemisAnalysisKeyWord.ELSE);
+        theElse = (ThemisAnalysisElse) pParser.processExtra(pOwner, ThemisAnalysisKeyWord.ELSE);
 
         /* Create a parser */
         theContents = new ArrayDeque<>();

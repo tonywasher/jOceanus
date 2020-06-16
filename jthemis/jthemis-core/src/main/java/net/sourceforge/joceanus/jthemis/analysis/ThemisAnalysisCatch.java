@@ -52,12 +52,14 @@ public class ThemisAnalysisCatch
     /**
      * Constructor.
      * @param pParser the parser
+     * @param pOwner the owning try
      * @param pLine the initial catch line
      */
     ThemisAnalysisCatch(final ThemisAnalysisParser pParser,
+                        final ThemisAnalysisContainer pOwner,
                         final ThemisAnalysisLine pLine) {
-        /* Access details from parser */
-        theParent = pParser.getParent();
+        /* Record the parent */
+        theParent = pOwner;
 
         /* Create the arrays */
         theHeaders = ThemisAnalysisBuilder.parseHeaders(pParser, pLine);
@@ -65,7 +67,7 @@ public class ThemisAnalysisCatch
         final int myBaseLines = myLines.size();
 
         /* Look for catch clauses */
-        theCatch = (ThemisAnalysisCatch) pParser.processExtra(ThemisAnalysisKeyWord.CATCH);
+        theCatch = (ThemisAnalysisCatch) pParser.processExtra(pOwner, ThemisAnalysisKeyWord.CATCH);
 
         /* Create a parser */
         theContents = new ArrayDeque<>();

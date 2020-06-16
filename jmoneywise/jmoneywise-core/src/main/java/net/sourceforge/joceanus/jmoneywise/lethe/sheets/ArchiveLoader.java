@@ -27,6 +27,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import net.sourceforge.joceanus.jmetis.profile.MetisProfile;
 import net.sourceforge.joceanus.jmetis.threads.MetisThreadStatusReport;
@@ -458,9 +459,9 @@ public class ArchiveLoader {
         final PortfolioList myPortfolios = pData.getPortfolios();
 
         /* Loop through the name map */
-        final Iterator<Map.Entry<String, Object>> myIterator = theNameMap.entrySet().iterator();
+        final Iterator<Entry<String, Object>> myIterator = theNameMap.entrySet().iterator();
         while (myIterator.hasNext()) {
-            final Map.Entry<String, Object> myEntry = myIterator.next();
+            final Entry<String, Object> myEntry = myIterator.next();
 
             /* If this is a security holding definition */
             final Object myValue = myEntry.getValue();
@@ -496,9 +497,9 @@ public class ArchiveLoader {
         final SecurityHoldingMap myMap = pData.getSecurityHoldingsMap();
 
         /* Loop through the name map */
-        final Iterator<Map.Entry<String, Object>> myIterator = theNameMap.entrySet().iterator();
+        final Iterator<Entry<String, Object>> myIterator = theNameMap.entrySet().iterator();
         while (myIterator.hasNext()) {
-            final Map.Entry<String, Object> myEntry = myIterator.next();
+            final Entry<String, Object> myEntry = myIterator.next();
 
             /* If this is a security holding definition */
             final Object myValue = myEntry.getValue();

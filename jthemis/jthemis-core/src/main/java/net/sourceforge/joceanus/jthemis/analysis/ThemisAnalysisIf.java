@@ -19,16 +19,13 @@ package net.sourceforge.joceanus.jthemis.analysis;
 import java.util.ArrayDeque;
 import java.util.Deque;
 
+import net.sourceforge.joceanus.jthemis.analysis.ThemisAnalysisContainer.ThemisAnalysisAdoptable;
+
 /**
  * If construct.
  */
 public class ThemisAnalysisIf
-        implements ThemisAnalysisContainer {
-    /**
-     * The parent.
-     */
-    private final ThemisAnalysisContainer theParent;
-
+        implements ThemisAnalysisContainer, ThemisAnalysisAdoptable {
     /**
      * The headers.
      */
@@ -50,6 +47,11 @@ public class ThemisAnalysisIf
     private final int theNumLines;
 
     /**
+     * The parent.
+     */
+    private ThemisAnalysisContainer theParent;
+
+    /**
      * Constructor.
      * @param pParser the parser
      * @param pLine the initial if line
@@ -65,7 +67,7 @@ public class ThemisAnalysisIf
         final int myBaseLines = myLines.size();
 
         /* Look for else clauses */
-        theElse = (ThemisAnalysisElse) pParser.processExtra(ThemisAnalysisKeyWord.ELSE);
+        theElse = (ThemisAnalysisElse) pParser.processExtra(this, ThemisAnalysisKeyWord.ELSE);
 
         /* Create a parser */
         theContents = new ArrayDeque<>();
@@ -84,6 +86,11 @@ public class ThemisAnalysisIf
     @Override
     public ThemisAnalysisContainer getParent() {
         return theParent;
+    }
+
+    @Override
+    public void setParent(final ThemisAnalysisContainer pParent) {
+        theParent = pParent;
     }
 
     @Override

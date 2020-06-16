@@ -47,12 +47,14 @@ public class ThemisAnalysisFinally
     /**
      * Constructor.
      * @param pParser the parser
+     * @param pOwner the owning try
      * @param pLine the initial finally line
      */
     ThemisAnalysisFinally(final ThemisAnalysisParser pParser,
+                          final ThemisAnalysisContainer pOwner,
                           final ThemisAnalysisLine pLine) {
-        /* Access details from parser */
-        theParent = pParser.getParent();
+        /* Record the parent */
+        theParent = pOwner;
 
         /* Create the arrays */
         theHeaders = ThemisAnalysisBuilder.parseHeaders(pParser, pLine);

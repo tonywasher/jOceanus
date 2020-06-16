@@ -27,6 +27,17 @@ import net.sourceforge.joceanus.jthemis.analysis.ThemisAnalysisFile.ThemisAnalys
 public interface ThemisAnalysisContainer
     extends ThemisAnalysisProcessed {
     /**
+     * Adoptable interface.
+     */
+    interface ThemisAnalysisAdoptable {
+        /**
+         * Set the parent of this container.
+         * @param pParent the parent
+         */
+        void setParent(ThemisAnalysisContainer pParent);
+    }
+
+    /**
      * Obtain the dataMap.
      * @return the map
      */

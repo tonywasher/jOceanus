@@ -346,16 +346,18 @@ public class ThemisAnalysisParser {
 
     /**
      * Process a case/default line.
+     * @param pOwner the owning switch
      * @param pLine the line
      * @return have we processed the line?
      */
-    boolean processCase(final ThemisAnalysisLine pLine) {
+    boolean processCase(final ThemisAnalysisContainer pOwner,
+                        final ThemisAnalysisLine pLine) {
         /* Access case type */
         final Object myCase = parseCase(pLine);
 
         /* If we have a case */
         if (myCase != null) {
-            theContents.add(new ThemisAnalysisCase(this, myCase));
+            theContents.add(new ThemisAnalysisCase(this, pOwner, myCase));
             return true;
         }
 
@@ -398,10 +400,12 @@ public class ThemisAnalysisParser {
 
     /**
      * Process extra constructs.
+     * @param pOwner the owning construct
      * @param pKeyWord the keyWord
      * @return have we processed the line?
      */
-    ThemisAnalysisElement processExtra(final ThemisAnalysisKeyWord pKeyWord) {
+    ThemisAnalysisElement processExtra(final ThemisAnalysisContainer pOwner,
+                                       final ThemisAnalysisKeyWord pKeyWord) {
         /* Just return if there are no more lines */
         if (!hasLines()) {
             return null;
@@ -420,19 +424,19 @@ public class ThemisAnalysisParser {
                 case ELSE:
                     /* Create the else */
                     myLine.stripStartSequence(myToken);
-                    return new ThemisAnalysisElse(this, myLine);
+                    return new ThemisAnalysisElse(this, pOwner, myLine);
 
                 /* If this is a catch */
                 case CATCH:
                     /* Create the switch */
                     myLine.stripStartSequence(myToken);
-                    return new ThemisAnalysisCatch(this, myLine);
+                    return new ThemisAnalysisCatch(this, pOwner, myLine);
 
                 /* If this is a finally */
                 case FINALLY:
                     /* Create the finally */
                     myLine.stripStartSequence(myToken);
-                    return new ThemisAnalysisFinally(this, myLine);
+                    return new ThemisAnalysisFinally(this, pOwner, myLine);
 
                 default:
                     break;

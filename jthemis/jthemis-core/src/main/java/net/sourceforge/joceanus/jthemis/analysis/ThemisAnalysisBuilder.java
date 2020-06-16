@@ -19,6 +19,8 @@ package net.sourceforge.joceanus.jthemis.analysis;
 import java.util.ArrayDeque;
 import java.util.Deque;
 
+import net.sourceforge.joceanus.jthemis.analysis.ThemisAnalysisContainer.ThemisAnalysisAdoptable;
+
 /**
  * Builder utilities.
  */
@@ -104,9 +106,11 @@ public final class ThemisAnalysisBuilder {
     /**
      * Process method body.
      * @param pParser the parser
+     * @param pOwner the owning method
      * @return the body
      */
-    static Deque<ThemisAnalysisElement> processMethodBody(final ThemisAnalysisParser pParser) {
+    static Deque<ThemisAnalysisElement> processMethodBody(final ThemisAnalysisParser pParser,
+                                                          final ThemisAnalysisMethod pOwner) {
         /* Allocate queue */
         final Deque<ThemisAnalysisElement> myBody = new ArrayDeque<>();
 
@@ -118,6 +122,12 @@ public final class ThemisAnalysisBuilder {
 
             /* Skip already processed items */
             if (myElement instanceof ThemisAnalysisProcessed) {
+                /* Adopt the element if required */
+                if (myElement instanceof ThemisAnalysisAdoptable) {
+                    ((ThemisAnalysisAdoptable) myElement).setParent(pOwner);
+                }
+
+                /* Add to body */
                 myBody.add(myElement);
                 continue;
             }

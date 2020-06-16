@@ -19,16 +19,13 @@ package net.sourceforge.joceanus.jthemis.analysis;
 import java.util.ArrayDeque;
 import java.util.Deque;
 
+import net.sourceforge.joceanus.jthemis.analysis.ThemisAnalysisContainer.ThemisAnalysisAdoptable;
+
 /**
  * Try construct.
  */
 public class ThemisAnalysisTry
-        implements ThemisAnalysisContainer {
-    /**
-     * The parent.
-     */
-    private final ThemisAnalysisContainer theParent;
-
+        implements ThemisAnalysisContainer, ThemisAnalysisAdoptable {
     /**
      * The headers.
      */
@@ -55,6 +52,11 @@ public class ThemisAnalysisTry
     private final int theNumLines;
 
     /**
+     * The parent.
+     */
+    private ThemisAnalysisContainer theParent;
+
+    /**
      * Constructor.
      * @param pParser the parser
      * @param pLine the initial try line
@@ -70,10 +72,10 @@ public class ThemisAnalysisTry
         final int myBaseLines = myLines.size();
 
         /* Look for catch clauses */
-        theCatch = (ThemisAnalysisCatch) pParser.processExtra(ThemisAnalysisKeyWord.CATCH);
+        theCatch = (ThemisAnalysisCatch) pParser.processExtra(this, ThemisAnalysisKeyWord.CATCH);
 
         /* Look for finally clauses */
-        theFinally = (ThemisAnalysisFinally) pParser.processExtra(ThemisAnalysisKeyWord.FINALLY);
+        theFinally = (ThemisAnalysisFinally) pParser.processExtra(this, ThemisAnalysisKeyWord.FINALLY);
 
         /* Create a parser */
         theContents = new ArrayDeque<>();
@@ -105,6 +107,11 @@ public class ThemisAnalysisTry
     @Override
     public ThemisAnalysisContainer getParent() {
         return theParent;
+    }
+
+    @Override
+    public void setParent(final ThemisAnalysisContainer pParent) {
+        theParent = pParent;
     }
 
     /**

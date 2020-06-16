@@ -16,7 +16,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jgordianknot.api.keystore;
 
-import java.security.KeyStore;
+import java.security.KeyStore.Entry;
 
 import net.sourceforge.joceanus.jgordianknot.api.base.GordianKeySpec;
 import net.sourceforge.joceanus.jgordianknot.api.key.GordianKey;
@@ -29,7 +29,7 @@ import net.sourceforge.joceanus.jtethys.date.TethysDate;
  * KeyStore Entry API.
  */
 public interface GordianKeyStoreEntry
-        extends KeyStore.Entry {
+        extends Entry {
     /**
      * Obtain the creation date.
      * @return the creation date

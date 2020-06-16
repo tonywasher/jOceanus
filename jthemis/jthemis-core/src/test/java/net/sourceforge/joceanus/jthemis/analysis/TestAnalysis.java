@@ -272,8 +272,8 @@ public class TestAnalysis {
      * PrometheusSwing.
      */
     private static void testPrometheusSwing() {
-        //testPackage("jprometheus-swing", "lethe.swing");
-        testPackage("jprometheus-swing", "lethe.ui.swing");
+        testPackage("jprometheus-swing", "lethe.swing");
+        //testPackage("jprometheus-swing", "lethe.ui.swing");
     }
 
     /**

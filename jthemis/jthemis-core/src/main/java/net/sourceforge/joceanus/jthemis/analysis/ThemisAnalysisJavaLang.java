@@ -94,6 +94,11 @@ public enum ThemisAnalysisJavaLang
     RUNTIMEXCEPT("RuntimeException"),
 
     /**
+     * StackTraceELement.
+     */
+    STACKTRACE("StackTraceElement"),
+
+    /**
      * AutoCloseable.
      */
     AUTOCLOSEABLE("AutoCloseable");

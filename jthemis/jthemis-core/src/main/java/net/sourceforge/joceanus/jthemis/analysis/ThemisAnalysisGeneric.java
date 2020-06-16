@@ -255,8 +255,8 @@ public interface ThemisAnalysisGeneric {
                 final ThemisAnalysisGenericVar myVar = myIterator.previous();
 
                 /* Resolve generic details and add to dataMap */
-                myVar.resolveGeneric(pParser);
                 myMap.declareGenericVar(myVar);
+                myVar.resolveGeneric(pParser);
             }
         }
 
