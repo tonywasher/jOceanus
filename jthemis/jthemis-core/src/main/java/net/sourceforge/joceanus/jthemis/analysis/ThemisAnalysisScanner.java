@@ -22,7 +22,8 @@ import java.util.Deque;
 /**
  * Scanner for headers and trailers.
  */
-public class ThemisAnalysisScanner {
+public class
+ThemisAnalysisScanner {
     /**
      * The parser.
      */
@@ -120,6 +121,36 @@ public class ThemisAnalysisScanner {
         }
 
         /* return the results */
+        return theResults;
+    }
+
+    /**
+     * Scan For Terminator.
+     * @param pLine the current line
+     * @return the results
+     */
+    Deque<ThemisAnalysisElement> scanForGeneric(final ThemisAnalysisLine pLine) {
+        /* Allocate array */
+        theResults = new ArrayDeque<>();
+
+        /* Access line details */
+        theCurLine = pLine;
+        theLength = theCurLine.getLength();
+        theCurPos = 0;
+
+        /* Locate the end of the sequence */
+        handleNestedSequence(ThemisAnalysisChar.GENERIC_CLOSE);
+
+        /* Strip to end character and add to results */
+        final ThemisAnalysisLine myLine = theCurLine.stripUpToPosition(theCurPos - 1);
+        theResults.add(myLine);
+
+        /* Return a non-blank line to the stack and break loop */
+        if (!ThemisAnalysisBlank.isBlank(theCurLine)) {
+            theParser.pushLine(theCurLine);
+        }
+
+        /* Return the results */
         return theResults;
     }
 

@@ -45,13 +45,13 @@ public class TestAnalysis {
      * @param pArgs the arguments
      */
     public static void main(final String[] pArgs) {
-        //testCoeus();
+        testCoeus();
         testGordianKnot();
-        //testMetis();
-        //testMoneyWise();
-        //testPrometheus();
-        //testTethys();
-        //testThemis();
+        testMetis();
+        testMoneyWise();
+        testPrometheus();
+        testTethys();
+        testThemis();
     }
 
     /**
@@ -259,7 +259,7 @@ public class TestAnalysis {
         testPackage("jprometheus-core", "atlas.field");
         testPackage("jprometheus-core", "atlas.preference");
         testPackage("jprometheus-core", "lethe");
-        //testPackage("jprometheus-core", "lethe.data");
+        testPackage("jprometheus-core", "lethe.data");
         testPackage("jprometheus-core", "lethe.database");
         testPackage("jprometheus-core", "lethe.sheets");
         testPackage("jprometheus-core", "lethe.threads");
@@ -273,7 +273,7 @@ public class TestAnalysis {
      */
     private static void testPrometheusSwing() {
         testPackage("jprometheus-swing", "lethe.swing");
-        //testPackage("jprometheus-swing", "lethe.ui.swing");
+        testPackage("jprometheus-swing", "lethe.ui.swing");
     }
 
     /**
@@ -297,9 +297,9 @@ public class TestAnalysis {
      * Tethys.
      */
     private static void testTethys() {
-        //testTethysCore();
+        testTethysCore();
         testTethysSwing();
-        //testTethysJavaFX();
+        testTethysJavaFX();
     }
 
     /**

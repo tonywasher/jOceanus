@@ -17,6 +17,7 @@
 package net.sourceforge.joceanus.jthemis.analysis;
 
 import java.util.ArrayList;
+import java.util.Deque;
 import java.util.List;
 import java.util.ListIterator;
 
@@ -59,6 +60,25 @@ public interface ThemisAnalysisGeneric {
 
             /* Obtain the contents */
             theContents = pLine.stripUpToPosition(myEnd);
+            theContents.stripStartChar(ThemisAnalysisChar.GENERIC_OPEN);
+            theContents.stripEndChar(ThemisAnalysisChar.GENERIC_CLOSE);
+        }
+
+        /**
+         * Constructor.
+         * @param pParser the parser
+         * @param pLine the line
+         */
+        ThemisAnalysisGenericBase(final ThemisAnalysisParser pParser,
+                                  final ThemisAnalysisLine pLine) {
+            /* Create a scanner */
+            final ThemisAnalysisScanner myScanner = new ThemisAnalysisScanner(pParser);
+
+            /* Scan for the end of the generic sequence */
+            final Deque<ThemisAnalysisElement> myLines = myScanner.scanForGeneric(pLine);
+
+            /* Obtain the contents */
+            theContents = new ThemisAnalysisLine(myLines);
             theContents.stripStartChar(ThemisAnalysisChar.GENERIC_OPEN);
             theContents.stripEndChar(ThemisAnalysisChar.GENERIC_CLOSE);
         }

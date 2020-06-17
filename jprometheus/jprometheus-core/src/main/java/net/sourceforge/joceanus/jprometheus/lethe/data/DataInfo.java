@@ -438,7 +438,7 @@ public abstract class DataInfo<T extends DataInfo<T, O, I, S, E>,
      */
     @SuppressWarnings("unchecked")
     protected static <E extends Enum<E>> DataItem<E> getLink(final MetisValueSet pValueSet) {
-        return (DataItem<E>) pValueSet.getValue(FIELD_LINK, DataItem.class);
+        return pValueSet.getValue(FIELD_LINK, DataItem.class);
     }
 
     /**

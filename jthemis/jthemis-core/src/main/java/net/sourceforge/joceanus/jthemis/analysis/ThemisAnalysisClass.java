@@ -77,9 +77,11 @@ public class ThemisAnalysisClass
         theDataMap = new ThemisAnalysisDataMap(myParent.getDataMap());
 
         /* Handle generic variables */
+        ThemisAnalysisLine myLine = pLine;
         if (ThemisAnalysisGeneric.isGeneric(pLine)) {
             /* Declare them to the properties */
-            theProperties = theProperties.setGenericVariables(new ThemisAnalysisGenericBase(pLine));
+            theProperties = theProperties.setGenericVariables(new ThemisAnalysisGenericBase(pParser, myLine));
+            myLine = (ThemisAnalysisLine) pParser.popNextLine();
         }
 
         /* Determine the full name */
@@ -89,7 +91,7 @@ public class ThemisAnalysisClass
         theDataMap.declareClass(this);
 
         /* Parse the headers */
-        final Deque<ThemisAnalysisElement> myHeaders = ThemisAnalysisBuilder.parseHeaders(pParser, pLine);
+        final Deque<ThemisAnalysisElement> myHeaders = ThemisAnalysisBuilder.parseHeaders(pParser, myLine);
 
         /* Parse the body */
         final Deque<ThemisAnalysisElement> myLines = ThemisAnalysisBuilder.processBody(pParser);

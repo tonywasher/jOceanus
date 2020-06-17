@@ -75,10 +75,10 @@ public class ThemisAnalysisPackage
         theFiles = listFiles(myLocation);
 
         /* firstPass process the files */
-        firstPassProcessFiles();
+        performFirstPass();
 
         /* SecondPass process the files */
-        secondPassProcessFiles();
+        performSecondPass();
     }
 
     /**
@@ -132,7 +132,7 @@ public class ThemisAnalysisPackage
      * firstPass process files.
      * @throws OceanusException on error
      */
-    private void firstPassProcessFiles() throws OceanusException {
+    private void performFirstPass() throws OceanusException {
         /* Loop through the classes */
         for (ThemisAnalysisFile myFile : theFiles) {
             /* Process the class */
@@ -142,9 +142,8 @@ public class ThemisAnalysisPackage
 
     /**
      * secondPass process files.
-     * @throws OceanusException on error
      */
-    private void secondPassProcessFiles() throws OceanusException {
+    private void performSecondPass() {
         /* Loop through the classes */
         for (ThemisAnalysisFile myFile : theFiles) {
             /* Process the class */

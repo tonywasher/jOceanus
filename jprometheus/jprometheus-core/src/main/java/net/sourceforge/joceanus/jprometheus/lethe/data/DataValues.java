@@ -21,6 +21,7 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -387,7 +388,7 @@ public class DataValues<E extends Enum<E>> {
      * Obtain Field iterator.
      * @return the Field iterator
      */
-    public final Iterator<Map.Entry<MetisField, Object>> fieldIterator() {
+    public final Iterator<Entry<MetisField, Object>> fieldIterator() {
         return theFields.entrySet().iterator();
     }
 
@@ -508,7 +509,7 @@ public class DataValues<E extends Enum<E>> {
         final Element myElement = pDocument.createElement(theItemType);
 
         /* Loop through the values */
-        for (Map.Entry<MetisField, Object> myEntry : theFields.entrySet()) {
+        for (Entry<MetisField, Object> myEntry : theFields.entrySet()) {
             /* Access parts */
             final MetisField myField = myEntry.getKey();
             final Object myValue = myEntry.getValue();
