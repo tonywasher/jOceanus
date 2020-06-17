@@ -45,13 +45,13 @@ public class TestAnalysis {
      * @param pArgs the arguments
      */
     public static void main(final String[] pArgs) {
-        testCoeus();
+        //testCoeus();
         testGordianKnot();
-        testMetis();
-        testMoneyWise();
-        testPrometheus();
-        testTethys();
-        testThemis();
+        //testMetis();
+        //testMoneyWise();
+        //testPrometheus();
+        //testTethys();
+        //testThemis();
     }
 
     /**
@@ -129,7 +129,7 @@ public class TestAnalysis {
         testPackage("jgordianknot-core", "impl.core.key");
         testPackage("jgordianknot-core", "impl.core.keypair");
         testPackage("jgordianknot-core", "impl.core.keyset");
-        //testPackage("jgordianknot-core", "impl.core.keystore");
+        testPackage("jgordianknot-core", "impl.core.keystore");
         testPackage("jgordianknot-core", "impl.core.mac");
         testPackage("jgordianknot-core", "impl.core.password");
         testPackage("jgordianknot-core", "impl.core.random");
@@ -297,9 +297,9 @@ public class TestAnalysis {
      * Tethys.
      */
     private static void testTethys() {
-        testTethysCore();
+        //testTethysCore();
         testTethysSwing();
-        testTethysJavaFX();
+        //testTethysJavaFX();
     }
 
     /**
@@ -320,7 +320,7 @@ public class TestAnalysis {
      * TethysSwing.
      */
     private static void testTethysSwing() {
-        testPackage("jtethys-swing", "help.swing");
+        //testPackage("jtethys-swing", "help.swing");
         testPackage("jtethys-swing", "ui.swing");
     }
 

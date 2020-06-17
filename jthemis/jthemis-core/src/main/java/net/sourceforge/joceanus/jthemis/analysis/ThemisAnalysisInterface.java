@@ -20,7 +20,6 @@ import java.util.ArrayDeque;
 import java.util.Deque;
 import java.util.List;
 
-import net.sourceforge.joceanus.jthemis.analysis.ThemisAnalysisDataMap.ThemisAnalysisDataType;
 import net.sourceforge.joceanus.jthemis.analysis.ThemisAnalysisFile.ThemisAnalysisObject;
 import net.sourceforge.joceanus.jthemis.analysis.ThemisAnalysisGeneric.ThemisAnalysisGenericBase;
 
@@ -28,7 +27,7 @@ import net.sourceforge.joceanus.jthemis.analysis.ThemisAnalysisGeneric.ThemisAna
  * Interface representation.
  */
 public class ThemisAnalysisInterface
-        implements ThemisAnalysisContainer, ThemisAnalysisObject, ThemisAnalysisDataType {
+        implements ThemisAnalysisContainer, ThemisAnalysisObject {
     /**
      * The short name of the class.
      */
@@ -142,10 +141,7 @@ public class ThemisAnalysisInterface
         }
     }
 
-    /**
-     * Obtain the short name.
-     * @return the name
-     */
+    @Override
     public String getShortName() {
         return theShortName;
     }
@@ -168,6 +164,11 @@ public class ThemisAnalysisInterface
     @Override
     public ThemisAnalysisContainer getParent() {
         return this;
+    }
+
+    @Override
+    public List<ThemisAnalysisReference> getAncestors() {
+        return theAncestors;
     }
 
     @Override

@@ -22,6 +22,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import net.sourceforge.joceanus.jthemis.analysis.ThemisAnalysisFile.ThemisAnalysisObject;
 import net.sourceforge.joceanus.jthemis.analysis.ThemisAnalysisGeneric.ThemisAnalysisGenericVar;
 import net.sourceforge.joceanus.jthemis.analysis.ThemisAnalysisImports.ThemisAnalysisImport;
 
@@ -54,7 +55,7 @@ public class ThemisAnalysisDataMap {
     /**
      * The map of all classes.
      */
-    private final Map<String, ThemisAnalysisDataType> theClassMap;
+    private final Map<String, ThemisAnalysisObject> theClassMap;
 
     /**
      * The parent.
@@ -65,6 +66,11 @@ public class ThemisAnalysisDataMap {
      * The file dataTypes.
      */
     private Map<String, ThemisAnalysisDataType> theFileTypes;
+
+    /**
+     * The list of file classes.
+     */
+    private List<ThemisAnalysisObject> theFileClasses;
 
     /**
      * The list of all references.
@@ -89,6 +95,7 @@ public class ThemisAnalysisDataMap {
         theClassMap = pParent.theClassMap;
         theLocalTypes = new HashMap<>();
         theFileTypes = pParent.theFileTypes;
+        theFileClasses = pParent.theFileClasses;
         theReferences = pParent.theReferences;
     }
 
@@ -117,6 +124,7 @@ public class ThemisAnalysisDataMap {
     void declareClass(final ThemisAnalysisClass pClass) {
         theClassMap.put(pClass.getFullName(), pClass);
         theFileTypes.put(pClass.getShortName(), pClass);
+        theFileClasses.add(pClass);
     }
 
     /**
@@ -126,6 +134,7 @@ public class ThemisAnalysisDataMap {
     void declareInterface(final ThemisAnalysisInterface pInterface) {
         theClassMap.put(pInterface.getFullName(), pInterface);
         theFileTypes.put(pInterface.getShortName(), pInterface);
+        theFileClasses.add(pInterface);
     }
 
     /**
@@ -135,6 +144,7 @@ public class ThemisAnalysisDataMap {
     void declareEnum(final ThemisAnalysisEnum pEnum) {
         theClassMap.put(pEnum.getFullName(), pEnum);
         theFileTypes.put(pEnum.getShortName(), pEnum);
+        theFileClasses.add(pEnum);
     }
 
     /**
@@ -143,6 +153,9 @@ public class ThemisAnalysisDataMap {
     void setUpFileResoureces() {
         /* Local types are file wide */
         theFileTypes = theLocalTypes;
+
+        /* Allocate the fileClasses */
+        theFileClasses = new ArrayList<>();
 
         /* Allocate the references list */
         theReferences = new ArrayList<>();
@@ -208,12 +221,6 @@ public class ThemisAnalysisDataMap {
                     myEntry.setValue(myActual);
                 }
             }
-
-            /* If this is an unknown value */
-            if (myType instanceof ThemisAnalysisDataTypeUnknown) {
-                final ThemisAnalysisDataTypeUnknown myUnknown = (ThemisAnalysisDataTypeUnknown) myType;
-                System.out.println("Unknown: " + myUnknown.toString());
-            }
         }
 
         /* Loop through the References */
@@ -230,6 +237,74 @@ public class ThemisAnalysisDataMap {
                 }
             }
         }
+
+        /* Process implicit imports */
+        processImplicit();
+
+        /* Loop through the References */
+        for (ThemisAnalysisReference myRef : theReferences) {
+            /* Access the dataType */
+            final ThemisAnalysisDataType myType = myRef.getDataType();
+
+            /* If this is an unknown */
+            if (myType instanceof ThemisAnalysisDataTypeUnknown) {
+                /* Check for implicit import */
+                final ThemisAnalysisDataType myActual = theLocalTypes.get(myType.toString());
+                if (!(myActual instanceof ThemisAnalysisDataTypeUnknown)) {
+                    myRef.updateDataType(myActual);
+                }
+            }
+        }
+    }
+
+    /**
+     * Process implicit imports.
+     */
+    private void processImplicit() {
+        /* Loop through the fileClasses */
+        for (ThemisAnalysisObject myClass : theFileClasses) {
+            /* Loop through the ancestors */
+            for (ThemisAnalysisReference myRef : myClass.getAncestors()) {
+                /* Process the ancestor */
+                final ThemisAnalysisDataType myDataType = myRef.getDataType();
+                if (myDataType instanceof ThemisAnalysisObject) {
+                    processAncestor((ThemisAnalysisObject) myDataType);
+                }
+            }
+        }
+    }
+
+    /**
+     * Process ancestor.
+     * @param pAncestor the ancestor
+     */
+    private void processAncestor(final ThemisAnalysisObject pAncestor) {
+        /* Loop through the fileClasses */
+        for (ThemisAnalysisObject myClass : theClassMap.values()) {
+            /* If this is a direct child of the ancestor */
+            final String myName = pAncestor.getFullName() + ThemisAnalysisChar.PERIOD + myClass.getShortName();
+            if (myName.endsWith(myClass.getFullName())) {
+                /* Add it to the local types */
+                theLocalTypes.put(myClass.getShortName(), myClass);
+            }
+        }
+    }
+
+    /**
+     * Report unknown references. (DEBUG)
+     */
+    void reportUnknown() {
+        /* Loop through the localDataTypes */
+        for (Entry<String, ThemisAnalysisDataType> myEntry : theLocalTypes.entrySet()) {
+            /* Access the value */
+            final ThemisAnalysisDataType myType = myEntry.getValue();
+
+            /* If this is an unknown value */
+            if (myType instanceof ThemisAnalysisDataTypeUnknown) {
+                final ThemisAnalysisDataTypeUnknown myUnknown = (ThemisAnalysisDataTypeUnknown) myType;
+                System.out.println("Unknown: " + myUnknown.toString());
+            }
+        }
     }
 
     /**
@@ -237,7 +312,7 @@ public class ThemisAnalysisDataMap {
      * @param pIntermediate the intermediate dataType.
      * @return the actual dataType (or null)
      */
-    ThemisAnalysisDataType lookUpActualDataType(final ThemisAnalysisIntermediate pIntermediate) {
+    ThemisAnalysisObject lookUpActualDataType(final ThemisAnalysisIntermediate pIntermediate) {
         /* If this is an import */
         if (pIntermediate instanceof ThemisAnalysisImport) {
             /* Replace it with actual object if known */
@@ -285,7 +360,8 @@ public class ThemisAnalysisDataMap {
     /**
      * DataType Unknown.
      */
-    public static class ThemisAnalysisDataTypeUnknown implements ThemisAnalysisDataType {
+    public static class ThemisAnalysisDataTypeUnknown
+            implements ThemisAnalysisDataType {
         /**
          * The Name.
          */

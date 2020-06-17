@@ -74,11 +74,11 @@ public class ThemisAnalysisPackage
         /* Build list of files */
         theFiles = listFiles(myLocation);
 
-        /* Process the files */
-        processFiles();
+        /* firstPass process the files */
+        firstPassProcessFiles();
 
-        /* Update from the class map */
-        updateFromClassMap();
+        /* SecondPass process the files */
+        secondPassProcessFiles();
     }
 
     /**
@@ -129,14 +129,26 @@ public class ThemisAnalysisPackage
     }
 
     /**
-     * process files.
+     * firstPass process files.
      * @throws OceanusException on error
      */
-    private void processFiles() throws OceanusException {
+    private void firstPassProcessFiles() throws OceanusException {
         /* Loop through the classes */
         for (ThemisAnalysisFile myFile : theFiles) {
             /* Process the class */
             myFile.processFile();
+        }
+    }
+
+    /**
+     * secondPass process files.
+     * @throws OceanusException on error
+     */
+    private void secondPassProcessFiles() throws OceanusException {
+        /* Loop through the classes */
+        for (ThemisAnalysisFile myFile : theFiles) {
+            /* Process the class */
+            myFile.secondPassProcessLines();
         }
     }
 
@@ -146,17 +158,6 @@ public class ThemisAnalysisPackage
      */
     public String getPackage() {
         return thePackage;
-    }
-
-    /**
-     * Update from classMap.
-     */
-    void updateFromClassMap() {
-        /* Loop through the files */
-        for (ThemisAnalysisFile myFile : theFiles) {
-            /* Update the file */
-            myFile.updateFromClassMap();
-        }
     }
 
     /**

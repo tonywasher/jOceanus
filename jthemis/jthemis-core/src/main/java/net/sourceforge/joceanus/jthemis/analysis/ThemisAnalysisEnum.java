@@ -21,7 +21,6 @@ import java.util.ArrayList;
 import java.util.Deque;
 import java.util.List;
 
-import net.sourceforge.joceanus.jthemis.analysis.ThemisAnalysisDataMap.ThemisAnalysisDataType;
 import net.sourceforge.joceanus.jthemis.analysis.ThemisAnalysisFile.ThemisAnalysisObject;
 import net.sourceforge.joceanus.jthemis.analysis.ThemisAnalysisGeneric.ThemisAnalysisGenericBase;
 
@@ -29,7 +28,7 @@ import net.sourceforge.joceanus.jthemis.analysis.ThemisAnalysisGeneric.ThemisAna
  * Enum representation.
  */
 public class ThemisAnalysisEnum
-        implements ThemisAnalysisContainer, ThemisAnalysisObject, ThemisAnalysisDataType {
+        implements ThemisAnalysisContainer, ThemisAnalysisObject {
     /**
      * The short name of the class.
      */
@@ -173,10 +172,7 @@ public class ThemisAnalysisEnum
         return pLine.endsWithChar(ThemisAnalysisChar.COMMA);
     }
 
-    /**
-     * Obtain the short name.
-     * @return the name
-     */
+    @Override
     public String getShortName() {
         return theShortName;
     }
@@ -199,6 +195,11 @@ public class ThemisAnalysisEnum
     @Override
     public ThemisAnalysisContainer getParent() {
         return this;
+    }
+
+    @Override
+    public List<ThemisAnalysisReference> getAncestors() {
+        return theAncestors;
     }
 
     @Override

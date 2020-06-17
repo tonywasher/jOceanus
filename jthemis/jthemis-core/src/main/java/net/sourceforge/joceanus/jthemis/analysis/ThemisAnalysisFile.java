@@ -25,9 +25,11 @@ import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayDeque;
 import java.util.Deque;
+import java.util.List;
 
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jthemis.ThemisDataException;
+import net.sourceforge.joceanus.jthemis.analysis.ThemisAnalysisDataMap.ThemisAnalysisDataType;
 import net.sourceforge.joceanus.jthemis.analysis.ThemisAnalysisDataMap.ThemisAnalysisIntermediate;
 
 /**
@@ -38,12 +40,24 @@ public class ThemisAnalysisFile
     /**
      * Object class.
      */
-    interface ThemisAnalysisObject {
+    interface ThemisAnalysisObject extends ThemisAnalysisDataType {
+        /**
+         * Obtain the short name.
+         * @return the name
+         */
+        String getShortName();
+
         /**
          * Obtain the full name of the object.
          * @return the fullName
          */
         String getFullName();
+
+        /**
+         * Obtain ancestors.
+         * @return the list of ancestors
+         */
+        List<ThemisAnalysisReference> getAncestors();
     }
 
     /**
@@ -140,7 +154,6 @@ public class ThemisAnalysisFile
 
             /* Post process the lines */
             firstPassProcessLines(myLines);
-            secondPassProcessLines();
 
             /* Catch exceptions */
         } catch (IOException e) {
@@ -264,7 +277,7 @@ public class ThemisAnalysisFile
      * Post-process the lines as first Pass.
      * @param pLines the lines to process
      */
-    void firstPassProcessLines(final Deque<ThemisAnalysisElement> pLines) {
+    private void firstPassProcessLines(final Deque<ThemisAnalysisElement> pLines) {
         /* Create the parser */
         final ThemisAnalysisParser myParser = new ThemisAnalysisParser(pLines, theContents, this);
 
@@ -309,6 +322,9 @@ public class ThemisAnalysisFile
      * Post-process the lines as second Pass.
      */
     void secondPassProcessLines() {
+        /* Update from classMap */
+        theDataMap.updateFromClassMap();
+
         /* Loop through the lines */
         for (ThemisAnalysisElement myElement : theContents) {
             /* If the element is a container */
@@ -318,6 +334,9 @@ public class ThemisAnalysisFile
                 myContainer.postProcessLines();
             }
         }
+
+        /* Report unknown items */
+        theDataMap.reportUnknown();
     }
 
     /**
@@ -352,13 +371,6 @@ public class ThemisAnalysisFile
 
         /* return false */
         return false;
-    }
-
-    /**
-     * Update from classMap.
-     */
-    void updateFromClassMap() {
-        theDataMap.updateFromClassMap();
     }
 
     @Override
