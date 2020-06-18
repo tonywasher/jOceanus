@@ -18,6 +18,8 @@ package net.sourceforge.joceanus.jthemis.analysis;
 
 import java.util.Deque;
 
+import net.sourceforge.joceanus.jtethys.OceanusException;
+
 /**
  * Field Representation.
  */
@@ -54,11 +56,12 @@ public class ThemisAnalysisField
      * @param pName the method name
      * @param pDataType the dataType
      * @param pLine the initial class line
+     * @throws OceanusException on error
      */
     ThemisAnalysisField(final ThemisAnalysisParser pParser,
                         final String pName,
                         final ThemisAnalysisReference pDataType,
-                        final ThemisAnalysisLine pLine) {
+                        final ThemisAnalysisLine pLine) throws OceanusException {
         /* Store parameters */
         theName = pName;
         theDataType = pDataType;

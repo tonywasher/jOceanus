@@ -19,6 +19,8 @@ package net.sourceforge.joceanus.jthemis.analysis;
 import java.util.ArrayDeque;
 import java.util.Deque;
 
+import net.sourceforge.joceanus.jtethys.OceanusException;
+import net.sourceforge.joceanus.jthemis.ThemisDataException;
 import net.sourceforge.joceanus.jthemis.analysis.ThemisAnalysisFile.ThemisAnalysisObject;
 
 /**
@@ -78,8 +80,9 @@ public interface ThemisAnalysisContainer
 
     /**
      * Post process lines.
+     * @throws OceanusException on error
      */
-    default void postProcessLines() {
+    default void postProcessLines() throws OceanusException {
         /* Create a copy of the contents list and clear original */
         final Deque<ThemisAnalysisElement> myContents = getContents();
         final Deque<ThemisAnalysisElement> myLines = new ArrayDeque<>(myContents);
@@ -125,7 +128,7 @@ public interface ThemisAnalysisContainer
 
                 /* Everything should now be a line. */
             } else {
-                throw new IllegalStateException("Unexpected dataType");
+                throw new ThemisDataException("Unexpected dataType");
             }
         }
 
@@ -135,8 +138,9 @@ public interface ThemisAnalysisContainer
 
     /**
      * Post process extra lines.
+     * @throws OceanusException on error
      */
-    default void postProcessExtras() {
+    default void postProcessExtras() throws OceanusException {
         /* NoOp by default */
     }
 }

@@ -177,8 +177,9 @@ public class ThemisAnalysisModule {
 
     /**
      * secondPass process packages.
+     * @throws OceanusException on error
      */
-    void performSecondPass() {
+    void performSecondPass() throws OceanusException {
         /* Loop through the packages */
         for (ThemisAnalysisPackage myPackage : thePackages) {
             /* Process the package */

@@ -20,6 +20,9 @@ import java.util.Deque;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import net.sourceforge.joceanus.jtethys.OceanusException;
+import net.sourceforge.joceanus.jthemis.ThemisDataException;
+
 /**
  * Method parameters.
  */
@@ -38,16 +41,17 @@ public class ThemisAnalysisParameters {
      * Constructor.
      * @param pParser the parser
      * @param pHeaders the headers
+     * @throws OceanusException on error
      */
     ThemisAnalysisParameters(final ThemisAnalysisParser pParser,
-                             final Deque<ThemisAnalysisElement> pHeaders) {
+                             final Deque<ThemisAnalysisElement> pHeaders) throws OceanusException {
         /* Convert headers to single line */
         final ThemisAnalysisLine myHeader = new ThemisAnalysisLine(pHeaders);
 
         /* Find the end of the generic sequence */
         final int myEnd = myHeader.findEndOfNestedSequence(0, 0,  ThemisAnalysisChar.PARENTHESIS_CLOSE, ThemisAnalysisChar.PARENTHESIS_OPEN);
         if (myEnd < 0) {
-            throw new IllegalStateException("End character not found");
+            throw new ThemisDataException("End character not found");
         }
         final ThemisAnalysisLine myParms = myHeader.stripUpToPosition(myEnd);
         myParms.stripStartChar(ThemisAnalysisChar.PARENTHESIS_OPEN);

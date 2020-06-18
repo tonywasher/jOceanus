@@ -19,6 +19,7 @@ package net.sourceforge.joceanus.jthemis.analysis;
 import java.util.ArrayList;
 import java.util.List;
 
+import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jthemis.analysis.ThemisAnalysisDataMap.ThemisAnalysisIntermediate;
 
 /**
@@ -35,9 +36,10 @@ public class ThemisAnalysisImports
      * Constructor.
      * @param pParser the parser
      * @param pLine the initial import line
+     * @throws OceanusException on error
      */
     ThemisAnalysisImports(final ThemisAnalysisParser pParser,
-                          final ThemisAnalysisLine pLine) {
+                          final ThemisAnalysisLine pLine) throws OceanusException {
         /* Create the list of comment lines */
         theImports = new ArrayList<>();
 
@@ -76,8 +78,9 @@ public class ThemisAnalysisImports
      * Is the line an import?
      * @param pLine the line
      * @return true/false
+     * @throws OceanusException on error
      */
-    static boolean isImport(final ThemisAnalysisLine pLine) {
+    static boolean isImport(final ThemisAnalysisLine pLine) throws OceanusException {
         /* If we are ended by a semi-colon and is an import line*/
         if (pLine.endsWithChar(ThemisAnalysisChar.SEMICOLON)
                 && pLine.isStartedBy(ThemisAnalysisKeyWord.IMPORT.getKeyWord())) {

@@ -165,8 +165,9 @@ public class ThemisAnalysisPackage
 
     /**
      * secondPass process files.
+     * @throws OceanusException on error
      */
-    void performSecondPass() {
+    void performSecondPass() throws OceanusException {
         /* Loop through the classes */
         for (ThemisAnalysisFile myFile : theFiles) {
             /* Process the file */
@@ -186,8 +187,9 @@ public class ThemisAnalysisPackage
      * Is the line a package?
      * @param pLine the line
      * @return true/false
+     * @throws OceanusException on error
      */
-    static boolean isPackage(final ThemisAnalysisLine pLine) {
+    static boolean isPackage(final ThemisAnalysisLine pLine) throws OceanusException {
         /* If we are ended by a semi-colon and this is a package line */
         if (pLine.endsWithChar(ThemisAnalysisChar.SEMICOLON)
              && pLine.isStartedBy(ThemisAnalysisKeyWord.PACKAGE.getKeyWord())) {

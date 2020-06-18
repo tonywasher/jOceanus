@@ -23,6 +23,8 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import net.sourceforge.joceanus.jtethys.OceanusException;
+import net.sourceforge.joceanus.jthemis.ThemisDataException;
 import net.sourceforge.joceanus.jthemis.analysis.ThemisAnalysisDataMap.ThemisAnalysisDataType;
 import net.sourceforge.joceanus.jthemis.analysis.ThemisAnalysisGeneric.ThemisAnalysisGenericBase;
 
@@ -139,11 +141,12 @@ public class ThemisAnalysisParser {
     /**
      * Pop next line from list.
      * @return the next line
+     * @throws OceanusException on error
      */
-    ThemisAnalysisElement popNextLine() {
+    ThemisAnalysisElement popNextLine() throws OceanusException {
         /* Check that there is a line to pop */
         if (theLines.isEmpty()) {
-            throw new IllegalStateException();
+            throw new ThemisDataException("No more lines");
         }
 
         /* Access the first line and remove from the list */
@@ -153,11 +156,12 @@ public class ThemisAnalysisParser {
     /**
      * Peek next line from list.
      * @return the next line
+     * @throws OceanusException on error
      */
-    ThemisAnalysisElement peekNextLine() {
+    ThemisAnalysisElement peekNextLine() throws OceanusException {
         /* Check that there is a line to pop */
         if (theLines.isEmpty()) {
-            throw new IllegalStateException();
+            throw new ThemisDataException("No more lines");
         }
 
         /* Return the first line in the list */
@@ -177,8 +181,9 @@ public class ThemisAnalysisParser {
      * Process a potential comment/blank line.
      * @param pLine the line
      * @return have we processed the line?
+     * @throws OceanusException on error
      */
-    boolean processCommentsAndBlanks(final ThemisAnalysisLine pLine) {
+    boolean processCommentsAndBlanks(final ThemisAnalysisLine pLine) throws OceanusException {
         /* If this is a starting comment */
         if (ThemisAnalysisComment.isStartComment(pLine)) {
             /* Process the comment lines */
@@ -215,8 +220,9 @@ public class ThemisAnalysisParser {
      * Process a potential import line.
      * @param pLine the line
      * @return have we processed the line?
+     * @throws OceanusException on error
      */
-    boolean processImports(final ThemisAnalysisLine pLine) {
+    boolean processImports(final ThemisAnalysisLine pLine) throws OceanusException {
         /* If this is an import line */
         if (ThemisAnalysisImports.isImport(pLine)) {
             /* Process the import lines */
@@ -233,8 +239,9 @@ public class ThemisAnalysisParser {
      * Process a class/enum/interface line.
      * @param pLine the line
      * @return have we processed the line?
+     * @throws OceanusException on error
      */
-    boolean processClass(final ThemisAnalysisLine pLine) {
+    boolean processClass(final ThemisAnalysisLine pLine) throws OceanusException {
         /* Access class type */
         final String myToken = pLine.peekNextToken();
         final Object myType = KEYWORDS.get(myToken);
@@ -277,8 +284,9 @@ public class ThemisAnalysisParser {
      * Process language constructs.
      * @param pLine the line
      * @return have we processed the line?
+     * @throws OceanusException on error
      */
-    boolean processLanguage(final ThemisAnalysisLine pLine) {
+    boolean processLanguage(final ThemisAnalysisLine pLine) throws OceanusException {
         /* Access class type */
         final String myToken = pLine.peekNextToken();
         final Object myType = KEYWORDS.get(myToken);
@@ -350,9 +358,10 @@ public class ThemisAnalysisParser {
      * @param pOwner the owning switch
      * @param pLine the line
      * @return have we processed the line?
+     * @throws OceanusException on error
      */
     boolean processCase(final ThemisAnalysisContainer pOwner,
-                        final ThemisAnalysisLine pLine) {
+                        final ThemisAnalysisLine pLine) throws OceanusException {
         /* Access case type */
         final Object myCase = parseCase(pLine);
 
@@ -404,9 +413,10 @@ public class ThemisAnalysisParser {
      * @param pOwner the owning construct
      * @param pKeyWord the keyWord
      * @return have we processed the line?
+     * @throws OceanusException on error
      */
     ThemisAnalysisElement processExtra(final ThemisAnalysisContainer pOwner,
-                                       final ThemisAnalysisKeyWord pKeyWord) {
+                                       final ThemisAnalysisKeyWord pKeyWord) throws OceanusException {
         /* Just return if there are no more lines */
         if (!hasLines()) {
             return null;
@@ -453,8 +463,9 @@ public class ThemisAnalysisParser {
      * Process field and method constructs.
      * @param pLine the line
      * @return the field/method or null
+     * @throws OceanusException on error
      */
-    ThemisAnalysisElement processFieldsAndMethods(final ThemisAnalysisLine pLine) {
+    ThemisAnalysisElement processFieldsAndMethods(final ThemisAnalysisLine pLine) throws OceanusException {
         /* Look for a reference */
         final ThemisAnalysisReference myReference = parsePotentialDataType(pLine);
         if (myReference != null) {
@@ -477,8 +488,9 @@ public class ThemisAnalysisParser {
      * Parse a possible dataType.
      * @param pLine the line
      * @return the dataType or null
+     * @throws OceanusException on error
      */
-    ThemisAnalysisReference parsePotentialDataType(final ThemisAnalysisLine pLine) {
+    ThemisAnalysisReference parsePotentialDataType(final ThemisAnalysisLine pLine) throws OceanusException {
         /* Not a dataType if we start with a keyWord */
         final String myToken = pLine.peekNextToken();
         if (KEYWORDS.get(myToken) != null) {
@@ -512,12 +524,13 @@ public class ThemisAnalysisParser {
      * Parse a dataType.
      * @param pLine the line
      * @return the dataType or null
+     * @throws OceanusException on error
      */
-    ThemisAnalysisReference parseDataType(final ThemisAnalysisLine pLine) {
+    ThemisAnalysisReference parseDataType(final ThemisAnalysisLine pLine) throws OceanusException {
         /* Cannot be started by a keyWord */
         String myToken = pLine.peekNextToken();
         if (KEYWORDS.get(myToken) != null) {
-            throw new IllegalStateException("DataType required but keyWord found");
+            throw new ThemisDataException("DataType required but keyWord found");
         }
 
         /* If the token ends with the VARARGS indication */
@@ -543,9 +556,10 @@ public class ThemisAnalysisParser {
      * @param pLine the line
      * @param pType the dataType
      * @return the dataType or null
+     * @throws OceanusException on error
      */
     private ThemisAnalysisReference buildReference(final ThemisAnalysisLine pLine,
-                                                   final ThemisAnalysisDataType pType) {
+                                                   final ThemisAnalysisDataType pType) throws OceanusException {
         /* Access any generic/array detail */
         final ThemisAnalysisGeneric myGeneric = ThemisAnalysisGeneric.isGeneric(pLine)
                                                 ? new ThemisAnalysisGenericBase(pLine)
@@ -562,8 +576,9 @@ public class ThemisAnalysisParser {
 
     /**
      * process the lines.
+     * @throws OceanusException on error
      */
-    void processLines() {
+    void processLines() throws OceanusException {
         /* Loop through the lines */
         while (hasLines()) {
             /* Access next line */
@@ -611,8 +626,9 @@ public class ThemisAnalysisParser {
      * Parse ancestors.
      * @param pHeaders the headers
      * @return the list of ancestors
+     * @throws OceanusException on error
      */
-    List<ThemisAnalysisReference> parseAncestors(final Deque<ThemisAnalysisElement> pHeaders) {
+    List<ThemisAnalysisReference> parseAncestors(final Deque<ThemisAnalysisElement> pHeaders) throws OceanusException {
         /* Create the list */
         final List<ThemisAnalysisReference> myAncestors = new ArrayList<>();
         final ThemisAnalysisLine myHeader = new ThemisAnalysisLine(pHeaders);
@@ -638,7 +654,7 @@ public class ThemisAnalysisParser {
                 /* Process the ancestor */
                 final ThemisAnalysisReference myReference = parseDataType(myHeader);
                 if (myReference == null) {
-                    throw new IllegalStateException("Illegal implements/extends clause");
+                    throw new ThemisDataException("Illegal implements/extends clause");
                 }
                 myReference.resolveGeneric(this);
                 myAncestors.add(myReference);
@@ -650,8 +666,9 @@ public class ThemisAnalysisParser {
      * Parse parameters.
      * @param pParams the parameters
      * @return the parameter map
+     * @throws OceanusException on error
      */
-    Map<String, ThemisAnalysisReference> parseParameters(final ThemisAnalysisLine pParams) {
+    Map<String, ThemisAnalysisReference> parseParameters(final ThemisAnalysisLine pParams) throws OceanusException {
         /* Create the list */
         final Map<String, ThemisAnalysisReference> myParams = new LinkedHashMap<>();
 
@@ -676,7 +693,7 @@ public class ThemisAnalysisParser {
                 /* Process the parameter */
                 final ThemisAnalysisReference myReference = parseDataType(pParams);
                 if (myReference == null) {
-                    throw new IllegalStateException("Illegal parameter");
+                    throw new ThemisDataException("Illegal parameter");
                 }
                 myReference.resolveGeneric(this);
                 final String myVar = pParams.stripNextToken();

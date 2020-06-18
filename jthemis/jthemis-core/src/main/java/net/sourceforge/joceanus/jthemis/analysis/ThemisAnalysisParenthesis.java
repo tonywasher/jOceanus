@@ -16,6 +16,9 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jthemis.analysis;
 
+import net.sourceforge.joceanus.jtethys.OceanusException;
+import net.sourceforge.joceanus.jthemis.ThemisDataException;
+
 /**
  * Parenthesis utilities.
  */
@@ -30,12 +33,13 @@ public final class ThemisAnalysisParenthesis {
      * Strip parenthesis contents from line.
      * @param pLine the initial enum line
      * @return the content
+     * @throws OceanusException on error
      */
-    static ThemisAnalysisLine stripParenthesisContents(final ThemisAnalysisLine pLine) {
+    static ThemisAnalysisLine stripParenthesisContents(final ThemisAnalysisLine pLine) throws OceanusException {
         /* Find the end of the generic sequence */
         final int myEnd = pLine.findEndOfNestedSequence(0, 0,  ThemisAnalysisChar.PARENTHESIS_CLOSE, ThemisAnalysisChar.PARENTHESIS_OPEN);
         if (myEnd < 0) {
-            throw new IllegalStateException("End character not found");
+            throw new ThemisDataException("End character not found");
         }
 
         /* Obtain the contents */

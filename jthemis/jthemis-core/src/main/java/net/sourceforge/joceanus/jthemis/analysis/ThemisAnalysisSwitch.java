@@ -19,6 +19,8 @@ package net.sourceforge.joceanus.jthemis.analysis;
 import java.util.ArrayDeque;
 import java.util.Deque;
 
+import net.sourceforge.joceanus.jtethys.OceanusException;
+import net.sourceforge.joceanus.jthemis.ThemisDataException;
 import net.sourceforge.joceanus.jthemis.analysis.ThemisAnalysisContainer.ThemisAnalysisAdoptable;
 
 /**
@@ -50,9 +52,10 @@ public class ThemisAnalysisSwitch
      * Constructor.
      * @param pParser the parser
      * @param pLine the initial switch line
+     * @throws OceanusException on error
      */
     ThemisAnalysisSwitch(final ThemisAnalysisParser pParser,
-                         final ThemisAnalysisLine pLine) {
+                         final ThemisAnalysisLine pLine) throws OceanusException {
         /* Access details from parser */
         theParent = pParser.getParent();
 
@@ -73,8 +76,9 @@ public class ThemisAnalysisSwitch
     /**
      * process the lines.
      * @param pParser the parser
+     * @throws OceanusException on error
      */
-    void processLines(final ThemisAnalysisParser pParser) {
+    void processLines(final ThemisAnalysisParser pParser) throws OceanusException {
         /* Loop through the lines */
         while (pParser.hasLines()) {
             /* Access next line */
@@ -91,7 +95,7 @@ public class ThemisAnalysisSwitch
             /* If we haven't processed yet */
             if (!processed) {
                 /* We should never reach here */
-                throw new IllegalStateException("Unexpected code in switch");
+                throw new ThemisDataException("Unexpected code in switch");
             }
         }
     }

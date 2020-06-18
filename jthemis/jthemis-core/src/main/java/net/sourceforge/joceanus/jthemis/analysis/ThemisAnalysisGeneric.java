@@ -21,6 +21,8 @@ import java.util.Deque;
 import java.util.List;
 import java.util.ListIterator;
 
+import net.sourceforge.joceanus.jtethys.OceanusException;
+import net.sourceforge.joceanus.jthemis.ThemisDataException;
 import net.sourceforge.joceanus.jthemis.analysis.ThemisAnalysisDataMap.ThemisAnalysisDataType;
 
 /**
@@ -50,12 +52,13 @@ public interface ThemisAnalysisGeneric {
         /**
          * Constructor.
          * @param pLine the line
+         * @throws OceanusException on error
          */
-        ThemisAnalysisGenericBase(final ThemisAnalysisLine pLine) {
+        ThemisAnalysisGenericBase(final ThemisAnalysisLine pLine) throws OceanusException {
             /* Find the end of the generic sequence */
             final int myEnd = pLine.findEndOfNestedSequence(0, 0,  ThemisAnalysisChar.GENERIC_CLOSE, ThemisAnalysisChar.GENERIC_OPEN);
             if (myEnd < 0) {
-                throw new IllegalStateException("End character not found");
+                throw new ThemisDataException("End character not found");
             }
 
             /* Obtain the contents */
@@ -68,9 +71,10 @@ public interface ThemisAnalysisGeneric {
          * Constructor.
          * @param pParser the parser
          * @param pLine the line
+         * @throws OceanusException on error
          */
         ThemisAnalysisGenericBase(final ThemisAnalysisParser pParser,
-                                  final ThemisAnalysisLine pLine) {
+                                  final ThemisAnalysisLine pLine) throws OceanusException {
             /* Create a scanner */
             final ThemisAnalysisScanner myScanner = new ThemisAnalysisScanner(pParser);
 
@@ -116,9 +120,10 @@ public interface ThemisAnalysisGeneric {
          * Constructor.
          * @param pParser the parser
          * @param pBase the base generic line
+         * @throws OceanusException on error
          */
         ThemisAnalysisGenericRef(final ThemisAnalysisParser pParser,
-                                 final ThemisAnalysisGenericBase pBase) {
+                                 final ThemisAnalysisGenericBase pBase) throws OceanusException {
             /* Create the list */
             theBase = pBase;
             theReferences = new ArrayList<>();
@@ -171,7 +176,7 @@ public interface ThemisAnalysisGeneric {
                 } else {
                     final ThemisAnalysisReference myReference = pParser.parseDataType(myLine);
                     if (myReference == null) {
-                        throw new IllegalStateException("Illegal generic parameter");
+                        throw new ThemisDataException("Illegal generic parameter");
                     }
                     myReference.resolveGeneric(pParser);
                     theReferences.add(myReference);
@@ -212,9 +217,10 @@ public interface ThemisAnalysisGeneric {
          * Constructor.
          * @param pParser the parser
          * @param pBase the base generic line
+         * @throws OceanusException on error
          */
         ThemisAnalysisGenericVarList(final ThemisAnalysisParser pParser,
-                                     final ThemisAnalysisGenericBase pBase) {
+                                     final ThemisAnalysisGenericBase pBase) throws OceanusException {
             /* Create the list */
             theBase = pBase;
             theVariables = new ArrayList<>();
@@ -264,8 +270,9 @@ public interface ThemisAnalysisGeneric {
         /**
          * Add to dataList.
          * @param pParser the parser
+         * @throws OceanusException on error
          */
-        private void addToDataList(final ThemisAnalysisParser pParser) {
+        private void addToDataList(final ThemisAnalysisParser pParser) throws OceanusException {
             /* Access the dataMap */
             final ThemisAnalysisDataMap myMap = pParser.getDataMap();
 
@@ -324,8 +331,9 @@ public interface ThemisAnalysisGeneric {
         /**
          * Resolve the generic references.
          * @param pParser the parser
+         * @throws OceanusException on error
          */
-        public void resolveGeneric(final ThemisAnalysisParser pParser) {
+        public void resolveGeneric(final ThemisAnalysisParser pParser) throws OceanusException {
             /* Loop through resolving the references */
             for (ThemisAnalysisReference myRef : theReferences) {
                 myRef.resolveGeneric(pParser);

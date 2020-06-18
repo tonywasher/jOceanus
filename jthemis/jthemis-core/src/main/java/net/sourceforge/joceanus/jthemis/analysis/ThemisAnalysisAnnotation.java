@@ -19,6 +19,8 @@ package net.sourceforge.joceanus.jthemis.analysis;
 import java.util.ArrayList;
 import java.util.List;
 
+import net.sourceforge.joceanus.jtethys.OceanusException;
+
 /**
  * Annotation.
  */
@@ -33,9 +35,10 @@ public class ThemisAnalysisAnnotation
      * Constructor.
      * @param pParser the parser
      * @param pLine the initial annotation line
+     * @throws OceanusException on error
      */
     ThemisAnalysisAnnotation(final ThemisAnalysisParser pParser,
-                             final ThemisAnalysisLine pLine) {
+                             final ThemisAnalysisLine pLine) throws OceanusException {
         /* Create the list of annotation lines */
         theAnnotations = new ArrayList<>();
         theAnnotations.add(new ThemisAnalysisAnnotationRef(pParser, pLine));
@@ -86,9 +89,10 @@ public class ThemisAnalysisAnnotation
          * Constructor.
          * @param pParser the parser
          * @param pLine the initial annotation line
+         * @throws OceanusException on error
          */
         ThemisAnalysisAnnotationRef(final ThemisAnalysisParser pParser,
-                                    final ThemisAnalysisLine pLine) {
+                                    final ThemisAnalysisLine pLine) throws OceanusException {
             pLine.stripStartChar(ThemisAnalysisChar.ANNOTATION);
             theAnnotation = pParser.parseDataType(pLine);
         }

@@ -20,6 +20,7 @@ import java.util.ArrayDeque;
 import java.util.Deque;
 import java.util.List;
 
+import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jthemis.analysis.ThemisAnalysisFile.ThemisAnalysisObject;
 import net.sourceforge.joceanus.jthemis.analysis.ThemisAnalysisGeneric.ThemisAnalysisGenericBase;
 
@@ -67,9 +68,10 @@ public class ThemisAnalysisClass
      * Constructor.
      * @param pParser the parser
      * @param pLine the initial class line
+     * @throws OceanusException on error
      */
     ThemisAnalysisClass(final ThemisAnalysisParser pParser,
-                        final ThemisAnalysisLine pLine) {
+                        final ThemisAnalysisLine pLine) throws OceanusException {
         /* Store parameters */
         theShortName = pLine.stripNextToken();
         theProperties = pLine.getProperties();
@@ -115,8 +117,9 @@ public class ThemisAnalysisClass
     /**
      * process the lines.
      * @param pParser the parser
+     * @throws OceanusException on error
      */
-    void processLines(final ThemisAnalysisParser pParser) {
+    void processLines(final ThemisAnalysisParser pParser) throws OceanusException {
        /* Loop through the lines */
         while (pParser.hasLines()) {
             /* Access next line */

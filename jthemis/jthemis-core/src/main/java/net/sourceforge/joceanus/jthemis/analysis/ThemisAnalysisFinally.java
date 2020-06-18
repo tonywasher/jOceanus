@@ -19,6 +19,8 @@ package net.sourceforge.joceanus.jthemis.analysis;
 import java.util.ArrayDeque;
 import java.util.Deque;
 
+import net.sourceforge.joceanus.jtethys.OceanusException;
+
 /**
  * Finally construct.
  */
@@ -49,10 +51,11 @@ public class ThemisAnalysisFinally
      * @param pParser the parser
      * @param pOwner the owning try
      * @param pLine the initial finally line
+     * @throws OceanusException on error
      */
     ThemisAnalysisFinally(final ThemisAnalysisParser pParser,
                           final ThemisAnalysisContainer pOwner,
-                          final ThemisAnalysisLine pLine) {
+                          final ThemisAnalysisLine pLine) throws OceanusException {
         /* Record the parent */
         theParent = pOwner;
 

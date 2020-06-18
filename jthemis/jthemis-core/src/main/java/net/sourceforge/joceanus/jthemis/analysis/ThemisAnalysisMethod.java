@@ -19,6 +19,8 @@ package net.sourceforge.joceanus.jthemis.analysis;
 import java.util.ArrayDeque;
 import java.util.Deque;
 
+import net.sourceforge.joceanus.jtethys.OceanusException;
+
 /**
  * Method Representation.
  */
@@ -75,11 +77,12 @@ public class ThemisAnalysisMethod
      * @param pName the method name
      * @param pReference the reference
      * @param pLine the initial method line
+     * @throws OceanusException on error
      */
     ThemisAnalysisMethod(final ThemisAnalysisParser pParser,
                          final String pName,
                          final ThemisAnalysisReference pReference,
-                         final ThemisAnalysisLine pLine) {
+                         final ThemisAnalysisLine pLine) throws OceanusException {
         /* Store parameters */
         isInitializer = pName.length() == 0;
         theName = isInitializer ? pReference.toString() : pName;

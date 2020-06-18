@@ -19,6 +19,7 @@ package net.sourceforge.joceanus.jthemis.analysis;
 import java.util.ArrayDeque;
 import java.util.Deque;
 
+import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jthemis.analysis.ThemisAnalysisContainer.ThemisAnalysisAdoptable;
 
 /**
@@ -55,9 +56,10 @@ public class ThemisAnalysisIf
      * Constructor.
      * @param pParser the parser
      * @param pLine the initial if line
+     * @throws OceanusException on error
      */
     ThemisAnalysisIf(final ThemisAnalysisParser pParser,
-                     final ThemisAnalysisLine pLine) {
+                     final ThemisAnalysisLine pLine) throws OceanusException {
         /* Access details from parser */
         theParent = pParser.getParent();
 
@@ -94,7 +96,7 @@ public class ThemisAnalysisIf
     }
 
     @Override
-    public void postProcessExtras() {
+    public void postProcessExtras() throws OceanusException {
         /* Process the else clause if required */
         if (theElse != null) {
             theElse.postProcessLines();

@@ -16,6 +16,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jthemis.analysis;
 
+import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jthemis.analysis.ThemisAnalysisDataMap.ThemisAnalysisDataType;
 import net.sourceforge.joceanus.jthemis.analysis.ThemisAnalysisGeneric.ThemisAnalysisGenericBase;
 import net.sourceforge.joceanus.jthemis.analysis.ThemisAnalysisGeneric.ThemisAnalysisGenericRef;
@@ -65,8 +66,9 @@ public class ThemisAnalysisReference {
     /**
      * Resolve the generic reference.
      * @param pParser the parser
+     * @throws OceanusException on error
      */
-    void resolveGeneric(final ThemisAnalysisParser pParser) {
+    void resolveGeneric(final ThemisAnalysisParser pParser) throws OceanusException  {
         /* Resolve any generic base instance */
         if (theGeneric instanceof ThemisAnalysisGenericBase) {
             theGeneric = new ThemisAnalysisGenericRef(pParser, (ThemisAnalysisGenericBase) theGeneric);

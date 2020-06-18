@@ -19,6 +19,7 @@ package net.sourceforge.joceanus.jthemis.analysis;
 import java.util.ArrayDeque;
 import java.util.Deque;
 
+import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jthemis.analysis.ThemisAnalysisContainer.ThemisAnalysisAdoptable;
 
 /**
@@ -36,9 +37,10 @@ public final class ThemisAnalysisBuilder {
      * @param pParser the parser
      * @param pLine the current line
      * @return the headers
+     * @throws OceanusException on error
      */
     static Deque<ThemisAnalysisElement> parseHeaders(final ThemisAnalysisParser pParser,
-                                                     final ThemisAnalysisLine pLine) {
+                                                     final ThemisAnalysisLine pLine) throws OceanusException {
         /* Allocate scanner */
         final ThemisAnalysisScanner myScanner = new ThemisAnalysisScanner(pParser);
         return myScanner.scanForTerminator(pLine, ThemisAnalysisChar.BRACE_OPEN);
@@ -49,9 +51,10 @@ public final class ThemisAnalysisBuilder {
      * @param pParser the parser
      * @param pLine the current line
      * @return the trailers
+     * @throws OceanusException on error
      */
     static Deque<ThemisAnalysisElement> parseTrailers(final ThemisAnalysisParser pParser,
-                                                      final ThemisAnalysisLine pLine) {
+                                                      final ThemisAnalysisLine pLine) throws OceanusException {
         /* Allocate scanner */
         final ThemisAnalysisScanner myScanner = new ThemisAnalysisScanner(pParser);
         return myScanner.scanForTerminator(pLine, ThemisAnalysisChar.SEMICOLON);
@@ -61,8 +64,9 @@ public final class ThemisAnalysisBuilder {
      * Process body.
      * @param pParser the parser
      * @return the body
+     * @throws OceanusException on error
      */
-    static Deque<ThemisAnalysisElement> processBody(final ThemisAnalysisParser pParser) {
+    static Deque<ThemisAnalysisElement> processBody(final ThemisAnalysisParser pParser) throws OceanusException {
         /* Allocate queue */
         final Deque<ThemisAnalysisElement> myBody = new ArrayDeque<>();
 
@@ -108,9 +112,10 @@ public final class ThemisAnalysisBuilder {
      * @param pParser the parser
      * @param pOwner the owning method
      * @return the body
+     * @throws OceanusException on error
      */
     static Deque<ThemisAnalysisElement> processMethodBody(final ThemisAnalysisParser pParser,
-                                                          final ThemisAnalysisMethod pOwner) {
+                                                          final ThemisAnalysisMethod pOwner) throws OceanusException {
         /* Allocate queue */
         final Deque<ThemisAnalysisElement> myBody = new ArrayDeque<>();
 

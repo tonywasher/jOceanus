@@ -19,6 +19,8 @@ package net.sourceforge.joceanus.jthemis.analysis;
 import java.util.ArrayList;
 import java.util.List;
 
+import net.sourceforge.joceanus.jtethys.OceanusException;
+
 /**
  * A series of blank lines.
  */
@@ -33,9 +35,10 @@ public class ThemisAnalysisBlank
      * Constructor.
      * @param pParser the parser
      * @param pLine the initial blank line
+     * @throws OceanusException on error
      */
     ThemisAnalysisBlank(final ThemisAnalysisParser pParser,
-                        final ThemisAnalysisLine pLine) {
+                        final ThemisAnalysisLine pLine) throws OceanusException {
         /* Create the list of blank lines */
         theBlanks = new ArrayList<>();
         theBlanks.add(pLine);

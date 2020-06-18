@@ -19,6 +19,8 @@ package net.sourceforge.joceanus.jthemis.analysis;
 import java.util.ArrayDeque;
 import java.util.Deque;
 
+import net.sourceforge.joceanus.jtethys.OceanusException;
+
 /**
  * Else construct.
  */
@@ -54,10 +56,11 @@ public class ThemisAnalysisElse
      * @param pParser the parser
      * @param pOwner the owning if
      * @param pLine the initial else line
+     * @throws OceanusException on error
      */
     ThemisAnalysisElse(final ThemisAnalysisParser pParser,
                        final ThemisAnalysisContainer pOwner,
-                       final ThemisAnalysisLine pLine) {
+                       final ThemisAnalysisLine pLine) throws OceanusException {
         /* Record the parent */
         theParent = pOwner;
 
@@ -89,7 +92,7 @@ public class ThemisAnalysisElse
     }
 
     @Override
-    public void postProcessExtras() {
+    public void postProcessExtras() throws OceanusException {
         /* Process the else clause if required */
         if (theElse != null) {
             theElse.postProcessLines();

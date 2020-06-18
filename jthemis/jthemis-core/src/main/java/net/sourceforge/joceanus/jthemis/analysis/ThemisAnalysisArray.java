@@ -16,6 +16,9 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jthemis.analysis;
 
+import net.sourceforge.joceanus.jtethys.OceanusException;
+import net.sourceforge.joceanus.jthemis.ThemisDataException;
+
 /**
  * Array construct.
  */
@@ -33,8 +36,9 @@ public class ThemisAnalysisArray {
     /**
      * Constructor.
      * @param pLine the line
+     * @throws OceanusException on error
      */
-    ThemisAnalysisArray(final ThemisAnalysisLine pLine) {
+    ThemisAnalysisArray(final ThemisAnalysisLine pLine) throws OceanusException {
         /* If the token is VARARGS */
         if (pLine.peekNextToken().equals(VARARGS)) {
             pLine.stripNextToken();
@@ -47,7 +51,7 @@ public class ThemisAnalysisArray {
         while (pLine.startsWithChar(ThemisAnalysisChar.ARRAY_OPEN)) {
             pLine.stripStartChar(ThemisAnalysisChar.ARRAY_OPEN);
             if (!pLine.startsWithChar(ThemisAnalysisChar.ARRAY_CLOSE)) {
-                throw new IllegalStateException("Bad array notation");
+                throw new ThemisDataException("Bad array notation");
             }
             pLine.stripStartChar(ThemisAnalysisChar.ARRAY_CLOSE);
             myDepth++;

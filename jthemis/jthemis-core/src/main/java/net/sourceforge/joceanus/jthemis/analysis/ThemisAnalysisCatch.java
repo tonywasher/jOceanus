@@ -19,6 +19,8 @@ package net.sourceforge.joceanus.jthemis.analysis;
 import java.util.ArrayDeque;
 import java.util.Deque;
 
+import net.sourceforge.joceanus.jtethys.OceanusException;
+
 /**
  * Catch construct.
  */
@@ -54,10 +56,11 @@ public class ThemisAnalysisCatch
      * @param pParser the parser
      * @param pOwner the owning try
      * @param pLine the initial catch line
+     * @throws OceanusException on error
      */
     ThemisAnalysisCatch(final ThemisAnalysisParser pParser,
                         final ThemisAnalysisContainer pOwner,
-                        final ThemisAnalysisLine pLine) {
+                        final ThemisAnalysisLine pLine) throws OceanusException {
         /* Record the parent */
         theParent = pOwner;
 
@@ -89,7 +92,7 @@ public class ThemisAnalysisCatch
     }
 
     @Override
-    public void postProcessExtras() {
+    public void postProcessExtras() throws OceanusException {
         /* Process the catch clause if required */
         if (theCatch != null) {
             theCatch.postProcessLines();

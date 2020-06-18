@@ -154,8 +154,9 @@ public class ThemisAnalysisProject {
 
     /**
      * secondPass process modules.
+     * @throws OceanusException on error
      */
-    private void performSecondPass() {
+    private void performSecondPass() throws OceanusException {
         /* Loop through the modules */
         for (ThemisAnalysisModule myModule : theModules) {
             /* Process the module */

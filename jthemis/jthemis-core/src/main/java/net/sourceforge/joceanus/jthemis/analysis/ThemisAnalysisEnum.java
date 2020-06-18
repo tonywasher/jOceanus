@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.Deque;
 import java.util.List;
 
+import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jthemis.analysis.ThemisAnalysisFile.ThemisAnalysisObject;
 import net.sourceforge.joceanus.jthemis.analysis.ThemisAnalysisGeneric.ThemisAnalysisGenericBase;
 
@@ -73,9 +74,10 @@ public class ThemisAnalysisEnum
      * Constructor.
      * @param pParser the parser
      * @param pLine the initial enum line
+     * @throws OceanusException on error
      */
     ThemisAnalysisEnum(final ThemisAnalysisParser pParser,
-                       final ThemisAnalysisLine pLine) {
+                       final ThemisAnalysisLine pLine) throws OceanusException {
         /* Store parameters */
         theShortName = pLine.stripNextToken();
         theProperties = pLine.getProperties();
@@ -122,8 +124,9 @@ public class ThemisAnalysisEnum
     /**
      * process the lines.
      * @param pParser the parser
+     * @throws OceanusException on error
      */
-    void processLines(final ThemisAnalysisParser pParser) {
+    void processLines(final ThemisAnalysisParser pParser) throws OceanusException {
         /* we are still processing Enums */
         boolean look4Enum = true;
 
@@ -163,8 +166,9 @@ public class ThemisAnalysisEnum
      * process the enumValue.
      * @param pLine the line
      * @return continue to look for eNums true, false
+     * @throws OceanusException on error
      */
-    private boolean processEnumValue(final ThemisAnalysisLine pLine) {
+    private boolean processEnumValue(final ThemisAnalysisLine pLine) throws OceanusException {
         /* Access the token */
         final String myToken = pLine.stripNextToken();
         if (pLine.startsWithChar(ThemisAnalysisChar.PARENTHESIS_OPEN)) {

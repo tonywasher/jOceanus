@@ -19,6 +19,7 @@ package net.sourceforge.joceanus.jthemis.analysis;
 import java.util.EnumMap;
 import java.util.Map;
 
+import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jthemis.analysis.ThemisAnalysisGeneric.ThemisAnalysisGenericBase;
 import net.sourceforge.joceanus.jthemis.analysis.ThemisAnalysisGeneric.ThemisAnalysisGenericVarList;
 
@@ -110,8 +111,9 @@ public final class ThemisAnalysisProperties {
     /**
      * Resolve the generic variables.
      * @param pParser the parser
+     * @throws OceanusException on error
      */
-    void resolveGeneric(final ThemisAnalysisParser pParser) {
+    void resolveGeneric(final ThemisAnalysisParser pParser) throws OceanusException {
         /* Resolve any generic base instance */
         if (theGenericVars instanceof ThemisAnalysisGenericBase) {
             /* Resolve the variables */

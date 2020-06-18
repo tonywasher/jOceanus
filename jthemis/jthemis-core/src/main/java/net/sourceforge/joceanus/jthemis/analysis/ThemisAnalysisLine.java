@@ -19,6 +19,8 @@ package net.sourceforge.joceanus.jthemis.analysis;
 import java.nio.CharBuffer;
 import java.util.Deque;
 
+import net.sourceforge.joceanus.jtethys.OceanusException;
+import net.sourceforge.joceanus.jthemis.ThemisDataException;
 import net.sourceforge.joceanus.jthemis.analysis.ThemisAnalysisGeneric.ThemisAnalysisGenericBase;
 
 /**
@@ -162,8 +164,9 @@ public class ThemisAnalysisLine
 
     /**
      * Strip trailing comments.
+     * @throws OceanusException on error
      */
-    void stripTrailingComments() {
+    void stripTrailingComments() throws OceanusException {
         /* Loop through the characters */
         final int myLength = getLength();
         int mySkipped = 0;
@@ -247,8 +250,9 @@ public class ThemisAnalysisLine
 
     /**
      * Strip Modifiers.
+     * @throws OceanusException on error
      */
-    void stripModifiers() {
+    void stripModifiers() throws OceanusException {
         /* Loop while we find a modifier */
         boolean bContinue = true;
         while (bContinue) {
@@ -277,8 +281,9 @@ public class ThemisAnalysisLine
      * Does line start with identifier?
      * @param pIdentifier the identifier
      * @return true/false
+     * @throws OceanusException on error
      */
-    boolean isStartedBy(final String pIdentifier) {
+    boolean isStartedBy(final String pIdentifier) throws OceanusException {
         /* If the line is too short, just return */
         final int myIdLen = pIdentifier.length();
         final int myLength = getLength();
@@ -295,7 +300,7 @@ public class ThemisAnalysisLine
 
         /* Catch any solo modifiers */
         if (myIdLen == myLength) {
-            throw new IllegalStateException("Modifier found without object");
+            throw new ThemisDataException("Modifier found without object");
         }
 
         /* The next character must be whitespace */
@@ -522,11 +527,12 @@ public class ThemisAnalysisLine
      * @param pTerm the end nest character
      * @param pNest the start nest character
      * @return the position of the end of the nest if (non-negative), or nestLevel (negative) if not terminated.
+     * @throws OceanusException on error
      */
     int findEndOfNestedSequence(final int pStart,
                                 final int pLevel,
                                 final char pTerm,
-                                final char pNest) {
+                                final char pNest) throws OceanusException {
         /* Access details of quote */
         final int myLength = getLength();
 
@@ -568,8 +574,9 @@ public class ThemisAnalysisLine
      * Find end of single/double quoted sequence, allowing for escaped quote.
      * @param pStart the start position of the quote
      * @return the end position of the sequence.
+     * @throws OceanusException on error
      */
-    int findEndOfQuotedSequence(final int pStart) {
+    int findEndOfQuotedSequence(final int pStart) throws OceanusException {
         /* Access details of single/double quote */
         final int myLength = getLength();
         final char myQuote = theBuffer.charAt(pStart);
@@ -592,7 +599,7 @@ public class ThemisAnalysisLine
         }
 
         /* We should always be terminated */
-        throw new IllegalStateException("Unable to find end of quote in line");
+        throw new ThemisDataException("Unable to find end of quote in line");
     }
 
     @Override

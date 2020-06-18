@@ -21,6 +21,8 @@ import java.util.ArrayList;
 import java.util.Deque;
 import java.util.List;
 
+import net.sourceforge.joceanus.jtethys.OceanusException;
+
 /**
  * Case construct.
  */
@@ -51,10 +53,11 @@ public class ThemisAnalysisCase
      * @param pParser the parser
      * @param pOwner the owning switch
      * @param pCase the case
+     * @throws OceanusException on error
      */
     ThemisAnalysisCase(final ThemisAnalysisParser pParser,
                        final ThemisAnalysisContainer pOwner,
-                       final Object pCase) {
+                       final Object pCase) throws OceanusException {
         /* Record the parent */
         theParent = pOwner;
 
@@ -74,8 +77,9 @@ public class ThemisAnalysisCase
     /**
      * process the lines.
      * @param pParser the parser
+     * @throws OceanusException on error
      */
-    void processLines(final ThemisAnalysisParser pParser) {
+    void processLines(final ThemisAnalysisParser pParser) throws OceanusException {
         /* we are still processing Cases */
         boolean look4Case = true;
 

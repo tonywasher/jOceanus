@@ -197,10 +197,11 @@ public class ThemisAnalysisFile
      * @param pBuffer the character buffer
      * @param pNumChars the number of characters in the buffer
      * @return the remaining characters in the buffer
+     * @throws OceanusException on error
      */
     private static int processLines(final Deque<ThemisAnalysisElement> pLines,
                                     final char[] pBuffer,
-                                    final int pNumChars) {
+                                    final int pNumChars) throws OceanusException {
         /* The start of the current line */
         int myOffset = 0;
 
@@ -232,10 +233,11 @@ public class ThemisAnalysisFile
      * @param pOffset the starting offset
      * @param pNumChars the number of characters in the buffer
      * @return the remaining characters in the buffer
+     * @throws OceanusException on error
      */
     private static int findLineFeedInBuffer(final char[] pBuffer,
                                             final int pOffset,
-                                            final int pNumChars) {
+                                            final int pNumChars) throws OceanusException {
         /* Loop through the buffer */
         for (int i = pOffset; i < pNumChars; i++) {
             /* Check for LF and NULL */
@@ -243,7 +245,7 @@ public class ThemisAnalysisFile
                 case ThemisAnalysisChar.LF:
                     return i;
                 case ThemisAnalysisChar.NULL:
-                    throw new IllegalStateException("Null character in file");
+                    throw new ThemisDataException("Null character in file");
                 default:
                     break;
             }
@@ -276,8 +278,9 @@ public class ThemisAnalysisFile
     /**
      * Post-process the lines as first Pass.
      * @param pLines the lines to process
+     * @throws OceanusException on error
      */
-    private void firstPassProcessLines(final Deque<ThemisAnalysisElement> pLines) {
+    private void firstPassProcessLines(final Deque<ThemisAnalysisElement> pLines) throws OceanusException {
         /* Create the parser */
         final ThemisAnalysisParser myParser = new ThemisAnalysisParser(pLines, theContents, this);
 
@@ -291,7 +294,7 @@ public class ThemisAnalysisFile
 
             /* Process package */
             if (!processed) {
-                processed = processPackage(myParser, myLine);
+                processed = processPackage(myLine);
             }
 
             /* Process imports */
@@ -304,14 +307,14 @@ public class ThemisAnalysisFile
                 /* Process the class */
                 processed = myParser.processClass(myLine);
                 if (!processed) {
-                    throw new IllegalStateException();
+                    throw new ThemisDataException("Unexpected contruct in file");
                 }
 
                 /* Process any trailing blanks/comments */
                 while (myParser.hasLines()) {
                     myLine = (ThemisAnalysisLine) myParser.popNextLine();
                     if (!myParser.processCommentsAndBlanks(myLine)) {
-                        throw new IllegalStateException();
+                        throw new ThemisDataException("Trailing data in file");
                     }
                 }
             }
@@ -320,8 +323,9 @@ public class ThemisAnalysisFile
 
     /**
      * Post-process the lines as second Pass.
+     * @throws OceanusException on error
      */
-    void secondPassProcessLines() {
+    void secondPassProcessLines() throws OceanusException {
         /* Update from classMap */
         theDataMap.updateFromClassMap();
 
@@ -341,17 +345,16 @@ public class ThemisAnalysisFile
 
     /**
      * Process a potential import line.
-     * @param pParser the parser
      * @param pLine the line
      * @return have we processed the line?
+     * @throws OceanusException on error
      */
-    private boolean processPackage(final ThemisAnalysisParser pParser,
-                                   final ThemisAnalysisLine pLine) {
+    private boolean processPackage(final ThemisAnalysisLine pLine) throws OceanusException {
         /* If this is a package line */
         if (ThemisAnalysisPackage.isPackage(pLine)) {
             /* Check that the package is correct named */
             if (!thePackage.getPackage().equals(pLine.toString())) {
-                throw new IllegalStateException("Bad package");
+                throw new ThemisDataException("Bad package");
             }
 
             /* Setup the file resources */
