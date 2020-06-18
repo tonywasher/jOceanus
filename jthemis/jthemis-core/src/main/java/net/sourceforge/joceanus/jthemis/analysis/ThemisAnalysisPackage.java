@@ -24,7 +24,7 @@ import java.util.Objects;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
- * Package line.
+ * Package.
  */
 public class ThemisAnalysisPackage
     implements ThemisAnalysisElement {
@@ -54,31 +54,55 @@ public class ThemisAnalysisPackage
     private final ThemisAnalysisDataMap theDataMap;
 
     /**
+     * Module Constructor.
+     * @param pModule the owning module
+     * @param pPackage the package name.
+     * @throws OceanusException on error
+     */
+    ThemisAnalysisPackage(final ThemisAnalysisModule pModule,
+                          final String pPackage) throws OceanusException {
+        /* Initialise class */
+        this(pModule.getLocation(), new ThemisAnalysisDataMap(pModule.getDataMap()), pPackage);
+    }
+
+    /**
      * Constructor.
-     * @param pLocation the base location
+     * @param pLocation the base location for the package
      * @param pPackage the package name.
      * @throws OceanusException on error
      */
     ThemisAnalysisPackage(final File pLocation,
                           final String pPackage) throws OceanusException {
-        /* Store package name */
+        /* Initialise class */
+        this(pLocation, new ThemisAnalysisDataMap(), pPackage);
+
+        /* secondPass process the files */
+        performSecondPass();
+    }
+
+    /**
+     * Constructor.
+     * @param pLocation the base location for the package
+     * @param pDataMap the dataMap
+     * @param pPackage the package name.
+     * @throws OceanusException on error
+     */
+    private ThemisAnalysisPackage(final File pLocation,
+                                  final ThemisAnalysisDataMap pDataMap,
+                                  final String pPackage) throws OceanusException {
+        /* Store package name and dataMap */
         thePackage = pPackage;
+        theDataMap = pDataMap;
 
         /* Create directory path and record the location */
         final String myPath = pPackage.replace(ThemisAnalysisChar.PERIOD, File.separatorChar);
         final File myLocation = new File(pLocation, myPath);
-
-        /* Create the dataMap */
-        theDataMap = new ThemisAnalysisDataMap();
 
         /* Build list of files */
         theFiles = listFiles(myLocation);
 
         /* firstPass process the files */
         performFirstPass();
-
-        /* SecondPass process the files */
-        performSecondPass();
     }
 
     /**
@@ -101,9 +125,8 @@ public class ThemisAnalysisPackage
      * Build list of files.
      * @param pLocation the location
      * @return the list of files
-     * @throws OceanusException on error
      */
-    List<ThemisAnalysisFile> listFiles(final File pLocation) throws OceanusException  {
+    List<ThemisAnalysisFile> listFiles(final File pLocation) {
         /* Allocate the list */
         final List<ThemisAnalysisFile> myClasses = new ArrayList<>();
 
@@ -135,7 +158,7 @@ public class ThemisAnalysisPackage
     private void performFirstPass() throws OceanusException {
         /* Loop through the classes */
         for (ThemisAnalysisFile myFile : theFiles) {
-            /* Process the class */
+            /* Process the file */
             myFile.processFile();
         }
     }
@@ -143,10 +166,10 @@ public class ThemisAnalysisPackage
     /**
      * secondPass process files.
      */
-    private void performSecondPass() {
+    void performSecondPass() {
         /* Loop through the classes */
         for (ThemisAnalysisFile myFile : theFiles) {
-            /* Process the class */
+            /* Process the file */
             myFile.secondPassProcessLines();
         }
     }

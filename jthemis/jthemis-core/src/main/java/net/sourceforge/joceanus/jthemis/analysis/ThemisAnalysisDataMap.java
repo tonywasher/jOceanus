@@ -18,6 +18,7 @@ package net.sourceforge.joceanus.jthemis.analysis;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -82,7 +83,7 @@ public class ThemisAnalysisDataMap {
      */
     ThemisAnalysisDataMap() {
         theParent = null;
-        theClassMap = new HashMap<>();
+        theClassMap = new LinkedHashMap<>();
         theLocalTypes = new HashMap<>();
     }
 

@@ -43,7 +43,7 @@ public class ThemisDSMMaven {
     /**
      * Project filename.
      */
-    static final String POM = "pom.xml";
+    public static final String POM = "pom.xml";
 
     /**
      * Document name.
@@ -95,7 +95,7 @@ public class ThemisDSMMaven {
      * @param pInputStream the input stream to read
      * @throws OceanusException on error
      */
-    ThemisDSMMaven(final InputStream pInputStream) throws OceanusException {
+    public ThemisDSMMaven(final InputStream pInputStream) throws OceanusException {
         /* Create the module list */
         theModules = new ArrayList<>();
         theDependencies = new ArrayList<>();
@@ -129,7 +129,7 @@ public class ThemisDSMMaven {
      * Obtain the list of modules.
      * @return the list
      */
-    List<String> getModules() {
+    public List<String> getModules() {
         return theModules;
     }
 

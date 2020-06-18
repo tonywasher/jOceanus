@@ -121,7 +121,7 @@ public class TethysFXAreaChartExample extends Application {
         theChart.setTitle(pData.getTitle());
 
         /* Access and clear the data */
-        final ObservableList<XYChart.Series<Number, Number>> myData = theChart.getData();
+        final ObservableList<Series<Number, Number>> myData = theChart.getData();
         myData.clear();
         theSeriesMap.clear();
 
@@ -129,7 +129,7 @@ public class TethysFXAreaChartExample extends Application {
         final Iterator<TethysAreaChartSeries> myIterator = pData.seriesIterator();
         while (myIterator.hasNext()) {
             final TethysAreaChartSeries myBase = myIterator.next();
-            final Series<Number, Number> mySeries = new XYChart.Series<>();
+            final Series<Number, Number> mySeries = new Series<>();
             final String myKey = myBase.getName();
             mySeries.setName(myKey);
             final ObservableList<Data<Number, Number>> myPoints = mySeries.getData();

@@ -86,11 +86,7 @@ public class TethysSwingAreaChartExample {
         theDataSet = new TimeTableXYDataset();
         theSeriesMap = new HashMap<>();
 
-        theChart = ChartFactory.createTimeSeriesChart(
-                "XYChart XDemo",   // chart title
-                "Date",
-                "Value",
-                theDataSet);
+        theChart = ChartFactory.createTimeSeriesChart("XYChart XDemo", "Date","Value", theDataSet);
         final XYPlot myPlot = (XYPlot) theChart.getPlot();
         final StackedXYAreaRenderer2 myRenderer = new StackedXYAreaRenderer2();
         myRenderer.setDefaultToolTipGenerator((pDataset, pSeries, pItem) -> {
