@@ -26,7 +26,7 @@ import javax.swing.JPanel;
 
 import net.sourceforge.joceanus.jmetis.data.MetisDataType;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFieldSetItem;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisField;
+import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisLetheField;
 import net.sourceforge.joceanus.jmetis.lethe.field.MetisLetheFieldSetBase;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingDataTextField.TethysSwingStringTextField;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingDateButtonManager;
@@ -45,7 +45,7 @@ public class MetisSwingFieldSet<T extends MetisFieldSetItem>
     /**
      * The map of fields.
      */
-    private final Map<MetisField, MetisSwingFieldElement<T>> theMap;
+    private final Map<MetisLetheField, MetisSwingFieldElement<T>> theMap;
 
     /**
      * The Render Manager.
@@ -73,7 +73,7 @@ public class MetisSwingFieldSet<T extends MetisFieldSetItem>
      * @param pClass the class of the value
      * @param pTextField the textField
      */
-    public void addFieldElement(final MetisField pField,
+    public void addFieldElement(final MetisLetheField pField,
                                 final MetisDataType pClass,
                                 final TethysSwingStringTextField pTextField) {
         /* Create the field */
@@ -89,7 +89,7 @@ public class MetisSwingFieldSet<T extends MetisFieldSetItem>
      * @param pClass the class of the value
      * @param pScrollPane the scrollPane
      */
-    public void addFieldElement(final MetisField pField,
+    public void addFieldElement(final MetisLetheField pField,
                                 final MetisDataType pClass,
                                 final TethysSwingScrollPaneManager pScrollPane) {
         /* Create the field */
@@ -104,7 +104,7 @@ public class MetisSwingFieldSet<T extends MetisFieldSetItem>
      * @param pField the field id
      * @param pButton the button
      */
-    public void addFieldElement(final MetisField pField,
+    public void addFieldElement(final MetisLetheField pField,
                                 final TethysSwingDateButtonManager pButton) {
         /* Create the field */
         final MetisSwingFieldElement<T> myElement = new MetisSwingFieldElement<>(this, pField, pButton);
@@ -120,7 +120,7 @@ public class MetisSwingFieldSet<T extends MetisFieldSetItem>
      * @param pClass the class of the value
      * @param pButton the button
      */
-    public <I> void addFieldElement(final MetisField pField,
+    public <I> void addFieldElement(final MetisLetheField pField,
                                     final Class<I> pClass,
                                     final TethysSwingScrollButtonManager<I> pButton) {
         /* Create the field */
@@ -136,7 +136,7 @@ public class MetisSwingFieldSet<T extends MetisFieldSetItem>
      * @param pField the field id
      * @param pButton the button
      */
-    public <I extends Comparable<I>> void addFieldElement(final MetisField pField,
+    public <I extends Comparable<I>> void addFieldElement(final MetisLetheField pField,
                                                           final TethysSwingListButtonManager<I> pButton) {
         /* Create the field */
         final MetisSwingFieldElement<T> myElement = new MetisSwingFieldElement<>(this, pField, pButton);
@@ -152,7 +152,7 @@ public class MetisSwingFieldSet<T extends MetisFieldSetItem>
      * @param pClass the class of the value
      * @param pButton the button
      */
-    public <I> void addFieldElement(final MetisField pField,
+    public <I> void addFieldElement(final MetisLetheField pField,
                                     final Class<I> pClass,
                                     final TethysSwingIconButtonManager<I> pButton) {
         /* Create the field */
@@ -167,7 +167,7 @@ public class MetisSwingFieldSet<T extends MetisFieldSetItem>
      * @param pField the field to add
      * @param pPanel to add to
      */
-    public void addFieldToPanel(final MetisField pField,
+    public void addFieldToPanel(final MetisLetheField pField,
                                 final JPanel pPanel) {
         /* Access element */
         final MetisSwingFieldElement<T> myEl = theMap.get(pField);
@@ -183,7 +183,7 @@ public class MetisSwingFieldSet<T extends MetisFieldSetItem>
      * @param pField the field id
      * @param setVisible true/false
      */
-    public void setVisibility(final MetisField pField,
+    public void setVisibility(final MetisLetheField pField,
                               final boolean setVisible) {
         /* Access element */
         final MetisSwingFieldElement<T> myEl = theMap.get(pField);
@@ -200,11 +200,11 @@ public class MetisSwingFieldSet<T extends MetisFieldSetItem>
      * @param pFields the list of fields
      * @return true/false.
      */
-    public boolean isAnyFieldVisible(final List<MetisField> pFields) {
+    public boolean isAnyFieldVisible(final List<MetisLetheField> pFields) {
         /* Loop through the fields */
-        final Iterator<MetisField> myIterator = pFields.iterator();
+        final Iterator<MetisLetheField> myIterator = pFields.iterator();
         while (myIterator.hasNext()) {
-            final MetisField myField = myIterator.next();
+            final MetisLetheField myField = myIterator.next();
 
             /* Determine if the element is visible */
             final MetisSwingFieldElement<T> myEl = theMap.get(myField);
@@ -223,7 +223,7 @@ public class MetisSwingFieldSet<T extends MetisFieldSetItem>
      * @param pField the field id
      * @param setEditable true/false
      */
-    public void setEditable(final MetisField pField,
+    public void setEditable(final MetisLetheField pField,
                             final boolean setEditable) {
         /* Access element */
         final MetisSwingFieldElement<T> myEl = theMap.get(pField);
@@ -252,7 +252,7 @@ public class MetisSwingFieldSet<T extends MetisFieldSetItem>
      * @param pField the field id
      * @param pCurrency the assumed currency
      */
-    public void setAssumedCurrency(final MetisField pField,
+    public void setAssumedCurrency(final MetisLetheField pField,
                                    final Currency pCurrency) {
         /* Access element */
         final MetisSwingFieldElement<T> myEl = theMap.get(pField);

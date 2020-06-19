@@ -27,7 +27,7 @@ import net.sourceforge.joceanus.jmetis.data.MetisDataType;
 import net.sourceforge.joceanus.jmetis.field.MetisFieldSet;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisEncryptionGenerator;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisField;
+import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisLetheField;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisValueSet;
 import net.sourceforge.joceanus.jprometheus.PrometheusDataException;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataSet.CryptographyDataType;
@@ -65,27 +65,27 @@ public class DataKeySet
     /**
      * Field ID for ControlKey.
      */
-    public static final MetisField FIELD_CONTROLKEY = FIELD_DEFS.declareEqualityValueField(CryptographyDataType.CONTROLKEY.getItemName(), MetisDataType.LINK);
+    public static final MetisLetheField FIELD_CONTROLKEY = FIELD_DEFS.declareEqualityValueField(CryptographyDataType.CONTROLKEY.getItemName(), MetisDataType.LINK);
 
     /**
      * HashPrime Field Id.
      */
-    public static final MetisField FIELD_HASHPRIME = FIELD_DEFS.declareEqualityValueField(PrometheusDataResource.CONTROLKEY_PRIME.getValue(), MetisDataType.BOOLEAN);
+    public static final MetisLetheField FIELD_HASHPRIME = FIELD_DEFS.declareEqualityValueField(PrometheusDataResource.CONTROLKEY_PRIME.getValue(), MetisDataType.BOOLEAN);
 
     /**
      * Field ID for KeySetDef.
      */
-    public static final MetisField FIELD_KEYSETDEF = FIELD_DEFS.declareEqualityValueField(PrometheusDataResource.DATAKEYSET_KEYSETDEF.getValue(), MetisDataType.BYTEARRAY, WRAPLEN);
+    public static final MetisLetheField FIELD_KEYSETDEF = FIELD_DEFS.declareEqualityValueField(PrometheusDataResource.DATAKEYSET_KEYSETDEF.getValue(), MetisDataType.BYTEARRAY, WRAPLEN);
 
     /**d
      * Field ID for CreationDate.
      */
-    public static final MetisField FIELD_CREATEDATE = FIELD_DEFS.declareEqualityValueField(PrometheusDataResource.DATAKEYSET_CREATION.getValue(), MetisDataType.DATE);
+    public static final MetisLetheField FIELD_CREATEDATE = FIELD_DEFS.declareEqualityValueField(PrometheusDataResource.DATAKEYSET_CREATION.getValue(), MetisDataType.DATE);
 
     /**
      * Field ID for KeySet.
      */
-    public static final MetisField FIELD_KEYSET = FIELD_DEFS.declareLocalField(PrometheusDataResource.DATAKEYSET_KEYSET.getValue());
+    public static final MetisLetheField FIELD_KEYSET = FIELD_DEFS.declareLocalField(PrometheusDataResource.DATAKEYSET_KEYSET.getValue());
 
     /**
      * The Encryption KeySet.
@@ -236,7 +236,7 @@ public class DataKeySet
     }
 
     @Override
-    public Object getFieldValue(final MetisField pField) {
+    public Object getFieldValue(final MetisLetheField pField) {
         if (FIELD_KEYSET.equals(pField)) {
             return theKeySet;
         }

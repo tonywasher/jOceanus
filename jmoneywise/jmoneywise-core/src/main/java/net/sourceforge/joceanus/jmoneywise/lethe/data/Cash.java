@@ -27,7 +27,7 @@ import net.sourceforge.joceanus.jmetis.data.MetisDataType;
 import net.sourceforge.joceanus.jmetis.field.MetisFieldItem;
 import net.sourceforge.joceanus.jmetis.field.MetisFieldSet;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisField;
+import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisLetheField;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisValueSet;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
@@ -73,17 +73,17 @@ public class Cash
     /**
      * AccountCategory Field Id.
      */
-    public static final MetisField FIELD_CATEGORY = FIELD_DEFS.declareComparisonValueField(MoneyWiseDataType.CASHCATEGORY.getItemName(), MetisDataType.LINK);
+    public static final MetisLetheField FIELD_CATEGORY = FIELD_DEFS.declareComparisonValueField(MoneyWiseDataType.CASHCATEGORY.getItemName(), MetisDataType.LINK);
 
     /**
      * Currency Field Id.
      */
-    public static final MetisField FIELD_CURRENCY = FIELD_DEFS.declareEqualityValueField(MoneyWiseDataType.CURRENCY.getItemName(), MetisDataType.LINK);
+    public static final MetisLetheField FIELD_CURRENCY = FIELD_DEFS.declareEqualityValueField(MoneyWiseDataType.CURRENCY.getItemName(), MetisDataType.LINK);
 
     /**
      * PayeeInfoSet field Id.
      */
-    private static final MetisField FIELD_INFOSET = FIELD_DEFS.declareLocalField(PrometheusDataResource.DATAINFOSET_NAME.getValue());
+    private static final MetisLetheField FIELD_INFOSET = FIELD_DEFS.declareLocalField(PrometheusDataResource.DATAINFOSET_NAME.getValue());
 
     /**
      * New Account name.
@@ -191,7 +191,7 @@ public class Cash
     }
 
     @Override
-    public boolean includeXmlField(final MetisField pField) {
+    public boolean includeXmlField(final MetisLetheField pField) {
         /* Determine whether fields should be included */
         if (FIELD_CATEGORY.equals(pField)) {
             return true;
@@ -205,7 +205,7 @@ public class Cash
     }
 
     @Override
-    public Object getFieldValue(final MetisField pField) {
+    public Object getFieldValue(final MetisLetheField pField) {
         /* Handle standard fields */
         if (FIELD_INFOSET.equals(pField)) {
             return hasInfoSet
@@ -495,7 +495,7 @@ public class Cash
     }
 
     @Override
-    public MetisDataDifference fieldChanged(final MetisField pField) {
+    public MetisDataDifference fieldChanged(final MetisLetheField pField) {
         /* Handle InfoSet fields */
         final AccountInfoClass myClass = CashInfoSet.getClassForField(pField);
         if (myClass != null) {

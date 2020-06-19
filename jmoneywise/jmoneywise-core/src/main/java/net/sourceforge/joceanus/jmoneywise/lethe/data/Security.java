@@ -28,7 +28,7 @@ import net.sourceforge.joceanus.jmetis.data.MetisDataState;
 import net.sourceforge.joceanus.jmetis.data.MetisDataType;
 import net.sourceforge.joceanus.jmetis.field.MetisFieldSet;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisField;
+import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisLetheField;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisValueSet;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
@@ -80,22 +80,22 @@ public class Security
     /**
      * SecurityType Field Id.
      */
-    public static final MetisField FIELD_SECTYPE = FIELD_DEFS.declareComparisonValueField(MoneyWiseDataType.SECURITYTYPE.getItemName(), MetisDataType.LINK);
+    public static final MetisLetheField FIELD_SECTYPE = FIELD_DEFS.declareComparisonValueField(MoneyWiseDataType.SECURITYTYPE.getItemName(), MetisDataType.LINK);
 
     /**
      * Parent Field Id.
      */
-    public static final MetisField FIELD_PARENT = FIELD_DEFS.declareEqualityValueField(MoneyWiseDataResource.ASSET_PARENT.getValue(), MetisDataType.LINK);
+    public static final MetisLetheField FIELD_PARENT = FIELD_DEFS.declareEqualityValueField(MoneyWiseDataResource.ASSET_PARENT.getValue(), MetisDataType.LINK);
 
     /**
      * Currency Field Id.
      */
-    public static final MetisField FIELD_CURRENCY = FIELD_DEFS.declareEqualityValueField(MoneyWiseDataType.CURRENCY.getItemName(), MetisDataType.LINK);
+    public static final MetisLetheField FIELD_CURRENCY = FIELD_DEFS.declareEqualityValueField(MoneyWiseDataType.CURRENCY.getItemName(), MetisDataType.LINK);
 
     /**
      * SecurityInfoSet field Id.
      */
-    private static final MetisField FIELD_INFOSET = FIELD_DEFS.declareLocalField(PrometheusDataResource.DATAINFOSET_NAME.getValue());
+    private static final MetisLetheField FIELD_INFOSET = FIELD_DEFS.declareLocalField(PrometheusDataResource.DATAINFOSET_NAME.getValue());
 
     /**
      * New Account name.
@@ -211,7 +211,7 @@ public class Security
     }
 
     @Override
-    public boolean includeXmlField(final MetisField pField) {
+    public boolean includeXmlField(final MetisLetheField pField) {
         /* Determine whether fields should be included */
         if (FIELD_SECTYPE.equals(pField)) {
             return true;
@@ -228,7 +228,7 @@ public class Security
     }
 
     @Override
-    public Object getFieldValue(final MetisField pField) {
+    public Object getFieldValue(final MetisLetheField pField) {
         /* Handle standard fields */
         if (FIELD_INFOSET.equals(pField)) {
             return hasInfoSet
@@ -576,7 +576,7 @@ public class Security
     }
 
     @Override
-    public MetisDataDifference fieldChanged(final MetisField pField) {
+    public MetisDataDifference fieldChanged(final MetisLetheField pField) {
         /* Handle InfoSet fields */
         final AccountInfoClass myClass = SecurityInfoSet.getClassForField(pField);
         if (myClass != null) {

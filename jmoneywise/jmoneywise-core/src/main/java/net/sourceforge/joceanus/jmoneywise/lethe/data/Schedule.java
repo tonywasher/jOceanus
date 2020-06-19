@@ -23,7 +23,7 @@ import net.sourceforge.joceanus.jmetis.data.MetisDataFormatter;
 import net.sourceforge.joceanus.jmetis.data.MetisDataType;
 import net.sourceforge.joceanus.jmetis.field.MetisFieldSet;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisField;
+import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisLetheField;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisValueSet;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
@@ -62,32 +62,32 @@ public class Schedule
     /**
      * StartDate Field Id.
      */
-    public static final MetisField FIELD_STARTDATE = FIELD_DEFS.declareEqualityValueField(MoneyWiseDataResource.SCHEDULE_STARTDATE.getValue(), MetisDataType.DATE);
+    public static final MetisLetheField FIELD_STARTDATE = FIELD_DEFS.declareEqualityValueField(MoneyWiseDataResource.SCHEDULE_STARTDATE.getValue(), MetisDataType.DATE);
 
     /**
      * EndDate Field Id.
      */
-    public static final MetisField FIELD_ENDDATE = FIELD_DEFS.declareEqualityValueField(MoneyWiseDataResource.SCHEDULE_ENDDATE.getValue(), MetisDataType.DATE);
+    public static final MetisLetheField FIELD_ENDDATE = FIELD_DEFS.declareEqualityValueField(MoneyWiseDataResource.SCHEDULE_ENDDATE.getValue(), MetisDataType.DATE);
 
     /**
      * Frequency Field Id.
      */
-    public static final MetisField FIELD_FREQ = FIELD_DEFS.declareEqualityValueField(MoneyWiseDataType.FREQUENCY.getItemName(), MetisDataType.LINK);
+    public static final MetisLetheField FIELD_FREQ = FIELD_DEFS.declareEqualityValueField(MoneyWiseDataType.FREQUENCY.getItemName(), MetisDataType.LINK);
 
     /**
      * RepeatFrequency Field Id.
      */
-    public static final MetisField FIELD_REPFREQ = FIELD_DEFS.declareEqualityValueField(MoneyWiseDataResource.SCHEDULE_REPEATFREQ.getValue(), MetisDataType.LINK);
+    public static final MetisLetheField FIELD_REPFREQ = FIELD_DEFS.declareEqualityValueField(MoneyWiseDataResource.SCHEDULE_REPEATFREQ.getValue(), MetisDataType.LINK);
 
     /**
      * Pattern Field Id.
      */
-    public static final MetisField FIELD_PATTERN = FIELD_DEFS.declareEqualityValueField(MoneyWiseDataResource.SCHEDULE_PATTERN.getValue(), MetisDataType.INTEGER);
+    public static final MetisLetheField FIELD_PATTERN = FIELD_DEFS.declareEqualityValueField(MoneyWiseDataResource.SCHEDULE_PATTERN.getValue(), MetisDataType.INTEGER);
 
     /**
      * NextDate Field Id.
      */
-    public static final MetisField FIELD_NEXTDATE = FIELD_DEFS.declareEqualityValueField(MoneyWiseDataResource.SCHEDULE_NEXTDATE.getValue(), MetisDataType.DATE);
+    public static final MetisLetheField FIELD_NEXTDATE = FIELD_DEFS.declareEqualityValueField(MoneyWiseDataResource.SCHEDULE_NEXTDATE.getValue(), MetisDataType.DATE);
 
     /**
      * Bad Frequency error.
@@ -197,7 +197,7 @@ public class Schedule
     }
 
     @Override
-    public boolean includeXmlField(final MetisField pField) {
+    public boolean includeXmlField(final MetisLetheField pField) {
         /* Determine whether fields should be included */
         if (FIELD_STARTDATE.equals(pField)) {
             return true;

@@ -25,7 +25,7 @@ import net.sourceforge.joceanus.jtethys.resource.TethysBundleLoader;
 /**
  * Resource IDs for JMetis viewer.
  */
-public enum MetisDataResource implements TethysBundleId {
+public enum MetisLetheDataResource implements TethysBundleId {
     /**
      * Profile Object Name.
      */
@@ -81,7 +81,7 @@ public enum MetisDataResource implements TethysBundleId {
      * Constructor.
      * @param pKeyName the key name
      */
-    MetisDataResource(final String pKeyName) {
+    MetisLetheDataResource(final String pKeyName) {
         theKeyName = pKeyName;
     }
 

@@ -27,7 +27,7 @@ import net.sourceforge.joceanus.jmetis.data.MetisDataItem.MetisDataList;
 import net.sourceforge.joceanus.jmetis.data.MetisDataItem.MetisDataObjectFormat;
 import net.sourceforge.joceanus.jmetis.data.MetisDataState;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisField;
+import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisLetheField;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.ui.TethysListButtonManager;
 
@@ -59,12 +59,12 @@ public class DataInfoLinkSet<T extends DataInfo<T, O, I, S, E>,
     /**
      * The Active LinkSet.
      */
-    private static final MetisField FIELD_ACTIVE = FIELD_DEFS.declareLocalField(PrometheusDataResource.DATAINFO_ACTIVE.getValue());
+    private static final MetisLetheField FIELD_ACTIVE = FIELD_DEFS.declareLocalField(PrometheusDataResource.DATAINFO_ACTIVE.getValue());
 
     /**
      * The LinkSet.
      */
-    private static final MetisField FIELD_LINKSET = FIELD_DEFS.declareLocalField(PrometheusDataResource.DATAINFO_LINKSET.getValue());
+    private static final MetisLetheField FIELD_LINKSET = FIELD_DEFS.declareLocalField(PrometheusDataResource.DATAINFO_LINKSET.getValue());
 
     /**
      * List of active items.
@@ -143,7 +143,7 @@ public class DataInfoLinkSet<T extends DataInfo<T, O, I, S, E>,
     }
 
     @Override
-    public Object getFieldValue(final MetisField pField) {
+    public Object getFieldValue(final MetisLetheField pField) {
         if (FIELD_ACTIVE.equals(pField)) {
             return theActive;
         }

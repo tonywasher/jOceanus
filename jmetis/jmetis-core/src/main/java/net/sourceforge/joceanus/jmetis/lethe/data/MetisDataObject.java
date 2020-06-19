@@ -17,7 +17,7 @@
 package net.sourceforge.joceanus.jmetis.lethe.data;
 
 import net.sourceforge.joceanus.jmetis.data.MetisDataItem.MetisDataObjectFormat;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisField;
+import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisLetheField;
 
 /**
  * Data object formatting and interfaces.
@@ -40,7 +40,7 @@ public final class MetisDataObject {
          * @param pField the field
          * @return the value of the field
          */
-        Object getFieldValue(MetisField pField);
+        Object getFieldValue(MetisLetheField pField);
     }
 
     /**
@@ -65,7 +65,7 @@ public final class MetisDataObject {
          * @param pField the field
          * @return true/false
          */
-        boolean skipField(MetisField pField);
+        boolean skipField(MetisLetheField pField);
 
         /**
          * Declare the valueSet as active.
@@ -123,7 +123,7 @@ public final class MetisDataObject {
          * @param pField the particular field
          * @return <code>true/false</code>
          */
-        default boolean hasErrors(final MetisField pField) {
+        default boolean hasErrors(final MetisLetheField pField) {
             return false;
         }
     }

@@ -27,7 +27,7 @@ import java.util.Map;
 
 import net.sourceforge.joceanus.jgordianknot.util.GordianUtilities;
 import net.sourceforge.joceanus.jmetis.data.MetisDataFormatter;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisField;
+import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisLetheField;
 import net.sourceforge.joceanus.jprometheus.PrometheusLogicException;
 import net.sourceforge.joceanus.jprometheus.atlas.preference.PrometheusJDBCDriver;
 import net.sourceforge.joceanus.jprometheus.lethe.database.PrometheusColumnDefinition.BinaryColumn;
@@ -105,7 +105,7 @@ public class PrometheusTableDefinition {
     /**
      * The array list for the columns.
      */
-    private final Map<MetisField, PrometheusColumnDefinition> theMap;
+    private final Map<MetisLetheField, PrometheusColumnDefinition> theMap;
 
     /**
      * The prepared statement for the insert/update.
@@ -148,7 +148,7 @@ public class PrometheusTableDefinition {
      * Obtain the column map.
      * @return the map
      */
-    protected Map<MetisField, PrometheusColumnDefinition> getMap() {
+    protected Map<MetisLetheField, PrometheusColumnDefinition> getMap() {
         return theMap;
     }
 
@@ -197,7 +197,7 @@ public class PrometheusTableDefinition {
      * @param pRef the reference table
      * @return the reference column
      */
-    public ReferenceColumn addReferenceColumn(final MetisField pId,
+    public ReferenceColumn addReferenceColumn(final MetisLetheField pId,
                                               final String pRef) {
         /* Create the new reference column */
         final ReferenceColumn myColumn = new ReferenceColumn(this, pId, pRef);
@@ -213,7 +213,7 @@ public class PrometheusTableDefinition {
      * @param pRef the reference table
      * @return the reference column
      */
-    public ReferenceColumn addNullReferenceColumn(final MetisField pId,
+    public ReferenceColumn addNullReferenceColumn(final MetisLetheField pId,
                                                   final String pRef) {
         final ReferenceColumn myColumn = addReferenceColumn(pId, pRef);
         myColumn.setNullable();
@@ -225,7 +225,7 @@ public class PrometheusTableDefinition {
      * @param pId the column id
      * @return the integer column
      */
-    public IntegerColumn addIntegerColumn(final MetisField pId) {
+    public IntegerColumn addIntegerColumn(final MetisLetheField pId) {
         /* Create the new integer column */
         final IntegerColumn myColumn = new IntegerColumn(this, pId);
 
@@ -239,7 +239,7 @@ public class PrometheusTableDefinition {
      * @param pId the column id
      * @return the integer column
      */
-    public IntegerColumn addNullIntegerColumn(final MetisField pId) {
+    public IntegerColumn addNullIntegerColumn(final MetisLetheField pId) {
         final IntegerColumn myColumn = addIntegerColumn(pId);
         myColumn.setNullable();
         return myColumn;
@@ -250,7 +250,7 @@ public class PrometheusTableDefinition {
      * @param pId the column id
      * @return the long column
      */
-    public LongColumn addLongColumn(final MetisField pId) {
+    public LongColumn addLongColumn(final MetisLetheField pId) {
         /* Create the new long column */
         final LongColumn myColumn = new LongColumn(this, pId);
 
@@ -264,7 +264,7 @@ public class PrometheusTableDefinition {
      * @param pId the column id
      * @return the long column
      */
-    public LongColumn addNullLongColumn(final MetisField pId) {
+    public LongColumn addNullLongColumn(final MetisLetheField pId) {
         final LongColumn myColumn = addLongColumn(pId);
         myColumn.setNullable();
         return myColumn;
@@ -275,7 +275,7 @@ public class PrometheusTableDefinition {
      * @param pId the column id
      * @return the boolean column
      */
-    public BooleanColumn addBooleanColumn(final MetisField pId) {
+    public BooleanColumn addBooleanColumn(final MetisLetheField pId) {
         /* Create the new boolean column */
         final BooleanColumn myColumn = new BooleanColumn(this, pId);
 
@@ -289,7 +289,7 @@ public class PrometheusTableDefinition {
      * @param pId the column id
      * @return the boolean column
      */
-    public BooleanColumn addNullBooleanColumn(final MetisField pId) {
+    public BooleanColumn addNullBooleanColumn(final MetisLetheField pId) {
         final BooleanColumn myColumn = addBooleanColumn(pId);
         myColumn.setNullable();
         return myColumn;
@@ -300,7 +300,7 @@ public class PrometheusTableDefinition {
      * @param pId the column id
      * @return the date column
      */
-    public DateColumn addDateColumn(final MetisField pId) {
+    public DateColumn addDateColumn(final MetisLetheField pId) {
         /* Create the new date column */
         final DateColumn myColumn = new DateColumn(this, pId);
 
@@ -314,7 +314,7 @@ public class PrometheusTableDefinition {
      * @param pId the column id
      * @return the date column
      */
-    public DateColumn addNullDateColumn(final MetisField pId) {
+    public DateColumn addNullDateColumn(final MetisLetheField pId) {
         final DateColumn myColumn = addDateColumn(pId);
         myColumn.setNullable();
         return myColumn;
@@ -325,7 +325,7 @@ public class PrometheusTableDefinition {
      * @param pId the column id
      * @return the money column
      */
-    public MoneyColumn addMoneyColumn(final MetisField pId) {
+    public MoneyColumn addMoneyColumn(final MetisLetheField pId) {
         /* Create the new money column */
         final MoneyColumn myColumn = new MoneyColumn(this, pId);
 
@@ -339,7 +339,7 @@ public class PrometheusTableDefinition {
      * @param pId the column id
      * @return the money column
      */
-    public MoneyColumn addNullMoneyColumn(final MetisField pId) {
+    public MoneyColumn addNullMoneyColumn(final MetisLetheField pId) {
         final MoneyColumn myColumn = addMoneyColumn(pId);
         myColumn.setNullable();
         return myColumn;
@@ -350,7 +350,7 @@ public class PrometheusTableDefinition {
      * @param pId the column id
      * @return the rate column
      */
-    public RateColumn addRateColumn(final MetisField pId) {
+    public RateColumn addRateColumn(final MetisLetheField pId) {
         /* Create the new rate column */
         final RateColumn myColumn = new RateColumn(this, pId);
 
@@ -364,7 +364,7 @@ public class PrometheusTableDefinition {
      * @param pId the column id
      * @return the rate column
      */
-    public RateColumn addNullRateColumn(final MetisField pId) {
+    public RateColumn addNullRateColumn(final MetisLetheField pId) {
         final RateColumn myColumn = addRateColumn(pId);
         myColumn.setNullable();
         return myColumn;
@@ -375,7 +375,7 @@ public class PrometheusTableDefinition {
      * @param pId the column id
      * @return the rate column
      */
-    public RatioColumn addRatioColumn(final MetisField pId) {
+    public RatioColumn addRatioColumn(final MetisLetheField pId) {
         /* Create the new rate column */
         final RatioColumn myColumn = new RatioColumn(this, pId);
 
@@ -389,7 +389,7 @@ public class PrometheusTableDefinition {
      * @param pId the column id
      * @return the rate column
      */
-    public RatioColumn addNullRatioColumn(final MetisField pId) {
+    public RatioColumn addNullRatioColumn(final MetisLetheField pId) {
         final RatioColumn myColumn = addRatioColumn(pId);
         myColumn.setNullable();
         return myColumn;
@@ -401,7 +401,7 @@ public class PrometheusTableDefinition {
      * @param pLength the underlying (character) length
      * @return the binary column
      */
-    public BinaryColumn addBinaryColumn(final MetisField pId,
+    public BinaryColumn addBinaryColumn(final MetisLetheField pId,
                                         final int pLength) {
         /* Create the new binary column */
         final BinaryColumn myColumn = new BinaryColumn(this, pId, pLength);
@@ -417,7 +417,7 @@ public class PrometheusTableDefinition {
      * @param pLength the underlying (character) length
      * @return the binary column
      */
-    public BinaryColumn addNullBinaryColumn(final MetisField pId,
+    public BinaryColumn addNullBinaryColumn(final MetisLetheField pId,
                                             final int pLength) {
         final BinaryColumn myColumn = addBinaryColumn(pId, pLength);
         myColumn.setNullable();
@@ -430,7 +430,7 @@ public class PrometheusTableDefinition {
      * @param pLength the underlying (character) length
      * @return the binary column
      */
-    public BinaryColumn addEncryptedColumn(final MetisField pId,
+    public BinaryColumn addEncryptedColumn(final MetisLetheField pId,
                                            final int pLength) {
         /* Create the new binary column */
         final BinaryColumn myColumn = new BinaryColumn(this, pId, GordianUtilities.getKeySetEncryptionLength(pLength));
@@ -446,7 +446,7 @@ public class PrometheusTableDefinition {
      * @param pLength the underlying (character) length
      * @return the binary column
      */
-    public BinaryColumn addNullEncryptedColumn(final MetisField pId,
+    public BinaryColumn addNullEncryptedColumn(final MetisLetheField pId,
                                                final int pLength) {
         final BinaryColumn myColumn = addEncryptedColumn(pId, pLength);
         myColumn.setNullable();
@@ -459,7 +459,7 @@ public class PrometheusTableDefinition {
      * @param pLength the character length
      * @return the binary column
      */
-    public StringColumn addStringColumn(final MetisField pId,
+    public StringColumn addStringColumn(final MetisLetheField pId,
                                         final int pLength) {
         /* Create the new string column */
         final StringColumn myColumn = new StringColumn(this, pId, pLength);
@@ -475,7 +475,7 @@ public class PrometheusTableDefinition {
      * @param pLength the character length
      * @return the binary column
      */
-    public StringColumn addNullStringColumn(final MetisField pId,
+    public StringColumn addNullStringColumn(final MetisLetheField pId,
                                             final int pLength) {
         final StringColumn myColumn = addStringColumn(pId, pLength);
         myColumn.setNullable();
@@ -606,7 +606,7 @@ public class PrometheusTableDefinition {
      * @return the integer value
      * @throws OceanusException on error
      */
-    public Integer getIntegerValue(final MetisField pId) throws OceanusException {
+    public Integer getIntegerValue(final MetisLetheField pId) throws OceanusException {
         /* Obtain the correct id */
         final PrometheusColumnDefinition myCol = getColumnForId(pId);
 
@@ -626,7 +626,7 @@ public class PrometheusTableDefinition {
      * @return the long value
      * @throws OceanusException on error
      */
-    public Long getLongValue(final MetisField pId) throws OceanusException {
+    public Long getLongValue(final MetisLetheField pId) throws OceanusException {
         /* Obtain the correct id */
         final PrometheusColumnDefinition myCol = getColumnForId(pId);
 
@@ -646,7 +646,7 @@ public class PrometheusTableDefinition {
      * @return the Date value
      * @throws OceanusException on error
      */
-    public TethysDate getDateValue(final MetisField pId) throws OceanusException {
+    public TethysDate getDateValue(final MetisLetheField pId) throws OceanusException {
         /* Obtain the correct id */
         final PrometheusColumnDefinition myCol = getColumnForId(pId);
 
@@ -666,7 +666,7 @@ public class PrometheusTableDefinition {
      * @return the boolean value
      * @throws OceanusException on error
      */
-    public Boolean getBooleanValue(final MetisField pId) throws OceanusException {
+    public Boolean getBooleanValue(final MetisLetheField pId) throws OceanusException {
         /* Obtain the correct id */
         final PrometheusColumnDefinition myCol = getColumnForId(pId);
 
@@ -686,7 +686,7 @@ public class PrometheusTableDefinition {
      * @return the String value
      * @throws OceanusException on error
      */
-    public String getStringValue(final MetisField pId) throws OceanusException {
+    public String getStringValue(final MetisLetheField pId) throws OceanusException {
         /* Obtain the correct id */
         final PrometheusColumnDefinition myCol = getColumnForId(pId);
 
@@ -707,7 +707,7 @@ public class PrometheusTableDefinition {
      * @return the Money value
      * @throws OceanusException on error
      */
-    public TethysMoney getMoneyValue(final MetisField pId,
+    public TethysMoney getMoneyValue(final MetisLetheField pId,
                                      final MetisDataFormatter pFormatter) throws OceanusException {
         /* Obtain the correct id */
         final PrometheusColumnDefinition myCol = getColumnForId(pId);
@@ -729,7 +729,7 @@ public class PrometheusTableDefinition {
      * @return the price value
      * @throws OceanusException on error
      */
-    public TethysPrice getPriceValue(final MetisField pId,
+    public TethysPrice getPriceValue(final MetisLetheField pId,
                                      final MetisDataFormatter pFormatter) throws OceanusException {
         /* Obtain the correct id */
         final PrometheusColumnDefinition myCol = getColumnForId(pId);
@@ -751,7 +751,7 @@ public class PrometheusTableDefinition {
      * @return the rate value
      * @throws OceanusException on error
      */
-    public TethysRate getRateValue(final MetisField pId,
+    public TethysRate getRateValue(final MetisLetheField pId,
                                    final MetisDataFormatter pFormatter) throws OceanusException {
         /* Obtain the correct id */
         final PrometheusColumnDefinition myCol = getColumnForId(pId);
@@ -773,7 +773,7 @@ public class PrometheusTableDefinition {
      * @return the Units value
      * @throws OceanusException on error
      */
-    public TethysUnits getUnitsValue(final MetisField pId,
+    public TethysUnits getUnitsValue(final MetisLetheField pId,
                                      final MetisDataFormatter pFormatter) throws OceanusException {
         /* Obtain the correct id */
         final PrometheusColumnDefinition myCol = getColumnForId(pId);
@@ -795,7 +795,7 @@ public class PrometheusTableDefinition {
      * @return the Dilution value
      * @throws OceanusException on error
      */
-    public TethysDilution getDilutionValue(final MetisField pId,
+    public TethysDilution getDilutionValue(final MetisLetheField pId,
                                            final MetisDataFormatter pFormatter) throws OceanusException {
         /* Obtain the correct id */
         final PrometheusColumnDefinition myCol = getColumnForId(pId);
@@ -817,7 +817,7 @@ public class PrometheusTableDefinition {
      * @return the Ratio value
      * @throws OceanusException on error
      */
-    public TethysRatio getRatioValue(final MetisField pId,
+    public TethysRatio getRatioValue(final MetisLetheField pId,
                                      final MetisDataFormatter pFormatter) throws OceanusException {
         /* Obtain the correct id */
         final PrometheusColumnDefinition myCol = getColumnForId(pId);
@@ -838,7 +838,7 @@ public class PrometheusTableDefinition {
      * @return the binary value
      * @throws OceanusException on error
      */
-    public byte[] getBinaryValue(final MetisField pId) throws OceanusException {
+    public byte[] getBinaryValue(final MetisLetheField pId) throws OceanusException {
         /* Obtain the correct id */
         final PrometheusColumnDefinition myCol = getColumnForId(pId);
 
@@ -858,7 +858,7 @@ public class PrometheusTableDefinition {
      * @param pValue the value
      * @throws OceanusException on error
      */
-    public void setIntegerValue(final MetisField pId,
+    public void setIntegerValue(final MetisLetheField pId,
                                 final Integer pValue) throws OceanusException {
         /* Obtain the correct id */
         final PrometheusColumnDefinition myCol = getColumnForId(pId);
@@ -879,7 +879,7 @@ public class PrometheusTableDefinition {
      * @param pValue the value
      * @throws OceanusException on error
      */
-    public void setLongValue(final MetisField pId,
+    public void setLongValue(final MetisLetheField pId,
                              final Long pValue) throws OceanusException {
         /* Obtain the correct id */
         final PrometheusColumnDefinition myCol = getColumnForId(pId);
@@ -900,7 +900,7 @@ public class PrometheusTableDefinition {
      * @param pValue the value
      * @throws OceanusException on error
      */
-    public void setBooleanValue(final MetisField pId,
+    public void setBooleanValue(final MetisLetheField pId,
                                 final Boolean pValue) throws OceanusException {
         /* Obtain the correct id */
         final PrometheusColumnDefinition myCol = getColumnForId(pId);
@@ -921,7 +921,7 @@ public class PrometheusTableDefinition {
      * @param pValue the value
      * @throws OceanusException on error
      */
-    public void setDateValue(final MetisField pId,
+    public void setDateValue(final MetisLetheField pId,
                              final TethysDate pValue) throws OceanusException {
         /* Obtain the correct id */
         final PrometheusColumnDefinition myCol = getColumnForId(pId);
@@ -942,7 +942,7 @@ public class PrometheusTableDefinition {
      * @param pValue the value
      * @throws OceanusException on error
      */
-    public void setStringValue(final MetisField pId,
+    public void setStringValue(final MetisLetheField pId,
                                final String pValue) throws OceanusException {
         /* Obtain the correct id */
         final PrometheusColumnDefinition myCol = getColumnForId(pId);
@@ -963,7 +963,7 @@ public class PrometheusTableDefinition {
      * @param pValue the value
      * @throws OceanusException on error
      */
-    public void setBinaryValue(final MetisField pId,
+    public void setBinaryValue(final MetisLetheField pId,
                                final byte[] pValue) throws OceanusException {
         /* Obtain the correct id */
         final PrometheusColumnDefinition myCol = getColumnForId(pId);
@@ -984,7 +984,7 @@ public class PrometheusTableDefinition {
      * @param pValue the value
      * @throws OceanusException on error
      */
-    public void setMoneyValue(final MetisField pId,
+    public void setMoneyValue(final MetisLetheField pId,
                               final TethysMoney pValue) throws OceanusException {
         /* Obtain the correct id */
         final PrometheusColumnDefinition myCol = getColumnForId(pId);
@@ -1005,7 +1005,7 @@ public class PrometheusTableDefinition {
      * @param pValue the value
      * @throws OceanusException on error
      */
-    public void setRateValue(final MetisField pId,
+    public void setRateValue(final MetisLetheField pId,
                              final TethysRate pValue) throws OceanusException {
         /* Obtain the correct id */
         final PrometheusColumnDefinition myCol = getColumnForId(pId);
@@ -1026,7 +1026,7 @@ public class PrometheusTableDefinition {
      * @param pValue the value
      * @throws OceanusException on error
      */
-    public void setRatioValue(final MetisField pId,
+    public void setRatioValue(final MetisLetheField pId,
                               final TethysRatio pValue) throws OceanusException {
         /* Obtain the correct id */
         final PrometheusColumnDefinition myCol = getColumnForId(pId);
@@ -1047,7 +1047,7 @@ public class PrometheusTableDefinition {
      * @return the column
      * @throws OceanusException on error
      */
-    private PrometheusColumnDefinition getColumnForId(final MetisField pId) throws OceanusException {
+    private PrometheusColumnDefinition getColumnForId(final MetisLetheField pId) throws OceanusException {
         /* Access the definition */
         final PrometheusColumnDefinition myDef = theMap.get(pId);
 

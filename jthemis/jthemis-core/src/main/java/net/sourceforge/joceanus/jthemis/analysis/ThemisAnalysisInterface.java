@@ -90,7 +90,7 @@ public class ThemisAnalysisInterface
         theFullName = myParent.determineFullChildName(theShortName);
 
         /* declare the interface */
-        theDataMap.declareInterface(this);
+        theDataMap.declareObject(this);
 
         /* Parse the headers */
         final Deque<ThemisAnalysisElement> myHeaders = ThemisAnalysisBuilder.parseHeaders(pParser, myLine);
@@ -159,6 +159,11 @@ public class ThemisAnalysisInterface
     @Override
     public ThemisAnalysisDataMap getDataMap() {
         return theDataMap;
+    }
+
+    @Override
+    public ThemisAnalysisProperties getProperties() {
+        return theProperties;
     }
 
     @Override

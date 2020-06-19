@@ -33,7 +33,7 @@ import net.sourceforge.joceanus.jmetis.field.MetisFieldSet;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisEncryptedData.MetisEncryptedRate;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisEncryptedValueSet;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisField;
+import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisLetheField;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisValueSet;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
@@ -74,22 +74,22 @@ public class DepositRate
     /**
      * Deposit Field Id.
      */
-    public static final MetisField FIELD_DEPOSIT = FIELD_DEFS.declareComparisonValueField(MoneyWiseDataType.DEPOSIT.getItemName(), MetisDataType.LINK);
+    public static final MetisLetheField FIELD_DEPOSIT = FIELD_DEFS.declareComparisonValueField(MoneyWiseDataType.DEPOSIT.getItemName(), MetisDataType.LINK);
 
     /**
      * Rate Field Id.
      */
-    public static final MetisField FIELD_RATE = FIELD_DEFS.declareEqualityEncryptedField(MoneyWiseDataResource.MONEYWISEDATA_FIELD_RATE.getValue(), MetisDataType.RATE);
+    public static final MetisLetheField FIELD_RATE = FIELD_DEFS.declareEqualityEncryptedField(MoneyWiseDataResource.MONEYWISEDATA_FIELD_RATE.getValue(), MetisDataType.RATE);
 
     /**
      * Bonus Field Id.
      */
-    public static final MetisField FIELD_BONUS = FIELD_DEFS.declareEqualityEncryptedField(MoneyWiseDataResource.DEPOSITRATE_BONUS.getValue(), MetisDataType.RATE);
+    public static final MetisLetheField FIELD_BONUS = FIELD_DEFS.declareEqualityEncryptedField(MoneyWiseDataResource.DEPOSITRATE_BONUS.getValue(), MetisDataType.RATE);
 
     /**
      * EndDate Field Id.
      */
-    public static final MetisField FIELD_ENDDATE = FIELD_DEFS.declareComparisonValueField(MoneyWiseDataResource.DEPOSITRATE_ENDDATE.getValue(), MetisDataType.DATE);
+    public static final MetisLetheField FIELD_ENDDATE = FIELD_DEFS.declareComparisonValueField(MoneyWiseDataResource.DEPOSITRATE_ENDDATE.getValue(), MetisDataType.DATE);
 
     /**
      * Null Date Error.
@@ -186,7 +186,7 @@ public class DepositRate
     }
 
     @Override
-    public boolean includeXmlField(final MetisField pField) {
+    public boolean includeXmlField(final MetisLetheField pField) {
         /* Determine whether fields should be included */
         if (FIELD_DEPOSIT.equals(pField)) {
             return true;

@@ -23,7 +23,7 @@ import javax.swing.JTable;
 
 import net.sourceforge.joceanus.jmetis.atlas.ui.MetisErrorPanel;
 import net.sourceforge.joceanus.jmetis.data.MetisDataDifference;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisField;
+import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisLetheField;
 import net.sourceforge.joceanus.jmetis.lethe.field.swing.MetisSwingFieldCellEditor.MetisFieldIconButtonCellEditor;
 import net.sourceforge.joceanus.jmetis.lethe.field.swing.MetisSwingFieldCellEditor.MetisFieldRatioCellEditor;
 import net.sourceforge.joceanus.jmetis.lethe.field.swing.MetisSwingFieldCellRenderer.MetisFieldCalendarCellRenderer;
@@ -414,7 +414,7 @@ public class SpotRatesTable
     /**
      * SpotView table model.
      */
-    public final class SpotViewModel
+    private final class SpotViewModel
             extends PrometheusDataTableModel<SpotExchangeRate, MoneyWiseDataType> {
         /**
          * Serial Id.
@@ -470,8 +470,8 @@ public class SpotRatesTable
         }
 
         @Override
-        public MetisField getFieldForCell(final SpotExchangeRate pItem,
-                                          final int pColIndex) {
+        public MetisLetheField getFieldForCell(final SpotExchangeRate pItem,
+                                               final int pColIndex) {
             return theColumns.getFieldForCell(pColIndex);
         }
 
@@ -670,7 +670,7 @@ public class SpotRatesTable
          * @param pColIndex column index
          * @return the field
          */
-        public MetisField getFieldForCell(final int pColIndex) {
+        public MetisLetheField getFieldForCell(final int pColIndex) {
             /* Switch on column */
             switch (pColIndex) {
                 case COLUMN_CURRENCY:

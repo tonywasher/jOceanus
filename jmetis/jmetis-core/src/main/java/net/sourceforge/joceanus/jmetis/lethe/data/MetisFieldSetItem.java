@@ -17,7 +17,7 @@
 package net.sourceforge.joceanus.jmetis.lethe.data;
 
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisDataObject.MetisDataContents;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisField;
+import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisLetheField;
 
 /**
  * Basic Field interface.
@@ -48,19 +48,19 @@ public interface MetisFieldSetItem
      * @param pField the field
      * @return the render state
      */
-    MetisFieldState getFieldState(MetisField pField);
+    MetisFieldState getFieldState(MetisLetheField pField);
 
     /**
      * Get the Errors for the field.
      * @param pField the field
      * @return the error text
      */
-    String getFieldErrors(MetisField pField);
+    String getFieldErrors(MetisLetheField pField);
 
     /**
      * Get the Errors for the fields.
      * @param pFields the fields
      * @return the error text
      */
-    String getFieldErrors(MetisField[] pFields);
+    String getFieldErrors(MetisLetheField[] pFields);
 }

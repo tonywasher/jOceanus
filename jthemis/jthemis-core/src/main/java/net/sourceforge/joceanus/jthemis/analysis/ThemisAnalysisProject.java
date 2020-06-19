@@ -75,8 +75,8 @@ public class ThemisAnalysisProject {
         /* Initiate search for modules */
         parseProjectFile(new File(theLocation, ThemisDSMMaven.POM));
 
-        /* SecondPass process the packages */
-        performSecondPass();
+        /* FinalPass process the packages */
+        performFinalPass();
     }
 
     /**
@@ -153,14 +153,14 @@ public class ThemisAnalysisProject {
     }
 
     /**
-     * secondPass process modules.
+     * finalPass process modules.
      * @throws OceanusException on error
      */
-    private void performSecondPass() throws OceanusException {
+    private void performFinalPass() throws OceanusException {
         /* Loop through the modules */
         for (ThemisAnalysisModule myModule : theModules) {
             /* Process the module */
-            myModule.performSecondPass();
+            myModule.performFinalPass();
         }
     }
 }

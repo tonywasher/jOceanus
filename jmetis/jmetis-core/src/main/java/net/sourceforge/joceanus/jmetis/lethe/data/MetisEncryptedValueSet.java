@@ -18,7 +18,7 @@ package net.sourceforge.joceanus.jmetis.lethe.data;
 
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisDataObject.MetisDataValues;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisEncryptedData.MetisEncryptedField;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisField;
+import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisLetheField;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
@@ -57,7 +57,7 @@ public class MetisEncryptedValueSet
      * @param pField the field
      * @return the bytes
      */
-    public byte[] getEncryptedFieldBytes(final MetisField pField) {
+    public byte[] getEncryptedFieldBytes(final MetisLetheField pField) {
         /* Access the field and return null if required */
         final Object myObject = getValue(pField);
         if (myObject == null) {
@@ -82,7 +82,7 @@ public class MetisEncryptedValueSet
      * @param pClass the class
      * @return the value
      */
-    public <X> X getEncryptedFieldValue(final MetisField pField,
+    public <X> X getEncryptedFieldValue(final MetisLetheField pField,
                                         final Class<X> pClass) {
         /* Access the field and return null if required */
         final Object myObject = getValue(pField);

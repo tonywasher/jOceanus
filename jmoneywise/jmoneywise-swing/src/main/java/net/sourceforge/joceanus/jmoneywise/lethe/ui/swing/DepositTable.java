@@ -23,7 +23,7 @@ import java.util.Map;
 import javax.swing.JTable;
 
 import net.sourceforge.joceanus.jmetis.atlas.ui.MetisErrorPanel;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisField;
+import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisLetheField;
 import net.sourceforge.joceanus.jmetis.lethe.field.swing.MetisSwingFieldCellEditor.MetisFieldIconButtonCellEditor;
 import net.sourceforge.joceanus.jmetis.lethe.field.swing.MetisSwingFieldCellEditor.MetisFieldScrollButtonCellEditor;
 import net.sourceforge.joceanus.jmetis.lethe.field.swing.MetisSwingFieldCellEditor.MetisFieldStringCellEditor;
@@ -475,8 +475,8 @@ public class DepositTable
         }
 
         @Override
-        public MetisField getFieldForCell(final Deposit pItem,
-                                          final int pColIndex) {
+        public MetisLetheField getFieldForCell(final Deposit pItem,
+                                               final int pColIndex) {
             return theColumns.getFieldForCell(pColIndex);
         }
 
@@ -807,7 +807,7 @@ public class DepositTable
          * @param pColIndex column index
          * @return the field
          */
-        protected MetisField getFieldForCell(final int pColIndex) {
+        protected MetisLetheField getFieldForCell(final int pColIndex) {
             /* Switch on column */
             switch (pColIndex) {
                 case COLUMN_NAME:

@@ -24,7 +24,7 @@ import net.sourceforge.joceanus.jmetis.data.MetisDataFieldValue;
 import net.sourceforge.joceanus.jmetis.data.MetisDataFormatter;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisDataObject.MetisDataContents;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisDataObject.MetisDataValues;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisField;
+import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisLetheField;
 
 /**
  * Provides the implementation of delta between two valueSets.
@@ -103,10 +103,10 @@ public class MetisValueSetDelta
         myLocal.declareIndexField(MetisValueSet.FIELD_DELETION);
 
         /* Loop through the fields */
-        final Iterator<MetisField> myIterator = myFields.fieldIterator();
+        final Iterator<MetisLetheField> myIterator = myFields.fieldIterator();
         while (myIterator.hasNext()) {
             /* Access Field */
-            final MetisField myField = myIterator.next();
+            final MetisLetheField myField = myIterator.next();
 
             /* Skip if the field is not valueSet */
             if (!myField.getStorage().isValueSet()) {
@@ -122,7 +122,7 @@ public class MetisValueSetDelta
     }
 
     @Override
-    public Object getFieldValue(final MetisField pField) {
+    public Object getFieldValue(final MetisLetheField pField) {
         /* Access the index */
         int myIndex = pField.getIndex();
 

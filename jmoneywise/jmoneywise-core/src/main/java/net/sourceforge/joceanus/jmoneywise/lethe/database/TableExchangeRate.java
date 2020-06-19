@@ -17,7 +17,7 @@
 package net.sourceforge.joceanus.jmoneywise.lethe.database;
 
 import net.sourceforge.joceanus.jmetis.data.MetisDataFormatter;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisField;
+import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisLetheField;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.ExchangeRate;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.MoneyWiseData;
@@ -90,7 +90,7 @@ public class TableExchangeRate
 
     @Override
     protected void setFieldValue(final ExchangeRate pItem,
-                                 final MetisField iField) throws OceanusException {
+                                 final MetisLetheField iField) throws OceanusException {
         /* Switch on field id */
         final PrometheusTableDefinition myTableDef = getTableDef();
         if (ExchangeRate.FIELD_DATE.equals(iField)) {

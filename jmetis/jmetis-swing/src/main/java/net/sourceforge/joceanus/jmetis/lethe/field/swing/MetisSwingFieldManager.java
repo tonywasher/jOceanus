@@ -25,7 +25,7 @@ import javax.swing.border.Border;
 import net.sourceforge.joceanus.jmetis.data.MetisDataFormatter;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFieldSetItem;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFieldState;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisField;
+import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisLetheField;
 import net.sourceforge.joceanus.jmetis.lethe.field.MetisLetheFieldEvent;
 import net.sourceforge.joceanus.jmetis.lethe.field.swing.MetisSwingFieldCellEditor.MetisFieldCalendarCellEditor;
 import net.sourceforge.joceanus.jmetis.lethe.field.swing.MetisSwingFieldCellEditor.MetisFieldDilutionCellEditor;
@@ -426,7 +426,7 @@ public class MetisSwingFieldManager
      * @return the standard foreground for the item
      */
     public Color getForeground(final MetisFieldSetItem pItem,
-                               final MetisField pField) {
+                               final MetisLetheField pField) {
         /* Access foreground for item */
         return getForeground(pItem.getFieldState(pField));
     }
@@ -473,7 +473,7 @@ public class MetisSwingFieldManager
      * @return the standard Font for the item
      */
     public Font determineFont(final MetisFieldSetItem pItem,
-                              final MetisField pField,
+                              final MetisLetheField pField,
                               final boolean isFixed) {
         /* Return the font */
         return determineFont(pItem.getFieldState(pField), isFixed);
@@ -506,7 +506,7 @@ public class MetisSwingFieldManager
      * @return the standard Font for the item
      */
     public Font determineHiFont(final MetisFieldSetItem pItem,
-                                final MetisField pField,
+                                final MetisLetheField pField,
                                 final boolean isFixed) {
         /* Return the font */
         return determineHiFont(pItem.getFieldState(pField), isFixed);
@@ -538,7 +538,7 @@ public class MetisSwingFieldManager
      * @return the standard ToolTip for the item
      */
     public String getToolTip(final MetisFieldSetItem pItem,
-                             final MetisField pField) {
+                             final MetisLetheField pField) {
         /* return the toolTip */
         return getToolTip(pItem.getFieldState(pField), pItem, pField);
     }
@@ -552,7 +552,7 @@ public class MetisSwingFieldManager
      */
     protected String getToolTip(final MetisFieldState pState,
                                 final MetisFieldSetItem pItem,
-                                final MetisField pField) {
+                                final MetisLetheField pField) {
         /* Switch on the state */
         return MetisFieldState.ERROR.equals(pState)
                                                     ? pItem.getFieldErrors(pField)
@@ -567,7 +567,7 @@ public class MetisSwingFieldManager
      * @return the standard ToolTip for the item
      */
     public <X extends MetisFieldSetItem> String determineToolTip(final X pItem,
-                                                                 final MetisField pField) {
+                                                                 final MetisLetheField pField) {
         /* return the toolTip */
         return determineToolTip(pItem.getFieldState(pField), pItem, pField);
     }
@@ -582,7 +582,7 @@ public class MetisSwingFieldManager
      */
     protected <X extends MetisFieldSetItem> String determineToolTip(final MetisFieldState pState,
                                                                     final X pItem,
-                                                                    final MetisField pField) {
+                                                                    final MetisLetheField pField) {
         return MetisFieldState.ERROR.equals(pState)
                                                     ? pItem.getFieldErrors(pField)
                                                     : null;

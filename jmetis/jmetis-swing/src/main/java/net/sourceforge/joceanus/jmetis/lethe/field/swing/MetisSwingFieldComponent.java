@@ -37,7 +37,7 @@ import javax.swing.border.Border;
 import net.sourceforge.joceanus.jmetis.data.MetisDataType;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFieldSetItem;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFieldState;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisField;
+import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisLetheField;
 import net.sourceforge.joceanus.jmetis.lethe.field.MetisLetheFieldModel;
 import net.sourceforge.joceanus.jmetis.lethe.field.MetisLetheFieldModel.TethysFieldModelDate;
 import net.sourceforge.joceanus.jmetis.lethe.field.MetisLetheFieldModel.TethysFieldModelObject;
@@ -156,7 +156,7 @@ public abstract class MetisSwingFieldComponent<T extends MetisFieldSetItem> {
      * @return the field component
      */
     protected static <X extends MetisFieldSetItem> MetisSwingFieldComponent<X> deriveComponent(final MetisSwingFieldSet<X> pFieldSet,
-                                                                                               final MetisField pField,
+                                                                                               final MetisLetheField pField,
                                                                                                final TethysSwingStringTextField pTextField,
                                                                                                final MetisDataType pClass) {
         /* Allocate component */
@@ -174,7 +174,7 @@ public abstract class MetisSwingFieldComponent<T extends MetisFieldSetItem> {
      * @return the field component
      */
     protected static <X extends MetisFieldSetItem> MetisSwingFieldComponent<X> deriveComponent(final MetisSwingFieldSet<X> pFieldSet,
-                                                                                               final MetisField pField,
+                                                                                               final MetisLetheField pField,
                                                                                                final TethysSwingScrollPaneManager pScrollPane,
                                                                                                final MetisDataType pClass) {
         /* Split into scrollPane and child */
@@ -208,7 +208,7 @@ public abstract class MetisSwingFieldComponent<T extends MetisFieldSetItem> {
      * @return the field component
      */
     private static <X extends MetisFieldSetItem> MetisSwingFieldComponent<X> deriveComponent(final MetisSwingFieldSet<X> pFieldSet,
-                                                                                             final MetisField pField,
+                                                                                             final MetisLetheField pField,
                                                                                              final TethysSwingTextArea pTextArea,
                                                                                              final MetisDataType pClass) {
         /* Allocate component */
@@ -225,7 +225,7 @@ public abstract class MetisSwingFieldComponent<T extends MetisFieldSetItem> {
      * @return the field component
      */
     protected static <X extends MetisFieldSetItem> MetisSwingFieldComponent<X> deriveComponent(final MetisSwingFieldSet<X> pFieldSet,
-                                                                                               final MetisField pField,
+                                                                                               final MetisLetheField pField,
                                                                                                final TethysSwingDateButtonManager pButton) {
         /* Allocate component */
         final TethysFieldModelDate<X> myModel = new TethysFieldModelDate<>(pFieldSet, pField);
@@ -243,7 +243,7 @@ public abstract class MetisSwingFieldComponent<T extends MetisFieldSetItem> {
      * @return the field component
      */
     protected static <I, X extends MetisFieldSetItem> MetisSwingFieldComponent<X> deriveComponent(final MetisSwingFieldSet<X> pFieldSet,
-                                                                                                  final MetisField pField,
+                                                                                                  final MetisLetheField pField,
                                                                                                   final TethysSwingScrollButtonManager<I> pButton,
                                                                                                   final Class<I> pClazz) {
         /* Allocate component */
@@ -261,7 +261,7 @@ public abstract class MetisSwingFieldComponent<T extends MetisFieldSetItem> {
      * @return the field component
      */
     protected static <I extends Comparable<I>, X extends MetisFieldSetItem> MetisSwingFieldComponent<X> deriveComponent(final MetisSwingFieldSet<X> pFieldSet,
-                                                                                                                        final MetisField pField,
+                                                                                                                        final MetisLetheField pField,
                                                                                                                         final TethysSwingListButtonManager<I> pButton) {
         /* Allocate component */
         final TethysFieldModelObjectList<I, X> myModel = new TethysFieldModelObjectList<>(pFieldSet, pField);
@@ -279,7 +279,7 @@ public abstract class MetisSwingFieldComponent<T extends MetisFieldSetItem> {
      * @return the field component
      */
     protected static <I, X extends MetisFieldSetItem> MetisSwingFieldComponent<X> deriveComponent(final MetisSwingFieldSet<X> pFieldSet,
-                                                                                                  final MetisField pField,
+                                                                                                  final MetisLetheField pField,
                                                                                                   final TethysSwingIconButtonManager<I> pButton,
                                                                                                   final Class<I> pClazz) {
         /* Allocate component */

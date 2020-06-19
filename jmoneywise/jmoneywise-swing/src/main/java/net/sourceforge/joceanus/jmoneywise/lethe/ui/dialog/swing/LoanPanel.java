@@ -22,8 +22,8 @@ import java.util.Map;
 
 import net.sourceforge.joceanus.jmetis.atlas.ui.MetisErrorPanel;
 import net.sourceforge.joceanus.jmetis.data.MetisDataType;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisField;
-import net.sourceforge.joceanus.jmetis.lethe.field.MetisLetheFieldSetBase.MetisFieldUpdate;
+import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisLetheField;
+import net.sourceforge.joceanus.jmetis.lethe.field.MetisLetheFieldSetBase.MetisLetheFieldUpdate;
 import net.sourceforge.joceanus.jmetis.lethe.field.swing.MetisSwingFieldManager;
 import net.sourceforge.joceanus.jmetis.lethe.field.swing.MetisSwingFieldSet;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
@@ -223,7 +223,7 @@ public class LoanPanel
         myFieldSet.setVisibility(LoanInfoSet.getFieldForClass(AccountInfoClass.REFERENCE), bShowReference);
         final boolean bHasOpening = myLoan.getOpeningBalance() != null;
         final boolean bShowOpening = bIsChangeable || bHasOpening;
-        final MetisField myOpeningField = LoanInfoSet.getFieldForClass(AccountInfoClass.OPENINGBALANCE);
+        final MetisLetheField myOpeningField = LoanInfoSet.getFieldForClass(AccountInfoClass.OPENINGBALANCE);
         myFieldSet.setVisibility(myOpeningField, bShowOpening);
         final boolean bShowNotes = isEditable || myLoan.getNotes() != null;
         myFieldSet.setVisibility(LoanInfoSet.getFieldForClass(AccountInfoClass.NOTES), bShowNotes);
@@ -241,9 +241,9 @@ public class LoanPanel
     }
 
     @Override
-    protected void updateField(final MetisFieldUpdate pUpdate) throws OceanusException {
+    protected void updateField(final MetisLetheFieldUpdate pUpdate) throws OceanusException {
         /* Access the field */
-        final MetisField myField = pUpdate.getField();
+        final MetisLetheField myField = pUpdate.getField();
         final Loan myLoan = getItem();
 
         /* Process updates */

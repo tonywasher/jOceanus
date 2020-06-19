@@ -24,7 +24,7 @@ import net.sourceforge.joceanus.jmetis.field.MetisFieldSet;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisEncryptedData.MetisEncryptedField;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisEncryptedValueSet;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisField;
+import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisLetheField;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisValueSet;
 import net.sourceforge.joceanus.jprometheus.PrometheusDataException;
 import net.sourceforge.joceanus.jprometheus.PrometheusLogicException;
@@ -68,22 +68,22 @@ public abstract class DataInfo<T extends DataInfo<T, O, I, S, E>,
     /**
      * InfoType Field Id.
      */
-    public static final MetisField FIELD_INFOTYPE = FIELD_DEFS.declareComparisonValueField(PrometheusDataResource.DATAINFO_TYPE.getValue(), MetisDataType.LINK);
+    public static final MetisLetheField FIELD_INFOTYPE = FIELD_DEFS.declareComparisonValueField(PrometheusDataResource.DATAINFO_TYPE.getValue(), MetisDataType.LINK);
 
     /**
      * Owner Field Id.
      */
-    public static final MetisField FIELD_OWNER = FIELD_DEFS.declareComparisonValueField(PrometheusDataResource.DATAINFO_OWNER.getValue(), MetisDataType.LINK);
+    public static final MetisLetheField FIELD_OWNER = FIELD_DEFS.declareComparisonValueField(PrometheusDataResource.DATAINFO_OWNER.getValue(), MetisDataType.LINK);
 
     /**
      * Value Field Id.
      */
-    public static final MetisField FIELD_VALUE = FIELD_DEFS.declareEqualityEncryptedField(PrometheusDataResource.DATAINFO_VALUE.getValue(), MetisDataType.CONTEXT);
+    public static final MetisLetheField FIELD_VALUE = FIELD_DEFS.declareEqualityEncryptedField(PrometheusDataResource.DATAINFO_VALUE.getValue(), MetisDataType.CONTEXT);
 
     /**
      * Link Field Id.
      */
-    public static final MetisField FIELD_LINK = FIELD_DEFS.declareDerivedValueField(PrometheusDataResource.DATAINFO_LINK.getValue());
+    public static final MetisLetheField FIELD_LINK = FIELD_DEFS.declareDerivedValueField(PrometheusDataResource.DATAINFO_LINK.getValue());
 
     /**
      * Invalid Data Type Error.
@@ -203,7 +203,7 @@ public abstract class DataInfo<T extends DataInfo<T, O, I, S, E>,
     }
 
     @Override
-    public boolean skipField(final MetisField pField) {
+    public boolean skipField(final MetisLetheField pField) {
         if ((FIELD_LINK.equals(pField)) && !isInfoLink()) {
             return true;
         }

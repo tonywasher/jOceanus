@@ -22,8 +22,8 @@ import java.util.Map;
 
 import net.sourceforge.joceanus.jmetis.atlas.ui.MetisErrorPanel;
 import net.sourceforge.joceanus.jmetis.data.MetisDataType;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisField;
-import net.sourceforge.joceanus.jmetis.lethe.field.MetisLetheFieldSetBase.MetisFieldUpdate;
+import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisLetheField;
+import net.sourceforge.joceanus.jmetis.lethe.field.MetisLetheFieldSetBase.MetisLetheFieldUpdate;
 import net.sourceforge.joceanus.jmetis.lethe.field.swing.MetisSwingFieldManager;
 import net.sourceforge.joceanus.jmetis.lethe.field.swing.MetisSwingFieldSet;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
@@ -218,13 +218,13 @@ public class CashPanel
         myFieldSet.setVisibility(Cash.FIELD_DESC, bShowDesc);
 
         /* AutoExpense/Payee is hidden unless we are autoExpense */
-        final MetisField myAutoExpenseField = CashInfoSet.getFieldForClass(AccountInfoClass.AUTOEXPENSE);
-        final MetisField myAutoPayeeField = CashInfoSet.getFieldForClass(AccountInfoClass.AUTOPAYEE);
+        final MetisLetheField myAutoExpenseField = CashInfoSet.getFieldForClass(AccountInfoClass.AUTOEXPENSE);
+        final MetisLetheField myAutoPayeeField = CashInfoSet.getFieldForClass(AccountInfoClass.AUTOPAYEE);
         myFieldSet.setVisibility(myAutoExpenseField, isAutoExpense);
         myFieldSet.setVisibility(myAutoPayeeField, isAutoExpense);
 
         /* OpeningBalance is hidden if we are autoExpense */
-        final MetisField myOpeningField = CashInfoSet.getFieldForClass(AccountInfoClass.OPENINGBALANCE);
+        final MetisLetheField myOpeningField = CashInfoSet.getFieldForClass(AccountInfoClass.OPENINGBALANCE);
         final boolean bHasOpening = myCash.getOpeningBalance() != null;
         final boolean bShowOpening = bIsChangeable || bHasOpening;
         myFieldSet.setVisibility(myOpeningField, !isAutoExpense && bShowOpening);
@@ -249,9 +249,9 @@ public class CashPanel
     }
 
     @Override
-    protected void updateField(final MetisFieldUpdate pUpdate) throws OceanusException {
+    protected void updateField(final MetisLetheFieldUpdate pUpdate) throws OceanusException {
         /* Access the field */
-        final MetisField myField = pUpdate.getField();
+        final MetisLetheField myField = pUpdate.getField();
         final Cash myCash = getItem();
 
         /* Process updates */

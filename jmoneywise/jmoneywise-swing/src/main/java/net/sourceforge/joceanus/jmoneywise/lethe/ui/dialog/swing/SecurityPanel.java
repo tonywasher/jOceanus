@@ -23,8 +23,8 @@ import java.util.Map;
 import net.sourceforge.joceanus.jmetis.atlas.ui.MetisErrorPanel;
 import net.sourceforge.joceanus.jmetis.data.MetisDataType;
 import net.sourceforge.joceanus.jmetis.field.MetisFieldRequired;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisField;
-import net.sourceforge.joceanus.jmetis.lethe.field.MetisLetheFieldSetBase.MetisFieldUpdate;
+import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisLetheField;
+import net.sourceforge.joceanus.jmetis.lethe.field.MetisLetheFieldSetBase.MetisLetheFieldUpdate;
 import net.sourceforge.joceanus.jmetis.lethe.field.swing.MetisSwingFieldManager;
 import net.sourceforge.joceanus.jmetis.lethe.field.swing.MetisSwingFieldSet;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
@@ -259,7 +259,7 @@ public class SecurityPanel
         myFieldSet.setVisibility(SecurityInfoSet.getFieldForClass(AccountInfoClass.NOTES), bShowNotes);
 
         /* Determine whether the symbol field should be visible */
-        MetisField myField = SecurityInfoSet.getFieldForClass(AccountInfoClass.SYMBOL);
+        MetisLetheField myField = SecurityInfoSet.getFieldForClass(AccountInfoClass.SYMBOL);
         boolean bEditField = isEditable && isEditableField(mySecurity, AccountInfoClass.SYMBOL);
         boolean bShowField = bEditField || mySecurity.getSymbol() != null;
         myFieldSet.setVisibility(myField, bShowField);
@@ -317,9 +317,9 @@ public class SecurityPanel
     }
 
     @Override
-    protected void updateField(final MetisFieldUpdate pUpdate) throws OceanusException {
+    protected void updateField(final MetisLetheFieldUpdate pUpdate) throws OceanusException {
         /* Access the field */
-        final MetisField myField = pUpdate.getField();
+        final MetisLetheField myField = pUpdate.getField();
         final Security mySecurity = getItem();
 
         /* Process updates */

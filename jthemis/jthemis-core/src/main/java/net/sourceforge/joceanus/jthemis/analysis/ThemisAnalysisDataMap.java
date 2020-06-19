@@ -23,6 +23,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import net.sourceforge.joceanus.jtethys.OceanusException;
+import net.sourceforge.joceanus.jthemis.ThemisDataException;
 import net.sourceforge.joceanus.jthemis.analysis.ThemisAnalysisFile.ThemisAnalysisObject;
 import net.sourceforge.joceanus.jthemis.analysis.ThemisAnalysisGeneric.ThemisAnalysisGenericVar;
 import net.sourceforge.joceanus.jthemis.analysis.ThemisAnalysisImports.ThemisAnalysisImport;
@@ -59,6 +61,11 @@ public class ThemisAnalysisDataMap {
     private final Map<String, ThemisAnalysisObject> theClassMap;
 
     /**
+     * The map of all classes.
+     */
+    private final Map<String, ThemisAnalysisObject> theShortClassMap;
+
+    /**
      * The parent.
      */
     private final ThemisAnalysisDataMap theParent;
@@ -84,6 +91,7 @@ public class ThemisAnalysisDataMap {
     ThemisAnalysisDataMap() {
         theParent = null;
         theClassMap = new LinkedHashMap<>();
+        theShortClassMap = new LinkedHashMap<>();
         theLocalTypes = new HashMap<>();
     }
 
@@ -94,6 +102,7 @@ public class ThemisAnalysisDataMap {
     ThemisAnalysisDataMap(final ThemisAnalysisDataMap pParent) {
         theParent = pParent;
         theClassMap = pParent.theClassMap;
+        theShortClassMap = pParent.theShortClassMap;
         theLocalTypes = new HashMap<>();
         theFileTypes = pParent.theFileTypes;
         theFileClasses = pParent.theFileClasses;
@@ -118,34 +127,32 @@ public class ThemisAnalysisDataMap {
                : theParent.lookUpDataType(pToken);
     }
 
-    /**
-     * declare class.
-     * @param pClass the class
-     */
-    void declareClass(final ThemisAnalysisClass pClass) {
-        theClassMap.put(pClass.getFullName(), pClass);
-        theFileTypes.put(pClass.getShortName(), pClass);
-        theFileClasses.add(pClass);
-    }
 
     /**
-     * declare interface.
-     * @param pInterface the interface
+     * Record Object.
+     * @param pObject the object.
+     * @throws OceanusException on error
      */
-    void declareInterface(final ThemisAnalysisInterface pInterface) {
-        theClassMap.put(pInterface.getFullName(), pInterface);
-        theFileTypes.put(pInterface.getShortName(), pInterface);
-        theFileClasses.add(pInterface);
-    }
+    void declareObject(final ThemisAnalysisObject pObject) throws OceanusException {
+        /* Access properties */
+        final ThemisAnalysisProperties myProps = pObject.getProperties();
+        final String myShortName = pObject.getShortName();
 
-    /**
-     * declare enum.
-     * @param pEnum the enum
-     */
-    void declareEnum(final ThemisAnalysisEnum pEnum) {
-        theClassMap.put(pEnum.getFullName(), pEnum);
-        theFileTypes.put(pEnum.getShortName(), pEnum);
-        theFileClasses.add(pEnum);
+        /* Only register class globally if it is non-private */
+        if (!myProps.hasModifier(ThemisAnalysisModifier.PRIVATE)) {
+            /* Check that the shortName is unique */
+            if (theShortClassMap.get(myShortName) != null) {
+                throw new ThemisDataException("Duplicate class shortName: " + myShortName);
+            }
+
+            /* Register the object */
+            theShortClassMap.put(myShortName, pObject);
+            theClassMap.put(pObject.getFullName(), pObject);
+        }
+
+        /* Store locally */
+        theFileTypes.put(myShortName, pObject);
+        theFileClasses.add(pObject);
     }
 
     /**
@@ -209,6 +216,32 @@ public class ThemisAnalysisDataMap {
      * Loop through the localTypes and update from classMap.
      */
     void updateFromClassMap() {
+        /* Update intermediate references */
+        updateIntermediates();
+
+        /* Process implicit imports */
+        processImplicit();
+
+        /* Loop through the References */
+        for (ThemisAnalysisReference myRef : theReferences) {
+            /* Access the dataType */
+            final ThemisAnalysisDataType myType = myRef.getDataType();
+
+            /* If this is an unknown */
+            if (myType instanceof ThemisAnalysisDataTypeUnknown) {
+                /* Check for implicit import */
+                final ThemisAnalysisDataType myActual = theLocalTypes.get(myType.toString());
+                if (!(myActual instanceof ThemisAnalysisDataTypeUnknown)) {
+                    myRef.updateDataType(myActual);
+                }
+            }
+        }
+    }
+
+    /**
+     * Loop through the localTypes and update from classMap.
+     */
+    private void updateIntermediates() {
         /* Loop through the localDataTypes */
         for (Entry<String, ThemisAnalysisDataType> myEntry : theLocalTypes.entrySet()) {
             /* Access the value */
@@ -234,24 +267,6 @@ public class ThemisAnalysisDataMap {
                 /* Look up actual value */
                 final ThemisAnalysisDataType myActual = lookUpActualDataType((ThemisAnalysisIntermediate) myType);
                 if (myActual != null) {
-                    myRef.updateDataType(myActual);
-                }
-            }
-        }
-
-        /* Process implicit imports */
-        processImplicit();
-
-        /* Loop through the References */
-        for (ThemisAnalysisReference myRef : theReferences) {
-            /* Access the dataType */
-            final ThemisAnalysisDataType myType = myRef.getDataType();
-
-            /* If this is an unknown */
-            if (myType instanceof ThemisAnalysisDataTypeUnknown) {
-                /* Check for implicit import */
-                final ThemisAnalysisDataType myActual = theLocalTypes.get(myType.toString());
-                if (!(myActual instanceof ThemisAnalysisDataTypeUnknown)) {
                     myRef.updateDataType(myActual);
                 }
             }
@@ -284,7 +299,7 @@ public class ThemisAnalysisDataMap {
         for (ThemisAnalysisObject myClass : theClassMap.values()) {
             /* If this is a direct child of the ancestor */
             final String myName = pAncestor.getFullName() + ThemisAnalysisChar.PERIOD + myClass.getShortName();
-            if (myName.endsWith(myClass.getFullName())) {
+            if (myName.equals(myClass.getFullName())) {
                 /* Add it to the local types */
                 theLocalTypes.put(myClass.getShortName(), myClass);
             }

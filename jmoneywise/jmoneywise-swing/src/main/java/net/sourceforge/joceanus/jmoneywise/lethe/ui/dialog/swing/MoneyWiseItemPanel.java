@@ -33,7 +33,7 @@ import javax.swing.SpringLayout;
 
 import net.sourceforge.joceanus.jmetis.atlas.ui.MetisErrorPanel;
 import net.sourceforge.joceanus.jmetis.data.MetisDataType;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisField;
+import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisLetheField;
 import net.sourceforge.joceanus.jmetis.lethe.field.swing.MetisSwingFieldManager;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.AssetBase;
@@ -427,7 +427,7 @@ public abstract class MoneyWiseItemPanel<T extends DataItem<MoneyWiseDataType> &
          * @param pType the dataType
          * @param pControl the control
          */
-        protected void addField(final MetisField pField,
+        protected void addField(final MetisLetheField pField,
                                 final MetisDataType pType,
                                 final TethysSwingStringTextField pControl) {
             /* Add to the fieldSet */
@@ -446,7 +446,7 @@ public abstract class MoneyWiseItemPanel<T extends DataItem<MoneyWiseDataType> &
          * @param pType the dataType
          * @param pControl the control
          */
-        protected void addField(final MetisField pField,
+        protected void addField(final MetisLetheField pField,
                                 final MetisDataType pType,
                                 final TethysSwingScrollPaneManager pControl) {
             /* Add to the fieldSet */
@@ -464,7 +464,7 @@ public abstract class MoneyWiseItemPanel<T extends DataItem<MoneyWiseDataType> &
          * @param pField the field.
          * @param pControl the control
          */
-        protected void addField(final MetisField pField,
+        protected void addField(final MetisLetheField pField,
                                 final TethysSwingDateButtonManager pControl) {
             /* Add to the fieldSet */
             getFieldSet().addFieldElement(pField, pControl);
@@ -483,7 +483,7 @@ public abstract class MoneyWiseItemPanel<T extends DataItem<MoneyWiseDataType> &
          * @param pClazz the class of the value
          * @param pControl the control
          */
-        protected <I> void addField(final MetisField pField,
+        protected <I> void addField(final MetisLetheField pField,
                                     final Class<I> pClazz,
                                     final TethysSwingScrollButtonManager<I> pControl) {
             /* Add to the fieldSet */
@@ -503,7 +503,7 @@ public abstract class MoneyWiseItemPanel<T extends DataItem<MoneyWiseDataType> &
          * @param pClazz the class of the value
          * @param pControl the control
          */
-        protected <I> void addField(final MetisField pField,
+        protected <I> void addField(final MetisLetheField pField,
                                     final Class<I> pClazz,
                                     final TethysSwingIconButtonManager<I> pControl) {
             /* Add to the fieldSet */
@@ -522,7 +522,7 @@ public abstract class MoneyWiseItemPanel<T extends DataItem<MoneyWiseDataType> &
          * @param pField the field.
          * @param pControl the control
          */
-        protected <I extends Comparable<I>> void addField(final MetisField pField,
+        protected <I extends Comparable<I>> void addField(final MetisLetheField pField,
                                                           final TethysSwingListButtonManager<I> pControl) {
             /* Add to the fieldSet */
             getFieldSet().addFieldElement(pField, pControl);
@@ -538,7 +538,7 @@ public abstract class MoneyWiseItemPanel<T extends DataItem<MoneyWiseDataType> &
          * Add field.
          * @param pField the field.
          */
-        protected void addField(final MetisField pField) {
+        protected void addField(final MetisLetheField pField) {
             /* Add the field to the panel */
             getFieldSet().addFieldToPanel(pField, thePanel);
         }
@@ -595,7 +595,7 @@ public abstract class MoneyWiseItemPanel<T extends DataItem<MoneyWiseDataType> &
         /**
          * The fields.
          */
-        private final List<MetisField> theFields;
+        private final List<MetisLetheField> theFields;
 
         /**
          * isVisible.
@@ -646,7 +646,7 @@ public abstract class MoneyWiseItemPanel<T extends DataItem<MoneyWiseDataType> &
         }
 
         @Override
-        protected void addField(final MetisField pField) {
+        protected void addField(final MetisLetheField pField) {
             /* Add the field to the panel */
             super.addField(pField);
 

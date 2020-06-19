@@ -25,7 +25,7 @@ import net.sourceforge.joceanus.jmetis.field.MetisFieldSet;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisEncryptedData.MetisEncryptedMoney;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisEncryptedValueSet;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisField;
+import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisLetheField;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisValueSet;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
@@ -63,37 +63,37 @@ public abstract class TransactionBase<T extends TransactionBase<T>>
     /**
      * AssetPair Field Id.
      */
-    public static final MetisField FIELD_PAIR = FIELD_DEFS.declareEqualityValueField(MoneyWiseDataResource.TRANSACTION_ASSETPAIR.getValue(), MetisDataType.INTEGER);
+    public static final MetisLetheField FIELD_PAIR = FIELD_DEFS.declareEqualityValueField(MoneyWiseDataResource.TRANSACTION_ASSETPAIR.getValue(), MetisDataType.INTEGER);
 
     /**
      * Account Field Id.
      */
-    public static final MetisField FIELD_ACCOUNT = FIELD_DEFS.declareEqualityValueField(MoneyWiseDataResource.TRANSACTION_ACCOUNT.getValue(), MetisDataType.LINK);
+    public static final MetisLetheField FIELD_ACCOUNT = FIELD_DEFS.declareEqualityValueField(MoneyWiseDataResource.TRANSACTION_ACCOUNT.getValue(), MetisDataType.LINK);
 
     /**
      * Partner Field Id.
      */
-    public static final MetisField FIELD_PARTNER = FIELD_DEFS.declareEqualityValueField(MoneyWiseDataResource.TRANSACTION_PARTNER.getValue(), MetisDataType.LINK);
+    public static final MetisLetheField FIELD_PARTNER = FIELD_DEFS.declareEqualityValueField(MoneyWiseDataResource.TRANSACTION_PARTNER.getValue(), MetisDataType.LINK);
 
     /**
      * Direction Field Id.
      */
-    public static final MetisField FIELD_DIRECTION = FIELD_DEFS.declareDerivedValueField(MoneyWiseDataResource.TRANSACTION_DIRECTION.getValue());
+    public static final MetisLetheField FIELD_DIRECTION = FIELD_DEFS.declareDerivedValueField(MoneyWiseDataResource.TRANSACTION_DIRECTION.getValue());
 
     /**
      * Amount Field Id.
      */
-    public static final MetisField FIELD_AMOUNT = FIELD_DEFS.declareEqualityEncryptedField(MoneyWiseDataResource.TRANSACTION_AMOUNT.getValue(), MetisDataType.MONEY);
+    public static final MetisLetheField FIELD_AMOUNT = FIELD_DEFS.declareEqualityEncryptedField(MoneyWiseDataResource.TRANSACTION_AMOUNT.getValue(), MetisDataType.MONEY);
 
     /**
      * Category Field Id.
      */
-    public static final MetisField FIELD_CATEGORY = FIELD_DEFS.declareComparisonValueField(MoneyWiseDataType.TRANSCATEGORY.getItemName(), MetisDataType.LINK);
+    public static final MetisLetheField FIELD_CATEGORY = FIELD_DEFS.declareComparisonValueField(MoneyWiseDataType.TRANSCATEGORY.getItemName(), MetisDataType.LINK);
 
     /**
      * Reconciled Field Id.
      */
-    public static final MetisField FIELD_RECONCILED = FIELD_DEFS.declareEqualityValueField(MoneyWiseDataResource.TRANSACTION_RECONCILED.getValue(), MetisDataType.BOOLEAN);
+    public static final MetisLetheField FIELD_RECONCILED = FIELD_DEFS.declareEqualityValueField(MoneyWiseDataResource.TRANSACTION_RECONCILED.getValue(), MetisDataType.BOOLEAN);
 
     /**
      * Invalid Debit/Credit/Category Combination Error Text.
@@ -217,7 +217,7 @@ public abstract class TransactionBase<T extends TransactionBase<T>>
     }
 
     @Override
-    public boolean includeXmlField(final MetisField pField) {
+    public boolean includeXmlField(final MetisLetheField pField) {
         /* Determine whether fields should be included */
         if (FIELD_PAIR.equals(pField)) {
             return true;

@@ -58,6 +58,12 @@ public class ThemisAnalysisFile
          * @return the list of ancestors
          */
         List<ThemisAnalysisReference> getAncestors();
+
+        /**
+         * Obtain properties.
+         * @return the properties
+         */
+        ThemisAnalysisProperties getProperties();
     }
 
     /**
@@ -152,8 +158,8 @@ public class ThemisAnalysisFile
             /* Record the number of lines */
             theNumLines = myLines.size();
 
-            /* Post process the lines */
-            firstPassProcessLines(myLines);
+            /* Perform initial processing pass */
+            initialProcessingPass(myLines);
 
             /* Catch exceptions */
         } catch (IOException e) {
@@ -280,7 +286,7 @@ public class ThemisAnalysisFile
      * @param pLines the lines to process
      * @throws OceanusException on error
      */
-    private void firstPassProcessLines(final Deque<ThemisAnalysisElement> pLines) throws OceanusException {
+    private void initialProcessingPass(final Deque<ThemisAnalysisElement> pLines) throws OceanusException {
         /* Create the parser */
         final ThemisAnalysisParser myParser = new ThemisAnalysisParser(pLines, theContents, this);
 
@@ -322,10 +328,10 @@ public class ThemisAnalysisFile
     }
 
     /**
-     * Post-process the lines as second Pass.
+     * Perform final processing pass.
      * @throws OceanusException on error
      */
-    void secondPassProcessLines() throws OceanusException {
+    void finalProcessingPass() throws OceanusException {
         /* Update from classMap */
         theDataMap.updateFromClassMap();
 

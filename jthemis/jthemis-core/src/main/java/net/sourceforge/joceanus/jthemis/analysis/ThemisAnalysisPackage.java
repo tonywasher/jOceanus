@@ -76,8 +76,8 @@ public class ThemisAnalysisPackage
         /* Initialise class */
         this(pLocation, new ThemisAnalysisDataMap(), pPackage);
 
-        /* secondPass process the files */
-        performSecondPass();
+        /* finalPass process the files */
+        performFinalPass();
     }
 
     /**
@@ -164,14 +164,14 @@ public class ThemisAnalysisPackage
     }
 
     /**
-     * secondPass process files.
+     * finalPass process files.
      * @throws OceanusException on error
      */
-    void performSecondPass() throws OceanusException {
+    void performFinalPass() throws OceanusException {
         /* Loop through the classes */
         for (ThemisAnalysisFile myFile : theFiles) {
             /* Process the file */
-            myFile.secondPassProcessLines();
+            myFile.finalProcessingPass();
         }
     }
 
