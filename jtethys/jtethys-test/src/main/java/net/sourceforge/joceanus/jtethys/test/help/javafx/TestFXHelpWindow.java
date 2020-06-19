@@ -92,13 +92,13 @@ public class TestFXHelpWindow
     /**
      * Help system.
      */
-    public static class TestHelp
+    private static class TestHelp
             extends TethysHelpModule {
         /**
          * Constructor.
          * @throws OceanusException on error
          */
-        public TestHelp() throws OceanusException {
+        TestHelp() throws OceanusException {
             /* Initialise the underlying module */
             super("Test Help System");
 

@@ -120,8 +120,8 @@ public final class ThemisAnalysisBuilder {
         final Deque<ThemisAnalysisElement> myBody = new ArrayDeque<>();
 
         /* Loop through the lines */
-        boolean keepLooking = true;
-        while (keepLooking && pParser.hasLines()) {
+        int myNest = 1;
+        while (myNest > 0 && pParser.hasLines()) {
             /* Access next line */
             final ThemisAnalysisElement myElement = pParser.popNextLine();
 
@@ -142,18 +142,29 @@ public final class ThemisAnalysisBuilder {
 
             /* If we have a closing brace */
             if (myLine.startsWithChar(ThemisAnalysisChar.BRACE_CLOSE)) {
-                /* Strip start sequence from line */
-                myLine.stripStartChar(ThemisAnalysisChar.BRACE_CLOSE);
-                keepLooking = false;
+                /* Decrement nesting */
+                myNest--;
 
-                /* Return a non-blank line to the stack and break loop */
-                if (!ThemisAnalysisBlank.isBlank(myLine)) {
-                    pParser.pushLine(myLine);
+                /* If we have finished the class */
+                if (myNest == 0) {
+                    /* Strip start sequence from line */
+                    myLine.stripStartChar(ThemisAnalysisChar.BRACE_CLOSE);
+
+                    /* Return a non-blank line to the stack and break loop */
+                    if (!ThemisAnalysisBlank.isBlank(myLine)) {
+                        pParser.pushLine(myLine);
+                    }
+                    break;
                 }
-            } else {
-                /* Add the line */
-                myBody.add(myLine);
             }
+
+            /* Handle start of nested sequence */
+            if (myLine.endsWithChar(ThemisAnalysisChar.BRACE_OPEN)) {
+                myNest++;
+            }
+
+            /* Add the line */
+            myBody.add(myLine);
         }
 
         /* return the body */

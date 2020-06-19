@@ -108,35 +108,27 @@ public class ThemisAnalysisInterface
 
         /* Parse the ancestors and lines */
         theAncestors = myParser.parseAncestors(myHeaders);
-        processLines(myParser);
+        initialProcessingPass(myParser);
 
         /* Calculate the number of lines */
         theNumLines = calculateNumLines(myBaseLines, myHeaders.size());
     }
 
     /**
-     * process the lines.
+     * perform initial processing pass.
      * @param pParser the parser
      * @throws OceanusException on error
      */
-    void processLines(final ThemisAnalysisParser pParser) throws OceanusException {
+    void initialProcessingPass(final ThemisAnalysisParser pParser) throws OceanusException {
         /* Loop through the lines */
         while (pParser.hasLines()) {
             /* Access next line */
             final ThemisAnalysisLine myLine = (ThemisAnalysisLine) pParser.popNextLine();
 
-            /* Process comments and blanks */
-            boolean processed = pParser.processCommentsAndBlanks(myLine);
-
-            /* Process embedded classes */
-            if (!processed) {
-                processed = pParser.processClass(myLine);
-            }
-
-            /* Process language constructs */
-            if (!processed) {
-                processed = pParser.processLanguage(myLine);
-            }
+            /* Process comments/blanks/embeddedClasses/languageConstructs */
+            final boolean processed = pParser.processCommentsAndBlanks(myLine)
+                    || pParser.processClass(myLine)
+                    || pParser.processLanguage(myLine);
 
             /* If we haven't processed yet */
             if (!processed) {

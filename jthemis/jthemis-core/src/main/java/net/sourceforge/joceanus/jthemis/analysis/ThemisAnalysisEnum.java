@@ -115,18 +115,18 @@ public class ThemisAnalysisEnum
 
         /* Parse the ancestors and lines */
         theAncestors = myParser.parseAncestors(myHeaders);
-        processLines(myParser);
+        initialProcessingPass(myParser);
 
         /* Calculate the number of lines */
         theNumLines = calculateNumLines(myBaseLines, myHeaders.size());
     }
 
     /**
-     * process the lines.
+     * perform initial processing pass.
      * @param pParser the parser
      * @throws OceanusException on error
      */
-    void processLines(final ThemisAnalysisParser pParser) throws OceanusException {
+    void initialProcessingPass(final ThemisAnalysisParser pParser) throws OceanusException {
         /* we are still processing Enums */
         boolean look4Enum = true;
 

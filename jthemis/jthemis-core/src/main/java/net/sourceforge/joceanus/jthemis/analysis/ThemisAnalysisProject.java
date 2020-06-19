@@ -75,6 +75,9 @@ public class ThemisAnalysisProject {
         /* Initiate search for modules */
         parseProjectFile(new File(theLocation, ThemisDSMMaven.POM));
 
+        /* ConsolidationPass process the packages */
+        performConsolidationPass();
+
         /* FinalPass process the packages */
         performFinalPass();
     }
@@ -93,6 +96,14 @@ public class ThemisAnalysisProject {
      */
     File getLocation() {
         return theLocation;
+    }
+
+    /**
+     * Obtain the error.
+     * @return the error
+     */
+    OceanusException getError() {
+        return theError;
     }
 
     /**
@@ -125,8 +136,7 @@ public class ThemisAnalysisProject {
         /* Add module if source directory exists */
         final File mySrc = new File(pPom.getParent(), ThemisAnalysisModule.PATH_XTRA);
         if (mySrc.exists()
-                && mySrc.isDirectory()
-                && !pPom.getParent().endsWith("-test")) {
+                && mySrc.isDirectory()) {
             /* Add the module to the list */
             theModules.add(new ThemisAnalysisModule(this, new File(pPom.getParent())));
         }
@@ -149,6 +159,18 @@ public class ThemisAnalysisProject {
             /* Save Exception */
             theModules.clear();
             theError = new ThemisIOException("Failed to parse Project file", e);
+        }
+    }
+
+    /**
+     * consolidationPass process modules.
+     * @throws OceanusException on error
+     */
+    private void performConsolidationPass() throws OceanusException {
+        /* Loop through the modules */
+        for (ThemisAnalysisModule myModule : theModules) {
+            /* Process the module */
+            myModule.performConsolidationPass();
         }
     }
 

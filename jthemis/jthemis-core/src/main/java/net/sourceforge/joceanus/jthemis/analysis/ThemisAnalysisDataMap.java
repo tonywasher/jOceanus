@@ -24,6 +24,8 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import net.sourceforge.joceanus.jtethys.OceanusException;
+import net.sourceforge.joceanus.jtethys.logger.TethysLogManager;
+import net.sourceforge.joceanus.jtethys.logger.TethysLogger;
 import net.sourceforge.joceanus.jthemis.ThemisDataException;
 import net.sourceforge.joceanus.jthemis.analysis.ThemisAnalysisFile.ThemisAnalysisObject;
 import net.sourceforge.joceanus.jthemis.analysis.ThemisAnalysisGeneric.ThemisAnalysisGenericVar;
@@ -44,6 +46,11 @@ public class ThemisAnalysisDataMap {
      */
     interface ThemisAnalysisIntermediate extends ThemisAnalysisDataType {
     }
+
+    /**
+     * The logger.
+     */
+    private static final TethysLogger LOGGER = TethysLogManager.getLogger(ThemisAnalysisDataMap.class);
 
     /**
      * The base dataTypes.
@@ -158,7 +165,7 @@ public class ThemisAnalysisDataMap {
     /**
      * Set up file resources.
      */
-    void setUpFileResoureces() {
+    void setUpFileResources() {
         /* Local types are file wide */
         theFileTypes = theLocalTypes;
 
@@ -213,33 +220,19 @@ public class ThemisAnalysisDataMap {
     }
 
     /**
-     * Loop through the localTypes and update from classMap.
+     * Consolidate the class map.
+     * @throws OceanusException on error
      */
-    void updateFromClassMap() {
+    void consolidateMap() throws OceanusException {
         /* Update intermediate references */
         updateIntermediates();
 
-        /* Process implicit imports */
-        processImplicit();
-
-        /* Loop through the References */
-        for (ThemisAnalysisReference myRef : theReferences) {
-            /* Access the dataType */
-            final ThemisAnalysisDataType myType = myRef.getDataType();
-
-            /* If this is an unknown */
-            if (myType instanceof ThemisAnalysisDataTypeUnknown) {
-                /* Check for implicit import */
-                final ThemisAnalysisDataType myActual = theLocalTypes.get(myType.toString());
-                if (!(myActual instanceof ThemisAnalysisDataTypeUnknown)) {
-                    myRef.updateDataType(myActual);
-                }
-            }
-        }
+        /* resolve the immediate ancestors */
+        resolveImmediateAncestors();
     }
 
     /**
-     * Loop through the localTypes and update from classMap.
+     * Update intermediate references from classMap.
      */
     private void updateIntermediates() {
         /* Loop through the localDataTypes */
@@ -274,18 +267,115 @@ public class ThemisAnalysisDataMap {
     }
 
     /**
+     * Look up actual dataType.
+     * @param pIntermediate the intermediate dataType.
+     * @return the actual dataType (or null)
+     */
+    ThemisAnalysisObject lookUpActualDataType(final ThemisAnalysisIntermediate pIntermediate) {
+        /* If this is an import */
+        if (pIntermediate instanceof ThemisAnalysisImport) {
+            /* Replace it with actual object if known */
+            final ThemisAnalysisImport myImport = (ThemisAnalysisImport) pIntermediate;
+            return theClassMap.get(myImport.getFullName());
+        }
+
+        /* If this is a file */
+        if (pIntermediate instanceof ThemisAnalysisFile) {
+            /* Replace it with actual object if known */
+            final ThemisAnalysisFile myFile = (ThemisAnalysisFile) pIntermediate;
+            final String myFullName = myFile.getPackageName() + ThemisAnalysisChar.PERIOD + myFile.getName();
+            return theClassMap.get(myFullName);
+        }
+
+        /* No change */
+        return null;
+    }
+
+    /**
+     * Resolve immediate ancestors.
+     * @throws OceanusException on error
+     */
+    private void resolveImmediateAncestors() throws OceanusException {
+        /* Loop through the fileClasses */
+        for (ThemisAnalysisObject myClass : theFileClasses) {
+            /* Loop through the ancestors of each class */
+            for (ThemisAnalysisReference myRef : myClass.getAncestors()) {
+                /* Resolve the ancestor */
+                resolveAncestor(myRef);
+            }
+        }
+    }
+
+    /**
+     * Resolve ancestors.
+     * @param pAncestor the ancestor
+     * @throws OceanusException on error
+     */
+    private void resolveAncestor(final ThemisAnalysisReference pAncestor) throws OceanusException {
+        /* Only worry about unknown ancestors */
+        final ThemisAnalysisDataType myDataType = pAncestor.getDataType();
+        if (!(myDataType instanceof ThemisAnalysisDataTypeUnknown)) {
+            return;
+        }
+
+        /* Look up the shortName */
+        final String myName = ((ThemisAnalysisDataTypeUnknown) myDataType).theName;
+        final ThemisAnalysisObject myActual = theShortClassMap.get(myName);
+        if (myActual == null) {
+            throw new ThemisDataException("Unknown ancestor: " + myName);
+        }
+
+        /* Update the reference */
+        pAncestor.updateDataType(myActual);
+    }
+
+    /**
+     * Resolve references.
+     */
+    void resolveReferences() {
+        /* Process implicit imports */
+        processImplicit();
+
+        /* Loop through the References */
+        for (ThemisAnalysisReference myRef : theReferences) {
+            /* Access the dataType */
+            final ThemisAnalysisDataType myType = myRef.getDataType();
+
+            /* If this is an unknown */
+            if (myType instanceof ThemisAnalysisDataTypeUnknown) {
+                /* Check for implicit import */
+                final ThemisAnalysisDataType myActual = theLocalTypes.get(myType.toString());
+                if (!(myActual instanceof ThemisAnalysisDataTypeUnknown)) {
+                    myRef.updateDataType(myActual);
+                }
+            }
+        }
+    }
+
+    /**
      * Process implicit imports.
      */
     private void processImplicit() {
         /* Loop through the fileClasses */
         for (ThemisAnalysisObject myClass : theFileClasses) {
-            /* Loop through the ancestors */
-            for (ThemisAnalysisReference myRef : myClass.getAncestors()) {
-                /* Process the ancestor */
-                final ThemisAnalysisDataType myDataType = myRef.getDataType();
-                if (myDataType instanceof ThemisAnalysisObject) {
-                    processAncestor((ThemisAnalysisObject) myDataType);
-                }
+            /* Process the ancestors */
+            processAncestors(myClass);
+        }
+    }
+
+    /**
+     * Process implicit imports.
+     * @param pClass the class
+     */
+    private void processAncestors(final ThemisAnalysisObject pClass) {
+        /* Loop through the ancestors */
+        for (ThemisAnalysisReference myRef : pClass.getAncestors()) {
+            /* Process the ancestor */
+            final ThemisAnalysisDataType myDataType = myRef.getDataType();
+            if (myDataType instanceof ThemisAnalysisObject) {
+                final ThemisAnalysisObject myObject = (ThemisAnalysisObject) myDataType;
+                processAncestor(myObject);
+                processAncestors(myObject);
             }
         }
     }
@@ -318,34 +408,9 @@ public class ThemisAnalysisDataMap {
             /* If this is an unknown value */
             if (myType instanceof ThemisAnalysisDataTypeUnknown) {
                 final ThemisAnalysisDataTypeUnknown myUnknown = (ThemisAnalysisDataTypeUnknown) myType;
-                System.out.println("Unknown: " + myUnknown.toString());
+                LOGGER.info("Unknown: " + myUnknown.toString());
             }
         }
-    }
-
-    /**
-     * Look up actual dataType.
-     * @param pIntermediate the intermediate dataType.
-     * @return the actual dataType (or null)
-     */
-    ThemisAnalysisObject lookUpActualDataType(final ThemisAnalysisIntermediate pIntermediate) {
-        /* If this is an import */
-        if (pIntermediate instanceof ThemisAnalysisImport) {
-            /* Replace it with actual object if known */
-            final ThemisAnalysisImport myImport = (ThemisAnalysisImport) pIntermediate;
-            return theClassMap.get(myImport.getFullName());
-        }
-
-        /* If this is a file */
-        if (pIntermediate instanceof ThemisAnalysisFile) {
-            /* Replace it with actual object if known */
-            final ThemisAnalysisFile myFile = (ThemisAnalysisFile) pIntermediate;
-            final String myFullName = myFile.getPackageName() + ThemisAnalysisChar.PERIOD + myFile.getName();
-            return theClassMap.get(myFullName);
-        }
-
-        /* No change */
-        return null;
     }
 
     /**

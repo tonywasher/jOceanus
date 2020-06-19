@@ -46,7 +46,6 @@ public class TestAnalysis {
      * @param pArgs the arguments
      */
     public static void main(final String[] pArgs) {
-        //testPackage("jtethys-test", "test.ui.swing");
         testProject();
     }
 

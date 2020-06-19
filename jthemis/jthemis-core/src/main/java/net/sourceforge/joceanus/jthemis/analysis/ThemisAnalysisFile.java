@@ -127,8 +127,8 @@ public class ThemisAnalysisFile
     }
 
     /**
-     * Constructor.
-      * @throws OceanusException on error
+     * Process the file.
+     * @throws OceanusException on error
      */
     void processFile() throws OceanusException {
         /* Create the queue */
@@ -295,18 +295,10 @@ public class ThemisAnalysisFile
             /* Access next line */
             ThemisAnalysisLine myLine = (ThemisAnalysisLine) myParser.popNextLine();
 
-            /* Process comments and blanks */
-            boolean processed = myParser.processCommentsAndBlanks(myLine);
-
-            /* Process package */
-            if (!processed) {
-                processed = processPackage(myLine);
-            }
-
-            /* Process imports */
-            if (!processed) {
-                processed = myParser.processImports(myLine);
-            }
+            /* Process comments/blanks/package/imports */
+            boolean processed = myParser.processCommentsAndBlanks(myLine)
+                    ||  processPackage(myLine)
+                    ||  myParser.processImports(myLine);
 
             /* If we haven't processed yet */
             if (!processed) {
@@ -328,12 +320,21 @@ public class ThemisAnalysisFile
     }
 
     /**
+     * perform consolidation processing pass.
+     * @throws OceanusException on error
+     */
+    void consolidationProcessingPass() throws OceanusException {
+        /* Consolidate classMap */
+        theDataMap.consolidateMap();
+    }
+
+    /**
      * Perform final processing pass.
      * @throws OceanusException on error
      */
     void finalProcessingPass() throws OceanusException {
-        /* Update from classMap */
-        theDataMap.updateFromClassMap();
+        /* Resolve references */
+        theDataMap.resolveReferences();
 
         /* Loop through the lines */
         for (ThemisAnalysisElement myElement : theContents) {
@@ -364,7 +365,7 @@ public class ThemisAnalysisFile
             }
 
             /* Setup the file resources */
-            theDataMap.setUpFileResoureces();
+            theDataMap.setUpFileResources();
 
             /* Declare all the files in this package to the dataMap */
             for (ThemisAnalysisFile myFile : thePackage.getFiles()) {

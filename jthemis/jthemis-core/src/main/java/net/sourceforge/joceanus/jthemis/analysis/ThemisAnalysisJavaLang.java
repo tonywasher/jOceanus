@@ -49,6 +49,11 @@ public enum ThemisAnalysisJavaLang
     STRINGBLDR("StringBuilder"),
 
     /**
+     * StringBuffer.
+     */
+    STRINGBUFFER("StringBuffer"),
+
+    /**
      * Comparable.
      */
     COMPARABLE("Comparable"),
