@@ -18,18 +18,15 @@ package net.sourceforge.joceanus.jthemis.analysis;
 
 import java.util.ArrayDeque;
 import java.util.Deque;
-import java.util.Map;
+
+import net.sourceforge.joceanus.jtethys.OceanusException;
+import net.sourceforge.joceanus.jthemis.analysis.ThemisAnalysisContainer.ThemisAnalysisAdoptable;
 
 /**
  * DoWhile construct.
  */
 public class ThemisAnalysisDoWhile
-        implements ThemisAnalysisContainer {
-    /**
-     * The parent.
-     */
-    private final ThemisAnalysisContainer theParent;
-
+        implements ThemisAnalysisContainer, ThemisAnalysisAdoptable {
     /**
      * The trailers.
      */
@@ -41,22 +38,22 @@ public class ThemisAnalysisDoWhile
     private final Deque<ThemisAnalysisElement> theContents;
 
     /**
-     * The dataTypes.
-     */
-    private final Map<String, ThemisAnalysisDataType> theDataTypes;
-
-    /**
      * The number of lines.
      */
     private final int theNumLines;
 
     /**
+     * The parent.
+     */
+    private ThemisAnalysisContainer theParent;
+
+    /**
      * Constructor.
      * @param pParser the parser
+     * @throws OceanusException on error
      */
-    ThemisAnalysisDoWhile(final ThemisAnalysisParser pParser) {
+    ThemisAnalysisDoWhile(final ThemisAnalysisParser pParser) throws OceanusException {
         /* Access details from parser */
-        theDataTypes = pParser.getDataTypes();
         theParent = pParser.getParent();
 
         /* Create the arrays */
@@ -78,11 +75,6 @@ public class ThemisAnalysisDoWhile
     }
 
     @Override
-    public Map<String, ThemisAnalysisDataType> getDataTypes() {
-        return theDataTypes;
-    }
-
-    @Override
     public Deque<ThemisAnalysisElement> getContents() {
         return theContents;
     }
@@ -90,6 +82,11 @@ public class ThemisAnalysisDoWhile
     @Override
     public ThemisAnalysisContainer getParent() {
         return theParent;
+    }
+
+    @Override
+    public void setParent(final ThemisAnalysisContainer pParent) {
+        theParent = pParent;
     }
 
     @Override

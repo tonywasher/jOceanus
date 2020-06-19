@@ -16,7 +16,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jprometheus.lethe.database;
 
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisField;
+import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisLetheField;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataValues;
 import net.sourceforge.joceanus.jprometheus.lethe.data.EncryptedItem;
 import net.sourceforge.joceanus.jtethys.OceanusException;
@@ -43,7 +43,7 @@ public abstract class PrometheusTableEncrypted<T extends EncryptedItem<E> & Comp
 
     @Override
     protected void setFieldValue(final T pItem,
-                                 final MetisField iField) throws OceanusException {
+                                 final MetisLetheField iField) throws OceanusException {
         /* Switch on field id */
         final PrometheusTableDefinition myTableDef = getTableDef();
         if (EncryptedItem.FIELD_KEYSET.equals(iField)) {

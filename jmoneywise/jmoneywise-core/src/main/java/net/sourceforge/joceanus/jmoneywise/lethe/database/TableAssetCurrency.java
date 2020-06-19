@@ -16,7 +16,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.lethe.database;
 
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisField;
+import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisLetheField;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.AssetCurrency;
@@ -69,7 +69,7 @@ public class TableAssetCurrency
 
     @Override
     protected void setFieldValue(final AssetCurrency pItem,
-                                 final MetisField iField) throws OceanusException {
+                                 final MetisLetheField iField) throws OceanusException {
         /* Switch on field id */
         final PrometheusTableDefinition myTableDef = getTableDef();
         if (AssetCurrency.FIELD_DEFAULT.equals(iField)) {

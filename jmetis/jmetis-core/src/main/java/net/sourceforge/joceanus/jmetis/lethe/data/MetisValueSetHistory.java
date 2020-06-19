@@ -25,7 +25,7 @@ import net.sourceforge.joceanus.jmetis.data.MetisDataFieldValue;
 import net.sourceforge.joceanus.jmetis.data.MetisDataFormatter;
 import net.sourceforge.joceanus.jmetis.data.MetisDataState;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisDataObject.MetisDataContents;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisField;
+import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisLetheField;
 
 /**
  * Provides the implementation of a history buffer for a DataItem. Each element represents a changed
@@ -83,7 +83,7 @@ public class MetisValueSetHistory
     }
 
     @Override
-    public Object getFieldValue(final MetisField pField) {
+    public Object getFieldValue(final MetisLetheField pField) {
         /* Access the index */
         final int myIndex = pField.getIndex();
 
@@ -272,7 +272,7 @@ public class MetisValueSetHistory
      * @param pField the field
      * @return the difference
      */
-    public MetisDataDifference fieldChanged(final MetisField pField) {
+    public MetisDataDifference fieldChanged(final MetisLetheField pField) {
         /* Handle irrelevant cases */
         if (!pField.getStorage().isValueSet()) {
             return MetisDataDifference.IDENTICAL;

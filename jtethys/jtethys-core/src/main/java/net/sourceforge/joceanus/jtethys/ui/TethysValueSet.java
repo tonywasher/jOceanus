@@ -19,6 +19,7 @@ package net.sourceforge.joceanus.jtethys.ui;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import net.sourceforge.joceanus.jtethys.event.TethysEventManager;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
@@ -263,9 +264,9 @@ public class TethysValueSet
      */
     public void applyColorMapping(final Map<String, String> pMappings) {
         /* Loop through the mappings */
-        final Iterator<Map.Entry<String, String>> myIterator = pMappings.entrySet().iterator();
+        final Iterator<Entry<String, String>> myIterator = pMappings.entrySet().iterator();
         while (myIterator.hasNext()) {
-            final Map.Entry<String, String> myMapping = myIterator.next();
+            final Entry<String, String> myMapping = myIterator.next();
             theValueMap.put(myMapping.getKey(), myMapping.getValue());
         }
 

@@ -145,9 +145,9 @@ public class ChaChaPoly1305
         theCipher.reset();
 
         /* Run the cipher once to initialise the mac */
-        final byte[] firstBlock = new byte[64]; // ChaCha stateLength
+        final byte[] firstBlock = new byte[Long.SIZE]; // ChaCha stateLength
         theCipher.processBytes(firstBlock, 0, firstBlock.length, firstBlock, 0);
-        polyMac.init(new KeyParameter(firstBlock, 0, 32)); // Poly1305 KeyLength
+        polyMac.init(new KeyParameter(firstBlock, 0, Integer.SIZE)); // Poly1305 KeyLength
         Arrays.fill(firstBlock, (byte) 0);
 
         /* If we have initial AEAD data */
@@ -309,6 +309,15 @@ public class ChaChaPoly1305
     }
 
     /**
+     * Obtain buffer length (allowing for null).
+     * @param pBuffer the buffere
+     * @return the length
+     */
+    private static int bufLength(final byte[] pBuffer) {
+        return pBuffer == null ? 0 : pBuffer.length;
+    }
+
+    /**
      * Process encryption bytes.
      * @param in the input buffer
      * @param inOff the offset from which to start processing
@@ -323,10 +332,10 @@ public class ChaChaPoly1305
                                        final byte[] out,
                                        final int outOff) {
         /* Check that the buffers are sufficient */
-        if (in.length < (len + inOff)) {
+        if (bufLength(in) < (len + inOff)) {
             throw new DataLengthException("Input buffer too short.");
         }
-        if (out.length < (len + outOff)) {
+        if (bufLength(out) < (len + outOff)) {
             throw new OutputLengthException("Output buffer too short.");
         }
 
@@ -350,7 +359,7 @@ public class ChaChaPoly1305
     private int finishEncryptionMac(final byte[] out,
                                     final int outOff) {
         /* Check that the output buffer is sufficient */
-        if (out.length < (MACSIZE + outOff)) {
+        if (bufLength(out) < (MACSIZE + outOff)) {
             throw new OutputLengthException("Output buffer too short.");
         }
 
@@ -381,10 +390,10 @@ public class ChaChaPoly1305
                                        final byte[] out,
                                        final int outOff) {
         /* Check that the buffers are sufficient */
-        if (in.length < (len + inOff)) {
+        if (bufLength(in) < (len + inOff)) {
             throw new DataLengthException("Input buffer too short.");
         }
-        if (out.length < (len + outOff + cacheBytes - MACSIZE)) {
+        if (bufLength(out) < (len + outOff + cacheBytes - MACSIZE)) {
             throw new OutputLengthException("Output buffer too short.");
         }
 
@@ -477,9 +486,9 @@ public class ChaChaPoly1305
         padToBoundary(dataLength);
 
         /* Write the lengths */
-        final byte[] len = new byte[16]; // 2 * Long.BYTES
+        final byte[] len = new byte[Long.BYTES << 1]; // 2 * Long.BYTES
         Pack.longToLittleEndian(aeadLength, len, 0);
-        Pack.longToLittleEndian(dataLength, len, 8); // Long.BYTES
+        Pack.longToLittleEndian(dataLength, len, Long.BYTES); // Long.BYTES
         polyMac.update(len, 0, len.length);
     }
 
@@ -489,7 +498,7 @@ public class ChaChaPoly1305
      */
     private void padToBoundary(final long pDataLen) {
         /* Pad to boundary */
-        final int xtra = (int) pDataLen % MACSIZE;
+        final int xtra = (int) pDataLen & (MACSIZE - 1);
         if (xtra != 0) {
             final int numPadding = MACSIZE - xtra;
             polyMac.update(PADDING, 0, numPadding);

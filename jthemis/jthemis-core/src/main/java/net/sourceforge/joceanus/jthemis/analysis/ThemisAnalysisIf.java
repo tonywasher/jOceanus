@@ -18,18 +18,15 @@ package net.sourceforge.joceanus.jthemis.analysis;
 
 import java.util.ArrayDeque;
 import java.util.Deque;
-import java.util.Map;
+
+import net.sourceforge.joceanus.jtethys.OceanusException;
+import net.sourceforge.joceanus.jthemis.analysis.ThemisAnalysisContainer.ThemisAnalysisAdoptable;
 
 /**
  * If construct.
  */
 public class ThemisAnalysisIf
-        implements ThemisAnalysisContainer {
-    /**
-     * The parent.
-     */
-    private final ThemisAnalysisContainer theParent;
-
+        implements ThemisAnalysisContainer, ThemisAnalysisAdoptable {
     /**
      * The headers.
      */
@@ -46,24 +43,24 @@ public class ThemisAnalysisIf
     private final ThemisAnalysisElse theElse;
 
     /**
-     * The dataTypes.
-     */
-    private final Map<String, ThemisAnalysisDataType> theDataTypes;
-
-    /**
      * The number of lines.
      */
     private final int theNumLines;
 
     /**
+     * The parent.
+     */
+    private ThemisAnalysisContainer theParent;
+
+    /**
      * Constructor.
      * @param pParser the parser
      * @param pLine the initial if line
+     * @throws OceanusException on error
      */
     ThemisAnalysisIf(final ThemisAnalysisParser pParser,
-                     final ThemisAnalysisLine pLine) {
+                     final ThemisAnalysisLine pLine) throws OceanusException {
         /* Access details from parser */
-        theDataTypes = pParser.getDataTypes();
         theParent = pParser.getParent();
 
         /* Create the arrays */
@@ -72,7 +69,7 @@ public class ThemisAnalysisIf
         final int myBaseLines = myLines.size();
 
         /* Look for else clauses */
-        theElse = (ThemisAnalysisElse) pParser.processExtra(ThemisAnalysisKeyWord.ELSE);
+        theElse = (ThemisAnalysisElse) pParser.processExtra(this, ThemisAnalysisKeyWord.ELSE);
 
         /* Create a parser */
         theContents = new ArrayDeque<>();
@@ -81,11 +78,6 @@ public class ThemisAnalysisIf
 
         /* Calculate the number of lines */
         theNumLines = calculateNumLines(myBaseLines);
-    }
-
-    @Override
-    public Map<String, ThemisAnalysisDataType> getDataTypes() {
-        return theDataTypes;
     }
 
     @Override
@@ -99,7 +91,12 @@ public class ThemisAnalysisIf
     }
 
     @Override
-    public void postProcessExtras() {
+    public void setParent(final ThemisAnalysisContainer pParent) {
+        theParent = pParent;
+    }
+
+    @Override
+    public void postProcessExtras() throws OceanusException {
         /* Process the else clause if required */
         if (theElse != null) {
             theElse.postProcessLines();

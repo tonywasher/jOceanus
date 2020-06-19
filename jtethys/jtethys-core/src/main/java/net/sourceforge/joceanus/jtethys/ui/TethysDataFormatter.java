@@ -166,78 +166,70 @@ public class TethysDataFormatter {
         final Class<?> myClass = pValue.getClass();
 
         /* Handle Native classes */
-        if (String.class.equals(myClass)) {
+        if (pValue instanceof String) {
             return (String) pValue;
         }
-        if (Boolean.class.equals(myClass)) {
+        if (pValue instanceof Boolean) {
             return ((Boolean) pValue)
                                       ? "true"
                                       : "false";
         }
-        if (Short.class.equals(myClass)) {
-            return ((Short) pValue).toString();
+        if (pValue instanceof Short
+                || pValue instanceof Integer
+                || pValue instanceof Long) {
+            return pValue.toString();
         }
-        if (Integer.class.equals(myClass)) {
-            return ((Integer) pValue).toString();
+        if (pValue instanceof Float
+                || pValue instanceof Double) {
+            return pValue.toString();
         }
-        if (Long.class.equals(myClass)) {
-            return ((Long) pValue).toString();
-        }
-        if (Float.class.equals(myClass)) {
-            return ((Float) pValue).toString();
-        }
-        if (Double.class.equals(myClass)) {
-            return ((Double) pValue).toString();
-        }
-        if (BigInteger.class.equals(myClass)) {
-            return ((BigInteger) pValue).toString();
-        }
-        if (BigDecimal.class.equals(myClass)) {
-            return ((BigDecimal) pValue).toString();
+        if (pValue instanceof BigInteger
+                || pValue instanceof BigDecimal) {
+            return pValue.toString();
         }
 
         /* Handle Enumerated classes */
-        if (Enum.class.isInstance(pValue)) {
-            return ((Enum<?>) pValue).toString();
+        if (pValue instanceof Enum) {
+            return pValue.toString();
         }
 
         /* Handle Class */
-        if (Class.class.isInstance(pValue)) {
+        if (pValue instanceof Class) {
             return ((Class<?>) pValue).getCanonicalName();
         }
 
         /* Handle Native array classes */
-        if (byte[].class.equals(myClass)) {
+        if (pValue instanceof byte[]) {
             return TethysDataConverter.bytesToHexString((byte[]) pValue);
         }
-        if (char[].class.equals(myClass)) {
+        if (pValue instanceof char[]) {
             return new String((char[]) pValue);
         }
 
         /* Handle date classes */
-        if (Date.class.equals(myClass)) {
-            return theDateFormatter.formatJavaDate((Date) pValue);
-        }
-        if (Calendar.class.equals(myClass)) {
+        if (pValue instanceof Calendar) {
             return theDateFormatter.formatCalendarDay((Calendar) pValue);
         }
-        if (LocalDate.class.equals(myClass)) {
+        if (pValue instanceof Date) {
+            return theDateFormatter.formatJavaDate((Date) pValue);
+        }
+        if (pValue instanceof LocalDate) {
             return theDateFormatter.formatLocalDate((LocalDate) pValue);
         }
-        if (TethysDate.class.equals(myClass)) {
+        if (pValue instanceof TethysDate) {
             return theDateFormatter.formatDate((TethysDate) pValue);
         }
-        if (TethysDateRange.class.equals(myClass)) {
+        if (pValue instanceof TethysDateRange) {
             return theDateFormatter.formatDateRange((TethysDateRange) pValue);
         }
 
         /* Handle decimal classes */
-        if (TethysDecimal.class.isInstance(pValue)) {
+        if (pValue instanceof TethysDecimal) {
             return theDecimalFormatter.formatDecimal((TethysDecimal) pValue);
         }
 
         /* Handle OceanusExceptions */
-        if (OceanusException.class.isInstance(pValue)) {
+        if (pValue instanceof OceanusException) {
             return myClass.getSimpleName();
         }
 
@@ -397,9 +389,9 @@ public class TethysDataFormatter {
         myBuilder.append(myClass.getCanonicalName());
 
         /* Handle list/map instances */
-        if (List.class.isInstance(pValue)) {
+        if (pValue instanceof List) {
             formatSize(myBuilder, ((List<?>) pValue).size());
-        } else if (Map.class.isInstance(pValue)) {
+        } else if (pValue instanceof Map) {
             formatSize(myBuilder, ((Map<?, ?>) pValue).size());
         }
 

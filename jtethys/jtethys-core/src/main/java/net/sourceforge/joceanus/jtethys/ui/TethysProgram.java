@@ -21,6 +21,7 @@ import java.io.InputStream;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Properties;
 
 import net.sourceforge.joceanus.jtethys.logger.TethysLogManager;
@@ -178,7 +179,7 @@ public abstract class TethysProgram {
      * Obtain iterator for the dependencies.
      * @return the iterator.
      */
-    public Iterator<Map.Entry<String, String>> dependencyIterator() {
+    public Iterator<Entry<String, String>> dependencyIterator() {
         return theDependencies.entrySet().iterator();
     }
 }

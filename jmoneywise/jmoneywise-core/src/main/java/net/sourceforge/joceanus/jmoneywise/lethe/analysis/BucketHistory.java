@@ -19,6 +19,7 @@ package net.sourceforge.joceanus.jmoneywise.lethe.analysis;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import net.sourceforge.joceanus.jmetis.data.MetisDataFormatter;
 import net.sourceforge.joceanus.jmetis.data.MetisDataItem.MetisDataMap;
@@ -104,9 +105,9 @@ public class BucketHistory<T extends BucketValues<T, E>, E extends Enum<E> & Buc
         BucketSnapShot<T, E> myLatest = null;
 
         /* Loop through the map */
-        final Iterator<Map.Entry<Integer, BucketSnapShot<T, E>>> myIterator = pHistory.entryIterator();
+        final Iterator<Entry<Integer, BucketSnapShot<T, E>>> myIterator = pHistory.entryIterator();
         while (myIterator.hasNext()) {
-            final Map.Entry<Integer, BucketSnapShot<T, E>> myEntry = myIterator.next();
+            final Entry<Integer, BucketSnapShot<T, E>> myEntry = myIterator.next();
             final BucketSnapShot<T, E> myTrans = myEntry.getValue();
 
             /* If we have passed the Date, break the loop */
@@ -148,9 +149,9 @@ public class BucketHistory<T extends BucketValues<T, E>, E extends Enum<E> & Buc
         BucketSnapShot<T, E> myLatest = null;
 
         /* Loop through the map */
-        final Iterator<Map.Entry<Integer, BucketSnapShot<T, E>>> myIterator = pHistory.entryIterator();
+        final Iterator<Entry<Integer, BucketSnapShot<T, E>>> myIterator = pHistory.entryIterator();
         while (myIterator.hasNext()) {
-            final Map.Entry<Integer, BucketSnapShot<T, E>> myEntry = myIterator.next();
+            final Entry<Integer, BucketSnapShot<T, E>> myEntry = myIterator.next();
             final BucketSnapShot<T, E> myTrans = myEntry.getValue();
 
             /* If we are past the initial Date */
@@ -186,7 +187,7 @@ public class BucketHistory<T extends BucketValues<T, E>, E extends Enum<E> & Buc
 
         /* Continue the loop */
         while (myIterator.hasNext()) {
-            final Map.Entry<Integer, BucketSnapShot<T, E>> myEntry = myIterator.next();
+            final Entry<Integer, BucketSnapShot<T, E>> myEntry = myIterator.next();
             final BucketSnapShot<T, E> myTrans = myEntry.getValue();
 
             /* If we are past the range, break the loop */
@@ -223,7 +224,7 @@ public class BucketHistory<T extends BucketValues<T, E>, E extends Enum<E> & Buc
      * Obtain the entry set iterator.
      * @return the iterator
      */
-    private Iterator<Map.Entry<Integer, BucketSnapShot<T, E>>> entryIterator() {
+    private Iterator<Entry<Integer, BucketSnapShot<T, E>>> entryIterator() {
         return theHistoryMap.entrySet().iterator();
     }
 

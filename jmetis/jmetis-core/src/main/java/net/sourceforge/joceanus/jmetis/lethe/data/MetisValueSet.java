@@ -22,7 +22,7 @@ import net.sourceforge.joceanus.jmetis.data.MetisDataDifference;
 import net.sourceforge.joceanus.jmetis.data.MetisDataType;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisDataObject.MetisDataValues;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisEncryptedData.MetisEncryptedField;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisField;
+import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisLetheField;
 
 /**
  * ValueSet class.
@@ -183,7 +183,7 @@ public class MetisValueSet {
      * @param pField the field
      * @param pValue the value
      */
-    public void setValue(final MetisField pField,
+    public void setValue(final MetisLetheField pField,
                          final Object pValue) {
         /* Ignore if not in valueSet */
         if (!pField.getStorage().isValueSet()) {
@@ -202,7 +202,7 @@ public class MetisValueSet {
      * @param pField the field
      * @return the value
      */
-    public Object getValue(final MetisField pField) {
+    public Object getValue(final MetisLetheField pField) {
         /* Return null if not in valueSet */
         if (!pField.getStorage().isValueSet()) {
             return null;
@@ -229,7 +229,7 @@ public class MetisValueSet {
      * @param pClass the class
      * @return the value
      */
-    public <X> X getValue(final MetisField pField,
+    public <X> X getValue(final MetisLetheField pField,
                           final Class<X> pClass) {
         /* Return the value */
         return pClass.cast(getValue(pField));
@@ -261,10 +261,10 @@ public class MetisValueSet {
         }
 
         /* Loop through the values */
-        final Iterator<MetisField> myIterator = theFields.fieldIterator();
+        final Iterator<MetisLetheField> myIterator = theFields.fieldIterator();
         while (myIterator.hasNext()) {
             /* Ignore non-equality and non-valueSet fields */
-            final MetisField myField = myIterator.next();
+            final MetisLetheField myField = myIterator.next();
             if ((!myField.getEquality().isEquality())
                 || (!myField.getStorage().isValueSet())) {
                 continue;
@@ -289,10 +289,10 @@ public class MetisValueSet {
                                    : 1;
 
         /* Loop through the values */
-        final Iterator<MetisField> myIterator = theFields.fieldIterator();
+        final Iterator<MetisLetheField> myIterator = theFields.fieldIterator();
         while (myIterator.hasNext()) {
             /* Ignore non-equality and non-valueSet fields */
-            final MetisField myField = myIterator.next();
+            final MetisLetheField myField = myIterator.next();
             if ((!myField.getEquality().isEquality())
                 || (!myField.getStorage().isValueSet())) {
                 continue;
@@ -330,10 +330,10 @@ public class MetisValueSet {
         }
 
         /* Loop through the values */
-        final Iterator<MetisField> myIterator = theFields.fieldIterator();
+        final Iterator<MetisLetheField> myIterator = theFields.fieldIterator();
         while (myIterator.hasNext()) {
             /* Ignore non-equality and non-valueSet fields */
-            final MetisField myField = myIterator.next();
+            final MetisLetheField myField = myIterator.next();
             if ((!myField.getEquality().isEquality())
                 || (!myField.getStorage().isValueSet())) {
                 continue;
@@ -362,7 +362,7 @@ public class MetisValueSet {
      * @param pOriginal the original value set
      * @return the difference
      */
-    public MetisDataDifference fieldChanged(final MetisField pField,
+    public MetisDataDifference fieldChanged(final MetisLetheField pField,
                                             final MetisValueSet pOriginal) {
         /*
          * No difference if field does not exist, is not-equality or is not valueSet
@@ -383,7 +383,7 @@ public class MetisValueSet {
      * @param pField the field
      * @param pValue the value
      */
-    private static void checkValueType(final MetisField pField,
+    private static void checkValueType(final MetisLetheField pField,
                                        final Object pValue) {
         /* Null/String is always allowed */
         if (pValue == null

@@ -53,4 +53,3 @@ public enum GordianQTESLAKeyType {
         return theCategory;
     }
 }
-

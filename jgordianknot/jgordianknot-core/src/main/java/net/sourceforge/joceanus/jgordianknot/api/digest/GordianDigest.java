@@ -62,4 +62,3 @@ public interface GordianDigest
         return finish();
     }
 }
-

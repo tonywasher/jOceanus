@@ -20,6 +20,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import net.sourceforge.joceanus.jmetis.data.MetisDataFormatter;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
@@ -370,9 +371,9 @@ public class QIFAccount
 
             /* Loop through the map entries */
             Enum<?> myClass = null;
-            final Iterator<Map.Entry<Enum<?>, String>> myIterator = QIF_ACTCATMAP.entrySet().iterator();
+            final Iterator<Entry<Enum<?>, String>> myIterator = QIF_ACTCATMAP.entrySet().iterator();
             while (myIterator.hasNext()) {
-                final Map.Entry<Enum<?>, String> myEntry = myIterator.next();
+                final Entry<Enum<?>, String> myEntry = myIterator.next();
 
                 /* If we have a match */
                 if (pType.equals(myEntry.getValue())) {

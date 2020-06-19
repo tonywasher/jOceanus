@@ -24,7 +24,7 @@ import javax.swing.JPanel;
 
 import net.sourceforge.joceanus.jmetis.atlas.ui.MetisErrorPanel;
 import net.sourceforge.joceanus.jmetis.data.MetisDataFormatter;
-import net.sourceforge.joceanus.jmetis.lethe.field.MetisLetheFieldSetBase.MetisFieldUpdate;
+import net.sourceforge.joceanus.jmetis.lethe.field.MetisLetheFieldSetBase.MetisLetheFieldUpdate;
 import net.sourceforge.joceanus.jmetis.lethe.field.swing.MetisSwingFieldManager;
 import net.sourceforge.joceanus.jmetis.lethe.field.swing.MetisSwingFieldSet;
 import net.sourceforge.joceanus.jprometheus.PrometheusDataException;
@@ -192,7 +192,7 @@ public abstract class PrometheusDataItemPanel<T extends PrometheusTableItem & Co
 
         /* Create listener */
         theUpdateSet.getEventRegistrar().addEventListener(e -> refreshAfterUpdate());
-        theFieldSet.getEventRegistrar().addEventListener(e -> updateItem(e.getDetails(MetisFieldUpdate.class)));
+        theFieldSet.getEventRegistrar().addEventListener(e -> updateItem(e.getDetails(MetisLetheFieldUpdate.class)));
 
         /* Listen to the EditActions */
         TethysEventRegistrar<PrometheusUIEvent> myRegistrar = theEditActions.getEventRegistrar();
@@ -446,7 +446,7 @@ public abstract class PrometheusDataItemPanel<T extends PrometheusTableItem & Co
      * @param pUpdate the update
      * @throws OceanusException on error
      */
-    protected abstract void updateField(MetisFieldUpdate pUpdate) throws OceanusException;
+    protected abstract void updateField(MetisLetheFieldUpdate pUpdate) throws OceanusException;
 
     /**
      * Obtain the list for a class in base updateSet.
@@ -456,10 +456,8 @@ public abstract class PrometheusDataItemPanel<T extends PrometheusTableItem & Co
      * @param pClass the list class
      * @return the list
      */
-    public <L extends DataList<X, E>, X extends DataItem<E> & Comparable<? super X>>
-            L
-            getDataList(final E pDataType,
-                        final Class<L> pClass) {
+    public <L extends DataList<X, E>, X extends DataItem<E> & Comparable<? super X>> L getDataList(final E pDataType,
+                                                                                                   final Class<L> pClass) {
         /* Look up the base list */
         return theUpdateSet.getDataList(pDataType, pClass);
     }
@@ -661,7 +659,7 @@ public abstract class PrometheusDataItemPanel<T extends PrometheusTableItem & Co
      * Update item.
      * @param pUpdate the update
      */
-    private void updateItem(final MetisFieldUpdate pUpdate) {
+    private void updateItem(final MetisLetheFieldUpdate pUpdate) {
         /* Push history */
         theItem.pushHistory();
 

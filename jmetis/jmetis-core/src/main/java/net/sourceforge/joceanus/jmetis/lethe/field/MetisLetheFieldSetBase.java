@@ -18,7 +18,7 @@ package net.sourceforge.joceanus.jmetis.lethe.field;
 
 import net.sourceforge.joceanus.jmetis.MetisDataException;
 import net.sourceforge.joceanus.jmetis.data.MetisDataFormatter;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisField;
+import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisLetheField;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
 import net.sourceforge.joceanus.jtethys.decimal.TethysDilution;
@@ -93,12 +93,12 @@ public abstract class MetisLetheFieldSetBase
      * @param pField the source field
      * @param pNewValue the new Value
      */
-    protected void notifyUpdate(final MetisField pField,
+    protected void notifyUpdate(final MetisLetheField pField,
                                 final Object pNewValue) {
         /* If we are not refreshing data */
         if (!isRefreshing) {
             /* Create the notification */
-            final MetisFieldUpdate myUpdate = new MetisFieldUpdate(pField, pNewValue);
+            final MetisLetheFieldUpdate myUpdate = new MetisLetheFieldUpdate(pField, pNewValue);
 
             /* Fire the notification */
             theEventManager.fireEvent(MetisLetheFieldEvent.FIELDUPDATED, myUpdate);
@@ -108,11 +108,11 @@ public abstract class MetisLetheFieldSetBase
     /**
      * Field Update Notification.
      */
-    public static final class MetisFieldUpdate {
+    public static final class MetisLetheFieldUpdate {
         /**
          * The field.
          */
-        private final MetisField theField;
+        private final MetisLetheField theField;
 
         /**
          * The new value.
@@ -124,8 +124,8 @@ public abstract class MetisLetheFieldSetBase
          * @param pField the source field
          * @param pNewValue the new Value
          */
-        public MetisFieldUpdate(final MetisField pField,
-                                final Object pNewValue) {
+        public MetisLetheFieldUpdate(final MetisLetheField pField,
+                                     final Object pNewValue) {
             theField = pField;
             theValue = pNewValue;
         }
@@ -134,7 +134,7 @@ public abstract class MetisLetheFieldSetBase
          * Obtain the source field.
          * @return the field
          */
-        public MetisField getField() {
+        public MetisLetheField getField() {
             return theField;
         }
 

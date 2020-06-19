@@ -259,6 +259,7 @@ public class LMSPerformance {
          * Constructor.
          * @param pSigParms the sigParams
          * @param pOtsParms the otsParms
+         * @param pDepth the depth
          */
         HSSTestCase(final LMSigParameters pSigParms,
                     final LMOtsParameters pOtsParms,
@@ -354,7 +355,8 @@ public class LMSPerformance {
         }
 
         /**
-         * Obtain keySizes
+         * Obtain keySizes.
+         * @return the keySizes
          */
         String calculateKeySizes() {
             try {
@@ -425,7 +427,8 @@ public class LMSPerformance {
         }
 
         /**
-         * Obtain sigSize
+         * Obtain sigSize.
+         * @return the signature size
          */
         String getSigSize() {
             return " Sig=" + theSignatures[0].length;
@@ -519,6 +522,7 @@ public class LMSPerformance {
          * Constructor.
          * @param pSigParms the sigParams
          * @param pOtsParms the otsParms
+         * @param pDepth the depth
          */
         HSSKeyPair(final LMSigParameters pSigParms,
                    final LMOtsParameters pOtsParms,
@@ -555,7 +559,8 @@ public class LMSPerformance {
         }
 
         /**
-         * Obtain keySizes
+         * Obtain keySizes.
+         * @return the keySizes
          */
         String calculateKeySizes() {
             try {
@@ -638,7 +643,8 @@ public class LMSPerformance {
         }
 
         /**
-         * Obtain sigSize
+         * Obtain sigSize.
+         * @return th signature size
          */
         String getSigSize() {
             return " Sig=" + theSignatures[0].length;

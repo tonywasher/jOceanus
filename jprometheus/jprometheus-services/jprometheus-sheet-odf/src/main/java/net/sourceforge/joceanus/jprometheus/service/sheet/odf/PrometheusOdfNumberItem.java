@@ -139,4 +139,3 @@ public enum PrometheusOdfNumberItem
        return PrometheusOdfNameSpace.NUMBER;
     }
 }
-

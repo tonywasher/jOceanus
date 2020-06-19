@@ -22,7 +22,7 @@ import java.util.Map;
 import net.sourceforge.joceanus.jmetis.data.MetisDataDifference;
 import net.sourceforge.joceanus.jmetis.data.MetisDataFormatter;
 import net.sourceforge.joceanus.jmetis.data.MetisDataItem.MetisDataObjectFormat;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisField;
+import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisLetheField;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisValueSet;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.AssetBase.AssetBaseList;
@@ -205,7 +205,7 @@ public final class AssetPair
      */
     protected void resolveDataLink(final MoneyWiseData pData,
                                    final TransactionBase<?> pOwner,
-                                   final MetisField pField) throws OceanusException {
+                                   final MetisLetheField pField) throws OceanusException {
         /* Access the values */
         if (pField.equals(Transaction.FIELD_ACCOUNT)) {
             resolveDataLink(pData, pOwner, theAccount, pField);
@@ -227,7 +227,7 @@ public final class AssetPair
     private static void resolveDataLink(final MoneyWiseData pData,
                                         final TransactionBase<?> pOwner,
                                         final AssetType pAssetType,
-                                        final MetisField pField) throws OceanusException {
+                                        final MetisLetheField pField) throws OceanusException {
         /* Handle security holding differently */
         if (pAssetType.isSecurityHolding()) {
             resolveDataLink(pOwner, pData.getSecurityHoldingsMap(), pField);
@@ -273,7 +273,7 @@ public final class AssetPair
      */
     private static void resolveDataLink(final TransactionBase<?> pOwner,
                                         final AssetBaseList<?> pList,
-                                        final MetisField pField) throws OceanusException {
+                                        final MetisLetheField pField) throws OceanusException {
         /* Access the values */
         final MetisValueSet myValues = pOwner.getValueSet();
 
@@ -314,7 +314,7 @@ public final class AssetPair
      */
     public static void resolveDataLink(final DataItem<?> pOwner,
                                        final SecurityHoldingMap pMap,
-                                       final MetisField pField) throws OceanusException {
+                                       final MetisLetheField pField) throws OceanusException {
         /* Access the values */
         final MetisValueSet myValues = pOwner.getValueSet();
 

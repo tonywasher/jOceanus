@@ -24,7 +24,7 @@ import java.util.Iterator;
 import java.util.ListIterator;
 
 import net.sourceforge.joceanus.jmetis.data.MetisDataState;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisField;
+import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisLetheField;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisValueSet;
 import net.sourceforge.joceanus.jmetis.threads.MetisThreadStatusReport;
 import net.sourceforge.joceanus.jprometheus.PrometheusDataException;
@@ -278,7 +278,7 @@ public abstract class PrometheusTableDataItem<T extends DataItem<E> & Comparable
      * @throws OceanusException on error
      */
     protected void setFieldValue(final T pItem,
-                                 final MetisField pField) throws OceanusException {
+                                 final MetisLetheField pField) throws OceanusException {
         /* Switch on field id */
         if (pField.equals(DataItem.FIELD_ID)) {
             theTable.setIntegerValue(DataItem.FIELD_ID, pItem.getId());
@@ -413,7 +413,7 @@ public abstract class PrometheusTableDataItem<T extends DataItem<E> & Comparable
                 /* Loop through the columns */
                 for (PrometheusColumnDefinition myCol : theTable.getColumns()) {
                     /* Access the column id */
-                    final MetisField iField = myCol.getColumnId();
+                    final MetisLetheField iField = myCol.getColumnId();
 
                     /* Set the field value */
                     setFieldValue(myCurr, iField);
@@ -536,7 +536,7 @@ public abstract class PrometheusTableDataItem<T extends DataItem<E> & Comparable
             }
 
             /* Access the column id */
-            final MetisField iField = myCol.getColumnId();
+            final MetisLetheField iField = myCol.getColumnId();
 
             /* If the non-Id field has changed */
             if (!DataItem.FIELD_ID.equals(myCol.getColumnId())

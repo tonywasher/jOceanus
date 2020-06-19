@@ -34,14 +34,12 @@ public final class GordianSP800HMacDRBG
     /**
      * The Update Id.
      */
-    private static final byte[] UPDATE_ID =
-            { 0 };
+    private static final byte[] UPDATE_ID = { 0 };
 
     /**
      * The ReSeed Id.
      */
-    private static final byte[] SEED_ID =
-            { 1 };
+    private static final byte[] SEED_ID = { 1 };
 
     /**
      * The HMac.

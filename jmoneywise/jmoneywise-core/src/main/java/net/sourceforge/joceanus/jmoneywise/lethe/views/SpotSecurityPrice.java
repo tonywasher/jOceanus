@@ -24,7 +24,7 @@ import net.sourceforge.joceanus.jmetis.data.MetisDataState;
 import net.sourceforge.joceanus.jmetis.field.MetisFieldSet;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisEncryptedValueSet;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisField;
+import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisLetheField;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.lethe.analysis.Analysis;
 import net.sourceforge.joceanus.jmoneywise.lethe.analysis.AnalysisManager;
@@ -66,12 +66,12 @@ public final class SpotSecurityPrice
     /**
      * Previous Date field Id.
      */
-    public static final MetisField FIELD_PREVDATE = FIELD_DEFS.declareEqualityField(MoneyWiseViewResource.SPOTEVENT_PREVDATE.getValue());
+    public static final MetisLetheField FIELD_PREVDATE = FIELD_DEFS.declareEqualityField(MoneyWiseViewResource.SPOTEVENT_PREVDATE.getValue());
 
     /**
      * Previous Price field Id.
      */
-    public static final MetisField FIELD_PREVPRICE = FIELD_DEFS.declareEqualityField(MoneyWiseViewResource.SPOTPRICE_PREVPRICE.getValue());
+    public static final MetisLetheField FIELD_PREVPRICE = FIELD_DEFS.declareEqualityField(MoneyWiseViewResource.SPOTPRICE_PREVPRICE.getValue());
 
     /**
      * the previous date.
@@ -107,7 +107,7 @@ public final class SpotSecurityPrice
     }
 
     @Override
-    public Object getFieldValue(final MetisField pField) {
+    public Object getFieldValue(final MetisLetheField pField) {
         if (FIELD_PREVDATE.equals(pField)) {
             return thePrevDate;
         }

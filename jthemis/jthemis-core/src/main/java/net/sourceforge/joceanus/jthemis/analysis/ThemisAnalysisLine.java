@@ -17,8 +17,11 @@
 package net.sourceforge.joceanus.jthemis.analysis;
 
 import java.nio.CharBuffer;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Deque;
+
+import net.sourceforge.joceanus.jtethys.OceanusException;
+import net.sourceforge.joceanus.jthemis.ThemisDataException;
+import net.sourceforge.joceanus.jthemis.analysis.ThemisAnalysisGeneric.ThemisAnalysisGenericBase;
 
 /**
  * Line buffer.
@@ -26,52 +29,27 @@ import java.util.List;
 public class ThemisAnalysisLine
     implements ThemisAnalysisElement {
     /**
-     * The line comment character.
-     */
-    private static final char COMMENT = '/';
-
-    /**
-     * The escape character.
-     */
-    private static final char ESCAPE = '\\';
-
-    /**
-     * The single quote character.
-     */
-    static final char SINGLEQUOTE = '\'';
-
-    /**
-     * The double quote character.
-     */
-    static final char DOUBLEQUOTE = '"';
-
-    /**
-     * The null character.
-     */
-    static final char CHAR_NULL = (char) 0;
-
-    /**
      * The token terminators.
      */
     private static final char[] TERMINATORS = {
-        ThemisAnalysisParenthesis.PARENTHESIS_OPEN,
-        ThemisAnalysisParenthesis.PARENTHESIS_CLOSE,
-        ThemisAnalysisGeneric.GENERIC_OPEN,
-        ThemisAnalysisBuilder.STATEMENT_SEP,
-        ThemisAnalysisBuilder.STATEMENT_END,
-        ThemisAnalysisBuilder.CASE_COLON,
-        ThemisAnalysisArray.ARRAY_OPEN
+        ThemisAnalysisChar.PARENTHESIS_OPEN,
+        ThemisAnalysisChar.PARENTHESIS_CLOSE,
+        ThemisAnalysisChar.GENERIC_OPEN,
+        ThemisAnalysisChar.COMMA,
+        ThemisAnalysisChar.SEMICOLON,
+        ThemisAnalysisChar.COLON,
+        ThemisAnalysisChar.ARRAY_OPEN
     };
 
     /**
      * The line buffer.
      */
-    private final List<ThemisAnalysisPrefix> theModifiers;
+    private final CharBuffer theBuffer;
 
     /**
-     * The line buffer.
+     * The properties.
      */
-    private final CharBuffer theBuffer;
+    private ThemisAnalysisProperties theProperties;
 
     /**
      * Constructor.
@@ -91,8 +69,8 @@ public class ThemisAnalysisLine
         stripLeadingWhiteSpace();
         stripTrailingWhiteSpace();
 
-        /* Allocate modifier list */
-        theModifiers = new ArrayList<>();
+        /* Set null properties */
+        theProperties = ThemisAnalysisProperties.NULL;
     }
 
     /**
@@ -102,7 +80,45 @@ public class ThemisAnalysisLine
     ThemisAnalysisLine(final CharBuffer pBuffer) {
         /* Store values */
         theBuffer = pBuffer;
-        theModifiers = new ArrayList<>();
+
+        /* Set null properties */
+        theProperties = ThemisAnalysisProperties.NULL;
+    }
+
+    /**
+     * Constructor.
+     * @param pLine the line
+     */
+    ThemisAnalysisLine(final ThemisAnalysisLine pLine) {
+        /* Store values */
+        final CharBuffer myBuffer = pLine.theBuffer;
+        theBuffer = myBuffer.subSequence(0, myBuffer.length());
+
+        /* Set null properties */
+        theProperties = ThemisAnalysisProperties.NULL;
+    }
+
+    /**
+     * Constructor.
+     * @param pLines the lines
+     */
+    ThemisAnalysisLine(final Deque<ThemisAnalysisElement> pLines) {
+        /* Create a stringBuilder */
+        final StringBuilder myBuilder = new StringBuilder();
+
+        /* Loop through the lines */
+        for (ThemisAnalysisElement myLine : pLines) {
+            myBuilder.append(((ThemisAnalysisLine) myLine).theBuffer);
+            myBuilder.append(ThemisAnalysisChar.BLANK);
+        }
+
+        /* Create the buffer */
+        theBuffer = CharBuffer.wrap(myBuilder.toString());
+        stripLeadingWhiteSpace();
+        stripTrailingWhiteSpace();
+
+        /* Set null properties */
+        theProperties = ThemisAnalysisProperties.NULL;
     }
 
     /**
@@ -139,17 +155,18 @@ public class ThemisAnalysisLine
     }
 
     /**
-     * Obtain the modifiers.
-     * @return the modifiers
+     * Obtain the properties.
+     * @return the properties
      */
-    public List<ThemisAnalysisPrefix> getModifiers() {
-        return theModifiers;
+    public ThemisAnalysisProperties getProperties() {
+        return theProperties;
     }
 
     /**
      * Strip trailing comments.
+     * @throws OceanusException on error
      */
-    void stripTrailingComments() {
+    void stripTrailingComments() throws OceanusException {
         /* Loop through the characters */
         final int myLength = getLength();
         int mySkipped = 0;
@@ -159,14 +176,14 @@ public class ThemisAnalysisLine
             final char myChar = theBuffer.charAt(myPos);
 
             /* If this is a single/double quote */
-            if (myChar == SINGLEQUOTE
-                    || myChar == DOUBLEQUOTE) {
+            if (myChar == ThemisAnalysisChar.SINGLEQUOTE
+                    || myChar == ThemisAnalysisChar.DOUBLEQUOTE) {
                 final int myEnd = findEndOfQuotedSequence(myPos);
                 mySkipped += myEnd - myPos;
 
             /* If we have a line comment */
-            } else if (myChar == COMMENT
-                && theBuffer.charAt(myPos + 1) == COMMENT) {
+            } else if (myChar == ThemisAnalysisChar.COMMENT
+                && theBuffer.charAt(myPos + 1) == ThemisAnalysisChar.COMMENT) {
                 /* Reset the length */
                 setLength(myPos);
                 stripTrailingWhiteSpace();
@@ -233,20 +250,27 @@ public class ThemisAnalysisLine
 
     /**
      * Strip Modifiers.
+     * @throws OceanusException on error
      */
-    void stripModifiers() {
+    void stripModifiers() throws OceanusException {
         /* Loop while we find a modifier */
         boolean bContinue = true;
         while (bContinue) {
+            /* If we have a generic variable list */
+            if (ThemisAnalysisGeneric.isGeneric(this)) {
+                /* Declare them to the properties */
+                theProperties = theProperties.setGenericVariables(new ThemisAnalysisGenericBase(this));
+            }
+
             /* Access the next token */
             final String nextToken = peekNextToken();
             bContinue = false;
 
-            /* Loop through the modifiers */
+            /* If this is a modifier */
             final ThemisAnalysisModifier myModifier = ThemisAnalysisModifier.findModifier(nextToken);
             if (myModifier != null) {
-                /* Add modifier */
-                theModifiers.add(myModifier);
+                /* Set modifier */
+                theProperties = theProperties.setModifier(myModifier);
                 stripStartSequence(nextToken);
                 bContinue = true;
             }
@@ -257,8 +281,9 @@ public class ThemisAnalysisLine
      * Does line start with identifier?
      * @param pIdentifier the identifier
      * @return true/false
+     * @throws OceanusException on error
      */
-    boolean isStartedBy(final String pIdentifier) {
+    boolean isStartedBy(final String pIdentifier) throws OceanusException {
         /* If the line is too short, just return */
         final int myIdLen = pIdentifier.length();
         final int myLength = getLength();
@@ -275,7 +300,7 @@ public class ThemisAnalysisLine
 
         /* Catch any solo modifiers */
         if (myIdLen == myLength) {
-            throw new IllegalStateException("Modifier found without object");
+            throw new ThemisDataException("Modifier found without object");
         }
 
         /* The next character must be whitespace */
@@ -502,11 +527,12 @@ public class ThemisAnalysisLine
      * @param pTerm the end nest character
      * @param pNest the start nest character
      * @return the position of the end of the nest if (non-negative), or nestLevel (negative) if not terminated.
+     * @throws OceanusException on error
      */
     int findEndOfNestedSequence(final int pStart,
                                 final int pLevel,
                                 final char pTerm,
-                                final char pNest) {
+                                final char pNest) throws OceanusException {
         /* Access details of quote */
         final int myLength = getLength();
 
@@ -519,8 +545,8 @@ public class ThemisAnalysisLine
             final char myChar = theBuffer.charAt(myPos);
 
             /* If this is a single/double quote */
-            if (myChar == SINGLEQUOTE
-                    || myChar == DOUBLEQUOTE) {
+            if (myChar == ThemisAnalysisChar.SINGLEQUOTE
+                    || myChar == ThemisAnalysisChar.DOUBLEQUOTE) {
                 /* Find the end of the sequence and skip the quotes */
                 final int myEnd = findEndOfQuotedSequence(myPos);
                 mySkipped += myEnd - myPos;
@@ -548,8 +574,9 @@ public class ThemisAnalysisLine
      * Find end of single/double quoted sequence, allowing for escaped quote.
      * @param pStart the start position of the quote
      * @return the end position of the sequence.
+     * @throws OceanusException on error
      */
-    int findEndOfQuotedSequence(final int pStart) {
+    int findEndOfQuotedSequence(final int pStart) throws OceanusException {
         /* Access details of single/double quote */
         final int myLength = getLength();
         final char myQuote = theBuffer.charAt(pStart);
@@ -562,7 +589,7 @@ public class ThemisAnalysisLine
             final char myChar = theBuffer.charAt(myPos);
 
             /* Skip escaped character */
-            if (myChar == ESCAPE) {
+            if (myChar == ThemisAnalysisChar.ESCAPE) {
                 mySkipped++;
 
                 /* Return current position if we have finished */
@@ -572,7 +599,7 @@ public class ThemisAnalysisLine
         }
 
         /* We should always be terminated */
-        throw new IllegalStateException("Unable to find end of quote in line");
+        throw new ThemisDataException("Unable to find end of quote in line");
     }
 
     @Override

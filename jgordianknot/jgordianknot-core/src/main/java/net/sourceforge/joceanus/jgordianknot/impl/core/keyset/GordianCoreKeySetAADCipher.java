@@ -404,9 +404,8 @@ public class GordianCoreKeySetAADCipher
 
     /**
      * Complete AEAD Mac input.
-     * @throws OceanusException on error
      */
-    private void completeAEADMac() throws OceanusException {
+    private void completeAEADMac()  {
         /* Pad to boundary */
         padToBoundary(aeadLength);
 
@@ -416,9 +415,8 @@ public class GordianCoreKeySetAADCipher
 
     /**
      * Complete Mac data input.
-     * @throws OceanusException on error
      */
-    private void completeDataMac() throws OceanusException {
+    private void completeDataMac() {
         /* Pad to boundary */
         padToBoundary(encryptedLength);
 
@@ -440,7 +438,7 @@ public class GordianCoreKeySetAADCipher
      */
     private void padToBoundary(final long pDataLen) {
         /* Pad to boundary */
-        final int xtra = (int) pDataLen % MACSIZE;
+        final int xtra = (int) pDataLen & (MACSIZE - 1);
         if (xtra != 0) {
             final int numPadding = MACSIZE - xtra;
             theMac.update(PADDING, 0, numPadding);

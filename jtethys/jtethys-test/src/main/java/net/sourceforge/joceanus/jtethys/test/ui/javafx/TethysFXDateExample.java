@@ -548,7 +548,7 @@ public final class TethysFXDateExample
     /**
      * DateItem class.
      */
-    public static final class DateItem {
+    private static final class DateItem {
         /**
          * Date Property Name.
          */

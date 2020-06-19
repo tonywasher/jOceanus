@@ -18,18 +18,15 @@ package net.sourceforge.joceanus.jthemis.analysis;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
+
+import net.sourceforge.joceanus.jtethys.OceanusException;
+import net.sourceforge.joceanus.jthemis.analysis.ThemisAnalysisDataMap.ThemisAnalysisIntermediate;
 
 /**
  * The set of imports.
  */
 public class ThemisAnalysisImports
     implements ThemisAnalysisProcessed {
-    /**
-     * Period separator.
-     */
-    static final char PERIOD_SEP = '.';
-
     /**
      * The imports.
      */
@@ -39,17 +36,20 @@ public class ThemisAnalysisImports
      * Constructor.
      * @param pParser the parser
      * @param pLine the initial import line
+     * @throws OceanusException on error
      */
     ThemisAnalysisImports(final ThemisAnalysisParser pParser,
-                          final ThemisAnalysisLine pLine) {
+                          final ThemisAnalysisLine pLine) throws OceanusException {
         /* Create the list of comment lines */
         theImports = new ArrayList<>();
 
         /* Add import to list */
-        theImports.add(new ThemisAnalysisImport(pLine.toString()));
+        ThemisAnalysisImport myImport = new ThemisAnalysisImport(pLine.toString());
+        theImports.add(myImport);
+        final ThemisAnalysisDataMap myDataMap = pParser.getDataMap();
+        myDataMap.declareImport(myImport);
 
         /* While there are further lines */
-        final Map<String, ThemisAnalysisDataType> myMap = pParser.getDataTypes();
         while (pParser.hasLines()) {
             /* Access next line */
             final ThemisAnalysisLine myLine = (ThemisAnalysisLine) pParser.peekNextLine();
@@ -57,9 +57,9 @@ public class ThemisAnalysisImports
             /* It it is also an import */
             if (isImport(myLine)) {
                 /* Add the import line and remove from input */
-                final ThemisAnalysisImport myImport = new ThemisAnalysisImport(myLine.toString());
+                myImport = new ThemisAnalysisImport(myLine.toString());
                 theImports.add(myImport);
-                myMap.put(myImport.getSimpleName(), myImport);
+                myDataMap.declareImport(myImport);
                 pParser.popNextLine();
 
                 /* else break loop */
@@ -78,13 +78,14 @@ public class ThemisAnalysisImports
      * Is the line an import?
      * @param pLine the line
      * @return true/false
+     * @throws OceanusException on error
      */
-    static boolean isImport(final ThemisAnalysisLine pLine) {
+    static boolean isImport(final ThemisAnalysisLine pLine) throws OceanusException {
         /* If we are ended by a semi-colon and is an import line*/
-        if (pLine.endsWithChar(ThemisAnalysisBuilder.STATEMENT_END)
+        if (pLine.endsWithChar(ThemisAnalysisChar.SEMICOLON)
                 && pLine.isStartedBy(ThemisAnalysisKeyWord.IMPORT.getKeyWord())) {
             /* Strip the semi-colon and return true */
-            pLine.stripEndChar(ThemisAnalysisBuilder.STATEMENT_END);
+            pLine.stripEndChar(ThemisAnalysisChar.SEMICOLON);
             return true;
         }
 
@@ -96,7 +97,7 @@ public class ThemisAnalysisImports
      * Import line.
      */
     static class ThemisAnalysisImport
-            implements ThemisAnalysisElement, ThemisAnalysisDataType {
+            implements ThemisAnalysisElement, ThemisAnalysisIntermediate {
         /**
          * The full name.
          */
@@ -116,7 +117,7 @@ public class ThemisAnalysisImports
             theFullName = pImport;
 
             /* Strip out the simple name */
-            final int myIndex = theFullName.lastIndexOf(PERIOD_SEP);
+            final int myIndex = theFullName.lastIndexOf(ThemisAnalysisChar.PERIOD);
             theSimpleName = myIndex == -1 ? theFullName : theFullName.substring(myIndex + 1);
         }
 

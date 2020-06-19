@@ -16,24 +16,29 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jthemis.analysis;
 
+import net.sourceforge.joceanus.jtethys.OceanusException;
+import net.sourceforge.joceanus.jthemis.analysis.ThemisAnalysisDataMap.ThemisAnalysisDataType;
+import net.sourceforge.joceanus.jthemis.analysis.ThemisAnalysisGeneric.ThemisAnalysisGenericBase;
+import net.sourceforge.joceanus.jthemis.analysis.ThemisAnalysisGeneric.ThemisAnalysisGenericRef;
+
 /**
  * Reference structure.
  */
 public class ThemisAnalysisReference {
     /**
-     * The dataType.
-     */
-    private final ThemisAnalysisDataType theDataType;
-
-    /**
      * The generic.
      */
-    private final ThemisAnalysisGeneric theGeneric;
+    private ThemisAnalysisGeneric theGeneric;
 
     /**
      * The array.
      */
     private final ThemisAnalysisArray theArray;
+
+    /**
+     * The dataType.
+     */
+    private ThemisAnalysisDataType theDataType;
 
     /**
      * Constructor.
@@ -48,6 +53,34 @@ public class ThemisAnalysisReference {
         theDataType = pDataType;
         theGeneric = pGeneric;
         theArray = pArray;
+    }
+
+    /**
+     * Obtain the dataType.
+     * @return the dataType
+     */
+    ThemisAnalysisDataType getDataType() {
+        return theDataType;
+    }
+
+    /**
+     * Resolve the generic reference.
+     * @param pParser the parser
+     * @throws OceanusException on error
+     */
+    void resolveGeneric(final ThemisAnalysisParser pParser) throws OceanusException  {
+        /* Resolve any generic base instance */
+        if (theGeneric instanceof ThemisAnalysisGenericBase) {
+            theGeneric = new ThemisAnalysisGenericRef(pParser, (ThemisAnalysisGenericBase) theGeneric);
+        }
+    }
+
+    /**
+     * Update the dataType.
+     * @param pType the updated type
+     */
+    void updateDataType(final ThemisAnalysisDataType pType) {
+        theDataType = pType;
     }
 
     @Override

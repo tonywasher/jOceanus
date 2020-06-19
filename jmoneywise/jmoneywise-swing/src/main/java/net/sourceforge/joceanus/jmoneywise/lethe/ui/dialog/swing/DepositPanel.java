@@ -22,8 +22,8 @@ import java.util.Map;
 
 import net.sourceforge.joceanus.jmetis.atlas.ui.MetisErrorPanel;
 import net.sourceforge.joceanus.jmetis.data.MetisDataType;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisField;
-import net.sourceforge.joceanus.jmetis.lethe.field.MetisLetheFieldSetBase.MetisFieldUpdate;
+import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisLetheField;
+import net.sourceforge.joceanus.jmetis.lethe.field.MetisLetheFieldSetBase.MetisLetheFieldUpdate;
 import net.sourceforge.joceanus.jmetis.lethe.field.swing.MetisSwingFieldManager;
 import net.sourceforge.joceanus.jmetis.lethe.field.swing.MetisSwingFieldSet;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
@@ -255,14 +255,14 @@ public class DepositPanel
         myFieldSet.setVisibility(DepositInfoSet.getFieldForClass(AccountInfoClass.REFERENCE), bShowReference);
         final boolean bHasOpening = myDeposit.getOpeningBalance() != null;
         final boolean bShowOpening = bIsChangeable || bHasOpening;
-        final MetisField myOpeningField = DepositInfoSet.getFieldForClass(AccountInfoClass.OPENINGBALANCE);
+        final MetisLetheField myOpeningField = DepositInfoSet.getFieldForClass(AccountInfoClass.OPENINGBALANCE);
         myFieldSet.setVisibility(myOpeningField, bShowOpening);
         final boolean bShowNotes = isEditable || myDeposit.getNotes() != null;
         myFieldSet.setVisibility(DepositInfoSet.getFieldForClass(AccountInfoClass.NOTES), bShowNotes);
 
         /* Maturity is only visible if the item is a bond */
         final boolean bShowMaturity = DepositCategoryClass.BOND.equals(myDeposit.getCategoryClass());
-        final MetisField myMaturityField = DepositInfoSet.getFieldForClass(AccountInfoClass.MATURITY);
+        final MetisLetheField myMaturityField = DepositInfoSet.getFieldForClass(AccountInfoClass.MATURITY);
         myFieldSet.setVisibility(myMaturityField, bShowMaturity);
         myFieldSet.setEditable(myMaturityField, isEditable && !bIsClosed);
 
@@ -282,9 +282,9 @@ public class DepositPanel
     }
 
     @Override
-    protected void updateField(final MetisFieldUpdate pUpdate) throws OceanusException {
+    protected void updateField(final MetisLetheFieldUpdate pUpdate) throws OceanusException {
         /* Access the field */
-        final MetisField myField = pUpdate.getField();
+        final MetisLetheField myField = pUpdate.getField();
         final Deposit myDeposit = getItem();
 
         /* Process updates */

@@ -19,6 +19,8 @@ package net.sourceforge.joceanus.jthemis.analysis;
 import java.util.ArrayList;
 import java.util.List;
 
+import net.sourceforge.joceanus.jtethys.OceanusException;
+
 /**
  * A series of comment lines.
  */
@@ -33,9 +35,10 @@ public class ThemisAnalysisComment
      * Constructor.
      * @param pParser the parser
      * @param pLine the initial comment line
+     * @throws OceanusException on error
      */
     ThemisAnalysisComment(final ThemisAnalysisParser pParser,
-                          final ThemisAnalysisLine pLine) {
+                          final ThemisAnalysisLine pLine) throws OceanusException {
         /* Create the list of comment lines */
         theComments = new ArrayList<>();
         theComments.add(pLine);

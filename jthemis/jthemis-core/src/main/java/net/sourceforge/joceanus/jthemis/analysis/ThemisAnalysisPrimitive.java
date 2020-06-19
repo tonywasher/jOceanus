@@ -16,6 +16,8 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jthemis.analysis;
 
+import net.sourceforge.joceanus.jthemis.analysis.ThemisAnalysisDataMap.ThemisAnalysisDataType;
+
 /**
  * Primitive.
  */
@@ -62,27 +64,12 @@ public enum ThemisAnalysisPrimitive
     DOUBLE("double", "Double"),
 
     /**
-     * Object.
-     */
-    OBJECT("Object"),
-
-    /**
-     * Enum.
-     */
-    ENUM("Enum"),
-
-    /**
-     * String.
-     */
-    STRING("String"),
-
-    /**
      * Void.
      */
-    VOID("void");
+    VOID("void", "Void");
 
     /**
-     * The modifier.
+     * The primitive.
      */
     private final String thePrimitive;
 
@@ -90,14 +77,6 @@ public enum ThemisAnalysisPrimitive
      * The boxed.
      */
     private final String theBoxed;
-
-    /**
-     * Constructor.
-     * @param pPrimitive the primitive
-     */
-    ThemisAnalysisPrimitive(final String pPrimitive) {
-        this(pPrimitive, null);
-    }
 
     /**
      * Constructor.

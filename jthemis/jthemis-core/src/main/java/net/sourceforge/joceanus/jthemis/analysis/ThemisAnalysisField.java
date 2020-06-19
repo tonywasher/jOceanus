@@ -17,7 +17,8 @@
 package net.sourceforge.joceanus.jthemis.analysis;
 
 import java.util.Deque;
-import java.util.List;
+
+import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
  * Field Representation.
@@ -35,9 +36,9 @@ public class ThemisAnalysisField
     private final ThemisAnalysisReference theDataType;
 
     /**
-     * The modifiers.
+     * The properties.
      */
-    private final List<ThemisAnalysisPrefix> theModifiers;
+    private final ThemisAnalysisProperties theProperties;
 
     /**
      * The trailers.
@@ -55,15 +56,16 @@ public class ThemisAnalysisField
      * @param pName the method name
      * @param pDataType the dataType
      * @param pLine the initial class line
+     * @throws OceanusException on error
      */
     ThemisAnalysisField(final ThemisAnalysisParser pParser,
                         final String pName,
                         final ThemisAnalysisReference pDataType,
-                        final ThemisAnalysisLine pLine) {
+                        final ThemisAnalysisLine pLine) throws OceanusException {
         /* Store parameters */
         theName = pName;
         theDataType = pDataType;
-        theModifiers = pLine.getModifiers();
+        theProperties = pLine.getProperties();
 
         /* Create the arrays */
         theTrailers = ThemisAnalysisBuilder.parseTrailers(pParser, pLine);

@@ -19,6 +19,7 @@ package net.sourceforge.joceanus.jmoneywise.lethe.ui.controls;
 import java.util.EnumMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import net.sourceforge.joceanus.jmetis.data.MetisDataDifference;
 import net.sourceforge.joceanus.jmoneywise.lethe.analysis.Analysis;
@@ -739,9 +740,9 @@ public class MoneyWiseAnalysisSelect
         }
 
         /* Loop through the panels */
-        final Iterator<Map.Entry<AnalysisType, MoneyWiseAnalysisFilterSelection>> myIterator = theMap.entrySet().iterator();
+        final Iterator<Entry<AnalysisType, MoneyWiseAnalysisFilterSelection>> myIterator = theMap.entrySet().iterator();
         while (myIterator.hasNext()) {
-            final Map.Entry<AnalysisType, MoneyWiseAnalysisFilterSelection> myEntry = myIterator.next();
+            final Entry<AnalysisType, MoneyWiseAnalysisFilterSelection> myEntry = myIterator.next();
 
             /* If the filter is possible */
             final MoneyWiseAnalysisFilterSelection myPanel = myEntry.getValue();
@@ -784,9 +785,9 @@ public class MoneyWiseAnalysisSelect
         theTypeMenu.removeAllItems();
 
         /* Loop through the panels */
-        final Iterator<Map.Entry<AnalysisType, MoneyWiseAnalysisFilterSelection>> myIterator = theMap.entrySet().iterator();
+        final Iterator<Entry<AnalysisType, MoneyWiseAnalysisFilterSelection>> myIterator = theMap.entrySet().iterator();
         while (myIterator.hasNext()) {
-            final Map.Entry<AnalysisType, MoneyWiseAnalysisFilterSelection> myEntry = myIterator.next();
+            final Entry<AnalysisType, MoneyWiseAnalysisFilterSelection> myEntry = myIterator.next();
 
             /* If the filter is possible */
             if (myEntry.getValue().isAvailable()) {

@@ -22,7 +22,7 @@ import javax.swing.JTable;
 import javax.swing.event.TableModelEvent;
 import javax.swing.table.AbstractTableModel;
 
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisField;
+import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisLetheField;
 import net.sourceforge.joceanus.jmetis.lethe.field.MetisLetheFieldValue;
 import net.sourceforge.joceanus.jmetis.lethe.field.swing.MetisSwingFieldData;
 import net.sourceforge.joceanus.jmetis.lethe.field.swing.MetisSwingFieldManager.PopulateFieldData;
@@ -164,8 +164,8 @@ public abstract class PrometheusDataTableModel<T extends PrometheusTableItem & C
      * @param pColIndex the column
      * @return the field
      */
-    public abstract MetisField getFieldForCell(T pItem,
-                                               int pColIndex);
+    public abstract MetisLetheField getFieldForCell(T pItem,
+                                                    int pColIndex);
 
     @Override
     public Object getValueAt(final int pRowIndex,
@@ -338,7 +338,7 @@ public abstract class PrometheusDataTableModel<T extends PrometheusTableItem & C
             /* Access the field */
             int iCol = pData.getCol();
             iCol = theTable.convertColumnIndexToModel(iCol);
-            final MetisField iField = getFieldForCell(myRow, iCol);
+            final MetisLetheField iField = getFieldForCell(myRow, iCol);
 
             /* Has the field changed */
             pData.processTableRow(myRow, iField);
@@ -442,7 +442,7 @@ public abstract class PrometheusDataTableModel<T extends PrometheusTableItem & C
                 final PrometheusTableItem myRow = myModel.getItemAtIndex(iRow);
                 @SuppressWarnings("unchecked")
                 final PrometheusDataTableColumnModel<E> myColModel = (PrometheusDataTableColumnModel<E>) theTable.getColumnModel();
-                final MetisField[] iFields = myColModel.getColumnFields();
+                final MetisLetheField[] iFields = myColModel.getColumnFields();
 
                 /* Has the row changed */
                 pData.processRowHeader(myRow, iFields);

@@ -34,7 +34,7 @@ import net.sourceforge.joceanus.jmetis.field.MetisFieldSet;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisEncryptedData.MetisEncryptedPrice;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisEncryptedValueSet;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisField;
+import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisLetheField;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisValueSet;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
@@ -77,17 +77,17 @@ public class SecurityPrice
     /**
      * Security Field Id.
      */
-    public static final MetisField FIELD_SECURITY = FIELD_DEFS.declareComparisonValueField(MoneyWiseDataType.SECURITY.getItemName(), MetisDataType.LINK);
+    public static final MetisLetheField FIELD_SECURITY = FIELD_DEFS.declareComparisonValueField(MoneyWiseDataType.SECURITY.getItemName(), MetisDataType.LINK);
 
     /**
      * Date Field Id.
      */
-    public static final MetisField FIELD_DATE = FIELD_DEFS.declareComparisonValueField(MoneyWiseDataResource.MONEYWISEDATA_FIELD_DATE.getValue(), MetisDataType.DATE);
+    public static final MetisLetheField FIELD_DATE = FIELD_DEFS.declareComparisonValueField(MoneyWiseDataResource.MONEYWISEDATA_FIELD_DATE.getValue(), MetisDataType.DATE);
 
     /**
      * Price Field Id.
      */
-    public static final MetisField FIELD_PRICE = FIELD_DEFS.declareEqualityEncryptedField(MoneyWiseDataResource.MONEYWISEDATA_FIELD_PRICE.getValue(), MetisDataType.PRICE);
+    public static final MetisLetheField FIELD_PRICE = FIELD_DEFS.declareEqualityEncryptedField(MoneyWiseDataResource.MONEYWISEDATA_FIELD_PRICE.getValue(), MetisDataType.PRICE);
 
     /**
      * Invalid currency error.
@@ -173,7 +173,7 @@ public class SecurityPrice
     }
 
     @Override
-    public boolean includeXmlField(final MetisField pField) {
+    public boolean includeXmlField(final MetisLetheField pField) {
         /* Determine whether fields should be included */
         if (FIELD_SECURITY.equals(pField)) {
             return true;

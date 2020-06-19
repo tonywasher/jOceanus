@@ -24,7 +24,7 @@ import java.util.Objects;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
- * Package line.
+ * Package.
  */
 public class ThemisAnalysisPackage
     implements ThemisAnalysisElement {
@@ -36,7 +36,7 @@ public class ThemisAnalysisPackage
     /**
      * The package-info file.
      */
-    private static final String PACKAGE_INFO = "package-info.java";
+    private static final String PACKAGE_INFO = "package-info" + SFX_JAVA;
 
     /**
      * The package name.
@@ -44,47 +44,92 @@ public class ThemisAnalysisPackage
     private final String thePackage;
 
     /**
-     * The list of classes in this package.
+     * The list of files in this package.
      */
-    private final List<ThemisAnalysisFile> theClasses;
+    private final List<ThemisAnalysisFile> theFiles;
+
+    /**
+     * The initial dataMap.
+     */
+    private final ThemisAnalysisDataMap theDataMap;
+
+    /**
+     * Module Constructor.
+     * @param pModule the owning module
+     * @param pPackage the package name.
+     * @throws OceanusException on error
+     */
+    ThemisAnalysisPackage(final ThemisAnalysisModule pModule,
+                          final String pPackage) throws OceanusException {
+        /* Initialise class */
+        this(pModule.getLocation(), new ThemisAnalysisDataMap(pModule.getDataMap()), pPackage);
+    }
 
     /**
      * Constructor.
-     * @param pLocation the base location
+     * @param pLocation the base location for the package
      * @param pPackage the package name.
      * @throws OceanusException on error
      */
     ThemisAnalysisPackage(final File pLocation,
                           final String pPackage) throws OceanusException {
-        /* Store package name */
-        thePackage = pPackage;
+        /* Initialise class */
+        this(pLocation, new ThemisAnalysisDataMap(), pPackage);
 
-        /* Create directory path and record the location */
-        final String myPath = pPackage.replace(ThemisAnalysisImports.PERIOD_SEP, File.separatorChar);
-        final File myLocation = new File(pLocation, myPath);
+        /* consolidationPass process the files */
+        performConsolidationPass();
 
-        /* Build list of classes */
-        theClasses = listClasses(myLocation);
-
-        /* Process the classes */
-        processClasses();
+        /* finalPass process the files */
+        performFinalPass();
     }
 
     /**
-     * Obtain the classes.
-     * @return the classes
-     */
-    List<ThemisAnalysisFile> getClasses() {
-        return theClasses;
-    }
-
-    /**
-     * Build list of classes.
-     * @param pLocation the location
-     * @return the list of classes
+     * Constructor.
+     * @param pLocation the base location for the package
+     * @param pDataMap the dataMap
+     * @param pPackage the package name.
      * @throws OceanusException on error
      */
-    List<ThemisAnalysisFile> listClasses(final File pLocation) throws OceanusException  {
+    private ThemisAnalysisPackage(final File pLocation,
+                                  final ThemisAnalysisDataMap pDataMap,
+                                  final String pPackage) throws OceanusException {
+        /* Store package name and dataMap */
+        thePackage = pPackage;
+        theDataMap = pDataMap;
+
+        /* Create directory path and record the location */
+        final String myPath = pPackage.replace(ThemisAnalysisChar.PERIOD, File.separatorChar);
+        final File myLocation = new File(pLocation, myPath);
+
+        /* Build list of files */
+        theFiles = listFiles(myLocation);
+
+        /* initialPass process the files */
+        performInitialPass();
+    }
+
+    /**
+     * Obtain the files.
+     * @return the files
+     */
+    List<ThemisAnalysisFile> getFiles() {
+        return theFiles;
+    }
+
+    /**
+     * Obtain the dataMap.
+     * @return the map
+     */
+    ThemisAnalysisDataMap getDataMap() {
+        return theDataMap;
+    }
+
+    /**
+     * Build list of files.
+     * @param pLocation the location
+     * @return the list of files
+     */
+    List<ThemisAnalysisFile> listFiles(final File pLocation) {
         /* Allocate the list */
         final List<ThemisAnalysisFile> myClasses = new ArrayList<>();
 
@@ -110,14 +155,38 @@ public class ThemisAnalysisPackage
     }
 
     /**
-     * process classes.
+     * initialPass process files.
      * @throws OceanusException on error
      */
-    private void processClasses() throws OceanusException {
+    private void performInitialPass() throws OceanusException {
         /* Loop through the classes */
-        for (ThemisAnalysisFile myFile : theClasses) {
-            /* Process the class */
+        for (ThemisAnalysisFile myFile : theFiles) {
+            /* Process the file */
             myFile.processFile();
+        }
+    }
+
+    /**
+     * consolidationPass process files.
+     * @throws OceanusException on error
+     */
+    void performConsolidationPass() throws OceanusException {
+        /* Loop through the classes */
+        for (ThemisAnalysisFile myFile : theFiles) {
+            /* Process the file */
+            myFile.consolidationProcessingPass();
+        }
+    }
+
+    /**
+     * finalPass process files.
+     * @throws OceanusException on error
+     */
+    void performFinalPass() throws OceanusException {
+        /* Loop through the classes */
+        for (ThemisAnalysisFile myFile : theFiles) {
+            /* Process the file */
+            myFile.finalProcessingPass();
         }
     }
 
@@ -133,13 +202,14 @@ public class ThemisAnalysisPackage
      * Is the line a package?
      * @param pLine the line
      * @return true/false
+     * @throws OceanusException on error
      */
-    static boolean isPackage(final ThemisAnalysisLine pLine) {
+    static boolean isPackage(final ThemisAnalysisLine pLine) throws OceanusException {
         /* If we are ended by a semi-colon and this is a package line */
-        if (pLine.endsWithChar(ThemisAnalysisBuilder.STATEMENT_END)
+        if (pLine.endsWithChar(ThemisAnalysisChar.SEMICOLON)
              && pLine.isStartedBy(ThemisAnalysisKeyWord.PACKAGE.getKeyWord())) {
             /* Strip the semi-colon and return true */
-            pLine.stripEndChar(ThemisAnalysisBuilder.STATEMENT_END);
+            pLine.stripEndChar(ThemisAnalysisChar.SEMICOLON);
             return true;
         }
 

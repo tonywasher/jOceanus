@@ -18,23 +18,19 @@ package net.sourceforge.joceanus.jthemis.analysis;
 
 import java.util.ArrayDeque;
 import java.util.Deque;
-import java.util.List;
-import java.util.Map;
+
+import net.sourceforge.joceanus.jtethys.OceanusException;
+import net.sourceforge.joceanus.jthemis.analysis.ThemisAnalysisContainer.ThemisAnalysisAdoptable;
 
 /**
  * Block construct.
  */
 public class ThemisAnalysisBlock
-        implements ThemisAnalysisContainer {
+        implements ThemisAnalysisContainer, ThemisAnalysisAdoptable {
     /**
-     * The parent.
+     * The properties.
      */
-    private final ThemisAnalysisContainer theParent;
-
-    /**
-     * The modifiers.
-     */
-    private final List<ThemisAnalysisPrefix> theModifiers;
+    private final ThemisAnalysisProperties theProperties;
 
     /**
      * The contents.
@@ -42,25 +38,25 @@ public class ThemisAnalysisBlock
     private final Deque<ThemisAnalysisElement> theContents;
 
     /**
-     * The dataTypes.
-     */
-    private final Map<String, ThemisAnalysisDataType> theDataTypes;
-
-    /**
      * The number of lines.
      */
     private final int theNumLines;
 
     /**
+     * The parent.
+     */
+    private ThemisAnalysisContainer theParent;
+
+    /**
      * Constructor.
      * @param pParser the parser
      * @param pLine the initial class line
+     * @throws OceanusException on error
      */
     ThemisAnalysisBlock(final ThemisAnalysisParser pParser,
-                        final ThemisAnalysisLine pLine) {
+                        final ThemisAnalysisLine pLine) throws OceanusException {
         /* Store parameters */
-        theModifiers = pLine.getModifiers();
-        theDataTypes = pParser.getDataTypes();
+        theProperties = pLine.getProperties();
         theParent = pParser.getParent();
 
         /* Create the arrays */
@@ -77,11 +73,6 @@ public class ThemisAnalysisBlock
     }
 
     @Override
-    public Map<String, ThemisAnalysisDataType> getDataTypes() {
-        return theDataTypes;
-    }
-
-    @Override
     public Deque<ThemisAnalysisElement> getContents() {
         return theContents;
     }
@@ -89,6 +80,11 @@ public class ThemisAnalysisBlock
     @Override
     public ThemisAnalysisContainer getParent() {
         return theParent;
+    }
+
+    @Override
+    public void setParent(final ThemisAnalysisContainer pParent) {
+        theParent = pParent;
     }
 
     @Override

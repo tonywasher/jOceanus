@@ -80,8 +80,7 @@ public class TethysFXTableExample
         theHelper = new TethysScrollUITestHelper();
 
         /* Create test Data */
-        final ObservableList<TethysFXTableItem> myData = FXCollections.observableArrayList(p -> new Observable[]
-        { p.nameProperty() });
+        final ObservableList<TethysFXTableItem> myData = FXCollections.observableArrayList(p -> new Observable[] { p.nameProperty() });
         myData.add(new TethysFXTableItem(theHelper, "Damage"));
         myData.add(new TethysFXTableItem(theHelper, "Tony"));
         myData.add(new TethysFXTableItem(theHelper, "Dave"));

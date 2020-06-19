@@ -20,6 +20,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import javafx.beans.Observable;
 import javafx.beans.property.ObjectProperty;
@@ -132,9 +133,9 @@ public class MetisFXTableFieldSet<R extends MetisFieldTableItem> {
      */
     protected void updateValues() {
         /* Iterate through the entries */
-        final Iterator<Map.Entry<MetisFieldDef, ObjectProperty<Object>>> myIterator = thePropertyMap.entrySet().iterator();
+        final Iterator<Entry<MetisFieldDef, ObjectProperty<Object>>> myIterator = thePropertyMap.entrySet().iterator();
         while (myIterator.hasNext()) {
-            final Map.Entry<MetisFieldDef, ObjectProperty<Object>> myEntry = myIterator.next();
+            final Entry<MetisFieldDef, ObjectProperty<Object>> myEntry = myIterator.next();
             final MetisFieldDef myField = myEntry.getKey();
 
             /* If the field is changeable */
@@ -151,9 +152,9 @@ public class MetisFXTableFieldSet<R extends MetisFieldTableItem> {
      */
     protected void recalculateValues() {
         /* Iterate through the entries */
-        final Iterator<Map.Entry<MetisFieldDef, ObjectProperty<Object>>> myIterator = thePropertyMap.entrySet().iterator();
+        final Iterator<Entry<MetisFieldDef, ObjectProperty<Object>>> myIterator = thePropertyMap.entrySet().iterator();
         while (myIterator.hasNext()) {
-            final Map.Entry<MetisFieldDef, ObjectProperty<Object>> myEntry = myIterator.next();
+            final Entry<MetisFieldDef, ObjectProperty<Object>> myEntry = myIterator.next();
             final MetisFieldDef myField = myEntry.getKey();
 
             /* If the field is calculated */

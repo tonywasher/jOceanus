@@ -550,4 +550,3 @@ public final class GordianAgreementSpec {
         return myAgreements;
     }
 }
-

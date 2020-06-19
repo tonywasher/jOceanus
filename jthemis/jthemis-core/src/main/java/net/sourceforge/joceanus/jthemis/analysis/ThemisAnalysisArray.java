@@ -16,19 +16,17 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jthemis.analysis;
 
+import net.sourceforge.joceanus.jtethys.OceanusException;
+import net.sourceforge.joceanus.jthemis.ThemisDataException;
+
 /**
  * Array construct.
  */
 public class ThemisAnalysisArray {
     /**
-     * Start array.
+     * The varArgs notation.
      */
-    static final char ARRAY_OPEN = '[';
-
-    /**
-     * End array.
-     */
-    static final char ARRAY_CLOSE = ']';
+    static final String VARARGS = "...";
 
     /**
      * The array notation.
@@ -38,16 +36,24 @@ public class ThemisAnalysisArray {
     /**
      * Constructor.
      * @param pLine the line
+     * @throws OceanusException on error
      */
-    ThemisAnalysisArray(final ThemisAnalysisLine pLine) {
+    ThemisAnalysisArray(final ThemisAnalysisLine pLine) throws OceanusException {
+        /* If the token is VARARGS */
+        if (pLine.peekNextToken().equals(VARARGS)) {
+            pLine.stripNextToken();
+            theNotation = VARARGS;
+            return;
+        }
+
         /* Loop while we have an array start */
         int myDepth = 0;
-        while (pLine.startsWithChar(ARRAY_OPEN)) {
-            pLine.stripStartChar(ARRAY_OPEN);
-            if (!pLine.startsWithChar(ARRAY_CLOSE)) {
-                throw new IllegalStateException("Bad array notation");
+        while (pLine.startsWithChar(ThemisAnalysisChar.ARRAY_OPEN)) {
+            pLine.stripStartChar(ThemisAnalysisChar.ARRAY_OPEN);
+            if (!pLine.startsWithChar(ThemisAnalysisChar.ARRAY_CLOSE)) {
+                throw new ThemisDataException("Bad array notation");
             }
-            pLine.stripStartChar(ARRAY_CLOSE);
+            pLine.stripStartChar(ThemisAnalysisChar.ARRAY_CLOSE);
             myDepth++;
         }
         pLine.stripLeadingWhiteSpace();
@@ -55,7 +61,7 @@ public class ThemisAnalysisArray {
         /* Build the array notation */
         final StringBuilder myBuilder = new StringBuilder();
         for (int i = 0; i < myDepth; i++) {
-            myBuilder.append(ARRAY_OPEN).append(ARRAY_CLOSE);
+            myBuilder.append(ThemisAnalysisChar.ARRAY_OPEN).append(ThemisAnalysisChar.ARRAY_CLOSE);
         }
         theNotation = myBuilder.toString();
     }
@@ -66,8 +72,9 @@ public class ThemisAnalysisArray {
      * @return true/false
      */
     static boolean isArray(final ThemisAnalysisLine pLine) {
-        /* If we are started with an ARRAY_OPEN */
-        return pLine.startsWithChar(ARRAY_OPEN);
+        /* If we are started with an ARRAY_OPEN or we have args */
+        return pLine.startsWithChar(ThemisAnalysisChar.ARRAY_OPEN)
+                || pLine.peekNextToken().equals(VARARGS);
     }
 
     @Override

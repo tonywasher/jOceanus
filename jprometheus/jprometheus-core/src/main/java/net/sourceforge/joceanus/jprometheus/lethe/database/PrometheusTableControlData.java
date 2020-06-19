@@ -16,7 +16,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jprometheus.lethe.database;
 
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisField;
+import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisLetheField;
 import net.sourceforge.joceanus.jprometheus.lethe.data.ControlData;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataSet;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataSet.CryptographyDataType;
@@ -67,7 +67,7 @@ public class PrometheusTableControlData
 
     @Override
     protected void setFieldValue(final ControlData pItem,
-                                 final MetisField pField) throws OceanusException {
+                                 final MetisLetheField pField) throws OceanusException {
         /* Switch on field id */
         final PrometheusTableDefinition myTableDef = getTableDef();
         if (ControlData.FIELD_DATAVERSION.equals(pField)) {

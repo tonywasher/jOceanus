@@ -91,4 +91,3 @@ public enum GordianGOSTElliptic implements GordianElliptic {
         return theName;
     }
 }
-

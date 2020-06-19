@@ -35,7 +35,7 @@ import net.sourceforge.joceanus.jmetis.lethe.data.MetisDataObject.MetisDataConte
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisDataObject.MetisDataValues;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFieldSetItem;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisField;
+import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisLetheField;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisLetheFieldStorage;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisValueSet;
 import net.sourceforge.joceanus.jtethys.OceanusException;
@@ -335,10 +335,10 @@ public class MetisViewerFormatter {
         theBuilder.newTitleCell(COLUMN_VALUE);
 
         /* Loop through the fields */
-        final Iterator<MetisField> myIterator = myFields.fieldIterator();
+        final Iterator<MetisLetheField> myIterator = myFields.fieldIterator();
         while (myIterator.hasNext()) {
             /* Access Field */
-            final MetisField myField = myIterator.next();
+            final MetisLetheField myField = myIterator.next();
             final MetisLetheFieldStorage myStorage = myField.getStorage();
             Object myValue = MetisDataFieldValue.SKIP;
 

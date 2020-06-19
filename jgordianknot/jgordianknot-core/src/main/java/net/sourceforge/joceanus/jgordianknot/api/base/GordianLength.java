@@ -119,4 +119,3 @@ public enum GordianLength {
         return Integer.toString(theLength);
     }
 }
-

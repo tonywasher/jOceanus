@@ -32,7 +32,7 @@ import net.sourceforge.joceanus.jmetis.data.MetisDataType;
 import net.sourceforge.joceanus.jmetis.field.MetisFieldItem;
 import net.sourceforge.joceanus.jmetis.field.MetisFieldSet;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisField;
+import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisLetheField;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisValueSet;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
@@ -75,22 +75,22 @@ public class ExchangeRate
     /**
      * Date Field Id.
      */
-    public static final MetisField FIELD_DATE = FIELD_DEFS.declareComparisonValueField(MoneyWiseDataResource.MONEYWISEDATA_FIELD_DATE.getValue(), MetisDataType.DATE);
+    public static final MetisLetheField FIELD_DATE = FIELD_DEFS.declareComparisonValueField(MoneyWiseDataResource.MONEYWISEDATA_FIELD_DATE.getValue(), MetisDataType.DATE);
 
     /**
      * From Currency Field Id.
      */
-    public static final MetisField FIELD_FROM = FIELD_DEFS.declareComparisonValueField(MoneyWiseDataResource.XCHGRATE_FROM.getValue(), MetisDataType.LINK);
+    public static final MetisLetheField FIELD_FROM = FIELD_DEFS.declareComparisonValueField(MoneyWiseDataResource.XCHGRATE_FROM.getValue(), MetisDataType.LINK);
 
     /**
      * To Currency Field Id.
      */
-    public static final MetisField FIELD_TO = FIELD_DEFS.declareComparisonValueField(MoneyWiseDataResource.XCHGRATE_TO.getValue(), MetisDataType.LINK);
+    public static final MetisLetheField FIELD_TO = FIELD_DEFS.declareComparisonValueField(MoneyWiseDataResource.XCHGRATE_TO.getValue(), MetisDataType.LINK);
 
     /**
      * Rate Field Id.
      */
-    public static final MetisField FIELD_RATE = FIELD_DEFS.declareEqualityValueField(MoneyWiseDataResource.XCHGRATE_RATE.getValue(), MetisDataType.RATIO);
+    public static final MetisLetheField FIELD_RATE = FIELD_DEFS.declareEqualityValueField(MoneyWiseDataResource.XCHGRATE_RATE.getValue(), MetisDataType.RATIO);
 
     /**
      * Circular Rate Error.
@@ -205,7 +205,7 @@ public class ExchangeRate
     }
 
     @Override
-    public boolean includeXmlField(final MetisField pField) {
+    public boolean includeXmlField(final MetisLetheField pField) {
         /* Determine whether fields should be included */
         if (FIELD_DATE.equals(pField)) {
             return true;

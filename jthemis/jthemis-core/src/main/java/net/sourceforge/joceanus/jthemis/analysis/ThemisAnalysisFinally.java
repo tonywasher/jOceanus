@@ -18,7 +18,8 @@ package net.sourceforge.joceanus.jthemis.analysis;
 
 import java.util.ArrayDeque;
 import java.util.Deque;
-import java.util.Map;
+
+import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
  * Finally construct.
@@ -41,11 +42,6 @@ public class ThemisAnalysisFinally
     private final Deque<ThemisAnalysisElement> theContents;
 
     /**
-     * The dataTypes.
-     */
-    private final Map<String, ThemisAnalysisDataType> theDataTypes;
-
-    /**
      * The number of lines.
      */
     private final int theNumLines;
@@ -53,13 +49,15 @@ public class ThemisAnalysisFinally
     /**
      * Constructor.
      * @param pParser the parser
+     * @param pOwner the owning try
      * @param pLine the initial finally line
+     * @throws OceanusException on error
      */
     ThemisAnalysisFinally(final ThemisAnalysisParser pParser,
-                          final ThemisAnalysisLine pLine) {
-        /* Access details from parser */
-        theDataTypes = pParser.getDataTypes();
-        theParent = pParser.getParent();
+                          final ThemisAnalysisContainer pOwner,
+                          final ThemisAnalysisLine pLine) throws OceanusException {
+        /* Record the parent */
+        theParent = pOwner;
 
         /* Create the arrays */
         theHeaders = ThemisAnalysisBuilder.parseHeaders(pParser, pLine);
@@ -73,11 +71,6 @@ public class ThemisAnalysisFinally
 
         /* Calculate the number of lines */
         theNumLines = calculateNumLines(myBaseLines);
-    }
-
-    @Override
-    public Map<String, ThemisAnalysisDataType> getDataTypes() {
-        return theDataTypes;
     }
 
     @Override

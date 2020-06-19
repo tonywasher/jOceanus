@@ -22,7 +22,7 @@ import net.sourceforge.joceanus.jmetis.data.MetisDataDifference;
 import net.sourceforge.joceanus.jmetis.data.MetisDataType;
 import net.sourceforge.joceanus.jmetis.field.MetisFieldSet;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisField;
+import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisLetheField;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisValueSet;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
@@ -56,7 +56,7 @@ public class CashCategory
     /**
      * Category Type Field Id.
      */
-    public static final MetisField FIELD_CATTYPE = FIELD_DEFS.declareComparisonValueField(MoneyWiseDataType.CASHTYPE.getItemName(), MetisDataType.LINK);
+    public static final MetisLetheField FIELD_CATTYPE = FIELD_DEFS.declareComparisonValueField(MoneyWiseDataType.CASHTYPE.getItemName(), MetisDataType.LINK);
 
     /**
      * Copy Constructor.
@@ -103,7 +103,7 @@ public class CashCategory
     }
 
     @Override
-    public boolean includeXmlField(final MetisField pField) {
+    public boolean includeXmlField(final MetisLetheField pField) {
         /* Determine whether fields should be included */
         if (FIELD_CATTYPE.equals(pField)) {
             return true;

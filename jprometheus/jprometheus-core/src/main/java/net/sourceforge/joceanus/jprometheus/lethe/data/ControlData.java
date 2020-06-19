@@ -19,7 +19,7 @@ package net.sourceforge.joceanus.jprometheus.lethe.data;
 import net.sourceforge.joceanus.jmetis.data.MetisDataType;
 import net.sourceforge.joceanus.jmetis.field.MetisFieldSet;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisField;
+import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisLetheField;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisValueSet;
 import net.sourceforge.joceanus.jprometheus.PrometheusDataException;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataSet.CryptographyDataType;
@@ -58,12 +58,12 @@ public class ControlData
     /**
      * Field ID for Data Version.
      */
-    public static final MetisField FIELD_DATAVERSION = FIELD_DEFS.declareEqualityValueField(PrometheusDataResource.CONTROLDATA_VERSION.getValue(), MetisDataType.INTEGER);
+    public static final MetisLetheField FIELD_DATAVERSION = FIELD_DEFS.declareEqualityValueField(PrometheusDataResource.CONTROLDATA_VERSION.getValue(), MetisDataType.INTEGER);
 
     /**
      * Field ID for Control Key.
      */
-    public static final MetisField FIELD_CONTROLKEY = FIELD_DEFS.declareEqualityValueField(CryptographyDataType.CONTROLKEY.getItemName(), MetisDataType.LINK);
+    public static final MetisLetheField FIELD_CONTROLKEY = FIELD_DEFS.declareEqualityValueField(CryptographyDataType.CONTROLKEY.getItemName(), MetisDataType.LINK);
 
     /**
      * Error message for already exists.

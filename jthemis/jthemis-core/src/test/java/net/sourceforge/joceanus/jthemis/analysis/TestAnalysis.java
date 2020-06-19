@@ -26,34 +26,82 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
  */
 public class TestAnalysis {
     /**
-     * Lines.
+     * The path base.
      */
-    private static String[] STD_LINES = {
-      "\"A standard \"line",
-      "\"A line with an embedded \\\"single quote \"",
-      "\"A line with an embedded double quote \\\"Hello\\\" and \"more",
-    };
+    private static final String PATH_BASE = System.getProperty("user.home") + "/gitNew/jOceanus/";
 
     /**
-     * Lines.
+     * The path xtra.
      */
-    private static String[] XTRA_LINES = {
-            "{ An extended brace",
-            "that contains a quoted \"}\" end-brace }",
-            "{A line with a start brace",
-            "and another brace { followed by",
-            "a close } and then start { brace",
-            "and finally two close }} braces"
-    };
+    private static final String PATH_XTRA = "/src/main/java";
+
+    /**
+     * The package base.
+     */
+    private static final String PACKAGE_BASE = "net.sourceforge.joceanus.";
 
     /**
      * Main.
+     *
+     * @param pArgs the arguments
      */
     public static void main(final String[] pArgs) {
+        testProject();
+    }
+
+    /**
+     * Test a project.
+     */
+    private static void testProject() {
+        /* Protect against exceptions */
         try {
-            final String myBase = "c:/Users/Tony/gitNew/jOceanus/jthemis/jthemis-core/src/main/java";
-            final String myName = "net.sourceforge.joceanus.jthemis.analysis";
-            final ThemisAnalysisPackage myPackage = new ThemisAnalysisPackage(new File(myBase), myName);
+            final ThemisAnalysisProject myProj = new ThemisAnalysisProject(new File(PATH_BASE));
+            int i = 0;
+        } catch (OceanusException e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * Test a module.
+     *
+     * @param pModule  the module name.
+     */
+    private static void testModule(final String pModule) {
+        /* Determine full module/package names */
+        final String myModule = PATH_BASE + pModule;
+
+        /* Protect against exceptions */
+        try {
+            final ThemisAnalysisModule myMod = new ThemisAnalysisModule(new File(myModule));
+            int i = 0;
+        } catch (OceanusException e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * Test a package.
+     *
+     * @param pModule  the module name.
+     * @param pPackage the package name
+     */
+    private static void testPackage(final String pModule,
+                                    final String pPackage) {
+        /* Determine the module root */
+        final int myIndex = pModule.indexOf('-');
+        final String myRoot = pModule.substring(0, myIndex);
+
+        /* Determine full module/package names */
+        final String myModule = PATH_BASE + myRoot + ThemisAnalysisChar.COMMENT + pModule + PATH_XTRA;
+        final String myPackage = PACKAGE_BASE + myRoot
+                + (pPackage == null
+                   ? ""
+                   : ThemisAnalysisChar.PERIOD + pPackage);
+
+        /* Protect against exceptions */
+        try {
+            final ThemisAnalysisPackage myPack = new ThemisAnalysisPackage(new File(myModule), myPackage);
             int i = 0;
         } catch (OceanusException e) {
             e.printStackTrace();

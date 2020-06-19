@@ -18,18 +18,16 @@ package net.sourceforge.joceanus.jthemis.analysis;
 
 import java.util.ArrayDeque;
 import java.util.Deque;
-import java.util.Map;
+
+import net.sourceforge.joceanus.jtethys.OceanusException;
+import net.sourceforge.joceanus.jthemis.ThemisDataException;
+import net.sourceforge.joceanus.jthemis.analysis.ThemisAnalysisContainer.ThemisAnalysisAdoptable;
 
 /**
  * Switch construct.
  */
 public class ThemisAnalysisSwitch
-        implements ThemisAnalysisContainer {
-    /**
-     * The parent.
-     */
-    private final ThemisAnalysisContainer theParent;
-
+        implements ThemisAnalysisContainer, ThemisAnalysisAdoptable {
     /**
      * The headers.
      */
@@ -41,24 +39,24 @@ public class ThemisAnalysisSwitch
     private final Deque<ThemisAnalysisElement> theContents;
 
     /**
-     * The dataTypes.
-     */
-    private final Map<String, ThemisAnalysisDataType> theDataTypes;
-
-    /**
      * The number of lines.
      */
     private final int theNumLines;
 
     /**
+     * The parent.
+     */
+    private ThemisAnalysisContainer theParent;
+
+    /**
      * Constructor.
      * @param pParser the parser
      * @param pLine the initial switch line
+     * @throws OceanusException on error
      */
     ThemisAnalysisSwitch(final ThemisAnalysisParser pParser,
-                         final ThemisAnalysisLine pLine) {
+                         final ThemisAnalysisLine pLine) throws OceanusException {
         /* Access details from parser */
-        theDataTypes = pParser.getDataTypes();
         theParent = pParser.getParent();
 
         /* Create the arrays */
@@ -78,8 +76,9 @@ public class ThemisAnalysisSwitch
     /**
      * process the lines.
      * @param pParser the parser
+     * @throws OceanusException on error
      */
-    void processLines(final ThemisAnalysisParser pParser) {
+    void processLines(final ThemisAnalysisParser pParser) throws OceanusException {
         /* Loop through the lines */
         while (pParser.hasLines()) {
             /* Access next line */
@@ -90,20 +89,15 @@ public class ThemisAnalysisSwitch
 
             /* Process default/case statements */
             if (!processed) {
-                processed = pParser.processCase(myLine);
+                processed = pParser.processCase(this, myLine);
             }
 
             /* If we haven't processed yet */
             if (!processed) {
                 /* We should never reach here */
-                throw new IllegalStateException("Unexpected code in switch");
+                throw new ThemisDataException("Unexpected code in switch");
             }
         }
-    }
-
-    @Override
-    public Map<String, ThemisAnalysisDataType> getDataTypes() {
-        return theDataTypes;
     }
 
     @Override
@@ -114,6 +108,11 @@ public class ThemisAnalysisSwitch
     @Override
     public ThemisAnalysisContainer getParent() {
         return theParent;
+    }
+
+    @Override
+    public void setParent(final ThemisAnalysisContainer pParent) {
+        theParent = pParent;
     }
 
     @Override

@@ -24,27 +24,47 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayDeque;
-import java.util.Collections;
 import java.util.Deque;
-import java.util.Map;
+import java.util.List;
 
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jthemis.ThemisDataException;
+import net.sourceforge.joceanus.jthemis.analysis.ThemisAnalysisDataMap.ThemisAnalysisDataType;
+import net.sourceforge.joceanus.jthemis.analysis.ThemisAnalysisDataMap.ThemisAnalysisIntermediate;
 
 /**
  * Analysis representation of a java file.
  */
 public class ThemisAnalysisFile
-    implements ThemisAnalysisContainer, ThemisAnalysisDataType {
+    implements ThemisAnalysisContainer, ThemisAnalysisIntermediate {
     /**
-     * The lineFeed character.
+     * Object class.
      */
-    private static final char LF = '\n';
+    interface ThemisAnalysisObject extends ThemisAnalysisDataType {
+        /**
+         * Obtain the short name.
+         * @return the name
+         */
+        String getShortName();
 
-    /**
-     * The carriageReturn character.
-     */
-    private static final char CR = '\r';
+        /**
+         * Obtain the full name of the object.
+         * @return the fullName
+         */
+        String getFullName();
+
+        /**
+         * Obtain ancestors.
+         * @return the list of ancestors
+         */
+        List<ThemisAnalysisReference> getAncestors();
+
+        /**
+         * Obtain properties.
+         * @return the properties
+         */
+        ThemisAnalysisProperties getProperties();
+    }
 
     /**
      * The buffer length (must be longer than longest line).
@@ -67,6 +87,11 @@ public class ThemisAnalysisFile
     private final ThemisAnalysisPackage thePackage;
 
     /**
+     * The dataMap.
+     */
+    private final ThemisAnalysisDataMap theDataMap;
+
+    /**
      * The contents.
      */
     private final Deque<ThemisAnalysisElement> theContents;
@@ -87,6 +112,7 @@ public class ThemisAnalysisFile
         thePackage = pPackage;
         theLocation = pFile;
         theName = pFile.getName().replace(ThemisAnalysisPackage.SFX_JAVA, "");
+        theDataMap = new ThemisAnalysisDataMap(thePackage.getDataMap());
 
         /* Create the list */
         theContents = new ArrayDeque<>();
@@ -101,8 +127,8 @@ public class ThemisAnalysisFile
     }
 
     /**
-     * Constructor.
-      * @throws OceanusException on error
+     * Process the file.
+     * @throws OceanusException on error
      */
     void processFile() throws OceanusException {
         /* Create the queue */
@@ -132,9 +158,8 @@ public class ThemisAnalysisFile
             /* Record the number of lines */
             theNumLines = myLines.size();
 
-            /* Post process the lines */
-            firstPassProcessLines(myLines);
-            secondPassProcessLines();
+            /* Perform initial processing pass */
+            initialProcessingPass(myLines);
 
             /* Catch exceptions */
         } catch (IOException e) {
@@ -145,8 +170,8 @@ public class ThemisAnalysisFile
     }
 
     @Override
-    public Map<String, ThemisAnalysisDataType> getDataTypes() {
-        return Collections.emptyMap();
+    public ThemisAnalysisDataMap getDataMap() {
+        return theDataMap;
     }
 
     @Override
@@ -157,6 +182,14 @@ public class ThemisAnalysisFile
     @Override
     public ThemisAnalysisContainer getParent() {
         return this;
+    }
+
+    /**
+     * Obtain the package.
+     * @return the package
+     */
+    String getPackageName() {
+        return thePackage.getPackage();
     }
 
     @Override
@@ -170,10 +203,11 @@ public class ThemisAnalysisFile
      * @param pBuffer the character buffer
      * @param pNumChars the number of characters in the buffer
      * @return the remaining characters in the buffer
+     * @throws OceanusException on error
      */
     private static int processLines(final Deque<ThemisAnalysisElement> pLines,
                                     final char[] pBuffer,
-                                    final int pNumChars) {
+                                    final int pNumChars) throws OceanusException {
         /* The start of the current line */
         int myOffset = 0;
 
@@ -205,18 +239,19 @@ public class ThemisAnalysisFile
      * @param pOffset the starting offset
      * @param pNumChars the number of characters in the buffer
      * @return the remaining characters in the buffer
+     * @throws OceanusException on error
      */
     private static int findLineFeedInBuffer(final char[] pBuffer,
                                             final int pOffset,
-                                            final int pNumChars) {
+                                            final int pNumChars) throws OceanusException {
         /* Loop through the buffer */
         for (int i = pOffset; i < pNumChars; i++) {
             /* Check for LF and NULL */
             switch (pBuffer[i])  {
-                case LF:
+                case ThemisAnalysisChar.LF:
                     return i;
-                case ThemisAnalysisLine.CHAR_NULL:
-                    throw new IllegalStateException("Null character in file");
+                case ThemisAnalysisChar.NULL:
+                    throw new ThemisDataException("Null character in file");
                 default:
                     break;
             }
@@ -238,7 +273,7 @@ public class ThemisAnalysisFile
                                                 final int pLineFeed) {
         /* Strip any trailing cr */
         int myLen = pLineFeed - pOffset;
-        if (myLen > 0 && pBuffer[pOffset + myLen - 1] == CR) {
+        if (myLen > 0 && pBuffer[pOffset + myLen - 1] == ThemisAnalysisChar.CR) {
             myLen--;
         }
 
@@ -249,46 +284,58 @@ public class ThemisAnalysisFile
     /**
      * Post-process the lines as first Pass.
      * @param pLines the lines to process
+     * @throws OceanusException on error
      */
-    void firstPassProcessLines(final Deque<ThemisAnalysisElement> pLines) {
+    private void initialProcessingPass(final Deque<ThemisAnalysisElement> pLines) throws OceanusException {
         /* Create the parser */
-        final ThemisAnalysisParser myParser = new ThemisAnalysisParser(pLines, theContents);
+        final ThemisAnalysisParser myParser = new ThemisAnalysisParser(pLines, theContents, this);
 
         /* Loop through the lines */
         while (myParser.hasLines()) {
             /* Access next line */
-            final ThemisAnalysisLine myLine = (ThemisAnalysisLine) myParser.popNextLine();
+            ThemisAnalysisLine myLine = (ThemisAnalysisLine) myParser.popNextLine();
 
-            /* Process comments and blanks */
-            boolean processed = myParser.processCommentsAndBlanks(myLine);
-
-            /* Process package */
-            if (!processed) {
-                processed = processPackage(myParser, myLine);
-            }
-
-            /* Process imports */
-            if (!processed) {
-                processed = myParser.processImports(myLine);
-            }
+            /* Process comments/blanks/package/imports */
+            boolean processed = myParser.processCommentsAndBlanks(myLine)
+                    ||  processPackage(myLine)
+                    ||  myParser.processImports(myLine);
 
             /* If we haven't processed yet */
             if (!processed) {
                 /* Process the class */
                 processed = myParser.processClass(myLine);
+                if (!processed) {
+                    throw new ThemisDataException("Unexpected contruct in file");
+                }
 
-                /* Must have finished by now */
-                if (!processed || myParser.hasLines()) {
-                    throw new IllegalStateException();
+                /* Process any trailing blanks/comments */
+                while (myParser.hasLines()) {
+                    myLine = (ThemisAnalysisLine) myParser.popNextLine();
+                    if (!myParser.processCommentsAndBlanks(myLine)) {
+                        throw new ThemisDataException("Trailing data in file");
+                    }
                 }
             }
         }
     }
 
     /**
-     * Post-process the lines as second Pass.
+     * perform consolidation processing pass.
+     * @throws OceanusException on error
      */
-    void secondPassProcessLines() {
+    void consolidationProcessingPass() throws OceanusException {
+        /* Consolidate classMap */
+        theDataMap.consolidateMap();
+    }
+
+    /**
+     * Perform final processing pass.
+     * @throws OceanusException on error
+     */
+    void finalProcessingPass() throws OceanusException {
+        /* Resolve references */
+        theDataMap.resolveReferences();
+
         /* Loop through the lines */
         for (ThemisAnalysisElement myElement : theContents) {
             /* If the element is a container */
@@ -298,27 +345,31 @@ public class ThemisAnalysisFile
                 myContainer.postProcessLines();
             }
         }
+
+        /* Report unknown items */
+        theDataMap.reportUnknown();
     }
 
     /**
      * Process a potential import line.
-     * @param pParser the parser
      * @param pLine the line
      * @return have we processed the line?
+     * @throws OceanusException on error
      */
-    private boolean processPackage(final ThemisAnalysisParser pParser,
-                                   final ThemisAnalysisLine pLine) {
+    private boolean processPackage(final ThemisAnalysisLine pLine) throws OceanusException {
         /* If this is a package line */
         if (ThemisAnalysisPackage.isPackage(pLine)) {
             /* Check that the package is correct named */
             if (!thePackage.getPackage().equals(pLine.toString())) {
-                throw new IllegalStateException("Bad package");
+                throw new ThemisDataException("Bad package");
             }
 
-            /* Add the class name of each of the packages to the dataTypes */
-            final Map<String, ThemisAnalysisDataType> myMap = pParser.getDataTypes();
-            for (ThemisAnalysisFile myFile : thePackage.getClasses()) {
-                myMap.put(myFile.getName(), myFile);
+            /* Setup the file resources */
+            theDataMap.setUpFileResources();
+
+            /* Declare all the files in this package to the dataMap */
+            for (ThemisAnalysisFile myFile : thePackage.getFiles()) {
+                theDataMap.declareFile(myFile);
             }
 
             /* Process the package line */

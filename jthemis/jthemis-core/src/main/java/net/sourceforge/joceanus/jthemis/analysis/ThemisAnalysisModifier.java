@@ -19,8 +19,7 @@ package net.sourceforge.joceanus.jthemis.analysis;
 /**
  * Modifiers.
  */
-public enum ThemisAnalysisModifier
-        implements ThemisAnalysisPrefix {
+public enum ThemisAnalysisModifier {
     /**
      * Private.
      */

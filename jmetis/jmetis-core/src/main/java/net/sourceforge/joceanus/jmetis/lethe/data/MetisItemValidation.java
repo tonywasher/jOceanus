@@ -23,7 +23,7 @@ import java.util.List;
 import net.sourceforge.joceanus.jmetis.data.MetisDataFieldValue;
 import net.sourceforge.joceanus.jmetis.data.MetisDataFormatter;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisDataObject.MetisDataContents;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisField;
+import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisLetheField;
 
 /**
  * Provides the implementation of a error buffer for an object that implements MetisDataContents.
@@ -74,7 +74,7 @@ public class MetisItemValidation
     }
 
     @Override
-    public Object getFieldValue(final MetisField pField) {
+    public Object getFieldValue(final MetisLetheField pField) {
         /* Handle out of range */
         final int iIndex = pField.getIndex();
         if (iIndex < 0
@@ -103,7 +103,7 @@ public class MetisItemValidation
      * @param pField the field for the error
      */
     public void addError(final String pText,
-                         final MetisField pField) {
+                         final MetisLetheField pField) {
         /* Create a new error element */
         final MetisErrorElement myEl = new MetisErrorElement(pText, pField);
 
@@ -119,7 +119,7 @@ public class MetisItemValidation
      * @param pField - the field number to check
      * @return <code>true</code> if there are any errors <code>false</code> otherwise
      */
-    public boolean hasErrors(final MetisField pField) {
+    public boolean hasErrors(final MetisLetheField pField) {
         /* Loop through the elements */
         final Iterator<MetisErrorElement> myIterator = theErrors.iterator();
         while (myIterator.hasNext()) {
@@ -137,7 +137,7 @@ public class MetisItemValidation
      * @param pField - the field number to check
      * @return the error text
      */
-    public String getFieldErrors(final MetisField pField) {
+    public String getFieldErrors(final MetisLetheField pField) {
         final StringBuilder myErrors = new StringBuilder();
 
         /* Loop through the elements */
@@ -169,7 +169,7 @@ public class MetisItemValidation
      * @param aFields the set of fields
      * @return the error text
      */
-    public String getFieldErrors(final MetisField[] aFields) {
+    public String getFieldErrors(final MetisLetheField[] aFields) {
         final StringBuilder myErrors = new StringBuilder();
 
         /* Loop through the elements */
@@ -177,11 +177,11 @@ public class MetisItemValidation
         while (myIterator.hasNext()) {
             /* Access the element and field */
             final MetisErrorElement myCurr = myIterator.next();
-            final MetisField myField = myCurr.getField();
+            final MetisLetheField myField = myCurr.getField();
 
             /* Search the field set */
             boolean bFound = false;
-            for (MetisField field : aFields) {
+            for (MetisLetheField field : aFields) {
                 /* If we have found the field note it and break loop */
                 if ((field != null) && field.equals(myField)) {
                     bFound = true;
@@ -254,7 +254,7 @@ public class MetisItemValidation
         /**
          * The field for the error.
          */
-        private final MetisField theField;
+        private final MetisLetheField theField;
 
         /**
          * Constructor for the error.
@@ -262,7 +262,7 @@ public class MetisItemValidation
          * @param pField the field
          */
         private MetisErrorElement(final String pError,
-                                  final MetisField pField) {
+                                  final MetisLetheField pField) {
             theError = pError;
             theField = pField;
         }
@@ -279,7 +279,7 @@ public class MetisItemValidation
          * Get the field for the error.
          * @return the field
          */
-        public MetisField getField() {
+        public MetisLetheField getField() {
             return theField;
         }
 

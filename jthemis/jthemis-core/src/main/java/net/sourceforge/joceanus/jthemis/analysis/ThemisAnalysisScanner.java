@@ -19,10 +19,14 @@ package net.sourceforge.joceanus.jthemis.analysis;
 import java.util.ArrayDeque;
 import java.util.Deque;
 
+import net.sourceforge.joceanus.jtethys.OceanusException;
+import net.sourceforge.joceanus.jthemis.ThemisDataException;
+
 /**
  * Scanner for headers and trailers.
  */
-public class ThemisAnalysisScanner {
+public class
+ThemisAnalysisScanner {
     /**
      * The parser.
      */
@@ -61,9 +65,10 @@ public class ThemisAnalysisScanner {
      * @param pLine the current line
      * @param pTerminator the terminator
      * @return the results
+     * @throws OceanusException on error
      */
     Deque<ThemisAnalysisElement> scanForTerminator(final ThemisAnalysisLine pLine,
-                                                   final char pTerminator) {
+                                                   final char pTerminator) throws OceanusException {
         /* Allocate array */
         theResults = new ArrayDeque<>();
 
@@ -84,8 +89,8 @@ public class ThemisAnalysisScanner {
             final char myChar = theCurLine.charAt(theCurPos);
 
             /* If this is a single/double quote */
-            if (myChar == ThemisAnalysisLine.SINGLEQUOTE
-                    || myChar == ThemisAnalysisLine.DOUBLEQUOTE) {
+            if (myChar == ThemisAnalysisChar.SINGLEQUOTE
+                    || myChar == ThemisAnalysisChar.DOUBLEQUOTE) {
                 /* Find the end of the sequence and skip the quotes */
                 final int myEnd = theCurLine.findEndOfQuotedSequence(theCurPos);
                 theCurPos = myEnd + 1;
@@ -94,7 +99,7 @@ public class ThemisAnalysisScanner {
             } else if (myChar == pTerminator) {
                 /* Must be at the end of the line */
                 if (theCurPos != theLength - 1) {
-                    throw new IllegalStateException("Not at end of line");
+                    throw new ThemisDataException("Not at end of line");
                 }
 
                 /* Strip end character, add to results and break loop */
@@ -103,14 +108,14 @@ public class ThemisAnalysisScanner {
                 break;
 
                 /* If this is a parenthesisOpen character */
-            } else if (myChar == ThemisAnalysisParenthesis.PARENTHESIS_OPEN) {
+            } else if (myChar == ThemisAnalysisChar.PARENTHESIS_OPEN) {
                 /* Handle the nested sequence */
-                handleNestedSequence(ThemisAnalysisParenthesis.PARENTHESIS_CLOSE);
+                handleNestedSequence(ThemisAnalysisChar.PARENTHESIS_CLOSE);
 
                 /* If this is a braceOpen character */
-            } else if (myChar == ThemisAnalysisBuilder.BRACE_OPEN) {
+            } else if (myChar == ThemisAnalysisChar.BRACE_OPEN) {
                 /* Handle the nested sequence */
-                handleNestedSequence(ThemisAnalysisBuilder.BRACE_CLOSE);
+                handleNestedSequence(ThemisAnalysisChar.BRACE_CLOSE);
 
                 /* else move to next character */
             } else {
@@ -124,15 +129,47 @@ public class ThemisAnalysisScanner {
     }
 
     /**
-     * Shift to next line.
+     * Scan For Terminator.
+     * @param pLine the current line
+     * @return the results
+     * @throws OceanusException on error
      */
-    private void shiftToNextLine() {
+    Deque<ThemisAnalysisElement> scanForGeneric(final ThemisAnalysisLine pLine) throws OceanusException {
+        /* Allocate array */
+        theResults = new ArrayDeque<>();
+
+        /* Access line details */
+        theCurLine = pLine;
+        theLength = theCurLine.getLength();
+        theCurPos = 0;
+
+        /* Locate the end of the sequence */
+        handleNestedSequence(ThemisAnalysisChar.GENERIC_CLOSE);
+
+        /* Strip to end character and add to results */
+        final ThemisAnalysisLine myLine = theCurLine.stripUpToPosition(theCurPos - 1);
+        theResults.add(myLine);
+
+        /* Return a non-blank line to the stack and break loop */
+        if (!ThemisAnalysisBlank.isBlank(theCurLine)) {
+            theParser.pushLine(theCurLine);
+        }
+
+        /* Return the results */
+        return theResults;
+    }
+
+    /**
+     * Shift to next line.
+     * @throws OceanusException on error
+     */
+    private void shiftToNextLine() throws OceanusException {
          /* Add current line to the results */
          theResults.add(theCurLine);
 
          /* Check for additional lines */
          if (!theParser.hasLines()) {
-             throw new IllegalStateException("Did not find terminator");
+             throw new ThemisDataException("Did not find terminator");
          }
 
          /* Access the next line */
@@ -144,8 +181,9 @@ public class ThemisAnalysisScanner {
     /**
      * Handle nested sequence.
      * @param pNestEnd the nest end character
+     * @throws OceanusException on error
      */
-    private void handleNestedSequence(final char pNestEnd) {
+    private void handleNestedSequence(final char pNestEnd) throws OceanusException {
         /* Access the nest start character */
         final char myNestStart = theCurLine.charAt(theCurPos);
 

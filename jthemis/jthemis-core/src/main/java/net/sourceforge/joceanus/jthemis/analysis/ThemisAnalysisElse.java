@@ -18,7 +18,8 @@ package net.sourceforge.joceanus.jthemis.analysis;
 
 import java.util.ArrayDeque;
 import java.util.Deque;
-import java.util.Map;
+
+import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
  * Else construct.
@@ -46,11 +47,6 @@ public class ThemisAnalysisElse
     private final ThemisAnalysisElse theElse;
 
     /**
-     * The dataTypes.
-     */
-    private final Map<String, ThemisAnalysisDataType> theDataTypes;
-
-    /**
      * The number of lines.
      */
     private final int theNumLines;
@@ -58,13 +54,15 @@ public class ThemisAnalysisElse
     /**
      * Constructor.
      * @param pParser the parser
+     * @param pOwner the owning if
      * @param pLine the initial else line
+     * @throws OceanusException on error
      */
     ThemisAnalysisElse(final ThemisAnalysisParser pParser,
-                       final ThemisAnalysisLine pLine) {
-        /* Access details from parser */
-        theDataTypes = pParser.getDataTypes();
-        theParent = pParser.getParent();
+                       final ThemisAnalysisContainer pOwner,
+                       final ThemisAnalysisLine pLine) throws OceanusException {
+        /* Record the parent */
+        theParent = pOwner;
 
         /* Create the arrays */
         theHeaders = ThemisAnalysisBuilder.parseHeaders(pParser, pLine);
@@ -72,7 +70,7 @@ public class ThemisAnalysisElse
         final int myBaseLines = myLines.size();
 
         /* Look for else clauses */
-        theElse = (ThemisAnalysisElse) pParser.processExtra(ThemisAnalysisKeyWord.ELSE);
+        theElse = (ThemisAnalysisElse) pParser.processExtra(pOwner, ThemisAnalysisKeyWord.ELSE);
 
         /* Create a parser */
         theContents = new ArrayDeque<>();
@@ -81,11 +79,6 @@ public class ThemisAnalysisElse
 
         /* Calculate the number of lines */
         theNumLines = calculateNumLines(myBaseLines);
-    }
-
-    @Override
-    public Map<String, ThemisAnalysisDataType> getDataTypes() {
-        return theDataTypes;
     }
 
     @Override
@@ -99,7 +92,7 @@ public class ThemisAnalysisElse
     }
 
     @Override
-    public void postProcessExtras() {
+    public void postProcessExtras() throws OceanusException {
         /* Process the else clause if required */
         if (theElse != null) {
             theElse.postProcessLines();

@@ -23,7 +23,7 @@ import net.sourceforge.joceanus.jmetis.data.MetisDataDifference;
 import net.sourceforge.joceanus.jmetis.data.MetisDataFieldValue;
 import net.sourceforge.joceanus.jmetis.field.MetisFieldRequired;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisField;
+import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisLetheField;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.AssetPair.AssetDirection;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.MoneyWiseTax.MoneyWiseTaxCredit;
@@ -56,12 +56,12 @@ public class TransactionInfoSet
     /**
      * FieldSet map.
      */
-    private static final Map<MetisField, TransactionInfoClass> FIELDSET_MAP = MetisFields.buildFieldMap(FIELD_DEFS, TransactionInfoClass.class);
+    private static final Map<MetisLetheField, TransactionInfoClass> FIELDSET_MAP = MetisFields.buildFieldMap(FIELD_DEFS, TransactionInfoClass.class);
 
     /**
      * Reverse FieldSet map.
      */
-    private static final Map<TransactionInfoClass, MetisField> REVERSE_FIELDMAP = MetisFields.reverseFieldMap(FIELDSET_MAP, TransactionInfoClass.class);
+    private static final Map<TransactionInfoClass, MetisLetheField> REVERSE_FIELDMAP = MetisFields.reverseFieldMap(FIELDSET_MAP, TransactionInfoClass.class);
 
     /**
      * Constructor.
@@ -82,7 +82,7 @@ public class TransactionInfoSet
     }
 
     @Override
-    public Object getFieldValue(final MetisField pField) {
+    public Object getFieldValue(final MetisLetheField pField) {
         /* Handle InfoSet fields */
         final TransactionInfoClass myClass = getClassForField(pField);
         if (myClass != null) {
@@ -127,7 +127,7 @@ public class TransactionInfoSet
      * @param pField the field
      * @return the class
      */
-    public static TransactionInfoClass getClassForField(final MetisField pField) {
+    public static TransactionInfoClass getClassForField(final MetisLetheField pField) {
         /* Look up field in map */
         return FIELDSET_MAP.get(pField);
     }
@@ -137,7 +137,7 @@ public class TransactionInfoSet
      * @param pClass the class
      * @return the field
      */
-    public static MetisField getFieldForClass(final TransactionInfoClass pClass) {
+    public static MetisLetheField getFieldForClass(final TransactionInfoClass pClass) {
         /* Look up field in map */
         return REVERSE_FIELDMAP.get(pClass);
     }
@@ -174,7 +174,7 @@ public class TransactionInfoSet
      * @param pField the infoSet field
      * @return the status
      */
-    public MetisFieldRequired isFieldRequired(final MetisField pField) {
+    public MetisFieldRequired isFieldRequired(final MetisLetheField pField) {
         final TransactionInfoClass myClass = getClassForField(pField);
         return myClass == null
                                ? MetisFieldRequired.NOTALLOWED

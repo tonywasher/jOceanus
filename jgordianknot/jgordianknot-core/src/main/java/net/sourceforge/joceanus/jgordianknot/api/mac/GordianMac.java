@@ -83,4 +83,3 @@ public interface GordianMac
         return finish();
     }
 }
-

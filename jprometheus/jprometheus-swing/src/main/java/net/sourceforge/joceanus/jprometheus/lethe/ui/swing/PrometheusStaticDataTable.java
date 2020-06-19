@@ -22,7 +22,7 @@ import javax.swing.BoxLayout;
 import javax.swing.JTable;
 
 import net.sourceforge.joceanus.jmetis.atlas.ui.MetisErrorPanel;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisField;
+import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisLetheField;
 import net.sourceforge.joceanus.jmetis.lethe.field.swing.MetisSwingFieldCellEditor.MetisFieldIconButtonCellEditor;
 import net.sourceforge.joceanus.jmetis.lethe.field.swing.MetisSwingFieldCellEditor.MetisFieldStringCellEditor;
 import net.sourceforge.joceanus.jmetis.lethe.field.swing.MetisSwingFieldCellRenderer.MetisFieldIconButtonCellRenderer;
@@ -404,8 +404,8 @@ public class PrometheusStaticDataTable<L extends StaticList<T, S, E>, T extends 
         }
 
         @Override
-        public MetisField getFieldForCell(final T pItem,
-                                          final int pColIndex) {
+        public MetisLetheField getFieldForCell(final T pItem,
+                                               final int pColIndex) {
             /* Obtain the column field */
             return theColumns.getFieldForCell(pColIndex);
         }
@@ -640,7 +640,7 @@ public class PrometheusStaticDataTable<L extends StaticList<T, S, E>, T extends 
          * @param pColIndex column index
          * @return the field
          */
-        private MetisField getFieldForCell(final int pColIndex) {
+        private MetisLetheField getFieldForCell(final int pColIndex) {
             /* Switch on column */
             switch (pColIndex) {
                 case COLUMN_CLASS:

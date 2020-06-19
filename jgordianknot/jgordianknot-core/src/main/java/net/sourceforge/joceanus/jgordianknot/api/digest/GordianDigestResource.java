@@ -228,4 +228,3 @@ public enum GordianDigestResource implements TethysBundleId {
         return TethysBundleLoader.getKeyForEnum(DIGEST_MAP, pDigest);
     }
 }
-

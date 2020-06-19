@@ -24,7 +24,7 @@ import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
 
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisField;
+import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisLetheField;
 import net.sourceforge.joceanus.jmetis.lethe.field.swing.MetisSwingFieldCellRenderer.MetisFieldRowCellRenderer;
 
 /**
@@ -274,9 +274,9 @@ public class PrometheusDataTableColumn
          * Access the array of displayed column indices.
          * @return the array of columns
          */
-        protected MetisField[] getColumnFields() {
+        protected MetisLetheField[] getColumnFields() {
             /* Declare the field array */
-            final MetisField[] myFields = new MetisField[getColumnCount()];
+            final MetisLetheField[] myFields = new MetisLetheField[getColumnCount()];
             int myCol;
 
             /* Loop through the columns */

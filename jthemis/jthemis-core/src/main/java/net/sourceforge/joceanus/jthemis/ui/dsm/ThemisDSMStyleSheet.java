@@ -52,4 +52,3 @@ public enum ThemisDSMStyleSheet implements TethysStyleSheetId {
         return ThemisDSMStyleSheet.class.getResourceAsStream(theSource);
     }
 }
-

@@ -20,6 +20,7 @@ import java.util.EnumMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import net.sourceforge.joceanus.jmoneywise.lethe.data.Security;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.SecurityTypeClass;
@@ -267,9 +268,9 @@ public class QIFSecurity
 
             /* Loop through the map entries */
             SecurityTypeClass myClass = null;
-            final Iterator<Map.Entry<SecurityTypeClass, String>> myIterator = QIF_ACTCATMAP.entrySet().iterator();
+            final Iterator<Entry<SecurityTypeClass, String>> myIterator = QIF_ACTCATMAP.entrySet().iterator();
             while (myIterator.hasNext()) {
-                final Map.Entry<SecurityTypeClass, String> myEntry = myIterator.next();
+                final Entry<SecurityTypeClass, String> myEntry = myIterator.next();
 
                 /* If we have a match */
                 if (pType.equals(myEntry.getValue())) {

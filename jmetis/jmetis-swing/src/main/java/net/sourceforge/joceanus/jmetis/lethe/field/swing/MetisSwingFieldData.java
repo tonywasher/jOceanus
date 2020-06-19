@@ -24,7 +24,7 @@ import javax.swing.table.JTableHeader;
 
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFieldSetItem;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFieldState;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisField;
+import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisLetheField;
 
 /**
  * The Render Data class.
@@ -208,7 +208,7 @@ public final class MetisSwingFieldData {
      * @param pField the field id
      */
     public void processTableRow(final MetisFieldSetItem pRow,
-                                final MetisField pField) {
+                                final MetisLetheField pField) {
         /* Obtain the field state */
         theState = pRow.getFieldState(pField);
         final boolean isDisabled = pRow.isDisabled();
@@ -254,7 +254,7 @@ public final class MetisSwingFieldData {
      * @param pFields the field IDs
      */
     public void processRowHeader(final MetisFieldSetItem pRow,
-                                 final MetisField[] pFields) {
+                                 final MetisLetheField[] pFields) {
         /* Initialise toolTip */
         theToolTipText = null;
 
@@ -293,7 +293,7 @@ public final class MetisSwingFieldData {
         final boolean isNull = pItem == null;
 
         /* Obtain the state */
-        final MetisField myField = pElement.getField();
+        final MetisLetheField myField = pElement.getField();
         theState = isNull
                           ? MetisFieldState.NORMAL
                           : pItem.getFieldState(myField);

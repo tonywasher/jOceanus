@@ -18,18 +18,15 @@ package net.sourceforge.joceanus.jthemis.analysis;
 
 import java.util.ArrayDeque;
 import java.util.Deque;
-import java.util.Map;
+
+import net.sourceforge.joceanus.jtethys.OceanusException;
+import net.sourceforge.joceanus.jthemis.analysis.ThemisAnalysisContainer.ThemisAnalysisAdoptable;
 
 /**
  * Try construct.
  */
 public class ThemisAnalysisTry
-        implements ThemisAnalysisContainer {
-    /**
-     * The parent.
-     */
-    private final ThemisAnalysisContainer theParent;
-
+        implements ThemisAnalysisContainer, ThemisAnalysisAdoptable {
     /**
      * The headers.
      */
@@ -51,24 +48,24 @@ public class ThemisAnalysisTry
     private final ThemisAnalysisFinally theFinally;
 
     /**
-     * The dataTypes.
-     */
-    private final Map<String, ThemisAnalysisDataType> theDataTypes;
-
-    /**
      * The number of lines.
      */
     private final int theNumLines;
 
     /**
+     * The parent.
+     */
+    private ThemisAnalysisContainer theParent;
+
+    /**
      * Constructor.
      * @param pParser the parser
      * @param pLine the initial try line
+     * @throws OceanusException on error
      */
     ThemisAnalysisTry(final ThemisAnalysisParser pParser,
-                      final ThemisAnalysisLine pLine) {
+                      final ThemisAnalysisLine pLine) throws OceanusException {
         /* Access details from parser */
-        theDataTypes = pParser.getDataTypes();
         theParent = pParser.getParent();
 
         /* Create the arrays */
@@ -77,10 +74,10 @@ public class ThemisAnalysisTry
         final int myBaseLines = myLines.size();
 
         /* Look for catch clauses */
-        theCatch = (ThemisAnalysisCatch) pParser.processExtra(ThemisAnalysisKeyWord.CATCH);
+        theCatch = (ThemisAnalysisCatch) pParser.processExtra(this, ThemisAnalysisKeyWord.CATCH);
 
         /* Look for finally clauses */
-        theFinally = (ThemisAnalysisFinally) pParser.processExtra(ThemisAnalysisKeyWord.FINALLY);
+        theFinally = (ThemisAnalysisFinally) pParser.processExtra(this, ThemisAnalysisKeyWord.FINALLY);
 
         /* Create a parser */
         theContents = new ArrayDeque<>();
@@ -92,17 +89,12 @@ public class ThemisAnalysisTry
     }
 
     @Override
-    public Map<String, ThemisAnalysisDataType> getDataTypes() {
-        return theDataTypes;
-    }
-
-    @Override
     public Deque<ThemisAnalysisElement> getContents() {
         return theContents;
     }
 
     @Override
-    public void postProcessExtras() {
+    public void postProcessExtras() throws OceanusException {
         /* Process the catch clause if required */
         if (theCatch != null) {
             theCatch.postProcessLines();
@@ -117,6 +109,11 @@ public class ThemisAnalysisTry
     @Override
     public ThemisAnalysisContainer getParent() {
         return theParent;
+    }
+
+    @Override
+    public void setParent(final ThemisAnalysisContainer pParent) {
+        theParent = pParent;
     }
 
     /**

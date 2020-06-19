@@ -21,6 +21,7 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -28,7 +29,7 @@ import org.w3c.dom.Node;
 
 import net.sourceforge.joceanus.jmetis.data.MetisDataFormatter;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisField;
+import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisLetheField;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisValueSet;
 
 /**
@@ -106,7 +107,7 @@ public class DataValues<E extends Enum<E>> {
     /**
      * Field Definitions.
      */
-    private final Map<MetisField, Object> theFields;
+    private final Map<MetisLetheField, Object> theFields;
 
     /**
      * InfoSet values.
@@ -138,9 +139,9 @@ public class DataValues<E extends Enum<E>> {
         final MetisValueSet myValues = pItem.getValueSet();
 
         /* Iterate through the fields */
-        final Iterator<MetisField> myIterator = pItem.getDataFields().fieldIterator();
+        final Iterator<MetisLetheField> myIterator = pItem.getDataFields().fieldIterator();
         while (myIterator.hasNext()) {
-            final MetisField myField = myIterator.next();
+            final MetisLetheField myField = myIterator.next();
 
             /* Ignore field if it is irrelevant */
             if (!myField.getStorage().isValueSet()
@@ -286,9 +287,9 @@ public class DataValues<E extends Enum<E>> {
         }
 
         /* Loop through the children */
-        final Iterator<MetisField> myIterator = pFields.fieldIterator();
+        final Iterator<MetisLetheField> myIterator = pFields.fieldIterator();
         while (myIterator.hasNext()) {
-            final MetisField myField = myIterator.next();
+            final MetisLetheField myField = myIterator.next();
 
             /* If the field is an equality valueSet item */
             if (myField.getStorage().isValueSet()
@@ -387,7 +388,7 @@ public class DataValues<E extends Enum<E>> {
      * Obtain Field iterator.
      * @return the Field iterator
      */
-    public final Iterator<Map.Entry<MetisField, Object>> fieldIterator() {
+    public final Iterator<Entry<MetisLetheField, Object>> fieldIterator() {
         return theFields.entrySet().iterator();
     }
 
@@ -428,7 +429,7 @@ public class DataValues<E extends Enum<E>> {
      * @param pField the Field definition
      * @param pValue the field value
      */
-    public void addValue(final MetisField pField,
+    public void addValue(final MetisLetheField pField,
                          final Object pValue) {
         /* If the value is non-null */
         if (pValue != null) {
@@ -442,7 +443,7 @@ public class DataValues<E extends Enum<E>> {
      * @param pField the Field definition
      * @return the field value
      */
-    public Object getValue(final MetisField pField) {
+    public Object getValue(final MetisLetheField pField) {
         /* Return the field */
         return theFields.get(pField);
     }
@@ -454,7 +455,7 @@ public class DataValues<E extends Enum<E>> {
      * @param <T> the item type
      * @return the field value
      */
-    public <T> T getValue(final MetisField pField,
+    public <T> T getValue(final MetisLetheField pField,
                           final Class<T> pClass) {
         /* Return the properly cast field */
         return pClass.cast(getValue(pField));
@@ -508,9 +509,9 @@ public class DataValues<E extends Enum<E>> {
         final Element myElement = pDocument.createElement(theItemType);
 
         /* Loop through the values */
-        for (Map.Entry<MetisField, Object> myEntry : theFields.entrySet()) {
+        for (Entry<MetisLetheField, Object> myEntry : theFields.entrySet()) {
             /* Access parts */
-            final MetisField myField = myEntry.getKey();
+            final MetisLetheField myField = myEntry.getKey();
             final Object myValue = myEntry.getValue();
 
             /* If this is the Id */

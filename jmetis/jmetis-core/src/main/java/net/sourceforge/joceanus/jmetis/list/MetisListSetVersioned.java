@@ -22,6 +22,7 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import net.sourceforge.joceanus.jmetis.data.MetisDataFormatter;
 import net.sourceforge.joceanus.jmetis.field.MetisFieldItem;
@@ -475,9 +476,9 @@ public class MetisListSetVersioned
             thePairedReferenceMap.remove(myId);
 
             /* Iterate through the map entries */
-            final Iterator<Map.Entry<Long, MetisFieldPairedItem>> myIterator = thePairedMap.entrySet().iterator();
+            final Iterator<Entry<Long, MetisFieldPairedItem>> myIterator = thePairedMap.entrySet().iterator();
             while (myIterator.hasNext()) {
-                final Map.Entry<Long, MetisFieldPairedItem> myEntry = myIterator.next();
+                final Entry<Long, MetisFieldPairedItem> myEntry = myIterator.next();
 
                 /* If the entry references the Id */
                 if (myEntry.getValue().referencesId(myId)) {
@@ -515,9 +516,9 @@ public class MetisListSetVersioned
      */
     protected void rebasePairedItems(final MetisListSetVersioned pSource) {
         /* Iterate through the paired map entries */
-        final Iterator<Map.Entry<Long, MetisFieldPairedItem>> myIterator = pSource.thePairedMap.entrySet().iterator();
+        final Iterator<Entry<Long, MetisFieldPairedItem>> myIterator = pSource.thePairedMap.entrySet().iterator();
         while (myIterator.hasNext()) {
-            final Map.Entry<Long, MetisFieldPairedItem> myEntry = myIterator.next();
+            final Entry<Long, MetisFieldPairedItem> myEntry = myIterator.next();
 
             /* If the entry does not currently exist */
             if (!thePairedMap.containsKey(myEntry.getKey())) {
@@ -527,9 +528,9 @@ public class MetisListSetVersioned
         }
 
         /* Iterate through the paired reference map entries */
-        final Iterator<Map.Entry<Integer, MetisFieldVersionedItem>> myRefIterator = pSource.thePairedReferenceMap.entrySet().iterator();
+        final Iterator<Entry<Integer, MetisFieldVersionedItem>> myRefIterator = pSource.thePairedReferenceMap.entrySet().iterator();
         while (myIterator.hasNext()) {
-            final Map.Entry<Integer, MetisFieldVersionedItem> myEntry = myRefIterator.next();
+            final Entry<Integer, MetisFieldVersionedItem> myEntry = myRefIterator.next();
 
             /* If the entry does not currently exist */
             if (!thePairedReferenceMap.containsKey(myEntry.getKey())) {

@@ -47,4 +47,3 @@ public enum GordianFactoryType {
         return theName;
     }
 }
-

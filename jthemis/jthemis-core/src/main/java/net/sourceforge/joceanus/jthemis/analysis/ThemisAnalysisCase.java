@@ -20,7 +20,8 @@ import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Deque;
 import java.util.List;
-import java.util.Map;
+
+import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
  * Case construct.
@@ -38,11 +39,6 @@ public class ThemisAnalysisCase
     private final Deque<ThemisAnalysisElement> theContents;
 
     /**
-     * The dataTypes.
-     */
-    private final Map<String, ThemisAnalysisDataType> theDataTypes;
-
-    /**
      * The case values.
      */
     private final List<Object> theCases;
@@ -55,13 +51,15 @@ public class ThemisAnalysisCase
     /**
      * Constructor.
      * @param pParser the parser
+     * @param pOwner the owning switch
      * @param pCase the case
+     * @throws OceanusException on error
      */
     ThemisAnalysisCase(final ThemisAnalysisParser pParser,
-                       final Object pCase) {
-        /* Access details from parser */
-        theDataTypes = pParser.getDataTypes();
-        theParent = pParser.getParent();
+                       final ThemisAnalysisContainer pOwner,
+                       final Object pCase) throws OceanusException {
+        /* Record the parent */
+        theParent = pOwner;
 
         /* Initialise the case value */
         theCases = new ArrayList<>();
@@ -79,8 +77,9 @@ public class ThemisAnalysisCase
     /**
      * process the lines.
      * @param pParser the parser
+     * @throws OceanusException on error
      */
-    void processLines(final ThemisAnalysisParser pParser) {
+    void processLines(final ThemisAnalysisParser pParser) throws OceanusException {
         /* we are still processing Cases */
         boolean look4Case = true;
 
@@ -125,11 +124,6 @@ public class ThemisAnalysisCase
                 theContents.add(myLine);
             }
         }
-    }
-
-    @Override
-    public Map<String, ThemisAnalysisDataType> getDataTypes() {
-        return theDataTypes;
     }
 
     @Override

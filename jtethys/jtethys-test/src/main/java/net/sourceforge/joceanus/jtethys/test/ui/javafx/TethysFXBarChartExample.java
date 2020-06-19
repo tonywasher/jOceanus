@@ -106,7 +106,7 @@ public class TethysFXBarChartExample extends Application {
         theChart.setTitle(pData.getTitle());
 
         /* Access and clear the data */
-        final ObservableList<XYChart.Series<String, Number>> myData = theChart.getData();
+        final ObservableList<Series<String, Number>> myData = theChart.getData();
         myData.clear();
         theSectionMap.clear();
 
@@ -114,7 +114,7 @@ public class TethysFXBarChartExample extends Application {
         final Iterator<TethysBarChartSeries> myIterator = pData.seriesIterator();
         while (myIterator.hasNext()) {
             final TethysBarChartSeries myBase = myIterator.next();
-            final Series<String, Number> mySeries = new XYChart.Series<>();
+            final Series<String, Number> mySeries = new Series<>();
             mySeries.setName(myBase.getName());
             final ObservableList<Data<String, Number>> mySections = mySeries.getData();
             myData.add(mySeries);

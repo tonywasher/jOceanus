@@ -121,4 +121,3 @@ public enum GordianDSTU4145Elliptic implements GordianElliptic {
         return name();
     }
 }
-

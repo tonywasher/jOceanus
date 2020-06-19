@@ -20,27 +20,30 @@ import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Deque;
 import java.util.List;
-import java.util.Map;
+
+import net.sourceforge.joceanus.jtethys.OceanusException;
+import net.sourceforge.joceanus.jthemis.analysis.ThemisAnalysisFile.ThemisAnalysisObject;
+import net.sourceforge.joceanus.jthemis.analysis.ThemisAnalysisGeneric.ThemisAnalysisGenericBase;
 
 /**
  * Enum representation.
  */
 public class ThemisAnalysisEnum
-        implements ThemisAnalysisContainer, ThemisAnalysisDataType {
+        implements ThemisAnalysisContainer, ThemisAnalysisObject {
     /**
-     * The name of the class.
+     * The short name of the class.
      */
-    private final String theName;
+    private final String theShortName;
 
     /**
-     * The modifiers.
+     * The full name of the class.
      */
-    private final List<ThemisAnalysisPrefix> theModifiers;
+    private final String theFullName;
 
     /**
-     * The headers.
+     * The ancestors.
      */
-    private final Deque<ThemisAnalysisElement> theHeaders;
+    private final List<ThemisAnalysisReference> theAncestors;
 
     /**
      * The contents.
@@ -48,9 +51,9 @@ public class ThemisAnalysisEnum
     private final Deque<ThemisAnalysisElement> theContents;
 
     /**
-     * The dataTypes.
+     * The dataMap.
      */
-    private final Map<String, ThemisAnalysisDataType> theDataTypes;
+    private final ThemisAnalysisDataMap theDataMap;
 
     /**
      * The values.
@@ -63,41 +66,67 @@ public class ThemisAnalysisEnum
     private final int theNumLines;
 
     /**
+     * The properties.
+     */
+    private ThemisAnalysisProperties theProperties;
+
+    /**
      * Constructor.
      * @param pParser the parser
      * @param pLine the initial enum line
+     * @throws OceanusException on error
      */
     ThemisAnalysisEnum(final ThemisAnalysisParser pParser,
-                       final ThemisAnalysisLine pLine) {
+                       final ThemisAnalysisLine pLine) throws OceanusException {
         /* Store parameters */
-        theName = pLine.stripNextToken();
-        theModifiers = pLine.getModifiers();
-        theDataTypes = pParser.getDataTypes();
+        theShortName = pLine.stripNextToken();
+        theProperties = pLine.getProperties();
         theValues = new ArrayList<>();
+        final ThemisAnalysisContainer myParent = pParser.getParent();
+        theDataMap = new ThemisAnalysisDataMap(myParent.getDataMap());
 
-        /* Create the arrays */
-        theHeaders = ThemisAnalysisBuilder.parseHeaders(pParser, pLine);
+        /* Handle generic variables */
+        ThemisAnalysisLine myLine = pLine;
+        if (ThemisAnalysisGeneric.isGeneric(pLine)) {
+            /* Declare them to the properties */
+            theProperties = theProperties.setGenericVariables(new ThemisAnalysisGenericBase(pParser, myLine));
+            myLine = (ThemisAnalysisLine) pParser.popNextLine();
+        }
+
+        /* Determine the full name */
+        theFullName = myParent.determineFullChildName(theShortName);
+
+        /* declare the enum */
+        theDataMap.declareObject(this);
+
+        /* Parse the headers */
+        final Deque<ThemisAnalysisElement> myHeaders = ThemisAnalysisBuilder.parseHeaders(pParser, myLine);
+
+        /* Parse the body */
         final Deque<ThemisAnalysisElement> myLines = ThemisAnalysisBuilder.processBody(pParser);
         final int myBaseLines = myLines.size();
-
-        /* add/replace the enum in the map */
-        final Map<String, ThemisAnalysisDataType> myMap = pParser.getDataTypes();
-        myMap.put(theName, this);
 
         /* Create a parser */
         theContents = new ArrayDeque<>();
         final ThemisAnalysisParser myParser = new ThemisAnalysisParser(myLines, theContents, this);
-        processLines(myParser);
+
+        /* Resolve the generics */
+        theProperties.resolveGeneric(myParser);
+
+        /* Parse the ancestors and lines */
+        theAncestors = myParser.parseAncestors(myHeaders);
+        initialProcessingPass(myParser);
 
         /* Calculate the number of lines */
-        theNumLines = calculateNumLines(myBaseLines);
+        theNumLines = calculateNumLines(myBaseLines, myHeaders.size());
     }
 
     /**
-     * process the lines.
+     * perform initial processing pass.
      * @param pParser the parser
+     * @throws OceanusException on error
      */
-    void processLines(final ThemisAnalysisParser pParser) {
+    void initialProcessingPass(final ThemisAnalysisParser pParser) throws OceanusException {
         /* we are still processing Enums */
         boolean look4Enum = true;
 
@@ -137,28 +166,36 @@ public class ThemisAnalysisEnum
      * process the enumValue.
      * @param pLine the line
      * @return continue to look for eNums true, false
+     * @throws OceanusException on error
      */
-    private boolean processEnumValue(final ThemisAnalysisLine pLine) {
+    private boolean processEnumValue(final ThemisAnalysisLine pLine) throws OceanusException {
         /* Access the token */
         final String myToken = pLine.stripNextToken();
-        if (pLine.startsWithChar(ThemisAnalysisParenthesis.PARENTHESIS_OPEN)) {
+        if (pLine.startsWithChar(ThemisAnalysisChar.PARENTHESIS_OPEN)) {
             ThemisAnalysisParenthesis.stripParenthesisContents(pLine);
         }
         theValues.add(myToken);
-        return pLine.endsWithChar(ThemisAnalysisBuilder.STATEMENT_SEP);
-    }
-
-    /**
-     * Obtain the name.
-     * @return the name
-     */
-    public String getName() {
-        return theName;
+        return pLine.endsWithChar(ThemisAnalysisChar.COMMA);
     }
 
     @Override
-    public Map<String, ThemisAnalysisDataType> getDataTypes() {
-        return theDataTypes;
+    public String getShortName() {
+        return theShortName;
+    }
+
+    @Override
+    public String getFullName() {
+        return theFullName;
+    }
+
+    @Override
+    public ThemisAnalysisDataMap getDataMap() {
+        return theDataMap;
+    }
+
+    @Override
+    public ThemisAnalysisProperties getProperties() {
+        return theProperties;
     }
 
     @Override
@@ -172,6 +209,11 @@ public class ThemisAnalysisEnum
     }
 
     @Override
+    public List<ThemisAnalysisReference> getAncestors() {
+        return theAncestors;
+    }
+
+    @Override
     public int getNumLines() {
         return theNumLines;
     }
@@ -179,11 +221,13 @@ public class ThemisAnalysisEnum
     /**
      * Calculate the number of lines for the construct.
      * @param pBaseCount the baseCount
+     * @param pHdrCount the header line count
      * @return the number of lines
      */
-    public int calculateNumLines(final int pBaseCount) {
+    public int calculateNumLines(final int pBaseCount,
+                                 final int pHdrCount) {
         /* Add 1+ line(s) for the while headers  */
-        final int myNumLines = pBaseCount + Math.max(theHeaders.size() - 1, 1);
+        final int myNumLines = pBaseCount + Math.max(pHdrCount - 1, 1);
 
         /* Add one for the clause terminator */
         return myNumLines + 1;
@@ -191,6 +235,6 @@ public class ThemisAnalysisEnum
 
     @Override
     public String toString() {
-        return getName();
+        return getShortName();
     }
 }

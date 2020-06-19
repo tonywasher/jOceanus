@@ -19,31 +19,29 @@ package net.sourceforge.joceanus.jthemis.analysis;
 import java.util.ArrayList;
 import java.util.List;
 
+import net.sourceforge.joceanus.jtethys.OceanusException;
+
 /**
  * Annotation.
  */
 public class ThemisAnalysisAnnotation
         implements ThemisAnalysisProcessed {
     /**
-     * The annotation character.
-     */
-    private static final char ANNOTATION = '@';
-
-    /**
      * The annotationLines.
      */
-    private final List<ThemisAnalysisLine> theAnnotations;
+    private final List<ThemisAnalysisAnnotationRef> theAnnotations;
 
     /**
      * Constructor.
      * @param pParser the parser
      * @param pLine the initial annotation line
+     * @throws OceanusException on error
      */
     ThemisAnalysisAnnotation(final ThemisAnalysisParser pParser,
-                             final ThemisAnalysisLine pLine) {
+                             final ThemisAnalysisLine pLine) throws OceanusException {
         /* Create the list of annotation lines */
         theAnnotations = new ArrayList<>();
-        theAnnotations.add(pLine);
+        theAnnotations.add(new ThemisAnalysisAnnotationRef(pParser, pLine));
 
         /* While there are further lines */
         while (pParser.hasLines()) {
@@ -53,7 +51,7 @@ public class ThemisAnalysisAnnotation
             /* It it is also an annotation */
             if (isAnnotation(myLine)) {
                 /* Add the annotation line and remove from input */
-                theAnnotations.add(myLine);
+                theAnnotations.add(new ThemisAnalysisAnnotationRef(pParser, myLine));
                 pParser.popNextLine();
 
                 /* else break loop */
@@ -74,6 +72,29 @@ public class ThemisAnalysisAnnotation
      * @return true/false
      */
     static boolean isAnnotation(final ThemisAnalysisLine pLine) {
-        return pLine.startsWithChar(ANNOTATION);
+        return pLine.startsWithChar(ThemisAnalysisChar.ANNOTATION)
+                && !pLine.peekNextToken().equals(ThemisAnalysisKeyWord.ANNOTATION.getKeyWord());
+    }
+
+    /**
+     * AnnotationReference.
+     */
+    static class ThemisAnalysisAnnotationRef {
+        /**
+         * The annotationClass.
+         */
+        private final ThemisAnalysisReference theAnnotation;
+
+        /**
+         * Constructor.
+         * @param pParser the parser
+         * @param pLine the initial annotation line
+         * @throws OceanusException on error
+         */
+        ThemisAnalysisAnnotationRef(final ThemisAnalysisParser pParser,
+                                    final ThemisAnalysisLine pLine) throws OceanusException {
+            pLine.stripStartChar(ThemisAnalysisChar.ANNOTATION);
+            theAnnotation = pParser.parseDataType(pLine);
+        }
     }
 }

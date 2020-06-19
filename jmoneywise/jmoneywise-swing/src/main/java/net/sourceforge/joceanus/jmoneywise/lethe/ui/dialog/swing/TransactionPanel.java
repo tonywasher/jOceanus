@@ -26,8 +26,8 @@ import java.util.Map;
 import net.sourceforge.joceanus.jmetis.atlas.ui.MetisErrorPanel;
 import net.sourceforge.joceanus.jmetis.data.MetisDataType;
 import net.sourceforge.joceanus.jmetis.field.MetisFieldRequired;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisField;
-import net.sourceforge.joceanus.jmetis.lethe.field.MetisLetheFieldSetBase.MetisFieldUpdate;
+import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisLetheField;
+import net.sourceforge.joceanus.jmetis.lethe.field.MetisLetheFieldSetBase.MetisLetheFieldUpdate;
 import net.sourceforge.joceanus.jmetis.lethe.field.swing.MetisSwingFieldManager;
 import net.sourceforge.joceanus.jmetis.lethe.field.swing.MetisSwingFieldSet;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
@@ -364,7 +364,7 @@ public class TransactionPanel
         myFieldSet.setVisibility(TransactionInfoSet.getFieldForClass(TransactionInfoClass.TRANSTAG), bShowField);
 
         /* Determine whether the partnerAmount field should be visible */
-        MetisField myField = TransactionInfoSet.getFieldForClass(TransactionInfoClass.PARTNERAMOUNT);
+        MetisLetheField myField = TransactionInfoSet.getFieldForClass(TransactionInfoClass.PARTNERAMOUNT);
         boolean bEditField = isEditable && isEditableField(myTrans, TransactionInfoClass.PARTNERAMOUNT);
         bShowField = bEditField || myTrans.getPartnerAmount() != null;
         myFieldSet.setVisibility(myField, bShowField);
@@ -522,9 +522,9 @@ public class TransactionPanel
 
     @SuppressWarnings("unchecked")
     @Override
-    protected void updateField(final MetisFieldUpdate pUpdate) throws OceanusException {
+    protected void updateField(final MetisLetheFieldUpdate pUpdate) throws OceanusException {
         /* Access the field */
-        final MetisField myField = pUpdate.getField();
+        final MetisLetheField myField = pUpdate.getField();
         final Transaction myTrans = getItem();
 
         /* Process updates */

@@ -25,7 +25,7 @@ import net.sourceforge.joceanus.jmetis.lethe.data.MetisEncryptedData.MetisEncryp
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisEncryptedValueSet;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisEncryptionGenerator;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisField;
+import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisLetheField;
 import net.sourceforge.joceanus.jmetis.threads.MetisThreadStatusReport;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataKeySet.DataKeySetList;
 import net.sourceforge.joceanus.jtethys.OceanusException;
@@ -45,7 +45,7 @@ public abstract class EncryptedItem<E extends Enum<E>>
     /**
      * Data Key Set Field Id.
      */
-    public static final MetisField FIELD_KEYSET = FIELD_DEFS.declareEqualityValueField(DataKeySet.OBJECT_NAME, MetisDataType.LINK);
+    public static final MetisLetheField FIELD_KEYSET = FIELD_DEFS.declareEqualityValueField(DataKeySet.OBJECT_NAME, MetisDataType.LINK);
 
     /**
      * Error message for bad usage.
@@ -198,7 +198,7 @@ public abstract class EncryptedItem<E extends Enum<E>>
      * @param pValue the value to set
      * @throws OceanusException on error
      */
-    protected final void setEncryptedValue(final MetisField pField,
+    protected final void setEncryptedValue(final MetisLetheField pField,
                                            final Object pValue) throws OceanusException {
         /* Obtain the existing value */
         final MetisEncryptedValueSet myValueSet = getValueSet();
@@ -224,7 +224,7 @@ public abstract class EncryptedItem<E extends Enum<E>>
      * @param pClass the class of the value
      * @throws OceanusException on error
      */
-    protected final void setEncryptedValue(final MetisField pField,
+    protected final void setEncryptedValue(final MetisLetheField pField,
                                            final byte[] pEncrypted,
                                            final Class<?> pClass) throws OceanusException {
         /* Create the new encrypted value */

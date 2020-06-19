@@ -18,7 +18,10 @@ package net.sourceforge.joceanus.jthemis.analysis;
 
 import java.util.ArrayDeque;
 import java.util.Deque;
-import java.util.Map;
+
+import net.sourceforge.joceanus.jtethys.OceanusException;
+import net.sourceforge.joceanus.jthemis.ThemisDataException;
+import net.sourceforge.joceanus.jthemis.analysis.ThemisAnalysisFile.ThemisAnalysisObject;
 
 /**
  * Interface for containers that require postProcessing.
@@ -26,10 +29,23 @@ import java.util.Map;
 public interface ThemisAnalysisContainer
     extends ThemisAnalysisProcessed {
     /**
-     * Obtain the dataType Map.
+     * Adoptable interface.
+     */
+    interface ThemisAnalysisAdoptable {
+        /**
+         * Set the parent of this container.
+         * @param pParent the parent
+         */
+        void setParent(ThemisAnalysisContainer pParent);
+    }
+
+    /**
+     * Obtain the dataMap.
      * @return the map
      */
-    Map<String, ThemisAnalysisDataType> getDataTypes();
+    default ThemisAnalysisDataMap getDataMap() {
+        return getParent().getDataMap();
+    }
 
     /**
      * Obtain the contents.
@@ -44,9 +60,29 @@ public interface ThemisAnalysisContainer
     ThemisAnalysisContainer getParent();
 
     /**
-     * Post process lines.
+     * Determine the full name of the child object.
+     * @param pChildName the child name
+     * @return the fullName
      */
-    default void postProcessLines() {
+    default String determineFullChildName(final String pChildName) {
+        /* Loop */
+        ThemisAnalysisContainer myContainer = this;
+        for (;;) {
+            if (myContainer instanceof ThemisAnalysisObject) {
+                return ((ThemisAnalysisObject) myContainer).getFullName() + ThemisAnalysisChar.PERIOD + pChildName;
+            }
+            if (myContainer instanceof ThemisAnalysisFile) {
+                return ((ThemisAnalysisFile) myContainer).getPackageName() + ThemisAnalysisChar.PERIOD + pChildName;
+            }
+            myContainer = myContainer.getParent();
+        }
+    }
+
+    /**
+     * Post process lines.
+     * @throws OceanusException on error
+     */
+    default void postProcessLines() throws OceanusException {
         /* Create a copy of the contents list and clear original */
         final Deque<ThemisAnalysisElement> myContents = getContents();
         final Deque<ThemisAnalysisElement> myLines = new ArrayDeque<>(myContents);
@@ -59,7 +95,6 @@ public interface ThemisAnalysisContainer
         while (myParser.hasLines()) {
             /* Access next line */
             final ThemisAnalysisElement myElement = myParser.popNextLine();
-            boolean processed = false;
 
             /* If the element is a container */
             if (myElement instanceof ThemisAnalysisContainer) {
@@ -67,24 +102,13 @@ public interface ThemisAnalysisContainer
                 final ThemisAnalysisContainer myContainer = (ThemisAnalysisContainer) myElement;
                 myContainer.postProcessLines();
                 myContents.add(myContainer);
-                processed = true;
-            }
 
-            /* If the element is already fully processed */
-            if (!processed
-                    && myElement instanceof ThemisAnalysisProcessed) {
+                /* If the element is already fully processed */
+            } else if (myElement instanceof ThemisAnalysisProcessed) {
                 myContents.add(myElement);
-                processed = true;
-            }
 
-            /* Everything should now be a line. */
-            if (!processed
-                 && !(myElement instanceof ThemisAnalysisLine)) {
-                throw new IllegalStateException("Unexpected dataType");
-            }
-
-            /* process fields and methods */
-            if (!processed) {
+                /* process lines */
+            } else if (myElement instanceof ThemisAnalysisLine) {
                 final ThemisAnalysisLine myLine = (ThemisAnalysisLine) myElement;
                 final ThemisAnalysisElement myResult = myParser.processFieldsAndMethods(myLine);
 
@@ -95,14 +119,16 @@ public interface ThemisAnalysisContainer
                     if (myResult instanceof ThemisAnalysisContainer) {
                         ((ThemisAnalysisContainer) myResult).postProcessLines();
                     }
-                    processed = true;
-                }
-            }
 
-            /* process statements */
-            if (!processed) {
-                /* Just add the line for the moment */
-                myContents.add(myElement);
+                    /* Process statements */
+                } else {
+                    /* Just add the line for the moment */
+                    myContents.add(myElement);
+                }
+
+                /* Everything should now be a line. */
+            } else {
+                throw new ThemisDataException("Unexpected dataType");
             }
         }
 
@@ -112,8 +138,9 @@ public interface ThemisAnalysisContainer
 
     /**
      * Post process extra lines.
+     * @throws OceanusException on error
      */
-    default void postProcessExtras() {
+    default void postProcessExtras() throws OceanusException {
         /* NoOp by default */
     }
 }

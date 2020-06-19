@@ -21,7 +21,7 @@ import java.util.Map;
 import net.sourceforge.joceanus.jmetis.data.MetisDataFieldValue;
 import net.sourceforge.joceanus.jmetis.field.MetisFieldRequired;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisField;
+import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisLetheField;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.PortfolioInfo.PortfolioInfoList;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.AccountInfoClass;
@@ -44,12 +44,12 @@ public class PortfolioInfoSet
     /**
      * FieldSet map.
      */
-    private static final Map<MetisField, AccountInfoClass> FIELDSET_MAP = MetisFields.buildFieldMap(FIELD_DEFS, AccountInfoClass.class);
+    private static final Map<MetisLetheField, AccountInfoClass> FIELDSET_MAP = MetisFields.buildFieldMap(FIELD_DEFS, AccountInfoClass.class);
 
     /**
      * Reverse FieldSet map.
      */
-    private static final Map<AccountInfoClass, MetisField> REVERSE_FIELDMAP = MetisFields.reverseFieldMap(FIELDSET_MAP, AccountInfoClass.class);
+    private static final Map<AccountInfoClass, MetisLetheField> REVERSE_FIELDMAP = MetisFields.reverseFieldMap(FIELDSET_MAP, AccountInfoClass.class);
 
     /**
      * Constructor.
@@ -70,7 +70,7 @@ public class PortfolioInfoSet
     }
 
     @Override
-    public Object getFieldValue(final MetisField pField) {
+    public Object getFieldValue(final MetisLetheField pField) {
         /* Handle InfoSet fields */
         final AccountInfoClass myClass = getClassForField(pField);
         if (myClass != null) {
@@ -99,7 +99,7 @@ public class PortfolioInfoSet
      * @param pField the field
      * @return the class
      */
-    public static AccountInfoClass getClassForField(final MetisField pField) {
+    public static AccountInfoClass getClassForField(final MetisLetheField pField) {
         /* Look up field in map */
         return FIELDSET_MAP.get(pField);
     }
@@ -109,7 +109,7 @@ public class PortfolioInfoSet
      * @param pClass the class
      * @return the field
      */
-    public static MetisField getFieldForClass(final AccountInfoClass pClass) {
+    public static MetisLetheField getFieldForClass(final AccountInfoClass pClass) {
         /* Look up field in map */
         return REVERSE_FIELDMAP.get(pClass);
     }
@@ -128,7 +128,7 @@ public class PortfolioInfoSet
      * @param pField the infoSet field
      * @return the status
      */
-    public MetisFieldRequired isFieldRequired(final MetisField pField) {
+    public MetisFieldRequired isFieldRequired(final MetisLetheField pField) {
         final AccountInfoClass myClass = getClassForField(pField);
         return myClass == null
                                ? MetisFieldRequired.NOTALLOWED

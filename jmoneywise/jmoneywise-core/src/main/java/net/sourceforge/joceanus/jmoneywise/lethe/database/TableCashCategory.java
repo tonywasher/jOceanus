@@ -16,7 +16,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.lethe.database;
 
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisField;
+import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisLetheField;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.CashCategory;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.MoneyWiseData;
@@ -83,7 +83,7 @@ public class TableCashCategory
 
     @Override
     protected void setFieldValue(final CashCategory pItem,
-                                 final MetisField iField) throws OceanusException {
+                                 final MetisLetheField iField) throws OceanusException {
         /* Switch on field id */
         final PrometheusTableDefinition myTableDef = getTableDef();
         if (CashCategory.FIELD_CATTYPE.equals(iField)) {

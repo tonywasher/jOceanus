@@ -18,7 +18,8 @@ package net.sourceforge.joceanus.jthemis.analysis;
 
 import java.util.ArrayDeque;
 import java.util.Deque;
-import java.util.Map;
+
+import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
  * Catch construct.
@@ -46,11 +47,6 @@ public class ThemisAnalysisCatch
     private final ThemisAnalysisCatch theCatch;
 
     /**
-     * The dataTypes.
-     */
-    private final Map<String, ThemisAnalysisDataType> theDataTypes;
-
-    /**
      * The number of lines.
      */
     private final int theNumLines;
@@ -58,13 +54,15 @@ public class ThemisAnalysisCatch
     /**
      * Constructor.
      * @param pParser the parser
+     * @param pOwner the owning try
      * @param pLine the initial catch line
+     * @throws OceanusException on error
      */
     ThemisAnalysisCatch(final ThemisAnalysisParser pParser,
-                        final ThemisAnalysisLine pLine) {
-        /* Access details from parser */
-        theDataTypes = pParser.getDataTypes();
-        theParent = pParser.getParent();
+                        final ThemisAnalysisContainer pOwner,
+                        final ThemisAnalysisLine pLine) throws OceanusException {
+        /* Record the parent */
+        theParent = pOwner;
 
         /* Create the arrays */
         theHeaders = ThemisAnalysisBuilder.parseHeaders(pParser, pLine);
@@ -72,7 +70,7 @@ public class ThemisAnalysisCatch
         final int myBaseLines = myLines.size();
 
         /* Look for catch clauses */
-        theCatch = (ThemisAnalysisCatch) pParser.processExtra(ThemisAnalysisKeyWord.CATCH);
+        theCatch = (ThemisAnalysisCatch) pParser.processExtra(pOwner, ThemisAnalysisKeyWord.CATCH);
 
         /* Create a parser */
         theContents = new ArrayDeque<>();
@@ -81,11 +79,6 @@ public class ThemisAnalysisCatch
 
         /* Calculate the number of lines */
         theNumLines = calculateNumLines(myBaseLines);
-    }
-
-    @Override
-    public Map<String, ThemisAnalysisDataType> getDataTypes() {
-        return theDataTypes;
     }
 
     @Override
@@ -99,7 +92,7 @@ public class ThemisAnalysisCatch
     }
 
     @Override
-    public void postProcessExtras() {
+    public void postProcessExtras() throws OceanusException {
         /* Process the catch clause if required */
         if (theCatch != null) {
             theCatch.postProcessLines();

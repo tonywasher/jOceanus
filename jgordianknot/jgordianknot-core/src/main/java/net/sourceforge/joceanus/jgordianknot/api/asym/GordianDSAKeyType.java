@@ -97,4 +97,3 @@ public enum GordianDSAKeyType {
         return name();
     }
 }
-

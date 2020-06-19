@@ -22,6 +22,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import net.sourceforge.joceanus.jmetis.data.MetisDataDifference;
 import net.sourceforge.joceanus.jmetis.data.MetisDataFormatter;
@@ -304,9 +305,9 @@ public final class DilutionEvent
             this();
 
             /* Iterate through the source map */
-            final Iterator<Map.Entry<Integer, DilutionEventList>> myIterator = pSource.getUnderlyingMap().entrySet().iterator();
+            final Iterator<Entry<Integer, DilutionEventList>> myIterator = pSource.getUnderlyingMap().entrySet().iterator();
             while (myIterator.hasNext()) {
-                final Map.Entry<Integer, DilutionEventList> myEntry = myIterator.next();
+                final Entry<Integer, DilutionEventList> myEntry = myIterator.next();
 
                 /* Access the id and list iterator */
                 final Integer myId = myEntry.getKey();
