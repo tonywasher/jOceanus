@@ -43,6 +43,11 @@ public final class CoeusZopaTransaction
     private static final String PFIX_TRANSFER = "Funding Bacs";
 
     /**
+     * Transfer prefix.
+     */
+    private static final String PFIX_XFEROUT = "Lender Withdrawal Request";
+
+    /**
      * Loan prefix.
      */
     private static final String PFIX_LOAN = "Loan disbursal to ";
@@ -445,7 +450,8 @@ public final class CoeusZopaTransaction
         }
 
         /* If the description is BankTransfer */
-        if (PFIX_TRANSFER.equals(theDesc)) {
+        if (PFIX_TRANSFER.equals(theDesc)
+            || PFIX_XFEROUT.equals(theDesc)) {
             return CoeusTransactionType.TRANSFER;
         }
 

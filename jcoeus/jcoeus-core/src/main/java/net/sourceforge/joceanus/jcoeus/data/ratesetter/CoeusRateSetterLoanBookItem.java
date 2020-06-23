@@ -120,13 +120,14 @@ public class CoeusRateSetterLoanBookItem
         /* Obtain the startDate */
         theStartDate = pParser.parseDate(myIterator.next().text());
 
-        /* Skip term remaining for new style */
-        if (pNewStyle) {
-            myIterator.next();
+        /* Skip term remaining if it exists */
+        Element myNext = myIterator.next();
+        if (myNext.select("tr").first() == null) {
+            myNext = myIterator.next();
         }
 
         /* Obtain the amount */
-        final String myAmountText = pParser.childElementText(myIterator.next());
+        final String myAmountText = pParser.childElementText(myNext);
         final TethysMoney myAmount = pParser.parseMoney(myAmountText);
         final TethysMoney myZero = new TethysMoney(myAmount);
         myZero.setZero();

@@ -116,6 +116,7 @@ public class CoeusZopaLoader {
                 final String myName = myFileName.toString();
                 String myBase = myName.substring(0, myName.length() - SUFFIX.length());
                 myBase = myBase.substring(PREFIX.length());
+                myBase = myBase.replace('_', ' ');
                 final TemporalAccessor myTA = myFormatter.parse(myBase);
                 int myDate = myTA.get(ChronoField.YEAR) * MULTIPLIER;
                 myDate += myTA.get(ChronoField.MONTH_OF_YEAR);

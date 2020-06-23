@@ -123,9 +123,14 @@ public final class CoeusFundingCircleTransaction
     private static final String PFIX_RECOVERY4 = "Additional principal recovery payment for loan part ";
 
     /**
-     * Xfer Prefix.
+     * XferIn Prefix.
      */
     private static final String PFIX_XFERPAY = "Transfer Payment ";
+
+    /**
+     * XferOut Prefix.
+     */
+    private static final String PFIX_XFEROUT = "FC Len Withdrawal";
 
     /**
      * ZERO for BadDebt/CashBack.
@@ -463,8 +468,12 @@ public final class CoeusFundingCircleTransaction
         }
 
         /* If the description is BankTransfer */
-        if (PFIX_OPENING.equalsIgnoreCase(theDesc.substring(0, PFIX_OPENING.length()))
-            || PFIX_TRANSFER.equalsIgnoreCase(theDesc.substring(0, PFIX_TRANSFER.length()))) {
+        if (theDesc.startsWith(PFIX_OPENING)
+                || PFIX_XFEROUT.equals(theDesc)) {
+            return CoeusTransactionType.TRANSFER;
+        }
+        if (theDesc.length() >= PFIX_TRANSFER.length()
+            && PFIX_TRANSFER.equalsIgnoreCase(theDesc.substring(0, PFIX_TRANSFER.length()))) {
             return CoeusTransactionType.TRANSFER;
         }
 
