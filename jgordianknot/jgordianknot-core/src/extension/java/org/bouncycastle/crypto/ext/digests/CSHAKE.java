@@ -82,14 +82,18 @@ public class CSHAKE
             final int blockSize = rate / 8;
             absorb(diff, 0, diff.length);
 
-            int required = blockSize - (diff.length % blockSize);
+            /* Only add padding if needed */
+            final int delta = diff.length % blockSize;
+            if (delta != 0) {
+                int required = blockSize - delta;
 
-            while (required > padding.length) {
-                absorb(padding, 0, padding.length);
-                required -= padding.length;
+                while (required > padding.length) {
+                    absorb(padding, 0, padding.length);
+                    required -= padding.length;
+                }
+
+                absorb(padding, 0, required);
             }
-
-            absorb(padding, 0, required);
         }
     }
 

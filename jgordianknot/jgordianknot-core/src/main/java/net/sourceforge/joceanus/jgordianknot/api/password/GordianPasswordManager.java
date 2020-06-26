@@ -197,4 +197,48 @@ public interface GordianPasswordManager {
     GordianZipLock similarZipLock(GordianKeyPair pKeyPair,
                                   GordianKeySetHashSpec pKeySetHashSpec,
                                   GordianKeySetHash pReference) throws OceanusException;
+
+    /**
+     * obtain similar (same password) zipLock.
+     * @param pReference the zipLock to clone password from
+     * @return the similar zipLock
+     * @throws OceanusException on error
+     */
+    default GordianZipLock similarZipLock(GordianZipLock pReference) throws OceanusException {
+        return similarZipLock(new GordianKeySetHashSpec(), pReference);
+    }
+
+    /**
+     * obtain similar (same password) zipLock.
+     * @param pKeySetHashSpec the keySetHashSpec
+     * @param pReference the zipLock to clone password from
+     * @return the similar zipLock
+     * @throws OceanusException on error
+     */
+    GordianZipLock similarZipLock(GordianKeySetHashSpec pKeySetHashSpec,
+                                  GordianZipLock pReference) throws OceanusException;
+
+    /**
+     * obtain similar (same password) zipLock.
+     * @param pKeyPair the keyPair
+     * @param pReference the keySetHash/zipLock to clone password from
+     * @return the similar zipLock
+     * @throws OceanusException on error
+     */
+    default GordianZipLock similarZipLock(GordianKeyPair pKeyPair,
+                                          GordianZipLock pReference) throws OceanusException {
+        return similarZipLock(pKeyPair, new GordianKeySetHashSpec(), pReference);
+    }
+
+    /**
+     * obtain similar (same password) zipLock.
+     * @param pKeyPair the keyPair
+     * @param pKeySetHashSpec the keySetHashSpec
+     * @param pReference the zipLock to clone password from
+     * @return the similar zipLock
+     * @throws OceanusException on error
+     */
+    GordianZipLock similarZipLock(GordianKeyPair pKeyPair,
+                                  GordianKeySetHashSpec pKeySetHashSpec,
+                                  GordianZipLock pReference) throws OceanusException;
 }

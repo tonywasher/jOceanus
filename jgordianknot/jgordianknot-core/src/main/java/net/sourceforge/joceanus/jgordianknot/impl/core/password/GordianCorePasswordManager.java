@@ -32,6 +32,7 @@ import net.sourceforge.joceanus.jgordianknot.api.zip.GordianZipFactory;
 import net.sourceforge.joceanus.jgordianknot.api.zip.GordianZipLock;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianDataException;
 import net.sourceforge.joceanus.jgordianknot.impl.core.keyset.GordianCoreKeySetHash;
+import net.sourceforge.joceanus.jgordianknot.impl.core.zip.GordianCoreZipLock;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
@@ -177,6 +178,23 @@ public class GordianCorePasswordManager
 
         /* Create a similar zipLock */
         return theCache.createSimilarZipLock(pKeyPair, pKeySetHashSpec, myPassword);
+    }
+
+    @Override
+    public GordianZipLock similarZipLock(final GordianKeySetHashSpec pKeySetHashSpec,
+                                         final GordianZipLock pReference) throws OceanusException {
+        /* Access hash and create similar zipLock */
+        final GordianKeySetHash myHash = ((GordianCoreZipLock) pReference).getKeySetHash();
+        return similarZipLock(pKeySetHashSpec, myHash);
+   }
+
+    @Override
+    public GordianZipLock similarZipLock(final GordianKeyPair pKeyPair,
+                                         final GordianKeySetHashSpec pKeySetHashSpec,
+                                         final GordianZipLock pReference) throws OceanusException {
+        /* Access hash and create similar zipLock */
+        final GordianKeySetHash myHash = ((GordianCoreZipLock) pReference).getKeySetHash();
+        return similarZipLock(pKeyPair, pKeySetHashSpec, myHash);
     }
 
     /**
