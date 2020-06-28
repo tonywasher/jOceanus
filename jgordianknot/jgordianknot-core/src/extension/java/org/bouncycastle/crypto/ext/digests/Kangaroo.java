@@ -142,12 +142,12 @@ public abstract class Kangaroo
         /**
          * The XofLen.
          */
-        long theXofLen;
+        private long theXofLen;
 
         /**
          * The XofRemaining.
          */
-        long theXofRemaining;
+        private long theXofRemaining;
 
         /**
          * Are we squeezing?.

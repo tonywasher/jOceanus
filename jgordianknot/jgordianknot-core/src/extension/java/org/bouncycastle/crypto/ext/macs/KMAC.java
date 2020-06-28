@@ -19,6 +19,7 @@ package org.bouncycastle.crypto.ext.macs;
 import org.bouncycastle.crypto.CipherParameters;
 import org.bouncycastle.crypto.Mac;
 import org.bouncycastle.crypto.Xof;
+import org.bouncycastle.crypto.digests.XofUtils;
 import org.bouncycastle.crypto.ext.digests.CSHAKE;
 import org.bouncycastle.crypto.ext.params.KeccakParameters;
 import org.bouncycastle.crypto.params.KeyParameter;
@@ -108,7 +109,6 @@ public class KMAC
     public void init(final CipherParameters pParams) {
         /* defaults */
         byte[] myKey = null;
-        KeccakParameters myParms = null;
 
         /* If we have key parameters */
         if (pParams instanceof KeyParameter) {
@@ -120,7 +120,7 @@ public class KMAC
             /* If we have keccakParameters */
         } else if (pParams instanceof KeccakParameters) {
             /* Access params and the key */
-            myParms = (KeccakParameters) pParams;
+            final KeccakParameters myParms = (KeccakParameters) pParams;
             myKey = myParms.getKey();
             theDigest.init(myParms);
         }
@@ -275,7 +275,7 @@ public class KMAC
      * @param pLen the length
      */
     private void writeTrailer(final int pLen) {
-        final byte[] myTrailer = rightEncode(pLen * (long) Byte.SIZE);
+        final byte[] myTrailer = XofUtils.rightEncode(pLen * (long) Byte.SIZE);
         theDigest.update(myTrailer, 0, myTrailer.length);
         startedOutput = true;
     }
@@ -287,7 +287,7 @@ public class KMAC
      */
     private byte[] bytepad(final byte[] str) {
         /* Left encode the rate */
-        final byte[] myRate = CSHAKE.leftEncode(theRate);
+        final byte[] myRate = XofUtils.leftEncode(theRate);
 
         /* Determine length of buffer */
         int myLen = myRate.length + str.length;
@@ -310,36 +310,10 @@ public class KMAC
     private static byte[] encodeString(final byte[] str) {
         /* Handle null or zero length string */
         if (str == null || str.length == 0) {
-            return CSHAKE.leftEncode(0);
+            return XofUtils.leftEncode(0);
         }
 
         /* Concatenate the encoded length and the string */
-        return Arrays.concatenate(CSHAKE.leftEncode(str.length * (long) Byte.SIZE), str);
-    }
-
-    /**
-     * right Encode a length.
-     * @param strLen the length to encode
-     * @return the encoded length
-     */
-    private static byte[] rightEncode(final long strLen) {
-        /* Calculate # of bytes required to hold length */
-        byte n = 1;
-        long v = strLen;
-        while ((v >>= Byte.SIZE) != 0) {
-            n++;
-        }
-
-        /* Allocate byte array and store length */
-        final byte[] b = new byte[n + 1];
-        b[n] = n;
-
-        /* Encode the length */
-        for (int i = 0; i < n; i++) {
-            b[i] = (byte) (strLen >> (Byte.SIZE * (n - i - 1)));
-        }
-
-        /* Return the encoded length */
-        return b;
+        return Arrays.concatenate(XofUtils.leftEncode(str.length * (long) Byte.SIZE), str);
     }
 }

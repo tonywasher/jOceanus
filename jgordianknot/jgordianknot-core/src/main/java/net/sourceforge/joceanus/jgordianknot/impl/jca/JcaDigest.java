@@ -326,11 +326,8 @@ public final class JcaDigest
      */
     static boolean isHMacSupported(final GordianDigestType pDigestType) {
         switch (pDigestType) {
-            case SM3:
             case BLAKE:
             case KUPYNA:
-            case JH:
-            case GROESTL:
             case SHAKE:
                 return false;
             default:
