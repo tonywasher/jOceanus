@@ -59,11 +59,6 @@ public class CoeusLendingWorksLoan
     }
 
     @Override
-    protected CoeusLendingWorksHistory newHistory(final TethysDate pDate) {
-        return new CoeusLendingWorksHistory(this, pDate);
-    }
-
-    @Override
     public int compareTo(final CoeusLoan pThat) {
         return theLoanIdNo.compareTo(((CoeusLendingWorksLoan) pThat).theLoanIdNo);
     }

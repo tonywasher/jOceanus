@@ -77,17 +77,7 @@ public final class CoeusLendingWorksTotals
      * @param pMarket the market
      */
     CoeusLendingWorksTotals(final CoeusLendingWorksMarket pMarket) {
-        this(pMarket, null, null);
-    }
-
-    /**
-     * Constructor for zeroed period totals.
-     * @param pMarket the market
-     * @param pDate the end date for the totals
-     */
-    CoeusLendingWorksTotals(final CoeusLendingWorksMarket pMarket,
-                            final TethysDate pDate) {
-        this(pMarket, null, pDate);
+        this(pMarket, null);
     }
 
     /**
@@ -95,30 +85,18 @@ public final class CoeusLendingWorksTotals
      * @param pLoan the loan
      */
     CoeusLendingWorksTotals(final CoeusLendingWorksLoan pLoan) {
-        this(pLoan.getMarket(), pLoan, null);
-    }
-
-    /**
-     * Constructor for zeroed totals.
-     * @param pLoan the loan
-     * @param pDate the end date for the totals
-     */
-    CoeusLendingWorksTotals(final CoeusLendingWorksLoan pLoan,
-                            final TethysDate pDate) {
-        this(pLoan.getMarket(), pLoan, pDate);
+        this(pLoan.getMarket(), pLoan);
     }
 
     /**
      * Constructor for zeroed totals.
      * @param pMarket the market
      * @param pLoan the loan
-     * @param pDate the end date for the totals
      */
     CoeusLendingWorksTotals(final CoeusLendingWorksMarket pMarket,
-                            final CoeusLendingWorksLoan pLoan,
-                            final TethysDate pDate) {
+                            final CoeusLendingWorksLoan pLoan) {
         /* Initialise underlying class */
-        super(pMarket, pLoan, pDate);
+        super(pMarket, pLoan);
 
         /* Initialise values */
         theAssetValue = new TethysDecimal(getZero());
@@ -152,17 +130,23 @@ public final class CoeusLendingWorksTotals
         theCashBack = new TethysDecimal(pTotals.getCashBack());
     }
 
-    @Override
-    protected void addTotalsToTotals(final CoeusTotals pTotals) {
-        /* Add values from totals */
-        theAssetValue.addValue(pTotals.getAssetValue());
-        theHolding.addValue(pTotals.getHolding());
-        theLoanBook.addValue(pTotals.getLoanBook());
-        theSourceValue.addValue(pTotals.getSourceValue());
-        theInvested.addValue(pTotals.getInvested());
-        theEarnings.addValue(pTotals.getEarnings());
-        theInterest.addValue(pTotals.getInterest());
-        theCashBack.addValue(pTotals.getCashBack());
+    /**
+     * Constructor for cloning totals.
+     * @param pTotals the totals to clone
+     */
+    CoeusLendingWorksTotals(final CoeusLendingWorksTotals pTotals) {
+        /* Initialise underlying class */
+        super(pTotals);
+
+        /* Initialise values from previous totals */
+        theAssetValue = new TethysDecimal(pTotals.getAssetValue());
+        theHolding = new TethysDecimal(pTotals.getHolding());
+        theLoanBook = new TethysDecimal(pTotals.getLoanBook());
+        theSourceValue = new TethysDecimal(pTotals.getSourceValue());
+        theInvested = new TethysDecimal(pTotals.getInvested());
+        theEarnings = new TethysDecimal(pTotals.getEarnings());
+        theInterest = new TethysDecimal(pTotals.getInterest());
+        theCashBack = new TethysDecimal(pTotals.getCashBack());
     }
 
     @Override

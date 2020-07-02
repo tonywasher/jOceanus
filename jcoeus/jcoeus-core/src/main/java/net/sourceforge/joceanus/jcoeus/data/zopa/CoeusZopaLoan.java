@@ -211,11 +211,6 @@ public class CoeusZopaLoan
     }
 
     @Override
-    protected CoeusZopaHistory newHistory(final TethysDate pDate) {
-        return new CoeusZopaHistory(this, pDate);
-    }
-
-    @Override
     protected void checkLoan() throws CoeusDataException {
         /* Obtain the book balance and adjust for missing payments */
         final TethysDecimal myBookBalance = new TethysDecimal(theBookItem.getBalance());

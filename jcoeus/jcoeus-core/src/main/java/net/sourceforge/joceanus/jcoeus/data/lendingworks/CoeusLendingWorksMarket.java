@@ -108,11 +108,6 @@ public class CoeusLendingWorksMarket
     }
 
     @Override
-    protected CoeusLendingWorksHistory newHistory(final TethysDate pDate) {
-        return new CoeusLendingWorksHistory(this, pDate);
-    }
-
-    @Override
     protected CoeusLendingWorksLoan newLoan(final String pId) {
         return new CoeusLendingWorksLoan(this, pId);
     }

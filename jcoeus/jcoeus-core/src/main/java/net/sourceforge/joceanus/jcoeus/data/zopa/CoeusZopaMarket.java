@@ -250,11 +250,6 @@ public class CoeusZopaMarket
     }
 
     @Override
-    protected CoeusZopaHistory newHistory(final TethysDate pDate) {
-        return new CoeusZopaHistory(this, pDate);
-    }
-
-    @Override
     protected CoeusZopaLoan newLoan(final String pId) {
         return new CoeusZopaLoan(this, pId);
     }

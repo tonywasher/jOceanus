@@ -142,7 +142,7 @@ public class CoeusMarketSnapShot
      * Sort the loans.
      */
     private void sortLoans() {
-        theLoanList.sort((l, r) -> l.compareTo(r));
+        theLoanList.sort(CoeusLoan::compareTo);
     }
 
     /**

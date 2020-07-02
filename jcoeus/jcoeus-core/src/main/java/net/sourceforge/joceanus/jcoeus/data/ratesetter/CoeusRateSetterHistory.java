@@ -41,31 +41,11 @@ public class CoeusRateSetterHistory
     }
 
     /**
-     * Constructor for zeroed period totals.
-     * @param pMarket the market
-     * @param pDate the end date for the totals
-     */
-    CoeusRateSetterHistory(final CoeusRateSetterMarket pMarket,
-                           final TethysDate pDate) {
-        super(new CoeusRateSetterTotals(pMarket, pDate));
-    }
-
-    /**
      * Constructor for zeroed loan totals.
      * @param pLoan the loan
      */
     CoeusRateSetterHistory(final CoeusRateSetterLoan pLoan) {
         super(new CoeusRateSetterTotals(pLoan));
-    }
-
-    /**
-     * Constructor for zeroed period loan totals.
-     * @param pLoan the loan
-     * @param pDate the end date for the totals
-     */
-    CoeusRateSetterHistory(final CoeusRateSetterLoan pLoan,
-                           final TethysDate pDate) {
-        super(new CoeusRateSetterTotals(pLoan, pDate));
     }
 
     @Override

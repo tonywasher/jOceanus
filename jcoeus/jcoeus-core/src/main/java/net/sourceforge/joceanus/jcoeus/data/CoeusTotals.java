@@ -21,6 +21,7 @@ import net.sourceforge.joceanus.jmetis.field.MetisFieldSet;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
 import net.sourceforge.joceanus.jtethys.decimal.TethysDecimal;
 import net.sourceforge.joceanus.jtethys.decimal.TethysMoney;
+import net.sourceforge.joceanus.jtethys.decimal.TethysRatio;
 
 /**
  * Transaction Totals.
@@ -60,6 +61,8 @@ public abstract class CoeusTotals
         FIELD_DEFS.declareLocalField(CoeusTotalsField.LOSSES, CoeusTotals::getLosses);
         FIELD_DEFS.declareLocalField(CoeusTotalsField.BADDEBT, CoeusTotals::getBadDebt);
         FIELD_DEFS.declareLocalField(CoeusTotalsField.RECOVERED, CoeusTotals::getRecovered);
+        FIELD_DEFS.declareLocalField(CoeusTotalsField.LOANROR, CoeusTotals::getLoanRoR);
+        FIELD_DEFS.declareLocalField(CoeusTotalsField.ASSETROR, CoeusTotals::getAssetRoR);
         FIELD_DEFS.declareCalculatedField(CoeusTotalsField.DELTA);
         FIELD_DEFS.declareCalculatedField(CoeusTotalsField.BALANCE);
     }
@@ -75,11 +78,6 @@ public abstract class CoeusTotals
     private final CoeusLoan theLoan;
 
     /**
-     * The date for the totals.
-     */
-    private final TethysDate theDate;
-
-    /**
      * The underlying transaction.
      */
     private final CoeusTransaction theTransaction;
@@ -88,6 +86,16 @@ public abstract class CoeusTotals
      * The previous Totals.
      */
     private final CoeusTotals thePrevious;
+
+    /**
+     * The loan RateOfReturn.
+     */
+    private TethysRatio theLoanRor;
+
+    /**
+     * The asset RateOfReturn.
+     */
+    private TethysRatio theAssetRor;
 
     /**
      * The delta.
@@ -103,16 +111,14 @@ public abstract class CoeusTotals
      * Constructor.
      * @param pMarket the market.
      * @param pLoan the loan.
-     * @param pDate the end date for the totals
      */
     protected CoeusTotals(final CoeusMarket pMarket,
-                          final CoeusLoan pLoan,
-                          final TethysDate pDate) {
+                          final CoeusLoan pLoan) {
         theMarket = pMarket;
         theLoan = pLoan;
         theTransaction = null;
-        theDate = pDate;
         thePrevious = null;
+        resetRatios();
     }
 
     /**
@@ -124,11 +130,21 @@ public abstract class CoeusTotals
                           final CoeusTotals pPrevious) {
         theMarket = pUnderlying.getMarket();
         theLoan = pUnderlying.getLoan();
-        theDate = pUnderlying.getDate();
         theTransaction = pUnderlying;
         thePrevious = pPrevious.theTransaction == null
                                                        ? null
                                                        : pPrevious;
+    }
+
+    /**
+     * Constructor for cloning totals.
+     * @param pTotals the totals to clone
+     */
+    protected CoeusTotals(final CoeusTotals pTotals) {
+        theMarket = pTotals.getMarket();
+        theLoan = pTotals.getLoan();
+        theTransaction = pTotals.getTransaction();
+        thePrevious = null;
     }
 
     /**
@@ -177,7 +193,9 @@ public abstract class CoeusTotals
      * @return the date
      */
     public TethysDate getDate() {
-        return theDate;
+        return theTransaction != null
+               ? theTransaction.getDate()
+               : null;
     }
 
     /**
@@ -327,10 +345,36 @@ public abstract class CoeusTotals
     }
 
     /**
-     * Add totals to totals.
-     * @param pTotals the totals to add
+     * Obtain the LoanRateOfReturn.
+     * @return the rateOfReturn
      */
-    protected abstract void addTotalsToTotals(CoeusTotals pTotals);
+    public TethysRatio getLoanRoR() {
+        return theLoanRor;
+    }
+
+    /**
+     * Obtain the AssetRateOfReturn.
+     * @return the rateOfReturn
+     */
+    public TethysRatio getAssetRoR() {
+        return theAssetRor;
+    }
+
+    /**
+     * Set the LoanRateOfReturn.
+     * @param pRoR the rateOfReturn
+     */
+    protected void setLoanRoR(final TethysRatio pRoR) {
+        theLoanRor = pRoR;
+    }
+
+    /**
+     * Set the AssetRateOfReturn.
+     * @param pRoR the rateOfReturn
+     */
+    protected void setAssetRoR(final TethysRatio pRoR) {
+        theAssetRor = pRoR;
+    }
 
     /**
      * Add transaction to totals.
@@ -358,6 +402,15 @@ public abstract class CoeusTotals
         getLosses().setZero();
         getBadDebt().setZero();
         getRecovered().setZero();
+        resetRatios();
+    }
+
+    /**
+     * Reset the ratios.
+     */
+    protected void resetRatios() {
+        theAssetRor = TethysRatio.ONE;
+        theLoanRor = TethysRatio.ONE;
     }
 
     /**
@@ -494,8 +547,8 @@ public abstract class CoeusTotals
         myBuilder.append(CoeusTransaction.CHAR_CLOSE);
 
         /* Format the transaction type and date */
-        if (theDate != null) {
-            myBuilder.insert(0, theDate.toString());
+        if (theTransaction != null) {
+            myBuilder.insert(0, getDate().toString());
             myBuilder.insert(0, CoeusTransaction.CHAR_BLANK);
         }
         myBuilder.insert(0, CoeusTransactionType.TOTALS.toString());

@@ -250,7 +250,7 @@ public class CoeusMarketAnnual
         final Month myMonth = myDate.getMonthValue();
 
         /* Look up and return the history */
-        return theMonthlyHistories.computeIfAbsent(myMonth, m -> theMarket.newHistory(myDate));
+        return theMonthlyHistories.computeIfAbsent(myMonth, m -> theMarket.newHistory());
     }
 
     /**

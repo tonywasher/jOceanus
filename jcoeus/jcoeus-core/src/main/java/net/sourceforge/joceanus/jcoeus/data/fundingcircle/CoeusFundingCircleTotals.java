@@ -122,17 +122,7 @@ public final class CoeusFundingCircleTotals
      * @param pMarket the market
      */
     CoeusFundingCircleTotals(final CoeusFundingCircleMarket pMarket) {
-        this(pMarket, null, null);
-    }
-
-    /**
-     * Constructor for zeroed period totals.
-     * @param pMarket the market
-     * @param pDate the end date for the totals
-     */
-    CoeusFundingCircleTotals(final CoeusFundingCircleMarket pMarket,
-                             final TethysDate pDate) {
-        this(pMarket, null, pDate);
+        this(pMarket, null);
     }
 
     /**
@@ -140,30 +130,18 @@ public final class CoeusFundingCircleTotals
      * @param pLoan the loan
      */
     CoeusFundingCircleTotals(final CoeusFundingCircleLoan pLoan) {
-        this(pLoan.getMarket(), pLoan, null);
-    }
-
-    /**
-     * Constructor for zeroed period totals.
-     * @param pLoan the loan
-     * @param pDate the end date for the totals
-     */
-    CoeusFundingCircleTotals(final CoeusFundingCircleLoan pLoan,
-                             final TethysDate pDate) {
-        this(pLoan.getMarket(), pLoan, pDate);
+        this(pLoan.getMarket(), pLoan);
     }
 
     /**
      * Constructor for zeroed totals.
      * @param pMarket the market
      * @param pLoan the loan
-     * @param pDate the end date for the totals
      */
     private CoeusFundingCircleTotals(final CoeusFundingCircleMarket pMarket,
-                                     final CoeusFundingCircleLoan pLoan,
-                                     final TethysDate pDate) {
+                                     final CoeusFundingCircleLoan pLoan) {
         /* Initialise underlying class */
-        super(pMarket, pLoan, pDate);
+        super(pMarket, pLoan);
 
         /* Initialise values */
         theAssetValue = new TethysMoney(getZero());
@@ -215,29 +193,32 @@ public final class CoeusFundingCircleTotals
         theRecovered = new TethysMoney(pTotals.getRecovered());
     }
 
-    @Override
-    protected void addTotalsToTotals(final CoeusTotals pTotals) {
-        /* Cast correctly */
-        final CoeusFundingCircleTotals myTotals = (CoeusFundingCircleTotals) pTotals;
+    /**
+     * Constructor for cloning totals.
+     * @param pTotals the totals to clone
+     */
+    CoeusFundingCircleTotals(final CoeusFundingCircleTotals pTotals) {
+        /* Initialise underlying class */
+        super(pTotals);
 
-        /* Add values from totals */
-        theAssetValue.addAmount(myTotals.getAssetValue());
-        theHolding.addAmount(myTotals.getHolding());
-        theLoanBook.addAmount(myTotals.getLoanBook());
-        theSourceValue.addAmount(myTotals.getSourceValue());
-        theInvested.addAmount(myTotals.getInvested());
-        theEarnings.addAmount(myTotals.getEarnings());
-        theTaxableEarnings.addAmount(myTotals.getTaxableEarnings());
-        theInterest.addAmount(myTotals.getInterest());
-        theNettInterest.addAmount(myTotals.getNettInterest());
-        theBadDebtInterest.addAmount(myTotals.getBadDebtInterest());
-        theBadDebtCapital.addAmount(myTotals.getBadDebtCapital());
-        theFees.addAmount(myTotals.getFees());
-        theCashBack.addAmount(myTotals.getCashBack());
-        theXferPayment.addAmount(myTotals.getXferPayment());
-        theLosses.addAmount(myTotals.getLosses());
-        theBadDebt.addAmount(myTotals.getBadDebt());
-        theRecovered.addAmount(myTotals.getRecovered());
+        /* Initialise values from previous totals */
+        theAssetValue = new TethysMoney(pTotals.getAssetValue());
+        theHolding = new TethysMoney(pTotals.getHolding());
+        theLoanBook = new TethysMoney(pTotals.getLoanBook());
+        theSourceValue = new TethysMoney(pTotals.getSourceValue());
+        theInvested = new TethysMoney(pTotals.getInvested());
+        theEarnings = new TethysMoney(pTotals.getEarnings());
+        theTaxableEarnings = new TethysMoney(pTotals.getTaxableEarnings());
+        theInterest = new TethysMoney(pTotals.getInterest());
+        theNettInterest = new TethysMoney(pTotals.getNettInterest());
+        theBadDebtInterest = new TethysMoney(pTotals.getBadDebtInterest());
+        theBadDebtCapital = new TethysMoney(pTotals.getBadDebtCapital());
+        theFees = new TethysMoney(pTotals.getFees());
+        theCashBack = new TethysMoney(pTotals.getCashBack());
+        theXferPayment = new TethysMoney(pTotals.getXferPayment());
+        theLosses = new TethysMoney(pTotals.getLosses());
+        theBadDebt = new TethysMoney(pTotals.getBadDebt());
+        theRecovered = new TethysMoney(pTotals.getRecovered());
     }
 
     @Override

@@ -237,11 +237,6 @@ public class CoeusFundingCircleMarket
     }
 
     @Override
-    protected CoeusFundingCircleHistory newHistory(final TethysDate pDate) {
-        return new CoeusFundingCircleHistory(this, pDate);
-    }
-
-    @Override
     protected CoeusFundingCircleLoan newLoan(final String pId) {
         return new CoeusFundingCircleLoan(this, pId);
     }

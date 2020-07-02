@@ -17,6 +17,7 @@
 package net.sourceforge.joceanus.jcoeus.data;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -77,7 +78,7 @@ public abstract class CoeusMarket
     /**
      * The next transactionId.
      */
-    private Integer theNextId = Integer.valueOf(1);
+    private Integer theNextId = 1;
 
     /**
      * Constructor.
@@ -235,9 +236,7 @@ public abstract class CoeusMarket
      */
     private void resetLoans() {
         /* Loop through the loans */
-        final Iterator<CoeusLoan> myIterator = theLoanMap.values().iterator();
-        while (myIterator.hasNext()) {
-            final CoeusLoan myLoan = myIterator.next();
+        for (CoeusLoan myLoan : theLoanMap.values()) {
             myLoan.clearHistory();
         }
     }
@@ -257,7 +256,7 @@ public abstract class CoeusMarket
         resetLoans();
 
         /* Sort the transactions */
-        theTransactions.sort((l, r) -> l.getDate().compareTo(r.getDate()));
+        theTransactions.sort(Comparator.comparing(CoeusTransaction::getDate));
 
         /* Loop through the transactions */
         final Iterator<CoeusTransaction> myIterator = transactionIterator();
@@ -322,13 +321,6 @@ public abstract class CoeusMarket
      * @return the loan
      */
     protected abstract CoeusLoan newLoan(String pLoanId);
-
-    /**
-     * New dated history.
-     * @param pDate the date
-     * @return the history
-     */
-    protected abstract CoeusHistory newHistory(TethysDate pDate);
 
     /**
      * Does the market use decimal totals rather than money?

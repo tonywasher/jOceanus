@@ -87,13 +87,13 @@
     <CleanPluginVersion>3.1.0</CleanPluginVersion>
     <ResourcesPluginVersion>3.1.0</ResourcesPluginVersion>
     <InstallPluginVersion>3.0.0-M1</InstallPluginVersion>
-    <SitePluginVersion>3.9.0</SitePluginVersion>
+    <SitePluginVersion>3.9.1</SitePluginVersion>
     <DeployPluginVersion>3.0.0-M1</DeployPluginVersion>
     <EnforcerPluginVersion>3.0.0-M3</EnforcerPluginVersion>
     <CompilerPluginVersion>3.8.1</CompilerPluginVersion>
     <ShadePluginVersion>3.2.4</ShadePluginVersion>
     <DependencyPluginVersion>3.1.2</DependencyPluginVersion>
-    <SurefirePluginVersion>3.0.0-M4</SurefirePluginVersion>
+    <SurefirePluginVersion>3.0.0-M5</SurefirePluginVersion>
     <BuildNumberPluginVersion>1.4</BuildNumberPluginVersion>
     <BuildHelperPluginVersion>3.0.0</BuildHelperPluginVersion>
     <JarPluginVersion>3.2.0</JarPluginVersion>

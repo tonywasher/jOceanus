@@ -253,13 +253,6 @@ public abstract class CoeusLoan
     protected abstract CoeusHistory newHistory();
 
     /**
-     * New dated history.
-     * @param pDate the date
-     * @return the history
-     */
-    protected abstract CoeusHistory newHistory(TethysDate pDate);
-
-    /**
      * CheckLoan.
      * @throws OceanusException on error
      */

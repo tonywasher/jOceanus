@@ -96,11 +96,6 @@ public class CoeusRateSetterLoan
     }
 
     @Override
-    protected CoeusRateSetterHistory newHistory(final TethysDate pDate) {
-        return new CoeusRateSetterHistory(this, pDate);
-    }
-
-    @Override
     protected void checkLoan() throws CoeusDataException {
         final TethysMoney myBookBalance = theBookItem.getBalance();
         if (!myBookBalance.equals(getTotals().getLoanBook())) {

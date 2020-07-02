@@ -41,31 +41,11 @@ public class CoeusFundingCircleHistory
     }
 
     /**
-     * Constructor for zeroed period totals.
-     * @param pMarket the market
-     * @param pDate the end date for the totals
-     */
-    CoeusFundingCircleHistory(final CoeusFundingCircleMarket pMarket,
-                              final TethysDate pDate) {
-        super(new CoeusFundingCircleTotals(pMarket, pDate));
-    }
-
-    /**
      * Constructor for zeroed loan totals.
      * @param pLoan the loan
      */
     CoeusFundingCircleHistory(final CoeusFundingCircleLoan pLoan) {
         super(new CoeusFundingCircleTotals(pLoan));
-    }
-
-    /**
-     * Constructor for zeroed period totals.
-     * @param pLoan the loan
-     * @param pDate the end date for the totals
-     */
-    CoeusFundingCircleHistory(final CoeusFundingCircleLoan pLoan,
-                              final TethysDate pDate) {
-        super(new CoeusFundingCircleTotals(pLoan, pDate));
     }
 
     @Override

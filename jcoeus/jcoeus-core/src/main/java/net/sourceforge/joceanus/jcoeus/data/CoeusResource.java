@@ -381,6 +381,16 @@ public enum CoeusResource
     DATA_BALANCE("data.balance"),
 
     /**
+     * Data Loan Rate Of Return.
+     */
+    DATA_LOANROR("data.loanror"),
+
+    /**
+     * Data Asset Rate Of Return.
+     */
+    DATA_ASSETROR("data.assetror"),
+
+    /**
      * Data Delta.
      */
     DATA_DELTA("data.delta"),

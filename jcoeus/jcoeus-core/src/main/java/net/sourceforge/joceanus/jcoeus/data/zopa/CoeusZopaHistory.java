@@ -41,31 +41,11 @@ public class CoeusZopaHistory
     }
 
     /**
-     * Constructor for zeroed period totals.
-     * @param pMarket the market
-     * @param pDate the end date for the totals
-     */
-    CoeusZopaHistory(final CoeusZopaMarket pMarket,
-                     final TethysDate pDate) {
-        super(new CoeusZopaTotals(pMarket, pDate));
-    }
-
-    /**
      * Constructor for zeroed loan totals.
      * @param pLoan the loan
      */
     CoeusZopaHistory(final CoeusZopaLoan pLoan) {
         super(new CoeusZopaTotals(pLoan));
-    }
-
-    /**
-     * Constructor for zeroed loan totals.
-     * @param pLoan the loan
-     * @param pDate the end date for the totals
-     */
-    CoeusZopaHistory(final CoeusZopaLoan pLoan,
-                     final TethysDate pDate) {
-        super(new CoeusZopaTotals(pLoan, pDate));
     }
 
     @Override

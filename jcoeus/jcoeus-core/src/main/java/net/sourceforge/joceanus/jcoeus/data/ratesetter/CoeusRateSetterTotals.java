@@ -77,48 +77,27 @@ public final class CoeusRateSetterTotals
      * @param pMarket the market
      */
     CoeusRateSetterTotals(final CoeusRateSetterMarket pMarket) {
-        this(pMarket, null, null);
+        this(pMarket, null);
     }
 
-    /**
-     * Constructor for zeroed period totals.
-     * @param pMarket the market
-     * @param pDate the end date for the totals
-     */
-    CoeusRateSetterTotals(final CoeusRateSetterMarket pMarket,
-                          final TethysDate pDate) {
-        this(pMarket, null, pDate);
-    }
 
     /**
      * Constructor for zeroed totals.
      * @param pLoan the loan
      */
     CoeusRateSetterTotals(final CoeusRateSetterLoan pLoan) {
-        this(pLoan.getMarket(), pLoan, null);
-    }
-
-    /**
-     * Constructor for zeroed totals.
-     * @param pLoan the loan
-     * @param pDate the end date for the totals
-     */
-    CoeusRateSetterTotals(final CoeusRateSetterLoan pLoan,
-                          final TethysDate pDate) {
-        this(pLoan.getMarket(), pLoan, pDate);
+        this(pLoan.getMarket(), pLoan);
     }
 
     /**
      * Constructor for zeroed totals.
      * @param pMarket the market
      * @param pLoan the loan
-     * @param pDate the end date for the totals
      */
     CoeusRateSetterTotals(final CoeusRateSetterMarket pMarket,
-                          final CoeusRateSetterLoan pLoan,
-                          final TethysDate pDate) {
+                          final CoeusRateSetterLoan pLoan) {
         /* Initialise underlying class */
-        super(pMarket, pLoan, pDate);
+        super(pMarket, pLoan);
 
         /* Initialise values */
         theAssetValue = new TethysMoney(getZero());
@@ -152,20 +131,23 @@ public final class CoeusRateSetterTotals
         theFees = new TethysMoney(pTotals.getFees());
     }
 
-    @Override
-    protected void addTotalsToTotals(final CoeusTotals pTotals) {
-        /* Cast correctly */
-        final CoeusRateSetterTotals myTotals = (CoeusRateSetterTotals) pTotals;
+    /**
+     * Constructor for cloning totals.
+     * @param pTotals the totals to clone
+     */
+    CoeusRateSetterTotals(final CoeusRateSetterTotals pTotals) {
+        /* Initialise underlying class */
+        super(pTotals);
 
-        /* Add values from totals */
-        theAssetValue.addAmount(myTotals.getAssetValue());
-        theHolding.addAmount(myTotals.getHolding());
-        theLoanBook.addAmount(myTotals.getLoanBook());
-        theSourceValue.addAmount(myTotals.getSourceValue());
-        theInvested.addAmount(myTotals.getInvested());
-        theEarnings.addAmount(myTotals.getEarnings());
-        theInterest.addAmount(myTotals.getInterest());
-        theFees.addAmount(myTotals.getFees());
+        /* Initialise values from previous totals */
+        theAssetValue = new TethysMoney(pTotals.getAssetValue());
+        theHolding = new TethysMoney(pTotals.getHolding());
+        theLoanBook = new TethysMoney(pTotals.getLoanBook());
+        theSourceValue = new TethysMoney(pTotals.getSourceValue());
+        theInvested = new TethysMoney(pTotals.getInvested());
+        theEarnings = new TethysMoney(pTotals.getEarnings());
+        theInterest = new TethysMoney(pTotals.getInterest());
+        theFees = new TethysMoney(pTotals.getFees());
     }
 
     @Override

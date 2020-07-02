@@ -165,11 +165,6 @@ public class CoeusRateSetterMarket
     }
 
     @Override
-    protected CoeusRateSetterHistory newHistory(final TethysDate pDate) {
-        return new CoeusRateSetterHistory(this, pDate);
-    }
-
-    @Override
     protected CoeusRateSetterLoan newLoan(final String pId) {
         return new CoeusRateSetterLoan(this, pId);
     }
