@@ -66,12 +66,12 @@
     <appDir>${env.BACKUPDIR}</appDir>
     <appLibDir>lib/</appLibDir>
     <BouncyCastleVersion>1.65</BouncyCastleVersion>
-    <JGitVersion>5.7.0.202003110725-r</JGitVersion>
+    <JGitVersion>5.8.0.202006091008-r</JGitVersion>
     <JUnitVersion>5.6.2</JUnitVersion>
     <JSONVersion>20200518</JSONVersion>
     <ApacheMavenVersion>3.6.3</ApacheMavenVersion>
     <MySQLVersion>8.0.20</MySQLVersion>
-    <PostGreSQLVersion>42.2.13</PostGreSQLVersion>
+    <PostGreSQLVersion>42.2.14</PostGreSQLVersion>
     <JTDSVersion>1.3.1</JTDSVersion>
     <H2Version>1.4.200</H2Version>
     <ApachePOIVersion>4.1.2</ApachePOIVersion>
@@ -82,8 +82,8 @@
     <JavaVersion>11</JavaVersion>
     <JavaFXVersion>14.0.1</JavaFXVersion>
     <JavaLanguageVersion>11</JavaLanguageVersion>
-    <CheckStyleVersion>8.33</CheckStyleVersion>
-    <PMDVersion>6.24.0</PMDVersion>
+    <CheckStyleVersion>8.34</CheckStyleVersion>
+    <PMDVersion>6.25.0</PMDVersion>
     <CleanPluginVersion>3.1.0</CleanPluginVersion>
     <ResourcesPluginVersion>3.1.0</ResourcesPluginVersion>
     <InstallPluginVersion>3.0.0-M1</InstallPluginVersion>
@@ -95,7 +95,7 @@
     <DependencyPluginVersion>3.1.2</DependencyPluginVersion>
     <SurefirePluginVersion>3.0.0-M5</SurefirePluginVersion>
     <BuildNumberPluginVersion>1.4</BuildNumberPluginVersion>
-    <BuildHelperPluginVersion>3.0.0</BuildHelperPluginVersion>
+    <BuildHelperPluginVersion>3.2.0</BuildHelperPluginVersion>
     <JarPluginVersion>3.2.0</JarPluginVersion>
     <ProjectInfoPluginVersion>3.1.0</ProjectInfoPluginVersion>
     <JxrPluginVersion>3.0.0</JxrPluginVersion>
@@ -248,6 +248,7 @@
         <configuration>
           <show>package</show>
           <nohelp>true</nohelp>
+          <failOnError>false</failOnError>
           <excludePackageNames>SevenZip</excludePackageNames>
         </configuration>
         <executions>

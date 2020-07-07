@@ -43,6 +43,11 @@ public class CoeusStatementCalculator
     private final MetisListIndexed<CoeusTotals> theTotals;
 
     /**
+     * The initial totals.
+     */
+    private CoeusTotals theInitial;
+
+    /**
      * The current filter.
      */
     private Predicate<CoeusTotals> theFilter;
@@ -53,6 +58,14 @@ public class CoeusStatementCalculator
      */
     public CoeusStatementCalculator(final MetisListIndexed<CoeusTotals> pTotals) {
         theTotals = pTotals;
+    }
+
+    /**
+     * Set the Initial Totals.
+     * @param pInitial the totals
+     */
+    protected void setInitial(final CoeusTotals pInitial) {
+        theInitial = pInitial;
     }
 
     /**
@@ -72,7 +85,7 @@ public class CoeusStatementCalculator
             final CoeusTotals myTotals = myIterator.next();
 
             /* Calculate fields */
-            myTotals.calculateFields(myField);
+            myTotals.calculateFields(myField, theInitial);
         }
     }
 

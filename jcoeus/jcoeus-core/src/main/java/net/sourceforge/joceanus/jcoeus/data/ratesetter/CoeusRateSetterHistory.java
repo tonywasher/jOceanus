@@ -20,7 +20,7 @@ import net.sourceforge.joceanus.jcoeus.data.CoeusHistory;
 import net.sourceforge.joceanus.jcoeus.data.CoeusTotals;
 import net.sourceforge.joceanus.jcoeus.data.CoeusTransaction;
 import net.sourceforge.joceanus.jmetis.field.MetisFieldSet;
-import net.sourceforge.joceanus.jtethys.date.TethysDate;
+import net.sourceforge.joceanus.jtethys.date.TethysDateRange;
 
 /**
  * RateSetter Transaction Totals History.
@@ -46,6 +46,16 @@ public class CoeusRateSetterHistory
      */
     CoeusRateSetterHistory(final CoeusRateSetterLoan pLoan) {
         super(new CoeusRateSetterTotals(pLoan));
+    }
+
+    /**
+     * Constructor for history view.
+     * @param pHistory the history
+     * @param pRange the date Range
+     */
+    CoeusRateSetterHistory(final CoeusHistory pHistory,
+                           final TethysDateRange pRange) {
+        super(pHistory, pRange);
     }
 
     @Override

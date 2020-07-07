@@ -73,7 +73,7 @@ public class CoeusReportAnnual
         theMarket = pMarket;
 
         /* Access the date and totals */
-        TethysDate myDate = theMarket.getDate();
+        final TethysDate myDate = theMarket.getDateRange().getEnd();
         final boolean hasFees = theMarket.hasFees();
         final boolean hasCashBack = theMarket.hasCashBack();
         final boolean hasBadDebt = theMarket.hasBadDebt();
@@ -110,8 +110,8 @@ public class CoeusReportAnnual
         while (myIterator.hasNext()) {
             final CoeusHistory myHistory = myIterator.next();
             final CoeusTotals myTotals = myHistory.getTotals();
-            myDate = myHistory.getDate();
-            final Month myMonth = myDate.getMonthValue();
+            //myDate = myHistory.getDate();
+            final Month myMonth = Month.JANUARY; //myDate.getMonthValue();
 
             /* Create the row */
             theBuilder.startRow(myTable);
@@ -199,7 +199,7 @@ public class CoeusReportAnnual
         if (pSource instanceof CoeusFilterDefinition) {
             /* Create the new filter */
             final CoeusFilterDefinition myDef = (CoeusFilterDefinition) pSource;
-            final CoeusAnnualFilter myFilter = new CoeusAnnualFilter(theMarket, theMarket.getDate());
+            final CoeusAnnualFilter myFilter = new CoeusAnnualFilter(theMarket, theMarket.getDateRange().getEnd());
             myFilter.setMonth(myDef.getMonth());
             myFilter.setTotalSet(myDef.getTotalSet());
             return myFilter;

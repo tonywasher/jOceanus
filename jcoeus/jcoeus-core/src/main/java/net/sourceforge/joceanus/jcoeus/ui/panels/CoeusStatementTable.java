@@ -181,6 +181,7 @@ public class CoeusStatementTable
     private void filterChanged() {
         /* Adjust the calculator */
         final CoeusFilter myFilter = theSelector.getFilter();
+        theCalculator.setInitial(myFilter.getHistory().getInitial());
         theCalculator.setTotalSet(myFilter.getTotalSet());
 
         /* Show or hide the loan column */
@@ -196,7 +197,7 @@ public class CoeusStatementTable
     }
 
     /**
-     * Handle a changesaveToFile request.
+     * Handle a saveToFile request.
      */
     private void saveToFile() {
         /* Create the string Builder */

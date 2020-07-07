@@ -128,23 +128,56 @@ public abstract class CoeusTotals
      */
     protected CoeusTotals(final CoeusTransaction pUnderlying,
                           final CoeusTotals pPrevious) {
-        theMarket = pUnderlying.getMarket();
-        theLoan = pUnderlying.getLoan();
+        theMarket = pPrevious.getMarket();
+        theLoan = pPrevious.getLoan();
         theTransaction = pUnderlying;
-        thePrevious = pPrevious.theTransaction == null
-                                                       ? null
-                                                       : pPrevious;
+        thePrevious = pPrevious;
+
+        /* Clone the rate of returns */
+        theAssetRor = new TethysRatio(thePrevious.getAssetRoR());
+        theLoanRor = new TethysRatio(thePrevious.getLoanRoR());
     }
 
     /**
-     * Constructor for cloning totals.
-     * @param pTotals the totals to clone
+     * Calculate the delta from a totals.
+     * @param pBase the base totals
      */
-    protected CoeusTotals(final CoeusTotals pTotals) {
-        theMarket = pTotals.getMarket();
-        theLoan = pTotals.getLoan();
-        theTransaction = pTotals.getTransaction();
-        thePrevious = null;
+    protected void calculateDelta(final CoeusTotals pBase) {
+        /* Calculate the delta rate of returns */
+        theAssetRor.divide(pBase.getAssetRoR());
+        theLoanRor.divide(pBase.getLoanRoR());
+    }
+
+    /**
+     * Calculate the rateOfReturn.
+     * @param pDelta the delta
+     */
+    protected void calculateRateOfReturn(final TethysDecimal pDelta) {
+        /* No need to calculate if there is no delta or we are a loan total */
+        if (pDelta.isNonZero() && theLoan == null) {
+            /* Calculate the delta rate of returns */
+            theAssetRor = theAssetRor.multiplyBy(calculateRateOfReturn(thePrevious.getAssetValue(), pDelta));
+            theLoanRor = theLoanRor.multiplyBy(calculateRateOfReturn(thePrevious.getLoanBook(), pDelta));
+        }
+    }
+
+    /**
+     * Calculate the rateOfReturn.
+     * @param pBase the base value
+     * @param pDelta the delta
+     * @return the rate of return
+     */
+    private TethysRatio calculateRateOfReturn(final TethysDecimal pBase,
+                                              final TethysDecimal pDelta) {
+        /* If base is zero, just return one */
+        if (pBase.isZero()) {
+            return TethysRatio.ONE;
+        }
+
+        /* Calculate the delta rate of returns */
+        final TethysDecimal myNew = new TethysDecimal(pBase);
+        myNew.addValue(pDelta);
+        return new TethysRatio(myNew, pBase);
     }
 
     /**
@@ -219,10 +252,18 @@ public abstract class CoeusTotals
     }
 
     /**
+     * Obtain the Previous totals.
+     * @return the transaction
+     */
+    protected CoeusTotals getPrevious() {
+        return thePrevious;
+    }
+
+    /**
      * Obtain the Transaction.
      * @return the transaction
      */
-    private CoeusTransaction getTransaction() {
+    protected CoeusTransaction getTransaction() {
         return theTransaction;
     }
 
@@ -416,10 +457,13 @@ public abstract class CoeusTotals
     /**
      * Calculate the fields.
      * @param pField the field
+     * @param pInitial the initial totals
      */
-    public void calculateFields(final MetisFieldDef pField) {
+    public void calculateFields(final MetisFieldDef pField,
+                                final CoeusTotals pInitial) {
         /* Obtain the balance field value */
         final Object myBalance = pField.getFieldValue(this);
+        final Object myBase = pField.getFieldValue(pInitial);
 
         /* Make sure that balance is Decimal */
         if (!(myBalance instanceof TethysDecimal)) {
@@ -428,7 +472,7 @@ public abstract class CoeusTotals
             theDelta = null;
         } else {
             /* Store new values */
-            theBalance = (TethysDecimal) myBalance;
+            theBalance = calculateDelta((TethysDecimal) myBalance, myBase, false);
             theDelta = calculateDelta(pField);
         }
     }
@@ -444,30 +488,52 @@ public abstract class CoeusTotals
                                                       ? null
                                                       : pField.getFieldValue(thePrevious);
 
+        /* return the delta */
+        return calculateDelta(theBalance, myPrevious, true);
+    }
+
+    /**
+     * Calculate the delta.
+     * @param pBalance the balance
+     * @param pPrevious the previous value
+     * @param pNullIfEqual return null if the values are equal
+     * @return the delta
+     */
+    private static TethysDecimal calculateDelta(final TethysDecimal pBalance,
+                                                final Object pPrevious,
+                                                final boolean pNullIfEqual) {
         /* If we do not have a preceding total */
-        if (!(myPrevious instanceof TethysDecimal)) {
+        if (!(pPrevious instanceof TethysDecimal)) {
             /* Set delta as balance or null */
-            return theBalance.isNonZero()
-                                          ? theBalance
-                                          : null;
+            return pBalance.isNonZero() || !pNullIfEqual
+                   ? pBalance
+                   : null;
         }
 
         /* Delta is null if there is no change */
-        if (theBalance.equals(myPrevious)) {
+        if (pBalance.equals(pPrevious) && pNullIfEqual) {
             return null;
         }
 
         /* If this is a money value */
-        if (theBalance instanceof TethysMoney
-            && myPrevious instanceof TethysMoney) {
-            final TethysMoney myResult = new TethysMoney((TethysMoney) theBalance);
-            myResult.subtractAmount((TethysMoney) myPrevious);
+        if (pBalance instanceof TethysMoney
+                && pPrevious instanceof TethysMoney) {
+            final TethysMoney myResult = new TethysMoney((TethysMoney) pBalance);
+            myResult.subtractAmount((TethysMoney) pPrevious);
+            return myResult;
+        }
+
+        /* If this is a ratio value */
+        if (pBalance instanceof TethysRatio
+                && pPrevious instanceof TethysRatio) {
+            final TethysRatio myResult = new TethysRatio((TethysRatio) pBalance);
+            myResult.divide((TethysRatio) pPrevious);
             return myResult;
         }
 
         /* Handle standard result */
-        final TethysDecimal myResult = new TethysDecimal(theBalance);
-        myResult.subtractValue((TethysDecimal) myPrevious);
+        final TethysDecimal myResult = new TethysDecimal(pBalance);
+        myResult.subtractValue((TethysDecimal) pPrevious);
         return myResult;
     }
 
@@ -502,6 +568,10 @@ public abstract class CoeusTotals
                 return CoeusTotalsField.LOSSES;
             case BADDEBT:
                 return CoeusTotalsField.BADDEBT;
+            case LOANROR:
+                return CoeusTotalsField.LOANROR;
+            case ASSETROR:
+                return CoeusTotalsField.ASSETROR;
             case RECOVERED:
                 return CoeusTotalsField.RECOVERED;
             case HOLDING:

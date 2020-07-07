@@ -19,7 +19,6 @@ package net.sourceforge.joceanus.jcoeus.data.lendingworks;
 import net.sourceforge.joceanus.jcoeus.data.CoeusTotals;
 import net.sourceforge.joceanus.jcoeus.data.CoeusTransaction;
 import net.sourceforge.joceanus.jmetis.field.MetisFieldSet;
-import net.sourceforge.joceanus.jtethys.date.TethysDate;
 import net.sourceforge.joceanus.jtethys.decimal.TethysDecimal;
 
 /**
@@ -130,23 +129,20 @@ public final class CoeusLendingWorksTotals
         theCashBack = new TethysDecimal(pTotals.getCashBack());
     }
 
-    /**
-     * Constructor for cloning totals.
-     * @param pTotals the totals to clone
-     */
-    CoeusLendingWorksTotals(final CoeusLendingWorksTotals pTotals) {
-        /* Initialise underlying class */
-        super(pTotals);
+    @Override
+    protected void calculateDelta(final CoeusTotals pBase) {
+        /* Calculate delta rateOfReturns */
+        super.calculateDelta(pBase);
 
-        /* Initialise values from previous totals */
-        theAssetValue = new TethysDecimal(pTotals.getAssetValue());
-        theHolding = new TethysDecimal(pTotals.getHolding());
-        theLoanBook = new TethysDecimal(pTotals.getLoanBook());
-        theSourceValue = new TethysDecimal(pTotals.getSourceValue());
-        theInvested = new TethysDecimal(pTotals.getInvested());
-        theEarnings = new TethysDecimal(pTotals.getEarnings());
-        theInterest = new TethysDecimal(pTotals.getInterest());
-        theCashBack = new TethysDecimal(pTotals.getCashBack());
+        /* Calculate the deltas */
+        theAssetValue.subtractValue(pBase.getAssetValue());
+        theHolding.subtractValue(pBase.getHolding());
+        theLoanBook.subtractValue(pBase.getLoanBook());
+        theSourceValue.subtractValue(pBase.getSourceValue());
+        theInvested.subtractValue(pBase.getInvested());
+        theEarnings.subtractValue(pBase.getEarnings());
+        theInterest.subtractValue(pBase.getInterest());
+        theCashBack.subtractValue(pBase.getCashBack());
     }
 
     @Override
@@ -159,9 +155,10 @@ public final class CoeusLendingWorksTotals
         theCashBack.addValue(pTransaction.getCashBack());
 
         /* Adjust earnings */
-        theEarnings.addValue(pTransaction.getInterest());
-        theEarnings.subtractValue(pTransaction.getFees());
-        theEarnings.addValue(pTransaction.getCashBack());
+        final TethysDecimal myIncome = new TethysDecimal(pTransaction.getInterest());
+        myIncome.addValue(pTransaction.getFees());
+        myIncome.addValue(pTransaction.getCashBack());
+        theEarnings.addValue(myIncome);
 
         /* Adjust asset values */
         theAssetValue.addValue(pTransaction.getHolding());
@@ -171,6 +168,9 @@ public final class CoeusLendingWorksTotals
         theSourceValue.addValue(pTransaction.getInvested());
         theSourceValue.addValue(pTransaction.getInterest());
         theSourceValue.addValue(pTransaction.getCashBack());
+
+        /* Calculate the RateOfReturn */
+        calculateRateOfReturn(myIncome);
     }
 
     @Override

@@ -19,7 +19,6 @@ package net.sourceforge.joceanus.jcoeus.data.zopa;
 import net.sourceforge.joceanus.jcoeus.data.CoeusTotals;
 import net.sourceforge.joceanus.jcoeus.data.CoeusTransaction;
 import net.sourceforge.joceanus.jmetis.field.MetisFieldSet;
-import net.sourceforge.joceanus.jtethys.date.TethysDate;
 import net.sourceforge.joceanus.jtethys.decimal.TethysDecimal;
 
 /**
@@ -186,31 +185,28 @@ public final class CoeusZopaTotals
         theRecovered = new TethysDecimal(pTotals.getRecovered());
     }
 
-    /**
-     * Constructor for cloning totals.
-     * @param pTotals the totals to clone
-     */
-    CoeusZopaTotals(final CoeusZopaTotals pTotals) {
-        /* Initialise underlying class */
-        super(pTotals);
+    @Override
+    protected void calculateDelta(final CoeusTotals pBase) {
+        /* Calculate delta rateOfReturns */
+        super.calculateDelta(pBase);
 
-        /* Initialise values from previous totals */
-        theAssetValue = new TethysDecimal(pTotals.getAssetValue());
-        theHolding = new TethysDecimal(pTotals.getHolding());
-        theLoanBook = new TethysDecimal(pTotals.getLoanBook());
-        theSourceValue = new TethysDecimal(pTotals.getSourceValue());
-        theInvested = new TethysDecimal(pTotals.getInvested());
-        theEarnings = new TethysDecimal(pTotals.getEarnings());
-        theTaxableEarnings = new TethysDecimal(pTotals.getTaxableEarnings());
-        theInterest = new TethysDecimal(pTotals.getInterest());
-        theNettInterest = new TethysDecimal(pTotals.getNettInterest());
-        theBadDebtInterest = new TethysDecimal(pTotals.getBadDebtInterest());
-        theBadDebtCapital = new TethysDecimal(pTotals.getBadDebtCapital());
-        theFees = new TethysDecimal(pTotals.getFees());
-        theCashBack = new TethysDecimal(pTotals.getCashBack());
-        theLosses = new TethysDecimal(pTotals.getLosses());
-        theBadDebt = new TethysDecimal(pTotals.getBadDebt());
-        theRecovered = new TethysDecimal(pTotals.getRecovered());
+        /* Calculate the deltas */
+        theAssetValue.subtractValue(pBase.getAssetValue());
+        theHolding.subtractValue(pBase.getHolding());
+        theLoanBook.subtractValue(pBase.getLoanBook());
+        theSourceValue.subtractValue(pBase.getSourceValue());
+        theInvested.subtractValue(pBase.getInvested());
+        theEarnings.subtractValue(pBase.getEarnings());
+        theTaxableEarnings.subtractValue(pBase.getTaxableEarnings());
+        theInterest.subtractValue(pBase.getInterest());
+        theNettInterest.subtractValue(pBase.getNettInterest());
+        theBadDebtInterest.subtractValue(pBase.getBadDebtInterest());
+        theBadDebtCapital.subtractValue(pBase.getBadDebtCapital());
+        theFees.subtractValue(pBase.getFees());
+        theCashBack.subtractValue(pBase.getCashBack());
+        theLosses.subtractValue(pBase.getLosses());
+        theBadDebt.subtractValue(pBase.getBadDebt());
+        theRecovered.subtractValue(pBase.getRecovered());
     }
 
     @Override
@@ -228,9 +224,10 @@ public final class CoeusZopaTotals
         theRecovered.addValue(pTransaction.getRecovered());
 
         /* Adjust earnings */
-        theEarnings.addValue(pTransaction.getInterest());
-        theEarnings.addValue(pTransaction.getFees());
-        theEarnings.addValue(pTransaction.getCashBack());
+        final TethysDecimal myIncome = new TethysDecimal(pTransaction.getInterest());
+        myIncome.addValue(pTransaction.getFees());
+        myIncome.addValue(pTransaction.getCashBack());
+        theEarnings.addValue(myIncome);
 
         /* Adjust taxable earnings */
         theTaxableEarnings.addValue(pTransaction.getInterest());
@@ -242,8 +239,10 @@ public final class CoeusZopaTotals
         theNettInterest.addValue(pTransaction.getFees());
 
         /* Adjust losses */
-        theLosses.addValue(pTransaction.getBadDebt());
-        theLosses.addValue(pTransaction.getRecovered());
+        final TethysDecimal myLosses = new TethysDecimal(pTransaction.getBadDebt());
+        myLosses.addValue(pTransaction.getRecovered());
+        theLosses.addValue(myLosses);
+        myIncome.addValue(myLosses);
 
         /* Adjust asset values */
         theAssetValue.addValue(pTransaction.getHolding());
@@ -256,6 +255,9 @@ public final class CoeusZopaTotals
         theSourceValue.addValue(pTransaction.getFees());
         theSourceValue.addValue(pTransaction.getBadDebt());
         theSourceValue.addValue(pTransaction.getRecovered());
+
+        /* Calculate the RateOfReturn */
+        calculateRateOfReturn(myIncome);
     }
 
     @Override

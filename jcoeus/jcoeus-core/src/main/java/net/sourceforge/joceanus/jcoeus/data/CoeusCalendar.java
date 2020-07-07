@@ -80,6 +80,30 @@ public class CoeusCalendar {
     }
 
     /**
+     * Obtain start of month.
+     * @param pDate the date
+     * @return the start of the month
+     */
+    TethysDate getStartOfMonth(final TethysDate pDate) {
+        /* Determine the end of the month */
+        return Boolean.TRUE.equals(makeCalendarTotals)
+               ? getStartOfCalendarMonth(pDate)
+               : theFiscalYear.startOfMonth(pDate);
+    }
+
+    /**
+     * Obtain start of calendar month.
+     * @param pDate the date
+     * @return the end of the calendar month
+     */
+    private static TethysDate getStartOfCalendarMonth(final TethysDate pDate) {
+        /* Determine the start of the calendar month */
+        final TethysDate myDate = new TethysDate(pDate);
+        myDate.startCalendarMonth();
+        return myDate;
+    }
+
+    /**
      * Obtain end of calendar month.
      * @param pDate the date
      * @return the end of the calendar month

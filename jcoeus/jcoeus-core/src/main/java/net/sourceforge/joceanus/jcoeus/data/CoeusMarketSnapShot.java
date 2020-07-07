@@ -25,6 +25,7 @@ import java.util.Map;
 import net.sourceforge.joceanus.jmetis.field.MetisFieldItem;
 import net.sourceforge.joceanus.jmetis.field.MetisFieldSet;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
+import net.sourceforge.joceanus.jtethys.date.TethysDateRange;
 
 /**
  * Loan Market SnapShot.
@@ -42,7 +43,7 @@ public class CoeusMarketSnapShot
     static {
         FIELD_DEFS.declareLocalField(CoeusResource.DATA_MARKET, CoeusMarketSnapShot::getMarket);
         FIELD_DEFS.declareLocalField(CoeusResource.DATA_DATE, CoeusMarketSnapShot::getDate);
-        FIELD_DEFS.declareLocalField(CoeusResource.DATA_LOANMAP, CoeusMarketSnapShot::loanMap);
+        FIELD_DEFS.declareLocalField(CoeusResource.DATA_LOANS, CoeusMarketSnapShot::loanMap);
         FIELD_DEFS.declareLocalField(CoeusResource.DATA_HISTORY, CoeusMarketSnapShot::getHistory);
     }
 
@@ -62,6 +63,11 @@ public class CoeusMarketSnapShot
     private final List<CoeusLoan> theLoanList;
 
     /**
+     * xLoanList.
+     */
+    private final List<CoeusLoan> theXLoanList;
+
+    /**
      * LoanMap.
      */
     private final Map<String, CoeusLoan> theLoanMap;
@@ -70,6 +76,11 @@ public class CoeusMarketSnapShot
      * History.
      */
     private final CoeusHistory theHistory;
+
+    /**
+     * xHistory.
+     */
+    private final CoeusHistory theXHistory;
 
     /**
      * Do we have badDebt?
@@ -86,16 +97,29 @@ public class CoeusMarketSnapShot
         /* Store parameters */
         theMarket = pMarket;
         theDate = pDate;
+        final TethysDateRange myRange = new TethysDateRange(null, pDate);
 
         /* Create loan map/list */
         theLoanMap = new HashMap<>();
         theLoanList = new ArrayList<>();
+        theXLoanList = new ArrayList<>();
 
         /* Create the history */
         theHistory = determineHistory();
+        theXHistory = pMarket.viewHistory(myRange);
 
-        /* Sort the loans */
-        sortLoans();
+        /* Loop through the market loans */
+        final Iterator<CoeusLoan> myIterator = theMarket.loanIterator();
+        while (myIterator.hasNext()) {
+            final CoeusLoan myLoan = myIterator.next();
+            final CoeusLoan myView = theMarket.viewLoan(myLoan, myRange);
+            if (!myLoan.isEmpty()) {
+                theXLoanList.add(myView);
+            }
+        }
+
+        /* Sort the loan list */
+        theLoanList.sort(CoeusLoan::compareTo);
     }
 
     /**
@@ -131,18 +155,19 @@ public class CoeusMarketSnapShot
     }
 
     /**
+     * Obtain xhistory.
+     * @return the history
+     */
+    public CoeusHistory getXHistory() {
+        return theXHistory;
+    }
+
+    /**
      * Obtain the totals.
      * @return the totals
      */
     public CoeusTotals getTotals() {
         return theHistory.getTotals();
-    }
-
-    /**
-     * Sort the loans.
-     */
-    private void sortLoans() {
-        theLoanList.sort(CoeusLoan::compareTo);
     }
 
     /**
@@ -213,6 +238,23 @@ public class CoeusMarketSnapShot
     }
 
     /**
+     * Set flags.
+     */
+    private void setFlags() {
+        /* Loop through the totals */
+        final Iterator<CoeusTotals> myIterator = theXHistory.historyIterator();
+        while (myIterator.hasNext()) {
+            final CoeusTotals myTotals = myIterator.next();
+
+            /* Detect badDebt */
+            if (CoeusTransactionType.BADDEBT.equals(myTotals.getTransType())) {
+                hasBadDebt = true;
+                return;
+            }
+        }
+    }
+
+    /**
      * Obtain the loan for the snapShot.
      * @param pLoan the market loan
      * @return the loan
@@ -242,9 +284,7 @@ public class CoeusMarketSnapShot
 
     @Override
     public String toString() {
-        final StringBuilder myBuilder = new StringBuilder();
-        myBuilder.append(theMarket).append('@').append(theDate);
-        return myBuilder.toString();
+        return String.valueOf(theMarket) + '@' + theDate;
     }
 
     @Override

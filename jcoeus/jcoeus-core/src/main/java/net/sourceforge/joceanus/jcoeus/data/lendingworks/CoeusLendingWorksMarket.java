@@ -19,12 +19,14 @@ package net.sourceforge.joceanus.jcoeus.data.lendingworks;
 import java.nio.file.Path;
 import java.util.ListIterator;
 
+import net.sourceforge.joceanus.jcoeus.data.CoeusHistory;
+import net.sourceforge.joceanus.jcoeus.data.CoeusLoan;
 import net.sourceforge.joceanus.jcoeus.data.CoeusMarket;
 import net.sourceforge.joceanus.jcoeus.data.CoeusMarketProvider;
 import net.sourceforge.joceanus.jmetis.data.MetisDataFormatter;
 import net.sourceforge.joceanus.jmetis.field.MetisFieldSet;
 import net.sourceforge.joceanus.jtethys.OceanusException;
-import net.sourceforge.joceanus.jtethys.date.TethysDate;
+import net.sourceforge.joceanus.jtethys.date.TethysDateRange;
 
 /**
  * LendingWorks Market.
@@ -108,8 +110,20 @@ public class CoeusLendingWorksMarket
     }
 
     @Override
+    protected CoeusLendingWorksHistory viewHistory(final CoeusHistory pHistory,
+                                                   final TethysDateRange pRange) {
+        return new CoeusLendingWorksHistory(pHistory, pRange);
+    }
+
+    @Override
     protected CoeusLendingWorksLoan newLoan(final String pId) {
         return new CoeusLendingWorksLoan(this, pId);
+    }
+
+    @Override
+    protected CoeusLendingWorksLoan viewLoan(final CoeusLoan pLoan,
+                                             final TethysDateRange pRange) {
+        return new CoeusLendingWorksLoan((CoeusLendingWorksLoan) pLoan, pRange);
     }
 
     @Override

@@ -19,7 +19,6 @@ package net.sourceforge.joceanus.jcoeus.data.ratesetter;
 import net.sourceforge.joceanus.jcoeus.data.CoeusTotals;
 import net.sourceforge.joceanus.jcoeus.data.CoeusTransaction;
 import net.sourceforge.joceanus.jmetis.field.MetisFieldSet;
-import net.sourceforge.joceanus.jtethys.date.TethysDate;
 import net.sourceforge.joceanus.jtethys.decimal.TethysMoney;
 
 /**
@@ -131,23 +130,23 @@ public final class CoeusRateSetterTotals
         theFees = new TethysMoney(pTotals.getFees());
     }
 
-    /**
-     * Constructor for cloning totals.
-     * @param pTotals the totals to clone
-     */
-    CoeusRateSetterTotals(final CoeusRateSetterTotals pTotals) {
-        /* Initialise underlying class */
-        super(pTotals);
+    @Override
+    protected void calculateDelta(final CoeusTotals pBase) {
+        /* Calculate delta rateOfReturns */
+        super.calculateDelta(pBase);
 
-        /* Initialise values from previous totals */
-        theAssetValue = new TethysMoney(pTotals.getAssetValue());
-        theHolding = new TethysMoney(pTotals.getHolding());
-        theLoanBook = new TethysMoney(pTotals.getLoanBook());
-        theSourceValue = new TethysMoney(pTotals.getSourceValue());
-        theInvested = new TethysMoney(pTotals.getInvested());
-        theEarnings = new TethysMoney(pTotals.getEarnings());
-        theInterest = new TethysMoney(pTotals.getInterest());
-        theFees = new TethysMoney(pTotals.getFees());
+        /* Cast correctly */
+        final CoeusRateSetterTotals myBase = (CoeusRateSetterTotals) pBase;
+
+        /* Calculate the deltas */
+        theAssetValue.subtractAmount(myBase.getAssetValue());
+        theHolding.subtractAmount(myBase.getHolding());
+        theLoanBook.subtractAmount(myBase.getLoanBook());
+        theSourceValue.subtractAmount(myBase.getSourceValue());
+        theInvested.subtractAmount(myBase.getInvested());
+        theEarnings.subtractAmount(myBase.getEarnings());
+        theInterest.subtractAmount(myBase.getInterest());
+        theFees.subtractAmount(myBase.getFees());
     }
 
     @Override
@@ -163,8 +162,9 @@ public final class CoeusRateSetterTotals
         theFees.addAmount(myTransaction.getFees());
 
         /* Adjust earnings */
-        theEarnings.addAmount(myTransaction.getInterest());
-        theEarnings.addAmount(myTransaction.getFees());
+        final TethysMoney myIncome = new TethysMoney(myTransaction.getInterest());
+        myIncome.addAmount(myTransaction.getFees());
+        theEarnings.addAmount(myIncome);
 
         /* Adjust asset values */
         theAssetValue.addAmount(myTransaction.getHolding());
@@ -174,6 +174,9 @@ public final class CoeusRateSetterTotals
         theSourceValue.addAmount(myTransaction.getInvested());
         theSourceValue.addAmount(myTransaction.getInterest());
         theSourceValue.addAmount(myTransaction.getFees());
+
+        /* Calculate the RateOfReturn */
+        calculateRateOfReturn(myIncome);
     }
 
     @Override

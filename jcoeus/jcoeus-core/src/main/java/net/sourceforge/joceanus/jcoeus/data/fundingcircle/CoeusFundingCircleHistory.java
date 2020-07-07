@@ -20,7 +20,7 @@ import net.sourceforge.joceanus.jcoeus.data.CoeusHistory;
 import net.sourceforge.joceanus.jcoeus.data.CoeusTotals;
 import net.sourceforge.joceanus.jcoeus.data.CoeusTransaction;
 import net.sourceforge.joceanus.jmetis.field.MetisFieldSet;
-import net.sourceforge.joceanus.jtethys.date.TethysDate;
+import net.sourceforge.joceanus.jtethys.date.TethysDateRange;
 
 /**
  * FundingCircle Transaction Totals History.
@@ -33,11 +33,21 @@ public class CoeusFundingCircleHistory
     private static final MetisFieldSet<CoeusFundingCircleHistory> FIELD_DEFS = MetisFieldSet.newFieldSet(CoeusFundingCircleHistory.class);
 
     /**
-     * Constructor for zeroed market totals.
+     * Constructor for zeroed market history.
      * @param pMarket the market
      */
     CoeusFundingCircleHistory(final CoeusFundingCircleMarket pMarket) {
         super(new CoeusFundingCircleTotals(pMarket));
+    }
+
+    /**
+     * Constructor for history view.
+     * @param pHistory the history
+     * @param pRange the date Range
+     */
+    CoeusFundingCircleHistory(final CoeusHistory pHistory,
+                              final TethysDateRange pRange) {
+        super(pHistory, pRange);
     }
 
     /**

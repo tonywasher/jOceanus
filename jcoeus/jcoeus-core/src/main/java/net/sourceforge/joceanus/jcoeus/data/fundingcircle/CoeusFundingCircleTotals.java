@@ -19,7 +19,6 @@ package net.sourceforge.joceanus.jcoeus.data.fundingcircle;
 import net.sourceforge.joceanus.jcoeus.data.CoeusTotals;
 import net.sourceforge.joceanus.jcoeus.data.CoeusTransaction;
 import net.sourceforge.joceanus.jmetis.field.MetisFieldSet;
-import net.sourceforge.joceanus.jtethys.date.TethysDate;
 import net.sourceforge.joceanus.jtethys.decimal.TethysMoney;
 
 /**
@@ -193,32 +192,32 @@ public final class CoeusFundingCircleTotals
         theRecovered = new TethysMoney(pTotals.getRecovered());
     }
 
-    /**
-     * Constructor for cloning totals.
-     * @param pTotals the totals to clone
-     */
-    CoeusFundingCircleTotals(final CoeusFundingCircleTotals pTotals) {
-        /* Initialise underlying class */
-        super(pTotals);
+    @Override
+    protected void calculateDelta(final CoeusTotals pBase) {
+        /* Calculate delta rateOfReturns */
+        super.calculateDelta(pBase);
 
-        /* Initialise values from previous totals */
-        theAssetValue = new TethysMoney(pTotals.getAssetValue());
-        theHolding = new TethysMoney(pTotals.getHolding());
-        theLoanBook = new TethysMoney(pTotals.getLoanBook());
-        theSourceValue = new TethysMoney(pTotals.getSourceValue());
-        theInvested = new TethysMoney(pTotals.getInvested());
-        theEarnings = new TethysMoney(pTotals.getEarnings());
-        theTaxableEarnings = new TethysMoney(pTotals.getTaxableEarnings());
-        theInterest = new TethysMoney(pTotals.getInterest());
-        theNettInterest = new TethysMoney(pTotals.getNettInterest());
-        theBadDebtInterest = new TethysMoney(pTotals.getBadDebtInterest());
-        theBadDebtCapital = new TethysMoney(pTotals.getBadDebtCapital());
-        theFees = new TethysMoney(pTotals.getFees());
-        theCashBack = new TethysMoney(pTotals.getCashBack());
-        theXferPayment = new TethysMoney(pTotals.getXferPayment());
-        theLosses = new TethysMoney(pTotals.getLosses());
-        theBadDebt = new TethysMoney(pTotals.getBadDebt());
-        theRecovered = new TethysMoney(pTotals.getRecovered());
+        /* Cast correctly */
+        final CoeusFundingCircleTotals myBase = (CoeusFundingCircleTotals) pBase;
+
+        /* Calculate the deltas */
+        theAssetValue.subtractAmount(myBase.getAssetValue());
+        theHolding.subtractAmount(myBase.getHolding());
+        theLoanBook.subtractAmount(myBase.getLoanBook());
+        theSourceValue.subtractAmount(myBase.getSourceValue());
+        theInvested.subtractAmount(myBase.getInvested());
+        theEarnings.subtractAmount(myBase.getEarnings());
+        theTaxableEarnings.subtractAmount(myBase.getTaxableEarnings());
+        theInterest.subtractAmount(myBase.getInterest());
+        theNettInterest.subtractAmount(myBase.getNettInterest());
+        theBadDebtInterest.subtractAmount(myBase.getBadDebtInterest());
+        theBadDebtCapital.subtractAmount(myBase.getBadDebtCapital());
+        theFees.subtractAmount(myBase.getFees());
+        theCashBack.subtractAmount(myBase.getCashBack());
+        theXferPayment.subtractAmount(myBase.getXferPayment());
+        theLosses.subtractAmount(myBase.getLosses());
+        theBadDebt.subtractAmount(myBase.getBadDebt());
+        theRecovered.subtractAmount(myBase.getRecovered());
     }
 
     @Override
@@ -240,10 +239,11 @@ public final class CoeusFundingCircleTotals
         theRecovered.addAmount(myTransaction.getRecovered());
 
         /* Adjust earnings */
-        theEarnings.addAmount(myTransaction.getInterest());
-        theEarnings.addAmount(myTransaction.getFees());
-        theEarnings.addAmount(myTransaction.getCashBack());
-        theEarnings.addAmount(myTransaction.getXferPayment());
+        final TethysMoney myIncome = new TethysMoney(myTransaction.getInterest());
+        myIncome.addAmount(myTransaction.getFees());
+        myIncome.addAmount(myTransaction.getCashBack());
+        myIncome.addAmount(myTransaction.getXferPayment());
+        theEarnings.addAmount(myIncome);
 
         /* Adjust taxable earnings */
         theTaxableEarnings.addAmount(myTransaction.getInterest());
@@ -255,8 +255,10 @@ public final class CoeusFundingCircleTotals
         theNettInterest.addAmount(myTransaction.getFees());
 
         /* Adjust losses */
-        theLosses.addAmount(myTransaction.getBadDebt());
-        theLosses.addAmount(myTransaction.getRecovered());
+        final TethysMoney myLosses = new TethysMoney(myTransaction.getBadDebt());
+        myLosses.addAmount(myTransaction.getRecovered());
+        theLosses.addAmount(myLosses);
+        myIncome.addAmount(myLosses);
 
         /* Adjust asset values */
         theAssetValue.addAmount(myTransaction.getHolding());
@@ -270,6 +272,9 @@ public final class CoeusFundingCircleTotals
         theSourceValue.addAmount(myTransaction.getFees());
         theSourceValue.addAmount(myTransaction.getBadDebt());
         theSourceValue.addAmount(myTransaction.getRecovered());
+
+        /* Calculate the RateOfReturn */
+        calculateRateOfReturn(myIncome);
     }
 
     @Override

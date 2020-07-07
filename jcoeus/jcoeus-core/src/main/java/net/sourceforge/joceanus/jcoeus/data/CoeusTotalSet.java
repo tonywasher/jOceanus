@@ -88,6 +88,16 @@ public enum CoeusTotalSet {
     RECOVERED,
 
     /**
+     * LoanROR.
+     */
+    LOANROR,
+
+    /**
+     * AssetROR.
+     */
+    ASSETROR,
+
+    /**
      * Holding.
      */
     HOLDING,
