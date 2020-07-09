@@ -252,6 +252,7 @@ public abstract class CoeusMarket
             myLoan.clearHistory();
         }
         theLoanMap.clear();
+        theHistory.clear();
     }
 
     /**

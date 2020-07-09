@@ -343,10 +343,6 @@ public final class CoeusStatementState {
     void allocateNewSnapShotFilter() {
         final CoeusMarketCache myCache = theSelect.getCache();
         final CoeusSnapShotFilter myFilter = new CoeusSnapShotFilter(myCache.getSnapShot(theProvider, theSelectedDate));
-        if (theLoan != null
-            && !myFilter.availableLoan(theLoan)) {
-            theLoan = null;
-        }
         myFilter.setLoan(theLoan);
         myFilter.setTotalSet(theTotalSet);
         theFilter = myFilter;

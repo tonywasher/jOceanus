@@ -123,7 +123,7 @@ public abstract class CoeusHistory
                       : theHistory.get(theHistory.size() - 1);
 
         /* If we need to calculate a delta */
-        if (myIndices[0] != 0) {
+        if (theRange.getStart() != null) {
             theTotals = newTotals(theTotals, null);
             theTotals.calculateDelta(theInitial);
         }

@@ -52,11 +52,6 @@ public class CoeusMarketAnnual
     private final CoeusMarket theMarket;
 
     /**
-     * Calendar.
-     */
-    private final CoeusCalendar theCalendar;
-
-    /**
      * Date.
      */
     private final TethysDateRange theDateRange;
@@ -67,19 +62,9 @@ public class CoeusMarketAnnual
     private final Map<Month, CoeusHistory> theMonthlyHistories;
 
     /**
-     * The Map of MonthlyHistories.
-     */
-    private final Map<Month, CoeusHistory> theXMonthlyHistories;
-
-    /**
      * The AnnualHistory.
      */
     private final CoeusHistory theHistory;
-
-    /**
-     * The XHistory.
-     */
-    private final CoeusHistory theXHistory;
 
     /**
      * Do we have badDebt?
@@ -107,7 +92,6 @@ public class CoeusMarketAnnual
                       final TethysDate pDate) {
         /* Store parameters */
         theMarket = pMarket;
-        theCalendar = pCalendar;
 
         /* Determine the initial date */
         final TethysDate myInitial = new TethysDate(pDate);
@@ -117,24 +101,23 @@ public class CoeusMarketAnnual
 
         /* Create monthly history map */
         theMonthlyHistories = new LinkedHashMap<>();
-        theXMonthlyHistories = new LinkedHashMap<>();
 
         /* Create the history */
-        theHistory = determineHistory();
-        theXHistory = pMarket.viewHistory(theDateRange);
+        theHistory = pMarket.viewHistory(theDateRange);
+        setFlags();
 
         /* Create the monthly views */
         final TethysDate myDate = new TethysDate(myInitial);
         while (myDate.compareTo(pDate) < 0) {
-            final TethysDate myStart = theCalendar.getStartOfMonth(myDate);
-            final TethysDate myEnd = theCalendar.getEndOfMonth(myDate);
+            final TethysDate myStart = pCalendar.getStartOfMonth(myDate);
+            final TethysDate myEnd = pCalendar.getEndOfMonth(myDate);
             final Month myMonth = myEnd.getMonthValue();
             final TethysDateRange myRange = new TethysDateRange(myStart, myEnd);
-            final CoeusHistory myHistory = pMarket.viewHistory(theXHistory, myRange);
+            final CoeusHistory myHistory = pMarket.viewHistory(theHistory, myRange);
 
             /* Store a non-zero month */
             if (!myHistory.isEmpty()) {
-                theXMonthlyHistories.put(myMonth, myHistory);
+                theMonthlyHistories.put(myMonth, myHistory);
             }
 
             /* Next month */
@@ -216,65 +199,11 @@ public class CoeusMarketAnnual
     }
 
     /**
-     * Determine the history.
-     * @return the history
-     */
-    private CoeusHistory determineHistory() {
-        /* Create the history */
-        final CoeusHistory myHistory = theMarket.newHistory();
-
-        /* Access the dates */
-        final TethysDate myStart = theDateRange.getStart();
-        final TethysDate myEnd = theDateRange.getEnd();
-
-        /* Loop through the transactions */
-        final Iterator<CoeusTransaction> myIterator = theMarket.transactionIterator();
-        while (myIterator.hasNext()) {
-            final CoeusTransaction myTransaction = myIterator.next();
-            final TethysDate myDate = myTransaction.getDate();
-
-            /* If we have gone past the date, break the loop */
-            if (myDate.compareTo(myEnd) > 0) {
-                break;
-            }
-
-            /* If this is a relevant transaction */
-            if (myStart.compareTo(myTransaction.getDate()) <= 0) {
-                /* Obtain the monthly history and adjust */
-                final CoeusHistory myMonth = getMonthlyHistory(myDate);
-                myMonth.addTransactionToHistory(myTransaction);
-
-                /* Adjust the history */
-                myHistory.addTransactionToHistory(myTransaction);
-
-                /* Switch on transaction type */
-                switch (myTransaction.getTransType()) {
-                    case BADDEBT:
-                    case RECOVERY:
-                        hasBadDebt = true;
-                        break;
-                    case FEES:
-                        hasFees = true;
-                        break;
-                    case CASHBACK:
-                        hasCashBack = true;
-                        break;
-                    default:
-                        break;
-                }
-            }
-        }
-
-        /* Return the history */
-        return myHistory;
-    }
-
-    /**
      * Set flags.
      */
     private void setFlags() {
         /* Loop through the totals */
-        final Iterator<CoeusTotals> myIterator = theXHistory.historyIterator();
+        final Iterator<CoeusTotals> myIterator = theHistory.historyIterator();
         while (myIterator.hasNext()) {
             final CoeusTotals myTotals = myIterator.next();
 
@@ -294,20 +223,6 @@ public class CoeusMarketAnnual
                     break;
             }
         }
-    }
-
-    /**
-     * Obtain monthly history.
-     * @param pDate the date
-     * @return the history
-     */
-    private CoeusHistory getMonthlyHistory(final TethysDate pDate) {
-        /* Determine the date of the month */
-        final TethysDate myDate = theCalendar.getEndOfMonth(pDate);
-        final Month myMonth = myDate.getMonthValue();
-
-        /* Look up and return the history */
-        return theMonthlyHistories.computeIfAbsent(myMonth, m -> theMarket.newHistory());
     }
 
     /**

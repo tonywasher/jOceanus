@@ -73,7 +73,7 @@ public class CoeusReportAnnual
         theMarket = pMarket;
 
         /* Access the date and totals */
-        final TethysDate myDate = theMarket.getDateRange().getEnd();
+        TethysDate myDate = theMarket.getDateRange().getEnd();
         final boolean hasFees = theMarket.hasFees();
         final boolean hasCashBack = theMarket.hasCashBack();
         final boolean hasBadDebt = theMarket.hasBadDebt();
@@ -110,8 +110,8 @@ public class CoeusReportAnnual
         while (myIterator.hasNext()) {
             final CoeusHistory myHistory = myIterator.next();
             final CoeusTotals myTotals = myHistory.getTotals();
-            //myDate = myHistory.getDate();
-            final Month myMonth = Month.JANUARY; //myDate.getMonthValue();
+            myDate = myHistory.getDateRange().getEnd();
+            final Month myMonth = myDate.getMonthValue();
 
             /* Create the row */
             theBuilder.startRow(myTable);

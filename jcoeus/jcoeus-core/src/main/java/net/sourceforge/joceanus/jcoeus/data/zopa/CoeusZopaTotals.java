@@ -18,6 +18,7 @@ package net.sourceforge.joceanus.jcoeus.data.zopa;
 
 import net.sourceforge.joceanus.jcoeus.data.CoeusTotals;
 import net.sourceforge.joceanus.jcoeus.data.CoeusTransaction;
+import net.sourceforge.joceanus.jcoeus.data.CoeusTransactionType;
 import net.sourceforge.joceanus.jmetis.field.MetisFieldSet;
 import net.sourceforge.joceanus.jtethys.decimal.TethysDecimal;
 
@@ -211,6 +212,9 @@ public final class CoeusZopaTotals
 
     @Override
     protected void addTransactionToTotals(final CoeusTransaction pTransaction) {
+        if (pTransaction.getTransType().equals(CoeusTransactionType.FEES)) {
+            int i = 0;
+        }
         /* Add values from transaction */
         theInvested.addValue(pTransaction.getInvested());
         theHolding.addValue(pTransaction.getHolding());
