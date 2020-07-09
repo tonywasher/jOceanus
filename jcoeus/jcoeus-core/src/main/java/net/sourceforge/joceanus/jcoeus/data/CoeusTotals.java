@@ -16,6 +16,8 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jcoeus.data;
 
+import java.util.Objects;
+
 import net.sourceforge.joceanus.jmetis.field.MetisFieldItem.MetisFieldTableItem;
 import net.sourceforge.joceanus.jmetis.field.MetisFieldSet;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
@@ -114,11 +116,15 @@ public abstract class CoeusTotals
      */
     protected CoeusTotals(final CoeusMarket pMarket,
                           final CoeusLoan pLoan) {
+        /* Record details */
         theMarket = pMarket;
         theLoan = pLoan;
         theTransaction = null;
         thePrevious = null;
-        resetRatios();
+
+        /* Sedt rate of return ratios disabling Asset for Loan totals */
+        theAssetRor = pLoan == null ? TethysRatio.ONE : null;
+        theLoanRor = TethysRatio.ONE;
     }
 
     /**
@@ -134,7 +140,8 @@ public abstract class CoeusTotals
         thePrevious = pPrevious;
 
         /* Clone the rate of returns */
-        theAssetRor = new TethysRatio(thePrevious.getAssetRoR());
+        final TethysRatio myAssetRor = thePrevious.getAssetRoR();
+        theAssetRor = myAssetRor == null ? null : new TethysRatio(myAssetRor);
         theLoanRor = new TethysRatio(thePrevious.getLoanRoR());
     }
 
@@ -144,12 +151,23 @@ public abstract class CoeusTotals
      */
     protected void calculateDelta(final CoeusTotals pBase) {
         /* Calculate the delta rate of returns */
-        if (pBase.getAssetRoR().isZero()
-            || pBase.getLoanRoR().isZero()) {
-            int i = 0;
+        if (theAssetRor != null) {
+            theAssetRor.divide(pBase.getAssetRoR());
         }
-        theAssetRor.divide(pBase.getAssetRoR());
         theLoanRor.divide(pBase.getLoanRoR());
+    }
+
+    /**
+     * Remove duplicates.
+     */
+    protected void removeDuplicates() {
+        /* Use previous values if equal */
+        if (Objects.equals(theAssetRor, thePrevious.getAssetRoR())) {
+            theAssetRor = thePrevious.getAssetRoR();
+        }
+        if (Objects.equals(theLoanRor, thePrevious.getLoanRoR())) {
+            theLoanRor = thePrevious.getLoanRoR();
+        }
     }
 
     /**
@@ -160,9 +178,16 @@ public abstract class CoeusTotals
         /* No need to calculate if there is no delta */
         if (pDelta.isNonZero())  {
             /* Calculate the delta rate of returns */
-            TethysRatio myRatio = calculateRateOfReturn(thePrevious.getAssetValue(), pDelta);
-            theAssetRor = theAssetRor.multiplyBy(myRatio);
+            if (theAssetRor != null) {
+                theAssetRor = theAssetRor.multiplyBy(calculateRateOfReturn(thePrevious.getAssetValue(), pDelta));
+            }
             theLoanRor = theLoanRor.multiplyBy(calculateRateOfReturn(thePrevious.getLoanBook(), pDelta));
+        }
+        if (Objects.equals(theAssetRor, thePrevious.getAssetRoR())) {
+            theAssetRor = thePrevious.getAssetRoR();
+        }
+        if (Objects.equals(theLoanRor, thePrevious.getLoanRoR())) {
+            theLoanRor = thePrevious.getLoanRoR();
         }
     }
 
@@ -182,8 +207,7 @@ public abstract class CoeusTotals
         /* Calculate the delta rate of returns */
         final TethysDecimal myNew = new TethysDecimal(pBase);
         myNew.addValue(pDelta);
-        final TethysRatio myRatio = new TethysRatio(myNew, pBase);
-        return myRatio;
+        return new TethysRatio(myNew, pBase);
     }
 
     /**
@@ -408,57 +432,10 @@ public abstract class CoeusTotals
     }
 
     /**
-     * Set the LoanRateOfReturn.
-     * @param pRoR the rateOfReturn
-     */
-    protected void setLoanRoR(final TethysRatio pRoR) {
-        theLoanRor = pRoR;
-    }
-
-    /**
-     * Set the AssetRateOfReturn.
-     * @param pRoR the rateOfReturn
-     */
-    protected void setAssetRoR(final TethysRatio pRoR) {
-        theAssetRor = pRoR;
-    }
-
-    /**
      * Add transaction to totals.
      * @param pTransaction the transaction to add
      */
     protected abstract void addTransactionToTotals(CoeusTransaction pTransaction);
-
-    /**
-     * Reset the totals.
-     */
-    void resetTotals() {
-        getSourceValue().setZero();
-        getAssetValue().setZero();
-        getInvested().setZero();
-        getHolding().setZero();
-        getLoanBook().setZero();
-        getEarnings().setZero();
-        getTaxableEarnings().setZero();
-        getInterest().setZero();
-        getNettInterest().setZero();
-        getBadDebtInterest().setZero();
-        getBadDebtCapital().setZero();
-        getFees().setZero();
-        getCashBack().setZero();
-        getLosses().setZero();
-        getBadDebt().setZero();
-        getRecovered().setZero();
-        resetRatios();
-    }
-
-    /**
-     * Reset the ratios.
-     */
-    protected void resetRatios() {
-        theAssetRor = TethysRatio.ONE;
-        theLoanRor = TethysRatio.ONE;
-    }
 
     /**
      * Calculate the fields.

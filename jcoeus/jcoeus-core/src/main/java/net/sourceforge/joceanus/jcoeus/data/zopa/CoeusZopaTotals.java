@@ -16,9 +16,10 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jcoeus.data.zopa;
 
+import java.util.Objects;
+
 import net.sourceforge.joceanus.jcoeus.data.CoeusTotals;
 import net.sourceforge.joceanus.jcoeus.data.CoeusTransaction;
-import net.sourceforge.joceanus.jcoeus.data.CoeusTransactionType;
 import net.sourceforge.joceanus.jmetis.field.MetisFieldSet;
 import net.sourceforge.joceanus.jtethys.decimal.TethysDecimal;
 
@@ -35,82 +36,82 @@ public final class CoeusZopaTotals
     /**
      * AssetValue.
      */
-    private final TethysDecimal theAssetValue;
+    private TethysDecimal theAssetValue;
 
     /**
      * Holding.
      */
-    private final TethysDecimal theHolding;
+    private TethysDecimal theHolding;
 
     /**
      * LoanBook.
      */
-    private final TethysDecimal theLoanBook;
+    private TethysDecimal theLoanBook;
 
     /**
      * Source Value.
      */
-    private final TethysDecimal theSourceValue;
+    private TethysDecimal theSourceValue;
 
     /**
      * Invested.
      */
-    private final TethysDecimal theInvested;
+    private TethysDecimal theInvested;
 
     /**
      * Earnings.
      */
-    private final TethysDecimal theEarnings;
+    private TethysDecimal theEarnings;
 
     /**
      * Taxable Earnings.
      */
-    private final TethysDecimal theTaxableEarnings;
+    private TethysDecimal theTaxableEarnings;
 
     /**
      * Interest.
      */
-    private final TethysDecimal theInterest;
+    private TethysDecimal theInterest;
 
     /**
      * NettInterest.
      */
-    private final TethysDecimal theNettInterest;
+    private TethysDecimal theNettInterest;
 
     /**
      * BadDebtInterest.
      */
-    private final TethysDecimal theBadDebtInterest;
+    private TethysDecimal theBadDebtInterest;
 
     /**
      * BadDebtCapital.
      */
-    private final TethysDecimal theBadDebtCapital;
+    private TethysDecimal theBadDebtCapital;
 
     /**
      * Fees.
      */
-    private final TethysDecimal theFees;
+    private TethysDecimal theFees;
 
     /**
      * CashBack.
      */
-    private final TethysDecimal theCashBack;
+    private TethysDecimal theCashBack;
 
     /**
      * Losses.
      */
-    private final TethysDecimal theLosses;
+    private TethysDecimal theLosses;
 
     /**
      * BadDebt.
      */
-    private final TethysDecimal theBadDebt;
+    private TethysDecimal theBadDebt;
 
     /**
      * Recovered.
      */
-    private final TethysDecimal theRecovered;
+    private TethysDecimal theRecovered;
 
     /**
      * Constructor for zeroed totals.
@@ -212,9 +213,6 @@ public final class CoeusZopaTotals
 
     @Override
     protected void addTransactionToTotals(final CoeusTransaction pTransaction) {
-        if (pTransaction.getTransType().equals(CoeusTransactionType.FEES)) {
-            int i = 0;
-        }
         /* Add values from transaction */
         theInvested.addValue(pTransaction.getInvested());
         theHolding.addValue(pTransaction.getHolding());
@@ -262,6 +260,64 @@ public final class CoeusZopaTotals
 
         /* Calculate the RateOfReturn */
         calculateRateOfReturn(myIncome);
+        removeDuplicates();
+    }
+
+    @Override
+    protected void removeDuplicates() {
+        /* remove underlying duplicates */
+        super.removeDuplicates();
+
+        /* Resolve duplicates */
+        final CoeusZopaTotals myPrevious = (CoeusZopaTotals) getPrevious();
+        if (Objects.equals(theAssetValue, myPrevious.getAssetValue())) {
+            theAssetValue = myPrevious.getAssetValue();
+        }
+        if (Objects.equals(theHolding, myPrevious.getHolding())) {
+            theHolding = myPrevious.getHolding();
+        }
+        if (Objects.equals(theLoanBook, myPrevious.getLoanBook())) {
+            theLoanBook = myPrevious.getLoanBook();
+        }
+        if (Objects.equals(theSourceValue, myPrevious.getSourceValue())) {
+            theSourceValue = myPrevious.getSourceValue();
+        }
+        if (Objects.equals(theInvested, myPrevious.getInvested())) {
+            theInvested = myPrevious.getInvested();
+        }
+        if (Objects.equals(theEarnings, myPrevious.getEarnings())) {
+            theEarnings = myPrevious.getEarnings();
+        }
+        if (Objects.equals(theTaxableEarnings, myPrevious.getTaxableEarnings())) {
+            theTaxableEarnings = myPrevious.getTaxableEarnings();
+        }
+        if (Objects.equals(theInterest, myPrevious.getInterest())) {
+            theInterest = myPrevious.getInterest();
+        }
+        if (Objects.equals(theNettInterest, myPrevious.getNettInterest())) {
+            theNettInterest = myPrevious.getNettInterest();
+        }
+        if (Objects.equals(theBadDebtInterest, myPrevious.getBadDebtInterest())) {
+            theBadDebtInterest = myPrevious.getBadDebtInterest();
+        }
+        if (Objects.equals(theBadDebtCapital, myPrevious.getBadDebtCapital())) {
+            theBadDebtCapital = myPrevious.getBadDebtCapital();
+        }
+        if (Objects.equals(theFees, myPrevious.getFees())) {
+            theFees = myPrevious.getFees();
+        }
+        if (Objects.equals(theCashBack, myPrevious.getCashBack())) {
+            theCashBack = myPrevious.getCashBack();
+        }
+        if (Objects.equals(theLosses, myPrevious.getLosses())) {
+            theLosses = myPrevious.getLosses();
+        }
+        if (Objects.equals(theBadDebt, myPrevious.getBadDebt())) {
+            theBadDebt = myPrevious.getBadDebt();
+        }
+        if (Objects.equals(theRecovered, myPrevious.getRecovered())) {
+            theRecovered = myPrevious.getRecovered();
+        }
     }
 
     @Override

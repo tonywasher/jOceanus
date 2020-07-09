@@ -267,7 +267,7 @@ public abstract class CoeusHistory
      */
     public void clear() {
         if (theRange == null) {
-            theTotals.resetTotals();
+            theTotals = theInitial;
             theHistory.clear();
         }
     }

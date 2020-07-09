@@ -16,6 +16,8 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jcoeus.data.fundingcircle;
 
+import java.util.Objects;
+
 import net.sourceforge.joceanus.jcoeus.data.CoeusTotals;
 import net.sourceforge.joceanus.jcoeus.data.CoeusTransaction;
 import net.sourceforge.joceanus.jmetis.field.MetisFieldSet;
@@ -34,87 +36,87 @@ public final class CoeusFundingCircleTotals
     /**
      * AssetValue.
      */
-    private final TethysMoney theAssetValue;
+    private TethysMoney theAssetValue;
 
     /**
      * Holding.
      */
-    private final TethysMoney theHolding;
+    private TethysMoney theHolding;
 
     /**
      * LoanBook.
      */
-    private final TethysMoney theLoanBook;
+    private TethysMoney theLoanBook;
 
     /**
      * SourceValue.
      */
-    private final TethysMoney theSourceValue;
+    private TethysMoney theSourceValue;
 
     /**
      * Invested.
      */
-    private final TethysMoney theInvested;
+    private TethysMoney theInvested;
 
     /**
      * Earnings.
      */
-    private final TethysMoney theEarnings;
+    private TethysMoney theEarnings;
 
     /**
      * taxableEarnings.
      */
-    private final TethysMoney theTaxableEarnings;
+    private TethysMoney theTaxableEarnings;
 
     /**
      * Interest.
      */
-    private final TethysMoney theInterest;
+    private TethysMoney theInterest;
 
     /**
      * NettInterest.
      */
-    private final TethysMoney theNettInterest;
+    private TethysMoney theNettInterest;
 
     /**
      * BadDebtInterest.
      */
-    private final TethysMoney theBadDebtInterest;
+    private TethysMoney theBadDebtInterest;
 
     /**
      * BadDebtCapital.
      */
-    private final TethysMoney theBadDebtCapital;
+    private TethysMoney theBadDebtCapital;
 
     /**
      * Fees.
      */
-    private final TethysMoney theFees;
+    private TethysMoney theFees;
 
     /**
      * CashBack.
      */
-    private final TethysMoney theCashBack;
+    private TethysMoney theCashBack;
 
     /**
      * XferPayment.
      */
-    private final TethysMoney theXferPayment;
+    private TethysMoney theXferPayment;
 
     /**
      * Losses.
      */
-    private final TethysMoney theLosses;
+    private TethysMoney theLosses;
 
     /**
      * BadDebt.
      */
-    private final TethysMoney theBadDebt;
+    private TethysMoney theBadDebt;
 
     /**
      * Recovered.
      */
-    private final TethysMoney theRecovered;
+    private TethysMoney theRecovered;
 
     /**
      * Constructor for zeroed totals.
@@ -275,6 +277,67 @@ public final class CoeusFundingCircleTotals
 
         /* Calculate the RateOfReturn */
         calculateRateOfReturn(myIncome);
+        removeDuplicates();
+    }
+
+    @Override
+    protected void removeDuplicates() {
+        /* remove underlying duplicates */
+        super.removeDuplicates();
+
+        /* Resolve duplicates */
+        final CoeusFundingCircleTotals myPrevious = (CoeusFundingCircleTotals) getPrevious();
+        if (Objects.equals(theAssetValue, myPrevious.getAssetValue())) {
+            theAssetValue = myPrevious.getAssetValue();
+        }
+        if (Objects.equals(theHolding, myPrevious.getHolding())) {
+            theHolding = myPrevious.getHolding();
+        }
+        if (Objects.equals(theLoanBook, myPrevious.getLoanBook())) {
+            theLoanBook = myPrevious.getLoanBook();
+        }
+        if (Objects.equals(theSourceValue, myPrevious.getSourceValue())) {
+            theSourceValue = myPrevious.getSourceValue();
+        }
+        if (Objects.equals(theInvested, myPrevious.getInvested())) {
+            theInvested = myPrevious.getInvested();
+        }
+        if (Objects.equals(theEarnings, myPrevious.getEarnings())) {
+            theEarnings = myPrevious.getEarnings();
+        }
+        if (Objects.equals(theTaxableEarnings, myPrevious.getTaxableEarnings())) {
+            theTaxableEarnings = myPrevious.getTaxableEarnings();
+        }
+        if (Objects.equals(theInterest, myPrevious.getInterest())) {
+            theInterest = myPrevious.getInterest();
+        }
+        if (Objects.equals(theNettInterest, myPrevious.getNettInterest())) {
+            theNettInterest = myPrevious.getNettInterest();
+        }
+        if (Objects.equals(theBadDebtInterest, myPrevious.getBadDebtInterest())) {
+            theBadDebtInterest = myPrevious.getBadDebtInterest();
+        }
+        if (Objects.equals(theBadDebtCapital, myPrevious.getBadDebtCapital())) {
+            theBadDebtCapital = myPrevious.getBadDebtCapital();
+        }
+        if (Objects.equals(theFees, myPrevious.getFees())) {
+            theFees = myPrevious.getFees();
+        }
+        if (Objects.equals(theCashBack, myPrevious.getCashBack())) {
+            theCashBack = myPrevious.getCashBack();
+        }
+        if (Objects.equals(theXferPayment, myPrevious.getXferPayment())) {
+            theXferPayment = myPrevious.getXferPayment();
+        }
+        if (Objects.equals(theLosses, myPrevious.getLosses())) {
+            theLosses = myPrevious.getLosses();
+        }
+        if (Objects.equals(theBadDebt, myPrevious.getBadDebt())) {
+            theBadDebt = myPrevious.getBadDebt();
+        }
+        if (Objects.equals(theRecovered, myPrevious.getRecovered())) {
+            theRecovered = myPrevious.getRecovered();
+        }
     }
 
     @Override
