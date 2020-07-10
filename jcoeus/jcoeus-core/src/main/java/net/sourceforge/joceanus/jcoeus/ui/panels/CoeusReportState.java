@@ -181,5 +181,4 @@ public final class CoeusReportState {
                                                 ? theCalendar.getEndOfYear(theSelectedDate)
                                                 : theSelectedDate;
     }
-
 }

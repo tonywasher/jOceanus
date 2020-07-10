@@ -22,6 +22,8 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 import net.sourceforge.joceanus.jcoeus.CoeusDataException;
+import net.sourceforge.joceanus.jcoeus.data.CoeusHistory;
+import net.sourceforge.joceanus.jcoeus.data.CoeusLoan;
 import net.sourceforge.joceanus.jcoeus.data.CoeusLoanStatus;
 import net.sourceforge.joceanus.jcoeus.data.CoeusMarket;
 import net.sourceforge.joceanus.jcoeus.data.CoeusMarketProvider;
@@ -29,7 +31,7 @@ import net.sourceforge.joceanus.jcoeus.data.CoeusResource;
 import net.sourceforge.joceanus.jmetis.data.MetisDataFormatter;
 import net.sourceforge.joceanus.jmetis.field.MetisFieldSet;
 import net.sourceforge.joceanus.jtethys.OceanusException;
-import net.sourceforge.joceanus.jtethys.date.TethysDate;
+import net.sourceforge.joceanus.jtethys.date.TethysDateRange;
 
 /**
  * FundingCircle Market.
@@ -237,13 +239,20 @@ public class CoeusFundingCircleMarket
     }
 
     @Override
-    protected CoeusFundingCircleHistory newHistory(final TethysDate pDate) {
-        return new CoeusFundingCircleHistory(this, pDate);
+    protected CoeusFundingCircleHistory viewHistory(final CoeusHistory pHistory,
+                                                    final TethysDateRange pRange) {
+        return new CoeusFundingCircleHistory(pHistory, pRange);
     }
 
     @Override
     protected CoeusFundingCircleLoan newLoan(final String pId) {
         return new CoeusFundingCircleLoan(this, pId);
+    }
+
+    @Override
+    protected CoeusFundingCircleLoan viewLoan(final CoeusLoan pLoan,
+                                              final TethysDateRange pRange) {
+        return new CoeusFundingCircleLoan((CoeusFundingCircleLoan) pLoan, pRange);
     }
 
     @Override

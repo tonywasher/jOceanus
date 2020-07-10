@@ -20,13 +20,15 @@ import java.nio.file.Path;
 import java.util.Iterator;
 import java.util.ListIterator;
 
+import net.sourceforge.joceanus.jcoeus.data.CoeusHistory;
+import net.sourceforge.joceanus.jcoeus.data.CoeusLoan;
 import net.sourceforge.joceanus.jcoeus.data.CoeusMarket;
 import net.sourceforge.joceanus.jcoeus.data.CoeusMarketProvider;
 import net.sourceforge.joceanus.jcoeus.data.CoeusTransactionType;
 import net.sourceforge.joceanus.jmetis.data.MetisDataFormatter;
 import net.sourceforge.joceanus.jmetis.field.MetisFieldSet;
 import net.sourceforge.joceanus.jtethys.OceanusException;
-import net.sourceforge.joceanus.jtethys.date.TethysDate;
+import net.sourceforge.joceanus.jtethys.date.TethysDateRange;
 
 /**
  * RateSetter Market.
@@ -165,13 +167,20 @@ public class CoeusRateSetterMarket
     }
 
     @Override
-    protected CoeusRateSetterHistory newHistory(final TethysDate pDate) {
-        return new CoeusRateSetterHistory(this, pDate);
+    protected CoeusRateSetterHistory viewHistory(final CoeusHistory pHistory,
+                                                 final TethysDateRange pRange) {
+        return new CoeusRateSetterHistory(pHistory, pRange);
     }
 
     @Override
     protected CoeusRateSetterLoan newLoan(final String pId) {
         return new CoeusRateSetterLoan(this, pId);
+    }
+
+    @Override
+    protected CoeusRateSetterLoan viewLoan(final CoeusLoan pLoan,
+                                           final TethysDateRange pRange) {
+        return new CoeusRateSetterLoan((CoeusRateSetterLoan) pLoan, pRange);
     }
 
     @Override

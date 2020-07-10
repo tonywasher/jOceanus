@@ -23,6 +23,7 @@ import java.util.List;
 import net.sourceforge.joceanus.jmetis.field.MetisFieldItem;
 import net.sourceforge.joceanus.jmetis.field.MetisFieldSet;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
+import net.sourceforge.joceanus.jtethys.date.TethysDateRange;
 
 /**
  * Transaction Totals History.
@@ -40,8 +41,9 @@ public abstract class CoeusHistory
     static {
         FIELD_DEFS.declareLocalField(CoeusResource.DATA_MARKET, CoeusHistory::getMarket);
         FIELD_DEFS.declareLocalField(CoeusResource.DATA_LOAN, CoeusHistory::getLoan);
-        FIELD_DEFS.declareLocalField(CoeusResource.DATA_DATE, CoeusHistory::getDate);
+        FIELD_DEFS.declareLocalField(CoeusResource.DATA_RANGE, CoeusHistory::getDateRange);
         FIELD_DEFS.declareLocalField(CoeusResource.DATA_HISTORY, CoeusHistory::getHistory);
+        FIELD_DEFS.declareLocalField(CoeusResource.DATA_INITIAL, CoeusHistory::getInitial);
         FIELD_DEFS.declareLocalField(CoeusResource.DATA_TOTALS, CoeusHistory::getTotals);
     }
 
@@ -56,9 +58,9 @@ public abstract class CoeusHistory
     private final CoeusLoan theLoan;
 
     /**
-     * The date for the totals.
+     * The range for the totals.
      */
-    private final TethysDate theDate;
+    private final TethysDateRange theRange;
 
     /**
      * The individual totals.
@@ -66,14 +68,14 @@ public abstract class CoeusHistory
     private final List<CoeusTotals> theHistory;
 
     /**
-     * The summary totals.
+     * The initial totals.
      */
-    private final CoeusTotals theTotals;
+    private final CoeusTotals theInitial;
 
     /**
-     * The last totals.
+     * The summary totals.
      */
-    private CoeusTotals theLastTotals;
+    private CoeusTotals theTotals;
 
     /**
      * Constructor.
@@ -81,16 +83,50 @@ public abstract class CoeusHistory
      */
     protected CoeusHistory(final CoeusTotals pTotals) {
         /* Record parameters */
+        theInitial = pTotals;
         theTotals = pTotals;
-        theLastTotals = theTotals;
 
         /* Record details */
         theMarket = pTotals.getMarket();
         theLoan = pTotals.getLoan();
-        theDate = pTotals.getDate();
+        theRange = null;
 
         /* Create the list */
         theHistory = new ArrayList<>();
+    }
+
+    /**
+     * Constructor for partial view.
+     * @param pHistory the base history
+     * @param pRange the date range
+     */
+    protected CoeusHistory(final CoeusHistory pHistory,
+                           final TethysDateRange pRange) {
+        /* Record details */
+        theMarket = pHistory.getMarket();
+        theLoan = pHistory.getLoan();
+        theRange = pRange;
+
+        /* Determine indices */
+        final int[] myIndices = findIndicesForRange(pHistory, pRange);
+
+        /* Create the cut down history */
+        theHistory = pHistory.getHistory().subList(myIndices[0], myIndices[1]);
+
+        /* Determine bounds */
+        final boolean empty = isEmpty();
+        theInitial = empty
+                      ? pHistory.getInitial()
+                      :  theHistory.get(0).getPrevious();
+        theTotals = empty
+                      ? theInitial
+                      : theHistory.get(theHistory.size() - 1);
+
+        /* If we need to calculate a delta */
+        if (theRange.getStart() != null) {
+            theTotals = newTotals(theTotals, null);
+            theTotals.calculateDelta(theInitial);
+        }
     }
 
     /**
@@ -113,8 +149,24 @@ public abstract class CoeusHistory
      * Obtain the date.
      * @return the date
      */
-    public TethysDate getDate() {
-        return theDate;
+    public TethysDateRange getDateRange() {
+        return theRange;
+    }
+
+    /**
+     * Is the history empty?
+     * @return true/false
+     */
+    public boolean isEmpty() {
+        return theHistory.isEmpty();
+    }
+
+    /**
+     * Obtain the initial totals.
+     * @return the totals
+     */
+    public CoeusTotals getInitial() {
+        return theInitial;
     }
 
     /**
@@ -129,7 +181,7 @@ public abstract class CoeusHistory
      * Obtain the history.
      * @return the history
      */
-    private List<CoeusTotals> getHistory() {
+    List<CoeusTotals> getHistory() {
         return theHistory;
     }
 
@@ -146,14 +198,59 @@ public abstract class CoeusHistory
      * @param pTrans the transaction to add
      */
     void addTransactionToHistory(final CoeusTransaction pTrans) {
-        /* Create the new entry and add to the list */
-        final CoeusTotals myTotals = newTotals(theLastTotals, pTrans);
-        myTotals.addTransactionToTotals(pTrans);
-        theHistory.add(myTotals);
-        theLastTotals = myTotals;
+        /* Only allowed for base history */
+        if (theRange == null) {
+            /* Create the new entry and add to the list */
+            final CoeusTotals myTotals = newTotals(theTotals, pTrans);
+            myTotals.addTransactionToTotals(pTrans);
+            theHistory.add(myTotals);
+            theTotals = myTotals;
+        }
+    }
 
-        /* Add to the totals */
-        theTotals.addTransactionToTotals(pTrans);
+    /**
+     * Obtain indices for ranged view.
+     * @param pHistory the base history
+     * @param pRange the date range
+     * @return the indices
+     */
+    private int[] findIndicesForRange(final CoeusHistory pHistory,
+                                      final TethysDateRange pRange) {
+        /* Determine the dates */
+        final TethysDate myStartDate = pRange.getStart();
+        final TethysDate myEndDate = pRange.getEnd();
+
+        /* Create indices */
+        int myIndex = 0;
+        int myStart = -1;
+
+        /* Loop through the totals */
+        final Iterator<CoeusTotals> myIterator = pHistory.historyIterator();
+        while (myIterator.hasNext()) {
+            final CoeusTotals myTotals = myIterator.next();
+            final TethysDate myDate = myTotals.getDate();
+
+            /* Break loop if we have hit the end */
+            if (myEndDate.compareTo(myDate) < 0) {
+                break;
+            }
+
+            /* If we have not yet hit the start, check for start being hit */
+            if (myStart == -1
+                && (myStartDate == null
+                    || myStartDate.compareTo(myDate) <= 0)) {
+                /* Record the start */
+                myStart = myIndex;
+            }
+
+            /* increment the index */
+            myIndex++;
+        }
+
+        /* Handle empty list */
+        return myStart == -1
+                ? new int[] { 0, 0 }
+                : new int[] { myStart, myIndex };
     }
 
     /**
@@ -169,8 +266,10 @@ public abstract class CoeusHistory
      * Clear the history.
      */
     public void clear() {
-        theTotals.resetTotals();
-        theHistory.clear();
+        if (theRange == null) {
+            theTotals = theInitial;
+            theHistory.clear();
+        }
     }
 
     @Override

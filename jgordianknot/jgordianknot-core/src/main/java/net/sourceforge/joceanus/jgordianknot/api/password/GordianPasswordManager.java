@@ -177,7 +177,7 @@ public interface GordianPasswordManager {
     /**
      * obtain similar (same password) zipLock.
      * @param pKeyPair the keyPair
-     * @param pReference the keySetHash/zipLock to clone password from
+     * @param pReference the keySetHash to clone password from
      * @return the similar zipLock
      * @throws OceanusException on error
      */
@@ -190,7 +190,7 @@ public interface GordianPasswordManager {
      * obtain similar (same password) zipLock.
      * @param pKeyPair the keyPair
      * @param pKeySetHashSpec the keySetHashSpec
-     * @param pReference the keySetHash/zipLock to clone password from
+     * @param pReference the keySetHash to clone password from
      * @return the similar zipLock
      * @throws OceanusException on error
      */

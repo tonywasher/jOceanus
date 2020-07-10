@@ -185,4 +185,28 @@ public enum TethysFiscalYear {
         /* Return the date */
         return myDate;
     }
+
+    /**
+     * Normalise date to start of FiscalMonth.
+     * @param pDate the date to normalise.
+     * @return the normalised date
+     */
+    public TethysDate startOfMonth(final TethysDate pDate) {
+        /* Access constituent parts */
+        final int myDay = pDate.getDay();
+
+        /* See whether we are earlier in the month */
+        final boolean bEarlier = myDay < theDay;
+
+        /* Build the basic taxMonth */
+        final TethysDate myDate = new TethysDate(pDate.getYear(), pDate.getMonth(), theDay, pDate.getLocale());
+
+        /* Adjust if we are earlier */
+        if (bEarlier) {
+            myDate.adjustMonth(-1);
+        }
+
+        /* Return the date */
+        return myDate;
+    }
 }

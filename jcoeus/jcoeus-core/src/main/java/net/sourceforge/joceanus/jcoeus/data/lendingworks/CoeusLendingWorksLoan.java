@@ -19,7 +19,7 @@ package net.sourceforge.joceanus.jcoeus.data.lendingworks;
 import net.sourceforge.joceanus.jcoeus.CoeusDataException;
 import net.sourceforge.joceanus.jcoeus.data.CoeusLoan;
 import net.sourceforge.joceanus.jmetis.field.MetisFieldSet;
-import net.sourceforge.joceanus.jtethys.date.TethysDate;
+import net.sourceforge.joceanus.jtethys.date.TethysDateRange;
 import net.sourceforge.joceanus.jtethys.decimal.TethysMoney;
 
 /**
@@ -48,6 +48,17 @@ public class CoeusLendingWorksLoan
         theLoanIdNo = Integer.parseInt(pLoanId);
     }
 
+    /**
+     * Constructor.
+     * @param pLoan the loan
+     * @param pRange the dateRange
+     */
+    CoeusLendingWorksLoan(final CoeusLendingWorksLoan pLoan,
+                          final TethysDateRange pRange) {
+        super(pLoan, pRange);
+        theLoanIdNo = pLoan.theLoanIdNo;
+    }
+
     @Override
     public CoeusLendingWorksMarket getMarket() {
         return (CoeusLendingWorksMarket) super.getMarket();
@@ -56,11 +67,6 @@ public class CoeusLendingWorksLoan
     @Override
     protected CoeusLendingWorksHistory newHistory() {
         return new CoeusLendingWorksHistory(this);
-    }
-
-    @Override
-    protected CoeusLendingWorksHistory newHistory(final TethysDate pDate) {
-        return new CoeusLendingWorksHistory(this, pDate);
     }
 
     @Override

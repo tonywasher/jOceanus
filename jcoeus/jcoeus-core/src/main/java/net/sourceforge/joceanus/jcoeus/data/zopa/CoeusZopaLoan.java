@@ -25,7 +25,7 @@ import net.sourceforge.joceanus.jcoeus.data.CoeusLoan;
 import net.sourceforge.joceanus.jcoeus.data.CoeusLoanStatus;
 import net.sourceforge.joceanus.jcoeus.data.CoeusResource;
 import net.sourceforge.joceanus.jmetis.field.MetisFieldSet;
-import net.sourceforge.joceanus.jtethys.date.TethysDate;
+import net.sourceforge.joceanus.jtethys.date.TethysDateRange;
 import net.sourceforge.joceanus.jtethys.decimal.TethysDecimal;
 
 /**
@@ -121,6 +121,21 @@ public class CoeusZopaLoan
         }
     }
 
+    /**
+     * Constructor.
+     * @param pLoan the loan
+     * @param pRange the dateRange
+     */
+    CoeusZopaLoan(final CoeusZopaLoan pLoan,
+                  final TethysDateRange pRange) {
+        super(pLoan, pRange);
+        theBookItem = pLoan.getBookItem();
+        theBookItems = new ArrayList<>(pLoan.getBookItems());
+        theMissingCapital = new TethysDecimal(0, CoeusZopaMarket.DECIMAL_SIZE);
+        theMissingInterest = new TethysDecimal(0, CoeusZopaMarket.DECIMAL_SIZE);
+        theUpFrontInterest = new TethysDecimal(0, CoeusZopaMarket.DECIMAL_SIZE);
+    }
+
     @Override
     public CoeusZopaMarket getMarket() {
         return (CoeusZopaMarket) super.getMarket();
@@ -208,11 +223,6 @@ public class CoeusZopaLoan
     @Override
     protected CoeusZopaHistory newHistory() {
         return new CoeusZopaHistory(this);
-    }
-
-    @Override
-    protected CoeusZopaHistory newHistory(final TethysDate pDate) {
-        return new CoeusZopaHistory(this, pDate);
     }
 
     @Override

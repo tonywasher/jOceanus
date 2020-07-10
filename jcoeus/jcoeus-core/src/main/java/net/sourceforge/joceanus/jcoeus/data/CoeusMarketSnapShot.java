@@ -17,14 +17,13 @@
 package net.sourceforge.joceanus.jcoeus.data;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 
 import net.sourceforge.joceanus.jmetis.field.MetisFieldItem;
 import net.sourceforge.joceanus.jmetis.field.MetisFieldSet;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
+import net.sourceforge.joceanus.jtethys.date.TethysDateRange;
 
 /**
  * Loan Market SnapShot.
@@ -42,7 +41,7 @@ public class CoeusMarketSnapShot
     static {
         FIELD_DEFS.declareLocalField(CoeusResource.DATA_MARKET, CoeusMarketSnapShot::getMarket);
         FIELD_DEFS.declareLocalField(CoeusResource.DATA_DATE, CoeusMarketSnapShot::getDate);
-        FIELD_DEFS.declareLocalField(CoeusResource.DATA_LOANMAP, CoeusMarketSnapShot::loanMap);
+        FIELD_DEFS.declareLocalField(CoeusResource.DATA_LOANS, CoeusMarketSnapShot::getLoans);
         FIELD_DEFS.declareLocalField(CoeusResource.DATA_HISTORY, CoeusMarketSnapShot::getHistory);
     }
 
@@ -60,11 +59,6 @@ public class CoeusMarketSnapShot
      * LoanList.
      */
     private final List<CoeusLoan> theLoanList;
-
-    /**
-     * LoanMap.
-     */
-    private final Map<String, CoeusLoan> theLoanMap;
 
     /**
      * History.
@@ -86,16 +80,24 @@ public class CoeusMarketSnapShot
         /* Store parameters */
         theMarket = pMarket;
         theDate = pDate;
+        final TethysDateRange myRange = new TethysDateRange(null, pDate);
 
-        /* Create loan map/list */
-        theLoanMap = new HashMap<>();
+        /* Create loan list */
         theLoanList = new ArrayList<>();
 
         /* Create the history */
-        theHistory = determineHistory();
+        theHistory = pMarket.viewHistory(myRange);
+        setFlags();
 
-        /* Sort the loans */
-        sortLoans();
+        /* Loop through the market loans */
+        final Iterator<CoeusLoan> myIterator = theMarket.loanIterator();
+        while (myIterator.hasNext()) {
+            final CoeusLoan myLoan = myIterator.next();
+            final CoeusLoan myView = theMarket.viewLoan(myLoan, myRange);
+            if (!myLoan.isEmpty()) {
+                theLoanList.add(myView);
+            }
+        }
     }
 
     /**
@@ -115,11 +117,11 @@ public class CoeusMarketSnapShot
     }
 
     /**
-     * Obtain loanMap.
-     * @return the map
+     * Obtain loanList.
+     * @return the loans
      */
-    private Map<String, CoeusLoan> loanMap() {
-        return theLoanMap;
+    private List<CoeusLoan> getLoans() {
+        return theLoanList;
     }
 
     /**
@@ -139,13 +141,6 @@ public class CoeusMarketSnapShot
     }
 
     /**
-     * Sort the loans.
-     */
-    private void sortLoans() {
-        theLoanList.sort((l, r) -> l.compareTo(r));
-    }
-
-    /**
      * Obtain an iterator for the sorted loans.
      * @return the iterator
      */
@@ -162,89 +157,34 @@ public class CoeusMarketSnapShot
     }
 
     /**
-     * Is there history for the loan?
-     * @param pLoan the loan
-     * @return true/false
+     * Set flags.
      */
-    public boolean availableLoan(final CoeusLoan pLoan) {
-        return theLoanMap.containsKey(pLoan.getLoanId());
-    }
-
-    /**
-     * Determine the history.
-     * @return the history
-     */
-    private CoeusHistory determineHistory() {
-        /* Create the history */
-        final CoeusHistory myHistory = theMarket.newHistory();
-
-        /* Loop through the transactions */
-        final Iterator<CoeusTransaction> myIterator = theMarket.transactionIterator();
+    private void setFlags() {
+        /* Loop through the totals */
+        final Iterator<CoeusTotals> myIterator = theHistory.historyIterator();
         while (myIterator.hasNext()) {
-            final CoeusTransaction myTransaction = myIterator.next();
-            final TethysDate myDate = myTransaction.getDate();
+            final CoeusTotals myTotals = myIterator.next();
 
-            /* If we have gone past the date, break the loop */
-            if (myDate.compareTo(theDate) > 0) {
-                break;
-            }
-
-            /* Adjust the history */
-            myHistory.addTransactionToHistory(myTransaction);
-
-            /* Note badDebt */
-            if (CoeusTransactionType.BADDEBT.equals(myTransaction.getTransType())) {
+            /* Detect badDebt */
+            if (CoeusTransactionType.BADDEBT.equals(myTotals.getTransType())) {
                 hasBadDebt = true;
-            }
-
-            /* If the item has a loan */
-            CoeusLoan myLoan = myTransaction.getLoan();
-            if (myLoan != null) {
-                /* Obtain the snapShot loan */
-                myLoan = getSnapShotLoan(myLoan);
-
-                /* Add to the loans history */
-                myLoan.addTransactionToHistory(myTransaction);
+                return;
             }
         }
-
-        /* Return the history */
-        return myHistory;
     }
 
     /**
-     * Obtain the loan for the snapShot.
-     * @param pLoan the market loan
-     * @return the loan
+     * Obtain the dateRange of this snapshot.
+     * @return the dateRange.
      */
-    private CoeusLoan getSnapShotLoan(final CoeusLoan pLoan) {
-        /* Look up existing snapShot */
-        final String myId = pLoan.getLoanId();
-        return theLoanMap.computeIfAbsent(myId, i -> newSnapShotLoan(pLoan));
-    }
-
-    /**
-     * Create a new loan for the snapShot.
-     * @param pLoan the market loan
-     * @return the loan
-     */
-    private CoeusLoan newSnapShotLoan(final CoeusLoan pLoan) {
-        /* Create and record it */
-        final CoeusLoan myLoan = theMarket.newLoan(pLoan.getLoanId());
-        theLoanList.add(myLoan);
-
-        /* Ensure that the badDebt date is copied */
-        myLoan.setBadDebtDate(pLoan.getBadDebtDate());
-
-        /* return the loan SnapShot */
-        return myLoan;
+    public TethysDateRange getDateRange() {
+        final CoeusTotals myFirst = theHistory.getHistory().iterator().next();
+        return new TethysDateRange(myFirst.getDate(), theDate);
     }
 
     @Override
     public String toString() {
-        final StringBuilder myBuilder = new StringBuilder();
-        myBuilder.append(theMarket).append('@').append(theDate);
-        return myBuilder.toString();
+        return String.valueOf(theMarket) + '@' + theDate;
     }
 
     @Override

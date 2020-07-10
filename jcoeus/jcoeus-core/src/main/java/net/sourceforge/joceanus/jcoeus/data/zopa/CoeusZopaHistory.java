@@ -20,7 +20,7 @@ import net.sourceforge.joceanus.jcoeus.data.CoeusHistory;
 import net.sourceforge.joceanus.jcoeus.data.CoeusTotals;
 import net.sourceforge.joceanus.jcoeus.data.CoeusTransaction;
 import net.sourceforge.joceanus.jmetis.field.MetisFieldSet;
-import net.sourceforge.joceanus.jtethys.date.TethysDate;
+import net.sourceforge.joceanus.jtethys.date.TethysDateRange;
 
 /**
  * Zopa Transaction Totals History.
@@ -41,16 +41,6 @@ public class CoeusZopaHistory
     }
 
     /**
-     * Constructor for zeroed period totals.
-     * @param pMarket the market
-     * @param pDate the end date for the totals
-     */
-    CoeusZopaHistory(final CoeusZopaMarket pMarket,
-                     final TethysDate pDate) {
-        super(new CoeusZopaTotals(pMarket, pDate));
-    }
-
-    /**
      * Constructor for zeroed loan totals.
      * @param pLoan the loan
      */
@@ -59,13 +49,13 @@ public class CoeusZopaHistory
     }
 
     /**
-     * Constructor for zeroed loan totals.
-     * @param pLoan the loan
-     * @param pDate the end date for the totals
+     * Constructor for history view.
+     * @param pHistory the history
+     * @param pRange the date Range
      */
-    CoeusZopaHistory(final CoeusZopaLoan pLoan,
-                     final TethysDate pDate) {
-        super(new CoeusZopaTotals(pLoan, pDate));
+    CoeusZopaHistory(final CoeusHistory pHistory,
+                     final TethysDateRange pRange) {
+        super(pHistory, pRange);
     }
 
     @Override

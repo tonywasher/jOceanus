@@ -16,6 +16,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jtethys.date;
 
+import java.time.temporal.ChronoUnit;
 import java.util.Locale;
 
 /**
@@ -282,5 +283,19 @@ public class TethysDateRange
 
         /* Handle Standard cases */
         return !pCurr.equals(pNew);
+    }
+
+    /**
+     * Obtain the number of days in the range.
+     * @return the number of days (or -1 if unbounded)
+     */
+    public long getNumDays() {
+        /* Handle unbounded */
+        if (theStart == null || theEnd == null) {
+            return -1;
+        }
+
+        /* Calculate the number of days */
+        return 1 + ChronoUnit.DAYS.between(theStart.getDate(), theEnd.getDate());
     }
 }

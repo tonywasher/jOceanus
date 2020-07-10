@@ -20,7 +20,7 @@ import net.sourceforge.joceanus.jcoeus.data.CoeusHistory;
 import net.sourceforge.joceanus.jcoeus.data.CoeusTotals;
 import net.sourceforge.joceanus.jcoeus.data.CoeusTransaction;
 import net.sourceforge.joceanus.jmetis.field.MetisFieldSet;
-import net.sourceforge.joceanus.jtethys.date.TethysDate;
+import net.sourceforge.joceanus.jtethys.date.TethysDateRange;
 
 /**
  * FundingCircle Transaction Totals History.
@@ -33,7 +33,7 @@ public class CoeusFundingCircleHistory
     private static final MetisFieldSet<CoeusFundingCircleHistory> FIELD_DEFS = MetisFieldSet.newFieldSet(CoeusFundingCircleHistory.class);
 
     /**
-     * Constructor for zeroed market totals.
+     * Constructor for zeroed market history.
      * @param pMarket the market
      */
     CoeusFundingCircleHistory(final CoeusFundingCircleMarket pMarket) {
@@ -41,13 +41,13 @@ public class CoeusFundingCircleHistory
     }
 
     /**
-     * Constructor for zeroed period totals.
-     * @param pMarket the market
-     * @param pDate the end date for the totals
+     * Constructor for history view.
+     * @param pHistory the history
+     * @param pRange the date Range
      */
-    CoeusFundingCircleHistory(final CoeusFundingCircleMarket pMarket,
-                              final TethysDate pDate) {
-        super(new CoeusFundingCircleTotals(pMarket, pDate));
+    CoeusFundingCircleHistory(final CoeusHistory pHistory,
+                              final TethysDateRange pRange) {
+        super(pHistory, pRange);
     }
 
     /**
@@ -56,16 +56,6 @@ public class CoeusFundingCircleHistory
      */
     CoeusFundingCircleHistory(final CoeusFundingCircleLoan pLoan) {
         super(new CoeusFundingCircleTotals(pLoan));
-    }
-
-    /**
-     * Constructor for zeroed period totals.
-     * @param pLoan the loan
-     * @param pDate the end date for the totals
-     */
-    CoeusFundingCircleHistory(final CoeusFundingCircleLoan pLoan,
-                              final TethysDate pDate) {
-        super(new CoeusFundingCircleTotals(pLoan, pDate));
     }
 
     @Override

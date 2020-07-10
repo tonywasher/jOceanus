@@ -17,6 +17,7 @@
 package net.sourceforge.joceanus.jcoeus.data;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -28,6 +29,7 @@ import net.sourceforge.joceanus.jmetis.field.MetisFieldItem;
 import net.sourceforge.joceanus.jmetis.field.MetisFieldSet;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
+import net.sourceforge.joceanus.jtethys.date.TethysDateRange;
 
 /**
  * Loan Market.
@@ -44,7 +46,7 @@ public abstract class CoeusMarket
      */
     static {
         FIELD_DEFS.declareLocalField(CoeusResource.DATA_PROVIDER, CoeusMarket::getProvider);
-        FIELD_DEFS.declareLocalField(CoeusResource.DATA_LOANMAP, CoeusMarket::getLoans);
+        FIELD_DEFS.declareLocalField(CoeusResource.DATA_LOANS, CoeusMarket::getLoans);
         FIELD_DEFS.declareLocalField(CoeusResource.DATA_TRANSACTIONS, CoeusMarket::getTransactions);
         FIELD_DEFS.declareLocalField(CoeusResource.DATA_HISTORY, CoeusMarket::getFullHistory);
     }
@@ -65,6 +67,11 @@ public abstract class CoeusMarket
     private final Map<String, CoeusLoan> theLoanMap;
 
     /**
+     * The list of loans.
+     */
+    private final List<CoeusLoan> theLoans;
+
+    /**
      * The List of Transactions.
      */
     private final List<CoeusTransaction> theTransactions;
@@ -77,7 +84,7 @@ public abstract class CoeusMarket
     /**
      * The next transactionId.
      */
-    private Integer theNextId = Integer.valueOf(1);
+    private Integer theNextId = 1;
 
     /**
      * Constructor.
@@ -93,7 +100,8 @@ public abstract class CoeusMarket
         /* Create maps */
         theLoanMap = new LinkedHashMap<>();
 
-        /* Create transaction list */
+        /* Create lists */
+        theLoans = new ArrayList<>();
         theTransactions = new ArrayList<>();
 
         /* Create the history */
@@ -121,15 +129,15 @@ public abstract class CoeusMarket
      * @return the iterator
      */
     public Iterator<CoeusLoan> loanIterator() {
-        return theLoanMap.values().iterator();
+        return theLoans.iterator();
     }
 
     /**
      * Obtain the loans.
      * @return the loans
      */
-    private Map<String, CoeusLoan> getLoans() {
-        return theLoanMap;
+    private List<CoeusLoan> getLoans() {
+        return theLoans;
     }
 
     /**
@@ -208,8 +216,13 @@ public abstract class CoeusMarket
             throw new CoeusDataException(pLoanId, "Duplicate LoanId");
         }
 
-        /* Record the loan */
+        /* Record the loan in the map */
         theLoanMap.put(pLoanId, pLoan);
+
+        /* If the loan is a primary */
+        if (pLoanId.equals(pLoan.getLoanId())) {
+            theLoans.add(pLoan);
+        }
     }
 
     /**
@@ -235,11 +248,11 @@ public abstract class CoeusMarket
      */
     private void resetLoans() {
         /* Loop through the loans */
-        final Iterator<CoeusLoan> myIterator = theLoanMap.values().iterator();
-        while (myIterator.hasNext()) {
-            final CoeusLoan myLoan = myIterator.next();
+        for (CoeusLoan myLoan : theLoans) {
             myLoan.clearHistory();
         }
+        theLoanMap.clear();
+        theHistory.clear();
     }
 
     /**
@@ -252,12 +265,12 @@ public abstract class CoeusMarket
      * Create market analysis.
      */
     protected void createAnalysis() {
-        /* Clear the history */
-        theHistory.clear();
-        resetLoans();
+        /* Sort the transactions and loans */
+        theTransactions.sort(Comparator.comparing(CoeusTransaction::getDate));
+        theLoans.sort(CoeusLoan::compareTo);
 
-        /* Sort the transactions */
-        theTransactions.sort((l, r) -> l.getDate().compareTo(r.getDate()));
+        /* Reset the loans */
+        resetLoans();
 
         /* Loop through the transactions */
         final Iterator<CoeusTransaction> myIterator = transactionIterator();
@@ -280,7 +293,7 @@ public abstract class CoeusMarket
      * Obtain full history.
      * @return the full history
      */
-    private CoeusHistory getFullHistory() {
+    protected CoeusHistory getFullHistory() {
         return theHistory;
     }
 
@@ -317,6 +330,24 @@ public abstract class CoeusMarket
     protected abstract CoeusHistory newHistory();
 
     /**
+     * New history view.
+     * @param pRange the date range
+     * @return the history
+     */
+    protected CoeusHistory viewHistory(final TethysDateRange pRange) {
+        return viewHistory(getFullHistory(), pRange);
+    }
+
+    /**
+     * New history view.
+     * @param pHistory the history
+     * @param pRange the date range
+     * @return the history
+     */
+    protected abstract CoeusHistory viewHistory(CoeusHistory pHistory,
+                                                TethysDateRange pRange);
+
+    /**
      * New loan.
      * @param pLoanId the loan id
      * @return the loan
@@ -324,11 +355,13 @@ public abstract class CoeusMarket
     protected abstract CoeusLoan newLoan(String pLoanId);
 
     /**
-     * New dated history.
-     * @param pDate the date
-     * @return the history
+     * New loan view.
+     * @param pLoan the loan
+     * @param pRange the date range
+     * @return the loan
      */
-    protected abstract CoeusHistory newHistory(TethysDate pDate);
+    protected abstract CoeusLoan viewLoan(CoeusLoan pLoan,
+                                          TethysDateRange pRange);
 
     /**
      * Does the market use decimal totals rather than money?

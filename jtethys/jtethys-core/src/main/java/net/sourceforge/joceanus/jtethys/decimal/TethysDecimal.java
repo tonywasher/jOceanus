@@ -18,6 +18,7 @@ package net.sourceforge.joceanus.jtethys.decimal;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.math.RoundingMode;
 
 /**
  * Provides classes to represent decimal numbers with fixed numbers of decimal digits
@@ -259,7 +260,7 @@ public class TethysDecimal
 
     /**
      * Returns the sign function.
-     * @return -1, 0, or 1 as the value of this JDecimal is negative, zero, or positive.
+     * @return -1, 0, or 1 as the value of this Decimal is negative, zero, or positive.
      */
     public int signum() {
         if (theValue == 0) {
@@ -413,7 +414,7 @@ public class TethysDecimal
     }
 
     /**
-     * Divide a decimal by another decimals to produce a third.
+     * Divide a decimal by another decimal to produce a third.
      * <p>
      * The calculation can be written as
      * <code>x.10<sup>a</sup>/y.10<sup>b</sup> = (x/y).10<sup>a-b</sup> = z.10<sup>c</sup></code>.
@@ -487,47 +488,25 @@ public class TethysDecimal
     }
 
     /**
-     * Divide a decimal by another decimals to produce a third.
+     * Divide a decimal by another decimal to produce a third using slow BigDecimal arithmetic.
      * <p>
-     * This old style calculation simple adjusts the scale of the dividend by a calculated factor
-     * prior to the calculation, in order to produce a result at the correct scale. An additional
-     * decimal is added before division and removed afterwards to handle rounding correctly.
-     * <p>
-     * This is deprecated, since the initial adjustment makes no attempt to avoid losing significant
-     * digits to left or right, and will produce incorrect results if the scale is adjusted
-     * downwards or else is significantly boosted for large values.
+     * This is necessary when the quotient is large since there is a danger of overflow in the standard method
      * @param pDividend the number to divide
      * @param pDivisor the number to divide
      */
-    protected void calculateQuotientOldStyle(final TethysDecimal pDividend,
-                                             final TethysDecimal pDivisor) {
-        /* Access the two values */
-        long myDividend = pDividend.unscaledValue();
-        final long myDivisor = pDivisor.unscaledValue();
-
-        /* Determine how many decimals to factor in to the dividend to get the correct result */
-        int myDecimals = scale() + 1;
-        myDecimals += pDivisor.scale()
-                      - pDividend.scale();
-
-        /* Add in the decimals of the result plus 1 */
-        myDividend = adjustDecimals(myDividend, myDecimals);
-
-        /* Calculate the quotient */
-        long myQuotient = myDividend
-                          / myDivisor;
-
-        /* Remove the additional decimal to round correctly */
-        myQuotient = adjustDecimals(myQuotient, -1);
-
-        /* Set the value */
-        theValue = myQuotient;
+    protected void calculateSafeQuotient(final TethysDecimal pDividend,
+                                         final TethysDecimal pDivisor) {
+        final BigDecimal myDividend = pDividend.toBigDecimal();
+        final BigDecimal myDivisor = pDivisor.toBigDecimal();
+        BigDecimal myResult = myDividend.divide(myDivisor, theScale, RoundingMode.HALF_UP);
+        myResult = myResult.movePointRight(theScale);
+        theValue = myResult.longValue();
     }
 
     /**
-     * Add a JDecimal to the value. The value of this JDecimal is updated and the scale is
+     * Add a Decimal to the value. The value of this Decimal is updated and the scale is
      * maintained.
-     * @param pValue The JDecimal to add to this one.
+     * @param pValue The Decimal to add to this one.
      */
     public void addValue(final TethysDecimal pValue) {
         /* Access the parameter at the correct scale */
@@ -543,7 +522,7 @@ public class TethysDecimal
     }
 
     /**
-     * Subtract a JDecimal from the value. The value of this JDecimal is updated and the scale is
+     * Subtract a Decimal from the value. The value of this Decimal is updated and the scale is
      * maintained.
      * @param pValue The decimal to subtract from this one.
      */
@@ -592,9 +571,9 @@ public class TethysDecimal
     }
 
     /**
-     * Returns the maximum of this JDecimal and pValue.
+     * Returns the maximum of this Decimal and pValue.
      * @param pValue the value to compare.
-     * @return the JDecimal whose value is the greater of this JDecimal and pValue. If they are
+     * @return the Decimal whose value is the greater of this Decimal and pValue. If they are
      * equal, as defined by the compareTo method, this is returned
      */
     public TethysDecimal max(final TethysDecimal pValue) {
@@ -605,9 +584,9 @@ public class TethysDecimal
     }
 
     /**
-     * Returns the minimum of this JDecimal and pValue.
+     * Returns the minimum of this Decimal and pValue.
      * @param pValue the value to compare.
-     * @return the JDecimal whose value is the lesser of this JDecimal and pValue. If they are
+     * @return the Decimal whose value is the lesser of this Decimal and pValue. If they are
      * equal, as defined by the compareTo method, this is returned
      */
     public TethysDecimal min(final TethysDecimal pValue) {
@@ -618,10 +597,10 @@ public class TethysDecimal
     }
 
     /**
-     * Returns a new JDecimal which is the sum of this JDecimal and pValue, and whose scale is the
+     * Returns a new Decimal which is the sum of this Decimal and pValue, and whose scale is the
      * maximum of the two.
      * @param pValue the value to add.
-     * @return the resulting JDecimal
+     * @return the resulting Decimal
      * @see BigDecimal#add
      */
     public TethysDecimal add(final TethysDecimal pValue) {
@@ -644,10 +623,10 @@ public class TethysDecimal
     }
 
     /**
-     * Returns a new JDecimal which is the difference of this JDecimal and pValue, and whose scale
+     * Returns a new Decimal which is the difference of this Decimal and pValue, and whose scale
      * is the maximum of the two.
      * @param pValue the value to subtract.
-     * @return the resulting JDecimal
+     * @return the resulting Decimal
      * @see BigDecimal#subtract
      */
     public TethysDecimal subtract(final TethysDecimal pValue) {
@@ -670,10 +649,10 @@ public class TethysDecimal
     }
 
     /**
-     * Returns a new JDecimal which is the product of this JDecimal and pValue, and whose scale is
+     * Returns a new Decimal which is the product of this Decimal and pValue, and whose scale is
      * the sum of the two.
      * @param pValue the value to multiply by.
-     * @return the resulting JDecimal
+     * @return the resulting Decimal
      * @see BigDecimal#multiply
      */
     public TethysDecimal multiply(final TethysDecimal pValue) {
@@ -699,10 +678,10 @@ public class TethysDecimal
     }
 
     /**
-     * Returns a new JDecimal whose value is (this / pValue), and whose scale is the same as this
-     * JDecimal.
+     * Returns a new Decimal whose value is (this / pValue), and whose scale is the same as this
+     * Decimal.
      * @param pValue the value to divide by.
-     * @return the resulting JDecimal
+     * @return the resulting Decimal
      * @see BigDecimal#divide
      */
     public TethysDecimal divide(final TethysDecimal pValue) {
@@ -727,9 +706,9 @@ public class TethysDecimal
     }
 
     /**
-     * Returns a new JDecimal whose value is the integral part of (this / pValue).
+     * Returns a new Decimal whose value is the integral part of (this / pValue).
      * @param pValue the value to divide by.
-     * @return the resulting JDecimal
+     * @return the resulting Decimal
      * @see BigDecimal#divide
      */
     public TethysDecimal divideToIntegralValue(final TethysDecimal pValue) {
@@ -748,10 +727,10 @@ public class TethysDecimal
     }
 
     /**
-     * Returns a new JDecimal whose value is (this / pValue), and whose scale is the same as this
-     * JDecimal.
+     * Returns a new Decimal whose value is (this / pValue), and whose scale is the same as this
+     * Decimal.
      * @param pValue the value to divide by.
-     * @return the resulting JDecimal
+     * @return the resulting Decimal
      * @see BigDecimal#remainder
      */
     public TethysDecimal remainder(final TethysDecimal pValue) {

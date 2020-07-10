@@ -16,10 +16,11 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jcoeus.data.ratesetter;
 
+import java.util.Objects;
+
 import net.sourceforge.joceanus.jcoeus.data.CoeusTotals;
 import net.sourceforge.joceanus.jcoeus.data.CoeusTransaction;
 import net.sourceforge.joceanus.jmetis.field.MetisFieldSet;
-import net.sourceforge.joceanus.jtethys.date.TethysDate;
 import net.sourceforge.joceanus.jtethys.decimal.TethysMoney;
 
 /**
@@ -35,90 +36,69 @@ public final class CoeusRateSetterTotals
     /**
      * Asset Value.
      */
-    private final TethysMoney theAssetValue;
+    private TethysMoney theAssetValue;
 
     /**
      * Holding.
      */
-    private final TethysMoney theHolding;
+    private TethysMoney theHolding;
 
     /**
      * LoanBook.
      */
-    private final TethysMoney theLoanBook;
+    private TethysMoney theLoanBook;
 
     /**
      * Source Value.
      */
-    private final TethysMoney theSourceValue;
+    private TethysMoney theSourceValue;
 
     /**
      * Invested.
      */
-    private final TethysMoney theInvested;
+    private TethysMoney theInvested;
 
     /**
      * Earnings.
      */
-    private final TethysMoney theEarnings;
+    private TethysMoney theEarnings;
 
     /**
      * Interest.
      */
-    private final TethysMoney theInterest;
+    private TethysMoney theInterest;
 
     /**
      * Fees.
      */
-    private final TethysMoney theFees;
+    private TethysMoney theFees;
 
     /**
      * Constructor for zeroed totals.
      * @param pMarket the market
      */
     CoeusRateSetterTotals(final CoeusRateSetterMarket pMarket) {
-        this(pMarket, null, null);
+        this(pMarket, null);
     }
 
-    /**
-     * Constructor for zeroed period totals.
-     * @param pMarket the market
-     * @param pDate the end date for the totals
-     */
-    CoeusRateSetterTotals(final CoeusRateSetterMarket pMarket,
-                          final TethysDate pDate) {
-        this(pMarket, null, pDate);
-    }
 
     /**
      * Constructor for zeroed totals.
      * @param pLoan the loan
      */
     CoeusRateSetterTotals(final CoeusRateSetterLoan pLoan) {
-        this(pLoan.getMarket(), pLoan, null);
-    }
-
-    /**
-     * Constructor for zeroed totals.
-     * @param pLoan the loan
-     * @param pDate the end date for the totals
-     */
-    CoeusRateSetterTotals(final CoeusRateSetterLoan pLoan,
-                          final TethysDate pDate) {
-        this(pLoan.getMarket(), pLoan, pDate);
+        this(pLoan.getMarket(), pLoan);
     }
 
     /**
      * Constructor for zeroed totals.
      * @param pMarket the market
      * @param pLoan the loan
-     * @param pDate the end date for the totals
      */
     CoeusRateSetterTotals(final CoeusRateSetterMarket pMarket,
-                          final CoeusRateSetterLoan pLoan,
-                          final TethysDate pDate) {
+                          final CoeusRateSetterLoan pLoan) {
         /* Initialise underlying class */
-        super(pMarket, pLoan, pDate);
+        super(pMarket, pLoan);
 
         /* Initialise values */
         theAssetValue = new TethysMoney(getZero());
@@ -153,19 +133,22 @@ public final class CoeusRateSetterTotals
     }
 
     @Override
-    protected void addTotalsToTotals(final CoeusTotals pTotals) {
-        /* Cast correctly */
-        final CoeusRateSetterTotals myTotals = (CoeusRateSetterTotals) pTotals;
+    protected void calculateDelta(final CoeusTotals pBase) {
+        /* Calculate delta rateOfReturns */
+        super.calculateDelta(pBase);
 
-        /* Add values from totals */
-        theAssetValue.addAmount(myTotals.getAssetValue());
-        theHolding.addAmount(myTotals.getHolding());
-        theLoanBook.addAmount(myTotals.getLoanBook());
-        theSourceValue.addAmount(myTotals.getSourceValue());
-        theInvested.addAmount(myTotals.getInvested());
-        theEarnings.addAmount(myTotals.getEarnings());
-        theInterest.addAmount(myTotals.getInterest());
-        theFees.addAmount(myTotals.getFees());
+        /* Cast correctly */
+        final CoeusRateSetterTotals myBase = (CoeusRateSetterTotals) pBase;
+
+        /* Calculate the deltas */
+        theAssetValue.subtractAmount(myBase.getAssetValue());
+        theHolding.subtractAmount(myBase.getHolding());
+        theLoanBook.subtractAmount(myBase.getLoanBook());
+        theSourceValue.subtractAmount(myBase.getSourceValue());
+        theInvested.subtractAmount(myBase.getInvested());
+        theEarnings.subtractAmount(myBase.getEarnings());
+        theInterest.subtractAmount(myBase.getInterest());
+        theFees.subtractAmount(myBase.getFees());
     }
 
     @Override
@@ -181,8 +164,9 @@ public final class CoeusRateSetterTotals
         theFees.addAmount(myTransaction.getFees());
 
         /* Adjust earnings */
-        theEarnings.addAmount(myTransaction.getInterest());
-        theEarnings.addAmount(myTransaction.getFees());
+        final TethysMoney myIncome = new TethysMoney(myTransaction.getInterest());
+        myIncome.addAmount(myTransaction.getFees());
+        theEarnings.addAmount(myIncome);
 
         /* Adjust asset values */
         theAssetValue.addAmount(myTransaction.getHolding());
@@ -192,6 +176,43 @@ public final class CoeusRateSetterTotals
         theSourceValue.addAmount(myTransaction.getInvested());
         theSourceValue.addAmount(myTransaction.getInterest());
         theSourceValue.addAmount(myTransaction.getFees());
+
+        /* Calculate the RateOfReturn */
+        calculateRateOfReturn(myIncome);
+        removeDuplicates();
+    }
+
+    @Override
+    protected void removeDuplicates() {
+        /* remove underlying duplicates */
+        super.removeDuplicates();
+
+        /* Resolve duplicates */
+        final CoeusRateSetterTotals myPrevious = (CoeusRateSetterTotals) getPrevious();
+        if (Objects.equals(theAssetValue, myPrevious.getAssetValue())) {
+            theAssetValue = myPrevious.getAssetValue();
+        }
+        if (Objects.equals(theHolding, myPrevious.getHolding())) {
+            theHolding = myPrevious.getHolding();
+        }
+        if (Objects.equals(theLoanBook, myPrevious.getLoanBook())) {
+            theLoanBook = myPrevious.getLoanBook();
+        }
+        if (Objects.equals(theSourceValue, myPrevious.getSourceValue())) {
+            theSourceValue = myPrevious.getSourceValue();
+        }
+        if (Objects.equals(theInvested, myPrevious.getInvested())) {
+            theInvested = myPrevious.getInvested();
+        }
+        if (Objects.equals(theEarnings, myPrevious.getEarnings())) {
+            theEarnings = myPrevious.getEarnings();
+        }
+        if (Objects.equals(theInterest, myPrevious.getInterest())) {
+            theInterest = myPrevious.getInterest();
+        }
+        if (Objects.equals(theFees, myPrevious.getFees())) {
+            theFees = myPrevious.getFees();
+        }
     }
 
     @Override

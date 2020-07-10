@@ -15,4 +15,7 @@
       <version>${project.version}</version>
     </dependency>
   </dependencies>
+  <properties>
+    <moduleName>${packageName}.swing</moduleName>
+  </properties>
 </project>

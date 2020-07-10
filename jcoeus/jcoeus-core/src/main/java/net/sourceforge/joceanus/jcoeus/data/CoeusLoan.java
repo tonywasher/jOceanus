@@ -20,6 +20,7 @@ import net.sourceforge.joceanus.jmetis.field.MetisFieldItem;
 import net.sourceforge.joceanus.jmetis.field.MetisFieldSet;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
+import net.sourceforge.joceanus.jtethys.date.TethysDateRange;
 import net.sourceforge.joceanus.jtethys.decimal.TethysDecimal;
 
 /**
@@ -104,6 +105,44 @@ public abstract class CoeusLoan
     }
 
     /**
+     * Constructor for partial view.
+     * @param pLoan the base loan
+     * @param pRange the date range
+     */
+    protected CoeusLoan(final CoeusLoan pLoan,
+                        final TethysDateRange pRange) {
+        /* Record details */
+        theMarket = pLoan.getMarket();
+        theLoanId = pLoan.getLoanId();
+
+        /* Create the cut down history */
+        theHistory = theMarket.viewHistory(pLoan.getHistory(), pRange);
+
+        /* Copy details from loan */
+        theStartDate = pLoan.getStartDate();
+        theInitialLoan = pLoan.getInitialLoan();
+        theLastDate = pLoan.getLastDate();
+
+        /* Determine badDebtDate */
+        final TethysDate myBadDebtDate = pLoan.getBadDebtDate();
+        final TethysDate myEndDate = pRange.getEnd();
+        theBadDebtDate = myBadDebtDate != null
+                                 && myBadDebtDate.compareTo(myEndDate) <= 0
+                         ? myBadDebtDate
+                         : null;
+
+        /* Determine lastDate */
+        if (theLastDate != null
+                && theLastDate.compareTo(myEndDate) > 0) {
+            theLastDate = theHistory.getTotals().getDate();
+        }
+
+        /* Determine status */
+        theStatus = CoeusLoanStatus.ACTIVE;
+        adjustStatus();
+    }
+
+    /**
      * Obtain the market.
      * @return the market
      */
@@ -141,6 +180,14 @@ public abstract class CoeusLoan
      */
     public CoeusLoanStatus getStatus() {
         return theStatus;
+    }
+
+    /**
+     * Is the history empty?
+     * @return true/false
+     */
+    public boolean isEmpty() {
+        return theHistory.isEmpty();
     }
 
     /**
@@ -227,10 +274,18 @@ public abstract class CoeusLoan
             }
         }
 
+        /* Adjust the status */
+        adjustStatus();
+    }
+
+    /**
+     * Adjust status.
+     */
+    void adjustStatus() {
         /* If the loan has zero Capital outstanding */
         final CoeusTotals myTotals = theHistory.getTotals();
         if (theStartDate != null
-            && myTotals.getLoanBook().isZero()) {
+                && myTotals.getLoanBook().isZero()) {
             /* Determine outstanding badDebt */
             final TethysDecimal myBadDebt = myTotals.getBadDebt();
             final TethysDecimal myRecovered = myTotals.getRecovered();
@@ -241,9 +296,18 @@ public abstract class CoeusLoan
 
             /* Must be either badDebt or rePaid */
             theStatus = isBadDebt && !isRePaid
-                                               ? CoeusLoanStatus.BADDEBT
-                                               : CoeusLoanStatus.REPAID;
+                        ? CoeusLoanStatus.BADDEBT
+                        : CoeusLoanStatus.REPAID;
         }
+    }
+
+    /**
+     * Obtain the dateRange of this loan.
+     * @return the dateRange.
+     */
+    public TethysDateRange getDateRange() {
+        final CoeusTotals myFirst = theHistory.getHistory().iterator().next();
+        return new TethysDateRange(myFirst.getDate(), theLastDate);
     }
 
     /**
@@ -251,13 +315,6 @@ public abstract class CoeusLoan
      * @return the history
      */
     protected abstract CoeusHistory newHistory();
-
-    /**
-     * New dated history.
-     * @param pDate the date
-     * @return the history
-     */
-    protected abstract CoeusHistory newHistory(TethysDate pDate);
 
     /**
      * CheckLoan.

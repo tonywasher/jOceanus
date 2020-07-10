@@ -16,6 +16,9 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jtethys.decimal;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+
 /**
  * Represents a Ratio object.
  */
@@ -77,7 +80,7 @@ public class TethysRatio
     public TethysRatio(final TethysDecimal pFirst,
                        final TethysDecimal pSecond) {
         recordScale(NUM_DECIMALS);
-        calculateQuotient(pFirst, pSecond);
+        calculateSafeQuotient(pFirst, pSecond);
     }
 
     /**
@@ -105,15 +108,13 @@ public class TethysRatio
      * @param pDays the number of days in the period
      * @return the annualised ratio
      */
-    public TethysRatio annualise(final int pDays) {
-        /* Should not annualise periods of less than a year */
-        if (pDays < DAYS_IN_YEAR) {
-            return this;
-        }
-
-        /* Calculate the annualised value and convert to ratio */
-        final double myValue = Math.pow(doubleValue(), ((double) DAYS_IN_YEAR) / pDays);
-        return new TethysRatio(Double.toString(myValue));
+    public TethysRate annualise(final long pDays) {
+        /* Calculate the annualised value and convert to rate */
+        double myValue = Math.pow(doubleValue(), ((double) DAYS_IN_YEAR) / pDays);
+        myValue -= 1;
+        BigDecimal myDecimal = BigDecimal.valueOf(myValue);
+        myDecimal = myDecimal.setScale(TethysRate.NUM_DECIMALS, RoundingMode.HALF_UP);
+        return new TethysRate(myDecimal.toString());
     }
 
     @Override

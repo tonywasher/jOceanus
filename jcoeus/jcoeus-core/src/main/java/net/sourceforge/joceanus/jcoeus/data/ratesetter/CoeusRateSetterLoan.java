@@ -20,7 +20,7 @@ import net.sourceforge.joceanus.jcoeus.CoeusDataException;
 import net.sourceforge.joceanus.jcoeus.data.CoeusLoan;
 import net.sourceforge.joceanus.jcoeus.data.CoeusResource;
 import net.sourceforge.joceanus.jmetis.field.MetisFieldSet;
-import net.sourceforge.joceanus.jtethys.date.TethysDate;
+import net.sourceforge.joceanus.jtethys.date.TethysDateRange;
 import net.sourceforge.joceanus.jtethys.decimal.TethysMoney;
 
 /**
@@ -67,6 +67,17 @@ public class CoeusRateSetterLoan
         theBookItem = null;
     }
 
+    /**
+     * Constructor.
+     * @param pLoan the loan
+     * @param pRange the dateRange
+     */
+    CoeusRateSetterLoan(final CoeusRateSetterLoan pLoan,
+                        final TethysDateRange pRange) {
+        super(pLoan, pRange);
+        theBookItem = pLoan.getLoanBookItem();
+    }
+
     @Override
     public CoeusRateSetterMarket getMarket() {
         return (CoeusRateSetterMarket) super.getMarket();
@@ -93,11 +104,6 @@ public class CoeusRateSetterLoan
     @Override
     protected CoeusRateSetterHistory newHistory() {
         return new CoeusRateSetterHistory(this);
-    }
-
-    @Override
-    protected CoeusRateSetterHistory newHistory(final TethysDate pDate) {
-        return new CoeusRateSetterHistory(this, pDate);
     }
 
     @Override

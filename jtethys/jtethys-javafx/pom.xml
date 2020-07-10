@@ -20,4 +20,7 @@
       <version>${JavaFXVersion}</version>
     </dependency>
   </dependencies>
+  <properties>
+    <moduleName>${packageName}.javafx</moduleName>
+  </properties>
 </project>

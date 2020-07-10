@@ -144,6 +144,16 @@ public enum CoeusTotalsField
     RECOVERED(CoeusResource.DATA_RECOVERED),
 
     /**
+     * LoanRateOfReturn.
+     */
+    LOANROR(CoeusResource.DATA_LOANROR),
+
+    /**
+     * AssetRateOfReturn.
+     */
+    ASSETROR(CoeusResource.DATA_ASSETROR),
+
+    /**
      * Delta.
      */
     DELTA(CoeusResource.DATA_DELTA),

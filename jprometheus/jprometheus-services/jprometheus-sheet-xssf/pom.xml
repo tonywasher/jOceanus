@@ -25,4 +25,7 @@
       <version>${ApachePOIVersion}</version>
     </dependency>
   </dependencies>
+  <properties>
+    <moduleName>${packageName}.sheet.xssf</moduleName>
+  </properties>
 </project>

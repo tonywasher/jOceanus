@@ -35,7 +35,9 @@ import net.sourceforge.joceanus.jmetis.report.MetisReportHTMLBuilder.MetisHTMLTa
 import net.sourceforge.joceanus.jmetis.report.MetisReportManager;
 import net.sourceforge.joceanus.jmetis.report.MetisReportReferenceManager.DelayedTable;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
+import net.sourceforge.joceanus.jtethys.date.TethysDateRange;
 import net.sourceforge.joceanus.jtethys.decimal.TethysDecimal;
+import net.sourceforge.joceanus.jtethys.decimal.TethysRatio;
 
 /**
  * TaxBook Report.
@@ -73,7 +75,7 @@ public class CoeusReportAnnual
         theMarket = pMarket;
 
         /* Access the date and totals */
-        TethysDate myDate = theMarket.getDate();
+        TethysDate myDate = theMarket.getDateRange().getEnd();
         final boolean hasFees = theMarket.hasFees();
         final boolean hasCashBack = theMarket.hasCashBack();
         final boolean hasBadDebt = theMarket.hasBadDebt();
@@ -104,14 +106,19 @@ public class CoeusReportAnnual
         if (needTaxableEarnings) {
             theBuilder.makeTitleCell(myTable, CoeusTotalSet.TAXABLEEARNINGS.toString());
         }
+        theBuilder.makeTitleCell(myTable, CoeusTotalSet.ASSETROR.toString());
 
         /* Loop through the months */
         final Iterator<CoeusHistory> myIterator = theMarket.monthlyIterator();
         while (myIterator.hasNext()) {
             final CoeusHistory myHistory = myIterator.next();
             final CoeusTotals myTotals = myHistory.getTotals();
-            myDate = myHistory.getDate();
+            final TethysDateRange myRange = myHistory.getDateRange();
+            myDate = myRange.getEnd();
             final Month myMonth = myDate.getMonthValue();
+
+            /* Determine the number of days in the period */
+            final long numDays = myRange.getNumDays();
 
             /* Create the row */
             theBuilder.startRow(myTable);
@@ -133,6 +140,10 @@ public class CoeusReportAnnual
             if (needTaxableEarnings) {
                 makeTableFilterCell(myTable, CoeusTotalSet.TAXABLEEARNINGS, myMonth, myTotals.getTaxableEarnings());
             }
+
+            /* Create RoR cell */
+            final TethysRatio myRoR = myTotals.getAssetRoR();
+            makeTableFilterCell(myTable, CoeusTotalSet.ASSETROR, myMonth, myRoR.annualise(numDays));
         }
 
         /* Create the totals row */
@@ -156,6 +167,14 @@ public class CoeusReportAnnual
         if (needTaxableEarnings) {
             makeTableFilterCell(myTable, CoeusTotalSet.TAXABLEEARNINGS, myTotals.getTaxableEarnings());
         }
+
+        /* Determine the number of days in the period */
+        final TethysDateRange myRange = theMarket.getDateRange();
+        final long numDays = myRange.getNumDays();
+
+        /* Create RoR cell */
+        final TethysRatio myRoR = myTotals.getAssetRoR();
+        makeTableFilterCell(myTable, CoeusTotalSet.ASSETROR, myRoR.annualise(numDays));
 
         /* Return the document */
         return theBuilder.getDocument();
@@ -199,7 +218,7 @@ public class CoeusReportAnnual
         if (pSource instanceof CoeusFilterDefinition) {
             /* Create the new filter */
             final CoeusFilterDefinition myDef = (CoeusFilterDefinition) pSource;
-            final CoeusAnnualFilter myFilter = new CoeusAnnualFilter(theMarket, theMarket.getDate());
+            final CoeusAnnualFilter myFilter = new CoeusAnnualFilter(theMarket, theMarket.getDateRange().getEnd());
             myFilter.setMonth(myDef.getMonth());
             myFilter.setTotalSet(myDef.getTotalSet());
             return myFilter;

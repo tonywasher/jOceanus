@@ -15,4 +15,7 @@
       <version>${JSoupVersion}</version>
     </dependency>
   </dependencies>
+  <properties>
+    <moduleName>${packageName}.core</moduleName>
+  </properties>
 </project>

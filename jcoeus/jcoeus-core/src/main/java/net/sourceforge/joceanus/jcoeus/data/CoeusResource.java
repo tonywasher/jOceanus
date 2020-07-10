@@ -203,7 +203,7 @@ public enum CoeusResource
     /**
      * Data LoanMap.
      */
-    DATA_LOANMAP("data.loanmap"),
+    DATA_LOANS("data.loans"),
 
     /**
      * Data Transactions.
@@ -381,6 +381,16 @@ public enum CoeusResource
     DATA_BALANCE("data.balance"),
 
     /**
+     * Data Loan Rate Of Return.
+     */
+    DATA_LOANROR("data.loanror"),
+
+    /**
+     * Data Asset Rate Of Return.
+     */
+    DATA_ASSETROR("data.assetror"),
+
+    /**
      * Data Delta.
      */
     DATA_DELTA("data.delta"),
@@ -394,6 +404,16 @@ public enum CoeusResource
      * Data LastDate.
      */
     DATA_LASTDATE("data.lastdate"),
+
+    /**
+     * Data Range.
+     */
+    DATA_RANGE("data.range"),
+
+    /**
+     * Initial.
+     */
+    DATA_INITIAL("data.initial"),
 
     /**
      * Data Status.
@@ -705,6 +725,8 @@ public enum CoeusResource
         myMap.put(CoeusTotalSet.RECOVERED, DATA_RECOVERED);
         myMap.put(CoeusTotalSet.HOLDING, DATA_HOLDING);
         myMap.put(CoeusTotalSet.LOANBOOK, DATA_LOANBOOK);
+        myMap.put(CoeusTotalSet.LOANROR, DATA_LOANROR);
+        myMap.put(CoeusTotalSet.ASSETROR, DATA_ASSETROR);
         return myMap;
     }
 

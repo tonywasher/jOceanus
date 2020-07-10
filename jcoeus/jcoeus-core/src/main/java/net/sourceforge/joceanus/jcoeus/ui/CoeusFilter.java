@@ -97,15 +97,6 @@ public interface CoeusFilter {
         }
 
         /**
-         * is the loan available?
-         * @param pLoan the loan
-         * @return true/false
-         */
-        public boolean availableLoan(final CoeusLoan pLoan) {
-            return theSnapShot.availableLoan(pLoan);
-        }
-
-        /**
          * Obtain the loans iterator.
          * @return the iterator
          */
