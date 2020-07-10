@@ -31,7 +31,9 @@ import net.sourceforge.joceanus.jmetis.report.MetisReportHTMLBuilder.MetisHTMLTa
 import net.sourceforge.joceanus.jmetis.report.MetisReportManager;
 import net.sourceforge.joceanus.jmetis.report.MetisReportReferenceManager.DelayedTable;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
+import net.sourceforge.joceanus.jtethys.date.TethysDateRange;
 import net.sourceforge.joceanus.jtethys.decimal.TethysDecimal;
+import net.sourceforge.joceanus.jtethys.decimal.TethysRatio;
 
 /**
  * BalanceSheet Report.
@@ -133,6 +135,18 @@ public class CoeusReportBalanceSheet
 
         /* Create the LoanBook row */
         makeTableFilterRow(myTable, CoeusTotalSet.LOANBOOK, myTotals.getLoanBook());
+
+        /* Determine the number of days in the period */
+        final TethysDateRange myRange = theMarket.getDateRange();
+        final long numDays = myRange.getNumDays();
+
+        /* Create the AssetRoR row */
+        TethysRatio myRoR = myTotals.getAssetRoR();
+        makeTableFilterRow(myTable, CoeusTotalSet.ASSETROR, myRoR.annualise(numDays));
+
+        /* Create the LoanRoR row */
+        myRoR = myTotals.getLoanRoR();
+        makeTableFilterRow(myTable, CoeusTotalSet.LOANROR, myRoR.annualise(numDays));
 
         /* Return the document */
         return theBuilder.getDocument();

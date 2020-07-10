@@ -38,6 +38,16 @@ import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXNode;
 public class CoeusFXMainPanel
         extends CoeusMainPanel {
     /**
+     * Width for stage.
+     */
+    protected static final int WIDTH_SCENE = 1300;
+
+    /**
+     * Height for stage.
+     */
+    protected static final int HEIGHT_SCENE = 800;
+
+    /**
      * The Toolkit.
      */
     private final MetisFXToolkit theToolkit;
@@ -75,7 +85,7 @@ public class CoeusFXMainPanel
         final TethysProgram myApp = theToolkit.getProgramDefinitions();
 
         /* Create the scene */
-        final Scene myScene = new Scene(thePane);
+        final Scene myScene = new Scene(thePane, WIDTH_SCENE, HEIGHT_SCENE);
         myFactory.registerScene(myScene);
 
         /* Configure the stage */

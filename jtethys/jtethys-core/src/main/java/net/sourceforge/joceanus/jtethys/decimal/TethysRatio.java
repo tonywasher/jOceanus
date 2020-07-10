@@ -79,11 +79,8 @@ public class TethysRatio
      */
     public TethysRatio(final TethysDecimal pFirst,
                        final TethysDecimal pSecond) {
-        final BigDecimal myFirst = pFirst.toBigDecimal();
-        final BigDecimal mySecond = pSecond.toBigDecimal();
-        BigDecimal myResult = myFirst.divide(mySecond, NUM_DECIMALS, RoundingMode.HALF_UP);
-        myResult = myResult.movePointRight(NUM_DECIMALS);
-        setValue(myResult.longValue(), NUM_DECIMALS);
+        recordScale(NUM_DECIMALS);
+        calculateSafeQuotient(pFirst, pSecond);
     }
 
     /**
@@ -111,10 +108,13 @@ public class TethysRatio
      * @param pDays the number of days in the period
      * @return the annualised ratio
      */
-    public TethysRatio annualise(final int pDays) {
-        /* Calculate the annualised value and convert to ratio */
-        final double myValue = Math.pow(doubleValue(), ((double) DAYS_IN_YEAR) / pDays);
-        return new TethysRatio(Double.toString(myValue));
+    public TethysRate annualise(final long pDays) {
+        /* Calculate the annualised value and convert to rate */
+        double myValue = Math.pow(doubleValue(), ((double) DAYS_IN_YEAR) / pDays);
+        myValue -= 1;
+        BigDecimal myDecimal = BigDecimal.valueOf(myValue);
+        myDecimal = myDecimal.setScale(TethysRate.NUM_DECIMALS, RoundingMode.HALF_UP);
+        return new TethysRate(myDecimal.toString());
     }
 
     @Override

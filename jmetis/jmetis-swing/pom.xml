@@ -24,5 +24,8 @@
       <artifactId>jtethys-swing</artifactId>
       <version>${project.version}</version>
     </dependency>
-   </dependencies>
+  </dependencies>
+  <properties>
+    <moduleName>${packageName}.swing</moduleName>
+  </properties>
 </project>

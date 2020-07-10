@@ -63,7 +63,9 @@
     <packageKey>net.sourceforge.joceanus</packageKey>
     <packageMain/>
     <packageName/>
+    <moduleName/>
     <appDir>${env.BACKUPDIR}</appDir>
+    <appBinDir>bin/</appBinDir>
     <appLibDir>lib/</appLibDir>
     <BouncyCastleVersion>1.65</BouncyCastleVersion>
     <JGitVersion>5.8.0.202006091008-r</JGitVersion>
@@ -321,7 +323,6 @@
           <archive>
             <manifest>
               <mainClass>${packageMain}</mainClass>
-              <packageName>${packageName}</packageName>
               <addClasspath>true</addClasspath>
               <classpathLayoutType>repository</classpathLayoutType>
               <classpathPrefix>${appLibDir}</classpathPrefix>
@@ -329,6 +330,7 @@
               <addBuildEnvironmentEntries>true</addBuildEnvironmentEntries>
             </manifest>
             <manifestEntries>
+              <moduleName>${moduleName}</moduleName>
               <Revision>sha-${buildNumber}</Revision>
             </manifestEntries>
           </archive>
@@ -362,7 +364,7 @@
                     <type>${project.packaging}</type>
                   </artifactItem>
                 </artifactItems>
-                <outputDirectory>${appDir}</outputDirectory>
+                <outputDirectory>${appDir}/${appBinDir}</outputDirectory>
               </configuration>
             </execution>
             <execution>

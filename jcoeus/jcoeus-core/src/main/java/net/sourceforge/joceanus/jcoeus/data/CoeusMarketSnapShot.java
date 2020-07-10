@@ -173,6 +173,15 @@ public class CoeusMarketSnapShot
         }
     }
 
+    /**
+     * Obtain the dateRange of this snapshot.
+     * @return the dateRange.
+     */
+    public TethysDateRange getDateRange() {
+        final CoeusTotals myFirst = theHistory.getHistory().iterator().next();
+        return new TethysDateRange(myFirst.getDate(), theDate);
+    }
+
     @Override
     public String toString() {
         return String.valueOf(theMarket) + '@' + theDate;

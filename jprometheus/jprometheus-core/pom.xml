@@ -72,4 +72,7 @@
       <version>${project.version}</version>
     </dependency>
   </dependencies>
- </project>
+  <properties>
+    <moduleName>${packageName}.core</moduleName>
+  </properties>
+</project>

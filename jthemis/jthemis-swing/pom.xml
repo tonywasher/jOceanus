@@ -52,6 +52,7 @@
     </dependency>
   </dependencies>
   <properties>
+    <moduleName>${packageName}.swing</moduleName>
     <packageMain>${packageName}.ui.swing.Themis4Swing</packageMain>
     <packageSplash>net/sourceforge/joceanus/jthemis/ui/icons/swing/ThemisSplash.png</packageSplash>
   </properties>

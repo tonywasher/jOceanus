@@ -122,7 +122,7 @@ public abstract class CoeusTotals
         theTransaction = null;
         thePrevious = null;
 
-        /* Sedt rate of return ratios disabling Asset for Loan totals */
+        /* Set rate of return ratios disabling Asset for Loan totals */
         theAssetRor = pLoan == null ? TethysRatio.ONE : null;
         theLoanRor = TethysRatio.ONE;
     }
@@ -152,9 +152,9 @@ public abstract class CoeusTotals
     protected void calculateDelta(final CoeusTotals pBase) {
         /* Calculate the delta rate of returns */
         if (theAssetRor != null) {
-            theAssetRor.divide(pBase.getAssetRoR());
+            theAssetRor = new TethysRatio(theAssetRor, pBase.getAssetRoR());
         }
-        theLoanRor.divide(pBase.getLoanRoR());
+        theLoanRor = new TethysRatio(theLoanRor, pBase.getLoanRoR());
     }
 
     /**
@@ -511,9 +511,7 @@ public abstract class CoeusTotals
         /* If this is a ratio value */
         if (pBalance instanceof TethysRatio
                 && pPrevious instanceof TethysRatio) {
-            final TethysRatio myResult = new TethysRatio((TethysRatio) pBalance);
-            myResult.divide((TethysRatio) pPrevious);
-            return myResult;
+            return new TethysRatio(pBalance, (TethysDecimal) pPrevious);
         }
 
         /* Handle standard result */

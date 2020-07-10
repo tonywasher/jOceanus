@@ -302,6 +302,15 @@ public abstract class CoeusLoan
     }
 
     /**
+     * Obtain the dateRange of this loan.
+     * @return the dateRange.
+     */
+    public TethysDateRange getDateRange() {
+        final CoeusTotals myFirst = theHistory.getHistory().iterator().next();
+        return new TethysDateRange(myFirst.getDate(), theLastDate);
+    }
+
+    /**
      * New history.
      * @return the history
      */

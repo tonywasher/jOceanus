@@ -20,4 +20,7 @@
       <version>${ApachePOIVersion}</version>
     </dependency>
   </dependencies>
+  <properties>
+    <moduleName>${packageName}.sheet.hssf</moduleName>
+  </properties>
 </project>
