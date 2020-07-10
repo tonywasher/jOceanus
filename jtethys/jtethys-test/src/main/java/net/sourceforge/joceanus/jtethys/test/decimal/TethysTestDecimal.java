@@ -59,11 +59,11 @@ public final class TethysTestDecimal {
         /* Create a ratio of 21/20 */
         TethysRatio myRatio1 = myParser.parseRatioValue("1.05");
         TethysRate myResult = new TethysRate(myRatio1);
-        TethysRatio myRatio2 = myParser.parseRatioValue("0.90");
+        final TethysRatio myRatio2 = myParser.parseRatioValue("0.90");
         myResult = new TethysRate(myRatio2);
         final TethysRatio myRatio3 = myRatio2.multiplyBy(myRatio1);
         myRatio1 = myParser.parseRatioValue("1.21");
-        myRatio2 = myRatio1.annualise(500);
+        TethysRate myRate = myRatio1.annualise(500);
 
         /* Create a USD value */
         final TethysMoney myUSD = TethysMoney.getWholeUnits(-1000, Currency.getInstance("GBP"));
@@ -75,7 +75,7 @@ public final class TethysTestDecimal {
         }
 
         /* Parse a rate and money */
-        TethysRate myRate = myParser.parseRateValue("15%");
+        myRate = myParser.parseRateValue("15%");
         TethysMoney myMoney = myParser.parseMoneyValue("5000.00");
 
         /* Adjust accounting width */
