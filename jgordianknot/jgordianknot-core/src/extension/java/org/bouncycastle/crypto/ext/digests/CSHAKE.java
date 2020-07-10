@@ -1,5 +1,6 @@
 package org.bouncycastle.crypto.ext.digests;
 
+import org.bouncycastle.crypto.digests.XofUtils;
 import org.bouncycastle.crypto.ext.params.KeccakParameters;
 import org.bouncycastle.util.Arrays;
 
@@ -70,7 +71,7 @@ public class CSHAKE
                 && (S == null || S.length == 0)) {
             diff = null;
         } else {
-            diff = Arrays.concatenate(leftEncode(rate / 8), encodeString(nameSpace), encodeString(S));
+            diff = Arrays.concatenate(XofUtils.leftEncode(rate / 8), encodeString(nameSpace), encodeString(S));
         }
     }
 
@@ -82,14 +83,18 @@ public class CSHAKE
             final int blockSize = rate / 8;
             absorb(diff, 0, diff.length);
 
-            int required = blockSize - (diff.length % blockSize);
+            /* Only add padding if needed */
+            final int delta = diff.length % blockSize;
+            if (delta != 0) {
+                int required = blockSize - delta;
 
-            while (required > padding.length) {
-                absorb(padding, 0, padding.length);
-                required -= padding.length;
+                while (required > padding.length) {
+                    absorb(padding, 0, padding.length);
+                    required -= padding.length;
+                }
+
+                absorb(padding, 0, required);
             }
-
-            absorb(padding, 0, required);
         }
     }
 
@@ -109,34 +114,10 @@ public class CSHAKE
      */
     private byte[] encodeString(final byte[] str) {
         if (str == null || str.length == 0) {
-            return leftEncode(0);
+            return XofUtils.leftEncode(0);
         }
 
-        return Arrays.concatenate(leftEncode(str.length * 8L), str);
-    }
-
-    /**
-     * Left encode a length.
-     * @param strLen the length to encode
-     * @return the encoded length
-     */
-    public static byte[] leftEncode(final long strLen) {
-        byte n = 1;
-
-        long v = strLen;
-        while ((v >>= 8) != 0) {
-            n++;
-        }
-
-        final byte[] b = new byte[n + 1];
-
-        b[0] = n;
-
-        for (int i = 1; i <= n; i++) {
-            b[i] = (byte) (strLen >> (8 * (n - i)));
-        }
-
-        return b;
+        return Arrays.concatenate(XofUtils.leftEncode(str.length * 8L), str);
     }
 
     @Override

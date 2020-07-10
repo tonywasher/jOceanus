@@ -67,11 +67,6 @@ public class EllipticEncryptor {
     private boolean isAvailable;
 
     /**
-     * Is padding prefixed (or else suffixed)?
-     */
-    private boolean paddingPrefixed;
-
-    /**
      * Are we encrypting or decrypting?
      */
     private boolean encrypting;
@@ -88,11 +83,9 @@ public class EllipticEncryptor {
     /**
      * Initialise for encryption.
      * @param pPublicKey the publicKey
-     * @param pPaddingPrefixed use prefixed padding
      * @param pRandom the secureRandom
      */
     public void initForEncrypt(final ECPublicKeyParameters pPublicKey,
-                               final boolean pPaddingPrefixed,
                                final SecureRandom pRandom) {
         /* Access domain parameters */
         final ECDomainParameters myDomain = pPublicKey.getParameters();
@@ -104,7 +97,6 @@ public class EllipticEncryptor {
         theCurve = myDomain.getCurve();
         isAvailable = true;
         encrypting = true;
-        paddingPrefixed = pPaddingPrefixed;
 
         /* Initialise for encryption */
         final ParametersWithRandom myParms = new ParametersWithRandom(pPublicKey, pRandom);
@@ -114,10 +106,8 @@ public class EllipticEncryptor {
     /**
      * Initialise for decryption.
      * @param pPrivateKey the privateKey
-     * @param pPaddingPrefixed use prefixed padding
      */
-    public void initForDecrypt(final ECPrivateKeyParameters pPrivateKey,
-                               final boolean pPaddingPrefixed) {
+    public void initForDecrypt(final ECPrivateKeyParameters pPrivateKey) {
         /* Access domain parameters */
         final ECDomainParameters myDomain = pPrivateKey.getParameters();
         if (isUnsupported(myDomain)) {
@@ -128,7 +118,6 @@ public class EllipticEncryptor {
         theCurve = myDomain.getCurve();
         isAvailable = true;
         encrypting = false;
-        paddingPrefixed = pPaddingPrefixed;
 
         /* Initialise for decryption */
         theDecryptor.init(pPrivateKey);
@@ -144,18 +133,26 @@ public class EllipticEncryptor {
     }
 
     /**
-     * Obtain the length of the block.
-     * @return the length of the block.
+     * Obtain the length of field.
+     * @return the length of the field.
      */
-    private int getBlockLength() {
+    private int getFieldLength() {
         return (theCurve.getFieldSize() + Byte.SIZE - 1) / Byte.SIZE;
     }
 
     /**
-     * Obtain the length of the unencrypted block.
+     * Obtain the length of block (1 less than fieldLength).
      * @return the length of the block.
      */
-    private int getDecryptedBlockLength() {
+    private int getBlockLength() {
+        return getFieldLength() - 1;
+    }
+
+    /**
+     * Obtain the length of the plain block (2 less than blockLength).
+     * @return the length of the block.
+     */
+    private int getPlainBlockLength() {
         return getBlockLength() - 2;
     }
 
@@ -163,8 +160,8 @@ public class EllipticEncryptor {
      * Obtain the length of the encrypted block.
      * @return the length of the block.
      */
-    private int getEncryptedBlockLength() {
-        return (getBlockLength() + 1) << 1;
+    private int getEncodedBlockLength() {
+        return (getFieldLength() + 1) << 1;
     }
 
     /**
@@ -173,7 +170,7 @@ public class EllipticEncryptor {
      * @return the number of bytes.
      */
     private int getDecryptedLength(final int pLength) {
-        return getDecryptedBlockLength() * getNumBlocks(pLength, getEncryptedBlockLength());
+        return getPlainBlockLength() * getNumBlocks(pLength, getEncodedBlockLength());
     }
 
     /**
@@ -182,7 +179,7 @@ public class EllipticEncryptor {
      * @return the number of bytes.
      */
     private int getEncryptedLength(final int pLength) {
-        return getEncryptedBlockLength() * getNumBlocks(pLength, getDecryptedBlockLength());
+        return getEncodedBlockLength() * getNumBlocks(pLength, getPlainBlockLength());
     }
 
     /**
@@ -212,16 +209,14 @@ public class EllipticEncryptor {
         final byte[] myOutput = new byte[getEncryptedLength(pData.length)];
 
         /* Access block lengths */
-        final int myInBlockLength = getDecryptedBlockLength();
+        final int myInBlockLength = getPlainBlockLength();
 
         /* Loop encrypting the blocks */
         int myInOff = 0;
         int myOutOff = 0;
         while (myInLen > 0) {
             /* Encrypt to an ECPair */
-            final int myLen = myInLen >= myInBlockLength
-                              ? myInBlockLength
-                              : myInLen;
+            final int myLen = Math.min(myInLen, myInBlockLength);
             final ECPair myPair = encryptToPair(pData, myInOff, myLen);
 
             /* Convert into the output buffer */
@@ -278,21 +273,12 @@ public class EllipticEncryptor {
         }
 
         /* Create the work buffer and copy data in */
-        final byte[] myX = new byte[myLen];
+        final byte[] myX = new byte[myLen + 1];
 
-        /* If we are prefixing the padding */
-        if (paddingPrefixed) {
-            /* Calculate the start position and place data and padding */
-            final int myStart = myLen - pInLen - 1;
-            System.arraycopy(pInBuffer, pInOff, myX, myStart, pInLen);
-            myX[myStart - 1] = 1;
-
-            /* else we are suffixing the padding */
-        } else {
-            /* Place data and padding */
-            System.arraycopy(pInBuffer, pInOff, myX, 0, pInLen);
-            myX[pInLen] = 1;
-        }
+        /* Calculate the start position and place data and padding */
+        final int myStart = myLen - pInLen;
+        System.arraycopy(pInBuffer, pInOff, myX, myStart, pInLen);
+        myX[myStart - 1] = 1;
 
         /* Loop to obtain point on curve */
         for (int i = 0; i < MAXITERATION; i++) {
@@ -305,7 +291,7 @@ public class EllipticEncryptor {
             }
 
             /* Increment the test value */
-            myX[myLen - 1]++;
+            myX[myLen]++;
         }
 
         /* No possible value found */
@@ -321,8 +307,9 @@ public class EllipticEncryptor {
         /* Protect against exceptions */
         try {
             /* Create a compressed point */
-            final byte[] myCompressed = new byte[pX.length + 1];
-            System.arraycopy(pX, 0, myCompressed, 1, pX.length);
+            final int myFieldLen = getFieldLength();
+            final byte[] myCompressed = new byte[myFieldLen + 1];
+            System.arraycopy(pX, 0, myCompressed, 1, myFieldLen);
             myCompressed[0] = 2;
             final ECPoint myPoint = theCurve.decodePoint(myCompressed);
 
@@ -349,7 +336,7 @@ public class EllipticEncryptor {
                                   final byte[] pOutBuffer,
                                   final int pOutOff) throws InvalidCipherTextException {
         /* Check length */
-        final int myLen = getBlockLength() + 1;
+        final int myLen = getFieldLength() + 1;
         if (pOutBuffer.length - pOutOff < myLen << 1) {
             throw new IllegalArgumentException("Output buffer too small");
         }
@@ -384,7 +371,7 @@ public class EllipticEncryptor {
         final byte[] myOutput = new byte[getDecryptedLength(pData.length)];
 
         /* Access block lengths */
-        final int myInBlockLength = getEncryptedBlockLength();
+        final int myInBlockLength = getEncodedBlockLength();
 
         /* Loop decrypting the blocks */
         int myInOff = 0;
@@ -441,68 +428,29 @@ public class EllipticEncryptor {
                                    final int pOutOff) throws InvalidCipherTextException {
         /* Obtain the X co-ordinate */
         final BigInteger myX = pPoint.getAffineXCoord().toBigInteger();
-        byte[] myBuf = myX.toByteArray();
-        int myStart;
-        int myEnd;
+        final byte[] myBuf = myX.toByteArray();
 
-        /* If we are prefixing the padding */
-        if (paddingPrefixed) {
-            /* Set defaults */
-            myStart = -1;
-            myEnd = myBuf.length - 1;
+        /* Set defaults */
+        int myStart = -1;
+        final int myEnd = myBuf.length - 1;
 
-            /* Loop through the data in fixed time */
-            for (int myIndex = 0; myIndex < myEnd; myIndex++) {
-                /* If the value is non-zero and we have not yet found start */
-                if (myBuf[myIndex] != 0
-                        && myStart == -1) {
-                    myStart = myIndex;
-                }
-            }
-
-            /* Check validity */
-            if (myStart == -1 || myBuf[myStart] != 1) {
-                throw new InvalidCipherTextException("Invalid data");
-            }
-
-            /* Bump past padding */
-            myStart++;
-
-            /* else we are suffixing the padding */
-        } else {
-            /* Set data start */
-            myStart = 0;
-            myEnd = -1;
-
-            /* Check for a buffer that is too large (happens when the top bit is set) */
-            final int myBlockLen = getBlockLength();
-            final int myBufLen = myBuf.length;
-            if (myBufLen > myBlockLen) {
-
-                myStart = myBufLen - myBlockLen;
-
-                /* Check for a buffer that is too small (happens when the top bits are zero) */
-            } else if (myBuf.length < myBlockLen) {
-                /* Create new buffer with prefixed zeros */
-                final byte[] myOld = myBuf;
-                myBuf = new byte[myBlockLen];
-                System.arraycopy(myOld, 0, myBuf, myBlockLen - myBufLen, myBufLen);
-            }
-
-            /* Loop through the data in fixed time */
-            for (int myIndex = myBuf.length - 2; myIndex > myStart; myIndex--) {
-                /* If the value is non-zero and we have not yet found end */
-                if (myBuf[myIndex] != 0
-                        && myEnd == -1) {
-                    myEnd = myIndex;
-                }
-            }
-
-            /* Check validity */
-            if (myEnd == -1 || myBuf[myEnd] != 1) {
-                throw new InvalidCipherTextException("Invalid data");
+        /* Loop through the data in fixed time */
+        for (int myIndex = 0; myIndex < myEnd; myIndex++) {
+            /* If the value is non-zero and we have not yet found start */
+            /* Disable the short-circuit logic!! */
+            if (myBuf[myIndex] != 0
+                    & myStart == -1) {
+                myStart = myIndex;
             }
         }
+
+        /* Check validity, disabling short circuit logic */
+        if (myStart == -1 | myBuf[myStart] != 1) {
+            throw new InvalidCipherTextException("Invalid data");
+        }
+
+        /* Bump past padding */
+        myStart++;
 
         /* Check length */
         final int myOutLen = myEnd - myStart;
@@ -524,7 +472,7 @@ public class EllipticEncryptor {
     private ECPair convertToECPair(final byte[] pInBuffer,
                                    final int pInOff)  {
         /* Check length */
-        final int myLen = getBlockLength() + 1;
+        final int myLen = getFieldLength() + 1;
         if (pInBuffer.length - pInOff < myLen << 1) {
             throw new IllegalArgumentException("Invalid input buffer");
         }

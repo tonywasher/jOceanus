@@ -474,9 +474,4 @@ public enum GordianDSAElliptic implements GordianElliptic {
                 return false;
         }
     }
-
-    @Override
-    public boolean prefixPadding() {
-        return true;
-    }
 }
