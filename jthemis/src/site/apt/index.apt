@@ -1,8 +1,5 @@
 Themis Project
 
-  Themis is a subComponent of the jOceanus project, which looks after project management
-such as source code and issue management. It is named after the titaness Themis, who was viewed 
-as the embodiment of divine order, law, and custom.
+  Themis is a subComponent of the jOceanus project, which provides analysis functionality.
 
-  It currently provides access to Jira functionality (using the Jira Rest API), Subversion (using the SvnKit API), 
-and Git (using the jGit API). 
+  It currently provides a DSM (Dependency Structure Matrix) analyser, and a prototype Java Code analyser.

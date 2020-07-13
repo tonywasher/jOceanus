@@ -1,7 +1,7 @@
 jOceanus Project
 
   <<jOceanus>> is an overarching project that pulls together the underlying components of the embedded <<MoneyWise>>
-project. The project is still under development, and should currently be viewed as a set of source examples, 
+project. The project is still under development, and should currently be viewed as a set of source examples,
 with no pre-built downloadable files available.
 
  The underlying projects are as follows.
@@ -12,7 +12,7 @@ with no pre-built downloadable files available.
 
 * Utility classes (<<Tethys>>)
 
-  * a basic decimal class allowing values with fixed numbers of decimals to be manipulated without resorting to 
+  * a basic decimal class allowing values with fixed numbers of decimals to be manipulated without resorting to
 the <<BigDecimal>> class
 
   * a set of data conversion utilities
@@ -37,19 +37,19 @@ the <<BigDecimal>> class
 
   * a set of classes providing generic thread support on top of both javaFX and Swing
 
-* SourceControl classes (<<Themis>>)
+* Analysis classes (<<Themis>>)
 
-  * Classes for analysing a subversion repository and creating an equivalent Git repository.
+  * Classes for analysing a source tree.
 
 * Peer2Peer classes (<<Coeus>>)
 
   * Classes for analysing peer2peer financial statements.
 
 
-  
 
 
 
-	
+
+
 
 

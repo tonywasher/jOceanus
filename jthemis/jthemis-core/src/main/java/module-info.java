@@ -23,22 +23,10 @@ module net.sourceforge.joceanus.jthemis.core {
     requires java.desktop;
     requires java.prefs;
 
-    /* External libraries */
-    requires maven.model;
-    requires org.json;
-    requires org.eclipse.jgit;
-    requires plexus.utils;
-
     /* jOceanus */
-    requires net.sourceforge.joceanus.jprometheus.core;
-    requires net.sourceforge.joceanus.jgordianknot.core;
     requires net.sourceforge.joceanus.jmetis.core;
     requires net.sourceforge.joceanus.jtethys.core;
 
     /* Exports */
-    exports net.sourceforge.joceanus.jthemis.ui;
     exports net.sourceforge.joceanus.jthemis.ui.dsm;
-    exports net.sourceforge.joceanus.jthemis.git.data to net.sourceforge.joceanus.jmetis.core;
-    exports net.sourceforge.joceanus.jthemis.sf.data to net.sourceforge.joceanus.jmetis.core;
-    exports net.sourceforge.joceanus.jthemis.jira.data to net.sourceforge.joceanus.jmetis.core;
 }

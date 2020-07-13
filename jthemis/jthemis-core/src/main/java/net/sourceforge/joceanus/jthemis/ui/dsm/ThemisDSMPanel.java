@@ -319,7 +319,9 @@ public class ThemisDSMPanel {
 
         /* Loop through to add each package */
         for (ThemisDSMPackage myPackage : theModule.listPackages()) {
-            myBuilder.addItem(myPackage);
+            if (myPackage.hasReferences()) {
+                myBuilder.addItem(myPackage);
+            }
         }
     }
 

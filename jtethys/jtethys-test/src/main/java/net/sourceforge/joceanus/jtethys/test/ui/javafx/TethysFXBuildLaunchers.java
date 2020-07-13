@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Themis: Java Project Framework
+ * Tethys: Java Utilities
  * Copyright 2012,2020 Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -14,35 +14,37 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ******************************************************************************/
-package net.sourceforge.joceanus.jthemis.jira;
+package net.sourceforge.joceanus.jtethys.test.ui.javafx;
 
-import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceManager;
-import net.sourceforge.joceanus.jmetis.viewer.MetisViewerManager;
+import java.io.File;
+
 import net.sourceforge.joceanus.jtethys.OceanusException;
-import net.sourceforge.joceanus.jthemis.jira.data.ThemisJiraServer;
+import net.sourceforge.joceanus.jtethys.jar.javafx.TethysFXLauncher;
+import net.sourceforge.joceanus.jtethys.logger.TethysLogManager;
+import net.sourceforge.joceanus.jtethys.logger.TethysLogger;
 
 /**
- * Jira test suite.
+ * Harness to build launcehr scripts.
  */
-public final class TestJira {
+public class TethysFXBuildLaunchers {
     /**
-     * Private constructor.
+     * Create Logger.
      */
-    private TestJira() {
-    }
+    private static final TethysLogger LOGGER = TethysLogManager.getLogger(TethysFXBuildLaunchers.class);
 
     /**
      * Main entry point.
-     * @param args the parameters
      */
-    public static void main(final String[] args) {
+    public static void main(final String[] pArgs) {
+        /* Protect against exceptions */
         try {
-            final MetisViewerManager myViewer = new MetisViewerManager();
-            final ThemisJiraServer myServer = new ThemisJiraServer(new MetisPreferenceManager(myViewer));
-            myServer.getIssue("FIN-47");
-            System.exit(0);
+            /* Access the Backup location */
+            final String myBackup = System.getenv("BACKUPDIR");
+            TethysFXLauncher.processJarFiles(new File(myBackup + "/bin"));
+
+            /* Handle exceptions */
         } catch (OceanusException e) {
-            System.out.println("Help");
+            LOGGER.fatal("Failed to create launch scripts", e);
         }
     }
 }

@@ -329,10 +329,7 @@ public class ThemisDSMModule {
         /* Create result list and loop through the modules */
         final List<ThemisDSMPackage> myList = new ArrayList<>();
         for (ThemisDSMPackage myPackage : thePackages) {
-            /* Only add the module if it has packages */
-            if (myPackage.hasReferences()) {
-                myList.add(myPackage);
-            }
+            myList.add(myPackage);
         }
 
         /* Return the list */
