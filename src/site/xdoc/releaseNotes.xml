@@ -43,6 +43,9 @@
         <dt>v1.6.0-b1</dt> <dd>Restructure Security</dd>
         <dt>1.6.0-b2</dt> <dd>Additional Security algorithms</dd>
         <dt>1.6.0-b3</dt> <dd>More Security algorithms</dd>
+        <dt>1.6.1-b1</dt> <dd>BouncyCastle 1.65</dd>
+        <dt>1.6.1-b2</dt> <dd>keySetCipher</dd>
+        <dt>1.6.1-b3</dt> <dd>Coeus history rework</dd>
       </dl>
     </section>
   </body>
