@@ -1,3 +1,5 @@
 Tethys for JavaFX
 
   Tethys for JavaFX provides classes for Tethys that are specific to the JavaFX framework.
+
+  In addition it provides a mechanism to create a launch script to launch a modular javaFX jar that has non-modular dependencies.

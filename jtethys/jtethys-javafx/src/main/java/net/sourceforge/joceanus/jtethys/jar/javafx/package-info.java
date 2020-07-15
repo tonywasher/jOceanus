@@ -1,5 +1,5 @@
 /* *****************************************************************************
- * Themis: Java Project Framework
+ * Tethys: Java Utilities
  * Copyright 2012,2020 Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -15,6 +15,6 @@
  * limitations under the License.
  ******************************************************************************/
 /**
- * Package to handle user interface for Themis.
+ * JavaFX Jar utilities.
  */
-package net.sourceforge.joceanus.jthemis.ui;
+package net.sourceforge.joceanus.jtethys.jar.javafx;

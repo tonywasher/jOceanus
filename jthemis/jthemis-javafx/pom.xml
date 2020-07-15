@@ -37,8 +37,7 @@
   </dependencies>
   <properties>
     <moduleName>${packageName}.javafx</moduleName>
-    <packageMain>${packageName}.ui.javafx.Themis4FX</packageMain>
-    <packagePreLoader>${packageName}.ui.javafx.ThemisFXpreLoader</packagePreLoader>
+    <packageMain>${packageName}.ui.javafx.ThemisDSM4FX</packageMain>
   </properties>
   <build>
     <plugins>

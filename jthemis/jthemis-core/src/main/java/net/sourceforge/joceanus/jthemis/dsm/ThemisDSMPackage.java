@@ -145,7 +145,7 @@ public class ThemisDSMPackage {
      * Does the package have references?
      * @return true/false
      */
-    boolean hasReferences() {
+    public boolean hasReferences() {
         return !theDirectReferences.isEmpty();
     }
 
