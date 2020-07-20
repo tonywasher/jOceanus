@@ -17,12 +17,10 @@
 package net.sourceforge.joceanus.jcoeus.ui.javafx;
 
 import javafx.application.Application;
-import javafx.application.Platform;
 import javafx.stage.Stage;
-import net.sourceforge.joceanus.jcoeus.ui.CoeusApp;
-import net.sourceforge.joceanus.jmetis.profile.MetisProgram;
-import net.sourceforge.joceanus.jmetis.profile.MetisProgram.MetisApplication;
-import net.sourceforge.joceanus.jmetis.threads.javafx.MetisFXToolkit;
+import net.sourceforge.joceanus.jcoeus.ui.launch.CoeusApp;
+import net.sourceforge.joceanus.jmetis.launch.javafx.MetisFXMain;
+import net.sourceforge.joceanus.jmetis.launch.javafx.MetisFXState;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.logger.TethysLogManager;
 import net.sourceforge.joceanus.jtethys.logger.TethysLogger;
@@ -32,25 +30,20 @@ import net.sourceforge.joceanus.jtethys.logger.TethysLogger;
  */
 public class Coeus4FX
         extends Application
-        implements MetisApplication {
+        implements MetisFXMain {
     /**
      * Logger.
      */
     private static final TethysLogger LOGGER = TethysLogManager.getLogger(Coeus4FX.class);
 
     /**
-     * Main panel.
+     * javaFXState.
      */
-    private CoeusFXMainPanel thePanel;
-
-    /**
-     * Program information.
-     */
-    private MetisProgram theInfo;
+    private MetisFXState theState;
 
     @Override
-    public void setProgramInfo(final MetisProgram pInfo) {
-        theInfo = pInfo;
+    public void setProgramInfo(final MetisFXState pState) {
+        theState = pState;
     }
 
     @Override
@@ -58,15 +51,12 @@ public class Coeus4FX
         /* Protect against exceptions */
         try {
             /* Create a timer */
-            if (theInfo == null) {
-                theInfo = new MetisProgram(CoeusApp.class);
+            if (theState == null) {
+                theState = new MetisFXState(CoeusApp.class);
             }
 
-            /* Create the Toolkit */
-            final MetisFXToolkit myToolkit = new MetisFXToolkit(theInfo, false);
-
             /* Create the main panel */
-            thePanel = new CoeusFXMainPanel(myToolkit);
+            theState.createMain();
 
             /* Handle Exceptions */
         } catch (OceanusException e) {
@@ -77,17 +67,7 @@ public class Coeus4FX
 
     @Override
     public void start(final Stage pStage) {
-        /* If we have a panel */
-        if (thePanel != null) {
-            /* Attach to the stage and show */
-            thePanel.attachToStage(pStage);
-            Platform.setImplicitExit(true);
-            pStage.setOnCloseRequest(ae -> {
-                thePanel.handleAppClose();
-                Platform.exit();
-                System.exit(0);
-            });
-            pStage.show();
-        }
+        /* Start the program */
+        theState.startMain(pStage);
     }
 }

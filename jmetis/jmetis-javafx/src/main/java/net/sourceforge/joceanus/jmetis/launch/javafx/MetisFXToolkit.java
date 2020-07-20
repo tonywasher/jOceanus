@@ -14,7 +14,7 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  ******************************************************************************/
-package net.sourceforge.joceanus.jmetis.threads.javafx;
+package net.sourceforge.joceanus.jmetis.launch.javafx;
 
 import net.sourceforge.joceanus.jmetis.atlas.ui.javafx.MetisFXTableManager;
 import net.sourceforge.joceanus.jmetis.field.MetisFieldItem.MetisFieldTableItem;
@@ -24,6 +24,8 @@ import net.sourceforge.joceanus.jmetis.list.MetisListKey;
 import net.sourceforge.joceanus.jmetis.profile.MetisProgram;
 import net.sourceforge.joceanus.jmetis.threads.MetisThreadManager;
 import net.sourceforge.joceanus.jmetis.threads.MetisToolkit;
+import net.sourceforge.joceanus.jmetis.threads.javafx.MetisFXThreadManager;
+import net.sourceforge.joceanus.jmetis.threads.javafx.MetisFXThreadProgressStatus;
 import net.sourceforge.joceanus.jmetis.viewer.javafx.MetisFXViewerWindow;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.help.javafx.TethysFXHelpWindow;

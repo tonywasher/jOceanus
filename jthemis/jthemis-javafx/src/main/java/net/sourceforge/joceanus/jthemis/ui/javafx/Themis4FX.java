@@ -1,4 +1,4 @@
-/*******************************************************************************
+/* *****************************************************************************
  * Themis: Java Project Framework
  * Copyright 2012,2020 Tony Washer
  *
@@ -17,38 +17,47 @@
 package net.sourceforge.joceanus.jthemis.ui.javafx;
 
 import javafx.application.Application;
-import javafx.application.Platform;
 import javafx.stage.Stage;
 
+import net.sourceforge.joceanus.jmetis.launch.javafx.MetisFXMain;
+import net.sourceforge.joceanus.jmetis.launch.javafx.MetisFXState;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.logger.TethysLogManager;
 import net.sourceforge.joceanus.jtethys.logger.TethysLogger;
-import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXGuiFactory;
+import net.sourceforge.joceanus.jthemis.ui.launch.ThemisApp;
 
 /**
  * ThemisDSM javaFX entryPoint.
  */
-public class ThemisDSM4FX
-        extends Application {
+public class Themis4FX
+        extends Application
+        implements MetisFXMain {
     /**
      * Logger.
      */
-    private static final TethysLogger LOGGER = TethysLogManager.getLogger(ThemisDSM4FX.class);
+    private static final TethysLogger LOGGER = TethysLogManager.getLogger(Themis4FX.class);
 
     /**
-     * Main panel.
+     * javaFXState.
      */
-    private ThemisFXDSMPanel thePanel;
+    private MetisFXState theState;
+
+    @Override
+    public void setProgramInfo(final MetisFXState pState) {
+        theState = pState;
+    }
 
     @Override
     public void init() {
         /* Protect against exceptions */
         try {
-            /* Create the Toolkit */
-            final TethysFXGuiFactory myFactory = new TethysFXGuiFactory();
+            /* Create a timer */
+            if (theState == null) {
+                theState = new MetisFXState(ThemisApp.class);
+            }
 
             /* Create the main panel */
-            thePanel = new ThemisFXDSMPanel(myFactory);
+            theState.createMain();
 
             /* Handle Exceptions */
         } catch (OceanusException e) {
@@ -58,16 +67,7 @@ public class ThemisDSM4FX
 
     @Override
     public void start(final Stage pStage) {
-        /* If we have a panel */
-        if (thePanel != null) {
-            /* Attach to the stage and show */
-            thePanel.attachToStage(pStage);
-            Platform.setImplicitExit(true);
-            pStage.setOnCloseRequest(ae -> {
-                Platform.exit();
-                System.exit(0);
-            });
-            pStage.show();
-        }
+        /* Start the program */
+        theState.startMain(pStage);
     }
 }

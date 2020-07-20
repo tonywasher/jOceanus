@@ -26,6 +26,7 @@ import net.sourceforge.joceanus.jcoeus.ui.CoeusMenuItem;
 import net.sourceforge.joceanus.jcoeus.ui.CoeusUIResource;
 import net.sourceforge.joceanus.jmetis.atlas.ui.MetisPreferenceView;
 import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceManager;
+import net.sourceforge.joceanus.jmetis.launch.MetisMainPanel;
 import net.sourceforge.joceanus.jmetis.threads.MetisToolkit;
 import net.sourceforge.joceanus.jmetis.viewer.MetisViewerEntry;
 import net.sourceforge.joceanus.jmetis.viewer.MetisViewerManager;
@@ -45,7 +46,8 @@ import net.sourceforge.joceanus.jtethys.ui.TethysUIEvent;
 /**
  * Main Panel.
  */
-public abstract class CoeusMainPanel {
+public class CoeusMainPanel
+    implements MetisMainPanel {
     /**
      * The Totals Table.
      */
@@ -81,7 +83,7 @@ public abstract class CoeusMainPanel {
      * @param pToolkit the toolkit
      * @throws OceanusException on error
      */
-    protected CoeusMainPanel(final MetisToolkit pToolkit) throws OceanusException {
+    public CoeusMainPanel(final MetisToolkit pToolkit) throws OceanusException {
         /* Access Gui Factory and Preference Manager */
         final TethysGuiFactory myFactory = pToolkit.getGuiFactory();
         final MetisPreferenceManager myPreferences = pToolkit.getPreferenceManager();
@@ -137,19 +139,13 @@ public abstract class CoeusMainPanel {
         myMarketCache.declareMarketSet(myMarketSet);
     }
 
-    /**
-     * Obtain the tabs.
-     * @return the Tabs
-     */
-    protected TethysTabPaneManager getTabs() {
+    @Override
+    public TethysTabPaneManager getComponent() {
         return theTabs;
     }
 
-    /**
-     * Obtain menuBar.
-     * @return the menuBar
-     */
-    protected TethysMenuBarManager getMenuBar() {
+    @Override
+    public TethysMenuBarManager getMenuBar() {
         return theMenuBar;
     }
 
@@ -181,10 +177,9 @@ public abstract class CoeusMainPanel {
         theTotalsTab.selectItem();
     }
 
-    /**
-     * Handle application close.
-     */
-    public void handleAppClose() {
+    @Override
+    public boolean handleAppClose() {
         theDataWdw.closeWindow();
+        return true;
     }
 }

@@ -28,5 +28,8 @@ module net.sourceforge.joceanus.jthemis.core {
     requires net.sourceforge.joceanus.jtethys.core;
 
     /* Exports */
-    exports net.sourceforge.joceanus.jthemis.ui.dsm;
+    exports net.sourceforge.joceanus.jthemis.ui.launch;
+
+    /* Allow properties to be read */
+    opens net.sourceforge.joceanus.jthemis.ui to net.sourceforge.joceanus.jmetis.core;
 }

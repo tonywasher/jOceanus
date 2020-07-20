@@ -14,12 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ******************************************************************************/
-package net.sourceforge.joceanus.jthemis.ui.dsm;
+package net.sourceforge.joceanus.jthemis.ui;
 
 import java.io.File;
 import java.util.prefs.BackingStoreException;
 import java.util.prefs.Preferences;
 
+import net.sourceforge.joceanus.jmetis.launch.MetisMainPanel;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.ui.TethysBorderPaneManager;
 import net.sourceforge.joceanus.jtethys.ui.TethysBoxPaneManager;
@@ -41,7 +42,8 @@ import net.sourceforge.joceanus.jthemis.dsm.ThemisDSMReport;
 /**
  * DSMPanel.
  */
-public class ThemisDSMPanel {
+public class ThemisDSMPanel
+    implements MetisMainPanel {
     /**
      * The GUI Factory.
      */
@@ -112,7 +114,7 @@ public class ThemisDSMPanel {
      * @param pFactory the GuiFactory
      * @throws OceanusException on error
      */
-    protected ThemisDSMPanel(final TethysGuiFactory pFactory) throws OceanusException {
+    public ThemisDSMPanel(final TethysGuiFactory pFactory) throws OceanusException {
         /* Access GuiFactory */
         theGuiFactory = pFactory;
 
@@ -203,11 +205,8 @@ public class ThemisDSMPanel {
         }
     }
 
-    /**
-     * Obtain tabs.
-     * @return the tabs
-     */
-    protected TethysTabPaneManager getTabs() {
+    @Override
+    public TethysTabPaneManager getComponent() {
         return theTabPane;
     }
 

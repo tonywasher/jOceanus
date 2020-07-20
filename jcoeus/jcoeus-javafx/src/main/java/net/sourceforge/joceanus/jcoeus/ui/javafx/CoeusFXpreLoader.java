@@ -18,9 +18,8 @@ package net.sourceforge.joceanus.jcoeus.ui.javafx;
 
 import javafx.application.Preloader;
 import javafx.stage.Stage;
-import net.sourceforge.joceanus.jcoeus.ui.CoeusApp;
-import net.sourceforge.joceanus.jmetis.atlas.ui.javafx.MetisFXSplash;
-import net.sourceforge.joceanus.jmetis.profile.MetisProgram;
+import net.sourceforge.joceanus.jcoeus.ui.launch.CoeusApp;
+import net.sourceforge.joceanus.jmetis.launch.javafx.MetisFXState;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.logger.TethysLogManager;
 import net.sourceforge.joceanus.jtethys.logger.TethysLogger;
@@ -36,38 +35,32 @@ public class CoeusFXpreLoader
     private static final TethysLogger LOGGER = TethysLogManager.getLogger(CoeusFXpreLoader.class);
 
     /**
-     * The splashPane.
+     * javaFXState.
      */
-    private MetisFXSplash theSplash;
+    private MetisFXState theState;
 
     @Override
     public void init() {
+        /* Protect against exceptions */
         try {
             /* Access program info */
-            final MetisProgram myInfo = new MetisProgram(CoeusApp.class);
+            theState = new MetisFXState(CoeusApp.class);
 
-            /* Create a StackPane */
-            theSplash = new MetisFXSplash(myInfo);
+            /* Create a splash panel */
+            theState.createSplash();
 
         } catch (OceanusException e) {
-            LOGGER.error("createGUI didn't complete successfully", e);
+            LOGGER.error("createSplash didn't complete successfully", e);
         }
     }
 
     @Override
     public void start(final Stage pStage) {
-        /* If we have a pane */
-        if (theSplash != null) {
-            /* Configure the stage */
-            theSplash.attachToStage(pStage);
-            pStage.show();
-        }
+        theState.startPreLoader(pStage);
     }
 
     @Override
     public void handleStateChangeNotification(final StateChangeNotification pEvent) {
-        if (theSplash != null) {
-            theSplash.handleStateChange(pEvent);
-        }
+        theState.handleStateChangeNotification(pEvent);
     }
 }

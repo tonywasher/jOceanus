@@ -27,18 +27,6 @@ import net.sourceforge.joceanus.jtethys.ui.TethysProgram;
  */
 public class MetisProgram {
     /**
-     * Interface for application.
-     */
-    @FunctionalInterface
-    public interface MetisApplication {
-        /**
-         * Set Program information.
-         * @param pInfo the program information
-         */
-        void setProgramInfo(MetisProgram pInfo);
-    }
-
-    /**
      * Profile.
      */
     private final MetisProfile theProfile;

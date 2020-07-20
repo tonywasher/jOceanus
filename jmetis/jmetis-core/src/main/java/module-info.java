@@ -36,6 +36,7 @@ module net.sourceforge.joceanus.jmetis.core {
     exports net.sourceforge.joceanus.jmetis.data;
     exports net.sourceforge.joceanus.jmetis.field;
     exports net.sourceforge.joceanus.jmetis.http;
+    exports net.sourceforge.joceanus.jmetis.launch;
     exports net.sourceforge.joceanus.jmetis.list;
     exports net.sourceforge.joceanus.jmetis.profile;
     exports net.sourceforge.joceanus.jmetis.report;

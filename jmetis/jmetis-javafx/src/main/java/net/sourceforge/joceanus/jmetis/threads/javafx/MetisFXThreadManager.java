@@ -23,6 +23,7 @@ import net.sourceforge.joceanus.jmetis.threads.MetisThread;
 import net.sourceforge.joceanus.jmetis.threads.MetisThreadCancelException;
 import net.sourceforge.joceanus.jmetis.threads.MetisThreadManager;
 import net.sourceforge.joceanus.jmetis.threads.MetisThreadStatus;
+import net.sourceforge.joceanus.jmetis.threads.MetisToolkit;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
@@ -46,8 +47,8 @@ public class MetisFXThreadManager
      * @param pToolkit the toolkit
      * @param pSlider  use slider status
      */
-    MetisFXThreadManager(final MetisFXToolkit pToolkit,
-                         final boolean pSlider) {
+    public MetisFXThreadManager(final MetisToolkit pToolkit,
+                                final boolean pSlider) {
         super(pToolkit, pSlider);
         theActiveStatus = new AtomicReference<>();
     }
