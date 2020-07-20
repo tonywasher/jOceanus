@@ -14,8 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ******************************************************************************/
-package net.sourceforge.joceanus.jcoeus.ui;
+package net.sourceforge.joceanus.jcoeus.ui.launch;
 
+import net.sourceforge.joceanus.jcoeus.ui.CoeusIcon;
+import net.sourceforge.joceanus.jcoeus.ui.panels.CoeusMainPanel;
+import net.sourceforge.joceanus.jmetis.launch.MetisMainPanel;
+import net.sourceforge.joceanus.jmetis.launch.MetisProgramDef;
+import net.sourceforge.joceanus.jmetis.threads.MetisToolkit;
+import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.ui.TethysIconId;
 import net.sourceforge.joceanus.jtethys.ui.TethysProgram;
 
@@ -23,7 +29,18 @@ import net.sourceforge.joceanus.jtethys.ui.TethysProgram;
  * Coeus Application definition.
  */
 public class CoeusApp
-        extends TethysProgram {
+        extends TethysProgram
+        implements MetisProgramDef {
+    /**
+     * Width for main panel.
+     */
+    private static final int WIDTH_SCENE = 1300;
+
+    /**
+     * Height for main panel.
+     */
+    private static final int HEIGHT_SCENE = 800;
+
     /**
      * Constructor.
      */
@@ -40,5 +57,15 @@ public class CoeusApp
     @Override
     public TethysIconId getSplash() {
         return CoeusIcon.SPLASH;
+    }
+
+    @Override
+    public int[] getPanelDimensions() {
+        return new int[] { WIDTH_SCENE, HEIGHT_SCENE };
+    }
+
+    @Override
+    public MetisMainPanel createMainPanel(final MetisToolkit pToolkit) throws OceanusException {
+        return new CoeusMainPanel(pToolkit);
     }
 }

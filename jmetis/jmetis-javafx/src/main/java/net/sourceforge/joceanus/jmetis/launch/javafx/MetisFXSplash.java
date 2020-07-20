@@ -14,7 +14,7 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  ******************************************************************************/
-package net.sourceforge.joceanus.jmetis.atlas.ui.javafx;
+package net.sourceforge.joceanus.jmetis.launch.javafx;
 
 import javafx.application.Application;
 import javafx.application.Preloader.StateChangeNotification;
@@ -33,7 +33,6 @@ import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 
 import net.sourceforge.joceanus.jmetis.profile.MetisProgram;
-import net.sourceforge.joceanus.jmetis.profile.MetisProgram.MetisApplication;
 import net.sourceforge.joceanus.jtethys.ui.TethysProgram;
 import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXGuiUtils;
 import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXIcon;
@@ -55,7 +54,7 @@ public class MetisFXSplash {
     /**
      * The program info .
      */
-    private final MetisProgram theInfo;
+    private final MetisFXState theState;
 
     /**
      * The stage.
@@ -65,17 +64,17 @@ public class MetisFXSplash {
     /**
      * Constructor.
      *
-     * @param pInfo the program information
+     * @param pState the program state
      */
-    public MetisFXSplash(final MetisProgram pInfo) {
+    public MetisFXSplash(final MetisFXState pState) {
         /* Store parameters */
-        theInfo = pInfo;
+        theState = pState;
 
         /* Create a StackPane */
         thePane = new StackPane();
 
         /* Load the image */
-        final TethysProgram myApp = pInfo.getProgramDefinitions();
+        final TethysProgram myApp = theState.getProgramDefinitions();
         final TethysFXIcon myImage = TethysFXGuiUtils.getIcon(myApp.getSplash());
         theImage = myImage.getImage();
 
@@ -126,12 +125,12 @@ public class MetisFXSplash {
                 theStage.hide();
             }
 
-            /* else if we are just before application start */
+            /* else if we are just before application init */
         } else if (pEvent.getType() == StateChangeNotification.Type.BEFORE_INIT) {
             /* Pass on info to application if possible */
             final Application myApp = pEvent.getApplication();
-            if (myApp instanceof MetisApplication) {
-                ((MetisApplication) myApp).setProgramInfo(theInfo);
+            if (myApp instanceof MetisFXMain) {
+                ((MetisFXMain) myApp).setProgramInfo(theState);
             }
         }
     }

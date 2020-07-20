@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ******************************************************************************/
-package net.sourceforge.joceanus.jthemis.ui.dsm;
+package net.sourceforge.joceanus.jthemis.ui;
 
 import java.io.InputStream;
 

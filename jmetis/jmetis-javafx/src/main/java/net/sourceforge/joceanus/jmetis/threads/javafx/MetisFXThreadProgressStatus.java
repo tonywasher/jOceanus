@@ -40,8 +40,8 @@ public class MetisFXThreadProgressStatus
      * @param pManager the thread manager
      * @param pFactory the GUI factory
      */
-    protected MetisFXThreadProgressStatus(final MetisThreadManager pManager,
-                                          final TethysFXGuiFactory pFactory) {
+    public MetisFXThreadProgressStatus(final MetisThreadManager pManager,
+                                       final TethysFXGuiFactory pFactory) {
         /* Initialise underlying class */
         super(pManager, pFactory);
 

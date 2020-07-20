@@ -32,6 +32,7 @@ module net.sourceforge.joceanus.jmetis.javafx {
 
     /* Exports */
     exports net.sourceforge.joceanus.jmetis.atlas.ui.javafx;
+    exports net.sourceforge.joceanus.jmetis.launch.javafx;
     exports net.sourceforge.joceanus.jmetis.threads.javafx;
     exports net.sourceforge.joceanus.jmetis.viewer.javafx;
 }

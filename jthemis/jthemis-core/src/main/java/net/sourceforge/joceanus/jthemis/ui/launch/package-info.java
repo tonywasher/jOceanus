@@ -14,7 +14,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ******************************************************************************/
+
 /**
- * Package to handle user interface for Themis DSM.
+ * Launch definitions.
  */
-package net.sourceforge.joceanus.jthemis.ui.dsm;
+package net.sourceforge.joceanus.jthemis.ui.launch;

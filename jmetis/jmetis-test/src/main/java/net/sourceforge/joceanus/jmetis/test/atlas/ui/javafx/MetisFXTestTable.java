@@ -21,7 +21,7 @@ import javafx.scene.Scene;
 import javafx.scene.layout.Region;
 import javafx.stage.Stage;
 import net.sourceforge.joceanus.jmetis.test.atlas.ui.MetisTestDataTable;
-import net.sourceforge.joceanus.jmetis.threads.javafx.MetisFXToolkit;
+import net.sourceforge.joceanus.jmetis.launch.javafx.MetisFXToolkit;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXBorderPaneManager;
 import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXGuiFactory;

@@ -16,16 +16,12 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jcoeus.ui.swing;
 
-import net.sourceforge.joceanus.jcoeus.ui.CoeusApp;
-import net.sourceforge.joceanus.jmetis.profile.MetisProgram;
-import net.sourceforge.joceanus.jmetis.threads.swing.MetisSwingToolkit;
+import net.sourceforge.joceanus.jcoeus.ui.launch.CoeusApp;
+import net.sourceforge.joceanus.jmetis.launch.swing.MetisSwingState;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.logger.TethysLogManager;
 import net.sourceforge.joceanus.jtethys.logger.TethysLogger;
-import net.sourceforge.joceanus.jtethys.ui.TethysProgram;
-import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingSplash;
 
-import javax.swing.JFrame;
 import javax.swing.SwingUtilities;
 
 /**
@@ -45,22 +41,15 @@ public final class Coeus4Swing {
 
     /**
      * Create and show the GUI.
-     * @param pInfo the program info
+     * @param pState the program state
      */
-    private static void createAndShowGUI(final MetisProgram pInfo) {
+    private static void createAndShowGUI(final MetisSwingState pState) {
         try {
-            /* Create the Toolkit */
-            final MetisSwingToolkit myToolkit = new MetisSwingToolkit(pInfo, false);
-
-            /* Create the frame and declare it */
-            final JFrame myFrame = new JFrame();
-            myToolkit.getGuiFactory().setFrame(myFrame);
-
-            /* Create the Coeus program */
-            new CoeusSwingMainPanel(myToolkit);
+            /* Create the main panel */
+            pState.createMain();
 
         } catch (OceanusException e) {
-            LOGGER.error("createGUI didn't complete successfully", e);
+            LOGGER.error("createMain didn't complete successfully", e);
         }
     }
 
@@ -71,16 +60,13 @@ public final class Coeus4Swing {
     public static void main(final String[] args) {
         try {
             /* Create a timer */
-            final MetisProgram myInfo = new MetisProgram(CoeusApp.class);
+            final MetisSwingState myState = new MetisSwingState(CoeusApp.class);
 
-            /* Obtain program details */
-            final TethysProgram myApp = myInfo.getProgramDefinitions();
-
-            /* Sort out splash frame */
-            TethysSwingSplash.renderSplashFrame(myApp.getName(), myApp.getVersion());
+            /* Create the splash */
+            myState.createSplash();
 
             /* Build the GUI */
-            SwingUtilities.invokeLater(() -> createAndShowGUI(myInfo));
+            SwingUtilities.invokeLater(() -> createAndShowGUI(myState));
 
         } catch (OceanusException e) {
             LOGGER.error("main didn't complete successfully", e);

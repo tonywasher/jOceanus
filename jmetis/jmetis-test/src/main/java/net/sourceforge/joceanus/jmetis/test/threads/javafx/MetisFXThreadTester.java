@@ -24,7 +24,7 @@ import javafx.stage.Stage;
 import net.sourceforge.joceanus.jmetis.test.threads.MetisTestThread;
 import net.sourceforge.joceanus.jmetis.threads.MetisThreadStatusManager;
 import net.sourceforge.joceanus.jmetis.threads.javafx.MetisFXThreadManager;
-import net.sourceforge.joceanus.jmetis.threads.javafx.MetisFXToolkit;
+import net.sourceforge.joceanus.jmetis.launch.javafx.MetisFXToolkit;
 import net.sourceforge.joceanus.jmetis.viewer.javafx.MetisFXViewerWindow;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.logger.TethysLogManager;
