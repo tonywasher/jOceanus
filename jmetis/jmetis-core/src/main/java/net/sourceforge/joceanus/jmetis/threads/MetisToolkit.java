@@ -29,7 +29,7 @@ import net.sourceforge.joceanus.jmetis.list.MetisListKey;
 import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceEvent;
 import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceManager;
 import net.sourceforge.joceanus.jmetis.profile.MetisProfile;
-import net.sourceforge.joceanus.jmetis.profile.MetisProgram;
+import net.sourceforge.joceanus.jmetis.profile.MetisState;
 import net.sourceforge.joceanus.jmetis.viewer.MetisViewerEntry;
 import net.sourceforge.joceanus.jmetis.viewer.MetisViewerManager;
 import net.sourceforge.joceanus.jmetis.viewer.MetisViewerStandardEntry;
@@ -109,7 +109,7 @@ public abstract class MetisToolkit
      * @param pSlider use slider status
      * @throws OceanusException on error
      */
-    protected MetisToolkit(final MetisProgram pInfo,
+    protected MetisToolkit(final MetisState pInfo,
                            final boolean pSlider) throws OceanusException {
         /* Store program definitions */
         theProgram = pInfo == null

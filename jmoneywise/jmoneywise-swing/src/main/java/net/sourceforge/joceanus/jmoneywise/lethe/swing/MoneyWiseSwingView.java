@@ -17,7 +17,7 @@
 package net.sourceforge.joceanus.jmoneywise.lethe.swing;
 
 import net.sourceforge.joceanus.jmetis.lethe.field.swing.MetisSwingFieldManager;
-import net.sourceforge.joceanus.jmetis.profile.MetisProgram;
+import net.sourceforge.joceanus.jmetis.profile.MetisState;
 import net.sourceforge.joceanus.jmetis.threads.swing.MetisSwingToolkit;
 import net.sourceforge.joceanus.jmoneywise.lethe.tax.uk.MoneyWiseUKTaxYearCache;
 import net.sourceforge.joceanus.jmoneywise.lethe.views.MoneyWiseView;
@@ -35,7 +35,7 @@ public class MoneyWiseSwingView
      * @param pInfo the program info
      * @throws OceanusException on error
      */
-    public MoneyWiseSwingView(final MetisProgram pInfo) throws OceanusException {
+    public MoneyWiseSwingView(final MetisState pInfo) throws OceanusException {
         super(new PrometheusSwingToolkit(pInfo, true), new MoneyWiseUKTaxYearCache());
     }
 

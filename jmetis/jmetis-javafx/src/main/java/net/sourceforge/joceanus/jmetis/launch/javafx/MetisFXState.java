@@ -25,8 +25,8 @@ import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
 
 import net.sourceforge.joceanus.jmetis.launch.MetisMainPanel;
-import net.sourceforge.joceanus.jmetis.launch.MetisProgramDef;
-import net.sourceforge.joceanus.jmetis.profile.MetisProgram;
+import net.sourceforge.joceanus.jmetis.launch.MetisProgram;
+import net.sourceforge.joceanus.jmetis.profile.MetisState;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.ui.TethysIconId;
 import net.sourceforge.joceanus.jtethys.ui.TethysMenuBarManager;
@@ -43,7 +43,7 @@ public class MetisFXState {
     /**
      * The Program definition.
      */
-    private final MetisProgram theInfo;
+    private final MetisState theInfo;
 
     /**
      * The splashPane.
@@ -72,7 +72,7 @@ public class MetisFXState {
      */
     public MetisFXState(final Class<? extends TethysProgram> pClazz) throws OceanusException {
         /* Create the program class. */
-        theInfo = new MetisProgram(pClazz);
+        theInfo = new MetisState(pClazz);
     }
 
     /**
@@ -113,11 +113,11 @@ public class MetisFXState {
      */
     public void createMain() throws OceanusException {
         /* Create the Toolkit */
-        final MetisProgramDef myDef = (MetisProgramDef) theInfo.getProgramDefinitions();
+        final MetisProgram myDef = (MetisProgram) theInfo.getProgramDefinitions();
         theToolkit = new MetisFXToolkit(theInfo, myDef.useSliderStatus());
 
         /* Create the main panel */
-        theMain = myDef.createMainPanel(theToolkit);
+        theMain = createMain(myDef, theToolkit);
 
         /* Create the borderPane */
         thePane = new BorderPane();
@@ -127,6 +127,18 @@ public class MetisFXState {
             thePane.setTop(((TethysFXMenuBarManager) myMenuBar).getNode());
         }
      }
+
+    /**
+     * Create the main panel.
+     * @param pProgram the program state
+     * @param pToolkit the toolkit
+     * @throws OceanusException on error
+     */
+    protected MetisMainPanel createMain(final MetisProgram pProgram,
+                                        final MetisFXToolkit pToolkit) throws OceanusException {
+        /* Create the main panel */
+        return pProgram.createMainPanel(pToolkit);
+    }
 
     /**
      * Start the main panel.
@@ -158,7 +170,7 @@ public class MetisFXState {
         /* Access the GUI factory and program definitions */
         final TethysFXGuiFactory myFactory = theToolkit.getGuiFactory();
         final TethysProgram myApp = theInfo.getProgramDefinitions();
-        final MetisProgramDef myDef = (MetisProgramDef) myApp;
+        final MetisProgram myDef = (MetisProgram) myApp;
 
         /* Create the scene */
         final int[] myDim = myDef.getPanelDimensions();

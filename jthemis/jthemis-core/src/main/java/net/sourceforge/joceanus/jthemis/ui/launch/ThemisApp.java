@@ -17,7 +17,7 @@
 package net.sourceforge.joceanus.jthemis.ui.launch;
 
 import net.sourceforge.joceanus.jmetis.launch.MetisMainPanel;
-import net.sourceforge.joceanus.jmetis.launch.MetisProgramDef;
+import net.sourceforge.joceanus.jmetis.launch.MetisProgram;
 import net.sourceforge.joceanus.jmetis.threads.MetisToolkit;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.ui.TethysIconId;
@@ -30,7 +30,7 @@ import net.sourceforge.joceanus.jthemis.ui.ThemisIcon;
  */
 public class ThemisApp
         extends TethysProgram
-        implements MetisProgramDef {
+        implements MetisProgram {
     /**
      * Constructor.
      */

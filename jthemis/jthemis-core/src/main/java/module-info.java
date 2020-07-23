@@ -16,7 +16,7 @@
  ******************************************************************************/
 
 /**
- * Themis git management.
+ * Themis code analysis.
  */
 module net.sourceforge.joceanus.jthemis.core {
     /* java */
