@@ -42,10 +42,11 @@ import net.sourceforge.joceanus.jmoneywise.lethe.data.TransactionCategory;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.TransactionCategory.TransactionCategoryList;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.TransactionCategoryClass;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.TransactionCategoryType;
-import net.sourceforge.joceanus.jmoneywise.lethe.swing.MoneyWiseSwingView;
 import net.sourceforge.joceanus.jmoneywise.lethe.ui.MoneyWiseUIResource;
 import net.sourceforge.joceanus.jmoneywise.lethe.ui.dialog.swing.TransactionCategoryPanel;
 import net.sourceforge.joceanus.jmoneywise.lethe.ui.dialog.swing.TransactionCategoryPanel.CategoryType;
+import net.sourceforge.joceanus.jmoneywise.lethe.views.MoneyWiseView;
+import net.sourceforge.joceanus.jprometheus.lethe.swing.PrometheusSwingToolkit;
 import net.sourceforge.joceanus.jprometheus.lethe.ui.PrometheusUIResource;
 import net.sourceforge.joceanus.jprometheus.lethe.ui.swing.PrometheusDataTable;
 import net.sourceforge.joceanus.jprometheus.lethe.ui.swing.PrometheusDataTableColumn;
@@ -57,17 +58,17 @@ import net.sourceforge.joceanus.jprometheus.lethe.views.UpdateEntry;
 import net.sourceforge.joceanus.jprometheus.lethe.views.UpdateSet;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
+import net.sourceforge.joceanus.jtethys.ui.TethysBoxPaneManager;
+import net.sourceforge.joceanus.jtethys.ui.TethysButton;
 import net.sourceforge.joceanus.jtethys.ui.TethysIconButtonManager.TethysIconMapSet;
+import net.sourceforge.joceanus.jtethys.ui.TethysLabel;
+import net.sourceforge.joceanus.jtethys.ui.TethysScrollButtonManager;
 import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollMenu;
 import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollMenuItem;
 import net.sourceforge.joceanus.jtethys.ui.TethysUIEvent;
-import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingBoxPaneManager;
-import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingButton;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingEnableWrapper.TethysSwingEnablePanel;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingGuiFactory;
-import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingLabel;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingNode;
-import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingScrollButtonManager;
 
 /**
  * Transaction Category Maintenance.
@@ -112,7 +113,7 @@ public class TransactionCategoryTable
     /**
      * The data view.
      */
-    private final MoneyWiseSwingView theView;
+    private final MoneyWiseView theView;
 
     /**
      * The field manager.
@@ -152,17 +153,17 @@ public class TransactionCategoryTable
     /**
      * The filter panel.
      */
-    private final TethysSwingBoxPaneManager theFilterPanel;
+    private final TethysBoxPaneManager theFilterPanel;
 
     /**
      * The select button.
      */
-    private final TethysSwingScrollButtonManager<TransactionCategory> theSelectButton;
+    private final TethysScrollButtonManager<TransactionCategory> theSelectButton;
 
     /**
      * The new button.
      */
-    private final TethysSwingButton theNewButton;
+    private final TethysButton theNewButton;
 
     /**
      * The TransactionCategory dialog.
@@ -195,7 +196,7 @@ public class TransactionCategoryTable
      * @param pUpdateSet the update set
      * @param pError the error panel
      */
-    public TransactionCategoryTable(final MoneyWiseSwingView pView,
+    public TransactionCategoryTable(final MoneyWiseView pView,
                                     final UpdateSet<MoneyWiseDataType> pUpdateSet,
                                     final MetisErrorPanel pError) {
         /* initialise the underlying class */
@@ -204,7 +205,7 @@ public class TransactionCategoryTable
         /* Record the passed details */
         theView = pView;
         theError = pError;
-        theFieldMgr = theView.getFieldManager();
+        theFieldMgr = ((PrometheusSwingToolkit) theView.getToolkit()).getFieldManager();
         setFieldMgr(theFieldMgr);
 
         /* Build the Update set and entries */
@@ -229,12 +230,12 @@ public class TransactionCategoryTable
         myTable.setPreferredScrollableViewportSize(new Dimension(WIDTH_PANEL, HEIGHT_PANEL));
 
         /* Create new button */
-        final TethysSwingGuiFactory myFactory = pView.getGuiFactory();
+        final TethysSwingGuiFactory myFactory = (TethysSwingGuiFactory) pView.getGuiFactory();
         theNewButton = myFactory.newButton();
         MetisIcon.configureNewIconButton(theNewButton);
 
         /* Create the filter components */
-        final TethysSwingLabel myPrompt = myFactory.newLabel(TITLE_FILTER);
+        final TethysLabel myPrompt = myFactory.newLabel(TITLE_FILTER);
         theSelectButton = myFactory.newScrollButton();
         theSelectButton.setValue(null, FILTER_ALL);
 
@@ -249,7 +250,7 @@ public class TransactionCategoryTable
         /* Create the layout for the panel */
         thePanel = new TethysSwingEnablePanel();
         thePanel.setLayout(new BorderLayout());
-        thePanel.add(super.getNode().getNode(), BorderLayout.CENTER);
+        thePanel.add(((TethysSwingNode) super.getNode()).getNode(), BorderLayout.CENTER);
 
         /* Create a Category panel */
         theActiveCategory = new TransactionCategoryPanel(myFactory, theFieldMgr, theUpdateSet, theError);
@@ -283,7 +284,7 @@ public class TransactionCategoryTable
      * Obtain the filter panel.
      * @return the filter panel
      */
-    protected TethysSwingBoxPaneManager getFilterPanel() {
+    protected TethysBoxPaneManager getFilterPanel() {
         return theFilterPanel;
     }
 

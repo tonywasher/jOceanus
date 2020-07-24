@@ -44,10 +44,11 @@ import net.sourceforge.joceanus.jmoneywise.lethe.data.PayeeInfo;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.PayeeInfo.PayeeInfoList;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.Transaction;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.PayeeType;
-import net.sourceforge.joceanus.jmoneywise.lethe.swing.MoneyWiseSwingView;
 import net.sourceforge.joceanus.jmoneywise.lethe.ui.MoneyWiseIcon;
 import net.sourceforge.joceanus.jmoneywise.lethe.ui.MoneyWiseUIResource;
 import net.sourceforge.joceanus.jmoneywise.lethe.ui.dialog.swing.PayeePanel;
+import net.sourceforge.joceanus.jmoneywise.lethe.views.MoneyWiseView;
+import net.sourceforge.joceanus.jprometheus.lethe.swing.PrometheusSwingToolkit;
 import net.sourceforge.joceanus.jprometheus.lethe.ui.PrometheusUIResource;
 import net.sourceforge.joceanus.jprometheus.lethe.ui.swing.PrometheusDataTable;
 import net.sourceforge.joceanus.jprometheus.lethe.ui.swing.PrometheusDataTableColumn;
@@ -58,11 +59,11 @@ import net.sourceforge.joceanus.jprometheus.lethe.views.PrometheusDataEvent;
 import net.sourceforge.joceanus.jprometheus.lethe.views.UpdateEntry;
 import net.sourceforge.joceanus.jprometheus.lethe.views.UpdateSet;
 import net.sourceforge.joceanus.jtethys.OceanusException;
+import net.sourceforge.joceanus.jtethys.ui.TethysBoxPaneManager;
+import net.sourceforge.joceanus.jtethys.ui.TethysButton;
+import net.sourceforge.joceanus.jtethys.ui.TethysCheckBox;
 import net.sourceforge.joceanus.jtethys.ui.TethysIconButtonManager.TethysIconMapSet;
 import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollMenu;
-import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingBoxPaneManager;
-import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingButton;
-import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingCheckBox;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingEnableWrapper.TethysSwingEnablePanel;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingGuiFactory;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingNode;
@@ -110,7 +111,7 @@ public class PayeeTable
     /**
      * The data view.
      */
-    private final MoneyWiseSwingView theView;
+    private final MoneyWiseView theView;
 
     /**
      * The field manager.
@@ -155,17 +156,17 @@ public class PayeeTable
     /**
      * The filter panel.
      */
-    private final TethysSwingBoxPaneManager theFilterPanel;
+    private final TethysBoxPaneManager theFilterPanel;
 
     /**
      * The locked check box.
      */
-    private final TethysSwingCheckBox theLockedCheckBox;
+    private final TethysCheckBox theLockedCheckBox;
 
     /**
      * The new button.
      */
-    private final TethysSwingButton theNewButton;
+    private final TethysButton theNewButton;
 
     /**
      * The Payee dialog.
@@ -188,19 +189,19 @@ public class PayeeTable
      * @param pUpdateSet the update set
      * @param pError the error panel
      */
-    public PayeeTable(final MoneyWiseSwingView pView,
+    public PayeeTable(final MoneyWiseView pView,
                       final UpdateSet<MoneyWiseDataType> pUpdateSet,
                       final MetisErrorPanel pError) {
         /* initialise the underlying class */
         super(pView.getGuiFactory());
 
         /* Access the GUI Factory */
-        final TethysSwingGuiFactory myFactory = pView.getGuiFactory();
+        final TethysSwingGuiFactory myFactory = (TethysSwingGuiFactory) pView.getGuiFactory();
 
         /* Record the passed details */
         theView = pView;
         theError = pError;
-        theFieldMgr = theView.getFieldManager();
+        theFieldMgr = ((PrometheusSwingToolkit) theView.getToolkit()).getFieldManager();
         setFieldMgr(theFieldMgr);
 
         /* Build the Update set and entries */
@@ -242,7 +243,7 @@ public class PayeeTable
         /* Create the layout for the panel */
         thePanel = new TethysSwingEnablePanel();
         thePanel.setLayout(new BorderLayout());
-        thePanel.add(super.getNode().getNode(), BorderLayout.CENTER);
+        thePanel.add(((TethysSwingNode) super.getNode()).getNode(), BorderLayout.CENTER);
 
         /* Create an account panel */
         theActiveAccount = new PayeePanel(myFactory, theFieldMgr, theUpdateSet, theError);
@@ -270,7 +271,7 @@ public class PayeeTable
      * Obtain the filter panel.
      * @return the filter panel
      */
-    protected TethysSwingBoxPaneManager getFilterPanel() {
+    protected TethysBoxPaneManager getFilterPanel() {
         return theFilterPanel;
     }
 

@@ -24,9 +24,10 @@ import javax.swing.SwingUtilities;
 
 
 import net.sourceforge.joceanus.jmetis.profile.MetisState;
-import net.sourceforge.joceanus.jmetis.threads.swing.MetisSwingToolkit;
-import net.sourceforge.joceanus.jmoneywise.lethe.swing.MoneyWiseSwingView;
+import net.sourceforge.joceanus.jmoneywise.lethe.tax.uk.MoneyWiseUKTaxYearCache;
 import net.sourceforge.joceanus.jmoneywise.lethe.ui.MoneyWiseApp;
+import net.sourceforge.joceanus.jmoneywise.lethe.views.MoneyWiseView;
+import net.sourceforge.joceanus.jprometheus.lethe.swing.PrometheusSwingToolkit;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.logger.TethysLogManager;
 import net.sourceforge.joceanus.jtethys.logger.TethysLogger;
@@ -57,15 +58,15 @@ public final class Control {
     private static void createAndShowGUI(final MetisState pInfo) {
         try {
             /* Create the view */
-            final MoneyWiseSwingView myView = new MoneyWiseSwingView(pInfo);
-            final MetisSwingToolkit myToolkit = myView.getToolkit();
+            final PrometheusSwingToolkit myToolkit = new PrometheusSwingToolkit(pInfo, true);
+            final MoneyWiseView myView = new MoneyWiseView(myToolkit, new MoneyWiseUKTaxYearCache());
 
             /* Obtain program details */
             final TethysProgram myApp = pInfo.getProgramDefinitions();
 
             /* Create the frame and declare it */
             final JFrame myFrame = new JFrame(myApp.getName());
-            myToolkit.getGuiFactory().setFrame(myFrame);
+            myToolkit.getToolkit().getGuiFactory().setFrame(myFrame);
 
             /* Create the window */
             final MainTab myWindow = new MainTab(myView);

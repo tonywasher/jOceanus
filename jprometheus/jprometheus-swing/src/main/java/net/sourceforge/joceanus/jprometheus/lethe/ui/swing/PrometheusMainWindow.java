@@ -19,11 +19,11 @@ package net.sourceforge.joceanus.jprometheus.lethe.ui.swing;
 import net.sourceforge.joceanus.jmetis.profile.MetisProfile;
 import net.sourceforge.joceanus.jmetis.threads.MetisThread;
 import net.sourceforge.joceanus.jmetis.threads.MetisThreadEvent;
-import net.sourceforge.joceanus.jmetis.threads.swing.MetisSwingThreadManager;
-import net.sourceforge.joceanus.jmetis.threads.swing.MetisSwingToolkit;
-import net.sourceforge.joceanus.jmetis.viewer.swing.MetisSwingViewerWindow;
+import net.sourceforge.joceanus.jmetis.threads.MetisThreadManager;
+import net.sourceforge.joceanus.jmetis.threads.MetisToolkit;
+import net.sourceforge.joceanus.jmetis.viewer.MetisViewerWindow;
+import net.sourceforge.joceanus.jprometheus.lethe.PrometheusToolkit;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataSet;
-import net.sourceforge.joceanus.jprometheus.lethe.swing.PrometheusSwingToolkit;
 import net.sourceforge.joceanus.jprometheus.lethe.threads.PrometheusThreadCreateBackup;
 import net.sourceforge.joceanus.jprometheus.lethe.threads.PrometheusThreadCreateDatabase;
 import net.sourceforge.joceanus.jprometheus.lethe.threads.PrometheusThreadCreateXmlFile;
@@ -40,9 +40,10 @@ import net.sourceforge.joceanus.jprometheus.lethe.ui.PrometheusUIResource;
 import net.sourceforge.joceanus.jprometheus.lethe.views.DataControl;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.help.TethysHelpModule;
-import net.sourceforge.joceanus.jtethys.help.swing.TethysSwingHelpWindow;
+import net.sourceforge.joceanus.jtethys.help.TethysHelpWindow;
 import net.sourceforge.joceanus.jtethys.logger.TethysLogManager;
 import net.sourceforge.joceanus.jtethys.logger.TethysLogger;
+import net.sourceforge.joceanus.jtethys.ui.TethysGuiFactory;
 import net.sourceforge.joceanus.jtethys.ui.TethysMenuBarManager;
 import net.sourceforge.joceanus.jtethys.ui.TethysMenuBarManager.TethysMenuSubMenu;
 import net.sourceforge.joceanus.jtethys.ui.TethysUIEvent;
@@ -84,12 +85,12 @@ public abstract class PrometheusMainWindow<T extends DataSet<T, E>, E extends En
     /**
      * The Toolkit.
      */
-    private MetisSwingToolkit theToolkit;
+    private MetisToolkit theToolkit;
 
     /**
      * The GUI Factory.
      */
-    private TethysSwingGuiFactory theGuiFactory;
+    private TethysGuiFactory theGuiFactory;
 
     /**
      * The data view.
@@ -109,22 +110,22 @@ public abstract class PrometheusMainWindow<T extends DataSet<T, E>, E extends En
     /**
      * The data menu.
      */
-    private TethysSwingMenuBarManager theMenuBar;
+    private TethysMenuBarManager theMenuBar;
 
     /**
      * The Thread Manager.
      */
-    private MetisSwingThreadManager theThreadMgr;
+    private MetisThreadManager theThreadMgr;
 
     /**
      * The Started Help window.
      */
-    private TethysSwingHelpWindow theHelpWdw;
+    private TethysHelpWindow theHelpWdw;
 
     /**
      * The Started data window.
      */
-    private MetisSwingViewerWindow theDataWdw;
+    private MetisViewerWindow theDataWdw;
 
     /**
      * The Status window.
@@ -193,16 +194,16 @@ public abstract class PrometheusMainWindow<T extends DataSet<T, E>, E extends En
      * Build the main window.
      *
      * @param pView       the Data view
-     * @param pUtilitySet the utility set
+     * @param pToolkit the toolkit
      * @throws OceanusException on error
      */
     public void buildMainWindow(final DataControl<T, E> pView,
-                                final PrometheusSwingToolkit pUtilitySet) throws OceanusException {
+                                final PrometheusToolkit pToolkit) throws OceanusException {
         /* Store the view */
         theView = pView;
-        theToolkit = pUtilitySet.getToolkit();
-        theGuiFactory = pUtilitySet.getGuiFactory();
-        theThreadMgr = pUtilitySet.getThreadManager();
+        theToolkit = pToolkit.getToolkit();
+        theGuiFactory = theToolkit.getGuiFactory();
+        theThreadMgr = theToolkit.getThreadManager();
 
         /* Obtain the active profile */
         final MetisProfile myTask = theView.getActiveTask();
@@ -212,7 +213,7 @@ public abstract class PrometheusMainWindow<T extends DataSet<T, E>, E extends En
         thePanel = new JPanel();
 
         /* Obtain the frame */
-        theFrame = theGuiFactory.getFrame();
+        theFrame = ((TethysSwingGuiFactory) theGuiFactory).getFrame();
 
         /* Build the Main Panel */
         final JComponent myMainPanel = buildMainPanel();
@@ -277,7 +278,7 @@ public abstract class PrometheusMainWindow<T extends DataSet<T, E>, E extends En
         addHelpMenuItems(myMenu);
 
         /* Add the Menu bar */
-        theFrame.setJMenuBar(theMenuBar.getNode());
+        theFrame.setJMenuBar(((TethysSwingMenuBarManager) theMenuBar).getNode());
     }
 
     /**

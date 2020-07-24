@@ -193,10 +193,10 @@ public abstract class DataControl<T extends DataSet<T, E>, E extends Enum<E>>
     }
 
     /**
-     * Obtain UtilitySet.
-     * @return the UtilitySet
+     * Obtain toolkit.
+     * @return the toolkit
      */
-    public PrometheusToolkit getUtilitySet() {
+    public PrometheusToolkit getToolkit() {
         return theToolkit;
     }
 
@@ -238,14 +238,6 @@ public abstract class DataControl<T extends DataSet<T, E>, E extends Enum<E>>
      */
     public TethysGuiFactory getGuiFactory() {
         return theMetisToolkit.getGuiFactory();
-    }
-
-    /**
-     * Obtain Toolkit.
-     * @return the Toolkit
-     */
-    public MetisToolkit getToolkit() {
-        return theMetisToolkit;
     }
 
     /**

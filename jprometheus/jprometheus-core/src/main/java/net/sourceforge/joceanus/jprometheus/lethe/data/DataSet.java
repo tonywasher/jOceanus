@@ -32,6 +32,7 @@ import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceSecurity.MetisS
 import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceSecurity.MetisSecurityPreferences;
 import net.sourceforge.joceanus.jmetis.profile.MetisProfile;
 import net.sourceforge.joceanus.jmetis.threads.MetisThreadStatusReport;
+import net.sourceforge.joceanus.jmetis.threads.MetisToolkit;
 import net.sourceforge.joceanus.jprometheus.lethe.PrometheusToolkit;
 import net.sourceforge.joceanus.jprometheus.lethe.data.ControlData.ControlDataList;
 import net.sourceforge.joceanus.jprometheus.lethe.data.ControlKey.ControlKeyList;
@@ -158,16 +159,17 @@ public abstract class DataSet<T extends DataSet<T, E>, E extends Enum<E>>
     /**
      * Constructor for new empty DataSet.
      * @param pEnumClass the EnumClass
-     * @param pUtilitySet the utility set
+     * @param pToolkit the toolkit set
      */
     protected DataSet(final Class<E> pEnumClass,
-                      final PrometheusToolkit pUtilitySet) {
+                      final PrometheusToolkit pToolkit) {
         /* Store the password manager and Enum class */
-        thePasswordMgr = pUtilitySet.getPasswordManager();
+        thePasswordMgr = pToolkit.getPasswordManager();
         theEnumClass = pEnumClass;
 
         /* Access the SecurityPreferences */
-        final MetisPreferenceManager myPrefMgr = pUtilitySet.getPreferenceManager();
+        final MetisToolkit myToolkit = pToolkit.getToolkit();
+        final MetisPreferenceManager myPrefMgr = myToolkit.getPreferenceManager();
         final MetisSecurityPreferences mySecPreferences = myPrefMgr.getPreferenceSet(MetisSecurityPreferences.class);
         theNumActiveKeySets = mySecPreferences.getIntegerValue(MetisSecurityPreferenceKey.ACTIVEKEYSETS);
 
@@ -180,7 +182,7 @@ public abstract class DataSet<T extends DataSet<T, E>, E extends Enum<E>>
         theListMap = new EnumMap<>(pEnumClass);
 
         /* record formatter */
-        theFormatter = pUtilitySet.getDataFormatter();
+        theFormatter = myToolkit.getFormatter();
     }
 
     /**

@@ -41,8 +41,8 @@ import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.lethe.analysis.DilutionEvent.DilutionEventMap;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.Security;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.SecurityPrice;
-import net.sourceforge.joceanus.jmoneywise.lethe.swing.MoneyWiseSwingView;
 import net.sourceforge.joceanus.jmoneywise.lethe.ui.MoneyWiseUIResource;
+import net.sourceforge.joceanus.jmoneywise.lethe.views.MoneyWiseView;
 import net.sourceforge.joceanus.jmoneywise.lethe.views.ViewSecurityPrice;
 import net.sourceforge.joceanus.jmoneywise.lethe.views.ViewSecurityPrice.ViewSecurityPriceList;
 import net.sourceforge.joceanus.jprometheus.lethe.ui.swing.PrometheusDataTable;
@@ -57,7 +57,6 @@ import net.sourceforge.joceanus.jtethys.date.TethysDateRange;
 import net.sourceforge.joceanus.jtethys.decimal.TethysPrice;
 import net.sourceforge.joceanus.jtethys.ui.TethysIconButtonManager.TethysIconMapSet;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingEnableWrapper.TethysSwingEnablePanel;
-import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingGuiFactory;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingNode;
 
 /**
@@ -93,7 +92,7 @@ public class SecurityPriceTable
     /**
      * The data view.
      */
-    private final MoneyWiseSwingView theView;
+    private final MoneyWiseView theView;
 
     /**
      * The field manager.
@@ -162,12 +161,12 @@ public class SecurityPriceTable
      * @param pUpdateSet the update set
      * @param pError the error panel
      */
-    protected SecurityPriceTable(final MoneyWiseSwingView pView,
+    protected SecurityPriceTable(final MoneyWiseView pView,
                                  final MetisSwingFieldManager pFieldMgr,
                                  final UpdateSet<MoneyWiseDataType> pUpdateSet,
                                  final MetisErrorPanel pError) {
         /* initialise the underlying class */
-        super((TethysSwingGuiFactory) pView.getUtilitySet().getGuiFactory());
+        super(pView.getGuiFactory());
 
         /* Record the passed details */
         theView = pView;
@@ -198,7 +197,7 @@ public class SecurityPriceTable
         /* Create the layout for the panel */
         thePanel = new TethysSwingEnablePanel();
         thePanel.setLayout(new BoxLayout(thePanel, BoxLayout.Y_AXIS));
-        thePanel.add(super.getNode().getNode());
+        thePanel.add(((TethysSwingNode) super.getNode()).getNode());
     }
 
     @Override

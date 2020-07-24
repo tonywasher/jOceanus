@@ -49,14 +49,15 @@ import net.sourceforge.joceanus.jprometheus.lethe.ui.PrometheusGoToEvent;
 import net.sourceforge.joceanus.jprometheus.lethe.ui.swing.PrometheusDataItemPanel;
 import net.sourceforge.joceanus.jprometheus.lethe.ui.swing.PrometheusDataTable;
 import net.sourceforge.joceanus.jprometheus.lethe.views.UpdateSet;
+import net.sourceforge.joceanus.jtethys.ui.TethysGuiFactory;
 import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollMenu;
 import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollSubMenu;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingDataTextField.TethysSwingStringTextField;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingDateButtonManager;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingEnableWrapper.TethysSwingEnablePanel;
-import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingGuiFactory;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingIconButtonManager;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingListButtonManager;
+import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingNode;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingScrollButtonManager;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingScrollPaneManager;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingSpringUtilities;
@@ -99,7 +100,7 @@ public abstract class MoneyWiseItemPanel<T extends DataItem<MoneyWiseDataType> &
      * @param pUpdateSet the update set
      * @param pError the error panel
      */
-    protected MoneyWiseItemPanel(final TethysSwingGuiFactory pFactory,
+    protected MoneyWiseItemPanel(final TethysGuiFactory pFactory,
                                  final MetisSwingFieldManager pFieldMgr,
                                  final UpdateSet<MoneyWiseDataType> pUpdateSet,
                                  final MetisErrorPanel pError) {
@@ -716,7 +717,7 @@ public abstract class MoneyWiseItemPanel<T extends DataItem<MoneyWiseDataType> &
 
         @Override
         public JComponent getPanel() {
-            return theTable.getNode().getNode();
+            return ((TethysSwingNode) theTable.getNode()).getNode();
         }
 
         @Override

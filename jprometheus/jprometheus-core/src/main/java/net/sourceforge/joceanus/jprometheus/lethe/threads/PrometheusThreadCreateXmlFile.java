@@ -88,9 +88,9 @@ public class PrometheusThreadCreateXmlFile<T extends DataSet<T, E>, E extends En
     @Override
     public Void performTask(final MetisThreadData pThreadData) throws OceanusException {
         /* Access the thread manager */
-        final PrometheusToolkit myToolkit = (PrometheusToolkit) pThreadData;
+        final MetisToolkit myToolkit = ((PrometheusToolkit) pThreadData).getToolkit();
         final MetisThreadManager myManager = myToolkit.getThreadManager();
-        final GordianPasswordManager mySecurity = myToolkit.getPasswordManager();
+        final GordianPasswordManager myPasswordMgr = ((PrometheusToolkit) pThreadData).getPasswordManager();
         boolean doDelete = false;
         File myFile = null;
 
@@ -140,7 +140,7 @@ public class PrometheusThreadCreateXmlFile<T extends DataSet<T, E>, E extends En
             final T myOldData = theControl.getData();
 
             /* Create a new formatter */
-            final DataValuesFormatter<T, E> myFormatter = new DataValuesFormatter<>(myManager, mySecurity);
+            final DataValuesFormatter<T, E> myFormatter = new DataValuesFormatter<>(myManager, myPasswordMgr);
 
             /* Create backup */
             if (isSecure) {

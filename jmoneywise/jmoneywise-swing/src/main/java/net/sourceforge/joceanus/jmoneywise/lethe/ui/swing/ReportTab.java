@@ -32,13 +32,13 @@ import net.sourceforge.joceanus.jmoneywise.lethe.analysis.SecurityBucket;
 import net.sourceforge.joceanus.jmoneywise.lethe.reports.MoneyWiseReportBuilder;
 import net.sourceforge.joceanus.jmoneywise.lethe.reports.MoneyWiseReportStyleSheet;
 import net.sourceforge.joceanus.jmoneywise.lethe.reports.MoneyWiseReportType;
-import net.sourceforge.joceanus.jmoneywise.lethe.swing.MoneyWiseSwingView;
 import net.sourceforge.joceanus.jmoneywise.lethe.ui.MoneyWiseGoToId;
 import net.sourceforge.joceanus.jmoneywise.lethe.ui.MoneyWiseUIResource;
 import net.sourceforge.joceanus.jmoneywise.lethe.ui.controls.MoneyWiseAnalysisSelect.StatementSelect;
 import net.sourceforge.joceanus.jmoneywise.lethe.ui.controls.MoneyWiseReportSelect;
 import net.sourceforge.joceanus.jmoneywise.lethe.views.AnalysisFilter;
 import net.sourceforge.joceanus.jmoneywise.lethe.views.AnalysisFilter.SecurityFilter;
+import net.sourceforge.joceanus.jmoneywise.lethe.views.MoneyWiseView;
 import net.sourceforge.joceanus.jprometheus.lethe.ui.PrometheusGoToEvent;
 import net.sourceforge.joceanus.jprometheus.lethe.views.PrometheusDataEvent;
 import net.sourceforge.joceanus.jprometheus.lethe.views.PrometheusViewerEntryId;
@@ -48,14 +48,14 @@ import net.sourceforge.joceanus.jtethys.event.TethysEvent;
 import net.sourceforge.joceanus.jtethys.event.TethysEventManager;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventProvider;
+import net.sourceforge.joceanus.jtethys.ui.TethysBorderPaneManager;
 import net.sourceforge.joceanus.jtethys.ui.TethysComponent;
 import net.sourceforge.joceanus.jtethys.ui.TethysDateRangeSelector;
+import net.sourceforge.joceanus.jtethys.ui.TethysGuiFactory;
+import net.sourceforge.joceanus.jtethys.ui.TethysHTMLManager;
+import net.sourceforge.joceanus.jtethys.ui.TethysNode;
+import net.sourceforge.joceanus.jtethys.ui.TethysScrollPaneManager;
 import net.sourceforge.joceanus.jtethys.ui.TethysUIEvent;
-import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingBorderPaneManager;
-import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingGuiFactory;
-import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingHTMLManager;
-import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingNode;
-import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingScrollPaneManager;
 
 /**
  * Report panel.
@@ -75,17 +75,17 @@ public class ReportTab
     /**
      * The Data View.
      */
-    private final MoneyWiseSwingView theView;
+    private final MoneyWiseView theView;
 
     /**
      * The Panel.
      */
-    private final TethysSwingBorderPaneManager thePanel;
+    private final TethysBorderPaneManager thePanel;
 
     /**
      * The HTML pane.
      */
-    private final TethysSwingHTMLManager theHTMLPane;
+    private final TethysHTMLManager theHTMLPane;
 
     /**
      * The Report selection Panel.
@@ -117,12 +117,12 @@ public class ReportTab
      * @param pView the data view
      * @throws OceanusException on error
      */
-    public ReportTab(final MoneyWiseSwingView pView) throws OceanusException {
+    public ReportTab(final MoneyWiseView pView) throws OceanusException {
         /* Store the view */
         theView = pView;
 
         /* Access GUI Factory */
-        final TethysSwingGuiFactory myFactory = pView.getGuiFactory();
+        final TethysGuiFactory myFactory = pView.getGuiFactory();
 
         /* Create the event manager */
         theEventManager = new TethysEventManager<>();
@@ -150,14 +150,14 @@ public class ReportTab
         theSelect = new MoneyWiseReportSelect(myFactory);
 
         /* Create the error panel for this view */
-        theError = theView.getToolkit().newErrorPanel(myReport);
+        theError = theView.getToolkit().getToolkit().newErrorPanel(myReport);
 
         /* Create a scroll pane */
-        final TethysSwingScrollPaneManager myHTMLScroll = myFactory.newScrollPane();
+        final TethysScrollPaneManager myHTMLScroll = myFactory.newScrollPane();
         myHTMLScroll.setContent(theHTMLPane);
 
         /* Create the header panel */
-        final TethysSwingBorderPaneManager myHeader = myFactory.newBorderPane();
+        final TethysBorderPaneManager myHeader = myFactory.newBorderPane();
         myHeader.setCentre(theSelect);
         myHeader.setNorth(theError);
 
@@ -193,7 +193,7 @@ public class ReportTab
     }
 
     @Override
-    public TethysSwingNode getNode() {
+    public TethysNode getNode() {
         return thePanel.getNode();
     }
 

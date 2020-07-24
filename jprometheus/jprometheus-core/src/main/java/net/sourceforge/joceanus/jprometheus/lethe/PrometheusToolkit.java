@@ -19,15 +19,12 @@ package net.sourceforge.joceanus.jprometheus.lethe;
 import net.sourceforge.joceanus.jgordianknot.api.factory.GordianFactoryType;
 import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetHashSpec;
 import net.sourceforge.joceanus.jgordianknot.api.password.GordianPasswordManager;
-import net.sourceforge.joceanus.jmetis.data.MetisDataFormatter;
 import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceManager;
 import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceSecurity.MetisSecurityPreferences;
 import net.sourceforge.joceanus.jmetis.threads.MetisThreadData;
 import net.sourceforge.joceanus.jmetis.threads.MetisThreadManager;
 import net.sourceforge.joceanus.jmetis.threads.MetisToolkit;
-import net.sourceforge.joceanus.jmetis.viewer.MetisViewerManager;
 import net.sourceforge.joceanus.jtethys.OceanusException;
-import net.sourceforge.joceanus.jtethys.ui.TethysGuiFactory;
 import net.sourceforge.joceanus.jtethys.ui.TethysProgram;
 
 /**
@@ -46,51 +43,25 @@ public abstract class PrometheusToolkit
     private final GordianPasswordManager thePasswordMgr;
 
     /**
-     * Preference Manager.
-     */
-    private final MetisPreferenceManager thePreferenceMgr;
-
-    /**
-     * Data Formatter.
-     */
-    private final MetisDataFormatter theFormatter;
-
-    /**
-     * GUI Factory.
-     */
-    private final TethysGuiFactory theGuiFactory;
-
-    /**
-     * Viewer Manager.
-     */
-    private final MetisViewerManager theViewerMgr;
-
-    /**
-     * Thread Manager.
-     */
-    private final MetisThreadManager theThreadMgr;
-
-    /**
      * Constructor.
      * @param pToolkit the toolkit
      * @throws OceanusException on error
      */
     protected PrometheusToolkit(final MetisToolkit pToolkit) throws OceanusException {
-        /* Access components */
+        /* Store parameters */
         theToolkit = pToolkit;
-        thePreferenceMgr = pToolkit.getPreferenceManager();
-        theFormatter = pToolkit.getFormatter();
-        theGuiFactory = pToolkit.getGuiFactory();
-        theViewerMgr = pToolkit.getViewerManager();
-        theThreadMgr = pToolkit.getThreadManager();
+
+        /* Access components */
+        final MetisPreferenceManager myPreferenceMgr = pToolkit.getPreferenceManager();
+        final MetisThreadManager myThreadMgr = pToolkit.getThreadManager();
 
         /* Create the passwordManager */
-        final MetisSecurityPreferences myPreferences = thePreferenceMgr.getPreferenceSet(MetisSecurityPreferences.class);
+        final MetisSecurityPreferences myPreferences = myPreferenceMgr.getPreferenceSet(MetisSecurityPreferences.class);
         thePasswordMgr = newPasswordManager(myPreferences.getFactoryType(),
                 myPreferences.getSecurityPhrase(), myPreferences.getKeySetHashSpec());
 
         /* Set this as the threadData */
-        theThreadMgr.setThreadData(this);
+        myThreadMgr.setThreadData(this);
     }
 
     /**
@@ -99,46 +70,6 @@ public abstract class PrometheusToolkit
      */
     public GordianPasswordManager getPasswordManager() {
         return thePasswordMgr;
-    }
-
-    /**
-     * Obtain the preference manager.
-     * @return the preference manager
-     */
-    public MetisPreferenceManager getPreferenceManager() {
-        return thePreferenceMgr;
-    }
-
-    /**
-     * Obtain the formatter.
-     * @return the formatter
-     */
-    public MetisDataFormatter getDataFormatter() {
-        return theFormatter;
-    }
-
-    /**
-     * Obtain the GUI Factory.
-     * @return the factory
-     */
-    public TethysGuiFactory getGuiFactory() {
-        return theGuiFactory;
-    }
-
-    /**
-     * Obtain the viewer manager.
-     * @return the manager
-     */
-    public MetisViewerManager getViewerManager() {
-        return theViewerMgr;
-    }
-
-    /**
-     * Obtain the Thread Manager.
-     * @return the thread manager
-     */
-    public MetisThreadManager getThreadManager() {
-        return theThreadMgr;
     }
 
     /**

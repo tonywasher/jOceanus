@@ -21,11 +21,9 @@ import net.sourceforge.joceanus.jgordianknot.api.javafx.GordianFXPasswordManager
 import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetHashSpec;
 import net.sourceforge.joceanus.jgordianknot.api.password.GordianPasswordManager;
 import net.sourceforge.joceanus.jmetis.profile.MetisState;
-import net.sourceforge.joceanus.jmetis.threads.javafx.MetisFXThreadManager;
 import net.sourceforge.joceanus.jmetis.launch.javafx.MetisFXToolkit;
 import net.sourceforge.joceanus.jprometheus.lethe.PrometheusToolkit;
 import net.sourceforge.joceanus.jtethys.OceanusException;
-import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXGuiFactory;
 
 /**
  * Prometheus JavaFX Toolkit.
@@ -72,16 +70,6 @@ public class PrometheusFXToolkit
     }
 
     @Override
-    public TethysFXGuiFactory getGuiFactory() {
-        return (TethysFXGuiFactory) super.getGuiFactory();
-    }
-
-    @Override
-    public MetisFXThreadManager getThreadManager() {
-        return (MetisFXThreadManager) super.getThreadManager();
-    }
-
-    @Override
     public MetisFXToolkit getToolkit() {
         return (MetisFXToolkit) super.getToolkit();
     }
@@ -90,6 +78,6 @@ public class PrometheusFXToolkit
     protected GordianPasswordManager newPasswordManager(final GordianFactoryType pFactoryType,
                                                         final char[] pSecurityPhrase,
                                                         final GordianKeySetHashSpec pKeySetSpec) throws OceanusException {
-        return GordianFXPasswordManager.newPasswordManager(getGuiFactory(), pFactoryType, pSecurityPhrase, pKeySetSpec);
+        return GordianFXPasswordManager.newPasswordManager(getToolkit().getGuiFactory(), pFactoryType, pSecurityPhrase, pKeySetSpec);
     }
 }

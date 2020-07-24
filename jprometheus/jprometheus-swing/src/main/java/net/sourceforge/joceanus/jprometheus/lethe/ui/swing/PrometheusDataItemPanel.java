@@ -44,10 +44,11 @@ import net.sourceforge.joceanus.jtethys.event.TethysEventManager;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventProvider;
 import net.sourceforge.joceanus.jtethys.ui.TethysComponent;
+import net.sourceforge.joceanus.jtethys.ui.TethysGuiFactory;
+import net.sourceforge.joceanus.jtethys.ui.TethysNode;
 import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollMenu;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingDataTextField.TethysSwingStringTextField;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingEnableWrapper.TethysSwingEnablePanel;
-import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingGuiFactory;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingNode;
 
 /**
@@ -161,7 +162,7 @@ public abstract class PrometheusDataItemPanel<T extends PrometheusTableItem & Co
      * @param pError the error panel
      */
     @SuppressWarnings("unchecked")
-    protected PrometheusDataItemPanel(final TethysSwingGuiFactory pFactory,
+    protected PrometheusDataItemPanel(final TethysGuiFactory pFactory,
                                       final MetisSwingFieldManager pFieldMgr,
                                       final UpdateSet<E> pUpdateSet,
                                       final MetisErrorPanel pError) {
@@ -221,7 +222,7 @@ public abstract class PrometheusDataItemPanel<T extends PrometheusTableItem & Co
     }
 
     @Override
-    public TethysSwingNode getNode() {
+    public TethysNode getNode() {
         return thePanel.getNode();
     }
 

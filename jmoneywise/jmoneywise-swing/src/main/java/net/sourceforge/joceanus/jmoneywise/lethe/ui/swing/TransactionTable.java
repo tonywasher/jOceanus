@@ -56,7 +56,6 @@ import net.sourceforge.joceanus.jmoneywise.lethe.data.TransactionCategory;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.TransactionInfoSet;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.TransactionTag;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.TransactionInfoClass;
-import net.sourceforge.joceanus.jmoneywise.lethe.swing.MoneyWiseSwingView;
 import net.sourceforge.joceanus.jmoneywise.lethe.ui.AnalysisColumnSet;
 import net.sourceforge.joceanus.jmoneywise.lethe.ui.MoneyWiseIcon;
 import net.sourceforge.joceanus.jmoneywise.lethe.ui.MoneyWiseUIResource;
@@ -65,6 +64,8 @@ import net.sourceforge.joceanus.jmoneywise.lethe.ui.controls.MoneyWiseAnalysisSe
 import net.sourceforge.joceanus.jmoneywise.lethe.ui.dialog.swing.TransactionPanel;
 import net.sourceforge.joceanus.jmoneywise.lethe.views.AnalysisFilter;
 import net.sourceforge.joceanus.jmoneywise.lethe.views.AnalysisView;
+import net.sourceforge.joceanus.jmoneywise.lethe.views.MoneyWiseView;
+import net.sourceforge.joceanus.jprometheus.lethe.swing.PrometheusSwingToolkit;
 import net.sourceforge.joceanus.jprometheus.lethe.ui.PrometheusActionButtons;
 import net.sourceforge.joceanus.jprometheus.lethe.ui.swing.PrometheusDataTable;
 import net.sourceforge.joceanus.jprometheus.lethe.ui.swing.PrometheusDataTableColumn;
@@ -83,10 +84,10 @@ import net.sourceforge.joceanus.jtethys.decimal.TethysDilution;
 import net.sourceforge.joceanus.jtethys.decimal.TethysMoney;
 import net.sourceforge.joceanus.jtethys.decimal.TethysUnits;
 import net.sourceforge.joceanus.jtethys.event.TethysEvent;
+import net.sourceforge.joceanus.jtethys.ui.TethysBorderPaneManager;
+import net.sourceforge.joceanus.jtethys.ui.TethysButton;
 import net.sourceforge.joceanus.jtethys.ui.TethysIconButtonManager.TethysIconMapSet;
 import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollMenu;
-import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingBorderPaneManager;
-import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingButton;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingEnableWrapper.TethysSwingEnablePanel;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingGuiFactory;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingNode;
@@ -244,7 +245,7 @@ public class TransactionTable
     /**
      * The data view.
      */
-    private final MoneyWiseSwingView theView;
+    private final MoneyWiseView theView;
 
     /**
      * The updateSet.
@@ -304,7 +305,7 @@ public class TransactionTable
     /**
      * The new button.
      */
-    private final TethysSwingButton theNewButton;
+    private final TethysButton theNewButton;
 
     /**
      * The Transaction dialog.
@@ -345,17 +346,17 @@ public class TransactionTable
      * Constructor.
      * @param pView the data view
      */
-    public TransactionTable(final MoneyWiseSwingView pView) {
+    public TransactionTable(final MoneyWiseView pView) {
         /* initialise the underlying class */
         super(pView.getGuiFactory());
 
         /* Record the passed details */
         theView = pView;
-        theFieldMgr = pView.getFieldManager();
+        theFieldMgr = ((PrometheusSwingToolkit) theView.getToolkit()).getFieldManager();
         setFieldMgr(theFieldMgr);
 
         /* Access the GUI Factory */
-        final TethysSwingGuiFactory myFactory = theView.getGuiFactory();
+        final TethysSwingGuiFactory myFactory = (TethysSwingGuiFactory) theView.getGuiFactory();
         final MetisViewerManager myViewer = theView.getViewerManager();
 
         /* Build the Update set and entries */
@@ -384,7 +385,7 @@ public class TransactionTable
         theActionButtons = new PrometheusActionButtons(myFactory, theUpdateSet);
 
         /* Create the error panel for this view */
-        theError = theView.getToolkit().newErrorPanel(myRegister);
+        theError = theView.getToolkit().getToolkit().newErrorPanel(myRegister);
 
         /* Create the table model */
         theModel = new AnalysisTableModel(this);
@@ -396,7 +397,7 @@ public class TransactionTable
         myTable.setColumnModel(theColumns);
 
         /* Create the header panel */
-        final TethysSwingBorderPaneManager myHeader = myFactory.newBorderPane();
+        final TethysBorderPaneManager myHeader = myFactory.newBorderPane();
         myHeader.setCentre(theSelect);
         myHeader.setNorth(theError);
         myHeader.setEast(theActionButtons);
@@ -405,7 +406,7 @@ public class TransactionTable
         thePanel = new TethysSwingEnablePanel();
         thePanel.setLayout(new BorderLayout());
         thePanel.add(TethysSwingNode.getComponent(myHeader), BorderLayout.PAGE_START);
-        thePanel.add(super.getNode().getNode(), BorderLayout.CENTER);
+        thePanel.add(((TethysSwingNode) super.getNode()).getNode(), BorderLayout.CENTER);
 
         /* Create a transaction panel */
         theActiveTrans = new TransactionPanel(myFactory, theFieldMgr, theUpdateSet, theBuilder, theSelect, theError);
@@ -639,7 +640,7 @@ public class TransactionTable
         theSelect.setVisible(!isError);
 
         /* Lock scroll area */
-        super.getNode().getNode().setEnabled(!isError);
+        ((TethysSwingNode) super.getNode()).getNode().setEnabled(!isError);
 
         /* Lock Action Buttons */
         theActionButtons.setEnabled(!isError);
