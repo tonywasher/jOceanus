@@ -471,6 +471,21 @@ public class TethysFXGuiFactory
     }
 
     @Override
+    public TethysFXAreaChart newAreaChart() {
+        return new TethysFXAreaChart(this);
+    }
+
+    @Override
+    public TethysFXBarChart newBarChart() {
+        return new TethysFXBarChart(this);
+    }
+
+    @Override
+    public TethysFXPieChart newPieChart() {
+        return new TethysFXPieChart(this);
+    }
+
+    @Override
     public TethysFXAbout newAboutBox() {
         return new TethysFXAbout(this);
     }

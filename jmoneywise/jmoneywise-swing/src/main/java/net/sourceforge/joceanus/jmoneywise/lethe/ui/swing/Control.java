@@ -22,11 +22,8 @@ import java.util.Arrays;
 import javax.swing.JFrame;
 import javax.swing.SwingUtilities;
 
-
 import net.sourceforge.joceanus.jmetis.profile.MetisState;
-import net.sourceforge.joceanus.jmoneywise.lethe.tax.uk.MoneyWiseUKTaxYearCache;
 import net.sourceforge.joceanus.jmoneywise.lethe.ui.MoneyWiseApp;
-import net.sourceforge.joceanus.jmoneywise.lethe.views.MoneyWiseView;
 import net.sourceforge.joceanus.jprometheus.lethe.swing.PrometheusSwingToolkit;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.logger.TethysLogManager;
@@ -59,7 +56,6 @@ public final class Control {
         try {
             /* Create the view */
             final PrometheusSwingToolkit myToolkit = new PrometheusSwingToolkit(pInfo, true);
-            final MoneyWiseView myView = new MoneyWiseView(myToolkit, new MoneyWiseUKTaxYearCache());
 
             /* Obtain program details */
             final TethysProgram myApp = pInfo.getProgramDefinitions();
@@ -69,7 +65,7 @@ public final class Control {
             myToolkit.getToolkit().getGuiFactory().setFrame(myFrame);
 
             /* Create the window */
-            final MainTab myWindow = new MainTab(myView);
+            final MainTab myWindow = new MainTab(myToolkit);
             myWindow.makeFrame();
 
             /* Add the icons to the frame */

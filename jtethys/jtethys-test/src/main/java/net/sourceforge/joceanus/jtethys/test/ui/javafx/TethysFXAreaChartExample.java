@@ -16,151 +16,60 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jtethys.test.ui.javafx;
 
-import java.time.LocalDate;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
 import javafx.application.Application;
-import javafx.collections.ObservableList;
 import javafx.scene.Scene;
-import javafx.scene.chart.NumberAxis;
-import javafx.scene.chart.StackedAreaChart;
-import javafx.scene.chart.XYChart;
-import javafx.scene.chart.XYChart.Data;
-import javafx.scene.chart.XYChart.Series;
-import javafx.scene.control.Tooltip;
-import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.Region;
 import javafx.stage.Stage;
-import javafx.util.StringConverter;
 
-import net.sourceforge.joceanus.jtethys.date.TethysDate;
-import net.sourceforge.joceanus.jtethys.decimal.TethysDecimalFormatter;
-import net.sourceforge.joceanus.jtethys.decimal.TethysMoney;
-import net.sourceforge.joceanus.jtethys.test.ui.TethysAreaChartData;
-import net.sourceforge.joceanus.jtethys.test.ui.TethysAreaChartData.TethysAreaChartDataPoint;
-import net.sourceforge.joceanus.jtethys.test.ui.TethysAreaChartData.TethysAreaChartSeries;
+import net.sourceforge.joceanus.jtethys.test.ui.TethysTestChartData;
+import net.sourceforge.joceanus.jtethys.ui.TethysAreaChart.TethysAreaChartData;
+import net.sourceforge.joceanus.jtethys.ui.TethysAreaChart.TethysAreaChartSeries;
+import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXAreaChart;
+import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXBorderPaneManager;
+import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXGuiFactory;
+import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXNode;
 
 /**
  * JavaFX AreaChart Example.
  */
 public class TethysFXAreaChartExample extends Application {
     /**
-     * The formatter.
+     * The Gui Factory.
      */
-    private final TethysDecimalFormatter theFormatter = new TethysDecimalFormatter();
+    private final TethysFXGuiFactory theGuiFactory;
 
     /**
      * The chart.
      */
-    private final StackedAreaChart<Number, Number> theChart;
-
-    /**
-     * The sectionMap.
-     */
-    private final Map<String, TethysAreaChartSeries> theSeriesMap;
+    private final TethysFXAreaChart theChart;
 
     /**
      * Constructor.
      */
     public TethysFXAreaChartExample() {
-        theSeriesMap = new HashMap<>();
-        final NumberAxis myXAxis = new NumberAxis();
-        myXAxis.setLabel("Date");
-        myXAxis.setAutoRanging(true);
-        myXAxis.setForceZeroInRange(false);
-        myXAxis.setTickLabelFormatter(new StringConverter<Number>() {
-            @Override
-            public String toString(final Number pValue) {
-                final LocalDate myDate = LocalDate.ofEpochDay(((Double) pValue).longValue());
-                return new TethysDate(myDate).toString();
-            }
+        /* Create GUI Factory */
+        theGuiFactory = new TethysFXGuiFactory();
 
-            @Override
-            public Number fromString(final String pValue) {
-                return null;
-            }
-        });
-        final NumberAxis myYAxis = new NumberAxis();
-        myYAxis.setLabel("Value");
-        myYAxis.setTickLabelFormatter(new StringConverter<Number>() {
-            @Override
-            public String toString(final Number pValue) {
-                final TethysMoney myMoney = new TethysMoney(pValue.toString());
-                return theFormatter.formatMoney(myMoney);
-            }
+        /* Create chart */
+        theChart = theGuiFactory.newAreaChart();
+        final TethysAreaChartData myData = TethysTestChartData.createTestAreaData();
+        theChart.updateAreaChart(myData);
 
-            @Override
-            public Number fromString(final String pValue) {
-                return null;
-            }
-        });
-        theChart = new StackedAreaChart<>(myXAxis, myYAxis);
+        /* Add listener */
+        theChart.getEventRegistrar().addEventListener(e ->  System.out.println(((TethysAreaChartSeries) e.getDetails()).getSource()));
     }
 
     @Override
     public void start(final Stage pStage) {
-        /* Create the panel */
-        updateAreaChart(TethysAreaChartData.createTestData());
+        /* Create a Pane */
+        final TethysFXBorderPaneManager myPane = theGuiFactory.newBorderPane();
+        myPane.setCentre(theChart);
 
         /* Create scene */
-        final BorderPane myPane = new BorderPane();
-        final Scene myScene = new Scene(myPane);
-        myPane.setCenter(theChart);
-        pStage.setTitle("JavaFX AreaChart Demo");
+        final Scene myScene = new Scene((Region) TethysFXNode.getNode(myPane));
+        theGuiFactory.registerScene(myScene);
+        pStage.setTitle("JavaFXAreaChart Demo");
         pStage.setScene(myScene);
         pStage.show();
-    }
-
-    /**
-     * Update AreaChart with data.
-     * @param pData the data
-     */
-    private void updateAreaChart(final TethysAreaChartData pData) {
-        /* Set the chart title */
-        theChart.setTitle(pData.getTitle());
-
-        /* Access and clear the data */
-        final ObservableList<Series<Number, Number>> myData = theChart.getData();
-        myData.clear();
-        theSeriesMap.clear();
-
-        /* Iterate through the sections */
-        final Iterator<TethysAreaChartSeries> myIterator = pData.seriesIterator();
-        while (myIterator.hasNext()) {
-            final TethysAreaChartSeries myBase = myIterator.next();
-            final Series<Number, Number> mySeries = new Series<>();
-            final String myKey = myBase.getName();
-            mySeries.setName(myKey);
-            final ObservableList<Data<Number, Number>> myPoints = mySeries.getData();
-            myData.add(mySeries);
-            theSeriesMap.put(myKey, myBase);
-
-            /* Iterate through the sections */
-            final Iterator<TethysAreaChartDataPoint> myPointIterator = myBase.pointIterator();
-            while (myPointIterator.hasNext()) {
-                final TethysAreaChartDataPoint myPoint = myPointIterator.next();
-
-                /* Add the section */
-                myPoints.add(new Data<>(dateToEpoch(myPoint.getDate()), myPoint.getValue().doubleValue()));
-            }
-        }
-
-        myData.forEach(s -> s.getNode().addEventHandler(MouseEvent.MOUSE_CLICKED, e -> System.out.println(s.getName())));
-        myData.forEach(s -> s.getData().forEach(d -> {
-            final TethysAreaChartSeries mySeries = theSeriesMap.get(s.getName());
-            final TethysMoney myValue = new TethysMoney(d.getYValue().toString());
-            final Tooltip myTip = new Tooltip(mySeries.getName() + " = " + theFormatter.formatMoney(myValue));
-            Tooltip.install(d.getNode(), myTip);
-        }));
-    }
-
-    /**
-     * Convert date to epoch.
-     * @param pDate the date
-     * @return the epoch
-     */
-    private static long dateToEpoch(final TethysDate pDate) {
-        return pDate.getDate().toEpochDay();
     }
 }

@@ -23,6 +23,7 @@ import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseIOException;
 import net.sourceforge.joceanus.jmoneywise.help.MoneyWiseHelp;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.MoneyWiseData;
+import net.sourceforge.joceanus.jmoneywise.lethe.tax.uk.MoneyWiseUKTaxYearCache;
 import net.sourceforge.joceanus.jmoneywise.lethe.threads.MoneyWiseThreadId;
 import net.sourceforge.joceanus.jmoneywise.lethe.threads.MoneyWiseThreadLoadArchive;
 import net.sourceforge.joceanus.jmoneywise.lethe.threads.MoneyWiseThreadWriteQIF;
@@ -30,6 +31,7 @@ import net.sourceforge.joceanus.jmoneywise.lethe.ui.MoneyWiseGoToId;
 import net.sourceforge.joceanus.jmoneywise.lethe.ui.MoneyWiseUIResource;
 import net.sourceforge.joceanus.jmoneywise.lethe.ui.controls.MoneyWiseAnalysisSelect.StatementSelect;
 import net.sourceforge.joceanus.jmoneywise.lethe.views.MoneyWiseView;
+import net.sourceforge.joceanus.jprometheus.lethe.swing.PrometheusSwingToolkit;
 import net.sourceforge.joceanus.jprometheus.lethe.ui.PrometheusGoToEvent;
 import net.sourceforge.joceanus.jprometheus.lethe.ui.swing.PrometheusMainWindow;
 import net.sourceforge.joceanus.jprometheus.lethe.views.PrometheusDataEvent;
@@ -111,15 +113,15 @@ public class MainTab
 
     /**
      * Constructor.
-     * @param pView the view
+     * @param pToolkit the toolkit
      * @throws OceanusException on error
      */
-    public MainTab(final MoneyWiseView pView) throws OceanusException {
-        /* Record the view */
-        theView = pView;
+    public MainTab(final PrometheusSwingToolkit pToolkit) throws OceanusException {
+        /* create the view */
+        theView = new MoneyWiseView(pToolkit, new MoneyWiseUKTaxYearCache());
 
         /* Build the main window */
-        buildMainWindow(theView, theView.getToolkit());
+        buildMainWindow(theView, pToolkit);
     }
 
     @Override
