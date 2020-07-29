@@ -67,7 +67,8 @@ public class TethysSwingPieChart
         /* Create the chart */
         theChart = ChartFactory.createPieChart(
                 null,
-                theDataSet, true,
+                theDataSet,
+                true,
                 true,
                 false);
         final PiePlot myPlot = (PiePlot) theChart.getPlot();

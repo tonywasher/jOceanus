@@ -23,6 +23,7 @@ import org.jfree.chart.ChartMouseEvent;
 import org.jfree.chart.ChartMouseListener;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
+import org.jfree.chart.axis.CategoryAxis;
 import org.jfree.chart.axis.NumberAxis;
 import org.jfree.chart.entity.CategoryItemEntity;
 import org.jfree.chart.entity.ChartEntity;
@@ -74,8 +75,8 @@ public class TethysSwingBarChart
         /* Create the chart */
         theChart = ChartFactory.createStackedBarChart(
                 null,
-                "Date",
-                "Value",
+                null,
+                null,
                 theDataSet,
                 PlotOrientation.VERTICAL,
                 true,
@@ -133,8 +134,13 @@ public class TethysSwingBarChart
         /* Update underlying data */
         super.updateBarChart(pData);
 
-        /* Set the chart title */
+        /* Set the chart title and Axis labels */
         theChart.setTitle(pData.getTitle());
+        final CategoryPlot myPlot = (CategoryPlot) theChart.getPlot();
+        final CategoryAxis myXAxis = myPlot.getDomainAxis();
+        myXAxis.setLabel(pData.getXAxisLabel());
+        final NumberAxis myYAxis = (NumberAxis) myPlot.getRangeAxis();
+        myYAxis.setLabel(pData.getYAxisLabel());
 
         /* Declare changes */
         theChart.fireChartChanged();

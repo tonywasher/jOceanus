@@ -53,7 +53,8 @@ public class TethysFXAreaChartExample extends Application {
         /* Create chart */
         theChart = theGuiFactory.newAreaChart();
         final TethysAreaChartData myData = TethysTestChartData.createTestAreaData();
-        theChart.updateAreaChart(myData);
+        //theChart.updateAreaChart(myData);
+        theChart.updateAreaChart(new TethysAreaChartData("Test AreaChart"));
 
         /* Add listener */
         theChart.getEventRegistrar().addEventListener(e ->  System.out.println(((TethysAreaChartSeries) e.getDetails()).getSource()));

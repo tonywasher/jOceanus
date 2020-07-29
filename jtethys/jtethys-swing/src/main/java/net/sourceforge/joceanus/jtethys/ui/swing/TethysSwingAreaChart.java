@@ -16,18 +16,27 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jtethys.ui.swing;
 
+import java.awt.Graphics2D;
+import java.awt.geom.Rectangle2D;
 import java.text.FieldPosition;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartMouseEvent;
 import org.jfree.chart.ChartMouseListener;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
+import org.jfree.chart.axis.DateAxis;
+import org.jfree.chart.axis.DateTick;
 import org.jfree.chart.axis.NumberAxis;
+import org.jfree.chart.axis.Tick;
 import org.jfree.chart.entity.ChartEntity;
 import org.jfree.chart.entity.XYItemEntity;
 import org.jfree.chart.plot.XYPlot;
 import org.jfree.chart.renderer.xy.StackedXYAreaRenderer2;
+import org.jfree.chart.ui.RectangleEdge;
 import org.jfree.chart.util.HexNumberFormat;
 import org.jfree.data.time.Day;
 import org.jfree.data.time.TimeTableXYDataset;
@@ -41,6 +50,11 @@ import net.sourceforge.joceanus.jtethys.ui.TethysAreaChart;
  */
 public class TethysSwingAreaChart
         extends TethysAreaChart {
+    /**
+     * The angle for labels.
+     */
+    protected static final double LABEL_RADIANS = Math.PI * ((double) TethysAreaChart.LABEL_ANGLE / 180);
+
     /**
      * The Node.
      */
@@ -73,7 +87,7 @@ public class TethysSwingAreaChart
         theDataSet = new TimeTableXYDataset();
 
         /* Create the chart */
-        theChart = ChartFactory.createTimeSeriesChart("XYChart XDemo", "Date", "Value", theDataSet);
+        theChart = ChartFactory.createTimeSeriesChart(null, null, null, theDataSet);
         final XYPlot myPlot = (XYPlot) theChart.getPlot();
         final StackedXYAreaRenderer2 myRenderer = new StackedXYAreaRenderer2();
         myRenderer.setDefaultToolTipGenerator((pDataset, pSeries, pItem) -> {
@@ -83,6 +97,10 @@ public class TethysSwingAreaChart
         myPlot.setRenderer(0, myRenderer);
         final NumberAxis myYAxis = (NumberAxis) myPlot.getRangeAxis();
         myYAxis.setNumberFormatOverride(new MoneyFormat());
+        final TethysDateAxis myXAxis = new TethysDateAxis();
+        myXAxis.setDateFormatOverride(new SimpleDateFormat("dd-MMM-yyyy"));
+        myXAxis.setVerticalTickLabels(true);
+        myPlot.setDomainAxis(myXAxis);
 
         /* Create the panel */
         thePanel = new ChartPanel(theChart);
@@ -127,8 +145,13 @@ public class TethysSwingAreaChart
         /* Update underlying data */
         super.updateAreaChart(pData);
 
-        /* Set the chart title */
+        /* Set the chart title and Axis labels */
         theChart.setTitle(pData.getTitle());
+        final XYPlot myPlot = (XYPlot) theChart.getPlot();
+        final DateAxis myXAxis = (DateAxis) myPlot.getDomainAxis();
+        myXAxis.setLabel(pData.getXAxisLabel());
+        final NumberAxis myYAxis = (NumberAxis) myPlot.getRangeAxis();
+        myYAxis.setLabel(pData.getYAxisLabel());
 
         /* Declare changes */
         theChart.fireChartChanged();
@@ -158,7 +181,7 @@ public class TethysSwingAreaChart
      * Money Format class.
      */
     private class MoneyFormat extends HexNumberFormat {
-        private static final long serialVersionUID = 2233789189711420564L;
+        private static final long serialVersionUID = 1200795726700321267L;
 
         @Override
         public StringBuffer format(final double pValue,
@@ -166,6 +189,40 @@ public class TethysSwingAreaChart
                                    final FieldPosition pLoc) {
             final TethysMoney myMoney = new TethysMoney(Double.toString(pValue));
             return new StringBuffer(getFormatter().formatMoney(myMoney));
+        }
+    }
+
+    /**
+     * Extended DateAxis.
+     */
+    private static class TethysDateAxis extends DateAxis {
+        private static final long serialVersionUID = 1976939393800292546L;
+
+        @SuppressWarnings("unchecked")
+        @Override
+        protected List<Tick> refreshTicksHorizontal(final Graphics2D g2,
+                                                    final Rectangle2D dataArea,
+                                                    final RectangleEdge edge) {
+            final List<Tick> ticks = super.refreshTicksHorizontal(g2, dataArea, edge);
+            final List<Tick> ret = new ArrayList<>();
+            for (Tick tick : ticks) {
+                if (tick instanceof DateTick) {
+                    final DateTick dateTick = (DateTick) tick;
+                    ret.add(new DateTick(dateTick.getDate(), dateTick.getText(), dateTick.getTextAnchor(),
+                            dateTick.getRotationAnchor(), LABEL_RADIANS));
+                } else {
+                    ret.add(tick);
+                }
+            }
+            return ret;
+        }
+
+        @Override
+        protected double findMaximumTickLabelHeight(final List ticks,
+                                                    final Graphics2D g2,
+                                                    final Rectangle2D drawArea,
+                                                    final boolean vertical) {
+            return super.findMaximumTickLabelHeight(ticks, g2, drawArea, vertical) * Math.sin(-LABEL_RADIANS);
         }
     }
 }

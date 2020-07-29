@@ -26,6 +26,7 @@ import net.sourceforge.joceanus.jtethys.decimal.TethysMoney;
 import net.sourceforge.joceanus.jtethys.event.TethysEventManager;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventProvider;
+import net.sourceforge.joceanus.jtethys.ui.TethysAreaChart.TethysAreaChartData;
 
 /**
  * Bar Chart.
@@ -153,9 +154,29 @@ public abstract class TethysBarChart
      */
     public static class TethysBarChartData {
         /**
+         * The XAxis default label.
+         */
+        static final String XAXIS_LABEL = TethysAreaChartData.XAXIS_LABEL;
+
+        /**
+         * The XAxis default label.
+         */
+        static final String YAXIS_LABEL = TethysAreaChartData.YAXIS_LABEL;
+
+        /**
          * The Chart Title.
          */
         private final String theTitle;
+
+        /**
+         * The Chart XAxisLabel.
+         */
+        private final String theXAxisLabel;
+
+        /**
+         * The Chart YAxisLabel.
+         */
+        private final String theYAxisLabel;
 
         /**
          * The SeriesMap.
@@ -167,7 +188,24 @@ public abstract class TethysBarChart
          * @param pTitle the title
          */
         public TethysBarChartData(final String pTitle) {
+            this(pTitle, XAXIS_LABEL, YAXIS_LABEL);
+        }
+
+        /**
+         * Constructor.
+         * @param pTitle the title
+         * @param pXAxisLabel the XAxis label
+         * @param pYAxisLabel the YAxis label
+         */
+        public TethysBarChartData(final String pTitle,
+                                  final String pXAxisLabel,
+                                  final String pYAxisLabel) {
+            /* Store parameters */
             theTitle = pTitle;
+            theXAxisLabel = pXAxisLabel;
+            theYAxisLabel = pYAxisLabel;
+
+            /* Create map */
             theSeriesMap = new LinkedHashMap<>();
         }
 
@@ -177,6 +215,22 @@ public abstract class TethysBarChart
          */
         public String getTitle() {
             return theTitle;
+        }
+
+        /**
+         * Obtain the XAxis label.
+         * @return the label.
+         */
+        public String getXAxisLabel() {
+            return theXAxisLabel;
+        }
+
+        /**
+         * Obtain the YAxis label.
+         * @return the label.
+         */
+        public String getYAxisLabel() {
+            return theYAxisLabel;
         }
 
         /**

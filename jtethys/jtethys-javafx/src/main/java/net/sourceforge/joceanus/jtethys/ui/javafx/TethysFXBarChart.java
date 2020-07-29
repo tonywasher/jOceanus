@@ -62,14 +62,11 @@ public class TethysFXBarChart
 
         /* Create chart */
         final CategoryAxis myXAxis = new CategoryAxis();
-        myXAxis.setLabel("Date");
         final NumberAxis myYAxis = new NumberAxis();
-        myYAxis.setLabel("Value");
         myYAxis.setTickLabelFormatter(new StringConverter<>() {
             @Override
             public String toString(final Number pValue) {
-                final TethysMoney myMoney = new TethysMoney(pValue.toString());
-                return getFormatter().formatMoney(myMoney);
+                return getFormatter().formatMoney(new TethysMoney(pValue.toString()));
             }
 
             @Override
@@ -107,8 +104,10 @@ public class TethysFXBarChart
         /* Update underlying data */
         super.updateBarChart(pData);
 
-        /* Set the chart title */
+        /* Set the chart title and Axis labels */
         theChart.setTitle(pData.getTitle());
+        theChart.getXAxis().setLabel(pData.getXAxisLabel());
+        theChart.getYAxis().setLabel(pData.getYAxisLabel());
     }
 
     @Override

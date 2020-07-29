@@ -39,6 +39,16 @@ import net.sourceforge.joceanus.jtethys.ui.TethysAreaChart;
 public class TethysFXAreaChart
     extends TethysAreaChart {
     /**
+     * The border factor.
+     */
+    private static final double BORDER_FACTOR = 0.05;
+
+    /**
+     * The border factor.
+     */
+    private static final double TICK_FACTOR = 0.05;
+
+    /**
      * The Node.
      */
     private final TethysFXNode theNode;
@@ -54,6 +64,16 @@ public class TethysFXAreaChart
     private final Map<String, Series<Number, Number>> theSeries;
 
     /**
+     * The minimun date.
+     */
+    private Number theMinimum;
+
+    /**
+     * The maximun date.
+     */
+    private Number theMaximum;
+
+    /**
      * Constructor.
      * @param pFactory the Gui Factory
      */
@@ -63,14 +83,13 @@ public class TethysFXAreaChart
 
         /* Create chart */
         final NumberAxis myXAxis = new NumberAxis();
-        myXAxis.setLabel("Date");
-        myXAxis.setAutoRanging(true);
+        myXAxis.setAutoRanging(false);
         myXAxis.setForceZeroInRange(false);
-        myXAxis.setTickLabelFormatter(new StringConverter<Number>() {
+        myXAxis.setTickLabelRotation(LABEL_ANGLE);
+        myXAxis.setTickLabelFormatter(new StringConverter<>() {
             @Override
             public String toString(final Number pValue) {
-                final LocalDate myDate = LocalDate.ofEpochDay(((Double) pValue).longValue());
-                return new TethysDate(myDate).toString();
+                return new TethysDate(LocalDate.ofEpochDay(pValue.longValue())).toString();
             }
 
             @Override
@@ -79,12 +98,10 @@ public class TethysFXAreaChart
             }
         });
         final NumberAxis myYAxis = new NumberAxis();
-        myYAxis.setLabel("Value");
-        myYAxis.setTickLabelFormatter(new StringConverter<Number>() {
+        myYAxis.setTickLabelFormatter(new StringConverter<>() {
             @Override
             public String toString(final Number pValue) {
-                final TethysMoney myMoney = new TethysMoney(pValue.toString());
-                return getFormatter().formatMoney(myMoney);
+                return getFormatter().formatMoney(new TethysMoney(pValue.toString()));
             }
 
             @Override
@@ -93,6 +110,8 @@ public class TethysFXAreaChart
             }
         });
         theChart = new StackedAreaChart<>(myXAxis, myYAxis);
+        theChart.setHorizontalGridLinesVisible(false);
+        theChart.setVerticalGridLinesVisible(false);
 
         /* Create the map */
         theSeries = new HashMap<>();
@@ -122,8 +141,21 @@ public class TethysFXAreaChart
         /* Update underlying data */
         super.updateAreaChart(pData);
 
-        /* Set the chart title */
+        /* Set the chart title and Axis labels */
         theChart.setTitle(pData.getTitle());
+
+        /* Adjust XAxis */
+        final NumberAxis myAxis = (NumberAxis) theChart.getXAxis();
+        myAxis.setLabel(pData.getXAxisLabel());
+        if (theMinimum != null) {
+            final double myAdjust = getBorderAdjust();
+            myAxis.setLowerBound(theMinimum.doubleValue() - myAdjust);
+            myAxis.setUpperBound(theMaximum.doubleValue() + myAdjust);
+            myAxis.setTickUnit(getTickCount());
+        }
+
+        /* Adjust Y Axis */
+        theChart.getYAxis().setLabel(pData.getYAxisLabel());
     }
 
     @Override
@@ -132,8 +164,30 @@ public class TethysFXAreaChart
         final ObservableList<Series<Number, Number>> myData = theChart.getData();
         myData.clear();
 
+        /* Clear max/min dates */
+        theMaximum = null;
+        theMinimum = null;
+
         /* Clear underlying data  */
         super.resetData();
+    }
+
+    /**
+     * Determine border adjustment.
+     * @return the border adjustment
+     */
+    private double getBorderAdjust() {
+        final double myRange = theMaximum.doubleValue() - theMinimum.doubleValue();
+        return myRange * BORDER_FACTOR;
+    }
+
+    /**
+     * Determine tick count.
+     * @return the tick count
+     */
+    private long getTickCount() {
+        final double myRange = theMaximum.doubleValue() - theMinimum.doubleValue();
+        return (long) (myRange * TICK_FACTOR);
     }
 
     @Override
@@ -142,6 +196,7 @@ public class TethysFXAreaChart
         /* Access the series */
         Series<Number, Number> mySeries = theSeries.get(pName);
         if (mySeries == null) {
+            /* Create the series */
             mySeries = new Series<>();
             mySeries.setName(pName);
             final ObservableList<Series<Number, Number>> myData = theChart.getData();
@@ -149,9 +204,7 @@ public class TethysFXAreaChart
             theSeries.put(pName, mySeries);
 
             /* Install click handler for node */
-            mySeries.getNode().addEventHandler(MouseEvent.MOUSE_CLICKED, e -> {
-                selectSeries(pName);
-            });
+            mySeries.getNode().addEventHandler(MouseEvent.MOUSE_CLICKED, e -> selectSeries(pName));
         }
 
         /* Add the point */
@@ -163,6 +216,17 @@ public class TethysFXAreaChart
         /* Create the toolTip */
         final String myTooltip = getToolTip(pName, pPoint.getValue());
         Tooltip.install(myNode, new Tooltip(myTooltip));
+
+        /* Adjust max/min */
+        final Number myDate = myData.getXValue();
+        if (theMinimum == null
+                || theMinimum.longValue() > myDate.longValue()) {
+            theMinimum = myDate;
+        }
+        if (theMaximum == null
+                || theMaximum.longValue() < myDate.longValue()) {
+            theMaximum = myDate;
+        }
     }
 
     /**
