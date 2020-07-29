@@ -21,7 +21,7 @@ import net.sourceforge.joceanus.jmetis.field.MetisFieldItem.MetisFieldTableItem;
 import net.sourceforge.joceanus.jmetis.list.MetisListEditSession;
 import net.sourceforge.joceanus.jmetis.list.MetisListIndexed;
 import net.sourceforge.joceanus.jmetis.list.MetisListKey;
-import net.sourceforge.joceanus.jmetis.profile.MetisProgram;
+import net.sourceforge.joceanus.jmetis.profile.MetisState;
 import net.sourceforge.joceanus.jmetis.threads.MetisThreadManager;
 import net.sourceforge.joceanus.jmetis.threads.MetisToolkit;
 import net.sourceforge.joceanus.jmetis.threads.javafx.MetisFXThreadManager;
@@ -59,7 +59,7 @@ public class MetisFXToolkit
      * @param pSlider use slider status
      * @throws OceanusException on error
      */
-    public MetisFXToolkit(final MetisProgram pInfo,
+    public MetisFXToolkit(final MetisState pInfo,
                           final boolean pSlider) throws OceanusException {
         super(pInfo, pSlider);
     }

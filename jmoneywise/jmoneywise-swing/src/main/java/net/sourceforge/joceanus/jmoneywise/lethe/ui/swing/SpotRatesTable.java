@@ -38,12 +38,13 @@ import net.sourceforge.joceanus.jmetis.viewer.MetisViewerEntry;
 import net.sourceforge.joceanus.jmetis.viewer.MetisViewerManager;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.ExchangeRate;
-import net.sourceforge.joceanus.jmoneywise.lethe.swing.MoneyWiseSwingView;
 import net.sourceforge.joceanus.jmoneywise.lethe.ui.MoneyWiseUIResource;
 import net.sourceforge.joceanus.jmoneywise.lethe.ui.controls.MoneyWiseSpotRatesSelect;
+import net.sourceforge.joceanus.jmoneywise.lethe.views.MoneyWiseView;
 import net.sourceforge.joceanus.jmoneywise.lethe.views.SpotExchangeRate;
 import net.sourceforge.joceanus.jmoneywise.lethe.views.SpotExchangeRate.SpotExchangeList;
 import net.sourceforge.joceanus.jmoneywise.lethe.views.YQLDownloader;
+import net.sourceforge.joceanus.jprometheus.lethe.swing.PrometheusSwingToolkit;
 import net.sourceforge.joceanus.jprometheus.lethe.ui.PrometheusActionButtons;
 import net.sourceforge.joceanus.jprometheus.lethe.ui.swing.PrometheusDataTable;
 import net.sourceforge.joceanus.jprometheus.lethe.ui.swing.PrometheusDataTableColumn;
@@ -106,7 +107,7 @@ public class SpotRatesTable
     /**
      * The data view.
      */
-    private final MoneyWiseSwingView theView;
+    private final MoneyWiseView theView;
 
     /**
      * The field manager.
@@ -172,13 +173,13 @@ public class SpotRatesTable
      * Constructor.
      * @param pView the data view
      */
-    public SpotRatesTable(final MoneyWiseSwingView pView) {
+    public SpotRatesTable(final MoneyWiseView pView) {
         /* initialise the underlying class */
         super(pView.getGuiFactory());
 
         /* Record the passed details */
         theView = pView;
-        theFieldMgr = pView.getFieldManager();
+        theFieldMgr = ((PrometheusSwingToolkit) theView.getToolkit()).getFieldManager();
         setFieldMgr(theFieldMgr);
 
         /* Build the Update set and entry */
@@ -209,12 +210,12 @@ public class SpotRatesTable
         myTable.setPreferredScrollableViewportSize(new Dimension(WIDTH_PANEL, HEIGHT_PANEL));
 
         /* Create the sub panels */
-        final TethysSwingGuiFactory myFactory = pView.getGuiFactory();
+        final TethysSwingGuiFactory myFactory = (TethysSwingGuiFactory) pView.getGuiFactory();
         theSelect = new MoneyWiseSpotRatesSelect(myFactory, theView);
         theActionButtons = new PrometheusActionButtons(myFactory, theUpdateSet);
 
         /* Create the error panel for this view */
-        theError = theView.getToolkit().newErrorPanel(theViewerPrice);
+        theError = theView.getToolkit().getToolkit().newErrorPanel(theViewerPrice);
 
         /* Create the header panel */
         final TethysSwingEnablePanel myHeader = new TethysSwingEnablePanel();
@@ -229,7 +230,7 @@ public class SpotRatesTable
         /* Create the layout for the panel */
         thePanel.setLayout(new BorderLayout());
         thePanel.add(myHeader, BorderLayout.PAGE_START);
-        thePanel.add(super.getNode().getNode(), BorderLayout.CENTER);
+        thePanel.add(((TethysSwingNode) super.getNode()).getNode(), BorderLayout.CENTER);
 
         /* Hide the action buttons initially */
         theActionButtons.setVisible(false);
@@ -373,7 +374,7 @@ public class SpotRatesTable
         theSelect.setVisible(!isError);
 
         /* Lock scroll area */
-        super.getNode().getNode().setEnabled(!isError);
+        ((TethysSwingNode) super.getNode()).getNode().setEnabled(!isError);
 
         /* Lock Action Buttons */
         theActionButtons.setEnabled(!isError);

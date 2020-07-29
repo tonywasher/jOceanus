@@ -24,10 +24,10 @@ import net.sourceforge.joceanus.jmetis.atlas.ui.MetisErrorPanel;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisLetheFieldEnum;
 import net.sourceforge.joceanus.jmetis.profile.MetisProfile;
 import net.sourceforge.joceanus.jmetis.viewer.MetisViewerEntry;
+import net.sourceforge.joceanus.jprometheus.lethe.PrometheusToolkit;
 import net.sourceforge.joceanus.jprometheus.lethe.data.StaticData;
 import net.sourceforge.joceanus.jprometheus.lethe.data.StaticData.StaticList;
 import net.sourceforge.joceanus.jprometheus.lethe.data.StaticInterface;
-import net.sourceforge.joceanus.jprometheus.lethe.swing.PrometheusSwingToolkit;
 import net.sourceforge.joceanus.jprometheus.lethe.ui.PrometheusActionButtons;
 import net.sourceforge.joceanus.jprometheus.lethe.ui.PrometheusUIResource;
 import net.sourceforge.joceanus.jprometheus.lethe.views.DataControl;
@@ -40,18 +40,18 @@ import net.sourceforge.joceanus.jtethys.event.TethysEvent;
 import net.sourceforge.joceanus.jtethys.event.TethysEventManager;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventProvider;
+import net.sourceforge.joceanus.jtethys.ui.TethysBorderPaneManager;
+import net.sourceforge.joceanus.jtethys.ui.TethysBoxPaneManager;
+import net.sourceforge.joceanus.jtethys.ui.TethysCardPaneManager;
+import net.sourceforge.joceanus.jtethys.ui.TethysCheckBox;
 import net.sourceforge.joceanus.jtethys.ui.TethysComponent;
+import net.sourceforge.joceanus.jtethys.ui.TethysGuiFactory;
+import net.sourceforge.joceanus.jtethys.ui.TethysLabel;
+import net.sourceforge.joceanus.jtethys.ui.TethysNode;
+import net.sourceforge.joceanus.jtethys.ui.TethysScrollButtonManager;
 import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollMenu;
 import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollMenuItem;
 import net.sourceforge.joceanus.jtethys.ui.TethysUIEvent;
-import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingBorderPaneManager;
-import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingBoxPaneManager;
-import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingCardPaneManager;
-import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingCheckBox;
-import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingGuiFactory;
-import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingLabel;
-import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingNode;
-import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingScrollButtonManager;
 
 /**
  * Top level panel for static data.
@@ -82,7 +82,7 @@ public class PrometheusStaticDataPanel<E extends Enum<E> & MetisLetheFieldEnum>
     /**
      * The UtilitySet.
      */
-    private final PrometheusSwingToolkit theUtilitySet;
+    private final PrometheusToolkit theToolkit;
 
     /**
      * The data control.
@@ -92,27 +92,27 @@ public class PrometheusStaticDataPanel<E extends Enum<E> & MetisLetheFieldEnum>
     /**
      * The Panel.
      */
-    private final TethysSwingBorderPaneManager thePanel;
+    private final TethysBorderPaneManager thePanel;
 
     /**
      * The Selection Panel.
      */
-    private final TethysSwingBorderPaneManager theSelectionPanel;
+    private final TethysBorderPaneManager theSelectionPanel;
 
     /**
      * The table card panel.
      */
-    private final TethysSwingCardPaneManager<PrometheusStaticDataTable<?, ?, ?, E>> theTableCard;
+    private final TethysCardPaneManager<PrometheusStaticDataTable<?, ?, ?, E>> theTableCard;
 
     /**
      * The new card panel.
      */
-    private final TethysSwingCardPaneManager<TethysSwingScrollButtonManager<?>> theNewCard;
+    private final TethysCardPaneManager<TethysScrollButtonManager<?>> theNewCard;
 
     /**
      * The selection button.
      */
-    private final TethysSwingScrollButtonManager<PrometheusStaticDataTable<?, ?, ?, E>> theSelectButton;
+    private final TethysScrollButtonManager<PrometheusStaticDataTable<?, ?, ?, E>> theSelectButton;
 
     /**
      * Data menu builder.
@@ -122,7 +122,7 @@ public class PrometheusStaticDataPanel<E extends Enum<E> & MetisLetheFieldEnum>
     /**
      * The disabled check box.
      */
-    private final TethysSwingCheckBox theDisabledCheckBox;
+    private final TethysCheckBox theDisabledCheckBox;
 
     /**
      * The error panel.
@@ -152,18 +152,18 @@ public class PrometheusStaticDataPanel<E extends Enum<E> & MetisLetheFieldEnum>
     /**
      * Constructor.
      * @param pControl the data control
-     * @param pUtilitySet the utility set
+     * @param pToolkit the toolkit
      * @param pClass the dataType class
      */
     public PrometheusStaticDataPanel(final DataControl<?, E> pControl,
-                                     final PrometheusSwingToolkit pUtilitySet,
+                                     final PrometheusToolkit pToolkit,
                                      final Class<E> pClass) {
         /* Store control */
         theControl = pControl;
-        theUtilitySet = pUtilitySet;
+        theToolkit = pToolkit;
 
         /* Obtain GUI Factory */
-        final TethysSwingGuiFactory myFactory = pUtilitySet.getGuiFactory();
+        final TethysGuiFactory myFactory = pToolkit.getToolkit().getGuiFactory();
 
         /* Create the event manager */
         theEventManager = new TethysEventManager<>();
@@ -179,7 +179,7 @@ public class PrometheusStaticDataPanel<E extends Enum<E> & MetisLetheFieldEnum>
         theViewerEntry.setTreeObject(theUpdateSet);
 
         /* Create the error panel */
-        theError = theControl.getToolkit().newErrorPanel(theViewerEntry);
+        theError = theControl.getToolkit().getToolkit().newErrorPanel(theViewerEntry);
 
         /* Create the action buttons panel */
         theActionButtons = new PrometheusActionButtons(myFactory, theUpdateSet);
@@ -188,7 +188,7 @@ public class PrometheusStaticDataPanel<E extends Enum<E> & MetisLetheFieldEnum>
         thePanels = new ArrayList<>();
 
         /* Create selection button and label */
-        final TethysSwingLabel myLabel = myFactory.newLabel(NLS_DATA);
+        final TethysLabel myLabel = myFactory.newLabel(NLS_DATA);
         theSelectButton = myFactory.newScrollButton();
 
         /* Create the CheckBox */
@@ -202,7 +202,7 @@ public class PrometheusStaticDataPanel<E extends Enum<E> & MetisLetheFieldEnum>
         theNewCard = myFactory.newCardPane();
 
         /* Create the layout for the selection panel */
-        final TethysSwingBoxPaneManager mySubPanel = myFactory.newHBoxPane();
+        final TethysBoxPaneManager mySubPanel = myFactory.newHBoxPane();
         mySubPanel.addNode(myLabel);
         mySubPanel.addNode(theSelectButton);
         mySubPanel.addSpacer();
@@ -212,7 +212,7 @@ public class PrometheusStaticDataPanel<E extends Enum<E> & MetisLetheFieldEnum>
         theSelectionPanel.setEast(theNewCard);
 
         /* Create the header panel */
-        final TethysSwingBorderPaneManager myHeader = myFactory.newBorderPane();
+        final TethysBorderPaneManager myHeader = myFactory.newBorderPane();
         myHeader.setCentre(theSelectionPanel);
         myHeader.setNorth(theError);
         myHeader.setEast(theActionButtons);
@@ -251,7 +251,7 @@ public class PrometheusStaticDataPanel<E extends Enum<E> & MetisLetheFieldEnum>
     }
 
     @Override
-    public TethysSwingNode getNode() {
+    public TethysNode getNode() {
         return thePanel.getNode();
     }
 
@@ -363,7 +363,7 @@ public class PrometheusStaticDataPanel<E extends Enum<E> & MetisLetheFieldEnum>
     public <L extends StaticList<T, S, E>, T extends StaticData<T, S, E>, S extends Enum<S> & StaticInterface> void addStatic(final E pItemType,
                                                                                                                               final Class<L> pListClass) {
         /* Create the new panel */
-        final PrometheusStaticDataTable<L, T, S, E> myPanel = new PrometheusStaticDataTable<>(theControl, theUpdateSet, theUtilitySet, theError, pItemType, pListClass);
+        final PrometheusStaticDataTable<L, T, S, E> myPanel = new PrometheusStaticDataTable<>(theControl, theUpdateSet, theToolkit, theError, pItemType, pListClass);
 
         /* Add the listener for the panel */
         myPanel.getEventRegistrar().addEventListener(e -> setVisibility());

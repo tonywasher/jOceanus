@@ -29,7 +29,6 @@ module net.sourceforge.joceanus.jcoeus.core {
     requires net.sourceforge.joceanus.jtethys.core;
 
     /* Exports */
-    exports net.sourceforge.joceanus.jcoeus.ui.panels;
     exports net.sourceforge.joceanus.jcoeus.ui.launch;
 
     /* Allow properties to be read */

@@ -16,18 +16,20 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmetis.launch.swing;
 
-import java.awt.Component;
+import java.awt.BorderLayout;
+import java.awt.Dimension;
 import java.awt.Image;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.util.Arrays;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
+import javax.swing.JPanel;
 import javax.swing.WindowConstants;
 
 import net.sourceforge.joceanus.jmetis.launch.MetisMainPanel;
-import net.sourceforge.joceanus.jmetis.launch.MetisProgramDef;
-import net.sourceforge.joceanus.jmetis.profile.MetisProgram;
+import net.sourceforge.joceanus.jmetis.launch.MetisProgram;
+import net.sourceforge.joceanus.jmetis.profile.MetisState;
 import net.sourceforge.joceanus.jmetis.threads.swing.MetisSwingToolkit;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.ui.TethysIconId;
@@ -41,7 +43,7 @@ public class MetisSwingState {
     /**
      * The Program definition.
      */
-    private final MetisProgram theInfo;
+    private final MetisState theInfo;
 
     /**
      * The toolkit.
@@ -70,7 +72,7 @@ public class MetisSwingState {
      */
     public MetisSwingState(final Class<? extends TethysProgram> pClazz) throws OceanusException {
         /* Create the program class. */
-        theInfo = new MetisProgram(pClazz);
+        theInfo = new MetisState(pClazz);
     }
 
     /**
@@ -92,7 +94,7 @@ public class MetisSwingState {
     public void createMain() throws OceanusException {
         /* Access program definitions */
         final TethysProgram myApp = theInfo.getProgramDefinitions();
-        final MetisProgramDef myDef = (MetisProgramDef) myApp;
+        final MetisProgram myDef = (MetisProgram) myApp;
 
         /* Create the toolkit */
         theToolkit = new MetisSwingToolkit(theInfo, myDef.useSliderStatus());
@@ -102,13 +104,24 @@ public class MetisSwingState {
         theToolkit.getGuiFactory().setFrame(theFrame);
 
         /* Create the main panel */
-        theMain = myDef.createMainPanel(theToolkit);
+        theMain = createMain(myDef, theToolkit);
 
         /* Add the Menu bar */
         theFrame.setJMenuBar(((TethysSwingMenuBarManager) theMain.getMenuBar()).getNode());
 
+        /* Create a new pane */
+        final JPanel myPane = new JPanel();
+        myPane.setLayout(new BorderLayout());
+        myPane.add(TethysSwingNode.getComponent(theMain.getComponent()), BorderLayout.CENTER);
+
+        /* Set preferred size if specified */
+        final int[] myDim = myDef.getPanelDimensions();
+        if (myDim != null) {
+            myPane.setPreferredSize(new Dimension(myDim[0], myDim[1]));
+        }
+
         /* Attach the panel to the frame */
-        theFrame.setContentPane(TethysSwingNode.getComponent(theMain.getComponent()));
+        theFrame.setContentPane(myPane);
         theFrame.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
         theFrame.addWindowListener(new WindowClose());
 
@@ -125,6 +138,18 @@ public class MetisSwingState {
 
         /* Record startUp completion */
         theToolkit.getActiveProfile().end();
+    }
+
+    /**
+     * Create the main panel.
+     * @param pProgram the program state
+     * @param pToolkit the toolkit
+     * @throws OceanusException on error
+     */
+    protected MetisMainPanel createMain(final MetisProgram pProgram,
+                                        final MetisSwingToolkit pToolkit) throws OceanusException {
+        /* Create the main panel */
+        return pProgram.createMainPanel(pToolkit);
     }
 
     /**

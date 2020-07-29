@@ -19,7 +19,7 @@ package net.sourceforge.joceanus.jcoeus.ui.launch;
 import net.sourceforge.joceanus.jcoeus.ui.CoeusIcon;
 import net.sourceforge.joceanus.jcoeus.ui.panels.CoeusMainPanel;
 import net.sourceforge.joceanus.jmetis.launch.MetisMainPanel;
-import net.sourceforge.joceanus.jmetis.launch.MetisProgramDef;
+import net.sourceforge.joceanus.jmetis.launch.MetisProgram;
 import net.sourceforge.joceanus.jmetis.threads.MetisToolkit;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.ui.TethysIconId;
@@ -30,7 +30,7 @@ import net.sourceforge.joceanus.jtethys.ui.TethysProgram;
  */
 public class CoeusApp
         extends TethysProgram
-        implements MetisProgramDef {
+        implements MetisProgram {
     /**
      * Width for main panel.
      */

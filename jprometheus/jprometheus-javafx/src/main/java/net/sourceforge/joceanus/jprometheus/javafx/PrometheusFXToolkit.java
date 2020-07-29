@@ -20,12 +20,10 @@ import net.sourceforge.joceanus.jgordianknot.api.factory.GordianFactoryType;
 import net.sourceforge.joceanus.jgordianknot.api.javafx.GordianFXPasswordManager;
 import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetHashSpec;
 import net.sourceforge.joceanus.jgordianknot.api.password.GordianPasswordManager;
-import net.sourceforge.joceanus.jmetis.profile.MetisProgram;
-import net.sourceforge.joceanus.jmetis.threads.javafx.MetisFXThreadManager;
+import net.sourceforge.joceanus.jmetis.profile.MetisState;
 import net.sourceforge.joceanus.jmetis.launch.javafx.MetisFXToolkit;
 import net.sourceforge.joceanus.jprometheus.lethe.PrometheusToolkit;
 import net.sourceforge.joceanus.jtethys.OceanusException;
-import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXGuiFactory;
 
 /**
  * Prometheus JavaFX Toolkit.
@@ -55,20 +53,20 @@ public class PrometheusFXToolkit
      * @param pSlider use slider status
      * @throws OceanusException on error
      */
-    public PrometheusFXToolkit(final MetisProgram pInfo,
+    public PrometheusFXToolkit(final MetisState pInfo,
                                final boolean pSlider) throws OceanusException {
         /* Create Toolkit */
-        super(new MetisFXToolkit(pInfo, pSlider));
+        this(new MetisFXToolkit(pInfo, pSlider));
     }
 
-    @Override
-    public TethysFXGuiFactory getGuiFactory() {
-        return (TethysFXGuiFactory) super.getGuiFactory();
-    }
-
-    @Override
-    public MetisFXThreadManager getThreadManager() {
-        return (MetisFXThreadManager) super.getThreadManager();
+    /**
+     * Constructor.
+     * @param pToolkit the metis toolkit
+     * @throws OceanusException on error
+     */
+    public PrometheusFXToolkit(final MetisFXToolkit pToolkit) throws OceanusException {
+        /* Create Toolkit */
+        super(pToolkit);
     }
 
     @Override
@@ -80,6 +78,6 @@ public class PrometheusFXToolkit
     protected GordianPasswordManager newPasswordManager(final GordianFactoryType pFactoryType,
                                                         final char[] pSecurityPhrase,
                                                         final GordianKeySetHashSpec pKeySetSpec) throws OceanusException {
-        return GordianFXPasswordManager.newPasswordManager(getGuiFactory(), pFactoryType, pSecurityPhrase, pKeySetSpec);
+        return GordianFXPasswordManager.newPasswordManager(getToolkit().getGuiFactory(), pFactoryType, pSecurityPhrase, pKeySetSpec);
     }
 }

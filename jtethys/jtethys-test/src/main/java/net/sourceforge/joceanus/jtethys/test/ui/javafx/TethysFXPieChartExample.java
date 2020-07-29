@@ -16,110 +16,60 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jtethys.test.ui.javafx;
 
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
 import javafx.application.Application;
-import javafx.collections.ObservableList;
 import javafx.scene.Scene;
-import javafx.scene.chart.PieChart;
-import javafx.scene.chart.PieChart.Data;
-import javafx.scene.control.Tooltip;
-import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.Region;
 import javafx.stage.Stage;
 
-import net.sourceforge.joceanus.jtethys.decimal.TethysDecimalFormatter;
-import net.sourceforge.joceanus.jtethys.decimal.TethysMoney;
-import net.sourceforge.joceanus.jtethys.decimal.TethysRate;
-import net.sourceforge.joceanus.jtethys.test.ui.TethysPieChartData;
-import net.sourceforge.joceanus.jtethys.test.ui.TethysPieChartData.TethysPieChartSection;
+import net.sourceforge.joceanus.jtethys.ui.TethysPieChart.TethysPieChartData;
+import net.sourceforge.joceanus.jtethys.ui.TethysPieChart.TethysPieChartSection;
+import net.sourceforge.joceanus.jtethys.test.ui.TethysTestChartData;
+import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXBorderPaneManager;
+import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXGuiFactory;
+import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXNode;
+import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXPieChart;
 
 /**
  * JavaFX PieChart Example.
  */
 public class TethysFXPieChartExample extends Application {
     /**
-     * The formatter.
+     * The Gui Factory.
      */
-    private final TethysDecimalFormatter theFormatter = new TethysDecimalFormatter();
+    private final TethysFXGuiFactory theGuiFactory;
 
     /**
      * The chart.
      */
-    private final PieChart theChart;
-
-    /**
-     * The sectionMap.
-     */
-    private final Map<String, TethysPieChartSection> theSectionMap;
+    private final TethysFXPieChart theChart;
 
     /**
      * Constructor.
      */
     public TethysFXPieChartExample() {
-        theSectionMap = new HashMap<>();
-        theChart = new PieChart();
-        theChart.setLabelsVisible(true);
+        /* Create GUI Factory */
+        theGuiFactory = new TethysFXGuiFactory();
+
+        /* Create chart */
+        theChart = theGuiFactory.newPieChart();
+        final TethysPieChartData myData = TethysTestChartData.createTestPieData();
+        theChart.updatePieChart(myData);
+
+        /* Add listener */
+        theChart.getEventRegistrar().addEventListener(e ->  System.out.println(((TethysPieChartSection) e.getDetails()).getSource()));
     }
 
     @Override
     public void start(final Stage pStage) {
-        /* Create the panel */
-        updatePieChart(TethysPieChartData.createTestData());
+        /* Create a Pane */
+        final TethysFXBorderPaneManager myPane = theGuiFactory.newBorderPane();
+        myPane.setCentre(theChart);
 
         /* Create scene */
-        final BorderPane myPane = new BorderPane();
-        final Scene myScene = new Scene(myPane);
-        myPane.setCenter(theChart);
-        pStage.setTitle("JavaFX PieChart Demo");
+        final Scene myScene = new Scene((Region) TethysFXNode.getNode(myPane));
+        theGuiFactory.registerScene(myScene);
+        pStage.setTitle("JavaFXPieChart Demo");
         pStage.setScene(myScene);
         pStage.show();
-    }
-
-    /**
-     * Update PieChart with data.
-     * @param pData the data
-     */
-    private void updatePieChart(final TethysPieChartData pData) {
-        /* Set the chart title */
-        theChart.setTitle(pData.getTitle());
-
-        /* Access and clear the data */
-        final ObservableList<Data> myData = theChart.getData();
-        myData.clear();
-        theSectionMap.clear();
-
-        /* Initialise the total */
-        final TethysMoney myTotal = new TethysMoney();
-
-        /* Iterate through the sections */
-        final Iterator<TethysPieChartSection> myIterator = pData.sectionIterator();
-        while (myIterator.hasNext()) {
-            final TethysPieChartSection mySection = myIterator.next();
-
-            /* Create the slice */
-            final Data mySlice = new Data(mySection.getName(), mySection.getValue().doubleValue());
-            myData.add(mySlice);
-
-            /* Add to the section map */
-            theSectionMap.put(mySection.getName(), mySection);
-            myTotal.addAmount(mySection.getValue());
-        }
-
-        /* Install click handlers for each node */
-        myData.forEach(d -> d.getNode().addEventHandler(MouseEvent.MOUSE_CLICKED, e -> System.out.println(d.getName())));
-
-        /* Install toolTips for each node */
-        myData.forEach(d -> {
-            final String myName = d.getName();
-            final TethysPieChartSection mySection = theSectionMap.get(myName);
-            final TethysMoney myValue = mySection.getValue();
-            final TethysRate myPerCent = new TethysRate(myValue, myTotal);
-            final Tooltip myTip = new Tooltip(myName + ": ("
-                    + theFormatter.formatMoney(myValue) + ", "
-                    + theFormatter.formatRate(myPerCent) + ")");
-            Tooltip.install(d.getNode(), myTip);
-        });
     }
 }

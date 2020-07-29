@@ -22,7 +22,7 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
 /**
  * Program Definition interface.
  */
-public interface MetisProgramDef {
+public interface MetisProgram {
     /**
      * Obtain the dimensions (width, height) of the panel.
      * @return the width/height (or null for default)

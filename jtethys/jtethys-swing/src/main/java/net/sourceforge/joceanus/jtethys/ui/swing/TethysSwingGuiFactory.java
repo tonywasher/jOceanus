@@ -375,6 +375,21 @@ public class TethysSwingGuiFactory
     }
 
     @Override
+    public TethysSwingAreaChart newAreaChart() {
+        return new TethysSwingAreaChart(this);
+    }
+
+    @Override
+    public TethysSwingBarChart newBarChart() {
+        return new TethysSwingBarChart(this);
+    }
+
+    @Override
+    public TethysSwingPieChart newPieChart() {
+        return new TethysSwingPieChart(this);
+    }
+
+    @Override
     public TethysSwingAbout newAboutBox() {
         return new TethysSwingAbout(this);
     }

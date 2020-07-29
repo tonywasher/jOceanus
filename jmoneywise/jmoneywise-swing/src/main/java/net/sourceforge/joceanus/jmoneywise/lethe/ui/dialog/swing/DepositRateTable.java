@@ -52,9 +52,9 @@ import net.sourceforge.joceanus.jtethys.date.TethysDate;
 import net.sourceforge.joceanus.jtethys.date.TethysDateConfig;
 import net.sourceforge.joceanus.jtethys.date.TethysDateRange;
 import net.sourceforge.joceanus.jtethys.decimal.TethysRate;
+import net.sourceforge.joceanus.jtethys.ui.TethysGuiFactory;
 import net.sourceforge.joceanus.jtethys.ui.TethysIconButtonManager.TethysIconMapSet;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingEnableWrapper.TethysSwingEnablePanel;
-import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingGuiFactory;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingNode;
 
 /**
@@ -144,7 +144,7 @@ public class DepositRateTable
      * @param pUpdateSet the update set
      * @param pError the error panel
      */
-    protected DepositRateTable(final TethysSwingGuiFactory pFactory,
+    protected DepositRateTable(final TethysGuiFactory pFactory,
                                final MetisSwingFieldManager pFieldMgr,
                                final UpdateSet<MoneyWiseDataType> pUpdateSet,
                                final MetisErrorPanel pError) {
@@ -179,7 +179,7 @@ public class DepositRateTable
         /* Create the layout for the panel */
         thePanel = new TethysSwingEnablePanel();
         thePanel.setLayout(new BoxLayout(thePanel, BoxLayout.Y_AXIS));
-        thePanel.add(super.getNode().getNode());
+        thePanel.add(((TethysSwingNode) super.getNode()).getNode());
     }
 
     @Override

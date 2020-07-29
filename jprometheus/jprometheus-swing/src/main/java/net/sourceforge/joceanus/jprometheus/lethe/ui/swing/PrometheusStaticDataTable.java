@@ -31,6 +31,7 @@ import net.sourceforge.joceanus.jmetis.lethe.field.swing.MetisSwingFieldManager;
 import net.sourceforge.joceanus.jmetis.ui.MetisAction;
 import net.sourceforge.joceanus.jmetis.ui.MetisIcon;
 import net.sourceforge.joceanus.jmetis.viewer.MetisViewerEntry;
+import net.sourceforge.joceanus.jprometheus.lethe.PrometheusToolkit;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataList.ListStyle;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataSet;
 import net.sourceforge.joceanus.jprometheus.lethe.data.StaticData;
@@ -46,11 +47,12 @@ import net.sourceforge.joceanus.jprometheus.lethe.views.UpdateSet;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
 import net.sourceforge.joceanus.jtethys.ui.TethysIconButtonManager.TethysIconMapSet;
+import net.sourceforge.joceanus.jtethys.ui.TethysNode;
+import net.sourceforge.joceanus.jtethys.ui.TethysScrollButtonManager;
 import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollMenu;
 import net.sourceforge.joceanus.jtethys.ui.TethysUIEvent;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingEnableWrapper.TethysSwingEnablePanel;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingNode;
-import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingScrollButtonManager;
 
 /**
  * Static Data Table.
@@ -104,7 +106,7 @@ public class PrometheusStaticDataTable<L extends StaticList<T, S, E>, T extends 
     /**
      * The new button.
      */
-    private final TethysSwingScrollButtonManager<S> theNewButton;
+    private final TethysScrollButtonManager<S> theNewButton;
 
     /**
      * MenuBuilder.
@@ -155,26 +157,26 @@ public class PrometheusStaticDataTable<L extends StaticList<T, S, E>, T extends 
      * Constructor.
      * @param pControl the data control
      * @param pUpdateSet the update set
-     * @param pUtilitySet the utility set
+     * @param pToolkit the toolkit
      * @param pError the error panel
      * @param pItemType the item type
      * @param pListClass the list class
      */
     public PrometheusStaticDataTable(final DataControl<?, E> pControl,
                                      final UpdateSet<E> pUpdateSet,
-                                     final PrometheusSwingToolkit pUtilitySet,
+                                     final PrometheusToolkit pToolkit,
                                      final MetisErrorPanel pError,
                                      final E pItemType,
                                      final Class<L> pListClass) {
         /* initialise the underlying class */
-        super(pUtilitySet.getGuiFactory());
+        super(pToolkit.getToolkit().getGuiFactory());
 
         /* Record the passed details */
         theError = pError;
         theItemType = pItemType;
         theClass = pListClass;
         theControl = pControl;
-        theFieldMgr = pUtilitySet.getFieldManager();
+        theFieldMgr = ((PrometheusSwingToolkit) pToolkit).getFieldManager();
         setFieldMgr(theFieldMgr);
 
         /* Build the Update set and List */
@@ -199,7 +201,7 @@ public class PrometheusStaticDataTable<L extends StaticList<T, S, E>, T extends 
         myTable.setPreferredScrollableViewportSize(new Dimension(WIDTH_PANEL, HEIGHT_PANEL));
 
         /* Create new button */
-        theNewButton = pUtilitySet.getGuiFactory().newScrollButton();
+        theNewButton = pToolkit.getToolkit().getGuiFactory().newScrollButton();
         MetisIcon.configureNewScrollButton(theNewButton);
 
         /* Create the panel */
@@ -207,7 +209,7 @@ public class PrometheusStaticDataTable<L extends StaticList<T, S, E>, T extends 
 
         /* Create the layout for the panel */
         thePanel.setLayout(new BoxLayout(thePanel, BoxLayout.Y_AXIS));
-        thePanel.add(super.getNode().getNode());
+        thePanel.add(((TethysSwingNode) super.getNode()).getNode());
 
         /* Add listeners */
         final TethysEventRegistrar<TethysUIEvent> myRegistrar = theNewButton.getEventRegistrar();
@@ -218,7 +220,7 @@ public class PrometheusStaticDataTable<L extends StaticList<T, S, E>, T extends 
     }
 
     @Override
-    public TethysSwingNode getNode() {
+    public TethysNode getNode() {
         return thePanel.getNode();
     }
 
@@ -234,7 +236,7 @@ public class PrometheusStaticDataTable<L extends StaticList<T, S, E>, T extends 
      * Obtain the new button.
      * @return the new Button
      */
-    public TethysSwingScrollButtonManager<S> getNewButton() {
+    public TethysScrollButtonManager<S> getNewButton() {
         return theNewButton;
     }
 

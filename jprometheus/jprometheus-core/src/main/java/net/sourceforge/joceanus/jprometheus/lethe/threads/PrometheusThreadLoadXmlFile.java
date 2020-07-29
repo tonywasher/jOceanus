@@ -24,6 +24,7 @@ import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceManager;
 import net.sourceforge.joceanus.jmetis.threads.MetisThread;
 import net.sourceforge.joceanus.jmetis.threads.MetisThreadData;
 import net.sourceforge.joceanus.jmetis.threads.MetisThreadManager;
+import net.sourceforge.joceanus.jmetis.threads.MetisToolkit;
 import net.sourceforge.joceanus.jprometheus.atlas.preference.PrometheusBackup.PrometheusBackupPreferenceKey;
 import net.sourceforge.joceanus.jprometheus.atlas.preference.PrometheusBackup.PrometheusBackupPreferences;
 import net.sourceforge.joceanus.jprometheus.lethe.PrometheusToolkit;
@@ -67,9 +68,9 @@ public class PrometheusThreadLoadXmlFile<T extends DataSet<T, E>, E extends Enum
     @Override
     public T performTask(final MetisThreadData pThreadData) throws OceanusException {
         /* Access the thread manager */
-        final PrometheusToolkit myToolkit = (PrometheusToolkit) pThreadData;
+        final MetisToolkit myToolkit = ((PrometheusToolkit) pThreadData).getToolkit();
         final MetisThreadManager myManager = myToolkit.getThreadManager();
-        final GordianPasswordManager myPasswordMgr = myToolkit.getPasswordManager();
+        final GordianPasswordManager myPasswordMgr = ((PrometheusToolkit) pThreadData).getPasswordManager();
 
         /* Initialise the status window */
         myManager.initTask(getTaskName());

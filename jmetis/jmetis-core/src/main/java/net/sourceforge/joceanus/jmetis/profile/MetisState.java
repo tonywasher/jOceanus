@@ -25,7 +25,7 @@ import net.sourceforge.joceanus.jtethys.ui.TethysProgram;
 /**
  * Program definition.
  */
-public class MetisProgram {
+public class MetisState {
     /**
      * Profile.
      */
@@ -41,7 +41,7 @@ public class MetisProgram {
      * @param pClazz the program definition class
      * @throws OceanusException on error
      */
-    public MetisProgram(final Class<? extends TethysProgram> pClazz) throws OceanusException {
+    public MetisState(final Class<? extends TethysProgram> pClazz) throws OceanusException {
         try {
             /* Create a timer */
             theProfile = new MetisProfile("StartUp");

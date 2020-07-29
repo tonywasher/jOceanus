@@ -486,6 +486,24 @@ public abstract class TethysGuiFactory {
     public abstract <C, R> TethysTableManager<C, R> newTable();
 
     /**
+     * Obtain a new areaChart.
+     * @return the new chart
+     */
+    public abstract TethysAreaChart newAreaChart();
+
+    /**
+     * Obtain a new barChart.
+     * @return the new chart
+     */
+    public abstract TethysBarChart newBarChart();
+
+    /**
+     * Obtain a new pieChart.
+     * @return the new chart
+     */
+    public abstract TethysPieChart newPieChart();
+
+    /**
      * Obtain a new aboutBox.
      * @return the new box
      */

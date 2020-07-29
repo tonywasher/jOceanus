@@ -21,6 +21,8 @@ module net.sourceforge.joceanus.jtethys.swing {
     /* Java runTime */
     requires java.desktop;
 
+    requires jfreechart;
+
     /* jOceanus */
     requires net.sourceforge.joceanus.jtethys.core;
 

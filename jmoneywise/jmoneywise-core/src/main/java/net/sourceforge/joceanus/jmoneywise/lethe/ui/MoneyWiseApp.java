@@ -16,6 +16,10 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.lethe.ui;
 
+import net.sourceforge.joceanus.jmetis.launch.MetisMainPanel;
+import net.sourceforge.joceanus.jmetis.launch.MetisProgram;
+import net.sourceforge.joceanus.jmetis.threads.MetisToolkit;
+import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.ui.TethysIconId;
 import net.sourceforge.joceanus.jtethys.ui.TethysProgram;
 
@@ -23,7 +27,18 @@ import net.sourceforge.joceanus.jtethys.ui.TethysProgram;
  * MoneyWise Application definition.
  */
 public class MoneyWiseApp
-        extends TethysProgram {
+        extends TethysProgram
+        implements MetisProgram {
+    /**
+     * Width for main panel.
+     */
+    private static final int WIDTH_SCENE = 1300;
+
+    /**
+     * Height for main panel.
+     */
+    private static final int HEIGHT_SCENE = 800;
+
     /**
      * Constructor.
      */
@@ -40,5 +55,15 @@ public class MoneyWiseApp
     @Override
     public TethysIconId getSplash() {
         return MoneyWiseIcon.SPLASH;
+    }
+
+    @Override
+    public int[] getPanelDimensions() {
+        return new int[] { WIDTH_SCENE, HEIGHT_SCENE };
+    }
+
+    @Override
+    public MetisMainPanel createMainPanel(final MetisToolkit pToolkit) throws OceanusException {
+        return null;
     }
 }

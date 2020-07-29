@@ -74,7 +74,7 @@ public class MoneyWiseThreadWriteQIF
     @Override
     public Void performTask(final MetisThreadData pThreadData) throws OceanusException {
         /* Access the thread manager */
-        final PrometheusToolkit myToolkit = (PrometheusToolkit) pThreadData;
+        final MetisToolkit myToolkit = ((PrometheusToolkit) pThreadData).getToolkit();
         final MetisThreadManager myManager = myToolkit.getThreadManager();
 
         /* Initialise the status window */

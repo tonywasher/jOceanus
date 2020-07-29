@@ -27,9 +27,9 @@ import net.sourceforge.joceanus.jmoneywise.lethe.data.LoanCategory;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.Region;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.TransactionCategory;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.TransactionTag;
-import net.sourceforge.joceanus.jmoneywise.lethe.swing.MoneyWiseSwingView;
 import net.sourceforge.joceanus.jmoneywise.lethe.ui.MoneyWiseGoToId;
 import net.sourceforge.joceanus.jmoneywise.lethe.ui.MoneyWiseUIResource;
+import net.sourceforge.joceanus.jmoneywise.lethe.views.MoneyWiseView;
 import net.sourceforge.joceanus.jprometheus.lethe.ui.PrometheusActionButtons;
 import net.sourceforge.joceanus.jprometheus.lethe.ui.PrometheusGoToEvent;
 import net.sourceforge.joceanus.jprometheus.lethe.views.PrometheusDataEvent;
@@ -41,16 +41,16 @@ import net.sourceforge.joceanus.jtethys.event.TethysEvent;
 import net.sourceforge.joceanus.jtethys.event.TethysEventManager;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventProvider;
+import net.sourceforge.joceanus.jtethys.ui.TethysBorderPaneManager;
+import net.sourceforge.joceanus.jtethys.ui.TethysBoxPaneManager;
+import net.sourceforge.joceanus.jtethys.ui.TethysCardPaneManager;
 import net.sourceforge.joceanus.jtethys.ui.TethysComponent;
+import net.sourceforge.joceanus.jtethys.ui.TethysGuiFactory;
+import net.sourceforge.joceanus.jtethys.ui.TethysLabel;
+import net.sourceforge.joceanus.jtethys.ui.TethysNode;
+import net.sourceforge.joceanus.jtethys.ui.TethysScrollButtonManager;
 import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollMenu;
 import net.sourceforge.joceanus.jtethys.ui.TethysUIEvent;
-import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingBorderPaneManager;
-import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingBoxPaneManager;
-import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingCardPaneManager;
-import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingGuiFactory;
-import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingLabel;
-import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingNode;
-import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingScrollButtonManager;
 
 /**
  * Top-level panel for Account/EventCategories.
@@ -90,32 +90,32 @@ public class CategoryPanel
     /**
      * The Data View.
      */
-    private final MoneyWiseSwingView theView;
+    private final MoneyWiseView theView;
 
     /**
      * The Panel.
      */
-    private final TethysSwingBorderPaneManager thePanel;
+    private final TethysBorderPaneManager thePanel;
 
     /**
      * The select button.
      */
-    private final TethysSwingScrollButtonManager<PanelName> theSelectButton;
+    private final TethysScrollButtonManager<PanelName> theSelectButton;
 
     /**
      * The card panel.
      */
-    private final TethysSwingCardPaneManager<TethysComponent> theCardPanel;
+    private final TethysCardPaneManager<TethysComponent> theCardPanel;
 
     /**
      * The select panel.
      */
-    private final TethysSwingBoxPaneManager theSelectPanel;
+    private final TethysBoxPaneManager theSelectPanel;
 
     /**
      * The filter card panel.
      */
-    private final TethysSwingCardPaneManager<TethysComponent> theFilterCardPanel;
+    private final TethysCardPaneManager<TethysComponent> theFilterCardPanel;
 
     /**
      * Deposit Categories Table.
@@ -181,12 +181,12 @@ public class CategoryPanel
      * Constructor.
      * @param pView the data view
      */
-    public CategoryPanel(final MoneyWiseSwingView pView) {
+    public CategoryPanel(final MoneyWiseView pView) {
         /* Store details */
         theView = pView;
 
         /* Access GUI Factory */
-        final TethysSwingGuiFactory myFactory = pView.getGuiFactory();
+        final TethysGuiFactory myFactory = pView.getGuiFactory();
         final MetisViewerManager myViewer = pView.getViewerManager();
 
         /* Create the event manager */
@@ -204,7 +204,7 @@ public class CategoryPanel
         theViewerEntry.setTreeObject(theUpdateSet);
 
         /* Create the error panel */
-        theError = pView.getToolkit().newErrorPanel(theViewerEntry);
+        theError = pView.getToolkit().getToolkit().newErrorPanel(theViewerEntry);
 
         /* Create the action buttons panel */
         theActionButtons = new PrometheusActionButtons(myFactory, theUpdateSet);
@@ -218,7 +218,7 @@ public class CategoryPanel
         theRegionTable = new RegionTable(pView, theUpdateSet, theError);
 
         /* Create selection button and label */
-        final TethysSwingLabel myLabel = myFactory.newLabel(NLS_DATA);
+        final TethysLabel myLabel = myFactory.newLabel(NLS_DATA);
         theSelectButton = myFactory.newScrollButton();
         buildSelectMenu();
 
@@ -257,7 +257,7 @@ public class CategoryPanel
         theSelectPanel.addNode(theFilterCardPanel);
 
         /* Create the header panel */
-        final TethysSwingBorderPaneManager myHeader = myFactory.newBorderPane();
+        final TethysBorderPaneManager myHeader = myFactory.newBorderPane();
         myHeader.setCentre(theSelectPanel);
         myHeader.setNorth(theError);
         myHeader.setEast(theActionButtons);
@@ -305,7 +305,7 @@ public class CategoryPanel
     }
 
     @Override
-    public TethysSwingNode getNode() {
+    public TethysNode getNode() {
         return thePanel.getNode();
     }
 

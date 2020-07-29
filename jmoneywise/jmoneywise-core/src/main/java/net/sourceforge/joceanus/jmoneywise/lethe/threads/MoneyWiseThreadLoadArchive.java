@@ -20,6 +20,7 @@ import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceManager;
 import net.sourceforge.joceanus.jmetis.threads.MetisThread;
 import net.sourceforge.joceanus.jmetis.threads.MetisThreadData;
 import net.sourceforge.joceanus.jmetis.threads.MetisThreadManager;
+import net.sourceforge.joceanus.jmetis.threads.MetisToolkit;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.lethe.sheets.ArchiveLoader;
 import net.sourceforge.joceanus.jmoneywise.lethe.views.MoneyWiseView;
@@ -54,7 +55,7 @@ public class MoneyWiseThreadLoadArchive
     @Override
     public MoneyWiseData performTask(final MetisThreadData pThreadData) throws OceanusException {
         /* Access the thread manager */
-        final PrometheusToolkit myToolkit = (PrometheusToolkit) pThreadData;
+        final MetisToolkit myToolkit = ((PrometheusToolkit) pThreadData).getToolkit();
         final MetisThreadManager myManager = myToolkit.getThreadManager();
 
         /* Initialise the status window */

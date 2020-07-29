@@ -75,9 +75,9 @@ public class PrometheusThreadCreateBackup<T extends DataSet<T, E>, E extends Enu
     @Override
     public Void performTask(final MetisThreadData pThreadData) throws OceanusException {
         /* Access the thread manager */
-        final PrometheusToolkit myToolkit = (PrometheusToolkit) pThreadData;
+        final MetisToolkit myToolkit = ((PrometheusToolkit) pThreadData).getToolkit();
         final MetisThreadManager myManager = myToolkit.getThreadManager();
-        final GordianPasswordManager myPasswordMgr = myToolkit.getPasswordManager();
+        final GordianPasswordManager myPasswordMgr = ((PrometheusToolkit) pThreadData).getPasswordManager();
         boolean doDelete = false;
         File myFile = null;
 

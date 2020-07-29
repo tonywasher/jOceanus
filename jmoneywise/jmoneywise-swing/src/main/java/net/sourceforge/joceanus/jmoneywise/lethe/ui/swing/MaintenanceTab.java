@@ -38,9 +38,9 @@ import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.TaxBasis.TaxBasisL
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.TransactionCategoryType.TransactionCategoryTypeList;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.TransactionInfoType.TransactionInfoTypeList;
 import net.sourceforge.joceanus.jmoneywise.lethe.quicken.definitions.QIFPreference.MoneyWiseQIFPreferences;
-import net.sourceforge.joceanus.jmoneywise.lethe.swing.MoneyWiseSwingView;
 import net.sourceforge.joceanus.jmoneywise.lethe.ui.MoneyWiseGoToId;
 import net.sourceforge.joceanus.jmoneywise.lethe.ui.MoneyWiseUIResource;
+import net.sourceforge.joceanus.jmoneywise.lethe.views.MoneyWiseView;
 import net.sourceforge.joceanus.jprometheus.atlas.preference.PrometheusBackup.PrometheusBackupPreferences;
 import net.sourceforge.joceanus.jprometheus.atlas.preference.PrometheusDatabase.PrometheusDatabasePreferences;
 import net.sourceforge.joceanus.jprometheus.lethe.data.StaticData;
@@ -53,12 +53,11 @@ import net.sourceforge.joceanus.jtethys.event.TethysEventManager;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventProvider;
 import net.sourceforge.joceanus.jtethys.ui.TethysComponent;
+import net.sourceforge.joceanus.jtethys.ui.TethysGuiFactory;
+import net.sourceforge.joceanus.jtethys.ui.TethysTabPaneManager;
 import net.sourceforge.joceanus.jtethys.ui.TethysTabPaneManager.TethysTabItem;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingEnableWrapper.TethysSwingEnablePanel;
-import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingGuiFactory;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingNode;
-import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingTabPaneManager;
-import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingTabPaneManager.TethysSwingTabItem;
 
 /**
  * Maintenance Tab panel.
@@ -99,7 +98,7 @@ public class MaintenanceTab
     /**
      * The Data View.
      */
-    private final MoneyWiseSwingView theView;
+    private final MoneyWiseView theView;
 
     /**
      * The Parent.
@@ -114,7 +113,7 @@ public class MaintenanceTab
     /**
      * The Tabs.
      */
-    private final TethysSwingTabPaneManager theTabs;
+    private final TethysTabPaneManager theTabs;
 
     /**
      * The Account Panel.
@@ -151,7 +150,7 @@ public class MaintenanceTab
         theParent = pTop;
 
         /* Access GUI Factory */
-        final TethysSwingGuiFactory myFactory = theView.getUtilitySet().getGuiFactory();
+        final TethysGuiFactory myFactory = theView.getGuiFactory();
         theId = myFactory.getNextId();
 
         /* Create the event manager */
@@ -161,7 +160,7 @@ public class MaintenanceTab
         thePanel = new TethysSwingEnablePanel();
 
         /* Create the Tabbed Pane */
-        theTabs = theView.getUtilitySet().getGuiFactory().newTabPane();
+        theTabs = theView.getGuiFactory().newTabPane();
 
         /* Create the account Tab and add it */
         theAccountTab = new AccountPanel(theView);
@@ -172,7 +171,7 @@ public class MaintenanceTab
         theTabs.addTabItem(TITLE_CATEGORY, theCategoryTab);
 
         /* Create the Static Tab */
-        theStatic = new PrometheusStaticDataPanel<>(theView, theView.getUtilitySet(), MoneyWiseDataType.class);
+        theStatic = new PrometheusStaticDataPanel<>(theView, theView.getToolkit(), MoneyWiseDataType.class);
         theTabs.addTabItem(TITLE_STATIC, theStatic);
 
         /* Add the static elements */
@@ -260,7 +259,7 @@ public class MaintenanceTab
      * Obtain the view.
      * @return the view
      */
-    protected MoneyWiseSwingView getView() {
+    protected MoneyWiseView getView() {
         return theView;
     }
 
@@ -452,7 +451,7 @@ public class MaintenanceTab
      */
     protected void determineFocus() {
         /* Access the selected component */
-        final TethysSwingTabItem myItem = theTabs.getSelectedTab();
+        final TethysTabItem myItem = theTabs.getSelectedTab();
         final JComponent myComponent = TethysSwingNode.getComponent(myItem);
 
         /* If the selected component is Account */

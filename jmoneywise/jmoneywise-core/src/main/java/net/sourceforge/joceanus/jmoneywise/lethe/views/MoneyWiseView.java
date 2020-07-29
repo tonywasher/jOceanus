@@ -135,7 +135,7 @@ public class MoneyWiseView
      */
     @Override
     public final MoneyWiseData getNewData() {
-        return new MoneyWiseData(getUtilitySet(), theTaxFactory);
+        return new MoneyWiseData(getToolkit(), theTaxFactory);
     }
 
     @Override

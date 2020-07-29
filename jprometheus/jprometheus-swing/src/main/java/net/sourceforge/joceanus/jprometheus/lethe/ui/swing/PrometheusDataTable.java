@@ -43,7 +43,8 @@ import net.sourceforge.joceanus.jtethys.event.TethysEventManager;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventProvider;
 import net.sourceforge.joceanus.jtethys.ui.TethysComponent;
-import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingGuiFactory;
+import net.sourceforge.joceanus.jtethys.ui.TethysGuiFactory;
+import net.sourceforge.joceanus.jtethys.ui.TethysNode;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingNode;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingTableSorter;
 
@@ -133,7 +134,7 @@ public abstract class PrometheusDataTable<T extends PrometheusTableItem & Compar
      * Constructor.
      * @param pFactory the GUI factory
      */
-    public PrometheusDataTable(final TethysSwingGuiFactory pFactory) {
+    public PrometheusDataTable(final TethysGuiFactory pFactory) {
         /* Create the Id */
         theId = pFactory.getNextId();
 
@@ -250,7 +251,7 @@ public abstract class PrometheusDataTable<T extends PrometheusTableItem & Compar
     }
 
     @Override
-    public TethysSwingNode getNode() {
+    public TethysNode getNode() {
         return theNode;
     }
 

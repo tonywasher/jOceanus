@@ -24,13 +24,11 @@ import net.sourceforge.joceanus.jmetis.atlas.ui.MetisFieldColours.MetisColorPref
 import net.sourceforge.joceanus.jmetis.lethe.field.swing.MetisSwingFieldConfig;
 import net.sourceforge.joceanus.jmetis.lethe.field.swing.MetisSwingFieldManager;
 import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceEvent;
-import net.sourceforge.joceanus.jmetis.profile.MetisProgram;
-import net.sourceforge.joceanus.jmetis.threads.swing.MetisSwingThreadManager;
+import net.sourceforge.joceanus.jmetis.profile.MetisState;
 import net.sourceforge.joceanus.jmetis.threads.swing.MetisSwingToolkit;
 import net.sourceforge.joceanus.jprometheus.lethe.PrometheusToolkit;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
-import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingGuiFactory;
 
 /**
  * Prometheus Swing Toolkit.
@@ -70,16 +68,26 @@ public class PrometheusSwingToolkit
      * @param pSlider use slider status
      * @throws OceanusException on error
      */
-    public PrometheusSwingToolkit(final MetisProgram pInfo,
+    public PrometheusSwingToolkit(final MetisState pInfo,
                                   final boolean pSlider) throws OceanusException {
         /* Create Toolkit */
-        super(new MetisSwingToolkit(pInfo, pSlider));
+        this(new MetisSwingToolkit(pInfo, pSlider));
+    }
+
+    /**
+     * Constructor.
+     * @param pToolkit the metis toolkit
+     * @throws OceanusException on error
+     */
+    public PrometheusSwingToolkit(final MetisSwingToolkit pToolkit) throws OceanusException {
+        /* Create Toolkit */
+        super(pToolkit);
 
         /* Access the Colour Preferences */
-        theColorPreferences = getPreferenceManager().getPreferenceSet(MetisColorPreferences.class);
+        theColorPreferences = pToolkit.getPreferenceManager().getPreferenceSet(MetisColorPreferences.class);
 
         /* Allocate the EosFieldManager */
-        theEosFieldManager = new MetisSwingFieldManager(getGuiFactory(), new MetisSwingFieldConfig(theColorPreferences));
+        theEosFieldManager = new MetisSwingFieldManager(pToolkit.getGuiFactory(), new MetisSwingFieldConfig(theColorPreferences));
 
         /* Process the colour preferences */
         processColorPreferences();
@@ -95,16 +103,6 @@ public class PrometheusSwingToolkit
     private void processColorPreferences() {
         /* Update the field manager */
         theEosFieldManager.setConfig(new MetisSwingFieldConfig(theColorPreferences));
-    }
-
-    @Override
-    public TethysSwingGuiFactory getGuiFactory() {
-        return (TethysSwingGuiFactory) super.getGuiFactory();
-    }
-
-    @Override
-    public MetisSwingThreadManager getThreadManager() {
-        return (MetisSwingThreadManager) super.getThreadManager();
     }
 
     @Override
@@ -124,6 +122,6 @@ public class PrometheusSwingToolkit
     protected GordianPasswordManager newPasswordManager(final GordianFactoryType pFactoryType,
                                                         final char[] pSecurityPhrase,
                                                         final GordianKeySetHashSpec pKeySetSpec) throws OceanusException {
-        return GordianSwingPasswordManager.newPasswordManager(getGuiFactory(), pFactoryType, pSecurityPhrase, pKeySetSpec);
+        return GordianSwingPasswordManager.newPasswordManager(getToolkit().getGuiFactory(), pFactoryType, pSecurityPhrase, pKeySetSpec);
     }
 }

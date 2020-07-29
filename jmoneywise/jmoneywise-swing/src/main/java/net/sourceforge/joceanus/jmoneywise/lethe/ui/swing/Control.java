@@ -22,11 +22,9 @@ import java.util.Arrays;
 import javax.swing.JFrame;
 import javax.swing.SwingUtilities;
 
-
-import net.sourceforge.joceanus.jmetis.profile.MetisProgram;
-import net.sourceforge.joceanus.jmetis.threads.swing.MetisSwingToolkit;
-import net.sourceforge.joceanus.jmoneywise.lethe.swing.MoneyWiseSwingView;
+import net.sourceforge.joceanus.jmetis.profile.MetisState;
 import net.sourceforge.joceanus.jmoneywise.lethe.ui.MoneyWiseApp;
+import net.sourceforge.joceanus.jprometheus.lethe.swing.PrometheusSwingToolkit;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.logger.TethysLogManager;
 import net.sourceforge.joceanus.jtethys.logger.TethysLogger;
@@ -54,21 +52,20 @@ public final class Control {
      * Create and show the GUI.
      * @param pInfo the program info
      */
-    private static void createAndShowGUI(final MetisProgram pInfo) {
+    private static void createAndShowGUI(final MetisState pInfo) {
         try {
             /* Create the view */
-            final MoneyWiseSwingView myView = new MoneyWiseSwingView(pInfo);
-            final MetisSwingToolkit myToolkit = myView.getToolkit();
+            final PrometheusSwingToolkit myToolkit = new PrometheusSwingToolkit(pInfo, true);
 
             /* Obtain program details */
             final TethysProgram myApp = pInfo.getProgramDefinitions();
 
             /* Create the frame and declare it */
             final JFrame myFrame = new JFrame(myApp.getName());
-            myToolkit.getGuiFactory().setFrame(myFrame);
+            myToolkit.getToolkit().getGuiFactory().setFrame(myFrame);
 
             /* Create the window */
-            final MainTab myWindow = new MainTab(myView);
+            final MainTab myWindow = new MainTab(myToolkit);
             myWindow.makeFrame();
 
             /* Add the icons to the frame */
@@ -96,7 +93,7 @@ public final class Control {
     public static void main(final String[] args) {
         try {
             /* Create a timer */
-            final MetisProgram myInfo = new MetisProgram(MoneyWiseApp.class);
+            final MetisState myInfo = new MetisState(MoneyWiseApp.class);
 
             /* Obtain program details */
             final TethysProgram myApp = myInfo.getProgramDefinitions();

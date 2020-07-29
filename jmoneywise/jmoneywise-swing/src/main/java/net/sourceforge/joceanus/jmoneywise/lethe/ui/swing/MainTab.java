@@ -23,13 +23,15 @@ import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseIOException;
 import net.sourceforge.joceanus.jmoneywise.help.MoneyWiseHelp;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.MoneyWiseData;
-import net.sourceforge.joceanus.jmoneywise.lethe.swing.MoneyWiseSwingView;
+import net.sourceforge.joceanus.jmoneywise.lethe.tax.uk.MoneyWiseUKTaxYearCache;
 import net.sourceforge.joceanus.jmoneywise.lethe.threads.MoneyWiseThreadId;
 import net.sourceforge.joceanus.jmoneywise.lethe.threads.MoneyWiseThreadLoadArchive;
 import net.sourceforge.joceanus.jmoneywise.lethe.threads.MoneyWiseThreadWriteQIF;
 import net.sourceforge.joceanus.jmoneywise.lethe.ui.MoneyWiseGoToId;
 import net.sourceforge.joceanus.jmoneywise.lethe.ui.MoneyWiseUIResource;
 import net.sourceforge.joceanus.jmoneywise.lethe.ui.controls.MoneyWiseAnalysisSelect.StatementSelect;
+import net.sourceforge.joceanus.jmoneywise.lethe.views.MoneyWiseView;
+import net.sourceforge.joceanus.jprometheus.lethe.swing.PrometheusSwingToolkit;
 import net.sourceforge.joceanus.jprometheus.lethe.ui.PrometheusGoToEvent;
 import net.sourceforge.joceanus.jprometheus.lethe.ui.swing.PrometheusMainWindow;
 import net.sourceforge.joceanus.jprometheus.lethe.views.PrometheusDataEvent;
@@ -40,10 +42,9 @@ import net.sourceforge.joceanus.jtethys.help.TethysHelpModule;
 import net.sourceforge.joceanus.jtethys.ui.TethysAbout;
 import net.sourceforge.joceanus.jtethys.ui.TethysMenuBarManager;
 import net.sourceforge.joceanus.jtethys.ui.TethysMenuBarManager.TethysMenuSubMenu;
+import net.sourceforge.joceanus.jtethys.ui.TethysTabPaneManager;
 import net.sourceforge.joceanus.jtethys.ui.TethysTabPaneManager.TethysTabItem;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingNode;
-import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingTabPaneManager;
-import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingTabPaneManager.TethysSwingTabItem;
 
 /**
  * Main Window for jMoneyWise.
@@ -78,12 +79,12 @@ public class MainTab
     /**
      * The data view.
      */
-    private final MoneyWiseSwingView theView;
+    private final MoneyWiseView theView;
 
     /**
      * The tabs.
      */
-    private TethysSwingTabPaneManager theTabs;
+    private TethysTabPaneManager theTabs;
 
     /**
      * The register panel.
@@ -112,19 +113,19 @@ public class MainTab
 
     /**
      * Constructor.
-     * @param pView the view
+     * @param pToolkit the toolkit
      * @throws OceanusException on error
      */
-    public MainTab(final MoneyWiseSwingView pView) throws OceanusException {
-        /* Record the view */
-        theView = pView;
+    public MainTab(final PrometheusSwingToolkit pToolkit) throws OceanusException {
+        /* create the view */
+        theView = new MoneyWiseView(pToolkit, new MoneyWiseUKTaxYearCache());
 
         /* Build the main window */
-        buildMainWindow(theView, theView.getUtilitySet());
+        buildMainWindow(theView, pToolkit);
     }
 
     @Override
-    public MoneyWiseSwingView getView() {
+    public MoneyWiseView getView() {
         return theView;
     }
 
@@ -144,7 +145,7 @@ public class MainTab
         myTask = myTask.startTask("buildMain");
 
         /* Create the Tabbed Pane */
-        theTabs = theView.getUtilitySet().getGuiFactory().newTabPane();
+        theTabs = theView.getGuiFactory().newTabPane();
 
         /* Create the Report Tab */
         myTask.startTask("Report");
@@ -335,7 +336,7 @@ public class MainTab
 
         /* Enable/Disable/Hide the spotPrices tab */
         doEnabled = !hasWorker && (!hasSession || theSpotPrices.hasSession());
-        TethysSwingTabItem myItem = theTabs.findItemByName(TITLE_SPOTPRICES);
+        TethysTabItem myItem = theTabs.findItemByName(TITLE_SPOTPRICES);
         myItem.setEnabled(doEnabled);
         myItem.setVisible(theView.hasActiveSecurities());
 
@@ -361,7 +362,7 @@ public class MainTab
      */
     private void determineFocus() {
         /* Access the selected component */
-        final TethysSwingTabItem myItem = theTabs.getSelectedTab();
+        final TethysTabItem myItem = theTabs.getSelectedTab();
         final JComponent myComponent = TethysSwingNode.getComponent(myItem);
 
         /* If the selected component is Register */
