@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ******************************************************************************/
-package net.sourceforge.joceanus.jtethys.jar.javafx;
+package net.sourceforge.joceanus.jtethys.jar;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
@@ -36,16 +36,21 @@ import net.sourceforge.joceanus.jtethys.TethysDataException;
 /**
  * Launcher utilities.
  */
-public final class TethysFXLauncher {
+public final class TethysLauncher {
     /**
      * NewLine character.
      */
     private static final String NEWLINE = "\n";
 
     /**
+     * Resources directory.
+     */
+    private static final String RESOURCES = "../resources";
+
+    /**
      * Private constructor.
      */
-    private TethysFXLauncher() {
+    private TethysLauncher() {
     }
 
     /**
@@ -74,6 +79,7 @@ public final class TethysFXLauncher {
         final String myPreLoader = pAttrs.getValue("JavaFX-Preloader-Class");
         final String myMainClass = pAttrs.getValue("Main-Class");
         final String myClassPath = pAttrs.getValue("Class-Path");
+        final String mySplash = pAttrs.getValue("SplashScreen-Image");
 
         /* If there is no mainClass, then just return */
         if (myMainClass == null) {
@@ -97,6 +103,10 @@ public final class TethysFXLauncher {
         if (myPreLoader != null) {
             myBuilder.append("set PRELOADER=").append(myPreLoader).append(NEWLINE);
         }
+        if (mySplash != null) {
+            myBuilder.append("set SPLASH=").append(RESOURCES).append("/").append(mySplash).append(NEWLINE);
+            extractSplash(pJar, mySplash);
+        }
         myBuilder.append(NEWLINE);
 
         /* Obtain and process the classPath */
@@ -110,11 +120,14 @@ public final class TethysFXLauncher {
             myBuilder.append(NEWLINE);
         }
 
-        /* Output the header */
+        /* Output the commandLine */
         myBuilder.append("rem run the jar\n");
         myBuilder.append("java ");
         if (myPreLoader != null) {
             myBuilder.append("-Djavafx.preloader=%PRELOADER% ");
+        }
+        if (mySplash != null) {
+            myBuilder.append("-splash:%SPLASH% ");
         }
         myBuilder.append("-p %JARFILE%");
         if (myClassPath != null) {
@@ -163,6 +176,53 @@ public final class TethysFXLauncher {
     }
 
     /**
+     * Extract splash file.
+     * @param pJar the Jar file.
+     * @param pSplash the path to the splash file
+     * @throws OceanusException on error
+     */
+    private static void extractSplash(final File pJar,
+                                      final String pSplash) throws OceanusException {
+        try (FileInputStream myInStream = new FileInputStream(pJar);
+             BufferedInputStream myInBuffer = new BufferedInputStream(myInStream);
+             ZipInputStream myZipStream = new ZipInputStream(myInBuffer)) {
+            /* Loop through the Zip file entries */
+            for (;;) {
+                /* Read next entry */
+                final ZipEntry myEntry = myZipStream.getNextEntry();
+
+                /* If this is EOF we did not find the manifest */
+                if (myEntry == null) {
+                    throw new TethysDataException("Splash not found");
+                }
+
+                /* Process manifest file if found */
+                if (pSplash.equals(myEntry.getName())) {
+                    /* Determine location for splashFile */
+                    final File myBase = new File(pJar.getParent(), RESOURCES);
+                    final File myTarget = new File(myBase, pSplash);
+                    final File myDir = new File(myTarget.getParent());
+
+                    /* If we created the directoy OK */
+                    if (myDir.mkdirs()) {
+                        /* Copy the splashScreen */
+                        try (FileOutputStream myStream = new FileOutputStream(myTarget)) {
+                            myZipStream.transferTo(myStream);
+                        }
+                    }
+
+                    /* Return */
+                    return;
+                }
+            }
+
+            /* Handle exceptions */
+        } catch (IOException e) {
+            throw new TethysDataException("Exception copying Splash file", e);
+        }
+    }
+
+    /**
      * Write batchFile.
      * @param pTarget the target batchFile.
      * @param pText the contents of the batch file
@@ -178,7 +238,7 @@ public final class TethysFXLauncher {
 
             /* Handle exceptions */
         } catch (IOException e) {
-            throw new TethysDataException("Exception accessing Zip file", e);
+            throw new TethysDataException("Exception writing batch file", e);
         }
     }
 }

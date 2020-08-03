@@ -316,13 +316,20 @@ public class TethysDecimal
             }
 
             /* Access last digit */
-            final long myDigit = myValue
-                                 % RADIX_TEN;
+            long myDigit = myValue
+                             % RADIX_TEN;
+
+            /* Handle negatiove values */
+            int myAdjust = 1;
+            if (myDigit < 0) {
+                myAdjust = -1;
+                myDigit = -myDigit;
+            }
 
             /* Reduce final decimal and round up if required */
             myValue /= RADIX_TEN;
             if (myDigit >= (RADIX_TEN >> 1)) {
-                myValue++;
+                myValue += myAdjust;
             }
 
             /* else if we need to expand fractional product */
@@ -442,6 +449,14 @@ public class TethysDecimal
         /* Access the two values */
         final long myDividend = pDividend.unscaledValue();
         final long myDivisor = pDivisor.unscaledValue();
+
+        /* Check for possible overflow */
+        final long numDivisorBits = 1 + Long.SIZE - Long.numberOfLeadingZeros(pDivisor.isPositive() ? myDivisor : -myDivisor);
+        final long numScaleBits = 1 + Long.SIZE - Long.numberOfLeadingZeros(POWERS_OF_TEN[theScale]);
+        if (numDivisorBits + numScaleBits > Long.SIZE) {
+            calculateSafeQuotient(pDividend, pDivisor);
+            return;
+        }
 
         /* Calculate fractions (m,n) */
         long myInteger = myDividend

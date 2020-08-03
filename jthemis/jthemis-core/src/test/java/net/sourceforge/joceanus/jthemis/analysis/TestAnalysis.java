@@ -17,9 +17,16 @@
 package net.sourceforge.joceanus.jthemis.analysis;
 
 import java.io.File;
-import java.nio.CharBuffer;
+import java.util.stream.Stream;
+
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.DynamicNode;
+import org.junit.jupiter.api.DynamicTest;
+import org.junit.jupiter.api.TestFactory;
 
 import net.sourceforge.joceanus.jtethys.OceanusException;
+import net.sourceforge.joceanus.jthemis.dsm.ThemisDSMProject;
+import net.sourceforge.joceanus.jthemis.dsm.ThemisDSMReport;
 
 /**
  * Test Analysis.
@@ -41,25 +48,44 @@ public class TestAnalysis {
     private static final String PACKAGE_BASE = "net.sourceforge.joceanus.";
 
     /**
-     * Main.
-     *
-     * @param pArgs the arguments
+     * Create the analysis test suite.
+     * @return the test stream
+     * @throws OceanusException on error
      */
-    public static void main(final String[] pArgs) {
-        testProject();
+    @TestFactory
+    public Stream<DynamicNode> analyseSource() throws OceanusException {
+        return Stream.of(
+                    DynamicTest.dynamicTest("analyseSource", TestAnalysis::testProjectSource),
+                    DynamicTest.dynamicTest("analyseDependencies", TestAnalysis::testProjectDependencies)
+                );
     }
 
     /**
-     * Test a project.
+     * Test source analysis of the current project.
+     * @throws OceanusException on error
      */
-    private static void testProject() {
-        /* Protect against exceptions */
-        try {
-            final ThemisAnalysisProject myProj = new ThemisAnalysisProject(new File(PATH_BASE));
-            int i = 0;
-        } catch (OceanusException e) {
-            e.printStackTrace();
-        }
+    private static void testProjectSource() throws OceanusException {
+        /* Analyse source of project */
+        final ThemisAnalysisProject myProj = new ThemisAnalysisProject(new File(PATH_BASE));
+        Assertions.assertNotNull(myProj, "Failed to analyse project");
+        Assertions.assertNull(myProj.getError(), "Exception analysing project");
+    }
+
+    /**
+     * Test dependency analysis of the current project.
+     * @throws OceanusException on error
+     */
+    private static void testProjectDependencies() throws OceanusException {
+        /* Analyse dependencies of project */
+        final ThemisDSMProject myProject  = new ThemisDSMProject(new File(PATH_BASE));
+        Assertions.assertNotNull(myProject, "Failed to analyse project");
+        Assertions.assertNull(myProject.getError(), "Exception analysing project");
+        Assertions.assertTrue(myProject.hasModules(), "Project has no modules");
+        Assertions.assertFalse(myProject.getDefaultModule().isCircular(), "Project has circular dependencies");
+
+        /* Build report of module */
+        final String myDoc = ThemisDSMReport.reportOnModule(myProject.getDefaultModule());
+        Assertions.assertNotNull(myProject, "Failed to build report");
     }
 
     /**
@@ -74,7 +100,6 @@ public class TestAnalysis {
         /* Protect against exceptions */
         try {
             final ThemisAnalysisModule myMod = new ThemisAnalysisModule(new File(myModule));
-            int i = 0;
         } catch (OceanusException e) {
             e.printStackTrace();
         }
@@ -102,7 +127,6 @@ public class TestAnalysis {
         /* Protect against exceptions */
         try {
             final ThemisAnalysisPackage myPack = new ThemisAnalysisPackage(new File(myModule), myPackage);
-            int i = 0;
         } catch (OceanusException e) {
             e.printStackTrace();
         }

@@ -80,7 +80,7 @@ public class TethysRatio
     public TethysRatio(final TethysDecimal pFirst,
                        final TethysDecimal pSecond) {
         recordScale(NUM_DECIMALS);
-        calculateSafeQuotient(pFirst, pSecond);
+        calculateQuotient(pFirst, pSecond);
     }
 
     /**

@@ -14,23 +14,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ******************************************************************************/
-package net.sourceforge.joceanus.jtethys.test.ui.javafx;
+package net.sourceforge.joceanus.jtethys.test.ui;
 
 import java.io.File;
 
 import net.sourceforge.joceanus.jtethys.OceanusException;
-import net.sourceforge.joceanus.jtethys.jar.javafx.TethysFXLauncher;
+import net.sourceforge.joceanus.jtethys.jar.TethysLauncher;
 import net.sourceforge.joceanus.jtethys.logger.TethysLogManager;
 import net.sourceforge.joceanus.jtethys.logger.TethysLogger;
 
 /**
  * Harness to build launcehr scripts.
  */
-public class TethysFXBuildLaunchers {
+public class TethysBuildLaunchers {
     /**
      * Create Logger.
      */
-    private static final TethysLogger LOGGER = TethysLogManager.getLogger(TethysFXBuildLaunchers.class);
+    private static final TethysLogger LOGGER = TethysLogManager.getLogger(TethysBuildLaunchers.class);
 
     /**
      * Main entry point.
@@ -40,7 +40,7 @@ public class TethysFXBuildLaunchers {
         try {
             /* Access the Backup location */
             final String myBackup = System.getenv("BACKUPDIR");
-            TethysFXLauncher.processJarFiles(new File(myBackup + "/bin"));
+            TethysLauncher.processJarFiles(new File(myBackup + "/bin"));
 
             /* Handle exceptions */
         } catch (OceanusException e) {

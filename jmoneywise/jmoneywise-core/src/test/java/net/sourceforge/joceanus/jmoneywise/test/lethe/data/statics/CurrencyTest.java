@@ -17,15 +17,23 @@
 package net.sourceforge.joceanus.jmoneywise.test.lethe.data.statics;
 
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.AssetCurrencyClass;
+import net.sourceforge.joceanus.jtethys.OceanusException;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Currency;
 import java.util.List;
+import java.util.stream.Stream;
+
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.DynamicNode;
+import org.junit.jupiter.api.DynamicTest;
+import org.junit.jupiter.api.TestFactory;
 
 /**
  * CurrencyCode checker.
  */
-public final class CurrencyCheck {
+public final class CurrencyTest {
     /**
      * List of irrelevant currency codes.
      */
@@ -37,29 +45,22 @@ public final class CurrencyCheck {
             "TRL", "XAG", "BOV", "ITL", "CSD", "MXV", "NLG", "AYM", "BYR" };
 
     /**
-     * Constructor.
+     * Create the analysis test suite.
+     * @return the test stream
+     * @throws OceanusException on error
      */
-    private CurrencyCheck() {
+    @TestFactory
+    public Stream<DynamicNode> checkCurrencies() throws OceanusException {
+        return Stream.of(
+                DynamicTest.dynamicTest("checkCurrency", CurrencyTest::checkCurrency)
+        );
     }
-
-    /**
-     * Main entry point.
-     * @param pArgs the arguments
-     */
-    public static void main(final String[] pArgs) {
-        /* run the test */
-        checkCurrency();
-    }
-
     /**
      * Main test.
      */
     private static void checkCurrency() {
         /* Create list of irrelevant codes */
-        final List<String> myIrrelevantCurrencies = new ArrayList<>();
-        for (String myCode : IRRELEVANT) {
-            myIrrelevantCurrencies.add(myCode);
-        }
+        final List<String> myIrrelevantCurrencies = new ArrayList<>(Arrays.asList(IRRELEVANT));
 
         /* Create collections */
         final List<AssetCurrencyClass> mySupportedCurrencies = new ArrayList<>();
@@ -90,18 +91,7 @@ public final class CurrencyCheck {
 
         /* Report failures */
         boolean bOK = true;
-        if (!myInvalidCurrencies.isEmpty()) {
-            System.out.println("The following currencies are invalid\n" + myInvalidCurrencies);
-            bOK = false;
-        }
-        if (!myMissingCurrencies.isEmpty()) {
-            System.out.println("The following currencies are missing\n" + myMissingCurrencies);
-            bOK = false;
-        }
-
-        /* Report success */
-        if (bOK) {
-            System.out.println("Currencies are OK\n");
-        }
+        Assertions.assertTrue(myInvalidCurrencies.isEmpty(), "Invalid currencies:\n" + myInvalidCurrencies);
+        Assertions.assertTrue(myMissingCurrencies.isEmpty(), "Missing currencies:\n" + myMissingCurrencies);
     }
 }
