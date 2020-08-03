@@ -1,4 +1,4 @@
-/*******************************************************************************
+/* *****************************************************************************
  * Tethys: Java Utilities
  * Copyright 2012,2020 Tony Washer
  *
@@ -16,20 +16,6 @@
  ******************************************************************************/
 
 /**
- * Tethys Core.
+ * Decimal JUnit tests.
  */
-module net.sourceforge.joceanus.jtethys.core {
-    /* External libraries */
-    requires org.jsoup;
-
-    /* Exports */
-    exports net.sourceforge.joceanus.jtethys;
-    exports net.sourceforge.joceanus.jtethys.date;
-    exports net.sourceforge.joceanus.jtethys.decimal;
-    exports net.sourceforge.joceanus.jtethys.event;
-    exports net.sourceforge.joceanus.jtethys.help;
-    exports net.sourceforge.joceanus.jtethys.jar;
-    exports net.sourceforge.joceanus.jtethys.logger;
-    exports net.sourceforge.joceanus.jtethys.resource;
-    exports net.sourceforge.joceanus.jtethys.ui;
-}
+package net.sourceforge.joceanus.jtethys.junit.decimal;

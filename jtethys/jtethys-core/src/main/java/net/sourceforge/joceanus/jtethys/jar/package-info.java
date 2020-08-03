@@ -17,4 +17,4 @@
 /**
  * JavaFX Jar utilities.
  */
-package net.sourceforge.joceanus.jtethys.jar.javafx;
+package net.sourceforge.joceanus.jtethys.jar;
