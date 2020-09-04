@@ -477,6 +477,7 @@ public class CoeusZopaLoanBookItem
         if ("Arrangement".equals(pStatus)
             || "Deceased".equals(pStatus)
             || "Collections".equals(pStatus)
+            || "DeferredRepayments".equals(pStatus)
             || "Hardship".equals(pStatus)) {
             return CoeusLoanStatus.ACTIVE;
         }

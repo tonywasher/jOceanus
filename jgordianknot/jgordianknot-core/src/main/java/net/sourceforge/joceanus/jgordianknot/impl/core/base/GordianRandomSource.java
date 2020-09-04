@@ -39,7 +39,7 @@ public class GordianRandomSource {
     /**
      * The Initial strongRandom.
      */
-    private static SecureRandom theStrongEntropy;
+    private static volatile SecureRandom theStrongEntropy;
 
     /**
      * The random source.
@@ -81,30 +81,33 @@ public class GordianRandomSource {
      */
     private static SecureRandom getStrongRandom() throws OceanusException {
         /* Return the entropy if it has been created */
-        if (theStrongEntropy != null) {
-            return theStrongEntropy;
+        SecureRandom myStrong = theStrongEntropy;
+        if (myStrong != null) {
+            return myStrong;
         }
 
         /* Synchronize the attempts */
         synchronized (GordianRandomSource.class) {
             /* If we have not yet created the strong entropy */
-            if (theStrongEntropy == null) {
+            myStrong = theStrongEntropy;
+            if (myStrong == null) {
                 /* Protect against exceptions */
                 try {
                     /* Handle differently for Windows and *nix */
                     final boolean isWindows = System.getProperty("os.name").startsWith("Windows");
-                    theStrongEntropy = isWindows
-                                       ? SecureRandom.getInstanceStrong()
-                                       : SecureRandom.getInstance("NativePRNGNonBlocking");
+                    myStrong = isWindows
+                                   ? SecureRandom.getInstanceStrong()
+                                   : SecureRandom.getInstance("NativePRNGNonBlocking");
 
                     /* Seed the Entropy */
-                    theStrongEntropy.setSeed(createPersonalisation(null));
+                    myStrong.setSeed(createPersonalisation(null));
+                    theStrongEntropy = myStrong;
 
                 } catch (NoSuchAlgorithmException e) {
                     throw new GordianCryptoException("No strong random", e);
                 }
             }
-            return theStrongEntropy;
+            return myStrong;
         }
     }
 

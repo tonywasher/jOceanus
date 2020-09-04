@@ -84,6 +84,11 @@ public final class CoeusLendingWorksTransaction
     private static final String PFIX_CASHBACK = "Other account credit";
 
     /**
+     * Xfer out prefix.
+     */
+    private static final String PFIX_XFEROUT = "Money transferred out";
+
+    /**
      * ZERO for BadDebt/CashBack.
      */
     static final TethysDecimal ZERO_MONEY = new TethysDecimal(0, CoeusLendingWorksMarket.DECIMAL_SIZE);
@@ -347,6 +352,11 @@ public final class CoeusLendingWorksTransaction
         /* If the description is CashBack */
         if (PFIX_CASHBACK.equals(theDesc)) {
             return CoeusTransactionType.CASHBACK;
+        }
+
+        /* If the description is Xfer Out */
+        if (PFIX_XFEROUT.equals(theDesc)) {
+            return CoeusTransactionType.TRANSFER;
         }
 
         /* Not recognised */

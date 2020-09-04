@@ -35,7 +35,7 @@ public class TestAnalysis {
     /**
      * The path base.
      */
-    private static final String PATH_BASE = System.getProperty("user.home") + "/gitNew/jOceanus/";
+    private static final String PATH_BASE = System.getProperty("user.home") + "/git/jOceanus/";
 
     /**
      * The path xtra.

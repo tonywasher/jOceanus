@@ -270,27 +270,27 @@ class AsymmetricStore {
         /**
          * The keyPair.
          */
-        private GordianKeyPair theKeyPair;
-
-        /**
-         * The mirrorPair.
-         */
-        private GordianKeyPair theMirror;
-
-        /**
-         * The partnerSelf.
-         */
-        private GordianKeyPair thePartnerSelf;
+        private volatile GordianKeyPair theKeyPair;
 
         /**
          * The targetPair.
          */
-        private GordianKeyPair theTarget;
+        private volatile GordianKeyPair theTarget;
+
+        /**
+         * The mirrorPair.
+         */
+        private volatile GordianKeyPair theMirror;
+
+        /**
+         * The partnerSelf.
+         */
+        private volatile GordianKeyPair thePartnerSelf;
 
         /**
          * The partnerTarget.
          */
-        private GordianKeyPair thePartnerTarget;
+        private volatile GordianKeyPair thePartnerTarget;
 
         /**
          * Constructor.
@@ -306,23 +306,26 @@ class AsymmetricStore {
          * @throws OceanusException on error
          */
         GordianKeyPair getKeyPair() throws OceanusException {
-            /* Return keyPair if it exists */
-            if (theKeyPair != null) {
-                return theKeyPair;
+            /* If the keyPair has not yet been initialised */
+            GordianKeyPair myKeyPair = theKeyPair;
+            if (myKeyPair != null) {
+                return myKeyPair;
             }
 
             /* Synchronize access */
             synchronized (this) {
                 /* Check for race condition */
-                if (theKeyPair != null) {
-                    return theKeyPair;
+                myKeyPair = theKeyPair;
+                if (myKeyPair != null) {
+                    return myKeyPair;
                 }
 
                 /* Generate the keyPair */
                 final GordianAsymFactory myFactory = theOwner.getFactory();
                 final GordianKeyPairGenerator myGenerator = myFactory.getKeyPairGenerator(theOwner.getKeySpec());
-                theKeyPair = myGenerator.generateKeyPair();
-                return theKeyPair;
+                myKeyPair = myGenerator.generateKeyPair();
+                theKeyPair = myKeyPair;
+                return myKeyPair;
             }
         }
 
@@ -355,22 +358,25 @@ class AsymmetricStore {
          */
         GordianKeyPair getTargetKeyPair() throws OceanusException {
             /* Return keyPair if it exists */
-            if (theTarget != null) {
-                return theTarget;
+            GordianKeyPair myTarget = theTarget;
+            if (myTarget != null) {
+                return myTarget;
             }
 
             /* Synchronize access */
             synchronized (this) {
                 /* Check for race condition */
-                if (theTarget != null) {
-                    return theTarget;
+                myTarget = theTarget;
+                if (myTarget != null) {
+                    return myTarget;
                 }
 
                 /* Generate the keyPair */
                 final GordianAsymFactory myFactory = theOwner.getFactory();
                 final GordianKeyPairGenerator myGenerator = myFactory.getKeyPairGenerator(theOwner.getKeySpec());
-                theTarget = myGenerator.generateKeyPair();
-                return theTarget;
+                myTarget = myGenerator.generateKeyPair();
+                theTarget = myTarget;
+                return myTarget;
             }
         }
 
@@ -381,15 +387,17 @@ class AsymmetricStore {
          */
         GordianKeyPair getMirrorKeyPair() throws OceanusException {
             /* Return mirror keyPair if it exists */
-            if (theMirror != null) {
-                return theMirror;
+            GordianKeyPair myMirror = theMirror;
+            if (myMirror != null) {
+                return myMirror;
             }
 
             /* Synchronize access */
             synchronized (this) {
                 /* Check for race condition */
-                if (theMirror != null) {
-                    return theMirror;
+                myMirror = theMirror;
+                if (myMirror != null) {
+                    return myMirror;
                 }
 
                 /* Access the keyPair */
@@ -400,8 +408,9 @@ class AsymmetricStore {
                 final GordianKeyPairGenerator myGenerator = myFactory.getKeyPairGenerator(theOwner.getKeySpec());
                 final X509EncodedKeySpec myPublic = myGenerator.getX509Encoding(myPair);
                 final PKCS8EncodedKeySpec myPrivate = myGenerator.getPKCS8Encoding(myPair);
-                theMirror = myGenerator.deriveKeyPair(myPublic, myPrivate);
-                return theMirror;
+                myMirror = myGenerator.deriveKeyPair(myPublic, myPrivate);
+                theMirror = myMirror;
+                return myMirror;
             }
         }
 
@@ -412,16 +421,18 @@ class AsymmetricStore {
          */
         GordianKeyPair getPartnerSelfKeyPair() throws OceanusException {
             /* Return partnerSelf keyPair if it exists */
-            if (thePartnerSelf != null
+            GordianKeyPair myPartnerSelf = thePartnerSelf;
+            if (myPartnerSelf != null
                  || theOwner.getPartner() == null) {
-                return thePartnerSelf;
+                return myPartnerSelf;
             }
 
             /* Synchronize access */
             synchronized (this) {
                 /* Check for race condition */
-                if (thePartnerSelf != null) {
-                    return thePartnerSelf;
+                myPartnerSelf = thePartnerSelf;
+                if (myPartnerSelf != null) {
+                    return myPartnerSelf;
                 }
 
                 /* Access the keyPair */
@@ -434,8 +445,9 @@ class AsymmetricStore {
                 /* Derive the partner keyPair */
                 myFactory = theOwner.getPartner();
                 myGenerator = myFactory.getKeyPairGenerator(theOwner.getKeySpec());
-                thePartnerSelf = myGenerator.deriveKeyPair(myPublic, myPrivate);
-                return thePartnerSelf;
+                myPartnerSelf = myGenerator.deriveKeyPair(myPublic, myPrivate);
+                thePartnerSelf = myPartnerSelf;
+                return myPartnerSelf;
             }
         }
 
@@ -446,16 +458,18 @@ class AsymmetricStore {
          */
         GordianKeyPair getPartnerTargetKeyPair() throws OceanusException {
             /* Return partnerTarget keyPair if it exists */
-            if (thePartnerTarget != null
+            GordianKeyPair myPartnerTarget = thePartnerTarget;
+            if (myPartnerTarget != null
                     || theOwner.getPartner() == null) {
-                return thePartnerTarget;
+                return myPartnerTarget;
             }
 
             /* Synchronize access */
             synchronized (this) {
                 /* Check for race condition */
-                if (thePartnerTarget != null) {
-                    return thePartnerTarget;
+                myPartnerTarget = thePartnerTarget;
+                if (myPartnerTarget != null) {
+                    return myPartnerTarget;
                 }
 
                 /* Access the target keyPair */
@@ -468,8 +482,9 @@ class AsymmetricStore {
                 /* Derive the keyPair */
                 myFactory = theOwner.getPartner();
                 myGenerator = myFactory.getKeyPairGenerator(theOwner.getKeySpec());
-                thePartnerTarget = myGenerator.deriveKeyPair(myPublic, myPrivate);
-                return thePartnerTarget;
+                myPartnerTarget = myGenerator.deriveKeyPair(myPublic, myPrivate);
+                thePartnerTarget = myPartnerTarget;
+                return myPartnerTarget;
             }
         }
     }

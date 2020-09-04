@@ -441,6 +441,8 @@ public class TethysDecimal
      * <code>z.10<sup>c</sup> = m.10<sup>c-(a-b)</sup> + IntegralPart(n.10<sup>c-(a-b)</sup>/y)</code>
      * <p>
      * taking care to round the IntegralPart calculation correctly.
+     * <p>
+     * In the case where it is not possible to avoid overflow, the slower safeQuotient method is used.
      * @param pDividend the number to divide
      * @param pDivisor the number to divide
      */
@@ -452,8 +454,8 @@ public class TethysDecimal
 
         /* Check for possible overflow */
         final long numDivisorBits = 1 + Long.SIZE - Long.numberOfLeadingZeros(pDivisor.isPositive() ? myDivisor : -myDivisor);
-        final long numScaleBits = 1 + Long.SIZE - Long.numberOfLeadingZeros(POWERS_OF_TEN[theScale]);
-        if (numDivisorBits + numScaleBits > Long.SIZE) {
+        final long numScaleBits = 1 + Long.SIZE - Long.numberOfLeadingZeros(POWERS_OF_TEN[theScale + 1]);
+        if (numDivisorBits + numScaleBits >= Long.SIZE) {
             calculateSafeQuotient(pDividend, pDivisor);
             return;
         }
@@ -1042,14 +1044,14 @@ public class TethysDecimal
      */
     private static long[] getPowersOfTen(final int pMax) {
         /* Allocate the array */
-        final long[] myArray = new long[pMax + 1];
+        final long[] myArray = new long[pMax + 2];
 
         /* Initialise array */
         long myValue = 1;
         myArray[0] = myValue;
 
         /* Loop through array */
-        for (int i = 1; i <= pMax; i++) {
+        for (int i = 1; i <= pMax + 1; i++) {
             /* Adjust value and record it */
             myValue *= RADIX_TEN;
             myArray[i] = myValue;

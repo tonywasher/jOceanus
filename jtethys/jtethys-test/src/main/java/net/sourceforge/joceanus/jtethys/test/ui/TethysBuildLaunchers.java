@@ -24,16 +24,24 @@ import net.sourceforge.joceanus.jtethys.logger.TethysLogManager;
 import net.sourceforge.joceanus.jtethys.logger.TethysLogger;
 
 /**
- * Harness to build launcehr scripts.
+ * Harness to build launcher scripts.
  */
-public class TethysBuildLaunchers {
+public final class TethysBuildLaunchers {
     /**
      * Create Logger.
      */
     private static final TethysLogger LOGGER = TethysLogManager.getLogger(TethysBuildLaunchers.class);
 
     /**
+     * Private constructor.
+     */
+    private TethysBuildLaunchers() {
+    }
+
+    /**
      * Main entry point.
+     *
+     * @param pArgs the program arguments
      */
     public static void main(final String[] pArgs) {
         /* Protect against exceptions */
