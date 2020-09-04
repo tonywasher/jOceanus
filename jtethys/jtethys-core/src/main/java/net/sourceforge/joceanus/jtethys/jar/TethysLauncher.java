@@ -38,6 +38,11 @@ import net.sourceforge.joceanus.jtethys.TethysDataException;
  */
 public final class TethysLauncher {
     /**
+     * Are we windows?
+     */
+    private static final boolean OS_WINDOWS = System.getProperty("os.name").startsWith("Windows");
+
+    /**
      * NewLine character.
      */
     private static final String NEWLINE = "\n";
@@ -91,20 +96,20 @@ public final class TethysLauncher {
         final String myName = pJar.getName();
 
         /* Output the header */
-        myBuilder.append("@echo off\nsetlocal\n\n")
-                .append("rem make sure that we are in the same directory as the jar file\n")
-                .append("cd %0\\..\n\n");
+        myBuilder.append(getBatchHeader())
+                .append(getComment("make sure that we are in the same directory as the jar file"))
+                .append(setDirectory());
 
         /* Report details */
-        myBuilder.append("rem set up details of the jarFile\n")
-                .append("set JARFILE=").append(myName).append(NEWLINE)
-                .append("set MODULE=").append(pAttrs.getValue("ModuleName")).append(NEWLINE)
-                .append("set MAIN=").append(myMainClass).append(NEWLINE);
+        myBuilder.append(getComment("set up details of the jarFile"))
+                .append(setVariable("JARFILE")).append(myName).append(NEWLINE)
+                .append(setVariable("MODULE")).append(pAttrs.getValue("ModuleName")).append(NEWLINE)
+                .append(setVariable("MAIN")).append(myMainClass).append(NEWLINE);
         if (myPreLoader != null) {
-            myBuilder.append("set PRELOADER=").append(myPreLoader).append(NEWLINE);
+            myBuilder.append(setVariable("PRELOADER")).append(myPreLoader).append(NEWLINE);
         }
         if (mySplash != null) {
-            myBuilder.append("set SPLASH=").append(RESOURCES).append("/").append(mySplash).append(NEWLINE);
+            myBuilder.append(setVariable("SPLASH")).append(RESOURCES).append("/").append(mySplash).append(NEWLINE);
             extractSplash(pJar, mySplash);
         }
         myBuilder.append(NEWLINE);
@@ -112,33 +117,33 @@ public final class TethysLauncher {
         /* Obtain and process the classPath */
         if (myClassPath != null) {
             final String[] myClasses = myClassPath.split(" ");
-            myBuilder.append("rem build the modulePath from the classPath\n");
-            myBuilder.append("set JARS=").append(myClasses[0]).append(NEWLINE);
+            myBuilder.append(getComment("build the modulePath from the classPath"));
+            myBuilder.append(setVariable("JARS")).append(myClasses[0]).append(NEWLINE);
             for (int i = 1; i < myClasses.length; i++) {
-                myBuilder.append("set JARS=%JARS%;").append(myClasses[i]).append(NEWLINE);
+                myBuilder.append(setVariable("JARS")).append(getValue("JARS")).append(File.pathSeparator).append(myClasses[i]).append(NEWLINE);
             }
             myBuilder.append(NEWLINE);
         }
 
         /* Output the commandLine */
-        myBuilder.append("rem run the jar\n");
+        myBuilder.append(getComment("run the jar"));
         myBuilder.append("java ");
         if (myPreLoader != null) {
-            myBuilder.append("-Djavafx.preloader=%PRELOADER% ");
+            myBuilder.append("-Djavafx.preloader=").append(getValue("PRELOADER")).append(" ");
         }
         if (mySplash != null) {
-            myBuilder.append("-splash:%SPLASH% ");
+            myBuilder.append("-splash:").append(getValue("SPLASH")).append(" ");
         }
-        myBuilder.append("-p %JARFILE%");
+        myBuilder.append("-p ").append(getValue("JARFILE"));
         if (myClassPath != null) {
-            myBuilder.append(";%JARS%");
+            myBuilder.append(File.pathSeparator).append(getValue("JARS"));
         }
-        myBuilder.append(" -m %MODULE%/%MAIN% &");
-        myBuilder.append("\n\nendlocal\n");
+        myBuilder.append(" -m ").append(getValue("MODULE")).append("/").append(getValue("MAIN")).append(" &");
+        myBuilder.append(getBatchTrailer());
 
         /* determine the launch file name */
         final String mySuffix = "-" + pAttrs.getValue("Implementation-Version") + ".jar";
-        final String myFileName = myName.substring(0, myName.length() - mySuffix.length()) + ".bat";
+        final String myFileName = myName.substring(0, myName.length() - mySuffix.length()) + getBatchSuffix();
         final File myOutFile = new File(pJar.getParent(), myFileName);
         writeBatchFile(myOutFile, myBuilder.toString());
     }
@@ -203,7 +208,7 @@ public final class TethysLauncher {
                     final File myTarget = new File(myBase, pSplash);
                     final File myDir = new File(myTarget.getParent());
 
-                    /* If we created the directoy OK */
+                    /* If we created the directory OK */
                     if (myDir.mkdirs()) {
                         /* Copy the splashScreen */
                         try (FileOutputStream myStream = new FileOutputStream(myTarget)) {
@@ -240,5 +245,69 @@ public final class TethysLauncher {
         } catch (IOException e) {
             throw new TethysDataException("Exception writing batch file", e);
         }
+
+        /* Try to make file executable */
+        if (!OS_WINDOWS) {
+            pTarget.setExecutable(true);
+        }
+    }
+
+    /**
+     * Obtain the batch file header.
+     * @return the header.
+     */
+    private static String getBatchHeader() {
+        return OS_WINDOWS ? "@echo off\nsetlocal\n\n" : "#!/usr/bin/ksh\n\n";
+    }
+
+    /**
+     * Obtain the batch setDirectory command.
+     * @return the command.
+     */
+    private static String setDirectory() {
+        return OS_WINDOWS ? "cd %0\\..\n\n" : "cd $(dirname %0)\n\n";
+    }
+
+    /**
+     * Obtain the batch file trailer.
+     * @return the trailer.
+     */
+    private static String getBatchTrailer() {
+        return OS_WINDOWS ? "\n\nendlocal\n" : "\n\n";
+    }
+
+    /**
+     * Obtain the batch file comment.
+     * @param pComment the comment
+     * @return the comment.
+     */
+    private static String getComment(final String pComment) {
+        return (OS_WINDOWS ? "rem " : "# ") + pComment + NEWLINE;
+    }
+
+    /**
+     * Set a variable's value.
+     * @param pVar the variable
+     * @return the set clause.
+     */
+    private static String setVariable(final String pVar) {
+        return (OS_WINDOWS ? "set " : "") + pVar + '=';
+    }
+
+    /**
+     * Obtain a variable's value.
+     * @param pVar the variable
+     * @return the value.
+     */
+    private static String getValue(final String pVar) {
+        return OS_WINDOWS ? "%" + pVar + "%" : "$" + pVar;
+    }
+
+    /**
+     * Obtain the batch suffix.
+     * @return the suffix.
+     */
+    private static String getBatchSuffix() {
+        return OS_WINDOWS ? ".bat" : ".ksh";
     }
 }

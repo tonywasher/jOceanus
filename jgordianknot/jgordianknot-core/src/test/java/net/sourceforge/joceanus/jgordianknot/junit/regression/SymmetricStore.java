@@ -153,12 +153,12 @@ class SymmetricStore {
         /**
          * The key.
          */
-        private GordianCoreKey<GordianMacSpec> theKey;
+        private volatile GordianCoreKey<GordianMacSpec> theKey;
 
         /**
          * The partnerKey.
          */
-        private GordianKey<GordianMacSpec> thePartnerKey;
+        private volatile GordianKey<GordianMacSpec> thePartnerKey;
 
         /**
          * Constructor.
@@ -181,22 +181,25 @@ class SymmetricStore {
          */
         GordianKey<GordianMacSpec> getKey() throws OceanusException {
             /* Return key if it exists */
-            if (theKey != null) {
-                return theKey;
+            GordianCoreKey<GordianMacSpec> myKey = theKey;
+            if (myKey != null) {
+                return myKey;
             }
 
             /* Synchronize access */
             synchronized (this) {
                 /* Check for race condition */
-                if (theKey != null) {
-                    return theKey;
+                myKey = theKey;
+                if (myKey != null) {
+                    return myKey;
                 }
 
                 /* Generate the key */
                 GordianMacFactory myFactory = theFactory.getMacFactory();
                 GordianKeyGenerator<GordianMacSpec> myGenerator = myFactory.getKeyGenerator(theMacSpec);
-                theKey = (GordianCoreKey<GordianMacSpec>) myGenerator.generateKey();
-                return theKey;
+                myKey = (GordianCoreKey<GordianMacSpec>) myGenerator.generateKey();
+                theKey = myKey;
+                return myKey;
             }
         }
 
@@ -207,23 +210,26 @@ class SymmetricStore {
          */
         GordianKey<GordianMacSpec> getPartnerKey() throws OceanusException {
             /* Return key if it exists */
-            if (thePartnerKey != null || thePartner == null) {
-                return thePartnerKey;
+            GordianKey<GordianMacSpec> myPartnerKey = thePartnerKey;
+            if (myPartnerKey != null || thePartner == null) {
+                return myPartnerKey;
             }
 
             /* Synchronize access */
             synchronized (this) {
                 /* Check for race condition */
-                if (thePartnerKey != null) {
-                    return thePartnerKey;
+                myPartnerKey = thePartnerKey;
+                if (myPartnerKey != null) {
+                    return myPartnerKey;
                 }
 
                 /* Build the key */
                 GordianMacFactory myFactory = thePartner.getMacFactory();
                 GordianCoreKeyGenerator<GordianMacSpec> myGenerator
                         = (GordianCoreKeyGenerator<GordianMacSpec>) myFactory.getKeyGenerator(theMacSpec);
-                thePartnerKey = myGenerator.buildKeyFromBytes(theKey.getKeyBytes());
-                return thePartnerKey;
+                myPartnerKey = myGenerator.buildKeyFromBytes(theKey.getKeyBytes());
+                thePartnerKey = myPartnerKey;
+                return myPartnerKey;
             }
         }
 
@@ -271,12 +277,12 @@ class SymmetricStore {
         /**
          * The key.
          */
-        private GordianCoreKey<GordianSymKeySpec> theKey;
+        private volatile GordianCoreKey<GordianSymKeySpec> theKey;
 
         /**
          * The partnerKey.
          */
-        private GordianKey<GordianSymKeySpec> thePartnerKey;
+        private volatile GordianKey<GordianSymKeySpec> thePartnerKey;
 
         /**
          * Constructor.
@@ -299,22 +305,25 @@ class SymmetricStore {
          */
         GordianKey<GordianSymKeySpec> getKey() throws OceanusException {
             /* Return key if it exists */
-            if (theKey != null) {
-                return theKey;
+            GordianCoreKey<GordianSymKeySpec> myKey = theKey;
+            if (myKey != null) {
+                return myKey;
             }
 
             /* Synchronize access */
             synchronized (this) {
                 /* Check for race condition */
-                if (theKey != null) {
-                    return theKey;
+                myKey = theKey;
+                if (myKey != null) {
+                    return myKey;
                 }
 
                 /* Generate the key */
                 GordianCipherFactory myFactory = theFactory.getCipherFactory();
                 GordianKeyGenerator<GordianSymKeySpec> myGenerator = myFactory.getKeyGenerator(theSymKeySpec);
-                theKey = (GordianCoreKey<GordianSymKeySpec>) myGenerator.generateKey();
-                return theKey;
+                myKey = (GordianCoreKey<GordianSymKeySpec>) myGenerator.generateKey();
+                theKey = myKey;
+                return myKey;
             }
         }
 
@@ -325,23 +334,26 @@ class SymmetricStore {
          */
         GordianKey<GordianSymKeySpec> getPartnerKey() throws OceanusException {
             /* Return key if it exists */
-            if (thePartnerKey != null || thePartner == null) {
-                return thePartnerKey;
+            GordianKey<GordianSymKeySpec> myPartnerKey = thePartnerKey;
+            if (myPartnerKey != null || thePartner == null) {
+                return myPartnerKey;
             }
 
             /* Synchronize access */
             synchronized (this) {
                 /* Check for race condition */
-                if (thePartnerKey != null) {
-                    return thePartnerKey;
+                myPartnerKey = thePartnerKey;
+                if (myPartnerKey != null) {
+                    return myPartnerKey;
                 }
 
                 /* Build the key */
                 GordianCipherFactory myFactory = thePartner.getCipherFactory();
                 GordianCoreKeyGenerator<GordianSymKeySpec> myGenerator
                         = (GordianCoreKeyGenerator<GordianSymKeySpec>) myFactory.getKeyGenerator(theSymKeySpec);
-                thePartnerKey = myGenerator.buildKeyFromBytes(theKey.getKeyBytes());
-                return thePartnerKey;
+                myPartnerKey = myGenerator.buildKeyFromBytes(theKey.getKeyBytes());
+                thePartnerKey = myPartnerKey;
+                return myPartnerKey;
             }
         }
 
@@ -524,12 +536,12 @@ class SymmetricStore {
         /**
          * The key.
          */
-        private GordianCoreKey<GordianStreamKeySpec> theKey;
+        private volatile GordianCoreKey<GordianStreamKeySpec> theKey;
 
         /**
          * The partnerKey.
          */
-        private GordianKey<GordianStreamKeySpec> thePartnerKey;
+        private volatile GordianKey<GordianStreamKeySpec> thePartnerKey;
 
         /**
          * Constructor.
@@ -552,22 +564,25 @@ class SymmetricStore {
          */
         GordianKey<GordianStreamKeySpec> getKey() throws OceanusException {
             /* Return key if it exists */
-            if (theKey != null) {
-                return theKey;
+            GordianCoreKey<GordianStreamKeySpec> myKey = theKey;
+            if (myKey != null) {
+                return myKey;
             }
 
             /* Synchronize access */
             synchronized (this) {
                 /* Check for race condition */
-                if (theKey != null) {
-                    return theKey;
+                myKey = theKey;
+                if (myKey != null) {
+                    return myKey;
                 }
 
                 /* Generate the key */
                 GordianCipherFactory myFactory = theFactory.getCipherFactory();
                 GordianKeyGenerator<GordianStreamKeySpec> myGenerator = myFactory.getKeyGenerator(theKeySpec);
-                theKey = (GordianCoreKey<GordianStreamKeySpec>) myGenerator.generateKey();
-                return theKey;
+                myKey = (GordianCoreKey<GordianStreamKeySpec>) myGenerator.generateKey();
+                theKey = myKey;
+                return myKey;
             }
         }
 
@@ -578,23 +593,26 @@ class SymmetricStore {
          */
         GordianKey<GordianStreamKeySpec> getPartnerKey() throws OceanusException {
             /* Return key if it exists */
-            if (thePartnerKey != null || thePartner == null) {
-                return thePartnerKey;
+            GordianKey<GordianStreamKeySpec> myPartnerKey = thePartnerKey;
+            if (myPartnerKey != null || thePartner == null) {
+                return myPartnerKey;
             }
 
             /* Synchronize access */
             synchronized (this) {
                 /* Check for race condition */
-                if (thePartnerKey != null) {
-                    return thePartnerKey;
+                myPartnerKey = thePartnerKey;
+                if (myPartnerKey != null) {
+                    return myPartnerKey;
                 }
 
                 /* Build the key */
                 GordianCipherFactory myFactory = thePartner.getCipherFactory();
                 GordianCoreKeyGenerator<GordianStreamKeySpec> myGenerator
                         = (GordianCoreKeyGenerator<GordianStreamKeySpec>) myFactory.getKeyGenerator(theKeySpec);
-                thePartnerKey = myGenerator.buildKeyFromBytes(theKey.getKeyBytes());
-                return thePartnerKey;
+                myPartnerKey = myGenerator.buildKeyFromBytes(theKey.getKeyBytes());
+                thePartnerKey = myPartnerKey;
+                return myPartnerKey;
             }
         }
 
