@@ -71,6 +71,7 @@ public class JcaEncryptorFactory
     private GordianEncryptor getJcaEncryptor(final GordianEncryptorSpec pEncryptorSpec) throws OceanusException {
         switch (pEncryptorSpec.getKeyType()) {
             case RSA:
+            case ELGAMAL:
                 return new JcaBlockEncryptor(getFactory(), pEncryptorSpec);
             case SM2:
                 return new JcaHybridEncryptor(getFactory(), pEncryptorSpec);
@@ -117,6 +118,7 @@ public class JcaEncryptorFactory
         /* Switch on KeyType */
         switch (pSpec.getKeyType()) {
             case RSA:
+            case ELGAMAL:
             case MCELIECE:
                 return true;
             case SM2:

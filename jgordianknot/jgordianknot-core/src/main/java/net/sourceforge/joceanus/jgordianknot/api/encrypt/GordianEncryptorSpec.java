@@ -82,6 +82,15 @@ public final class GordianEncryptorSpec {
     }
 
     /**
+     * Create ElGamal Encryptor.
+     * @param pSpec the digestSpec
+     * @return the encryptorSpec
+     */
+    public static GordianEncryptorSpec elGamal(final GordianDigestSpec pSpec) {
+        return new GordianEncryptorSpec(GordianAsymKeyType.ELGAMAL, pSpec);
+    }
+
+    /**
      * Create EC Encryptor.
      * @return the encryptorSpec
      */
@@ -195,6 +204,7 @@ public final class GordianEncryptorSpec {
         }
         switch (theAsymKeyType) {
             case RSA:
+            case ELGAMAL:
                 return theEncryptorType instanceof GordianDigestSpec
                         && ((GordianDigestSpec) theEncryptorType).isValid();
             case SM2:
@@ -219,6 +229,7 @@ public final class GordianEncryptorSpec {
         final GordianDigestSpec mySpec = getDigestSpec();
         switch (theAsymKeyType) {
             case RSA:
+            case ELGAMAL:
                 return mySpec != null && GordianDigestType.SHA2.equals(mySpec.getDigestType()) && mySpec.getStateLength() == null;
             case EC:
             case GOST2012:
@@ -241,6 +252,7 @@ public final class GordianEncryptorSpec {
                 theName = theAsymKeyType.toString();
                 switch (theAsymKeyType) {
                     case RSA:
+                    case ELGAMAL:
                     case MCELIECE:
                         theName += SEP + theEncryptorType;
                         break;
@@ -312,6 +324,12 @@ public final class GordianEncryptorSpec {
                 myEncryptors.add(GordianEncryptorSpec.rsa(GordianDigestSpec.sha2(GordianLength.LEN_256)));
                 myEncryptors.add(GordianEncryptorSpec.rsa(GordianDigestSpec.sha2(GordianLength.LEN_384)));
                 myEncryptors.add(GordianEncryptorSpec.rsa(GordianDigestSpec.sha2(GordianLength.LEN_512)));
+                break;
+            case ELGAMAL:
+                myEncryptors.add(GordianEncryptorSpec.elGamal(GordianDigestSpec.sha2(GordianLength.LEN_224)));
+                myEncryptors.add(GordianEncryptorSpec.elGamal(GordianDigestSpec.sha2(GordianLength.LEN_256)));
+                myEncryptors.add(GordianEncryptorSpec.elGamal(GordianDigestSpec.sha2(GordianLength.LEN_384)));
+                myEncryptors.add(GordianEncryptorSpec.elGamal(GordianDigestSpec.sha2(GordianLength.LEN_512)));
                 break;
             case SM2:
                 myEncryptors.add(GordianEncryptorSpec.sm2());

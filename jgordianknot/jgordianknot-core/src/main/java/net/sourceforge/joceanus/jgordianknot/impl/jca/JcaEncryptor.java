@@ -200,17 +200,20 @@ public final class JcaEncryptor {
                 return "McEliece";
             }
 
+            /* Determine the base algorithm */
+            final String myBase = pSpec.getKeyType().name();
+
             /* Switch on encryptor type */
             switch (pSpec.getDigestSpec().getDigestLength()) {
                 case LEN_224:
-                    return "RSA/ECB/OAEPWITHSHA-224ANDMGF1PADDING";
+                    return myBase + "/ECB/OAEPWITHSHA224ANDMGF1PADDING";
                 case LEN_256:
-                    return "RSA/ECB/OAEPWITHSHA-256ANDMGF1PADDING";
+                    return myBase + "/ECB/OAEPWITHSHA256ANDMGF1PADDING";
                 case LEN_384:
-                    return "RSA/ECB/OAEPWITHSHA-384ANDMGF1PADDING";
+                    return myBase + "/ECB/OAEPWITHSHA384ANDMGF1PADDING";
                 case LEN_512:
                 default:
-                    return "RSA/ECB/OAEPWITHSHA-512ANDMGF1PADDING";
+                    return myBase + "/ECB/OAEPWITHSHA512ANDMGF1PADDING";
             }
         }
     }

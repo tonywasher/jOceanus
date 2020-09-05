@@ -46,6 +46,8 @@
                     <tr><td>DSA</td><td>Modulus 1024, 2048, 3096</td></tr>
                     <tr><td>DiffieHellman</td><td>rfc2409_1024, rfc3526_1536, rfc3526_2048, rfc3526_3072, rfc3526_4096, rfc3526_6144, rfc3526_8192,
                         rfc7919_ffdhe2048, rfc7919_ffdhe3072, rfc7919_ffdhe4096, rfc7919_ffdhe6144, rfc7919_ffdhe8192</td></tr>
+                    <tr><td>ElGamal</td><td>rfc2409_1024, rfc3526_1536, rfc3526_2048, rfc3526_3072, rfc3526_4096, rfc3526_6144, rfc3526_8192,
+                        rfc7919_ffdhe2048, rfc7919_ffdhe3072, rfc7919_ffdhe4096, rfc7919_ffdhe6144, rfc7919_ffdhe8192</td></tr>
                     <tr><td>EC</td><td>sect571k1, sect571r1, secp521r1, sect409k1, sect409r1, secp384r1, sect283k1, sect283r1, secp256k1,
                         secp256r1, sect239k1, sect233k1, sect233r1, secp224k1, secp224r1, sect193r1, sect193r2, secp192k1, secp192r1, sect163k1,
                         sect163r1, sect163r2, secp160k1, secp160r1, secp160r2, sect131r1, sect131r2, secp128r1, secp128r2, sect113r1, sect113r2,
@@ -71,5 +73,5 @@
                 </table>
             </subsection>
         </section>
-     </body>
+    </body>
 </document>
