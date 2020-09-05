@@ -97,7 +97,7 @@
     <BuildNumberPluginVersion>1.4</BuildNumberPluginVersion>
     <BuildHelperPluginVersion>3.2.0</BuildHelperPluginVersion>
     <JarPluginVersion>3.2.0</JarPluginVersion>
-    <ProjectInfoPluginVersion>3.1.0</ProjectInfoPluginVersion>
+    <ProjectInfoPluginVersion>3.1.1</ProjectInfoPluginVersion>
     <JxrPluginVersion>3.0.0</JxrPluginVersion>
     <JavaDocPluginVersion>3.1.1</JavaDocPluginVersion>
     <SourcePluginVersion>3.2.1</SourcePluginVersion>
