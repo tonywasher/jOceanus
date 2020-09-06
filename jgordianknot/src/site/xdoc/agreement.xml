@@ -165,18 +165,15 @@
         <section name="Algorithms">
             <p>The following agreement algorithms are supported.</p>
             <table class="defTable">
-                <tr><th class="defHdr">Algorithm</th><th class="defHdr">Variants</th><th>Notes</th></tr>
-                <tr><td>RSA</td><td>RSA-KEM</td><td>Not available on JCA</td></tr>
-                <tr><td>DH</td><td>Anonymous, Basic, Signed, MQV, Unified</td><td>ECIES not available on JCA</td></tr>
-                <tr><td>EC</td><td>ECIES, Anonymous, Basic, Signed, MQV, Unified</td><td/></tr>
-                <tr><td>GOST2012</td><td>ECIES, Anonymous, Basic, Signed, MQV, Unified</td><td>Not available on JCA</td></tr>
-                <tr><td>DSTU4145</td><td>ECIES, Anonymous, Basic, Signed, MQV, Unified</td><td>Not available on JCA</td></tr>
-                <tr><td>SM2</td><td>ECIES, Anonymous, Basic, Signed, MQV, Unified, SM2</td><td>Not available on JCA</td></tr>
-                <tr><td>XDH</td><td>Anonymous, Basic, Signed, Unified</td><td/></tr>
-                <tr><td>NewHope</td><td>Anonymous</td><td/></tr>
+                <tr><th class="defHdr">Algorithm</th><th>Type</th><th class="defHdr">KeyTypes</th><th>Notes</th></tr>
+                <tr><td>KEM</td><td>Anonymous</td><td>RSA, EC, GOST2012, DSTU4145, SM2</td><td>Not available on JCA</td></tr>
+                <tr><td>Anonymous</td><td>Anonymous</td><td>DH, EC. GOST2012, DSTU4145, SM2, XDH, NewHope</td><td/></tr>
+                <tr><td>Basic</td><td>Anonymous</td><td>DH, EC, GOST2012, DSTU4145, SM2, XDH</td><td/></tr>
+                <tr><td>Signed</td><td>Signed</td><td>DH, EC, GOST2012, DSTU4145, SM2, XDH</td><td/></tr>
+                <tr><td>MQV</td><td>Handshake</td><td>DH, EC, GOST2012, DSTU4145, SM2</td><td/></tr>
+                <tr><td>Unified</td><td>Handshake</td><td>DH, EC, GOST2012, DSTU4145, SM2, XDH</td><td/></tr>
+                <tr><td>SM2</td><td>Handshake</td><td>EC, GOST2012, SM2</td><td>Not available on JCA</td></tr>
             </table>
-            <p>The RSA-KEM, ECIES and Anonymous variants use Anonymous Agreements. All others use Handshake agreements.</p>
-            <p>The Unified, MQV and SM2 variants support keyConfirmation.</p>
         </section>
     </body>
 </document>

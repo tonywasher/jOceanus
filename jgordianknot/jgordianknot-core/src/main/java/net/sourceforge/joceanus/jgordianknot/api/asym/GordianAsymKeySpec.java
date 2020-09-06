@@ -132,6 +132,15 @@ public final class GordianAsymKeySpec {
     }
 
     /**
+     * Create ElGamalKey.
+     * @param pGroup the group
+     * @return the KeySpec
+     */
+    public static GordianAsymKeySpec elGamal(final GordianDHGroup pGroup) {
+        return new GordianAsymKeySpec(GordianAsymKeyType.ELGAMAL, pGroup);
+    }
+
+    /**
      * Create EdDSA25519 Key.
      * @return the KeySpec
      */
@@ -499,6 +508,7 @@ public final class GordianAsymKeySpec {
             case DSA:
                 return theSubKeyType instanceof GordianDSAKeyType;
             case DH:
+            case ELGAMAL:
                 return theSubKeyType instanceof GordianDHGroup;
             case EC:
                 return theSubKeyType instanceof GordianDSAElliptic;
@@ -550,6 +560,9 @@ public final class GordianAsymKeySpec {
 
         /* Add DH  */
         EnumSet.allOf(GordianDHGroup.class).forEach(g -> mySpecs.add(GordianAsymKeySpec.dh(g)));
+
+        /* Add ElGamal  */
+        EnumSet.allOf(GordianDHGroup.class).forEach(g -> mySpecs.add(GordianAsymKeySpec.elGamal(g)));
 
         /* Add EC */
         EnumSet.allOf(GordianDSAElliptic.class).forEach(c -> mySpecs.add(GordianAsymKeySpec.ec(c)));

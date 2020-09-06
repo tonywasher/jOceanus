@@ -478,7 +478,9 @@ public final class GordianAgreementSpec {
             case NEWHOPE:
                 myAgreements.addAll(listAllKDFs(pKeyType, GordianAgreementType.ANON));
                 break;
+            case EC:
             case SM2:
+            case GOST2012:
                 myAgreements.addAll(listAllKDFs(pKeyType, GordianAgreementType.KEM));
                 myAgreements.addAll(listAllKDFs(pKeyType, GordianAgreementType.ANON));
                 myAgreements.addAll(listAllKDFs(pKeyType, GordianAgreementType.BASIC));
@@ -490,10 +492,8 @@ public final class GordianAgreementSpec {
                 myAgreements.addAll(listAllKDFs(pKeyType, GordianAgreementType.SM2));
                 myAgreements.addAll(listAllKDFs(pKeyType, GordianAgreementType.SM2, Boolean.TRUE));
                 break;
-            case EC:
-            case GOST2012:
-            case DSTU4145:
             case DH:
+            case DSTU4145:
                 myAgreements.addAll(listAllKDFs(pKeyType, GordianAgreementType.KEM));
                 myAgreements.addAll(listAllKDFs(pKeyType, GordianAgreementType.ANON));
                 myAgreements.addAll(listAllKDFs(pKeyType, GordianAgreementType.BASIC));
@@ -528,6 +528,7 @@ public final class GordianAgreementSpec {
                                                           final GordianAgreementType pAgreementType) {
         return listAllKDFs(pAsymKeyType, pAgreementType, Boolean.FALSE);
     }
+
     /**
      * Create list of KDF variants.
      * @param pAsymKeyType the keyType

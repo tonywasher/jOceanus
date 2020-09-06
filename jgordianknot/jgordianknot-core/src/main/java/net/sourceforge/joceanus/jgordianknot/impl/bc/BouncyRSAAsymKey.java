@@ -508,6 +508,34 @@ public final class BouncyRSAAsymKey {
      * RSA Encryptor.
      */
     public static class BouncyRSAEncryptor
+            extends BouncyCoreEncryptor {
+        /**
+         * Constructor.
+         * @param pFactory the factory
+         * @param pSpec the encryptorSpec
+         * @throws OceanusException on error
+         */
+        BouncyRSAEncryptor(final BouncyFactory pFactory,
+                           final GordianEncryptorSpec pSpec) throws OceanusException {
+            /* Initialise underlying cipher */
+            super(pFactory, pSpec, new RSABlindedEngine());
+        }
+
+        @Override
+        protected BouncyRSAPublicKey getPublicKey() {
+            return (BouncyRSAPublicKey) super.getPublicKey();
+        }
+
+        @Override
+        protected BouncyRSAPrivateKey getPrivateKey() {
+            return (BouncyRSAPrivateKey) super.getPrivateKey();
+        }
+    }
+
+    /**
+     * RSA Encryptor.
+     */
+    public static class BouncyCoreEncryptor
             extends GordianCoreEncryptor {
         /**
          * The underlying encryptor.
@@ -518,14 +546,16 @@ public final class BouncyRSAAsymKey {
          * Constructor.
          * @param pFactory the factory
          * @param pSpec the encryptorSpec
+         * @param pEngine the underlying engine
          * @throws OceanusException on error
          */
-        BouncyRSAEncryptor(final BouncyFactory pFactory,
-                           final GordianEncryptorSpec pSpec) throws OceanusException {
+        protected BouncyCoreEncryptor(final BouncyFactory pFactory,
+                                      final GordianEncryptorSpec pSpec,
+                                      final AsymmetricBlockCipher pEngine) throws OceanusException {
             /* Initialise underlying cipher */
             super(pFactory, pSpec);
             final BouncyDigest myDigest = pFactory.getDigestFactory().createDigest(pSpec.getDigestSpec());
-            theEncryptor = new OAEPEncoding(new RSABlindedEngine(), myDigest.getDigest(), PSource.PSpecified.DEFAULT.getValue());
+            theEncryptor = new OAEPEncoding(pEngine, myDigest.getDigest(), PSource.PSpecified.DEFAULT.getValue());
         }
 
         @Override

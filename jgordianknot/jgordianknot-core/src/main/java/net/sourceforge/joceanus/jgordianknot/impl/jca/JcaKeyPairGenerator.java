@@ -31,6 +31,7 @@ import org.bouncycastle.crypto.params.DHParameters;
 import org.bouncycastle.jcajce.spec.DHDomainParameterSpec;
 import org.bouncycastle.jcajce.spec.EdDSAParameterSpec;
 import org.bouncycastle.jcajce.spec.XDHParameterSpec;
+import org.bouncycastle.jce.spec.ElGamalParameterSpec;
 import org.bouncycastle.pqc.crypto.lms.LMSParameters;
 import org.bouncycastle.pqc.jcajce.spec.LMSHSSParameterSpec;
 import org.bouncycastle.pqc.jcajce.spec.LMSParameterSpec;
@@ -180,6 +181,59 @@ public abstract class JcaKeyPairGenerator
 
             /* Create the factory */
             setKeyFactory(JcaAsymFactory.getJavaKeyFactory(RSA_ALGO, false));
+        }
+
+        @Override
+        public JcaKeyPair generateKeyPair() {
+            final KeyPair myPair = theGenerator.generateKeyPair();
+            final JcaPublicKey myPublic = new JcaPublicKey(getKeySpec(), myPair.getPublic());
+            final JcaPrivateKey myPrivate = new JcaPrivateKey(getKeySpec(), myPair.getPrivate());
+            return new JcaKeyPair(myPublic, myPrivate);
+        }
+    }
+
+    /**
+     * Jca ElGamal KeyPair generator.
+     */
+    public static class JcaElGamalKeyPairGenerator
+            extends JcaKeyPairGenerator {
+        /**
+         * RSA algorithm.
+         */
+        private static final String ELGAMAL_ALGO = "ELGAMAL";
+
+        /**
+         * Generator.
+         */
+        private final KeyPairGenerator theGenerator;
+
+        /**
+         * Constructor.
+         * @param pFactory the Security Factory
+         * @param pKeySpec the keySpec
+         * @throws OceanusException on error
+         */
+        JcaElGamalKeyPairGenerator(final JcaFactory pFactory,
+                                   final GordianAsymKeySpec pKeySpec) throws OceanusException {
+            /* Initialise underlying class */
+            super(pFactory, pKeySpec);
+
+            /* Protect against exceptions */
+            try {
+                /* Create the parameter generator */
+                final GordianDHGroup myGroup = pKeySpec.getDHGroup();
+                final DHParameters myParms = myGroup.getParameters();
+                final ElGamalParameterSpec mySpec = new ElGamalParameterSpec(myParms.getP(), myParms.getQ());
+
+                /* Create and initialise the generator */
+                theGenerator = JcaAsymFactory.getJavaKeyPairGenerator(ELGAMAL_ALGO, false);
+                theGenerator.initialize(mySpec, getRandom());
+
+                /* Create the factory */
+                setKeyFactory(JcaAsymFactory.getJavaKeyFactory(ELGAMAL_ALGO, false));
+            } catch (InvalidAlgorithmParameterException e) {
+                throw new GordianCryptoException("Failed to create ElGamalGenerator", e);
+            }
         }
 
         @Override

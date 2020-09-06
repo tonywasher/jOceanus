@@ -41,6 +41,11 @@ public enum GordianAsymKeyType {
     DH,
 
     /**
+     * ElGamal.
+     */
+    ELGAMAL,
+
+    /**
      * SM2.
      */
     SM2,

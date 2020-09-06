@@ -26,6 +26,7 @@ import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyDSAAsymKey.BouncyDSAK
 import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyDSTUAsymKey.BouncyDSTUKeyPairGenerator;
 import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyEdDSAAsymKey.BouncyEd25519KeyPairGenerator;
 import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyEdDSAAsymKey.BouncyEd448KeyPairGenerator;
+import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyElGamalAsymKey.BouncyElGamalKeyPairGenerator;
 import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyEllipticAsymKey.BouncyECKeyPairGenerator;
 import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyGOSTAsymKey.BouncyGOSTKeyPairGenerator;
 import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyLMSAsymKey.BouncyHSSKeyPairGenerator;
@@ -124,6 +125,8 @@ public class BouncyAsymFactory
         switch (pKeySpec.getKeyType()) {
             case RSA:
                 return new BouncyRSAKeyPairGenerator(getFactory(), pKeySpec);
+            case ELGAMAL:
+                return new BouncyElGamalKeyPairGenerator(getFactory(), pKeySpec);
             case EC:
             case SM2:
                 return new BouncyECKeyPairGenerator(getFactory(), pKeySpec);

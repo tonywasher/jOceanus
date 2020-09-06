@@ -59,14 +59,14 @@ import org.bouncycastle.crypto.engines.VMPCEngine;
 import org.bouncycastle.crypto.engines.VMPCKSA3Engine;
 import org.bouncycastle.crypto.engines.XSalsa20Engine;
 import org.bouncycastle.crypto.engines.XTEAEngine;
-import org.bouncycastle.crypto.engines.Zuc128Engine;
-import org.bouncycastle.crypto.engines.Zuc256Engine;
 import org.bouncycastle.crypto.ext.digests.Blake2b;
 import org.bouncycastle.crypto.ext.digests.Blake2s;
 import org.bouncycastle.crypto.ext.engines.AnubisEngine;
 import org.bouncycastle.crypto.ext.engines.Blake2XEngine;
 import org.bouncycastle.crypto.ext.engines.KMACEngine;
 import org.bouncycastle.crypto.ext.engines.SkeinXofEngine;
+import org.bouncycastle.crypto.ext.engines.Zuc128Engine;
+import org.bouncycastle.crypto.ext.engines.Zuc256Engine;
 import org.bouncycastle.crypto.ext.modes.ChaChaPoly1305;
 import org.bouncycastle.crypto.ext.engines.MARSEngine;
 import org.bouncycastle.crypto.ext.engines.RabbitEngine;
@@ -391,10 +391,14 @@ public class BouncyCipherFactory
                 return new KCTRBlockCipher(pEngine);
             case CFB:
                 return new CFBBlockCipher(pEngine, Byte.SIZE * pEngine.getBlockSize());
+            case CFB8:
+                return new CFBBlockCipher(pEngine, Byte.SIZE);
             case GCFB:
                 return new GCFBBlockCipher(pEngine);
             case OFB:
                 return new OFBBlockCipher(pEngine, Byte.SIZE * pEngine.getBlockSize());
+            case OFB8:
+                return new OFBBlockCipher(pEngine, Byte.SIZE);
             case GOFB:
                 return new GOFBBlockCipher(pEngine);
             case G3413CBC:

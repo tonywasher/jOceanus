@@ -30,6 +30,7 @@ import org.bouncycastle.asn1.cryptopro.GOST3410PublicKeyAlgParameters;
 import org.bouncycastle.asn1.edec.EdECObjectIdentifiers;
 import org.bouncycastle.asn1.isara.IsaraObjectIdentifiers;
 import org.bouncycastle.asn1.nist.NISTObjectIdentifiers;
+import org.bouncycastle.asn1.oiw.ElGamalParameter;
 import org.bouncycastle.asn1.oiw.OIWObjectIdentifiers;
 import org.bouncycastle.asn1.pkcs.DHParameter;
 import org.bouncycastle.asn1.pkcs.PKCSObjectIdentifiers;
@@ -96,6 +97,11 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
  */
 public class GordianAsymAlgId {
     /**
+     * TWO as big integer.
+     */
+    private static final BigInteger TWO = BigInteger.valueOf(2);
+
+    /**
      * The algorithm error.
      */
     private static final String ERROR_ALGO = "Unrecognised algorithm";
@@ -119,6 +125,7 @@ public class GordianAsymAlgId {
      * The treeDigest error.
      */
     private static final String ERROR_TREEDIGEST = "Unsupported treeDigest: ";
+
     /**
      * The parser map.
      */
@@ -133,6 +140,7 @@ public class GordianAsymAlgId {
 
         /* Register the parsers */
         GordianRSAEncodedParser.register(this);
+        GordianElGamalEncodedParser.register(this);
         GordianDSAEncodedParser.register(this);
         GordianDHEncodedParser.register(this);
         GordianECEncodedParser.register(this);
@@ -385,6 +393,62 @@ public class GordianAsymAlgId {
                         + pParms.getP().bitLength());
             }
             return  GordianAsymKeySpec.dh(myGroup);
+        }
+    }
+
+    /**
+     * ElGamal Encoded parser.
+     */
+    public static class GordianElGamalEncodedParser implements GordianEncodedParser {
+        /**
+         * Registrar.
+         * @param pIdManager the idManager
+         */
+        static void register(final GordianAsymAlgId pIdManager) {
+            pIdManager.registerParser(OIWObjectIdentifiers.elGamalAlgorithm, new GordianElGamalEncodedParser());
+        }
+
+        @Override
+        public GordianAsymKeySpec determineKeySpec(final SubjectPublicKeyInfo pInfo) throws OceanusException {
+            final DHParameters myParms = determineParameters(pInfo.getAlgorithm());
+            return determineKeySpec(myParms);
+        }
+
+        @Override
+        public GordianAsymKeySpec determineKeySpec(final PrivateKeyInfo pInfo) throws OceanusException {
+            final DHParameters myParms = determineParameters(pInfo.getPrivateKeyAlgorithm());
+            return determineKeySpec(myParms);
+        }
+
+        /**
+         * Obtain parameters from encoded sequence.
+         * @param pId the algorithm Identifier
+         * @return the parameters
+         */
+        public static DHParameters determineParameters(final AlgorithmIdentifier pId) {
+            /* Access algorithmId */
+            final ASN1ObjectIdentifier myId = pId.getAlgorithm();
+
+            /* Access the ElGamalParameter */
+            final ElGamalParameter myParams = ElGamalParameter.getInstance(pId.getParameters());
+
+            /* Convert to DH parameters */
+            return new DHParameters(myParams.getP(), TWO, myParams.getG());
+        }
+
+        /**
+         * Obtain keySpec from Parameters.
+         * @param pParms the parameters
+         * @return the keySpec
+         * @throws OceanusException on error
+         */
+        private static  GordianAsymKeySpec determineKeySpec(final DHParameters pParms) throws OceanusException {
+            final GordianDHGroup myGroup = GordianDHGroup.getGroupForParams(pParms);
+            if (myGroup == null) {
+                throw new GordianDataException("Unsupported DH parameters: "
+                        + pParms.getP().bitLength());
+            }
+            return  GordianAsymKeySpec.elGamal(myGroup);
         }
     }
 

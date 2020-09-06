@@ -126,7 +126,14 @@ public enum GordianAgreementType {
      * @return true/false
      */
     public static boolean hasSM2(final GordianAsymKeyType pKeyType) {
-        return pKeyType == GordianAsymKeyType.SM2;
+        switch (pKeyType) {
+            case EC:
+            case SM2:
+            case GOST2012:
+                return true;
+            default:
+                return false;
+        }
     }
 
     /**

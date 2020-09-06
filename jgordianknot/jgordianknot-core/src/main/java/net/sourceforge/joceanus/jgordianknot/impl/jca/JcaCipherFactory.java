@@ -310,6 +310,8 @@ public class JcaCipherFactory
             case OCB:
             case GOFB:
             case GCFB:
+            case CFB8:
+            case OFB8:
                 return myMode.name();
             case CBC:
             case G3413CBC:

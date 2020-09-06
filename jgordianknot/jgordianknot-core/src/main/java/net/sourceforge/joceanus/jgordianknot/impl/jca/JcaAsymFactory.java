@@ -32,6 +32,7 @@ import net.sourceforge.joceanus.jgordianknot.impl.jca.JcaKeyPairGenerator.JcaDHK
 import net.sourceforge.joceanus.jgordianknot.impl.jca.JcaKeyPairGenerator.JcaDSAKeyPairGenerator;
 import net.sourceforge.joceanus.jgordianknot.impl.jca.JcaKeyPairGenerator.JcaECKeyPairGenerator;
 import net.sourceforge.joceanus.jgordianknot.impl.jca.JcaKeyPairGenerator.JcaEdKeyPairGenerator;
+import net.sourceforge.joceanus.jgordianknot.impl.jca.JcaKeyPairGenerator.JcaElGamalKeyPairGenerator;
 import net.sourceforge.joceanus.jgordianknot.impl.jca.JcaKeyPairGenerator.JcaLMSKeyPairGenerator;
 import net.sourceforge.joceanus.jgordianknot.impl.jca.JcaKeyPairGenerator.JcaMcElieceKeyPairGenerator;
 import net.sourceforge.joceanus.jgordianknot.impl.jca.JcaKeyPairGenerator.JcaNewHopeKeyPairGenerator;
@@ -118,6 +119,8 @@ public class JcaAsymFactory
         switch (pKeySpec.getKeyType()) {
             case RSA:
                 return new JcaRSAKeyPairGenerator(getFactory(), pKeySpec);
+            case ELGAMAL:
+                return new JcaElGamalKeyPairGenerator(getFactory(), pKeySpec);
             case EC:
             case SM2:
             case DSTU4145:
