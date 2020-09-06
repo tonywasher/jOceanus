@@ -41,9 +41,19 @@ public enum GordianCipherMode {
     CFB,
 
     /**
+     * CFB8 Mode.
+     */
+    CFB8,
+
+    /**
      * OFB Mode.
      */
     OFB,
+
+    /**
+     * OFB8 Mode.
+     */
+    OFB8,
 
     /**
      * EAX Mode.

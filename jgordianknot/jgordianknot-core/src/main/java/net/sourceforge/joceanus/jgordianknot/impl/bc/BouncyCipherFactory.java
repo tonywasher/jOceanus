@@ -391,10 +391,14 @@ public class BouncyCipherFactory
                 return new KCTRBlockCipher(pEngine);
             case CFB:
                 return new CFBBlockCipher(pEngine, Byte.SIZE * pEngine.getBlockSize());
+            case CFB8:
+                return new CFBBlockCipher(pEngine, Byte.SIZE);
             case GCFB:
                 return new GCFBBlockCipher(pEngine);
             case OFB:
                 return new OFBBlockCipher(pEngine, Byte.SIZE * pEngine.getBlockSize());
+            case OFB8:
+                return new OFBBlockCipher(pEngine, Byte.SIZE);
             case GOFB:
                 return new GOFBBlockCipher(pEngine);
             case G3413CBC:
