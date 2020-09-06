@@ -73,12 +73,9 @@ public class BouncyEncryptorFactory
             case ELGAMAL:
                 return new BouncyElGamalEncryptor(getFactory(), pSpec);
             case EC:
-            case GOST2012:
                 return new BouncyECEncryptor(getFactory(), pSpec);
             case SM2:
-                return pSpec.getSM2EncryptionSpec() == null
-                       ? new BouncyECEncryptor(getFactory(), pSpec)
-                       : new BouncySM2Encryptor(getFactory(), pSpec);
+                return new BouncySM2Encryptor(getFactory(), pSpec);
             case MCELIECE:
                 return GordianMcElieceEncryptionType.STANDARD.equals(pSpec.getMcElieceType())
                        ? new BouncyMcElieceEncryptor(getFactory(), pSpec)

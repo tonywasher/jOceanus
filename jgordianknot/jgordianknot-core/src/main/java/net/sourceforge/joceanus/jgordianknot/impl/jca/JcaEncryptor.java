@@ -316,33 +316,33 @@ public final class JcaEncryptor {
          * @return the algorithm name
          */
         private static String getAlgorithmName(final GordianEncryptorSpec pSpec) {
-            /* If this is an SM2 encryptor */
-            if (GordianAsymKeyType.SM2.equals(pSpec.getKeyType())) {
+            /* If this is a McEliece encryptor */
+            if (GordianAsymKeyType.MCELIECE.equals(pSpec.getKeyType())) {
                 /* Switch on encryptor type */
-                final GordianSM2EncryptionSpec mySpec = pSpec.getSM2EncryptionSpec();
-                final GordianDigestSpec myDigestSpec = mySpec.getDigestSpec();
-                final GordianDigestType myDigestType = myDigestSpec.getDigestType();
-                switch (myDigestType) {
-                    case SHA2:
-                        return "SM2withSHA" + myDigestSpec.getDigestLength();
-                    case BLAKE:
-                        return "SM2withBlake2" + (GordianLength.LEN_512.equals(myDigestSpec.getDigestLength()) ? "b" : "s");
-                    case WHIRLPOOL:
-                    case SM3:
+                switch (pSpec.getMcElieceType()) {
+                    case FUJISAKI:
+                        return "McElieceFujisaki";
+                    case KOBARAIMAI:
+                        return "McElieceKobaraImai";
+                    case POINTCHEVAL:
                     default:
-                        return "SM2with" +  myDigestType;
+                        return "McEliecePointcheval";
                 }
             }
 
             /* Switch on encryptor type */
-            switch (pSpec.getMcElieceType()) {
-                case FUJISAKI:
-                    return "McElieceFujisaki";
-                case KOBARAIMAI:
-                    return "McElieceKobaraImai";
-                case POINTCHEVAL:
+            final GordianSM2EncryptionSpec mySpec = pSpec.getSM2EncryptionSpec();
+            final GordianDigestSpec myDigestSpec = mySpec.getDigestSpec();
+            final GordianDigestType myDigestType = myDigestSpec.getDigestType();
+            switch (myDigestType) {
+                case SHA2:
+                    return "SM2withSHA" + myDigestSpec.getDigestLength();
+                case BLAKE:
+                    return "SM2withBlake2" + (GordianLength.LEN_512.equals(myDigestSpec.getDigestLength()) ? "b" : "s");
+                case WHIRLPOOL:
+                case SM3:
                 default:
-                    return "McEliecePointcheval";
+                    return "SM2with" +  myDigestType;
             }
         }
     }

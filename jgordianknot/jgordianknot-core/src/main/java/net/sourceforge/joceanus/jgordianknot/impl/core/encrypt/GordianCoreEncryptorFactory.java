@@ -100,14 +100,28 @@ public abstract class GordianCoreEncryptorFactory
             return false;
         }
 
-        /* Check encryptor matches keyPair */
-        if (pEncryptorSpec.getKeyType() != pKeySpec.getKeyType()) {
-            return false;
-        }
-
         /* Check that the encryptorSpec is supported */
         if (!validEncryptorSpec(pEncryptorSpec)) {
             return false;
+        }
+
+        /* Check encryptor matches keyPair */
+        final GordianAsymKeyType myKeyType = pKeySpec.getKeyType();
+        final GordianAsymKeyType myEncType = pEncryptorSpec.getKeyType();
+        switch (myEncType) {
+            case SM2:
+            case EC:
+                if (!GordianAsymKeyType.EC.equals(myKeyType)
+                    && !GordianAsymKeyType.GOST2012.equals(myKeyType)
+                    && !GordianAsymKeyType.SM2.equals(myKeyType)) {
+                    return false;
+                }
+                break;
+            default:
+                if (!myKeyType.equals(myEncType)) {
+                    return false;
+                }
+                break;
         }
 
         /* Disallow EC if the curve does not support encryption */

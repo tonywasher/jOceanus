@@ -84,6 +84,9 @@ public class JcaAgreementFactory
             case NEWHOPE:
                 return getNHAgreement(pAgreementSpec);
             case EC:
+            case GOST2012:
+            case DSTU4145:
+            case SM2:
                 return getECAgreement(pAgreementSpec);
             case DH:
                 return getDHAgreement(pAgreementSpec);
@@ -225,24 +228,26 @@ public class JcaAgreementFactory
             return false;
         }
 
-        /* Switch on KeyType */
+        /* Disallow SM2 */
         final GordianAgreementType myType = pSpec.getAgreementType();
+        if (GordianAgreementType.SM2.equals(myType)) {
+            return false;
+        }
+
+        /* Switch on KeyType */
         switch (pSpec.getAsymKeyType()) {
             case NEWHOPE:
                 return true;
             case EC:
-                return !GordianAgreementType.KEM.equals(myType);
+            case GOST2012:
+            case DSTU4145:
+            case SM2:
             case DH:
-                return !GordianAgreementType.KEM.equals(myType)
-                        && !GordianAgreementType.SM2.equals(myType);
+                return !GordianAgreementType.KEM.equals(myType);
             case XDH:
                 return !GordianAgreementType.KEM.equals(myType)
-                        && !GordianAgreementType.MQV.equals(myType)
-                        && !GordianAgreementType.SM2.equals(myType);
+                        && !GordianAgreementType.MQV.equals(myType);
             case RSA:
-            case DSTU4145:
-            case GOST2012:
-            case SM2:
             default:
                 return false;
         }

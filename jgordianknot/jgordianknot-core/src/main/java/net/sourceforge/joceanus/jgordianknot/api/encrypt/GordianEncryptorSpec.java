@@ -331,18 +331,16 @@ public final class GordianEncryptorSpec {
                 myEncryptors.add(GordianEncryptorSpec.elGamal(GordianDigestSpec.sha2(GordianLength.LEN_384)));
                 myEncryptors.add(GordianEncryptorSpec.elGamal(GordianDigestSpec.sha2(GordianLength.LEN_512)));
                 break;
+            case EC:
             case SM2:
-                myEncryptors.add(GordianEncryptorSpec.sm2());
+            case GOST2012:
+                /* Add EC-ElGamal */
+                myEncryptors.add(GordianEncryptorSpec.ec());
+
                 /* Loop through the encryptionSpecs */
                 for (GordianSM2EncryptionSpec mySpec : GordianSM2EncryptionSpec.listPossibleSpecs()) {
                     myEncryptors.add(GordianEncryptorSpec.sm2(mySpec));
                 }
-                break;
-            case EC:
-                myEncryptors.add(GordianEncryptorSpec.ec());
-                break;
-            case GOST2012:
-                myEncryptors.add(GordianEncryptorSpec.gost2012());
                 break;
             case MCELIECE:
                 myEncryptors.add(GordianEncryptorSpec.mcEliece(GordianMcElieceEncryptionType.STANDARD));

@@ -19,9 +19,6 @@ package net.sourceforge.joceanus.jgordianknot.impl.bc;
 import java.io.IOException;
 import java.security.spec.PKCS8EncodedKeySpec;
 import java.security.spec.X509EncodedKeySpec;
-import java.util.Arrays;
-
-import javax.crypto.spec.PSource;
 
 import org.bouncycastle.asn1.ASN1Integer;
 import org.bouncycastle.asn1.oiw.ElGamalParameter;
@@ -29,10 +26,7 @@ import org.bouncycastle.asn1.oiw.OIWObjectIdentifiers;
 import org.bouncycastle.asn1.pkcs.PrivateKeyInfo;
 import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
 import org.bouncycastle.asn1.x509.SubjectPublicKeyInfo;
-import org.bouncycastle.crypto.AsymmetricBlockCipher;
 import org.bouncycastle.crypto.AsymmetricCipherKeyPair;
-import org.bouncycastle.crypto.InvalidCipherTextException;
-import org.bouncycastle.crypto.encodings.OAEPEncoding;
 import org.bouncycastle.crypto.engines.ElGamalEngine;
 import org.bouncycastle.crypto.generators.ElGamalKeyPairGenerator;
 import org.bouncycastle.crypto.params.AsymmetricKeyParameter;
@@ -41,7 +35,6 @@ import org.bouncycastle.crypto.params.ElGamalKeyGenerationParameters;
 import org.bouncycastle.crypto.params.ElGamalParameters;
 import org.bouncycastle.crypto.params.ElGamalPrivateKeyParameters;
 import org.bouncycastle.crypto.params.ElGamalPublicKeyParameters;
-import org.bouncycastle.crypto.params.ParametersWithRandom;
 import org.bouncycastle.crypto.util.PrivateKeyFactory;
 import org.bouncycastle.crypto.util.PublicKeyFactory;
 
@@ -51,8 +44,8 @@ import net.sourceforge.joceanus.jgordianknot.api.encrypt.GordianEncryptorSpec;
 import net.sourceforge.joceanus.jgordianknot.api.key.GordianKeyPair;
 import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyKeyPair.BouncyPrivateKey;
 import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyKeyPair.BouncyPublicKey;
+import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyRSAAsymKey.BouncyCoreEncryptor;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianCryptoException;
-import net.sourceforge.joceanus.jgordianknot.impl.core.encrypt.GordianCoreEncryptor;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
@@ -266,12 +259,7 @@ public final class BouncyElGamalAsymKey {
      * ElGamal Encryptor.
      */
     public static class BouncyElGamalEncryptor
-            extends GordianCoreEncryptor {
-        /**
-         * The underlying encryptor.
-         */
-        private final AsymmetricBlockCipher theEncryptor;
-
+            extends BouncyCoreEncryptor {
         /**
          * Constructor.
          * @param pFactory the factory
@@ -281,123 +269,17 @@ public final class BouncyElGamalAsymKey {
         BouncyElGamalEncryptor(final BouncyFactory pFactory,
                                final GordianEncryptorSpec pSpec) throws OceanusException {
             /* Initialise underlying cipher */
-            super(pFactory, pSpec);
-            final BouncyDigest myDigest = pFactory.getDigestFactory().createDigest(pSpec.getDigestSpec());
-            theEncryptor = new OAEPEncoding(new ElGamalEngine(), myDigest.getDigest(), PSource.PSpecified.DEFAULT.getValue());
+            super(pFactory, pSpec, new ElGamalEngine());
         }
 
         @Override
-        protected BouncyPublicKey<?> getPublicKey() {
-            return (BouncyPublicKey<?>) super.getPublicKey();
+        protected BouncyElGamalPublicKey getPublicKey() {
+            return (BouncyElGamalPublicKey) super.getPublicKey();
         }
 
         @Override
-        protected BouncyPrivateKey<?> getPrivateKey() {
-            return (BouncyPrivateKey<?>) super.getPrivateKey();
-        }
-
-        @Override
-        public void initForEncrypt(final GordianKeyPair pKeyPair) throws OceanusException {
-            /* Initialise underlying cipher */
-            super.initForEncrypt(pKeyPair);
-
-            /* Initialise for encryption */
-            final ParametersWithRandom myParms = new ParametersWithRandom(getPublicKey().getPublicKey(), getRandom());
-            theEncryptor.init(true, myParms);
-        }
-
-        @Override
-        public void initForDecrypt(final GordianKeyPair pKeyPair) throws OceanusException {
-            /* Initialise underlying cipher */
-            super.initForDecrypt(pKeyPair);
-
-            /* Initialise for decryption */
-            theEncryptor.init(false, getPrivateKey().getPrivateKey());
-        }
-
-        @Override
-        public byte[] encrypt(final byte[] pBytes) throws OceanusException {
-            /* Check that we are in encryption mode */
-            checkMode(GordianEncryptMode.ENCRYPT);
-
-            /* Encrypt the message */
-            return processData(pBytes);
-        }
-
-        @Override
-        public byte[] decrypt(final byte[] pBytes) throws OceanusException {
-            /* Check that we are in decryption mode */
-            checkMode(GordianEncryptMode.DECRYPT);
-
-            /* Decrypt the message */
-            return processData(pBytes);
-        }
-
-        /**
-         * Process a data buffer.
-         * @param pData the buffer to process
-         * @return the processed buffer
-         * @throws OceanusException on error
-         */
-        private byte[] processData(final byte[] pData) throws OceanusException {
-            try {
-                /* Create the output buffer */
-                int myInLen = pData.length;
-                final byte[] myOutput = new byte[getProcessedLength(myInLen)];
-
-                /* Access input block length */
-                final int myInBlockLength = theEncryptor.getInputBlockSize();
-
-                /* Loop encrypting the blocks */
-                int myInOff = 0;
-                int myOutOff = 0;
-                while (myInLen > 0) {
-                    /* Process the data */
-                    final int myLen = Math.min(myInLen, myInBlockLength);
-                    final byte[] myBlock = theEncryptor.processBlock(pData, myInOff, myLen);
-
-                    /* Copy to the output buffer */
-                    final int myOutLen = myBlock.length;
-                    System.arraycopy(myBlock, 0, myOutput, myOutOff, myOutLen);
-                    myOutOff += myOutLen;
-
-                    /* Move to next block */
-                    myInOff += myInBlockLength;
-                    myInLen -= myInBlockLength;
-                }
-
-                /* Return full buffer if possible */
-                if (myOutOff == myOutput.length) {
-                    return myOutput;
-                }
-
-                /* Cut down buffer */
-                final byte[] myReturn = Arrays.copyOf(myOutput, myOutOff);
-                Arrays.fill(myOutput, (byte) 0);
-                return myReturn;
-
-            } catch (InvalidCipherTextException e) {
-                throw new GordianCryptoException("Failed to process data", e);
-            }
-        }
-
-        /**
-         * Obtain the length of the buffer required for the processed output.
-         * @param pLength the length of input data
-         * @return the number of bytes.
-         */
-        private int getProcessedLength(final int pLength) {
-            return theEncryptor.getOutputBlockSize() * getNumBlocks(pLength, theEncryptor.getInputBlockSize());
-        }
-
-        /**
-         * Obtain the number of blocks required for the length in terms of blocks.
-         * @param pLength the length of data
-         * @param pBlockLength the blockLength
-         * @return the number of blocks.
-         */
-        private static int getNumBlocks(final int pLength, final int pBlockLength) {
-            return (pLength + pBlockLength - 1) / pBlockLength;
+        protected BouncyElGamalPrivateKey getPrivateKey() {
+            return (BouncyElGamalPrivateKey) super.getPrivateKey();
         }
     }
 }
