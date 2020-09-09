@@ -144,6 +144,7 @@ public class MetisSwingState {
      * Create the main panel.
      * @param pProgram the program state
      * @param pToolkit the toolkit
+     * @return the main panel
      * @throws OceanusException on error
      */
     protected MetisMainPanel createMain(final MetisProgram pProgram,

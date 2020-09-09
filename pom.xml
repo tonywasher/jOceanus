@@ -121,6 +121,7 @@
         <artifactId>maven-resources-plugin</artifactId>
         <version>${ResourcesPluginVersion}</version>
         <configuration>
+          <propertiesEncoding>ISO-8859-1</propertiesEncoding>
           <nonFilteredFileExtensions>
             <nonFilteredFileExtension>ods</nonFilteredFileExtension>
           </nonFilteredFileExtensions>
