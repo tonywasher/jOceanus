@@ -78,10 +78,13 @@ public class ThemisAnalysisModule {
         /* Initialise class */
         this(pLocation, new ThemisAnalysisDataMap());
 
-        /* consolidationPass process the packages */
+        /* initialPass */
+        performInitialPass();
+
+        /* consolidationPass */
         performConsolidationPass();
 
-        /* finalPass process the packages */
+        /* finalPass */
         performFinalPass();
     }
 
@@ -184,7 +187,19 @@ public class ThemisAnalysisModule {
     }
 
     /**
-     * consolidationPass process packages.
+     * initialPass.
+     * @throws OceanusException on error
+     */
+    void performInitialPass() throws OceanusException {
+        /* Loop through the packages */
+        for (ThemisAnalysisPackage myPackage : thePackages) {
+            /* Process the package */
+            myPackage.performInitialPass();
+        }
+    }
+
+    /**
+     * consolidationPass.
      * @throws OceanusException on error
      */
     void performConsolidationPass() throws OceanusException {
@@ -196,7 +211,7 @@ public class ThemisAnalysisModule {
     }
 
     /**
-     * secondPass process packages.
+     * finalPass.
      * @throws OceanusException on error
      */
     void performFinalPass() throws OceanusException {

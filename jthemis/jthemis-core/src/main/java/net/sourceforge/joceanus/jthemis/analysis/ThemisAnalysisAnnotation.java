@@ -118,5 +118,10 @@ public class ThemisAnalysisAnnotation
             pLine.stripStartChar(ThemisAnalysisChar.ANNOTATION);
             theAnnotation = pParser.parseDataType(pLine);
         }
+
+        @Override
+        public String toString() {
+            return theAnnotation.toString();
+        }
     }
 }
