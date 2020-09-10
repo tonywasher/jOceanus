@@ -96,7 +96,11 @@ public final class ThemisAnalysisBuilder {
 
             /* Handle start of nested sequence */
             if (myLine.endsWithChar(ThemisAnalysisChar.BRACE_OPEN)) {
-                myNest++;
+                /* Strip trailing comments */
+                myLine.stripTrailingComments();
+                if (myLine.endsWithChar(ThemisAnalysisChar.BRACE_OPEN)) {
+                    myNest++;
+                }
             }
 
             /* Add the line */
@@ -160,7 +164,11 @@ public final class ThemisAnalysisBuilder {
 
             /* Handle start of nested sequence */
             if (myLine.endsWithChar(ThemisAnalysisChar.BRACE_OPEN)) {
-                myNest++;
+                /* Strip trailing comments */
+                myLine.stripTrailingComments();
+                if (myLine.endsWithChar(ThemisAnalysisChar.BRACE_OPEN)) {
+                    myNest++;
+                }
             }
 
             /* Add the line */
@@ -194,6 +202,7 @@ public final class ThemisAnalysisBuilder {
             myBuilder.append(myLine);
         }
 
+        /* Return the string */
         return myBuilder.toString();
     }
 }

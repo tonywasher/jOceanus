@@ -341,7 +341,7 @@ public class ThemisAnalysisParser {
                     break;
             }
 
-            /* Else handle a standard block */
+            /* else handle a standard block */
         } else if (ThemisAnalysisBlock.checkBlock(pLine)) {
             theContents.add(new ThemisAnalysisBlock(this, pLine));
             return true;
@@ -489,17 +489,17 @@ public class ThemisAnalysisParser {
             }
         }
 
-        /* Try to process control statement */
-        return processControls(pLine);
+        /* Not processed */
+        return null;
     }
 
     /**
-     * Process control statements.
+     * Process a statement.
      * @param pLine the line
-     * @return the field/method or null
+     * @return the statement
      * @throws OceanusException on error
      */
-    private ThemisAnalysisElement processControls(final ThemisAnalysisLine pLine) throws OceanusException {
+    ThemisAnalysisElement processStatement(final ThemisAnalysisLine pLine) throws OceanusException {
         /* Look for a control keyWord */
         final String myToken = pLine.peekNextToken();
         final Object myType = KEYWORDS.get(myToken);
@@ -515,15 +515,14 @@ public class ThemisAnalysisParser {
                 case CONTINUE:
                 case YIELD:
                     pLine.stripNextToken();
-                    return new ThemisAnalysisControl(this, myKeyWord, pLine);
+                    return new ThemisAnalysisStatement(this, myKeyWord, pLine);
                 default:
                     break;
             }
         }
 
-        /* Not processed  ARW */
-        //return null;
-        return new ThemisAnalysisControl(this, pLine);
+        /* Standard statement */
+        return new ThemisAnalysisStatement(this, pLine);
     }
 
     /**

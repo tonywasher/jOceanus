@@ -110,6 +110,26 @@ public class ThemisAnalysisBlock
         return pBaseCount + 2;
     }
 
+    @Override
+    public String toString() {
+        /* Create builder */
+        final StringBuilder myBuilder = new StringBuilder();
+
+        /* Handle flags */
+        if (theHeader.getProperties().hasModifier(ThemisAnalysisModifier.STATIC)) {
+            myBuilder.append(ThemisAnalysisModifier.STATIC);
+            myBuilder.append(ThemisAnalysisChar.BLANK);
+        }
+        if (theHeader.getProperties().hasModifier(ThemisAnalysisModifier.SYNCHRONIZED)) {
+            myBuilder.append(ThemisAnalysisModifier.SYNCHRONIZED);
+            myBuilder.append(ThemisAnalysisChar.BLANK);
+        }
+
+        /* Add header */
+        myBuilder.append(theHeader);
+        return myBuilder.toString();
+    }
+
     /**
      * Check for block sequence.
      * @param pLine the line to check

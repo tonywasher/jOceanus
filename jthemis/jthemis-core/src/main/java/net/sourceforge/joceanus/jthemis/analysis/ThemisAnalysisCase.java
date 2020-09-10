@@ -162,6 +162,7 @@ public class ThemisAnalysisCase
             myBuilder.append(myCase);
         }
 
+        /* Return the string */
         return myBuilder.toString();
     }
 }

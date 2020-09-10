@@ -78,19 +78,32 @@ ThemisAnalysisScanner {
 
         /* Loop through the line */
         theCurPos = 0;
+        boolean maybeComment = false;
         for (;;) {
             /* If we have finished the line */
             if (theCurPos == theLength) {
-                /* Shift to the next line  ARW */
-                if (!theParser.hasLines()) {
-                    theResults.add(theCurLine);
-                    break;
-                }
+                /* Shift to the next line */
                 shiftToNextLine();
+                maybeComment = false;
             }
 
             /* Access current character */
             final char myChar = theCurLine.charAt(theCurPos);
+
+            /* If this is the comment character */
+            if (myChar == ThemisAnalysisChar.COMMENT) {
+                /* Flip flag */
+                maybeComment = !maybeComment;
+
+                /* If we have double comment */
+                if (!maybeComment) {
+                    /* Strip trailing comments and re-loop */
+                    theCurLine.stripTrailingComments();
+                    theCurPos = theLength;
+                }
+            } else {
+                maybeComment = false;
+            }
 
             /* If this is a single/double quote */
             if (myChar == ThemisAnalysisChar.SINGLEQUOTE
@@ -103,7 +116,12 @@ ThemisAnalysisScanner {
             } else if (myChar == pTerminator) {
                 /* Must be at the end of the line */
                 if (theCurPos != theLength - 1) {
-                    throw new ThemisDataException("Not at end of line");
+                    /* Strip trailing comments */
+                    theCurLine.stripTrailingComments();
+                    theLength = theCurLine.getLength();
+                    if (theCurPos != theLength - 1) {
+                        throw new ThemisDataException("Not at end of line");
+                    }
                 }
 
                 /* Strip end character, add to results and break loop */
@@ -176,12 +194,8 @@ ThemisAnalysisScanner {
              throw new ThemisDataException("Did not find terminator");
          }
 
-         /* Access the next line ARW */
-         final ThemisAnalysisElement myLine = theParser.popNextLine();
-         if (!(myLine instanceof ThemisAnalysisLine)) {
-             int i = 0;
-         }
-         theCurLine = (ThemisAnalysisLine) myLine;
+         /* Access the next line */
+         theCurLine = (ThemisAnalysisLine) theParser.popNextLine();
          theLength = theCurLine.getLength();
          theCurPos = 0;
     }

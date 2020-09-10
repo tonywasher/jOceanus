@@ -582,12 +582,26 @@ public class ThemisAnalysisLine
         final int myLength = getLength();
 
         /* Loop through the line */
+        boolean maybeComment = false;
         int myNested = pLevel;
         int mySkipped = 0;
         for (int i = pStart; i < myLength - mySkipped; i++) {
             /* Access position and current character */
             final int myPos = i + mySkipped;
             final char myChar = theBuffer.charAt(myPos);
+
+            /* If this is the comment character */
+            if (myChar == ThemisAnalysisChar.COMMENT) {
+                /* Flip flag */
+                maybeComment = !maybeComment;
+
+                /* If we have double comment, break loop */
+                if (!maybeComment) {
+                    break;
+                }
+            } else {
+                maybeComment = false;
+            }
 
             /* If this is a single/double quote */
             if (myChar == ThemisAnalysisChar.SINGLEQUOTE
@@ -617,6 +631,9 @@ public class ThemisAnalysisLine
 
     /**
      * Find end of single/double quoted sequence, allowing for escaped quote.
+     * <p>
+     *     Note that a quoted sequence cannot span lines.
+     * </p>
      * @param pStart the start position of the quote
      * @return the end position of the sequence.
      * @throws OceanusException on error

@@ -93,7 +93,7 @@ public class DataErrorList<E extends Enum<E>>
     // * Obtain the first error
     // * @return the first error (or null)
     // */
-    // public DataIteMetisViewerExceptionWrapper getFirst() {
+    // public DataItem<E> getFirst() {
     // return isEmpty()
     // ? null
     // : theList.get(0);

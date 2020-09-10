@@ -92,10 +92,7 @@ public class ThemisAnalysisEmbedded
         /* Parse the lines */
         initialProcessingPass(myParser);
 
-        /* Pop the trailing line ARW */
-        if (!pParser.hasLines()) {
-            int i = 0;
-        }
+        /* Pop the trailing line */
         theTrailer = (ThemisAnalysisLine) pParser.popNextLine();
 
         /* Make sure that there is a trailing semicolon */

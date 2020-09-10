@@ -21,9 +21,9 @@ import java.util.Deque;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
- * Control Statements.
+ * Statements.
  */
-public class ThemisAnalysisControl
+public class ThemisAnalysisStatement
     implements ThemisAnalysisProcessed {
     /**
      * The control.
@@ -41,8 +41,8 @@ public class ThemisAnalysisControl
      * @param pLine the line
      * @throws OceanusException on error
      */
-    ThemisAnalysisControl(final ThemisAnalysisParser pParser,
-                          final ThemisAnalysisLine pLine) throws OceanusException {
+    ThemisAnalysisStatement(final ThemisAnalysisParser pParser,
+                            final ThemisAnalysisLine pLine) throws OceanusException {
         this(pParser, null, pLine);
     }
 
@@ -53,9 +53,9 @@ public class ThemisAnalysisControl
      * @param pLine the line
      * @throws OceanusException on error
      */
-    ThemisAnalysisControl(final ThemisAnalysisParser pParser,
-                          final ThemisAnalysisKeyWord pControl,
-                          final ThemisAnalysisLine pLine) throws OceanusException {
+    ThemisAnalysisStatement(final ThemisAnalysisParser pParser,
+                            final ThemisAnalysisKeyWord pControl,
+                            final ThemisAnalysisLine pLine) throws OceanusException {
         /* Store parameters */
         theControl = pControl;
         theParameters = ThemisAnalysisBuilder.parseTrailers(pParser, pLine);

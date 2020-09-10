@@ -27,6 +27,11 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
 public class ThemisAnalysisBlank
     implements ThemisAnalysisProcessed {
     /**
+     * The in-line comments.
+     */
+    private static final String COMMENTS = "" + ThemisAnalysisChar.COMMENT + ThemisAnalysisChar.COMMENT;
+
+    /**
      * The blankLines.
      */
     private final List<ThemisAnalysisLine> theBlanks;
@@ -72,6 +77,6 @@ public class ThemisAnalysisBlank
      * @return true/false
      */
     static boolean isBlank(final ThemisAnalysisLine pLine) {
-        return pLine.getLength() == 0;
+        return pLine.getLength() == 0 || pLine.startsWithSequence(COMMENTS);
     }
 }
