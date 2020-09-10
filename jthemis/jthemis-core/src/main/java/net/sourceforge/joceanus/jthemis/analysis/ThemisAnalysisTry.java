@@ -159,4 +159,9 @@ public class ThemisAnalysisTry
         /* Add one for the clause terminator */
         return myNumLines + 1;
     }
+
+    @Override
+    public String toString() {
+        return ThemisAnalysisBuilder.formatLines(theHeaders);
+    }
 }

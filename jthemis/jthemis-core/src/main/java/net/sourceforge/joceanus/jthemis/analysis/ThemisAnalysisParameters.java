@@ -105,6 +105,7 @@ public class ThemisAnalysisParameters {
             myBuilder.append(theThrown.toString());
         }
 
+        /* return the string */
         return myBuilder.toString();
     }
 }

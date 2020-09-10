@@ -129,4 +129,9 @@ public class ThemisAnalysisCatch
         /* Return the lines */
         return myNumLines;
     }
+
+    @Override
+    public String toString() {
+        return ThemisAnalysisBuilder.formatLines(theHeaders);
+    }
 }

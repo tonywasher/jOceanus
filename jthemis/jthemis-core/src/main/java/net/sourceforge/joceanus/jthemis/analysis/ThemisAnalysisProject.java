@@ -75,11 +75,20 @@ public class ThemisAnalysisProject {
         /* Initiate search for modules */
         parseProjectFile(new File(theLocation, ThemisDSMMaven.POM));
 
-        /* ConsolidationPass process the packages */
-        performConsolidationPass();
+        /* InitialPass */
+        if (theError == null) {
+            performInitialPass();
+        }
 
-        /* FinalPass process the packages */
-        performFinalPass();
+        /* ConsolidationPass */
+        if (theError == null) {
+            performConsolidationPass();
+        }
+
+        /* FinalPass */
+        if (theError == null) {
+            performFinalPass();
+        }
     }
 
     /**
@@ -125,20 +134,28 @@ public class ThemisAnalysisProject {
     /**
      * Parse the maven top-level project file.
      * @param pPom the project file
-     * @throws OceanusException on error
      */
-    private void parseProjectFile(final File pPom) throws OceanusException {
+    private void parseProjectFile(final File pPom) {
         /* If the pom file does not exist, just return */
         if (!pPom.exists()) {
             return;
         }
 
-        /* Add module if source directory exists */
-        final File mySrc = new File(pPom.getParent(), ThemisAnalysisModule.PATH_XTRA);
-        if (mySrc.exists()
+        /* Protect against exceptions */
+        try {
+            /* Add module if source directory exists */
+            final File mySrc = new File(pPom.getParent(), ThemisAnalysisModule.PATH_XTRA);
+            if (mySrc.exists()
                 && mySrc.isDirectory()) {
-            /* Add the module to the list */
-            theModules.add(new ThemisAnalysisModule(this, new File(pPom.getParent())));
+                /* Add the module to the list */
+                theModules.add(new ThemisAnalysisModule(this, new File(pPom.getParent())));
+            }
+
+            /* Handle exceptions */
+        } catch (OceanusException e) {
+            /* Save Exception */
+            theError = new ThemisIOException("Failed on consolidation pass", e);
+            return;
         }
 
         /* Protect against exceptions */
@@ -148,41 +165,80 @@ public class ThemisAnalysisProject {
 
             /* Loop through the modules */
             for (final String myModuleName : myPom.getModules()) {
+                /* Access module directory */
                 final File myModuleDir = new File(pPom.getParentFile(), myModuleName);
+
                 /* Process the project file */
                 parseProjectFile(new File(myModuleDir, ThemisDSMMaven.POM));
+
+                /* Break loop on error */
+                if (theError != null) {
+                    break;
+                }
             }
 
             /* Catch exceptions */
         } catch (IOException
                 | OceanusException e) {
             /* Save Exception */
-            theModules.clear();
             theError = new ThemisIOException("Failed to parse Project file", e);
         }
     }
 
     /**
-     * consolidationPass process modules.
-     * @throws OceanusException on error
+     * initialPass.
      */
-    private void performConsolidationPass() throws OceanusException {
-        /* Loop through the modules */
-        for (ThemisAnalysisModule myModule : theModules) {
-            /* Process the module */
-            myModule.performConsolidationPass();
+    private void performInitialPass() {
+        /* Protect against exceptions */
+        try {
+            /* Loop through the modules */
+            for (ThemisAnalysisModule myModule : theModules) {
+                /* Process the module */
+                myModule.performInitialPass();
+            }
+
+            /* Handle exceptions */
+        } catch (OceanusException e) {
+            /* Save Exception */
+            theError = new ThemisIOException("Failed on consolidation pass", e);
         }
     }
 
     /**
-     * finalPass process modules.
-     * @throws OceanusException on error
+     * consolidationPass.
      */
-    private void performFinalPass() throws OceanusException {
-        /* Loop through the modules */
-        for (ThemisAnalysisModule myModule : theModules) {
-            /* Process the module */
-            myModule.performFinalPass();
+    private void performConsolidationPass() {
+        /* Protect against exceptions */
+        try {
+            /* Loop through the modules */
+            for (ThemisAnalysisModule myModule : theModules) {
+                /* Process the module */
+                myModule.performConsolidationPass();
+            }
+
+            /* Handle exceptions */
+        } catch (OceanusException e) {
+            /* Save Exception */
+            theError = new ThemisIOException("Failed on consolidation pass", e);
+        }
+    }
+
+    /**
+     * finalPass.
+     */
+    private void performFinalPass() {
+        /* Protect against exceptions */
+        try {
+            /* Loop through the modules */
+            for (ThemisAnalysisModule myModule : theModules) {
+                /* Process the module */
+                myModule.performFinalPass();
+            }
+
+            /* Handle exceptions */
+        } catch (OceanusException e) {
+            /* Save Exception */
+            theError = new ThemisIOException("Failed on final pass", e);
         }
     }
 }

@@ -76,6 +76,28 @@ public class ThemisAnalysisAnnotation
                 && !pLine.peekNextToken().equals(ThemisAnalysisKeyWord.ANNOTATION.getKeyWord());
     }
 
+    @Override
+    public String toString() {
+        /* Start parameters */
+        final StringBuilder myBuilder = new StringBuilder();
+
+        /* Build parameters */
+        boolean bFirst = true;
+        for (ThemisAnalysisAnnotationRef myRef : theAnnotations) {
+            /* Handle separators */
+            if (!bFirst) {
+                myBuilder.append(ThemisAnalysisChar.LF);
+            } else {
+                bFirst = false;
+            }
+
+            /* Add parameter */
+            myBuilder.append(myRef);
+        }
+
+        return myBuilder.toString();
+    }
+
     /**
      * AnnotationReference.
      */
@@ -95,6 +117,11 @@ public class ThemisAnalysisAnnotation
                                     final ThemisAnalysisLine pLine) throws OceanusException {
             pLine.stripStartChar(ThemisAnalysisChar.ANNOTATION);
             theAnnotation = pParser.parseDataType(pLine);
+        }
+
+        @Override
+        public String toString() {
+            return theAnnotation.toString();
         }
     }
 }

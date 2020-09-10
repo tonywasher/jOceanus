@@ -96,6 +96,11 @@ public enum ThemisAnalysisKeyWord {
     CONTINUE("continue"),
 
     /**
+     * Yield.
+     */
+    YIELD("yield"),
+
+    /**
      * Do.
      */
     DO("do"),

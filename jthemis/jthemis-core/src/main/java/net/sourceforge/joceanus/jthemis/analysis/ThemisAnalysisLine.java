@@ -347,6 +347,38 @@ public class ThemisAnalysisLine
     }
 
     /**
+     * Strip NextToken.
+     * @return the next token
+     */
+    String stripLastToken() {
+        /* Access the next token */
+        final String myToken = peekLastToken();
+        stripEndSequence(myToken);
+        return myToken;
+    }
+
+    /**
+     * Peek lastToken.
+     * @return the last token
+     */
+    String peekLastToken() {
+        /* Loop through the buffer */
+        final int myLength = getLength();
+        for (int i = myLength - 1; i >= 0; i--) {
+            /* if we have hit whiteSpace or a terminator */
+            final char myChar = theBuffer.charAt(i);
+            if (isTerminator(myChar)) {
+                /* Strip out the characters */
+                final CharBuffer myToken = theBuffer.subSequence(i + 1, myLength);
+                return myToken.toString();
+            }
+        }
+
+        /* Whole buffer is the token */
+        return toString();
+    }
+
+    /**
      * Is the character a token terminator?
      * @param pChar the character
      * @return true/false
@@ -504,6 +536,19 @@ public class ThemisAnalysisLine
     }
 
     /**
+     * Strip the starting sequence.
+     * @param pSequence the sequence
+     */
+    void stripEndSequence(final CharSequence pSequence) {
+        /* If the line ends with the sequence */
+        if (endsWithSequence(pSequence)) {
+            /* adjust the length */
+            setLength(getLength() - pSequence.length());
+            stripTrailingWhiteSpace();
+        }
+    }
+
+    /**
      * Strip the ending character.
      * @param pChar the character
      */
@@ -537,12 +582,26 @@ public class ThemisAnalysisLine
         final int myLength = getLength();
 
         /* Loop through the line */
+        boolean maybeComment = false;
         int myNested = pLevel;
         int mySkipped = 0;
         for (int i = pStart; i < myLength - mySkipped; i++) {
             /* Access position and current character */
             final int myPos = i + mySkipped;
             final char myChar = theBuffer.charAt(myPos);
+
+            /* If this is the comment character */
+            if (myChar == ThemisAnalysisChar.COMMENT) {
+                /* Flip flag */
+                maybeComment = !maybeComment;
+
+                /* If we have double comment, break loop */
+                if (!maybeComment) {
+                    break;
+                }
+            } else {
+                maybeComment = false;
+            }
 
             /* If this is a single/double quote */
             if (myChar == ThemisAnalysisChar.SINGLEQUOTE
@@ -572,6 +631,9 @@ public class ThemisAnalysisLine
 
     /**
      * Find end of single/double quoted sequence, allowing for escaped quote.
+     * <p>
+     *     Note that a quoted sequence cannot span lines.
+     * </p>
      * @param pStart the start position of the quote
      * @return the end position of the sequence.
      * @throws OceanusException on error

@@ -453,8 +453,8 @@ public class TethysDecimal
         final long myDivisor = pDivisor.unscaledValue();
 
         /* Check for possible overflow */
-        final long numDivisorBits = 1 + Long.SIZE - Long.numberOfLeadingZeros(pDivisor.isPositive() ? myDivisor : -myDivisor);
-        final long numScaleBits = 1 + Long.SIZE - Long.numberOfLeadingZeros(POWERS_OF_TEN[theScale + 1]);
+        final int numDivisorBits = 1 + Long.SIZE - Long.numberOfLeadingZeros(pDivisor.isPositive() ? myDivisor : -myDivisor);
+        final int numScaleBits = 1 + Long.SIZE - Long.numberOfLeadingZeros(POWERS_OF_TEN[theScale + 1]);
         if (numDivisorBits + numScaleBits >= Long.SIZE) {
             calculateSafeQuotient(pDividend, pDivisor);
             return;

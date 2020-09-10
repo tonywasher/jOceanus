@@ -76,10 +76,13 @@ public class ThemisAnalysisPackage
         /* Initialise class */
         this(pLocation, new ThemisAnalysisDataMap(), pPackage);
 
-        /* consolidationPass process the files */
+        /* initialPass */
         performConsolidationPass();
 
-        /* finalPass process the files */
+        /* consolidationPass */
+        performConsolidationPass();
+
+        /* finalPass */
         performFinalPass();
     }
 
@@ -103,9 +106,6 @@ public class ThemisAnalysisPackage
 
         /* Build list of files */
         theFiles = listFiles(myLocation);
-
-        /* initialPass process the files */
-        performInitialPass();
     }
 
     /**
@@ -158,7 +158,7 @@ public class ThemisAnalysisPackage
      * initialPass process files.
      * @throws OceanusException on error
      */
-    private void performInitialPass() throws OceanusException {
+    void performInitialPass() throws OceanusException {
         /* Loop through the classes */
         for (ThemisAnalysisFile myFile : theFiles) {
             /* Process the file */

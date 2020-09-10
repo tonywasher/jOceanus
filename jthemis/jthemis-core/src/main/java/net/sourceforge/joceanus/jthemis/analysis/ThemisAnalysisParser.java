@@ -341,11 +341,15 @@ public class ThemisAnalysisParser {
                     break;
             }
 
-            /* Else handle an initializer block */
-        } else if (myToken.length() == 1
-                && myToken.charAt(0) == ThemisAnalysisChar.BRACE_OPEN) {
-            /* Create the block */
+            /* else handle a standard block */
+        } else if (ThemisAnalysisBlock.checkBlock(pLine)) {
             theContents.add(new ThemisAnalysisBlock(this, pLine));
+            return true;
+
+            /* else handle an embedded block */
+        } else if (ThemisAnalysisEmbedded.checkEmbedded(pLine)) {
+            /* Process an embedded block */
+            theContents.add(new ThemisAnalysisEmbedded(this, pLine));
             return true;
         }
 
@@ -381,6 +385,11 @@ public class ThemisAnalysisParser {
      * @return have we processed the line?
      */
     static Object parseCase(final ThemisAnalysisLine pLine) {
+        /* Handle default clause */
+        if (pLine.getProperties().hasModifier(ThemisAnalysisModifier.DEFAULT)) {
+            return ThemisAnalysisKeyWord.DEFAULT;
+        }
+
         /* Access case type */
         final String myToken = pLine.peekNextToken();
         final Object myType = KEYWORDS.get(myToken);
@@ -482,6 +491,38 @@ public class ThemisAnalysisParser {
 
         /* Not processed */
         return null;
+    }
+
+    /**
+     * Process a statement.
+     * @param pLine the line
+     * @return the statement
+     * @throws OceanusException on error
+     */
+    ThemisAnalysisElement processStatement(final ThemisAnalysisLine pLine) throws OceanusException {
+        /* Look for a control keyWord */
+        final String myToken = pLine.peekNextToken();
+        final Object myType = KEYWORDS.get(myToken);
+
+        /* If we have a keyWord */
+        if (myType instanceof ThemisAnalysisKeyWord) {
+            /* Switch on the type */
+            final ThemisAnalysisKeyWord myKeyWord = (ThemisAnalysisKeyWord) myType;
+            switch (myKeyWord) {
+                case RETURN:
+                case THROW:
+                case BREAK:
+                case CONTINUE:
+                case YIELD:
+                    pLine.stripNextToken();
+                    return new ThemisAnalysisStatement(this, myKeyWord, pLine);
+                default:
+                    break;
+            }
+        }
+
+        /* Standard statement */
+        return new ThemisAnalysisStatement(this, pLine);
     }
 
     /**

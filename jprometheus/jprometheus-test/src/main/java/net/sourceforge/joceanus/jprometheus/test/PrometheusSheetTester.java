@@ -78,9 +78,7 @@ public final class PrometheusSheetTester {
      */
     private static void writeSample(final PrometheusSheetWorkBookType pType,
                                     final String pName) {
-        /**
-         * Write a sample ODS Spreadsheet.
-         */
+        /* Write a sample ODS Spreadsheet. */
         try {
             /* Create workBook and sheet */
             System.out.println("Building " + pName);
@@ -108,7 +106,8 @@ public final class PrometheusSheetTester {
             try (FileInputStream myInFile = new FileInputStream(myXFile);
                  BufferedInputStream myInBuffer = new BufferedInputStream(myInFile)) {
                 myBook = PrometheusSheetProvider.loadFromStream(pType, myInBuffer);
-                mySheet = myBook.getSheet("TestData");            } catch (IOException
+                mySheet = myBook.getSheet("TestData");
+            } catch (IOException
                     | OceanusException e) {
                 LOGGER.fatal("Failed to load file", e);
                 return;
@@ -126,9 +125,7 @@ public final class PrometheusSheetTester {
      * Main entry point.
      */
     private static void loadRange() {
-        /**
-         * Load an ODS Spreadsheet using jOpenDocument
-         */
+        /* Load an ODS Spreadsheet using jOpenDocument */
         final File myFile = new File("C:\\Users\\Tony\\Documents\\MoneywiseNI.ods");
         try (FileInputStream myInFile = new FileInputStream(myFile);
              BufferedInputStream myInBuffer = new BufferedInputStream(myInFile)) {

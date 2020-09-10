@@ -120,10 +120,10 @@ public interface ThemisAnalysisContainer
                         ((ThemisAnalysisContainer) myResult).postProcessLines();
                     }
 
-                    /* Process statements */
+                    /* else */
                 } else {
-                    /* Just add the line for the moment */
-                    myContents.add(myElement);
+                    /* Process statement */
+                    myContents.add(myParser.processStatement(myLine));
                 }
 
                 /* Everything should now be a line. */
