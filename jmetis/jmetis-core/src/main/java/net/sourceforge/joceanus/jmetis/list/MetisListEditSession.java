@@ -275,8 +275,8 @@ public class MetisListEditSession
      * @return the new item
      */
     public <T extends MetisFieldVersionedItem> T createNewItem(final MetisListKey pItemType) {
-        /* Protect against exceptions */
-        // try {
+        /* Protect against exceptions try S */
+
         /* Start editing */
         newVersion();
 
@@ -305,14 +305,14 @@ public class MetisListEditSession
         /* Return the item */
         return myNew;
 
-        /* Handle exceptions */
-        // } catch (OceanusException e) {
-        /* Store error and cancel version */
-        // theError = e;
-        // cancelVersion();
-        // theEventManager.fireEvent(MetisListEvent.ERROR, theError);
-        // return null;
-        // }
+        /* Handle exceptions
+         E catch (OceanusException e) S
+         Store error and cancel version
+         theError = e;
+         cancelVersion();
+         theEventManager.fireEvent(MetisListEvent.ERROR, theError);
+         return null;
+         E */
     }
 
     /**

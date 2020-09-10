@@ -88,8 +88,9 @@ public class ThemisAnalysisCase
             /* Access next line */
             final ThemisAnalysisLine myLine = (ThemisAnalysisLine) pParser.popNextLine();
 
-            /* Process comments and blanks */
-            boolean processed = pParser.processCommentsAndBlanks(myLine);
+            /* Process comments/blanks/language */
+            boolean processed = pParser.processCommentsAndBlanks(myLine)
+                    || pParser.processLanguage(myLine);
 
             /* If we have not processed */
             if (!processed) {
@@ -110,7 +111,7 @@ public class ThemisAnalysisCase
                         /* reset and restore line and break loop */
                         myLine.reset();
                         pParser.pushLine(myLine);
-                        break;
+                        return;
                     }
                 }
             }
@@ -139,5 +140,28 @@ public class ThemisAnalysisCase
     @Override
     public int getNumLines() {
         return theNumLines;
+    }
+
+    @Override
+    public String toString() {
+        /* Start parameters */
+        final StringBuilder myBuilder = new StringBuilder();
+
+        /* Build parameters */
+        boolean bFirst = true;
+        for (Object myCase : theCases) {
+            /* Handle separators */
+            if (!bFirst) {
+                myBuilder.append(ThemisAnalysisChar.COMMA);
+                myBuilder.append(ThemisAnalysisChar.BLANK);
+            } else {
+                bFirst = false;
+            }
+
+            /* Add case */
+            myBuilder.append(myCase);
+        }
+
+        return myBuilder.toString();
     }
 }

@@ -525,26 +525,26 @@ public class TransactionInfoSet
                                                            final TransactionAsset pPartner) {
         /* Don't allow yet */
         return MetisFieldRequired.NOTALLOWED;
-        /* Account or Partner must be security holding */
-        // if (!(pAccount instanceof SecurityHolding)
-        // && !(pPartner instanceof SecurityHolding)) {
-        // return MetisFieldRequired.NOTALLOWED;
-        // }
-        // switch (pCategory) {
-        // case STOCKSPLIT:
-        // case STOCKTAKEOVER:
-        // case STOCKDEMERGER:
-        // case SECURITYREPLACE:
-        // case OPTIONSEXERCISE:
-        // case TRANSFER:
-        // return MetisFieldRequired.MUSTEXIST;
-        // case DIVIDEND:
-        // return MetisDataDifference.isEqual(pAccount, pPartner)
-        // ? MetisFieldRequired.MUSTEXIST
-        // : MetisFieldRequired.NOTALLOWED;
-        // default:
-        // return MetisFieldRequired.NOTALLOWED;
-        // }
+        /* Account or Partner must be security holding
+         if (!(pAccount instanceof SecurityHolding)
+         && !(pPartner instanceof SecurityHolding)) {
+         return MetisFieldRequired.NOTALLOWED;
+         }
+         switch (pCategory) {
+         case STOCKSPLIT:
+         case STOCKTAKEOVER:
+         case STOCKDEMERGER:
+         case SECURITYREPLACE:
+         case OPTIONSEXERCISE:
+         case TRANSFER:
+         return MetisFieldRequired.MUSTEXIST;
+         case DIVIDEND:
+         return MetisDataDifference.isEqual(pAccount, pPartner)
+         ? MetisFieldRequired.MUSTEXIST
+         : MetisFieldRequired.NOTALLOWED;
+         default:
+         return MetisFieldRequired.NOTALLOWED;
+         } */
     }
 
     /**
@@ -559,21 +559,21 @@ public class TransactionInfoSet
                                                                 final TransactionAsset pPartner) {
         /* Don't allow yet */
         return MetisFieldRequired.NOTALLOWED;
-        /* Account or Partner must be security holding */
-        // if (!(pAccount instanceof SecurityHolding)
-        // && !(pPartner instanceof SecurityHolding)) {
-        // return MetisFieldRequired.NOTALLOWED;
-        // }
-        // switch (pCategory) {
-        // case TRANSFER:
-        // return MetisFieldRequired.CANEXIST;
-        // case DIVIDEND:
-        // return MetisDataDifference.isEqual(pAccount, pPartner)
-        // ? MetisFieldRequired.CANEXIST
-        // : MetisFieldRequired.NOTALLOWED;
-        // default:
-        // return MetisFieldRequired.NOTALLOWED;
-        // }
+        /* Account or Partner must be security holding
+         if (!(pAccount instanceof SecurityHolding)
+         && !(pPartner instanceof SecurityHolding)) {
+         return MetisFieldRequired.NOTALLOWED;
+         }
+         switch (pCategory) {
+         case TRANSFER:
+         return MetisFieldRequired.CANEXIST;
+         case DIVIDEND:
+         return MetisDataDifference.isEqual(pAccount, pPartner)
+         ? MetisFieldRequired.CANEXIST
+         : MetisFieldRequired.NOTALLOWED;
+         default:
+         return MetisFieldRequired.NOTALLOWED;
+         } */
     }
 
     /**

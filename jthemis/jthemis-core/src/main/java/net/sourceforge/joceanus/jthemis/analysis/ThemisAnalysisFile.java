@@ -305,7 +305,7 @@ public class ThemisAnalysisFile
                 /* Process the class */
                 processed = myParser.processClass(myLine);
                 if (!processed) {
-                    throw new ThemisDataException("Unexpected contruct in file");
+                    throw new ThemisDataException("Unexpected construct in file");
                 }
 
                 /* Process any trailing blanks/comments */

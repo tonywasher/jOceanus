@@ -113,6 +113,11 @@ public class ThemisAnalysisModule {
         return theName;
     }
 
+    @Override
+    public String toString() {
+        return getName();
+    }
+
     /**
      * Obtain the location.
      * @return the location

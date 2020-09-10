@@ -28,6 +28,11 @@ import net.sourceforge.joceanus.jthemis.analysis.ThemisAnalysisContainer.ThemisA
 public class ThemisAnalysisBlock
         implements ThemisAnalysisContainer, ThemisAnalysisAdoptable {
     /**
+     * The Header.
+     */
+    private final ThemisAnalysisLine theHeader;
+
+    /**
      * The properties.
      */
     private final ThemisAnalysisProperties theProperties;
@@ -55,6 +60,9 @@ public class ThemisAnalysisBlock
      */
     ThemisAnalysisBlock(final ThemisAnalysisParser pParser,
                         final ThemisAnalysisLine pLine) throws OceanusException {
+        /* Store parameters */
+        theHeader = pLine;
+
         /* Store parameters */
         theProperties = pLine.getProperties();
         theParent = pParser.getParent();
@@ -100,5 +108,26 @@ public class ThemisAnalysisBlock
     public int calculateNumLines(final int pBaseCount) {
         /* Add one for the clause start and terminator */
         return pBaseCount + 2;
+    }
+
+    /**
+     * Check for block sequence.
+     * @param pLine the line to check
+     * @return true/false
+     */
+    static boolean checkBlock(final ThemisAnalysisLine pLine) {
+        /* Only interested in possible blocks */
+        if (!pLine.endsWithChar(ThemisAnalysisChar.BRACE_OPEN)) {
+            return false;
+        }
+
+        /* Check for synchronised block */
+        if (pLine.getProperties().hasModifier(ThemisAnalysisModifier.SYNCHRONIZED)
+                && pLine.startsWithChar(ThemisAnalysisChar.PARENTHESIS_OPEN)) {
+            return true;
+        }
+
+        /* Check for standard block */
+        return pLine.getLength() == 1;
     }
 }

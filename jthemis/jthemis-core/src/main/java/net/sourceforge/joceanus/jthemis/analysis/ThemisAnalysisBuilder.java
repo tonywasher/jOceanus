@@ -170,4 +170,30 @@ public final class ThemisAnalysisBuilder {
         /* return the body */
         return myBody;
     }
+
+    /**
+     * format lines.
+     * @param pLines the lines to format
+     * @return the formatted lines
+     */
+    public static String formatLines(final Deque<ThemisAnalysisElement> pLines) {
+        /* Start parameters */
+        final StringBuilder myBuilder = new StringBuilder();
+
+        /* Build parameters */
+        boolean bFirst = true;
+        for (ThemisAnalysisElement myLine : pLines) {
+            /* Handle separators */
+            if (!bFirst) {
+                myBuilder.append(ThemisAnalysisChar.LF);
+            } else {
+                bFirst = false;
+            }
+
+            /* Add parameter */
+            myBuilder.append(myLine);
+        }
+
+        return myBuilder.toString();
+    }
 }

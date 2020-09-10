@@ -347,6 +347,38 @@ public class ThemisAnalysisLine
     }
 
     /**
+     * Strip NextToken.
+     * @return the next token
+     */
+    String stripLastToken() {
+        /* Access the next token */
+        final String myToken = peekLastToken();
+        stripEndSequence(myToken);
+        return myToken;
+    }
+
+    /**
+     * Peek lastToken.
+     * @return the last token
+     */
+    String peekLastToken() {
+        /* Loop through the buffer */
+        final int myLength = getLength();
+        for (int i = myLength - 1; i >= 0; i--) {
+            /* if we have hit whiteSpace or a terminator */
+            final char myChar = theBuffer.charAt(i);
+            if (isTerminator(myChar)) {
+                /* Strip out the characters */
+                final CharBuffer myToken = theBuffer.subSequence(i + 1, myLength);
+                return myToken.toString();
+            }
+        }
+
+        /* Whole buffer is the token */
+        return toString();
+    }
+
+    /**
      * Is the character a token terminator?
      * @param pChar the character
      * @return true/false
@@ -501,6 +533,19 @@ public class ThemisAnalysisLine
 
         /* Test the character */
         return theBuffer.charAt(myLength - 1) == pChar;
+    }
+
+    /**
+     * Strip the starting sequence.
+     * @param pSequence the sequence
+     */
+    void stripEndSequence(final CharSequence pSequence) {
+        /* If the line ends with the sequence */
+        if (endsWithSequence(pSequence)) {
+            /* adjust the length */
+            setLength(getLength() - pSequence.length());
+            stripTrailingWhiteSpace();
+        }
     }
 
     /**
