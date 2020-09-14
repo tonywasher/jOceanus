@@ -30,14 +30,14 @@ public interface GordianEncryptor {
     GordianEncryptorSpec getEncryptorSpec();
 
     /**
-     * Initialise for signature.
+     * Initialise for encrypt.
      * @param pKeyPair the keyPair
      * @throws OceanusException on error
      */
     void initForEncrypt(GordianKeyPair pKeyPair) throws OceanusException;
 
     /**
-     * Initialise for verify.
+     * Initialise for decrypt.
      * @param pKeyPair the keyPair
      * @throws OceanusException on error
      */

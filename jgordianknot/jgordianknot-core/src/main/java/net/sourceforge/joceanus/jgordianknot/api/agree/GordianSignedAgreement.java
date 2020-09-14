@@ -18,13 +18,13 @@ package net.sourceforge.joceanus.jgordianknot.api.agree;
 
 import net.sourceforge.joceanus.jgordianknot.api.asym.GordianAsymKeySpec;
 import net.sourceforge.joceanus.jgordianknot.api.key.GordianKeyPair;
-import net.sourceforge.joceanus.jgordianknot.api.sign.GordianSignatureSpec;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
  * Signed TwoShot Agreement.
  */
-public interface GordianSignedAgreement {
+public interface GordianSignedAgreement
+        extends GordianAgreement {
     /**
      * Create the clientHello message.
      * @param pKeySpec the keySpec for the ephemeral keys
@@ -36,13 +36,11 @@ public interface GordianSignedAgreement {
     /**
      * Accept the clientHello.
      * @param pServer the server keyPair
-     * @param pSignSpec the signature spec
      * @param pClientHello the incoming clientHello message
      * @return the serverHello message
      * @throws OceanusException on error
      */
     byte[] acceptClientHello(GordianKeyPair pServer,
-                             GordianSignatureSpec pSignSpec,
                              byte[] pClientHello)  throws OceanusException;
 
     /**

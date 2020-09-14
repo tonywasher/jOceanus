@@ -14,19 +14,17 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  ******************************************************************************/
-package net.sourceforge.joceanus.jgordianknot.api.key;
-
-import net.sourceforge.joceanus.jgordianknot.api.asym.GordianAsymKeySpec;
+package net.sourceforge.joceanus.jgordianknot.api.keypairset;
 
 /**
- * Asymmetric KeyPair.
+ * KeyPairSet.
  */
-public interface GordianKeyPair {
+public interface GordianKeyPairSet {
     /**
      * Obtain the keySpec.
      * @return the keySpec
      */
-    GordianAsymKeySpec getKeySpec();
+    GordianKeyPairSetSpec getKeyPairSetSpec();
 
     /**
      * Is only the public key known?

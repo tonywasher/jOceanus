@@ -138,12 +138,10 @@ public abstract class GordianCoreSignedAgreement
     /**
      * build the serverHello message.
      * @param pServer the server keyPair
-     * @param pSignSpec the signature spec
      * @return the serverHello message
      * @throws OceanusException on error
      */
-    protected byte[] buildServerHello(final GordianKeyPair pServer,
-                                      final GordianSignatureSpec pSignSpec) throws OceanusException {
+    protected byte[] buildServerHello(final GordianKeyPair pServer) throws OceanusException {
         /* Obtain the encoding for the server ephemeral publicKey */
         final GordianAsymFactory myAsym = getFactory().getAsymmetricFactory();
         final GordianKeyPairGenerator myGenerator = myAsym.getKeyPairGenerator(theServerEphemeral.getKeySpec());
@@ -151,9 +149,10 @@ public abstract class GordianCoreSignedAgreement
         final byte[] myServerEncoded = myGenerator.getX509Encoding(theServerEphemeral).getEncoded();
 
         /* Create the signer */
+        final GordianSignatureSpec mySpec = GordianSignatureSpec.defaultForKey(pServer.getKeySpec());
         final GordianCoreSignatureFactory mySigns = (GordianCoreSignatureFactory) myAsym.getSignatureFactory();
-        final AlgorithmIdentifier myAlgId = mySigns.getIdentifierForSpecAndKeyPair(pSignSpec, pServer);
-        final GordianSignature mySigner = mySigns.createSigner(pSignSpec);
+        final AlgorithmIdentifier myAlgId = mySigns.getIdentifierForSpecAndKeyPair(mySpec, pServer);
+        final GordianSignature mySigner = mySigns.createSigner(mySpec);
 
         /* Build the signature */
         mySigner.initForSigning(pServer);

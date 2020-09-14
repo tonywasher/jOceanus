@@ -607,7 +607,6 @@ public final class BouncyEllipticAsymKey {
 
         @Override
         public byte[] acceptClientHello(final GordianKeyPair pServer,
-                                        final GordianSignatureSpec pSignSpec,
                                         final byte[] pClientHello) throws OceanusException {
             /* Process clientHello */
             processClientHello(pClientHello);
@@ -623,7 +622,7 @@ public final class BouncyEllipticAsymKey {
             storeSecret(mySecret);
 
             /* Return the serverHello */
-            return buildServerHello(pServer, pSignSpec);
+            return buildServerHello(pServer);
         }
 
         @Override

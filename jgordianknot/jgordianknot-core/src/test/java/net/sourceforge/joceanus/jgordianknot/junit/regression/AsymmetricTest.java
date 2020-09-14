@@ -83,7 +83,6 @@ public class AsymmetricTest {
     private static GordianFactory JCAFACTORY;
 
     /* The Agreement signers */
-    private static GordianSignatureSpec SIGNALG;
     private static GordianKeyPair BCSIGNER;
     private static GordianKeyPair JCASIGNER;
 
@@ -134,9 +133,6 @@ public class AsymmetricTest {
         myAsymFactory = JCAFACTORY.getAsymmetricFactory();
         myGenerator = myAsymFactory.getKeyPairGenerator(mySpec);
         JCASIGNER = myGenerator.deriveKeyPair(myPublic, myPrivate);
-
-        /* Create the signature Spec */
-        SIGNALG = GordianSignatureSpec.edDSA();
     }
 
     /**
@@ -483,7 +479,7 @@ public class AsymmetricTest {
             /* Check the agreement */
             final byte[] myClientHello = ((GordianSignedAgreement) mySender).createClientHello(myPair.getKeySpec());
             final byte[] myServerHello
-                    = ((GordianSignedAgreement) myResponder).acceptClientHello(mySignPair, SIGNALG, myClientHello);
+                    = ((GordianSignedAgreement) myResponder).acceptClientHello(mySignPair, myClientHello);
             ((GordianSignedAgreement) mySender).acceptServerHello(mySignPair, myServerHello);
 
             /* Handle ephemeral */
@@ -544,7 +540,7 @@ public class AsymmetricTest {
             /* Check the agreement */
             final byte[] myClientHello = ((GordianSignedAgreement) mySender).createClientHello(myPair.getKeySpec());
             final byte[] myServerHello
-                    = ((GordianSignedAgreement) myResponder).acceptClientHello(myPartnerSignPair, SIGNALG, myClientHello);
+                    = ((GordianSignedAgreement) myResponder).acceptClientHello(myPartnerSignPair, myClientHello);
             ((GordianSignedAgreement) mySender).acceptServerHello(mySignPair, myServerHello);
 
             /* Handle ephemeral */

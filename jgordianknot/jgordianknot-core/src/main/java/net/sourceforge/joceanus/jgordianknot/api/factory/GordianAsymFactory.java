@@ -90,7 +90,7 @@ public interface GordianAsymFactory {
     GordianKeyStoreFactory getKeyStoreFactory();
 
     /**
-     * Obtain predicate for keyAgreement.
+     * Obtain predicate for asymKeySpecs.
      * @return the predicate
      */
     Predicate<GordianAsymKeySpec> supportedAsymKeySpecs();

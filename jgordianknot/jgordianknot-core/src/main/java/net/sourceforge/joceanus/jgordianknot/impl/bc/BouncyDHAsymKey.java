@@ -54,7 +54,6 @@ import net.sourceforge.joceanus.jgordianknot.api.asym.GordianDHGroup;
 import net.sourceforge.joceanus.jgordianknot.api.factory.GordianAsymFactory;
 import net.sourceforge.joceanus.jgordianknot.api.key.GordianKeyPair;
 import net.sourceforge.joceanus.jgordianknot.api.key.GordianKeyPairGenerator;
-import net.sourceforge.joceanus.jgordianknot.api.sign.GordianSignatureSpec;
 import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyKeyPair.BouncyPrivateKey;
 import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyKeyPair.BouncyPublicKey;
 import net.sourceforge.joceanus.jgordianknot.impl.core.agree.GordianCoreBasicAgreement;
@@ -452,7 +451,6 @@ public final class BouncyDHAsymKey {
 
         @Override
         public byte[] acceptClientHello(final GordianKeyPair pServer,
-                                        final GordianSignatureSpec pSignSpec,
                                         final byte[] pClientHello) throws OceanusException {
             /* Process clientHello */
             processClientHello(pClientHello);
@@ -468,7 +466,7 @@ public final class BouncyDHAsymKey {
             storeSecret(mySecret);
 
             /* Return the serverHello */
-            return buildServerHello(pServer, pSignSpec);
+            return buildServerHello(pServer);
         }
 
         @Override

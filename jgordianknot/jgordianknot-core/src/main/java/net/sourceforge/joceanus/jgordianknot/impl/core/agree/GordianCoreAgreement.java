@@ -130,8 +130,8 @@ public abstract class GordianCoreAgreement
      * @param pFactory the factory
      * @param pSpec the agreementSpec
      */
-    GordianCoreAgreement(final GordianCoreFactory pFactory,
-                         final GordianAgreementSpec pSpec) {
+    protected GordianCoreAgreement(final GordianCoreFactory pFactory,
+                                   final GordianAgreementSpec pSpec) {
         theFactory = pFactory;
         theSpec = pSpec;
         theStatus = GordianAgreementStatus.CLEAN;
@@ -181,7 +181,7 @@ public abstract class GordianCoreAgreement
         /* Must be in result available state */
         checkStatus(GordianAgreementStatus.RESULT_AVAILABLE);
 
-        /* Obtainresult to rreturnand reset the agreement */
+        /* Obtain result to  return and reset the agreement */
         final Object myResult = theResult;
         reset();
 
@@ -639,7 +639,7 @@ public abstract class GordianCoreAgreement
      * @return the identifier
      * @throws OceanusException on error
      */
-    AlgorithmIdentifier getIdentifierForResult() throws OceanusException {
+    protected AlgorithmIdentifier getIdentifierForResult() throws OceanusException {
         if (theResultType instanceof GordianFactoryType) {
             final ASN1ObjectIdentifier myOID = theResultType == GordianFactoryType.BC
                                            ? GordianCoreFactory.BCFACTORYOID
@@ -669,7 +669,7 @@ public abstract class GordianCoreAgreement
      * @param pResId the result algorithmId.
      * @throws OceanusException on error
      */
-    void processResultIdentifier(final AlgorithmIdentifier pResId) throws OceanusException {
+    public void processResultIdentifier(final AlgorithmIdentifier pResId) throws OceanusException {
         /* Look for a Factory */
         final ASN1ObjectIdentifier myAlgId = pResId.getAlgorithm();
         if (GordianCoreFactory.BCFACTORYOID.equals(myAlgId)) {

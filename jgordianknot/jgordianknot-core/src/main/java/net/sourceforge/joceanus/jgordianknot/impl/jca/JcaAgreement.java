@@ -33,9 +33,8 @@ import net.sourceforge.joceanus.jgordianknot.api.asym.GordianAsymKeyType;
 import net.sourceforge.joceanus.jgordianknot.api.factory.GordianAsymFactory;
 import net.sourceforge.joceanus.jgordianknot.api.key.GordianKeyPair;
 import net.sourceforge.joceanus.jgordianknot.api.key.GordianKeyPairGenerator;
-import net.sourceforge.joceanus.jgordianknot.api.sign.GordianSignatureSpec;
-import net.sourceforge.joceanus.jgordianknot.impl.core.agree.GordianCoreBasicAgreement;
 import net.sourceforge.joceanus.jgordianknot.impl.core.agree.GordianCoreAnonymousAgreement;
+import net.sourceforge.joceanus.jgordianknot.impl.core.agree.GordianCoreBasicAgreement;
 import net.sourceforge.joceanus.jgordianknot.impl.core.agree.GordianCoreEphemeralAgreement;
 import net.sourceforge.joceanus.jgordianknot.impl.core.agree.GordianCoreSignedAgreement;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianCryptoException;
@@ -402,7 +401,6 @@ public final class JcaAgreement {
 
         @Override
         public byte[] acceptClientHello(final GordianKeyPair pServer,
-                                        final GordianSignatureSpec pSignSpec,
                                         final byte[] pClientHello) throws OceanusException {
             /* Protect against exceptions */
             try {
@@ -426,7 +424,7 @@ public final class JcaAgreement {
                 storeSecret(theAgreement.generateSecret());
 
                 /* Return the serverHello */
-                return buildServerHello(pServer, pSignSpec);
+                return buildServerHello(pServer);
 
             } catch (InvalidKeyException
                     | InvalidAlgorithmParameterException e) {

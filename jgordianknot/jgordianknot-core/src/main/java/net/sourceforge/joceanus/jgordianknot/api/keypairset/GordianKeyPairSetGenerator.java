@@ -14,61 +14,61 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  ******************************************************************************/
-package net.sourceforge.joceanus.jgordianknot.api.key;
+package net.sourceforge.joceanus.jgordianknot.api.keypairset;
 
 import java.security.spec.PKCS8EncodedKeySpec;
 import java.security.spec.X509EncodedKeySpec;
 
-import net.sourceforge.joceanus.jgordianknot.api.asym.GordianAsymKeySpec;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
- * KeyPair Generator API.
+ * KeyPairSetGenerator.
  */
-public interface GordianKeyPairGenerator {
+public interface GordianKeyPairSetGenerator {
     /**
      * Obtain keySpec.
      * @return the keySpec
      */
-    GordianAsymKeySpec getKeySpec();
+    GordianKeyPairSetSpec getKeyPairSetSpec();
 
     /**
      * Generate a new KeyPair.
      * @return the new KeyPair
-     */
-    GordianKeyPair generateKeyPair();
-
-    /**
-     * Extract the X509 encoding for the public key.
-     * @param pKeyPair the keyPair
-     * @return the X509 publicKeySpec
      * @throws OceanusException on error
      */
-    X509EncodedKeySpec getX509Encoding(GordianKeyPair pKeyPair) throws OceanusException;
+    GordianKeyPairSet generateKeyPairSet() throws OceanusException;
+
+    /**
+     * Extract the X509 encoding for the public keyPairSet.
+     * @param pKeyPairSet the keyPairSet
+     * @return the X509 publicKeySetSpec
+     * @throws OceanusException on error
+     */
+    X509EncodedKeySpec getX509Encoding(GordianKeyPairSet pKeyPairSet) throws OceanusException;
 
     /**
      * Obtain PKCS8EncodedKeySpec.
-     * @param pKeyPair the keyPair
-     * @return the PrivateKeySpec
+     * @param pKeyPairSet the keyPairSet
+     * @return the PrivateKeySetSpec
      * @throws OceanusException on error
      */
-    PKCS8EncodedKeySpec getPKCS8Encoding(GordianKeyPair pKeyPair) throws OceanusException;
+    PKCS8EncodedKeySpec getPKCS8Encoding(GordianKeyPairSet pKeyPairSet) throws OceanusException;
 
     /**
-     * Create the keyPair from the PKCS8/X509 encodings.
-     * @param pPublicKey the encoded public key
-     * @param pPrivateKey the secured private key
-     * @return the keyPair
+     * Create the keyPairSet from the PKCS8/X509 encodings.
+     * @param pPublicKeySet the encoded public key
+     * @param pPrivateKeySet the secured private key
+     * @return the keyPairSet
      * @throws OceanusException on error
      */
-    GordianKeyPair deriveKeyPair(X509EncodedKeySpec pPublicKey,
-                                 PKCS8EncodedKeySpec pPrivateKey) throws OceanusException;
+    GordianKeyPairSet deriveKeyPairSet(X509EncodedKeySpec pPublicKeySet,
+                                       PKCS8EncodedKeySpec pPrivateKeySet) throws OceanusException;
 
     /**
-     * Derive the public-only keyPair from the X509 encoding.
-     * @param pPublicKeySpec the publicKeySpec
-     * @return the derived public-only keyPair
+     * Derive the public-only keyPairSet from the X509 encoding.
+     * @param pPublicKeySet the publicKeySetSpec
+     * @return the derived public-only keyPairSet
      * @throws OceanusException on error
      */
-    GordianKeyPair derivePublicOnlyKeyPair(X509EncodedKeySpec pPublicKeySpec) throws OceanusException;
+    GordianKeyPairSet derivePublicOnlyKeyPairSet(X509EncodedKeySpec pPublicKeySet) throws OceanusException;
 }

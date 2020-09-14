@@ -140,7 +140,7 @@ public class ThemisAnalysisEnum
 
             /* Process enumValue */
             if (!processed && look4Enum) {
-                look4Enum = processEnumValue(myLine);
+                look4Enum = processEnumValue(pParser, myLine);
                 processed = true;
             }
 
@@ -164,18 +164,24 @@ public class ThemisAnalysisEnum
 
     /**
      * process the enumValue.
+     *
+     * @param pParser the parser
      * @param pLine the line
-     * @return continue to look for eNums true, false
+     * @return continue to look for eNums true/false
      * @throws OceanusException on error
      */
-    private boolean processEnumValue(final ThemisAnalysisLine pLine) throws OceanusException {
+    private boolean processEnumValue(final ThemisAnalysisParser pParser,
+                                     final ThemisAnalysisLine pLine) throws OceanusException {
         /* Access the token */
-        final String myToken = pLine.stripNextToken();
+        ThemisAnalysisLine myLine = pLine;
+        final String myToken = myLine.stripNextToken();
         if (pLine.startsWithChar(ThemisAnalysisChar.PARENTHESIS_OPEN)) {
-            ThemisAnalysisParenthesis.stripParenthesisContents(pLine);
+            final ThemisAnalysisScanner myScanner = new ThemisAnalysisScanner(pParser);
+            myScanner.scanForParenthesis(myLine);
+            myLine = (ThemisAnalysisLine) pParser.popNextLine();
         }
         theValues.add(myToken);
-        return pLine.endsWithChar(ThemisAnalysisChar.COMMA);
+        return myLine.endsWithChar(ThemisAnalysisChar.COMMA);
     }
 
     @Override

@@ -150,7 +150,7 @@
                     /* Send myClientHello (plus Client Certificate) to server */
 
                     /* Server side */
-                    final byte[] myServerHello = myHandshakeServer.acceptClientHello(myServerPair, GordianSignatureSpec.edDSA(), myClientHello);
+                    final byte[] myServerHello = myHandshakeServer.acceptClientHello(myServerPair, myClientHello);
                     final GordianKeySetSpec myResultKeySetSpec = (GordianKeySetSpec) myHandshakeServer.getResultType();
                     final GordianKeySet myServerKeySet = (GordianKeySet) myHandshakeServer.getResult();
 
@@ -159,7 +159,7 @@
                     /* Client side */
                     myHandshakeClient.acceptServerHello(myServerPair, myServerHello);
                     final GordianKeySet myClientKeySet = (GordianKeySet) myHandshakeClient.getResult();
-                 </source>
+                </source>
             </subsection>
         </section>
         <section name="Algorithms">
@@ -168,7 +168,7 @@
                 <tr><th class="defHdr">Algorithm</th><th>Type</th><th class="defHdr">KeyTypes</th><th>Notes</th></tr>
                 <tr><td>KEM</td><td>Anonymous</td><td>RSA, EC, GOST2012, DSTU4145, SM2</td><td>Not available on JCA</td></tr>
                 <tr><td>Anonymous</td><td>Anonymous</td><td>DH, EC. GOST2012, DSTU4145, SM2, XDH, NewHope</td><td/></tr>
-                <tr><td>Basic</td><td>Anonymous</td><td>DH, EC, GOST2012, DSTU4145, SM2, XDH</td><td/></tr>
+                <tr><td>Basic</td><td>Handshake</td><td>DH, EC, GOST2012, DSTU4145, SM2, XDH</td><td/></tr>
                 <tr><td>Signed</td><td>Signed</td><td>DH, EC, GOST2012, DSTU4145, SM2, XDH</td><td/></tr>
                 <tr><td>MQV</td><td>Handshake</td><td>DH, EC, GOST2012, DSTU4145, SM2</td><td/></tr>
                 <tr><td>Unified</td><td>Handshake</td><td>DH, EC, GOST2012, DSTU4145, SM2, XDH</td><td/></tr>

@@ -53,7 +53,7 @@ public class GordianSM2EncryptionSpec {
      * @param pDigest the digestSpec
      */
     GordianSM2EncryptionSpec(final GordianSM2EncryptionType pType,
-                            final GordianDigestSpec pDigest) {
+                             final GordianDigestSpec pDigest) {
         /* Store parameters */
         theType = pType;
         theDigest = pDigest;

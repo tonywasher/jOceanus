@@ -1,4 +1,4 @@
-/*******************************************************************************
+/* *****************************************************************************
  * GordianKnot: Security Suite
  * Copyright 2012,2020 Tony Washer
  *
@@ -14,23 +14,8 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  ******************************************************************************/
-package net.sourceforge.joceanus.jgordianknot.api.key;
-
-import net.sourceforge.joceanus.jgordianknot.api.asym.GordianAsymKeySpec;
 
 /**
- * Asymmetric KeyPair.
+ * KeyPairSet core implementation.
  */
-public interface GordianKeyPair {
-    /**
-     * Obtain the keySpec.
-     * @return the keySpec
-     */
-    GordianAsymKeySpec getKeySpec();
-
-    /**
-     * Is only the public key known?
-     * @return true/false
-     */
-    boolean isPublicOnly();
-}
+package net.sourceforge.joceanus.jgordianknot.impl.core.keypairset;
