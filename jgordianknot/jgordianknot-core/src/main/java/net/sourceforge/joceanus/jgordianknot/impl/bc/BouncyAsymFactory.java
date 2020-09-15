@@ -45,6 +45,7 @@ import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyXMSSAsymKey.BouncyXMS
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianCoreFactory;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianDataException;
 import net.sourceforge.joceanus.jgordianknot.impl.core.keypair.GordianCoreAsymFactory;
+import net.sourceforge.joceanus.jgordianknot.impl.core.keypairset.GordianCoreKeyPairSetFactory;
 import net.sourceforge.joceanus.jgordianknot.impl.core.keystore.GordianCoreKeyStoreFactory;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
@@ -74,6 +75,7 @@ public class BouncyAsymFactory
         setSignatureFactory(new BouncySignatureFactory(pFactory));
         setAgreementFactory(new BouncyAgreementFactory(pFactory));
         setEncryptorFactory(new BouncyEncryptorFactory(pFactory));
+        setKeyPairSetFactory(new GordianCoreKeyPairSetFactory(this));
         setKeyStoreFactory(new GordianCoreKeyStoreFactory(this));
     }
 

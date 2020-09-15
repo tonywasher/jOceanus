@@ -17,6 +17,7 @@
 package net.sourceforge.joceanus.jgordianknot.impl.core.keypairset;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
@@ -89,6 +90,7 @@ public class GordianKeyPairSetSignedAgreement
         /* Loop through the agreements */
         final Iterator<GordianAsymKeySpec> myIterator = pKeyPairSetSpec.iterator();
         for (GordianSignedAgreement myAgreement : theAgreements) {
+            /* create the clientHello and add to message */
             myASN1.addMessage(myAgreement.createClientHello(myIterator.next()));
         }
 
@@ -105,6 +107,11 @@ public class GordianKeyPairSetSignedAgreement
      */
     public byte[] acceptClientHello(final GordianKeyPairSet pServer,
                                     final byte[] pClientHello)  throws OceanusException {
+        /* Check valid spec */
+        if (!pServer.getKeyPairSetSpec().canSign()) {
+            throw new GordianDataException(GordianCoreFactory.getInvalidText(pServer.getKeyPairSetSpec()));
+        }
+
         /* Parse the clientHello */
         final GordianKeyPairSetAgreeASN1 myHello = GordianKeyPairSetAgreeASN1.getInstance(pClientHello);
         final AlgorithmIdentifier myResId = myHello.getResultId();
@@ -124,10 +131,14 @@ public class GordianKeyPairSetSignedAgreement
         final Iterator<GordianKeyPair> myPairIterator = mySet.iterator();
         final Iterator<byte[]> myHelloIterator = myHello.msgIterator();
         for (GordianSignedAgreement myAgreement : theAgreements) {
+            /* process clientHello and add serverHello to response */
             myASN1.addMessage(myAgreement.acceptClientHello(myPairIterator.next(), myHelloIterator.next()));
+
+            /* build secret part */
             final byte[] myPart = (byte[]) myAgreement.getResult();
             System.arraycopy(myPart, 0, myResult, myOffset, myPartLen);
             myOffset += myPartLen;
+            Arrays.fill(myPart, (byte) 0);
         }
 
         /* Store the secret */
@@ -145,6 +156,11 @@ public class GordianKeyPairSetSignedAgreement
      */
     public void acceptServerHello(final GordianKeyPairSet pServer,
                                   final byte[] pServerHello) throws OceanusException {
+        /* Check valid spec */
+        if (!pServer.getKeyPairSetSpec().canSign()) {
+            throw new GordianDataException(GordianCoreFactory.getInvalidText(pServer.getKeyPairSetSpec()));
+        }
+
         /* Parse the serverHello */
         final GordianKeyPairSetAgreeASN1 myHello = GordianKeyPairSetAgreeASN1.getInstance(pServerHello);
 
@@ -159,10 +175,14 @@ public class GordianKeyPairSetSignedAgreement
         final Iterator<GordianKeyPair> myPairIterator = mySet.iterator();
         final Iterator<byte[]> myHelloIterator = myHello.msgIterator();
         for (GordianSignedAgreement myAgreement : theAgreements) {
+            /* process serverHello */
             myAgreement.acceptServerHello(myPairIterator.next(), myHelloIterator.next());
+
+            /* build secret part */
             final byte[] myPart = (byte[]) myAgreement.getResult();
             System.arraycopy(myPart, 0, myResult, myOffset, myPartLen);
             myOffset += myPartLen;
+            Arrays.fill(myPart, (byte) 0);
         }
 
         /* Store the secret */

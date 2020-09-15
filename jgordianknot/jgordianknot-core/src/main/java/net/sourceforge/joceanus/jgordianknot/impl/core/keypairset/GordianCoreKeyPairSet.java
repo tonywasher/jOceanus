@@ -19,6 +19,7 @@ package net.sourceforge.joceanus.jgordianknot.impl.core.keypairset;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Objects;
 
 import net.sourceforge.joceanus.jgordianknot.api.asym.GordianAsymKeySpec;
 import net.sourceforge.joceanus.jgordianknot.api.key.GordianKeyPair;
@@ -95,5 +96,28 @@ public class GordianCoreKeyPairSet
 
         /* Add the keyPair */
         theKeyPairs.put(mySpec, pKeyPair);
+    }
+
+    @Override
+    public boolean equals(final Object pThat) {
+        /* Handle trivial cases */
+        if (this == pThat) {
+            return true;
+        }
+        if (pThat == null) {
+            return false;
+        }
+
+        /* Check object is same class */
+        if (!(pThat instanceof GordianCoreKeyPairSet)) {
+            return false;
+        }
+        final GordianCoreKeyPairSet myThat = (GordianCoreKeyPairSet) pThat;
+        return Objects.equals(theKeyPairs, myThat.theKeyPairs);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(theKeyPairs);
     }
 }

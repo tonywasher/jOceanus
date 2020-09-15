@@ -23,12 +23,14 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.function.Predicate;
 
+import net.sourceforge.joceanus.jgordianknot.api.agree.GordianAgreementSpec;
 import net.sourceforge.joceanus.jgordianknot.api.factory.GordianAsymFactory;
 import net.sourceforge.joceanus.jgordianknot.api.keypairset.GordianKeyPairSetFactory;
 import net.sourceforge.joceanus.jgordianknot.api.keypairset.GordianKeyPairSetGenerator;
 import net.sourceforge.joceanus.jgordianknot.api.keypairset.GordianKeyPairSetSpec;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianCoreFactory;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianDataException;
+import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianLogicException;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
@@ -90,6 +92,27 @@ public class GordianCoreKeyPairSetFactory
     @Override
     public Predicate<GordianKeyPairSetSpec> supportedKeyPairSetSpecs() {
         return Objects::nonNull;
+    }
+
+    /**
+     * create keyPairSetAgreement.
+     * @param pAgreementSpec the keyPairSetSpec
+     * @return the encryptor
+     * @throws OceanusException on error
+     */
+    public Object getKeyPairSetAgreement(final GordianAgreementSpec pAgreementSpec) throws OceanusException {
+        /* Switch on agreementType */
+        final GordianCoreFactory myFactory = (GordianCoreFactory) theFactory.getFactory();
+        switch (pAgreementSpec.getAgreementType()) {
+            case ANON:
+                return new GordianKeyPairSetAnonymousAgreement(myFactory, pAgreementSpec);
+            case SIGNED:
+                return new GordianKeyPairSetSignedAgreement(myFactory, pAgreementSpec);
+            case UNIFIED:
+                return new GordianKeyPairSetHandshakeAgreement(myFactory, pAgreementSpec);
+            default:
+                throw new GordianLogicException(GordianCoreFactory.getInvalidText(pAgreementSpec));
+        }
     }
 
     /**

@@ -17,6 +17,7 @@
 package net.sourceforge.joceanus.jgordianknot.impl.core.keypairset;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
@@ -71,13 +72,13 @@ public class GordianKeyPairSetAnonymousAgreement
 
     /**
      * Create the clientHello message.
-     * @param pKeyPairSet the target keyPairSet
+     * @param pServer the target keyPairSet
      * @return the clientHello message
      * @throws OceanusException on error
      */
-    public byte[] createClientHello(final GordianKeyPairSet pKeyPairSet) throws OceanusException {
+    public byte[] createClientHello(final GordianKeyPairSet pServer) throws OceanusException {
         /* Check valid spec */
-        final GordianKeyPairSetSpec mySpec = pKeyPairSet.getKeyPairSetSpec();
+        final GordianKeyPairSetSpec mySpec = pServer.getKeyPairSetSpec();
         if (!mySpec.canAgree()) {
             throw new GordianDataException(GordianCoreFactory.getInvalidText(mySpec));
         }
@@ -92,12 +93,16 @@ public class GordianKeyPairSetAnonymousAgreement
         int myOffset = 0;
 
         /* Loop through the agreements */
-        final Iterator<GordianKeyPair> myIterator = ((GordianCoreKeyPairSet) pKeyPairSet).iterator();
+        final Iterator<GordianKeyPair> myIterator = ((GordianCoreKeyPairSet) pServer).iterator();
         for (GordianAnonymousAgreement myAgreement : theAgreements) {
+            /* create the clientHello and add to message */
             myASN1.addMessage(myAgreement.createClientHello(myIterator.next()));
+
+            /* build secret part */
             final byte[] myPart = (byte[]) myAgreement.getResult();
             System.arraycopy(myPart, 0, myResult, myOffset, myPartLen);
             myOffset += myPartLen;
+            Arrays.fill(myPart, (byte) 0);
         }
 
         /* Store the secret */
@@ -115,6 +120,12 @@ public class GordianKeyPairSetAnonymousAgreement
      */
     public void acceptClientHello(final GordianKeyPairSet pServer,
                                   final byte[] pClientHello)  throws OceanusException {
+        /* Check valid spec */
+        final GordianKeyPairSetSpec mySpec = pServer.getKeyPairSetSpec();
+        if (!mySpec.canAgree()) {
+            throw new GordianDataException(GordianCoreFactory.getInvalidText(mySpec));
+        }
+
         /* Parse the clientHello */
         final GordianKeyPairSetAgreeASN1 myHello = GordianKeyPairSetAgreeASN1.getInstance(pClientHello);
         final AlgorithmIdentifier myResId = myHello.getResultId();
@@ -123,7 +134,6 @@ public class GordianKeyPairSetAnonymousAgreement
         processResultIdentifier(myResId);
 
         /* Create the result */
-        final GordianKeyPairSetSpec mySpec = myHello.getSpec();
         final int myPartLen = GordianLength.LEN_512.getByteLength();
         final byte[] myResult = new byte[mySpec.numKeyPairs() * myPartLen];
         int myOffset = 0;
@@ -133,10 +143,14 @@ public class GordianKeyPairSetAnonymousAgreement
         final Iterator<GordianKeyPair> myPairIterator = mySet.iterator();
         final Iterator<byte[]> myHelloIterator = myHello.msgIterator();
         for (GordianAnonymousAgreement myAgreement : theAgreements) {
+            /* process the clientHello */
             myAgreement.acceptClientHello(myPairIterator.next(), myHelloIterator.next());
+
+            /* build secret part */
             final byte[] myPart = (byte[]) myAgreement.getResult();
             System.arraycopy(myPart, 0, myResult, myOffset, myPartLen);
             myOffset += myPartLen;
+            Arrays.fill(myPart, (byte) 0);
         }
 
         /* Store the secret */

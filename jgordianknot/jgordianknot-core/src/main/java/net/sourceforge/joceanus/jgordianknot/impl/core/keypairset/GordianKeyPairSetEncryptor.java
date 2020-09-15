@@ -172,11 +172,11 @@ public class GordianKeyPairSetEncryptor {
     public static GordianEncryptorSpec defaultForKey(final GordianAsymKeySpec pKeySpec) {
         switch (pKeySpec.getKeyType()) {
             case RSA:
-                return GordianEncryptorSpec.rsa(GordianDigestSpec.sha3(GordianLength.LEN_512));
+                return GordianEncryptorSpec.rsa(GordianDigestSpec.sha2(GordianLength.LEN_512));
             case ELGAMAL:
-                return GordianEncryptorSpec.elGamal(GordianDigestSpec.sha3(GordianLength.LEN_512));
+                return GordianEncryptorSpec.elGamal(GordianDigestSpec.sha2(GordianLength.LEN_512));
             case SM2:
-                return GordianEncryptorSpec.sm2(GordianSM2EncryptionSpec.c1c2c3(GordianDigestSpec.sha3(GordianLength.LEN_512)));
+                return GordianEncryptorSpec.sm2(GordianSM2EncryptionSpec.c1c2c3(GordianDigestSpec.sha2(GordianLength.LEN_512)));
             default:
                 return null;
         }

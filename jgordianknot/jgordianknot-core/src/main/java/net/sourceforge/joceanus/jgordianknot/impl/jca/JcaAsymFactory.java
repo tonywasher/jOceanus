@@ -27,6 +27,7 @@ import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianCoreFactory;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianCryptoException;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianDataException;
 import net.sourceforge.joceanus.jgordianknot.impl.core.keypair.GordianCoreAsymFactory;
+import net.sourceforge.joceanus.jgordianknot.impl.core.keypairset.GordianCoreKeyPairSetFactory;
 import net.sourceforge.joceanus.jgordianknot.impl.core.keystore.GordianCoreKeyStoreFactory;
 import net.sourceforge.joceanus.jgordianknot.impl.jca.JcaKeyPairGenerator.JcaDHKeyPairGenerator;
 import net.sourceforge.joceanus.jgordianknot.impl.jca.JcaKeyPairGenerator.JcaDSAKeyPairGenerator;
@@ -69,6 +70,7 @@ public class JcaAsymFactory
         setSignatureFactory(new JcaSignatureFactory(pFactory));
         setAgreementFactory(new JcaAgreementFactory(pFactory));
         setEncryptorFactory(new JcaEncryptorFactory(pFactory));
+        setKeyPairSetFactory(new GordianCoreKeyPairSetFactory(this));
         setKeyStoreFactory(new GordianCoreKeyStoreFactory(this));
     }
 

@@ -248,7 +248,7 @@ public final class GordianSignatureSpec {
             case GOST2012:
                 return gost2012(GordianLength.LEN_512);
             case EDDSA:
-                return edDSA();
+                return pKeySpec.getEdwardsElliptic().is25519() ? edDSActx() : edDSA();
             case RAINBOW:
                 return rainbow(GordianDigestSpec.sha2(GordianLength.LEN_512));
             case SPHINCS:

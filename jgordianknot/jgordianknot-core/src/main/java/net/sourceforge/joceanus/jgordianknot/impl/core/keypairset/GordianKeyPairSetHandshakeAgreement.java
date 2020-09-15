@@ -17,6 +17,7 @@
 package net.sourceforge.joceanus.jgordianknot.impl.core.keypairset;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
@@ -61,12 +62,13 @@ public class GordianKeyPairSetHandshakeAgreement
         /* Create the agreements */
         final GordianAgreementFactory myFactory = pFactory.getAsymmetricFactory().getAgreementFactory();
         final GordianKDFType myKDFType = pSpec.getKDFType();
+        final Boolean withConfirm = pSpec.withConfirm();
         theAgreements.add((GordianHandshakeAgreement) myFactory.createAgreement(
-                GordianAgreementSpec.dhUnified(myKDFType)));
+                GordianAgreementSpec.dhUnifiedConfirm(myKDFType, withConfirm)));
         theAgreements.add((GordianHandshakeAgreement) myFactory.createAgreement(
-                GordianAgreementSpec.ecdhUnified(GordianAsymKeyType.EC, myKDFType)));
+                GordianAgreementSpec.ecdhUnifiedConfirm(GordianAsymKeyType.EC, myKDFType, withConfirm)));
         theAgreements.add((GordianHandshakeAgreement) myFactory.createAgreement(
-                GordianAgreementSpec.xdhUnified(myKDFType)));
+                GordianAgreementSpec.xdhUnifiedConfirm(myKDFType, withConfirm)));
     }
 
     /**
@@ -89,6 +91,7 @@ public class GordianKeyPairSetHandshakeAgreement
         /* Loop through the agreements */
         final Iterator<GordianKeyPair> myIterator = ((GordianCoreKeyPairSet) pKeyPairSet).iterator();
         for (GordianHandshakeAgreement myAgreement : theAgreements) {
+            /* create the clientHello and add to message */
             myASN1.addMessage(myAgreement.createClientHello(myIterator.next()));
         }
 
@@ -109,13 +112,21 @@ public class GordianKeyPairSetHandshakeAgreement
                                     final byte[] pClientHello)  throws OceanusException {
         /* Parse the clientHello */
         final GordianKeyPairSetAgreeASN1 myHello = GordianKeyPairSetAgreeASN1.getInstance(pClientHello);
+        final GordianKeyPairSetSpec mySpec = myHello.getSpec();
         final AlgorithmIdentifier myResId = myHello.getResultId();
+        final Boolean noConfirm = !getAgreementSpec().withConfirm();
 
         /* Process result identifier */
         processResultIdentifier(myResId);
 
+        /* Create the result if needed */
+        final int myPartLen = GordianLength.LEN_512.getByteLength();
+        final byte[] myResult = noConfirm
+                ? new byte[mySpec.numKeyPairs() * myPartLen]
+                : null;
+        int myOffset = 0;
+
         /* Loop through the agreements */
-        final GordianKeyPairSetSpec mySpec = myHello.getSpec();
         final GordianCoreKeyPairSet myClient = (GordianCoreKeyPairSet) pClient;
         final GordianCoreKeyPairSet myServer = (GordianCoreKeyPairSet) pServer;
         final GordianKeyPairSetAgreeASN1 myASN1 = new GordianKeyPairSetAgreeASN1(mySpec, myResId);
@@ -123,7 +134,24 @@ public class GordianKeyPairSetHandshakeAgreement
         final Iterator<GordianKeyPair> myServerIterator = myServer.iterator();
         final Iterator<byte[]> myHelloIterator = myHello.msgIterator();
         for (GordianHandshakeAgreement myAgreement : theAgreements) {
+            /* Accept the clientHello and add response to serverHello */
             myASN1.addMessage(myAgreement.acceptClientHello(myClientIterator.next(), myServerIterator.next(), myHelloIterator.next()));
+
+            /* Don't process result if we are with confirm */
+            if (!noConfirm) {
+                continue;
+            }
+
+            /* build secret part */
+            final byte[] myPart = (byte[]) myAgreement.getResult();
+            System.arraycopy(myPart, 0, myResult, myOffset, myPartLen);
+            myOffset += myPartLen;
+            Arrays.fill(myPart, (byte) 0);
+        }
+
+        /* Store the secret if not with confirm */
+        if (noConfirm) {
+            storeSecret(myResult);
         }
 
         /* Return the message */
@@ -142,6 +170,12 @@ public class GordianKeyPairSetHandshakeAgreement
         /* Parse the serverHello */
         final GordianKeyPairSetAgreeASN1 myHello = GordianKeyPairSetAgreeASN1.getInstance(pServerHello);
         final AlgorithmIdentifier myResId = myHello.getResultId();
+        final Boolean withConfirm = getAgreementSpec().withConfirm();
+
+        /* Create the confirm message if needed */
+        final GordianKeyPairSetAgreeASN1 myConfirm = withConfirm
+                ? new GordianKeyPairSetAgreeASN1(myHello.getSpec(), myResId)
+                : null;
 
         /* Create the result */
         final GordianKeyPairSetSpec mySpec = myHello.getSpec();
@@ -154,17 +188,26 @@ public class GordianKeyPairSetHandshakeAgreement
         final Iterator<GordianKeyPair> myPairIterator = mySet.iterator();
         final Iterator<byte[]> myHelloIterator = myHello.msgIterator();
         for (GordianHandshakeAgreement myAgreement : theAgreements) {
-            myAgreement.acceptServerHello(myPairIterator.next(), myHelloIterator.next());
+            /* Accept the serverHello */
+            final byte[] myMsg = myAgreement.acceptServerHello(myPairIterator.next(), myHelloIterator.next());
+
+            /* Process confirm message if required */
+            if (withConfirm) {
+                myConfirm.addMessage(myMsg);
+            }
+
+            /* build secret part */
             final byte[] myPart = (byte[]) myAgreement.getResult();
             System.arraycopy(myPart, 0, myResult, myOffset, myPartLen);
             myOffset += myPartLen;
+            Arrays.fill(myPart, (byte) 0);
         }
 
         /* Store the secret */
         storeSecret(myResult);
 
-        /* No confirm at present */
-        return null;
+        /* Return confirm message or null */
+        return withConfirm ? myConfirm.getEncodedMessage() : null;
     }
 
     /**
@@ -185,10 +228,14 @@ public class GordianKeyPairSetHandshakeAgreement
         /* Loop through the agreements */
         final Iterator<byte[]> myConfirmIterator = myConfirm.msgIterator();
         for (GordianHandshakeAgreement myAgreement : theAgreements) {
+            /* Accept the clientConfirm */
             myAgreement.acceptClientConfirm(myConfirmIterator.next());
+
+            /* build secret part */
             final byte[] myPart = (byte[]) myAgreement.getResult();
             System.arraycopy(myPart, 0, myResult, myOffset, myPartLen);
             myOffset += myPartLen;
+            Arrays.fill(myPart, (byte) 0);
         }
 
         /* Store the secret */

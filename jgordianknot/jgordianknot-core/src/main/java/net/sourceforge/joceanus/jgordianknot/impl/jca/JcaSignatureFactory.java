@@ -242,7 +242,7 @@ public class JcaSignatureFactory
     @Override
     public boolean validSignatureSpecForKeySpec(final GordianAsymKeySpec pKeySpec,
                                                 final GordianSignatureSpec pSpec) {
-        /* validate the signatureSpec/keySpecr */
+        /* validate the signatureSpec/keySpec */
         if (!super.validSignatureSpecForKeySpec(pKeySpec, pSpec)) {
             return false;
         }

@@ -30,6 +30,7 @@ import org.bouncycastle.asn1.ASN1Sequence;
 import org.bouncycastle.asn1.DEROctetString;
 import org.bouncycastle.asn1.DERSequence;
 import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
+import org.bouncycastle.asn1.x509.SubjectPublicKeyInfo;
 
 import net.sourceforge.joceanus.jgordianknot.api.keypairset.GordianKeyPairSetSpec;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianASN1Util.GordianASN1Object;
@@ -81,21 +82,16 @@ public class GordianKeyPairSetPublicASN1
             /* Create the list */
             thePublicKeys = new ArrayList<>();
 
-            /* Extract the parameters from the sequence */
-            Enumeration<?> en = pSequence.getObjects();
-            final AlgorithmIdentifier myId = AlgorithmIdentifier.getInstance(en.nextElement());
-            final ASN1Sequence myKeys = ASN1Sequence.getInstance(en.nextElement());
-
-            /* Make sure that we have completed the sequence */
-            if (en.hasMoreElements()) {
-                throw new GordianDataException("Unexpected additional values in ASN1 sequence");
-            }
+            /* Access as SubjectPublicKeyInfo */
+            final SubjectPublicKeyInfo myInfo = SubjectPublicKeyInfo.getInstance(pSequence);
+            final AlgorithmIdentifier myId = myInfo.getAlgorithm();
+            final ASN1Sequence myKeys = ASN1Sequence.getInstance(myInfo.getPublicKeyData().getBytes());
 
             /* Build the keyPairSetSpec */
             theSpec = GordianKeyPairSetAlgId.determineKeyPairSetSpec(myId);
 
             /* Build the list from the keys sequence */
-            en = myKeys.getObjects();
+            final Enumeration<?> en = myKeys.getObjects();
             while (en.hasMoreElements()) {
                 final byte[] myBytes = ASN1OctetString.getInstance(en.nextElement()).getOctets();
                 addKey(new X509EncodedKeySpec(myBytes));
@@ -157,7 +153,9 @@ public class GordianKeyPairSetPublicASN1
      */
     X509EncodedKeySpec getEncodedKeySpec() throws OceanusException {
         try {
-            return new X509EncodedKeySpec(toASN1Primitive().getEncoded());
+            final AlgorithmIdentifier myId = GordianKeyPairSetAlgId.determineAlgorithmId(theSpec);
+            final SubjectPublicKeyInfo myInfo = new SubjectPublicKeyInfo(myId, toASN1Primitive().getEncoded());
+            return new X509EncodedKeySpec(myInfo.getEncoded());
         } catch (IOException e) {
             throw new GordianIOException("Failed to encode keySpec", e);
         }
@@ -171,10 +169,7 @@ public class GordianKeyPairSetPublicASN1
             ks.add(new DEROctetString(myKeySpec.getEncoded()));
         }
 
-        /* Build the overall sequence */
-        final ASN1EncodableVector v = new ASN1EncodableVector();
-        v.add(GordianKeyPairSetAlgId.determineAlgorithmId(theSpec).toASN1Primitive());
-        v.add(new DERSequence(ks));
-        return new DERSequence(v);
+        /* Return the sequence */
+        return new DERSequence(ks);
     }
 }
