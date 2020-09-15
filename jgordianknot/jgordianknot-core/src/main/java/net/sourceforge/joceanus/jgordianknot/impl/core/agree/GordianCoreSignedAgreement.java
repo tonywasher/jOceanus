@@ -22,12 +22,12 @@ import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
 
 import net.sourceforge.joceanus.jgordianknot.api.agree.GordianAgreementSpec;
 import net.sourceforge.joceanus.jgordianknot.api.agree.GordianAgreementStatus;
-import net.sourceforge.joceanus.jgordianknot.api.agree.GordianSignedAgreement;
+import net.sourceforge.joceanus.jgordianknot.api.agree.GordianKeyPairSignedAgreement;
 import net.sourceforge.joceanus.jgordianknot.api.factory.GordianKeyPairFactory;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPair;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPairGenerator;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPairSpec;
-import net.sourceforge.joceanus.jgordianknot.api.sign.GordianSignature;
+import net.sourceforge.joceanus.jgordianknot.api.sign.GordianKeyPairSignature;
 import net.sourceforge.joceanus.jgordianknot.api.sign.GordianSignatureSpec;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianCoreFactory;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianDataException;
@@ -39,7 +39,7 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
  */
 public abstract class GordianCoreSignedAgreement
         extends GordianCoreAgreement
-        implements GordianSignedAgreement {
+        implements GordianKeyPairSignedAgreement {
     /**
      * The client ephemeral KeyPair.
      */
@@ -152,7 +152,7 @@ public abstract class GordianCoreSignedAgreement
         final GordianSignatureSpec mySpec = GordianSignatureSpec.defaultForKey(pServer.getKeyPairSpec());
         final GordianCoreSignatureFactory mySigns = (GordianCoreSignatureFactory) myFactory.getSignatureFactory();
         final AlgorithmIdentifier myAlgId = mySigns.getIdentifierForSpecAndKeyPair(mySpec, pServer);
-        final GordianSignature mySigner = mySigns.createSigner(mySpec);
+        final GordianKeyPairSignature mySigner = mySigns.createSigner(mySpec);
 
         /* Build the signature */
         mySigner.initForSigning(pServer);
@@ -190,7 +190,7 @@ public abstract class GordianCoreSignedAgreement
         final AlgorithmIdentifier myAlgId = myASN1.getSignatureId();
         final byte[] mySignature = myASN1.getSignature();
         final GordianSignatureSpec mySignSpec = mySigns.getSpecForIdentifier(myAlgId);
-        final GordianSignature mySigner = mySigns.createSigner(mySignSpec);
+        final GordianKeyPairSignature mySigner = mySigns.createSigner(mySignSpec);
 
         /* Build the signature */
         mySigner.initForVerify(pServer);

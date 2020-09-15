@@ -35,7 +35,7 @@ public interface GordianEncryptorFactory {
      * @return the Encryptor
      * @throws OceanusException on error
      */
-    GordianEncryptor createEncryptor(GordianEncryptorSpec pSpec) throws OceanusException;
+    GordianKeyPairEncryptor createEncryptor(GordianEncryptorSpec pSpec) throws OceanusException;
 
     /**
      * Obtain predicate for Encryptor.

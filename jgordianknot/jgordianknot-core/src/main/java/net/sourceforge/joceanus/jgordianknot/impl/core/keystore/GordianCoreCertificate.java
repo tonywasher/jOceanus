@@ -54,7 +54,7 @@ import net.sourceforge.joceanus.jgordianknot.api.keystore.GordianCertificateId;
 import net.sourceforge.joceanus.jgordianknot.api.keystore.GordianKeyPairUsage;
 import net.sourceforge.joceanus.jgordianknot.api.keystore.GordianKeyPairUse;
 import net.sourceforge.joceanus.jgordianknot.api.keystore.GordianKeyStoreEntry.GordianKeyStorePair;
-import net.sourceforge.joceanus.jgordianknot.api.sign.GordianSignature;
+import net.sourceforge.joceanus.jgordianknot.api.sign.GordianKeyPairSignature;
 import net.sourceforge.joceanus.jgordianknot.api.sign.GordianSignatureSpec;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianCoreFactory;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianDataException;
@@ -594,7 +594,7 @@ public class GordianCoreCertificate
         try {
             /* Build the signature */
             final GordianCoreSignatureFactory mySigns = (GordianCoreSignatureFactory) theFactory.getKeyPairFactory().getSignatureFactory();
-            final GordianSignature mySigner = mySigns.createSigner(theSigSpec);
+            final GordianKeyPairSignature mySigner = mySigns.createSigner(theSigSpec);
             mySigner.initForSigning(pSigner);
             final GordianStreamConsumer myConsumer = new GordianStreamConsumer(mySigner);
             final ASN1OutputStream myOut = ASN1OutputStream.create(myConsumer);
@@ -637,7 +637,7 @@ public class GordianCoreCertificate
         try {
             /* Build the signature */
             final GordianCoreSignatureFactory mySigns = (GordianCoreSignatureFactory) theFactory.getKeyPairFactory().getSignatureFactory();
-            final GordianSignature myValidator = mySigns.createSigner(theSigSpec);
+            final GordianKeyPairSignature myValidator = mySigns.createSigner(theSigSpec);
             myValidator.initForVerify(pSigner);
             final GordianStreamConsumer myConsumer = new GordianStreamConsumer(myValidator);
             final ASN1OutputStream myOut = ASN1OutputStream.create(myConsumer);

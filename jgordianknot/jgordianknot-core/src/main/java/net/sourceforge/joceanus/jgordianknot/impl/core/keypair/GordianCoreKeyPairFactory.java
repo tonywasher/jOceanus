@@ -123,10 +123,7 @@ public abstract class GordianCoreKeyPairFactory
         theEncryptorFactory = pFactory;
     }
 
-    /**
-     * Obtain the keyPairSet factory.
-     * @return the factory
-     */
+    @Override
     public GordianKeyPairSetFactory getKeyPairSetFactory() {
         return theKeyPairSetFactory;
     }

@@ -18,7 +18,7 @@ package net.sourceforge.joceanus.jgordianknot.impl.bc;
 
 import java.util.function.Predicate;
 
-import net.sourceforge.joceanus.jgordianknot.api.sign.GordianSignature;
+import net.sourceforge.joceanus.jgordianknot.api.sign.GordianKeyPairSignature;
 import net.sourceforge.joceanus.jgordianknot.api.sign.GordianSignatureSpec;
 import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyDSAKeyPair.BouncyDSASignature;
 import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyDSTUKeyPair.BouncyDSTUSignature;
@@ -63,7 +63,7 @@ public class BouncySignatureFactory
     }
 
     @Override
-    public GordianSignature createSigner(final GordianSignatureSpec pSignatureSpec) throws OceanusException {
+    public GordianKeyPairSignature createSigner(final GordianSignatureSpec pSignatureSpec) throws OceanusException {
         /* Check validity of Signature */
         checkSignatureSpec(pSignatureSpec);
 
@@ -78,7 +78,7 @@ public class BouncySignatureFactory
      * @return the Signer
      * @throws OceanusException on error
      */
-    private GordianSignature getBCSigner(final GordianSignatureSpec pSignatureSpec) throws OceanusException {
+    private GordianKeyPairSignature getBCSigner(final GordianSignatureSpec pSignatureSpec) throws OceanusException {
         switch (pSignatureSpec.getKeyPairType()) {
             case RSA:
                 return new BouncyRSASignature(getFactory(), pSignatureSpec);

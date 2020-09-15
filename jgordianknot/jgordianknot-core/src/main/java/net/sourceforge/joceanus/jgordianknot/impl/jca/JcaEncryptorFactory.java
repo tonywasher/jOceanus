@@ -20,8 +20,8 @@ import java.security.NoSuchAlgorithmException;
 import javax.crypto.Cipher;
 import javax.crypto.NoSuchPaddingException;
 
-import net.sourceforge.joceanus.jgordianknot.api.encrypt.GordianEncryptor;
 import net.sourceforge.joceanus.jgordianknot.api.encrypt.GordianEncryptorSpec;
+import net.sourceforge.joceanus.jgordianknot.api.encrypt.GordianKeyPairEncryptor;
 import net.sourceforge.joceanus.jgordianknot.api.encrypt.GordianMcElieceEncryptionType;
 import net.sourceforge.joceanus.jgordianknot.api.encrypt.GordianSM2EncryptionSpec;
 import net.sourceforge.joceanus.jgordianknot.api.encrypt.GordianSM2EncryptionSpec.GordianSM2EncryptionType;
@@ -54,7 +54,7 @@ public class JcaEncryptorFactory
     }
 
     @Override
-    public GordianEncryptor createEncryptor(final GordianEncryptorSpec pEncryptorSpec) throws OceanusException {
+    public GordianKeyPairEncryptor createEncryptor(final GordianEncryptorSpec pEncryptorSpec) throws OceanusException {
         /* Check validity of encryptor */
         checkEncryptorSpec(pEncryptorSpec);
 
@@ -68,7 +68,7 @@ public class JcaEncryptorFactory
      * @return the Encryptor
      * @throws OceanusException on error
      */
-    private GordianEncryptor getJcaEncryptor(final GordianEncryptorSpec pEncryptorSpec) throws OceanusException {
+    private GordianKeyPairEncryptor getJcaEncryptor(final GordianEncryptorSpec pEncryptorSpec) throws OceanusException {
         switch (pEncryptorSpec.getKeyPairType()) {
             case RSA:
             case ELGAMAL:

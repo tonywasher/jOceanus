@@ -16,8 +16,8 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jgordianknot.impl.bc;
 
-import net.sourceforge.joceanus.jgordianknot.api.encrypt.GordianEncryptor;
 import net.sourceforge.joceanus.jgordianknot.api.encrypt.GordianEncryptorSpec;
+import net.sourceforge.joceanus.jgordianknot.api.encrypt.GordianKeyPairEncryptor;
 import net.sourceforge.joceanus.jgordianknot.api.encrypt.GordianMcElieceEncryptionType;
 import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyElGamalKeyPair.BouncyElGamalEncryptor;
 import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyEllipticKeyPair.BouncyECEncryptor;
@@ -51,7 +51,7 @@ public class BouncyEncryptorFactory
     }
 
     @Override
-    public GordianEncryptor createEncryptor(final GordianEncryptorSpec pEncryptorSpec) throws OceanusException {
+    public GordianKeyPairEncryptor createEncryptor(final GordianEncryptorSpec pEncryptorSpec) throws OceanusException {
         /* Check validity of Encryptor */
         checkEncryptorSpec(pEncryptorSpec);
 
@@ -66,7 +66,7 @@ public class BouncyEncryptorFactory
      * @return the Agreement
      * @throws OceanusException on error
      */
-    private GordianEncryptor getBCEncryptor(final GordianEncryptorSpec pSpec) throws OceanusException {
+    private GordianKeyPairEncryptor getBCEncryptor(final GordianEncryptorSpec pSpec) throws OceanusException {
         switch (pSpec.getKeyPairType()) {
             case RSA:
                 return new BouncyRSAEncryptor(getFactory(), pSpec);

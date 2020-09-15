@@ -16,32 +16,33 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jgordianknot.api.encrypt;
 
-import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPair;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
  * Asymmetric Encryptor.
+ * @param <S> the specification type
+ * @param <K> the keyPair Type
  */
-public interface GordianEncryptor {
+public interface GordianEncryptor<S, K> {
     /**
      * Obtain the encryptorSpec.
      * @return the spec
      */
-    GordianEncryptorSpec getEncryptorSpec();
+    S getEncryptorSpec();
 
     /**
      * Initialise for encrypt.
      * @param pKeyPair the keyPair
      * @throws OceanusException on error
      */
-    void initForEncrypt(GordianKeyPair pKeyPair) throws OceanusException;
+    void initForEncrypt(K pKeyPair) throws OceanusException;
 
     /**
      * Initialise for decrypt.
      * @param pKeyPair the keyPair
      * @throws OceanusException on error
      */
-    void initForDecrypt(GordianKeyPair pKeyPair) throws OceanusException;
+    void initForDecrypt(K pKeyPair) throws OceanusException;
 
      /**
      * Encrypt the bytes.

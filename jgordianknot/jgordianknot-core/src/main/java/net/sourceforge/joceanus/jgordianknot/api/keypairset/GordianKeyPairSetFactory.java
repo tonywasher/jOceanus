@@ -23,6 +23,8 @@ import java.util.List;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
+import net.sourceforge.joceanus.jgordianknot.api.agree.GordianAgreement;
+import net.sourceforge.joceanus.jgordianknot.api.agree.GordianAgreementSpec;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
@@ -36,6 +38,30 @@ public interface GordianKeyPairSetFactory {
      * @throws OceanusException on error
      */
     GordianKeyPairSetGenerator getKeyPairSetGenerator(GordianKeyPairSetSpec pKeyPairSetSpec) throws OceanusException;
+
+    /**
+     * create keyPairSetAgreement.
+     * @param pAgreementSpec the keyPairSetSpec
+     * @return the encryptor
+     * @throws OceanusException on error
+     */
+    GordianAgreement createAgreement(GordianAgreementSpec pAgreementSpec) throws OceanusException;
+
+    /**
+     * create keyPairSetEncryptor.
+     * @param pKeyPairSetSpec the keyPairSetSpec
+     * @return the encryptor
+     * @throws OceanusException on error
+     */
+    GordianKeyPairSetEncryptor createEncryptor(GordianKeyPairSetSpec pKeyPairSetSpec) throws OceanusException;
+
+    /**
+     * create keyPairSetSigner.
+     * @param pKeyPairSetSpec the keyPairSetSpec
+     * @return the encryptor
+     * @throws OceanusException on error
+     */
+    GordianKeyPairSetSignature createSigner(GordianKeyPairSetSpec pKeyPairSetSpec) throws OceanusException;
 
     /**
      * Determine KeyPairSetSpec from PKCS8EncodedKeySpec.

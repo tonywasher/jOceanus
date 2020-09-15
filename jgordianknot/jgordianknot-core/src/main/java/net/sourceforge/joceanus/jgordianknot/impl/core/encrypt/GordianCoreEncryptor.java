@@ -18,9 +18,9 @@ package net.sourceforge.joceanus.jgordianknot.impl.core.encrypt;
 
 import java.security.SecureRandom;
 
-import net.sourceforge.joceanus.jgordianknot.api.encrypt.GordianEncryptor;
 import net.sourceforge.joceanus.jgordianknot.api.encrypt.GordianEncryptorFactory;
 import net.sourceforge.joceanus.jgordianknot.api.encrypt.GordianEncryptorSpec;
+import net.sourceforge.joceanus.jgordianknot.api.encrypt.GordianKeyPairEncryptor;
 import net.sourceforge.joceanus.jgordianknot.api.factory.GordianKeyPairFactory;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPair;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianCoreFactory;
@@ -34,7 +34,7 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
  * Asymmetric Encryptor.
  */
 public abstract class GordianCoreEncryptor
-    implements GordianEncryptor {
+    implements GordianKeyPairEncryptor {
     /**
      * The Factory.
      */

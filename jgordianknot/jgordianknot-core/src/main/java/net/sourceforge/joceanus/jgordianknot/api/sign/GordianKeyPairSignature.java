@@ -14,25 +14,13 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  ******************************************************************************/
-package net.sourceforge.joceanus.jgordianknot.impl.core.agree;
+package net.sourceforge.joceanus.jgordianknot.api.sign;
 
-import net.sourceforge.joceanus.jgordianknot.api.agree.GordianAgreementSpec;
-import net.sourceforge.joceanus.jgordianknot.api.agree.GordianKeyPairAnonymousAgreement;
-import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianCoreFactory;
+import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPair;
 
 /**
- * Encapsulation Agreement.
+ * KeyPair signature.
  */
-public abstract class GordianCoreAnonymousAgreement
-        extends GordianCoreAgreement
-        implements GordianKeyPairAnonymousAgreement {
-    /**
-     * Constructor.
-     * @param pFactory the factory
-     * @param pSpec the agreementSpec
-     */
-    protected GordianCoreAnonymousAgreement(final GordianCoreFactory pFactory,
-                                            final GordianAgreementSpec pSpec) {
-        super(pFactory, pSpec);
-    }
+public interface GordianKeyPairSignature
+    extends GordianSignature<GordianSignatureSpec, GordianKeyPair> {
 }

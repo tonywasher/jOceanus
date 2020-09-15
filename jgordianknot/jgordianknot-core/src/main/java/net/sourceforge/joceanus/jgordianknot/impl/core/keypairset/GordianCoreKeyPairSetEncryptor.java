@@ -23,14 +23,15 @@ import java.util.ListIterator;
 
 import net.sourceforge.joceanus.jgordianknot.api.base.GordianLength;
 import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigestSpec;
-import net.sourceforge.joceanus.jgordianknot.api.encrypt.GordianEncryptor;
 import net.sourceforge.joceanus.jgordianknot.api.encrypt.GordianEncryptorFactory;
 import net.sourceforge.joceanus.jgordianknot.api.encrypt.GordianEncryptorSpec;
+import net.sourceforge.joceanus.jgordianknot.api.encrypt.GordianKeyPairEncryptor;
 import net.sourceforge.joceanus.jgordianknot.api.encrypt.GordianSM2EncryptionSpec;
 import net.sourceforge.joceanus.jgordianknot.api.factory.GordianKeyPairFactory;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPair;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPairSpec;
 import net.sourceforge.joceanus.jgordianknot.api.keypairset.GordianKeyPairSet;
+import net.sourceforge.joceanus.jgordianknot.api.keypairset.GordianKeyPairSetEncryptor;
 import net.sourceforge.joceanus.jgordianknot.api.keypairset.GordianKeyPairSetSpec;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianLogicException;
 import net.sourceforge.joceanus.jtethys.OceanusException;
@@ -38,7 +39,8 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
 /**
  * KeyPairSet encryptor.
  */
-public class GordianKeyPairSetEncryptor {
+public class GordianCoreKeyPairSetEncryptor
+    implements GordianKeyPairSetEncryptor {
     /**
      * The keyPairSetSpec.
      */
@@ -47,7 +49,7 @@ public class GordianKeyPairSetEncryptor {
     /**
      * The signers.
      */
-    private final List<GordianEncryptor> theEncryptors;
+    private final List<GordianKeyPairEncryptor> theEncryptors;
 
     /**
      * Constructor.
@@ -55,8 +57,8 @@ public class GordianKeyPairSetEncryptor {
      * @param pKeyPairSetSpec the keyPairSetSpec
      * @throws OceanusException on error
      */
-    GordianKeyPairSetEncryptor(final GordianKeyPairFactory pFactory,
-                               final GordianKeyPairSetSpec pKeyPairSetSpec) throws OceanusException {
+    GordianCoreKeyPairSetEncryptor(final GordianKeyPairFactory pFactory,
+                                   final GordianKeyPairSetSpec pKeyPairSetSpec) throws OceanusException {
         /* Store parameters */
         theSpec = pKeyPairSetSpec;
         theEncryptors = new ArrayList<>();
@@ -71,19 +73,12 @@ public class GordianKeyPairSetEncryptor {
         }
     }
 
-    /**
-     * Obtain the keyPairSetSpec.
-     * @return the Spec
-     */
-    public GordianKeyPairSetSpec getSpec() {
+    @Override
+    public GordianKeyPairSetSpec getEncryptorSpec() {
         return theSpec;
     }
 
-    /**
-     * Initialise for encryption.
-     * @param pKeyPairSet the keyPairSet
-     * @throws OceanusException on error
-     */
+    @Override
     public void initForEncrypt(final GordianKeyPairSet pKeyPairSet) throws OceanusException {
         /* Check the keyPairSet */
         checkKeySpec(pKeyPairSet);
@@ -91,7 +86,7 @@ public class GordianKeyPairSetEncryptor {
         /* Initialise the signers */
         final GordianCoreKeyPairSet mySet = (GordianCoreKeyPairSet) pKeyPairSet;
         final Iterator<GordianKeyPair> myIterator = mySet.iterator();
-        for (GordianEncryptor myEncryptor : theEncryptors) {
+        for (GordianKeyPairEncryptor myEncryptor : theEncryptors) {
             final GordianKeyPair myPair = myIterator.next();
             myEncryptor.initForEncrypt(myPair);
         }
@@ -109,7 +104,7 @@ public class GordianKeyPairSetEncryptor {
         /* Initialise the signers */
         final GordianCoreKeyPairSet mySet = (GordianCoreKeyPairSet) pKeyPairSet;
         final Iterator<GordianKeyPair> myIterator = mySet.iterator();
-        for (GordianEncryptor myEncryptor : theEncryptors) {
+        for (GordianKeyPairEncryptor myEncryptor : theEncryptors) {
             final GordianKeyPair myPair = myIterator.next();
             myEncryptor.initForDecrypt(myPair);
         }
@@ -135,7 +130,7 @@ public class GordianKeyPairSetEncryptor {
     public byte[] encrypt(final byte[] pBytes) throws OceanusException {
         /* Loop through the encryptors */
         byte[] myData = pBytes;
-        for (GordianEncryptor myEncryptor : theEncryptors) {
+        for (GordianKeyPairEncryptor myEncryptor : theEncryptors) {
             /* Encrypt using this encryptor */
             myData = myEncryptor.encrypt(myData);
         }
@@ -153,10 +148,10 @@ public class GordianKeyPairSetEncryptor {
     public byte[] decrypt(final byte[] pEncrypted) throws OceanusException {
         /* Loop through the encryptors */
         byte[] myData = pEncrypted;
-        final ListIterator<GordianEncryptor> myIterator = theEncryptors.listIterator(theEncryptors.size());
+        final ListIterator<GordianKeyPairEncryptor> myIterator = theEncryptors.listIterator(theEncryptors.size());
         while (myIterator.hasPrevious()) {
             /* Encrypt using this encryptor */
-            final GordianEncryptor myEncryptor = myIterator.previous();
+            final GordianKeyPairEncryptor myEncryptor = myIterator.previous();
             myData = myEncryptor.decrypt(myData);
         }
 
@@ -170,13 +165,14 @@ public class GordianKeyPairSetEncryptor {
      * @return the encryptorSpec
      */
     public static GordianEncryptorSpec defaultForKey(final GordianKeyPairSpec pKeySpec) {
+        final GordianDigestSpec myDigest = GordianDigestSpec.sha2(GordianLength.LEN_512);
         switch (pKeySpec.getKeyPairType()) {
             case RSA:
-                return GordianEncryptorSpec.rsa(GordianDigestSpec.sha2(GordianLength.LEN_512));
+                return GordianEncryptorSpec.rsa(myDigest);
             case ELGAMAL:
-                return GordianEncryptorSpec.elGamal(GordianDigestSpec.sha2(GordianLength.LEN_512));
+                return GordianEncryptorSpec.elGamal(myDigest);
             case SM2:
-                return GordianEncryptorSpec.sm2(GordianSM2EncryptionSpec.c1c2c3(GordianDigestSpec.sha2(GordianLength.LEN_512)));
+                return GordianEncryptorSpec.sm2(GordianSM2EncryptionSpec.c1c2c3(myDigest));
             default:
                 return null;
         }

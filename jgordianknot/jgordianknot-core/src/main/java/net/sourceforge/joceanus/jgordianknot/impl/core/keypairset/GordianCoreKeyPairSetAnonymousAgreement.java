@@ -25,12 +25,14 @@ import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
 
 import net.sourceforge.joceanus.jgordianknot.api.agree.GordianAgreementFactory;
 import net.sourceforge.joceanus.jgordianknot.api.agree.GordianAgreementSpec;
-import net.sourceforge.joceanus.jgordianknot.api.agree.GordianAnonymousAgreement;
+import net.sourceforge.joceanus.jgordianknot.api.agree.GordianAgreementStatus;
 import net.sourceforge.joceanus.jgordianknot.api.agree.GordianKDFType;
+import net.sourceforge.joceanus.jgordianknot.api.agree.GordianKeyPairAnonymousAgreement;
 import net.sourceforge.joceanus.jgordianknot.api.base.GordianLength;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPair;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPairType;
 import net.sourceforge.joceanus.jgordianknot.api.keypairset.GordianKeyPairSet;
+import net.sourceforge.joceanus.jgordianknot.api.keypairset.GordianKeyPairSetAnonymousAgreement;
 import net.sourceforge.joceanus.jgordianknot.api.keypairset.GordianKeyPairSetSpec;
 import net.sourceforge.joceanus.jgordianknot.impl.core.agree.GordianCoreAgreement;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianCoreFactory;
@@ -40,12 +42,13 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
 /**
  * KeyPairSet signedAgreement.
  */
-public class GordianKeyPairSetAnonymousAgreement
-        extends GordianCoreAgreement {
+public class GordianCoreKeyPairSetAnonymousAgreement
+        extends GordianCoreAgreement
+        implements GordianKeyPairSetAnonymousAgreement {
     /**
      * The list of agreements.
      */
-    private final List<GordianAnonymousAgreement> theAgreements;
+    private final List<GordianKeyPairAnonymousAgreement> theAgreements;
 
     /**
      * Constructor.
@@ -53,8 +56,8 @@ public class GordianKeyPairSetAnonymousAgreement
      * @param pSpec the agreementSpec
      * @throws OceanusException on error
      */
-    GordianKeyPairSetAnonymousAgreement(final GordianCoreFactory pFactory,
-                                        final GordianAgreementSpec pSpec) throws OceanusException {
+    GordianCoreKeyPairSetAnonymousAgreement(final GordianCoreFactory pFactory,
+                                            final GordianAgreementSpec pSpec) throws OceanusException {
         /* Initialise underlying class */
         super(pFactory, pSpec);
         theAgreements = new ArrayList<>();
@@ -62,21 +65,19 @@ public class GordianKeyPairSetAnonymousAgreement
         /* Create the agreements */
         final GordianAgreementFactory myFactory = pFactory.getKeyPairFactory().getAgreementFactory();
         final GordianKDFType myKDFType = pSpec.getKDFType();
-        theAgreements.add((GordianAnonymousAgreement) myFactory.createAgreement(
+        theAgreements.add((GordianKeyPairAnonymousAgreement) myFactory.createAgreement(
                 GordianAgreementSpec.dhAnon(myKDFType)));
-        theAgreements.add((GordianAnonymousAgreement) myFactory.createAgreement(
+        theAgreements.add((GordianKeyPairAnonymousAgreement) myFactory.createAgreement(
                 GordianAgreementSpec.ecdhAnon(GordianKeyPairType.EC, myKDFType)));
-        theAgreements.add((GordianAnonymousAgreement) myFactory.createAgreement(
+        theAgreements.add((GordianKeyPairAnonymousAgreement) myFactory.createAgreement(
                 GordianAgreementSpec.xdhAnon(myKDFType)));
     }
 
-    /**
-     * Create the clientHello message.
-     * @param pServer the target keyPairSet
-     * @return the clientHello message
-     * @throws OceanusException on error
-     */
+    @Override
     public byte[] createClientHello(final GordianKeyPairSet pServer) throws OceanusException {
+        /* Must be in clean state */
+        checkStatus(GordianAgreementStatus.CLEAN);
+
         /* Check valid spec */
         final GordianKeyPairSetSpec mySpec = pServer.getKeyPairSetSpec();
         if (!mySpec.canAgree()) {
@@ -94,7 +95,7 @@ public class GordianKeyPairSetAnonymousAgreement
 
         /* Loop through the agreements */
         final Iterator<GordianKeyPair> myIterator = ((GordianCoreKeyPairSet) pServer).iterator();
-        for (GordianAnonymousAgreement myAgreement : theAgreements) {
+        for (GordianKeyPairAnonymousAgreement myAgreement : theAgreements) {
             /* create the clientHello and add to message */
             myASN1.addMessage(myAgreement.createClientHello(myIterator.next()));
 
@@ -112,14 +113,12 @@ public class GordianKeyPairSetAnonymousAgreement
         return myASN1.getEncodedMessage();
     }
 
-    /**
-     * Accept the clientHello.
-     * @param pServer the server keyPairSet
-     * @param pClientHello the incoming clientHello message
-     * @throws OceanusException on error
-     */
+    @Override
     public void acceptClientHello(final GordianKeyPairSet pServer,
                                   final byte[] pClientHello)  throws OceanusException {
+        /* Must be in clean state */
+        checkStatus(GordianAgreementStatus.CLEAN);
+
         /* Check valid spec */
         final GordianKeyPairSetSpec mySpec = pServer.getKeyPairSetSpec();
         if (!mySpec.canAgree()) {
@@ -142,7 +141,7 @@ public class GordianKeyPairSetAnonymousAgreement
         final GordianCoreKeyPairSet mySet = (GordianCoreKeyPairSet) pServer;
         final Iterator<GordianKeyPair> myPairIterator = mySet.iterator();
         final Iterator<byte[]> myHelloIterator = myHello.msgIterator();
-        for (GordianAnonymousAgreement myAgreement : theAgreements) {
+        for (GordianKeyPairAnonymousAgreement myAgreement : theAgreements) {
             /* process the clientHello */
             myAgreement.acceptClientHello(myPairIterator.next(), myHelloIterator.next());
 

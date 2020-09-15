@@ -25,12 +25,14 @@ import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
 
 import net.sourceforge.joceanus.jgordianknot.api.agree.GordianAgreementFactory;
 import net.sourceforge.joceanus.jgordianknot.api.agree.GordianAgreementSpec;
-import net.sourceforge.joceanus.jgordianknot.api.agree.GordianHandshakeAgreement;
+import net.sourceforge.joceanus.jgordianknot.api.agree.GordianAgreementStatus;
 import net.sourceforge.joceanus.jgordianknot.api.agree.GordianKDFType;
+import net.sourceforge.joceanus.jgordianknot.api.agree.GordianKeyPairHandshakeAgreement;
 import net.sourceforge.joceanus.jgordianknot.api.base.GordianLength;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPair;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPairType;
 import net.sourceforge.joceanus.jgordianknot.api.keypairset.GordianKeyPairSet;
+import net.sourceforge.joceanus.jgordianknot.api.keypairset.GordianKeyPairSetHandshakeAgreement;
 import net.sourceforge.joceanus.jgordianknot.api.keypairset.GordianKeyPairSetSpec;
 import net.sourceforge.joceanus.jgordianknot.impl.core.agree.GordianCoreAgreement;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianCoreFactory;
@@ -40,12 +42,13 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
 /**
  * KeyPairSet signedAgreement.
  */
-public class GordianKeyPairSetHandshakeAgreement
-        extends GordianCoreAgreement {
+public class GordianCoreKeyPairSetHandshakeAgreement
+        extends GordianCoreAgreement
+        implements GordianKeyPairSetHandshakeAgreement {
     /**
      * The list of agreements.
      */
-    private final List<GordianHandshakeAgreement> theAgreements;
+    private final List<GordianKeyPairHandshakeAgreement> theAgreements;
 
     /**
      * Constructor.
@@ -53,8 +56,8 @@ public class GordianKeyPairSetHandshakeAgreement
      * @param pSpec the agreementSpec
      * @throws OceanusException on error
      */
-    GordianKeyPairSetHandshakeAgreement(final GordianCoreFactory pFactory,
-                                        final GordianAgreementSpec pSpec) throws OceanusException {
+    GordianCoreKeyPairSetHandshakeAgreement(final GordianCoreFactory pFactory,
+                                            final GordianAgreementSpec pSpec) throws OceanusException {
         /* Initialise underlying class */
         super(pFactory, pSpec);
         theAgreements = new ArrayList<>();
@@ -63,21 +66,19 @@ public class GordianKeyPairSetHandshakeAgreement
         final GordianAgreementFactory myFactory = pFactory.getKeyPairFactory().getAgreementFactory();
         final GordianKDFType myKDFType = pSpec.getKDFType();
         final Boolean withConfirm = pSpec.withConfirm();
-        theAgreements.add((GordianHandshakeAgreement) myFactory.createAgreement(
+        theAgreements.add((GordianKeyPairHandshakeAgreement) myFactory.createAgreement(
                 GordianAgreementSpec.dhUnifiedConfirm(myKDFType, withConfirm)));
-        theAgreements.add((GordianHandshakeAgreement) myFactory.createAgreement(
+        theAgreements.add((GordianKeyPairHandshakeAgreement) myFactory.createAgreement(
                 GordianAgreementSpec.ecdhUnifiedConfirm(GordianKeyPairType.EC, myKDFType, withConfirm)));
-        theAgreements.add((GordianHandshakeAgreement) myFactory.createAgreement(
+        theAgreements.add((GordianKeyPairHandshakeAgreement) myFactory.createAgreement(
                 GordianAgreementSpec.xdhUnifiedConfirm(myKDFType, withConfirm)));
     }
 
-    /**
-     * Create the clientHello message.
-     * @param pKeyPairSet the client keyPairSet
-     * @return the clientHello message
-     * @throws OceanusException on error
-     */
+    @Override
     public byte[] createClientHello(final GordianKeyPairSet pKeyPairSet) throws OceanusException {
+        /* Must be in clean state */
+        checkStatus(GordianAgreementStatus.CLEAN);
+
         /* Check valid spec */
         final GordianKeyPairSetSpec mySpec = pKeyPairSet.getKeyPairSetSpec();
         if (!mySpec.canAgree()) {
@@ -90,31 +91,30 @@ public class GordianKeyPairSetHandshakeAgreement
 
         /* Loop through the agreements */
         final Iterator<GordianKeyPair> myIterator = ((GordianCoreKeyPairSet) pKeyPairSet).iterator();
-        for (GordianHandshakeAgreement myAgreement : theAgreements) {
+        for (GordianKeyPairHandshakeAgreement myAgreement : theAgreements) {
             /* create the clientHello and add to message */
             myASN1.addMessage(myAgreement.createClientHello(myIterator.next()));
         }
+
+        /* Set status */
+        setStatus(GordianAgreementStatus.AWAITING_SERVERHELLO);
 
         /* Return the combined clientHello */
         return myASN1.getEncodedMessage();
     }
 
-    /**
-     * Accept the clientHello.
-     * @param pClient the server keyPairSet
-     * @param pServer the server keyPairSet
-     * @param pClientHello the incoming clientHello message
-     * @return the serverHello message
-     * @throws OceanusException on error
-     */
+    @Override
     public byte[] acceptClientHello(final GordianKeyPairSet pClient,
                                     final GordianKeyPairSet pServer,
                                     final byte[] pClientHello)  throws OceanusException {
+        /* Must be in clean state */
+        checkStatus(GordianAgreementStatus.CLEAN);
+
         /* Parse the clientHello */
         final GordianKeyPairSetAgreeASN1 myHello = GordianKeyPairSetAgreeASN1.getInstance(pClientHello);
         final GordianKeyPairSetSpec mySpec = myHello.getSpec();
         final AlgorithmIdentifier myResId = myHello.getResultId();
-        final Boolean noConfirm = !getAgreementSpec().withConfirm();
+        final boolean noConfirm = !getAgreementSpec().withConfirm();
 
         /* Process result identifier */
         processResultIdentifier(myResId);
@@ -133,7 +133,7 @@ public class GordianKeyPairSetHandshakeAgreement
         final Iterator<GordianKeyPair> myClientIterator = myClient.iterator();
         final Iterator<GordianKeyPair> myServerIterator = myServer.iterator();
         final Iterator<byte[]> myHelloIterator = myHello.msgIterator();
-        for (GordianHandshakeAgreement myAgreement : theAgreements) {
+        for (GordianKeyPairHandshakeAgreement myAgreement : theAgreements) {
             /* Accept the clientHello and add response to serverHello */
             myASN1.addMessage(myAgreement.acceptClientHello(myClientIterator.next(), myServerIterator.next(), myHelloIterator.next()));
 
@@ -152,25 +152,25 @@ public class GordianKeyPairSetHandshakeAgreement
         /* Store the secret if not with confirm */
         if (noConfirm) {
             storeSecret(myResult);
+        } else {
+            /* set status */
+            setStatus(GordianAgreementStatus.AWAITING_CLIENTCONFIRM);
         }
 
         /* Return the message */
         return myASN1.getEncodedMessage();
     }
 
-    /**
-     * Accept the serverHello.
-     * @param pServer the server keyPair
-     * @param pServerHello the serverHello message
-     * @return the clientConfirm (or null if no confirmation)
-     * @throws OceanusException on error
-     */
+    @Override
     public byte[] acceptServerHello(final GordianKeyPairSet pServer,
                                     final byte[] pServerHello) throws OceanusException {
+        /* Must be waiting for serverHello */
+        checkStatus(GordianAgreementStatus.AWAITING_SERVERHELLO);
+
         /* Parse the serverHello */
         final GordianKeyPairSetAgreeASN1 myHello = GordianKeyPairSetAgreeASN1.getInstance(pServerHello);
         final AlgorithmIdentifier myResId = myHello.getResultId();
-        final Boolean withConfirm = getAgreementSpec().withConfirm();
+        final boolean withConfirm = getAgreementSpec().withConfirm();
 
         /* Create the confirm message if needed */
         final GordianKeyPairSetAgreeASN1 myConfirm = withConfirm
@@ -187,7 +187,7 @@ public class GordianKeyPairSetHandshakeAgreement
         final GordianCoreKeyPairSet mySet = (GordianCoreKeyPairSet) pServer;
         final Iterator<GordianKeyPair> myPairIterator = mySet.iterator();
         final Iterator<byte[]> myHelloIterator = myHello.msgIterator();
-        for (GordianHandshakeAgreement myAgreement : theAgreements) {
+        for (GordianKeyPairHandshakeAgreement myAgreement : theAgreements) {
             /* Accept the serverHello */
             final byte[] myMsg = myAgreement.acceptServerHello(myPairIterator.next(), myHelloIterator.next());
 
@@ -210,12 +210,11 @@ public class GordianKeyPairSetHandshakeAgreement
         return withConfirm ? myConfirm.getEncodedMessage() : null;
     }
 
-    /**
-     * Accept the clientConfirm.
-     * @param pClientConfirm the clientConfirm message
-     * @throws OceanusException on error
-     */
+    @Override
     public void acceptClientConfirm(final byte[] pClientConfirm) throws OceanusException {
+        /* Must be waiting for clientConfirm */
+        checkStatus(GordianAgreementStatus.AWAITING_CLIENTCONFIRM);
+
         /* Parse the clientConfirm */
         final GordianKeyPairSetAgreeASN1 myConfirm = GordianKeyPairSetAgreeASN1.getInstance(pClientConfirm);
 
@@ -227,7 +226,7 @@ public class GordianKeyPairSetHandshakeAgreement
 
         /* Loop through the agreements */
         final Iterator<byte[]> myConfirmIterator = myConfirm.msgIterator();
-        for (GordianHandshakeAgreement myAgreement : theAgreements) {
+        for (GordianKeyPairHandshakeAgreement myAgreement : theAgreements) {
             /* Accept the clientConfirm */
             myAgreement.acceptClientConfirm(myConfirmIterator.next());
 

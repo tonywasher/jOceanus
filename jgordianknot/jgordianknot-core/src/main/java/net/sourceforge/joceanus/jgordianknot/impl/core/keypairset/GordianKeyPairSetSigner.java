@@ -20,13 +20,13 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import net.sourceforge.joceanus.jgordianknot.api.base.GordianConsumer;
 import net.sourceforge.joceanus.jgordianknot.api.factory.GordianKeyPairFactory;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPair;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPairSpec;
 import net.sourceforge.joceanus.jgordianknot.api.keypairset.GordianKeyPairSet;
+import net.sourceforge.joceanus.jgordianknot.api.keypairset.GordianKeyPairSetSignature;
 import net.sourceforge.joceanus.jgordianknot.api.keypairset.GordianKeyPairSetSpec;
-import net.sourceforge.joceanus.jgordianknot.api.sign.GordianSignature;
+import net.sourceforge.joceanus.jgordianknot.api.sign.GordianKeyPairSignature;
 import net.sourceforge.joceanus.jgordianknot.api.sign.GordianSignatureFactory;
 import net.sourceforge.joceanus.jgordianknot.api.sign.GordianSignatureSpec;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianLogicException;
@@ -36,7 +36,7 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
  * KeyPairSet signer.
  */
 public class GordianKeyPairSetSigner
-        implements GordianConsumer {
+        implements GordianKeyPairSetSignature {
     /**
      * The keyPairSetSpec.
      */
@@ -45,7 +45,7 @@ public class GordianKeyPairSetSigner
     /**
      * The signers.
      */
-    private final List<GordianSignature> theSigners;
+    private final List<GordianKeyPairSignature> theSigners;
 
     /**
      * Constructor.
@@ -69,19 +69,12 @@ public class GordianKeyPairSetSigner
         }
     }
 
-    /**
-     * Obtain the keyPairSetSpec.
-     * @return the Spec
-     */
-    public GordianKeyPairSetSpec getSpec() {
+    @Override
+    public GordianKeyPairSetSpec getSignatureSpec() {
         return theSpec;
     }
 
-    /**
-     * Initialise for signature.
-     * @param pKeyPairSet the keyPairSet
-     * @throws OceanusException on error
-     */
+    @Override
     public void initForSigning(final GordianKeyPairSet pKeyPairSet) throws OceanusException {
         /* Check the keyPairSet */
         checkKeySpec(pKeyPairSet);
@@ -89,17 +82,13 @@ public class GordianKeyPairSetSigner
         /* Initialise the signers */
         final GordianCoreKeyPairSet mySet = (GordianCoreKeyPairSet) pKeyPairSet;
         final Iterator<GordianKeyPair> myIterator = mySet.iterator();
-        for (GordianSignature mySigner : theSigners) {
+        for (GordianKeyPairSignature mySigner : theSigners) {
             final GordianKeyPair myPair = myIterator.next();
             mySigner.initForSigning(myPair);
         }
     }
 
-    /**
-     * Initialise for verify.
-     * @param pKeyPairSet the keyPairSet
-     * @throws OceanusException on error
-     */
+    @Override
     public void initForVerify(final GordianKeyPairSet pKeyPairSet) throws OceanusException {
         /* Check the keyPairSet */
         checkKeySpec(pKeyPairSet);
@@ -107,7 +96,7 @@ public class GordianKeyPairSetSigner
         /* Initialise the signers */
         final GordianCoreKeyPairSet mySet = (GordianCoreKeyPairSet) pKeyPairSet;
         final Iterator<GordianKeyPair> myIterator = mySet.iterator();
-        for (GordianSignature mySigner : theSigners) {
+        for (GordianKeyPairSignature mySigner : theSigners) {
             final GordianKeyPair myPair = myIterator.next();
             mySigner.initForVerify(myPair);
         }
@@ -129,7 +118,7 @@ public class GordianKeyPairSetSigner
                        final int pOffset,
                        final int pLength) {
         /* Loop through the signers */
-        for (GordianSignature mySigner : theSigners) {
+        for (GordianKeyPairSignature mySigner : theSigners) {
             mySigner.update(pBytes, pOffset, pLength);
         }
     }
@@ -137,7 +126,7 @@ public class GordianKeyPairSetSigner
     @Override
     public void update(final byte pByte) {
         /* Loop through the signers */
-        for (GordianSignature mySigner : theSigners) {
+        for (GordianKeyPairSignature mySigner : theSigners) {
             mySigner.update(pByte);
         }
     }
@@ -145,7 +134,7 @@ public class GordianKeyPairSetSigner
     @Override
     public void reset() {
         /* Loop through the signers */
-        for (GordianSignature mySigner : theSigners) {
+        for (GordianKeyPairSignature mySigner : theSigners) {
             mySigner.reset();
         }
     }
@@ -161,7 +150,7 @@ public class GordianKeyPairSetSigner
 
         /* Loop through the signers */
         byte[] mySign = null;
-        for (GordianSignature mySigner : theSigners) {
+        for (GordianKeyPairSignature mySigner : theSigners) {
             /* If we have a previous signature */
             if (mySign != null) {
                 /* Process previous signature */
@@ -193,7 +182,7 @@ public class GordianKeyPairSetSigner
         byte[] mySign = null;
         boolean isValid = true;
         final Iterator<byte[]> myIterator = myASN1.signIterator();
-        for (GordianSignature mySigner : theSigners) {
+        for (GordianKeyPairSignature mySigner : theSigners) {
             /* If we have a previous signature */
             if (mySign != null) {
                 /* Process previous signature */

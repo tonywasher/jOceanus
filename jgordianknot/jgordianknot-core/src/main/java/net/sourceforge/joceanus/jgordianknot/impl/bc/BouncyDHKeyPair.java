@@ -266,7 +266,7 @@ public final class BouncyDHKeyPair {
             /* If this is a public # algorithm */
             return pParams.getQ() != null
                    ? new AlgorithmIdentifier(X9ObjectIdentifiers.dhpublicnumber,
-                    new DomainParameters(pParams.getP(), pParams.getG(), pParams.getQ(), pParams.getJ(), null).toASN1Primitive())
+                           new DomainParameters(pParams.getP(), pParams.getG(), pParams.getQ(), pParams.getJ(), null).toASN1Primitive())
                    : new AlgorithmIdentifier(PKCSObjectIdentifiers.dhKeyAgreement,
                            new DHParameter(pParams.getP(), pParams.getG(), pParams.getL()).toASN1Primitive());
         }
