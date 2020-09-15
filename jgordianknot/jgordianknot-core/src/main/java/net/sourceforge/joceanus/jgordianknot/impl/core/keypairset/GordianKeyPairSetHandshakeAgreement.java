@@ -27,9 +27,9 @@ import net.sourceforge.joceanus.jgordianknot.api.agree.GordianAgreementFactory;
 import net.sourceforge.joceanus.jgordianknot.api.agree.GordianAgreementSpec;
 import net.sourceforge.joceanus.jgordianknot.api.agree.GordianHandshakeAgreement;
 import net.sourceforge.joceanus.jgordianknot.api.agree.GordianKDFType;
-import net.sourceforge.joceanus.jgordianknot.api.asym.GordianAsymKeyType;
 import net.sourceforge.joceanus.jgordianknot.api.base.GordianLength;
-import net.sourceforge.joceanus.jgordianknot.api.key.GordianKeyPair;
+import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPair;
+import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPairType;
 import net.sourceforge.joceanus.jgordianknot.api.keypairset.GordianKeyPairSet;
 import net.sourceforge.joceanus.jgordianknot.api.keypairset.GordianKeyPairSetSpec;
 import net.sourceforge.joceanus.jgordianknot.impl.core.agree.GordianCoreAgreement;
@@ -60,13 +60,13 @@ public class GordianKeyPairSetHandshakeAgreement
         theAgreements = new ArrayList<>();
 
         /* Create the agreements */
-        final GordianAgreementFactory myFactory = pFactory.getAsymmetricFactory().getAgreementFactory();
+        final GordianAgreementFactory myFactory = pFactory.getKeyPairFactory().getAgreementFactory();
         final GordianKDFType myKDFType = pSpec.getKDFType();
         final Boolean withConfirm = pSpec.withConfirm();
         theAgreements.add((GordianHandshakeAgreement) myFactory.createAgreement(
                 GordianAgreementSpec.dhUnifiedConfirm(myKDFType, withConfirm)));
         theAgreements.add((GordianHandshakeAgreement) myFactory.createAgreement(
-                GordianAgreementSpec.ecdhUnifiedConfirm(GordianAsymKeyType.EC, myKDFType, withConfirm)));
+                GordianAgreementSpec.ecdhUnifiedConfirm(GordianKeyPairType.EC, myKDFType, withConfirm)));
         theAgreements.add((GordianHandshakeAgreement) myFactory.createAgreement(
                 GordianAgreementSpec.xdhUnifiedConfirm(myKDFType, withConfirm)));
     }

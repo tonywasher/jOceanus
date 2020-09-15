@@ -80,7 +80,7 @@ public class JcaAgreementFactory
      * @throws OceanusException on error
      */
     private GordianAgreement getJcaAgreement(final GordianAgreementSpec pAgreementSpec) throws OceanusException {
-        switch (pAgreementSpec.getAsymKeyType()) {
+        switch (pAgreementSpec.getKeyPairType()) {
             case NEWHOPE:
                 return getNHAgreement(pAgreementSpec);
             case EC:
@@ -93,7 +93,7 @@ public class JcaAgreementFactory
             case XDH:
                 return getXDHAgreement(pAgreementSpec);
             default:
-                throw new GordianDataException(GordianCoreFactory.getInvalidText(pAgreementSpec.getAsymKeyType()));
+                throw new GordianDataException(GordianCoreFactory.getInvalidText(pAgreementSpec.getKeyPairType()));
         }
     }
     /**
@@ -235,7 +235,7 @@ public class JcaAgreementFactory
         }
 
         /* Switch on KeyType */
-        switch (pSpec.getAsymKeyType()) {
+        switch (pSpec.getKeyPairType()) {
             case NEWHOPE:
                 return true;
             case EC:

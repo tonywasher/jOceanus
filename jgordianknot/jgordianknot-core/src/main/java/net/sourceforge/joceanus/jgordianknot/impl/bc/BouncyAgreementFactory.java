@@ -18,24 +18,24 @@ package net.sourceforge.joceanus.jgordianknot.impl.bc;
 
 import net.sourceforge.joceanus.jgordianknot.api.agree.GordianAgreement;
 import net.sourceforge.joceanus.jgordianknot.api.agree.GordianAgreementSpec;
-import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyDHAsymKey.BouncyDHBasicAgreement;
-import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyDHAsymKey.BouncyDHAnonymousAgreement;
-import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyDHAsymKey.BouncyDHMQVAgreement;
-import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyDHAsymKey.BouncyDHSignedAgreement;
-import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyDHAsymKey.BouncyDHUnifiedAgreement;
-import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyEllipticAsymKey.BouncyECAnonymousAgreement;
-import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyEllipticAsymKey.BouncyECBasicAgreement;
-import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyEllipticAsymKey.BouncyECIESAgreement;
-import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyEllipticAsymKey.BouncyECMQVAgreement;
-import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyEllipticAsymKey.BouncyECSignedAgreement;
-import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyEllipticAsymKey.BouncyECUnifiedAgreement;
-import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyNewHopeAsymKey.BouncyNewHopeAgreement;
-import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyRSAAsymKey.BouncyRSAEncapsulationAgreement;
-import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncySM2AsymKey.BouncyECSM2Agreement;
-import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyXDHAsymKey.BouncyXDHAnonymousAgreement;
-import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyXDHAsymKey.BouncyXDHBasicAgreement;
-import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyXDHAsymKey.BouncyXDHSignedAgreement;
-import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyXDHAsymKey.BouncyXDHUnifiedAgreement;
+import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyDHKeyPair.BouncyDHAnonymousAgreement;
+import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyDHKeyPair.BouncyDHBasicAgreement;
+import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyDHKeyPair.BouncyDHMQVAgreement;
+import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyDHKeyPair.BouncyDHSignedAgreement;
+import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyDHKeyPair.BouncyDHUnifiedAgreement;
+import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyEllipticKeyPair.BouncyECAnonymousAgreement;
+import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyEllipticKeyPair.BouncyECBasicAgreement;
+import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyEllipticKeyPair.BouncyECIESAgreement;
+import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyEllipticKeyPair.BouncyECMQVAgreement;
+import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyEllipticKeyPair.BouncyECSignedAgreement;
+import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyEllipticKeyPair.BouncyECUnifiedAgreement;
+import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyNewHopeKeyPair.BouncyNewHopeAgreement;
+import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyRSAKeyPair.BouncyRSAEncapsulationAgreement;
+import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncySM2KeyPair.BouncyECSM2Agreement;
+import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyXDHKeyPair.BouncyXDHAnonymousAgreement;
+import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyXDHKeyPair.BouncyXDHBasicAgreement;
+import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyXDHKeyPair.BouncyXDHSignedAgreement;
+import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyXDHKeyPair.BouncyXDHUnifiedAgreement;
 import net.sourceforge.joceanus.jgordianknot.impl.core.agree.GordianCoreAgreementFactory;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianCoreFactory;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianDataException;
@@ -78,7 +78,7 @@ public class BouncyAgreementFactory
      * @throws OceanusException on error
      */
     private GordianAgreement getBCAgreement(final GordianAgreementSpec pSpec) throws OceanusException {
-        switch (pSpec.getAsymKeyType()) {
+        switch (pSpec.getKeyPairType()) {
             case RSA:
                 return new BouncyRSAEncapsulationAgreement(getFactory(), pSpec);
             case EC:

@@ -27,12 +27,12 @@ import java.util.Map;
 
 import org.bouncycastle.asn1.x500.X500Name;
 
-import net.sourceforge.joceanus.jgordianknot.api.asym.GordianAsymKeySpec;
 import net.sourceforge.joceanus.jgordianknot.api.base.GordianKeySpec;
-import net.sourceforge.joceanus.jgordianknot.api.factory.GordianAsymFactory;
+import net.sourceforge.joceanus.jgordianknot.api.factory.GordianKeyPairFactory;
 import net.sourceforge.joceanus.jgordianknot.api.key.GordianKey;
-import net.sourceforge.joceanus.jgordianknot.api.key.GordianKeyPair;
-import net.sourceforge.joceanus.jgordianknot.api.key.GordianKeyPairGenerator;
+import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPair;
+import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPairGenerator;
+import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPairSpec;
 import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySet;
 import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetHash;
 import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetHashSpec;
@@ -177,13 +177,13 @@ public class GordianCoreKeyStore
     }
 
     @Override
-    public GordianKeyStorePair createRootKeyPair(final GordianAsymKeySpec pKeySpec,
+    public GordianKeyStorePair createRootKeyPair(final GordianKeyPairSpec pKeySpec,
                                                  final X500Name pSubject,
                                                  final String pAlias,
                                                  final char[] pPassword) throws OceanusException {
         /* Create the new keyPair */
-        final GordianAsymFactory myAsym = theFactory.getAsymmetricFactory();
-        final GordianKeyPairGenerator myGenerator = myAsym.getKeyPairGenerator(pKeySpec);
+        final GordianKeyPairFactory myFactory = theFactory.getKeyPairFactory();
+        final GordianKeyPairGenerator myGenerator = myFactory.getKeyPairGenerator(pKeySpec);
         final GordianCoreKeyPair myKeyPair = (GordianCoreKeyPair) myGenerator.generateKeyPair();
 
         /* Create the certificate */
@@ -197,15 +197,15 @@ public class GordianCoreKeyStore
 
 
     @Override
-    public GordianKeyStorePair createKeyPair(final GordianAsymKeySpec pKeySpec,
+    public GordianKeyStorePair createKeyPair(final GordianKeyPairSpec pKeySpec,
                                              final X500Name pSubject,
                                              final GordianKeyPairUsage pUsage,
                                              final GordianKeyStorePair pSigner,
                                              final String pAlias,
                                              final char[] pPassword) throws OceanusException {
         /* Create the new keyPair */
-        final GordianAsymFactory myAsym = theFactory.getAsymmetricFactory();
-        final GordianKeyPairGenerator myGenerator = myAsym.getKeyPairGenerator(pKeySpec);
+        final GordianKeyPairFactory myFactory = theFactory.getKeyPairFactory();
+        final GordianKeyPairGenerator myGenerator = myFactory.getKeyPairGenerator(pKeySpec);
         final GordianCoreKeyPair myKeyPair = (GordianCoreKeyPair) myGenerator.generateKeyPair();
 
         /* Create the certificate */

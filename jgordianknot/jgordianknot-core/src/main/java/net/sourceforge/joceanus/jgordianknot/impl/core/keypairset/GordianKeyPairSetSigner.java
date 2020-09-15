@@ -20,10 +20,10 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import net.sourceforge.joceanus.jgordianknot.api.asym.GordianAsymKeySpec;
 import net.sourceforge.joceanus.jgordianknot.api.base.GordianConsumer;
-import net.sourceforge.joceanus.jgordianknot.api.factory.GordianAsymFactory;
-import net.sourceforge.joceanus.jgordianknot.api.key.GordianKeyPair;
+import net.sourceforge.joceanus.jgordianknot.api.factory.GordianKeyPairFactory;
+import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPair;
+import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPairSpec;
 import net.sourceforge.joceanus.jgordianknot.api.keypairset.GordianKeyPairSet;
 import net.sourceforge.joceanus.jgordianknot.api.keypairset.GordianKeyPairSetSpec;
 import net.sourceforge.joceanus.jgordianknot.api.sign.GordianSignature;
@@ -53,7 +53,7 @@ public class GordianKeyPairSetSigner
      * @param pKeyPairSetSpec the keyPairSetSpec
      * @throws OceanusException on error
      */
-    GordianKeyPairSetSigner(final GordianAsymFactory pFactory,
+    GordianKeyPairSetSigner(final GordianKeyPairFactory pFactory,
                             final GordianKeyPairSetSpec pKeyPairSetSpec) throws OceanusException {
         /* Store parameters */
         theSpec = pKeyPairSetSpec;
@@ -61,9 +61,9 @@ public class GordianKeyPairSetSigner
 
         /* Create the signers */
         final GordianSignatureFactory myFactory = pFactory.getSignatureFactory();
-        final Iterator<GordianAsymKeySpec> myIterator = theSpec.iterator();
+        final Iterator<GordianKeyPairSpec> myIterator = theSpec.iterator();
         while (myIterator.hasNext()) {
-            final GordianAsymKeySpec mySpec = myIterator.next();
+            final GordianKeyPairSpec mySpec = myIterator.next();
             final GordianSignatureSpec mySignSpec = GordianSignatureSpec.defaultForKey(mySpec);
             theSigners.add(myFactory.createSigner(mySignSpec));
         }

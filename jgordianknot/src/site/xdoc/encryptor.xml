@@ -13,11 +13,11 @@
             <source>
                 /* Access factory */
                 final GordianFactory myBaseFactory = GordianGenerator.createFactory();
-                final GordianAsymFactory myKeyPairFactory = myBase.getAsymmetricFactory();
+                final GordianKeyPairFactory myKeyPairFactory = myBase.getKeyPairFactory();
                 final GordianEncryptorFactory myEncryptorFactory = myKeyPairFactory.getEncryptorFactory();
 
                 /* Access keyPairGenerator */
-                final GordianAsymKeySpec mySpec = GordianAsymKeySpec.rsa(GordianRSAModulus.MOD2048);
+                final GordianKeyPairSpec mySpec = GordianKeyPairSpec.rsa(GordianRSAModulus.MOD2048);
                 final GordianKeyPairGenerator myGenerator = myKeyPairFactory.getKeyPairGenerator(mySpec);
                 final GordianKeyPair myPair = myGenerator.generateKeyPair();
 

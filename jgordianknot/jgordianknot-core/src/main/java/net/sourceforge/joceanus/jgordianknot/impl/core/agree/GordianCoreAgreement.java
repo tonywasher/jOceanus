@@ -49,11 +49,11 @@ import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianSymKeySpec;
 import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigest;
 import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigestSpec;
 import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigestType;
-import net.sourceforge.joceanus.jgordianknot.api.factory.GordianAsymFactory;
 import net.sourceforge.joceanus.jgordianknot.api.factory.GordianFactory;
 import net.sourceforge.joceanus.jgordianknot.api.factory.GordianFactoryType;
+import net.sourceforge.joceanus.jgordianknot.api.factory.GordianKeyPairFactory;
 import net.sourceforge.joceanus.jgordianknot.api.key.GordianKey;
-import net.sourceforge.joceanus.jgordianknot.api.key.GordianKeyPair;
+import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPair;
 import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySet;
 import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetSpec;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianCoreFactory;
@@ -150,7 +150,7 @@ public abstract class GordianCoreAgreement
      * @return the factory
      */
     protected GordianCoreAgreementFactory getAgreementFactory() {
-        return (GordianCoreAgreementFactory) theFactory.getAsymmetricFactory().getAgreementFactory();
+        return (GordianCoreAgreementFactory) theFactory.getKeyPairFactory().getAgreementFactory();
     }
 
     @Override
@@ -280,8 +280,8 @@ public abstract class GordianCoreAgreement
      */
     protected void checkKeyPair(final GordianKeyPair pKeyPair) throws OceanusException {
         /* Check that the KeyPair is valid */
-        final GordianAsymFactory myAsym = theFactory.getAsymmetricFactory();
-        final GordianAgreementFactory myAgrees = myAsym.getAgreementFactory();
+        final GordianKeyPairFactory myFactory = theFactory.getKeyPairFactory();
+        final GordianAgreementFactory myAgrees = myFactory.getAgreementFactory();
         if (!myAgrees.validAgreementSpecForKeyPair(pKeyPair, theSpec)) {
             throw new GordianDataException("Incorrect KeyPair type");
         }

@@ -19,7 +19,7 @@ package net.sourceforge.joceanus.jgordianknot.api.agree;
 import java.util.ArrayList;
 import java.util.List;
 
-import net.sourceforge.joceanus.jgordianknot.api.asym.GordianAsymKeyType;
+import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPairType;
 import net.sourceforge.joceanus.jtethys.TethysDataConverter;
 
 /**
@@ -32,9 +32,9 @@ public final class GordianAgreementSpec {
     private static final String SEP = "-";
 
     /**
-     * AsymKeyType.
+     * KeyPairType.
      */
-    private final GordianAsymKeyType theAsymKeyType;
+    private final GordianKeyPairType theKeyPairType;
 
     /**
      * AgreementType.
@@ -63,28 +63,28 @@ public final class GordianAgreementSpec {
 
     /**
      * Constructor.
-     * @param pAsymKeyType the asymKeyType
+     * @param pKeyPairType the keyPairType
      * @param pAgreementType the agreement type
      * @param pKDFType the KDF type
      */
-    public GordianAgreementSpec(final GordianAsymKeyType pAsymKeyType,
+    public GordianAgreementSpec(final GordianKeyPairType pKeyPairType,
                                 final GordianAgreementType pAgreementType,
                                 final GordianKDFType pKDFType) {
-        this(pAsymKeyType, pAgreementType, pKDFType, Boolean.FALSE);
+        this(pKeyPairType, pAgreementType, pKDFType, Boolean.FALSE);
     }
 
     /**
      * Constructor.
-     * @param pAsymKeyType the asymKeyType
+     * @param pKeyPairType the keyPairType
      * @param pAgreementType the agreement type
      * @param pKDFType the KDF type
      * @param pConfirm with key confirmation
      */
-    public GordianAgreementSpec(final GordianAsymKeyType pAsymKeyType,
+    public GordianAgreementSpec(final GordianKeyPairType pKeyPairType,
                                 final GordianAgreementType pAgreementType,
                                 final GordianKDFType pKDFType,
                                 final Boolean pConfirm) {
-        theAsymKeyType = pAsymKeyType;
+        theKeyPairType = pKeyPairType;
         theAgreementType = pAgreementType;
         theKDFType = pKDFType;
         withConfirm = pConfirm;
@@ -97,7 +97,7 @@ public final class GordianAgreementSpec {
      * @return the Spec
      */
     public static GordianAgreementSpec rsaKEM(final GordianKDFType pKDFType) {
-        return new GordianAgreementSpec(GordianAsymKeyType.RSA, GordianAgreementType.KEM, pKDFType);
+        return new GordianAgreementSpec(GordianKeyPairType.RSA, GordianAgreementType.KEM, pKDFType);
     }
 
     /**
@@ -106,7 +106,7 @@ public final class GordianAgreementSpec {
      * @return the Spec
      */
     public static GordianAgreementSpec dhAnon(final GordianKDFType pKDFType) {
-        return new GordianAgreementSpec(GordianAsymKeyType.DH, GordianAgreementType.ANON, pKDFType);
+        return new GordianAgreementSpec(GordianKeyPairType.DH, GordianAgreementType.ANON, pKDFType);
     }
 
     /**
@@ -115,7 +115,7 @@ public final class GordianAgreementSpec {
      * @return the Spec
      */
     public static GordianAgreementSpec dhBasic(final GordianKDFType pKDFType) {
-        return new GordianAgreementSpec(GordianAsymKeyType.DH, GordianAgreementType.BASIC, pKDFType);
+        return new GordianAgreementSpec(GordianKeyPairType.DH, GordianAgreementType.BASIC, pKDFType);
     }
 
     /**
@@ -124,7 +124,7 @@ public final class GordianAgreementSpec {
      * @return the Spec
      */
     public static GordianAgreementSpec dhSigned(final GordianKDFType pKDFType) {
-        return new GordianAgreementSpec(GordianAsymKeyType.DH, GordianAgreementType.SIGNED, pKDFType);
+        return new GordianAgreementSpec(GordianKeyPairType.DH, GordianAgreementType.SIGNED, pKDFType);
     }
 
     /**
@@ -144,7 +144,7 @@ public final class GordianAgreementSpec {
      */
     public static GordianAgreementSpec dhMQVConfirm(final GordianKDFType pKDFType,
                                                     final Boolean pConfirm) {
-        return new GordianAgreementSpec(GordianAsymKeyType.DH, GordianAgreementType.MQV, pKDFType, pConfirm);
+        return new GordianAgreementSpec(GordianKeyPairType.DH, GordianAgreementType.MQV, pKDFType, pConfirm);
     }
 
     /**
@@ -164,99 +164,99 @@ public final class GordianAgreementSpec {
      */
     public static GordianAgreementSpec dhUnifiedConfirm(final GordianKDFType pKDFType,
                                                         final Boolean pConfirm) {
-        return new GordianAgreementSpec(GordianAsymKeyType.DH, GordianAgreementType.UNIFIED, pKDFType, pConfirm);
+        return new GordianAgreementSpec(GordianKeyPairType.DH, GordianAgreementType.UNIFIED, pKDFType, pConfirm);
     }
 
     /**
      * Create the ecIES agreementSpec.
-     * @param pKeyType the asymKeyType
+     * @param pKeyPairType the keyPairType
      * @param pKDFType the KDF type
      * @return the Spec
      */
-    public static GordianAgreementSpec ecIES(final GordianAsymKeyType pKeyType,
+    public static GordianAgreementSpec ecIES(final GordianKeyPairType pKeyPairType,
                                              final GordianKDFType pKDFType) {
-        return new GordianAgreementSpec(pKeyType, GordianAgreementType.KEM, pKDFType);
+        return new GordianAgreementSpec(pKeyPairType, GordianAgreementType.KEM, pKDFType);
     }
 
     /**
-     * Create the ecANON agreementSpec.
-     * @param pKeyType the asymKeyType
+     * Create the ecdhANON agreementSpec.
+     * @param pKeyPairType the keyPairType
      * @param pKDFType the KDF type
      * @return the Spec
      */
-    public static GordianAgreementSpec ecdhAnon(final GordianAsymKeyType pKeyType,
+    public static GordianAgreementSpec ecdhAnon(final GordianKeyPairType pKeyPairType,
                                                 final GordianKDFType pKDFType) {
-        return new GordianAgreementSpec(pKeyType, GordianAgreementType.ANON, pKDFType);
+        return new GordianAgreementSpec(pKeyPairType, GordianAgreementType.ANON, pKDFType);
     }
 
     /**
      * Create the ecdhBasic agreementSpec.
-     * @param pKeyType the asymKeyType
+     * @param pKeyPairType the keyPairType
      * @param pKDFType the KDF type
      * @return the Spec
      */
-    public static GordianAgreementSpec ecdhBasic(final GordianAsymKeyType pKeyType,
+    public static GordianAgreementSpec ecdhBasic(final GordianKeyPairType pKeyPairType,
                                                  final GordianKDFType pKDFType) {
-        return new GordianAgreementSpec(pKeyType, GordianAgreementType.BASIC, pKDFType);
+        return new GordianAgreementSpec(pKeyPairType, GordianAgreementType.BASIC, pKDFType);
     }
 
     /**
      * Create the ecdhSigned agreementSpec.
-     * @param pKeyType the asymKeyType
+     * @param pKeyPairType the keyPairType
      * @param pKDFType the KDF type
      * @return the Spec
      */
-    public static GordianAgreementSpec ecdhSigned(final GordianAsymKeyType pKeyType,
+    public static GordianAgreementSpec ecdhSigned(final GordianKeyPairType pKeyPairType,
                                                   final GordianKDFType pKDFType) {
-        return new GordianAgreementSpec(pKeyType, GordianAgreementType.SIGNED, pKDFType);
+        return new GordianAgreementSpec(pKeyPairType, GordianAgreementType.SIGNED, pKDFType);
     }
 
     /**
      * Create the ecdhMQV agreementSpec.
-     * @param pKeyType the asymKeyType
+     * @param pKeyPairType the keyPairType
      * @param pKDFType the KDF type
      * @return the Spec
      */
-    public static GordianAgreementSpec ecdhMQV(final GordianAsymKeyType pKeyType,
+    public static GordianAgreementSpec ecdhMQV(final GordianKeyPairType pKeyPairType,
                                                final GordianKDFType pKDFType) {
-        return ecdhMQVConfirm(pKeyType, pKDFType, Boolean.FALSE);
+        return ecdhMQVConfirm(pKeyPairType, pKDFType, Boolean.FALSE);
     }
 
     /**
      * Create the ecdhMQVConfirm agreementSpec.
-     * @param pKeyType the asymKeyType
+     * @param pKeyPairType the keyPairType
      * @param pKDFType the KDF type
      * @param pConfirm confirm message needed?
      * @return the Spec
      */
-    public static GordianAgreementSpec ecdhMQVConfirm(final GordianAsymKeyType pKeyType,
+    public static GordianAgreementSpec ecdhMQVConfirm(final GordianKeyPairType pKeyPairType,
                                                       final GordianKDFType pKDFType,
                                                       final Boolean pConfirm) {
-        return new GordianAgreementSpec(pKeyType, GordianAgreementType.MQV, pKDFType, pConfirm);
+        return new GordianAgreementSpec(pKeyPairType, GordianAgreementType.MQV, pKDFType, pConfirm);
     }
 
     /**
      * Create the ecdhUnified agreementSpec.
-     * @param pKeyType the asymKeyType
+     * @param pKeyPairType the keyPairType
      * @param pKDFType the KDF type
      * @return the Spec
      */
-    public static GordianAgreementSpec ecdhUnified(final GordianAsymKeyType pKeyType,
+    public static GordianAgreementSpec ecdhUnified(final GordianKeyPairType pKeyPairType,
                                                    final GordianKDFType pKDFType) {
-        return ecdhUnifiedConfirm(pKeyType, pKDFType, Boolean.FALSE);
+        return ecdhUnifiedConfirm(pKeyPairType, pKDFType, Boolean.FALSE);
     }
 
     /**
      * Create the ecdhUnifiedConfirm agreementSpec.
-     * @param pKeyType the asymKeyType
+     * @param pKeyPairType the keyPairType
      * @param pKDFType the KDF type
      * @param pConfirm confirm message needed?
      * @return the Spec
      */
-    public static GordianAgreementSpec ecdhUnifiedConfirm(final GordianAsymKeyType pKeyType,
+    public static GordianAgreementSpec ecdhUnifiedConfirm(final GordianKeyPairType pKeyPairType,
                                                           final GordianKDFType pKDFType,
                                                           final Boolean pConfirm) {
-        return new GordianAgreementSpec(pKeyType, GordianAgreementType.UNIFIED, pKDFType, pConfirm);
+        return new GordianAgreementSpec(pKeyPairType, GordianAgreementType.UNIFIED, pKDFType, pConfirm);
     }
 
     /**
@@ -276,7 +276,7 @@ public final class GordianAgreementSpec {
      */
     public static GordianAgreementSpec sm2Confirm(final GordianKDFType pKDFType,
                                                   final Boolean pConfirm) {
-        return new GordianAgreementSpec(GordianAsymKeyType.SM2, GordianAgreementType.SM2, pKDFType, pConfirm);
+        return new GordianAgreementSpec(GordianKeyPairType.SM2, GordianAgreementType.SM2, pKDFType, pConfirm);
     }
 
     /**
@@ -285,7 +285,7 @@ public final class GordianAgreementSpec {
      * @return the Spec
      */
     public static GordianAgreementSpec xdhAnon(final GordianKDFType pKDFType) {
-        return new GordianAgreementSpec(GordianAsymKeyType.XDH, GordianAgreementType.ANON, pKDFType);
+        return new GordianAgreementSpec(GordianKeyPairType.XDH, GordianAgreementType.ANON, pKDFType);
     }
 
     /**
@@ -294,7 +294,7 @@ public final class GordianAgreementSpec {
      * @return the Spec
      */
     public static GordianAgreementSpec xdhBasic(final GordianKDFType pKDFType) {
-        return new GordianAgreementSpec(GordianAsymKeyType.XDH, GordianAgreementType.BASIC, pKDFType);
+        return new GordianAgreementSpec(GordianKeyPairType.XDH, GordianAgreementType.BASIC, pKDFType);
     }
 
     /**
@@ -303,7 +303,7 @@ public final class GordianAgreementSpec {
      * @return the Spec
      */
     public static GordianAgreementSpec xdhSigned(final GordianKDFType pKDFType) {
-        return new GordianAgreementSpec(GordianAsymKeyType.XDH, GordianAgreementType.SIGNED, pKDFType);
+        return new GordianAgreementSpec(GordianKeyPairType.XDH, GordianAgreementType.SIGNED, pKDFType);
     }
 
     /**
@@ -323,7 +323,7 @@ public final class GordianAgreementSpec {
      */
     public static GordianAgreementSpec xdhUnifiedConfirm(final GordianKDFType pKDFType,
                                                          final Boolean pConfirm) {
-        return new GordianAgreementSpec(GordianAsymKeyType.XDH, GordianAgreementType.UNIFIED, pKDFType, pConfirm);
+        return new GordianAgreementSpec(GordianKeyPairType.XDH, GordianAgreementType.UNIFIED, pKDFType, pConfirm);
     }
 
     /**
@@ -332,15 +332,15 @@ public final class GordianAgreementSpec {
      * @return the Spec
      */
     public static GordianAgreementSpec newHope(final GordianKDFType pKDFType) {
-        return new GordianAgreementSpec(GordianAsymKeyType.NEWHOPE, GordianAgreementType.ANON, pKDFType);
+        return new GordianAgreementSpec(GordianKeyPairType.NEWHOPE, GordianAgreementType.ANON, pKDFType);
     }
 
     /**
-     * Obtain the asymKeyType.
-     * @return the asymKeyType
+     * Obtain the keyPairType.
+     * @return the keyPairType
      */
-    public GordianAsymKeyType getAsymKeyType() {
-        return theAsymKeyType;
+    public GordianKeyPairType getKeyPairType() {
+        return theKeyPairType;
     }
 
     /**
@@ -372,7 +372,7 @@ public final class GordianAgreementSpec {
      * @return true/false
      */
     public boolean isSupported() {
-        return theAgreementType.isSupported(theAsymKeyType) && theKDFType.isSupported(theAsymKeyType, theAgreementType);
+        return theAgreementType.isSupported(theKeyPairType) && theKDFType.isSupported(theKeyPairType, theAgreementType);
     }
 
     /**
@@ -389,7 +389,7 @@ public final class GordianAgreementSpec {
      */
     private boolean checkValidity() {
         /* All components must be non-null */
-        if (theAsymKeyType == null
+        if (theKeyPairType == null
                 || theAgreementType == null
                 || theKDFType == null
                 || withConfirm == null) {
@@ -419,7 +419,7 @@ public final class GordianAgreementSpec {
             /* If the agreementSpec is valid */
             if (isValid) {
                 /* Load the name */
-                theName = theAsymKeyType.toString()
+                theName = theKeyPairType.toString()
                         + SEP + theAgreementType;
 
                 /* Add KDF type if present */
@@ -433,7 +433,7 @@ public final class GordianAgreementSpec {
                 }
             } else {
                 /* Report invalid spec */
-                theName = "InvalidAgreementSpec: " + theAsymKeyType + ":" + theAgreementType + ":" + theKDFType;
+                theName = "InvalidAgreementSpec: " + theKeyPairType + ":" + theAgreementType + ":" + theKDFType;
             }
         }
 
@@ -460,7 +460,7 @@ public final class GordianAgreementSpec {
         final GordianAgreementSpec myThat = (GordianAgreementSpec) pThat;
 
         /* Match subfields */
-        return theAsymKeyType == myThat.getAsymKeyType()
+        return theKeyPairType == myThat.getKeyPairType()
                 && theAgreementType == myThat.getAgreementType()
                 && theKDFType == myThat.getKDFType()
                 && withConfirm == myThat.withConfirm();
@@ -468,59 +468,59 @@ public final class GordianAgreementSpec {
 
     @Override
     public int hashCode() {
-        int hashCode = theAsymKeyType.hashCode() << TethysDataConverter.BYTE_SHIFT;
+        int hashCode = theKeyPairType.hashCode() << TethysDataConverter.BYTE_SHIFT;
         hashCode += theAgreementType.hashCode() + (Boolean.TRUE.equals(withConfirm) ? 1 : 0);
         return (hashCode << TethysDataConverter.BYTE_SHIFT) + theKDFType.hashCode();
     }
 
     /**
-     * Obtain a list of all possible agreements for the keyType.
-     * @param pKeyType the keyType
+     * Obtain a list of all possible agreements for the keyPairType.
+     * @param pKeyPairType the keyPairType
      * @return the list
      */
-    public static List<GordianAgreementSpec> listPossibleAgreements(final GordianAsymKeyType pKeyType) {
+    public static List<GordianAgreementSpec> listPossibleAgreements(final GordianKeyPairType pKeyPairType) {
         /* Create list */
         final List<GordianAgreementSpec> myAgreements = new ArrayList<>();
 
-        /* Switch on AsymKeyType */
-        switch (pKeyType) {
+        /* Switch on keyPairType */
+        switch (pKeyPairType) {
             case RSA:
-                myAgreements.addAll(listAllKDFs(pKeyType, GordianAgreementType.KEM));
+                myAgreements.addAll(listAllKDFs(pKeyPairType, GordianAgreementType.KEM));
                 break;
             case NEWHOPE:
-                myAgreements.addAll(listAllKDFs(pKeyType, GordianAgreementType.ANON));
+                myAgreements.addAll(listAllKDFs(pKeyPairType, GordianAgreementType.ANON));
                 break;
             case EC:
             case SM2:
             case GOST2012:
-                myAgreements.addAll(listAllKDFs(pKeyType, GordianAgreementType.KEM));
-                myAgreements.addAll(listAllKDFs(pKeyType, GordianAgreementType.ANON));
-                myAgreements.addAll(listAllKDFs(pKeyType, GordianAgreementType.BASIC));
-                myAgreements.addAll(listAllKDFs(pKeyType, GordianAgreementType.SIGNED));
-                myAgreements.addAll(listAllKDFs(pKeyType, GordianAgreementType.UNIFIED));
-                myAgreements.addAll(listAllKDFs(pKeyType, GordianAgreementType.UNIFIED, Boolean.TRUE));
-                myAgreements.addAll(listAllKDFs(pKeyType, GordianAgreementType.MQV));
-                myAgreements.addAll(listAllKDFs(pKeyType, GordianAgreementType.MQV, Boolean.TRUE));
-                myAgreements.addAll(listAllKDFs(pKeyType, GordianAgreementType.SM2));
-                myAgreements.addAll(listAllKDFs(pKeyType, GordianAgreementType.SM2, Boolean.TRUE));
+                myAgreements.addAll(listAllKDFs(pKeyPairType, GordianAgreementType.KEM));
+                myAgreements.addAll(listAllKDFs(pKeyPairType, GordianAgreementType.ANON));
+                myAgreements.addAll(listAllKDFs(pKeyPairType, GordianAgreementType.BASIC));
+                myAgreements.addAll(listAllKDFs(pKeyPairType, GordianAgreementType.SIGNED));
+                myAgreements.addAll(listAllKDFs(pKeyPairType, GordianAgreementType.UNIFIED));
+                myAgreements.addAll(listAllKDFs(pKeyPairType, GordianAgreementType.UNIFIED, Boolean.TRUE));
+                myAgreements.addAll(listAllKDFs(pKeyPairType, GordianAgreementType.MQV));
+                myAgreements.addAll(listAllKDFs(pKeyPairType, GordianAgreementType.MQV, Boolean.TRUE));
+                myAgreements.addAll(listAllKDFs(pKeyPairType, GordianAgreementType.SM2));
+                myAgreements.addAll(listAllKDFs(pKeyPairType, GordianAgreementType.SM2, Boolean.TRUE));
                 break;
             case DH:
             case DSTU4145:
-                myAgreements.addAll(listAllKDFs(pKeyType, GordianAgreementType.KEM));
-                myAgreements.addAll(listAllKDFs(pKeyType, GordianAgreementType.ANON));
-                myAgreements.addAll(listAllKDFs(pKeyType, GordianAgreementType.BASIC));
-                myAgreements.addAll(listAllKDFs(pKeyType, GordianAgreementType.SIGNED));
-                myAgreements.addAll(listAllKDFs(pKeyType, GordianAgreementType.UNIFIED));
-                myAgreements.addAll(listAllKDFs(pKeyType, GordianAgreementType.UNIFIED, Boolean.TRUE));
-                myAgreements.addAll(listAllKDFs(pKeyType, GordianAgreementType.MQV));
-                myAgreements.addAll(listAllKDFs(pKeyType, GordianAgreementType.MQV, Boolean.TRUE));
+                myAgreements.addAll(listAllKDFs(pKeyPairType, GordianAgreementType.KEM));
+                myAgreements.addAll(listAllKDFs(pKeyPairType, GordianAgreementType.ANON));
+                myAgreements.addAll(listAllKDFs(pKeyPairType, GordianAgreementType.BASIC));
+                myAgreements.addAll(listAllKDFs(pKeyPairType, GordianAgreementType.SIGNED));
+                myAgreements.addAll(listAllKDFs(pKeyPairType, GordianAgreementType.UNIFIED));
+                myAgreements.addAll(listAllKDFs(pKeyPairType, GordianAgreementType.UNIFIED, Boolean.TRUE));
+                myAgreements.addAll(listAllKDFs(pKeyPairType, GordianAgreementType.MQV));
+                myAgreements.addAll(listAllKDFs(pKeyPairType, GordianAgreementType.MQV, Boolean.TRUE));
                 break;
             case XDH:
-                myAgreements.addAll(listAllKDFs(pKeyType, GordianAgreementType.ANON));
-                myAgreements.addAll(listAllKDFs(pKeyType, GordianAgreementType.BASIC));
-                myAgreements.addAll(listAllKDFs(pKeyType, GordianAgreementType.SIGNED));
-                myAgreements.addAll(listAllKDFs(pKeyType, GordianAgreementType.UNIFIED));
-                myAgreements.addAll(listAllKDFs(pKeyType, GordianAgreementType.UNIFIED, Boolean.TRUE));
+                myAgreements.addAll(listAllKDFs(pKeyPairType, GordianAgreementType.ANON));
+                myAgreements.addAll(listAllKDFs(pKeyPairType, GordianAgreementType.BASIC));
+                myAgreements.addAll(listAllKDFs(pKeyPairType, GordianAgreementType.SIGNED));
+                myAgreements.addAll(listAllKDFs(pKeyPairType, GordianAgreementType.UNIFIED));
+                myAgreements.addAll(listAllKDFs(pKeyPairType, GordianAgreementType.UNIFIED, Boolean.TRUE));
                 break;
             default:
                 break;
@@ -532,23 +532,23 @@ public final class GordianAgreementSpec {
 
     /**
      * Create list of KDF variants.
-     * @param pAsymKeyType the keyType
+     * @param pKeyPairType the keyPairType
      * @param pAgreementType the agreementType
      * @return the list
      */
-    private static List<GordianAgreementSpec> listAllKDFs(final GordianAsymKeyType pAsymKeyType,
+    private static List<GordianAgreementSpec> listAllKDFs(final GordianKeyPairType pKeyPairType,
                                                           final GordianAgreementType pAgreementType) {
-        return listAllKDFs(pAsymKeyType, pAgreementType, Boolean.FALSE);
+        return listAllKDFs(pKeyPairType, pAgreementType, Boolean.FALSE);
     }
 
     /**
      * Create list of KDF variants.
-     * @param pAsymKeyType the keyType
+     * @param pKeyPairType the keyPairType
      * @param pAgreementType the agreementType
      * @param pConfirm with key confirmation
      * @return the list
      */
-    private static List<GordianAgreementSpec> listAllKDFs(final GordianAsymKeyType pAsymKeyType,
+    private static List<GordianAgreementSpec> listAllKDFs(final GordianKeyPairType pKeyPairType,
                                                           final GordianAgreementType pAgreementType,
                                                           final Boolean pConfirm) {
         /* Create list */
@@ -556,7 +556,7 @@ public final class GordianAgreementSpec {
 
         /* Loop through the KDFs */
         for (final GordianKDFType myKDF : GordianKDFType.values()) {
-            myAgreements.add(new GordianAgreementSpec(pAsymKeyType, pAgreementType, myKDF, pConfirm));
+            myAgreements.add(new GordianAgreementSpec(pKeyPairType, pAgreementType, myKDF, pConfirm));
         }
 
         /* Return the list */

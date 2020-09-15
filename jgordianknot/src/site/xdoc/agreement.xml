@@ -32,11 +32,11 @@
                 <source>
                     /* Access factory */
                     final GordianFactory myBaseFactory = GordianGenerator.createFactory();
-                    final GordianAsymFactory myKeyPairFactory = myBase.getAsymmetricFactory();
+                    final GordianKeyPairFactory myKeyPairFactory = myBase.getKeyPairFactory();
                     final GordianAgreementFactory myAgreementFactory = myKeyPairFactory.getAgreementFactory();
 
                     /* Access keyPairGenerator and create sending/receiving pairs */
-                    final GordianAsymKeySpec mySpec = GordianAsymKeySpec.dh(GordianDHGroup.rfc7919_ffdhe2048);
+                    final GordianKeyPairSpec mySpec = GordianKeyPairSpec.dh(GordianDHGroup.FFDHE2048);
                     final GordianKeyPairGenerator myGenerator = myKeyPairFactory.getKeyPairGenerator(mySpec);
                     final GordianKeyPair myClientPair = myGenerator.generateKeyPair();
                     final GordianKeyPair myServerPair = myGenerator.generateKeyPair();
@@ -74,11 +74,11 @@
                 <source>
                     /* Access factory */
                     final GordianFactory myBaseFactory = GordianGenerator.createFactory();
-                    final GordianAsymFactory myKeyPairFactory = myBase.getAsymmetricFactory();
+                    final GordianKeyPairFactory myKeyPairFactory = myBase.getKeyPairFactory();
                     final GordianAgreementFactory myAgreementFactory = myKeyPairFactory.getAgreementFactory();
 
                     /* Access keyPairGenerator and create sending/receiving pairs */
-                    final GordianAsymKeySpec mySpec = GordianAsymKeySpec.dh(GordianDHGroup.rfc7919_ffdhe2048);
+                    final GordianKeyPairSpec mySpec = GordianKeyPairSpec.dh(GordianDHGroup.FFDHE2048);
                     final GordianKeyPairGenerator myGenerator = myKeyPairFactory.getKeyPairGenerator(mySpec);
                     final GordianKeyPair myClientPair = myGenerator.generateKeyPair();
                     final GordianKeyPair myServerPair = myGenerator.generateKeyPair();
@@ -129,11 +129,11 @@
                 <source>
                     /* Access factory */
                     final GordianFactory myBaseFactory = GordianGenerator.createFactory();
-                    final GordianAsymFactory myKeyPairFactory = myBase.getAsymmetricFactory();
+                    final GordianKeyPairFactory myKeyPairFactory = myBase.getKeyPairFactory();
                     final GordianAgreementFactory myAgreementFactory = myKeyPairFactory.getAgreementFactory();
 
                     /* Access keyPairGenerator and create server pair */
-                    final GordianAsymKeySpec mySpec = GordianAsymKeySpec.ed448();
+                    final GordianKeyPairSpec mySpec = GordianKeyPairSpec.ed448();
                     final GordianKeyPairGenerator myGenerator = myKeyPairFactory.getKeyPairGenerator(mySpec);
                     final GordianKeyPair myServerPair = myGenerator.generateKeyPair();
 

@@ -18,7 +18,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jgordianknot.api.sign;
 
-import net.sourceforge.joceanus.jgordianknot.api.asym.GordianAsymKeyType;
+import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPairType;
 
 /**
  * Signature Type.
@@ -74,14 +74,14 @@ public enum GordianSignatureType {
      * @param pKeyType the asymKeyType
      * @return true/false
      */
-    public boolean isSupported(final GordianAsymKeyType pKeyType) {
+    public boolean isSupported(final GordianKeyPairType pKeyType) {
         switch (this) {
             case ISO9796D2:
             case PSS:
             case X931:
-                return GordianAsymKeyType.RSA == pKeyType;
+                return GordianKeyPairType.RSA == pKeyType;
             case NR:
-                return GordianAsymKeyType.EC == pKeyType;
+                return GordianKeyPairType.EC == pKeyType;
             case PURE:
                 return hasPure(pKeyType);
             case PREHASH:
@@ -101,7 +101,7 @@ public enum GordianSignatureType {
      * @param pKeyType the asymKeyType
      * @return true/false
      */
-    public static boolean hasPure(final GordianAsymKeyType pKeyType) {
+    public static boolean hasPure(final GordianKeyPairType pKeyType) {
         switch (pKeyType) {
             case EDDSA:
             case XMSS:
@@ -118,7 +118,7 @@ public enum GordianSignatureType {
      * @param pKeyType the asymKeyType
      * @return true/false
      */
-    public static boolean hasPreHash(final GordianAsymKeyType pKeyType) {
+    public static boolean hasPreHash(final GordianKeyPairType pKeyType) {
         switch (pKeyType) {
             case EDDSA:
             case XMSS:
@@ -135,7 +135,7 @@ public enum GordianSignatureType {
      * @param pKeyType the asymKeyType
      * @return true/false
      */
-    public static boolean hasDSA(final GordianAsymKeyType pKeyType) {
+    public static boolean hasDSA(final GordianKeyPairType pKeyType) {
         switch (pKeyType) {
             case EC:
             case DSA:
@@ -150,7 +150,7 @@ public enum GordianSignatureType {
      * @param pKeyType the asymKeyType
      * @return true/false
      */
-    public static boolean hasNative(final GordianAsymKeyType pKeyType) {
+    public static boolean hasNative(final GordianKeyPairType pKeyType) {
         switch (pKeyType) {
             case SM2:
             case EDDSA:

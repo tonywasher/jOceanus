@@ -21,8 +21,8 @@ import java.security.SecureRandom;
 import net.sourceforge.joceanus.jgordianknot.api.encrypt.GordianEncryptor;
 import net.sourceforge.joceanus.jgordianknot.api.encrypt.GordianEncryptorFactory;
 import net.sourceforge.joceanus.jgordianknot.api.encrypt.GordianEncryptorSpec;
-import net.sourceforge.joceanus.jgordianknot.api.factory.GordianAsymFactory;
-import net.sourceforge.joceanus.jgordianknot.api.key.GordianKeyPair;
+import net.sourceforge.joceanus.jgordianknot.api.factory.GordianKeyPairFactory;
+import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPair;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianCoreFactory;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianDataException;
 import net.sourceforge.joceanus.jgordianknot.impl.core.keypair.GordianCoreKeyPair;
@@ -93,8 +93,8 @@ public abstract class GordianCoreEncryptor
      * @throws OceanusException on error
      */
     protected void checkKeyPair(final GordianKeyPair pKeyPair) throws OceanusException {
-        final GordianAsymFactory myAsym = theFactory.getAsymmetricFactory();
-        final GordianEncryptorFactory myEncrypts = myAsym.getEncryptorFactory();
+        final GordianKeyPairFactory myFactory = theFactory.getKeyPairFactory();
+        final GordianEncryptorFactory myEncrypts = myFactory.getEncryptorFactory();
         if (!myEncrypts.validEncryptorSpecForKeyPair(pKeyPair, theSpec)) {
             throw new GordianDataException("Incorrect KeyPair type");
         }

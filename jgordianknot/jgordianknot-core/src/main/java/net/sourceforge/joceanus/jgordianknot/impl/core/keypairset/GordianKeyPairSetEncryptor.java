@@ -21,15 +21,15 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
 
-import net.sourceforge.joceanus.jgordianknot.api.asym.GordianAsymKeySpec;
 import net.sourceforge.joceanus.jgordianknot.api.base.GordianLength;
 import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigestSpec;
 import net.sourceforge.joceanus.jgordianknot.api.encrypt.GordianEncryptor;
 import net.sourceforge.joceanus.jgordianknot.api.encrypt.GordianEncryptorFactory;
 import net.sourceforge.joceanus.jgordianknot.api.encrypt.GordianEncryptorSpec;
 import net.sourceforge.joceanus.jgordianknot.api.encrypt.GordianSM2EncryptionSpec;
-import net.sourceforge.joceanus.jgordianknot.api.factory.GordianAsymFactory;
-import net.sourceforge.joceanus.jgordianknot.api.key.GordianKeyPair;
+import net.sourceforge.joceanus.jgordianknot.api.factory.GordianKeyPairFactory;
+import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPair;
+import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPairSpec;
 import net.sourceforge.joceanus.jgordianknot.api.keypairset.GordianKeyPairSet;
 import net.sourceforge.joceanus.jgordianknot.api.keypairset.GordianKeyPairSetSpec;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianLogicException;
@@ -55,7 +55,7 @@ public class GordianKeyPairSetEncryptor {
      * @param pKeyPairSetSpec the keyPairSetSpec
      * @throws OceanusException on error
      */
-    GordianKeyPairSetEncryptor(final GordianAsymFactory pFactory,
+    GordianKeyPairSetEncryptor(final GordianKeyPairFactory pFactory,
                                final GordianKeyPairSetSpec pKeyPairSetSpec) throws OceanusException {
         /* Store parameters */
         theSpec = pKeyPairSetSpec;
@@ -63,9 +63,9 @@ public class GordianKeyPairSetEncryptor {
 
         /* Create the signers */
         final GordianEncryptorFactory myFactory = pFactory.getEncryptorFactory();
-        final Iterator<GordianAsymKeySpec> myIterator = theSpec.iterator();
+        final Iterator<GordianKeyPairSpec> myIterator = theSpec.iterator();
         while (myIterator.hasNext()) {
-            final GordianAsymKeySpec mySpec = myIterator.next();
+            final GordianKeyPairSpec mySpec = myIterator.next();
             final GordianEncryptorSpec myEncSpec = defaultForKey(mySpec);
             theEncryptors.add(myFactory.createEncryptor(myEncSpec));
         }
@@ -169,8 +169,8 @@ public class GordianKeyPairSetEncryptor {
      * @param pKeySpec the keySpec
      * @return the encryptorSpec
      */
-    public static GordianEncryptorSpec defaultForKey(final GordianAsymKeySpec pKeySpec) {
-        switch (pKeySpec.getKeyType()) {
+    public static GordianEncryptorSpec defaultForKey(final GordianKeyPairSpec pKeySpec) {
+        switch (pKeySpec.getKeyPairType()) {
             case RSA:
                 return GordianEncryptorSpec.rsa(GordianDigestSpec.sha2(GordianLength.LEN_512));
             case ELGAMAL:

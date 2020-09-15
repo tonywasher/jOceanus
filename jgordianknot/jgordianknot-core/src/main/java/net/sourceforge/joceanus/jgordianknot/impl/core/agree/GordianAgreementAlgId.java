@@ -27,7 +27,7 @@ import net.sourceforge.joceanus.jgordianknot.api.agree.GordianAgreementFactory;
 import net.sourceforge.joceanus.jgordianknot.api.agree.GordianAgreementSpec;
 import net.sourceforge.joceanus.jgordianknot.api.agree.GordianAgreementType;
 import net.sourceforge.joceanus.jgordianknot.api.agree.GordianKDFType;
-import net.sourceforge.joceanus.jgordianknot.api.asym.GordianAsymKeyType;
+import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPairType;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianASN1Util;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianCoreFactory;
 
@@ -76,10 +76,10 @@ public class GordianAgreementAlgId {
         theIdentifierMap = new HashMap<>();
 
         /* Access the agreementFactory  */
-        theFactory = pFactory.getAsymmetricFactory().getAgreementFactory();
+        theFactory = pFactory.getKeyPairFactory().getAgreementFactory();
 
         /* Loop through the possible AsymKeys */
-        for (GordianAsymKeyType myKeyType : GordianAsymKeyType.values()) {
+        for (GordianKeyPairType myKeyType : GordianKeyPairType.values()) {
             /* Add any non-standard agreementSpecs */
             addAgreements(myKeyType);
         }
@@ -109,7 +109,7 @@ public class GordianAgreementAlgId {
      * Create Identifiers for all valid AgreementTypes.
      * @param pKeyType the keyType
      */
-    private void addAgreements(final GordianAsymKeyType pKeyType) {
+    private void addAgreements(final GordianKeyPairType pKeyType) {
         for (GordianAgreementSpec mySpec : theFactory.listAllSupportedAgreements(pKeyType)) {
             ensureAgreement(mySpec);
         }
@@ -133,7 +133,7 @@ public class GordianAgreementAlgId {
      */
     private void addAgreement(final GordianAgreementSpec pSpec) {
         /* Create a branch for mac based on the AgreementType */
-        final GordianAsymKeyType myKeyType = pSpec.getAsymKeyType();
+        final GordianKeyPairType myKeyType = pSpec.getKeyPairType();
         ASN1ObjectIdentifier myId = AGREESPECOID.branch(Integer.toString(myKeyType.ordinal() + 1));
 
         /* Add branch for agreementType */

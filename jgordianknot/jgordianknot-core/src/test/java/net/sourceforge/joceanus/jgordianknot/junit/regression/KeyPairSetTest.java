@@ -34,7 +34,7 @@ import net.sourceforge.joceanus.jgordianknot.api.factory.GordianFactoryType;
 import net.sourceforge.joceanus.jgordianknot.api.keypairset.GordianKeyPairSet;
 import net.sourceforge.joceanus.jgordianknot.api.keypairset.GordianKeyPairSetGenerator;
 import net.sourceforge.joceanus.jgordianknot.api.keypairset.GordianKeyPairSetSpec;
-import net.sourceforge.joceanus.jgordianknot.impl.core.keypair.GordianCoreAsymFactory;
+import net.sourceforge.joceanus.jgordianknot.impl.core.keypair.GordianCoreKeyPairFactory;
 import net.sourceforge.joceanus.jgordianknot.impl.core.keypairset.GordianCoreKeyPairSetFactory;
 import net.sourceforge.joceanus.jgordianknot.impl.core.keypairset.GordianKeyPairSetAnonymousAgreement;
 import net.sourceforge.joceanus.jgordianknot.impl.core.keypairset.GordianKeyPairSetEncryptor;
@@ -147,7 +147,7 @@ public class KeyPairSetTest {
     private void signatureTest(final GordianFactory pFactory,
                                final GordianKeyPairSetSpec pSpec) throws OceanusException {
         /* Create the keyPair */
-        final GordianCoreAsymFactory myAsymFactory = (GordianCoreAsymFactory) pFactory.getAsymmetricFactory();
+        final GordianCoreKeyPairFactory myAsymFactory = (GordianCoreKeyPairFactory) pFactory.getKeyPairFactory();
         final GordianCoreKeyPairSetFactory myFactory = (GordianCoreKeyPairSetFactory) myAsymFactory.getKeyPairSetFactory();
         final GordianKeyPairSetGenerator myGenerator = myFactory.getKeyPairSetGenerator(pSpec);
         final GordianKeyPairSet mySet = myGenerator.generateKeyPairSet();
@@ -181,7 +181,7 @@ public class KeyPairSetTest {
     private void encryptionTest(final GordianFactory pFactory,
                                 final GordianKeyPairSetSpec pSpec) throws OceanusException {
         /* Create the keyPair */
-        final GordianCoreAsymFactory myAsymFactory = (GordianCoreAsymFactory) pFactory.getAsymmetricFactory();
+        final GordianCoreKeyPairFactory myAsymFactory = (GordianCoreKeyPairFactory) pFactory.getKeyPairFactory();
         final GordianCoreKeyPairSetFactory myFactory = (GordianCoreKeyPairSetFactory) myAsymFactory.getKeyPairSetFactory();
         final GordianKeyPairSetGenerator myGenerator = myFactory.getKeyPairSetGenerator(pSpec);
         final GordianKeyPairSet mySet = myGenerator.generateKeyPairSet();
@@ -212,7 +212,7 @@ public class KeyPairSetTest {
     private void agreementAnonTest(final GordianFactory pFactory,
                                    final GordianKeyPairSetSpec pSpec) throws OceanusException {
         /* Create the keyPair */
-        final GordianCoreAsymFactory myAsymFactory = (GordianCoreAsymFactory) pFactory.getAsymmetricFactory();
+        final GordianCoreKeyPairFactory myAsymFactory = (GordianCoreKeyPairFactory) pFactory.getKeyPairFactory();
         final GordianCoreKeyPairSetFactory myFactory = (GordianCoreKeyPairSetFactory) myAsymFactory.getKeyPairSetFactory();
         final GordianKeyPairSetGenerator myGenerator = myFactory.getKeyPairSetGenerator(pSpec);
         final GordianKeyPairSet mySet = myGenerator.generateKeyPairSet();
@@ -247,7 +247,7 @@ public class KeyPairSetTest {
     private void agreementSignedTest(final GordianFactory pFactory,
                                      final GordianKeyPairSetSpec pSpec) throws OceanusException {
         /* Create the keyPair */
-        final GordianCoreAsymFactory myAsymFactory = (GordianCoreAsymFactory) pFactory.getAsymmetricFactory();
+        final GordianCoreKeyPairFactory myAsymFactory = (GordianCoreKeyPairFactory) pFactory.getKeyPairFactory();
         final GordianCoreKeyPairSetFactory myFactory = (GordianCoreKeyPairSetFactory) myAsymFactory.getKeyPairSetFactory();
         final GordianKeyPairSetGenerator myGenerator = myFactory.getKeyPairSetGenerator(GordianKeyPairSetSpec.SIGNLO);
         final GordianKeyPairSet mySet = myGenerator.generateKeyPairSet();
@@ -285,7 +285,7 @@ public class KeyPairSetTest {
                                         final GordianKeyPairSetSpec pSpec,
                                         final Boolean pConfirm) throws OceanusException {
         /* Create the keyPair */
-        final GordianCoreAsymFactory myAsymFactory = (GordianCoreAsymFactory) pFactory.getAsymmetricFactory();
+        final GordianCoreKeyPairFactory myAsymFactory = (GordianCoreKeyPairFactory) pFactory.getKeyPairFactory();
         final GordianCoreKeyPairSetFactory myFactory = (GordianCoreKeyPairSetFactory) myAsymFactory.getKeyPairSetFactory();
         final GordianKeyPairSetGenerator myGenerator = myFactory.getKeyPairSetGenerator(pSpec);
         final GordianKeyPairSet myClient = myGenerator.generateKeyPairSet();

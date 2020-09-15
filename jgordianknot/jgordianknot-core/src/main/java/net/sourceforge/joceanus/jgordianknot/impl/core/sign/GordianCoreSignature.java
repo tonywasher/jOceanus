@@ -18,8 +18,8 @@ package net.sourceforge.joceanus.jgordianknot.impl.core.sign;
 
 import java.security.SecureRandom;
 
-import net.sourceforge.joceanus.jgordianknot.api.factory.GordianAsymFactory;
-import net.sourceforge.joceanus.jgordianknot.api.key.GordianKeyPair;
+import net.sourceforge.joceanus.jgordianknot.api.factory.GordianKeyPairFactory;
+import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPair;
 import net.sourceforge.joceanus.jgordianknot.api.sign.GordianSignature;
 import net.sourceforge.joceanus.jgordianknot.api.sign.GordianSignatureFactory;
 import net.sourceforge.joceanus.jgordianknot.api.sign.GordianSignatureSpec;
@@ -107,8 +107,8 @@ public abstract class GordianCoreSignature
      * @throws OceanusException on error
      */
     private void checkKeyPair(final GordianKeyPair pKeyPair) throws OceanusException {
-        final GordianAsymFactory myAsym = theFactory.getAsymmetricFactory();
-        final GordianSignatureFactory mySigns = myAsym.getSignatureFactory();
+        final GordianKeyPairFactory myFactory = theFactory.getKeyPairFactory();
+        final GordianSignatureFactory mySigns = myFactory.getSignatureFactory();
         if (!mySigns.validSignatureSpecForKeyPair(pKeyPair, theSpec)) {
             throw new GordianDataException("Incorrect KeyPair type");
         }

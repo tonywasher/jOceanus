@@ -28,7 +28,7 @@
             </subsection>
             <subsection name="Asymmetric API">
                 <ol>
-                    <li><a href="asymKeyPair.html">KeyPairs</a></li>
+                    <li><a href="keyPair.html">KeyPairs</a></li>
                     <li><a href="signature.html">Signatures</a></li>
                     <li><a href="agreement.html">Agreements</a></li>
                     <li><a href="encryptor.html">Encryptors</a></li>

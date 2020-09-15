@@ -69,7 +69,7 @@ public class JcaEncryptorFactory
      * @throws OceanusException on error
      */
     private GordianEncryptor getJcaEncryptor(final GordianEncryptorSpec pEncryptorSpec) throws OceanusException {
-        switch (pEncryptorSpec.getKeyType()) {
+        switch (pEncryptorSpec.getKeyPairType()) {
             case RSA:
             case ELGAMAL:
                 return new JcaBlockEncryptor(getFactory(), pEncryptorSpec);
@@ -80,7 +80,7 @@ public class JcaEncryptorFactory
                        ? new JcaBlockEncryptor(getFactory(), pEncryptorSpec)
                        : new JcaHybridEncryptor(getFactory(), pEncryptorSpec);
             default:
-                throw new GordianDataException(GordianCoreFactory.getInvalidText(pEncryptorSpec.getKeyType()));
+                throw new GordianDataException(GordianCoreFactory.getInvalidText(pEncryptorSpec.getKeyPairType()));
         }
     }
 
@@ -116,7 +116,7 @@ public class JcaEncryptorFactory
         }
 
         /* Switch on KeyType */
-        switch (pSpec.getKeyType()) {
+        switch (pSpec.getKeyPairType()) {
             case RSA:
             case ELGAMAL:
             case MCELIECE:

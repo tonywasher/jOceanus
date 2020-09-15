@@ -34,15 +34,15 @@ import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
 import org.bouncycastle.asn1.x9.X9ObjectIdentifiers;
 import org.bouncycastle.pqc.asn1.PQCObjectIdentifiers;
 
-import net.sourceforge.joceanus.jgordianknot.api.asym.GordianAsymKeySpec;
-import net.sourceforge.joceanus.jgordianknot.api.asym.GordianAsymKeyType;
-import net.sourceforge.joceanus.jgordianknot.api.asym.GordianQTESLAKeyType;
-import net.sourceforge.joceanus.jgordianknot.api.asym.GordianSPHINCSDigestType;
-import net.sourceforge.joceanus.jgordianknot.api.asym.GordianXMSSKeySpec;
-import net.sourceforge.joceanus.jgordianknot.api.asym.GordianXMSSKeySpec.GordianXMSSDigestType;
 import net.sourceforge.joceanus.jgordianknot.api.base.GordianLength;
 import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigestSpec;
-import net.sourceforge.joceanus.jgordianknot.api.key.GordianKeyPair;
+import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPair;
+import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPairSpec;
+import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPairType;
+import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianQTESLAKeyType;
+import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianSPHINCSDigestType;
+import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianXMSSKeySpec;
+import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianXMSSKeySpec.GordianXMSSDigestType;
 import net.sourceforge.joceanus.jgordianknot.api.sign.GordianSignatureFactory;
 import net.sourceforge.joceanus.jgordianknot.api.sign.GordianSignatureSpec;
 import net.sourceforge.joceanus.jgordianknot.api.sign.GordianSignatureType;
@@ -89,7 +89,7 @@ public class GordianSignatureAlgId {
         theIdentifierMap = new HashMap<>();
 
         /* Access the asymFactory and digests */
-        theFactory = pFactory.getAsymmetricFactory().getSignatureFactory();
+        theFactory = pFactory.getKeyPairFactory().getSignatureFactory();
 
         /* Populate with the public standards */
         addRSASignatures();
@@ -101,7 +101,7 @@ public class GordianSignatureAlgId {
         addPostQuantumSignatures();
 
         /* Loop through the possible AsymKeys */
-        for (GordianAsymKeyType myKeyType : GordianAsymKeyType.values()) {
+        for (GordianKeyPairType myKeyType : GordianKeyPairType.values()) {
             /* Ignore keyType if subTypes are used */
             if (myKeyType.subTypeForSignatures()) {
                 continue;
@@ -121,12 +121,12 @@ public class GordianSignatureAlgId {
     AlgorithmIdentifier getIdentifierForSpecAndKeyPair(final GordianSignatureSpec pSpec,
                                                        final GordianKeyPair pKeyPair) {
         /* If we need to use the subType */
-        if (pSpec.getAsymKeyType().subTypeForSignatures()) {
+        if (pSpec.getKeyPairType().subTypeForSignatures()) {
             /* Look up in the subKey map */
             final Map<Object, AlgorithmIdentifier> myMap = theSpecSubTypeMap.get(pSpec);
             return myMap == null
                    ? null
-                   : myMap.get(pKeyPair.getKeySpec().getSubKeyType());
+                   : myMap.get(pKeyPair.getKeyPairSpec().getSubKeyType());
         }
 
         /* Look up in the standard map */
@@ -306,9 +306,9 @@ public class GordianSignatureAlgId {
      * Add EdDSA signatures.
      */
     private void addEdDSASignatures() {
-        addToMaps(GordianSignatureSpec.edDSA(), GordianAsymKeySpec.ed25519(),
+        addToMaps(GordianSignatureSpec.edDSA(), GordianKeyPairSpec.ed25519(),
                 new AlgorithmIdentifier(EdECObjectIdentifiers.id_Ed25519, DERNull.INSTANCE));
-        addToMaps(GordianSignatureSpec.edDSA(), GordianAsymKeySpec.ed448(),
+        addToMaps(GordianSignatureSpec.edDSA(), GordianKeyPairSpec.ed448(),
                 new AlgorithmIdentifier(EdECObjectIdentifiers.id_Ed448, DERNull.INSTANCE));
     }
 
@@ -427,7 +427,7 @@ public class GordianSignatureAlgId {
      * Create Identifiers for all valid SignatureTypes/DigestSpecs.
      * @param pKeyType the keyType
      */
-    private void addSignatures(final GordianAsymKeyType pKeyType) {
+    private void addSignatures(final GordianKeyPairType pKeyType) {
         for (GordianSignatureSpec mySpec : theFactory.listAllSupportedSignatures(pKeyType)) {
             ensureSignature(mySpec);
         }
@@ -450,7 +450,7 @@ public class GordianSignatureAlgId {
      */
     private void addSignature(final GordianSignatureSpec pSigSpec) {
         /* Create a branch for signatures based on the AsymKeyType */
-        final GordianAsymKeyType myKeyType = pSigSpec.getAsymKeyType();
+        final GordianKeyPairType myKeyType = pSigSpec.getKeyPairType();
         ASN1ObjectIdentifier myId = SIGOID.branch(Integer.toString(myKeyType.ordinal() + 1));
 
         /* Create a branch for signatures based on the SignatureType */

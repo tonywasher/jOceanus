@@ -27,10 +27,10 @@ import net.sourceforge.joceanus.jgordianknot.api.agree.GordianAgreementFactory;
 import net.sourceforge.joceanus.jgordianknot.api.agree.GordianAgreementSpec;
 import net.sourceforge.joceanus.jgordianknot.api.agree.GordianKDFType;
 import net.sourceforge.joceanus.jgordianknot.api.agree.GordianSignedAgreement;
-import net.sourceforge.joceanus.jgordianknot.api.asym.GordianAsymKeySpec;
-import net.sourceforge.joceanus.jgordianknot.api.asym.GordianAsymKeyType;
 import net.sourceforge.joceanus.jgordianknot.api.base.GordianLength;
-import net.sourceforge.joceanus.jgordianknot.api.key.GordianKeyPair;
+import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPair;
+import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPairSpec;
+import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPairType;
 import net.sourceforge.joceanus.jgordianknot.api.keypairset.GordianKeyPairSet;
 import net.sourceforge.joceanus.jgordianknot.api.keypairset.GordianKeyPairSetSpec;
 import net.sourceforge.joceanus.jgordianknot.impl.core.agree.GordianCoreAgreement;
@@ -61,12 +61,12 @@ public class GordianKeyPairSetSignedAgreement
         theAgreements = new ArrayList<>();
 
         /* Create the agreements */
-        final GordianAgreementFactory myFactory = pFactory.getAsymmetricFactory().getAgreementFactory();
+        final GordianAgreementFactory myFactory = pFactory.getKeyPairFactory().getAgreementFactory();
         final GordianKDFType myKDFType = pSpec.getKDFType();
         theAgreements.add((GordianSignedAgreement) myFactory.createAgreement(
                 GordianAgreementSpec.dhSigned(myKDFType)));
         theAgreements.add((GordianSignedAgreement) myFactory.createAgreement(
-                GordianAgreementSpec.ecdhSigned(GordianAsymKeyType.EC, myKDFType)));
+                GordianAgreementSpec.ecdhSigned(GordianKeyPairType.EC, myKDFType)));
         theAgreements.add((GordianSignedAgreement) myFactory.createAgreement(
                 GordianAgreementSpec.xdhSigned(myKDFType)));
     }
@@ -88,7 +88,7 @@ public class GordianKeyPairSetSignedAgreement
         final GordianKeyPairSetAgreeASN1 myASN1 = new GordianKeyPairSetAgreeASN1(pKeyPairSetSpec, myResId);
 
         /* Loop through the agreements */
-        final Iterator<GordianAsymKeySpec> myIterator = pKeyPairSetSpec.iterator();
+        final Iterator<GordianKeyPairSpec> myIterator = pKeyPairSetSpec.iterator();
         for (GordianSignedAgreement myAgreement : theAgreements) {
             /* create the clientHello and add to message */
             myASN1.addMessage(myAgreement.createClientHello(myIterator.next()));

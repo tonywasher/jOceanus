@@ -21,8 +21,8 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Objects;
 
-import net.sourceforge.joceanus.jgordianknot.api.asym.GordianAsymKeySpec;
-import net.sourceforge.joceanus.jgordianknot.api.key.GordianKeyPair;
+import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPair;
+import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPairSpec;
 import net.sourceforge.joceanus.jgordianknot.api.keypairset.GordianKeyPairSet;
 import net.sourceforge.joceanus.jgordianknot.api.keypairset.GordianKeyPairSetSpec;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianLogicException;
@@ -41,7 +41,7 @@ public class GordianCoreKeyPairSet
     /**
      * The keyPairs.
      */
-    private final Map<GordianAsymKeySpec, GordianKeyPair> theKeyPairs;
+    private final Map<GordianKeyPairSpec, GordianKeyPair> theKeyPairs;
 
     /**
      * is the keyPairSet public only?
@@ -89,7 +89,7 @@ public class GordianCoreKeyPairSet
         }
 
         /* Check uniqueness */
-        final GordianAsymKeySpec mySpec = pKeyPair.getKeySpec();
+        final GordianKeyPairSpec mySpec = pKeyPair.getKeyPairSpec();
         if (theKeyPairs.containsKey(mySpec)) {
             throw new GordianLogicException("duplicate keyPairSpec");
         }

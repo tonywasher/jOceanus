@@ -23,13 +23,13 @@ import net.sourceforge.joceanus.jgordianknot.api.agree.GordianAgreementSpec;
 import net.sourceforge.joceanus.jgordianknot.api.agree.GordianAgreementType;
 import net.sourceforge.joceanus.jgordianknot.api.agree.GordianAnonymousAgreement;
 import net.sourceforge.joceanus.jgordianknot.api.agree.GordianKDFType;
-import net.sourceforge.joceanus.jgordianknot.api.asym.GordianAsymKeySpec;
-import net.sourceforge.joceanus.jgordianknot.api.asym.GordianAsymKeyType;
-import net.sourceforge.joceanus.jgordianknot.api.asym.GordianEdwardsElliptic;
-import net.sourceforge.joceanus.jgordianknot.api.factory.GordianAsymFactory;
 import net.sourceforge.joceanus.jgordianknot.api.factory.GordianFactory;
 import net.sourceforge.joceanus.jgordianknot.api.factory.GordianFactoryType;
-import net.sourceforge.joceanus.jgordianknot.api.key.GordianKeyPair;
+import net.sourceforge.joceanus.jgordianknot.api.factory.GordianKeyPairFactory;
+import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianEdwardsElliptic;
+import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPair;
+import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPairSpec;
+import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPairType;
 import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetFactory;
 import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetHash;
 import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetHashSpec;
@@ -127,9 +127,9 @@ public class GordianCoreZipLock
         theLockedZipFile = null;
 
         /* Create the agreement */
-        final GordianAsymFactory myAsymFactory = theFactory.getAsymmetricFactory();
-        final GordianAgreementFactory myAgreeFactory = myAsymFactory.getAgreementFactory();
-        final GordianAgreementSpec mySpec = getAgreementSpec(pKeyPair.getKeySpec());
+        final GordianKeyPairFactory myKeyPairFactory = theFactory.getKeyPairFactory();
+        final GordianAgreementFactory myAgreeFactory = myKeyPairFactory.getAgreementFactory();
+        final GordianAgreementSpec mySpec = getAgreementSpec(pKeyPair.getKeyPairSpec());
         final GordianAnonymousAgreement myAgreement = (GordianAnonymousAgreement) myAgreeFactory.createAgreement(mySpec);
         myAgreement.setResultType(GordianFactoryType.BC);
         final byte[] myClientHello = myAgreement.createClientHello(pKeyPair);
@@ -182,8 +182,8 @@ public class GordianCoreZipLock
         checkState(GordianZipLockType.KEYPAIR_PASSWORD);
 
         /* Resolve the agreement */
-        final GordianAsymFactory myAsymFactory = theFactory.getAsymmetricFactory();
-        final GordianAgreementFactory myAgreeFactory = myAsymFactory.getAgreementFactory();
+        final GordianKeyPairFactory myKeyPairFactory = theFactory.getKeyPairFactory();
+        final GordianAgreementFactory myAgreeFactory = myKeyPairFactory.getAgreementFactory();
         final byte[] myClientHello = theZipLock.getClientHello().getEncodedBytes();
         final GordianAnonymousAgreement myAgreement = (GordianAnonymousAgreement) myAgreeFactory.createAgreement(myClientHello);
         myAgreement.acceptClientHello(pKeyPair, myClientHello);
@@ -244,8 +244,8 @@ public class GordianCoreZipLock
      * @param pKeySpec the keySpec
      * @return the agreementSpec
      */
-    private static GordianAgreementSpec getAgreementSpec(final GordianAsymKeySpec pKeySpec) {
-        final GordianAsymKeyType myKeyType = pKeySpec.getKeyType();
+    private static GordianAgreementSpec getAgreementSpec(final GordianKeyPairSpec pKeySpec) {
+        final GordianKeyPairType myKeyType = pKeySpec.getKeyPairType();
         final GordianEdwardsElliptic myEdwards = pKeySpec.getEdwardsElliptic();
         final GordianKDFType myKDFType = GordianEdwardsElliptic.CURVE25519.equals(myEdwards)
                     ? GordianKDFType.SHA256KDF

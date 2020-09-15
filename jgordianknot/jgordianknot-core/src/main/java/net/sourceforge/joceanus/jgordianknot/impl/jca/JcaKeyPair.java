@@ -23,8 +23,8 @@ import org.bouncycastle.pqc.jcajce.interfaces.LMSPrivateKey;
 import org.bouncycastle.pqc.jcajce.interfaces.XMSSMTPrivateKey;
 import org.bouncycastle.pqc.jcajce.interfaces.XMSSPrivateKey;
 
-import net.sourceforge.joceanus.jgordianknot.api.asym.GordianAsymKeySpec;
-import net.sourceforge.joceanus.jgordianknot.api.key.GordianStateAwareKeyPair;
+import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPairSpec;
+import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianStateAwareKeyPair;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianCoreFactory;
 import net.sourceforge.joceanus.jgordianknot.impl.core.keypair.GordianCoreKeyPair;
 import net.sourceforge.joceanus.jgordianknot.impl.core.keypair.GordianPrivateKey;
@@ -83,7 +83,7 @@ public class JcaKeyPair
          * @param pKeySpec the keySpec
          * @param pPublicKey the public key
          */
-        protected JcaPublicKey(final GordianAsymKeySpec pKeySpec,
+        protected JcaPublicKey(final GordianKeyPairSpec pKeySpec,
                                final PublicKey pPublicKey) {
             super(pKeySpec);
             theKey = pPublicKey;
@@ -142,7 +142,7 @@ public class JcaKeyPair
          * @param pKeySpec the keySpec
          * @param pPrivateKey the private key
          */
-        protected JcaPrivateKey(final GordianAsymKeySpec pKeySpec,
+        protected JcaPrivateKey(final GordianKeyPairSpec pKeySpec,
                                 final PrivateKey pPrivateKey) {
             super(pKeySpec);
             theKey = pPrivateKey;
@@ -201,7 +201,7 @@ public class JcaKeyPair
          * @param pKeySpec the key spec
          * @param pKey the key
          */
-        JcaStateAwarePrivateKey(final GordianAsymKeySpec pKeySpec,
+        JcaStateAwarePrivateKey(final GordianKeyPairSpec pKeySpec,
                                 final PrivateKey pKey) {
             super(pKeySpec, pKey);
             thePrivateKey = pKey;

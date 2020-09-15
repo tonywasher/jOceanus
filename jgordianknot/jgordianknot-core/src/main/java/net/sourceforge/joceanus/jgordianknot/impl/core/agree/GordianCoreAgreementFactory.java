@@ -24,9 +24,9 @@ import net.sourceforge.joceanus.jgordianknot.api.agree.GordianAgreement;
 import net.sourceforge.joceanus.jgordianknot.api.agree.GordianAgreementFactory;
 import net.sourceforge.joceanus.jgordianknot.api.agree.GordianAgreementSpec;
 import net.sourceforge.joceanus.jgordianknot.api.agree.GordianAgreementType;
-import net.sourceforge.joceanus.jgordianknot.api.asym.GordianAsymKeySpec;
-import net.sourceforge.joceanus.jgordianknot.api.asym.GordianAsymKeyType;
-import net.sourceforge.joceanus.jgordianknot.api.asym.GordianEdwardsElliptic;
+import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianEdwardsElliptic;
+import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPairSpec;
+import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPairType;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianCoreFactory;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianDataException;
 import net.sourceforge.joceanus.jtethys.OceanusException;
@@ -106,15 +106,15 @@ public abstract class GordianCoreAgreementFactory
     }
 
     @Override
-    public boolean validAgreementSpecForKeySpec(final GordianAsymKeySpec pKeySpec,
-                                                final GordianAgreementSpec pAgreementSpec) {
+    public boolean validAgreementSpecForKeyPairSpec(final GordianKeyPairSpec pKeyPairSpec,
+                                                    final GordianAgreementSpec pAgreementSpec) {
         /* Reject invalid agreementSpec */
         if (pAgreementSpec == null || !pAgreementSpec.isValid()) {
             return false;
         }
 
         /* Check agreement matches keySpec */
-        if (pAgreementSpec.getAsymKeyType() != pKeySpec.getKeyType()) {
+        if (pAgreementSpec.getKeyPairType() != pKeyPairSpec.getKeyPairType()) {
             return false;
         }
 
@@ -124,13 +124,13 @@ public abstract class GordianCoreAgreementFactory
         }
 
         /* Disallow MQV if group does not support it */
-        if (GordianAsymKeyType.DH.equals(pKeySpec.getKeyType())
+        if (GordianKeyPairType.DH.equals(pKeyPairSpec.getKeyPairType())
                 && GordianAgreementType.MQV.equals(pAgreementSpec.getAgreementType())) {
-            return pKeySpec.getDHGroup().isMQV();
+            return pKeyPairSpec.getDHGroup().isMQV();
         }
 
         /* For Edwards XDH, disallow 512KDF for 25519 and 256KDF for 448 */
-        final GordianEdwardsElliptic myEdwards = pKeySpec.getEdwardsElliptic();
+        final GordianEdwardsElliptic myEdwards = pKeyPairSpec.getEdwardsElliptic();
         if (myEdwards != null) {
             switch (pAgreementSpec.getKDFType()) {
                 case SHA256KDF:

@@ -18,18 +18,17 @@ package net.sourceforge.joceanus.jgordianknot.impl.jca;
 
 import java.security.InvalidKeyException;
 import java.util.Arrays;
-
 import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
 import javax.crypto.IllegalBlockSizeException;
 
-import net.sourceforge.joceanus.jgordianknot.api.asym.GordianAsymKeyType;
 import net.sourceforge.joceanus.jgordianknot.api.base.GordianLength;
 import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigestSpec;
 import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigestType;
 import net.sourceforge.joceanus.jgordianknot.api.encrypt.GordianEncryptorSpec;
 import net.sourceforge.joceanus.jgordianknot.api.encrypt.GordianSM2EncryptionSpec;
-import net.sourceforge.joceanus.jgordianknot.api.key.GordianKeyPair;
+import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPair;
+import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPairType;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianCryptoException;
 import net.sourceforge.joceanus.jgordianknot.impl.core.encrypt.GordianCoreEncryptor;
 import net.sourceforge.joceanus.jgordianknot.impl.jca.JcaKeyPair.JcaPrivateKey;
@@ -71,7 +70,7 @@ public final class JcaEncryptor {
                           final GordianEncryptorSpec pSpec) throws OceanusException {
             /* Initialise underlying cipher */
             super(pFactory, pSpec);
-            theEncryptor = JcaEncryptorFactory.getJavaEncryptor(getAlgorithmName(pSpec), GordianAsymKeyType.MCELIECE.equals(pSpec.getKeyType()));
+            theEncryptor = JcaEncryptorFactory.getJavaEncryptor(getAlgorithmName(pSpec), GordianKeyPairType.MCELIECE.equals(pSpec.getKeyPairType()));
         }
 
         @Override
@@ -196,12 +195,12 @@ public final class JcaEncryptor {
          */
         private static String getAlgorithmName(final GordianEncryptorSpec pSpec) {
             /* If this is a McEliece encryptor */
-            if (GordianAsymKeyType.MCELIECE.equals(pSpec.getKeyType())) {
+            if (GordianKeyPairType.MCELIECE.equals(pSpec.getKeyPairType())) {
                 return "McEliece";
             }
 
             /* Determine the base algorithm */
-            final String myBase = pSpec.getKeyType().name();
+            final String myBase = pSpec.getKeyPairType().name();
 
             /* Switch on encryptor type */
             switch (pSpec.getDigestSpec().getDigestLength()) {
@@ -238,7 +237,7 @@ public final class JcaEncryptor {
                            final GordianEncryptorSpec pSpec) throws OceanusException {
             /* Initialise underlying cipher */
             super(pFactory, pSpec);
-            theEncryptor = JcaEncryptorFactory.getJavaEncryptor(getAlgorithmName(pSpec), GordianAsymKeyType.MCELIECE.equals(pSpec.getKeyType()));
+            theEncryptor = JcaEncryptorFactory.getJavaEncryptor(getAlgorithmName(pSpec), GordianKeyPairType.MCELIECE.equals(pSpec.getKeyPairType()));
         }
 
         @Override
@@ -317,7 +316,7 @@ public final class JcaEncryptor {
          */
         private static String getAlgorithmName(final GordianEncryptorSpec pSpec) {
             /* If this is a McEliece encryptor */
-            if (GordianAsymKeyType.MCELIECE.equals(pSpec.getKeyType())) {
+            if (GordianKeyPairType.MCELIECE.equals(pSpec.getKeyPairType())) {
                 /* Switch on encryptor type */
                 switch (pSpec.getMcElieceType()) {
                     case FUJISAKI:

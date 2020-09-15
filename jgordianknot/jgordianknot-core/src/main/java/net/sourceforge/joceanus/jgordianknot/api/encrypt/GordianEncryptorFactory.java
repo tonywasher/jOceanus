@@ -20,9 +20,9 @@ import java.util.List;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
-import net.sourceforge.joceanus.jgordianknot.api.asym.GordianAsymKeySpec;
-import net.sourceforge.joceanus.jgordianknot.api.asym.GordianAsymKeyType;
-import net.sourceforge.joceanus.jgordianknot.api.key.GordianKeyPair;
+import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPair;
+import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPairSpec;
+import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPairType;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
@@ -48,7 +48,7 @@ public interface GordianEncryptorFactory {
      * @param pKeyType the keyType
      * @return the list of supported encryptorSpecs.
      */
-    default List<GordianEncryptorSpec> listAllSupportedEncryptors(final GordianAsymKeyType pKeyType) {
+    default List<GordianEncryptorSpec> listAllSupportedEncryptors(final GordianKeyPairType pKeyType) {
         return GordianEncryptorSpec.listPossibleEncryptors(pKeyType)
                 .stream()
                 .filter(supportedEncryptors())
@@ -63,17 +63,17 @@ public interface GordianEncryptorFactory {
      */
     default boolean validEncryptorSpecForKeyPair(GordianKeyPair pKeyPair,
                                                  GordianEncryptorSpec pEncryptorSpec) {
-        return validEncryptorSpecForKeySpec(pKeyPair.getKeySpec(), pEncryptorSpec);
+        return validEncryptorSpecForKeyPairSpec(pKeyPair.getKeyPairSpec(), pEncryptorSpec);
     }
 
     /**
-     * Check EncryptorSpec and KeySpec combination.
-     * @param pKeySpec the keySpec
+     * Check EncryptorSpec and KeyPairSpec combination.
+     * @param pKeyPairSpec the keyPairSpec
      * @param pEncryptorSpec the macSpec
      * @return true/false
      */
-    boolean validEncryptorSpecForKeySpec(GordianAsymKeySpec pKeySpec,
-                                         GordianEncryptorSpec pEncryptorSpec);
+    boolean validEncryptorSpecForKeyPairSpec(GordianKeyPairSpec pKeyPairSpec,
+                                             GordianEncryptorSpec pEncryptorSpec);
 
     /**
      * Obtain a list of supported encryptorSpecs.
@@ -81,18 +81,18 @@ public interface GordianEncryptorFactory {
      * @return the list of supported encryptorSpecs.
      */
     default List<GordianEncryptorSpec> listAllSupportedEncryptors(final GordianKeyPair pKeyPair) {
-        return listAllSupportedEncryptors(pKeyPair.getKeySpec());
+        return listAllSupportedEncryptors(pKeyPair.getKeyPairSpec());
     }
 
     /**
      * Obtain a list of supported encryptorSpecs.
-     * @param pKeySpec the keySpec
+     * @param pKeyPairSpec the keySpec
      * @return the list of supported encryptorSpecs.
      */
-    default List<GordianEncryptorSpec> listAllSupportedEncryptors(final GordianAsymKeySpec pKeySpec) {
-        return GordianEncryptorSpec.listPossibleEncryptors(pKeySpec.getKeyType())
+    default List<GordianEncryptorSpec> listAllSupportedEncryptors(final GordianKeyPairSpec pKeyPairSpec) {
+        return GordianEncryptorSpec.listPossibleEncryptors(pKeyPairSpec.getKeyPairType())
                 .stream()
-                .filter(s -> validEncryptorSpecForKeySpec(pKeySpec, s))
+                .filter(s -> validEncryptorSpecForKeyPairSpec(pKeyPairSpec, s))
                 .collect(Collectors.toList());
     }
 }

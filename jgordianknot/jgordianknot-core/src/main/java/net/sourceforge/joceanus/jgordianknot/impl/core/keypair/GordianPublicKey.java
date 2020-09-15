@@ -16,7 +16,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jgordianknot.impl.core.keypair;
 
-import net.sourceforge.joceanus.jgordianknot.api.asym.GordianAsymKeySpec;
+import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPairSpec;
 
 /**
  * Asymmetric PublicKey.
@@ -25,13 +25,13 @@ public abstract class GordianPublicKey {
     /**
      * The KeySpec.
      */
-    private final GordianAsymKeySpec theKeySpec;
+    private final GordianKeyPairSpec theKeySpec;
 
     /**
      * Constructor.
      * @param pKeySpec the keySpec
      */
-    protected GordianPublicKey(final GordianAsymKeySpec pKeySpec) {
+    protected GordianPublicKey(final GordianKeyPairSpec pKeySpec) {
         theKeySpec = pKeySpec;
     }
 
@@ -39,7 +39,7 @@ public abstract class GordianPublicKey {
      * Obtain the keySpec.
      * @return the keySpec
      */
-    public GordianAsymKeySpec getKeySpec() {
+    public GordianKeyPairSpec getKeySpec() {
         return theKeySpec;
     }
 }

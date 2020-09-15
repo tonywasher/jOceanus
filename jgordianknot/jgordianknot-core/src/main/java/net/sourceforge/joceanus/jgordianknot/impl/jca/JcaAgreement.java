@@ -20,7 +20,6 @@ import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
 import java.security.PublicKey;
 import java.security.spec.X509EncodedKeySpec;
-
 import javax.crypto.KeyAgreement;
 
 import org.bouncycastle.jcajce.spec.DHUParameterSpec;
@@ -29,10 +28,10 @@ import org.bouncycastle.jcajce.spec.UserKeyingMaterialSpec;
 
 import net.sourceforge.joceanus.jgordianknot.api.agree.GordianAgreementSpec;
 import net.sourceforge.joceanus.jgordianknot.api.agree.GordianKDFType;
-import net.sourceforge.joceanus.jgordianknot.api.asym.GordianAsymKeyType;
-import net.sourceforge.joceanus.jgordianknot.api.factory.GordianAsymFactory;
-import net.sourceforge.joceanus.jgordianknot.api.key.GordianKeyPair;
-import net.sourceforge.joceanus.jgordianknot.api.key.GordianKeyPairGenerator;
+import net.sourceforge.joceanus.jgordianknot.api.factory.GordianKeyPairFactory;
+import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPair;
+import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPairGenerator;
+import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPairType;
 import net.sourceforge.joceanus.jgordianknot.impl.core.agree.GordianCoreAnonymousAgreement;
 import net.sourceforge.joceanus.jgordianknot.impl.core.agree.GordianCoreBasicAgreement;
 import net.sourceforge.joceanus.jgordianknot.impl.core.agree.GordianCoreEphemeralAgreement;
@@ -121,8 +120,8 @@ public final class JcaAgreement {
                 final X509EncodedKeySpec myKeySpec = new X509EncodedKeySpec(myX509bytes);
 
                 /* Derive ephemeral Public key */
-                final GordianAsymFactory myAsym = getFactory().getAsymmetricFactory();
-                final GordianKeyPairGenerator myGenerator = myAsym.getKeyPairGenerator(pServer.getKeySpec());
+                final GordianKeyPairFactory myFactory = getFactory().getKeyPairFactory();
+                final GordianKeyPairGenerator myGenerator = myFactory.getKeyPairGenerator(pServer.getKeyPairSpec());
                 final GordianKeyPair myPair = myGenerator.derivePublicOnlyKeyPair(myKeySpec);
                 final JcaPublicKey myPublic = (JcaPublicKey) getPublicKey(myPair);
 
@@ -176,8 +175,8 @@ public final class JcaAgreement {
                 establishAgreement(pServer);
 
                 /* Create an ephemeral keyPair */
-                final GordianAsymFactory myAsym = getFactory().getAsymmetricFactory();
-                final GordianKeyPairGenerator myGenerator = myAsym.getKeyPairGenerator(pServer.getKeySpec());
+                final GordianKeyPairFactory myFactory = getFactory().getKeyPairFactory();
+                final GordianKeyPairGenerator myGenerator = myFactory.getKeyPairGenerator(pServer.getKeyPairSpec());
                 final GordianKeyPair myPair = myGenerator.generateKeyPair();
 
                 /* Initialise the agreement taking care in case of null parameters */
@@ -222,8 +221,8 @@ public final class JcaAgreement {
                 final X509EncodedKeySpec myKeySpec = new X509EncodedKeySpec(myX509bytes);
 
                 /* Derive ephemeral Public key */
-                final GordianAsymFactory myAsym = getFactory().getAsymmetricFactory();
-                final GordianKeyPairGenerator myGenerator = myAsym.getKeyPairGenerator(pServer.getKeySpec());
+                final GordianKeyPairFactory myFactory = getFactory().getKeyPairFactory();
+                final GordianKeyPairGenerator myGenerator = myFactory.getKeyPairGenerator(pServer.getKeyPairSpec());
                 final GordianKeyPair myPair = myGenerator.derivePublicOnlyKeyPair(myKeySpec);
 
                 /* Initialise the agreement taking care in case of null parameters */
@@ -251,8 +250,8 @@ public final class JcaAgreement {
          * @throws OceanusException on error
          */
         private void establishAgreement(final GordianKeyPair pKeyPair) throws OceanusException {
-            if (getAgreementSpec().getAsymKeyType() == GordianAsymKeyType.XDH) {
-                final String myBase = pKeyPair.getKeySpec().toString();
+            if (getAgreementSpec().getKeyPairType() == GordianKeyPairType.XDH) {
+                final String myBase = pKeyPair.getKeyPairSpec().toString();
                 final String myName = JcaAgreementFactory.getFullAgreementName(myBase, getAgreementSpec());
                 theAgreement = JcaAgreementFactory.getJavaKeyAgreement(myName, false);
             }
@@ -365,8 +364,8 @@ public final class JcaAgreement {
          * @throws OceanusException on error
          */
         private void establishAgreement(final GordianKeyPair pKeyPair) throws OceanusException {
-            if (getAgreementSpec().getAsymKeyType() == GordianAsymKeyType.XDH) {
-                final String myBase = pKeyPair.getKeySpec().toString();
+            if (getAgreementSpec().getKeyPairType() == GordianKeyPairType.XDH) {
+                final String myBase = pKeyPair.getKeyPairSpec().toString();
                 final String myName = JcaAgreementFactory.getFullAgreementName(myBase, getAgreementSpec());
                 theAgreement = JcaAgreementFactory.getJavaKeyAgreement(myName, false);
             }
@@ -468,8 +467,8 @@ public final class JcaAgreement {
          * @throws OceanusException on error
          */
         private void establishAgreement(final GordianKeyPair pKeyPair) throws OceanusException {
-            if (getAgreementSpec().getAsymKeyType() == GordianAsymKeyType.XDH) {
-                final String myBase = pKeyPair.getKeySpec().toString();
+            if (getAgreementSpec().getKeyPairType() == GordianKeyPairType.XDH) {
+                final String myBase = pKeyPair.getKeyPairSpec().toString();
                 final String myName = JcaAgreementFactory.getFullAgreementName(myBase, getAgreementSpec());
                 theAgreement = JcaAgreementFactory.getJavaKeyAgreement(myName, false);
             }
@@ -579,8 +578,8 @@ public final class JcaAgreement {
          * @throws OceanusException on error
          */
         private void establishAgreement(final GordianKeyPair pKeyPair) throws OceanusException {
-            if (getAgreementSpec().getAsymKeyType() == GordianAsymKeyType.XDH) {
-                final String myBase = pKeyPair.getKeySpec().toString();
+            if (getAgreementSpec().getKeyPairType() == GordianKeyPairType.XDH) {
+                final String myBase = pKeyPair.getKeyPairSpec().toString();
                 final String myName = JcaAgreementFactory.getFullAgreementName(myBase + "U", getAgreementSpec());
                 theAgreement = JcaAgreementFactory.getJavaKeyAgreement(myName, false);
             }

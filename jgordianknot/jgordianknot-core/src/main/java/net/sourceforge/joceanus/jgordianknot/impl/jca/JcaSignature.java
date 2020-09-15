@@ -20,12 +20,12 @@ import java.security.InvalidKeyException;
 import java.security.Signature;
 import java.security.SignatureException;
 
-import net.sourceforge.joceanus.jgordianknot.api.asym.GordianAsymKeyType;
-import net.sourceforge.joceanus.jgordianknot.api.asym.GordianEdwardsElliptic;
-import net.sourceforge.joceanus.jgordianknot.api.asym.GordianXMSSKeySpec;
 import net.sourceforge.joceanus.jgordianknot.api.base.GordianLength;
 import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigestSpec;
-import net.sourceforge.joceanus.jgordianknot.api.key.GordianKeyPair;
+import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianEdwardsElliptic;
+import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPair;
+import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPairType;
+import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianXMSSKeySpec;
 import net.sourceforge.joceanus.jgordianknot.api.sign.GordianSignatureSpec;
 import net.sourceforge.joceanus.jgordianknot.api.sign.GordianSignatureType;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianCoreFactory;
@@ -147,7 +147,7 @@ public abstract class JcaSignature
         /* Initialise for signing */
         try {
             /* Determine whether we should use random for signatures */
-            final boolean useRandom = getSignatureSpec().getAsymKeyType().useRandomForSignatures();
+            final boolean useRandom = getSignatureSpec().getKeyPairType().useRandomForSignatures();
 
             /* Initialise the signing */
             if (useRandom) {
@@ -263,12 +263,12 @@ public abstract class JcaSignature
      */
     static String getSignatureBase(final GordianSignatureSpec pSignatureSpec) {
         /* Handle SM2 explicitly */
-        if (GordianAsymKeyType.SM2.equals(pSignatureSpec.getAsymKeyType())) {
+        if (GordianKeyPairType.SM2.equals(pSignatureSpec.getKeyPairType())) {
             return EC_SM2_ALGOBASE;
         }
 
         /* Note if we are DSA */
-        final boolean isDSA = GordianAsymKeyType.DSA.equals(pSignatureSpec.getAsymKeyType());
+        final boolean isDSA = GordianKeyPairType.DSA.equals(pSignatureSpec.getKeyPairType());
 
         /* Switch on signature type */
         switch (pSignatureSpec.getSignatureType()) {
@@ -344,7 +344,7 @@ public abstract class JcaSignature
          */
         private static String getSignature(final GordianSignatureSpec pSignatureSpec) {
             /* Handle DSTU explicitly */
-            if (GordianAsymKeyType.DSTU4145.equals(pSignatureSpec.getAsymKeyType())) {
+            if (GordianKeyPairType.DSTU4145.equals(pSignatureSpec.getKeyPairType())) {
                 return DSTU_SIGN;
             }
 
@@ -405,7 +405,7 @@ public abstract class JcaSignature
          */
         private static String getAlgorithmForKeyPair(final GordianKeyPair pKeyPair) throws OceanusException {
             /* Determine the required signer */
-            final GordianDigestSpec myDigestSpec = pKeyPair.getKeySpec().getSPHINCSDigestType().getDigestSpec();
+            final GordianDigestSpec myDigestSpec = pKeyPair.getKeyPairSpec().getSPHINCSDigestType().getDigestSpec();
             final String myDigest = JcaDigest.getAlgorithm(myDigestSpec);
 
             /* Create builder */
@@ -493,7 +493,7 @@ public abstract class JcaSignature
          */
         private String getAlgorithmForKeyPair(final GordianKeyPair pKeyPair) throws OceanusException {
             /* Determine the required signer */
-            final GordianXMSSKeySpec myXMSSKeySpec = pKeyPair.getKeySpec().getXMSSKeySpec();
+            final GordianXMSSKeySpec myXMSSKeySpec = pKeyPair.getKeyPairSpec().getXMSSKeySpec();
             final GordianDigestSpec myDigestSpec = myXMSSKeySpec.getDigestType().getDigestSpec();
             final String myDigest = JcaDigest.getAlgorithm(myDigestSpec);
 
@@ -556,7 +556,7 @@ public abstract class JcaSignature
          */
         private static String getAlgorithmForKeyPair(final GordianKeyPair pKeyPair) {
             /* Determine the required signer */
-            final GordianEdwardsElliptic myEdwards = pKeyPair.getKeySpec().getEdwardsElliptic();
+            final GordianEdwardsElliptic myEdwards = pKeyPair.getKeyPairSpec().getEdwardsElliptic();
             final boolean is25519 = myEdwards.is25519();
 
             /* Build the algorithm */

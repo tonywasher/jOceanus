@@ -16,8 +16,8 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jgordianknot.impl.core.keypair;
 
-import net.sourceforge.joceanus.jgordianknot.api.asym.GordianAsymKeySpec;
-import net.sourceforge.joceanus.jgordianknot.api.key.GordianKeyPair;
+import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPair;
+import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPairSpec;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianCoreFactory;
 
 /**
@@ -28,7 +28,7 @@ public abstract class GordianCoreKeyPair
     /**
      * The KeySpec.
      */
-    private final GordianAsymKeySpec theKeySpec;
+    private final GordianKeyPairSpec theKeySpec;
 
     /**
      * The PrivateKey.
@@ -60,7 +60,7 @@ public abstract class GordianCoreKeyPair
     }
 
     @Override
-    public GordianAsymKeySpec getKeySpec() {
+    public GordianKeyPairSpec getKeyPairSpec() {
         return theKeySpec;
     }
 
@@ -110,7 +110,7 @@ public abstract class GordianCoreKeyPair
         final GordianCoreKeyPair myThat = (GordianCoreKeyPair) pThat;
 
         /* Check key Spec */
-        if (!theKeySpec.equals(myThat.getKeySpec())) {
+        if (!theKeySpec.equals(myThat.getKeyPairSpec())) {
             return false;
         }
 
@@ -131,7 +131,7 @@ public abstract class GordianCoreKeyPair
                      ? 1
                      : thePrivateKey.hashCode();
         myHash *= GordianCoreFactory.HASH_PRIME;
-        myHash += getKeySpec().hashCode();
+        myHash += getKeyPairSpec().hashCode();
         myHash *= GordianCoreFactory.HASH_PRIME;
         return myHash + thePublicKey.hashCode();
     }

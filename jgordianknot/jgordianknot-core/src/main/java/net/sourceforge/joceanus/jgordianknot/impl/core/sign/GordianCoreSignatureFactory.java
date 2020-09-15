@@ -18,15 +18,15 @@ package net.sourceforge.joceanus.jgordianknot.impl.core.sign;
 
 import java.util.function.Predicate;
 
-import net.sourceforge.joceanus.jgordianknot.api.asym.GordianEdwardsElliptic;
-import net.sourceforge.joceanus.jgordianknot.api.base.GordianLength;
 import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
 
-import net.sourceforge.joceanus.jgordianknot.api.asym.GordianAsymKeySpec;
-import net.sourceforge.joceanus.jgordianknot.api.asym.GordianAsymKeyType;
+import net.sourceforge.joceanus.jgordianknot.api.base.GordianLength;
 import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigestSpec;
 import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigestType;
-import net.sourceforge.joceanus.jgordianknot.api.key.GordianKeyPair;
+import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianEdwardsElliptic;
+import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPair;
+import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPairSpec;
+import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPairType;
 import net.sourceforge.joceanus.jgordianknot.api.sign.GordianSignatureFactory;
 import net.sourceforge.joceanus.jgordianknot.api.sign.GordianSignatureSpec;
 import net.sourceforge.joceanus.jgordianknot.api.sign.GordianSignatureType;
@@ -84,15 +84,15 @@ public abstract class GordianCoreSignatureFactory
     }
 
     @Override
-    public boolean validSignatureSpecForKeySpec(final GordianAsymKeySpec pKeySpec,
-                                                final GordianSignatureSpec pSignSpec) {
+    public boolean validSignatureSpecForKeyPairSpec(final GordianKeyPairSpec pKeyPairSpec,
+                                                    final GordianSignatureSpec pSignSpec) {
         /* Reject invalid signatureSpec */
         if (pSignSpec == null || !pSignSpec.isValid()) {
             return false;
         }
 
         /* Check signature matches keySpec */
-        if (pSignSpec.getAsymKeyType() != pKeySpec.getKeyType()) {
+        if (pSignSpec.getKeyPairType() != pKeyPairSpec.getKeyPairType()) {
             return false;
         }
 
@@ -103,29 +103,29 @@ public abstract class GordianCoreSignatureFactory
 
         /* Disallow ECNR if keySize is smaller than digestSize */
         if (GordianSignatureType.NR.equals(pSignSpec.getSignatureType())) {
-            return pKeySpec.getElliptic().getKeySize() > pSignSpec.getDigestSpec().getDigestLength().getLength();
+            return pKeyPairSpec.getElliptic().getKeySize() > pSignSpec.getDigestSpec().getDigestLength().getLength();
         }
 
         /* Disallow incorrectly sized digest for GOST */
-        if (GordianAsymKeyType.GOST2012.equals(pKeySpec.getKeyType())) {
+        if (GordianKeyPairType.GOST2012.equals(pKeyPairSpec.getKeyPairType())) {
             final int myDigestLen = pSignSpec.getDigestSpec().getDigestLength().getLength();
-            return pKeySpec.getElliptic().getKeySize() == myDigestLen;
+            return pKeyPairSpec.getElliptic().getKeySize() == myDigestLen;
         }
 
         /* Disallow NATIVE signature for ed448 */
-        if (GordianAsymKeyType.EDDSA.equals(pKeySpec.getKeyType())) {
+        if (GordianKeyPairType.EDDSA.equals(pKeyPairSpec.getKeyPairType())) {
             return pSignSpec.getSignatureType() != GordianSignatureType.NATIVE
-                    || pKeySpec.getEdwardsElliptic() == GordianEdwardsElliptic.CURVE25519;
+                    || pKeyPairSpec.getEdwardsElliptic() == GordianEdwardsElliptic.CURVE25519;
         }
 
         /* If this is a RSA Signature */
-        if (GordianAsymKeyType.RSA.equals(pKeySpec.getKeyType())) {
+        if (GordianKeyPairType.RSA.equals(pKeyPairSpec.getKeyPairType())) {
             /* If this is a PSS signature */
             if (GordianSignatureType.PSS.equals(pSignSpec.getSignatureType())) {
                 /* The digest length cannot be too large wrt to the modulus */
                 int myLen = pSignSpec.getDigestSpec().getDigestLength().getLength();
                 myLen += Byte.SIZE;
-                if (pKeySpec.getRSAModulus().getLength() < (myLen << 1)) {
+                if (pKeyPairSpec.getRSAModulus().getLength() < (myLen << 1)) {
                     return false;
                 }
             }
@@ -134,7 +134,7 @@ public abstract class GordianCoreSignatureFactory
             /* The digest length cannot be too large wrt to the modulus */
             int myLen = pSignSpec.getDigestSpec().getDigestLength().getLength();
             myLen += Integer.SIZE;
-            if (pKeySpec.getRSAModulus().getLength() < myLen) {
+            if (pKeyPairSpec.getRSAModulus().getLength() < myLen) {
                 return false;
             }
         }
@@ -155,7 +155,7 @@ public abstract class GordianCoreSignatureFactory
         }
 
         /* Check that the signatureType is supported */
-        final GordianAsymKeyType myType = pSignSpec.getAsymKeyType();
+        final GordianKeyPairType myType = pSignSpec.getKeyPairType();
         final GordianSignatureType mySignType = pSignSpec.getSignatureType();
         if (!mySignType.isSupported(myType)) {
             return false;
@@ -174,22 +174,22 @@ public abstract class GordianCoreSignatureFactory
         }
 
         /* Check RSA signatures */
-        if (GordianAsymKeyType.RSA.equals(myType)) {
+        if (GordianKeyPairType.RSA.equals(myType)) {
             return validRSASignature(pSignSpec);
         }
 
         /* Only allow SM3 for SM2 signature */
-        if (GordianAsymKeyType.SM2.equals(myType)) {
+        if (GordianKeyPairType.SM2.equals(myType)) {
             return GordianDigestType.SM3.equals(mySpec.getDigestType());
         }
 
         /* Only allow GOST for DSTU signature */
-        if (GordianAsymKeyType.DSTU4145.equals(myType)) {
+        if (GordianKeyPairType.DSTU4145.equals(myType)) {
             return GordianDigestType.GOST.equals(mySpec.getDigestType());
         }
 
         /* Only allow STREEBOG for GOST signature */
-        if (GordianAsymKeyType.GOST2012.equals(myType)) {
+        if (GordianKeyPairType.GOST2012.equals(myType)) {
             return GordianDigestType.STREEBOG.equals(mySpec.getDigestType());
         }
 

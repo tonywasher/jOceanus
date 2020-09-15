@@ -20,9 +20,9 @@ import java.util.List;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
-import net.sourceforge.joceanus.jgordianknot.api.asym.GordianAsymKeySpec;
-import net.sourceforge.joceanus.jgordianknot.api.asym.GordianAsymKeyType;
-import net.sourceforge.joceanus.jgordianknot.api.key.GordianKeyPair;
+import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPair;
+import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPairSpec;
+import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPairType;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
@@ -45,11 +45,11 @@ public interface GordianSignatureFactory {
 
     /**
      * Obtain a list of supported signatures.
-     * @param pKeyType the keyType
+     * @param pKeyPairType the keyPairType
      * @return the list of supported signatureSpecs.
      */
-    default List<GordianSignatureSpec> listAllSupportedSignatures(final GordianAsymKeyType pKeyType) {
-        return GordianSignatureSpec.listPossibleSignatures(pKeyType)
+    default List<GordianSignatureSpec> listAllSupportedSignatures(final GordianKeyPairType pKeyPairType) {
+        return GordianSignatureSpec.listPossibleSignatures(pKeyPairType)
                 .stream()
                 .filter(supportedSignatures())
                 .collect(Collectors.toList());
@@ -63,17 +63,17 @@ public interface GordianSignatureFactory {
      */
     default boolean validSignatureSpecForKeyPair(GordianKeyPair pKeyPair,
                                                  GordianSignatureSpec pSignSpec) {
-        return validSignatureSpecForKeySpec(pKeyPair.getKeySpec(), pSignSpec);
+        return validSignatureSpecForKeyPairSpec(pKeyPair.getKeyPairSpec(), pSignSpec);
     }
 
     /**
-     * Check SignatureSpec and KeySpec combination.
-     * @param pKeySpec the keyPair
+     * Check SignatureSpec and KeyPairSpec combination.
+     * @param pKeyPairSpec the keyPairSpec
      * @param pSignSpec the signSpec
      * @return true/false
      */
-    boolean validSignatureSpecForKeySpec(GordianAsymKeySpec pKeySpec,
-                                         GordianSignatureSpec pSignSpec);
+    boolean validSignatureSpecForKeyPairSpec(GordianKeyPairSpec pKeyPairSpec,
+                                             GordianSignatureSpec pSignSpec);
 
     /**
      * Obtain a list of supported signatureSpecs.
@@ -81,7 +81,7 @@ public interface GordianSignatureFactory {
      * @return the list of supported signatureSpecs.
      */
     default List<GordianSignatureSpec> listAllSupportedSignatures(final GordianKeyPair pKeyPair) {
-        return listAllSupportedSignatures(pKeyPair.getKeySpec());
+        return listAllSupportedSignatures(pKeyPair.getKeyPairSpec());
     }
 
     /**
@@ -89,10 +89,10 @@ public interface GordianSignatureFactory {
      * @param pKeySpec the keySpec
      * @return the list of supported signatureSpecs.
      */
-    default List<GordianSignatureSpec> listAllSupportedSignatures(final GordianAsymKeySpec pKeySpec) {
-        return GordianSignatureSpec.listPossibleSignatures(pKeySpec.getKeyType())
+    default List<GordianSignatureSpec> listAllSupportedSignatures(final GordianKeyPairSpec pKeySpec) {
+        return GordianSignatureSpec.listPossibleSignatures(pKeySpec.getKeyPairType())
                 .stream()
-                .filter(s -> validSignatureSpecForKeySpec(pKeySpec, s))
+                .filter(s -> validSignatureSpecForKeyPairSpec(pKeySpec, s))
                 .collect(Collectors.toList());
     }
 }

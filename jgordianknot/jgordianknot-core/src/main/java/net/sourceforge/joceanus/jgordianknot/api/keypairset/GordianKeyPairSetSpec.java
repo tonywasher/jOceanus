@@ -21,11 +21,11 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
-import net.sourceforge.joceanus.jgordianknot.api.asym.GordianAsymKeySpec;
-import net.sourceforge.joceanus.jgordianknot.api.asym.GordianDHGroup;
-import net.sourceforge.joceanus.jgordianknot.api.asym.GordianDSAElliptic;
-import net.sourceforge.joceanus.jgordianknot.api.asym.GordianRSAModulus;
-import net.sourceforge.joceanus.jgordianknot.api.asym.GordianSM2Elliptic;
+import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianDHGroup;
+import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianDSAElliptic;
+import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPairSpec;
+import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianRSAModulus;
+import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianSM2Elliptic;
 
 /**
  * KeyPairSetSpec.
@@ -34,48 +34,48 @@ public enum GordianKeyPairSetSpec {
     /**
      * 256bit RSA,EC,EdDSA Signature.
      */
-    SIGNLO(GordianAsymKeySpec.rsa(GordianRSAModulus.MOD2048),
-           GordianAsymKeySpec.ec(GordianDSAElliptic.SECT283K1),
-           GordianAsymKeySpec.ed25519()),
+    SIGNLO(GordianKeyPairSpec.rsa(GordianRSAModulus.MOD2048),
+           GordianKeyPairSpec.ec(GordianDSAElliptic.SECT283K1),
+           GordianKeyPairSpec.ed25519()),
 
     /**
      * 512bit RSA,EC,EdDSA Signature.
      */
-    SIGNHI(GordianAsymKeySpec.rsa(GordianRSAModulus.MOD3072),
-           GordianAsymKeySpec.ec(GordianDSAElliptic.SECT571K1),
-           GordianAsymKeySpec.ed448()),
+    SIGNHI(GordianKeyPairSpec.rsa(GordianRSAModulus.MOD3072),
+           GordianKeyPairSpec.ec(GordianDSAElliptic.SECT571K1),
+           GordianKeyPairSpec.ed448()),
 
     /**
      * 256bit RSA,EC,XDH.
      */
-    AGREELO(GordianAsymKeySpec.dh(GordianDHGroup.FFDE2048),
-            GordianAsymKeySpec.ec(GordianDSAElliptic.SECT283K1),
-            GordianAsymKeySpec.x25519()),
+    AGREELO(GordianKeyPairSpec.dh(GordianDHGroup.FFDHE2048),
+            GordianKeyPairSpec.ec(GordianDSAElliptic.SECT283K1),
+            GordianKeyPairSpec.x25519()),
 
     /**
      * 512bit RSA,EC,XDH.
      */
-    AGREEHI(GordianAsymKeySpec.dh(GordianDHGroup.FFDE3072),
-            GordianAsymKeySpec.ec(GordianDSAElliptic.SECT571K1),
-            GordianAsymKeySpec.x448()),
+    AGREEHI(GordianKeyPairSpec.dh(GordianDHGroup.FFDHE3072),
+            GordianKeyPairSpec.ec(GordianDSAElliptic.SECT571K1),
+            GordianKeyPairSpec.x448()),
 
     /**
      * 256bit RSA,EC,XDH.
      */
-    ENCRYPT(GordianAsymKeySpec.rsa(GordianRSAModulus.MOD2048),
-            GordianAsymKeySpec.elGamal(GordianDHGroup.FFDE2048),
-            GordianAsymKeySpec.sm2(GordianSM2Elliptic.SM2P256V1));
+    ENCRYPT(GordianKeyPairSpec.rsa(GordianRSAModulus.MOD2048),
+            GordianKeyPairSpec.elGamal(GordianDHGroup.FFDHE2048),
+            GordianKeyPairSpec.sm2(GordianSM2Elliptic.SM2P256V1));
 
     /**
      * List of Specs.
      */
-    private final List<GordianAsymKeySpec> theSpecs;
+    private final List<GordianKeyPairSpec> theSpecs;
 
     /**
      * Constructor.
      * @param pSpecs the specs
      */
-    GordianKeyPairSetSpec(final GordianAsymKeySpec... pSpecs) {
+    GordianKeyPairSetSpec(final GordianKeyPairSpec... pSpecs) {
         theSpecs = new ArrayList<>();
         Collections.addAll(theSpecs, pSpecs);
     }
@@ -84,7 +84,7 @@ public enum GordianKeyPairSetSpec {
      * Obtain an iterator for the keyPairSpecs.
      * @return the iterator
      */
-    public Iterator<GordianAsymKeySpec> iterator() {
+    public Iterator<GordianKeyPairSpec> iterator() {
         return theSpecs.iterator();
     }
 

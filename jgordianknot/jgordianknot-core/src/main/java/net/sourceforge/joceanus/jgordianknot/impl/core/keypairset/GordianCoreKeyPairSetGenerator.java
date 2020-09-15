@@ -22,10 +22,10 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import net.sourceforge.joceanus.jgordianknot.api.asym.GordianAsymKeySpec;
-import net.sourceforge.joceanus.jgordianknot.api.factory.GordianAsymFactory;
-import net.sourceforge.joceanus.jgordianknot.api.key.GordianKeyPair;
-import net.sourceforge.joceanus.jgordianknot.api.key.GordianKeyPairGenerator;
+import net.sourceforge.joceanus.jgordianknot.api.factory.GordianKeyPairFactory;
+import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPair;
+import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPairGenerator;
+import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPairSpec;
 import net.sourceforge.joceanus.jgordianknot.api.keypairset.GordianKeyPairSet;
 import net.sourceforge.joceanus.jgordianknot.api.keypairset.GordianKeyPairSetGenerator;
 import net.sourceforge.joceanus.jgordianknot.api.keypairset.GordianKeyPairSetSpec;
@@ -53,16 +53,16 @@ public class GordianCoreKeyPairSetGenerator
      * @param pSpec the keyPairSetSpec.
      * @throws OceanusException on error
      */
-    GordianCoreKeyPairSetGenerator(final GordianAsymFactory pFactory,
+    GordianCoreKeyPairSetGenerator(final GordianKeyPairFactory pFactory,
                                    final GordianKeyPairSetSpec pSpec) throws OceanusException {
         /* Store the spec. */
         theSpec = pSpec;
         theGenerators = new ArrayList<>();
 
         /* Loop through the asymKeySpecs */
-        final Iterator<GordianAsymKeySpec> myIterator = pSpec.iterator();
+        final Iterator<GordianKeyPairSpec> myIterator = pSpec.iterator();
         while (myIterator.hasNext()) {
-            final GordianAsymKeySpec mySpec = myIterator.next();
+            final GordianKeyPairSpec mySpec = myIterator.next();
 
             /* create generator and add it to list */
             theGenerators.add(pFactory.getKeyPairGenerator(mySpec));

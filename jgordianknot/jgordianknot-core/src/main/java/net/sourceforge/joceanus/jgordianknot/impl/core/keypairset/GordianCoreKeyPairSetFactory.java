@@ -24,7 +24,7 @@ import java.util.Objects;
 import java.util.function.Predicate;
 
 import net.sourceforge.joceanus.jgordianknot.api.agree.GordianAgreementSpec;
-import net.sourceforge.joceanus.jgordianknot.api.factory.GordianAsymFactory;
+import net.sourceforge.joceanus.jgordianknot.api.factory.GordianKeyPairFactory;
 import net.sourceforge.joceanus.jgordianknot.api.keypairset.GordianKeyPairSetFactory;
 import net.sourceforge.joceanus.jgordianknot.api.keypairset.GordianKeyPairSetGenerator;
 import net.sourceforge.joceanus.jgordianknot.api.keypairset.GordianKeyPairSetSpec;
@@ -41,7 +41,7 @@ public class GordianCoreKeyPairSetFactory
     /**
      * The AsymFactory.
      */
-    private final GordianAsymFactory theFactory;
+    private final GordianKeyPairFactory theFactory;
 
     /**
      * KeyPairGenerator Cache.
@@ -52,7 +52,7 @@ public class GordianCoreKeyPairSetFactory
      * Constructor.
      * @param pFactory the AsymFactory
      */
-    public GordianCoreKeyPairSetFactory(final GordianAsymFactory pFactory) {
+    public GordianCoreKeyPairSetFactory(final GordianKeyPairFactory pFactory) {
         /* Store parameters */
         theFactory = pFactory;
 

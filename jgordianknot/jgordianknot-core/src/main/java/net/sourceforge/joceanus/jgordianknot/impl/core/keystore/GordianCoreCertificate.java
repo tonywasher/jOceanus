@@ -42,13 +42,13 @@ import org.bouncycastle.asn1.x509.TBSCertificate;
 import org.bouncycastle.asn1.x509.Time;
 import org.bouncycastle.asn1.x509.V3TBSCertificateGenerator;
 
-import net.sourceforge.joceanus.jgordianknot.api.asym.GordianAsymKeySpec;
 import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigest;
 import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigestFactory;
 import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigestSpec;
-import net.sourceforge.joceanus.jgordianknot.api.factory.GordianAsymFactory;
-import net.sourceforge.joceanus.jgordianknot.api.key.GordianKeyPair;
-import net.sourceforge.joceanus.jgordianknot.api.key.GordianKeyPairGenerator;
+import net.sourceforge.joceanus.jgordianknot.api.factory.GordianKeyPairFactory;
+import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPair;
+import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPairGenerator;
+import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPairSpec;
 import net.sourceforge.joceanus.jgordianknot.api.keystore.GordianCertificate;
 import net.sourceforge.joceanus.jgordianknot.api.keystore.GordianCertificateId;
 import net.sourceforge.joceanus.jgordianknot.api.keystore.GordianKeyPairUsage;
@@ -151,10 +151,10 @@ public class GordianCoreCertificate
         theKeyPair = pKeyPair.getPublicOnly();
 
         /* Determine the signatureSpec */
-        theSigSpec = GordianSignatureSpec.defaultForKey(theKeyPair.getKeySpec());
+        theSigSpec = GordianSignatureSpec.defaultForKey(theKeyPair.getKeyPairSpec());
 
         /* Determine the algorithm Id for the signatureSpec */
-        final GordianCoreSignatureFactory mySignFactory = (GordianCoreSignatureFactory) theFactory.getAsymmetricFactory().getSignatureFactory();
+        final GordianCoreSignatureFactory mySignFactory = (GordianCoreSignatureFactory) theFactory.getKeyPairFactory().getSignatureFactory();
         theSigAlgId = mySignFactory.getIdentifierForSpecAndKeyPair(theSigSpec, theKeyPair);
 
         /* Create the TBSCertificate */
@@ -207,10 +207,10 @@ public class GordianCoreCertificate
         theCAStatus = new GordianCAStatus(theKeyUsage, mySignerCert.theCAStatus);
 
         /* Determine the signatureSpec */
-        theSigSpec = GordianSignatureSpec.defaultForKey(pSigner.getKeyPair().getKeySpec());
+        theSigSpec = GordianSignatureSpec.defaultForKey(pSigner.getKeyPair().getKeyPairSpec());
 
         /* Determine the algorithm Id for the signatureSpec */
-        final GordianCoreSignatureFactory mySignFactory = (GordianCoreSignatureFactory) theFactory.getAsymmetricFactory().getSignatureFactory();
+        final GordianCoreSignatureFactory mySignFactory = (GordianCoreSignatureFactory) theFactory.getKeyPairFactory().getSignatureFactory();
         theSigAlgId = mySignFactory.getIdentifierForSpecAndKeyPair(theSigSpec, pSigner.getKeyPair());
 
         /* Create the TBSCertificate */
@@ -249,8 +249,8 @@ public class GordianCoreCertificate
         theSignature = myCert.getSignature().getBytes();
 
         /* Determine the signatureSpec for the algorithmId */
-        final GordianAsymFactory myAsym = theFactory.getAsymmetricFactory();
-        final GordianCoreSignatureFactory mySignFactory = (GordianCoreSignatureFactory) theFactory.getAsymmetricFactory().getSignatureFactory();
+        final GordianKeyPairFactory myFactory = theFactory.getKeyPairFactory();
+        final GordianCoreSignatureFactory mySignFactory = (GordianCoreSignatureFactory) myFactory.getSignatureFactory();
         theSigSpec = mySignFactory.getSpecForIdentifier(theSigAlgId);
         if (theSigSpec == null) {
             throw new GordianDataException("Unsupported Signature AlgorithmId: " + theSigAlgId);
@@ -258,8 +258,8 @@ public class GordianCoreCertificate
 
         /* Derive the keyPair */
         final X509EncodedKeySpec myX509 = getX509KeySpec();
-        final GordianAsymKeySpec myKeySpec = myAsym.determineKeySpec(myX509);
-        final GordianCoreKeyPairGenerator myGenerator = (GordianCoreKeyPairGenerator) myAsym.getKeyPairGenerator(myKeySpec);
+        final GordianKeyPairSpec myKeySpec = myFactory.determineKeyPairSpec(myX509);
+        final GordianCoreKeyPairGenerator myGenerator = (GordianCoreKeyPairGenerator) myFactory.getKeyPairGenerator(myKeySpec);
         theKeyPair = (GordianCoreKeyPair) myGenerator.derivePublicOnlyKeyPair(myX509);
 
         /* Access the extensions */
@@ -505,8 +505,8 @@ public class GordianCoreCertificate
         final Date myEnd = myCalendar.getTime();
 
         /* Access the keyPair generator */
-        final GordianAsymFactory myAsym = theFactory.getAsymmetricFactory();
-        final GordianKeyPairGenerator myGenerator = myAsym.getKeyPairGenerator(theKeyPair.getKeySpec());
+        final GordianKeyPairFactory myFactory = theFactory.getKeyPairFactory();
+        final GordianKeyPairGenerator myGenerator = myFactory.getKeyPairGenerator(theKeyPair.getKeyPairSpec());
 
         /* Obtain the publicKey Info */
         final byte[] myPublicKeyEncoded = myGenerator.getX509Encoding(theKeyPair).getEncoded();
@@ -593,7 +593,7 @@ public class GordianCoreCertificate
         /* Protect against exceptions */
         try {
             /* Build the signature */
-            final GordianCoreSignatureFactory mySigns = (GordianCoreSignatureFactory) theFactory.getAsymmetricFactory().getSignatureFactory();
+            final GordianCoreSignatureFactory mySigns = (GordianCoreSignatureFactory) theFactory.getKeyPairFactory().getSignatureFactory();
             final GordianSignature mySigner = mySigns.createSigner(theSigSpec);
             mySigner.initForSigning(pSigner);
             final GordianStreamConsumer myConsumer = new GordianStreamConsumer(mySigner);
@@ -636,7 +636,7 @@ public class GordianCoreCertificate
         /* Protect against exceptions */
         try {
             /* Build the signature */
-            final GordianCoreSignatureFactory mySigns = (GordianCoreSignatureFactory) theFactory.getAsymmetricFactory().getSignatureFactory();
+            final GordianCoreSignatureFactory mySigns = (GordianCoreSignatureFactory) theFactory.getKeyPairFactory().getSignatureFactory();
             final GordianSignature myValidator = mySigns.createSigner(theSigSpec);
             myValidator.initForVerify(pSigner);
             final GordianStreamConsumer myConsumer = new GordianStreamConsumer(myValidator);

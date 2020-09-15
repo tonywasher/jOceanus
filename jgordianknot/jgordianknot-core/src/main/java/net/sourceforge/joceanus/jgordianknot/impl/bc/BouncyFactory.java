@@ -16,10 +16,10 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jgordianknot.impl.bc;
 
-import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianParameters;
 import net.sourceforge.joceanus.jgordianknot.api.zip.GordianZipFactory;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianCoreFactory;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianFactoryGenerator;
+import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianParameters;
 import net.sourceforge.joceanus.jgordianknot.impl.core.keyset.GordianCoreKeySetFactory;
 import net.sourceforge.joceanus.jgordianknot.impl.core.random.GordianCoreRandomFactory;
 import net.sourceforge.joceanus.jgordianknot.impl.core.zip.GordianCoreZipFactory;
@@ -36,9 +36,9 @@ public class BouncyFactory
     private GordianCoreZipFactory theZipFactory;
 
     /**
-     * Asym Factory.
+     * keyPair Factory.
      */
-    private BouncyAsymFactory theAsymFactory;
+    private BouncyKeyPairFactory theKeyPairFactory;
 
     /**
      * Constructor.
@@ -86,10 +86,10 @@ public class BouncyFactory
     }
 
     @Override
-    public BouncyAsymFactory getAsymmetricFactory() {
-        if (theAsymFactory == null) {
-            theAsymFactory = new BouncyAsymFactory(this);
+    public BouncyKeyPairFactory getKeyPairFactory() {
+        if (theKeyPairFactory == null) {
+            theKeyPairFactory = new BouncyKeyPairFactory(this);
         }
-        return theAsymFactory;
+        return theKeyPairFactory;
     }
 }

@@ -19,12 +19,12 @@ package net.sourceforge.joceanus.jgordianknot.impl.bc;
 import net.sourceforge.joceanus.jgordianknot.api.encrypt.GordianEncryptor;
 import net.sourceforge.joceanus.jgordianknot.api.encrypt.GordianEncryptorSpec;
 import net.sourceforge.joceanus.jgordianknot.api.encrypt.GordianMcElieceEncryptionType;
-import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyElGamalAsymKey.BouncyElGamalEncryptor;
-import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyEllipticAsymKey.BouncyECEncryptor;
-import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyMcElieceAsymKey.BouncyMcElieceCCA2Encryptor;
-import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyMcElieceAsymKey.BouncyMcElieceEncryptor;
-import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyRSAAsymKey.BouncyRSAEncryptor;
-import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncySM2AsymKey.BouncySM2Encryptor;
+import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyElGamalKeyPair.BouncyElGamalEncryptor;
+import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyEllipticKeyPair.BouncyECEncryptor;
+import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyMcElieceKeyPair.BouncyMcElieceCCA2Encryptor;
+import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyMcElieceKeyPair.BouncyMcElieceEncryptor;
+import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyRSAKeyPair.BouncyRSAEncryptor;
+import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncySM2KeyPair.BouncySM2Encryptor;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianCoreFactory;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianDataException;
 import net.sourceforge.joceanus.jgordianknot.impl.core.encrypt.GordianCoreEncryptorFactory;
@@ -67,7 +67,7 @@ public class BouncyEncryptorFactory
      * @throws OceanusException on error
      */
     private GordianEncryptor getBCEncryptor(final GordianEncryptorSpec pSpec) throws OceanusException {
-        switch (pSpec.getKeyType()) {
+        switch (pSpec.getKeyPairType()) {
             case RSA:
                 return new BouncyRSAEncryptor(getFactory(), pSpec);
             case ELGAMAL:
