@@ -53,7 +53,7 @@ import org.bouncycastle.crypto.util.PrivateKeyInfoFactory;
 import org.bouncycastle.crypto.util.PublicKeyFactory;
 import org.bouncycastle.crypto.util.SubjectPublicKeyInfoFactory;
 
-import net.sourceforge.joceanus.jgordianknot.api.agree.GordianAgreementSpec;
+import net.sourceforge.joceanus.jgordianknot.api.agree.GordianKeyPairAgreementSpec;
 import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigestSpec;
 import net.sourceforge.joceanus.jgordianknot.api.encrypt.GordianEncryptorSpec;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPair;
@@ -450,7 +450,7 @@ public final class BouncyRSAKeyPair {
          * @param pSpec the agreementSpec
          */
         BouncyRSAEncapsulationAgreement(final BouncyFactory pFactory,
-                                        final GordianAgreementSpec pSpec) {
+                                        final GordianKeyPairAgreementSpec pSpec) {
             /* Initialise underlying class */
             super(pFactory, pSpec);
 

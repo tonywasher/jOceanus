@@ -22,8 +22,8 @@ import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
 
 import net.sourceforge.joceanus.jgordianknot.api.agree.GordianAgreement;
 import net.sourceforge.joceanus.jgordianknot.api.agree.GordianAgreementFactory;
-import net.sourceforge.joceanus.jgordianknot.api.agree.GordianAgreementSpec;
 import net.sourceforge.joceanus.jgordianknot.api.agree.GordianAgreementType;
+import net.sourceforge.joceanus.jgordianknot.api.agree.GordianKeyPairAgreementSpec;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianEdwardsElliptic;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPairSpec;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPairType;
@@ -64,16 +64,16 @@ public abstract class GordianCoreAgreementFactory
     }
 
     @Override
-    public GordianAgreement createAgreement(final byte[] pClientHello) throws OceanusException {
+    public GordianAgreement<GordianKeyPairAgreementSpec> createAgreement(final byte[] pClientHello) throws OceanusException {
         /* Parse the client hello message */
         final GordianAgreementClientHelloASN1 myASN1 = GordianAgreementClientHelloASN1.getInstance(pClientHello);
         final AlgorithmIdentifier myAlgId = myASN1.getAgreementId();
-        final GordianAgreementSpec mySpec = getSpecForIdentifier(myAlgId);
+        final GordianKeyPairAgreementSpec mySpec = getSpecForIdentifier(myAlgId);
         return createAgreement(mySpec);
     }
 
     @Override
-    public Predicate<GordianAgreementSpec> supportedAgreements() {
+    public Predicate<GordianKeyPairAgreementSpec> supportedAgreements() {
         return this::validAgreementSpec;
     }
 
@@ -82,7 +82,7 @@ public abstract class GordianCoreAgreementFactory
      * @param pAgreementSpec the agreementSpec
      * @throws OceanusException on error
      */
-    protected void checkAgreementSpec(final GordianAgreementSpec pAgreementSpec) throws OceanusException {
+    protected void checkAgreementSpec(final GordianKeyPairAgreementSpec pAgreementSpec) throws OceanusException {
         /* Check validity of agreement */
         if (!validAgreementSpec(pAgreementSpec)) {
             throw new GordianDataException(GordianCoreFactory.getInvalidText(pAgreementSpec));
@@ -95,7 +95,7 @@ public abstract class GordianCoreAgreementFactory
      * @param pSpec the agreementSpec
      * @return true/false
      */
-    protected boolean validAgreementSpec(final GordianAgreementSpec pSpec) {
+    protected boolean validAgreementSpec(final GordianKeyPairAgreementSpec pSpec) {
         /* Reject invalid agreementSpec */
         if (pSpec == null || !pSpec.isValid()) {
             return false;
@@ -107,7 +107,7 @@ public abstract class GordianCoreAgreementFactory
 
     @Override
     public boolean validAgreementSpecForKeyPairSpec(final GordianKeyPairSpec pKeyPairSpec,
-                                                    final GordianAgreementSpec pAgreementSpec) {
+                                                    final GordianKeyPairAgreementSpec pAgreementSpec) {
         /* Reject invalid agreementSpec */
         if (pAgreementSpec == null || !pAgreementSpec.isValid()) {
             return false;
@@ -153,7 +153,7 @@ public abstract class GordianCoreAgreementFactory
      * @param pSpec the agreementSpec.
      * @return the Identifier
      */
-    public AlgorithmIdentifier getIdentifierForSpec(final GordianAgreementSpec pSpec) {
+    public AlgorithmIdentifier getIdentifierForSpec(final GordianKeyPairAgreementSpec pSpec) {
         return getAlgorithmIds().getIdentifierForSpec(pSpec);
     }
 
@@ -162,7 +162,7 @@ public abstract class GordianCoreAgreementFactory
      * @param pIdentifier the identifier.
      * @return the agreementSpec (or null if not found)
      */
-    public GordianAgreementSpec getSpecForIdentifier(final AlgorithmIdentifier pIdentifier) {
+    public GordianKeyPairAgreementSpec getSpecForIdentifier(final AlgorithmIdentifier pIdentifier) {
         return getAlgorithmIds().getSpecForIdentifier(pIdentifier);
     }
 

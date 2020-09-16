@@ -20,10 +20,11 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
  * Anonymous OneShot Agreement.
+ * @param <A> the agreement specification
  * @param <K> the keyPair Type
  */
-public interface GordianAnonymousAgreement<K>
-        extends GordianAgreement {
+public interface GordianAnonymousAgreement<A, K>
+        extends GordianAgreement<A> {
     /**
      * Create the clientHello message.
      * @param pServer the server keyPair

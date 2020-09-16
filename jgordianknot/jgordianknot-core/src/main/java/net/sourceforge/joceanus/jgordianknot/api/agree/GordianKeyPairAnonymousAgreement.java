@@ -22,5 +22,5 @@ import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPair;
  * KeyPair Anonymous Agreement.
  */
 public interface GordianKeyPairAnonymousAgreement
-    extends GordianAnonymousAgreement<GordianKeyPair> {
+    extends GordianAnonymousAgreement<GordianKeyPairAgreementSpec, GordianKeyPair> {
 }

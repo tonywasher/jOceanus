@@ -19,9 +19,9 @@ package net.sourceforge.joceanus.jgordianknot.impl.core.zip;
 import java.util.Objects;
 
 import net.sourceforge.joceanus.jgordianknot.api.agree.GordianAgreementFactory;
-import net.sourceforge.joceanus.jgordianknot.api.agree.GordianAgreementSpec;
 import net.sourceforge.joceanus.jgordianknot.api.agree.GordianAgreementType;
 import net.sourceforge.joceanus.jgordianknot.api.agree.GordianKDFType;
+import net.sourceforge.joceanus.jgordianknot.api.agree.GordianKeyPairAgreementSpec;
 import net.sourceforge.joceanus.jgordianknot.api.agree.GordianKeyPairAnonymousAgreement;
 import net.sourceforge.joceanus.jgordianknot.api.factory.GordianFactory;
 import net.sourceforge.joceanus.jgordianknot.api.factory.GordianFactoryType;
@@ -129,7 +129,7 @@ public class GordianCoreZipLock
         /* Create the agreement */
         final GordianKeyPairFactory myKeyPairFactory = theFactory.getKeyPairFactory();
         final GordianAgreementFactory myAgreeFactory = myKeyPairFactory.getAgreementFactory();
-        final GordianAgreementSpec mySpec = getAgreementSpec(pKeyPair.getKeyPairSpec());
+        final GordianKeyPairAgreementSpec mySpec = getAgreementSpec(pKeyPair.getKeyPairSpec());
         final GordianKeyPairAnonymousAgreement myAgreement = (GordianKeyPairAnonymousAgreement) myAgreeFactory.createAgreement(mySpec);
         myAgreement.setResultType(GordianFactoryType.BC);
         final byte[] myClientHello = myAgreement.createClientHello(pKeyPair);
@@ -244,13 +244,13 @@ public class GordianCoreZipLock
      * @param pKeySpec the keySpec
      * @return the agreementSpec
      */
-    private static GordianAgreementSpec getAgreementSpec(final GordianKeyPairSpec pKeySpec) {
+    private static GordianKeyPairAgreementSpec getAgreementSpec(final GordianKeyPairSpec pKeySpec) {
         final GordianKeyPairType myKeyType = pKeySpec.getKeyPairType();
         final GordianEdwardsElliptic myEdwards = pKeySpec.getEdwardsElliptic();
         final GordianKDFType myKDFType = GordianEdwardsElliptic.CURVE25519.equals(myEdwards)
                     ? GordianKDFType.SHA256KDF
                     : GordianKDFType.SHA512KDF;
-        return new GordianAgreementSpec(myKeyType, GordianAgreementType.ANON, myKDFType);
+        return new GordianKeyPairAgreementSpec(myKeyType, GordianAgreementType.ANON, myKDFType);
     }
 
     @Override

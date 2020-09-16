@@ -20,11 +20,12 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
  * Signed TwoShot Agreement.
+ * @param <A> the agreement specification
  * @param <S> the specification type
  * @param <K> the keyPair Type
  */
-public interface GordianSignedAgreement<S, K>
-        extends GordianAgreement {
+public interface GordianSignedAgreement<A, S, K>
+        extends GordianAgreement<A> {
     /**
      * Create the clientHello message.
      * @param pKeySpec the keySpec for the ephemeral keys

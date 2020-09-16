@@ -22,5 +22,5 @@ import net.sourceforge.joceanus.jgordianknot.api.agree.GordianHandshakeAgreement
  * KeyPairSet Handshake Agreement.
  */
 public interface GordianKeyPairSetHandshakeAgreement
-        extends GordianHandshakeAgreement<GordianKeyPairSet> {
+        extends GordianHandshakeAgreement<GordianKeyPairSetAgreementSpec, GordianKeyPairSet> {
 }

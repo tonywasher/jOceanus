@@ -48,7 +48,7 @@ import org.bouncycastle.jcajce.provider.asymmetric.dh.BCDHPublicKey;
 import org.bouncycastle.jcajce.provider.asymmetric.util.KeyUtil;
 import org.bouncycastle.util.BigIntegers;
 
-import net.sourceforge.joceanus.jgordianknot.api.agree.GordianAgreementSpec;
+import net.sourceforge.joceanus.jgordianknot.api.agree.GordianKeyPairAgreementSpec;
 import net.sourceforge.joceanus.jgordianknot.api.factory.GordianKeyPairFactory;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianDHGroup;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPair;
@@ -288,7 +288,7 @@ public final class BouncyDHKeyPair {
          * @param pSpec the agreementSpec
          */
         BouncyDHAnonymousAgreement(final BouncyFactory pFactory,
-                                   final GordianAgreementSpec pSpec) {
+                                   final GordianKeyPairAgreementSpec pSpec) {
             /* Initialise underlying class */
             super(pFactory, pSpec);
 
@@ -368,7 +368,7 @@ public final class BouncyDHKeyPair {
          * @param pSpec the agreementSpec
          */
         BouncyDHBasicAgreement(final BouncyFactory pFactory,
-                               final GordianAgreementSpec pSpec) {
+                               final GordianKeyPairAgreementSpec pSpec) {
             /* Initialise underlying class */
             super(pFactory, pSpec);
 
@@ -440,7 +440,7 @@ public final class BouncyDHKeyPair {
          * @param pSpec the agreementSpec
          */
         BouncyDHSignedAgreement(final BouncyFactory pFactory,
-                                final GordianAgreementSpec pSpec) {
+                                final GordianKeyPairAgreementSpec pSpec) {
             /* Initialise underlying class */
             super(pFactory, pSpec);
 
@@ -503,7 +503,7 @@ public final class BouncyDHKeyPair {
          * @param pSpec the agreementSpec
          */
         BouncyDHUnifiedAgreement(final BouncyFactory pFactory,
-                                 final GordianAgreementSpec pSpec) {
+                                 final GordianKeyPairAgreementSpec pSpec) {
             /* Initialise underlying class */
             super(pFactory, pSpec);
 
@@ -583,7 +583,7 @@ public final class BouncyDHKeyPair {
          * @param pSpec the agreementSpec
          */
         BouncyDHMQVAgreement(final BouncyFactory pFactory,
-                             final GordianAgreementSpec pSpec) {
+                             final GordianKeyPairAgreementSpec pSpec) {
             /* Initialise underlying class */
             super(pFactory, pSpec);
 

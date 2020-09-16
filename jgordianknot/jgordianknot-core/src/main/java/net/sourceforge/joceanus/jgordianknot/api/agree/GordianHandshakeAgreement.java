@@ -20,10 +20,11 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
  * Handshake Two/ThreeShot Agreement.
+ * @param <A> the agreement specification
  * @param <K> the keyPair Type
  */
-public interface GordianHandshakeAgreement<K>
-        extends GordianAgreement {
+public interface GordianHandshakeAgreement<A, K>
+        extends GordianAgreement<A> {
     /**
      * create the clientHello.
      * @param pClient the client keyPair

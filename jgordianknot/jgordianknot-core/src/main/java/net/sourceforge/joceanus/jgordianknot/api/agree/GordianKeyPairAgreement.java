@@ -14,13 +14,11 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  ******************************************************************************/
-package net.sourceforge.joceanus.jgordianknot.api.keypairset;
-
-import net.sourceforge.joceanus.jgordianknot.api.agree.GordianAnonymousAgreement;
+package net.sourceforge.joceanus.jgordianknot.api.agree;
 
 /**
- * KeyPairSet Anonymous Agreement.
+ * KeyPairAgreement.
  */
-public interface GordianKeyPairSetAnonymousAgreement
-    extends GordianAnonymousAgreement<GordianKeyPairSetAgreementSpec, GordianKeyPairSet> {
+public interface GordianKeyPairAgreement
+        extends GordianAgreement<GordianKeyPairAgreementSpec> {
 }

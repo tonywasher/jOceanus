@@ -16,11 +16,11 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jgordianknot.api.keypairset;
 
-import net.sourceforge.joceanus.jgordianknot.api.agree.GordianAnonymousAgreement;
+import net.sourceforge.joceanus.jgordianknot.api.agree.GordianAgreement;
 
 /**
- * KeyPairSet Anonymous Agreement.
+ * KeyPairSetAgreement.
  */
-public interface GordianKeyPairSetAnonymousAgreement
-    extends GordianAnonymousAgreement<GordianKeyPairSetAgreementSpec, GordianKeyPairSet> {
+public interface GordianKeyPairSetAgreement
+        extends GordianAgreement<GordianKeyPairSetAgreementSpec> {
 }

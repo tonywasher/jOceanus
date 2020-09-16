@@ -45,7 +45,7 @@ import org.bouncycastle.crypto.util.PrivateKeyInfoFactory;
 import org.bouncycastle.crypto.util.PublicKeyFactory;
 import org.bouncycastle.crypto.util.SubjectPublicKeyInfoFactory;
 
-import net.sourceforge.joceanus.jgordianknot.api.agree.GordianAgreementSpec;
+import net.sourceforge.joceanus.jgordianknot.api.agree.GordianKeyPairAgreementSpec;
 import net.sourceforge.joceanus.jgordianknot.api.factory.GordianKeyPairFactory;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPair;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPairGenerator;
@@ -404,7 +404,7 @@ public final class BouncyXDHKeyPair {
          * @param pSpec the agreementSpec
          */
         BouncyXDHAnonymousAgreement(final BouncyFactory pFactory,
-                                    final GordianAgreementSpec pSpec) {
+                                    final GordianKeyPairAgreementSpec pSpec) {
             /* Initialise underlying class */
             super(pFactory, pSpec);
 
@@ -484,7 +484,7 @@ public final class BouncyXDHKeyPair {
          * @param pSpec the agreementSpec
          */
         BouncyXDHBasicAgreement(final BouncyFactory pFactory,
-                                final GordianAgreementSpec pSpec) {
+                                final GordianKeyPairAgreementSpec pSpec) {
             /* Initialise underlying class */
             super(pFactory, pSpec);
 
@@ -559,7 +559,7 @@ public final class BouncyXDHKeyPair {
          * @param pSpec the agreementSpec
          */
         BouncyXDHSignedAgreement(final BouncyFactory pFactory,
-                                final GordianAgreementSpec pSpec) {
+                                final GordianKeyPairAgreementSpec pSpec) {
             /* Initialise underlying class */
             super(pFactory, pSpec);
 
@@ -623,7 +623,7 @@ public final class BouncyXDHKeyPair {
          * @param pSpec the agreementSpec
          */
         BouncyXDHUnifiedAgreement(final BouncyFactory pFactory,
-                                  final GordianAgreementSpec pSpec) {
+                                  final GordianKeyPairAgreementSpec pSpec) {
             /* Initialise underlying class */
             super(pFactory, pSpec);
 

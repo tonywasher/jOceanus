@@ -31,9 +31,9 @@ import org.junit.jupiter.api.DynamicNode;
 import org.junit.jupiter.api.DynamicTest;
 import org.junit.jupiter.api.TestFactory;
 
-import net.sourceforge.joceanus.jgordianknot.api.agree.GordianAgreement;
 import net.sourceforge.joceanus.jgordianknot.api.agree.GordianAgreementFactory;
-import net.sourceforge.joceanus.jgordianknot.api.agree.GordianAgreementSpec;
+import net.sourceforge.joceanus.jgordianknot.api.agree.GordianKeyPairAgreement;
+import net.sourceforge.joceanus.jgordianknot.api.agree.GordianKeyPairAgreementSpec;
 import net.sourceforge.joceanus.jgordianknot.api.agree.GordianKeyPairAnonymousAgreement;
 import net.sourceforge.joceanus.jgordianknot.api.agree.GordianKeyPairHandshakeAgreement;
 import net.sourceforge.joceanus.jgordianknot.api.agree.GordianKeyPairSignedAgreement;
@@ -445,16 +445,16 @@ public class AsymmetricTest {
     private void checkSelfAgreement(final FactoryAgreement pAgreement,
                                     final Object pResultType) throws OceanusException {
         /* Access the KeySpec */
-        final GordianAgreementSpec mySpec = pAgreement.getSpec();
+        final GordianKeyPairAgreementSpec mySpec = pAgreement.getSpec();
         final FactoryKeyPairs myPairs = pAgreement.getOwner().getKeyPairs();
         final GordianKeyPair myPair = myPairs.getKeyPair();
         GordianKeyPair myTarget = null;
 
         /* Check the agreement */
         final GordianAgreementFactory myAgrees = pAgreement.getOwner().getFactory().getAgreementFactory();
-        final GordianAgreement mySender = myAgrees.createAgreement(mySpec);
+        final GordianKeyPairAgreement mySender = myAgrees.createAgreement(mySpec);
         mySender.setResultType(pResultType);
-        final GordianAgreement myResponder = myAgrees.createAgreement(mySpec);
+        final GordianKeyPairAgreement myResponder = myAgrees.createAgreement(mySpec);
 
         /* Access target if we are using one */
         if (!(mySender instanceof GordianKeyPairAnonymousAgreement)) {
@@ -507,7 +507,7 @@ public class AsymmetricTest {
      */
     private void checkPartnerAgreement(final FactoryAgreement pAgreement) throws OceanusException {
         /* Access the KeySpec */
-        final GordianAgreementSpec mySpec = pAgreement.getSpec();
+        final GordianKeyPairAgreementSpec mySpec = pAgreement.getSpec();
         final FactoryKeyPairs myPairs = pAgreement.getOwner().getKeyPairs();
         final GordianKeyPair myPair = myPairs.getKeyPair();
         final GordianKeyPair myTarget = myPairs.getTargetKeyPair();
@@ -517,9 +517,9 @@ public class AsymmetricTest {
         /* Check the agreement */
         final GordianAgreementFactory mySrcAgrees = pAgreement.getOwner().getFactory().getAgreementFactory();
         final GordianAgreementFactory myPartnerAgrees = pAgreement.getOwner().getPartner().getAgreementFactory();
-        final GordianAgreement mySender = mySrcAgrees.createAgreement(mySpec);
+        final GordianKeyPairAgreement mySender = mySrcAgrees.createAgreement(mySpec);
         mySender.setResultType(new GordianKeySetSpec());
-        final GordianAgreement myResponder = myPartnerAgrees.createAgreement(mySpec);
+        final GordianKeyPairAgreement myResponder = myPartnerAgrees.createAgreement(mySpec);
 
         /* Handle Anonymous */
         if (mySender instanceof GordianKeyPairAnonymousAgreement
@@ -684,7 +684,7 @@ public class AsymmetricTest {
         Assertions.assertNotNull(myId,  "Unknown AlgorithmId for " + pAgreement.getSpec());
 
         /* Check unique mapping */
-        final GordianAgreementSpec mySpec = myFactory.getSpecForIdentifier(myId);
+        final GordianKeyPairAgreementSpec mySpec = myFactory.getSpecForIdentifier(myId);
         Assertions.assertEquals(pAgreement.getSpec(), mySpec, "Invalid mapping for  " + pAgreement.getSpec());
     }
 

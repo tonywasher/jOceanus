@@ -22,7 +22,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import net.sourceforge.joceanus.jgordianknot.api.agree.GordianAgreementFactory;
-import net.sourceforge.joceanus.jgordianknot.api.agree.GordianAgreementSpec;
+import net.sourceforge.joceanus.jgordianknot.api.agree.GordianKeyPairAgreementSpec;
 import net.sourceforge.joceanus.jgordianknot.api.encrypt.GordianEncryptorFactory;
 import net.sourceforge.joceanus.jgordianknot.api.encrypt.GordianEncryptorSpec;
 import net.sourceforge.joceanus.jgordianknot.api.factory.GordianFactory;
@@ -548,7 +548,7 @@ class AsymmetricStore {
         /**
          * The Spec.
          */
-        private final GordianAgreementSpec theAgreeSpec;
+        private final GordianKeyPairAgreementSpec theAgreeSpec;
 
         /**
          * Constructor.
@@ -556,7 +556,7 @@ class AsymmetricStore {
          * @param pAgreeSpec the agreementSpec
          */
         FactoryAgreement(final FactoryKeySpec pOwner,
-                         final GordianAgreementSpec pAgreeSpec) {
+                         final GordianKeyPairAgreementSpec pAgreeSpec) {
             theOwner = pOwner;
             theAgreeSpec = pAgreeSpec;
         }
@@ -573,7 +573,7 @@ class AsymmetricStore {
          * Obtain the spec.
          * @return the spec
          */
-        GordianAgreementSpec getSpec() {
+        GordianKeyPairAgreementSpec getSpec() {
             return theAgreeSpec;
         }
 
@@ -754,7 +754,7 @@ class AsymmetricStore {
         /* Access the list of possible agreements */
         final GordianKeyPairFactory myFactory = pKeySpec.theFactory;
         final GordianAgreementFactory myAgreeFactory = myFactory.getAgreementFactory();
-        final List<GordianAgreementSpec> myAgreeSpecs = myAgreeFactory.listAllSupportedAgreements(pKeySpec.theKeySpec.getKeyPairType());
+        final List<GordianKeyPairAgreementSpec> myAgreeSpecs = myAgreeFactory.listAllSupportedAgreements(pKeySpec.theKeySpec.getKeyPairType());
 
         /* Skip key if there are no possible agreements */
         if (myAgreeSpecs.isEmpty()) {
@@ -762,7 +762,7 @@ class AsymmetricStore {
         }
 
         /* Loop through the possible agreements */
-        for (GordianAgreementSpec myAgree : myAgreeSpecs) {
+        for (GordianKeyPairAgreementSpec myAgree : myAgreeSpecs) {
             /* Add the agreement if it is supported */
             if (myAgreeFactory.validAgreementSpecForKeyPairSpec(pKeySpec.getKeySpec(), myAgree)) {
                 myResult.add(new FactoryAgreement(pKeySpec, myAgree));

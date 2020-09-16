@@ -23,8 +23,6 @@ import java.util.List;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
-import net.sourceforge.joceanus.jgordianknot.api.agree.GordianAgreement;
-import net.sourceforge.joceanus.jgordianknot.api.agree.GordianAgreementSpec;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
@@ -45,7 +43,7 @@ public interface GordianKeyPairSetFactory {
      * @return the encryptor
      * @throws OceanusException on error
      */
-    GordianAgreement createAgreement(GordianAgreementSpec pAgreementSpec) throws OceanusException;
+    GordianKeyPairSetAgreement createAgreement(GordianKeyPairSetAgreementSpec pAgreementSpec) throws OceanusException;
 
     /**
      * create keyPairSetEncryptor.

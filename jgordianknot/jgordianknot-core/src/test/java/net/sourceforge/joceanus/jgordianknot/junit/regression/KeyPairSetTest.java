@@ -27,12 +27,11 @@ import org.junit.jupiter.api.DynamicNode;
 import org.junit.jupiter.api.DynamicTest;
 import org.junit.jupiter.api.TestFactory;
 
-import net.sourceforge.joceanus.jgordianknot.api.agree.GordianAgreementSpec;
-import net.sourceforge.joceanus.jgordianknot.api.agree.GordianKDFType;
 import net.sourceforge.joceanus.jgordianknot.api.factory.GordianFactory;
 import net.sourceforge.joceanus.jgordianknot.api.factory.GordianFactoryType;
 import net.sourceforge.joceanus.jgordianknot.api.factory.GordianKeyPairFactory;
 import net.sourceforge.joceanus.jgordianknot.api.keypairset.GordianKeyPairSet;
+import net.sourceforge.joceanus.jgordianknot.api.keypairset.GordianKeyPairSetAgreementSpec;
 import net.sourceforge.joceanus.jgordianknot.api.keypairset.GordianKeyPairSetAnonymousAgreement;
 import net.sourceforge.joceanus.jgordianknot.api.keypairset.GordianKeyPairSetEncryptor;
 import net.sourceforge.joceanus.jgordianknot.api.keypairset.GordianKeyPairSetFactory;
@@ -226,8 +225,7 @@ public class KeyPairSetTest {
         }
 
         /* Create clientHello */
-        final GordianKDFType myKDFType = getKDFTypeForKeyPairSetSpec(pSpec);
-        final GordianAgreementSpec myAgreeSpec = GordianAgreementSpec.dhAnon(myKDFType);
+        final GordianKeyPairSetAgreementSpec myAgreeSpec = GordianKeyPairSetAgreementSpec.anon(pSpec);
         final GordianKeyPairSetAnonymousAgreement myClient = (GordianKeyPairSetAnonymousAgreement) myFactory.createAgreement(myAgreeSpec);
         final byte[] myClientHello = myClient.createClientHello(mySet);
         final byte[] myResult = (byte[]) myClient.getResult();
@@ -259,8 +257,7 @@ public class KeyPairSetTest {
         Assertions.assertEquals(mySet, myDerived);
 
         /* Create clientHello */
-        final GordianKDFType myKDFType = getKDFTypeForKeyPairSetSpec(pSpec);
-        final GordianAgreementSpec myAgreeSpec = GordianAgreementSpec.dhSigned(myKDFType);
+        final GordianKeyPairSetAgreementSpec myAgreeSpec = GordianKeyPairSetAgreementSpec.signed(pSpec);
         final GordianKeyPairSetSignedAgreement myClient = (GordianKeyPairSetSignedAgreement) myFactory.createAgreement(myAgreeSpec);
         final byte[] myClientHello = myClient.createClientHello(pSpec);
 
@@ -300,8 +297,9 @@ public class KeyPairSetTest {
         }
 
         /* Create clientHello */
-        final GordianKDFType myKDFType = getKDFTypeForKeyPairSetSpec(pSpec);
-        final GordianAgreementSpec myAgreeSpec = GordianAgreementSpec.dhUnifiedConfirm(myKDFType, pConfirm);
+        final GordianKeyPairSetAgreementSpec myAgreeSpec = pConfirm
+                ? GordianKeyPairSetAgreementSpec.confirm(pSpec)
+                : GordianKeyPairSetAgreementSpec.handshake(pSpec);
         final GordianKeyPairSetHandshakeAgreement myClientAgree = (GordianKeyPairSetHandshakeAgreement) myFactory.createAgreement(myAgreeSpec);
         final byte[] myClientHello = myClientAgree.createClientHello(myClient);
 
@@ -318,16 +316,5 @@ public class KeyPairSetTest {
             myServerAgree.acceptClientConfirm(myClientConfirm);
         }
         Assertions.assertArrayEquals(myResult, (byte[]) myServerAgree.getResult());
-    }
-
-    /**
-     * Obtain the KDF for the KeyPairSetSpec.
-     * @param pSpec the keyPairSetSpec
-     * @return the KDFType.
-     */
-    private static GordianKDFType getKDFTypeForKeyPairSetSpec(final GordianKeyPairSetSpec pSpec) {
-        return GordianKeyPairSetSpec.AGREEHI.equals(pSpec)
-            ? GordianKDFType.SHA512KDF
-            : GordianKDFType.SHA256KDF;
     }
 }

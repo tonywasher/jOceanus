@@ -26,7 +26,7 @@ import org.bouncycastle.crypto.params.SM2KeyExchangePrivateParameters;
 import org.bouncycastle.crypto.params.SM2KeyExchangePublicParameters;
 import org.bouncycastle.crypto.signers.SM2Signer;
 
-import net.sourceforge.joceanus.jgordianknot.api.agree.GordianAgreementSpec;
+import net.sourceforge.joceanus.jgordianknot.api.agree.GordianKeyPairAgreementSpec;
 import net.sourceforge.joceanus.jgordianknot.api.encrypt.GordianEncryptorSpec;
 import net.sourceforge.joceanus.jgordianknot.api.encrypt.GordianSM2EncryptionSpec;
 import net.sourceforge.joceanus.jgordianknot.api.encrypt.GordianSM2EncryptionSpec.GordianSM2EncryptionType;
@@ -169,7 +169,7 @@ public final class BouncySM2KeyPair {
          * @param pSpec the agreementSpec
          */
         BouncyECSM2Agreement(final BouncyFactory pFactory,
-                             final GordianAgreementSpec pSpec) {
+                             final GordianKeyPairAgreementSpec pSpec) {
             /* Initialise underlying class */
             super(pFactory, pSpec);
 

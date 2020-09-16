@@ -32,9 +32,9 @@ import org.bouncycastle.util.Arrays;
 
 import net.sourceforge.joceanus.jgordianknot.api.agree.GordianAgreement;
 import net.sourceforge.joceanus.jgordianknot.api.agree.GordianAgreementFactory;
-import net.sourceforge.joceanus.jgordianknot.api.agree.GordianAgreementSpec;
 import net.sourceforge.joceanus.jgordianknot.api.agree.GordianAgreementStatus;
 import net.sourceforge.joceanus.jgordianknot.api.agree.GordianKDFType;
+import net.sourceforge.joceanus.jgordianknot.api.agree.GordianKeyPairAgreementSpec;
 import net.sourceforge.joceanus.jgordianknot.api.base.GordianKeySpec;
 import net.sourceforge.joceanus.jgordianknot.api.base.GordianLength;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianCipherFactory;
@@ -72,9 +72,10 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
  * Key Agreement Specification.
+ * @param <A> the agreement specification
  */
-public abstract class GordianCoreAgreement
-    implements GordianAgreement {
+public abstract class GordianCoreAgreement<A>
+    implements GordianAgreement<A> {
     /**
      * InitVectorLength.
      */
@@ -93,7 +94,7 @@ public abstract class GordianCoreAgreement
     /**
      * The agreementSpec.
      */
-    private final GordianAgreementSpec theSpec;
+    private final A theSpec;
 
     /**
      * The keyDerivation function.
@@ -131,7 +132,7 @@ public abstract class GordianCoreAgreement
      * @param pSpec the agreementSpec
      */
     protected GordianCoreAgreement(final GordianCoreFactory pFactory,
-                                   final GordianAgreementSpec pSpec) {
+                                   final A pSpec) {
         theFactory = pFactory;
         theSpec = pSpec;
         theStatus = GordianAgreementStatus.CLEAN;
@@ -154,7 +155,7 @@ public abstract class GordianCoreAgreement
     }
 
     @Override
-    public GordianAgreementSpec getAgreementSpec() {
+    public A getAgreementSpec() {
         return theSpec;
     }
 
@@ -282,7 +283,7 @@ public abstract class GordianCoreAgreement
         /* Check that the KeyPair is valid */
         final GordianKeyPairFactory myFactory = theFactory.getKeyPairFactory();
         final GordianAgreementFactory myAgrees = myFactory.getAgreementFactory();
-        if (!myAgrees.validAgreementSpecForKeyPair(pKeyPair, theSpec)) {
+        if (!myAgrees.validAgreementSpecForKeyPair(pKeyPair, (GordianKeyPairAgreementSpec) theSpec)) {
             throw new GordianDataException("Incorrect KeyPair type");
         }
     }
@@ -708,7 +709,8 @@ public abstract class GordianCoreAgreement
      */
     protected void enableDerivation() {
         /* Only enable derivation if it is not none */
-        if (!GordianKDFType.NONE.equals(getAgreementSpec().getKDFType())) {
+        final GordianKeyPairAgreementSpec mySpec = (GordianKeyPairAgreementSpec) getAgreementSpec();
+        if (!GordianKDFType.NONE.equals(mySpec.getKDFType())) {
             theKDF = newDerivationFunction();
         }
     }
@@ -718,7 +720,8 @@ public abstract class GordianCoreAgreement
      * @return the derivation function
      */
     protected DerivationFunction newDerivationFunction() {
-        switch (getAgreementSpec().getKDFType()) {
+        final GordianKeyPairAgreementSpec mySpec = (GordianKeyPairAgreementSpec) getAgreementSpec();
+        switch (mySpec.getKDFType()) {
             case SHA256KDF:
                 return new KDF2BytesGenerator(new SHA256Digest());
             case SHA512KDF:
@@ -754,7 +757,8 @@ public abstract class GordianCoreAgreement
 
         /* Create the clientHello */
         final GordianCoreAgreementFactory myFactory = getAgreementFactory();
-        final AlgorithmIdentifier myAlgId = myFactory.getIdentifierForSpec(getAgreementSpec());
+        final GordianKeyPairAgreementSpec mySpec = (GordianKeyPairAgreementSpec) getAgreementSpec();
+        final AlgorithmIdentifier myAlgId = myFactory.getIdentifierForSpec(mySpec);
         final AlgorithmIdentifier myResId = getIdentifierForResult();
         final GordianAgreementClientHelloASN1 myClientHello
                 = new GordianAgreementClientHelloASN1(myAlgId, myResId, newClientIV(), pEncapsulated);
@@ -782,7 +786,7 @@ public abstract class GordianCoreAgreement
 
         /* Check agreementSpec */
         final GordianCoreAgreementFactory myFactory = getAgreementFactory();
-        final GordianAgreementSpec mySpec = myFactory.getSpecForIdentifier(myAlgId);
+        final GordianKeyPairAgreementSpec mySpec = myFactory.getSpecForIdentifier(myAlgId);
         if (!Objects.equals(mySpec, getAgreementSpec())) {
             throw new GordianDataException(ERROR_INVSPEC);
         }
@@ -817,7 +821,8 @@ public abstract class GordianCoreAgreement
                                       final byte[] pConfirmation) throws OceanusException {
         /* Create the serverHello */
         final GordianCoreAgreementFactory myFactory = getAgreementFactory();
-        final AlgorithmIdentifier myAlgId = myFactory.getIdentifierForSpec(getAgreementSpec());
+        final GordianKeyPairAgreementSpec mySpec = (GordianKeyPairAgreementSpec) getAgreementSpec();
+        final AlgorithmIdentifier myAlgId = myFactory.getIdentifierForSpec(mySpec);
         final GordianAgreementServerHelloASN1 myServerHello
                 = new GordianAgreementServerHelloASN1(myAlgId, theServerIV, pEncapsulated, pConfirmation);
 
@@ -843,7 +848,8 @@ public abstract class GordianCoreAgreement
                                       final byte[] pSignature) throws OceanusException {
         /* Create the serverHello */
         final GordianCoreAgreementFactory myFactory = getAgreementFactory();
-        final AlgorithmIdentifier myAlgId = myFactory.getIdentifierForSpec(getAgreementSpec());
+        final GordianKeyPairAgreementSpec mySpec = (GordianKeyPairAgreementSpec) getAgreementSpec();
+        final AlgorithmIdentifier myAlgId = myFactory.getIdentifierForSpec(mySpec);
         final GordianAgreementServerHelloASN1 myServerHello
                 = new GordianAgreementServerHelloASN1(myAlgId, theServerIV, pEncapsulated, pSignId, pSignature);
 
@@ -870,7 +876,7 @@ public abstract class GordianCoreAgreement
 
         /* Check agreementSpec */
         final GordianCoreAgreementFactory myFactory = getAgreementFactory();
-        final GordianAgreementSpec mySpec = myFactory.getSpecForIdentifier(myAlgId);
+        final GordianKeyPairAgreementSpec mySpec = myFactory.getSpecForIdentifier(myAlgId);
         if (!Objects.equals(mySpec, getAgreementSpec())) {
             throw new GordianDataException(ERROR_INVSPEC);
         }

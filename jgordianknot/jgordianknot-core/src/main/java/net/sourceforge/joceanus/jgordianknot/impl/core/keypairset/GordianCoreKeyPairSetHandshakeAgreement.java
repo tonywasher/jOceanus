@@ -24,14 +24,16 @@ import java.util.List;
 import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
 
 import net.sourceforge.joceanus.jgordianknot.api.agree.GordianAgreementFactory;
-import net.sourceforge.joceanus.jgordianknot.api.agree.GordianAgreementSpec;
 import net.sourceforge.joceanus.jgordianknot.api.agree.GordianAgreementStatus;
 import net.sourceforge.joceanus.jgordianknot.api.agree.GordianKDFType;
+import net.sourceforge.joceanus.jgordianknot.api.agree.GordianKeyPairAgreementSpec;
 import net.sourceforge.joceanus.jgordianknot.api.agree.GordianKeyPairHandshakeAgreement;
 import net.sourceforge.joceanus.jgordianknot.api.base.GordianLength;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPair;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPairType;
 import net.sourceforge.joceanus.jgordianknot.api.keypairset.GordianKeyPairSet;
+import net.sourceforge.joceanus.jgordianknot.api.keypairset.GordianKeyPairSetAgreement;
+import net.sourceforge.joceanus.jgordianknot.api.keypairset.GordianKeyPairSetAgreementSpec;
 import net.sourceforge.joceanus.jgordianknot.api.keypairset.GordianKeyPairSetHandshakeAgreement;
 import net.sourceforge.joceanus.jgordianknot.api.keypairset.GordianKeyPairSetSpec;
 import net.sourceforge.joceanus.jgordianknot.impl.core.agree.GordianCoreAgreement;
@@ -43,8 +45,8 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
  * KeyPairSet signedAgreement.
  */
 public class GordianCoreKeyPairSetHandshakeAgreement
-        extends GordianCoreAgreement
-        implements GordianKeyPairSetHandshakeAgreement {
+        extends GordianCoreAgreement<GordianKeyPairSetAgreementSpec>
+        implements GordianKeyPairSetHandshakeAgreement, GordianKeyPairSetAgreement {
     /**
      * The list of agreements.
      */
@@ -57,7 +59,7 @@ public class GordianCoreKeyPairSetHandshakeAgreement
      * @throws OceanusException on error
      */
     GordianCoreKeyPairSetHandshakeAgreement(final GordianCoreFactory pFactory,
-                                            final GordianAgreementSpec pSpec) throws OceanusException {
+                                            final GordianKeyPairSetAgreementSpec pSpec) throws OceanusException {
         /* Initialise underlying class */
         super(pFactory, pSpec);
         theAgreements = new ArrayList<>();
@@ -67,11 +69,11 @@ public class GordianCoreKeyPairSetHandshakeAgreement
         final GordianKDFType myKDFType = pSpec.getKDFType();
         final Boolean withConfirm = pSpec.withConfirm();
         theAgreements.add((GordianKeyPairHandshakeAgreement) myFactory.createAgreement(
-                GordianAgreementSpec.dhUnifiedConfirm(myKDFType, withConfirm)));
+                GordianKeyPairAgreementSpec.dhUnifiedConfirm(myKDFType, withConfirm)));
         theAgreements.add((GordianKeyPairHandshakeAgreement) myFactory.createAgreement(
-                GordianAgreementSpec.ecdhUnifiedConfirm(GordianKeyPairType.EC, myKDFType, withConfirm)));
+                GordianKeyPairAgreementSpec.ecdhUnifiedConfirm(GordianKeyPairType.EC, myKDFType, withConfirm)));
         theAgreements.add((GordianKeyPairHandshakeAgreement) myFactory.createAgreement(
-                GordianAgreementSpec.xdhUnifiedConfirm(myKDFType, withConfirm)));
+                GordianKeyPairAgreementSpec.xdhUnifiedConfirm(myKDFType, withConfirm)));
     }
 
     @Override

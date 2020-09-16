@@ -16,7 +16,8 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jgordianknot.impl.core.agree;
 
-import net.sourceforge.joceanus.jgordianknot.api.agree.GordianAgreementSpec;
+import net.sourceforge.joceanus.jgordianknot.api.agree.GordianKeyPairAgreement;
+import net.sourceforge.joceanus.jgordianknot.api.agree.GordianKeyPairAgreementSpec;
 import net.sourceforge.joceanus.jgordianknot.api.agree.GordianKeyPairAnonymousAgreement;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianCoreFactory;
 
@@ -24,15 +25,15 @@ import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianCoreFactory;
  * Encapsulation Agreement.
  */
 public abstract class GordianCoreAnonymousAgreement
-        extends GordianCoreAgreement
-        implements GordianKeyPairAnonymousAgreement {
+        extends GordianCoreAgreement<GordianKeyPairAgreementSpec>
+        implements GordianKeyPairAnonymousAgreement, GordianKeyPairAgreement {
     /**
      * Constructor.
      * @param pFactory the factory
      * @param pSpec the agreementSpec
      */
     protected GordianCoreAnonymousAgreement(final GordianCoreFactory pFactory,
-                                            final GordianAgreementSpec pSpec) {
+                                            final GordianKeyPairAgreementSpec pSpec) {
         super(pFactory, pSpec);
     }
 }

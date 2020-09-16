@@ -23,9 +23,9 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.function.Predicate;
 
-import net.sourceforge.joceanus.jgordianknot.api.agree.GordianAgreement;
-import net.sourceforge.joceanus.jgordianknot.api.agree.GordianAgreementSpec;
 import net.sourceforge.joceanus.jgordianknot.api.factory.GordianKeyPairFactory;
+import net.sourceforge.joceanus.jgordianknot.api.keypairset.GordianKeyPairSetAgreement;
+import net.sourceforge.joceanus.jgordianknot.api.keypairset.GordianKeyPairSetAgreementSpec;
 import net.sourceforge.joceanus.jgordianknot.api.keypairset.GordianKeyPairSetEncryptor;
 import net.sourceforge.joceanus.jgordianknot.api.keypairset.GordianKeyPairSetFactory;
 import net.sourceforge.joceanus.jgordianknot.api.keypairset.GordianKeyPairSetGenerator;
@@ -98,7 +98,7 @@ public class GordianCoreKeyPairSetFactory
     }
 
     @Override
-    public GordianAgreement createAgreement(final GordianAgreementSpec pAgreementSpec) throws OceanusException {
+    public GordianKeyPairSetAgreement createAgreement(final GordianKeyPairSetAgreementSpec pAgreementSpec) throws OceanusException {
         /* Switch on agreementType */
         final GordianCoreFactory myFactory = (GordianCoreFactory) theFactory.getFactory();
         switch (pAgreementSpec.getAgreementType()) {
