@@ -17,24 +17,13 @@
 package net.sourceforge.joceanus.jgordianknot.impl.core.agree;
 
 import java.security.SecureRandom;
-import java.util.Objects;
 
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
 import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
-import org.bouncycastle.crypto.DerivationFunction;
-import org.bouncycastle.crypto.DerivationParameters;
-import org.bouncycastle.crypto.agreement.kdf.ConcatenationKDFGenerator;
-import org.bouncycastle.crypto.digests.SHA256Digest;
-import org.bouncycastle.crypto.digests.SHA512Digest;
-import org.bouncycastle.crypto.generators.KDF2BytesGenerator;
-import org.bouncycastle.crypto.params.KDFParameters;
 import org.bouncycastle.util.Arrays;
 
 import net.sourceforge.joceanus.jgordianknot.api.agree.GordianAgreement;
-import net.sourceforge.joceanus.jgordianknot.api.agree.GordianAgreementFactory;
 import net.sourceforge.joceanus.jgordianknot.api.agree.GordianAgreementStatus;
-import net.sourceforge.joceanus.jgordianknot.api.agree.GordianKDFType;
-import net.sourceforge.joceanus.jgordianknot.api.agree.GordianKeyPairAgreementSpec;
 import net.sourceforge.joceanus.jgordianknot.api.base.GordianKeySpec;
 import net.sourceforge.joceanus.jgordianknot.api.base.GordianLength;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianCipherFactory;
@@ -51,9 +40,7 @@ import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigestSpec;
 import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigestType;
 import net.sourceforge.joceanus.jgordianknot.api.factory.GordianFactory;
 import net.sourceforge.joceanus.jgordianknot.api.factory.GordianFactoryType;
-import net.sourceforge.joceanus.jgordianknot.api.factory.GordianKeyPairFactory;
 import net.sourceforge.joceanus.jgordianknot.api.key.GordianKey;
-import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPair;
 import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySet;
 import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetSpec;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianCoreFactory;
@@ -62,9 +49,6 @@ import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianLogicExceptio
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianParameters;
 import net.sourceforge.joceanus.jgordianknot.impl.core.cipher.GordianCoreCipherFactory;
 import net.sourceforge.joceanus.jgordianknot.impl.core.key.GordianCoreKeyGenerator;
-import net.sourceforge.joceanus.jgordianknot.impl.core.keypair.GordianCoreKeyPair;
-import net.sourceforge.joceanus.jgordianknot.impl.core.keypair.GordianPrivateKey;
-import net.sourceforge.joceanus.jgordianknot.impl.core.keypair.GordianPublicKey;
 import net.sourceforge.joceanus.jgordianknot.impl.core.keyset.GordianCoreKeySet;
 import net.sourceforge.joceanus.jgordianknot.impl.core.keyset.GordianCoreKeySetFactory;
 import net.sourceforge.joceanus.jgordianknot.impl.core.keyset.GordianKeySetSpecASN1;
@@ -79,12 +63,12 @@ public abstract class GordianCoreAgreement<A>
     /**
      * InitVectorLength.
      */
-    private static final int INITLEN = 32;
+    protected static final int INITLEN = 32;
 
     /**
      * Invalid AgreementSpec message.
      */
-    static final String ERROR_INVSPEC = "Incorrect AgreementSpec";
+    protected static final String ERROR_INVSPEC = "Incorrect AgreementSpec";
 
     /**
      * The factory.
@@ -97,24 +81,9 @@ public abstract class GordianCoreAgreement<A>
     private final A theSpec;
 
     /**
-     * The keyDerivation function.
-     */
-    private DerivationFunction theKDF;
-
-    /**
      * The status.
      */
     private GordianAgreementStatus theStatus;
-
-    /**
-     * The client initVector.
-     */
-    private byte[] theClientIV;
-
-    /**
-     * The server initVector.
-     */
-    private byte[] theServerIV;
 
     /**
      * The resultType.
@@ -125,6 +94,16 @@ public abstract class GordianCoreAgreement<A>
      * The agreed result.
      */
     private Object theResult;
+
+    /**
+     * The client initVector.
+     */
+    private byte[] theClientIV;
+
+    /**
+     * The server initVector.
+     */
+    private byte[] theServerIV;
 
     /**
      * Constructor.
@@ -144,14 +123,6 @@ public abstract class GordianCoreAgreement<A>
      */
     protected GordianCoreFactory getFactory() {
         return theFactory;
-    }
-
-    /**
-     * Obtain the agreement factory.
-     * @return the factory
-     */
-    protected GordianCoreAgreementFactory getAgreementFactory() {
-        return (GordianCoreAgreementFactory) theFactory.getKeyPairFactory().getAgreementFactory();
     }
 
     @Override
@@ -275,47 +246,10 @@ public abstract class GordianCoreAgreement<A>
     }
 
     /**
-     * CheckKeyPair.
-     * @param pKeyPair the keyPair
-     * @throws OceanusException on error
-     */
-    protected void checkKeyPair(final GordianKeyPair pKeyPair) throws OceanusException {
-        /* Check that the KeyPair is valid */
-        final GordianKeyPairFactory myFactory = theFactory.getKeyPairFactory();
-        final GordianAgreementFactory myAgrees = myFactory.getAgreementFactory();
-        if (!myAgrees.validAgreementSpecForKeyPair(pKeyPair, (GordianKeyPairAgreementSpec) theSpec)) {
-            throw new GordianDataException("Incorrect KeyPair type");
-        }
-    }
-
-    /**
-     * Obtain public key from pair.
-     * @param pKeyPair the keyPair
-     * @return the public key
-     */
-    protected GordianPublicKey getPublicKey(final GordianKeyPair pKeyPair) {
-
-        return ((GordianCoreKeyPair) pKeyPair).getPublicKey();
-    }
-
-    /**
-     * Obtain private key from pair.
-     * @param pKeyPair the keyPair
-     * @return the private key
-     * @throws OceanusException on error
-     */
-    protected GordianPrivateKey getPrivateKey(final GordianKeyPair pKeyPair) throws OceanusException {
-        if (pKeyPair.isPublicOnly()) {
-            throw new GordianDataException("missing privateKey");
-        }
-        return ((GordianCoreKeyPair) pKeyPair).getPrivateKey();
-    }
-
-    /**
      * Create and return a new clientIV.
      * @return the initVector
      */
-    private byte[] newClientIV() {
+    protected byte[] newClientIV() {
         /* Create a new initVector */
         theClientIV = new byte[INITLEN];
         getRandom().nextBytes(theClientIV);
@@ -352,7 +286,7 @@ public abstract class GordianCoreAgreement<A>
      * Store server initVector.
      * @param pInitVector the initVector
      */
-    private void storeServerIV(final byte[] pInitVector) {
+    protected void storeServerIV(final byte[] pInitVector) {
         /* Store the initVector */
         theServerIV = pInitVector;
     }
@@ -372,28 +306,14 @@ public abstract class GordianCoreAgreement<A>
      */
     protected void storeSecret(final byte[] pSecret) throws OceanusException {
         /* Protect against failure */
-        final byte[] mySecret = new byte[pSecret.length];
         try {
-            /* If we have a kdf */
-            if (theKDF != null) {
-                /* Create KDF Parameters */
-                final KDFParameters myParms = new KDFParameters(pSecret, new byte[0]);
-                theKDF.init(myParms);
-
-                /* Create the secret */
-                theKDF.generateBytes(mySecret, 0, mySecret.length);
-                processSecret(mySecret);
-
-            } else {
-                /* Just process the secret */
-                processSecret(pSecret);
-            }
+            /* Just process the secret */
+            processSecret(pSecret);
 
             /* Clear buffers */
         } finally {
             /* Clear the secret */
-            Arrays.fill(mySecret, (byte) 0);
-            Arrays.fill(pSecret, (byte) 0);
+             Arrays.fill(pSecret, (byte) 0);
         }
     }
 
@@ -705,190 +625,6 @@ public abstract class GordianCoreAgreement<A>
     }
 
     /**
-     * Enable additional derivation of secret.
-     */
-    protected void enableDerivation() {
-        /* Only enable derivation if it is not none */
-        final GordianKeyPairAgreementSpec mySpec = (GordianKeyPairAgreementSpec) getAgreementSpec();
-        if (!GordianKDFType.NONE.equals(mySpec.getKDFType())) {
-            theKDF = newDerivationFunction();
-        }
-    }
-
-    /**
-     * Obtain the required derivation function.
-     * @return the derivation function
-     */
-    protected DerivationFunction newDerivationFunction() {
-        final GordianKeyPairAgreementSpec mySpec = (GordianKeyPairAgreementSpec) getAgreementSpec();
-        switch (mySpec.getKDFType()) {
-            case SHA256KDF:
-                return new KDF2BytesGenerator(new SHA256Digest());
-            case SHA512KDF:
-                return new KDF2BytesGenerator(new SHA512Digest());
-            case SHA256CKDF:
-                return new ConcatenationKDFGenerator(new SHA256Digest());
-            case SHA512CKDF:
-                return new ConcatenationKDFGenerator(new SHA512Digest());
-            case NONE:
-            default:
-                return new GordianNullKeyDerivation();
-        }
-    }
-
-    /**
-     * Build clientHello message.
-     * @return the clientHello message
-     * @throws OceanusException on error
-     */
-    protected byte[] buildClientHello() throws OceanusException {
-        return buildClientHello(null);
-    }
-
-    /**
-     * Build clientHello message.
-     * @param pEncapsulated the encapsulated message
-     * @return the clientHello message
-     * @throws OceanusException on error
-     */
-    protected byte[] buildClientHello(final byte[] pEncapsulated) throws OceanusException {
-        /* Must be in clean state */
-        checkStatus(GordianAgreementStatus.CLEAN);
-
-        /* Create the clientHello */
-        final GordianCoreAgreementFactory myFactory = getAgreementFactory();
-        final GordianKeyPairAgreementSpec mySpec = (GordianKeyPairAgreementSpec) getAgreementSpec();
-        final AlgorithmIdentifier myAlgId = myFactory.getIdentifierForSpec(mySpec);
-        final AlgorithmIdentifier myResId = getIdentifierForResult();
-        final GordianAgreementClientHelloASN1 myClientHello
-                = new GordianAgreementClientHelloASN1(myAlgId, myResId, newClientIV(), pEncapsulated);
-        return myClientHello.getEncodedBytes();
-    }
-
-    /**
-     * Parse the incoming clientHello message.
-     * @param pClientHello the incoming clientHello message
-     * @return the encapsulated message
-     * @throws OceanusException on error
-     */
-    protected byte[] parseClientHello(final byte[] pClientHello) throws OceanusException {
-        /* Must be in clean state */
-        checkStatus(GordianAgreementStatus.CLEAN);
-
-        /* Access the sequence */
-        final GordianAgreementClientHelloASN1 myClientHello = GordianAgreementClientHelloASN1.getInstance(pClientHello);
-
-        /* Access message parts */
-        final AlgorithmIdentifier myAlgId = myClientHello.getAgreementId();
-        final AlgorithmIdentifier myResId = myClientHello.getResultId();
-        final byte[] myInitVector = myClientHello.getInitVector();
-        final byte[] myData = myClientHello.getData();
-
-        /* Check agreementSpec */
-        final GordianCoreAgreementFactory myFactory = getAgreementFactory();
-        final GordianKeyPairAgreementSpec mySpec = myFactory.getSpecForIdentifier(myAlgId);
-        if (!Objects.equals(mySpec, getAgreementSpec())) {
-            throw new GordianDataException(ERROR_INVSPEC);
-        }
-
-        /* Process result identifier */
-        processResultIdentifier(myResId);
-
-        /* Store client initVector */
-        storeClientIV(myInitVector);
-
-        /* Return the encapsulated message */
-        return myData;
-    }
-
-    /**
-     * Build serverHello message.
-     * @return the serverHello message
-     * @throws OceanusException on error
-     */
-    protected byte[] buildServerHello() throws OceanusException {
-        return buildServerHello(null, null);
-    }
-
-    /**
-     * Build serverHello message.
-     * @param pEncapsulated the encapsulated data
-     * @param pConfirmation the confirmationTag
-     * @return the serverHello message
-     * @throws OceanusException on error
-     */
-    protected byte[] buildServerHello(final byte[] pEncapsulated,
-                                      final byte[] pConfirmation) throws OceanusException {
-        /* Create the serverHello */
-        final GordianCoreAgreementFactory myFactory = getAgreementFactory();
-        final GordianKeyPairAgreementSpec mySpec = (GordianKeyPairAgreementSpec) getAgreementSpec();
-        final AlgorithmIdentifier myAlgId = myFactory.getIdentifierForSpec(mySpec);
-        final GordianAgreementServerHelloASN1 myServerHello
-                = new GordianAgreementServerHelloASN1(myAlgId, theServerIV, pEncapsulated, pConfirmation);
-
-        /* If there is a server confirmation, set status */
-        if (pConfirmation != null) {
-            setStatus(GordianAgreementStatus.AWAITING_CLIENTCONFIRM);
-        }
-
-        /* return the serverHello */
-        return myServerHello.getEncodedBytes();
-    }
-
-    /**
-     * Build serverHello message.
-     * @param pEncapsulated the encapsulated data
-     * @param pSignId the signatureId
-     * @param pSignature the signature
-     * @return the serverHello message
-     * @throws OceanusException on error
-     */
-    protected byte[] buildServerHello(final byte[] pEncapsulated,
-                                      final AlgorithmIdentifier pSignId,
-                                      final byte[] pSignature) throws OceanusException {
-        /* Create the serverHello */
-        final GordianCoreAgreementFactory myFactory = getAgreementFactory();
-        final GordianKeyPairAgreementSpec mySpec = (GordianKeyPairAgreementSpec) getAgreementSpec();
-        final AlgorithmIdentifier myAlgId = myFactory.getIdentifierForSpec(mySpec);
-        final GordianAgreementServerHelloASN1 myServerHello
-                = new GordianAgreementServerHelloASN1(myAlgId, theServerIV, pEncapsulated, pSignId, pSignature);
-
-        /* return the serverHello */
-        return myServerHello.getEncodedBytes();
-    }
-
-    /**
-     * Parse the incoming serverHello message.
-     * @param pServerHello the serverHello message
-     * @return the parsed ASN1
-     * @throws OceanusException on error
-     */
-    protected GordianAgreementServerHelloASN1 parseServerHello(final byte[] pServerHello) throws OceanusException {
-        /* Must be in awaiting serverHello state */
-        checkStatus(GordianAgreementStatus.AWAITING_SERVERHELLO);
-
-        /* Access the sequence */
-        final GordianAgreementServerHelloASN1 myServerHello = GordianAgreementServerHelloASN1.getInstance(pServerHello);
-
-        /* Access message parts */
-        final AlgorithmIdentifier myAlgId = myServerHello.getAgreementId();
-        final byte[] myInitVector = myServerHello.getInitVector();
-
-        /* Check agreementSpec */
-        final GordianCoreAgreementFactory myFactory = getAgreementFactory();
-        final GordianKeyPairAgreementSpec mySpec = myFactory.getSpecForIdentifier(myAlgId);
-        if (!Objects.equals(mySpec, getAgreementSpec())) {
-            throw new GordianDataException(ERROR_INVSPEC);
-        }
-
-        /* Store server initVector */
-        storeServerIV(myInitVector);
-
-        /* Return the ASN1 */
-        return myServerHello;
-    }
-
-    /**
      * Calculate the derived secret.
      * @param pDigestType the digestType
      * @param pSecret the secret
@@ -953,35 +689,6 @@ public abstract class GordianCoreAgreement<A>
             bytesToCopy = Math.min(myBuffer.length, bytesLeft);
             System.arraycopy(myBuffer, 0, pResult, pResult.length - bytesLeft, bytesToCopy);
             bytesLeft -= bytesToCopy;
-        }
-    }
-
-    /**
-     * NullKeyDerivation.
-     */
-    public static final class GordianNullKeyDerivation
-            implements DerivationFunction {
-        /**
-         * The key.
-         */
-        private byte[] theKey;
-
-        @Override
-        public int generateBytes(final byte[] pBuffer,
-                                 final int pOffset,
-                                 final int pLength) {
-            /* Create the array that is to be copied */
-            final byte[] myKey = Arrays.copyOf(theKey, pLength);
-            Arrays.fill(theKey, (byte) 0);
-            System.arraycopy(myKey, 0, pBuffer, pOffset, pLength);
-            Arrays.fill(myKey, (byte) 0);
-            return pLength;
-        }
-
-        @Override
-        public void init(final DerivationParameters pParms) {
-            final byte[] mySecret = ((KDFParameters) pParms).getSharedSecret();
-            theKey = Arrays.copyOf(mySecret, mySecret.length);
         }
     }
 }

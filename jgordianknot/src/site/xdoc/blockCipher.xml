@@ -32,8 +32,8 @@
             <subsection name="Algorithms">
                 <p>The following symKey algorithms are supported.</p>
                 <table class="defTable">
-                    <tr><td class="defHdr">Algorithm</td><td class="defHdr">BlockSize</td><td class="defHdr">JCA</td>
-                        <td class="defHdr">128</td><td class="defHdr">192</td><td class="defHdr">256</td><td class="defHdr">512</td><td class="defHdr">1024</td></tr>
+                    <tr><th class="defHdr">Algorithm</th><th class="defHdr">BlockSize</th><th class="defHdr">JCA</th>
+                        <th class="defHdr">128</th><th class="defHdr">192</th><th class="defHdr">256</th><th class="defHdr">512</th><th class="defHdr">1024</th></tr>
                     <tr><td>AES</td><td>128</td><td>Y</td><td>Y</td><td>Y</td><td>Y</td><td/><td/></tr>
                     <tr><td>Serpent</td><td>128</td><td>Y</td><td>Y</td><td>Y</td><td>Y</td><td/><td/></tr>
                     <tr><td>TwoFish</td><td>128</td><td>Y</td><td>Y</td><td>Y</td><td>Y</td><td/><td/></tr>
@@ -108,7 +108,7 @@
             <subsection name="Cipher Modes">
                 <p>The following modes can be used</p>
                 <table class="defTable">
-                    <tr><td class="defHdr">Mode</td><td class="defHdr">JCA</td><td class="defHdr">Notes</td></tr>
+                    <tr><th class="defHdr">Mode</th><th class="defHdr">JCA</th><th class="defHdr">Notes</th></tr>
                     <tr><td>ECB</td><td>Y</td><td/></tr>
                     <tr><td>CBC</td><td>Y</td><td>JCA does not support for Kuznyechik</td></tr>
                     <tr><td>G3413CBC</td><td>Y</td><td>Only available for Kuznyechik</td></tr>
@@ -132,7 +132,7 @@
             <subsection name="Padding">
                 <p>The following paddings can be used for ECB and CBC modes</p>
                 <table class="defTable">
-                    <tr><td class="defHdr">Padding</td><td class="defHdr">JCA</td><td class="defHdr">Notes</td></tr>
+                    <tr><th class="defHdr">Padding</th><th class="defHdr">JCA</th><th class="defHdr">Notes</th></tr>
                     <tr><td>CTS</td><td>Y</td><td/></tr>
                     <tr><td>ISO7816-4</td><td>Y</td><td/></tr>
                     <tr><td>PKCS7</td><td>Y</td><td/></tr>

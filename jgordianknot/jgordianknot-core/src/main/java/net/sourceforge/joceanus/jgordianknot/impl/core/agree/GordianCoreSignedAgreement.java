@@ -21,7 +21,6 @@ import java.security.spec.X509EncodedKeySpec;
 import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
 
 import net.sourceforge.joceanus.jgordianknot.api.agree.GordianAgreementStatus;
-import net.sourceforge.joceanus.jgordianknot.api.agree.GordianKeyPairAgreement;
 import net.sourceforge.joceanus.jgordianknot.api.agree.GordianKeyPairAgreementSpec;
 import net.sourceforge.joceanus.jgordianknot.api.agree.GordianKeyPairSignedAgreement;
 import net.sourceforge.joceanus.jgordianknot.api.factory.GordianKeyPairFactory;
@@ -39,8 +38,8 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
  * Signed Agreement.
  */
 public abstract class GordianCoreSignedAgreement
-        extends GordianCoreAgreement<GordianKeyPairAgreementSpec>
-        implements GordianKeyPairSignedAgreement, GordianKeyPairAgreement {
+        extends GordianCoreKeyPairAgreement
+        implements GordianKeyPairSignedAgreement {
     /**
      * The client ephemeral KeyPair.
      */

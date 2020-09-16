@@ -16,6 +16,6 @@
  ******************************************************************************/
 
 /**
- * KeyPairSet.
+ * KeyPairSet API.
  */
 package net.sourceforge.joceanus.jgordianknot.api.keypairset;

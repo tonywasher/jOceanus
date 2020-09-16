@@ -20,9 +20,9 @@ import java.util.function.Predicate;
 
 import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
 
-import net.sourceforge.joceanus.jgordianknot.api.agree.GordianAgreement;
 import net.sourceforge.joceanus.jgordianknot.api.agree.GordianAgreementFactory;
 import net.sourceforge.joceanus.jgordianknot.api.agree.GordianAgreementType;
+import net.sourceforge.joceanus.jgordianknot.api.agree.GordianKeyPairAgreement;
 import net.sourceforge.joceanus.jgordianknot.api.agree.GordianKeyPairAgreementSpec;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianEdwardsElliptic;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPairSpec;
@@ -64,7 +64,7 @@ public abstract class GordianCoreAgreementFactory
     }
 
     @Override
-    public GordianAgreement<GordianKeyPairAgreementSpec> createAgreement(final byte[] pClientHello) throws OceanusException {
+    public GordianKeyPairAgreement createAgreement(final byte[] pClientHello) throws OceanusException {
         /* Parse the client hello message */
         final GordianAgreementClientHelloASN1 myASN1 = GordianAgreementClientHelloASN1.getInstance(pClientHello);
         final AlgorithmIdentifier myAlgId = myASN1.getAgreementId();

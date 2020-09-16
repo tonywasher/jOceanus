@@ -31,8 +31,8 @@
             <subsection name="Algorithms">
                 <p>The following algorithms are supported.</p>
                 <table class="defTable">
-                    <tr><td class="defHdr">Algorithm</td><td class="defHdr">StateLength</td><td class="defHdr">OutputLengths</td>
-                        <td class="defHdr">JCA</td><td class="defHdr">Notes</td></tr>
+                    <tr><th class="defHdr">Algorithm</th><th class="defHdr">StateLength</th><th class="defHdr">OutputLengths</th>
+                        <th class="defHdr">JCA</th><th class="defHdr">Notes</th></tr>
                     <tr><td rowspan="2">SHA2</td><td>512</td><td>224,256,384,512</td><td>Y</td><td/></tr>
                     <tr><td>256</td><td>224,256</td><td>Y</td><td/></tr>
                     <tr><td>Tiger</td><td/><td>192</td><td>Y</td><td/></tr>

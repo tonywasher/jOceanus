@@ -33,7 +33,7 @@
             <subsection name="Algorithms">
                 <p>The following algorithms are supported.</p>
                 <table class="defTable">
-                    <tr><td class="defHdr">Algorithm</td></tr>
+                    <tr><th class="defHdr">Algorithm</th></tr>
                     <tr><td>SP800-HASH</td></tr>
                     <tr><td>SP800-HMAC</td></tr>
                     <tr><td>SP800-CTR</td></tr>

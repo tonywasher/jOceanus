@@ -7,14 +7,14 @@
         <section name="Overview">
             <p>Asymmetric functions are supported via the <strong>GordianKeyPairFactory</strong> interface.</p>
             <p>GordianKnot supports most Asymmetric algorithms that are available from BouncyCastle through the JCA.</p>
-            <p>A keyPairGenerator can be created for an asymKeySpec (algorithm plus additional configuration)
+            <p>A keyPairGenerator can be created for a KeyPairSpec (algorithm plus additional configuration)
                 This will allow generation of a random keyPair plus translation to/from PKCS8/X509 encodings,
                 and combines the role of KeyPairGenerator and KeyFactory in JCA.</p>
             <p>The various algorithms support Signature/Encryption/Agreement as available</p>
             <p>JCA supports all algorithms</p>
         </section>
         <section name="Key Management">
-            <p>Algorithms are represented by <b>GordianAsymKeySpec</b>. A <b>GordianKeyPairGenerator</b> is obtained via the keySpec,
+            <p>Algorithms are represented by <b>GordianKeyPairSpec</b>. A <b>GordianKeyPairGenerator</b> is obtained via the keySpec,
             and then keyPairs are generated or derived by the generator. The keyPair may be publicOnly if only the public key is known.</p>
             <subsection name="Sample">
                 <source>
@@ -41,7 +41,7 @@
             <subsection name="Algorithms">
                 <p>The following asymmetric algorithms and variants are supported.</p>
                 <table class="defTable">
-                    <tr><td class="defHdr">Algorithm</td><td class="defHdr">Variants</td></tr>
+                    <tr><th class="defHdr">Algorithm</th><th class="defHdr">Variants</th></tr>
                     <tr><td>RSA</td><td>Modulus 1024, 1536, 2048, 3072, 4096, 6144, 8192</td></tr>
                     <tr><td>DSA</td><td>Modulus 1024, 2048, 3096</td></tr>
                     <tr><td>DiffieHellman</td><td>rfc2409_1024, rfc3526_1536, rfc3526_2048, rfc3526_3072, rfc3526_4096, rfc3526_6144, rfc3526_8192,
@@ -60,8 +60,8 @@
                     <tr><td>DSTU4145</td><td>Curves 1-9</td></tr>
                     <tr><td>GOST2012</td><td>Tc26-Gost-3410-12-512-paramSetA,B,C Tc26-Gost-3410-12-256-paramSetA</td></tr>
                     <tr><td>SM2</td><td>sm2p256v1, wapip192v1</td></tr>
-                    <tr><td>EdDSA</td><td>Curve25518, Curve448</td></tr>
-                    <tr><td>XDH</td><td>Curve25518, Curve448</td></tr>
+                    <tr><td>EdDSA</td><td>Curve25519, Curve448</td></tr>
+                    <tr><td>XDH</td><td>Curve25519, Curve448</td></tr>
                     <tr><td>McEliece</td><td>Standard, CCA2(SHA1,SHA224,SHA256,SHA384,SHA512)</td></tr>
                     <tr><td>NewHope</td><td/></tr>
                     <tr><td>SPHINCS256</td><td>SHA2, SHA3</td></tr>

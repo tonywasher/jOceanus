@@ -46,6 +46,14 @@ public interface GordianKeyPairSetFactory {
     GordianKeyPairSetAgreement createAgreement(GordianKeyPairSetAgreementSpec pAgreementSpec) throws OceanusException;
 
     /**
+     * Create Agreement for clientHello message.
+     * @param pClientHello the clientHello message
+     * @return the Agreement
+     * @throws OceanusException on error
+     */
+    GordianKeyPairSetAgreement createAgreement(byte[] pClientHello) throws OceanusException;
+
+    /**
      * create keyPairSetEncryptor.
      * @param pKeyPairSetSpec the keyPairSetSpec
      * @return the encryptor

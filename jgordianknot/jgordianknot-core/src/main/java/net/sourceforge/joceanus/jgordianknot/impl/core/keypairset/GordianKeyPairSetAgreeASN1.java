@@ -30,7 +30,7 @@ import org.bouncycastle.asn1.DEROctetString;
 import org.bouncycastle.asn1.DERSequence;
 import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
 
-import net.sourceforge.joceanus.jgordianknot.api.keypairset.GordianKeyPairSetSpec;
+import net.sourceforge.joceanus.jgordianknot.api.keypairset.GordianKeyPairSetAgreementSpec;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianASN1Util.GordianASN1Object;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianDataException;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianIOException;
@@ -53,7 +53,7 @@ public class GordianKeyPairSetAgreeASN1
     /**
      * The keyPairSetSpec.
      */
-    private final GordianKeyPairSetSpec theSpec;
+    private final GordianKeyPairSetAgreementSpec theSpec;
 
     /**
      * The ResultType.
@@ -67,13 +67,13 @@ public class GordianKeyPairSetAgreeASN1
 
     /**
      * Create the ASN1 sequence.
-     * @param pKeyPairSetSpec the keyPairSetSpec
+     * @param pAgreementSpec the agreementSpec
      * @param pResult the resultId
      */
-    public GordianKeyPairSetAgreeASN1(final GordianKeyPairSetSpec pKeyPairSetSpec,
+    public GordianKeyPairSetAgreeASN1(final GordianKeyPairSetAgreementSpec pAgreementSpec,
                                       final AlgorithmIdentifier pResult) {
         /* Store the Spec */
-        theSpec = pKeyPairSetSpec;
+        theSpec = pAgreementSpec;
         theResultType = pResult;
         theMessages = new ArrayList<>();
     }
@@ -101,7 +101,7 @@ public class GordianKeyPairSetAgreeASN1
             }
 
             /* Build the keyPairSetSpec */
-            theSpec = GordianKeyPairSetAlgId.determineKeyPairSetSpec(myId);
+            theSpec = GordianKeyPairSetAlgId.determineKeyPairSetAgreementSpec(myId);
 
             /* Build the list from the messages sequence */
             en = myMsgs.getObjects();
@@ -111,7 +111,7 @@ public class GordianKeyPairSetAgreeASN1
             }
 
             /* Check that we have the right number of messages */
-            if (theMessages.size() != theSpec.numKeyPairs()) {
+            if (theMessages.size() != theSpec.getKeyPairSetSpec().numKeyPairs()) {
                 throw new GordianDataException("Invalid message");
             }
 
@@ -140,7 +140,7 @@ public class GordianKeyPairSetAgreeASN1
      * Obtain the spec.
      * @return the Spec
      */
-    public GordianKeyPairSetSpec getSpec() {
+    public GordianKeyPairSetAgreementSpec getSpec() {
         return theSpec;
     }
 

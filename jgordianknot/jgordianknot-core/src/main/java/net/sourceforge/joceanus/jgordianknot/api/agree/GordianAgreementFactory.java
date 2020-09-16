@@ -43,7 +43,7 @@ public interface GordianAgreementFactory {
      * @return the Agreement
      * @throws OceanusException on error
      */
-    GordianAgreement<GordianKeyPairAgreementSpec> createAgreement(byte[] pClientHello) throws OceanusException;
+    GordianKeyPairAgreement createAgreement(byte[] pClientHello) throws OceanusException;
 
     /**
      * Obtain predicate for keyAgreement.

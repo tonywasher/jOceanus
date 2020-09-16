@@ -24,7 +24,6 @@ import org.bouncycastle.util.Arrays;
 
 import net.sourceforge.joceanus.jgordianknot.api.agree.GordianAgreementStatus;
 import net.sourceforge.joceanus.jgordianknot.api.agree.GordianAgreementType;
-import net.sourceforge.joceanus.jgordianknot.api.agree.GordianKeyPairAgreement;
 import net.sourceforge.joceanus.jgordianknot.api.agree.GordianKeyPairAgreementSpec;
 import net.sourceforge.joceanus.jgordianknot.api.agree.GordianKeyPairHandshakeAgreement;
 import net.sourceforge.joceanus.jgordianknot.api.base.GordianLength;
@@ -44,8 +43,8 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
  * Ephemeral Agreement.
  */
 public abstract class GordianCoreEphemeralAgreement
-        extends GordianCoreAgreement<GordianKeyPairAgreementSpec>
-        implements GordianKeyPairHandshakeAgreement, GordianKeyPairAgreement {
+        extends GordianCoreKeyPairAgreement
+        implements GordianKeyPairHandshakeAgreement {
     /**
      * The client KeyPair.
      */

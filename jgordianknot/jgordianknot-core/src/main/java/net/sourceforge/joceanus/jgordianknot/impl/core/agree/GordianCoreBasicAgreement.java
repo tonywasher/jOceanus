@@ -17,7 +17,6 @@
 package net.sourceforge.joceanus.jgordianknot.impl.core.agree;
 
 import net.sourceforge.joceanus.jgordianknot.api.agree.GordianAgreementStatus;
-import net.sourceforge.joceanus.jgordianknot.api.agree.GordianKeyPairAgreement;
 import net.sourceforge.joceanus.jgordianknot.api.agree.GordianKeyPairAgreementSpec;
 import net.sourceforge.joceanus.jgordianknot.api.agree.GordianKeyPairHandshakeAgreement;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPair;
@@ -28,8 +27,8 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
  * New Handshake Basic Agreement.
  */
 public abstract class GordianCoreBasicAgreement
-        extends GordianCoreAgreement<GordianKeyPairAgreementSpec>
-        implements GordianKeyPairHandshakeAgreement, GordianKeyPairAgreement {
+        extends GordianCoreKeyPairAgreement
+        implements GordianKeyPairHandshakeAgreement {
     /**
      * The client KeyPair.
      */

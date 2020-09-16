@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Objects;
 
 import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
 
@@ -77,22 +78,20 @@ public class GordianCoreKeyPairSetHandshakeAgreement
     }
 
     @Override
-    public byte[] createClientHello(final GordianKeyPairSet pKeyPairSet) throws OceanusException {
+    public byte[] createClientHello(final GordianKeyPairSet pClient) throws OceanusException {
         /* Must be in clean state */
         checkStatus(GordianAgreementStatus.CLEAN);
 
         /* Check valid spec */
-        final GordianKeyPairSetSpec mySpec = pKeyPairSet.getKeyPairSetSpec();
-        if (!mySpec.canAgree()) {
-            throw new GordianDataException(GordianCoreFactory.getInvalidText(mySpec));
-        }
+        checkKeyPairSet(pClient);
 
         /* Create the message */
+        final GordianKeyPairSetAgreementSpec mySpec = getAgreementSpec();
         final AlgorithmIdentifier myResId = getIdentifierForResult();
         final GordianKeyPairSetAgreeASN1 myASN1 = new GordianKeyPairSetAgreeASN1(mySpec, myResId);
 
         /* Loop through the agreements */
-        final Iterator<GordianKeyPair> myIterator = ((GordianCoreKeyPairSet) pKeyPairSet).iterator();
+        final Iterator<GordianKeyPair> myIterator = ((GordianCoreKeyPairSet) pClient).iterator();
         for (GordianKeyPairHandshakeAgreement myAgreement : theAgreements) {
             /* create the clientHello and add to message */
             myASN1.addMessage(myAgreement.createClientHello(myIterator.next()));
@@ -112,11 +111,18 @@ public class GordianCoreKeyPairSetHandshakeAgreement
         /* Must be in clean state */
         checkStatus(GordianAgreementStatus.CLEAN);
 
+        /* Check valid spec */
+        checkKeyPairSet(pClient);
+        checkKeyPairSet(pServer);
+
         /* Parse the clientHello */
         final GordianKeyPairSetAgreeASN1 myHello = GordianKeyPairSetAgreeASN1.getInstance(pClientHello);
-        final GordianKeyPairSetSpec mySpec = myHello.getSpec();
+        final GordianKeyPairSetAgreementSpec mySpec = myHello.getSpec();
         final AlgorithmIdentifier myResId = myHello.getResultId();
         final boolean noConfirm = !getAgreementSpec().withConfirm();
+        if (!Objects.equals(getAgreementSpec(), myHello.getSpec())) {
+            throw new GordianDataException(ERROR_INVSPEC);
+        }
 
         /* Process result identifier */
         processResultIdentifier(myResId);
@@ -124,7 +130,7 @@ public class GordianCoreKeyPairSetHandshakeAgreement
         /* Create the result if needed */
         final int myPartLen = GordianLength.LEN_512.getByteLength();
         final byte[] myResult = noConfirm
-                ? new byte[mySpec.numKeyPairs() * myPartLen]
+                ? new byte[mySpec.getKeyPairSetSpec().numKeyPairs() * myPartLen]
                 : null;
         int myOffset = 0;
 
@@ -169,10 +175,16 @@ public class GordianCoreKeyPairSetHandshakeAgreement
         /* Must be waiting for serverHello */
         checkStatus(GordianAgreementStatus.AWAITING_SERVERHELLO);
 
+        /* Check valid spec */
+        checkKeyPairSet(pServer);
+
         /* Parse the serverHello */
         final GordianKeyPairSetAgreeASN1 myHello = GordianKeyPairSetAgreeASN1.getInstance(pServerHello);
         final AlgorithmIdentifier myResId = myHello.getResultId();
         final boolean withConfirm = getAgreementSpec().withConfirm();
+        if (!Objects.equals(getAgreementSpec(), myHello.getSpec())) {
+            throw new GordianDataException(ERROR_INVSPEC);
+        }
 
         /* Create the confirm message if needed */
         final GordianKeyPairSetAgreeASN1 myConfirm = withConfirm
@@ -180,9 +192,9 @@ public class GordianCoreKeyPairSetHandshakeAgreement
                 : null;
 
         /* Create the result */
-        final GordianKeyPairSetSpec mySpec = myHello.getSpec();
+        final GordianKeyPairSetAgreementSpec mySpec = myHello.getSpec();
         final int myPartLen = GordianLength.LEN_512.getByteLength();
-        final byte[] myResult = new byte[mySpec.numKeyPairs() * myPartLen];
+        final byte[] myResult = new byte[mySpec.getKeyPairSetSpec().numKeyPairs() * myPartLen];
         int myOffset = 0;
 
         /* Loop through the agreements */
@@ -219,14 +231,18 @@ public class GordianCoreKeyPairSetHandshakeAgreement
 
         /* Parse the clientConfirm */
         final GordianKeyPairSetAgreeASN1 myConfirm = GordianKeyPairSetAgreeASN1.getInstance(pClientConfirm);
+        if (!Objects.equals(getAgreementSpec(), myConfirm.getSpec())) {
+            throw new GordianDataException(ERROR_INVSPEC);
+        }
 
         /* Create the result */
-        final GordianKeyPairSetSpec mySpec = myConfirm.getSpec();
+        final GordianKeyPairSetAgreementSpec mySpec = myConfirm.getSpec();
         final int myPartLen = GordianLength.LEN_512.getByteLength();
-        final byte[] myResult = new byte[mySpec.numKeyPairs() * myPartLen];
+        final byte[] myResult = new byte[mySpec.getKeyPairSetSpec().numKeyPairs() * myPartLen];
         int myOffset = 0;
 
         /* Loop through the agreements */
+
         final Iterator<byte[]> myConfirmIterator = myConfirm.msgIterator();
         for (GordianKeyPairHandshakeAgreement myAgreement : theAgreements) {
             /* Accept the clientConfirm */
@@ -241,5 +257,18 @@ public class GordianCoreKeyPairSetHandshakeAgreement
 
         /* Store the secret */
         storeSecret(myResult);
+    }
+
+    /**
+     * Check valid keyPairSet.
+     * @param pKeyPairSet the keyPairSet
+     * @throws OceanusException on error
+     */
+    private void checkKeyPairSet(final GordianKeyPairSet pKeyPairSet) throws OceanusException {
+        /* Check valid spec */
+        final GordianKeyPairSetSpec mySpec = pKeyPairSet.getKeyPairSetSpec();
+        if (!getAgreementSpec().getKeyPairSetSpec().equals(mySpec)) {
+            throw new GordianDataException(GordianCoreFactory.getInvalidText(mySpec));
+        }
     }
 }

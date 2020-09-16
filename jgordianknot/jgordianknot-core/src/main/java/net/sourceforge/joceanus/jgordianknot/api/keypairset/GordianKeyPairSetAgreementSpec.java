@@ -17,6 +17,7 @@
 package net.sourceforge.joceanus.jgordianknot.api.keypairset;
 
 import java.util.ArrayList;
+import java.util.EnumSet;
 import java.util.List;
 
 import net.sourceforge.joceanus.jgordianknot.api.agree.GordianAgreementType;
@@ -267,6 +268,22 @@ public final class GordianKeyPairSetAgreementSpec {
 
     /**
      * Obtain a list of all possible agreements for a keyPairSetSpec.
+     * @return the list
+     */
+    public static List<GordianKeyPairSetAgreementSpec> listPossibleAgreements() {
+        /* Create list */
+        final List<GordianKeyPairSetAgreementSpec> myAgreements = new ArrayList<>();
+
+        /* Add possible agreements for each spec */
+        EnumSet.allOf(GordianKeyPairSetSpec.class)
+                .forEach(s -> myAgreements.addAll(listPossibleAgreements(s)));
+
+        /* Return the list */
+        return myAgreements;
+    }
+
+    /**
+     * Obtain a list of all possible agreements for a keyPairSetSpec.
      * @param pSpec the keyPairSetSpec
      * @return the list
      */
@@ -275,7 +292,7 @@ public final class GordianKeyPairSetAgreementSpec {
         final List<GordianKeyPairSetAgreementSpec> myAgreements = new ArrayList<>();
 
         /* If the Spec can form agreements */
-        if (pSpec.canSign()) {
+        if (pSpec.canAgree()) {
             /* Add the agreements */
             myAgreements.add(new GordianKeyPairSetAgreementSpec(pSpec, GordianAgreementType.ANON));
             myAgreements.add(new GordianKeyPairSetAgreementSpec(pSpec, GordianAgreementType.SIGNED));

@@ -35,32 +35,32 @@ public enum GordianKeyPairSetSpec {
      * 256bit RSA,EC,EdDSA Signature.
      */
     SIGNLO(GordianKeyPairSpec.rsa(GordianRSAModulus.MOD2048),
-           GordianKeyPairSpec.ec(GordianDSAElliptic.SECT283K1),
+           GordianKeyPairSpec.ec(GordianDSAElliptic.SECP256R1),
            GordianKeyPairSpec.ed25519()),
 
     /**
      * 512bit RSA,EC,EdDSA Signature.
      */
     SIGNHI(GordianKeyPairSpec.rsa(GordianRSAModulus.MOD3072),
-           GordianKeyPairSpec.ec(GordianDSAElliptic.SECT571K1),
+           GordianKeyPairSpec.ec(GordianDSAElliptic.SECP521R1),
            GordianKeyPairSpec.ed448()),
 
     /**
-     * 256bit RSA,EC,XDH.
+     * 256bit DH,EC,XDH.
      */
     AGREELO(GordianKeyPairSpec.dh(GordianDHGroup.FFDHE2048),
-            GordianKeyPairSpec.ec(GordianDSAElliptic.SECT283K1),
+            GordianKeyPairSpec.ec(GordianDSAElliptic.SECP256R1),
             GordianKeyPairSpec.x25519()),
 
     /**
-     * 512bit RSA,EC,XDH.
+     * 512bit DH,EC,XDH.
      */
     AGREEHI(GordianKeyPairSpec.dh(GordianDHGroup.FFDHE3072),
-            GordianKeyPairSpec.ec(GordianDSAElliptic.SECT571K1),
+            GordianKeyPairSpec.ec(GordianDSAElliptic.SECP521R1),
             GordianKeyPairSpec.x448()),
 
     /**
-     * 256bit RSA,EC,XDH.
+     * 256bit RSA,ELGAMAL,SM2.
      */
     ENCRYPT(GordianKeyPairSpec.rsa(GordianRSAModulus.MOD2048),
             GordianKeyPairSpec.elGamal(GordianDHGroup.FFDHE2048),

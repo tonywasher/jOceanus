@@ -1,4 +1,4 @@
-/* *****************************************************************************
+/*******************************************************************************
  * GordianKnot: Security Suite
  * Copyright 2012,2020 Tony Washer
  *
@@ -16,6 +16,6 @@
  ******************************************************************************/
 
 /**
- * Asymmetric keyPair API.
+ * New Mode implementations.
  */
-package net.sourceforge.joceanus.jgordianknot.api.keypair;
+package org.bouncycastle.crypto.ext.modes;

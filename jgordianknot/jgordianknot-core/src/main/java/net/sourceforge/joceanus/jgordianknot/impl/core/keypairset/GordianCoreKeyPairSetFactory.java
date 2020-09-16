@@ -18,7 +18,7 @@ package net.sourceforge.joceanus.jgordianknot.impl.core.keypairset;
 
 import java.security.spec.PKCS8EncodedKeySpec;
 import java.security.spec.X509EncodedKeySpec;
-import java.util.HashMap;
+import java.util.EnumMap;
 import java.util.Map;
 import java.util.Objects;
 import java.util.function.Predicate;
@@ -60,7 +60,7 @@ public class GordianCoreKeyPairSetFactory
         theFactory = pFactory;
 
         /* Create the cache */
-        theCache = new HashMap<>();
+        theCache = new EnumMap<>(GordianKeyPairSetSpec.class);
     }
 
     @Override
@@ -99,6 +99,11 @@ public class GordianCoreKeyPairSetFactory
 
     @Override
     public GordianKeyPairSetAgreement createAgreement(final GordianKeyPairSetAgreementSpec pAgreementSpec) throws OceanusException {
+        /* Check valid spec */
+        if (pAgreementSpec == null || !pAgreementSpec.isValid()) {
+            throw new GordianDataException(GordianCoreFactory.getInvalidText(pAgreementSpec));
+        }
+
         /* Switch on agreementType */
         final GordianCoreFactory myFactory = (GordianCoreFactory) theFactory.getFactory();
         switch (pAgreementSpec.getAgreementType()) {
@@ -111,6 +116,14 @@ public class GordianCoreKeyPairSetFactory
             default:
                 throw new GordianLogicException(GordianCoreFactory.getInvalidText(pAgreementSpec));
         }
+    }
+
+    @Override
+    public GordianKeyPairSetAgreement createAgreement(final byte[] pClientHello) throws OceanusException {
+        /* Parse the client hello message */
+        final GordianKeyPairSetAgreeASN1 myASN1 = GordianKeyPairSetAgreeASN1.getInstance(pClientHello);
+        final GordianKeyPairSetAgreementSpec mySpec = myASN1.getSpec();
+        return createAgreement(mySpec);
     }
 
     @Override

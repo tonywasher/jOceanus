@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Objects;
 
 import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
 
@@ -81,18 +82,16 @@ public class GordianCoreKeyPairSetAnonymousAgreement
         checkStatus(GordianAgreementStatus.CLEAN);
 
         /* Check valid spec */
-        final GordianKeyPairSetSpec mySpec = pServer.getKeyPairSetSpec();
-        if (!mySpec.canAgree()) {
-            throw new GordianDataException(GordianCoreFactory.getInvalidText(mySpec));
-        }
+        checkKeyPairSet(pServer);
 
         /* Create the message */
+        final GordianKeyPairSetAgreementSpec mySpec = getAgreementSpec();
         final AlgorithmIdentifier myResId = getIdentifierForResult();
         final GordianKeyPairSetAgreeASN1 myASN1 = new GordianKeyPairSetAgreeASN1(mySpec, myResId);
 
         /* Create the result */
         final int myPartLen = GordianLength.LEN_512.getByteLength();
-        final byte[] myResult = new byte[mySpec.numKeyPairs() * myPartLen];
+        final byte[] myResult = new byte[mySpec.getKeyPairSetSpec().numKeyPairs() * myPartLen];
         int myOffset = 0;
 
         /* Loop through the agreements */
@@ -122,14 +121,15 @@ public class GordianCoreKeyPairSetAnonymousAgreement
         checkStatus(GordianAgreementStatus.CLEAN);
 
         /* Check valid spec */
-        final GordianKeyPairSetSpec mySpec = pServer.getKeyPairSetSpec();
-        if (!mySpec.canAgree()) {
-            throw new GordianDataException(GordianCoreFactory.getInvalidText(mySpec));
-        }
+        checkKeyPairSet(pServer);
 
         /* Parse the clientHello */
+        final GordianKeyPairSetSpec mySpec = pServer.getKeyPairSetSpec();
         final GordianKeyPairSetAgreeASN1 myHello = GordianKeyPairSetAgreeASN1.getInstance(pClientHello);
         final AlgorithmIdentifier myResId = myHello.getResultId();
+        if (!Objects.equals(getAgreementSpec(), myHello.getSpec())) {
+            throw new GordianDataException(ERROR_INVSPEC);
+        }
 
         /* Process result identifier */
         processResultIdentifier(myResId);
@@ -156,5 +156,18 @@ public class GordianCoreKeyPairSetAnonymousAgreement
 
         /* Store the secret */
         storeSecret(myResult);
+    }
+
+    /**
+     * Check valid keyPairSet.
+     * @param pKeyPairSet the keyPairSet
+     * @throws OceanusException on error
+     */
+    private void checkKeyPairSet(final GordianKeyPairSet pKeyPairSet) throws OceanusException {
+        /* Check valid spec */
+        final GordianKeyPairSetSpec mySpec = pKeyPairSet.getKeyPairSetSpec();
+        if (!getAgreementSpec().getKeyPairSetSpec().equals(mySpec)) {
+            throw new GordianDataException(GordianCoreFactory.getInvalidText(mySpec));
+        }
     }
 }
