@@ -17,7 +17,7 @@
 package net.sourceforge.joceanus.jgordianknot.impl.bc;
 
 
-import net.sourceforge.joceanus.jgordianknot.api.asym.GordianAsymKeySpec;
+import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPairSpec;
 import net.sourceforge.joceanus.jgordianknot.impl.core.keypair.GordianCoreKeyPairGenerator;
 
 /**
@@ -41,7 +41,7 @@ public abstract class BouncyKeyPairGenerator
      * @param pKeySpec the keySpec
      */
     protected BouncyKeyPairGenerator(final BouncyFactory pFactory,
-                                     final GordianAsymKeySpec pKeySpec) {
+                                     final GordianKeyPairSpec pKeySpec) {
         super(pFactory, pKeySpec);
     }
 }

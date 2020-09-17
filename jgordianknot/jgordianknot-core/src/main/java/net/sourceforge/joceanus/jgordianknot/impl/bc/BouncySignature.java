@@ -33,8 +33,8 @@ import org.bouncycastle.crypto.signers.ECDSASigner;
 import org.bouncycastle.crypto.signers.ECNRSigner;
 import org.bouncycastle.crypto.signers.HMacDSAKCalculator;
 
-import net.sourceforge.joceanus.jgordianknot.api.asym.GordianAsymKeyType;
 import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigestSpec;
+import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPairType;
 import net.sourceforge.joceanus.jgordianknot.api.sign.GordianSignatureSpec;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianCryptoException;
 import net.sourceforge.joceanus.jgordianknot.impl.core.sign.GordianCoreSignature;
@@ -213,7 +213,7 @@ public final class BouncySignature {
     static DSA getDSASigner(final BouncyFactory pFactory,
                             final GordianSignatureSpec pSpec) throws OceanusException {
         /* Note if we are DSA */
-        final boolean isDSA = GordianAsymKeyType.DSA.equals(pSpec.getAsymKeyType());
+        final boolean isDSA = GordianKeyPairType.DSA.equals(pSpec.getKeyPairType());
 
         /* Switch on signature type */
         switch (pSpec.getSignatureType()) {

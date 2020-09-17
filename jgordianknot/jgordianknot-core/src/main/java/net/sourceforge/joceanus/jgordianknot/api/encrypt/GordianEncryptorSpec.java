@@ -20,10 +20,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-import net.sourceforge.joceanus.jgordianknot.api.asym.GordianAsymKeyType;
 import net.sourceforge.joceanus.jgordianknot.api.base.GordianLength;
 import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigestSpec;
 import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigestType;
+import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPairType;
 import net.sourceforge.joceanus.jtethys.TethysDataConverter;
 
 /**
@@ -41,9 +41,9 @@ public final class GordianEncryptorSpec {
     static final String SEP = "-";
 
     /**
-     * AsymKeyType.
+     * KeyPairType.
      */
-    private final GordianAsymKeyType theAsymKeyType;
+    private final GordianKeyPairType theKeyPairType;
 
     /**
      * EncryptorType.
@@ -62,12 +62,12 @@ public final class GordianEncryptorSpec {
 
     /**
      * Constructor.
-     * @param pAsymKeyType the asymKeyType
+     * @param pKeyPairType the keyPairType
      * @param pEncryptorType the encryptor type
      */
-    public GordianEncryptorSpec(final GordianAsymKeyType pAsymKeyType,
+    public GordianEncryptorSpec(final GordianKeyPairType pKeyPairType,
                                 final Object pEncryptorType) {
-        theAsymKeyType = pAsymKeyType;
+        theKeyPairType = pKeyPairType;
         theEncryptorType = pEncryptorType;
         isValid = checkValidity();
     }
@@ -78,7 +78,7 @@ public final class GordianEncryptorSpec {
      * @return the encryptorSpec
      */
     public static GordianEncryptorSpec rsa(final GordianDigestSpec pSpec) {
-        return new GordianEncryptorSpec(GordianAsymKeyType.RSA, pSpec);
+        return new GordianEncryptorSpec(GordianKeyPairType.RSA, pSpec);
     }
 
     /**
@@ -87,7 +87,7 @@ public final class GordianEncryptorSpec {
      * @return the encryptorSpec
      */
     public static GordianEncryptorSpec elGamal(final GordianDigestSpec pSpec) {
-        return new GordianEncryptorSpec(GordianAsymKeyType.ELGAMAL, pSpec);
+        return new GordianEncryptorSpec(GordianKeyPairType.ELGAMAL, pSpec);
     }
 
     /**
@@ -95,7 +95,7 @@ public final class GordianEncryptorSpec {
      * @return the encryptorSpec
      */
     public static GordianEncryptorSpec ec() {
-        return new GordianEncryptorSpec(GordianAsymKeyType.EC, null);
+        return new GordianEncryptorSpec(GordianKeyPairType.EC, null);
     }
 
     /**
@@ -103,7 +103,7 @@ public final class GordianEncryptorSpec {
      * @return the encryptorSpec
      */
     public static GordianEncryptorSpec gost2012() {
-        return new GordianEncryptorSpec(GordianAsymKeyType.GOST2012, null);
+        return new GordianEncryptorSpec(GordianKeyPairType.GOST2012, null);
     }
 
     /**
@@ -111,7 +111,7 @@ public final class GordianEncryptorSpec {
      * @return the encryptorSpec
      */
     public static GordianEncryptorSpec dstu4145() {
-        return new GordianEncryptorSpec(GordianAsymKeyType.DSTU4145, null);
+        return new GordianEncryptorSpec(GordianKeyPairType.DSTU4145, null);
     }
 
     /**
@@ -119,7 +119,7 @@ public final class GordianEncryptorSpec {
      * @return the encryptorSpec
      */
     public static GordianEncryptorSpec sm2() {
-        return new GordianEncryptorSpec(GordianAsymKeyType.SM2, null);
+        return new GordianEncryptorSpec(GordianKeyPairType.SM2, null);
     }
 
     /**
@@ -128,7 +128,7 @@ public final class GordianEncryptorSpec {
      * @return the encryptorSpec
      */
     public static GordianEncryptorSpec sm2(final GordianSM2EncryptionSpec pSpec) {
-        return new GordianEncryptorSpec(GordianAsymKeyType.SM2, pSpec);
+        return new GordianEncryptorSpec(GordianKeyPairType.SM2, pSpec);
     }
 
     /**
@@ -137,15 +137,15 @@ public final class GordianEncryptorSpec {
      * @return the encryptorSpec
      */
     public static GordianEncryptorSpec mcEliece(final GordianMcElieceEncryptionType pType) {
-        return new GordianEncryptorSpec(GordianAsymKeyType.MCELIECE, pType);
+        return new GordianEncryptorSpec(GordianKeyPairType.MCELIECE, pType);
     }
 
     /**
-     * Obtain the keyType.
-     * @return the keyType.
+     * Obtain the keyPairType.
+     * @return the keyPairType.
      */
-    public GordianAsymKeyType getKeyType() {
-        return theAsymKeyType;
+    public GordianKeyPairType getKeyPairType() {
+        return theKeyPairType;
     }
 
     /**
@@ -199,10 +199,10 @@ public final class GordianEncryptorSpec {
      * @return valid true/false
      */
     private boolean checkValidity() {
-        if (theAsymKeyType == null) {
+        if (theKeyPairType == null) {
             return false;
         }
-        switch (theAsymKeyType) {
+        switch (theKeyPairType) {
             case RSA:
             case ELGAMAL:
                 return theEncryptorType instanceof GordianDigestSpec
@@ -227,7 +227,7 @@ public final class GordianEncryptorSpec {
      */
     public boolean isSupported() {
         final GordianDigestSpec mySpec = getDigestSpec();
-        switch (theAsymKeyType) {
+        switch (theKeyPairType) {
             case RSA:
             case ELGAMAL:
                 return mySpec != null && GordianDigestType.SHA2.equals(mySpec.getDigestType()) && mySpec.getStateLength() == null;
@@ -249,8 +249,8 @@ public final class GordianEncryptorSpec {
             /* If the encryptorSpec is valid */
             if (isValid) {
                 /* Load the name */
-                theName = theAsymKeyType.toString();
-                switch (theAsymKeyType) {
+                theName = theKeyPairType.toString();
+                switch (theKeyPairType) {
                     case RSA:
                     case ELGAMAL:
                     case MCELIECE:
@@ -268,7 +268,7 @@ public final class GordianEncryptorSpec {
                 }
             }  else {
                 /* Report invalid spec */
-                theName = "InvalidEncryptorSpec: " + theAsymKeyType + ":" + theEncryptorType;
+                theName = "InvalidEncryptorSpec: " + theKeyPairType + ":" + theEncryptorType;
             }
         }
 
@@ -295,13 +295,13 @@ public final class GordianEncryptorSpec {
         final GordianEncryptorSpec myThat = (GordianEncryptorSpec) pThat;
 
         /* Match fields */
-        return theAsymKeyType == myThat.getKeyType()
+        return theKeyPairType == myThat.getKeyPairType()
                 && Objects.equals(theEncryptorType, myThat.theEncryptorType);
     }
 
     @Override
     public int hashCode() {
-        int hashCode = theAsymKeyType.hashCode() << TethysDataConverter.BYTE_SHIFT;
+        int hashCode = theKeyPairType.hashCode() << TethysDataConverter.BYTE_SHIFT;
         if (theEncryptorType != null) {
             hashCode += theEncryptorType.hashCode();
         }
@@ -310,15 +310,15 @@ public final class GordianEncryptorSpec {
 
     /**
      * Obtain a list of all possible encryptors for the keyType.
-     * @param pKeyType the keyType
+     * @param pKeyPairType the keyPairType
      * @return the list
      */
-    public static List<GordianEncryptorSpec> listPossibleEncryptors(final GordianAsymKeyType pKeyType) {
+    public static List<GordianEncryptorSpec> listPossibleEncryptors(final GordianKeyPairType pKeyPairType) {
         /* Create list */
         final List<GordianEncryptorSpec> myEncryptors = new ArrayList<>();
 
-        /* Switch on AsymKeyType */
-        switch (pKeyType) {
+        /* Switch on keyPairType */
+        switch (pKeyPairType) {
             case RSA:
                 myEncryptors.add(GordianEncryptorSpec.rsa(GordianDigestSpec.sha2(GordianLength.LEN_224)));
                 myEncryptors.add(GordianEncryptorSpec.rsa(GordianDigestSpec.sha2(GordianLength.LEN_256)));

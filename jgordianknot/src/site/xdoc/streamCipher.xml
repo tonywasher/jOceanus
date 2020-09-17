@@ -31,8 +31,8 @@
             <subsection name="Algorithms">
                 <p>The following streamKey algorithms are supported.</p>
                 <table class="defTable">
-                    <tr><td class="defHdr">Algorithm</td><td class="defHdr">Variant</td><td class="defHdr">JCA</td><td class="defHdr">128</td><td class="defHdr">192</td>
-                        <td class="defHdr">256</td><td class="defHdr">512</td><td class="defHdr">1024</td><td class="defHdr">Notes</td></tr>
+                    <tr><th class="defHdr">Algorithm</th><th class="defHdr">Variant</th><th class="defHdr">JCA</th><th class="defHdr">128</th><td class="defHdr">192</td>
+                        <th class="defHdr">256</th><th class="defHdr">512</th><th class="defHdr">1024</th><td class="defHdr">Notes</td></tr>
                     <tr><td rowspan="3">ChaCha20</td><td>Standard</td><td>Y</td><td>Y</td><td/><td>Y</td><td/><td/><td/></tr>
                     <tr><td>ChaCha7359</td><td>Y</td><td/><td/><td>Y</td><td/><td/><td/></tr>
                     <tr><td>XChaCha20</td><td/><td/><td/><td>Y</td><td/><td/><td/></tr>

@@ -19,11 +19,11 @@ package net.sourceforge.joceanus.jgordianknot.impl.jca;
 import java.security.NoSuchAlgorithmException;
 import java.security.Signature;
 
-import net.sourceforge.joceanus.jgordianknot.api.asym.GordianAsymKeySpec;
-import net.sourceforge.joceanus.jgordianknot.api.asym.GordianEdwardsElliptic;
 import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigestSpec;
 import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigestType;
-import net.sourceforge.joceanus.jgordianknot.api.sign.GordianSignature;
+import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianEdwardsElliptic;
+import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPairSpec;
+import net.sourceforge.joceanus.jgordianknot.api.sign.GordianKeyPairSignature;
 import net.sourceforge.joceanus.jgordianknot.api.sign.GordianSignatureSpec;
 import net.sourceforge.joceanus.jgordianknot.api.sign.GordianSignatureType;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianCoreFactory;
@@ -62,7 +62,7 @@ public class JcaSignatureFactory
     }
 
     @Override
-    public GordianSignature createSigner(final GordianSignatureSpec pSignatureSpec) throws OceanusException {
+    public GordianKeyPairSignature createSigner(final GordianSignatureSpec pSignatureSpec) throws OceanusException {
         /* Check validity of Signature */
         checkSignatureSpec(pSignatureSpec);
 
@@ -99,8 +99,8 @@ public class JcaSignatureFactory
      * @return the Signer
      * @throws OceanusException on error
      */
-    private GordianSignature getJcaSigner(final GordianSignatureSpec pSignatureSpec) throws OceanusException {
-        switch (pSignatureSpec.getAsymKeyType()) {
+    private GordianKeyPairSignature getJcaSigner(final GordianSignatureSpec pSignatureSpec) throws OceanusException {
+        switch (pSignatureSpec.getKeyPairType()) {
             case RSA:
                 return new JcaRSASignature(getFactory(), pSignatureSpec);
             case EC:
@@ -123,7 +123,7 @@ public class JcaSignatureFactory
             case LMS:
                 return new JcaLMSSignature(getFactory(), pSignatureSpec);
             default:
-                throw new GordianDataException(GordianCoreFactory.getInvalidText(pSignatureSpec.getAsymKeyType()));
+                throw new GordianDataException(GordianCoreFactory.getInvalidText(pSignatureSpec.getKeyPairType()));
         }
     }
 
@@ -136,7 +136,7 @@ public class JcaSignatureFactory
 
         /* Switch on KeyType */
         final GordianDigestSpec myDigest = pSpec.getDigestSpec();
-        switch (pSpec.getAsymKeyType()) {
+        switch (pSpec.getKeyPairType()) {
             case RSA:
                 return validRSASignature(pSpec);
             case EC:
@@ -240,15 +240,15 @@ public class JcaSignatureFactory
     }
 
     @Override
-    public boolean validSignatureSpecForKeySpec(final GordianAsymKeySpec pKeySpec,
-                                                final GordianSignatureSpec pSpec) {
-        /* validate the signatureSpec/keySpecr */
-        if (!super.validSignatureSpecForKeySpec(pKeySpec, pSpec)) {
+    public boolean validSignatureSpecForKeyPairSpec(final GordianKeyPairSpec pKeyPairSpec,
+                                                    final GordianSignatureSpec pSpec) {
+        /* validate the signatureSpec/keySpec */
+        if (!super.validSignatureSpecForKeyPairSpec(pKeyPairSpec, pSpec)) {
             return false;
         }
 
         /* Disallow EdDSA 25519 PURE */
-        final GordianEdwardsElliptic myEdwards = pKeySpec.getEdwardsElliptic();
+        final GordianEdwardsElliptic myEdwards = pKeyPairSpec.getEdwardsElliptic();
         return myEdwards == null
                 || !myEdwards.is25519()
                 || pSpec.getSignatureType() != GordianSignatureType.PURE;

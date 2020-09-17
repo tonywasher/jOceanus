@@ -16,8 +16,8 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jgordianknot.api.encrypt;
 
-import net.sourceforge.joceanus.jgordianknot.api.asym.GordianMcElieceKeySpec;
-import net.sourceforge.joceanus.jgordianknot.api.asym.GordianMcElieceKeySpec.GordianMcElieceKeyType;
+import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianMcElieceKeySpec;
+import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianMcElieceKeySpec.GordianMcElieceKeyType;
 
 /**
  * McEliece encryptionType.

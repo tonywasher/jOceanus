@@ -18,20 +18,20 @@ package net.sourceforge.joceanus.jgordianknot.impl.bc;
 
 import java.util.function.Predicate;
 
-import net.sourceforge.joceanus.jgordianknot.api.sign.GordianSignature;
+import net.sourceforge.joceanus.jgordianknot.api.sign.GordianKeyPairSignature;
 import net.sourceforge.joceanus.jgordianknot.api.sign.GordianSignatureSpec;
-import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyDSAAsymKey.BouncyDSASignature;
-import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyDSTUAsymKey.BouncyDSTUSignature;
-import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyEdDSAAsymKey.BouncyEdDSASignature;
-import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyEllipticAsymKey.BouncyECSignature;
-import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyGOSTAsymKey.BouncyGOSTSignature;
-import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyLMSAsymKey.BouncyLMSSignature;
-import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyQTESLAAsymKey.BouncyQTESLASignature;
-import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyRSAAsymKey.BouncyRSASignature;
-import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyRainbowAsymKey.BouncyRainbowSignature;
-import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncySM2AsymKey.BouncySM2Signature;
-import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncySPHINCSAsymKey.BouncySPHINCSSignature;
-import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyXMSSAsymKey.BouncyXMSSSignature;
+import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyDSAKeyPair.BouncyDSASignature;
+import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyDSTUKeyPair.BouncyDSTUSignature;
+import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyEdDSAKeyPair.BouncyEdDSASignature;
+import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyEllipticKeyPair.BouncyECSignature;
+import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyGOSTKeyPair.BouncyGOSTSignature;
+import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyLMSKeyPair.BouncyLMSSignature;
+import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyQTESLAKeyPair.BouncyQTESLASignature;
+import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyRSAKeyPair.BouncyRSASignature;
+import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyRainbowKeyPair.BouncyRainbowSignature;
+import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncySM2KeyPair.BouncySM2Signature;
+import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncySPHINCSKeyPair.BouncySPHINCSSignature;
+import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyXMSSKeyPair.BouncyXMSSSignature;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianCoreFactory;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianDataException;
 import net.sourceforge.joceanus.jgordianknot.impl.core.sign.GordianCoreSignatureFactory;
@@ -63,7 +63,7 @@ public class BouncySignatureFactory
     }
 
     @Override
-    public GordianSignature createSigner(final GordianSignatureSpec pSignatureSpec) throws OceanusException {
+    public GordianKeyPairSignature createSigner(final GordianSignatureSpec pSignatureSpec) throws OceanusException {
         /* Check validity of Signature */
         checkSignatureSpec(pSignatureSpec);
 
@@ -78,8 +78,8 @@ public class BouncySignatureFactory
      * @return the Signer
      * @throws OceanusException on error
      */
-    private GordianSignature getBCSigner(final GordianSignatureSpec pSignatureSpec) throws OceanusException {
-        switch (pSignatureSpec.getAsymKeyType()) {
+    private GordianKeyPairSignature getBCSigner(final GordianSignatureSpec pSignatureSpec) throws OceanusException {
+        switch (pSignatureSpec.getKeyPairType()) {
             case RSA:
                 return new BouncyRSASignature(getFactory(), pSignatureSpec);
             case EC:
@@ -105,7 +105,7 @@ public class BouncySignatureFactory
             case LMS:
                 return new BouncyLMSSignature(getFactory(), pSignatureSpec);
             default:
-                throw new GordianDataException(GordianCoreFactory.getInvalidText(pSignatureSpec.getAsymKeyType()));
+                throw new GordianDataException(GordianCoreFactory.getInvalidText(pSignatureSpec.getKeyPairType()));
         }
     }
 

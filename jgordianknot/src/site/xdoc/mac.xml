@@ -38,8 +38,8 @@
             <subsection name="Algorithms">
                 <p>The following algorithms are supported, with the JCA subset indicated.</p>
                 <table class="defTable">
-                    <tr><td class="defHdr">Algorithm</td><td class="defHdr">OutputLengths</td><td class="defHdr">KeyLengths</td>
-                        <td class="defHdr">JCA</td><td class="defHdr">Notes</td></tr>
+                    <tr><th class="defHdr">Algorithm</th><th class="defHdr">OutputLengths</th><th class="defHdr">KeyLengths</th>
+                        <th class="defHdr">JCA</th><th class="defHdr">Notes</th></tr>
                     <tr><td>HMac</td><td>digest length</td><td>All</td><td>Y</td><td>Jca does not support SM3, BLAKE, SHAKE, JH, Groestl, CubeHash or Kupyna</td></tr>
                     <tr><td>GMac</td><td>128</td><td>As per cipher</td><td>Y</td><td>For all supported 128 bit block ciphers except Kalyna (BUG). Jca does not support Kuznyechik</td></tr>
                     <tr><td>CMac</td><td>cipher block length</td><td>As per cipher</td><td>Y</td><td>Jca has limited  set of supported ciphers</td></tr>

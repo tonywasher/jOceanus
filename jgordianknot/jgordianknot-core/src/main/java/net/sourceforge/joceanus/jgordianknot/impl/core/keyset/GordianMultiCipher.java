@@ -22,6 +22,7 @@ import java.util.Map;
 
 import org.bouncycastle.util.Arrays;
 
+import net.sourceforge.joceanus.jgordianknot.api.base.GordianKeySpec;
 import net.sourceforge.joceanus.jgordianknot.api.base.GordianLength;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianCipher;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianCipherFactory;
@@ -32,10 +33,9 @@ import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianSymCipher;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianSymCipherSpec;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianSymKeySpec;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianSymKeyType;
-import net.sourceforge.joceanus.jgordianknot.api.factory.GordianAsymFactory;
+import net.sourceforge.joceanus.jgordianknot.api.factory.GordianKeyPairFactory;
 import net.sourceforge.joceanus.jgordianknot.api.key.GordianKey;
-import net.sourceforge.joceanus.jgordianknot.api.base.GordianKeySpec;
-import net.sourceforge.joceanus.jgordianknot.api.key.GordianKeyPair;
+import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPair;
 import net.sourceforge.joceanus.jgordianknot.api.mac.GordianMacFactory;
 import net.sourceforge.joceanus.jgordianknot.api.mac.GordianMacSpec;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianCoreFactory;
@@ -450,8 +450,8 @@ final class GordianMultiCipher
         checkParameters(pParams);
 
         /* Secure the key */
-        final GordianAsymFactory myAsym = theFactory.getAsymmetricFactory();
-        final GordianCoreKeyPairGenerator myGenerator = (GordianCoreKeyPairGenerator) myAsym.getKeyPairGenerator(pKeyPairToSecure.getKeySpec());
+        final GordianKeyPairFactory myFactory = theFactory.getKeyPairFactory();
+        final GordianCoreKeyPairGenerator myGenerator = (GordianCoreKeyPairGenerator) myFactory.getKeyPairGenerator(pKeyPairToSecure.getKeyPairSpec());
         final PKCS8EncodedKeySpec myPKCS8Key = myGenerator.getPKCS8Encoding(pKeyPairToSecure);
         return secureBytes(pParams, myPKCS8Key.getEncoded());
     }

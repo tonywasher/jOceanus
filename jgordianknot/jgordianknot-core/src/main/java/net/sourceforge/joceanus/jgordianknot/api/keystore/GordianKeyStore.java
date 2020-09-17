@@ -22,10 +22,10 @@ import java.util.List;
 
 import org.bouncycastle.asn1.x500.X500Name;
 
-import net.sourceforge.joceanus.jgordianknot.api.asym.GordianAsymKeySpec;
 import net.sourceforge.joceanus.jgordianknot.api.base.GordianKeySpec;
 import net.sourceforge.joceanus.jgordianknot.api.key.GordianKey;
-import net.sourceforge.joceanus.jgordianknot.api.key.GordianKeyPair;
+import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPair;
+import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPairSpec;
 import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySet;
 import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetHash;
 import net.sourceforge.joceanus.jgordianknot.api.keystore.GordianKeyStoreEntry.GordianKeyStoreCertificate;
@@ -264,7 +264,7 @@ public interface GordianKeyStore {
      * @return the new keyPair entry
      * @throws OceanusException on error
      */
-    GordianKeyStorePair createRootKeyPair(GordianAsymKeySpec pKeySpec,
+    GordianKeyStorePair createRootKeyPair(GordianKeyPairSpec pKeySpec,
                                           X500Name pSubject,
                                           String pAlias,
                                           char[] pPassword) throws OceanusException;
@@ -281,7 +281,7 @@ public interface GordianKeyStore {
      * @return the new keyPair entry
      * @throws OceanusException on error
      */
-    GordianKeyStorePair createKeyPair(GordianAsymKeySpec pKeySpec,
+    GordianKeyStorePair createKeyPair(GordianKeyPairSpec pKeySpec,
                                       X500Name pSubject,
                                       GordianKeyPairUsage pUsage,
                                       GordianKeyStorePair pSigner,

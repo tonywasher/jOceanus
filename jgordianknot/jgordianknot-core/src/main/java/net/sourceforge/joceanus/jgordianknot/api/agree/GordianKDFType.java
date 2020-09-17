@@ -16,7 +16,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jgordianknot.api.agree;
 
-import net.sourceforge.joceanus.jgordianknot.api.asym.GordianAsymKeyType;
+import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPairType;
 
 /**
  * KDF types.
@@ -53,7 +53,7 @@ public enum GordianKDFType {
      * @param pAgreeType the agreement type
      * @return true/false
      */
-    public boolean isSupported(final GordianAsymKeyType pKeyType,
+    public boolean isSupported(final GordianKeyPairType pKeyType,
                                final GordianAgreementType pAgreeType) {
         /* Switch on keyType */
         switch (pKeyType) {

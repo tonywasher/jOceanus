@@ -18,8 +18,8 @@ package net.sourceforge.joceanus.jgordianknot.impl.bc;
 
 import org.bouncycastle.crypto.params.AsymmetricKeyParameter;
 
-import net.sourceforge.joceanus.jgordianknot.api.asym.GordianAsymKeySpec;
-import net.sourceforge.joceanus.jgordianknot.api.key.GordianStateAwareKeyPair;
+import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPairSpec;
+import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianStateAwareKeyPair;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianCoreFactory;
 import net.sourceforge.joceanus.jgordianknot.impl.core.keypair.GordianCoreKeyPair;
 import net.sourceforge.joceanus.jgordianknot.impl.core.keypair.GordianPrivateKey;
@@ -79,7 +79,7 @@ public class BouncyKeyPair
          * @param pKeySpec the key spec
          * @param pKey the key
          */
-        protected BouncyPublicKey(final GordianAsymKeySpec pKeySpec,
+        protected BouncyPublicKey(final GordianKeyPairSpec pKeySpec,
                                   final T pKey) {
             super(pKeySpec);
             theKey = pKey;
@@ -146,7 +146,7 @@ public class BouncyKeyPair
          * @param pKeySpec the key spec
          * @param pKey the key
          */
-        protected BouncyPrivateKey(final GordianAsymKeySpec pKeySpec,
+        protected BouncyPrivateKey(final GordianKeyPairSpec pKeySpec,
                                    final T pKey) {
             super(pKeySpec);
             theKey = pKey;
@@ -213,7 +213,7 @@ public class BouncyKeyPair
          * @param pKeySpec the key spec
          * @param pKey the key
          */
-        protected BouncyStateAwarePrivateKey(final GordianAsymKeySpec pKeySpec,
+        protected BouncyStateAwarePrivateKey(final GordianKeyPairSpec pKeySpec,
                                              final T pKey) {
             super(pKeySpec, pKey);
             thePrivateKey = pKey;

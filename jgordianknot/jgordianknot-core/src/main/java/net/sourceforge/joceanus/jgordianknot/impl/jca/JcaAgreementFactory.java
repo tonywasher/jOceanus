@@ -19,9 +19,9 @@ package net.sourceforge.joceanus.jgordianknot.impl.jca;
 import java.security.NoSuchAlgorithmException;
 import javax.crypto.KeyAgreement;
 
-import net.sourceforge.joceanus.jgordianknot.api.agree.GordianAgreement;
-import net.sourceforge.joceanus.jgordianknot.api.agree.GordianAgreementSpec;
 import net.sourceforge.joceanus.jgordianknot.api.agree.GordianAgreementType;
+import net.sourceforge.joceanus.jgordianknot.api.agree.GordianKeyPairAgreement;
+import net.sourceforge.joceanus.jgordianknot.api.agree.GordianKeyPairAgreementSpec;
 import net.sourceforge.joceanus.jgordianknot.impl.core.agree.GordianCoreAgreementFactory;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianCoreFactory;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianCryptoException;
@@ -65,7 +65,7 @@ public class JcaAgreementFactory
     }
 
     @Override
-    public GordianAgreement createAgreement(final GordianAgreementSpec pAgreementSpec) throws OceanusException {
+    public GordianKeyPairAgreement createAgreement(final GordianKeyPairAgreementSpec pAgreementSpec) throws OceanusException {
         /* Check validity of agreement */
         checkAgreementSpec(pAgreementSpec);
 
@@ -79,8 +79,8 @@ public class JcaAgreementFactory
      * @return the Agreement
      * @throws OceanusException on error
      */
-    private GordianAgreement getJcaAgreement(final GordianAgreementSpec pAgreementSpec) throws OceanusException {
-        switch (pAgreementSpec.getAsymKeyType()) {
+    private GordianKeyPairAgreement getJcaAgreement(final GordianKeyPairAgreementSpec pAgreementSpec) throws OceanusException {
+        switch (pAgreementSpec.getKeyPairType()) {
             case NEWHOPE:
                 return getNHAgreement(pAgreementSpec);
             case EC:
@@ -93,7 +93,7 @@ public class JcaAgreementFactory
             case XDH:
                 return getXDHAgreement(pAgreementSpec);
             default:
-                throw new GordianDataException(GordianCoreFactory.getInvalidText(pAgreementSpec.getAsymKeyType()));
+                throw new GordianDataException(GordianCoreFactory.getInvalidText(pAgreementSpec.getKeyPairType()));
         }
     }
     /**
@@ -102,7 +102,7 @@ public class JcaAgreementFactory
      * @return the Agreement
      * @throws OceanusException on error
      */
-    private GordianAgreement getNHAgreement(final GordianAgreementSpec pAgreementSpec) throws OceanusException {
+    private GordianKeyPairAgreement getNHAgreement(final GordianKeyPairAgreementSpec pAgreementSpec) throws OceanusException {
         return new JcaEncapsulationAgreement(getFactory(), pAgreementSpec, getJavaKeyAgreement("NH", true));
     }
 
@@ -112,7 +112,7 @@ public class JcaAgreementFactory
      * @return the Agreement
      * @throws OceanusException on error
      */
-    private GordianAgreement getECAgreement(final GordianAgreementSpec pAgreementSpec) throws OceanusException {
+    private GordianKeyPairAgreement getECAgreement(final GordianKeyPairAgreementSpec pAgreementSpec) throws OceanusException {
         switch (pAgreementSpec.getAgreementType()) {
             case ANON:
                 return new JcaAnonymousAgreement(getFactory(), pAgreementSpec, getJavaKeyAgreement(getFullAgreementName(ECCDH_ALGO, pAgreementSpec), false));
@@ -135,7 +135,7 @@ public class JcaAgreementFactory
      * @return the Agreement
      * @throws OceanusException on error
      */
-    private GordianAgreement getDHAgreement(final GordianAgreementSpec pAgreementSpec) throws OceanusException {
+    private GordianKeyPairAgreement getDHAgreement(final GordianKeyPairAgreementSpec pAgreementSpec) throws OceanusException {
         switch (pAgreementSpec.getAgreementType()) {
             case ANON:
                 return new JcaAnonymousAgreement(getFactory(), pAgreementSpec, getJavaKeyAgreement(getFullAgreementName(DH_ALGO, pAgreementSpec), false));
@@ -158,7 +158,7 @@ public class JcaAgreementFactory
      * @return the Agreement
      * @throws OceanusException on error
      */
-    private GordianAgreement getXDHAgreement(final GordianAgreementSpec pAgreementSpec) throws OceanusException {
+    private GordianKeyPairAgreement getXDHAgreement(final GordianKeyPairAgreementSpec pAgreementSpec) throws OceanusException {
         switch (pAgreementSpec.getAgreementType()) {
             case ANON:
                 return new JcaAnonymousAgreement(getFactory(), pAgreementSpec, null);
@@ -181,7 +181,7 @@ public class JcaAgreementFactory
      * @throws OceanusException on error
      */
     static String getFullAgreementName(final String pBase,
-                                       final GordianAgreementSpec pAgreementSpec) throws OceanusException {
+                                       final GordianKeyPairAgreementSpec pAgreementSpec) throws OceanusException {
         switch (pAgreementSpec.getKDFType()) {
             case NONE:
                 return pBase;
@@ -222,7 +222,7 @@ public class JcaAgreementFactory
     }
 
     @Override
-    protected boolean validAgreementSpec(final GordianAgreementSpec pSpec) {
+    protected boolean validAgreementSpec(final GordianKeyPairAgreementSpec pSpec) {
         /* validate the agreementSpec */
         if (!super.validAgreementSpec(pSpec)) {
             return false;
@@ -235,7 +235,7 @@ public class JcaAgreementFactory
         }
 
         /* Switch on KeyType */
-        switch (pSpec.getAsymKeyType()) {
+        switch (pSpec.getKeyPairType()) {
             case NEWHOPE:
                 return true;
             case EC:

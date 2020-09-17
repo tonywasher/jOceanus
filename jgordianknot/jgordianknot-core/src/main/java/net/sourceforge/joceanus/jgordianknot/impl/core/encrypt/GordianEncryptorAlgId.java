@@ -25,13 +25,13 @@ import org.bouncycastle.asn1.gm.GMObjectIdentifiers;
 import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
 import org.bouncycastle.pqc.asn1.PQCObjectIdentifiers;
 
-import net.sourceforge.joceanus.jgordianknot.api.asym.GordianAsymKeyType;
 import net.sourceforge.joceanus.jgordianknot.api.base.GordianLength;
 import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigestSpec;
 import net.sourceforge.joceanus.jgordianknot.api.encrypt.GordianEncryptorFactory;
 import net.sourceforge.joceanus.jgordianknot.api.encrypt.GordianEncryptorSpec;
 import net.sourceforge.joceanus.jgordianknot.api.encrypt.GordianMcElieceEncryptionType;
 import net.sourceforge.joceanus.jgordianknot.api.encrypt.GordianSM2EncryptionSpec;
+import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPairType;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianASN1Util;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianCoreFactory;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianDigestAlgId;
@@ -71,13 +71,13 @@ public class GordianEncryptorAlgId {
         theIdentifierMap = new HashMap<>();
 
         /* Access the encryptorFactory  */
-        theFactory = pFactory.getAsymmetricFactory().getEncryptorFactory();
+        theFactory = pFactory.getKeyPairFactory().getEncryptorFactory();
 
         /* Populate with the public standards */
         addWellKnownEncryptors();
 
         /* Loop through the possible AsymKeys */
-        for (GordianAsymKeyType myKeyType : GordianAsymKeyType.values()) {
+        for (GordianKeyPairType myKeyType : GordianKeyPairType.values()) {
             /* Add any non-standard encryptorSpecs */
             addEncryptors(myKeyType);
         }
@@ -137,7 +137,7 @@ public class GordianEncryptorAlgId {
      * Create Identifiers for all valid EncryptorTypes.
      * @param pKeyType the keyType
      */
-    private void addEncryptors(final GordianAsymKeyType pKeyType) {
+    private void addEncryptors(final GordianKeyPairType pKeyType) {
         for (GordianEncryptorSpec mySpec : theFactory.listAllSupportedEncryptors(pKeyType)) {
             ensureEncryptor(mySpec);
         }
@@ -161,7 +161,7 @@ public class GordianEncryptorAlgId {
      */
     private void addEncryptor(final GordianEncryptorSpec pSpec) {
         /* Create a branch for encryptor based on the keyType */
-        final GordianAsymKeyType myKeyType = pSpec.getKeyType();
+        final GordianKeyPairType myKeyType = pSpec.getKeyPairType();
         ASN1ObjectIdentifier myId = ENCRYPTOID.branch(Integer.toString(myKeyType.ordinal() + 1));
 
         /* Obtain the encryptor */

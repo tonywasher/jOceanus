@@ -16,33 +16,32 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jgordianknot.api.agree;
 
-import net.sourceforge.joceanus.jgordianknot.api.asym.GordianAsymKeySpec;
-import net.sourceforge.joceanus.jgordianknot.api.key.GordianKeyPair;
-import net.sourceforge.joceanus.jgordianknot.api.sign.GordianSignatureSpec;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
  * Signed TwoShot Agreement.
+ * @param <A> the agreement specification
+ * @param <S> the specification type
+ * @param <K> the keyPair Type
  */
-public interface GordianSignedAgreement {
+public interface GordianSignedAgreement<A, S, K>
+        extends GordianAgreement<A> {
     /**
      * Create the clientHello message.
      * @param pKeySpec the keySpec for the ephemeral keys
      * @return the clientHello message
      * @throws OceanusException on error
      */
-    byte[] createClientHello(GordianAsymKeySpec pKeySpec) throws OceanusException;
+    byte[] createClientHello(S pKeySpec) throws OceanusException;
 
     /**
      * Accept the clientHello.
      * @param pServer the server keyPair
-     * @param pSignSpec the signature spec
      * @param pClientHello the incoming clientHello message
      * @return the serverHello message
      * @throws OceanusException on error
      */
-    byte[] acceptClientHello(GordianKeyPair pServer,
-                             GordianSignatureSpec pSignSpec,
+    byte[] acceptClientHello(K pServer,
                              byte[] pClientHello)  throws OceanusException;
 
     /**
@@ -51,6 +50,6 @@ public interface GordianSignedAgreement {
      * @param pServerHello the serverHello message
      * @throws OceanusException on error
      */
-    void acceptServerHello(GordianKeyPair pServer,
+    void acceptServerHello(K pServer,
                            byte[] pServerHello) throws OceanusException;
 }

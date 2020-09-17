@@ -18,7 +18,7 @@ package net.sourceforge.joceanus.jgordianknot.api.keystore;
 
 import java.util.Date;
 
-import net.sourceforge.joceanus.jgordianknot.api.key.GordianKeyPair;
+import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPair;
 
 /**
  * Certificate API.

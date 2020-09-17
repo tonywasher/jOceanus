@@ -20,14 +20,14 @@ import java.security.spec.X509EncodedKeySpec;
 
 import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
 
-import net.sourceforge.joceanus.jgordianknot.api.agree.GordianAgreementSpec;
 import net.sourceforge.joceanus.jgordianknot.api.agree.GordianAgreementStatus;
-import net.sourceforge.joceanus.jgordianknot.api.agree.GordianSignedAgreement;
-import net.sourceforge.joceanus.jgordianknot.api.asym.GordianAsymKeySpec;
-import net.sourceforge.joceanus.jgordianknot.api.factory.GordianAsymFactory;
-import net.sourceforge.joceanus.jgordianknot.api.key.GordianKeyPair;
-import net.sourceforge.joceanus.jgordianknot.api.key.GordianKeyPairGenerator;
-import net.sourceforge.joceanus.jgordianknot.api.sign.GordianSignature;
+import net.sourceforge.joceanus.jgordianknot.api.agree.GordianKeyPairAgreementSpec;
+import net.sourceforge.joceanus.jgordianknot.api.agree.GordianKeyPairSignedAgreement;
+import net.sourceforge.joceanus.jgordianknot.api.factory.GordianKeyPairFactory;
+import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPair;
+import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPairGenerator;
+import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPairSpec;
+import net.sourceforge.joceanus.jgordianknot.api.sign.GordianKeyPairSignature;
 import net.sourceforge.joceanus.jgordianknot.api.sign.GordianSignatureSpec;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianCoreFactory;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianDataException;
@@ -38,8 +38,8 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
  * Signed Agreement.
  */
 public abstract class GordianCoreSignedAgreement
-        extends GordianCoreAgreement
-        implements GordianSignedAgreement {
+        extends GordianCoreKeyPairAgreement
+        implements GordianKeyPairSignedAgreement {
     /**
      * The client ephemeral KeyPair.
      */
@@ -56,7 +56,7 @@ public abstract class GordianCoreSignedAgreement
      * @param pSpec the agreementSpec
      */
     protected GordianCoreSignedAgreement(final GordianCoreFactory pFactory,
-                                         final GordianAgreementSpec pSpec) {
+                                         final GordianKeyPairAgreementSpec pSpec) {
         super(pFactory, pSpec);
     }
 
@@ -87,15 +87,15 @@ public abstract class GordianCoreSignedAgreement
     }
 
     @Override
-    public byte[] createClientHello(final GordianAsymKeySpec pKeySpec) throws OceanusException {
+    public byte[] createClientHello(final GordianKeyPairSpec pKeySpec) throws OceanusException {
         /* Check that the keySpec matches the agreement */
-        if (getAgreementSpec().getAsymKeyType() != pKeySpec.getKeyType()) {
+        if (getAgreementSpec().getKeyPairType() != pKeySpec.getKeyPairType()) {
             throw new GordianDataException("Incorrect KeySpec type");
         }
 
         /* Create ephemeral key */
-        final GordianAsymFactory myAsym = getFactory().getAsymmetricFactory();
-        final GordianKeyPairGenerator myGenerator = myAsym.getKeyPairGenerator(pKeySpec);
+        final GordianKeyPairFactory myFactory = getFactory().getKeyPairFactory();
+        final GordianKeyPairGenerator myGenerator = myFactory.getKeyPairGenerator(pKeySpec);
         theClientEphemeral = myGenerator.generateKeyPair();
         final X509EncodedKeySpec myKeySpec = myGenerator.getX509Encoding(theClientEphemeral);
         final byte[] myKeyBytes = myKeySpec.getEncoded();
@@ -123,9 +123,9 @@ public abstract class GordianCoreSignedAgreement
         final X509EncodedKeySpec myEncodedKeySpec = new X509EncodedKeySpec(myKeyBytes);
 
         /* Create ephemeral key */
-        final GordianAsymFactory myAsym = getFactory().getAsymmetricFactory();
-        final GordianAsymKeySpec myKeySpec = myAsym.determineKeySpec(myEncodedKeySpec);
-        final GordianKeyPairGenerator myGenerator = myAsym.getKeyPairGenerator(myKeySpec);
+        final GordianKeyPairFactory myFactory = getFactory().getKeyPairFactory();
+        final GordianKeyPairSpec myKeySpec = myFactory.determineKeyPairSpec(myEncodedKeySpec);
+        final GordianKeyPairGenerator myGenerator = myFactory.getKeyPairGenerator(myKeySpec);
         theServerEphemeral = myGenerator.generateKeyPair();
 
         /* Derive partner ephemeral key */
@@ -138,22 +138,21 @@ public abstract class GordianCoreSignedAgreement
     /**
      * build the serverHello message.
      * @param pServer the server keyPair
-     * @param pSignSpec the signature spec
      * @return the serverHello message
      * @throws OceanusException on error
      */
-    protected byte[] buildServerHello(final GordianKeyPair pServer,
-                                      final GordianSignatureSpec pSignSpec) throws OceanusException {
+    protected byte[] buildServerHello(final GordianKeyPair pServer) throws OceanusException {
         /* Obtain the encoding for the server ephemeral publicKey */
-        final GordianAsymFactory myAsym = getFactory().getAsymmetricFactory();
-        final GordianKeyPairGenerator myGenerator = myAsym.getKeyPairGenerator(theServerEphemeral.getKeySpec());
+        final GordianKeyPairFactory myFactory = getFactory().getKeyPairFactory();
+        final GordianKeyPairGenerator myGenerator = myFactory.getKeyPairGenerator(theServerEphemeral.getKeyPairSpec());
         final byte[] myClientEncoded = myGenerator.getX509Encoding(theClientEphemeral).getEncoded();
         final byte[] myServerEncoded = myGenerator.getX509Encoding(theServerEphemeral).getEncoded();
 
         /* Create the signer */
-        final GordianCoreSignatureFactory mySigns = (GordianCoreSignatureFactory) myAsym.getSignatureFactory();
-        final AlgorithmIdentifier myAlgId = mySigns.getIdentifierForSpecAndKeyPair(pSignSpec, pServer);
-        final GordianSignature mySigner = mySigns.createSigner(pSignSpec);
+        final GordianSignatureSpec mySpec = GordianSignatureSpec.defaultForKey(pServer.getKeyPairSpec());
+        final GordianCoreSignatureFactory mySigns = (GordianCoreSignatureFactory) myFactory.getSignatureFactory();
+        final AlgorithmIdentifier myAlgId = mySigns.getIdentifierForSpecAndKeyPair(mySpec, pServer);
+        final GordianKeyPairSignature mySigner = mySigns.createSigner(mySpec);
 
         /* Build the signature */
         mySigner.initForSigning(pServer);
@@ -181,17 +180,17 @@ public abstract class GordianCoreSignedAgreement
         final X509EncodedKeySpec myKeySpec = new X509EncodedKeySpec(myData);
 
         /* Derive partner ephemeral key */
-        final GordianAsymFactory myAsym = getFactory().getAsymmetricFactory();
-        final GordianKeyPairGenerator myGenerator = myAsym.getKeyPairGenerator(theClientEphemeral.getKeySpec());
+        final GordianKeyPairFactory myFactory = getFactory().getKeyPairFactory();
+        final GordianKeyPairGenerator myGenerator = myFactory.getKeyPairGenerator(theClientEphemeral.getKeyPairSpec());
         theServerEphemeral = myGenerator.derivePublicOnlyKeyPair(myKeySpec);
         final byte[] myClientEncoded = myGenerator.getX509Encoding(theClientEphemeral).getEncoded();
 
         /* Create the signer */
-        final GordianCoreSignatureFactory mySigns = (GordianCoreSignatureFactory) myAsym.getSignatureFactory();
+        final GordianCoreSignatureFactory mySigns = (GordianCoreSignatureFactory) myFactory.getSignatureFactory();
         final AlgorithmIdentifier myAlgId = myASN1.getSignatureId();
         final byte[] mySignature = myASN1.getSignature();
         final GordianSignatureSpec mySignSpec = mySigns.getSpecForIdentifier(myAlgId);
-        final GordianSignature mySigner = mySigns.createSigner(mySignSpec);
+        final GordianKeyPairSignature mySigner = mySigns.createSigner(mySignSpec);
 
         /* Build the signature */
         mySigner.initForVerify(pServer);

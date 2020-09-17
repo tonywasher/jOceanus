@@ -16,10 +16,10 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jgordianknot.impl.core.agree;
 
-import net.sourceforge.joceanus.jgordianknot.api.agree.GordianAgreementSpec;
 import net.sourceforge.joceanus.jgordianknot.api.agree.GordianAgreementStatus;
-import net.sourceforge.joceanus.jgordianknot.api.agree.GordianHandshakeAgreement;
-import net.sourceforge.joceanus.jgordianknot.api.key.GordianKeyPair;
+import net.sourceforge.joceanus.jgordianknot.api.agree.GordianKeyPairAgreementSpec;
+import net.sourceforge.joceanus.jgordianknot.api.agree.GordianKeyPairHandshakeAgreement;
+import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPair;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianCoreFactory;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
@@ -27,8 +27,8 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
  * New Handshake Basic Agreement.
  */
 public abstract class GordianCoreBasicAgreement
-        extends GordianCoreAgreement
-        implements GordianHandshakeAgreement {
+        extends GordianCoreKeyPairAgreement
+        implements GordianKeyPairHandshakeAgreement {
     /**
      * The client KeyPair.
      */
@@ -40,7 +40,7 @@ public abstract class GordianCoreBasicAgreement
      * @param pSpec the agreementSpec
      */
     protected GordianCoreBasicAgreement(final GordianCoreFactory pFactory,
-                                        final GordianAgreementSpec pSpec) {
+                                        final GordianKeyPairAgreementSpec pSpec) {
         super(pFactory, pSpec);
     }
 

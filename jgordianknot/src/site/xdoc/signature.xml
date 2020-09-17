@@ -15,19 +15,19 @@
             <source>
                 /* Access factory */
                 final GordianFactory myBaseFactory = GordianGenerator.createFactory();
-                final GordianAsymFactory myKeyPairFactory = myBase.getAsymmetricFactory();
+                final GordianKeyPairFactory myKeyPairFactory = myBase.getKeyPairFactory();
                 final GordianSignatureFactory mySignatureFactory = myKeyPairFactory.getSignatureFactory();
 
                 /* Access keyPairGenerator */
-                final GordianAsymKeySpec mySpec = GordianAsymKeySpec.rsa(GordianRSAModulus.MOD2048);
+                final GordianKeyPairSpec mySpec = GordianKeyPairSpec.rsa(GordianRSAModulus.MOD2048);
                 final GordianKeyPairGenerator myGenerator = myKeyPairFactory.getKeyPairGenerator(mySpec);
-                final GordianKeyPair myPair = myGenerator.generateKeyPair();
+                final GordianKeyPair myKeyPair = myGenerator.generateKeyPair();
                 GordianKeyPair mySigningPair = myKeyPair;
 
                 /* If the pair is StateAware */
-                if (myPair instanceof GordianStateAwareKeyPair) {
+                if (myKeyPair instanceof GordianStateAwareKeyPair) {
                     /* Extract a shard that can sign a single entity */
-                    final GordianKeyPair mySigningPair = ((GordianStateAwareKeyPair) myPair).getKeyPairShard(1);
+                    final GordianKeyPair mySigningPair = ((GordianStateAwareKeyPair) myKeyPair).getKeyPairShard(1);
 
                     /* Store updated keyPair back to store BEFORE signing to ensure this shard is not reused */
                 }
@@ -35,7 +35,7 @@
                 /* Access signer */
                 final GordianSignatureSpec mySignSpec = GordianSignatureSpec.rsa(GordianSignatureType.PSS,
                 GordianDigestSpec.sha2(GordianLength.LEN_256));
-                final GordianSignature mySigner = mySignatureFactory.createSigner(mySignSpec);
+                final GordianKeyPairSignature mySigner = mySignatureFactory.createSigner(mySignSpec);
 
                 /* Sign message */
                 final byte[] message = ....;
@@ -44,7 +44,7 @@
                 final byte[] mySignature = mySigner.sign();
 
                 /* Verify signature */
-                mySigner.initForVerify(myPair);
+                mySigner.initForVerify(myKeyPair);
                 mySigner.update(message);
                 final boolean verified = mySigner.verify(mySignature);
             </source>
@@ -52,7 +52,7 @@
         <section name="Algorithms">
             <p>The following signature algorithms are supported.</p>
             <table class="defTable">
-                <tr><td class="defHdr">Algorithm</td><td class="defHdr">Variants</td></tr>
+                <tr><th class="defHdr">Algorithm</th><th class="defHdr">Variants</th></tr>
                 <tr><td>RSA</td><td>PSS, X931, ISO9796D2, PreHash</td></tr>
                 <tr><td>DSA</td><td>DSA, DetDSA</td></tr>
                 <tr><td>EC</td><td>ECDSA, ECDetDSA, ECNR</td></tr>

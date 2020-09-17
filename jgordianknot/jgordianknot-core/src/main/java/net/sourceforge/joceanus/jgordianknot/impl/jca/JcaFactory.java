@@ -23,10 +23,10 @@ import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.pqc.jcajce.provider.BouncyCastlePQCProvider;
 
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianSymKeyType;
-import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianParameters;
 import net.sourceforge.joceanus.jgordianknot.api.zip.GordianZipFactory;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianCoreFactory;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianFactoryGenerator;
+import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianParameters;
 import net.sourceforge.joceanus.jgordianknot.impl.core.keyset.GordianCoreKeySetFactory;
 import net.sourceforge.joceanus.jgordianknot.impl.core.random.GordianCoreRandomFactory;
 import net.sourceforge.joceanus.jgordianknot.impl.core.zip.GordianCoreZipFactory;
@@ -61,9 +61,9 @@ public class JcaFactory
     private GordianCoreZipFactory theZipFactory;
 
     /**
-     * Asym Factory.
+     * keyPair Factory.
      */
-    private JcaAsymFactory theAsymFactory;
+    private JcaKeyPairFactory theKeyPairFactory;
 
     /**
      * Constructor.
@@ -111,11 +111,11 @@ public class JcaFactory
     }
 
     @Override
-    public JcaAsymFactory getAsymmetricFactory() {
-        if (theAsymFactory == null) {
-            theAsymFactory = new JcaAsymFactory(this);
+    public JcaKeyPairFactory getKeyPairFactory() {
+        if (theKeyPairFactory == null) {
+            theKeyPairFactory = new JcaKeyPairFactory(this);
         }
-        return theAsymFactory;
+        return theKeyPairFactory;
     }
 
     @Override

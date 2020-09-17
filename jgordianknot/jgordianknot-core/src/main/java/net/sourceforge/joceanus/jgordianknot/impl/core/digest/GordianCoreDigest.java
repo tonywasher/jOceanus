@@ -60,7 +60,9 @@ public abstract class GordianCoreDigest
         }
 
         /* Process the bytes */
-        doUpdate(pBytes, pOffset, pLength);
+        if (pLength != 0) {
+            doUpdate(pBytes, pOffset, pLength);
+        }
     }
 
     /**

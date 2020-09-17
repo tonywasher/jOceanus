@@ -33,7 +33,7 @@ import net.sourceforge.joceanus.jgordianknot.api.zip.GordianZipReadFile;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianCoreFactory;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianDataException;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianIOException;
-import net.sourceforge.joceanus.jgordianknot.impl.core.keypair.GordianCoreAsymFactory;
+import net.sourceforge.joceanus.jgordianknot.impl.core.keypair.GordianCoreKeyPairFactory;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
@@ -50,7 +50,7 @@ public class GordianCoreKeyStoreFactory
      * Constructor.
      * @param pFactory the factory
      */
-    public GordianCoreKeyStoreFactory(final GordianCoreAsymFactory pFactory) {
+    public GordianCoreKeyStoreFactory(final GordianCoreKeyPairFactory pFactory) {
         theFactory = pFactory.getFactory();
     }
 

@@ -19,10 +19,10 @@ package net.sourceforge.joceanus.jgordianknot.api.sign;
 import java.util.ArrayList;
 import java.util.List;
 
-import net.sourceforge.joceanus.jgordianknot.api.asym.GordianAsymKeySpec;
-import net.sourceforge.joceanus.jgordianknot.api.asym.GordianAsymKeyType;
 import net.sourceforge.joceanus.jgordianknot.api.base.GordianLength;
 import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigestSpec;
+import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPairSpec;
+import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPairType;
 import net.sourceforge.joceanus.jtethys.TethysDataConverter;
 
 /**
@@ -35,9 +35,9 @@ public final class GordianSignatureSpec {
     private static final String SEP = "-";
 
     /**
-     * AsymKeyType.
+     * KeyPairType.
      */
-    private final GordianAsymKeyType theAsymKeyType;
+    private final GordianKeyPairType theKeyPairType;
 
     /**
      * SignatureType.
@@ -61,37 +61,37 @@ public final class GordianSignatureSpec {
 
     /**
      * Constructor.
-     * @param pAsymKeyType the asymKeyType
+     * @param pKeyPairType the keyPairType
      * @param pDigestSpec the digestSpec
      */
-    public GordianSignatureSpec(final GordianAsymKeyType pAsymKeyType,
+    public GordianSignatureSpec(final GordianKeyPairType pKeyPairType,
                                 final GordianDigestSpec pDigestSpec) {
         /* Store parameters */
-        this(pAsymKeyType, GordianSignatureType.NATIVE, pDigestSpec);
+        this(pKeyPairType, GordianSignatureType.NATIVE, pDigestSpec);
     }
 
     /**
      * Constructor.
-     * @param pAsymKeyType the asymKeyType
+     * @param pKeyPairType the keyPairType
      * @param pSignatureType the signatureType
      */
-    public GordianSignatureSpec(final GordianAsymKeyType pAsymKeyType,
+    public GordianSignatureSpec(final GordianKeyPairType pKeyPairType,
                                 final GordianSignatureType pSignatureType) {
         /* Store parameters */
-        this(pAsymKeyType, pSignatureType, null);
+        this(pKeyPairType, pSignatureType, null);
     }
 
     /**
      * Constructor.
-     * @param pAsymKeyType the asymKeyType
+     * @param pKeyPairType the keyPairType
      * @param pSignatureType the signatureType
      * @param pDigestSpec the digestSpec
      */
-    public GordianSignatureSpec(final GordianAsymKeyType pAsymKeyType,
+    public GordianSignatureSpec(final GordianKeyPairType pKeyPairType,
                                 final GordianSignatureType pSignatureType,
                                 final GordianDigestSpec pDigestSpec) {
         /* Store parameters */
-        theAsymKeyType = pAsymKeyType;
+        theKeyPairType = pKeyPairType;
         theSignatureType = pSignatureType;
         theDigestSpec = pDigestSpec;
         isValid = checkValidity();
@@ -105,7 +105,7 @@ public final class GordianSignatureSpec {
      */
     public static GordianSignatureSpec rsa(final GordianSignatureType pSignatureType,
                                            final GordianDigestSpec pDigestSpec) {
-        return new GordianSignatureSpec(GordianAsymKeyType.RSA, pSignatureType, pDigestSpec);
+        return new GordianSignatureSpec(GordianKeyPairType.RSA, pSignatureType, pDigestSpec);
     }
 
     /**
@@ -116,7 +116,7 @@ public final class GordianSignatureSpec {
      */
     public static GordianSignatureSpec dsa(final GordianSignatureType pSignatureType,
                                            final GordianDigestSpec pDigestSpec) {
-        return new GordianSignatureSpec(GordianAsymKeyType.DSA, pSignatureType, pDigestSpec);
+        return new GordianSignatureSpec(GordianKeyPairType.DSA, pSignatureType, pDigestSpec);
     }
 
     /**
@@ -127,7 +127,7 @@ public final class GordianSignatureSpec {
      */
     public static GordianSignatureSpec ec(final GordianSignatureType pSignatureType,
                                           final GordianDigestSpec pDigestSpec) {
-        return new GordianSignatureSpec(GordianAsymKeyType.EC, pSignatureType, pDigestSpec);
+        return new GordianSignatureSpec(GordianKeyPairType.EC, pSignatureType, pDigestSpec);
     }
 
     /**
@@ -135,7 +135,7 @@ public final class GordianSignatureSpec {
      * @return the SignatureSpec
      */
     public static GordianSignatureSpec sm2() {
-        return new GordianSignatureSpec(GordianAsymKeyType.SM2, GordianDigestSpec.sm3());
+        return new GordianSignatureSpec(GordianKeyPairType.SM2, GordianDigestSpec.sm3());
     }
 
     /**
@@ -143,7 +143,7 @@ public final class GordianSignatureSpec {
      * @return the SignatureSpec
      */
     public static GordianSignatureSpec dstu4145() {
-        return new GordianSignatureSpec(GordianAsymKeyType.DSTU4145, GordianDigestSpec.gost());
+        return new GordianSignatureSpec(GordianKeyPairType.DSTU4145, GordianDigestSpec.gost());
     }
 
     /**
@@ -152,7 +152,7 @@ public final class GordianSignatureSpec {
      * @return the SignatureSpec
      */
     public static GordianSignatureSpec gost2012(final GordianLength pLength) {
-        return new GordianSignatureSpec(GordianAsymKeyType.GOST2012, GordianDigestSpec.streebog(pLength));
+        return new GordianSignatureSpec(GordianKeyPairType.GOST2012, GordianDigestSpec.streebog(pLength));
     }
 
     /**
@@ -160,7 +160,7 @@ public final class GordianSignatureSpec {
      * @return the SignatureSpec
      */
     public static GordianSignatureSpec edDSActx() {
-        return new GordianSignatureSpec(GordianAsymKeyType.EDDSA, GordianSignatureType.NATIVE);
+        return new GordianSignatureSpec(GordianKeyPairType.EDDSA, GordianSignatureType.NATIVE);
     }
 
     /**
@@ -168,7 +168,7 @@ public final class GordianSignatureSpec {
      * @return the SignatureSpec
      */
     public static GordianSignatureSpec edDSA() {
-        return new GordianSignatureSpec(GordianAsymKeyType.EDDSA, GordianSignatureType.PURE);
+        return new GordianSignatureSpec(GordianKeyPairType.EDDSA, GordianSignatureType.PURE);
     }
 
     /**
@@ -176,7 +176,7 @@ public final class GordianSignatureSpec {
      * @return the SignatureSpec
      */
     public static GordianSignatureSpec edDSAph() {
-        return new GordianSignatureSpec(GordianAsymKeyType.EDDSA, GordianSignatureType.PREHASH);
+        return new GordianSignatureSpec(GordianKeyPairType.EDDSA, GordianSignatureType.PREHASH);
     }
 
     /**
@@ -184,7 +184,7 @@ public final class GordianSignatureSpec {
      * @return the SignatureSpec
      */
     public static GordianSignatureSpec sphincs() {
-        return new GordianSignatureSpec(GordianAsymKeyType.SPHINCS, GordianSignatureType.PREHASH);
+        return new GordianSignatureSpec(GordianKeyPairType.SPHINCS, GordianSignatureType.PREHASH);
     }
 
     /**
@@ -193,7 +193,7 @@ public final class GordianSignatureSpec {
      * @return the SignatureSpec
      */
     public static GordianSignatureSpec rainbow(final GordianDigestSpec pDigestSpec) {
-        return new GordianSignatureSpec(GordianAsymKeyType.RAINBOW, pDigestSpec);
+        return new GordianSignatureSpec(GordianKeyPairType.RAINBOW, pDigestSpec);
     }
 
     /**
@@ -201,7 +201,7 @@ public final class GordianSignatureSpec {
      * @return the SignatureSpec
      */
     public static GordianSignatureSpec xmss() {
-        return new GordianSignatureSpec(GordianAsymKeyType.XMSS, GordianSignatureType.PURE);
+        return new GordianSignatureSpec(GordianKeyPairType.XMSS, GordianSignatureType.PURE);
     }
 
     /**
@@ -209,7 +209,7 @@ public final class GordianSignatureSpec {
      * @return the SignatureSpec
      */
     public static GordianSignatureSpec xmssph() {
-        return new GordianSignatureSpec(GordianAsymKeyType.XMSS, GordianSignatureType.PREHASH);
+        return new GordianSignatureSpec(GordianKeyPairType.XMSS, GordianSignatureType.PREHASH);
     }
 
     /**
@@ -217,7 +217,7 @@ public final class GordianSignatureSpec {
      * @return the SignatureSpec
      */
     public static GordianSignatureSpec qTESLA() {
-        return new GordianSignatureSpec(GordianAsymKeyType.QTESLA, GordianSignatureType.PURE);
+        return new GordianSignatureSpec(GordianKeyPairType.QTESLA, GordianSignatureType.PURE);
     }
 
     /**
@@ -225,7 +225,7 @@ public final class GordianSignatureSpec {
      * @return the SignatureSpec
      */
     public static GordianSignatureSpec lms() {
-        return new GordianSignatureSpec(GordianAsymKeyType.LMS, GordianSignatureType.PURE);
+        return new GordianSignatureSpec(GordianKeyPairType.LMS, GordianSignatureType.PURE);
     }
 
     /**
@@ -233,8 +233,8 @@ public final class GordianSignatureSpec {
      * @param pKeySpec the keySpec
      * @return the SignatureSpec
      */
-    public static GordianSignatureSpec defaultForKey(final GordianAsymKeySpec pKeySpec) {
-        switch (pKeySpec.getKeyType()) {
+    public static GordianSignatureSpec defaultForKey(final GordianKeyPairSpec pKeySpec) {
+        switch (pKeySpec.getKeyPairType()) {
             case RSA:
                 return rsa(GordianSignatureType.PSS, GordianDigestSpec.sha3(GordianLength.LEN_512));
             case DSA:
@@ -248,7 +248,7 @@ public final class GordianSignatureSpec {
             case GOST2012:
                 return gost2012(GordianLength.LEN_512);
             case EDDSA:
-                return edDSA();
+                return pKeySpec.getEdwardsElliptic().is25519() ? edDSActx() : edDSA();
             case RAINBOW:
                 return rainbow(GordianDigestSpec.sha2(GordianLength.LEN_512));
             case SPHINCS:
@@ -265,11 +265,11 @@ public final class GordianSignatureSpec {
     }
 
     /**
-     * Obtain the AsymKeyType.
-     * @return the asymKeyType.
+     * Obtain the keyPairType.
+     * @return the keyPairType.
      */
-    public GordianAsymKeyType getAsymKeyType() {
-        return theAsymKeyType;
+    public GordianKeyPairType getKeyPairType() {
+        return theKeyPairType;
     }
 
     /**
@@ -301,10 +301,10 @@ public final class GordianSignatureSpec {
      * @return valid true/false
      */
     private boolean checkValidity() {
-        if (theAsymKeyType == null || theSignatureType == null) {
+        if (theKeyPairType == null || theSignatureType == null) {
             return false;
         }
-        switch (theAsymKeyType) {
+        switch (theKeyPairType) {
             case RSA:
             case DSA:
             case EC:
@@ -329,7 +329,7 @@ public final class GordianSignatureSpec {
         /* If we have not yet loaded the name */
         if (theName == null) {
             /* Load the name */
-            theName = theAsymKeyType.toString();
+            theName = theKeyPairType.toString();
             if (theSignatureType != GordianSignatureType.NATIVE) {
                 theName += SEP + theSignatureType.toString();
             }
@@ -360,8 +360,8 @@ public final class GordianSignatureSpec {
         /* Access the target SignatureSpec */
         final GordianSignatureSpec myThat = (GordianSignatureSpec) pThat;
 
-        /* Check AsymKeyType and signatureType */
-        if (theAsymKeyType != myThat.getAsymKeyType()
+        /* Check KeyPairType and signatureType */
+        if (theKeyPairType != myThat.getKeyPairType()
                 || theSignatureType != myThat.getSignatureType()) {
             return false;
         }
@@ -375,7 +375,7 @@ public final class GordianSignatureSpec {
 
     @Override
     public int hashCode() {
-        int hashCode = theAsymKeyType.hashCode() << TethysDataConverter.BYTE_SHIFT;
+        int hashCode = theKeyPairType.hashCode() << TethysDataConverter.BYTE_SHIFT;
         hashCode += theSignatureType.hashCode();
         hashCode <<= TethysDataConverter.BYTE_SHIFT;
         if (theDigestSpec != null) {
@@ -389,7 +389,7 @@ public final class GordianSignatureSpec {
      * @param pKeyType the keyType
      * @return the list
      */
-    public static List<GordianSignatureSpec> listPossibleSignatures(final GordianAsymKeyType pKeyType) {
+    public static List<GordianSignatureSpec> listPossibleSignatures(final GordianKeyPairType pKeyType) {
         /* Access the list of possible digests */
         final List<GordianSignatureSpec> mySignatures = new ArrayList<>();
         final List<GordianDigestSpec> myDigests = GordianDigestSpec.listAll();

@@ -24,10 +24,10 @@ import org.bouncycastle.asn1.DERNull;
 import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
 
 import net.sourceforge.joceanus.jgordianknot.api.agree.GordianAgreementFactory;
-import net.sourceforge.joceanus.jgordianknot.api.agree.GordianAgreementSpec;
 import net.sourceforge.joceanus.jgordianknot.api.agree.GordianAgreementType;
 import net.sourceforge.joceanus.jgordianknot.api.agree.GordianKDFType;
-import net.sourceforge.joceanus.jgordianknot.api.asym.GordianAsymKeyType;
+import net.sourceforge.joceanus.jgordianknot.api.agree.GordianKeyPairAgreementSpec;
+import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPairType;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianASN1Util;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianCoreFactory;
 
@@ -53,12 +53,12 @@ public class GordianAgreementAlgId {
     /**
      * Map of DigestSpec to Identifier.
      */
-    private final Map<GordianAgreementSpec, AlgorithmIdentifier> theSpecMap;
+    private final Map<GordianKeyPairAgreementSpec, AlgorithmIdentifier> theSpecMap;
 
     /**
      * Map of Identifier to AgreementSpec.
      */
-    private final Map<AlgorithmIdentifier, GordianAgreementSpec> theIdentifierMap;
+    private final Map<AlgorithmIdentifier, GordianKeyPairAgreementSpec> theIdentifierMap;
 
     /**
      * The factory.
@@ -76,10 +76,10 @@ public class GordianAgreementAlgId {
         theIdentifierMap = new HashMap<>();
 
         /* Access the agreementFactory  */
-        theFactory = pFactory.getAsymmetricFactory().getAgreementFactory();
+        theFactory = pFactory.getKeyPairFactory().getAgreementFactory();
 
         /* Loop through the possible AsymKeys */
-        for (GordianAsymKeyType myKeyType : GordianAsymKeyType.values()) {
+        for (GordianKeyPairType myKeyType : GordianKeyPairType.values()) {
             /* Add any non-standard agreementSpecs */
             addAgreements(myKeyType);
         }
@@ -91,7 +91,7 @@ public class GordianAgreementAlgId {
      * @param pSpec the agreementSpec.
      * @return the Identifier
      */
-    public AlgorithmIdentifier getIdentifierForSpec(final GordianAgreementSpec pSpec) {
+    public AlgorithmIdentifier getIdentifierForSpec(final GordianKeyPairAgreementSpec pSpec) {
         return theSpecMap.get(pSpec);
     }
 
@@ -101,7 +101,7 @@ public class GordianAgreementAlgId {
      * @param pIdentifier the identifier.
      * @return the agreementSpec (or null if not found)
      */
-    public GordianAgreementSpec getSpecForIdentifier(final AlgorithmIdentifier pIdentifier) {
+    public GordianKeyPairAgreementSpec getSpecForIdentifier(final AlgorithmIdentifier pIdentifier) {
         return theIdentifierMap.get(pIdentifier);
     }
 
@@ -109,8 +109,8 @@ public class GordianAgreementAlgId {
      * Create Identifiers for all valid AgreementTypes.
      * @param pKeyType the keyType
      */
-    private void addAgreements(final GordianAsymKeyType pKeyType) {
-        for (GordianAgreementSpec mySpec : theFactory.listAllSupportedAgreements(pKeyType)) {
+    private void addAgreements(final GordianKeyPairType pKeyType) {
+        for (GordianKeyPairAgreementSpec mySpec : theFactory.listAllSupportedAgreements(pKeyType)) {
             ensureAgreement(mySpec);
         }
     }
@@ -119,7 +119,7 @@ public class GordianAgreementAlgId {
      * Add agreementSpec to map if supported and not already present.
      * @param pSpec the agreementSpec
      */
-    private void ensureAgreement(final GordianAgreementSpec pSpec) {
+    private void ensureAgreement(final GordianKeyPairAgreementSpec pSpec) {
         /* If the encryptor is not already known */
         if (!theSpecMap.containsKey(pSpec)) {
             addAgreement(pSpec);
@@ -131,9 +131,9 @@ public class GordianAgreementAlgId {
      *
      * @param pSpec the agreementSpec
      */
-    private void addAgreement(final GordianAgreementSpec pSpec) {
+    private void addAgreement(final GordianKeyPairAgreementSpec pSpec) {
         /* Create a branch for mac based on the AgreementType */
-        final GordianAsymKeyType myKeyType = pSpec.getAsymKeyType();
+        final GordianKeyPairType myKeyType = pSpec.getKeyPairType();
         ASN1ObjectIdentifier myId = AGREESPECOID.branch(Integer.toString(myKeyType.ordinal() + 1));
 
         /* Add branch for agreementType */
@@ -158,7 +158,7 @@ public class GordianAgreementAlgId {
      * @param pSpec the agreementSpec
      * @param pIdentifier the identifier
      */
-    private void addToMaps(final GordianAgreementSpec pSpec,
+    private void addToMaps(final GordianKeyPairAgreementSpec pSpec,
                            final AlgorithmIdentifier pIdentifier) {
         theSpecMap.put(pSpec, pIdentifier);
         theIdentifierMap.put(pIdentifier, pSpec);

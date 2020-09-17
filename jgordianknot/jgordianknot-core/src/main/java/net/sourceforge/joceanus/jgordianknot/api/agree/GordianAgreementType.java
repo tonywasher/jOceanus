@@ -16,7 +16,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jgordianknot.api.agree;
 
-import net.sourceforge.joceanus.jgordianknot.api.asym.GordianAsymKeyType;
+import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPairType;
 
 /**
  * Signature Type.
@@ -58,37 +58,37 @@ public enum GordianAgreementType {
     UNIFIED;
 
     /**
-     * Is this Agreement supported for this AsymKeyType?
-     * @param pKeyType the asymKeyType
+     * Is this Agreement supported for this KeyPairType?
+     * @param pKeyPairType the keyPair
      * @return true/false
      */
-    public boolean isSupported(final GordianAsymKeyType pKeyType) {
+    public boolean isSupported(final GordianKeyPairType pKeyPairType) {
         switch (this) {
             case KEM:
-                return hasKEM(pKeyType);
+                return hasKEM(pKeyPairType);
             case ANON:
-                return hasAnon(pKeyType);
+                return hasAnon(pKeyPairType);
             case BASIC:
             case SIGNED:
-                return hasBasic(pKeyType);
+                return hasBasic(pKeyPairType);
             case SM2:
-                return hasSM2(pKeyType);
+                return hasSM2(pKeyPairType);
             case MQV:
-                return hasMQV(pKeyType);
+                return hasMQV(pKeyPairType);
             case UNIFIED:
-                return hasUnified(pKeyType);
+                return hasUnified(pKeyPairType);
             default:
                 return false;
         }
     }
 
     /**
-     * Does the AsymKeyType have an KEM agreement?
-     * @param pKeyType the asymKeyType
+     * Does the keyPairType have an KEM agreement?
+     * @param pKeyPairType the keyPairType
      * @return true/false
      */
-    public static boolean hasKEM(final GordianAsymKeyType pKeyType) {
-        switch (pKeyType) {
+    public static boolean hasKEM(final GordianKeyPairType pKeyPairType) {
+        switch (pKeyPairType) {
             case RSA:
             case EC:
             case GOST2012:
@@ -101,12 +101,12 @@ public enum GordianAgreementType {
     }
 
     /**
-     * Does the AsymKeyType have an ANON agreement?
-     * @param pKeyType the asymKeyType
+     * Does the keyPairType have an ANON agreement?
+     * @param pKeyPairType the keyPairType
      * @return true/false
      */
-    public static boolean hasAnon(final GordianAsymKeyType pKeyType) {
-        switch (pKeyType) {
+    public static boolean hasAnon(final GordianKeyPairType pKeyPairType) {
+        switch (pKeyPairType) {
             case NEWHOPE:
             case DH:
             case EC:
@@ -121,12 +121,12 @@ public enum GordianAgreementType {
     }
 
     /**
-     * Does the AsymKeyType have an SM2 agreement?
-     * @param pKeyType the asymKeyType
+     * Does the kKeyPairType have an SM2 agreement?
+     * @param pKeyPairType the keyPairType
      * @return true/false
      */
-    public static boolean hasSM2(final GordianAsymKeyType pKeyType) {
-        switch (pKeyType) {
+    public static boolean hasSM2(final GordianKeyPairType pKeyPairType) {
+        switch (pKeyPairType) {
             case EC:
             case SM2:
             case GOST2012:
@@ -137,39 +137,39 @@ public enum GordianAgreementType {
     }
 
     /**
-     * Does the AsymKeyType have a Basic agreement?
-     * @param pKeyType the asymKeyType
+     * Does the keyPairType have a Basic agreement?
+     * @param pKeyPairType the keyPairType
      * @return true/false
      */
-    public static boolean hasBasic(final GordianAsymKeyType pKeyType) {
-        return isECorDH(pKeyType);
+    public static boolean hasBasic(final GordianKeyPairType pKeyPairType) {
+        return isECorDH(pKeyPairType);
     }
 
     /**
-     * Does the AsymKeyType have a MQV agreement?
-     * @param pKeyType the asymKeyType
+     * Does the keyPairType have a MQV agreement?
+     * @param pKeyPairType the keyPairType
      * @return true/false
      */
-    public static boolean hasMQV(final GordianAsymKeyType pKeyType) {
-        return  pKeyType == GordianAsymKeyType.DH || isEC(pKeyType);
+    public static boolean hasMQV(final GordianKeyPairType pKeyPairType) {
+        return  pKeyPairType == GordianKeyPairType.DH || isEC(pKeyPairType);
     }
 
     /**
-     * Does the AsymKeyType have a Unified agreement?
-     * @param pKeyType the asymKeyType
+     * Does the keyPairType have a Unified agreement?
+     * @param pKeyPairType the keyPairType
      * @return true/false
      */
-    public static boolean hasUnified(final GordianAsymKeyType pKeyType) {
-        return isECorDH(pKeyType);
+    public static boolean hasUnified(final GordianKeyPairType pKeyPairType) {
+        return isECorDH(pKeyPairType);
     }
 
     /**
-     * Is the AsymKeyType EC/DH?
-     * @param pKeyType the asymKeyType
+     * Is the keyPairType EC/DH?
+     * @param pKeyPairType the keyPairType
      * @return true/false
      */
-    private static boolean isECorDH(final GordianAsymKeyType pKeyType) {
-        switch (pKeyType) {
+    private static boolean isECorDH(final GordianKeyPairType pKeyPairType) {
+        switch (pKeyPairType) {
             case SM2:
             case EC:
             case GOST2012:
@@ -183,12 +183,12 @@ public enum GordianAgreementType {
     }
 
     /**
-     * Is the AsymKeyType EC?
-     * @param pKeyType the asymKeyType
+     * Is the keyPairType EC?
+     * @param pKeyPairType the keyPairType
      * @return true/false
      */
-    private static boolean isEC(final GordianAsymKeyType pKeyType) {
-        switch (pKeyType) {
+    private static boolean isEC(final GordianKeyPairType pKeyPairType) {
+        switch (pKeyPairType) {
             case SM2:
             case EC:
             case GOST2012:

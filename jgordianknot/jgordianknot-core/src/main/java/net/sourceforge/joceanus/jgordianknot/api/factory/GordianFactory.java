@@ -70,10 +70,10 @@ public interface GordianFactory {
     GordianZipFactory getZipFactory();
 
     /**
-     * Obtain the asymmetric Factory.
-     * @return the asym factory
+     * Obtain the keyPair Factory.
+     * @return the keyPair factory
      */
-    GordianAsymFactory getAsymmetricFactory();
+    GordianKeyPairFactory getKeyPairFactory();
 
     /**
      * ReSeed the random number generator.
