@@ -26,6 +26,13 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
 public class ThemisAnalysisStatement
     implements ThemisAnalysisProcessed {
     /**
+     * StatementHolder interface.
+     */
+    public interface ThemisAnalysisStatementHolder
+            extends Iterable<ThemisAnalysisStatement> {
+    }
+
+    /**
      * The control.
      */
     private final ThemisAnalysisKeyWord theControl;
@@ -61,9 +68,26 @@ public class ThemisAnalysisStatement
         theParameters = ThemisAnalysisBuilder.parseTrailers(pParser, pLine);
     }
 
+    /**
+     * Constructor.
+     * @param pParams the parameters
+     */
+    ThemisAnalysisStatement(final Deque<ThemisAnalysisElement> pParams) {
+        theControl = null;
+        theParameters = pParams;
+    }
+
     @Override
     public int getNumLines() {
         return theParameters.size();
+    }
+
+    /**
+     * Are there null parameters?
+     * @return true/false
+     */
+    public boolean nullParameters() {
+        return theParameters.toString().length() == 0;
     }
 
     @Override

@@ -112,7 +112,7 @@ public class ThemisAnalysisPackage
      * Obtain the files.
      * @return the files
      */
-    List<ThemisAnalysisFile> getFiles() {
+    public List<ThemisAnalysisFile> getFiles() {
         return theFiles;
     }
 

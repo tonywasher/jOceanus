@@ -16,15 +16,17 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jthemis.analysis;
 
-import java.util.Deque;
+import java.util.Collections;
+import java.util.Iterator;
 
 import net.sourceforge.joceanus.jtethys.OceanusException;
+import net.sourceforge.joceanus.jthemis.analysis.ThemisAnalysisStatement.ThemisAnalysisStatementHolder;
 
 /**
  * Field Representation.
  */
 public class ThemisAnalysisField
-    implements ThemisAnalysisProcessed {
+    implements ThemisAnalysisProcessed, ThemisAnalysisStatementHolder {
     /**
      * The name of the class.
      */
@@ -41,9 +43,9 @@ public class ThemisAnalysisField
     private final ThemisAnalysisProperties theProperties;
 
     /**
-     * The trailers.
+     * The initial value.
      */
-    private final Deque<ThemisAnalysisElement> theTrailers;
+    private final ThemisAnalysisStatement theInitial;
 
     /**
      * The number of lines.
@@ -67,9 +69,21 @@ public class ThemisAnalysisField
         theDataType = pDataType;
         theProperties = pLine.getProperties();
 
-        /* Create the arrays */
-        theTrailers = ThemisAnalysisBuilder.parseTrailers(pParser, pLine);
-        theNumLines = theTrailers.size();
+        /* If we have no initial value */
+        if (pLine.startsWithChar(ThemisAnalysisChar.SEMICOLON)) {
+            /* Set default values */
+            theNumLines = 1;
+            theInitial = null;
+
+            /* else we have an initialiser */
+        } else {
+            /* Strip the equals sign */
+            pLine.stripStartChar(ThemisAnalysisChar.EQUALS);
+
+            /* Declare as statement */
+            theInitial = new ThemisAnalysisStatement(pParser, pLine);
+            theNumLines = theInitial.getNumLines();
+        }
     }
 
     /**
@@ -78,6 +92,11 @@ public class ThemisAnalysisField
      */
     public String getName() {
         return theName;
+    }
+
+    @Override
+    public Iterator<ThemisAnalysisStatement> iterator() {
+        return Collections.singleton(theInitial).iterator();
     }
 
     @Override

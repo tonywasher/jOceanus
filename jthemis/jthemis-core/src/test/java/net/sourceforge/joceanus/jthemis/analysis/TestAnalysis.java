@@ -27,6 +27,7 @@ import org.junit.jupiter.api.TestFactory;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jthemis.dsm.ThemisDSMProject;
 import net.sourceforge.joceanus.jthemis.dsm.ThemisDSMReport;
+import net.sourceforge.joceanus.jthemis.statements.ThemisProjectParser;
 
 /**
  * Test Analysis.
@@ -67,8 +68,8 @@ public class TestAnalysis {
     private static void testProjectSource() throws OceanusException {
         /* Analyse source of project */
         final ThemisAnalysisProject myProj = new ThemisAnalysisProject(new File(PATH_BASE));
-        Assertions.assertNotNull(myProj, "Failed to analyse project");
         Assertions.assertNull(myProj.getError(), "Exception analysing project");
+        ThemisProjectParser.parseProject(myProj);
     }
 
     /**

@@ -133,7 +133,7 @@ public class ThemisAnalysisModule {
      * Obtain the packages.
      * @return the packages
      */
-    List<ThemisAnalysisPackage> getPackages() {
+    public List<ThemisAnalysisPackage> getPackages() {
         return thePackages;
     }
 

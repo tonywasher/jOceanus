@@ -101,6 +101,7 @@ public class ThemisAnalysisScanner {
                     /* Strip trailing comments and re-loop */
                     theCurLine.stripTrailingComments();
                     theCurPos = theLength;
+                    continue;
                 }
             } else {
                 maybeComment = false;

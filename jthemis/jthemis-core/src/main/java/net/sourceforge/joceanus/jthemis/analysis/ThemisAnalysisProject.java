@@ -119,7 +119,7 @@ public class ThemisAnalysisProject {
      * Obtain the modules.
      * @return the modules
      */
-    List<ThemisAnalysisModule> getModules() {
+    public List<ThemisAnalysisModule> getModules() {
         return theModules;
     }
 
