@@ -27,9 +27,22 @@ import net.sourceforge.joceanus.jthemis.ThemisDataException;
  */
 public class ThemisAnalysisScanner {
     /**
-     * The parser.
+     * Terminator processor.
      */
-    private final ThemisAnalysisParser theParser;
+    @FunctionalInterface
+    private interface ThemisScannerTerminator {
+        /**
+         * Handle Terminator.
+         * @param pTerminator the terminator
+         * @throws OceanusException on error
+         */
+        void handle(char pTerminator) throws OceanusException;
+    }
+
+    /**
+     * The source.
+     */
+    private final ThemisAnalysisSource theSource;
 
     /**
      * The list of result lines.
@@ -52,12 +65,18 @@ public class ThemisAnalysisScanner {
     private int theCurPos;
 
     /**
+     * Are we investigating a potential comment?
+     */
+    private boolean maybeComment;
+
+    /**
      * Constructor.
      *
-     * @param pParser the parser
+     * @param pSource the source
      */
-    ThemisAnalysisScanner(final ThemisAnalysisParser pParser) {
-        theParser = pParser;
+    ThemisAnalysisScanner(final ThemisAnalysisSource pSource) {
+        theSource = pSource;
+        theResults = new ArrayDeque<>();
     }
 
     /**
@@ -70,86 +89,259 @@ public class ThemisAnalysisScanner {
      */
     Deque<ThemisAnalysisElement> scanForTerminator(final ThemisAnalysisLine pLine,
                                                    final char pTerminator) throws OceanusException {
-        /* Allocate array */
-        theResults = new ArrayDeque<>();
-
-        /* Access line details */
-        theCurLine = pLine;
-        theLength = theCurLine.getLength();
+        /* Initialise scan */
+        initialiseScan(pLine);
 
         /* Loop through the line */
-        theCurPos = 0;
-        boolean maybeComment = false;
         for (;;) {
             /* If we have finished the line */
             if (theCurPos == theLength) {
                 /* Shift to the next line */
-                shiftToNextLine();
+                shiftToNextLine(true);
                 maybeComment = false;
             }
 
             /* Access current character */
             final char myChar = theCurLine.charAt(theCurPos);
 
-            /* If this is the comment character */
-            if (myChar == ThemisAnalysisChar.COMMENT) {
-                /* Flip flag */
-                maybeComment = !maybeComment;
-
-                /* If we have double comment */
-                if (!maybeComment) {
-                    /* Strip trailing comments and re-loop */
-                    theCurLine.stripTrailingComments();
-                    theCurPos = theLength;
-                    continue;
-                }
-            } else {
-                maybeComment = false;
+            /* Check for trailing line comments */
+            if (checkComments(myChar)) {
+                continue;
             }
 
-            /* If this is a single/double quote */
-            if (myChar == ThemisAnalysisChar.SINGLEQUOTE
-                    || myChar == ThemisAnalysisChar.DOUBLEQUOTE) {
-                /* Find the end of the sequence and skip the quotes */
-                final int myEnd = theCurLine.findEndOfQuotedSequence(theCurPos);
-                theCurPos = myEnd + 1;
-
-                /* If we have found the terminator */
-            } else if (myChar == pTerminator) {
-                /* Must be at the end of the line */
-                if (theCurPos != theLength - 1) {
-                    /* Strip trailing comments */
-                    theCurLine.stripTrailingComments();
-                    theLength = theCurLine.getLength();
-                    if (theCurPos != theLength - 1) {
-                        throw new ThemisDataException("Not at end of line");
-                    }
-                }
-
-                /* Strip end character, add to results and break loop */
-                theCurLine.stripEndChar(pTerminator);
-                theResults.add(theCurLine);
+            /* Break loop if this is a terminator */
+            if (checkForTerminator(myChar, pTerminator, this::handleEOLTerminator)) {
                 break;
-
-                /* If this is a parenthesisOpen character */
-            } else if (myChar == ThemisAnalysisChar.PARENTHESIS_OPEN) {
-                /* Handle the nested sequence */
-                handleNestedSequence(ThemisAnalysisChar.PARENTHESIS_CLOSE);
-
-                /* If this is a braceOpen character */
-            } else if (myChar == ThemisAnalysisChar.BRACE_OPEN) {
-                /* Handle the nested sequence */
-                handleNestedSequence(ThemisAnalysisChar.BRACE_CLOSE);
-
-                /* else move to next character */
-            } else {
-                /* Increment position */
-                theCurPos++;
             }
         }
 
         /* return the results */
         return theResults;
+    }
+
+    /**
+     * Scan For Separator.
+     *
+     * @param pSeparator the separator
+     * @return the results
+     * @throws OceanusException on error
+     */
+    Deque<ThemisAnalysisElement> scanForSeparator(final char pSeparator) throws OceanusException {
+        /* Initialise scan */
+        initialiseScan((ThemisAnalysisLine) theSource.popNextLine());
+
+        /* Loop through the line */
+        for (;;) {
+            /* If we have finished the line */
+            if (theCurPos == theLength) {
+                /* Shift to the next line */
+                if (shiftToNextLine(false)) {
+                    break;
+                }
+                maybeComment = false;
+            }
+
+            /* Access current character */
+            final char myChar = theCurLine.charAt(theCurPos);
+
+            /* Check for trailing line comments */
+            if (checkComments(myChar)) {
+                continue;
+            }
+
+            /* Break loop if this is a terminator */
+            if (checkForTerminator(myChar, pSeparator, this::handleSeparator)) {
+                break;
+            }
+        }
+
+        /* return the results */
+        return theResults;
+    }
+
+    /**
+     * Check For Separator.
+     *
+     * @param pSeparator the separator
+     * @return the results
+     * @throws OceanusException on error
+     */
+    boolean checkForSeparator(final char pSeparator) throws OceanusException {
+        /* Initialise scan */
+        initialiseScan((ThemisAnalysisLine) theSource.popNextLine());
+
+        /* Loop through the line */
+        for (;;) {
+            /* If we have finished the line */
+            if (theCurPos == theLength) {
+                /* Shift to the next line */
+                if (shiftToNextLine(false)) {
+                    restoreStack(pSeparator);
+                    return false;
+                }
+                maybeComment = false;
+            }
+
+            /* Access current character */
+            final char myChar = theCurLine.charAt(theCurPos);
+
+            /* Check for trailing line comments */
+            if (checkComments(myChar)) {
+                continue;
+            }
+
+            /* Break loop if this is a terminator */
+            if (checkForTerminator(myChar, pSeparator, this::restoreStack)) {
+                return true;
+            }
+        }
+    }
+
+    /**
+     * Initialise scan.
+     *
+     * @param pLine       the current line
+     */
+    private void initialiseScan(final ThemisAnalysisLine pLine) {
+        /* Clear the results array */
+        theResults.clear();
+
+        /* Access line details */
+        theCurLine = pLine;
+        theLength = theCurLine.getLength();
+
+        /* reset flags */
+        theCurPos = 0;
+        maybeComment = false;
+    }
+
+    /**
+     * Check for comment.
+     * @param pChar the current character
+     * @return reloop true/false
+     * @throws OceanusException on error
+     */
+    private boolean checkComments(final char pChar) throws OceanusException {
+        /* If this is the comment character */
+        if (pChar == ThemisAnalysisChar.COMMENT) {
+            /* Flip flag */
+            maybeComment = !maybeComment;
+
+            /* If we have double comment */
+            if (!maybeComment) {
+                /* Strip trailing comments and re-loop */
+                theCurLine.stripTrailingComments();
+                theCurPos = theLength;
+                return true;
+            }
+        } else {
+            maybeComment = false;
+        }
+
+        /* Continue */
+        return false;
+    }
+
+    /**
+     * Scan For Terminator.
+     *
+     * @param pChar the current character
+     * @param pTerminator the terminator
+     * @param pHandler the handler
+     * @return terminator found true/false
+     * @throws OceanusException on error
+     */
+    private boolean checkForTerminator(final char pChar,
+                                       final char pTerminator,
+                                       final ThemisScannerTerminator pHandler) throws OceanusException {
+        /* If this is a single/double quote */
+        if (pChar == ThemisAnalysisChar.SINGLEQUOTE
+                || pChar == ThemisAnalysisChar.DOUBLEQUOTE) {
+            /* Find the end of the sequence and skip the quotes */
+            final int myEnd = theCurLine.findEndOfQuotedSequence(theCurPos);
+            theCurPos = myEnd + 1;
+
+            /* If we have found the terminator */
+        } else if (pChar == pTerminator) {
+            /* Handle the terminator */
+            pHandler.handle(pTerminator);
+            return true;
+
+            /* If this is a parenthesisOpen character */
+        } else if (pChar == ThemisAnalysisChar.PARENTHESIS_OPEN) {
+            /* Handle the nested sequence */
+            handleNestedSequence(ThemisAnalysisChar.PARENTHESIS_CLOSE);
+
+            /* If this is a braceOpen character */
+        } else if (pChar == ThemisAnalysisChar.BRACE_OPEN) {
+            /* Handle the nested sequence */
+            handleNestedSequence(ThemisAnalysisChar.BRACE_CLOSE);
+
+            /* else move to next character */
+        } else {
+            /* Increment position */
+            theCurPos++;
+        }
+
+        /* not found */
+        return false;
+    }
+
+    /**
+     * Handle Terminator at End of Line.
+     * @param pTerminator the terminator
+     * @throws OceanusException on error
+     */
+    private void handleEOLTerminator(final char pTerminator) throws OceanusException {
+        /* Must be at the end of the line */
+        if (theCurPos != theLength - 1) {
+            throw new ThemisDataException("Not at end of line");
+        }
+
+        /* Strip end character, add to results and break loop */
+        theCurLine.stripEndChar(pTerminator);
+        theResults.add(theCurLine);
+    }
+
+    /**
+     * Handle Separator (possible mid-line).
+     * @param pTerminator the terminator
+     */
+    private void handleSeparator(final char pTerminator) {
+        /* If separator is not at end of line */
+        if (theCurPos != theLength - 1) {
+            /* Strip to end character and add to results */
+            final ThemisAnalysisLine myLine = theCurLine.stripUpToPosition(theCurPos - 1);
+            theResults.add(myLine);
+
+            /* Return a non-blank line to the stack and break loop */
+            theCurLine.stripStartChar(pTerminator);
+            if (!ThemisAnalysisBlank.isBlank(theCurLine)) {
+                theSource.pushLine(theCurLine);
+            }
+
+            /* else terminator is at end of line */
+        } else {
+            /* Strip end character, add to results and break loop */
+            theCurLine.stripEndChar(pTerminator);
+            theResults.add(theCurLine);
+        }
+    }
+
+    /**
+     * Restore the stack.
+     * @param pTerminator the terminator
+     */
+    private void restoreStack(final char pTerminator) {
+        /* Restore current line */
+        if (theCurLine != null) {
+            theSource.pushLine(theCurLine);
+        }
+
+        /* Loop through the results */
+        while (!theResults.isEmpty()) {
+            theSource.pushLine(theResults.removeLast());
+        }
     }
 
     /**
@@ -172,6 +364,17 @@ public class ThemisAnalysisScanner {
      */
     Deque<ThemisAnalysisElement> scanForParenthesis(final ThemisAnalysisLine pLine) throws OceanusException {
         return scanForContents(pLine, ThemisAnalysisChar.PARENTHESIS_CLOSE);
+    }
+
+    /**
+     * Scan For Array Terminator.
+     *
+     * @param pLine the current line
+     * @return the results
+     * @throws OceanusException on error
+     */
+    Deque<ThemisAnalysisElement> scanForArray(final ThemisAnalysisLine pLine) throws OceanusException {
+        return scanForContents(pLine, ThemisAnalysisChar.ARRAY_CLOSE);
     }
 
     /**
@@ -201,7 +404,7 @@ public class ThemisAnalysisScanner {
 
         /* Return a non-blank line to the stack and break loop */
         if (!ThemisAnalysisBlank.isBlank(theCurLine)) {
-            theParser.pushLine(theCurLine);
+            theSource.pushLine(theCurLine);
         }
 
         /* Return the results */
@@ -210,22 +413,31 @@ public class ThemisAnalysisScanner {
 
     /**
      * Shift to next line.
-     *
+     * @param pErrorOnEmpty throw exception on empty
+     * @return empty true/false
      * @throws OceanusException on error
      */
-    private void shiftToNextLine() throws OceanusException {
+    private boolean shiftToNextLine(final boolean pErrorOnEmpty) throws OceanusException {
         /* Add current line to the results */
         theResults.add(theCurLine);
+        theCurLine = null;
 
         /* Check for additional lines */
-        if (!theParser.hasLines()) {
-            throw new ThemisDataException("Did not find terminator");
+        if (!theSource.hasLines()) {
+            /* Throw exception if required, else return empty */
+            if (pErrorOnEmpty) {
+                throw new ThemisDataException("Did not find terminator");
+            }
+            return true;
         }
 
         /* Access the next line */
-        theCurLine = (ThemisAnalysisLine) theParser.popNextLine();
+        theCurLine = (ThemisAnalysisLine) theSource.popNextLine();
         theLength = theCurLine.getLength();
         theCurPos = 0;
+
+        /* Handle empty lines */
+        return theLength == 0 && shiftToNextLine(pErrorOnEmpty);
     }
 
     /**
@@ -244,7 +456,7 @@ public class ThemisAnalysisScanner {
         /* While the end of the nest is not found */
         while (myNested < 0) {
             /* Shift to the next line */
-            shiftToNextLine();
+            shiftToNextLine(true);
 
             /* Repeat test for end of nest */
             myNested = theCurLine.findEndOfNestedSequence(0, myNested, pNestEnd, myNestStart);
@@ -252,5 +464,29 @@ public class ThemisAnalysisScanner {
 
         /* Adjust position */
         theCurPos = myNested + 1;
+    }
+
+    /**
+     * Scanner Source.
+     */
+    public interface ThemisAnalysisSource {
+        /**
+         * Are there more lines to process?
+         * @return true/false
+         */
+        boolean hasLines();
+
+        /**
+         * Pop next line from list.
+         * @return the next line
+         * @throws OceanusException on error
+         */
+        ThemisAnalysisElement popNextLine() throws OceanusException;
+
+        /**
+         * Push line back onto stack.
+         * @param pLine to line to push onto stack
+         */
+        void pushLine(ThemisAnalysisElement pLine);
     }
 }

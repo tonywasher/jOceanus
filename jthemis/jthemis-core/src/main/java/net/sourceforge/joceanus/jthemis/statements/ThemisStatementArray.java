@@ -16,26 +16,51 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jthemis.statements;
 
+import net.sourceforge.joceanus.jthemis.analysis.ThemisAnalysisChar;
+
 /**
- * Entity.
+ * Array.
  */
-public class ThemisStatementEntity
+public class ThemisStatementArray
         implements ThemisStatementElement {
     /**
-     * Entity.
+     * Owner.
      */
-    private final String theEntity;
+    private final ThemisStatementElement theOwner;
+
+    /**
+     * Contents.
+     */
+    private final ThemisStatementElement theContents;
+
+    /**
+     * The format.
+     */
+    private String theFormat;
 
     /**
      * Constructor.
-     * @param pName the entity
+     * @param pOwner the owner
+     * @param pContents the contents
      */
-    ThemisStatementEntity(final String pName) {
-        theEntity = pName;
+    ThemisStatementArray(final ThemisStatementElement pOwner,
+                         final ThemisStatementElement pContents) {
+        theOwner = pOwner;
+        theContents = pContents;
     }
 
     @Override
     public String toString() {
-        return theEntity;
+        /* If we have not yet built the format */
+        if (theFormat == null) {
+            /* Build the format */
+            theFormat = String.valueOf(theOwner)
+                    + ThemisAnalysisChar.ARRAY_OPEN
+                    + theContents
+                    + ThemisAnalysisChar.ARRAY_CLOSE;
+        }
+
+        /* Return the format */
+        return theFormat;
     }
 }

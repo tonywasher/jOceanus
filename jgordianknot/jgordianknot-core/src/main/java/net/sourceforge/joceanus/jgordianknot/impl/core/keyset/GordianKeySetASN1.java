@@ -19,6 +19,7 @@ package net.sourceforge.joceanus.jgordianknot.impl.core.keyset;
 import java.util.Enumeration;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Objects;
 
 import org.bouncycastle.asn1.ASN1EncodableVector;
@@ -85,7 +86,7 @@ public class GordianKeySetASN1
 
         /* Loop through the keys placing wrapped keys into the map */
         final Map<GordianSymKeySpec, GordianKey<GordianSymKeySpec>> myMap = pKeySet.getSymKeyMap();
-        for (Map.Entry<GordianSymKeySpec, GordianKey<GordianSymKeySpec>> myEntry : myMap.entrySet()) {
+        for (Entry<GordianSymKeySpec, GordianKey<GordianSymKeySpec>> myEntry : myMap.entrySet()) {
             theMap.put(myEntry.getKey().getSymKeyType().ordinal() + 1,
                     pWrapper.secureKey(myEntry.getValue()));
         }
@@ -146,7 +147,7 @@ public class GordianKeySetASN1
     public ASN1Primitive toASN1Primitive() {
         /* Build the keySetSequence */
         final ASN1EncodableVector ks = new ASN1EncodableVector();
-        for (Map.Entry<Integer, byte[]> myEntry : theMap.entrySet()) {
+        for (Entry<Integer, byte[]> myEntry : theMap.entrySet()) {
             final ASN1EncodableVector k = new ASN1EncodableVector();
             k.add(new ASN1Integer(myEntry.getKey()));
             k.add(new DEROctetString(myEntry.getValue()));
@@ -173,7 +174,7 @@ public class GordianKeySetASN1
         final GordianCoreKeySet myKeySet = pFactory.createKeySet(theSpec);
 
         /* Declare the keys */
-        for (Map.Entry<Integer, byte[]> myEntry : theMap.entrySet()) {
+        for (Entry<Integer, byte[]> myEntry : theMap.entrySet()) {
             final GordianSymKeyType myKeyType = GordianSymKeyType.values()[myEntry.getKey() - 1];
             final GordianSymKeySpec mySpec = new GordianSymKeySpec(myKeyType, GordianLength.LEN_128, theSpec.getKeyLength());
             final GordianKey<GordianSymKeySpec> myKey = pWrapper.deriveKey(myEntry.getValue(), mySpec);

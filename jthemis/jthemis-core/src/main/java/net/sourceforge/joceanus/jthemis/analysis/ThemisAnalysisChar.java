@@ -124,12 +124,12 @@ public final class ThemisAnalysisChar {
     /**
      * Start array.
      */
-    static final char ARRAY_OPEN = '[';
+    public static final char ARRAY_OPEN = '[';
 
     /**
      * End array.
      */
-    static final char ARRAY_CLOSE = ']';
+    public static final char ARRAY_CLOSE = ']';
 
     /**
      * Blank.

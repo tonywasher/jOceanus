@@ -17,25 +17,25 @@
 package net.sourceforge.joceanus.jthemis.statements;
 
 /**
- * Entity.
+ * Value.
  */
-public class ThemisStatementEntity
+public class ThemisStatementValue
         implements ThemisStatementElement {
     /**
-     * Entity.
+     * Value.
      */
-    private final String theEntity;
+    private final String theValue;
 
     /**
      * Constructor.
-     * @param pName the entity
+     * @param pValue the value
      */
-    ThemisStatementEntity(final String pName) {
-        theEntity = pName;
+    ThemisStatementValue(final String pValue) {
+        theValue = pValue;
     }
 
     @Override
     public String toString() {
-        return theEntity;
+        return theValue;
     }
 }

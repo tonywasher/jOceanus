@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import javax.xml.XMLConstants;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -256,7 +257,7 @@ public final class GordianKeyStoreDocument {
      */
     private void buildAliases(final Node pAliases) throws OceanusException {
         /* Access the Alias entries */
-        for (Map.Entry<String, GordianCoreKeyStoreEntry> myEntry : theKeyStore.getAliasMap().entrySet()) {
+        for (Entry<String, GordianCoreKeyStoreEntry> myEntry : theKeyStore.getAliasMap().entrySet()) {
             /* Determine the entry type */
             final GordianCoreKeyStoreEntry myElement = myEntry.getValue();
             final GordianStoreEntryType myType = GordianStoreEntryType.determineEntryType(myElement);

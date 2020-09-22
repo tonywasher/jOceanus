@@ -27,11 +27,13 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jthemis.ThemisDataException;
 import net.sourceforge.joceanus.jthemis.analysis.ThemisAnalysisDataMap.ThemisAnalysisDataType;
 import net.sourceforge.joceanus.jthemis.analysis.ThemisAnalysisGeneric.ThemisAnalysisGenericBase;
+import net.sourceforge.joceanus.jthemis.analysis.ThemisAnalysisScanner.ThemisAnalysisSource;
 
 /**
  * Parser.
  */
-public class ThemisAnalysisParser {
+public class ThemisAnalysisParser
+    implements ThemisAnalysisSource {
     /**
      * The keyWordMap.
      */
@@ -106,11 +108,8 @@ public class ThemisAnalysisParser {
         isTemporary = true;
     }
 
-    /**
-     * Are there more lines to process?
-     * @return true/false
-     */
-    boolean hasLines() {
+    @Override
+    public boolean hasLines() {
         return !theLines.isEmpty();
     }
 
@@ -138,12 +137,8 @@ public class ThemisAnalysisParser {
         return theDataMap;
     }
 
-    /**
-     * Pop next line from list.
-     * @return the next line
-     * @throws OceanusException on error
-     */
-    ThemisAnalysisElement popNextLine() throws OceanusException {
+    @Override
+    public ThemisAnalysisElement popNextLine() throws OceanusException {
         /* Check that there is a line to pop */
         if (theLines.isEmpty()) {
             throw new ThemisDataException("No more lines");
@@ -168,11 +163,8 @@ public class ThemisAnalysisParser {
         return theLines.getFirst();
     }
 
-    /**
-     * Push line back onto stack.
-     * @param pLine to line to push onto stack
-     */
-    void pushLine(final ThemisAnalysisElement pLine) {
+    @Override
+    public void pushLine(final ThemisAnalysisElement pLine) {
         /* Insert the line at the front of the stack */
         theLines.offerFirst(pLine);
     }

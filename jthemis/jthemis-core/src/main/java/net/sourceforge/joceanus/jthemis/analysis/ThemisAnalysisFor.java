@@ -17,25 +17,35 @@
 package net.sourceforge.joceanus.jthemis.analysis;
 
 import java.util.ArrayDeque;
+import java.util.ArrayList;
 import java.util.Deque;
+import java.util.Iterator;
+import java.util.List;
 
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jthemis.analysis.ThemisAnalysisContainer.ThemisAnalysisAdoptable;
+import net.sourceforge.joceanus.jthemis.analysis.ThemisAnalysisIf.ThemisIteratorChain;
+import net.sourceforge.joceanus.jthemis.analysis.ThemisAnalysisStatement.ThemisAnalysisStatementHolder;
 
 /**
  * For construct.
  */
 public class ThemisAnalysisFor
-        implements ThemisAnalysisContainer, ThemisAnalysisAdoptable {
-    /**
-     * The headers.
-     */
-    private final Deque<ThemisAnalysisElement> theHeaders;
-
+        implements ThemisAnalysisContainer, ThemisAnalysisAdoptable, ThemisAnalysisStatementHolder {
     /**
      * The contents.
      */
     private final Deque<ThemisAnalysisElement> theContents;
+
+    /**
+     * The fields.
+     */
+    private final List<ThemisAnalysisField> theFields;
+
+    /**
+     * The statements.
+     */
+    private final List<ThemisAnalysisStatement> theStatements;
 
     /**
      * The number of lines.
@@ -59,7 +69,7 @@ public class ThemisAnalysisFor
         theParent = pParser.getParent();
 
         /* Create the arrays */
-        theHeaders = ThemisAnalysisBuilder.parseHeaders(pParser, pLine);
+        final Deque<ThemisAnalysisElement> myHeaders = ThemisAnalysisBuilder.parseHeaders(pParser, pLine);
         final Deque<ThemisAnalysisElement> myLines = ThemisAnalysisBuilder.processBody(pParser);
         final int myBaseLines = myLines.size();
 
@@ -69,7 +79,13 @@ public class ThemisAnalysisFor
         myParser.processLines();
 
         /* Calculate the number of lines */
-        theNumLines = calculateNumLines(myBaseLines);
+        theNumLines = calculateNumLines(myBaseLines, myHeaders);
+
+        /* Parse the headers */
+        theFields = new ArrayList<>();
+        theStatements = new ArrayList<>();
+        final ThemisAnalysisStack myStack = new ThemisAnalysisStack(myHeaders);
+        parseHeaders(pParser, myStack);
     }
 
     @Override
@@ -92,14 +108,99 @@ public class ThemisAnalysisFor
         return theNumLines;
     }
 
+    @Override
+    public void postProcessExtras() {
+    }
+
+    @Override
+    public Iterator<ThemisAnalysisStatement> statementIterator() {
+        final Iterator<ThemisAnalysisStatement> myField = ThemisAnalysisField.statementIteratorForFields(theFields);
+        final Iterator<ThemisAnalysisStatement> myStatement = theStatements.iterator();
+        return new ThemisIteratorChain<>(myField, myStatement);
+    }
+
+    /**
+     * Parse headers.
+     * @param pParser the parser
+     * @param pHeaders the headers
+     * @throws OceanusException on error
+     */
+    private void parseHeaders(final ThemisAnalysisParser pParser,
+                              final ThemisAnalysisStack pHeaders) throws OceanusException {
+        /* Strip parentheses and create scanner */
+        final ThemisAnalysisStack myParts = pHeaders.extractParentheses();
+        final ThemisAnalysisScanner myScanner = new ThemisAnalysisScanner(myParts);
+
+        /* Determine separator */
+        char mySep = ThemisAnalysisChar.COLON;
+        if (!myScanner.checkForSeparator(mySep)) {
+            mySep = ThemisAnalysisChar.SEMICOLON;
+        }
+
+        /* Loop through the items */
+        boolean isField = true;
+        while (myParts.hasLines()) {
+            /* Access next part */
+            final Deque<ThemisAnalysisElement> myPart = myScanner.scanForSeparator(mySep);
+            final ThemisAnalysisStack myStack = new ThemisAnalysisStack(myPart);
+            if (myStack.isEmpty()) {
+                continue;
+            }
+
+            /* Process as field/statement */
+            if (isField) {
+                parseField(pParser, myStack);
+            } else {
+                parseStatement(myStack);
+            }
+            isField = false;
+        }
+    }
+
+    /**
+     * Parse field.
+     * @param pParser the parser
+     * @param pField the field
+     * @throws OceanusException on error
+     */
+    private void parseField(final ThemisAnalysisParser pParser,
+                            final ThemisAnalysisStack pField) throws OceanusException {
+        /* Create field for each resource */
+        final ThemisAnalysisScanner myScanner = new ThemisAnalysisScanner(pField);
+        //ThemisAnalysisField myLast = null;
+        while (pField.hasLines()) {
+            final Deque<ThemisAnalysisElement> myResource = myScanner.scanForSeparator(ThemisAnalysisChar.COMMA);
+            //myLast = myLast == null
+            //        ? new ThemisAnalysisField(pParser, new ThemisAnalysisStack(myResource))
+            //        : new ThemisAnalysisField(myLast, new ThemisAnalysisStack(myResource));
+            //theFields.add(myLast);
+        }
+    }
+
+    /**
+     * Parse statements.
+     * @param pStatement the statement
+     * @throws OceanusException on error
+     */
+    private void parseStatement(final ThemisAnalysisStack pStatement) throws OceanusException {
+        /* Create field for each resource */
+        final ThemisAnalysisScanner myScanner = new ThemisAnalysisScanner(pStatement);
+        while (pStatement.hasLines()) {
+            final Deque<ThemisAnalysisElement> myResource = myScanner.scanForSeparator(ThemisAnalysisChar.COMMA);
+            theStatements.add(new ThemisAnalysisStatement(new ThemisAnalysisStack(myResource)));
+        }
+    }
+
     /**
      * Calculate the number of lines for the construct.
      * @param pBaseCount the baseCount
+     * @param pHeaders the headers
      * @return the number of lines
      */
-    public int calculateNumLines(final int pBaseCount) {
+    public int calculateNumLines(final int pBaseCount,
+                                 final Deque<ThemisAnalysisElement> pHeaders) {
         /* Add 1+ line(s) for the while headers  */
-        final int myNumLines = pBaseCount + Math.max(theHeaders.size() - 1, 1);
+        final int myNumLines = pBaseCount + Math.max(pHeaders.size() - 1, 1);
 
         /* Add one for the clause terminator */
         return myNumLines + 1;
@@ -107,6 +208,37 @@ public class ThemisAnalysisFor
 
     @Override
     public String toString() {
-        return ThemisAnalysisBuilder.formatLines(theHeaders);
+        /* Start parameters */
+        final StringBuilder myBuilder = new StringBuilder();
+
+        /* Build fields */
+        boolean bFirst = true;
+        for (ThemisAnalysisField myField : theFields) {
+            /* Handle separators */
+            if (!bFirst) {
+                myBuilder.append(ThemisAnalysisChar.LF);
+            } else {
+                bFirst = false;
+            }
+
+            /* Add parameter */
+            myBuilder.append(myField);
+        }
+
+        /* Build fields */
+        for (ThemisAnalysisStatement myStatement : theStatements) {
+            /* Handle separators */
+            if (!bFirst) {
+                myBuilder.append(ThemisAnalysisChar.LF);
+            } else {
+                bFirst = false;
+            }
+
+            /* Add parameter */
+            myBuilder.append(myStatement);
+        }
+
+        /* Return the string */
+        return myBuilder.toString();
     }
 }

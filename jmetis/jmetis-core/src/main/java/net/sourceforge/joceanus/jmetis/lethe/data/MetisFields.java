@@ -23,6 +23,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
 
@@ -811,7 +812,7 @@ public final class MetisFields {
         final Map<E, MetisLetheField> myMap = new EnumMap<>(pClass);
 
         /* Loop through the enum values */
-        for (Map.Entry<MetisLetheField, E> myEntry : pSourceMap.entrySet()) {
+        for (Entry<MetisLetheField, E> myEntry : pSourceMap.entrySet()) {
             /* Access Key and Value */
             final MetisLetheField myField = myEntry.getKey();
             final E myEnum = myEntry.getValue();

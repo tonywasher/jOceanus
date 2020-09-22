@@ -17,7 +17,9 @@
 package net.sourceforge.joceanus.jthemis.analysis;
 
 import java.util.ArrayDeque;
+import java.util.Collections;
 import java.util.Deque;
+import java.util.Iterator;
 
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jthemis.ThemisDataException;
@@ -142,5 +144,13 @@ public interface ThemisAnalysisContainer
      */
     default void postProcessExtras() throws OceanusException {
         /* NoOp by default */
+    }
+
+    /**
+     * Obtain iterator for chained containers.
+     * @return the iterator
+     */
+    default Iterator<ThemisAnalysisContainer> containerIterator() {
+        return Collections.emptyIterator();
     }
 }

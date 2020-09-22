@@ -24,9 +24,9 @@ import net.sourceforge.joceanus.jthemis.analysis.ThemisAnalysisChar;
 public class ThemisStatementParenthesis
         implements ThemisStatementElement {
     /**
-     * Right-hand side.
+     * Contents.
      */
-    private final ThemisStatementElement theExpression;
+    private final ThemisStatementElement theContents;
 
     /**
      * The format.
@@ -35,9 +35,10 @@ public class ThemisStatementParenthesis
 
     /**
      * Constructor.
+     * @param pContents the contents
      */
-    ThemisStatementParenthesis() {
-        theExpression = null;
+    ThemisStatementParenthesis(final ThemisStatementElement pContents) {
+        theContents = pContents;
     }
 
     @Override
@@ -46,7 +47,7 @@ public class ThemisStatementParenthesis
         if (theFormat == null) {
             /* Build the format */
             theFormat = String.valueOf(ThemisAnalysisChar.PARENTHESIS_OPEN)
-                    + theExpression
+                    + theContents
                     + ThemisAnalysisChar.PARENTHESIS_CLOSE;
         }
 

@@ -97,11 +97,18 @@ public class ThemisAnalysisElse
     }
 
     @Override
-    public Iterator<ThemisAnalysisStatement> iterator() {
+    public Iterator<ThemisAnalysisStatement> statementIterator() {
         final Iterator<ThemisAnalysisStatement> myLocal = theCondition.nullParameters()
                 ? Collections.emptyIterator()
                 : Collections.singleton(theCondition).iterator();
-        return theElse == null ? myLocal : new ThemisIteratorChain<>(myLocal, theElse.iterator());
+        return theElse == null ? myLocal : new ThemisIteratorChain<>(myLocal, theElse.statementIterator());
+    }
+
+    @Override
+    public Iterator<ThemisAnalysisContainer> containerIterator() {
+        return theElse == null
+                ? Collections.emptyIterator()
+                : Collections.singleton((ThemisAnalysisContainer) theElse).iterator();
     }
 
     @Override

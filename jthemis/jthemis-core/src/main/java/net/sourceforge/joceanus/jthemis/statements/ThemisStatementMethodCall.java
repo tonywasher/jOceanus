@@ -16,7 +16,6 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jthemis.statements;
 
-import java.util.ArrayDeque;
 import java.util.Deque;
 
 import net.sourceforge.joceanus.jthemis.analysis.ThemisAnalysisChar;
@@ -43,10 +42,13 @@ public class ThemisStatementMethodCall
 
     /**
      * Constructor.
+     * @param pMethod the method
+     * @param pParams the parameters
      */
-    ThemisStatementMethodCall() {
-        theMethod = null;
-        theParameters = new ArrayDeque<>();
+    ThemisStatementMethodCall(final ThemisStatementEntity pMethod,
+                              final Deque<ThemisStatementElement> pParams) {
+        theMethod = pMethod;
+        theParameters = pParams;
     }
 
     @Override

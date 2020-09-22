@@ -16,6 +16,8 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jthemis.statements;
 
+import java.util.Iterator;
+
 import net.sourceforge.joceanus.jthemis.analysis.ThemisAnalysisContainer;
 import net.sourceforge.joceanus.jthemis.analysis.ThemisAnalysisElement;
 import net.sourceforge.joceanus.jthemis.analysis.ThemisAnalysisEmbedded;
@@ -81,13 +83,21 @@ public final class ThemisProjectParser {
         for (ThemisAnalysisElement myElement : pContainer.getContents()) {
             /* Process a nested container */
             if (myElement instanceof ThemisAnalysisContainer) {
-                parseContainer((ThemisAnalysisContainer) myElement);
+                final ThemisAnalysisContainer myContainer = (ThemisAnalysisContainer) myElement;
+                parseContainer(myContainer);
+                final Iterator<ThemisAnalysisContainer> myIterator = myContainer.containerIterator();
+                while (myIterator.hasNext()) {
+                    parseContainer(myIterator.next());
+                }
             }
 
             /* Process a statement holder */
             if (myElement instanceof ThemisAnalysisStatementHolder) {
                 final ThemisAnalysisStatementHolder myHolder = (ThemisAnalysisStatementHolder) myElement;
-                myHolder.forEach(ThemisProjectParser::processStatement);
+                final Iterator<ThemisAnalysisStatement> myIterator = myHolder.statementIterator();
+                while (myIterator.hasNext()) {
+                    processStatement(myIterator.next());
+                }
             }
 
             /* Process a statement */

@@ -43,11 +43,16 @@ public class ThemisStatementUnaryOp
 
     /**
      * Constructor.
+     * @param pOperator the operator
+     * @param pExpression the expression
+     * @param pLeft is this a preceding operator?
      */
-    ThemisStatementUnaryOp() {
-        isLeft = false;
-        theOperator = null;
-        theExpression = null;
+    ThemisStatementUnaryOp(final ThemisStatementUnary pOperator,
+                           final ThemisStatementElement pExpression,
+                           final boolean pLeft) {
+        isLeft = pLeft;
+        theOperator = pOperator;
+        theExpression = pExpression;
     }
 
     @Override

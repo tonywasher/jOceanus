@@ -92,9 +92,9 @@ public class ThemisAnalysisIf
     }
 
     @Override
-    public Iterator<ThemisAnalysisStatement> iterator() {
+    public Iterator<ThemisAnalysisStatement> statementIterator() {
         final Iterator<ThemisAnalysisStatement> myLocal = Collections.singleton(theCondition).iterator();
-        return theElse == null ? myLocal : new ThemisIteratorChain<>(myLocal, theElse.iterator());
+        return theElse == null ? myLocal : new ThemisIteratorChain<>(myLocal, theElse.statementIterator());
     }
 
     @Override
@@ -121,6 +121,13 @@ public class ThemisAnalysisIf
      */
     public ThemisAnalysisElse getElse() {
         return theElse;
+    }
+
+    @Override
+    public Iterator<ThemisAnalysisContainer> containerIterator() {
+        return theElse == null
+                ? Collections.emptyIterator()
+                : theElse.containerIterator();
     }
 
     @Override

@@ -24,14 +24,14 @@ import net.sourceforge.joceanus.jthemis.analysis.ThemisAnalysisChar;
 public class ThemisStatementChain
         implements ThemisStatementElement {
     /**
-     * Left-hand side.
+     * The method call.
      */
-    private final ThemisStatementElement theLeft;
+    private final ThemisStatementMethodCall theMethodCall;
 
     /**
-     * Right-hand side.
+     * the Chain.
      */
-    private final ThemisStatementElement theRight;
+    private final ThemisStatementElement theChain;
 
     /**
      * The format.
@@ -40,10 +40,13 @@ public class ThemisStatementChain
 
     /**
      * Constructor.
+     * @param pMethodCall the nethod call
+     * @param pChain the chain
      */
-    ThemisStatementChain() {
-        theLeft = null;
-        theRight = null;
+    ThemisStatementChain(final ThemisStatementMethodCall pMethodCall,
+                         final ThemisStatementElement pChain) {
+        theMethodCall = pMethodCall;
+        theChain = pMethodCall;
     }
 
     @Override
@@ -51,9 +54,9 @@ public class ThemisStatementChain
         /* If we have not yet built the format */
         if (theFormat == null) {
             /* Build the format */
-            theFormat = String.valueOf(theLeft)
+            theFormat = String.valueOf(theMethodCall)
                     + ThemisAnalysisChar.PERIOD
-                    + theRight;
+                    + theChain;
         }
 
         /* Return the format */

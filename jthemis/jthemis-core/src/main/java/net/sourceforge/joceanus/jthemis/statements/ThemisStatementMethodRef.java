@@ -27,14 +27,14 @@ public class ThemisStatementMethodRef
     private static final String SEP = "::";
 
     /**
-     * Left-hand side.
+     * Context.
      */
-    private final ThemisStatementElement theLeft;
+    private final ThemisStatementEntity theContext;
 
     /**
-     * Right-hand side.
+     * Method.
      */
-    private final ThemisStatementElement theRight;
+    private final ThemisStatementEntity theMethod;
 
     /**
      * The format.
@@ -43,10 +43,13 @@ public class ThemisStatementMethodRef
 
     /**
      * Constructor.
+     * @param pContext the context
+     * @param pMethod the method
      */
-    ThemisStatementMethodRef() {
-        theLeft = null;
-        theRight = null;
+    ThemisStatementMethodRef(final ThemisStatementEntity pContext,
+                             final ThemisStatementEntity pMethod) {
+        theContext = pContext;
+        theMethod = pMethod;
     }
 
     @Override
@@ -54,9 +57,9 @@ public class ThemisStatementMethodRef
         /* If we have not yet built the format */
         if (theFormat == null) {
             /* Build the format */
-            theFormat = String.valueOf(theLeft)
+            theFormat = String.valueOf(theContext)
                     + SEP
-                    + theRight;
+                    + theMethod;
         }
 
         /* Return the format */

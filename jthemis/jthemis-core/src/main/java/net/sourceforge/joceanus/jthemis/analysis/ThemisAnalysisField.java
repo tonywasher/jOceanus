@@ -18,8 +18,11 @@ package net.sourceforge.joceanus.jthemis.analysis;
 
 import java.util.Collections;
 import java.util.Iterator;
+import java.util.List;
+import java.util.ListIterator;
 
 import net.sourceforge.joceanus.jtethys.OceanusException;
+import net.sourceforge.joceanus.jthemis.analysis.ThemisAnalysisIf.ThemisIteratorChain;
 import net.sourceforge.joceanus.jthemis.analysis.ThemisAnalysisStatement.ThemisAnalysisStatementHolder;
 
 /**
@@ -57,7 +60,7 @@ public class ThemisAnalysisField
      * @param pParser the parser
      * @param pName the method name
      * @param pDataType the dataType
-     * @param pLine the initial class line
+     * @param pLine the initial field line
      * @throws OceanusException on error
      */
     ThemisAnalysisField(final ThemisAnalysisParser pParser,
@@ -87,6 +90,61 @@ public class ThemisAnalysisField
     }
 
     /**
+     * Constructor.
+     * @param pParser the parser
+     * @param pStack the field stack
+     * @throws OceanusException on error
+     */
+    ThemisAnalysisField(final ThemisAnalysisParser pParser,
+                        final ThemisAnalysisStack pStack) throws OceanusException {
+        /* Determine initial parameters */
+        final ThemisAnalysisLine myLine = (ThemisAnalysisLine) pStack.popNextLine();
+        ThemisAnalysisProperties myProps = ThemisAnalysisProperties.NULL;
+
+        /* Access the next token */
+        final String nextToken = myLine.peekNextToken();
+
+        /* If this is a final modifier */
+        if (ThemisAnalysisModifier.FINAL.getModifier().equals(nextToken)) {
+            /* Record modifier and strip it */
+            myProps = myProps.setModifier(ThemisAnalysisModifier.FINAL);
+            myLine.stripStartSequence(nextToken);
+        }
+
+        /* Process remaining data */
+        theDataType = pParser.parsePotentialDataType(myLine);
+        theName = myLine.stripNextToken();
+        myLine.stripStartChar(ThemisAnalysisChar.EQUALS);
+        pStack.pushLine(myLine);
+        theProperties = myProps;
+
+        /* Declare as statement */
+        theInitial = new ThemisAnalysisStatement(pStack);
+        theNumLines = theInitial.getNumLines();
+    }
+
+    /**
+     * Constructor.
+     * @param pPrevious the previous field
+     * @param pStack the field stack
+     * @throws OceanusException on error
+     */
+    ThemisAnalysisField(final ThemisAnalysisField pPrevious,
+                        final ThemisAnalysisStack pStack) throws OceanusException {
+        /* Determine initial parameters */
+        final ThemisAnalysisLine myLine = (ThemisAnalysisLine) pStack.popNextLine();
+        theDataType = pPrevious.theDataType;
+        theName = myLine.stripNextToken();
+        myLine.stripStartChar(ThemisAnalysisChar.EQUALS);
+        pStack.pushLine(myLine);
+        theProperties = ThemisAnalysisProperties.NULL;
+
+        /* Declare as statement */
+        theInitial = new ThemisAnalysisStatement(pStack);
+        theNumLines = theInitial.getNumLines();
+    }
+
+    /**
      * Obtain the name.
      * @return the name
      */
@@ -95,7 +153,7 @@ public class ThemisAnalysisField
     }
 
     @Override
-    public Iterator<ThemisAnalysisStatement> iterator() {
+    public Iterator<ThemisAnalysisStatement> statementIterator() {
         return Collections.singleton(theInitial).iterator();
     }
 
@@ -107,5 +165,20 @@ public class ThemisAnalysisField
     @Override
     public String toString() {
         return theDataType.toString() + " " + getName();
+    }
+
+    /**
+     * Obtain statement iterator for list of fields.
+     * @param pList the field list
+     * @return the statement iterator
+     */
+    public static Iterator<ThemisAnalysisStatement> statementIteratorForFields(final List<ThemisAnalysisField> pList) {
+        final ListIterator<ThemisAnalysisField> myIterator = pList.listIterator(pList.size());
+        Iterator<ThemisAnalysisStatement> myCurr = Collections.emptyIterator();
+        while (myIterator.hasPrevious()) {
+            final ThemisAnalysisField myField = myIterator.previous();
+            myCurr = new ThemisIteratorChain<>(myField.statementIterator(), myCurr);
+        }
+        return myCurr;
     }
 }

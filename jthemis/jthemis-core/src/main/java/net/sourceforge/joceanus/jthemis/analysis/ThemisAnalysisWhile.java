@@ -84,7 +84,7 @@ public class ThemisAnalysisWhile
     }
 
     @Override
-    public Iterator<ThemisAnalysisStatement> iterator() {
+    public Iterator<ThemisAnalysisStatement> statementIterator() {
         return Collections.singleton(theCondition).iterator();
     }
 

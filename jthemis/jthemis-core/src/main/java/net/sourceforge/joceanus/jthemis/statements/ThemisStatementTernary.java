@@ -28,12 +28,12 @@ public class ThemisStatementTernary {
     private final ThemisStatementElement theCondition;
 
     /**
-     * The assignment modifier.
+     * The then expression.
      */
     private final ThemisStatementElement theThen;
 
     /**
-     * The expression.
+     * The else expression.
      */
     private final ThemisStatementElement theElse;
 
@@ -44,11 +44,16 @@ public class ThemisStatementTernary {
 
     /**
      * Constructor.
+     * @param pCondition the condition
+     * @param pThen the then expression
+     * @param pElse the else expression
      */
-    ThemisStatementTernary() {
-        theCondition = null;
-        theThen = null;
-        theElse = null;
+    ThemisStatementTernary(final ThemisStatementElement pCondition,
+                           final ThemisStatementElement pThen,
+                           final ThemisStatementElement pElse) {
+        theCondition = pCondition;
+        theThen = pThen;
+        theElse = pElse;
     }
 
     @Override

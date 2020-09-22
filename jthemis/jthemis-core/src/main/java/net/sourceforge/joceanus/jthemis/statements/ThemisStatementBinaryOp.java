@@ -45,11 +45,16 @@ public class ThemisStatementBinaryOp
 
     /**
      * Constructor.
+     * @param pLeft the left expression
+     * @param pOperator the operator
+     * @param pRight the right expression
      */
-    ThemisStatementBinaryOp() {
-        theLeft = null;
-        theOperator = null;
-        theRight = null;
+    ThemisStatementBinaryOp(final ThemisStatementElement pLeft,
+                            final ThemisStatementOperator pOperator,
+                            final ThemisStatementElement pRight) {
+        theLeft = pLeft;
+        theOperator = pOperator;
+        theRight = pRight;
     }
 
     @Override

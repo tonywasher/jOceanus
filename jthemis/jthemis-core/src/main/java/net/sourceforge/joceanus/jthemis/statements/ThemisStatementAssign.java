@@ -32,7 +32,7 @@ public class ThemisStatementAssign
     /**
      * The assigned entity.
      */
-    private final ThemisStatementElement theAssignee;
+    private final ThemisStatementEntity theAssignee;
 
     /**
      * The assignment modifier.
@@ -51,11 +51,16 @@ public class ThemisStatementAssign
 
     /**
      * Constructor.
+     * @param pAssignee the assignee
+     * @param pModifier the modifier,
+     * @param pExpression the expression
      */
-    ThemisStatementAssign() {
-        theAssignee = null;
-        theModifier = null;
-        theExpression = null;
+    ThemisStatementAssign(final ThemisStatementEntity pAssignee,
+                          final ThemisStatementAssignModifier pModifier,
+                          final ThemisStatementElement pExpression) {
+        theAssignee = pAssignee;
+        theModifier = pModifier;
+        theExpression = pExpression;
     }
 
     @Override
