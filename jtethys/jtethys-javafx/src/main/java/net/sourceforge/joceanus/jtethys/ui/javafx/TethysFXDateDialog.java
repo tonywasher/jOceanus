@@ -20,7 +20,6 @@ import java.time.DayOfWeek;
 import java.time.format.TextStyle;
 import java.util.Calendar;
 import java.util.Locale;
-
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.geometry.Bounds;
@@ -39,6 +38,7 @@ import javafx.scene.layout.Region;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
+
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
 import net.sourceforge.joceanus.jtethys.date.TethysDateConfig;
 import net.sourceforge.joceanus.jtethys.date.TethysDateResource;
@@ -703,9 +703,7 @@ public final class TethysFXDateDialog
             }
 
             /* Loop through remaining columns in row */
-            for (
-
-                    int iDay = 1; iCol < DAYS_IN_WEEK; iCol++, iDay++) {
+            for (int iDay = 1; iCol < DAYS_IN_WEEK; iCol++, iDay++) {
                 /* Access the label */
                 final PanelDay myLabel = theDays[iRow][iCol];
 

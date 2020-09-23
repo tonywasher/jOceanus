@@ -17,7 +17,9 @@
 package net.sourceforge.joceanus.jthemis.analysis;
 
 import java.util.ArrayDeque;
+import java.util.Collections;
 import java.util.Deque;
+import java.util.Iterator;
 
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
@@ -105,6 +107,13 @@ public class ThemisAnalysisCatch
      */
     public ThemisAnalysisCatch getCatch() {
         return theCatch;
+    }
+
+    @Override
+    public Iterator<ThemisAnalysisContainer> containerIterator() {
+        return theCatch == null
+                ? Collections.emptyIterator()
+                : Collections.singleton((ThemisAnalysisContainer) theCatch).iterator();
     }
 
     @Override

@@ -116,7 +116,7 @@ public class ThemisAnalysisAnnotation
         ThemisAnalysisAnnotationRef(final ThemisAnalysisParser pParser,
                                     final ThemisAnalysisLine pLine) throws OceanusException {
             pLine.stripStartChar(ThemisAnalysisChar.ANNOTATION);
-            theAnnotation = pParser.parseDataType(pLine);
+            theAnnotation = ThemisAnalysisParser.parseDataType(pParser.getDataMap(), pLine);
         }
 
         @Override

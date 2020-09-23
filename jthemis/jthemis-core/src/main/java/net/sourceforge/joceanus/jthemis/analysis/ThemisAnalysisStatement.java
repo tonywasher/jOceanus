@@ -17,14 +17,27 @@
 package net.sourceforge.joceanus.jthemis.analysis;
 
 import java.util.Deque;
+import java.util.Iterator;
 
 import net.sourceforge.joceanus.jtethys.OceanusException;
+import net.sourceforge.joceanus.jthemis.ThemisDataException;
 
 /**
  * Statements.
  */
 public class ThemisAnalysisStatement
     implements ThemisAnalysisProcessed {
+    /**
+     * StatementHolder interface.
+     */
+    public interface ThemisAnalysisStatementHolder {
+        /**
+         * Obtain statement iterator.
+         * @return the iterator
+         */
+        Iterator<ThemisAnalysisStatement> statementIterator();
+    }
+
     /**
      * The control.
      */
@@ -33,7 +46,7 @@ public class ThemisAnalysisStatement
     /**
      * The line.
      */
-    private final Deque<ThemisAnalysisElement> theParameters;
+    private final ThemisAnalysisStack theParameters;
 
     /**
      * Constructor.
@@ -56,9 +69,48 @@ public class ThemisAnalysisStatement
     ThemisAnalysisStatement(final ThemisAnalysisParser pParser,
                             final ThemisAnalysisKeyWord pControl,
                             final ThemisAnalysisLine pLine) throws OceanusException {
-        /* Store parameters */
+        this(pControl, ThemisAnalysisBuilder.parseTrailers(pParser, pLine));
+        checkSeparator();
+    }
+
+    /**
+     * Constructor.
+     * @param pParams the parameters
+     */
+    ThemisAnalysisStatement(final Deque<ThemisAnalysisElement> pParams) {
+        this(null, pParams);
+    }
+
+    /**
+     * Constructor.
+     * @param pControl the control
+     * @param pParams the parameters
+     */
+    ThemisAnalysisStatement(final ThemisAnalysisKeyWord pControl,
+                            final Deque<ThemisAnalysisElement> pParams) {
         theControl = pControl;
-        theParameters = ThemisAnalysisBuilder.parseTrailers(pParser, pLine);
+        theParameters = new ThemisAnalysisStack(pParams);
+    }
+
+    /**
+     * Constructor.
+     * @param pStack the stack
+     */
+    ThemisAnalysisStatement(final ThemisAnalysisStack pStack) {
+        theControl = null;
+        theParameters = pStack;
+    }
+
+    /**
+     * Test for separator.
+     * @throws OceanusException on error
+     */
+    void checkSeparator() throws OceanusException {
+        final ThemisAnalysisScanner myScanner = new ThemisAnalysisScanner(theParameters);
+        final boolean isSep = myScanner.checkForSeparator(ThemisAnalysisChar.COMMA);
+        if (isSep) {
+            throw new ThemisDataException("Multi-statement");
+        }
     }
 
     @Override
@@ -66,9 +118,17 @@ public class ThemisAnalysisStatement
         return theParameters.size();
     }
 
+    /**
+     * Are there null parameters?
+     * @return true/false
+     */
+    public boolean nullParameters() {
+        return theParameters.isEmpty();
+    }
+
     @Override
     public String toString() {
-        final String myParms = ThemisAnalysisBuilder.formatLines(theParameters);
+        final String myParms = theParameters.toString();
         return theControl == null ? myParms : theControl + " " + myParms;
     }
 }

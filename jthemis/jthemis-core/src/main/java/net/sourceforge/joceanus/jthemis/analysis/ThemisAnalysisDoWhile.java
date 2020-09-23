@@ -17,20 +17,23 @@
 package net.sourceforge.joceanus.jthemis.analysis;
 
 import java.util.ArrayDeque;
+import java.util.Collections;
 import java.util.Deque;
+import java.util.Iterator;
 
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jthemis.analysis.ThemisAnalysisContainer.ThemisAnalysisAdoptable;
+import net.sourceforge.joceanus.jthemis.analysis.ThemisAnalysisStatement.ThemisAnalysisStatementHolder;
 
 /**
  * DoWhile construct.
  */
 public class ThemisAnalysisDoWhile
-        implements ThemisAnalysisContainer, ThemisAnalysisAdoptable {
+        implements ThemisAnalysisContainer, ThemisAnalysisAdoptable, ThemisAnalysisStatementHolder {
     /**
-     * The trailers.
+     * The condition.
      */
-    private final Deque<ThemisAnalysisElement> theTrailers;
+    private final ThemisAnalysisStatement theCondition;
 
     /**
      * The contents.
@@ -63,7 +66,7 @@ public class ThemisAnalysisDoWhile
         /* Parse trailers */
         final ThemisAnalysisLine myLine = (ThemisAnalysisLine) pParser.popNextLine();
         myLine.stripStartSequence(ThemisAnalysisKeyWord.WHILE.toString());
-        theTrailers = ThemisAnalysisBuilder.parseTrailers(pParser, myLine);
+        theCondition = new ThemisAnalysisStatement(pParser, myLine);
 
         /* Create a parser */
         theContents = new ArrayDeque<>();
@@ -77,6 +80,11 @@ public class ThemisAnalysisDoWhile
     @Override
     public Deque<ThemisAnalysisElement> getContents() {
         return theContents;
+    }
+
+    @Override
+    public Iterator<ThemisAnalysisStatement> statementIterator() {
+        return Collections.singleton(theCondition).iterator();
     }
 
     @Override
@@ -101,7 +109,7 @@ public class ThemisAnalysisDoWhile
      */
     public int calculateNumLines(final int pBaseCount) {
         /* Add 1+ line(s) for the while trailers  */
-        final int myNumLines = pBaseCount + Math.max(theTrailers.size() - 1, 1);
+        final int myNumLines = pBaseCount + Math.max(theCondition.getNumLines() - 1, 1);
 
         /* Add one for the clause terminator */
         return myNumLines + 1;
@@ -109,6 +117,6 @@ public class ThemisAnalysisDoWhile
 
     @Override
     public String toString() {
-        return ThemisAnalysisBuilder.formatLines(theTrailers);
+        return theCondition.toString();
     }
 }

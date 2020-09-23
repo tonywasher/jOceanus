@@ -19,6 +19,7 @@ package net.sourceforge.joceanus.jmetis.viewer;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import net.sourceforge.joceanus.jmetis.data.MetisDataDelta;
 import net.sourceforge.joceanus.jmetis.data.MetisDataFieldValue;
@@ -456,7 +457,7 @@ public class MetisViewerFormatter {
             while (myIterator.hasNext()
                    && (myCount-- > 0)) {
                 /* Access the key and value */
-                final Map.Entry<?, ?> myEntry = Map.Entry.class.cast(myIterator.next());
+                final Entry<?, ?> myEntry = Map.Entry.class.cast(myIterator.next());
 
                 /* Format the row */
                 theBuilder.newTableRow();

@@ -24,6 +24,7 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import org.bouncycastle.asn1.x500.X500Name;
 
@@ -578,7 +579,7 @@ public class GordianCoreKeyStore
     @Override
     public String getCertificateAlias(final GordianCertificate pCertificate) {
         /* Loop through the alias entries */
-        for (Map.Entry<String, GordianCoreKeyStoreEntry> myRecord : theAliases.entrySet()) {
+        for (Entry<String, GordianCoreKeyStoreEntry> myRecord : theAliases.entrySet()) {
             /* Check for match on certificate entry */
             final GordianKeyStoreEntry myEntry = myRecord.getValue();
             if (myEntry instanceof GordianKeyStoreCertificateHolder

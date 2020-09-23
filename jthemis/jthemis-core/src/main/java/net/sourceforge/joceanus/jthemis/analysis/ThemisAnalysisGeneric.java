@@ -127,6 +127,7 @@ public interface ThemisAnalysisGeneric {
             /* Create the list */
             theBase = pBase;
             theReferences = new ArrayList<>();
+            final ThemisAnalysisDataMap myDataMap = pParser.getDataMap();
 
             /* Take a copy of the buffer */
             final ThemisAnalysisLine myLine = new ThemisAnalysisLine(theBase.getLine());
@@ -158,13 +159,13 @@ public interface ThemisAnalysisGeneric {
                         || myNext.equals(ThemisAnalysisKeyWord.SUPER.getKeyWord())) {
                         /* Access data type */
                         myLine.stripNextToken();
-                        ThemisAnalysisReference myRef = pParser.parseDataType(myLine);
+                        ThemisAnalysisReference myRef = ThemisAnalysisParser.parseDataType(myDataMap, myLine);
                         myRefs.add(myRef);
 
                         /* Loop for additional extends */
                         while (myLine.getLength() > 0 && myLine.startsWithChar(ThemisAnalysisChar.AND)) {
                             myLine.stripStartChar(ThemisAnalysisChar.AND);
-                            myRef = pParser.parseDataType(myLine);
+                            myRef = ThemisAnalysisParser.parseDataType(myDataMap, myLine);
                             myRefs.add(myRef);
                         }
                     }
@@ -174,10 +175,7 @@ public interface ThemisAnalysisGeneric {
 
                     /* else handle standard generic */
                 } else {
-                    final ThemisAnalysisReference myReference = pParser.parseDataType(myLine);
-                    if (myReference == null) {
-                        throw new ThemisDataException("Illegal generic parameter");
-                    }
+                    final ThemisAnalysisReference myReference = ThemisAnalysisParser.parseDataType(myDataMap, myLine);
                     myReference.resolveGeneric(pParser);
                     theReferences.add(myReference);
                 }
@@ -224,6 +222,7 @@ public interface ThemisAnalysisGeneric {
             /* Create the list */
             theBase = pBase;
             theVariables = new ArrayList<>();
+            final ThemisAnalysisDataMap myDataMap = pParser.getDataMap();
 
             /* Take a copy of the buffer */
             final ThemisAnalysisLine myLine = new ThemisAnalysisLine(theBase.getLine());
@@ -250,13 +249,13 @@ public interface ThemisAnalysisGeneric {
                 if (myNext.equals(ThemisAnalysisKeyWord.EXTENDS.getKeyWord())) {
                     /* Access data type */
                     myLine.stripNextToken();
-                    ThemisAnalysisReference myRef = pParser.parseDataType(myLine);
+                    ThemisAnalysisReference myRef = ThemisAnalysisParser.parseDataType(myDataMap, myLine);
                     myRefs.add(myRef);
 
                     /* Loop for additional extends */
                     while (myLine.getLength() > 0 && myLine.startsWithChar(ThemisAnalysisChar.AND)) {
                         myLine.stripStartChar(ThemisAnalysisChar.AND);
-                        myRef = pParser.parseDataType(myLine);
+                        myRef = ThemisAnalysisParser.parseDataType(myDataMap, myLine);
                         myRefs.add(myRef);
                     }
                 }

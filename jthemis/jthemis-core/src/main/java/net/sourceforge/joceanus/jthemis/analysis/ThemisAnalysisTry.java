@@ -17,21 +17,22 @@
 package net.sourceforge.joceanus.jthemis.analysis;
 
 import java.util.ArrayDeque;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Deque;
+import java.util.Iterator;
+import java.util.List;
 
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jthemis.analysis.ThemisAnalysisContainer.ThemisAnalysisAdoptable;
+import net.sourceforge.joceanus.jthemis.analysis.ThemisAnalysisIf.ThemisIteratorChain;
+import net.sourceforge.joceanus.jthemis.analysis.ThemisAnalysisStatement.ThemisAnalysisStatementHolder;
 
 /**
  * Try construct.
  */
 public class ThemisAnalysisTry
-        implements ThemisAnalysisContainer, ThemisAnalysisAdoptable {
-    /**
-     * The headers.
-     */
-    private final Deque<ThemisAnalysisElement> theHeaders;
-
+        implements ThemisAnalysisContainer, ThemisAnalysisAdoptable, ThemisAnalysisStatementHolder {
     /**
      * The contents.
      */
@@ -46,6 +47,16 @@ public class ThemisAnalysisTry
      * The finally clause.
      */
     private final ThemisAnalysisFinally theFinally;
+
+    /**
+     * The headers.
+     */
+    private final ThemisAnalysisStack theHeaders;
+
+    /**
+     * The fields.
+     */
+    private final List<ThemisAnalysisField> theFields;
 
     /**
      * The number of lines.
@@ -69,7 +80,7 @@ public class ThemisAnalysisTry
         theParent = pParser.getParent();
 
         /* Create the arrays */
-        theHeaders = ThemisAnalysisBuilder.parseHeaders(pParser, pLine);
+        final Deque<ThemisAnalysisElement> myHeaders = ThemisAnalysisBuilder.parseHeaders(pParser, pLine);
         final Deque<ThemisAnalysisElement> myLines = ThemisAnalysisBuilder.processBody(pParser);
         final int myBaseLines = myLines.size();
 
@@ -85,7 +96,11 @@ public class ThemisAnalysisTry
         myParser.processLines();
 
         /* Calculate the number of lines */
-        theNumLines = calculateNumLines(myBaseLines);
+        theNumLines = calculateNumLines(myBaseLines, myHeaders);
+
+        /* Parse the headers */
+        theFields = new ArrayList<>();
+        theHeaders = new ThemisAnalysisStack(myHeaders);
     }
 
     @Override
@@ -103,6 +118,19 @@ public class ThemisAnalysisTry
         /* Process the finally clause if required */
         if (theFinally != null) {
             theFinally.postProcessLines();
+        }
+
+        /* If the headers are non empty */
+        if (!theHeaders.isEmpty()) {
+            /* Strip out parentheses and create scanner */
+            final ThemisAnalysisStack myResources = theHeaders.extractParentheses();
+            final ThemisAnalysisScanner myScanner = new ThemisAnalysisScanner(myResources);
+
+            /* Create field for each resource */
+            while (myResources.hasLines()) {
+                final Deque<ThemisAnalysisElement> myResource = myScanner.scanForSeparator(ThemisAnalysisChar.SEMICOLON);
+                theFields.add(new ThemisAnalysisField(getDataMap(), new ThemisAnalysisStack(myResource)));
+            }
         }
     }
 
@@ -140,11 +168,13 @@ public class ThemisAnalysisTry
     /**
      * Calculate the number of lines for the construct.
      * @param pBaseCount the baseCount
+     * @param pHeaders the headers
      * @return the number of lines
      */
-    public int calculateNumLines(final int pBaseCount) {
+    public int calculateNumLines(final int pBaseCount,
+                                 final Deque<ThemisAnalysisElement> pHeaders) {
         /* Add 1+ line(s) for the if headers  */
-        int myNumLines = pBaseCount + Math.max(theHeaders.size() - 1, 1);
+        int myNumLines = pBaseCount + Math.max(pHeaders.size() - 1, 1);
 
         /* Add lines for additional catch clauses */
         if (theCatch != null) {
@@ -161,7 +191,41 @@ public class ThemisAnalysisTry
     }
 
     @Override
+    public Iterator<ThemisAnalysisStatement> statementIterator() {
+        return ThemisAnalysisField.statementIteratorForFields(theFields);
+    }
+
+    @Override
+    public Iterator<ThemisAnalysisContainer> containerIterator() {
+        final Iterator<ThemisAnalysisContainer> myCatch = theCatch == null
+                ? Collections.emptyIterator()
+                : Collections.singleton((ThemisAnalysisContainer) theCatch).iterator();
+        final Iterator<ThemisAnalysisContainer> myFinally = theFinally == null
+                ? Collections.emptyIterator()
+                : Collections.singleton((ThemisAnalysisContainer) theFinally).iterator();
+        return new ThemisIteratorChain<>(myCatch, myFinally);
+    }
+
+    @Override
     public String toString() {
-        return ThemisAnalysisBuilder.formatLines(theHeaders);
+        /* Start parameters */
+        final StringBuilder myBuilder = new StringBuilder();
+
+        /* Build parameters */
+        boolean bFirst = true;
+        for (ThemisAnalysisField myField : theFields) {
+            /* Handle separators */
+            if (!bFirst) {
+                myBuilder.append(ThemisAnalysisChar.LF);
+            } else {
+                bFirst = false;
+            }
+
+            /* Add parameter */
+            myBuilder.append(myField);
+        }
+
+        /* Return the string */
+        return myBuilder.toString();
     }
 }

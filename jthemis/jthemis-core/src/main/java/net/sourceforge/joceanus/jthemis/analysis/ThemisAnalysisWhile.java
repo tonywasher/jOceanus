@@ -17,20 +17,23 @@
 package net.sourceforge.joceanus.jthemis.analysis;
 
 import java.util.ArrayDeque;
+import java.util.Collections;
 import java.util.Deque;
+import java.util.Iterator;
 
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jthemis.analysis.ThemisAnalysisContainer.ThemisAnalysisAdoptable;
+import net.sourceforge.joceanus.jthemis.analysis.ThemisAnalysisStatement.ThemisAnalysisStatementHolder;
 
 /**
  * While construct.
  */
 public class ThemisAnalysisWhile
-        implements ThemisAnalysisContainer, ThemisAnalysisAdoptable {
+        implements ThemisAnalysisContainer, ThemisAnalysisAdoptable, ThemisAnalysisStatementHolder {
     /**
-     * The headers.
+     * The condition.
      */
-    private final Deque<ThemisAnalysisElement> theHeaders;
+    private final ThemisAnalysisStatement theCondition;
 
     /**
      * The contents.
@@ -58,8 +61,11 @@ public class ThemisAnalysisWhile
         /* Access details from parser */
         theParent = pParser.getParent();
 
-        /* Create the arrays */
-        theHeaders = ThemisAnalysisBuilder.parseHeaders(pParser, pLine);
+        /* Parse the condition */
+        final Deque<ThemisAnalysisElement> myHeaders = ThemisAnalysisBuilder.parseHeaders(pParser, pLine);
+        theCondition = new ThemisAnalysisStatement(myHeaders);
+
+        /* Parse the body */
         final Deque<ThemisAnalysisElement> myLines = ThemisAnalysisBuilder.processBody(pParser);
         final int myBaseLines = myLines.size();
 
@@ -75,6 +81,11 @@ public class ThemisAnalysisWhile
     @Override
     public Deque<ThemisAnalysisElement> getContents() {
         return theContents;
+    }
+
+    @Override
+    public Iterator<ThemisAnalysisStatement> statementIterator() {
+        return Collections.singleton(theCondition).iterator();
     }
 
     @Override
@@ -99,7 +110,7 @@ public class ThemisAnalysisWhile
      */
     public int calculateNumLines(final int pBaseCount) {
         /* Add 1+ line(s) for the while headers  */
-        final int myNumLines = pBaseCount + Math.max(theHeaders.size() - 1, 1);
+        final int myNumLines = pBaseCount + Math.max(theCondition.getNumLines() - 1, 1);
 
         /* Add one for the clause terminator */
         return myNumLines + 1;
@@ -107,6 +118,6 @@ public class ThemisAnalysisWhile
 
     @Override
     public String toString() {
-        return ThemisAnalysisBuilder.formatLines(theHeaders);
+        return theCondition.toString();
     }
 }

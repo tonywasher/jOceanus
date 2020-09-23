@@ -17,24 +17,28 @@
 package net.sourceforge.joceanus.jthemis.analysis;
 
 import java.util.ArrayDeque;
+import java.util.Collections;
 import java.util.Deque;
+import java.util.Iterator;
 
 import net.sourceforge.joceanus.jtethys.OceanusException;
+import net.sourceforge.joceanus.jthemis.analysis.ThemisAnalysisIf.ThemisIteratorChain;
+import net.sourceforge.joceanus.jthemis.analysis.ThemisAnalysisStatement.ThemisAnalysisStatementHolder;
 
 /**
  * Else construct.
  */
 public class ThemisAnalysisElse
-        implements ThemisAnalysisContainer {
+        implements ThemisAnalysisContainer, ThemisAnalysisStatementHolder {
     /**
      * The parent.
      */
     private final ThemisAnalysisContainer theParent;
 
     /**
-     * The headers.
+     * The condition.
      */
-    private final Deque<ThemisAnalysisElement> theHeaders;
+    private final ThemisAnalysisStatement theCondition;
 
     /**
      * The contents.
@@ -64,8 +68,14 @@ public class ThemisAnalysisElse
         /* Record the parent */
         theParent = pOwner;
 
-        /* Create the arrays */
-        theHeaders = ThemisAnalysisBuilder.parseHeaders(pParser, pLine);
+        /* Strip any if token */
+        pLine.stripStartSequence(ThemisAnalysisKeyWord.IF.getKeyWord());
+
+        /* Parse the condition */
+        final Deque<ThemisAnalysisElement> myHeaders = ThemisAnalysisBuilder.parseHeaders(pParser, pLine);
+        theCondition = new ThemisAnalysisStatement(myHeaders);
+
+        /* Parse the body */
         final Deque<ThemisAnalysisElement> myLines = ThemisAnalysisBuilder.processBody(pParser);
         final int myBaseLines = myLines.size();
 
@@ -84,6 +94,21 @@ public class ThemisAnalysisElse
     @Override
     public Deque<ThemisAnalysisElement> getContents() {
         return theContents;
+    }
+
+    @Override
+    public Iterator<ThemisAnalysisStatement> statementIterator() {
+        final Iterator<ThemisAnalysisStatement> myLocal = theCondition.nullParameters()
+                ? Collections.emptyIterator()
+                : Collections.singleton(theCondition).iterator();
+        return theElse == null ? myLocal : new ThemisIteratorChain<>(myLocal, theElse.statementIterator());
+    }
+
+    @Override
+    public Iterator<ThemisAnalysisContainer> containerIterator() {
+        return theElse == null
+                ? Collections.emptyIterator()
+                : Collections.singleton((ThemisAnalysisContainer) theElse).iterator();
     }
 
     @Override
@@ -119,7 +144,7 @@ public class ThemisAnalysisElse
      */
     public int calculateNumLines(final int pBaseCount) {
         /* Add 1+ line(s) for the else headers  */
-        int myNumLines = pBaseCount + Math.max(theHeaders.size() - 1, 1);
+        int myNumLines = pBaseCount + Math.max(theCondition.getNumLines() - 1, 1);
 
         /* Add lines for additional else clauses */
         if (theElse != null) {
@@ -132,6 +157,6 @@ public class ThemisAnalysisElse
 
     @Override
     public String toString() {
-        return ThemisAnalysisBuilder.formatLines(theHeaders);
+        return theCondition.toString();
     }
 }

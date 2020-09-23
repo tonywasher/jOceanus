@@ -17,21 +17,24 @@
 package net.sourceforge.joceanus.jthemis.analysis;
 
 import java.util.ArrayDeque;
+import java.util.Collections;
 import java.util.Deque;
+import java.util.Iterator;
 
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jthemis.ThemisDataException;
 import net.sourceforge.joceanus.jthemis.analysis.ThemisAnalysisContainer.ThemisAnalysisAdoptable;
+import net.sourceforge.joceanus.jthemis.analysis.ThemisAnalysisStatement.ThemisAnalysisStatementHolder;
 
 /**
  * Switch construct.
  */
 public class ThemisAnalysisSwitch
-        implements ThemisAnalysisContainer, ThemisAnalysisAdoptable {
+        implements ThemisAnalysisContainer, ThemisAnalysisAdoptable, ThemisAnalysisStatementHolder {
     /**
-     * The headers.
+     * The switch value.
      */
-    private final Deque<ThemisAnalysisElement> theHeaders;
+    private final ThemisAnalysisStatement theSwitch;
 
     /**
      * The contents.
@@ -59,8 +62,11 @@ public class ThemisAnalysisSwitch
         /* Access details from parser */
         theParent = pParser.getParent();
 
-        /* Create the arrays */
-        theHeaders = ThemisAnalysisBuilder.parseHeaders(pParser, pLine);
+        /* Parse the switch */
+        final Deque<ThemisAnalysisElement> myHeaders = ThemisAnalysisBuilder.parseHeaders(pParser, pLine);
+        theSwitch = new ThemisAnalysisStatement(myHeaders);
+
+        /* Parse the body */
         final Deque<ThemisAnalysisElement> myLines = ThemisAnalysisBuilder.processBody(pParser);
         final int myBaseLines = myLines.size();
 
@@ -106,6 +112,11 @@ public class ThemisAnalysisSwitch
     }
 
     @Override
+    public Iterator<ThemisAnalysisStatement> statementIterator() {
+        return Collections.singleton(theSwitch).iterator();
+    }
+
+    @Override
     public ThemisAnalysisContainer getParent() {
         return theParent;
     }
@@ -127,7 +138,7 @@ public class ThemisAnalysisSwitch
      */
     public int calculateNumLines(final int pBaseCount) {
         /* Add 1+ line(s) for the switch headers  */
-        final int myNumLines = pBaseCount + Math.max(theHeaders.size() - 1, 1);
+        final int myNumLines = pBaseCount + Math.max(theSwitch.getNumLines() - 1, 1);
 
         /* Add one for the clause terminator */
         return myNumLines + 1;
@@ -135,6 +146,6 @@ public class ThemisAnalysisSwitch
 
     @Override
     public String toString() {
-        return ThemisAnalysisBuilder.formatLines(theHeaders);
+        return theSwitch.toString();
     }
 }

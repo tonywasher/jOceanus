@@ -44,7 +44,7 @@ public final class ThemisAnalysisChar {
     /**
      * Statement separator.
      */
-    static final char COMMA = ',';
+    public static final char COMMA = ',';
 
     /**
      * Statement terminator.
@@ -54,7 +54,7 @@ public final class ThemisAnalysisChar {
     /**
      * Period separator.
      */
-    static final char PERIOD = '.';
+    public static final char PERIOD = '.';
 
     /**
      * The annotation character.
@@ -75,6 +75,11 @@ public final class ThemisAnalysisChar {
      * The escape character.
      */
     static final char ESCAPE = '\\';
+
+    /**
+     * The equals character.
+     */
+    public static final char EQUAL = '=';
 
     /**
      * The single quote character.
@@ -99,12 +104,12 @@ public final class ThemisAnalysisChar {
     /**
      * Open parenthesis.
      */
-    static final char PARENTHESIS_OPEN = '(';
+    public static final char PARENTHESIS_OPEN = '(';
 
     /**
      * Close parenthesis.
      */
-    static final char PARENTHESIS_CLOSE = ')';
+    public static final char PARENTHESIS_CLOSE = ')';
 
     /**
      * Open generic.
@@ -119,17 +124,17 @@ public final class ThemisAnalysisChar {
     /**
      * Start array.
      */
-    static final char ARRAY_OPEN = '[';
+    public static final char ARRAY_OPEN = '[';
 
     /**
      * End array.
      */
-    static final char ARRAY_CLOSE = ']';
+    public static final char ARRAY_CLOSE = ']';
 
     /**
      * Blank.
      */
-    static final char BLANK = ' ';
+    public static final char BLANK = ' ';
 
     /**
      * QuestionMark.
