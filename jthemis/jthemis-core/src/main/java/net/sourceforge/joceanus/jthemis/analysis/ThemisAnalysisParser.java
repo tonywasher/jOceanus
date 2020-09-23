@@ -550,16 +550,18 @@ public class ThemisAnalysisParser
         pLine.stripStartSequence(myToken);
 
         /* Return the reference */
-        return buildReference(pLine, myType);
+        return buildReference(theDataMap, pLine, myType);
     }
 
     /**
      * Parse a dataType.
+     * @param pDataMap the dataMap
      * @param pLine the line
      * @return the dataType or null
      * @throws OceanusException on error
      */
-    ThemisAnalysisReference parseDataType(final ThemisAnalysisLine pLine) throws OceanusException {
+    static ThemisAnalysisReference parseDataType(final ThemisAnalysisDataMap pDataMap,
+                                                 final ThemisAnalysisLine pLine) throws OceanusException {
         /* Cannot be started by a keyWord */
         String myToken = pLine.peekNextToken();
         if (KEYWORDS.get(myToken) != null) {
@@ -573,26 +575,28 @@ public class ThemisAnalysisParser
         }
 
         /* Look for a valid dataType */
-        ThemisAnalysisDataType myType = theDataMap.lookUpDataType(myToken);
+        ThemisAnalysisDataType myType = pDataMap.lookUpDataType(myToken);
         if (myType == null) {
             /* Declare the unrecognised dataType */
-            myType = theDataMap.declareUnknown(myToken);
+            myType = pDataMap.declareUnknown(myToken);
         }
         pLine.stripStartSequence(myToken);
 
         /* Return the reference */
-        return buildReference(pLine, myType);
+        return buildReference(pDataMap, pLine, myType);
     }
 
     /**
      * Create the reference.
+     * @param pDataMap the dataMap
      * @param pLine the line
      * @param pType the dataType
      * @return the dataType or null
      * @throws OceanusException on error
      */
-    private ThemisAnalysisReference buildReference(final ThemisAnalysisLine pLine,
-                                                   final ThemisAnalysisDataType pType) throws OceanusException {
+    private static ThemisAnalysisReference buildReference(final ThemisAnalysisDataMap pDataMap,
+                                                          final ThemisAnalysisLine pLine,
+                                                          final ThemisAnalysisDataType pType) throws OceanusException {
         /* Access any generic/array detail */
         final ThemisAnalysisGeneric myGeneric = ThemisAnalysisGeneric.isGeneric(pLine)
                                                 ? new ThemisAnalysisGenericBase(pLine)
@@ -603,7 +607,7 @@ public class ThemisAnalysisParser
 
         /* Return the reference */
         final ThemisAnalysisReference myRef = new ThemisAnalysisReference(pType, myGeneric, myArray);
-        theDataMap.declareReference(myRef);
+        pDataMap.declareReference(myRef);
         return myRef;
     }
 
@@ -685,10 +689,7 @@ public class ThemisAnalysisParser
                 myHeader.stripNextToken();
             } else {
                 /* Process the ancestor */
-                final ThemisAnalysisReference myReference = parseDataType(myHeader);
-                if (myReference == null) {
-                    throw new ThemisDataException("Illegal implements/extends clause");
-                }
+                final ThemisAnalysisReference myReference = parseDataType(theDataMap, myHeader);
                 myReference.resolveGeneric(this);
                 myAncestors.add(myReference);
             }
@@ -724,10 +725,7 @@ public class ThemisAnalysisParser
                 pParams.stripNextToken();
             } else {
                 /* Process the parameter */
-                final ThemisAnalysisReference myReference = parseDataType(pParams);
-                if (myReference == null) {
-                    throw new ThemisDataException("Illegal parameter");
-                }
+                final ThemisAnalysisReference myReference = parseDataType(theDataMap, pParams);
                 myReference.resolveGeneric(this);
                 final String myVar = pParams.stripNextToken();
                 myParams.put(myVar, myReference);

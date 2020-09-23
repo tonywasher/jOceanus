@@ -64,7 +64,7 @@ public class ThemisAnalysisParameters {
         final String myToken = myHeader.peekNextToken();
         if (myToken.equals(ThemisAnalysisKeyWord.THROWS.getKeyWord())) {
             myHeader.stripNextToken();
-            theThrown = pParser.parseDataType(myHeader);
+            theThrown = ThemisAnalysisParser.parseDataType(pParser.getDataMap(), myHeader);
         } else {
             theThrown = null;
         }

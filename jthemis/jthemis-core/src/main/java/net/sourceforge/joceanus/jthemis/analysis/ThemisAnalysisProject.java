@@ -32,6 +32,11 @@ import net.sourceforge.joceanus.jthemis.dsm.ThemisDSMMaven;
  */
 public class ThemisAnalysisProject {
     /**
+     * Consolidation Pass error.
+     */
+    private static final String CONSOLIDATION_ERROR = "Failed on consolidation Pass";
+
+    /**
      * The module name.
      */
     private final String theName;
@@ -154,7 +159,7 @@ public class ThemisAnalysisProject {
             /* Handle exceptions */
         } catch (OceanusException e) {
             /* Save Exception */
-            theError = new ThemisIOException("Failed on consolidation pass", e);
+            theError = new ThemisIOException(CONSOLIDATION_ERROR, e);
             return;
         }
 
@@ -200,7 +205,7 @@ public class ThemisAnalysisProject {
             /* Handle exceptions */
         } catch (OceanusException e) {
             /* Save Exception */
-            theError = new ThemisIOException("Failed on consolidation pass", e);
+            theError = new ThemisIOException(CONSOLIDATION_ERROR, e);
         }
     }
 
@@ -219,7 +224,7 @@ public class ThemisAnalysisProject {
             /* Handle exceptions */
         } catch (OceanusException e) {
             /* Save Exception */
-            theError = new ThemisIOException("Failed on consolidation pass", e);
+            theError = new ThemisIOException(CONSOLIDATION_ERROR, e);
         }
     }
 

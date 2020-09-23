@@ -74,7 +74,7 @@ public class ThemisStatementAssign
             if (theModifier != null) {
                 myBuilder.append(theModifier);
             }
-            myBuilder.append(ThemisAnalysisChar.EQUALS);
+            myBuilder.append(ThemisAnalysisChar.EQUAL);
             myBuilder.append(ThemisAnalysisChar.BLANK);
             myBuilder.append(theExpression);
             theFormat = myBuilder.toString();

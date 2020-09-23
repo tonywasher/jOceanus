@@ -156,7 +156,7 @@ public class JcaCipherFactory
      * @return the name of the algorithm
      * @throws OceanusException on error
      */
-    private <T extends GordianKeySpec> String getKeyAlgorithm(final T pKeySpec) throws OceanusException {
+    private static <T extends GordianKeySpec> String getKeyAlgorithm(final T pKeySpec) throws OceanusException {
         if (pKeySpec instanceof GordianStreamKeySpec) {
             return getStreamKeyAlgorithm((GordianStreamKeySpec) pKeySpec);
         }
@@ -200,13 +200,12 @@ public class JcaCipherFactory
      * @throws OceanusException on error
      */
     private static Cipher getJavaCipher(final GordianSymCipherSpec pCipherSpec) throws OceanusException {
-        final StringBuilder myBuilder = new StringBuilder();
-        myBuilder.append(getSymKeyAlgorithm(pCipherSpec.getKeyType()))
-                .append(ALGO_SEP)
-                .append(getCipherModeAlgorithm(pCipherSpec))
-                .append(ALGO_SEP)
-                .append(getPaddingAlgorithm(pCipherSpec.getPadding()));
-        return getJavaCipher(myBuilder.toString());
+        final String myAlgo = getSymKeyAlgorithm(pCipherSpec.getKeyType())
+                + ALGO_SEP
+                + getCipherModeAlgorithm(pCipherSpec)
+                + ALGO_SEP
+                + getPaddingAlgorithm(pCipherSpec.getPadding());
+        return getJavaCipher(myAlgo);
     }
 
     /**
@@ -215,7 +214,7 @@ public class JcaCipherFactory
      * @return the Cipher
      * @throws OceanusException on error
      */
-    private Cipher getJavaCipher(final GordianStreamCipherSpec pCipherSpec) throws OceanusException {
+    private static Cipher getJavaCipher(final GordianStreamCipherSpec pCipherSpec) throws OceanusException {
         final GordianStreamKeySpec myKeySpec = pCipherSpec.getKeyType();
         String myAlgo = getStreamKeyAlgorithm(myKeySpec);
         if (pCipherSpec.isAAD()

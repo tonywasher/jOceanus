@@ -38,6 +38,11 @@ public class ThemisAnalysisFor
     private final Deque<ThemisAnalysisElement> theContents;
 
     /**
+     * The headers.
+     */
+    private final ThemisAnalysisStack theHeaders;
+
+    /**
      * The fields.
      */
     private final List<ThemisAnalysisField> theFields;
@@ -84,8 +89,7 @@ public class ThemisAnalysisFor
         /* Parse the headers */
         theFields = new ArrayList<>();
         theStatements = new ArrayList<>();
-        final ThemisAnalysisStack myStack = new ThemisAnalysisStack(myHeaders);
-        parseHeaders(pParser, myStack);
+        theHeaders = new ThemisAnalysisStack(myHeaders);
     }
 
     @Override
@@ -109,7 +113,8 @@ public class ThemisAnalysisFor
     }
 
     @Override
-    public void postProcessExtras() {
+    public void postProcessExtras() throws OceanusException {
+        parseHeaders();
     }
 
     @Override
@@ -121,14 +126,11 @@ public class ThemisAnalysisFor
 
     /**
      * Parse headers.
-     * @param pParser the parser
-     * @param pHeaders the headers
      * @throws OceanusException on error
      */
-    private void parseHeaders(final ThemisAnalysisParser pParser,
-                              final ThemisAnalysisStack pHeaders) throws OceanusException {
+    private void parseHeaders() throws OceanusException {
         /* Strip parentheses and create scanner */
-        final ThemisAnalysisStack myParts = pHeaders.extractParentheses();
+        final ThemisAnalysisStack myParts = theHeaders.extractParentheses();
         final ThemisAnalysisScanner myScanner = new ThemisAnalysisScanner(myParts);
 
         /* Determine separator */
@@ -149,7 +151,7 @@ public class ThemisAnalysisFor
 
             /* Process as field/statement */
             if (isField) {
-                parseField(pParser, myStack);
+                parseField(myStack);
             } else {
                 parseStatement(myStack);
             }
@@ -159,21 +161,20 @@ public class ThemisAnalysisFor
 
     /**
      * Parse field.
-     * @param pParser the parser
      * @param pField the field
      * @throws OceanusException on error
      */
-    private void parseField(final ThemisAnalysisParser pParser,
-                            final ThemisAnalysisStack pField) throws OceanusException {
+    private void parseField(final ThemisAnalysisStack pField) throws OceanusException {
         /* Create field for each resource */
         final ThemisAnalysisScanner myScanner = new ThemisAnalysisScanner(pField);
-        //ThemisAnalysisField myLast = null;
+        myScanner.skipGenerics();
+        ThemisAnalysisField myLast = null;
         while (pField.hasLines()) {
             final Deque<ThemisAnalysisElement> myResource = myScanner.scanForSeparator(ThemisAnalysisChar.COMMA);
-            //myLast = myLast == null
-            //        ? new ThemisAnalysisField(pParser, new ThemisAnalysisStack(myResource))
-            //        : new ThemisAnalysisField(myLast, new ThemisAnalysisStack(myResource));
-            //theFields.add(myLast);
+            myLast = myLast == null
+                    ? new ThemisAnalysisField(getDataMap(), new ThemisAnalysisStack(myResource))
+                    : new ThemisAnalysisField(myLast, new ThemisAnalysisStack(myResource));
+            theFields.add(myLast);
         }
     }
 

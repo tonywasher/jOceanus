@@ -91,11 +91,10 @@ public class ThemisAnalysisPackage
      * @param pLocation the base location for the package
      * @param pDataMap the dataMap
      * @param pPackage the package name.
-     * @throws OceanusException on error
      */
     private ThemisAnalysisPackage(final File pLocation,
                                   final ThemisAnalysisDataMap pDataMap,
-                                  final String pPackage) throws OceanusException {
+                                  final String pPackage) {
         /* Store package name and dataMap */
         thePackage = pPackage;
         theDataMap = pDataMap;

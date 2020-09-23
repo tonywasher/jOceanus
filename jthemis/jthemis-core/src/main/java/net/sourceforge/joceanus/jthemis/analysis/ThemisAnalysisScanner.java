@@ -70,6 +70,11 @@ public class ThemisAnalysisScanner {
     private boolean maybeComment;
 
     /**
+     * Should we skip generics?
+     */
+    private boolean skipGenerics;
+
+    /**
      * Constructor.
      *
      * @param pSource the source
@@ -77,6 +82,13 @@ public class ThemisAnalysisScanner {
     ThemisAnalysisScanner(final ThemisAnalysisSource pSource) {
         theSource = pSource;
         theResults = new ArrayDeque<>();
+    }
+
+    /**
+     * Set skip generics flag.
+     */
+    void skipGenerics() {
+        skipGenerics = true;
     }
 
     /**
@@ -276,6 +288,11 @@ public class ThemisAnalysisScanner {
         } else if (pChar == ThemisAnalysisChar.BRACE_OPEN) {
             /* Handle the nested sequence */
             handleNestedSequence(ThemisAnalysisChar.BRACE_CLOSE);
+
+            /* If we should skip Generics and this is a genericOpen character */
+        } else if (skipGenerics && pChar == ThemisAnalysisChar.GENERIC_OPEN) {
+            /* Handle the nested sequence */
+            handleNestedSequence(ThemisAnalysisChar.GENERIC_CLOSE);
 
             /* else move to next character */
         } else {

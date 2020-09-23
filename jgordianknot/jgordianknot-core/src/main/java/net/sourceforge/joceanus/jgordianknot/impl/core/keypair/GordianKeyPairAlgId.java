@@ -426,9 +426,6 @@ public class GordianKeyPairAlgId {
          * @return the parameters
          */
         public static DHParameters determineParameters(final AlgorithmIdentifier pId) {
-            /* Access algorithmId */
-            final ASN1ObjectIdentifier myId = pId.getAlgorithm();
-
             /* Access the ElGamalParameter */
             final ElGamalParameter myParams = ElGamalParameter.getInstance(pId.getParameters());
 

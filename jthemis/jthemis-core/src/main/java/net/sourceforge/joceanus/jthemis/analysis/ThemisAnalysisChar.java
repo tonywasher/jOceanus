@@ -79,7 +79,7 @@ public final class ThemisAnalysisChar {
     /**
      * The equals character.
      */
-    public static final char EQUALS = '=';
+    public static final char EQUAL = '=';
 
     /**
      * The single quote character.

@@ -81,7 +81,7 @@ public class ThemisAnalysisField
             /* else we have an initialiser */
         } else {
             /* Strip the equals sign */
-            pLine.stripStartChar(ThemisAnalysisChar.EQUALS);
+            pLine.stripStartChar(ThemisAnalysisChar.EQUAL);
 
             /* Declare as statement */
             theInitial = new ThemisAnalysisStatement(pParser, pLine);
@@ -91,11 +91,11 @@ public class ThemisAnalysisField
 
     /**
      * Constructor.
-     * @param pParser the parser
+     * @param pDataMap the dataMap
      * @param pStack the field stack
      * @throws OceanusException on error
      */
-    ThemisAnalysisField(final ThemisAnalysisParser pParser,
+    ThemisAnalysisField(final ThemisAnalysisDataMap pDataMap,
                         final ThemisAnalysisStack pStack) throws OceanusException {
         /* Determine initial parameters */
         final ThemisAnalysisLine myLine = (ThemisAnalysisLine) pStack.popNextLine();
@@ -112,9 +112,9 @@ public class ThemisAnalysisField
         }
 
         /* Process remaining data */
-        theDataType = pParser.parsePotentialDataType(myLine);
+        theDataType = ThemisAnalysisParser.parseDataType(pDataMap, myLine);
         theName = myLine.stripNextToken();
-        myLine.stripStartChar(ThemisAnalysisChar.EQUALS);
+        myLine.stripStartChar(ThemisAnalysisChar.EQUAL);
         pStack.pushLine(myLine);
         theProperties = myProps;
 
@@ -135,7 +135,7 @@ public class ThemisAnalysisField
         final ThemisAnalysisLine myLine = (ThemisAnalysisLine) pStack.popNextLine();
         theDataType = pPrevious.theDataType;
         theName = myLine.stripNextToken();
-        myLine.stripStartChar(ThemisAnalysisChar.EQUALS);
+        myLine.stripStartChar(ThemisAnalysisChar.EQUAL);
         pStack.pushLine(myLine);
         theProperties = ThemisAnalysisProperties.NULL;
 

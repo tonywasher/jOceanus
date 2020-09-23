@@ -118,9 +118,6 @@ public interface ThemisAnalysisContainer
                 if (myResult != null) {
                     /* Add the element and postProcess any Containers */
                     myContents.add(myResult);
-                    if (myResult instanceof ThemisAnalysisContainer) {
-                        ((ThemisAnalysisContainer) myResult).postProcessLines();
-                    }
 
                     /* else */
                 } else {

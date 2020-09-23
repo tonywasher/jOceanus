@@ -49,6 +49,11 @@ public class ThemisAnalysisTry
     private final ThemisAnalysisFinally theFinally;
 
     /**
+     * The headers.
+     */
+    private final ThemisAnalysisStack theHeaders;
+
+    /**
      * The fields.
      */
     private final List<ThemisAnalysisField> theFields;
@@ -95,18 +100,7 @@ public class ThemisAnalysisTry
 
         /* Parse the headers */
         theFields = new ArrayList<>();
-        final ThemisAnalysisStack myStack = new ThemisAnalysisStack(myHeaders);
-        if (!myStack.isEmpty()) {
-            /* Strip out parentheses and create scanner */
-            final ThemisAnalysisStack myResources = myStack.extractParentheses();
-            final ThemisAnalysisScanner myScanner = new ThemisAnalysisScanner(myResources);
-
-            /* Create field for each resource */
-            while (myResources.hasLines()) {
-                final Deque<ThemisAnalysisElement> myResource = myScanner.scanForSeparator(ThemisAnalysisChar.SEMICOLON);
-                theFields.add(new ThemisAnalysisField(pParser, new ThemisAnalysisStack(myResource)));
-            }
-        }
+        theHeaders = new ThemisAnalysisStack(myHeaders);
     }
 
     @Override
@@ -124,6 +118,19 @@ public class ThemisAnalysisTry
         /* Process the finally clause if required */
         if (theFinally != null) {
             theFinally.postProcessLines();
+        }
+
+        /* If the headers are non empty */
+        if (!theHeaders.isEmpty()) {
+            /* Strip out parentheses and create scanner */
+            final ThemisAnalysisStack myResources = theHeaders.extractParentheses();
+            final ThemisAnalysisScanner myScanner = new ThemisAnalysisScanner(myResources);
+
+            /* Create field for each resource */
+            while (myResources.hasLines()) {
+                final Deque<ThemisAnalysisElement> myResource = myScanner.scanForSeparator(ThemisAnalysisChar.SEMICOLON);
+                theFields.add(new ThemisAnalysisField(getDataMap(), new ThemisAnalysisStack(myResource)));
+            }
         }
     }
 
