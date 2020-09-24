@@ -28,10 +28,10 @@ import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPair;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPairSpec;
 import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySet;
 import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetHash;
-import net.sourceforge.joceanus.jgordianknot.api.keystore.GordianKeyStoreEntry.GordianKeyStoreCertificate;
 import net.sourceforge.joceanus.jgordianknot.api.keystore.GordianKeyStoreEntry.GordianKeyStoreHash;
 import net.sourceforge.joceanus.jgordianknot.api.keystore.GordianKeyStoreEntry.GordianKeyStoreKey;
 import net.sourceforge.joceanus.jgordianknot.api.keystore.GordianKeyStoreEntry.GordianKeyStorePair;
+import net.sourceforge.joceanus.jgordianknot.api.keystore.GordianKeyStoreEntry.GordianKeyStorePairCertificate;
 import net.sourceforge.joceanus.jgordianknot.api.keystore.GordianKeyStoreEntry.GordianKeyStoreSet;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
@@ -91,7 +91,7 @@ public interface GordianKeyStore {
      * @throws OceanusException on error
      */
     void setCertificate(String pAlias,
-                        GordianCertificate pCertificate) throws OceanusException;
+                        GordianKeyPairCertificate pCertificate) throws OceanusException;
 
     /**
      * Set keyPair entry.
@@ -104,7 +104,7 @@ public interface GordianKeyStore {
     void setKeyPair(String pAlias,
                     GordianKeyPair pKeyPair,
                     char[] pPassword,
-                    GordianCertificate[] pCertificateChain) throws OceanusException;
+                    GordianKeyPairCertificate[] pCertificateChain) throws OceanusException;
 
     /**
      * Set key entry.
@@ -197,7 +197,7 @@ public interface GordianKeyStore {
      * @param pAlias the alias
      * @return the keyPair
      */
-    GordianKeyStoreCertificate getCertificate(String pAlias);
+    GordianKeyStorePairCertificate getCertificate(String pAlias);
 
     /**
      * Obtain the keyPair for the alias.
@@ -252,7 +252,7 @@ public interface GordianKeyStore {
      * @param pCertificate the certificate
      * @return the Alias if it exists
      */
-    String getCertificateAlias(GordianCertificate pCertificate);
+    String getCertificateAlias(GordianKeyPairCertificate pCertificate);
 
     /**
      * Create a new keyPair with root certificate.

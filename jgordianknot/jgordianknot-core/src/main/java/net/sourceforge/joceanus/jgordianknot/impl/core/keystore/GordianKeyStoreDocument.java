@@ -441,8 +441,8 @@ public final class GordianKeyStoreDocument {
      */
     private void buildCertificates(final Node pCerts) {
         /* Access the Subject MapOfMaps */
-        for (Map<GordianCertificateId, GordianCoreCertificate> myMap : theKeyStore.getSubjectMapOfMaps().values()) {
-            for (GordianCoreCertificate myCert : myMap.values()) {
+        for (Map<GordianCertificateId, GordianCoreKeyPairCertificate> myMap : theKeyStore.getSubjectMapOfMaps().values()) {
+            for (GordianCoreKeyPairCertificate myCert : myMap.values()) {
                 /* Build certificate entry */
                 final Element myCertEl = theDocument.createElement(ELEMENT_CERT);
                 pCerts.appendChild(myCertEl);
@@ -807,7 +807,7 @@ public final class GordianKeyStoreDocument {
             if (ELEMENT_CERT.equals(myNodeName)) {
                 /* Access the encoded certificate */
                 final byte[] myEncoded = TethysDataConverter.base64ToByteArray(myNode.getTextContent());
-                final GordianCoreCertificate myCert = new GordianCoreCertificate(theKeyStore.getFactory(), myEncoded);
+                final GordianCoreKeyPairCertificate myCert = new GordianCoreKeyPairCertificate(theKeyStore.getFactory(), myEncoded);
                 theKeyStore.storeCertificate(myCert);
             }
 

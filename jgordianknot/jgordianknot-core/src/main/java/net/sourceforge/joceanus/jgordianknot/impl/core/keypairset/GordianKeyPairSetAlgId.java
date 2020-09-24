@@ -119,7 +119,7 @@ public final class GordianKeyPairSetAlgId {
      * @return the keyPairSetSpec
      * @throws OceanusException on error
      */
-    static GordianKeyPairSetSpec determineKeyPairSetSpec(final AlgorithmIdentifier pAlgId) throws OceanusException {
+    public static GordianKeyPairSetSpec determineKeyPairSetSpec(final AlgorithmIdentifier pAlgId) throws OceanusException {
         /* Obtain the spec */
         final GordianKeyPairSetSpec mySpec = KEYPAIRSPECS.get(pAlgId);
         if (mySpec != null) {
@@ -129,11 +129,20 @@ public final class GordianKeyPairSetAlgId {
     }
 
     /**
+     * Obtain KeyPairSetSpec from algorithmId.
+     * @param pAlgId algorithmIdc
+     * @return the keyPairSetSpec
+     */
+    public static GordianKeyPairSetSpec lookUpKeyPairSetSpec(final AlgorithmIdentifier pAlgId) {
+        return KEYPAIRSPECS.get(pAlgId);
+    }
+
+    /**
      * Obtain AlgorithmId from KeyPairSetSpec.
      * @param pSpec the keyPairSetSpec
      * @return the algorithmId
      */
-    static AlgorithmIdentifier determineAlgorithmId(final GordianKeyPairSetSpec pSpec) {
+    public static AlgorithmIdentifier determineAlgorithmId(final GordianKeyPairSetSpec pSpec) {
         /* Obtain the algorithmId */
         return KEYPAIRALGIDS.get(pSpec);
     }

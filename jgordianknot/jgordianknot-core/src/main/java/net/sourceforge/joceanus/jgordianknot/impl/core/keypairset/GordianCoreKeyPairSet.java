@@ -26,6 +26,7 @@ import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPairSpec;
 import net.sourceforge.joceanus.jgordianknot.api.keypairset.GordianKeyPairSet;
 import net.sourceforge.joceanus.jgordianknot.api.keypairset.GordianKeyPairSetSpec;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianLogicException;
+import net.sourceforge.joceanus.jgordianknot.impl.core.keypair.GordianCoreKeyPair;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
@@ -65,6 +66,18 @@ public class GordianCoreKeyPairSet
     @Override
     public boolean isPublicOnly() {
         return isPublicOnly;
+    }
+
+    /**
+     * Obtain a publicOnly version of this keySet.
+     * @return the publicOnly keySet
+     */
+    public GordianCoreKeyPairSet getPublicOnly()  {
+        final GordianCoreKeyPairSet myPublicOnly = new GordianCoreKeyPairSet(theSpec);
+        for (GordianKeyPair myPair : theKeyPairs.values()) {
+            myPublicOnly.theKeyPairs.put(myPair.getKeyPairSpec(), ((GordianCoreKeyPair) myPair).getPublicOnly());
+        }
+        return myPublicOnly;
     }
 
     /**
