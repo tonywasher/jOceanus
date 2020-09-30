@@ -20,14 +20,14 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import net.sourceforge.joceanus.jcoeus.data.CoeusCSVParser;
 import net.sourceforge.joceanus.jtethys.OceanusException;
+import net.sourceforge.joceanus.jtethys.parser.TethysCSVParser;
 
 /**
  * FundingCircle BadDebt Parser.
  */
 public class CoeusFundingCircleBadDebtParser
-        extends CoeusCSVParser {
+        extends TethysCSVParser {
     /**
      * Header fields.
      */
@@ -44,11 +44,6 @@ public class CoeusFundingCircleBadDebtParser
      * Parsed fields.
      */
     private final List<CoeusFundingCircleTransaction> theBadDebts;
-
-    /**
-     * Have we checked the header?
-     */
-    private boolean checkedHeader;
 
     /**
      * Constructor.
@@ -86,21 +81,11 @@ public class CoeusFundingCircleBadDebtParser
 
         /* Clear data */
         theBadDebts.clear();
-        checkedHeader = false;
     }
 
     @Override
     protected void processFields(final List<String> pFields) throws OceanusException {
-        /* If we have not yet checked the header */
-        if (!checkedHeader) {
-            /* Validate the header */
-            checkHeaders(pFields);
-            checkedHeader = true;
-
-            /* else its a transaction */
-        } else {
-            /* Parse the loan and add to the list */
-            theBadDebts.add(new CoeusFundingCircleTransaction(this, pFields));
-        }
+        /* Parse the loan and add to the list */
+        theBadDebts.add(new CoeusFundingCircleTransaction(this, pFields));
     }
 }

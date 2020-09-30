@@ -20,14 +20,14 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import net.sourceforge.joceanus.jcoeus.data.CoeusCSVParser;
 import net.sourceforge.joceanus.jtethys.OceanusException;
+import net.sourceforge.joceanus.jtethys.parser.TethysCSVParser;
 
 /**
  * Zopa LoanBook Parser.
  */
 public class CoeusZopaLoanBookParser
-        extends CoeusCSVParser {
+        extends TethysCSVParser {
     /**
      * Header fields.
      */
@@ -48,11 +48,6 @@ public class CoeusZopaLoanBookParser
      * Parsed loans.
      */
     private final List<CoeusZopaLoanBookItem> theLoans;
-
-    /**
-     * Have we checked the header?
-     */
-    private boolean checkedHeader;
 
     /**
      * Constructor.
@@ -93,22 +88,12 @@ public class CoeusZopaLoanBookParser
 
         /* Clear data */
         theLoans.clear();
-        checkedHeader = false;
     }
 
     @Override
     protected void processFields(final List<String> pFields) throws OceanusException {
-        /* If we have not yet checked the header */
-        if (!checkedHeader) {
-            /* Validate the header */
-            checkHeaders(pFields);
-            checkedHeader = true;
-
-            /* else its a transaction */
-        } else {
-            /* Parse the loan and add to the list */
-            final CoeusZopaLoanBookItem myBookItem = new CoeusZopaLoanBookItem(this, pFields);
-            theLoans.add(myBookItem);
-        }
+        /* Parse the loan and add to the list */
+        final CoeusZopaLoanBookItem myBookItem = new CoeusZopaLoanBookItem(this, pFields);
+        theLoans.add(myBookItem);
     }
 }

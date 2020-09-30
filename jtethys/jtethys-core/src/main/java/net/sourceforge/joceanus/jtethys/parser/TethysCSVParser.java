@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Coeus: Peer2Peer Analysis
+ * Tethys: Java Utilities
  * Copyright 2012,2020 Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ******************************************************************************/
-package net.sourceforge.joceanus.jcoeus.data;
+package net.sourceforge.joceanus.jtethys.parser;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -25,8 +25,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import net.sourceforge.joceanus.jcoeus.CoeusDataException;
-import net.sourceforge.joceanus.jmetis.data.MetisDataFormatter;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.TethysDataException;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
@@ -35,11 +33,12 @@ import net.sourceforge.joceanus.jtethys.decimal.TethysDecimal;
 import net.sourceforge.joceanus.jtethys.decimal.TethysDecimalParser;
 import net.sourceforge.joceanus.jtethys.decimal.TethysMoney;
 import net.sourceforge.joceanus.jtethys.decimal.TethysRate;
+import net.sourceforge.joceanus.jtethys.ui.TethysDataFormatter;
 
 /**
  * CSV Parser.
  */
-public abstract class CoeusCSVParser {
+public abstract class TethysCSVParser {
     /**
      * The Quote Character.
      */
@@ -76,18 +75,24 @@ public abstract class CoeusCSVParser {
     private int theDecimalSize;
 
     /**
+     * CheckHeaders.
+     */
+    private boolean checkHeaders;
+
+    /**
      * Constructor.
      * @param pFormatter the formatter
      * @param pHeaders the expected headers
      */
-    protected CoeusCSVParser(final MetisDataFormatter pFormatter,
-                             final String[] pHeaders) {
+    protected TethysCSVParser(final TethysDataFormatter pFormatter,
+                              final String[] pHeaders) {
         /* Store the headers */
         theHeaders = Arrays.copyOf(pHeaders, pHeaders.length);
 
         /* Access the formatters */
         theDateParser = pFormatter.getDateFormatter();
         theDecimalParser = pFormatter.getDecimalParser();
+        checkHeaders = true;
     }
 
     /**
@@ -100,7 +105,7 @@ public abstract class CoeusCSVParser {
         try {
             return theDateParser.parseDate(pInput);
         } catch (IllegalArgumentException e) {
-            throw new CoeusDataException("Bad date", e);
+            throw new TethysDataException("Bad date", e);
         }
     }
 
@@ -114,7 +119,7 @@ public abstract class CoeusCSVParser {
         try {
             return theDecimalParser.parseDecimalValue(pInput, theDecimalSize);
         } catch (IllegalArgumentException e) {
-            throw new CoeusDataException("Bad decimal", e);
+            throw new TethysDataException("Bad decimal", e);
         }
     }
 
@@ -128,7 +133,7 @@ public abstract class CoeusCSVParser {
         try {
             return theDecimalParser.parseMoneyValue(pInput);
         } catch (IllegalArgumentException e) {
-            throw new CoeusDataException("Bad money", e);
+            throw new TethysDataException("Bad money", e);
         }
     }
 
@@ -142,7 +147,7 @@ public abstract class CoeusCSVParser {
         try {
             return theDecimalParser.parseRateValue(pInput);
         } catch (IllegalArgumentException e) {
-            throw new CoeusDataException("Bad rate", e);
+            throw new TethysDataException("Bad rate", e);
         }
     }
 
@@ -172,6 +177,7 @@ public abstract class CoeusCSVParser {
         final StringBuilder myBuilder = new StringBuilder();
 
         /* Reset the fields */
+        checkHeaders = true;
         resetFields();
 
         /* Protect against exceptions */
@@ -197,8 +203,8 @@ public abstract class CoeusCSVParser {
                     /* Check the field count */
                     checkFieldCount(myFields);
 
-                    /* Process the fields */
-                    processFields(myFields);
+                    /* Process the line */
+                    processLine(myFields);
                 }
             }
 
@@ -206,6 +212,25 @@ public abstract class CoeusCSVParser {
         } catch (IOException e) {
             /* Throw an exception */
             throw new TethysDataException("Failed to load resource ", e);
+        }
+    }
+
+    /**
+     * process line.
+     * @param pFields the fields
+     * @throws OceanusException on error
+     */
+    private void processLine(final List<String> pFields) throws OceanusException {
+        /* If we should check the headers */
+        if (checkHeaders) {
+            /* Validate the header */
+            checkHeaders(pFields);
+            checkHeaders = false;
+
+            /* else we should process the fields */
+        } else {
+            /* Process the fields */
+            processFields(pFields);
         }
     }
 
@@ -260,7 +285,7 @@ public abstract class CoeusCSVParser {
 
                 /* If we are outside quotes and have found a comma */
             } else if (!inQuotes
-                       && myChar == COMMA_CHAR) {
+                    && myChar == COMMA_CHAR) {
                 /* Add the value to the list */
                 myFields.add(myBuilder.toString());
                 myBuilder.setLength(0);
@@ -313,7 +338,7 @@ public abstract class CoeusCSVParser {
     private void checkFieldCount(final List<String> pFields) throws OceanusException {
         /* Check the # of fields */
         if (pFields.size() != theHeaders.length) {
-            throw new CoeusDataException("Invalid # of fields in record");
+            throw new TethysDataException("Invalid # of fields in record");
         }
     }
 
@@ -328,7 +353,7 @@ public abstract class CoeusCSVParser {
             /* Check name */
             final String myHeader = pFields.get(i);
             if (!theHeaders[i].equals(myHeader.trim())) {
-                throw new CoeusDataException(myHeader, "Invalid header");
+                throw new TethysDataException(myHeader, "Invalid header");
             }
         }
     }

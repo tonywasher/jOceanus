@@ -52,10 +52,10 @@ public class MetisDataFormatter
         }
 
         /* Handle maps and lists */
-        if (MetisDataMap.class.isInstance(pValue)) {
+        if (pValue instanceof MetisDataMap) {
             return formatValue(pValue, ((MetisDataMap<?, ?>) pValue).size());
         }
-        if (MetisDataList.class.isInstance(pValue)) {
+        if (pValue instanceof MetisDataList) {
             return formatValue(pValue, ((MetisDataList<?>) pValue).size());
         }
 
