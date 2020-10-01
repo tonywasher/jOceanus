@@ -42,7 +42,7 @@ public interface ThemisSMStatHolder {
      *
      * @return the map
      */
-    Map<ThemisSMStat, Long> getStatistics();
+    Map<ThemisSMStat, Integer> getStatistics();
 
     /**
      * Register Child.
@@ -65,7 +65,7 @@ public interface ThemisSMStatHolder {
      * @param pValue the value of the statistic.
      */
     void setStatistic(ThemisSMStat pStat,
-                      Long pValue);
+                      Integer pValue);
 
     /**
      * Obtain the child iterator.

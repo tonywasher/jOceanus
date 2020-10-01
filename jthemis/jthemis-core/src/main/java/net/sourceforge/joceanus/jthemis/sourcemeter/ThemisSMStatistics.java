@@ -219,8 +219,8 @@ public class ThemisSMStatistics {
             final ThemisSMStat myStat = ThemisSMStat.determineStat(myHeader);
             if (myStat != null) {
                 /* Parse and store it in the holder */
-                final Long myLong = myParser.parseLongValue(myValue);
-                pHolder.setStatistic(myStat, myLong);
+                final Integer myInteger = myParser.parseIntegerValue(myValue);
+                pHolder.setStatistic(myStat, myInteger);
             }
         }
     }
@@ -249,8 +249,13 @@ public class ThemisSMStatistics {
      */
     public ThemisSMFile findFile(final ThemisSMPackage pPackage,
                                  final ThemisAnalysisFile pFile) {
+        /* If package was not found, then file cannot be */
+        if (pPackage == null) {
+            return null;
+        }
+
         /* Search the files in the package */
-        final String myName = pFile.getName();
+        final String myName = pFile.getName() + ".java";
         final Iterator<ThemisSMStatHolder> myIterator = pPackage.childIterator();
         while (myIterator.hasNext()) {
             final ThemisSMFile myFile = (ThemisSMFile) myIterator.next();
@@ -269,6 +274,11 @@ public class ThemisSMStatistics {
      */
     public ThemisSMClass findClass(final ThemisSMStatHolder pParent,
                                    final ThemisAnalysisObject pClass) {
+        /* If holder was not found, then class cannot be */
+        if (pParent == null) {
+            return null;
+        }
+
         /* Search the children */
         final String myName = pClass.getFullName();
         final Iterator<ThemisSMStatHolder> myIterator = pParent.childIterator();
@@ -289,6 +299,11 @@ public class ThemisSMStatistics {
      */
     public ThemisSMMethod findMethod(final ThemisSMStatHolder pParent,
                                      final ThemisAnalysisMethod pMethod) {
+        /* If parent was not found, then method cannot be */
+        if (pParent == null) {
+            return null;
+        }
+
         /* Search the packages */
         final String myName = pMethod.toString();
         final Iterator<ThemisSMStatHolder> myIterator = pParent.childIterator();

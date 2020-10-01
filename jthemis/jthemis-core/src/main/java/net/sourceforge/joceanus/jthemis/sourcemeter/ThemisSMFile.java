@@ -50,7 +50,7 @@ public class ThemisSMFile
     /**
      * The stats.
      */
-    private final Map<ThemisSMStat, Long> theStats;
+    private final Map<ThemisSMStat, Integer> theStats;
 
     /**
      * The Parent.
@@ -87,7 +87,7 @@ public class ThemisSMFile
     }
 
     @Override
-    public Map<ThemisSMStat, Long> getStatistics() {
+    public Map<ThemisSMStat, Integer> getStatistics() {
         return theStats;
     }
 
@@ -120,7 +120,7 @@ public class ThemisSMFile
 
     @Override
     public void setStatistic(final ThemisSMStat pStat,
-                             final Long pValue) {
+                             final Integer pValue) {
         theStats.put(pStat, pValue);
     }
 }

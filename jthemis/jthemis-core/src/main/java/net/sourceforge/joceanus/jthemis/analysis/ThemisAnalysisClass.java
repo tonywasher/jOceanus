@@ -28,7 +28,7 @@ import net.sourceforge.joceanus.jthemis.analysis.ThemisAnalysisGeneric.ThemisAna
  * Class representation.
  */
 public class ThemisAnalysisClass
-    implements ThemisAnalysisContainer, ThemisAnalysisObject {
+    implements ThemisAnalysisObject {
     /**
      * The short name of the class.
      */

@@ -32,7 +32,7 @@ import net.sourceforge.joceanus.jtethys.ui.TethysDataFormatter;
 import net.sourceforge.joceanus.jthemis.dsm.ThemisDSMProject;
 import net.sourceforge.joceanus.jthemis.dsm.ThemisDSMReport;
 import net.sourceforge.joceanus.jthemis.sourcemeter.ThemisSMStatistics;
-import net.sourceforge.joceanus.jthemis.statements.ThemisProjectParser;
+import net.sourceforge.joceanus.jthemis.statistics.ThemisStatsParser;
 
 /**
  * Test Analysis.
@@ -84,7 +84,17 @@ public class TestAnalysis {
         /* Analyse source of project */
         final ThemisAnalysisProject myProj = new ThemisAnalysisProject(new File(PATH_BASE));
         Assertions.assertNull(myProj.getError(), "Exception analysing project");
-        ThemisProjectParser.parseProject(myProj);
+
+        /* Parse sourceMeter statistics */
+        ThemisSMStatistics myStats = new ThemisSMStatistics(new TethysDataFormatter());
+        final FileSystem mySystem = FileSystems.getDefault();
+        final String myDir = PATH_SM + PROJECT + "/java/2020-09-24-11-26-09";
+        final Path myPath = mySystem.getPath(myDir);
+        myStats.parseStatistics(myPath, PROJECT);
+
+        /* Parse the base project */
+        final ThemisStatsParser myParser = new ThemisStatsParser(myStats);
+        myParser.parseProject(myProj);
     }
 
     /**
@@ -102,12 +112,6 @@ public class TestAnalysis {
         /* Build report of module */
         final String myDoc = ThemisDSMReport.reportOnModule(myProject.getDefaultModule());
         Assertions.assertNotNull(myProject, "Failed to build report");
-
-        ThemisSMStatistics myStats = new ThemisSMStatistics(new TethysDataFormatter());
-        final FileSystem mySystem = FileSystems.getDefault();
-        final String myDir = PATH_SM + PROJECT + "/java/2020-09-24-11-26-09";
-        final Path myPath = mySystem.getPath(myDir);
-        myStats.parseStatistics(myPath, PROJECT);
     }
 
     /**

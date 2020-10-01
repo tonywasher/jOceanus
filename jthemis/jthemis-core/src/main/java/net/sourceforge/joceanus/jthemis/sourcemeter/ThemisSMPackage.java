@@ -45,7 +45,7 @@ public class ThemisSMPackage
     /**
      * The stats.
      */
-    private final Map<ThemisSMStat, Long> theStats;
+    private final Map<ThemisSMStat, Integer> theStats;
 
     /**
      * Constructor.
@@ -74,7 +74,7 @@ public class ThemisSMPackage
     }
 
     @Override
-    public Map<ThemisSMStat, Long> getStatistics() {
+    public Map<ThemisSMStat, Integer> getStatistics() {
         return theStats;
     }
 
@@ -95,7 +95,7 @@ public class ThemisSMPackage
 
     @Override
     public void setStatistic(final ThemisSMStat pStat,
-                             final Long pValue) {
+                             final Integer pValue) {
         theStats.put(pStat, pValue);
     }
 }

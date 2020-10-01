@@ -45,7 +45,7 @@ public class ThemisSMMethod
     /**
      * The stats.
      */
-    private final Map<ThemisSMStat, Long> theStats;
+    private final Map<ThemisSMStat, Integer> theStats;
 
     /**
      * The parent.
@@ -82,7 +82,7 @@ public class ThemisSMMethod
     }
 
     @Override
-    public Map<ThemisSMStat, Long> getStatistics() {
+    public Map<ThemisSMStat, Integer> getStatistics() {
         return theStats;
     }
 
@@ -104,7 +104,7 @@ public class ThemisSMMethod
 
     @Override
     public void setStatistic(final ThemisSMStat pStat,
-                             final Long pValue) {
+                             final Integer pValue) {
         theStats.put(pStat, pValue);
     }
 }

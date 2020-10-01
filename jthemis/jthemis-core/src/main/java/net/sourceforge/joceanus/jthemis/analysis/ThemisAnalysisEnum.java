@@ -29,7 +29,7 @@ import net.sourceforge.joceanus.jthemis.analysis.ThemisAnalysisGeneric.ThemisAna
  * Enum representation.
  */
 public class ThemisAnalysisEnum
-        implements ThemisAnalysisContainer, ThemisAnalysisObject {
+        implements ThemisAnalysisObject {
     /**
      * The short name of the class.
      */
