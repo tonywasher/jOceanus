@@ -71,7 +71,7 @@ public class ThemisAnalysisCase
         processLines(myParser);
 
         /* Calculate the number of lines */
-        theNumLines = theContents.size() + theCases.size();
+        theNumLines = theCases.size();
     }
 
     /**

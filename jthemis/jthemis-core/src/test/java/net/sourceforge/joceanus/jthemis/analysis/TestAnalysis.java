@@ -33,6 +33,7 @@ import net.sourceforge.joceanus.jthemis.dsm.ThemisDSMProject;
 import net.sourceforge.joceanus.jthemis.dsm.ThemisDSMReport;
 import net.sourceforge.joceanus.jthemis.sourcemeter.ThemisSMStatistics;
 import net.sourceforge.joceanus.jthemis.statistics.ThemisStatsParser;
+import net.sourceforge.joceanus.jthemis.statistics.ThemisStatsProject;
 
 /**
  * Test Analysis.
@@ -94,7 +95,7 @@ public class TestAnalysis {
 
         /* Parse the base project */
         final ThemisStatsParser myParser = new ThemisStatsParser(myStats);
-        myParser.parseProject(myProj);
+        final ThemisStatsProject myProject = myParser.parseProject(myProj);
     }
 
     /**

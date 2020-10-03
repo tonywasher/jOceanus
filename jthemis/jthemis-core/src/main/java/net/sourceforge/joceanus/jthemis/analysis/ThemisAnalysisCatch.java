@@ -69,7 +69,7 @@ public class ThemisAnalysisCatch
         /* Create the arrays */
         theHeaders = ThemisAnalysisBuilder.parseHeaders(pParser, pLine);
         final Deque<ThemisAnalysisElement> myLines = ThemisAnalysisBuilder.processBody(pParser);
-        final int myBaseLines = myLines.size();
+        theNumLines = theHeaders.size();
 
         /* Look for catch clauses */
         theCatch = (ThemisAnalysisCatch) pParser.processExtra(pOwner, ThemisAnalysisKeyWord.CATCH);
@@ -78,9 +78,6 @@ public class ThemisAnalysisCatch
         theContents = new ArrayDeque<>();
         final ThemisAnalysisParser myParser = new ThemisAnalysisParser(myLines, theContents, theParent);
         myParser.processLines();
-
-        /* Calculate the number of lines */
-        theNumLines = calculateNumLines(myBaseLines);
     }
 
     @Override
@@ -119,24 +116,6 @@ public class ThemisAnalysisCatch
     @Override
     public int getNumLines() {
         return theNumLines;
-    }
-
-    /**
-     * Calculate the number of lines for the construct.
-     * @param pBaseCount the baseCount
-     * @return the number of lines
-     */
-    public int calculateNumLines(final int pBaseCount) {
-        /* Add 1+ line(s) for the else headers  */
-        int myNumLines = pBaseCount + Math.max(theHeaders.size() - 1, 1);
-
-        /* Add lines for additional catch clauses */
-        if (theCatch != null) {
-            myNumLines += theCatch.getNumLines();
-        }
-
-        /* Return the lines */
-        return myNumLines;
     }
 
     @Override

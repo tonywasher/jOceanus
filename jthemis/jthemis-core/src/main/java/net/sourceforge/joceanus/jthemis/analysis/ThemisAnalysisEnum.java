@@ -63,7 +63,7 @@ public class ThemisAnalysisEnum
     /**
      * The number of lines.
      */
-    private final int theNumLines;
+    private int theNumLines;
 
     /**
      * The properties.
@@ -101,10 +101,10 @@ public class ThemisAnalysisEnum
 
         /* Parse the headers */
         final Deque<ThemisAnalysisElement> myHeaders = ThemisAnalysisBuilder.parseHeaders(pParser, myLine);
+        theNumLines = myHeaders.size() + 1;
 
         /* Parse the body */
         final Deque<ThemisAnalysisElement> myLines = ThemisAnalysisBuilder.processBody(pParser);
-        final int myBaseLines = myLines.size();
 
         /* Create a parser */
         theContents = new ArrayDeque<>();
@@ -116,9 +116,6 @@ public class ThemisAnalysisEnum
         /* Parse the ancestors and lines */
         theAncestors = myParser.parseAncestors(myHeaders);
         initialProcessingPass(myParser);
-
-        /* Calculate the number of lines */
-        theNumLines = calculateNumLines(myBaseLines, myHeaders.size());
     }
 
     /**
@@ -175,10 +172,12 @@ public class ThemisAnalysisEnum
         /* Access the token */
         ThemisAnalysisLine myLine = pLine;
         final String myToken = myLine.stripNextToken();
-        if (pLine.startsWithChar(ThemisAnalysisChar.PARENTHESIS_OPEN)) {
+        theNumLines++;
+        if (myLine.startsWithChar(ThemisAnalysisChar.PARENTHESIS_OPEN)) {
             final ThemisAnalysisScanner myScanner = new ThemisAnalysisScanner(pParser);
-            myScanner.scanForParenthesis(myLine);
+            final Deque<ThemisAnalysisElement> myDef = myScanner.scanForParenthesis(myLine);
             myLine = (ThemisAnalysisLine) pParser.popNextLine();
+            theNumLines += myDef.size() - 1;
         }
         theValues.add(myToken);
         return myLine.endsWithChar(ThemisAnalysisChar.COMMA);
@@ -225,18 +224,11 @@ public class ThemisAnalysisEnum
     }
 
     /**
-     * Calculate the number of lines for the construct.
-     * @param pBaseCount the baseCount
-     * @param pHdrCount the header line count
-     * @return the number of lines
+     * Obtain the number of enums.
+     * @return the number of enums
      */
-    public int calculateNumLines(final int pBaseCount,
-                                 final int pHdrCount) {
-        /* Add 1+ line(s) for the while headers  */
-        final int myNumLines = pBaseCount + Math.max(pHdrCount - 1, 1);
-
-        /* Add one for the clause terminator */
-        return myNumLines + 1;
+    public int getNumEnums() {
+        return theValues.size();
     }
 
     @Override

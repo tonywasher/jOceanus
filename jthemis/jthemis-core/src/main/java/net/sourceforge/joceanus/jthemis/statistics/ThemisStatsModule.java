@@ -21,6 +21,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import net.sourceforge.joceanus.jthemis.analysis.ThemisAnalysisModule;
+import net.sourceforge.joceanus.jthemis.sourcemeter.ThemisSMStat;
 
 /**
  * Module statistics.
@@ -70,6 +71,24 @@ public class ThemisStatsModule
      * @param pPackage the package
      */
     void addPackage(final ThemisStatsPackage pPackage) {
+        /* Add package to list */
         thePackages.add(pPackage);
+
+        /* Increment # of packages */
+        incrementStat(ThemisSMStat.NPKG);
+
+        /* Adjust count of files */
+        adjustStat(ThemisSMStat.TNFI, pPackage.getStat(ThemisSMStat.NFI));
+
+        /* Adjust counts */
+        adjustStat(ThemisSMStat.TNCL, pPackage.getStat(ThemisSMStat.TNCL));
+        adjustStat(ThemisSMStat.TNIN, pPackage.getStat(ThemisSMStat.TNIN));
+        adjustStat(ThemisSMStat.TNEN, pPackage.getStat(ThemisSMStat.TNEN));
+        adjustStat(ThemisSMStat.TNM, pPackage.getStat(ThemisSMStat.TNM));
+        adjustStat(ThemisSMStat.TNOS, pPackage.getStat(ThemisSMStat.TNOS));
+        adjustStat(ThemisSMStat.TLOC, pPackage.getStat(ThemisSMStat.TLOC));
+        adjustStat(ThemisSMStat.TLLOC, pPackage.getStat(ThemisSMStat.TLLOC));
+        adjustStat(ThemisSMStat.TCLOC, pPackage.getStat(ThemisSMStat.TCLOC));
+        adjustStat(ThemisSMStat.TDLOC, pPackage.getStat(ThemisSMStat.TDLOC));
     }
 }

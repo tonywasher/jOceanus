@@ -29,6 +29,7 @@ import net.sourceforge.joceanus.jtethys.decimal.TethysDecimalParser;
 import net.sourceforge.joceanus.jtethys.ui.TethysDataFormatter;
 import net.sourceforge.joceanus.jthemis.analysis.ThemisAnalysisFile;
 import net.sourceforge.joceanus.jthemis.analysis.ThemisAnalysisFile.ThemisAnalysisObject;
+import net.sourceforge.joceanus.jthemis.analysis.ThemisAnalysisKeyWord;
 import net.sourceforge.joceanus.jthemis.analysis.ThemisAnalysisMethod;
 import net.sourceforge.joceanus.jthemis.analysis.ThemisAnalysisPackage;
 import net.sourceforge.joceanus.jthemis.sourcemeter.ThemisSMClass.ThemisSMClassType;
@@ -175,6 +176,10 @@ public class ThemisSMStatistics {
         final ThemisSMClassParser myEnums = new ThemisSMClassParser(this, ThemisSMClassType.ENUM);
         myEnums.parseStatistics(pBase, pProject);
 
+        /* Parse the annotations */
+        final ThemisSMClassParser myAnnotations = new ThemisSMClassParser(this, ThemisSMClassType.ANNOTATION);
+        myAnnotations.parseStatistics(pBase, pProject);
+
         /* Parse the methods */
         final ThemisSMMethodParser myMethods = new ThemisSMMethodParser(this);
         myMethods.parseStatistics(pBase, pProject);
@@ -304,8 +309,14 @@ public class ThemisSMStatistics {
             return null;
         }
 
-        /* Search the packages */
-        final String myName = pMethod.toString();
+        /* Extract the name of the method minus any throws clause */
+        String myName = pMethod.toString();
+        final int myIndex = myName.indexOf(ThemisAnalysisKeyWord.THROWS.toString());
+        if (myIndex != -1) {
+            myName = myName.substring(0, myIndex - 1);
+        }
+
+        /* Search the children */
         final Iterator<ThemisSMStatHolder> myIterator = pParent.childIterator();
         while (myIterator.hasNext()) {
             final ThemisSMStatHolder myMethod = myIterator.next();

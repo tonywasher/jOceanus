@@ -27,6 +27,11 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
 public class ThemisAnalysisComment
         implements ThemisAnalysisProcessed {
     /**
+     * Is this a javaDoc comment?
+     */
+    private final boolean isJavaDoc;
+
+    /**
      * The commentLines.
      */
     private final List<ThemisAnalysisLine> theComments;
@@ -43,6 +48,9 @@ public class ThemisAnalysisComment
         theComments = new ArrayList<>();
         theComments.add(pLine);
 
+        /* Determine whether this is a javaDoc comment */
+        isJavaDoc = isJavaDocComment(pLine);
+
         /* If this is not a complete comment */
         ThemisAnalysisLine myLine = pLine;
         while (!isEndComment(myLine)) {
@@ -58,12 +66,29 @@ public class ThemisAnalysisComment
     }
 
     /**
+     * Is this a javaDoc comment.
+     * @return true/false
+     */
+    public boolean isJavaDoc() {
+        return isJavaDoc;
+    }
+
+    /**
      * Is the line a starting comment?
      * @param pLine the line
      * @return true/false
      */
     static boolean isStartComment(final ThemisAnalysisLine pLine) {
         return pLine.startsWithSequence("/*");
+    }
+
+    /**
+     * Is the line a javaDoc comment?
+     * @param pLine the line
+     * @return true/false
+     */
+    private static boolean isJavaDocComment(final ThemisAnalysisLine pLine) {
+        return pLine.startsWithSequence("/**");
     }
 
     /**

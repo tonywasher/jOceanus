@@ -23,13 +23,13 @@ import java.util.List;
 
 import net.sourceforge.joceanus.jthemis.analysis.ThemisAnalysisMethod;
 import net.sourceforge.joceanus.jthemis.sourcemeter.ThemisSMMethod;
+import net.sourceforge.joceanus.jthemis.sourcemeter.ThemisSMStat;
 
 /**
  * Method statistics.
  */
 public class ThemisStatsMethod
-        extends ThemisStatsBase
-        implements ThemisStatsOwner {
+        extends ThemisStatsBase {
     /**
      * The class.
      */
@@ -80,7 +80,19 @@ public class ThemisStatsMethod
 
     @Override
     public void addClass(final ThemisStatsClass pClass) {
+        /* Add class to list */
         theClasses.add(pClass);
+
+        /* Adjust counts */
+        adjustStat(ThemisSMStat.TNCL, pClass.getStat(ThemisSMStat.TNCL));
+        adjustStat(ThemisSMStat.TNIN, pClass.getStat(ThemisSMStat.TNIN));
+        adjustStat(ThemisSMStat.TNEN, pClass.getStat(ThemisSMStat.TNEN));
+        adjustStat(ThemisSMStat.TNM, pClass.getStat(ThemisSMStat.TNM));
+        adjustStat(ThemisSMStat.TNOS, pClass.getStat(ThemisSMStat.TNOS));
+        adjustStat(ThemisSMStat.TLOC, pClass.getStat(ThemisSMStat.TLOC));
+        adjustStat(ThemisSMStat.TLLOC, pClass.getStat(ThemisSMStat.TLLOC));
+        adjustStat(ThemisSMStat.TCLOC, pClass.getStat(ThemisSMStat.TCLOC));
+        adjustStat(ThemisSMStat.TDLOC, pClass.getStat(ThemisSMStat.TDLOC));
     }
 
     @Override
@@ -90,5 +102,6 @@ public class ThemisStatsMethod
 
     @Override
     public void addMethod(final ThemisStatsMethod pMethod) {
+        /* Methods cannot be a direct child of a method */
     }
 }

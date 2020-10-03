@@ -67,14 +67,12 @@ public class ThemisAnalysisDoWhile
         final ThemisAnalysisLine myLine = (ThemisAnalysisLine) pParser.popNextLine();
         myLine.stripStartSequence(ThemisAnalysisKeyWord.WHILE.toString());
         theCondition = new ThemisAnalysisStatement(pParser, myLine);
+        theNumLines = theCondition.getNumLines() + 1;
 
         /* Create a parser */
         theContents = new ArrayDeque<>();
         final ThemisAnalysisParser myParser = new ThemisAnalysisParser(myLines, theContents, theParent);
         myParser.processLines();
-
-        /* Calculate the number of lines */
-        theNumLines = calculateNumLines(myBaseLines);
     }
 
     @Override
@@ -100,19 +98,6 @@ public class ThemisAnalysisDoWhile
     @Override
     public int getNumLines() {
         return theNumLines;
-    }
-
-    /**
-     * Calculate the number of lines for the construct.
-     * @param pBaseCount the baseCount
-     * @return the number of lines
-     */
-    public int calculateNumLines(final int pBaseCount) {
-        /* Add 1+ line(s) for the while trailers  */
-        final int myNumLines = pBaseCount + Math.max(theCondition.getNumLines() - 1, 1);
-
-        /* Add one for the clause terminator */
-        return myNumLines + 1;
     }
 
     @Override

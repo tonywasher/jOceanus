@@ -142,6 +142,11 @@ public class ThemisSMClass
         /**
          * Enum.
          */
-        ENUM;
+        ENUM,
+
+        /**
+         * Annotation.
+         */
+        ANNOTATION;
     }
 }

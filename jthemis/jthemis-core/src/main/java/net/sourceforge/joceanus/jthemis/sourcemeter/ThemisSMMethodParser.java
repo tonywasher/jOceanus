@@ -104,6 +104,7 @@ public class ThemisSMMethodParser
         /* Create the method */
         final ThemisSMMethod myMethod = new ThemisSMMethod(myParent, myId, myName);
         theStats.registerStatHolder(myMethod);
+        myParent.registerChild(myMethod);
 
         /* parse the statistics */
         theStats.processStatistics(myMethod, HEADERS, pFields);

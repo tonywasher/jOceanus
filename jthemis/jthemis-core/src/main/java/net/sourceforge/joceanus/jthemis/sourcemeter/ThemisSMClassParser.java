@@ -48,6 +48,11 @@ public class ThemisSMClassParser
     private static final String ENUM_SUFFIX = "-Enum.csv";
 
     /**
+     * Base for Annotation file name.
+     */
+    private static final String ANNOTATION_SUFFIX = "-Annotation.csv";
+
+    /**
      * Header fields.
      */
     private static final String[] HEADERS = {
@@ -165,6 +170,8 @@ public class ThemisSMClassParser
                 return IFC_SUFFIX;
             case ENUM:
                 return ENUM_SUFFIX;
+            case ANNOTATION:
+                return ANNOTATION_SUFFIX;
             case CLASS:
             default:
                 return CLASS_SUFFIX;

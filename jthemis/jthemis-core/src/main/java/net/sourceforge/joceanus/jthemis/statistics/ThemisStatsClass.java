@@ -22,13 +22,13 @@ import java.util.List;
 
 import net.sourceforge.joceanus.jthemis.analysis.ThemisAnalysisFile.ThemisAnalysisObject;
 import net.sourceforge.joceanus.jthemis.sourcemeter.ThemisSMClass;
+import net.sourceforge.joceanus.jthemis.sourcemeter.ThemisSMStat;
 
 /**
  * Class statistics.
  */
 public class ThemisStatsClass
-        extends ThemisStatsBase
-        implements ThemisStatsOwner {
+        extends ThemisStatsBase {
     /**
      * The class.
      */
@@ -85,7 +85,19 @@ public class ThemisStatsClass
 
     @Override
     public void addClass(final ThemisStatsClass pClass) {
+        /* Add class to list */
         theClasses.add(pClass);
+
+        /* Adjust counts */
+        adjustStat(ThemisSMStat.TNCL, pClass.getStat(ThemisSMStat.TNCL));
+        adjustStat(ThemisSMStat.TNIN, pClass.getStat(ThemisSMStat.TNIN));
+        adjustStat(ThemisSMStat.TNEN, pClass.getStat(ThemisSMStat.TNEN));
+        adjustStat(ThemisSMStat.TNM, pClass.getStat(ThemisSMStat.TNM));
+        adjustStat(ThemisSMStat.TNOS, pClass.getStat(ThemisSMStat.TNOS));
+        adjustStat(ThemisSMStat.TLOC, pClass.getStat(ThemisSMStat.TLOC));
+        adjustStat(ThemisSMStat.TLLOC, pClass.getStat(ThemisSMStat.TLLOC));
+        adjustStat(ThemisSMStat.TCLOC, pClass.getStat(ThemisSMStat.TCLOC));
+        adjustStat(ThemisSMStat.TDLOC, pClass.getStat(ThemisSMStat.TDLOC));
     }
 
     @Override
@@ -95,6 +107,19 @@ public class ThemisStatsClass
 
     @Override
     public void addMethod(final ThemisStatsMethod pMethod) {
+        /* Add method to list */
         theMethods.add(pMethod);
+
+        /* Adjust counts */
+        adjustStat(ThemisSMStat.LOC, pMethod.getStat(ThemisSMStat.LOC));
+        adjustStat(ThemisSMStat.TNCL, pMethod.getStat(ThemisSMStat.TNCL));
+        adjustStat(ThemisSMStat.TNIN, pMethod.getStat(ThemisSMStat.TNIN));
+        adjustStat(ThemisSMStat.TNEN, pMethod.getStat(ThemisSMStat.TNEN));
+        adjustStat(ThemisSMStat.TNM, pMethod.getStat(ThemisSMStat.TNM));
+        adjustStat(ThemisSMStat.TNOS, pMethod.getStat(ThemisSMStat.TNOS));
+        adjustStat(ThemisSMStat.TLOC, pMethod.getStat(ThemisSMStat.TLOC));
+        adjustStat(ThemisSMStat.TLLOC, pMethod.getStat(ThemisSMStat.TLLOC));
+        adjustStat(ThemisSMStat.TCLOC, pMethod.getStat(ThemisSMStat.TCLOC));
+        adjustStat(ThemisSMStat.TDLOC, pMethod.getStat(ThemisSMStat.TDLOC));
     }
 }

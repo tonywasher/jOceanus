@@ -62,15 +62,12 @@ public class ThemisAnalysisFinally
         /* Create the arrays */
         theHeaders = ThemisAnalysisBuilder.parseHeaders(pParser, pLine);
         final Deque<ThemisAnalysisElement> myLines = ThemisAnalysisBuilder.processBody(pParser);
-        final int myBaseLines = myLines.size();
+        theNumLines = theHeaders.size();
 
         /* Create a parser */
         theContents = new ArrayDeque<>();
         final ThemisAnalysisParser myParser = new ThemisAnalysisParser(myLines, theContents, theParent);
         myParser.processLines();
-
-        /* Calculate the number of lines */
-        theNumLines = calculateNumLines(myBaseLines);
     }
 
     @Override
@@ -86,15 +83,5 @@ public class ThemisAnalysisFinally
     @Override
     public int getNumLines() {
         return theNumLines;
-    }
-
-    /**
-     * Calculate the number of lines for the construct.
-     * @param pBaseCount the baseCount
-     * @return the number of lines
-     */
-    public int calculateNumLines(final int pBaseCount) {
-        /* Add 1 line for the header */
-        return pBaseCount + 1;
     }
 }

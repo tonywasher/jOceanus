@@ -76,15 +76,12 @@ public class ThemisAnalysisFor
         /* Create the arrays */
         final Deque<ThemisAnalysisElement> myHeaders = ThemisAnalysisBuilder.parseHeaders(pParser, pLine);
         final Deque<ThemisAnalysisElement> myLines = ThemisAnalysisBuilder.processBody(pParser);
-        final int myBaseLines = myLines.size();
+        theNumLines = myHeaders.size() + 1;
 
         /* Create a parser */
         theContents = new ArrayDeque<>();
         final ThemisAnalysisParser myParser = new ThemisAnalysisParser(myLines, theContents, theParent);
         myParser.processLines();
-
-        /* Calculate the number of lines */
-        theNumLines = calculateNumLines(myBaseLines, myHeaders);
 
         /* Parse the headers */
         theFields = new ArrayList<>();
@@ -190,21 +187,6 @@ public class ThemisAnalysisFor
             final Deque<ThemisAnalysisElement> myResource = myScanner.scanForSeparator(ThemisAnalysisChar.COMMA);
             theStatements.add(new ThemisAnalysisStatement(new ThemisAnalysisStack(myResource)));
         }
-    }
-
-    /**
-     * Calculate the number of lines for the construct.
-     * @param pBaseCount the baseCount
-     * @param pHeaders the headers
-     * @return the number of lines
-     */
-    public int calculateNumLines(final int pBaseCount,
-                                 final Deque<ThemisAnalysisElement> pHeaders) {
-        /* Add 1+ line(s) for the while headers  */
-        final int myNumLines = pBaseCount + Math.max(pHeaders.size() - 1, 1);
-
-        /* Add one for the clause terminator */
-        return myNumLines + 1;
     }
 
     @Override

@@ -16,10 +16,13 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jthemis.statistics;
 
+import java.util.Collections;
 import java.util.EnumMap;
+import java.util.Iterator;
 import java.util.Map;
 
 import net.sourceforge.joceanus.jthemis.sourcemeter.ThemisSMStat;
+import net.sourceforge.joceanus.jthemis.sourcemeter.ThemisSMStatHolder;
 
 /**
  * Statistics Base.
@@ -74,5 +77,45 @@ public abstract class ThemisStatsBase {
         /* Adjust the value */
         final Integer myCurr = getStat(pStat);
         setStat(pStat, myCurr + pAdjust);
+    }
+
+    /**
+     * Obtain the sourceMeter stats.
+     * @return the stats
+     */
+    ThemisSMStatHolder getSourceMeter() {
+        return null;
+    }
+
+    /**
+     * Obtain class iterator.
+     * @return the iterator
+     */
+    Iterator<ThemisStatsClass> classIterator() {
+        return Collections.emptyIterator();
+    }
+
+    /**
+     * Add class to list.
+     * @param pClass the class
+     */
+    void addClass(final ThemisStatsClass pClass) {
+        /* NoOp by default */
+    }
+
+    /**
+     * Obtain class iterator.
+     * @return the iterator
+     */
+    Iterator<ThemisStatsMethod> methodIterator() {
+        return Collections.emptyIterator();
+    }
+
+    /**
+     * Add method to list.
+     * @param pMethod the method
+     */
+    void addMethod(final ThemisStatsMethod pMethod) {
+        /* NoOp by default */
     }
 }

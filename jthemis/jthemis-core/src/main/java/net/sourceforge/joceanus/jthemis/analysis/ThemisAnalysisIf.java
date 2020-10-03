@@ -68,11 +68,11 @@ public class ThemisAnalysisIf
 
         /* Parse the condition */
         final Deque<ThemisAnalysisElement> myHeaders = ThemisAnalysisBuilder.parseHeaders(pParser, pLine);
+        theNumLines = myHeaders.size() + 1;
         theCondition = new ThemisAnalysisStatement(myHeaders);
 
         /* Parse the body */
         final Deque<ThemisAnalysisElement> myLines = ThemisAnalysisBuilder.processBody(pParser);
-        final int myBaseLines = myLines.size();
 
         /* Look for else clauses */
         theElse = (ThemisAnalysisElse) pParser.processExtra(this, ThemisAnalysisKeyWord.ELSE);
@@ -81,9 +81,6 @@ public class ThemisAnalysisIf
         theContents = new ArrayDeque<>();
         final ThemisAnalysisParser myParser = new ThemisAnalysisParser(myLines, theContents, theParent);
         myParser.processLines();
-
-        /* Calculate the number of lines */
-        theNumLines = calculateNumLines(myBaseLines);
     }
 
     @Override
@@ -133,24 +130,6 @@ public class ThemisAnalysisIf
     @Override
     public int getNumLines() {
         return theNumLines;
-    }
-
-    /**
-     * Calculate the number of lines for the construct.
-     * @param pBaseCount the baseCount
-     * @return the number of lines
-     */
-    public int calculateNumLines(final int pBaseCount) {
-        /* Add 1+ line(s) for the if headers  */
-        int myNumLines = pBaseCount + Math.max(theCondition.getNumLines() - 1, 1);
-
-        /* Add lines for additional else clauses */
-        if (theElse != null) {
-            myNumLines += theElse.getNumLines();
-        }
-
-        /* Add one for the clause terminator */
-        return myNumLines + 1;
     }
 
     @Override

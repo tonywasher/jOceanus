@@ -31,6 +31,11 @@ public enum ThemisSMStat {
     LLOC("Logical Lines Of Code"),
 
     /**
+     * NFI.
+     */
+    NFI("Number of Files"),
+
+    /**
      * NPKG.
      */
     NPKG("Number of Packages"),
@@ -76,17 +81,12 @@ public enum ThemisSMStat {
     CLOC("Comment Lines of Code"),
 
     /**
-     * TCLOC.
-     */
-    TCLOC("Total Comment Lines of Code"),
-
-    /**
-     * LOC.
+     * TLOC.
      */
     TLOC("Total Lines Of Code"),
 
     /**
-     * LLOC.
+     * TLLOC.
      */
     TLLOC("Total Logical Lines Of Code"),
 
@@ -121,9 +121,24 @@ public enum ThemisSMStat {
     TNA("Total Number of Attributes"),
 
     /**
+     * TNPKG.
+     */
+    TNPKG("Total Number of Packages"),
+
+    /**
      * TNOS.
      */
-    TNOS("Total Number of Statements");
+    TNOS("Total Number of Statements"),
+
+    /**
+     * TDLOC.
+     */
+    TDLOC("Total Documentation Lines of Code"),
+
+    /**
+     * TCLOC.
+     */
+    TCLOC("Total Comment Lines of Code");
 
     /**
      * The description.

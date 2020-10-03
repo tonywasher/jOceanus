@@ -62,6 +62,7 @@ public class ThemisAnalysisBlock
                         final ThemisAnalysisLine pLine) throws OceanusException {
         /* Store parameters */
         theHeader = pLine;
+        theNumLines = 2;
 
         /* Store parameters */
         theProperties = pLine.getProperties();
@@ -69,15 +70,11 @@ public class ThemisAnalysisBlock
 
         /* Create the arrays */
         final Deque<ThemisAnalysisElement> myLines = ThemisAnalysisBuilder.processBody(pParser);
-        final int myBaseLines = myLines.size();
 
         /* Create a parser */
         theContents = new ArrayDeque<>();
         final ThemisAnalysisParser myParser = new ThemisAnalysisParser(myLines, theContents, this);
         myParser.processLines();
-
-        /* Calculate the number of lines */
-        theNumLines = calculateNumLines(myBaseLines);
     }
 
     @Override
@@ -101,13 +98,11 @@ public class ThemisAnalysisBlock
     }
 
     /**
-     * Calculate the number of lines for the construct.
-     * @param pBaseCount the baseCount
-     * @return the number of lines
+     * Is the block synchronized.
+     * @return true/false
      */
-    public int calculateNumLines(final int pBaseCount) {
-        /* Add one for the clause start and terminator */
-        return pBaseCount + 2;
+    public boolean isSynchronized() {
+        return theProperties.hasModifier(ThemisAnalysisModifier.SYNCHRONIZED);
     }
 
     @Override

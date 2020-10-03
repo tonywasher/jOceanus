@@ -104,6 +104,7 @@ public class ThemisAnalysisMethod
         final Deque<ThemisAnalysisElement> myHeaders = isAbstract
                         ? ThemisAnalysisBuilder.parseTrailers(pParser, pLine)
                         : ThemisAnalysisBuilder.parseHeaders(pParser, pLine);
+        theNumLines = myHeaders.size() + (isAbstract ? 0 : 1);
 
         /* Process the body if we have one */
         theContents = isAbstract
@@ -123,9 +124,6 @@ public class ThemisAnalysisMethod
 
         /* Post process the lines */
         postProcessLines();
-
-        /* Calculate the number of lines */
-        theNumLines = calculateNumLines(myBaseLines, myHeaders.size());
     }
 
     /**
@@ -154,28 +152,6 @@ public class ThemisAnalysisMethod
     @Override
     public int getNumLines() {
         return theNumLines;
-    }
-
-    /**
-     * Calculate the number of lines for the construct.
-     * @param pBaseCount the baseCount
-     * @param pHdrCount the header line count
-     * @return the number of lines
-     */
-    public int calculateNumLines(final int pBaseCount,
-                                 final int pHdrCount) {
-        /* Add 1+ line(s) for the class headers  */
-        int myNumLines = pBaseCount + Math.max(pHdrCount - 1, 1);
-
-        /* Loop through the contents */
-        for (ThemisAnalysisElement myElement : theContents) {
-            if (myElement instanceof ThemisAnalysisProcessed) {
-                myNumLines += ((ThemisAnalysisProcessed) myElement).getNumLines() - 1;
-            }
-        }
-
-        /* Add one for the clause terminator */
-        return myNumLines + 1;
     }
 
     @Override
