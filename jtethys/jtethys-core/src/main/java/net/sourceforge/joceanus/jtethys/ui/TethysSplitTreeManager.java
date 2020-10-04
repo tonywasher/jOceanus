@@ -28,6 +28,11 @@ import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventPr
 public abstract class TethysSplitTreeManager<T>
         implements TethysEventProvider<TethysUIEvent>, TethysComponent {
     /**
+     * The default Weight.
+     */
+    protected static final double DEFAULT_WEIGHT = 0.2;
+
+    /**
      * The id.
      */
     private final Integer theId;
@@ -51,6 +56,11 @@ public abstract class TethysSplitTreeManager<T>
      * The HTML Manager.
      */
     private final TethysHTMLManager theHTMLManager;
+
+    /**
+     * The Weight.
+     */
+    private double theWeight;
 
     /**
      * Constructor.
@@ -113,6 +123,22 @@ public abstract class TethysSplitTreeManager<T>
      */
     public void setControlPane(final TethysComponent pPane) {
         theHTMLPane.setNorth(pPane);
+    }
+
+    /**
+     * Set weight.
+     * @param pWeight the weight
+     */
+    public void setWeight(final double pWeight) {
+        theWeight = pWeight;
+    }
+
+    /**
+     * Get weight.
+     * @return the weight
+     */
+    public double getWeight() {
+        return theWeight;
     }
 
     /**

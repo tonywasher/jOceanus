@@ -99,7 +99,7 @@ public class ThemisSMClass
      * Obtain the classType.
      * @return the classType
      */
-    ThemisSMClassType getClassType() {
+    public ThemisSMClassType getClassType() {
         return theType;
     }
 
@@ -128,25 +128,43 @@ public class ThemisSMClass
     /**
      * ClassType.
      */
-    enum ThemisSMClassType {
+    public enum ThemisSMClassType {
         /**
          * Class.
          */
-        CLASS,
+        CLASS("Class"),
 
         /**
          * Interface.
          */
-        INTERFACE,
+        INTERFACE("Interface"),
 
         /**
          * Enum.
          */
-        ENUM,
+        ENUM("Enum"),
 
         /**
          * Annotation.
          */
-        ANNOTATION;
+        ANNOTATION("Annotation");
+
+        /**
+         * The name.
+         */
+        private final String theName;
+
+        /**
+         * Constructor.
+         * @param pName the name
+         */
+        ThemisSMClassType(final String pName) {
+            theName = pName;
+        }
+
+        @Override
+        public String toString() {
+            return theName;
+        }
     }
 }

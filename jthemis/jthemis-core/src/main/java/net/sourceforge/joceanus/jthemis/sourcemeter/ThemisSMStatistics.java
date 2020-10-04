@@ -260,7 +260,7 @@ public class ThemisSMStatistics {
         }
 
         /* Search the files in the package */
-        final String myName = pFile.getName() + ".java";
+        final String myName = pFile.getName() + ThemisAnalysisPackage.SFX_JAVA;
         final Iterator<ThemisSMStatHolder> myIterator = pPackage.childIterator();
         while (myIterator.hasNext()) {
             final ThemisSMFile myFile = (ThemisSMFile) myIterator.next();

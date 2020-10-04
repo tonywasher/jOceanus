@@ -17,6 +17,9 @@
 package net.sourceforge.joceanus.jthemis.ui;
 
 import java.io.File;
+import java.nio.file.FileSystem;
+import java.nio.file.FileSystems;
+import java.nio.file.Path;
 import java.util.prefs.BackingStoreException;
 import java.util.prefs.Preferences;
 
@@ -25,6 +28,7 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.ui.TethysBorderPaneManager;
 import net.sourceforge.joceanus.jtethys.ui.TethysBoxPaneManager;
 import net.sourceforge.joceanus.jtethys.ui.TethysButton;
+import net.sourceforge.joceanus.jtethys.ui.TethysDataFormatter;
 import net.sourceforge.joceanus.jtethys.ui.TethysDirectorySelector;
 import net.sourceforge.joceanus.jtethys.ui.TethysGuiFactory;
 import net.sourceforge.joceanus.jtethys.ui.TethysHTMLManager;
@@ -34,10 +38,14 @@ import net.sourceforge.joceanus.jtethys.ui.TethysTabPaneManager;
 import net.sourceforge.joceanus.jtethys.ui.TethysTabPaneManager.TethysTabItem;
 import net.sourceforge.joceanus.jtethys.ui.TethysUIEvent;
 import net.sourceforge.joceanus.jthemis.ThemisIOException;
+import net.sourceforge.joceanus.jthemis.analysis.ThemisAnalysisProject;
 import net.sourceforge.joceanus.jthemis.dsm.ThemisDSMModule;
 import net.sourceforge.joceanus.jthemis.dsm.ThemisDSMPackage;
 import net.sourceforge.joceanus.jthemis.dsm.ThemisDSMProject;
 import net.sourceforge.joceanus.jthemis.dsm.ThemisDSMReport;
+import net.sourceforge.joceanus.jthemis.sourcemeter.ThemisSMStatistics;
+import net.sourceforge.joceanus.jthemis.statistics.ThemisStatsParser;
+import net.sourceforge.joceanus.jthemis.statistics.ThemisStatsProject;
 
 /**
  * DSMPanel.
@@ -68,6 +76,11 @@ public class ThemisDSMPanel
      * The Dependency Tab.
      */
     private final TethysTabItem theDependencyTab;
+
+    /**
+     * The Statistics Panel.
+     */
+    private final ThemisStatsPanel theStatsPanel;
 
     /**
      * The ProjectButton.
@@ -191,6 +204,10 @@ public class ThemisDSMPanel
         theTabPane.addTabItem("Matrix", myMatrixPanel);
         theDependencyTab = theTabPane.addTabItem("Dependencies", myDependencyPanel);
 
+        /* Create the Stats panel */
+        theStatsPanel = new ThemisStatsPanel(theGuiFactory);
+        theTabPane.addTabItem("Stats", theStatsPanel);
+
         /* Initialise status */
         theProjectButton.setText("None");
         theDependencyTab.setVisible(false);
@@ -244,6 +261,39 @@ public class ThemisDSMPanel
 
             /* Set the new module */
             processNewModule(theProject.getDefaultModule());
+
+            /* Load statistics */
+            handleNewStats(pProjectDir);
+        }
+    }
+
+    /**
+     * Handle the new project.
+     * @param pProjectDir the new project directory
+     */
+    private void handleNewStats(final File pProjectDir) {
+        try {
+            /* Analyse source of project */
+            final ThemisAnalysisProject myProj = new ThemisAnalysisProject(pProjectDir);
+
+            /* The sourceMeter base. */
+            final String pathSM = System.getProperty("user.home") + "/Downloads/SourceMeter-9.1.1-x64-Windows/java/Results/";
+
+            /* Parse sourceMeter statistics */
+            final ThemisSMStatistics myStats = new ThemisSMStatistics(new TethysDataFormatter());
+            final FileSystem mySystem = FileSystems.getDefault();
+            final String myDir = pathSM + theProject + "/java/2020-09-24-11-26-09";
+            final Path myPath = mySystem.getPath(myDir);
+            myStats.parseStatistics(myPath, theProject.toString());
+
+            /* Parse the base project */
+            final ThemisStatsParser myParser = new ThemisStatsParser(myStats);
+            final ThemisStatsProject myProject = myParser.parseProject(myProj);
+            theStatsPanel.initialiseTree(myProject);
+
+            /* Catch exceptions */
+        } catch (OceanusException e) {
+            e.printStackTrace();
         }
     }
 

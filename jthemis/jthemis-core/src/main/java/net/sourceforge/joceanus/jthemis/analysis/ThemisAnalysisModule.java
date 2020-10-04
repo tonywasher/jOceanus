@@ -112,7 +112,7 @@ public class ThemisAnalysisModule {
      * Obtain the name.
      * @return the name
      */
-    String getName() {
+    public String getName() {
         return theName;
     }
 

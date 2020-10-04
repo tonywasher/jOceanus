@@ -19,7 +19,9 @@ package net.sourceforge.joceanus.jthemis.statistics;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
+import net.sourceforge.joceanus.jthemis.analysis.ThemisAnalysisChar;
 import net.sourceforge.joceanus.jthemis.analysis.ThemisAnalysisPackage;
 import net.sourceforge.joceanus.jthemis.sourcemeter.ThemisSMPackage;
 import net.sourceforge.joceanus.jthemis.sourcemeter.ThemisSMStat;
@@ -29,6 +31,11 @@ import net.sourceforge.joceanus.jthemis.sourcemeter.ThemisSMStat;
  */
 public class ThemisStatsPackage
         extends ThemisStatsBase {
+    /**
+     * The root name.
+     */
+    private static final String ROOT = "(root)";
+
     /**
      * The package.
      */
@@ -40,9 +47,14 @@ public class ThemisStatsPackage
     private final ThemisSMPackage theSMPackage;
 
     /**
-     * The file list.
+     * The child list.
      */
-    private final List<ThemisStatsFile> theFiles;
+    private final List<ThemisStatsBase> theChildren;
+
+    /**
+     * The prefix.
+     */
+    private String thePrefix;
 
     /**
      * Constructor.
@@ -56,7 +68,7 @@ public class ThemisStatsPackage
         theSMPackage = pSourceMeter;
 
         /* Create lists */
-        theFiles = new ArrayList<>();
+        theChildren = new ArrayList<>();
     }
 
     /**
@@ -75,12 +87,25 @@ public class ThemisStatsPackage
         return theSMPackage;
     }
 
+    @Override
+    public Map<ThemisSMStat, Integer> getSourceMeterStats() {
+        return theSMPackage == null ? null : theSMPackage.getStatistics();
+    }
+
     /**
      * Obtain file iterator.
      * @return the iterator
      */
-    Iterator<ThemisStatsFile> fileIterator() {
-        return theFiles.iterator();
+    public Iterator<ThemisStatsBase> childIterator() {
+        return theChildren.iterator();
+    }
+
+    /**
+     * Set the prefix.
+     * @param pPrefix the prefix
+     */
+    void setPrefix(final String pPrefix) {
+        thePrefix = pPrefix;
     }
 
     /**
@@ -89,20 +114,23 @@ public class ThemisStatsPackage
      */
     void addFile(final ThemisStatsFile pFile) {
         /* Add file to list */
-        theFiles.add(pFile);
+        theChildren.add(pFile);
+        pFile.setParent(this);
 
         /* Increment # of files */
         incrementStat(ThemisSMStat.NFI);
 
         /* Adjust counts */
-        adjustStat(ThemisSMStat.TNCL, pFile.getStat(ThemisSMStat.TNCL));
-        adjustStat(ThemisSMStat.TNIN, pFile.getStat(ThemisSMStat.TNIN));
-        adjustStat(ThemisSMStat.TNEN, pFile.getStat(ThemisSMStat.TNEN));
-        adjustStat(ThemisSMStat.TNM, pFile.getStat(ThemisSMStat.TNM));
-        adjustStat(ThemisSMStat.TNOS, pFile.getStat(ThemisSMStat.TNOS));
-        adjustStat(ThemisSMStat.TLOC, pFile.getStat(ThemisSMStat.TLOC));
-        adjustStat(ThemisSMStat.TLLOC, pFile.getStat(ThemisSMStat.TLLOC));
-        adjustStat(ThemisSMStat.TCLOC, pFile.getStat(ThemisSMStat.TCLOC));
-        adjustStat(ThemisSMStat.TDLOC, pFile.getStat(ThemisSMStat.TDLOC));
+        addChildTotals(pFile);
+    }
+
+    @Override
+    public String toString() {
+        String myPackage = thePackage.getPackage();
+        myPackage = myPackage.substring(thePrefix.length());
+        if (myPackage.startsWith(Character.toString(ThemisAnalysisChar.PERIOD))) {
+            myPackage = myPackage.substring(1);
+        }
+        return myPackage.length() > 0 ? myPackage : ROOT;
     }
 }

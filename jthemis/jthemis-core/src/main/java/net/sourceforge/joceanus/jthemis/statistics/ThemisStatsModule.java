@@ -17,9 +17,12 @@
 package net.sourceforge.joceanus.jthemis.statistics;
 
 import java.util.ArrayList;
+import java.util.EnumMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
+import net.sourceforge.joceanus.jthemis.analysis.ThemisAnalysisChar;
 import net.sourceforge.joceanus.jthemis.analysis.ThemisAnalysisModule;
 import net.sourceforge.joceanus.jthemis.sourcemeter.ThemisSMStat;
 
@@ -34,9 +37,19 @@ public class ThemisStatsModule
     private final ThemisAnalysisModule theModule;
 
     /**
-     * The package list.
+     * The child list.
      */
-    private final List<ThemisStatsPackage> thePackages;
+    private final List<ThemisStatsBase> theChildren;
+
+    /**
+     * The sourceMeterStats.
+     */
+    private final Map<ThemisSMStat, Integer> theSMStats;
+
+    /**
+     * The packagePrefix.
+     */
+    private String thePrefix;
 
     /**
      * Constructor.
@@ -47,7 +60,8 @@ public class ThemisStatsModule
         theModule = pModule;
 
         /* Create lists */
-        thePackages = new ArrayList<>();
+        theChildren = new ArrayList<>();
+        theSMStats = new EnumMap<>(ThemisSMStat.class);
     }
 
     /**
@@ -58,12 +72,22 @@ public class ThemisStatsModule
         return theModule;
     }
 
+    @Override
+    public String toString() {
+        return theModule.getName();
+    }
+
+    @Override
+    public Map<ThemisSMStat, Integer> getSourceMeterStats() {
+        return theSMStats;
+    }
+
     /**
      * Obtain package iterator.
      * @return the iterator
      */
-    Iterator<ThemisStatsPackage> packageIterator() {
-        return thePackages.iterator();
+    public Iterator<ThemisStatsBase> childIterator() {
+        return theChildren.iterator();
     }
 
     /**
@@ -71,24 +95,61 @@ public class ThemisStatsModule
      * @param pPackage the package
      */
     void addPackage(final ThemisStatsPackage pPackage) {
+        /* Adjust the prefix */
+        adjustPrefix(pPackage);
+
         /* Add package to list */
-        thePackages.add(pPackage);
+        theChildren.add(pPackage);
+        pPackage.setParent(this);
 
         /* Increment # of packages */
         incrementStat(ThemisSMStat.NPKG);
 
         /* Adjust count of files */
-        adjustStat(ThemisSMStat.TNFI, pPackage.getStat(ThemisSMStat.NFI));
+        adjustChildStat(pPackage, ThemisSMStat.TNFI, ThemisSMStat.NFI);
 
         /* Adjust counts */
-        adjustStat(ThemisSMStat.TNCL, pPackage.getStat(ThemisSMStat.TNCL));
-        adjustStat(ThemisSMStat.TNIN, pPackage.getStat(ThemisSMStat.TNIN));
-        adjustStat(ThemisSMStat.TNEN, pPackage.getStat(ThemisSMStat.TNEN));
-        adjustStat(ThemisSMStat.TNM, pPackage.getStat(ThemisSMStat.TNM));
-        adjustStat(ThemisSMStat.TNOS, pPackage.getStat(ThemisSMStat.TNOS));
-        adjustStat(ThemisSMStat.TLOC, pPackage.getStat(ThemisSMStat.TLOC));
-        adjustStat(ThemisSMStat.TLLOC, pPackage.getStat(ThemisSMStat.TLLOC));
-        adjustStat(ThemisSMStat.TCLOC, pPackage.getStat(ThemisSMStat.TCLOC));
-        adjustStat(ThemisSMStat.TDLOC, pPackage.getStat(ThemisSMStat.TDLOC));
+        addChildTotals(pPackage);
+    }
+
+    /**
+     * Adjust the prefix.
+     * @param pPackage the package
+     */
+    private void adjustPrefix(final ThemisStatsPackage pPackage) {
+        /* Access the package name */
+        final String myName = pPackage.getPackage().getPackage();
+
+        /* If this is the first package */
+        if (thePrefix == null) {
+            /* Prefix is everything prior to the last subPackage */
+            final int myIndex = myName.lastIndexOf(ThemisAnalysisChar.PERIOD);
+            thePrefix = myIndex == -1 ? "" : myName.substring(0, myIndex);
+
+            /* Find the common prefix */
+        } else if (!myName.startsWith(thePrefix)) {
+            /* Determine length */
+            final int myLength = Math.min(thePrefix.length(), myName.length());
+
+            /* Loop while prefixes are the same */
+            for (int i = 0; i < myLength; i++) {
+                /* If we have found a difference */
+                if (thePrefix.charAt(i) != myName.charAt(i)) {
+                    /* Strip the prefix down */
+                    thePrefix = thePrefix.substring(0, i);
+                    break;
+                }
+            }
+
+            /* If the package is a prefix of the prefix */
+            if (thePrefix.startsWith(myName)) {
+                thePrefix = myName;
+            }
+            /* Update prefix for existing packages */
+            theChildren.forEach(s -> ((ThemisStatsPackage) s).setPrefix(thePrefix));
+        }
+
+        /* Set prefix for package */
+        pPackage.setPrefix(thePrefix);
     }
 }

@@ -16,7 +16,6 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jthemis.statistics;
 
-import java.util.Collections;
 import java.util.EnumMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -28,6 +27,11 @@ import net.sourceforge.joceanus.jthemis.sourcemeter.ThemisSMStatHolder;
  * Statistics Base.
  */
 public abstract class ThemisStatsBase {
+    /**
+     * The parent.
+     */
+    private ThemisStatsBase theParent;
+
     /**
      * The stats.
      */
@@ -41,11 +45,27 @@ public abstract class ThemisStatsBase {
     }
 
     /**
+     * Obtain the parent.
+     * @return the parent
+     */
+    public ThemisStatsBase getParent() {
+        return theParent;
+    }
+
+    /**
+     * Set the parent.
+     * @param pParent the parent
+     */
+    public void setParent(final ThemisStatsBase pParent) {
+        theParent = pParent;
+    }
+
+    /**
      * Obtain statistic value.
      * @param pStat the statistic
      * @return the value
      */
-    Integer getStat(final ThemisSMStat pStat) {
+    public Integer getStat(final ThemisSMStat pStat) {
         return theStats.computeIfAbsent(pStat, s -> 0);
     }
 
@@ -80,20 +100,38 @@ public abstract class ThemisStatsBase {
     }
 
     /**
+     * Adjust statistic.
+     * @param pStat the statistic
+     * @param pAdjust the adjustment value
+     */
+    private void adjustSMStat(final ThemisSMStat pStat,
+                              final Integer pAdjust) {
+        /* Adjust the value */
+        final Map<ThemisSMStat, Integer> myMap = getSourceMeterStats();
+        final Integer myAdjust = pAdjust == null ? 0 : pAdjust;
+        final Integer myCurr = myMap.computeIfAbsent(pStat, s -> 0);
+        myMap.put(pStat, myCurr + myAdjust);
+    }
+
+    /**
      * Obtain the sourceMeter stats.
      * @return the stats
      */
-    ThemisSMStatHolder getSourceMeter() {
+    public ThemisSMStatHolder getSourceMeter() {
         return null;
     }
+
+    /**
+     * Obtain the sourceMeter stats.
+     * @return the stats
+     */
+    public abstract Map<ThemisSMStat, Integer> getSourceMeterStats();
 
     /**
      * Obtain class iterator.
      * @return the iterator
      */
-    Iterator<ThemisStatsClass> classIterator() {
-        return Collections.emptyIterator();
-    }
+    public abstract Iterator<ThemisStatsBase> childIterator();
 
     /**
      * Add class to list.
@@ -104,18 +142,56 @@ public abstract class ThemisStatsBase {
     }
 
     /**
-     * Obtain class iterator.
-     * @return the iterator
-     */
-    Iterator<ThemisStatsMethod> methodIterator() {
-        return Collections.emptyIterator();
-    }
-
-    /**
      * Add method to list.
      * @param pMethod the method
      */
     void addMethod(final ThemisStatsMethod pMethod) {
         /* NoOp by default */
+    }
+
+    /**
+     * Add child totals.
+     * @param pChild the child
+     */
+    void addChildTotals(final ThemisStatsBase pChild) {
+        /* Adjust counts */
+        adjustChildStat(pChild, ThemisSMStat.TNCL);
+        adjustChildStat(pChild, ThemisSMStat.TNIN);
+        adjustChildStat(pChild, ThemisSMStat.TNEN);
+        adjustChildStat(pChild, ThemisSMStat.TNM);
+        adjustChildStat(pChild, ThemisSMStat.TNOS);
+        adjustChildStat(pChild, ThemisSMStat.TLOC);
+        adjustChildStat(pChild, ThemisSMStat.TLLOC);
+        adjustChildStat(pChild, ThemisSMStat.TCLOC);
+        adjustChildStat(pChild, ThemisSMStat.TDLOC);
+    }
+
+    /**
+     * Adjust child stat.
+     * @param pChild the child
+     * @param pStat the stat
+     */
+    void adjustChildStat(final ThemisStatsBase pChild,
+                         final ThemisSMStat pStat) {
+        adjustChildStat(pChild, pStat, pStat);
+    }
+
+    /**
+     * Adjust child stat.
+     * @param pChild the child
+     * @param pStat the stat
+     * @param pChildStat the child stat
+     */
+    void adjustChildStat(final ThemisStatsBase pChild,
+                         final ThemisSMStat pStat,
+                         final ThemisSMStat pChildStat) {
+        /* Adjust counts */
+        adjustStat(pStat, pChild.getStat(pChildStat));
+        if (getSourceMeter() == null) {
+            final Map<ThemisSMStat, Integer> myMap = pChild.getSourceMeterStats();
+            if (myMap != null) {
+                adjustSMStat(pStat, myMap.get(pChildStat));
+            }
+        }
     }
 }

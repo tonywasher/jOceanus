@@ -19,9 +19,12 @@ package net.sourceforge.joceanus.jthemis.statistics;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import net.sourceforge.joceanus.jthemis.analysis.ThemisAnalysisFile.ThemisAnalysisObject;
+import net.sourceforge.joceanus.jthemis.analysis.ThemisAnalysisIf.ThemisIteratorChain;
 import net.sourceforge.joceanus.jthemis.sourcemeter.ThemisSMClass;
+import net.sourceforge.joceanus.jthemis.sourcemeter.ThemisSMClass.ThemisSMClassType;
 import net.sourceforge.joceanus.jthemis.sourcemeter.ThemisSMStat;
 
 /**
@@ -42,12 +45,12 @@ public class ThemisStatsClass
     /**
      * The class list.
      */
-    private final List<ThemisStatsClass> theClasses;
+    private final List<ThemisStatsBase> theClasses;
 
     /**
-     * The methods list.
+     * The method list.
      */
-    private final List<ThemisStatsMethod> theMethods;
+    private final List<ThemisStatsBase> theMethods;
 
     /**
      * Constructor.
@@ -73,53 +76,52 @@ public class ThemisStatsClass
         return theClass;
     }
 
+    /**
+     * Obtain the classType.
+     * @return the classType
+     */
+    public ThemisSMClassType getClassType() {
+        return theSMClass.getClassType();
+    }
+
     @Override
     public ThemisSMClass getSourceMeter() {
         return theSMClass;
     }
 
     @Override
-    public Iterator<ThemisStatsClass> classIterator() {
-        return theClasses.iterator();
+    public Map<ThemisSMStat, Integer> getSourceMeterStats() {
+        return theSMClass == null ? null : theSMClass.getStatistics();
+    }
+
+    @Override
+    public Iterator<ThemisStatsBase> childIterator() {
+        return new ThemisIteratorChain<>(theClasses.iterator(), theMethods.iterator());
+    }
+
+    @Override
+    public String toString() {
+        return theClass.getShortName();
     }
 
     @Override
     public void addClass(final ThemisStatsClass pClass) {
         /* Add class to list */
         theClasses.add(pClass);
+        pClass.setParent(this);
 
         /* Adjust counts */
-        adjustStat(ThemisSMStat.TNCL, pClass.getStat(ThemisSMStat.TNCL));
-        adjustStat(ThemisSMStat.TNIN, pClass.getStat(ThemisSMStat.TNIN));
-        adjustStat(ThemisSMStat.TNEN, pClass.getStat(ThemisSMStat.TNEN));
-        adjustStat(ThemisSMStat.TNM, pClass.getStat(ThemisSMStat.TNM));
-        adjustStat(ThemisSMStat.TNOS, pClass.getStat(ThemisSMStat.TNOS));
-        adjustStat(ThemisSMStat.TLOC, pClass.getStat(ThemisSMStat.TLOC));
-        adjustStat(ThemisSMStat.TLLOC, pClass.getStat(ThemisSMStat.TLLOC));
-        adjustStat(ThemisSMStat.TCLOC, pClass.getStat(ThemisSMStat.TCLOC));
-        adjustStat(ThemisSMStat.TDLOC, pClass.getStat(ThemisSMStat.TDLOC));
-    }
-
-    @Override
-    public Iterator<ThemisStatsMethod> methodIterator() {
-        return theMethods.iterator();
+        addChildTotals(pClass);
     }
 
     @Override
     public void addMethod(final ThemisStatsMethod pMethod) {
         /* Add method to list */
         theMethods.add(pMethod);
+        pMethod.setParent(this);
 
         /* Adjust counts */
         adjustStat(ThemisSMStat.LOC, pMethod.getStat(ThemisSMStat.LOC));
-        adjustStat(ThemisSMStat.TNCL, pMethod.getStat(ThemisSMStat.TNCL));
-        adjustStat(ThemisSMStat.TNIN, pMethod.getStat(ThemisSMStat.TNIN));
-        adjustStat(ThemisSMStat.TNEN, pMethod.getStat(ThemisSMStat.TNEN));
-        adjustStat(ThemisSMStat.TNM, pMethod.getStat(ThemisSMStat.TNM));
-        adjustStat(ThemisSMStat.TNOS, pMethod.getStat(ThemisSMStat.TNOS));
-        adjustStat(ThemisSMStat.TLOC, pMethod.getStat(ThemisSMStat.TLOC));
-        adjustStat(ThemisSMStat.TLLOC, pMethod.getStat(ThemisSMStat.TLLOC));
-        adjustStat(ThemisSMStat.TCLOC, pMethod.getStat(ThemisSMStat.TCLOC));
-        adjustStat(ThemisSMStat.TDLOC, pMethod.getStat(ThemisSMStat.TDLOC));
+        addChildTotals(pMethod);
     }
 }

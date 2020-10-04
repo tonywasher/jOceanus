@@ -50,7 +50,7 @@ public class MetisViewerManager
     /**
      * The Next entryId.
      */
-    private static AtomicInteger theNextEntryId = new AtomicInteger(1);
+    private static final AtomicInteger NEXT_ENTRY_ID = new AtomicInteger(1);
 
     /**
      * The Focused Entry.
@@ -121,7 +121,7 @@ public class MetisViewerManager
      * @return the next id
      */
     protected int getNextId() {
-        return theNextEntryId.getAndIncrement();
+        return NEXT_ENTRY_ID.getAndIncrement();
     }
 
     /**

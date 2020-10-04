@@ -141,7 +141,7 @@ public class ThemisAnalysisIf
      * Chained Iterator.
      * @param <T> the item class
      */
-    static class ThemisIteratorChain<T> implements Iterator<T> {
+    public static class ThemisIteratorChain<T> implements Iterator<T> {
         /**
          * Local Iterator.
          */
@@ -157,8 +157,8 @@ public class ThemisAnalysisIf
          * @param pLocal the local iterator
          * @param pChained the chained iterator
          */
-        ThemisIteratorChain(final Iterator<T> pLocal,
-                            final Iterator<T> pChained) {
+        public ThemisIteratorChain(final Iterator<T> pLocal,
+                                   final Iterator<T> pChained) {
             theLocal = pLocal;
             theChained = pChained;
         }

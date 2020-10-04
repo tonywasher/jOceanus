@@ -17,8 +17,10 @@
 package net.sourceforge.joceanus.jthemis.statistics;
 
 import java.util.ArrayList;
+import java.util.EnumMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import net.sourceforge.joceanus.jthemis.analysis.ThemisAnalysisProject;
 import net.sourceforge.joceanus.jthemis.sourcemeter.ThemisSMStat;
@@ -36,7 +38,12 @@ public class ThemisStatsProject
     /**
      * The module list.
      */
-    private final List<ThemisStatsModule> theModules;
+    private final List<ThemisStatsBase> theChildren;
+
+    /**
+     * The sourceMeterStats.
+     */
+    private final Map<ThemisSMStat, Integer> theSMStats;
 
     /**
      * Constructor.
@@ -47,7 +54,8 @@ public class ThemisStatsProject
         theProject = pProject;
 
         /* Create lists */
-        theModules = new ArrayList<>();
+        theChildren = new ArrayList<>();
+        theSMStats = new EnumMap<>(ThemisSMStat.class);
     }
 
     /**
@@ -58,12 +66,22 @@ public class ThemisStatsProject
         return theProject;
     }
 
+    @Override
+    public Map<ThemisSMStat, Integer> getSourceMeterStats() {
+        return theSMStats;
+    }
+
     /**
      * Obtain module iterator.
      * @return the iterator
      */
-    Iterator<ThemisStatsModule> moduleIterator() {
-        return theModules.iterator();
+    public Iterator<ThemisStatsBase> childIterator() {
+        return theChildren.iterator();
+    }
+
+    @Override
+    public String toString() {
+        return theProject.getName();
     }
 
     /**
@@ -72,21 +90,14 @@ public class ThemisStatsProject
      */
     void addModule(final ThemisStatsModule pModule) {
         /* Add module to list */
-        theModules.add(pModule);
+        theChildren.add(pModule);
+        pModule.setParent(this);
 
         /* Adjust count of files and packages */
-        adjustStat(ThemisSMStat.TNPKG, pModule.getStat(ThemisSMStat.NPKG));
-        adjustStat(ThemisSMStat.TNFI, pModule.getStat(ThemisSMStat.TNFI));
+        adjustChildStat(pModule, ThemisSMStat.TNPKG, ThemisSMStat.NPKG);
+        adjustChildStat(pModule, ThemisSMStat.TNFI);
 
         /* Adjust counts */
-        adjustStat(ThemisSMStat.TNCL, pModule.getStat(ThemisSMStat.TNCL));
-        adjustStat(ThemisSMStat.TNIN, pModule.getStat(ThemisSMStat.TNIN));
-        adjustStat(ThemisSMStat.TNEN, pModule.getStat(ThemisSMStat.TNEN));
-        adjustStat(ThemisSMStat.TNM, pModule.getStat(ThemisSMStat.TNM));
-        adjustStat(ThemisSMStat.TNOS, pModule.getStat(ThemisSMStat.TNOS));
-        adjustStat(ThemisSMStat.TLOC, pModule.getStat(ThemisSMStat.TLOC));
-        adjustStat(ThemisSMStat.TLLOC, pModule.getStat(ThemisSMStat.TLLOC));
-        adjustStat(ThemisSMStat.TCLOC, pModule.getStat(ThemisSMStat.TCLOC));
-        adjustStat(ThemisSMStat.TDLOC, pModule.getStat(ThemisSMStat.TDLOC));
+        addChildTotals(pModule);
     }
 }

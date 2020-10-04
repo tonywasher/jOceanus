@@ -17,10 +17,11 @@
 package net.sourceforge.joceanus.jthemis.statistics;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
+import net.sourceforge.joceanus.jthemis.analysis.ThemisAnalysisKeyWord;
 import net.sourceforge.joceanus.jthemis.analysis.ThemisAnalysisMethod;
 import net.sourceforge.joceanus.jthemis.sourcemeter.ThemisSMMethod;
 import net.sourceforge.joceanus.jthemis.sourcemeter.ThemisSMStat;
@@ -41,9 +42,9 @@ public class ThemisStatsMethod
     private final ThemisSMMethod theSMMethod;
 
     /**
-     * The class list.
+     * The child list.
      */
-    private final List<ThemisStatsClass> theClasses;
+    private final List<ThemisStatsBase> theChildren;
 
     /**
      * Constructor.
@@ -57,7 +58,7 @@ public class ThemisStatsMethod
         theSMMethod = pSourceMeter;
 
         /* Create lists */
-        theClasses = new ArrayList<>();
+        theChildren = new ArrayList<>();
     }
 
     /**
@@ -74,30 +75,30 @@ public class ThemisStatsMethod
     }
 
     @Override
-    public Iterator<ThemisStatsClass> classIterator() {
-        return theClasses.iterator();
+    public Map<ThemisSMStat, Integer> getSourceMeterStats() {
+        return theSMMethod == null ? null : theSMMethod.getStatistics();
+    }
+
+    @Override
+    public Iterator<ThemisStatsBase> childIterator() {
+        return theChildren.iterator();
+    }
+
+    @Override
+    public String toString() {
+        final String myName = theMethod.toString();
+        final int myIndex = myName.indexOf(ThemisAnalysisKeyWord.THROWS.toString());
+        return myIndex != -1 ?  myName.substring(0, myIndex - 1) : myName;
     }
 
     @Override
     public void addClass(final ThemisStatsClass pClass) {
         /* Add class to list */
-        theClasses.add(pClass);
+        theChildren.add(pClass);
+        pClass.setParent(this);
 
         /* Adjust counts */
-        adjustStat(ThemisSMStat.TNCL, pClass.getStat(ThemisSMStat.TNCL));
-        adjustStat(ThemisSMStat.TNIN, pClass.getStat(ThemisSMStat.TNIN));
-        adjustStat(ThemisSMStat.TNEN, pClass.getStat(ThemisSMStat.TNEN));
-        adjustStat(ThemisSMStat.TNM, pClass.getStat(ThemisSMStat.TNM));
-        adjustStat(ThemisSMStat.TNOS, pClass.getStat(ThemisSMStat.TNOS));
-        adjustStat(ThemisSMStat.TLOC, pClass.getStat(ThemisSMStat.TLOC));
-        adjustStat(ThemisSMStat.TLLOC, pClass.getStat(ThemisSMStat.TLLOC));
-        adjustStat(ThemisSMStat.TCLOC, pClass.getStat(ThemisSMStat.TCLOC));
-        adjustStat(ThemisSMStat.TDLOC, pClass.getStat(ThemisSMStat.TDLOC));
-    }
-
-    @Override
-    public Iterator<ThemisStatsMethod> methodIterator() {
-        return Collections.emptyIterator();
+        addChildTotals(pClass);
     }
 
     @Override

@@ -28,6 +28,7 @@ import java.util.Objects;
 
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jthemis.ThemisIOException;
+import net.sourceforge.joceanus.jthemis.analysis.ThemisAnalysisMaven;
 
 /**
  * DSM Module.
@@ -223,7 +224,7 @@ public class ThemisDSMModule {
      */
     void processModulesAndPackages() {
         /* Process the project */
-        parseProjectFile(new File(theLocation, ThemisDSMMaven.POM));
+        parseProjectFile(new File(theLocation, ThemisAnalysisMaven.POM));
 
         /* Look for the source directory */
         final File mySrc = new File(theLocation, DIR_JAVA);
@@ -369,7 +370,7 @@ public class ThemisDSMModule {
         /* Protect against exceptions */
         try (InputStream myInStream = new FileInputStream(pPom)) {
             /* Parse the Project definition file */
-            final ThemisDSMMaven myPom = new ThemisDSMMaven(myInStream);
+            final ThemisAnalysisMaven myPom = new ThemisAnalysisMaven(myInStream);
 
             /* Loop through the modules */
             for (final String myModuleName : myPom.getModules()) {
