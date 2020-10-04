@@ -28,7 +28,7 @@ import net.sourceforge.joceanus.jthemis.analysis.ThemisAnalysisGeneric.ThemisAna
  * Interface representation.
  */
 public class ThemisAnalysisInterface
-        implements ThemisAnalysisContainer, ThemisAnalysisObject {
+        implements ThemisAnalysisObject {
     /**
      * The short name of the class.
      */
@@ -94,6 +94,7 @@ public class ThemisAnalysisInterface
 
         /* Parse the headers */
         final Deque<ThemisAnalysisElement> myHeaders = ThemisAnalysisBuilder.parseHeaders(pParser, myLine);
+        theNumLines = myHeaders.size() + 1;
 
         /* Parse the body */
         final Deque<ThemisAnalysisElement> myLines = ThemisAnalysisBuilder.processBody(pParser);
@@ -109,9 +110,6 @@ public class ThemisAnalysisInterface
         /* Parse the ancestors and lines */
         theAncestors = myParser.parseAncestors(myHeaders);
         initialProcessingPass(myParser);
-
-        /* Calculate the number of lines */
-        theNumLines = calculateNumLines(myBaseLines, myHeaders.size());
     }
 
     /**
@@ -176,21 +174,6 @@ public class ThemisAnalysisInterface
     @Override
     public int getNumLines() {
         return theNumLines;
-    }
-
-    /**
-     * Calculate the number of lines for the construct.
-     * @param pBaseCount the baseCount
-     * @param pHdrCount the header line count
-     * @return the number of lines
-     */
-    public int calculateNumLines(final int pBaseCount,
-                                 final int pHdrCount) {
-        /* Add 1+ line(s) for the while headers  */
-        final int myNumLines = pBaseCount + Math.max(pHdrCount - 1, 1);
-
-        /* Add one for the clause terminator */
-        return myNumLines + 1;
     }
 
     @Override

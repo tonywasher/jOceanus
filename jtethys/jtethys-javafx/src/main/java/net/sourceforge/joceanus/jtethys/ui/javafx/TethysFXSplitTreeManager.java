@@ -16,6 +16,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jtethys.ui.javafx;
 
+import javafx.application.Platform;
 import javafx.geometry.Orientation;
 import javafx.scene.control.SplitPane;
 
@@ -59,6 +60,9 @@ public final class TethysFXSplitTreeManager<T>
 
         /* create the node */
         theNode = new TethysFXNode(theSplit);
+
+        /* Set the default weight */
+        setWeight(DEFAULT_WEIGHT);
     }
 
     @Override
@@ -90,5 +94,11 @@ public final class TethysFXSplitTreeManager<T>
     public void setVisible(final boolean pVisible) {
         theSplit.setVisible(pVisible);
         theSplit.setManaged(pVisible);
+    }
+
+    @Override
+    public void setWeight(final double pWeight) {
+        super.setWeight(pWeight);
+        Platform.runLater(() -> theSplit.setDividerPositions(getWeight()));
     }
 }

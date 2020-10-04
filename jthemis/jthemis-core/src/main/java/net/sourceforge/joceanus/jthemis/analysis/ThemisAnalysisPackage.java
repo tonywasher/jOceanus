@@ -31,7 +31,7 @@ public class ThemisAnalysisPackage
     /**
      * The java suffix.
      */
-    static final String SFX_JAVA = ".java";
+    public static final String SFX_JAVA = ".java";
 
     /**
      * The package-info file.

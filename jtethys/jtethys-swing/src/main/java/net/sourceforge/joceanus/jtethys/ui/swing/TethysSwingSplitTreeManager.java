@@ -16,6 +16,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jtethys.ui.swing;
 
+
 import javax.swing.JSplitPane;
 
 import net.sourceforge.joceanus.jtethys.ui.TethysSplitTreeManager;
@@ -62,7 +63,10 @@ public final class TethysSwingSplitTreeManager<T>
 
         /* create the node */
         theNode = new TethysSwingNode(theSplit);
-    }
+
+        /* Set the default weight */
+        setWeight(DEFAULT_WEIGHT);
+     }
 
     @Override
     public TethysSwingTreeManager<T> getTreeManager() {
@@ -92,5 +96,11 @@ public final class TethysSwingSplitTreeManager<T>
     @Override
     public void setVisible(final boolean pVisible) {
         theNode.setVisible(pVisible);
+    }
+
+    @Override
+    public void setWeight(final double pWeight) {
+        super.setWeight(pWeight);
+        theSplit.setResizeWeight(pWeight);
     }
 }

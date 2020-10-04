@@ -11,6 +11,7 @@ table {
 	margin-left: auto;
 	margin-right: auto;
 	page-break-inside:avoid;
+	width: 90%
 }
 
 h1,h2 {
@@ -21,8 +22,36 @@ th {
 	font-weight: bold;
 }
 
+th.dsm-package {
+	width: auto;
+}
+
+th.dsm-key {
+	width: 60px;
+}
+
 th.dsm-col-count {
 	width: 30px;
+}
+
+th.stats-name {
+	width: 90px;
+}
+
+th.stats-desc {
+	width: auto;
+}
+
+th.stats-desc {
+	width: auto;
+}
+
+th.stats-name {
+	width: 100px;
+}
+
+th.stats-count {
+	width: 100px;
 }
 
 td {
@@ -31,12 +60,10 @@ td {
 
 td.dsm-cell-name-right {
 	text-align: right;
-	width: 150px;
 }
 
 td.dsm-cell-name-left {
 	text-align: left;
-	width: 150px;
 }
 
 td.dsm-cell-self {

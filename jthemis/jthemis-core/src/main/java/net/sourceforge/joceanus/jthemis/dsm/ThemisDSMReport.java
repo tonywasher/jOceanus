@@ -81,8 +81,8 @@ public final class ThemisDSMReport {
         addStartElementWithClass(pBuilder, Tag.TR, "dsm-row-header");
 
         /* Build the initial headers */
-        addTextElement(pBuilder, Tag.TH, "Package");
-        addTextElement(pBuilder, Tag.TH, "Key");
+        addTextElementWithClass(pBuilder, Tag.TH, "dsm-package", "Package");
+        addTextElementWithClass(pBuilder, Tag.TH, "dsm-key", "Key");
 
         /* Loop through the packages */
         int myKey = 0;

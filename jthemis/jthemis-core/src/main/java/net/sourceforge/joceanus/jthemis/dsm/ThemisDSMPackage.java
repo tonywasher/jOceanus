@@ -26,6 +26,8 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
 
+import net.sourceforge.joceanus.jthemis.analysis.ThemisAnalysisPackage;
+
 /**
  * DSM Package.
  */
@@ -39,11 +41,6 @@ public class ThemisDSMPackage {
      * The import prefix.
      */
     private static final String PFX_IMPORT = "import ";
-
-    /**
-     * The java suffix.
-     */
-    private static final String SFX_JAVA = ".java";
 
     /**
      * The package-info file.
@@ -214,7 +211,7 @@ public class ThemisDSMPackage {
                 final String myName = myFile.getName();
 
                 /* If this is a .java that is not package-info */
-                if (myName.endsWith(SFX_JAVA)
+                if (myName.endsWith(ThemisAnalysisPackage.SFX_JAVA)
                     && !myName.equals(PACKAGE_INFO)) {
                     /* Add the class */
                     final ThemisDSMClass myClass = new ThemisDSMClass(this, myFile);

@@ -58,6 +58,11 @@ public class ThemisAnalysisDataMap {
     private static final Map<String, ThemisAnalysisDataType> BASETYPES = createDataTypeMap();
 
     /**
+     * The hidden dataTypes.
+     */
+    private static final Map<String, String> HIDDENTYPES = createHiddenTypeMap();
+
+    /**
      * The local dataTypes.
      */
     private final Map<String, ThemisAnalysisDataType> theLocalTypes;
@@ -397,7 +402,7 @@ public class ThemisAnalysisDataMap {
     }
 
     /**
-     * Report unknown references. (DEBUG)
+     * Report unknown references.
      */
     void reportUnknown() {
         /* Loop through the localDataTypes */
@@ -407,10 +412,35 @@ public class ThemisAnalysisDataMap {
 
             /* If this is an unknown value */
             if (myType instanceof ThemisAnalysisDataTypeUnknown) {
-                final ThemisAnalysisDataTypeUnknown myUnknown = (ThemisAnalysisDataTypeUnknown) myType;
-                LOGGER.info("Unknown: " + myUnknown.toString());
+                /* Process the unknown reference */
+                processUnknown(myEntry, (ThemisAnalysisDataTypeUnknown) myType);
             }
         }
+    }
+
+    /**
+     * Process unknown reference.
+     * @param pEntry the entry
+     * @param pUnknown the unknown reference
+     */
+    private void processUnknown(final Entry<String, ThemisAnalysisDataType> pEntry,
+                                final ThemisAnalysisDataTypeUnknown pUnknown) {
+        /* If this is a hidden child */
+        final String myName = pEntry.getKey();
+        if (HIDDENTYPES.containsKey(myName)) {
+            /* Look up the parent */
+            final ThemisAnalysisDataType myParent = theLocalTypes.get(HIDDENTYPES.get(myName));
+            if (myParent instanceof ThemisAnalysisImport) {
+                /* Register a fake import and return */
+                final String myFullName = ((ThemisAnalysisImport) myParent).getFullName() + ThemisAnalysisChar.PERIOD + myName;
+                final ThemisAnalysisImport myChild = new ThemisAnalysisImport(myFullName);
+                pEntry.setValue(myChild);
+                return;
+            }
+        }
+
+        /* Report it if we have not rectified the problem */
+        LOGGER.info("Unknown: " + pUnknown.toString());
     }
 
     /**
@@ -435,6 +465,17 @@ public class ThemisAnalysisDataMap {
         }
 
         /* return the map */
+        return myMap;
+    }
+
+    /**
+     * Create hidden dataType map.
+     * @return the map
+     */
+    private static Map<String, String> createHiddenTypeMap() {
+        final Map<String, String> myMap = new HashMap<>();
+        myMap.put("StateChangeNotification", "Preloader");
+        myMap.put("SortKey", "RowSorter");
         return myMap;
     }
 

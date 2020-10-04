@@ -17,6 +17,9 @@
 package net.sourceforge.joceanus.jthemis.analysis;
 
 import java.io.File;
+import java.nio.file.FileSystem;
+import java.nio.file.FileSystems;
+import java.nio.file.Path;
 import java.util.stream.Stream;
 
 import org.junit.jupiter.api.Assertions;
@@ -25,18 +28,31 @@ import org.junit.jupiter.api.DynamicTest;
 import org.junit.jupiter.api.TestFactory;
 
 import net.sourceforge.joceanus.jtethys.OceanusException;
+import net.sourceforge.joceanus.jtethys.ui.TethysDataFormatter;
 import net.sourceforge.joceanus.jthemis.dsm.ThemisDSMProject;
 import net.sourceforge.joceanus.jthemis.dsm.ThemisDSMReport;
-import net.sourceforge.joceanus.jthemis.statements.ThemisProjectParser;
+import net.sourceforge.joceanus.jthemis.sourcemeter.ThemisSMStatistics;
+import net.sourceforge.joceanus.jthemis.statistics.ThemisStatsParser;
+import net.sourceforge.joceanus.jthemis.statistics.ThemisStatsProject;
 
 /**
  * Test Analysis.
  */
 public class TestAnalysis {
     /**
+     * The project.
+     */
+    private static final String PROJECT = "jOceanus";
+
+    /**
      * The path base.
      */
-    private static final String PATH_BASE = System.getProperty("user.home") + "/git/jOceanus/";
+    private static final String PATH_BASE = System.getProperty("user.home") + "/git/" + PROJECT + "/";
+
+    /**
+     * The sourceMeter base.
+     */
+    private static final String PATH_SM = System.getProperty("user.home") + "/Downloads/SourceMeter-9.1.1-x64-Windows/java/Results/";
 
     /**
      * The path xtra.
@@ -69,7 +85,17 @@ public class TestAnalysis {
         /* Analyse source of project */
         final ThemisAnalysisProject myProj = new ThemisAnalysisProject(new File(PATH_BASE));
         Assertions.assertNull(myProj.getError(), "Exception analysing project");
-        ThemisProjectParser.parseProject(myProj);
+
+        /* Parse sourceMeter statistics */
+        ThemisSMStatistics myStats = new ThemisSMStatistics(new TethysDataFormatter());
+        final FileSystem mySystem = FileSystems.getDefault();
+        final String myDir = PATH_SM + PROJECT + "/java/2020-09-24-11-26-09";
+        final Path myPath = mySystem.getPath(myDir);
+        myStats.parseStatistics(myPath, PROJECT);
+
+        /* Parse the base project */
+        final ThemisStatsParser myParser = new ThemisStatsParser(myStats);
+        final ThemisStatsProject myProject = myParser.parseProject(myProj);
     }
 
     /**

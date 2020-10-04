@@ -40,7 +40,8 @@ public class ThemisAnalysisFile
     /**
      * Object class.
      */
-    interface ThemisAnalysisObject extends ThemisAnalysisDataType {
+    public interface ThemisAnalysisObject
+            extends ThemisAnalysisDataType, ThemisAnalysisContainer {
         /**
          * Obtain the short name.
          * @return the name
@@ -124,6 +125,14 @@ public class ThemisAnalysisFile
      */
     public String getName() {
         return theName;
+    }
+
+    /**
+     * Obtain the location of the fileClass.
+     * @return the location
+     */
+    public String getLocation() {
+        return theLocation.getAbsolutePath();
     }
 
     /**

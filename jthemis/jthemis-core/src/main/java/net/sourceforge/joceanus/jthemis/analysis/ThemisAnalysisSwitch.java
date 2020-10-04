@@ -64,6 +64,7 @@ public class ThemisAnalysisSwitch
 
         /* Parse the switch */
         final Deque<ThemisAnalysisElement> myHeaders = ThemisAnalysisBuilder.parseHeaders(pParser, pLine);
+        theNumLines = myHeaders.size() + 1;
         theSwitch = new ThemisAnalysisStatement(myHeaders);
 
         /* Parse the body */
@@ -74,9 +75,6 @@ public class ThemisAnalysisSwitch
         theContents = new ArrayDeque<>();
         final ThemisAnalysisParser myParser = new ThemisAnalysisParser(myLines, theContents, theParent);
         processLines(myParser);
-
-        /* Calculate the number of lines */
-        theNumLines = calculateNumLines(myBaseLines);
     }
 
     /**
@@ -129,19 +127,6 @@ public class ThemisAnalysisSwitch
     @Override
     public int getNumLines() {
         return theNumLines;
-    }
-
-    /**
-     * Calculate the number of lines for the construct.
-     * @param pBaseCount the baseCount
-     * @return the number of lines
-     */
-    public int calculateNumLines(final int pBaseCount) {
-        /* Add 1+ line(s) for the switch headers  */
-        final int myNumLines = pBaseCount + Math.max(theSwitch.getNumLines() - 1, 1);
-
-        /* Add one for the clause terminator */
-        return myNumLines + 1;
     }
 
     @Override

@@ -94,10 +94,8 @@ public class MetisViewerEntry {
         theId = pManager.getNextId();
 
         /* Determine unique name */
-        final StringBuilder myBuilder = new StringBuilder();
-        myBuilder.append(ENTRY_PREFIX);
-        myBuilder.append(theId);
-        theUniqueName = myBuilder.toString();
+        theUniqueName = ENTRY_PREFIX
+                + theId;
 
         /* Initialise to visible */
         isVisible = true;
@@ -217,10 +215,7 @@ public class MetisViewerEntry {
      */
     public void setFocus(final String pName) {
         /* Loop through the children */
-        final Iterator<MetisViewerEntry> myIterator = theChildList.iterator();
-        while (myIterator.hasNext()) {
-            final MetisViewerEntry myEntry = myIterator.next();
-
+        for (MetisViewerEntry myEntry : theChildList) {
             /* If we match the object */
             if (pName.equals(myEntry.getDisplayName())) {
                 /* Set the focus and return */

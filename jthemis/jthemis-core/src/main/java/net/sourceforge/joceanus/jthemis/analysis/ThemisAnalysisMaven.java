@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ******************************************************************************/
-package net.sourceforge.joceanus.jthemis.dsm;
+package net.sourceforge.joceanus.jthemis.analysis;
 
 import java.io.BufferedInputStream;
 import java.io.IOException;
@@ -39,7 +39,7 @@ import net.sourceforge.joceanus.jthemis.ThemisIOException;
 /**
  * Maven pom.xml parser.
  */
-public class ThemisDSMMaven {
+public class ThemisAnalysisMaven {
     /**
      * Project filename.
      */
@@ -78,7 +78,7 @@ public class ThemisDSMMaven {
     /**
      * The Id.
      */
-    private final ThemisDSMMavenId theId;
+    private final ThemisAnalysisMavenId theId;
 
     /**
      * The modules.
@@ -88,14 +88,14 @@ public class ThemisDSMMaven {
     /**
      * The dependencies.
      */
-    private final List<ThemisDSMMavenId> theDependencies;
+    private final List<ThemisAnalysisMavenId> theDependencies;
 
     /**
      * Constructor.
      * @param pInputStream the input stream to read
      * @throws OceanusException on error
      */
-    public ThemisDSMMaven(final InputStream pInputStream) throws OceanusException {
+    public ThemisAnalysisMaven(final InputStream pInputStream) throws OceanusException {
         /* Create the module list */
         theModules = new ArrayList<>();
         theDependencies = new ArrayList<>();
@@ -139,7 +139,7 @@ public class ThemisDSMMaven {
      * @return the MavenId
      * @throws OceanusException on error
      */
-    public ThemisDSMMavenId parseProjectFile(final Document pDocument) throws OceanusException {
+    public ThemisAnalysisMavenId parseProjectFile(final Document pDocument) throws OceanusException {
         /* Access the document element */
         final Element myDoc = pDocument.getDocumentElement();
 
@@ -150,12 +150,12 @@ public class ThemisDSMMaven {
 
         /* Obtain parent definition if any */
         final Element myParentEl = getElement(myDoc, EL_PARENT);
-        final ThemisDSMMavenId myParent = myParentEl == null
+        final ThemisAnalysisMavenId myParent = myParentEl == null
                 ? null
-                : new ThemisDSMMavenId(myParentEl);
+                : new ThemisAnalysisMavenId(myParentEl);
 
         /* Obtain our mavenId */
-        final ThemisDSMMavenId myId = new ThemisDSMMavenId(myDoc, myParent);
+        final ThemisAnalysisMavenId myId = new ThemisAnalysisMavenId(myDoc, myParent);
 
         /* Process modules */
         final Element myModules = getElement(myDoc, EL_MODULES);
@@ -253,7 +253,7 @@ public class ThemisDSMMaven {
      * @param pParent the parentId
      */
     private void processDependencies(final Element pDependencies,
-                                     final ThemisDSMMavenId pParent) {
+                                     final ThemisAnalysisMavenId pParent) {
         /* Return if no element */
         if (pDependencies == null) {
             return;
@@ -266,7 +266,7 @@ public class ThemisDSMMaven {
             /* Return result if we have a match */
             if (myChild instanceof Element
                     && EL_DEPENDENCY.equals(myChild.getNodeName())) {
-                theDependencies.add(new ThemisDSMMavenId((Element) myChild, pParent));
+                theDependencies.add(new ThemisAnalysisMavenId((Element) myChild, pParent));
             }
         }
     }

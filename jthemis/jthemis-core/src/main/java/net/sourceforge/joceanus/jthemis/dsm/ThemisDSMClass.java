@@ -22,6 +22,8 @@ import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 
+import net.sourceforge.joceanus.jthemis.analysis.ThemisAnalysisPackage;
+
 /**
  * DSM Class.
  */
@@ -56,7 +58,7 @@ public class ThemisDSMClass {
         thePackage = pPackage;
         theLocation = pLocation;
         final String myName = pLocation.getName();
-        theClass = myName.substring(0, myName.length() - ".java".length());
+        theClass = myName.substring(0, myName.length() - ThemisAnalysisPackage.SFX_JAVA.length());
         theImports = new ArrayList<>();
     }
 

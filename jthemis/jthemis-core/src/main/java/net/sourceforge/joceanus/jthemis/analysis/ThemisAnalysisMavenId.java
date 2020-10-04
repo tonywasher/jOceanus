@@ -14,14 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ******************************************************************************/
-package net.sourceforge.joceanus.jthemis.dsm;
+package net.sourceforge.joceanus.jthemis.analysis;
 
 import org.w3c.dom.Element;
 
 /**
  * Maven Module Id.
  */
-public class ThemisDSMMavenId {
+public class ThemisAnalysisMavenId {
     /**
      * GroupId element.
      */
@@ -66,11 +66,11 @@ public class ThemisDSMMavenId {
      * Constructor.
      * @param pElement the element containing the values
      */
-    ThemisDSMMavenId(final Element pElement) {
+    ThemisAnalysisMavenId(final Element pElement) {
         /* Access the values */
-        theGroupId = ThemisDSMMaven.getElementValue(pElement, EL_GROUPID);
-        theArtifactId = ThemisDSMMaven.getElementValue(pElement, EL_ARTIFACTID);
-        theVersion = ThemisDSMMaven.getElementValue(pElement, EL_VERSION);
+        theGroupId = ThemisAnalysisMaven.getElementValue(pElement, EL_GROUPID);
+        theArtifactId = ThemisAnalysisMaven.getElementValue(pElement, EL_ARTIFACTID);
+        theVersion = ThemisAnalysisMaven.getElementValue(pElement, EL_VERSION);
     }
 
     /**
@@ -78,8 +78,8 @@ public class ThemisDSMMavenId {
      * @param pElement the element containing the values
      * @param pParent the parent Id
      */
-    ThemisDSMMavenId(final Element pElement,
-                     final ThemisDSMMavenId pParent) {
+    ThemisAnalysisMavenId(final Element pElement,
+                          final ThemisAnalysisMavenId pParent) {
         /* Process as much as we can */
         this(pElement);
 

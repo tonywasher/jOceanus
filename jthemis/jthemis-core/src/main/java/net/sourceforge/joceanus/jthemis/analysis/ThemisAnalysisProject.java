@@ -25,7 +25,6 @@ import java.util.List;
 
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jthemis.ThemisIOException;
-import net.sourceforge.joceanus.jthemis.dsm.ThemisDSMMaven;
 
 /**
  * Project.
@@ -37,7 +36,7 @@ public class ThemisAnalysisProject {
     private static final String CONSOLIDATION_ERROR = "Failed on consolidation Pass";
 
     /**
-     * The module name.
+     * The project name.
      */
     private final String theName;
 
@@ -64,9 +63,8 @@ public class ThemisAnalysisProject {
     /**
      * Constructor.
      * @param pLocation the project location
-     * @throws OceanusException on error
      */
-    ThemisAnalysisProject(final File pLocation) throws OceanusException {
+    public ThemisAnalysisProject(final File pLocation) {
         /* Store the name and location */
         theLocation = pLocation;
         theName = pLocation.getName();
@@ -78,7 +76,7 @@ public class ThemisAnalysisProject {
         theDataMap = new ThemisAnalysisDataMap();
 
         /* Initiate search for modules */
-        parseProjectFile(new File(theLocation, ThemisDSMMaven.POM));
+        parseProjectFile(new File(theLocation, ThemisAnalysisMaven.POM));
 
         /* InitialPass */
         if (theError == null) {
@@ -100,7 +98,7 @@ public class ThemisAnalysisProject {
      * Obtain the name.
      * @return the name
      */
-    String getName() {
+    public String getName() {
         return theName;
     }
 
@@ -136,6 +134,11 @@ public class ThemisAnalysisProject {
         return theDataMap;
     }
 
+    @Override
+    public String toString() {
+        return theName;
+    }
+
     /**
      * Parse the maven top-level project file.
      * @param pPom the project file
@@ -166,7 +169,7 @@ public class ThemisAnalysisProject {
         /* Protect against exceptions */
         try (InputStream myInStream = new FileInputStream(pPom)) {
             /* Parse the Project definition file */
-            final ThemisDSMMaven myPom = new ThemisDSMMaven(myInStream);
+            final ThemisAnalysisMaven myPom = new ThemisAnalysisMaven(myInStream);
 
             /* Loop through the modules */
             for (final String myModuleName : myPom.getModules()) {
@@ -174,7 +177,7 @@ public class ThemisAnalysisProject {
                 final File myModuleDir = new File(pPom.getParentFile(), myModuleName);
 
                 /* Process the project file */
-                parseProjectFile(new File(myModuleDir, ThemisDSMMaven.POM));
+                parseProjectFile(new File(myModuleDir, ThemisAnalysisMaven.POM));
 
                 /* Break loop on error */
                 if (theError != null) {

@@ -64,6 +64,7 @@ public class ThemisAnalysisWhile
         /* Parse the condition */
         final Deque<ThemisAnalysisElement> myHeaders = ThemisAnalysisBuilder.parseHeaders(pParser, pLine);
         theCondition = new ThemisAnalysisStatement(myHeaders);
+        theNumLines = myHeaders.size() + 1;
 
         /* Parse the body */
         final Deque<ThemisAnalysisElement> myLines = ThemisAnalysisBuilder.processBody(pParser);
@@ -73,9 +74,6 @@ public class ThemisAnalysisWhile
         theContents = new ArrayDeque<>();
         final ThemisAnalysisParser myParser = new ThemisAnalysisParser(myLines, theContents, theParent);
         myParser.processLines();
-
-        /* Calculate the number of lines */
-        theNumLines = calculateNumLines(myBaseLines);
     }
 
     @Override
@@ -101,19 +99,6 @@ public class ThemisAnalysisWhile
     @Override
     public int getNumLines() {
         return theNumLines;
-    }
-
-    /**
-     * Calculate the number of lines for the construct.
-     * @param pBaseCount the baseCount
-     * @return the number of lines
-     */
-    public int calculateNumLines(final int pBaseCount) {
-        /* Add 1+ line(s) for the while headers  */
-        final int myNumLines = pBaseCount + Math.max(theCondition.getNumLines() - 1, 1);
-
-        /* Add one for the clause terminator */
-        return myNumLines + 1;
     }
 
     @Override
