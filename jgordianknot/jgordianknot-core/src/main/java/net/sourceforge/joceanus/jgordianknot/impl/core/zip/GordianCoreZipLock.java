@@ -23,6 +23,8 @@ import net.sourceforge.joceanus.jgordianknot.api.agree.GordianAgreementType;
 import net.sourceforge.joceanus.jgordianknot.api.agree.GordianKDFType;
 import net.sourceforge.joceanus.jgordianknot.api.agree.GordianKeyPairAgreementSpec;
 import net.sourceforge.joceanus.jgordianknot.api.agree.GordianKeyPairAnonymousAgreement;
+import net.sourceforge.joceanus.jgordianknot.api.agree.GordianKeyPairSetAgreementSpec;
+import net.sourceforge.joceanus.jgordianknot.api.agree.GordianKeyPairSetAnonymousAgreement;
 import net.sourceforge.joceanus.jgordianknot.api.factory.GordianFactory;
 import net.sourceforge.joceanus.jgordianknot.api.factory.GordianFactoryType;
 import net.sourceforge.joceanus.jgordianknot.api.factory.GordianKeyPairFactory;
@@ -30,12 +32,14 @@ import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianEdwardsElliptic;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPair;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPairSpec;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPairType;
+import net.sourceforge.joceanus.jgordianknot.api.keypairset.GordianKeyPairSet;
 import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetFactory;
 import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetHash;
 import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetHashSpec;
 import net.sourceforge.joceanus.jgordianknot.api.zip.GordianZipLock;
 import net.sourceforge.joceanus.jgordianknot.api.zip.GordianZipLockType;
 import net.sourceforge.joceanus.jgordianknot.impl.core.agree.GordianAgreementClientHelloASN1;
+import net.sourceforge.joceanus.jgordianknot.impl.core.agree.GordianKeyPairSetAgreeASN1;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianLogicException;
 import net.sourceforge.joceanus.jgordianknot.impl.core.keyset.GordianKeySetHashASN1;
 import net.sourceforge.joceanus.jtethys.OceanusException;
@@ -146,6 +150,42 @@ public class GordianCoreZipLock
         isFresh = true;
     }
 
+    /**
+     * Constructor.
+     * @param pFactory the factory
+     * @param pKeyPairSet the keyPairSet
+     * @param pKeySetHashSpec the KeySetHashSpec
+     * @param pPassword the password.
+     * @throws OceanusException on error
+     */
+    GordianCoreZipLock(final GordianFactory pFactory,
+                       final GordianKeyPairSet pKeyPairSet,
+                       final GordianKeySetHashSpec pKeySetHashSpec,
+                       final char[] pPassword) throws OceanusException {
+        /* Store parameters */
+        theFactory = pFactory;
+        theLockedZipFile = null;
+
+        /* Create the agreement */
+        final GordianKeyPairFactory myKeyPairFactory = theFactory.getKeyPairFactory();
+        final GordianAgreementFactory myAgreeFactory = myKeyPairFactory.getAgreementFactory();
+        final GordianKeyPairSetAgreementSpec mySpec = GordianKeyPairSetAgreementSpec.anon(pKeyPairSet.getKeyPairSetSpec());
+        final GordianKeyPairSetAnonymousAgreement myAgreement = (GordianKeyPairSetAnonymousAgreement) myAgreeFactory.createKeyPairSetAgreement(mySpec);
+        myAgreement.setResultType(GordianFactoryType.BC);
+        final byte[] myClientHello = myAgreement.createClientHello(pKeyPairSet);
+        final GordianKeyPairSetAgreeASN1 myHelloASN = GordianKeyPairSetAgreeASN1.getInstance(myClientHello);
+        final GordianFactory myFactory = (GordianFactory) myAgreement.getResult();
+
+        /* create the keySetHash */
+        final GordianKeySetFactory myKeySetFactory = myFactory.getKeySetFactory();
+        theKeySetHash = myKeySetFactory.generateKeySetHash(pKeySetHashSpec, pPassword);
+        final GordianKeySetHashASN1 myHashASN = GordianKeySetHashASN1.getInstance(theKeySetHash.getHash());
+        theZipLock = new GordianZipLockASN1(myHashASN, myHelloASN);
+
+        /* Available for locking */
+        isFresh = true;
+    }
+
     @Override
     public boolean isLocked() {
         return theKeySetHash == null;
@@ -184,9 +224,32 @@ public class GordianCoreZipLock
         /* Resolve the agreement */
         final GordianKeyPairFactory myKeyPairFactory = theFactory.getKeyPairFactory();
         final GordianAgreementFactory myAgreeFactory = myKeyPairFactory.getAgreementFactory();
-        final byte[] myClientHello = theZipLock.getClientHello().getEncodedBytes();
+        final byte[] myClientHello = theZipLock.getKeyPairHello().getEncodedBytes();
         final GordianKeyPairAnonymousAgreement myAgreement = (GordianKeyPairAnonymousAgreement) myAgreeFactory.createKeyPairAgreement(myClientHello);
         myAgreement.acceptClientHello(pKeyPair, myClientHello);
+        final GordianFactory myFactory = (GordianFactory) myAgreement.getResult();
+
+        /* derive the keySetHash */
+        final GordianKeySetFactory myKeySetFactory = myFactory.getKeySetFactory();
+        final byte[] myHashBytes = theZipLock.getKeySetHash().getEncodedBytes();
+        theKeySetHash = myKeySetFactory.deriveKeySetHash(myHashBytes, pPassword);
+
+        /* unlock the zipFile */
+        theLockedZipFile.unlockFile();
+    }
+
+    @Override
+    public void unlock(final GordianKeyPairSet pKeyPairSet,
+                       final char[] pPassword) throws OceanusException {
+        /* Check that the state is correct */
+        checkState(GordianZipLockType.KEYPAIRSET_PASSWORD);
+
+        /* Resolve the agreement */
+        final GordianKeyPairFactory myKeyPairFactory = theFactory.getKeyPairFactory();
+        final GordianAgreementFactory myAgreeFactory = myKeyPairFactory.getAgreementFactory();
+        final byte[] myClientHello = theZipLock.getKeyPairSetHello().getEncodedBytes();
+        final GordianKeyPairSetAnonymousAgreement myAgreement = (GordianKeyPairSetAnonymousAgreement) myAgreeFactory.createKeyPairSetAgreement(myClientHello);
+        myAgreement.acceptClientHello(pKeyPairSet, myClientHello);
         final GordianFactory myFactory = (GordianFactory) myAgreement.getResult();
 
         /* derive the keySetHash */

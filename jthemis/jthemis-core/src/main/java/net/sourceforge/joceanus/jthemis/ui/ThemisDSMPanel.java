@@ -293,7 +293,7 @@ public class ThemisDSMPanel
 
             /* Catch exceptions */
         } catch (OceanusException e) {
-            e.printStackTrace();
+            theError = e;
         }
     }
 

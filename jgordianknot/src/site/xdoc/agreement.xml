@@ -44,8 +44,8 @@
                     /* Create anonymous agreement */
                     final GordianKeyPairAgreementSpec myAgreeSpec = GordianKeyPairAgreementSpec.dhAnon(GordianKDFType.SHA256KDF);
                     final GordianSymCipherSpec myCipherSpec = GordianSymCipherSpec.cbc(GordianGordianSymKeySpec.aes(GordianLength.LEN_256), GordianPadding.PKCS7);
-                    final GordianKeyPairAnonymousAgreement myAnonClient = (GordianKeyPairAnonymousAgreement) myAgreementFactory.createAgreement(myAgreeSpec);
-                    final GordianKeyPairAnonymousAgreement myAnonServer = (GordianKeyPairAnonymousAgreement) myAgreementFactory.createAgreement(myAgreeSpec);
+                    final GordianKeyPairAnonymousAgreement myAnonClient = (GordianKeyPairAnonymousAgreement) myAgreementFactory.createKeyPairAgreement(myAgreeSpec);
+                    final GordianKeyPairAnonymousAgreement myAnonServer = (GordianKeyPairAnonymousAgreement) myAgreementFactory.createKeyPairAgreement(myAgreeSpec);
 
                     /* Client side */
                     myAnonClient.setResultType(myCipherSpec);
@@ -86,8 +86,8 @@
                     /* Create handshake agreement */
                     final GordianKeyPairAgreementSpec myAgreeSpec = GordianKeyPairAgreementSpec.dhUnified(GordianKDFType.SHA256KDF);
                     final GordianKeySetSpec myKeySetSpec = new GordianKeySetSpec(GordianLength.LEN_256);
-                    final GordianKeyPairHandshakeAgreement myHandshakeClient = (GordianKeyPairHandshakeAgreement) myAgreementFactory.createAgreement(myAgreeSpec);
-                    final GordianKeyPairHandshakeAgreement myHandshakeServer = (GordianKeyPairHandshakeAgreement) myAgreementFactory.createAgreement(myAgreeSpec);
+                    final GordianKeyPairHandshakeAgreement myHandshakeClient = (GordianKeyPairHandshakeAgreement) myAgreementFactory.createKeyPairAgreement(myAgreeSpec);
+                    final GordianKeyPairHandshakeAgreement myHandshakeServer = (GordianKeyPairHandshakeAgreement) myAgreementFactory.createKeyPairAgreement(myAgreeSpec);
 
                     /* Client side */
                     myHandshakeClient.setResultType(myKeySetSpec);
@@ -140,8 +140,8 @@
                     /* Create signed agreement */
                     final GordianKeyPairAgreementSpec myAgreeSpec = GordianKeyPairAgreementSpec.dhSigned(GordianKDFType.SHA256KDF);
                     final GordianKeySetSpec myKeySetSpec = new GordianKeySetSpec(GordianLength.LEN_256);
-                    final GordianKeyPairSignedAgreement myHandshakeClient = (GordianKeyPairSignedAgreement) myAgreementFactory.createAgreement(myAgreeSpec);
-                    final GordianKeyPairSignedAgreement myHandshakeServer = (GordianKeyPairSignedAgreement) myAgreementFactory.createAgreement(myAgreeSpec);
+                    final GordianKeyPairSignedAgreement myHandshakeClient = (GordianKeyPairSignedAgreement) myAgreementFactory.createKeyPairAgreement(myAgreeSpec);
+                    final GordianKeyPairSignedAgreement myHandshakeServer = (GordianKeyPairSignedAgreement) myAgreementFactory.createKeyPairAgreement(myAgreeSpec);
 
                     /* Client side */
                     myHandshakeClient.setResultType(myKeySetSpec);

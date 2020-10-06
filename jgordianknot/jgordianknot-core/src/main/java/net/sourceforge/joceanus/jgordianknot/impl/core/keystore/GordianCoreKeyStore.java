@@ -605,7 +605,7 @@ public class GordianCoreKeyStore
             return isKeyPairEntry(pAlias);
         }
         if (pClazz.isAssignableFrom(GordianKeyStorePairSet.class)) {
-            return isKeyPairEntry(pAlias);
+            return isKeyPairSetEntry(pAlias);
         }
         if (pClazz.isAssignableFrom(GordianKeyStoreKey.class)) {
             return isKeyEntry(pAlias);

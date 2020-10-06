@@ -87,7 +87,7 @@
                 final GordianZipReadFile myZipFile = myZipMgr.openZipFile(myInputStream);
 
                 /* Unlock the file */
-                final GoprdianZipLock myLock = myZipFile.getLock();
+                final GordianZipLock myLock = myZipFile.getLock();
                 final char[] myPassword = ....
                 myLock.unlock(myPassword);
 

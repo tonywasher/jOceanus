@@ -51,6 +51,7 @@
                     final GordianFactory myBaseFactory = GordianGenerator.createFactory();
                     final GordianKeySetFactory myKeySetFactory = myBaseFactory.getKeySetFactory();
                     final GordianKeyPairSetFactory myKeyPairSetFactory = myKeySetFactory.getKeyPairSetFactory();
+                    final GordianSignatureFactory mySignFactory = myKeySetFactory.getSignatureFactory();
 
                     /* Create keyPairSet */
                     final GordianKeyPairSetSpec mySpec = GordianKeyPairSetSpec.SIGNLO;
@@ -58,7 +59,7 @@
                     final GordianKeyPairSet myKeyPairSet = myGenerator.generateKeyPairSet();
 
                     /* Create signer */
-                    final GordianKeyPairSetSigner mySigner = myKeyPairSetFactory.createSigner(mySpec);
+                    final GordianKeyPairSetSigner mySigner = mySignatureFactory.createKeyPairSetSigner(mySpec);
 
                     /* Sign message */
                     final byte[] message = ....;
@@ -86,6 +87,7 @@
                     final GordianFactory myBaseFactory = GordianGenerator.createFactory();
                     final GordianKeySetFactory myKeySetFactory = myBaseFactory.getKeySetFactory();
                     final GordianKeyPairSetFactory myKeyPairSetFactory = myKeySetFactory.getKeyPairSetFactory();
+                    final GordianAgreementFactory myAgreeFactory = myKeySetFactory.getAgreementFactory();
 
                     /* Create keyPairSet */
                     final GordianKeyPairSetSpec mySpec = GordianKeyPairSetSpec.ENCRYPT;
@@ -95,8 +97,8 @@
                     /* Create anonymous agreement */
                     final GordianKeyPairSetAgreementSpec myAgreeSpec = GordianKeyPairSetAgreementSpec.anon(mySpec);
                     final GordianSymCipherSpec myCipherSpec = GordianSymCipherSpec.cbc(GordianGordianSymKeySpec.aes(GordianLength.LEN_256), GordianPadding.PKCS7);
-                    final GordianKeyPairSetAnonymousAgreement myAnonClient = (GordianKeyPairSetAnonymousAgreement) myKeyPairSetFactory.createAgreement(myAgreeSpec);
-                    final GordianKeyPairSetAnonymousAgreement myAnonServer = (GordianKeyPairSetAnonymousAgreement) myKeyPairSetFactory.createAgreement(myAgreeSpec);
+                    final GordianKeyPairSetAnonymousAgreement myAnonClient = (GordianKeyPairSetAnonymousAgreement) myAgreeFactory.createAgreement(myAgreeSpec);
+                    final GordianKeyPairSetAnonymousAgreement myAnonServer = (GordianKeyPairSetAnonymousAgreement) myAgreeFactory.createAgreement(myAgreeSpec);
 
                     /* Client side */
                     myAnonClient.setResultType(myCipherSpec);
@@ -122,6 +124,7 @@
                     final GordianFactory myBaseFactory = GordianGenerator.createFactory();
                     final GordianKeySetFactory myKeySetFactory = myBaseFactory.getKeySetFactory();
                     final GordianKeyPairSetFactory myKeyPairSetFactory = myKeySetFactory.getKeyPairSetFactory();
+                    final GordianEncryptorFactory myEncryptFactory = myKeySetFactory.getEncryptorFactory();
 
                     /* Create keyPairSet */
                     final GordianKeyPairSetSpec mySpec = GordianKeyPairSetSpec.ENCRYPT;
@@ -129,7 +132,7 @@
                     final GordianKeyPairSet myKeyPairSet = myGenerator.generateKeyPairSet();
 
                     /* Create encryptor */
-                    final GordianKeyPairSetEncryptor myEncryptor = myKeyPairSetFactory.createEncryptor(mySpec);
+                    final GordianKeyPairSetEncryptor myEncryptor = myEncryptFactory.createKeyPairSetEncryptor(mySpec);
 
                     /* Encrypt data as one-off */
                     final byte[] myMessage = ...

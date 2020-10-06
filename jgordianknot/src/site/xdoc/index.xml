@@ -39,7 +39,7 @@
             <p>The Extended API provides access to additional features that are not provided by BouncyCastle.</p>
             <ol>
                 <li><a href="personal.html">Personalisation</a></li>
-                <li><a href="keyset.html">KeySets</a></li>
+                <li><a href="keySet.html">KeySets</a></li>
                 <li><a href="keyPairSet.html">KeyPairSets</a></li>
                 <li><a href="zip.html">Secure ZipFile</a></li>
             </ol>

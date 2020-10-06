@@ -28,5 +28,10 @@ public enum GordianZipLockType {
     /**
      * KeyPair and Password.
      */
-    KEYPAIR_PASSWORD;
+    KEYPAIR_PASSWORD,
+
+    /**
+     * KeyPairSet and Password.
+     */
+    KEYPAIRSET_PASSWORD;
 }

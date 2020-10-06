@@ -54,7 +54,7 @@ public final class GordianCoreCertificateId
      * @param pCertificate the certificate
      * @return get the issuer id
      */
-    public static GordianCoreCertificateId getSubjectId(final GordianCoreCertificate pCertificate) {
+    public static GordianCoreCertificateId getSubjectId(final GordianCoreCertificate<?, ?> pCertificate) {
         return new GordianCoreCertificateId(pCertificate.getSubjectName(), pCertificate.getSubjectId());
     }
 
@@ -63,7 +63,7 @@ public final class GordianCoreCertificateId
      * @param pCertificate the certificate
      * @return get the issuer id
      */
-    public static GordianCoreCertificateId getIssuerId(final GordianCoreCertificate pCertificate) {
+    public static GordianCoreCertificateId getIssuerId(final GordianCoreCertificate<?, ?> pCertificate) {
         return new GordianCoreCertificateId(pCertificate.getIssuerName(), pCertificate.getIssuerId());
     }
 

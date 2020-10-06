@@ -82,7 +82,6 @@ public class ThemisAnalysisTry
         /* Create the arrays */
         final Deque<ThemisAnalysisElement> myHeaders = ThemisAnalysisBuilder.parseHeaders(pParser, pLine);
         final Deque<ThemisAnalysisElement> myLines = ThemisAnalysisBuilder.processBody(pParser);
-        final int myBaseLines = myLines.size();
         theNumLines = myHeaders.size() + 1;
 
         /* Look for catch clauses */

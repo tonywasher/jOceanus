@@ -79,10 +79,7 @@ public class ThemisStatsPackage
         return thePackage;
     }
 
-    /**
-     * Obtain the sourceMeter stats.
-     * @return the stats
-     */
+    @Override
     public ThemisSMPackage getSourceMeter() {
         return theSMPackage;
     }
