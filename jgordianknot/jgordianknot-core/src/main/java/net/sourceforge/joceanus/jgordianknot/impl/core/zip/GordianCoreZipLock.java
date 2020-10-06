@@ -130,7 +130,7 @@ public class GordianCoreZipLock
         final GordianKeyPairFactory myKeyPairFactory = theFactory.getKeyPairFactory();
         final GordianAgreementFactory myAgreeFactory = myKeyPairFactory.getAgreementFactory();
         final GordianKeyPairAgreementSpec mySpec = getAgreementSpec(pKeyPair.getKeyPairSpec());
-        final GordianKeyPairAnonymousAgreement myAgreement = (GordianKeyPairAnonymousAgreement) myAgreeFactory.createAgreement(mySpec);
+        final GordianKeyPairAnonymousAgreement myAgreement = (GordianKeyPairAnonymousAgreement) myAgreeFactory.createKeyPairAgreement(mySpec);
         myAgreement.setResultType(GordianFactoryType.BC);
         final byte[] myClientHello = myAgreement.createClientHello(pKeyPair);
         final GordianAgreementClientHelloASN1 myHelloASN = GordianAgreementClientHelloASN1.getInstance(myClientHello);
@@ -185,7 +185,7 @@ public class GordianCoreZipLock
         final GordianKeyPairFactory myKeyPairFactory = theFactory.getKeyPairFactory();
         final GordianAgreementFactory myAgreeFactory = myKeyPairFactory.getAgreementFactory();
         final byte[] myClientHello = theZipLock.getClientHello().getEncodedBytes();
-        final GordianKeyPairAnonymousAgreement myAgreement = (GordianKeyPairAnonymousAgreement) myAgreeFactory.createAgreement(myClientHello);
+        final GordianKeyPairAnonymousAgreement myAgreement = (GordianKeyPairAnonymousAgreement) myAgreeFactory.createKeyPairAgreement(myClientHello);
         myAgreement.acceptClientHello(pKeyPair, myClientHello);
         final GordianFactory myFactory = (GordianFactory) myAgreement.getResult();
 

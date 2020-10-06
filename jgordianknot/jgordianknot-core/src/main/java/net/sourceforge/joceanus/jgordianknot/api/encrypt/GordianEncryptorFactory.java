@@ -23,6 +23,7 @@ import java.util.stream.Collectors;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPair;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPairSpec;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPairType;
+import net.sourceforge.joceanus.jgordianknot.api.keypairset.GordianKeyPairSetSpec;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
@@ -30,18 +31,26 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
  */
 public interface GordianEncryptorFactory {
     /**
-     * Create Encryptor.
+     * Create keyPairEncryptor.
      * @param pSpec the encryptorSpec
      * @return the Encryptor
      * @throws OceanusException on error
      */
-    GordianKeyPairEncryptor createEncryptor(GordianEncryptorSpec pSpec) throws OceanusException;
+    GordianKeyPairEncryptor createKeyPairEncryptor(GordianEncryptorSpec pSpec) throws OceanusException;
+
+    /**
+     * create keyPairSetEncryptor.
+     * @param pKeyPairSetSpec the keyPairSetSpec
+     * @return the encryptor
+     * @throws OceanusException on error
+     */
+    GordianKeyPairSetEncryptor createKeyPairSetEncryptor(GordianKeyPairSetSpec pKeyPairSetSpec) throws OceanusException;
 
     /**
      * Obtain predicate for Encryptor.
      * @return the predicate
      */
-    Predicate<GordianEncryptorSpec> supportedEncryptors();
+    Predicate<GordianEncryptorSpec> supportedKeyPairEncryptors();
 
     /**
      * Obtain a list of supported encryptorSpecs.
@@ -51,7 +60,7 @@ public interface GordianEncryptorFactory {
     default List<GordianEncryptorSpec> listAllSupportedEncryptors(final GordianKeyPairType pKeyType) {
         return GordianEncryptorSpec.listPossibleEncryptors(pKeyType)
                 .stream()
-                .filter(supportedEncryptors())
+                .filter(supportedKeyPairEncryptors())
                 .collect(Collectors.toList());
     }
 

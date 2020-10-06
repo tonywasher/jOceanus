@@ -154,6 +154,6 @@ public class GordianCoreKeyPairCertificate
     protected GordianKeyPairSignature createSigner() throws OceanusException {
         /* Create the signer */
         final GordianCoreSignatureFactory mySigns = (GordianCoreSignatureFactory) getFactory().getKeyPairFactory().getSignatureFactory();
-        return mySigns.createSigner(getSignatureSpec());
+        return mySigns.createKeyPairSigner(getSignatureSpec());
     }
 }

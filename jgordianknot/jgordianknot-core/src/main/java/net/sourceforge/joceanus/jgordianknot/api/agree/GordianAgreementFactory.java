@@ -35,7 +35,7 @@ public interface GordianAgreementFactory {
      * @return the Agreement
      * @throws OceanusException on error
      */
-    GordianKeyPairAgreement createAgreement(GordianKeyPairAgreementSpec pSpec) throws OceanusException;
+    GordianKeyPairAgreement createKeyPairAgreement(GordianKeyPairAgreementSpec pSpec) throws OceanusException;
 
     /**
      * Create Agreement for clientHello message.
@@ -43,13 +43,13 @@ public interface GordianAgreementFactory {
      * @return the Agreement
      * @throws OceanusException on error
      */
-    GordianKeyPairAgreement createAgreement(byte[] pClientHello) throws OceanusException;
+    GordianKeyPairAgreement createKeyPairAgreement(byte[] pClientHello) throws OceanusException;
 
     /**
      * Obtain predicate for keyAgreement.
      * @return the predicate
      */
-    Predicate<GordianKeyPairAgreementSpec> supportedAgreements();
+    Predicate<GordianKeyPairAgreementSpec> supportedKeyPairAgreements();
 
     /**
      * Obtain a list of supported agreementSpecs.
@@ -59,7 +59,7 @@ public interface GordianAgreementFactory {
     default List<GordianKeyPairAgreementSpec> listAllSupportedAgreements(final GordianKeyPairType pKeyType) {
         return GordianKeyPairAgreementSpec.listPossibleAgreements(pKeyType)
                 .stream()
-                .filter(supportedAgreements())
+                .filter(supportedKeyPairAgreements())
                 .collect(Collectors.toList());
     }
 
@@ -82,6 +82,22 @@ public interface GordianAgreementFactory {
      */
     boolean validAgreementSpecForKeyPairSpec(GordianKeyPairSpec pKeyPairSpec,
                                              GordianKeyPairAgreementSpec pAgreementSpec);
+
+    /**
+     * create keyPairSetAgreement.
+     * @param pAgreementSpec the keyPairSetSpec
+     * @return the encryptor
+     * @throws OceanusException on error
+     */
+    GordianKeyPairSetAgreement createKeyPairSetAgreement(GordianKeyPairSetAgreementSpec pAgreementSpec) throws OceanusException;
+
+    /**
+     * Create Agreement for clientHello message.
+     * @param pClientHello the clientHello message
+     * @return the Agreement
+     * @throws OceanusException on error
+     */
+    GordianKeyPairSetAgreement createKeyPairSetAgreement(byte[] pClientHello) throws OceanusException;
 
     /**
      * Obtain a list of supported agreementSpecs.

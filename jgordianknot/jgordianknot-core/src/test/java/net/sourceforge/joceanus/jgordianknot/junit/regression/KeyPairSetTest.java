@@ -27,19 +27,22 @@ import org.junit.jupiter.api.DynamicNode;
 import org.junit.jupiter.api.DynamicTest;
 import org.junit.jupiter.api.TestFactory;
 
+import net.sourceforge.joceanus.jgordianknot.api.agree.GordianAgreementFactory;
+import net.sourceforge.joceanus.jgordianknot.api.agree.GordianKeyPairSetAgreementSpec;
+import net.sourceforge.joceanus.jgordianknot.api.agree.GordianKeyPairSetAnonymousAgreement;
+import net.sourceforge.joceanus.jgordianknot.api.agree.GordianKeyPairSetHandshakeAgreement;
+import net.sourceforge.joceanus.jgordianknot.api.agree.GordianKeyPairSetSignedAgreement;
+import net.sourceforge.joceanus.jgordianknot.api.encrypt.GordianEncryptorFactory;
+import net.sourceforge.joceanus.jgordianknot.api.encrypt.GordianKeyPairSetEncryptor;
 import net.sourceforge.joceanus.jgordianknot.api.factory.GordianFactory;
 import net.sourceforge.joceanus.jgordianknot.api.factory.GordianFactoryType;
 import net.sourceforge.joceanus.jgordianknot.api.factory.GordianKeyPairFactory;
 import net.sourceforge.joceanus.jgordianknot.api.keypairset.GordianKeyPairSet;
-import net.sourceforge.joceanus.jgordianknot.api.keypairset.GordianKeyPairSetAgreementSpec;
-import net.sourceforge.joceanus.jgordianknot.api.keypairset.GordianKeyPairSetAnonymousAgreement;
-import net.sourceforge.joceanus.jgordianknot.api.keypairset.GordianKeyPairSetEncryptor;
 import net.sourceforge.joceanus.jgordianknot.api.keypairset.GordianKeyPairSetFactory;
 import net.sourceforge.joceanus.jgordianknot.api.keypairset.GordianKeyPairSetGenerator;
-import net.sourceforge.joceanus.jgordianknot.api.keypairset.GordianKeyPairSetHandshakeAgreement;
-import net.sourceforge.joceanus.jgordianknot.api.keypairset.GordianKeyPairSetSignature;
-import net.sourceforge.joceanus.jgordianknot.api.keypairset.GordianKeyPairSetSignedAgreement;
 import net.sourceforge.joceanus.jgordianknot.api.keypairset.GordianKeyPairSetSpec;
+import net.sourceforge.joceanus.jgordianknot.api.sign.GordianKeyPairSetSignature;
+import net.sourceforge.joceanus.jgordianknot.api.sign.GordianSignatureFactory;
 import net.sourceforge.joceanus.jgordianknot.util.GordianGenerator;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
@@ -147,8 +150,9 @@ public class KeyPairSetTest {
                                final GordianKeyPairSetSpec pSpec) throws OceanusException {
         /* Create the keyPair */
         final GordianKeyPairFactory myBaseFactory = pFactory.getKeyPairFactory();
-        final GordianKeyPairSetFactory myFactory = myBaseFactory.getKeyPairSetFactory();
-        final GordianKeyPairSetGenerator myGenerator = myFactory.getKeyPairSetGenerator(pSpec);
+        final GordianKeyPairSetFactory mySetFactory = myBaseFactory.getKeyPairSetFactory();
+        final GordianSignatureFactory mySignFactory = myBaseFactory.getSignatureFactory();
+        final GordianKeyPairSetGenerator myGenerator = mySetFactory.getKeyPairSetGenerator(pSpec);
         final GordianKeyPairSet mySet = myGenerator.generateKeyPairSet();
 
         /* Check external transformations */
@@ -158,7 +162,7 @@ public class KeyPairSetTest {
         Assertions.assertEquals(mySet, myDerived);
 
         /* Create signature */
-        final GordianKeyPairSetSignature mySigner = myFactory.createSigner(pSpec);
+        final GordianKeyPairSetSignature mySigner = mySignFactory.createKeyPairSetSigner(pSpec);
         mySigner.initForSigning(mySet);
         mySigner.update(myPublic.getEncoded(), 0, myPublic.getEncoded().length);
         mySigner.update(myPrivate.getEncoded(), 0, myPrivate.getEncoded().length);
@@ -181,8 +185,9 @@ public class KeyPairSetTest {
                                 final GordianKeyPairSetSpec pSpec) throws OceanusException {
         /* Create the keyPair */
         final GordianKeyPairFactory myBaseFactory = pFactory.getKeyPairFactory();
-        final GordianKeyPairSetFactory myFactory = myBaseFactory.getKeyPairSetFactory();
-        final GordianKeyPairSetGenerator myGenerator = myFactory.getKeyPairSetGenerator(pSpec);
+        final GordianKeyPairSetFactory mySetFactory = myBaseFactory.getKeyPairSetFactory();
+        final GordianEncryptorFactory myEncFactory = myBaseFactory.getEncryptorFactory();
+        final GordianKeyPairSetGenerator myGenerator = mySetFactory.getKeyPairSetGenerator(pSpec);
         final GordianKeyPairSet mySet = myGenerator.generateKeyPairSet();
 
         /* Check external transformations */
@@ -192,7 +197,7 @@ public class KeyPairSetTest {
         Assertions.assertEquals(mySet, myDerived);
 
         /* Create encryption */
-        final GordianKeyPairSetEncryptor myEncrypt = myFactory.createEncryptor(pSpec);
+        final GordianKeyPairSetEncryptor myEncrypt = myEncFactory.createKeyPairSetEncryptor(pSpec);
         myEncrypt.initForEncrypt(mySet);
         final byte[] myData = myEncrypt.encrypt(myPublic.getEncoded());
 
@@ -212,8 +217,9 @@ public class KeyPairSetTest {
                                    final GordianKeyPairSetSpec pSpec) throws OceanusException {
         /* Create the keyPair */
         final GordianKeyPairFactory myBaseFactory = pFactory.getKeyPairFactory();
-        final GordianKeyPairSetFactory myFactory = myBaseFactory.getKeyPairSetFactory();
-        final GordianKeyPairSetGenerator myGenerator = myFactory.getKeyPairSetGenerator(pSpec);
+        final GordianKeyPairSetFactory mySetFactory = myBaseFactory.getKeyPairSetFactory();
+        final GordianAgreementFactory myAgreeFactory = myBaseFactory.getAgreementFactory();
+        final GordianKeyPairSetGenerator myGenerator = mySetFactory.getKeyPairSetGenerator(pSpec);
         final GordianKeyPairSet mySet = myGenerator.generateKeyPairSet();
 
         /* Check external transformations */
@@ -226,12 +232,12 @@ public class KeyPairSetTest {
 
         /* Create clientHello */
         final GordianKeyPairSetAgreementSpec myAgreeSpec = GordianKeyPairSetAgreementSpec.anon(pSpec);
-        final GordianKeyPairSetAnonymousAgreement myClient = (GordianKeyPairSetAnonymousAgreement) myFactory.createAgreement(myAgreeSpec);
+        final GordianKeyPairSetAnonymousAgreement myClient = (GordianKeyPairSetAnonymousAgreement) myAgreeFactory.createKeyPairSetAgreement(myAgreeSpec);
         final byte[] myClientHello = myClient.createClientHello(mySet);
         final byte[] myResult = (byte[]) myClient.getResult();
 
         /* accept clientHello */
-        final GordianKeyPairSetAnonymousAgreement myServer = (GordianKeyPairSetAnonymousAgreement) myFactory.createAgreement(myAgreeSpec);
+        final GordianKeyPairSetAnonymousAgreement myServer = (GordianKeyPairSetAnonymousAgreement) myAgreeFactory.createKeyPairSetAgreement(myAgreeSpec);
         myServer.acceptClientHello(mySet, myClientHello);
         Assertions.assertArrayEquals(myResult, (byte[]) myServer.getResult());
     }
@@ -246,8 +252,9 @@ public class KeyPairSetTest {
                                      final GordianKeyPairSetSpec pSpec) throws OceanusException {
         /* Create the keyPair */
         final GordianKeyPairFactory myBaseFactory = pFactory.getKeyPairFactory();
-        final GordianKeyPairSetFactory myFactory = myBaseFactory.getKeyPairSetFactory();
-        final GordianKeyPairSetGenerator myGenerator = myFactory.getKeyPairSetGenerator(GordianKeyPairSetSpec.SIGNLO);
+        final GordianKeyPairSetFactory mySetFactory = myBaseFactory.getKeyPairSetFactory();
+        final GordianAgreementFactory myAgreeFactory = myBaseFactory.getAgreementFactory();
+        final GordianKeyPairSetGenerator myGenerator = mySetFactory.getKeyPairSetGenerator(GordianKeyPairSetSpec.SIGNLO);
         final GordianKeyPairSet mySet = myGenerator.generateKeyPairSet();
 
         /* Check external transformations */
@@ -258,11 +265,11 @@ public class KeyPairSetTest {
 
         /* Create clientHello */
         final GordianKeyPairSetAgreementSpec myAgreeSpec = GordianKeyPairSetAgreementSpec.signed(pSpec);
-        final GordianKeyPairSetSignedAgreement myClient = (GordianKeyPairSetSignedAgreement) myFactory.createAgreement(myAgreeSpec);
+        final GordianKeyPairSetSignedAgreement myClient = (GordianKeyPairSetSignedAgreement) myAgreeFactory.createKeyPairSetAgreement(myAgreeSpec);
         final byte[] myClientHello = myClient.createClientHello(pSpec);
 
         /* accept clientHello */
-        final GordianKeyPairSetSignedAgreement myServer = (GordianKeyPairSetSignedAgreement) myFactory.createAgreement(myAgreeSpec);
+        final GordianKeyPairSetSignedAgreement myServer = (GordianKeyPairSetSignedAgreement) myAgreeFactory.createKeyPairSetAgreement(myAgreeSpec);
         final byte[] myServerHello = myServer.acceptClientHello(mySet, myClientHello);
 
         /* accept serverHello */
@@ -283,8 +290,9 @@ public class KeyPairSetTest {
                                         final Boolean pConfirm) throws OceanusException {
         /* Create the keyPair */
         final GordianKeyPairFactory myBaseFactory = pFactory.getKeyPairFactory();
-        final GordianKeyPairSetFactory myFactory = myBaseFactory.getKeyPairSetFactory();
-        final GordianKeyPairSetGenerator myGenerator = myFactory.getKeyPairSetGenerator(pSpec);
+        final GordianKeyPairSetFactory mySetFactory = myBaseFactory.getKeyPairSetFactory();
+        final GordianAgreementFactory myAgreeFactory = myBaseFactory.getAgreementFactory();
+        final GordianKeyPairSetGenerator myGenerator = mySetFactory.getKeyPairSetGenerator(pSpec);
         final GordianKeyPairSet myClient = myGenerator.generateKeyPairSet();
         final GordianKeyPairSet myServer = myGenerator.generateKeyPairSet();
 
@@ -300,11 +308,11 @@ public class KeyPairSetTest {
         final GordianKeyPairSetAgreementSpec myAgreeSpec = pConfirm
                 ? GordianKeyPairSetAgreementSpec.confirm(pSpec)
                 : GordianKeyPairSetAgreementSpec.handshake(pSpec);
-        final GordianKeyPairSetHandshakeAgreement myClientAgree = (GordianKeyPairSetHandshakeAgreement) myFactory.createAgreement(myAgreeSpec);
+        final GordianKeyPairSetHandshakeAgreement myClientAgree = (GordianKeyPairSetHandshakeAgreement) myAgreeFactory.createKeyPairSetAgreement(myAgreeSpec);
         final byte[] myClientHello = myClientAgree.createClientHello(myClient);
 
         /* accept clientHello */
-        final GordianKeyPairSetHandshakeAgreement myServerAgree = (GordianKeyPairSetHandshakeAgreement) myFactory.createAgreement(myAgreeSpec);
+        final GordianKeyPairSetHandshakeAgreement myServerAgree = (GordianKeyPairSetHandshakeAgreement) myAgreeFactory.createKeyPairSetAgreement(myAgreeSpec);
         final byte[] myServerHello = myServerAgree.acceptClientHello(myClient, myServer, myClientHello);
 
         /* accept serverHello */

@@ -65,7 +65,7 @@ public class JcaAgreementFactory
     }
 
     @Override
-    public GordianKeyPairAgreement createAgreement(final GordianKeyPairAgreementSpec pAgreementSpec) throws OceanusException {
+    public GordianKeyPairAgreement createKeyPairAgreement(final GordianKeyPairAgreementSpec pAgreementSpec) throws OceanusException {
         /* Check validity of agreement */
         checkAgreementSpec(pAgreementSpec);
 

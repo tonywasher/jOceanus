@@ -24,16 +24,11 @@ import java.util.Objects;
 import java.util.function.Predicate;
 
 import net.sourceforge.joceanus.jgordianknot.api.factory.GordianKeyPairFactory;
-import net.sourceforge.joceanus.jgordianknot.api.keypairset.GordianKeyPairSetAgreement;
-import net.sourceforge.joceanus.jgordianknot.api.keypairset.GordianKeyPairSetAgreementSpec;
-import net.sourceforge.joceanus.jgordianknot.api.keypairset.GordianKeyPairSetEncryptor;
 import net.sourceforge.joceanus.jgordianknot.api.keypairset.GordianKeyPairSetFactory;
 import net.sourceforge.joceanus.jgordianknot.api.keypairset.GordianKeyPairSetGenerator;
-import net.sourceforge.joceanus.jgordianknot.api.keypairset.GordianKeyPairSetSignature;
 import net.sourceforge.joceanus.jgordianknot.api.keypairset.GordianKeyPairSetSpec;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianCoreFactory;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianDataException;
-import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianLogicException;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
@@ -95,58 +90,5 @@ public class GordianCoreKeyPairSetFactory
     @Override
     public Predicate<GordianKeyPairSetSpec> supportedKeyPairSetSpecs() {
         return Objects::nonNull;
-    }
-
-    @Override
-    public GordianKeyPairSetAgreement createAgreement(final GordianKeyPairSetAgreementSpec pAgreementSpec) throws OceanusException {
-        /* Check valid spec */
-        if (pAgreementSpec == null || !pAgreementSpec.isValid()) {
-            throw new GordianDataException(GordianCoreFactory.getInvalidText(pAgreementSpec));
-        }
-
-        /* Switch on agreementType */
-        final GordianCoreFactory myFactory = (GordianCoreFactory) theFactory.getFactory();
-        switch (pAgreementSpec.getAgreementType()) {
-            case ANON:
-                return new GordianCoreKeyPairSetAnonymousAgreement(myFactory, pAgreementSpec);
-            case SIGNED:
-                return new GordianCoreKeyPairSetSignedAgreement(myFactory, pAgreementSpec);
-            case UNIFIED:
-                return new GordianCoreKeyPairSetHandshakeAgreement(myFactory, pAgreementSpec);
-            default:
-                throw new GordianLogicException(GordianCoreFactory.getInvalidText(pAgreementSpec));
-        }
-    }
-
-    @Override
-    public GordianKeyPairSetAgreement createAgreement(final byte[] pClientHello) throws OceanusException {
-        /* Parse the client hello message */
-        final GordianKeyPairSetAgreeASN1 myASN1 = GordianKeyPairSetAgreeASN1.getInstance(pClientHello);
-        final GordianKeyPairSetAgreementSpec mySpec = myASN1.getSpec();
-        return createAgreement(mySpec);
-    }
-
-    @Override
-    public GordianKeyPairSetEncryptor createEncryptor(final GordianKeyPairSetSpec pKeyPairSetSpec) throws OceanusException {
-        /* Check valid spec */
-        if (!supportedKeyPairSetSpecs().test(pKeyPairSetSpec)
-            || !pKeyPairSetSpec.canEncrypt()) {
-            throw new GordianDataException(GordianCoreFactory.getInvalidText(pKeyPairSetSpec));
-        }
-
-        /* Create the new encryptor */
-        return new GordianCoreKeyPairSetEncryptor(theFactory, pKeyPairSetSpec);
-    }
-
-    @Override
-    public GordianKeyPairSetSignature createSigner(final GordianKeyPairSetSpec pKeyPairSetSpec) throws OceanusException {
-        /* Check valid spec */
-        if (!supportedKeyPairSetSpecs().test(pKeyPairSetSpec)
-            || !pKeyPairSetSpec.canSign()) {
-            throw new GordianDataException(GordianCoreFactory.getInvalidText(pKeyPairSetSpec));
-        }
-
-        /* Create the new signer */
-        return new GordianKeyPairSetSigner(theFactory, pKeyPairSetSpec);
     }
 }

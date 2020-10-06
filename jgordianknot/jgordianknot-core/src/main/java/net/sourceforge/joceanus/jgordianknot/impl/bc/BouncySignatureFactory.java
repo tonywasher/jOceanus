@@ -58,12 +58,12 @@ public class BouncySignatureFactory
     }
 
     @Override
-    public Predicate<GordianSignatureSpec> supportedSignatures() {
+    public Predicate<GordianSignatureSpec> supportedKeyPairSignatures() {
         return this::validSignatureSpec;
     }
 
     @Override
-    public GordianKeyPairSignature createSigner(final GordianSignatureSpec pSignatureSpec) throws OceanusException {
+    public GordianKeyPairSignature createKeyPairSigner(final GordianSignatureSpec pSignatureSpec) throws OceanusException {
         /* Check validity of Signature */
         checkSignatureSpec(pSignatureSpec);
 

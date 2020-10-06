@@ -37,37 +37,6 @@ public interface GordianKeyPairSetFactory {
      */
     GordianKeyPairSetGenerator getKeyPairSetGenerator(GordianKeyPairSetSpec pKeyPairSetSpec) throws OceanusException;
 
-    /**
-     * create keyPairSetAgreement.
-     * @param pAgreementSpec the keyPairSetSpec
-     * @return the encryptor
-     * @throws OceanusException on error
-     */
-    GordianKeyPairSetAgreement createAgreement(GordianKeyPairSetAgreementSpec pAgreementSpec) throws OceanusException;
-
-    /**
-     * Create Agreement for clientHello message.
-     * @param pClientHello the clientHello message
-     * @return the Agreement
-     * @throws OceanusException on error
-     */
-    GordianKeyPairSetAgreement createAgreement(byte[] pClientHello) throws OceanusException;
-
-    /**
-     * create keyPairSetEncryptor.
-     * @param pKeyPairSetSpec the keyPairSetSpec
-     * @return the encryptor
-     * @throws OceanusException on error
-     */
-    GordianKeyPairSetEncryptor createEncryptor(GordianKeyPairSetSpec pKeyPairSetSpec) throws OceanusException;
-
-    /**
-     * create keyPairSetSigner.
-     * @param pKeyPairSetSpec the keyPairSetSpec
-     * @return the encryptor
-     * @throws OceanusException on error
-     */
-    GordianKeyPairSetSignature createSigner(GordianKeyPairSetSpec pKeyPairSetSpec) throws OceanusException;
 
     /**
      * Determine KeyPairSetSpec from PKCS8EncodedKeySpec.

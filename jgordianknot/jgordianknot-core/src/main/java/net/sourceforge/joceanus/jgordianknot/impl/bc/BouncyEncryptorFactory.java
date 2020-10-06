@@ -51,7 +51,7 @@ public class BouncyEncryptorFactory
     }
 
     @Override
-    public GordianKeyPairEncryptor createEncryptor(final GordianEncryptorSpec pEncryptorSpec) throws OceanusException {
+    public GordianKeyPairEncryptor createKeyPairEncryptor(final GordianEncryptorSpec pEncryptorSpec) throws OceanusException {
         /* Check validity of Encryptor */
         checkEncryptorSpec(pEncryptorSpec);
 

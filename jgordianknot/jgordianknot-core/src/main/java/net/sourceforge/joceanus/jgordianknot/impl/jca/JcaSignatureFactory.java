@@ -62,7 +62,7 @@ public class JcaSignatureFactory
     }
 
     @Override
-    public GordianKeyPairSignature createSigner(final GordianSignatureSpec pSignatureSpec) throws OceanusException {
+    public GordianKeyPairSignature createKeyPairSigner(final GordianSignatureSpec pSignatureSpec) throws OceanusException {
         /* Check validity of Signature */
         checkSignatureSpec(pSignatureSpec);
 

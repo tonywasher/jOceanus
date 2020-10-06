@@ -26,11 +26,12 @@ import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigestSpec;
 import net.sourceforge.joceanus.jgordianknot.api.keypairset.GordianKeyPairSet;
 import net.sourceforge.joceanus.jgordianknot.api.keypairset.GordianKeyPairSetFactory;
 import net.sourceforge.joceanus.jgordianknot.api.keypairset.GordianKeyPairSetGenerator;
-import net.sourceforge.joceanus.jgordianknot.api.keypairset.GordianKeyPairSetSignature;
 import net.sourceforge.joceanus.jgordianknot.api.keypairset.GordianKeyPairSetSpec;
 import net.sourceforge.joceanus.jgordianknot.api.keystore.GordianKeyPairSetCertificate;
 import net.sourceforge.joceanus.jgordianknot.api.keystore.GordianKeyPairUsage;
 import net.sourceforge.joceanus.jgordianknot.api.keystore.GordianKeyStoreEntry.GordianKeyStorePairSet;
+import net.sourceforge.joceanus.jgordianknot.api.sign.GordianKeyPairSetSignature;
+import net.sourceforge.joceanus.jgordianknot.api.sign.GordianSignatureFactory;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianCoreFactory;
 import net.sourceforge.joceanus.jgordianknot.impl.core.keypairset.GordianCoreKeyPairSet;
 import net.sourceforge.joceanus.jgordianknot.impl.core.keypairset.GordianCoreKeyPairSetGenerator;
@@ -151,7 +152,7 @@ public class GordianCoreKeyPairSetCertificate
     @Override
     protected GordianKeyPairSetSignature createSigner() throws OceanusException {
         /* Create the signer */
-        final GordianKeyPairSetFactory mySigns = getFactory().getKeyPairFactory().getKeyPairSetFactory();
-        return mySigns.createSigner(getSignatureSpec());
+        final GordianSignatureFactory mySigns = getFactory().getKeyPairFactory().getSignatureFactory();
+        return mySigns.createKeyPairSetSigner(getSignatureSpec());
     }
 }

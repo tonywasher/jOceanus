@@ -23,6 +23,7 @@ import java.util.stream.Collectors;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPair;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPairSpec;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPairType;
+import net.sourceforge.joceanus.jgordianknot.api.keypairset.GordianKeyPairSetSpec;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
@@ -35,13 +36,21 @@ public interface GordianSignatureFactory {
      * @return the signer
      * @throws OceanusException on error
      */
-    GordianKeyPairSignature createSigner(GordianSignatureSpec pSignatureSpec) throws OceanusException;
+    GordianKeyPairSignature createKeyPairSigner(GordianSignatureSpec pSignatureSpec) throws OceanusException;
+
+    /**
+     * create keyPairSetSigner.
+     * @param pKeyPairSetSpec the keyPairSetSpec
+     * @return the encryptor
+     * @throws OceanusException on error
+     */
+    GordianKeyPairSetSignature createKeyPairSetSigner(GordianKeyPairSetSpec pKeyPairSetSpec) throws OceanusException;
 
     /**
      * Obtain predicate for signatures.
      * @return the predicate
      */
-    Predicate<GordianSignatureSpec> supportedSignatures();
+    Predicate<GordianSignatureSpec> supportedKeyPairSignatures();
 
     /**
      * Obtain a list of supported signatures.
@@ -51,7 +60,7 @@ public interface GordianSignatureFactory {
     default List<GordianSignatureSpec> listAllSupportedSignatures(final GordianKeyPairType pKeyPairType) {
         return GordianSignatureSpec.listPossibleSignatures(pKeyPairType)
                 .stream()
-                .filter(supportedSignatures())
+                .filter(supportedKeyPairSignatures())
                 .collect(Collectors.toList());
     }
 
