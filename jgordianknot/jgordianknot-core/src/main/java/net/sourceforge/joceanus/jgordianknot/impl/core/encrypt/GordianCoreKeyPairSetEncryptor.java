@@ -14,7 +14,7 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  ******************************************************************************/
-package net.sourceforge.joceanus.jgordianknot.impl.core.keypairset;
+package net.sourceforge.joceanus.jgordianknot.impl.core.encrypt;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -26,14 +26,15 @@ import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigestSpec;
 import net.sourceforge.joceanus.jgordianknot.api.encrypt.GordianEncryptorFactory;
 import net.sourceforge.joceanus.jgordianknot.api.encrypt.GordianEncryptorSpec;
 import net.sourceforge.joceanus.jgordianknot.api.encrypt.GordianKeyPairEncryptor;
+import net.sourceforge.joceanus.jgordianknot.api.encrypt.GordianKeyPairSetEncryptor;
 import net.sourceforge.joceanus.jgordianknot.api.encrypt.GordianSM2EncryptionSpec;
 import net.sourceforge.joceanus.jgordianknot.api.factory.GordianKeyPairFactory;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPair;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPairSpec;
 import net.sourceforge.joceanus.jgordianknot.api.keypairset.GordianKeyPairSet;
-import net.sourceforge.joceanus.jgordianknot.api.keypairset.GordianKeyPairSetEncryptor;
 import net.sourceforge.joceanus.jgordianknot.api.keypairset.GordianKeyPairSetSpec;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianLogicException;
+import net.sourceforge.joceanus.jgordianknot.impl.core.keypairset.GordianCoreKeyPairSet;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
@@ -69,7 +70,7 @@ public class GordianCoreKeyPairSetEncryptor
         while (myIterator.hasNext()) {
             final GordianKeyPairSpec mySpec = myIterator.next();
             final GordianEncryptorSpec myEncSpec = defaultForKey(mySpec);
-            theEncryptors.add(myFactory.createEncryptor(myEncSpec));
+            theEncryptors.add(myFactory.createKeyPairEncryptor(myEncSpec));
         }
     }
 

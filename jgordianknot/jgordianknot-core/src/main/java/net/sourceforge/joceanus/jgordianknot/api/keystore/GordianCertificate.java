@@ -18,12 +18,11 @@ package net.sourceforge.joceanus.jgordianknot.api.keystore;
 
 import java.util.Date;
 
-import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPair;
-
 /**
  * Certificate API.
+ * @param <K> keyPair type
  */
-public interface GordianCertificate {
+public interface GordianCertificate<K> {
     /**
      * Obtain the subject of the certificate.
      *
@@ -43,7 +42,7 @@ public interface GordianCertificate {
      *
      * @return the keyPair
      */
-    GordianKeyPair getKeyPair();
+    K getKeyPair();
 
     /**
      * Obtain the encoded representation of the certificate.

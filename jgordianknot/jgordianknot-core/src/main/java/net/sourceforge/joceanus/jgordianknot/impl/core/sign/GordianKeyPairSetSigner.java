@@ -14,7 +14,7 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  ******************************************************************************/
-package net.sourceforge.joceanus.jgordianknot.impl.core.keypairset;
+package net.sourceforge.joceanus.jgordianknot.impl.core.sign;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -24,12 +24,13 @@ import net.sourceforge.joceanus.jgordianknot.api.factory.GordianKeyPairFactory;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPair;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPairSpec;
 import net.sourceforge.joceanus.jgordianknot.api.keypairset.GordianKeyPairSet;
-import net.sourceforge.joceanus.jgordianknot.api.keypairset.GordianKeyPairSetSignature;
 import net.sourceforge.joceanus.jgordianknot.api.keypairset.GordianKeyPairSetSpec;
+import net.sourceforge.joceanus.jgordianknot.api.sign.GordianKeyPairSetSignature;
 import net.sourceforge.joceanus.jgordianknot.api.sign.GordianKeyPairSignature;
 import net.sourceforge.joceanus.jgordianknot.api.sign.GordianSignatureFactory;
 import net.sourceforge.joceanus.jgordianknot.api.sign.GordianSignatureSpec;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianLogicException;
+import net.sourceforge.joceanus.jgordianknot.impl.core.keypairset.GordianCoreKeyPairSet;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
@@ -65,7 +66,7 @@ public class GordianKeyPairSetSigner
         while (myIterator.hasNext()) {
             final GordianKeyPairSpec mySpec = myIterator.next();
             final GordianSignatureSpec mySignSpec = GordianSignatureSpec.defaultForKey(mySpec);
-            theSigners.add(myFactory.createSigner(mySignSpec));
+            theSigners.add(myFactory.createKeyPairSigner(mySignSpec));
         }
     }
 

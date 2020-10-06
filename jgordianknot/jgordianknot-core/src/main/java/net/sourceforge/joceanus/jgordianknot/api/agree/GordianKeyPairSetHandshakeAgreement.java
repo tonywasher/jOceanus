@@ -14,9 +14,9 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  ******************************************************************************/
-package net.sourceforge.joceanus.jgordianknot.api.keypairset;
+package net.sourceforge.joceanus.jgordianknot.api.agree;
 
-import net.sourceforge.joceanus.jgordianknot.api.agree.GordianHandshakeAgreement;
+import net.sourceforge.joceanus.jgordianknot.api.keypairset.GordianKeyPairSet;
 
 /**
  * KeyPairSet Handshake Agreement.

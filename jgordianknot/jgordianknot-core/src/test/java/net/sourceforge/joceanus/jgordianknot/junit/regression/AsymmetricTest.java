@@ -390,7 +390,7 @@ public class AsymmetricTest {
         /* Check outgoing signature */
         final GordianSignatureFactory mySigns = pSignature.getOwner().getFactory().getSignatureFactory();
         final byte[] myMessage = "Hello there. How is life treating you?".getBytes();
-        GordianKeyPairSignature mySigner = mySigns.createSigner(mySpec);
+        GordianKeyPairSignature mySigner = mySigns.createKeyPairSigner(mySpec);
         mySigner.initForSigning(myMirror);
         mySigner.update(myMessage);
         byte[] mySignature = mySigner.sign();
@@ -415,13 +415,13 @@ public class AsymmetricTest {
         final GordianSignatureFactory mySrcSigns = pSignature.getOwner().getFactory().getSignatureFactory();
         final GordianSignatureFactory myTgtSigns = pSignature.getOwner().getPartner().getSignatureFactory();
         final byte[] myMessage = "Hello there. How is life treating you?".getBytes();
-        GordianKeyPairSignature mySigner = mySrcSigns.createSigner(mySpec);
+        GordianKeyPairSignature mySigner = mySrcSigns.createKeyPairSigner(mySpec);
         mySigner.initForSigning(myPair);
         mySigner.update(myMessage);
         byte[] mySignature = mySigner.sign();
 
         /* Check sent signature */
-        mySigner = myTgtSigns.createSigner(mySpec);
+        mySigner = myTgtSigns.createKeyPairSigner(mySpec);
         mySigner.initForVerify(myPartnerSelf);
         mySigner.update(myMessage);
         Assertions.assertTrue(mySigner.verify(mySignature),"Failed to verify sent signature");
@@ -430,7 +430,7 @@ public class AsymmetricTest {
         mySigner.initForSigning(myPartnerSelf);
         mySigner.update(myMessage);
         mySignature = mySigner.sign();
-        mySigner = mySrcSigns.createSigner(mySpec);
+        mySigner = mySrcSigns.createKeyPairSigner(mySpec);
         mySigner.initForVerify(myPair);
         mySigner.update(myMessage);
         Assertions.assertTrue(mySigner.verify(mySignature),"Failed to verify returned signature");
@@ -452,9 +452,9 @@ public class AsymmetricTest {
 
         /* Check the agreement */
         final GordianAgreementFactory myAgrees = pAgreement.getOwner().getFactory().getAgreementFactory();
-        final GordianKeyPairAgreement mySender = myAgrees.createAgreement(mySpec);
+        final GordianKeyPairAgreement mySender = myAgrees.createKeyPairAgreement(mySpec);
         mySender.setResultType(pResultType);
-        final GordianKeyPairAgreement myResponder = myAgrees.createAgreement(mySpec);
+        final GordianKeyPairAgreement myResponder = myAgrees.createKeyPairAgreement(mySpec);
 
         /* Access target if we are using one */
         if (!(mySender instanceof GordianKeyPairAnonymousAgreement)) {
@@ -517,9 +517,9 @@ public class AsymmetricTest {
         /* Check the agreement */
         final GordianAgreementFactory mySrcAgrees = pAgreement.getOwner().getFactory().getAgreementFactory();
         final GordianAgreementFactory myPartnerAgrees = pAgreement.getOwner().getPartner().getAgreementFactory();
-        final GordianKeyPairAgreement mySender = mySrcAgrees.createAgreement(mySpec);
+        final GordianKeyPairAgreement mySender = mySrcAgrees.createKeyPairAgreement(mySpec);
         mySender.setResultType(new GordianKeySetSpec());
-        final GordianKeyPairAgreement myResponder = myPartnerAgrees.createAgreement(mySpec);
+        final GordianKeyPairAgreement myResponder = myPartnerAgrees.createKeyPairAgreement(mySpec);
 
         /* Handle Anonymous */
         if (mySender instanceof GordianKeyPairAnonymousAgreement
@@ -576,8 +576,8 @@ public class AsymmetricTest {
 
         /* Check the encryptor */
         final GordianEncryptorFactory myEncrypts = pEncryptor.getOwner().getFactory().getEncryptorFactory();
-        final GordianKeyPairEncryptor mySender = myEncrypts.createEncryptor(mySpec);
-        final GordianKeyPairEncryptor myReceiver = myEncrypts.createEncryptor(mySpec);
+        final GordianKeyPairEncryptor mySender = myEncrypts.createKeyPairEncryptor(mySpec);
+        final GordianKeyPairEncryptor myReceiver = myEncrypts.createKeyPairEncryptor(mySpec);
 
         /* Handle Initialisation */
         mySender.initForEncrypt(myPair);
@@ -625,8 +625,8 @@ public class AsymmetricTest {
         /* Check the encryptor */
         final GordianEncryptorFactory mySrcEncrypts = pEncryptor.getOwner().getFactory().getEncryptorFactory();
         final GordianEncryptorFactory myTgtEncrypts = pEncryptor.getOwner().getPartner().getEncryptorFactory();
-        final GordianKeyPairEncryptor mySender = mySrcEncrypts.createEncryptor(mySpec);
-        final GordianKeyPairEncryptor myReceiver = myTgtEncrypts.createEncryptor(mySpec);
+        final GordianKeyPairEncryptor mySender = mySrcEncrypts.createKeyPairEncryptor(mySpec);
+        final GordianKeyPairEncryptor myReceiver = myTgtEncrypts.createKeyPairEncryptor(mySpec);
 
         /* Handle Initialisation */
         mySender.initForEncrypt(myPair);

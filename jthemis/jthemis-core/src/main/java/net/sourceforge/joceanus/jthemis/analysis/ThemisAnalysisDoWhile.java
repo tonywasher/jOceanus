@@ -61,7 +61,6 @@ public class ThemisAnalysisDoWhile
 
         /* Create the arrays */
         final Deque<ThemisAnalysisElement> myLines = ThemisAnalysisBuilder.processBody(pParser);
-        final int myBaseLines =  myLines.size();
 
         /* Parse trailers */
         final ThemisAnalysisLine myLine = (ThemisAnalysisLine) pParser.popNextLine();

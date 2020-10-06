@@ -21,10 +21,12 @@ import java.util.Arrays;
 import net.sourceforge.joceanus.jgordianknot.api.base.GordianKeySpec;
 import net.sourceforge.joceanus.jgordianknot.api.key.GordianKey;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPair;
+import net.sourceforge.joceanus.jgordianknot.api.keypairset.GordianKeyPairSet;
+import net.sourceforge.joceanus.jgordianknot.api.keypairset.GordianKeyPairSetSpec;
 import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySet;
 import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetHash;
-import net.sourceforge.joceanus.jgordianknot.api.keystore.GordianCertificate;
 import net.sourceforge.joceanus.jgordianknot.api.keystore.GordianKeyStoreEntry;
+import net.sourceforge.joceanus.jgordianknot.api.sign.GordianSignatureSpec;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
 
 /**
@@ -88,46 +90,95 @@ class GordianCoreKeyStoreEntry
 
     /**
      * KeyStore Certificate.
+     * @param <S> the signatureSpec type
+     * @param <K> the keyPair type
      */
-    static class GordianCoreKeyStoreCertificate
+    static class GordianCoreKeyStoreCertificate<S, K>
             extends GordianCoreKeyStoreEntry
-            implements GordianKeyStoreCertificate {
+            implements GordianKeyStoreCertificate<K> {
         /**
          * The Certificate.
          */
-        private final GordianCoreCertificate theCertificate;
+        private final GordianCoreCertificate<S, K> theCertificate;
 
         /**
          * Constructor.
          * @param pCertificate the certificate
          * @param pDate the creation date
          */
-        GordianCoreKeyStoreCertificate(final GordianCoreCertificate pCertificate,
+        GordianCoreKeyStoreCertificate(final GordianCoreCertificate<S, K> pCertificate,
                                        final TethysDate pDate) {
             super(pDate);
             theCertificate = pCertificate;
         }
 
         @Override
-        public GordianCoreCertificate getCertificate() {
+        public GordianCoreCertificate<S, K> getCertificate() {
             return theCertificate;
         }
     }
+
     /**
-     * KeyStore KeyPair.
+     * KeyStorePair Certificate.
      */
-    static class GordianCoreKeyStorePair
+    static class GordianCoreKeyStorePairCertificate
+            extends GordianCoreKeyStoreCertificate<GordianSignatureSpec, GordianKeyPair>
+            implements GordianKeyStorePairCertificate {
+        /**
+         * Constructor.
+         * @param pCertificate the certificate
+         * @param pDate the creation date
+         */
+        GordianCoreKeyStorePairCertificate(final GordianCoreKeyPairCertificate pCertificate,
+                                           final TethysDate pDate) {
+            super(pCertificate, pDate);
+        }
+
+        @Override
+        public GordianCoreKeyPairCertificate getCertificate() {
+            return (GordianCoreKeyPairCertificate) super.getCertificate();
+        }
+    }
+
+    /**
+     * KeyStorePairSet Certificate.
+     */
+    static class GordianCoreKeyStorePairSetCertificate
+            extends GordianCoreKeyStoreCertificate<GordianKeyPairSetSpec, GordianKeyPairSet>
+            implements GordianKeyStorePairSetCertificate {
+        /**
+         * Constructor.
+         * @param pCertificate the certificate
+         * @param pDate the creation date
+         */
+        GordianCoreKeyStorePairSetCertificate(final GordianCoreKeyPairSetCertificate pCertificate,
+                                              final TethysDate pDate) {
+            super(pCertificate, pDate);
+        }
+
+        @Override
+        public GordianCoreKeyPairSetCertificate getCertificate() {
+            return (GordianCoreKeyPairSetCertificate) super.getCertificate();
+        }
+    }
+
+    /**
+     * KeyStore Pair.
+     * @param <S> the signatureSpec type
+     * @param <K> the keyPair type
+     */
+    static class GordianCoreKeyStorePairEntry<S, K>
             extends GordianCoreKeyStoreEntry
-            implements GordianKeyStorePair {
+            implements GordianKeyStorePairEntry<K> {
         /**
          * The KeyPair.
          */
-        private final GordianKeyPair theKeyPair;
+        private final K theKeyPair;
 
         /**
          * The CertificateChain.
          */
-        private final GordianCertificate[] theChain;
+        private final GordianCoreCertificate<S, K>[] theChain;
 
         /**
          * Constructor.
@@ -135,22 +186,70 @@ class GordianCoreKeyStoreEntry
          * @param pChain the matching certificateChain
          * @param pDate the creation date
          */
-        GordianCoreKeyStorePair(final GordianKeyPair pKeyPair,
-                                final GordianCoreCertificate[] pChain,
-                                final TethysDate pDate) {
+        GordianCoreKeyStorePairEntry(final K pKeyPair,
+                                     final GordianCoreCertificate<S, K>[] pChain,
+                                     final TethysDate pDate) {
             super(pDate);
             theKeyPair = pKeyPair;
             theChain = Arrays.copyOf(pChain, pChain.length);
         }
 
         @Override
-        public GordianKeyPair getKeyPair() {
+        public K getKeyPair() {
             return theKeyPair;
         }
 
         @Override
-        public GordianCertificate[] getCertificateChain() {
+        public GordianCoreCertificate<S, K>[] getCertificateChain() {
             return Arrays.copyOf(theChain, theChain.length);
+        }
+    }
+
+    /**
+     * KeyStore KeyPair.
+     */
+    static class GordianCoreKeyStorePair
+            extends GordianCoreKeyStorePairEntry<GordianSignatureSpec, GordianKeyPair>
+            implements GordianKeyStorePair {
+        /**
+         * Constructor.
+         * @param pKeyPair the keyPair.
+         * @param pChain the matching certificateChain
+         * @param pDate the creation date
+         */
+        GordianCoreKeyStorePair(final GordianKeyPair pKeyPair,
+                                final GordianCoreKeyPairCertificate[] pChain,
+                                final TethysDate pDate) {
+            super(pKeyPair, pChain, pDate);
+        }
+
+        @Override
+        public GordianCoreKeyPairCertificate[] getCertificateChain() {
+            return (GordianCoreKeyPairCertificate[]) super.getCertificateChain();
+        }
+    }
+
+    /**
+     * KeyStore KeyPairSet.
+     */
+    static class GordianCoreKeyStorePairSet
+            extends GordianCoreKeyStorePairEntry<GordianKeyPairSetSpec, GordianKeyPairSet>
+            implements GordianKeyStorePairSet {
+        /**
+         * Constructor.
+         * @param pKeyPairSet the keyPairSet.
+         * @param pChain the matching certificateChain
+         * @param pDate the creation date
+         */
+        GordianCoreKeyStorePairSet(final GordianKeyPairSet pKeyPairSet,
+                                   final GordianCoreKeyPairSetCertificate[] pChain,
+                                   final TethysDate pDate) {
+            super(pKeyPairSet, pChain, pDate);
+        }
+
+        @Override
+        public GordianCoreKeyPairSetCertificate[] getCertificateChain() {
+            return (GordianCoreKeyPairSetCertificate[]) super.getCertificateChain();
         }
     }
 
@@ -160,7 +259,7 @@ class GordianCoreKeyStoreEntry
      */
     public static class GordianCoreKeyStoreKey<T extends GordianKeySpec>
             extends GordianCoreKeyStoreEntry
-            implements GordianKeyStoreKey {
+            implements GordianKeyStoreKey<T> {
         /**
          * The Key.
          */

@@ -14,24 +14,13 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  ******************************************************************************/
-package net.sourceforge.joceanus.jgordianknot.api.zip;
+package net.sourceforge.joceanus.jgordianknot.api.keystore;
+
+import net.sourceforge.joceanus.jgordianknot.api.keypairset.GordianKeyPairSet;
 
 /**
- * Lock Type.
+ * keyPairSet Certificate.
  */
-public enum GordianZipLockType {
-    /**
-     * Password.
-     */
-    PASSWORD,
-
-    /**
-     * KeyPair and Password.
-     */
-    KEYPAIR_PASSWORD,
-
-    /**
-     * KeyPairSet and Password.
-     */
-    KEYPAIRSET_PASSWORD;
+public interface GordianKeyPairSetCertificate
+        extends GordianCertificate<GordianKeyPairSet> {
 }

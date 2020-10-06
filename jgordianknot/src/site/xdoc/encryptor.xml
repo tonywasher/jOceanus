@@ -23,7 +23,7 @@
 
                 /* Access encryptor */
                 final GordianEncryptorSpec myEncryptSpec = GordianEncryptorSpec.rsa(GordianDigestSpec.sha2(GordianLength.LEN_256));
-                final GordianEncryptor myEncryptor = myEncryptorFactory.createEncryptor(myEncryptSpec);
+                final GordianEncryptor myEncryptor = myEncryptorFactory.createKeyPairEncryptor(myEncryptSpec);
 
                 /* Encrypt message */
                 final byte[] message = ....;

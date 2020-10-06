@@ -120,7 +120,7 @@ public class Zuc128Mac
         shift4NextByte();
 
         /* Loop through the bits */
-        final int bitBase = theByteIndex * 8; //Byte.SIZE;
+        final int bitBase = theByteIndex * Byte.SIZE;
         for (int bitMask = TOPBIT, bitNo = 0; bitMask > 0; bitMask >>= 1, bitNo++) {
             /* If the bit is set */
             if ((in & bitMask) != 0) {

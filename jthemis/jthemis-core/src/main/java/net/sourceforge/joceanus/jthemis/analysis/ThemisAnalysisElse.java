@@ -78,7 +78,6 @@ public class ThemisAnalysisElse
 
         /* Parse the body */
         final Deque<ThemisAnalysisElement> myLines = ThemisAnalysisBuilder.processBody(pParser);
-        final int myBaseLines = myLines.size();
 
         /* Look for else clauses */
         theElse = (ThemisAnalysisElse) pParser.processExtra(pOwner, ThemisAnalysisKeyWord.ELSE);

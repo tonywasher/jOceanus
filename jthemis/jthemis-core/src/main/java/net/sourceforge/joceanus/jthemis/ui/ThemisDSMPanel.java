@@ -282,7 +282,7 @@ public class ThemisDSMPanel
             /* Parse sourceMeter statistics */
             final ThemisSMStatistics myStats = new ThemisSMStatistics(new TethysDataFormatter());
             final FileSystem mySystem = FileSystems.getDefault();
-            final String myDir = pathSM + theProject + "/java/2020-09-24-11-26-09";
+            final String myDir = pathSM + theProject + "/java/2020-10-04-12-00-01";
             final Path myPath = mySystem.getPath(myDir);
             myStats.parseStatistics(myPath, theProject.toString());
 
@@ -293,7 +293,7 @@ public class ThemisDSMPanel
 
             /* Catch exceptions */
         } catch (OceanusException e) {
-            e.printStackTrace();
+            theError = e;
         }
     }
 

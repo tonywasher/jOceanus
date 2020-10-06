@@ -21,6 +21,7 @@ import java.security.KeyStore.Entry;
 import net.sourceforge.joceanus.jgordianknot.api.base.GordianKeySpec;
 import net.sourceforge.joceanus.jgordianknot.api.key.GordianKey;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPair;
+import net.sourceforge.joceanus.jgordianknot.api.keypairset.GordianKeyPairSet;
 import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySet;
 import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetHash;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
@@ -38,32 +39,62 @@ public interface GordianKeyStoreEntry
 
     /**
      * KeyStore Certificate API.
+     * @param <K> the keyType
      */
-    interface GordianKeyStoreCertificate
+    interface GordianKeyStoreCertificate<K>
             extends GordianKeyStoreEntry {
         /**
          * Obtain the certificate.
          * @return the certificate
          */
-        GordianCertificate getCertificate();
+        GordianCertificate<K> getCertificate();
+    }
+
+    /**
+     * KeyStore keyPairCertificate API.
+     */
+    interface GordianKeyStorePairCertificate
+            extends GordianKeyStoreCertificate<GordianKeyPair> {
+    }
+
+    /**
+     * KeyStore keyPairSetCertificate API.
+     */
+    interface GordianKeyStorePairSetCertificate
+            extends GordianKeyStoreCertificate<GordianKeyPairSet> {
+    }
+
+    /**
+     * KeyStore KeyPair.
+     * @param <K> the keyType
+     */
+    interface GordianKeyStorePairEntry<K>
+            extends GordianKeyStoreEntry {
+        /**
+         * Obtain the keyPair.
+         * @return the keyPair
+         */
+        K getKeyPair();
+
+        /**
+         * Obtain the certificate chain.
+         * @return the certificate chain
+         */
+        GordianCertificate<K>[] getCertificateChain();
     }
 
     /**
      * KeyStore KeyPair.
      */
     interface GordianKeyStorePair
-            extends GordianKeyStoreEntry {
-        /**
-         * Obtain the keyPair.
-         * @return the keyPair
-         */
-        GordianKeyPair getKeyPair();
+            extends GordianKeyStorePairEntry<GordianKeyPair> {
+    }
 
-        /**
-         * Obtain the certificate chain.
-         * @return the certificate chain
-         */
-        GordianCertificate[] getCertificateChain();
+    /**
+     * KeyStore KeyPairSet.
+     */
+    interface GordianKeyStorePairSet
+            extends GordianKeyStorePairEntry<GordianKeyPairSet> {
     }
 
     /**

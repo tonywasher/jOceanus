@@ -68,7 +68,6 @@ public class ThemisAnalysisWhile
 
         /* Parse the body */
         final Deque<ThemisAnalysisElement> myLines = ThemisAnalysisBuilder.processBody(pParser);
-        final int myBaseLines = myLines.size();
 
         /* Create a parser */
         theContents = new ArrayDeque<>();

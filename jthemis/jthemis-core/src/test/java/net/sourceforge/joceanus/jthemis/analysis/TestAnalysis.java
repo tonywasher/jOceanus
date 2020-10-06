@@ -89,7 +89,7 @@ public class TestAnalysis {
         /* Parse sourceMeter statistics */
         ThemisSMStatistics myStats = new ThemisSMStatistics(new TethysDataFormatter());
         final FileSystem mySystem = FileSystems.getDefault();
-        final String myDir = PATH_SM + PROJECT + "/java/2020-09-24-11-26-09";
+        final String myDir = PATH_SM + PROJECT + "/java/2020-10-04-12-00-01";
         final Path myPath = mySystem.getPath(myDir);
         myStats.parseStatistics(myPath, PROJECT);
 

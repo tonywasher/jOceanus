@@ -110,7 +110,6 @@ public class ThemisAnalysisMethod
         theContents = isAbstract
                        ? new ArrayDeque<>()
                        : ThemisAnalysisBuilder.processMethodBody(pParser, this);
-        final int myBaseLines = theContents.size();
 
         /* Create a parser */
         final ThemisAnalysisParser myParser = new ThemisAnalysisParser(myHeaders, theContents, this);

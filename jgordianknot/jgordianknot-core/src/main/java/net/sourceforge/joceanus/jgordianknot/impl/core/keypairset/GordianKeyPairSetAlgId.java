@@ -30,7 +30,7 @@ import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
 import org.bouncycastle.asn1.x509.SubjectPublicKeyInfo;
 
 import net.sourceforge.joceanus.jgordianknot.api.agree.GordianAgreementType;
-import net.sourceforge.joceanus.jgordianknot.api.keypairset.GordianKeyPairSetAgreementSpec;
+import net.sourceforge.joceanus.jgordianknot.api.agree.GordianKeyPairSetAgreementSpec;
 import net.sourceforge.joceanus.jgordianknot.api.keypairset.GordianKeyPairSetSpec;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianASN1Util;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianDataException;
@@ -119,7 +119,7 @@ public final class GordianKeyPairSetAlgId {
      * @return the keyPairSetSpec
      * @throws OceanusException on error
      */
-    static GordianKeyPairSetSpec determineKeyPairSetSpec(final AlgorithmIdentifier pAlgId) throws OceanusException {
+    public static GordianKeyPairSetSpec determineKeyPairSetSpec(final AlgorithmIdentifier pAlgId) throws OceanusException {
         /* Obtain the spec */
         final GordianKeyPairSetSpec mySpec = KEYPAIRSPECS.get(pAlgId);
         if (mySpec != null) {
@@ -129,11 +129,20 @@ public final class GordianKeyPairSetAlgId {
     }
 
     /**
+     * Obtain KeyPairSetSpec from algorithmId.
+     * @param pAlgId algorithmIdc
+     * @return the keyPairSetSpec
+     */
+    public static GordianKeyPairSetSpec lookUpKeyPairSetSpec(final AlgorithmIdentifier pAlgId) {
+        return KEYPAIRSPECS.get(pAlgId);
+    }
+
+    /**
      * Obtain AlgorithmId from KeyPairSetSpec.
      * @param pSpec the keyPairSetSpec
      * @return the algorithmId
      */
-    static AlgorithmIdentifier determineAlgorithmId(final GordianKeyPairSetSpec pSpec) {
+    public static AlgorithmIdentifier determineAlgorithmId(final GordianKeyPairSetSpec pSpec) {
         /* Obtain the algorithmId */
         return KEYPAIRALGIDS.get(pSpec);
     }
@@ -144,7 +153,7 @@ public final class GordianKeyPairSetAlgId {
      * @return the keyPairSetSpec
      * @throws OceanusException on error
      */
-    static GordianKeyPairSetAgreementSpec determineKeyPairSetAgreementSpec(final AlgorithmIdentifier pAlgId) throws OceanusException {
+    public static GordianKeyPairSetAgreementSpec determineKeyPairSetAgreementSpec(final AlgorithmIdentifier pAlgId) throws OceanusException {
         /* Obtain the spec */
         final GordianKeyPairSetAgreementSpec mySpec = AGREESPECS.get(pAlgId);
         if (mySpec != null) {
@@ -158,7 +167,7 @@ public final class GordianKeyPairSetAlgId {
      * @param pSpec the keyPairSetSpec
      * @return the algorithmId
      */
-    static AlgorithmIdentifier determineAlgorithmId(final GordianKeyPairSetAgreementSpec pSpec) {
+    public static AlgorithmIdentifier determineAlgorithmId(final GordianKeyPairSetAgreementSpec pSpec) {
         /* Obtain the algorithmId */
         return AGREEALGIDS.get(pSpec);
     }

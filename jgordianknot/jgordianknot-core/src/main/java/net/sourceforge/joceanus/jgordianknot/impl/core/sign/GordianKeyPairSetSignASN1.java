@@ -14,7 +14,7 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  ******************************************************************************/
-package net.sourceforge.joceanus.jgordianknot.impl.core.keypairset;
+package net.sourceforge.joceanus.jgordianknot.impl.core.sign;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -34,6 +34,7 @@ import net.sourceforge.joceanus.jgordianknot.api.keypairset.GordianKeyPairSetSpe
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianASN1Util.GordianASN1Object;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianDataException;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianIOException;
+import net.sourceforge.joceanus.jgordianknot.impl.core.keypairset.GordianKeyPairSetAlgId;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**

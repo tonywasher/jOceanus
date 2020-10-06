@@ -66,16 +66,19 @@ public final class ThemisStatsReport {
         addStartElement(myBuilder, Tag.TABLE);
         buildStatsTableHeader(myBuilder);
 
-        /* Access the sourceMeter statistics */
-        final Map<ThemisSMStat, Integer> myMap = pStats.getSourceMeterStats();
+        /* If we have statistics */
+        if (pStats != null) {
+            /* Access the sourceMeter statistics */
+            final Map<ThemisSMStat, Integer> myMap = pStats.getSourceMeterStats();
 
-        /* Loop through the statistics */
-        myRowNo = 0;
-        for (ThemisSMStat myStat : ThemisSMStat.values()) {
-            final Integer myValue = pStats.getStat(myStat);
-            final Integer mySMValue = myMap != null ? myMap.computeIfAbsent(myStat, s -> 0) : null;
-            if (myValue != 0 || mySMValue != null && mySMValue != 0) {
-                buildStatsTableRow(myBuilder, myStat, myValue, mySMValue, myRowNo++);
+            /* Loop through the statistics */
+            myRowNo = 0;
+            for (ThemisSMStat myStat : ThemisSMStat.values()) {
+                final Integer myValue = pStats.getStat(myStat);
+                final Integer mySMValue = myMap != null ? myMap.computeIfAbsent(myStat, s -> 0) : null;
+                if (myValue != 0 || mySMValue != null && mySMValue != 0) {
+                    buildStatsTableRow(myBuilder, myStat, myValue, mySMValue, myRowNo++);
+                }
             }
         }
 

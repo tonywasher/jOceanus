@@ -152,7 +152,7 @@ public abstract class GordianCoreSignedAgreement
         final GordianSignatureSpec mySpec = GordianSignatureSpec.defaultForKey(pServer.getKeyPairSpec());
         final GordianCoreSignatureFactory mySigns = (GordianCoreSignatureFactory) myFactory.getSignatureFactory();
         final AlgorithmIdentifier myAlgId = mySigns.getIdentifierForSpecAndKeyPair(mySpec, pServer);
-        final GordianKeyPairSignature mySigner = mySigns.createSigner(mySpec);
+        final GordianKeyPairSignature mySigner = mySigns.createKeyPairSigner(mySpec);
 
         /* Build the signature */
         mySigner.initForSigning(pServer);
@@ -190,7 +190,7 @@ public abstract class GordianCoreSignedAgreement
         final AlgorithmIdentifier myAlgId = myASN1.getSignatureId();
         final byte[] mySignature = myASN1.getSignature();
         final GordianSignatureSpec mySignSpec = mySigns.getSpecForIdentifier(myAlgId);
-        final GordianKeyPairSignature mySigner = mySigns.createSigner(mySignSpec);
+        final GordianKeyPairSignature mySigner = mySigns.createKeyPairSigner(mySignSpec);
 
         /* Build the signature */
         mySigner.initForVerify(pServer);

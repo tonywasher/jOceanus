@@ -35,7 +35,9 @@ import org.w3c.dom.Node;
 import net.sourceforge.joceanus.jgordianknot.api.base.GordianKeySpec;
 import net.sourceforge.joceanus.jgordianknot.api.factory.GordianFactory;
 import net.sourceforge.joceanus.jgordianknot.api.factory.GordianKnuthObfuscater;
+import net.sourceforge.joceanus.jgordianknot.api.keystore.GordianCertificate;
 import net.sourceforge.joceanus.jgordianknot.api.keystore.GordianCertificateId;
+import net.sourceforge.joceanus.jgordianknot.api.keystore.GordianKeyPairCertificate;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianCoreFactory;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianDataException;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianIOException;
@@ -44,7 +46,11 @@ import net.sourceforge.joceanus.jgordianknot.impl.core.keystore.GordianKeyStoreE
 import net.sourceforge.joceanus.jgordianknot.impl.core.keystore.GordianKeyStoreElement.GordianKeyStoreCertificateKey;
 import net.sourceforge.joceanus.jgordianknot.impl.core.keystore.GordianKeyStoreElement.GordianKeyStoreHashElement;
 import net.sourceforge.joceanus.jgordianknot.impl.core.keystore.GordianKeyStoreElement.GordianKeyStoreKeyElement;
+import net.sourceforge.joceanus.jgordianknot.impl.core.keystore.GordianKeyStoreElement.GordianKeyStorePairCertificateElement;
 import net.sourceforge.joceanus.jgordianknot.impl.core.keystore.GordianKeyStoreElement.GordianKeyStorePairElement;
+import net.sourceforge.joceanus.jgordianknot.impl.core.keystore.GordianKeyStoreElement.GordianKeyStorePairElementBase;
+import net.sourceforge.joceanus.jgordianknot.impl.core.keystore.GordianKeyStoreElement.GordianKeyStorePairSetCertificateElement;
+import net.sourceforge.joceanus.jgordianknot.impl.core.keystore.GordianKeyStoreElement.GordianKeyStorePairSetElement;
 import net.sourceforge.joceanus.jgordianknot.impl.core.keystore.GordianKeyStoreElement.GordianKeyStoreSetElement;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.TethysDataConverter;
@@ -90,9 +96,14 @@ public final class GordianKeyStoreDocument {
     private static final String ELEMENT_CERTIFICATES = "Certificates";
 
     /**
-     * The Certificate element.
+     * The PairCertificate element.
      */
-    private static final String ELEMENT_CERT = "Certificate";
+    private static final String ELEMENT_PAIRCERT = "PairCertificate";
+
+    /**
+     * The PairCertificate element.
+     */
+    private static final String ELEMENT_PAIRSETCERT = "PairSetCertificate";
 
     /**
      * The keyType attribute.
@@ -279,12 +290,14 @@ public final class GordianKeyStoreDocument {
                 case KEYSETHASH:
                     buildKeySetHashElement(myAliasEl, (GordianKeyStoreHashElement) myElement);
                     break;
-                case PRIVATEKEY:
-                    buildPrivateKeyElement(myAliasEl, (GordianKeyStorePairElement) myElement);
+                case PRIVATEKEYPAIR:
+                case PRIVATEKEYPAIRSET:
+                    buildPrivateKeyElement(myAliasEl, (GordianKeyStorePairElementBase<?, ?>) myElement);
                     break;
-                case TRUSTEDCERT:
+                case TRUSTEDPAIRCERT:
+                case TRUSTEDPAIRSETCERT:
                 default:
-                    buildCertificateElement(myAliasEl, (GordianKeyStoreCertificateElement) myElement);
+                    buildCertificateElement(myAliasEl, (GordianKeyStoreCertificateElement<?, ?>) myElement);
                     break;
             }
         }
@@ -352,7 +365,7 @@ public final class GordianKeyStoreDocument {
      * @throws OceanusException on error
      */
     private void buildPrivateKeyElement(final Element pNode,
-                                        final GordianKeyStorePairElement pEntry) throws OceanusException {
+                                        final GordianKeyStorePairElementBase<?, ?> pEntry) throws OceanusException {
         /* Build securedKey entry */
         final Element myKeyEl = theDocument.createElement(ELEMENT_SECUREDKEY);
         pNode.appendChild(myKeyEl);
@@ -361,7 +374,7 @@ public final class GordianKeyStoreDocument {
         /* Build hash entry */
         final Element myHashEl = theDocument.createElement(ELEMENT_HASH);
         pNode.appendChild(myHashEl);
-        myHashEl.setTextContent(TethysDataConverter.byteArrayToBase64(pEntry.getSecuringHash()));
+        myHashEl.setTextContent(TethysDataConverter.byteArrayToBase64(pEntry.getSecuringHashHash()));
 
         /* Build certificates entry */
         final Element myChainEl = theDocument.createElement(ELEMENT_CERTIFICATES);
@@ -381,7 +394,7 @@ public final class GordianKeyStoreDocument {
      * @throws OceanusException on error
      */
     private void buildCertificateElement(final Element pNode,
-                                         final GordianKeyStoreCertificateElement pEntry) throws OceanusException {
+                                         final GordianKeyStoreCertificateElement<?, ?> pEntry) throws OceanusException {
         /* Build certificateKey */
         buildCertificateKey(pNode, pEntry.getCertificateKey());
     }
@@ -441,10 +454,13 @@ public final class GordianKeyStoreDocument {
      */
     private void buildCertificates(final Node pCerts) {
         /* Access the Subject MapOfMaps */
-        for (Map<GordianCertificateId, GordianCoreCertificate> myMap : theKeyStore.getSubjectMapOfMaps().values()) {
-            for (GordianCoreCertificate myCert : myMap.values()) {
+        for (Map<GordianCertificateId, GordianCertificate<?>> myMap : theKeyStore.getSubjectMapOfMaps().values()) {
+            for (GordianCertificate<?> myCert : myMap.values()) {
                 /* Build certificate entry */
-                final Element myCertEl = theDocument.createElement(ELEMENT_CERT);
+                final String myElement = myCert instanceof GordianKeyPairCertificate
+                        ? ELEMENT_PAIRCERT
+                        : ELEMENT_PAIRSETCERT;
+                final Element myCertEl = theDocument.createElement(myElement);
                 pCerts.appendChild(myCertEl);
 
                 /* Build the certificate element */
@@ -480,12 +496,18 @@ public final class GordianKeyStoreDocument {
                 case KEYSETHASH:
                     parseKeySetHashElement(myNode, myAlias, myDate);
                     break;
-                case PRIVATEKEY:
-                    parsePrivateKeyElement(myNode, myAlias, myDate);
+                case PRIVATEKEYPAIR:
+                    parsePrivateKeyElement(myNode, myAlias, false, myDate);
                     break;
-                case TRUSTEDCERT:
+                case PRIVATEKEYPAIRSET:
+                    parsePrivateKeyElement(myNode, myAlias, true, myDate);
+                    break;
+                case TRUSTEDPAIRCERT:
+                    parseCertificateElement(myNode, myAlias, false, myDate);
+                    break;
+                case TRUSTEDPAIRSETCERT:
                 default:
-                    parseCertificateElement(myNode, myAlias, myDate);
+                    parseCertificateElement(myNode, myAlias, true, myDate);
                     break;
             }
 
@@ -618,11 +640,13 @@ public final class GordianKeyStoreDocument {
      * parse the key alias.
      * @param pNode the node to parse
      * @param pAlias the alias
+     * @param pIsPairSet true/false
      * @param pDate the creation date
      * @throws OceanusException on error
      */
     private void parsePrivateKeyElement(final Node pNode,
                                         final String pAlias,
+                                        final boolean pIsPairSet,
                                         final TethysDate pDate) throws OceanusException {
         /* Loop through the nodes */
         byte[] mySecuredKey = null;
@@ -660,7 +684,7 @@ public final class GordianKeyStoreDocument {
 
                     /* If this is a certificateKey node */
                     if (ELEMENT_CERTKEY.equals(myName)) {
-                        /* Add the certficate to the list */
+                        /* Add the certificate to the list */
                         myChain.add(parseCertificateKey(myChild));
                     }
 
@@ -669,7 +693,9 @@ public final class GordianKeyStoreDocument {
                 }
 
                 /* build the entry */
-                final GordianKeyStorePairElement myEntry = new GordianKeyStorePairElement(mySecuredKey, myHash, myChain, pDate);
+                final GordianKeyStorePairElementBase<?, ?> myEntry = pIsPairSet
+                        ? new GordianKeyStorePairSetElement(mySecuredKey, myHash, myChain, pDate)
+                        : new GordianKeyStorePairElement(mySecuredKey, myHash, myChain, pDate);
                 theKeyStore.getAliasMap().put(pAlias, myEntry);
                 return;
             }
@@ -683,11 +709,13 @@ public final class GordianKeyStoreDocument {
      * parse the certificate alias.
      * @param pNode the node to parse
      * @param pAlias the alias
+     * @param pIsPairSet true/false
      * @param pDate the creation date
      * @throws OceanusException on error
      */
     private void parseCertificateElement(final Node pNode,
                                          final String pAlias,
+                                         final boolean pIsPairSet,
                                          final TethysDate pDate) throws OceanusException {
         /* Loop through the nodes */
         Node myNode = pNode.getFirstChild();
@@ -699,7 +727,9 @@ public final class GordianKeyStoreDocument {
             if (ELEMENT_CERTKEY.equals(myNodeName)) {
                 /* Obtain the key and build the entry */
                 final GordianKeyStoreCertificateKey myKey = parseCertificateKey(myNode);
-                final GordianKeyStoreCertificateElement myEntry = new GordianKeyStoreCertificateElement(myKey, pDate);
+                final GordianKeyStoreCertificateElement<?, ?> myEntry = pIsPairSet
+                        ? new GordianKeyStorePairSetCertificateElement(myKey, pDate)
+                        : new GordianKeyStorePairCertificateElement(myKey, pDate);
                 theKeyStore.getAliasMap().put(pAlias, myEntry);
                 return;
             }
@@ -803,11 +833,19 @@ public final class GordianKeyStoreDocument {
             /* Access the Node name */
             final String myNodeName = myNode.getNodeName();
 
-            /* If this is a certificate node */
-            if (ELEMENT_CERT.equals(myNodeName)) {
+            /* If this is a pairCertificate node */
+            if (ELEMENT_PAIRCERT.equals(myNodeName)) {
                 /* Access the encoded certificate */
                 final byte[] myEncoded = TethysDataConverter.base64ToByteArray(myNode.getTextContent());
-                final GordianCoreCertificate myCert = new GordianCoreCertificate(theKeyStore.getFactory(), myEncoded);
+                final GordianCoreKeyPairCertificate myCert = new GordianCoreKeyPairCertificate(theKeyStore.getFactory(), myEncoded);
+                theKeyStore.storeCertificate(myCert);
+            }
+
+            /* If this is a pairSetCertificate node */
+            if (ELEMENT_PAIRSETCERT.equals(myNodeName)) {
+                /* Access the encoded certificate */
+                final byte[] myEncoded = TethysDataConverter.base64ToByteArray(myNode.getTextContent());
+                final GordianCoreKeyPairSetCertificate myCert = new GordianCoreKeyPairSetCertificate(theKeyStore.getFactory(), myEncoded);
                 theKeyStore.storeCertificate(myCert);
             }
 
@@ -821,14 +859,24 @@ public final class GordianKeyStoreDocument {
      */
     private enum GordianStoreEntryType {
         /**
-         * Certificate.
+         * PairCertificate.
          */
-        TRUSTEDCERT("TrustedCertificate"),
+        TRUSTEDPAIRCERT("TrustedKeyPairCertificate"),
 
         /**
          * PrivateKey.
          */
-        PRIVATEKEY("PrivateKey"),
+        PRIVATEKEYPAIR("PrivateKeyPair"),
+
+        /**
+         * PairSetCertificate.
+         */
+        TRUSTEDPAIRSETCERT("TrustedKeyPairSetCertificate"),
+
+        /**
+         * PrivateKeySet.
+         */
+        PRIVATEKEYPAIRSET("PrivateKeyPairSet"),
 
         /**
          * Key.
@@ -882,10 +930,16 @@ public final class GordianKeyStoreDocument {
                 return KEY;
             }
             if (pEntry instanceof GordianKeyStorePairElement) {
-                return PRIVATEKEY;
+                return PRIVATEKEYPAIR;
             }
-            if (pEntry instanceof GordianKeyStoreCertificateElement) {
-                return TRUSTEDCERT;
+            if (pEntry instanceof GordianKeyStorePairSetElement) {
+                return PRIVATEKEYPAIRSET;
+            }
+            if (pEntry instanceof GordianKeyStorePairCertificateElement) {
+                return TRUSTEDPAIRCERT;
+            }
+            if (pEntry instanceof GordianKeyStorePairSetCertificateElement) {
+                return TRUSTEDPAIRSETCERT;
             }
             throw new IllegalArgumentException();
         }

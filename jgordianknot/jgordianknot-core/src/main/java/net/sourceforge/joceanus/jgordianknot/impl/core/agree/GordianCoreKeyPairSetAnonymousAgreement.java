@@ -14,7 +14,7 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  ******************************************************************************/
-package net.sourceforge.joceanus.jgordianknot.impl.core.keypairset;
+package net.sourceforge.joceanus.jgordianknot.impl.core.agree;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -29,17 +29,17 @@ import net.sourceforge.joceanus.jgordianknot.api.agree.GordianAgreementStatus;
 import net.sourceforge.joceanus.jgordianknot.api.agree.GordianKDFType;
 import net.sourceforge.joceanus.jgordianknot.api.agree.GordianKeyPairAgreementSpec;
 import net.sourceforge.joceanus.jgordianknot.api.agree.GordianKeyPairAnonymousAgreement;
+import net.sourceforge.joceanus.jgordianknot.api.agree.GordianKeyPairSetAgreement;
+import net.sourceforge.joceanus.jgordianknot.api.agree.GordianKeyPairSetAgreementSpec;
+import net.sourceforge.joceanus.jgordianknot.api.agree.GordianKeyPairSetAnonymousAgreement;
 import net.sourceforge.joceanus.jgordianknot.api.base.GordianLength;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPair;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPairType;
 import net.sourceforge.joceanus.jgordianknot.api.keypairset.GordianKeyPairSet;
-import net.sourceforge.joceanus.jgordianknot.api.keypairset.GordianKeyPairSetAgreement;
-import net.sourceforge.joceanus.jgordianknot.api.keypairset.GordianKeyPairSetAgreementSpec;
-import net.sourceforge.joceanus.jgordianknot.api.keypairset.GordianKeyPairSetAnonymousAgreement;
 import net.sourceforge.joceanus.jgordianknot.api.keypairset.GordianKeyPairSetSpec;
-import net.sourceforge.joceanus.jgordianknot.impl.core.agree.GordianCoreAgreement;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianCoreFactory;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianDataException;
+import net.sourceforge.joceanus.jgordianknot.impl.core.keypairset.GordianCoreKeyPairSet;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
@@ -68,11 +68,11 @@ public class GordianCoreKeyPairSetAnonymousAgreement
         /* Create the agreements */
         final GordianAgreementFactory myFactory = pFactory.getKeyPairFactory().getAgreementFactory();
         final GordianKDFType myKDFType = pSpec.getKDFType();
-        theAgreements.add((GordianKeyPairAnonymousAgreement) myFactory.createAgreement(
+        theAgreements.add((GordianKeyPairAnonymousAgreement) myFactory.createKeyPairAgreement(
                 GordianKeyPairAgreementSpec.dhAnon(myKDFType)));
-        theAgreements.add((GordianKeyPairAnonymousAgreement) myFactory.createAgreement(
+        theAgreements.add((GordianKeyPairAnonymousAgreement) myFactory.createKeyPairAgreement(
                 GordianKeyPairAgreementSpec.ecdhAnon(GordianKeyPairType.EC, myKDFType)));
-        theAgreements.add((GordianKeyPairAnonymousAgreement) myFactory.createAgreement(
+        theAgreements.add((GordianKeyPairAnonymousAgreement) myFactory.createKeyPairAgreement(
                 GordianKeyPairAgreementSpec.xdhAnon(myKDFType)));
     }
 
