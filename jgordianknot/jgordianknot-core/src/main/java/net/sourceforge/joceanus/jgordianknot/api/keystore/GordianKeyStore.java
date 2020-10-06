@@ -26,12 +26,16 @@ import net.sourceforge.joceanus.jgordianknot.api.base.GordianKeySpec;
 import net.sourceforge.joceanus.jgordianknot.api.key.GordianKey;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPair;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPairSpec;
+import net.sourceforge.joceanus.jgordianknot.api.keypairset.GordianKeyPairSet;
+import net.sourceforge.joceanus.jgordianknot.api.keypairset.GordianKeyPairSetSpec;
 import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySet;
 import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetHash;
 import net.sourceforge.joceanus.jgordianknot.api.keystore.GordianKeyStoreEntry.GordianKeyStoreHash;
 import net.sourceforge.joceanus.jgordianknot.api.keystore.GordianKeyStoreEntry.GordianKeyStoreKey;
 import net.sourceforge.joceanus.jgordianknot.api.keystore.GordianKeyStoreEntry.GordianKeyStorePair;
 import net.sourceforge.joceanus.jgordianknot.api.keystore.GordianKeyStoreEntry.GordianKeyStorePairCertificate;
+import net.sourceforge.joceanus.jgordianknot.api.keystore.GordianKeyStoreEntry.GordianKeyStorePairSet;
+import net.sourceforge.joceanus.jgordianknot.api.keystore.GordianKeyStoreEntry.GordianKeyStorePairSetCertificate;
 import net.sourceforge.joceanus.jgordianknot.api.keystore.GordianKeyStoreEntry.GordianKeyStoreSet;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
@@ -94,6 +98,15 @@ public interface GordianKeyStore {
                         GordianKeyPairCertificate pCertificate) throws OceanusException;
 
     /**
+     * Set certificate entry.
+     * @param pAlias the alias
+     * @param pCertificate the certificate
+     * @throws OceanusException on error
+     */
+    void setCertificate(String pAlias,
+                        GordianKeyPairSetCertificate pCertificate) throws OceanusException;
+
+    /**
      * Set keyPair entry.
      * @param pAlias the alias
      * @param pKeyPair the keyPair
@@ -105,6 +118,19 @@ public interface GordianKeyStore {
                     GordianKeyPair pKeyPair,
                     char[] pPassword,
                     GordianKeyPairCertificate[] pCertificateChain) throws OceanusException;
+
+    /**
+     * Set keyPair entry.
+     * @param pAlias the alias
+     * @param pKeyPairSet the keyPairSet
+     * @param pPassword the securing password.
+     * @param pCertificateChain the certificateChain
+     * @throws OceanusException on error
+     */
+    void setKeyPairSet(String pAlias,
+                       GordianKeyPairSet pKeyPairSet,
+                       char[] pPassword,
+                       GordianKeyPairSetCertificate[] pCertificateChain) throws OceanusException;
 
     /**
      * Set key entry.
@@ -148,11 +174,18 @@ public interface GordianKeyStore {
                                                              Class<T> pClazz);
 
     /**
-     * Determine whether the alias is a certificate entry.
+     * Determine whether the alias is a keyPair certificate entry.
      * @param pAlias the alias
      * @return true/false
      */
-    boolean isCertificateEntry(String pAlias);
+    boolean isKeyPairCertificateEntry(String pAlias);
+
+    /**
+     * Determine whether the alias is a keyPairSet certificate entry.
+     * @param pAlias the alias
+     * @return true/false
+     */
+    boolean isKeyPairSetCertificateEntry(String pAlias);
 
     /**
      * Determine whether the alias is a keyPair entry.
@@ -160,6 +193,13 @@ public interface GordianKeyStore {
      * @return true/false
      */
     boolean isKeyPairEntry(String pAlias);
+
+    /**
+     * Determine whether the alias is a keyPairSet entry.
+     * @param pAlias the alias
+     * @return true/false
+     */
+    boolean isKeyPairSetEntry(String pAlias);
 
     /**
      * Determine whether the alias is a key entry.
@@ -197,7 +237,14 @@ public interface GordianKeyStore {
      * @param pAlias the alias
      * @return the keyPair
      */
-    GordianKeyStorePairCertificate getCertificate(String pAlias);
+    GordianKeyStorePairCertificate getKeyPairCertificate(String pAlias);
+
+    /**
+     * Obtain the certificate for the alias.
+     * @param pAlias the alias
+     * @return the keyPair
+     */
+    GordianKeyStorePairSetCertificate getKeyPairSetCertificate(String pAlias);
 
     /**
      * Obtain the keyPair for the alias.
@@ -208,6 +255,16 @@ public interface GordianKeyStore {
      */
     GordianKeyStorePair getKeyPair(String pAlias,
                                    char[] pPassword) throws OceanusException;
+
+    /**
+     * Obtain the keyPair for the alias.
+     * @param pAlias the alias
+     * @param pPassword the password
+     * @return the keyPair
+     * @throws OceanusException on error
+     */
+    GordianKeyStorePairSet getKeyPairSet(String pAlias,
+                                         char[] pPassword) throws OceanusException;
 
     /**
      * Obtain the key for the alias.
@@ -252,7 +309,7 @@ public interface GordianKeyStore {
      * @param pCertificate the certificate
      * @return the Alias if it exists
      */
-    String getCertificateAlias(GordianKeyPairCertificate pCertificate);
+    String getCertificateAlias(GordianCertificate<?> pCertificate);
 
     /**
      * Create a new keyPair with root certificate.
@@ -304,4 +361,54 @@ public interface GordianKeyStore {
                                         GordianKeyStorePair pSigner,
                                         String pAlias,
                                         char[] pPassword) throws OceanusException;
+    /**
+     * Create a new keyPair with root certificate.
+     *
+     * @param pKeySetSpec the spec of the new keyPairSet
+     * @param pSubject the name of the entity
+     * @param pAlias the alias
+     * @param pPassword the password
+     * @return the new keyPairSet entry
+     * @throws OceanusException on error
+     */
+    GordianKeyStorePairSet createRootKeyPairSet(GordianKeyPairSetSpec pKeySetSpec,
+                                                X500Name pSubject,
+                                                String pAlias,
+                                                char[] pPassword) throws OceanusException;
+
+    /**
+     * Create a new keyPairSet with certificate.
+     *
+     * @param pKeySetSpec the spec of the new keyPairSet
+     * @param pSubject the name of the entity
+     * @param pUsage   the key usage
+     * @param pSigner the signer
+     * @param pAlias the alias
+     * @param pPassword the password
+     * @return the new keyPairSet entry
+     * @throws OceanusException on error
+     */
+    GordianKeyStorePairSet createKeyPairSet(GordianKeyPairSetSpec pKeySetSpec,
+                                            X500Name pSubject,
+                                            GordianKeyPairUsage pUsage,
+                                            GordianKeyStorePairSet pSigner,
+                                            String pAlias,
+                                            char[] pPassword) throws OceanusException;
+
+    /**
+     * Create an alternate certificate for keyPair.
+     *
+     * @param pKeyPairSet the existing keyPairSet record
+     * @param pUsage   the key usage
+     * @param pSigner the signer
+     * @param pAlias the alias
+     * @param pPassword the password
+     * @return the new keyPairSet entry
+     * @throws OceanusException on error
+     */
+    GordianKeyStorePairSet createAlternate(GordianKeyStorePairSet pKeyPairSet,
+                                           GordianKeyPairUsage pUsage,
+                                           GordianKeyStorePairSet pSigner,
+                                           String pAlias,
+                                           char[] pPassword) throws OceanusException;
 }

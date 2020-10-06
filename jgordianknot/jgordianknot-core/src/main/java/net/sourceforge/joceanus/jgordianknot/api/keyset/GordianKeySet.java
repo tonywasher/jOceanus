@@ -22,6 +22,7 @@ import net.sourceforge.joceanus.jgordianknot.api.base.GordianKeySpec;
 import net.sourceforge.joceanus.jgordianknot.api.base.GordianLength;
 import net.sourceforge.joceanus.jgordianknot.api.key.GordianKey;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPair;
+import net.sourceforge.joceanus.jgordianknot.api.keypairset.GordianKeyPairSet;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
@@ -172,6 +173,24 @@ public interface GordianKeySet {
      */
     GordianKeyPair deriveKeyPair(X509EncodedKeySpec pPublicKeySpec,
                                  byte[] pSecuredPrivateKey) throws OceanusException;
+
+    /**
+     * secure privateKeySet.
+     * @param pKeyPairSet the keyPairSet to secure
+     * @return the securedPrivateKey
+     * @throws OceanusException on error
+     */
+    byte[] securePrivateKeySet(GordianKeyPairSet pKeyPairSet) throws OceanusException;
+
+    /**
+     * derive keyPair.
+     * @param pPublicKeySpec the publicKeySpec
+     * @param pSecuredPrivateKeySet the secured privateKeySet
+     * @return the keyPair
+     * @throws OceanusException on error
+     */
+    GordianKeyPairSet deriveKeyPairSet(X509EncodedKeySpec pPublicKeySpec,
+                                       byte[] pSecuredPrivateKeySet) throws OceanusException;
 
     /**
      * Obtain wrapped size of a key.
