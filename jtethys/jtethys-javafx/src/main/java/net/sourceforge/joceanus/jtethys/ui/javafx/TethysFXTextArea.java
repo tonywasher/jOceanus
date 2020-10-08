@@ -113,4 +113,14 @@ public class TethysFXTextArea
     public void setCaretPosition(final int pPos) {
         theArea.positionCaret(pPos);
     }
+
+    @Override
+    public int getCaretPosition() {
+        return theArea.getCaretPosition();
+    }
+
+    @Override
+    public int getTextLength() {
+        return theArea.getLength();
+    }
 }

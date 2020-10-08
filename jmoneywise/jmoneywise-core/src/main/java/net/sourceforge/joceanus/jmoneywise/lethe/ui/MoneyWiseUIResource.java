@@ -403,6 +403,11 @@ public enum MoneyWiseUIResource implements TethysBundleId {
     MAIN_MAINTENANCE("Main.Tab.Maint"),
 
     /**
+     * Main Log Tab.
+     */
+    MAIN_LOG("Main.Tab.Log"),
+
+    /**
      * Main Menu Backup SVN.
      */
     MAIN_MENU_BACKUPSVN("Main.Menu.BackupSVN"),

@@ -22,7 +22,6 @@ import java.awt.Image;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.util.Arrays;
-import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.WindowConstants;
@@ -46,19 +45,9 @@ public class MetisSwingState {
     private final MetisState theInfo;
 
     /**
-     * The toolkit.
-     */
-    private MetisSwingToolkit theToolkit;
-
-    /**
      * The Frame.
      */
     private JFrame theFrame;
-
-    /**
-     * The Panel.
-     */
-    private JComponent thePane;
 
     /**
      * The Panel.
@@ -97,14 +86,14 @@ public class MetisSwingState {
         final MetisProgram myDef = (MetisProgram) myApp;
 
         /* Create the toolkit */
-        theToolkit = new MetisSwingToolkit(theInfo, myDef.useSliderStatus());
+        final MetisSwingToolkit myToolkit = new MetisSwingToolkit(theInfo, myDef.useSliderStatus());
 
         /* Create the frame and declare it */
         theFrame = new JFrame(myApp.getName());
-        theToolkit.getGuiFactory().setFrame(theFrame);
+        myToolkit.getGuiFactory().setFrame(theFrame);
 
         /* Create the main panel */
-        theMain = createMain(myDef, theToolkit);
+        theMain = createMain(myDef, myToolkit);
 
         /* Add the Menu bar */
         theFrame.setJMenuBar(((TethysSwingMenuBarManager) theMain.getMenuBar()).getNode());
@@ -137,7 +126,8 @@ public class MetisSwingState {
         theFrame.setVisible(true);
 
         /* Record startUp completion */
-        theToolkit.getActiveProfile().end();
+        myToolkit.getActiveProfile().end();
+        myToolkit.getGuiFactory().activateLogSink();
     }
 
     /**
@@ -147,8 +137,8 @@ public class MetisSwingState {
      * @return the main panel
      * @throws OceanusException on error
      */
-    protected MetisMainPanel createMain(final MetisProgram pProgram,
-                                        final MetisSwingToolkit pToolkit) throws OceanusException {
+    private static MetisMainPanel createMain(final MetisProgram pProgram,
+                                             final MetisSwingToolkit pToolkit) throws OceanusException {
         /* Create the main panel */
         return pProgram.createMainPanel(pToolkit);
     }

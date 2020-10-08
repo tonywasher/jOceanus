@@ -266,7 +266,7 @@ public class ThemisStatsParser {
 
                 /* If this is a package */
             } else if (myElement instanceof ThemisAnalysisPackage) {
-                processPackage(pOwner, (ThemisAnalysisPackage) myElement);
+                processPackage(pOwner);
 
                 /* If this is a statement */
             } else if (myElement instanceof ThemisAnalysisStatement) {
@@ -292,8 +292,8 @@ public class ThemisStatsParser {
      * @param pOwner the owner
      * @param pAnnotation the annotation
      */
-    private void processAnnotation(final ThemisStatsBase pOwner,
-                                   final ThemisAnalysisAnnotation pAnnotation) {
+    private static void processAnnotation(final ThemisStatsBase pOwner,
+                                          final ThemisAnalysisAnnotation pAnnotation) {
         /* Adjust statistics */
         adjustLinesOfCode(pOwner, pAnnotation.getNumLines());
         adjustNumberOfStatements(pOwner, 1);
@@ -304,8 +304,8 @@ public class ThemisStatsParser {
      * @param pOwner the owner
      * @param pBlank the blank
      */
-    private void processBlank(final ThemisStatsBase pOwner,
-                              final ThemisAnalysisBlank pBlank) {
+    private static void processBlank(final ThemisStatsBase pOwner,
+                                     final ThemisAnalysisBlank pBlank) {
         /* Adjust statistics */
         final int myBlanks = pBlank.getNumLines();
         pOwner.adjustStat(ThemisSMStat.LOC, myBlanks);
@@ -354,8 +354,8 @@ public class ThemisStatsParser {
      * @param pOwner the owner
      * @param pComment the comment
      */
-    private void processComment(final ThemisStatsBase pOwner,
-                                final ThemisAnalysisComment pComment) {
+    private static void processComment(final ThemisStatsBase pOwner,
+                                       final ThemisAnalysisComment pComment) {
         /* Adjust the stats */
         final int myComments = pComment.getNumLines();
         pOwner.adjustStat(ThemisSMStat.LOC, myComments);
@@ -420,8 +420,8 @@ public class ThemisStatsParser {
      * @param pOwner the owner
      * @param pField the field
      */
-    private void processField(final ThemisStatsBase pOwner,
-                              final ThemisAnalysisField pField) {
+    private static void processField(final ThemisStatsBase pOwner,
+                                     final ThemisAnalysisField pField) {
         /* Adjust the stats */
         adjustLinesOfCode(pOwner, pField.getNumLines());
         adjustNumberOfAttributes(pOwner, 1);
@@ -489,8 +489,8 @@ public class ThemisStatsParser {
      * @param pOwner the owner
      * @param pImports the imports
      */
-    private void processImports(final ThemisStatsBase pOwner,
-                                final ThemisAnalysisImports pImports) {
+    private static void processImports(final ThemisStatsBase pOwner,
+                                       final ThemisAnalysisImports pImports) {
         /* Adjust the stats */
         adjustLinesOfCode(pOwner, pImports.getNumLines());
     }
@@ -538,10 +538,8 @@ public class ThemisStatsParser {
     /**
      * process package.
      * @param pOwner the owner
-     * @param pPackage the package
      */
-    private void processPackage(final ThemisStatsBase pOwner,
-                                final ThemisAnalysisPackage pPackage) {
+    private static void processPackage(final ThemisStatsBase pOwner) {
         /* Adjust the stats */
         adjustLinesOfCode(pOwner, 1);
     }
@@ -551,8 +549,8 @@ public class ThemisStatsParser {
      * @param pOwner the owner
      * @param pStatement the statement
      */
-    private void processStatement(final ThemisStatsBase pOwner,
-                                  final ThemisAnalysisStatement pStatement) {
+    private static void processStatement(final ThemisStatsBase pOwner,
+                                         final ThemisAnalysisStatement pStatement) {
         /* Adjust the owner stats */
         adjustLinesOfCode(pOwner, pStatement.getNumLines());
         adjustNumberOfStatements(pOwner, 1);
@@ -669,8 +667,8 @@ public class ThemisStatsParser {
      * @param pOwner the owner
      * @param pCount the line count
      */
-    private void adjustLinesOfCode(final ThemisStatsBase pOwner,
-                                   final int pCount) {
+    private static void adjustLinesOfCode(final ThemisStatsBase pOwner,
+                                          final int pCount) {
         /* Adjust the stats */
         pOwner.adjustStat(ThemisSMStat.LOC, pCount);
         pOwner.adjustStat(ThemisSMStat.TLOC, pCount);
@@ -683,8 +681,8 @@ public class ThemisStatsParser {
      * @param pOwner the owner
      * @param pCount the statement count
      */
-    private void adjustNumberOfStatements(final ThemisStatsBase pOwner,
-                                          final int pCount) {
+    private static void adjustNumberOfStatements(final ThemisStatsBase pOwner,
+                                                 final int pCount) {
         /* Adjust the stats */
         pOwner.adjustStat(ThemisSMStat.NOS, pCount);
         pOwner.adjustStat(ThemisSMStat.TNOS, pCount);
@@ -695,8 +693,8 @@ public class ThemisStatsParser {
      * @param pOwner the owner
      * @param pCount the attribute count
      */
-    private void adjustNumberOfAttributes(final ThemisStatsBase pOwner,
-                                          final int pCount) {
+    private static void adjustNumberOfAttributes(final ThemisStatsBase pOwner,
+                                                 final int pCount) {
         /* Adjust the stats */
         pOwner.adjustStat(ThemisSMStat.NA, pCount);
         pOwner.adjustStat(ThemisSMStat.TNA, pCount);
@@ -707,7 +705,7 @@ public class ThemisStatsParser {
      * parse a container.
      * @param pContainer the container
      */
-    public void parseContainer(final ThemisAnalysisContainer pContainer) {
+    public static void parseContainer(final ThemisAnalysisContainer pContainer) {
         /* Loop through the contents */
         for (ThemisAnalysisElement myElement : pContainer.getContents()) {
             /* Process a nested container */
@@ -745,15 +743,15 @@ public class ThemisStatsParser {
      * Process Statement.
      * @param pStatement the statement
      */
-    private void processStatement(final ThemisAnalysisStatement pStatement) {
-
+    private static void processStatement(final ThemisAnalysisStatement pStatement) {
+        /* TBD */
     }
 
     /**
      * Process Embedded Statement.
      * @param pEmbedded the statement
      */
-    private void processEmbedded(final ThemisAnalysisEmbedded pEmbedded) {
-
+    private static void processEmbedded(final ThemisAnalysisEmbedded pEmbedded) {
+        /* TBD */
     }
 }

@@ -22,6 +22,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import net.sourceforge.joceanus.jmetis.data.MetisDataDifference;
+import net.sourceforge.joceanus.jmetis.ui.MetisIcon;
 import net.sourceforge.joceanus.jmoneywise.lethe.analysis.Analysis;
 import net.sourceforge.joceanus.jmoneywise.lethe.analysis.AnalysisType;
 import net.sourceforge.joceanus.jmoneywise.lethe.analysis.BucketAttribute;
@@ -464,6 +465,10 @@ public class MoneyWiseAnalysisSelect
         /* Create the labels */
         final TethysLabel myRangeLabel = pFactory.newLabel(NLS_RANGE);
 
+        /* Create save button */
+        final TethysButton mySave = pFactory.newButton();
+        MetisIcon.configureSaveIconButton(mySave);
+
         /* Create the panel */
         myPanel.setBorderTitle(NLS_TITLE);
         myPanel.addNode(myRangeLabel);
@@ -471,7 +476,12 @@ public class MoneyWiseAnalysisSelect
         myPanel.addSpacer();
         myPanel.addNode(theFilterDetail);
         myPanel.addSpacer();
+        myPanel.addNode(mySave);
         myPanel.addNode(pNewButton);
+
+        /* Pass through the save event */
+        final TethysEventRegistrar<TethysUIEvent> myRegistrar = mySave.getEventRegistrar();
+        myRegistrar.addEventListener(e -> theEventManager.fireEvent(PrometheusDataEvent.SAVETOFILE));
 
         /* Return the panel */
         return myPanel;

@@ -81,7 +81,7 @@ public class KeyStoreTest {
     }
 
     /**
-     * Simple creation test.
+     * test symmetric.
      * @throws OceanusException on error
      */
     @Test
@@ -335,6 +335,9 @@ public class KeyStoreTest {
 
     /**
      * check keySetHash.
+     * @param pKeyStore the keyStore
+     * @param pName the name
+     * @param pKeyHash the keyHash
      * @throws OceanusException on error
      */
     public void checkKeySetHash(final GordianKeyStore pKeyStore,
@@ -349,6 +352,9 @@ public class KeyStoreTest {
 
     /**
      * check keySet.
+     * @param pKeyStore the keyStore
+     * @param pName the name
+     * @param pKeySet the keySet
      * @throws OceanusException on error
      */
     public void checkKeySet(final GordianKeyStore pKeyStore,
@@ -363,6 +369,9 @@ public class KeyStoreTest {
 
     /**
      * check key.
+     * @param pKeyStore the keyStore
+     * @param pName the name
+     * @param pKey the key
      * @throws OceanusException on error
      */
     public void checkKey(final GordianKeyStore pKeyStore,
@@ -377,6 +386,9 @@ public class KeyStoreTest {
 
     /**
      * check keyPair.
+     * @param pKeyStore the keyStore
+     * @param pName the name
+     * @param pKeyPair the keyPair
      * @throws OceanusException on error
      */
     public void checkKeyPair(final GordianKeyStore pKeyStore,
@@ -391,6 +403,9 @@ public class KeyStoreTest {
 
     /**
      * check keyPair.
+     * @param pKeyStore the keyStore
+     * @param pName the name
+     * @param pKeyPairSet the keyPairSet
      * @throws OceanusException on error
      */
     public void checkKeyPairSet(final GordianKeyStore pKeyStore,

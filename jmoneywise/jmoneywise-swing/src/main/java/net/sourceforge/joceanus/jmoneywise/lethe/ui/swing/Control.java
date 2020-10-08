@@ -18,7 +18,6 @@ package net.sourceforge.joceanus.jmoneywise.lethe.ui.swing;
 
 import java.awt.Image;
 import java.util.Arrays;
-
 import javax.swing.JFrame;
 import javax.swing.SwingUtilities;
 
@@ -80,6 +79,7 @@ public final class Control {
 
             /* Record startUp completion */
             pInfo.getProfile().end();
+            myToolkit.getToolkit().getGuiFactory().activateLogSink();
 
         } catch (OceanusException e) {
             LOGGER.error("createGUI didn't complete successfully", e);

@@ -25,8 +25,8 @@ import net.sourceforge.joceanus.jcoeus.ui.CoeusMarketCache;
 import net.sourceforge.joceanus.jcoeus.ui.CoeusMenuItem;
 import net.sourceforge.joceanus.jcoeus.ui.CoeusUIResource;
 import net.sourceforge.joceanus.jmetis.atlas.ui.MetisPreferenceView;
-import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceManager;
 import net.sourceforge.joceanus.jmetis.launch.MetisMainPanel;
+import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceManager;
 import net.sourceforge.joceanus.jmetis.threads.MetisToolkit;
 import net.sourceforge.joceanus.jmetis.viewer.MetisViewerEntry;
 import net.sourceforge.joceanus.jmetis.viewer.MetisViewerManager;
@@ -37,6 +37,7 @@ import net.sourceforge.joceanus.jtethys.event.TethysEvent;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
 import net.sourceforge.joceanus.jtethys.ui.TethysAbout;
 import net.sourceforge.joceanus.jtethys.ui.TethysGuiFactory;
+import net.sourceforge.joceanus.jtethys.ui.TethysLogTextArea;
 import net.sourceforge.joceanus.jtethys.ui.TethysMenuBarManager;
 import net.sourceforge.joceanus.jtethys.ui.TethysMenuBarManager.TethysMenuSubMenu;
 import net.sourceforge.joceanus.jtethys.ui.TethysTabPaneManager;
@@ -62,6 +63,11 @@ public class CoeusMainPanel
      * The Totals Tab.
      */
     private final TethysTabItem theTotalsTab;
+
+    /**
+     * The Log Tab.
+     */
+    private final TethysTabItem theLogTab;
 
     /**
      * The menuBar.
@@ -115,6 +121,13 @@ public class CoeusMainPanel
         /* Create the Preferences Tab */
         final MetisPreferenceView myPrefPanel = new MetisPreferenceView(myFactory, myPreferences);
         theTabs.addTabItem(CoeusUIResource.TAB_PREFERENCES.getValue(), myPrefPanel);
+
+        /* Create the log tab */
+        final TethysLogTextArea myLog = myFactory.getLogSink();
+        theLogTab = theTabs.addTabItem(CoeusUIResource.TAB_LOG.getValue(), myLog);
+        myLog.getEventRegistrar().addEventListener(TethysUIEvent.NEWVALUE, e -> theLogTab.setVisible(true));
+        myLog.getEventRegistrar().addEventListener(TethysUIEvent.WINDOWCLOSED, e -> theLogTab.setVisible(false));
+        theLogTab.setVisible(myLog.isActive());
 
         /* Create the menu bar */
         theMenuBar = myFactory.newMenuBar();

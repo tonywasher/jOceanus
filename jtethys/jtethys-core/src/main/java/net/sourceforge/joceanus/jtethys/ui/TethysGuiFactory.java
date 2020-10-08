@@ -27,6 +27,7 @@ import net.sourceforge.joceanus.jtethys.decimal.TethysPrice;
 import net.sourceforge.joceanus.jtethys.decimal.TethysRate;
 import net.sourceforge.joceanus.jtethys.decimal.TethysRatio;
 import net.sourceforge.joceanus.jtethys.decimal.TethysUnits;
+import net.sourceforge.joceanus.jtethys.logger.TethysLogManager;
 import net.sourceforge.joceanus.jtethys.ui.TethysDataEditField.TethysCurrencyEditField;
 import net.sourceforge.joceanus.jtethys.ui.TethysDataEditField.TethysDateButtonField;
 import net.sourceforge.joceanus.jtethys.ui.TethysDataEditField.TethysIconButtonField;
@@ -66,6 +67,11 @@ public abstract class TethysGuiFactory {
     private final TethysProgram theProgram;
 
     /**
+     * LogSink.
+     */
+    private final TethysLogTextArea theLogSink;
+
+    /**
      * ParentComponent.
      */
     @FunctionalInterface
@@ -86,10 +92,14 @@ public abstract class TethysGuiFactory {
      */
     protected TethysGuiFactory(final TethysDataFormatter pFormatter,
                                final TethysProgram pApp) {
+        /* Store details */
         theFormatter = pFormatter;
         theParentMap = new HashMap<>();
         theValueSet = new TethysValueSet();
         theProgram = pApp;
+
+        /* Create logSink */
+        theLogSink = new TethysLogTextArea(this);
     }
 
     /**
@@ -114,6 +124,21 @@ public abstract class TethysGuiFactory {
      */
     public Integer getNextId() {
         return theNextNodeId.getAndIncrement();
+    }
+
+    /**
+     * Obtain the logSink.
+     * @return the logSink
+     */
+    public TethysLogTextArea getLogSink() {
+        return theLogSink;
+    }
+
+    /**
+     * Activate logSink.
+     */
+    public void activateLogSink() {
+        TethysLogManager.setSink(theLogSink);
     }
 
     /**

@@ -214,8 +214,8 @@ public abstract class CoeusHistory
      * @param pRange the date range
      * @return the indices
      */
-    private int[] findIndicesForRange(final CoeusHistory pHistory,
-                                      final TethysDateRange pRange) {
+    private static int[] findIndicesForRange(final CoeusHistory pHistory,
+                                             final TethysDateRange pRange) {
         /* Determine the dates */
         final TethysDate myStartDate = pRange.getStart();
         final TethysDate myEndDate = pRange.getEnd();

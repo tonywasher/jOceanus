@@ -128,4 +128,16 @@ public abstract class TethysTextArea
      * @param pPos the position
      */
     public abstract void setCaretPosition(int pPos);
+
+    /**
+     * GetCaretPosition.
+     * @return the position
+     */
+    public abstract int getCaretPosition();
+
+    /**
+     * Obtain textLength.
+     * @return the length
+     */
+    public abstract int getTextLength();
 }

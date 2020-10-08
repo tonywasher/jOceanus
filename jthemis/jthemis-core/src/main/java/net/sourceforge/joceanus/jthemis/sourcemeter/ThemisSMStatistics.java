@@ -16,6 +16,11 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jthemis.sourcemeter;
 
+import java.io.IOException;
+import java.nio.file.DirectoryStream;
+import java.nio.file.FileSystem;
+import java.nio.file.FileSystems;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -27,6 +32,7 @@ import java.util.Map.Entry;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.decimal.TethysDecimalParser;
 import net.sourceforge.joceanus.jtethys.ui.TethysDataFormatter;
+import net.sourceforge.joceanus.jthemis.ThemisIOException;
 import net.sourceforge.joceanus.jthemis.analysis.ThemisAnalysisFile;
 import net.sourceforge.joceanus.jthemis.analysis.ThemisAnalysisFile.ThemisAnalysisObject;
 import net.sourceforge.joceanus.jthemis.analysis.ThemisAnalysisKeyWord;
@@ -38,6 +44,11 @@ import net.sourceforge.joceanus.jthemis.sourcemeter.ThemisSMClass.ThemisSMClassT
  * SourceMeter statistics.
  */
 public class ThemisSMStatistics {
+    /**
+     * SourceMeter version.
+     */
+    private static final String VERSIONSM = "9.1.1";
+
     /**
      * The map of ids to statHolders.
      */
@@ -149,6 +160,47 @@ public class ThemisSMStatistics {
     }
 
     /**
+     * Obtain most recent stats directory.
+     * @param pProject the project name
+     * @return the most recent stats (or null)
+     * @throws OceanusException on error
+     */
+    public static Path getRecentStats(final String pProject) throws OceanusException {
+        /* The sourceMeter base. */
+        final boolean isWindows = System.getProperty("os.name").startsWith("Windows");
+        final String pathSM = System.getProperty("user.home")
+                + "/Downloads/SourceMeter-"
+                + VERSIONSM
+                + "-x64-"
+                + (isWindows ? "Windows" : "linux");
+
+        /* Build results path */
+        final FileSystem mySystem = FileSystems.getDefault();
+        final String myDir = pathSM + "/java/Results/" + pProject + "/java";
+        final Path myResultsPath = mySystem.getPath(myDir);
+
+        /* Loop through statement file in the directory */
+        Path myLatest = null;
+        try (DirectoryStream<Path> myStream = Files.newDirectoryStream(myResultsPath, "*")) {
+            for (final Path myFile : myStream) {
+                /* Skip null entries */
+                final Path myFileName = myFile.getFileName();
+                if (myFileName == null) {
+                    continue;
+                }
+                myLatest = myFile;
+            }
+
+            /* Catch exceptions */
+        } catch (IOException e1) {
+            throw new ThemisIOException("Failed to read directory", e1);
+        }
+
+        /* Return the most recent stats directory */
+        return myLatest;
+    }
+
+    /**
      * Parse statistics.
      * @param pBase the base directory for the stats
      * @param pProject the project name
@@ -156,6 +208,11 @@ public class ThemisSMStatistics {
      */
     public void parseStatistics(final Path pBase,
                                 final String pProject) throws OceanusException {
+        /* Handle null path (no stats) */
+        if (pBase == null) {
+            return;
+        }
+
         /* Parse the packages */
         final ThemisSMPackageParser myPackages = new ThemisSMPackageParser(this);
         myPackages.parseStatistics(pBase, pProject);

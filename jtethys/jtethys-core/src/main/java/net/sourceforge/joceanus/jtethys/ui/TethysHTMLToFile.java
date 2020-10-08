@@ -119,7 +119,6 @@ public class TethysHTMLToFile {
      * @param pXML the XML String
      * @param pStyleSheet the styleSheet
      * @return the document
-     * @throws OceanusException on error
      */
     private static Document createXMLDocument(final String pXML,
                                               final String pStyleSheet) {

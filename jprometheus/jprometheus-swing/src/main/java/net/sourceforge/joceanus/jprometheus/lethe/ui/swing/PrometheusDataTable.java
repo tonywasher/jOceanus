@@ -19,14 +19,18 @@ package net.sourceforge.joceanus.jprometheus.lethe.ui.swing;
 import java.awt.Dimension;
 import java.awt.Point;
 import java.awt.Rectangle;
+import java.io.File;
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.lang.reflect.Array;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
-
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JViewport;
 import javax.swing.ListSelectionModel;
 import javax.swing.ScrollPaneConstants;
+import javax.swing.table.TableModel;
 
 import net.sourceforge.joceanus.jmetis.data.MetisDataEditState;
 import net.sourceforge.joceanus.jmetis.lethe.field.swing.MetisSwingFieldManager;
@@ -38,11 +42,15 @@ import net.sourceforge.joceanus.jprometheus.lethe.ui.swing.PrometheusDataTableMo
 import net.sourceforge.joceanus.jprometheus.lethe.views.PrometheusDataEvent;
 import net.sourceforge.joceanus.jprometheus.lethe.views.UpdateSet;
 import net.sourceforge.joceanus.jtethys.OceanusException;
+import net.sourceforge.joceanus.jtethys.TethysDataException;
 import net.sourceforge.joceanus.jtethys.event.TethysEvent;
 import net.sourceforge.joceanus.jtethys.event.TethysEventManager;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventProvider;
+import net.sourceforge.joceanus.jtethys.logger.TethysLogManager;
+import net.sourceforge.joceanus.jtethys.logger.TethysLogger;
 import net.sourceforge.joceanus.jtethys.ui.TethysComponent;
+import net.sourceforge.joceanus.jtethys.ui.TethysFileSelector;
 import net.sourceforge.joceanus.jtethys.ui.TethysGuiFactory;
 import net.sourceforge.joceanus.jtethys.ui.TethysNode;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingNode;
@@ -55,6 +63,11 @@ import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingTableSorter;
  */
 public abstract class PrometheusDataTable<T extends PrometheusTableItem & Comparable<? super T>, E extends Enum<E>>
         implements TethysEventProvider<PrometheusDataEvent>, TethysComponent {
+    /**
+     * The logger.
+     */
+    private static final TethysLogger LOGGER = TethysLogManager.getLogger(PrometheusDataTable.class);
+
     /**
      * Panel height.
      */
@@ -596,5 +609,92 @@ public abstract class PrometheusDataTable<T extends PrometheusTableItem & Compar
         /* Convert back to model index and return the item */
         myIndex = theTable.convertRowIndexToModel(myViewIndex);
         return theList.get(myIndex);
+    }
+
+    /**
+     * build CSV representation of Model.
+     * @param pTable the table
+     * @return the CSV text
+     */
+    private static String createCSV(final JTable pTable) {
+        /* Access the model */
+        final TableModel myModel = pTable.getModel();
+        final int myNumRows = pTable.getRowCount();
+        final int myNumCols = pTable.getColumnCount();
+        final StringBuilder myBuilder = new StringBuilder();
+
+        /* Loop through the columns */
+        for (int j = 0; j < myNumCols; j++) {
+            /* Add the column name */
+            final int myCol = pTable.convertColumnIndexToModel(j);
+            if (j > 0) {
+                myBuilder.append(",");
+            }
+            myBuilder.append(myModel.getColumnName(myCol));
+        }
+        myBuilder.append("\n");
+
+        /* Loop through the rows */
+        for (int i = 0; i < myNumRows; i++) {
+            final int myRow = pTable.convertRowIndexToModel(i);
+
+            /* Loop through the columns */
+            for (int j = 0; j < myNumCols; j++) {
+                final int myCol = pTable.convertColumnIndexToModel(j);
+
+                /* Output the column value */
+                final Object myVar = myModel.getValueAt(myRow, myCol);
+                if (j > 0) {
+                    myBuilder.append(",");
+                }
+                if (myVar != null) {
+                    myBuilder.append(myVar);
+                }
+            }
+            myBuilder.append("\n");
+        }
+
+        /* Return the CSV file */
+        return myBuilder.toString();
+    }
+
+    /**
+     * Write CSV to file.
+     * @param pFactory the gui factory
+     */
+    public void writeCSVToFile(final TethysGuiFactory pFactory) {
+        try {
+            /* Create a file selector */
+            final TethysFileSelector mySelector = pFactory.newFileSelector();
+
+            /* Select File */
+            mySelector.setUseSave(true);
+            final File myFile = mySelector.selectFile();
+            if (myFile != null) {
+                final String myCSV = createCSV(getTable());
+                writeToFile(myFile, myCSV);
+            }
+
+        } catch (OceanusException e) {
+            LOGGER.error("Failed to write to file", e);
+        }
+    }
+
+    /**
+     * Write CSV to file.
+     * @param pFile the file to write to
+     * @param pData the data to write
+     * @throws OceanusException on error
+     */
+    private static void writeToFile(final File pFile,
+                                    final String pData) throws OceanusException {
+        /* Protect the write */
+        try (PrintWriter myWriter = new PrintWriter(pFile, StandardCharsets.UTF_8.name())) {
+            /* Write data to file */
+            myWriter.print(pData);
+
+        } catch (IOException e) {
+            throw new TethysDataException("Failed to output CSV", e);
+        }
     }
 }

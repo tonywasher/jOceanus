@@ -60,11 +60,6 @@ public class MetisThreadTextAreaStatus
     private final MetisThreadManager theThreadManager;
 
     /**
-     * GUI Factory.
-     */
-    private final TethysGuiFactory theGuiFactory;
-
-    /**
      * Pane.
      */
     private final TethysBorderPaneManager thePane;
@@ -78,11 +73,6 @@ public class MetisThreadTextAreaStatus
      * Cancel Button.
      */
     private final TethysButton theCancelButton;
-
-    /**
-     * Clear Button.
-     */
-    private final TethysButton theClearButton;
 
     /**
      * The current status.
@@ -108,31 +98,30 @@ public class MetisThreadTextAreaStatus
                               final TethysGuiFactory pFactory) {
         /* Store parameters */
         theThreadManager = pManager;
-        theGuiFactory = pFactory;
 
         /* Create textArea */
-        theTextArea = theGuiFactory.newTextArea();
+        theTextArea = pFactory.newTextArea();
 
         /* Create buttons */
-        theCancelButton = theGuiFactory.newButton();
+        theCancelButton = pFactory.newButton();
         theCancelButton.setTextOnly();
         theCancelButton.setText(NLS_CANCEL);
-        theClearButton = theGuiFactory.newButton();
+        final TethysButton theClearButton = pFactory.newButton();
         theClearButton.setTextOnly();
         theClearButton.setText(NLS_CLEAR);
         theCancelButton.setVisible(false);
 
         /* Create a scroll manager */
-        final TethysScrollPaneManager myScroll = theGuiFactory.newScrollPane();
+        final TethysScrollPaneManager myScroll = pFactory.newScrollPane();
         myScroll.setContent(theTextArea);
 
         /* Create a new subPanel for the buttons */
-        final TethysBoxPaneManager myButtonPanel = theGuiFactory.newHBoxPane();
+        final TethysBoxPaneManager myButtonPanel = pFactory.newHBoxPane();
         myButtonPanel.addNode(theClearButton);
         myButtonPanel.addNode(theCancelButton);
 
         /* Add the components */
-        thePane = theGuiFactory.newBorderPane();
+        thePane = pFactory.newBorderPane();
         thePane.setCentre(myScroll);
         thePane.setSouth(myButtonPanel);
 
@@ -188,13 +177,12 @@ public class MetisThreadTextAreaStatus
         /* Handle new step */
         final int myStepsDone = pStatus.getStepsDone();
         if (myStepsDone != myOld.getStepsDone()) {
-            final StringBuilder myBuilder = new StringBuilder();
-            myBuilder.append(myStepsDone + 1);
-            myBuilder.append(" of ");
-            myBuilder.append(pStatus.getNumSteps());
-            myBuilder.append(": ");
-            myBuilder.append(pStatus.getStep());
-            setNewStep(myBuilder.toString());
+            final String myDone = (myStepsDone + 1)
+                    + " of "
+                    + pStatus.getNumSteps()
+                    + ": "
+                    + pStatus.getStep();
+            setNewStep(myDone);
         }
 
         /* Show the cancel button */

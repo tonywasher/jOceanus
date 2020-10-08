@@ -40,10 +40,13 @@ import net.sourceforge.joceanus.jtethys.event.TethysEvent;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
 import net.sourceforge.joceanus.jtethys.help.TethysHelpModule;
 import net.sourceforge.joceanus.jtethys.ui.TethysAbout;
+import net.sourceforge.joceanus.jtethys.ui.TethysGuiFactory;
+import net.sourceforge.joceanus.jtethys.ui.TethysLogTextArea;
 import net.sourceforge.joceanus.jtethys.ui.TethysMenuBarManager;
 import net.sourceforge.joceanus.jtethys.ui.TethysMenuBarManager.TethysMenuSubMenu;
 import net.sourceforge.joceanus.jtethys.ui.TethysTabPaneManager;
 import net.sourceforge.joceanus.jtethys.ui.TethysTabPaneManager.TethysTabItem;
+import net.sourceforge.joceanus.jtethys.ui.TethysUIEvent;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingNode;
 
 /**
@@ -145,7 +148,8 @@ public class MainTab
         myTask = myTask.startTask("buildMain");
 
         /* Create the Tabbed Pane */
-        theTabs = theView.getGuiFactory().newTabPane();
+        final TethysGuiFactory myFactory = theView.getGuiFactory();
+        theTabs = myFactory.newTabPane();
 
         /* Create the Report Tab */
         myTask.startTask("Report");
@@ -171,6 +175,13 @@ public class MainTab
         myTask.startTask("Maintenance");
         theMaint = new MaintenanceTab(this);
         theTabs.addTabItem(TITLE_MAINT, theMaint);
+
+        /* Create the log tab */
+        final TethysLogTextArea myLog = myFactory.getLogSink();
+        final TethysTabItem myLogTab = theTabs.addTabItem(MoneyWiseUIResource.MAIN_LOG.getValue(), myLog);
+        myLog.getEventRegistrar().addEventListener(TethysUIEvent.NEWVALUE, e -> myLogTab.setVisible(true));
+        myLog.getEventRegistrar().addEventListener(TethysUIEvent.WINDOWCLOSED, e -> myLogTab.setVisible(false));
+        myLogTab.setVisible(myLog.isActive());
 
         /* Create listeners */
         theTabs.getEventRegistrar().addEventListener(e -> determineFocus());

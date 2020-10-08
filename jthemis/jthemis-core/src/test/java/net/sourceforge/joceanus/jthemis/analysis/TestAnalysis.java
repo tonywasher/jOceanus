@@ -17,8 +17,6 @@
 package net.sourceforge.joceanus.jthemis.analysis;
 
 import java.io.File;
-import java.nio.file.FileSystem;
-import java.nio.file.FileSystems;
 import java.nio.file.Path;
 import java.util.stream.Stream;
 
@@ -48,11 +46,6 @@ public class TestAnalysis {
      * The path base.
      */
     private static final String PATH_BASE = System.getProperty("user.home") + "/git/" + PROJECT + "/";
-
-    /**
-     * The sourceMeter base.
-     */
-    private static final String PATH_SM = System.getProperty("user.home") + "/Downloads/SourceMeter-9.1.1-x64-Windows/java/Results/";
 
     /**
      * The path xtra.
@@ -88,9 +81,7 @@ public class TestAnalysis {
 
         /* Parse sourceMeter statistics */
         ThemisSMStatistics myStats = new ThemisSMStatistics(new TethysDataFormatter());
-        final FileSystem mySystem = FileSystems.getDefault();
-        final String myDir = PATH_SM + PROJECT + "/java/2020-10-04-12-00-01";
-        final Path myPath = mySystem.getPath(myDir);
+        final Path myPath = ThemisSMStatistics.getRecentStats(PROJECT);
         myStats.parseStatistics(myPath, PROJECT);
 
         /* Parse the base project */

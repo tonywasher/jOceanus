@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Coeus: Peer2Peer Analysis
+ * Tethys: Java Utilities
  * Copyright 2012,2020 Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -14,20 +14,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ******************************************************************************/
+package net.sourceforge.joceanus.jtethys.logger;
+
 /**
- * Coeus Swing.
+ * Log Sink.
  */
-module net.sourceforge.joceanus.jcoeus.swing {
-    /* Java Libraries */
-    requires java.desktop;
-
-    /* jOceanus */
-    requires net.sourceforge.joceanus.jcoeus.core;
-    requires net.sourceforge.joceanus.jmetis.core;
-    requires net.sourceforge.joceanus.jtethys.core;
-    requires net.sourceforge.joceanus.jmetis.swing;
-    requires net.sourceforge.joceanus.jtethys.swing;
-
-    /* Exports */
-    exports net.sourceforge.joceanus.jcoeus.ui.swing;
+public interface TethysLogSink {
+    /**
+     * write log message.
+     * @param pMessage the message to write
+     */
+    void writeLogMessage(String pMessage);
 }

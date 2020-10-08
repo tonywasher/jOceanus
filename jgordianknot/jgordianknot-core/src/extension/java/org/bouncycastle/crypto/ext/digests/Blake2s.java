@@ -16,7 +16,6 @@
  ******************************************************************************/
 package org.bouncycastle.crypto.ext.digests;
 
-import org.bouncycastle.crypto.ext.params.Blake2Parameters;
 import org.bouncycastle.util.Memoable;
 import org.bouncycastle.util.Pack;
 

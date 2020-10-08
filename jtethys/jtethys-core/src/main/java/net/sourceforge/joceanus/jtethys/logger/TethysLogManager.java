@@ -16,6 +16,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jtethys.logger;
 
+import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 
 import net.sourceforge.joceanus.jtethys.TethysDataConverter;
@@ -37,7 +38,7 @@ public final class TethysLogManager {
     /**
      * The output stream.
      */
-    private final PrintStream theOutput;
+    private static TethysLogSink theSink = new TethysLogStdOut();
 
     /**
      * The initial time.
@@ -48,7 +49,6 @@ public final class TethysLogManager {
      * The constructor.
      */
     private TethysLogManager() {
-        theOutput = System.out;
         theTimeZero = System.nanoTime();
     }
 
@@ -67,6 +67,14 @@ public final class TethysLogManager {
      */
     public static TethysLogger getLogger(final Class<?> pOwner) {
         return new TethysLogger(getInstance(), pOwner);
+    }
+
+    /**
+     * Set Sink.
+     * @param pSink the sink
+     */
+    public static void setSink(final TethysLogSink pSink) {
+        theSink = pSink;
     }
 
     /**
@@ -147,7 +155,7 @@ public final class TethysLogManager {
      */
     void writeLogMessage(final String pMessage) {
         synchronized (this) {
-            theOutput.println(pMessage);
+            theSink.writeLogMessage(pMessage);
         }
     }
 
@@ -159,11 +167,15 @@ public final class TethysLogManager {
     void writeLogMessage(final String pMessage,
                          final Throwable pException) {
         synchronized (this) {
-            theOutput.println(pMessage);
-            if (pException != null) {
-                pException.printStackTrace(theOutput);
-            } else {
-                theOutput.println("Null Exception");
+            theSink.writeLogMessage(pMessage);
+            final ByteArrayOutputStream myBaos = new ByteArrayOutputStream();
+            try (PrintStream myPs = new PrintStream(myBaos)) {
+                if (pException != null) {
+                    pException.printStackTrace(myPs);
+                } else {
+                    myPs.println("Null Exception");
+                }
+                theSink.writeLogMessage(myBaos.toString());
             }
         }
     }
@@ -176,5 +188,21 @@ public final class TethysLogManager {
          * The Log Manager instance.
          */
         private static final TethysLogManager INSTANCE = new TethysLogManager();
+    }
+
+    /**
+     * Default Log Sink.
+     */
+    static class TethysLogStdOut
+            implements TethysLogSink {
+        /**
+         * The output stream.
+         */
+        private final PrintStream theOutput = System.out;
+
+        @Override
+        public void writeLogMessage(final String pMessage) {
+            theOutput.println(pMessage);
+        }
     }
 }

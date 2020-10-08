@@ -20,7 +20,6 @@ import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.util.List;
 import java.util.Map;
-
 import javax.swing.JTable;
 
 import net.sourceforge.joceanus.jmetis.atlas.ui.MetisErrorPanel;
@@ -426,7 +425,8 @@ public class TransactionTable
         theView.getEventRegistrar().addEventListener(e -> refreshData());
         theActionButtons.getEventRegistrar().addEventListener(this::handleActionButtons);
         theError.getEventRegistrar().addEventListener(e -> handleErrorPane());
-        theSelect.getEventRegistrar().addEventListener(e -> handleFilterSelection());
+        theSelect.getEventRegistrar().addEventListener(PrometheusDataEvent.SELECTIONCHANGED, e -> handleFilterSelection());
+        theSelect.getEventRegistrar().addEventListener(PrometheusDataEvent.SAVETOFILE, e -> writeCSVToFile(theView.getGuiFactory()));
         theActiveTrans.getEventRegistrar().addEventListener(PrometheusDataEvent.ADJUSTVISIBILITY, e -> handlePanelState());
         theActiveTrans.getEventRegistrar().addEventListener(PrometheusDataEvent.GOTOWINDOW, this::cascadeEvent);
 

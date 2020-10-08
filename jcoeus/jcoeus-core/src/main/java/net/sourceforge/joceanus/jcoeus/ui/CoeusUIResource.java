@@ -112,7 +112,12 @@ public enum CoeusUIResource
     /**
      * Tab Preferences.
      */
-    TAB_PREFERENCES("tab.preferences");
+    TAB_PREFERENCES("tab.preferences"),
+
+    /**
+     * Tab Log.
+     */
+    TAB_LOG("tab.log");
 
     /**
      * The Resource Loader.

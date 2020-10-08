@@ -197,8 +197,8 @@ public abstract class CoeusTotals
      * @param pDelta the delta
      * @return the rate of return
      */
-    private TethysRatio calculateRateOfReturn(final TethysDecimal pBase,
-                                              final TethysDecimal pDelta) {
+    private static TethysRatio calculateRateOfReturn(final TethysDecimal pBase,
+                                                     final TethysDecimal pDelta) {
         /* If base is zero, just return one */
         if (pBase.isZero()) {
             return TethysRatio.ONE;

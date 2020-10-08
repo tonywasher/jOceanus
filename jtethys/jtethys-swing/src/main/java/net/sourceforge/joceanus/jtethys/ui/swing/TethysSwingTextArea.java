@@ -111,4 +111,14 @@ public class TethysSwingTextArea
     public void setCaretPosition(final int pPos) {
         theArea.setCaretPosition(pPos);
     }
+
+    @Override
+    public int getCaretPosition() {
+        return theArea.getCaretPosition();
+    }
+
+    @Override
+    public int getTextLength() {
+        return theArea.getText().length();
+    }
 }

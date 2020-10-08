@@ -17,8 +17,6 @@
 package net.sourceforge.joceanus.jthemis.ui;
 
 import java.io.File;
-import java.nio.file.FileSystem;
-import java.nio.file.FileSystems;
 import java.nio.file.Path;
 import java.util.prefs.BackingStoreException;
 import java.util.prefs.Preferences;
@@ -32,6 +30,7 @@ import net.sourceforge.joceanus.jtethys.ui.TethysDataFormatter;
 import net.sourceforge.joceanus.jtethys.ui.TethysDirectorySelector;
 import net.sourceforge.joceanus.jtethys.ui.TethysGuiFactory;
 import net.sourceforge.joceanus.jtethys.ui.TethysHTMLManager;
+import net.sourceforge.joceanus.jtethys.ui.TethysLogTextArea;
 import net.sourceforge.joceanus.jtethys.ui.TethysScrollButtonManager;
 import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollMenu;
 import net.sourceforge.joceanus.jtethys.ui.TethysTabPaneManager;
@@ -81,6 +80,11 @@ public class ThemisDSMPanel
      * The Statistics Panel.
      */
     private final ThemisStatsPanel theStatsPanel;
+
+    /**
+     * The Log Tab.
+     */
+    private final TethysTabItem theLogTab;
 
     /**
      * The ProjectButton.
@@ -208,6 +212,13 @@ public class ThemisDSMPanel
         theStatsPanel = new ThemisStatsPanel(theGuiFactory);
         theTabPane.addTabItem("Stats", theStatsPanel);
 
+        /* Create the log tab */
+        final TethysLogTextArea myLog = theGuiFactory.getLogSink();
+        theLogTab = theTabPane.addTabItem("Log", myLog);
+        myLog.getEventRegistrar().addEventListener(TethysUIEvent.NEWVALUE, e -> theLogTab.setVisible(true));
+        myLog.getEventRegistrar().addEventListener(TethysUIEvent.WINDOWCLOSED, e -> theLogTab.setVisible(false));
+        theLogTab.setVisible(myLog.isActive());
+
         /* Initialise status */
         theProjectButton.setText("None");
         theDependencyTab.setVisible(false);
@@ -276,14 +287,9 @@ public class ThemisDSMPanel
             /* Analyse source of project */
             final ThemisAnalysisProject myProj = new ThemisAnalysisProject(pProjectDir);
 
-            /* The sourceMeter base. */
-            final String pathSM = System.getProperty("user.home") + "/Downloads/SourceMeter-9.1.1-x64-Windows/java/Results/";
-
             /* Parse sourceMeter statistics */
             final ThemisSMStatistics myStats = new ThemisSMStatistics(new TethysDataFormatter());
-            final FileSystem mySystem = FileSystems.getDefault();
-            final String myDir = pathSM + theProject + "/java/2020-10-04-12-00-01";
-            final Path myPath = mySystem.getPath(myDir);
+            final Path myPath = ThemisSMStatistics.getRecentStats(theProject.toString());
             myStats.parseStatistics(myPath, theProject.toString());
 
             /* Parse the base project */

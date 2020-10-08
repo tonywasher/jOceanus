@@ -135,8 +135,8 @@ public class MetisFXState {
      * @return the main panel
      * @throws OceanusException on error
      */
-    protected MetisMainPanel createMain(final MetisProgram pProgram,
-                                        final MetisFXToolkit pToolkit) throws OceanusException {
+    private static MetisMainPanel createMain(final MetisProgram pProgram,
+                                             final MetisFXToolkit pToolkit) throws OceanusException {
         /* Create the main panel */
         return pProgram.createMainPanel(pToolkit);
     }
@@ -150,6 +150,7 @@ public class MetisFXState {
         if (theMain != null) {
             /* Attach to the stage and show */
             attachToStage(pStage);
+            theToolkit.getGuiFactory().activateLogSink();
             Platform.setImplicitExit(true);
             pStage.setOnCloseRequest(ae -> {
                 if (theMain.handleAppClose()) {

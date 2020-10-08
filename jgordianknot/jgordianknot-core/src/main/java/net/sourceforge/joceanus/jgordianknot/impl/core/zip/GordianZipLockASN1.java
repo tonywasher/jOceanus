@@ -240,7 +240,7 @@ public class GordianZipLockASN1
         final int myLen = MSG_ID.length;
         if (pMsgId.length == myLen + 1
             && ByteBuffer.wrap(pMsgId, 0, myLen).equals(ByteBuffer.wrap(MSG_ID))) {
-            /* Check that id is valie */
+            /* Check that id is valid */
             final int myZipType = pMsgId[myLen] - '1';
             final GordianZipLockType[] myTypes = GordianZipLockType.values();
             if (myZipType >= 0 && myZipType < myTypes.length) {

@@ -132,7 +132,7 @@ public class CoeusFundingCircleMarket
     }
 
     /**
-     * Parse the badDebtBook file.
+     * Parse the bidBook file.
      * @param pFile the file to parse
      * @throws OceanusException on error
      */
