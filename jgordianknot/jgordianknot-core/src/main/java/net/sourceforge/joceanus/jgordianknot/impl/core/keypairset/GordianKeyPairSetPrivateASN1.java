@@ -150,6 +150,7 @@ public class GordianKeyPairSetPrivateASN1
     /**
      * Obtain the PKCS8EncodedKeySpec.
      * @return encodedKeySpec
+     * @throws OceanusException on error
      */
     PKCS8EncodedKeySpec getEncodedKeySpec() throws OceanusException {
         try {

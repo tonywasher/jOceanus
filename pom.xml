@@ -2,7 +2,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>net.sourceforge.joceanus</groupId>
   <artifactId>joceanus</artifactId>
-  <version>1.6.1-b4</version>
+  <version>1.6.1-SNAPSHOT</version>
   <packaging>pom</packaging>
   <name>Java Oceanus package</name>
   <description>Parent project for jOceanus</description>
@@ -438,7 +438,6 @@
         <artifactId>maven-jxr-plugin</artifactId>
         <version>${JxrPluginVersion}</version>
         <configuration>
-          <linkJavadoc>true</linkJavadoc>
           <excludes>
             <exclude>**/SevenZip/**/*.java</exclude>
             <exclude>**/module-info.java</exclude>

@@ -154,6 +154,7 @@ public class GordianKeyPairSetSignASN1
     /**
      * Obtain the Signature.
      * @return the signature
+     * @throws OceanusException on error
      */
     byte[] getEncodedSignature() throws OceanusException {
         try {

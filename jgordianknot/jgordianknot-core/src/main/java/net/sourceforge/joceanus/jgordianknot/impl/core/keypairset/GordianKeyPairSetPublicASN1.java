@@ -150,6 +150,7 @@ public class GordianKeyPairSetPublicASN1
     /**
      * Obtain the X509EncodedKeySpec.
      * @return encodedKeySpec
+     * @throws OceanusException on error
      */
     X509EncodedKeySpec getEncodedKeySpec() throws OceanusException {
         try {

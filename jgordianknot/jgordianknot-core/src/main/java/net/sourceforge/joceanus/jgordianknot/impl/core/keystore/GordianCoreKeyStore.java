@@ -81,6 +81,7 @@ import net.sourceforge.joceanus.jtethys.date.TethysDate;
  * KeyStore implementation.
  * <p>
  * It should be noted that this implementation is based upon a number of assumptions.
+ * </p>
  * <ol>
  *     <li>The combination of Subject Name/Subject Id is viewed as a unique identifier for a public key. Multiple Certificates for the same subject,
  *     issued by different authorities must describe the same publicKey. It is expected that different publicKeys for the same subjectName
@@ -89,7 +90,6 @@ import net.sourceforge.joceanus.jtethys.date.TethysDate;
  *     If two such certificates are received, the later one will overwrite the first one, (assuming the publicKey is the same).
  *     No attempt will be made to determine a BETTER certificate (e.g. longer validity)</li>
  * </ol>
- * </p>
  */
 public class GordianCoreKeyStore
         implements GordianKeyStore {

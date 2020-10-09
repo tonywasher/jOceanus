@@ -172,6 +172,7 @@ public class GordianKeyPairSetAgreeASN1
     /**
      * Obtain the Message.
      * @return the message
+     * @throws OceanusException on error
      */
     byte[] getEncodedMessage() throws OceanusException {
         try {
