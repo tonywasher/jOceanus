@@ -49,12 +49,12 @@ import net.sourceforge.joceanus.jgordianknot.api.keystore.GordianCertificate;
 import net.sourceforge.joceanus.jgordianknot.api.keystore.GordianCertificateId;
 import net.sourceforge.joceanus.jgordianknot.api.keystore.GordianKeyPairUsage;
 import net.sourceforge.joceanus.jgordianknot.api.keystore.GordianKeyPairUse;
-import net.sourceforge.joceanus.jgordianknot.api.keystore.GordianKeyStoreEntry.GordianKeyStorePairEntry;
 import net.sourceforge.joceanus.jgordianknot.api.sign.GordianSignature;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianCoreFactory;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianDataException;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianIOException;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianLogicException;
+import net.sourceforge.joceanus.jgordianknot.impl.core.keystore.GordianCoreKeyStoreEntry.GordianKeyStorePairEntry;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
@@ -178,7 +178,7 @@ public abstract class GordianCoreCertificate<S, K>
      * @throws OceanusException on error
      */
     GordianCoreCertificate(final GordianCoreFactory pFactory,
-                           final GordianKeyStorePairEntry<K> pSigner,
+                           final GordianKeyStorePairEntry<?, K> pSigner,
                            final K pKeyPair,
                            final X500Name pSubject,
                            final GordianKeyPairUsage pUsage) throws OceanusException {
@@ -188,8 +188,8 @@ public abstract class GordianCoreCertificate<S, K>
         theKeyUsage = pUsage;
 
         /* Check that the signer is allowed to sign certificates */
-        final K mySignerPair = pSigner.getKeyPair();
-        final GordianCoreCertificate<?, K> mySignerCert = (GordianCoreCertificate<?, K>) pSigner.getCertificateChain()[0];
+        final K mySignerPair = pSigner.getPair();
+        final GordianCoreCertificate<?, K> mySignerCert = (GordianCoreCertificate<?, K>) pSigner.getCertificateChain().get(0);
         if (!mySignerCert.getUsage().hasUse(GordianKeyPairUse.CERTIFICATE)
                 || !mySignerCert.isValidNow()
                 || isPublicOnly(mySignerPair)) {
@@ -200,10 +200,10 @@ public abstract class GordianCoreCertificate<S, K>
         theCAStatus = new GordianCAStatus(theKeyUsage, mySignerCert.theCAStatus);
 
         /* Determine the signatureSpec */
-        theSigSpec = determineSignatureSpecForKeyPair(pSigner.getKeyPair());
+        theSigSpec = determineSignatureSpecForKeyPair(pSigner.getPair());
 
         /* Determine the algorithm Id for the signatureSpec */
-        theSigAlgId = determineAlgIdForSignatureSpec(theSigSpec, pSigner.getKeyPair());
+        theSigAlgId = determineAlgIdForSignatureSpec(theSigSpec, pSigner.getPair());
 
         /* Create the TBSCertificate */
         theTbsCertificate = buildCertificate(mySignerCert, pSubject);

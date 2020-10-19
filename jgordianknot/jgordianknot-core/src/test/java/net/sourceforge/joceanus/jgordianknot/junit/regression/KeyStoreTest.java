@@ -51,6 +51,7 @@ import net.sourceforge.joceanus.jgordianknot.api.keystore.GordianKeyStoreEntry.G
 import net.sourceforge.joceanus.jgordianknot.api.keystore.GordianKeyStoreEntry.GordianKeyStorePairSet;
 import net.sourceforge.joceanus.jgordianknot.api.keystore.GordianKeyStoreEntry.GordianKeyStoreSet;
 import net.sourceforge.joceanus.jgordianknot.api.keystore.GordianKeyStoreFactory;
+import net.sourceforge.joceanus.jgordianknot.api.keystore.GordianKeyStoreManager;
 import net.sourceforge.joceanus.jgordianknot.api.mac.GordianMacFactory;
 import net.sourceforge.joceanus.jgordianknot.api.mac.GordianMacSpec;
 import net.sourceforge.joceanus.jgordianknot.util.GordianGenerator;
@@ -99,23 +100,29 @@ public class KeyStoreTest {
         final GordianKeySetFactory mySetFactory = FACTORY.getKeySetFactory();
         final GordianKeySetHash myHash = mySetFactory.generateKeySetHash(myKeySetHashSpec, DEF_PASSWORD);
         myStore.setKeySetHash("HashDef", myHash);
-        final GordianKeyStoreHash myHashRec = myStore.getKeySetHash("HashDef", DEF_PASSWORD);
-        Assertions.assertEquals(myHash, myHashRec.getKeySetHash());
-        checkKeySetHash(myStore, "HashDef", myHashRec);
+        final GordianKeyStoreHash myStoreHash = (GordianKeyStoreHash) myStore.getEntry("HashDef", DEF_PASSWORD);
+        Assertions.assertEquals(myHash, myStoreHash.getKeySetHash());
+        final GordianKeySetHash myHashRec = myStore.getKeySetHash("HashDef", DEF_PASSWORD);
+        Assertions.assertEquals(myHash, myHashRec);
+        checkKeySetHash(myStore, "HashDef", myStoreHash);
 
         /* Record the keySet */
         final GordianKeySet myKeySet = mySetFactory.generateKeySet(myKeySetSpec);
         myStore.setKeySet("KeySet", myKeySet, DEF_PASSWORD);
-        final GordianKeyStoreSet mySetRec = myStore.getKeySet("KeySet", DEF_PASSWORD);
-        Assertions.assertEquals(myKeySet, mySetRec.getKeySet());
-        checkKeySet(myStore, "KeySet", mySetRec);
+        final GordianKeyStoreSet myStoreSet = (GordianKeyStoreSet) myStore.getEntry("KeySet", DEF_PASSWORD);
+        Assertions.assertEquals(myKeySet, myStoreSet.getKeySet());
+        final GordianKeySet mySetRec = myStore.getKeySet("KeySet", DEF_PASSWORD);
+        Assertions.assertEquals(myKeySet, mySetRec);
+        checkKeySet(myStore, "KeySet", myStoreSet);
 
         /* Create a symKey */
         final GordianCipherFactory myCipherFactory = FACTORY.getCipherFactory();
         final GordianKeyGenerator<GordianSymKeySpec> mySymGenerator = myCipherFactory.getKeyGenerator(GordianSymKeySpec.aes(myKeyLen));
         final GordianKey<GordianSymKeySpec> mySymKey = mySymGenerator.generateKey();
         myStore.setKey("symKey", mySymKey, DEF_PASSWORD);
-        final GordianKeyStoreKey<?> mySymKeyRec = myStore.getKey("symKey", DEF_PASSWORD);
+        final GordianKey<?> myStoreSymKey = myStore.getKey("symKey", DEF_PASSWORD);
+        Assertions.assertEquals(mySymKey, myStoreSymKey);
+        final GordianKeyStoreKey<?> mySymKeyRec = (GordianKeyStoreKey<?>) myStore.getEntry("symKey", DEF_PASSWORD);
         Assertions.assertEquals(mySymKey, mySymKeyRec.getKey());
         checkKey(myStore, "symKey", mySymKeyRec);
 
@@ -123,7 +130,9 @@ public class KeyStoreTest {
         final GordianKeyGenerator<GordianStreamKeySpec> myStreamGenerator = myCipherFactory.getKeyGenerator(GordianStreamKeySpec.hc(myKeyLen));
         final GordianKey<GordianStreamKeySpec> myStreamKey = myStreamGenerator.generateKey();
         myStore.setKey("streamKey", myStreamKey, DEF_PASSWORD);
-        final GordianKeyStoreKey<?> myStreamKeyRec = myStore.getKey("streamKey", DEF_PASSWORD);
+        final GordianKey<?> myStoreStreamKey = myStore.getKey("streamKey", DEF_PASSWORD);
+        Assertions.assertEquals(myStreamKey, myStoreStreamKey);
+        final GordianKeyStoreKey<?> myStreamKeyRec = (GordianKeyStoreKey<?>) myStore.getEntry("streamKey", DEF_PASSWORD);
         Assertions.assertEquals(myStreamKey, myStreamKeyRec.getKey());
         checkKey(myStore, "streamKey", myStreamKeyRec);
 
@@ -132,7 +141,9 @@ public class KeyStoreTest {
         final GordianKeyGenerator<GordianMacSpec> myMacGenerator = myMacFactory.getKeyGenerator(GordianMacSpec.vmpcMac(myKeyLen));
         final GordianKey<GordianMacSpec> myMacKey = myMacGenerator.generateKey();
         myStore.setKey("macKey", myMacKey, DEF_PASSWORD);
-        final GordianKeyStoreKey<?> myMacKeyRec = myStore.getKey("macKey", DEF_PASSWORD);
+        final GordianKey<?> myStoreMacKey = myStore.getKey("macKey", DEF_PASSWORD);
+        Assertions.assertEquals(myMacKey, myStoreMacKey);
+        final GordianKeyStoreKey<?> myMacKeyRec = (GordianKeyStoreKey<?>) myStore.getEntry("macKey", DEF_PASSWORD);
         Assertions.assertEquals(myMacKey, myMacKeyRec.getKey());
         checkKey(myStore, "macKey", myMacKeyRec);
 
@@ -169,54 +180,55 @@ public class KeyStoreTest {
         /* Access keyStoreFactory and create a keyStore */
         final GordianKeyStoreFactory myFactory = FACTORY.getKeyPairFactory().getKeyStoreFactory();
         final GordianKeyStore myStore = myFactory.createKeyStore(myKeySetHashSpec);
+        final GordianKeyStoreManager myMgr = myFactory.createKeyStoreManager(myStore);
 
         /* Create root certificates */
         final GordianKeyPairSpec mySpec = GordianKeyPairSpec.ec(GordianDSAElliptic.SECT571K1);
         final X500Name myRootName = buildX500Name("Root Certificate");
-        final GordianKeyStorePair myRoot = myStore.createRootKeyPair(mySpec, myRootName, "RootCert", DEF_PASSWORD);
+        final GordianKeyStorePair myRoot = myMgr.createRootKeyPair(mySpec, myRootName, "RootCert", DEF_PASSWORD);
         final X500Name myRoot2Name = buildX500Name("Root Certificate 2");
-        final GordianKeyStorePair myRoot2 = myStore.createRootKeyPair(mySpec, myRoot2Name, "RootCert2", DEF_PASSWORD);
+        final GordianKeyStorePair myRoot2 = myMgr.createRootKeyPair(mySpec, myRoot2Name, "RootCert2", DEF_PASSWORD);
         checkKeyPair(myStore, "RootCert", myRoot);
         checkKeyPair(myStore, "RootCert2", myRoot2);
 
         /* Cross-sign theRoots */
         GordianKeyPairUsage myUsage = new GordianKeyPairUsage(GordianKeyPairUse.CERTIFICATE);
-        final GordianKeyStorePair myRootAlt = myStore.createAlternate(myRoot, myUsage, myRoot2, "RootCertAlt", DEF_PASSWORD);
-        final GordianKeyStorePair myRoot2Alt = myStore.createAlternate(myRoot2, myUsage, myRoot, "RootCert2Alt", DEF_PASSWORD);
+        final GordianKeyStorePair myRootAlt = myMgr.createAlternate(myRoot, myUsage, myRoot2, "RootCertAlt", DEF_PASSWORD);
+        final GordianKeyStorePair myRoot2Alt = myMgr.createAlternate(myRoot2, myUsage, myRoot, "RootCert2Alt", DEF_PASSWORD);
         checkKeyPair(myStore, "RootCertAlt", myRootAlt);
         checkKeyPair(myStore, "RootCert2Alt", myRoot2Alt);
 
         /* Create intermediates */
         final X500Name myInterName = buildX500Name("Intermediate Certificate");
-        final GordianKeyStorePair myIntermediate = myStore.createKeyPair(mySpec, myInterName, myUsage, myRoot, "InterCert", DEF_PASSWORD);
+        final GordianKeyStorePair myIntermediate = myMgr.createKeyPair(mySpec, myInterName, myUsage, myRoot, "InterCert", DEF_PASSWORD);
         final X500Name myInter2Name = buildX500Name("Intermediate Certificate 2");
-        final GordianKeyStorePair myIntermediate2 = myStore.createKeyPair(mySpec, myInter2Name, myUsage, myRoot2, "InterCert2", DEF_PASSWORD);
+        final GordianKeyStorePair myIntermediate2 = myMgr.createKeyPair(mySpec, myInter2Name, myUsage, myRoot2, "InterCert2", DEF_PASSWORD);
         checkKeyPair(myStore, "InterCert", myIntermediate);
         checkKeyPair(myStore, "InterCert2", myIntermediate2);
 
         /* Cross-sign the intermediates */
         myUsage = new GordianKeyPairUsage(GordianKeyPairUse.CERTIFICATE, GordianKeyPairUse.SIGNATURE);
-        final GordianKeyStorePair myIntermediateAlt = myStore.createAlternate(myIntermediate, myUsage, myRoot2, "InterCertAlt", DEF_PASSWORD);
-        final GordianKeyStorePair myIntermediate2Alt = myStore.createAlternate(myIntermediate2, myUsage, myRoot, "InterCert2Alt", DEF_PASSWORD);
+        final GordianKeyStorePair myIntermediateAlt = myMgr.createAlternate(myIntermediate, myUsage, myRoot2, "InterCertAlt", DEF_PASSWORD);
+        final GordianKeyStorePair myIntermediate2Alt = myMgr.createAlternate(myIntermediate2, myUsage, myRoot, "InterCert2Alt", DEF_PASSWORD);
         checkKeyPair(myStore, "InterCertAlt", myIntermediateAlt);
         checkKeyPair(myStore, "InterCert2Alt", myIntermediate2Alt);
 
         /* Create a signature keyPair */
         final X500Name mySignName = buildX500Name("Signing Certificate");
         myUsage = new GordianKeyPairUsage(GordianKeyPairUse.SIGNATURE);
-        final GordianKeyStorePair mySigner = myStore.createKeyPair(mySpec, mySignName, myUsage, myIntermediate, "SigningCert", DEF_PASSWORD);
+        final GordianKeyStorePair mySigner = myMgr.createKeyPair(mySpec, mySignName, myUsage, myIntermediate, "SigningCert", DEF_PASSWORD);
         checkKeyPair(myStore, "SigningCert", mySigner);
 
         /* Create an agreement keyPair */
         final X500Name myAgreeName = buildX500Name("Agreement Certificate");
         myUsage = new GordianKeyPairUsage(GordianKeyPairUse.AGREEMENT);
-        final GordianKeyStorePair myAgree = myStore.createKeyPair(mySpec, myAgreeName, myUsage, myIntermediate, "AgreementCert", DEF_PASSWORD);
+        final GordianKeyStorePair myAgree = myMgr.createKeyPair(mySpec, myAgreeName, myUsage, myIntermediate, "AgreementCert", DEF_PASSWORD);
         checkKeyPair(myStore, "AgreementCert", myAgree);
 
         /* Create an encryption keyPair */
         final X500Name myEncryptName = buildX500Name("Encryption Certificate");
         myUsage = new GordianKeyPairUsage(GordianKeyPairUse.DATAENCRYPT);
-        final GordianKeyStorePair myEncrypt = myStore.createKeyPair(mySpec, myEncryptName, myUsage, myIntermediate, "EncryptCert", DEF_PASSWORD);
+        final GordianKeyStorePair myEncrypt = myMgr.createKeyPair(mySpec, myEncryptName, myUsage, myIntermediate, "EncryptCert", DEF_PASSWORD);
         checkKeyPair(myStore, "EncryptCert", myEncrypt);
 
         /* Create keyStore documents */
@@ -258,54 +270,55 @@ public class KeyStoreTest {
         /* Access keyStoreFactory and create a keyStore */
         final GordianKeyStoreFactory myFactory = FACTORY.getKeyPairFactory().getKeyStoreFactory();
         final GordianKeyStore myStore = myFactory.createKeyStore(myKeySetHashSpec);
+        final GordianKeyStoreManager myMgr = myFactory.createKeyStoreManager(myStore);
 
         /* Create root certificates */
         final GordianKeyPairSetSpec mySpec = GordianKeyPairSetSpec.SIGNLO;
         final X500Name myRootName = buildX500Name("Root Certificate");
-        final GordianKeyStorePairSet myRoot = myStore.createRootKeyPairSet(mySpec, myRootName, "RootCert", DEF_PASSWORD);
+        final GordianKeyStorePairSet myRoot = myMgr.createRootKeyPairSet(mySpec, myRootName, "RootCert", DEF_PASSWORD);
         final X500Name myRoot2Name = buildX500Name("Root Certificate 2");
-        final GordianKeyStorePairSet myRoot2 = myStore.createRootKeyPairSet(mySpec, myRoot2Name, "RootCert2", DEF_PASSWORD);
+        final GordianKeyStorePairSet myRoot2 = myMgr.createRootKeyPairSet(mySpec, myRoot2Name, "RootCert2", DEF_PASSWORD);
         checkKeyPairSet(myStore, "RootCert", myRoot);
         checkKeyPairSet(myStore, "RootCert2", myRoot2);
 
         /* Cross-sign theRoots */
         GordianKeyPairUsage myUsage = new GordianKeyPairUsage(GordianKeyPairUse.CERTIFICATE);
-        final GordianKeyStorePairSet myRootAlt = myStore.createAlternate(myRoot, myUsage, myRoot2, "RootCertAlt", DEF_PASSWORD);
-        final GordianKeyStorePairSet myRoot2Alt = myStore.createAlternate(myRoot2, myUsage, myRoot, "RootCert2Alt", DEF_PASSWORD);
+        final GordianKeyStorePairSet myRootAlt = myMgr.createAlternate(myRoot, myUsage, myRoot2, "RootCertAlt", DEF_PASSWORD);
+        final GordianKeyStorePairSet myRoot2Alt = myMgr.createAlternate(myRoot2, myUsage, myRoot, "RootCert2Alt", DEF_PASSWORD);
         checkKeyPairSet(myStore, "RootCertAlt", myRootAlt);
         checkKeyPairSet(myStore, "RootCert2Alt", myRoot2Alt);
 
         /* Create intermediates */
         final X500Name myInterName = buildX500Name("Intermediate Certificate");
-        final GordianKeyStorePairSet myIntermediate = myStore.createKeyPairSet(mySpec, myInterName, myUsage, myRoot, "InterCert", DEF_PASSWORD);
+        final GordianKeyStorePairSet myIntermediate = myMgr.createKeyPairSet(mySpec, myInterName, myUsage, myRoot, "InterCert", DEF_PASSWORD);
         final X500Name myInter2Name = buildX500Name("Intermediate Certificate 2");
-        final GordianKeyStorePairSet myIntermediate2 = myStore.createKeyPairSet(mySpec, myInter2Name, myUsage, myRoot2, "InterCert2", DEF_PASSWORD);
+        final GordianKeyStorePairSet myIntermediate2 = myMgr.createKeyPairSet(mySpec, myInter2Name, myUsage, myRoot2, "InterCert2", DEF_PASSWORD);
         checkKeyPairSet(myStore, "InterCert", myIntermediate);
         checkKeyPairSet(myStore, "InterCert2", myIntermediate2);
 
         /* Cross-sign the intermediates */
         myUsage = new GordianKeyPairUsage(GordianKeyPairUse.CERTIFICATE, GordianKeyPairUse.SIGNATURE);
-        final GordianKeyStorePairSet myIntermediateAlt = myStore.createAlternate(myIntermediate, myUsage, myRoot2, "InterCertAlt", DEF_PASSWORD);
-        final GordianKeyStorePairSet myIntermediate2Alt = myStore.createAlternate(myIntermediate2, myUsage, myRoot, "InterCert2Alt", DEF_PASSWORD);
+        final GordianKeyStorePairSet myIntermediateAlt = myMgr.createAlternate(myIntermediate, myUsage, myRoot2, "InterCertAlt", DEF_PASSWORD);
+        final GordianKeyStorePairSet myIntermediate2Alt = myMgr.createAlternate(myIntermediate2, myUsage, myRoot, "InterCert2Alt", DEF_PASSWORD);
         checkKeyPairSet(myStore, "InterCertAlt", myIntermediateAlt);
         checkKeyPairSet(myStore, "InterCert2Alt", myIntermediate2Alt);
 
         /* Create a signature keyPairSet */
         final X500Name mySignName = buildX500Name("Signing Certificate");
         myUsage = new GordianKeyPairUsage(GordianKeyPairUse.SIGNATURE);
-        final GordianKeyStorePairSet mySigner = myStore.createKeyPairSet(mySpec, mySignName, myUsage, myIntermediate, "SigningCert", DEF_PASSWORD);
+        final GordianKeyStorePairSet mySigner = myMgr.createKeyPairSet(mySpec, mySignName, myUsage, myIntermediate, "SigningCert", DEF_PASSWORD);
         checkKeyPairSet(myStore, "SigningCert", mySigner);
 
         /* Create an agreement keyPairSet */
         final X500Name myAgreeName = buildX500Name("Agreement Certificate");
         myUsage = new GordianKeyPairUsage(GordianKeyPairUse.AGREEMENT);
-        final GordianKeyStorePairSet myAgree = myStore.createKeyPairSet(GordianKeyPairSetSpec.AGREELO, myAgreeName, myUsage, myIntermediate, "AgreementCert", DEF_PASSWORD);
+        final GordianKeyStorePairSet myAgree = myMgr.createKeyPairSet(GordianKeyPairSetSpec.AGREELO, myAgreeName, myUsage, myIntermediate, "AgreementCert", DEF_PASSWORD);
         checkKeyPairSet(myStore, "AgreementCert", myAgree);
 
         /* Create an encryption keyPairSet */
         final X500Name myEncryptName = buildX500Name("Encryption Certificate");
         myUsage = new GordianKeyPairUsage(GordianKeyPairUse.DATAENCRYPT);
-        final GordianKeyStorePairSet myEncrypt = myStore.createKeyPairSet(GordianKeyPairSetSpec.ENCRYPT, myEncryptName, myUsage, myIntermediate, "EncryptCert", DEF_PASSWORD);
+        final GordianKeyStorePairSet myEncrypt = myMgr.createKeyPairSet(GordianKeyPairSetSpec.ENCRYPT, myEncryptName, myUsage, myIntermediate, "EncryptCert", DEF_PASSWORD);
         checkKeyPairSet(myStore, "EncryptCert", myEncrypt);
 
         /* Create keyStore documents */
@@ -346,7 +359,7 @@ public class KeyStoreTest {
         Assertions.assertTrue(pKeyStore.containsAlias(pName));
         Assertions.assertTrue(pKeyStore.isKeySetHashEntry(pName));
         Assertions.assertTrue(pKeyStore.entryInstanceOf(pName, GordianKeyStoreHash.class));
-        Assertions.assertEquals(pKeyHash, pKeyStore.getKeySetHash(pName, DEF_PASSWORD));
+        Assertions.assertEquals(pKeyHash.getKeySetHash(), pKeyStore.getKeySetHash(pName, DEF_PASSWORD));
         Assertions.assertEquals(pKeyHash, pKeyStore.getEntry(pName, DEF_PASSWORD));
     }
 
@@ -363,7 +376,7 @@ public class KeyStoreTest {
         Assertions.assertTrue(pKeyStore.containsAlias(pName));
         Assertions.assertTrue(pKeyStore.isKeySetEntry(pName));
         Assertions.assertTrue(pKeyStore.entryInstanceOf(pName, GordianKeyStoreSet.class));
-        Assertions.assertEquals(pKeySet, pKeyStore.getKeySet(pName, DEF_PASSWORD));
+        Assertions.assertEquals(pKeySet.getKeySet(), pKeyStore.getKeySet(pName, DEF_PASSWORD));
         Assertions.assertEquals(pKeySet, pKeyStore.getEntry(pName, DEF_PASSWORD));
     }
 
@@ -380,7 +393,7 @@ public class KeyStoreTest {
         Assertions.assertTrue(pKeyStore.containsAlias(pName));
         Assertions.assertTrue(pKeyStore.isKeyEntry(pName));
         Assertions.assertTrue(pKeyStore.entryInstanceOf(pName, GordianKeyStoreKey.class));
-        Assertions.assertEquals(pKey, pKeyStore.getKey(pName, DEF_PASSWORD));
+        Assertions.assertEquals(pKey.getKey(), pKeyStore.getKey(pName, DEF_PASSWORD));
         Assertions.assertEquals(pKey, pKeyStore.getEntry(pName, DEF_PASSWORD));
     }
 
@@ -397,7 +410,7 @@ public class KeyStoreTest {
         Assertions.assertTrue(pKeyStore.containsAlias(pName));
         Assertions.assertTrue(pKeyStore.isKeyPairEntry(pName));
         Assertions.assertTrue(pKeyStore.entryInstanceOf(pName, GordianKeyStorePair.class));
-        Assertions.assertEquals(pKeyPair, pKeyStore.getKeyPair(pName, DEF_PASSWORD));
+        Assertions.assertEquals(pKeyPair.getKeyPair(), pKeyStore.getKeyPair(pName, DEF_PASSWORD));
         Assertions.assertEquals(pKeyPair, pKeyStore.getEntry(pName, DEF_PASSWORD));
     }
 
@@ -414,7 +427,7 @@ public class KeyStoreTest {
         Assertions.assertTrue(pKeyStore.containsAlias(pName));
         Assertions.assertTrue(pKeyStore.isKeyPairSetEntry(pName));
         Assertions.assertTrue(pKeyStore.entryInstanceOf(pName, GordianKeyStorePairSet.class));
-        Assertions.assertEquals(pKeyPairSet, pKeyStore.getKeyPairSet(pName, DEF_PASSWORD));
+        Assertions.assertEquals(pKeyPairSet.getKeyPairSet(), pKeyStore.getKeyPairSet(pName, DEF_PASSWORD));
         Assertions.assertEquals(pKeyPairSet, pKeyStore.getEntry(pName, DEF_PASSWORD));
     }
 
@@ -422,7 +435,7 @@ public class KeyStoreTest {
      * Build X500Name.
      * @param pName the CN value.
      */
-    private X500Name buildX500Name(final String pName) throws OceanusException {
+    private X500Name buildX500Name(final String pName) {
         /* Build the name */
         X500NameBuilder myBuilder = new X500NameBuilder(BCStyle.INSTANCE);
         myBuilder.addRDN(BCStyle.CN, pName);

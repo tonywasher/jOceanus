@@ -52,4 +52,11 @@ public interface GordianKeyStoreFactory {
      */
     GordianKeyStore loadKeyStore(InputStream pSource,
                                  char[] pPassword) throws OceanusException;
+
+    /**
+     * Create a keyStore Manager for the KeyStore.
+     * @param pKeyStore the keyStore
+     * @return the keyStoreManager
+     */
+    GordianKeyStoreManager createKeyStoreManager(GordianKeyStore pKeyStore);
 }

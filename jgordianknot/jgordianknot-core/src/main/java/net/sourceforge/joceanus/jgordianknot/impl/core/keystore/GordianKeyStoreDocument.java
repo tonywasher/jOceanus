@@ -297,7 +297,7 @@ public final class GordianKeyStoreDocument {
                 case TRUSTEDPAIRCERT:
                 case TRUSTEDPAIRSETCERT:
                 default:
-                    buildCertificateElement(myAliasEl, (GordianKeyStoreCertificateElement<?, ?>) myElement);
+                    buildCertificateElement(myAliasEl, (GordianKeyStoreCertificateElement<?>) myElement);
                     break;
             }
         }
@@ -394,7 +394,7 @@ public final class GordianKeyStoreDocument {
      * @throws OceanusException on error
      */
     private void buildCertificateElement(final Element pNode,
-                                         final GordianKeyStoreCertificateElement<?, ?> pEntry) throws OceanusException {
+                                         final GordianKeyStoreCertificateElement<?> pEntry) throws OceanusException {
         /* Build certificateKey */
         buildCertificateKey(pNode, pEntry.getCertificateKey());
     }
@@ -727,7 +727,7 @@ public final class GordianKeyStoreDocument {
             if (ELEMENT_CERTKEY.equals(myNodeName)) {
                 /* Obtain the key and build the entry */
                 final GordianKeyStoreCertificateKey myKey = parseCertificateKey(myNode);
-                final GordianKeyStoreCertificateElement<?, ?> myEntry = pIsPairSet
+                final GordianKeyStoreCertificateElement<?> myEntry = pIsPairSet
                         ? new GordianKeyStorePairSetCertificateElement(myKey, pDate)
                         : new GordianKeyStorePairCertificateElement(myKey, pDate);
                 theKeyStore.getAliasMap().put(pAlias, myEntry);
