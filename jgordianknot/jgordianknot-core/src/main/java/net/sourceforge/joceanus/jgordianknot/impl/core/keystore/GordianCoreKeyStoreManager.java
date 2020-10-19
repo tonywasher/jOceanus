@@ -23,7 +23,6 @@ import java.util.List;
 import org.bouncycastle.asn1.x500.X500Name;
 
 import net.sourceforge.joceanus.jgordianknot.api.base.GordianKeySpec;
-import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianCipherFactory;
 import net.sourceforge.joceanus.jgordianknot.api.factory.GordianKeyPairFactory;
 import net.sourceforge.joceanus.jgordianknot.api.key.GordianKey;
 import net.sourceforge.joceanus.jgordianknot.api.key.GordianKeyGenerator;
@@ -46,6 +45,7 @@ import net.sourceforge.joceanus.jgordianknot.api.keystore.GordianKeyStoreEntry.G
 import net.sourceforge.joceanus.jgordianknot.api.keystore.GordianKeyStoreEntry.GordianKeyStorePairSet;
 import net.sourceforge.joceanus.jgordianknot.api.keystore.GordianKeyStoreEntry.GordianKeyStoreSet;
 import net.sourceforge.joceanus.jgordianknot.api.keystore.GordianKeyStoreManager;
+import net.sourceforge.joceanus.jgordianknot.api.mac.GordianMacSpec;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianCoreFactory;
 import net.sourceforge.joceanus.jgordianknot.impl.core.keypair.GordianCoreKeyPair;
 import net.sourceforge.joceanus.jgordianknot.impl.core.keypairset.GordianCoreKeyPairSet;
@@ -104,8 +104,12 @@ public class GordianCoreKeyStoreManager
     public <K extends GordianKeySpec> GordianKeyStoreKey<K> createKey(final K pKeySpec,
                                                                       final String pAlias,
                                                                       final char[] pPassword) throws OceanusException {
-        final GordianCipherFactory myFactory = theFactory.getCipherFactory();
-        final GordianKeyGenerator<K> myGenerator = myFactory.getKeyGenerator(pKeySpec);
+        /* Access the relevant keyGenerator */
+        final GordianKeyGenerator<K> myGenerator = pKeySpec instanceof GordianMacSpec
+                ? theFactory.getMacFactory().getKeyGenerator(pKeySpec)
+                : theFactory.getCipherFactory().getKeyGenerator(pKeySpec);
+
+        /* Generate, store and return key */
         final GordianKey<K> myKey = myGenerator.generateKey();
         theKeyStore.setKey(pAlias, myKey, pPassword);
         return (GordianKeyStoreKey<K>) theKeyStore.getEntry(pAlias, pPassword);

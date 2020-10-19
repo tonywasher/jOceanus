@@ -58,7 +58,7 @@
     <project.build.sourceEncoding>Cp1252</project.build.sourceEncoding>
     <scmMaster>master</scmMaster>
     <scmBranch>1.6.1</scmBranch>
-    <scmTag>b4</scmTag>
+    <scmTag>SNAPSHOT</scmTag>
     <scmRef>${scmBranch}-${scmTag}</scmRef>
     <packageKey>net.sourceforge.joceanus</packageKey>
     <packageMain/>
@@ -71,8 +71,8 @@
     <JUnitVersion>5.7.0</JUnitVersion>
     <JSONVersion>20200518</JSONVersion>
     <ApacheMavenVersion>3.6.3</ApacheMavenVersion>
-    <MySQLVersion>8.0.21</MySQLVersion>
-    <PostGreSQLVersion>42.2.16</PostGreSQLVersion>
+    <MySQLVersion>8.0.22</MySQLVersion>
+    <PostGreSQLVersion>42.2.18</PostGreSQLVersion>
     <JTDSVersion>1.3.1</JTDSVersion>
     <H2Version>1.4.200</H2Version>
     <ApachePOIVersion>4.1.2</ApachePOIVersion>

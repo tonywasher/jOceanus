@@ -550,7 +550,11 @@ public class GordianCoreKeyStore
     @Override
     public GordianKeyPairCertificate getKeyPairCertificate(final String pAlias) {
         final GordianKeyStorePairCertificate myCert = getKeyStorePairCertificate(pAlias);
-        return myCert == null ? null : myCert.getCertificate();
+        if (myCert != null) {
+            return myCert.getCertificate();
+        }
+        final List<GordianKeyPairCertificate> myChain = getKeyPairCertificateChain(pAlias);
+        return myChain == null || myChain.isEmpty() ? null : myChain.get(0);
     }
 
     /**
@@ -568,7 +572,11 @@ public class GordianCoreKeyStore
     @Override
     public GordianKeyPairSetCertificate getKeyPairSetCertificate(final String pAlias) {
         final GordianKeyStorePairSetCertificate myCert = getKeyStorePairSetCertificate(pAlias);
-        return myCert == null ? null : myCert.getCertificate();
+        if (myCert != null) {
+            return myCert.getCertificate();
+        }
+        final List<GordianKeyPairSetCertificate> myChain = getKeyPairSetCertificateChain(pAlias);
+        return myChain == null || myChain.isEmpty() ? null : myChain.get(0);
     }
 
     /**
@@ -633,8 +641,8 @@ public class GordianCoreKeyStore
      * @param pPassword the password
      * @return the keyPairSet entry (or null)
      */
-    public GordianKeyStorePairSet getKeyStorePairSet(final String pAlias,
-                                                     final char[] pPassword) throws OceanusException {
+    private GordianKeyStorePairSet getKeyStorePairSet(final String pAlias,
+                                                      final char[] pPassword) throws OceanusException {
         final GordianCoreKeyStoreEntry myEntry = theAliases.get(pAlias);
         return myEntry instanceof GordianKeyStorePairSetElement
                 ? ((GordianKeyStorePairSetElement) myEntry).buildEntry(this, pPassword)
@@ -718,9 +726,12 @@ public class GordianCoreKeyStore
         for (Entry<String, GordianCoreKeyStoreEntry> myRecord : theAliases.entrySet()) {
             /* Check for match on certificate entry */
             final GordianKeyStoreEntry myEntry = myRecord.getValue();
-            if (myEntry instanceof GordianKeyStoreCertificateHolder
-                    && pCertificate.equals(getCertificate(((GordianKeyStoreCertificateHolder) myEntry).getCertificateKey()))) {
-                return myRecord.getKey();
+            if (myEntry instanceof GordianKeyStoreCertificateHolder) {
+                final GordianKeyStoreCertificateKey myKey = ((GordianKeyStoreCertificateHolder) myEntry).getCertificateKey();
+                final GordianCertificate<?> myCert = getCertificate(myKey);
+                if (pCertificate.equals(myCert)) {
+                    return myRecord.getKey();
+                }
             }
         }
 
@@ -793,8 +804,14 @@ public class GordianCoreKeyStore
         }
 
         /* Check that we are anchored by a root certificate */
-        if (!((GordianCoreKeyPairCertificate) pChain.get(mySize - 1)).validateRootCertificate()) {
+        final GordianKeyPairCertificate myRoot = pChain.get(mySize - 1);
+        if (!((GordianCoreKeyPairCertificate) myRoot).validateRootCertificate()) {
             throw new GordianDataException("Invalid root certificate");
+        }
+
+        /* Check that the root is known if the depth is greater than 1 */
+        if (mySize > 1 && getCertificateAlias(myRoot) == null) {
+            throw new GordianDataException("Unknown root certificate");
         }
     }
 
@@ -845,8 +862,14 @@ public class GordianCoreKeyStore
         }
 
         /* Check that we are anchored by a root certificate */
-        if (!((GordianCoreKeyPairSetCertificate) pChain.get(mySize - 1)).validateRootCertificate()) {
+        final GordianKeyPairSetCertificate myRoot = pChain.get(mySize - 1);
+        if (!((GordianCoreKeyPairSetCertificate) myRoot).validateRootCertificate()) {
             throw new GordianDataException("Invalid root certificate");
+        }
+
+        /* Check that the root is known if the depth is greater than 1 */
+        if (mySize > 1 && getCertificateAlias(myRoot) == null) {
+            throw new GordianDataException("Unknown root certificate");
         }
     }
 

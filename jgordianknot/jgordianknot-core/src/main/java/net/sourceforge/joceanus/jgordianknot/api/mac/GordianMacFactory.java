@@ -20,6 +20,7 @@ import java.util.List;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
+import net.sourceforge.joceanus.jgordianknot.api.base.GordianKeySpec;
 import net.sourceforge.joceanus.jgordianknot.api.base.GordianLength;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianSymKeySpec;
 import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigestSpec;
@@ -33,11 +34,12 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
 public interface GordianMacFactory {
     /**
      * obtain GordianKeyGenerator for MacSpec.
+     * @param <T> the keyType
      * @param pKeyType the KeyType
      * @return the new KeyGenerator
      * @throws OceanusException on error
      */
-    GordianKeyGenerator<GordianMacSpec> getKeyGenerator(GordianMacSpec pKeyType) throws OceanusException;
+    <T extends GordianKeySpec> GordianKeyGenerator<T> getKeyGenerator(T pKeyType) throws OceanusException;
 
     /**
      * create GordianMac.

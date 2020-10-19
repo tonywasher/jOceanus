@@ -191,6 +191,24 @@ public interface GordianKeyStore {
     boolean isKeyPairSetEntry(String pAlias);
 
     /**
+     * Determine whether the alias is a keyPair certificate/pair entry.
+     * @param pAlias the alias
+     * @return true/false
+     */
+    default boolean isKeyPairCertificate(final String pAlias) {
+        return isKeyPairEntry(pAlias) || isKeyPairCertificateEntry(pAlias);
+    }
+
+    /**
+     * Determine whether the alias is a keyPairSet certificate/pair entry.
+     * @param pAlias the alias
+     * @return true/false
+     */
+    default boolean isKeyPairSetCertificate(final String pAlias) {
+        return isKeyPairSetEntry(pAlias) || isKeyPairSetCertificateEntry(pAlias);
+    }
+
+    /**
      * Determine whether the alias is a key entry.
      * @param pAlias the alias
      * @return true/false

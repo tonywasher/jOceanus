@@ -44,6 +44,7 @@ import org.bouncycastle.crypto.patch.macs.DSTUX7624Mac;
 import org.bouncycastle.crypto.patch.macs.KXGMac;
 import org.bouncycastle.crypto.patch.modes.KGCMXBlockCipher;
 
+import net.sourceforge.joceanus.jgordianknot.api.base.GordianKeySpec;
 import net.sourceforge.joceanus.jgordianknot.api.base.GordianLength;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianSymKeySpec;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianSymKeyType;
@@ -64,7 +65,7 @@ public class BouncyMacFactory
     /**
      * KeyPairGenerator Cache.
      */
-    private final Map<GordianMacSpec, BouncyKeyGenerator<GordianMacSpec>> theCache;
+    private final Map<GordianKeySpec, BouncyKeyGenerator<? extends GordianKeySpec>> theCache;
 
     /**
      * Constructor.
@@ -85,15 +86,16 @@ public class BouncyMacFactory
     }
 
     @Override
-    public BouncyKeyGenerator<GordianMacSpec> getKeyGenerator(final GordianMacSpec pMacSpec) throws OceanusException {
+    @SuppressWarnings("unchecked")
+    public <T extends GordianKeySpec> BouncyKeyGenerator<T> getKeyGenerator(final T pMacSpec) throws OceanusException {
         /* Look up in the cache */
-        BouncyKeyGenerator<GordianMacSpec> myGenerator = theCache.get(pMacSpec);
+        BouncyKeyGenerator<T> myGenerator = (BouncyKeyGenerator<T>) theCache.get(pMacSpec);
         if (myGenerator == null) {
             /* Check validity of MacSpec */
             checkMacSpec(pMacSpec);
 
             /* Create the new generator */
-            final CipherKeyGenerator myBCGenerator = getBCKeyGenerator(pMacSpec);
+            final CipherKeyGenerator myBCGenerator = getBCKeyGenerator((GordianMacSpec) pMacSpec);
             myGenerator = new BouncyKeyGenerator<>(getFactory(), pMacSpec, myBCGenerator);
 
             /* Add to cache */
