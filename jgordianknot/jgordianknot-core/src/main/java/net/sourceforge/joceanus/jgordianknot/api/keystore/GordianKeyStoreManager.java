@@ -16,14 +16,16 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jgordianknot.api.keystore;
 
+import java.io.File;
+import java.io.InputStream;
+import java.io.OutputStream;
+
 import org.bouncycastle.asn1.x500.X500Name;
 
 import net.sourceforge.joceanus.jgordianknot.api.base.GordianKeySpec;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPairSpec;
 import net.sourceforge.joceanus.jgordianknot.api.keypairset.GordianKeyPairSetSpec;
-import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetHashSpec;
 import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetSpec;
-import net.sourceforge.joceanus.jgordianknot.api.keystore.GordianKeyStoreEntry.GordianKeyStoreHash;
 import net.sourceforge.joceanus.jgordianknot.api.keystore.GordianKeyStoreEntry.GordianKeyStoreKey;
 import net.sourceforge.joceanus.jgordianknot.api.keystore.GordianKeyStoreEntry.GordianKeyStorePair;
 import net.sourceforge.joceanus.jgordianknot.api.keystore.GordianKeyStoreEntry.GordianKeyStorePairSet;
@@ -46,19 +48,6 @@ public interface GordianKeyStoreManager {
     GordianKeyStoreSet createKeySet(GordianKeySetSpec pKeySetSpec,
                                     String pAlias,
                                     char[] pPassword) throws OceanusException;
-
-    /**
-     * Create a new keySetHash.
-     *
-     * @param pKeySetHashSpec the spec of the new keySetHash
-     * @param pHashPassword the hash password
-     * @param pAlias the alias
-     * @return the new keySetHash entry
-     * @throws OceanusException on error
-     */
-    GordianKeyStoreHash createKeySetHash(GordianKeySetHashSpec pKeySetHashSpec,
-                                         char[] pHashPassword,
-                                         String pAlias) throws OceanusException;
 
     /**
      * Create a new key.
@@ -175,4 +164,46 @@ public interface GordianKeyStoreManager {
                                            GordianKeyStorePairSet pSigner,
                                            String pAlias,
                                            char[] pPassword) throws OceanusException;
+
+    /**
+     * export object to file.
+     * @param pAlias the alias
+     * @param pFile the file
+     * @param pPassword the password
+     * @throws OceanusException on error
+     */
+    void exportEntry(String pAlias,
+                     File pFile,
+                     char[] pPassword) throws OceanusException;
+
+    /**
+     * export object to stream.
+     * @param pAlias the alias
+     * @param pStream the stream
+     * @param pPassword the password
+     * @throws OceanusException on error
+     */
+    void exportEntry(String pAlias,
+                     OutputStream pStream,
+                     char[] pPassword) throws OceanusException;
+
+    /**
+     * import object from file.
+     * @param pFile the file
+     * @param pPassword the password
+     * @return the parsed object
+     * @throws OceanusException on error
+     */
+    GordianKeyStoreEntry importEntry(File pFile,
+                                     char[] pPassword) throws OceanusException;
+
+    /**
+     * import object from stream.
+     * @param pStream the stream
+     * @param pPassword the password
+     * @return the parsed object
+     * @throws OceanusException on error
+     */
+    GordianKeyStoreEntry importEntry(InputStream pStream,
+                                     char[] pPassword) throws OceanusException;
 }

@@ -24,7 +24,6 @@ import net.sourceforge.joceanus.jgordianknot.api.key.GordianKey;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPair;
 import net.sourceforge.joceanus.jgordianknot.api.keypairset.GordianKeyPairSet;
 import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySet;
-import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetHash;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
 
 /**
@@ -122,17 +121,5 @@ public interface GordianKeyStoreEntry
          * @return the keySet
          */
         GordianKeySet getKeySet();
-    }
-
-    /**
-     * KeyStore KeySetHash.
-     */
-    interface GordianKeyStoreHash
-            extends GordianKeyStoreEntry {
-        /**
-         * Obtain the keySetHash.
-         * @return the keySetHash
-         */
-        GordianKeySetHash getKeySetHash();
     }
 }

@@ -1,10 +1,23 @@
+/*******************************************************************************
+ * GordianKnot: Security Suite
+ * Copyright 2012,2020 Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ ******************************************************************************/
 package net.sourceforge.joceanus.jgordianknot.impl.core.keystore;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -14,14 +27,15 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 
-import net.sourceforge.joceanus.jgordianknot.api.keystore.GordianCertificate;
-import net.sourceforge.joceanus.jgordianknot.api.keystore.GordianKeyPairCertificate;
-import net.sourceforge.joceanus.jgordianknot.api.keystore.GordianKeyPairSetCertificate;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianDataException;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianIOException;
+import net.sourceforge.joceanus.jgordianknot.impl.core.keystore.GordianPEMObject.GordianPEMObjectType;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.TethysDataConverter;
 
+/**
+ * PEM Parser.
+ */
 public class GordianPEMParser {
     /**
      * The bracket sequence.
@@ -39,14 +53,9 @@ public class GordianPEMParser {
     private static final String END = "END ";
 
     /**
-     * The certificateId.
+     * The newLine.
      */
-    private static final String PAIRCERTIFICATE = "CERTIFICATE";
-
-    /**
-     * The setCertificateId.
-     */
-    private static final String SETCERTIFICATE = "SETCERTIFICATE";
+    private static final char NEWLINE = '\n';
 
     /**
      * The PEM line length.
@@ -54,212 +63,105 @@ public class GordianPEMParser {
     private static final int PEMLEN = 64;
 
     /**
-     * is this a keySet?
+     * the active ObjectType.
      */
-    private boolean isKeySet;
+    private GordianPEMObjectType theObjectType;
 
     /**
-     * are we parsing a certificate?
-     */
-    private boolean inParsing;
-
-    /**
-     * Write certificate File.
-     * @param pFile the writer
-     * @param pCertificates the list of certificates
+     * Write PEM objects to stream.
+     * @param pStream the stream
+     * @param pObjects the list of objects
      * @throws OceanusException on error
      */
-    public void writeKeyPairCertificates(final File pFile,
-                                         final GordianKeyPairCertificate[] pCertificates) throws OceanusException {
-        /* Write to file */
-        isKeySet = false;
-        writeCertificates(pFile, pCertificates);
-    }
-
-    /**
-     * Write certificate File.
-     * @param pFile the writer
-     * @param pCertificates the list of certificates
-     * @throws OceanusException on error
-     */
-    public void writeKeyPairSetCertificates(final File pFile,
-                                            final GordianKeyPairSetCertificate[] pCertificates) throws OceanusException {
-        /* Write to file */
-        isKeySet = true;
-        writeCertificates(pFile, pCertificates);
-    }
-
-    /**
-     * Parse certificate File.
-     * @param pFile the writer
-     * @return the array of certificates
-     * @throws OceanusException on error
-     */
-    GordianCertificate<?>[] parseCertificates(final File pFile) throws OceanusException {
-        /* Parse the certificates */
-        final List<byte[]> myCertBytes = parseCertificateList(pFile);
-
-        /* Write to file */
-        return isKeySet
-                ? parseKeyPairSetCertificates(myCertBytes)
-                : parseKeyPairCertificates(myCertBytes);
-    }
-
-    /**
-     * Write certificate File.
-     * @param pFile the writer
-     * @param pCertificates the array of certificates
-     * @throws OceanusException on error
-     */
-    private void writeCertificates(final File pFile,
-                                   final GordianCertificate<?>[] pCertificates) throws OceanusException {
-        /* Create the list */
-        final List<byte[]> myList = new ArrayList<>();
-        for (GordianCertificate<?> myCert : pCertificates) {
-            myList.add(myCert.getEncoded());
-        }
-
-        /* Write to file */
-        writeCertificates(pFile, myList);
-    }
-
-    /**
-     * Parse keyPairCertificates.
-     * @param pCertificates the certificats
-     * @return the array of certificates
-     * @throws OceanusException on error
-     */
-    GordianKeyPairCertificate[] parseKeyPairCertificates(final List<byte[]> pCertificates) throws OceanusException {
-        /* Parse the certificates */
-        final int mySize = pCertificates.size();
-        final GordianKeyPairCertificate[] myCerts = new GordianKeyPairCertificate[mySize];
-
-        /* Create the list */
-        for (int i = 0; i < mySize; i++) {
-            myCerts[i] = new GordianCoreKeyPairCertificate(null, pCertificates.get(i));
-        }
-
-        /* Return the certificates */
-        return myCerts;
-    }
-
-    /**
-     * Parse keyPairCertificates.
-     * @param pCertificates the certificats
-     * @return the array of certificates
-     * @throws OceanusException on error
-     */
-    GordianKeyPairSetCertificate[] parseKeyPairSetCertificates(final List<byte[]> pCertificates) throws OceanusException {
-        /* Parse the certificates */
-        final int mySize = pCertificates.size();
-        final GordianKeyPairSetCertificate[] myCerts = new GordianKeyPairSetCertificate[mySize];
-
-        /* Create the list */
-        for (int i = 0; i < mySize; i++) {
-            myCerts[i] = new GordianCoreKeyPairSetCertificate(null, pCertificates.get(i));
-        }
-
-        /* Return the certificates */
-        return myCerts;
-    }
-
-    /**
-     * Write certificate File.
-     * @param pFile the writer
-     * @param pCertificates the list of certificates
-     * @throws OceanusException on error
-     */
-    void writeCertificates(final File pFile,
-                           final List<byte[]> pCertificates) throws OceanusException {
+    void writePEMFile(final OutputStream pStream,
+                      final List<GordianPEMObject> pObjects) throws OceanusException {
         /* Protect against exceptions */
-        try (OutputStream myStream = new FileOutputStream(pFile);
-             OutputStreamWriter myOutputWriter = new OutputStreamWriter(myStream, StandardCharsets.UTF_8);
+        try (OutputStreamWriter myOutputWriter = new OutputStreamWriter(pStream, StandardCharsets.UTF_8);
              BufferedWriter myWriter = new BufferedWriter(myOutputWriter)) {
-            /* Write the certificates to the file */
-            writeCertificates(myWriter, pCertificates);
+            /* Write the objects to the file */
+            writeObjects(myWriter, pObjects);
 
             /* Catch exceptions */
         } catch (IOException e) {
-            throw new GordianIOException("Failed to write file", e);
+            throw new GordianIOException("Failed to write to stream", e);
         }
     }
 
     /**
-     * Parse certificate file.
-     * @param pFile the writer
-     * @return the list of certificates
+     * Parse PEM Object stream.
+     * @param pStream the stream
+     * @return the list of parsed objects
      * @throws OceanusException on error
      */
-    List<byte[]> parseCertificateList(final File pFile) throws OceanusException {
+    List<GordianPEMObject> parsePEMFile(final InputStream pStream) throws OceanusException {
         /* Protect against exceptions */
-        try (InputStream myStream = new FileInputStream(pFile);
-             InputStreamReader myInputReader = new InputStreamReader(myStream, StandardCharsets.UTF_8);
+        try (InputStreamReader myInputReader = new InputStreamReader(pStream, StandardCharsets.UTF_8);
              BufferedReader myReader = new BufferedReader(myInputReader)) {
-            /* Parse the certificates from the file */
-            return parseCertificates(myReader);
+            /* Parse the objects from the file */
+            return parseObjects(myReader);
 
             /* Catch exceptions */
         } catch (IOException e) {
-            throw new GordianIOException("Failed to parse file", e);
+            throw new GordianIOException("Failed to process stream", e);
         }
     }
 
     /**
-     * Write certificates.
+     * Write PEM Objects.
      * @param pWriter the writer
-     * @param pCertificates the list of certificates
+     * @param pObjects the list of objects
      * @throws OceanusException on error
      */
-    private void writeCertificates(final BufferedWriter pWriter,
-                                   final List<byte[]> pCertificates) throws OceanusException {
-        /* Determine header type */
-        final String myType = isKeySet ? SETCERTIFICATE : PAIRCERTIFICATE;
-
+    private void writeObjects(final BufferedWriter pWriter,
+                              final List<GordianPEMObject> pObjects) throws OceanusException {
         /* Protect against exceptions */
         try {
-            /* Loop through the certificates */
-            for (byte[] myCert : pCertificates) {
-                /* Write the certificate header */
+            /* Loop through the objects */
+            for (GordianPEMObject myObject : pObjects) {
+                /* Determine header type */
+                final String myType = myObject.getObjectType().getId();
+
+                /* Write the object header */
                 pWriter.write(BRACKET);
                 pWriter.write(BEGIN);
                 pWriter.write(myType);
                 pWriter.write(BRACKET);
-                pWriter.write('\n');
+                pWriter.write(NEWLINE);
 
                 /* Access base64 data */
-                final String myBase64 = TethysDataConverter.byteArrayToBase64(myCert);
+                final String myBase64 = TethysDataConverter.byteArrayToBase64(myObject.getEncoded());
                 int myLen = myBase64.length();
                 for (int i = 0; myLen > 0; i += PEMLEN, myLen -= PEMLEN) {
                     pWriter.write(myBase64, i, Math.min(myLen, PEMLEN));
-                    pWriter.write('\n');
+                    pWriter.write(NEWLINE);
                 }
 
-                /* Write the certificate trailer */
+                /* Write the object trailer */
                 pWriter.write(BRACKET);
                 pWriter.write(END);
                 pWriter.write(myType);
                 pWriter.write(BRACKET);
-                pWriter.write('\n');
-                pWriter.write('\n');
+                pWriter.write(NEWLINE);
+                pWriter.write(NEWLINE);
             }
 
             /* Catch exceptions */
         } catch (IOException e) {
-            throw new GordianIOException("Failed to parse file", e);
+            throw new GordianIOException("Failed to write to stream", e);
         }
    }
 
     /**
      * Parse certificates.
      * @param pReader the reader
-     * @return the list of certificates
+     * @return the list of objects
      * @throws OceanusException on error
      */
-    private List<byte[]> parseCertificates(final BufferedReader pReader) throws OceanusException {
+    private List<GordianPEMObject> parseObjects(final BufferedReader pReader) throws OceanusException {
         /* Protect against exceptions */
         try {
             /* Create variables */
-            final List<byte[]> myCerts = new ArrayList<>();
+            final List<GordianPEMObject> myObjects = new ArrayList<>();
             final StringBuilder myCurrent = new StringBuilder();
 
             /* Read the lines */
@@ -274,37 +176,35 @@ public class GordianPEMParser {
                 if (myLine.startsWith(BRACKET)) {
                     /* Process the boundary */
                     myLine = myLine.substring(BRACKET.length());
-                    if (inParsing) {
-                        processEndBoundary(myLine, myCurrent, myCerts);
+                    if (theObjectType != null) {
+                        processEndBoundary(myLine, myCurrent, myObjects);
                     } else {
-                        processStartBoundary(myLine, myCerts.isEmpty());
+                        processStartBoundary(myLine);
                     }
 
                     /* else if we are parsing, add line to buffer */
-                } else if (inParsing) {
+                } else if (theObjectType != null) {
                     myCurrent.append(myLine);
                 }
 
                 /* Ignore other lines */
             }
 
-            /* Return the certificates */
-            return myCerts;
+            /* Return the objects */
+            return myObjects;
 
             /* Catch exceptions */
         } catch (IOException e) {
-            throw new GordianIOException("Failed to parse file", e);
+            throw new GordianIOException("Failed to parse stream", e);
         }
     }
 
     /**
      * Process the start boundary.
      * @param pBoundary the boundary
-     * @param pFirst is this the first certificate
      * @throws OceanusException on error
      */
-    private void processStartBoundary(final String pBoundary,
-                                      final boolean pFirst) throws OceanusException {
+    private void processStartBoundary(final String pBoundary) throws OceanusException {
         /* If this is not a begin boundary */
         if (!pBoundary.startsWith(BEGIN)) {
             throw new GordianDataException("Sequencing error");
@@ -312,27 +212,19 @@ public class GordianPEMParser {
 
         /* Check object type */
         final String myLine = pBoundary.substring(BEGIN.length());
-        final boolean isSet = getBoundaryType(myLine);
-        if (pFirst) {
-            isKeySet = isSet;
-        } else if (isKeySet != isSet) {
-            throw new GordianDataException("Mixed dataTypes");
-        }
-
-        /* Note the we are parsing */
-        inParsing = true;
+        theObjectType = GordianPEMObjectType.getObjectType(myLine);
     }
 
     /**
      * Process the end boundary.
      * @param pBoundary the boundary
      * @param pCurrent the current item
-     * @param pList the list of certificates
+     * @param pList the list of parsed objects
      * @throws OceanusException on error
      */
     private void processEndBoundary(final String pBoundary,
                                     final StringBuilder pCurrent,
-                                    final List<byte[]> pList) throws OceanusException {
+                                    final List<GordianPEMObject> pList) throws OceanusException {
         /* If this is not an end boundary */
         if (!pBoundary.startsWith(END)) {
             throw new GordianDataException("Sequencing error");
@@ -340,36 +232,16 @@ public class GordianPEMParser {
 
         /* Check object type */
         final String myLine = pBoundary.substring(END.length());
-        final boolean isSet = getBoundaryType(myLine);
-        if (isKeySet != isSet) {
+        final GordianPEMObjectType myType = GordianPEMObjectType.getObjectType(myLine);
+        if (theObjectType != myType) {
             throw new GordianDataException("Mixed dataTypes");
         }
 
         /* Parse the data and add certificate to list */
         final String myData = pCurrent.toString();
         final byte[] myBytes = TethysDataConverter.base64ToByteArray(myData);
-        pList.add(myBytes);
-        inParsing = false;
-    }
-
-    /**
-     * Obtain the boundary type.
-     * @param pBoundary the boundary
-     * @return keySetCertificate true/false
-     * @throws OceanusException on error
-     */
-    private static boolean getBoundaryType(final String pBoundary) throws OceanusException {
-        /* If this is a keyPairCertificate */
-        if (pBoundary.equals(PAIRCERTIFICATE + BRACKET)) {
-            return false;
-        }
-
-        /* If this is a keyPairSetCertificate */
-        if (pBoundary.equals(SETCERTIFICATE + BRACKET)) {
-            return true;
-        }
-
-        /* Unsupported object type */
-        throw new GordianDataException("Unsupported object type");
+        pList.add(new GordianPEMObject(theObjectType, myBytes));
+        theObjectType = null;
+        pCurrent.setLength(0);
     }
 }

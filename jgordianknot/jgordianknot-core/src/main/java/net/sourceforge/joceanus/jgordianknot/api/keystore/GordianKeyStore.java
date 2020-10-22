@@ -25,7 +25,6 @@ import net.sourceforge.joceanus.jgordianknot.api.key.GordianKey;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPair;
 import net.sourceforge.joceanus.jgordianknot.api.keypairset.GordianKeyPairSet;
 import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySet;
-import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetHash;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
 
@@ -145,14 +144,6 @@ public interface GordianKeyStore {
                    char[] pPassword) throws OceanusException;
 
     /**
-     * Set keySetHash entry.
-     * @param pAlias the alias
-     * @param pHash the keySetHash
-     */
-    void setKeySetHash(String pAlias,
-                       GordianKeySetHash pHash);
-
-    /**
      * Determine whether the alias is a specified entry type.
      * @param <T> the entry class
      * @param pAlias the alias
@@ -221,13 +212,6 @@ public interface GordianKeyStore {
      * @return true/false
      */
     boolean isKeySetEntry(String pAlias);
-
-    /**
-     * Determine whether the alias is a keySetHash entry.
-     * @param pAlias the alias
-     * @return true/false
-     */
-    boolean isKeySetHashEntry(String pAlias);
 
     /**
      * Obtain the Entry for the alias.
@@ -307,16 +291,6 @@ public interface GordianKeyStore {
      */
     GordianKeySet getKeySet(String pAlias,
                             char[] pPassword) throws OceanusException;
-
-    /**
-     * Obtain the keySetHash for the alias.
-     * @param pAlias the alias
-     * @param pPassword the password
-     * @return the keySetHash (or null)
-     * @throws OceanusException on error
-     */
-    GordianKeySetHash getKeySetHash(String pAlias,
-                                    char[] pPassword) throws OceanusException;
 
     /**
      * Obtain the creationDate of the alias.

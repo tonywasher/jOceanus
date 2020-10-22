@@ -31,7 +31,6 @@ import net.sourceforge.joceanus.jgordianknot.api.key.GordianKey;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPair;
 import net.sourceforge.joceanus.jgordianknot.api.keypairset.GordianKeyPairSet;
 import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySet;
-import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetHash;
 import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetHashSpec;
 import net.sourceforge.joceanus.jgordianknot.api.keystore.GordianCertificate;
 import net.sourceforge.joceanus.jgordianknot.api.keystore.GordianCertificateId;
@@ -39,7 +38,6 @@ import net.sourceforge.joceanus.jgordianknot.api.keystore.GordianKeyPairCertific
 import net.sourceforge.joceanus.jgordianknot.api.keystore.GordianKeyPairSetCertificate;
 import net.sourceforge.joceanus.jgordianknot.api.keystore.GordianKeyStore;
 import net.sourceforge.joceanus.jgordianknot.api.keystore.GordianKeyStoreEntry;
-import net.sourceforge.joceanus.jgordianknot.api.keystore.GordianKeyStoreEntry.GordianKeyStoreHash;
 import net.sourceforge.joceanus.jgordianknot.api.keystore.GordianKeyStoreEntry.GordianKeyStoreKey;
 import net.sourceforge.joceanus.jgordianknot.api.keystore.GordianKeyStoreEntry.GordianKeyStorePair;
 import net.sourceforge.joceanus.jgordianknot.api.keystore.GordianKeyStoreEntry.GordianKeyStorePairCertificate;
@@ -56,7 +54,6 @@ import net.sourceforge.joceanus.jgordianknot.impl.core.keystore.GordianCoreKeySt
 import net.sourceforge.joceanus.jgordianknot.impl.core.keystore.GordianCoreKeyStoreEntry.GordianCoreKeyStorePairSetCertificate;
 import net.sourceforge.joceanus.jgordianknot.impl.core.keystore.GordianKeyStoreElement.GordianKeyStoreCertificateHolder;
 import net.sourceforge.joceanus.jgordianknot.impl.core.keystore.GordianKeyStoreElement.GordianKeyStoreCertificateKey;
-import net.sourceforge.joceanus.jgordianknot.impl.core.keystore.GordianKeyStoreElement.GordianKeyStoreHashElement;
 import net.sourceforge.joceanus.jgordianknot.impl.core.keystore.GordianKeyStoreElement.GordianKeyStoreKeyElement;
 import net.sourceforge.joceanus.jgordianknot.impl.core.keystore.GordianKeyStoreElement.GordianKeyStorePairCertificateElement;
 import net.sourceforge.joceanus.jgordianknot.impl.core.keystore.GordianKeyStoreElement.GordianKeyStorePairElement;
@@ -438,17 +435,6 @@ public class GordianCoreKeyStore
         theAliases.put(pAlias, mySet);
     }
 
-    @Override
-    public void setKeySetHash(final String pAlias,
-                              final GordianKeySetHash pHash) {
-        /* Check the alias */
-        checkAlias(pAlias);
-
-        /* Set the new value */
-        final GordianKeyStoreHashElement myHash = new GordianKeyStoreHashElement(pHash);
-        theAliases.put(pAlias, myHash);
-    }
-
     /**
      * Check that the alias is valid.
      * @param pAlias the alias
@@ -476,9 +462,6 @@ public class GordianCoreKeyStore
         }
         if (pClazz.isAssignableFrom(GordianKeyStoreKey.class)) {
             return isKeyEntry(pAlias);
-        }
-        if (pClazz.isAssignableFrom(GordianKeyStoreHash.class)) {
-            return isKeySetHashEntry(pAlias);
         }
         if (pClazz.isAssignableFrom(GordianKeyStoreSet.class)) {
             return isKeySetEntry(pAlias);
@@ -517,11 +500,6 @@ public class GordianCoreKeyStore
     }
 
     @Override
-    public boolean isKeySetHashEntry(final String pAlias) {
-        return theAliases.get(pAlias) instanceof GordianKeyStoreHashElement;
-    }
-
-    @Override
     public GordianKeyStoreEntry getEntry(final String pAlias,
                                          final char[] pPassword) throws OceanusException {
         if (isKeyPairCertificateEntry(pAlias)) {
@@ -538,9 +516,6 @@ public class GordianCoreKeyStore
         }
         if (isKeyEntry(pAlias)) {
             return getKeyStoreKey(pAlias, pPassword);
-        }
-        if (isKeySetHashEntry(pAlias)) {
-            return getKeyStoreHash(pAlias, pPassword);
         }
         return isKeySetEntry(pAlias)
                 ? getKeyStoreSet(pAlias, pPassword)
@@ -690,27 +665,6 @@ public class GordianCoreKeyStore
         final GordianCoreKeyStoreEntry myEntry = theAliases.get(pAlias);
         return myEntry instanceof GordianKeyStoreSetElement
                 ? ((GordianKeyStoreSetElement) myEntry).buildEntry(this, pPassword)
-                : null;
-    }
-
-    @Override
-    public GordianKeySetHash getKeySetHash(final String pAlias,
-                                           final char[] pPassword) throws OceanusException {
-        final GordianKeyStoreHash myHash = getKeyStoreHash(pAlias, pPassword);
-        return myHash == null ? null : myHash.getKeySetHash();
-    }
-
-    /**
-     * Obtain the keyStoreKeySetHash.
-     * @param pAlias the alias
-     * @param pPassword the password
-     * @return the keySetHash entry (or null)
-     */
-    private GordianKeyStoreHash getKeyStoreHash(final String pAlias,
-                                                final char[] pPassword) throws OceanusException {
-        final GordianCoreKeyStoreEntry myEntry = theAliases.get(pAlias);
-        return myEntry instanceof GordianKeyStoreHashElement
-                ? ((GordianKeyStoreHashElement) myEntry).buildEntry(this, pPassword)
                 : null;
     }
 

@@ -24,7 +24,6 @@ import net.sourceforge.joceanus.jgordianknot.api.key.GordianKey;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPair;
 import net.sourceforge.joceanus.jgordianknot.api.keypairset.GordianKeyPairSet;
 import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySet;
-import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetHash;
 import net.sourceforge.joceanus.jgordianknot.api.keystore.GordianCertificate;
 import net.sourceforge.joceanus.jgordianknot.api.keystore.GordianKeyPairCertificate;
 import net.sourceforge.joceanus.jgordianknot.api.keystore.GordianKeyPairSetCertificate;
@@ -300,34 +299,6 @@ class GordianCoreKeyStoreEntry
          */
         public GordianKeySet getKeySet() {
             return theKeySet;
-        }
-    }
-
-    /**
-     * KeyStore KeySetHash.
-     */
-    static class GordianCoreKeyStoreHash
-            extends GordianCoreKeyStoreEntry
-            implements GordianKeyStoreHash {
-        /**
-         * The KeySetHash.
-         */
-        private final GordianKeySetHash theHash;
-
-        /**
-         * Constructor.
-         * @param pHash the keySetHash
-         * @param pDate the creation date
-         */
-        GordianCoreKeyStoreHash(final GordianKeySetHash pHash,
-                                final TethysDate pDate) {
-            super(pDate);
-            theHash = pHash;
-        }
-
-        @Override
-        public GordianKeySetHash getKeySetHash() {
-            return theHash;
         }
     }
 }

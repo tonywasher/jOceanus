@@ -379,10 +379,8 @@ public interface GordianKeyStoreElement {
          * @return the securedPrivateKey
          * @throws OceanusException on error
          */
-        byte[] securePrivateKey(final GordianKeySet pKeySet,
-                                final K pKeyPair) throws OceanusException {
-            return theSecuringHash.getHash();
-        }
+        abstract byte[] securePrivateKey(GordianKeySet pKeySet,
+                                         K pKeyPair) throws OceanusException;
 
         @Override
         public boolean equals(final Object pThat) {
@@ -479,7 +477,7 @@ public interface GordianKeyStoreElement {
          * Build the corresponding keyStoreEntry.
          * @param pKeyStore the keyStore
          * @param pPassword the password
-         * @return the keyStore certificate entry
+         * @return the keyStorePair entry
          * @throws OceanusException on error
          */
         GordianCoreKeyStorePair buildEntry(final GordianCoreKeyStore pKeyStore,
@@ -488,10 +486,10 @@ public interface GordianKeyStoreElement {
             final List<GordianKeyPairCertificate> myChain = buildChain(pKeyStore);
 
             /* Resolve securing hash */
-            final GordianKeyStoreHash myHash = getSecuringHash().buildEntry(pKeyStore, pPassword);
+            final GordianKeySetHash myHash = getSecuringHash().buildEntry(pKeyStore, pPassword);
 
             /* derive the keyPair */
-            final GordianKeySet myKeySet = myHash.getKeySetHash().getKeySet();
+            final GordianKeySet myKeySet = myHash.getKeySet();
             final GordianCoreKeyPairCertificate myCert = (GordianCoreKeyPairCertificate) myChain.get(0);
             final GordianKeyPair myPair = myKeySet.deriveKeyPair(myCert.getX509KeySpec(), getSecuredKey());
 
@@ -563,7 +561,7 @@ public interface GordianKeyStoreElement {
          * Build the corresponding keyStoreEntry.
          * @param pKeyStore the keyStore
          * @param pPassword the password
-         * @return the keyStore certificate entry
+         * @return the keyStorePairSet entry
          * @throws OceanusException on error
          */
         GordianCoreKeyStorePairSet buildEntry(final GordianCoreKeyStore pKeyStore,
@@ -572,10 +570,10 @@ public interface GordianKeyStoreElement {
             final List<GordianKeyPairSetCertificate> myChain = buildChain(pKeyStore);
 
             /* Resolve securing hash */
-            final GordianKeyStoreHash myHash = getSecuringHash().buildEntry(pKeyStore, pPassword);
+            final GordianKeySetHash myHash = getSecuringHash().buildEntry(pKeyStore, pPassword);
 
             /* derive the keyPair */
-            final GordianKeySet myKeySet = myHash.getKeySetHash().getKeySet();
+            final GordianKeySet myKeySet = myHash.getKeySet();
             final GordianCoreKeyPairSetCertificate myCert = (GordianCoreKeyPairSetCertificate) myChain.get(0);
             final GordianKeyPairSet myPair = myKeySet.deriveKeyPairSet(myCert.getX509KeySpec(), getSecuredKey());
 
@@ -630,12 +628,11 @@ public interface GordianKeyStoreElement {
          * @return the keyStore certificate entry
          * @throws OceanusException on error
          */
-        GordianCoreKeyStoreHash buildEntry(final GordianCoreKeyStore pKeyStore,
-                                           final char[] pPassword) throws OceanusException {
+        GordianKeySetHash buildEntry(final GordianCoreKeyStore pKeyStore,
+                                     final char[] pPassword) throws OceanusException {
             /* Resolve the hash */
             final GordianKeySetFactory myFactory = pKeyStore.getFactory().getKeySetFactory();
-            final GordianKeySetHash myHash = myFactory.deriveKeySetHash(theHash, pPassword);
-            return new GordianCoreKeyStoreHash(myHash, getCreationDate());
+            return myFactory.deriveKeySetHash(theHash, pPassword);
         }
 
         @Override
@@ -748,7 +745,15 @@ public interface GordianKeyStoreElement {
          * Obtain the securingHash.
          * @return the securingHash
          */
-        byte[] getSecuringHash() {
+        GordianKeyStoreHashElement getSecuringHash() {
+            return theSecuringHash;
+        }
+
+        /**
+         * Obtain the securingHashHash.
+         * @return the securingHashHash
+         */
+        byte[] getSecuringHashHash() {
             return theSecuringHash.getHash();
         }
 
@@ -762,10 +767,10 @@ public interface GordianKeyStoreElement {
         GordianCoreKeyStoreKey<T> buildEntry(final GordianCoreKeyStore pKeyStore,
                                              final char[] pPassword) throws OceanusException {
             /* Resolve securing hash */
-            final GordianKeyStoreHash myHash = theSecuringHash.buildEntry(pKeyStore, pPassword);
+            final GordianKeySetHash myHash = theSecuringHash.buildEntry(pKeyStore, pPassword);
 
             /* derive the key */
-            final GordianKeySet myKeySet = myHash.getKeySetHash().getKeySet();
+            final GordianKeySet myKeySet = myHash.getKeySet();
             final GordianKey<T> myKey = myKeySet.deriveKey(theSecuredKey, theKeyType);
             return new GordianCoreKeyStoreKey<>(myKey, getCreationDate());
         }
@@ -789,7 +794,7 @@ public interface GordianKeyStoreElement {
             /* Check that the hashes match */
             return theKeyType.equals(myThat.getKeyType())
                     && Arrays.equals(theSecuredKey, myThat.getSecuredKey())
-                    && Arrays.equals(getSecuringHash(), myThat.getSecuringHash())
+                    && Arrays.equals(getSecuringHashHash(), myThat.getSecuringHashHash())
                     && super.equals(pThat);
         }
 
@@ -797,7 +802,7 @@ public interface GordianKeyStoreElement {
         public int hashCode() {
             return theKeyType.hashCode()
                     + Arrays.hashCode(theSecuredKey)
-                    + Arrays.hashCode(getSecuringHash())
+                    + Arrays.hashCode(getSecuringHashHash())
                     + super.hashCode();
         }
     }
@@ -866,7 +871,15 @@ public interface GordianKeyStoreElement {
          * Obtain the securingHash.
          * @return the securingHash
          */
-        byte[] getSecuringHash() {
+        GordianKeyStoreHashElement getSecuringHash() {
+            return theSecuringHash;
+        }
+
+        /**
+         * Obtain the securingHashHash.
+         * @return the securingHashHash
+         */
+        byte[] getSecuringHashHash() {
             return theSecuringHash.getHash();
         }
 
@@ -880,8 +893,8 @@ public interface GordianKeyStoreElement {
         GordianCoreKeyStoreSet buildEntry(final GordianCoreKeyStore pKeyStore,
                                           final char[] pPassword) throws OceanusException {
             /* Resolve the hash */
-            final GordianKeyStoreHash myHash = theSecuringHash.buildEntry(pKeyStore, pPassword);
-            final GordianKeySet mySecuringKeySet = myHash.getKeySetHash().getKeySet();
+            final GordianKeySetHash myHash = theSecuringHash.buildEntry(pKeyStore, pPassword);
+            final GordianKeySet mySecuringKeySet = myHash.getKeySet();
 
             /* Derive the keySet */
             final GordianKeySet myKeySet = mySecuringKeySet.deriveKeySet(theSecuredKeySet);
@@ -908,14 +921,14 @@ public interface GordianKeyStoreElement {
 
             /* Check that the hashes match */
             return Arrays.equals(theSecuredKeySet, myThat.getSecuredKeySet())
-                    && Arrays.equals(getSecuringHash(), myThat.getSecuringHash())
+                    && Arrays.equals(getSecuringHashHash(), myThat.getSecuringHashHash())
                     && super.equals(pThat);
         }
 
         @Override
         public int hashCode() {
             return Arrays.hashCode(theSecuredKeySet)
-                    + Arrays.hashCode(getSecuringHash())
+                    + Arrays.hashCode(getSecuringHashHash())
                     + super.hashCode();
         }
     }

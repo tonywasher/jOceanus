@@ -34,13 +34,12 @@ import net.sourceforge.joceanus.jgordianknot.api.factory.GordianFactoryType;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianDSAElliptic;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPairSpec;
 import net.sourceforge.joceanus.jgordianknot.api.keypairset.GordianKeyPairSetSpec;
-import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetFactory;
 import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetHashSpec;
 import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetSpec;
 import net.sourceforge.joceanus.jgordianknot.api.keystore.GordianKeyPairUsage;
 import net.sourceforge.joceanus.jgordianknot.api.keystore.GordianKeyPairUse;
 import net.sourceforge.joceanus.jgordianknot.api.keystore.GordianKeyStore;
-import net.sourceforge.joceanus.jgordianknot.api.keystore.GordianKeyStoreEntry.GordianKeyStoreHash;
+import net.sourceforge.joceanus.jgordianknot.api.keystore.GordianKeyStoreEntry;
 import net.sourceforge.joceanus.jgordianknot.api.keystore.GordianKeyStoreEntry.GordianKeyStoreKey;
 import net.sourceforge.joceanus.jgordianknot.api.keystore.GordianKeyStoreEntry.GordianKeyStorePair;
 import net.sourceforge.joceanus.jgordianknot.api.keystore.GordianKeyStoreEntry.GordianKeyStorePairSet;
@@ -91,11 +90,6 @@ public class KeyStoreTest {
         final GordianKeyStore myStore = myFactory.createKeyStore(myKeySetHashSpec);
         final GordianKeyStoreManager myMgr = myFactory.createKeyStoreManager(myStore);
 
-        /* Create a keySetHash */
-        final GordianKeySetFactory mySetFactory = FACTORY.getKeySetFactory();
-        final GordianKeyStoreHash myHash = myMgr.createKeySetHash(myKeySetHashSpec, DEF_PASSWORD, KeyStoreAlias.KEYSETHASH.getName());
-        checkKeySetHash(myStore, KeyStoreAlias.KEYSETHASH, myHash);
-
         /* Create the keySet */
         final GordianKeyStoreSet mySet = myMgr.createKeySet(myKeySetSpec, KeyStoreAlias.KEYSET.getName(), DEF_PASSWORD);
         checkKeySet(myStore, KeyStoreAlias.KEYSET, mySet);
@@ -120,7 +114,6 @@ public class KeyStoreTest {
         Assertions.assertEquals(myStore, myStore2);
 
         /* delete the entries */
-        myStore.deleteEntry(KeyStoreAlias.KEYSETHASH.getName());
         myStore.deleteEntry(KeyStoreAlias.KEYSET.getName());
         myStore.deleteEntry(KeyStoreAlias.SYMKEY.getName());
         myStore.deleteEntry(KeyStoreAlias.STREAMKEY.getName());
@@ -312,39 +305,22 @@ public class KeyStoreTest {
     }
 
     /**
-     * check keySetHash.
-     * @param pKeyStore the keyStore
-     * @param pAlias the alias
-     * @param pKeyHash the keyHash
-     * @throws OceanusException on error
-     */
-    public void checkKeySetHash(final GordianKeyStore pKeyStore,
-                                final KeyStoreAlias pAlias,
-                                final GordianKeyStoreHash pKeyHash) throws OceanusException {
-        final String myName = pAlias.getName();
-        Assertions.assertTrue(pKeyStore.containsAlias(myName));
-        Assertions.assertTrue(pKeyStore.isKeySetHashEntry(myName));
-        Assertions.assertTrue(pKeyStore.entryInstanceOf(myName, GordianKeyStoreHash.class));
-        Assertions.assertEquals(pKeyHash.getKeySetHash(), pKeyStore.getKeySetHash(myName, DEF_PASSWORD));
-        Assertions.assertEquals(pKeyHash, pKeyStore.getEntry(myName, DEF_PASSWORD));
-    }
-
-    /**
      * check keySet.
      * @param pKeyStore the keyStore
      * @param pAlias the alias
      * @param pKeySet the keySet
      * @throws OceanusException on error
      */
-    public void checkKeySet(final GordianKeyStore pKeyStore,
-                            final KeyStoreAlias pAlias,
-                            final GordianKeyStoreSet pKeySet) throws OceanusException {
+    public static void checkKeySet(final GordianKeyStore pKeyStore,
+                                   final KeyStoreAlias pAlias,
+                                   final GordianKeyStoreSet pKeySet) throws OceanusException {
         final String myName = pAlias.getName();
         Assertions.assertTrue(pKeyStore.containsAlias(myName));
         Assertions.assertTrue(pKeyStore.isKeySetEntry(myName));
         Assertions.assertTrue(pKeyStore.entryInstanceOf(myName, GordianKeyStoreSet.class));
         Assertions.assertEquals(pKeySet.getKeySet(), pKeyStore.getKeySet(myName, DEF_PASSWORD));
         Assertions.assertEquals(pKeySet, pKeyStore.getEntry(myName, DEF_PASSWORD));
+        checkExport(pKeyStore, pAlias, pKeySet);
     }
 
     /**
@@ -354,15 +330,16 @@ public class KeyStoreTest {
      * @param pKey the key
      * @throws OceanusException on error
      */
-    public void checkKey(final GordianKeyStore pKeyStore,
-                         final KeyStoreAlias pAlias,
-                         final GordianKeyStoreKey<?> pKey) throws OceanusException {
+    public static void checkKey(final GordianKeyStore pKeyStore,
+                                final KeyStoreAlias pAlias,
+                                final GordianKeyStoreKey<?> pKey) throws OceanusException {
         final String myName = pAlias.getName();
         Assertions.assertTrue(pKeyStore.containsAlias(myName));
         Assertions.assertTrue(pKeyStore.isKeyEntry(myName));
         Assertions.assertTrue(pKeyStore.entryInstanceOf(myName, GordianKeyStoreKey.class));
         Assertions.assertEquals(pKey.getKey(), pKeyStore.getKey(myName, DEF_PASSWORD));
         Assertions.assertEquals(pKey, pKeyStore.getEntry(myName, DEF_PASSWORD));
+        checkExport(pKeyStore, pAlias, pKey);
     }
 
     /**
@@ -372,9 +349,9 @@ public class KeyStoreTest {
      * @param pKeyPair the keyPair
      * @throws OceanusException on error
      */
-    public void checkKeyPair(final GordianKeyStore pKeyStore,
-                             final KeyStoreAlias pAlias,
-                             final GordianKeyStorePair pKeyPair) throws OceanusException {
+    public static void checkKeyPair(final GordianKeyStore pKeyStore,
+                                    final KeyStoreAlias pAlias,
+                                    final GordianKeyStorePair pKeyPair) throws OceanusException {
         final String myName = pAlias.getName();
         Assertions.assertTrue(pKeyStore.containsAlias(myName));
         Assertions.assertTrue(pKeyStore.isKeyPairEntry(myName));
@@ -382,6 +359,7 @@ public class KeyStoreTest {
         Assertions.assertEquals(pKeyPair.getKeyPair(), pKeyStore.getKeyPair(myName, DEF_PASSWORD));
         Assertions.assertEquals(pKeyPair.getCertificateChain(), pKeyStore.getKeyPairCertificateChain(myName));
         Assertions.assertEquals(pKeyPair, pKeyStore.getEntry(myName, DEF_PASSWORD));
+        checkExport(pKeyStore, pAlias, pKeyPair);
     }
 
     /**
@@ -391,9 +369,9 @@ public class KeyStoreTest {
      * @param pKeyPairSet the keyPairSet
      * @throws OceanusException on error
      */
-    public void checkKeyPairSet(final GordianKeyStore pKeyStore,
-                                final KeyStoreAlias pAlias,
-                                final GordianKeyStorePairSet pKeyPairSet) throws OceanusException {
+    public static void checkKeyPairSet(final GordianKeyStore pKeyStore,
+                                       final KeyStoreAlias pAlias,
+                                       final GordianKeyStorePairSet pKeyPairSet) throws OceanusException {
         final String myName = pAlias.getName();
         Assertions.assertTrue(pKeyStore.containsAlias(myName));
         Assertions.assertTrue(pKeyStore.isKeyPairSetEntry(myName));
@@ -401,17 +379,37 @@ public class KeyStoreTest {
         Assertions.assertEquals(pKeyPairSet.getKeyPairSet(), pKeyStore.getKeyPairSet(myName, DEF_PASSWORD));
         Assertions.assertEquals(pKeyPairSet.getCertificateChain(), pKeyStore.getKeyPairSetCertificateChain(myName));
         Assertions.assertEquals(pKeyPairSet, pKeyStore.getEntry(myName, DEF_PASSWORD));
+        checkExport(pKeyStore, pAlias, pKeyPairSet);
+    }
+
+    /**
+     * check keySet.
+     * @param pKeyStore the keyStore
+     * @param pAlias the alias
+     * @param pEntry the entry
+     * @throws OceanusException on error
+     */
+    private static void checkExport(final GordianKeyStore pKeyStore,
+                                    final KeyStoreAlias pAlias,
+                                    final GordianKeyStoreEntry pEntry) throws OceanusException {
+        final GordianKeyStoreFactory myFactory = FACTORY.getKeyPairFactory().getKeyStoreFactory();
+        final GordianKeyStoreManager myMgr = myFactory.createKeyStoreManager(pKeyStore);
+        final ByteArrayOutputStream myOutStream = new ByteArrayOutputStream();
+        myMgr.exportEntry(pAlias.getName(), myOutStream, DEF_PASSWORD);
+        final ByteArrayInputStream myInputStream = new ByteArrayInputStream(myOutStream.toByteArray());
+        Assertions.assertEquals(pEntry, myMgr.importEntry(myInputStream, DEF_PASSWORD));
     }
 
     /**
      * Build X500Name.
      * @param pAlias the Alias
      */
-    private X500Name buildX500Name(final KeyStoreAlias pAlias) {
+    private static X500Name buildX500Name(final KeyStoreAlias pAlias) {
         /* Build the name */
         X500NameBuilder myBuilder = new X500NameBuilder(BCStyle.INSTANCE);
         myBuilder.addRDN(BCStyle.CN, pAlias.getName());
-        myBuilder.addRDN(BCStyle.O, "jOceanus development");
+        myBuilder.addRDN(BCStyle.OU, "jOceanus development");
+        myBuilder.addRDN(BCStyle.O, "jOceanus");
         myBuilder.addRDN(BCStyle.L, "Romsey");
         myBuilder.addRDN(BCStyle.ST, "HANTS");
         myBuilder.addRDN(BCStyle.C, "UK");
@@ -481,11 +479,6 @@ public class KeyStoreTest {
          * KeySet.
          */
         KEYSET("KeySet"),
-
-        /**
-         * KeySetHash.
-         */
-        KEYSETHASH("KeySetHash"),
 
         /**
          * SymKey.

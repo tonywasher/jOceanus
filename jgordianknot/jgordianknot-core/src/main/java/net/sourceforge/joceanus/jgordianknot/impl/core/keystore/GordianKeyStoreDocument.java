@@ -331,7 +331,7 @@ public final class GordianKeyStoreDocument {
         /* Build hash entry */
         final Element myHashEl = theDocument.createElement(ELEMENT_HASH);
         pNode.appendChild(myHashEl);
-        myHashEl.setTextContent(TethysDataConverter.byteArrayToBase64(pEntry.getSecuringHash()));
+        myHashEl.setTextContent(TethysDataConverter.byteArrayToBase64(pEntry.getSecuringHashHash()));
     }
 
     /**
@@ -355,7 +355,7 @@ public final class GordianKeyStoreDocument {
         /* Build hash entry */
         final Element myHashEl = theDocument.createElement(ELEMENT_HASH);
         pNode.appendChild(myHashEl);
-        myHashEl.setTextContent(TethysDataConverter.byteArrayToBase64(pEntry.getSecuringHash()));
+        myHashEl.setTextContent(TethysDataConverter.byteArrayToBase64(pEntry.getSecuringHashHash()));
     }
 
     /**
