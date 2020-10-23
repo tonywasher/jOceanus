@@ -142,6 +142,7 @@ public abstract class JcaSignature
     @Override
     public void initForSigning(final GordianKeyPair pKeyPair) throws OceanusException {
         /* Initialise detail */
+        JcaKeyPair.checkKeyPair(pKeyPair);
         super.initForSigning(pKeyPair);
 
         /* Initialise for signing */
@@ -165,6 +166,7 @@ public abstract class JcaSignature
     @Override
     public void initForVerify(final GordianKeyPair pKeyPair) throws OceanusException {
         /* Initialise detail */
+        JcaKeyPair.checkKeyPair(pKeyPair);
         super.initForVerify(pKeyPair);
 
         /* Initialise for signing */
@@ -206,6 +208,7 @@ public abstract class JcaSignature
         /* Protect against exception */
         try {
             return getSigner().sign();
+
         } catch (SignatureException e) {
             throw new GordianCryptoException(SIG_ERROR, e);
         }
@@ -380,6 +383,7 @@ public abstract class JcaSignature
         @Override
         public void initForSigning(final GordianKeyPair pKeyPair) throws OceanusException {
             /* Determine the required signer */
+            JcaKeyPair.checkKeyPair(pKeyPair);
             final String mySignName = getAlgorithmForKeyPair(pKeyPair);
             setSigner(JcaSignatureFactory.getJavaSignature(mySignName, true));
 
@@ -390,6 +394,7 @@ public abstract class JcaSignature
         @Override
         public void initForVerify(final GordianKeyPair pKeyPair) throws OceanusException {
             /* Determine the required signer */
+            JcaKeyPair.checkKeyPair(pKeyPair);
             final String mySignName = getAlgorithmForKeyPair(pKeyPair);
             setSigner(JcaSignatureFactory.getJavaSignature(mySignName, true));
 
@@ -468,6 +473,7 @@ public abstract class JcaSignature
         @Override
         public void initForSigning(final GordianKeyPair pKeyPair) throws OceanusException {
             /* Determine the required signer */
+            JcaKeyPair.checkKeyPair(pKeyPair);
             final String mySignName = getAlgorithmForKeyPair(pKeyPair);
             setSigner(JcaSignatureFactory.getJavaSignature(mySignName, true));
 
@@ -478,6 +484,7 @@ public abstract class JcaSignature
         @Override
         public void initForVerify(final GordianKeyPair pKeyPair) throws OceanusException {
             /* Determine the required signer */
+            JcaKeyPair.checkKeyPair(pKeyPair);
             final String mySignName = getAlgorithmForKeyPair(pKeyPair);
             setSigner(JcaSignatureFactory.getJavaSignature(mySignName, true));
 
@@ -532,6 +539,7 @@ public abstract class JcaSignature
         @Override
         public void initForSigning(final GordianKeyPair pKeyPair) throws OceanusException {
             /* Determine the required signer */
+            JcaKeyPair.checkKeyPair(pKeyPair);
             final String mySignName = getAlgorithmForKeyPair(pKeyPair);
             setSigner(JcaSignatureFactory.getJavaSignature(mySignName, false));
 
@@ -542,6 +550,7 @@ public abstract class JcaSignature
         @Override
         public void initForVerify(final GordianKeyPair pKeyPair) throws OceanusException {
             /* Determine the required signer */
+            JcaKeyPair.checkKeyPair(pKeyPair);
             final String mySignName = getAlgorithmForKeyPair(pKeyPair);
             setSigner(JcaSignatureFactory.getJavaSignature(mySignName, false));
 

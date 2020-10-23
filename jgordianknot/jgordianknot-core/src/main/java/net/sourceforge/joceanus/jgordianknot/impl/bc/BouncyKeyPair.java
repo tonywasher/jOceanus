@@ -18,12 +18,15 @@ package net.sourceforge.joceanus.jgordianknot.impl.bc;
 
 import org.bouncycastle.crypto.params.AsymmetricKeyParameter;
 
+import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPair;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPairSpec;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianStateAwareKeyPair;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianCoreFactory;
+import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianDataException;
 import net.sourceforge.joceanus.jgordianknot.impl.core.keypair.GordianCoreKeyPair;
 import net.sourceforge.joceanus.jgordianknot.impl.core.keypair.GordianPrivateKey;
 import net.sourceforge.joceanus.jgordianknot.impl.core.keypair.GordianPublicKey;
+import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
  * BouncyCastle Asymmetric KeyPair.
@@ -61,6 +64,37 @@ public class BouncyKeyPair
     @Override
     public BouncyKeyPair getPublicOnly() {
         return new BouncyKeyPair(getPublicKey());
+    }
+
+    /**
+     * Check for bouncyKeyPair.
+     * @param pKeyPair the keyPair to check
+     * @throws OceanusException on error
+     */
+    public static void checkKeyPair(final GordianKeyPair pKeyPair) throws OceanusException {
+        /* Check that it is a BouncyKeyPair */
+        if (!(pKeyPair instanceof BouncyKeyPair)) {
+            /* Reject keyPair */
+            throw new GordianDataException("Invalid KeyPair");
+        }
+    }
+
+    /**
+     * Check for bouncyKeyPair.
+     * @param pKeyPair the keyPair to check
+     * @param pSpec the required keySpec
+     * @throws OceanusException on error
+     */
+    public static void checkKeyPair(final GordianKeyPair pKeyPair,
+                                    final GordianKeyPairSpec pSpec) throws OceanusException {
+        /* Check the keyPair */
+        checkKeyPair(pKeyPair);
+
+        /* Check that it the correct key type */
+        if (!pSpec.equals(pKeyPair.getKeyPairSpec())) {
+            /* Reject keyPair */
+            throw new GordianDataException("Invalid KeyPairType");
+        }
     }
 
     /**
@@ -206,7 +240,7 @@ public class BouncyKeyPair
         /**
          * The private key.
          */
-        private T thePrivateKey;
+        private final T thePrivateKey;
 
         /**
          * Constructor.

@@ -66,6 +66,7 @@ import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyKeyPair.BouncyPublicK
 import net.sourceforge.joceanus.jgordianknot.impl.core.agree.GordianCoreAnonymousAgreement;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianCryptoException;
 import net.sourceforge.joceanus.jgordianknot.impl.core.encrypt.GordianCoreEncryptor;
+import net.sourceforge.joceanus.jgordianknot.impl.core.keypair.GordianKeyPairValidity;
 import net.sourceforge.joceanus.jgordianknot.impl.core.sign.GordianCoreSignature;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
@@ -215,6 +216,7 @@ public final class BouncyRSAKeyPair {
 
         @Override
         public BouncyKeyPair generateKeyPair() {
+            /* Generate and return the keyPair */
             final AsymmetricCipherKeyPair myPair = theGenerator.generateKeyPair();
             final BouncyRSAPublicKey myPublic = new BouncyRSAPublicKey(getKeySpec(), (RSAKeyParameters) myPair.getPublic());
             final BouncyRSAPrivateKey myPrivate = new BouncyRSAPrivateKey(getKeySpec(), (RSAPrivateCrtKeyParameters) myPair.getPrivate());
@@ -223,11 +225,17 @@ public final class BouncyRSAKeyPair {
 
         @Override
         public PKCS8EncodedKeySpec getPKCS8Encoding(final GordianKeyPair pKeyPair) throws OceanusException {
+            /* Protect against exceptions */
             try {
+                /* Check the keyPair type and keySpecs */
+                BouncyKeyPair.checkKeyPair(pKeyPair, getKeySpec());
+
+                /* build and return the encoding */
                 final BouncyRSAPrivateKey myPrivateKey = (BouncyRSAPrivateKey) getPrivateKey(pKeyPair);
                 final RSAPrivateCrtKeyParameters myParms = myPrivateKey.getPrivateKey();
                 final PrivateKeyInfo myInfo = PrivateKeyInfoFactory.createPrivateKeyInfo(myParms);
                 return new PKCS8EncodedKeySpec(myInfo.getEncoded());
+
             } catch (IOException e) {
                 throw new GordianCryptoException(ERROR_PARSE, e);
             }
@@ -236,13 +244,24 @@ public final class BouncyRSAKeyPair {
         @Override
         public BouncyKeyPair deriveKeyPair(final X509EncodedKeySpec pPublicKey,
                                            final PKCS8EncodedKeySpec pPrivateKey) throws OceanusException {
+            /* Protect against exceptions */
             try {
+                /* Check the keySpecs */
                 checkKeySpec(pPrivateKey);
+
+                /* derive keyPair */
                 final BouncyRSAPublicKey myPublic = derivePublicKey(pPublicKey);
                 final PrivateKeyInfo myInfo = PrivateKeyInfo.getInstance(pPrivateKey.getEncoded());
                 final RSAPrivateCrtKeyParameters myParms = (RSAPrivateCrtKeyParameters) PrivateKeyFactory.createKey(myInfo);
                 final BouncyRSAPrivateKey myPrivate = new BouncyRSAPrivateKey(getKeySpec(), myParms);
-                return new BouncyKeyPair(myPublic, myPrivate);
+                final BouncyKeyPair myPair = new BouncyKeyPair(myPublic, myPrivate);
+
+                /* Check that we have a matching pair */
+                GordianKeyPairValidity.checkValidity(getFactory(), myPair);
+
+                /* Return the keyPair */
+                return myPair;
+
             } catch (IOException e) {
                 throw new GordianCryptoException(ERROR_PARSE, e);
             }
@@ -250,11 +269,17 @@ public final class BouncyRSAKeyPair {
 
         @Override
         public X509EncodedKeySpec getX509Encoding(final GordianKeyPair pKeyPair) throws OceanusException {
+            /* Protect against exceptions */
             try {
+                /* Check the keyPair type and keySpecs */
+                BouncyKeyPair.checkKeyPair(pKeyPair, getKeySpec());
+
+                /* build and return the encoding */
                 final BouncyRSAPublicKey myPublicKey = (BouncyRSAPublicKey) getPublicKey(pKeyPair);
                 final RSAKeyParameters myParms = myPublicKey.getPublicKey();
                 final SubjectPublicKeyInfo myInfo = SubjectPublicKeyInfoFactory.createSubjectPublicKeyInfo(myParms);
                 return new X509EncodedKeySpec(myInfo.getEncoded());
+
             } catch (IOException e) {
                 throw new GordianCryptoException(ERROR_PARSE, e);
             }
@@ -273,11 +298,16 @@ public final class BouncyRSAKeyPair {
          * @throws OceanusException on error
          */
         private BouncyRSAPublicKey derivePublicKey(final X509EncodedKeySpec pEncodedKey) throws OceanusException {
+            /* Protect against exceptions */
             try {
+                /* Check the keySpecs */
                 checkKeySpec(pEncodedKey);
+
+                /* derive publicKey */
                 final SubjectPublicKeyInfo myInfo = SubjectPublicKeyInfo.getInstance(pEncodedKey.getEncoded());
                 final RSAKeyParameters myParms = (RSAKeyParameters) PublicKeyFactory.createKey(myInfo);
                 return new BouncyRSAPublicKey(getKeySpec(), myParms);
+
             } catch (IOException e) {
                 throw new GordianCryptoException(ERROR_PARSE, e);
             }
@@ -390,6 +420,7 @@ public final class BouncyRSAKeyPair {
         @Override
         public void initForSigning(final GordianKeyPair pKeyPair) throws OceanusException {
             /* Initialise detail */
+            BouncyKeyPair.checkKeyPair(pKeyPair);
             super.initForSigning(pKeyPair);
 
             /* Initialise and set the signer */
@@ -403,6 +434,7 @@ public final class BouncyRSAKeyPair {
         @Override
         public void initForVerify(final GordianKeyPair pKeyPair) throws OceanusException {
             /* Initialise detail */
+            BouncyKeyPair.checkKeyPair(pKeyPair);
             super.initForVerify(pKeyPair);
 
             /* Initialise and set the signer */
@@ -462,6 +494,7 @@ public final class BouncyRSAKeyPair {
         @Override
         public byte[] createClientHello(final GordianKeyPair pServer) throws OceanusException {
             /* Check keyPair */
+            BouncyKeyPair.checkKeyPair(pServer);
             checkKeyPair(pServer);
 
             /* Initialise Key Encapsulation */
@@ -488,6 +521,7 @@ public final class BouncyRSAKeyPair {
         public void acceptClientHello(final GordianKeyPair pServer,
                                       final byte[] pClientHello) throws OceanusException {
             /* Check keyPair */
+            BouncyKeyPair.checkKeyPair(pServer);
             checkKeyPair(pServer);
 
             /* Initialise Key Encapsulation */
@@ -570,6 +604,7 @@ public final class BouncyRSAKeyPair {
         @Override
         public void initForEncrypt(final GordianKeyPair pKeyPair) throws OceanusException {
             /* Initialise underlying cipher */
+            BouncyKeyPair.checkKeyPair(pKeyPair);
             super.initForEncrypt(pKeyPair);
 
             /* Initialise for encryption */
@@ -580,6 +615,7 @@ public final class BouncyRSAKeyPair {
         @Override
         public void initForDecrypt(final GordianKeyPair pKeyPair) throws OceanusException {
             /* Initialise underlying cipher */
+            BouncyKeyPair.checkKeyPair(pKeyPair);
             super.initForDecrypt(pKeyPair);
 
             /* Initialise for decryption */

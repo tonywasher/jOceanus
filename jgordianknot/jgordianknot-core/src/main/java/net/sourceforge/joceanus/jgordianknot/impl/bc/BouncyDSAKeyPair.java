@@ -48,6 +48,7 @@ import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyKeyPair.BouncyPublicK
 import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncySignature.BouncyDERCoder;
 import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncySignature.BouncyDigestSignature;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianCryptoException;
+import net.sourceforge.joceanus.jgordianknot.impl.core.keypair.GordianKeyPairValidity;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
@@ -181,6 +182,7 @@ public final class BouncyDSAKeyPair {
 
         @Override
         public BouncyKeyPair generateKeyPair() {
+            /* Generate and return the keyPair */
             final AsymmetricCipherKeyPair myPair = theGenerator.generateKeyPair();
             final BouncyDSAPublicKey myPublic = new BouncyDSAPublicKey(getKeySpec(), (DSAPublicKeyParameters) myPair.getPublic());
             final BouncyDSAPrivateKey myPrivate = new BouncyDSAPrivateKey(getKeySpec(), (DSAPrivateKeyParameters) myPair.getPrivate());
@@ -188,12 +190,18 @@ public final class BouncyDSAKeyPair {
         }
 
         @Override
-        public PKCS8EncodedKeySpec getPKCS8Encoding(final GordianKeyPair pKeyPair) throws GordianCryptoException {
+        public PKCS8EncodedKeySpec getPKCS8Encoding(final GordianKeyPair pKeyPair) throws OceanusException {
+            /* Protect against exceptions */
             try {
+                /* Check the keyPair type and keySpecs */
+                BouncyKeyPair.checkKeyPair(pKeyPair, getKeySpec());
+
+                /* build and return the encoding */
                 final BouncyDSAPrivateKey myPrivateKey = (BouncyDSAPrivateKey) getPrivateKey(pKeyPair);
                 final DSAPrivateKeyParameters myParms = myPrivateKey.getPrivateKey();
                 final PrivateKeyInfo myInfo = PrivateKeyInfoFactory.createPrivateKeyInfo(myParms);
                 return new PKCS8EncodedKeySpec(myInfo.getEncoded());
+
             } catch (IOException e) {
                 throw new GordianCryptoException(ERROR_PARSE, e);
             }
@@ -202,13 +210,24 @@ public final class BouncyDSAKeyPair {
         @Override
         public BouncyKeyPair deriveKeyPair(final X509EncodedKeySpec pPublicKey,
                                            final PKCS8EncodedKeySpec pPrivateKey) throws OceanusException {
+            /* Protect against exceptions */
             try {
+                /* Check the keySpecs */
                 checkKeySpec(pPrivateKey);
+
+                /* derive keyPair */
                 final BouncyDSAPublicKey myPublic = derivePublicKey(pPublicKey);
                 final PrivateKeyInfo myInfo = PrivateKeyInfo.getInstance(pPrivateKey.getEncoded());
                 final DSAPrivateKeyParameters myParms = (DSAPrivateKeyParameters) PrivateKeyFactory.createKey(myInfo);
                 final BouncyDSAPrivateKey myPrivate = new BouncyDSAPrivateKey(getKeySpec(), myParms);
-                return new BouncyKeyPair(myPublic, myPrivate);
+                final BouncyKeyPair myPair = new BouncyKeyPair(myPublic, myPrivate);
+
+                /* Check that we have a matching pair */
+                GordianKeyPairValidity.checkValidity(getFactory(), myPair);
+
+                /* Return the keyPair */
+                return myPair;
+
             } catch (IOException e) {
                 throw new GordianCryptoException(ERROR_PARSE, e);
             }
@@ -216,11 +235,17 @@ public final class BouncyDSAKeyPair {
 
         @Override
         public X509EncodedKeySpec getX509Encoding(final GordianKeyPair pKeyPair) throws OceanusException {
+            /* Protect against exceptions */
             try {
+                /* Check the keyPair type and keySpecs */
+                BouncyKeyPair.checkKeyPair(pKeyPair, getKeySpec());
+
+                /* build and return the encoding */
                 final BouncyDSAPublicKey myPublicKey = (BouncyDSAPublicKey) getPublicKey(pKeyPair);
                 final DSAPublicKeyParameters myParms = myPublicKey.getPublicKey();
                 final SubjectPublicKeyInfo myInfo = SubjectPublicKeyInfoFactory.createSubjectPublicKeyInfo(myParms);
                 return new X509EncodedKeySpec(myInfo.getEncoded());
+
             } catch (IOException e) {
                 throw new GordianCryptoException(ERROR_PARSE, e);
             }
@@ -239,11 +264,16 @@ public final class BouncyDSAKeyPair {
          * @throws OceanusException on error
          */
         private BouncyDSAPublicKey derivePublicKey(final X509EncodedKeySpec pEncodedKey) throws OceanusException {
+            /* Protect against exceptions */
             try {
+                /* Check the keySpecs */
                 checkKeySpec(pEncodedKey);
+
+                /* derive publicKey */
                 final SubjectPublicKeyInfo myInfo = SubjectPublicKeyInfo.getInstance(pEncodedKey.getEncoded());
                 final DSAPublicKeyParameters myParms = (DSAPublicKeyParameters) PublicKeyFactory.createKey(myInfo);
                 return new BouncyDSAPublicKey(getKeySpec(), myParms);
+
             } catch (IOException e) {
                 throw new GordianCryptoException(ERROR_PARSE, e);
             }
@@ -284,6 +314,7 @@ public final class BouncyDSAKeyPair {
         @Override
         public void initForSigning(final GordianKeyPair pKeyPair) throws OceanusException {
             /* Initialise detail */
+            BouncyKeyPair.checkKeyPair(pKeyPair);
             super.initForSigning(pKeyPair);
 
             /* Initialise and set the signer */
@@ -295,6 +326,7 @@ public final class BouncyDSAKeyPair {
         @Override
         public void initForVerify(final GordianKeyPair pKeyPair) throws OceanusException {
             /* Initialise detail */
+            BouncyKeyPair.checkKeyPair(pKeyPair);
             super.initForVerify(pKeyPair);
 
             /* Initialise and set the signer */

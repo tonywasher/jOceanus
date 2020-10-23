@@ -47,6 +47,7 @@ import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyKeyPair.BouncyPrivate
 import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyKeyPair.BouncyPublicKey;
 import net.sourceforge.joceanus.jgordianknot.impl.core.agree.GordianCoreAnonymousAgreement;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianCryptoException;
+import net.sourceforge.joceanus.jgordianknot.impl.core.keypair.GordianKeyPairValidity;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
@@ -139,6 +140,7 @@ public final class BouncyNewHopeKeyPair {
 
         @Override
         public BouncyKeyPair generateKeyPair() {
+            /* Generate and return the keyPair */
             final AsymmetricCipherKeyPair myPair = theGenerator.generateKeyPair();
             final BouncyNewHopePublicKey myPublic = new BouncyNewHopePublicKey(getKeySpec(), (NHPublicKeyParameters) myPair.getPublic());
             final BouncyNewHopePrivateKey myPrivate = new BouncyNewHopePrivateKey(getKeySpec(), (NHPrivateKeyParameters) myPair.getPrivate());
@@ -147,11 +149,17 @@ public final class BouncyNewHopeKeyPair {
 
         @Override
         public PKCS8EncodedKeySpec getPKCS8Encoding(final GordianKeyPair pKeyPair) throws OceanusException {
+            /* Protect against exceptions */
             try {
+                /* Check the keyPair type and keySpecs */
+                BouncyKeyPair.checkKeyPair(pKeyPair, getKeySpec());
+
+                /* build and return the encoding */
                 final BouncyNewHopePrivateKey myPrivateKey = (BouncyNewHopePrivateKey) getPrivateKey(pKeyPair);
                 final NHPrivateKeyParameters myParms = myPrivateKey.getPrivateKey();
                 final PrivateKeyInfo myInfo = PrivateKeyInfoFactory.createPrivateKeyInfo(myParms, null);
                 return new PKCS8EncodedKeySpec(myInfo.getEncoded());
+
             } catch (IOException e) {
                 throw new GordianCryptoException(ERROR_PARSE, e);
             }
@@ -160,25 +168,42 @@ public final class BouncyNewHopeKeyPair {
         @Override
         public BouncyKeyPair deriveKeyPair(final X509EncodedKeySpec pPublicKey,
                                            final PKCS8EncodedKeySpec pPrivateKey) throws OceanusException {
+            /* Protect against exceptions */
             try {
+                /* Check the keySpecs */
                 checkKeySpec(pPrivateKey);
+
+                /* derive keyPair */
                 final BouncyNewHopePublicKey myPublic = derivePublicKey(pPublicKey);
                 final PrivateKeyInfo myInfo = PrivateKeyInfo.getInstance(pPrivateKey.getEncoded());
                 final NHPrivateKeyParameters myParms = (NHPrivateKeyParameters) PrivateKeyFactory.createKey(myInfo);
                 final BouncyNewHopePrivateKey myPrivate = new BouncyNewHopePrivateKey(getKeySpec(), myParms);
-                return new BouncyKeyPair(myPublic, myPrivate);
-            } catch (IOException e) {
+                final BouncyKeyPair myPair = new BouncyKeyPair(myPublic, myPrivate);
+
+                /* Check that we have a matching pair */
+                GordianKeyPairValidity.checkValidity(getFactory(), myPair);
+
+                /* Return the keyPair */
+                return myPair;
+
+           } catch (IOException e) {
                 throw new GordianCryptoException(ERROR_PARSE, e);
             }
         }
 
         @Override
         public X509EncodedKeySpec getX509Encoding(final GordianKeyPair pKeyPair) throws OceanusException {
+            /* Protect against exceptions */
             try {
+                /* Check the keyPair type and keySpecs */
+                BouncyKeyPair.checkKeyPair(pKeyPair, getKeySpec());
+
+                /* build and return the encoding */
                 final BouncyNewHopePublicKey myPublicKey = (BouncyNewHopePublicKey) getPublicKey(pKeyPair);
                 final NHPublicKeyParameters myParms = myPublicKey.getPublicKey();
                 final SubjectPublicKeyInfo myInfo = SubjectPublicKeyInfoFactory.createSubjectPublicKeyInfo(myParms);
                 return new X509EncodedKeySpec(myInfo.getEncoded());
+
             } catch (IOException e) {
                 throw new GordianCryptoException(ERROR_PARSE, e);
             }
@@ -197,11 +222,16 @@ public final class BouncyNewHopeKeyPair {
          * @throws OceanusException on error
          */
         private BouncyNewHopePublicKey derivePublicKey(final X509EncodedKeySpec pEncodedKey) throws OceanusException {
+            /* Protect against exceptions */
             try {
+                /* Check the keySpecs */
                 checkKeySpec(pEncodedKey);
+
+                /* derive publicKey */
                 final SubjectPublicKeyInfo myInfo = SubjectPublicKeyInfo.getInstance(pEncodedKey.getEncoded());
                 final NHPublicKeyParameters myParms = (NHPublicKeyParameters) PublicKeyFactory.createKey(myInfo);
                 return new BouncyNewHopePublicKey(getKeySpec(), myParms);
+
             } catch (IOException e) {
                 throw new GordianCryptoException(ERROR_PARSE, e);
             }
@@ -231,6 +261,7 @@ public final class BouncyNewHopeKeyPair {
         public byte[] createClientHello(final GordianKeyPair pServer) throws OceanusException {
             try {
                 /* Check keyPair */
+                BouncyKeyPair.checkKeyPair(pServer);
                 checkKeyPair(pServer);
 
                 /* Generate an Exchange KeyPair */
@@ -263,6 +294,7 @@ public final class BouncyNewHopeKeyPair {
         public void acceptClientHello(final GordianKeyPair pServer,
                                       final byte[] pClientHello) throws OceanusException {
             /* Check keyPair */
+            BouncyKeyPair.checkKeyPair(pServer);
             checkKeyPair(pServer);
 
             /* Obtain keySpec */

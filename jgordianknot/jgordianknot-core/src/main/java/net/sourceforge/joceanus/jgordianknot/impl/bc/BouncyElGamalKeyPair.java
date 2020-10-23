@@ -46,6 +46,7 @@ import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyKeyPair.BouncyPrivate
 import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyKeyPair.BouncyPublicKey;
 import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyRSAKeyPair.BouncyCoreEncryptor;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianCryptoException;
+import net.sourceforge.joceanus.jgordianknot.impl.core.keypair.GordianKeyPairValidity;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
@@ -175,6 +176,7 @@ public final class BouncyElGamalKeyPair {
 
         @Override
         public BouncyKeyPair generateKeyPair() {
+            /* Generate and return the keyPair */
             final AsymmetricCipherKeyPair myPair = theGenerator.generateKeyPair();
             final BouncyElGamalPublicKey myPublic = new BouncyElGamalPublicKey(getKeySpec(), (ElGamalPublicKeyParameters) myPair.getPublic());
             final BouncyElGamalPrivateKey myPrivate = new BouncyElGamalPrivateKey(getKeySpec(), (ElGamalPrivateKeyParameters) myPair.getPrivate());
@@ -182,13 +184,19 @@ public final class BouncyElGamalKeyPair {
         }
 
         @Override
-        public PKCS8EncodedKeySpec getPKCS8Encoding(final GordianKeyPair pKeyPair) throws GordianCryptoException {
+        public PKCS8EncodedKeySpec getPKCS8Encoding(final GordianKeyPair pKeyPair) throws OceanusException {
+            /* Protect against exceptions */
             try {
+                /* Check the keyPair type and keySpecs */
+                BouncyKeyPair.checkKeyPair(pKeyPair, getKeySpec());
+
+                /* build and return the encoding */
                 final BouncyElGamalPrivateKey myPrivateKey = (BouncyElGamalPrivateKey) getPrivateKey(pKeyPair);
                 final ElGamalPrivateKeyParameters myParms = myPrivateKey.getPrivateKey();
                 final AlgorithmIdentifier myAlgId = getAlgorithmIdentifier(myParms.getParameters());
                 final PrivateKeyInfo myInfo = new PrivateKeyInfo(myAlgId, new ASN1Integer(myParms.getX()), null);
                 return new PKCS8EncodedKeySpec(myInfo.getEncoded());
+
             } catch (IOException e) {
                 throw new GordianCryptoException(ERROR_PARSE, e);
             }
@@ -197,13 +205,24 @@ public final class BouncyElGamalKeyPair {
         @Override
         public BouncyKeyPair deriveKeyPair(final X509EncodedKeySpec pPublicKey,
                                            final PKCS8EncodedKeySpec pPrivateKey) throws OceanusException {
+            /* Protect against exceptions */
             try {
+                /* Check the keySpecs */
                 checkKeySpec(pPrivateKey);
+
+                /* derive keyPair */
                 final BouncyElGamalPublicKey myPublic = derivePublicKey(pPublicKey);
                 final PrivateKeyInfo myInfo = PrivateKeyInfo.getInstance(pPrivateKey.getEncoded());
                 final ElGamalPrivateKeyParameters myParms = (ElGamalPrivateKeyParameters) PrivateKeyFactory.createKey(myInfo);
                 final BouncyElGamalPrivateKey myPrivate = new BouncyElGamalPrivateKey(getKeySpec(), myParms);
-                return new BouncyKeyPair(myPublic, myPrivate);
+                final BouncyKeyPair myPair = new BouncyKeyPair(myPublic, myPrivate);
+
+                /* Check that we have a matching pair */
+                GordianKeyPairValidity.checkValidity(getFactory(), myPair);
+
+                /* Return the keyPair */
+                return myPair;
+
             } catch (IOException e) {
                 throw new GordianCryptoException(ERROR_PARSE, e);
             }
@@ -211,12 +230,18 @@ public final class BouncyElGamalKeyPair {
 
         @Override
         public X509EncodedKeySpec getX509Encoding(final GordianKeyPair pKeyPair) throws OceanusException {
+            /* Protect against exceptions */
             try {
+                /* Check the keyPair type and keySpecs */
+                BouncyKeyPair.checkKeyPair(pKeyPair, getKeySpec());
+
+                /* build and return the encoding */
                 final BouncyElGamalPublicKey myPublicKey = (BouncyElGamalPublicKey) getPublicKey(pKeyPair);
                 final ElGamalPublicKeyParameters myParms = myPublicKey.getPublicKey();
                 final AlgorithmIdentifier myAlgId = getAlgorithmIdentifier(myParms.getParameters());
                 final SubjectPublicKeyInfo myInfo = new SubjectPublicKeyInfo(myAlgId, new ASN1Integer(myParms.getY()));
                 return new X509EncodedKeySpec(myInfo.getEncoded());
+
             } catch (IOException e) {
                 throw new GordianCryptoException(ERROR_PARSE, e);
             }
@@ -235,11 +260,16 @@ public final class BouncyElGamalKeyPair {
          * @throws OceanusException on error
          */
         private BouncyElGamalPublicKey derivePublicKey(final X509EncodedKeySpec pEncodedKey) throws OceanusException {
+            /* Protect against exceptions */
             try {
+                /* Check the keySpecs */
                 checkKeySpec(pEncodedKey);
+
+                /* derive publicKey */
                 final SubjectPublicKeyInfo myInfo = SubjectPublicKeyInfo.getInstance(pEncodedKey.getEncoded());
                 final ElGamalPublicKeyParameters myParms = (ElGamalPublicKeyParameters) PublicKeyFactory.createKey(myInfo);
                 return new BouncyElGamalPublicKey(getKeySpec(), myParms);
+
             } catch (IOException e) {
                 throw new GordianCryptoException(ERROR_PARSE, e);
             }

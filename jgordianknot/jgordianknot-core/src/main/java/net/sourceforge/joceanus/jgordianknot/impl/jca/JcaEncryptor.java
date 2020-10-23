@@ -87,6 +87,7 @@ public final class JcaEncryptor {
         public void initForEncrypt(final GordianKeyPair pKeyPair) throws OceanusException {
             try {
                 /* Initialise underlying cipher */
+                JcaKeyPair.checkKeyPair(pKeyPair);
                 super.initForEncrypt(pKeyPair);
 
                 /* Initialise for encryption */
@@ -100,6 +101,7 @@ public final class JcaEncryptor {
         public void initForDecrypt(final GordianKeyPair pKeyPair) throws OceanusException {
             try {
                 /* Initialise underlying cipher */
+                JcaKeyPair.checkKeyPair(pKeyPair);
                 super.initForDecrypt(pKeyPair);
 
                 /* Initialise for decryption */
@@ -254,6 +256,7 @@ public final class JcaEncryptor {
         public void initForEncrypt(final GordianKeyPair pKeyPair) throws OceanusException {
             try {
                 /* Initialise underlying cipher */
+                JcaKeyPair.checkKeyPair(pKeyPair);
                 super.initForEncrypt(pKeyPair);
 
                 /* Initialise for encryption */
@@ -267,6 +270,7 @@ public final class JcaEncryptor {
         public void initForDecrypt(final GordianKeyPair pKeyPair) throws OceanusException {
             try {
                 /* Initialise underlying cipher */
+                JcaKeyPair.checkKeyPair(pKeyPair);
                 super.initForDecrypt(pKeyPair);
 
                 /* Initialise for decryption */

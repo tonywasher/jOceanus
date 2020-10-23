@@ -37,6 +37,12 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
  */
 public interface GordianKeyStoreManager {
     /**
+     * Obtain the keyStore.
+     * @return the keyStore
+     */
+    GordianKeyStore getKeyStore();
+
+    /**
      * Create a new keySet.
      *
      * @param pKeySetSpec the spec of the new keySet

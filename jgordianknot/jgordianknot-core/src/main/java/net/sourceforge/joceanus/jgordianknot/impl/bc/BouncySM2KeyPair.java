@@ -107,6 +107,7 @@ public final class BouncySM2KeyPair {
         @Override
         public void initForSigning(final GordianKeyPair pKeyPair) throws OceanusException {
             /* Initialise detail */
+            BouncyKeyPair.checkKeyPair(pKeyPair);
             super.initForSigning(pKeyPair);
 
             /* Initialise and set the signer */
@@ -118,6 +119,7 @@ public final class BouncySM2KeyPair {
         @Override
         public void initForVerify(final GordianKeyPair pKeyPair) throws OceanusException {
             /* Initialise detail */
+            BouncyKeyPair.checkKeyPair(pKeyPair);
             super.initForVerify(pKeyPair);
 
             /* Initialise and set the signer */
@@ -182,6 +184,8 @@ public final class BouncySM2KeyPair {
                                         final GordianKeyPair pServer,
                                         final byte[] pClientHello) throws OceanusException {
             /* process clientHello */
+            BouncyKeyPair.checkKeyPair(pClient);
+            BouncyKeyPair.checkKeyPair(pServer);
             processClientHello(pClient, pServer, pClientHello);
 
             /* Initialise agreement */
@@ -222,6 +226,7 @@ public final class BouncySM2KeyPair {
         public byte[] acceptServerHello(final GordianKeyPair pServer,
                                         final byte[] pServerHello) throws OceanusException {
             /* Check keyPair */
+            BouncyKeyPair.checkKeyPair(pServer);
             checkKeyPair(pServer);
 
             /* process the serverHello */
@@ -313,6 +318,7 @@ public final class BouncySM2KeyPair {
         @Override
         public void initForEncrypt(final GordianKeyPair pKeyPair) throws OceanusException {
             /* Initialise underlying cipher */
+            BouncyKeyPair.checkKeyPair(pKeyPair);
             super.initForEncrypt(pKeyPair);
 
             /* Initialise for encryption */
@@ -323,6 +329,7 @@ public final class BouncySM2KeyPair {
         @Override
         public void initForDecrypt(final GordianKeyPair pKeyPair) throws OceanusException {
             /* Initialise underlying cipher */
+            BouncyKeyPair.checkKeyPair(pKeyPair);
             super.initForDecrypt(pKeyPair);
 
             /* Initialise for decryption */

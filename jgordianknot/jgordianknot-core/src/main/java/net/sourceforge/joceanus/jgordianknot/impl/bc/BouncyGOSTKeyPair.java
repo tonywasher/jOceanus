@@ -55,6 +55,7 @@ import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncySignature.BouncyDSACo
 import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncySignature.BouncyDigestSignature;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianCryptoException;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianDataException;
+import net.sourceforge.joceanus.jgordianknot.impl.core.keypair.GordianKeyPairValidity;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
@@ -148,6 +149,7 @@ public final class BouncyGOSTKeyPair {
 
         @Override
         public BouncyKeyPair generateKeyPair() {
+            /* Generate and return the keyPair */
             final AsymmetricCipherKeyPair myPair = theGenerator.generateKeyPair();
             final BouncyECPublicKey myPublic = new BouncyECPublicKey(getKeySpec(), (ECPublicKeyParameters) myPair.getPublic());
             final BouncyECPrivateKey myPrivate = new BouncyECPrivateKey(getKeySpec(), (ECPrivateKeyParameters) myPair.getPrivate());
@@ -156,6 +158,10 @@ public final class BouncyGOSTKeyPair {
 
         @Override
         public PKCS8EncodedKeySpec getPKCS8Encoding(final GordianKeyPair pKeyPair) throws OceanusException {
+            /* Check the keyPair type and keySpecs */
+            BouncyKeyPair.checkKeyPair(pKeyPair, getKeySpec());
+
+            /* build and return the encoding */
             final BouncyECPrivateKey myPrivateKey = (BouncyECPrivateKey) getPrivateKey(pKeyPair);
             final ECPrivateKeyParameters myParms = myPrivateKey.getPrivateKey();
             final BouncyECPublicKey myPublicKey = (BouncyECPublicKey) getPublicKey(pKeyPair);
@@ -168,16 +174,29 @@ public final class BouncyGOSTKeyPair {
         @Override
         public BouncyKeyPair deriveKeyPair(final X509EncodedKeySpec pPublicKey,
                                            final PKCS8EncodedKeySpec pPrivateKey) throws OceanusException {
+            /* Check the keySpecs */
             checkKeySpec(pPrivateKey);
+
+            /* derive keyPair */
             final BouncyECPublicKey myPublic = derivePublicKey(pPublicKey);
             final PrivateKeyInfo myInfo = PrivateKeyInfo.getInstance(pPrivateKey.getEncoded());
             final ECPrivateKeyParameters myParms = deriveFromPrivKeyInfo(myInfo);
             final BouncyECPrivateKey myPrivate = new BouncyECPrivateKey(getKeySpec(), myParms);
-            return new BouncyKeyPair(myPublic, myPrivate);
+            final BouncyKeyPair myPair = new BouncyKeyPair(myPublic, myPrivate);
+
+            /* Check that we have a matching pair */
+            GordianKeyPairValidity.checkValidity(getFactory(), myPair);
+
+            /* Return the keyPair */
+            return myPair;
         }
 
         @Override
         public X509EncodedKeySpec getX509Encoding(final GordianKeyPair pKeyPair) throws OceanusException {
+            /* Check the keyPair type and keySpecs */
+            BouncyKeyPair.checkKeyPair(pKeyPair, getKeySpec());
+
+            /* build and return the encoding */
             final BouncyECPublicKey myPublicKey = (BouncyECPublicKey) getPublicKey(pKeyPair);
             final ECPublicKeyParameters myParms = myPublicKey.getPublicKey();
             final BCECGOST3410_2012PublicKey pubKey = new BCECGOST3410_2012PublicKey(ALGO, myParms, theSpec);
@@ -197,7 +216,10 @@ public final class BouncyGOSTKeyPair {
          * @throws OceanusException on error
          */
         private BouncyECPublicKey derivePublicKey(final X509EncodedKeySpec pEncodedKey) throws OceanusException {
+            /* Check the keySpecs */
             checkKeySpec(pEncodedKey);
+
+            /* derive publicKey */
             final SubjectPublicKeyInfo myInfo = SubjectPublicKeyInfo.getInstance(pEncodedKey.getEncoded());
             final ECPublicKeyParameters myParms = deriveFromPubKeyInfo(myInfo);
             return new BouncyECPublicKey(getKeySpec(), myParms);
@@ -368,6 +390,7 @@ public final class BouncyGOSTKeyPair {
         @Override
         public void initForSigning(final GordianKeyPair pKeyPair) throws OceanusException {
             /* Initialise detail */
+            BouncyKeyPair.checkKeyPair(pKeyPair);
             super.initForSigning(pKeyPair);
 
             /* Initialise and set the signer */
@@ -379,6 +402,7 @@ public final class BouncyGOSTKeyPair {
         @Override
         public void initForVerify(final GordianKeyPair pKeyPair) throws OceanusException {
             /* Initialise detail */
+            BouncyKeyPair.checkKeyPair(pKeyPair);
             super.initForVerify(pKeyPair);
 
             /* Initialise and set the signer */

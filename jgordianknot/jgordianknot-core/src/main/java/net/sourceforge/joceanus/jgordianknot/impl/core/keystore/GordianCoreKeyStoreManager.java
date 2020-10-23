@@ -43,6 +43,7 @@ import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetSpec;
 import net.sourceforge.joceanus.jgordianknot.api.keystore.GordianKeyPairCertificate;
 import net.sourceforge.joceanus.jgordianknot.api.keystore.GordianKeyPairSetCertificate;
 import net.sourceforge.joceanus.jgordianknot.api.keystore.GordianKeyPairUsage;
+import net.sourceforge.joceanus.jgordianknot.api.keystore.GordianKeyStore;
 import net.sourceforge.joceanus.jgordianknot.api.keystore.GordianKeyStoreEntry;
 import net.sourceforge.joceanus.jgordianknot.api.keystore.GordianKeyStoreEntry.GordianKeyStoreKey;
 import net.sourceforge.joceanus.jgordianknot.api.keystore.GordianKeyStoreEntry.GordianKeyStorePair;
@@ -84,6 +85,11 @@ public class GordianCoreKeyStoreManager
         theKeyStore = pKeyStore;
     }
 
+    @Override
+    public GordianKeyStore getKeyStore() {
+        return theKeyStore;
+    }
+    
     @Override
     public GordianKeyStoreSet createKeySet(final GordianKeySetSpec pKeySetSpec,
                                            final String pAlias,

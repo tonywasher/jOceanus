@@ -18,13 +18,16 @@ package net.sourceforge.joceanus.jgordianknot.junit.regression;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.util.stream.Stream;
 
 import org.bouncycastle.asn1.x500.X500Name;
 import org.bouncycastle.asn1.x500.X500NameBuilder;
 import org.bouncycastle.asn1.x500.style.BCStyle;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.DynamicContainer;
+import org.junit.jupiter.api.DynamicNode;
+import org.junit.jupiter.api.DynamicTest;
+import org.junit.jupiter.api.TestFactory;
 
 import net.sourceforge.joceanus.jgordianknot.api.base.GordianLength;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianStreamKeySpec;
@@ -60,51 +63,66 @@ public class KeyStoreTest {
     private static final char[] DEF_PASSWORD = "SimplePassword".toCharArray();
 
     /**
-     * A factory.
-     */
-    private static GordianFactory FACTORY;
-
-    /**
-     * Create the factory.
+     * Create the keyStore test suite.
+     * @return the test stream
      * @throws OceanusException on error
      */
-    @BeforeAll
-    public static void createFactory() throws OceanusException {
+    @TestFactory
+    public Stream<DynamicNode> keyStoreTests() throws OceanusException {
+        /* Create tests */
+        Stream<DynamicNode> myStream = keyStoreTests(GordianFactoryType.BC);
+        return Stream.concat(myStream, keyStoreTests(GordianFactoryType.JCA));
+    }
+
+    /**
+     * Create the keySet test suite for a factoryType.
+     * @param pFactoryType the factoryType
+     * @return the test stream
+     * @throws OceanusException on error
+     */
+    private Stream<DynamicNode> keyStoreTests(final GordianFactoryType pFactoryType) throws OceanusException {
         /* Create the factory */
-        FACTORY = GordianGenerator.createFactory(GordianFactoryType.BC);
+        final GordianFactory myFactory = GordianGenerator.createFactory(pFactoryType);
+
+        /* Return the stream */
+        return Stream.of(DynamicContainer.dynamicContainer(pFactoryType.toString(), Stream.of(
+                DynamicTest.dynamicTest("symmetric", () -> symmetric(myFactory)),
+                DynamicTest.dynamicTest("keyPair", () -> keyPairs(myFactory)),
+                DynamicTest.dynamicTest("keyPairSet", () -> keyPairSets(myFactory))
+        )));
     }
 
     /**
      * test symmetric.
+     * @param pFactory the factory
      * @throws OceanusException on error
      */
-    @Test
-    public void symmetric() throws OceanusException {
+    private void symmetric(final GordianFactory pFactory) throws OceanusException {
         /* Set up test parameters */
         final GordianLength myKeyLen = GordianLength.LEN_256;
         final GordianKeySetSpec myKeySetSpec = new GordianKeySetSpec(myKeyLen);
         final GordianKeySetHashSpec myKeySetHashSpec = new GordianKeySetHashSpec(myKeySetSpec);
 
         /* Access keyStoreFactory and create a keyStore */
-        final GordianKeyStoreFactory myFactory = FACTORY.getKeyPairFactory().getKeyStoreFactory();
+        final GordianKeyStoreFactory myFactory = pFactory.getKeyPairFactory().getKeyStoreFactory();
         final GordianKeyStore myStore = myFactory.createKeyStore(myKeySetHashSpec);
         final GordianKeyStoreManager myMgr = myFactory.createKeyStoreManager(myStore);
 
         /* Create the keySet */
         final GordianKeyStoreSet mySet = myMgr.createKeySet(myKeySetSpec, KeyStoreAlias.KEYSET.getName(), DEF_PASSWORD);
-        checkKeySet(myStore, KeyStoreAlias.KEYSET, mySet);
+        checkKeySet(myMgr, KeyStoreAlias.KEYSET, mySet);
 
         /* Create a symKey */
         final GordianKeyStoreKey<?> mySymKey = myMgr.createKey(GordianSymKeySpec.aes(myKeyLen), KeyStoreAlias.SYMKEY.getName(), DEF_PASSWORD);
-        checkKey(myStore, KeyStoreAlias.SYMKEY, mySymKey);
+        checkKey(myMgr, KeyStoreAlias.SYMKEY, mySymKey);
 
         /* Create a streamKey */
         final GordianKeyStoreKey<?> myStreamKey = myMgr.createKey(GordianStreamKeySpec.hc(myKeyLen), KeyStoreAlias.STREAMKEY.getName(), DEF_PASSWORD);
-        checkKey(myStore, KeyStoreAlias.STREAMKEY, myStreamKey);
+        checkKey(myMgr, KeyStoreAlias.STREAMKEY, myStreamKey);
 
         /* Create a macKey */
         final GordianKeyStoreKey<?> myMacKey = myMgr.createKey(GordianMacSpec.vmpcMac(myKeyLen), KeyStoreAlias.MACKEY.getName(), DEF_PASSWORD);
-        checkKey(myStore, KeyStoreAlias.MACKEY, myMacKey);
+        checkKey(myMgr, KeyStoreAlias.MACKEY, myMacKey);
 
         /* Create keyStore documents */
         final ByteArrayOutputStream myZipStream = new ByteArrayOutputStream();
@@ -126,17 +144,17 @@ public class KeyStoreTest {
 
     /**
      * test keyPairs.
+     * @param pFactory the factory
      * @throws OceanusException on error
      */
-    @Test
-    public void keyPairs() throws OceanusException {
+    private void keyPairs(final GordianFactory pFactory) throws OceanusException {
         /* Set up test parameters */
         final GordianLength myKeyLen = GordianLength.LEN_256;
         final GordianKeySetSpec myKeySetSpec = new GordianKeySetSpec(myKeyLen);
         final GordianKeySetHashSpec myKeySetHashSpec = new GordianKeySetHashSpec(myKeySetSpec);
 
         /* Access keyStoreFactory and create a keyStore */
-        final GordianKeyStoreFactory myFactory = FACTORY.getKeyPairFactory().getKeyStoreFactory();
+        final GordianKeyStoreFactory myFactory = pFactory.getKeyPairFactory().getKeyStoreFactory();
         final GordianKeyStore myStore = myFactory.createKeyStore(myKeySetHashSpec);
         final GordianKeyStoreManager myMgr = myFactory.createKeyStoreManager(myStore);
 
@@ -146,48 +164,48 @@ public class KeyStoreTest {
         final GordianKeyStorePair myRoot = myMgr.createRootKeyPair(mySpec, myRootName, KeyStoreAlias.ROOT.getName(), DEF_PASSWORD);
         final X500Name myRoot2Name = buildX500Name(KeyStoreAlias.ROOT2);
         final GordianKeyStorePair myRoot2 = myMgr.createRootKeyPair(mySpec, myRoot2Name, KeyStoreAlias.ROOT2.getName(), DEF_PASSWORD);
-        checkKeyPair(myStore, KeyStoreAlias.ROOT, myRoot);
-        checkKeyPair(myStore, KeyStoreAlias.ROOT2, myRoot2);
+        checkKeyPair(myMgr, KeyStoreAlias.ROOT, myRoot);
+        checkKeyPair(myMgr, KeyStoreAlias.ROOT2, myRoot2);
 
         /* Cross-sign theRoots */
         GordianKeyPairUsage myUsage = new GordianKeyPairUsage(GordianKeyPairUse.CERTIFICATE);
         final GordianKeyStorePair myRootAlt = myMgr.createAlternate(myRoot, myUsage, myRoot2, KeyStoreAlias.ROOTALT.getName(), DEF_PASSWORD);
         final GordianKeyStorePair myRoot2Alt = myMgr.createAlternate(myRoot2, myUsage, myRoot, KeyStoreAlias.ROOTALT2.getName(), DEF_PASSWORD);
-        checkKeyPair(myStore, KeyStoreAlias.ROOTALT, myRootAlt);
-        checkKeyPair(myStore, KeyStoreAlias.ROOTALT2, myRoot2Alt);
+        checkKeyPair(myMgr, KeyStoreAlias.ROOTALT, myRootAlt);
+        checkKeyPair(myMgr, KeyStoreAlias.ROOTALT2, myRoot2Alt);
 
         /* Create intermediates */
         final X500Name myInterName = buildX500Name(KeyStoreAlias.INTER);
         final GordianKeyStorePair myIntermediate = myMgr.createKeyPair(mySpec, myInterName, myUsage, myRoot, KeyStoreAlias.INTER.getName(), DEF_PASSWORD);
         final X500Name myInter2Name = buildX500Name(KeyStoreAlias.INTER2);
         final GordianKeyStorePair myIntermediate2 = myMgr.createKeyPair(mySpec, myInter2Name, myUsage, myRoot2, KeyStoreAlias.INTER2.getName(), DEF_PASSWORD);
-        checkKeyPair(myStore, KeyStoreAlias.INTER, myIntermediate);
-        checkKeyPair(myStore, KeyStoreAlias.INTER2, myIntermediate2);
+        checkKeyPair(myMgr, KeyStoreAlias.INTER, myIntermediate);
+        checkKeyPair(myMgr, KeyStoreAlias.INTER2, myIntermediate2);
 
         /* Cross-sign the intermediates */
         myUsage = new GordianKeyPairUsage(GordianKeyPairUse.CERTIFICATE, GordianKeyPairUse.SIGNATURE);
         final GordianKeyStorePair myIntermediateAlt = myMgr.createAlternate(myIntermediate, myUsage, myRoot2, KeyStoreAlias.INTERALT.getName(), DEF_PASSWORD);
         final GordianKeyStorePair myIntermediate2Alt = myMgr.createAlternate(myIntermediate2, myUsage, myRoot, KeyStoreAlias.INTERALT2.getName(), DEF_PASSWORD);
-        checkKeyPair(myStore, KeyStoreAlias.INTERALT, myIntermediateAlt);
-        checkKeyPair(myStore, KeyStoreAlias.INTERALT2, myIntermediate2Alt);
+        checkKeyPair(myMgr, KeyStoreAlias.INTERALT, myIntermediateAlt);
+        checkKeyPair(myMgr, KeyStoreAlias.INTERALT2, myIntermediate2Alt);
 
         /* Create a signature keyPair */
         final X500Name mySignName = buildX500Name(KeyStoreAlias.SIGNER);
         myUsage = new GordianKeyPairUsage(GordianKeyPairUse.SIGNATURE);
         final GordianKeyStorePair mySigner = myMgr.createKeyPair(mySpec, mySignName, myUsage, myIntermediate, KeyStoreAlias.SIGNER.getName(), DEF_PASSWORD);
-        checkKeyPair(myStore, KeyStoreAlias.SIGNER, mySigner);
+        checkKeyPair(myMgr, KeyStoreAlias.SIGNER, mySigner);
 
         /* Create an agreement keyPair */
         final X500Name myAgreeName = buildX500Name(KeyStoreAlias.AGREE);
         myUsage = new GordianKeyPairUsage(GordianKeyPairUse.AGREEMENT);
         final GordianKeyStorePair myAgree = myMgr.createKeyPair(mySpec, myAgreeName, myUsage, myIntermediate, KeyStoreAlias.AGREE.getName(), DEF_PASSWORD);
-        checkKeyPair(myStore, KeyStoreAlias.AGREE, myAgree);
+        checkKeyPair(myMgr, KeyStoreAlias.AGREE, myAgree);
 
         /* Create an encryption keyPair */
         final X500Name myEncryptName = buildX500Name(KeyStoreAlias.ENCRYPT);
         myUsage = new GordianKeyPairUsage(GordianKeyPairUse.DATAENCRYPT);
         final GordianKeyStorePair myEncrypt = myMgr.createKeyPair(mySpec, myEncryptName, myUsage, myIntermediate, KeyStoreAlias.ENCRYPT.getName(), DEF_PASSWORD);
-        checkKeyPair(myStore, KeyStoreAlias.ENCRYPT, myEncrypt);
+        checkKeyPair(myMgr, KeyStoreAlias.ENCRYPT, myEncrypt);
 
         /* Create keyStore documents */
         final ByteArrayOutputStream myZipStream = new ByteArrayOutputStream();
@@ -216,17 +234,17 @@ public class KeyStoreTest {
 
     /**
      * test keyPairSet.
+     * @param pFactory the factory
      * @throws OceanusException on error
      */
-    @Test
-    public void keyPairSet() throws OceanusException {
+    private void keyPairSets(final GordianFactory pFactory) throws OceanusException {
         /* Set up test parameters */
         final GordianLength myKeyLen = GordianLength.LEN_256;
         final GordianKeySetSpec myKeySetSpec = new GordianKeySetSpec(myKeyLen);
         final GordianKeySetHashSpec myKeySetHashSpec = new GordianKeySetHashSpec(myKeySetSpec);
 
         /* Access keyStoreFactory and create a keyStore */
-        final GordianKeyStoreFactory myFactory = FACTORY.getKeyPairFactory().getKeyStoreFactory();
+        final GordianKeyStoreFactory myFactory = pFactory.getKeyPairFactory().getKeyStoreFactory();
         final GordianKeyStore myStore = myFactory.createKeyStore(myKeySetHashSpec);
         final GordianKeyStoreManager myMgr = myFactory.createKeyStoreManager(myStore);
 
@@ -236,48 +254,48 @@ public class KeyStoreTest {
         final GordianKeyStorePairSet myRoot = myMgr.createRootKeyPairSet(mySpec, myRootName, KeyStoreAlias.ROOT.getName(), DEF_PASSWORD);
         final X500Name myRoot2Name = buildX500Name(KeyStoreAlias.ROOT2);
         final GordianKeyStorePairSet myRoot2 = myMgr.createRootKeyPairSet(mySpec, myRoot2Name, KeyStoreAlias.ROOT2.getName(), DEF_PASSWORD);
-        checkKeyPairSet(myStore, KeyStoreAlias.ROOT, myRoot);
-        checkKeyPairSet(myStore, KeyStoreAlias.ROOT2, myRoot2);
+        checkKeyPairSet(myMgr, KeyStoreAlias.ROOT, myRoot);
+        checkKeyPairSet(myMgr, KeyStoreAlias.ROOT2, myRoot2);
 
         /* Cross-sign theRoots */
         GordianKeyPairUsage myUsage = new GordianKeyPairUsage(GordianKeyPairUse.CERTIFICATE);
         final GordianKeyStorePairSet myRootAlt = myMgr.createAlternate(myRoot, myUsage, myRoot2, KeyStoreAlias.ROOTALT.getName(), DEF_PASSWORD);
         final GordianKeyStorePairSet myRoot2Alt = myMgr.createAlternate(myRoot2, myUsage, myRoot, KeyStoreAlias.ROOTALT2.getName(), DEF_PASSWORD);
-        checkKeyPairSet(myStore, KeyStoreAlias.ROOTALT, myRootAlt);
-        checkKeyPairSet(myStore, KeyStoreAlias.ROOTALT2, myRoot2Alt);
+        checkKeyPairSet(myMgr, KeyStoreAlias.ROOTALT, myRootAlt);
+        checkKeyPairSet(myMgr, KeyStoreAlias.ROOTALT2, myRoot2Alt);
 
         /* Create intermediates */
         final X500Name myInterName = buildX500Name(KeyStoreAlias.INTER);
         final GordianKeyStorePairSet myIntermediate = myMgr.createKeyPairSet(mySpec, myInterName, myUsage, myRoot, KeyStoreAlias.INTER.getName(), DEF_PASSWORD);
         final X500Name myInter2Name = buildX500Name(KeyStoreAlias.INTER2);
         final GordianKeyStorePairSet myIntermediate2 = myMgr.createKeyPairSet(mySpec, myInter2Name, myUsage, myRoot2, KeyStoreAlias.INTER2.getName(), DEF_PASSWORD);
-        checkKeyPairSet(myStore, KeyStoreAlias.INTER, myIntermediate);
-        checkKeyPairSet(myStore, KeyStoreAlias.INTER2, myIntermediate2);
+        checkKeyPairSet(myMgr, KeyStoreAlias.INTER, myIntermediate);
+        checkKeyPairSet(myMgr, KeyStoreAlias.INTER2, myIntermediate2);
 
         /* Cross-sign the intermediates */
         myUsage = new GordianKeyPairUsage(GordianKeyPairUse.CERTIFICATE, GordianKeyPairUse.SIGNATURE);
         final GordianKeyStorePairSet myIntermediateAlt = myMgr.createAlternate(myIntermediate, myUsage, myRoot2, KeyStoreAlias.INTERALT.getName(), DEF_PASSWORD);
         final GordianKeyStorePairSet myIntermediate2Alt = myMgr.createAlternate(myIntermediate2, myUsage, myRoot, KeyStoreAlias.INTERALT2.getName(), DEF_PASSWORD);
-        checkKeyPairSet(myStore, KeyStoreAlias.INTERALT, myIntermediateAlt);
-        checkKeyPairSet(myStore, KeyStoreAlias.INTERALT2, myIntermediate2Alt);
+        checkKeyPairSet(myMgr, KeyStoreAlias.INTERALT, myIntermediateAlt);
+        checkKeyPairSet(myMgr, KeyStoreAlias.INTERALT2, myIntermediate2Alt);
 
         /* Create a signature keyPairSet */
         final X500Name mySignName = buildX500Name(KeyStoreAlias.SIGNER);
         myUsage = new GordianKeyPairUsage(GordianKeyPairUse.SIGNATURE);
         final GordianKeyStorePairSet mySigner = myMgr.createKeyPairSet(mySpec, mySignName, myUsage, myIntermediate, KeyStoreAlias.SIGNER.getName(), DEF_PASSWORD);
-        checkKeyPairSet(myStore, KeyStoreAlias.SIGNER, mySigner);
+        checkKeyPairSet(myMgr, KeyStoreAlias.SIGNER, mySigner);
 
         /* Create an agreement keyPairSet */
         final X500Name myAgreeName = buildX500Name(KeyStoreAlias.AGREE);
         myUsage = new GordianKeyPairUsage(GordianKeyPairUse.AGREEMENT);
         final GordianKeyStorePairSet myAgree = myMgr.createKeyPairSet(GordianKeyPairSetSpec.AGREELO, myAgreeName, myUsage, myIntermediate, KeyStoreAlias.AGREE.getName(), DEF_PASSWORD);
-        checkKeyPairSet(myStore, KeyStoreAlias.AGREE, myAgree);
+        checkKeyPairSet(myMgr, KeyStoreAlias.AGREE, myAgree);
 
         /* Create an encryption keyPairSet */
         final X500Name myEncryptName = buildX500Name(KeyStoreAlias.ENCRYPT);
         myUsage = new GordianKeyPairUsage(GordianKeyPairUse.DATAENCRYPT);
         final GordianKeyStorePairSet myEncrypt = myMgr.createKeyPairSet(GordianKeyPairSetSpec.ENCRYPT, myEncryptName, myUsage, myIntermediate, KeyStoreAlias.ENCRYPT.getName(), DEF_PASSWORD);
-        checkKeyPairSet(myStore, KeyStoreAlias.ENCRYPT, myEncrypt);
+        checkKeyPairSet(myMgr, KeyStoreAlias.ENCRYPT, myEncrypt);
 
         /* Create keyStore documents */
         final ByteArrayOutputStream myZipStream = new ByteArrayOutputStream();
@@ -306,98 +324,100 @@ public class KeyStoreTest {
 
     /**
      * check keySet.
-     * @param pKeyStore the keyStore
+     * @param pManager the keyStoreManager
      * @param pAlias the alias
      * @param pKeySet the keySet
      * @throws OceanusException on error
      */
-    public static void checkKeySet(final GordianKeyStore pKeyStore,
-                                   final KeyStoreAlias pAlias,
-                                   final GordianKeyStoreSet pKeySet) throws OceanusException {
+    private static void checkKeySet(final GordianKeyStoreManager pManager,
+                                    final KeyStoreAlias pAlias,
+                                    final GordianKeyStoreSet pKeySet) throws OceanusException {
         final String myName = pAlias.getName();
-        Assertions.assertTrue(pKeyStore.containsAlias(myName));
-        Assertions.assertTrue(pKeyStore.isKeySetEntry(myName));
-        Assertions.assertTrue(pKeyStore.entryInstanceOf(myName, GordianKeyStoreSet.class));
-        Assertions.assertEquals(pKeySet.getKeySet(), pKeyStore.getKeySet(myName, DEF_PASSWORD));
-        Assertions.assertEquals(pKeySet, pKeyStore.getEntry(myName, DEF_PASSWORD));
-        checkExport(pKeyStore, pAlias, pKeySet);
+        final GordianKeyStore myStore = pManager.getKeyStore();
+        Assertions.assertTrue(myStore.containsAlias(myName));
+        Assertions.assertTrue(myStore.isKeySetEntry(myName));
+        Assertions.assertTrue(myStore.entryInstanceOf(myName, GordianKeyStoreSet.class));
+        Assertions.assertEquals(pKeySet.getKeySet(), myStore.getKeySet(myName, DEF_PASSWORD));
+        Assertions.assertEquals(pKeySet, myStore.getEntry(myName, DEF_PASSWORD));
+        checkExport(pManager, pAlias, pKeySet);
     }
 
     /**
      * check key.
-     * @param pKeyStore the keyStore
+     * @param pManager the keyStoreManager
      * @param pAlias the alias
      * @param pKey the key
      * @throws OceanusException on error
      */
-    public static void checkKey(final GordianKeyStore pKeyStore,
-                                final KeyStoreAlias pAlias,
-                                final GordianKeyStoreKey<?> pKey) throws OceanusException {
+    private static void checkKey(final GordianKeyStoreManager pManager,
+                                 final KeyStoreAlias pAlias,
+                                 final GordianKeyStoreKey<?> pKey) throws OceanusException {
         final String myName = pAlias.getName();
-        Assertions.assertTrue(pKeyStore.containsAlias(myName));
-        Assertions.assertTrue(pKeyStore.isKeyEntry(myName));
-        Assertions.assertTrue(pKeyStore.entryInstanceOf(myName, GordianKeyStoreKey.class));
-        Assertions.assertEquals(pKey.getKey(), pKeyStore.getKey(myName, DEF_PASSWORD));
-        Assertions.assertEquals(pKey, pKeyStore.getEntry(myName, DEF_PASSWORD));
-        checkExport(pKeyStore, pAlias, pKey);
+        final GordianKeyStore myStore = pManager.getKeyStore();
+        Assertions.assertTrue(myStore.containsAlias(myName));
+        Assertions.assertTrue(myStore.isKeyEntry(myName));
+        Assertions.assertTrue(myStore.entryInstanceOf(myName, GordianKeyStoreKey.class));
+        Assertions.assertEquals(pKey.getKey(), myStore.getKey(myName, DEF_PASSWORD));
+        Assertions.assertEquals(pKey, myStore.getEntry(myName, DEF_PASSWORD));
+        checkExport(pManager, pAlias, pKey);
     }
 
     /**
      * check keyPair.
-     * @param pKeyStore the keyStore
+     * @param pManager the keyStoreManager
      * @param pAlias the alias
      * @param pKeyPair the keyPair
      * @throws OceanusException on error
      */
-    public static void checkKeyPair(final GordianKeyStore pKeyStore,
-                                    final KeyStoreAlias pAlias,
-                                    final GordianKeyStorePair pKeyPair) throws OceanusException {
+    private static void checkKeyPair(final GordianKeyStoreManager pManager,
+                                     final KeyStoreAlias pAlias,
+                                     final GordianKeyStorePair pKeyPair) throws OceanusException {
         final String myName = pAlias.getName();
-        Assertions.assertTrue(pKeyStore.containsAlias(myName));
-        Assertions.assertTrue(pKeyStore.isKeyPairEntry(myName));
-        Assertions.assertTrue(pKeyStore.entryInstanceOf(myName, GordianKeyStorePair.class));
-        Assertions.assertEquals(pKeyPair.getKeyPair(), pKeyStore.getKeyPair(myName, DEF_PASSWORD));
-        Assertions.assertEquals(pKeyPair.getCertificateChain(), pKeyStore.getKeyPairCertificateChain(myName));
-        Assertions.assertEquals(pKeyPair, pKeyStore.getEntry(myName, DEF_PASSWORD));
-        checkExport(pKeyStore, pAlias, pKeyPair);
+        final GordianKeyStore myStore = pManager.getKeyStore();
+        Assertions.assertTrue(myStore.containsAlias(myName));
+        Assertions.assertTrue(myStore.isKeyPairEntry(myName));
+        Assertions.assertTrue(myStore.entryInstanceOf(myName, GordianKeyStorePair.class));
+        Assertions.assertEquals(pKeyPair.getKeyPair(), myStore.getKeyPair(myName, DEF_PASSWORD));
+        Assertions.assertEquals(pKeyPair.getCertificateChain(), myStore.getKeyPairCertificateChain(myName));
+        Assertions.assertEquals(pKeyPair, myStore.getEntry(myName, DEF_PASSWORD));
+        checkExport(pManager, pAlias, pKeyPair);
     }
 
     /**
-     * check keyPair.
-     * @param pKeyStore the keyStore
+     * check keyPairSet.
+     * @param pManager the keyStoreManager
      * @param pAlias the alias
      * @param pKeyPairSet the keyPairSet
      * @throws OceanusException on error
      */
-    public static void checkKeyPairSet(final GordianKeyStore pKeyStore,
-                                       final KeyStoreAlias pAlias,
-                                       final GordianKeyStorePairSet pKeyPairSet) throws OceanusException {
+    private static void checkKeyPairSet(final GordianKeyStoreManager pManager,
+                                        final KeyStoreAlias pAlias,
+                                        final GordianKeyStorePairSet pKeyPairSet) throws OceanusException {
         final String myName = pAlias.getName();
-        Assertions.assertTrue(pKeyStore.containsAlias(myName));
-        Assertions.assertTrue(pKeyStore.isKeyPairSetEntry(myName));
-        Assertions.assertTrue(pKeyStore.entryInstanceOf(myName, GordianKeyStorePairSet.class));
-        Assertions.assertEquals(pKeyPairSet.getKeyPairSet(), pKeyStore.getKeyPairSet(myName, DEF_PASSWORD));
-        Assertions.assertEquals(pKeyPairSet.getCertificateChain(), pKeyStore.getKeyPairSetCertificateChain(myName));
-        Assertions.assertEquals(pKeyPairSet, pKeyStore.getEntry(myName, DEF_PASSWORD));
-        checkExport(pKeyStore, pAlias, pKeyPairSet);
+        final GordianKeyStore myStore = pManager.getKeyStore();
+        Assertions.assertTrue(myStore.containsAlias(myName));
+        Assertions.assertTrue(myStore.isKeyPairSetEntry(myName));
+        Assertions.assertTrue(myStore.entryInstanceOf(myName, GordianKeyStorePairSet.class));
+        Assertions.assertEquals(pKeyPairSet.getKeyPairSet(), myStore.getKeyPairSet(myName, DEF_PASSWORD));
+        Assertions.assertEquals(pKeyPairSet.getCertificateChain(), myStore.getKeyPairSetCertificateChain(myName));
+        Assertions.assertEquals(pKeyPairSet, myStore.getEntry(myName, DEF_PASSWORD));
+        checkExport(pManager, pAlias, pKeyPairSet);
     }
 
     /**
-     * check keySet.
-     * @param pKeyStore the keyStore
+     * check export.
+     * @param pManager the keyStoreManager
      * @param pAlias the alias
      * @param pEntry the entry
      * @throws OceanusException on error
      */
-    private static void checkExport(final GordianKeyStore pKeyStore,
+    private static void checkExport(final GordianKeyStoreManager pManager,
                                     final KeyStoreAlias pAlias,
                                     final GordianKeyStoreEntry pEntry) throws OceanusException {
-        final GordianKeyStoreFactory myFactory = FACTORY.getKeyPairFactory().getKeyStoreFactory();
-        final GordianKeyStoreManager myMgr = myFactory.createKeyStoreManager(pKeyStore);
         final ByteArrayOutputStream myOutStream = new ByteArrayOutputStream();
-        myMgr.exportEntry(pAlias.getName(), myOutStream, DEF_PASSWORD);
+        pManager.exportEntry(pAlias.getName(), myOutStream, DEF_PASSWORD);
         final ByteArrayInputStream myInputStream = new ByteArrayInputStream(myOutStream.toByteArray());
-        Assertions.assertEquals(pEntry, myMgr.importEntry(myInputStream, DEF_PASSWORD));
+        Assertions.assertEquals(pEntry, pManager.importEntry(myInputStream, DEF_PASSWORD));
     }
 
     /**

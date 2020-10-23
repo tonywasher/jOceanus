@@ -23,12 +23,15 @@ import org.bouncycastle.pqc.jcajce.interfaces.LMSPrivateKey;
 import org.bouncycastle.pqc.jcajce.interfaces.XMSSMTPrivateKey;
 import org.bouncycastle.pqc.jcajce.interfaces.XMSSPrivateKey;
 
+import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPair;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPairSpec;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianStateAwareKeyPair;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianCoreFactory;
+import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianDataException;
 import net.sourceforge.joceanus.jgordianknot.impl.core.keypair.GordianCoreKeyPair;
 import net.sourceforge.joceanus.jgordianknot.impl.core.keypair.GordianPrivateKey;
 import net.sourceforge.joceanus.jgordianknot.impl.core.keypair.GordianPublicKey;
+import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
  * BouncyCastle Asymmetric KeyPair.
@@ -66,6 +69,37 @@ public class JcaKeyPair
     @Override
     public JcaKeyPair getPublicOnly() {
         return new JcaKeyPair(getPublicKey());
+    }
+
+    /**
+     * Check for jcaKeyPair.
+     * @param pKeyPair the keyPair to check
+     * @throws OceanusException on error
+     */
+    public static void checkKeyPair(final GordianKeyPair pKeyPair) throws OceanusException {
+        /* Check that it is a JcaKeyPair */
+        if (!(pKeyPair instanceof JcaKeyPair)) {
+            /* Reject keyPair */
+            throw new GordianDataException("Invalid KeyPair");
+        }
+    }
+
+    /**
+     * Check for jcaKeyPair.
+     * @param pKeyPair the keyPair to check
+     * @param pSpec the required keySpec
+     * @throws OceanusException on error
+     */
+    public static void checkKeyPair(final GordianKeyPair pKeyPair,
+                                    final GordianKeyPairSpec pSpec) throws OceanusException {
+        /* Check the keyPair */
+        checkKeyPair(pKeyPair);
+
+        /* Check that it the correct key type */
+        if (!pSpec.equals(pKeyPair.getKeyPairSpec())) {
+            /* Reject keyPair */
+            throw new GordianDataException("Invalid KeyPairType");
+        }
     }
 
     /**
@@ -187,14 +221,14 @@ public class JcaKeyPair
     }
 
     /**
-     * Bouncy StateAware PrivateKey.
+     * Jca StateAware PrivateKey.
      */
     public static class JcaStateAwarePrivateKey
             extends JcaPrivateKey {
         /**
          * The private key.
          */
-        private PrivateKey thePrivateKey;
+        private final PrivateKey thePrivateKey;
 
         /**
          * Constructor.

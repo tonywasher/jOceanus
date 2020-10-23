@@ -88,6 +88,7 @@ public final class JcaAgreement {
             /* Protect against exceptions */
             try {
                 /* Check keyPairs */
+                JcaKeyPair.checkKeyPair(pServer);
                 checkKeyPair(pServer);
 
                 /* Derive the secret */
@@ -113,6 +114,7 @@ public final class JcaAgreement {
             /* Protect against exceptions */
             try {
                 /* Check keyPair */
+                JcaKeyPair.checkKeyPair(pServer);
                 checkKeyPair(pServer);
 
                 /* Obtain keySpec */
@@ -169,6 +171,7 @@ public final class JcaAgreement {
             /* Protect against exceptions */
             try {
                 /* Check keyPairs */
+                JcaKeyPair.checkKeyPair(pServer);
                 checkKeyPair(pServer);
 
                 /* Establish agreement */
@@ -211,6 +214,7 @@ public final class JcaAgreement {
             /* Protect against exceptions */
             try {
                 /* Check keyPair */
+                JcaKeyPair.checkKeyPair(pServer);
                 checkKeyPair(pServer);
 
                 /* Establish agreement */
@@ -291,7 +295,9 @@ public final class JcaAgreement {
             /* Protect against exceptions */
             try {
                 /* Check keyPair */
+                JcaKeyPair.checkKeyPair(pClient);
                 checkKeyPair(pClient);
+                JcaKeyPair.checkKeyPair(pServer);
                 checkKeyPair(pServer);
 
                 /* Establish agreement */
@@ -328,6 +334,7 @@ public final class JcaAgreement {
             /* Protect against exceptions */
             try {
                 /* Check keyPair */
+                JcaKeyPair.checkKeyPair(pServer);
                 checkKeyPair(pServer);
 
                 /* Establish agreement */
@@ -404,6 +411,7 @@ public final class JcaAgreement {
             /* Protect against exceptions */
             try {
                 /* Process the clientHello */
+                JcaKeyPair.checkKeyPair(pServer);
                 processClientHello(pClientHello);
                 final JcaPrivateKey myPrivate = (JcaPrivateKey) getPrivateKey(getServerEphemeralKeyPair());
                 final JcaPublicKey myPublic = (JcaPublicKey) getPublicKey(getClientEphemeralKeyPair());
@@ -437,6 +445,7 @@ public final class JcaAgreement {
             /* Protect against exceptions */
             try {
                 /* process the serverHello */
+                JcaKeyPair.checkKeyPair(pServer);
                 processServerHello(pServer, pServerHello);
                 final JcaPrivateKey myPrivate = (JcaPrivateKey) getPrivateKey(getClientEphemeralKeyPair());
                 final JcaPublicKey myTarget = (JcaPublicKey) getPublicKey(getServerEphemeralKeyPair());
@@ -508,6 +517,8 @@ public final class JcaAgreement {
             /* Protect against exceptions */
             try {
                 /* Establish agreement */
+                JcaKeyPair.checkKeyPair(pClient);
+                JcaKeyPair.checkKeyPair(pServer);
                 establishAgreement(pServer);
 
                 /* process clientHello */
@@ -542,6 +553,7 @@ public final class JcaAgreement {
             /* Protect against exceptions */
             try {
                 /* Establish agreement */
+                JcaKeyPair.checkKeyPair(pServer);
                 establishAgreement(pServer);
 
                 /* parse the serverHello */
@@ -619,6 +631,8 @@ public final class JcaAgreement {
             /* Protect against exceptions */
             try {
                 /* process clientHello */
+                JcaKeyPair.checkKeyPair(pClient);
+                JcaKeyPair.checkKeyPair(pServer);
                 processClientHello(pClient, pServer, pClientHello);
 
                 /* Initialise agreement */
@@ -650,6 +664,7 @@ public final class JcaAgreement {
             /* Protect against exceptions */
             try {
                 /* process the serverHello */
+                JcaKeyPair.checkKeyPair(pServer);
                 processServerHello(pServer, pServerHello);
 
                 /* Initialise agreement */
