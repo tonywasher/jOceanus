@@ -112,8 +112,8 @@ public class GordianPEMParser {
      * @param pObjects the list of objects
      * @throws OceanusException on error
      */
-    private void writeObjects(final BufferedWriter pWriter,
-                              final List<GordianPEMObject> pObjects) throws OceanusException {
+    private static void writeObjects(final BufferedWriter pWriter,
+                                     final List<GordianPEMObject> pObjects) throws OceanusException {
         /* Protect against exceptions */
         try {
             /* Loop through the objects */

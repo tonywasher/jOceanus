@@ -20,11 +20,15 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+
+import org.bouncycastle.asn1.cms.IssuerAndSerialNumber;
+import org.bouncycastle.asn1.x500.X500Name;
 
 import net.sourceforge.joceanus.jgordianknot.api.base.GordianKeySpec;
 import net.sourceforge.joceanus.jgordianknot.api.key.GordianKey;
@@ -825,6 +829,35 @@ public class GordianCoreKeyStore
         if (mySize > 1 && getCertificateAlias(myRoot) == null) {
             throw new GordianDataException("Unknown root certificate");
         }
+    }
+
+    /**
+     * find the alias for a keyPair entry for issuer/serial#.
+     * @param pIssuer the issuer
+     * @return the alias if found
+     */
+    public String findIssuerKeyPairCert(final IssuerAndSerialNumber pIssuer) throws OceanusException {
+        /* Loop through the alias entries */
+        final X500Name myIssuer = pIssuer.getName();
+        final BigInteger mySerial = pIssuer.getSerialNumber().getValue();
+        for (Entry<String, GordianCoreKeyStoreEntry> myEntry : theAliases.entrySet()) {
+            /* If this is a keyPair entry */
+            if (myEntry.getValue() instanceof GordianKeyStorePairElement) {
+                /* Access details */
+                final GordianKeyStorePairElement myPair = (GordianKeyStorePairElement) myEntry.getValue();
+                final GordianKeyStoreCertificateKey myCertKey =  myPair.getCertificateChain().get(0);
+                final GordianCoreKeyPairCertificate myCert = (GordianCoreKeyPairCertificate) getKeyPairCertificate(myCertKey);
+
+                /* Return alias if we have a match */
+                if (myIssuer.equals(myCert.getIssuer().getName())
+                    && mySerial.equals(myCert.getSerialNo())) {
+                    return myEntry.getKey();
+                }
+            }
+        }
+
+        /* Not found */
+        throw new GordianDataException("Unable to find matching certificate");
     }
 
     @Override

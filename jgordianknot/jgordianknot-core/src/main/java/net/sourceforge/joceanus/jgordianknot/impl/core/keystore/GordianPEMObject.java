@@ -102,7 +102,12 @@ public class GordianPEMObject {
         /**
          * certificate request.
          */
-        CERTREQ("CERTIFICATE REQUEST");
+        KEYPAIRCERTREQ("CERTIFICATE REQUEST"),
+
+        /**
+         * certificate request.
+         */
+        KEYPAIRSETCERTREQ("SETCERTIFICATE REQUEST");
 
         /**
          * The header.

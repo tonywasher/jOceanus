@@ -18,6 +18,8 @@ package net.sourceforge.joceanus.jgordianknot.junit.regression;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.stream.Stream;
 
 import org.bouncycastle.asn1.x500.X500Name;
@@ -34,8 +36,23 @@ import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianStreamKeySpec;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianSymKeySpec;
 import net.sourceforge.joceanus.jgordianknot.api.factory.GordianFactory;
 import net.sourceforge.joceanus.jgordianknot.api.factory.GordianFactoryType;
+import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianDHGroup;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianDSAElliptic;
+import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianDSAKeyType;
+import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianDSTU4145Elliptic;
+import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianGOSTElliptic;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPairSpec;
+import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianLMSKeySpec;
+import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianLMSKeySpec.GordianLMSOtsType;
+import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianLMSKeySpec.GordianLMSSigType;
+import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianMcElieceKeySpec;
+import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianMcElieceKeySpec.GordianMcElieceDigestType;
+import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianQTESLAKeyType;
+import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianRSAModulus;
+import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianSM2Elliptic;
+import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianSPHINCSDigestType;
+import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianXMSSKeySpec.GordianXMSSDigestType;
+import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianXMSSKeySpec.GordianXMSSHeight;
 import net.sourceforge.joceanus.jgordianknot.api.keypairset.GordianKeyPairSetSpec;
 import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetHashSpec;
 import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetSpec;
@@ -50,6 +67,14 @@ import net.sourceforge.joceanus.jgordianknot.api.keystore.GordianKeyStoreEntry.G
 import net.sourceforge.joceanus.jgordianknot.api.keystore.GordianKeyStoreFactory;
 import net.sourceforge.joceanus.jgordianknot.api.keystore.GordianKeyStoreManager;
 import net.sourceforge.joceanus.jgordianknot.api.mac.GordianMacSpec;
+import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianCoreFactory;
+import net.sourceforge.joceanus.jgordianknot.impl.core.keystore.GordianCRMBuilder;
+import net.sourceforge.joceanus.jgordianknot.impl.core.keystore.GordianCRMParser;
+import net.sourceforge.joceanus.jgordianknot.impl.core.keystore.GordianCRMParser.GordianCRMIssuer;
+import net.sourceforge.joceanus.jgordianknot.impl.core.keystore.GordianCoreKeyPairCertificate;
+import net.sourceforge.joceanus.jgordianknot.impl.core.keystore.GordianCoreKeyStore;
+import net.sourceforge.joceanus.jgordianknot.impl.core.keystore.GordianCoreKeyStoreManager;
+import net.sourceforge.joceanus.jgordianknot.impl.core.keystore.GordianPEMObject;
 import net.sourceforge.joceanus.jgordianknot.util.GordianGenerator;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
@@ -88,7 +113,8 @@ public class KeyStoreTest {
         return Stream.of(DynamicContainer.dynamicContainer(pFactoryType.toString(), Stream.of(
                 DynamicTest.dynamicTest("symmetric", () -> symmetric(myFactory)),
                 DynamicTest.dynamicTest("keyPair", () -> keyPairs(myFactory)),
-                DynamicTest.dynamicTest("keyPairSet", () -> keyPairSets(myFactory))
+                DynamicTest.dynamicTest("keyPairSet", () -> keyPairSets(myFactory)),
+                DynamicTest.dynamicTest("keyPairRequest", () -> keyPairRequest(myFactory))
         )));
     }
 
@@ -323,6 +349,127 @@ public class KeyStoreTest {
     }
 
     /**
+     * test keyPairs.
+     * @param pFactory the factory
+     * @throws OceanusException on error
+     */
+    private void keyPairRequest(final GordianFactory pFactory) throws OceanusException {
+        /* Set up test parameters */
+        final GordianLength myKeyLen = GordianLength.LEN_256;
+        final GordianKeySetSpec myKeySetSpec = new GordianKeySetSpec(myKeyLen);
+        final GordianKeySetHashSpec myKeySetHashSpec = new GordianKeySetHashSpec(myKeySetSpec);
+
+        /* Access keyStoreFactory and create a keyStore */
+        final GordianKeyStoreFactory myFactory = pFactory.getKeyPairFactory().getKeyStoreFactory();
+        final GordianCoreKeyStore myStore = (GordianCoreKeyStore) myFactory.createKeyStore(myKeySetHashSpec);
+        final GordianCoreKeyStoreManager myMgr = (GordianCoreKeyStoreManager) myFactory.createKeyStoreManager(myStore);
+
+        /* Create signer keyPairSpecs */
+        final GordianKeyPairSpec myRSASpec = GordianKeyPairSpec.rsa(GordianRSAModulus.MOD2048);
+        final GordianKeyPairSpec myECSpec = GordianKeyPairSpec.ec(GordianDSAElliptic.SECT571K1);
+        final List<GordianKeyPairSpec> mySignSpecs = new ArrayList<>();
+        mySignSpecs.add(myRSASpec);
+        mySignSpecs.add(myECSpec);
+        mySignSpecs.add(GordianKeyPairSpec.dsa(GordianDSAKeyType.MOD2048));
+        mySignSpecs.add(GordianKeyPairSpec.ed25519());
+        mySignSpecs.add(GordianKeyPairSpec.ed448());
+        mySignSpecs.add(GordianKeyPairSpec.gost2012(GordianGOSTElliptic.GOST512A));
+        mySignSpecs.add(GordianKeyPairSpec.dstu4145(GordianDSTU4145Elliptic.DSTU9));
+        mySignSpecs.add(GordianKeyPairSpec.sm2(GordianSM2Elliptic.SM2P256V1));
+        mySignSpecs.add(GordianKeyPairSpec.sphincs(GordianSPHINCSDigestType.SHA2));
+        mySignSpecs.add(GordianKeyPairSpec.rainbow());
+        mySignSpecs.add(GordianKeyPairSpec.qTESLA(GordianQTESLAKeyType.PROVABLY_SECURE_III));
+        mySignSpecs.add(GordianKeyPairSpec.xmss(GordianXMSSDigestType.SHA512, GordianXMSSHeight.H10));
+        mySignSpecs.add(GordianKeyPairSpec.lms(GordianLMSKeySpec.keySpec(GordianLMSSigType.H5, GordianLMSOtsType.W1)));
+
+        final List<GordianKeyPairSpec> myEncSpecs = new ArrayList<>();
+        myEncSpecs.add(GordianKeyPairSpec.mcEliece(GordianMcElieceKeySpec.standard()));
+        myEncSpecs.add(GordianKeyPairSpec.mcEliece(GordianMcElieceKeySpec.cca2(GordianMcElieceDigestType.SHA512)));
+        myEncSpecs.add(GordianKeyPairSpec.elGamal(GordianDHGroup.FFDHE2048));
+
+        final List<GordianKeyPairSpec> myAgreeSpecs = new ArrayList<>();
+        myAgreeSpecs.add(GordianKeyPairSpec.newHope());
+        myAgreeSpecs.add(GordianKeyPairSpec.dh(GordianDHGroup.FFDHE2048));
+        myAgreeSpecs.add(GordianKeyPairSpec.x25519());
+        myAgreeSpecs.add(GordianKeyPairSpec.x448());
+
+        /* Create root certificate */
+        final X500Name myRootName = buildX500Name(KeyStoreAlias.ROOT);
+        final GordianKeyStorePair myRoot = myMgr.createRootKeyPair(myRSASpec, myRootName, KeyStoreAlias.ROOT.getName(), DEF_PASSWORD);
+
+        /* Create intermediate */
+        GordianKeyPairUsage myUsage = new GordianKeyPairUsage(GordianKeyPairUse.CERTIFICATE);
+        final X500Name myInterName = buildX500Name(KeyStoreAlias.INTER);
+        final GordianKeyStorePair myIntermediate = myMgr.createKeyPair(myECSpec, myInterName, myUsage, myRoot, KeyStoreAlias.INTER.getName(), DEF_PASSWORD);
+
+        /* Create certifier */
+        final X500Name myCertifierName = buildX500Name(KeyStoreAlias.CERTIFIER);
+        final GordianKeyStorePair myCertifier = myMgr.createKeyPair(myECSpec, myCertifierName, myUsage, myRoot, KeyStoreAlias.CERTIFIER.getName(), DEF_PASSWORD);
+
+        /* Create the issuer callback */
+        final GordianCRMIssuer myIssuer = s -> {
+            final String myAlias = myStore.findIssuerKeyPairCert(s);
+            return (GordianKeyStorePair) myStore.getEntry(myAlias, DEF_PASSWORD);
+        };
+
+        /* For each signSpec */
+        for (GordianKeyPairSpec mySpec : mySignSpecs) {
+            /* Create a signature keyPair */
+            final X500Name mySignName = buildX500Name(KeyStoreAlias.SIGNER);
+            myUsage = new GordianKeyPairUsage(GordianKeyPairUse.SIGNATURE);
+            final GordianKeyStorePair mySigner = myMgr.createKeyPair(mySpec, mySignName, myUsage, myIntermediate, KeyStoreAlias.SIGNER.getName(), DEF_PASSWORD);
+            final GordianCRMBuilder myBuilder = new GordianCRMBuilder((GordianCoreFactory) pFactory, null);
+            final GordianPEMObject myRequest = myBuilder.createCertificateRequest(mySigner);
+            final GordianCRMParser myParser = new GordianCRMParser(myMgr, myCertifier, null);
+            myParser.decodeCertificateRequest(myRequest);
+            myStore.deleteEntry(KeyStoreAlias.SIGNER.getName());
+        }
+
+        /* For each encSpec */
+        for (GordianKeyPairSpec mySpec : myEncSpecs) {
+            /* Create an encryption keyPair */
+            final X500Name myEncName = buildX500Name(KeyStoreAlias.ENCRYPT);
+            myUsage = new GordianKeyPairUsage(GordianKeyPairUse.KEYENCRYPT, GordianKeyPairUse.DATAENCRYPT);
+            final GordianKeyStorePair myEnc = myMgr.createKeyPair(mySpec, myEncName, myUsage, myIntermediate, KeyStoreAlias.ENCRYPT.getName(), DEF_PASSWORD);
+            final X500Name myMatchName = buildX500Name(KeyStoreAlias.MATCH);
+            final GordianKeyStorePair myMatch = myMgr.createKeyPair(mySpec, myMatchName, myUsage, myIntermediate, KeyStoreAlias.MATCH.getName(), DEF_PASSWORD);
+            final GordianCoreKeyPairCertificate myMatchCert = (GordianCoreKeyPairCertificate) myMatch.getCertificateChain().get(0);
+            final GordianCRMBuilder myBuilder = new GordianCRMBuilder((GordianCoreFactory) pFactory, myMatchCert);
+            final GordianPEMObject myRequest = myBuilder.createCertificateRequest(myEnc);
+            final GordianCRMParser myParser = new GordianCRMParser(myMgr, myCertifier, myIssuer);
+            myParser.decodeCertificateRequest(myRequest);
+            myStore.deleteEntry(KeyStoreAlias.ENCRYPT.getName());
+            myStore.deleteEntry(KeyStoreAlias.MATCH.getName());
+        }
+
+        /* For each agreementSpec */
+        for (GordianKeyPairSpec mySpec : myAgreeSpecs) {
+            /* Create an agreement keyPair */
+            final X500Name myAgreeName = buildX500Name(KeyStoreAlias.AGREE);
+            myUsage = new GordianKeyPairUsage(GordianKeyPairUse.AGREEMENT);
+            final GordianKeyStorePair myAgree = myMgr.createKeyPair(mySpec, myAgreeName, myUsage, myIntermediate, KeyStoreAlias.AGREE.getName(), DEF_PASSWORD);
+            final X500Name myMatchName = buildX500Name(KeyStoreAlias.MATCH);
+            final GordianKeyStorePair myMatch = myMgr.createKeyPair(mySpec, myMatchName, myUsage, myIntermediate, KeyStoreAlias.MATCH.getName(), DEF_PASSWORD);
+            final GordianCoreKeyPairCertificate myMatchCert = (GordianCoreKeyPairCertificate) myMatch.getCertificateChain().get(0);
+            final GordianCRMBuilder myBuilder = new GordianCRMBuilder((GordianCoreFactory) pFactory, myMatchCert);
+            final GordianPEMObject myRequest = myBuilder.createCertificateRequest(myAgree);
+            final GordianCRMParser myParser = new GordianCRMParser(myMgr, myCertifier, myIssuer);
+            myParser.decodeCertificateRequest(myRequest);
+            myStore.deleteEntry(KeyStoreAlias.AGREE.getName());
+            myStore.deleteEntry(KeyStoreAlias.MATCH.getName());
+        }
+
+        /* delete the entries */
+        myStore.deleteEntry(KeyStoreAlias.ROOT.getName());
+        myStore.deleteEntry(KeyStoreAlias.INTER.getName());
+        myStore.deleteEntry(KeyStoreAlias.CERTIFIER.getName());
+
+        /* Check that we have deleted all values */
+        int mySize = myStore.size();
+        Assertions.assertEquals(0, mySize);
+    }
+
+    /**
      * check keySet.
      * @param pManager the keyStoreManager
      * @param pAlias the alias
@@ -494,6 +641,16 @@ public class KeyStoreTest {
          * Encrypt Certificate.
          */
         ENCRYPT("Encrypt Certificate"),
+
+        /**
+         * Certifier Certificate.
+         */
+        CERTIFIER("Certifier Certificate"),
+
+        /**
+         * Match Certificate.
+         */
+        MATCH("Match Certificate"),
 
         /**
          * KeySet.

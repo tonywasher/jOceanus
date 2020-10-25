@@ -197,7 +197,7 @@ public class GordianPEMCoder {
      * @param pCertificate the certificate
      * @return the encoded object.
      */
-    private static GordianPEMObject encodeCertificate(final GordianKeyPairCertificate pCertificate) {
+    static GordianPEMObject encodeCertificate(final GordianKeyPairCertificate pCertificate) {
         return new GordianPEMObject(GordianPEMObjectType.KEYPAIRCERT, pCertificate.getEncoded());
     }
 
@@ -206,7 +206,7 @@ public class GordianPEMCoder {
      * @param pCertificate the certificate
      * @return the encoded object.
      */
-    private static GordianPEMObject encodeCertificate(final GordianKeyPairSetCertificate pCertificate) {
+    static GordianPEMObject encodeCertificate(final GordianKeyPairSetCertificate pCertificate) {
         return new GordianPEMObject(GordianPEMObjectType.KEYPAIRSETCERT, pCertificate.getEncoded());
     }
 

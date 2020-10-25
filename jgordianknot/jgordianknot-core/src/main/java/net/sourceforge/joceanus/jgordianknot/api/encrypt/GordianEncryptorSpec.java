@@ -107,14 +107,6 @@ public final class GordianEncryptorSpec {
     }
 
     /**
-     * Create DSTU Encryptor.
-     * @return the encryptorSpec
-     */
-    public static GordianEncryptorSpec dstu4145() {
-        return new GordianEncryptorSpec(GordianKeyPairType.DSTU4145, null);
-    }
-
-    /**
      * Create SM2 Encryptor.
      * @return the encryptorSpec
      */

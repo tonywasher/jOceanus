@@ -32,8 +32,10 @@ import net.sourceforge.joceanus.jgordianknot.api.base.GordianKeySpec;
 import net.sourceforge.joceanus.jgordianknot.api.factory.GordianKeyPairFactory;
 import net.sourceforge.joceanus.jgordianknot.api.key.GordianKey;
 import net.sourceforge.joceanus.jgordianknot.api.key.GordianKeyGenerator;
+import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPair;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPairGenerator;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPairSpec;
+import net.sourceforge.joceanus.jgordianknot.api.keypairset.GordianKeyPairSet;
 import net.sourceforge.joceanus.jgordianknot.api.keypairset.GordianKeyPairSetFactory;
 import net.sourceforge.joceanus.jgordianknot.api.keypairset.GordianKeyPairSetGenerator;
 import net.sourceforge.joceanus.jgordianknot.api.keypairset.GordianKeyPairSetSpec;
@@ -43,7 +45,6 @@ import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetSpec;
 import net.sourceforge.joceanus.jgordianknot.api.keystore.GordianKeyPairCertificate;
 import net.sourceforge.joceanus.jgordianknot.api.keystore.GordianKeyPairSetCertificate;
 import net.sourceforge.joceanus.jgordianknot.api.keystore.GordianKeyPairUsage;
-import net.sourceforge.joceanus.jgordianknot.api.keystore.GordianKeyStore;
 import net.sourceforge.joceanus.jgordianknot.api.keystore.GordianKeyStoreEntry;
 import net.sourceforge.joceanus.jgordianknot.api.keystore.GordianKeyStoreEntry.GordianKeyStoreKey;
 import net.sourceforge.joceanus.jgordianknot.api.keystore.GordianKeyStoreEntry.GordianKeyStorePair;
@@ -86,10 +87,10 @@ public class GordianCoreKeyStoreManager
     }
 
     @Override
-    public GordianKeyStore getKeyStore() {
+    public GordianCoreKeyStore getKeyStore() {
         return theKeyStore;
     }
-    
+
     @Override
     public GordianKeyStoreSet createKeySet(final GordianKeySetSpec pKeySetSpec,
                                            final String pAlias,
@@ -184,6 +185,29 @@ public class GordianCoreKeyStoreManager
         return (GordianKeyStorePair) theKeyStore.getEntry(pAlias, pPassword);
     }
 
+    /**
+     * Sign keyPair.
+     * @param pKeyPair the keyPair
+     * @param pSubject the name of the entity
+     * @param pUsage   the key usage
+     * @param pSigner the signer
+     * @return the certificate chain
+     * @throws OceanusException on error
+     */
+    List<GordianKeyPairCertificate> signKeyPair(final GordianKeyPair pKeyPair,
+                                                final X500Name pSubject,
+                                                final GordianKeyPairUsage pUsage,
+                                                final GordianKeyStorePair pSigner) throws OceanusException {
+        /* Create the certificate */
+        final GordianCoreKeyPairCertificate myCert = new GordianCoreKeyPairCertificate(theFactory, (GordianCoreKeyStorePair) pSigner, pKeyPair, pSubject, pUsage);
+
+        /* Create the new chain */
+        final List<GordianKeyPairCertificate> myParentChain = pSigner.getCertificateChain();
+        final List<GordianKeyPairCertificate> myChain = new ArrayList<>(myParentChain);
+        myChain.add(0, myCert);
+        return myChain;
+    }
+
     @Override
     public GordianKeyStorePairSet createRootKeyPairSet(final GordianKeyPairSetSpec pKeySetSpec,
                                                        final X500Name pSubject,
@@ -263,6 +287,29 @@ public class GordianCoreKeyStoreManager
         } catch (IOException e) {
             throw new GordianIOException("Failed to write to file", e);
         }
+    }
+
+    /**
+     * Sign keyPair.
+     * @param pKeyPairSet the keyPairSet
+     * @param pSubject the name of the entity
+     * @param pUsage   the key usage
+     * @param pSigner the signer
+     * @return the certificate chain
+     * @throws OceanusException on error
+     */
+    List<GordianKeyPairSetCertificate> signKeyPairSet(final GordianKeyPairSet pKeyPairSet,
+                                                      final X500Name pSubject,
+                                                      final GordianKeyPairUsage pUsage,
+                                                      final GordianKeyStorePairSet pSigner) throws OceanusException {
+        /* Create the certificate */
+        final GordianCoreKeyPairSetCertificate myCert = new GordianCoreKeyPairSetCertificate(theFactory, (GordianCoreKeyStorePairSet) pSigner, pKeyPairSet, pSubject, pUsage);
+
+        /* Create the new chain */
+        final List<GordianKeyPairSetCertificate> myParentChain = pSigner.getCertificateChain();
+        final List<GordianKeyPairSetCertificate> myChain = new ArrayList<>(myParentChain);
+        myChain.add(0, myCert);
+        return myChain;
     }
 
     @Override

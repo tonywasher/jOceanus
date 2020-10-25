@@ -105,6 +105,11 @@ public abstract class GordianCoreCertificate<S, K>
     private final S theSigSpec;
 
     /**
+     * The serial#.
+     */
+    private final BigInteger theSerialNo;
+
+    /**
      * The TBS Certificate.
      */
     private final TBSCertificate theTbsCertificate;
@@ -154,6 +159,7 @@ public abstract class GordianCoreCertificate<S, K>
         theKeyUsage = new GordianKeyPairUsage(GordianKeyPairUse.CERTIFICATE);
         theCAStatus = new GordianCAStatus(true);
         theTbsCertificate = buildCertificate(null, pSubject);
+        theSerialNo = theTbsCertificate.getSerialNumber().getValue();
 
         /* Create the signature */
         theSignature = createSignature(pKeyPair);
@@ -207,6 +213,7 @@ public abstract class GordianCoreCertificate<S, K>
 
         /* Create the TBSCertificate */
         theTbsCertificate = buildCertificate(mySignerCert, pSubject);
+        theSerialNo = theTbsCertificate.getSerialNumber().getValue();
 
         /* Create the signature */
         theSignature = createSignature(mySignerPair);
@@ -261,6 +268,7 @@ public abstract class GordianCoreCertificate<S, K>
         /* Create the ids */
         theSubject = GordianCoreCertificateId.getSubjectId(this);
         theIssuer = GordianCoreCertificateId.getIssuerId(this);
+        theSerialNo = theTbsCertificate.getSerialNumber().getValue();
 
         /* Store the encoded representation */
         theEncoded = pSequence;
@@ -347,6 +355,14 @@ public abstract class GordianCoreCertificate<S, K>
     @Override
     public K getKeyPair() {
         return theKeyPair;
+    }
+
+    /**
+     * Obtain the serial#.
+     * @return the serial number.
+     */
+    public BigInteger getSerialNo() {
+        return theSerialNo;
     }
 
     /**
@@ -439,7 +455,7 @@ public abstract class GordianCoreCertificate<S, K>
      * @param pExtensions the extensions.
      * @return the usage
      */
-    private static GordianKeyPairUsage determineUsage(final Extensions pExtensions) {
+    static GordianKeyPairUsage determineUsage(final Extensions pExtensions) {
         /* Access details */
         final KeyUsage myUsage = KeyUsage.fromExtensions(pExtensions);
         final BasicConstraints myConstraint = BasicConstraints.fromExtensions(pExtensions);
