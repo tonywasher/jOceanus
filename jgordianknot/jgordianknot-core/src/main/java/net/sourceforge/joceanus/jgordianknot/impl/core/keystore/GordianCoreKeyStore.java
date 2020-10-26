@@ -134,7 +134,7 @@ public class GordianCoreKeyStore
      * Obtain the factory.
      * @return the factory
      */
-    GordianCoreFactory getFactory() {
+    public GordianCoreFactory getFactory() {
         return theFactory;
     }
 
@@ -142,7 +142,7 @@ public class GordianCoreKeyStore
      * Obtain the keySetHashSpec.
      * @return the keySetHashSpec
      */
-    GordianKeySetHashSpec getKeySetSpec() {
+    public GordianKeySetHashSpec getKeySetSpec() {
         return theKeySetSpec;
     }
 
@@ -851,6 +851,35 @@ public class GordianCoreKeyStore
                 /* Return alias if we have a match */
                 if (myIssuer.equals(myCert.getIssuer().getName())
                     && mySerial.equals(myCert.getSerialNo())) {
+                    return myEntry.getKey();
+                }
+            }
+        }
+
+        /* Not found */
+        throw new GordianDataException("Unable to find matching certificate");
+    }
+
+    /**
+     * find the alias for a keyPair entry for issuer/serial#.
+     * @param pIssuer the issuer
+     * @return the alias if found
+     */
+    public String findIssuerKeyPairSetCert(final IssuerAndSerialNumber pIssuer) throws OceanusException {
+        /* Loop through the alias entries */
+        final X500Name myIssuer = pIssuer.getName();
+        final BigInteger mySerial = pIssuer.getSerialNumber().getValue();
+        for (Entry<String, GordianCoreKeyStoreEntry> myEntry : theAliases.entrySet()) {
+            /* If this is a keyPairSet entry */
+            if (myEntry.getValue() instanceof GordianKeyStorePairSetElement) {
+                /* Access details */
+                final GordianKeyStorePairSetElement myPair = (GordianKeyStorePairSetElement) myEntry.getValue();
+                final GordianKeyStoreCertificateKey myCertKey =  myPair.getCertificateChain().get(0);
+                final GordianCoreKeyPairSetCertificate myCert = (GordianCoreKeyPairSetCertificate) getKeyPairSetCertificate(myCertKey);
+
+                /* Return alias if we have a match */
+                if (myIssuer.equals(myCert.getIssuer().getName())
+                        && mySerial.equals(myCert.getSerialNo())) {
                     return myEntry.getKey();
                 }
             }

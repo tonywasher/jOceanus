@@ -62,13 +62,13 @@ import net.sourceforge.joceanus.jgordianknot.impl.core.sign.GordianCoreSignature
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
- * Certificate Request Message Parser.
+ * KeyPair Certificate Request Message Parser.
  */
-public class GordianCRMParser {
+public class GordianKeyPairCRMParser {
     /**
      * The Issuer Callback.
      */
-    public interface GordianCRMIssuer {
+    public interface GordianKeyPairCRMIssuer {
         /**
          * Obtain KeyPair entry for issuer.
          * @param pIssuerId the issuerId
@@ -101,7 +101,7 @@ public class GordianCRMParser {
     /**
      * The issuer lookup.
      */
-    private final GordianCRMIssuer theIssuer;
+    private final GordianKeyPairCRMIssuer theIssuer;
 
     /**
      * Constructor.
@@ -109,9 +109,9 @@ public class GordianCRMParser {
      * @param pSigner the signer
      * @param pIssuer the issuer lookup
      */
-    public GordianCRMParser(final GordianCoreKeyStoreManager pKeyStoreMgr,
-                            final GordianKeyStorePair pSigner,
-                            final GordianCRMIssuer pIssuer) {
+    public GordianKeyPairCRMParser(final GordianCoreKeyStoreManager pKeyStoreMgr,
+                                   final GordianKeyStorePair pSigner,
+                                   final GordianKeyPairCRMIssuer pIssuer) {
         /* Store parameters */
         theKeyStoreMgr = pKeyStoreMgr;
         theKeyStore = pKeyStoreMgr.getKeyStore();
@@ -293,7 +293,7 @@ public class GordianCRMParser {
         final GordianKeyPairEncryptor myEncryptor = myEncFactory.createKeyPairEncryptor(myEncSpec);
         myEncryptor.initForDecrypt(pKeyPair);
         final byte[] myKey = myEncryptor.decrypt(pEncryptedKey);
-        return GordianCRMBuilder.deriveKeySetFromKey(theFactory, myKey);
+        return GordianKeyPairCRMBuilder.deriveKeySetFromKey(theFactory, myKey);
     }
 
     /**

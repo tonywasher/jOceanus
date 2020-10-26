@@ -35,7 +35,6 @@ import org.bouncycastle.asn1.cms.RecipientInfo;
 import org.bouncycastle.asn1.crmf.CRMFObjectIdentifiers;
 import org.bouncycastle.asn1.crmf.CertReqMsg;
 import org.bouncycastle.asn1.crmf.CertRequest;
-import org.bouncycastle.asn1.crmf.CertTemplate;
 import org.bouncycastle.asn1.crmf.CertTemplateBuilder;
 import org.bouncycastle.asn1.crmf.EncKeyWithID;
 import org.bouncycastle.asn1.crmf.PKMACValue;
@@ -86,9 +85,9 @@ import net.sourceforge.joceanus.jgordianknot.impl.core.sign.GordianCoreSignature
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
- * Certificate Request Message Builder.
+ * KeyPair Certificate Request Message Builder.
  */
-public class GordianCRMBuilder {
+public class GordianKeyPairCRMBuilder {
     /**
      * The factory.
      */
@@ -104,8 +103,8 @@ public class GordianCRMBuilder {
      * @param pFactory the factory
      * @param pTarget the target certificate
      */
-    public GordianCRMBuilder(final GordianCoreFactory pFactory,
-                             final GordianCoreKeyPairCertificate pTarget) {
+    public GordianKeyPairCRMBuilder(final GordianCoreFactory pFactory,
+                                    final GordianCoreKeyPairCertificate pTarget) {
         theFactory = pFactory;
         theTarget = pTarget;
     }
@@ -122,11 +121,8 @@ public class GordianCRMBuilder {
             /* Access the certificate */
             final GordianCoreKeyPairCertificate myCert = (GordianCoreKeyPairCertificate) pKeyPair.getCertificateChain().get(0);
 
-            /* Create the certificate template */
-            final CertTemplate myTemplate = createCertTemplate(myCert);
-
             /* Create the Certificate request */
-            final CertRequest myCertReq = new CertRequest(1, myTemplate, null);
+            final CertRequest myCertReq = createCertRequest(myCert);
 
             /* Create the ProofOfPossession */
             final ProofOfPossession myProof = createProofOfPossession(pKeyPair, myCert, myCertReq);
@@ -141,12 +137,12 @@ public class GordianCRMBuilder {
     }
 
     /**
-     * Create a Certificate template.
+     * Create a Certificate request.
      * @param pCertificate the local certificate
-     * @return the certificate template
+     * @return the certificate request
      * @throws OceanusException on error
      */
-    CertTemplate createCertTemplate(final GordianCoreKeyPairCertificate pCertificate) throws OceanusException {
+    static CertRequest createCertRequest(final GordianCoreCertificate<?, ?> pCertificate) throws OceanusException {
         /* Protect against exceptions */
         try {
             /* Create the Certificate template Builder */
@@ -166,11 +162,11 @@ public class GordianCRMBuilder {
             myGenerator.addExtension(Extension.basicConstraints, false, new BasicConstraints(false));
             myBuilder.setExtensions(myGenerator.generate());
 
-            /* Create the certificate template */
-            return myBuilder.build();
+             /* Create the Certificate request */
+            return new CertRequest(1, myBuilder.build(), null);
 
         } catch (IOException e) {
-            throw new GordianIOException("Failed to create Certificate template", e);
+            throw new GordianIOException("Failed to create Certificate request", e);
         }
     }
 
@@ -442,7 +438,7 @@ public class GordianCRMBuilder {
     /**
      * Extended POPOPrivKey to allow encryptedKey.
      */
-    private static class XPOPOPrivKey extends POPOPrivKey {
+    static class XPOPOPrivKey extends POPOPrivKey {
         /**
          * The encrypted key.
          */
