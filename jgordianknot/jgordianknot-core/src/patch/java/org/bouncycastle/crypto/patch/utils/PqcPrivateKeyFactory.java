@@ -39,6 +39,8 @@ import org.bouncycastle.pqc.crypto.mceliece.McElieceCCA2PrivateKeyParameters;
 import org.bouncycastle.pqc.crypto.mceliece.McEliecePrivateKeyParameters;
 import org.bouncycastle.pqc.crypto.rainbow.RainbowPrivateKeyParameters;
 
+import net.sourceforge.joceanus.jgordianknot.api.base.GordianLength;
+
 /**
  * Additional AsymmetricKeys that are missing from PrivateKeyFactory.
  */
@@ -56,67 +58,54 @@ public final class PqcPrivateKeyFactory {
      * @return a suitable private key parameter
      * @throws IOException on an error decoding the key
      */
-    public static AsymmetricKeyParameter createKey(PrivateKeyInfo keyInfo) throws IOException
-    {
-        AlgorithmIdentifier algId = keyInfo.getPrivateKeyAlgorithm();
-        ASN1ObjectIdentifier algOID = algId.getAlgorithm();
+    public static AsymmetricKeyParameter createKey(final PrivateKeyInfo keyInfo) throws IOException {
+        final AlgorithmIdentifier algId = keyInfo.getPrivateKeyAlgorithm();
+        final ASN1ObjectIdentifier algOID = algId.getAlgorithm();
 
-        if (algOID.equals(PQCObjectIdentifiers.mcEliece))
-        {
-            McEliecePrivateKey myKey = McEliecePrivateKey.getInstance(keyInfo.parsePrivateKey());
+        if (algOID.equals(PQCObjectIdentifiers.mcEliece)) {
+            final McEliecePrivateKey myKey = McEliecePrivateKey.getInstance(keyInfo.parsePrivateKey());
 
             return new McEliecePrivateKeyParameters(myKey.getN(), myKey.getK(), myKey.getField(), myKey.getGoppaPoly(),
                             myKey.getP1(), myKey.getP2(), myKey.getSInv());
-        }
-        else if (algOID.equals(PQCObjectIdentifiers.mcElieceCca2))
-        {
-            McElieceCCA2PrivateKey myKey = McElieceCCA2PrivateKey.getInstance(keyInfo.parsePrivateKey());
+
+        } else if (algOID.equals(PQCObjectIdentifiers.mcElieceCca2)) {
+            final McElieceCCA2PrivateKey myKey = McElieceCCA2PrivateKey.getInstance(keyInfo.parsePrivateKey());
 
             return new McElieceCCA2PrivateKeyParameters(myKey.getN(), myKey.getK(), myKey.getField(), myKey.getGoppaPoly(),
                             myKey.getP(), getDigest(myKey.getDigest().getAlgorithm()).getAlgorithmName());
-        }
-        else if (algOID.equals(PQCObjectIdentifiers.rainbow))
-        {
-            RainbowPrivateKey keyStructure = RainbowPrivateKey.getInstance(keyInfo.parsePrivateKey());
+
+        } else if (algOID.equals(PQCObjectIdentifiers.rainbow)) {
+            final RainbowPrivateKey keyStructure = RainbowPrivateKey.getInstance(keyInfo.parsePrivateKey());
 
             return new RainbowPrivateKeyParameters(keyStructure.getInvA1(), keyStructure.getB1(),
                     keyStructure.getInvA2(), keyStructure.getB2(), keyStructure.getVi(), keyStructure.getLayers());
-        }
-        else
-        {
+
+        } else {
             throw new RuntimeException("algorithm identifier in private key not recognised");
         }
     }
 
-    static Digest getDigest(ASN1ObjectIdentifier oid)
-    {
-        if (oid.equals(OIWObjectIdentifiers.idSHA1))
-        {
+    static Digest getDigest(final ASN1ObjectIdentifier oid) {
+        if (oid.equals(OIWObjectIdentifiers.idSHA1)) {
             return new SHA1Digest();
         }
-        if (oid.equals(NISTObjectIdentifiers.id_sha224))
-        {
+        if (oid.equals(NISTObjectIdentifiers.id_sha224)) {
             return new SHA224Digest();
         }
-        if (oid.equals(NISTObjectIdentifiers.id_sha256))
-        {
+        if (oid.equals(NISTObjectIdentifiers.id_sha256)) {
             return new SHA256Digest();
         }
-        if (oid.equals(NISTObjectIdentifiers.id_sha384))
-        {
+        if (oid.equals(NISTObjectIdentifiers.id_sha384)) {
             return new SHA384Digest();
         }
-        if (oid.equals(NISTObjectIdentifiers.id_sha512))
-        {
+        if (oid.equals(NISTObjectIdentifiers.id_sha512)) {
             return new SHA512Digest();
         }
-        if (oid.equals(NISTObjectIdentifiers.id_shake128))
-        {
-            return new SHAKEDigest(128);
+        if (oid.equals(NISTObjectIdentifiers.id_shake128)) {
+            return new SHAKEDigest(GordianLength.LEN_128.getLength());
         }
-        if (oid.equals(NISTObjectIdentifiers.id_shake256))
-        {
-            return new SHAKEDigest(256);
+        if (oid.equals(NISTObjectIdentifiers.id_shake256)) {
+            return new SHAKEDigest(GordianLength.LEN_256.getLength());
         }
 
         throw new IllegalArgumentException("unrecognized digest OID: " + oid);

@@ -121,6 +121,24 @@ public interface GordianKeyStore {
                        List<GordianKeyPairSetCertificate> pCertificateChain) throws OceanusException;
 
     /**
+     * Update keyPair certificateChain.
+     * @param pAlias the alias
+     * @param pCertificateChain the certificateChain
+     * @throws OceanusException on error
+     */
+    void updateKeyPairCertificateChain(String pAlias,
+                                       List<GordianKeyPairCertificate> pCertificateChain) throws OceanusException;
+
+    /**
+     * Update keyPairSet certificate Chain.
+     * @param pAlias the alias
+     * @param pCertificateChain the certificateChain
+     * @throws OceanusException on error
+     */
+    void updateKeyPairSetCertificateChain(String pAlias,
+                                          List<GordianKeyPairSetCertificate> pCertificateChain) throws OceanusException;
+
+    /**
      * Set key entry.
      * @param <T> the key type
      * @param pAlias the alias

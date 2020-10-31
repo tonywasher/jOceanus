@@ -23,6 +23,7 @@ import java.util.Objects;
 import net.sourceforge.joceanus.jgordianknot.api.base.GordianLength;
 import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigestSpec;
 import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigestType;
+import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPairSpec;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPairType;
 import net.sourceforge.joceanus.jtethys.TethysDataConverter;
 
@@ -130,6 +131,30 @@ public final class GordianEncryptorSpec {
      */
     public static GordianEncryptorSpec mcEliece(final GordianMcElieceEncryptionType pType) {
         return new GordianEncryptorSpec(GordianKeyPairType.MCELIECE, pType);
+    }
+
+    /**
+     * Create default signatureSpec for key.
+     * @param pKeySpec the keySpec
+     * @return the SignatureSpec
+     */
+    public static GordianEncryptorSpec defaultForKey(final GordianKeyPairSpec pKeySpec) {
+        switch (pKeySpec.getKeyPairType()) {
+            case RSA:
+                return GordianEncryptorSpec.rsa(GordianDigestSpec.sha2(GordianLength.LEN_512));
+            case EC:
+            case SM2:
+            case GOST2012:
+                return GordianEncryptorSpec.sm2(GordianSM2EncryptionSpec.c1c2c3(GordianDigestSpec.sm3()));
+            case ELGAMAL:
+                return GordianEncryptorSpec.elGamal(GordianDigestSpec.sha2(GordianLength.LEN_512));
+            case MCELIECE:
+                return pKeySpec.getMcElieceKeySpec().isCCA2()
+                        ? GordianEncryptorSpec.mcEliece(GordianMcElieceEncryptionType.FUJISAKI)
+                        : GordianEncryptorSpec.mcEliece(GordianMcElieceEncryptionType.STANDARD);
+            default:
+                return null;
+        }
     }
 
     /**

@@ -52,58 +52,48 @@ public final class PqcPrivateKeyInfoFactory {
      * @return the appropriate PrivateKeyInfo
      * @throws java.io.IOException on an error encoding the key
      */
-    public static PrivateKeyInfo createPrivateKeyInfo(AsymmetricKeyParameter privateKey, ASN1Set attributes) throws IOException
-    {
-        if (privateKey instanceof McEliecePrivateKeyParameters)
-        {
-            McEliecePrivateKeyParameters priv = (McEliecePrivateKeyParameters) privateKey;
+    public static PrivateKeyInfo createPrivateKeyInfo(final AsymmetricKeyParameter privateKey,
+                                                      final ASN1Set attributes) throws IOException {
+        if (privateKey instanceof McEliecePrivateKeyParameters) {
+            final McEliecePrivateKeyParameters priv = (McEliecePrivateKeyParameters) privateKey;
 
-            McEliecePrivateKey privKey = new McEliecePrivateKey(priv.getN(), priv.getK(), priv.getField(), priv.getGoppaPoly(), priv.getP1(), priv.getP2(), priv.getSInv());
-            AlgorithmIdentifier algorithmIdentifier = new AlgorithmIdentifier(PQCObjectIdentifiers.mcEliece);
+            final McEliecePrivateKey privKey = new McEliecePrivateKey(priv.getN(), priv.getK(), priv.getField(), priv.getGoppaPoly(), priv.getP1(), priv.getP2(), priv.getSInv());
+            final AlgorithmIdentifier algorithmIdentifier = new AlgorithmIdentifier(PQCObjectIdentifiers.mcEliece);
             return new PrivateKeyInfo(algorithmIdentifier, privKey);
-        }
-        else if (privateKey instanceof McElieceCCA2PrivateKeyParameters)
-        {
-            McElieceCCA2PrivateKeyParameters priv = (McElieceCCA2PrivateKeyParameters) privateKey;
 
-            McElieceCCA2PrivateKey privKey = new McElieceCCA2PrivateKey(priv.getN(), priv.getK(), priv.getField(), priv.getGoppaPoly(), priv.getP(), getDigAlgId(priv.getDigest()));
-            AlgorithmIdentifier algorithmIdentifier = new AlgorithmIdentifier(PQCObjectIdentifiers.mcElieceCca2);
+        } else if (privateKey instanceof McElieceCCA2PrivateKeyParameters) {
+            final McElieceCCA2PrivateKeyParameters priv = (McElieceCCA2PrivateKeyParameters) privateKey;
+
+            final McElieceCCA2PrivateKey privKey = new McElieceCCA2PrivateKey(priv.getN(), priv.getK(), priv.getField(), priv.getGoppaPoly(), priv.getP(), getDigAlgId(priv.getDigest()));
+            final AlgorithmIdentifier algorithmIdentifier = new AlgorithmIdentifier(PQCObjectIdentifiers.mcElieceCca2);
             return new PrivateKeyInfo(algorithmIdentifier, privKey);
-        }
-        else if (privateKey instanceof RainbowPrivateKeyParameters)
-        {
-            RainbowPrivateKeyParameters priv = (RainbowPrivateKeyParameters) privateKey;
-            RainbowPrivateKey key = new RainbowPrivateKey(priv.getInvA1(), priv.getB1(), priv.getInvA2(), priv.getB2(), priv.getVi(), priv.getLayers());
 
-            AlgorithmIdentifier algorithmIdentifier = new AlgorithmIdentifier(PQCObjectIdentifiers.rainbow, DERNull.INSTANCE);
+        } else if (privateKey instanceof RainbowPrivateKeyParameters) {
+            final RainbowPrivateKeyParameters priv = (RainbowPrivateKeyParameters) privateKey;
+            final RainbowPrivateKey key = new RainbowPrivateKey(priv.getInvA1(), priv.getB1(), priv.getInvA2(), priv.getB2(), priv.getVi(), priv.getLayers());
+
+            final AlgorithmIdentifier algorithmIdentifier = new AlgorithmIdentifier(PQCObjectIdentifiers.rainbow, DERNull.INSTANCE);
             return new PrivateKeyInfo(algorithmIdentifier, key);
-        }
-        else
-        {
+
+        } else {
             throw new IOException("key parameters not recognised.");
         }
     }
 
-    static AlgorithmIdentifier getDigAlgId(String digestName)
-    {
-        if (digestName.equals(McElieceCCA2KeyGenParameterSpec.SHA1))
-        {
+    static AlgorithmIdentifier getDigAlgId(final String digestName) {
+        if (digestName.equals(McElieceCCA2KeyGenParameterSpec.SHA1)) {
             return new AlgorithmIdentifier(OIWObjectIdentifiers.idSHA1, DERNull.INSTANCE);
         }
-        if (digestName.equals(McElieceCCA2KeyGenParameterSpec.SHA224))
-        {
+        if (digestName.equals(McElieceCCA2KeyGenParameterSpec.SHA224)) {
             return new AlgorithmIdentifier(NISTObjectIdentifiers.id_sha224, DERNull.INSTANCE);
         }
-        if (digestName.equals(McElieceCCA2KeyGenParameterSpec.SHA256))
-        {
+        if (digestName.equals(McElieceCCA2KeyGenParameterSpec.SHA256)) {
             return new AlgorithmIdentifier(NISTObjectIdentifiers.id_sha256, DERNull.INSTANCE);
         }
-        if (digestName.equals(McElieceCCA2KeyGenParameterSpec.SHA384))
-        {
+        if (digestName.equals(McElieceCCA2KeyGenParameterSpec.SHA384)) {
             return new AlgorithmIdentifier(NISTObjectIdentifiers.id_sha384, DERNull.INSTANCE);
         }
-        if (digestName.equals(McElieceCCA2KeyGenParameterSpec.SHA512))
-        {
+        if (digestName.equals(McElieceCCA2KeyGenParameterSpec.SHA512)) {
             return new AlgorithmIdentifier(NISTObjectIdentifiers.id_sha512, DERNull.INSTANCE);
         }
 

@@ -36,7 +36,7 @@ import net.sourceforge.joceanus.jtethys.date.TethysDate;
  * These are the entries as seen by the user.
  * </p>
  */
-class GordianCoreKeyStoreEntry
+public class GordianCoreKeyStoreEntry
         implements GordianKeyStoreEntry {
     /**
      * The Creation Date.
@@ -196,7 +196,7 @@ class GordianCoreKeyStoreEntry
     /**
      * KeyStore KeyPair.
      */
-    static class GordianCoreKeyStorePair
+    public static class GordianCoreKeyStorePair
             extends GordianKeyStorePairEntry<GordianKeyPairCertificate, GordianKeyPair>
             implements GordianKeyStorePair {
         /**
@@ -220,7 +220,7 @@ class GordianCoreKeyStoreEntry
     /**
      * KeyStore KeyPairSet.
      */
-    static class GordianCoreKeyStorePairSet
+    public static class GordianCoreKeyStorePairSet
             extends GordianKeyStorePairEntry<GordianKeyPairSetCertificate, GordianKeyPairSet>
             implements GordianKeyStorePairSet {
         /**

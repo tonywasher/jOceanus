@@ -19,6 +19,7 @@ package net.sourceforge.joceanus.jgordianknot.api.agree;
 import java.util.ArrayList;
 import java.util.List;
 
+import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPairSpec;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPairType;
 import net.sourceforge.joceanus.jtethys.TethysDataConverter;
 
@@ -333,6 +334,32 @@ public final class GordianKeyPairAgreementSpec {
      */
     public static GordianKeyPairAgreementSpec newHope(final GordianKDFType pKDFType) {
         return new GordianKeyPairAgreementSpec(GordianKeyPairType.NEWHOPE, GordianAgreementType.ANON, pKDFType);
+    }
+
+    /**
+     * Create default signatureSpec for key.
+     * @param pKeySpec the keySpec
+     * @return the SignatureSpec
+     */
+    public static GordianKeyPairAgreementSpec defaultForKey(final GordianKeyPairSpec pKeySpec) {
+        final GordianKeyPairType myType = pKeySpec.getKeyPairType();
+        switch (myType) {
+            case DH:
+                return GordianKeyPairAgreementSpec.dhAnon(GordianKDFType.SHA256KDF);
+            case XDH:
+                return pKeySpec.getEdwardsElliptic().is25519()
+                        ? GordianKeyPairAgreementSpec.xdhAnon(GordianKDFType.SHA256KDF)
+                        : GordianKeyPairAgreementSpec.xdhAnon(GordianKDFType.SHA512KDF);
+            case NEWHOPE:
+                return GordianKeyPairAgreementSpec.newHope(GordianKDFType.SHA256KDF);
+            case EC:
+            case SM2:
+            case GOST2012:
+            case DSTU4145:
+                return GordianKeyPairAgreementSpec.ecdhAnon(myType, GordianKDFType.SHA256KDF);
+            default:
+                return null;
+        }
     }
 
     /**

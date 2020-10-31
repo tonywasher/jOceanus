@@ -16,19 +16,15 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jgordianknot.impl.core.keystore;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
 import org.bouncycastle.asn1.x500.X500Name;
 
+import net.sourceforge.joceanus.jgordianknot.api.agree.GordianKeyPairAgreementSpec;
 import net.sourceforge.joceanus.jgordianknot.api.base.GordianKeySpec;
+import net.sourceforge.joceanus.jgordianknot.api.encrypt.GordianEncryptorSpec;
 import net.sourceforge.joceanus.jgordianknot.api.factory.GordianKeyPairFactory;
 import net.sourceforge.joceanus.jgordianknot.api.key.GordianKey;
 import net.sourceforge.joceanus.jgordianknot.api.key.GordianKeyGenerator;
@@ -45,15 +41,17 @@ import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetSpec;
 import net.sourceforge.joceanus.jgordianknot.api.keystore.GordianKeyPairCertificate;
 import net.sourceforge.joceanus.jgordianknot.api.keystore.GordianKeyPairSetCertificate;
 import net.sourceforge.joceanus.jgordianknot.api.keystore.GordianKeyPairUsage;
-import net.sourceforge.joceanus.jgordianknot.api.keystore.GordianKeyStoreEntry;
+import net.sourceforge.joceanus.jgordianknot.api.keystore.GordianKeyPairUse;
 import net.sourceforge.joceanus.jgordianknot.api.keystore.GordianKeyStoreEntry.GordianKeyStoreKey;
 import net.sourceforge.joceanus.jgordianknot.api.keystore.GordianKeyStoreEntry.GordianKeyStorePair;
 import net.sourceforge.joceanus.jgordianknot.api.keystore.GordianKeyStoreEntry.GordianKeyStorePairSet;
 import net.sourceforge.joceanus.jgordianknot.api.keystore.GordianKeyStoreEntry.GordianKeyStoreSet;
 import net.sourceforge.joceanus.jgordianknot.api.keystore.GordianKeyStoreManager;
 import net.sourceforge.joceanus.jgordianknot.api.mac.GordianMacSpec;
+import net.sourceforge.joceanus.jgordianknot.api.sign.GordianSignatureSpec;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianCoreFactory;
-import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianIOException;
+import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianDataException;
+import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianLogicException;
 import net.sourceforge.joceanus.jgordianknot.impl.core.keypair.GordianCoreKeyPair;
 import net.sourceforge.joceanus.jgordianknot.impl.core.keypairset.GordianCoreKeyPairSet;
 import net.sourceforge.joceanus.jgordianknot.impl.core.keystore.GordianCoreKeyStoreEntry.GordianCoreKeyStorePair;
@@ -118,10 +116,15 @@ public class GordianCoreKeyStoreManager
     }
 
     @Override
-    public GordianKeyStorePair createRootKeyPair(final GordianKeyPairSpec pKeySpec,
-                                                 final X500Name pSubject,
-                                                 final String pAlias,
-                                                 final char[] pPassword) throws OceanusException {
+    public GordianCoreKeyStorePair createRootKeyPair(final GordianKeyPairSpec pKeySpec,
+                                                     final X500Name pSubject,
+                                                     final String pAlias,
+                                                     final char[] pPassword) throws OceanusException {
+        /* Check that the keySpec can provide a signature */
+        if (GordianSignatureSpec.defaultForKey(pKeySpec) == null) {
+            throw new GordianDataException("Root keyPair must be capable of signing");
+        }
+
         /* Create the new keyPair */
         final GordianKeyPairFactory myFactory = theFactory.getKeyPairFactory();
         final GordianKeyPairGenerator myGenerator = myFactory.getKeyPairGenerator(pKeySpec);
@@ -133,18 +136,19 @@ public class GordianCoreKeyStoreManager
 
         /* Record into keyStore */
         theKeyStore.setKeyPair(pAlias, myKeyPair, pPassword, myChain);
-        return (GordianKeyStorePair) theKeyStore.getEntry(pAlias, pPassword);
+        return (GordianCoreKeyStorePair) theKeyStore.getEntry(pAlias, pPassword);
     }
 
 
     @Override
-    public GordianKeyStorePair createKeyPair(final GordianKeyPairSpec pKeySpec,
-                                             final X500Name pSubject,
-                                             final GordianKeyPairUsage pUsage,
-                                             final GordianKeyStorePair pSigner,
-                                             final String pAlias,
-                                             final char[] pPassword) throws OceanusException {
+    public GordianCoreKeyStorePair createKeyPair(final GordianKeyPairSpec pKeySpec,
+                                                 final X500Name pSubject,
+                                                 final GordianKeyPairUsage pUsage,
+                                                 final GordianKeyStorePair pSigner,
+                                                 final String pAlias,
+                                                 final char[] pPassword) throws OceanusException {
         /* Create the new keyPair */
+        checkKeyPairUsage(pKeySpec, pUsage);
         final GordianKeyPairFactory myFactory = theFactory.getKeyPairFactory();
         final GordianKeyPairGenerator myGenerator = myFactory.getKeyPairGenerator(pKeySpec);
         final GordianCoreKeyPair myKeyPair = (GordianCoreKeyPair) myGenerator.generateKeyPair();
@@ -159,18 +163,19 @@ public class GordianCoreKeyStoreManager
 
         /* Record into keyStore */
         theKeyStore.setKeyPair(pAlias, myKeyPair, pPassword, myChain);
-        return (GordianKeyStorePair) theKeyStore.getEntry(pAlias, pPassword);
+        return (GordianCoreKeyStorePair) theKeyStore.getEntry(pAlias, pPassword);
     }
 
     @Override
-    public GordianKeyStorePair createAlternate(final GordianKeyStorePair pKeyPair,
-                                               final GordianKeyPairUsage pUsage,
-                                               final GordianKeyStorePair pSigner,
-                                               final String pAlias,
-                                               final char[] pPassword) throws OceanusException {
+    public GordianCoreKeyStorePair createAlternate(final GordianKeyStorePair pKeyPair,
+                                                   final GordianKeyPairUsage pUsage,
+                                                   final GordianKeyStorePair pSigner,
+                                                   final String pAlias,
+                                                   final char[] pPassword) throws OceanusException {
         /* Access the keyPair and subject */
         final GordianCoreKeyPair myKeyPair = (GordianCoreKeyPair) pKeyPair.getKeyPair();
         final X500Name mySubject = pKeyPair.getCertificateChain().get(0).getSubject().getName();
+        checkKeyPairUsage(myKeyPair.getKeyPairSpec(), pUsage);
 
         /* Create the certificate */
         final GordianCoreKeyPairCertificate myCert = new GordianCoreKeyPairCertificate(theFactory, (GordianCoreKeyStorePair) pSigner, myKeyPair, mySubject, pUsage);
@@ -182,7 +187,7 @@ public class GordianCoreKeyStoreManager
 
         /* Record into keyStore */
         theKeyStore.setKeyPair(pAlias, myKeyPair, pPassword, myChain);
-        return (GordianKeyStorePair) theKeyStore.getEntry(pAlias, pPassword);
+        return (GordianCoreKeyStorePair) theKeyStore.getEntry(pAlias, pPassword);
     }
 
     /**
@@ -208,11 +213,42 @@ public class GordianCoreKeyStoreManager
         return myChain;
     }
 
+    /**
+     * Check Usage for keyPairSpec.
+     * @param pKeyPairSpec the keyPairSpec
+     * @param pUsage   the key usage
+     * @throws OceanusException on error
+     */
+    private static void checkKeyPairUsage(final GordianKeyPairSpec pKeyPairSpec,
+                                          final GordianKeyPairUsage pUsage) throws OceanusException {
+        /* Determine the requirements */
+        final boolean needsSign = pUsage.hasUse(GordianKeyPairUse.CERTIFICATE)
+                || pUsage.hasUse(GordianKeyPairUse.SIGNATURE);
+        final boolean needsEnc = pUsage.hasUse(GordianKeyPairUse.KEYENCRYPT)
+                || pUsage.hasUse(GordianKeyPairUse.DATAENCRYPT);
+        final boolean needsAgree = pUsage.hasUse(GordianKeyPairUse.AGREEMENT);
+
+        /* Validate keyPairSpec against requirements */
+        final boolean bFail = (needsSign && GordianSignatureSpec.defaultForKey(pKeyPairSpec) == null)
+                || (needsEnc && GordianEncryptorSpec.defaultForKey(pKeyPairSpec) == null)
+                || (needsAgree && GordianKeyPairAgreementSpec.defaultForKey(pKeyPairSpec) == null);
+
+        /* Handle failure */
+        if (bFail) {
+            throw new GordianLogicException("Unsupported Usage for keyPair");
+        }
+    }
+
     @Override
-    public GordianKeyStorePairSet createRootKeyPairSet(final GordianKeyPairSetSpec pKeySetSpec,
-                                                       final X500Name pSubject,
-                                                       final String pAlias,
-                                                       final char[] pPassword) throws OceanusException {
+    public GordianCoreKeyStorePairSet createRootKeyPairSet(final GordianKeyPairSetSpec pKeySetSpec,
+                                                           final X500Name pSubject,
+                                                           final String pAlias,
+                                                           final char[] pPassword) throws OceanusException {
+        /* Check that the keySetSpec can provide a signature */
+        if (!pKeySetSpec.canSign()) {
+            throw new GordianDataException("Root keyPairSet must be capable of signing");
+        }
+
         /* Create the new keyPair */
         final GordianKeyPairFactory myPairFactory = theFactory.getKeyPairFactory();
         final GordianKeyPairSetFactory myFactory = myPairFactory.getKeyPairSetFactory();
@@ -225,18 +261,19 @@ public class GordianCoreKeyStoreManager
 
         /* Record into keyStore */
         theKeyStore.setKeyPairSet(pAlias, myKeyPairSet, pPassword, myChain);
-        return (GordianKeyStorePairSet) theKeyStore.getEntry(pAlias, pPassword);
+        return (GordianCoreKeyStorePairSet) theKeyStore.getEntry(pAlias, pPassword);
     }
 
 
     @Override
-    public GordianKeyStorePairSet createKeyPairSet(final GordianKeyPairSetSpec pKeySetSpec,
-                                                   final X500Name pSubject,
-                                                   final GordianKeyPairUsage pUsage,
-                                                   final GordianKeyStorePairSet pSigner,
-                                                   final String pAlias,
-                                                   final char[] pPassword) throws OceanusException {
-        /* Create the new keyPair */
+    public GordianCoreKeyStorePairSet createKeyPairSet(final GordianKeyPairSetSpec pKeySetSpec,
+                                                       final X500Name pSubject,
+                                                       final GordianKeyPairUsage pUsage,
+                                                       final GordianKeyStorePairSet pSigner,
+                                                       final String pAlias,
+                                                       final char[] pPassword) throws OceanusException {
+        /* Create the new keyPairSet */
+        checkKeyPairSetUsage(pKeySetSpec, pUsage);
         final GordianKeyPairFactory myPairFactory = theFactory.getKeyPairFactory();
         final GordianKeyPairSetFactory myFactory = myPairFactory.getKeyPairSetFactory();
         final GordianKeyPairSetGenerator myGenerator = myFactory.getKeyPairSetGenerator(pKeySetSpec);
@@ -252,18 +289,19 @@ public class GordianCoreKeyStoreManager
 
         /* Record into keyStore */
         theKeyStore.setKeyPairSet(pAlias, myKeyPairSet, pPassword, myChain);
-        return (GordianKeyStorePairSet) theKeyStore.getEntry(pAlias, pPassword);
+        return (GordianCoreKeyStorePairSet) theKeyStore.getEntry(pAlias, pPassword);
     }
 
     @Override
-    public GordianKeyStorePairSet createAlternate(final GordianKeyStorePairSet pKeyPairSet,
-                                                  final GordianKeyPairUsage pUsage,
-                                                  final GordianKeyStorePairSet pSigner,
-                                                  final String pAlias,
-                                                  final char[] pPassword) throws OceanusException {
+    public GordianCoreKeyStorePairSet createAlternate(final GordianKeyStorePairSet pKeyPairSet,
+                                                      final GordianKeyPairUsage pUsage,
+                                                      final GordianKeyStorePairSet pSigner,
+                                                      final String pAlias,
+                                                      final char[] pPassword) throws OceanusException {
         /* Access the keyPair and subject */
         final GordianCoreKeyPairSet myKeyPairSet = (GordianCoreKeyPairSet) pKeyPairSet.getKeyPairSet();
         final X500Name mySubject = pKeyPairSet.getCertificateChain().get(0).getSubject().getName();
+        checkKeyPairSetUsage(myKeyPairSet.getKeyPairSetSpec(), pUsage);
 
         /* Create the certificate */
         final GordianCoreKeyPairSetCertificate myCert = new GordianCoreKeyPairSetCertificate(theFactory, (GordianCoreKeyStorePairSet) pSigner, myKeyPairSet, mySubject, pUsage);
@@ -275,22 +313,11 @@ public class GordianCoreKeyStoreManager
 
         /* Record into keyStore */
         theKeyStore.setKeyPairSet(pAlias, myKeyPairSet, pPassword, myChain);
-        return (GordianKeyStorePairSet) theKeyStore.getEntry(pAlias, pPassword);
-    }
-
-    @Override
-    public void exportEntry(final String pAlias,
-                            final File pFile,
-                            final char[] pPassword) throws OceanusException {
-        try (FileOutputStream myStream = new FileOutputStream(pFile)) {
-            exportEntry(pAlias, myStream, pPassword);
-        } catch (IOException e) {
-            throw new GordianIOException("Failed to write to file", e);
-        }
+        return (GordianCoreKeyStorePairSet) theKeyStore.getEntry(pAlias, pPassword);
     }
 
     /**
-     * Sign keyPair.
+     * Sign keyPairSet.
      * @param pKeyPairSet the keyPairSet
      * @param pSubject the name of the entity
      * @param pUsage   the key usage
@@ -312,29 +339,29 @@ public class GordianCoreKeyStoreManager
         return myChain;
     }
 
-    @Override
-    public void exportEntry(final String pAlias,
-                            final OutputStream pStream,
-                            final char[] pPassword) throws OceanusException {
-        final GordianKeyStoreEntry myEntry = theKeyStore.getEntry(pAlias, pPassword);
-        final GordianPEMCoder myCoder = new GordianPEMCoder(theKeyStore);
-        myCoder.exportKeyStoreEntry(myEntry, pStream, pPassword);
-    }
+    /**
+     * Check Usage for keyPairSetSpec.
+     * @param pKeyPairSetSpec the keyPairSetSpec
+     * @param pUsage   the key usage
+     * @throws OceanusException on error
+     */
+    private static void checkKeyPairSetUsage(final GordianKeyPairSetSpec pKeyPairSetSpec,
+                                             final GordianKeyPairUsage pUsage) throws OceanusException {
+        /* Determine the requirements */
+        final boolean needsSign = pUsage.hasUse(GordianKeyPairUse.CERTIFICATE)
+                                    || pUsage.hasUse(GordianKeyPairUse.SIGNATURE);
+        final boolean needsEnc = pUsage.hasUse(GordianKeyPairUse.KEYENCRYPT)
+                                    || pUsage.hasUse(GordianKeyPairUse.DATAENCRYPT);
+        final boolean needsAgree = pUsage.hasUse(GordianKeyPairUse.AGREEMENT);
 
-    @Override
-    public GordianKeyStoreEntry importEntry(final File pFile,
-                                            final char[] pPassword) throws OceanusException {
-        try (FileInputStream myStream = new FileInputStream(pFile)) {
-            return importEntry(myStream, pPassword);
-        } catch (IOException e) {
-            throw new GordianIOException("Failed to read from file", e);
+        /* Validate keyPairSetSpec against requirements */
+        final boolean bFail = (needsSign && !pKeyPairSetSpec.canSign())
+                || (needsEnc && !pKeyPairSetSpec.canEncrypt())
+                || (needsAgree && !pKeyPairSetSpec.canAgree());
+
+        /* Handle failure */
+        if (bFail) {
+            throw new GordianLogicException("Unsupported Usage for keyPairSet");
         }
-    }
-
-    @Override
-    public GordianKeyStoreEntry importEntry(final InputStream pStream,
-                                            final char[] pPassword) throws OceanusException {
-        final GordianPEMCoder myCoder = new GordianPEMCoder(theKeyStore);
-        return myCoder.importKeyStoreEntry(pStream, pPassword);
     }
 }

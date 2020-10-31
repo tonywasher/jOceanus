@@ -16,10 +16,6 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jgordianknot.api.keystore;
 
-import java.io.File;
-import java.io.InputStream;
-import java.io.OutputStream;
-
 import org.bouncycastle.asn1.x500.X500Name;
 
 import net.sourceforge.joceanus.jgordianknot.api.base.GordianKeySpec;
@@ -170,46 +166,4 @@ public interface GordianKeyStoreManager {
                                            GordianKeyStorePairSet pSigner,
                                            String pAlias,
                                            char[] pPassword) throws OceanusException;
-
-    /**
-     * export object to file.
-     * @param pAlias the alias
-     * @param pFile the file
-     * @param pPassword the password
-     * @throws OceanusException on error
-     */
-    void exportEntry(String pAlias,
-                     File pFile,
-                     char[] pPassword) throws OceanusException;
-
-    /**
-     * export object to stream.
-     * @param pAlias the alias
-     * @param pStream the stream
-     * @param pPassword the password
-     * @throws OceanusException on error
-     */
-    void exportEntry(String pAlias,
-                     OutputStream pStream,
-                     char[] pPassword) throws OceanusException;
-
-    /**
-     * import object from file.
-     * @param pFile the file
-     * @param pPassword the password
-     * @return the parsed object
-     * @throws OceanusException on error
-     */
-    GordianKeyStoreEntry importEntry(File pFile,
-                                     char[] pPassword) throws OceanusException;
-
-    /**
-     * import object from stream.
-     * @param pStream the stream
-     * @param pPassword the password
-     * @return the parsed object
-     * @throws OceanusException on error
-     */
-    GordianKeyStoreEntry importEntry(InputStream pStream,
-                                     char[] pPassword) throws OceanusException;
 }

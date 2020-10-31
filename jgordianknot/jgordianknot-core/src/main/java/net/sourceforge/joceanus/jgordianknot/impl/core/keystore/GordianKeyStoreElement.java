@@ -373,6 +373,17 @@ public interface GordianKeyStoreElement {
         }
 
         /**
+         * Update the chain.
+         * @param pChain the new chain.
+         */
+        void updateChain(final List<C> pChain) {
+            theChain.clear();
+            for (C myCert : pChain) {
+                theChain.add(new GordianKeyStoreCertificateKey(myCert));
+            }
+        }
+
+        /**
          * Obtain the secured privateKey.
          * @param pKeySet the keySet
          * @param pKeyPair the keyPair

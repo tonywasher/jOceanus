@@ -100,14 +100,14 @@ public class GordianPEMObject {
         KEY("ENCRYPTED KEY"),
 
         /**
-         * certificate request.
+         * keyPair certificate request.
          */
-        KEYPAIRCERTREQ("CERTIFICATE REQUEST"),
+        KEYPAIRCERTREQ("KEYPAIRCERTIFICATE REQUEST"),
 
         /**
-         * certificate request.
+         * keyPairSet certificate request.
          */
-        KEYPAIRSETCERTREQ("SETCERTIFICATE REQUEST");
+        KEYPAIRSETCERTREQ("KEYPAIRSETCERTIFICATE REQUEST");
 
         /**
          * The header.

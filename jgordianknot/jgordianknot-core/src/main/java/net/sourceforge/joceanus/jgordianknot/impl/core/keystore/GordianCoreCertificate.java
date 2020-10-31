@@ -462,47 +462,59 @@ public abstract class GordianCoreCertificate<S, K>
         final GordianKeyPairUsage myResult = new GordianKeyPairUsage();
 
         /* Check for CERTIFICATE */
-        if (myConstraint.isCA() && myUsage.hasUsages(KeyUsage.keyCertSign)) {
+        final boolean isCA = myConstraint != null && myConstraint.isCA();
+        if (isCA && checkUsage(myUsage, KeyUsage.keyCertSign)) {
             myResult.addUse(GordianKeyPairUse.CERTIFICATE);
         }
 
         /* Check for signer. */
-        if (myUsage.hasUsages(KeyUsage.digitalSignature)) {
+        if (checkUsage(myUsage, KeyUsage.digitalSignature)) {
             myResult.addUse(GordianKeyPairUse.SIGNATURE);
         }
 
         /* Check for nonRepudiation. */
-        if (myUsage.hasUsages(KeyUsage.nonRepudiation)) {
+        if (checkUsage(myUsage, KeyUsage.nonRepudiation)) {
             myResult.addUse(GordianKeyPairUse.NONREPUDIATION);
         }
 
         /* Check for keyAgreement. */
-        if (myUsage.hasUsages(KeyUsage.keyAgreement)) {
+        if (checkUsage(myUsage, KeyUsage.keyAgreement)) {
             myResult.addUse(GordianKeyPairUse.AGREEMENT);
         }
 
         /* Check for keyEncryption. */
-        if (myUsage.hasUsages(KeyUsage.keyEncipherment)) {
+        if (checkUsage(myUsage, KeyUsage.keyEncipherment)) {
             myResult.addUse(GordianKeyPairUse.KEYENCRYPT);
         }
 
         /* Check for dataEncryption. */
-        if (myUsage.hasUsages(KeyUsage.dataEncipherment)) {
+        if (checkUsage(myUsage, KeyUsage.dataEncipherment)) {
             myResult.addUse(GordianKeyPairUse.DATAENCRYPT);
         }
 
         /* Check for encipherOnly. */
-        if (myUsage.hasUsages(KeyUsage.encipherOnly)) {
+        if (checkUsage(myUsage, KeyUsage.encipherOnly)) {
             myResult.addUse(GordianKeyPairUse.ENCRYPTONLY);
         }
 
         /* Check for decipherOnly. */
-        if (myUsage.hasUsages(KeyUsage.decipherOnly)) {
+        if (checkUsage(myUsage, KeyUsage.decipherOnly)) {
             myResult.addUse(GordianKeyPairUse.DECRYPTONLY);
         }
 
         /* Return the result */
         return myResult;
+    }
+
+    /**
+     * Check for usage.
+     * @param pUsage the usage control
+     * @param pRequired  the required usage
+     * @return true/false
+     */
+    private static boolean checkUsage(final KeyUsage pUsage,
+                                      final int pRequired) {
+        return pUsage == null || pUsage.hasUsages(pRequired);
     }
 
     /**
@@ -872,7 +884,7 @@ public abstract class GordianCoreCertificate<S, K>
             final BasicConstraints myConstraint = BasicConstraints.fromExtensions(pExtensions);
 
             /* Check for CA */
-            if (myConstraint.isCA()) {
+            if (myConstraint != null && myConstraint.isCA()) {
                 return new GordianCAStatus(myConstraint.getPathLenConstraint());
             }
 

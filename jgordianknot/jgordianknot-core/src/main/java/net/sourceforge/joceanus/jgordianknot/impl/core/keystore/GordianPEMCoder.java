@@ -117,6 +117,17 @@ public class GordianPEMCoder {
     }
 
     /**
+     * Import a list of certificates from stream.
+     * @param pStream the input stream
+     * @return the list of certificates.
+     * @throws OceanusException on error
+     */
+    public List<GordianKeyStoreEntry> importCertificates(final InputStream pStream) throws OceanusException {
+        final List<GordianPEMObject> myObjects = theParser.parsePEMFile(pStream);
+        return decodePEMCertificateList(myObjects);
+    }
+
+    /**
      * Encode a keyStoreEntry.
      * @param pEntry the entry
      * @param pPassword the password
@@ -190,6 +201,52 @@ public class GordianPEMCoder {
              default:
                 throw new GordianDataException("Unsupported object type");
          }
+    }
+
+    /**
+     * Decode a PEMCertificate list.
+     * @param pObjects the object list
+     * @return the decoded list.
+     * @throws OceanusException on error
+     */
+    private List<GordianKeyStoreEntry> decodePEMCertificateList(final List<GordianPEMObject> pObjects) throws OceanusException {
+        /* List must be non-empty */
+        if (pObjects.isEmpty()) {
+            throw new GordianDataException("Empty list");
+        }
+
+        /* Prepare for loop */
+        final List<GordianKeyStoreEntry> myChain = new ArrayList<>();
+        final GordianPEMObjectType myType = pObjects.get(0).getObjectType();
+        final TethysDate myDate = new TethysDate();
+
+        /* Loop through the objects */
+        for (GordianPEMObject myObject : pObjects) {
+            /* Check that the list is homogenous */
+            if (myObject.getObjectType() != myType) {
+                throw new GordianDataException("Inconsistent chain");
+            }
+
+            /* switch on object type */
+            switch (myObject.getObjectType()) {
+                /* Decode objects */
+                case KEYPAIRCERT:
+                    final GordianCoreKeyPairCertificate myKeyPairCert = decodeKeyPairCertificate(myObject);
+                    myChain.add(new GordianCoreKeyStorePairCertificate(myKeyPairCert, myDate));
+                    break;
+                case KEYPAIRSETCERT:
+                    final GordianCoreKeyPairSetCertificate myKeyPairSetCert = decodeKeyPairSetCertificate(myObject);
+                    myChain.add(new GordianCoreKeyStorePairSetCertificate(myKeyPairSetCert, myDate));
+                    break;
+
+                    /* Unsupported entry */
+                default:
+                    throw new GordianDataException("Unsupported object type");
+            }
+        }
+
+        /* Return the chain */
+        return myChain;
     }
 
     /**
@@ -631,8 +688,8 @@ public class GordianPEMCoder {
      * @param pRequired the required objectType
      * @throws OceanusException on error
      */
-    private static void checkObjectType(final GordianPEMObject pObject,
-                                        final GordianPEMObjectType pRequired) throws OceanusException {
+    static void checkObjectType(final GordianPEMObject pObject,
+                                final GordianPEMObjectType pRequired) throws OceanusException {
         /* Throw error on mismatch */
         final GordianPEMObjectType myType = pObject.getObjectType();
         if (myType != pRequired) {

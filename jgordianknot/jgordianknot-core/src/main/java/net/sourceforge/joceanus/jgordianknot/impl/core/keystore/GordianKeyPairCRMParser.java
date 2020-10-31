@@ -21,112 +21,67 @@ import java.security.spec.PKCS8EncodedKeySpec;
 import java.security.spec.X509EncodedKeySpec;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Function;
 
-import org.bouncycastle.asn1.cms.EncryptedContentInfo;
-import org.bouncycastle.asn1.cms.EnvelopedData;
-import org.bouncycastle.asn1.cms.IssuerAndSerialNumber;
-import org.bouncycastle.asn1.cms.KeyTransRecipientInfo;
-import org.bouncycastle.asn1.cms.RecipientInfo;
 import org.bouncycastle.asn1.crmf.CertReqMsg;
 import org.bouncycastle.asn1.crmf.CertRequest;
 import org.bouncycastle.asn1.crmf.CertTemplate;
-import org.bouncycastle.asn1.crmf.EncKeyWithID;
-import org.bouncycastle.asn1.crmf.POPOPrivKey;
 import org.bouncycastle.asn1.crmf.POPOSigningKey;
 import org.bouncycastle.asn1.crmf.ProofOfPossession;
 import org.bouncycastle.asn1.x500.X500Name;
 import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
-import org.bouncycastle.asn1.x509.GeneralName;
 import org.bouncycastle.asn1.x509.SubjectPublicKeyInfo;
 
-import net.sourceforge.joceanus.jgordianknot.api.agree.GordianKeyPairAnonymousAgreement;
-import net.sourceforge.joceanus.jgordianknot.api.encrypt.GordianEncryptorSpec;
-import net.sourceforge.joceanus.jgordianknot.api.encrypt.GordianKeyPairEncryptor;
 import net.sourceforge.joceanus.jgordianknot.api.factory.GordianKeyPairFactory;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPair;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPairGenerator;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPairSpec;
-import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySet;
 import net.sourceforge.joceanus.jgordianknot.api.keystore.GordianKeyPairCertificate;
 import net.sourceforge.joceanus.jgordianknot.api.keystore.GordianKeyPairUsage;
-import net.sourceforge.joceanus.jgordianknot.api.keystore.GordianKeyPairUse;
 import net.sourceforge.joceanus.jgordianknot.api.keystore.GordianKeyStoreEntry.GordianKeyStorePair;
 import net.sourceforge.joceanus.jgordianknot.api.sign.GordianKeyPairSignature;
 import net.sourceforge.joceanus.jgordianknot.api.sign.GordianSignatureSpec;
-import net.sourceforge.joceanus.jgordianknot.impl.core.agree.GordianCoreAgreementFactory;
-import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianCoreFactory;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianDataException;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianIOException;
-import net.sourceforge.joceanus.jgordianknot.impl.core.encrypt.GordianCoreEncryptorFactory;
+import net.sourceforge.joceanus.jgordianknot.impl.core.keystore.GordianPEMObject.GordianPEMObjectType;
 import net.sourceforge.joceanus.jgordianknot.impl.core.sign.GordianCoreSignatureFactory;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
  * KeyPair Certificate Request Message Parser.
  */
-public class GordianKeyPairCRMParser {
-    /**
-     * The Issuer Callback.
-     */
-    public interface GordianKeyPairCRMIssuer {
-        /**
-         * Obtain KeyPair entry for issuer.
-         * @param pIssuerId the issuerId
-         * @return the keyPair entry
-         * @throws OceanusException on error
-         */
-        GordianKeyStorePair getIssuerKeyPair(IssuerAndSerialNumber pIssuerId) throws OceanusException;
-    }
-
-    /**
-     * The factory.
-     */
-    private final GordianCoreFactory theFactory;
-
-    /**
-     * The keyStore.
-     */
-    private final GordianCoreKeyStore theKeyStore;
-
-    /**
-     * The keyStoreManager.
-     */
-    private final GordianCoreKeyStoreManager theKeyStoreMgr;
-
+public class GordianKeyPairCRMParser
+        extends GordianCRMParser {
     /**
      * The signer.
      */
     private final GordianKeyStorePair theSigner;
 
     /**
-     * The issuer lookup.
-     */
-    private final GordianKeyPairCRMIssuer theIssuer;
-
-    /**
      * Constructor.
      * @param pKeyStoreMgr the keyStoreManager
      * @param pSigner the signer
-     * @param pIssuer the issuer lookup
+     * @param pResolver the password resolver
+     * @throws OceanusException on error
      */
     public GordianKeyPairCRMParser(final GordianCoreKeyStoreManager pKeyStoreMgr,
                                    final GordianKeyStorePair pSigner,
-                                   final GordianKeyPairCRMIssuer pIssuer) {
+                                   final Function<String, char[]> pResolver) throws OceanusException {
         /* Store parameters */
-        theKeyStoreMgr = pKeyStoreMgr;
-        theKeyStore = pKeyStoreMgr.getKeyStore();
+        super(pKeyStoreMgr, pResolver);
         theSigner = pSigner;
-        theIssuer = pIssuer;
-        theFactory = theKeyStore.getFactory();
+
+        /* Reject null signer */
+        if (theSigner == null) {
+            throw new GordianDataException("Null keyPairSigner");
+        }
     }
 
-    /**
-     * Decode a certificate request.
-     * @param pObject the PEM object
-     * @return the PEM certificate chain
-     * @throws OceanusException on error
-     */
+    @Override
     public List<GordianPEMObject> decodeCertificateRequest(final GordianPEMObject pObject) throws OceanusException {
+        /* Reject if not KeyPairCertReq */
+        GordianPEMCoder.checkObjectType(pObject, GordianPEMObjectType.KEYPAIRCERTREQ);
+
         /* Derive the certificate request message */
         final CertReqMsg myReq = CertReqMsg.getInstance(pObject.getEncoded());
         final CertRequest myCertReq = myReq.getCertReq();
@@ -136,9 +91,9 @@ public class GordianKeyPairCRMParser {
         final SubjectPublicKeyInfo myPublic = myTemplate.getPublicKey();
         final GordianKeyPairUsage myUsage = GordianCoreCertificate.determineUsage(myTemplate.getExtensions());
 
-        /* Derive keyPair and access certificate chain */
+        /* Derive keyPair and create certificate chain */
         final GordianKeyPair myPair = deriveKeyPair(myProof, myCertReq, mySubject, myPublic);
-        final List<GordianKeyPairCertificate> myChain = theKeyStoreMgr.signKeyPair(myPair, mySubject, myUsage, theSigner);
+        final List<GordianKeyPairCertificate> myChain = getKeyStoreMgr().signKeyPair(myPair, mySubject, myUsage, theSigner);
 
         /* Create and return the object list */
         final List<GordianPEMObject> myObjects = new ArrayList<>();
@@ -166,7 +121,7 @@ public class GordianKeyPairCRMParser {
             return deriveSignedKeyPair(pProof, pCertReq, pPublicKey);
         }
 
-        /* Handle signed keyPair */
+        /* Handle encrypted keyPair */
         if (pProof.getType() == ProofOfPossession.TYPE_KEY_ENCIPHERMENT) {
             return deriveEncryptedKeyPair(pProof, pSubject, pPublicKey);
         }
@@ -189,7 +144,7 @@ public class GordianKeyPairCRMParser {
         /* Protect against exceptions */
         try {
             /* Derive the public Key */
-            final GordianKeyPairFactory myFactory = theFactory.getKeyPairFactory();
+            final GordianKeyPairFactory myFactory = getFactory().getKeyPairFactory();
             final X509EncodedKeySpec myX509Spec = new X509EncodedKeySpec(pPublicKey.getEncoded());
             final GordianKeyPairSpec myKeySpec = myFactory.determineKeyPairSpec(myX509Spec);
             final GordianKeyPairGenerator myGenerator = myFactory.getKeyPairGenerator(myKeySpec);
@@ -229,87 +184,18 @@ public class GordianKeyPairCRMParser {
                                                   final SubjectPublicKeyInfo pPublicKey) throws OceanusException {
         /* Protect against exceptions */
         try {
-            /* Extract details */
-            final POPOPrivKey myEncrypt = (POPOPrivKey) pProof.getObject();
-            final EnvelopedData myData = (EnvelopedData) myEncrypt.getValue();
-            final RecipientInfo myRecipient = RecipientInfo.getInstance(myData.getRecipientInfos().getObjectAt(0));
-            final EncryptedContentInfo myContent = myData.getEncryptedContentInfo();
-            final byte[] myEncryptedPrivKey = myContent.getEncryptedContent().getOctets();
-            final KeyTransRecipientInfo myRecInfo = (KeyTransRecipientInfo) myRecipient.getInfo();
-            final AlgorithmIdentifier myAId = myRecInfo.getKeyEncryptionAlgorithm();
-            final byte[] myEncryptedKey = myRecInfo.getEncryptedKey().getOctets();
-
-            /* Locate the alias for the matching keyCertificate */
-            final IssuerAndSerialNumber myIssId = (IssuerAndSerialNumber) myRecInfo.getRecipientIdentifier().getId();
-            final GordianKeyStorePair myIssuer = theIssuer.getIssuerKeyPair(myIssId);
-            final GordianKeyPairCertificate myCert = myIssuer.getCertificateChain().get(0);
-            final GordianKeyPair myKeyPair = myIssuer.getKeyPair();
-
-            /* Derive the keySet appropriately */
-            final GordianKeyPairUsage myUsage = myCert.getUsage();
-            final GordianKeySet myKeySet = myUsage.hasUse(GordianKeyPairUse.KEYENCRYPT)
-                    ? deriveEncryptedKeySet(myKeyPair, myAId, myEncryptedKey)
-                    : deriveAgreedKeySet(myKeyPair, myEncryptedKey);
-
             /* Access the generator */
-            final GordianKeyPairFactory myFactory = theFactory.getKeyPairFactory();
+            final GordianKeyPairFactory myFactory = getFactory().getKeyPairFactory();
             final X509EncodedKeySpec myX509Spec = new X509EncodedKeySpec(pPublicKey.getEncoded());
             final GordianKeyPairSpec myKeySpec = myFactory.determineKeyPairSpec(myX509Spec);
             final GordianKeyPairGenerator myGenerator = myFactory.getKeyPairGenerator(myKeySpec);
 
-            /* Decrypt the privateKey/ID */
-            final EncKeyWithID myKeyWithId = EncKeyWithID.getInstance(myKeySet.decryptBytes(myEncryptedPrivKey));
-
-            /* Check that the ID matches */
-            final X500Name myName = X500Name.getInstance(GeneralName.getInstance(myKeyWithId.getIdentifier()).getName());
-            if (!myName.equals(pSubject)) {
-                throw new GordianDataException("Mismatch on subjectID");
-            }
-
-            /* myName and Subject should be identical */
-            final PKCS8EncodedKeySpec myPKCS8Spec = new PKCS8EncodedKeySpec(myKeyWithId.getPrivateKey().getEncoded());
+            /* derive the privateKey and keyPair */
+            final PKCS8EncodedKeySpec myPKCS8Spec = derivePrivateKey(pProof, pSubject);
             return myGenerator.deriveKeyPair(myX509Spec, myPKCS8Spec);
 
         } catch (IOException e) {
             throw new GordianIOException("Failed to derive encrypted keyPair", e);
         }
-    }
-
-    /**
-     * Derive an encrypted keySet.
-     * @param pKeyPair the keyPair
-     * @param pAlgId the algorithm Identifier
-     * @param pEncryptedKey the encrypted key
-     * @return the derived keySet
-     * @throws OceanusException on error
-     */
-    private GordianKeySet deriveEncryptedKeySet(final GordianKeyPair pKeyPair,
-                                                final AlgorithmIdentifier pAlgId,
-                                                final byte[] pEncryptedKey) throws OceanusException {
-        /* Handle decryption */
-        final GordianKeyPairFactory myKPFactory = theFactory.getKeyPairFactory();
-        final GordianCoreEncryptorFactory myEncFactory = (GordianCoreEncryptorFactory) myKPFactory.getEncryptorFactory();
-        final GordianEncryptorSpec myEncSpec = myEncFactory.getSpecForIdentifier(pAlgId);
-        final GordianKeyPairEncryptor myEncryptor = myEncFactory.createKeyPairEncryptor(myEncSpec);
-        myEncryptor.initForDecrypt(pKeyPair);
-        final byte[] myKey = myEncryptor.decrypt(pEncryptedKey);
-        return GordianKeyPairCRMBuilder.deriveKeySetFromKey(theFactory, myKey);
-    }
-
-    /**
-     * Derive an agreed keySet.
-     * @param pKeyPair the keyPair
-     * @param pHello the clientHello
-     * @return the derived keySet
-     * @throws OceanusException on error
-     */
-    private GordianKeySet deriveAgreedKeySet(final GordianKeyPair pKeyPair,
-                                             final byte[] pHello) throws OceanusException {
-        /* Handle agreement */
-        final GordianKeyPairFactory myKPFactory = theFactory.getKeyPairFactory();
-        final GordianCoreAgreementFactory myAgreeFactory = (GordianCoreAgreementFactory) myKPFactory.getAgreementFactory();
-        final GordianKeyPairAnonymousAgreement myAgree = (GordianKeyPairAnonymousAgreement) myAgreeFactory.createKeyPairAgreement(pHello);
-        myAgree.acceptClientHello(pKeyPair, pHello);
-        return (GordianKeySet) myAgree.getResult();
     }
 }
