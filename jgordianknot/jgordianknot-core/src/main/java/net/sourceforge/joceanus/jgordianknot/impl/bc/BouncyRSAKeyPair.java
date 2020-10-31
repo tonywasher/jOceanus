@@ -63,6 +63,7 @@ import net.sourceforge.joceanus.jgordianknot.api.sign.GordianSignatureSpec;
 import net.sourceforge.joceanus.jgordianknot.api.sign.GordianSignatureType;
 import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyKeyPair.BouncyPrivateKey;
 import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyKeyPair.BouncyPublicKey;
+import net.sourceforge.joceanus.jgordianknot.impl.core.agree.GordianAgreementClientHelloASN1;
 import net.sourceforge.joceanus.jgordianknot.impl.core.agree.GordianCoreAnonymousAgreement;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianCryptoException;
 import net.sourceforge.joceanus.jgordianknot.impl.core.encrypt.GordianCoreEncryptor;
@@ -531,7 +532,8 @@ public final class BouncyRSAKeyPair {
             /* Parse clientHello message and store secret */
             final GordianRSAModulus myModulus = myPrivate.getKeySpec().getRSAModulus();
             final int myLen = myModulus.getLength() / Byte.SIZE;
-            final byte[] myMessage = parseClientHello(pClientHello);
+            final GordianAgreementClientHelloASN1 myHello = parseClientHello(pClientHello);
+            final byte[] myMessage = myHello.getEncapsulated();
             final KeyParameter myParms = (KeyParameter) theAgreement.decrypt(myMessage, 0, myMessage.length, myLen);
             storeSecret(myParms.getKey());
         }

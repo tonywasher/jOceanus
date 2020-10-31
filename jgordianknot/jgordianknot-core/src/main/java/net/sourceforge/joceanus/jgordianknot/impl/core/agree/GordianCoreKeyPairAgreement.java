@@ -16,6 +16,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jgordianknot.impl.core.agree;
 
+import java.security.spec.X509EncodedKeySpec;
 import java.util.Objects;
 
 import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
@@ -172,7 +173,7 @@ public class GordianCoreKeyPairAgreement
      * @throws OceanusException on error
      */
     protected byte[] buildClientHello() throws OceanusException {
-        return buildClientHello(null);
+        return buildClientHello(null, null);
     }
 
     /**
@@ -182,6 +183,28 @@ public class GordianCoreKeyPairAgreement
      * @throws OceanusException on error
      */
     protected byte[] buildClientHello(final byte[] pEncapsulated) throws OceanusException {
+        return buildClientHello(pEncapsulated, null);
+    }
+
+    /**
+     * Build clientHello message.
+     * @param pEphemeral the ephemeral publicKey
+     * @return the clientHello message
+     * @throws OceanusException on error
+     */
+    protected byte[] buildClientHello(final X509EncodedKeySpec pEphemeral) throws OceanusException {
+        return buildClientHello(null, pEphemeral);
+    }
+
+    /**
+     * Build clientHello message.
+     * @param pEncapsulated the encapsulated message
+     * @param pEphemeral the ephemeral publicKey
+     * @return the clientHello message
+     * @throws OceanusException on error
+     */
+    private byte[] buildClientHello(final byte[] pEncapsulated,
+                                    final X509EncodedKeySpec pEphemeral) throws OceanusException {
         /* Must be in clean state */
         checkStatus(GordianAgreementStatus.CLEAN);
 
@@ -191,7 +214,7 @@ public class GordianCoreKeyPairAgreement
         final AlgorithmIdentifier myAlgId = myFactory.getIdentifierForSpec(mySpec);
         final AlgorithmIdentifier myResId = getIdentifierForResult();
         final GordianAgreementClientHelloASN1 myClientHello
-                = new GordianAgreementClientHelloASN1(myAlgId, myResId, newClientIV(), pEncapsulated);
+                = new GordianAgreementClientHelloASN1(myAlgId, myResId, newClientIV(), pEncapsulated, pEphemeral);
         return myClientHello.getEncodedBytes();
     }
 
@@ -201,7 +224,7 @@ public class GordianCoreKeyPairAgreement
      * @return the encapsulated message
      * @throws OceanusException on error
      */
-    protected byte[] parseClientHello(final byte[] pClientHello) throws OceanusException {
+    protected GordianAgreementClientHelloASN1 parseClientHello(final byte[] pClientHello) throws OceanusException {
         /* Must be in clean state */
         checkStatus(GordianAgreementStatus.CLEAN);
 
@@ -212,7 +235,6 @@ public class GordianCoreKeyPairAgreement
         final AlgorithmIdentifier myAlgId = myClientHello.getAgreementId();
         final AlgorithmIdentifier myResId = myClientHello.getResultId();
         final byte[] myInitVector = myClientHello.getInitVector();
-        final byte[] myData = myClientHello.getData();
 
         /* Check agreementSpec */
         final GordianCoreAgreementFactory myFactory = getAgreementFactory();
@@ -227,8 +249,8 @@ public class GordianCoreKeyPairAgreement
         /* Store client initVector */
         storeClientIV(myInitVector);
 
-        /* Return the encapsulated message */
-        return myData;
+        /* Return the clientHello */
+        return myClientHello;
     }
 
     /**
@@ -242,19 +264,19 @@ public class GordianCoreKeyPairAgreement
 
     /**
      * Build serverHello message.
-     * @param pEncapsulated the encapsulated data
+     * @param pEphemeral the ephemeral publicKey
      * @param pConfirmation the confirmationTag
      * @return the serverHello message
      * @throws OceanusException on error
      */
-    protected byte[] buildServerHello(final byte[] pEncapsulated,
+    protected byte[] buildServerHello(final X509EncodedKeySpec pEphemeral,
                                       final byte[] pConfirmation) throws OceanusException {
         /* Create the serverHello */
         final GordianCoreAgreementFactory myFactory = getAgreementFactory();
         final GordianKeyPairAgreementSpec mySpec = getAgreementSpec();
         final AlgorithmIdentifier myAlgId = myFactory.getIdentifierForSpec(mySpec);
         final GordianAgreementServerHelloASN1 myServerHello
-                = new GordianAgreementServerHelloASN1(myAlgId, getServerIV(), pEncapsulated, pConfirmation);
+                = new GordianAgreementServerHelloASN1(myAlgId, getServerIV(), pEphemeral, pConfirmation);
 
         /* If there is a server confirmation, set status */
         if (pConfirmation != null) {
@@ -267,13 +289,13 @@ public class GordianCoreKeyPairAgreement
 
     /**
      * Build serverHello message.
-     * @param pEncapsulated the encapsulated data
+     * @param pEphemeral the ephemeral publicKey
      * @param pSignId the signatureId
      * @param pSignature the signature
      * @return the serverHello message
      * @throws OceanusException on error
      */
-    protected byte[] buildServerHello(final byte[] pEncapsulated,
+    protected byte[] buildServerHello(final X509EncodedKeySpec pEphemeral,
                                       final AlgorithmIdentifier pSignId,
                                       final byte[] pSignature) throws OceanusException {
         /* Create the serverHello */
@@ -281,7 +303,7 @@ public class GordianCoreKeyPairAgreement
         final GordianKeyPairAgreementSpec mySpec = getAgreementSpec();
         final AlgorithmIdentifier myAlgId = myFactory.getIdentifierForSpec(mySpec);
         final GordianAgreementServerHelloASN1 myServerHello
-                = new GordianAgreementServerHelloASN1(myAlgId, getServerIV(), pEncapsulated, pSignId, pSignature);
+                = new GordianAgreementServerHelloASN1(myAlgId, getServerIV(), pEphemeral, pSignId, pSignature);
 
         /* return the serverHello */
         return myServerHello.getEncodedBytes();

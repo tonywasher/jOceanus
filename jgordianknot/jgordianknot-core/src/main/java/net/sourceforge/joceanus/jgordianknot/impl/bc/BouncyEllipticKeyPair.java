@@ -66,6 +66,7 @@ import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyKeyPair.BouncyPrivate
 import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyKeyPair.BouncyPublicKey;
 import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncySignature.BouncyDERCoder;
 import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncySignature.BouncyDigestSignature;
+import net.sourceforge.joceanus.jgordianknot.impl.core.agree.GordianAgreementClientHelloASN1;
 import net.sourceforge.joceanus.jgordianknot.impl.core.agree.GordianCoreAnonymousAgreement;
 import net.sourceforge.joceanus.jgordianknot.impl.core.agree.GordianCoreBasicAgreement;
 import net.sourceforge.joceanus.jgordianknot.impl.core.agree.GordianCoreEphemeralAgreement;
@@ -457,7 +458,8 @@ public final class BouncyEllipticKeyPair {
             final int myLen = 2 * myFieldSize + 1;
 
             /* Parse clientHello */
-            final byte[] myMessage = parseClientHello(pClientHello);
+            final GordianAgreementClientHelloASN1 myHello = parseClientHello(pClientHello);
+            final byte[] myMessage = myHello.getEncapsulated();
             final KeyParameter myParms = (KeyParameter) theAgreement.decrypt(myMessage, 0, myMessage.length, myLen);
 
             /* Store secret */
@@ -506,8 +508,7 @@ public final class BouncyEllipticKeyPair {
 
             /* Create the request  */
             final X509EncodedKeySpec myKeySpec = myGenerator.getX509Encoding(myPair);
-            final byte[] myKeyBytes = myKeySpec.getEncoded();
-            final byte[] myClientHello = buildClientHello(myKeyBytes);
+            final byte[] myClientHello = buildClientHello(myKeySpec);
 
             /* Derive the secret */
             theAgreement.init(myPrivate.getPrivateKey());
@@ -525,9 +526,9 @@ public final class BouncyEllipticKeyPair {
             checkKeyPair(pSelf);
 
             /* Obtain source keySpec */
-            final byte[] myKeyBytes = parseClientHello(pClientHello);
+            final GordianAgreementClientHelloASN1 myHello = parseClientHello(pClientHello);
             final BouncyECPrivateKey myPrivate = (BouncyECPrivateKey) getPrivateKey(pSelf);
-            final X509EncodedKeySpec myKeySpec = new X509EncodedKeySpec(myKeyBytes);
+            final X509EncodedKeySpec myKeySpec = myHello.getEphemeral();
             final GordianKeyPairFactory myFactory = getFactory().getKeyPairFactory();
             final GordianKeyPairGenerator myGenerator = myFactory.getKeyPairGenerator(pSelf.getKeyPairSpec());
 

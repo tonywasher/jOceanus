@@ -45,6 +45,7 @@ import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPairSpec;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianRSAModulus;
 import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyKeyPair.BouncyPrivateKey;
 import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyKeyPair.BouncyPublicKey;
+import net.sourceforge.joceanus.jgordianknot.impl.core.agree.GordianAgreementClientHelloASN1;
 import net.sourceforge.joceanus.jgordianknot.impl.core.agree.GordianCoreAnonymousAgreement;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianCryptoException;
 import net.sourceforge.joceanus.jgordianknot.impl.core.keypair.GordianKeyPairValidity;
@@ -273,10 +274,9 @@ public final class BouncyNewHopeKeyPair {
                 final NHPublicKeyParameters myParms = (NHPublicKeyParameters) myPair.getPublicKey();
                 final SubjectPublicKeyInfo myInfo = SubjectPublicKeyInfoFactory.createSubjectPublicKeyInfo(myParms);
                 final X509EncodedKeySpec myKeySpec = new X509EncodedKeySpec(myInfo.getEncoded());
-                final byte[] myKeySpecBytes = myKeySpec.getEncoded();
 
                 /* Build the clientHello Message */
-                final byte[] myClientHello = buildClientHello(myKeySpecBytes);
+                final byte[] myClientHello = buildClientHello(myKeySpec);
 
                 /* Derive the secret */
                 final byte[] mySecret = myPair.getSharedValue();
@@ -298,8 +298,8 @@ public final class BouncyNewHopeKeyPair {
             checkKeyPair(pServer);
 
             /* Obtain keySpec */
-            final byte[] myX509bytes = parseClientHello(pClientHello);
-            final X509EncodedKeySpec myKeySpec = new X509EncodedKeySpec(myX509bytes);
+            final GordianAgreementClientHelloASN1 myHello = parseClientHello(pClientHello);
+            final X509EncodedKeySpec myKeySpec = myHello.getEphemeral();
 
             /* Derive ephemeral Public key */
             final GordianKeyPairFactory myFactory = getFactory().getKeyPairFactory();

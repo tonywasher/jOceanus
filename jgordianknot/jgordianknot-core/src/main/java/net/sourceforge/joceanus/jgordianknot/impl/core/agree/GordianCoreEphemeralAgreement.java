@@ -187,10 +187,9 @@ public abstract class GordianCoreEphemeralAgreement
         final GordianKeyPairGenerator myGenerator = myFactory.getKeyPairGenerator(theClient.getKeyPairSpec());
         theClientEphemeral = myGenerator.generateKeyPair();
         final X509EncodedKeySpec myKeySpec = myGenerator.getX509Encoding(theClientEphemeral);
-        final byte[] myKeyBytes = myKeySpec.getEncoded();
 
         /* Create the clientHello message */
-        final byte[] myClientHello = buildClientHello(myKeyBytes);
+        final byte[] myClientHello = buildClientHello(myKeySpec);
 
         /* Set status */
         setStatus(GordianAgreementStatus.AWAITING_SERVERHELLO);
@@ -218,10 +217,10 @@ public abstract class GordianCoreEphemeralAgreement
         theServer = pServer;
 
         /* Parse the request */
-        final byte[] myKeyBytes = parseClientHello(pClientHello);
+        final GordianAgreementClientHelloASN1 myHello = parseClientHello(pClientHello);
 
         /* Parse the ephemeral encoding */
-        final X509EncodedKeySpec myKeySpec = new X509EncodedKeySpec(myKeyBytes);
+        final X509EncodedKeySpec myKeySpec = myHello.getEphemeral();
 
         /* Create ephemeral key */
         final GordianKeyPairFactory myFactory = getFactory().getKeyPairFactory();
@@ -240,7 +239,7 @@ public abstract class GordianCoreEphemeralAgreement
         /* Add server ephemeral and any server confirmation tag to the serverHello */
         final GordianKeyPairFactory myFactory = getFactory().getKeyPairFactory();
         final GordianKeyPairGenerator myGenerator = myFactory.getKeyPairGenerator(theServerEphemeral.getKeyPairSpec());
-        return buildServerHello(myGenerator.getX509Encoding(theServerEphemeral).getEncoded(), theServerConfirmation);
+        return buildServerHello(myGenerator.getX509Encoding(theServerEphemeral), theServerConfirmation);
     }
 
     /**
@@ -258,10 +257,9 @@ public abstract class GordianCoreEphemeralAgreement
         theServer = pServer;
 
         /* Obtain details from the serverHello */
-        final GordianAgreementServerHelloASN1 myASN1 = parseServerHello(pServerHello);
-        theServerConfirmation = myASN1.getConfirmation();
-        final byte[] myData = myASN1.getData();
-        final X509EncodedKeySpec myKeySpec = new X509EncodedKeySpec(myData);
+        final GordianAgreementServerHelloASN1 myHello = parseServerHello(pServerHello);
+        theServerConfirmation = myHello.getConfirmation();
+        final X509EncodedKeySpec myKeySpec = myHello.getEphemeral();
 
         /* Derive partner ephemeral key */
         final GordianKeyPairFactory myFactory = getFactory().getKeyPairFactory();
@@ -342,7 +340,6 @@ public abstract class GordianCoreEphemeralAgreement
         final byte[] myServerEphemeral = myGenerator.getX509Encoding(getServerEphemeralKeyPair()).getEncoded();
 
         /* Build Server Confirmation tag */
-        myMac.update(GordianAgreementServerHelloASN1.MSG_ID);
         myMac.update(myServer);
         myMac.update(myClient);
         myMac.update(myServerEphemeral);
@@ -357,7 +354,6 @@ public abstract class GordianCoreEphemeralAgreement
         theServerConfirmation = myServerConfirmation;
 
         /* Build Client Confirmation tag */
-        myMac.update(GordianAgreementClientConfirmASN1.MSG_ID);
         myMac.update(myClient);
         myMac.update(myServer);
         myMac.update(myClientEphemeral);

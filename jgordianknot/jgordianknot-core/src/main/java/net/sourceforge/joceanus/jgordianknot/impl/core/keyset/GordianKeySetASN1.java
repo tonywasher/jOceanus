@@ -45,7 +45,7 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
 /**
  * ASN1 Encoding of KeySet.
  * <pre>
- * GordianKeySetASN1 ::= SEQUENCE OF {
+ * GordianKeySetASN1 ::= SEQUENCE {
  *      keySetSpec GordianKeySetSpecASN1
  *      securedKeys securedKeySet
  * } securedKey

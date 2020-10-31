@@ -39,7 +39,7 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
 /**
  * ASN1 Encoding of KeySetSpec.
  * <pre>
- * GordianKeySetSpecASN1 ::= SEQUENCE  {
+ * GordianKeySetSpecASN1 ::= SEQUENCE {
  *      keyLengthId INTEGER
  *      numCipherSteps INTEGER
  * }

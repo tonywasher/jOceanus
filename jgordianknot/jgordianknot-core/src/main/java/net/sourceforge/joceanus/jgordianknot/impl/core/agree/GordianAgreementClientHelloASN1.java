@@ -16,6 +16,8 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jgordianknot.impl.core.agree;
 
+import java.io.IOException;
+import java.security.spec.X509EncodedKeySpec;
 import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.Objects;
@@ -24,9 +26,12 @@ import org.bouncycastle.asn1.ASN1EncodableVector;
 import org.bouncycastle.asn1.ASN1OctetString;
 import org.bouncycastle.asn1.ASN1Primitive;
 import org.bouncycastle.asn1.ASN1Sequence;
+import org.bouncycastle.asn1.ASN1TaggedObject;
 import org.bouncycastle.asn1.BEROctetString;
 import org.bouncycastle.asn1.DERSequence;
+import org.bouncycastle.asn1.DERTaggedObject;
 import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
+import org.bouncycastle.asn1.x509.SubjectPublicKeyInfo;
 
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianASN1Util.GordianASN1Object;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianDataException;
@@ -37,20 +42,27 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
  * ASN1 Encoding of Agreement ClientHello.
  * <pre>
  * GordianAgreementClientHelloASN1 ::= SEQUENCE  {
- *      id OCTET STRING
  *      agreeId AlgorithmIdentifier
  *      result AlgorithmIdentifier
  *      initVector OCTET STRING
- *      data OCTET STRING OPTIONAL
+ *      body CHOICE {
+ *          encapsulated    [1] OCTET STRING
+ *          ephemeral       [2] SubjectPublicKeyInfo
+ *      } OPTIONAL
  * }
  * </pre>
  */
 public class GordianAgreementClientHelloASN1
         extends GordianASN1Object {
     /**
-     * The MessageId.
+     * The encapsulated tag.
      */
-    static final byte[] MSG_ID = new byte[] { 'C', 'H' };
+    private static final int TAG_ENCAPSULATED = 1;
+
+    /**
+     * The ephemeral tag.
+     */
+    private static final int TAG_EPHEMERAL = 2;
 
     /**
      * The AgreementSpec.
@@ -68,26 +80,74 @@ public class GordianAgreementClientHelloASN1
     private final byte[] theInitVector;
 
     /**
-     * The Associated Data.
+     * The Encapsulated Data.
      */
-    private final byte[] theData;
+    private final byte[] theEncapsulated;
+
+    /**
+     * The Ephemeral publicKey.
+     */
+    private final X509EncodedKeySpec theEphemeral;
 
     /**
      * Create the ASN1 sequence.
      * @param pAgreement the agreementId
      * @param pResult the resultId
      * @param pInitVector theInitVector
-     * @param pData the associated data
+     */
+    GordianAgreementClientHelloASN1(final AlgorithmIdentifier pAgreement,
+                                    final AlgorithmIdentifier pResult,
+                                    final byte[] pInitVector) {
+        this(pAgreement, pResult, pInitVector, null, null);
+    }
+
+    /**
+     * Create the ASN1 sequence.
+     * @param pAgreement the agreementId
+     * @param pResult the resultId
+     * @param pInitVector theInitVector
+     * @param pEncapsulated the encapsulated data
+     */
+    GordianAgreementClientHelloASN1(final AlgorithmIdentifier pAgreement,
+                                    final AlgorithmIdentifier pResult,
+                                    final byte[] pInitVector,
+                                    final byte[] pEncapsulated) {
+        this(pAgreement, pResult, pInitVector, pEncapsulated, null);
+    }
+
+    /**
+     * Create the ASN1 sequence.
+     * @param pAgreement the agreementId
+     * @param pResult the resultId
+     * @param pInitVector theInitVector
+     * @param pEphemeral the ephemeral key
+     */
+    GordianAgreementClientHelloASN1(final AlgorithmIdentifier pAgreement,
+                                    final AlgorithmIdentifier pResult,
+                                    final byte[] pInitVector,
+                                    final X509EncodedKeySpec pEphemeral) {
+        this(pAgreement, pResult, pInitVector, null, pEphemeral);
+    }
+
+    /**
+     * Create the ASN1 sequence.
+     * @param pAgreement the agreementId
+     * @param pResult the resultId
+     * @param pInitVector theInitVector
+     * @param pEncapsulated the encapsulated data
+     * @param pEphemeral the ephemeral key
      */
     public GordianAgreementClientHelloASN1(final AlgorithmIdentifier pAgreement,
                                            final AlgorithmIdentifier pResult,
                                            final byte[] pInitVector,
-                                           final byte[] pData) {
+                                           final byte[] pEncapsulated,
+                                           final X509EncodedKeySpec pEphemeral) {
         /* Store the Details */
         theAgreement = pAgreement;
         theResultType = pResult;
         theInitVector = pInitVector;
-        theData = pData;
+        theEncapsulated = pEncapsulated;
+        theEphemeral = pEphemeral;
     }
 
     /**
@@ -102,19 +162,30 @@ public class GordianAgreementClientHelloASN1
             final ASN1Sequence mySequence = ASN1Sequence.getInstance(pSequence);
             final Enumeration<?> en = mySequence.getObjects();
 
-            /* Check MessageId */
-            final byte[] myId = ASN1OctetString.getInstance(en.nextElement()).getOctets();
-            if (!Arrays.equals(myId, MSG_ID)) {
-                throw new GordianDataException("Incorrect message type");
-            }
-
             /* Access message parts */
             theAgreement = AlgorithmIdentifier.getInstance(en.nextElement());
             theResultType = AlgorithmIdentifier.getInstance(en.nextElement());
             theInitVector = ASN1OctetString.getInstance(en.nextElement()).getOctets();
-            theData = en.hasMoreElements()
-                      ? ASN1OctetString.getInstance(en.nextElement()).getOctets()
-                      : null;
+            if (en.hasMoreElements()) {
+                final ASN1TaggedObject myTagged = ASN1TaggedObject.getInstance(en.nextElement());
+                switch (myTagged.getTagNo()) {
+                    case TAG_ENCAPSULATED:
+                        theEncapsulated = ASN1OctetString.getInstance(myTagged.getObject()).getOctets();
+                        theEphemeral = null;
+                        break;
+                    case TAG_EPHEMERAL:
+                        theEphemeral = new X509EncodedKeySpec(SubjectPublicKeyInfo.getInstance(myTagged.getObject()).getEncoded());
+                        theEncapsulated = null;
+                        break;
+                    default:
+                        throw new GordianDataException("Unexpected tag");
+                }
+
+                /* No encapsulated or ephemeral */
+            } else {
+                theEncapsulated = null;
+                theEphemeral = null;
+            }
 
             /* Make sure that we have completed the sequence */
             if (en.hasMoreElements()) {
@@ -122,7 +193,8 @@ public class GordianAgreementClientHelloASN1
             }
 
             /* handle exceptions */
-        } catch (IllegalArgumentException e) {
+        } catch (IllegalArgumentException
+                | IOException e) {
             throw new GordianIOException("Unable to parse ASN1 sequence", e);
         }
     }
@@ -167,22 +239,33 @@ public class GordianAgreementClientHelloASN1
     }
 
     /**
-     * Obtain the data.
-     * @return the data
+     * Obtain the encapsulated data.
+     * @return the encapsulated data
      */
-    public byte[] getData() {
-        return theData;
+    public byte[] getEncapsulated() {
+        return theEncapsulated;
+    }
+
+    /**
+     * Obtain the ephemeral publicKey.
+     * @return the ephemeral
+     */
+    public X509EncodedKeySpec getEphemeral() {
+        return theEphemeral;
     }
 
     @Override
     public ASN1Primitive toASN1Primitive() {
         final ASN1EncodableVector v = new ASN1EncodableVector();
-        v.add(new BEROctetString(MSG_ID));
         v.add(theAgreement);
         v.add(theResultType);
         v.add(new BEROctetString(theInitVector));
-        if (theData != null) {
-            v.add(new BEROctetString(theData));
+        if (theEncapsulated != null) {
+            final BEROctetString myObject = new BEROctetString(theEncapsulated);
+            v.add(new DERTaggedObject(false, TAG_ENCAPSULATED, myObject));
+        } else if (theEphemeral != null) {
+            final SubjectPublicKeyInfo myInfo = SubjectPublicKeyInfo.getInstance(theEphemeral.getEncoded());
+            v.add(new DERTaggedObject(false, TAG_EPHEMERAL, myInfo));
         }
 
         return new DERSequence(v);
@@ -207,14 +290,15 @@ public class GordianAgreementClientHelloASN1
         /* Check that the fields are equal */
         return Objects.equals(theAgreement, myThat.getAgreementId())
                 && Objects.equals(getResultId(), myThat.getResultId())
-                && Arrays.equals(getData(), myThat.getData())
+                && Objects.equals(getEphemeral(), myThat.getEphemeral())
+                && Arrays.equals(getEncapsulated(), myThat.getEncapsulated())
                 && Arrays.equals(getInitVector(), myThat.getInitVector());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getAgreementId(), getResultId())
-                + Arrays.hashCode(getData())
+        return Objects.hash(getAgreementId(), getResultId(), getEphemeral())
+                + Arrays.hashCode(getEncapsulated())
                 + Arrays.hashCode(getInitVector());
     }
 }

@@ -56,6 +56,7 @@ import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPairGenerator
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPairSpec;
 import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyKeyPair.BouncyPrivateKey;
 import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyKeyPair.BouncyPublicKey;
+import net.sourceforge.joceanus.jgordianknot.impl.core.agree.GordianAgreementClientHelloASN1;
 import net.sourceforge.joceanus.jgordianknot.impl.core.agree.GordianCoreAnonymousAgreement;
 import net.sourceforge.joceanus.jgordianknot.impl.core.agree.GordianCoreBasicAgreement;
 import net.sourceforge.joceanus.jgordianknot.impl.core.agree.GordianCoreEphemeralAgreement;
@@ -339,8 +340,7 @@ public final class BouncyDHKeyPair {
 
             /* Create the clientHello */
             final X509EncodedKeySpec myKeySpec = myGenerator.getX509Encoding(myPair);
-            final byte[] myKeyBytes = myKeySpec.getEncoded();
-            final byte[] myClientHello = buildClientHello(myKeyBytes);
+            final byte[] myClientHello = buildClientHello(myKeySpec);
 
             /* Derive the secret */
             theAgreement.init(myPrivate.getPrivateKey());
@@ -362,8 +362,8 @@ public final class BouncyDHKeyPair {
             checkKeyPair(pServer);
 
             /* Parse the clientHello */
-            final byte[] myKeyBytes = parseClientHello(pClientHello);
-            final X509EncodedKeySpec myKeySpec = new X509EncodedKeySpec(myKeyBytes);
+            final GordianAgreementClientHelloASN1 myHello = parseClientHello(pClientHello);
+            final X509EncodedKeySpec myKeySpec = myHello.getEphemeral();
             final GordianKeyPairFactory myFactory = getFactory().getKeyPairFactory();
             final GordianKeyPairGenerator myGenerator = myFactory.getKeyPairGenerator(pServer.getKeyPairSpec());
             final GordianKeyPair myPartner = myGenerator.derivePublicOnlyKeyPair(myKeySpec);

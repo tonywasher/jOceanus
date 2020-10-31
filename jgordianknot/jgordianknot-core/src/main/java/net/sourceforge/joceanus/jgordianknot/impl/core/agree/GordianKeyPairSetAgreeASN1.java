@@ -40,13 +40,11 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
 /**
  * ASN1 Encoding of KeyPairSetAgree.
  * <pre>
- * GordianKeyPairSetAgreeASN1 ::= SEQUENCE OF {
+ * GordianKeyPairSetAgreeASN1 ::= SEQUENCE {
  *      algId AlgorithmIdentifier
  *      result AlgorithmIdentifier
- *      agreements agrees
+ *      agreements SEQUENCE OF OCTET STRINGS
  * }
- *
- * agreements ::= SEQUENCE OF OCTET STRINGS
  * </pre>
  */
 public class GordianKeyPairSetAgreeASN1

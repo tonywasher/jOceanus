@@ -46,11 +46,6 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
 public class GordianAgreementClientConfirmASN1
         extends GordianASN1Object {
     /**
-     * The MessageId.
-     */
-    static final byte[] MSG_ID = new byte[] { 'C', 'C' };
-
-    /**
      * The AgreementSpec.
      */
     private final AlgorithmIdentifier theAgreement;
@@ -83,12 +78,6 @@ public class GordianAgreementClientConfirmASN1
             /* Access the sequence */
             final ASN1Sequence mySequence = ASN1Sequence.getInstance(pSequence);
             final Enumeration<?> en = mySequence.getObjects();
-
-            /* Check MessageId */
-            final byte[] myId = ASN1OctetString.getInstance(en.nextElement()).getOctets();
-            if (!Arrays.equals(myId, MSG_ID)) {
-                throw new GordianDataException("Incorrect message type");
-            }
 
             /* Access message parts */
             theAgreement = AlgorithmIdentifier.getInstance(en.nextElement());
@@ -139,7 +128,6 @@ public class GordianAgreementClientConfirmASN1
     @Override
     public ASN1Primitive toASN1Primitive() {
         final ASN1EncodableVector v = new ASN1EncodableVector();
-        v.add(new BEROctetString(MSG_ID));
         v.add(theAgreement);
         v.add(new BEROctetString(theConfirmation));
 

@@ -16,6 +16,8 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jgordianknot.impl.core.agree;
 
+import java.io.IOException;
+import java.security.spec.X509EncodedKeySpec;
 import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.Objects;
@@ -24,9 +26,12 @@ import org.bouncycastle.asn1.ASN1EncodableVector;
 import org.bouncycastle.asn1.ASN1OctetString;
 import org.bouncycastle.asn1.ASN1Primitive;
 import org.bouncycastle.asn1.ASN1Sequence;
+import org.bouncycastle.asn1.ASN1TaggedObject;
 import org.bouncycastle.asn1.BEROctetString;
 import org.bouncycastle.asn1.DERSequence;
+import org.bouncycastle.asn1.DERTaggedObject;
 import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
+import org.bouncycastle.asn1.x509.SubjectPublicKeyInfo;
 
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianASN1Util.GordianASN1Object;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianDataException;
@@ -37,28 +42,30 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
  * ASN1 Encoding of Agreement ServerHello.
  * <pre>
  * GordianAgreementServerHelloASN1 ::= SEQUENCE  {
- *      id OCTET STRING
  *      agreeId AlgorithmIdentifier
  *      initVector OCTET STRING
- *      data OCTET STRING OPTIONAL
- *      extra CHOICE {
- *          confirmation OCTET STRING
- *          signature signatureASN1
+ *      ephemeral SubjectPublicKeyInfo OPTIONAL
+ *      body CHOICE {
+ *          confirmation    [1] OCTET STRING
+ *          signature       [2] SEQUENCE {
+ *              signId AlgorithmIdentifier
+ *              signature OCTET STRING
+ *          }
  *      } OPTIONAL
- * }
- *
- * signatureASN1 ::- SEQUENCE {
- *      signId AlgorithmIdentifier
- *      signature OCTET STRING signature
  * }
  * </pre>
  */
 public class GordianAgreementServerHelloASN1
         extends GordianASN1Object {
     /**
-     * The MessageId.
+     * The confirmation tag.
      */
-    static final byte[] MSG_ID = new byte[] { 'S', 'H' };
+    private static final int TAG_CONFIRMATION = 1;
+
+    /**
+     * The signature tag.
+     */
+    private static final int TAG_SIGNATURE = 2;
 
     /**
      * The AgreementId.
@@ -71,9 +78,9 @@ public class GordianAgreementServerHelloASN1
     private final byte[] theInitVector;
 
     /**
-     * The Associated Data.
+     * The Ephemeral PublicKey.
      */
-    private final byte[] theData;
+    private final X509EncodedKeySpec theEphemeral;
 
     /**
      * The Confirmation.
@@ -94,17 +101,17 @@ public class GordianAgreementServerHelloASN1
      * Create the ASN1 sequence.
      * @param pAgreement the agreementId
      * @param pInitVector theInitVector
-     * @param pData the associated data
+     * @param pEphemeral the ephemeral PublicKey
      * @param pConfirmation the confirmation
      */
     public GordianAgreementServerHelloASN1(final AlgorithmIdentifier pAgreement,
                                            final byte[] pInitVector,
-                                           final byte[] pData,
+                                           final X509EncodedKeySpec pEphemeral,
                                            final byte[] pConfirmation) {
         /* Store the Details */
         theAgreementId = pAgreement;
         theInitVector = pInitVector;
-        theData = pData;
+        theEphemeral = pEphemeral;
         theConfirmation = pConfirmation;
         theSignId = null;
         theSignature = null;
@@ -114,19 +121,19 @@ public class GordianAgreementServerHelloASN1
      * Create the ASN1 sequence.
      * @param pAgreement the agreementId
      * @param pInitVector theInitVector
-     * @param pData the associated data
+     * @param pEphemeral the ephemeral publicKey
      * @param pSignId the signatureId
      * @param pSignature the signature
      */
     public GordianAgreementServerHelloASN1(final AlgorithmIdentifier pAgreement,
                                            final byte[] pInitVector,
-                                           final byte[] pData,
+                                           final X509EncodedKeySpec pEphemeral,
                                            final AlgorithmIdentifier pSignId,
                                            final byte[] pSignature) {
         /* Store the Details */
         theAgreementId = pAgreement;
         theInitVector = pInitVector;
-        theData = pData;
+        theEphemeral = pEphemeral;
         theConfirmation = null;
         theSignId = pSignId;
         theSignature = pSignature;
@@ -144,44 +151,36 @@ public class GordianAgreementServerHelloASN1
             final ASN1Sequence mySequence = ASN1Sequence.getInstance(pSequence);
             final Enumeration<?> en = mySequence.getObjects();
 
-            /* Check MessageId */
-            final byte[] myId = ASN1OctetString.getInstance(en.nextElement()).getOctets();
-            if (!Arrays.equals(myId, MSG_ID)) {
-                throw new GordianDataException("Incorrect message type");
-            }
-
             /* Access standard message parts */
             theAgreementId = AlgorithmIdentifier.getInstance(en.nextElement());
             theInitVector = ASN1OctetString.getInstance(en.nextElement()).getOctets();
-            theData = en.hasMoreElements()
-                      ? ASN1OctetString.getInstance(en.nextElement()).getOctets()
-                      : null;
+            theEphemeral = en.hasMoreElements()
+                    ? new X509EncodedKeySpec(SubjectPublicKeyInfo.getInstance(en.nextElement()).getEncoded())
+                    : null;
 
             /* If there are more elements */
             if (en.hasMoreElements()) {
                 /* Access next item */
-                final Object myItem = en.nextElement();
-
-                /* Look for confirmation */
-                if (myItem instanceof ASN1OctetString) {
-                    theConfirmation = ASN1OctetString.getInstance(myItem).getOctets();
-                    theSignId = null;
-                    theSignature = null;
-
-                    /* Look for signature */
-                } else if (myItem instanceof ASN1Sequence) {
-                    final ASN1Sequence mySignature = ASN1Sequence.getInstance(myItem);
-                    theConfirmation = null;
-                    final Enumeration<?> es = mySignature.getObjects();
-                    theSignId = AlgorithmIdentifier.getInstance(es.nextElement());
-                    theSignature = ASN1OctetString.getInstance(es.nextElement()).getOctets();
-
-                    /* Unknown */
-                } else {
-                    throw new GordianDataException("Unexpected value in ASN1 sequence");
+                final ASN1TaggedObject myTagged = ASN1TaggedObject.getInstance(en.nextElement());
+                switch (myTagged.getTagNo()) {
+                    case TAG_CONFIRMATION:
+                        theConfirmation = ASN1OctetString.getInstance(myTagged.getObject()).getOctets();
+                        theSignId = null;
+                        theSignature = null;
+                        break;
+                    case TAG_SIGNATURE:
+                        final ASN1Sequence mySignature = ASN1Sequence.getInstance(myTagged.getObject());
+                        final Enumeration<?> es = mySignature.getObjects();
+                        theSignId = AlgorithmIdentifier.getInstance(es.nextElement());
+                        theSignature = ASN1OctetString.getInstance(es.nextElement()).getOctets();
+                        theConfirmation = null;
+                        break;
+                        /* Unknown */
+                    default:
+                        throw new GordianDataException("Unexpected value in ASN1 sequence");
                 }
 
-                /* No extra */
+                /* No confirmation or signature */
             } else {
                 theConfirmation = null;
                 theSignId = null;
@@ -194,7 +193,8 @@ public class GordianAgreementServerHelloASN1
             }
 
             /* handle exceptions */
-        } catch (IllegalArgumentException e) {
+        } catch (IllegalArgumentException
+                | IOException e) {
             throw new GordianIOException("Unable to parse ASN1 sequence", e);
         }
     }
@@ -231,11 +231,11 @@ public class GordianAgreementServerHelloASN1
     }
 
     /**
-     * Obtain the data.
+     * Obtain the ephemeral publicKey.
      * @return the data
      */
-    public byte[] getData() {
-        return theData;
+    public X509EncodedKeySpec getEphemeral() {
+        return theEphemeral;
     }
 
     /**
@@ -266,25 +266,25 @@ public class GordianAgreementServerHelloASN1
     public ASN1Primitive toASN1Primitive() {
         /* Build basic part */
         final ASN1EncodableVector v = new ASN1EncodableVector();
-        v.add(new BEROctetString(MSG_ID));
         v.add(theAgreementId);
         v.add(new BEROctetString(theInitVector));
 
-        /* Add data if present */
-        if (theData != null) {
-            v.add(new BEROctetString(theData));
+        /* Add ephemeral if present */
+        if (theEphemeral != null) {
+            v.add(SubjectPublicKeyInfo.getInstance(theEphemeral.getEncoded()));
         }
 
         /* Add confirmation if present */
         if (theConfirmation != null) {
-            v.add(new BEROctetString(theConfirmation));
+            final BEROctetString myObject = new BEROctetString(theConfirmation);
+            v.add(new DERTaggedObject(false, TAG_CONFIRMATION, myObject));
 
             /* else add signature if present */
         } else if (theSignId != null) {
             final ASN1EncodableVector sv = new ASN1EncodableVector();
             sv.add(theSignId);
             sv.add(new BEROctetString(theSignature));
-            v.add(new DERSequence(sv).toASN1Primitive());
+            v.add(new DERTaggedObject(false, TAG_SIGNATURE, new DERSequence(sv)));
         }
 
         /* return the sequence */
@@ -310,7 +310,7 @@ public class GordianAgreementServerHelloASN1
         /* Check that the fields are equal */
         return Objects.equals(getAgreementId(), myThat.getAgreementId())
                 && Objects.equals(getSignatureId(), myThat.getSignatureId())
-                && Arrays.equals(getData(), myThat.getData())
+                && Objects.equals(getEphemeral(), myThat.getEphemeral())
                 && Arrays.equals(getConfirmation(), myThat.getConfirmation())
                 && Arrays.equals(getSignature(), myThat.getSignature())
                 && Arrays.equals(getInitVector(), myThat.getInitVector());
@@ -318,8 +318,7 @@ public class GordianAgreementServerHelloASN1
 
     @Override
     public int hashCode() {
-        return Objects.hash(getAgreementId(), getSignatureId())
-                + Arrays.hashCode(getData())
+        return Objects.hash(getAgreementId(), getSignatureId(), getEphemeral())
                 + Arrays.hashCode(getConfirmation())
                 + Arrays.hashCode(getSignature())
                 + Arrays.hashCode(getInitVector());
