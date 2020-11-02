@@ -32,6 +32,7 @@ import net.sourceforge.joceanus.jgordianknot.api.factory.GordianKeyPairFactory;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPair;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPairGenerator;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPairType;
+import net.sourceforge.joceanus.jgordianknot.impl.core.agree.GordianAgreementClientHelloASN1;
 import net.sourceforge.joceanus.jgordianknot.impl.core.agree.GordianCoreAnonymousAgreement;
 import net.sourceforge.joceanus.jgordianknot.impl.core.agree.GordianCoreBasicAgreement;
 import net.sourceforge.joceanus.jgordianknot.impl.core.agree.GordianCoreEphemeralAgreement;
@@ -88,6 +89,7 @@ public final class JcaAgreement {
             /* Protect against exceptions */
             try {
                 /* Check keyPairs */
+                JcaKeyPair.checkKeyPair(pServer);
                 checkKeyPair(pServer);
 
                 /* Derive the secret */
@@ -97,8 +99,7 @@ public final class JcaAgreement {
 
                 /* Create the clientHello */
                 final X509EncodedKeySpec myKeySpec = new X509EncodedKeySpec(myKey.getEncoded());
-                final byte[] myKeySpecBytes = myKeySpec.getEncoded();
-                final byte[] myClientHello = buildClientHello(myKeySpecBytes);
+                final byte[] myClientHello = buildClientHello(myKeySpec);
                 storeSecret(theAgreement.generateSecret());
                 return myClientHello;
 
@@ -113,11 +114,12 @@ public final class JcaAgreement {
             /* Protect against exceptions */
             try {
                 /* Check keyPair */
+                JcaKeyPair.checkKeyPair(pServer);
                 checkKeyPair(pServer);
 
                 /* Obtain keySpec */
-                final byte[] myX509bytes = parseClientHello(pClientHello);
-                final X509EncodedKeySpec myKeySpec = new X509EncodedKeySpec(myX509bytes);
+                final GordianAgreementClientHelloASN1 myHello = parseClientHello(pClientHello);
+                final X509EncodedKeySpec myKeySpec = myHello.getEphemeral();
 
                 /* Derive ephemeral Public key */
                 final GordianKeyPairFactory myFactory = getFactory().getKeyPairFactory();
@@ -169,6 +171,7 @@ public final class JcaAgreement {
             /* Protect against exceptions */
             try {
                 /* Check keyPairs */
+                JcaKeyPair.checkKeyPair(pServer);
                 checkKeyPair(pServer);
 
                 /* Establish agreement */
@@ -189,8 +192,7 @@ public final class JcaAgreement {
 
                 /* Create the clientHello */
                 final X509EncodedKeySpec myKeySpec = myGenerator.getX509Encoding(myPair);
-                final byte[] myKeySpecBytes = myKeySpec.getEncoded();
-                final byte[] myClientHello = buildClientHello(myKeySpecBytes);
+                final byte[] myClientHello = buildClientHello(myKeySpec);
 
                 /* Derive the secret */
                 final JcaPublicKey myTarget = (JcaPublicKey) getPublicKey(pServer);
@@ -211,14 +213,15 @@ public final class JcaAgreement {
             /* Protect against exceptions */
             try {
                 /* Check keyPair */
+                JcaKeyPair.checkKeyPair(pServer);
                 checkKeyPair(pServer);
 
                 /* Establish agreement */
                 establishAgreement(pServer);
 
                 /* Obtain keySpec */
-                final byte[] myX509bytes = parseClientHello(pClientHello);
-                final X509EncodedKeySpec myKeySpec = new X509EncodedKeySpec(myX509bytes);
+                final GordianAgreementClientHelloASN1 myHello = parseClientHello(pClientHello);
+                final X509EncodedKeySpec myKeySpec = myHello.getEphemeral();
 
                 /* Derive ephemeral Public key */
                 final GordianKeyPairFactory myFactory = getFactory().getKeyPairFactory();
@@ -291,7 +294,9 @@ public final class JcaAgreement {
             /* Protect against exceptions */
             try {
                 /* Check keyPair */
+                JcaKeyPair.checkKeyPair(pClient);
                 checkKeyPair(pClient);
+                JcaKeyPair.checkKeyPair(pServer);
                 checkKeyPair(pServer);
 
                 /* Establish agreement */
@@ -328,6 +333,7 @@ public final class JcaAgreement {
             /* Protect against exceptions */
             try {
                 /* Check keyPair */
+                JcaKeyPair.checkKeyPair(pServer);
                 checkKeyPair(pServer);
 
                 /* Establish agreement */
@@ -404,6 +410,7 @@ public final class JcaAgreement {
             /* Protect against exceptions */
             try {
                 /* Process the clientHello */
+                JcaKeyPair.checkKeyPair(pServer);
                 processClientHello(pClientHello);
                 final JcaPrivateKey myPrivate = (JcaPrivateKey) getPrivateKey(getServerEphemeralKeyPair());
                 final JcaPublicKey myPublic = (JcaPublicKey) getPublicKey(getClientEphemeralKeyPair());
@@ -437,6 +444,7 @@ public final class JcaAgreement {
             /* Protect against exceptions */
             try {
                 /* process the serverHello */
+                JcaKeyPair.checkKeyPair(pServer);
                 processServerHello(pServer, pServerHello);
                 final JcaPrivateKey myPrivate = (JcaPrivateKey) getPrivateKey(getClientEphemeralKeyPair());
                 final JcaPublicKey myTarget = (JcaPublicKey) getPublicKey(getServerEphemeralKeyPair());
@@ -508,6 +516,8 @@ public final class JcaAgreement {
             /* Protect against exceptions */
             try {
                 /* Establish agreement */
+                JcaKeyPair.checkKeyPair(pClient);
+                JcaKeyPair.checkKeyPair(pServer);
                 establishAgreement(pServer);
 
                 /* process clientHello */
@@ -542,6 +552,7 @@ public final class JcaAgreement {
             /* Protect against exceptions */
             try {
                 /* Establish agreement */
+                JcaKeyPair.checkKeyPair(pServer);
                 establishAgreement(pServer);
 
                 /* parse the serverHello */
@@ -619,6 +630,8 @@ public final class JcaAgreement {
             /* Protect against exceptions */
             try {
                 /* process clientHello */
+                JcaKeyPair.checkKeyPair(pClient);
+                JcaKeyPair.checkKeyPair(pServer);
                 processClientHello(pClient, pServer, pClientHello);
 
                 /* Initialise agreement */
@@ -650,6 +663,7 @@ public final class JcaAgreement {
             /* Protect against exceptions */
             try {
                 /* process the serverHello */
+                JcaKeyPair.checkKeyPair(pServer);
                 processServerHello(pServer, pServerHello);
 
                 /* Initialise agreement */

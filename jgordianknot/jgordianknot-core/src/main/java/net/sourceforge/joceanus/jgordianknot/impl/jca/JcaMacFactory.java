@@ -19,10 +19,10 @@ package net.sourceforge.joceanus.jgordianknot.impl.jca;
 import java.security.NoSuchAlgorithmException;
 import java.util.HashMap;
 import java.util.Map;
-
 import javax.crypto.KeyGenerator;
 import javax.crypto.Mac;
 
+import net.sourceforge.joceanus.jgordianknot.api.base.GordianKeySpec;
 import net.sourceforge.joceanus.jgordianknot.api.base.GordianLength;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianSymKeySpec;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianSymKeyType;
@@ -60,7 +60,7 @@ public class JcaMacFactory
     /**
      * KeyGenerator Cache.
      */
-    private final Map<GordianMacSpec, JcaKeyGenerator<GordianMacSpec>> theCache;
+    private final Map<GordianKeySpec, JcaKeyGenerator<? extends GordianKeySpec>> theCache;
 
     /**
      * Constructor.
@@ -81,15 +81,16 @@ public class JcaMacFactory
     }
 
     @Override
-    public GordianKeyGenerator<GordianMacSpec> getKeyGenerator(final GordianMacSpec pMacSpec) throws OceanusException {
+    @SuppressWarnings("unchecked")
+    public <T extends GordianKeySpec> GordianKeyGenerator<T> getKeyGenerator(final T pMacSpec) throws OceanusException {
         /* Look up in the cache */
-        JcaKeyGenerator<GordianMacSpec> myGenerator = theCache.get(pMacSpec);
+        JcaKeyGenerator<T> myGenerator = (JcaKeyGenerator<T>) theCache.get(pMacSpec);
         if (myGenerator == null) {
             /* Check validity of MacSpec */
             checkMacSpec(pMacSpec);
 
             /* Create the new generator */
-            final String myAlgorithm = getMacSpecAlgorithm(pMacSpec);
+            final String myAlgorithm = getMacSpecAlgorithm((GordianMacSpec) pMacSpec);
             final KeyGenerator myJavaGenerator = getJavaKeyGenerator(myAlgorithm);
             myGenerator = new JcaKeyGenerator<>(getFactory(), pMacSpec, myJavaGenerator);
 

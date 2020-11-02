@@ -41,35 +41,30 @@ public final class PqcPublicKeyFactory {
     }
 
     /**
-     * Create a public key from the passed in SubjectPublicKeyInfo
+     * Create a public key from the passed in SubjectPublicKeyInfo.
      *
      * @param keyInfo the SubjectPublicKeyInfo containing the key data
      * @return the appropriate key parameter
      * @throws IOException on an error decoding the key
      */
-    public static AsymmetricKeyParameter createKey(SubjectPublicKeyInfo keyInfo)
-            throws IOException
-    {
-        AlgorithmIdentifier algId = keyInfo.getAlgorithm();
-        ASN1ObjectIdentifier algOID = algId.getAlgorithm();
+    public static AsymmetricKeyParameter createKey(final SubjectPublicKeyInfo keyInfo)
+            throws IOException {
+        final AlgorithmIdentifier algId = keyInfo.getAlgorithm();
+        final ASN1ObjectIdentifier algOID = algId.getAlgorithm();
 
-        if (algOID.equals(PQCObjectIdentifiers.mcEliece))
-        {
-            McEliecePublicKey key = McEliecePublicKey.getInstance(keyInfo.parsePublicKey());
+        if (algOID.equals(PQCObjectIdentifiers.mcEliece)) {
+            final McEliecePublicKey key = McEliecePublicKey.getInstance(keyInfo.parsePublicKey());
             return new McEliecePublicKeyParameters(key.getN(), key.getT(), key.getG());
-        }
-        else if (algOID.equals(PQCObjectIdentifiers.mcElieceCca2))
-        {
-            McElieceCCA2PublicKey myKey = McElieceCCA2PublicKey.getInstance(keyInfo.parsePublicKey());
+
+        } else if (algOID.equals(PQCObjectIdentifiers.mcElieceCca2)) {
+            final McElieceCCA2PublicKey myKey = McElieceCCA2PublicKey.getInstance(keyInfo.parsePublicKey());
             return new McElieceCCA2PublicKeyParameters(myKey.getN(), myKey.getT(), myKey.getG(), PqcPrivateKeyFactory.getDigest(myKey.getDigest().getAlgorithm()).getAlgorithmName());
-        }
-        else if (algOID.equals(PQCObjectIdentifiers.rainbow))
-        {
-            RainbowPublicKey key = RainbowPublicKey.getInstance(keyInfo.parsePublicKey());
+
+        } else if (algOID.equals(PQCObjectIdentifiers.rainbow)) {
+            final RainbowPublicKey key = RainbowPublicKey.getInstance(keyInfo.parsePublicKey());
             return new RainbowPublicKeyParameters(key.getDocLength(), key.getCoeffQuadratic(), key.getCoeffSingular(), key.getCoeffScalar());
-        }
-        else
-        {
+
+        } else {
             throw new RuntimeException("algorithm identifier in public key not recognised");
         }
     }

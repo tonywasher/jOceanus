@@ -49,12 +49,12 @@ import net.sourceforge.joceanus.jgordianknot.api.keystore.GordianCertificate;
 import net.sourceforge.joceanus.jgordianknot.api.keystore.GordianCertificateId;
 import net.sourceforge.joceanus.jgordianknot.api.keystore.GordianKeyPairUsage;
 import net.sourceforge.joceanus.jgordianknot.api.keystore.GordianKeyPairUse;
-import net.sourceforge.joceanus.jgordianknot.api.keystore.GordianKeyStoreEntry.GordianKeyStorePairEntry;
 import net.sourceforge.joceanus.jgordianknot.api.sign.GordianSignature;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianCoreFactory;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianDataException;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianIOException;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianLogicException;
+import net.sourceforge.joceanus.jgordianknot.impl.core.keystore.GordianCoreKeyStoreEntry.GordianKeyStorePairEntry;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
@@ -103,6 +103,11 @@ public abstract class GordianCoreCertificate<S, K>
      * The SignatureSpec.
      */
     private final S theSigSpec;
+
+    /**
+     * The serial#.
+     */
+    private final BigInteger theSerialNo;
 
     /**
      * The TBS Certificate.
@@ -154,6 +159,7 @@ public abstract class GordianCoreCertificate<S, K>
         theKeyUsage = new GordianKeyPairUsage(GordianKeyPairUse.CERTIFICATE);
         theCAStatus = new GordianCAStatus(true);
         theTbsCertificate = buildCertificate(null, pSubject);
+        theSerialNo = theTbsCertificate.getSerialNumber().getValue();
 
         /* Create the signature */
         theSignature = createSignature(pKeyPair);
@@ -178,7 +184,7 @@ public abstract class GordianCoreCertificate<S, K>
      * @throws OceanusException on error
      */
     GordianCoreCertificate(final GordianCoreFactory pFactory,
-                           final GordianKeyStorePairEntry<K> pSigner,
+                           final GordianKeyStorePairEntry<?, K> pSigner,
                            final K pKeyPair,
                            final X500Name pSubject,
                            final GordianKeyPairUsage pUsage) throws OceanusException {
@@ -188,8 +194,8 @@ public abstract class GordianCoreCertificate<S, K>
         theKeyUsage = pUsage;
 
         /* Check that the signer is allowed to sign certificates */
-        final K mySignerPair = pSigner.getKeyPair();
-        final GordianCoreCertificate<?, K> mySignerCert = (GordianCoreCertificate<?, K>) pSigner.getCertificateChain()[0];
+        final K mySignerPair = pSigner.getPair();
+        final GordianCoreCertificate<?, K> mySignerCert = (GordianCoreCertificate<?, K>) pSigner.getCertificateChain().get(0);
         if (!mySignerCert.getUsage().hasUse(GordianKeyPairUse.CERTIFICATE)
                 || !mySignerCert.isValidNow()
                 || isPublicOnly(mySignerPair)) {
@@ -200,13 +206,14 @@ public abstract class GordianCoreCertificate<S, K>
         theCAStatus = new GordianCAStatus(theKeyUsage, mySignerCert.theCAStatus);
 
         /* Determine the signatureSpec */
-        theSigSpec = determineSignatureSpecForKeyPair(pSigner.getKeyPair());
+        theSigSpec = determineSignatureSpecForKeyPair(pSigner.getPair());
 
         /* Determine the algorithm Id for the signatureSpec */
-        theSigAlgId = determineAlgIdForSignatureSpec(theSigSpec, pSigner.getKeyPair());
+        theSigAlgId = determineAlgIdForSignatureSpec(theSigSpec, pSigner.getPair());
 
         /* Create the TBSCertificate */
         theTbsCertificate = buildCertificate(mySignerCert, pSubject);
+        theSerialNo = theTbsCertificate.getSerialNumber().getValue();
 
         /* Create the signature */
         theSignature = createSignature(mySignerPair);
@@ -261,6 +268,7 @@ public abstract class GordianCoreCertificate<S, K>
         /* Create the ids */
         theSubject = GordianCoreCertificateId.getSubjectId(this);
         theIssuer = GordianCoreCertificateId.getIssuerId(this);
+        theSerialNo = theTbsCertificate.getSerialNumber().getValue();
 
         /* Store the encoded representation */
         theEncoded = pSequence;
@@ -347,6 +355,14 @@ public abstract class GordianCoreCertificate<S, K>
     @Override
     public K getKeyPair() {
         return theKeyPair;
+    }
+
+    /**
+     * Obtain the serial#.
+     * @return the serial number.
+     */
+    public BigInteger getSerialNo() {
+        return theSerialNo;
     }
 
     /**
@@ -439,54 +455,66 @@ public abstract class GordianCoreCertificate<S, K>
      * @param pExtensions the extensions.
      * @return the usage
      */
-    private static GordianKeyPairUsage determineUsage(final Extensions pExtensions) {
+    static GordianKeyPairUsage determineUsage(final Extensions pExtensions) {
         /* Access details */
         final KeyUsage myUsage = KeyUsage.fromExtensions(pExtensions);
         final BasicConstraints myConstraint = BasicConstraints.fromExtensions(pExtensions);
         final GordianKeyPairUsage myResult = new GordianKeyPairUsage();
 
         /* Check for CERTIFICATE */
-        if (myConstraint.isCA() && myUsage.hasUsages(KeyUsage.keyCertSign)) {
+        final boolean isCA = myConstraint != null && myConstraint.isCA();
+        if (isCA && checkUsage(myUsage, KeyUsage.keyCertSign)) {
             myResult.addUse(GordianKeyPairUse.CERTIFICATE);
         }
 
         /* Check for signer. */
-        if (myUsage.hasUsages(KeyUsage.digitalSignature)) {
+        if (checkUsage(myUsage, KeyUsage.digitalSignature)) {
             myResult.addUse(GordianKeyPairUse.SIGNATURE);
         }
 
         /* Check for nonRepudiation. */
-        if (myUsage.hasUsages(KeyUsage.nonRepudiation)) {
+        if (checkUsage(myUsage, KeyUsage.nonRepudiation)) {
             myResult.addUse(GordianKeyPairUse.NONREPUDIATION);
         }
 
         /* Check for keyAgreement. */
-        if (myUsage.hasUsages(KeyUsage.keyAgreement)) {
+        if (checkUsage(myUsage, KeyUsage.keyAgreement)) {
             myResult.addUse(GordianKeyPairUse.AGREEMENT);
         }
 
         /* Check for keyEncryption. */
-        if (myUsage.hasUsages(KeyUsage.keyEncipherment)) {
+        if (checkUsage(myUsage, KeyUsage.keyEncipherment)) {
             myResult.addUse(GordianKeyPairUse.KEYENCRYPT);
         }
 
         /* Check for dataEncryption. */
-        if (myUsage.hasUsages(KeyUsage.dataEncipherment)) {
+        if (checkUsage(myUsage, KeyUsage.dataEncipherment)) {
             myResult.addUse(GordianKeyPairUse.DATAENCRYPT);
         }
 
         /* Check for encipherOnly. */
-        if (myUsage.hasUsages(KeyUsage.encipherOnly)) {
+        if (checkUsage(myUsage, KeyUsage.encipherOnly)) {
             myResult.addUse(GordianKeyPairUse.ENCRYPTONLY);
         }
 
         /* Check for decipherOnly. */
-        if (myUsage.hasUsages(KeyUsage.decipherOnly)) {
+        if (checkUsage(myUsage, KeyUsage.decipherOnly)) {
             myResult.addUse(GordianKeyPairUse.DECRYPTONLY);
         }
 
         /* Return the result */
         return myResult;
+    }
+
+    /**
+     * Check for usage.
+     * @param pUsage the usage control
+     * @param pRequired  the required usage
+     * @return true/false
+     */
+    private static boolean checkUsage(final KeyUsage pUsage,
+                                      final int pRequired) {
+        return pUsage == null || pUsage.hasUsages(pRequired);
     }
 
     /**
@@ -856,7 +884,7 @@ public abstract class GordianCoreCertificate<S, K>
             final BasicConstraints myConstraint = BasicConstraints.fromExtensions(pExtensions);
 
             /* Check for CA */
-            if (myConstraint.isCA()) {
+            if (myConstraint != null && myConstraint.isCA()) {
                 return new GordianCAStatus(myConstraint.getPathLenConstraint());
             }
 

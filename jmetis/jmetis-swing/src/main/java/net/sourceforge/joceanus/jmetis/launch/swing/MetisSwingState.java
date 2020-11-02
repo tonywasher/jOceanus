@@ -38,6 +38,9 @@ import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingMenuBarManager;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingNode;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingSplash;
 
+/**
+ * State for Swing program.
+ */
 public class MetisSwingState {
     /**
      * The Program definition.

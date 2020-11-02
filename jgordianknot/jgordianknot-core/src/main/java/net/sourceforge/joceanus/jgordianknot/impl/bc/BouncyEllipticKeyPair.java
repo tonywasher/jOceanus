@@ -66,6 +66,7 @@ import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyKeyPair.BouncyPrivate
 import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyKeyPair.BouncyPublicKey;
 import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncySignature.BouncyDERCoder;
 import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncySignature.BouncyDigestSignature;
+import net.sourceforge.joceanus.jgordianknot.impl.core.agree.GordianAgreementClientHelloASN1;
 import net.sourceforge.joceanus.jgordianknot.impl.core.agree.GordianCoreAnonymousAgreement;
 import net.sourceforge.joceanus.jgordianknot.impl.core.agree.GordianCoreBasicAgreement;
 import net.sourceforge.joceanus.jgordianknot.impl.core.agree.GordianCoreEphemeralAgreement;
@@ -73,6 +74,7 @@ import net.sourceforge.joceanus.jgordianknot.impl.core.agree.GordianCoreSignedAg
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianCryptoException;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianLogicException;
 import net.sourceforge.joceanus.jgordianknot.impl.core.encrypt.GordianCoreEncryptor;
+import net.sourceforge.joceanus.jgordianknot.impl.core.keypair.GordianKeyPairValidity;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
@@ -214,6 +216,7 @@ public final class BouncyEllipticKeyPair {
 
         @Override
         public BouncyKeyPair generateKeyPair() {
+            /* Generate and return the keyPair */
             final AsymmetricCipherKeyPair myPair = theGenerator.generateKeyPair();
             final BouncyECPublicKey myPublic = new BouncyECPublicKey(getKeySpec(), (ECPublicKeyParameters) myPair.getPublic());
             final BouncyECPrivateKey myPrivate = new BouncyECPrivateKey(getKeySpec(), (ECPrivateKeyParameters) myPair.getPrivate());
@@ -222,11 +225,17 @@ public final class BouncyEllipticKeyPair {
 
         @Override
         public PKCS8EncodedKeySpec getPKCS8Encoding(final GordianKeyPair pKeyPair) throws OceanusException {
+            /* Protect against exceptions */
             try {
+                /* Check the keyPair type and keySpecs */
+                BouncyKeyPair.checkKeyPair(pKeyPair, getKeySpec());
+
+                /* build and return the encoding */
                 final BouncyECPrivateKey myPrivateKey = (BouncyECPrivateKey) getPrivateKey(pKeyPair);
                 final ECPrivateKeyParameters myParms = myPrivateKey.getPrivateKey();
                 final PrivateKeyInfo myInfo = PrivateKeyInfoFactory.createPrivateKeyInfo(myParms);
                 return new PKCS8EncodedKeySpec(myInfo.getEncoded());
+
             } catch (IOException e) {
                 throw new GordianCryptoException(ERROR_PARSE, e);
             }
@@ -235,13 +244,24 @@ public final class BouncyEllipticKeyPair {
         @Override
         public BouncyKeyPair deriveKeyPair(final X509EncodedKeySpec pPublicKey,
                                            final PKCS8EncodedKeySpec pPrivateKey) throws OceanusException {
+            /* Protect against exceptions */
             try {
-                final BouncyECPublicKey myPublic = derivePublicKey(pPublicKey);
+                /* Check the keySpecs */
                 checkKeySpec(pPrivateKey);
+
+                /* derive keyPair */
+                final BouncyECPublicKey myPublic = derivePublicKey(pPublicKey);
                 final PrivateKeyInfo myInfo = PrivateKeyInfo.getInstance(pPrivateKey.getEncoded());
                 final ECPrivateKeyParameters myParms = (ECPrivateKeyParameters) PrivateKeyFactory.createKey(myInfo);
                 final BouncyECPrivateKey myPrivate = new BouncyECPrivateKey(getKeySpec(), myParms);
-                return new BouncyKeyPair(myPublic, myPrivate);
+                final BouncyKeyPair myPair = new BouncyKeyPair(myPublic, myPrivate);
+
+                /* Check that we have a matching pair */
+                GordianKeyPairValidity.checkValidity(getFactory(), myPair);
+
+                /* Return the keyPair */
+                return myPair;
+
             } catch (IOException e) {
                 throw new GordianCryptoException(ERROR_PARSE, e);
             }
@@ -249,11 +269,17 @@ public final class BouncyEllipticKeyPair {
 
         @Override
         public X509EncodedKeySpec getX509Encoding(final GordianKeyPair pKeyPair) throws OceanusException {
+            /* Protect against exceptions */
             try {
+                /* Check the keyPair type and keySpecs */
+                BouncyKeyPair.checkKeyPair(pKeyPair, getKeySpec());
+
+                /* build and return the encoding */
                 final BouncyECPublicKey myPublicKey = (BouncyECPublicKey) getPublicKey(pKeyPair);
                 final ECPublicKeyParameters myParms = myPublicKey.getPublicKey();
                 final SubjectPublicKeyInfo myInfo = SubjectPublicKeyInfoFactory.createSubjectPublicKeyInfo(myParms);
                 return new X509EncodedKeySpec(myInfo.getEncoded());
+
             } catch (IOException e) {
                 throw new GordianCryptoException(ERROR_PARSE, e);
             }
@@ -272,11 +298,16 @@ public final class BouncyEllipticKeyPair {
          * @throws OceanusException on error
          */
         private BouncyECPublicKey derivePublicKey(final X509EncodedKeySpec pEncodedKey) throws OceanusException {
+            /* Protect against exceptions */
             try {
+                /* Check the keySpecs */
                 checkKeySpec(pEncodedKey);
+
+                /* derive publicKey */
                 final SubjectPublicKeyInfo myInfo = SubjectPublicKeyInfo.getInstance(pEncodedKey.getEncoded());
                 final ECPublicKeyParameters myParms = (ECPublicKeyParameters) PublicKeyFactory.createKey(myInfo);
                 return new BouncyECPublicKey(getKeySpec(), myParms);
+
             } catch (IOException e) {
                 throw new GordianCryptoException(ERROR_PARSE, e);
             }
@@ -317,6 +348,7 @@ public final class BouncyEllipticKeyPair {
         @Override
         public void initForSigning(final GordianKeyPair pKeyPair) throws OceanusException {
             /* Initialise detail */
+            BouncyKeyPair.checkKeyPair(pKeyPair);
             super.initForSigning(pKeyPair);
 
             /* Initialise and set the signer */
@@ -328,6 +360,7 @@ public final class BouncyEllipticKeyPair {
         @Override
         public void initForVerify(final GordianKeyPair pKeyPair) throws OceanusException {
             /* Initialise detail */
+            BouncyKeyPair.checkKeyPair(pKeyPair);
             super.initForVerify(pKeyPair);
 
             /* Initialise and set the signer */
@@ -384,6 +417,7 @@ public final class BouncyEllipticKeyPair {
         @Override
         public byte[] createClientHello(final GordianKeyPair pServer) throws OceanusException {
             /* Check keyPair */
+            BouncyKeyPair.checkKeyPair(pServer);
             checkKeyPair(pServer);
 
             /* initialise Key Encapsulation */
@@ -411,6 +445,7 @@ public final class BouncyEllipticKeyPair {
         public void acceptClientHello(final GordianKeyPair pServer,
                                       final byte[] pClientHello) throws OceanusException {
             /* Check keyPair */
+            BouncyKeyPair.checkKeyPair(pServer);
             checkKeyPair(pServer);
 
             /* initialise Key Encapsulation */
@@ -423,7 +458,8 @@ public final class BouncyEllipticKeyPair {
             final int myLen = 2 * myFieldSize + 1;
 
             /* Parse clientHello */
-            final byte[] myMessage = parseClientHello(pClientHello);
+            final GordianAgreementClientHelloASN1 myHello = parseClientHello(pClientHello);
+            final byte[] myMessage = myHello.getEncapsulated();
             final KeyParameter myParms = (KeyParameter) theAgreement.decrypt(myMessage, 0, myMessage.length, myLen);
 
             /* Store secret */
@@ -461,6 +497,7 @@ public final class BouncyEllipticKeyPair {
         @Override
         public byte[] createClientHello(final GordianKeyPair pServer) throws OceanusException {
             /* Check keyPair */
+            BouncyKeyPair.checkKeyPair(pServer);
             checkKeyPair(pServer);
 
             /* Create an ephemeral keyPair */
@@ -471,8 +508,7 @@ public final class BouncyEllipticKeyPair {
 
             /* Create the request  */
             final X509EncodedKeySpec myKeySpec = myGenerator.getX509Encoding(myPair);
-            final byte[] myKeyBytes = myKeySpec.getEncoded();
-            final byte[] myClientHello = buildClientHello(myKeyBytes);
+            final byte[] myClientHello = buildClientHello(myKeySpec);
 
             /* Derive the secret */
             theAgreement.init(myPrivate.getPrivateKey());
@@ -486,12 +522,13 @@ public final class BouncyEllipticKeyPair {
         public void acceptClientHello(final GordianKeyPair pSelf,
                                       final byte[] pClientHello) throws OceanusException {
             /* Check keyPair */
+            BouncyKeyPair.checkKeyPair(pSelf);
             checkKeyPair(pSelf);
 
             /* Obtain source keySpec */
-            final byte[] myKeyBytes = parseClientHello(pClientHello);
+            final GordianAgreementClientHelloASN1 myHello = parseClientHello(pClientHello);
             final BouncyECPrivateKey myPrivate = (BouncyECPrivateKey) getPrivateKey(pSelf);
-            final X509EncodedKeySpec myKeySpec = new X509EncodedKeySpec(myKeyBytes);
+            final X509EncodedKeySpec myKeySpec = myHello.getEphemeral();
             final GordianKeyPairFactory myFactory = getFactory().getKeyPairFactory();
             final GordianKeyPairGenerator myGenerator = myFactory.getKeyPairGenerator(pSelf.getKeyPairSpec());
 
@@ -540,7 +577,9 @@ public final class BouncyEllipticKeyPair {
                                         final GordianKeyPair pServer,
                                         final byte[] pClientHello) throws OceanusException {
             /* Check keyPair */
+            BouncyKeyPair.checkKeyPair(pClient);
             checkKeyPair(pClient);
+            BouncyKeyPair.checkKeyPair(pServer);
             checkKeyPair(pServer);
 
             /* Process the clientHello */
@@ -563,6 +602,7 @@ public final class BouncyEllipticKeyPair {
         public byte[] acceptServerHello(final GordianKeyPair pServer,
                                         final byte[] pServerHello) throws OceanusException {
             /* Check keyPair */
+            BouncyKeyPair.checkKeyPair(pServer);
             checkKeyPair(pServer);
 
             /* process the serverHello */
@@ -609,6 +649,7 @@ public final class BouncyEllipticKeyPair {
         public byte[] acceptClientHello(final GordianKeyPair pServer,
                                         final byte[] pClientHello) throws OceanusException {
             /* Process clientHello */
+            BouncyKeyPair.checkKeyPair(pServer);
             processClientHello(pClientHello);
             final BouncyPrivateKey<?> myPrivate = (BouncyPrivateKey<?>) getPrivateKey(getServerEphemeralKeyPair());
             final BouncyPublicKey<?> myPublic = (BouncyPublicKey<?>) getPublicKey(getClientEphemeralKeyPair());
@@ -629,6 +670,7 @@ public final class BouncyEllipticKeyPair {
         public void acceptServerHello(final GordianKeyPair pServer,
                                       final byte[] pServerHello) throws OceanusException {
             /* process the serverHello */
+            BouncyKeyPair.checkKeyPair(pServer);
             processServerHello(pServer, pServerHello);
             final BouncyPrivateKey<?> myPrivate = (BouncyPrivateKey<?>) getPrivateKey(getClientEphemeralKeyPair());
 
@@ -675,6 +717,8 @@ public final class BouncyEllipticKeyPair {
                                         final GordianKeyPair pServer,
                                         final byte[] pClientHello) throws OceanusException {
             /* process clientHello */
+            BouncyKeyPair.checkKeyPair(pClient);
+            BouncyKeyPair.checkKeyPair(pServer);
             processClientHello(pClient, pServer, pClientHello);
 
             /* Initialise agreement */
@@ -700,6 +744,7 @@ public final class BouncyEllipticKeyPair {
         public byte[] acceptServerHello(final GordianKeyPair pServer,
                                         final byte[] pServerHello) throws OceanusException {
             /* Check keyPair */
+            BouncyKeyPair.checkKeyPair(pServer);
             checkKeyPair(pServer);
 
             /* process the serverHello */
@@ -757,6 +802,8 @@ public final class BouncyEllipticKeyPair {
                                         final GordianKeyPair pServer,
                                         final byte[] pClientHello) throws OceanusException {
             /* process clientHello */
+            BouncyKeyPair.checkKeyPair(pClient);
+            BouncyKeyPair.checkKeyPair(pServer);
             processClientHello(pClient, pServer, pClientHello);
 
             /* Initialise agreement */
@@ -782,6 +829,7 @@ public final class BouncyEllipticKeyPair {
         public byte[] acceptServerHello(final GordianKeyPair pServer,
                                         final byte[] pServerHello) throws OceanusException {
             /* Check keyPair */
+            BouncyKeyPair.checkKeyPair(pServer);
             checkKeyPair(pServer);
 
             /* process the serverHello */
@@ -842,6 +890,7 @@ public final class BouncyEllipticKeyPair {
         @Override
         public void initForEncrypt(final GordianKeyPair pKeyPair) throws OceanusException {
             /* Initialise underlying cipher */
+            BouncyKeyPair.checkKeyPair(pKeyPair);
             super.initForEncrypt(pKeyPair);
 
             /* Initialise for encryption */
@@ -852,6 +901,7 @@ public final class BouncyEllipticKeyPair {
         @Override
         public void initForDecrypt(final GordianKeyPair pKeyPair) throws OceanusException {
             /* Initialise underlying cipher */
+            BouncyKeyPair.checkKeyPair(pKeyPair);
             super.initForDecrypt(pKeyPair);
 
             /* Initialise for decryption */

@@ -22,12 +22,11 @@ import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Objects;
 
 import org.bouncycastle.asn1.ASN1EncodableVector;
-import org.bouncycastle.asn1.ASN1OctetString;
 import org.bouncycastle.asn1.ASN1Primitive;
 import org.bouncycastle.asn1.ASN1Sequence;
-import org.bouncycastle.asn1.DEROctetString;
 import org.bouncycastle.asn1.DERSequence;
 import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
 import org.bouncycastle.asn1.x509.SubjectPublicKeyInfo;
@@ -43,10 +42,10 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
  * <pre>
  * GordianKeyPairSetPublicASN1 ::= SEQUENCE OF {
  *      algId AlgorithmIdentifier
- *      publicKeys keys
+ *      keys publicKeys
  * }
  *
- * publicKeys ::= SEQUENCE OF x509EncodedKeySpec
+ * publicKeys ::= SEQUENCE OF SubjectPublicKeyInfo
  * </pre>
  */
 public class GordianKeyPairSetPublicASN1
@@ -93,8 +92,8 @@ public class GordianKeyPairSetPublicASN1
             /* Build the list from the keys sequence */
             final Enumeration<?> en = myKeys.getObjects();
             while (en.hasMoreElements()) {
-                final byte[] myBytes = ASN1OctetString.getInstance(en.nextElement()).getOctets();
-                addKey(new X509EncodedKeySpec(myBytes));
+                final SubjectPublicKeyInfo myPKInfo = SubjectPublicKeyInfo.getInstance(en.nextElement());
+                thePublicKeys.add(new X509EncodedKeySpec(myPKInfo.getEncoded()));
             }
 
             /* Check that we have the right number of keys */
@@ -103,7 +102,8 @@ public class GordianKeyPairSetPublicASN1
             }
 
             /* handle exceptions */
-        } catch (IllegalArgumentException e) {
+        } catch (IllegalArgumentException
+                | IOException e) {
             throw new GordianIOException("Unable to parse ASN1 sequence", e);
         }
     }
@@ -167,10 +167,36 @@ public class GordianKeyPairSetPublicASN1
         /* Build the publicKeySequence */
         final ASN1EncodableVector ks = new ASN1EncodableVector();
         for (X509EncodedKeySpec myKeySpec : thePublicKeys) {
-            ks.add(new DEROctetString(myKeySpec.getEncoded()));
+            ks.add(SubjectPublicKeyInfo.getInstance(myKeySpec.getEncoded()));
         }
 
         /* Return the sequence */
         return new DERSequence(ks);
+    }
+
+    @Override
+    public boolean equals(final Object pThat) {
+        /* Handle trivial cases */
+        if (this == pThat) {
+            return true;
+        }
+        if (pThat == null) {
+            return false;
+        }
+
+        /* Make sure that the classes are the same */
+        if (!(pThat instanceof GordianKeyPairSetPublicASN1)) {
+            return false;
+        }
+        final GordianKeyPairSetPublicASN1 myThat = (GordianKeyPairSetPublicASN1) pThat;
+
+        /* Check that the fields are equal */
+        return Objects.equals(theSpec, myThat.theSpec)
+                && Objects.equals(thePublicKeys, myThat.thePublicKeys);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(theSpec, thePublicKeys);
     }
 }

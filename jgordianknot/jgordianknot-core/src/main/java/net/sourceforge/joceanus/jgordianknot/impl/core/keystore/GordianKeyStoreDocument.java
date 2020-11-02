@@ -297,7 +297,7 @@ public final class GordianKeyStoreDocument {
                 case TRUSTEDPAIRCERT:
                 case TRUSTEDPAIRSETCERT:
                 default:
-                    buildCertificateElement(myAliasEl, (GordianKeyStoreCertificateElement<?, ?>) myElement);
+                    buildCertificateElement(myAliasEl, (GordianKeyStoreCertificateElement<?>) myElement);
                     break;
             }
         }
@@ -331,7 +331,7 @@ public final class GordianKeyStoreDocument {
         /* Build hash entry */
         final Element myHashEl = theDocument.createElement(ELEMENT_HASH);
         pNode.appendChild(myHashEl);
-        myHashEl.setTextContent(TethysDataConverter.byteArrayToBase64(pEntry.getSecuringHash()));
+        myHashEl.setTextContent(TethysDataConverter.byteArrayToBase64(pEntry.getSecuringHashHash()));
     }
 
     /**
@@ -355,7 +355,7 @@ public final class GordianKeyStoreDocument {
         /* Build hash entry */
         final Element myHashEl = theDocument.createElement(ELEMENT_HASH);
         pNode.appendChild(myHashEl);
-        myHashEl.setTextContent(TethysDataConverter.byteArrayToBase64(pEntry.getSecuringHash()));
+        myHashEl.setTextContent(TethysDataConverter.byteArrayToBase64(pEntry.getSecuringHashHash()));
     }
 
     /**
@@ -394,7 +394,7 @@ public final class GordianKeyStoreDocument {
      * @throws OceanusException on error
      */
     private void buildCertificateElement(final Element pNode,
-                                         final GordianKeyStoreCertificateElement<?, ?> pEntry) throws OceanusException {
+                                         final GordianKeyStoreCertificateElement<?> pEntry) throws OceanusException {
         /* Build certificateKey */
         buildCertificateKey(pNode, pEntry.getCertificateKey());
     }
@@ -727,7 +727,7 @@ public final class GordianKeyStoreDocument {
             if (ELEMENT_CERTKEY.equals(myNodeName)) {
                 /* Obtain the key and build the entry */
                 final GordianKeyStoreCertificateKey myKey = parseCertificateKey(myNode);
-                final GordianKeyStoreCertificateElement<?, ?> myEntry = pIsPairSet
+                final GordianKeyStoreCertificateElement<?> myEntry = pIsPairSet
                         ? new GordianKeyStorePairSetCertificateElement(myKey, pDate)
                         : new GordianKeyStorePairCertificateElement(myKey, pDate);
                 theKeyStore.getAliasMap().put(pAlias, myEntry);

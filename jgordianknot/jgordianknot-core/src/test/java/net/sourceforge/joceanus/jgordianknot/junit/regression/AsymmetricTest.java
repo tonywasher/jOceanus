@@ -51,6 +51,7 @@ import net.sourceforge.joceanus.jgordianknot.api.factory.GordianKeyPairFactory;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPair;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPairGenerator;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPairSpec;
+import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianStateAwareKeyPair;
 import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySet;
 import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetFactory;
 import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetHash;
@@ -341,12 +342,19 @@ public class AsymmetricTest {
         final PKCS8EncodedKeySpec myPrivate = myPairs.getPKCS8Encoding();
         Assertions.assertEquals(mySpec, myFactory.determineKeyPairSpec(myPrivate), "PKCS8 has wrong keySpec");
 
-        /* Skip test if necessary to bypass DH JCA bug */
-        if (!mySpec.getKeyPairType().differentDerivedKey()) {
-            /* Derive identical keyPair */
-            final GordianKeyPair myPair = myPairs.getKeyPair();
-            final GordianKeyPair myMirror = myPairs.getMirrorKeyPair();
-            Assertions.assertEquals(myPair, myMirror, "Derived pair has wrong keySpec");
+        /* Derive identical keyPair */
+        final GordianKeyPair myPair = myPairs.getKeyPair();
+        final GordianKeyPair myMirror = myPairs.getMirrorKeyPair();
+        Assertions.assertEquals(myPair, myMirror, "Derived pair has wrong keySpec");
+
+        /* If the keyPair is stateAware */
+        if (mySpec.getKeyPairType().isStateAware()) {
+            /* Check for StateAware */
+            Assertions.assertTrue(myPair instanceof GordianStateAwareKeyPair, "Pair");
+            Assertions.assertTrue(myMirror instanceof GordianStateAwareKeyPair, "Mirror");
+            Assertions.assertTrue(myPairs.getTargetKeyPair() instanceof GordianStateAwareKeyPair, "Target");
+            Assertions.assertTrue(myPairs.getPartnerSelfKeyPair() instanceof GordianStateAwareKeyPair, "PartnerSelf");
+            Assertions.assertTrue(myPairs.getPartnerTargetKeyPair() instanceof GordianStateAwareKeyPair, "PartnerTarget");
         }
     }
 
@@ -369,9 +377,7 @@ public class AsymmetricTest {
         final GordianCoreKeySet myKeySet = (GordianCoreKeySet) myHash.getKeySet();
         final byte[] mySecured = myKeySet.securePrivateKey(myPair);
         final GordianKeyPair myDerived = myKeySet.deriveKeyPair(myPublic, mySecured);
-        if (!mySpec.getKeyPairType().differentDerivedKey()) {
-            Assertions.assertEquals(myPair, myDerived, "Incorrect derived pair");
-        }
+        Assertions.assertEquals(myPair, myDerived, "Incorrect derived pair");
         Assertions.assertEquals(myKeySet.getPrivateKeyWrapLength(myPair), mySecured.length, "Incorrect wrapped length");
     }
 

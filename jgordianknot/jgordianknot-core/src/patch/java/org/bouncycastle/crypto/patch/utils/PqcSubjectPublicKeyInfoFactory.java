@@ -47,35 +47,30 @@ public final class PqcSubjectPublicKeyInfoFactory {
      * @return a SubjectPublicKeyInfo representing the key.
      * @throws java.io.IOException on an error encoding the key
      */
-    public static SubjectPublicKeyInfo createSubjectPublicKeyInfo(AsymmetricKeyParameter publicKey) throws IOException
-    {
-        if (publicKey instanceof McEliecePublicKeyParameters)
-        {
-            McEliecePublicKeyParameters pub = (McEliecePublicKeyParameters)publicKey;
+    public static SubjectPublicKeyInfo createSubjectPublicKeyInfo(final AsymmetricKeyParameter publicKey) throws IOException {
+        if (publicKey instanceof McEliecePublicKeyParameters) {
+            final McEliecePublicKeyParameters pub = (McEliecePublicKeyParameters) publicKey;
 
-            McEliecePublicKey key = new McEliecePublicKey(pub.getN(), pub.getT(), pub.getG());
-            AlgorithmIdentifier algorithmIdentifier = new AlgorithmIdentifier(PQCObjectIdentifiers.mcEliece);
+            final McEliecePublicKey key = new McEliecePublicKey(pub.getN(), pub.getT(), pub.getG());
+            final AlgorithmIdentifier algorithmIdentifier = new AlgorithmIdentifier(PQCObjectIdentifiers.mcEliece);
             return new SubjectPublicKeyInfo(algorithmIdentifier, key);
-        }
-        else if (publicKey instanceof McElieceCCA2PublicKeyParameters)
-        {
-            McElieceCCA2PublicKeyParameters pub = (McElieceCCA2PublicKeyParameters)publicKey;
 
-            McElieceCCA2PublicKey key = new McElieceCCA2PublicKey(pub.getN(), pub.getT(), pub.getG(), PqcPrivateKeyInfoFactory.getDigAlgId(pub.getDigest()));
-            AlgorithmIdentifier algorithmIdentifier = new AlgorithmIdentifier(PQCObjectIdentifiers.mcElieceCca2);
+        } else if (publicKey instanceof McElieceCCA2PublicKeyParameters) {
+            final McElieceCCA2PublicKeyParameters pub = (McElieceCCA2PublicKeyParameters) publicKey;
+
+            final McElieceCCA2PublicKey key = new McElieceCCA2PublicKey(pub.getN(), pub.getT(), pub.getG(), PqcPrivateKeyInfoFactory.getDigAlgId(pub.getDigest()));
+            final AlgorithmIdentifier algorithmIdentifier = new AlgorithmIdentifier(PQCObjectIdentifiers.mcElieceCca2);
             return new SubjectPublicKeyInfo(algorithmIdentifier, key);
-        }
-        else if (publicKey instanceof RainbowPublicKeyParameters)
-        {
-            RainbowPublicKeyParameters pub = (RainbowPublicKeyParameters)publicKey;
 
-            RainbowPublicKey key = new RainbowPublicKey(pub.getDocLength(), pub.getCoeffQuadratic(), pub.getCoeffSingular(), pub.getCoeffScalar());
-            AlgorithmIdentifier algorithmIdentifier = new AlgorithmIdentifier(PQCObjectIdentifiers.rainbow, DERNull.INSTANCE);
+        } else if (publicKey instanceof RainbowPublicKeyParameters) {
+            final RainbowPublicKeyParameters pub = (RainbowPublicKeyParameters) publicKey;
+
+            final RainbowPublicKey key = new RainbowPublicKey(pub.getDocLength(), pub.getCoeffQuadratic(), pub.getCoeffSingular(), pub.getCoeffScalar());
+            final AlgorithmIdentifier algorithmIdentifier = new AlgorithmIdentifier(PQCObjectIdentifiers.rainbow, DERNull.INSTANCE);
 
             return new SubjectPublicKeyInfo(algorithmIdentifier, key);
-        }
-        else
-        {
+
+        } else {
             throw new IOException("key parameters not recognised.");
         }
     }

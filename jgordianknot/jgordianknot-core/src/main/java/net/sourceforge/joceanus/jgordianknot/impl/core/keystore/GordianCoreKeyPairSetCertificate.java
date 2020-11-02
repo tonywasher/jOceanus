@@ -29,13 +29,13 @@ import net.sourceforge.joceanus.jgordianknot.api.keypairset.GordianKeyPairSetGen
 import net.sourceforge.joceanus.jgordianknot.api.keypairset.GordianKeyPairSetSpec;
 import net.sourceforge.joceanus.jgordianknot.api.keystore.GordianKeyPairSetCertificate;
 import net.sourceforge.joceanus.jgordianknot.api.keystore.GordianKeyPairUsage;
-import net.sourceforge.joceanus.jgordianknot.api.keystore.GordianKeyStoreEntry.GordianKeyStorePairSet;
 import net.sourceforge.joceanus.jgordianknot.api.sign.GordianKeyPairSetSignature;
 import net.sourceforge.joceanus.jgordianknot.api.sign.GordianSignatureFactory;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianCoreFactory;
 import net.sourceforge.joceanus.jgordianknot.impl.core.keypairset.GordianCoreKeyPairSet;
 import net.sourceforge.joceanus.jgordianknot.impl.core.keypairset.GordianCoreKeyPairSetGenerator;
 import net.sourceforge.joceanus.jgordianknot.impl.core.keypairset.GordianKeyPairSetAlgId;
+import net.sourceforge.joceanus.jgordianknot.impl.core.keystore.GordianCoreKeyStoreEntry.GordianCoreKeyStorePairSet;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
@@ -69,7 +69,7 @@ public class GordianCoreKeyPairSetCertificate
      * @throws OceanusException on error
      */
     GordianCoreKeyPairSetCertificate(final GordianCoreFactory pFactory,
-                                     final GordianKeyStorePairSet pSigner,
+                                     final GordianCoreKeyStorePairSet pSigner,
                                      final GordianKeyPairSet pKeyPair,
                                      final X500Name pSubject,
                                      final GordianKeyPairUsage pUsage) throws OceanusException {

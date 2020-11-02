@@ -18,6 +18,7 @@ package net.sourceforge.joceanus.jgordianknot.impl.core.mac;
 
 import java.util.function.Predicate;
 
+import net.sourceforge.joceanus.jgordianknot.api.base.GordianKeySpec;
 import net.sourceforge.joceanus.jgordianknot.api.base.GordianLength;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianSymKeySpec;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianSymKeyType;
@@ -111,9 +112,10 @@ public abstract class GordianCoreMacFactory
      * @param pMacSpec the macSpec
      * @throws OceanusException on error
      */
-    protected void checkMacSpec(final GordianMacSpec pMacSpec) throws OceanusException {
-        /* Check validity of SymKey */
-        if (!supportedMacSpecs().test(pMacSpec)) {
+    protected void checkMacSpec(final GordianKeySpec pMacSpec) throws OceanusException {
+        /* Check validity of MacSpec */
+        if (!(pMacSpec instanceof GordianMacSpec)
+                || !supportedMacSpecs().test((GordianMacSpec) pMacSpec)) {
             throw new GordianDataException(GordianCoreFactory.getInvalidText(pMacSpec));
         }
     }

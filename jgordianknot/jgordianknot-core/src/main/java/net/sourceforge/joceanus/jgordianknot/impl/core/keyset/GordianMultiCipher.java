@@ -42,14 +42,12 @@ import net.sourceforge.joceanus.jgordianknot.api.mac.GordianMacFactory;
 import net.sourceforge.joceanus.jgordianknot.api.mac.GordianMacSpec;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianCoreFactory;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianDataException;
-import net.sourceforge.joceanus.jgordianknot.impl.core.cipher.GordianCoreCipherFactory;
 import net.sourceforge.joceanus.jgordianknot.impl.core.cipher.GordianCoreWrapper;
 import net.sourceforge.joceanus.jgordianknot.impl.core.key.GordianCoreKey;
 import net.sourceforge.joceanus.jgordianknot.impl.core.key.GordianCoreKeyGenerator;
 import net.sourceforge.joceanus.jgordianknot.impl.core.keypair.GordianCoreKeyPairGenerator;
 import net.sourceforge.joceanus.jgordianknot.impl.core.keypairset.GordianCoreKeyPairSetGenerator;
 import net.sourceforge.joceanus.jgordianknot.impl.core.keyset.GordianKeySetRecipe.GordianKeySetParameters;
-import net.sourceforge.joceanus.jgordianknot.impl.core.mac.GordianCoreMacFactory;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
@@ -427,16 +425,12 @@ final class GordianMultiCipher
         /* Derive the bytes */
         final byte[] myBytes = deriveBytes(pParams, pSecuredKey, pOffset);
 
-        /* Handle the macSpec separately */
-        if (pKeyType instanceof GordianMacSpec) {
-            final GordianCoreMacFactory myFactory = (GordianCoreMacFactory) theFactory.getMacFactory();
-            final GordianCoreKeyGenerator<T> myGenerator = (GordianCoreKeyGenerator<T>) myFactory.getKeyGenerator((GordianMacSpec) pKeyType);
-            return myGenerator.buildKeyFromBytes(myBytes);
-        }
+        /* Access the relevant generator */
+        final GordianCoreKeyGenerator<T> myGenerator = pKeyType instanceof GordianMacSpec
+                    ? (GordianCoreKeyGenerator<T>) theFactory.getMacFactory().getKeyGenerator(pKeyType)
+                    : (GordianCoreKeyGenerator<T>) theFactory.getCipherFactory().getKeyGenerator(pKeyType);
 
         /* Generate the key */
-        final GordianCoreCipherFactory myFactory = (GordianCoreCipherFactory) theFactory.getCipherFactory();
-        final GordianCoreKeyGenerator<T> myGenerator = (GordianCoreKeyGenerator<T>) myFactory.getKeyGenerator(pKeyType);
         return myGenerator.buildKeyFromBytes(myBytes);
     }
 

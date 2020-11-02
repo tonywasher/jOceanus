@@ -22,12 +22,11 @@ import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Objects;
 
 import org.bouncycastle.asn1.ASN1EncodableVector;
-import org.bouncycastle.asn1.ASN1OctetString;
 import org.bouncycastle.asn1.ASN1Primitive;
 import org.bouncycastle.asn1.ASN1Sequence;
-import org.bouncycastle.asn1.DEROctetString;
 import org.bouncycastle.asn1.DERSequence;
 import org.bouncycastle.asn1.pkcs.PrivateKeyInfo;
 import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
@@ -43,10 +42,10 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
  * <pre>
  * GordianKeyPairSetPrivateASN1 ::= SEQUENCE OF {
  *      algId AlgorithmIdentifier
- *      privateKeys keys
+ *      keys privateKeys
  * }
  *
- * privateKeys ::= SEQUENCE OF pkcs8EncodedKeySpec
+ * privateKeys ::= SEQUENCE OF PrivateKeyInfo
  * </pre>
  */
 public class GordianKeyPairSetPrivateASN1
@@ -57,7 +56,7 @@ public class GordianKeyPairSetPrivateASN1
     private final GordianKeyPairSetSpec theSpec;
 
     /**
-     * The x509EncodedKeySpecs.
+     * The privateKeys.
      */
     private final List<PKCS8EncodedKeySpec> thePrivateKeys;
 
@@ -93,8 +92,8 @@ public class GordianKeyPairSetPrivateASN1
             /* Build the list from the keys sequence */
             final Enumeration<?> en = myKeys.getObjects();
             while (en.hasMoreElements()) {
-                final byte[] myBytes = ASN1OctetString.getInstance(en.nextElement()).getOctets();
-                addKey(new PKCS8EncodedKeySpec(myBytes));
+                final PrivateKeyInfo myPKInfo = PrivateKeyInfo.getInstance(en.nextElement());
+                thePrivateKeys.add(new PKCS8EncodedKeySpec(myPKInfo.getEncoded()));
             }
 
             /* Check that we have the right number of keys */
@@ -103,7 +102,8 @@ public class GordianKeyPairSetPrivateASN1
             }
 
             /* handle exceptions */
-        } catch (IllegalArgumentException e) {
+        } catch (IllegalArgumentException
+                | IOException e) {
             throw new GordianIOException("Unable to parse ASN1 sequence", e);
         }
     }
@@ -167,10 +167,36 @@ public class GordianKeyPairSetPrivateASN1
         /* Build the privateKeySequence */
         final ASN1EncodableVector ks = new ASN1EncodableVector();
         for (PKCS8EncodedKeySpec myKeySpec : thePrivateKeys) {
-            ks.add(new DEROctetString(myKeySpec.getEncoded()));
+            ks.add(PrivateKeyInfo.getInstance(myKeySpec.getEncoded()));
         }
 
         /* Return the sequence */
         return new DERSequence(ks);
+    }
+
+    @Override
+    public boolean equals(final Object pThat) {
+        /* Handle trivial cases */
+        if (this == pThat) {
+            return true;
+        }
+        if (pThat == null) {
+            return false;
+        }
+
+        /* Make sure that the classes are the same */
+        if (!(pThat instanceof GordianKeyPairSetPrivateASN1)) {
+            return false;
+        }
+        final GordianKeyPairSetPrivateASN1 myThat = (GordianKeyPairSetPrivateASN1) pThat;
+
+        /* Check that the fields are equal */
+        return Objects.equals(theSpec, myThat.theSpec)
+                && Objects.equals(thePrivateKeys, myThat.thePrivateKeys);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(theSpec, thePrivateKeys);
     }
 }

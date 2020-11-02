@@ -26,6 +26,8 @@ import org.w3c.dom.Document;
 import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetHashSpec;
 import net.sourceforge.joceanus.jgordianknot.api.keystore.GordianKeyStore;
 import net.sourceforge.joceanus.jgordianknot.api.keystore.GordianKeyStoreFactory;
+import net.sourceforge.joceanus.jgordianknot.api.keystore.GordianKeyStoreGateway;
+import net.sourceforge.joceanus.jgordianknot.api.keystore.GordianKeyStoreManager;
 import net.sourceforge.joceanus.jgordianknot.api.zip.GordianZipFactory;
 import net.sourceforge.joceanus.jgordianknot.api.zip.GordianZipFileEntry;
 import net.sourceforge.joceanus.jgordianknot.api.zip.GordianZipLock;
@@ -95,5 +97,15 @@ public class GordianCoreKeyStoreFactory
         final Document myDoc = myZipFile.readXMLDocument(myEntry);
         final GordianKeyStoreDocument myKeyStoreDoc = new GordianKeyStoreDocument(theFactory, myDoc);
         return myKeyStoreDoc.getKeyStore();
+    }
+
+    @Override
+    public GordianKeyStoreManager createKeyStoreManager(final GordianKeyStore pKeyStore) {
+        return new GordianCoreKeyStoreManager(theFactory, (GordianCoreKeyStore) pKeyStore);
+    }
+
+    @Override
+    public GordianKeyStoreGateway createKeyStoreGateway(final GordianKeyStoreManager pKeyStoreMgr) {
+        return new GordianCoreKeyStoreGateway(theFactory, (GordianCoreKeyStoreManager) pKeyStoreMgr);
     }
 }
