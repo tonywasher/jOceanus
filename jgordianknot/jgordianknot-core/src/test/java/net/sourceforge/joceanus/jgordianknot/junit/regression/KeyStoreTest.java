@@ -18,6 +18,8 @@ package net.sourceforge.joceanus.jgordianknot.junit.regression;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.util.List;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.bouncycastle.asn1.x500.X500Name;
@@ -54,28 +56,28 @@ import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianXMSSKeySpec.Gord
 import net.sourceforge.joceanus.jgordianknot.api.keypairset.GordianKeyPairSetSpec;
 import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetHashSpec;
 import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetSpec;
+import net.sourceforge.joceanus.jgordianknot.api.keystore.GordianKeyPairCertificate;
+import net.sourceforge.joceanus.jgordianknot.api.keystore.GordianKeyPairSetCertificate;
 import net.sourceforge.joceanus.jgordianknot.api.keystore.GordianKeyPairUsage;
 import net.sourceforge.joceanus.jgordianknot.api.keystore.GordianKeyPairUse;
 import net.sourceforge.joceanus.jgordianknot.api.keystore.GordianKeyStore;
 import net.sourceforge.joceanus.jgordianknot.api.keystore.GordianKeyStoreEntry;
 import net.sourceforge.joceanus.jgordianknot.api.keystore.GordianKeyStoreEntry.GordianKeyStoreKey;
 import net.sourceforge.joceanus.jgordianknot.api.keystore.GordianKeyStoreEntry.GordianKeyStorePair;
+import net.sourceforge.joceanus.jgordianknot.api.keystore.GordianKeyStoreEntry.GordianKeyStorePairCertificate;
 import net.sourceforge.joceanus.jgordianknot.api.keystore.GordianKeyStoreEntry.GordianKeyStorePairSet;
+import net.sourceforge.joceanus.jgordianknot.api.keystore.GordianKeyStoreEntry.GordianKeyStorePairSetCertificate;
 import net.sourceforge.joceanus.jgordianknot.api.keystore.GordianKeyStoreEntry.GordianKeyStoreSet;
 import net.sourceforge.joceanus.jgordianknot.api.keystore.GordianKeyStoreFactory;
 import net.sourceforge.joceanus.jgordianknot.api.keystore.GordianKeyStoreGateway;
 import net.sourceforge.joceanus.jgordianknot.api.keystore.GordianKeyStoreManager;
 import net.sourceforge.joceanus.jgordianknot.api.mac.GordianMacSpec;
-import net.sourceforge.joceanus.jgordianknot.impl.core.keystore.GordianCRMBuilder;
 import net.sourceforge.joceanus.jgordianknot.impl.core.keystore.GordianCoreKeyPairCertificate;
 import net.sourceforge.joceanus.jgordianknot.impl.core.keystore.GordianCoreKeyPairSetCertificate;
 import net.sourceforge.joceanus.jgordianknot.impl.core.keystore.GordianCoreKeyStore;
 import net.sourceforge.joceanus.jgordianknot.impl.core.keystore.GordianCoreKeyStoreEntry.GordianCoreKeyStorePair;
 import net.sourceforge.joceanus.jgordianknot.impl.core.keystore.GordianCoreKeyStoreEntry.GordianCoreKeyStorePairSet;
 import net.sourceforge.joceanus.jgordianknot.impl.core.keystore.GordianCoreKeyStoreManager;
-import net.sourceforge.joceanus.jgordianknot.impl.core.keystore.GordianKeyPairCRMParser;
-import net.sourceforge.joceanus.jgordianknot.impl.core.keystore.GordianKeyPairSetCRMParser;
-import net.sourceforge.joceanus.jgordianknot.impl.core.keystore.GordianPEMObject;
 import net.sourceforge.joceanus.jgordianknot.util.GordianGenerator;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
@@ -508,8 +510,10 @@ public class KeyStoreTest {
         final GordianKeyStorePair myIntermediate = pState.getIntermediate();
         final GordianKeyStorePair myCertifier = pState.getCertifier();
 
+        /* Create and configure gateway */
         final GordianKeyStoreGateway myGateway = myStore.getFactory().getKeyPairFactory().getKeyStoreFactory().createKeyStoreGateway(myMgr);
         myGateway.setKeyPairCertifier(KeyStoreAlias.CERTIFIER.getName(), DEF_PASSWORD);
+        myGateway.setPasswordResolver(pState::passwordResolver);
 
         /* Create a signature keyPair */
         final X500Name mySignName = buildX500Name(KeyStoreAlias.SIGNER);
@@ -517,12 +521,22 @@ public class KeyStoreTest {
         final GordianCoreKeyStorePair mySigner = myMgr.createKeyPair(pKeyPairSpec, mySignName, myUsage, myIntermediate, KeyStoreAlias.SIGNER.getName(), DEF_PASSWORD);
 
         /* Build the CertificateRequest */
-        final GordianCRMBuilder myBuilder = new GordianCRMBuilder(myStore.getFactory());
-        final GordianPEMObject myRequest = myBuilder.createCertificateRequest(mySigner);
+        final ByteArrayOutputStream myOutStream = new ByteArrayOutputStream();
+        myGateway.createCertificateRequest(KeyStoreAlias.SIGNER.getName(), myOutStream, DEF_PASSWORD);
 
-        /* Parse the certificate Object */
-        final GordianKeyPairCRMParser myParser = new GordianKeyPairCRMParser(myMgr, myCertifier, null);
-        myParser.decodeCertificateRequest(myRequest);
+        /* Process the certificateRequest */
+        ByteArrayInputStream myInputStream = new ByteArrayInputStream(myOutStream.toByteArray());
+        myOutStream.reset();
+        myGateway.processCertificateRequest(myInputStream, myOutStream);
+
+        /* Input the new certificateChain and install it */
+        myInputStream = new ByteArrayInputStream(myOutStream.toByteArray());
+        final List<GordianKeyStoreEntry> myEntries = myGateway.importCertificates(myInputStream);
+        final List<GordianKeyPairCertificate> myChain
+                = myEntries.stream()
+                        .map(e -> ((GordianKeyStorePairCertificate) e).getCertificate())
+                        .collect(Collectors.toList());
+        myStore.updateKeyPairCertificateChain(KeyStoreAlias.SIGNER.getName(), myChain);
 
         /* Cleanup */
         myStore.deleteEntry(KeyStoreAlias.SIGNER.getName());
@@ -556,13 +570,29 @@ public class KeyStoreTest {
         final GordianKeyStorePair myTarget = myMgr.createKeyPair(pKeyPairSpec, myTargetName, pUsage, myIntermediate, KeyStoreAlias.TARGET.getName(), DEF_PASSWORD);
         final GordianCoreKeyPairCertificate myTargetCert = (GordianCoreKeyPairCertificate) myTarget.getCertificateChain().get(0);
 
-        /* Build the CertificateRequest */
-        final GordianCRMBuilder myBuilder = new GordianCRMBuilder(myStore.getFactory(), myTargetCert);
-        final GordianPEMObject myRequest = myBuilder.createCertificateRequest(myCert);
+        /* Create and configure gateway */
+        final GordianKeyStoreGateway myGateway = myStore.getFactory().getKeyPairFactory().getKeyStoreFactory().createKeyStoreGateway(myMgr);
+        myGateway.setKeyPairCertifier(KeyStoreAlias.CERTIFIER.getName(), DEF_PASSWORD);
+        myGateway.setEncryptionTarget(KeyStoreAlias.TARGET.getName());
+        myGateway.setPasswordResolver(pState::passwordResolver);
 
-        /* Parse the certificate Object */
-        final GordianKeyPairCRMParser myParser = new GordianKeyPairCRMParser(myMgr, myCertifier, pState::passwordResolver);
-        myParser.decodeCertificateRequest(myRequest);
+        /* Build the CertificateRequest */
+        final ByteArrayOutputStream myOutStream = new ByteArrayOutputStream();
+        myGateway.createCertificateRequest(myAlias.getName(), myOutStream, DEF_PASSWORD);
+
+        /* Process the certificateRequest */
+        ByteArrayInputStream myInputStream = new ByteArrayInputStream(myOutStream.toByteArray());
+        myOutStream.reset();
+        myGateway.processCertificateRequest(myInputStream, myOutStream);
+
+        /* Input the new certificateChain and install it */
+        myInputStream = new ByteArrayInputStream(myOutStream.toByteArray());
+        final List<GordianKeyStoreEntry> myEntries = myGateway.importCertificates(myInputStream);
+        final List<GordianKeyPairCertificate> myChain
+                = myEntries.stream()
+                        .map(e -> ((GordianKeyStorePairCertificate) e).getCertificate())
+                        .collect(Collectors.toList());
+        myStore.updateKeyPairCertificateChain(myAlias.getName(), myChain);
 
         /* Cleanup */
         myStore.deleteEntry(myAlias.getName());
@@ -583,18 +613,33 @@ public class KeyStoreTest {
         final GordianKeyStorePairSet myIntermediate = pState.getIntermediate();
         final GordianKeyStorePairSet myCertifier = pState.getCertifier();
 
+        /* Create and configure gateway */
+        final GordianKeyStoreGateway myGateway = myStore.getFactory().getKeyPairFactory().getKeyStoreFactory().createKeyStoreGateway(myMgr);
+        myGateway.setKeyPairSetCertifier(KeyStoreAlias.CERTIFIER.getName(), DEF_PASSWORD);
+        myGateway.setPasswordResolver(pState::passwordResolver);
+
         /* Create a signature keyPairSet */
         final X500Name mySignName = buildX500Name(KeyStoreAlias.SIGNER);
         final GordianKeyPairUsage myUsage = new GordianKeyPairUsage(GordianKeyPairUse.SIGNATURE);
         final GordianCoreKeyStorePairSet mySigner = myMgr.createKeyPairSet(pKeyPairSetSpec, mySignName, myUsage, myIntermediate, KeyStoreAlias.SIGNER.getName(), DEF_PASSWORD);
 
         /* Build the CertificateRequest */
-        final GordianCRMBuilder myBuilder = new GordianCRMBuilder(myStore.getFactory());
-        final GordianPEMObject myRequest = myBuilder.createCertificateRequest(mySigner);
+        final ByteArrayOutputStream myOutStream = new ByteArrayOutputStream();
+        myGateway.createCertificateRequest(KeyStoreAlias.SIGNER.getName(), myOutStream, DEF_PASSWORD);
 
-        /* Parse the certificate Object */
-        final GordianKeyPairSetCRMParser myParser = new GordianKeyPairSetCRMParser(myMgr, myCertifier, null);
-        myParser.decodeCertificateRequest(myRequest);
+        /* Process the certificateRequest */
+        ByteArrayInputStream myInputStream = new ByteArrayInputStream(myOutStream.toByteArray());
+        myOutStream.reset();
+        myGateway.processCertificateRequest(myInputStream, myOutStream);
+
+        /* Input the new certificateChain and install it */
+        myInputStream = new ByteArrayInputStream(myOutStream.toByteArray());
+        final List<GordianKeyStoreEntry> myEntries = myGateway.importCertificates(myInputStream);
+        final List<GordianKeyPairSetCertificate> myChain
+                = myEntries.stream()
+                        .map(e -> ((GordianKeyStorePairSetCertificate) e).getCertificate())
+                        .collect(Collectors.toList());
+        myStore.updateKeyPairSetCertificateChain(KeyStoreAlias.SIGNER.getName(), myChain);
 
         /* Cleanup */
         myStore.deleteEntry(KeyStoreAlias.SIGNER.getName());
@@ -628,13 +673,29 @@ public class KeyStoreTest {
         final GordianKeyStorePairSet myTarget = myMgr.createKeyPairSet(pKeyPairSetSpec, myTargetName, pUsage, myIntermediate, KeyStoreAlias.TARGET.getName(), DEF_PASSWORD);
         final GordianCoreKeyPairSetCertificate myTargetCert = (GordianCoreKeyPairSetCertificate) myTarget.getCertificateChain().get(0);
 
-        /* Build the CertificateRequest */
-        final GordianCRMBuilder myBuilder = new GordianCRMBuilder(myStore.getFactory(), myTargetCert);
-        final GordianPEMObject myRequest = myBuilder.createCertificateRequest(myCert);
+        /* Create and configure gateway */
+        final GordianKeyStoreGateway myGateway = myStore.getFactory().getKeyPairFactory().getKeyStoreFactory().createKeyStoreGateway(myMgr);
+        myGateway.setKeyPairSetCertifier(KeyStoreAlias.CERTIFIER.getName(), DEF_PASSWORD);
+        myGateway.setEncryptionTarget(KeyStoreAlias.TARGET.getName());
+        myGateway.setPasswordResolver(pState::passwordResolver);
 
-        /* Parse the certificate Object */
-        final GordianKeyPairSetCRMParser myParser = new GordianKeyPairSetCRMParser(myMgr, myCertifier, pState::passwordResolver);
-        myParser.decodeCertificateRequest(myRequest);
+        /* Build the CertificateRequest */
+        final ByteArrayOutputStream myOutStream = new ByteArrayOutputStream();
+        myGateway.createCertificateRequest(myAlias.getName(), myOutStream, DEF_PASSWORD);
+
+        /* Process the certificateRequest */
+        ByteArrayInputStream myInputStream = new ByteArrayInputStream(myOutStream.toByteArray());
+        myOutStream.reset();
+        myGateway.processCertificateRequest(myInputStream, myOutStream);
+
+        /* Input the new certificateChain and install it */
+        myInputStream = new ByteArrayInputStream(myOutStream.toByteArray());
+        final List<GordianKeyStoreEntry> myEntries = myGateway.importCertificates(myInputStream);
+        final List<GordianKeyPairSetCertificate> myChain
+                = myEntries.stream()
+                        .map(e -> ((GordianKeyStorePairSetCertificate) e).getCertificate())
+                        .collect(Collectors.toList());
+        myStore.updateKeyPairSetCertificateChain(myAlias.getName(), myChain);
 
         /* Cleanup */
         myStore.deleteEntry(myAlias.getName());

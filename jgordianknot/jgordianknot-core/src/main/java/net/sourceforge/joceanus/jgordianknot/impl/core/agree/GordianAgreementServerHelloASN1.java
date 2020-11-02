@@ -319,8 +319,8 @@ public class GordianAgreementServerHelloASN1
     @Override
     public int hashCode() {
         return Objects.hash(getAgreementId(), getSignatureId(), getEphemeral())
-                + Arrays.hashCode(getConfirmation())
-                + Arrays.hashCode(getSignature())
-                + Arrays.hashCode(getInitVector());
+                ^ Arrays.hashCode(getConfirmation())
+                ^ Arrays.hashCode(getSignature())
+                ^ Arrays.hashCode(getInitVector());
     }
 }

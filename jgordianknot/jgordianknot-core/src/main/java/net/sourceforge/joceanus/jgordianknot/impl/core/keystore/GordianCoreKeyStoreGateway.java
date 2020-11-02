@@ -151,12 +151,18 @@ public class GordianCoreKeyStoreGateway
     public void createCertificateRequest(final String pAlias,
                                          final OutputStream pStream,
                                          final char[] pPassword) throws OceanusException {
+        /* Access the requested entry */
         final GordianKeyStoreEntry myEntry = theKeyStore.getEntry(pAlias, pPassword);
+
+        /* If it is a keyPair(Set) */
         if (myEntry instanceof GordianKeyStorePairEntry) {
+            /* Create the certificate request and write to output stream */
             final GordianCRMBuilder myBuilder = new GordianCRMBuilder(theFactory, theTarget);
             final GordianPEMObject myCertReq = myBuilder.createCertificateRequest((GordianKeyStorePairEntry<?, ?>) myEntry);
             final GordianPEMParser myParser = new GordianPEMParser();
             myParser.writePEMFile(pStream, Collections.singletonList(myCertReq));
+
+            /* else reject request */
         } else {
             throw new GordianDataException("Alias not found");
         }
@@ -218,10 +224,12 @@ public class GordianCoreKeyStoreGateway
                 GordianCRMParser myCRMParser = new GordianKeyPairCRMParser(theKeyStoreMgr, theKeyPairCertifier, theResolver);
                 List<GordianPEMObject> myChain = myCRMParser.decodeCertificateRequest(myObject);
                 myParser.writePEMFile(pOutStream, myChain);
+                break;
             case KEYPAIRSETCERTREQ:
                 myCRMParser = new GordianKeyPairSetCRMParser(theKeyStoreMgr, theKeyPairSetCertifier, theResolver);
                 myChain = myCRMParser.decodeCertificateRequest(myObject);
                 myParser.writePEMFile(pOutStream, myChain);
+                break;
             default:
                 throw new GordianDataException("Unexpected object type");
         }
@@ -242,5 +250,20 @@ public class GordianCoreKeyStoreGateway
                                             final char[] pPassword) throws OceanusException {
         final GordianPEMCoder myCoder = new GordianPEMCoder(theKeyStore);
         return myCoder.importKeyStoreEntry(pStream, pPassword);
+    }
+
+    @Override
+    public List<GordianKeyStoreEntry> importCertificates(final File pFile) throws OceanusException {
+        try (FileInputStream myStream = new FileInputStream(pFile)) {
+            return importCertificates(myStream);
+        } catch (IOException e) {
+            throw new GordianIOException("Failed to read from file", e);
+        }
+    }
+
+    @Override
+    public List<GordianKeyStoreEntry> importCertificates(final InputStream pStream) throws OceanusException {
+        final GordianPEMCoder myCoder = new GordianPEMCoder(theKeyStore);
+        return myCoder.importCertificates(pStream);
     }
 }

@@ -158,6 +158,6 @@ public class GordianAgreementClientConfirmASN1
     @Override
     public int hashCode() {
         return Objects.hash(getAgreementId())
-                + Arrays.hashCode(getConfirmation());
+                ^ Arrays.hashCode(getConfirmation());
     }
 }

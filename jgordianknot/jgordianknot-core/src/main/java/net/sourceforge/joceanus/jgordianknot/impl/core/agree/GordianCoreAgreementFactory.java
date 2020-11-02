@@ -21,14 +21,12 @@ import java.util.function.Predicate;
 import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
 
 import net.sourceforge.joceanus.jgordianknot.api.agree.GordianAgreementFactory;
-import net.sourceforge.joceanus.jgordianknot.api.agree.GordianAgreementType;
 import net.sourceforge.joceanus.jgordianknot.api.agree.GordianKeyPairAgreement;
 import net.sourceforge.joceanus.jgordianknot.api.agree.GordianKeyPairAgreementSpec;
 import net.sourceforge.joceanus.jgordianknot.api.agree.GordianKeyPairSetAgreement;
 import net.sourceforge.joceanus.jgordianknot.api.agree.GordianKeyPairSetAgreementSpec;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianEdwardsElliptic;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPairSpec;
-import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPairType;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianCoreFactory;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianDataException;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianLogicException;
@@ -124,12 +122,6 @@ public abstract class GordianCoreAgreementFactory
         /* Check that the agreementSpec is supported */
         if (!validAgreementSpec(pAgreementSpec)) {
             return false;
-        }
-
-        /* Disallow MQV if group does not support it */
-        if (GordianKeyPairType.DH.equals(pKeyPairSpec.getKeyPairType())
-                && GordianAgreementType.MQV.equals(pAgreementSpec.getAgreementType())) {
-            return pKeyPairSpec.getDHGroup().isMQV();
         }
 
         /* For Edwards XDH, disallow 512KDF for 25519 and 256KDF for 448 */

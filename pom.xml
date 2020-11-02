@@ -67,7 +67,7 @@
     <appDir>${env.BACKUPDIR}</appDir>
     <appBinDir>bin/</appBinDir>
     <appLibDir>lib/</appLibDir>
-    <BouncyCastleVersion>1.66</BouncyCastleVersion>
+    <BouncyCastleVersion>1.67</BouncyCastleVersion>
     <JUnitVersion>5.7.0</JUnitVersion>
     <JSONVersion>20200518</JSONVersion>
     <ApacheMavenVersion>3.6.3</ApacheMavenVersion>
@@ -99,7 +99,7 @@
     <JarPluginVersion>3.2.0</JarPluginVersion>
     <ProjectInfoPluginVersion>3.1.1</ProjectInfoPluginVersion>
     <JxrPluginVersion>3.0.0</JxrPluginVersion>
-    <JavaDocPluginVersion>3.1.1</JavaDocPluginVersion>
+    <JavaDocPluginVersion>3.2.0</JavaDocPluginVersion>
     <SourcePluginVersion>3.2.1</SourcePluginVersion>
     <SonarQubePluginVersion>3.7.0.1746</SonarQubePluginVersion>
     <CheckStylePluginVersion>3.1.1</CheckStylePluginVersion>

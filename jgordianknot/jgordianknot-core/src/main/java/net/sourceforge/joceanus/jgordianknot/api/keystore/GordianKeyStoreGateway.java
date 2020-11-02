@@ -19,6 +19,7 @@ package net.sourceforge.joceanus.jgordianknot.api.keystore;
 import java.io.File;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.List;
 import java.util.function.Function;
 
 import net.sourceforge.joceanus.jtethys.OceanusException;
@@ -151,4 +152,20 @@ public interface GordianKeyStoreGateway {
      */
     GordianKeyStoreEntry importEntry(InputStream pStream,
                                      char[] pPassword) throws OceanusException;
+
+    /**
+     * import certificates from file.
+     * @param pFile the input file
+     * @return the parsed object
+     * @throws OceanusException on error
+     */
+    List<GordianKeyStoreEntry> importCertificates(File pFile) throws OceanusException;
+
+    /**
+     * import certificates from stream.
+     * @param pStream the input stream
+     * @return the parsed object
+     * @throws OceanusException on error
+     */
+    List<GordianKeyStoreEntry> importCertificates(InputStream pStream) throws OceanusException;
 }

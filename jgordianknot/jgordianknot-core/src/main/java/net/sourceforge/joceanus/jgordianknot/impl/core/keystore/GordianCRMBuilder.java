@@ -182,8 +182,11 @@ public class GordianCRMBuilder {
             myGenerator.addExtension(Extension.basicConstraints, false, new BasicConstraints(false));
             myBuilder.setExtensions(myGenerator.generate());
 
+            /* Using the current timestamp as the certificate serial number */
+            final int myNow = (int) System.currentTimeMillis();
+
             /* Create the Certificate request */
-            return new CertRequest(1, myBuilder.build(), null);
+            return new CertRequest(myNow, myBuilder.build(), null);
 
         } catch (IOException e) {
             throw new GordianIOException("Failed to create Certificate request", e);

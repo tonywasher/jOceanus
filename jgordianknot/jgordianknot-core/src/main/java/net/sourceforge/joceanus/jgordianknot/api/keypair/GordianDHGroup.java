@@ -105,14 +105,6 @@ public enum GordianDHGroup {
     }
 
     /**
-     * is MQV supported?
-     * @return true/false
-     */
-    public boolean isMQV() {
-        return theParameters.getQ() != null;
-    }
-
-    /**
      * Obtain the group for parameters.
      * @param pParams the parameters
      * @return the group

@@ -153,12 +153,16 @@ public enum GordianKeyPairType {
     }
 
     /**
-     * Do we skip derived key equality check?
-     * <p>
-     * Temporary fix for DH JCA bug where the derived key does not equal the original key
+     * is the use subType for signatures?
      * @return true/false
      */
-    public boolean differentDerivedKey() {
-        return this == DH;
+    public boolean isStateAware() {
+        switch (this) {
+            case XMSS:
+            case LMS:
+                return true;
+            default:
+                return false;
+        }
     }
 }

@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Objects;
 
 import org.bouncycastle.asn1.ASN1EncodableVector;
 import org.bouncycastle.asn1.ASN1Primitive;
@@ -171,5 +172,31 @@ public class GordianKeyPairSetPrivateASN1
 
         /* Return the sequence */
         return new DERSequence(ks);
+    }
+
+    @Override
+    public boolean equals(final Object pThat) {
+        /* Handle trivial cases */
+        if (this == pThat) {
+            return true;
+        }
+        if (pThat == null) {
+            return false;
+        }
+
+        /* Make sure that the classes are the same */
+        if (!(pThat instanceof GordianKeyPairSetPrivateASN1)) {
+            return false;
+        }
+        final GordianKeyPairSetPrivateASN1 myThat = (GordianKeyPairSetPrivateASN1) pThat;
+
+        /* Check that the fields are equal */
+        return Objects.equals(theSpec, myThat.theSpec)
+                && Objects.equals(thePrivateKeys, myThat.thePrivateKeys);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(theSpec, thePrivateKeys);
     }
 }

@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Objects;
 
 import org.bouncycastle.asn1.ASN1EncodableVector;
 import org.bouncycastle.asn1.ASN1OctetString;
@@ -175,5 +176,31 @@ public class GordianKeyPairSetSignASN1
         v.add(GordianKeyPairSetAlgId.determineAlgorithmId(theSpec).toASN1Primitive());
         v.add(new DERSequence(ss));
         return new DERSequence(v);
+    }
+
+    @Override
+    public boolean equals(final Object pThat) {
+        /* Handle trivial cases */
+        if (this == pThat) {
+            return true;
+        }
+        if (pThat == null) {
+            return false;
+        }
+
+        /* Make sure that the classes are the same */
+        if (!(pThat instanceof GordianKeyPairSetSignASN1)) {
+            return false;
+        }
+        final GordianKeyPairSetSignASN1 myThat = (GordianKeyPairSetSignASN1) pThat;
+
+        /* Check that the fields are equal */
+        return Objects.equals(theSpec, myThat.theSpec)
+                && Objects.equals(theSignatures, myThat.theSignatures);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(theSpec, theSignatures);
     }
 }

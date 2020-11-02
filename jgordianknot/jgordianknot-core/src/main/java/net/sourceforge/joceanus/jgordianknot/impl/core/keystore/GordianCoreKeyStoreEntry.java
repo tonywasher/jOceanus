@@ -80,7 +80,7 @@ public class GordianCoreKeyStoreEntry
         }
         final GordianCoreKeyStoreEntry myThat = (GordianCoreKeyStoreEntry) pThat;
 
-        /* Check that the hashes match */
+        /* Check that the dates match */
         return theDate.equals(myThat.getCreationDate());
     }
 
@@ -115,6 +115,32 @@ public class GordianCoreKeyStoreEntry
         public GordianCoreKeyPairCertificate getCertificate() {
             return theCertificate;
         }
+
+        @Override
+        public boolean equals(final Object pThat) {
+            /* Handle the trivial case */
+            if (pThat == this) {
+                return true;
+            }
+            if (pThat == null) {
+                return false;
+            }
+
+            /* Ensure object is correct class */
+            if (!(pThat instanceof GordianCoreKeyStorePairCertificate)) {
+                return false;
+            }
+            final GordianCoreKeyStorePairCertificate myThat = (GordianCoreKeyStorePairCertificate) pThat;
+
+            /* Check that the certificates match */
+            return theCertificate.equals(myThat.getCertificate())
+                    && super.equals(pThat);
+        }
+
+        @Override
+        public int hashCode() {
+            return theCertificate.hashCode() ^ super.hashCode();
+        }
     }
 
     /**
@@ -143,6 +169,32 @@ public class GordianCoreKeyStoreEntry
         public GordianCoreKeyPairSetCertificate getCertificate() {
             return theCertificate;
         }
+
+        @Override
+        public boolean equals(final Object pThat) {
+            /* Handle the trivial case */
+            if (pThat == this) {
+                return true;
+            }
+            if (pThat == null) {
+                return false;
+            }
+
+            /* Ensure object is correct class */
+            if (!(pThat instanceof GordianCoreKeyStorePairSetCertificate)) {
+                return false;
+            }
+            final GordianCoreKeyStorePairSetCertificate myThat = (GordianCoreKeyStorePairSetCertificate) pThat;
+
+            /* Check that the certificates match */
+            return theCertificate.equals(myThat.getCertificate())
+                    && super.equals(pThat);
+        }
+
+        @Override
+        public int hashCode() {
+            return theCertificate.hashCode() ^ super.hashCode();
+        }
     }
 
     /**
@@ -150,7 +202,7 @@ public class GordianCoreKeyStoreEntry
      * @param <C> the certificate type
      * @param <K> the keyPairType
      */
-    static class GordianKeyStorePairEntry<C extends GordianCertificate<K>, K>
+    abstract static class GordianKeyStorePairEntry<C extends GordianCertificate<K>, K>
             extends GordianCoreKeyStoreEntry {
         /**
          * The KeyPair.
@@ -190,6 +242,35 @@ public class GordianCoreKeyStoreEntry
          */
         public List<C> getCertificateChain() {
             return theChain;
+        }
+
+        @Override
+        public boolean equals(final Object pThat) {
+            /* Handle the trivial case */
+            if (pThat == this) {
+                return true;
+            }
+            if (pThat == null) {
+                return false;
+            }
+
+            /* Ensure object is correct class */
+            if (!(pThat instanceof GordianKeyStorePairEntry)) {
+                return false;
+            }
+            final GordianKeyStorePairEntry<?, ?> myThat = (GordianKeyStorePairEntry<?, ?>) pThat;
+
+            /* Check that the keyPairs match */
+            return theKeyPair.equals(myThat.getPair())
+                    && theChain.equals(myThat.getCertificateChain())
+                    && super.equals(pThat);
+        }
+
+        @Override
+        public int hashCode() {
+            return theKeyPair.hashCode()
+                    ^ theChain.hashCode()
+                    ^ super.hashCode();
         }
     }
 
@@ -268,8 +349,33 @@ public class GordianCoreKeyStoreEntry
         public GordianKey<T> getKey() {
             return theKey;
         }
-    }
 
+        @Override
+        public boolean equals(final Object pThat) {
+            /* Handle the trivial case */
+            if (pThat == this) {
+                return true;
+            }
+            if (pThat == null) {
+                return false;
+            }
+
+            /* Ensure object is correct class */
+            if (!(pThat instanceof GordianCoreKeyStoreKey)) {
+                return false;
+            }
+            final GordianCoreKeyStoreKey<?> myThat = (GordianCoreKeyStoreKey<?>) pThat;
+
+            /* Check that the keys match */
+            return theKey.equals(myThat.getKey())
+                    && super.equals(pThat);
+        }
+
+        @Override
+        public int hashCode() {
+            return theKey.hashCode() ^ super.hashCode();
+        }
+    }
 
     /**
      * KeyStore KeySet.
@@ -299,6 +405,32 @@ public class GordianCoreKeyStoreEntry
          */
         public GordianKeySet getKeySet() {
             return theKeySet;
+        }
+
+        @Override
+        public boolean equals(final Object pThat) {
+            /* Handle the trivial case */
+            if (pThat == this) {
+                return true;
+            }
+            if (pThat == null) {
+                return false;
+            }
+
+            /* Ensure object is correct class */
+            if (!(pThat instanceof GordianCoreKeyStoreSet)) {
+                return false;
+            }
+            final GordianCoreKeyStoreSet myThat = (GordianCoreKeyStoreSet) pThat;
+
+            /* Check that the certificates match */
+            return theKeySet.equals(myThat.getKeySet())
+                    && super.equals(pThat);
+        }
+
+        @Override
+        public int hashCode() {
+            return theKeySet.hashCode() ^ super.hashCode();
         }
     }
 }

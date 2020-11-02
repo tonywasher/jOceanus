@@ -64,6 +64,11 @@ import net.sourceforge.joceanus.jtethys.date.TethysDate;
  */
 public class GordianPEMCoder {
     /**
+     * Unsupported objectType error.
+     */
+    private static final String ERROR_UNSUPPORTED = "Unsupported object type";
+
+    /**
      * The Factory.
      */
     private final GordianCoreFactory theFactory;
@@ -163,7 +168,7 @@ public class GordianPEMCoder {
         }
 
         /* Unsupported entry */
-        throw new GordianDataException("Unsupported object type");
+        throw new GordianDataException(ERROR_UNSUPPORTED);
     }
 
     /**
@@ -199,7 +204,7 @@ public class GordianPEMCoder {
 
              /* Unsupported entry */
              default:
-                throw new GordianDataException("Unsupported object type");
+                throw new GordianDataException(ERROR_UNSUPPORTED);
          }
     }
 
@@ -241,7 +246,7 @@ public class GordianPEMCoder {
 
                     /* Unsupported entry */
                 default:
-                    throw new GordianDataException("Unsupported object type");
+                    throw new GordianDataException(ERROR_UNSUPPORTED);
             }
         }
 
