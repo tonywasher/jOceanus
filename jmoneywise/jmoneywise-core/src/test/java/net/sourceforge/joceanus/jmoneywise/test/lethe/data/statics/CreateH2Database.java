@@ -11,6 +11,9 @@ import net.sourceforge.joceanus.jprometheus.atlas.preference.PrometheusDatabase.
 import net.sourceforge.joceanus.jprometheus.atlas.preference.PrometheusJDBCDriver;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
+/**
+ * H2 Database Create Test.
+ */
 public class CreateH2Database {
     /**
      * Main test program

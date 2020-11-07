@@ -83,13 +83,19 @@ public final class GordianKeyPairValidity {
     private static void checkValidity(final GordianCoreFactory pFactory,
                                       final GordianKeyPair pKeyPair,
                                       final GordianSignatureSpec pSignSpec) throws OceanusException {
-        /* Access the spec */
+        /* Use default personalisation as the data to sign */
         final byte[] myData = pFactory.getRandomSource().defaultPersonalisation();
+
+        /* Create signer */
         final GordianSignatureFactory mySigns = pFactory.getKeyPairFactory().getSignatureFactory();
         final GordianKeyPairSignature mySigner = mySigns.createKeyPairSigner(pSignSpec);
+
+        /* Create signature */
         mySigner.initForSigning(pKeyPair);
         mySigner.update(myData);
         final byte[] mySignature = mySigner.sign();
+
+        /* Validate signature */
         mySigner.initForVerify(pKeyPair);
         mySigner.update(myData);
         if (!mySigner.verify(mySignature)) {
@@ -107,14 +113,22 @@ public final class GordianKeyPairValidity {
     private static void checkValidity(final GordianCoreFactory pFactory,
                                       final GordianKeyPair pKeyPair,
                                       final GordianEncryptorSpec pEncryptSpec) throws OceanusException {
-        /* Access the spec */
+        /* Use default personalisation as the data to encrypt */
         final byte[] myData = pFactory.getRandomSource().defaultPersonalisation();
+
+        /* Create encryptor */
         final GordianEncryptorFactory myEncrypts = pFactory.getKeyPairFactory().getEncryptorFactory();
         final GordianKeyPairEncryptor myEncryptor = myEncrypts.createKeyPairEncryptor(pEncryptSpec);
+
+        /* Encrypt data */
         myEncryptor.initForEncrypt(pKeyPair);
         final byte[] myEncrypted = myEncryptor.encrypt(myData);
+
+        /* decrypt encrypted data */
         myEncryptor.initForDecrypt(pKeyPair);
         final byte[] myResult = myEncryptor.decrypt(myEncrypted);
+
+        /* Check that we have arrived back at the original data */
         if (!Arrays.equals(myData, myResult)) {
             throw new GordianDataException(ERRORMSG);
         }
@@ -130,17 +144,20 @@ public final class GordianKeyPairValidity {
     private static void checkValidity(final GordianCoreFactory pFactory,
                                       final GordianKeyPair pKeyPair,
                                       final GordianKeyPairAgreementSpec pAgreeSpec) throws OceanusException {
-        /* Access the spec */
+        /* Create agreement on client side */
         final GordianAgreementFactory myAgrees = pFactory.getKeyPairFactory().getAgreementFactory();
         GordianKeyPairAnonymousAgreement myAgreement
                 = (GordianKeyPairAnonymousAgreement) myAgrees.createKeyPairAgreement(pAgreeSpec);
         final byte[] myHello = myAgreement.createClientHello(pKeyPair);
         final byte[] myClient = (byte[]) myAgreement.getResult();
 
-        /* We have to use a new agreement due to bug in JCA NEWHOPE support */
+        /* Accept agreement on server side */
+        /* We have to use a new agreement due to bug in JCA NewHope support */
         myAgreement = (GordianKeyPairAnonymousAgreement) myAgrees.createKeyPairAgreement(pAgreeSpec);
         myAgreement.acceptClientHello(pKeyPair, myHello);
         final byte[] myServer = (byte[]) myAgreement.getResult();
+
+        /* Check that we have the same result at either end */
         if (!Arrays.equals(myClient, myServer)) {
             throw new GordianDataException(ERRORMSG);
         }

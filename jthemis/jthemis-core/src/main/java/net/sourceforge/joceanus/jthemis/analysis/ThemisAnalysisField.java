@@ -78,7 +78,7 @@ public class ThemisAnalysisField
             theNumLines = 1;
             theInitial = null;
 
-            /* else we have an initialiser */
+            /* else we have an initializer */
         } else {
             /* Strip the equals sign */
             pLine.stripStartChar(ThemisAnalysisChar.EQUAL);
@@ -154,7 +154,9 @@ public class ThemisAnalysisField
 
     @Override
     public Iterator<ThemisAnalysisStatement> statementIterator() {
-        return Collections.singleton(theInitial).iterator();
+        return theInitial == null
+                ? Collections.emptyIterator()
+                : Collections.singleton(theInitial).iterator();
     }
 
     @Override

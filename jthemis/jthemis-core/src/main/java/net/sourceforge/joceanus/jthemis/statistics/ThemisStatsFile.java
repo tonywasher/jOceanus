@@ -96,6 +96,7 @@ public class ThemisStatsFile
         pClass.setParent(this);
 
         /* Adjust counts */
+        pClass.addStatsToTotals();
         addChildTotals(pClass);
     }
 

@@ -31,16 +31,6 @@ public enum ThemisSMStat {
     LLOC("Logical Lines Of Code"),
 
     /**
-     * NFI.
-     */
-    NFI("Number of Files"),
-
-    /**
-     * NPKG.
-     */
-    NPKG("Number of Packages"),
-
-    /**
      * NCL.
      */
     NCL("Number of Classes"),
@@ -96,6 +86,11 @@ public enum ThemisSMStat {
     TNFI("Total Number of Files"),
 
     /**
+     * TNPKG.
+     */
+    TNPKG("Total Number of Packages"),
+
+    /**
      * NCL.
      */
     TNCL("Total Number of Classes"),
@@ -119,11 +114,6 @@ public enum ThemisSMStat {
      * TNA.
      */
     TNA("Total Number of Attributes"),
-
-    /**
-     * TNPKG.
-     */
-    TNPKG("Total Number of Packages"),
 
     /**
      * TNOS.

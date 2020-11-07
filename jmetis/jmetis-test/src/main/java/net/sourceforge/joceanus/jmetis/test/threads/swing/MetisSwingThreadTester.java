@@ -16,6 +16,12 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmetis.test.threads.swing;
 
+import java.awt.HeadlessException;
+import javax.swing.JComponent;
+import javax.swing.JFrame;
+import javax.swing.SwingUtilities;
+import javax.swing.WindowConstants;
+
 import net.sourceforge.joceanus.jmetis.test.threads.MetisTestThread;
 import net.sourceforge.joceanus.jmetis.threads.MetisThreadStatusManager;
 import net.sourceforge.joceanus.jmetis.threads.swing.MetisSwingThreadManager;
@@ -31,12 +37,6 @@ import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingButton;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingGuiFactory;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingNode;
 
-import javax.swing.JComponent;
-import javax.swing.JFrame;
-import javax.swing.SwingUtilities;
-import javax.swing.WindowConstants;
-import java.awt.HeadlessException;
-
 /**
  * Thread Manager Tester.
  */
@@ -45,6 +45,11 @@ public class MetisSwingThreadTester {
      * Logger.
      */
     private static final TethysLogger LOGGER = TethysLogManager.getLogger(MetisSwingThreadTester.class);
+
+    /**
+     * Padding.
+     */
+    private static final int PADDING = 5;
 
     /**
      * Toolkit.
@@ -118,12 +123,7 @@ public class MetisSwingThreadTester {
      * @param args the arguments
      */
     public static void main(final String[] args) {
-        SwingUtilities.invokeLater(new Runnable() {
-            @Override
-            public void run() {
-                createAndShowGUI();
-            }
-        });
+        SwingUtilities.invokeLater(MetisSwingThreadTester::createAndShowGUI);
     }
 
     /**
@@ -171,7 +171,7 @@ public class MetisSwingThreadTester {
 
         /* Create borderPane for the window */
         theMainPanel.setCentre(myBox);
-        theMainPanel.setBorderPadding(5);
+        theMainPanel.setBorderPadding(PADDING);
 
         /* Set the status panel */
         theMainPanel.setNorth(theStatusPanel);

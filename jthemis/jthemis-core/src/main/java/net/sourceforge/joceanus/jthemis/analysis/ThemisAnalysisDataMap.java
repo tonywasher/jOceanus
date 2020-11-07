@@ -78,6 +78,11 @@ public class ThemisAnalysisDataMap {
     private final Map<String, ThemisAnalysisObject> theShortClassMap;
 
     /**
+     * The map of local/anonymous classes.
+     */
+    private final Map<String, Integer> theLocalIdMap;
+
+    /**
      * The parent.
      */
     private final ThemisAnalysisDataMap theParent;
@@ -105,6 +110,7 @@ public class ThemisAnalysisDataMap {
         theClassMap = new LinkedHashMap<>();
         theShortClassMap = new LinkedHashMap<>();
         theLocalTypes = new HashMap<>();
+        theLocalIdMap = new HashMap<>();
     }
 
     /**
@@ -119,6 +125,7 @@ public class ThemisAnalysisDataMap {
         theFileTypes = pParent.theFileTypes;
         theFileClasses = pParent.theFileClasses;
         theReferences = pParent.theReferences;
+        theLocalIdMap = new HashMap<>();
     }
 
     /**
@@ -138,7 +145,6 @@ public class ThemisAnalysisDataMap {
                ? BASETYPES.get(pToken)
                : theParent.lookUpDataType(pToken);
     }
-
 
     /**
      * Record Object.
@@ -477,6 +483,17 @@ public class ThemisAnalysisDataMap {
         myMap.put("StateChangeNotification", "Preloader");
         myMap.put("SortKey", "RowSorter");
         return myMap;
+    }
+
+    /**
+     * Obtain local id.
+     * @param pName the name
+     * @return the localId
+     */
+    public int getLocalId(final String pName) {
+        final int myId = 1 + theLocalIdMap.computeIfAbsent(pName, s -> 0);
+        theLocalIdMap.put(pName, myId);
+        return myId;
     }
 
     /**

@@ -338,9 +338,10 @@ public class ThemisAnalysisParser
             theContents.add(new ThemisAnalysisBlock(this, pLine));
             return true;
 
-            /* else handle an embedded block */
-        } else if (ThemisAnalysisEmbedded.checkEmbedded(pLine)) {
-            /* Process an embedded block */
+            /* else handle an embedded lambda/Anonymous class */
+        } else if (ThemisAnalysisLambda.checkLambda(pLine)
+                    || ThemisAnalysisAnonClass.checkAnon(pLine)) {
+            /* Process an embedded lambda/anon */
             theContents.add(new ThemisAnalysisEmbedded(this, pLine));
             return true;
         }

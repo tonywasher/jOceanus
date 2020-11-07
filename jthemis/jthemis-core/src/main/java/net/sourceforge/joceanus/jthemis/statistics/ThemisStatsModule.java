@@ -17,7 +17,6 @@
 package net.sourceforge.joceanus.jthemis.statistics;
 
 import java.util.ArrayList;
-import java.util.EnumMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -42,11 +41,6 @@ public class ThemisStatsModule
     private final List<ThemisStatsBase> theChildren;
 
     /**
-     * The sourceMeterStats.
-     */
-    private final Map<ThemisSMStat, Integer> theSMStats;
-
-    /**
      * The packagePrefix.
      */
     private String thePrefix;
@@ -61,7 +55,6 @@ public class ThemisStatsModule
 
         /* Create lists */
         theChildren = new ArrayList<>();
-        theSMStats = new EnumMap<>(ThemisSMStat.class);
     }
 
     /**
@@ -79,7 +72,7 @@ public class ThemisStatsModule
 
     @Override
     public Map<ThemisSMStat, Integer> getSourceMeterStats() {
-        return theSMStats;
+        return null;
     }
 
     /**
@@ -99,14 +92,18 @@ public class ThemisStatsModule
         adjustPrefix(pPackage);
 
         /* Add package to list */
-        theChildren.add(pPackage);
+        if (ThemisStatsPackage.ROOT.equals(pPackage.toString())) {
+            theChildren.add(0, pPackage);
+        } else {
+            theChildren.add(pPackage);
+        }
         pPackage.setParent(this);
 
         /* Increment # of packages */
-        incrementStat(ThemisSMStat.NPKG);
+        incrementStat(ThemisSMStat.TNPKG);
 
         /* Adjust count of files */
-        adjustChildStat(pPackage, ThemisSMStat.TNFI, ThemisSMStat.NFI);
+        adjustChildStat(pPackage, ThemisSMStat.TNFI);
 
         /* Adjust counts */
         addChildTotals(pPackage);
@@ -145,6 +142,7 @@ public class ThemisStatsModule
             if (thePrefix.startsWith(myName)) {
                 thePrefix = myName;
             }
+
             /* Update prefix for existing packages */
             theChildren.forEach(s -> ((ThemisStatsPackage) s).setPrefix(thePrefix));
         }
