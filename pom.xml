@@ -263,7 +263,7 @@
           <show>package</show>
           <nohelp>true</nohelp>
           <failOnError>false</failOnError>
-          <excludePackageNames>SevenZip</excludePackageNames>
+          <excludePackageNames>SevenZip:SevenZip.*:*.ext.*:*.patch.*</excludePackageNames>
         </configuration>
         <executions>
           <execution>
@@ -460,7 +460,7 @@
         <configuration>
           <show>package</show>
           <nohelp>true</nohelp>
-          <excludePackageNames>SevenZip</excludePackageNames>
+          <excludePackageNames>SevenZip:SevenZip.*:*.ext.*:*.patch.*</excludePackageNames>
         </configuration>
         <reportSets>
           <reportSet>

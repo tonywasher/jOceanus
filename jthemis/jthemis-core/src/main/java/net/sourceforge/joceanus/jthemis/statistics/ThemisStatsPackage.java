@@ -34,7 +34,7 @@ public class ThemisStatsPackage
     /**
      * The root name.
      */
-    private static final String ROOT = "(root)";
+    static final String ROOT = "(root)";
 
     /**
      * The package.
@@ -86,7 +86,7 @@ public class ThemisStatsPackage
 
     @Override
     public Map<ThemisSMStat, Integer> getSourceMeterStats() {
-        return theSMPackage == null ? null : theSMPackage.getStatistics();
+        return null;
     }
 
     /**
@@ -115,9 +115,10 @@ public class ThemisStatsPackage
         pFile.setParent(this);
 
         /* Increment # of files */
-        incrementStat(ThemisSMStat.NFI);
+        incrementStat(ThemisSMStat.TNFI);
 
         /* Adjust counts */
+        pFile.addStatsToTotals();
         addChildTotals(pFile);
     }
 

@@ -16,9 +16,8 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jthemis.statistics;
 
-import java.util.Iterator;
-
 import net.sourceforge.joceanus.jthemis.analysis.ThemisAnalysisAnnotation;
+import net.sourceforge.joceanus.jthemis.analysis.ThemisAnalysisAnonClass;
 import net.sourceforge.joceanus.jthemis.analysis.ThemisAnalysisBlank;
 import net.sourceforge.joceanus.jthemis.analysis.ThemisAnalysisBlock;
 import net.sourceforge.joceanus.jthemis.analysis.ThemisAnalysisCase;
@@ -39,12 +38,12 @@ import net.sourceforge.joceanus.jthemis.analysis.ThemisAnalysisFor;
 import net.sourceforge.joceanus.jthemis.analysis.ThemisAnalysisIf;
 import net.sourceforge.joceanus.jthemis.analysis.ThemisAnalysisImports;
 import net.sourceforge.joceanus.jthemis.analysis.ThemisAnalysisInterface;
+import net.sourceforge.joceanus.jthemis.analysis.ThemisAnalysisLambda;
 import net.sourceforge.joceanus.jthemis.analysis.ThemisAnalysisMethod;
 import net.sourceforge.joceanus.jthemis.analysis.ThemisAnalysisModule;
 import net.sourceforge.joceanus.jthemis.analysis.ThemisAnalysisPackage;
 import net.sourceforge.joceanus.jthemis.analysis.ThemisAnalysisProject;
 import net.sourceforge.joceanus.jthemis.analysis.ThemisAnalysisStatement;
-import net.sourceforge.joceanus.jthemis.analysis.ThemisAnalysisStatement.ThemisAnalysisStatementHolder;
 import net.sourceforge.joceanus.jthemis.analysis.ThemisAnalysisSwitch;
 import net.sourceforge.joceanus.jthemis.analysis.ThemisAnalysisTry;
 import net.sourceforge.joceanus.jthemis.analysis.ThemisAnalysisWhile;
@@ -63,6 +62,16 @@ public class ThemisStatsParser {
      * The base statistics.
      */
     private final ThemisSMStatistics theSourceMeter;
+
+    /**
+     * The cached documentation comment.
+     */
+    private ThemisAnalysisComment theCachedDocComment;
+
+    /**
+     * The cached annotation.
+     */
+    private ThemisAnalysisAnnotation theCachedAnnotation;
 
     /**
      * Private constructor.
@@ -168,6 +177,7 @@ public class ThemisStatsParser {
         final ThemisStatsClass myStats = new ThemisStatsClass(pClass, mySMClass);
 
         /* process the container */
+        processCachedItems(pOwner, myStats);
         processContainer(myStats, pClass);
 
         /* Return the classStats */
@@ -189,6 +199,7 @@ public class ThemisStatsParser {
         final ThemisStatsMethod myStats = new ThemisStatsMethod(pMethod, mySMMethod);
 
         /* process the container */
+        processCachedItems(pOwner, myStats);
         processContainer(myStats, pMethod);
 
         /* Return the classStats */
@@ -206,7 +217,11 @@ public class ThemisStatsParser {
         for (ThemisAnalysisElement myElement : pContainer.getContents()) {
             /* If this is an annotation */
             if (myElement instanceof ThemisAnalysisAnnotation) {
-                processAnnotation(pOwner, (ThemisAnalysisAnnotation) myElement);
+                processAnnotation(pOwner, (ThemisAnalysisAnnotation) myElement, true);
+
+                /* If this is an anonymous class */
+            } else if (myElement instanceof ThemisAnalysisAnonClass) {
+                processAnonClass(pOwner, (ThemisAnalysisAnonClass) myElement);
 
                 /* If this is a blank */
             } else if (myElement instanceof ThemisAnalysisBlank) {
@@ -226,7 +241,7 @@ public class ThemisStatsParser {
 
                 /* If this is a comment */
             } else if (myElement instanceof ThemisAnalysisComment) {
-                processComment(pOwner, (ThemisAnalysisComment) myElement);
+                processComment(pOwner, (ThemisAnalysisComment) myElement, true);
 
             /* If this is a doWhile */
             } else if (myElement instanceof ThemisAnalysisDoWhile) {
@@ -236,7 +251,7 @@ public class ThemisStatsParser {
             } else if (myElement instanceof ThemisAnalysisEmbedded) {
                 processEmbedded(pOwner, (ThemisAnalysisEmbedded) myElement);
 
-                /* If this is an enum */
+                 /* If this is an enum */
             } else if (myElement instanceof ThemisAnalysisEnum) {
                 processEnum(pOwner, (ThemisAnalysisEnum) myElement);
 
@@ -259,6 +274,10 @@ public class ThemisStatsParser {
                 /* If this is an interface */
             } else if (myElement instanceof ThemisAnalysisInterface) {
                 processInterface(pOwner, (ThemisAnalysisInterface) myElement);
+
+                /* If this is a lambda */
+            } else if (myElement instanceof ThemisAnalysisLambda) {
+                processLambda(pOwner, (ThemisAnalysisLambda) myElement);
 
                 /* If this is a method */
             } else if (myElement instanceof ThemisAnalysisMethod) {
@@ -284,6 +303,9 @@ public class ThemisStatsParser {
             } else if (myElement instanceof ThemisAnalysisWhile) {
                 processWhile(pOwner, (ThemisAnalysisWhile) myElement);
             }
+
+            /* Adjust the cached items */
+            adjustCachedItems(myElement);
         }
     }
 
@@ -291,12 +313,34 @@ public class ThemisStatsParser {
      * process annotation.
      * @param pOwner the owner
      * @param pAnnotation the annotation
+     * @param pAddToStats addTo stats or remove from Stats?
      */
     private static void processAnnotation(final ThemisStatsBase pOwner,
-                                          final ThemisAnalysisAnnotation pAnnotation) {
+                                          final ThemisAnalysisAnnotation pAnnotation,
+                                          final boolean pAddToStats) {
         /* Adjust statistics */
-        adjustLinesOfCode(pOwner, pAnnotation.getNumLines());
-        adjustNumberOfStatements(pOwner, 1);
+        final int myAdjust = pAddToStats
+                                ? pAnnotation.getNumLines()
+                                : -pAnnotation.getNumLines();
+        adjustLinesOfCode(pOwner, myAdjust);
+    }
+
+    /**
+     * process anonymous class.
+     * @param pOwner the owner
+     * @param pAnon the anonymous class
+     */
+    private void processAnonClass(final ThemisStatsBase pOwner,
+                                  final ThemisAnalysisAnonClass pAnon) {
+        /* Parse the class */
+        final ThemisStatsClass myClass = parseClass(pOwner, pAnon);
+
+        /* Adjust statistics */
+        pOwner.incrementStat(ThemisSMStat.NCL);
+
+        /* Adjust the stats and add to owner */
+        adjustLinesOfCode(myClass, pAnon.getNumLines());
+        pOwner.addClass(myClass);
     }
 
     /**
@@ -309,7 +353,6 @@ public class ThemisStatsParser {
         /* Adjust statistics */
         final int myBlanks = pBlank.getNumLines();
         pOwner.adjustStat(ThemisSMStat.LOC, myBlanks);
-        pOwner.adjustStat(ThemisSMStat.TLOC, myBlanks);
     }
 
     /**
@@ -341,7 +384,6 @@ public class ThemisStatsParser {
 
         /* Adjust statistics */
         pOwner.incrementStat(ThemisSMStat.NCL);
-        pOwner.incrementStat(ThemisSMStat.TNCL);
 
         /* Adjust the stats and add to owner */
         adjustLinesOfCode(myClass, pClass.getNumLines());
@@ -353,18 +395,19 @@ public class ThemisStatsParser {
      * process comment.
      * @param pOwner the owner
      * @param pComment the comment
+     * @param pAddToStats addTo stats or remove from Stats?
      */
     private static void processComment(final ThemisStatsBase pOwner,
-                                       final ThemisAnalysisComment pComment) {
+                                       final ThemisAnalysisComment pComment,
+                                       final boolean pAddToStats) {
         /* Adjust the stats */
-        final int myComments = pComment.getNumLines();
-        pOwner.adjustStat(ThemisSMStat.LOC, myComments);
-        pOwner.adjustStat(ThemisSMStat.TLOC, myComments);
-        pOwner.adjustStat(ThemisSMStat.CLOC, myComments);
-        pOwner.adjustStat(ThemisSMStat.TCLOC, myComments);
+        final int myAdjust = pAddToStats
+                                 ? pComment.getNumLines()
+                                 : -pComment.getNumLines();
+        pOwner.adjustStat(ThemisSMStat.LOC, myAdjust);
+        pOwner.adjustStat(ThemisSMStat.CLOC, myAdjust);
         if (pComment.isJavaDoc()) {
-            pOwner.adjustStat(ThemisSMStat.DLOC, myComments);
-            pOwner.adjustStat(ThemisSMStat.TDLOC, myComments);
+            pOwner.adjustStat(ThemisSMStat.DLOC, myAdjust);
         }
     }
 
@@ -384,14 +427,18 @@ public class ThemisStatsParser {
     }
 
     /**
-     * process embedded.
+     * process embedded element.
      * @param pOwner the owner
      * @param pEmbedded the embedded
      */
     private void processEmbedded(final ThemisStatsBase pOwner,
                                  final ThemisAnalysisEmbedded pEmbedded) {
+        /* process the container */
+        processContainer(pOwner, pEmbedded);
+
         /* Adjust statistics */
         adjustNumberOfStatements(pOwner, 1);
+        adjustLinesOfCode(pOwner, pEmbedded.getNumLines());
     }
 
     /**
@@ -406,7 +453,6 @@ public class ThemisStatsParser {
 
         /* Adjust owner statistics */
         pOwner.incrementStat(ThemisSMStat.NEN);
-        pOwner.incrementStat(ThemisSMStat.TNEN);
 
         /* Adjust the stats and add to owner */
         adjustLinesOfCode(myEnum, pEnum.getNumLines());
@@ -424,7 +470,16 @@ public class ThemisStatsParser {
                                      final ThemisAnalysisField pField) {
         /* Adjust the stats */
         adjustLinesOfCode(pOwner, pField.getNumLines());
-        adjustNumberOfAttributes(pOwner, 1);
+
+        /* Counts as a statement if there is an initializer */
+        if (pField.statementIterator().hasNext()) {
+            adjustNumberOfStatements(pOwner, 1);
+        }
+
+        /* Attributes are only relevant to classes */
+        if (pOwner instanceof ThemisStatsClass) {
+            adjustNumberOfAttributes(pOwner, 1);
+        }
     }
 
     /**
@@ -493,6 +548,7 @@ public class ThemisStatsParser {
                                        final ThemisAnalysisImports pImports) {
         /* Adjust the stats */
         adjustLinesOfCode(pOwner, pImports.getNumLines());
+        adjustNumberOfStatements(pOwner, pImports.getNumLines());
     }
 
     /**
@@ -507,12 +563,25 @@ public class ThemisStatsParser {
 
         /* Adjust owner statistics */
         pOwner.incrementStat(ThemisSMStat.NIN);
-        pOwner.incrementStat(ThemisSMStat.TNIN);
 
         /* Adjust the stats and add to owner */
         adjustLinesOfCode(myIFace, pInterface.getNumLines());
         adjustNumberOfStatements(pOwner, 1);
         pOwner.addClass(myIFace);
+    }
+
+    /**
+     * process lambda.
+     * @param pOwner the owner
+     * @param pLambda the lambda
+     */
+    private void processLambda(final ThemisStatsBase pOwner,
+                               final ThemisAnalysisLambda pLambda) {
+        /* process the container */
+        processContainer(pOwner, pLambda);
+
+        /* Adjust the owner stats */
+        adjustLinesOfCode(pOwner, pLambda.getNumLines());
     }
 
     /**
@@ -527,7 +596,6 @@ public class ThemisStatsParser {
 
         /* Adjust owner statistics */
         pOwner.incrementStat(ThemisSMStat.NM);
-        pOwner.incrementStat(ThemisSMStat.TNM);
 
         /* Adjust the lines of code and add to owner */
         adjustLinesOfCode(myMethod, pMethod.getNumLines());
@@ -671,9 +739,7 @@ public class ThemisStatsParser {
                                           final int pCount) {
         /* Adjust the stats */
         pOwner.adjustStat(ThemisSMStat.LOC, pCount);
-        pOwner.adjustStat(ThemisSMStat.TLOC, pCount);
         pOwner.adjustStat(ThemisSMStat.LLOC, pCount);
-        pOwner.adjustStat(ThemisSMStat.TLLOC, pCount);
     }
 
     /**
@@ -685,7 +751,6 @@ public class ThemisStatsParser {
                                                  final int pCount) {
         /* Adjust the stats */
         pOwner.adjustStat(ThemisSMStat.NOS, pCount);
-        pOwner.adjustStat(ThemisSMStat.TNOS, pCount);
     }
 
     /**
@@ -697,61 +762,60 @@ public class ThemisStatsParser {
                                                  final int pCount) {
         /* Adjust the stats */
         pOwner.adjustStat(ThemisSMStat.NA, pCount);
-        pOwner.adjustStat(ThemisSMStat.TNA, pCount);
         adjustNumberOfStatements(pOwner, pCount);
     }
 
     /**
-     * parse a container.
-     * @param pContainer the container
+     * adjust cached items.
+     * @param pElement the item
      */
-    public static void parseContainer(final ThemisAnalysisContainer pContainer) {
-        /* Loop through the contents */
-        for (ThemisAnalysisElement myElement : pContainer.getContents()) {
-            /* Process a nested container */
-            if (myElement instanceof ThemisAnalysisContainer) {
-                final ThemisAnalysisContainer myContainer = (ThemisAnalysisContainer) myElement;
-                parseContainer(myContainer);
-                final Iterator<ThemisAnalysisContainer> myIterator = myContainer.containerIterator();
-                while (myIterator.hasNext()) {
-                    parseContainer(myIterator.next());
-                }
-            }
+    private void adjustCachedItems(final ThemisAnalysisElement pElement) {
+        /* Adjust for Annotation */
+        if (pElement instanceof ThemisAnalysisAnnotation) {
+            theCachedAnnotation = (ThemisAnalysisAnnotation) pElement;
 
-            /* Process a statement holder */
-            if (myElement instanceof ThemisAnalysisStatementHolder) {
-                final ThemisAnalysisStatementHolder myHolder = (ThemisAnalysisStatementHolder) myElement;
-                final Iterator<ThemisAnalysisStatement> myIterator = myHolder.statementIterator();
-                while (myIterator.hasNext()) {
-                    processStatement(myIterator.next());
-                }
-            }
+        /* Adjust for documentation comment */
+        } else if (pElement instanceof ThemisAnalysisComment
+                    && ((ThemisAnalysisComment) pElement).isJavaDoc()) {
+            theCachedDocComment = (ThemisAnalysisComment) pElement;
+            theCachedAnnotation = null;
 
-            /* Process a statement */
-            if (myElement instanceof ThemisAnalysisStatement) {
-                processStatement((ThemisAnalysisStatement) myElement);
-            }
-
-            /* Process an embedded statement */
-            if (myElement instanceof ThemisAnalysisEmbedded) {
-                processEmbedded((ThemisAnalysisEmbedded) myElement);
-            }
+            /* else reset cache */
+        } else {
+            resetCache();
         }
     }
 
     /**
-     * Process Statement.
-     * @param pStatement the statement
+     * process cached items.
+     * @param pParent the parent
+     * @param pOwner the stats owner
      */
-    private static void processStatement(final ThemisAnalysisStatement pStatement) {
-        /* TBD */
+    private void processCachedItems(final ThemisStatsBase pParent,
+                                    final ThemisStatsBase pOwner) {
+        /* If we have an annotation */
+        if (theCachedAnnotation != null) {
+            /* transfer stats from parent */
+            processAnnotation(pParent, theCachedAnnotation, false);
+            processAnnotation(pOwner, theCachedAnnotation, true);
+        }
+
+        /* If we have a documentation comment */
+        if (theCachedDocComment != null) {
+            /* transfer stats from parent */
+            processComment(pParent, theCachedDocComment, false);
+            processComment(pOwner, theCachedDocComment, true);
+        }
+
+        /* reset cache */
+        resetCache();
     }
 
     /**
-     * Process Embedded Statement.
-     * @param pEmbedded the statement
+     * resetCache.
      */
-    private static void processEmbedded(final ThemisAnalysisEmbedded pEmbedded) {
-        /* TBD */
+    private void resetCache() {
+        theCachedDocComment = null;
+        theCachedAnnotation = null;
     }
 }

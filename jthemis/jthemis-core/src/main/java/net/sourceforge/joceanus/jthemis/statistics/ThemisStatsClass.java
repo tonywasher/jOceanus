@@ -111,6 +111,7 @@ public class ThemisStatsClass
         pClass.setParent(this);
 
         /* Adjust counts */
+        pClass.addStatsToTotals();
         addChildTotals(pClass);
     }
 
@@ -120,8 +121,9 @@ public class ThemisStatsClass
         theMethods.add(pMethod);
         pMethod.setParent(this);
 
-        /* Adjust counts */
-        adjustStat(ThemisSMStat.LOC, pMethod.getStat(ThemisSMStat.LOC));
+        /* Add method counts to class */
+        pMethod.addMethodStatsToTotals();
+        addMethodStatsToClass(pMethod);
         addChildTotals(pMethod);
     }
 }

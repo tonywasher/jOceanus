@@ -850,6 +850,10 @@ public class DigestTest {
                 "48e34719a74c380fbeaf6f9914a3d84570bee32f9284f919459f12eb3360bf9c632663daa154455f79ec95db11ba1d3c23e9d9f7d12a59dcdb7c464c52965d5d"
         };
 
+        /**
+         * Test digests.
+         * @throws OceanusException on error
+         */
         void checkDigests() throws OceanusException {
             checkDigestStrings(new CubeHashDigest(512), EXPECTED);
         }
@@ -872,6 +876,10 @@ public class DigestTest {
                 "d353573a176b7034a9b3a1fa63b4a6fa0eb7bfb86ebfd1be9aaf0f58"
         };
 
+        /**
+         * Test digests.
+         * @throws OceanusException on error
+         */
         void checkDigests() throws OceanusException {
             checkDigestStrings(new Blake2b(224), EXPECTED);
         }
@@ -894,6 +902,10 @@ public class DigestTest {
                 "a4705bbca1ae2e7a5d184a403a15f36c31c7e567adeae33f0f3e2f3ca9958198"
         };
 
+        /**
+         * Test digests.
+         * @throws OceanusException on error
+         */
         void checkDigests() throws OceanusException {
             checkDigestStrings(new Blake2b(256), EXPECTED);
         }
@@ -916,6 +928,10 @@ public class DigestTest {
                 "1ce12d72189f06f1b95c16f4bf7e0685519bc1065eae2efd015a31db13bd123ea8f8bf83a8682ad29e3828a0a0af299c"
         };
 
+        /**
+         * Test digests.
+         * @throws OceanusException on error
+         */
         void checkDigests() throws OceanusException {
             checkDigestStrings(new Blake2b(384), EXPECTED);
         }
@@ -938,6 +954,10 @@ public class DigestTest {
                 "686f41ec5afff6e87e1f076f542aa466466ff5fbde162c48481ba48a748d842799f5b30f5b67fc684771b33b994206d05cc310f31914edd7b97e41860d77d282"
         };
 
+        /**
+         * Test digests.
+         * @throws OceanusException on error
+         */
         void checkDigests() throws OceanusException {
             checkDigestStrings(new Blake2b(512), EXPECTED);
         }
@@ -959,6 +979,10 @@ public class DigestTest {
                 "142709d62e28fcccd0af97fad0f8465b971e82201dc51070faa0372aa43e92484be1c1e73ba10906d5d1853db6a4106e0a7bf9800d373d6dee2d46d62ef2a461"
         };
 
+        /**
+         * Test macs.
+         * @throws OceanusException on error
+         */
         void checkMacs() throws OceanusException {
             final Blake2Mac myMac = new Blake2Mac(new Blake2b(512));
             testBlakeMac(myMac, 64, 0, EXPECTED[0]);
@@ -987,6 +1011,10 @@ public class DigestTest {
                 "d0b88b4a58efa805a1f7642865edd050"
         };
 
+        /**
+         * Test digests.
+         * @throws OceanusException on error
+         */
         void checkDigests() throws OceanusException {
             checkDigestStrings(new Blake2s(128), EXPECTED);
         }
@@ -1009,6 +1037,10 @@ public class DigestTest {
                 "b81de34029b3fa85ac71db064d25a687377d27f5"
         };
 
+        /**
+         * Test digests.
+         * @throws OceanusException on error
+         */
         void checkDigests() throws OceanusException {
             checkDigestStrings(new Blake2s(160), EXPECTED);
         }
@@ -1031,6 +1063,10 @@ public class DigestTest {
                 "9144fe48a93c7139b4f1b92ec3c87ee8d184e665eeeaf096b6218d51"
         };
 
+        /**
+         * Test digests.
+         * @throws OceanusException on error
+         */
         void checkDigests() throws OceanusException {
             checkDigestStrings(new Blake2s(224), EXPECTED);
         }
@@ -1053,6 +1089,10 @@ public class DigestTest {
                 "fdaedb290a0d5af9870864fec2e090200989dc9cd53a3c092129e8535e8b4f66"
         };
 
+        /**
+         * Test digests.
+         * @throws OceanusException on error
+         */
         void checkDigests() throws OceanusException {
             checkDigestStrings(new Blake2s(256), EXPECTED);
         }
@@ -1074,6 +1114,10 @@ public class DigestTest {
                 "3fb735061abc519dfe979e54c1ee5bfad0a9d858b3315bad34bde999efd724dd"
         };
 
+        /**
+         * Test macs.
+         * @throws OceanusException on error
+         */
         void checkMacs() throws OceanusException {
             final Blake2Mac myMac = new Blake2Mac(new Blake2s(256));
             testBlakeMac(myMac, 32, 0, EXPECTED[0]);
@@ -1111,6 +1155,10 @@ public class DigestTest {
                 "5784e614d538f7f26c803191deb464a884817002988c36448dcbecfad1997fe51ab0b3853c51ed49ce9f4e477522fb3f32cc50515b753c18fb89a8d965afcf1ed5e099b22c4225732baeb986f5c5bc88e4582d27915e2a19126d3d4555fab4f6516a6a156dbfeed9e982fc589e33ce2b9e1ba2b416e11852ddeab93025974267ac82c84f071c3d07f215f47e3565fd1d962c76e0d635892ea71488273765887d31f250a26c4ddc377ed89b17326e259f6cc1de0e63158e83aebb7f5a7c08c63c767876c8203639958a407acca096d1f606c04b4f4b3fd771781a5901b1c3cee7c04c3b6870226eee309b74f51edbf70a3817cc8da87875301e04d0416a65dc5d"
         };
 
+        /**
+         * Test Xofs.
+         * @throws OceanusException on error
+         */
         void checkXofs() throws OceanusException {
             final Blake2X myXof = new Blake2X(new Blake2s(256));
             testBlakeXof(myXof, 0, EXPECTED[0]);
@@ -1159,6 +1207,10 @@ public class DigestTest {
                 "75D2F86A2E644566726B4FBCFC5657B9DBCF070C7B0DCA06450AB291D7443BCF"
         };
 
+        /**
+         * Test digests.
+         * @throws OceanusException on error
+         */
         void checkDigests() throws OceanusException {
             testKangaroo(0, true, 0, EXPECTED[0]);
             testKangaroo(0, true, 0, EXPECTED[1]);
@@ -1222,6 +1274,10 @@ public class DigestTest {
                 "6cc40b5d483f16212f3c6a5aed80db82c8a945884c784260f96da0ae1739d052fe7ec6eb991500c5b72aae5160ce4928f5fa8603e9ff220d52fe28c86fa092dd1d4bbd25d8247076394e9c9f0cd79b41a189b7e43233a5ac5ebc5993328d089f2bf954b9b3f71353be9273d349842e1929a268c83b11cfb576ec395cb69ab1783b3f9d6848e6f5da1a419e0a094f1002b190d731d8af7a9d659ab91790b22e9014d49c2e7c2cf672668ef186d5c979c603608333bb49affd339381cdec13bbf1bc944c7678627322f5fe68bded52c0380eb9bb17dbeade6b7eedc80b6e7b07758f68846e603e48316425ff9fcc76cccc8a08896234f1baa2d9834671c5f85123"
         };
 
+        /**
+         * Test Xofs.
+         * @throws OceanusException on error
+         */
         void checkXofs() throws OceanusException {
             final SkeinXof myXof = new SkeinXof(new SkeinBase(256, 256));
             testSkeinXof(myXof, 0, EXPECTED[0]);
@@ -1288,6 +1344,10 @@ public class DigestTest {
                 "7bf451c92fdc77b9771e6c9056445894"
         };
 
+        /**
+         * Test digests.
+         * @throws OceanusException on error
+         */
         void checkDigests() throws OceanusException {
             checkDigestStrings(new SHAKE(128), EXPECTED);
         }
@@ -1308,6 +1368,10 @@ public class DigestTest {
                 "9d32ba2aa8f40b0cdf108376d77abfd5c97f149e6ba0c9efe3499c7b3c039b0afac641a978ef435b3d83b9712da8ea826bb38078899b3efaec77d44a0460b220225d1b0b11a1d1c5cb0acb5aca92c6fb95f64a992eee6b6de24434aae4fba9d496bd8bd90624391f79c0db7d20eef1ddbfe8d771b4123e97ad7664012188590eb0b43c7073b7a9ab8af27229bc7246296ac0e172fca7314b8f100dc247d51c949bc4977c345d7c1d5536c96825f3650b7f80b5981b252ce4a858e54f9833cceaf38c12a91a8c6b341e197eb894553ca6f100f731f00f43b854098aace7a4e0ed8252782523f561dd994c291229eaf70185c98ed0026be1bd39c17dd817424009"
         };
 
+        /**
+         * Test Xofs.
+         * @throws OceanusException on error
+         */
         void checkXofs() throws OceanusException {
             final SHAKE myXof = new SHAKE(128);
             testSHAKEXof(myXof, EXPECTED[0]);
@@ -1335,6 +1399,10 @@ public class DigestTest {
                 "24c508adefdf5e3f2596e8b5a888fe10eb7b5b22e1f35d858e6eff3025c4cc18"
         };
 
+        /**
+         * Test digests.
+         * @throws OceanusException on error
+         */
         void checkDigests() throws OceanusException {
             checkDigestStrings(new SHAKE(256), EXPECTED);
         }
@@ -1355,6 +1423,10 @@ public class DigestTest {
                 "336c8aa7f2b08bda6bd7402cd2ea89760b7728a8b31802b80524756361165366ff8159f2f4568a2bfa286db6387895629938c2868a6421c37f988455763a75e4b9259e0a939aaa68295119ccea72c9f0ca7d048aa70eeeb4534c6bd08ecc6163217c790f33b84a89623f8e5538b734967e9490a48b7d0658afb4565364e8b234dfe6a2bceb12ce2130eec00bf2113615a276819d7815f5891d07600275f4d8fbc87b056f44bc2b141ca5ed9e4cb6e9a7bf71f520971dca1c8da6140e2af31faef5502e84991a2d9e9a80183c174cc105ef178d5f6fa45b0f284eb7bced20a47c3f584aca27eac5558da517af7569fe2e843461b4b65f81f819bf81aae6dfaa3b"
         };
 
+        /**
+         * Test Xofs.
+         * @throws OceanusException on error
+         */
         void checkXofs() throws OceanusException {
             final SHAKE myXof = new SHAKE(256);
             testSHAKEXof(myXof, EXPECTED[0]);

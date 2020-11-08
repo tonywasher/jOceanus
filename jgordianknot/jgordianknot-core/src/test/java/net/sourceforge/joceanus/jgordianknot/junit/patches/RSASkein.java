@@ -1,6 +1,16 @@
 package net.sourceforge.joceanus.jgordianknot.junit.patches;
 
-import org.bouncycastle.crypto.*;
+import java.math.BigInteger;
+import java.security.SecureRandom;
+
+import org.bouncycastle.crypto.AsymmetricBlockCipher;
+import org.bouncycastle.crypto.AsymmetricCipherKeyPair;
+import org.bouncycastle.crypto.CipherParameters;
+import org.bouncycastle.crypto.CryptoException;
+import org.bouncycastle.crypto.Digest;
+import org.bouncycastle.crypto.InvalidCipherTextException;
+import org.bouncycastle.crypto.Signer;
+import org.bouncycastle.crypto.SignerWithRecovery;
 import org.bouncycastle.crypto.digests.SkeinDigest;
 import org.bouncycastle.crypto.engines.RSABlindedEngine;
 import org.bouncycastle.crypto.generators.RSAKeyPairGenerator;
@@ -10,9 +20,9 @@ import org.bouncycastle.crypto.signers.ISOTrailers;
 import org.bouncycastle.util.Arrays;
 import org.bouncycastle.util.BigIntegers;
 
-import java.math.BigInteger;
-import java.security.SecureRandom;
-
+/**
+ * RSASkein test.
+ */
 public class RSASkein {
     /**
      * Main entry.
@@ -53,6 +63,7 @@ public class RSASkein {
             e.printStackTrace();
         }
     }
+
     /**
      * ISO9796-2 - mechanism using a hash function with recovery (scheme 1)
      */
@@ -602,7 +613,7 @@ public class RSASkein {
      * <pre>
      * EB = 06 || PS || 0xBA || H || TRAILER
      * </pre>
-     * where PS is a string of bytes all of value 0xBB of length such that |EB|=|n|, and TRAILER is the ISO/IEC 10118 part number† for the digest. The byte string, EB, is converted to an integer value, the message representative, f.
+     * where PS is a string of bytes all of value 0xBB of length such that |EB|=|n|, and TRAILER is the ISO/IEC 10118 part numberï¿½ for the digest. The byte string, EB, is converted to an integer value, the message representative, f.
      */
     public static class X931Signer
             implements Signer

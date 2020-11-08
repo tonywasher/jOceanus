@@ -47,7 +47,7 @@ public class ThemisSMStatistics {
     /**
      * SourceMeter version.
      */
-    private static final String VERSIONSM = "9.1.1";
+    private static final String VERSIONSM = "9.2.0";
 
     /**
      * The map of ids to statHolders.

@@ -17,7 +17,6 @@
 package net.sourceforge.joceanus.jthemis.statistics;
 
 import java.util.ArrayList;
-import java.util.EnumMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -41,11 +40,6 @@ public class ThemisStatsProject
     private final List<ThemisStatsBase> theChildren;
 
     /**
-     * The sourceMeterStats.
-     */
-    private final Map<ThemisSMStat, Integer> theSMStats;
-
-    /**
      * Constructor.
      * @param pProject the project
      */
@@ -55,7 +49,6 @@ public class ThemisStatsProject
 
         /* Create lists */
         theChildren = new ArrayList<>();
-        theSMStats = new EnumMap<>(ThemisSMStat.class);
     }
 
     /**
@@ -68,7 +61,7 @@ public class ThemisStatsProject
 
     @Override
     public Map<ThemisSMStat, Integer> getSourceMeterStats() {
-        return theSMStats;
+        return null;
     }
 
     /**
@@ -94,7 +87,7 @@ public class ThemisStatsProject
         pModule.setParent(this);
 
         /* Adjust count of files and packages */
-        adjustChildStat(pModule, ThemisSMStat.TNPKG, ThemisSMStat.NPKG);
+        adjustChildStat(pModule, ThemisSMStat.TNPKG);
         adjustChildStat(pModule, ThemisSMStat.TNFI);
 
         /* Adjust counts */
