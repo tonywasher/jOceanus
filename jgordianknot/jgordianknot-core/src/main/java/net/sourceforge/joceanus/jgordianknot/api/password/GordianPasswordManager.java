@@ -21,7 +21,7 @@ import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPair;
 import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetHash;
 import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetHashSpec;
 import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetSpec;
-import net.sourceforge.joceanus.jgordianknot.api.zip.GordianZipLock;
+import net.sourceforge.joceanus.jgordianknot.api.zip.GordianLock;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
@@ -96,7 +96,7 @@ public interface GordianPasswordManager {
      * @return the zipLock
      * @throws OceanusException on error
      */
-    default GordianZipLock newZipLock(String pSource) throws OceanusException {
+    default GordianLock newZipLock(String pSource) throws OceanusException {
         return newZipLock(new GordianKeySetHashSpec(), pSource);
     }
 
@@ -107,8 +107,8 @@ public interface GordianPasswordManager {
      * @return the keySetHash
      * @throws OceanusException on error
      */
-    GordianZipLock newZipLock(GordianKeySetHashSpec pKeySetHashSpec,
-                              String pSource) throws OceanusException;
+    GordianLock newZipLock(GordianKeySetHashSpec pKeySetHashSpec,
+                           String pSource) throws OceanusException;
 
     /**
      * Create a new zipLock.
@@ -117,8 +117,8 @@ public interface GordianPasswordManager {
      * @return the zipLock
      * @throws OceanusException on error
      */
-    default GordianZipLock newZipLock(GordianKeyPair pKeyPair,
-                                      String pSource) throws OceanusException {
+    default GordianLock newZipLock(GordianKeyPair pKeyPair,
+                                   String pSource) throws OceanusException {
         return newZipLock(pKeyPair, new GordianKeySetHashSpec(), pSource);
     }
 
@@ -130,9 +130,9 @@ public interface GordianPasswordManager {
      * @return the keySetHash
      * @throws OceanusException on error
      */
-    GordianZipLock newZipLock(GordianKeyPair pKeyPair,
-                              GordianKeySetHashSpec pKeySetHashSpec,
-                              String pSource) throws OceanusException;
+    GordianLock newZipLock(GordianKeyPair pKeyPair,
+                           GordianKeySetHashSpec pKeySetHashSpec,
+                           String pSource) throws OceanusException;
 
     /**
      * Resolve the zipLock.
@@ -140,7 +140,7 @@ public interface GordianPasswordManager {
      * @param pSource the description of the secured resource
      * @throws OceanusException on error
      */
-    void resolveZipLock(GordianZipLock pZipLock,
+    void resolveZipLock(GordianLock pZipLock,
                         String pSource) throws OceanusException;
 
     /**
@@ -151,7 +151,7 @@ public interface GordianPasswordManager {
      * @throws OceanusException on error
      */
     void resolveZipLock(GordianKeyPair pKeyPair,
-                        GordianZipLock pZipLock,
+                        GordianLock pZipLock,
                         String pSource) throws OceanusException;
 
     /**
@@ -160,7 +160,7 @@ public interface GordianPasswordManager {
      * @return the similar zipLock
      * @throws OceanusException on error
      */
-    default GordianZipLock similarZipLock(GordianKeySetHash pReference) throws OceanusException {
+    default GordianLock similarZipLock(GordianKeySetHash pReference) throws OceanusException {
         return similarZipLock(new GordianKeySetHashSpec(), pReference);
     }
 
@@ -171,8 +171,8 @@ public interface GordianPasswordManager {
      * @return the similar zipLock
      * @throws OceanusException on error
      */
-    GordianZipLock similarZipLock(GordianKeySetHashSpec pKeySetHashSpec,
-                                  GordianKeySetHash pReference) throws OceanusException;
+    GordianLock similarZipLock(GordianKeySetHashSpec pKeySetHashSpec,
+                               GordianKeySetHash pReference) throws OceanusException;
 
     /**
      * obtain similar (same password) zipLock.
@@ -181,8 +181,8 @@ public interface GordianPasswordManager {
      * @return the similar zipLock
      * @throws OceanusException on error
      */
-    default GordianZipLock similarZipLock(GordianKeyPair pKeyPair,
-                                          GordianKeySetHash pReference) throws OceanusException {
+    default GordianLock similarZipLock(GordianKeyPair pKeyPair,
+                                       GordianKeySetHash pReference) throws OceanusException {
         return similarZipLock(pKeyPair, new GordianKeySetHashSpec(), pReference);
     }
 
@@ -194,9 +194,9 @@ public interface GordianPasswordManager {
      * @return the similar zipLock
      * @throws OceanusException on error
      */
-    GordianZipLock similarZipLock(GordianKeyPair pKeyPair,
-                                  GordianKeySetHashSpec pKeySetHashSpec,
-                                  GordianKeySetHash pReference) throws OceanusException;
+    GordianLock similarZipLock(GordianKeyPair pKeyPair,
+                               GordianKeySetHashSpec pKeySetHashSpec,
+                               GordianKeySetHash pReference) throws OceanusException;
 
     /**
      * obtain similar (same password) zipLock.
@@ -204,7 +204,7 @@ public interface GordianPasswordManager {
      * @return the similar zipLock
      * @throws OceanusException on error
      */
-    default GordianZipLock similarZipLock(GordianZipLock pReference) throws OceanusException {
+    default GordianLock similarZipLock(GordianLock pReference) throws OceanusException {
         return similarZipLock(new GordianKeySetHashSpec(), pReference);
     }
 
@@ -215,8 +215,8 @@ public interface GordianPasswordManager {
      * @return the similar zipLock
      * @throws OceanusException on error
      */
-    GordianZipLock similarZipLock(GordianKeySetHashSpec pKeySetHashSpec,
-                                  GordianZipLock pReference) throws OceanusException;
+    GordianLock similarZipLock(GordianKeySetHashSpec pKeySetHashSpec,
+                               GordianLock pReference) throws OceanusException;
 
     /**
      * obtain similar (same password) zipLock.
@@ -225,8 +225,8 @@ public interface GordianPasswordManager {
      * @return the similar zipLock
      * @throws OceanusException on error
      */
-    default GordianZipLock similarZipLock(GordianKeyPair pKeyPair,
-                                          GordianZipLock pReference) throws OceanusException {
+    default GordianLock similarZipLock(GordianKeyPair pKeyPair,
+                                       GordianLock pReference) throws OceanusException {
         return similarZipLock(pKeyPair, new GordianKeySetHashSpec(), pReference);
     }
 
@@ -238,7 +238,7 @@ public interface GordianPasswordManager {
      * @return the similar zipLock
      * @throws OceanusException on error
      */
-    GordianZipLock similarZipLock(GordianKeyPair pKeyPair,
-                                  GordianKeySetHashSpec pKeySetHashSpec,
-                                  GordianZipLock pReference) throws OceanusException;
+    GordianLock similarZipLock(GordianKeyPair pKeyPair,
+                               GordianKeySetHashSpec pKeySetHashSpec,
+                               GordianLock pReference) throws OceanusException;
 }

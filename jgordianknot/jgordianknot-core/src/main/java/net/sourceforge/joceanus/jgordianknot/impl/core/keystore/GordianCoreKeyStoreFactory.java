@@ -28,9 +28,9 @@ import net.sourceforge.joceanus.jgordianknot.api.keystore.GordianKeyStore;
 import net.sourceforge.joceanus.jgordianknot.api.keystore.GordianKeyStoreFactory;
 import net.sourceforge.joceanus.jgordianknot.api.keystore.GordianKeyStoreGateway;
 import net.sourceforge.joceanus.jgordianknot.api.keystore.GordianKeyStoreManager;
+import net.sourceforge.joceanus.jgordianknot.api.zip.GordianLock;
 import net.sourceforge.joceanus.jgordianknot.api.zip.GordianZipFactory;
 import net.sourceforge.joceanus.jgordianknot.api.zip.GordianZipFileEntry;
-import net.sourceforge.joceanus.jgordianknot.api.zip.GordianZipLock;
 import net.sourceforge.joceanus.jgordianknot.api.zip.GordianZipReadFile;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianCoreFactory;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianDataException;
@@ -79,7 +79,7 @@ public class GordianCoreKeyStoreFactory
         final GordianZipReadFile myZipFile = myZipFactory.openZipFile(pInputStream);
 
         /* Reject if there is no hash */
-        final GordianZipLock myLock = myZipFile.getLock();
+        final GordianLock myLock = myZipFile.getLock();
         if (myLock == null) {
             throw new GordianDataException("Unsecured keyStore");
         }

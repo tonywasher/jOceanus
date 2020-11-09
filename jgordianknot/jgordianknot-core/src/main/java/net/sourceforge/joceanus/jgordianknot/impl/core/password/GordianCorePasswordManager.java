@@ -28,11 +28,11 @@ import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetHashSpec;
 import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetSpec;
 import net.sourceforge.joceanus.jgordianknot.api.password.GordianDialogController;
 import net.sourceforge.joceanus.jgordianknot.api.password.GordianPasswordManager;
+import net.sourceforge.joceanus.jgordianknot.api.zip.GordianLock;
 import net.sourceforge.joceanus.jgordianknot.api.zip.GordianZipFactory;
-import net.sourceforge.joceanus.jgordianknot.api.zip.GordianZipLock;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianDataException;
 import net.sourceforge.joceanus.jgordianknot.impl.core.keyset.GordianCoreKeySetHash;
-import net.sourceforge.joceanus.jgordianknot.impl.core.zip.GordianCoreZipLock;
+import net.sourceforge.joceanus.jgordianknot.impl.core.zip.GordianCoreLock;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
@@ -128,20 +128,20 @@ public class GordianCorePasswordManager
     }
 
     @Override
-    public GordianZipLock newZipLock(final GordianKeySetHashSpec pKeySetHashSpec,
-                                     final String pSource) throws OceanusException {
-        return (GordianZipLock) requestPassword(pSource, true, p -> createZipLock(pKeySetHashSpec, p));
+    public GordianLock newZipLock(final GordianKeySetHashSpec pKeySetHashSpec,
+                                  final String pSource) throws OceanusException {
+        return (GordianLock) requestPassword(pSource, true, p -> createZipLock(pKeySetHashSpec, p));
     }
 
     @Override
-    public GordianZipLock newZipLock(final GordianKeyPair pKeyPair,
-                                     final GordianKeySetHashSpec pKeySetHashSpec,
-                                     final String pSource) throws OceanusException {
-        return (GordianZipLock) requestPassword(pSource, true, p -> createZipLock(pKeyPair, pKeySetHashSpec, p));
+    public GordianLock newZipLock(final GordianKeyPair pKeyPair,
+                                  final GordianKeySetHashSpec pKeySetHashSpec,
+                                  final String pSource) throws OceanusException {
+        return (GordianLock) requestPassword(pSource, true, p -> createZipLock(pKeyPair, pKeySetHashSpec, p));
     }
 
     @Override
-    public void resolveZipLock(final GordianZipLock pZipLock,
+    public void resolveZipLock(final GordianLock pZipLock,
                                final String pSource) throws OceanusException {
         /* attempt known passwords */
         if (!theCache.attemptKnownPasswords(pZipLock)) {
@@ -151,7 +151,7 @@ public class GordianCorePasswordManager
 
     @Override
     public void resolveZipLock(final GordianKeyPair pKeyPair,
-                               final GordianZipLock pZipLock,
+                               final GordianLock pZipLock,
                                final String pSource) throws OceanusException {
         /* attempt known passwords */
         if (!theCache.attemptKnownPasswords(pKeyPair, pZipLock)) {
@@ -160,8 +160,8 @@ public class GordianCorePasswordManager
     }
 
     @Override
-    public GordianZipLock similarZipLock(final GordianKeySetHashSpec pKeySetHashSpec,
-                                         final GordianKeySetHash pReference) throws OceanusException {
+    public GordianLock similarZipLock(final GordianKeySetHashSpec pKeySetHashSpec,
+                                      final GordianKeySetHash pReference) throws OceanusException {
         /* LookUp the password */
         final ByteBuffer myPassword = theCache.lookUpResolvedPassword(pReference);
 
@@ -170,9 +170,9 @@ public class GordianCorePasswordManager
     }
 
     @Override
-    public GordianZipLock similarZipLock(final GordianKeyPair pKeyPair,
-                                         final GordianKeySetHashSpec pKeySetHashSpec,
-                                         final GordianKeySetHash pReference) throws OceanusException {
+    public GordianLock similarZipLock(final GordianKeyPair pKeyPair,
+                                      final GordianKeySetHashSpec pKeySetHashSpec,
+                                      final GordianKeySetHash pReference) throws OceanusException {
         /* LookUp the password */
         final ByteBuffer myPassword = theCache.lookUpResolvedPassword(pReference);
 
@@ -181,19 +181,19 @@ public class GordianCorePasswordManager
     }
 
     @Override
-    public GordianZipLock similarZipLock(final GordianKeySetHashSpec pKeySetHashSpec,
-                                         final GordianZipLock pReference) throws OceanusException {
+    public GordianLock similarZipLock(final GordianKeySetHashSpec pKeySetHashSpec,
+                                      final GordianLock pReference) throws OceanusException {
         /* Access hash and create similar zipLock */
-        final GordianKeySetHash myHash = ((GordianCoreZipLock) pReference).getKeySetHash();
+        final GordianKeySetHash myHash = ((GordianCoreLock) pReference).getKeySetHash();
         return similarZipLock(pKeySetHashSpec, myHash);
    }
 
     @Override
-    public GordianZipLock similarZipLock(final GordianKeyPair pKeyPair,
-                                         final GordianKeySetHashSpec pKeySetHashSpec,
-                                         final GordianZipLock pReference) throws OceanusException {
+    public GordianLock similarZipLock(final GordianKeyPair pKeyPair,
+                                      final GordianKeySetHashSpec pKeySetHashSpec,
+                                      final GordianLock pReference) throws OceanusException {
         /* Access hash and create similar zipLock */
-        final GordianKeySetHash myHash = ((GordianCoreZipLock) pReference).getKeySetHash();
+        final GordianKeySetHash myHash = ((GordianCoreLock) pReference).getKeySetHash();
         return similarZipLock(pKeyPair, pKeySetHashSpec, myHash);
     }
 
@@ -305,10 +305,10 @@ public class GordianCorePasswordManager
      * @return the new hash
      * @throws OceanusException on error
      */
-    private GordianZipLock createZipLock(final GordianKeySetHashSpec pKeySetHashSpec,
-                                         final char[] pPassword) throws OceanusException {
+    private GordianLock createZipLock(final GordianKeySetHashSpec pKeySetHashSpec,
+                                      final char[] pPassword) throws OceanusException {
         final GordianZipFactory myFactory = theFactory.getZipFactory();
-        final GordianZipLock myZipLock = myFactory.createZipLock(pKeySetHashSpec, pPassword);
+        final GordianLock myZipLock = myFactory.createPasswordLock(pKeySetHashSpec, pPassword);
         theCache.addResolvedPassword(pPassword);
         return myZipLock;
     }
@@ -321,11 +321,11 @@ public class GordianCorePasswordManager
      * @return the new hash
      * @throws OceanusException on error
      */
-    private GordianZipLock createZipLock(final GordianKeyPair pKeyPair,
-                                         final GordianKeySetHashSpec pKeySetHashSpec,
-                                         final char[] pPassword) throws OceanusException {
+    private GordianLock createZipLock(final GordianKeyPair pKeyPair,
+                                      final GordianKeySetHashSpec pKeySetHashSpec,
+                                      final char[] pPassword) throws OceanusException {
         final GordianZipFactory myFactory = theFactory.getZipFactory();
-        final GordianZipLock myZipLock = myFactory.createZipLock(pKeyPair, pKeySetHashSpec, pPassword);
+        final GordianLock myZipLock = myFactory.createKeyPairLock(pKeyPair, pKeySetHashSpec, pPassword);
         theCache.addResolvedPassword(pPassword);
         return myZipLock;
     }
@@ -337,7 +337,7 @@ public class GordianCorePasswordManager
      * @return null
      * @throws OceanusException on error
      */
-    private Object resolveZipLock(final GordianZipLock pLock,
+    private Object resolveZipLock(final GordianLock pLock,
                                 final char[] pPassword) throws OceanusException {
         pLock.unlock(pPassword);
         theCache.addResolvedPassword(pPassword);
@@ -353,7 +353,7 @@ public class GordianCorePasswordManager
      * @throws OceanusException on error
      */
     private Object resolveZipLock(final GordianKeyPair pKeyPair,
-                                  final GordianZipLock pLock,
+                                  final GordianLock pLock,
                                   final char[] pPassword) throws OceanusException {
         pLock.unlock(pKeyPair, pPassword);
         theCache.addResolvedPassword(pPassword);

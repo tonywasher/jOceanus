@@ -21,9 +21,9 @@ import net.sourceforge.joceanus.jgordianknot.api.keypairset.GordianKeyPairSet;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
- * ZipLock interface.
+ * Lock interface.
  */
-public interface GordianZipLock {
+public interface GordianLock {
     /**
      * Is this still locked?
      * @return true/false
@@ -40,7 +40,7 @@ public interface GordianZipLock {
      * Obtain lockType.
      * @return the lockType
      */
-    GordianZipLockType getLockType();
+    GordianLockType getLockType();
 
     /**
      * Unlock with password.
