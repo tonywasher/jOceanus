@@ -72,6 +72,7 @@ import net.sourceforge.joceanus.jgordianknot.api.keystore.GordianKeyStoreFactory
 import net.sourceforge.joceanus.jgordianknot.api.keystore.GordianKeyStoreGateway;
 import net.sourceforge.joceanus.jgordianknot.api.keystore.GordianKeyStoreManager;
 import net.sourceforge.joceanus.jgordianknot.api.mac.GordianMacSpec;
+import net.sourceforge.joceanus.jgordianknot.api.zip.GordianLock;
 import net.sourceforge.joceanus.jgordianknot.impl.core.keystore.GordianCoreKeyPairCertificate;
 import net.sourceforge.joceanus.jgordianknot.impl.core.keystore.GordianCoreKeyPairSetCertificate;
 import net.sourceforge.joceanus.jgordianknot.impl.core.keystore.GordianCoreKeyStore;
@@ -794,9 +795,12 @@ public class KeyStoreTest {
     private static void checkExport(final GordianKeyStoreGateway pGateway,
                                     final KeyStoreAlias pAlias,
                                     final GordianKeyStoreEntry pEntry) throws OceanusException {
+        final GordianCoreKeyStore myStore = (GordianCoreKeyStore) pGateway.getKeyStore();
+        final GordianLock myLock = myStore.getFactory().getZipFactory().createPasswordLock(DEF_PASSWORD);
         final ByteArrayOutputStream myOutStream = new ByteArrayOutputStream();
-        pGateway.exportEntry(pAlias.getName(), myOutStream, DEF_PASSWORD);
+        pGateway.exportEntry(pAlias.getName(), myOutStream, DEF_PASSWORD, myLock);
         final ByteArrayInputStream myInputStream = new ByteArrayInputStream(myOutStream.toByteArray());
+        pGateway.setLockResolver(l -> l.unlock(DEF_PASSWORD));
         Assertions.assertEquals(pEntry, pGateway.importEntry(myInputStream, DEF_PASSWORD));
     }
 

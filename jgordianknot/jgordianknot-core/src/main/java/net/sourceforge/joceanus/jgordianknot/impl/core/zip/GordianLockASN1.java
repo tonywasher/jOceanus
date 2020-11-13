@@ -16,21 +16,26 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jgordianknot.impl.core.zip;
 
-import java.nio.ByteBuffer;
 import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.Objects;
 
 import org.bouncycastle.asn1.ASN1EncodableVector;
+import org.bouncycastle.asn1.ASN1ObjectIdentifier;
 import org.bouncycastle.asn1.ASN1OctetString;
 import org.bouncycastle.asn1.ASN1Primitive;
 import org.bouncycastle.asn1.ASN1Sequence;
+import org.bouncycastle.asn1.ASN1TaggedObject;
 import org.bouncycastle.asn1.BEROctetString;
+import org.bouncycastle.asn1.DERNull;
 import org.bouncycastle.asn1.DERSequence;
+import org.bouncycastle.asn1.DERTaggedObject;
+import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
 
-import net.sourceforge.joceanus.jgordianknot.api.zip.GordianZipLockType;
+import net.sourceforge.joceanus.jgordianknot.api.zip.GordianLockType;
 import net.sourceforge.joceanus.jgordianknot.impl.core.agree.GordianAgreementClientHelloASN1;
 import net.sourceforge.joceanus.jgordianknot.impl.core.agree.GordianKeyPairSetAgreeASN1;
+import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianASN1Util;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianASN1Util.GordianASN1Object;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianDataException;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianIOException;
@@ -38,31 +43,60 @@ import net.sourceforge.joceanus.jgordianknot.impl.core.keyset.GordianKeySetHashA
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
- * ASN1 Encoding of ZipLock.
+ * ASN1 Encoding of Lock.
  * <pre>
- * GordianZipLockASN1 ::= SEQUENCE  {
- *      id OCTET STRING
+ * GordianLockASN1 ::= SEQUENCE  {
  *      hashBytes GordianKeySetHashASN1
- *      clientHello GordianAgreementClientHelloASN1 OPTIONAL
+ *      lockType CHOICE {
+ *          password    [0] NULL
+ *          key         [1] OCTET STRING
+ *          keyPair     [2] GordianAgreementClientHelloASN1
+ *          keyPairSet  [3] GordianKeyPairSetAgreeASN1
+ *      }
  * }
  * </pre>
  */
-public class GordianZipLockASN1
+public class GordianLockASN1
         extends GordianASN1Object {
     /**
-     * The MessageId.
+     * LockOID branch.
      */
-    private static final byte[] MSG_ID = new byte[] { 'Z', 'L' };
+    public static final ASN1ObjectIdentifier LOCKOID = GordianASN1Util.EXTOID.branch("3");
+
+    /**
+     * Password.
+     */
+    private static final int TAG_PASSWORD = 0;
+
+    /**
+     * Key and Password.
+     */
+    private static final int TAG_KEY = 1;
+
+    /**
+     * KeyPair and Password.
+     */
+    private static final int TAG_KEYPAIR = 2;
+
+    /**
+     * KeyPairSet and Password.
+     */
+    private static final int TAG_KEYPAIRSET = 3;
 
     /**
      * The zipLockType.
      */
-    private final GordianZipLockType theLockType;
+    private final GordianLockType theLockType;
 
     /**
      * The keySetHashASN1.
      */
     private final GordianKeySetHashASN1 theKeySetHash;
+
+    /**
+     * The key.
+     */
+    private final byte[] theKey;
 
     /**
      * The keyPair clientHelloASN1.
@@ -78,10 +112,26 @@ public class GordianZipLockASN1
      * Create the ASN1 sequence.
      * @param pKeySetHash the keySetHash
      */
-    public GordianZipLockASN1(final GordianKeySetHashASN1 pKeySetHash) {
+    public GordianLockASN1(final GordianKeySetHashASN1 pKeySetHash) {
         /* Store the Details */
-        theLockType = GordianZipLockType.PASSWORD;
+        theLockType = GordianLockType.PASSWORD;
         theKeySetHash = pKeySetHash;
+        theKey = null;
+        theKeyPairHello = null;
+        theKeyPairSetHello = null;
+    }
+
+    /**
+     * Create the ASN1 sequence.
+     * @param pKeySetHash the keySetHash
+     * @param pKey the key
+     */
+    public GordianLockASN1(final GordianKeySetHashASN1 pKeySetHash,
+                           final byte[] pKey) {
+        /* Store the Details */
+        theLockType = GordianLockType.PASSWORD;
+        theKeySetHash = pKeySetHash;
+        theKey = pKey;
         theKeyPairHello = null;
         theKeyPairSetHello = null;
     }
@@ -91,11 +141,12 @@ public class GordianZipLockASN1
      * @param pKeySetHash the keySetHash
      * @param pClientHello the clientHello
      */
-    public GordianZipLockASN1(final GordianKeySetHashASN1 pKeySetHash,
-                              final GordianAgreementClientHelloASN1 pClientHello) {
+    public GordianLockASN1(final GordianKeySetHashASN1 pKeySetHash,
+                           final GordianAgreementClientHelloASN1 pClientHello) {
         /* Store the Details */
-        theLockType = GordianZipLockType.KEYPAIR_PASSWORD;
+        theLockType = GordianLockType.KEYPAIR_PASSWORD;
         theKeySetHash = pKeySetHash;
+        theKey = null;
         theKeyPairHello = pClientHello;
         theKeyPairSetHello = null;
     }
@@ -105,46 +156,56 @@ public class GordianZipLockASN1
      * @param pKeySetHash the keySetHash
      * @param pClientHello the clientHello
      */
-    public GordianZipLockASN1(final GordianKeySetHashASN1 pKeySetHash,
-                              final GordianKeyPairSetAgreeASN1 pClientHello) {
+    public GordianLockASN1(final GordianKeySetHashASN1 pKeySetHash,
+                           final GordianKeyPairSetAgreeASN1 pClientHello) {
         /* Store the Details */
-        theLockType = GordianZipLockType.KEYPAIRSET_PASSWORD;
+        theLockType = GordianLockType.KEYPAIRSET_PASSWORD;
         theKeySetHash = pKeySetHash;
+        theKey = null;
         theKeyPairHello = null;
         theKeyPairSetHello = pClientHello;
     }
+
     /**
      * Constructor.
      * @param pSequence the Sequence
      * @throws OceanusException on error
      */
-    private GordianZipLockASN1(final ASN1Sequence pSequence) throws OceanusException {
+    private GordianLockASN1(final ASN1Sequence pSequence) throws OceanusException {
         /* Protect against exceptions */
         try {
             /* Access the sequence */
             final ASN1Sequence mySequence = ASN1Sequence.getInstance(pSequence);
             final Enumeration<?> en = mySequence.getObjects();
 
-            /* Check MessageId */
-            final byte[] myId = ASN1OctetString.getInstance(en.nextElement()).getOctets();
-            theLockType = deriveLockType(myId);
-
             /* Access message parts */
             theKeySetHash = GordianKeySetHashASN1.getInstance(en.nextElement());
-            switch (theLockType) {
-                case PASSWORD:
+            final ASN1TaggedObject myTagged = ASN1TaggedObject.getInstance(en.nextElement());
+            switch (myTagged.getTagNo()) {
+                case TAG_KEY:
+                    theLockType = GordianLockType.KEY_PASSWORD;
+                    theKey = ASN1OctetString.getInstance(myTagged.getObject()).getOctets();
                     theKeyPairHello = null;
                     theKeyPairSetHello = null;
                     break;
-                case KEYPAIR_PASSWORD:
-                    theKeyPairHello = GordianAgreementClientHelloASN1.getInstance(en.nextElement());
+                case TAG_KEYPAIR:
+                    theLockType = GordianLockType.KEYPAIR_PASSWORD;
+                    theKey = null;
+                    theKeyPairHello = GordianAgreementClientHelloASN1.getInstance(myTagged.getObject());
                     theKeyPairSetHello = null;
                     break;
-                case KEYPAIRSET_PASSWORD:
+                case TAG_KEYPAIRSET:
+                    theLockType = GordianLockType.KEYPAIRSET_PASSWORD;
+                    theKey = null;
+                    theKeyPairHello = null;
+                    theKeyPairSetHello = GordianKeyPairSetAgreeASN1.getInstance(myTagged.getObject());
+                    break;
+                case TAG_PASSWORD:
                 default:
+                    theLockType = GordianLockType.PASSWORD;
+                    theKey = null;
                     theKeyPairHello = null;
-                    theKeyPairSetHello = GordianKeyPairSetAgreeASN1.getInstance(en.nextElement());
-                    break;
+                    theKeyPairSetHello = null;
             }
 
             /* Make sure that we have completed the sequence */
@@ -164,11 +225,11 @@ public class GordianZipLockASN1
      * @return the parsed object
      * @throws OceanusException on error
      */
-    public static GordianZipLockASN1 getInstance(final Object pObject) throws OceanusException {
-        if (pObject instanceof GordianZipLockASN1) {
-            return (GordianZipLockASN1) pObject;
+    public static GordianLockASN1 getInstance(final Object pObject) throws OceanusException {
+        if (pObject instanceof GordianLockASN1) {
+            return (GordianLockASN1) pObject;
         } else if (pObject != null) {
-            return new GordianZipLockASN1(ASN1Sequence.getInstance(pObject));
+            return new GordianLockASN1(ASN1Sequence.getInstance(pObject));
         }
         throw new GordianDataException("Null sequence");
     }
@@ -177,8 +238,16 @@ public class GordianZipLockASN1
      * Obtain the lockType.
      * @return the lockType
      */
-    public GordianZipLockType getLockType() {
+    public GordianLockType getLockType() {
         return theLockType;
+    }
+
+    /**
+     * Obtain the key.
+     * @return the key
+     */
+    public byte[] getKey() {
+        return theKey;
     }
 
     /**
@@ -205,52 +274,29 @@ public class GordianZipLockASN1
         return theKeyPairSetHello;
     }
 
+    /**
+     * Obtain the algorithmId.
+     * @return  the algorithmId
+     */
+    public AlgorithmIdentifier getAlgorithmId() {
+        return new AlgorithmIdentifier(LOCKOID, toASN1Primitive());
+    }
+
     @Override
     public ASN1Primitive toASN1Primitive() {
         final ASN1EncodableVector v = new ASN1EncodableVector();
-        v.add(new BEROctetString(createMessageId()));
         v.add(theKeySetHash.toASN1Primitive());
-        if (theKeyPairHello != null) {
-            v.add(theKeyPairHello.toASN1Primitive());
-        }
-        if (theKeyPairSetHello != null) {
-            v.add(theKeyPairSetHello.toASN1Primitive());
+        if (theKey != null) {
+            final BEROctetString myKey = new BEROctetString(theKey);
+            v.add(new DERTaggedObject(false, TAG_KEY, myKey));
+        } else if (theKeyPairHello != null) {
+            v.add(new DERTaggedObject(false, TAG_KEYPAIR, theKeyPairHello));
+        } else if (theKeyPairSetHello != null) {
+            v.add(new DERTaggedObject(false, TAG_KEYPAIRSET, theKeyPairSetHello));
+        } else {
+            v.add(new DERTaggedObject(false, TAG_PASSWORD, DERNull.INSTANCE));
         }
         return new DERSequence(v);
-    }
-
-    /**
-     * Create messageId.
-     * @return the messageId
-     */
-    private byte[] createMessageId() {
-        final byte[] myId = Arrays.copyOf(MSG_ID, MSG_ID.length + 1);
-        myId[MSG_ID.length] = (byte) ('1' + theLockType.ordinal());
-        return myId;
-    }
-
-    /**
-     * Derive lockType.
-     * @param pMsgId the msgId
-     * @return the lockType
-     * @throws OceanusException on error
-     */
-    private static GordianZipLockType deriveLockType(final byte[] pMsgId) throws OceanusException {
-        /* If the header is correct */
-        final int myLen = MSG_ID.length;
-        if (pMsgId.length == myLen + 1
-            && ByteBuffer.wrap(pMsgId, 0, myLen).equals(ByteBuffer.wrap(MSG_ID))) {
-            /* Check that id is valid */
-            final int myZipType = pMsgId[myLen] - '1';
-            final GordianZipLockType[] myTypes = GordianZipLockType.values();
-            if (myZipType >= 0 && myZipType < myTypes.length) {
-                /* Return zipType */
-                return myTypes[myZipType];
-            }
-        }
-
-        /* Reject message */
-        throw new GordianDataException("Incorrect message type");
     }
 
     @Override
@@ -264,19 +310,21 @@ public class GordianZipLockASN1
         }
 
         /* Make sure that the classes are the same */
-        if (!(pThat instanceof GordianZipLockASN1)) {
+        if (!(pThat instanceof GordianLockASN1)) {
             return false;
         }
-        final GordianZipLockASN1 myThat = (GordianZipLockASN1) pThat;
+        final GordianLockASN1 myThat = (GordianLockASN1) pThat;
 
         /* Check that the fields are equal */
         return Objects.equals(theKeySetHash, myThat.getKeySetHash())
+                && Arrays.equals(theKey, myThat.getKey())
                 && Objects.equals(theKeyPairHello, myThat.getKeyPairHello())
                 && Objects.equals(theKeyPairSetHello, myThat.getKeyPairSetHello());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(theKeySetHash, theKeyPairHello, theKeyPairSetHello);
+        return Objects.hash(theKeySetHash, theKeyPairHello, theKeyPairSetHello)
+                ^ Arrays.hashCode(theKey);
     }
 }

@@ -19,11 +19,16 @@ package net.sourceforge.joceanus.jgordianknot.api.zip;
 /**
  * Lock Type.
  */
-public enum GordianZipLockType {
+public enum GordianLockType {
     /**
      * Password.
      */
     PASSWORD,
+
+    /**
+     * Key and Password.
+     */
+    KEY_PASSWORD,
 
     /**
      * KeyPair and Password.

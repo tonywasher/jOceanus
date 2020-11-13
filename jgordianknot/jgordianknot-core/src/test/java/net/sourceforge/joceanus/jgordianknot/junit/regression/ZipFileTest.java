@@ -49,10 +49,10 @@ import net.sourceforge.joceanus.jgordianknot.api.keypairset.GordianKeyPairSetGen
 import net.sourceforge.joceanus.jgordianknot.api.keypairset.GordianKeyPairSetSpec;
 import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetHashSpec;
 import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetSpec;
+import net.sourceforge.joceanus.jgordianknot.api.zip.GordianLock;
 import net.sourceforge.joceanus.jgordianknot.api.zip.GordianZipFactory;
 import net.sourceforge.joceanus.jgordianknot.api.zip.GordianZipFileContents;
 import net.sourceforge.joceanus.jgordianknot.api.zip.GordianZipFileEntry;
-import net.sourceforge.joceanus.jgordianknot.api.zip.GordianZipLock;
 import net.sourceforge.joceanus.jgordianknot.api.zip.GordianZipReadFile;
 import net.sourceforge.joceanus.jgordianknot.api.zip.GordianZipWriteFile;
 import net.sourceforge.joceanus.jgordianknot.util.GordianGenerator;
@@ -123,6 +123,7 @@ public class ZipFileTest {
                                                    final GordianLength pKeyLen) throws OceanusException {
         return Stream.of(
                 DynamicTest.dynamicTest("password", () -> testZipFile(pFactory,null, pKeyLen)),
+                DynamicTest.dynamicTest("key/password", () -> testZipFile(pFactory, Boolean.TRUE, pKeyLen)),
                 DynamicTest.dynamicTest("keyPair/password", () -> testZipFile(pFactory, pKeyPair, pKeyLen)),
                 DynamicTest.dynamicTest("keyPairSet/password", () -> testZipFile(pFactory, pKeyPairSet, pKeyLen))
         );
@@ -215,7 +216,7 @@ public class ZipFileTest {
         /* If we are creating a secure zip file */
         if (pKeyLen != null) {
             /* Create new zipLock */
-            final GordianZipLock myLock = createZipLock(myZipFactory, pKeyPair, pKeyLen);
+            final GordianLock myLock = createZipLock(myZipFactory, pKeyPair, pKeyLen);
 
             /* Initialise the Zip file */
             return myZipFactory.createZipFile(myLock, pZipStream);
@@ -235,18 +236,21 @@ public class ZipFileTest {
      * @return the new zip file
      * @throws OceanusException on error
      */
-    private GordianZipLock createZipLock(final GordianZipFactory pFactory,
-                                         final Object pKeyPair,
-                                         final GordianLength pKeyLen) throws OceanusException {
+    private GordianLock createZipLock(final GordianZipFactory pFactory,
+                                      final Object pKeyPair,
+                                      final GordianLength pKeyLen) throws OceanusException {
         /* Create appropriate zipLock */
         final GordianKeySetHashSpec mySpec = new GordianKeySetHashSpec(new GordianKeySetSpec(pKeyLen));
         if (pKeyPair instanceof GordianKeyPair) {
-            return pFactory.createZipLock((GordianKeyPair) pKeyPair, mySpec, DEF_PASSWORD.clone());
+            return pFactory.createKeyPairLock((GordianKeyPair) pKeyPair, mySpec, DEF_PASSWORD.clone());
         }
         if (pKeyPair instanceof GordianKeyPairSet) {
-            return pFactory.createZipLock((GordianKeyPairSet) pKeyPair, mySpec, DEF_PASSWORD.clone());
+            return pFactory.createKeyPairSetLock((GordianKeyPairSet) pKeyPair, mySpec, DEF_PASSWORD.clone());
         }
-        return pFactory.createZipLock(mySpec, DEF_PASSWORD.clone());
+        if (pKeyPair instanceof Boolean) {
+            return pFactory.createKeyLock(DEF_PASSWORD.clone());
+        }
+        return pFactory.createPasswordLock(mySpec, DEF_PASSWORD.clone());
     }
 
     /**
@@ -268,11 +272,12 @@ public class ZipFileTest {
         final GordianZipReadFile myZipFile = myZipMgr.openZipFile(myInputStream);
 
         /* Check for security */
-        final GordianZipLock myLock = myZipFile.getLock();
+        final GordianLock myLock = myZipFile.getLock();
         if (myLock != null) {
             /* switch on lockType */
             switch (myLock.getLockType()) {
                 case PASSWORD:
+                case KEY_PASSWORD:
                     myLock.unlock(DEF_PASSWORD.clone());
                     break;
                 case KEYPAIR_PASSWORD:

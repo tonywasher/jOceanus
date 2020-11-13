@@ -23,7 +23,6 @@ import java.io.OutputStream;
 import java.util.List;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
-
 import javax.xml.XMLConstants;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerException;
@@ -60,7 +59,7 @@ public class GordianCoreZipWriteFile
     /**
      * Security Lock for this zip file.
      */
-    private final GordianCoreZipLock theLock;
+    private final GordianCoreLock theLock;
 
     /**
      * securedKeySet for this zip file.
@@ -118,7 +117,7 @@ public class GordianCoreZipWriteFile
      * @param pOutputStream the output stream to write to
      * @throws OceanusException on error
      */
-    GordianCoreZipWriteFile(final GordianCoreZipLock pLock,
+    GordianCoreZipWriteFile(final GordianCoreLock pLock,
                             final OutputStream pOutputStream) throws OceanusException {
         /* Check that the lock is usable */
         if (pLock == null || !pLock.isFresh()) {

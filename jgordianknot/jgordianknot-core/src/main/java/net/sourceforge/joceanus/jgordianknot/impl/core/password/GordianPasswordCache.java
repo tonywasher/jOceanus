@@ -30,8 +30,8 @@ import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetHash;
 import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetHashSpec;
 import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetSpec;
 import net.sourceforge.joceanus.jgordianknot.api.password.GordianPasswordManager;
+import net.sourceforge.joceanus.jgordianknot.api.zip.GordianLock;
 import net.sourceforge.joceanus.jgordianknot.api.zip.GordianZipFactory;
-import net.sourceforge.joceanus.jgordianknot.api.zip.GordianZipLock;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianDataException;
 import net.sourceforge.joceanus.jgordianknot.impl.core.keyset.GordianCoreKeySetHash;
 import net.sourceforge.joceanus.jtethys.OceanusException;
@@ -248,7 +248,7 @@ public class GordianPasswordCache {
      * @param pLock the zipLock to attempt passwords for
      * @return successful true/false
      */
-    boolean attemptKnownPasswords(final GordianZipLock pLock) {
+    boolean attemptKnownPasswords(final GordianLock pLock) {
         /* Loop through the passwords */
         for (ByteBuffer myCurr : thePasswords) {
             /* Attempt the password */
@@ -267,7 +267,7 @@ public class GordianPasswordCache {
      * @param pPassword the encrypted password
      * @return successful true/false
      */
-    private boolean attemptPasswordForLock(final GordianZipLock pLock,
+    private boolean attemptPasswordForLock(final GordianLock pLock,
                                            final byte[] pPassword) {
         /* Protect against exceptions */
         byte[] myPasswordBytes = null;
@@ -307,7 +307,7 @@ public class GordianPasswordCache {
      * @return successful true/false
      */
     boolean attemptKnownPasswords(final GordianKeyPair pKeyPair,
-                                  final GordianZipLock pLock) {
+                                  final GordianLock pLock) {
         /* Loop through the passwords */
         for (ByteBuffer myCurr : thePasswords) {
             /* Attempt the password */
@@ -328,7 +328,7 @@ public class GordianPasswordCache {
      * @return successful true/false
      */
     private boolean attemptPasswordForLock(final GordianKeyPair pKeyPair,
-                                           final GordianZipLock pLock,
+                                           final GordianLock pLock,
                                            final byte[] pPassword) {
         /* Protect against exceptions */
         byte[] myPasswordBytes = null;
@@ -405,8 +405,8 @@ public class GordianPasswordCache {
      * @return the new PasswordHash
      * @throws OceanusException on error
      */
-    GordianZipLock createSimilarZipLock(final GordianKeySetHashSpec pKeySetHashSpec,
-                                        final ByteBuffer pPassword) throws OceanusException {
+    GordianLock createSimilarZipLock(final GordianKeySetHashSpec pKeySetHashSpec,
+                                     final ByteBuffer pPassword) throws OceanusException {
         /* Protect against exceptions */
         byte[] myPasswordBytes = null;
         char[] myPasswordChars = null;
@@ -417,7 +417,7 @@ public class GordianPasswordCache {
 
             /* Create the similar ZipLock and return it */
             final GordianZipFactory myZips = theFactory.getZipFactory();
-            return myZips.createZipLock(pKeySetHashSpec, myPasswordChars);
+            return myZips.createPasswordLock(pKeySetHashSpec, myPasswordChars);
 
         } finally {
             /* Clear out password */
@@ -438,9 +438,9 @@ public class GordianPasswordCache {
      * @return the new PasswordHash
      * @throws OceanusException on error
      */
-    GordianZipLock createSimilarZipLock(final GordianKeyPair pKeyPair,
-                                        final GordianKeySetHashSpec pKeySetHashSpec,
-                                        final ByteBuffer pPassword) throws OceanusException {
+    GordianLock createSimilarZipLock(final GordianKeyPair pKeyPair,
+                                     final GordianKeySetHashSpec pKeySetHashSpec,
+                                     final ByteBuffer pPassword) throws OceanusException {
         /* Protect against exceptions */
         byte[] myPasswordBytes = null;
         char[] myPasswordChars = null;
@@ -451,7 +451,7 @@ public class GordianPasswordCache {
 
             /* Create the similar ZipLock and return it */
             final GordianZipFactory myZips = theFactory.getZipFactory();
-            return myZips.createZipLock(pKeyPair, pKeySetHashSpec, myPasswordChars);
+            return myZips.createKeyPairLock(pKeyPair, pKeySetHashSpec, myPasswordChars);
 
         } finally {
             /* Clear out password */

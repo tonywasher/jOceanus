@@ -21,7 +21,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Iterator;
-
 import javax.xml.XMLConstants;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -38,12 +37,12 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.xml.sax.SAXException;
 
-import net.sourceforge.joceanus.jgordianknot.api.password.GordianPasswordManager;
 import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetHash;
+import net.sourceforge.joceanus.jgordianknot.api.password.GordianPasswordManager;
+import net.sourceforge.joceanus.jgordianknot.api.zip.GordianLock;
 import net.sourceforge.joceanus.jgordianknot.api.zip.GordianZipFactory;
 import net.sourceforge.joceanus.jgordianknot.api.zip.GordianZipFileContents;
 import net.sourceforge.joceanus.jgordianknot.api.zip.GordianZipFileEntry;
-import net.sourceforge.joceanus.jgordianknot.api.zip.GordianZipLock;
 import net.sourceforge.joceanus.jgordianknot.api.zip.GordianZipReadFile;
 import net.sourceforge.joceanus.jgordianknot.api.zip.GordianZipWriteFile;
 import net.sourceforge.joceanus.jmetis.data.MetisDataDifference;
@@ -141,7 +140,7 @@ public class DataValuesFormatter<T extends DataSet<T, E>, E extends Enum<E>> {
         /* Create a similar security control */
         final GordianPasswordManager myPasswordMgr = pData.getPasswordMgr();
         final GordianKeySetHash myBase = pData.getKeySetHash();
-        final GordianZipLock myLock = myPasswordMgr.similarZipLock(myBase);
+        final GordianLock myLock = myPasswordMgr.similarZipLock(myBase);
         final GordianZipFactory myZips = myPasswordMgr.getSecurityFactory().getZipFactory();
 
         /* Access the data version */
@@ -342,7 +341,7 @@ public class DataValuesFormatter<T extends DataSet<T, E>, E extends Enum<E>> {
         final GordianZipReadFile myZipFile = myZips.openZipFile(pFile);
 
         /* Obtain the hash bytes from the file */
-        final GordianZipLock myLock = myZipFile.getLock();
+        final GordianLock myLock = myZipFile.getLock();
 
         /* If this is a secure ZipFile */
         if (myLock != null) {

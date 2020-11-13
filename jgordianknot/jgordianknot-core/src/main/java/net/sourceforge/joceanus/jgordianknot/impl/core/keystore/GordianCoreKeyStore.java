@@ -48,8 +48,8 @@ import net.sourceforge.joceanus.jgordianknot.api.keystore.GordianKeyStoreEntry.G
 import net.sourceforge.joceanus.jgordianknot.api.keystore.GordianKeyStoreEntry.GordianKeyStorePairSet;
 import net.sourceforge.joceanus.jgordianknot.api.keystore.GordianKeyStoreEntry.GordianKeyStorePairSetCertificate;
 import net.sourceforge.joceanus.jgordianknot.api.keystore.GordianKeyStoreEntry.GordianKeyStoreSet;
+import net.sourceforge.joceanus.jgordianknot.api.zip.GordianLock;
 import net.sourceforge.joceanus.jgordianknot.api.zip.GordianZipFactory;
-import net.sourceforge.joceanus.jgordianknot.api.zip.GordianZipLock;
 import net.sourceforge.joceanus.jgordianknot.api.zip.GordianZipWriteFile;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianCoreFactory;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianDataException;
@@ -949,7 +949,7 @@ public class GordianCoreKeyStore
         final GordianZipFactory myZipFactory = theFactory.getZipFactory();
 
         /* Create the lock */
-        final GordianZipLock myLock = myZipFactory.createZipLock(theKeySetSpec, pPassword);
+        final GordianLock myLock = myZipFactory.createPasswordLock(theKeySetSpec, pPassword);
 
         /* Create the Zip file */
         try (GordianZipWriteFile myZipFile = myZipFactory.createZipFile(myLock, pOutputStream)) {

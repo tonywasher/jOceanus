@@ -33,10 +33,10 @@
                 final GordianFactory myBaseFactory = GordianGenerator.createFactory();
                 final GordianZipFactory myZipFactory = myBaseFactory.getZipFactory();
 
-                /* Create new ZipLock */
+                /* Create new Lock */
                 final char[] myPassword = .....
                 final GordianKeySetHashSpec mySpec = new GordianKeySetHashSpec(new GordianKeySetSpec(pKeyLen));
-                final GordianZipLock myLock = myZipFactory.createZipLock(mySpec, myPassword);
+                final GordianLock myLock = myZipFactory.createPasswordLock(mySpec, myPassword);
 
                 /* Initialise the Zip file */
                 final ByteArrayOutputStream myZipStream = new ByteArrayOutputStream();
@@ -87,7 +87,7 @@
                 final GordianZipReadFile myZipFile = myZipMgr.openZipFile(myInputStream);
 
                 /* Unlock the file */
-                final GordianZipLock myLock = myZipFile.getLock();
+                final GordianLock myLock = myZipFile.getLock();
                 final char[] myPassword = ....
                 myLock.unlock(myPassword);
 

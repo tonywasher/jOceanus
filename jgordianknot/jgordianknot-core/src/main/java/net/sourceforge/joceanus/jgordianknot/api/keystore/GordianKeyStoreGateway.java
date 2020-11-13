@@ -22,12 +22,25 @@ import java.io.OutputStream;
 import java.util.List;
 import java.util.function.Function;
 
+import net.sourceforge.joceanus.jgordianknot.api.zip.GordianLock;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
  * KeyStore Gateway.
  */
 public interface GordianKeyStoreGateway {
+    /**
+     * UnLock notification.
+     */
+    interface GordianLockResolver {
+        /**
+         * resolve Lock.
+         * @param pLock the lock to resolve
+         * @throws OceanusException on error
+         */
+        void resolveLock(GordianLock pLock) throws OceanusException;
+    }
+
     /**
      * Obtain the keyStore.
      * @return the keyStore
@@ -44,23 +57,27 @@ public interface GordianKeyStoreGateway {
      * export object to file.
      * @param pAlias the alias
      * @param pFile the target file
-     * @param pPassword the password
+     * @param pPassword the keyStore password for the entry
+     * @param pLock the lock for the file
      * @throws OceanusException on error
      */
     void exportEntry(String pAlias,
                      File pFile,
-                     char[] pPassword) throws OceanusException;
+                     char[] pPassword,
+                     GordianLock pLock) throws OceanusException;
 
     /**
      * export object to stream.
      * @param pAlias the alias
      * @param pStream the target stream
-     * @param pPassword the password
+     * @param pPassword the keyStore password for the entry
+     * @param pLock the lock for the file
      * @throws OceanusException on error
      */
     void exportEntry(String pAlias,
                      OutputStream pStream,
-                     char[] pPassword) throws OceanusException;
+                     char[] pPassword,
+                     GordianLock pLock) throws OceanusException;
 
     /**
      * set the certificateRequest encryption entry.
@@ -92,6 +109,12 @@ public interface GordianKeyStoreGateway {
      * @param pResolver the resolver
      */
     void setPasswordResolver(Function<String, char[]> pResolver);
+
+    /**
+     * set the lockResolver.
+     * @param pResolver the resolver
+     */
+    void setLockResolver(GordianLockResolver pResolver);
 
     /**
      * create certificate request.
