@@ -41,6 +41,7 @@ import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianDataException
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianIOException;
 import net.sourceforge.joceanus.jgordianknot.impl.core.keyset.GordianCoreKeySet;
 import net.sourceforge.joceanus.jgordianknot.impl.core.stream.GordianStreamManager;
+import net.sourceforge.joceanus.jgordianknot.impl.core.zip.GordianCoreLock.GordianUnlockNotify;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.TethysDataConverter;
 
@@ -48,7 +49,7 @@ import net.sourceforge.joceanus.jtethys.TethysDataConverter;
  * Class used to extract from a ZipFile.
  */
 public class GordianCoreZipReadFile
-    implements GordianZipReadFile {
+    implements GordianZipReadFile, GordianUnlockNotify {
     /**
      * The extension size for the buffer.
      */
@@ -153,11 +154,8 @@ public class GordianCoreZipReadFile
         return theLock;
     }
 
-    /**
-     * Unlock the file.
-     * @throws OceanusException on error
-     */
-    void unlockFile() throws OceanusException {
+    @Override
+    public void notifyUnlock() throws OceanusException {
         /* Access the keySet */
         final GordianCoreKeySet myKeySet = (GordianCoreKeySet) theLock.getKeySetHash().getKeySet();
 

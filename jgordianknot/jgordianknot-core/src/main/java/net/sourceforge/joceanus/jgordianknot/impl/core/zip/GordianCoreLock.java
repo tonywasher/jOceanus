@@ -18,6 +18,8 @@ package net.sourceforge.joceanus.jgordianknot.impl.core.zip;
 
 import java.util.Objects;
 
+import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
+
 import net.sourceforge.joceanus.jgordianknot.api.agree.GordianAgreementFactory;
 import net.sourceforge.joceanus.jgordianknot.api.agree.GordianAgreementType;
 import net.sourceforge.joceanus.jgordianknot.api.agree.GordianKDFType;
@@ -53,6 +55,17 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
 public class GordianCoreLock
     implements GordianLock {
     /**
+     * UnLock notification.
+     */
+    interface GordianUnlockNotify {
+        /**
+         * Notify successful unlock.
+         * @throws OceanusException on error
+         */
+        void notifyUnlock() throws OceanusException;
+    }
+
+    /**
      * The factory.
      */
     private final GordianFactory theFactory;
@@ -63,9 +76,9 @@ public class GordianCoreLock
     private final GordianLockASN1 theZipLock;
 
     /**
-     * The Locked ZipFile.
+     * The Unlock notification.
      */
-    private final GordianCoreZipReadFile theLockedZipFile;
+    private final GordianUnlockNotify theNotify;
 
     /**
      * The keySetHash.
@@ -80,16 +93,27 @@ public class GordianCoreLock
     /**
      * Constructor.
      * @param pFactory the factory
-     * @param pZipFile the locked zip file
+     * @param pZipLock the zipLock message.
+     * @throws OceanusException on error
+     */
+    public GordianCoreLock(final GordianFactory pFactory,
+                           final Object pZipLock) throws OceanusException {
+        this(pFactory, null, pZipLock);
+    }
+
+    /**
+     * Constructor.
+     * @param pFactory the factory
+     * @param pNotify the unlock notification (if any)
      * @param pZipLock the zipLock message.
      * @throws OceanusException on error
      */
     GordianCoreLock(final GordianFactory pFactory,
-                    final GordianCoreZipReadFile pZipFile,
-                    final byte[] pZipLock) throws OceanusException {
+                    final GordianUnlockNotify pNotify,
+                    final Object pZipLock) throws OceanusException {
         /* Store parameters */
         theFactory = pFactory;
-        theLockedZipFile = pZipFile;
+        theNotify = pNotify;
         theZipLock = GordianLockASN1.getInstance(pZipLock);
     }
 
@@ -105,7 +129,7 @@ public class GordianCoreLock
                     final char[] pPassword) throws OceanusException {
         /* Store parameters */
         theFactory = pFactory;
-        theLockedZipFile = null;
+        theNotify = null;
 
         /* create the keySetHash */
         final GordianKeySetFactory myFactory = theFactory.getKeySetFactory();
@@ -125,8 +149,8 @@ public class GordianCoreLock
      */
     GordianCoreLock(final GordianFactory pFactory,
                     final char[] pPassword) throws OceanusException {
-        /* No ZipFile */
-        theLockedZipFile = null;
+        /* No Notification */
+        theNotify = null;
 
         /* Create the key */
         final GordianCoreFactory myFactory = (GordianCoreFactory) pFactory;
@@ -161,7 +185,7 @@ public class GordianCoreLock
                     final char[] pPassword) throws OceanusException {
         /* Store parameters */
         theFactory = pFactory;
-        theLockedZipFile = null;
+        theNotify = null;
 
         /* Create the agreement */
         final GordianKeyPairFactory myKeyPairFactory = theFactory.getKeyPairFactory();
@@ -197,7 +221,7 @@ public class GordianCoreLock
                     final char[] pPassword) throws OceanusException {
         /* Store parameters */
         theFactory = pFactory;
-        theLockedZipFile = null;
+        theNotify = null;
 
         /* Create the agreement */
         final GordianKeyPairFactory myKeyPairFactory = theFactory.getKeyPairFactory();
@@ -250,8 +274,10 @@ public class GordianCoreLock
         final byte[] myHashBytes = theZipLock.getKeySetHash().getEncodedBytes();
         theKeySetHash = myFactory.deriveKeySetHash(myHashBytes, pPassword);
 
-        /* unlock the zipFile */
-        theLockedZipFile.unlockFile();
+        /* notify if required */
+        if (theNotify != null) {
+            theNotify.notifyUnlock();
+        }
     }
 
     /**
@@ -274,8 +300,10 @@ public class GordianCoreLock
         final byte[] myHashBytes = theZipLock.getKeySetHash().getEncodedBytes();
         theKeySetHash = myKSFactory.deriveKeySetHash(myHashBytes, pPassword);
 
-        /* unlock the zipFile */
-        theLockedZipFile.unlockFile();
+        /* notify if required */
+        if (theNotify != null) {
+            theNotify.notifyUnlock();
+        }
     }
 
     @Override
@@ -297,8 +325,10 @@ public class GordianCoreLock
         final byte[] myHashBytes = theZipLock.getKeySetHash().getEncodedBytes();
         theKeySetHash = myKeySetFactory.deriveKeySetHash(myHashBytes, pPassword);
 
-        /* unlock the zipFile */
-        theLockedZipFile.unlockFile();
+        /* notify if required */
+        if (theNotify != null) {
+            theNotify.notifyUnlock();
+        }
     }
 
     @Override
@@ -320,8 +350,10 @@ public class GordianCoreLock
         final byte[] myHashBytes = theZipLock.getKeySetHash().getEncodedBytes();
         theKeySetHash = myKeySetFactory.deriveKeySetHash(myHashBytes, pPassword);
 
-        /* unlock the zipFile */
-        theLockedZipFile.unlockFile();
+        /* notify if required */
+        if (theNotify != null) {
+            theNotify.notifyUnlock();
+        }
     }
 
     /**
@@ -339,6 +371,14 @@ public class GordianCoreLock
      */
     public byte[] getEncodedBytes() throws OceanusException {
         return theZipLock.getEncodedBytes();
+    }
+
+    /**
+     * Obtain the algorithmId.
+     * @return  the algorithmId
+     */
+    public AlgorithmIdentifier getAlgorithmId() {
+        return theZipLock.getAlgorithmId();
     }
 
     /**

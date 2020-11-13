@@ -33,10 +33,12 @@ import net.sourceforge.joceanus.jgordianknot.api.keystore.GordianKeyStoreEntry;
 import net.sourceforge.joceanus.jgordianknot.api.keystore.GordianKeyStoreEntry.GordianKeyStorePair;
 import net.sourceforge.joceanus.jgordianknot.api.keystore.GordianKeyStoreEntry.GordianKeyStorePairSet;
 import net.sourceforge.joceanus.jgordianknot.api.keystore.GordianKeyStoreGateway;
+import net.sourceforge.joceanus.jgordianknot.api.zip.GordianLock;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianCoreFactory;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianDataException;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianIOException;
 import net.sourceforge.joceanus.jgordianknot.impl.core.keystore.GordianCoreKeyStoreEntry.GordianKeyStorePairEntry;
+import net.sourceforge.joceanus.jgordianknot.impl.core.zip.GordianCoreLock;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
@@ -77,7 +79,12 @@ public class GordianCoreKeyStoreGateway
     /**
      * The password callback.
      */
-    private Function<String, char[]> theResolver;
+    private Function<String, char[]> thePasswordResolver;
+
+    /**
+     * The lock callback.
+     */
+    private GordianLockResolver theLockResolver;
 
     /**
      * Constructor.
@@ -104,9 +111,10 @@ public class GordianCoreKeyStoreGateway
     @Override
     public void exportEntry(final String pAlias,
                             final File pFile,
-                            final char[] pPassword) throws OceanusException {
+                            final char[] pPassword,
+                            final GordianLock pLock) throws OceanusException {
         try (FileOutputStream myStream = new FileOutputStream(pFile)) {
-            exportEntry(pAlias, myStream, pPassword);
+            exportEntry(pAlias, myStream, pPassword, pLock);
         } catch (IOException e) {
             throw new GordianIOException("Failed to write to file", e);
         }
@@ -115,10 +123,11 @@ public class GordianCoreKeyStoreGateway
     @Override
     public void exportEntry(final String pAlias,
                             final OutputStream pStream,
-                            final char[] pPassword) throws OceanusException {
+                            final char[] pPassword,
+                            final GordianLock pLock) throws OceanusException {
         final GordianKeyStoreEntry myEntry = theKeyStore.getEntry(pAlias, pPassword);
         final GordianPEMCoder myCoder = new GordianPEMCoder(theKeyStore);
-        myCoder.exportKeyStoreEntry(myEntry, pStream, pPassword);
+        myCoder.exportKeyStoreEntry(myEntry, pStream, (GordianCoreLock) pLock);
     }
 
     @Override
@@ -200,7 +209,12 @@ public class GordianCoreKeyStoreGateway
 
     @Override
     public void setPasswordResolver(final Function<String, char[]> pResolver) {
-        theResolver = pResolver;
+        thePasswordResolver = pResolver;
+    }
+
+    @Override
+    public void setLockResolver(final GordianLockResolver pResolver) {
+        theLockResolver = pResolver;
     }
 
     @Override
@@ -221,12 +235,12 @@ public class GordianCoreKeyStoreGateway
         final GordianPEMObject myObject = myParser.parsePEMFile(pInStream).get(0);
         switch (myObject.getObjectType()) {
             case KEYPAIRCERTREQ:
-                GordianCRMParser myCRMParser = new GordianKeyPairCRMParser(theKeyStoreMgr, theKeyPairCertifier, theResolver);
+                GordianCRMParser myCRMParser = new GordianKeyPairCRMParser(theKeyStoreMgr, theKeyPairCertifier, thePasswordResolver);
                 List<GordianPEMObject> myChain = myCRMParser.decodeCertificateRequest(myObject);
                 myParser.writePEMFile(pOutStream, myChain);
                 break;
             case KEYPAIRSETCERTREQ:
-                myCRMParser = new GordianKeyPairSetCRMParser(theKeyStoreMgr, theKeyPairSetCertifier, theResolver);
+                myCRMParser = new GordianKeyPairSetCRMParser(theKeyStoreMgr, theKeyPairSetCertifier, thePasswordResolver);
                 myChain = myCRMParser.decodeCertificateRequest(myObject);
                 myParser.writePEMFile(pOutStream, myChain);
                 break;
@@ -249,6 +263,7 @@ public class GordianCoreKeyStoreGateway
     public GordianKeyStoreEntry importEntry(final InputStream pStream,
                                             final char[] pPassword) throws OceanusException {
         final GordianPEMCoder myCoder = new GordianPEMCoder(theKeyStore);
+        myCoder.setLockResolver(theLockResolver);
         return myCoder.importKeyStoreEntry(pStream, pPassword);
     }
 

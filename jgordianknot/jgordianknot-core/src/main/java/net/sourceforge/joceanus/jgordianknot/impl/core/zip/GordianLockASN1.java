@@ -21,6 +21,7 @@ import java.util.Enumeration;
 import java.util.Objects;
 
 import org.bouncycastle.asn1.ASN1EncodableVector;
+import org.bouncycastle.asn1.ASN1ObjectIdentifier;
 import org.bouncycastle.asn1.ASN1OctetString;
 import org.bouncycastle.asn1.ASN1Primitive;
 import org.bouncycastle.asn1.ASN1Sequence;
@@ -29,10 +30,12 @@ import org.bouncycastle.asn1.BEROctetString;
 import org.bouncycastle.asn1.DERNull;
 import org.bouncycastle.asn1.DERSequence;
 import org.bouncycastle.asn1.DERTaggedObject;
+import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
 
 import net.sourceforge.joceanus.jgordianknot.api.zip.GordianLockType;
 import net.sourceforge.joceanus.jgordianknot.impl.core.agree.GordianAgreementClientHelloASN1;
 import net.sourceforge.joceanus.jgordianknot.impl.core.agree.GordianKeyPairSetAgreeASN1;
+import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianASN1Util;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianASN1Util.GordianASN1Object;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianDataException;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianIOException;
@@ -55,6 +58,11 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
  */
 public class GordianLockASN1
         extends GordianASN1Object {
+    /**
+     * LockOID branch.
+     */
+    public static final ASN1ObjectIdentifier LOCKOID = GordianASN1Util.EXTOID.branch("3");
+
     /**
      * Password.
      */
@@ -264,6 +272,14 @@ public class GordianLockASN1
      */
     public GordianKeyPairSetAgreeASN1 getKeyPairSetHello() {
         return theKeyPairSetHello;
+    }
+
+    /**
+     * Obtain the algorithmId.
+     * @return  the algorithmId
+     */
+    public AlgorithmIdentifier getAlgorithmId() {
+        return new AlgorithmIdentifier(LOCKOID, toASN1Primitive());
     }
 
     @Override
