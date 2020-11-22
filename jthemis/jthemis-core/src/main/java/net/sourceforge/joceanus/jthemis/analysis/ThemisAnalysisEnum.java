@@ -141,14 +141,10 @@ public class ThemisAnalysisEnum
                 processed = true;
             }
 
-            /* Process embedded classes */
+            /* Process embedded classes/languageConstructs */
             if (!processed) {
-                processed = pParser.processClass(myLine);
-            }
-
-            /* Process language constructs */
-            if (!processed) {
-                processed = pParser.processLanguage(myLine);
+                processed = pParser.processClass(myLine)
+                     || pParser.processLanguage(myLine);
             }
 
             /* If we haven't processed yet */

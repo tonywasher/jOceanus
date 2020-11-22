@@ -622,13 +622,9 @@ public class ThemisAnalysisParser
             /* Access next line */
             final ThemisAnalysisLine myLine = (ThemisAnalysisLine) popNextLine();
 
-            /* Process comments and blanks */
-            boolean processed = processCommentsAndBlanks(myLine);
-
-            /* Process language constructs */
-            if (!processed) {
-                processed = processLanguage(myLine);
-            }
+            /* Process comments/blanks/languageConstructs */
+            final boolean processed = processCommentsAndBlanks(myLine)
+                    || processLanguage(myLine);
 
             /* If we haven't processed yet */
             if (!processed) {

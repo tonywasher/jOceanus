@@ -482,6 +482,7 @@ public class ThemisAnalysisDataMap {
         final Map<String, String> myMap = new HashMap<>();
         myMap.put("StateChangeNotification", "Preloader");
         myMap.put("SortKey", "RowSorter");
+        myMap.put("Entry", "RowFilter");
         return myMap;
     }
 

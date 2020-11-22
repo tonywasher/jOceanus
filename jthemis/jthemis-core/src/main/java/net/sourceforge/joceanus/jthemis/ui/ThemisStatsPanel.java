@@ -59,6 +59,11 @@ public class ThemisStatsPanel
     private final TethysHTMLManager theHTML;
 
     /**
+     * The Current root.
+     */
+    private TethysTreeItem<ThemisStatsEntry> theRoot;
+
+    /**
      * Constructor.
      *
      * @param pFactory the GuiFactory
@@ -109,13 +114,19 @@ public class ThemisStatsPanel
      * @param pProject the project
      */
     void initialiseTree(final ThemisStatsProject pProject) {
+        /* If there is currently a root item */
+        if (theRoot != null) {
+            /* Hide it */
+            theRoot.setVisible(false);
+        }
+
         /* Create root item for project */
         final ThemisStatsEntry myEntry = new ThemisStatsEntry(pProject);
-        final TethysTreeItem<ThemisStatsEntry> myTreeItem = theTree.addRootItem(myEntry.getUniqueName(), myEntry);
-        myTreeItem.setVisible(true);
+        theRoot = theTree.addRootItem(myEntry.getUniqueName(), myEntry);
+        theRoot.setVisible(true);
 
         /* Create child entries */
-        createChildEntries(myTreeItem, pProject);
+        createChildEntries(theRoot, pProject);
     }
 
     /**

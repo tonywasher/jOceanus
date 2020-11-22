@@ -154,8 +154,14 @@ public class ThemisDSMProject {
             /* Loop through the modules */
             for (final String myModuleName : myPom.getModules()) {
                  final File myModuleDir = new File(pPom.getParentFile(), myModuleName);
-
                 final ThemisDSMModule myModule = new ThemisDSMModule(myModuleDir);
+                theModules.add(myModule);
+                myModule.processModulesAndPackages();
+            }
+
+            /* If we have no modules in the project, then we are a single module project */
+            if (theModules.isEmpty()) {
+                final ThemisDSMModule myModule = new ThemisDSMModule(theLocation);
                 theModules.add(myModule);
                 myModule.processModulesAndPackages();
             }

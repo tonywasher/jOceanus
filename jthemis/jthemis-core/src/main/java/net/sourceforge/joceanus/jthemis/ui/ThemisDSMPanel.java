@@ -242,10 +242,16 @@ public class ThemisDSMPanel
      * Handle select project.
      */
     void selectProject() {
+        /* Determine initial directory */
+        File myInit = getDefaultLocation();
+        if (myInit == null) {
+            myInit = new File(System.getProperty("user.home"));
+        }
+
         /* Determine the name of the directory to load */
         final TethysDirectorySelector myDialog = theGuiFactory.newDirectorySelector();
         myDialog.setTitle("Select Project");
-        myDialog.setInitialDirectory(new File(System.getProperty("user.home")));
+        myDialog.setInitialDirectory(myInit);
         final File myFile = myDialog.selectDirectory();
 
         /* If we selected a file */
