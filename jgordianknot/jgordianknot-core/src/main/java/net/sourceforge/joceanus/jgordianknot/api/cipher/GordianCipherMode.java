@@ -16,6 +16,8 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jgordianknot.api.cipher;
 
+import net.sourceforge.joceanus.jgordianknot.api.base.GordianLength;
+
 /**
  * Cipher Modes. Available algorithms.
  */
@@ -118,7 +120,12 @@ public enum GordianCipherMode {
     /**
      * G3413CTR Mode.
      */
-    G3413CTR;
+    G3413CTR,
+
+    /**
+     * GCMSIV Mode.
+     */
+    GCMSIV;
 
     /**
      * Does the mode require padding?
@@ -147,6 +154,7 @@ public enum GordianCipherMode {
             case OCB:
             case KCCM:
             case KGCM:
+            case GCMSIV:
                 return true;
             default:
                 return false;
@@ -177,6 +185,7 @@ public enum GordianCipherMode {
         switch (this) {
             case CCM:
             case GCM:
+            case GCMSIV:
             case OCB:
                 return true;
             default:
@@ -185,24 +194,29 @@ public enum GordianCipherMode {
     }
 
     /**
-     * Is this mode valid for the symKeyType?
-     * @param pKeyType the keyType
+     * Is this mode valid for the symKeySpec?
+     * @param pKeySpec the keySpec
      * @return true/false
      */
-    public boolean validForSymKey(final GordianSymKeyType pKeyType) {
+    public boolean validForSymKey(final GordianSymKeySpec pKeySpec) {
+        final GordianSymKeyType myKeyType = pKeySpec.getSymKeyType();
+        final GordianLength myKeyLen = pKeySpec.getKeyLength();
         switch (this) {
             case G3413OFB:
             case G3413CFB:
             case G3413CBC:
             case G3413CTR:
-                return GordianSymKeyType.KUZNYECHIK.equals(pKeyType);
+                return GordianSymKeyType.KUZNYECHIK.equals(myKeyType);
             case GOFB:
             case GCFB:
-                return GordianSymKeyType.GOST.equals(pKeyType);
+                return GordianSymKeyType.GOST.equals(myKeyType);
             case KCTR:
             case KGCM:
             case KCCM:
-                return GordianSymKeyType.KALYNA.equals(pKeyType);
+                return GordianSymKeyType.KALYNA.equals(myKeyType);
+            case GCMSIV:
+                return GordianLength.LEN_128.equals(myKeyLen)
+                         || GordianLength.LEN_256.equals(myKeyLen);
             default:
                 return true;
         }

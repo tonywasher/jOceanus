@@ -127,6 +127,7 @@
                     <tr><td>KGCM</td><td/><td>Only available for Kalyna</td></tr>
                     <tr><td>EAX</td><td>Y</td><td/></tr>
                     <tr><td>OCB</td><td>Y</td><td>JCA does not support for Kuznyechik or Kalyna</td></tr>
+                    <tr><td>GCMSIV</td><td/><td>Only available for 128-bit/256-bit keys and 128-bit blocks</td></tr>
                 </table>
             </subsection>
             <subsection name="Padding">

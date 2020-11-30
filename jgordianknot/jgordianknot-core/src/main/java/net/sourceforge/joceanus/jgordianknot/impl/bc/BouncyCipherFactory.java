@@ -64,17 +64,18 @@ import org.bouncycastle.crypto.ext.digests.Blake2s;
 import org.bouncycastle.crypto.ext.engines.AnubisEngine;
 import org.bouncycastle.crypto.ext.engines.Blake2XEngine;
 import org.bouncycastle.crypto.ext.engines.KMACEngine;
-import org.bouncycastle.crypto.ext.engines.SkeinXofEngine;
-import org.bouncycastle.crypto.ext.engines.Zuc128Engine;
-import org.bouncycastle.crypto.ext.engines.Zuc256Engine;
-import org.bouncycastle.crypto.ext.modes.ChaChaPoly1305;
 import org.bouncycastle.crypto.ext.engines.MARSEngine;
 import org.bouncycastle.crypto.ext.engines.RabbitEngine;
 import org.bouncycastle.crypto.ext.engines.SimonEngine;
+import org.bouncycastle.crypto.ext.engines.SkeinXofEngine;
 import org.bouncycastle.crypto.ext.engines.Snow3GEngine;
 import org.bouncycastle.crypto.ext.engines.SosemanukEngine;
 import org.bouncycastle.crypto.ext.engines.SpeckEngine;
 import org.bouncycastle.crypto.ext.engines.XChaCha20Engine;
+import org.bouncycastle.crypto.ext.engines.Zuc128Engine;
+import org.bouncycastle.crypto.ext.engines.Zuc256Engine;
+import org.bouncycastle.crypto.ext.modes.ChaChaPoly1305;
+import org.bouncycastle.crypto.ext.modes.GCMSIVBlockCipher;
 import org.bouncycastle.crypto.generators.DESedeKeyGenerator;
 import org.bouncycastle.crypto.modes.AEADBlockCipher;
 import org.bouncycastle.crypto.modes.CBCBlockCipher;
@@ -101,8 +102,11 @@ import org.bouncycastle.crypto.paddings.X923Padding;
 import org.bouncycastle.crypto.patch.modes.KCCMXBlockCipher;
 import org.bouncycastle.crypto.patch.modes.KGCMXBlockCipher;
 
+import net.sourceforge.joceanus.jgordianknot.api.base.GordianKeySpec;
 import net.sourceforge.joceanus.jgordianknot.api.base.GordianLength;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianCipherMode;
+import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianPadding;
+import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianStreamCipherSpec;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianStreamKeySpec;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianStreamKeySpec.GordianBlakeXofKey;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianStreamKeySpec.GordianChaCha20Key;
@@ -111,13 +115,10 @@ import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianStreamKeySpec.Gor
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianStreamKeySpec.GordianSkeinXofKey;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianStreamKeySpec.GordianVMPCKey;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianSymCipher;
-import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianWrapper;
-import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianPadding;
-import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianStreamCipherSpec;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianSymCipherSpec;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianSymKeySpec;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianSymKeyType;
-import net.sourceforge.joceanus.jgordianknot.api.base.GordianKeySpec;
+import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianWrapper;
 import net.sourceforge.joceanus.jgordianknot.api.key.GordianKey;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianCoreFactory;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianDataException;
@@ -432,6 +433,8 @@ public class BouncyCipherFactory
                 return new KCCMXBlockCipher(getBCSymEngine(mySpec));
             case GCM:
                 return new GCMBlockCipher(getBCSymEngine(mySpec));
+            case GCMSIV:
+                return new GCMSIVBlockCipher(getBCSymEngine(mySpec));
             case KGCM:
                 return new KGCMXBlockCipher(getBCSymEngine(mySpec));
             case OCB:
