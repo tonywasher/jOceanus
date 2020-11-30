@@ -452,8 +452,13 @@ public class JcaCipherFactory
             return false;
         }
 
-        /* Additional Checks */
+        /* Disallow GCM-SIV */
         final GordianCipherMode myMode = pCipherSpec.getCipherMode();
+        if (GordianCipherMode.GCMSIV.equals(myMode)) {
+            return false;
+        }
+
+        /* Additional Checks */
         switch (pCipherSpec.getKeyType().getSymKeyType()) {
             case KALYNA:
                 /* Disallow OCB, CCM and GCM */

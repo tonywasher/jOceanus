@@ -27,14 +27,14 @@ import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianCipherMode;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianCipherSpec;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianPBESpec;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianPBESpec.GordianPBEDigestAndCountSpec;
+import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianPadding;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianStreamCipherSpec;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianStreamKeySpec;
-import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianWrapper;
-import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianPadding;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianStreamKeyType;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianSymCipherSpec;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianSymKeySpec;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianSymKeyType;
+import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianWrapper;
 import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigestSpec;
 import net.sourceforge.joceanus.jgordianknot.api.key.GordianKey;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianCoreFactory;
@@ -160,7 +160,7 @@ public abstract class GordianCoreCipherFactory
         /* Check that the mode is valid for the keyType */
         final GordianSymKeySpec myKeySpec = pCipherSpec.getKeyType();
         final GordianSymKeyType myKeyType = myKeySpec.getSymKeyType();
-        if (!myMode.validForSymKey(myKeyType)) {
+        if (!myMode.validForSymKey(myKeySpec)) {
             return false;
         }
 
