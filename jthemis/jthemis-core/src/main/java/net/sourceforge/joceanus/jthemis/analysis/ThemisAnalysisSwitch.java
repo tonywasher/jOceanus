@@ -88,12 +88,8 @@ public class ThemisAnalysisSwitch
             final ThemisAnalysisLine myLine = (ThemisAnalysisLine) pParser.popNextLine();
 
             /* Process comments and blanks */
-            boolean processed = pParser.processCommentsAndBlanks(myLine);
-
-            /* Process default/case statements */
-            if (!processed) {
-                processed = pParser.processCase(this, myLine);
-            }
+            final boolean processed = pParser.processCommentsAndBlanks(myLine)
+                                          ||  pParser.processCase(this, myLine);
 
             /* If we haven't processed yet */
             if (!processed) {

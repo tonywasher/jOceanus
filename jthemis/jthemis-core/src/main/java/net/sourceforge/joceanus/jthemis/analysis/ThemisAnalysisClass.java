@@ -76,7 +76,19 @@ public class ThemisAnalysisClass
         theShortName = pLine.stripNextToken();
         theProperties = pLine.getProperties();
         final ThemisAnalysisContainer myParent = pParser.getParent();
-        theDataMap = new ThemisAnalysisDataMap(myParent.getDataMap());
+        final ThemisAnalysisDataMap myParentDataMap = myParent.getDataMap();
+        theDataMap = new ThemisAnalysisDataMap(myParentDataMap);
+
+        /* If this is a local class */
+        if (!(myParent instanceof ThemisAnalysisObject)
+            &&  (!(myParent instanceof ThemisAnalysisFile))) {
+            final int myId = myParentDataMap.getLocalId(theShortName);
+            theFullName = myParent.determineFullChildName(myId + theShortName);
+
+            /* else handle standard name */
+        } else {
+            theFullName = myParent.determineFullChildName(theShortName);
+        }
 
         /* Handle generic variables */
         ThemisAnalysisLine myLine = pLine;
@@ -85,9 +97,6 @@ public class ThemisAnalysisClass
             theProperties = theProperties.setGenericVariables(new ThemisAnalysisGenericBase(pParser, myLine));
             myLine = (ThemisAnalysisLine) pParser.popNextLine();
         }
-
-        /* Determine the full name */
-        theFullName = myParent.determineFullChildName(theShortName);
 
         /* declare the class */
         theDataMap.declareObject(this);
@@ -108,31 +117,7 @@ public class ThemisAnalysisClass
 
         /* Parse the ancestors and lines */
         theAncestors = myParser.parseAncestors(myHeaders);
-        initialProcessingPass(myParser);
-    }
-
-    /**
-     * perform initial processing pass.
-     * @param pParser the parser
-     * @throws OceanusException on error
-     */
-    void initialProcessingPass(final ThemisAnalysisParser pParser) throws OceanusException {
-       /* Loop through the lines */
-        while (pParser.hasLines()) {
-            /* Access next line */
-            final ThemisAnalysisLine myLine = (ThemisAnalysisLine) pParser.popNextLine();
-
-            /* Process comments/blanks/embeddedClasses/languageConstructs */
-            final boolean processed = pParser.processCommentsAndBlanks(myLine)
-                    || pParser.processClass(myLine)
-                    || pParser.processLanguage(myLine);
-
-            /* If we haven't processed yet */
-            if (!processed) {
-                /* Just add the line to contents at present */
-                theContents.add(myLine);
-            }
-        }
+        myParser.processLines();
     }
 
     @Override

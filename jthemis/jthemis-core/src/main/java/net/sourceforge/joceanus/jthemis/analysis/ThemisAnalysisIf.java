@@ -51,6 +51,11 @@ public class ThemisAnalysisIf
     private final int theNumLines;
 
     /**
+     * The dataMap.
+     */
+    private final ThemisAnalysisDataMap theDataMap;
+
+    /**
      * The parent.
      */
     private ThemisAnalysisContainer theParent;
@@ -65,6 +70,7 @@ public class ThemisAnalysisIf
                      final ThemisAnalysisLine pLine) throws OceanusException {
         /* Access details from parser */
         theParent = pParser.getParent();
+        theDataMap = new ThemisAnalysisDataMap(theParent.getDataMap());
 
         /* Parse the condition */
         final Deque<ThemisAnalysisElement> myHeaders = ThemisAnalysisBuilder.parseHeaders(pParser, pLine);
@@ -79,7 +85,7 @@ public class ThemisAnalysisIf
 
         /* Create a parser */
         theContents = new ArrayDeque<>();
-        final ThemisAnalysisParser myParser = new ThemisAnalysisParser(myLines, theContents, theParent);
+        final ThemisAnalysisParser myParser = new ThemisAnalysisParser(myLines, theContents, this);
         myParser.processLines();
     }
 
@@ -102,6 +108,15 @@ public class ThemisAnalysisIf
     @Override
     public void setParent(final ThemisAnalysisContainer pParent) {
         theParent = pParent;
+        theDataMap.setParent(pParent.getDataMap());
+        if (theElse != null) {
+            theElse.setParent(pParent);
+        }
+    }
+
+    @Override
+    public ThemisAnalysisDataMap getDataMap() {
+        return theDataMap;
     }
 
     @Override

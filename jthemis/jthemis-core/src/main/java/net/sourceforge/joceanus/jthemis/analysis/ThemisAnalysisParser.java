@@ -624,6 +624,7 @@ public class ThemisAnalysisParser
 
             /* Process comments/blanks/languageConstructs */
             final boolean processed = processCommentsAndBlanks(myLine)
+                    || processClass(myLine)
                     || processLanguage(myLine);
 
             /* If we haven't processed yet */

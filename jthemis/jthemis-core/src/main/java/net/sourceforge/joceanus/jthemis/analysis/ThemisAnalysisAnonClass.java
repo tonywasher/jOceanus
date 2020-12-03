@@ -22,13 +22,14 @@ import java.util.Deque;
 import java.util.List;
 
 import net.sourceforge.joceanus.jtethys.OceanusException;
+import net.sourceforge.joceanus.jthemis.analysis.ThemisAnalysisContainer.ThemisAnalysisAdoptable;
 import net.sourceforge.joceanus.jthemis.analysis.ThemisAnalysisFile.ThemisAnalysisObject;
 
 /**
  * Anonymous Class.
  */
 public class ThemisAnalysisAnonClass
-        implements ThemisAnalysisObject {
+        implements ThemisAnalysisObject, ThemisAnalysisAdoptable {
     /**
      * The anon sequence.
      */
@@ -60,6 +61,11 @@ public class ThemisAnalysisAnonClass
     private final Deque<ThemisAnalysisElement> theContents;
 
     /**
+     * The Parent.
+     */
+    private ThemisAnalysisContainer theParent;
+
+    /**
      * The dataMap.
      */
     private final ThemisAnalysisDataMap theDataMap;
@@ -85,15 +91,15 @@ public class ThemisAnalysisAnonClass
         pLine.stripEndSequence(ThemisAnalysisKeyWord.NEW.getKeyWord());
 
         /* Access parent dataMap */
-        final ThemisAnalysisContainer myParent = pParser.getParent();
-        final ThemisAnalysisDataMap myParentDataMap = myParent.getDataMap();
+        theParent = pParser.getParent();
+        final ThemisAnalysisDataMap myParentDataMap = theParent.getDataMap();
 
         /* Determine the full name */
         final int myId = myParentDataMap.getLocalId("");
-        theFullName = myParent.determineFullChildName(Integer.toString(myId));
+        theFullName = theParent.determineFullChildName(Integer.toString(myId));
 
         /* Create local dataMap */
-        theDataMap = new ThemisAnalysisDataMap(myParent.getDataMap());
+        theDataMap = new ThemisAnalysisDataMap(myParentDataMap);
 
         /* Parse the body */
         final Deque<ThemisAnalysisElement> myLines = ThemisAnalysisBuilder.processBody(pParser);
@@ -106,30 +112,7 @@ public class ThemisAnalysisAnonClass
         final ThemisAnalysisLine myBaseLine = new ThemisAnalysisLine(theBaseName.toCharArray(), 0, theBaseName.length());
         final ThemisAnalysisReference myAncestor = ThemisAnalysisParser.parseDataType(theDataMap, myBaseLine);
         theAncestors = Collections.singletonList(myAncestor);
-        initialProcessingPass(myParser);
-    }
-
-    /**
-     * perform initial processing pass.
-     * @param pParser the parser
-     * @throws OceanusException on error
-     */
-    void initialProcessingPass(final ThemisAnalysisParser pParser) throws OceanusException {
-        /* Loop through the lines */
-        while (pParser.hasLines()) {
-            /* Access next line */
-            final ThemisAnalysisLine myLine = (ThemisAnalysisLine) pParser.popNextLine();
-
-            /* Process comments/blanks/languageConstructs */
-            final boolean processed = pParser.processCommentsAndBlanks(myLine)
-                    || pParser.processLanguage(myLine);
-
-            /* If we haven't processed yet */
-            if (!processed) {
-                /* Just add the line to contents at present */
-                theContents.add(myLine);
-            }
-        }
+        myParser.processLines();
     }
 
     @Override
@@ -140,11 +123,6 @@ public class ThemisAnalysisAnonClass
     @Override
     public String getFullName() {
         return theFullName;
-    }
-
-    @Override
-    public ThemisAnalysisDataMap getDataMap() {
-        return theDataMap;
     }
 
     @Override
@@ -160,6 +138,17 @@ public class ThemisAnalysisAnonClass
     @Override
     public ThemisAnalysisContainer getParent() {
         return this;
+    }
+
+    @Override
+    public void setParent(final ThemisAnalysisContainer pParent) {
+        theParent = pParent;
+        theDataMap.setParent(pParent.getDataMap());
+    }
+
+    @Override
+    public ThemisAnalysisDataMap getDataMap() {
+        return theDataMap;
     }
 
     @Override

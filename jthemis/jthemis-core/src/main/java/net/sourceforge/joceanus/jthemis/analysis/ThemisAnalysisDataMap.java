@@ -83,11 +83,6 @@ public class ThemisAnalysisDataMap {
     private final Map<String, Integer> theLocalIdMap;
 
     /**
-     * The parent.
-     */
-    private final ThemisAnalysisDataMap theParent;
-
-    /**
      * The file dataTypes.
      */
     private Map<String, ThemisAnalysisDataType> theFileTypes;
@@ -101,6 +96,11 @@ public class ThemisAnalysisDataMap {
      * The list of all references.
      */
     private List<ThemisAnalysisReference> theReferences;
+
+    /**
+     * The parent.
+     */
+    private ThemisAnalysisDataMap theParent;
 
     /**
      * Base constructor.
@@ -185,6 +185,14 @@ public class ThemisAnalysisDataMap {
 
         /* Allocate the references list */
         theReferences = new ArrayList<>();
+    }
+
+    /**
+     * Set parent.
+     * @param pParent the parent dataMap.
+     */
+    void setParent(final ThemisAnalysisDataMap pParent) {
+        theParent = pParent;
     }
 
     /**

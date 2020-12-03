@@ -179,6 +179,11 @@ public class ThemisSMStatistics {
         final String myDir = pathSM + "/java/Results/" + pProject + "/java";
         final Path myResultsPath = mySystem.getPath(myDir);
 
+        /* Return null if there are no results */
+        if (!Files.exists(myResultsPath)) {
+            return null;
+        }
+
         /* Loop through statement file in the directory */
         Path myLatest = null;
         try (DirectoryStream<Path> myStream = Files.newDirectoryStream(myResultsPath, "*")) {

@@ -18,19 +18,21 @@ package net.sourceforge.joceanus.jthemis.analysis;
 
 import java.util.ArrayDeque;
 import java.util.Deque;
+import java.util.Objects;
 
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jthemis.ThemisDataException;
+import net.sourceforge.joceanus.jthemis.analysis.ThemisAnalysisContainer.ThemisAnalysisAdoptable;
 
 /**
  * Embedded Block.
  */
 public class ThemisAnalysisEmbedded
-        implements ThemisAnalysisContainer {
+        implements ThemisAnalysisContainer, ThemisAnalysisAdoptable {
     /**
      * The Parent.
      */
-    private final ThemisAnalysisContainer theParent;
+    private ThemisAnalysisContainer theParent;
 
     /**
      * The Header.
@@ -92,6 +94,17 @@ public class ThemisAnalysisEmbedded
     @Override
     public ThemisAnalysisContainer getParent() {
         return theParent;
+    }
+
+    @Override
+    public void setParent(final ThemisAnalysisContainer pParent) {
+        theParent = pParent;
+        theEmbedded.forEach(e -> ((ThemisAnalysisAdoptable) e).setParent(pParent));
+    }
+
+    @Override
+    public ThemisAnalysisDataMap getDataMap() {
+        return ((ThemisAnalysisContainer) Objects.requireNonNull(theEmbedded.peekFirst())).getDataMap();
     }
 
     @Override
