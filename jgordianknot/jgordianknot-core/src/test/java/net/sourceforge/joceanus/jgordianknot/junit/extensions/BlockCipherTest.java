@@ -587,6 +587,8 @@ public class BlockCipherTest {
      * Test the GCMSIVCipher against the results.
      * @param pCipher the cipher to test.
      * @param pKey the key to test
+     * @param pNonce the nonce
+     * @param pAEAD the AEAD
      * @param pData the data to test
      * @param pExpected the expected results
      * @throws OceanusException on error

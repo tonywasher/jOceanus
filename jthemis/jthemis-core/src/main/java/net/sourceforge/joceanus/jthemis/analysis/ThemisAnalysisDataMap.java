@@ -129,11 +129,44 @@ public class ThemisAnalysisDataMap {
     }
 
     /**
+     * lookUp thedataType.
+     * @param pToken the token.
+     * @param pMethod is this a method call/def?
+     * @return the dataType (or null)
+     */
+    ThemisAnalysisDataType lookUpDataType(final String pToken,
+                                          final boolean pMethod) {
+        /* Look up standard data type */
+        ThemisAnalysisDataType myDataType = lookUpTheDataType(pToken);
+
+        /* If it is not found and this is not a method call */
+        if (myDataType == null && !pMethod) {
+            /* Look for a root dataType */
+            final int myIndex = pToken.indexOf(ThemisAnalysisChar.PERIOD);
+            if (myIndex != -1) {
+                /* Check for child of imported dataType */
+                final String myStart = pToken.substring(0, myIndex);
+                final String myEnd = pToken.substring(myIndex + 1);
+                final ThemisAnalysisDataType myParent = lookUpTheDataType(myStart);
+
+                /* If we have found it */
+                if (myParent != null) {
+                    myDataType = new ThemisAnalysisDataTypeChild(myParent, myEnd);
+                    theFileTypes.put(pToken, myDataType);
+                }
+            }
+        }
+
+        /* Return the dataType */
+        return myDataType;
+    }
+
+    /**
      * lookUp dataType.
      * @param pToken the token.
      * @return the dataType (or null)
      */
-    ThemisAnalysisDataType lookUpDataType(final String pToken) {
+    ThemisAnalysisDataType lookUpTheDataType(final String pToken) {
         /* Look up in local types */
         final ThemisAnalysisDataType myDataType = theLocalTypes.get(pToken);
         if (myDataType != null) {
@@ -143,7 +176,7 @@ public class ThemisAnalysisDataMap {
         /* Pass call on */
         return theParent == null
                ? BASETYPES.get(pToken)
-               : theParent.lookUpDataType(pToken);
+               : theParent.lookUpTheDataType(pToken);
     }
 
     /**
@@ -526,6 +559,38 @@ public class ThemisAnalysisDataMap {
         @Override
         public String toString() {
             return theName;
+        }
+    }
+
+    /**
+     * DataType Child.
+     */
+    public static class ThemisAnalysisDataTypeChild
+            implements ThemisAnalysisDataType {
+        /**
+         * The Name.
+         */
+        private final ThemisAnalysisDataType theParent;
+
+        /**
+         * The Child.
+         */
+        private final String theChild;
+
+        /**
+         * Constructor.
+         * @param pParent the parent
+         * @param pChild the child
+         */
+        ThemisAnalysisDataTypeChild(final ThemisAnalysisDataType pParent,
+                                    final String pChild) {
+            theParent = pParent;
+            theChild = pChild;
+        }
+
+        @Override
+        public String toString() {
+            return theParent.toString() + ThemisAnalysisChar.PERIOD + theChild;
         }
     }
 }

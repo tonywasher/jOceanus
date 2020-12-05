@@ -524,15 +524,18 @@ public class ThemisAnalysisParser
      * @return the dataType or null
      * @throws OceanusException on error
      */
-    ThemisAnalysisReference parsePotentialDataType(final ThemisAnalysisLine pLine) throws OceanusException {
+    private ThemisAnalysisReference parsePotentialDataType(final ThemisAnalysisLine pLine) throws OceanusException {
         /* Not a dataType if we start with a keyWord */
         final String myToken = pLine.peekNextToken();
         if (KEYWORDS.get(myToken) != null) {
             return null;
         }
 
+        /* Determine whether this is a method call or declaration */
+        final boolean isMethod = pLine.startsWithSequence(myToken + ThemisAnalysisChar.PARENTHESIS_OPEN);
+
         /* Look for a valid, existing dataType */
-        ThemisAnalysisDataType myType = theDataMap.lookUpDataType(myToken);
+        ThemisAnalysisDataType myType = theDataMap.lookUpDataType(myToken, isMethod);
         if (myType == null) {
             /* If the line has generic definitions */
             final ThemisAnalysisProperties myProps = pLine.getProperties();
@@ -540,7 +543,7 @@ public class ThemisAnalysisParser
                 /* Create a temporary parser and resolve against the generics */
                 final ThemisAnalysisParser myTempParser = new ThemisAnalysisParser(this);
                 myProps.resolveGeneric(myTempParser);
-                myType = myTempParser.getDataMap().lookUpDataType(myToken);
+                myType = myTempParser.getDataMap().lookUpTheDataType(myToken);
             }
 
             /* Return null if we haven't resolved it */
@@ -576,7 +579,7 @@ public class ThemisAnalysisParser
         }
 
         /* Look for a valid dataType */
-        ThemisAnalysisDataType myType = pDataMap.lookUpDataType(myToken);
+        ThemisAnalysisDataType myType = pDataMap.lookUpDataType(myToken, false);
         if (myType == null) {
             /* Declare the unrecognised dataType */
             myType = pDataMap.declareUnknown(myToken);
