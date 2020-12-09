@@ -197,7 +197,7 @@ public class ThemisAnalysisFor
         final ThemisAnalysisScanner myScanner = new ThemisAnalysisScanner(pStatement);
         while (pStatement.hasLines()) {
             final Deque<ThemisAnalysisElement> myResource = myScanner.scanForSeparator(ThemisAnalysisChar.COMMA);
-            theStatements.add(new ThemisAnalysisStatement(new ThemisAnalysisStack(myResource)));
+            theStatements.add(new ThemisAnalysisStatement(myResource));
         }
     }
 

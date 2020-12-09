@@ -86,6 +86,14 @@ public class ThemisAnalysisEmbedded
         }
     }
 
+    /**
+     * Obtain the header.
+     * @return the header
+     */
+    ThemisAnalysisLine getHeader() {
+        return theHeader;
+    }
+
     @Override
     public Deque<ThemisAnalysisElement> getContents() {
         return theEmbedded;

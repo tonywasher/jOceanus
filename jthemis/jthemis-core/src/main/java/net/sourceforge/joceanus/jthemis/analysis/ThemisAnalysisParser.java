@@ -462,6 +462,29 @@ public class ThemisAnalysisParser
     }
 
     /**
+     * Process embedded block construct.
+     * @param pEmbedded the embedded block
+     * @return the field/statement
+     * @throws OceanusException on error
+     */
+    ThemisAnalysisElement processEmbedded(final ThemisAnalysisEmbedded pEmbedded) throws OceanusException {
+        /* Look for a reference */
+        final ThemisAnalysisLine myLine = pEmbedded.getHeader();
+        final ThemisAnalysisReference myReference = parsePotentialDataType(myLine);
+
+        /* If we have a reference */
+        if (myReference != null) {
+            /* Create as field */
+            final String myName = myLine.stripNextToken();
+            return new ThemisAnalysisField(this, myName, myReference, pEmbedded);
+        }
+
+        /* Just convert to statement */
+        final ThemisAnalysisKeyWord myKeyWord = determineStatementKeyWord(myLine);
+        return new ThemisAnalysisStatement(myKeyWord, pEmbedded);
+    }
+
+    /**
      * Process field and method constructs.
      * @param pLine the line
      * @return the field/method or null
@@ -493,6 +516,18 @@ public class ThemisAnalysisParser
      * @throws OceanusException on error
      */
     ThemisAnalysisElement processStatement(final ThemisAnalysisLine pLine) throws OceanusException {
+        /* Determine keyWord (if any)  */
+        final ThemisAnalysisKeyWord myKeyWord = determineStatementKeyWord(pLine);
+        return new ThemisAnalysisStatement(this, myKeyWord, pLine);
+    }
+
+    /**
+     * Process a statement.
+     * @param pLine the line
+     * @return the statement
+     * @throws OceanusException on error
+     */
+    private ThemisAnalysisKeyWord determineStatementKeyWord(final ThemisAnalysisLine pLine) throws OceanusException {
         /* Look for a control keyWord */
         final String myToken = pLine.peekNextToken();
         final Object myType = KEYWORDS.get(myToken);
@@ -508,14 +543,14 @@ public class ThemisAnalysisParser
                 case CONTINUE:
                 case YIELD:
                     pLine.stripNextToken();
-                    return new ThemisAnalysisStatement(this, myKeyWord, pLine);
+                    return myKeyWord;
                 default:
                     break;
             }
         }
 
-        /* Standard statement */
-        return new ThemisAnalysisStatement(this, pLine);
+        /* No keyWord */
+        return null;
     }
 
     /**

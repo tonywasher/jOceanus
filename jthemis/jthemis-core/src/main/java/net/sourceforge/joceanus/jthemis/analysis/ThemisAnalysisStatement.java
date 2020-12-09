@@ -75,10 +75,39 @@ public class ThemisAnalysisStatement
 
     /**
      * Constructor.
+     * @param pEmbedded the embedded block
+     * @throws OceanusException on error
+     */
+    ThemisAnalysisStatement(final ThemisAnalysisEmbedded pEmbedded) throws OceanusException {
+        this(null, pEmbedded);
+    }
+
+    /**
+     * Constructor.
+     * @param pControl the control keyword
+     * @param pEmbedded the embedded block
+     * @throws OceanusException on error
+     */
+    ThemisAnalysisStatement(final ThemisAnalysisKeyWord pControl,
+                            final ThemisAnalysisEmbedded pEmbedded) throws OceanusException {
+        this(pControl, new ThemisAnalysisStack(pEmbedded));
+        pEmbedded.postProcessLines();
+    }
+
+    /**
+     * Constructor.
      * @param pParams the parameters
      */
     ThemisAnalysisStatement(final Deque<ThemisAnalysisElement> pParams) {
         this(null, pParams);
+    }
+
+    /**
+     * Constructor.
+     * @param pStack the stack
+     */
+    ThemisAnalysisStatement(final ThemisAnalysisStack pStack) {
+        this(null, pStack);
     }
 
     /**
@@ -94,10 +123,12 @@ public class ThemisAnalysisStatement
 
     /**
      * Constructor.
+     * @param pControl the control keyword
      * @param pStack the stack
      */
-    ThemisAnalysisStatement(final ThemisAnalysisStack pStack) {
-        theControl = null;
+    ThemisAnalysisStatement(final ThemisAnalysisKeyWord pControl,
+                            final ThemisAnalysisStack pStack) {
+        theControl = pControl;
         theParameters = pStack;
     }
 

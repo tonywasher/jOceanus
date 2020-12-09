@@ -16,6 +16,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jthemis.analysis;
 
+import java.util.ArrayDeque;
 import java.util.Deque;
 
 import net.sourceforge.joceanus.jtethys.OceanusException;
@@ -38,6 +39,15 @@ public class ThemisAnalysisStack
      */
     ThemisAnalysisStack(final Deque<ThemisAnalysisElement> pStack) {
         theStack = pStack;
+    }
+
+    /**
+     * Constructor.
+     * @param pElement the element
+     */
+    ThemisAnalysisStack(final ThemisAnalysisElement pElement) {
+        theStack = new ArrayDeque<>();
+        theStack.add(pElement);
     }
 
     @Override
