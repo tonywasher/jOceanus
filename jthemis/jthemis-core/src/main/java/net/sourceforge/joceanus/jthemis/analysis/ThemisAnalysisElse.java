@@ -22,6 +22,7 @@ import java.util.Deque;
 import java.util.Iterator;
 
 import net.sourceforge.joceanus.jtethys.OceanusException;
+import net.sourceforge.joceanus.jthemis.analysis.ThemisAnalysisContainer.ThemisAnalysisAdoptable;
 import net.sourceforge.joceanus.jthemis.analysis.ThemisAnalysisIf.ThemisIteratorChain;
 import net.sourceforge.joceanus.jthemis.analysis.ThemisAnalysisStatement.ThemisAnalysisStatementHolder;
 
@@ -29,11 +30,11 @@ import net.sourceforge.joceanus.jthemis.analysis.ThemisAnalysisStatement.ThemisA
  * Else construct.
  */
 public class ThemisAnalysisElse
-        implements ThemisAnalysisContainer, ThemisAnalysisStatementHolder {
+        implements ThemisAnalysisContainer, ThemisAnalysisAdoptable, ThemisAnalysisStatementHolder {
     /**
      * The parent.
      */
-    private final ThemisAnalysisContainer theParent;
+    private ThemisAnalysisContainer theParent;
 
     /**
      * The condition.
@@ -56,6 +57,11 @@ public class ThemisAnalysisElse
     private final int theNumLines;
 
     /**
+     * The dataMap.
+     */
+    private final ThemisAnalysisDataMap theDataMap;
+
+    /**
      * Constructor.
      * @param pParser the parser
      * @param pOwner the owning if
@@ -67,6 +73,7 @@ public class ThemisAnalysisElse
                        final ThemisAnalysisLine pLine) throws OceanusException {
         /* Record the parent */
         theParent = pOwner;
+        theDataMap = new ThemisAnalysisDataMap(theParent.getDataMap());
 
         /* Strip any if token */
         pLine.stripStartSequence(ThemisAnalysisKeyWord.IF.getKeyWord());
@@ -84,7 +91,7 @@ public class ThemisAnalysisElse
 
         /* Create a parser */
         theContents = new ArrayDeque<>();
-        final ThemisAnalysisParser myParser = new ThemisAnalysisParser(myLines, theContents, theParent);
+        final ThemisAnalysisParser myParser = new ThemisAnalysisParser(myLines, theContents, this);
         myParser.processLines();
     }
 
@@ -111,6 +118,20 @@ public class ThemisAnalysisElse
     @Override
     public ThemisAnalysisContainer getParent() {
         return theParent;
+    }
+
+    @Override
+    public void setParent(final ThemisAnalysisContainer pParent) {
+        theParent = pParent;
+        theDataMap.setParent(pParent.getDataMap());
+        if (theElse != null) {
+            theElse.setParent(pParent);
+        }
+    }
+
+    @Override
+    public ThemisAnalysisDataMap getDataMap() {
+        return theDataMap;
     }
 
     @Override

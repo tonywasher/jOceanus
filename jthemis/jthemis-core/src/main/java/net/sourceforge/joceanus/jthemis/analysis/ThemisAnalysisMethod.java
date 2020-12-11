@@ -20,6 +20,7 @@ import java.util.ArrayDeque;
 import java.util.Deque;
 
 import net.sourceforge.joceanus.jtethys.OceanusException;
+import net.sourceforge.joceanus.jthemis.ThemisDataException;
 
 /**
  * Method Representation.
@@ -39,7 +40,7 @@ public class ThemisAnalysisMethod
     /**
      * The parent.
      */
-    private final ThemisAnalysisContainer theParent;
+    private ThemisAnalysisContainer theParent;
 
     /**
      * The properties.
@@ -54,7 +55,7 @@ public class ThemisAnalysisMethod
     /**
      * The dataMap.
      */
-    private final ThemisAnalysisDataMap theDataMap;
+    private ThemisAnalysisDataMap theDataMap;
 
     /**
      * The parameters.
@@ -101,15 +102,11 @@ public class ThemisAnalysisMethod
         final boolean isAbstract = markedAbstract || (isInterface && !markedDefault && !markedStatic);
 
         /* Parse the headers */
+        theContents = new ArrayDeque<>();
         final Deque<ThemisAnalysisElement> myHeaders = isAbstract
                         ? ThemisAnalysisBuilder.parseTrailers(pParser, pLine)
-                        : ThemisAnalysisBuilder.parseHeaders(pParser, pLine);
+                        : parseHeaders(pParser, pLine);
         theNumLines = myHeaders.size() + (isAbstract ? 0 : 1);
-
-        /* Process the body if we have one */
-        theContents = isAbstract
-                       ? new ArrayDeque<>()
-                       : ThemisAnalysisBuilder.processMethodBody(pParser, this);
 
         /* Create a parser */
         final ThemisAnalysisParser myParser = new ThemisAnalysisParser(myHeaders, theContents, this);
@@ -123,6 +120,86 @@ public class ThemisAnalysisMethod
 
         /* Post process the lines */
         postProcessLines();
+    }
+
+    /**
+     * Constructor.
+     * @param pParser the parser
+     * @param pName the method name
+     * @param pReference the reference
+     * @param pBody the method body
+     * @throws OceanusException on error
+     */
+    ThemisAnalysisMethod(final ThemisAnalysisParser pParser,
+                         final String pName,
+                         final ThemisAnalysisReference pReference,
+                         final ThemisAnalysisMethodBody pBody) throws OceanusException {
+        /* Store parameters */
+        final ThemisAnalysisLine myLine = pBody.getHeader();
+        isInitializer = pName.length() == 0;
+        theName = isInitializer ? pReference.toString() : pName;
+        theReference = pReference;
+        theProperties = myLine.getProperties();
+
+        /* Access details from body */
+        theParent = pBody.getParent();
+        theDataMap = pBody.getDataMap();
+
+        /* Record the headers */
+        final Deque<ThemisAnalysisElement> myHeaders = new ArrayDeque<>();
+        myHeaders.add(myLine);
+        theNumLines = 2;
+
+        /* Access the contents */
+        theContents = pBody.getContents();
+
+        /* Create a parser */
+        final ThemisAnalysisParser myParser = new ThemisAnalysisParser(myHeaders, theContents, this);
+
+        /* Resolve the generics */
+        theProperties.resolveGeneric(myParser);
+        theReference.resolveGeneric(myParser);
+
+        /* resolve the parameters */
+        theParameters = new ThemisAnalysisParameters(myParser, myHeaders);
+
+        /* Post process the lines */
+        postProcessLines();
+    }
+
+    /**
+     * Parse Headers.
+     * @param pParser the parser
+     * @param pLine the line
+     * @return the headers
+     * @throws OceanusException on error
+     */
+    private Deque<ThemisAnalysisElement> parseHeaders(final ThemisAnalysisParser pParser,
+                                                      final ThemisAnalysisLine pLine) throws OceanusException {
+        /* Initialise details */
+        final Deque<ThemisAnalysisElement> myHeaders = new ArrayDeque<>();
+        ThemisAnalysisElement myElement = pLine;
+
+        /* Add lines to header */
+        while (myElement instanceof ThemisAnalysisLine) {
+            myHeaders.add(myElement);
+            myElement = pParser.popNextLine();
+        }
+
+        /* Must end with a method body */
+        if (!(myElement instanceof ThemisAnalysisMethodBody)) {
+            throw new ThemisDataException("Unexpected dataType");
+        }
+
+        /* Copy details from method body */
+        final ThemisAnalysisMethodBody myBody = (ThemisAnalysisMethodBody) myElement;
+        myHeaders.add(myBody.getHeader());
+        theContents.addAll(myBody.getContents());
+        theParent = myBody.getParent();
+        theDataMap = myBody.getDataMap();
+
+        /* return the headers */
+        return myHeaders;
     }
 
     /**

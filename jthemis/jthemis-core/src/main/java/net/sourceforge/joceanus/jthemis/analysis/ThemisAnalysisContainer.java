@@ -98,8 +98,22 @@ public interface ThemisAnalysisContainer
             /* Access next line */
             final ThemisAnalysisElement myElement = myParser.popNextLine();
 
-            /* If the element is a container */
-            if (myElement instanceof ThemisAnalysisContainer) {
+            /* If the element is an embedded block */
+            if (myElement instanceof ThemisAnalysisEmbedded) {
+                /* Access and process the block */
+                final ThemisAnalysisEmbedded myEmbedded = (ThemisAnalysisEmbedded) myElement;
+                final ThemisAnalysisElement myResult = myParser.processEmbedded(myEmbedded);
+                myContents.add(myResult);
+
+                /* If the element is a methodBody */
+            } else if (myElement instanceof ThemisAnalysisMethodBody) {
+                /* Access and process the block */
+                final ThemisAnalysisMethodBody myMethod = (ThemisAnalysisMethodBody) myElement;
+                final ThemisAnalysisElement myResult = myParser.processMethodBody(myMethod);
+                myContents.add(myResult);
+
+                /* If the element is a container */
+            } else if (myElement instanceof ThemisAnalysisContainer) {
                 /* Access and process the container */
                 final ThemisAnalysisContainer myContainer = (ThemisAnalysisContainer) myElement;
                 myContainer.postProcessLines();

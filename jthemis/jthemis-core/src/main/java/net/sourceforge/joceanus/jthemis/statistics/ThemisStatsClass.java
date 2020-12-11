@@ -81,7 +81,7 @@ public class ThemisStatsClass
      * @return the classType
      */
     public ThemisSMClassType getClassType() {
-        return theSMClass.getClassType();
+        return theSMClass != null ? theSMClass.getClassType() : ThemisSMClassType.CLASS;
     }
 
     @Override

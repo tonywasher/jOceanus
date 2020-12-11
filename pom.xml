@@ -57,9 +57,13 @@
     <maven.build.timestamp.format>yyyy</maven.build.timestamp.format>
     <project.build.sourceEncoding>Cp1252</project.build.sourceEncoding>
     <scmMaster>master</scmMaster>
-    <scmBranch>1.6.1</scmBranch>
-    <scmTag>SNAPSHOT</scmTag>
-    <scmRef>${scmBranch}-${scmTag}</scmRef>
+    <currentBranch>1.6.1</currentBranch>
+    <currentTag>SNAPSHOT</currentTag>
+    <baseBranch>${currentBranch}</baseBranch>
+    <baseTag>b4</baseTag>
+    <currentRef>${scmMaster}</currentRef>
+    <!--<currentRef>${currentBranch}-${currentTag}</currentRef>-->
+    <baseRef>${baseBranch}-${baseTag}</baseRef>
     <packageKey>net.sourceforge.joceanus</packageKey>
     <packageMain/>
     <packageName/>
@@ -82,7 +86,7 @@
     <JavaVersion>11</JavaVersion>
     <JavaFXVersion>15.0.1</JavaFXVersion>
     <JavaLanguageVersion>11</JavaLanguageVersion>
-    <CheckStyleVersion>8.37</CheckStyleVersion>
+    <CheckStyleVersion>8.38</CheckStyleVersion>
     <PMDVersion>6.29.0</PMDVersion>
     <CleanPluginVersion>3.1.0</CleanPluginVersion>
     <ResourcesPluginVersion>3.2.0</ResourcesPluginVersion>
@@ -101,6 +105,7 @@
     <JxrPluginVersion>3.0.0</JxrPluginVersion>
     <JavaDocPluginVersion>3.2.0</JavaDocPluginVersion>
     <SourcePluginVersion>3.2.1</SourcePluginVersion>
+    <ChangelogPluginVersion>2.3</ChangelogPluginVersion>
     <SonarQubePluginVersion>3.7.0.1746</SonarQubePluginVersion>
     <CheckStylePluginVersion>3.1.1</CheckStylePluginVersion>
     <PMDPluginVersion>3.14.0</PMDPluginVersion>
@@ -493,6 +498,18 @@
             </reports>
           </reportSet>
         </reportSets>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-changelog-plugin</artifactId>
+        <version>${ChangelogPluginVersion}</version>
+        <configuration>
+          <type>tag</type>
+          <tags>
+            <tag implementation="java.lang.String">${baseRef}</tag>
+            <tag implementation="java.lang.String">${currentRef}</tag>
+          </tags>
+        </configuration>
       </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>

@@ -20,12 +20,13 @@ import java.util.ArrayDeque;
 import java.util.Deque;
 
 import net.sourceforge.joceanus.jtethys.OceanusException;
+import net.sourceforge.joceanus.jthemis.analysis.ThemisAnalysisContainer.ThemisAnalysisAdoptable;
 
 /**
  * Lambda Block.
  */
 public class ThemisAnalysisLambda
-            implements ThemisAnalysisContainer {
+            implements ThemisAnalysisContainer, ThemisAnalysisAdoptable {
     /**
      * The lambda sequence.
      */
@@ -34,12 +35,17 @@ public class ThemisAnalysisLambda
     /**
      * The Parent.
      */
-    private final ThemisAnalysisContainer theParent;
+    private ThemisAnalysisContainer theParent;
 
     /**
      * The contents.
      */
     private final Deque<ThemisAnalysisElement> theContents;
+
+    /**
+     * The dataMap.
+     */
+    private final ThemisAnalysisDataMap theDataMap;
 
     /**
      * Constructor.
@@ -51,6 +57,7 @@ public class ThemisAnalysisLambda
                          final ThemisAnalysisLine pLine) throws OceanusException {
         /* Store parent */
         theParent = pParser.getParent();
+        theDataMap = new ThemisAnalysisDataMap(theParent.getDataMap());
 
         /* Parse the body */
         final Deque<ThemisAnalysisElement> myLines = ThemisAnalysisBuilder.processBody(pParser);
@@ -60,30 +67,7 @@ public class ThemisAnalysisLambda
         final ThemisAnalysisParser myParser = new ThemisAnalysisParser(myLines, theContents, this);
 
         /* Parse the lines */
-        initialProcessingPass(myParser);
-    }
-
-    /**
-     * perform initial processing pass.
-     * @param pParser the parser
-     * @throws OceanusException on error
-     */
-    void initialProcessingPass(final ThemisAnalysisParser pParser) throws OceanusException {
-        /* Loop through the lines */
-        while (pParser.hasLines()) {
-            /* Access next line */
-            final ThemisAnalysisLine myLine = (ThemisAnalysisLine) pParser.popNextLine();
-
-            /* Process comments/blanks/languageConstructs */
-            final boolean processed = pParser.processCommentsAndBlanks(myLine)
-                    || pParser.processLanguage(myLine);
-
-            /* If we haven't processed yet */
-            if (!processed) {
-                /* Just add the line to contents at present */
-                theContents.add(myLine);
-            }
-        }
+        myParser.processLines();
     }
 
     @Override
@@ -94,6 +78,17 @@ public class ThemisAnalysisLambda
     @Override
     public ThemisAnalysisContainer getParent() {
         return theParent;
+    }
+
+    @Override
+    public void setParent(final ThemisAnalysisContainer pParent) {
+        theParent = pParent;
+        theDataMap.setParent(pParent.getDataMap());
+    }
+
+    @Override
+    public ThemisAnalysisDataMap getDataMap() {
+        return theDataMap;
     }
 
     @Override

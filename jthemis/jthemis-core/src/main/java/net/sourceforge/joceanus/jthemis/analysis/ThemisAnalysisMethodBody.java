@@ -23,19 +23,24 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jthemis.analysis.ThemisAnalysisContainer.ThemisAnalysisAdoptable;
 
 /**
- * Finally construct.
+ * Temporary Method Body.
  */
-public class ThemisAnalysisFinally
+public class ThemisAnalysisMethodBody
         implements ThemisAnalysisContainer, ThemisAnalysisAdoptable {
     /**
-     * The parent.
+     * The ArrayInit sequence.
+     */
+    static final String ARRAYINIT = "= " + ThemisAnalysisChar.BRACE_OPEN;
+
+    /**
+     * The Parent.
      */
     private ThemisAnalysisContainer theParent;
 
     /**
-     * The headers.
+     * The Header.
      */
-    private final Deque<ThemisAnalysisElement> theHeaders;
+    private final ThemisAnalysisLine theHeader;
 
     /**
      * The contents.
@@ -43,38 +48,36 @@ public class ThemisAnalysisFinally
     private final Deque<ThemisAnalysisElement> theContents;
 
     /**
-     * The number of lines.
-     */
-    private final int theNumLines;
-
-    /**
-     * The dataMap.
-     */
-    private final ThemisAnalysisDataMap theDataMap;
-
-    /**
      * Constructor.
      * @param pParser the parser
-     * @param pOwner the owning try
-     * @param pLine the initial finally line
+     * @param pLine the initial class line
      * @throws OceanusException on error
      */
-    ThemisAnalysisFinally(final ThemisAnalysisParser pParser,
-                          final ThemisAnalysisContainer pOwner,
-                          final ThemisAnalysisLine pLine) throws OceanusException {
-        /* Record the parent */
-        theParent = pOwner;
-        theDataMap = new ThemisAnalysisDataMap(theParent.getDataMap());
+    ThemisAnalysisMethodBody(final ThemisAnalysisParser pParser,
+                             final ThemisAnalysisLine pLine) throws OceanusException {
+        /* Store parameters */
+        theHeader = pLine;
 
-        /* Create the arrays */
-        theHeaders = ThemisAnalysisBuilder.parseHeaders(pParser, pLine);
+        /* Store parent */
+        theParent = pParser.getParent();
+
+        /* Parse the body */
         final Deque<ThemisAnalysisElement> myLines = ThemisAnalysisBuilder.processBody(pParser);
-        theNumLines = theHeaders.size();
 
         /* Create a parser */
         theContents = new ArrayDeque<>();
         final ThemisAnalysisParser myParser = new ThemisAnalysisParser(myLines, theContents, this);
+
+        /* Parse the lines */
         myParser.processLines();
+    }
+
+    /**
+     * Obtain the header.
+     * @return the header
+     */
+    ThemisAnalysisLine getHeader() {
+        return theHeader;
     }
 
     @Override
@@ -90,16 +93,25 @@ public class ThemisAnalysisFinally
     @Override
     public void setParent(final ThemisAnalysisContainer pParent) {
         theParent = pParent;
-        theDataMap.setParent(pParent.getDataMap());
     }
 
     @Override
-    public ThemisAnalysisDataMap getDataMap() {
-        return theDataMap;
+    public void postProcessLines() {
+        /* Disable the processing of the lines */
     }
 
     @Override
     public int getNumLines() {
-        return theNumLines;
+        return theContents.size();
+    }
+
+    /**
+     * Check for embedded methodBody.
+     * @param pLine the line to check
+     * @return true/false
+     */
+    static boolean checkMethodBody(final ThemisAnalysisLine pLine) {
+        /* Check for braceOpen */
+        return pLine.endsWithChar(ThemisAnalysisChar.BRACE_OPEN);
     }
 }

@@ -22,16 +22,17 @@ import java.util.Deque;
 import java.util.Iterator;
 
 import net.sourceforge.joceanus.jtethys.OceanusException;
+import net.sourceforge.joceanus.jthemis.analysis.ThemisAnalysisContainer.ThemisAnalysisAdoptable;
 
 /**
  * Catch construct.
  */
 public class ThemisAnalysisCatch
-        implements ThemisAnalysisContainer {
+        implements ThemisAnalysisContainer, ThemisAnalysisAdoptable {
     /**
      * The parent.
      */
-    private final ThemisAnalysisContainer theParent;
+    private ThemisAnalysisContainer theParent;
 
     /**
      * The headers.
@@ -54,6 +55,11 @@ public class ThemisAnalysisCatch
     private final int theNumLines;
 
     /**
+     * The dataMap.
+     */
+    private final ThemisAnalysisDataMap theDataMap;
+
+    /**
      * Constructor.
      * @param pParser the parser
      * @param pOwner the owning try
@@ -65,6 +71,7 @@ public class ThemisAnalysisCatch
                         final ThemisAnalysisLine pLine) throws OceanusException {
         /* Record the parent */
         theParent = pOwner;
+        theDataMap = new ThemisAnalysisDataMap(theParent.getDataMap());
 
         /* Create the arrays */
         theHeaders = ThemisAnalysisBuilder.parseHeaders(pParser, pLine);
@@ -76,7 +83,7 @@ public class ThemisAnalysisCatch
 
         /* Create a parser */
         theContents = new ArrayDeque<>();
-        final ThemisAnalysisParser myParser = new ThemisAnalysisParser(myLines, theContents, theParent);
+        final ThemisAnalysisParser myParser = new ThemisAnalysisParser(myLines, theContents, this);
         myParser.processLines();
     }
 
@@ -88,6 +95,20 @@ public class ThemisAnalysisCatch
     @Override
     public ThemisAnalysisContainer getParent() {
         return theParent;
+    }
+
+    @Override
+    public void setParent(final ThemisAnalysisContainer pParent) {
+        theParent = pParent;
+        theDataMap.setParent(pParent.getDataMap());
+        if (theCatch != null) {
+            theCatch.setParent(pParent);
+        }
+    }
+
+    @Override
+    public ThemisAnalysisDataMap getDataMap() {
+        return theDataMap;
     }
 
     @Override

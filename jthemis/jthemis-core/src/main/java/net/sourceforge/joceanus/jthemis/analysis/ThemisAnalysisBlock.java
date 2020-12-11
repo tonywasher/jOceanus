@@ -53,6 +53,11 @@ public class ThemisAnalysisBlock
     private ThemisAnalysisContainer theParent;
 
     /**
+     * The dataMap.
+     */
+    private final ThemisAnalysisDataMap theDataMap;
+
+    /**
      * Constructor.
      * @param pParser the parser
      * @param pLine the initial class line
@@ -67,6 +72,7 @@ public class ThemisAnalysisBlock
         /* Store parameters */
         theProperties = pLine.getProperties();
         theParent = pParser.getParent();
+        theDataMap = new ThemisAnalysisDataMap(theParent.getDataMap());
 
         /* Create the arrays */
         final Deque<ThemisAnalysisElement> myLines = ThemisAnalysisBuilder.processBody(pParser);
@@ -90,6 +96,12 @@ public class ThemisAnalysisBlock
     @Override
     public void setParent(final ThemisAnalysisContainer pParent) {
         theParent = pParent;
+        theDataMap.setParent(pParent.getDataMap());
+    }
+
+    @Override
+    public ThemisAnalysisDataMap getDataMap() {
+        return theDataMap;
     }
 
     @Override

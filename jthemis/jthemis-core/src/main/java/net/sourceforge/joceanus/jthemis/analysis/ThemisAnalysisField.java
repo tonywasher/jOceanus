@@ -91,6 +91,34 @@ public class ThemisAnalysisField
 
     /**
      * Constructor.
+     * @param pParser the parser
+     * @param pName the method name
+     * @param pDataType the dataType
+     * @param pEmbedded the embedded block
+     * @throws OceanusException on error
+     */
+    ThemisAnalysisField(final ThemisAnalysisParser pParser,
+                        final String pName,
+                        final ThemisAnalysisReference pDataType,
+                        final ThemisAnalysisEmbedded pEmbedded) throws OceanusException {
+        /* Store parameters */
+        theName = pName;
+        theDataType = pDataType;
+
+        /* Access header line */
+        final ThemisAnalysisLine myLine = pEmbedded.getHeader();
+        theProperties = myLine.getProperties();
+
+        /* Strip the equals sign */
+        myLine.stripStartChar(ThemisAnalysisChar.EQUAL);
+
+        /* Declare as statement */
+        theInitial = new ThemisAnalysisStatement(pEmbedded);
+        theNumLines = theInitial.getNumLines();
+    }
+
+    /**
+     * Constructor.
      * @param pDataMap the dataMap
      * @param pStack the field stack
      * @throws OceanusException on error
@@ -119,7 +147,7 @@ public class ThemisAnalysisField
         theProperties = myProps;
 
         /* Declare as statement */
-        theInitial = new ThemisAnalysisStatement(pStack);
+        theInitial = new ThemisAnalysisStatement(null, pStack);
         theNumLines = theInitial.getNumLines();
     }
 
@@ -140,7 +168,7 @@ public class ThemisAnalysisField
         theProperties = ThemisAnalysisProperties.NULL;
 
         /* Declare as statement */
-        theInitial = new ThemisAnalysisStatement(pStack);
+        theInitial = new ThemisAnalysisStatement(null, pStack);
         theNumLines = theInitial.getNumLines();
     }
 

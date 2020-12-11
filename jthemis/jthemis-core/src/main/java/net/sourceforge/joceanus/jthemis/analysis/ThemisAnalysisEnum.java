@@ -83,7 +83,19 @@ public class ThemisAnalysisEnum
         theProperties = pLine.getProperties();
         theValues = new ArrayList<>();
         final ThemisAnalysisContainer myParent = pParser.getParent();
-        theDataMap = new ThemisAnalysisDataMap(myParent.getDataMap());
+        final ThemisAnalysisDataMap myParentDataMap = myParent.getDataMap();
+        theDataMap = new ThemisAnalysisDataMap(myParentDataMap);
+
+        /* If this is a local enum */
+        if (!(myParent instanceof ThemisAnalysisObject)
+                &&  (!(myParent instanceof ThemisAnalysisFile))) {
+            final int myId = myParentDataMap.getLocalId(theShortName);
+            theFullName = myParent.determineFullChildName(myId + theShortName);
+
+            /* else handle standard name */
+        } else {
+            theFullName = myParent.determineFullChildName(theShortName);
+        }
 
         /* Handle generic variables */
         ThemisAnalysisLine myLine = pLine;
@@ -92,9 +104,6 @@ public class ThemisAnalysisEnum
             theProperties = theProperties.setGenericVariables(new ThemisAnalysisGenericBase(pParser, myLine));
             myLine = (ThemisAnalysisLine) pParser.popNextLine();
         }
-
-        /* Determine the full name */
-        theFullName = myParent.determineFullChildName(theShortName);
 
         /* declare the enum */
         theDataMap.declareObject(this);
@@ -141,14 +150,11 @@ public class ThemisAnalysisEnum
                 processed = true;
             }
 
-            /* Process embedded classes */
+            /* Process embedded classes/languageConstructs */
             if (!processed) {
-                processed = pParser.processClass(myLine);
-            }
-
-            /* Process language constructs */
-            if (!processed) {
-                processed = pParser.processLanguage(myLine);
+                processed = pParser.processClass(myLine)
+                     || pParser.processLanguage(myLine)
+                     || pParser.processBlocks(myLine);
             }
 
             /* If we haven't processed yet */

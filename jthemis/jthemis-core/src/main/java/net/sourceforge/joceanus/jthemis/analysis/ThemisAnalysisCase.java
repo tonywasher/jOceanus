@@ -88,9 +88,10 @@ public class ThemisAnalysisCase
             /* Access next line */
             final ThemisAnalysisLine myLine = (ThemisAnalysisLine) pParser.popNextLine();
 
-            /* Process comments/blanks/language */
+            /* Process comments/blanks/languageConstructs */
             boolean processed = pParser.processCommentsAndBlanks(myLine)
-                    || pParser.processLanguage(myLine);
+                         || pParser.processLanguage(myLine)
+                         || pParser.processBlocks(myLine);
 
             /* If we have not processed */
             if (!processed) {

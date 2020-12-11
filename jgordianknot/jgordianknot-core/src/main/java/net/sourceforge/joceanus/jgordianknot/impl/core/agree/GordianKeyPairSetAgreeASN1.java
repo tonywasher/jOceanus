@@ -189,7 +189,8 @@ public class GordianKeyPairSetAgreeASN1
             ms.add(new DEROctetString(mySign));
         }
 
-        /* Build the overall sequence */        final ASN1EncodableVector v = new ASN1EncodableVector();
+        /* Build the overall sequence */
+        final ASN1EncodableVector v = new ASN1EncodableVector();
         v.add(GordianKeyPairSetAlgId.determineAlgorithmId(theSpec).toASN1Primitive());
         v.add(theResultType);
         v.add(new DERSequence(ms));

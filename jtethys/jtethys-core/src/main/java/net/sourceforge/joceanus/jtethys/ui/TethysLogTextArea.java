@@ -101,7 +101,8 @@ public class TethysLogTextArea
     public void writeLogMessage(final String pMessage) {
         final int myPos = theTextArea.getTextLength();
         theTextArea.appendText(pMessage);
-        theTextArea.setCaretPosition(myPos);
+        theTextArea.appendText("\n");
+        theTextArea.setCaretPosition(myPos + 1);
         theEventManager.fireEvent(TethysUIEvent.NEWVALUE);
     }
 

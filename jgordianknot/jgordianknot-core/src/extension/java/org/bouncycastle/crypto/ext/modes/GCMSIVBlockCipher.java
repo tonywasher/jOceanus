@@ -19,11 +19,14 @@ import org.bouncycastle.util.Pack;
 
 /**
  * GCM-SIV Mode.
- * <p>It should be noted that the limit of 2<sup>36</sup> bytes is not checked. This is because all bytes are
- * cached in a <b>ByteArrayOutputStream</b> which has a limit of 2<sup>31</sup> bytes. While it would be possible to
- * implement a list of <b>ByteArrayOutputStream</b>s to enable data up to the specified limit, only 2<sup>31</sup>
- * bytes can be processed on the <b>doFinal</b>() call. Since all bytes must be processed on the <b>doFinal</b>()
- * call,  that limit takes precedence. No attempt is made to process more than 2<sup>31</sup> AEAD bytes.
+ * <p>It should be noted that the specified limit of 2<sup>36</sup> bytes is not checked. This is because all bytes are
+ * cached in a <b>ByteArrayOutputStream</b> object (which has a limit of 2<sup>31</sup> bytes), and are output
+ * on the <b>doFinal</b>() call (which can only process a maximum of 2<sup>31</sup> bytes).
+ * <p>The limit of 2<sup>31</sup> bytes is not policed, and attempts to breach the limit will fail on writing to the
+ * <b>ByteArrayOutputStream</b> with <b>OutOfMemoryError</b></p>
+ * <p>In order to properly support the higher limit, an extended form of <b>ByteArrayOutputStream</b> would be needed which would
+ * use multiple arrays to store the data. In addition, a new <b>doOutput</b> method would be required (similar to that in
+ * <b>XOF</b> digests), which would allow the data to be output over multiple calls.</p>
  */
 public class GCMSIVBlockCipher
         implements AEADBlockCipher {
