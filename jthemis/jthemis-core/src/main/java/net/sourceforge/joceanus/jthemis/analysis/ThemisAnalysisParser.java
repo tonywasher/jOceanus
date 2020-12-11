@@ -26,6 +26,7 @@ import java.util.Map;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jthemis.ThemisDataException;
 import net.sourceforge.joceanus.jthemis.analysis.ThemisAnalysisDataMap.ThemisAnalysisDataType;
+import net.sourceforge.joceanus.jthemis.analysis.ThemisAnalysisEmbedded.ThemisAnalysisEmbedType;
 import net.sourceforge.joceanus.jthemis.analysis.ThemisAnalysisGeneric.ThemisAnalysisGenericBase;
 import net.sourceforge.joceanus.jthemis.analysis.ThemisAnalysisScanner.ThemisAnalysisSource;
 
@@ -332,18 +333,40 @@ public class ThemisAnalysisParser
                 default:
                     break;
             }
+        }
 
-            /* else handle a standard block */
-        } else if (ThemisAnalysisBlock.checkBlock(pLine)) {
+        /* Not processed */
+        return false;
+    }
+
+    /**
+     * Process blocks.
+     * @param pLine the line
+     * @return have we processed the line?
+     * @throws OceanusException on error
+     */
+    boolean processBlocks(final ThemisAnalysisLine pLine) throws OceanusException {
+        /* handle a standard block */
+        if (ThemisAnalysisBlock.checkBlock(pLine)) {
             theContents.add(new ThemisAnalysisBlock(this, pLine));
             return true;
+        }
 
-            /* else handle an embedded lambda/Anonymous class */
-        } else if (ThemisAnalysisLambda.checkLambda(pLine)
-                    || ThemisAnalysisAnonClass.checkAnon(pLine)) {
-            /* Process an embedded lambda/anon */
-            theContents.add(new ThemisAnalysisEmbedded(this, pLine));
-            return true;
+        /* check for an embedded lambda/Anonymous class/ArrayInit */
+        final ThemisAnalysisEmbedType myEmbed = ThemisAnalysisEmbedded.checkForEmbedded(pLine);
+        switch (myEmbed) {
+            case LAMBDA:
+            case ANON:
+            case ARRAY:
+                /* Process an embedded lambda/anon/init */
+                theContents.add(new ThemisAnalysisEmbedded(this, myEmbed, pLine));
+                return true;
+            case METHOD:
+                /* Process an embedded methodBody */
+                theContents.add(new ThemisAnalysisMethodBody(this, pLine));
+                return true;
+            default:
+                break;
         }
 
         /* Not processed */
@@ -482,6 +505,30 @@ public class ThemisAnalysisParser
         /* Just convert to statement */
         final ThemisAnalysisKeyWord myKeyWord = determineStatementKeyWord(myLine);
         return new ThemisAnalysisStatement(myKeyWord, pEmbedded);
+    }
+
+    /**
+     * Process methodBody construct.
+     * @param pMethod the methodBody
+     * @return the method
+     * @throws OceanusException on error
+     */
+    ThemisAnalysisElement processMethodBody(final ThemisAnalysisMethodBody pMethod) throws OceanusException {
+        /* Look for a reference */
+        final ThemisAnalysisLine myLine = pMethod.getHeader();
+        final ThemisAnalysisReference myReference = parsePotentialDataType(myLine);
+
+        /* Access the name of the method */
+        final String myName = myLine.stripNextToken();
+        final boolean isMethod = myLine.startsWithChar(ThemisAnalysisChar.PARENTHESIS_OPEN);
+
+        /* We must have a reference and be a method */
+        if (myReference == null || !isMethod) {
+            throw new ThemisDataException("Invalid Method Body");
+        }
+
+        /* Create as field */
+        return new ThemisAnalysisMethod(this, myName, myReference, pMethod);
     }
 
     /**
@@ -663,7 +710,8 @@ public class ThemisAnalysisParser
             /* Process comments/blanks/languageConstructs */
             final boolean processed = processCommentsAndBlanks(myLine)
                     || processClass(myLine)
-                    || processLanguage(myLine);
+                    || processLanguage(myLine)
+                    || processBlocks(myLine);
 
             /* If we haven't processed yet */
             if (!processed) {

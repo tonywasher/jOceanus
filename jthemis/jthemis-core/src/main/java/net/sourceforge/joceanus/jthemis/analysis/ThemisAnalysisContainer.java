@@ -105,6 +105,13 @@ public interface ThemisAnalysisContainer
                 final ThemisAnalysisElement myResult = myParser.processEmbedded(myEmbedded);
                 myContents.add(myResult);
 
+                /* If the element is a methodBody */
+            } else if (myElement instanceof ThemisAnalysisMethodBody) {
+                /* Access and process the block */
+                final ThemisAnalysisMethodBody myMethod = (ThemisAnalysisMethodBody) myElement;
+                final ThemisAnalysisElement myResult = myParser.processMethodBody(myMethod);
+                myContents.add(myResult);
+
                 /* If the element is a container */
             } else if (myElement instanceof ThemisAnalysisContainer) {
                 /* Access and process the container */

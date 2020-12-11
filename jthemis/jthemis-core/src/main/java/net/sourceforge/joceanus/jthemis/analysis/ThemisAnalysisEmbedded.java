@@ -57,19 +57,32 @@ public class ThemisAnalysisEmbedded
     /**
      * Constructor.
      * @param pParser the parser
+     * @param pType the embed Type
      * @param pLine the initial class line
      * @throws OceanusException on error
      */
     ThemisAnalysisEmbedded(final ThemisAnalysisParser pParser,
+                           final ThemisAnalysisEmbedType pType,
                            final ThemisAnalysisLine pLine) throws OceanusException {
         /* Store parameters */
         theHeader = pLine;
 
-        /* Take a copy of the line and strip the trailer */
+        /* Build the embedded content */
         theEmbedded = new ArrayDeque<>();
-        theEmbedded.add(ThemisAnalysisAnonClass.checkAnon(pLine)
-                ? new ThemisAnalysisAnonClass(pParser, pLine)
-                : new ThemisAnalysisLambda(pParser, pLine));
+        switch (pType) {
+            case LAMBDA:
+                theEmbedded.add(new ThemisAnalysisLambda(pParser, pLine));
+                break;
+            case ANON:
+                theEmbedded.add(new ThemisAnalysisAnonClass(pParser, pLine));
+                break;
+            case ARRAY:
+                theEmbedded.add(new ThemisAnalysisArrayInit(pParser, pLine));
+                break;
+            case NONE:
+            default:
+                break;
+        }
 
         /* Store parent */
         theParent = pParser.getParent();
@@ -118,5 +131,56 @@ public class ThemisAnalysisEmbedded
     @Override
     public int getNumLines() {
         return theNumLines;
+    }
+
+    /**
+     * Check For embedded type.
+     * @param pLine the line
+     * @return the embedded type
+     */
+    static ThemisAnalysisEmbedType checkForEmbedded(final ThemisAnalysisLine pLine) {
+        if (ThemisAnalysisLambda.checkLambda(pLine)) {
+            return ThemisAnalysisEmbedType.LAMBDA;
+        }
+        if (ThemisAnalysisAnonClass.checkAnon(pLine)) {
+            return ThemisAnalysisEmbedType.ANON;
+        }
+        if (ThemisAnalysisArrayInit.checkArrayInit(pLine)) {
+            return ThemisAnalysisEmbedType.ARRAY;
+        }
+        if (ThemisAnalysisMethodBody.checkMethodBody(pLine)) {
+            return ThemisAnalysisEmbedType.METHOD;
+        }
+        return ThemisAnalysisEmbedType.NONE;
+    }
+
+    /**
+     * The embedded Type.
+     */
+    enum ThemisAnalysisEmbedType {
+        /**
+         * Lambda.
+         */
+        LAMBDA,
+
+        /**
+         * AnonClass.
+         */
+        ANON,
+
+        /**
+         * ArrayInit.
+         */
+        ARRAY,
+
+        /**
+         * MethodBody.
+         */
+        METHOD,
+
+        /**
+         * None.
+         */
+        NONE;
     }
 }

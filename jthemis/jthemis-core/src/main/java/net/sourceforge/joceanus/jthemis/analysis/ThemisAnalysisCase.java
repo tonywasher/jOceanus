@@ -90,7 +90,8 @@ public class ThemisAnalysisCase
 
             /* Process comments/blanks/languageConstructs */
             boolean processed = pParser.processCommentsAndBlanks(myLine)
-                         || pParser.processLanguage(myLine);
+                         || pParser.processLanguage(myLine)
+                         || pParser.processBlocks(myLine);
 
             /* If we have not processed */
             if (!processed) {
