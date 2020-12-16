@@ -82,6 +82,11 @@ public class ThemisDSMPanel
     private final ThemisStatsPanel theStatsPanel;
 
     /**
+     * The Source Panel.
+     */
+    private final ThemisSourcePanel theSourcePanel;
+
+    /**
      * The Log Tab.
      */
     private final TethysTabItem theLogTab;
@@ -212,6 +217,10 @@ public class ThemisDSMPanel
         theStatsPanel = new ThemisStatsPanel(theGuiFactory);
         theTabPane.addTabItem("Stats", theStatsPanel);
 
+        /* Create the Source panel */
+        theSourcePanel = new ThemisSourcePanel(theGuiFactory);
+        theTabPane.addTabItem("Source", theSourcePanel);
+
         /* Create the log tab */
         final TethysLogTextArea myLog = theGuiFactory.getLogSink();
         theLogTab = theTabPane.addTabItem("Log", myLog);
@@ -302,6 +311,7 @@ public class ThemisDSMPanel
             final ThemisStatsParser myParser = new ThemisStatsParser(myStats);
             final ThemisStatsProject myProject = myParser.parseProject(myProj);
             theStatsPanel.initialiseTree(myProject);
+            theSourcePanel.initialiseTree(myProj);
 
             /* Catch exceptions */
         } catch (OceanusException e) {

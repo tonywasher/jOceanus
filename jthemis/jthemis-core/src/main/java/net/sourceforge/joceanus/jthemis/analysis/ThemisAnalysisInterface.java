@@ -40,6 +40,11 @@ public class ThemisAnalysisInterface
     private final String theFullName;
 
     /**
+     * Is this an annotation definition.
+     */
+    private final boolean isAnnotation;
+
+    /**
      * The ancestors.
      */
     private final List<ThemisAnalysisReference> theAncestors;
@@ -67,14 +72,17 @@ public class ThemisAnalysisInterface
     /**
      * Constructor.
      * @param pParser the parser
+     * @param pAnnotation is this an annoitation definition?
      * @param pLine the initial interface line
      * @throws OceanusException on error
      */
     ThemisAnalysisInterface(final ThemisAnalysisParser pParser,
+                            final boolean pAnnotation,
                             final ThemisAnalysisLine pLine) throws OceanusException {
         /* Store parameters */
         theShortName = pLine.stripNextToken();
         theProperties = pLine.getProperties();
+        isAnnotation = pAnnotation;
         final ThemisAnalysisContainer myParent = pParser.getParent();
         final ThemisAnalysisDataMap myParentDataMap = myParent.getDataMap();
         theDataMap = new ThemisAnalysisDataMap(myParentDataMap);
@@ -118,6 +126,14 @@ public class ThemisAnalysisInterface
         /* Parse the ancestors and lines */
         theAncestors = myParser.parseAncestors(myHeaders);
         myParser.processLines();
+    }
+
+    /**
+     * Is this an annotation?
+     * @return true/false
+     */
+    public boolean isAnnotation() {
+        return isAnnotation;
     }
 
     @Override

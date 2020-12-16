@@ -44,9 +44,9 @@ public class ThemisAnalysisStatement
     private final ThemisAnalysisKeyWord theControl;
 
     /**
-     * The line.
+     * The lines.
      */
-    private final ThemisAnalysisStack theParameters;
+    private final ThemisAnalysisStack theLines;
 
     /**
      * Constructor.
@@ -118,7 +118,7 @@ public class ThemisAnalysisStatement
     ThemisAnalysisStatement(final ThemisAnalysisKeyWord pControl,
                             final Deque<ThemisAnalysisElement> pParams) {
         theControl = pControl;
-        theParameters = new ThemisAnalysisStack(pParams);
+        theLines = new ThemisAnalysisStack(pParams);
     }
 
     /**
@@ -129,7 +129,7 @@ public class ThemisAnalysisStatement
     ThemisAnalysisStatement(final ThemisAnalysisKeyWord pControl,
                             final ThemisAnalysisStack pStack) {
         theControl = pControl;
-        theParameters = pStack;
+        theLines = pStack;
     }
 
     /**
@@ -137,7 +137,7 @@ public class ThemisAnalysisStatement
      * @throws OceanusException on error
      */
     void checkSeparator() throws OceanusException {
-        final ThemisAnalysisScanner myScanner = new ThemisAnalysisScanner(theParameters);
+        final ThemisAnalysisScanner myScanner = new ThemisAnalysisScanner(theLines);
         final boolean isSep = myScanner.checkForSeparator(ThemisAnalysisChar.COMMA);
         if (isSep) {
             throw new ThemisDataException("Multi-statement");
@@ -146,7 +146,7 @@ public class ThemisAnalysisStatement
 
     @Override
     public int getNumLines() {
-        return theParameters.size();
+        return theLines.size();
     }
 
     /**
@@ -154,12 +154,23 @@ public class ThemisAnalysisStatement
      * @return true/false
      */
     public boolean nullParameters() {
-        return theParameters.isEmpty();
+        return theLines.isEmpty();
+    }
+
+    /**
+     * Obtain the embedded statement (if any).
+     * @return the embedded statement (or null)
+     */
+    public ThemisAnalysisElement getEmbedded() {
+        final ThemisAnalysisElement myLast = theLines.peekLastLine();
+        return myLast instanceof ThemisAnalysisEmbedded
+                ? ((ThemisAnalysisEmbedded) myLast).getContents().peekFirst()
+                : null;
     }
 
     @Override
     public String toString() {
-        final String myParms = theParameters.toString();
+        final String myParms = theLines.toString();
         return theControl == null ? myParms : theControl + " " + myParms;
     }
 }

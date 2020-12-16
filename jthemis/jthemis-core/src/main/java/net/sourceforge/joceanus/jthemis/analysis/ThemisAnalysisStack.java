@@ -82,6 +82,14 @@ public class ThemisAnalysisStack
     }
 
     /**
+     * Obtain the last line in the stack.
+     * @return the line
+     */
+    ThemisAnalysisElement peekLastLine() {
+        return theStack.peekLast();
+    }
+
+    /**
      * Obtain the size of the stack.
      * @return the size
      */

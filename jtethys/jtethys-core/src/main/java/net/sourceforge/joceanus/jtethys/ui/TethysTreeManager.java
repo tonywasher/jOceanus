@@ -37,14 +37,29 @@ public abstract class TethysTreeManager<T>
     private static final TethysLogger LOGGER = TethysLogManager.getLogger(TethysTreeManager.class);
 
     /**
+     * Icon width.
+     */
+    protected static final int ICONWIDTH = 16;
+
+    /**
      * The id.
      */
     private final Integer theId;
 
     /**
+     * The guiFactory.
+     */
+    private final TethysGuiFactory theFactory;
+
+    /**
      * The map of items.
      */
     private final Map<String, TethysTreeItem<T>> theItemMap;
+
+    /**
+     * The map of icons.
+     */
+    private final Map<TethysIconId, TethysIcon> theIconMap;
 
     /**
      * The Event Manager.
@@ -71,8 +86,10 @@ public abstract class TethysTreeManager<T>
      * @param pFactory the GUI factory
      */
     protected TethysTreeManager(final TethysGuiFactory pFactory) {
-        theId = pFactory.getNextId();
+        theFactory = pFactory;
+        theId = theFactory.getNextId();
         theItemMap = new HashMap<>();
+        theIconMap = new HashMap<>();
         theEventManager = new TethysEventManager<>();
     }
 
@@ -231,6 +248,20 @@ public abstract class TethysTreeManager<T>
                                                    T pItem);
 
     /**
+     * Obtain the icon for the iconId.
+     * @param pIconId the iconId
+     * @return the icon
+     */
+    public TethysIcon getIcon(final TethysIconId pIconId) {
+        TethysIcon myIcon = theIconMap.get(pIconId);
+        if (myIcon == null) {
+            myIcon = theFactory.resolveIcon(pIconId, ICONWIDTH);
+            theIconMap.put(pIconId, myIcon);
+        }
+        return myIcon;
+    }
+
+    /**
      * TreeItem class.
      * @param <T> the data type
      */
@@ -276,6 +307,11 @@ public abstract class TethysTreeManager<T>
         private T theItem;
 
         /**
+         * The iconId.
+         */
+        private TethysIconId theIcon;
+
+        /**
          * Is the item visible (i.e. part of the actual tree)?
          */
         private boolean isVisible;
@@ -289,6 +325,7 @@ public abstract class TethysTreeManager<T>
             theTree = pTree;
             theParent = null;
             theName = null;
+            theIcon = null;
             theItem = null;
             isVisible = false;
         }
@@ -309,6 +346,7 @@ public abstract class TethysTreeManager<T>
             theParent = pParent;
             theName = pName;
             theItem = pItem;
+            theIcon = null;
 
             /* If we have a parent */
             if (theParent != null) {
@@ -344,6 +382,14 @@ public abstract class TethysTreeManager<T>
          */
         public T getItem() {
             return theItem;
+        }
+
+        /**
+         * Obtain the iconId.
+         * @return the iconId
+         */
+        public TethysIconId getIconId() {
+            return theIcon;
         }
 
         /**
@@ -392,6 +438,14 @@ public abstract class TethysTreeManager<T>
          */
         public void setItem(final T pItem) {
             theItem = pItem;
+        }
+
+        /**
+         * Set the iconId.
+         * @param pIconId the iconId
+         */
+        public void setIcon(final TethysIconId pIconId) {
+            theIcon = pIconId;
         }
 
         /**

@@ -188,4 +188,33 @@ public class ThemisAnalysisIf
             return theLocal.hasNext() ? theLocal.next() : theChained.next();
         }
     }
+
+    /**
+     * Reduced Iterator.
+     * @param <T> the item class
+     */
+    public static class ThemisReducedIterator<T> implements Iterator<T> {
+        /**
+         * Local Iterator.
+         */
+        private final Iterator<? extends T> theBase;
+
+         /**
+         * Constructor.
+         * @param pBase the base iterator
+         */
+        public ThemisReducedIterator(final Iterator<? extends T> pBase) {
+            theBase = pBase;
+        }
+
+        @Override
+        public boolean hasNext() {
+            return theBase.hasNext();
+        }
+
+        @Override
+        public T next() {
+            return (T) theBase.next();
+        }
+    }
 }

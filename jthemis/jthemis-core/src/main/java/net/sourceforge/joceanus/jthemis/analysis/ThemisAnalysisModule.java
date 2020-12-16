@@ -26,7 +26,8 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
 /**
  * Module.
  */
-public class ThemisAnalysisModule {
+public class ThemisAnalysisModule
+        implements ThemisAnalysisElement {
     /**
      * The path xtra.
      */
