@@ -16,12 +16,15 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jtethys.ui.swing;
 
+import java.awt.Component;
 import javax.swing.JTree;
 import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.DefaultTreeCellRenderer;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
 
+import net.sourceforge.joceanus.jtethys.ui.TethysIconId;
 import net.sourceforge.joceanus.jtethys.ui.TethysTreeManager;
 import net.sourceforge.joceanus.jtethys.ui.TethysUIEvent;
 
@@ -78,6 +81,7 @@ public class TethysSwingTreeManager<T>
         theTree.setEditable(false);
         theTree.setRootVisible(false);
         theTree.setExpandsSelectedPaths(true);
+        theTree.setCellRenderer(new TethysTreeCellRenderer());
         mySelectionModel.setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
 
         /* Create the listener */
@@ -362,6 +366,35 @@ public class TethysSwingTreeManager<T>
             return myValue == null
                                    ? null
                                    : myValue.toString();
+        }
+    }
+
+    /**
+     * TreeCellRenderer.
+     */
+    private class TethysTreeCellRenderer
+            extends DefaultTreeCellRenderer {
+        @Override
+        public Component getTreeCellRendererComponent(final JTree pTree,
+                                                      final Object pValue,
+                                                      final boolean pSelected,
+                                                      final boolean pExpanded,
+                                                      final boolean pLeaf,
+                                                      final int pRow,
+                                                      final boolean pFocus) {
+            /* Call underlying implementation */
+            super.getTreeCellRendererComponent(pTree, pValue, pSelected, pExpanded, pLeaf, pRow, pFocus);
+
+            /* Access value */
+            @SuppressWarnings("unchecked")
+            final TethysSwingTreeNode<T> myNode = (TethysSwingTreeNode<T>) pValue;
+
+            /* Display icon if required */
+            final TethysSwingTreeItem<T> myItem = myNode.getValue();
+            final TethysIconId myId = myItem.getIconId();
+            final TethysSwingIcon myIcon = myId == null ? null : (TethysSwingIcon) myItem.getTree().getIcon(myId);
+            this.setIcon(myIcon == null ? null : myIcon.getIcon());
+            return this;
         }
     }
 }

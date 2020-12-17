@@ -18,6 +18,7 @@ package net.sourceforge.joceanus.jtethys.ui;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.function.Supplier;
 
 import net.sourceforge.joceanus.jtethys.event.TethysEventManager;
@@ -313,9 +314,7 @@ public abstract class TethysIconButtonManager<T>
      * @return true/false
      */
     private boolean valueChanged(final T pNew) {
-        return theValue == null
-                                ? pNew != null
-                                : !theValue.equals(pNew);
+        return !Objects.equals(theValue, pNew);
     }
 
     /**

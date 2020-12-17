@@ -18,7 +18,9 @@ package net.sourceforge.joceanus.jtethys.ui.javafx;
 
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
+import javafx.scene.image.ImageView;
 
+import net.sourceforge.joceanus.jtethys.ui.TethysIconId;
 import net.sourceforge.joceanus.jtethys.ui.TethysTreeManager;
 import net.sourceforge.joceanus.jtethys.ui.TethysUIEvent;
 
@@ -291,6 +293,23 @@ public class TethysFXTreeManager<T>
         @Override
         public void setFocus() {
             getTree().setFocusedItem(this);
+        }
+
+        @Override
+        public void setIcon(final TethysIconId pIconId) {
+            super.setIcon(pIconId);
+            if (pIconId != null) {
+                final TethysFXIcon myIcon = (TethysFXIcon) getTree().getIcon(pIconId);
+                final ImageView myImage = new ImageView();
+                myImage.setImage(myIcon.getImage());
+                myImage.setFitWidth(ICONWIDTH);
+                myImage.setPreserveRatio(true);
+                myImage.setSmooth(true);
+                myImage.setCache(true);
+                theNode.setGraphic(myImage);
+            } else {
+                theNode.setGraphic(null);
+            }
         }
     }
 

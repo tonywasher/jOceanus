@@ -29,7 +29,8 @@ import net.sourceforge.joceanus.jthemis.ThemisIOException;
 /**
  * Project.
  */
-public class ThemisAnalysisProject {
+public class ThemisAnalysisProject
+        implements ThemisAnalysisElement {
     /**
      * Consolidation Pass error.
      */

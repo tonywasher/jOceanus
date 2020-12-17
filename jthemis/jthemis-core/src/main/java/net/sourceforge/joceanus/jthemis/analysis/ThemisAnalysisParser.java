@@ -254,7 +254,7 @@ public class ThemisAnalysisParser
                 case ANNOTATION:
                     /* Create the interface */
                     pLine.stripStartSequence(myToken);
-                    theContents.add(new ThemisAnalysisInterface(this, pLine));
+                    theContents.add(new ThemisAnalysisInterface(this, myType.equals(ThemisAnalysisKeyWord.ANNOTATION), pLine));
                     return true;
 
                 /* If this is an enum */
