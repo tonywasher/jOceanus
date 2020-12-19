@@ -49,17 +49,17 @@ public class Blake2b
     /**
      * The state.
      */
-    private long[] theH = new long[NUMWORDS];
+    private final long[] theH = new long[NUMWORDS];
 
     /**
      * The workBuffer.
      */
-    private long[] theV = new long[NUMWORDS << 1];
+    private final long[] theV = new long[NUMWORDS << 1];
 
     /**
      * The messageBuffer.
      */
-    private long[] theM = new long[NUMWORDS << 1];
+    private final long[] theM = new long[NUMWORDS << 1];
 
     /**
      * Low Counter.
@@ -149,7 +149,7 @@ public class Blake2b
     }
 
     @Override
-    void adjustCounter(int pCount) {
+    void adjustCounter(final int pCount) {
         t0 += pCount;
         if (t0 == 0) {
             t1++;
@@ -157,7 +157,7 @@ public class Blake2b
     }
 
     @Override
-    void completeCounter(int pCount) {
+    void completeCounter(final int pCount) {
         t0 += pCount;
         if (pCount > 0 && t0 == 0) {
             t1++;

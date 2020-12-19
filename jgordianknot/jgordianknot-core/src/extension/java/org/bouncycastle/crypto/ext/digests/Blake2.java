@@ -477,7 +477,7 @@ public abstract class Blake2
 
             /* If there is sufficient space in the buffer */
             if (remainingLen >= pLen) {
-                /* Copy date ointo byffer and return */
+                /* Copy date into byffer and return */
                 System.arraycopy(pMessage, pOffset, theBuffer, thePos, pLen);
                 thePos += pLen;
                 return;
