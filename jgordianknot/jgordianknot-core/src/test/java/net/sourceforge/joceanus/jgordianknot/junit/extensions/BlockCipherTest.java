@@ -21,7 +21,10 @@ import java.util.stream.Stream;
 import org.bouncycastle.crypto.BlockCipher;
 import org.bouncycastle.crypto.InvalidCipherTextException;
 import org.bouncycastle.crypto.ext.engines.AnubisEngine;
+import org.bouncycastle.crypto.ext.engines.LeaEngine;
 import org.bouncycastle.crypto.ext.engines.MARSEngine;
+import org.bouncycastle.crypto.ext.engines.SimonEngine;
+import org.bouncycastle.crypto.ext.engines.SpeckEngine;
 import org.bouncycastle.crypto.ext.modes.GCMSIVBlockCipher;
 import org.bouncycastle.crypto.params.AEADParameters;
 import org.bouncycastle.crypto.params.KeyParameter;
@@ -76,6 +79,21 @@ public class BlockCipherTest {
                         DynamicTest.dynamicTest("128", () -> new MARS128Test().testTheCipher()),
                         DynamicTest.dynamicTest("192", () -> new MARS192Test().testTheCipher()),
                         DynamicTest.dynamicTest("256", () -> new MARS256Test().testTheCipher())
+                )),
+                DynamicContainer.dynamicContainer("LEA", Stream.of(
+                        DynamicTest.dynamicTest("128", () -> new LEA128Test().testTheCipher()),
+                        DynamicTest.dynamicTest("192", () -> new LEA192Test().testTheCipher()),
+                        DynamicTest.dynamicTest("256", () -> new LEA256Test().testTheCipher())
+                )),
+                DynamicContainer.dynamicContainer("Speck", Stream.of(
+                        DynamicTest.dynamicTest("128", () -> new Speck128Test().testTheCipher()),
+                        DynamicTest.dynamicTest("192", () -> new Speck192Test().testTheCipher()),
+                        DynamicTest.dynamicTest("256", () -> new Speck256Test().testTheCipher())
+                )),
+                DynamicContainer.dynamicContainer("Simon", Stream.of(
+                        DynamicTest.dynamicTest("128", () -> new Simon128Test().testTheCipher()),
+                        DynamicTest.dynamicTest("192", () -> new Simon192Test().testTheCipher()),
+                        DynamicTest.dynamicTest("256", () -> new Simon256Test().testTheCipher())
                 )),
                 DynamicContainer.dynamicContainer("SIV", Stream.of(
                         DynamicContainer.dynamicContainer("128", Stream.of(
@@ -238,6 +256,186 @@ public class BlockCipherTest {
          */
         void testTheCipher() throws OceanusException {
             testCipher(new MARSEngine(), KEY256, TESTDATA, EXPECTED);
+        }
+    }
+
+    /**
+     * LEA128.
+     */
+    static class LEA128Test {
+        /**
+         * Test details.
+         */
+        private static final String KEY = "0f1e2d3c4b5a69788796a5b4c3d2e1f0";
+        private static final String TESTDATA = "101112131415161718191a1b1c1d1e1f";
+        private static final String EXPECTED = "9fc84e3528c6c6185532c7a704648bfd";
+
+        /**
+         * Test cipher.
+         * @throws OceanusException on error
+         */
+        void testTheCipher() throws OceanusException {
+            testCipher(new LeaEngine(), KEY, TESTDATA, EXPECTED);
+        }
+    }
+
+    /**
+     * LEA192.
+     */
+    static class LEA192Test {
+        /**
+         * Test details.
+         */
+        private static final String KEY = "0f1e2d3c4b5a69788796a5b4c3d2e1f0f0e1d2c3b4a59687";
+        private static final String TESTDATA = "202122232425262728292a2b2c2d2e2f";
+        private static final String EXPECTED = "6fb95e325aad1b878cdcf5357674c6f2";
+
+        /**
+         * Test cipher.
+         * @throws OceanusException on error
+         */
+        void testTheCipher() throws OceanusException {
+            testCipher(new LeaEngine(), KEY, TESTDATA, EXPECTED);
+        }
+    }
+
+    /**
+     * LEA256.
+     */
+    static class LEA256Test {
+        /**
+         * Test details.
+         */
+        private static final String KEY = "0f1e2d3c4b5a69788796a5b4c3d2e1f0f0e1d2c3b4a5968778695a4b3c2d1e0f";
+        private static final String TESTDATA = "303132333435363738393a3b3c3d3e3f";
+        private static final String EXPECTED = "d651aff647b189c13a8900ca27f9e197";
+
+        /**
+         * Test cipher.
+         * @throws OceanusException on error
+         */
+        void testTheCipher() throws OceanusException {
+            testCipher(new LeaEngine(), KEY, TESTDATA, EXPECTED);
+        }
+    }
+
+    /**
+     * Speck128.
+     */
+    static class Speck128Test {
+        /**
+         * Test details.
+         */
+        private static final String KEY = "0f0e0d0c0b0a09080706050403020100";
+        private static final String TESTDATA = "6c617669757165207469206564616d20";
+        private static final String EXPECTED = "a65d9851797832657860fedf5c570d18";
+
+        /**
+         * Test cipher.
+         * @throws OceanusException on error
+         */
+        void testTheCipher() throws OceanusException {
+            testCipher(new SpeckEngine(SpeckEngine.SPECK_128), KEY, TESTDATA, EXPECTED);
+        }
+    }
+
+    /**
+     * Speck192.
+     */
+    static class Speck192Test {
+        /**
+         * Test details.
+         */
+        private static final String KEY = "17161514131211100f0e0d0c0b0a09080706050403020100";
+        private static final String TESTDATA = "726148206665696843206f7420746e65";
+        private static final String EXPECTED = "1be4cf3a13135566f9bc185de03c1886";
+
+        /**
+         * Test cipher.
+         * @throws OceanusException on error
+         */
+        void testTheCipher() throws OceanusException {
+            testCipher(new SpeckEngine(SpeckEngine.SPECK_128), KEY, TESTDATA, EXPECTED);
+        }
+    }
+
+    /**
+     * Speck256.
+     */
+    static class Speck256Test {
+        /**
+         * Test details.
+         */
+        private static final String KEY = "1f1e1d1c1b1a191817161514131211100f0e0d0c0b0a09080706050403020100";
+        private static final String TESTDATA = "65736f6874206e49202e72656e6f6f70";
+        private static final String EXPECTED = "4109010405c0f53e4eeeb48d9c188f43";
+
+        /**
+         * Test cipher.
+         * @throws OceanusException on error
+         */
+        void testTheCipher() throws OceanusException {
+            testCipher(new SpeckEngine(SpeckEngine.SPECK_128), KEY, TESTDATA, EXPECTED);
+        }
+    }
+
+    /**
+     * Speck128.
+     */
+    static class Simon128Test {
+        /**
+         * Test details.
+         */
+        private static final String KEY = "0f0e0d0c0b0a09080706050403020100";
+        private static final String TESTDATA = "63736564207372656c6c657661727420";
+        private static final String EXPECTED = "49681b1e1e54fe3f65aa832af84e0bbc";
+
+        /**
+         * Test cipher.
+         * @throws OceanusException on error
+         */
+        void testTheCipher() throws OceanusException {
+            testCipher(new SimonEngine(SimonEngine.SIMON_128), KEY, TESTDATA, EXPECTED);
+        }
+    }
+
+    /**
+     * Simon192.
+     */
+    static class Simon192Test {
+        /**
+         * Test details.
+         */
+        private static final String KEY = "17161514131211100f0e0d0c0b0a09080706050403020100";
+        private static final String TESTDATA = "206572656874206e6568772065626972";
+        private static final String EXPECTED = "c4ac61effcdc0d4f6c9c8d6e2597b85b";
+
+        /**
+         * Test cipher.
+         * @throws OceanusException on error
+         */
+        void testTheCipher() throws OceanusException {
+            testCipher(new SimonEngine(SimonEngine.SIMON_128), KEY, TESTDATA, EXPECTED);
+        }
+    }
+
+    /**
+     * Simon256.
+     */
+    static class Simon256Test {
+        /**
+         * Test details.
+         */
+        private static final String KEY = "1f1e1d1c1b1a191817161514131211100f0e0d0c0b0a09080706050403020100";
+        private static final String TESTDATA = "74206e69206d6f6f6d69732061207369";
+        private static final String EXPECTED = "8d2b5579afc8a3a03bf72a87efe7b868";
+
+        /**
+         * Test cipher.
+         * @throws OceanusException on error
+         */
+        void testTheCipher() throws OceanusException {
+            testCipher(new SimonEngine(SimonEngine.SIMON_128), KEY, TESTDATA, EXPECTED);
         }
     }
 
