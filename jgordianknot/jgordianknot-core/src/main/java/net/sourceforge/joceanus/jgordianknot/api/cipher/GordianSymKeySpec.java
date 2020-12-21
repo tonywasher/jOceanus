@@ -19,8 +19,8 @@ package net.sourceforge.joceanus.jgordianknot.api.cipher;
 import java.util.ArrayList;
 import java.util.List;
 
-import net.sourceforge.joceanus.jgordianknot.api.base.GordianLength;
 import net.sourceforge.joceanus.jgordianknot.api.base.GordianKeySpec;
+import net.sourceforge.joceanus.jgordianknot.api.base.GordianLength;
 import net.sourceforge.joceanus.jgordianknot.api.key.GordianKeyLengths;
 import net.sourceforge.joceanus.jtethys.TethysDataConverter;
 
@@ -295,34 +295,12 @@ public class GordianSymKeySpec
     }
 
     /**
-     * Create speckKeySpec.
-     * @param pBlockLength the block length
-     * @param pKeyLength the keyLength
-     * @return the keySpec
-     */
-    public static GordianSymKeySpec speck(final GordianLength pBlockLength,
-                                          final GordianLength pKeyLength) {
-        return new GordianSymKeySpec(GordianSymKeyType.SPECK, pBlockLength, pKeyLength);
-    }
-
-    /**
      * Create simonKeySpec.
      * @param pKeyLength the keyLength
      * @return the keySpec
      */
     public static GordianSymKeySpec simon(final GordianLength pKeyLength) {
         return new GordianSymKeySpec(GordianSymKeyType.SIMON, pKeyLength);
-    }
-
-    /**
-     * Create simonKeySpec.
-     * @param pBlockLength the block length
-     * @param pKeyLength the keyLength
-     * @return the keySpec
-     */
-    public static GordianSymKeySpec simon(final GordianLength pBlockLength,
-                                          final GordianLength pKeyLength) {
-        return new GordianSymKeySpec(GordianSymKeyType.SIMON, pBlockLength, pKeyLength);
     }
 
     /**

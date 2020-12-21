@@ -146,7 +146,7 @@ public enum GordianSymKeyType {
     /**
      * SPECK.
      */
-    SPECK(GordianLength.LEN_128, GordianLength.LEN_64),
+    SPECK(GordianLength.LEN_128),
 
     /**
      * Anubis.
@@ -156,7 +156,7 @@ public enum GordianSymKeyType {
     /**
      * Simon.
      */
-    SIMON(GordianLength.LEN_128, GordianLength.LEN_64),
+    SIMON(GordianLength.LEN_128),
 
     /**
      * MARS.

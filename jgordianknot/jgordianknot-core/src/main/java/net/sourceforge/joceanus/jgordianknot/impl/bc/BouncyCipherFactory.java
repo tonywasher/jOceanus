@@ -359,11 +359,11 @@ public class BouncyCipherFactory
             case SHACAL2:
                 return new Shacal2Engine();
             case SPECK:
-                return new SpeckEngine(pKeySpec.getBlockLength().getLength());
+                return new SpeckEngine();
             case ANUBIS:
                 return new AnubisEngine();
             case SIMON:
-                return new SimonEngine(pKeySpec.getBlockLength().getLength());
+                return new SimonEngine();
             case MARS:
                 return new MARSEngine();
             default:

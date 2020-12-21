@@ -335,7 +335,7 @@ public class BlockCipherTest {
          * @throws OceanusException on error
          */
         void testTheCipher() throws OceanusException {
-            testCipher(new SpeckEngine(SpeckEngine.SPECK_128), KEY, TESTDATA, EXPECTED);
+            testCipher(new SpeckEngine(), KEY, TESTDATA, EXPECTED);
         }
     }
 
@@ -355,7 +355,7 @@ public class BlockCipherTest {
          * @throws OceanusException on error
          */
         void testTheCipher() throws OceanusException {
-            testCipher(new SpeckEngine(SpeckEngine.SPECK_128), KEY, TESTDATA, EXPECTED);
+            testCipher(new SpeckEngine(), KEY, TESTDATA, EXPECTED);
         }
     }
 
@@ -375,7 +375,7 @@ public class BlockCipherTest {
          * @throws OceanusException on error
          */
         void testTheCipher() throws OceanusException {
-            testCipher(new SpeckEngine(SpeckEngine.SPECK_128), KEY, TESTDATA, EXPECTED);
+            testCipher(new SpeckEngine(), KEY, TESTDATA, EXPECTED);
         }
     }
 
@@ -395,7 +395,7 @@ public class BlockCipherTest {
          * @throws OceanusException on error
          */
         void testTheCipher() throws OceanusException {
-            testCipher(new SimonEngine(SimonEngine.SIMON_128), KEY, TESTDATA, EXPECTED);
+            testCipher(new SimonEngine(), KEY, TESTDATA, EXPECTED);
         }
     }
 
@@ -415,7 +415,7 @@ public class BlockCipherTest {
          * @throws OceanusException on error
          */
         void testTheCipher() throws OceanusException {
-            testCipher(new SimonEngine(SimonEngine.SIMON_128), KEY, TESTDATA, EXPECTED);
+            testCipher(new SimonEngine(), KEY, TESTDATA, EXPECTED);
         }
     }
 
@@ -435,7 +435,7 @@ public class BlockCipherTest {
          * @throws OceanusException on error
          */
         void testTheCipher() throws OceanusException {
-            testCipher(new SimonEngine(SimonEngine.SIMON_128), KEY, TESTDATA, EXPECTED);
+            testCipher(new SimonEngine(), KEY, TESTDATA, EXPECTED);
         }
     }
 
