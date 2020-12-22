@@ -60,12 +60,11 @@
                     <tr><td>XTEA</td><td>64</td><td>Y</td><td>Y</td><td/><td/><td/><td/></tr>
                     <tr><td>Magma</td><td>64</td><td>Y</td><td/><td/><td>Y</td><td/><td/></tr>
                     <tr><td>SHACAL2</td><td>256</td><td>Y</td><td/><td/><td>Y</td><td>Y</td><td/></tr>
-                    <tr><td rowspan="2">Speck</td><td>64</td><td/><td>Y</td><td/><td/><td/><td/></tr>
-                    <tr><td>128</td><td/><td>Y</td><td>Y</td><td>Y</td><td/><td/></tr>
-                    <tr><td rowspan="2">Simon</td><td>64</td><td/><td>Y</td><td/><td/><td/><td/></tr>
-                    <tr><td>128</td><td/><td>Y</td><td>Y</td><td>Y</td><td/><td/></tr>
+                    <tr><td>Speck</td><td>128</td><td/><td>Y</td><td>Y</td><td>Y</td><td/><td/></tr>
+                    <tr><td>Simon</td><td>128</td><td/><td>Y</td><td>Y</td><td>Y</td><td/><td/></tr>
                     <tr><td>MARS</td><td>128</td><td/><td>Y</td><td>Y</td><td>Y</td><td/><td/></tr>
                     <tr><td>Anubis</td><td>128</td><td/><td>Y</td><td>Y</td><td>Y</td><td/><td/></tr>
+                    <tr><td>LEA</td><td>128</td><td/><td>Y</td><td>Y</td><td>Y</td><td/><td/></tr>
                 </table>
             </subsection>
         </section>

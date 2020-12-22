@@ -16,12 +16,14 @@
  ******************************************************************************/
 package org.bouncycastle.crypto.ext.params;
 
+import org.bouncycastle.crypto.CipherParameters;
 import org.bouncycastle.util.Arrays;
 
 /**
  * Blake3 Parameters.
  */
-public class Blake3Parameters {
+public class Blake3Parameters
+        implements CipherParameters {
     /**
      * The key length.
      */

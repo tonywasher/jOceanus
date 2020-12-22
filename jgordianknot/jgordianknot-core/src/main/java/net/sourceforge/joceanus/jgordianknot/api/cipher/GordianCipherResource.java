@@ -168,6 +168,11 @@ public enum GordianCipherResource implements TethysBundleId {
     SYMKEY_MARS("symKey.MARS"),
 
     /**
+     * SymKey LEA.
+     */
+    SYMKEY_LEA("symKey.LEA"),
+
+    /**
      * StreamKey SALSA20.
      */
     STREAMKEY_SALSA20("streamKey.SALSA20"),
@@ -228,9 +233,14 @@ public enum GordianCipherResource implements TethysBundleId {
     STREAMKEY_SKEIN("streamKey.SKEIN"),
 
     /**
-     * StreamKey BlakeXof.
+     * StreamKey Blake2Xof.
      */
-    STREAMKEY_BLAKE("streamKey.BLAKE"),
+    STREAMKEY_BLAKE2("streamKey.BLAKE2"),
+
+    /**
+     * StreamKey Blake3Xof.
+     */
+    STREAMKEY_BLAKE3("streamKey.BLAKE3"),
 
     /**
      * StreamKey KMACXof.
@@ -328,6 +338,7 @@ public enum GordianCipherResource implements TethysBundleId {
         myMap.put(GordianSymKeyType.ANUBIS, SYMKEY_ANUBIS);
         myMap.put(GordianSymKeyType.SIMON, SYMKEY_SIMON);
         myMap.put(GordianSymKeyType.MARS, SYMKEY_MARS);
+        myMap.put(GordianSymKeyType.LEA, SYMKEY_LEA);
         return myMap;
     }
 
@@ -359,7 +370,8 @@ public enum GordianCipherResource implements TethysBundleId {
         myMap.put(GordianStreamKeyType.SNOW3G, STREAMKEY_SNOW3G);
         myMap.put(GordianStreamKeyType.ZUC, STREAMKEY_ZUC);
         myMap.put(GordianStreamKeyType.SKEINXOF, STREAMKEY_SKEIN);
-        myMap.put(GordianStreamKeyType.BLAKEXOF, STREAMKEY_BLAKE);
+        myMap.put(GordianStreamKeyType.BLAKE2XOF, STREAMKEY_BLAKE2);
+        myMap.put(GordianStreamKeyType.BLAKE3XOF, STREAMKEY_BLAKE3);
         myMap.put(GordianStreamKeyType.KMACXOF, STREAMKEY_KMAC);
         return myMap;
     }

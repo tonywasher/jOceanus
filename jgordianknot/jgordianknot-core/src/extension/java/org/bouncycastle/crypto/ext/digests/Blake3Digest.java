@@ -28,7 +28,7 @@ import org.bouncycastle.util.Pack;
 /**
  * Blake3 implementation.
  */
-public class Blake3
+public class Blake3Digest
         implements ExtendedDigest, Memoable, Xof {
     /**
      * Number of Words.
@@ -218,6 +218,11 @@ public class Blake3
     private final Stack<int[]> theStack = new Stack<>();
 
     /**
+     * The default digestLength.
+     */
+    private final int theDigestLen;
+
+    /**
      * Are we outputting?
      */
     private boolean outputting;
@@ -255,7 +260,16 @@ public class Blake3
     /**
      * Constructor.
      */
-    public Blake3() {
+    public Blake3Digest() {
+        this(BLOCKLEN >> 1);
+    }
+
+    /**
+     * Constructor.
+     * @param pDigestLen the default digestLength
+     */
+    public Blake3Digest(final int pDigestLen) {
+        theDigestLen = pDigestLen;
         init(null);
     }
 
@@ -263,7 +277,10 @@ public class Blake3
      * Constructor.
      * @param pSource the source digest.
      */
-    private Blake3(final Blake3 pSource) {
+    private Blake3Digest(final Blake3Digest pSource) {
+        /* Copy default digest length */
+        theDigestLen = pSource.theDigestLen;
+
         /* Initialise from source */
         reset((Memoable) pSource);
     }
@@ -280,9 +297,8 @@ public class Blake3
 
     @Override
     public int getDigestSize() {
-        return BLOCKLEN >> 1;
+        return theDigestLen;
     }
-
 
     /**
      * Initialise.
@@ -475,7 +491,7 @@ public class Blake3
     @Override
     public void reset(final Memoable pSource) {
         /* Access source */
-        final Blake3 mySource = (Blake3) pSource;
+        final Blake3Digest mySource = (Blake3Digest) pSource;
 
         /*  Reset counter */
         theCounter = mySource.theCounter;
@@ -504,8 +520,8 @@ public class Blake3
     }
 
     @Override
-    public Blake3 copy() {
-        return new Blake3(this);
+    public Blake3Digest copy() {
+        return new Blake3Digest(this);
     }
 
     /**

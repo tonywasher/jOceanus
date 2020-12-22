@@ -3,7 +3,7 @@ package net.sourceforge.joceanus.jgordianknot.junit.extensions;
 import java.util.Arrays;
 import java.util.stream.Stream;
 
-import org.bouncycastle.crypto.ext.digests.Blake3;
+import org.bouncycastle.crypto.ext.digests.Blake3Digest;
 import org.bouncycastle.crypto.ext.params.Blake3Parameters;
 import org.bouncycastle.util.encoders.Hex;
 import org.junit.jupiter.api.Assertions;
@@ -285,7 +285,7 @@ public class Blake3Test {
      */
     private void testHash(final TestDef pTest) {
         /* Create digest */
-        final Blake3 myDigest = new Blake3();
+        final Blake3Digest myDigest = new Blake3Digest();
 
         /* Try a fake update */
         myDigest.update(BLAKE3KEY, 0, BLAKE3KEY.length);
@@ -293,7 +293,7 @@ public class Blake3Test {
 
         /* Save just before final and reset */
         myDigest.update(pTest.theData, 0, pTest.theLength);
-        final Blake3 mySave = myDigest.copy();
+        final Blake3Digest mySave = myDigest.copy();
         myDigest.reset();
 
         /* restore save and perform a standard hash */
@@ -316,7 +316,7 @@ public class Blake3Test {
      */
     private void testKeyed(final TestDef pTest) {
         /* Create digest */
-        final Blake3 myDigest = new Blake3();
+        final Blake3Digest myDigest = new Blake3Digest();
         final Blake3Parameters myParams = Blake3Parameters.key(BLAKE3KEY);
         myDigest.init(myParams);
 
@@ -326,7 +326,7 @@ public class Blake3Test {
 
         /* Save just before final and reset */
         myDigest.update(pTest.theData, 0, pTest.theLength);
-        final Blake3 mySave = myDigest.copy();
+        final Blake3Digest mySave = myDigest.copy();
         myDigest.reset();
 
         /* restore save and perform a standard hash */
@@ -349,7 +349,7 @@ public class Blake3Test {
      */
     private void testDerived(final TestDef pTest) {
         /* Create digest */
-        final Blake3 myDigest = new Blake3();
+        final Blake3Digest myDigest = new Blake3Digest();
         final Blake3Parameters myParams = Blake3Parameters.context(BLAKE3CTX);
         myDigest.init(myParams);
 
@@ -359,7 +359,7 @@ public class Blake3Test {
 
         /* Save just before final and reset */
         myDigest.update(pTest.theData, 0, pTest.theLength);
-        final Blake3 mySave = myDigest.copy();
+        final Blake3Digest mySave = myDigest.copy();
         myDigest.reset();
 
         /* restore save and perform a standard hash */
@@ -381,10 +381,10 @@ public class Blake3Test {
      * @param pDigest the digest
      * @param pBuffer the buffer
      */
-    private static void checkMultiOutput(final Blake3 pDigest,
+    private static void checkMultiOutput(final Blake3Digest pDigest,
                                          final byte[] pBuffer) {
         /* Take a copy of the state */
-        final Blake3 mySave = pDigest.copy();
+        final Blake3Digest mySave = pDigest.copy();
 
         /* Crate alternative buffer */
         final int myLen = pBuffer.length;
@@ -403,7 +403,7 @@ public class Blake3Test {
             /* Around halfway through */
             if (i == PARTBREAK) {
                 /* Check save and reset in the middle of output */
-                final Blake3 myTemp  = pDigest.copy();
+                final Blake3Digest myTemp  = pDigest.copy();
                 pDigest.reset();
                 pDigest.reset(myTemp);
             }

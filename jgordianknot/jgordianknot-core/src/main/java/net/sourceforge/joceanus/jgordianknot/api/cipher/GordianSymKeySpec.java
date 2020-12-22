@@ -322,6 +322,15 @@ public class GordianSymKeySpec
     }
 
     /**
+     * Create leaKeySpec.
+     * @param pKeyLength the keyLength
+     * @return the keySpec
+     */
+    public static GordianSymKeySpec lea(final GordianLength pKeyLength) {
+        return new GordianSymKeySpec(GordianSymKeyType.LEA, pKeyLength);
+    }
+
+    /**
      * Obtain symKey Type.
      * @return the symKeyType
      */

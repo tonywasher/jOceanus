@@ -408,6 +408,7 @@ public class JcaCipherFactory
             case ANUBIS:
             case SIMON:
             case MARS:
+            case LEA:
                 return false;
             default:
                 return true;
@@ -437,7 +438,8 @@ public class JcaCipherFactory
             case RABBIT:
             case SNOW3G:
             case SKEINXOF:
-            case BLAKEXOF:
+            case BLAKE2XOF:
+            case BLAKE3XOF:
             case KMACXOF:
                 return false;
             default:

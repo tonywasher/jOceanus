@@ -78,9 +78,14 @@ public enum GordianDigestResource implements TethysBundleId {
     DIGEST_SM3("SM3"),
 
     /**
-     * Digest BLAKE.
+     * Digest BLAKE2.
      */
-    DIGEST_BLAKE("BLAKE"),
+    DIGEST_BLAKE2("BLAKE2"),
+
+    /**
+     * Digest BLAKE3.
+     */
+    DIGEST_BLAKE3("BLAKE3"),
 
     /**
      * Digest Kupyna.
@@ -205,7 +210,8 @@ public enum GordianDigestResource implements TethysBundleId {
         myMap.put(GordianDigestType.SHAKE, DIGEST_SHAKE);
         myMap.put(GordianDigestType.SKEIN, DIGEST_SKEIN);
         myMap.put(GordianDigestType.SM3, DIGEST_SM3);
-        myMap.put(GordianDigestType.BLAKE, DIGEST_BLAKE);
+        myMap.put(GordianDigestType.BLAKE2, DIGEST_BLAKE2);
+        myMap.put(GordianDigestType.BLAKE3, DIGEST_BLAKE3);
         myMap.put(GordianDigestType.KUPYNA, DIGEST_KUPYNA);
         myMap.put(GordianDigestType.SHA1, DIGEST_SHA1);
         myMap.put(GordianDigestType.MD5, DIGEST_MD5);

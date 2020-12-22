@@ -113,7 +113,7 @@ public class JcaMacFactory
     @Override
     protected boolean validMacType(final GordianMacType pMacType) {
         switch (pMacType) {
-            case BLAKE:
+            case BLAKE2:
             case KALYNA:
             case CBCMAC:
             case CFBMAC:

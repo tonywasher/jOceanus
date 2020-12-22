@@ -20,16 +20,16 @@ import org.bouncycastle.crypto.CipherParameters;
 import org.bouncycastle.crypto.DataLengthException;
 import org.bouncycastle.crypto.OutputLengthException;
 import org.bouncycastle.crypto.StreamCipher;
-import org.bouncycastle.crypto.ext.macs.KMAC;
-import org.bouncycastle.crypto.ext.params.KeccakParameters.Builder;
+import org.bouncycastle.crypto.ext.digests.Blake3Digest;
+import org.bouncycastle.crypto.ext.params.Blake3Parameters;
 import org.bouncycastle.crypto.params.KeyParameter;
 import org.bouncycastle.crypto.params.ParametersWithIV;
 import org.bouncycastle.util.Memoable;
 
 /**
- * KMAC used as a stream Cipher.
+ * Blake3 used as a stream Cipher.
  */
-public class KMACEngine
+public class Blake3Engine
         implements StreamCipher, Memoable {
     /**
      * index of next byte in keyStream.
@@ -44,29 +44,27 @@ public class KMACEngine
     /**
      * Underlying kMac.
      */
-    private final KMAC theKMAC;
+    private final Blake3Digest theDigest;
 
     /**
      * Reset state.
      */
-    private KMAC theResetState;
+    private Blake3Digest theResetState;
 
     /**
      * Constructor.
-     * @param pStrength the strength of the underlyuing mac
      */
-    public KMACEngine(final int pStrength) {
-        theKMAC = new KMAC(pStrength);
-        theKeyStream = new byte[theKMAC.getMacSize()];
+    public Blake3Engine() {
+        theDigest = new Blake3Digest();
+        theKeyStream = new byte[theDigest.getDigestSize() << 1];
     }
 
     /**
      * Constructor.
      * @param pSource the source engine
      */
-    private KMACEngine(final KMACEngine pSource) {
-        theKMAC = new KMAC(pSource.theKMAC);
-        theKeyStream = new byte[theKMAC.getByteLength()];
+    private Blake3Engine(final Blake3Engine pSource) {
+        this();
         reset(pSource);
     }
 
@@ -101,14 +99,11 @@ public class KMACEngine
         }
 
         /* Initialise engine and mark as initialised */
-        final Builder myBuilder = new Builder()
-                .setKey(newKey)
-                .setMaxOutputLen(-1);
-        theKMAC.init(myBuilder.build());
-        theKMAC.update(newIV, 0, newIV.length);
+        theDigest.init(Blake3Parameters.key(newKey));
+        theDigest.update(newIV, 0, newIV.length);
 
         /* Save reset state */
-        theResetState = theKMAC.copy();
+        theResetState = theDigest.copy();
 
         /* Initialise the stream block */
         theIndex = 0;
@@ -117,7 +112,7 @@ public class KMACEngine
 
     @Override
     public String getAlgorithmName() {
-        return theKMAC.getAlgorithmName();
+        return theDigest.getAlgorithmName();
     }
 
     @Override
@@ -147,7 +142,7 @@ public class KMACEngine
     @Override
     public void reset() {
         if (theResetState != null) {
-            theKMAC.reset(theResetState);
+            theDigest.reset(theResetState);
             theIndex = 0;
             makeStreamBlock();
         }
@@ -169,24 +164,23 @@ public class KMACEngine
      */
     private void makeStreamBlock() {
         /* Generate next output block */
-        theKMAC.doOutput(theKeyStream, 0, theKeyStream.length);
+        theDigest.doOutput(theKeyStream, 0, theKeyStream.length);
     }
 
     @Override
-    public KMACEngine copy() {
-        return new KMACEngine(this);
+    public Blake3Engine copy() {
+        return new Blake3Engine(this);
     }
 
     @Override
     public void reset(final Memoable pState) {
-        final KMACEngine e = (KMACEngine) pState;
+        final Blake3Engine e = (Blake3Engine) pState;
         if (theKeyStream.length != e.theKeyStream.length) {
             throw new IllegalArgumentException();
         }
-        theKMAC.reset(e.theKMAC);
+        theDigest.reset(e.theDigest);
         System.arraycopy(e.theKeyStream, 0, theKeyStream, 0, theKeyStream.length);
         theIndex = e.theIndex;
         theResetState = e.theResetState;
     }
 }
-

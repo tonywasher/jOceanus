@@ -161,7 +161,12 @@ public enum GordianSymKeyType {
     /**
      * MARS.
      */
-    MARS(GordianLength.LEN_128);
+    MARS(GordianLength.LEN_128),
+
+    /**
+     * LEA.
+     */
+    LEA(GordianLength.LEN_128);
 
     /**
      * The Supported lengths.
@@ -312,11 +317,6 @@ public enum GordianSymKeyType {
             case KALYNA:
                 return GordianLength.LEN_128 != pBlkLen
                         || GordianLength.LEN_512 != pKeyLen;
-            /* Simon/Speck 64-bit blockSize can only be used with 128-bit keys */
-            case SIMON:
-            case SPECK:
-                return pBlkLen != GordianLength.LEN_64
-                        || pKeyLen == GordianLength.LEN_128;
             default:
                 return true;
         }

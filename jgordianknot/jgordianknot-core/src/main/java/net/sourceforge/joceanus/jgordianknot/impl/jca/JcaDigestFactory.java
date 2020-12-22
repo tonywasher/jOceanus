@@ -22,9 +22,9 @@ import java.security.NoSuchAlgorithmException;
 import net.sourceforge.joceanus.jgordianknot.api.base.GordianLength;
 import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigestSpec;
 import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigestType;
-import net.sourceforge.joceanus.jgordianknot.impl.core.digest.GordianCoreDigestFactory;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianCoreFactory;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianCryptoException;
+import net.sourceforge.joceanus.jgordianknot.impl.core.digest.GordianCoreDigestFactory;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
@@ -83,12 +83,13 @@ public class JcaDigestFactory
             return false;
         }
 
-        /* Disable JH, Groestl, SHAKE and CubeHash */
+        /* Disable JH, Groestl, Kangaroo, CubeHash and BLAKE3 */
         switch (pDigestType) {
             case JH:
             case GROESTL:
             case CUBEHASH:
             case KANGAROO:
+            case BLAKE3:
                 return false;
             default:
                 return true;

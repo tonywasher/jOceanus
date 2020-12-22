@@ -78,9 +78,9 @@ public enum GordianDigestType {
     SM3(GordianLength.LEN_256),
 
     /**
-     * Blake2B.
+     * Blake2.
      */
-    BLAKE(GordianLength.LEN_512, GordianLength.LEN_128, GordianLength.LEN_160, GordianLength.LEN_224, GordianLength.LEN_256, GordianLength.LEN_384),
+    BLAKE2(GordianLength.LEN_512, GordianLength.LEN_128, GordianLength.LEN_160, GordianLength.LEN_224, GordianLength.LEN_256, GordianLength.LEN_384),
 
     /**
      * SHA1.
@@ -125,7 +125,12 @@ public enum GordianDigestType {
     /**
      * Haraka.
      */
-    HARAKA(GordianLength.LEN_256);
+    HARAKA(GordianLength.LEN_256),
+
+    /**
+     * Blake3.
+     */
+    BLAKE3(GordianLength.LEN_256, GordianLength.LEN_512);
 
     /**
      * The Supported lengths.
@@ -208,10 +213,10 @@ public enum GordianDigestType {
                 return pStateLength != null
                         && (pStateLength.equals(getSkeinStateForLength(pLength))
                         || pStateLength.equals(getAlternateSkeinStateForLength(pLength)));
-            case BLAKE:
+            case BLAKE2:
                 return pStateLength != null
-                        && (pStateLength.equals(getBLAKEStateForLength(pLength))
-                        || pStateLength.equals(getAlternateBLAKEStateForLength(pLength)));
+                        && (pStateLength.equals(getBLAKE2StateForLength(pLength))
+                        || pStateLength.equals(getAlternateBLAKE2StateForLength(pLength)));
             case HARAKA:
                 return pStateLength != null
                         && (pStateLength.equals(getDefaultHarakaState())
@@ -233,8 +238,8 @@ public enum GordianDigestType {
             case SHAKE:
             case KANGAROO:
                 return getSHAKEStateForLength(pLength);
-            case BLAKE:
-                return getBLAKEStateForLength(pLength);
+            case BLAKE2:
+                return getBLAKE2StateForLength(pLength);
             case HARAKA:
                 return getDefaultHarakaState();
             default:
@@ -285,11 +290,11 @@ public enum GordianDigestType {
     }
 
     /**
-     * Obtain the standard blakeState length.
+     * Obtain the standard blake2State length.
      * @param pLength the length
      * @return the length (null if not supported)
      */
-    private static GordianLength getBLAKEStateForLength(final GordianLength pLength) {
+    private static GordianLength getBLAKE2StateForLength(final GordianLength pLength) {
         switch (pLength) {
             case LEN_160:
             case LEN_256:
@@ -326,8 +331,8 @@ public enum GordianDigestType {
                 return getAlternateSHAKEStateForLength(pLength);
             case SKEIN:
                 return getAlternateSkeinStateForLength(pLength);
-            case BLAKE:
-                return getAlternateBLAKEStateForLength(pLength);
+            case BLAKE2:
+                return getAlternateBLAKE2StateForLength(pLength);
             case HARAKA:
                 return getAlternateHarakaState();
             default:
@@ -367,11 +372,11 @@ public enum GordianDigestType {
     }
 
     /**
-     * Obtain the alternate blakeState length.
+     * Obtain the alternate blake2State length.
      * @param pLength the length
      * @return the length (null if not supported)
      */
-    private static GordianLength getAlternateBLAKEStateForLength(final GordianLength pLength) {
+    private static GordianLength getAlternateBLAKE2StateForLength(final GordianLength pLength) {
         switch (pLength) {
             case LEN_160:
             case LEN_256:
@@ -418,8 +423,8 @@ public enum GordianDigestType {
      * @param pLength the length
      * @return the length
      */
-    public static String getBlakeAlgorithmForStateLength(final GordianLength pLength) {
-        return BLAKE.toString() + "2" + (isBlake2bState(pLength)
+    public static String getBlake2AlgorithmForStateLength(final GordianLength pLength) {
+        return BLAKE2.toString() + (isBlake2bState(pLength)
                                          ? "b"
                                          : "s");
     }

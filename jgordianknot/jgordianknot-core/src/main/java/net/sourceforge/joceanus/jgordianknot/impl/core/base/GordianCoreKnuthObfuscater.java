@@ -494,7 +494,7 @@ public class GordianCoreKnuthObfuscater
                 return deriveEncodedIdFromEnum((GordianVMPCKey) pStreamKeySpec.getSubKeyType());
             case SKEINXOF:
                 return deriveEncodedIdFromEnum((GordianSkeinXofKey) pStreamKeySpec.getSubKeyType());
-            case BLAKEXOF:
+            case BLAKE2XOF:
                 return deriveEncodedIdFromEnum((GordianBlakeXofKey) pStreamKeySpec.getSubKeyType());
             case KMACXOF:
                 return deriveEncodedIdFromEnum((GordianKMACXofKey) pStreamKeySpec.getSubKeyType());
@@ -522,7 +522,7 @@ public class GordianCoreKnuthObfuscater
                 return deriveEnumFromEncodedId(pEncodedId, GordianVMPCKey.class);
             case SKEINXOF:
                 return deriveEnumFromEncodedId(pEncodedId, GordianSkeinXofKey.class);
-            case BLAKEXOF:
+            case BLAKE2XOF:
                 return deriveEnumFromEncodedId(pEncodedId, GordianBlakeXofKey.class);
             case KMACXOF:
                 return deriveEnumFromEncodedId(pEncodedId, GordianKMACXofKey.class);
@@ -566,7 +566,8 @@ public class GordianCoreKnuthObfuscater
         switch (myMacType) {
             case HMAC:
             case SKEIN:
-            case BLAKE:
+            case BLAKE2:
+            case BLAKE3:
             case KUPYNA:
             case KMAC:
                 myCode += deriveEncodedIdFromDigestSpec(pMacSpec.getDigestSpec()) << myShift;
@@ -631,9 +632,12 @@ public class GordianCoreKnuthObfuscater
             case SKEIN:
                 GordianDigestSpec mySpec = deriveDigestSpecFromEncodedId(myId);
                 return GordianMacSpec.skeinMac(myKeyLen, mySpec);
-            case BLAKE:
+            case BLAKE2:
                 mySpec = deriveDigestSpecFromEncodedId(myId);
-                return GordianMacSpec.blakeMac(myKeyLen, mySpec);
+                return GordianMacSpec.blake2Mac(myKeyLen, mySpec);
+            case BLAKE3:
+                mySpec = deriveDigestSpecFromEncodedId(myId);
+                return GordianMacSpec.blake3Mac(mySpec.getDigestLength());
             case KMAC:
                 mySpec = deriveDigestSpecFromEncodedId(myId);
                 return GordianMacSpec.kMac(myKeyLen, mySpec);

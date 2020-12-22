@@ -123,7 +123,7 @@ public class GordianSM2EncryptionSpec {
             case WHIRLPOOL:
             case SM3:
                 return true;
-            case BLAKE:
+            case BLAKE2:
                 return theDigest.getDigestLength().equals(theDigest.getStateLength());
             default:
                 return false;
@@ -191,8 +191,8 @@ public class GordianSM2EncryptionSpec {
             mySpecs.add(new GordianSM2EncryptionSpec(myType, GordianDigestSpec.sha2(GordianLength.LEN_256)));
             mySpecs.add(new GordianSM2EncryptionSpec(myType, GordianDigestSpec.sha2(GordianLength.LEN_384)));
             mySpecs.add(new GordianSM2EncryptionSpec(myType, GordianDigestSpec.sha2(GordianLength.LEN_512)));
-            mySpecs.add(new GordianSM2EncryptionSpec(myType, GordianDigestSpec.blakeAlt(GordianLength.LEN_256)));
-            mySpecs.add(new GordianSM2EncryptionSpec(myType, GordianDigestSpec.blake(GordianLength.LEN_512)));
+            mySpecs.add(new GordianSM2EncryptionSpec(myType, GordianDigestSpec.blake2Alt(GordianLength.LEN_256)));
+            mySpecs.add(new GordianSM2EncryptionSpec(myType, GordianDigestSpec.blake2(GordianLength.LEN_512)));
             mySpecs.add(new GordianSM2EncryptionSpec(myType, GordianDigestSpec.whirlpool()));
         }
 

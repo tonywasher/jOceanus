@@ -82,17 +82,15 @@ public class SkeinXofEngine
             final KeyParameter keyParam = (KeyParameter) myParams;
             newKey = keyParam.getKey();
         }
-        if (newKey == null) {
-            throw new IllegalArgumentException("A key must be provided");
+        if (newKey == null || newIV == null) {
+            throw new IllegalArgumentException("A key and IV must be provided");
         }
 
         /* Initialise engine and mark as initialised */
         final Builder myBuilder = new Builder()
                 .setKey(newKey)
+                .setNonce(newIV)
                 .setMaxOutputLen(-1);
-        if (newIV != null) {
-            myBuilder.setNonce(newIV);
-        }
         theSkeinXof.init(myBuilder.build());
 
         /* Save reset state */

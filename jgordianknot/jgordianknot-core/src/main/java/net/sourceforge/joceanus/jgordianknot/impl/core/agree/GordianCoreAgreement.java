@@ -524,7 +524,7 @@ public abstract class GordianCoreAgreement<A>
         /* Ensure that we clear out the phrase */
         try {
             /* Calculate the phrase */
-            calculateDerivedSecret(GordianDigestType.BLAKE, pSecret, myPhrase);
+            calculateDerivedSecret(GordianDigestType.BLAKE2, pSecret, myPhrase);
 
             /* Create a new Factory using the phrase */
             final GordianParameters myParams = new GordianParameters(pFactoryType);

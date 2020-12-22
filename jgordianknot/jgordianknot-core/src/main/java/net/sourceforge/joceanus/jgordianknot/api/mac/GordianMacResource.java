@@ -69,9 +69,14 @@ public enum GordianMacResource implements TethysBundleId {
     MAC_KUPYNA("KUPYNA"),
 
     /**
-     * MAC BLAKE.
+     * MAC BLAKE2.
      */
-    MAC_BLAKE("BLAKE"),
+    MAC_BLAKE2("BLAKE2"),
+
+    /**
+     * MAC BLAKE2.
+     */
+    MAC_BLAKE3("BLAKE3"),
 
     /**
      * MAC CBC.
@@ -163,7 +168,8 @@ public enum GordianMacResource implements TethysBundleId {
         myMap.put(GordianMacType.SKEIN, MAC_SKEIN);
         myMap.put(GordianMacType.KALYNA, MAC_KALYNA);
         myMap.put(GordianMacType.KUPYNA, MAC_KUPYNA);
-        myMap.put(GordianMacType.BLAKE, MAC_BLAKE);
+        myMap.put(GordianMacType.BLAKE2, MAC_BLAKE2);
+        myMap.put(GordianMacType.BLAKE3, MAC_BLAKE3);
         myMap.put(GordianMacType.VMPC, MAC_VMPC);
         myMap.put(GordianMacType.ZUC, GordianCipherResource.STREAMKEY_ZUC);
         myMap.put(GordianMacType.CBCMAC, MAC_CBC);
