@@ -46,7 +46,8 @@
                     <tr><td>Poly1305Mac</td><td>128</td><td>256</td><td>Y</td><td>For all supported 128 bit block ciphers with 128 bit keys. JCA does not support Kalyna.</td></tr>
                     <tr><td>SkeinMac</td><td>digest length</td><td>All</td><td>Y</td><td/></tr>
                     <tr><td>VMPCMac</td><td>160</td><td>All</td><td>Y</td><td/></tr>
-                    <tr><td>BlakeMac</td><td>digest length</td><td>less or equal to stateLength</td><td/><td/></tr>
+                    <tr><td>Blake2Mac</td><td>digest length</td><td>less or equal to stateLength</td><td/><td/></tr>
+                    <tr><td>Blake3Mac</td><td>digest length</td><td>256</td><td/><td/></tr>
                     <tr><td>KupynaMac</td><td>digest length</td><td/><td/><td/></tr>
                     <tr><td>KalynaMac</td><td>cipher block length</td><td>As per cipher</td><td/><td/></tr>
                     <tr><td>CBCMac</td><td>cipher block length</td><td>As per cipher</td><td/><td/></tr>

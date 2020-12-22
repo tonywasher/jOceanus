@@ -63,7 +63,9 @@ import org.bouncycastle.crypto.ext.digests.Blake2b;
 import org.bouncycastle.crypto.ext.digests.Blake2s;
 import org.bouncycastle.crypto.ext.engines.AnubisEngine;
 import org.bouncycastle.crypto.ext.engines.Blake2XEngine;
+import org.bouncycastle.crypto.ext.engines.Blake3Engine;
 import org.bouncycastle.crypto.ext.engines.KMACEngine;
+import org.bouncycastle.crypto.ext.engines.LeaEngine;
 import org.bouncycastle.crypto.ext.engines.MARSEngine;
 import org.bouncycastle.crypto.ext.engines.RabbitEngine;
 import org.bouncycastle.crypto.ext.engines.SimonEngine;
@@ -288,9 +290,11 @@ public class BouncyCipherFactory
             case SKEINXOF:
                 final GordianSkeinXofKey mySkeinKeyType = (GordianSkeinXofKey) mySpec.getSubKeyType();
                 return new SkeinXofEngine(mySkeinKeyType.getLength().getLength());
-            case BLAKEXOF:
+            case BLAKE2XOF:
                 final GordianBlakeXofKey myBlakeKeyType = (GordianBlakeXofKey) mySpec.getSubKeyType();
                 return new Blake2XEngine(GordianBlakeXofKey.BLAKE2XB == myBlakeKeyType ? new Blake2b() : new Blake2s());
+            case BLAKE3XOF:
+                return new Blake3Engine();
             case KMACXOF:
                 final GordianKMACXofKey myKMACKeyType = (GordianKMACXofKey) mySpec.getSubKeyType();
                 return new KMACEngine(myKMACKeyType.getLength().getLength());
@@ -359,13 +363,15 @@ public class BouncyCipherFactory
             case SHACAL2:
                 return new Shacal2Engine();
             case SPECK:
-                return new SpeckEngine(pKeySpec.getBlockLength().getLength());
+                return new SpeckEngine();
             case ANUBIS:
                 return new AnubisEngine();
             case SIMON:
-                return new SimonEngine(pKeySpec.getBlockLength().getLength());
+                return new SimonEngine();
             case MARS:
                 return new MARSEngine();
+            case LEA:
+                return new LeaEngine();
             default:
                 throw new GordianDataException(GordianCoreFactory.getInvalidText(pKeySpec));
         }

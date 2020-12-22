@@ -35,7 +35,7 @@ public class Blake2s
     private static final int BLOCK_LENGTH_BYTES = NUMWORDS * Integer.BYTES << 1;
 
     /**
-     * Blake2b Initialization Vector.
+     * Blake2s Initialization Vector.
      */
     private static final int[] IV =
             // Produced from the square root of primes 2, 3, 5, 7, 11, 13, 17, 19.
@@ -49,17 +49,17 @@ public class Blake2s
     /**
      * The state.
      */
-    private int[] theH = new int[NUMWORDS];
+    private final int[] theH = new int[NUMWORDS];
 
     /**
      * The workBuffer.
      */
-    private int[] theV = new int[NUMWORDS << 1];
+    private final int[] theV = new int[NUMWORDS << 1];
 
     /**
      * The messageBuffer.
      */
-    private int[] theM = new int[NUMWORDS << 1];
+    private final int[] theM = new int[NUMWORDS << 1];
 
     /**
      * Low Counter.
@@ -149,7 +149,7 @@ public class Blake2s
     }
 
     @Override
-    void adjustCounter(int pCount) {
+    void adjustCounter(final int pCount) {
         t0 += pCount;
         if (t0 == 0) {
             t1++;
@@ -157,7 +157,7 @@ public class Blake2s
     }
 
     @Override
-    void completeCounter(int pCount) {
+    void completeCounter(final int pCount) {
         t0 += pCount;
         if (pCount > 0 && t0 == 0) {
             t1++;

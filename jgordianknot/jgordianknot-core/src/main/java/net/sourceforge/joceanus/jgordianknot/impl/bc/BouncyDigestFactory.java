@@ -43,6 +43,7 @@ import org.bouncycastle.crypto.digests.WhirlpoolDigest;
 import org.bouncycastle.crypto.ext.digests.Blake2;
 import org.bouncycastle.crypto.ext.digests.Blake2b;
 import org.bouncycastle.crypto.ext.digests.Blake2s;
+import org.bouncycastle.crypto.ext.digests.Blake3Digest;
 import org.bouncycastle.crypto.ext.digests.CSHAKE;
 import org.bouncycastle.crypto.ext.digests.CubeHashDigest;
 import org.bouncycastle.crypto.ext.digests.GroestlDigest;
@@ -55,9 +56,9 @@ import org.bouncycastle.crypto.ext.digests.SkeinDigest;
 import net.sourceforge.joceanus.jgordianknot.api.base.GordianLength;
 import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigestSpec;
 import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigestType;
-import net.sourceforge.joceanus.jgordianknot.impl.core.digest.GordianCoreDigestFactory;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianCoreFactory;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianDataException;
+import net.sourceforge.joceanus.jgordianknot.impl.core.digest.GordianCoreDigestFactory;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
@@ -118,8 +119,10 @@ public class BouncyDigestFactory
                 return getKangarooDigest(pDigestSpec);
             case HARAKA:
                 return getHarakaDigest(pDigestSpec);
-            case BLAKE:
+            case BLAKE2:
                 return getBlake2Digest(pDigestSpec);
+            case BLAKE3:
+                return new Blake3Digest(myLen.getByteLength());
             case STREEBOG:
                 return getStreebogDigest(myLen);
             case KUPYNA:

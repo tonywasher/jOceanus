@@ -49,6 +49,7 @@
                     <tr><td>SM3</td><td/><td>256</td><td>Y</td><td/></tr>
                     <tr><td>Blake2s</td><td>256</td><td>128,160,224,256</td><td>Y</td><td/></tr>
                     <tr><td>Blake2b</td><td>512</td><td>160,256,384,512</td><td>Y</td><td/></tr>
+                    <tr><td>Blake3</td><td>512</td><td>256,512</td><td/><td/></tr>
                     <tr><td>SHA1</td><td/><td>160</td><td>Y</td><td/></tr>
                     <tr><td>MD2</td><td/><td>128</td><td>Y</td><td/></tr>
                     <tr><td>MD4</td><td/><td>128</td><td>Y</td><td/></tr>

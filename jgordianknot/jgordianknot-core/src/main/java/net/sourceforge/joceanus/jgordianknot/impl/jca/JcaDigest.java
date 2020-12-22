@@ -22,9 +22,9 @@ import java.security.MessageDigest;
 import net.sourceforge.joceanus.jgordianknot.api.base.GordianLength;
 import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigestSpec;
 import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigestType;
-import net.sourceforge.joceanus.jgordianknot.impl.core.digest.GordianCoreDigest;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianCryptoException;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianDataException;
+import net.sourceforge.joceanus.jgordianknot.impl.core.digest.GordianCoreDigest;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
@@ -166,7 +166,7 @@ public final class JcaDigest
                 return getSkeinAlgorithm(pDigestSpec);
             case SHA3:
                 return getSHA3Algorithm(myLen);
-            case BLAKE:
+            case BLAKE2:
                 return getBlake2Algorithm(pDigestSpec);
             case KUPYNA:
                 return getKupynaAlgorithm(myLen);
@@ -326,7 +326,7 @@ public final class JcaDigest
      */
     static boolean isHMacSupported(final GordianDigestType pDigestType) {
         switch (pDigestType) {
-            case BLAKE:
+            case BLAKE2:
             case KUPYNA:
             case SHAKE:
                 return false;

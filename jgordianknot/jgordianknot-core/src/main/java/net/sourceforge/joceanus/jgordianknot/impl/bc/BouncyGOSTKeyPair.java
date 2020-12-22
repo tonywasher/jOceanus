@@ -31,20 +31,22 @@ import org.bouncycastle.asn1.cryptopro.ECGOST3410NamedCurves;
 import org.bouncycastle.asn1.pkcs.PrivateKeyInfo;
 import org.bouncycastle.asn1.rosstandart.RosstandartObjectIdentifiers;
 import org.bouncycastle.asn1.x509.SubjectPublicKeyInfo;
+import org.bouncycastle.asn1.x9.X9ECParameters;
 import org.bouncycastle.crypto.AsymmetricCipherKeyPair;
 import org.bouncycastle.crypto.generators.ECKeyPairGenerator;
 import org.bouncycastle.crypto.params.ECDomainParameters;
+import org.bouncycastle.crypto.params.ECGOST3410Parameters;
 import org.bouncycastle.crypto.params.ECKeyGenerationParameters;
+import org.bouncycastle.crypto.params.ECNamedDomainParameters;
 import org.bouncycastle.crypto.params.ECPrivateKeyParameters;
 import org.bouncycastle.crypto.params.ECPublicKeyParameters;
 import org.bouncycastle.crypto.params.ParametersWithRandom;
 import org.bouncycastle.crypto.signers.ECGOST3410_2012Signer;
 import org.bouncycastle.jcajce.provider.asymmetric.ecgost12.BCECGOST3410_2012PrivateKey;
 import org.bouncycastle.jcajce.provider.asymmetric.ecgost12.BCECGOST3410_2012PublicKey;
-import org.bouncycastle.jcajce.provider.asymmetric.util.EC5Util;
+import org.bouncycastle.jcajce.spec.GOST3410ParameterSpec;
 import org.bouncycastle.jce.spec.ECNamedCurveSpec;
 import org.bouncycastle.math.ec.ECCurve;
-import org.bouncycastle.math.ec.ECPoint;
 
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPair;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPairSpec;
@@ -129,21 +131,21 @@ public final class BouncyGOSTKeyPair {
 
             /* Determine domain */
             theCurve = pKeySpec.getElliptic().getCurveName();
-            theDomain = ECGOST3410NamedCurves.getByName(theCurve);
-            theSpec = new ECNamedCurveSpec(theCurve,
-                    theDomain.getCurve(),
-                    theDomain.getG(),
-                    theDomain.getN(),
-                    theDomain.getH(),
-                    theDomain.getSeed());
+            final GOST3410ParameterSpec mySpec = new GOST3410ParameterSpec(theCurve);
+            final X9ECParameters x9 = ECGOST3410NamedCurves.getByNameX9(theCurve);
+            theSpec = new ECNamedCurveSpec(
+                    theCurve,
+                    x9.getCurve(),
+                    x9.getG(),
+                    x9.getN(),
+                    x9.getH(),
+                    x9.getSeed());
+            theDomain = new ECNamedDomainParameters(mySpec.getPublicKeyParamSet(), x9);
 
-            /* Perform conversion */
-            final ECCurve myCurve = EC5Util.convertCurve(theSpec.getCurve());
-            final ECPoint myG = EC5Util.convertPoint(myCurve, theSpec.getGenerator());
-
-            /* Initialise the generator */
+            /* initialise */
             final ECKeyGenerationParameters myParams = new ECKeyGenerationParameters(
-                    new ECDomainParameters(myCurve, myG, theSpec.getOrder(), BigInteger.valueOf(theSpec.getCofactor())), getRandom());
+                    new ECGOST3410Parameters(theDomain, mySpec.getPublicKeyParamSet(), mySpec.getDigestParamSet(),
+                            mySpec.getEncryptionParamSet()), getRandom());
             theGenerator.init(myParams);
         }
 

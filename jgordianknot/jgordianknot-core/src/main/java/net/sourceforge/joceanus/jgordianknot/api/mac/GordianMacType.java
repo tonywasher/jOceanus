@@ -16,8 +16,6 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jgordianknot.api.mac;
 
-import org.bouncycastle.jcajce.provider.asymmetric.GOST;
-
 import net.sourceforge.joceanus.jgordianknot.api.base.GordianLength;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianSymKeyType;
 
@@ -51,9 +49,9 @@ public enum GordianMacType {
     SKEIN,
 
     /**
-     * Blake2B.
+     * Blake2.
      */
-    BLAKE,
+    BLAKE2,
 
     /**
      * Kalyna.
@@ -98,7 +96,12 @@ public enum GordianMacType {
     /**
      * GOST.
      */
-    GOST;
+    GOST,
+
+    /**
+     * Blake3.
+     */
+    BLAKE3;
 
     /**
      * The String name.
@@ -142,6 +145,7 @@ public enum GordianMacType {
         switch (this) {
             case POLY1305:
             case GOST:
+            case BLAKE3:
                 return GordianLength.LEN_256 == pKeyLen;
             case ZUC:
                 return GordianLength.LEN_128 == pKeyLen

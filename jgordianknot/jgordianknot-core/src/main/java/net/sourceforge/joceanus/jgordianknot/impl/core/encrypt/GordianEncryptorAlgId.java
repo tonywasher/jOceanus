@@ -119,9 +119,9 @@ public class GordianEncryptorAlgId {
                 new AlgorithmIdentifier(GMObjectIdentifiers.sm2encrypt_with_sha512, DERNull.INSTANCE));
         addToMaps(GordianEncryptorSpec.sm2(GordianSM2EncryptionSpec.c1c2c3(GordianDigestSpec.whirlpool())),
                 new AlgorithmIdentifier(GMObjectIdentifiers.sm2encrypt_with_whirlpool, DERNull.INSTANCE));
-        addToMaps(GordianEncryptorSpec.sm2(GordianSM2EncryptionSpec.c1c2c3(GordianDigestSpec.blake(GordianLength.LEN_256))),
+        addToMaps(GordianEncryptorSpec.sm2(GordianSM2EncryptionSpec.c1c2c3(GordianDigestSpec.blake2(GordianLength.LEN_256))),
                 new AlgorithmIdentifier(GMObjectIdentifiers.sm2encrypt_with_blake2s256, DERNull.INSTANCE));
-        addToMaps(GordianEncryptorSpec.sm2(GordianSM2EncryptionSpec.c1c2c3(GordianDigestSpec.blake(GordianLength.LEN_512))),
+        addToMaps(GordianEncryptorSpec.sm2(GordianSM2EncryptionSpec.c1c2c3(GordianDigestSpec.blake2(GordianLength.LEN_512))),
                 new AlgorithmIdentifier(GMObjectIdentifiers.sm2encrypt_with_blake2b512, DERNull.INSTANCE));
         addToMaps(GordianEncryptorSpec.mcEliece(GordianMcElieceEncryptionType.STANDARD),
                 new AlgorithmIdentifier(PQCObjectIdentifiers.mcEliece, DERNull.INSTANCE));

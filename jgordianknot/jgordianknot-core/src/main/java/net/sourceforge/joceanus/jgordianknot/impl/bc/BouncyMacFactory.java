@@ -22,7 +22,9 @@ import java.util.Map;
 import org.bouncycastle.crypto.CipherKeyGenerator;
 import org.bouncycastle.crypto.Mac;
 import org.bouncycastle.crypto.ext.digests.Blake2;
+import org.bouncycastle.crypto.ext.digests.Blake3Digest;
 import org.bouncycastle.crypto.ext.macs.Blake2Mac;
+import org.bouncycastle.crypto.ext.macs.Blake3Mac;
 import org.bouncycastle.crypto.ext.macs.KMAC;
 import org.bouncycastle.crypto.ext.macs.SkeinMac;
 import org.bouncycastle.crypto.ext.macs.Zuc128Mac;
@@ -145,8 +147,10 @@ public class BouncyMacFactory
                 return getBCPoly1305Mac(pMacSpec.getSymKeySpec());
             case SKEIN:
                 return getBCSkeinMac(pMacSpec.getDigestSpec());
-            case BLAKE:
-                return getBCBlakeMac(pMacSpec);
+            case BLAKE2:
+                return getBCBlake2Mac(pMacSpec);
+            case BLAKE3:
+                return getBCBlake3Mac(pMacSpec);
             case KMAC:
                 return getBCKMAC(pMacSpec);
             case KALYNA:
@@ -256,9 +260,20 @@ public class BouncyMacFactory
      * @param pSpec the digestSpec
      * @return the MAC
      */
-    private static Mac getBCBlakeMac(final GordianMacSpec pSpec) {
+    private static Mac getBCBlake2Mac(final GordianMacSpec pSpec) {
         final Blake2 myDigest = BouncyDigestFactory.getBlake2Digest(pSpec.getDigestSpec());
         return new Blake2Mac(myDigest);
+    }
+
+    /**
+     * Create the BouncyCastle blakeMac.
+     *
+     * @param pSpec the digestSpec
+     * @return the MAC
+     */
+    private static Mac getBCBlake3Mac(final GordianMacSpec pSpec) {
+        final Blake3Digest myDigest = new Blake3Digest(pSpec.getDigestSpec().getDigestLength().getByteLength());
+        return new Blake3Mac(myDigest);
     }
 
     /**

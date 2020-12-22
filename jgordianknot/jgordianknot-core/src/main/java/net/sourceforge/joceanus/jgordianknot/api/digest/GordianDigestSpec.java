@@ -177,32 +177,41 @@ public class GordianDigestSpec
     }
 
     /**
-     * Create blake2BDigestSpec.
+     * Create blake2bDigestSpec.
      * @param pLength the length
      * @return the DigestSpec
      */
-    public static GordianDigestSpec blake(final GordianLength pLength) {
-        return new GordianDigestSpec(GordianDigestType.BLAKE, GordianDigestType.BLAKE.getStateForLength(pLength), pLength);
+    public static GordianDigestSpec blake2(final GordianLength pLength) {
+        return new GordianDigestSpec(GordianDigestType.BLAKE2, GordianDigestType.BLAKE2.getStateForLength(pLength), pLength);
     }
 
     /**
-     * Create blake2SDigestSpec.
+     * Create blake2sDigestSpec.
      * @param pLength the length
      * @return the DigestSpec
      */
-    public static GordianDigestSpec blakeAlt(final GordianLength pLength) {
-        return new GordianDigestSpec(GordianDigestType.BLAKE, GordianDigestType.BLAKE.getAlternateStateForLength(pLength), pLength);
+    public static GordianDigestSpec blake2Alt(final GordianLength pLength) {
+        return new GordianDigestSpec(GordianDigestType.BLAKE2, GordianDigestType.BLAKE2.getAlternateStateForLength(pLength), pLength);
     }
 
     /**
-     * Create blakeDigestSpec.
+     * Create blake2DigestSpec.
      * @param pStateLength the state length
      * @param pLength the length
      * @return the DigestSpec
      */
-    public static GordianDigestSpec blake(final GordianLength pStateLength,
+    public static GordianDigestSpec blake2(final GordianLength pStateLength,
                                           final GordianLength pLength) {
-        return new GordianDigestSpec(GordianDigestType.BLAKE, pStateLength, pLength);
+        return new GordianDigestSpec(GordianDigestType.BLAKE2, pStateLength, pLength);
+    }
+
+    /**
+     * Create blake3DigestSpec.
+     * @param pLength the length
+     * @return the DigestSpec
+     */
+    public static GordianDigestSpec blake3(final GordianLength pLength) {
+        return new GordianDigestSpec(GordianDigestType.BLAKE3, pLength);
     }
 
     /**
@@ -401,7 +410,7 @@ public class GordianDigestSpec
         /* Switch on keyType */
         switch (theDigestType) {
             case SKEIN:
-            case BLAKE:
+            case BLAKE2:
             case SHAKE:
             case KANGAROO:
             case HARAKA:
@@ -438,8 +447,8 @@ public class GordianDigestSpec
                         theName += SEP + theStateLength;
                         theName += SEP + theLength;
                         break;
-                    case BLAKE:
-                        theName = GordianDigestType.getBlakeAlgorithmForStateLength(theStateLength);
+                    case BLAKE2:
+                        theName = GordianDigestType.getBlake2AlgorithmForStateLength(theStateLength);
                         theName += SEP + theLength;
                         break;
                     case KANGAROO:

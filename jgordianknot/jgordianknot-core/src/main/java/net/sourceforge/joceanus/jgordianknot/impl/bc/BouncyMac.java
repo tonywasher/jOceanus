@@ -95,7 +95,7 @@ public final class BouncyMac
         }
 
         /* Handle Blake Parameters */
-        if (GordianMacType.BLAKE.equals(getMacSpec().getMacType())) {
+        if (GordianMacType.BLAKE2.equals(getMacSpec().getMacType())) {
             final Blake2Parameters.Builder myBuilder = new Blake2Parameters.Builder();
             myBuilder.setKey(pKey.getKey());
             if (pIV != null) {

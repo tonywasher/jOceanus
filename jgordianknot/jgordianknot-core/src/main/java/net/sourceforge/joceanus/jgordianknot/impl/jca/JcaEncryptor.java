@@ -340,7 +340,7 @@ public final class JcaEncryptor {
             switch (myDigestType) {
                 case SHA2:
                     return "SM2withSHA" + myDigestSpec.getDigestLength();
-                case BLAKE:
+                case BLAKE2:
                     return "SM2withBlake2" + (GordianLength.LEN_512.equals(myDigestSpec.getDigestLength()) ? "b" : "s");
                 case WHIRLPOOL:
                 case SM3:

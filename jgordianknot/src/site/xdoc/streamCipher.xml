@@ -52,6 +52,7 @@
                     <tr><td>Skein-1024</td><td/><td>Y</td><td>Y</td><td>Y</td><td>Y</td><td>Y</td><td/></tr>
                     <tr><td rowspan="2">Blake2X</td><td>Blake2Xs</td><td/><td>Y</td><td>Y</td><td>Y</td><td/><td/><td/></tr>
                     <tr><td>Blake2Xb</td><td/><td>Y</td><td>Y</td><td>Y</td><td>Y</td><td/><td/></tr>
+                    <tr><td>Blake3Xof</td><td/><td/><td/><td/><td>Y</td><td/><td/><td/></tr>
                     <tr><td rowspan="2">KMACXof</td><td>KMAC128</td><td/><td>Y</td><td>Y</td><td>Y</td><td>Y</td><td>Y</td><td/></tr>
                     <tr><td>KMAC256</td><td/><td/><td/><td>Y</td><td>Y</td><td>Y</td><td/></tr>
                 </table>

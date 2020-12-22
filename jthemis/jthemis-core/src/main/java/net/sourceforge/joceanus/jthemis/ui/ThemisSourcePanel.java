@@ -70,7 +70,7 @@ public class ThemisSourcePanel
     /**
      * The Allowed File children.
      */
-    private static final Class<?>[] FILE_CHILDREN =  {
+    private static final Class<?>[] FILE_CHILDREN = {
         ThemisAnalysisClass.class,
         ThemisAnalysisInterface.class,
         ThemisAnalysisEnum.class
@@ -79,7 +79,7 @@ public class ThemisSourcePanel
     /**
      * The Allowed Class children.
      */
-    private static final Class<?>[] CLASS_CHILDREN =  {
+    private static final Class<?>[] CLASS_CHILDREN = {
             ThemisAnalysisClass.class,
             ThemisAnalysisInterface.class,
             ThemisAnalysisEnum.class,
@@ -91,7 +91,7 @@ public class ThemisSourcePanel
     /**
      * The Allowed Code children.
      */
-    private static final Class<?>[] CODE_CHILDREN =  {
+    private static final Class<?>[] CODE_CHILDREN = {
             ThemisAnalysisClass.class,
             ThemisAnalysisInterface.class,
             ThemisAnalysisEnum.class,
@@ -109,7 +109,7 @@ public class ThemisSourcePanel
     /**
      * The Switch Code children.
      */
-    private static final Class<?>[] SWITCH_CHILDREN =  {
+    private static final Class<?>[] SWITCH_CHILDREN = {
             ThemisAnalysisCase.class
     };
 

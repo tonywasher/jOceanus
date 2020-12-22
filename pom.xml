@@ -71,7 +71,7 @@
     <appDir>${env.BACKUPDIR}</appDir>
     <appBinDir>bin/</appBinDir>
     <appLibDir>lib/</appLibDir>
-    <BouncyCastleVersion>1.67</BouncyCastleVersion>
+    <BouncyCastleVersion>1.68</BouncyCastleVersion>
     <JUnitVersion>5.7.0</JUnitVersion>
     <JSONVersion>20201115</JSONVersion>
     <ApacheMavenVersion>3.6.3</ApacheMavenVersion>
@@ -87,7 +87,7 @@
     <JavaFXVersion>15.0.1</JavaFXVersion>
     <JavaLanguageVersion>11</JavaLanguageVersion>
     <CheckStyleVersion>8.38</CheckStyleVersion>
-    <PMDVersion>6.29.0</PMDVersion>
+    <PMDVersion>6.30.0</PMDVersion>
     <CleanPluginVersion>3.1.0</CleanPluginVersion>
     <ResourcesPluginVersion>3.2.0</ResourcesPluginVersion>
     <InstallPluginVersion>3.0.0-M1</InstallPluginVersion>

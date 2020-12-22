@@ -179,8 +179,11 @@ public abstract class GordianCoreMacFactory
             case SKEIN:
                 return GordianDigestType.SKEIN.equals(mySpec.getDigestType())
                         && myDigests.supportedDigestSpecs().test(mySpec);
-            case BLAKE:
-                return GordianDigestType.BLAKE.equals(mySpec.getDigestType())
+            case BLAKE2:
+                return GordianDigestType.BLAKE2.equals(mySpec.getDigestType())
+                        && myDigests.supportedDigestSpecs().test(mySpec);
+            case BLAKE3:
+                return GordianDigestType.BLAKE3.equals(mySpec.getDigestType())
                         && myDigests.supportedDigestSpecs().test(mySpec);
             case KUPYNA:
                 return GordianDigestType.KUPYNA.equals(mySpec.getDigestType())

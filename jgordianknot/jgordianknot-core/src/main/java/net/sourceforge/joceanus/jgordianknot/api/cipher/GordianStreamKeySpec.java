@@ -234,12 +234,20 @@ public class GordianStreamKeySpec
     }
 
     /**
-     * Create blakeKeySpec.
+     * Create blake2KeySpec.
      * @param pKeyLength the keyLength
      * @return the keySpec
      */
-    public static GordianStreamKeySpec blakeXof(final GordianLength pKeyLength) {
-        return new GordianStreamKeySpec(GordianStreamKeyType.BLAKEXOF, pKeyLength);
+    public static GordianStreamKeySpec blake2Xof(final GordianLength pKeyLength) {
+        return new GordianStreamKeySpec(GordianStreamKeyType.BLAKE2XOF, pKeyLength);
+    }
+
+    /**
+     * Create blake3KeySpec.
+     * @return the keySpec
+     */
+    public static GordianStreamKeySpec blake3Xof() {
+        return new GordianStreamKeySpec(GordianStreamKeyType.BLAKE2XOF, GordianLength.LEN_256);
     }
 
     /**
@@ -308,7 +316,7 @@ public class GordianStreamKeySpec
                 return theSubKeyType == GordianChaCha20Key.ISO7539
                             ? GordianLength.LEN_96.getByteLength()
                             : theStreamKeyType.getIVLength(theKeyLength);
-            case BLAKEXOF:
+            case BLAKE2XOF:
                 return theSubKeyType == GordianBlakeXofKey.BLAKE2XS
                        ? GordianLength.LEN_64.getByteLength()
                        : GordianLength.LEN_128.getByteLength();
@@ -338,8 +346,8 @@ public class GordianStreamKeySpec
                 return checkVMPCValidity();
             case SKEINXOF:
                 return checkSkeinValidity();
-            case BLAKEXOF:
-                return checkBlakeValidity();
+            case BLAKE2XOF:
+                return checkBlake2Validity();
             case KMACXOF:
                 return checkKMACValidity();
             default:
@@ -412,7 +420,7 @@ public class GordianStreamKeySpec
      * Check skein spec validity.
      * @return valid true/false
      */
-    private boolean checkBlakeValidity() {
+    private boolean checkBlake2Validity() {
         /* SubKeyType must be a GordianBlakeXofKey */
         if (!(theSubKeyType instanceof GordianBlakeXofKey)) {
             return false;
@@ -495,7 +503,7 @@ public class GordianStreamKeySpec
         }
 
         /* Handle Blake */
-        if (theStreamKeyType == GordianStreamKeyType.BLAKEXOF) {
+        if (theStreamKeyType == GordianStreamKeyType.BLAKE2XOF) {
             return theSubKeyType.toString();
         }
 
@@ -625,7 +633,7 @@ public class GordianStreamKeySpec
                 return Arrays.asList(GordianVMPCKey.values());
             case SKEINXOF:
                 return Arrays.asList(GordianSkeinXofKey.values());
-            case BLAKEXOF:
+            case BLAKE2XOF:
                 return Arrays.asList(GordianBlakeXofKey.values());
             case KMACXOF:
                 return Arrays.asList(GordianKMACXofKey.values());
@@ -650,7 +658,7 @@ public class GordianStreamKeySpec
                 return GordianVMPCKey.STD;
             case SKEINXOF:
                 return GordianSkeinXofKey.STATE1024;
-            case BLAKEXOF:
+            case BLAKE2XOF:
                 return GordianBlakeXofKey.BLAKE2XB;
             case KMACXOF:
                 return GordianKMACXofKey.STATE128;
