@@ -16,8 +16,9 @@
  ******************************************************************************/
 package org.bouncycastle.crypto.ext.digests;
 
+import java.util.ArrayDeque;
 import java.util.Arrays;
-import java.util.Stack;
+import java.util.Deque;
 
 import org.bouncycastle.crypto.ExtendedDigest;
 import org.bouncycastle.crypto.Xof;
@@ -30,6 +31,11 @@ import org.bouncycastle.util.Pack;
  */
 public class Blake3Digest
         implements ExtendedDigest, Memoable, Xof {
+    /**
+     * Already outputting error.
+     */
+    private static final String ERR_OUTPUTTING = "Already outputting";
+
     /**
      * Number of Words.
      */
@@ -215,7 +221,7 @@ public class Blake3Digest
     /**
      * The chainingStack.
      */
-    private final Stack<int[]> theStack = new Stack<>();
+    private final Deque<int[]> theStack = new ArrayDeque<>();
 
     /**
      * The default digestLength.
@@ -341,7 +347,7 @@ public class Blake3Digest
     public void update(final byte b) {
         /* Check that we are not outputting */
         if (outputting) {
-            throw new IllegalStateException("Already outputting");
+            throw new IllegalStateException(ERR_OUTPUTTING);
         }
 
         /* If the buffer is full */
@@ -372,7 +378,7 @@ public class Blake3Digest
 
         /* Check that we are not outputting */
         if (outputting) {
-            throw new IllegalStateException("Already outputting");
+            throw new IllegalStateException(ERR_OUTPUTTING);
         }
 
         /* Process any bytes currently in the buffer */
@@ -383,7 +389,7 @@ public class Blake3Digest
 
             /* If there is sufficient space in the buffer */
             if (remainingLen >= pLen) {
-                /* Copy date into byffer and return */
+                /* Copy data into byffer and return */
                 System.arraycopy(pMessage, pOffset, theBuffer, thePos, pLen);
                 thePos += pLen;
                 return;
@@ -426,7 +432,7 @@ public class Blake3Digest
                        final int pOutLen) {
         /* Reject if we are already outputting */
         if (outputting) {
-            throw new IllegalStateException("Already outputting");
+            throw new IllegalStateException(ERR_OUTPUTTING);
         }
 
         /* Build the required output */
@@ -511,7 +517,7 @@ public class Blake3Digest
         /* Copy stack */
         theStack.clear();
         for (int[] myEntry : mySource.theStack) {
-            theStack.add(myEntry.clone()); // TODO check that we have not reordered
+            theStack.push(myEntry.clone());
         }
 
         /* Copy buffer */
@@ -568,7 +574,7 @@ public class Blake3Digest
         }
 
         /* Add back to the stack */
-        theStack.add(Arrays.copyOf(theChaining, NUMWORDS));
+        theStack.push(Arrays.copyOf(theChaining, NUMWORDS));
     }
 
     /**

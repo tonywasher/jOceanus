@@ -214,7 +214,7 @@ public class ThemisAnalysisIf
 
         @Override
         public T next() {
-            return (T) theBase.next();
+            return theBase.next();
         }
     }
 }

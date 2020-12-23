@@ -146,9 +146,6 @@ public class ThemisSourcePanel
         theHTML = theSplitTree.getHTMLManager();
         theHTML.setCSSContent(ThemisDSMStyleSheet.CSS_DSM);
         theTree.setVisible(true);
-
-        /* Listen to the TreeManager */
-        //theSplitTree.getEventRegistrar().addEventListener(this::handleSplitTreeAction);
     }
 
     @Override
@@ -395,31 +392,4 @@ public class ThemisSourcePanel
         /* Not allowed */
         return false;
     }
-
-    ///**
-    // * Handle the split tree action event.
-    // * @param pEvent the event
-    // */
-    //protected void handleSplitTreeAction(final TethysEvent<TethysUIEvent> pEvent) {
-    //    /* If this is a new value */
-    //    if (pEvent.getEventId() == TethysUIEvent.NEWVALUE) {
-    //        handleNewTreeItem(pEvent.getDetails(ThemisStatsEntry.class));
-    //    }
-    //}
-
-    ///**
-    // * Handle the new tree item.
-    // * @param pEntry the new entry
-    // */
-    //private void handleNewTreeItem(final ThemisStatsEntry pEntry) {
-    //    /* If we have an entry */
-    //    if (pEntry != null) {
-    //        /* Access the StatsHolder */
-    //        final ThemisStatsBase myHolder = pEntry.getObject();
-    //
-    //        /* Build report */
-    //        final String myDoc = ThemisStatsReport.reportOnStats(myHolder);
-    //        theHTML.setHTMLContent(myDoc, "");
-    //    }
-    //}
 }

@@ -45,21 +45,6 @@ public class SpeckEngine
     private static final int BLOCKSIZE = NUMWORDS * Long.BYTES;
 
     /**
-     * Number of words in 128-bit key.
-     */
-    private static final int NUMWORDS128 = 2;
-
-    /**
-     * Number of words in 192-bit key.
-     */
-    private static final int NUMWORDS192 = 3;
-
-    /**
-     * Number of words in 256-bit key.
-     */
-    private static final int NUMWORDS256 = 4;
-
-    /**
      * Rotate3.
      */
     private static final int ROT3 = 3;
@@ -83,12 +68,6 @@ public class SpeckEngine
      * Are we encrypting?
      */
     private boolean forEncryption;
-
-    /**
-     * Constructor.
-     */
-    public SpeckEngine() {
-    }
 
     @Override
     public void init(final boolean pEncrypt,
@@ -132,7 +111,7 @@ public class SpeckEngine
     public int processBlock(final byte[] pInput,
                             final int pInOff,
                             final byte[] pOutput,
-                            final int pOutOff) throws IllegalStateException {
+                            final int pOutOff) {
         /* Check buffers */
         if (pInput == null || pInput.length - pInOff < BLOCKSIZE) {
             throw new IllegalArgumentException("Invalid input buffer");

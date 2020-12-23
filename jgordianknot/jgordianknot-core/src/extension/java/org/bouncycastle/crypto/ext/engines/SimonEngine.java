@@ -115,12 +115,6 @@ public class SimonEngine
      */
     private boolean forEncryption;
 
-    /**
-     * Constructor.
-     */
-    public SimonEngine() {
-    }
-
     @Override
     public void init(final boolean pEncrypt,
                      final CipherParameters pParams) {
@@ -163,7 +157,7 @@ public class SimonEngine
     public int processBlock(final byte[] pInput,
                             final int pInOff,
                             final byte[] pOutput,
-                            final int pOutOff) throws IllegalStateException {
+                            final int pOutOff) {
         /* Check buffers */
         if (pInput == null || pInput.length - pInOff < BLOCKSIZE) {
             throw new IllegalArgumentException("Invalid input buffer");

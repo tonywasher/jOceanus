@@ -212,7 +212,7 @@ public class LeaEngine
     public int processBlock(final byte[] pInput,
                             final int pInOff,
                             final byte[] pOutput,
-                            final int pOutOff) throws IllegalStateException {
+                            final int pOutOff) {
         /* Check buffers */
         if (pInput == null || pInput.length - pInOff < BLOCKSIZE) {
             throw new IllegalArgumentException("Invalid input buffer");
@@ -276,7 +276,7 @@ public class LeaEngine
      * @param pIndex the index
      * @return the left of an index
      */
-    private int leftIndex(final int pIndex) {
+    private static int leftIndex(final int pIndex) {
         return pIndex == 0 ? NUMWORDS - 1 : pIndex - 1;
     }
 
@@ -330,7 +330,7 @@ public class LeaEngine
      * @param pIndex the index
      * @return the left of an index
      */
-    private int rightIndex(final int pIndex) {
+    private static int rightIndex(final int pIndex) {
         return pIndex == NUMWORDS - 1 ? 0 : pIndex + 1;
     }
 
@@ -377,14 +377,13 @@ public class LeaEngine
             pWork[j] = rol32(pWork[j] + rol32(myDelta, j++), ROT6);
             pWork[j] = rol32(pWork[j] + rol32(myDelta, j), ROT11);
 
-            j = 0;
             final int[] myKeys = theRoundKeys[i];
-            myKeys[j] = pWork[j++];
-            myKeys[j] = pWork[j++];
-            myKeys[j] = pWork[j++];
-            myKeys[j++] = pWork[1];
-            myKeys[j] = pWork[j++ - 1];
-            myKeys[j] = pWork[1];
+            myKeys[KEY0] = pWork[KEY0];
+            myKeys[KEY1] = pWork[KEY1];
+            myKeys[KEY2] = pWork[KEY2];
+            myKeys[KEY3] = pWork[KEY1];
+            myKeys[KEY4] = pWork[KEY3];
+            myKeys[KEY5] = pWork[KEY1];
         }
     }
 

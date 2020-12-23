@@ -306,7 +306,14 @@ public enum ThemisSourceIcon implements TethysIconId {
      * @return the icon
      */
     static TethysIconId getElementIcon(final ThemisAnalysisElement pElement) {
-        switch (getElementColour(pElement)) {
+        /* Determine the element colour */
+        final String myColour = getElementColour(pElement);
+        if (myColour == null) {
+            return null;
+        }
+
+        /* Switch on the colour */
+        switch (myColour) {
             case BLUE:
                 return getBlueElementIcon(pElement);
             case GREEN:
