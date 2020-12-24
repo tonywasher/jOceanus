@@ -332,11 +332,9 @@ public class GordianCoreWrapper
         myDataLen -= theBlockLen;
 
         /* Check initialisation value */
-        boolean isCheckOK = true;
+        int checkFail = 0;
         for (int myInit = 0; myInit < myCheckLen; myInit++) {
-            if (myData[myInit] != getIntegrityValue(myInit)) {
-                isCheckOK = false;
-            }
+            checkFail |= myData[myInit] ^ getIntegrityValue(myInit);
         }
 
         /* Obtain encoded length */
@@ -345,23 +343,17 @@ public class GordianCoreWrapper
 
         /* Obtain zeroLen and check that it is valid */
         final int myZeroLen = myDataLen - myEncodedLen;
-        if (myZeroLen < 0) {
-            isCheckOK = false;
-        }
-        if (myZeroLen >= theBlockLen) {
-            isCheckOK = false;
-        }
+        checkFail |= myZeroLen < 0 ? 1 : 0;
+        checkFail |= myZeroLen >= theBlockLen ? 2 : 0;
 
         /* Check trailing bytes */
         for (int myZeros = myZeroLen, myLoc = myData.length - 1; myZeros > 0 && myLoc > 0; myZeros--, myLoc--) {
             /* Check that byte is zero */
-            if (myData[myLoc] != 0) {
-                isCheckOK = false;
-            }
+            checkFail |= myData[myLoc];
         }
 
         /* Return unwrapped data */
-        if (isCheckOK) {
+        if (checkFail == 0) {
             return Arrays.copyOfRange(myData, myCheckLen + Integer.BYTES + theBlockLen, myData.length
                     - myZeroLen);
         }

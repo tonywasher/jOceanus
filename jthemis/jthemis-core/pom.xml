@@ -3,7 +3,7 @@
   <parent>
     <groupId>net.sourceforge.joceanus</groupId>
     <artifactId>jthemis</artifactId>
-    <version>1.6.1-b5</version>
+    <version>1.6.1-SNAPSHOT</version>
   </parent>
   <artifactId>jthemis-core</artifactId>
   <name>Themis Core Project Framework</name>
