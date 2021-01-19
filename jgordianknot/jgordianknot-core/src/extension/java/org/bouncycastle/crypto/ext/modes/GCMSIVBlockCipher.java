@@ -24,9 +24,10 @@ import org.bouncycastle.util.Pack;
  * on the <b>doFinal</b>() call (which can only process a maximum of 2<sup>31</sup> bytes).
  * <p>The limit of 2<sup>31</sup> bytes is not policed, and attempts to breach the limit will fail on writing to the
  * <b>ByteArrayOutputStream</b> with <b>OutOfMemoryError</b></p>
- * <p>In order to properly support the higher limit, an extended form of <b>ByteArrayOutputStream</b> would be needed which would
+ * <p>In order to properly support the higher limit, the <b>GCMSIVCache</b> would need to be extended to use
  * use multiple arrays to store the data. In addition, a new <b>doOutput</b> method would be required (similar to that in
- * <b>XOF</b> digests), which would allow the data to be output over multiple calls.</p>
+ * <b>XOF</b> digests), which would allow the data to be output over multiple calls. Alternatively an extended form
+ * of <b>ByteArrayInputStream</b> could be used to deliver the data</p>
  */
 public class GCMSIVBlockCipher
         implements AEADBlockCipher {
@@ -387,7 +388,7 @@ public class GCMSIVBlockCipher
 
         /* Initialise AEAD if required */
         theFlags &= ~AEAD_COMPLETE;
-        initPolyVal();
+        Arrays.fill(theGHash, (byte) 0);
         if (theInitialAEAD != null) {
             theAEAD.write(theInitialAEAD, 0, theInitialAEAD.length);
         }
@@ -515,30 +516,6 @@ public class GCMSIVBlockCipher
     }
 
     /**
-     * calculate polyVAL.
-     * @return the calculated value
-     */
-    private byte[] polyVal() {
-        /* Initialise the polyVal */
-        initPolyVal();
-
-        /* Hash the plainText */
-        gHashStream(thePlain);
-
-        /* Calculate result and return it */
-        return completePolyVal();
-    }
-
-    /**
-     * initialise polyVAL.
-     */
-    private void initPolyVal() {
-        /* Hash the AEAD stream */
-        Arrays.fill(theGHash, (byte) 0);
-        gHashStream(theAEAD);
-    }
-
-    /**
      * complete polyVAL.
      * @return the calculated value
      */
@@ -548,58 +525,6 @@ public class GCMSIVBlockCipher
         gHashLengths();
         fillReverse(theGHash, 0, BUFLEN, myResult);
         return myResult;
-    }
-
-    /**
-     * hash a block.
-     * @param pBlock the block
-     * @param pLen the length of the block (<= BUFLEN)
-     */
-    private void hashBlock(final byte[] pBlock,
-                           final int pLen) {
-        /* Clear reverse buffer if this is a short buffer */
-        if (pLen < BUFLEN) {
-            Arrays.fill(theReverse, (byte) 0);
-        }
-
-        /* Build the polyVal result */
-        fillReverse(pBlock, 0, pLen, theReverse);
-
-        /* hash value */
-        gHASH(theReverse);
-    }
-
-    /**
-     * gHash data stream.
-     * @param pStream the buffer to process
-     */
-    private void gHashStream(final GCMSIVCache pStream) {
-        /* Access buffer and length */
-        final byte[] mySrc = pStream.getBuffer();
-        final byte[] myIn = new byte[BUFLEN];
-        int myLen = pStream.size();
-        int myOff = 0;
-
-        /* While we have full blocks */
-        while (myLen >= BUFLEN) {
-            /* Access the next data */
-            fillReverse(mySrc, myOff, BUFLEN, myIn);
-            myLen -= BUFLEN;
-            myOff += BUFLEN;
-
-            /* hash value */
-            gHASH(myIn);
-        }
-
-        /* If we have remaining data */
-        if (myLen > 0) {
-            /* Access the next data */
-            Arrays.fill(myIn, (byte) 0);
-            fillReverse(mySrc, myOff, myLen, myIn);
-
-            /* hash value */
-            gHASH(myIn);
-        }
     }
 
     /**
@@ -784,6 +709,10 @@ public class GCMSIVBlockCipher
             theCipher = pCipher;
          }
 
+        /**
+         * Obtain the buffer.
+         * @return the buffer
+         */
         byte[] getBuffer() {
             return this.buf;
         }
@@ -841,9 +770,6 @@ public class GCMSIVBlockCipher
          * complete hash.
          */
         private void completeHash() {
-            /* Update full blocks */
-            updateHash();
-
             /* Determine # of bytes to process */
             final int myLen = size() - numHashed;
 
