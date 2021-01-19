@@ -87,9 +87,14 @@ public class GCMSIVBlockCipher
     private final byte[] theReverse = new byte[BUFLEN];
 
     /**
-     * The aeadDataStream.
+     * The aeadHasher.
      */
-    private GCMSIVCache theAEAD;
+    private final GCMSIVHasher theAEADHasher;
+
+    /**
+     * The dataHasher.
+     */
+    private final GCMSIVHasher theDataHasher;
 
     /**
      * The plainDataStream.
@@ -151,6 +156,10 @@ public class GCMSIVBlockCipher
         /* Store parameters */
         theCipher = pCipher;
         theMultiplier = pMultiplier;
+
+        /* Create the hashers */
+        theAEADHasher = new GCMSIVHasher();
+        theDataHasher = new GCMSIVHasher();
     }
 
     @Override
@@ -233,7 +242,7 @@ public class GCMSIVBlockCipher
 
         /* Complete the AEAD section if this is the first data */
         if ((theFlags & AEAD_COMPLETE) == 0) {
-            theAEAD.completeHash();
+            theAEADHasher.completeHash();
             theFlags |= AEAD_COMPLETE;
         }
     }
@@ -243,8 +252,8 @@ public class GCMSIVBlockCipher
         /* Check that we can supply AEAD */
         checkAEADStatus();
 
-        /* Store the data */
-        theAEAD.write(pByte);
+        /* Process the aead */
+        theAEADHasher.updateHash(pByte);
     }
 
     @Override
@@ -259,8 +268,8 @@ public class GCMSIVBlockCipher
             throw new DataLengthException("Input buffer too short.");
         }
 
-        /* Store the data */
-        theAEAD.write(pData, pOffset, pLen);
+        /* Process the aead */
+        theAEADHasher.updateHash(pData, pOffset, pLen);
     }
 
     @Override
@@ -273,6 +282,7 @@ public class GCMSIVBlockCipher
         /* Store the data */
         if (forEncryption) {
             thePlain.write(pByte);
+            theDataHasher.updateHash(pByte);
         } else {
             theEncData.write(pByte);
         }
@@ -298,6 +308,7 @@ public class GCMSIVBlockCipher
         /* Store the data */
         if (forEncryption) {
             thePlain.write(pData, pOffset, pLen);
+            theDataHasher.updateHash(pData, pOffset, pLen);
         } else {
             theEncData.write(pData, pOffset, pLen);
         }
@@ -381,16 +392,19 @@ public class GCMSIVBlockCipher
             thePlain.clearBuffer();
         }
 
+        /* Reset hashers */
+        theAEADHasher.reset();
+        theDataHasher.reset();
+
         /* Recreate streams (to release memory) */
-        theAEAD = new GCMSIVCache(this);
-        thePlain = new GCMSIVCache(this);
-        theEncData = forEncryption ? null : new GCMSIVCache(null);
+        thePlain = new GCMSIVCache();
+        theEncData = forEncryption ? null : new GCMSIVCache();
 
         /* Initialise AEAD if required */
         theFlags &= ~AEAD_COMPLETE;
         Arrays.fill(theGHash, (byte) 0);
         if (theInitialAEAD != null) {
-            theAEAD.write(theInitialAEAD, 0, theInitialAEAD.length);
+            theAEADHasher.updateHash(theInitialAEAD, 0, theInitialAEAD.length);
         }
      }
 
@@ -475,6 +489,7 @@ public class GCMSIVBlockCipher
 
             /* Write data to plain dataStream */
             thePlain.write(myMask, 0, myLen);
+            theDataHasher.updateHash(myMask, 0, myLen);
 
             /* Adjust counters */
             myRemaining -= myLen;
@@ -496,7 +511,7 @@ public class GCMSIVBlockCipher
      */
     private byte[] calculateTag() {
         /* Complete the hash */
-        thePlain.completeHash();
+        theDataHasher.completeHash();
         final byte[] myPolyVal = completePolyVal();
 
         /* calculate polyVal */
@@ -533,8 +548,8 @@ public class GCMSIVBlockCipher
     private void gHashLengths() {
         /* Create reversed bigEndian buffer to keep it simple */
         final byte[] myIn = new byte[BUFLEN];
-        Pack.longToBigEndian(Byte.SIZE * (long) thePlain.size(), myIn, 0);
-        Pack.longToBigEndian(Byte.SIZE * (long) theAEAD.size(), myIn, Long.BYTES);
+        Pack.longToBigEndian(Byte.SIZE * theDataHasher.getBytesProcessed(), myIn, 0);
+        Pack.longToBigEndian(Byte.SIZE * theAEADHasher.getBytesProcessed(), myIn, Long.BYTES);
 
         /* hash value */
         gHASH(myIn);
@@ -692,22 +707,15 @@ public class GCMSIVBlockCipher
     private static class GCMSIVCache
             extends ByteArrayOutputStream {
         /**
-         * The Cipher.
-         */
-        private final GCMSIVBlockCipher theCipher;
-
-        /**
          * number of bytes hashed.
          */
         private int numHashed;
 
         /**
          * Constructor.
-         * @param pCipher the cipher
          */
-        GCMSIVCache(final GCMSIVBlockCipher pCipher) {
-            theCipher = pCipher;
-         }
+        GCMSIVCache() {
+        }
 
         /**
          * Obtain the buffer.
@@ -723,68 +731,117 @@ public class GCMSIVBlockCipher
         void clearBuffer() {
             Arrays.fill(getBuffer(), (byte) 0);
         }
+    }
 
-        @Override
-        public void write(final int b) {
-            super.write(b);
-            updateHash();
+    /**
+     * Hash Control.
+     */
+    private class GCMSIVHasher {
+        /**
+         * Cache.
+         */
+        private final byte[] theBuffer = new byte[BUFLEN];
+
+        /**
+         * Single byte cache.
+         */
+        private final byte[] theByte = new byte[1];
+
+        /**
+         * Count of active bytes in cache.
+         */
+        private int numActive;
+
+        /**
+         * Count of hashed bytes.
+         */
+        private long numHashed;
+
+        /**
+         * Obtain the count of bytes hashed.
+         * @return the count
+         */
+        long getBytesProcessed() {
+            return numHashed;
         }
 
-        @Override
-        public void write(final byte[] b,
-                          final int off,
-                          final int len) {
-            super.write(b, off, len);
-            updateHash();
+        /**
+         * Reset the hasher.
+         */
+        void reset() {
+            numActive = 0;
+            numHashed = 0;
         }
 
         /**
          * update hash.
+         * @param pByte the byte
          */
-        private void updateHash() {
-            /* Ignore if not hashing */
-            if (theCipher == null) {
-                return;
+        void updateHash(final byte pByte) {
+            theByte[0] = pByte;
+            updateHash(theByte, 0, 1);
+        }
+
+        /**
+         * update hash.
+         * @param pBuffer the buffer
+         * @param pOffset the offset within the buffer
+         * @param pLen the length of data
+         */
+        void updateHash(final byte[] pBuffer,
+                        final int pOffset,
+                        final int pLen) {
+            /* If we should process the cache */
+            final int mySpace = BUFLEN - numActive;
+            int numProcessed = 0;
+            int myRemaining = pLen;
+            if (numActive > 0
+                    && pLen >= mySpace) {
+                /* Copy data into the cache and hash it */
+                System.arraycopy(pBuffer, pOffset, theBuffer, numActive, mySpace);
+                fillReverse(theBuffer, 0, BUFLEN, theReverse);
+                gHASH(theReverse);
+
+                /* Adjust counters */
+                numProcessed += mySpace;
+                myRemaining -= mySpace;
+                numActive = 0;
             }
-
-            /* Determine # of bytes to process */
-            int myLen = size() - numHashed;
-
-            /* Access buffers */
-            final byte[] mySrc = getBuffer();
-            final byte[] myReverse = theCipher.theReverse;
 
             /* While we have full blocks */
-            while (myLen >= BUFLEN) {
+            while (myRemaining >= BUFLEN) {
                 /* Access the next data */
-                fillReverse(mySrc, numHashed, BUFLEN, myReverse);
-                myLen -= BUFLEN;
-                numHashed += BUFLEN;
+                fillReverse(pBuffer, pOffset + numProcessed, BUFLEN, theReverse);
+                gHASH(theReverse);
 
-                /* hash value */
-                theCipher.gHASH(myReverse);
+                /* Adjust counters */
+                numProcessed += mySpace;
+                myRemaining -= mySpace;
             }
+
+            /* If we have remaining data */
+            if (myRemaining > 0) {
+                /* Copy data into the cache */
+                System.arraycopy(pBuffer, pOffset + numProcessed, theBuffer, numActive, myRemaining);
+                numActive += myRemaining;
+            }
+
+            /* Adjust the number of bytes processed */
+            numHashed += pLen;
         }
 
         /**
          * complete hash.
          */
-        private void completeHash() {
-            /* Determine # of bytes to process */
-            final int myLen = size() - numHashed;
-
-            /* Access buffers */
-            final byte[] mySrc = getBuffer();
-            final byte[] myReverse = theCipher.theReverse;
-
+        void completeHash() {
             /* If we have remaining data */
-            if (myLen > 0) {
+            if (numActive > 0) {
                 /* Access the next data */
-                Arrays.fill(myReverse, (byte) 0);
-                fillReverse(mySrc, numHashed, myLen, myReverse);
+                Arrays.fill(theReverse, (byte) 0);
+                fillReverse(theBuffer, 0, numActive, theReverse);
 
                 /* hash value */
-                theCipher.gHASH(myReverse);
+                gHASH(theReverse);
             }
         }
     }
