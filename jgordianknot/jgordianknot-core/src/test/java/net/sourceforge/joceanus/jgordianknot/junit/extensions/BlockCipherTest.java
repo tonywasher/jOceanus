@@ -821,6 +821,13 @@ public class BlockCipherTest {
             final byte[] myExpected = Hex.decode(pExpected);
             Assertions.assertArrayEquals(myExpected, myOutput, "Encryption mismatch");
 
+            /* Repeat processing byte at a time */
+            for (byte b : myData) {
+                pCipher.processByte(b, null, 0);
+            }
+            pCipher.doFinal(myOutput, 0);
+            Assertions.assertArrayEquals(myExpected, myOutput, "Encryption mismatch");
+
             /* Re-initialise the cipher */
             pCipher.init(false, myParams);
             pCipher.processBytes(myOutput, 0, myOutput.length, null, 0);
