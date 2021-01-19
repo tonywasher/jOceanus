@@ -181,7 +181,7 @@ public class GordianKeyPairSetSigner
 
         /* Loop through the signers */
         byte[] mySign = null;
-        boolean isValid = true;
+        int numFailed = 0;
         final Iterator<byte[]> myIterator = myASN1.signIterator();
         for (GordianKeyPairSignature mySigner : theSigners) {
             /* If we have a previous signature */
@@ -194,10 +194,10 @@ public class GordianKeyPairSetSigner
             mySign = myIterator.next();
 
             /* Verify using this signature */
-            isValid = mySigner.verify(mySign) && isValid;
+            numFailed += mySigner.verify(mySign) ? 0 : 1;
         }
 
         /* Return validity */
-        return isValid;
+        return numFailed == 0;
     }
 }

@@ -1,0 +1,3 @@
+Prometheus ODF Sheet Service
+
+  Prometheus Sheet-ODF provides classes to access LibreOffice Calc files (*.ods).

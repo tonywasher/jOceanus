@@ -400,16 +400,16 @@ public abstract class CoeusTotals
     public abstract TethysDecimal getRecovered();
 
     /**
-     * Obtain the Transaction.
-     * @return the transaction
+     * Obtain the Delta.
+     * @return the delta
      */
     public TethysDecimal getDelta() {
         return theDelta;
     }
 
     /**
-     * Obtain the Transaction.
-     * @return the transaction
+     * Obtain the Balance.
+     * @return the balance
      */
     public TethysDecimal getBalance() {
         return theBalance;

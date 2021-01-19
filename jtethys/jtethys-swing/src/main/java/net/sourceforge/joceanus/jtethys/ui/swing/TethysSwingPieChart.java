@@ -41,7 +41,7 @@ public class TethysSwingPieChart
     /**
      * The dataSet.
      */
-    private final DefaultPieDataset theDataSet;
+    private final DefaultPieDataset<String> theDataSet;
 
     /**
      * The chart.
@@ -62,7 +62,7 @@ public class TethysSwingPieChart
         super(pFactory);
 
         /* Create the dataSet */
-        theDataSet = new DefaultPieDataset();
+        theDataSet = new DefaultPieDataset<>();
 
         /* Create the chart */
         theChart = ChartFactory.createPieChart(
@@ -71,7 +71,8 @@ public class TethysSwingPieChart
                 true,
                 true,
                 false);
-        final PiePlot myPlot = (PiePlot) theChart.getPlot();
+        @SuppressWarnings("unchecked")
+        final PiePlot<String> myPlot = (PiePlot<String>) theChart.getPlot();
         myPlot.setStartAngle(0);
         myPlot.setToolTipGenerator((pDataSet, pKey) -> getToolTip((String) pKey));
 

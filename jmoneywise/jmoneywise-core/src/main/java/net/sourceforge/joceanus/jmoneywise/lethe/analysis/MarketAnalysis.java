@@ -99,15 +99,20 @@ public class MarketAnalysis {
         final AccountValues myValues = pBucket.getValues();
         final TethysMoney myFluct = myValues.getMoneyValue(AccountAttribute.CURRENCYFLUCT);
 
-        /* If there are fluctuations in the period */
-        if (myFluct != null && myFluct.isNonZero()) {
+        /* If there are fluctuations */
+        if (myFluct != null) {
+            final AccountValues myBaseValues = pBucket.getBaseValues();
+            final TethysMoney myBaseFluct = myBaseValues.getMoneyValue(AccountAttribute.CURRENCYFLUCT);
+            final TethysMoney myPeriodFluct = new TethysMoney(myFluct);
+            myPeriodFluct.subtractAmount(myBaseFluct);
+
             /* Add to CurrencyFluctuation income/expense */
-            if (myFluct.isPositive()) {
-                theFluctIncome.addAmount(myFluct);
-                theMarketIncome.addAmount(myFluct);
+            if (myPeriodFluct.isPositive()) {
+                theFluctIncome.addAmount(myPeriodFluct);
+                theMarketIncome.addAmount(myPeriodFluct);
             } else {
-                theFluctExpense.subtractAmount(myFluct);
-                theMarketExpense.subtractAmount(myFluct);
+                theFluctExpense.subtractAmount(myPeriodFluct);
+                theMarketExpense.subtractAmount(myPeriodFluct);
             }
         }
     }
