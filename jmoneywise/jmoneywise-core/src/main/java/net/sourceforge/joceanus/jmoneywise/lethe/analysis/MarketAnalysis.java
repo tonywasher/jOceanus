@@ -1,6 +1,6 @@
 /*******************************************************************************
  * MoneyWise: Finance Application
- * Copyright 2012,2020 Tony Washer
+ * Copyright 2012,2021 Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License.  You may obtain a copy
@@ -99,15 +99,20 @@ public class MarketAnalysis {
         final AccountValues myValues = pBucket.getValues();
         final TethysMoney myFluct = myValues.getMoneyValue(AccountAttribute.CURRENCYFLUCT);
 
-        /* If there are fluctuations in the period */
-        if (myFluct != null && myFluct.isNonZero()) {
+        /* If there are fluctuations */
+        if (myFluct != null) {
+            final AccountValues myBaseValues = pBucket.getBaseValues();
+            final TethysMoney myBaseFluct = myBaseValues.getMoneyValue(AccountAttribute.CURRENCYFLUCT);
+            final TethysMoney myPeriodFluct = new TethysMoney(myFluct);
+            myPeriodFluct.subtractAmount(myBaseFluct);
+
             /* Add to CurrencyFluctuation income/expense */
-            if (myFluct.isPositive()) {
-                theFluctIncome.addAmount(myFluct);
-                theMarketIncome.addAmount(myFluct);
+            if (myPeriodFluct.isPositive()) {
+                theFluctIncome.addAmount(myPeriodFluct);
+                theMarketIncome.addAmount(myPeriodFluct);
             } else {
-                theFluctExpense.subtractAmount(myFluct);
-                theMarketExpense.subtractAmount(myFluct);
+                theFluctExpense.subtractAmount(myPeriodFluct);
+                theMarketExpense.subtractAmount(myPeriodFluct);
             }
         }
     }

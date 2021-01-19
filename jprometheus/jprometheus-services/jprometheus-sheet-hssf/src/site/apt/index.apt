@@ -1,3 +1,3 @@
-Metis HSSF Sheet Service
+Prometheus HSSF Sheet Service
 
-  Metis Sheet-HSSF provides classes to access old-style Excel files (*.xls) via the POI library.
+  Prometheus Sheet-HSSF provides classes to access old-style Excel files (*.xls) via the POI library.

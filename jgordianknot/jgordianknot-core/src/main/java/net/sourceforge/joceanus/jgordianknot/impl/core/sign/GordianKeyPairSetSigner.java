@@ -1,6 +1,6 @@
 /*******************************************************************************
  * GordianKnot: Security Suite
- * Copyright 2012,2020 Tony Washer
+ * Copyright 2012,2021 Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License.  You may obtain a copy
@@ -181,7 +181,7 @@ public class GordianKeyPairSetSigner
 
         /* Loop through the signers */
         byte[] mySign = null;
-        boolean isValid = true;
+        int numFailed = 0;
         final Iterator<byte[]> myIterator = myASN1.signIterator();
         for (GordianKeyPairSignature mySigner : theSigners) {
             /* If we have a previous signature */
@@ -194,10 +194,10 @@ public class GordianKeyPairSetSigner
             mySign = myIterator.next();
 
             /* Verify using this signature */
-            isValid = mySigner.verify(mySign) && isValid;
+            numFailed += mySigner.verify(mySign) ? 0 : 1;
         }
 
         /* Return validity */
-        return isValid;
+        return numFailed == 0;
     }
 }
