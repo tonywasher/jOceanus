@@ -23,8 +23,8 @@ import net.sourceforge.joceanus.jprometheus.service.sheet.xssf.PrometheusExcelXS
  */
 module net.sourceforge.joceanus.jprometheus.sheet.xssf {
     /* External libraries */
-    requires poi;
-    requires poi.ooxml;
+    requires org.apache.poi.poi;
+    requires org.apache.poi.ooxml;
 
     /* jOceanus */
     requires net.sourceforge.joceanus.jtethys.core;
