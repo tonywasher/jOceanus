@@ -1,4 +1,0 @@
-Prometheus XSSF Sheet Service
-
-  Prometheus Sheet-XSSF provides classes to access new-style Excel files (*.xlsx) via the POI library.
-

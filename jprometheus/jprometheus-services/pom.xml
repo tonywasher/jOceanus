@@ -12,7 +12,6 @@
   <modules>
     <module>jprometheus-sheet-api</module>
     <module>jprometheus-sheet-hssf</module>
-    <module>jprometheus-sheet-xssf</module>
     <module>jprometheus-sheet-odf</module>
   </modules>
   <properties>
