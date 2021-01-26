@@ -46,6 +46,11 @@ public enum CoeusTransactionType {
     FEES,
 
     /**
+     * Shield.
+     */
+    SHIELD,
+
+    /**
      * CashBack.
      */
     CASHBACK,

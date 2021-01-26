@@ -82,6 +82,11 @@ public class CoeusMarketAnnual
     private boolean hasCashBack;
 
     /**
+     * Do we have shield?
+     */
+    private boolean hasShield;
+
+    /**
      * Constructor.
      * @param pMarket the market
      * @param pCalendar the calendar
@@ -183,6 +188,14 @@ public class CoeusMarketAnnual
     }
 
     /**
+     * Do we have shield payments?
+     * @return true/false
+     */
+    public boolean hasShield() {
+        return hasShield;
+    }
+
+    /**
      * Do we have Fees?
      * @return true/false
      */
@@ -218,6 +231,9 @@ public class CoeusMarketAnnual
                     break;
                 case CASHBACK:
                     hasCashBack = true;
+                    break;
+                case SHIELD:
+                    hasShield = true;
                     break;
                 default:
                     break;

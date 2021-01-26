@@ -49,9 +49,19 @@ public class CoeusRateSetterTransaction
     private static final String PFIX_TRANSFER = "Bank transfer";
 
     /**
+     * Withdrawal prefix.
+     */
+    private static final String PFIX_WITHDRAWAL = "Next Day Money Withdrawal request";
+
+    /**
      * Loan prefix.
      */
     private static final String PFIX_LOAN = "Lend order";
+
+    /**
+     * Cancel prefix.
+     */
+    private static final String PFIX_CANCEL = "Cancellation of order";
 
     /**
      * Interest prefix.
@@ -330,6 +340,11 @@ public class CoeusRateSetterTransaction
     }
 
     @Override
+    public TethysMoney getShield() {
+        return ZERO_MONEY;
+    }
+
+    @Override
     public TethysMoney getBadDebtInterest() {
         return ZERO_MONEY;
     }
@@ -365,14 +380,16 @@ public class CoeusRateSetterTransaction
      * @throws OceanusException on error
      */
     private CoeusTransactionType determineTransactionType() throws OceanusException {
-        /* If the description is Lend Order */
-        if (PFIX_LOAN.equals(theDesc)) {
+        /* If the description is Lend Order/Cancel Order */
+        if (PFIX_LOAN.equals(theDesc)
+            || PFIX_CANCEL.equals(theDesc)) {
             return CoeusTransactionType.CAPITALLOAN;
         }
 
         /* If the description is BankTransfer/AccountOpen */
         if (PFIX_TRANSFER.equals(theDesc)
-            || PFIX_OPEN.equals(theDesc)) {
+            || PFIX_OPEN.equals(theDesc)
+            || PFIX_WITHDRAWAL.equals(theDesc)) {
             return CoeusTransactionType.TRANSFER;
         }
 

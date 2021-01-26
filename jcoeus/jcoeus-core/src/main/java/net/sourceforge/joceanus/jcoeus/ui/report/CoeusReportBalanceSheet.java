@@ -100,6 +100,9 @@ public class CoeusReportBalanceSheet
         /* Create the Fees row */
         makeTableFilterRow(mySubTable, CoeusTotalSet.FEES, myTotals.getFees());
 
+        /* Create the Shield row */
+        makeTableFilterRow(mySubTable, CoeusTotalSet.SHIELD, myTotals.getShield());
+
         /* Create the CashBack row */
         makeTableFilterRow(mySubTable, CoeusTotalSet.CASHBACK, myTotals.getCashBack());
 

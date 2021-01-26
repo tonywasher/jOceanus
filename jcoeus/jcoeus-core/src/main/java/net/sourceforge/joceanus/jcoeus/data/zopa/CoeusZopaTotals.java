@@ -391,6 +391,11 @@ public final class CoeusZopaTotals
     }
 
     @Override
+    public TethysDecimal getShield() {
+        return getZero();
+    }
+
+    @Override
     public TethysDecimal getCashBack() {
         return theCashBack;
     }

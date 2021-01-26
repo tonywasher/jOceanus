@@ -34,7 +34,7 @@ public class CoeusFundingCircleLoanBookParser
      */
     private static final String[] HEADERS = {
             "Loan part ID", "Loan title", "Sector", "Loan ID", "Risk", "Repayments left", "Principal remaining", "Rate",
-            "Next payment date", "Status", "Date acquired"
+            "Next payment date", "Status", "Date acquired", "Extension date"
     };
 
     /**

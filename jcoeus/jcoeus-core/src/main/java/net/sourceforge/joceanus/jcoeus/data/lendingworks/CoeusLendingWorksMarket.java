@@ -17,7 +17,7 @@
 package net.sourceforge.joceanus.jcoeus.data.lendingworks;
 
 import java.nio.file.Path;
-import java.util.ListIterator;
+import java.util.Iterator;
 
 import net.sourceforge.joceanus.jcoeus.data.CoeusHistory;
 import net.sourceforge.joceanus.jcoeus.data.CoeusLoan;
@@ -70,9 +70,9 @@ public class CoeusLendingWorksMarket
         theXactionParser.parseFile(pFile);
 
         /* Loop through the transactions in reverse order */
-        final ListIterator<CoeusLendingWorksTransaction> myIterator = theXactionParser.reverseTransactionIterator();
-        while (myIterator.hasPrevious()) {
-            final CoeusLendingWorksTransaction myTrans = myIterator.previous();
+        final Iterator<CoeusLendingWorksTransaction> myIterator = theXactionParser.transactionIterator();
+        while (myIterator.hasNext()) {
+            final CoeusLendingWorksTransaction myTrans = myIterator.next();
 
             /* Add to the transactions */
             addTransaction(myTrans);

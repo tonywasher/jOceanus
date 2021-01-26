@@ -89,6 +89,11 @@ public final class CoeusLendingWorksTransaction
     private static final String PFIX_XFEROUT = "Money transferred out";
 
     /**
+     * Shield payment prefix.
+     */
+    private static final String PFIX_SHIELD = "Shield contribution adjustment";
+
+    /**
      * ZERO for BadDebt/CashBack.
      */
     static final TethysDecimal ZERO_MONEY = new TethysDecimal(0, CoeusLendingWorksMarket.DECIMAL_SIZE);
@@ -144,6 +149,11 @@ public final class CoeusLendingWorksTransaction
     private final TethysDecimal theCashBack;
 
     /**
+     * Shield.
+     */
+    private final TethysDecimal theShield;
+
+    /**
      * Constructor.
      * @param pParser the parser
      * @param pFields the fields
@@ -185,6 +195,9 @@ public final class CoeusLendingWorksTransaction
         /* Handle Interest correctly */
         theInterest = determineInterestDelta();
 
+        /* Handle Shield correctly */
+        theShield = determineShieldDelta();
+
         /* Handle Invested correctly */
         theInvested = determineInvestedDelta();
 
@@ -210,6 +223,7 @@ public final class CoeusLendingWorksTransaction
         myMoney.subtractValue(theInterest);
         myMoney.subtractValue(theCashBack);
         myMoney.subtractValue(theInvested);
+        myMoney.subtractValue(theShield);
 
         /* We should now be zero */
         if (myMoney.isNonZero()) {
@@ -290,6 +304,11 @@ public final class CoeusLendingWorksTransaction
     }
 
     @Override
+    public TethysDecimal getShield() {
+        return theShield;
+    }
+
+    @Override
     public TethysDecimal getCashBack() {
         return theCashBack;
     }
@@ -349,6 +368,11 @@ public final class CoeusLendingWorksTransaction
             return CoeusTransactionType.INTEREST;
         }
 
+        /* If the description is Shield */
+        if (PFIX_SHIELD.equals(theDesc)) {
+            return CoeusTransactionType.SHIELD;
+        }
+
         /* If the description is CashBack */
         if (PFIX_CASHBACK.equals(theDesc)) {
             return CoeusTransactionType.CASHBACK;
@@ -375,6 +399,7 @@ public final class CoeusLendingWorksTransaction
             case CAPITALLOAN:
             case CAPITALREPAYMENT:
             case INTEREST:
+            case SHIELD:
                 return findLoan(pId);
             default:
                 return null;
@@ -417,6 +442,12 @@ public final class CoeusLendingWorksTransaction
             return myInvested;
         }
 
+        /* Capital are decreased by shield payment */
+        if (CoeusTransactionType.SHIELD.equals(theTransType)) {
+            theHolding.setZero();
+            return myInvested;
+        }
+
         /* Capital are reduced by any repayment */
         if (!CoeusTransactionType.CAPITALREPAYMENT.equals(theTransType)) {
             myInvested.setZero();
@@ -437,6 +468,23 @@ public final class CoeusLendingWorksTransaction
 
         /* Interest are increased by any increase the holding account */
         if (!CoeusTransactionType.INTEREST.equals(theTransType)) {
+            myInvested.setZero();
+        }
+
+        /* Return the Invested */
+        return myInvested;
+    }
+
+    /**
+     * determine shield delta.
+     * @return the delta
+     */
+    private TethysDecimal determineShieldDelta() {
+        /* Obtain change in loanBook */
+        final TethysDecimal myInvested = new TethysDecimal(theLoanBook);
+
+        /* Interest are increased by any increase the holding account */
+        if (!CoeusTransactionType.SHIELD.equals(theTransType)) {
             myInvested.setZero();
         }
 

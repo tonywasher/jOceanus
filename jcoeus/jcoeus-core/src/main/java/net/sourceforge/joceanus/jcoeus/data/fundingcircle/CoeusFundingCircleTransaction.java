@@ -430,6 +430,11 @@ public final class CoeusFundingCircleTransaction
     }
 
     @Override
+    public TethysMoney getShield() {
+        return ZERO_MONEY;
+    }
+
+    @Override
     public TethysMoney getCashBack() {
         return theCashBack;
     }

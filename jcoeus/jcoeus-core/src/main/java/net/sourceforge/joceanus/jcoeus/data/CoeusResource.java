@@ -321,6 +321,11 @@ public enum CoeusResource
     DATA_FEES("data.fees"),
 
     /**
+     * Data Shield.
+     */
+    DATA_SHIELD("data.shield"),
+
+    /**
      * Data CashBack.
      */
     DATA_CASHBACK("data.cashback"),
@@ -657,6 +662,7 @@ public enum CoeusResource
         myMap.put(CoeusTransactionType.CAPITALREPAYMENT, TRANS_REPAYMENT);
         myMap.put(CoeusTransactionType.INTEREST, TRANS_INTEREST);
         myMap.put(CoeusTransactionType.FEES, TRANS_FEES);
+        myMap.put(CoeusTransactionType.SHIELD, DATA_SHIELD);
         myMap.put(CoeusTransactionType.CASHBACK, TRANS_CASHBACK);
         myMap.put(CoeusTransactionType.RATEPROMISE, TRANS_RATEPROMISE);
         myMap.put(CoeusTransactionType.BUYLOAN, TRANS_BUYLOAN);
@@ -718,6 +724,7 @@ public enum CoeusResource
         myMap.put(CoeusTotalSet.BADDEBTINTEREST, DATA_BADDEBTINTEREST);
         myMap.put(CoeusTotalSet.BADDEBTCAPITAL, DATA_BADDEBTCAPITAL);
         myMap.put(CoeusTotalSet.FEES, DATA_FEES);
+        myMap.put(CoeusTotalSet.SHIELD, DATA_SHIELD);
         myMap.put(CoeusTotalSet.XFERPAYMENT, DATA_XFERPAYMENT);
         myMap.put(CoeusTotalSet.CASHBACK, DATA_CASHBACK);
         myMap.put(CoeusTotalSet.LOSSES, DATA_LOSSES);

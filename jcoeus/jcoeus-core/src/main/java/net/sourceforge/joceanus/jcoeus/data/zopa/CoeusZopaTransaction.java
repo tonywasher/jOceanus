@@ -88,6 +88,11 @@ public final class CoeusZopaTransaction
     private static final String PFIX_SAFECAPITAL = "Safeguard capital payment for ";
 
     /**
+     * Safeguard Final prefix.
+     */
+    private static final String PFIX_SAFEFINAL = "Final Safeguard Payout";
+
+    /**
      * Fees Rebate prefix.
      */
     private static final String PFIX_FEESREBATE = "Monthly Lender Fees Rebate";
@@ -411,6 +416,11 @@ public final class CoeusZopaTransaction
     }
 
     @Override
+    public TethysDecimal getShield() {
+        return ZERO_MONEY;
+    }
+
+    @Override
     public TethysDecimal getCashBack() {
         return theCashBack;
     }
@@ -504,7 +514,8 @@ public final class CoeusZopaTransaction
 
         /* If the description is CashBack */
         if (PFIX_CASHBACK.equals(theDesc)
-            || PFIX_BADPRICE.equals(theDesc)) {
+            || PFIX_BADPRICE.equals(theDesc)
+            || PFIX_SAFEFINAL.equals(theDesc)) {
             return CoeusTransactionType.CASHBACK;
         }
 

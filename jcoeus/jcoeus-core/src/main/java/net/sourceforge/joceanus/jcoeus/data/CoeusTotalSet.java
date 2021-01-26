@@ -68,6 +68,11 @@ public enum CoeusTotalSet {
     FEES,
 
     /**
+     * Shield.
+     */
+    SHIELD,
+
+    /**
      * CashBack.
      */
     CASHBACK,
