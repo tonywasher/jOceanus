@@ -411,6 +411,11 @@ public final class CoeusFundingCircleTotals
     }
 
     @Override
+    public TethysMoney getShield() {
+        return getZero();
+    }
+
+    @Override
     public TethysMoney getCashBack() {
         return theCashBack;
     }

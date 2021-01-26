@@ -271,6 +271,11 @@ public final class CoeusRateSetterTotals
     }
 
     @Override
+    public TethysMoney getShield() {
+        return getZero();
+    }
+
+    @Override
     public TethysMoney getBadDebtInterest() {
         return getZero();
     }

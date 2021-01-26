@@ -78,6 +78,7 @@ public class CoeusReportAnnual
         TethysDate myDate = theMarket.getDateRange().getEnd();
         final boolean hasFees = theMarket.hasFees();
         final boolean hasCashBack = theMarket.hasCashBack();
+        final boolean hasShield = theMarket.hasShield();
         final boolean hasBadDebt = theMarket.hasBadDebt();
         final boolean needTaxableEarnings = hasFees || hasCashBack || hasBadDebt;
 
@@ -94,6 +95,9 @@ public class CoeusReportAnnual
         /* Handle optional parts */
         if (hasFees) {
             theBuilder.makeTitleCell(myTable, CoeusTotalSet.FEES.toString());
+        }
+        if (hasShield) {
+            theBuilder.makeTitleCell(myTable, CoeusTotalSet.SHIELD.toString());
         }
         if (hasCashBack) {
             theBuilder.makeTitleCell(myTable, CoeusTotalSet.CASHBACK.toString());
@@ -129,6 +133,9 @@ public class CoeusReportAnnual
             if (hasFees) {
                 makeTableFilterCell(myTable, CoeusTotalSet.FEES, myMonth, myTotals.getFees());
             }
+            if (hasShield) {
+                makeTableFilterCell(myTable, CoeusTotalSet.SHIELD, myMonth, myTotals.getShield());
+            }
             if (hasCashBack) {
                 makeTableFilterCell(myTable, CoeusTotalSet.CASHBACK, myMonth, myTotals.getCashBack());
             }
@@ -155,6 +162,9 @@ public class CoeusReportAnnual
         /* Handle optional parts */
         if (hasFees) {
             makeTableFilterCell(myTable, CoeusTotalSet.FEES, myTotals.getFees());
+        }
+        if (hasShield) {
+            makeTableFilterCell(myTable, CoeusTotalSet.SHIELD, myTotals.getShield());
         }
         if (hasCashBack) {
             makeTableFilterCell(myTable, CoeusTotalSet.CASHBACK, myTotals.getCashBack());

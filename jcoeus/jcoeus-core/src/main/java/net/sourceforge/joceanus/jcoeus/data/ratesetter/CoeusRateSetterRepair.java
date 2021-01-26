@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
+import java.util.ListIterator;
 
 import net.sourceforge.joceanus.jcoeus.CoeusDataException;
 import net.sourceforge.joceanus.jcoeus.data.CoeusLoan;
@@ -84,9 +85,18 @@ public class CoeusRateSetterRepair {
     /**
      * Record an initial loan.
      * @param pLoan the initial loan
+     * @throws OceanusException on error
      */
-    void recordInitialLoan(final CoeusRateSetterTransaction pLoan) {
-        theInitialLoans.add(pLoan);
+    void recordInitialLoan(final CoeusRateSetterTransaction pLoan) throws OceanusException {
+        /* If this is a cancellation */
+        if (!pLoan.getLoanBook().isPositive()) {
+            /* Remove the original loan */
+            handleCancellation(pLoan);
+
+            /* Else add to the list */
+        } else {
+            theInitialLoans.add(pLoan);
+        }
     }
 
     /**
@@ -240,7 +250,12 @@ public class CoeusRateSetterRepair {
                     myLoans.add(myLoan);
                     myLoanIterator.remove();
                     myLoanAmount.addAmount(myBookItem.getLent());
-               }
+
+                    /* Break loop if we have matched the loan */
+                    if (myLoanAmount.equals(myTrans.getLoanBook())) {
+                        break;
+                    }
+                }
             }
 
             /* If we have matched the amount */
@@ -265,5 +280,30 @@ public class CoeusRateSetterRepair {
                 pLoans.sort(LOAN_COMPARATOR);
             }
         }
+    }
+
+    /**
+     * Handle cancellation.
+     * @param pLoan the cancelled loan
+     * @throws OceanusException on error
+     */
+    private void handleCancellation(final CoeusRateSetterTransaction pLoan) throws OceanusException {
+        /* Access value of loan */
+        final TethysMoney myLoanValue = pLoan.getHolding();
+
+        /* Loop through the loans in reverse order */
+        final int mySize = theInitialLoans.size();
+        final ListIterator<CoeusRateSetterTransaction> myIterator = theInitialLoans.listIterator(mySize);
+        while (myIterator.hasPrevious()) {
+            /* If we have a match */
+            final CoeusRateSetterTransaction myLoan = myIterator.previous();
+            if (myLoanValue.equals(myLoan.getLoanBook())) {
+                myIterator.remove();
+                return;
+            }
+        }
+
+        /* We did not find a loan to cancel */
+        throw new CoeusDataException("Orphan loan cancellation");
     }
 }

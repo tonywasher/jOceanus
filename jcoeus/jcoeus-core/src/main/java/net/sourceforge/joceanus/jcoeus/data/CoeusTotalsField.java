@@ -119,6 +119,11 @@ public enum CoeusTotalsField
     FEES(CoeusResource.DATA_FEES),
 
     /**
+     * Shield.
+     */
+    SHIELD(CoeusResource.DATA_SHIELD),
+
+    /**
      * CashBack.
      */
     CASHBACK(CoeusResource.DATA_CASHBACK),

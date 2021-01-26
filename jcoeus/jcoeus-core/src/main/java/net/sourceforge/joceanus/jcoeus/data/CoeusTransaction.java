@@ -48,6 +48,7 @@ public abstract class CoeusTransaction
         FIELD_DEFS.declareLocalField(CoeusResource.DATA_BADDEBTINTEREST, CoeusTransaction::getBadDebtInterest);
         FIELD_DEFS.declareLocalField(CoeusResource.DATA_BADDEBTCAPITAL, CoeusTransaction::getBadDebtCapital);
         FIELD_DEFS.declareLocalField(CoeusResource.DATA_FEES, CoeusTransaction::getFees);
+        FIELD_DEFS.declareLocalField(CoeusResource.DATA_SHIELD, CoeusTransaction::getShield);
         FIELD_DEFS.declareLocalField(CoeusResource.DATA_CASHBACK, CoeusTransaction::getCashBack);
         FIELD_DEFS.declareLocalField(CoeusResource.DATA_XFERPAYMENT, CoeusTransaction::getXferPayment);
         FIELD_DEFS.declareLocalField(CoeusResource.DATA_BADDEBT, CoeusTransaction::getBadDebt);
@@ -258,6 +259,12 @@ public abstract class CoeusTransaction
      * @return the fees
      */
     public abstract TethysDecimal getFees();
+
+    /**
+     * Obtain the shield.
+     * @return the shield
+     */
+    public abstract TethysDecimal getShield();
 
     /**
      * Obtain the cashBack.

@@ -16,11 +16,14 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jcoeus.data.lendingworks;
 
+import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
 
 import net.sourceforge.joceanus.jtethys.OceanusException;
+import net.sourceforge.joceanus.jtethys.date.TethysDate;
 import net.sourceforge.joceanus.jtethys.parser.TethysCSVParser;
 
 /**
@@ -44,6 +47,16 @@ public class CoeusLendingWorksTransactionParser
      * Parsed fields.
      */
     private final List<CoeusLendingWorksTransaction> theTransactions;
+
+    /**
+     * The most recent date.
+     */
+    private TethysDate theLastDate;
+
+    /**
+     * Parsed fields.
+     */
+    private boolean isAscending;
 
     /**
      * Constructor.
@@ -73,8 +86,22 @@ public class CoeusLendingWorksTransactionParser
      * Obtain the transactions.
      * @return the transactions
      */
-    ListIterator<CoeusLendingWorksTransaction> reverseTransactionIterator() {
-        return theTransactions.listIterator(theTransactions.size());
+    Iterator<CoeusLendingWorksTransaction> transactionIterator() {
+        return isAscending ? theTransactions.iterator() : new ReverseIterator<>(theTransactions);
+    }
+
+    ///**
+    //* Obtain the transactions.
+    // * @return the transactions
+     ///*/
+    //ListIterator<CoeusLendingWorksTransaction> reverseTransactionIterator() {
+    //    return theTransactions.listIterator(theTransactions.size());
+    //}
+
+    @Override
+    public void parseFile(final Path pInput) throws OceanusException {
+        theLastDate = null;
+        super.parseFile(pInput);
     }
 
     @Override
@@ -89,6 +116,43 @@ public class CoeusLendingWorksTransactionParser
     @Override
     protected void processFields(final List<String> pFields) throws OceanusException {
         /* Parse the transaction and add to the list */
-        theTransactions.add(new CoeusLendingWorksTransaction(this, pFields));
+        final CoeusLendingWorksTransaction myTran = new CoeusLendingWorksTransaction(this, pFields);
+        theTransactions.add(myTran);
+        if (theLastDate == null) {
+            theLastDate = myTran.getDate();
+        }
+        if (theLastDate.compareTo(myTran.getDate()) < 0) {
+            isAscending = true;
+        }
+    }
+
+    /**
+     * Reverse iterator.
+     * @param <T> The item type
+     */
+    private static class ReverseIterator<T>
+            implements Iterator<T> {
+        /**
+         * The list iterator.
+         */
+        private final ListIterator<T> theIterator;
+
+        /**
+         * Constructor.
+         * @param pList the list
+         */
+        ReverseIterator(final List<T> pList) {
+            theIterator = pList.listIterator(pList.size());
+        }
+
+        @Override
+        public boolean hasNext() {
+            return theIterator.hasPrevious();
+        }
+
+        @Override
+        public T next() {
+            return theIterator.previous();
+        }
     }
 }
