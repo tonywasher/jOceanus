@@ -16,6 +16,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.atlas.analysis.data;
 
+import net.sourceforge.joceanus.jmetis.field.MetisFieldSet;
 import net.sourceforge.joceanus.jmoneywise.atlas.analysis.base.MoneyWiseAnalysisBucket;
 import net.sourceforge.joceanus.jmoneywise.atlas.analysis.base.MoneyWiseAnalysisValues;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.TransactionCategory;
@@ -28,6 +29,11 @@ import net.sourceforge.joceanus.jtethys.decimal.TethysMoney;
  */
 public class MoneyWiseTransactionBucket
         extends MoneyWiseAnalysisBucket<TransactionCategory, MoneyWiseIncomeAttr> {
+    /**
+     * Local Report fields.
+     */
+    private static final MetisFieldSet<MoneyWiseTransactionBucket> FIELD_DEFS = MetisFieldSet.newFieldSet(MoneyWiseTransactionBucket.class);
+
     /**
      * Constructor.
      * @param pCategory the transaction category
@@ -56,6 +62,11 @@ public class MoneyWiseTransactionBucket
     private MoneyWiseTransactionBucket(final MoneyWiseTransactionBucket pBase,
                                        final TethysDateRange pRange) {
         super(pBase, pRange);
+    }
+
+    @Override
+    public MetisFieldSetDef getDataFieldSet() {
+        return FIELD_DEFS;
     }
 
     @Override

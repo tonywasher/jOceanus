@@ -20,6 +20,8 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
+import net.sourceforge.joceanus.jmetis.field.MetisFieldItem;
+import net.sourceforge.joceanus.jmetis.field.MetisFieldSet;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.ExchangeRate;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.SecurityPrice;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.Transaction;
@@ -29,7 +31,24 @@ import net.sourceforge.joceanus.jtethys.date.TethysDate;
  * Analysis Event.
  */
 public class MoneyWiseAnalysisEvent
-        implements Comparable<MoneyWiseAnalysisEvent> {
+        implements Comparable<MoneyWiseAnalysisEvent>, MetisFieldItem {
+    /**
+     * Local Report fields.
+     */
+    private static final MetisFieldSet<MoneyWiseAnalysisEvent> FIELD_DEFS = MetisFieldSet.newFieldSet(MoneyWiseAnalysisEvent.class);
+
+    /*
+     * Declare Fields.
+     */
+    static {
+        FIELD_DEFS.declareLocalField(MoneyWiseAnalysisBaseResource.EVENT_ID, MoneyWiseAnalysisEvent::getId);
+        FIELD_DEFS.declareLocalField(MoneyWiseAnalysisBaseResource.EVENT_DATE, MoneyWiseAnalysisEvent::getDate);
+        FIELD_DEFS.declareLocalField(MoneyWiseAnalysisBaseResource.EVENT_TYPE, MoneyWiseAnalysisEvent::getEventType);
+        FIELD_DEFS.declareLocalField(MoneyWiseAnalysisBaseResource.EVENT_TRANS, MoneyWiseAnalysisEvent::getTransaction);
+        FIELD_DEFS.declareLocalField(MoneyWiseAnalysisBaseResource.EVENT_PRICES, MoneyWiseAnalysisEvent::getPriceMap);
+        FIELD_DEFS.declareLocalField(MoneyWiseAnalysisBaseResource.EVENT_RATES, MoneyWiseAnalysisEvent::getExchgRateMap);
+    }
+
     /**
      * Id.
      */
@@ -64,7 +83,7 @@ public class MoneyWiseAnalysisEvent
      * Constructor.
      * @param pTransaction the transaction
      */
-    MoneyWiseAnalysisEvent(final Transaction pTransaction) {
+    public MoneyWiseAnalysisEvent(final Transaction pTransaction) {
         /* Record details */
         theEventType = MoneyWiseAnalysisEventType.TRANSACTION;
         theTransaction = pTransaction;
@@ -79,8 +98,8 @@ public class MoneyWiseAnalysisEvent
      * @param pDate the date
      * @param pType the event type
      */
-    MoneyWiseAnalysisEvent(final TethysDate pDate,
-                           final MoneyWiseAnalysisEventType pType) {
+    public MoneyWiseAnalysisEvent(final TethysDate pDate,
+                                  final MoneyWiseAnalysisEventType pType) {
         theEventType = pType;
         final boolean isPrice = MoneyWiseAnalysisEventType.PRICE.equals(pType);
         theTransaction = null;
@@ -138,6 +157,11 @@ public class MoneyWiseAnalysisEvent
         return theXchangeRates;
     }
 
+    @Override
+    public MetisFieldSetDef getDataFieldSet() {
+        return FIELD_DEFS;
+    }
+
     /**
      * Add SecurityPrice.
      * @param pPrice the securityPrice
@@ -185,15 +209,15 @@ public class MoneyWiseAnalysisEvent
      * EventTypes.
      */
     public enum MoneyWiseAnalysisEventType {
-         /**
-         * PricePoint.
-         */
-        PRICE,
-
         /**
          * ExchangeRate.
          */
         XCHGRATE,
+
+        /**
+         * PricePoint.
+         */
+        PRICE,
 
         /**
          * Transaction.

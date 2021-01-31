@@ -16,6 +16,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.atlas.analysis.data;
 
+import net.sourceforge.joceanus.jmetis.field.MetisFieldSet;
 import net.sourceforge.joceanus.jmoneywise.atlas.analysis.base.MoneyWiseAnalysisBucket;
 import net.sourceforge.joceanus.jmoneywise.atlas.analysis.base.MoneyWiseAnalysisValues;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.Deposit;
@@ -27,6 +28,11 @@ import net.sourceforge.joceanus.jtethys.date.TethysDateRange;
  */
 public class MoneyWiseDepositBucket
         extends MoneyWiseAnalysisBucket<Deposit, MoneyWiseAccountAttr> {
+    /**
+     * Local Report fields.
+     */
+    private static final MetisFieldSet<MoneyWiseDepositBucket> FIELD_DEFS = MetisFieldSet.newFieldSet(MoneyWiseDepositBucket.class);
+
     /**
      * Constructor.
      * @param pDeposit the deposit account
@@ -55,6 +61,11 @@ public class MoneyWiseDepositBucket
     private MoneyWiseDepositBucket(final MoneyWiseDepositBucket pBase,
                                    final TethysDateRange pRange) {
         super(pBase, pRange);
+    }
+
+    @Override
+    public MetisFieldSetDef getDataFieldSet() {
+        return FIELD_DEFS;
     }
 
     @Override

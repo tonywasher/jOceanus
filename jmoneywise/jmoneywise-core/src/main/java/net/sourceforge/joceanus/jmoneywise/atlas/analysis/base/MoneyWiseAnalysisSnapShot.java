@@ -16,13 +16,31 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.atlas.analysis.base;
 
+import net.sourceforge.joceanus.jmetis.field.MetisFieldItem;
+import net.sourceforge.joceanus.jmetis.field.MetisFieldSet;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
 
 /**
  * SnapShot.
  * @param <E> the enum class
  */
-public class MoneyWiseAnalysisSnapShot<E extends Enum<E> & MoneyWiseAnalysisAttribute> {
+public class MoneyWiseAnalysisSnapShot<E extends Enum<E> & MoneyWiseAnalysisAttribute>
+        implements MetisFieldItem {
+    /**
+     * Local Report fields.
+     */
+    @SuppressWarnings("rawtypes")
+    private static final MetisFieldSet<MoneyWiseAnalysisSnapShot> FIELD_DEFS = MetisFieldSet.newFieldSet(MoneyWiseAnalysisSnapShot.class);
+
+    /*
+     * Declare Fields.
+     */
+    static {
+        FIELD_DEFS.declareLocalField(MoneyWiseAnalysisBaseResource.SNAPSHOT_EVENT, MoneyWiseAnalysisSnapShot::getEvent);
+        FIELD_DEFS.declareLocalField(MoneyWiseAnalysisBaseResource.SNAPSHOT_VALUES, MoneyWiseAnalysisSnapShot::getValues);
+        FIELD_DEFS.declareLocalField(MoneyWiseAnalysisBaseResource.SNAPSHOT_PREV, MoneyWiseAnalysisSnapShot::getPrevious);
+    }
+
     /**
      * The event related to this snapShot.
      */
@@ -88,6 +106,11 @@ public class MoneyWiseAnalysisSnapShot<E extends Enum<E> & MoneyWiseAnalysisAttr
      */
     public MoneyWiseAnalysisValues<E> getPrevious() {
         return thePrevious;
+    }
+
+    @Override
+    public MetisFieldSetDef getDataFieldSet() {
+        return FIELD_DEFS;
     }
 
     /**

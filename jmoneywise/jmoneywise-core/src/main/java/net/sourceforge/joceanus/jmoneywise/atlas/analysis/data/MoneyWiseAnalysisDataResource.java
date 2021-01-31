@@ -28,7 +28,7 @@ import net.sourceforge.joceanus.jtethys.resource.TethysBundleId;
 import net.sourceforge.joceanus.jtethys.resource.TethysBundleLoader;
 
 /**
- * Resource IDs for MoneyWise Analysis Fields.
+ * Resource IDs for MoneyWise Analysis Data Fields.
  */
 public enum MoneyWiseAnalysisDataResource
         implements TethysBundleId, MetisDataFieldId {
@@ -130,7 +130,57 @@ public enum MoneyWiseAnalysisDataResource
     /**
      * TaxAttr Tax.
      */
-    TAXATTR_TAX("TaxAttr.Tax");
+    TAXATTR_TAX("TaxAttr.Tax"),
+
+    /**
+     * Analysis Events.
+     */
+    ANALYSIS_EVENTS("Analysis.Events"),
+
+    /**
+     * Analysis Deposits.
+     */
+    ANALYSIS_DEPOSITS("Analysis.Deposits"),
+
+    /**
+     * Analysis Cash.
+     */
+    ANALYSIS_CASH("Analysis.Cash"),
+
+    /**
+     * Analysis Loans.
+     */
+    ANALYSIS_LOANS("Analysis.Loans"),
+
+    /**
+     * Analysis Portfolios.
+     */
+    ANALYSIS_PORTFOLIOS("Analysis.Portfolios"),
+
+    /**
+     * Analysis Holdings.
+     */
+    ANALYSIS_HOLDINGS("Analysis.Holdings"),
+
+    /**
+     * Analysis Payees.
+     */
+    ANALYSIS_PAYEES("Analysis.Payees"),
+
+    /**
+     * Analysis Transactions.
+     */
+    ANALYSIS_TRANS("Analysis.Transactions"),
+
+    /**
+     * Analysis TaxBases.
+     */
+    ANALYSIS_TAXBASES("Analysis.TaxBases"),
+
+    /**
+     * Analysis TaxBases.
+     */
+    ANALYSIS_CURRENCY("Analysis.Currency");
 
     /**
      * The AccountAttr Map.
@@ -155,7 +205,7 @@ public enum MoneyWiseAnalysisDataResource
     /**
      * The Resource Loader.
      */
-    private static final TethysBundleLoader LOADER = TethysBundleLoader.getLoader(MoneyWiseAnalysisDataResource.class.getCanonicalName(),
+    private static final TethysBundleLoader LOADER = TethysBundleLoader.getPackageLoader(MoneyWiseAnalysisDataResource.class.getCanonicalName(),
             ResourceBundle::getBundle);
 
     /**

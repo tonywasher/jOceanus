@@ -21,6 +21,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import net.sourceforge.joceanus.jmetis.field.MetisFieldItem;
+import net.sourceforge.joceanus.jmetis.field.MetisFieldSet;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
 import net.sourceforge.joceanus.jtethys.date.TethysDateRange;
 
@@ -28,7 +30,25 @@ import net.sourceforge.joceanus.jtethys.date.TethysDateRange;
  * Analysis Bucket History.
  * @param <E> the enum class
  */
-public class MoneyWiseAnalysisHistory<E extends Enum<E> & MoneyWiseAnalysisAttribute> {
+public class MoneyWiseAnalysisHistory<E extends Enum<E> & MoneyWiseAnalysisAttribute>
+        implements MetisFieldItem {
+    /**
+     * Local Report fields.
+     */
+    @SuppressWarnings("rawtypes")
+    private static final MetisFieldSet<MoneyWiseAnalysisHistory> FIELD_DEFS = MetisFieldSet.newFieldSet(MoneyWiseAnalysisHistory.class);
+
+    /*
+     * Declare Fields.
+     */
+    static {
+        FIELD_DEFS.declareLocalField(MoneyWiseAnalysisBaseResource.HISTORY_RANGE, MoneyWiseAnalysisHistory::getRange);
+        FIELD_DEFS.declareLocalField(MoneyWiseAnalysisBaseResource.HISTORY_LIST, MoneyWiseAnalysisHistory::getList);
+        FIELD_DEFS.declareLocalField(MoneyWiseAnalysisBaseResource.HISTORY_MAP, MoneyWiseAnalysisHistory::getMap);
+        FIELD_DEFS.declareLocalField(MoneyWiseAnalysisBaseResource.HISTORY_INITIAL, MoneyWiseAnalysisHistory::getInitial);
+        FIELD_DEFS.declareLocalField(MoneyWiseAnalysisBaseResource.HISTORY_VALUES, MoneyWiseAnalysisHistory::getValues);
+    }
+
     /**
      * The range.
      */
@@ -104,6 +124,30 @@ public class MoneyWiseAnalysisHistory<E extends Enum<E> & MoneyWiseAnalysisAttri
     }
 
     /**
+     * Obtain the range.
+     * @return the range
+     */
+    public TethysDateRange getRange() {
+        return theRange;
+    }
+
+    /**
+     * Obtain the list.
+     * @return the list
+     */
+    public List<MoneyWiseAnalysisSnapShot<E>> getList() {
+        return theSnapShots;
+    }
+
+    /**
+     * Obtain the map.
+     * @return the map
+     */
+    public Map<Integer, MoneyWiseAnalysisSnapShot<E>> getMap() {
+        return theMap;
+    }
+
+    /**
      * Is the history idle?
      * @return true/false
      */
@@ -112,11 +156,24 @@ public class MoneyWiseAnalysisHistory<E extends Enum<E> & MoneyWiseAnalysisAttri
     }
 
     /**
+     * Obtain the initial values.
+     * @return the values
+     */
+    public MoneyWiseAnalysisValues<E> getInitial() {
+        return theInitial;
+    }
+
+    /**
      * Obtain the values.
      * @return the values
      */
     public MoneyWiseAnalysisValues<E> getValues() {
         return theTotal;
+    }
+
+    @Override
+    public MetisFieldSetDef getDataFieldSet() {
+        return FIELD_DEFS;
     }
 
     /**

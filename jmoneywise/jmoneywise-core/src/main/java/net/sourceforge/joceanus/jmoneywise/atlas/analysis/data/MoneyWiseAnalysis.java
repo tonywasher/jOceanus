@@ -20,7 +20,10 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
+import net.sourceforge.joceanus.jmetis.field.MetisFieldItem;
+import net.sourceforge.joceanus.jmetis.field.MetisFieldSet;
 import net.sourceforge.joceanus.jmoneywise.atlas.analysis.base.MoneyWiseAnalysisBucket;
+import net.sourceforge.joceanus.jmoneywise.atlas.analysis.base.MoneyWiseAnalysisEvent;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.Cash;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.Deposit;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.Loan;
@@ -37,7 +40,33 @@ import net.sourceforge.joceanus.jtethys.date.TethysDateRange;
 /**
  * Analysis.
  */
-public class MoneyWiseAnalysis {
+public class MoneyWiseAnalysis
+        implements MetisFieldItem {
+    /**
+     * Local Report fields.
+     */
+    private static final MetisFieldSet<MoneyWiseAnalysis> FIELD_DEFS = MetisFieldSet.newFieldSet(MoneyWiseAnalysis.class);
+
+    /*
+     * Declare Fields.
+     */
+    static {
+        FIELD_DEFS.declareLocalField(MoneyWiseAnalysisDataResource.ANALYSIS_EVENTS, MoneyWiseAnalysis::getEvents);
+        FIELD_DEFS.declareLocalField(MoneyWiseAnalysisDataResource.ANALYSIS_DEPOSITS, MoneyWiseAnalysis::getDeposits);
+        FIELD_DEFS.declareLocalField(MoneyWiseAnalysisDataResource.ANALYSIS_CASH, MoneyWiseAnalysis::getCash);
+        FIELD_DEFS.declareLocalField(MoneyWiseAnalysisDataResource.ANALYSIS_LOANS, MoneyWiseAnalysis::getLoans);
+        FIELD_DEFS.declareLocalField(MoneyWiseAnalysisDataResource.ANALYSIS_PORTFOLIOS, MoneyWiseAnalysis::getPortfolios);
+        FIELD_DEFS.declareLocalField(MoneyWiseAnalysisDataResource.ANALYSIS_HOLDINGS, MoneyWiseAnalysis::getHoldings);
+        FIELD_DEFS.declareLocalField(MoneyWiseAnalysisDataResource.ANALYSIS_PAYEES, MoneyWiseAnalysis::getPayees);
+        FIELD_DEFS.declareLocalField(MoneyWiseAnalysisDataResource.ANALYSIS_TRANS, MoneyWiseAnalysis::getTrans);
+        FIELD_DEFS.declareLocalField(MoneyWiseAnalysisDataResource.ANALYSIS_TAXBASES, MoneyWiseAnalysis::getTaxBases);
+    }
+
+    /**
+     * The Events.
+     */
+    private final MoneyWiseAnalysisEvents theEvents;
+
     /**
      * The Deposit Map.
      */
@@ -79,15 +108,13 @@ public class MoneyWiseAnalysis {
     private final Map<Integer, MoneyWiseTaxBasisBucket> theTaxBases;
 
     /**
-     * The reporting currency.
-     */
-    private final AssetCurrency theReporting;
-
-    /**
      * Constructor.
      * @param pDataSet the data
      */
     MoneyWiseAnalysis(final MoneyWiseData pDataSet) {
+        /* Create the events */
+        theEvents = new MoneyWiseAnalysisEvents(pDataSet);
+
         /* Create the maps */
         theDeposits = new HashMap<>();
         theCash = new HashMap<>();
@@ -97,9 +124,6 @@ public class MoneyWiseAnalysis {
         thePayees = new HashMap<>();
         theTrans = new HashMap<>();
         theTaxBases = new HashMap<>();
-
-        /* Record the reporting currency */
-        theReporting = pDataSet.getDefaultCurrency();
     }
 
     /**
@@ -109,6 +133,9 @@ public class MoneyWiseAnalysis {
      */
     MoneyWiseAnalysis(final MoneyWiseAnalysis pAnalysis,
                       final TethysDate pDate) {
+        /* Create the events */
+        theEvents = new MoneyWiseAnalysisEvents(pAnalysis.theEvents, pDate);
+
         /* Create the maps */
         theDeposits = MoneyWiseAnalysisBucket.newMap(pAnalysis.theDeposits, b -> b.newBucket(pDate));
         theCash = MoneyWiseAnalysisBucket.newMap(pAnalysis.theCash, b -> b.newBucket(pDate));
@@ -118,9 +145,6 @@ public class MoneyWiseAnalysis {
         thePayees = MoneyWiseAnalysisBucket.newMap(pAnalysis.thePayees, b -> b.newBucket(pDate));
         theTrans = MoneyWiseAnalysisBucket.newMap(pAnalysis.theTrans, b -> b.newBucket(pDate));
         theTaxBases = MoneyWiseAnalysisBucket.newMap(pAnalysis.theTaxBases, b -> b.newBucket(pDate));
-
-        /* Record the reporting currency */
-        theReporting = pAnalysis.getReportingCurrency();
     }
 
     /**
@@ -130,6 +154,9 @@ public class MoneyWiseAnalysis {
      */
     MoneyWiseAnalysis(final MoneyWiseAnalysis pAnalysis,
                       final TethysDateRange pRange) {
+        /* Create the events */
+        theEvents = new MoneyWiseAnalysisEvents(pAnalysis.theEvents, pRange);
+
         /* Create the maps */
         theDeposits = MoneyWiseAnalysisBucket.newMap(pAnalysis.theDeposits, b -> b.newBucket(pRange));
         theCash = MoneyWiseAnalysisBucket.newMap(pAnalysis.theCash, b -> b.newBucket(pRange));
@@ -139,73 +166,91 @@ public class MoneyWiseAnalysis {
         thePayees = MoneyWiseAnalysisBucket.newMap(pAnalysis.thePayees, b -> b.newBucket(pRange));
         theTrans = MoneyWiseAnalysisBucket.newMap(pAnalysis.theTrans, b -> b.newBucket(pRange));
         theTaxBases = MoneyWiseAnalysisBucket.newMap(pAnalysis.theTaxBases, b -> b.newBucket(pRange));
-
-        /* Record the reporting currency */
-        theReporting = pAnalysis.getReportingCurrency();
     }
 
     /**
-     * Obtain an iterator for the deposits.
-     * @return the iterator
+     * Get the events.
+     * @return the events
      */
-    public Iterator<MoneyWiseDepositBucket> depositIterator() {
-        return theDeposits.values().iterator();
+    public MoneyWiseAnalysisEvents getEvents() {
+        return theEvents;
     }
 
     /**
-     * Obtain an iterator for the cash.
-     * @return the iterator
+     * Get the deposit map.
+     * @return the map
      */
-    public Iterator<MoneyWiseCashBucket> cashIterator() {
-        return theCash.values().iterator();
+    public Map<Integer, MoneyWiseDepositBucket> getDeposits() {
+        return theDeposits;
     }
 
     /**
-     * Obtain an iterator for the loans.
-     * @return the iterator
+     * Get the cash map.
+     * @return the map
      */
-    public Iterator<MoneyWiseLoanBucket> loanIterator() {
-        return theLoans.values().iterator();
+    public Map<Integer, MoneyWiseCashBucket> getCash() {
+        return theCash;
     }
 
     /**
-     * Obtain an iterator for the portfolios.
-     * @return the iterator
+     * Get the loan map.
+     * @return the map
      */
-    public Iterator<MoneyWisePortfolioBucket> portfolioIterator() {
-        return thePortfolios.values().iterator();
+    public Map<Integer, MoneyWiseLoanBucket> getLoans() {
+        return theLoans;
     }
 
     /**
-     * Obtain an iterator for the holdings.
-     * @return the iterator
+     * Get the portfolio map.
+     * @return the map
      */
-    public Iterator<MoneyWiseSecurityBucket> holdingIterator() {
-        return theHoldings.values().iterator();
+    public Map<Integer, MoneyWisePortfolioBucket> getPortfolios() {
+        return thePortfolios;
     }
 
     /**
-     * Obtain an iterator for the payees.
-     * @return the iterator
+     * Get the holding map.
+     * @return the map
      */
-    public Iterator<MoneyWisePayeeBucket> payeeIterator() {
-        return thePayees.values().iterator();
+    public Map<Integer, MoneyWiseSecurityBucket> getHoldings() {
+        return theHoldings;
     }
 
     /**
-     * Obtain an iterator for the transactions.
-     * @return the iterator
+     * Get the payee map.
+     * @return the map
      */
-    public Iterator<MoneyWiseTransactionBucket> transIterator() {
-        return theTrans.values().iterator();
+    public Map<Integer, MoneyWisePayeeBucket> getPayees() {
+        return thePayees;
     }
 
     /**
-     * Obtain an iterator for the taxBases.
+     * Get the transactions map.
+     * @return the map
+     */
+    public Map<Integer, MoneyWiseTransactionBucket> getTrans() {
+        return theTrans;
+    }
+
+    /**
+     * Get the taxBasis map.
+     * @return the map
+     */
+    public Map<Integer, MoneyWiseTaxBasisBucket> getTaxBases() {
+        return theTaxBases;
+    }
+
+    @Override
+    public MetisFieldSetDef getDataFieldSet() {
+        return FIELD_DEFS;
+    }
+
+    /**
+     * Obtain an iterator for the events.
      * @return the iterator
      */
-    public Iterator<MoneyWiseTaxBasisBucket> taxBasisIterator() {
-        return theTaxBases.values().iterator();
+    public Iterator<MoneyWiseAnalysisEvent> eventIterator() {
+        return theEvents.getEvents().iterator();
     }
 
     /**
@@ -213,7 +258,7 @@ public class MoneyWiseAnalysis {
      * @return the currency
      */
     public AssetCurrency getReportingCurrency() {
-        return theReporting;
+        return theEvents.getReportingCurrency();
     }
 
     /**

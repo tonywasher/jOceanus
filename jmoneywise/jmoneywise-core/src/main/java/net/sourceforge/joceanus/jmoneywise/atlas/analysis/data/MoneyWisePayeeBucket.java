@@ -16,6 +16,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.atlas.analysis.data;
 
+import net.sourceforge.joceanus.jmetis.field.MetisFieldSet;
 import net.sourceforge.joceanus.jmoneywise.atlas.analysis.base.MoneyWiseAnalysisBucket;
 import net.sourceforge.joceanus.jmoneywise.atlas.analysis.base.MoneyWiseAnalysisValues;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.Payee;
@@ -28,6 +29,11 @@ import net.sourceforge.joceanus.jtethys.decimal.TethysMoney;
  */
 public class MoneyWisePayeeBucket
         extends MoneyWiseAnalysisBucket<Payee, MoneyWiseIncomeAttr> {
+    /**
+     * Local Report fields.
+     */
+    private static final MetisFieldSet<MoneyWisePayeeBucket> FIELD_DEFS = MetisFieldSet.newFieldSet(MoneyWisePayeeBucket.class);
+
     /**
      * Constructor.
      * @param pPayee the payee
@@ -56,6 +62,11 @@ public class MoneyWisePayeeBucket
     private MoneyWisePayeeBucket(final MoneyWisePayeeBucket pBase,
                                  final TethysDateRange pRange) {
         super(pBase, pRange);
+    }
+
+    @Override
+    public MetisFieldSetDef getDataFieldSet() {
+        return FIELD_DEFS;
     }
 
     @Override

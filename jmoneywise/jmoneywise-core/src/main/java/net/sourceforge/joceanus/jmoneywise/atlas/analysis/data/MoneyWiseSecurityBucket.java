@@ -16,6 +16,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.atlas.analysis.data;
 
+import net.sourceforge.joceanus.jmetis.field.MetisFieldSet;
 import net.sourceforge.joceanus.jmoneywise.atlas.analysis.base.MoneyWiseAnalysisBucket;
 import net.sourceforge.joceanus.jmoneywise.atlas.analysis.base.MoneyWiseAnalysisValues;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.Security;
@@ -28,6 +29,11 @@ import net.sourceforge.joceanus.jtethys.date.TethysDateRange;
  */
 public class MoneyWiseSecurityBucket
         extends MoneyWiseAnalysisBucket<SecurityHolding, MoneyWiseSecurityAttr> {
+    /**
+     * Local Report fields.
+     */
+    private static final MetisFieldSet<MoneyWiseSecurityBucket> FIELD_DEFS = MetisFieldSet.newFieldSet(MoneyWiseSecurityBucket.class);
+
     /**
      * Constructor.
      * @param pHolding the security holding
@@ -56,6 +62,11 @@ public class MoneyWiseSecurityBucket
     private MoneyWiseSecurityBucket(final MoneyWiseSecurityBucket pBase,
                                     final TethysDateRange pRange) {
         super(pBase, pRange);
+    }
+
+    @Override
+    public MetisFieldSetDef getDataFieldSet() {
+        return FIELD_DEFS;
     }
 
     @Override

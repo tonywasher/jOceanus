@@ -20,6 +20,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
 
+import net.sourceforge.joceanus.jmetis.field.MetisFieldItem;
+import net.sourceforge.joceanus.jmetis.field.MetisFieldSet;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
 import net.sourceforge.joceanus.jtethys.date.TethysDateRange;
 
@@ -28,7 +30,22 @@ import net.sourceforge.joceanus.jtethys.date.TethysDateRange;
  * @param <T> the owner
  * @param <E> the attribute
  */
-public abstract class MoneyWiseAnalysisBucket<T, E extends Enum<E> & MoneyWiseAnalysisAttribute> {
+public abstract class MoneyWiseAnalysisBucket<T, E extends Enum<E> & MoneyWiseAnalysisAttribute>
+        implements MetisFieldItem {
+    /**
+     * Local Report fields.
+     */
+    @SuppressWarnings("rawtypes")
+    private static final MetisFieldSet<MoneyWiseAnalysisBucket> FIELD_DEFS = MetisFieldSet.newFieldSet(MoneyWiseAnalysisBucket.class);
+
+    /*
+     * Declare Fields.
+     */
+    static {
+        FIELD_DEFS.declareLocalField(MoneyWiseAnalysisBaseResource.BUCKET_OWNER, MoneyWiseAnalysisBucket::getOwner);
+        FIELD_DEFS.declareLocalField(MoneyWiseAnalysisBaseResource.BUCKET_HISTORY, MoneyWiseAnalysisBucket::getHistory);
+    }
+
     /**
      * The owner.
      */
@@ -107,6 +124,11 @@ public abstract class MoneyWiseAnalysisBucket<T, E extends Enum<E> & MoneyWiseAn
      */
     public boolean isIdle() {
         return theHistory.isIdle();
+    }
+
+    @Override
+    public MetisFieldSetDef getDataFieldSet() {
+        return FIELD_DEFS;
     }
 
     /**
