@@ -59,14 +59,14 @@ public abstract class Kangaroo
     }
 
     /**
-     * MarsupimalFourteen.
+     * MarsupilamiFourteen.
      */
-    public static class MarsupimalFourteen
+    public static class MarsupilamiFourteen
             extends KangarooBase {
         /**
          * Constructor.
          */
-        public MarsupimalFourteen() {
+        public MarsupilamiFourteen() {
             this(DIGESTLEN);
         }
 
@@ -74,7 +74,7 @@ public abstract class Kangaroo
          * Constructor.
          * @param pLength the digest length
          */
-        public MarsupimalFourteen(final int pLength) {
+        public MarsupilamiFourteen(final int pLength) {
             super(256, 14, pLength);
         }
 

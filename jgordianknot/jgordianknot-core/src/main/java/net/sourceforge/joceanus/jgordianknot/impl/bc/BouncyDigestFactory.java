@@ -50,7 +50,7 @@ import org.bouncycastle.crypto.ext.digests.GroestlDigest;
 import org.bouncycastle.crypto.ext.digests.JHDigest;
 import org.bouncycastle.crypto.ext.digests.Kangaroo.KangarooBase;
 import org.bouncycastle.crypto.ext.digests.Kangaroo.KangarooTwelve;
-import org.bouncycastle.crypto.ext.digests.Kangaroo.MarsupimalFourteen;
+import org.bouncycastle.crypto.ext.digests.Kangaroo.MarsupilamiFourteen;
 import org.bouncycastle.crypto.ext.digests.SkeinDigest;
 
 import net.sourceforge.joceanus.jgordianknot.api.base.GordianLength;
@@ -197,7 +197,7 @@ public class BouncyDigestFactory
         final int myLength = pSpec.getDigestLength().getByteLength();
         return GordianLength.LEN_128 == pSpec.getStateLength()
                ? new KangarooTwelve(myLength)
-               : new MarsupimalFourteen(myLength);
+               : new MarsupilamiFourteen(myLength);
     }
 
     /**

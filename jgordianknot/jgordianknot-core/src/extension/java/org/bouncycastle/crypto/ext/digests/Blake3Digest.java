@@ -724,7 +724,7 @@ public class Blake3Digest
     }
 
     /**
-     * PermuteM.
+     * PermuteIndices.
      */
     private void permuteIndices() {
         for (byte i = 0; i < theIndices.length; i++) {

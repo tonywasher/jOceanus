@@ -133,9 +133,9 @@ public enum GordianDigestResource implements TethysBundleId {
     DIGEST_KANGAROO("Kangaroo"),
 
     /**
-     * Digest Marsupimal.
+     * Digest Marsupilami.
      */
-    DIGEST_MARSUPIMAL("Marsupimal"),
+    DIGEST_MARSUPILAMI("Marsupilami"),
 
     /**
      * Digest Haraka.

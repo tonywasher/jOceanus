@@ -363,9 +363,26 @@ public class DigestTest {
                              final boolean pStdMsg,
                              final int pPersLen,
                              final String pResult) throws OceanusException {
+        testKangaroo(pMsgLen, pStdMsg, pPersLen, 0, pResult);
+    }
+
+    /**
+     * Run the kangaroo tests.
+     * @param pMsgLen the messageLength
+     * @param pStdMsg is this a  standard message
+     * @param pPersLen the personalLength
+     * @param pOutLen the outputLength
+     * @param pResult the expected result
+     * @throws OceanusException on error
+     */
+    static void testKangaroo(final int pMsgLen,
+                             final boolean pStdMsg,
+                             final int pPersLen,
+                             final int pOutLen,
+                             final String pResult) throws OceanusException {
         /* Access the expected result */
         final byte[] myExpected = Hex.decode(pResult);
-        final int myXofLen = myExpected.length;
+        final int myXofLen = pOutLen == 0 ? myExpected.length : pOutLen;
 
         /* Create the message */
         final byte[] myMsg = new byte[pMsgLen];
@@ -382,7 +399,7 @@ public class DigestTest {
         }
 
         /* Create the output buffer */
-        final byte[] myOutput = new byte[myXofLen];
+        byte[] myOutput = new byte[myXofLen];
 
         /* Initialise the mac */
         final KangarooTwelve myDigest = new KangarooTwelve();
@@ -393,6 +410,11 @@ public class DigestTest {
         myDigest.init(myParams);
         myDigest.update(myMsg, 0, pMsgLen);
         myDigest.doFinal(myOutput, 0);
+
+        /* If we are only looking at the last bit of the output */
+        if (pOutLen != 0) {
+            myOutput = Arrays.copyOfRange(myOutput, pOutLen - myExpected.length, pOutLen);
+        }
 
         /* Check the result */
         Assertions.assertArrayEquals(myExpected, myOutput, "Result mismatch");
@@ -1189,11 +1211,12 @@ public class DigestTest {
      */
     static class KangarooTest {
         /**
-         * Expected unkeyed results.
+         * Expected results.
          */
         private static final String[] EXPECTED = {
                 "1AC2D450FC3B4205D19DA7BFCA1B37513C0803577AC7167F06FE2CE1F0EF39E5",
                 "1AC2D450FC3B4205D19DA7BFCA1B37513C0803577AC7167F06FE2CE1F0EF39E54269C056B8C82E48276038B6D292966CC07A3D4645272E31FF38508139EB0A71",
+                "E8DC563642F7228C84684C898405D3A834799158C079B12880277A1D28E2FF6D",
                 "2BDA92450E8B147F8A7CB629E784A058EFCA7CF7D8218E02D345DFAA65244A1F",
                 "6BF75FA2239198DB4772E36478F8E19B0F371205F6A9A93A273F51DF37122888",
                 "0C315EBCDEDBF61426DE7DCF8FB725D1E74675D7F5327A5067F367B108ECB67C",
@@ -1214,17 +1237,18 @@ public class DigestTest {
         void checkDigests() throws OceanusException {
             testKangaroo(0, true, 0, EXPECTED[0]);
             testKangaroo(0, true, 0, EXPECTED[1]);
-            testKangaroo(1, true, 0, EXPECTED[2]);
-            testKangaroo(17, true, 0, EXPECTED[3]);
-            testKangaroo(17*17, true, 0, EXPECTED[4]);
-            testKangaroo(17*17*17, true, 0, EXPECTED[5]);
-            testKangaroo(17*17*17*17, true, 0, EXPECTED[6]);
-            testKangaroo(17*17*17*17*17, true, 0, EXPECTED[7]);
-            testKangaroo(17*17*17*17*17*17, true, 0, EXPECTED[8]);
-            testKangaroo(0, true, 1, EXPECTED[9]);
-            testKangaroo(1, false, 41, EXPECTED[10]);
-            testKangaroo(3, false, 41*41, EXPECTED[11]);
-            testKangaroo(7, false, 41*41*41, EXPECTED[12]);
+            testKangaroo(0, true, 0, 10032, EXPECTED[2]);
+            testKangaroo(1, true, 0, EXPECTED[3]);
+            testKangaroo(17, true, 0, EXPECTED[4]);
+            testKangaroo(17*17, true, 0, EXPECTED[5]);
+            testKangaroo(17*17*17, true, 0, EXPECTED[6]);
+            testKangaroo(17*17*17*17, true, 0, EXPECTED[7]);
+            testKangaroo(17*17*17*17*17, true, 0, EXPECTED[8]);
+            testKangaroo(17*17*17*17*17*17, true, 0, EXPECTED[9]);
+            testKangaroo(0, true, 1, EXPECTED[10]);
+            testKangaroo(1, false, 41, EXPECTED[11]);
+            testKangaroo(3, false, 41*41, EXPECTED[12]);
+            testKangaroo(7, false, 41*41*41, EXPECTED[13]);
         }
     }
 
