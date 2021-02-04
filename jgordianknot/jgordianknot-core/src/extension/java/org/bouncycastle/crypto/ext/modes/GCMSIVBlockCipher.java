@@ -47,6 +47,12 @@ public class GCMSIVBlockCipher
     private static final int NONCELEN = 12;
 
     /**
+     * The maximum data length (AEAD/PlainText). Due to implementation constraints this is restricted to the
+     * maximum array length (https://programming.guide/java/array-maximum-length.html) - the BUFLEN
+     */
+    private static final int MAX_DATALEN = Integer.MAX_VALUE - 8 - BUFLEN;
+
+    /**
      * The top bit mask.
      */
     private static final byte MASK = (byte) 0b10000000;
@@ -218,8 +224,9 @@ public class GCMSIVBlockCipher
 
     /**
      * check AEAD status.
+     * @param pLen the dataLength
      */
-    private void checkAEADStatus() {
+    private void checkAEADStatus(final int pLen) {
         /* Check we are initialised */
         if ((theFlags & INIT) == 0) {
             throw new IllegalStateException("Cipher is not initialised");
@@ -229,12 +236,19 @@ public class GCMSIVBlockCipher
         if ((theFlags & AEAD_COMPLETE) != 0) {
             throw new IllegalStateException("AEAD data cannot be processed after ordinary data");
         }
+
+        /* Make sure that we haven't breached AEAD data limit */
+        if (theAEADHasher.getBytesProcessed() + Long.MIN_VALUE
+                > (MAX_DATALEN - pLen) + Long.MIN_VALUE) {
+            throw new IllegalStateException("AEAD byte count exceeded");
+        }
     }
 
     /**
      * check status.
+     * @param pLen the dataLength
      */
-    private void checkStatus() {
+    private void checkStatus(final int pLen) {
         /* Check we are initialised */
         if ((theFlags & INIT) == 0) {
             throw new IllegalStateException("Cipher is not initialised");
@@ -245,12 +259,24 @@ public class GCMSIVBlockCipher
             theAEADHasher.completeHash();
             theFlags |= AEAD_COMPLETE;
         }
+
+        /* Make sure that we haven't breached data limit */
+        long dataLimit = MAX_DATALEN;
+        long currBytes = thePlain.size();
+        if (!forEncryption) {
+            dataLimit += BUFLEN;
+            currBytes = theEncData.size();
+        }
+        if (currBytes + Long.MIN_VALUE
+                > (dataLimit - pLen) + Long.MIN_VALUE) {
+            throw new IllegalStateException("byte count exceeded");
+        }
     }
 
     @Override
     public void processAADByte(final byte pByte) {
         /* Check that we can supply AEAD */
-        checkAEADStatus();
+        checkAEADStatus(1);
 
         /* Process the aead */
         theAEADHasher.updateHash(pByte);
@@ -261,12 +287,10 @@ public class GCMSIVBlockCipher
                                 final int pOffset,
                                 final int pLen) {
         /* Check that we can supply AEAD */
-        checkAEADStatus();
+        checkAEADStatus(pLen);
 
         /* Check input buffer */
-        if (bufLength(pData) < (pLen + pOffset)) {
-            throw new DataLengthException("Input buffer too short.");
-        }
+        checkBuffer(pData, pOffset, pLen, false);
 
         /* Process the aead */
         theAEADHasher.updateHash(pData, pOffset, pLen);
@@ -277,7 +301,7 @@ public class GCMSIVBlockCipher
                            final byte[] pOutput,
                            final int pOutOffset) throws DataLengthException {
         /* Check that we have initialised */
-        checkStatus();
+        checkStatus(1);
 
         /* Store the data */
         if (forEncryption) {
@@ -298,12 +322,10 @@ public class GCMSIVBlockCipher
                             final byte[] pOutput,
                             final int pOutOffset) throws DataLengthException {
         /* Check that we have initialised */
-        checkStatus();
+        checkStatus(pLen);
 
         /* Check input buffer */
-        if (bufLength(pData) < (pLen + pOffset)) {
-            throw new DataLengthException("Input buffer too short.");
-        }
+        checkBuffer(pData, pOffset, pLen, false);
 
         /* Store the data */
         if (forEncryption) {
@@ -321,12 +343,10 @@ public class GCMSIVBlockCipher
     public int doFinal(final byte[] pOutput,
                        final int pOffset) throws IllegalStateException, InvalidCipherTextException {
         /* Check that we have initialised */
-        checkStatus();
+        checkStatus(0);
 
         /* Check output buffer */
-        if (bufLength(pOutput) < (pOffset + getOutputSize(0))) {
-            throw new OutputLengthException("Output buffer too short.");
-        }
+        checkBuffer(pOutput, pOffset, getOutputSize(0), true);
 
         /* If we are encrypting */
         if (forEncryption) {
@@ -410,11 +430,35 @@ public class GCMSIVBlockCipher
 
     /**
      * Obtain buffer length (allowing for null).
-     * @param pBuffer the buffere
+     * @param pBuffer the buffer
      * @return the length
      */
     private static int bufLength(final byte[] pBuffer) {
         return pBuffer == null ? 0 : pBuffer.length;
+    }
+
+    /**
+     * Check buffer.
+     * @param pBuffer the buffer
+     * @param pOffset the offset
+     * @param pLen the length
+     * @param pOutput is this an output buffer?
+     */
+    private static void checkBuffer(final byte[] pBuffer,
+                                    final int pOffset,
+                                    final int pLen,
+                                    final boolean pOutput) {
+        /* Access lengths */
+        final int myBufLen = bufLength(pBuffer);
+        final int myLast = pOffset + pLen;
+
+        /* Check for negative values and buffer overflow */
+        final boolean badLen = pLen < 0 || pOffset < 0 || myLast < 0;
+        if (badLen || myLast > myBufLen) {
+            throw pOutput
+                    ? new OutputLengthException("Output buffer too short.")
+                    : new DataLengthException("Input buffer too short.");
+        }
     }
 
     /**

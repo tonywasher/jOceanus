@@ -18,6 +18,8 @@ package org.bouncycastle.crypto.ext.engines;
 
 import org.bouncycastle.crypto.BlockCipher;
 import org.bouncycastle.crypto.CipherParameters;
+import org.bouncycastle.crypto.DataLengthException;
+import org.bouncycastle.crypto.OutputLengthException;
 import org.bouncycastle.crypto.params.KeyParameter;
 import org.bouncycastle.util.Pack;
 
@@ -214,17 +216,44 @@ public class LeaEngine
                             final byte[] pOutput,
                             final int pOutOff) {
         /* Check buffers */
-        if (pInput == null || pInput.length - pInOff < BLOCKSIZE) {
-            throw new IllegalArgumentException("Invalid input buffer");
-        }
-        if (pOutput == null || pOutput.length - pOutOff < BLOCKSIZE) {
-            throw new IllegalArgumentException("Invalid output buffer");
-        }
+        checkBuffer(pInput, pInOff, false);
+        checkBuffer(pOutput, pOutOff, true);
 
         /* Perform the encryption/decryption */
         return forEncryption
                 ? encryptBlock(pInput, pInOff, pOutput, pOutOff)
                 : decryptBlock(pInput, pInOff, pOutput, pOutOff);
+    }
+
+    /**
+     * Obtain buffer length (allowing for null).
+     * @param pBuffer the buffer
+     * @return the length
+     */
+    private static int bufLength(final byte[] pBuffer) {
+        return pBuffer == null ? 0 : pBuffer.length;
+    }
+
+    /**
+     * Check buffer.
+     * @param pBuffer the buffer
+     * @param pOffset the offset
+     * @param pOutput is this an output buffer?
+     */
+    private static void checkBuffer(final byte[] pBuffer,
+                                    final int pOffset,
+                                    final boolean pOutput) {
+        /* Access lengths */
+        final int myBufLen = bufLength(pBuffer);
+        final int myLast = pOffset + BLOCKSIZE;
+
+        /* Check for negative values and buffer overflow */
+        final boolean badLen = pOffset < 0 || myLast < 0;
+        if (badLen || myLast > myBufLen) {
+            throw pOutput
+                    ? new OutputLengthException("Output buffer too short.")
+                    : new DataLengthException("Input buffer too short.");
+        }
     }
 
     /**
@@ -388,7 +417,7 @@ public class LeaEngine
     }
 
     /**
-     * Generate the round keys.
+     * Generate the round keys from 192-bit key.
      * @param pWork the working keys
      */
     private void generate192RoundKeys(final int[] pWork) {
@@ -407,7 +436,7 @@ public class LeaEngine
     }
 
     /**
-     * Generate the round keys.
+     * Generate the round keys from 256-bit key.
      * @param pWork the working keys
      */
     private void generate256RoundKeys(final int[] pWork) {

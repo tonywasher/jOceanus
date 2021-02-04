@@ -436,7 +436,7 @@ public enum GordianDigestType {
      */
     public static String getKangarooAlgorithmForStateLength(final GordianLength pLength) {
         return GordianLength.LEN_256.equals(pLength)
-               ? GordianDigestResource.DIGEST_MARSUPIMAL.getValue()
+               ? GordianDigestResource.DIGEST_MARSUPILAMI.getValue()
                : GordianDigestResource.DIGEST_KANGAROO.getValue();
     }
 

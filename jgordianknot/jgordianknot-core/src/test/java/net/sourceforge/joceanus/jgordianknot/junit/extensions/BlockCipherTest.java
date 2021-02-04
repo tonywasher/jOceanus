@@ -805,9 +805,10 @@ public class BlockCipherTest {
             final byte[] myAEAD = Hex.decode(pAEAD);
             final byte[] myData = Hex.decode(pData);
 
-            /* Initialise the cipher */
-            final AEADParameters myParams = new AEADParameters(myKey, 128, myNonce, myAEAD);
-            pCipher.init(true, myParams);
+            /* Initialise the cipher with AEAD */
+            AEADParameters myParamsA = new AEADParameters(myKey, 128, myNonce, myAEAD);
+            AEADParameters myParamsB = new AEADParameters(myKey, 128, myNonce);
+            pCipher.init(true, myParamsA);
 
             /* Create the output buffers */
             final byte[] myOutput = new byte[pCipher.getOutputSize(myData.length)];
@@ -821,15 +822,20 @@ public class BlockCipherTest {
             final byte[] myExpected = Hex.decode(pExpected);
             Assertions.assertArrayEquals(myExpected, myOutput, "Encryption mismatch");
 
-            /* Repeat processing byte at a time */
+            /* Repeat processing one byte at a time */
             for (byte b : myData) {
                 pCipher.processByte(b, null, 0);
             }
             pCipher.doFinal(myOutput, 0);
             Assertions.assertArrayEquals(myExpected, myOutput, "Encryption mismatch");
 
-            /* Re-initialise the cipher */
-            pCipher.init(false, myParams);
+            /* Re-initialise the cipher with no AEAD */
+            pCipher.init(false, myParamsB);
+
+            /* Process AEAD one byte at a time */
+            for (byte b : myAEAD) {
+                pCipher.processAADByte(b);
+            }
             pCipher.processBytes(myOutput, 0, myOutput.length, null, 0);
             pCipher.doFinal(myFinal, 0);
             Assertions.assertArrayEquals(myData, myFinal, "Decryption mismatch");
