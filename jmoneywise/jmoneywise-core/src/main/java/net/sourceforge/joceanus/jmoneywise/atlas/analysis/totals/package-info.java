@@ -16,6 +16,6 @@
  ******************************************************************************/
 
 /**
- * Analysis Base.
+ * Analysis Totals.
  */
-package net.sourceforge.joceanus.jmoneywise.atlas.analysis.base;
+package net.sourceforge.joceanus.jmoneywise.atlas.analysis.totals;

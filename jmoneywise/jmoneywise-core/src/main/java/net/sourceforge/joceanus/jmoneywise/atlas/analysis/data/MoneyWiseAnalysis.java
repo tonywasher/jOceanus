@@ -22,6 +22,7 @@ import java.util.Map;
 
 import net.sourceforge.joceanus.jmetis.field.MetisFieldItem;
 import net.sourceforge.joceanus.jmetis.field.MetisFieldSet;
+import net.sourceforge.joceanus.jmoneywise.atlas.analysis.base.MoneyWiseAnalysisBaseResource;
 import net.sourceforge.joceanus.jmoneywise.atlas.analysis.base.MoneyWiseAnalysisBucket;
 import net.sourceforge.joceanus.jmoneywise.atlas.analysis.base.MoneyWiseAnalysisEvent;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.Cash;
@@ -51,6 +52,7 @@ public class MoneyWiseAnalysis
      * Declare Fields.
      */
     static {
+        FIELD_DEFS.declareLocalField(MoneyWiseAnalysisBaseResource.HISTORY_RANGE, MoneyWiseAnalysis::getRange);
         FIELD_DEFS.declareLocalField(MoneyWiseAnalysisDataResource.ANALYSIS_EVENTS, MoneyWiseAnalysis::getEvents);
         FIELD_DEFS.declareLocalField(MoneyWiseAnalysisDataResource.ANALYSIS_DEPOSITS, MoneyWiseAnalysis::getDeposits);
         FIELD_DEFS.declareLocalField(MoneyWiseAnalysisDataResource.ANALYSIS_CASH, MoneyWiseAnalysis::getCash);
@@ -61,6 +63,11 @@ public class MoneyWiseAnalysis
         FIELD_DEFS.declareLocalField(MoneyWiseAnalysisDataResource.ANALYSIS_TRANS, MoneyWiseAnalysis::getTrans);
         FIELD_DEFS.declareLocalField(MoneyWiseAnalysisDataResource.ANALYSIS_TAXBASES, MoneyWiseAnalysis::getTaxBases);
     }
+
+    /**
+     * The dateRange.
+     */
+    private final TethysDateRange theRange;
 
     /**
      * The Events.
@@ -113,6 +120,7 @@ public class MoneyWiseAnalysis
      */
     MoneyWiseAnalysis(final MoneyWiseData pDataSet) {
         /* Create the events */
+        theRange = new TethysDateRange(null, null);
         theEvents = new MoneyWiseAnalysisEvents(pDataSet);
 
         /* Create the maps */
@@ -134,6 +142,7 @@ public class MoneyWiseAnalysis
     MoneyWiseAnalysis(final MoneyWiseAnalysis pAnalysis,
                       final TethysDate pDate) {
         /* Create the events */
+        theRange = new TethysDateRange(null, pDate);
         theEvents = new MoneyWiseAnalysisEvents(pAnalysis.theEvents, pDate);
 
         /* Create the maps */
@@ -155,6 +164,7 @@ public class MoneyWiseAnalysis
     MoneyWiseAnalysis(final MoneyWiseAnalysis pAnalysis,
                       final TethysDateRange pRange) {
         /* Create the events */
+        theRange = pRange;
         theEvents = new MoneyWiseAnalysisEvents(pAnalysis.theEvents, pRange);
 
         /* Create the maps */
@@ -166,6 +176,14 @@ public class MoneyWiseAnalysis
         thePayees = MoneyWiseAnalysisBucket.newMap(pAnalysis.thePayees, b -> b.newBucket(pRange));
         theTrans = MoneyWiseAnalysisBucket.newMap(pAnalysis.theTrans, b -> b.newBucket(pRange));
         theTaxBases = MoneyWiseAnalysisBucket.newMap(pAnalysis.theTaxBases, b -> b.newBucket(pRange));
+    }
+
+    /**
+     * Get the dateRange.
+     * @return the dateRange
+     */
+    public TethysDateRange getRange() {
+        return theRange;
     }
 
     /**

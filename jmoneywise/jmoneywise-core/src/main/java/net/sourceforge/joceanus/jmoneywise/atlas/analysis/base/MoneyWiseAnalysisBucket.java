@@ -118,6 +118,14 @@ public abstract class MoneyWiseAnalysisBucket<T, E extends Enum<E> & MoneyWiseAn
     }
 
     /**
+     * Obtain the initial values.
+     * @return the initial values
+     */
+    public MoneyWiseAnalysisValues<E> getInitial() {
+        return theHistory.getInitial();
+    }
+
+    /**
      * Is the bucket idle?
      *
      * @return true/false

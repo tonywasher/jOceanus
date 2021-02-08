@@ -19,6 +19,7 @@ package net.sourceforge.joceanus.jmoneywise.atlas.analysis.data;
 import net.sourceforge.joceanus.jmetis.field.MetisFieldSet;
 import net.sourceforge.joceanus.jmoneywise.atlas.analysis.base.MoneyWiseAnalysisBucket;
 import net.sourceforge.joceanus.jmoneywise.atlas.analysis.base.MoneyWiseAnalysisValues;
+import net.sourceforge.joceanus.jmoneywise.lethe.data.Portfolio;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.Security;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.SecurityHolding;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
@@ -62,6 +63,22 @@ public class MoneyWiseSecurityBucket
     private MoneyWiseSecurityBucket(final MoneyWiseSecurityBucket pBase,
                                     final TethysDateRange pRange) {
         super(pBase, pRange);
+    }
+
+    /**
+     * Obtain the portfolio.
+     * @return the portfolio
+     */
+    public Portfolio getPortfolio() {
+        return getOwner().getPortfolio();
+    }
+
+    /**
+     * Obtain the security.
+     * @return the security
+     */
+    public Security getSecurity() {
+        return getOwner().getSecurity();
     }
 
     @Override

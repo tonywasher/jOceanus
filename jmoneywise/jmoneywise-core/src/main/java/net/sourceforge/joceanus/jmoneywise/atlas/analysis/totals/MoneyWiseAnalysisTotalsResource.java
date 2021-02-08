@@ -14,7 +14,7 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  ******************************************************************************/
-package net.sourceforge.joceanus.jmoneywise.atlas.analysis.base;
+package net.sourceforge.joceanus.jmoneywise.atlas.analysis.totals;
 
 import java.util.ResourceBundle;
 
@@ -23,94 +23,89 @@ import net.sourceforge.joceanus.jtethys.resource.TethysBundleId;
 import net.sourceforge.joceanus.jtethys.resource.TethysBundleLoader;
 
 /**
- * Resource IDs for MoneyWise Analysis Base Fields.
+ * Resource IDs for MoneyWise Analysis Data Fields.
  */
-public enum MoneyWiseAnalysisBaseResource
+public enum MoneyWiseAnalysisTotalsResource
         implements TethysBundleId, MetisDataFieldId {
     /**
-     * Bucket Owner.
+     * Totals.
      */
-    BUCKET_OWNER("Bucket.Owner"),
+    TOTALS_TOTAL("Totals.Total"),
 
     /**
-     * Bucket History.
+     * Initial.
      */
-    BUCKET_HISTORY("Bucket.History"),
+    TOTALS_INITIAL("Totals.Initial"),
 
     /**
-     * Event Id.
+     * Bucket.
      */
-    EVENT_ID("Event.Id"),
+    TOTALS_BUCKET("Totals.Bucket"),
 
     /**
-     * Event Date.
+     * Category.
      */
-    EVENT_DATE("Event.Date"),
+    TOTALS_CATEGORY("Totals.Category"),
 
     /**
-     * Event.Type.
+     * Categories.
      */
-    EVENT_TYPE("Event.Type"),
+    TOTALS_CATEGORIES("Totals.Categories"),
 
     /**
-     * Event Transaction.
+     * Portfolio.
      */
-    EVENT_TRANS("Event.Transaction"),
+    TOTALS_PORTFOLIO("Totals.Portfolio"),
 
     /**
-     * Event Prices.
+     * Deposits.
      */
-    EVENT_PRICES("Event.Prices"),
+    TOTALS_DEPOSITS("Totals.Deposits"),
 
     /**
-     * Event Rates.
+     * Cash.
      */
-    EVENT_RATES("Event.Rates"),
+    TOTALS_CASH("Totals.Cash"),
 
     /**
-     * SnapShot Event.
+     * Portfolios.
      */
-    SNAPSHOT_EVENT("SnapShot.Event"),
+    TOTALS_PORTFOLIOS("Totals.Portfolios"),
 
     /**
-     * SnapShot Values.
+     * Holdings.
      */
-    SNAPSHOT_VALUES("SnapShot.Values"),
+    TOTALS_HOLDINGS("Totals.Holdings"),
 
     /**
-     * SnapShot Previous.
+     * Loans.
      */
-    SNAPSHOT_PREV("SnapShot.Previous"),
+    TOTALS_LOANS("Totals.Loans"),
 
     /**
-     * History Range.
+     * Assets.
      */
-    HISTORY_RANGE("History.Range"),
+    TOTALS_ASSETS("Totals.Assets"),
 
     /**
-     * History SnapShot List.
+     * Payees.
      */
-    HISTORY_LIST("History.List"),
+    TOTALS_PAYEES("Totals.Payees"),
 
     /**
-     * History SnapShot Map.
+     * TransactionCategories.
      */
-    HISTORY_MAP("History.Map"),
+    TOTALS_TRANS("Totals.Trans"),
 
     /**
-     * Initial Values.
+     * TaxBases.
      */
-    HISTORY_INITIAL("History.Initial"),
-
-    /**
-     * SnapShot Previous.
-     */
-    HISTORY_VALUES("History.Values");
+    TOTALS_TAX("Totals.Tax");
 
     /**
      * The Resource Loader.
      */
-    private static final TethysBundleLoader LOADER = TethysBundleLoader.getPackageLoader(MoneyWiseAnalysisBaseResource.class.getCanonicalName(),
+    private static final TethysBundleLoader LOADER = TethysBundleLoader.getPackageLoader(MoneyWiseAnalysisTotalsResource.class.getCanonicalName(),
             ResourceBundle::getBundle);
 
     /**
@@ -127,7 +122,7 @@ public enum MoneyWiseAnalysisBaseResource
      * Constructor.
      * @param pKeyName the key name
      */
-    MoneyWiseAnalysisBaseResource(final String pKeyName) {
+    MoneyWiseAnalysisTotalsResource(final String pKeyName) {
         theKeyName = pKeyName;
     }
 
@@ -135,7 +130,7 @@ public enum MoneyWiseAnalysisBaseResource
      * Constructor.
      * @param pResource the underlying resource
      */
-    MoneyWiseAnalysisBaseResource(final TethysBundleId pResource) {
+    MoneyWiseAnalysisTotalsResource(final TethysBundleId pResource) {
         theKeyName = null;
         theValue = pResource.getValue();
     }
