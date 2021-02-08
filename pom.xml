@@ -72,7 +72,7 @@
     <appBinDir>bin/</appBinDir>
     <appLibDir>lib/</appLibDir>
     <BouncyCastleVersion>1.68</BouncyCastleVersion>
-    <JUnitVersion>5.7.0</JUnitVersion>
+    <JUnitVersion>5.7.1</JUnitVersion>
     <JSONVersion>20201115</JSONVersion>
     <ApacheMavenVersion>3.6.3</ApacheMavenVersion>
     <MySQLVersion>8.0.23</MySQLVersion>
@@ -86,8 +86,8 @@
     <JavaVersion>11</JavaVersion>
     <JavaFXVersion>15.0.1</JavaFXVersion>
     <JavaLanguageVersion>11</JavaLanguageVersion>
-    <CheckStyleVersion>8.39</CheckStyleVersion>
-    <PMDVersion>6.30.0</PMDVersion>
+    <CheckStyleVersion>8.40</CheckStyleVersion>
+    <PMDVersion>6.31.0</PMDVersion>
     <CleanPluginVersion>3.1.0</CleanPluginVersion>
     <ResourcesPluginVersion>3.2.0</ResourcesPluginVersion>
     <InstallPluginVersion>3.0.0-M1</InstallPluginVersion>
@@ -106,7 +106,7 @@
     <JavaDocPluginVersion>3.2.0</JavaDocPluginVersion>
     <SourcePluginVersion>3.2.1</SourcePluginVersion>
     <ChangelogPluginVersion>2.3</ChangelogPluginVersion>
-    <SonarQubePluginVersion>3.7.0.1746</SonarQubePluginVersion>
+    <SonarQubePluginVersion>3.8.0.2131</SonarQubePluginVersion>
     <CheckStylePluginVersion>3.1.1</CheckStylePluginVersion>
     <PMDPluginVersion>3.14.0</PMDPluginVersion>
     <JacocoPluginVersion>0.8.6</JacocoPluginVersion>
