@@ -229,7 +229,7 @@ public class AssetCurrency
      * Set default indication.
      * @param pDefault the new indication
      */
-    private void setDefault(final Boolean pDefault) {
+    public void setDefault(final Boolean pDefault) {
         setValueDefault(pDefault);
     }
 
