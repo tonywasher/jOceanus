@@ -76,47 +76,44 @@ public class MoneyWiseCashBuilder {
     /**
      * Set Name.
      * @param pName the name of the loan.
+     * @return the builder
      */
-    public void name(final String pName) {
+    public MoneyWiseCashBuilder name(final String pName) {
         theName = pName;
+        return this;
     }
 
     /**
      * Set the cashCategory.
      * @param pCategory the category of the cash.
+     * @return the builder
      */
-    public void category(final CashCategory pCategory) {
+    public MoneyWiseCashBuilder category(final CashCategory pCategory) {
         theCategory = pCategory;
+        return this;
     }
 
     /**
      * Set the autoExpense.
      * @param pCategory the category.
      * @param pPayee the payee
+     * @return the builder
      */
-    public void autoExpense(final String pCategory,
-                            final String pPayee) {
-        autoExpense(theDataSet.getTransCategories().findItemByName(pCategory),
-                    theDataSet.getPayees().findItemByName(pPayee));
-    }
-
-    /**
-     * Set the autoExpense.
-     * @param pCategory the category.
-     * @param pPayee the payee
-     */
-    public void autoExpense(final TransactionCategory pCategory,
-                            final Payee pPayee) {
+    public MoneyWiseCashBuilder autoExpense(final TransactionCategory pCategory,
+                                            final Payee pPayee) {
         theAutoExpense = pCategory;
         theAutoPayee = pPayee;
+        return this;
     }
 
     /**
      * Set the currency.
      * @param pCurrency the currency of the cash.
+     * @return the builder
      */
-    public void currency(final AssetCurrency pCurrency) {
+    public MoneyWiseCashBuilder currency(final AssetCurrency pCurrency) {
         theCurrency = pCurrency;
+        return this;
     }
 
     /**
@@ -137,9 +134,11 @@ public class MoneyWiseCashBuilder {
     /**
      * Set the openingBalance.
      * @param pOpening the opening Balance
+     * @return the builder
      */
-    public void openingBalance(final TethysMoney pOpening) {
+    public MoneyWiseCashBuilder openingBalance(final TethysMoney pOpening) {
         theOpeningBalance = pOpening;
+        return this;
     }
 
     /**

@@ -70,50 +70,41 @@ public class MoneyWiseLoanBuilder {
     /**
      * Set Name.
      * @param pName the name of the loan.
+     * @return the builder
      */
-    public void name(final String pName) {
+    public MoneyWiseLoanBuilder name(final String pName) {
         theName = pName;
-    }
-
-    /**
-     * Set Parent.
-     * @param pParent the name of the parent.
-     */
-    public void parent(final String pParent) {
-        theParent = lookupParent(pParent);
-    }
-
-    /**
-     * Obtain the parent.
-     * @param pParent the name of the parent.
-     * @return the parent
-     */
-    private Payee lookupParent(final String pParent) {
-        return theDataSet.getPayees().findItemByName(pParent);
+        return this;
     }
 
     /**
      * Set Parent.
      * @param pParent the parent.
+     * @return the builder
      */
-    public void parent(final Payee pParent) {
+    public MoneyWiseLoanBuilder parent(final Payee pParent) {
         theParent = pParent;
+        return this;
     }
 
     /**
      * Set the loanCategory.
      * @param pCategory the category of the loan.
+     * @return the builder
      */
-    public void category(final LoanCategory pCategory) {
+    public MoneyWiseLoanBuilder category(final LoanCategory pCategory) {
         theCategory = pCategory;
+        return this;
     }
 
     /**
      * Set the currency.
      * @param pCurrency the currency of the loan.
+     * @return the builder
      */
-    public void currency(final AssetCurrency pCurrency) {
+    public MoneyWiseLoanBuilder currency(final AssetCurrency pCurrency) {
         theCurrency = pCurrency;
+        return this;
     }
 
     /**
@@ -134,9 +125,11 @@ public class MoneyWiseLoanBuilder {
     /**
      * Set the openingBalance.
      * @param pOpening the opening Balance
+     * @return the builder
      */
-    public void openingBalance(final TethysMoney pOpening) {
+    public MoneyWiseLoanBuilder openingBalance(final TethysMoney pOpening) {
         theOpeningBalance = pOpening;
+        return this;
     }
 
     /**

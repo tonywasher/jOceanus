@@ -76,25 +76,31 @@ public class MoneyWiseXchgRateBuilder {
     /**
      * Set the currency.
      * @param pCurrency the currency of the cash.
+     * @return the builder
      */
-    public void currency(final AssetCurrency pCurrency) {
+    public MoneyWiseXchgRateBuilder currency(final AssetCurrency pCurrency) {
         theCurrency = pCurrency;
+        return this;
     }
 
     /**
      * Set the rate.
      * @param pRate the rate.
+     * @return the builder
      */
-    public void rate(final TethysRatio pRate) {
+    public MoneyWiseXchgRateBuilder rate(final TethysRatio pRate) {
         theRate = pRate;
+        return this;
     }
 
     /**
      * Set the date.
      * @param pDate the Date of the rate.
+     * @return the builder
      */
-    public void date(final TethysDate pDate) {
+    public MoneyWiseXchgRateBuilder date(final TethysDate pDate) {
         theDate = pDate;
+        return this;
     }
 
     /**

@@ -63,33 +63,41 @@ public class MoneyWiseDepositRateBuilder {
     /**
      * Set Deposit.
      * @param pDeposit the deposit.
+     * @return the builder
      */
-    public void deposit(final Deposit pDeposit) {
+    public MoneyWiseDepositRateBuilder deposit(final Deposit pDeposit) {
         theDeposit = pDeposit;
+        return this;
     }
 
     /**
      * Set the rate.
      * @param pRate the rate.
+     * @return the builder
      */
-    public void rate(final TethysRate pRate) {
+    public MoneyWiseDepositRateBuilder rate(final TethysRate pRate) {
         theRate = pRate;
+        return this;
     }
 
     /**
      * Set the bonus.
      * @param pBonus the bonus.
+     * @return the builder
      */
-    public void bonus(final TethysRate pBonus) {
+    public MoneyWiseDepositRateBuilder bonus(final TethysRate pBonus) {
         theBonus = pBonus;
+        return this;
     }
 
     /**
      * Set the endDate.
      * @param pEndDate the endDate of the rate.
+     * @return the builder
      */
-    public void endDate(final TethysDate pEndDate) {
+    public MoneyWiseDepositRateBuilder endDate(final TethysDate pEndDate) {
         theEndDate = pEndDate;
+        return this;
     }
 
     /**

@@ -86,33 +86,41 @@ public class MoneyWiseSecurityBuilder {
     /**
      * Set Name.
      * @param pName the name of the loan.
+     * @return the builder
      */
-    public void name(final String pName) {
+    public MoneyWiseSecurityBuilder name(final String pName) {
         theName = pName;
+        return this;
     }
 
     /**
      * Set Parent.
      * @param pParent the parent.
+     * @return the builder
      */
-    public void parent(final Payee pParent) {
+    public MoneyWiseSecurityBuilder parent(final Payee pParent) {
         theParent = pParent;
+        return this;
     }
 
     /**
      * Set the securityType.
      * @param pType the type of the security.
+     * @return the builder
      */
-    public void type(final SecurityType pType) {
+    public MoneyWiseSecurityBuilder type(final SecurityType pType) {
         theType = pType;
+        return this;
     }
 
     /**
      * Set the currency.
      * @param pCurrency the currency of the loan.
+     * @return the builder
      */
-    public void currency(final AssetCurrency pCurrency) {
+    public MoneyWiseSecurityBuilder currency(final AssetCurrency pCurrency) {
         theCurrency = pCurrency;
+        return this;
     }
 
     /**
@@ -133,25 +141,21 @@ public class MoneyWiseSecurityBuilder {
     /**
      * Set Symbol.
      * @param pSymbol the symbol of the security.
+     * @return the builder
      */
-    public void symbol(final String pSymbol) {
+    public MoneyWiseSecurityBuilder symbol(final String pSymbol) {
         theName = pSymbol;
+        return this;
     }
 
     /**
      * Set Region.
      * @param pRegion the region.
+     * @return the builder
      */
-    public void region(final Region pRegion) {
+    public MoneyWiseSecurityBuilder region(final Region pRegion) {
         theRegion = pRegion;
-    }
-
-    /**
-     * Set Underlying.
-     * @param pUnderlying the name of the underlying stock.
-     */
-    public void underlying(final String pUnderlying) {
-        theUnderlying = lookupSecurity(pUnderlying);
+        return this;
     }
 
     /**
@@ -166,17 +170,21 @@ public class MoneyWiseSecurityBuilder {
     /**
      * Set Underlying.
      * @param pUnderlying the underlying.
+     * @return the builder
      */
-    public void underlying(final Security pUnderlying) {
+    public MoneyWiseSecurityBuilder underlying(final Security pUnderlying) {
         theUnderlying = pUnderlying;
+        return this;
     }
 
     /**
      * Set optionPrice.
      * @param pPrice the optionPrice of the security.
+     * @return the builder
      */
-    public void optionPrice(final TethysPrice pPrice) {
+    public MoneyWiseSecurityBuilder optionPrice(final TethysPrice pPrice) {
         theOptionPrice = pPrice;
+        return this;
     }
 
     /**

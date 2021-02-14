@@ -159,92 +159,113 @@ public class MoneyWiseTransactionBuilder {
     /**
      * Set Date.
      * @param pDate the date of the transaction.
+     * @return the builder
      */
-    public void date(final TethysDate pDate) {
+    public MoneyWiseTransactionBuilder date(final TethysDate pDate) {
         theDate = pDate;
+        return this;
     }
 
     /**
      * Set Pair.
      * @param pFrom the from account.
      * @param pTo the to account.
+     * @return the builder
      */
-    public void pair(final TransactionAsset pFrom,
-                     final TransactionAsset pTo) {
+    public MoneyWiseTransactionBuilder pair(final TransactionAsset pFrom,
+                                            final TransactionAsset pTo) {
         switchDirection = pFrom instanceof Payee;
         theAccount = switchDirection ? pTo : pFrom;
         thePartner = switchDirection ? pFrom : pTo;
+        return this;
     }
 
     /**
      * Set category.
      * @param pCategory the category.
+     * @return the builder
      */
-    public void category(final TransactionCategory pCategory) {
+    public MoneyWiseTransactionBuilder category(final TransactionCategory pCategory) {
         theCategory = pCategory;
+        return this;
     }
 
     /**
      * Set the amount.
      * @param pAmount the amount of the transaction.
+     * @return the builder
      */
-    public void setAmount(final TethysMoney pAmount) {
+    public MoneyWiseTransactionBuilder setAmount(final TethysMoney pAmount) {
         theAmount = pAmount;
+        return this;
     }
 
     /**
      * Set the taxCredit.
      * @param pTaxCredit the taxCredit of the transaction.
+     * @return the builder
      */
-    public void setTaxCredit(final TethysMoney pTaxCredit) {
+    public MoneyWiseTransactionBuilder setTaxCredit(final TethysMoney pTaxCredit) {
         theTaxCredit = pTaxCredit;
+        return this;
     }
 
     /**
      * Set the EmployersNI.
      * @param pNI the EmployersNI of the transaction.
+     * @return the builder
      */
-    public void setEmployersNI(final TethysMoney pNI) {
+    public MoneyWiseTransactionBuilder setEmployersNI(final TethysMoney pNI) {
         theErNI = pNI;
+        return this;
     }
 
     /**
      * Set the EmployeesNI.
      * @param pNI the EmployeesNI of the transaction.
+     * @return the builder
      */
-    public void setEmployeesNI(final TethysMoney pNI) {
+    public MoneyWiseTransactionBuilder setEmployeesNI(final TethysMoney pNI) {
         theEeNI = pNI;
+        return this;
     }
 
     /**
      * Set the benefit.
      * @param pBenefit the benefit of the transaction.
+     * @return the builder
      */
-    public void setBenefit(final TethysMoney pBenefit) {
+    public MoneyWiseTransactionBuilder setBenefit(final TethysMoney pBenefit) {
         theBenefit = pBenefit;
+        return this;
     }
 
     /**
      * Set the withheld.
      * @param pWithheld the withheld of the transaction.
+     * @return the builder
      */
-    public void setWithheld(final TethysMoney pWithheld) {
+    public MoneyWiseTransactionBuilder setWithheld(final TethysMoney pWithheld) {
         theWithheld = pWithheld;
+        return this;
     }
 
     /**
      * Set the partner amount.
      * @param pAmount the partner amount of the transaction.
+     * @return the builder
      */
-    public void setPartnerAmount(final TethysMoney pAmount) {
+    public MoneyWiseTransactionBuilder setPartnerAmount(final TethysMoney pAmount) {
         thePartnerAmount = pAmount;
+        return this;
     }
 
     /**
      * Set the debit units.
      * @param pUnits the debit units.
+     * @return the builder
      */
-    public void setDebitUnits(final TethysUnits pUnits) {
+    public MoneyWiseTransactionBuilder setDebitUnits(final TethysUnits pUnits) {
         final TethysUnits myUnits = new TethysUnits(pUnits);
         myUnits.negate();
         if (switchDirection) {
@@ -252,71 +273,85 @@ public class MoneyWiseTransactionBuilder {
         } else {
             theAccountUnits = myUnits;
         }
+        return this;
     }
-
 
     /**
      * Set the credit units.
      * @param pUnits the credit units.
+     * @return the builder
      */
-    public void setCreditUnits(final TethysUnits pUnits) {
+    public MoneyWiseTransactionBuilder setCreditUnits(final TethysUnits pUnits) {
         if (switchDirection) {
             theAccountUnits = pUnits;
         } else {
             thePartnerUnits = pUnits;
         }
+        return this;
     }
 
     /**
      * Set the dilution.
      * @param pDilution the dilution of the transaction.
+     * @return the builder
      */
-    public void setDilution(final TethysDilution pDilution) {
+    public MoneyWiseTransactionBuilder setDilution(final TethysDilution pDilution) {
         theDilution = pDilution;
+        return this;
     }
 
     /**
      * Set the qualifyYears.
      * @param pYears the qualifyYears of the transaction.
+     * @return the builder
      */
-    public void setQualifyYears(final Integer pYears) {
+    public MoneyWiseTransactionBuilder setQualifyYears(final Integer pYears) {
         theQualifyYears = pYears;
+        return this;
     }
 
     /**
      * Set the returnedCash.
      * @param pCash the returnedCash.
      * @param pAccount the account to which the cash was returned
+     * @return the builder
      */
-    public void setReturnedCash(final TethysMoney pCash,
-                                final TransactionAsset pAccount) {
+    public MoneyWiseTransactionBuilder setReturnedCash(final TethysMoney pCash,
+                                                       final TransactionAsset pAccount) {
         theReturnedCash = pCash;
         theReturnedCashAccount = pAccount;
+        return this;
     }
 
     /**
      * Set the price.
      * @param pPrice the price of the transaction.
+     * @return the builder
      */
-    public void setPrice(final TethysPrice pPrice) {
+    public MoneyWiseTransactionBuilder setPrice(final TethysPrice pPrice) {
         thePrice = pPrice;
+        return this;
     }
 
     /**
      * Set a tag.
      * @param pTag the tag for the transaction.
+     * @return the builder
      */
-    public void setTag(final TransactionTag pTag) {
-        if (theTags.contains(pTag)) {
+    public MoneyWiseTransactionBuilder setTag(final TransactionTag pTag) {
+        if (!theTags.contains(pTag)) {
             theTags.add(pTag);
         }
+        return this;
     }
 
     /**
      * Set reconciled.
+     * @return the builder
      */
-    public void setReconciled() {
+    public MoneyWiseTransactionBuilder setReconciled() {
         theReconciled = Boolean.TRUE;
+        return this;
     }
 
     /**

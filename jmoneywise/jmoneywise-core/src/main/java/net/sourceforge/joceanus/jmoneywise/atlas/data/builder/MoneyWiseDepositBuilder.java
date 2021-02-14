@@ -70,50 +70,41 @@ public class MoneyWiseDepositBuilder {
     /**
      * Set Name.
      * @param pName the name of the loan.
+     * @return the builder
      */
-    public void name(final String pName) {
+    public MoneyWiseDepositBuilder name(final String pName) {
         theName = pName;
-    }
-
-    /**
-     * Set Parent.
-     * @param pParent the name of the parent.
-     */
-    public void parent(final String pParent) {
-        theParent = lookupParent(pParent);
-    }
-
-    /**
-     * Obtain the parent.
-     * @param pParent the name of the parent.
-     * @return the parent
-     */
-    private Payee lookupParent(final String pParent) {
-        return theDataSet.getPayees().findItemByName(pParent);
+        return this;
     }
 
     /**
      * Set Parent.
      * @param pParent the parent.
+     * @return the builder
      */
-    public void parent(final Payee pParent) {
+    public MoneyWiseDepositBuilder parent(final Payee pParent) {
         theParent = pParent;
+        return this;
     }
 
     /**
      * Set the depositCategory.
      * @param pCategory the category of the deposit.
+     * @return the builder
      */
-    public void category(final DepositCategory pCategory) {
+    public MoneyWiseDepositBuilder category(final DepositCategory pCategory) {
         theCategory = pCategory;
+        return this;
     }
 
     /**
      * Set the currency.
      * @param pCurrency the currency of the deposit.
+     * @return the builder
      */
-    public void currency(final AssetCurrency pCurrency) {
+    public MoneyWiseDepositBuilder currency(final AssetCurrency pCurrency) {
         theCurrency = pCurrency;
+        return this;
     }
 
     /**
@@ -134,9 +125,11 @@ public class MoneyWiseDepositBuilder {
     /**
      * Set the openingBalance.
      * @param pOpening the opening Balance
+     * @return the builder
      */
-    public void openingBalance(final TethysMoney pOpening) {
+    public MoneyWiseDepositBuilder openingBalance(final TethysMoney pOpening) {
         theOpeningBalance = pOpening;
+        return this;
     }
 
     /**

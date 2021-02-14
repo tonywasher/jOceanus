@@ -45,9 +45,11 @@ public class MoneyWiseRegionBuilder {
     /**
      * Set Name.
      * @param pName the name of the tag.
+     * @return the builder
      */
-    public void name(final String pName) {
+    public MoneyWiseRegionBuilder name(final String pName) {
         theName = pName;
+        return this;
     }
 
     /**

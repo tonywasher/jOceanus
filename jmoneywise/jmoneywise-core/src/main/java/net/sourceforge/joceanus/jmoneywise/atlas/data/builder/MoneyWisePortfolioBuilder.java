@@ -64,33 +64,41 @@ public class MoneyWisePortfolioBuilder {
     /**
      * Set Name.
      * @param pName the name of the portfolio.
+     * @return the builder
      */
-    public void name(final String pName) {
+    public MoneyWisePortfolioBuilder name(final String pName) {
         theName = pName;
+        return this;
     }
 
     /**
      * Set Parent.
      * @param pParent the parent.
+     * @return the builder
      */
-    public void parent(final Payee pParent) {
+    public MoneyWisePortfolioBuilder parent(final Payee pParent) {
         theParent = pParent;
+        return this;
     }
 
     /**
      * Set the portfolioType.
      * @param pType the type of the portfolio.
+     * @return the builder
      */
-    public void type(final PortfolioType pType) {
+    public MoneyWisePortfolioBuilder type(final PortfolioType pType) {
         theType = pType;
+        return this;
     }
 
     /**
      * Set the currency.
      * @param pCurrency the currency of the loan.
+     * @return the builder
      */
-    public void currency(final AssetCurrency pCurrency) {
+    public MoneyWisePortfolioBuilder currency(final AssetCurrency pCurrency) {
         theCurrency = pCurrency;
+        return this;
     }
 
     /**

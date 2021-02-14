@@ -58,25 +58,31 @@ public class MoneyWiseSecurityPriceBuilder {
     /**
      * Set Security.
      * @param pSecurity the security
+     * @return the builder
      */
-    public void security(final Security pSecurity) {
+    public MoneyWiseSecurityPriceBuilder security(final Security pSecurity) {
         theSecurity = pSecurity;
+        return this;
     }
 
     /**
      * Set the price.
      * @param pPrice the price.
+     * @return the builder
      */
-    public void rate(final TethysPrice pPrice) {
+    public MoneyWiseSecurityPriceBuilder rate(final TethysPrice pPrice) {
         thePrice = pPrice;
+        return this;
     }
 
     /**
      * Set the date.
      * @param pDate the date of the price.
+     * @return the builder
      */
-    public void endDate(final TethysDate pDate) {
+    public MoneyWiseSecurityPriceBuilder date(final TethysDate pDate) {
         theDate = pDate;
+        return this;
     }
 
     /**

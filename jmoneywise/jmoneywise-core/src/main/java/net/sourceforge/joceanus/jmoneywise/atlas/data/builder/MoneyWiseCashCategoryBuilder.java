@@ -56,8 +56,9 @@ public class MoneyWiseCashCategoryBuilder {
     /**
      * Set Name.
      * @param pName the name of the category.
+     * @return the builder
      */
-    public void name(final String pName) {
+    public MoneyWiseCashCategoryBuilder name(final String pName) {
         final int myIndex = pName.lastIndexOf(':');
         if (myIndex == -1) {
             theName = pName;
@@ -66,14 +67,17 @@ public class MoneyWiseCashCategoryBuilder {
             theName = pName.substring(myIndex + 1);
             theParent = lookupCategory(pName.substring(0, myIndex));
         }
+        return this;
     }
 
     /**
      * Set the categoryType.
      * @param pType the type of the category.
+     * @return the builder
      */
-    public void type(final CashCategoryType pType) {
+    public MoneyWiseCashCategoryBuilder type(final CashCategoryType pType) {
         theType = pType;
+        return this;
     }
 
     /**

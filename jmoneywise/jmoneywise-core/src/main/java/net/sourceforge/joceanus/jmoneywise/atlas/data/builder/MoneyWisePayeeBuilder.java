@@ -51,17 +51,21 @@ public class MoneyWisePayeeBuilder {
     /**
      * Set Name.
      * @param pName the name of the payee.
+     * @return the builder
      */
-    public void name(final String pName) {
+    public MoneyWisePayeeBuilder name(final String pName) {
         theName = pName;
+        return this;
     }
 
     /**
      * Set the payeeType.
      * @param pType the type of the payee.
+     * @return the builder
      */
-    public void type(final PayeeType pType) {
+    public MoneyWisePayeeBuilder type(final PayeeType pType) {
         theType = pType;
+        return this;
     }
 
     /**

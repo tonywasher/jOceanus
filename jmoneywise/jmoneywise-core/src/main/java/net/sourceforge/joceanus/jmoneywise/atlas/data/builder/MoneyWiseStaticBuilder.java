@@ -75,8 +75,9 @@ public class MoneyWiseStaticBuilder {
     /**
      * build basic Static.
      * @throws OceanusException on error
+     * @return the builder
      */
-    public void buildBasic() throws OceanusException {
+    public MoneyWiseStaticBuilder buildBasic() throws OceanusException {
         /* Create default currency */
         buildDefaultCurrency();
 
@@ -93,6 +94,7 @@ public class MoneyWiseStaticBuilder {
         buildTransCategories();
         buildTransInfo();
         buildTaxBases();
+        return this;
     }
 
     /**
