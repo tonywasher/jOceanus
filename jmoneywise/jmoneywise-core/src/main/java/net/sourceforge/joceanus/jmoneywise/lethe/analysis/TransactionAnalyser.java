@@ -736,6 +736,7 @@ public class TransactionAnalyser
                 /* Adjust the Target Bucket */
                 final SecurityHolding myTargetHolding = theHoldingMap.declareHolding(pTarget, myBucket.getSecurity());
                 final SecurityBucket myTargetBucket = myTarget.getSecurityBucket(myTargetHolding);
+                theHelper.setSecurity(myBucket.getSecurity());
 
                 /* Process the Transfer */
                 processPortfolioXfer(myBucket, myTargetBucket);

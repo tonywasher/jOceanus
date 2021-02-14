@@ -21,6 +21,7 @@ import java.util.Currency;
 import net.sourceforge.joceanus.jmetis.data.MetisDataDifference;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.AssetPair.AssetDirection;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.MoneyWiseData;
+import net.sourceforge.joceanus.jmoneywise.lethe.data.Security;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.SecurityHolding;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.Transaction;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.TransactionAsset;
@@ -69,6 +70,11 @@ public class TransactionHelper {
     private TransactionDetail theAccountDetail;
 
     /**
+     * The debit XchangeRate.
+     */
+    private TethysRatio theDebitXchangeRate;
+
+    /**
      * Constructor.
      * @param pData the dataSet
      */
@@ -100,6 +106,17 @@ public class TransactionHelper {
 
         /* Reset details */
         theAccountDetail = new TransactionDetail();
+        theDebitXchangeRate = theAccountDetail.getDebitExchangeRate();
+    }
+
+    /**
+     * Set the security (for PortfolioXfer).
+     * @param pSecurity the security.
+     */
+    protected void setSecurity(final Security pSecurity) {
+        final AssetCurrency myCurr = pSecurity.getAssetCurrency();
+        final boolean isForeign = !MetisDataDifference.isEqual(myCurr, theCurrency);
+        theDebitXchangeRate = isForeign ? theRateCursor.getExchangeRate(myCurr, theDate) : null;
     }
 
     /**
@@ -333,7 +350,7 @@ public class TransactionHelper {
      * @return the rate
      */
     public TethysRatio getDebitExchangeRate() {
-        return theAccountDetail.getDebitExchangeRate();
+        return theDebitXchangeRate;
     }
 
     /**

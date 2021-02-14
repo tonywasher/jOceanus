@@ -107,7 +107,7 @@
     <SourcePluginVersion>3.2.1</SourcePluginVersion>
     <ChangelogPluginVersion>2.3</ChangelogPluginVersion>
     <SonarQubePluginVersion>3.8.0.2131</SonarQubePluginVersion>
-    <CheckStylePluginVersion>3.1.1</CheckStylePluginVersion>
+    <CheckStylePluginVersion>3.1.2</CheckStylePluginVersion>
     <PMDPluginVersion>3.14.0</PMDPluginVersion>
     <JacocoPluginVersion>0.8.6</JacocoPluginVersion>
     <JetBrainsAnnotationsVersion>20.1.0</JetBrainsAnnotationsVersion>
