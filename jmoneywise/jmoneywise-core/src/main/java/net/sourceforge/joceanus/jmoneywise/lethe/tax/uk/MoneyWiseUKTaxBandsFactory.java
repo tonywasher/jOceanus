@@ -358,6 +358,15 @@ public final class MoneyWiseUKTaxBandsFactory {
             new MoneyWiseTaxBand(getAmount(5000), getRate(0)));
 
     /**
+     * The 2022 TaxBands.
+     */
+    protected static final MoneyWiseUKTaxBands BANDS_2022 = new MoneyWiseUKTaxBands(new MoneyWiseTaxBandSet(
+            new MoneyWiseTaxBand(getAmount(37700), getRate(20)),
+            new MoneyWiseTaxBand(getAmount(112300), getRate(40)),
+            new MoneyWiseTaxBand(getRate(45))),
+            new MoneyWiseTaxBand(getAmount(5000), getRate(0)));
+
+    /**
      * Private Constructor.
      */
     private MoneyWiseUKTaxBandsFactory() {

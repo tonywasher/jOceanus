@@ -95,9 +95,10 @@ public class MoneyWiseUKTaxYearCache
         setTaxYearInCache(MoneyWiseUKTaxYearFactory.YEAR_2019);
         setTaxYearInCache(MoneyWiseUKTaxYearFactory.YEAR_2020);
         setTaxYearInCache(MoneyWiseUKTaxYearFactory.YEAR_2021);
+        setTaxYearInCache(MoneyWiseUKTaxYearFactory.YEAR_2022);
 
         /* Determine the dateRange */
-        final TethysDate myEnd = MoneyWiseUKTaxYearFactory.YEAR_2021.getYearEnd();
+        final TethysDate myEnd = MoneyWiseUKTaxYearFactory.YEAR_2022.getYearEnd();
         TethysDate myStart = MoneyWiseUKTaxYearFactory.YEAR_1981.getYearEnd();
         myStart = new TethysDate(myStart);
         myStart.adjustDay(1);
