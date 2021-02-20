@@ -21,7 +21,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
-
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.SwingConstants;
@@ -105,6 +104,7 @@ public final class TethysSwingDataButtonField {
             /* Store the manager and button */
             theManager = pManager;
             theButton = getEditControl();
+            pLabel.setHorizontalAlignment(SwingConstants.CENTER);
 
             /* Set listener on manager */
             final TethysEventRegistrar<TethysUIEvent> myRegistrar = pManager.getEventRegistrar();

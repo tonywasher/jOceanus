@@ -29,7 +29,6 @@ import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.ToIntFunction;
-
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JViewport;
@@ -280,6 +279,13 @@ public class TethysSwingTableManager<C, R>
             throw new IllegalArgumentException();
         }
         return theItems.get(pIndex);
+    }
+
+    @Override
+    public void cancelEditing() {
+        if (theTable.isEditing()) {
+            theTable.getCellEditor().cancelCellEditing();
+        }
     }
 
     /**
@@ -587,9 +593,11 @@ public class TethysSwingTableManager<C, R>
          * Set cell value Factory.
          *
          * @param pFactory the cell factory
+         * @return the column
          */
-        public void setCellValueFactory(final Function<R, T> pFactory) {
+        public TethysSwingTableColumn<T, C, R> setCellValueFactory(final Function<R, T> pFactory) {
             theValueFactory = pFactory;
+            return this;
         }
 
         /**
@@ -683,14 +691,16 @@ public class TethysSwingTableManager<C, R>
         }
 
         @Override
-        public void setColumnWidth(final int pWidth) {
+        public TethysSwingTableColumn<T, C, R> setColumnWidth(final int pWidth) {
             theColumn.setPreferredWidth(pWidth);
+            return this;
         }
 
         @Override
-        public void setName(final String pName) {
+        public TethysSwingTableColumn<T, C, R> setName(final String pName) {
             super.setName(pName);
             theColumn.setHeaderValue(pName);
+            return this;
         }
 
         /**
@@ -736,8 +746,9 @@ public class TethysSwingTableManager<C, R>
         }
 
         @Override
-        public void setValidator(final BiFunction<T, R, String> pValidator) {
+        public TethysSwingTableValidatedColumn<T, C, R> setValidator(final BiFunction<T, R, String> pValidator) {
             theValidator = pValidator;
+            return this;
         }
 
         /**
@@ -770,6 +781,11 @@ public class TethysSwingTableManager<C, R>
             super(pTable, pId, TethysFieldType.STRING);
             declareCell(getTable().getCellFactory().stringCell(this));
         }
+
+        @Override
+        public TethysSwingTableStringColumn<C, R> setValidator(final BiFunction<String, R, String> pValidator) {
+            return (TethysSwingTableStringColumn<C, R>) super.setValidator(pValidator);
+        }
     }
 
     /**
@@ -791,6 +807,11 @@ public class TethysSwingTableManager<C, R>
                                         final C pId) {
             super(pTable, pId, TethysFieldType.CHARARRAY);
             declareCell(getTable().getCellFactory().charArrayCell(this));
+        }
+
+        @Override
+        public TethysSwingTableCharArrayColumn<C, R> setValidator(final BiFunction<char[], R, String> pValidator) {
+            return (TethysSwingTableCharArrayColumn<C, R>) super.setValidator(pValidator);
         }
     }
 
@@ -814,6 +835,11 @@ public class TethysSwingTableManager<C, R>
             super(pTable, pId, TethysFieldType.SHORT);
             declareCell(getTable().getCellFactory().shortCell(this));
         }
+
+        @Override
+        public TethysSwingTableShortColumn<C, R> setValidator(final BiFunction<Short, R, String> pValidator) {
+            return (TethysSwingTableShortColumn<C, R>) super.setValidator(pValidator);
+        }
     }
 
     /**
@@ -836,6 +862,11 @@ public class TethysSwingTableManager<C, R>
             super(pTable, pId, TethysFieldType.INTEGER);
             declareCell(getTable().getCellFactory().integerCell(this));
         }
+
+        @Override
+        public TethysSwingTableIntegerColumn<C, R> setValidator(final BiFunction<Integer, R, String> pValidator) {
+            return (TethysSwingTableIntegerColumn<C, R>) super.setValidator(pValidator);
+        }
     }
 
     /**
@@ -857,6 +888,11 @@ public class TethysSwingTableManager<C, R>
                                    final C pId) {
             super(pTable, pId, TethysFieldType.LONG);
             declareCell(getTable().getCellFactory().longCell(this));
+        }
+
+        @Override
+        public TethysSwingTableLongColumn<C, R> setValidator(final BiFunction<Long, R, String> pValidator) {
+            return (TethysSwingTableLongColumn<C, R>) super.setValidator(pValidator);
         }
     }
 
@@ -888,8 +924,14 @@ public class TethysSwingTableManager<C, R>
         }
 
         @Override
-        public void setNumDecimals(final ToIntFunction<R> pSupplier) {
+        public TethysSwingTableRawDecimalColumn<C, R> setValidator(final BiFunction<TethysDecimal, R, String> pValidator) {
+            return (TethysSwingTableRawDecimalColumn<C, R>) super.setValidator(pValidator);
+        }
+
+        @Override
+        public TethysSwingTableRawDecimalColumn<C, R> setNumDecimals(final ToIntFunction<R> pSupplier) {
             theSupplier = pSupplier;
+            return this;
         }
 
         /**
@@ -930,8 +972,14 @@ public class TethysSwingTableManager<C, R>
         }
 
         @Override
-        public void setDeemedCurrency(final Function<R, Currency> pSupplier) {
+        public TethysSwingTableMoneyColumn<C, R> setValidator(final BiFunction<TethysMoney, R, String> pValidator) {
+            return (TethysSwingTableMoneyColumn<C, R>) super.setValidator(pValidator);
+        }
+
+        @Override
+        public TethysSwingTableMoneyColumn<C, R> setDeemedCurrency(final Function<R, Currency> pSupplier) {
             theSupplier = pSupplier;
+            return this;
         }
 
         /**
@@ -972,8 +1020,14 @@ public class TethysSwingTableManager<C, R>
         }
 
         @Override
-        public void setDeemedCurrency(final Function<R, Currency> pSupplier) {
+        public TethysSwingTablePriceColumn<C, R> setValidator(final BiFunction<TethysPrice, R, String> pValidator) {
+            return (TethysSwingTablePriceColumn<C, R>) super.setValidator(pValidator);
+        }
+
+        @Override
+        public TethysSwingTablePriceColumn<C, R> setDeemedCurrency(final Function<R, Currency> pSupplier) {
             theSupplier = pSupplier;
+            return this;
         }
 
         /**
@@ -1006,6 +1060,11 @@ public class TethysSwingTableManager<C, R>
             super(pTable, pId, TethysFieldType.RATE);
             declareCell(getTable().getCellFactory().rateCell(this));
         }
+
+        @Override
+        public TethysSwingTableRateColumn<C, R> setValidator(final BiFunction<TethysRate, R, String> pValidator) {
+            return (TethysSwingTableRateColumn<C, R>) super.setValidator(pValidator);
+        }
     }
 
     /**
@@ -1027,6 +1086,11 @@ public class TethysSwingTableManager<C, R>
                                     final C pId) {
             super(pTable, pId, TethysFieldType.UNITS);
             declareCell(getTable().getCellFactory().unitsCell(this));
+        }
+
+        @Override
+        public TethysSwingTableUnitsColumn<C, R> setValidator(final BiFunction<TethysUnits, R, String> pValidator) {
+            return (TethysSwingTableUnitsColumn<C, R>) super.setValidator(pValidator);
         }
     }
 
@@ -1050,6 +1114,11 @@ public class TethysSwingTableManager<C, R>
             super(pTable, pId, TethysFieldType.DILUTION);
             declareCell(getTable().getCellFactory().dilutionCell(this));
         }
+
+        @Override
+        public TethysSwingTableDilutionColumn<C, R> setValidator(final BiFunction<TethysDilution, R, String> pValidator) {
+            return (TethysSwingTableDilutionColumn<C, R>) super.setValidator(pValidator);
+        }
     }
 
     /**
@@ -1071,6 +1140,11 @@ public class TethysSwingTableManager<C, R>
                                     final C pId) {
             super(pTable, pId, TethysFieldType.RATIO);
             declareCell(getTable().getCellFactory().ratioCell(this));
+        }
+
+        @Override
+        public TethysSwingTableRatioColumn<C, R> setValidator(final BiFunction<TethysRatio, R, String> pValidator) {
+            return (TethysSwingTableRatioColumn<C, R>) super.setValidator(pValidator);
         }
     }
 
@@ -1102,8 +1176,14 @@ public class TethysSwingTableManager<C, R>
         }
 
         @Override
-        public void setDeemedCurrency(final Function<R, Currency> pSupplier) {
+        public TethysSwingTableDilutedPriceColumn<C, R> setValidator(final BiFunction<TethysDilutedPrice, R, String> pValidator) {
+            return (TethysSwingTableDilutedPriceColumn<C, R>) super.setValidator(pValidator);
+        }
+
+        @Override
+        public TethysSwingTableDilutedPriceColumn<C, R> setDeemedCurrency(final Function<R, Currency> pSupplier) {
             theSupplier = pSupplier;
+            return this;
         }
 
         /**
@@ -1145,8 +1225,9 @@ public class TethysSwingTableManager<C, R>
         }
 
         @Override
-        public void setDateConfigurator(final BiConsumer<R, TethysDateConfig> pConfigurator) {
+        public TethysSwingTableDateColumn<C, R> setDateConfigurator(final BiConsumer<R, TethysDateConfig> pConfigurator) {
             theConfigurator = pConfigurator;
+            return this;
         }
 
         /**
@@ -1191,8 +1272,9 @@ public class TethysSwingTableManager<C, R>
         }
 
         @Override
-        public void setMenuConfigurator(final BiConsumer<R, TethysScrollMenu<T>> pConfigurator) {
+        public TethysSwingTableScrollColumn<T, C, R> setMenuConfigurator(final BiConsumer<R, TethysScrollMenu<T>> pConfigurator) {
             theConfigurator = pConfigurator;
+            return this;
         }
 
         /**
@@ -1234,8 +1316,9 @@ public class TethysSwingTableManager<C, R>
         }
 
         @Override
-        public void setSelectables(final Function<R, Iterator<T>> pSelectables) {
+        public TethysSwingTableListColumn<T, C, R> setSelectables(final Function<R, Iterator<T>> pSelectables) {
             theSelectables = pSelectables;
+            return this;
         }
 
         /**
@@ -1279,8 +1362,9 @@ public class TethysSwingTableManager<C, R>
         }
 
         @Override
-        public void setIconMapSet(final Function<R, TethysIconMapSet<T>> pSupplier) {
+        public TethysSwingTableIconColumn<T, C, R> setIconMapSet(final Function<R, TethysIconMapSet<T>> pSupplier) {
             theSupplier = pSupplier;
+            return this;
         }
 
         /**

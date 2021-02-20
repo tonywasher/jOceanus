@@ -286,8 +286,9 @@ public abstract class MetisTableColumn<T, R extends MetisFieldTableItem> {
         }
 
         @Override
-        public void setValidator(final BiFunction<String, R, String> pValidator) {
+        public MetisTableStringColumn<R> setValidator(final BiFunction<String, R, String> pValidator) {
             getColumn().setValidator(pValidator);
+            return this;
         }
     }
 
@@ -314,8 +315,9 @@ public abstract class MetisTableColumn<T, R extends MetisFieldTableItem> {
         }
 
         @Override
-        public void setValidator(final BiFunction<char[], R, String> pValidator) {
+        public MetisTableCharArrayColumn<R> setValidator(final BiFunction<char[], R, String> pValidator) {
             getColumn().setValidator(pValidator);
+            return this;
         }
     }
 
@@ -342,8 +344,9 @@ public abstract class MetisTableColumn<T, R extends MetisFieldTableItem> {
         }
 
         @Override
-        public void setValidator(final BiFunction<Short, R, String> pValidator) {
+        public MetisTableShortColumn<R> setValidator(final BiFunction<Short, R, String> pValidator) {
             getColumn().setValidator(pValidator);
+            return this;
         }
     }
 
@@ -370,8 +373,9 @@ public abstract class MetisTableColumn<T, R extends MetisFieldTableItem> {
         }
 
         @Override
-        public void setValidator(final BiFunction<Integer, R, String> pValidator) {
+        public MetisTableIntegerColumn<R> setValidator(final BiFunction<Integer, R, String> pValidator) {
             getColumn().setValidator(pValidator);
+            return this;
         }
     }
 
@@ -398,8 +402,9 @@ public abstract class MetisTableColumn<T, R extends MetisFieldTableItem> {
         }
 
         @Override
-        public void setValidator(final BiFunction<Long, R, String> pValidator) {
+        public MetisTableLongColumn<R> setValidator(final BiFunction<Long, R, String> pValidator) {
             getColumn().setValidator(pValidator);
+            return this;
         }
     }
 
@@ -426,13 +431,15 @@ public abstract class MetisTableColumn<T, R extends MetisFieldTableItem> {
         }
 
         @Override
-        public void setValidator(final BiFunction<TethysDecimal, R, String> pValidator) {
+        public MetisTableRawDecimalColumn<R> setValidator(final BiFunction<TethysDecimal, R, String> pValidator) {
             getColumn().setValidator(pValidator);
+            return this;
         }
 
         @Override
-        public void setNumDecimals(final ToIntFunction<R> pSupplier) {
+        public MetisTableRawDecimalColumn<R> setNumDecimals(final ToIntFunction<R> pSupplier) {
             getColumn().setNumDecimals(pSupplier);
+            return this;
         }
     }
 
@@ -459,13 +466,15 @@ public abstract class MetisTableColumn<T, R extends MetisFieldTableItem> {
         }
 
         @Override
-        public void setValidator(final BiFunction<TethysMoney, R, String> pValidator) {
+        public MetisTableMoneyColumn<R> setValidator(final BiFunction<TethysMoney, R, String> pValidator) {
             getColumn().setValidator(pValidator);
+            return this;
         }
 
         @Override
-        public void setDeemedCurrency(final Function<R, Currency> pSupplier) {
+        public MetisTableMoneyColumn<R> setDeemedCurrency(final Function<R, Currency> pSupplier) {
             getColumn().setDeemedCurrency(pSupplier);
+            return this;
         }
     }
 
@@ -492,13 +501,15 @@ public abstract class MetisTableColumn<T, R extends MetisFieldTableItem> {
         }
 
         @Override
-        public void setValidator(final BiFunction<TethysPrice, R, String> pValidator) {
+        public MetisTablePriceColumn<R> setValidator(final BiFunction<TethysPrice, R, String> pValidator) {
             getColumn().setValidator(pValidator);
+            return this;
         }
 
         @Override
-        public void setDeemedCurrency(final Function<R, Currency> pSupplier) {
+        public MetisTablePriceColumn<R> setDeemedCurrency(final Function<R, Currency> pSupplier) {
             getColumn().setDeemedCurrency(pSupplier);
+            return this;
         }
     }
 
@@ -525,8 +536,9 @@ public abstract class MetisTableColumn<T, R extends MetisFieldTableItem> {
         }
 
         @Override
-        public void setValidator(final BiFunction<TethysUnits, R, String> pValidator) {
+        public MetisTableUnitsColumn<R> setValidator(final BiFunction<TethysUnits, R, String> pValidator) {
             getColumn().setValidator(pValidator);
+            return this;
         }
     }
 
@@ -553,8 +565,9 @@ public abstract class MetisTableColumn<T, R extends MetisFieldTableItem> {
         }
 
         @Override
-        public void setValidator(final BiFunction<TethysRate, R, String> pValidator) {
+        public MetisTableRateColumn<R> setValidator(final BiFunction<TethysRate, R, String> pValidator) {
             getColumn().setValidator(pValidator);
+            return this;
         }
     }
 
@@ -581,8 +594,9 @@ public abstract class MetisTableColumn<T, R extends MetisFieldTableItem> {
         }
 
         @Override
-        public void setValidator(final BiFunction<TethysRatio, R, String> pValidator) {
+        public MetisTableRatioColumn<R> setValidator(final BiFunction<TethysRatio, R, String> pValidator) {
             getColumn().setValidator(pValidator);
+            return this;
         }
     }
 
@@ -609,8 +623,9 @@ public abstract class MetisTableColumn<T, R extends MetisFieldTableItem> {
         }
 
         @Override
-        public void setValidator(final BiFunction<TethysDilution, R, String> pValidator) {
+        public MetisTableDilutionColumn<R> setValidator(final BiFunction<TethysDilution, R, String> pValidator) {
             getColumn().setValidator(pValidator);
+            return this;
         }
     }
 
@@ -637,13 +652,15 @@ public abstract class MetisTableColumn<T, R extends MetisFieldTableItem> {
         }
 
         @Override
-        public void setValidator(final BiFunction<TethysDilutedPrice, R, String> pValidator) {
+        public MetisTableDilutedPriceColumn<R> setValidator(final BiFunction<TethysDilutedPrice, R, String> pValidator) {
             getColumn().setValidator(pValidator);
+            return this;
         }
 
         @Override
-        public void setDeemedCurrency(final Function<R, Currency> pSupplier) {
+        public MetisTableDilutedPriceColumn<R> setDeemedCurrency(final Function<R, Currency> pSupplier) {
             getColumn().setDeemedCurrency(pSupplier);
+            return this;
         }
     }
 
@@ -671,8 +688,9 @@ public abstract class MetisTableColumn<T, R extends MetisFieldTableItem> {
         }
 
         @Override
-        public void setIconMapSet(final Function<R, TethysIconMapSet<T>> pSupplier) {
+        public MetisTableIconColumn<T, R> setIconMapSet(final Function<R, TethysIconMapSet<T>> pSupplier) {
             getColumn().setIconMapSet(pSupplier);
+            return this;
         }
     }
 
@@ -699,8 +717,9 @@ public abstract class MetisTableColumn<T, R extends MetisFieldTableItem> {
         }
 
         @Override
-        public void setDateConfigurator(final BiConsumer<R, TethysDateConfig> pConfigurator) {
+        public MetisTableDateColumn<R> setDateConfigurator(final BiConsumer<R, TethysDateConfig> pConfigurator) {
             getColumn().setDateConfigurator(pConfigurator);
+            return this;
         }
     }
 
@@ -728,8 +747,9 @@ public abstract class MetisTableColumn<T, R extends MetisFieldTableItem> {
         }
 
         @Override
-        public void setMenuConfigurator(final BiConsumer<R, TethysScrollMenu<T>> pConfigurator) {
+        public MetisTableScrollColumn<T, R> setMenuConfigurator(final BiConsumer<R, TethysScrollMenu<T>> pConfigurator) {
             getColumn().setMenuConfigurator(pConfigurator);
+            return this;
         }
     }
 
@@ -757,8 +777,9 @@ public abstract class MetisTableColumn<T, R extends MetisFieldTableItem> {
         }
 
         @Override
-        public void setSelectables(final Function<R, Iterator<T>> pSelectables) {
+        public MetisTableListColumn<T, R> setSelectables(final Function<R, Iterator<T>> pSelectables) {
             getColumn().setSelectables(pSelectables);
+            return this;
         }
     }
 }

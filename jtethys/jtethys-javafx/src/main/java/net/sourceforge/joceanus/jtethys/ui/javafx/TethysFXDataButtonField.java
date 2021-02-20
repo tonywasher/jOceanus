@@ -20,9 +20,9 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
-
 import javafx.application.Platform;
 import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.geometry.Side;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
@@ -100,6 +100,7 @@ public final class TethysFXDataButtonField {
 
             /* Set padding */
             getLabel().setPadding(new Insets(PADDING, PADDING, PADDING, PADDING));
+            getLabel().setAlignment(Pos.CENTER);
 
             /* Set listener on manager */
             pManager.getEventRegistrar().addEventListener(e -> {
