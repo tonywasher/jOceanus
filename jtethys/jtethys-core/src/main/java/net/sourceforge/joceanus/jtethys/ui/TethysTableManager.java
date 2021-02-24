@@ -151,6 +151,11 @@ public abstract class TethysTableManager<C, R>
     }
 
     /**
+     * RequestFocus.
+     */
+    public abstract void requestFocus();
+
+    /**
      * do we rePaintRow on commit?
      * @return true/false
      */

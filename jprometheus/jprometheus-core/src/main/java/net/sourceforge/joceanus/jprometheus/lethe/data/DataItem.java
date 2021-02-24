@@ -34,6 +34,7 @@ import net.sourceforge.joceanus.jmetis.lethe.data.MetisValueSetHistory;
 import net.sourceforge.joceanus.jprometheus.PrometheusDataException;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataList.ListStyle;
 import net.sourceforge.joceanus.jtethys.OceanusException;
+import net.sourceforge.joceanus.jtethys.TethysDataConverter;
 
 /**
  * Provides the abstract DataItem class as the basis for data items. The implementation of the
@@ -1105,6 +1106,40 @@ public abstract class DataItem<E extends Enum<E>>
         }
     }
 
+    /**
+     * Does the string contain only valid characters (no control chars)?
+     * @param pString the string
+     * @param pDisallowed the set of additional disallowed characters
+     * @return true/false
+     */
+    public static boolean validString(final String pString,
+                                      final String pDisallowed) {
+        /* Loop through the string */
+        for (int i = 0; i < pString.length(); i++) {
+            final int myChar = pString.codePointAt(i);
+            /* Check for ISO control */
+            if (Character.isISOControl(myChar)) {
+                return false;
+            }
+
+            /* Check for disallowed value */
+            if (pDisallowed != null
+                    && pDisallowed.indexOf(myChar) != -1) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    /**
+     * Obtain the byte length of a string.
+     * @param pString the string
+     * @return the length
+     */
+    public static int byteLength(final String pString) {
+        return TethysDataConverter.stringToByteArray(pString).length;
+    }
+
     @Override
     public MetisFieldState getFieldState(final MetisLetheField pField) {
         /* Determine DELETED state */
@@ -1158,4 +1193,5 @@ public abstract class DataItem<E extends Enum<E>>
             }
         }
     }
+
 }

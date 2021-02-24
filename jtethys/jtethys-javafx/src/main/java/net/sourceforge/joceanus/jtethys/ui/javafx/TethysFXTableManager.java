@@ -179,6 +179,11 @@ public class TethysFXTableManager<C, R>
         return (TethysFXTableColumn<?, C, R>) super.getColumn(pId);
     }
 
+    @Override
+    public void requestFocus() {
+        theTable.requestFocus();
+    }
+
     /**
      * Obtain the columns.
      *

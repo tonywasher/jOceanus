@@ -23,29 +23,22 @@ import net.sourceforge.joceanus.jmetis.ui.MetisIcon;
 import net.sourceforge.joceanus.jmetis.viewer.MetisViewerEntry;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.MoneyWiseData;
-import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.Frequency;
-import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.Frequency.FrequencyList;
-import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.FrequencyClass;
+import net.sourceforge.joceanus.jmoneywise.lethe.ui.MoneyWiseUIResource;
 import net.sourceforge.joceanus.jmoneywise.lethe.views.MoneyWiseView;
 import net.sourceforge.joceanus.jprometheus.PrometheusDataException;
+import net.sourceforge.joceanus.jprometheus.lethe.data.DataItem;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataList.ListStyle;
 import net.sourceforge.joceanus.jprometheus.lethe.data.StaticData;
-import net.sourceforge.joceanus.jprometheus.lethe.ui.PrometheusActionButtons;
+import net.sourceforge.joceanus.jprometheus.lethe.data.StaticData.StaticList;
+import net.sourceforge.joceanus.jprometheus.lethe.data.StaticInterface;
 import net.sourceforge.joceanus.jprometheus.lethe.ui.PrometheusIcon;
 import net.sourceforge.joceanus.jprometheus.lethe.views.PrometheusDataEvent;
-import net.sourceforge.joceanus.jprometheus.lethe.views.PrometheusUIEvent;
-import net.sourceforge.joceanus.jprometheus.lethe.views.PrometheusViewerEntryId;
 import net.sourceforge.joceanus.jprometheus.lethe.views.UpdateEntry;
 import net.sourceforge.joceanus.jprometheus.lethe.views.UpdateSet;
 import net.sourceforge.joceanus.jtethys.OceanusException;
-import net.sourceforge.joceanus.jtethys.event.TethysEvent;
 import net.sourceforge.joceanus.jtethys.event.TethysEventManager;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventProvider;
-import net.sourceforge.joceanus.jtethys.ui.TethysBorderPaneManager;
-import net.sourceforge.joceanus.jtethys.ui.TethysBoxPaneManager;
-import net.sourceforge.joceanus.jtethys.ui.TethysButton;
-import net.sourceforge.joceanus.jtethys.ui.TethysCheckBox;
 import net.sourceforge.joceanus.jtethys.ui.TethysComponent;
 import net.sourceforge.joceanus.jtethys.ui.TethysIconButtonManager.TethysIconMapSet;
 import net.sourceforge.joceanus.jtethys.ui.TethysNode;
@@ -58,14 +51,27 @@ import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingTableManager;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingTableManager.TethysSwingTableIconColumn;
 
 /**
- * Frequency Table.
+ * MoneyWise Static Table.
+ * @param <L> the list type
+ * @param <T> the data type
+ * @param <S> the static class
  */
-public class MoneyWiseFrequencyTable
+public class MoneyWiseStaticTable<L extends StaticList<T, S, MoneyWiseDataType>, T extends StaticData<T, S, MoneyWiseDataType>, S extends Enum<S> & StaticInterface>
         implements TethysEventProvider<PrometheusDataEvent>, TethysComponent {
     /**
      * The view.
      */
     private final MoneyWiseView theView;
+
+    /**
+     * The ItemType.
+     */
+    private final MoneyWiseDataType theItemType;
+
+    /**
+     * The list class.
+     */
+    private final Class<L> theClass;
 
     /**
      * The Event Manager.
@@ -80,27 +86,7 @@ public class MoneyWiseFrequencyTable
     /**
      * The UpdateEntry.
      */
-    private final UpdateEntry<Frequency, MoneyWiseDataType> theUpdateEntry;
-
-    /**
-     * The ViewerEntry.
-     */
-    private final MetisViewerEntry theViewerEntry;
-
-    /**
-     * The Panel.
-     */
-    private final TethysBorderPaneManager thePanel;
-
-    /**
-     * The underlying table.
-     */
-    private final TethysSwingTableManager<MetisLetheField, Frequency> theTable;
-
-    /**
-     * The enabled column.
-     */
-    private final TethysSwingTableIconColumn<Boolean, MetisLetheField, Frequency> theEnabledColumn;
+    private final UpdateEntry<T, MoneyWiseDataType> theUpdateEntry;
 
     /**
      * The error panel.
@@ -108,29 +94,24 @@ public class MoneyWiseFrequencyTable
     private final MetisErrorPanel theError;
 
     /**
-     * The action buttons panel.
+     * The underlying table.
      */
-    private final PrometheusActionButtons theActionButtons;
+    private final TethysSwingTableManager<MetisLetheField, T> theTable;
 
     /**
-     * The disabled check box.
+     * The enabled column.
      */
-    private final TethysCheckBox theDisabledCheckBox;
-
-    /**
-     * The select button.
-     */
-    private final TethysButton theSelect;
+    private final TethysSwingTableIconColumn<Boolean, MetisLetheField, T> theEnabledColumn;
 
     /**
      * The new button.
      */
-    private final TethysScrollButtonManager<FrequencyClass> theNewButton;
+    private final TethysScrollButtonManager<S> theNewButton;
 
     /**
      * The edit list.
      */
-    private FrequencyList theStatic;
+    private L theStatic;
 
     /**
      * show disabled.
@@ -140,105 +121,68 @@ public class MoneyWiseFrequencyTable
     /**
      * Constructor.
      * @param pView the view
+     * @param pUpdateSet the updateSet
+     * @param pError the error panel
+     * @param pDataType the dataType
+     * @param pListClass the listClass
      */
-    public MoneyWiseFrequencyTable(final MoneyWiseView pView) {
+    MoneyWiseStaticTable(final MoneyWiseView pView,
+                         final UpdateSet<MoneyWiseDataType> pUpdateSet,
+                         final MetisErrorPanel pError,
+                         final MoneyWiseDataType pDataType,
+                         final Class<L> pListClass) {
         /* Store parameters */
         theView = pView;
+        theError = pError;
+        theItemType = pDataType;
+        theClass = pListClass;
 
         /* Create the event manager */
         theEventManager = new TethysEventManager<>();
 
         /* Build the Update set */
-        theUpdateSet = new UpdateSet<>(theView, MoneyWiseDataType.class);
-        theUpdateEntry = theUpdateSet.registerType(MoneyWiseDataType.FREQUENCY);
+        theUpdateSet = pUpdateSet;
+        theUpdateEntry = theUpdateSet.registerType(pDataType);
 
         /* Create the table */
         final TethysSwingGuiFactory myGuiFactory = (TethysSwingGuiFactory) pView.getGuiFactory();
         theTable = myGuiFactory.newTable();
 
-        /* Create the top level viewer entry for this view */
-        theViewerEntry = pView.getViewerEntry(PrometheusViewerEntryId.STATIC);
-        theViewerEntry.setTreeObject(theUpdateSet);
-
-        /* Create the error panel */
-        theError = pView.getToolkit().getToolkit().newErrorPanel(theViewerEntry);
-        theError.getEventRegistrar().addEventListener(e -> handleErrorPanel());
-
-        /* Create the select button */
-        theSelect = myGuiFactory.newButton();
-        theSelect.setTextOnly();
-        theSelect.setText("Temporary");
-
-        /* Create the action buttons panel */
-        theActionButtons = new PrometheusActionButtons(myGuiFactory, theUpdateSet);
-        theActionButtons.getEventRegistrar().addEventListener(this::handleActionButtons);
-
-        /* Create the CheckBox */
-        theDisabledCheckBox = myGuiFactory.newCheckBox("Show Disabled");
-        theDisabledCheckBox.getEventRegistrar().addEventListener(e -> setShowAll(theDisabledCheckBox.isSelected()));
-
         /* Create new button */
         theNewButton = myGuiFactory.newScrollButton();
         MetisIcon.configureNewScrollButton(theNewButton);
 
-        /* Create the layout for the selection panel */
-        final TethysBoxPaneManager mySubPanel = myGuiFactory.newHBoxPane();
-        mySubPanel.addNode(theSelect);
-        mySubPanel.addSpacer();
-        mySubPanel.addNode(theDisabledCheckBox);
-        mySubPanel.addSpacer();
-        mySubPanel.addNode(theNewButton);
-        mySubPanel.setBorderTitle("Selection");
-
-        /* Create the header panel */
-        final TethysBorderPaneManager myHeader = myGuiFactory.newBorderPane();
-        myHeader.setCentre(mySubPanel);
-        myHeader.setNorth(theError);
-        myHeader.setEast(theActionButtons);
-
-        /* Create the Panel */
-        thePanel = myGuiFactory.newBorderPane();
-
-        /* Now define the panel */
-        thePanel.setNorth(myHeader);
-        thePanel.setCentre(theTable);
-
-        /* Set visibility of new button */
-        showNewButton();
-
-        /* Hide the action buttons initially */
-        theActionButtons.setVisible(false);
-
         /* Set disabled indication and filter */
         theTable.setOnCommitError(this::setError);
         theTable.setDisabled(StaticData::isDisabled);
-        theTable.setChanged(MoneyWiseFrequencyTable::isFieldChanged);
-        theTable.setError(MoneyWiseFrequencyTable::isFieldInError);
+        theTable.setChanged(this::isFieldChanged);
+        theTable.setError(this::isFieldInError);
         theTable.setComparator(StaticData::compareTo);
         theTable.setEditable(true);
 
         /* Create the class column */
-        theTable.declareStringColumn(Frequency.FIELD_CLASS)
-                .setCellValueFactory(r -> r.getFrequency().toString())
+        theTable.declareStringColumn(StaticData.FIELD_CLASS)
+                .setCellValueFactory(r -> r.getStaticClass().toString())
                 .setEditable(false);
 
         /* Create the name column */
-        theTable.declareStringColumn(Frequency.FIELD_NAME)
+        theTable.declareStringColumn(StaticData.FIELD_NAME)
                 .setValidator(this::isValidName)
                 .setCellValueFactory(StaticData::getName)
                 .setEditable(true)
                 .setOnCommit((r, v) -> updateField(StaticData::setName, r, v));
 
         /* Create the description column */
-        theTable.declareStringColumn(Frequency.FIELD_DESC)
+        theTable.declareStringColumn(StaticData.FIELD_DESC)
+                .setValidator(this::isValidDesc)
                 .setCellValueFactory(StaticData::getDesc)
                 .setEditable(true)
                 .setOnCommit((r, v) -> updateField(StaticData::setDescription, r, v));
 
         /* Create the enabled column */
         final TethysIconMapSet<Boolean> myEnabledMapSet = PrometheusIcon.configureEnabledIconButton();
-        theEnabledColumn = theTable.declareIconColumn(Frequency.FIELD_ENABLED, Boolean.class)
-                                          .setIconMapSet(r -> myEnabledMapSet);
+        theEnabledColumn = theTable.declareIconColumn(StaticData.FIELD_ENABLED, Boolean.class)
+                .setIconMapSet(r -> myEnabledMapSet);
         theEnabledColumn.setCellValueFactory(StaticData::getEnabled)
                 .setVisible(false)
                 .setEditable(true)
@@ -247,11 +191,11 @@ public class MoneyWiseFrequencyTable
 
         /* Create the Active column */
         final TethysIconMapSet<MetisAction> myActionMapSet = MetisIcon.configureStatusIconButton();
-        final TethysSwingTableIconColumn<MetisAction, MetisLetheField, Frequency> myStatusColumn
-                = theTable.declareIconColumn(Frequency.FIELD_TOUCH, MetisAction.class)
-                            .setIconMapSet(r -> myActionMapSet);
+        final TethysSwingTableIconColumn<MetisAction, MetisLetheField, T> myStatusColumn
+                = theTable.declareIconColumn(StaticData.FIELD_TOUCH, MetisAction.class)
+                .setIconMapSet(r -> myActionMapSet);
         myStatusColumn.setCellValueFactory(r -> r.isActive() ? MetisAction.ACTIVE : MetisAction.DELETE)
-                .setName("Active")
+                .setName(MoneyWiseUIResource.STATICDATA_ACTIVE.getValue())
                 .setEditable(true)
                 .setCellEditable(r -> !r.isActive())
                 .setOnCommit((r, v) -> updateField(this::deleteRow, r, v));
@@ -266,7 +210,7 @@ public class MoneyWiseFrequencyTable
 
     @Override
     public Integer getId() {
-        return thePanel.getId();
+        return theTable.getId();
     }
 
     @Override
@@ -276,75 +220,42 @@ public class MoneyWiseFrequencyTable
 
     @Override
     public TethysNode getNode() {
-        return thePanel.getNode();
+        return theTable.getNode();
     }
 
     @Override
     public void setEnabled(final boolean pEnabled) {
-        thePanel.setEnabled(pEnabled);
+        theTable.setEnabled(pEnabled);
     }
 
     @Override
     public void setVisible(final boolean pVisible) {
-        thePanel.setVisible(pVisible);
+        theTable.setVisible(pVisible);
     }
 
     /**
-     * Handle action buttons.
-     * @param pEvent the event
+     * Obtain the item type.
+     * @return the item type
      */
-    private void handleActionButtons(final TethysEvent<PrometheusUIEvent> pEvent) {
-        /* Cancel Editing */
-        theTable.cancelEditing();
-
-        /* Process the command */
-        theUpdateSet.processCommand(pEvent.getEventId(), theError);
-
-        /* Adjust visibility */
-        setVisibility();
+    protected MoneyWiseDataType getItemType() {
+        return theItemType;
     }
 
     /**
-     * Set Visibility.
+     * Obtain the new button.
+     * @return the new Button
      */
-    protected void setVisibility() {
-        /* Determine whether we have updates */
-        final boolean hasUpdates = theUpdateSet.hasUpdates();
-
-        /* Update the action buttons */
-        theActionButtons.setEnabled(true);
-        theActionButtons.setVisible(hasUpdates);
-
-        /* Set visibility of New Button */
-        showNewButton();
-
-        /* Alert listeners that there has been a change */
-        theEventManager.fireEvent(PrometheusDataEvent.ADJUSTVISIBILITY);
-    }
-
-    /**
-     * Handle error panel.
-     */
-    private void handleErrorPanel() {
-        /* Determine whether we have an error */
-        final boolean isError = theError.hasError();
-
-        /* Hide selection panel on error */
-        //theSelectionPanel.setVisible(!isError);
-
-        /* Lock scroll-able area */
-        theTable.setEnabled(!isError);
-
-        /* Lock Action Buttons */
-        theActionButtons.setEnabled(!isError);
+    TethysScrollButtonManager<S> getNewButton() {
+        return theNewButton;
     }
 
     /**
      * Refresh data.
      */
-    public void refreshData() throws OceanusException {
+    void refreshData() throws OceanusException {
         final MoneyWiseData myData = theView.getData();
-        theStatic = (FrequencyList) myData.getFrequencys().deriveList(ListStyle.EDIT);
+        final StaticList<T, S, MoneyWiseDataType> myStatic = myData.getDataList(theClass);
+        theStatic = theClass.cast(myStatic.deriveList(ListStyle.EDIT));
         theStatic.mapData();
         theTable.setItems(theStatic.getUnderlyingList());
         theUpdateEntry.setDataList(theStatic);
@@ -355,13 +266,13 @@ public class MoneyWiseFrequencyTable
      */
     private void handleNewClass() {
         /* Access the new class */
-        theTable.cancelEditing();
-        final FrequencyClass myClass = theNewButton.getValue();
+        cancelEditing();
+        final S myClass = theNewButton.getValue();
 
         /* Protect the action */
         try {
             /* Look to find a deleted value */
-            Frequency myValue = theStatic.findItemByClass(myClass);
+            T myValue = theStatic.findItemByClass(myClass);
 
             /* If we found a deleted value */
             if (myValue != null) {
@@ -378,8 +289,7 @@ public class MoneyWiseFrequencyTable
             /* Update the table */
             theUpdateSet.incrementVersion();
             theTable.fireTableDataChanged();
-            setVisibility();
-            //notifyChanges();
+            notifyChanges();
 
             /* Handle exceptions */
         } catch (OceanusException e) {
@@ -392,30 +302,49 @@ public class MoneyWiseFrequencyTable
      */
     private void buildNewMenu() {
         /* Reset the menu popUp */
-        final TethysScrollMenu<FrequencyClass> myMenu = theNewButton.getMenu();
+        final TethysScrollMenu<S> myMenu = theNewButton.getMenu();
         myMenu.removeAllItems();
 
         /* Loop through the missing classes */
-        for (FrequencyClass myValue : theStatic.getMissingClasses()) {
+        for (S myValue : theStatic.getMissingClasses()) {
             /* Create a new MenuItem and add it to the popUp */
             myMenu.addItem(myValue);
         }
     }
 
     /**
-     * Show New button.
+     * Cancel editing.
      */
-    private void showNewButton() {
-        /* Set visibility of New Button */
-        final boolean showNew = !isFull();
-        theNewButton.setVisible(showNew);
+    void cancelEditing() {
+        theTable.cancelEditing();
     }
 
     /**
-     * Is the frequency table full?
+     * Determine Focus.
+     * @param pEntry the master data entry
+     */
+    void determineFocus(final MetisViewerEntry pEntry) {
+        /* Request the focus */
+        theTable.requestFocus();
+
+        /* Set the required focus */
+        pEntry.setFocus(theUpdateEntry.getName());
+    }
+
+    /**
+     * Select static data.
+     * @param pStatic the static data
+     */
+    @SuppressWarnings("unchecked")
+    void selectStatic(final StaticData<?, ?, MoneyWiseDataType> pStatic) {
+        theTable.selectRowWithScroll((T) pStatic);
+    }
+
+    /**
+     * Is the static table full?
      * @return true/false
      */
-    protected boolean isFull() {
+    boolean isFull() {
         return theStatic == null
                 || theStatic.isFull();
     }
@@ -425,22 +354,22 @@ public class MoneyWiseFrequencyTable
      * @param pRow the row
      * @param pValue the value (ignored)
      */
-    private void deleteRow(final Frequency pRow,
+    private void deleteRow(final T pRow,
                            final Object pValue) {
         pRow.setDeleted(true);
     }
 
     /**
      * Update value.
-     * @param <T> the value type
+     * @param <V> the value type
      * @param pOnCommit the update function
      * @param pRow the row to update
      * @param pValue the value
      * @throws OceanusException on error
      */
-    private <T> void updateField(final TethysOnColumnCommit<Frequency, T> pOnCommit,
-                                 final Frequency pRow,
-                                 final T pValue) throws OceanusException {
+    private <V> void updateField(final TethysOnColumnCommit<T, V> pOnCommit,
+                                 final T pRow,
+                                 final V pValue) throws OceanusException {
         /* Push history */
         pRow.pushHistory();
 
@@ -465,8 +394,7 @@ public class MoneyWiseFrequencyTable
 
             /* Update components to reflect changes */
             theTable.fireTableDataChanged();
-            setVisibility();
-            //notifyChanges();
+            notifyChanges();
         }
     }
 
@@ -479,14 +407,22 @@ public class MoneyWiseFrequencyTable
     }
 
     /**
+     * Notify that there have been changes to this list.
+     */
+    protected void notifyChanges() {
+        /* Notify listeners */
+        theEventManager.fireEvent(PrometheusDataEvent.ADJUSTVISIBILITY);
+    }
+
+    /**
      * is field in error?
      *
      * @param pField the field
      * @param pItem  the item
      * @return true/false
      */
-    private static boolean isFieldInError(final MetisLetheField pField,
-                                          final Frequency pItem) {
+    private boolean isFieldInError(final MetisLetheField pField,
+                                   final T pItem) {
         return pItem.getFieldErrors(pField) != null;
     }
 
@@ -497,8 +433,8 @@ public class MoneyWiseFrequencyTable
      * @param pItem  the item
      * @return true/false
      */
-    private static boolean isFieldChanged(final MetisLetheField pField,
-                                          final Frequency pItem) {
+    private boolean isFieldChanged(final MetisLetheField pField,
+                                   final T pItem) {
         return pItem.fieldChanged(pField).isDifferent();
     }
 
@@ -506,9 +442,9 @@ public class MoneyWiseFrequencyTable
      * adjust showALL.
      * @param pShow show disabled entries
      */
-    public void setShowAll(final boolean pShow) {
+    void setShowAll(final boolean pShow) {
         showAll = pShow;
-        theTable.cancelEditing();
+        cancelEditing();
         theTable.setFilter(this::isFiltered);
         theEnabledColumn.setVisible(showAll);
     }
@@ -518,7 +454,7 @@ public class MoneyWiseFrequencyTable
      * @param pRow the row
      * @return true/false
      */
-    private boolean isFiltered(final Frequency pRow) {
+    private boolean isFiltered(final T pRow) {
         return pRow.getEnabled() || showAll;
     }
 
@@ -529,26 +465,54 @@ public class MoneyWiseFrequencyTable
      * @return error message or null
      */
     private String isValidName(final String pNewName,
-                               final Frequency pRow) {
+                               final T pRow) {
         /* Reject null name */
         if (pNewName == null) {
             return "Null Name not allowed";
         }
 
+        /* Reject invalid name */
+        if (!DataItem.validString(pNewName, null)) {
+            return "Invalid characters in name";
+        }
+
+        /* Reject name that is too long */
+        if (DataItem.byteLength(pNewName) > StaticData.NAMELEN) {
+            return "Name too long";
+        }
+
         /* Loop through the existing values */
-        for (Frequency myFreq : theStatic.getUnderlyingList()) {
+        for (T myValue : theStatic.getUnderlyingList()) {
             /* Ignore self and deleted */
-            if (myFreq.isDeleted() || myFreq.equals(pRow)) {
+            if (myValue.isDeleted() || myValue.equals(pRow)) {
                 continue;
             }
 
             /* Check for duplicate */
-            if (pNewName.equals(myFreq.getName())) {
+            if (pNewName.equals(myValue.getName())) {
                 return "Duplicate name";
             }
         }
 
         /* Valid name */
+        return null;
+    }
+
+    /**
+     * is Valid description?
+     * @param pNewDesc the new description
+     * @param pRow the row
+     * @return error message or null
+     */
+    private String isValidDesc(final String pNewDesc,
+                               final T pRow) {
+        /* Reject description that is too long */
+        if (pNewDesc != null
+                && DataItem.byteLength(pNewDesc) > StaticData.DESCLEN) {
+            return "Description too long";
+        }
+
+        /* Valid description */
         return null;
     }
 }

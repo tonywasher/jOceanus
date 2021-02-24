@@ -23,7 +23,7 @@ import net.sourceforge.joceanus.jmetis.atlas.ui.MetisPreferenceView;
 import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceManager;
 import net.sourceforge.joceanus.jmetis.profile.MetisProfile;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
-import net.sourceforge.joceanus.jmoneywise.atlas.ui.MoneyWiseFrequencyTable;
+import net.sourceforge.joceanus.jmoneywise.atlas.ui.MoneyWiseStaticPanel;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.AssetBase;
 import net.sourceforge.joceanus.jmoneywise.lethe.quicken.definitions.QIFPreference.MoneyWiseQIFPreferences;
 import net.sourceforge.joceanus.jmoneywise.lethe.ui.MoneyWiseGoToId;
@@ -115,8 +115,7 @@ public class MaintenanceTab
     /**
      * The Static Panel.
      */
-    //private final PrometheusStaticDataPanel<MoneyWiseDataType> theStatic;
-    private MoneyWiseFrequencyTable theFreq;
+    private final MoneyWiseStaticPanel theStatic;
 
     /**
      * The Preferences Panel.
@@ -159,24 +158,8 @@ public class MaintenanceTab
         theTabs.addTabItem(TITLE_CATEGORY, theCategoryTab);
 
         /* Create the Static Tab */
-        //theStatic = new PrometheusStaticDataPanel<>(theView, theView.getToolkit(), MoneyWiseDataType.class);
-        //theTabs.addTabItem(TITLE_STATIC, theStatic);
-        theFreq = new MoneyWiseFrequencyTable(theView);
-        theTabs.addTabItem(TITLE_STATIC, theFreq);
-
-        /* Add the static elements */
-        //theStatic.addStatic(MoneyWiseDataType.DEPOSITTYPE, DepositCategoryTypeList.class);
-        //theStatic.addStatic(MoneyWiseDataType.CASHTYPE, CashCategoryTypeList.class);
-        //theStatic.addStatic(MoneyWiseDataType.LOANTYPE, LoanCategoryTypeList.class);
-        //theStatic.addStatic(MoneyWiseDataType.PAYEETYPE, PayeeTypeList.class);
-        //theStatic.addStatic(MoneyWiseDataType.PORTFOLIOTYPE, PortfolioTypeList.class);
-        //theStatic.addStatic(MoneyWiseDataType.SECURITYTYPE, SecurityTypeList.class);
-        //theStatic.addStatic(MoneyWiseDataType.TRANSTYPE, TransactionCategoryTypeList.class);
-        //theStatic.addStatic(MoneyWiseDataType.CURRENCY, AssetCurrencyList.class);
-        //theStatic.addStatic(MoneyWiseDataType.TAXBASIS, TaxBasisList.class);
-        //theStatic.addStatic(MoneyWiseDataType.FREQUENCY, FrequencyList.class);
-        //theStatic.addStatic(MoneyWiseDataType.ACCOUNTINFOTYPE, AccountInfoTypeList.class);
-        //theStatic.addStatic(MoneyWiseDataType.TRANSINFOTYPE, TransactionInfoTypeList.class);
+        theStatic = new MoneyWiseStaticPanel(theView);
+        theTabs.addTabItem(TITLE_STATIC, theStatic);
 
         /* Create the Preferences Tab */
         final MetisPreferenceManager myPrefs = theView.getPreferenceManager();
@@ -197,7 +180,7 @@ public class MaintenanceTab
         theTabs.getEventRegistrar().addEventListener(e -> determineFocus());
         setChildListeners(theAccountTab.getEventRegistrar());
         setChildListeners(theCategoryTab.getEventRegistrar());
-        //setChildListeners(theStatic.getEventRegistrar());
+        setChildListeners(theStatic.getEventRegistrar());
         thePreferences.getEventRegistrar().addEventListener(e -> setVisibility());
 
         /* Handle Refresh */
@@ -280,8 +263,7 @@ public class MaintenanceTab
             /* Refresh sub-panels */
             theAccountTab.refreshData();
             theCategoryTab.refreshData();
-            //theStatic.refreshData();
-            theFreq.refreshData();
+            theStatic.refreshData();
 
         } catch (OceanusException e) {
             /* Show the error */
@@ -302,9 +284,9 @@ public class MaintenanceTab
         if (!hasUpdates) {
             hasUpdates = theCategoryTab.hasUpdates();
         }
-        //if (!hasUpdates) {
-        //    hasUpdates = theStatic.hasUpdates();
-        //}
+        if (!hasUpdates) {
+            hasUpdates = theStatic.hasUpdates();
+        }
         if (!hasUpdates) {
             hasUpdates = thePreferences.hasUpdates();
         }
@@ -323,9 +305,9 @@ public class MaintenanceTab
         if (!hasUpdates) {
             hasUpdates = theCategoryTab.hasSession();
         }
-        //if (!hasUpdates) {
-        //    hasUpdates = theStatic.hasSession();
-        //}
+        if (!hasUpdates) {
+            hasUpdates = theStatic.hasSession();
+        }
         if (!hasUpdates) {
             hasUpdates = thePreferences.hasSession();
         }
@@ -386,7 +368,7 @@ public class MaintenanceTab
                 /* Select the requested tag */
                 @SuppressWarnings("unchecked")
                 final StaticData<?, ?, MoneyWiseDataType> myData = (StaticData<?, ?, MoneyWiseDataType>) pEvent.getDetails(StaticData.class);
-                //theStatic.selectStatic(myData);
+                theStatic.selectStatic(myData);
 
                 /* Goto the Static tab */
                 gotoNamedTab(TITLE_STATIC);
@@ -426,7 +408,7 @@ public class MaintenanceTab
         theTabs.enableItemByName(TITLE_CATEGORY, doEnabled);
 
         /* Enable/Disable the static tab */
-        doEnabled = !hasSession; // || theStatic.hasSession();
+        doEnabled = !hasSession || theStatic.hasSession();
         theTabs.enableItemByName(TITLE_STATIC, doEnabled);
 
         /* Enable/Disable the Properties tab */
@@ -456,9 +438,9 @@ public class MaintenanceTab
             theCategoryTab.determineFocus();
 
             /* If the selected component is Static */
-        //} else if (myComponent.equals(TethysSwingNode.getComponent(theStatic))) {
+        } else if (myComponent.equals(TethysSwingNode.getComponent(theStatic))) {
             /* Set the debug focus */
-          //  theStatic.determineFocus();
+            theStatic.determineFocus();
 
             /* If the selected component is Preferences */
         } else if (myComponent.equals(TethysSwingNode.getComponent(thePreferences))) {

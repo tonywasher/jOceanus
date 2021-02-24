@@ -196,6 +196,11 @@ public class TethysSwingTableManager<C, R>
         return (TethysSwingTableColumn<?, C, R>) super.getColumn(pId);
     }
 
+    @Override
+    public void requestFocus() {
+        theTable.requestFocus();
+    }
+
     /**
      * Obtain the table model.
      *
