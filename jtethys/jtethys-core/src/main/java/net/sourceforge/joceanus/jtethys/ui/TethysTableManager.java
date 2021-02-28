@@ -100,6 +100,16 @@ public abstract class TethysTableManager<C, R>
     private Consumer<OceanusException> theOnCommitError;
 
     /**
+     * The OnValidateError Consumer.
+     */
+    private Consumer<String> theOnValidateError;
+
+    /**
+     * The OnCellEditState Consumer.
+     */
+    private Consumer<Boolean> theOnCellEditState;
+
+    /**
      * The Comparator.
      */
     private Comparator<R> theComparator;
@@ -309,6 +319,26 @@ public abstract class TethysTableManager<C, R>
     public abstract void selectRowWithScroll(R pItem);
 
     /**
+     * Set the on-celEditState consumer.
+     * @param pOnCellEditState the consumer
+     */
+    public void setOnCellEditState(final Consumer<Boolean> pOnCellEditState) {
+        theOnCellEditState = pOnCellEditState;
+    }
+
+    /**
+     * process onCellEditState.
+     * @param pState the state
+     */
+    public void processOnCellEditState(final Boolean pState) {
+        /* If we have an onCellEditState consumer */
+        if (theOnCellEditState != null) {
+            /* call it */
+            theOnCellEditState.accept(pState);
+        }
+    }
+
+    /**
      * Set the on-commitError consumer.
      * @param pOnCommitError the consumer
      */
@@ -326,6 +356,22 @@ public abstract class TethysTableManager<C, R>
             /* call it */
             theOnCommitError.accept(pError);
         }
+    }
+
+    /**
+     * Set the on-validateError consumer.
+     * @param pOnValidateError the consumer
+     */
+    public void setOnValidateError(final Consumer<String> pOnValidateError) {
+        theOnValidateError = pOnValidateError;
+    }
+
+    /**
+     * obtain onValidateError consumer.
+     * @return the consumer
+     */
+    public Consumer<String> getOnValidateError() {
+        return theOnValidateError;
     }
 
     /**
@@ -627,7 +673,7 @@ public abstract class TethysTableManager<C, R>
          * @param pOnCommit the consumer
          * @return the column
          */
-        TethysTableColumn<T, C, R> setOnCommit(TethysOnColumnCommit<R, T> pOnCommit);
+        TethysTableColumn<T, C, R> setOnCommit(TethysOnCellCommit<R, T> pOnCommit);
 
         /**
          * do we rePaintColumn on commit?
@@ -1029,7 +1075,7 @@ public abstract class TethysTableManager<C, R>
         /**
          * The cell-commit consumer.
          */
-        private TethysOnColumnCommit<R, T> theOnCommit;
+        private TethysOnCellCommit<R, T> theOnCommit;
 
         /**
          * Repaint the column on commit?
@@ -1206,7 +1252,7 @@ public abstract class TethysTableManager<C, R>
         }
 
         @Override
-        public TethysBaseTableColumn<T, C, R> setOnCommit(final TethysOnColumnCommit<R, T> pOnCommit) {
+        public TethysBaseTableColumn<T, C, R> setOnCommit(final TethysOnCellCommit<R, T> pOnCommit) {
             theOnCommit = pOnCommit;
             return this;
         }
@@ -1222,7 +1268,7 @@ public abstract class TethysTableManager<C, R>
             /* If we have an onCommit consumer */
             if (theOnCommit != null) {
                 /* call it */
-                theOnCommit.commitColumn(pRow, pValue);
+                theOnCommit.commitCell(pRow, pValue);
             }
 
             /* Call the table onCommit */
@@ -1286,19 +1332,19 @@ public abstract class TethysTableManager<C, R>
     }
 
     /**
-     * OnColumn commit callback.
+     * OnCell commit callback.
      * @param <R> the row type
      * @param <T> the value type
      */
     @FunctionalInterface
-    public interface TethysOnColumnCommit<R, T> {
+    public interface TethysOnCellCommit<R, T> {
         /**
          * CallBack on a columnCommit.
          * @param pRow the row that is being committed
          * @param pValue the new value
          * @throws OceanusException on error
          */
-        void commitColumn(R pRow, T pValue) throws OceanusException;
+        void commitCell(R pRow, T pValue) throws OceanusException;
     }
 
     /**

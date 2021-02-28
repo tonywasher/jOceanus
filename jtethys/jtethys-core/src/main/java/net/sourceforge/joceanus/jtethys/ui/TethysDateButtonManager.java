@@ -29,14 +29,11 @@ import net.sourceforge.joceanus.jtethys.ui.TethysDataEditField.TethysDateButton;
 /**
  * DateButton Manager.
  * <p>
- * Provides the following events.
- * <dl>
- * <dt>NEWVALUE
- * <dd>fired when a new date value is selected. <br>
- * Detail is new date value
- * <dt>EDITFOCUSLOST
- * <dd>fired when the dialog is cancelled without a value being selected.
- * </dl>
+ * The EventProvider fires the following events.
+ * <ul>
+ *   <li>TethysUIEvent.NEWVALUE is fired when a new date value is selected.
+ *   <li>TethysUIEvent.EDITFOCUSLOST is fired when the dialog is cancelled without a value being selected.
+ * </ul>
  */
 public abstract class TethysDateButtonManager
         implements TethysDateButton, TethysEventProvider<TethysUIEvent>, TethysComponent {

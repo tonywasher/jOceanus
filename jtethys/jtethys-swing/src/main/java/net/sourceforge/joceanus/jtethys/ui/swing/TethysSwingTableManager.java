@@ -678,6 +678,7 @@ public class TethysSwingTableManager<C, R>
             try {
                 /* Call the commit hook */
                 processOnCommit(theCell.getActiveRow(), theCell.getCastValue(pValue));
+                getTable().processOnCellEditState(Boolean.FALSE);
 
                 /* If we had an exception, report it */
             } catch (OceanusException e) {

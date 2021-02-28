@@ -17,7 +17,6 @@
 package net.sourceforge.joceanus.jtethys.ui.javafx;
 
 import java.util.List;
-
 import javafx.collections.ObservableList;
 import javafx.scene.control.ContentDisplay;
 import javafx.scene.control.TableCell;
@@ -360,6 +359,7 @@ public class TethysFXTableCellFactory<C, R> {
                 final TethysFXTextEditField<T> myField = (TethysFXTextEditField<T>) theControl;
                 final TethysFXTableValidatedColumn<T, C, R> myColumn = (TethysFXTableValidatedColumn<T, C, R>) theColumn;
                 myField.setValidator(t -> myColumn.getValidator().apply(t, getActiveRow()));
+                myField.setReporter(theColumn.getTable().getOnValidateError());
             }
         }
 
@@ -427,6 +427,7 @@ public class TethysFXTableCellFactory<C, R> {
                 /* Set the value of the item */
                 theControl.setValue(getItem());
                 theControl.startCellEditing(theControl.getLabel());
+                theColumn.getTable().processOnCellEditState(Boolean.TRUE);
             }
         }
 
@@ -490,6 +491,7 @@ public class TethysFXTableCellFactory<C, R> {
 
                     /* Note that we are no longer editing */
                     cancelEdit();
+                    theColumn.getTable().processOnCellEditState(Boolean.TRUE);
 
                     /* If we had an exception, report it */
                 } catch (OceanusException e) {
@@ -512,6 +514,7 @@ public class TethysFXTableCellFactory<C, R> {
          */
         private void handleCancel() {
             cancelEdit();
+            theColumn.getTable().processOnCellEditState(Boolean.FALSE);
             getTable().setActiveCell(null);
         }
 

@@ -376,6 +376,11 @@ public abstract class MetisFieldSetPanelItem<T>
         public void setValidator(final Function<T, String> pValidator) {
             ((TethysValidatedEditField<T>) getEditField()).setValidator(pValidator);
         }
+
+        @Override
+        public void setReporter(final Consumer<String> pReporter) {
+            ((TethysValidatedEditField<T>) getEditField()).setReporter(pReporter);
+        }
     }
 
     /**

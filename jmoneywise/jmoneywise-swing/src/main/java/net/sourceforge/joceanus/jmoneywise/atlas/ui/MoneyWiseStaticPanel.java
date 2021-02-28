@@ -275,7 +275,7 @@ public class MoneyWiseStaticPanel
      */
     public boolean hasSession() {
         /* Return to caller */
-        return hasUpdates();
+        return hasUpdates() || isEditing();
     }
 
     /**
@@ -507,5 +507,14 @@ public class MoneyWiseStaticPanel
         for (MoneyWiseStaticTable<?, ?, ?> myPanel : thePanels) {
             myPanel.cancelEditing();
         }
+    }
+
+    /**
+     * is the current table editing?
+     * @return true/false
+     */
+    private boolean isEditing() {
+        final MoneyWiseStaticTable<?, ?, ?> myPanel = theSelectButton.getValue();
+        return myPanel.isEditing();
     }
 }

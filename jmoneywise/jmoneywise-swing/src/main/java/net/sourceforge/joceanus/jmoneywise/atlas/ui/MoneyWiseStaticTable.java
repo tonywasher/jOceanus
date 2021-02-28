@@ -16,6 +16,8 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.atlas.ui;
 
+import java.util.Objects;
+
 import net.sourceforge.joceanus.jmetis.atlas.ui.MetisErrorPanel;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisLetheField;
 import net.sourceforge.joceanus.jmetis.ui.MetisAction;
@@ -44,7 +46,7 @@ import net.sourceforge.joceanus.jtethys.ui.TethysIconButtonManager.TethysIconMap
 import net.sourceforge.joceanus.jtethys.ui.TethysNode;
 import net.sourceforge.joceanus.jtethys.ui.TethysScrollButtonManager;
 import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollMenu;
-import net.sourceforge.joceanus.jtethys.ui.TethysTableManager.TethysOnColumnCommit;
+import net.sourceforge.joceanus.jtethys.ui.TethysTableManager.TethysOnCellCommit;
 import net.sourceforge.joceanus.jtethys.ui.TethysUIEvent;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingGuiFactory;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingTableManager;
@@ -119,6 +121,11 @@ public class MoneyWiseStaticTable<L extends StaticList<T, S, MoneyWiseDataType>,
     private boolean showAll;
 
     /**
+     * is the table editing?
+     */
+    private boolean isEditing;
+
+    /**
      * Constructor.
      * @param pView the view
      * @param pUpdateSet the updateSet
@@ -154,6 +161,8 @@ public class MoneyWiseStaticTable<L extends StaticList<T, S, MoneyWiseDataType>,
 
         /* Set disabled indication and filter */
         theTable.setOnCommitError(this::setError);
+        theTable.setOnValidateError(this::showValidateError);
+        theTable.setOnCellEditState(this::handleEditState);
         theTable.setDisabled(StaticData::isDisabled);
         theTable.setChanged(this::isFieldChanged);
         theTable.setError(this::isFieldInError);
@@ -320,6 +329,14 @@ public class MoneyWiseStaticTable<L extends StaticList<T, S, MoneyWiseDataType>,
     }
 
     /**
+     * Is the table editing?
+     * @return true/false
+     */
+    boolean isEditing() {
+        return isEditing;
+    }
+
+    /**
      * Determine Focus.
      * @param pEntry the master data entry
      */
@@ -367,7 +384,7 @@ public class MoneyWiseStaticTable<L extends StaticList<T, S, MoneyWiseDataType>,
      * @param pValue the value
      * @throws OceanusException on error
      */
-    private <V> void updateField(final TethysOnColumnCommit<T, V> pOnCommit,
+    private <V> void updateField(final TethysOnCellCommit<T, V> pOnCommit,
                                  final T pRow,
                                  final V pValue) throws OceanusException {
         /* Push history */
@@ -376,7 +393,7 @@ public class MoneyWiseStaticTable<L extends StaticList<T, S, MoneyWiseDataType>,
         /* Protect against Exceptions */
         try {
             /* Set the item value */
-            pOnCommit.commitColumn(pRow, pValue);
+            pOnCommit.commitCell(pRow, pValue);
 
             /* Handle Exceptions */
         } catch (OceanusException e) {
@@ -514,5 +531,22 @@ public class MoneyWiseStaticTable<L extends StaticList<T, S, MoneyWiseDataType>,
 
         /* Valid description */
         return null;
+    }
+
+    /**
+     * Show validation error TODO use panel.
+     * @param pError the error message
+     */
+    private void showValidateError(final String pError) {
+        System.out.println(Objects.requireNonNullElse(pError, "Error cleared"));
+    }
+
+    /**
+     * Check edit state.
+     * @param pState the new state
+     */
+    private void handleEditState(final Boolean pState) {
+        isEditing = pState;
+        notifyChanges();
     }
 }

@@ -22,6 +22,12 @@ import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventPr
 
 /**
  * Colour Picker.
+ * <p>
+ * The EventProvider fires the following events.
+ * <ul>
+ *    <li>TethysUIEvent.NEWVALUE is fired when a colour is selected.
+ *    <li>TethysUIEvent.WINDOWCLOSED is fired when the window is closed.
+ * </ul>
  */
 public abstract class TethysColorPicker
         implements TethysEventProvider<TethysUIEvent>, TethysComponent {

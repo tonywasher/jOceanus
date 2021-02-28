@@ -21,7 +21,6 @@ import java.awt.Point;
 import java.awt.Rectangle;
 import java.util.List;
 import java.util.function.Supplier;
-
 import javax.swing.AbstractCellEditor;
 import javax.swing.JComponent;
 import javax.swing.JTable;
@@ -376,6 +375,7 @@ public class TethysSwingTableCellFactory<C, R> {
                 final TethysSwingTextEditField<T> myField = (TethysSwingTextEditField<T>) theEditControl;
                 final TethysSwingTableValidatedColumn<T, C, R> myColumn = (TethysSwingTableValidatedColumn<T, C, R>) theColumn;
                 myField.setValidator(t -> myColumn.getValidator().apply(t, getActiveRow()));
+                myField.setReporter(theColumn.getTable().getOnValidateError());
             }
         }
 
@@ -530,6 +530,11 @@ public class TethysSwingTableCellFactory<C, R> {
             private static final long serialVersionUID = -3591698125380052152L;
 
             /**
+             * the active row index.
+             */
+            private int theRowIndex;
+
+            /**
              * Are we in the middle of stopping edit?
              */
             private boolean stoppingEdit;
@@ -556,8 +561,8 @@ public class TethysSwingTableCellFactory<C, R> {
                                                          final int pRow,
                                                          final int pCol) {
                 /* Determine the active row */
-                final int myRow = pTable.convertRowIndexToModel(pRow);
-                setActiveRow(myRow);
+                theRowIndex = pTable.convertRowIndexToModel(pRow);
+                setActiveRow(theRowIndex);
 
                 /* Determine cell rectangle */
                 final Point myPoint = pTable.getLocationOnScreen();
@@ -572,6 +577,7 @@ public class TethysSwingTableCellFactory<C, R> {
                 /* Set field value and start edit */
                 getControl().setValue(getCastValue(pValue));
                 getControl().startCellEditing(myCellLoc);
+                theColumn.getTable().processOnCellEditState(Boolean.TRUE);
 
                 /* Return the field */
                 return useDialog()
@@ -585,6 +591,9 @@ public class TethysSwingTableCellFactory<C, R> {
                 if (stoppingEdit) {
                     return true;
                 }
+
+                /* Restore the active row */
+                setActiveRow(theRowIndex);
 
                 /* Check the data */
                 stoppingEdit = true;
@@ -603,6 +612,14 @@ public class TethysSwingTableCellFactory<C, R> {
                 /* Return status */
                 stoppingEdit = false;
                 return bComplete;
+            }
+
+            @Override
+            public void cancelCellEditing() {
+                theColumn.getTable().processOnCellEditState(Boolean.FALSE);
+                getControl().clearTheAttribute(TethysFieldAttribute.ERROR);
+                getControl().adjustField();
+                super.cancelCellEditing();
             }
         }
 
