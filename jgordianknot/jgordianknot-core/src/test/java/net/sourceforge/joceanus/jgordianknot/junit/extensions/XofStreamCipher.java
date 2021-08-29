@@ -28,11 +28,8 @@ import org.bouncycastle.crypto.ext.digests.Blake2s;
 import org.bouncycastle.crypto.ext.digests.SkeinBase;
 import org.bouncycastle.crypto.ext.digests.SkeinXof;
 import org.bouncycastle.crypto.ext.engines.Blake2XEngine;
-import org.bouncycastle.crypto.ext.engines.KMACEngine;
 import org.bouncycastle.crypto.ext.engines.SkeinXofEngine;
-import org.bouncycastle.crypto.ext.macs.KMAC;
 import org.bouncycastle.crypto.ext.params.Blake2Parameters;
-import org.bouncycastle.crypto.ext.params.KeccakParameters;
 import org.bouncycastle.crypto.ext.params.SkeinXParameters;
 import org.bouncycastle.crypto.params.KeyParameter;
 import org.bouncycastle.crypto.params.ParametersWithIV;
@@ -43,15 +40,6 @@ import org.junit.jupiter.api.DynamicNode;
 import org.junit.jupiter.api.DynamicTest;
 import org.junit.jupiter.api.TestFactory;
 
-import net.sourceforge.joceanus.jgordianknot.junit.extensions.StreamCipherTest.ChaChaPolyTest;
-import net.sourceforge.joceanus.jgordianknot.junit.extensions.StreamCipherTest.Rabbit128Test;
-import net.sourceforge.joceanus.jgordianknot.junit.extensions.StreamCipherTest.Snow3G128Test;
-import net.sourceforge.joceanus.jgordianknot.junit.extensions.StreamCipherTest.Sosemanuk128Test;
-import net.sourceforge.joceanus.jgordianknot.junit.extensions.StreamCipherTest.Sosemanuk256Test;
-import net.sourceforge.joceanus.jgordianknot.junit.extensions.StreamCipherTest.XChaCha20Test;
-import net.sourceforge.joceanus.jgordianknot.junit.extensions.StreamCipherTest.XChaChaPolyTest;
-import net.sourceforge.joceanus.jgordianknot.junit.extensions.StreamCipherTest.Zuc128Test;
-import net.sourceforge.joceanus.jgordianknot.junit.extensions.StreamCipherTest.Zuc256Test;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
@@ -111,10 +99,6 @@ public class XofStreamCipher {
                         DynamicTest.dynamicTest("Skein-256", () -> new SkeinXofTest().runTests(256)),
                         DynamicTest.dynamicTest("Skein-512", () -> new SkeinXofTest().runTests(512)),
                         DynamicTest.dynamicTest("Skein-1024", () -> new SkeinXofTest().runTests(1024))
-                )),
-                DynamicContainer.dynamicContainer("KMAC", Stream.of(
-                        DynamicTest.dynamicTest("KMAC-128", () -> new KMACTest().runTests(128)),
-                        DynamicTest.dynamicTest("KMAC-256", () -> new KMACTest().runTests(256))
                 ))
         )));
     }
@@ -190,18 +174,6 @@ public class XofStreamCipher {
             }
             myXof.init(myBuilder.build());
         }
-
-        /* Handle KMAC */
-        if (pXof instanceof KMAC) {
-            final KMAC myXof = (KMAC) pXof;
-            final KeccakParameters.Builder myBuilder = new KeccakParameters.Builder()
-                    .setKey(pKey)
-                    .setMaxOutputLen(-1);
-            myXof.init(myBuilder.build());
-            if (pIV != null) {
-                myXof.update(pIV, 0, pIV.length);
-            }
-        }
     }
 
     /**
@@ -250,30 +222,6 @@ public class XofStreamCipher {
             testXofStream(myCipher, KEY128_2, IV64_2, myXof);
             testXofStream(myCipher, KEY256_1, IV128_1, myXof);
             testXofStream(myCipher, KEY256_2, IV128_2, myXof);
-        }
-    }
-
-    /**
-     * The KMAC cipher.
-     */
-    private static class KMACTest {
-        /**
-         * Run the tests.
-         * @param pState the statelength
-         */
-        void runTests(final int pState) {
-            /* Create the cipher and Xof */
-            final KMACEngine myCipher = new KMACEngine(pState);
-            final KMAC myXof = new KMAC(pState);
-
-            /* Run tests */
-            testXofStream(myCipher, KEY256_1, null, myXof);
-            testXofStream(myCipher, KEY256_1, IV128_1, myXof);
-            testXofStream(myCipher, KEY256_2, IV128_2, myXof);
-            if (pState == 128) {
-                testXofStream(myCipher, KEY128_1, IV64_1, myXof);
-                testXofStream(myCipher, KEY128_2, IV64_2, myXof);
-            }
         }
     }
 }

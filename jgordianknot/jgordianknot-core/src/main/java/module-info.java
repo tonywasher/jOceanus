@@ -23,6 +23,7 @@ module net.sourceforge.joceanus.jgordianknot.core {
 
     /* External libraries */
     requires org.bouncycastle.provider;
+    requires org.bouncycastle.util;
 
     /* jOceanus */
     requires net.sourceforge.joceanus.jtethys.core;

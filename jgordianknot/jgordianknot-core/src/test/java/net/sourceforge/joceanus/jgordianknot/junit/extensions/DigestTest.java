@@ -27,12 +27,10 @@ import org.bouncycastle.crypto.ext.digests.Blake2Tree;
 import org.bouncycastle.crypto.ext.digests.Blake2X;
 import org.bouncycastle.crypto.ext.digests.Blake2b;
 import org.bouncycastle.crypto.ext.digests.Blake2s;
-import org.bouncycastle.crypto.ext.digests.CSHAKE;
 import org.bouncycastle.crypto.ext.digests.CubeHashDigest;
 import org.bouncycastle.crypto.ext.digests.GroestlDigest;
 import org.bouncycastle.crypto.ext.digests.JHDigest;
 import org.bouncycastle.crypto.ext.digests.Kangaroo.KangarooTwelve;
-import org.bouncycastle.crypto.ext.digests.SHAKE;
 import org.bouncycastle.crypto.ext.digests.SkeinBase;
 import org.bouncycastle.crypto.ext.digests.SkeinTree;
 import org.bouncycastle.crypto.ext.digests.SkeinXof;
@@ -119,16 +117,6 @@ public class DigestTest {
                         DynamicTest.dynamicTest("256", () -> new Blake2s256Test().checkDigests()),
                         DynamicTest.dynamicTest("Mac", () -> new Blake2sMacTest().checkMacs()),
                         DynamicTest.dynamicTest("Xof", () -> new Blake2sXofTest().checkXofs())
-                )),
-                DynamicContainer.dynamicContainer("SHAKE", Stream.of(
-                        DynamicTest.dynamicTest("128", () -> new SHAKE128Test().checkDigests()),
-                        DynamicTest.dynamicTest("256", () -> new SHAKE256Test().checkDigests()),
-                        DynamicTest.dynamicTest("128Xof", () -> new SHAKE128XofTest().checkXofs()),
-                        DynamicTest.dynamicTest("256Xof", () -> new SHAKE256XofTest().checkXofs())
-                )),
-                DynamicContainer.dynamicContainer("cSHAKE", Stream.of(
-                        DynamicTest.dynamicTest("128", () -> new CSHAKETest().testThe128Hash()),
-                        DynamicTest.dynamicTest("256", () -> new CSHAKETest().testThe256Hash())
                 )),
                 DynamicContainer.dynamicContainer("Skein", Stream.of(
                         DynamicTest.dynamicTest("Xof", () -> new SkeinXofTest().checkXofs()),
@@ -405,11 +393,10 @@ public class DigestTest {
         final KangarooTwelve myDigest = new KangarooTwelve();
         final KeccakParameters myParams = new KeccakParameters.Builder()
                 .setPersonalisation(myPers)
-                .setMaxOutputLen(myXofLen)
                 .build();
         myDigest.init(myParams);
         myDigest.update(myMsg, 0, pMsgLen);
-        myDigest.doFinal(myOutput, 0);
+        myDigest.doFinal(myOutput, 0, myXofLen);
 
         /* If we are only looking at the last bit of the output */
         if (pOutLen != 0) {
@@ -540,33 +527,6 @@ public class DigestTest {
         /* Build the result */
         myAltTree.doFinal(myResult, 0);
         Assertions.assertArrayEquals(myResult, myLeafResult, "Result mismatch");
-    }
-
-    /**
-     * Run the blake Xof tests.
-     * @param pXof the Xof to test.
-     * @param pResult the expected result
-     * @throws OceanusException on error
-     */
-    static void testSHAKEXof(final SHAKE pXof,
-                             final String pResult) throws OceanusException {
-        /* Access the expected result */
-        final byte[] myExpected = Hex.decode(pResult);
-        final int myXofLen = myExpected.length;
-
-        /* Create the output buffer */
-        final byte[] myOutput = new byte[myXofLen];
-
-        /* Calculate the Xof */
-        final KeccakParameters myParams = new KeccakParameters.Builder()
-                .setMaxOutputLen(myXofLen)
-                .build();
-        pXof.init(myParams);
-        pXof.update(BLAKE2DATA, 0, BLAKE2DATA.length);
-        pXof.doFinal(myOutput, 0);
-
-        /* Check the result */
-        Assertions.assertArrayEquals(myExpected, myOutput, "Result mismatch");
     }
 
     /**
@@ -1348,253 +1308,6 @@ public class DigestTest {
             testSkeinTree(53, 2, 255);
             testSkeinTree(53, 4, 255);
             testSkeinTree(53, 10, 255);
-        }
-    }
-
-    /**
-     * SHAKE128.
-     */
-    static class SHAKE128Test {
-        /**
-         * Expected results.
-         */
-        private static final String[] EXPECTED = {
-                "7f9c2ba4e88f827d616045507605853e",
-                "85c8de88d28866bf0868090b3961162b",
-                "5881092dd818bf5cf8a3ddb793fbcba7",
-                "cbef732961b55b4c31396796577df491",
-                "961c919c0854576e561320e81514bf37",
-                "54dd201e53249910db3c7d366574fbb6",
-                "7bf451c92fdc77b9771e6c9056445894"
-        };
-
-        /**
-         * Test digests.
-         * @throws OceanusException on error
-         */
-        void checkDigests() throws OceanusException {
-            checkDigestStrings(new SHAKE(128), EXPECTED);
-        }
-    }
-
-    /**
-     * SHAKE128Xof.
-     */
-    static class SHAKE128XofTest {
-        /**
-         * Expected unkeyed results.
-         */
-        private static final String[] EXPECTED = {
-                "9d32",
-                "9d32ba2aa8f40b0cdf10",
-                "9d32ba2aa8f40b0cdf108376d77abfd5",
-                "9d32ba2aa8f40b0cdf108376d77abfd5c97f149e6ba0c9efe3499c7b3c039b0a",
-                "9d32ba2aa8f40b0cdf108376d77abfd5c97f149e6ba0c9efe3499c7b3c039b0afac641a978ef435b3d83b9712da8ea826bb38078899b3efaec77d44a0460b220225d1b0b11a1d1c5cb0acb5aca92c6fb95f64a992eee6b6de24434aae4fba9d496bd8bd90624391f79c0db7d20eef1ddbfe8d771b4123e97ad7664012188590eb0b43c7073b7a9ab8af27229bc7246296ac0e172fca7314b8f100dc247d51c949bc4977c345d7c1d5536c96825f3650b7f80b5981b252ce4a858e54f9833cceaf38c12a91a8c6b341e197eb894553ca6f100f731f00f43b854098aace7a4e0ed8252782523f561dd994c291229eaf70185c98ed0026be1bd39c17dd817424009"
-        };
-
-        /**
-         * Test Xofs.
-         * @throws OceanusException on error
-         */
-        void checkXofs() throws OceanusException {
-            final SHAKE myXof = new SHAKE(128);
-            testSHAKEXof(myXof, EXPECTED[0]);
-            testSHAKEXof(myXof, EXPECTED[1]);
-            testSHAKEXof(myXof, EXPECTED[2]);
-            testSHAKEXof(myXof, EXPECTED[3]);
-            testSHAKEXof(myXof, EXPECTED[4]);
-        }
-    }
-
-    /**
-     * SHAKE256.
-     */
-    static class SHAKE256Test {
-        /**
-         * Expected results.
-         */
-        private static final String[] EXPECTED = {
-                "46b9dd2b0ba88d13233b3feb743eeb243fcd52ea62b81b82b50c27646ed5762f",
-                "867e2cb04f5a04dcbd592501a5e8fe9ceaafca50255626ca736c138042530ba4",
-                "483366601360a8771c6863080cc4114d8db44530f8f1e1ee4f94ea37e78b5739",
-                "718e224088856840ade4dc73487e15826a07ecb8ed5e2bda526cc1acddb99d00",
-                "b7b78b04a3dd30a265c8886c33fda94799853de5d3d10541fd4e9f4613701c61",
-                "31f19a097c723e91fa59b0998dd8523c2a9e7e13b4025d6b48fcbc328973a108",
-                "24c508adefdf5e3f2596e8b5a888fe10eb7b5b22e1f35d858e6eff3025c4cc18"
-        };
-
-        /**
-         * Test digests.
-         * @throws OceanusException on error
-         */
-        void checkDigests() throws OceanusException {
-            checkDigestStrings(new SHAKE(256), EXPECTED);
-        }
-    }
-
-    /**
-     * SHAKE256Xof.
-     */
-    static class SHAKE256XofTest {
-        /**
-         * Expected unkeyed results.
-         */
-        private static final String[] EXPECTED = {
-                "336c",
-                "336c8aa7f2b08bda6bd7",
-                "336c8aa7f2b08bda6bd7402cd2ea8976",
-                "336c8aa7f2b08bda6bd7402cd2ea89760b7728a8b31802b80524756361165366",
-                "336c8aa7f2b08bda6bd7402cd2ea89760b7728a8b31802b80524756361165366ff8159f2f4568a2bfa286db6387895629938c2868a6421c37f988455763a75e4b9259e0a939aaa68295119ccea72c9f0ca7d048aa70eeeb4534c6bd08ecc6163217c790f33b84a89623f8e5538b734967e9490a48b7d0658afb4565364e8b234dfe6a2bceb12ce2130eec00bf2113615a276819d7815f5891d07600275f4d8fbc87b056f44bc2b141ca5ed9e4cb6e9a7bf71f520971dca1c8da6140e2af31faef5502e84991a2d9e9a80183c174cc105ef178d5f6fa45b0f284eb7bced20a47c3f584aca27eac5558da517af7569fe2e843461b4b65f81f819bf81aae6dfaa3b"
-        };
-
-        /**
-         * Test Xofs.
-         * @throws OceanusException on error
-         */
-        void checkXofs() throws OceanusException {
-            final SHAKE myXof = new SHAKE(256);
-            testSHAKEXof(myXof, EXPECTED[0]);
-            testSHAKEXof(myXof, EXPECTED[1]);
-            testSHAKEXof(myXof, EXPECTED[2]);
-            testSHAKEXof(myXof, EXPECTED[3]);
-            testSHAKEXof(myXof, EXPECTED[4]);
-        }
-    }
-
-    /**
-     * The cSHAKE TestCase.
-     */
-    private static class CSHAKETestCase {
-        /**
-         * The testCase.
-         */
-        private final int theStrength;
-        private final String theNameSpace;
-        private final String theData;
-        private final String theExpected;
-
-        /**
-         * Constructor.
-         * @param pStrength the strength
-         * @param pNameSpace the NameSpace
-         * @param pData the data
-         * @param pExpected the expected results.
-         */
-        CSHAKETestCase(final int pStrength,
-                       final String pNameSpace,
-                       final String pData,
-                       final String pExpected) {
-            theStrength = pStrength;
-            theNameSpace = pNameSpace;
-            theData = pData;
-            theExpected = pExpected;
-        }
-    }
-
-    /**
-     * CSHAKE.
-     */
-    static class CSHAKETest {
-        private static final String DATA_1 = "00010203";
-        private static final String DATA_2 = "000102030405060708090A0B0C0D0E0F" +
-                "101112131415161718191A1B1C1D1E1F" +
-                "202122232425262728292A2B2C2D2E2F" +
-                "303132333435363738393A3B3C3D3E3F" +
-                "404142434445464748494A4B4C4D4E4F" +
-                "505152535455565758595A5B5C5D5E5F" +
-                "606162636465666768696A6B6C6D6E6F" +
-                "707172737475767778797A7B7C7D7E7F" +
-                "808182838485868788898A8B8C8D8E8F" +
-                "909192939495969798999A9B9C9D9E9F" +
-                "A0A1A2A3A4A5A6A7A8A9AAABACADAEAF" +
-                "B0B1B2B3B4B5B6B7B8B9BABBBCBDBEBF" +
-                "C0C1C2C3C4C5C6C7";
-
-        /**
-         * TestCases.
-         */
-        private static final CSHAKETestCase TEST1 = new CSHAKETestCase(128, "Email Signature", DATA_1,
-                "C1C36925B6409A04F1B504FCBCA9D82B" +
-                        "4017277CB5ED2B2065FC1D3814D5AAF5"
-        );
-        private static final CSHAKETestCase TEST2 = new CSHAKETestCase(128, "Email Signature", DATA_2,
-                "C5221D50E4F822D96A2E8881A961420F" +
-                        "294B7B24FE3D2094BAED2C6524CC166B"
-        );
-        private static final CSHAKETestCase TEST3 = new CSHAKETestCase(256, "Email Signature", DATA_1,
-                "D008828E2B80AC9D2218FFEE1D070C48" +
-                        "B8E4C87BFF32C9699D5B6896EEE0EDD1" +
-                        "64020E2BE0560858D9C00C037E34A969" +
-                        "37C561A74C412BB4C746469527281C8C"
-        );
-        private static final CSHAKETestCase TEST4 = new CSHAKETestCase(256, "Email Signature", DATA_2,
-                "07DC27B11E51FBAC75BC7B3C1D983E8B" +
-                        "4B85FB1DEFAF218912AC864302730917" +
-                        "27F42B17ED1DF63E8EC118F04B23633C" +
-                        "1DFB1574C8FB55CB45DA8E25AFB092BB"
-        );
-
-        /**
-         * Test Mac.
-         * @throws OceanusException on error
-         */
-        void testThe128Hash() throws OceanusException {
-            testHash(TEST1);
-            testHash(TEST2);
-        }
-
-        /**
-         * Test Mac.
-         * @throws OceanusException on error
-         */
-        void testThe256Hash() throws OceanusException {
-            testHash(TEST3);
-            testHash(TEST4);
-        }
-
-        /**
-         * Test the Mac against the results.
-         * @param pTestCase the testCase
-         * @throws OceanusException on error
-         */
-        void testHash(final CSHAKETestCase pTestCase) throws OceanusException {
-            /* Create the KMAC */
-            final byte[] myNameSpace = pTestCase.theNameSpace.getBytes();
-            final CSHAKE myHash = new CSHAKE(pTestCase.theStrength, null);
-
-            /* Access the data and expected bytes */
-            final byte[] myData = Hex.decode(pTestCase.theData);
-            final byte[] myExpected = Hex.decode(pTestCase.theExpected);
-
-            /* Create the output buffer */
-            final byte[] myOutput = new byte[myExpected.length];
-
-            /* Initialise the cipher and create the keyStream */
-            final KeccakParameters myParam = new KeccakParameters.Builder()
-                    .setPersonalisation(myNameSpace)
-                    .setMaxOutputLen(myExpected.length)
-                    .build();
-            myHash.init(myParam);
-            myHash.update(myData, 0, myData.length);
-            myHash.doFinal(myOutput, 0, myOutput.length);
-
-            /* Check the mac */
-            Assertions.assertArrayEquals(myExpected, myOutput, "Mac mismatch");
-
-            /* Test auto-reset */
-            myHash.update(myData, 0, myData.length);
-            myHash.doFinal(myOutput, 0, myOutput.length);
-
-            /* Check the mac */
-            Assertions.assertArrayEquals(myExpected, myOutput, "Mac mismatch on auto-reset");
-
-            /* Test re-init */
-            myHash.init(myParam);
-            myHash.update(myData, 0, myData.length);
-            myHash.doFinal(myOutput, 0, myOutput.length);
-
-            /* Check the mac */
-            Assertions.assertArrayEquals(myExpected, myOutput, "Mac mismatch on reInit");
         }
     }
 }

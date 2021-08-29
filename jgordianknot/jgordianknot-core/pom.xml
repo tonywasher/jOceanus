@@ -31,6 +31,11 @@
       <version>${BouncyCastleVersion}</version>
     </dependency>
     <dependency>
+      <groupId>org.bouncycastle</groupId>
+      <artifactId>bcutil-jdk15on</artifactId>
+      <version>${BouncyCastleVersion}</version>
+    </dependency>
+    <dependency>
       <groupId>${project.groupId}</groupId>
       <artifactId>jtethys-core</artifactId>
       <version>${project.version}</version>

@@ -23,7 +23,6 @@ import org.bouncycastle.crypto.InvalidCipherTextException;
 import org.bouncycastle.crypto.Mac;
 import org.bouncycastle.crypto.StreamCipher;
 import org.bouncycastle.crypto.engines.ChaCha7539Engine;
-import org.bouncycastle.crypto.ext.macs.KMAC;
 import org.bouncycastle.crypto.ext.modes.ChaChaPoly1305;
 import org.bouncycastle.crypto.ext.engines.RabbitEngine;
 import org.bouncycastle.crypto.ext.engines.Snow3GEngine;
@@ -33,7 +32,6 @@ import org.bouncycastle.crypto.engines.Zuc128Engine;
 import org.bouncycastle.crypto.engines.Zuc256Engine;
 import org.bouncycastle.crypto.macs.Zuc128Mac;
 import org.bouncycastle.crypto.macs.Zuc256Mac;
-import org.bouncycastle.crypto.ext.params.KeccakParameters;
 import org.bouncycastle.crypto.params.AEADParameters;
 import org.bouncycastle.crypto.params.KeyParameter;
 import org.bouncycastle.crypto.params.ParametersWithIV;
@@ -204,10 +202,6 @@ public class StreamCipherTest {
                         DynamicTest.dynamicTest("32", () -> new Zuc256Mac32Test().testTheMac()),
                         DynamicTest.dynamicTest("64", () -> new Zuc256Mac64Test().testTheMac()),
                         DynamicTest.dynamicTest("128", () -> new Zuc256Mac128Test().testTheMac())
-                )),
-                DynamicContainer.dynamicContainer("KMAC", Stream.of(
-                        DynamicTest.dynamicTest("128", () -> new KMACTest().testThe128Mac()),
-                        DynamicTest.dynamicTest("256", () -> new KMACTest().testThe256Mac())
                 ))
         )));
     }
@@ -940,218 +934,6 @@ public class StreamCipherTest {
             theKey = pKey;
             theData = pData;
             theExpected = pExpected;
-        }
-    }
-
-    /**
-     * KMAC.
-     */
-    static class KMACTest {
-        private static final String KEY256 =
-                "404142434445464748494A4B4C4D4E4F" +
-                "505152535455565758595A5B5C5D5E5F";
-        private static final String DATA_1 = "00010203";
-        private static final String DATA_2 = "000102030405060708090A0B0C0D0E0F" +
-                "101112131415161718191A1B1C1D1E1F" +
-                "202122232425262728292A2B2C2D2E2F" +
-                "303132333435363738393A3B3C3D3E3F" +
-                "404142434445464748494A4B4C4D4E4F" +
-                "505152535455565758595A5B5C5D5E5F" +
-                "606162636465666768696A6B6C6D6E6F" +
-                "707172737475767778797A7B7C7D7E7F" +
-                "808182838485868788898A8B8C8D8E8F" +
-                "909192939495969798999A9B9C9D9E9F" +
-                "A0A1A2A3A4A5A6A7A8A9AAABACADAEAF" +
-                "B0B1B2B3B4B5B6B7B8B9BABBBCBDBEBF" +
-                "C0C1C2C3C4C5C6C7";
-
-        /**
-         * TestCases.
-         */
-        private static final KMACTestCase TEST1 = new KMACTestCase(128, null, KEY256, DATA_1,
-                "E5780B0D3EA6F7D3A429C5706AA43A00" +
-                        "FADBD7D49628839E3187243F456EE14E"
-        );
-        private static final KMACTestCase TEST2 = new KMACTestCase(128, "My Tagged Application", KEY256, DATA_1,
-                "3B1FBA963CD8B0B59E8C1A6D71888B71" +
-                        "43651AF8BA0A7070C0979E2811324AA5"
-        );
-        private static final KMACTestCase TEST3 = new KMACTestCase(128, "My Tagged Application", KEY256, DATA_2,
-                "1F5B4E6CCA02209E0DCB5CA635B89A15" +
-                        "E271ECC760071DFD805FAA38F9729230"
-        );
-        private static final KMACTestCase TEST1X = new KMACTestCase(128, null, KEY256, DATA_1,
-                "CD83740BBD92CCC8CF032B1481A0F446" +
-                        "0E7CA9DD12B08A0C4031178BACD6EC35"
-        );
-        private static final KMACTestCase TEST2X = new KMACTestCase(128, "My Tagged Application", KEY256, DATA_1,
-                "31A44527B4ED9F5C6101D11DE6D26F06" +
-                        "20AA5C341DEF41299657FE9DF1A3B16C"
-        );
-        private static final KMACTestCase TEST3X = new KMACTestCase(128, "My Tagged Application", KEY256, DATA_2,
-                "47026C7CD793084AA0283C253EF65849" +
-                        "0C0DB61438B8326FE9BDDF281B83AE0F"
-        );
-        private static final KMACTestCase TEST4 = new KMACTestCase(256, "My Tagged Application", KEY256, DATA_1,
-                "20C570C31346F703C9AC36C61C03CB64" +
-                        "C3970D0CFC787E9B79599D273A68D2F7" +
-                        "F69D4CC3DE9D104A351689F27CF6F595" +
-                        "1F0103F33F4F24871024D9C27773A8DD"
-        );
-        private static final KMACTestCase TEST5 = new KMACTestCase(256, null, KEY256, DATA_2,
-                "75358CF39E41494E949707927CEE0AF2" +
-                        "0A3FF553904C86B08F21CC414BCFD691" +
-                        "589D27CF5E15369CBBFF8B9A4C2EB178" +
-                        "00855D0235FF635DA82533EC6B759B69"
-        );
-        private static final KMACTestCase TEST6 = new KMACTestCase(256, "My Tagged Application", KEY256, DATA_2,
-                "B58618F71F92E1D56C1B8C55DDD7CD18" +
-                        "8B97B4CA4D99831EB2699A837DA2E4D9" +
-                        "70FBACFDE50033AEA585F1A2708510C3" +
-                        "2D07880801BD182898FE476876FC8965"
-        );
-        private static final KMACTestCase TEST4X = new KMACTestCase(256, "My Tagged Application", KEY256, DATA_1,
-                "1755133F1534752AAD0748F2C706FB5C" +
-                        "784512CAB835CD15676B16C0C6647FA9" +
-                        "6FAA7AF634A0BF8FF6DF39374FA00FAD" +
-                        "9A39E322A7C92065A64EB1FB0801EB2B"
-        );
-        private static final KMACTestCase TEST5X = new KMACTestCase(256, null, KEY256, DATA_2,
-                "FF7B171F1E8A2B24683EED37830EE797" +
-                        "538BA8DC563F6DA1E667391A75EDC02C" +
-                        "A633079F81CE12A25F45615EC8997203" +
-                        "1D18337331D24CEB8F8CA8E6A19FD98B"
-        );
-        private static final KMACTestCase TEST6X = new KMACTestCase(256, "My Tagged Application", KEY256, DATA_2,
-                "D5BE731C954ED7732846BB59DBE3A8E3" +
-                        "0F83E77A4BFF4459F2F1C2B4ECEBB8CE" +
-                        "67BA01C62E8AB8578D2D499BD1BB2767" +
-                        "68781190020A306A97DE281DCC30305D"
-        );
-
-        /**
-         * Test Mac.
-         * @throws OceanusException on error
-         */
-        void testThe128Mac() throws OceanusException {
-            testMac(TEST1);
-            testMac(TEST2);
-            testMac(TEST3);
-            testXof(TEST1X);
-            testXof(TEST2X);
-            testXof(TEST3X);
-        }
-
-        /**
-         * Test Mac.
-         * @throws OceanusException on error
-         */
-        void testThe256Mac() throws OceanusException {
-            testMac(TEST4);
-            testMac(TEST5);
-            testMac(TEST6);
-            testXof(TEST4X);
-            testXof(TEST5X);
-            testXof(TEST6X);
-        }
-
-        /**
-         * Test the Mac against the results.
-         * @param pTestCase the testCase
-         * @throws OceanusException on error
-         */
-        void testMac(final KMACTestCase pTestCase) throws OceanusException {
-            /* Create the KMAC */
-            final byte[] myNameSpace = pTestCase.theNameSpace == null ? null : pTestCase.theNameSpace.getBytes();
-            final KMAC myMac = new KMAC(pTestCase.theStrength);
-
-            /* Access the data and expected bytes */
-            final byte[] myData = Hex.decode(pTestCase.theData);
-            final byte[] myExpected = Hex.decode(pTestCase.theExpected);
-
-            /* Create the output buffer */
-            final byte[] myOutput = new byte[myExpected.length];
-
-            /* Build the parameters */
-            final KeccakParameters myParams = new KeccakParameters.Builder()
-                    .setKey(Hex.decode(pTestCase.theKey))
-                    .setPersonalisation(myNameSpace)
-                    .setMaxOutputLen(myOutput.length)
-                    .build();
-
-            /* Initialise the cipher and create the keyStream */
-            myMac.init(myParams);
-            myMac.update(myData, 0, myData.length);
-            myMac.doFinal(myOutput, 0, myOutput.length);
-
-            /* Check the mac */
-            Assertions.assertArrayEquals(myExpected, myOutput, "Mac mismatch");
-
-            /* Test auto-reset */
-            myMac.update(myData, 0, myData.length);
-            myMac.doFinal(myOutput, 0, myOutput.length);
-
-            /* Check the mac */
-            Assertions.assertArrayEquals(myExpected, myOutput, "Mac mismatch on auto-reset");
-
-            /* Test re-init */
-            myMac.init(myParams);
-            myMac.update(myData, 0, myData.length);
-            myMac.doFinal(myOutput, 0, myOutput.length);
-
-            /* Check the mac */
-            Assertions.assertArrayEquals(myExpected, myOutput, "Mac mismatch on reInit");
-        }
-
-        /**
-         * Test the Mac against the results.
-         * @param pTestCase the testCase
-         * @throws OceanusException on error
-         */
-        void testXof(final KMACTestCase pTestCase) throws OceanusException {
-            /* Create the KMAC */
-            final byte[] myNameSpace = pTestCase.theNameSpace == null ? null : pTestCase.theNameSpace.getBytes();
-            final KMAC myMac = new KMAC(pTestCase.theStrength);
-
-            /* Access the data and expected bytes */
-            final byte[] myData = Hex.decode(pTestCase.theData);
-            final byte[] myExpected = Hex.decode(pTestCase.theExpected);
-
-            /* Create the output buffer */
-            final byte[] myOutput = new byte[myExpected.length];
-
-            /* Build the parameters */
-            final KeccakParameters myParams = new KeccakParameters.Builder()
-                    .setKey(Hex.decode(pTestCase.theKey))
-                    .setPersonalisation(myNameSpace)
-                    .setMaxOutputLen(myOutput.length)
-                    .build();
-
-            /* Initialise the cipher and create the keyStream */
-            myMac.init(myParams);
-            myMac.update(myData, 0, myData.length);
-            myMac.doOutput(myOutput, 0, myOutput.length);
-
-            /* Check the mac */
-            Assertions.assertArrayEquals(myExpected, myOutput, "Mac mismatch");
-
-            /* Test re-init */
-            myMac.init(myParams);
-            myMac.update(myData, 0, myData.length);
-            myMac.doOutput(myOutput, 0, myOutput.length);
-
-            /* Check the mac */
-            Assertions.assertArrayEquals(myExpected, myOutput, "Mac mismatch on re-Init");
-
-            /* Test reset */
-            myMac.reset();
-            myMac.update(myData, 0, myData.length);
-            myMac.reset();
-            myMac.update(myData, 0, myData.length);
-            myMac.doOutput(myOutput, 0, myOutput.length);
-
-            /* Check the mac */
-            Assertions.assertArrayEquals(myExpected, myOutput, "Mac mismatch on reset");
         }
     }
 }

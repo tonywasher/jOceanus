@@ -117,8 +117,8 @@ public class GordianDigestAlgId {
         addToMaps(GordianDigestSpec.sha3(GordianLength.LEN_256), new AlgorithmIdentifier(NISTObjectIdentifiers.id_sha3_256, DERNull.INSTANCE));
         addToMaps(GordianDigestSpec.sha3(GordianLength.LEN_384), new AlgorithmIdentifier(NISTObjectIdentifiers.id_sha3_384, DERNull.INSTANCE));
         addToMaps(GordianDigestSpec.sha3(GordianLength.LEN_512), new AlgorithmIdentifier(NISTObjectIdentifiers.id_sha3_512, DERNull.INSTANCE));
-        addToMaps(GordianDigestSpec.shake(GordianLength.LEN_128), new AlgorithmIdentifier(NISTObjectIdentifiers.id_shake128, DERNull.INSTANCE));
-        addToMaps(GordianDigestSpec.shake(GordianLength.LEN_256), new AlgorithmIdentifier(NISTObjectIdentifiers.id_shake256, DERNull.INSTANCE));
+        addToMaps(GordianDigestSpec.shake128(GordianLength.LEN_256), new AlgorithmIdentifier(NISTObjectIdentifiers.id_shake128, DERNull.INSTANCE));
+        addToMaps(GordianDigestSpec.shake256(GordianLength.LEN_512), new AlgorithmIdentifier(NISTObjectIdentifiers.id_shake256, DERNull.INSTANCE));
     }
 
     /**

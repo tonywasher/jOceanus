@@ -64,7 +64,6 @@ import org.bouncycastle.crypto.ext.digests.Blake2s;
 import org.bouncycastle.crypto.ext.engines.AnubisEngine;
 import org.bouncycastle.crypto.ext.engines.Blake2XEngine;
 import org.bouncycastle.crypto.ext.engines.Blake3Engine;
-import org.bouncycastle.crypto.ext.engines.KMACEngine;
 import org.bouncycastle.crypto.ext.engines.LeaEngine;
 import org.bouncycastle.crypto.ext.engines.MARSEngine;
 import org.bouncycastle.crypto.ext.engines.RabbitEngine;
@@ -112,7 +111,6 @@ import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianStreamCipherSpec;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianStreamKeySpec;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianStreamKeySpec.GordianBlakeXofKey;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianStreamKeySpec.GordianChaCha20Key;
-import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianStreamKeySpec.GordianKMACXofKey;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianStreamKeySpec.GordianSalsa20Key;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianStreamKeySpec.GordianSkeinXofKey;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianStreamKeySpec.GordianVMPCKey;
@@ -295,9 +293,6 @@ public class BouncyCipherFactory
                 return new Blake2XEngine(GordianBlakeXofKey.BLAKE2XB == myBlakeKeyType ? new Blake2b() : new Blake2s());
             case BLAKE3XOF:
                 return new Blake3Engine();
-            case KMACXOF:
-                final GordianKMACXofKey myKMACKeyType = (GordianKMACXofKey) mySpec.getSubKeyType();
-                return new KMACEngine(myKMACKeyType.getLength().getLength());
             default:
                 throw new GordianDataException(GordianCoreFactory.getInvalidText(pCipherSpec));
         }

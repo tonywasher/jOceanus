@@ -240,12 +240,7 @@ public enum GordianCipherResource implements TethysBundleId {
     /**
      * StreamKey Blake3Xof.
      */
-    STREAMKEY_BLAKE3("streamKey.BLAKE3"),
-
-    /**
-     * StreamKey KMACXof.
-     */
-    STREAMKEY_KMAC("streamKey.KMAC");
+    STREAMKEY_BLAKE3("streamKey.BLAKE3");
 
     /**
      * The SymKey Map.
@@ -372,7 +367,6 @@ public enum GordianCipherResource implements TethysBundleId {
         myMap.put(GordianStreamKeyType.SKEINXOF, STREAMKEY_SKEIN);
         myMap.put(GordianStreamKeyType.BLAKE2XOF, STREAMKEY_BLAKE2);
         myMap.put(GordianStreamKeyType.BLAKE3XOF, STREAMKEY_BLAKE3);
-        myMap.put(GordianStreamKeyType.KMACXOF, STREAMKEY_KMAC);
         return myMap;
     }
 

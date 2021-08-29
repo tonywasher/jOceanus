@@ -54,6 +54,7 @@ import org.bouncycastle.crypto.util.PublicKeyFactory;
 import org.bouncycastle.crypto.util.SubjectPublicKeyInfoFactory;
 
 import net.sourceforge.joceanus.jgordianknot.api.agree.GordianKeyPairAgreementSpec;
+import net.sourceforge.joceanus.jgordianknot.api.base.GordianLength;
 import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigestSpec;
 import net.sourceforge.joceanus.jgordianknot.api.encrypt.GordianEncryptorSpec;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPair;
@@ -389,7 +390,13 @@ public final class BouncyRSAKeyPair {
                     return new X931Signer(new RSABlindedEngine(), myDigest.getDigest(), ISOTrailers.noTrailerAvailable(myDigest.getDigest()));
                 case PREHASH:
                     return new RSADigestSigner(myDigest.getDigest());
-                case PSS:
+                case PSS128:
+                    return new PSSSigner(new RSABlindedEngine(), myDigest.getDigest(),
+                            pFactory.getDigestFactory().createDigest(GordianDigestSpec.shake128(GordianLength.LEN_256)).getDigest(), mySaltLength);
+                case PSS256:
+                    return new PSSSigner(new RSABlindedEngine(), myDigest.getDigest(),
+                            pFactory.getDigestFactory().createDigest(GordianDigestSpec.shake256(GordianLength.LEN_512)).getDigest(), mySaltLength);
+                case PSSMGF1:
                 default:
                     return new PSSSigner(new RSABlindedEngine(), myDigest.getDigest(), mySaltLength);
             }
@@ -426,7 +433,7 @@ public final class BouncyRSAKeyPair {
 
             /* Initialise and set the signer */
             final BouncyRSAPrivateKey myPrivate = (BouncyRSAPrivateKey) getKeyPair().getPrivateKey();
-            final CipherParameters myParms = GordianSignatureType.PSS.equals(getSignatureSpec().getSignatureType())
+            final CipherParameters myParms = getSignatureSpec().getSignatureType().isPSS()
                                              ? new ParametersWithRandom(myPrivate.getPrivateKey(), getRandom())
                                              : myPrivate.getPrivateKey();
             getSigner().init(true, myParms);

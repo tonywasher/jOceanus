@@ -140,7 +140,7 @@ public abstract class GordianCoreSignatureFactory
         /* If this is a RSA Signature */
         if (GordianKeyPairType.RSA.equals(pKeyPairSpec.getKeyPairType())) {
             /* If this is a PSS signature */
-            if (GordianSignatureType.PSS.equals(pSignSpec.getSignatureType())) {
+            if (pSignSpec.getSignatureType().isPSS()) {
                 /* The digest length cannot be too large wrt to the modulus */
                 int myLen = pSignSpec.getDigestSpec().getDigestLength().getLength();
                 myLen += Byte.SIZE;

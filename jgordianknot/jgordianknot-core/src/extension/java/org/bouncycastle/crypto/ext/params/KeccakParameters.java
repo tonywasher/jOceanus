@@ -22,11 +22,8 @@ import org.bouncycastle.util.Arrays;
 /**
  * Keccak Parameters.
  * <p>
- * Used for the follwoing constructs
+ * Used for the following constructs
  * <ul>
- *     <li>SHAKE
- *     <li>cSHAKE
- *     <li>KMAC
  *     <li>Kangaroo
  * </ul>
  */
@@ -41,11 +38,6 @@ public class KeccakParameters
      * The personalisation.
      */
     private byte[] thePersonal;
-
-    /**
-     * The maximum xofLen.
-     */
-    private long theMaxXofLen;
 
     /**
      * Obtain the key.
@@ -64,14 +56,6 @@ public class KeccakParameters
     }
 
     /**
-     * Obtain the maximum output length.
-     * @return the output length
-     */
-    public long getMaxOutputLength() {
-        return theMaxXofLen;
-    }
-
-    /**
      * Parameter Builder.
      */
     public static class Builder {
@@ -84,11 +68,6 @@ public class KeccakParameters
          * The personalisation.
          */
         private byte[] thePersonal;
-
-        /**
-         * The maximum xofLen.
-         */
-        private long theMaxXofLen;
 
         /**
          * Set the key.
@@ -111,16 +90,6 @@ public class KeccakParameters
         }
 
         /**
-         * Set the maximum output length. (-1=unlimited)
-         * @param pMaxOutLen the maximum output length
-         * @return the Builder
-         */
-        public Builder setMaxOutputLen(final long pMaxOutLen) {
-            theMaxXofLen = pMaxOutLen;
-            return this;
-        }
-
-        /**
          * Build the parameters.
          * @return the parameters
          */
@@ -133,11 +102,10 @@ public class KeccakParameters
                 myParams.theKey = theKey;
             }
 
-            /* Record personalisation and xof length */
+            /* Record personalisation */
             if (thePersonal != null) {
                 myParams.thePersonal = thePersonal;
             }
-            myParams.theMaxXofLen = theMaxXofLen;
 
             /* Return the parameters */
             return myParams;

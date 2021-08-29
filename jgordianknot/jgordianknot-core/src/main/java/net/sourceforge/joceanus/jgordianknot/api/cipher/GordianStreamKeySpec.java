@@ -251,17 +251,6 @@ public class GordianStreamKeySpec
     }
 
     /**
-     * Create kmacKeySpec.
-     * @param pKeyLength the keyLength
-     * @param pStateLength the stateLength
-     * @return the keySpec
-     */
-    public static GordianStreamKeySpec kmacXof(final GordianLength pKeyLength,
-                                               final GordianLength pStateLength) {
-        return new GordianStreamKeySpec(GordianStreamKeyType.KMACXOF, pKeyLength, GordianKMACXofKey.getKeyTypeForLength(pStateLength));
-    }
-
-    /**
      * Obtain streamKey Type.
      * @return the streamKeyType
      */
@@ -348,8 +337,6 @@ public class GordianStreamKeySpec
                 return checkSkeinValidity();
             case BLAKE2XOF:
                 return checkBlake2Validity();
-            case KMACXOF:
-                return checkKMACValidity();
             default:
                 return theSubKeyType == null
                         && theStreamKeyType.validForKeyLength(theKeyLength);
@@ -507,11 +494,6 @@ public class GordianStreamKeySpec
             return theSubKeyType.toString();
         }
 
-        /* Handle KMAC */
-        if (theStreamKeyType == GordianStreamKeyType.KMACXOF) {
-            return theStreamKeyType.toString() + theSubKeyType.toString();
-        }
-
         /* return the name */
         return theStreamKeyType.toString();
     }
@@ -635,8 +617,6 @@ public class GordianStreamKeySpec
                 return Arrays.asList(GordianSkeinXofKey.values());
             case BLAKE2XOF:
                 return Arrays.asList(GordianBlakeXofKey.values());
-            case KMACXOF:
-                return Arrays.asList(GordianKMACXofKey.values());
             default:
                 return Collections.emptyList();
         }
@@ -660,8 +640,6 @@ public class GordianStreamKeySpec
                 return GordianSkeinXofKey.STATE1024;
             case BLAKE2XOF:
                 return GordianBlakeXofKey.BLAKE2XB;
-            case KMACXOF:
-                return GordianKMACXofKey.STATE128;
             default:
                 return null;
         }

@@ -496,8 +496,6 @@ public class GordianCoreKnuthObfuscater
                 return deriveEncodedIdFromEnum((GordianSkeinXofKey) pStreamKeySpec.getSubKeyType());
             case BLAKE2XOF:
                 return deriveEncodedIdFromEnum((GordianBlakeXofKey) pStreamKeySpec.getSubKeyType());
-            case KMACXOF:
-                return deriveEncodedIdFromEnum((GordianKMACXofKey) pStreamKeySpec.getSubKeyType());
             default:
                 return 0;
         }
@@ -524,8 +522,6 @@ public class GordianCoreKnuthObfuscater
                 return deriveEnumFromEncodedId(pEncodedId, GordianSkeinXofKey.class);
             case BLAKE2XOF:
                 return deriveEnumFromEncodedId(pEncodedId, GordianBlakeXofKey.class);
-            case KMACXOF:
-                return deriveEnumFromEncodedId(pEncodedId, GordianKMACXofKey.class);
             default:
                 return null;
         }

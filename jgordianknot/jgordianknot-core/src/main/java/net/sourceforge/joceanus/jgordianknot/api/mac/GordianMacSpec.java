@@ -204,7 +204,7 @@ public final class GordianMacSpec implements GordianKeySpec {
      * @return the MacSpec
      */
     public static GordianMacSpec kMac(final GordianLength pKeyLength) {
-        return kMac(pKeyLength, GordianDigestSpec.shake(GordianDigestType.SHAKE.getDefaultLength()));
+        return kMac(pKeyLength, GordianDigestSpec.shake128(GordianDigestType.SHAKE.getDefaultLength()));
     }
 
     /**

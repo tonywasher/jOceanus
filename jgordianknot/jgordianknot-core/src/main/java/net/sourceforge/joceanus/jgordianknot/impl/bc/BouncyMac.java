@@ -18,8 +18,8 @@ package net.sourceforge.joceanus.jgordianknot.impl.bc;
 
 import org.bouncycastle.crypto.CipherParameters;
 import org.bouncycastle.crypto.Mac;
-import org.bouncycastle.crypto.ext.macs.KMAC;
 import org.bouncycastle.crypto.ext.params.Blake2Parameters;
+import org.bouncycastle.crypto.macs.KMAC;
 import org.bouncycastle.crypto.params.KeyParameter;
 import org.bouncycastle.crypto.params.ParametersWithIV;
 import org.bouncycastle.crypto.params.SkeinParameters;
@@ -132,13 +132,19 @@ public final class BouncyMac
     @Override
     public byte[] finish() {
         final byte[] myResult = new byte[getMacSize()];
-        theMac.doFinal(myResult, 0);
+        if (theMac instanceof KMAC) {
+            ((KMAC) theMac).doFinal(myResult, 0, getMacSize());
+        } else {
+            theMac.doFinal(myResult, 0);
+        }
         return myResult;
     }
 
     @Override
     public int doFinish(final byte[] pBuffer,
                         final int pOffset) {
-        return theMac.doFinal(pBuffer, pOffset);
+        return theMac instanceof KMAC
+            ? ((KMAC) theMac).doFinal(pBuffer, pOffset, getMacSize())
+            : theMac.doFinal(pBuffer, pOffset);
     }
 }

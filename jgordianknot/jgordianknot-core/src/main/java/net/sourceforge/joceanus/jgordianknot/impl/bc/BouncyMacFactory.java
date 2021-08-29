@@ -25,7 +25,6 @@ import org.bouncycastle.crypto.ext.digests.Blake2;
 import org.bouncycastle.crypto.ext.digests.Blake3Digest;
 import org.bouncycastle.crypto.ext.macs.Blake2Mac;
 import org.bouncycastle.crypto.ext.macs.Blake3Mac;
-import org.bouncycastle.crypto.ext.macs.KMAC;
 import org.bouncycastle.crypto.ext.macs.SkeinMac;
 import org.bouncycastle.crypto.ext.macs.Zuc128Mac;
 import org.bouncycastle.crypto.ext.macs.Zuc256Mac;
@@ -37,6 +36,7 @@ import org.bouncycastle.crypto.macs.DSTU7564Mac;
 import org.bouncycastle.crypto.macs.GMac;
 import org.bouncycastle.crypto.macs.GOST28147Mac;
 import org.bouncycastle.crypto.macs.HMac;
+import org.bouncycastle.crypto.macs.KMAC;
 import org.bouncycastle.crypto.macs.Poly1305;
 import org.bouncycastle.crypto.macs.SipHash;
 import org.bouncycastle.crypto.macs.SipHash128;
@@ -138,7 +138,7 @@ public class BouncyMacFactory
     private Mac getBCMac(final GordianMacSpec pMacSpec) throws OceanusException {
         switch (pMacSpec.getMacType()) {
             case HMAC:
-                return getBCHMac(pMacSpec.getDigestSpec());
+                return getBCHMac(pMacSpec);
             case GMAC:
                 return getBCGMac(pMacSpec.getSymKeySpec());
             case CMAC:
@@ -177,13 +177,12 @@ public class BouncyMacFactory
     /**
      * Create the BouncyCastle HMAC.
      *
-     * @param pDigestSpec the digestSpec
+     * @param pMacSpec the macSpec
      * @return the MAC
      * @throws OceanusException on error
      */
-    private Mac getBCHMac(final GordianDigestSpec pDigestSpec) throws OceanusException {
-        final BouncyDigest myDigest = getFactory().getDigestFactory().createDigest(pDigestSpec);
-        return new HMac(myDigest.getDigest());
+    private Mac getBCHMac(final GordianMacSpec pMacSpec) throws OceanusException {
+         return new BouncyHMac(getFactory().getDigestFactory(), pMacSpec);
     }
 
     /**
@@ -284,7 +283,7 @@ public class BouncyMacFactory
      */
     private static Mac getBCKMAC(final GordianMacSpec pSpec) {
         final GordianDigestSpec mySpec = pSpec.getDigestSpec();
-        return new KMAC(mySpec.getStateLength().getLength(), mySpec.getDigestLength().getByteLength());
+        return new KMAC(mySpec.getStateLength().getLength(), new byte[0]);
     }
 
     /**

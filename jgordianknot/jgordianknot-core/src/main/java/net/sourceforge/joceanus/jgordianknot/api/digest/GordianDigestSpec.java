@@ -270,21 +270,21 @@ public class GordianDigestSpec
     }
 
     /**
-     * Create shakeDigestSpec.
+     * Create shake128DigestSpec.
      * @param pLength the length
      * @return the DigestSpec
      */
-    public static GordianDigestSpec shakeAlt(final GordianLength pLength) {
-        return new GordianDigestSpec(GordianDigestType.SHAKE, GordianDigestType.SHAKE.getAlternateStateForLength(pLength), pLength);
+    public static GordianDigestSpec shake128(final GordianLength pLength) {
+        return new GordianDigestSpec(GordianDigestType.SHAKE, GordianLength.LEN_128, pLength);
     }
 
     /**
-     * Create shakeDigestSpec.
+     * Create shake256DigestSpec.
      * @param pLength the length
      * @return the DigestSpec
      */
-    public static GordianDigestSpec shake(final GordianLength pLength) {
-        return new GordianDigestSpec(GordianDigestType.SHAKE, pLength);
+    public static GordianDigestSpec shake256(final GordianLength pLength) {
+        return new GordianDigestSpec(GordianDigestType.SHAKE, GordianLength.LEN_256, pLength);
     }
 
     /**
@@ -398,6 +398,16 @@ public class GordianDigestSpec
     }
 
     /**
+     * Is this a pureSHAKE digest.
+     * @return true/false
+     */
+    public boolean isPureSHAKE() {
+        return GordianDigestType.SHAKE.equals(theDigestType)
+                && theStateLength != null
+                && theLength.getByteLength() == 2 * theStateLength.getByteLength();
+    }
+
+    /**
      * Check spec validity.
      * @return valid true/false
      */
@@ -439,7 +449,7 @@ public class GordianDigestSpec
                         break;
                     case SHAKE:
                         theName += theStateLength;
-                        if (!theStateLength.equals(theLength)) {
+                        if (!isPureSHAKE()) {
                             theName += SEP + theLength;
                         }
                         break;

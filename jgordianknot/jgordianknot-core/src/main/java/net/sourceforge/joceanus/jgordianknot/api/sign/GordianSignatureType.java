@@ -45,9 +45,19 @@ public enum GordianSignatureType {
     NR,
 
     /**
-     * PSS.
+     * PSS-MGF1.
      */
-    PSS,
+    PSSMGF1,
+
+    /**
+     * PSS-SHAKE128.
+     */
+    PSS128,
+
+    /**
+     * PSS-SHAKE256.
+     */
+    PSS256,
 
     /**
      * X9.31.
@@ -77,7 +87,9 @@ public enum GordianSignatureType {
     public boolean isSupported(final GordianKeyPairType pKeyType) {
         switch (this) {
             case ISO9796D2:
-            case PSS:
+            case PSSMGF1:
+            case PSS128:
+            case PSS256:
             case X931:
                 return GordianKeyPairType.RSA == pKeyType;
             case NR:
@@ -157,6 +169,21 @@ public enum GordianSignatureType {
             case DSTU4145:
             case GOST2012:
             case RAINBOW:
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    /**
+     * Is this signature type PSS?
+     * @return true/false
+     */
+    public boolean isPSS() {
+        switch (this) {
+            case PSSMGF1:
+            case PSS128:
+            case PSS256:
                 return true;
             default:
                 return false;

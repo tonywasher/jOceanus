@@ -37,6 +37,7 @@ import org.bouncycastle.crypto.digests.SHA384Digest;
 import org.bouncycastle.crypto.digests.SHA3Digest;
 import org.bouncycastle.crypto.digests.SHA512Digest;
 import org.bouncycastle.crypto.digests.SHA512tDigest;
+import org.bouncycastle.crypto.digests.SHAKEDigest;
 import org.bouncycastle.crypto.digests.SM3Digest;
 import org.bouncycastle.crypto.digests.TigerDigest;
 import org.bouncycastle.crypto.digests.WhirlpoolDigest;
@@ -44,7 +45,6 @@ import org.bouncycastle.crypto.ext.digests.Blake2;
 import org.bouncycastle.crypto.ext.digests.Blake2b;
 import org.bouncycastle.crypto.ext.digests.Blake2s;
 import org.bouncycastle.crypto.ext.digests.Blake3Digest;
-import org.bouncycastle.crypto.ext.digests.CSHAKE;
 import org.bouncycastle.crypto.ext.digests.CubeHashDigest;
 import org.bouncycastle.crypto.ext.digests.GroestlDigest;
 import org.bouncycastle.crypto.ext.digests.JHDigest;
@@ -114,7 +114,7 @@ public class BouncyDigestFactory
             case SHA3:
                 return getSHA3Digest(myLen);
             case SHAKE:
-                return new CSHAKE(pDigestSpec.getStateLength().getLength(), pDigestSpec.getDigestLength().getByteLength(), null);
+                return new SHAKEDigest(pDigestSpec.getStateLength().getLength());
             case KANGAROO:
                 return getKangarooDigest(pDigestSpec);
             case HARAKA:
