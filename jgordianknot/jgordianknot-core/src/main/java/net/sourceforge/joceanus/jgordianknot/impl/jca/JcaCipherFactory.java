@@ -440,7 +440,6 @@ public class JcaCipherFactory
             case SKEINXOF:
             case BLAKE2XOF:
             case BLAKE3XOF:
-            case KMACXOF:
                 return false;
             default:
                 return super.validStreamKeyType(pKeyType);

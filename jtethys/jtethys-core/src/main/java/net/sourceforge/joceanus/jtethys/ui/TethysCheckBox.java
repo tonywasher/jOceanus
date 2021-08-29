@@ -22,6 +22,11 @@ import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventPr
 
 /**
  * Check Box.
+ * <p>
+ * The EventProvider fires the following events.
+ * <ul>
+ *    <li>TethysUIEvent.NEWVALUE is fired when the checkBox value is changed.
+ * </ul>
  */
 public abstract class TethysCheckBox
         implements TethysEventProvider<TethysUIEvent>, TethysComponent {

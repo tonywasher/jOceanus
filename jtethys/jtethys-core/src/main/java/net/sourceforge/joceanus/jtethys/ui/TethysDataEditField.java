@@ -143,7 +143,7 @@ public interface TethysDataEditField<T>
         /**
          * The id.
          */
-        private Integer theId;
+        private final Integer theId;
 
         /**
          * Is the field editable?
@@ -323,20 +323,30 @@ public interface TethysDataEditField<T>
          * @param pValidator the validator
          */
         void setValidator(Function<T, String> pValidator);
+
+        /**
+         * Set the reporter.
+         * <p>
+         * This should report the validation error
+         * @param pReporter the reporter
+         */
+        void setReporter(Consumer<String> pReporter);
     }
 
     /**
      * ValidatedTextFieldControl.
      * @param <T> the item class
      */
-    interface TethysValidatedEditField<T> extends TethysDataEditField<T>, TethysValidatedField<T> {
+    interface TethysValidatedEditField<T>
+            extends TethysDataEditField<T>, TethysValidatedField<T> {
     }
 
     /**
      * DataEditTextField base class.
      * @param <T> the data type
      */
-    class TethysDataEditTextFieldControl<T> {
+    class TethysDataEditTextFieldControl<T>
+            implements TethysValidatedField<T> {
         /**
          * The InvalidValue Error Text.
          */
@@ -356,6 +366,11 @@ public interface TethysDataEditField<T>
          * The validator.
          */
         private Function<T, String> theValidator;
+
+        /**
+         * The reporter.
+         */
+        private Consumer<String> theReporter;
 
         /**
          * The base value.
@@ -437,14 +452,14 @@ public interface TethysDataEditField<T>
             theErrorText = null;
         }
 
-        /**
-         * Set the validator.
-         * <p>
-         * This should validate the value and return null for OK, and an error text for failure
-         * @param pValidator the validator
-         */
+        @Override
         public void setValidator(final Function<T, String> pValidator) {
             theValidator = pValidator;
+        }
+
+        @Override
+        public void setReporter(final Consumer<String> pReporter) {
+            theReporter = pReporter;
         }
 
         /**
@@ -467,6 +482,7 @@ public interface TethysDataEditField<T>
             /* NullOp if there are no changes */
             if (Objects.equals(pNewValue, theEdit)) {
                 /* Return success */
+                theField.fireEvent(TethysUIEvent.EDITFOCUSLOST, null);
                 return true;
             }
 
@@ -480,6 +496,9 @@ public interface TethysDataEditField<T>
                 /* Invoke the validator and reject value if necessary */
                 theErrorText = theValidator.apply(myValue);
                 if (theErrorText != null) {
+                    if (theReporter != null) {
+                        theReporter.accept(theErrorText);
+                    }
                     return false;
                 }
 
@@ -529,7 +548,8 @@ public interface TethysDataEditField<T>
     /**
      * RawDecimalTextFieldControl.
      */
-    interface TethysRawDecimalEditField extends TethysValidatedEditField<TethysDecimal>, TethysRawDecimalField {
+    interface TethysRawDecimalEditField
+            extends TethysValidatedEditField<TethysDecimal>, TethysRawDecimalField {
     }
 
     /**
@@ -547,7 +567,8 @@ public interface TethysDataEditField<T>
      * CurrencyTextFieldControl.
      * @param <T> the data type
      */
-    interface TethysCurrencyEditField<T extends TethysMoney> extends TethysValidatedEditField<T>, TethysCurrencyField {
+    interface TethysCurrencyEditField<T extends TethysMoney>
+            extends TethysValidatedEditField<T>, TethysCurrencyField {
     }
 
     /**
@@ -566,7 +587,8 @@ public interface TethysDataEditField<T>
      * IconButtonFieldControl.
      * @param <T> the data type
      */
-    interface TethysIconButtonField<T> extends TethysDataEditField<T>, TethysIconButton<T> {
+    interface TethysIconButtonField<T>
+            extends TethysDataEditField<T>, TethysIconButton<T> {
     }
 
     /**
@@ -583,7 +605,8 @@ public interface TethysDataEditField<T>
     /**
      * DateButton Field.
      */
-    interface TethysDateButtonField extends TethysDataEditField<TethysDate>, TethysDateButton {
+    interface TethysDateButtonField
+            extends TethysDataEditField<TethysDate>, TethysDateButton {
     }
 
     /**
@@ -602,7 +625,8 @@ public interface TethysDataEditField<T>
      * Scroll Button Field.
      * @param <T> the value type
      */
-    interface TethysScrollButtonField<T> extends TethysDataEditField<T>, TethysScrollButton<T> {
+    interface TethysScrollButtonField<T>
+            extends TethysDataEditField<T>, TethysScrollButton<T> {
     }
 
     /**
@@ -621,6 +645,7 @@ public interface TethysDataEditField<T>
      * List Button Field.
      * @param <T> the value type
      */
-    interface TethysListButtonField<T extends Comparable<T>> extends TethysDataEditField<List<T>>, TethysListButton<T> {
+    interface TethysListButtonField<T extends Comparable<T>>
+            extends TethysDataEditField<List<T>>, TethysListButton<T> {
     }
 }

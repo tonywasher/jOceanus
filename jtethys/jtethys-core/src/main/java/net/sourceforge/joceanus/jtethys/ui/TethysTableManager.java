@@ -100,6 +100,16 @@ public abstract class TethysTableManager<C, R>
     private Consumer<OceanusException> theOnCommitError;
 
     /**
+     * The OnValidateError Consumer.
+     */
+    private Consumer<String> theOnValidateError;
+
+    /**
+     * The OnCellEditState Consumer.
+     */
+    private Consumer<Boolean> theOnCellEditState;
+
+    /**
      * The Comparator.
      */
     private Comparator<R> theComparator;
@@ -149,6 +159,11 @@ public abstract class TethysTableManager<C, R>
     public void setEditable(final boolean pEditable) {
         isEditable = pEditable;
     }
+
+    /**
+     * RequestFocus.
+     */
+    public abstract void requestFocus();
 
     /**
      * do we rePaintRow on commit?
@@ -304,6 +319,26 @@ public abstract class TethysTableManager<C, R>
     public abstract void selectRowWithScroll(R pItem);
 
     /**
+     * Set the on-celEditState consumer.
+     * @param pOnCellEditState the consumer
+     */
+    public void setOnCellEditState(final Consumer<Boolean> pOnCellEditState) {
+        theOnCellEditState = pOnCellEditState;
+    }
+
+    /**
+     * process onCellEditState.
+     * @param pState the state
+     */
+    public void processOnCellEditState(final Boolean pState) {
+        /* If we have an onCellEditState consumer */
+        if (theOnCellEditState != null) {
+            /* call it */
+            theOnCellEditState.accept(pState);
+        }
+    }
+
+    /**
      * Set the on-commitError consumer.
      * @param pOnCommitError the consumer
      */
@@ -322,6 +357,27 @@ public abstract class TethysTableManager<C, R>
             theOnCommitError.accept(pError);
         }
     }
+
+    /**
+     * Set the on-validateError consumer.
+     * @param pOnValidateError the consumer
+     */
+    public void setOnValidateError(final Consumer<String> pOnValidateError) {
+        theOnValidateError = pOnValidateError;
+    }
+
+    /**
+     * obtain onValidateError consumer.
+     * @return the consumer
+     */
+    public Consumer<String> getOnValidateError() {
+        return theOnValidateError;
+    }
+
+    /**
+     * Cancel editing.
+     */
+    public abstract void cancelEditing();
 
     /**
      * Obtain an iterator over the unsorted items.
@@ -562,14 +618,16 @@ public abstract class TethysTableManager<C, R>
         /**
          * Set the name of the column.
          * @param pName the column name
+         * @return the column
          */
-        void setName(String pName);
+        TethysTableColumn<T, C, R> setName(String pName);
 
         /**
          * Set the column width.
          * @param pWidth the width
+         * @return the column
          */
-        void setColumnWidth(int pWidth);
+        TethysTableColumn<T, C, R> setColumnWidth(int pWidth);
 
         /**
          * Is the column visible?
@@ -580,8 +638,9 @@ public abstract class TethysTableManager<C, R>
         /**
          * Set the visibility of the column.
          * @param pVisible true/false
+         * @return the column
          */
-        void setVisible(boolean pVisible);
+        TethysTableColumn<T, C, R> setVisible(boolean pVisible);
 
         /**
          * Is the column editable?
@@ -592,14 +651,16 @@ public abstract class TethysTableManager<C, R>
         /**
          * Set the edit-ability of the column.
          * @param pEditable true/false
+         * @return the column
          */
-        void setEditable(boolean pEditable);
+        TethysTableColumn<T, C, R> setEditable(boolean pEditable);
 
         /**
          * Set the cell-editable tester.
          * @param pEditable the editable tester
+         * @return the column
          */
-        void setCellEditable(Predicate<R> pEditable);
+        TethysTableColumn<T, C, R> setCellEditable(Predicate<R> pEditable);
 
         /**
          * Get the cell-editable tester.
@@ -610,8 +671,9 @@ public abstract class TethysTableManager<C, R>
         /**
          * Set the on-commit consumer.
          * @param pOnCommit the consumer
+         * @return the column
          */
-        void setOnCommit(TethysOnColumnCommit<R, T> pOnCommit);
+        TethysTableColumn<T, C, R> setOnCommit(TethysOnCellCommit<R, T> pOnCommit);
 
         /**
          * do we rePaintColumn on commit?
@@ -622,8 +684,9 @@ public abstract class TethysTableManager<C, R>
         /**
          * Set repaintColumn on Commit.
          * @param pRePaint the flag
+         * @return the column
          */
-        void setRepaintColumnOnCommit(boolean pRePaint);
+        TethysTableColumn<T, C, R> setRepaintColumnOnCommit(boolean pRePaint);
 
         /**
          * get the column id which forces a rePaint.
@@ -634,8 +697,9 @@ public abstract class TethysTableManager<C, R>
         /**
          * Set repaintColumnId.
          * @param pRePaintId the repaint id
+         * @return the column
          */
-        void setRepaintColumnId(C pRePaintId);
+        TethysTableColumn<T, C, R> setRepaintColumnId(C pRePaintId);
     }
 
     /**
@@ -647,8 +711,9 @@ public abstract class TethysTableManager<C, R>
         /**
          * Set the validity tester.
          * @param pValidator the validator
+         * @return the column
          */
-        void setValidator(BiFunction<T, R, String> pValidator);
+        TethysTableValidatedColumn<T, R> setValidator(BiFunction<T, R, String> pValidator);
     }
 
     /**
@@ -659,6 +724,8 @@ public abstract class TethysTableManager<C, R>
     public interface TethysTableStringColumn<C, R>
             extends TethysTableValidatedColumn<String, R>,
             TethysTableColumn<String, C, R> {
+        @Override
+        TethysTableStringColumn<C, R> setValidator(BiFunction<String, R, String> pValidator);
     }
 
     /**
@@ -669,6 +736,8 @@ public abstract class TethysTableManager<C, R>
     public interface TethysTableCharArrayColumn<C, R>
             extends TethysTableValidatedColumn<char[], R>,
             TethysTableColumn<char[], C, R> {
+        @Override
+        TethysTableCharArrayColumn<C, R> setValidator(BiFunction<char[], R, String> pValidator);
     }
 
     /**
@@ -679,6 +748,8 @@ public abstract class TethysTableManager<C, R>
     public interface TethysTableShortColumn<C, R>
             extends TethysTableValidatedColumn<Short, R>,
             TethysTableColumn<Short, C, R> {
+        @Override
+        TethysTableShortColumn<C, R> setValidator(BiFunction<Short, R, String> pValidator);
     }
 
     /**
@@ -689,6 +760,8 @@ public abstract class TethysTableManager<C, R>
     public interface TethysTableIntegerColumn<C, R>
             extends TethysTableValidatedColumn<Integer, R>,
             TethysTableColumn<Integer, C, R> {
+        @Override
+        TethysTableIntegerColumn<C, R> setValidator(BiFunction<Integer, R, String> pValidator);
     }
 
     /**
@@ -699,6 +772,8 @@ public abstract class TethysTableManager<C, R>
     public interface TethysTableLongColumn<C, R>
             extends TethysTableValidatedColumn<Long, R>,
             TethysTableColumn<Long, C, R> {
+        @Override
+        TethysTableLongColumn<C, R> setValidator(BiFunction<Long, R, String> pValidator);
     }
 
     /**
@@ -710,8 +785,9 @@ public abstract class TethysTableManager<C, R>
         /**
          * Set the Number of decimals supplier.
          * @param pSupplier the supplier
+         * @return the column
          */
-        void setNumDecimals(ToIntFunction<R> pSupplier);
+        TethysTableDecimalColumn<R> setNumDecimals(ToIntFunction<R> pSupplier);
     }
 
     /**
@@ -724,8 +800,9 @@ public abstract class TethysTableManager<C, R>
         /**
          * Set the Deemed Currency supplier.
          * @param pSupplier the supplier
+         * @return the column
          */
-        void setDeemedCurrency(Function<R, Currency> pSupplier);
+        TethysTableCurrencyColumn<T, R> setDeemedCurrency(Function<R, Currency> pSupplier);
     }
 
     /**
@@ -736,6 +813,11 @@ public abstract class TethysTableManager<C, R>
     public interface TethysTableRawDecimalColumn<C, R>
             extends TethysTableDecimalColumn<R>,
             TethysTableColumn<TethysDecimal, C, R> {
+        @Override
+        TethysTableRawDecimalColumn<C, R> setValidator(BiFunction<TethysDecimal, R, String> pValidator);
+
+        @Override
+        TethysTableRawDecimalColumn<C, R> setNumDecimals(ToIntFunction<R> pSupplier);
     }
 
     /**
@@ -746,6 +828,11 @@ public abstract class TethysTableManager<C, R>
     public interface TethysTableMoneyColumn<C, R>
             extends TethysTableCurrencyColumn<TethysMoney, R>,
             TethysTableColumn<TethysMoney, C, R> {
+        @Override
+        TethysTableMoneyColumn<C, R> setValidator(BiFunction<TethysMoney, R, String> pValidator);
+
+        @Override
+        TethysTableMoneyColumn<C, R> setDeemedCurrency(Function<R, Currency> pSupplier);
     }
 
     /**
@@ -756,6 +843,11 @@ public abstract class TethysTableManager<C, R>
     public interface TethysTablePriceColumn<C, R>
             extends TethysTableCurrencyColumn<TethysPrice, R>,
             TethysTableColumn<TethysPrice, C, R> {
+        @Override
+        TethysTablePriceColumn<C, R> setValidator(BiFunction<TethysPrice, R, String> pValidator);
+
+        @Override
+        TethysTablePriceColumn<C, R> setDeemedCurrency(Function<R, Currency> pSupplier);
     }
 
     /**
@@ -766,6 +858,8 @@ public abstract class TethysTableManager<C, R>
     public interface TethysTableUnitsColumn<C, R>
             extends TethysTableValidatedColumn<TethysUnits, R>,
             TethysTableColumn<TethysUnits, C, R> {
+        @Override
+        TethysTableUnitsColumn<C, R> setValidator(BiFunction<TethysUnits, R, String> pValidator);
     }
 
     /**
@@ -776,6 +870,8 @@ public abstract class TethysTableManager<C, R>
     public interface TethysTableRateColumn<C, R>
             extends TethysTableValidatedColumn<TethysRate, R>,
             TethysTableColumn<TethysRate, C, R> {
+        @Override
+        TethysTableRateColumn<C, R> setValidator(BiFunction<TethysRate, R, String> pValidator);
     }
 
     /**
@@ -786,6 +882,8 @@ public abstract class TethysTableManager<C, R>
     public interface TethysTableDilutionColumn<C, R>
             extends TethysTableValidatedColumn<TethysDilution, R>,
             TethysTableColumn<TethysDilution, C, R> {
+        @Override
+        TethysTableDilutionColumn<C, R> setValidator(BiFunction<TethysDilution, R, String> pValidator);
     }
 
     /**
@@ -796,6 +894,8 @@ public abstract class TethysTableManager<C, R>
     public interface TethysTableRatioColumn<C, R>
             extends TethysTableValidatedColumn<TethysRatio, R>,
             TethysTableColumn<TethysRatio, C, R> {
+        @Override
+        TethysTableRatioColumn<C, R> setValidator(BiFunction<TethysRatio, R, String> pValidator);
     }
 
     /**
@@ -806,6 +906,11 @@ public abstract class TethysTableManager<C, R>
     public interface TethysTableDilutedPriceColumn<C, R>
             extends TethysTableCurrencyColumn<TethysDilutedPrice, R>,
             TethysTableColumn<TethysDilutedPrice, C, R> {
+        @Override
+        TethysTableDilutedPriceColumn<C, R> setValidator(BiFunction<TethysDilutedPrice, R, String> pValidator);
+
+        @Override
+        TethysTableDilutedPriceColumn<C, R> setDeemedCurrency(Function<R, Currency> pSupplier);
     }
 
     /**
@@ -817,8 +922,9 @@ public abstract class TethysTableManager<C, R>
         /**
          * Set the IconMapSet supplier.
          * @param pSupplier the supplier
+         * @return the configurator
          */
-        void setIconMapSet(Function<R, TethysIconMapSet<T>> pSupplier);
+        TethysTableIconConfig<T, R> setIconMapSet(Function<R, TethysIconMapSet<T>> pSupplier);
     }
 
     /**
@@ -830,6 +936,8 @@ public abstract class TethysTableManager<C, R>
     public interface TethysTableIconColumn<T, C, R>
             extends TethysTableIconConfig<T, R>,
             TethysTableColumn<T, C, R> {
+        @Override
+        TethysTableIconColumn<T, C, R> setIconMapSet(Function<R, TethysIconMapSet<T>> pSupplier);
     }
 
     /**
@@ -840,8 +948,9 @@ public abstract class TethysTableManager<C, R>
         /**
          * Set the Date configurator.
          * @param pConfigurator the configurator
+         * @return the configurator
          */
-        void setDateConfigurator(BiConsumer<R, TethysDateConfig> pConfigurator);
+        TethysTableDateConfig<R> setDateConfigurator(BiConsumer<R, TethysDateConfig> pConfigurator);
     }
 
     /**
@@ -852,6 +961,8 @@ public abstract class TethysTableManager<C, R>
     public interface TethysTableDateColumn<C, R>
             extends TethysTableDateConfig<R>,
             TethysTableColumn<TethysDate, C, R> {
+        @Override
+        TethysTableDateColumn<C, R> setDateConfigurator(BiConsumer<R, TethysDateConfig> pConfigurator);
     }
 
     /**
@@ -863,8 +974,9 @@ public abstract class TethysTableManager<C, R>
         /**
          * Set the Menu configurator.
          * @param pConfigurator the configurator
+         * @return the configurator
          */
-        void setMenuConfigurator(BiConsumer<R, TethysScrollMenu<T>> pConfigurator);
+        TethysTableScrollConfig<T, R> setMenuConfigurator(BiConsumer<R, TethysScrollMenu<T>> pConfigurator);
     }
 
     /**
@@ -876,6 +988,8 @@ public abstract class TethysTableManager<C, R>
     public interface TethysTableScrollColumn<T, C, R>
             extends TethysTableScrollConfig<T, R>,
             TethysTableColumn<T, C, R> {
+        @Override
+        TethysTableScrollColumn<T, C, R> setMenuConfigurator(BiConsumer<R, TethysScrollMenu<T>> pConfigurator);
     }
 
     /**
@@ -887,8 +1001,9 @@ public abstract class TethysTableManager<C, R>
         /**
          * Set the selectable supplier.
          * @param pSelectables the supplier
+         * @return the configurator
          */
-        void setSelectables(Function<R, Iterator<T>> pSelectables);
+        TethysTableListConfig<T, R> setSelectables(Function<R, Iterator<T>> pSelectables);
     }
 
     /**
@@ -900,6 +1015,8 @@ public abstract class TethysTableManager<C, R>
     public interface TethysTableListColumn<T extends Comparable<T>, C, R>
             extends TethysTableListConfig<T, R>,
             TethysTableColumn<List<T>, C, R> {
+        @Override
+        TethysTableListColumn<T, C, R> setSelectables(Function<R, Iterator<T>> pSelectables);
     }
 
     /**
@@ -918,7 +1035,7 @@ public abstract class TethysTableManager<C, R>
         /**
          * The event manager.
          */
-        private TethysEventManager<TethysUIEvent> theEventManager;
+        private final TethysEventManager<TethysUIEvent> theEventManager;
 
         /**
          * The id of the column.
@@ -958,7 +1075,7 @@ public abstract class TethysTableManager<C, R>
         /**
          * The cell-commit consumer.
          */
-        private TethysOnColumnCommit<R, T> theOnCommit;
+        private TethysOnCellCommit<R, T> theOnCommit;
 
         /**
          * Repaint the column on commit?
@@ -1033,8 +1150,9 @@ public abstract class TethysTableManager<C, R>
         }
 
         @Override
-        public void setName(final String pName) {
+        public TethysBaseTableColumn<T, C, R> setName(final String pName) {
             theName = pName;
+            return this;
         }
 
         @Override
@@ -1053,8 +1171,9 @@ public abstract class TethysTableManager<C, R>
         }
 
         @Override
-        public void setRepaintColumnOnCommit(final boolean pRePaint) {
+        public TethysBaseTableColumn<T, C, R> setRepaintColumnOnCommit(final boolean pRePaint) {
             doRePaintColOnCommit = pRePaint;
+            return this;
         }
 
         @Override
@@ -1063,12 +1182,13 @@ public abstract class TethysTableManager<C, R>
         }
 
         @Override
-        public void setRepaintColumnId(final C pRePaintId) {
+        public TethysBaseTableColumn<T, C, R> setRepaintColumnId(final C pRePaintId) {
             theRePaintId = pRePaintId;
+            return this;
         }
 
         @Override
-        public void setVisible(final boolean pVisible) {
+        public TethysBaseTableColumn<T, C, R> setVisible(final boolean pVisible) {
             /* If we are changing visibility */
             if (pVisible != isVisible) {
                 /* Set new visibility */
@@ -1084,11 +1204,13 @@ public abstract class TethysTableManager<C, R>
                     detachFromTable();
                 }
             }
+            return this;
         }
 
         @Override
-        public void setEditable(final boolean pEditable) {
+        public TethysBaseTableColumn<T, C, R> setEditable(final boolean pEditable) {
             isEditable = pEditable;
+            return this;
         }
 
         /**
@@ -1119,8 +1241,9 @@ public abstract class TethysTableManager<C, R>
         }
 
         @Override
-        public void setCellEditable(final Predicate<R> pEditable) {
+        public TethysBaseTableColumn<T, C, R> setCellEditable(final Predicate<R> pEditable) {
             isCellEditable = pEditable;
+            return this;
         }
 
         @Override
@@ -1129,8 +1252,9 @@ public abstract class TethysTableManager<C, R>
         }
 
         @Override
-        public void setOnCommit(final TethysOnColumnCommit<R, T> pOnCommit) {
+        public TethysBaseTableColumn<T, C, R> setOnCommit(final TethysOnCellCommit<R, T> pOnCommit) {
             theOnCommit = pOnCommit;
+            return this;
         }
 
         /**
@@ -1144,7 +1268,7 @@ public abstract class TethysTableManager<C, R>
             /* If we have an onCommit consumer */
             if (theOnCommit != null) {
                 /* call it */
-                theOnCommit.commitColumn(pRow, pValue);
+                theOnCommit.commitCell(pRow, pValue);
             }
 
             /* Call the table onCommit */
@@ -1208,19 +1332,19 @@ public abstract class TethysTableManager<C, R>
     }
 
     /**
-     * OnColumn commit callback.
+     * OnCell commit callback.
      * @param <R> the row type
      * @param <T> the value type
      */
     @FunctionalInterface
-    public interface TethysOnColumnCommit<R, T> {
+    public interface TethysOnCellCommit<R, T> {
         /**
          * CallBack on a columnCommit.
          * @param pRow the row that is being committed
          * @param pValue the new value
          * @throws OceanusException on error
          */
-        void commitColumn(R pRow, T pValue) throws OceanusException;
+        void commitCell(R pRow, T pValue) throws OceanusException;
     }
 
     /**

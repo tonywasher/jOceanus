@@ -22,6 +22,7 @@ import java.security.SignatureException;
 
 import net.sourceforge.joceanus.jgordianknot.api.base.GordianLength;
 import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigestSpec;
+import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigestType;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianEdwardsElliptic;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPair;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPairType;
@@ -44,9 +45,24 @@ public abstract class JcaSignature
     private static final String SIG_ERROR = "Signature error";
 
     /**
-     * The RSA PSS Algorithm.
+     * The RSA PSS MGF1 Algorithm.
      */
-    private static final String RSA_PSS_ALGOBASE = "withRSAandMGF1";
+    private static final String RSA_PSSMGF1_ALGOBASE = "withRSAandMGF1";
+
+    /**
+     * The RSA PSS SHAKE128 Algorithm.
+     */
+    private static final String RSA_PSS128_ALGOBASE = "withRSAandSHAKE128";
+
+    /**
+     * The RSA PSS SHAKE256 Algorithm.
+     */
+    private static final String RSA_PSS256_ALGOBASE = "withRSAandSHAKE256";
+
+    /**
+     * The RSA PSS PureSHAKE Algorithm.
+     */
+    private static final String RSA_PSSSHAKE_ALGOBASE = "withRSA/PSS";
 
     /**
      * The RSA X9.31 Algorithm.
@@ -272,11 +288,16 @@ public abstract class JcaSignature
 
         /* Note if we are DSA */
         final boolean isDSA = GordianKeyPairType.DSA.equals(pSignatureSpec.getKeyPairType());
+        final boolean isSHAKE = GordianDigestType.SHAKE.equals(pSignatureSpec.getDigestSpec().getDigestType());
 
         /* Switch on signature type */
         switch (pSignatureSpec.getSignatureType()) {
-            case PSS:
-                return RSA_PSS_ALGOBASE;
+            case PSSMGF1:
+                return RSA_PSSMGF1_ALGOBASE;
+            case PSS128:
+                return isSHAKE ? RSA_PSSSHAKE_ALGOBASE : RSA_PSS128_ALGOBASE;
+            case PSS256:
+                return isSHAKE ? RSA_PSSSHAKE_ALGOBASE : RSA_PSS256_ALGOBASE;
             case X931:
                 return RSA_X931_ALGOBASE;
             case ISO9796D2:

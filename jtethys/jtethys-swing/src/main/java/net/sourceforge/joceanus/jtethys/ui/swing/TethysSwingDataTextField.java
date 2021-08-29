@@ -26,16 +26,17 @@ import java.awt.event.FocusListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.util.Currency;
+import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.IntSupplier;
 import java.util.function.Supplier;
-
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
+import javax.swing.KeyStroke;
 import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 import javax.swing.border.Border;
@@ -346,6 +347,7 @@ public abstract class TethysSwingDataTextField<T>
          * @param pConverter the text converter
          * @param pLabel the label
          */
+        @SuppressWarnings("checkstyle:MethodParamPad")
         TethysSwingTextEditField(final TethysSwingGuiFactory pFactory,
                                  final TethysDataEditConverter<T> pConverter,
                                  final JLabel pLabel) {
@@ -380,7 +382,8 @@ public abstract class TethysSwingDataTextField<T>
                 }
             });
 
-            /* handle enter/escape keys */
+            theTextField.getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT)
+                    .put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), "none");
             theTextField.addKeyListener(new DataKeyListener());
         }
 
@@ -400,6 +403,11 @@ public abstract class TethysSwingDataTextField<T>
         @Override
         public void setValidator(final Function<T, String> pValidator) {
             theControl.setValidator(pValidator);
+        }
+
+        @Override
+        public void setReporter(final Consumer<String> pReporter) {
+            theControl.setReporter(pReporter);
         }
 
         @Override
@@ -428,6 +436,7 @@ public abstract class TethysSwingDataTextField<T>
                     theErrorBorder = BorderFactory.createLineBorder(getErrorColour());
                 }
                 theTextField.setBorder(theErrorBorder);
+                theTextField.setForeground(getErrorColour());
                 setTheAttribute(TethysFieldAttribute.ERROR);
 
                 /* request focus again */
@@ -447,6 +456,7 @@ public abstract class TethysSwingDataTextField<T>
             /* Clear error indications */
             theTextField.setToolTipText(null);
             theErrorText = null;
+            adjustField();
 
             /* Restore cached background colour */
             theTextField.setBorder(BORDER_STD);
@@ -457,21 +467,19 @@ public abstract class TethysSwingDataTextField<T>
          * Handle focusGained.
          */
         void handleFocusGained() {
-            theTextField.setText(theErrorText == null
-                                                      ? theControl.getEditText()
-                                                      : theErrorText);
-            theTextField.selectAll();
+            if (!isCellEditing) {
+                theTextField.setText(theErrorText == null
+                        ? theControl.getEditText()
+                        : theErrorText);
+                theTextField.selectAll();
+            }
         }
 
         /**
          * Handle focusLost.
          */
         void handleFocusLost() {
-            processValue();
-            if (theErrorText == null) {
-                theTextField.setText(theControl.getDisplayText());
-                haltCellEditing();
-            }
+            handleEscapeKey();
         }
 
         @Override
@@ -487,6 +495,16 @@ public abstract class TethysSwingDataTextField<T>
         }
 
         /**
+         * handle escapeKey.
+         */
+        private void handleEscapeKey() {
+            resetEditText();
+            clearError();
+            fireEvent(TethysUIEvent.EDITFOCUSLOST);
+            haltCellEditing();
+        }
+
+        /**
          * Key Listener class.
          */
         private class DataKeyListener
@@ -498,6 +516,9 @@ public abstract class TethysSwingDataTextField<T>
 
             @Override
             public void keyPressed(final KeyEvent e) {
+                if (isCellEditing) {
+                    return;
+                }
                 switch (e.getKeyCode()) {
                     case KeyEvent.VK_ENTER:
                         handleEnterKey();
@@ -524,21 +545,13 @@ public abstract class TethysSwingDataTextField<T>
                     haltCellEditing();
                 }
             }
-
-            /**
-             * handle escapeKey.
-             */
-            private void handleEscapeKey() {
-                resetEditText();
-                clearError();
-                haltCellEditing();
-            }
         }
 
         @Override
         public void startCellEditing(final Rectangle pCell) {
             isCellEditing = true;
             setEditable(true);
+            clearError();
             theControl.clearNewValue();
             theTextField.requestFocus();
         }
@@ -549,9 +562,6 @@ public abstract class TethysSwingDataTextField<T>
         void haltCellEditing() {
             if (isCellEditing) {
                 setEditable(false);
-                if (!theControl.parsedNewValue()) {
-                    fireEvent(TethysUIEvent.EDITFOCUSLOST);
-                }
             }
             isCellEditing = false;
         }

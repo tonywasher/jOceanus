@@ -22,6 +22,11 @@ import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventPr
 
 /**
  * Tethys Button.
+ * <p>
+ * The EventProvider fires the following events.
+ * <ul>
+ *    <li>TethysUIEvent.PRESSED is fired when a button is pressed
+ * </ul>
  */
 public abstract class TethysButton
         implements TethysEventProvider<TethysUIEvent>, TethysComponent {

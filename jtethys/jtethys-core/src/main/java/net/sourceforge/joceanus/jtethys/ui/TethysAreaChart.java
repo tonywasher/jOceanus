@@ -30,6 +30,11 @@ import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventPr
 
 /**
  * Area Chart.
+ * <p>
+ * The EventProvider fires the following events.
+ * <ul>
+ *    <li>TethysUIEvent.PRESSED is fired when a series is selected
+ * </ul>
  */
 public abstract class TethysAreaChart
         implements TethysEventProvider<TethysUIEvent>, TethysComponent {

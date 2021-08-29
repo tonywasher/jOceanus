@@ -78,8 +78,18 @@ public class MoneyWiseStaticBuilder {
      * @return the builder
      */
     public MoneyWiseStaticBuilder buildBasic() throws OceanusException {
+        return buildBasic(Currency.getInstance(Locale.getDefault()));
+    }
+
+    /**
+     * build basic Static.
+     * @param pDefault the default currency
+     * @throws OceanusException on error
+     * @return the builder
+     */
+    public MoneyWiseStaticBuilder buildBasic(final Currency pDefault) throws OceanusException {
         /* Create default currency */
-        buildDefaultCurrency();
+        buildDefaultCurrency(pDefault);
 
         /* Build account types */
         buildPayeeTypes();
@@ -299,12 +309,11 @@ public class MoneyWiseStaticBuilder {
 
     /**
      * build defaultCurrency.
+     * @param pDefault the default currency
      * @throws OceanusException on error
      */
-    private void buildDefaultCurrency() throws OceanusException {
-        final Locale myLocale = Locale.getDefault();
-        final Currency myCurrency = Currency.getInstance(myLocale);
-        final AssetCurrencyClass myClass = AssetCurrencyClass.fromCurrency(myCurrency);
+    private void buildDefaultCurrency(final Currency pDefault) throws OceanusException {
+        final AssetCurrencyClass myClass = AssetCurrencyClass.fromCurrency(pDefault);
         final AssetCurrency myDefault = addCurrency(myClass);
         myDefault.setDefault(Boolean.TRUE);
     }

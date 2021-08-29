@@ -375,9 +375,9 @@ public class GordianXMSSKeySpec {
                 case SHA512:
                     return GordianDigestSpec.sha2(GordianLength.LEN_512);
                 case SHAKE128:
-                    return GordianDigestSpec.shakeAlt(GordianLength.LEN_256);
+                    return GordianDigestSpec.shake128(GordianLength.LEN_256);
                 case SHAKE256:
-                    return GordianDigestSpec.shake(GordianLength.LEN_512);
+                    return GordianDigestSpec.shake256(GordianLength.LEN_512);
                 default:
                     throw new IllegalStateException();
             }

@@ -91,12 +91,7 @@ public enum GordianStreamKeyType {
     /**
      * Blake3Xof.
      */
-    BLAKE3XOF(GordianLength.LEN_128),
-
-    /**
-     * KMACXof.
-     */
-    KMACXOF(GordianLength.LEN_128);
+    BLAKE3XOF(GordianLength.LEN_128);
 
     /**
      * The IV Length.
@@ -158,7 +153,6 @@ public enum GordianStreamKeyType {
             case RABBIT:
             case SNOW3G:
             case SKEINXOF:
-            case KMACXOF:
             default:
                 return theShortIVLen.getByteLength();
         }
@@ -175,7 +169,6 @@ public enum GordianStreamKeyType {
             case VMPC:
             case SKEINXOF:
             case BLAKE2XOF:
-            case KMACXOF:
                 return true;
             default:
                 return false;

@@ -80,6 +80,7 @@
 
 .-jtethys .-jtethys-datafield:-jtethys-datafield-error {
   -fx-focus-color: -jtethys-error-color;
+  -fx-text-fill: -jtethys-error-color;
 }
 
 /**

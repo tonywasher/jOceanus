@@ -26,7 +26,6 @@ import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.ToIntFunction;
-
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.value.ObservableValue;
@@ -180,6 +179,11 @@ public class TethysFXTableManager<C, R>
         return (TethysFXTableColumn<?, C, R>) super.getColumn(pId);
     }
 
+    @Override
+    public void requestFocus() {
+        theTable.requestFocus();
+    }
+
     /**
      * Obtain the columns.
      *
@@ -218,6 +222,11 @@ public class TethysFXTableManager<C, R>
     public void setComparator(final Comparator<R> pComparator) {
         super.setComparator(pComparator);
         setTheItems();
+    }
+
+    @Override
+    public void cancelEditing() {
+        theTable.edit(-1, null);
     }
 
     /**
@@ -454,14 +463,16 @@ public class TethysFXTableManager<C, R>
         }
 
         @Override
-        public void setColumnWidth(final int pWidth) {
+        public TethysFXTableColumn<T, C, R> setColumnWidth(final int pWidth) {
             theColumn.setPrefWidth(pWidth);
+            return this;
         }
 
         @Override
-        public void setName(final String pName) {
+        public TethysFXTableColumn<T, C, R> setName(final String pName) {
             super.setName(pName);
             theColumn.setText(pName);
+            return this;
         }
     }
 
@@ -498,8 +509,9 @@ public class TethysFXTableManager<C, R>
         }
 
         @Override
-        public void setValidator(final BiFunction<T, R, String> pValidator) {
+        public TethysFXTableValidatedColumn<T, C, R> setValidator(final BiFunction<T, R, String> pValidator) {
             theValidator = pValidator;
+            return this;
         }
 
         /**
@@ -532,6 +544,11 @@ public class TethysFXTableManager<C, R>
             super(pTable, pId, TethysFieldType.STRING);
             declareCellFactory(super.getCellFactory().stringCellFactory(this));
         }
+
+        @Override
+        public TethysFXTableStringColumn<C, R> setValidator(final BiFunction<String, R, String> pValidator) {
+            return (TethysFXTableStringColumn<C, R>) super.setValidator(pValidator);
+        }
     }
 
     /**
@@ -553,6 +570,11 @@ public class TethysFXTableManager<C, R>
                                      final C pId) {
             super(pTable, pId, TethysFieldType.CHARARRAY);
             declareCellFactory(super.getCellFactory().charArrayCellFactory(this));
+        }
+
+        @Override
+        public TethysFXTableCharArrayColumn<C, R> setValidator(final BiFunction<char[], R, String> pValidator) {
+            return (TethysFXTableCharArrayColumn<C, R>) super.setValidator(pValidator);
         }
     }
 
@@ -576,6 +598,11 @@ public class TethysFXTableManager<C, R>
             super(pTable, pId, TethysFieldType.SHORT);
             declareCellFactory(super.getCellFactory().shortCellFactory(this));
         }
+
+        @Override
+        public TethysFXTableShortColumn<C, R> setValidator(final BiFunction<Short, R, String> pValidator) {
+            return (TethysFXTableShortColumn<C, R>) super.setValidator(pValidator);
+        }
     }
 
     /**
@@ -598,6 +625,11 @@ public class TethysFXTableManager<C, R>
             super(pTable, pId, TethysFieldType.INTEGER);
             declareCellFactory(super.getCellFactory().integerCellFactory(this));
         }
+
+        @Override
+        public TethysFXTableIntegerColumn<C, R> setValidator(final BiFunction<Integer, R, String> pValidator) {
+            return (TethysFXTableIntegerColumn<C, R>) super.setValidator(pValidator);
+        }
     }
 
     /**
@@ -619,6 +651,11 @@ public class TethysFXTableManager<C, R>
                                 final C pId) {
             super(pTable, pId, TethysFieldType.LONG);
             declareCellFactory(super.getCellFactory().longCellFactory(this));
+        }
+
+        @Override
+        public TethysFXTableLongColumn<C, R> setValidator(final BiFunction<Long, R, String> pValidator) {
+            return (TethysFXTableLongColumn<C, R>) super.setValidator(pValidator);
         }
     }
 
@@ -650,8 +687,14 @@ public class TethysFXTableManager<C, R>
         }
 
         @Override
-        public void setNumDecimals(final ToIntFunction<R> pSupplier) {
+        public TethysFXTableRawDecimalColumn<C, R> setValidator(final BiFunction<TethysDecimal, R, String> pValidator) {
+            return (TethysFXTableRawDecimalColumn<C, R>) super.setValidator(pValidator);
+        }
+
+        @Override
+        public TethysFXTableRawDecimalColumn<C, R> setNumDecimals(final ToIntFunction<R> pSupplier) {
             theSupplier = pSupplier;
+            return this;
         }
 
         /**
@@ -692,8 +735,14 @@ public class TethysFXTableManager<C, R>
         }
 
         @Override
-        public void setDeemedCurrency(final Function<R, Currency> pSupplier) {
+        public TethysFXTableMoneyColumn<C, R> setValidator(final BiFunction<TethysMoney, R, String> pValidator) {
+            return (TethysFXTableMoneyColumn<C, R>) super.setValidator(pValidator);
+        }
+
+        @Override
+        public TethysFXTableMoneyColumn<C, R> setDeemedCurrency(final Function<R, Currency> pSupplier) {
             theSupplier = pSupplier;
+            return this;
         }
 
         /**
@@ -734,8 +783,14 @@ public class TethysFXTableManager<C, R>
         }
 
         @Override
-        public void setDeemedCurrency(final Function<R, Currency> pSupplier) {
+        public TethysFXTablePriceColumn<C, R> setValidator(final BiFunction<TethysPrice, R, String> pValidator) {
+            return (TethysFXTablePriceColumn<C, R>) super.setValidator(pValidator);
+        }
+
+        @Override
+        public TethysFXTablePriceColumn<C, R> setDeemedCurrency(final Function<R, Currency> pSupplier) {
             theSupplier = pSupplier;
+            return this;
         }
 
         /**
@@ -768,6 +823,11 @@ public class TethysFXTableManager<C, R>
             super(pTable, pId, TethysFieldType.RATE);
             declareCellFactory(super.getCellFactory().rateCellFactory(this));
         }
+
+        @Override
+        public TethysFXTableRateColumn<C, R> setValidator(final BiFunction<TethysRate, R, String> pValidator) {
+            return (TethysFXTableRateColumn<C, R>) super.setValidator(pValidator);
+        }
     }
 
     /**
@@ -789,6 +849,11 @@ public class TethysFXTableManager<C, R>
                                  final C pId) {
             super(pTable, pId, TethysFieldType.UNITS);
             declareCellFactory(super.getCellFactory().unitsCellFactory(this));
+        }
+
+        @Override
+        public TethysFXTableUnitsColumn<C, R> setValidator(final BiFunction<TethysUnits, R, String> pValidator) {
+            return (TethysFXTableUnitsColumn<C, R>) super.setValidator(pValidator);
         }
     }
 
@@ -812,6 +877,11 @@ public class TethysFXTableManager<C, R>
             super(pTable, pId, TethysFieldType.DILUTION);
             declareCellFactory(super.getCellFactory().dilutionCellFactory(this));
         }
+
+        @Override
+        public TethysFXTableDilutionColumn<C, R> setValidator(final BiFunction<TethysDilution, R, String> pValidator) {
+            return (TethysFXTableDilutionColumn<C, R>) super.setValidator(pValidator);
+        }
     }
 
     /**
@@ -833,6 +903,11 @@ public class TethysFXTableManager<C, R>
                                  final C pId) {
             super(pTable, pId, TethysFieldType.RATIO);
             declareCellFactory(super.getCellFactory().ratioCellFactory(this));
+        }
+
+        @Override
+        public TethysFXTableRatioColumn<C, R> setValidator(final BiFunction<TethysRatio, R, String> pValidator) {
+            return (TethysFXTableRatioColumn<C, R>) super.setValidator(pValidator);
         }
     }
 
@@ -864,8 +939,14 @@ public class TethysFXTableManager<C, R>
         }
 
         @Override
-        public void setDeemedCurrency(final Function<R, Currency> pSupplier) {
+        public TethysFXTableDilutedPriceColumn<C, R> setValidator(final BiFunction<TethysDilutedPrice, R, String> pValidator) {
+            return (TethysFXTableDilutedPriceColumn<C, R>) super.setValidator(pValidator);
+        }
+
+        @Override
+        public TethysFXTableDilutedPriceColumn<C, R> setDeemedCurrency(final Function<R, Currency> pSupplier) {
             theSupplier = pSupplier;
+            return this;
         }
 
         /**
@@ -907,8 +988,9 @@ public class TethysFXTableManager<C, R>
         }
 
         @Override
-        public void setDateConfigurator(final BiConsumer<R, TethysDateConfig> pConfigurator) {
+        public TethysFXTableDateColumn<C, R> setDateConfigurator(final BiConsumer<R, TethysDateConfig> pConfigurator) {
             theConfigurator = pConfigurator;
+            return this;
         }
 
         /**
@@ -953,8 +1035,9 @@ public class TethysFXTableManager<C, R>
         }
 
         @Override
-        public void setMenuConfigurator(final BiConsumer<R, TethysScrollMenu<T>> pConfigurator) {
+        public TethysFXTableScrollColumn<T, C, R> setMenuConfigurator(final BiConsumer<R, TethysScrollMenu<T>> pConfigurator) {
             theConfigurator = pConfigurator;
+            return this;
         }
 
         /**
@@ -996,8 +1079,9 @@ public class TethysFXTableManager<C, R>
         }
 
         @Override
-        public void setSelectables(final Function<R, Iterator<T>> pSelectables) {
+        public TethysFXTableListColumn<T, C, R> setSelectables(final Function<R, Iterator<T>> pSelectables) {
             theSelectables = pSelectables;
+            return this;
         }
 
         /**
@@ -1041,8 +1125,9 @@ public class TethysFXTableManager<C, R>
         }
 
         @Override
-        public void setIconMapSet(final Function<R, TethysIconMapSet<T>> pSupplier) {
+        public TethysFXTableIconColumn<T, C, R> setIconMapSet(final Function<R, TethysIconMapSet<T>> pSupplier) {
             theSupplier = pSupplier;
+            return this;
         }
 
         /**

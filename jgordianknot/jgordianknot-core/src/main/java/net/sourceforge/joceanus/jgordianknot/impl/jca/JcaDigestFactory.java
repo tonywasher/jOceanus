@@ -105,9 +105,7 @@ public class JcaDigestFactory
 
         /* Additional restrictions on SHAKE */
         if (pDigestSpec.getDigestType() == GordianDigestType.SHAKE) {
-            final GordianLength myStateLen = pDigestSpec.getStateLength();
-            final GordianLength myLen = pDigestSpec.getDigestLength();
-            return myLen.getByteLength() == 2 * myStateLen.getByteLength();
+           return pDigestSpec.isPureSHAKE();
         }
 
         /* OK */

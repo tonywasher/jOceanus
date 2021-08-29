@@ -19,6 +19,7 @@ package net.sourceforge.joceanus.jgordianknot.impl.jca;
 import java.security.NoSuchAlgorithmException;
 import java.security.Signature;
 
+import net.sourceforge.joceanus.jgordianknot.api.base.GordianLength;
 import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigestSpec;
 import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigestType;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianEdwardsElliptic;
@@ -178,15 +179,40 @@ public class JcaSignatureFactory
             case SHA2:
                 return true;
             case SHA3:
-                return GordianSignatureType.PSS.equals(pSpec.getSignatureType())
+                return pSpec.getSignatureType().isPSS()
                        || GordianSignatureType.PREHASH.equals(pSpec.getSignatureType());
+            case SHAKE:
+                return validRSASHAKESignature(pSpec);
             case WHIRLPOOL:
-                return !GordianSignatureType.PSS.equals(pSpec.getSignatureType());
+                return !pSpec.getSignatureType().isPSS();
             case RIPEMD:
             case MD2:
             case MD4:
             case MD5:
                 return GordianSignatureType.PREHASH.equals(pSpec.getSignatureType());
+            default:
+                return false;
+        }
+    }
+
+    /**
+     * Check RSASHAKESignature.
+     * @param pSpec the signatureSpec
+     * @return true/false
+     */
+    private static boolean validRSASHAKESignature(final GordianSignatureSpec pSpec) {
+        /* Must be pure SHAKE */
+        final GordianDigestSpec myDigest = pSpec.getDigestSpec();
+        if (!pSpec.getSignatureType().isPSS() || !myDigest.isPureSHAKE()) {
+            return false;
+        }
+
+        /* Switch on SignatureType */
+        switch (pSpec.getSignatureType()) {
+            case PSS128:
+                return GordianLength.LEN_128.equals(myDigest.getStateLength());
+            case PSS256:
+                return GordianLength.LEN_256.equals(myDigest.getStateLength());
             default:
                 return false;
         }
@@ -205,6 +231,8 @@ public class JcaSignatureFactory
                 return myDigest.getStateLength() == null;
             case SHA3:
                 return !GordianSignatureType.NR.equals(pSpec.getSignatureType());
+            case SHAKE:
+                return GordianSignatureType.DSA.equals(pSpec.getSignatureType());
             default:
                 return false;
         }

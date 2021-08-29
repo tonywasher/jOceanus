@@ -425,7 +425,27 @@ public enum MoneyWiseUIResource implements TethysBundleId {
     /**
      * Main Menu CreateQIF.
      */
-    MAIN_MENU_CREATEQIF("Main.Menu.CreateQIF");
+    MAIN_MENU_CREATEQIF("Main.Menu.CreateQIF"),
+
+    /**
+     * StaticData ShowDisabled.
+     */
+    STATICDATA_DISABLED("StaticData.Disabled"),
+
+    /**
+     * StaticData Selection.
+     */
+    STATICDATA_SELECTION("StaticData.Selection"),
+
+    /**
+     * StaticData Select.
+     */
+    STATICDATA_SELECT("StaticData.Select"),
+
+    /**
+     * StaticData Active.
+     */
+    STATICDATA_ACTIVE("StaticData.Active");
 
     /**
      * The ColumnSet Map.

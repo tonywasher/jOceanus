@@ -17,10 +17,10 @@
 package net.sourceforge.joceanus.jtethys.ui.javafx;
 
 import java.util.Currency;
+import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.IntSupplier;
 import java.util.function.Supplier;
-
 import javafx.css.PseudoClass;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -399,6 +399,11 @@ public abstract class TethysFXDataTextField<T>
             theControl.setValidator(pValidator);
         }
 
+        @Override
+        public void setReporter(final Consumer<String> pReporter) {
+            theControl.setReporter(pReporter);
+        }
+
         /**
          * handle focusChange.
          *
@@ -408,10 +413,7 @@ public abstract class TethysFXDataTextField<T>
             if (pFocused) {
                 handleFocusGained();
             } else {
-                processValue();
-                if (theErrorText == null) {
-                    handleFocusLost();
-                }
+                handleEscapeKey();
             }
         }
 

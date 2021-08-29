@@ -546,9 +546,14 @@ public abstract class StaticData<T extends StaticData<T, S, E>, S extends Enum<S
 
             /* Else check the name */
         } else {
-            /* The description must not be too long */
-            if (myName.length() > NAMELEN) {
+            /* The name must not be too long */
+            if (DataItem.byteLength(myName) > NAMELEN) {
                 addError(ERROR_LENGTH, FIELD_NAME);
+            }
+
+            /* The name must only contain valid characters */
+            if (!DataItem.validString(myName, null)) {
+                addError(ERROR_BADNAME, FIELD_NAME);
             }
 
             /* Check that the name is unique */
@@ -558,7 +563,8 @@ public abstract class StaticData<T extends StaticData<T, S, E>, S extends Enum<S
         }
 
         /* Check description length */
-        if ((myDesc != null) && (myDesc.length() > DESCLEN)) {
+        if (myDesc != null
+                && DataItem.byteLength(myDesc) > DESCLEN) {
             addError(ERROR_LENGTH, FIELD_NAME);
         }
 

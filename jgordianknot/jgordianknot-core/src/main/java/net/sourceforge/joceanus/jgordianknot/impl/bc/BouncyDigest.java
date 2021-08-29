@@ -33,11 +33,6 @@ public final class BouncyDigest
     private final Digest theDigest;
 
     /**
-     * Xof.
-     */
-    private final Xof theXof;
-
-    /**
      * Constructor.
      * @param pDigestSpec the digestSpec
      * @param pDigest the digest
@@ -46,10 +41,6 @@ public final class BouncyDigest
                  final Digest pDigest) {
         super(pDigestSpec);
         theDigest = pDigest;
-        theXof = theDigest instanceof Xof
-                         && pDigestSpec.isHybrid()
-                 ? (Xof) theDigest
-                 : null;
     }
 
     /**
@@ -94,8 +85,8 @@ public final class BouncyDigest
     @Override
     public int doFinish(final byte[] pBuffer,
                         final int pOffset) {
-        return theXof == null
-               ? theDigest.doFinal(pBuffer, pOffset)
-               : theXof.doFinal(pBuffer, pOffset, getDigestSize());
+        return theDigest instanceof Xof
+               ? ((Xof) theDigest).doFinal(pBuffer, pOffset, getDigestSize())
+               : theDigest.doFinal(pBuffer, pOffset);
     }
 }
