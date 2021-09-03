@@ -86,8 +86,8 @@
     <JavaVersion>11</JavaVersion>
     <JavaFXVersion>16</JavaFXVersion>
     <JavaLanguageVersion>11</JavaLanguageVersion>
-    <CheckStyleVersion>8.45.1</CheckStyleVersion>
-    <PMDVersion>6.37.0</PMDVersion>
+    <CheckStyleVersion>9.0</CheckStyleVersion>
+    <PMDVersion>6.38.0</PMDVersion>
     <CleanPluginVersion>3.1.0</CleanPluginVersion>
     <ResourcesPluginVersion>3.2.0</ResourcesPluginVersion>
     <InstallPluginVersion>3.0.0-M1</InstallPluginVersion>

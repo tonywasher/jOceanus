@@ -133,6 +133,11 @@ public final class CoeusFundingCircleTransaction
     private static final String PFIX_XFEROUT = "FC Len Withdrawal";
 
     /**
+     * DEBTSale Suffix.
+     */
+    private static final String SFIX_DEBTSALE = " DEBT SALE";
+
+    /**
      * ZERO for BadDebt/CashBack.
      */
     static final TethysMoney ZERO_MONEY = new TethysMoney();
@@ -746,9 +751,12 @@ public final class CoeusFundingCircleTransaction
                 myIndex = myId.indexOf(" : ");
                 return myId.substring(0, myIndex);
             case INTEREST:
-            case RECOVERY:
             case CAPITALREPAYMENT:
                 return theDesc.substring(thePrefix.length());
+            case RECOVERY:
+                return theDesc.endsWith(SFIX_DEBTSALE)
+                    ? theDesc.substring(thePrefix.length(), theDesc.length() - SFIX_DEBTSALE.length())
+                    : theDesc.substring(thePrefix.length());
             default:
                 return null;
         }
