@@ -46,9 +46,6 @@ import org.bouncycastle.openpgp.operator.bc.BcPublicKeyKeyEncryptionMethodGenera
  * PGP File encryption utilities.
  */
 public class PGPCreate {
-    /* Buffer Size */
-    private static final int BUFFER_SIZE = 1 << 16;
-
     /* Secure Random */
     private static final SecureRandom RANDOM = new SecureRandom();
 
@@ -61,7 +58,7 @@ public class PGPCreate {
         /* Protect against exceptions */
         try {
             /* Access the encryption keys */
-            List<BcPGPPublicKeyRing> myRings = loadRings(PGPBase.PUBRSA, PGPBase.PUBDSA);
+            List<BcPGPPublicKeyRing> myRings = loadRings(PGPBase.PUBRSA, PGPBase.PUBDSA, PGPBase.PUBED, PGPBase.PUBEC);
 
             /* Access the target file */
             OutputStream myOutput = new FileOutputStream(PGPBase.FILEDIR + "PGPTest.new.asc");
@@ -114,7 +111,7 @@ public class PGPCreate {
     public static void encryptFile(final OutputStream pOutput,
                                    final List<BcPGPPublicKeyRing> pKeyRings) throws PGPException, IOException {
         /* Determine algorithms */
-        AvailableAlgs myAlgs = AvailableAlgs.determinePreferences(pKeyRings);
+        PGPAvailable myAlgs = PGPAvailable.determinePreferences(pKeyRings);
 
         /* Init encrypted data generator */
         PGPDataEncryptorBuilder myEncBuilder = new BcPGPDataEncryptorBuilder(myAlgs.getSymAlgorithm())
@@ -124,7 +121,7 @@ public class PGPCreate {
             PGPPublicKey myEncKey = obtainEncryptionKey(myRing);
             encryptedDataGenerator.addMethod(new BcPublicKeyKeyEncryptionMethodGenerator(myEncKey));
         }
-        OutputStream encryptedOut = encryptedDataGenerator.open(pOutput, new byte[BUFFER_SIZE]);
+        OutputStream encryptedOut = encryptedDataGenerator.open(pOutput, new byte[PGPBase.BUFFER_SIZE]);
 
         /* start compression */
         PGPCompressedDataGenerator compressedDataGenerator = new PGPCompressedDataGenerator(myAlgs.getCompAlgorithm());
@@ -132,19 +129,19 @@ public class PGPCreate {
 
         /* Create the signature builders */
         List<PGPSignatureGenerator> mySigners = createSigners(compressedOut, myAlgs.getHashAlgorithm(),
-                PGPBase.SECRSA, PGPBase.SECDSA, PGPBase.SECEC);
+                PGPBase.SECRSA, PGPBase.SECDSA, PGPBase.SECED, PGPBase.SECEC);
 
         /* Create the Literal Data generator output stream */
         PGPLiteralDataGenerator literalDataGenerator = new PGPLiteralDataGenerator();
         File actualFile = new File(PGPBase.FILEDIR + "PGPTest.docx");
         OutputStream literalOut = literalDataGenerator.open(compressedOut,
                 PGPLiteralData.BINARY, "PGPTest.docx",
-                new Date(actualFile.lastModified()), new byte[BUFFER_SIZE]);
+                new Date(actualFile.lastModified()), new byte[PGPBase.BUFFER_SIZE]);
 
         /* read input file and write to target file using a buffer */
         InputStream myInput = new FileInputStream(PGPBase.FILEDIR + "PGPTest.docx");
         BufferedInputStream myBufferedIn = new BufferedInputStream(myInput);
-        byte[] buf = new byte[BUFFER_SIZE];
+        byte[] buf = new byte[PGPBase.BUFFER_SIZE];
         int len;
         while ((len = myBufferedIn.read(buf, 0, buf.length)) > 0) {
             literalOut.write(buf, 0, len);
@@ -191,7 +188,8 @@ public class PGPCreate {
 
             /* Make sure that we can encrypt storage */
             PGPSignatureSubpacketVector v = mySig.getHashedSubPackets();
-            if ((v.getKeyFlags() & PGPKeyFlags.CAN_ENCRYPT_STORAGE) != 0) {
+            if (PGPBase.checkKeyValidity(mySig)
+                    && (v.getKeyFlags() & PGPKeyFlags.CAN_ENCRYPT_STORAGE) != 0) {
                 return k;
             }
         }
@@ -268,9 +266,10 @@ public class PGPCreate {
             PGPSecretKey k = kIt.next();
             PGPSignature mySig = PGPBase.obtainKeyIdSignature(k.getPublicKey(), myMaster.getKeyID());
 
-            /* Make sure that we can encrypt storage */
+            /* Make sure that we can sign data */
             PGPSignatureSubpacketVector v = mySig.getHashedSubPackets();
-            if ((v.getKeyFlags() & PGPKeyFlags.CAN_SIGN) != 0) {
+            if (PGPBase.checkKeyValidity(mySig)
+                    && (v.getKeyFlags() & PGPKeyFlags.CAN_SIGN) != 0) {
                 return k;
             }
         }

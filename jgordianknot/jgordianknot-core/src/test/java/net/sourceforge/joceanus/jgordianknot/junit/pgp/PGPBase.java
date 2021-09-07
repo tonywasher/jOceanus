@@ -1,5 +1,8 @@
 package net.sourceforge.joceanus.jgordianknot.junit.pgp;
 
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.util.Date;
 import java.util.Iterator;
 
 import org.bouncycastle.openpgp.PGPPublicKey;
@@ -14,12 +17,17 @@ public class PGPBase {
     /* Public Key Names */
     static final String PUBRSA = "PGPTest1.pub.txt";
     static final String PUBDSA = "PGPTest2.pub.txt";
-    static final String PUBEC = "PGPTest3.pub.txt";
+    static final String PUBED = "PGPTest3.pub.txt";
+    static final String PUBEC = "PGPTest4.pub.txt";
 
     /* Secret Key Names */
     static final String SECRSA = "PGPTest1.sec.txt";
     static final String SECDSA = "PGPTest2.sec.txt";
-    static final String SECEC = "PGPTest3.sec.txt";
+    static final String SECED = "PGPTest3.sec.txt";
+    static final String SECEC = "PGPTest4.sec.txt";
+
+    /* Buffer Size */
+    static final int BUFFER_SIZE = 1 << 16;
 
     /**
      * Obtain password for secret key
@@ -30,17 +38,18 @@ public class PGPBase {
         switch (pSecret) {
             case PGPBase.SECRSA: return "pgptest1";
             case PGPBase.SECDSA: return "pgptest2";
-            case PGPBase.SECEC:  return "pgptest3";
+            case PGPBase.SECED:  return "pgptest3";
+            case PGPBase.SECEC:  return "pgptest4";
             default:
                 throw new IllegalArgumentException("Unexpected secret key.");
         }
     }
 
     /**
-     * Try to find an encryption key in the keyRing
-     * We will use the first one for now
+     * Obtain the signature signed by the specified key.
      * @param pKey the keyRing
-     * @return first encryption key
+     * @param pKeyId the keyId
+     * @return the signature
      */
     static PGPSignature obtainKeyIdSignature(final PGPPublicKey pKey,
                                              final long pKeyId) {
@@ -50,12 +59,45 @@ public class PGPBase {
 
             /* Check that this is the required signature */
             PGPSignatureSubpacketVector v = sig.getUnhashedSubPackets();
-            if (v != null && v.getIssuerKeyID() == pKeyId) {
+            if (v != null && v.getIssuerKeyID() == pKeyId
+                    && checkSigValidity(sig)) {
                 return sig;
             }
         }
 
         /* No valid signature */
         throw new IllegalArgumentException("Can't find signature for keyId.");
+    }
+
+    /**
+     * Check key validity.
+     * @param pSig the signature
+     * @return valid true/false
+     */
+    static boolean checkKeyValidity(final PGPSignature pSig) {
+        /* Access detail */
+        PGPSignatureSubpacketVector v = pSig.getHashedSubPackets();
+        Date myCreate = v.getSignatureCreationTime();
+        LocalDateTime myExpireTime = myCreate.toInstant()
+                .atZone(ZoneId.systemDefault())
+                .toLocalDateTime();
+        long myExpire = v.getKeyExpirationTime();
+        return myExpire == 0 || myExpireTime.plusSeconds(myExpire).isAfter(LocalDateTime.now());
+    }
+
+    /**
+     * Check signature validity.
+     * @param pSig the signature
+     * @return valid true/false
+     */
+    private static boolean checkSigValidity(final PGPSignature pSig) {
+        /* Access detail */
+        PGPSignatureSubpacketVector v = pSig.getHashedSubPackets();
+        Date myCreate = v.getSignatureCreationTime();
+        LocalDateTime myExpireTime = myCreate.toInstant()
+                .atZone(ZoneId.systemDefault())
+                .toLocalDateTime();
+        long myExpire = v.getSignatureExpirationTime();
+        return myExpire == 0 || myExpireTime.plusSeconds(myExpire).isAfter(LocalDateTime.now());
     }
 }

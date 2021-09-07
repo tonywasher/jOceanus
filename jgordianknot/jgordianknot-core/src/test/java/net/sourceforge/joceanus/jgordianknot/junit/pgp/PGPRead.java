@@ -20,6 +20,8 @@ import org.bouncycastle.openpgp.PGPPublicKeyEncryptedData;
 import org.bouncycastle.openpgp.PGPPublicKeyRing;
 import org.bouncycastle.openpgp.PGPPublicKeyRingCollection;
 import org.bouncycastle.openpgp.PGPSecretKey;
+import org.bouncycastle.openpgp.PGPSignature;
+import org.bouncycastle.openpgp.PGPSignatureGenerator;
 import org.bouncycastle.openpgp.PGPSignatureList;
 import org.bouncycastle.openpgp.bc.BcPGPObjectFactory;
 import org.bouncycastle.openpgp.bc.BcPGPPublicKeyRing;
@@ -135,36 +137,47 @@ public class PGPRead {
      */
     private static void validateCompressed(final PGPCompressedData pCompressed) throws PGPException, IOException {
         /* Access the signing keys */
-        List<PGPPublicKeyRing> myPubKeys = loadSigners(PGPBase.PUBRSA, PGPBase.PUBDSA, PGPBase.PUBEC);
+        List<PGPPublicKeyRing> myPubKeys = loadSigners(PGPBase.PUBRSA, PGPBase.PUBDSA, PGPBase.PUBED, PGPBase.PUBEC);
         PGPPublicKeyRingCollection myPubColl = new PGPPublicKeyRingCollection(myPubKeys);
 
         /* Access the various data parts */
         BcPGPObjectFactory plainFact = new BcPGPObjectFactory(pCompressed.getDataStream());
-        PGPOnePassSignatureList mySigs = (PGPOnePassSignatureList) plainFact.nextObject();
+        PGPOnePassSignatureList myOPSigs = (PGPOnePassSignatureList) plainFact.nextObject();
         PGPLiteralData myData = (PGPLiteralData) plainFact.nextObject();
-        byte[] myBytes = myData.getDataStream().readAllBytes();
-        PGPSignatureList mySigList = (PGPSignatureList) plainFact.nextObject();
 
-        /* Process signatures */
+        /* Initialise the signatures */
         BcPGPContentVerifierBuilderProvider myProvider = new BcPGPContentVerifierBuilderProvider();
-        int myNumSigs = mySigs.size();
-
-        /* Loop through the signatures */
-        for (int i = 0; i < myNumSigs; i++) {
-            /* Access OPS in ascending order and access validating key */
-            PGPOnePassSignature mySig = mySigs.get(i);
-            PGPPublicKey publicKey = myPubColl.getPublicKey(mySig.getKeyID());
+        for (PGPOnePassSignature myOPS : myOPSigs) {
+            /* access validating key */
+            PGPPublicKey publicKey = myPubColl.getPublicKey(myOPS.getKeyID());
             if (publicKey == null) {
                 throw new IOException("Signing key not found");
             }
 
             /* Update signature */
-            mySig.init(myProvider, publicKey);
-            mySig.update(myBytes);
+            myOPS.init(myProvider, publicKey);
+        }
+
+        /* read input file and write to target file using a buffer */
+        InputStream myInput = myData.getDataStream();
+        byte[] buf = new byte[PGPBase.BUFFER_SIZE];
+        int len;
+        while ((len = myInput.read(buf, 0, buf.length)) > 0) {
+            for (PGPOnePassSignature myOPS : myOPSigs) {
+                myOPS.update(buf, 0, len);
+            }
+        }
+
+        /* Loop through the signatures */
+        PGPSignatureList mySigs = (PGPSignatureList) plainFact.nextObject();
+        int myNumSigs = mySigs.size();
+        for (int i = 0; i < myNumSigs; i++) {
+            /* Access OPS in ascending order and access validating key */
+            PGPOnePassSignature myOPS = myOPSigs.get(i);
+            PGPSignature mySig = mySigs.get(myNumSigs - 1 - i);
 
             /* Access signatures in descending order and validate it */
-            boolean signOK = mySig.verify(mySigList.get(myNumSigs - 1 - i));
-            if (!signOK) {
+            if (!myOPS.verify(mySig)) {
                 throw new IOException("Validation failed");
             }
         }

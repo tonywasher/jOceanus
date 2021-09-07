@@ -10,7 +10,7 @@ import org.bouncycastle.openpgp.PGPSignature;
 import org.bouncycastle.openpgp.PGPSignatureSubpacketVector;
 import org.bouncycastle.openpgp.bc.BcPGPPublicKeyRing;
 
-public class AvailableAlgs {
+public class PGPAvailable {
     /**
      * The list of available hash algorithms.
      */
@@ -34,7 +34,7 @@ public class AvailableAlgs {
     /**
      * Constructor.
      */
-    private AvailableAlgs() {
+    private PGPAvailable() {
         theHashes = new ArrayList<>();
         theSyms = new ArrayList<>();
         theCompressions = new ArrayList<>();
@@ -68,8 +68,8 @@ public class AvailableAlgs {
      * Determine the preferences.
      * @param pRings the keyRings
      */
-    static AvailableAlgs determinePreferences(final List<BcPGPPublicKeyRing> pRings) {
-        AvailableAlgs myAlgs = new AvailableAlgs();
+    static PGPAvailable determinePreferences(final List<BcPGPPublicKeyRing> pRings) {
+        PGPAvailable myAlgs = new PGPAvailable();
         for (PGPPublicKeyRing myRing : pRings) {
             myAlgs.updatePreferences(myRing);
         }
