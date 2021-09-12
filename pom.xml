@@ -67,7 +67,7 @@
     <packageKey>net.sourceforge.joceanus</packageKey>
     <packageMain/>
     <packageName/>
-    <moduleName/>
+    <moduleName>jOceanus</moduleName>
     <appDir>${env.BACKUPDIR}</appDir>
     <appBinDir>bin/</appBinDir>
     <appLibDir>lib/</appLibDir>
@@ -347,7 +347,7 @@
               <addBuildEnvironmentEntries>true</addBuildEnvironmentEntries>
             </manifest>
             <manifestEntries>
-              <ModuleName>${moduleName}</ModuleName>
+              <Automatic-Module-Name>${moduleName}</Automatic-Module-Name>
               <Revision>sha-${buildNumber}</Revision>
             </manifestEntries>
           </archive>

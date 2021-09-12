@@ -15,7 +15,7 @@
     <module>jprometheus-sheet-odf</module>
   </modules>
   <properties>
-    <svnComponent>jprometheus-services</svnComponent>
+    <svnComponent>jprometheus</svnComponent>
     <packageName>${packageKey}.${svnComponent}</packageName>
   </properties>
 </project>
