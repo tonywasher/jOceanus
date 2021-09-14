@@ -36,6 +36,21 @@ import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventPr
 public class TethysDateFormatter
         implements TethysEventProvider<TethysDateEvent> {
     /**
+     * As of Java 16.0.2 the short format for September is Sept instead of Sep.
+     */
+    private static final int PATCH_JAVA_VER = 16;
+
+    /**
+     * As of Java 16.0.2 the short format for September is Sept instead of Sep.
+     */
+    private static final String PATCH_SEPT_NEW = "-Sept-";
+
+    /**
+     * As of Java 16.0.2 the short format for September is Sept instead of Sep.
+     */
+    private static final String PATCH_SEPT_OLD = "-Sep-";
+
+    /**
      * The default format.
      */
     private static final String DEFAULT_FORMAT = "dd-MMM-yyyy";
@@ -208,19 +223,15 @@ public class TethysDateFormatter
         final TethysDate myEnd = pRange.getEnd();
 
         /* Build range description */
-        final StringBuilder myBuilder = new StringBuilder();
-        myBuilder.append((myStart == null)
-                                           ? TethysDateRange.DESC_UNBOUNDED
-                                           : formatDate(myStart));
-        myBuilder.append(TethysDateRange.CHAR_BLANK);
-        myBuilder.append(TethysDateRange.DESC_LINK);
-        myBuilder.append(TethysDateRange.CHAR_BLANK);
-        myBuilder.append((myEnd == null)
-                                         ? TethysDateRange.DESC_UNBOUNDED
-                                         : formatDate(myEnd));
-
-        /* return the format */
-        return myBuilder.toString();
+        return ((myStart == null)
+                ? TethysDateRange.DESC_UNBOUNDED
+                : formatDate(myStart)) +
+                TethysDateRange.CHAR_BLANK +
+                TethysDateRange.DESC_LINK +
+                TethysDateRange.CHAR_BLANK +
+                ((myEnd == null)
+                        ? TethysDateRange.DESC_UNBOUNDED
+                        : formatDate(myEnd));
     }
 
     /**
@@ -250,8 +261,37 @@ public class TethysDateFormatter
         try {
             return LocalDate.parse(pValue, theLocalDateFormat);
         } catch (DateTimeParseException e) {
+            /* Handle Patch for Java 16.0.2 change for September */
+            int myVersion = Runtime.version().feature();
+            if (pValue.contains(PATCH_SEPT_OLD)
+                    && myVersion >= PATCH_JAVA_VER) {
+                return parsePatchedLocalDate(pValue.replace(PATCH_SEPT_OLD, PATCH_SEPT_NEW));
+            }
+            if (pValue.contains(PATCH_SEPT_NEW)
+                    && Runtime.version().feature() < PATCH_JAVA_VER) {
+                return parsePatchedLocalDate(pValue.replace(PATCH_SEPT_NEW, PATCH_SEPT_OLD));
+            }
+
+            /* throw exception */
             throw new IllegalArgumentException("Invalid date: "
                                                + pValue, e);
+        }
+    }
+
+    /**
+     * Parse LocalDate.
+     * @param pValue Formatted Date
+     * @return the Date
+     * @throws IllegalArgumentException on error
+     */
+    private LocalDate parsePatchedLocalDate(final String pValue) {
+        /* Parse the date */
+        try {
+            return LocalDate.parse(pValue, theLocalDateFormat);
+        } catch (DateTimeParseException e) {
+            /* throw exception */
+            throw new IllegalArgumentException("Invalid date: "
+                    + pValue, e);
         }
     }
 
