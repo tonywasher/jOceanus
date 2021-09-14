@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import org.bouncycastle.bcpg.sig.Features;
 import org.bouncycastle.openpgp.PGPPublicKey;
 import org.bouncycastle.openpgp.PGPPublicKeyRing;
 import org.bouncycastle.openpgp.PGPSignature;
@@ -25,6 +26,11 @@ public class PGPAvailable {
      * The list of available compression algorithms.
      */
     private final List<Integer> theCompressions;
+
+    /**
+     * Do we use an integrity packet?.
+     */
+    private boolean withIntegrity;
 
     /**
      * Have we initialised?.
@@ -65,6 +71,14 @@ public class PGPAvailable {
     }
 
     /**
+     * Should we include an integrity packet?
+     * @return true/false
+     */
+    boolean withIntegrity() {
+        return withIntegrity;
+    }
+
+    /**
      * Determine the preferences.
      * @param pRings the keyRings
      */
@@ -93,11 +107,13 @@ public class PGPAvailable {
             initPreferences(theHashes, v.getPreferredHashAlgorithms());
             initPreferences(theSyms, v.getPreferredSymmetricAlgorithms());
             initPreferences(theCompressions, v.getPreferredCompressionAlgorithms());
+            withIntegrity = v.getFeatures().supportsFeature(Features.FEATURE_MODIFICATION_DETECTION);
             isInit = true;
         } else {
             adjustPreferences(theHashes, v.getPreferredHashAlgorithms());
             adjustPreferences(theSyms, v.getPreferredSymmetricAlgorithms());
             adjustPreferences(theCompressions, v.getPreferredCompressionAlgorithms());
+            withIntegrity |= v.getFeatures().supportsFeature(Features.FEATURE_MODIFICATION_DETECTION);
         }
     }
 

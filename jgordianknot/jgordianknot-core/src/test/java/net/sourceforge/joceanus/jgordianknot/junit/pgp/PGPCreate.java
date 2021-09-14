@@ -115,7 +115,7 @@ public class PGPCreate {
 
         /* Init encrypted data generator */
         PGPDataEncryptorBuilder myEncBuilder = new BcPGPDataEncryptorBuilder(myAlgs.getSymAlgorithm())
-                .setSecureRandom(RANDOM);
+                .setSecureRandom(RANDOM).setWithIntegrityPacket(myAlgs.withIntegrity());
         PGPEncryptedDataGenerator encryptedDataGenerator = new PGPEncryptedDataGenerator(myEncBuilder);
         for (BcPGPPublicKeyRing myRing : pKeyRings) {
             PGPPublicKey myEncKey = obtainEncryptionKey(myRing);
@@ -209,9 +209,10 @@ public class PGPCreate {
                                                              final int pHashAlgId,
                                                              final String... pSecrets) throws PGPException, IOException {
         final List<PGPSignatureGenerator> mySigners = new ArrayList<>();
-        for (final String mySecret : pSecrets) {
+        for (int i = 0; i < pSecrets.length; i++) {
+            final String mySecret = pSecrets[i];
             PGPSignatureGenerator mySigner = createSigner(mySecret, pHashAlgId);
-            mySigner.generateOnePassVersion(false).encode(pCompressed);
+            mySigner.generateOnePassVersion(i < pSecrets.length - 1).encode(pCompressed);
             mySigners.add(0, mySigner);
         }
         return mySigners;
@@ -239,15 +240,22 @@ public class PGPCreate {
         if (mySignSecret.getPublicKey().getAlgorithm() != PGPPublicKey.EDDSA) {
             mySignerBuilder.setSecureRandom(RANDOM);
         }
+
+        /* Create the signer */
         PGPSignatureGenerator mySigner = new PGPSignatureGenerator(mySignerBuilder);
         mySigner.init(PGPSignature.BINARY_DOCUMENT, mySignKey);
+
+        /* Build signature attributes */
+        PGPSignatureSubpacketGenerator spGen = new PGPSignatureSubpacketGenerator();
+        spGen.setIssuerFingerprint(false, mySignSecret);
         Iterator<String> myUserids = mySignSecret.getUserIDs();
         if (myUserids.hasNext()) {
             String userId = myUserids.next();
-            PGPSignatureSubpacketGenerator spGen = new PGPSignatureSubpacketGenerator();
             spGen.setSignerUserID(false, userId.getBytes(StandardCharsets.UTF_8));
-            mySigner.setHashedSubpackets(spGen.generate());
         }
+        mySigner.setHashedSubpackets(spGen.generate());
+
+        /* Return the signer */
         return mySigner;
     }
 
