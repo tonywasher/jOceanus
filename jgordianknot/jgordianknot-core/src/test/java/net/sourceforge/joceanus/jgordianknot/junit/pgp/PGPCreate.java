@@ -115,7 +115,7 @@ public class PGPCreate {
 
         /* Init encrypted data generator */
         PGPDataEncryptorBuilder myEncBuilder = new BcPGPDataEncryptorBuilder(myAlgs.getSymAlgorithm())
-                .setSecureRandom(RANDOM);
+                .setSecureRandom(RANDOM).setWithIntegrityPacket(myAlgs.withIntegrity());
         PGPEncryptedDataGenerator encryptedDataGenerator = new PGPEncryptedDataGenerator(myEncBuilder);
         for (BcPGPPublicKeyRing myRing : pKeyRings) {
             PGPPublicKey myEncKey = obtainEncryptionKey(myRing);
