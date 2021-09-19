@@ -45,7 +45,7 @@ import org.bouncycastle.openpgp.operator.bc.BcPublicKeyKeyEncryptionMethodGenera
 /**
  * PGP File encryption utilities.
  */
-public class PGPCreate {
+public class PGPSignEncrypt {
     /* Secure Random */
     private static final SecureRandom RANDOM = new SecureRandom();
 
@@ -58,12 +58,12 @@ public class PGPCreate {
         /* Protect against exceptions */
         try {
             /* Access the encryption keys */
-            List<BcPGPPublicKeyRing> myRings = loadRings(PGPBase.PUBRSA, PGPBase.PUBDSA, PGPBase.PUBED, PGPBase.PUBEC);
+            final List<BcPGPPublicKeyRing> myRings = loadRings(PGPBase.PUBRSA, PGPBase.PUBDSA, PGPBase.PUBED, PGPBase.PUBEC);
 
             /* Access the target file */
-            OutputStream myOutput = new FileOutputStream(PGPBase.FILEDIR + "PGPTest.new.asc");
-            BufferedOutputStream myBufferedOut = new BufferedOutputStream(myOutput);
-            ArmoredOutputStream myArmoredOut = new ArmoredOutputStream(myBufferedOut);
+            final OutputStream myOutput = new FileOutputStream(PGPBase.FILEDIR + "PGPTest.new.asc");
+            final BufferedOutputStream myBufferedOut = new BufferedOutputStream(myOutput);
+            final ArmoredOutputStream myArmoredOut = new ArmoredOutputStream(myBufferedOut);
 
             /* Encrypt the file */
             encryptFile(myArmoredOut, myRings);
@@ -97,9 +97,9 @@ public class PGPCreate {
      */
     private static BcPGPPublicKeyRing loadRing(final String pName) throws IOException {
         /* Load the ring */
-        InputStream myInput = new FileInputStream(PGPBase.FILEDIR + pName);
-        BufferedInputStream myBufferedIn = new BufferedInputStream(myInput);
-        ArmoredInputStream myArmoredIn = new ArmoredInputStream(myBufferedIn);
+        final InputStream myInput = new FileInputStream(PGPBase.FILEDIR + pName);
+        final BufferedInputStream myBufferedIn = new BufferedInputStream(myInput);
+        final ArmoredInputStream myArmoredIn = new ArmoredInputStream(myBufferedIn);
         return new BcPGPPublicKeyRing(myArmoredIn);
     }
 
@@ -111,37 +111,37 @@ public class PGPCreate {
     public static void encryptFile(final OutputStream pOutput,
                                    final List<BcPGPPublicKeyRing> pKeyRings) throws PGPException, IOException {
         /* Determine algorithms */
-        PGPAvailable myAlgs = PGPAvailable.determinePreferences(pKeyRings);
+        final PGPFeatures myAlgs = PGPFeatures.determinePreferences(pKeyRings);
 
         /* Init encrypted data generator */
-        PGPDataEncryptorBuilder myEncBuilder = new BcPGPDataEncryptorBuilder(myAlgs.getSymAlgorithm())
+        final PGPDataEncryptorBuilder myEncBuilder = new BcPGPDataEncryptorBuilder(myAlgs.getSymAlgorithm())
                 .setSecureRandom(RANDOM).setWithIntegrityPacket(myAlgs.withIntegrity());
-        PGPEncryptedDataGenerator encryptedDataGenerator = new PGPEncryptedDataGenerator(myEncBuilder);
+        final PGPEncryptedDataGenerator encryptedDataGenerator = new PGPEncryptedDataGenerator(myEncBuilder);
         for (BcPGPPublicKeyRing myRing : pKeyRings) {
-            PGPPublicKey myEncKey = obtainEncryptionKey(myRing);
+            final PGPPublicKey myEncKey = obtainEncryptionKey(myRing);
             encryptedDataGenerator.addMethod(new BcPublicKeyKeyEncryptionMethodGenerator(myEncKey));
         }
-        OutputStream encryptedOut = encryptedDataGenerator.open(pOutput, new byte[PGPBase.BUFFER_SIZE]);
+        final OutputStream encryptedOut = encryptedDataGenerator.open(pOutput, new byte[PGPBase.BUFFER_SIZE]);
 
         /* start compression */
-        PGPCompressedDataGenerator compressedDataGenerator = new PGPCompressedDataGenerator(myAlgs.getCompAlgorithm());
-        OutputStream compressedOut = compressedDataGenerator.open(encryptedOut);
+        final PGPCompressedDataGenerator compressedDataGenerator = new PGPCompressedDataGenerator(myAlgs.getCompAlgorithm());
+        final OutputStream compressedOut = compressedDataGenerator.open(encryptedOut);
 
         /* Create the signature builders */
-        List<PGPSignatureGenerator> mySigners = createSigners(compressedOut, myAlgs.getHashAlgorithm(),
+        final List<PGPSignatureGenerator> mySigners = createSigners(compressedOut, myAlgs.getHashAlgorithm(),
                 PGPBase.SECRSA, PGPBase.SECDSA, PGPBase.SECED, PGPBase.SECEC);
 
         /* Create the Literal Data generator output stream */
-        PGPLiteralDataGenerator literalDataGenerator = new PGPLiteralDataGenerator();
-        File actualFile = new File(PGPBase.FILEDIR + "PGPTest.docx");
-        OutputStream literalOut = literalDataGenerator.open(compressedOut,
+        final PGPLiteralDataGenerator literalDataGenerator = new PGPLiteralDataGenerator();
+        final File actualFile = new File(PGPBase.FILEDIR + "PGPTest.docx");
+        final OutputStream literalOut = literalDataGenerator.open(compressedOut,
                 PGPLiteralData.BINARY, "PGPTest.docx",
                 new Date(actualFile.lastModified()), new byte[PGPBase.BUFFER_SIZE]);
 
         /* read input file and write to target file using a buffer */
-        InputStream myInput = new FileInputStream(PGPBase.FILEDIR + "PGPTest.docx");
-        BufferedInputStream myBufferedIn = new BufferedInputStream(myInput);
-        byte[] buf = new byte[PGPBase.BUFFER_SIZE];
+        final InputStream myInput = new FileInputStream(PGPBase.FILEDIR + "PGPTest.docx");
+        final BufferedInputStream myBufferedIn = new BufferedInputStream(myInput);
+        final byte[] buf = new byte[PGPBase.BUFFER_SIZE];
         int len;
         while ((len = myBufferedIn.read(buf, 0, buf.length)) > 0) {
             literalOut.write(buf, 0, len);
@@ -176,18 +176,18 @@ public class PGPCreate {
      */
     private static PGPPublicKey obtainEncryptionKey(final PGPPublicKeyRing pRing) {
         /* Access the master key */
-        PGPPublicKey myMaster = pRing.getPublicKey();
+        final PGPPublicKey myMaster = pRing.getPublicKey();
 
         /* Loop through keyRing */
-        Iterator<PGPPublicKey> kIt = pRing.getPublicKeys();
+        final Iterator<PGPPublicKey> kIt = pRing.getPublicKeys();
         while (kIt.hasNext()) {
-            PGPPublicKey k = kIt.next();
+            final PGPPublicKey k = kIt.next();
 
             /* Access the binding signature */
-            PGPSignature mySig = PGPBase.obtainKeyIdSignature(k, myMaster.getKeyID());
+            final PGPSignature mySig = PGPBase.obtainKeyIdSignature(k, myMaster.getKeyID());
 
             /* Make sure that we can encrypt storage */
-            PGPSignatureSubpacketVector v = mySig.getHashedSubPackets();
+            final PGPSignatureSubpacketVector v = mySig.getHashedSubPackets();
             if (PGPBase.checkKeyValidity(mySig)
                     && (v.getKeyFlags() & PGPKeyFlags.CAN_ENCRYPT_STORAGE) != 0) {
                 return k;
@@ -211,7 +211,7 @@ public class PGPCreate {
         final List<PGPSignatureGenerator> mySigners = new ArrayList<>();
         for (int i = 0; i < pSecrets.length; i++) {
             final String mySecret = pSecrets[i];
-            PGPSignatureGenerator mySigner = createSigner(mySecret, pHashAlgId);
+            final PGPSignatureGenerator mySigner = createSigner(mySecret, pHashAlgId);
             mySigner.generateOnePassVersion(i < pSecrets.length - 1).encode(pCompressed);
             mySigners.add(0, mySigner);
         }
@@ -227,30 +227,30 @@ public class PGPCreate {
     private static PGPSignatureGenerator createSigner(final String pSecret,
                                                       final int pHashAlgId) throws PGPException, IOException {
         /* Access the signing key */
-        InputStream myInput = new FileInputStream(PGPBase.FILEDIR + pSecret);
-        BufferedInputStream myBufferedIn = new BufferedInputStream(myInput);
-        ArmoredInputStream myArmoredIn = new ArmoredInputStream(myBufferedIn);
-        BcPGPSecretKeyRing pgpSec = new BcPGPSecretKeyRing(myArmoredIn);
-        PGPSecretKey mySignSecret = obtainSigningKey(pgpSec);
-        PGPPrivateKey mySignKey = obtainPrivateKey(pSecret, mySignSecret);
+        final InputStream myInput = new FileInputStream(PGPBase.FILEDIR + pSecret);
+        final BufferedInputStream myBufferedIn = new BufferedInputStream(myInput);
+        final ArmoredInputStream myArmoredIn = new ArmoredInputStream(myBufferedIn);
+        final BcPGPSecretKeyRing pgpSec = new BcPGPSecretKeyRing(myArmoredIn);
+        final PGPSecretKey mySignSecret = obtainSigningKey(pgpSec);
+        final PGPPrivateKey mySignKey = obtainPrivateKey(pSecret, mySignSecret);
 
         /* Create the signature builder */
-        BcPGPContentSignerBuilder mySignerBuilder = new BcPGPContentSignerBuilder(mySignSecret.getPublicKey().getAlgorithm(),
+        final BcPGPContentSignerBuilder mySignerBuilder = new BcPGPContentSignerBuilder(mySignSecret.getPublicKey().getAlgorithm(),
                 pHashAlgId);
         if (mySignSecret.getPublicKey().getAlgorithm() != PGPPublicKey.EDDSA) {
             mySignerBuilder.setSecureRandom(RANDOM);
         }
 
         /* Create the signer */
-        PGPSignatureGenerator mySigner = new PGPSignatureGenerator(mySignerBuilder);
+        final PGPSignatureGenerator mySigner = new PGPSignatureGenerator(mySignerBuilder);
         mySigner.init(PGPSignature.BINARY_DOCUMENT, mySignKey);
 
         /* Build signature attributes */
-        PGPSignatureSubpacketGenerator spGen = new PGPSignatureSubpacketGenerator();
+        final PGPSignatureSubpacketGenerator spGen = new PGPSignatureSubpacketGenerator();
         spGen.setIssuerFingerprint(false, mySignSecret);
-        Iterator<String> myUserids = mySignSecret.getUserIDs();
+        final Iterator<String> myUserids = mySignSecret.getUserIDs();
         if (myUserids.hasNext()) {
-            String userId = myUserids.next();
+            final String userId = myUserids.next();
             spGen.setSignerUserID(false, userId.getBytes(StandardCharsets.UTF_8));
         }
         mySigner.setHashedSubpackets(spGen.generate());
@@ -266,16 +266,16 @@ public class PGPCreate {
      */
     private static PGPSecretKey obtainSigningKey(final PGPSecretKeyRing pRing) {
         /* Access the master key */
-        PGPPublicKey myMaster = pRing.getPublicKey();
+        final PGPPublicKey myMaster = pRing.getPublicKey();
 
         /* Loop through keyRing */
-        Iterator<PGPSecretKey> kIt = pRing.getSecretKeys();
+        final Iterator<PGPSecretKey> kIt = pRing.getSecretKeys();
         while (kIt.hasNext()) {
-            PGPSecretKey k = kIt.next();
-            PGPSignature mySig = PGPBase.obtainKeyIdSignature(k.getPublicKey(), myMaster.getKeyID());
+            final PGPSecretKey k = kIt.next();
+            final PGPSignature mySig = PGPBase.obtainKeyIdSignature(k.getPublicKey(), myMaster.getKeyID());
 
             /* Make sure that we can sign data */
-            PGPSignatureSubpacketVector v = mySig.getHashedSubPackets();
+            final PGPSignatureSubpacketVector v = mySig.getHashedSubPackets();
             if (PGPBase.checkKeyValidity(mySig)
                     && (v.getKeyFlags() & PGPKeyFlags.CAN_SIGN) != 0) {
                 return k;
@@ -295,7 +295,7 @@ public class PGPCreate {
     private static PGPPrivateKey obtainPrivateKey(final String pSecret,
                                                   final PGPSecretKey pKey) throws PGPException {
         final String myPass = PGPBase.obtainPassword4Secret(pSecret);
-        PBESecretKeyDecryptor myDecryptor = new BcPBESecretKeyDecryptorBuilder(new BcPGPDigestCalculatorProvider()).build(myPass.toCharArray());
+        final PBESecretKeyDecryptor myDecryptor = new BcPBESecretKeyDecryptorBuilder(new BcPGPDigestCalculatorProvider()).build(myPass.toCharArray());
         return pKey.extractPrivateKey(myDecryptor);
     }
 }

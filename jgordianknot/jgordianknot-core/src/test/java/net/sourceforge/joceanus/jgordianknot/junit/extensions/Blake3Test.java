@@ -386,7 +386,7 @@ public class Blake3Test {
         /* Take a copy of the state */
         final Blake3Digest mySave = pDigest.copy();
 
-        /* Crate alternative buffer */
+        /* Create alternative buffer */
         final int myLen = pBuffer.length;
         final byte[] myAlt = new byte[myLen];
 

@@ -9,6 +9,9 @@ import org.bouncycastle.openpgp.PGPPublicKey;
 import org.bouncycastle.openpgp.PGPSignature;
 import org.bouncycastle.openpgp.PGPSignatureSubpacketVector;
 
+/**
+ * Base PGP methods/constants.
+ */
 public class PGPBase {
     /* Source files location */
     private static final String HOME = System.getProperty("user.home");
@@ -55,10 +58,10 @@ public class PGPBase {
                                              final long pKeyId) {
         /* Loop through signatures */
         for (Iterator<PGPSignature> sit = pKey.getSignatures(); sit.hasNext();) {
-            PGPSignature sig = sit.next();
+            final PGPSignature sig = sit.next();
 
             /* Check that this is the required signature */
-            PGPSignatureSubpacketVector v = sig.getUnhashedSubPackets();
+            final PGPSignatureSubpacketVector v = sig.getUnhashedSubPackets();
             if (v != null && v.getIssuerKeyID() == pKeyId
                     && checkSigValidity(sig)) {
                 return sig;
@@ -76,12 +79,12 @@ public class PGPBase {
      */
     static boolean checkKeyValidity(final PGPSignature pSig) {
         /* Access detail */
-        PGPSignatureSubpacketVector v = pSig.getHashedSubPackets();
-        Date myCreate = v.getSignatureCreationTime();
-        LocalDateTime myExpireTime = myCreate.toInstant()
+        final PGPSignatureSubpacketVector v = pSig.getHashedSubPackets();
+        final Date myCreate = v.getSignatureCreationTime();
+        final LocalDateTime myExpireTime = myCreate.toInstant()
                 .atZone(ZoneId.systemDefault())
                 .toLocalDateTime();
-        long myExpire = v.getKeyExpirationTime();
+        final long myExpire = v.getKeyExpirationTime();
         return myExpire == 0 || myExpireTime.plusSeconds(myExpire).isAfter(LocalDateTime.now());
     }
 
@@ -92,12 +95,12 @@ public class PGPBase {
      */
     private static boolean checkSigValidity(final PGPSignature pSig) {
         /* Access detail */
-        PGPSignatureSubpacketVector v = pSig.getHashedSubPackets();
-        Date myCreate = v.getSignatureCreationTime();
-        LocalDateTime myExpireTime = myCreate.toInstant()
+        final PGPSignatureSubpacketVector v = pSig.getHashedSubPackets();
+        final Date myCreate = v.getSignatureCreationTime();
+        final LocalDateTime myExpireTime = myCreate.toInstant()
                 .atZone(ZoneId.systemDefault())
                 .toLocalDateTime();
-        long myExpire = v.getSignatureExpirationTime();
+        final long myExpire = v.getSignatureExpirationTime();
         return myExpire == 0 || myExpireTime.plusSeconds(myExpire).isAfter(LocalDateTime.now());
     }
 }

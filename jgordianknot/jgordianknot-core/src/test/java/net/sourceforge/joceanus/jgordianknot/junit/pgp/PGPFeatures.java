@@ -11,7 +11,7 @@ import org.bouncycastle.openpgp.PGPSignature;
 import org.bouncycastle.openpgp.PGPSignatureSubpacketVector;
 import org.bouncycastle.openpgp.bc.BcPGPPublicKeyRing;
 
-public class PGPAvailable {
+public class PGPFeatures {
     /**
      * The list of available hash algorithms.
      */
@@ -40,7 +40,7 @@ public class PGPAvailable {
     /**
      * Constructor.
      */
-    private PGPAvailable() {
+    private PGPFeatures() {
         theHashes = new ArrayList<>();
         theSyms = new ArrayList<>();
         theCompressions = new ArrayList<>();
@@ -82,8 +82,8 @@ public class PGPAvailable {
      * Determine the preferences.
      * @param pRings the keyRings
      */
-    static PGPAvailable determinePreferences(final List<BcPGPPublicKeyRing> pRings) {
-        PGPAvailable myAlgs = new PGPAvailable();
+    static PGPFeatures determinePreferences(final List<BcPGPPublicKeyRing> pRings) {
+        final PGPFeatures myAlgs = new PGPFeatures();
         for (PGPPublicKeyRing myRing : pRings) {
             myAlgs.updatePreferences(myRing);
         }
@@ -96,13 +96,13 @@ public class PGPAvailable {
      */
     private void updatePreferences(final PGPPublicKeyRing pRing) {
         /* Access the master key */
-        PGPPublicKey myMaster = pRing.getPublicKey();
+        final PGPPublicKey myMaster = pRing.getPublicKey();
 
         /* Access the binding signature */
-        PGPSignature mySig = PGPBase.obtainKeyIdSignature(myMaster, myMaster.getKeyID());
+        final PGPSignature mySig = PGPBase.obtainKeyIdSignature(myMaster, myMaster.getKeyID());
 
         /* Update the preferences */
-        PGPSignatureSubpacketVector v = mySig.getHashedSubPackets();
+        final PGPSignatureSubpacketVector v = mySig.getHashedSubPackets();
         if (!isInit) {
             initPreferences(theHashes, v.getPreferredHashAlgorithms());
             initPreferences(theSyms, v.getPreferredSymmetricAlgorithms());
@@ -113,7 +113,7 @@ public class PGPAvailable {
             adjustPreferences(theHashes, v.getPreferredHashAlgorithms());
             adjustPreferences(theSyms, v.getPreferredSymmetricAlgorithms());
             adjustPreferences(theCompressions, v.getPreferredCompressionAlgorithms());
-            withIntegrity |= v.getFeatures().supportsFeature(Features.FEATURE_MODIFICATION_DETECTION);
+            withIntegrity &= v.getFeatures().supportsFeature(Features.FEATURE_MODIFICATION_DETECTION);
         }
     }
 
@@ -145,9 +145,9 @@ public class PGPAvailable {
         }
         final List<Integer> myKeep = new ArrayList<>();
         for (int i : pAdjust) { myKeep.add(i); }
-        Iterator<Integer> myIterator = myKeep.iterator();
+        final Iterator<Integer> myIterator = myKeep.iterator();
         while (myIterator.hasNext()) {
-            Integer myValue = myIterator.next();
+            final Integer myValue = myIterator.next();
             if (!myKeep.contains(myValue)) {
                 myIterator.remove();
             }
