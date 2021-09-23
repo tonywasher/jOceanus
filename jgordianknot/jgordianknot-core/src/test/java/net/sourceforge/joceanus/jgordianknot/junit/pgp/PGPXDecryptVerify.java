@@ -32,7 +32,14 @@ import org.bouncycastle.openpgp.operator.bc.BcPGPContentVerifierBuilderProvider;
 import org.bouncycastle.openpgp.operator.bc.BcPGPDigestCalculatorProvider;
 import org.bouncycastle.openpgp.operator.bc.BcPublicKeyDataDecryptorFactory;
 
-public class PGPDecryptVerify {
+/**
+ * PGP XDecrypt and verify.
+ */
+public class PGPXDecryptVerify {
+    /* Target Style/Decrypt */
+    private static final PGPXKeyRingStyle STYLE = PGPXKeyRingStyle.DUO;
+    private static final PGPXKeyRing DECRYPT = PGPXKeyRing.DSAELGAMALDUO;
+
     /**
      * Main program.
      *
@@ -42,9 +49,9 @@ public class PGPDecryptVerify {
         /* Protect against exceptions */
         try {
             /* Access the decrypted compressed input stream */
-            final BcPGPSecretKeyRing pgpSec = loadSecretKeyRing(PGPBase.SECDSA);
+            final BcPGPSecretKeyRing pgpSec = PGPXKeyRingUtil.loadSecretKeyRing(DECRYPT);
             final PGPPublicKeyEncryptedData myEncrypted = accessEncryptedData(pgpSec);
-            final PGPCompressedData myCompressed = accessCompressed(myEncrypted, PGPBase.SECDSA, pgpSec);
+            final PGPCompressedData myCompressed = accessCompressed(myEncrypted, pgpSec);
 
             /* Validate the compressed stream */
             validateCompressed(myCompressed);
@@ -63,40 +70,17 @@ public class PGPDecryptVerify {
     /**
      * Load public keyRings
      *
-     * @param pSigners the keyRing names
      * @return the keyRing list
      */
-    private static List<PGPPublicKeyRing> loadSigners(final String... pSigners) throws PGPException, IOException {
+    private static List<PGPPublicKeyRing> loadSigners() throws PGPException, IOException {
         final List<PGPPublicKeyRing> mySigners = new ArrayList<>();
-        for (final String mySigner : pSigners) {
-            final BcPGPPublicKeyRing myRing = loadPublicKeyRing(mySigner);
-            mySigners.add(0, myRing);
+        for (final PGPXKeyRing mySigner : PGPXKeyRing.values()) {
+            if (mySigner.getKeyPairStyle() == STYLE) {
+                final BcPGPPublicKeyRing myRing = PGPXKeyRingUtil.loadPublicKeyRing(mySigner);
+                mySigners.add(myRing);
+            }
         }
         return mySigners;
-    }
-
-    /**
-     * Load publicKeyRing.
-     *
-     * @param pName the ring file name
-     */
-    private static BcPGPPublicKeyRing loadPublicKeyRing(final String pName) throws IOException {
-        final InputStream myInput = new FileInputStream(PGPBase.FILEDIR + pName);
-        final BufferedInputStream myBuffered = new BufferedInputStream(myInput);
-        final ArmoredInputStream myArmored = new ArmoredInputStream(myBuffered);
-        return new BcPGPPublicKeyRing(myArmored);
-    }
-
-    /**
-     * Load secretKeyRing.
-     *
-     * @param pName the ring file name
-     */
-    private static BcPGPSecretKeyRing loadSecretKeyRing(final String pName) throws IOException, PGPException {
-        final InputStream myInput = new FileInputStream(PGPBase.FILEDIR + pName);
-        final BufferedInputStream myBuffered = new BufferedInputStream(myInput);
-        final ArmoredInputStream myArmored = new ArmoredInputStream(myBuffered);
-        return new BcPGPSecretKeyRing(myArmored);
     }
 
     /**
@@ -107,7 +91,7 @@ public class PGPDecryptVerify {
      */
     private static PGPPublicKeyEncryptedData accessEncryptedData(final BcPGPSecretKeyRing pSecret) throws PGPException, IOException {
         /*Load the encrypted DataList */
-        final InputStream myInput = new FileInputStream(PGPBase.FILEDIR + "PGPTest.new.asc");
+        final InputStream myInput = new FileInputStream(PGPXKeyRingUtil.FILEDIR + "PGPTest.new.asc");
         final BufferedInputStream myBuffered = new BufferedInputStream(myInput);
         final ArmoredInputStream myArmored = new ArmoredInputStream(myBuffered);
         final BcPGPObjectFactory myFact = new BcPGPObjectFactory(myArmored);
@@ -135,15 +119,13 @@ public class PGPDecryptVerify {
      * Access decrypted compressedData
      *
      * @param pEncrypted the selected encryptedData
-     * @param pName the ring file name
      * @param pSecret the secret keyRing
      * @return the compressed data
      */
     private static PGPCompressedData accessCompressed(final PGPPublicKeyEncryptedData pEncrypted,
-                                                      final String pName,
                                                       final BcPGPSecretKeyRing pSecret) throws PGPException, IOException {
 
-        final String myPass = PGPBase.obtainPassword4Secret(pName);
+        final String myPass = DECRYPT.obtainPassword4Secret();
         final PGPSecretKey mySecret = pSecret.getSecretKey(pEncrypted.getKeyID());
         final PBESecretKeyDecryptor myDecryptor = new BcPBESecretKeyDecryptorBuilder(new BcPGPDigestCalculatorProvider()).build(myPass.toCharArray());
         final BcPublicKeyDataDecryptorFactory myDecFactory = new BcPublicKeyDataDecryptorFactory(mySecret.extractPrivateKey(myDecryptor));
@@ -157,7 +139,7 @@ public class PGPDecryptVerify {
      */
     private static void validateCompressed(final PGPCompressedData pCompressed) throws PGPException, IOException {
         /* Access the signing keys */
-        final List<PGPPublicKeyRing> myPubKeys = loadSigners(PGPBase.PUBRSA, PGPBase.PUBDSA, PGPBase.PUBED, PGPBase.PUBEC);
+        final List<PGPPublicKeyRing> myPubKeys = loadSigners();
         final PGPPublicKeyRingCollection myPubColl = new PGPPublicKeyRingCollection(myPubKeys);
 
         /* Access the various data parts */
@@ -180,7 +162,7 @@ public class PGPDecryptVerify {
 
         /* read input file and write to target file using a buffer */
         final InputStream myInput = myData.getDataStream();
-        final byte[] buf = new byte[PGPBase.BUFFER_SIZE];
+        final byte[] buf = new byte[PGPXKeyRingUtil.BUFFER_SIZE];
         int len;
         while ((len = myInput.read(buf, 0, buf.length)) > 0) {
             for (final PGPOnePassSignature myOPS : myOPSigs) {
