@@ -11,7 +11,10 @@ import org.bouncycastle.openpgp.PGPSignature;
 import org.bouncycastle.openpgp.PGPSignatureSubpacketVector;
 import org.bouncycastle.openpgp.bc.BcPGPPublicKeyRing;
 
-public class PGPFeatures {
+/**
+ * PGP Features.
+ */
+public class PGPXFeatures {
     /**
      * The list of available hash algorithms.
      */
@@ -40,7 +43,7 @@ public class PGPFeatures {
     /**
      * Constructor.
      */
-    private PGPFeatures() {
+    private PGPXFeatures() {
         theHashes = new ArrayList<>();
         theSyms = new ArrayList<>();
         theCompressions = new ArrayList<>();
@@ -82,8 +85,8 @@ public class PGPFeatures {
      * Determine the preferences.
      * @param pRings the keyRings
      */
-    static PGPFeatures determinePreferences(final List<BcPGPPublicKeyRing> pRings) {
-        final PGPFeatures myAlgs = new PGPFeatures();
+    static PGPXFeatures determinePreferences(final List<BcPGPPublicKeyRing> pRings) {
+        final PGPXFeatures myAlgs = new PGPXFeatures();
         for (PGPPublicKeyRing myRing : pRings) {
             myAlgs.updatePreferences(myRing);
         }
@@ -99,7 +102,7 @@ public class PGPFeatures {
         final PGPPublicKey myMaster = pRing.getPublicKey();
 
         /* Access the binding signature */
-        final PGPSignature mySig = PGPBase.obtainKeyIdSignature(myMaster, myMaster.getKeyID());
+        final PGPSignature mySig = PGPXKeyRingUtil.obtainKeyIdSignature(myMaster, myMaster.getKeyID());
 
         /* Update the preferences */
         final PGPSignatureSubpacketVector v = mySig.getHashedSubPackets();
