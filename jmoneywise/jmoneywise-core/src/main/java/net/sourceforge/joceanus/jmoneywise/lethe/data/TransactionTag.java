@@ -463,7 +463,7 @@ public class TransactionTag
 
         /**
          * Construct an empty CORE Tag list.
-         * <p>
+         *
          * @param pData the DataSet for the list
          */
         protected TransactionTagList(final MoneyWiseData pData) {

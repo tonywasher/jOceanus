@@ -463,7 +463,7 @@ public class Region
 
         /**
          * Construct an empty CORE Tag list.
-         * <p>
+         *
          * @param pData the DataSet for the list
          */
         protected RegionList(final MoneyWiseData pData) {

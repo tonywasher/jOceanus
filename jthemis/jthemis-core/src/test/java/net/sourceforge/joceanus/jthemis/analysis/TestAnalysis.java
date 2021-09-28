@@ -80,7 +80,7 @@ public class TestAnalysis {
         Assertions.assertNull(myProj.getError(), "Exception analysing project");
 
         /* Parse sourceMeter statistics */
-        ThemisSMStatistics myStats = new ThemisSMStatistics(new TethysDataFormatter());
+        final ThemisSMStatistics myStats = new ThemisSMStatistics(new TethysDataFormatter());
         final Path myPath = ThemisSMStatistics.getRecentStats(PROJECT);
         myStats.parseStatistics(myPath, PROJECT);
 

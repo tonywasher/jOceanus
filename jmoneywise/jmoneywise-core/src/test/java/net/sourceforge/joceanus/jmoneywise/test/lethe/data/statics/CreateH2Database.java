@@ -14,9 +14,15 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
 /**
  * H2 Database Create Test.
  */
-public class CreateH2Database {
+public final class CreateH2Database {
     /**
-     * Main test program
+     * private constructor.
+     */
+    private CreateH2Database() {
+    }
+
+    /**
+     * Main test program.
      * @param args the arguments
      */
     public static void main(final String[] args) {
@@ -49,56 +55,49 @@ public class CreateH2Database {
      */
     public static class NullStatusReport
             implements MetisThreadStatusReport {
+        /**
+         * Profile.
+         */
         private final MetisProfile myProfile = new MetisProfile("Test");
 
         @Override
-        public void initTask(String pTask) throws OceanusException {
-
+        public void initTask(final String pTask) {
         }
 
         @Override
-        public void setNumStages(int pNumStages) throws OceanusException {
-
+        public void setNumStages(final int pNumStages) {
         }
 
         @Override
-        public void setNewStage(String pStage) throws OceanusException {
-
+        public void setNewStage(final String pStage) {
         }
 
         @Override
-        public void setNumSteps(int pNumSteps) throws OceanusException {
-
+        public void setNumSteps(final int pNumSteps) {
         }
 
         @Override
-        public void setStepsDone(int pSteps) throws OceanusException {
-
+        public void setStepsDone(final int pSteps) {
         }
 
         @Override
-        public void setNextStep() throws OceanusException {
-
+        public void setNextStep() {
         }
 
         @Override
-        public void setNextStep(String pStep) throws OceanusException {
-
+        public void setNextStep(final String pStep) {
         }
 
         @Override
-        public void setCompletion() throws OceanusException {
-
+        public void setCompletion() {
         }
 
         @Override
-        public void checkForCancellation() throws OceanusException {
-
+        public void checkForCancellation() {
         }
 
         @Override
-        public void throwCancelException() throws OceanusException {
-
+        public void throwCancelException() {
         }
 
         @Override

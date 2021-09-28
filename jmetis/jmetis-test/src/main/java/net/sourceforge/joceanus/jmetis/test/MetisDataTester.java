@@ -27,43 +27,45 @@ import net.sourceforge.joceanus.jmetis.field.MetisFieldSimpleId;
 /**
  * Data Tester.
  */
-public class MetisDataTester {
+public final class MetisDataTester {
+    /**
+     * Private constructor.
+     */
+    private MetisDataTester() {
+    }
+
     /**
      * Main.
      * @param args the program arguments
      */
     public static void main(final String[] args) {
-        MainClass myClass = new MainClass();
-        MetisFieldSetDef mySet = myClass.getDataFieldSet();
-        Iterator<MetisFieldDef> myIterator = mySet.fieldIterator();
+        final MainClass myClass = new MainClass();
+        final MetisFieldSetDef mySet = myClass.getDataFieldSet();
+        final Iterator<MetisFieldDef> myIterator = mySet.fieldIterator();
         while (myIterator.hasNext()) {
-            MetisFieldDef myField = myIterator.next();
+            final MetisFieldDef myField = myIterator.next();
 
             System.out.println(myField.getFieldId().getId() + '=' + myField.getFieldValue(myClass));
         }
     }
 
     /**
-     * Base class
+     * Base class.
      */
-    public static abstract class BaseClass
+    public abstract static class BaseClass
             implements MetisFieldItem {
         /**
          * FieldSet.
          */
         private static final MetisFieldSet<BaseClass> FIELD_DEFS = MetisFieldSet.newFieldSet(BaseClass.class);
 
-        /**
+        /*
          * Declare fields.
          */
         static {
             FIELD_DEFS.declareLocalField(new MetisFieldSimpleId("One"), p -> 1);
             FIELD_DEFS.declareLocalField(new MetisFieldSimpleId("Two"), BaseClass::getCounter);
         }
-
-        /**
-         * DataFieldTwo.
-         */
 
         /**
          * Counter.
@@ -80,7 +82,7 @@ public class MetisDataTester {
     }
 
     /**
-     * Main class
+     * Main class.
      */
     public static class MainClass extends BaseClass {
         /**
@@ -88,7 +90,7 @@ public class MetisDataTester {
          */
         private static final MetisFieldSet<MainClass> FIELD_DEFS = MetisFieldSet.newFieldSet(MainClass.class);
 
-        /**
+        /*
          * DataFieldThree.
          */
         static {
@@ -103,7 +105,7 @@ public class MetisDataTester {
         /**
          * Counter.
          */
-        private final Integer theValue = Integer.valueOf(20);
+        private final Integer theValue = 20;
 
         /**
          * Constructor.

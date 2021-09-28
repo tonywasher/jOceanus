@@ -24,6 +24,7 @@ module net.sourceforge.joceanus.jgordianknot.core {
     /* External libraries */
     requires org.bouncycastle.provider;
     requires org.bouncycastle.util;
+    requires org.bouncycastle.pg;
 
     /* jOceanus */
     requires net.sourceforge.joceanus.jtethys.core;

@@ -35,7 +35,6 @@ import org.bouncycastle.crypto.macs.CMac;
 import org.bouncycastle.crypto.macs.DSTU7564Mac;
 import org.bouncycastle.crypto.macs.GMac;
 import org.bouncycastle.crypto.macs.GOST28147Mac;
-import org.bouncycastle.crypto.macs.HMac;
 import org.bouncycastle.crypto.macs.KMAC;
 import org.bouncycastle.crypto.macs.Poly1305;
 import org.bouncycastle.crypto.macs.SipHash;

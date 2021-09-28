@@ -90,7 +90,6 @@ public final class CurrencyTest {
         }
 
         /* Report failures */
-        boolean bOK = true;
         Assertions.assertTrue(myInvalidCurrencies.isEmpty(), "Invalid currencies:\n" + myInvalidCurrencies);
         Assertions.assertTrue(myMissingCurrencies.isEmpty(), "Missing currencies:\n" + myMissingCurrencies);
     }

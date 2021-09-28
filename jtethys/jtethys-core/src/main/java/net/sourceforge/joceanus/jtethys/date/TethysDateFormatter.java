@@ -225,11 +225,11 @@ public class TethysDateFormatter
         /* Build range description */
         return ((myStart == null)
                 ? TethysDateRange.DESC_UNBOUNDED
-                : formatDate(myStart)) +
-                TethysDateRange.CHAR_BLANK +
-                TethysDateRange.DESC_LINK +
-                TethysDateRange.CHAR_BLANK +
-                ((myEnd == null)
+                : formatDate(myStart))
+                    + TethysDateRange.CHAR_BLANK
+                    + TethysDateRange.DESC_LINK
+                    + TethysDateRange.CHAR_BLANK
+                    + ((myEnd == null)
                         ? TethysDateRange.DESC_UNBOUNDED
                         : formatDate(myEnd));
     }
@@ -262,7 +262,7 @@ public class TethysDateFormatter
             return LocalDate.parse(pValue, theLocalDateFormat);
         } catch (DateTimeParseException e) {
             /* Handle Patch for Java 16.0.2 change for September */
-            int myVersion = Runtime.version().feature();
+            final int myVersion = Runtime.version().feature();
             if (pValue.contains(PATCH_SEPT_OLD)
                     && myVersion >= PATCH_JAVA_VER) {
                 return parsePatchedLocalDate(pValue.replace(PATCH_SEPT_OLD, PATCH_SEPT_NEW));

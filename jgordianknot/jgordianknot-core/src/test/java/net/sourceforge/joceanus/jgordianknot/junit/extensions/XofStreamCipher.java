@@ -195,7 +195,6 @@ public class XofStreamCipher {
             final String IV2 = pBlake2b ? IV128_2 : IV64_2;
 
             /* Run tests */
-            testXofStream(myCipher, KEY128_1, null, myXof);
             testXofStream(myCipher, KEY128_1, IV1, myXof);
             testXofStream(myCipher, KEY128_2, IV2, myXof);
             testXofStream(myCipher, KEY256_1, IV1, myXof);
@@ -217,7 +216,6 @@ public class XofStreamCipher {
             final SkeinXof myXof = new SkeinXof(new SkeinBase(pState, pState));
 
             /* Run tests */
-            testXofStream(myCipher, KEY128_1, null, myXof);
             testXofStream(myCipher, KEY128_1, IV64_1, myXof);
             testXofStream(myCipher, KEY128_2, IV64_2, myXof);
             testXofStream(myCipher, KEY256_1, IV128_1, myXof);

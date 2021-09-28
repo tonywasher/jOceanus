@@ -352,7 +352,7 @@ public class TethysSwingScrollUIExample {
         theColorPicker.getEventRegistrar().addEventListener(TethysUIEvent.NEWVALUE, e -> setColorValue(e.getDetails(String.class)));
 
         /* Configure the grid */
-        myGrid.setBorderPadding(3);
+        myGrid.setBorderPadding(2);
 
         /* Return the panel */
         return myGrid;

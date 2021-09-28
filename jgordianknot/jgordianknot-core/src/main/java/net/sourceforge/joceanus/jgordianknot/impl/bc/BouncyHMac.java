@@ -31,19 +31,19 @@ import net.sourceforge.joceanus.jgordianknot.api.mac.GordianMacSpec;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
- * HMac implementation that utilises Xof digests
+ * HMac implementation that utilises Xof digests.
  */
 public class BouncyHMac
         implements Mac {
     /**
      * IPAD Value.
      */
-    private final static byte IPAD = (byte)0x36;
+    private static final byte IPAD = (byte) 0x36;
 
     /**
      * OPAD value.
      */
-    private final static byte OPAD = (byte)0x5C;
+    private static final byte OPAD = (byte) 0x5C;
 
     /**
      * The macSpec.
@@ -199,7 +199,7 @@ public class BouncyHMac
     }
 
     /**
-     * Xor a value into a pad
+     * Xor a value into a pad.
      * @param pBuffer the pad buffer
      * @param pLen the length of the buffer
      * @param pValue the value

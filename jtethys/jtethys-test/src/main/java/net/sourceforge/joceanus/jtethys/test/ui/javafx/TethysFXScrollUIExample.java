@@ -322,7 +322,7 @@ public class TethysFXScrollUIExample
         });
 
         /* Configure the grid */
-        myGrid.setBorderPadding(3);
+        myGrid.setBorderPadding(2);
 
         /* Create scene */
         final Scene myScene = new Scene((Region) TethysFXNode.getNode(myGrid));
