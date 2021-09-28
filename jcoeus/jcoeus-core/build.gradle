@@ -1,0 +1,21 @@
+/* Dependencies */
+dependencies {
+    implementation project(':jmetis-core')
+    implementation project(':jgordianknot-core')
+    implementation project(':jtethys-core')
+    implementation "org.jsoup:jsoup:$jsoupVersion"
+}
+
+/* Description */
+description = 'Coeus Core Peer2Peer Analysis'
+
+/* Specific Manifest details */
+jar {
+    manifest {
+        from sharedManifest
+        attributes(
+            "Implementation-Title": project.description,
+            "Class-Path": configurations.runtimeClasspath.collect { "../${appLibDir}" + standardizePath(it.absolutePath) }.join(' ')         
+        )
+    }
+}

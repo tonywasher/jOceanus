@@ -1,0 +1,18 @@
+/* Dependencies */
+dependencies {
+    implementation project(':jtethys-core')
+}
+
+/* Description */
+description = 'Prometheus Sheet Service API'
+
+/* Specific Manifest details */
+jar {
+    manifest {
+        from sharedManifest
+        attributes(
+            "Implementation-Title": project.description,
+            "Class-Path": configurations.runtimeClasspath.collect { "../${appLibDir}" + standardizePath(it.absolutePath) }.join(' ')         
+        )
+    }
+}

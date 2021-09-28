@@ -1,0 +1,20 @@
+/* Dependencies */
+dependencies {
+    implementation project(':jgordianknot-core')
+    implementation project(':jtethys-core')
+    implementation "org.json:json:$jsonVersion"
+}
+
+/* Description */
+description = 'Metis Core Data Framework'
+
+/* Specific Manifest details */
+jar {
+    manifest {
+        from sharedManifest
+        attributes(
+            "Implementation-Title": project.description,
+             "Class-Path": configurations.runtimeClasspath.collect { "../${appLibDir}" + standardizePath(it.absolutePath) }.join(' ')         
+       )
+    }
+}

@@ -1,0 +1,33 @@
+/* javaFX Specifics */
+plugins {
+    id 'org.openjfx.javafxplugin' version "$javaFXPluginVersion"
+}
+javafx {
+    version = "$javaFXVersion"
+    modules = [ 'javafx.controls', 'javafx.graphics' ]
+}
+
+/* Dependencies */
+dependencies {
+    implementation project(':jtethys-core')
+    implementation project(':jtethys-javafx')
+    implementation project(':jtethys-swing')
+    implementation "org.jfree:jfreechart:$jFreeChartVersion"
+}
+
+/* Description */
+description = 'Tethys Java Test'
+
+/* disable checkstyle */
+checkstyleMain.enabled = false
+
+/* Specific Manifest details */
+jar {
+    manifest {
+        from sharedManifest
+        attributes(
+            "Implementation-Title": project.description,
+            "Class-Path": configurations.runtimeClasspath.collect { "../${appLibDir}" + standardizePath(it.absolutePath) }.join(' ')
+        )         
+    }
+}

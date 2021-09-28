@@ -1,0 +1,264 @@
+/* General settings  */
+buildscript {
+    repositories {
+        mavenLocal()
+        maven {
+            url = uri('https://repo.maven.apache.org/maven2/')
+        }
+    }
+
+    tasks.withType(JavaCompile) {
+        options.encoding = 'Cp1252'
+    }
+}
+
+/* project-wise setup */
+allprojects {
+    /* Standard plugins */
+    apply plugin: 'java-library'
+    apply plugin: 'maven-publish'
+    apply plugin: 'checkstyle'
+    apply plugin: 'pmd'
+    apply plugin: 'jacoco'
+
+    /* general identity */
+    group = 'net.sourceforge.joceanus'
+    version = '1.6.1-SNAPSHOT'
+
+    /* java compatibility */
+    java.sourceCompatibility = JavaVersion.VERSION_11
+    java.targetCompatibility = JavaVersion.VERSION_11
+
+    /* Maven repositories */
+    repositories {
+        mavenLocal()
+        mavenCentral()
+    }
+
+    /* Standard properties */
+    project.ext { 
+        /* Dependency versions */
+        bouncyCastleVersion = "1.69"
+        jUnitVersion = "5.8.1"
+        jsonVersion = "20210307"
+        mySQLVersion = "8.0.26"
+        postGreSQLVersion = "42.2.24"
+        jtdsVersion = "1.3.1"
+        h2Version = "1.4.200"
+        apachePOIVersion = "5.0.0"
+        jsoupVersion = "1.14.2"
+        jFreeChartVersion = "1.5.3"
+
+        /* javaFX versions */
+        javaFXVersion = "17.0.0.1"
+        javaFXPluginVersion = "0.0.10"
+
+        /* Annotation versions */
+        jetBrainsAnnotationsVersion = "22.0.0"
+
+        /* checkStyle config */
+        checkStyleVersion = "9.0"
+        checkStyleConfig = "$rootDir/src/main/checkstyle/checks.xml"
+
+        /* pmd config */
+        pmdVersion = "6.39.0"
+        pmdConfig = "$rootDir/src/main/pmd/pmd.xml"
+
+        /* jacoco config */
+        jacocoVersion = "0.8.7"
+
+        /* Distribution details */
+        appDir = "$rootDir/dist"
+        appBinDir = "bin/"
+        appLibDir = "lib/"
+    }
+}
+
+/* Store calculated properties in the root project */
+ext { 
+    /* git details */
+    gitRepo = getGitRepo()
+    gitBranch = getGitBranch()
+    gitRev = getGitRev()
+    pmdRuleSet = resources.text.fromFile("$pmdConfig")
+}
+
+/* sub-project setup */
+subprojects {
+    /* Build source and javaDoc jars */
+    java {
+        withJavadocJar()
+        withSourcesJar()
+    }
+
+    /* Support jUnit 5 */
+    test {
+        useJUnitPlatform()
+    }
+
+    /* Add annotations */
+    dependencies {
+	compileOnly "org.jetbrains:annotations:$jetBrainsAnnotationsVersion"
+    } 
+
+    /* Java options */
+    compileJava {
+        options.compilerArgs += ["-Xlint:unchecked"]
+    }
+
+    /* Maven publishing */
+    publishing {
+        publications {
+            maven(MavenPublication) {
+                from(components.java)
+            }
+        }
+    }
+
+    /* CheckStyle config */ 
+    checkstyle {
+        toolVersion "$checkStyleVersion"
+        configFile file("$checkStyleConfig")
+        ignoreFailures = true
+    }
+
+    /* PMD config */ 
+    pmd {
+        toolVersion = "$pmdVersion"
+        ruleSets = []
+        ruleSetConfig = rootProject.ext.pmdRuleSet
+        ignoreFailures = true
+    }
+
+    /* Jacoco */
+    test {
+        finalizedBy jacocoTestReport 
+    }
+    jacocoTestReport {
+        dependsOn test 
+    }
+    jacoco {
+        toolVersion = "$jacocoVersion"
+    }
+
+    /* Standard manifest details */
+    ext.sharedManifest = manifest {
+        attributes(
+            "Implementation-Version": project.version,
+            "Created-By"     : "Gradle ${gradle.gradleVersion}",
+            "Git-Repo"       : rootProject.ext.gitRepo,
+            "Git-Branch"     : rootProject.ext.gitBranch,
+            "Git-Rev"        : "sha1-" + rootProject.ext.gitRev,
+            "Built-By"       : System.properties['user.name'],
+            "Build-Timestamp": new java.text.SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ").format(new Date()),
+            "Build-Jdk"      : "${System.properties['java.version']} (${System.properties['java.vendor']} ${System.properties['java.vm.version']})",
+            "Build-OS"       : "${System.properties['os.name']} ${System.properties['os.arch']} ${System.properties['os.version']}"
+        )   
+    }
+}
+
+/* Make sure distribution directory is cleared on clean */
+clean.doFirst {
+    delete "${appDir}/"
+}
+
+/* Disable jar building for root project */
+jar.enabled = false
+
+/* Obtain gitBranch details */
+String getGitBranch() {
+    def projectDirFile = new File("$projectDir")
+    def dotGit = new File("$projectDir/.git")
+
+    def srCmd = 'git symbolic-ref --short HEAD'
+    def srProc = srCmd.execute(null, projectDirFile)
+    srProc.waitForOrKill(10 * 1000)
+    if (srProc.exitValue() == 0) {
+        return srProc.text.trim()
+    }
+    return "GitBranch not found"
+}
+
+/* Obtain gitRevision details */
+String getGitRev() {
+    def projectDirFile = new File("$projectDir")
+    def dotGit = new File("$projectDir/.git")
+
+    def rpCmd = 'git rev-parse --short=12 HEAD'
+    def rpProc = rpCmd.execute(null, projectDirFile)
+    rpProc.waitForOrKill(10 * 1000)
+    if (rpProc.exitValue() == 0) {
+        return rpProc.text.trim()
+    } 
+    return "gitRevision not found"
+}
+
+/* Obtain gitRepository details */
+String getGitRepo() {
+    def projectDirFile = new File("$projectDir")
+    def dotGit = new File("$projectDir/.git")
+
+    def rmCmd = 'git remote get-url origin'
+    def rmProc = rmCmd.execute(null, projectDirFile)
+    rmProc.waitForOrKill(10 * 1000)
+    if (rmProc.exitValue() == 0) {
+        return rmProc.text.trim()
+    } 
+    return "gitRepository not found"
+}
+
+/* Obtain Maven repository style path for artifact */
+String standardizePath(String pPath) {
+    /* Convert to standard style and access root directory */
+    String myPath = pPath.replaceAll("\\\\", "/")
+    String projDir = "$rootDir"
+
+    /* If the artifact has been built within the project */
+    if (pPath.startsWith(projDir)) { 
+       /* Obtain directory version of group */      
+       String myGroup = group.replaceAll("\\.", "/") 
+
+       /* Strip of the full prefix to the artifact */
+       myPath = myPath.substring(projDir.length())
+       String bldDir = "/build/libs/"
+       int myIndex = myPath.indexOf(bldDir)
+       String myJar = myPath.substring(myIndex + bldDir.length()) 
+
+       /* Split out artifact name */
+       myIndex = myJar.indexOf("-" + version)
+       String myArtifact = myJar.substring(0, myIndex)
+
+       /* return required path */
+       return myGroup + "/" + myArtifact + "/" + version + "/" + myJar
+    }
+
+    /* If the artifact is in the gradle cache */
+    String gradleCacheDir = "/.gradle/caches/modules-2/files-2.1/"
+    int myIndex = myPath.indexOf(gradleCacheDir)
+    if (myIndex != -1) {
+        /* Split off prefix */
+        myPath = myPath.substring(myIndex + gradleCacheDir.length()) 
+
+        /* Split off group */
+        myIndex = myPath.indexOf("/")
+        String myGroup = myPath.substring(0, myIndex).replaceAll("\\.", "/")
+        myPath = myPath.substring(myIndex+1)
+
+        /* Split off artifact */
+        myIndex = myPath.indexOf("/")
+        String myArtifact = myPath.substring(0, myIndex)
+        myPath = myPath.substring(myIndex+1)
+
+        /* Split off version */
+        myIndex = myPath.indexOf("/")
+        String myVersion = myPath.substring(0, myIndex)
+   
+        /* return required path */
+        return myGroup + "/" + myArtifact + "/" + myVersion + "/" + myArtifact + "-" + myVersion + ".jar"
+    } 
+
+    /* Must be from local maven repository */
+    String mavenDir = "/.m2/repository/"
+    myIndex = myPath.indexOf(mavenDir)
+    return myPath.substring(myIndex + mavenDir.length()) 
+}

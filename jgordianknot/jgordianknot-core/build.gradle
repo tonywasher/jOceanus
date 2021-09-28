@@ -1,0 +1,50 @@
+/* Dependencies */
+dependencies {
+    implementation "org.bouncycastle:bcprov-jdk15on:$bouncyCastleVersion"
+    implementation "org.bouncycastle:bcutil-jdk15on:$bouncyCastleVersion"
+    implementation project(':jtethys-core')
+    implementation "org.bouncycastle:bcpg-jdk15on:$bouncyCastleVersion"
+    testImplementation "org.junit.jupiter:junit-jupiter-api:$jUnitVersion"
+    testImplementation "org.junit.jupiter:junit-jupiter-engine:$jUnitVersion"
+}
+
+/* Description */
+description = 'GordianKnot Core Security Framework'
+
+/* Additional sourceSets */
+sourceSets {
+    main {
+        java {
+            srcDir 'src/embedded/java'
+            srcDir 'src/patch/java'
+            srcDir 'src/extension/java'
+        }
+    }
+}
+
+/* Test jar details */
+tasks.register('testsJar', Jar) {
+    archiveClassifier = 'tests'
+    from(sourceSets.test.output)    
+}
+publishing.publications.maven.artifact(testsJar)
+
+/* Specific Manifest details */
+jar {
+    manifest {
+        from sharedManifest
+        attributes(
+            "Implementation-Title": project.description,
+            "Class-Path": configurations.runtimeClasspath.collect { "../${appLibDir}" + standardizePath(it.absolutePath) }.join(' ')  
+        )       
+    }
+}
+
+/* Exclude various files from checkStyle */
+checkstyleMain
+    .exclude('**/SevenZip/**/*.java')
+    .exclude('**/patch/**/*.java')
+    .exclude('**/ext/**/*.java')
+checkstyleTest
+    .exclude('**/junit/**/*.java')
+

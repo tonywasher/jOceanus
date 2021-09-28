@@ -1,0 +1,19 @@
+/* Dependencies */
+dependencies {
+    implementation project(':jtethys-core')
+    implementation "org.jfree:jfreechart:$jFreeChartVersion"
+}
+
+/* Description */
+description = 'Tethys Java Swing Utilities'
+
+/* Specific Manifest details */
+jar {
+    manifest {
+        from sharedManifest
+        attributes(
+            "Implementation-Title": project.description,
+            "Class-Path": configurations.runtimeClasspath.collect { "../${appLibDir}" + standardizePath(it.absolutePath) }.join(' ')
+        )         
+    }
+}
