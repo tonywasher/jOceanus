@@ -1,0 +1,62 @@
+/* javaFX Specifics */
+plugins {
+    id 'org.openjfx.javafxplugin' version "$javaFXPluginVersion"
+}
+javafx {
+    version = "$javaFXVersion"
+    modules = [ 'javafx.graphics' ]
+}
+
+/* Dependencies */
+dependencies {
+    implementation project(':jthemis-core')
+    implementation project(':jmetis-javafx')
+    implementation project(':jmetis-core')
+    implementation project(':jtethys-javafx')
+    implementation project(':jtethys-core')
+}
+
+/* Description */
+description = 'Themis JavaFX Project Framework'
+
+/* Specific Manifest details */
+jar {
+    manifest {
+        from sharedManifest
+        attributes(
+            "Implementation-Title": project.description,
+            "Main-Class": "net.sourceforge.joceanus.jthemis.ui.javafx.Themis4FX",
+            "JavaFX-Preloader-Class": "net.sourceforge.joceanus.jthemis.ui.javafx.ThemisFXpreLoader",
+            "Automatic-Module-Name": "net.sourceforge.joceanus.jthemis.javafx",
+            "Class-Path": configurations.runtimeClasspath.collect { "../${appLibDir}" + standardizePath(it.absolutePath) }.join(' ')         
+        )
+    }
+}
+
+/* Copy dependency modules to distribution directory */
+task copyLibsToDist(type: Copy) {
+    destinationDir = rootDir
+    into("dist/$appLibDir") {
+	def fileRenameMap = [:];
+   	from configurations.runtimeClasspath.collect { d ->
+            def oldName = d.getName()
+            def newName = standardizePath(d.getAbsolutePath())
+            fileRenameMap[oldName] = newName
+            d
+        }
+        rename { oldName -> fileRenameMap[oldName] }
+    }
+    setDuplicatesStrategy(DuplicatesStrategy.EXCLUDE)
+}
+
+/* Resolve ordering between task instances */
+copyLibsToDist.dependsOn ":jcoeus-swing:copyLibsToDist"
+
+/* Copy module to distribution directory */
+task copyJarToDist(type: Copy) {
+    from jar 
+    into "${appDir}/${appBinDir}"
+}   
+
+/* Add to assemble task */
+assemble.dependsOn copyJarToDist

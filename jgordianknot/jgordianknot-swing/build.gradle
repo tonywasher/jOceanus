@@ -1,0 +1,20 @@
+/* Dependencies */
+dependencies {
+    implementation project(':jtethys-swing')
+    implementation project(':jtethys-core')
+    implementation project(':jgordianknot-core')
+}
+
+/* Description */
+description = 'GordianKnot Swing Security Framework'
+
+/* Specific Manifest details */
+jar {
+    manifest {
+        from sharedManifest
+        attributes(
+            "Implementation-Title": project.description,
+            "Class-Path": configurations.runtimeClasspath.collect { "../${appLibDir}" + standardizePath(it.absolutePath) }.join(' ')
+        )         
+    }
+}

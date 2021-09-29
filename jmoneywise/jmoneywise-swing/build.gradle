@@ -1,0 +1,57 @@
+/* Dependencies */
+dependencies {
+    implementation project(':jmoneywise-core')
+    implementation project(':jprometheus-swing')
+    implementation project(':jprometheus-core')
+    implementation project(':jmetis-swing')
+    implementation project(':jmetis-core')
+    implementation project(':jgordianknot-swing')
+    implementation project(':jgordianknot-core')
+    implementation project(':jtethys-swing')
+    implementation project(':jtethys-core')
+}
+
+/* Description */
+description = 'MoneyWise Personal Finance - Swing'
+
+/* Specific Manifest details */
+jar {
+    manifest {
+        from sharedManifest
+        attributes(
+            "Implementation-Title": project.description,
+            "Main-Class": "net.sourceforge.joceanus.jmoneywise.lethe.ui.swing.Control",
+            "Automatic-Module-Name": "net.sourceforge.joceanus.jmoneywise.swing",
+            "SplashScreen-Image": "net/sourceforge/joceanus/jmoneywise/ui/icons/swing/MoneyWiseSplash.png",
+            "Class-Path": configurations.runtimeClasspath.collect { "../${appLibDir}" + standardizePath(it.absolutePath) }.join(' ')         
+        )        
+    }
+}
+
+/* Copy dependency modules to distribution directory */
+task copyLibsToDist(type: Copy) {
+    destinationDir = rootDir
+    into("dist/$appLibDir") {
+	def fileRenameMap = [:];
+   	from configurations.runtimeClasspath.collect { d ->
+            def oldName = d.getName()
+            def newName = standardizePath(d.getAbsolutePath())
+            fileRenameMap[oldName] = newName
+            d
+        }
+        rename { oldName -> fileRenameMap[oldName] }
+    }
+    setDuplicatesStrategy(DuplicatesStrategy.EXCLUDE)
+}
+
+/* Resolve ordering between task instances */
+copyLibsToDist.dependsOn ":jthemis-javafx:copyLibsToDist"
+
+/* Copy module to distribution directory */
+task copyJarToDist(type: Copy) {
+    from jar 
+    into "${appDir}/${appBinDir}"
+}   
+
+/* Add to assemble task */
+assemble.dependsOn copyJarToDist

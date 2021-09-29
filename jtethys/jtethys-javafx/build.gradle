@@ -1,0 +1,27 @@
+/* javaFX Specifics */
+plugins {
+    id 'org.openjfx.javafxplugin' version "$javaFXPluginVersion"
+}
+javafx {
+    version = "$javaFXVersion"
+    modules = [ 'javafx.web', 'javafx.controls', 'javafx.graphics' ]
+}
+
+/* Dependencies */
+dependencies {
+    implementation project(':jtethys-core')
+}
+
+/* Description */
+description = 'Tethys JavaFX Utilities'
+
+/* Specific Manifest details */
+jar {
+    manifest {
+        from sharedManifest
+        attributes(
+            "Implementation-Title": project.description,
+            "Class-Path": configurations.runtimeClasspath.collect { "../${appLibDir}" + standardizePath(it.absolutePath) }.join(' ')
+        )         
+    }
+}

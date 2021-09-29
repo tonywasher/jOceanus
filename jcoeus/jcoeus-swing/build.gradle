@@ -1,0 +1,55 @@
+/* Dependencies */
+dependencies {
+    implementation project(':jcoeus-core')
+    implementation project(':jmetis-swing')
+    implementation project(':jmetis-core')
+    implementation project(':jgordianknot-swing')
+    implementation project(':jgordianknot-core')
+    implementation project(':jtethys-swing')
+    implementation project(':jtethys-core')
+}
+
+/* Description */
+description = 'Coeus Swing Peer2Peer Analysis'
+
+/* Specific Manifest details */
+jar {
+    manifest {
+        from sharedManifest
+        attributes(
+            "Implementation-Title": project.description,
+            "Main-Class": "net.sourceforge.joceanus.jcoeus.ui.swing.Coeus4Swing",
+            "Automatic-Module-Name": "net.sourceforge.joceanus.jcoeus.swing",
+            "SplashScreen-Image": "net/sourceforge/joceanus/jcoeus/ui/icons/swing/CoeusSplash.png",
+            "Class-Path": configurations.runtimeClasspath.collect { "../${appLibDir}" + standardizePath(it.getAbsolutePath()) }.join(' ')         
+        )
+    }
+}
+
+/* Copy dependency modules to distribution directory */
+task copyLibsToDist(type: Copy) {
+    destinationDir = rootDir
+    into("dist/$appLibDir") {
+	def fileRenameMap = [:];
+   	from configurations.runtimeClasspath.collect { d ->
+            def oldName = d.getName()
+            def newName = standardizePath(d.getAbsolutePath())
+            fileRenameMap[oldName] = newName
+            d
+        }
+        rename { oldName -> fileRenameMap[oldName] }
+    }
+    setDuplicatesStrategy(DuplicatesStrategy.EXCLUDE)
+}
+
+/* Resolve ordering between task instances */
+copyLibsToDist.dependsOn ":jcoeus-javafx:copyLibsToDist"
+
+/* Copy module to distribution directory */
+task copyJarToDist(type: Copy) {
+    from jar 
+    into "${appDir}/${appBinDir}"
+}   
+
+/* Add to assemble task */
+assemble.dependsOn copyJarToDist
