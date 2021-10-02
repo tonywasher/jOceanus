@@ -28,30 +28,29 @@ jar {
     }
 }
 
-/* Copy dependency modules to distribution directory */
-task copyLibsToDist(type: Copy) {
-    destinationDir = rootDir
-    into("dist/$appLibDir") {
-	def fileRenameMap = [:];
-   	from configurations.runtimeClasspath.collect { d ->
-            def oldName = d.getName()
-            def newName = standardizePath(d.getAbsolutePath())
-            fileRenameMap[oldName] = newName
-            d
-        }
-        rename { oldName -> fileRenameMap[oldName] }
+/* Build list of distributable modules */
+task buildDistribution {
+    def jarName = project.name + "-" + version + ".jar"
+    def fullJarName = "$projectDir/build/libs/$jarName"
+    rootProject.ext.newRenameMap[fullJarName] = "${appBinDir}" + jarName
+    configurations.runtimeClasspath.each { d ->
+            def oldName = d.getAbsolutePath()
+            def newName = "${appLibDir}" + standardizePath(d.getAbsolutePath())
+            rootProject.ext.newRenameMap[oldName] = newName
     }
-    setDuplicatesStrategy(DuplicatesStrategy.EXCLUDE)
 }
 
-/* Resolve ordering between task instances */
-copyLibsToDist.dependsOn ":jthemis-javafx:copyLibsToDist"
-
-/* Copy module to distribution directory */
-task copyJarToDist(type: Copy) {
-    from jar 
-    into "${appDir}/${appBinDir}"
-}   
-
-/* Add to assemble task */
-assemble.dependsOn copyJarToDist
+/* Copy distributable modules to distribution directory */
+task distribute {
+    doLast {
+        rootProject.ext.newRenameMap.each{ k, v -> 
+            copy {
+                into("$rootDir/dist/$v")
+                from k
+	        setDuplicatesStrategy(DuplicatesStrategy.EXCLUDE)
+            }
+        }
+    }
+}
+distribute.dependsOn jar, ":jthemis-javafx:jar", ":jcoeus-javafx:jar", ":jcoeus-swing:jar", ":jprometheus-sheet-odf:jar", ":jprometheus-sheet-hssf:jar"
+assemble.dependsOn distribute

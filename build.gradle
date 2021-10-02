@@ -81,6 +81,7 @@ ext {
     gitBranch = getGitBranch()
     gitRev = getGitRev()
     pmdRuleSet = resources.text.fromFile("$pmdConfig")
+    newRenameMap = [:];
 }
 
 /* sub-project setup */
