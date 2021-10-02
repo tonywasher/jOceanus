@@ -31,6 +31,5 @@ module net.sourceforge.joceanus.jtethys.javafx {
     requires net.sourceforge.joceanus.jtethys.core;
 
     /* Exports */
-    exports net.sourceforge.joceanus.jtethys.help.javafx;
     exports net.sourceforge.joceanus.jtethys.ui.javafx;
 }

@@ -1,5 +1,5 @@
 /* *****************************************************************************
- * Tethys: Java Utilities
+ * Metis: Java Data Framework
  * Copyright 2012,2021 Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -15,6 +15,6 @@
  * limitations under the License.
  ******************************************************************************/
 /**
- * JavaFX Tethys help test classes.
+ * Swing Tethys Help test classes.
  */
-package net.sourceforge.joceanus.jtethys.test.help.javafx;
+package net.sourceforge.joceanus.jmetis.test.help.swing;

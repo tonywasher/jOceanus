@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Tethys: Java Utilities
+ * Metis: Java Data Framework
  * Copyright 2012,2021 Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -14,19 +14,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ******************************************************************************/
-package net.sourceforge.joceanus.jtethys.help;
+package net.sourceforge.joceanus.jmetis.help;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import net.sourceforge.joceanus.jtethys.help.TethysHelpModule.TethysHelpId;
+import net.sourceforge.joceanus.jmetis.help.MetisHelpModule.MetisHelpId;
 
 /**
  * Help Entry class. This class provides structure to the help system, providing parent child
  * relationships to implement chapters and also providing maps between the name of a help page and
  * the file that holds the HTML for the page
  */
-public class TethysHelpEntry {
+public class MetisHelpEntry {
     /**
      * Title of the entry.
      */
@@ -40,12 +40,12 @@ public class TethysHelpEntry {
     /**
      * HelpId of the entry.
      */
-    private final TethysHelpId theId;
+    private final MetisHelpId theId;
 
     /**
      * Children of the entry.
      */
-    private List<TethysHelpEntry> theChildren;
+    private List<MetisHelpEntry> theChildren;
 
     /**
      * HTML.
@@ -59,9 +59,9 @@ public class TethysHelpEntry {
      * @param pTitle the title for this page in the table of contents
      * @param pHelpId the helpId representing the HTML for this entry
      */
-    public <K extends Enum<K> & TethysHelpId> TethysHelpEntry(final String pName,
-                                                              final String pTitle,
-                                                              final K pHelpId) {
+    public <K extends Enum<K> & MetisHelpId> MetisHelpEntry(final String pName,
+                                                            final String pTitle,
+                                                            final K pHelpId) {
         theName = pName;
         theTitle = pTitle;
         theId = pHelpId;
@@ -72,7 +72,7 @@ public class TethysHelpEntry {
      * @param pName the name by which this entry is referenced
      * @param pTitle the title for this page in the table of contents
      */
-    public TethysHelpEntry(final String pName,
+    public MetisHelpEntry(final String pName,
                            final String pTitle) {
         theName = pName;
         theTitle = pTitle;
@@ -84,7 +84,7 @@ public class TethysHelpEntry {
      * @param pChild the child
      * @return the HelpEntry
      */
-    public TethysHelpEntry addChildEntry(final TethysHelpEntry pChild) {
+    public MetisHelpEntry addChildEntry(final MetisHelpEntry pChild) {
         if (theChildren == null) {
             theChildren = new ArrayList<>();
         }
@@ -112,7 +112,7 @@ public class TethysHelpEntry {
      * Obtain the helpId.
      * @return the id
      */
-    public TethysHelpId getHelpId() {
+    public MetisHelpId getHelpId() {
         return theId;
     }
 
@@ -120,7 +120,7 @@ public class TethysHelpEntry {
      * Obtain the children.
      * @return the children
      */
-    public List<TethysHelpEntry> getChildren() {
+    public List<MetisHelpEntry> getChildren() {
         return theChildren;
     }
 

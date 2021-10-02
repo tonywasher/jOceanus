@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Tethys: Java Utilities
+ * Metis: Java Data Framework
  * Copyright 2012,2021 Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ******************************************************************************/
-package net.sourceforge.joceanus.jtethys.test.help.swing;
+package net.sourceforge.joceanus.jmetis.test.help.swing;
 
 import java.awt.BorderLayout;
 import java.awt.HeadlessException;
@@ -25,15 +25,17 @@ import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 import javax.swing.WindowConstants;
 
+import net.sourceforge.joceanus.jmetis.help.MetisHelpEntry;
+import net.sourceforge.joceanus.jmetis.help.MetisHelpModule;
+import net.sourceforge.joceanus.jmetis.help.swing.MetisSwingHelpWindow;
+import net.sourceforge.joceanus.jmetis.test.help.MetisTestHelpPage;
+import net.sourceforge.joceanus.jmetis.test.help.MetisTestHelpStyleSheet;
 import net.sourceforge.joceanus.jtethys.OceanusException;
-import net.sourceforge.joceanus.jtethys.help.TethysHelpEntry;
-import net.sourceforge.joceanus.jtethys.help.TethysHelpModule;
-import net.sourceforge.joceanus.jtethys.help.swing.TethysSwingHelpWindow;
 import net.sourceforge.joceanus.jtethys.logger.TethysLogManager;
 import net.sourceforge.joceanus.jtethys.logger.TethysLogger;
-import net.sourceforge.joceanus.jtethys.test.help.TethysTestHelpPage;
-import net.sourceforge.joceanus.jtethys.test.help.TethysTestHelpStyleSheet;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingGuiFactory;
+
+import static net.sourceforge.joceanus.jmetis.help.MetisHelpModule.defineContentsEntry;
 
 /**
  * Help Window.
@@ -71,7 +73,7 @@ public final class TestSwingHelpWindow {
             myFactory.setFrame(myFrame);
 
             /* Create the help window */
-            final TethysSwingHelpWindow myWindow = new TethysSwingHelpWindow(myFactory);
+            final MetisSwingHelpWindow myWindow = new MetisSwingHelpWindow(myFactory);
 
             /* Access the panel */
             final JPanel myPanel = buildPanel(myWindow);
@@ -95,7 +97,7 @@ public final class TestSwingHelpWindow {
      * @param pWindow the window
      * @return the panel
      */
-    private static JPanel buildPanel(final TethysSwingHelpWindow pWindow) {
+    private static JPanel buildPanel(final MetisSwingHelpWindow pWindow) {
         /* Create a button */
         final JButton myButton = new JButton("Help");
 
@@ -120,7 +122,7 @@ public final class TestSwingHelpWindow {
      * Help system.
      */
     private static class TestHelp
-            extends TethysHelpModule {
+            extends MetisHelpModule {
         /**
          * Constructor.
          * @throws OceanusException on error
@@ -130,20 +132,20 @@ public final class TestSwingHelpWindow {
             super("Test Help System");
 
             /* Create accounts tree */
-            final TethysHelpEntry myAccounts = addRootEntry(defineContentsEntry("Accounts"));
-            myAccounts.addChildEntry(defineHelpEntry("Deposits", TethysTestHelpPage.HELP_DEPOSITS));
-            myAccounts.addChildEntry(defineHelpEntry("Loans", TethysTestHelpPage.HELP_LOANS));
+            final MetisHelpEntry myAccounts = addRootEntry(defineContentsEntry("Accounts"));
+            myAccounts.addChildEntry(defineHelpEntry("Deposits", MetisTestHelpPage.HELP_DEPOSITS));
+            myAccounts.addChildEntry(defineHelpEntry("Loans", MetisTestHelpPage.HELP_LOANS));
 
             /* Create static tree */
-            final TethysHelpEntry myStatic = addRootEntry(defineContentsEntry("StaticData"));
-            myStatic.addChildEntry(defineHelpEntry("AccountTypes", TethysTestHelpPage.HELP_ACCOUNTTYPES));
-            myStatic.addChildEntry(defineHelpEntry("TransactionTypes", TethysTestHelpPage.HELP_TRANTYPES));
+            final MetisHelpEntry myStatic = addRootEntry(defineContentsEntry("StaticData"));
+            myStatic.addChildEntry(defineHelpEntry("AccountTypes", MetisTestHelpPage.HELP_ACCOUNTTYPES));
+            myStatic.addChildEntry(defineHelpEntry("TransactionTypes", MetisTestHelpPage.HELP_TRANTYPES));
 
             /* Load pages */
             loadHelpPages();
 
             /* Load the CSS */
-            loadCSS(TethysTestHelpStyleSheet.CSS_HELP);
+            loadCSS(MetisTestHelpStyleSheet.CSS_HELP);
         }
     }
 }

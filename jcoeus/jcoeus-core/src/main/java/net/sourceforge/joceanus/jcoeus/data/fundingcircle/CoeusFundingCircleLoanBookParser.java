@@ -21,14 +21,14 @@ import java.util.Iterator;
 import java.util.List;
 
 import net.sourceforge.joceanus.jmetis.data.MetisDataFormatter;
+import net.sourceforge.joceanus.jmetis.parser.MetisCSVParser;
 import net.sourceforge.joceanus.jtethys.OceanusException;
-import net.sourceforge.joceanus.jtethys.parser.TethysCSVParser;
 
 /**
  * FundingCircle LoanBook Parser.
  */
 public class CoeusFundingCircleLoanBookParser
-        extends TethysCSVParser {
+        extends MetisCSVParser {
     /**
      * Header fields.
      */

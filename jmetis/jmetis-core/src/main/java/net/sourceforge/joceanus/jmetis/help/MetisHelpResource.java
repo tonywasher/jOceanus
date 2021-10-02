@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Tethys: Java Utilities
+ * Metis: Java Data Framework
  * Copyright 2012,2021 Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -14,10 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ******************************************************************************/
-package net.sourceforge.joceanus.jtethys.help;
+package net.sourceforge.joceanus.jmetis.help;
 
 import java.util.ResourceBundle;
 
+import net.sourceforge.joceanus.jmetis.ui.MetisUIResource;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.resource.TethysBundleId;
 import net.sourceforge.joceanus.jtethys.resource.TethysBundleLoader;
@@ -25,7 +26,7 @@ import net.sourceforge.joceanus.jtethys.resource.TethysBundleLoader;
 /**
  * Resource IDs for TethysHelp package.
  */
-public enum TethysHelpResource implements TethysBundleId {
+public enum MetisHelpResource implements TethysBundleId {
     /**
      * TitleSelect.
      */
@@ -34,7 +35,7 @@ public enum TethysHelpResource implements TethysBundleId {
     /**
      * The Resource Loader.
      */
-    private static final TethysBundleLoader LOADER = TethysBundleLoader.getPackageLoader(OceanusException.class.getCanonicalName(),
+    private static final TethysBundleLoader LOADER = TethysBundleLoader.getLoader(MetisUIResource.class.getCanonicalName(),
             ResourceBundle::getBundle);
 
     /**
@@ -51,7 +52,7 @@ public enum TethysHelpResource implements TethysBundleId {
      * Constructor.
      * @param pKeyName the key name
      */
-    TethysHelpResource(final String pKeyName) {
+    MetisHelpResource(final String pKeyName) {
         theKeyName = pKeyName;
     }
 
@@ -62,7 +63,7 @@ public enum TethysHelpResource implements TethysBundleId {
 
     @Override
     public String getNameSpace() {
-        return "help";
+        return "jMetis.help";
     }
 
     @Override

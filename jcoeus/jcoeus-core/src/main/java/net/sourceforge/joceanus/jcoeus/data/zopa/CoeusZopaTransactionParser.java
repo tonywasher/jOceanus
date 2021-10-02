@@ -20,14 +20,14 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.ListIterator;
 
+import net.sourceforge.joceanus.jmetis.parser.MetisCSVParser;
 import net.sourceforge.joceanus.jtethys.OceanusException;
-import net.sourceforge.joceanus.jtethys.parser.TethysCSVParser;
 
 /**
  * Zopa parser.
  */
 public class CoeusZopaTransactionParser
-        extends TethysCSVParser {
+        extends MetisCSVParser {
     /**
      * Header fields.
      */

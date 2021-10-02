@@ -18,12 +18,12 @@ package net.sourceforge.joceanus.jmoneywise.help;
 
 import java.io.InputStream;
 
-import net.sourceforge.joceanus.jtethys.help.TethysHelpModule.TethysHelpId;
+import net.sourceforge.joceanus.jmetis.help.MetisHelpModule.MetisHelpId;
 
 /**
  * Help Page definitions.
  */
-public enum MoneyWiseHelpPage implements TethysHelpId {
+public enum MoneyWiseHelpPage implements MetisHelpId {
     /**
      * Deposits.
      */
