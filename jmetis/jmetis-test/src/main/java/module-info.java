@@ -23,6 +23,7 @@ module net.sourceforge.joceanus.jmetis.test.core {
     requires java.xml;
 
     /* Java Libraries */
+    requires javafx.controls;
     requires javafx.graphics;
 
     /* jOceanus */
@@ -35,6 +36,7 @@ module net.sourceforge.joceanus.jmetis.test.core {
     requires net.sourceforge.joceanus.jtethys.test.core;
 
     /* Exports */
+    exports net.sourceforge.joceanus.jmetis.test.help.javafx to javafx.graphics;
     exports net.sourceforge.joceanus.jmetis.test.threads.javafx to javafx.graphics;
     exports net.sourceforge.joceanus.jmetis.test.atlas.ui.javafx to javafx.graphics;
 }

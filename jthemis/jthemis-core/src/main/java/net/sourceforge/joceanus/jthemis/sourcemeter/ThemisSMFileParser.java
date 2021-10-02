@@ -21,14 +21,14 @@ import java.nio.file.Path;
 import java.util.Iterator;
 import java.util.List;
 
+import net.sourceforge.joceanus.jmetis.parser.MetisCSVParser;
 import net.sourceforge.joceanus.jtethys.OceanusException;
-import net.sourceforge.joceanus.jtethys.parser.TethysCSVParser;
 
 /**
  * SourceMeter File Parser.
  */
 public class ThemisSMFileParser
-        extends TethysCSVParser {
+        extends MetisCSVParser {
     /**
      * Base for file name.
      */

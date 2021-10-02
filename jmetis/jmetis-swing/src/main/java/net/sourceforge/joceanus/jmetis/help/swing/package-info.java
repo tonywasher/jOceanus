@@ -1,5 +1,5 @@
 /* *****************************************************************************
- * Tethys: Java Utilities
+ * Metis: Java Data Framework
  * Copyright 2012,2021 Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -14,8 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ******************************************************************************/
-
 /**
- * Parsers.
+ * Swing Help utilities.
  */
-package net.sourceforge.joceanus.jtethys.parser;
+package net.sourceforge.joceanus.jmetis.help.swing;

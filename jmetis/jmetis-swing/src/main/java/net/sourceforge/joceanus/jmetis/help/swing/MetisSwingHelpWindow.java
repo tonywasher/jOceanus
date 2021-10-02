@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Tethys: Java Utilities
+ * Metis: Java Data Framework
  * Copyright 2012,2021 Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ******************************************************************************/
-package net.sourceforge.joceanus.jtethys.help.swing;
+package net.sourceforge.joceanus.jmetis.help.swing;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
@@ -25,9 +25,9 @@ import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
-import net.sourceforge.joceanus.jtethys.help.TethysHelpEntry;
-import net.sourceforge.joceanus.jtethys.help.TethysHelpResource;
-import net.sourceforge.joceanus.jtethys.help.TethysHelpWindow;
+import net.sourceforge.joceanus.jmetis.help.MetisHelpEntry;
+import net.sourceforge.joceanus.jmetis.help.MetisHelpResource;
+import net.sourceforge.joceanus.jmetis.help.MetisHelpWindow;
 import net.sourceforge.joceanus.jtethys.ui.TethysUIEvent;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingGuiFactory;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingHTMLManager;
@@ -38,8 +38,8 @@ import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingTreeManager;
 /**
  * Help Window class, responsible for displaying the help.
  */
-public class TethysSwingHelpWindow
-        extends TethysHelpWindow {
+public class MetisSwingHelpWindow
+        extends MetisHelpWindow {
     /**
      * The frame.
      */
@@ -54,20 +54,20 @@ public class TethysSwingHelpWindow
      * Constructor.
      * @param pFactory the GUI Factory
      */
-    public TethysSwingHelpWindow(final TethysSwingGuiFactory pFactory) {
+    public MetisSwingHelpWindow(final TethysSwingGuiFactory pFactory) {
         /* Initialise underlying class */
         super(pFactory);
         theBaseFrame = pFactory.getFrame();
     }
 
     @Override
-    public TethysSwingSplitTreeManager<TethysHelpEntry> getSplitTreeManager() {
-        return (TethysSwingSplitTreeManager<TethysHelpEntry>) super.getSplitTreeManager();
+    public TethysSwingSplitTreeManager<MetisHelpEntry> getSplitTreeManager() {
+        return (TethysSwingSplitTreeManager<MetisHelpEntry>) super.getSplitTreeManager();
     }
 
     @Override
-    public TethysSwingTreeManager<TethysHelpEntry> getTreeManager() {
-        return (TethysSwingTreeManager<TethysHelpEntry>) super.getTreeManager();
+    public TethysSwingTreeManager<MetisHelpEntry> getTreeManager() {
+        return (TethysSwingTreeManager<MetisHelpEntry>) super.getTreeManager();
     }
 
     @Override
@@ -121,7 +121,7 @@ public class TethysSwingHelpWindow
             theFrame = new JFrame();
 
             /* Set the title */
-            theFrame.setTitle(TethysHelpResource.TITLE.getValue());
+            theFrame.setTitle(MetisHelpResource.TITLE.getValue());
 
             /* Create the help panel */
             final JPanel myPanel = new JPanel();

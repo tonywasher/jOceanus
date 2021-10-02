@@ -18,6 +18,7 @@ package net.sourceforge.joceanus.jmetis.threads.swing;
 
 import net.sourceforge.joceanus.jmetis.atlas.ui.swing.MetisSwingTableManager;
 import net.sourceforge.joceanus.jmetis.field.MetisFieldItem.MetisFieldTableItem;
+import net.sourceforge.joceanus.jmetis.help.swing.MetisSwingHelpWindow;
 import net.sourceforge.joceanus.jmetis.list.MetisListEditSession;
 import net.sourceforge.joceanus.jmetis.list.MetisListIndexed;
 import net.sourceforge.joceanus.jmetis.list.MetisListKey;
@@ -26,7 +27,6 @@ import net.sourceforge.joceanus.jmetis.threads.MetisThreadManager;
 import net.sourceforge.joceanus.jmetis.threads.MetisToolkit;
 import net.sourceforge.joceanus.jmetis.viewer.swing.MetisSwingViewerWindow;
 import net.sourceforge.joceanus.jtethys.OceanusException;
-import net.sourceforge.joceanus.jtethys.help.swing.TethysSwingHelpWindow;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingGuiFactory;
 
 /**
@@ -83,8 +83,8 @@ public class MetisSwingToolkit
     }
 
     @Override
-    public TethysSwingHelpWindow newHelpWindow() {
-        return new TethysSwingHelpWindow(getGuiFactory());
+    public MetisSwingHelpWindow newHelpWindow() {
+        return new MetisSwingHelpWindow(getGuiFactory());
     }
 
     @Override

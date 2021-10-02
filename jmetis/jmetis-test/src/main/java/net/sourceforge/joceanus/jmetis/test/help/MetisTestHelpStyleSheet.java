@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Tethys: Java Utilities
+ * Metis: Java Data Framework
  * Copyright 2012,2021 Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ******************************************************************************/
-package net.sourceforge.joceanus.jtethys.test.help;
+package net.sourceforge.joceanus.jmetis.test.help;
 
 import java.io.InputStream;
 
@@ -23,7 +23,7 @@ import net.sourceforge.joceanus.jtethys.ui.TethysHTMLManager.TethysStyleSheetId;
 /**
  * StyleSheetIds.
  */
-public enum TethysTestHelpStyleSheet implements TethysStyleSheetId {
+public enum MetisTestHelpStyleSheet implements TethysStyleSheetId {
     /**
      * Help StyleSheet.
      */
@@ -38,7 +38,7 @@ public enum TethysTestHelpStyleSheet implements TethysStyleSheetId {
      * Constructor.
      * @param pSource the source
      */
-    TethysTestHelpStyleSheet(final String pSource) {
+    MetisTestHelpStyleSheet(final String pSource) {
         theSource = pSource;
     }
 
@@ -49,6 +49,6 @@ public enum TethysTestHelpStyleSheet implements TethysStyleSheetId {
 
     @Override
     public InputStream getInputStream() {
-        return TethysTestHelpStyleSheet.class.getResourceAsStream(theSource);
+        return MetisTestHelpStyleSheet.class.getResourceAsStream(theSource);
     }
 }

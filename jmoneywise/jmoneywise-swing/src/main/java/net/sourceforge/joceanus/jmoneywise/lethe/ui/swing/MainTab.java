@@ -18,6 +18,7 @@ package net.sourceforge.joceanus.jmoneywise.lethe.ui.swing;
 
 import javax.swing.JComponent;
 
+import net.sourceforge.joceanus.jmetis.help.MetisHelpModule;
 import net.sourceforge.joceanus.jmetis.profile.MetisProfile;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseIOException;
@@ -38,7 +39,6 @@ import net.sourceforge.joceanus.jprometheus.lethe.views.PrometheusDataEvent;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.event.TethysEvent;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
-import net.sourceforge.joceanus.jtethys.help.TethysHelpModule;
 import net.sourceforge.joceanus.jtethys.ui.TethysAbout;
 import net.sourceforge.joceanus.jtethys.ui.TethysGuiFactory;
 import net.sourceforge.joceanus.jtethys.ui.TethysLogTextArea;
@@ -133,7 +133,7 @@ public class MainTab
     }
 
     @Override
-    protected TethysHelpModule getHelpModule() throws OceanusException {
+    protected MetisHelpModule getHelpModule() throws OceanusException {
         try {
             return new MoneyWiseHelp();
         } catch (OceanusException e) {

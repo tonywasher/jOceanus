@@ -21,8 +21,8 @@ import java.nio.file.Path;
 import java.util.Iterator;
 import java.util.List;
 
+import net.sourceforge.joceanus.jmetis.parser.MetisCSVParser;
 import net.sourceforge.joceanus.jtethys.OceanusException;
-import net.sourceforge.joceanus.jtethys.parser.TethysCSVParser;
 import net.sourceforge.joceanus.jthemis.ThemisDataException;
 import net.sourceforge.joceanus.jthemis.analysis.ThemisAnalysisChar;
 import net.sourceforge.joceanus.jthemis.sourcemeter.ThemisSMClass.ThemisSMClassType;
@@ -31,7 +31,7 @@ import net.sourceforge.joceanus.jthemis.sourcemeter.ThemisSMClass.ThemisSMClassT
  * SourceMeter Class Parser.
  */
 public class ThemisSMClassParser
-        extends TethysCSVParser {
+        extends MetisCSVParser {
     /**
      * Base for Class file name.
      */

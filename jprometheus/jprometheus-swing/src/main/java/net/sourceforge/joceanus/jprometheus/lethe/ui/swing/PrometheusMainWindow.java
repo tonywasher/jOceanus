@@ -16,6 +16,8 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jprometheus.lethe.ui.swing;
 
+import net.sourceforge.joceanus.jmetis.help.MetisHelpModule;
+import net.sourceforge.joceanus.jmetis.help.MetisHelpWindow;
 import net.sourceforge.joceanus.jmetis.profile.MetisProfile;
 import net.sourceforge.joceanus.jmetis.threads.MetisThread;
 import net.sourceforge.joceanus.jmetis.threads.MetisThreadEvent;
@@ -39,8 +41,6 @@ import net.sourceforge.joceanus.jprometheus.lethe.ui.PrometheusMenuId;
 import net.sourceforge.joceanus.jprometheus.lethe.ui.PrometheusUIResource;
 import net.sourceforge.joceanus.jprometheus.lethe.views.DataControl;
 import net.sourceforge.joceanus.jtethys.OceanusException;
-import net.sourceforge.joceanus.jtethys.help.TethysHelpModule;
-import net.sourceforge.joceanus.jtethys.help.TethysHelpWindow;
 import net.sourceforge.joceanus.jtethys.logger.TethysLogManager;
 import net.sourceforge.joceanus.jtethys.logger.TethysLogger;
 import net.sourceforge.joceanus.jtethys.ui.TethysGuiFactory;
@@ -120,7 +120,7 @@ public abstract class PrometheusMainWindow<T extends DataSet<T, E>, E extends En
     /**
      * The Started Help window.
      */
-    private TethysHelpWindow theHelpWdw;
+    private MetisHelpWindow theHelpWdw;
 
     /**
      * The Started data window.
@@ -188,7 +188,7 @@ public abstract class PrometheusMainWindow<T extends DataSet<T, E>, E extends En
      * @return the help module
      * @throws OceanusException on error
      */
-    protected abstract TethysHelpModule getHelpModule() throws OceanusException;
+    protected abstract MetisHelpModule getHelpModule() throws OceanusException;
 
     /**
      * Build the main window.

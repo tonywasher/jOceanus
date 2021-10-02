@@ -18,6 +18,7 @@ package net.sourceforge.joceanus.jmetis.launch.javafx;
 
 import net.sourceforge.joceanus.jmetis.atlas.ui.javafx.MetisFXTableManager;
 import net.sourceforge.joceanus.jmetis.field.MetisFieldItem.MetisFieldTableItem;
+import net.sourceforge.joceanus.jmetis.help.javafx.MetisFXHelpWindow;
 import net.sourceforge.joceanus.jmetis.list.MetisListEditSession;
 import net.sourceforge.joceanus.jmetis.list.MetisListIndexed;
 import net.sourceforge.joceanus.jmetis.list.MetisListKey;
@@ -28,7 +29,6 @@ import net.sourceforge.joceanus.jmetis.threads.javafx.MetisFXThreadManager;
 import net.sourceforge.joceanus.jmetis.threads.javafx.MetisFXThreadProgressStatus;
 import net.sourceforge.joceanus.jmetis.viewer.javafx.MetisFXViewerWindow;
 import net.sourceforge.joceanus.jtethys.OceanusException;
-import net.sourceforge.joceanus.jtethys.help.javafx.TethysFXHelpWindow;
 import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXGuiFactory;
 
 /**
@@ -85,8 +85,8 @@ public class MetisFXToolkit
     }
 
     @Override
-    public TethysFXHelpWindow newHelpWindow() {
-        return new TethysFXHelpWindow(getGuiFactory());
+    public MetisFXHelpWindow newHelpWindow() {
+        return new MetisFXHelpWindow(getGuiFactory());
     }
 
     @Override

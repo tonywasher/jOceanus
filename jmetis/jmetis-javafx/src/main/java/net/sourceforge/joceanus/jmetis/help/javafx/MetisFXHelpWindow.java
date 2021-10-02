@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Tethys: Java Utilities
+ * Metis: Java Data Framework
  * Copyright 2012,2021 Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ******************************************************************************/
-package net.sourceforge.joceanus.jtethys.help.javafx;
+package net.sourceforge.joceanus.jmetis.help.javafx;
 
 import javafx.scene.Scene;
 import javafx.scene.layout.BorderPane;
@@ -23,9 +23,9 @@ import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import javafx.stage.Window;
 
-import net.sourceforge.joceanus.jtethys.help.TethysHelpEntry;
-import net.sourceforge.joceanus.jtethys.help.TethysHelpResource;
-import net.sourceforge.joceanus.jtethys.help.TethysHelpWindow;
+import net.sourceforge.joceanus.jmetis.help.MetisHelpEntry;
+import net.sourceforge.joceanus.jmetis.help.MetisHelpResource;
+import net.sourceforge.joceanus.jmetis.help.MetisHelpWindow;
 import net.sourceforge.joceanus.jtethys.ui.TethysUIEvent;
 import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXGuiFactory;
 import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXHTMLManager;
@@ -36,8 +36,8 @@ import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXTreeManager;
 /**
  * Help Window class, responsible for displaying the help.
  */
-public class TethysFXHelpWindow
-        extends TethysHelpWindow {
+public class MetisFXHelpWindow
+        extends MetisHelpWindow {
     /**
      * The help dialog.
      */
@@ -48,19 +48,19 @@ public class TethysFXHelpWindow
      *
      * @param pFactory the GUI Factory
      */
-    public TethysFXHelpWindow(final TethysFXGuiFactory pFactory) {
+    public MetisFXHelpWindow(final TethysFXGuiFactory pFactory) {
         /* Initialise underlying class */
         super(pFactory);
     }
 
     @Override
-    public TethysFXSplitTreeManager<TethysHelpEntry> getSplitTreeManager() {
-        return (TethysFXSplitTreeManager<TethysHelpEntry>) super.getSplitTreeManager();
+    public TethysFXSplitTreeManager<MetisHelpEntry> getSplitTreeManager() {
+        return (TethysFXSplitTreeManager<MetisHelpEntry>) super.getSplitTreeManager();
     }
 
     @Override
-    public TethysFXTreeManager<TethysHelpEntry> getTreeManager() {
-        return (TethysFXTreeManager<TethysHelpEntry>) super.getTreeManager();
+    public TethysFXTreeManager<MetisHelpEntry> getTreeManager() {
+        return (TethysFXTreeManager<MetisHelpEntry>) super.getTreeManager();
     }
 
     @Override
@@ -111,7 +111,7 @@ public class TethysFXHelpWindow
             theStage = new Stage();
 
             /* Set the title */
-            theStage.setTitle(TethysHelpResource.TITLE.getValue());
+            theStage.setTitle(MetisHelpResource.TITLE.getValue());
 
             /* Initialise the dialog */
             theStage.initModality(Modality.NONE);

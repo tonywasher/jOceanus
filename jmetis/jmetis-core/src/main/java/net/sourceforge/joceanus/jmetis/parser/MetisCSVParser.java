@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Tethys: Java Utilities
+ * Metis: Java Data Framework
  * Copyright 2012,2021 Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ******************************************************************************/
-package net.sourceforge.joceanus.jtethys.parser;
+package net.sourceforge.joceanus.jmetis.parser;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -38,7 +38,7 @@ import net.sourceforge.joceanus.jtethys.ui.TethysDataFormatter;
 /**
  * CSV Parser.
  */
-public abstract class TethysCSVParser {
+public abstract class MetisCSVParser {
     /**
      * The Quote Character.
      */
@@ -84,8 +84,8 @@ public abstract class TethysCSVParser {
      * @param pFormatter the formatter
      * @param pHeaders the expected headers
      */
-    protected TethysCSVParser(final TethysDataFormatter pFormatter,
-                              final String[] pHeaders) {
+    protected MetisCSVParser(final TethysDataFormatter pFormatter,
+                             final String[] pHeaders) {
         /* Store the headers */
         theHeaders = Arrays.copyOf(pHeaders, pHeaders.length);
 

@@ -20,14 +20,14 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import net.sourceforge.joceanus.jmetis.parser.MetisCSVParser;
 import net.sourceforge.joceanus.jtethys.OceanusException;
-import net.sourceforge.joceanus.jtethys.parser.TethysCSVParser;
 
 /**
  * FundingCircle Bids Parser.
  */
 public class CoeusFundingCircleBidBookParser
-        extends TethysCSVParser {
+        extends MetisCSVParser {
     /**
      * Header fields.
      */

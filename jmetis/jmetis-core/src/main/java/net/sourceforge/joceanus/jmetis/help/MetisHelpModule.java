@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Tethys: Java Utilities
+ * Metis: Java Data Framework
  * Copyright 2012,2021 Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ******************************************************************************/
-package net.sourceforge.joceanus.jtethys.help;
+package net.sourceforge.joceanus.jmetis.help;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,11 +27,11 @@ import net.sourceforge.joceanus.jtethys.ui.TethysHTMLManager.TethysStyleSheetId;
 /**
  * The help module that is implemented by each Help System.
  */
-public abstract class TethysHelpModule {
+public abstract class MetisHelpModule {
     /**
      * HelpId.
      */
-    public interface TethysHelpId extends TethysResourceId {
+    public interface MetisHelpId extends TethysResourceId {
     }
 
     /**
@@ -52,7 +52,7 @@ public abstract class TethysHelpModule {
     /**
      * The Help Entries.
      */
-    private final List<TethysHelpEntry> theEntries;
+    private final List<MetisHelpEntry> theEntries;
 
     /**
      * The title of the Help System.
@@ -73,7 +73,7 @@ public abstract class TethysHelpModule {
      * Constructor.
      * @param pTitle the title
      */
-    public TethysHelpModule(final String pTitle) {
+    public MetisHelpModule(final String pTitle) {
         /* Store parameters */
         theTitle = pTitle;
 
@@ -117,7 +117,7 @@ public abstract class TethysHelpModule {
      * Obtain the help entries.
      * @return the help entries
      */
-    public List<TethysHelpEntry> getHelpEntries() {
+    public List<MetisHelpEntry> getHelpEntries() {
         return theEntries;
     }
 
@@ -126,7 +126,7 @@ public abstract class TethysHelpModule {
      * @param pEntry the entry
      * @return the HelpEntry
      */
-    public TethysHelpEntry addRootEntry(final TethysHelpEntry pEntry) {
+    public MetisHelpEntry addRootEntry(final MetisHelpEntry pEntry) {
         theEntries.add(pEntry);
         return pEntry;
     }
@@ -138,8 +138,8 @@ public abstract class TethysHelpModule {
      * @param pHelpId the helpId
      * @return the HelpEntry
      */
-    public static <K extends Enum<K> & TethysHelpId> TethysHelpEntry defineHelpEntry(final String pName,
-                                                                                     final K pHelpId) {
+    public static <K extends Enum<K> & MetisHelpId> MetisHelpEntry defineHelpEntry(final String pName,
+                                                                                   final K pHelpId) {
         return defineTitledHelpEntry(pName, pName, pHelpId);
     }
 
@@ -151,10 +151,10 @@ public abstract class TethysHelpModule {
      * @param pHelpId the helpId
      * @return the HelpEntry
      */
-    public static <K extends Enum<K> & TethysHelpId> TethysHelpEntry defineTitledHelpEntry(final String pName,
-                                                                                           final String pTitle,
-                                                                                           final K pHelpId) {
-        return new TethysHelpEntry(pName, pTitle, pHelpId);
+    public static <K extends Enum<K> & MetisHelpId> MetisHelpEntry defineTitledHelpEntry(final String pName,
+                                                                                         final String pTitle,
+                                                                                         final K pHelpId) {
+        return new MetisHelpEntry(pName, pTitle, pHelpId);
     }
 
     /**
@@ -162,7 +162,7 @@ public abstract class TethysHelpModule {
      * @param pName the name
      * @return the HelpEntry
      */
-    public static TethysHelpEntry defineContentsEntry(final String pName) {
+    public static MetisHelpEntry defineContentsEntry(final String pName) {
         return defineTitledContentsEntry(pName, pName);
     }
 
@@ -172,9 +172,9 @@ public abstract class TethysHelpModule {
      * @param pTitle the title
      * @return the HelpEntry
      */
-    public static TethysHelpEntry defineTitledContentsEntry(final String pName,
-                                                            final String pTitle) {
-        return new TethysHelpEntry(pName, pTitle);
+    public static MetisHelpEntry defineTitledContentsEntry(final String pName,
+                                                           final String pTitle) {
+        return new MetisHelpEntry(pName, pTitle);
     }
 
     /**
@@ -200,9 +200,9 @@ public abstract class TethysHelpModule {
      * @param pEntries the Help Entries
      * @throws OceanusException on error
      */
-    private static void loadHelpPages(final List<TethysHelpEntry> pEntries) throws OceanusException {
+    private static void loadHelpPages(final List<MetisHelpEntry> pEntries) throws OceanusException {
         /* Loop through the entities */
-        for (TethysHelpEntry myEntry : pEntries) {
+        for (MetisHelpEntry myEntry : pEntries) {
             /* If we have a helpId */
             if (myEntry.getHelpId() != null) {
                 /* Reset the builder */

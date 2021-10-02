@@ -85,6 +85,7 @@ public final class TethysLauncher {
         final String myMainClass = pAttrs.getValue("Main-Class");
         final String myClassPath = pAttrs.getValue("Class-Path");
         final String mySplash = pAttrs.getValue("SplashScreen-Image");
+        final String myModule = pAttrs.getValue("Automatic-Module-Name");
 
         /* If there is no mainClass, then just return */
         if (myMainClass == null) {
@@ -103,7 +104,7 @@ public final class TethysLauncher {
         /* Report details */
         myBuilder.append(getComment("set up details of the jarFile"))
                 .append(setVariable("JARFILE")).append(myName).append(NEWLINE)
-                .append(setVariable("MODULE")).append(pAttrs.getValue("ModuleName")).append(NEWLINE)
+                .append(setVariable("MODULE")).append(myModule).append(NEWLINE)
                 .append(setVariable("MAIN")).append(myMainClass).append(NEWLINE);
         if (myPreLoader != null) {
             myBuilder.append(setVariable("PRELOADER")).append(myPreLoader).append(NEWLINE);

@@ -16,16 +16,16 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.help;
 
+import net.sourceforge.joceanus.jmetis.help.MetisHelpEntry;
+import net.sourceforge.joceanus.jmetis.help.MetisHelpModule;
 import net.sourceforge.joceanus.jtethys.OceanusException;
-import net.sourceforge.joceanus.jtethys.help.TethysHelpEntry;
-import net.sourceforge.joceanus.jtethys.help.TethysHelpModule;
 
 /**
  * Help Module for FinanceApp.
  * @author Tony Washer
  */
 public class MoneyWiseHelp
-        extends TethysHelpModule {
+        extends MetisHelpModule {
     /**
      * Constructor.
      * @throws OceanusException on error
@@ -35,12 +35,12 @@ public class MoneyWiseHelp
         super("MoneyWise Help");
 
         /* Create accounts tree */
-        final TethysHelpEntry myAccounts = addRootEntry(defineContentsEntry("Accounts"));
+        final MetisHelpEntry myAccounts = addRootEntry(defineContentsEntry("Accounts"));
         myAccounts.addChildEntry(defineHelpEntry("Deposits", MoneyWiseHelpPage.HELP_DEPOSITS));
         myAccounts.addChildEntry(defineHelpEntry("Loans", MoneyWiseHelpPage.HELP_LOANS));
 
         /* Create static tree */
-        final TethysHelpEntry myStatic = addRootEntry(defineContentsEntry("StaticData"));
+        final MetisHelpEntry myStatic = addRootEntry(defineContentsEntry("StaticData"));
         myStatic.addChildEntry(defineHelpEntry("AccountTypes", MoneyWiseHelpPage.HELP_ACCOUNTTYPES));
         myStatic.addChildEntry(defineHelpEntry("TransactionTypes", MoneyWiseHelpPage.HELP_TRANTYPES));
 

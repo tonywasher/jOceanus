@@ -27,10 +27,8 @@ module net.sourceforge.joceanus.jtethys.core {
     exports net.sourceforge.joceanus.jtethys.date;
     exports net.sourceforge.joceanus.jtethys.decimal;
     exports net.sourceforge.joceanus.jtethys.event;
-    exports net.sourceforge.joceanus.jtethys.help;
     exports net.sourceforge.joceanus.jtethys.jar;
     exports net.sourceforge.joceanus.jtethys.logger;
-    exports net.sourceforge.joceanus.jtethys.parser;
     exports net.sourceforge.joceanus.jtethys.resource;
     exports net.sourceforge.joceanus.jtethys.ui;
 }

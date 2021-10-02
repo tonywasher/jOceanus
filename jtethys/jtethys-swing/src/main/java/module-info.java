@@ -29,5 +29,4 @@ module net.sourceforge.joceanus.jtethys.swing {
 
     /* Exports */
     exports net.sourceforge.joceanus.jtethys.ui.swing;
-    exports net.sourceforge.joceanus.jtethys.help.swing;
 }

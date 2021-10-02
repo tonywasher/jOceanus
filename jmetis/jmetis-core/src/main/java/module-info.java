@@ -32,18 +32,20 @@ module net.sourceforge.joceanus.jmetis.core {
 
     /* Exports */
     exports net.sourceforge.joceanus.jmetis;
-    exports net.sourceforge.joceanus.jmetis.preference;
+    exports net.sourceforge.joceanus.jmetis.atlas.ui;
     exports net.sourceforge.joceanus.jmetis.data;
     exports net.sourceforge.joceanus.jmetis.field;
+    exports net.sourceforge.joceanus.jmetis.help;
     exports net.sourceforge.joceanus.jmetis.http;
     exports net.sourceforge.joceanus.jmetis.launch;
+    exports net.sourceforge.joceanus.jmetis.lethe.data;
+    exports net.sourceforge.joceanus.jmetis.lethe.field;
     exports net.sourceforge.joceanus.jmetis.list;
+    exports net.sourceforge.joceanus.jmetis.parser;
+    exports net.sourceforge.joceanus.jmetis.preference;
     exports net.sourceforge.joceanus.jmetis.profile;
     exports net.sourceforge.joceanus.jmetis.report;
     exports net.sourceforge.joceanus.jmetis.threads;
     exports net.sourceforge.joceanus.jmetis.viewer;
     exports net.sourceforge.joceanus.jmetis.ui;
-    exports net.sourceforge.joceanus.jmetis.atlas.ui;
-    exports net.sourceforge.joceanus.jmetis.lethe.data;
-    exports net.sourceforge.joceanus.jmetis.lethe.field;
 }

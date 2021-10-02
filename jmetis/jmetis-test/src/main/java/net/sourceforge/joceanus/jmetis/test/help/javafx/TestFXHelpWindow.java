@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Tethys: Java Utilities
+ * Metis: Java Data Framework
  * Copyright 2012,2021 Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ******************************************************************************/
-package net.sourceforge.joceanus.jtethys.test.help.javafx;
+package net.sourceforge.joceanus.jmetis.test.help.javafx;
 
 import javafx.application.Application;
 import javafx.scene.Group;
@@ -23,15 +23,19 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
+
+import net.sourceforge.joceanus.jmetis.help.MetisHelpEntry;
+import net.sourceforge.joceanus.jmetis.help.MetisHelpModule;
+import net.sourceforge.joceanus.jmetis.help.javafx.MetisFXHelpWindow;
+import net.sourceforge.joceanus.jmetis.test.help.MetisTestHelpPage;
+import net.sourceforge.joceanus.jmetis.test.help.MetisTestHelpStyleSheet;
 import net.sourceforge.joceanus.jtethys.OceanusException;
-import net.sourceforge.joceanus.jtethys.help.TethysHelpEntry;
-import net.sourceforge.joceanus.jtethys.help.TethysHelpModule;
-import net.sourceforge.joceanus.jtethys.help.javafx.TethysFXHelpWindow;
 import net.sourceforge.joceanus.jtethys.logger.TethysLogManager;
 import net.sourceforge.joceanus.jtethys.logger.TethysLogger;
-import net.sourceforge.joceanus.jtethys.test.help.TethysTestHelpPage;
-import net.sourceforge.joceanus.jtethys.test.help.TethysTestHelpStyleSheet;
 import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXGuiFactory;
+
+import static net.sourceforge.joceanus.jmetis.help.MetisHelpModule.defineContentsEntry;
+import static net.sourceforge.joceanus.jmetis.help.MetisHelpModule.defineHelpEntry;
 
 /**
  * Help Window.
@@ -70,7 +74,7 @@ public class TestFXHelpWindow
         final Button myButton = new Button("Help");
 
         /* Create the help window */
-        final TethysFXHelpWindow myWindow = new TethysFXHelpWindow(myFactory);
+        final MetisFXHelpWindow myWindow = new MetisFXHelpWindow(myFactory);
 
         /* Create a BorderPane for the fields */
         final BorderPane myPane = new BorderPane();
@@ -93,7 +97,7 @@ public class TestFXHelpWindow
      * Help system.
      */
     private static class TestHelp
-            extends TethysHelpModule {
+            extends MetisHelpModule {
         /**
          * Constructor.
          * @throws OceanusException on error
@@ -103,20 +107,20 @@ public class TestFXHelpWindow
             super("Test Help System");
 
             /* Create accounts tree */
-            final TethysHelpEntry myAccounts = addRootEntry(defineContentsEntry("Accounts"));
-            myAccounts.addChildEntry(defineHelpEntry("Deposits", TethysTestHelpPage.HELP_DEPOSITS));
-            myAccounts.addChildEntry(defineHelpEntry("Loans", TethysTestHelpPage.HELP_LOANS));
+            final MetisHelpEntry myAccounts = addRootEntry(defineContentsEntry("Accounts"));
+            myAccounts.addChildEntry(defineHelpEntry("Deposits", MetisTestHelpPage.HELP_DEPOSITS));
+            myAccounts.addChildEntry(defineHelpEntry("Loans", MetisTestHelpPage.HELP_LOANS));
 
             /* Create static tree */
-            final TethysHelpEntry myStatic = addRootEntry(defineContentsEntry("StaticData"));
-            myStatic.addChildEntry(defineHelpEntry("AccountTypes", TethysTestHelpPage.HELP_ACCOUNTTYPES));
-            myStatic.addChildEntry(defineHelpEntry("TransactionTypes", TethysTestHelpPage.HELP_TRANTYPES));
+            final MetisHelpEntry myStatic = addRootEntry(defineContentsEntry("StaticData"));
+            myStatic.addChildEntry(defineHelpEntry("AccountTypes", MetisTestHelpPage.HELP_ACCOUNTTYPES));
+            myStatic.addChildEntry(defineHelpEntry("TransactionTypes", MetisTestHelpPage.HELP_TRANTYPES));
 
             /* Load help pages */
             loadHelpPages();
 
             /* Load the CSS */
-            loadCSS(TethysTestHelpStyleSheet.CSS_HELP);
+            loadCSS(MetisTestHelpStyleSheet.CSS_HELP);
         }
     }
 }
