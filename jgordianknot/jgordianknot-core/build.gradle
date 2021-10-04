@@ -11,6 +11,9 @@ dependencies {
 /* Description */
 description = 'GordianKnot Core Security Framework'
 
+/* Register the project */
+registerProject(project) 
+
 /* Additional sourceSets */
 sourceSets {
     main {
@@ -28,17 +31,6 @@ tasks.register('testsJar', Jar) {
     from(sourceSets.test.output)    
 }
 publishing.publications.maven.artifact(testsJar)
-
-/* Specific Manifest details */
-jar {
-    manifest {
-        from sharedManifest
-        attributes(
-            "Implementation-Title": project.description,
-            "Class-Path": configurations.runtimeClasspath.collect { "../${appLibDir}" + standardizePath(it.absolutePath) }.join(' ')  
-        )       
-    }
-}
 
 /* Exclude various files from checkStyle */
 checkstyleMain

@@ -46,7 +46,7 @@ allprojects {
         jtdsVersion = "1.3.1"
         h2Version = "1.4.200"
         apachePOIVersion = "5.0.0"
-        jsoupVersion = "1.14.2"
+        jsoupVersion = "1.14.3"
         jFreeChartVersion = "1.5.3"
 
         /* javaFX versions */
@@ -62,7 +62,6 @@ allprojects {
 
         /* pmd config */
         pmdVersion = "6.39.0"
-        pmdConfig = "$rootDir/src/main/pmd/pmd.xml"
 
         /* jacoco config */
         jacocoVersion = "0.8.7"
@@ -80,8 +79,26 @@ ext {
     gitRepo = getGitRepo()
     gitBranch = getGitBranch()
     gitRev = getGitRev()
-    pmdRuleSet = resources.text.fromFile("$pmdConfig")
-    newRenameMap = [:];
+
+    /* Load the pmd ruleSet once only */
+    pmdRuleSet = resources.text.fromFile("$rootDir/src/main/pmd/pmd.xml")
+
+    /* Distribution mappings */
+    distributionMap = [:];
+    //baseManifest = [:];
+
+    /* Base manifest details */
+    baseManifest = [
+            "Implementation-Version": project.version,
+            "Created-By"     : "Gradle ${gradle.gradleVersion}",
+            "Git-Repo"       : gitRepo,
+            "Git-Branch"     : gitBranch,
+            "Git-Rev"        : "sha1-" + gitRev,
+            "Built-By"       : System.properties['user.name'],
+            "Build-Timestamp": new java.text.SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ").format(new Date()),
+            "Build-Jdk"      : "${System.properties['java.version']} (${System.properties['java.vendor']} ${System.properties['java.vm.version']})",
+            "Build-OS"       : "${System.properties['os.name']} ${System.properties['os.arch']} ${System.properties['os.version']}"
+    ]    
 }
 
 /* sub-project setup */
@@ -142,21 +159,34 @@ subprojects {
         toolVersion = "$jacocoVersion"
     }
 
-    /* Standard manifest details */
-    ext.sharedManifest = manifest {
-        attributes(
-            "Implementation-Version": project.version,
-            "Created-By"     : "Gradle ${gradle.gradleVersion}",
-            "Git-Repo"       : rootProject.ext.gitRepo,
-            "Git-Branch"     : rootProject.ext.gitBranch,
-            "Git-Rev"        : "sha1-" + rootProject.ext.gitRev,
-            "Built-By"       : System.properties['user.name'],
-            "Build-Timestamp": new java.text.SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ").format(new Date()),
-            "Build-Jdk"      : "${System.properties['java.version']} (${System.properties['java.vendor']} ${System.properties['java.vm.version']})",
-            "Build-OS"       : "${System.properties['os.name']} ${System.properties['os.arch']} ${System.properties['os.version']}"
-        )   
-    }
+    /* Project properties */
+    project.ext { 
+        /* Manifest Attributes */
+        manifestAttrs = rootProject.ext.baseManifest.clone()
+
+        /* manifest control */
+        mainClass = null
+        moduleName = null
+        preLoaderClass = null
+        splashScreen = null
+    } 
 }
+
+/* Distribution task */
+task distribute {
+    doLast {
+        rootProject.ext.distributionMap.each{ k, v -> 
+            if (shouldCopy(k, "$appDir/$v")) {
+                copy {
+                    into("$appDir/" + stripFileName("$v"))
+                    from k
+                }
+            }	
+        }
+    }        
+}
+distribute.dependsOn ":jmoneywise-swing:jar", ":jthemis-javafx:jar", ":jcoeus-javafx:jar", ":jcoeus-swing:jar", ":jprometheus-sheet-odf:jar", ":jprometheus-sheet-hssf:jar"
+assemble.dependsOn distribute
 
 /* Make sure distribution directory is cleared on clean */
 clean.doFirst {
@@ -263,3 +293,65 @@ String standardizePath(String pPath) {
     myIndex = myPath.indexOf(mavenDir)
     return myPath.substring(myIndex + mavenDir.length()) 
 }
+
+/* Strip the fileName from the path */
+String stripFileName(String pPath) {
+    int myIndex = pPath.lastIndexOf("/")
+    return pPath.substring(0, myIndex) 
+}
+
+/* Register project */
+void registerProject(Project pProject) {
+    /* Add implementation title and classPath */
+    pProject.ext.manifestAttrs["Implementation-Title"] = pProject.description
+    pProject.ext.manifestAttrs["Class-Path"] = pProject.configurations.runtimeClasspath.collect { 
+                                       "../${appLibDir}" + standardizePath(it.absolutePath) }.join(' ')
+
+    /* Add mainClass and moduleName if defined */
+    if (pProject.ext.mainClass != null) {
+        pProject.ext.manifestAttrs["Main-Class"] = pProject.ext.mainClass
+        buildDistribution(pProject)
+    }          
+    if (pProject.ext.moduleName != null) {
+        pProject.ext.manifestAttrs["Automatic-Module-Name"] = pProject.ext.moduleName
+    }          
+
+    /* Add preLoader/splashScreen if defined */
+    if (pProject.ext.preLoaderClass != null) {
+        pProject.ext.manifestAttrs["JavaFX-Preloader-Class"] = pProject.ext.preLoaderClass
+    }          
+    if (pProject.ext.splashScreen != null) {
+        pProject.ext.manifestAttrs["SplashScreen-Image"] = pProject.ext.splashScreen
+    }          
+}
+
+/* Build list of distributable modules */
+void buildDistribution(Project pProject) {
+    def jarName = pProject.name + "-" + version + ".jar"
+    def fullJarName = "${pProject.projectDir}/build/libs/$jarName"
+    rootProject.ext.distributionMap[fullJarName] = "${appBinDir}" + jarName
+    pProject.configurations.runtimeClasspath.each { d ->
+            def oldName = d.getAbsolutePath()
+            def newName = "${appLibDir}" + standardizePath(d.getAbsolutePath())
+            rootProject.ext.distributionMap[oldName] = newName
+    }
+}
+
+/* Check to see whether we should copy a file */
+boolean shouldCopy(String pSource, String pTarget) {
+    /* Can't copy if source file does not exist */
+    File mySrc = new File(pSource)
+    if (!mySrc.exists()) {
+       return false;
+    }
+
+    /* Always copy if target file does not exist */
+    File myTgt = new File(pTarget)
+    if (!myTgt.exists()) {
+       return true;
+    }
+
+    /* Only copy if source file is newer than target */
+    return mySrc.lastModified() > myTgt.lastModified();
+}
+

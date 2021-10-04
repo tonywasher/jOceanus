@@ -18,31 +18,18 @@ dependencies {
     implementation project(':jtethys-core')
 }
 
-/* Description */
+/* Details */
 description = 'Coeus javaFX Peer2Peer Analysis'
+mainClass = "net.sourceforge.joceanus.jcoeus.ui.javafx.Coeus4FX"
+moduleName = "net.sourceforge.joceanus.jcoeus.javafx"
+preLoaderClass = "net.sourceforge.joceanus.jcoeus.ui.javafx.CoeusFXpreLoader"
+
+/* Register the project */
+registerProject(project) 
 
 /* Specific Manifest details */
 jar {
     manifest {
-        from sharedManifest
-        attributes(
-            "Implementation-Title": project.description,
-            "Main-Class": "net.sourceforge.joceanus.jcoeus.ui.javafx.Coeus4FX",
-            "JavaFX-Preloader-Class": "net.sourceforge.joceanus.jcoeus.ui.javafx.CoeusFXpreLoader",
-            "Automatic-Module-Name": "net.sourceforge.joceanus.jcoeus.javafx",
-            "Class-Path": configurations.runtimeClasspath.collect { "../${appLibDir}" + standardizePath(it.absolutePath) }.join(' ')         
-        )
-    }
-}
-
-/* Copy dependency modules to distribution directory */
-task buildDistribution {
-    def jarName = project.name + "-" + version + ".jar"
-    def fullJarName = "$projectDir/build/libs/$jarName"
-    rootProject.ext.newRenameMap[fullJarName] = "${appBinDir}" + jarName
-    configurations.runtimeClasspath.each { d ->
-            def oldName = d.getAbsolutePath()
-            def newName = "${appLibDir}" + standardizePath(d.getAbsolutePath())
-            rootProject.ext.newRenameMap[oldName] = newName
+        attributes(manifestAttrs)
     }
 }

@@ -7,13 +7,12 @@ dependencies {
 /* Description */
 description = 'Tethys Java Swing Utilities'
 
+/* Register the project */
+registerProject(project) 
+
 /* Specific Manifest details */
 jar {
     manifest {
-        from sharedManifest
-        attributes(
-            "Implementation-Title": project.description,
-            "Class-Path": configurations.runtimeClasspath.collect { "../${appLibDir}" + standardizePath(it.absolutePath) }.join(' ')
-        )         
+        attributes(manifestAttrs)         
     }
 }

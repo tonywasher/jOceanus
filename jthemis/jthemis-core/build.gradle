@@ -9,6 +9,9 @@ dependencies {
 /* Description */
 description = 'Themis Core Project Framework'
 
+/* Register the project */
+registerProject(project) 
+
 /* Test jar details */
 tasks.register('testsJar', Jar) {
     archiveClassifier = 'tests'
@@ -19,10 +22,6 @@ publishing.publications.maven.artifact(testsJar)
 /* Specific Manifest details */
 jar {
     manifest {
-        from sharedManifest
-        attributes(
-            "Implementation-Title": project.description,
-            "Class-Path": configurations.runtimeClasspath.collect { "../${appLibDir}" + standardizePath(it.absolutePath) }.join(' ')         
-        )
+        attributes(manifestAttrs)
     }
 }

@@ -11,46 +11,18 @@ dependencies {
     implementation project(':jtethys-core')
 }
 
-/* Description */
+/* Details */
 description = 'MoneyWise Personal Finance - Swing'
+mainClass = "net.sourceforge.joceanus.jmoneywise.lethe.ui.swing.Control"
+moduleName = "net.sourceforge.joceanus.jmoneywise.swing"
+splashScreen = "net/sourceforge/joceanus/jmoneywise/ui/icons/swing/MoneyWiseSplash.png"
+
+/* Register the project */
+registerProject(project) 
 
 /* Specific Manifest details */
 jar {
     manifest {
-        from sharedManifest
-        attributes(
-            "Implementation-Title": project.description,
-            "Main-Class": "net.sourceforge.joceanus.jmoneywise.lethe.ui.swing.Control",
-            "Automatic-Module-Name": "net.sourceforge.joceanus.jmoneywise.swing",
-            "SplashScreen-Image": "net/sourceforge/joceanus/jmoneywise/ui/icons/swing/MoneyWiseSplash.png",
-            "Class-Path": configurations.runtimeClasspath.collect { "../${appLibDir}" + standardizePath(it.absolutePath) }.join(' ')         
-        )        
+        attributes(manifestAttrs)        
     }
 }
-
-/* Build list of distributable modules */
-task buildDistribution {
-    def jarName = project.name + "-" + version + ".jar"
-    def fullJarName = "$projectDir/build/libs/$jarName"
-    rootProject.ext.newRenameMap[fullJarName] = "${appBinDir}" + jarName
-    configurations.runtimeClasspath.each { d ->
-            def oldName = d.getAbsolutePath()
-            def newName = "${appLibDir}" + standardizePath(d.getAbsolutePath())
-            rootProject.ext.newRenameMap[oldName] = newName
-    }
-}
-
-/* Copy distributable modules to distribution directory */
-task distribute {
-    doLast {
-        rootProject.ext.newRenameMap.each{ k, v -> 
-            copy {
-                into("$rootDir/dist/$v")
-                from k
-	        setDuplicatesStrategy(DuplicatesStrategy.EXCLUDE)
-            }
-        }
-    }
-}
-distribute.dependsOn jar, ":jthemis-javafx:jar", ":jcoeus-javafx:jar", ":jcoeus-swing:jar", ":jprometheus-sheet-odf:jar", ":jprometheus-sheet-hssf:jar"
-assemble.dependsOn distribute

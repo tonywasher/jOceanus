@@ -16,31 +16,18 @@ dependencies {
     implementation project(':jtethys-core')
 }
 
-/* Description */
+/* Details */
 description = 'Themis JavaFX Project Framework'
+mainClass = "net.sourceforge.joceanus.jthemis.ui.javafx.Themis4FX"
+moduleName = "net.sourceforge.joceanus.jthemis.javafx"
+preLoaderClass = "net.sourceforge.joceanus.jthemis.ui.javafx.ThemisFXpreLoader"
+
+/* Register the project */
+registerProject(project) 
 
 /* Specific Manifest details */
 jar {
     manifest {
-        from sharedManifest
-        attributes(
-            "Implementation-Title": project.description,
-            "Main-Class": "net.sourceforge.joceanus.jthemis.ui.javafx.Themis4FX",
-            "JavaFX-Preloader-Class": "net.sourceforge.joceanus.jthemis.ui.javafx.ThemisFXpreLoader",
-            "Automatic-Module-Name": "net.sourceforge.joceanus.jthemis.javafx",
-            "Class-Path": configurations.runtimeClasspath.collect { "../${appLibDir}" + standardizePath(it.absolutePath) }.join(' ')         
-        )
-    }
-}
-
-/* Copy dependency modules to distribution directory */
-task buildDistribution {
-    def jarName = project.name + "-" + version + ".jar"
-    def fullJarName = "$projectDir/build/libs/$jarName"
-    rootProject.ext.newRenameMap[fullJarName] = "${appBinDir}" + jarName
-    configurations.runtimeClasspath.each { d ->
-            def oldName = d.getAbsolutePath()
-            def newName = "${appLibDir}" + standardizePath(d.getAbsolutePath())
-            rootProject.ext.newRenameMap[oldName] = newName
+        attributes(manifestAttrs)
     }
 }
