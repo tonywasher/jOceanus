@@ -57,7 +57,7 @@ allprojects {
         jetBrainsAnnotationsVersion = "22.0.0"
 
         /* checkStyle config */
-        checkStyleVersion = "9.0"
+        checkStyleVersion = "9.0.1"
         checkStyleConfig = "$rootDir/src/main/checkstyle/checks.xml"
 
         /* pmd config */
@@ -85,7 +85,6 @@ ext {
 
     /* Distribution mappings */
     distributionMap = [:];
-    //baseManifest = [:];
 
     /* Base manifest details */
     baseManifest = [

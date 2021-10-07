@@ -127,7 +127,7 @@ public class TethysMoney
     }
 
     /**
-     * Factory method for generating whole monetary units for a currency (e.g. £1)
+     * Factory method for generating whole monetary units for a currency (e.g. Â£)
      * @param pUnits the number of whole monetary units
      * @param pCurrency the currency
      * @return the allocated money
@@ -142,7 +142,7 @@ public class TethysMoney
     }
 
     /**
-     * Factory method for generating whole monetary units (e.g. £1)
+     * Factory method for generating whole monetary units (e.g. Â£)
      * @param pUnits the number of whole monetary units
      * @return the allocated money
      */

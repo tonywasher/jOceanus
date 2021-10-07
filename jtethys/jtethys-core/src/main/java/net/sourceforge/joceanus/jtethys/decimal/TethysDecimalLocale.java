@@ -36,7 +36,7 @@ public class TethysDecimalLocale {
     /**
      * The pound.
      */
-    private static final String POUND = "£";
+    private static final String POUND = "Â£";
 
     /**
      * The locale.

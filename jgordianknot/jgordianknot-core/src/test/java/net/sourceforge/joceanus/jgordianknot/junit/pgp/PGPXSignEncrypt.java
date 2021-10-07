@@ -111,7 +111,7 @@ public class PGPXSignEncrypt {
 
         /* start compression */
         final PGPCompressedDataGenerator compressedDataGenerator = new PGPCompressedDataGenerator(myAlgs.getCompAlgorithm());
-        final OutputStream compressedOut = compressedDataGenerator.open(encryptedOut);
+        final OutputStream compressedOut = compressedDataGenerator.open(encryptedOut, new byte[PGPXKeyRingUtil.BUFFER_SIZE]);
 
         /* Create the signature builders */
         final List<PGPSignatureGenerator> mySigners = createSigners(compressedOut, myAlgs.getHashAlgorithm());

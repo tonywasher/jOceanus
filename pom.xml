@@ -55,7 +55,7 @@
     <MyName>Tony Washer</MyName>
     <currentYear>${maven.build.timestamp}</currentYear>
     <maven.build.timestamp.format>yyyy</maven.build.timestamp.format>
-    <project.build.sourceEncoding>Cp1252</project.build.sourceEncoding>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <scmMaster>master</scmMaster>
     <currentBranch>1.6.1</currentBranch>
     <currentTag>SNAPSHOT</currentTag>
@@ -74,7 +74,7 @@
     <BouncyCastleVersion>1.69</BouncyCastleVersion>
     <JUnitVersion>5.8.1</JUnitVersion>
     <JSONVersion>20210307</JSONVersion>
-    <ApacheMavenVersion>3.6.3</ApacheMavenVersion>
+    <ApacheMavenVersion>3.8.3</ApacheMavenVersion>
     <MySQLVersion>8.0.26</MySQLVersion>
     <PostGreSQLVersion>42.2.24</PostGreSQLVersion>
     <JTDSVersion>1.3.1</JTDSVersion>
@@ -86,7 +86,7 @@
     <JavaVersion>11</JavaVersion>
     <JavaFXVersion>17.0.0.1</JavaFXVersion>
     <JavaLanguageVersion>11</JavaLanguageVersion>
-    <CheckStyleVersion>9.0</CheckStyleVersion>
+    <CheckStyleVersion>9.0.1</CheckStyleVersion>
     <PMDVersion>6.39.0</PMDVersion>
     <CleanPluginVersion>3.1.0</CleanPluginVersion>
     <ResourcesPluginVersion>3.2.0</ResourcesPluginVersion>

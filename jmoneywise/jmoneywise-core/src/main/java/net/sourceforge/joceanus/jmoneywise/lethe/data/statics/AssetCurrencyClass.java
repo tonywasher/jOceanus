@@ -813,12 +813,12 @@ public enum AssetCurrencyClass implements StaticInterface {
     HRK(157, 156),
 
     /**
-     * Sao Tome and Príncipe Dobra.
+     * SÃ£o TomÃ© and PrÃ­ncipe Dobra.
      */
     STD(158, 157),
 
     /**
-     * Sao Tome and Príncipe Dobra (New).
+     * Sao Tome and Prï¿½ncipe Dobra (New).
      */
     STN(159, 158),
 

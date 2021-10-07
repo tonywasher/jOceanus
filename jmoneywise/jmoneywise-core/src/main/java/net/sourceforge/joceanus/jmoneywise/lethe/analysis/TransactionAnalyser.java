@@ -95,7 +95,7 @@ public class TransactionAnalyser
     }
 
     /**
-     * The Amount Tax threshold for "small" transactions (£3000).
+     * The Amount Tax threshold for "small" transactions (Â£3000).
      */
     private static final TethysMoney LIMIT_VALUE = TethysMoney.getWholeUnits(3000);
 
