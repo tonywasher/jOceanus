@@ -200,10 +200,9 @@ public class MoneyWiseStaticTable<L extends StaticList<T, S, MoneyWiseDataType>,
 
         /* Create the Active column */
         final TethysIconMapSet<MetisAction> myActionMapSet = MetisIcon.configureStatusIconButton();
-        final TethysSwingTableIconColumn<MetisAction, MetisLetheField, T> myStatusColumn
-                = theTable.declareIconColumn(StaticData.FIELD_TOUCH, MetisAction.class)
-                .setIconMapSet(r -> myActionMapSet);
-        myStatusColumn.setCellValueFactory(r -> r.isActive() ? MetisAction.ACTIVE : MetisAction.DELETE)
+        theTable.declareIconColumn(StaticData.FIELD_TOUCH, MetisAction.class)
+                .setIconMapSet(r -> myActionMapSet)
+                .setCellValueFactory(r -> r.isActive() ? MetisAction.ACTIVE : MetisAction.DELETE)
                 .setName(MoneyWiseUIResource.STATICDATA_ACTIVE.getValue())
                 .setEditable(true)
                 .setCellEditable(r -> !r.isActive())
@@ -293,6 +292,7 @@ public class MoneyWiseStaticTable<L extends StaticList<T, S, MoneyWiseDataType>,
                 /* Create the new value */
                 myValue = theStatic.addNewItem(myClass);
                 myValue.setNewVersion();
+                myValue.adjustMapForItem();
             }
 
             /* Update the table */

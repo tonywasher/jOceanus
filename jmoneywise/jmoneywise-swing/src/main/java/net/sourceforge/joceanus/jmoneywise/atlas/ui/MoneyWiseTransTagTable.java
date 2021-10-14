@@ -16,10 +16,13 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.atlas.ui;
 
+import java.awt.BorderLayout;
 import java.util.Objects;
 
 import net.sourceforge.joceanus.jmetis.atlas.ui.MetisErrorPanel;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisLetheField;
+import net.sourceforge.joceanus.jmetis.lethe.field.swing.MetisSwingFieldManager;
+import net.sourceforge.joceanus.jmetis.profile.MetisProfile;
 import net.sourceforge.joceanus.jmetis.ui.MetisAction;
 import net.sourceforge.joceanus.jmetis.ui.MetisIcon;
 import net.sourceforge.joceanus.jmetis.viewer.MetisViewerEntry;
@@ -29,11 +32,12 @@ import net.sourceforge.joceanus.jmoneywise.lethe.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.TransactionTag;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.TransactionTag.TransactionTagList;
 import net.sourceforge.joceanus.jmoneywise.lethe.ui.MoneyWiseUIResource;
+import net.sourceforge.joceanus.jmoneywise.lethe.ui.dialog.swing.TransactionTagPanel;
 import net.sourceforge.joceanus.jmoneywise.lethe.views.MoneyWiseView;
 import net.sourceforge.joceanus.jprometheus.PrometheusDataException;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataItem;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataList.ListStyle;
-import net.sourceforge.joceanus.jprometheus.lethe.data.StaticData;
+import net.sourceforge.joceanus.jprometheus.lethe.swing.PrometheusSwingToolkit;
 import net.sourceforge.joceanus.jprometheus.lethe.views.PrometheusDataEvent;
 import net.sourceforge.joceanus.jprometheus.lethe.views.UpdateEntry;
 import net.sourceforge.joceanus.jprometheus.lethe.views.UpdateSet;
@@ -41,19 +45,22 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.event.TethysEventManager;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventProvider;
+import net.sourceforge.joceanus.jtethys.ui.TethysBorderPaneManager;
+import net.sourceforge.joceanus.jtethys.ui.TethysBoxPaneManager;
 import net.sourceforge.joceanus.jtethys.ui.TethysButton;
 import net.sourceforge.joceanus.jtethys.ui.TethysComponent;
 import net.sourceforge.joceanus.jtethys.ui.TethysIconButtonManager.TethysIconMapSet;
 import net.sourceforge.joceanus.jtethys.ui.TethysNode;
 import net.sourceforge.joceanus.jtethys.ui.TethysTableManager.TethysOnCellCommit;
+import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingEnableWrapper.TethysSwingEnablePanel;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingGuiFactory;
+import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingNode;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingTableManager;
-import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingTableManager.TethysSwingTableIconColumn;
 
 /**
  * MoneyWise Tag Table.
  */
-public class MoneyWiseTagTable
+public class MoneyWiseTransTagTable
         implements TethysEventProvider<PrometheusDataEvent>, TethysComponent {
     /**
      * The view.
@@ -81,14 +88,24 @@ public class MoneyWiseTagTable
     private final MetisErrorPanel theError;
 
     /**
+     * The panel.
+     */
+    private final TethysBorderPaneManager thePanel;
+
+    /**
+     * The filter panel.
+     */
+    private final TethysBoxPaneManager theFilterPanel;
+
+    /**
      * The underlying table.
      */
     private final TethysSwingTableManager<MetisLetheField, TransactionTag> theTable;
 
     /**
-     * The new button.
+     * The tag dialog.
      */
-    private final TethysButton theNewButton;
+    private final TransactionTagPanel theActiveTag;
 
     /**
      * The edit list.
@@ -96,22 +113,20 @@ public class MoneyWiseTagTable
     private TransactionTagList theTags;
 
     /**
-     * is the table editing?
-     */
-    private boolean isEditing;
-
-    /**
      * Constructor.
      * @param pView the view
      * @param pUpdateSet the updateSet
      * @param pError the error panel
      */
-    MoneyWiseTagTable(final MoneyWiseView pView,
-                      final UpdateSet<MoneyWiseDataType> pUpdateSet,
-                      final MetisErrorPanel pError) {
+    MoneyWiseTransTagTable(final MoneyWiseView pView,
+                           final UpdateSet<MoneyWiseDataType> pUpdateSet,
+                           final MetisErrorPanel pError) {
         /* Store parameters */
         theView = pView;
         theError = pError;
+
+        /* Access field manager */
+        MetisSwingFieldManager myFieldMgr = ((PrometheusSwingToolkit) theView.getToolkit()).getFieldManager();
 
         /* Create the event manager */
         theEventManager = new TethysEventManager<>();
@@ -120,13 +135,29 @@ public class MoneyWiseTagTable
         theUpdateSet = pUpdateSet;
         theUpdateEntry = theUpdateSet.registerType(MoneyWiseDataType.TRANSTAG);
 
-        /* Create the table */
+        /* Create the panel */
         final TethysSwingGuiFactory myGuiFactory = (TethysSwingGuiFactory) pView.getGuiFactory();
+        thePanel = myGuiFactory.newBorderPane();
+
+        /* Create the table */
         theTable = myGuiFactory.newTable();
+        thePanel.setCentre(theTable);
 
         /* Create new button */
-        theNewButton = myGuiFactory.newButton();
-        MetisIcon.configureNewIconButton(theNewButton);
+        final TethysButton myNewButton = myGuiFactory.newButton();
+        MetisIcon.configureNewIconButton(myNewButton);
+
+        /* Create a filter panel */
+        theFilterPanel = myGuiFactory.newHBoxPane();
+        theFilterPanel.addSpacer();
+        theFilterPanel.addNode(myNewButton);
+
+        /* Create a tag panel */
+        theActiveTag = new TransactionTagPanel(myGuiFactory, myFieldMgr, theUpdateSet, theError);
+        TethysSwingEnablePanel myPanel = new TethysSwingEnablePanel();
+        myPanel.setLayout(new BorderLayout());
+        myPanel.add(TethysSwingNode.getComponent(theActiveTag), BorderLayout.CENTER);
+        thePanel.setSouth(myPanel);
 
         /* Set disabled indication and filter */
         theTable.setOnCommitError(this::setError);
@@ -137,6 +168,7 @@ public class MoneyWiseTagTable
         theTable.setError(this::isFieldInError);
         theTable.setComparator(TransactionTag::compareTo);
         theTable.setEditable(true);
+        theTable.setOnSelect(theActiveTag::setItem);
 
         /* Create the name column */
         theTable.declareStringColumn(TransactionTag.FIELD_NAME)
@@ -154,23 +186,24 @@ public class MoneyWiseTagTable
 
         /* Create the Active column */
         final TethysIconMapSet<MetisAction> myActionMapSet = MetisIcon.configureStatusIconButton();
-        final TethysSwingTableIconColumn<MetisAction, MetisLetheField, TransactionTag> myStatusColumn
-                = theTable.declareIconColumn(StaticData.FIELD_TOUCH, MetisAction.class)
-                .setIconMapSet(r -> myActionMapSet);
-        myStatusColumn.setCellValueFactory(r -> r.isActive() ? MetisAction.ACTIVE : MetisAction.DELETE)
+        theTable.declareIconColumn(TransactionTag.FIELD_TOUCH, MetisAction.class)
+                .setIconMapSet(r -> myActionMapSet)
+                .setCellValueFactory(r -> r.isActive() ? MetisAction.ACTIVE : MetisAction.DELETE)
                 .setName(MoneyWiseUIResource.STATICDATA_ACTIVE.getValue())
                 .setEditable(true)
                 .setCellEditable(r -> !r.isActive())
                 .setOnCommit((r, v) -> updateField(this::deleteRow, r, v));
 
         /* Add listeners */
-        theNewButton.getEventRegistrar().addEventListener(e -> addNewItem());
-        theUpdateSet.getEventRegistrar().addEventListener(e -> theTable.fireTableDataChanged());
+        myNewButton.getEventRegistrar().addEventListener(e -> addNewItem());
+        theUpdateSet.getEventRegistrar().addEventListener(e -> handleRewind());
+        theActiveTag.getEventRegistrar().addEventListener(PrometheusDataEvent.ADJUSTVISIBILITY, e -> handlePanelState());
+        theActiveTag.getEventRegistrar().addEventListener(PrometheusDataEvent.GOTOWINDOW, theEventManager::cascadeEvent);
     }
 
     @Override
     public Integer getId() {
-        return theTable.getId();
+        return thePanel.getId();
     }
 
     @Override
@@ -180,37 +213,56 @@ public class MoneyWiseTagTable
 
     @Override
     public TethysNode getNode() {
-        return theTable.getNode();
+        return thePanel.getNode();
+    }
+
+    /**
+     * Are we in the middle of an item edit?
+     * @return true/false
+     */
+    protected boolean isItemEditing() {
+        return theActiveTag.isEditing();
     }
 
     @Override
     public void setEnabled(final boolean pEnabled) {
-        theTable.setEnabled(pEnabled);
+        thePanel.setEnabled(pEnabled);
     }
 
     @Override
     public void setVisible(final boolean pVisible) {
-        theTable.setVisible(pVisible);
+        thePanel.setVisible(pVisible);
     }
 
     /**
-     * Obtain the new button.
-     * @return the new Button
+     * Obtain the filter panel.
+     * @return the filter panel
      */
-    TethysButton getNewButton() {
-        return theNewButton;
+    protected TethysBoxPaneManager getFilterPanel() {
+        return theFilterPanel;
     }
 
     /**
      * Refresh data.
      */
     void refreshData() throws OceanusException {
+        /* Obtain the active profile */
+        MetisProfile myTask = theView.getActiveTask();
+        myTask = myTask.startTask("Tags");
+
+        /* Access list */
         final MoneyWiseData myData = theView.getData();
         final TransactionTagList myBase = myData.getDataList(TransactionTagList.class);
         theTags = (TransactionTagList) myBase.deriveList(ListStyle.EDIT);
         theTags.mapData();
         theTable.setItems(theTags.getUnderlyingList());
         theUpdateEntry.setDataList(theTags);
+
+        /* Notify panel of refresh */
+        theActiveTag.refreshData();
+
+        /* Complete the task */
+        myTask.end();
     }
 
     /**
@@ -218,14 +270,31 @@ public class MoneyWiseTagTable
      */
     void cancelEditing() {
         theTable.cancelEditing();
+        theActiveTag.setEditable(false);
     }
 
     /**
-     * Is the table editing?
+     * Does the panel have updates?
      * @return true/false
      */
-    boolean isEditing() {
-        return isEditing;
+    public boolean hasUpdates() {
+        return theUpdateSet.hasUpdates();
+    }
+
+    /**
+     * Does the panel have a session?
+     * @return true/false
+     */
+    public boolean hasSession() {
+        return hasUpdates() || isItemEditing();
+    }
+
+    /**
+     * Does the panel have errors?
+     * @return true/false
+     */
+    public boolean hasErrors() {
+        return theUpdateSet.hasErrors();
     }
 
     /**
@@ -260,22 +329,55 @@ public class MoneyWiseTagTable
     }
 
     /**
+     * Handle updateSet rewind.
+     */
+    private void handleRewind() {
+        /* Only action if we are not editing */
+        if (!theActiveTag.isEditing()) {
+            /* Handle the reWind */
+            theTable.fireTableDataChanged();
+            selectTag(theActiveTag.getSelectedItem());
+        }
+
+        /* Adjust for changes */
+        notifyChanges();
+    }
+
+    /**
+     * Handle panel state.
+     */
+    private void handlePanelState() {
+        /* Only action if we are not editing */
+        if (!theActiveTag.isEditing()) {
+            /* handle the edit transition */
+            theTable.fireTableDataChanged();
+        }
+
+        /* Note changes */
+        notifyChanges();
+    }
+
+    /**
      * New item.
      */
     private void addNewItem() {
         /* Protect against Exceptions */
         try {
+            /* Make sure that we have finished editing */
+            cancelEditing();
+
             /* Create the new tag */
             final TransactionTag myTag = theTags.addNewItem();
             myTag.setDefaults();
 
-            /* Add the new item */
+            /* Set as new and adjust map */
             myTag.setNewVersion();
-            theTags.add(myTag);
-
-            /* Validate the new item and notify of the changes */
-            myTag.validate();
+            myTag.adjustMapForItem();
             theUpdateSet.incrementVersion();
+
+            /* Validate the new item and update panel */
+            myTag.validate();
+            theActiveTag.setNewItem(myTag);
 
             /* Lock the table */
             setEnabled(false);
@@ -341,6 +443,9 @@ public class MoneyWiseTagTable
      * Notify that there have been changes to this list.
      */
     protected void notifyChanges() {
+        /* Adjust enable of the table */
+        theTable.setEnabled(!theActiveTag.isEditing());
+
         /* Notify listeners */
         theEventManager.fireEvent(PrometheusDataEvent.ADJUSTVISIBILITY);
     }
@@ -367,15 +472,6 @@ public class MoneyWiseTagTable
     private boolean isFieldChanged(final MetisLetheField pField,
                                    final TransactionTag pItem) {
         return pItem.fieldChanged(pField).isDifferent();
-    }
-
-    /**
-     * isFiltered?
-     * @param pRow the row
-     * @return true/false
-     */
-    private boolean isFiltered(final TransactionTag pRow) {
-        return true;
     }
 
     /**
@@ -428,7 +524,7 @@ public class MoneyWiseTagTable
                                final TransactionTag pRow) {
         /* Reject description that is too long */
         if (pNewDesc != null
-                && DataItem.byteLength(pNewDesc) > StaticData.DESCLEN) {
+                && DataItem.byteLength(pNewDesc) > TransactionTag.DESCLEN) {
             return "Description too long";
         }
 
@@ -449,7 +545,6 @@ public class MoneyWiseTagTable
      * @param pState the new state
      */
     private void handleEditState(final Boolean pState) {
-        isEditing = pState;
         notifyChanges();
     }
 }

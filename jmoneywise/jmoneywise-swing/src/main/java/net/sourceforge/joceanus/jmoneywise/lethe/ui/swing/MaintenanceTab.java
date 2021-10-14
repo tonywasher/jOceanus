@@ -23,6 +23,7 @@ import net.sourceforge.joceanus.jmetis.atlas.ui.MetisPreferenceView;
 import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceManager;
 import net.sourceforge.joceanus.jmetis.profile.MetisProfile;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
+import net.sourceforge.joceanus.jmoneywise.atlas.ui.MoneyWiseCategoryPanel;
 import net.sourceforge.joceanus.jmoneywise.atlas.ui.MoneyWiseStaticPanel;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.AssetBase;
 import net.sourceforge.joceanus.jmoneywise.lethe.quicken.definitions.QIFPreference.MoneyWiseQIFPreferences;
@@ -110,7 +111,7 @@ public class MaintenanceTab
     /**
      * The Category Panel.
      */
-    private final CategoryPanel theCategoryTab;
+    private final MoneyWiseCategoryPanel theCategoryTab;
 
     /**
      * The Static Panel.
@@ -154,7 +155,7 @@ public class MaintenanceTab
         theTabs.addTabItem(TITLE_ACCOUNT, theAccountTab);
 
         /* Create the category Tab and add it */
-        theCategoryTab = new CategoryPanel(theView);
+        theCategoryTab = new MoneyWiseCategoryPanel(theView);
         theTabs.addTabItem(TITLE_CATEGORY, theCategoryTab);
 
         /* Create the Static Tab */

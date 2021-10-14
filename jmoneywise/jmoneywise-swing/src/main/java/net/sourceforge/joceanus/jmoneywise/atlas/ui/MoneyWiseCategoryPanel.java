@@ -1,20 +1,4 @@
-/*******************************************************************************
- * MoneyWise: Finance Application
- * Copyright 2012,2021 Tony Washer
- *
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not
- * use this file except in compliance with the License.  You may obtain a copy
- * of the License at
- *
- *   http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
- * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
- * License for the specific language governing permissions and limitations under
- * the License.
- ******************************************************************************/
-package net.sourceforge.joceanus.jmoneywise.lethe.ui.swing;
+package net.sourceforge.joceanus.jmoneywise.atlas.ui;
 
 import net.sourceforge.joceanus.jmetis.atlas.ui.MetisErrorPanel;
 import net.sourceforge.joceanus.jmetis.profile.MetisProfile;
@@ -52,21 +36,8 @@ import net.sourceforge.joceanus.jtethys.ui.TethysScrollButtonManager;
 import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollMenu;
 import net.sourceforge.joceanus.jtethys.ui.TethysUIEvent;
 
-/**
- * Top-level panel for Account/EventCategories.
- */
-public class CategoryPanel
+public class MoneyWiseCategoryPanel
         implements TethysEventProvider<PrometheusDataEvent>, TethysComponent {
-    /**
-     * Strut width.
-     */
-    protected static final int STRUT_WIDTH = 5;
-
-    /**
-     * Panel padding.
-     */
-    protected static final int PANEL_PAD = 50;
-
     /**
      * Text for DataEntry Title.
      */
@@ -120,32 +91,32 @@ public class CategoryPanel
     /**
      * Deposit Categories Table.
      */
-    private final DepositCategoryTable theDepositTable;
+    private final MoneyWiseDepositCategoryTable theDepositTable;
 
     /**
      * Cash Categories Table.
      */
-    private final CashCategoryTable theCashTable;
+    private final MoneyWiseCashCategoryTable theCashTable;
 
     /**
      * Loan Categories Table.
      */
-    private final LoanCategoryTable theLoanTable;
+    private final MoneyWiseLoanCategoryTable theLoanTable;
 
     /**
-     * Event Categories Table.
+     * Transaction Categories Table.
      */
-    private final TransactionCategoryTable theEventTable;
+    private final MoneyWiseTransCategoryTable theEventTable;
 
     /**
      * Event Tags Table.
      */
-    private final TransactionTagTable theTagTable;
+    private final MoneyWiseTransTagTable theTagTable;
 
     /**
      * Regions Table.
      */
-    private final RegionTable theRegionTable;
+    private final MoneyWiseRegionTable theRegionTable;
 
     /**
      * The UpdateSet.
@@ -181,7 +152,7 @@ public class CategoryPanel
      * Constructor.
      * @param pView the data view
      */
-    public CategoryPanel(final MoneyWiseView pView) {
+    public MoneyWiseCategoryPanel(final MoneyWiseView pView) {
         /* Store details */
         theView = pView;
 
@@ -210,12 +181,12 @@ public class CategoryPanel
         theActionButtons = new PrometheusActionButtons(myFactory, theUpdateSet);
 
         /* Create the table panels */
-        theDepositTable = new DepositCategoryTable(pView, theUpdateSet, theError);
-        theCashTable = new CashCategoryTable(pView, theUpdateSet, theError);
-        theLoanTable = new LoanCategoryTable(pView, theUpdateSet, theError);
-        theEventTable = new TransactionCategoryTable(pView, theUpdateSet, theError);
-        theTagTable = new TransactionTagTable(pView, theUpdateSet, theError);
-        theRegionTable = new RegionTable(pView, theUpdateSet, theError);
+        theDepositTable = new MoneyWiseDepositCategoryTable(pView, theUpdateSet, theError);
+        theCashTable = new MoneyWiseCashCategoryTable(pView, theUpdateSet, theError);
+        theLoanTable = new MoneyWiseLoanCategoryTable(pView, theUpdateSet, theError);
+        theEventTable = new MoneyWiseTransCategoryTable(pView, theUpdateSet, theError);
+        theTagTable = new MoneyWiseTransTagTable(pView, theUpdateSet, theError);
+        theRegionTable = new MoneyWiseRegionTable(pView, theUpdateSet, theError);
 
         /* Create selection button and label */
         final TethysLabel myLabel = myFactory.newLabel(NLS_DATA);
@@ -330,7 +301,7 @@ public class CategoryPanel
 
         /* Loop through the panels */
         for (PanelName myPanel : PanelName.values()) {
-            /* Create a new JMenuItem for the panel */
+            /* Create a new MenuItem for the panel */
             myMenu.addItem(myPanel);
         }
     }
@@ -339,7 +310,7 @@ public class CategoryPanel
      * Refresh data.
      * @throws OceanusException on error
      */
-    protected void refreshData() throws OceanusException {
+    public void refreshData() throws OceanusException {
         /* Obtain the active profile */
         MetisProfile myTask = theView.getActiveTask();
         myTask = myTask.startTask("Categories");
@@ -369,7 +340,7 @@ public class CategoryPanel
     /**
      * Determine Focus.
      */
-    protected void determineFocus() {
+    public void determineFocus() {
         /* Switch on active component */
         switch (theActive) {
             case DEPOSITS:
@@ -507,7 +478,7 @@ public class CategoryPanel
      * Select category.
      * @param pCategory the category to select
      */
-    protected void selectCategory(final Object pCategory) {
+    public void selectCategory(final Object pCategory) {
         /* Determine which panel to show */
         if (pCategory instanceof DepositCategory) {
             theDepositTable.selectCategory((DepositCategory) pCategory);
@@ -528,7 +499,7 @@ public class CategoryPanel
      * Select tag.
      * @param pTag the category to select
      */
-    protected void selectTag(final Object pTag) {
+    public void selectTag(final Object pTag) {
         /* Determine which panel to show */
         if (pTag instanceof TransactionTag) {
             theTagTable.selectTag((TransactionTag) pTag);
@@ -540,7 +511,7 @@ public class CategoryPanel
      * Select region.
      * @param pRegion the region to select
      */
-    protected void selectRegion(final Object pRegion) {
+    public void selectRegion(final Object pRegion) {
         /* Determine which panel to show */
         if (pRegion instanceof Region) {
             theRegionTable.selectRegion((Region) pRegion);
@@ -711,7 +682,7 @@ public class CategoryPanel
         /**
          * The String name.
          */
-        private String theName;
+        private final String theName;
 
         /**
          * Constructor.

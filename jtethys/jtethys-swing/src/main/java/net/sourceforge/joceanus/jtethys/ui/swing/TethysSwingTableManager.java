@@ -446,9 +446,10 @@ public class TethysSwingTableManager<C, R>
      */
     private void handleSelection(final ListSelectionEvent pEvent) {
         final ListSelectionModel myModel = (ListSelectionModel) pEvent.getSource();
+        final int myIndex = myModel.getMinSelectionIndex();
         final R mySelected = myModel.isSelectionEmpty()
                              ? null
-                             : theModel.getItemAtIndex(myModel.getMinSelectionIndex());
+                             : theModel.getItemAtIndex(theTable.convertRowIndexToModel(myIndex));
         processOnSelect(mySelected);
     }
 
@@ -456,7 +457,7 @@ public class TethysSwingTableManager<C, R>
     public void selectRowWithScroll(final R pItem) {
         /* Determine the index of the item */
         final int iModel = theItems.indexOf(pItem);
-        final int iView = theTable.convertRowIndexToView(iModel);
+        final int iView = iModel == -1 ? -1 : theTable.convertRowIndexToView(iModel);
 
         /* If we have a row to display */
         if (iView != -1) {

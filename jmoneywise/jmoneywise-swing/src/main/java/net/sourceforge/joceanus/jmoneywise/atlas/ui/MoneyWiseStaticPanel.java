@@ -79,7 +79,7 @@ public class MoneyWiseStaticPanel
     private final TethysEventManager<PrometheusDataEvent> theEventManager;
 
     /**
-     * The UpdateSet associated with the table.
+     * The UpdateSet associated with the panel.
      */
     private final UpdateSet<MoneyWiseDataType> theUpdateSet;
 

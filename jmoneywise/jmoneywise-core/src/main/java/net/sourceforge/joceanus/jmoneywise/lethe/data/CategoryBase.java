@@ -806,7 +806,7 @@ public abstract class CategoryBase<T extends CategoryBase<T, S, C>, S extends St
                 }
 
                 /* Build next name */
-                myName = myBase.concat(Integer.toString(iNextId++));
+                myName = myCore.concat(Integer.toString(iNextId++));
             }
         }
 

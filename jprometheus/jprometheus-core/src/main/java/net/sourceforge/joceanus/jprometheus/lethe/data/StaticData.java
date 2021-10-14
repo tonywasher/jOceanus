@@ -862,9 +862,7 @@ public abstract class StaticData<T extends StaticData<T, S, E>, S extends Enum<S
          */
         public T addNewItem(final S pClass) throws OceanusException {
             /* Create the new item */
-            final T myItem = newItem(pClass);
-            add(myItem);
-            return myItem;
+            return newItem(pClass);
         }
 
         /**
@@ -884,9 +882,6 @@ public abstract class StaticData<T extends StaticData<T, S, E>, S extends Enum<S
             for (S myClass : getEnumClass().getEnumConstants()) {
                 /* Create new element */
                 final T myItem = newItem(myClass);
-
-                /* Add the item to the list */
-                add(myItem);
 
                 /* Validate the item */
                 myItem.validate();
