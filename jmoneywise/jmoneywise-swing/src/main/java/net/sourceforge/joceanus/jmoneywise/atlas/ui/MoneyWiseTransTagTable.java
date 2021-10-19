@@ -167,6 +167,7 @@ public class MoneyWiseTransTagTable
         theTable.setChanged(this::isFieldChanged);
         theTable.setError(this::isFieldInError);
         theTable.setComparator(TransactionTag::compareTo);
+        theTable.setFilter(this::isFiltered);
         theTable.setEditable(true);
         theTable.setOnSelect(theActiveTag::setItem);
 
@@ -472,6 +473,15 @@ public class MoneyWiseTransTagTable
     private boolean isFieldChanged(final MetisLetheField pField,
                                    final TransactionTag pItem) {
         return pItem.fieldChanged(pField).isDifferent();
+    }
+
+    /**
+     * isFiltered?
+     * @param pRow the row
+     * @return true/false
+     */
+    private boolean isFiltered(final TransactionTag pRow) {
+        return !pRow.isDeleted();
     }
 
     /**

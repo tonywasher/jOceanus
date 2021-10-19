@@ -80,6 +80,7 @@ public class MoneyWiseLoanCategoryTable
      * Filter Parents Title.
      */
     private static final String FILTER_PARENTS = MoneyWiseUIResource.CATEGORY_FILTER_PARENT.getValue();
+
     /**
      * The view.
      */
@@ -224,6 +225,7 @@ public class MoneyWiseLoanCategoryTable
                 .setMenuConfigurator(this::buildCategoryTypeMenu)
                 .setCellValueFactory(LoanCategory::getCategoryType)
                 .setEditable(true)
+                .setCellEditable(r -> !r.isActive())
                 .setOnCommit((r, v) -> updateField(LoanCategory::setCategoryType, r, v));
 
         /* Create the description column */
@@ -657,9 +659,9 @@ public class MoneyWiseLoanCategoryTable
      * @return true/false
      */
     private boolean isFiltered(final LoanCategory pRow) {
-        return theParent == null
+        return !pRow.isDeleted() && (theParent == null
                 ? pRow.isCategoryClass(LoanCategoryClass.PARENT)
-                : theParent.equals(pRow.getParentCategory());
+                : theParent.equals(pRow.getParentCategory()));
     }
 
     /**

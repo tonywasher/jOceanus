@@ -82,7 +82,7 @@ public abstract class AssetBase<T extends AssetBase<T>>
     /**
      * lastEvent Field Id.
      */
-    private static final MetisLetheField FIELD_EVTLAST = FIELD_DEFS.declareLocalField(MoneyWiseDataResource.ASSET_LASTEVENT.getValue());
+    public static final MetisLetheField FIELD_EVTLAST = FIELD_DEFS.declareLocalField(MoneyWiseDataResource.ASSET_LASTEVENT.getValue());
 
     /**
      * isRelevant Field Id.

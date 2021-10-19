@@ -79,6 +79,7 @@ public class MoneyWiseTransCategoryTable
      * Filter Parents Title.
      */
     private static final String FILTER_PARENTS = MoneyWiseUIResource.CATEGORY_FILTER_PARENT.getValue();
+
     /**
      * The view.
      */
@@ -223,6 +224,7 @@ public class MoneyWiseTransCategoryTable
                 .setMenuConfigurator(this::buildCategoryTypeMenu)
                 .setCellValueFactory(TransactionCategory::getCategoryType)
                 .setEditable(true)
+                .setCellEditable(r -> !r.isActive())
                 .setOnCommit((r, v) -> updateField(TransactionCategory::setCategoryType, r, v));
 
         /* Create the description column */
@@ -656,9 +658,9 @@ public class MoneyWiseTransCategoryTable
      * @return true/false
      */
     private boolean isFiltered(final TransactionCategory pRow) {
-        return theParent == null
+        return !pRow.isDeleted() && (theParent == null
                 ? pRow.getParentCategory() == null
-                : theParent.equals(pRow.getParentCategory());
+                : theParent.equals(pRow.getParentCategory()));
     }
 
     /**

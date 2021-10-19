@@ -47,10 +47,10 @@ import net.sourceforge.joceanus.jtethys.ui.TethysNode;
 import net.sourceforge.joceanus.jtethys.ui.TethysScrollButtonManager;
 import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollMenu;
 import net.sourceforge.joceanus.jtethys.ui.TethysTableManager.TethysOnCellCommit;
+import net.sourceforge.joceanus.jtethys.ui.TethysTableManager.TethysTableIconColumn;
 import net.sourceforge.joceanus.jtethys.ui.TethysUIEvent;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingGuiFactory;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingTableManager;
-import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingTableManager.TethysSwingTableIconColumn;
 
 /**
  * MoneyWise Static Table.
@@ -103,7 +103,7 @@ public class MoneyWiseStaticTable<L extends StaticList<T, S, MoneyWiseDataType>,
     /**
      * The enabled column.
      */
-    private final TethysSwingTableIconColumn<Boolean, MetisLetheField, T> theEnabledColumn;
+    private final TethysTableIconColumn<Boolean, MetisLetheField, T> theEnabledColumn;
 
     /**
      * The new button.
@@ -133,6 +133,7 @@ public class MoneyWiseStaticTable<L extends StaticList<T, S, MoneyWiseDataType>,
      * @param pDataType the dataType
      * @param pListClass the listClass
      */
+    @SuppressWarnings("unchecked")
     MoneyWiseStaticTable(final MoneyWiseView pView,
                          final UpdateSet<MoneyWiseDataType> pUpdateSet,
                          final MetisErrorPanel pError,
@@ -166,6 +167,7 @@ public class MoneyWiseStaticTable<L extends StaticList<T, S, MoneyWiseDataType>,
         theTable.setDisabled(StaticData::isDisabled);
         theTable.setChanged(this::isFieldChanged);
         theTable.setError(this::isFieldInError);
+        theTable.setFilter(this::isFiltered);
         theTable.setComparator(StaticData::compareTo);
         theTable.setEditable(true);
 
@@ -190,13 +192,14 @@ public class MoneyWiseStaticTable<L extends StaticList<T, S, MoneyWiseDataType>,
 
         /* Create the enabled column */
         final TethysIconMapSet<Boolean> myEnabledMapSet = PrometheusIcon.configureEnabledIconButton();
-        theEnabledColumn = theTable.declareIconColumn(StaticData.FIELD_ENABLED, Boolean.class)
-                .setIconMapSet(r -> myEnabledMapSet);
-        theEnabledColumn.setCellValueFactory(StaticData::getEnabled)
-                .setVisible(false)
-                .setEditable(true)
-                .setCellEditable(r -> !r.isActive())
-                .setOnCommit((r, v) -> updateField(StaticData::setEnabled, r, v));
+        theEnabledColumn = (TethysTableIconColumn<Boolean, MetisLetheField, T>)
+                theTable.declareIconColumn(StaticData.FIELD_ENABLED, Boolean.class)
+                        .setIconMapSet(r -> myEnabledMapSet)
+                        .setCellValueFactory(StaticData::getEnabled)
+                        .setVisible(false)
+                        .setEditable(true)
+                        .setCellEditable(r -> !r.isActive())
+                        .setOnCommit((r, v) -> updateField(StaticData::setEnabled, r, v));
 
         /* Create the Active column */
         final TethysIconMapSet<MetisAction> myActionMapSet = MetisIcon.configureStatusIconButton();
@@ -472,7 +475,7 @@ public class MoneyWiseStaticTable<L extends StaticList<T, S, MoneyWiseDataType>,
      * @return true/false
      */
     private boolean isFiltered(final T pRow) {
-        return pRow.getEnabled() || showAll;
+        return !pRow.isDeleted() && (pRow.getEnabled() || showAll);
     }
 
     /**

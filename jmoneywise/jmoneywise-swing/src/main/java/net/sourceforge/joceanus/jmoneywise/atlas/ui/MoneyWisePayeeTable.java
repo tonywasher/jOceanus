@@ -17,9 +17,11 @@
 package net.sourceforge.joceanus.jmoneywise.atlas.ui;
 
 import java.awt.BorderLayout;
+import java.util.Map;
 import java.util.Objects;
 
 import net.sourceforge.joceanus.jmetis.atlas.ui.MetisErrorPanel;
+import net.sourceforge.joceanus.jmetis.data.MetisDataDifference;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisLetheField;
 import net.sourceforge.joceanus.jmetis.lethe.field.swing.MetisSwingFieldManager;
 import net.sourceforge.joceanus.jmetis.profile.MetisProfile;
@@ -29,10 +31,13 @@ import net.sourceforge.joceanus.jmetis.viewer.MetisViewerEntry;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.MoneyWiseData;
-import net.sourceforge.joceanus.jmoneywise.lethe.data.Region;
-import net.sourceforge.joceanus.jmoneywise.lethe.data.Region.RegionList;
+import net.sourceforge.joceanus.jmoneywise.lethe.data.Payee;
+import net.sourceforge.joceanus.jmoneywise.lethe.data.Payee.PayeeList;
+import net.sourceforge.joceanus.jmoneywise.lethe.data.Transaction;
+import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.PayeeType;
+import net.sourceforge.joceanus.jmoneywise.lethe.ui.MoneyWiseIcon;
 import net.sourceforge.joceanus.jmoneywise.lethe.ui.MoneyWiseUIResource;
-import net.sourceforge.joceanus.jmoneywise.lethe.ui.dialog.swing.RegionPanel;
+import net.sourceforge.joceanus.jmoneywise.lethe.ui.dialog.swing.PayeePanel;
 import net.sourceforge.joceanus.jmoneywise.lethe.views.MoneyWiseView;
 import net.sourceforge.joceanus.jprometheus.PrometheusDataException;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataItem;
@@ -42,26 +47,35 @@ import net.sourceforge.joceanus.jprometheus.lethe.views.PrometheusDataEvent;
 import net.sourceforge.joceanus.jprometheus.lethe.views.UpdateEntry;
 import net.sourceforge.joceanus.jprometheus.lethe.views.UpdateSet;
 import net.sourceforge.joceanus.jtethys.OceanusException;
+import net.sourceforge.joceanus.jtethys.date.TethysDate;
 import net.sourceforge.joceanus.jtethys.event.TethysEventManager;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventProvider;
 import net.sourceforge.joceanus.jtethys.ui.TethysBorderPaneManager;
 import net.sourceforge.joceanus.jtethys.ui.TethysBoxPaneManager;
 import net.sourceforge.joceanus.jtethys.ui.TethysButton;
+import net.sourceforge.joceanus.jtethys.ui.TethysCheckBox;
 import net.sourceforge.joceanus.jtethys.ui.TethysComponent;
 import net.sourceforge.joceanus.jtethys.ui.TethysIconButtonManager.TethysIconMapSet;
 import net.sourceforge.joceanus.jtethys.ui.TethysNode;
+import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollMenu;
 import net.sourceforge.joceanus.jtethys.ui.TethysTableManager.TethysOnCellCommit;
+import net.sourceforge.joceanus.jtethys.ui.TethysTableManager.TethysTableIconColumn;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingEnableWrapper.TethysSwingEnablePanel;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingGuiFactory;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingNode;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingTableManager;
 
 /**
- * MoneyWise Region Table.
+ * MoneyWise Payee Table.
  */
-public class MoneyWiseRegionTable
+public class MoneyWisePayeeTable
         implements TethysEventProvider<PrometheusDataEvent>, TethysComponent {
+    /**
+     * ShowClosed prompt.
+     */
+    private static final String PROMPT_CLOSED = MoneyWiseUIResource.UI_PROMPT_SHOWCLOSED.getValue();
+
     /**
      * The view.
      */
@@ -80,7 +94,7 @@ public class MoneyWiseRegionTable
     /**
      * The UpdateEntry.
      */
-    private final UpdateEntry<Region, MoneyWiseDataType> theUpdateEntry;
+    private final UpdateEntry<Payee, MoneyWiseDataType> theUpdateEntry;
 
     /**
      * The error panel.
@@ -98,19 +112,34 @@ public class MoneyWiseRegionTable
     private final TethysBoxPaneManager theFilterPanel;
 
     /**
-     * The underlying table.
+     * The locked check box.
      */
-    private final TethysSwingTableManager<MetisLetheField, Region> theTable;
+    private final TethysCheckBox theLockedCheckBox;
 
     /**
-     * The Region dialog.
+     * The underlying table.
      */
-    private final RegionPanel theActiveRegion;
+    private final TethysSwingTableManager<MetisLetheField, Payee> theTable;
+
+    /**
+     * The closed column.
+     */
+    private final TethysTableIconColumn<Boolean, MetisLetheField, Payee> theClosedColumn;
+
+    /**
+     * The Payee dialog.
+     */
+    private final PayeePanel theActivePayee;
 
     /**
      * The edit list.
      */
-    private RegionList theRegions;
+    private PayeeList thePayees;
+
+    /**
+     * Are we showing closed accounts?
+     */
+    private boolean doShowClosed;
 
     /**
      * Constructor.
@@ -118,9 +147,10 @@ public class MoneyWiseRegionTable
      * @param pUpdateSet the updateSet
      * @param pError the error panel
      */
-    MoneyWiseRegionTable(final MoneyWiseView pView,
-                         final UpdateSet<MoneyWiseDataType> pUpdateSet,
-                         final MetisErrorPanel pError) {
+    @SuppressWarnings("unchecked")
+    MoneyWisePayeeTable(final MoneyWiseView pView,
+                        final UpdateSet<MoneyWiseDataType> pUpdateSet,
+                        final MetisErrorPanel pError) {
         /* Store parameters */
         theView = pView;
         theError = pError;
@@ -133,7 +163,7 @@ public class MoneyWiseRegionTable
 
         /* Build the Update set */
         theUpdateSet = pUpdateSet;
-        theUpdateEntry = theUpdateSet.registerType(MoneyWiseDataType.REGION);
+        theUpdateEntry = theUpdateSet.registerType(MoneyWiseDataType.PAYEE);
 
         /* Create the panel */
         final TethysSwingGuiFactory myGuiFactory = (TethysSwingGuiFactory) pView.getGuiFactory();
@@ -147,47 +177,70 @@ public class MoneyWiseRegionTable
         final TethysButton myNewButton = myGuiFactory.newButton();
         MetisIcon.configureNewIconButton(myNewButton);
 
+        /* Create the CheckBox */
+        theLockedCheckBox = myGuiFactory.newCheckBox(PROMPT_CLOSED);
+
         /* Create a filter panel */
         theFilterPanel = myGuiFactory.newHBoxPane();
         theFilterPanel.addSpacer();
+        theFilterPanel.addNode(theLockedCheckBox);
+        theFilterPanel.addSpacer();
         theFilterPanel.addNode(myNewButton);
 
-        /* Create a region panel */
-        theActiveRegion = new RegionPanel(myGuiFactory, myFieldMgr, theUpdateSet, theError);
+        /* Create a payee panel */
+        theActivePayee = new PayeePanel(myGuiFactory, myFieldMgr, theUpdateSet, theError);
         TethysSwingEnablePanel myPanel = new TethysSwingEnablePanel();
         myPanel.setLayout(new BorderLayout());
-        myPanel.add(TethysSwingNode.getComponent(theActiveRegion), BorderLayout.CENTER);
+        myPanel.add(TethysSwingNode.getComponent(theActivePayee), BorderLayout.CENTER);
         thePanel.setSouth(myPanel);
 
         /* Set disabled indication and filter */
         theTable.setOnCommitError(this::setError);
         theTable.setOnValidateError(this::showValidateError);
         theTable.setOnCellEditState(this::handleEditState);
-        theTable.setDisabled(Region::isDisabled);
+        theTable.setDisabled(Payee::isDisabled);
         theTable.setChanged(this::isFieldChanged);
         theTable.setError(this::isFieldInError);
-        theTable.setComparator(Region::compareTo);
+        theTable.setComparator(Payee::compareTo);
         theTable.setFilter(this::isFiltered);
         theTable.setEditable(true);
-        theTable.setOnSelect(theActiveRegion::setItem);
+        theTable.setOnSelect(theActivePayee::setItem);
 
         /* Create the name column */
-        theTable.declareStringColumn(Region.FIELD_NAME)
+        theTable.declareStringColumn(Payee.FIELD_NAME)
                 .setValidator(this::isValidName)
-                .setCellValueFactory(Region::getName)
+                .setCellValueFactory(Payee::getName)
                 .setEditable(true)
-                .setOnCommit((r, v) -> updateField(Region::setName, r, v));
+                .setOnCommit((r, v) -> updateField(Payee::setName, r, v));
+
+        /* Create the payee type column */
+        theTable.declareScrollColumn(Payee.FIELD_PAYEETYPE, PayeeType.class)
+                .setMenuConfigurator(this::buildPayeeTypeMenu)
+                .setCellValueFactory(Payee::getPayeeType)
+                .setEditable(true)
+                .setCellEditable(r -> !r.isActive())
+                .setOnCommit((r, v) -> updateField(Payee::setPayeeType, r, v));
 
         /* Create the description column */
-        theTable.declareStringColumn(Region.FIELD_DESC)
+        theTable.declareStringColumn(Payee.FIELD_DESC)
                 .setValidator(this::isValidDesc)
-                .setCellValueFactory(Region::getDesc)
+                .setCellValueFactory(Payee::getDesc)
                 .setEditable(true)
-                .setOnCommit((r, v) -> updateField(Region::setDescription, r, v));
+                .setOnCommit((r, v) -> updateField(Payee::setDescription, r, v));
+
+        /* Create the Closed column */
+        final Map<Boolean, TethysIconMapSet<Boolean>> myClosedMapSets = MoneyWiseIcon.configureLockedIconButton();
+        theClosedColumn = (TethysTableIconColumn<Boolean, MetisLetheField, Payee>)
+                theTable.declareIconColumn(Payee.FIELD_CLOSED, Boolean.class)
+                        .setIconMapSet(r -> myClosedMapSets.get(determineClosedState(r)))
+                        .setCellValueFactory(Payee::isClosed)
+                        .setEditable(true)
+                        .setCellEditable(this::determineClosedState)
+                        .setOnCommit((r, v) -> updateField(Payee::setClosed, r, v));
 
         /* Create the Active column */
         final TethysIconMapSet<MetisAction> myActionMapSet = MetisIcon.configureStatusIconButton();
-        theTable.declareIconColumn(Region.FIELD_TOUCH, MetisAction.class)
+        theTable.declareIconColumn(Payee.FIELD_TOUCH, MetisAction.class)
                 .setIconMapSet(r -> myActionMapSet)
                 .setCellValueFactory(r -> r.isActive() ? MetisAction.ACTIVE : MetisAction.DELETE)
                 .setName(MoneyWiseUIResource.STATICDATA_ACTIVE.getValue())
@@ -195,11 +248,18 @@ public class MoneyWiseRegionTable
                 .setCellEditable(r -> !r.isActive())
                 .setOnCommit((r, v) -> updateField(this::deleteRow, r, v));
 
+        /* Create the latest event column */
+        theTable.declareDateColumn(Payee.FIELD_EVTLAST)
+                .setCellValueFactory(this::getLatestTranDate)
+                .setName(MoneyWiseUIResource.ASSET_COLUMN_LATEST.getValue())
+                .setEditable(false);
+
         /* Add listeners */
         myNewButton.getEventRegistrar().addEventListener(e -> addNewItem());
+        theLockedCheckBox.getEventRegistrar().addEventListener(e -> setShowAll(theLockedCheckBox.isSelected()));
         theUpdateSet.getEventRegistrar().addEventListener(e -> handleRewind());
-        theActiveRegion.getEventRegistrar().addEventListener(PrometheusDataEvent.ADJUSTVISIBILITY, e -> handlePanelState());
-        theActiveRegion.getEventRegistrar().addEventListener(PrometheusDataEvent.GOTOWINDOW, theEventManager::cascadeEvent);
+        theActivePayee.getEventRegistrar().addEventListener(PrometheusDataEvent.ADJUSTVISIBILITY, e -> handlePanelState());
+        theActivePayee.getEventRegistrar().addEventListener(PrometheusDataEvent.GOTOWINDOW, theEventManager::cascadeEvent);
     }
 
     @Override
@@ -222,7 +282,7 @@ public class MoneyWiseRegionTable
      * @return true/false
      */
     protected boolean isItemEditing() {
-        return theActiveRegion.isEditing();
+        return theActivePayee.isEditing();
     }
 
     @Override
@@ -244,23 +304,53 @@ public class MoneyWiseRegionTable
     }
 
     /**
+     * Determine closed state.
+     * @param pPayee the payee
+     * @return the state
+     */
+    private boolean determineClosedState(final Payee pPayee) {
+        return pPayee.isClosed() || !pPayee.isRelevant();
+    }
+
+    /**
+     * Obtain the date of the latest transaction.
+     * @param pPayee the payee
+     * @return the date or null
+     */
+    private TethysDate getLatestTranDate(final Payee pPayee) {
+        final Transaction myTran = pPayee.getLatest();
+        return myTran == null ? null : myTran.getDate();
+    }
+
+    /**
+     * Set the showAll indicator.
+     * @param pShowAll show closed accounts?
+     */
+    private void setShowAll(final boolean pShowAll) {
+        doShowClosed = pShowAll;
+        cancelEditing();
+        theTable.setFilter(this::isFiltered);
+        theClosedColumn.setVisible(pShowAll);
+    }
+
+    /**
      * Refresh data.
      */
     void refreshData() throws OceanusException {
         /* Obtain the active profile */
         MetisProfile myTask = theView.getActiveTask();
-        myTask = myTask.startTask("Regions");
+        myTask = myTask.startTask("Payees");
 
         /* Access list */
         final MoneyWiseData myData = theView.getData();
-        final RegionList myBase = myData.getDataList(RegionList.class);
-        theRegions = (RegionList) myBase.deriveList(ListStyle.EDIT);
-        theRegions.mapData();
-        theTable.setItems(theRegions.getUnderlyingList());
-        theUpdateEntry.setDataList(theRegions);
+        final PayeeList myBase = myData.getDataList(PayeeList.class);
+        thePayees = (PayeeList) myBase.deriveList(ListStyle.EDIT);
+        thePayees.mapData();
+        theTable.setItems(thePayees.getUnderlyingList());
+        theUpdateEntry.setDataList(thePayees);
 
         /* Notify panel of refresh */
-        theActiveRegion.refreshData();
+        theActivePayee.refreshData();
 
         /* Complete the task */
         myTask.end();
@@ -271,7 +361,7 @@ public class MoneyWiseRegionTable
      */
     void cancelEditing() {
         theTable.cancelEditing();
-        theActiveRegion.setEditable(false);
+        theActivePayee.setEditable(false);
     }
 
     /**
@@ -311,12 +401,24 @@ public class MoneyWiseRegionTable
     }
 
     /**
-     * Select region.
-     * @param pRegion the region to select
+     * Select payee.
+     * @param pPayee the payee to select
      */
-    void selectRegion(final Region pRegion) {
-        /* Select the row and ensure that it is visible */
-        theTable.selectRowWithScroll(pRegion);
+    void selectPayee(final Payee pPayee) {
+        /* If the item is closed, but we are not showing closed items */
+        if (pPayee.isClosed()
+                && !theLockedCheckBox.isSelected()) {
+            theLockedCheckBox.setSelected(true);
+            setShowAll(true);
+        }
+
+        /* If we are changing the selection */
+        final Payee myCurrent = theActivePayee.getSelectedItem();
+        if (!MetisDataDifference.isEqual(myCurrent, pPayee)) {
+            /* Select the row and ensure that it is visible */
+            theTable.selectRowWithScroll(pPayee);
+            theActivePayee.setItem(pPayee);
+        }
     }
 
     /**
@@ -324,7 +426,7 @@ public class MoneyWiseRegionTable
      * @param pRow the row
      * @param pValue the value (ignored)
      */
-    private void deleteRow(final Region pRow,
+    private void deleteRow(final Payee pRow,
                            final Object pValue) {
         pRow.setDeleted(true);
     }
@@ -334,7 +436,7 @@ public class MoneyWiseRegionTable
      */
     private void handleRewind() {
         /* Only action if we are not editing */
-        if (!theActiveRegion.isEditing()) {
+        if (!theActivePayee.isEditing()) {
             /* Handle the reWind */
             theTable.fireTableDataChanged();
         }
@@ -348,14 +450,25 @@ public class MoneyWiseRegionTable
      */
     private void handlePanelState() {
         /* Only action if we are not editing */
-        if (!theActiveRegion.isEditing()) {
+        if (!theActivePayee.isEditing()) {
             /* handle the edit transition */
             theTable.fireTableDataChanged();
-            selectRegion(theActiveRegion.getSelectedItem());
+            selectPayee(theActivePayee.getSelectedItem());
         }
 
         /* Note changes */
         notifyChanges();
+    }
+
+    /**
+     * Build the payee type list for the item.
+     * @param pPayee the item
+     * @param pMenu the menu to build
+     */
+    private void buildPayeeTypeMenu(final Payee pPayee,
+                                    final TethysScrollMenu<PayeeType> pMenu) {
+        /* Build the menu */
+        theActivePayee.buildPayeeTypeMenu(pMenu, pPayee);
     }
 
     /**
@@ -367,18 +480,18 @@ public class MoneyWiseRegionTable
             /* Make sure that we have finished editing */
             cancelEditing();
 
-            /* Create the new region */
-            final Region myRegion = theRegions.addNewItem();
-            myRegion.setDefaults();
+            /* Create the new category */
+            final Payee myPayee = thePayees.addNewItem();
+            myPayee.setDefaults();
 
             /* Set as new and adjust map */
-            myRegion.setNewVersion();
-            myRegion.adjustMapForItem();
+            myPayee.setNewVersion();
+            myPayee.adjustMapForItem();
             theUpdateSet.incrementVersion();
 
             /* Validate the new item and update panel */
-            myRegion.validate();
-            theActiveRegion.setNewItem(myRegion);
+            myPayee.validate();
+            theActivePayee.setNewItem(myPayee);
 
             /* Lock the table */
             setEnabled(false);
@@ -386,7 +499,7 @@ public class MoneyWiseRegionTable
             /* Handle Exceptions */
         } catch (OceanusException e) {
             /* Build the error */
-            final OceanusException myError = new MoneyWiseDataException("Failed to create new region", e);
+            final OceanusException myError = new MoneyWiseDataException("Failed to create new payee", e);
 
             /* Show the error */
             setError(myError);
@@ -401,8 +514,8 @@ public class MoneyWiseRegionTable
      * @param pValue the value
      * @throws OceanusException on error
      */
-    private <V> void updateField(final TethysOnCellCommit<Region, V> pOnCommit,
-                                 final Region pRow,
+    private <V> void updateField(final TethysOnCellCommit<Payee, V> pOnCommit,
+                                 final Payee pRow,
                                  final V pValue) throws OceanusException {
         /* Push history */
         pRow.pushHistory();
@@ -445,7 +558,7 @@ public class MoneyWiseRegionTable
      */
     protected void notifyChanges() {
         /* Adjust enable of the table */
-        theTable.setEnabled(!theActiveRegion.isEditing());
+        theTable.setEnabled(!theActivePayee.isEditing());
 
         /* Notify listeners */
         theEventManager.fireEvent(PrometheusDataEvent.ADJUSTVISIBILITY);
@@ -459,7 +572,7 @@ public class MoneyWiseRegionTable
      * @return true/false
      */
     private boolean isFieldInError(final MetisLetheField pField,
-                                   final Region pItem) {
+                                   final Payee pItem) {
         return pItem.getFieldErrors(pField) != null;
     }
 
@@ -471,7 +584,7 @@ public class MoneyWiseRegionTable
      * @return true/false
      */
     private boolean isFieldChanged(final MetisLetheField pField,
-                                   final Region pItem) {
+                                   final Payee pItem) {
         return pItem.fieldChanged(pField).isDifferent();
     }
 
@@ -480,8 +593,9 @@ public class MoneyWiseRegionTable
      * @param pRow the row
      * @return true/false
      */
-    private boolean isFiltered(final Region pRow) {
-        return !pRow.isDeleted();
+    private boolean isFiltered(final Payee pRow) {
+        /* Handle filter */
+        return doShowClosed || !pRow.isDisabled();
     }
 
     /**
@@ -491,26 +605,27 @@ public class MoneyWiseRegionTable
      * @return error message or null
      */
     private String isValidName(final String pNewName,
-                               final Region pRow) {
+                               final Payee pRow) {
         /* Reject null name */
         if (pNewName == null) {
             return "Null Name not allowed";
         }
 
         /* Reject invalid name */
-        if (!DataItem.validString(pNewName, null)) {
+        if (!DataItem.validString(pNewName, ":")) {
             return "Invalid characters in name";
         }
 
         /* Reject name that is too long */
-        if (DataItem.byteLength(pNewName) > Region.NAMELEN) {
+        if (DataItem.byteLength(pNewName) > Payee.NAMELEN) {
             return "Name too long";
         }
 
         /* Loop through the existing values */
-        for (Region myValue : theRegions.getUnderlyingList()) {
-            /* Ignore self and deleted */
-            if (myValue.isDeleted() || myValue.equals(pRow)) {
+        for (Payee myValue : thePayees.getUnderlyingList()) {
+            /* Ignore self, deleted and non-siblings */
+            if (myValue.isDeleted()
+                    || myValue.equals(pRow)) {
                 continue;
             }
 
@@ -531,10 +646,10 @@ public class MoneyWiseRegionTable
      * @return error message or null
      */
     private String isValidDesc(final String pNewDesc,
-                               final Region pRow) {
+                               final Payee pRow) {
         /* Reject description that is too long */
         if (pNewDesc != null
-                && DataItem.byteLength(pNewDesc) > Region.DESCLEN) {
+                && DataItem.byteLength(pNewDesc) > Payee.DESCLEN) {
             return "Description too long";
         }
 
@@ -558,3 +673,4 @@ public class MoneyWiseRegionTable
         notifyChanges();
     }
 }
+

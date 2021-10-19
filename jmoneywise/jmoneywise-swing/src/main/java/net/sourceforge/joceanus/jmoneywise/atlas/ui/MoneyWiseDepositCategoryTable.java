@@ -80,6 +80,7 @@ public class MoneyWiseDepositCategoryTable
      * Filter Parents Title.
      */
     private static final String FILTER_PARENTS = MoneyWiseUIResource.CATEGORY_FILTER_PARENT.getValue();
+
     /**
      * The view.
      */
@@ -224,6 +225,7 @@ public class MoneyWiseDepositCategoryTable
                 .setMenuConfigurator(this::buildCategoryTypeMenu)
                 .setCellValueFactory(DepositCategory::getCategoryType)
                 .setEditable(true)
+                .setCellEditable(r -> !r.isActive())
                 .setOnCommit((r, v) -> updateField(DepositCategory::setCategoryType, r, v));
 
         /* Create the description column */
@@ -657,9 +659,9 @@ public class MoneyWiseDepositCategoryTable
      * @return true/false
      */
     private boolean isFiltered(final DepositCategory pRow) {
-        return theParent == null
+        return !pRow.isDeleted() && (theParent == null
                 ? pRow.isCategoryClass(DepositCategoryClass.PARENT)
-                : theParent.equals(pRow.getParentCategory());
+                : theParent.equals(pRow.getParentCategory()));
     }
 
     /**
