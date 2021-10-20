@@ -47,7 +47,7 @@ import net.sourceforge.joceanus.jtethys.ui.TethysNode;
 import net.sourceforge.joceanus.jtethys.ui.TethysScrollButtonManager;
 import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollMenu;
 import net.sourceforge.joceanus.jtethys.ui.TethysTableManager.TethysOnCellCommit;
-import net.sourceforge.joceanus.jtethys.ui.TethysTableManager.TethysTableIconColumn;
+import net.sourceforge.joceanus.jtethys.ui.TethysTableManager.TethysTableColumn;
 import net.sourceforge.joceanus.jtethys.ui.TethysUIEvent;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingGuiFactory;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingTableManager;
@@ -103,7 +103,7 @@ public class MoneyWiseStaticTable<L extends StaticList<T, S, MoneyWiseDataType>,
     /**
      * The enabled column.
      */
-    private final TethysTableIconColumn<Boolean, MetisLetheField, T> theEnabledColumn;
+    private final TethysTableColumn<Boolean, MetisLetheField, T> theEnabledColumn;
 
     /**
      * The new button.
@@ -133,7 +133,6 @@ public class MoneyWiseStaticTable<L extends StaticList<T, S, MoneyWiseDataType>,
      * @param pDataType the dataType
      * @param pListClass the listClass
      */
-    @SuppressWarnings("unchecked")
     MoneyWiseStaticTable(final MoneyWiseView pView,
                          final UpdateSet<MoneyWiseDataType> pUpdateSet,
                          final MetisErrorPanel pError,
@@ -160,16 +159,16 @@ public class MoneyWiseStaticTable<L extends StaticList<T, S, MoneyWiseDataType>,
         theNewButton = myGuiFactory.newScrollButton();
         MetisIcon.configureNewScrollButton(theNewButton);
 
-        /* Set disabled indication and filter */
-        theTable.setOnCommitError(this::setError);
-        theTable.setOnValidateError(this::showValidateError);
-        theTable.setOnCellEditState(this::handleEditState);
-        theTable.setDisabled(StaticData::isDisabled);
-        theTable.setChanged(this::isFieldChanged);
-        theTable.setError(this::isFieldInError);
-        theTable.setFilter(this::isFiltered);
-        theTable.setComparator(StaticData::compareTo);
-        theTable.setEditable(true);
+        /* Set table configuration */
+        theTable.setOnCommitError(this::setError)
+                .setOnValidateError(this::showValidateError)
+                .setOnCellEditState(this::handleEditState)
+                .setDisabled(StaticData::isDisabled)
+                .setChanged(this::isFieldChanged)
+                .setError(this::isFieldInError)
+                .setFilter(this::isFiltered)
+                .setComparator(StaticData::compareTo)
+                .setEditable(true);
 
         /* Create the class column */
         theTable.declareStringColumn(StaticData.FIELD_CLASS)
@@ -192,14 +191,13 @@ public class MoneyWiseStaticTable<L extends StaticList<T, S, MoneyWiseDataType>,
 
         /* Create the enabled column */
         final TethysIconMapSet<Boolean> myEnabledMapSet = PrometheusIcon.configureEnabledIconButton();
-        theEnabledColumn = (TethysTableIconColumn<Boolean, MetisLetheField, T>)
-                theTable.declareIconColumn(StaticData.FIELD_ENABLED, Boolean.class)
-                        .setIconMapSet(r -> myEnabledMapSet)
-                        .setCellValueFactory(StaticData::getEnabled)
-                        .setVisible(false)
-                        .setEditable(true)
-                        .setCellEditable(r -> !r.isActive())
-                        .setOnCommit((r, v) -> updateField(StaticData::setEnabled, r, v));
+        theEnabledColumn = theTable.declareIconColumn(StaticData.FIELD_ENABLED, Boolean.class)
+                .setIconMapSet(r -> myEnabledMapSet)
+                .setCellValueFactory(StaticData::getEnabled)
+                .setVisible(false)
+                .setEditable(true)
+                .setCellEditable(r -> !r.isActive())
+                .setOnCommit((r, v) -> updateField(StaticData::setEnabled, r, v));
 
         /* Create the Active column */
         final TethysIconMapSet<MetisAction> myActionMapSet = MetisIcon.configureStatusIconButton();

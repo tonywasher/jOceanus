@@ -196,17 +196,17 @@ public class MoneyWiseLoanCategoryTable
         myPanel.add(TethysSwingNode.getComponent(theActiveCategory), BorderLayout.CENTER);
         thePanel.setSouth(myPanel);
 
-        /* Set disabled indication and filter */
-        theTable.setOnCommitError(this::setError);
-        theTable.setOnValidateError(this::showValidateError);
-        theTable.setOnCellEditState(this::handleEditState);
-        theTable.setDisabled(LoanCategory::isDisabled);
-        theTable.setChanged(this::isFieldChanged);
-        theTable.setError(this::isFieldInError);
-        theTable.setComparator(LoanCategory::compareTo);
-        theTable.setFilter(this::isFiltered);
-        theTable.setEditable(true);
-        theTable.setOnSelect(theActiveCategory::setItem);
+        /* Set table configuration */
+        theTable.setOnCommitError(this::setError)
+                .setOnValidateError(this::showValidateError)
+                .setOnCellEditState(this::handleEditState)
+                .setDisabled(LoanCategory::isDisabled)
+                .setChanged(this::isFieldChanged)
+                .setError(this::isFieldInError)
+                .setComparator(LoanCategory::compareTo)
+                .setFilter(this::isFiltered)
+                .setEditable(true)
+                .setOnSelect(theActiveCategory::setItem);
 
         /* Create the short name column */
         theTable.declareStringColumn(LoanCategory.FIELD_SUBCAT)

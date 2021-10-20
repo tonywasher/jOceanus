@@ -150,11 +150,6 @@ public abstract class PrometheusDataItemPanel<T extends PrometheusTableItem & Co
     private boolean isNew;
 
     /**
-     * Is this item on the edge of the list.
-     */
-    private boolean isEdgeOfList;
-
-    /**
      * Constructor.
      * @param pFactory the GUI factory
      * @param pFieldMgr the field manager
@@ -309,14 +304,6 @@ public abstract class PrometheusDataItemPanel<T extends PrometheusTableItem & Co
     }
 
     /**
-     * Is the item on the edge of the list?
-     * @return true/false
-     */
-    public boolean isEdgeOfList() {
-        return isEdgeOfList;
-    }
-
-    /**
      * Layout the panel.
      */
     protected void layoutPanel() {
@@ -387,7 +374,7 @@ public abstract class PrometheusDataItemPanel<T extends PrometheusTableItem & Co
         if ((pItem != null) || !isEditing()) {
             /* Store the element */
             theItem = pItem;
-            isEdgeOfList = false;
+            theSelectedItem = pItem;
 
             /* Set readOnly */
             setEditable(false);
@@ -401,7 +388,6 @@ public abstract class PrometheusDataItemPanel<T extends PrometheusTableItem & Co
     public void setNewItem(final T pItem) {
         /* Store the element */
         theSelectedItem = theItem;
-        isEdgeOfList = false;
         theItem = pItem;
         isNew = true;
 
@@ -411,13 +397,6 @@ public abstract class PrometheusDataItemPanel<T extends PrometheusTableItem & Co
 
         /* Note status has changed */
         theEventManager.fireEvent(PrometheusDataEvent.ADJUSTVISIBILITY);
-    }
-
-    /**
-     * Set edgeOfList indication.
-     */
-    protected void setEdgeOfList() {
-        isEdgeOfList = true;
     }
 
     @Override

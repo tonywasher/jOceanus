@@ -213,11 +213,6 @@ public class PrometheusDataTableSelection<T extends PrometheusTableItem & Compar
             /* Declare item to the panel */
             theItemPanel.setItem(myItem);
 
-            /* Check whether this item is EndOfList */
-            if (iIndex == 0 || iIndex == iRowCount - 1) {
-                theItemPanel.setEdgeOfList();
-            }
-
             /* else clear the item panel */
         } else {
             theItemPanel.setEditable(false);

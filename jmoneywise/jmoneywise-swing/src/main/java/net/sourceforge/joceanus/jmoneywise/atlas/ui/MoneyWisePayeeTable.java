@@ -60,7 +60,7 @@ import net.sourceforge.joceanus.jtethys.ui.TethysIconButtonManager.TethysIconMap
 import net.sourceforge.joceanus.jtethys.ui.TethysNode;
 import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollMenu;
 import net.sourceforge.joceanus.jtethys.ui.TethysTableManager.TethysOnCellCommit;
-import net.sourceforge.joceanus.jtethys.ui.TethysTableManager.TethysTableIconColumn;
+import net.sourceforge.joceanus.jtethys.ui.TethysTableManager.TethysTableColumn;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingEnableWrapper.TethysSwingEnablePanel;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingGuiFactory;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingNode;
@@ -124,7 +124,7 @@ public class MoneyWisePayeeTable
     /**
      * The closed column.
      */
-    private final TethysTableIconColumn<Boolean, MetisLetheField, Payee> theClosedColumn;
+    private final TethysTableColumn<Boolean, MetisLetheField, Payee> theClosedColumn;
 
     /**
      * The Payee dialog.
@@ -147,7 +147,6 @@ public class MoneyWisePayeeTable
      * @param pUpdateSet the updateSet
      * @param pError the error panel
      */
-    @SuppressWarnings("unchecked")
     MoneyWisePayeeTable(final MoneyWiseView pView,
                         final UpdateSet<MoneyWiseDataType> pUpdateSet,
                         final MetisErrorPanel pError) {
@@ -194,17 +193,17 @@ public class MoneyWisePayeeTable
         myPanel.add(TethysSwingNode.getComponent(theActivePayee), BorderLayout.CENTER);
         thePanel.setSouth(myPanel);
 
-        /* Set disabled indication and filter */
-        theTable.setOnCommitError(this::setError);
-        theTable.setOnValidateError(this::showValidateError);
-        theTable.setOnCellEditState(this::handleEditState);
-        theTable.setDisabled(Payee::isDisabled);
-        theTable.setChanged(this::isFieldChanged);
-        theTable.setError(this::isFieldInError);
-        theTable.setComparator(Payee::compareTo);
-        theTable.setFilter(this::isFiltered);
-        theTable.setEditable(true);
-        theTable.setOnSelect(theActivePayee::setItem);
+        /* Set table configuration */
+        theTable.setOnCommitError(this::setError)
+                .setOnValidateError(this::showValidateError)
+                .setOnCellEditState(this::handleEditState)
+                .setDisabled(Payee::isDisabled)
+                .setChanged(this::isFieldChanged)
+                .setError(this::isFieldInError)
+                .setComparator(Payee::compareTo)
+                .setFilter(this::isFiltered)
+                .setEditable(true)
+                .setOnSelect(theActivePayee::setItem);
 
         /* Create the name column */
         theTable.declareStringColumn(Payee.FIELD_NAME)
@@ -230,13 +229,12 @@ public class MoneyWisePayeeTable
 
         /* Create the Closed column */
         final Map<Boolean, TethysIconMapSet<Boolean>> myClosedMapSets = MoneyWiseIcon.configureLockedIconButton();
-        theClosedColumn = (TethysTableIconColumn<Boolean, MetisLetheField, Payee>)
-                theTable.declareIconColumn(Payee.FIELD_CLOSED, Boolean.class)
-                        .setIconMapSet(r -> myClosedMapSets.get(determineClosedState(r)))
-                        .setCellValueFactory(Payee::isClosed)
-                        .setEditable(true)
-                        .setCellEditable(this::determineClosedState)
-                        .setOnCommit((r, v) -> updateField(Payee::setClosed, r, v));
+        theClosedColumn = theTable.declareIconColumn(Payee.FIELD_CLOSED, Boolean.class)
+                .setIconMapSet(r -> myClosedMapSets.get(determineClosedState(r)))
+                .setCellValueFactory(Payee::isClosed)
+                .setEditable(true)
+                .setCellEditable(this::determineClosedState)
+                .setOnCommit((r, v) -> updateField(Payee::setClosed, r, v));
 
         /* Create the Active column */
         final TethysIconMapSet<MetisAction> myActionMapSet = MetisIcon.configureStatusIconButton();

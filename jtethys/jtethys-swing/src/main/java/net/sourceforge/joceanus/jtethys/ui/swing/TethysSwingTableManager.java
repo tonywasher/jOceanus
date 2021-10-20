@@ -180,15 +180,17 @@ public class TethysSwingTableManager<C, R>
     }
 
     @Override
-    public void setFilter(final Predicate<R> pFilter) {
+    public TethysSwingTableManager<C, R> setFilter(final Predicate<R> pFilter) {
         super.setFilter(pFilter);
         theSorter.setFilter(pFilter);
+        return this;
     }
 
     @Override
-    public void setComparator(final Comparator<R> pComparator) {
+    public TethysSwingTableManager<C, R> setComparator(final Comparator<R> pComparator) {
         super.setComparator(pComparator);
         theSorter.setComparator(getComparator());
+        return this;
     }
 
     @Override

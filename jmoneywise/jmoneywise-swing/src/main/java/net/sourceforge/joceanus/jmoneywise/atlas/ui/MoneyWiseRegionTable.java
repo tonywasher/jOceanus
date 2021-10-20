@@ -159,17 +159,17 @@ public class MoneyWiseRegionTable
         myPanel.add(TethysSwingNode.getComponent(theActiveRegion), BorderLayout.CENTER);
         thePanel.setSouth(myPanel);
 
-        /* Set disabled indication and filter */
-        theTable.setOnCommitError(this::setError);
-        theTable.setOnValidateError(this::showValidateError);
-        theTable.setOnCellEditState(this::handleEditState);
-        theTable.setDisabled(Region::isDisabled);
-        theTable.setChanged(this::isFieldChanged);
-        theTable.setError(this::isFieldInError);
-        theTable.setComparator(Region::compareTo);
-        theTable.setFilter(this::isFiltered);
-        theTable.setEditable(true);
-        theTable.setOnSelect(theActiveRegion::setItem);
+        /* Set table configuration */
+        theTable.setOnCommitError(this::setError)
+                .setOnValidateError(this::showValidateError)
+                .setOnCellEditState(this::handleEditState)
+                .setDisabled(Region::isDisabled)
+                .setChanged(this::isFieldChanged)
+                .setError(this::isFieldInError)
+                .setComparator(Region::compareTo)
+                .setFilter(this::isFiltered)
+                .setEditable(true)
+                .setOnSelect(theActiveRegion::setItem);
 
         /* Create the name column */
         theTable.declareStringColumn(Region.FIELD_NAME)

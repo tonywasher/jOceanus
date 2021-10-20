@@ -75,8 +75,8 @@
     <JUnitVersion>5.8.1</JUnitVersion>
     <JSONVersion>20210307</JSONVersion>
     <ApacheMavenVersion>3.8.3</ApacheMavenVersion>
-    <MySQLVersion>8.0.26</MySQLVersion>
-    <PostGreSQLVersion>42.2.24</PostGreSQLVersion>
+    <MySQLVersion>8.0.27</MySQLVersion>
+    <PostGreSQLVersion>42.3.0</PostGreSQLVersion>
     <JTDSVersion>1.3.1</JTDSVersion>
     <H2Version>1.4.200</H2Version>
     <ApachePOIVersion>5.0.0</ApachePOIVersion>
@@ -126,7 +126,7 @@
         <artifactId>maven-resources-plugin</artifactId>
         <version>${ResourcesPluginVersion}</version>
         <configuration>
-          <propertiesEncoding>ISO-8859-1</propertiesEncoding>
+          <propertiesEncoding>UTF-8</propertiesEncoding>
           <nonFilteredFileExtensions>
             <nonFilteredFileExtension>ods</nonFilteredFileExtension>
           </nonFilteredFileExtensions>

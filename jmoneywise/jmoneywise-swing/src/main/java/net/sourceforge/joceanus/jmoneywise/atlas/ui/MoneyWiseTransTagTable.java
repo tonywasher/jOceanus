@@ -159,17 +159,17 @@ public class MoneyWiseTransTagTable
         myPanel.add(TethysSwingNode.getComponent(theActiveTag), BorderLayout.CENTER);
         thePanel.setSouth(myPanel);
 
-        /* Set disabled indication and filter */
-        theTable.setOnCommitError(this::setError);
-        theTable.setOnValidateError(this::showValidateError);
-        theTable.setOnCellEditState(this::handleEditState);
-        theTable.setDisabled(TransactionTag::isDisabled);
-        theTable.setChanged(this::isFieldChanged);
-        theTable.setError(this::isFieldInError);
-        theTable.setComparator(TransactionTag::compareTo);
-        theTable.setFilter(this::isFiltered);
-        theTable.setEditable(true);
-        theTable.setOnSelect(theActiveTag::setItem);
+        /* Set table configuration */
+        theTable.setOnCommitError(this::setError)
+                .setOnValidateError(this::showValidateError)
+                .setOnCellEditState(this::handleEditState)
+                .setDisabled(TransactionTag::isDisabled)
+                .setChanged(this::isFieldChanged)
+                .setError(this::isFieldInError)
+                .setComparator(TransactionTag::compareTo)
+                .setFilter(this::isFiltered)
+                .setEditable(true)
+                .setOnSelect(theActiveTag::setItem);
 
         /* Create the name column */
         theTable.declareStringColumn(TransactionTag.FIELD_NAME)

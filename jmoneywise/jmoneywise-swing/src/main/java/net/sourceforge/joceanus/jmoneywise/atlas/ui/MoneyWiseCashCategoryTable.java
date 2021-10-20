@@ -196,17 +196,17 @@ public class MoneyWiseCashCategoryTable
         myPanel.add(TethysSwingNode.getComponent(theActiveCategory), BorderLayout.CENTER);
         thePanel.setSouth(myPanel);
 
-        /* Set disabled indication and filter */
-        theTable.setOnCommitError(this::setError);
-        theTable.setOnValidateError(this::showValidateError);
-        theTable.setOnCellEditState(this::handleEditState);
-        theTable.setDisabled(CashCategory::isDisabled);
-        theTable.setChanged(this::isFieldChanged);
-        theTable.setError(this::isFieldInError);
-        theTable.setComparator(CashCategory::compareTo);
-        theTable.setFilter(this::isFiltered);
-        theTable.setEditable(true);
-        theTable.setOnSelect(theActiveCategory::setItem);
+        /* Set table configuration */
+        theTable.setOnCommitError(this::setError)
+                .setOnValidateError(this::showValidateError)
+                .setOnCellEditState(this::handleEditState)
+                .setDisabled(CashCategory::isDisabled)
+                .setChanged(this::isFieldChanged)
+                .setError(this::isFieldInError)
+                .setComparator(CashCategory::compareTo)
+                .setFilter(this::isFiltered)
+                .setEditable(true)
+                .setOnSelect(theActiveCategory::setItem);
 
         /* Create the short name column */
         theTable.declareStringColumn(CashCategory.FIELD_SUBCAT)
