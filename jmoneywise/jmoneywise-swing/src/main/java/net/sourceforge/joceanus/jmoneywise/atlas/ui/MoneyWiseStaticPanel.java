@@ -485,6 +485,7 @@ public class MoneyWiseStaticPanel
         final String myName = myPanel.getItemType().getFieldName();
         theTableCard.selectCard(myName);
         theNewCard.selectCard(myName);
+        myPanel.determineFocus(theViewerEntry);
         showNewButton();
     }
 

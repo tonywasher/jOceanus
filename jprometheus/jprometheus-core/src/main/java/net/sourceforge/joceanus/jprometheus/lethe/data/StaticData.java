@@ -24,6 +24,7 @@ import java.util.Map;
 
 import net.sourceforge.joceanus.jmetis.data.MetisDataDifference;
 import net.sourceforge.joceanus.jmetis.data.MetisDataFormatter;
+import net.sourceforge.joceanus.jmetis.data.MetisDataItem.MetisDataNamedItem;
 import net.sourceforge.joceanus.jmetis.data.MetisDataType;
 import net.sourceforge.joceanus.jmetis.field.MetisFieldSet;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisEncryptedData.MetisEncryptedString;
@@ -43,7 +44,7 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
  */
 public abstract class StaticData<T extends StaticData<T, S, E>, S extends Enum<S> & StaticInterface, E extends Enum<E>>
         extends EncryptedItem<E>
-        implements Comparable<T> {
+        implements Comparable<T>, MetisDataNamedItem {
     /**
      * Report fields.
      */
@@ -98,6 +99,7 @@ public abstract class StaticData<T extends StaticData<T, S, E>, S extends Enum<S
                          final T pSource) {
         super(pList, pSource);
         theEnumClass = pSource.getEnumClass();
+        setId(pSource.getId());
     }
 
     /**
@@ -256,10 +258,7 @@ public abstract class StaticData<T extends StaticData<T, S, E>, S extends Enum<S
         return super.includeXmlField(pField);
     }
 
-    /**
-     * Return the name of the Static Data.
-     * @return the name
-     */
+    @Override
     public final String getName() {
         return getName(getValueSet());
     }

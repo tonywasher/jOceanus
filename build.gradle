@@ -50,7 +50,7 @@ allprojects {
         jFreeChartVersion = "1.5.3"
 
         /* javaFX versions */
-        javaFXVersion = "17.0.0.1"
+        javaFXVersion = "17.0.1"
         javaFXPluginVersion = "0.0.10"
 
         /* Annotation versions */

@@ -20,6 +20,7 @@ import java.util.Iterator;
 
 import net.sourceforge.joceanus.jmetis.data.MetisDataDifference;
 import net.sourceforge.joceanus.jmetis.data.MetisDataFormatter;
+import net.sourceforge.joceanus.jmetis.data.MetisDataItem.MetisDataNamedItem;
 import net.sourceforge.joceanus.jmetis.data.MetisDataType;
 import net.sourceforge.joceanus.jmetis.field.MetisFieldSet;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisEncryptedData.MetisEncryptedString;
@@ -45,7 +46,7 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
  */
 public abstract class CategoryBase<T extends CategoryBase<T, S, C>, S extends StaticData<S, C, MoneyWiseDataType>, C extends Enum<C> & CategoryInterface>
         extends EncryptedItem<MoneyWiseDataType>
-        implements Comparable<T> {
+        implements MetisDataNamedItem, Comparable<T> {
     /**
      * Separator.
      */

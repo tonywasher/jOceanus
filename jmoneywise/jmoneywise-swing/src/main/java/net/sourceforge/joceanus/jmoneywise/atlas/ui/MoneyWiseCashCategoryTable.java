@@ -27,7 +27,6 @@ import net.sourceforge.joceanus.jmetis.lethe.field.swing.MetisSwingFieldManager;
 import net.sourceforge.joceanus.jmetis.profile.MetisProfile;
 import net.sourceforge.joceanus.jmetis.ui.MetisAction;
 import net.sourceforge.joceanus.jmetis.ui.MetisIcon;
-import net.sourceforge.joceanus.jmetis.viewer.MetisViewerEntry;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.CashCategory;
@@ -38,39 +37,27 @@ import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.CashCategoryType;
 import net.sourceforge.joceanus.jmoneywise.lethe.ui.MoneyWiseUIResource;
 import net.sourceforge.joceanus.jmoneywise.lethe.ui.dialog.swing.CashCategoryPanel;
 import net.sourceforge.joceanus.jmoneywise.lethe.views.MoneyWiseView;
-import net.sourceforge.joceanus.jprometheus.PrometheusDataException;
-import net.sourceforge.joceanus.jprometheus.lethe.data.DataItem;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataList.ListStyle;
 import net.sourceforge.joceanus.jprometheus.lethe.swing.PrometheusSwingToolkit;
 import net.sourceforge.joceanus.jprometheus.lethe.views.PrometheusDataEvent;
-import net.sourceforge.joceanus.jprometheus.lethe.views.UpdateEntry;
 import net.sourceforge.joceanus.jprometheus.lethe.views.UpdateSet;
 import net.sourceforge.joceanus.jtethys.OceanusException;
-import net.sourceforge.joceanus.jtethys.event.TethysEventManager;
-import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
-import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventProvider;
-import net.sourceforge.joceanus.jtethys.ui.TethysBorderPaneManager;
 import net.sourceforge.joceanus.jtethys.ui.TethysBoxPaneManager;
 import net.sourceforge.joceanus.jtethys.ui.TethysButton;
-import net.sourceforge.joceanus.jtethys.ui.TethysComponent;
 import net.sourceforge.joceanus.jtethys.ui.TethysIconButtonManager.TethysIconMapSet;
 import net.sourceforge.joceanus.jtethys.ui.TethysLabel;
-import net.sourceforge.joceanus.jtethys.ui.TethysNode;
 import net.sourceforge.joceanus.jtethys.ui.TethysScrollButtonManager;
 import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollMenu;
 import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollMenuItem;
-import net.sourceforge.joceanus.jtethys.ui.TethysTableManager.TethysOnCellCommit;
 import net.sourceforge.joceanus.jtethys.ui.TethysUIEvent;
-import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingEnableWrapper.TethysSwingEnablePanel;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingGuiFactory;
-import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingNode;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingTableManager;
 
 /**
  * MoneyWise CashCategory Table.
  */
 public class MoneyWiseCashCategoryTable
-        implements TethysEventProvider<PrometheusDataEvent>, TethysComponent {
+        extends MoneyWiseBaseTable<CashCategory> {
     /**
      * Filter Prompt.
      */
@@ -82,44 +69,9 @@ public class MoneyWiseCashCategoryTable
     private static final String FILTER_PARENTS = MoneyWiseUIResource.CATEGORY_FILTER_PARENT.getValue();
 
     /**
-     * The view.
-     */
-    private final MoneyWiseView theView;
-
-    /**
-     * The Event Manager.
-     */
-    private final TethysEventManager<PrometheusDataEvent> theEventManager;
-
-    /**
-     * The UpdateSet associated with the table.
-     */
-    private final UpdateSet<MoneyWiseDataType> theUpdateSet;
-
-    /**
-     * The UpdateEntry.
-     */
-    private final UpdateEntry<CashCategory, MoneyWiseDataType> theUpdateEntry;
-
-    /**
-     * The error panel.
-     */
-    private final MetisErrorPanel theError;
-
-    /**
-     * The panel.
-     */
-    private final TethysBorderPaneManager thePanel;
-
-    /**
      * The filter panel.
      */
     private final TethysBoxPaneManager theFilterPanel;
-
-    /**
-     * The underlying table.
-     */
-    private final TethysSwingTableManager<MetisLetheField, CashCategory> theTable;
 
     /**
      * The Category dialog.
@@ -151,26 +103,14 @@ public class MoneyWiseCashCategoryTable
                                final UpdateSet<MoneyWiseDataType> pUpdateSet,
                                final MetisErrorPanel pError) {
         /* Store parameters */
-        theView = pView;
-        theError = pError;
+        super(pView, pUpdateSet, pError, MoneyWiseDataType.CASHCATEGORY);
 
         /* Access field manager */
-        MetisSwingFieldManager myFieldMgr = ((PrometheusSwingToolkit) theView.getToolkit()).getFieldManager();
+        MetisSwingFieldManager myFieldMgr = ((PrometheusSwingToolkit) pView.getToolkit()).getFieldManager();
 
-        /* Create the event manager */
-        theEventManager = new TethysEventManager<>();
-
-        /* Build the Update set */
-        theUpdateSet = pUpdateSet;
-        theUpdateEntry = theUpdateSet.registerType(MoneyWiseDataType.CASHCATEGORY);
-
-        /* Create the panel */
+        /* Access Gui factory */
         final TethysSwingGuiFactory myGuiFactory = (TethysSwingGuiFactory) pView.getGuiFactory();
-        thePanel = myGuiFactory.newBorderPane();
-
-        /* Create the table */
-        theTable = myGuiFactory.newTable();
-        thePanel.setCentre(theTable);
+        final TethysSwingTableManager<MetisLetheField, CashCategory> myTable = getTable();
 
         /* Create new button */
         final TethysButton myNewButton = myGuiFactory.newButton();
@@ -190,101 +130,61 @@ public class MoneyWiseCashCategoryTable
         theFilterPanel.addNode(myNewButton);
 
         /* Create a category panel */
-        theActiveCategory = new CashCategoryPanel(myGuiFactory, myFieldMgr, theUpdateSet, theError);
-        TethysSwingEnablePanel myPanel = new TethysSwingEnablePanel();
-        myPanel.setLayout(new BorderLayout());
-        myPanel.add(TethysSwingNode.getComponent(theActiveCategory), BorderLayout.CENTER);
-        thePanel.setSouth(myPanel);
+        theActiveCategory = new CashCategoryPanel(myGuiFactory, myFieldMgr, pUpdateSet, pError);
+        declareItemPanel(theActiveCategory);
 
         /* Set table configuration */
-        theTable.setOnCommitError(this::setError)
-                .setOnValidateError(this::showValidateError)
-                .setOnCellEditState(this::handleEditState)
-                .setDisabled(CashCategory::isDisabled)
-                .setChanged(this::isFieldChanged)
-                .setError(this::isFieldInError)
-                .setComparator(CashCategory::compareTo)
-                .setFilter(this::isFiltered)
-                .setEditable(true)
-                .setOnSelect(theActiveCategory::setItem);
+        myTable.setDisabled(CashCategory::isDisabled)
+               .setComparator(CashCategory::compareTo)
+               .setOnSelect(theActiveCategory::setItem);
 
         /* Create the short name column */
-        theTable.declareStringColumn(CashCategory.FIELD_SUBCAT)
-                .setValidator(this::isValidName)
-                .setCellValueFactory(this::getShortName)
-                .setEditable(true)
-                .setOnCommit((r, v) -> updateField(CashCategory::setSubCategoryName, r, v));
+        myTable.declareStringColumn(CashCategory.FIELD_SUBCAT)
+               .setValidator(this::isValidName)
+               .setCellValueFactory(this::getShortName)
+               .setEditable(true)
+               .setOnCommit((r, v) -> updateField(CashCategory::setSubCategoryName, r, v));
 
         /* Create the full name column */
-        theTable.declareStringColumn(CashCategory.FIELD_NAME)
-                .setCellValueFactory(CashCategory::getName)
-                .setEditable(false);
+        myTable.declareStringColumn(CashCategory.FIELD_NAME)
+               .setCellValueFactory(CashCategory::getName)
+               .setEditable(false);
 
         /* Create the category type column */
-        theTable.declareScrollColumn(CashCategory.FIELD_CATTYPE, CashCategoryType.class)
-                .setMenuConfigurator(this::buildCategoryTypeMenu)
-                .setCellValueFactory(CashCategory::getCategoryType)
-                .setEditable(true)
-                .setCellEditable(r -> !r.isActive())
-                .setOnCommit((r, v) -> updateField(CashCategory::setCategoryType, r, v));
+        myTable.declareScrollColumn(CashCategory.FIELD_CATTYPE, CashCategoryType.class)
+               .setMenuConfigurator(this::buildCategoryTypeMenu)
+               .setCellValueFactory(CashCategory::getCategoryType)
+               .setEditable(true)
+               .setCellEditable(r -> !r.isActive())
+               .setOnCommit((r, v) -> updateField(CashCategory::setCategoryType, r, v));
 
         /* Create the description column */
-        theTable.declareStringColumn(CashCategory.FIELD_DESC)
-                .setValidator(this::isValidDesc)
-                .setCellValueFactory(CashCategory::getDesc)
-                .setEditable(true)
-                .setOnCommit((r, v) -> updateField(CashCategory::setDescription, r, v));
+        myTable.declareStringColumn(CashCategory.FIELD_DESC)
+               .setValidator(this::isValidDesc)
+               .setCellValueFactory(CashCategory::getDesc)
+               .setEditable(true)
+               .setOnCommit((r, v) -> updateField(CashCategory::setDescription, r, v));
 
         /* Create the Active column */
         final TethysIconMapSet<MetisAction> myActionMapSet = MetisIcon.configureStatusIconButton();
-        theTable.declareIconColumn(CashCategory.FIELD_TOUCH, MetisAction.class)
-                .setIconMapSet(r -> myActionMapSet)
-                .setCellValueFactory(r -> r.isActive() ? MetisAction.ACTIVE : MetisAction.DELETE)
-                .setName(MoneyWiseUIResource.STATICDATA_ACTIVE.getValue())
-                .setEditable(true)
-                .setCellEditable(r -> !r.isActive())
-                .setOnCommit((r, v) -> updateField(this::deleteRow, r, v));
+        myTable.declareIconColumn(CashCategory.FIELD_TOUCH, MetisAction.class)
+               .setIconMapSet(r -> myActionMapSet)
+               .setCellValueFactory(r -> r.isActive() ? MetisAction.ACTIVE : MetisAction.DELETE)
+               .setName(MoneyWiseUIResource.STATICDATA_ACTIVE.getValue())
+               .setEditable(true)
+               .setCellEditable(r -> !r.isActive())
+               .setOnCommit((r, v) -> updateField(this::deleteRow, r, v));
 
         /* Add listeners */
         myNewButton.getEventRegistrar().addEventListener(e -> addNewItem());
-        theUpdateSet.getEventRegistrar().addEventListener(e -> handleRewind());
         theActiveCategory.getEventRegistrar().addEventListener(PrometheusDataEvent.ADJUSTVISIBILITY, e -> handlePanelState());
-        theActiveCategory.getEventRegistrar().addEventListener(PrometheusDataEvent.GOTOWINDOW, theEventManager::cascadeEvent);
         theSelectButton.getEventRegistrar().addEventListener(TethysUIEvent.NEWVALUE, e -> handleParentSelection());
         theSelectButton.setMenuConfigurator(e -> buildSelectMenu());
     }
 
     @Override
-    public Integer getId() {
-        return thePanel.getId();
-    }
-
-    @Override
-    public TethysEventRegistrar<PrometheusDataEvent> getEventRegistrar() {
-        return theEventManager.getEventRegistrar();
-    }
-
-    @Override
-    public TethysNode getNode() {
-        return thePanel.getNode();
-    }
-
-    /**
-     * Are we in the middle of an item edit?
-     * @return true/false
-     */
     protected boolean isItemEditing() {
         return theActiveCategory.isEditing();
-    }
-
-    @Override
-    public void setEnabled(final boolean pEnabled) {
-        thePanel.setEnabled(pEnabled);
-    }
-
-    @Override
-    public void setVisible(final boolean pVisible) {
-        thePanel.setVisible(pVisible);
     }
 
     /**
@@ -304,21 +204,19 @@ public class MoneyWiseCashCategoryTable
         return myName == null ? pCategory.getName() : myName;
     }
 
-    /**
-     * Refresh data.
-     */
-    void refreshData() throws OceanusException {
+    @Override
+    protected void refreshData() throws OceanusException {
         /* Obtain the active profile */
-        MetisProfile myTask = theView.getActiveTask();
+        MetisProfile myTask = getView().getActiveTask();
         myTask = myTask.startTask("CashCategories");
 
         /* Access list */
-        final MoneyWiseData myData = theView.getData();
+        final MoneyWiseData myData = getView().getData();
         final CashCategoryList myBase = myData.getDataList(CashCategoryList.class);
         theCategories = (CashCategoryList) myBase.deriveList(ListStyle.EDIT);
         theCategories.mapData();
-        theTable.setItems(theCategories.getUnderlyingList());
-        theUpdateEntry.setDataList(theCategories);
+        getTable().setItems(theCategories.getUnderlyingList());
+        getUpdateEntry().setDataList(theCategories);
 
         /* If we have a parent */
         if (theParent != null) {
@@ -334,48 +232,10 @@ public class MoneyWiseCashCategoryTable
         myTask.end();
     }
 
-    /**
-     * Cancel editing.
-     */
-    void cancelEditing() {
-        theTable.cancelEditing();
+    @Override
+    protected void cancelEditing() {
+        super.cancelEditing();
         theActiveCategory.setEditable(false);
-    }
-
-    /**
-     * Does the panel have updates?
-     * @return true/false
-     */
-    public boolean hasUpdates() {
-        return theUpdateSet.hasUpdates();
-    }
-
-    /**
-     * Does the panel have a session?
-     * @return true/false
-     */
-    public boolean hasSession() {
-        return hasUpdates() || isItemEditing();
-    }
-
-    /**
-     * Does the panel have errors?
-     * @return true/false
-     */
-    public boolean hasErrors() {
-        return theUpdateSet.hasErrors();
-    }
-
-    /**
-     * Determine Focus.
-     * @param pEntry the master data entry
-     */
-    void determineFocus(final MetisViewerEntry pEntry) {
-        /* Request the focus */
-        theTable.requestFocus();
-
-        /* Set the required focus */
-        pEntry.setFocus(theUpdateEntry.getName());
     }
 
     /**
@@ -396,7 +256,7 @@ public class MoneyWiseCashCategoryTable
             }
 
             /* Select the row and ensure that it is visible */
-            theTable.selectRowWithScroll(pCategory);
+            getTable().selectRowWithScroll(pCategory);
             theActiveCategory.setItem(pCategory);
         }
     }
@@ -419,7 +279,7 @@ public class MoneyWiseCashCategoryTable
             }
 
             /* Notify table of change */
-            theTable.fireTableDataChanged();
+            getTable().fireTableDataChanged();
         }
     }
 
@@ -430,24 +290,13 @@ public class MoneyWiseCashCategoryTable
         selectParent(theSelectButton.getValue());
     }
 
-    /**
-     * Delete row.
-     * @param pRow the row
-     * @param pValue the value (ignored)
-     */
-    private void deleteRow(final CashCategory pRow,
-                           final Object pValue) {
-        pRow.setDeleted(true);
-    }
-
-    /**
-     * Handle updateSet rewind.
-     */
-    private void handleRewind() {
+    @Override
+    protected void handleRewind() {
         /* Only action if we are not editing */
         if (!theActiveCategory.isEditing()) {
             /* Handle the reWind */
-            theTable.fireTableDataChanged();
+            getTable().fireTableDataChanged();
+            selectCategory(theActiveCategory.getSelectedItem());
         }
 
         /* Adjust for changes */
@@ -461,7 +310,7 @@ public class MoneyWiseCashCategoryTable
         /* Only action if we are not editing */
         if (!theActiveCategory.isEditing()) {
             /* handle the edit transition */
-            theTable.fireTableDataChanged();
+            getTable().fireTableDataChanged();
             selectCategory(theActiveCategory.getSelectedItem());
         }
 
@@ -552,7 +401,7 @@ public class MoneyWiseCashCategoryTable
             /* Set as new and adjust map */
             myCategory.setNewVersion();
             myCategory.adjustMapForItem();
-            theUpdateSet.incrementVersion();
+            getUpdateSet().incrementVersion();
 
             /* Validate the new item and update panel */
             myCategory.validate();
@@ -571,172 +420,15 @@ public class MoneyWiseCashCategoryTable
         }
     }
 
-    /**
-     * Update value.
-     * @param <V> the value type
-     * @param pOnCommit the update function
-     * @param pRow the row to update
-     * @param pValue the value
-     * @throws OceanusException on error
-     */
-    private <V> void updateField(final TethysOnCellCommit<CashCategory, V> pOnCommit,
-                                 final CashCategory pRow,
-                                 final V pValue) throws OceanusException {
-        /* Push history */
-        pRow.pushHistory();
-
-        /* Protect against Exceptions */
-        try {
-            /* Set the item value */
-            pOnCommit.commitCell(pRow, pValue);
-
-            /* Handle Exceptions */
-        } catch (OceanusException e) {
-            /* Reset values */
-            pRow.popHistory();
-
-            /* Throw the error */
-            throw new PrometheusDataException("Failed to update field", e);
-        }
-
-        /* Check for changes */
-        if (pRow.checkForHistory()) {
-            /* Increment data version */
-            theUpdateSet.incrementVersion();
-
-            /* Update components to reflect changes */
-            theTable.fireTableDataChanged();
-            notifyChanges();
-        }
-    }
-
-    /**
-     * Set the error.
-     * @param pError the error
-     */
-    protected void setError(final OceanusException pError) {
-        theError.addError(pError);
-    }
-
-    /**
-     * Notify that there have been changes to this list.
-     */
-    protected void notifyChanges() {
-        /* Adjust enable of the table */
-        theTable.setEnabled(!theActiveCategory.isEditing());
-
-        /* Notify listeners */
-        theEventManager.fireEvent(PrometheusDataEvent.ADJUSTVISIBILITY);
-    }
-
-    /**
-     * is field in error?
-     *
-     * @param pField the field
-     * @param pItem  the item
-     * @return true/false
-     */
-    private boolean isFieldInError(final MetisLetheField pField,
-                                   final CashCategory pItem) {
-        return pItem.getFieldErrors(pField) != null;
-    }
-
-    /**
-     * is field changed?
-     *
-     * @param pField the field
-     * @param pItem  the item
-     * @return true/false
-     */
-    private boolean isFieldChanged(final MetisLetheField pField,
-                                   final CashCategory pItem) {
-        return pItem.fieldChanged(pField).isDifferent();
-    }
-
-    /**
-     * isFiltered?
-     * @param pRow the row
-     * @return true/false
-     */
-    private boolean isFiltered(final CashCategory pRow) {
-        return !pRow.isDeleted() && (theParent == null
+    @Override
+    protected boolean isFiltered(final CashCategory pRow) {
+        return super.isFiltered(pRow) && (theParent == null
                 ? pRow.isCategoryClass(CashCategoryClass.PARENT)
                 : theParent.equals(pRow.getParentCategory()));
     }
 
-    /**
-     * is Valid name?
-     * @param pNewName the new name
-     * @param pRow the row
-     * @return error message or null
-     */
-    private String isValidName(final String pNewName,
-                               final CashCategory pRow) {
-        /* Reject null name */
-        if (pNewName == null) {
-            return "Null Name not allowed";
-        }
-
-        /* Reject invalid name */
-        if (!DataItem.validString(pNewName, ":")) {
-            return "Invalid characters in name";
-        }
-
-        /* Reject name that is too long */
-        if (DataItem.byteLength(pNewName) > CashCategory.NAMELEN) {
-            return "Name too long";
-        }
-
-        /* Loop through the existing values */
-        for (CashCategory myValue : theCategories.getUnderlyingList()) {
-            /* Ignore self, deleted and non-siblings */
-            if (myValue.isDeleted()
-                    || myValue.equals(pRow)
-                    ||!Objects.equals(myValue.getParentCategory(), theParent)) {
-                continue;
-            }
-
-            /* Check for duplicate */
-            if (pNewName.equals(myValue.getName())) {
-                return "Duplicate name";
-            }
-        }
-
-        /* Valid name */
-        return null;
-    }
-
-    /**
-     * is Valid description?
-     * @param pNewDesc the new description
-     * @param pRow the row
-     * @return error message or null
-     */
-    private String isValidDesc(final String pNewDesc,
-                               final CashCategory pRow) {
-        /* Reject description that is too long */
-        if (pNewDesc != null
-                && DataItem.byteLength(pNewDesc) > CashCategory.DESCLEN) {
-            return "Description too long";
-        }
-
-        /* Valid description */
-        return null;
-    }
-
-    /**
-     * Show validation error TODO use panel.
-     * @param pError the error message
-     */
-    private void showValidateError(final String pError) {
-        System.out.println(Objects.requireNonNullElse(pError, "Error cleared"));
-    }
-
-    /**
-     * Check edit state.
-     * @param pState the new state
-     */
-    private void handleEditState(final Boolean pState) {
-        notifyChanges();
+    @Override
+    protected String getInvalidNameChars() {
+        return ":";
     }
 }
