@@ -16,15 +16,13 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.atlas.ui;
 
-import java.util.Iterator;
+import java.util.List;
 
 import net.sourceforge.joceanus.jmetis.atlas.ui.MetisErrorPanel;
 import net.sourceforge.joceanus.jmetis.data.MetisDataDifference;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisLetheField;
 import net.sourceforge.joceanus.jmetis.lethe.field.swing.MetisSwingFieldManager;
 import net.sourceforge.joceanus.jmetis.profile.MetisProfile;
-import net.sourceforge.joceanus.jmetis.ui.MetisAction;
-import net.sourceforge.joceanus.jmetis.ui.MetisIcon;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.DepositCategory;
@@ -32,7 +30,6 @@ import net.sourceforge.joceanus.jmoneywise.lethe.data.DepositCategory.DepositCat
 import net.sourceforge.joceanus.jmoneywise.lethe.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.DepositCategoryClass;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.DepositCategoryType;
-import net.sourceforge.joceanus.jmoneywise.lethe.ui.MoneyWiseUIResource;
 import net.sourceforge.joceanus.jmoneywise.lethe.ui.dialog.swing.DepositCategoryPanel;
 import net.sourceforge.joceanus.jmoneywise.lethe.views.MoneyWiseView;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataList.ListStyle;
@@ -40,14 +37,7 @@ import net.sourceforge.joceanus.jprometheus.lethe.swing.PrometheusSwingToolkit;
 import net.sourceforge.joceanus.jprometheus.lethe.views.PrometheusDataEvent;
 import net.sourceforge.joceanus.jprometheus.lethe.views.UpdateSet;
 import net.sourceforge.joceanus.jtethys.OceanusException;
-import net.sourceforge.joceanus.jtethys.ui.TethysBoxPaneManager;
-import net.sourceforge.joceanus.jtethys.ui.TethysButton;
-import net.sourceforge.joceanus.jtethys.ui.TethysIconButtonManager.TethysIconMapSet;
-import net.sourceforge.joceanus.jtethys.ui.TethysLabel;
-import net.sourceforge.joceanus.jtethys.ui.TethysScrollButtonManager;
 import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollMenu;
-import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollMenuItem;
-import net.sourceforge.joceanus.jtethys.ui.TethysUIEvent;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingGuiFactory;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingTableManager;
 
@@ -55,41 +45,16 @@ import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingTableManager;
  * MoneyWise DepositCategory Table.
  */
 public class MoneyWiseDepositCategoryTable
-        extends MoneyWiseBaseTable<DepositCategory> {
-    /**
-     * Filter Prompt.
-     */
-    private static final String TITLE_FILTER = MoneyWiseUIResource.CATEGORY_PROMPT_FILTER.getValue();
-
-    /**
-     * Filter Parents Title.
-     */
-    private static final String FILTER_PARENTS = MoneyWiseUIResource.CATEGORY_FILTER_PARENT.getValue();
-
-    /**
-     * The filter panel.
-     */
-    private final TethysBoxPaneManager theFilterPanel;
-
+        extends MoneyWiseCategoryTable<DepositCategory, DepositCategoryType, DepositCategoryClass> {
     /**
      * The Category dialog.
      */
     private final DepositCategoryPanel theActiveCategory;
 
     /**
-     * The select button.
-     */
-    private final TethysScrollButtonManager<DepositCategory> theSelectButton;
-
-    /**
      * The edit list.
      */
     private DepositCategoryList theCategories;
-
-    /**
-     * Active parent.
-     */
-    private DepositCategory theParent;
 
     /**
      * Constructor.
@@ -101,7 +66,7 @@ public class MoneyWiseDepositCategoryTable
                                   final UpdateSet<MoneyWiseDataType> pUpdateSet,
                                   final MetisErrorPanel pError) {
         /* Store parameters */
-        super(pView, pUpdateSet, pError, MoneyWiseDataType.DEPOSITCATEGORY);
+        super(pView, pUpdateSet, pError, MoneyWiseDataType.DEPOSITCATEGORY, DepositCategoryType.class);
 
         /* Access field manager */
         MetisSwingFieldManager myFieldMgr = ((PrometheusSwingToolkit) pView.getToolkit()).getFieldManager();
@@ -110,74 +75,15 @@ public class MoneyWiseDepositCategoryTable
         final TethysSwingGuiFactory myGuiFactory = (TethysSwingGuiFactory) pView.getGuiFactory();
         final TethysSwingTableManager<MetisLetheField, DepositCategory> myTable = getTable();
 
-        /* Create new button */
-        final TethysButton myNewButton = myGuiFactory.newButton();
-        MetisIcon.configureNewIconButton(myNewButton);
-
-        /* Create the filter components */
-        final TethysLabel myPrompt = myGuiFactory.newLabel(TITLE_FILTER);
-        theSelectButton = myGuiFactory.newScrollButton();
-        theSelectButton.setValue(null, FILTER_PARENTS);
-
-        /* Create a filter panel */
-        theFilterPanel = myGuiFactory.newHBoxPane();
-        theFilterPanel.addSpacer();
-        theFilterPanel.addNode(myPrompt);
-        theFilterPanel.addNode(theSelectButton);
-        theFilterPanel.addSpacer();
-        theFilterPanel.addNode(myNewButton);
-
         /* Create a category panel */
         theActiveCategory = new DepositCategoryPanel(myGuiFactory, myFieldMgr, pUpdateSet, pError);
         declareItemPanel(theActiveCategory);
 
         /* Set table configuration */
-        myTable.setDisabled(DepositCategory::isDisabled)
-               .setComparator(DepositCategory::compareTo)
-               .setOnSelect(theActiveCategory::setItem);
-
-        /* Create the short name column */
-        myTable.declareStringColumn(DepositCategory.FIELD_SUBCAT)
-               .setValidator(this::isValidName)
-               .setCellValueFactory(this::getShortName)
-               .setEditable(true)
-               .setOnCommit((r, v) -> updateField(DepositCategory::setSubCategoryName, r, v));
-
-        /* Create the full name column */
-        myTable.declareStringColumn(DepositCategory.FIELD_NAME)
-               .setCellValueFactory(DepositCategory::getName)
-               .setEditable(false);
-
-        /* Create the category type column */
-        myTable.declareScrollColumn(DepositCategory.FIELD_CATTYPE, DepositCategoryType.class)
-               .setMenuConfigurator(this::buildCategoryTypeMenu)
-               .setCellValueFactory(DepositCategory::getCategoryType)
-               .setEditable(true)
-               .setCellEditable(r -> !r.isActive())
-               .setOnCommit((r, v) -> updateField(DepositCategory::setCategoryType, r, v));
-
-        /* Create the description column */
-        myTable.declareStringColumn(DepositCategory.FIELD_DESC)
-               .setValidator(this::isValidDesc)
-               .setCellValueFactory(DepositCategory::getDesc)
-               .setEditable(true)
-               .setOnCommit((r, v) -> updateField(DepositCategory::setDescription, r, v));
-
-        /* Create the Active column */
-        final TethysIconMapSet<MetisAction> myActionMapSet = MetisIcon.configureStatusIconButton();
-        myTable.declareIconColumn(DepositCategory.FIELD_TOUCH, MetisAction.class)
-               .setIconMapSet(r -> myActionMapSet)
-               .setCellValueFactory(r -> r.isActive() ? MetisAction.ACTIVE : MetisAction.DELETE)
-               .setName(MoneyWiseUIResource.STATICDATA_ACTIVE.getValue())
-               .setEditable(true)
-               .setCellEditable(r -> !r.isActive())
-               .setOnCommit((r, v) -> updateField(this::deleteRow, r, v));
+        myTable.setOnSelect(theActiveCategory::setItem);
 
         /* Add listeners */
-        myNewButton.getEventRegistrar().addEventListener(e -> addNewItem());
         theActiveCategory.getEventRegistrar().addEventListener(PrometheusDataEvent.ADJUSTVISIBILITY, e -> handlePanelState());
-        theSelectButton.getEventRegistrar().addEventListener(TethysUIEvent.NEWVALUE, e -> handleParentSelection());
-        theSelectButton.setMenuConfigurator(e -> buildSelectMenu());
     }
 
     @Override
@@ -185,21 +91,14 @@ public class MoneyWiseDepositCategoryTable
         return theActiveCategory.isEditing();
     }
 
-    /**
-     * Obtain the filter panel.
-     * @return the filter panel
-     */
-    protected TethysBoxPaneManager getFilterPanel() {
-        return theFilterPanel;
+    @Override
+    protected List<DepositCategory> getCategories() {
+        return theCategories == null ? null : theCategories.getUnderlyingList();
     }
 
-    /**
-     * Obtain the short name.
-     * @return the name
-     */
-    private String getShortName(final DepositCategory pCategory) {
-        final String myName = pCategory.getSubCategory();
-        return myName == null ? pCategory.getName() : myName;
+    @Override
+    protected boolean isChildCategory(final DepositCategoryType pCategoryType) {
+        return !pCategoryType.getDepositClass().isParentCategory();
     }
 
     @Override
@@ -217,10 +116,11 @@ public class MoneyWiseDepositCategoryTable
         getUpdateEntry().setDataList(theCategories);
 
         /* If we have a parent */
-        if (theParent != null) {
+        DepositCategory myParent = getParent();
+        if (myParent != null) {
             /* Update the parent via the edit list */
-            theParent = theCategories.findItemById(theParent.getId());
-            theSelectButton.setValue(theParent);
+            myParent = theCategories.findItemById(myParent.getId());
+            updateParent(myParent);
         }
 
         /* Notify panel of refresh */
@@ -246,7 +146,7 @@ public class MoneyWiseDepositCategoryTable
         if (!MetisDataDifference.isEqual(myCurrent, pCategory)) {
             /* Ensure the correct parent is selected */
             DepositCategory myParent = pCategory.getParentCategory();
-            if (!MetisDataDifference.isEqual(theParent, myParent)) {
+            if (!MetisDataDifference.isEqual(getParent(), myParent)) {
                 if (myParent != null) {
                     myParent = theCategories.findItemById(myParent.getId());
                 }
@@ -257,35 +157,6 @@ public class MoneyWiseDepositCategoryTable
             getTable().selectRowWithScroll(pCategory);
             theActiveCategory.setItem(pCategory);
         }
-    }
-
-    /**
-     * Select parent.
-     * @param pParent the parent category
-     */
-    private void selectParent(final DepositCategory pParent) {
-        /* If the parent is being changed */
-        if (!MetisDataDifference.isEqual(pParent, theParent)) {
-            /* Store new value */
-            theParent = pParent;
-
-            /* Update select button */
-            if (pParent == null) {
-                theSelectButton.setValue(null, FILTER_PARENTS);
-            } else {
-                theSelectButton.setValue(pParent);
-            }
-
-            /* Notify table of change */
-            getTable().fireTableDataChanged();
-        }
-    }
-
-    /**
-     * Handle parent selection.
-     */
-    private void handleParentSelection() {
-        selectParent(theSelectButton.getValue());
     }
 
     @Override
@@ -316,77 +187,15 @@ public class MoneyWiseDepositCategoryTable
         notifyChanges();
     }
 
-    /**
-     * Build Select menu.
-     */
-    private void buildSelectMenu() {
-        /* Clear the menu */
-        final TethysScrollMenu<DepositCategory> myCategoryMenu = theSelectButton.getMenu();
-        myCategoryMenu.removeAllItems();
-
-        /* Cope if we have no categories */
-        if (theCategories == null) {
-            return;
-        }
-
-        /* Record active item */
-        TethysScrollMenuItem<DepositCategory> myActive = null;
-
-        /* Create the no filter MenuItem and add it to the popUp */
-        TethysScrollMenuItem<DepositCategory> myItem = myCategoryMenu.addItem(null, FILTER_PARENTS);
-
-        /* If this is the active parent */
-        if (theParent == null) {
-            /* Record it */
-            myActive = myItem;
-        }
-
-        /* Loop through the available category values */
-        final Iterator<DepositCategory> myIterator = theCategories.iterator();
-        while (myIterator.hasNext()) {
-            final DepositCategory myCurr = myIterator.next();
-            final DepositCategoryType myType = myCurr.getCategoryType();
-
-            /* Ignore deleted */
-            boolean bIgnore = myCurr.isDeleted();
-
-            /* Ignore category if it is not a parent */
-            bIgnore |= !myType.getDepositClass().isParentCategory();
-            if (bIgnore) {
-                continue;
-            }
-
-            /* Create a new MenuItem and add it to the popUp */
-            myItem = myCategoryMenu.addItem(myCurr);
-
-            /* If this is the active parent */
-            if (myCurr.equals(theParent)) {
-                /* Record it */
-                myActive = myItem;
-            }
-        }
-
-        /* Ensure active item is visible */
-        if (myActive != null) {
-            myActive.scrollToItem();
-        }
-    }
-
-    /**
-     * Build the category type list for the item.
-     * @param pCategory the item
-     * @param pMenu the menu to build
-     */
-    private void buildCategoryTypeMenu(final DepositCategory pCategory,
-                                       final TethysScrollMenu<DepositCategoryType> pMenu) {
+    @Override
+    protected void buildCategoryTypeMenu(final DepositCategory pCategory,
+                                         final TethysScrollMenu<DepositCategoryType> pMenu) {
         /* Build the menu */
         theActiveCategory.buildCategoryTypeMenu(pMenu, pCategory);
     }
 
-   /**
-     * New item.
-     */
-    private void addNewItem() {
+   @Override
+    protected void addNewItem() {
         /* Protect against Exceptions */
         try {
             /* Make sure that we have finished editing */
@@ -394,7 +203,7 @@ public class MoneyWiseDepositCategoryTable
 
             /* Create the new category */
             final DepositCategory myCategory = theCategories.addNewItem();
-            myCategory.setDefaults(theParent);
+            myCategory.setDefaults(getParent());
 
             /* Set as new and adjust map */
             myCategory.setNewVersion();
@@ -420,13 +229,9 @@ public class MoneyWiseDepositCategoryTable
 
     @Override
     protected boolean isFiltered(final DepositCategory pRow) {
-        return super.isFiltered(pRow) && (theParent == null
+        final DepositCategory myParent = getParent();
+        return super.isFiltered(pRow) && (myParent == null
                 ? pRow.isCategoryClass(DepositCategoryClass.PARENT)
-                : theParent.equals(pRow.getParentCategory()));
-    }
-
-    @Override
-    protected String getInvalidNameChars() {
-        return ":";
+                : myParent.equals(pRow.getParentCategory()));
     }
 }
