@@ -26,6 +26,7 @@ import net.sourceforge.joceanus.jmetis.profile.MetisProfile;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.MoneyWiseData;
+import net.sourceforge.joceanus.jmoneywise.lethe.data.Transaction;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.TransactionCategory;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.TransactionCategory.TransactionCategoryList;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.TransactionCategoryClass;
@@ -164,6 +165,7 @@ public class MoneyWiseTransCategoryTable
         /* Only action if we are not editing */
         if (!theActiveCategory.isEditing()) {
             /* Handle the reWind */
+            setEnabled(true);
             getTable().fireTableDataChanged();
             selectCategory(theActiveCategory.getSelectedItem());
         }
@@ -179,6 +181,7 @@ public class MoneyWiseTransCategoryTable
         /* Only action if we are not editing */
         if (!theActiveCategory.isEditing()) {
             /* handle the edit transition */
+            setEnabled(true);
             getTable().fireTableDataChanged();
             selectCategory(theActiveCategory.getSelectedItem());
         }
@@ -232,6 +235,7 @@ public class MoneyWiseTransCategoryTable
         final TransactionCategory myParent = getParent();
         return super.isFiltered(pRow) && (myParent == null
                 ? pRow.getParentCategory() == null
+                  || pRow.getParentCategory().isCategoryClass(TransactionCategoryClass.TOTALS)
                 : myParent.equals(pRow.getParentCategory()));
     }
 }

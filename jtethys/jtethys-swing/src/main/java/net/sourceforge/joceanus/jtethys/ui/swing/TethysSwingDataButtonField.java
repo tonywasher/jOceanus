@@ -235,6 +235,7 @@ public final class TethysSwingDataButtonField {
 
             /* Set listener on manager */
             pManager.getEventRegistrar().addEventListener(this::handleEvent);
+            theManager.getMenu().getEventRegistrar().addEventListener(TethysUIEvent.WINDOWCLOSED, e -> haltCellEditing());
 
             /* Set configurator */
             theConfigurator = p -> {
@@ -589,6 +590,7 @@ public final class TethysSwingDataButtonField {
 
             /* Set listener on manager */
             pManager.getEventRegistrar().addEventListener(this::handleEvent);
+            theManager.getMenu().getEventRegistrar().addEventListener(TethysUIEvent.WINDOWCLOSED, e -> haltCellEditing());
         }
 
         /**

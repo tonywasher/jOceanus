@@ -29,11 +29,13 @@ import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.Payee;
-import net.sourceforge.joceanus.jmoneywise.lethe.data.Payee.PayeeList;
-import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.PayeeType;
+import net.sourceforge.joceanus.jmoneywise.lethe.data.Portfolio;
+import net.sourceforge.joceanus.jmoneywise.lethe.data.Portfolio.PortfolioList;
+import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.AssetCurrency;
+import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.PortfolioType;
 import net.sourceforge.joceanus.jmoneywise.lethe.ui.MoneyWiseIcon;
 import net.sourceforge.joceanus.jmoneywise.lethe.ui.MoneyWiseUIResource;
-import net.sourceforge.joceanus.jmoneywise.lethe.ui.dialog.swing.PayeePanel;
+import net.sourceforge.joceanus.jmoneywise.lethe.ui.dialog.swing.PortfolioPanel;
 import net.sourceforge.joceanus.jmoneywise.lethe.views.MoneyWiseView;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataList.ListStyle;
 import net.sourceforge.joceanus.jprometheus.lethe.swing.PrometheusSwingToolkit;
@@ -47,19 +49,19 @@ import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingGuiFactory;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingTableManager;
 
 /**
- * MoneyWise Payee Table.
+ * MoneyWise Portfolio Table.
  */
-public class MoneyWisePayeeTable
-        extends MoneyWiseAssetTable<Payee> {
+public class MoneyWisePortfolioTable
+        extends MoneyWiseAssetTable<Portfolio> {
     /**
-     * The Payee dialog.
+     * The Portfolio dialog.
      */
-    private final PayeePanel theActivePayee;
+    private final PortfolioPanel theActivePortfolio;
 
     /**
      * The edit list.
      */
-    private PayeeList thePayees;
+    private PortfolioList thePortfolios;
 
     /**
      * Constructor.
@@ -67,64 +69,80 @@ public class MoneyWisePayeeTable
      * @param pUpdateSet the updateSet
      * @param pError the error panel
      */
-    MoneyWisePayeeTable(final MoneyWiseView pView,
-                        final UpdateSet<MoneyWiseDataType> pUpdateSet,
-                        final MetisErrorPanel pError) {
+    MoneyWisePortfolioTable(final MoneyWiseView pView,
+                            final UpdateSet<MoneyWiseDataType> pUpdateSet,
+                            final MetisErrorPanel pError) {
         /* Store parameters */
-        super(pView, pUpdateSet, pError, MoneyWiseDataType.PAYEE);
+        super(pView, pUpdateSet, pError, MoneyWiseDataType.PORTFOLIO);
 
         /* Access field manager */
         MetisSwingFieldManager myFieldMgr = ((PrometheusSwingToolkit) pView.getToolkit()).getFieldManager();
 
         /* Access Gui factory */
         final TethysSwingGuiFactory myGuiFactory = (TethysSwingGuiFactory) pView.getGuiFactory();
-        final TethysSwingTableManager<MetisLetheField, Payee> myTable = getTable();
+        final TethysSwingTableManager<MetisLetheField, Portfolio> myTable = getTable();
 
-        /* Create a payee panel */
-        theActivePayee = new PayeePanel(myGuiFactory, myFieldMgr, pUpdateSet, pError);
-        declareItemPanel(theActivePayee);
+        /* Create a portfolio panel */
+        theActivePortfolio = new PortfolioPanel(myGuiFactory, myFieldMgr, pUpdateSet, pError);
+        declareItemPanel(theActivePortfolio);
 
         /* Set table configuration */
-        myTable.setDisabled(Payee::isDisabled)
-               .setComparator(Payee::compareTo)
-               .setOnSelect(theActivePayee::setItem);
+        myTable.setDisabled(Portfolio::isDisabled)
+               .setComparator(Portfolio::compareTo)
+               .setOnSelect(theActivePortfolio::setItem);
 
         /* Create the name column */
-        myTable.declareStringColumn(Payee.FIELD_NAME)
+        myTable.declareStringColumn(Portfolio.FIELD_NAME)
                .setValidator(this::isValidName)
-               .setCellValueFactory(Payee::getName)
+               .setCellValueFactory(Portfolio::getName)
                .setEditable(true)
-               .setOnCommit((r, v) -> updateField(Payee::setName, r, v));
+               .setOnCommit((r, v) -> updateField(Portfolio::setName, r, v));
 
-        /* Create the payee type column */
-        myTable.declareScrollColumn(Payee.FIELD_PAYEETYPE, PayeeType.class)
-               .setMenuConfigurator(this::buildPayeeTypeMenu)
-               .setCellValueFactory(Payee::getPayeeType)
+        /* Create the portfolio type column */
+        myTable.declareScrollColumn(Portfolio.FIELD_PORTTYPE, PortfolioType.class)
+               .setMenuConfigurator(this::buildPortfolioTypeMenu)
+               .setCellValueFactory(Portfolio::getPortfolioType)
                .setEditable(true)
                .setCellEditable(r -> !r.isActive())
-               .setOnCommit((r, v) -> updateField(Payee::setPayeeType, r, v));
+               .setOnCommit((r, v) -> updateField(Portfolio::setPortfolioType, r, v));
 
         /* Create the description column */
-        myTable.declareStringColumn(Payee.FIELD_DESC)
+        myTable.declareStringColumn(Portfolio.FIELD_DESC)
                .setValidator(this::isValidDesc)
-               .setCellValueFactory(Payee::getDesc)
+               .setCellValueFactory(Portfolio::getDesc)
                .setEditable(true)
-               .setOnCommit((r, v) -> updateField(Payee::setDescription, r, v));
+               .setOnCommit((r, v) -> updateField(Portfolio::setDescription, r, v));
+
+        /* Create the parent column */
+        myTable.declareScrollColumn(Portfolio.FIELD_PARENT, Payee.class)
+                .setMenuConfigurator(this::buildParentMenu)
+                .setCellValueFactory(Portfolio::getParent)
+                .setEditable(true)
+                .setCellEditable(r -> !r.isActive())
+                .setOnCommit((r, v) -> updateField(Portfolio::setParent, r, v));
+
+        /* Create the currency column */
+        myTable.declareScrollColumn(Portfolio.FIELD_CURRENCY, AssetCurrency.class)
+                .setMenuConfigurator(this::buildCurrencyMenu)
+                .setCellValueFactory(Portfolio::getAssetCurrency)
+                .setEditable(true)
+                .setCellEditable(r -> !r.isActive())
+                .setOnCommit((r, v) -> updateField(Portfolio::setAssetCurrency, r, v));
 
         /* Create the Closed column */
         final Map<Boolean, TethysIconMapSet<Boolean>> myClosedMapSets = MoneyWiseIcon.configureLockedIconButton();
-        final TethysTableColumn<Boolean, MetisLetheField, Payee> myClosedColumn
-                = myTable.declareIconColumn(Payee.FIELD_CLOSED, Boolean.class)
-                .setIconMapSet(r -> myClosedMapSets.get(determineClosedState(r)))
-                .setCellValueFactory(Payee::isClosed)
-                .setEditable(true)
-                .setCellEditable(this::determineClosedState)
-                .setOnCommit((r, v) -> updateField(Payee::setClosed, r, v));
+        final TethysTableColumn<Boolean, MetisLetheField, Portfolio> myClosedColumn
+               = myTable.declareIconColumn(Portfolio.FIELD_CLOSED, Boolean.class)
+               .setIconMapSet(r -> myClosedMapSets.get(determineClosedState(r)))
+               .setCellValueFactory(Portfolio::isClosed)
+               .setEditable(true)
+               .setCellEditable(this::determineClosedState)
+               .setOnCommit((r, v) -> updateField(Portfolio::setClosed, r, v));
         declareClosedColumn(myClosedColumn);
 
         /* Create the Active column */
         final TethysIconMapSet<MetisAction> myActionMapSet = MetisIcon.configureStatusIconButton();
-        myTable.declareIconColumn(Payee.FIELD_TOUCH, MetisAction.class)
+        myTable.declareIconColumn(Portfolio.FIELD_TOUCH, MetisAction.class)
                .setIconMapSet(r -> myActionMapSet)
                .setCellValueFactory(r -> r.isActive() ? MetisAction.ACTIVE : MetisAction.DELETE)
                .setName(MoneyWiseUIResource.STATICDATA_ACTIVE.getValue())
@@ -133,36 +151,36 @@ public class MoneyWisePayeeTable
                .setOnCommit((r, v) -> updateField(this::deleteRow, r, v));
 
         /* Create the latest event column */
-        myTable.declareDateColumn(Payee.FIELD_EVTLAST)
+        myTable.declareDateColumn(Portfolio.FIELD_EVTLAST)
                .setCellValueFactory(this::getLatestTranDate)
                .setName(MoneyWiseUIResource.ASSET_COLUMN_LATEST.getValue())
                .setEditable(false);
 
         /* Add listeners */
-        theActivePayee.getEventRegistrar().addEventListener(PrometheusDataEvent.ADJUSTVISIBILITY, e -> handlePanelState());
+        theActivePortfolio.getEventRegistrar().addEventListener(PrometheusDataEvent.ADJUSTVISIBILITY, e -> handlePanelState());
     }
 
     @Override
     protected boolean isItemEditing() {
-        return theActivePayee.isEditing();
+        return theActivePortfolio.isEditing();
     }
 
     @Override
     protected void refreshData() throws OceanusException {
         /* Obtain the active profile */
         MetisProfile myTask = getView().getActiveTask();
-        myTask = myTask.startTask("Payees");
+        myTask = myTask.startTask("Portfolios");
 
         /* Access list */
         final MoneyWiseData myData = getView().getData();
-        final PayeeList myBase = myData.getDataList(PayeeList.class);
-        thePayees = (PayeeList) myBase.deriveList(ListStyle.EDIT);
-        thePayees.mapData();
-        getTable().setItems(thePayees.getUnderlyingList());
-        getUpdateEntry().setDataList(thePayees);
+        final PortfolioList myBase = myData.getDataList(PortfolioList.class);
+        thePortfolios = (PortfolioList) myBase.deriveList(ListStyle.EDIT);
+        thePortfolios.mapData();
+        getTable().setItems(thePortfolios.getUnderlyingList());
+        getUpdateEntry().setDataList(thePortfolios);
 
         /* Notify panel of refresh */
-        theActivePayee.refreshData();
+        theActivePortfolio.refreshData();
 
         /* Complete the task */
         myTask.end();
@@ -171,34 +189,34 @@ public class MoneyWisePayeeTable
     @Override
     protected void cancelEditing() {
         super.cancelEditing();
-        theActivePayee.setEditable(false);
+        theActivePortfolio.setEditable(false);
     }
 
     /**
-     * Select payee.
-     * @param pPayee the payee to select
+     * Select portfolio.
+     * @param pPortfolio the portfolio to select
      */
-    void selectPayee(final Payee pPayee) {
+    void selectPortfolio(final Portfolio pPortfolio) {
         /* Check whether we need to showAll */
-        checkShowAll(pPayee);
+        checkShowAll(pPortfolio);
 
         /* If we are changing the selection */
-        final Payee myCurrent = theActivePayee.getSelectedItem();
-        if (!MetisDataDifference.isEqual(myCurrent, pPayee)) {
+        final Portfolio myCurrent = theActivePortfolio.getSelectedItem();
+        if (!MetisDataDifference.isEqual(myCurrent, pPortfolio)) {
             /* Select the row and ensure that it is visible */
-            getTable().selectRowWithScroll(pPayee);
-            theActivePayee.setItem(pPayee);
+            getTable().selectRowWithScroll(pPortfolio);
+            theActivePortfolio.setItem(pPortfolio);
         }
     }
 
     @Override
     protected void handleRewind() {
         /* Only action if we are not editing */
-        if (!theActivePayee.isEditing()) {
+        if (!theActivePortfolio.isEditing()) {
             /* Handle the reWind */
             setEnabled(true);
             getTable().fireTableDataChanged();
-            selectPayee(theActivePayee.getSelectedItem());
+            selectPortfolio(theActivePortfolio.getSelectedItem());
         }
 
         /* Adjust for changes */
@@ -210,11 +228,11 @@ public class MoneyWisePayeeTable
      */
     private void handlePanelState() {
         /* Only action if we are not editing */
-        if (!theActivePayee.isEditing()) {
+        if (!theActivePortfolio.isEditing()) {
             /* handle the edit transition */
             setEnabled(true);
             getTable().fireTableDataChanged();
-            selectPayee(theActivePayee.getSelectedItem());
+            selectPortfolio(theActivePortfolio.getSelectedItem());
         }
 
         /* Note changes */
@@ -222,14 +240,36 @@ public class MoneyWisePayeeTable
     }
 
     /**
-     * Build the payee type list for the item.
-     * @param pPayee the item
+     * Build the portfolio type list for the item.
+     * @param pPortfolio the item
      * @param pMenu the menu to build
      */
-    private void buildPayeeTypeMenu(final Payee pPayee,
-                                    final TethysScrollMenu<PayeeType> pMenu) {
+    private void buildPortfolioTypeMenu(final Portfolio pPortfolio,
+                                        final TethysScrollMenu<PortfolioType> pMenu) {
         /* Build the menu */
-        theActivePayee.buildPayeeTypeMenu(pMenu, pPayee);
+        theActivePortfolio.buildTypeMenu(pMenu, pPortfolio);
+    }
+
+    /**
+     * Build the portfolio type list for the item.
+     * @param pPortfolio the item
+     * @param pMenu the menu to build
+     */
+    private void buildParentMenu(final Portfolio pPortfolio,
+                                 final TethysScrollMenu<Payee> pMenu) {
+        /* Build the menu */
+        theActivePortfolio.buildParentMenu(pMenu, pPortfolio);
+    }
+
+    /**
+     * Build the currency list for the item.
+     * @param pPortfolio the item
+     * @param pMenu the menu to build
+     */
+    private void buildCurrencyMenu(final Portfolio pPortfolio,
+                                   final TethysScrollMenu<AssetCurrency> pMenu) {
+        /* Build the menu */
+        theActivePortfolio.buildCurrencyMenu(pMenu, pPortfolio);
     }
 
     @Override
@@ -239,18 +279,18 @@ public class MoneyWisePayeeTable
             /* Make sure that we have finished editing */
             cancelEditing();
 
-            /* Create the new category */
-            final Payee myPayee = thePayees.addNewItem();
-            myPayee.setDefaults();
+            /* Create the new asset */
+            final Portfolio myPortfolio = thePortfolios.addNewItem();
+            myPortfolio.setDefaults(getUpdateSet());
 
             /* Set as new and adjust map */
-            myPayee.setNewVersion();
-            myPayee.adjustMapForItem();
+            myPortfolio.setNewVersion();
+            myPortfolio.adjustMapForItem();
             getUpdateSet().incrementVersion();
 
             /* Validate the new item and update panel */
-            myPayee.validate();
-            theActivePayee.setNewItem(myPayee);
+            myPortfolio.validate();
+            theActivePortfolio.setNewItem(myPortfolio);
 
             /* Lock the table */
             setEnabled(false);
@@ -258,7 +298,7 @@ public class MoneyWisePayeeTable
             /* Handle Exceptions */
         } catch (OceanusException e) {
             /* Build the error */
-            final OceanusException myError = new MoneyWiseDataException("Failed to create new payee", e);
+            final OceanusException myError = new MoneyWiseDataException("Failed to create new portfolio", e);
 
             /* Show the error */
             setError(myError);

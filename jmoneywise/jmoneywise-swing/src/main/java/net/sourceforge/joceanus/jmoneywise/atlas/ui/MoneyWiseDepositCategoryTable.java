@@ -164,6 +164,7 @@ public class MoneyWiseDepositCategoryTable
         /* Only action if we are not editing */
         if (!theActiveCategory.isEditing()) {
             /* Handle the reWind */
+            setEnabled(true);
             getTable().fireTableDataChanged();
             selectCategory(theActiveCategory.getSelectedItem());
         }
@@ -179,6 +180,7 @@ public class MoneyWiseDepositCategoryTable
         /* Only action if we are not editing */
         if (!theActiveCategory.isEditing()) {
             /* handle the edit transition */
+            setEnabled(true);
             getTable().fireTableDataChanged();
             selectCategory(theActiveCategory.getSelectedItem());
         }

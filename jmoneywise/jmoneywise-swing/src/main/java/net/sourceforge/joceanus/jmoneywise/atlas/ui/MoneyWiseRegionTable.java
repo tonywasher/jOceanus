@@ -181,6 +181,7 @@ public class MoneyWiseRegionTable
         /* Only action if we are not editing */
         if (!theActiveRegion.isEditing()) {
             /* Handle the reWind */
+            setEnabled(true);
             getTable().fireTableDataChanged();
             selectRegion(theActiveRegion.getSelectedItem());
         }
@@ -196,6 +197,7 @@ public class MoneyWiseRegionTable
         /* Only action if we are not editing */
         if (!theActiveRegion.isEditing()) {
             /* handle the edit transition */
+            setEnabled(true);
             getTable().fireTableDataChanged();
             selectRegion(theActiveRegion.getSelectedItem());
         }

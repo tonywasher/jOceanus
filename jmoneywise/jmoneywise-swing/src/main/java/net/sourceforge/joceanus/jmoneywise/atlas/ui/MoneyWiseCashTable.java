@@ -27,13 +27,14 @@ import net.sourceforge.joceanus.jmetis.ui.MetisAction;
 import net.sourceforge.joceanus.jmetis.ui.MetisIcon;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
+import net.sourceforge.joceanus.jmoneywise.lethe.data.Cash;
+import net.sourceforge.joceanus.jmoneywise.lethe.data.Cash.CashList;
+import net.sourceforge.joceanus.jmoneywise.lethe.data.CashCategory;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.MoneyWiseData;
-import net.sourceforge.joceanus.jmoneywise.lethe.data.Payee;
-import net.sourceforge.joceanus.jmoneywise.lethe.data.Payee.PayeeList;
-import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.PayeeType;
+import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.AssetCurrency;
 import net.sourceforge.joceanus.jmoneywise.lethe.ui.MoneyWiseIcon;
 import net.sourceforge.joceanus.jmoneywise.lethe.ui.MoneyWiseUIResource;
-import net.sourceforge.joceanus.jmoneywise.lethe.ui.dialog.swing.PayeePanel;
+import net.sourceforge.joceanus.jmoneywise.lethe.ui.dialog.swing.CashPanel;
 import net.sourceforge.joceanus.jmoneywise.lethe.views.MoneyWiseView;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataList.ListStyle;
 import net.sourceforge.joceanus.jprometheus.lethe.swing.PrometheusSwingToolkit;
@@ -47,19 +48,19 @@ import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingGuiFactory;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingTableManager;
 
 /**
- * MoneyWise Payee Table.
+ * MoneyWise Cash Table.
  */
-public class MoneyWisePayeeTable
-        extends MoneyWiseAssetTable<Payee> {
+public class MoneyWiseCashTable
+        extends MoneyWiseAssetTable<Cash> {
     /**
-     * The Payee dialog.
+     * The Cash dialog.
      */
-    private final PayeePanel theActivePayee;
+    private final CashPanel theActiveCash;
 
     /**
      * The edit list.
      */
-    private PayeeList thePayees;
+    private CashList theCashs;
 
     /**
      * Constructor.
@@ -67,102 +68,110 @@ public class MoneyWisePayeeTable
      * @param pUpdateSet the updateSet
      * @param pError the error panel
      */
-    MoneyWisePayeeTable(final MoneyWiseView pView,
-                        final UpdateSet<MoneyWiseDataType> pUpdateSet,
-                        final MetisErrorPanel pError) {
+    MoneyWiseCashTable(final MoneyWiseView pView,
+                            final UpdateSet<MoneyWiseDataType> pUpdateSet,
+                            final MetisErrorPanel pError) {
         /* Store parameters */
-        super(pView, pUpdateSet, pError, MoneyWiseDataType.PAYEE);
+        super(pView, pUpdateSet, pError, MoneyWiseDataType.CASH);
 
         /* Access field manager */
         MetisSwingFieldManager myFieldMgr = ((PrometheusSwingToolkit) pView.getToolkit()).getFieldManager();
 
         /* Access Gui factory */
         final TethysSwingGuiFactory myGuiFactory = (TethysSwingGuiFactory) pView.getGuiFactory();
-        final TethysSwingTableManager<MetisLetheField, Payee> myTable = getTable();
+        final TethysSwingTableManager<MetisLetheField, Cash> myTable = getTable();
 
-        /* Create a payee panel */
-        theActivePayee = new PayeePanel(myGuiFactory, myFieldMgr, pUpdateSet, pError);
-        declareItemPanel(theActivePayee);
+        /* Create a Cash panel */
+        theActiveCash = new CashPanel(myGuiFactory, myFieldMgr, pUpdateSet, pError);
+        declareItemPanel(theActiveCash);
 
         /* Set table configuration */
-        myTable.setDisabled(Payee::isDisabled)
-               .setComparator(Payee::compareTo)
-               .setOnSelect(theActivePayee::setItem);
+        myTable.setDisabled(Cash::isDisabled)
+                .setComparator(Cash::compareTo)
+                .setOnSelect(theActiveCash::setItem);
 
         /* Create the name column */
-        myTable.declareStringColumn(Payee.FIELD_NAME)
-               .setValidator(this::isValidName)
-               .setCellValueFactory(Payee::getName)
-               .setEditable(true)
-               .setOnCommit((r, v) -> updateField(Payee::setName, r, v));
+        myTable.declareStringColumn(Cash.FIELD_NAME)
+                .setValidator(this::isValidName)
+                .setCellValueFactory(Cash::getName)
+                .setEditable(true)
+                .setOnCommit((r, v) -> updateField(Cash::setName, r, v));
 
-        /* Create the payee type column */
-        myTable.declareScrollColumn(Payee.FIELD_PAYEETYPE, PayeeType.class)
-               .setMenuConfigurator(this::buildPayeeTypeMenu)
-               .setCellValueFactory(Payee::getPayeeType)
-               .setEditable(true)
-               .setCellEditable(r -> !r.isActive())
-               .setOnCommit((r, v) -> updateField(Payee::setPayeeType, r, v));
+        /* Create the Cash type column */
+        myTable.declareScrollColumn(Cash.FIELD_CATEGORY, CashCategory.class)
+                .setMenuConfigurator(this::buildCategoryMenu)
+                .setCellValueFactory(Cash::getCategory)
+                .setEditable(true)
+                .setCellEditable(r -> !r.isActive())
+                .setOnCommit((r, v) -> updateField(Cash::setCashCategory, r, v));
 
         /* Create the description column */
-        myTable.declareStringColumn(Payee.FIELD_DESC)
-               .setValidator(this::isValidDesc)
-               .setCellValueFactory(Payee::getDesc)
-               .setEditable(true)
-               .setOnCommit((r, v) -> updateField(Payee::setDescription, r, v));
+        myTable.declareStringColumn(Cash.FIELD_DESC)
+                .setValidator(this::isValidDesc)
+                .setCellValueFactory(Cash::getDesc)
+                .setEditable(true)
+                .setOnCommit((r, v) -> updateField(Cash::setDescription, r, v));
+
+        /* Create the currency column */
+        myTable.declareScrollColumn(Cash.FIELD_CURRENCY, AssetCurrency.class)
+                .setMenuConfigurator(this::buildCurrencyMenu)
+                .setCellValueFactory(Cash::getAssetCurrency)
+                .setEditable(true)
+                .setCellEditable(r -> !r.isActive())
+                .setOnCommit((r, v) -> updateField(Cash::setAssetCurrency, r, v));
 
         /* Create the Closed column */
         final Map<Boolean, TethysIconMapSet<Boolean>> myClosedMapSets = MoneyWiseIcon.configureLockedIconButton();
-        final TethysTableColumn<Boolean, MetisLetheField, Payee> myClosedColumn
-                = myTable.declareIconColumn(Payee.FIELD_CLOSED, Boolean.class)
+        final TethysTableColumn<Boolean, MetisLetheField, Cash> myClosedColumn
+                = myTable.declareIconColumn(Cash.FIELD_CLOSED, Boolean.class)
                 .setIconMapSet(r -> myClosedMapSets.get(determineClosedState(r)))
-                .setCellValueFactory(Payee::isClosed)
+                .setCellValueFactory(Cash::isClosed)
                 .setEditable(true)
                 .setCellEditable(this::determineClosedState)
-                .setOnCommit((r, v) -> updateField(Payee::setClosed, r, v));
+                .setOnCommit((r, v) -> updateField(Cash::setClosed, r, v));
         declareClosedColumn(myClosedColumn);
 
         /* Create the Active column */
         final TethysIconMapSet<MetisAction> myActionMapSet = MetisIcon.configureStatusIconButton();
-        myTable.declareIconColumn(Payee.FIELD_TOUCH, MetisAction.class)
-               .setIconMapSet(r -> myActionMapSet)
-               .setCellValueFactory(r -> r.isActive() ? MetisAction.ACTIVE : MetisAction.DELETE)
-               .setName(MoneyWiseUIResource.STATICDATA_ACTIVE.getValue())
-               .setEditable(true)
-               .setCellEditable(r -> !r.isActive())
-               .setOnCommit((r, v) -> updateField(this::deleteRow, r, v));
+        myTable.declareIconColumn(Cash.FIELD_TOUCH, MetisAction.class)
+                .setIconMapSet(r -> myActionMapSet)
+                .setCellValueFactory(r -> r.isActive() ? MetisAction.ACTIVE : MetisAction.DELETE)
+                .setName(MoneyWiseUIResource.STATICDATA_ACTIVE.getValue())
+                .setEditable(true)
+                .setCellEditable(r -> !r.isActive())
+                .setOnCommit((r, v) -> updateField(this::deleteRow, r, v));
 
         /* Create the latest event column */
-        myTable.declareDateColumn(Payee.FIELD_EVTLAST)
-               .setCellValueFactory(this::getLatestTranDate)
-               .setName(MoneyWiseUIResource.ASSET_COLUMN_LATEST.getValue())
-               .setEditable(false);
+        myTable.declareDateColumn(Cash.FIELD_EVTLAST)
+                .setCellValueFactory(this::getLatestTranDate)
+                .setName(MoneyWiseUIResource.ASSET_COLUMN_LATEST.getValue())
+                .setEditable(false);
 
         /* Add listeners */
-        theActivePayee.getEventRegistrar().addEventListener(PrometheusDataEvent.ADJUSTVISIBILITY, e -> handlePanelState());
+        theActiveCash.getEventRegistrar().addEventListener(PrometheusDataEvent.ADJUSTVISIBILITY, e -> handlePanelState());
     }
 
     @Override
     protected boolean isItemEditing() {
-        return theActivePayee.isEditing();
+        return theActiveCash.isEditing();
     }
 
     @Override
     protected void refreshData() throws OceanusException {
         /* Obtain the active profile */
         MetisProfile myTask = getView().getActiveTask();
-        myTask = myTask.startTask("Payees");
+        myTask = myTask.startTask("Cashs");
 
         /* Access list */
         final MoneyWiseData myData = getView().getData();
-        final PayeeList myBase = myData.getDataList(PayeeList.class);
-        thePayees = (PayeeList) myBase.deriveList(ListStyle.EDIT);
-        thePayees.mapData();
-        getTable().setItems(thePayees.getUnderlyingList());
-        getUpdateEntry().setDataList(thePayees);
+        final CashList myBase = myData.getDataList(CashList.class);
+        theCashs = (CashList) myBase.deriveList(ListStyle.EDIT);
+        theCashs.mapData();
+        getTable().setItems(theCashs.getUnderlyingList());
+        getUpdateEntry().setDataList(theCashs);
 
         /* Notify panel of refresh */
-        theActivePayee.refreshData();
+        theActiveCash.refreshData();
 
         /* Complete the task */
         myTask.end();
@@ -171,34 +180,34 @@ public class MoneyWisePayeeTable
     @Override
     protected void cancelEditing() {
         super.cancelEditing();
-        theActivePayee.setEditable(false);
+        theActiveCash.setEditable(false);
     }
 
     /**
-     * Select payee.
-     * @param pPayee the payee to select
+     * Select Cash.
+     * @param pCash the Cash to select
      */
-    void selectPayee(final Payee pPayee) {
+    void selectCash(final Cash pCash) {
         /* Check whether we need to showAll */
-        checkShowAll(pPayee);
+        checkShowAll(pCash);
 
         /* If we are changing the selection */
-        final Payee myCurrent = theActivePayee.getSelectedItem();
-        if (!MetisDataDifference.isEqual(myCurrent, pPayee)) {
+        final Cash myCurrent = theActiveCash.getSelectedItem();
+        if (!MetisDataDifference.isEqual(myCurrent, pCash)) {
             /* Select the row and ensure that it is visible */
-            getTable().selectRowWithScroll(pPayee);
-            theActivePayee.setItem(pPayee);
+            getTable().selectRowWithScroll(pCash);
+            theActiveCash.setItem(pCash);
         }
     }
 
     @Override
     protected void handleRewind() {
         /* Only action if we are not editing */
-        if (!theActivePayee.isEditing()) {
+        if (!theActiveCash.isEditing()) {
             /* Handle the reWind */
             setEnabled(true);
             getTable().fireTableDataChanged();
-            selectPayee(theActivePayee.getSelectedItem());
+            selectCash(theActiveCash.getSelectedItem());
         }
 
         /* Adjust for changes */
@@ -210,11 +219,11 @@ public class MoneyWisePayeeTable
      */
     private void handlePanelState() {
         /* Only action if we are not editing */
-        if (!theActivePayee.isEditing()) {
+        if (!theActiveCash.isEditing()) {
             /* handle the edit transition */
             setEnabled(true);
             getTable().fireTableDataChanged();
-            selectPayee(theActivePayee.getSelectedItem());
+            selectCash(theActiveCash.getSelectedItem());
         }
 
         /* Note changes */
@@ -222,14 +231,25 @@ public class MoneyWisePayeeTable
     }
 
     /**
-     * Build the payee type list for the item.
-     * @param pPayee the item
+     * Build the Cash type list for the item.
+     * @param pCash the item
      * @param pMenu the menu to build
      */
-    private void buildPayeeTypeMenu(final Payee pPayee,
-                                    final TethysScrollMenu<PayeeType> pMenu) {
+    private void buildCategoryMenu(final Cash pCash,
+                                   final TethysScrollMenu<CashCategory> pMenu) {
         /* Build the menu */
-        theActivePayee.buildPayeeTypeMenu(pMenu, pPayee);
+        theActiveCash.buildCategoryMenu(pMenu, pCash);
+    }
+
+    /**
+     * Build the currency list for the item.
+     * @param pCash the item
+     * @param pMenu the menu to build
+     */
+    private void buildCurrencyMenu(final Cash pCash,
+                                   final TethysScrollMenu<AssetCurrency> pMenu) {
+        /* Build the menu */
+        theActiveCash.buildCurrencyMenu(pMenu, pCash);
     }
 
     @Override
@@ -239,18 +259,18 @@ public class MoneyWisePayeeTable
             /* Make sure that we have finished editing */
             cancelEditing();
 
-            /* Create the new category */
-            final Payee myPayee = thePayees.addNewItem();
-            myPayee.setDefaults();
+            /* Create the new asset */
+            final Cash myCash = theCashs.addNewItem();
+            myCash.setDefaults(getUpdateSet());
 
             /* Set as new and adjust map */
-            myPayee.setNewVersion();
-            myPayee.adjustMapForItem();
+            myCash.setNewVersion();
+            myCash.adjustMapForItem();
             getUpdateSet().incrementVersion();
 
             /* Validate the new item and update panel */
-            myPayee.validate();
-            theActivePayee.setNewItem(myPayee);
+            myCash.validate();
+            theActiveCash.setNewItem(myCash);
 
             /* Lock the table */
             setEnabled(false);
@@ -258,10 +278,11 @@ public class MoneyWisePayeeTable
             /* Handle Exceptions */
         } catch (OceanusException e) {
             /* Build the error */
-            final OceanusException myError = new MoneyWiseDataException("Failed to create new payee", e);
+            final OceanusException myError = new MoneyWiseDataException("Failed to create new cash", e);
 
             /* Show the error */
             setError(myError);
         }
     }
 }
+

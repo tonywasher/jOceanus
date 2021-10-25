@@ -183,6 +183,7 @@ public class MoneyWiseTransTagTable
         /* Only action if we are not editing */
         if (!theActiveTag.isEditing()) {
             /* Handle the reWind */
+            setEnabled(true);
             getTable().fireTableDataChanged();
             selectTag(theActiveTag.getSelectedItem());
         }
@@ -198,6 +199,7 @@ public class MoneyWiseTransTagTable
         /* Only action if we are not editing */
         if (!theActiveTag.isEditing()) {
             /* handle the edit transition */
+            setEnabled(true);
             getTable().fireTableDataChanged();
             selectTag(theActiveTag.getSelectedItem());
         }
