@@ -213,15 +213,17 @@ public class TethysFXTableManager<C, R>
     }
 
     @Override
-    public void setFilter(final Predicate<R> pFilter) {
+    public TethysFXTableManager<C, R> setFilter(final Predicate<R> pFilter) {
         super.setFilter(pFilter);
         setTheItems();
+        return this;
     }
 
     @Override
-    public void setComparator(final Comparator<R> pComparator) {
+    public TethysFXTableManager<C, R> setComparator(final Comparator<R> pComparator) {
         super.setComparator(pComparator);
         setTheItems();
+        return this;
     }
 
     @Override

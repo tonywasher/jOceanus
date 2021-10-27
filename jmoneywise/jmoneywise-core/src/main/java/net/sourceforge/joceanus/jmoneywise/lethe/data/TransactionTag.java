@@ -20,6 +20,7 @@ import java.util.Iterator;
 
 import net.sourceforge.joceanus.jmetis.data.MetisDataDifference;
 import net.sourceforge.joceanus.jmetis.data.MetisDataFormatter;
+import net.sourceforge.joceanus.jmetis.data.MetisDataItem.MetisDataNamedItem;
 import net.sourceforge.joceanus.jmetis.data.MetisDataType;
 import net.sourceforge.joceanus.jmetis.field.MetisFieldSet;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisEncryptedData.MetisEncryptedString;
@@ -42,7 +43,7 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
  */
 public class TransactionTag
         extends EncryptedItem<MoneyWiseDataType>
-        implements Comparable<TransactionTag> {
+        implements MetisDataNamedItem, Comparable<TransactionTag> {
     /**
      * Object name.
      */

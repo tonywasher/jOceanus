@@ -1070,6 +1070,7 @@ public class TethysSwingTableCellFactory<C, R> {
             super(pColumn, pFactory.newScrollField(), pClazz);
             useDialogForEdit();
             getControl().setMenuConfigurator(c -> getColumn().getMenuConfigurator().accept(getActiveRow(), c));
+            getControl().getEventRegistrar().addEventListener(TethysUIEvent.EDITFOCUSLOST, e -> getEditor().cancelCellEditing());
         }
 
         @Override
@@ -1103,7 +1104,8 @@ public class TethysSwingTableCellFactory<C, R> {
             super(pColumn, pFactory.newListField());
             useDialogForEdit();
             getControl().setSelectables(() -> getColumn().getSelectables().apply(getActiveRow()));
-        }
+            getControl().getEventRegistrar().addEventListener(TethysUIEvent.EDITFOCUSLOST, e -> getEditor().cancelCellEditing());
+       }
 
         @Override
         public TethysSwingListButtonField<T> getControl() {

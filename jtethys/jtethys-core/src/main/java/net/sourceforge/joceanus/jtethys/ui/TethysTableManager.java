@@ -155,9 +155,11 @@ public abstract class TethysTableManager<C, R>
     /**
      * Set the edit-ability of the table.
      * @param pEditable true/false
+     * @return the table
      */
-    public void setEditable(final boolean pEditable) {
+    public TethysTableManager<C, R> setEditable(final boolean pEditable) {
         isEditable = pEditable;
+        return this;
     }
 
     /**
@@ -176,17 +178,21 @@ public abstract class TethysTableManager<C, R>
     /**
      * Set repaintRow on Commit.
      * @param pRePaint the flag
+     * @return the table
      */
-    public void setRepaintRowOnCommit(final boolean pRePaint) {
+    public TethysTableManager<C, R> setRepaintRowOnCommit(final boolean pRePaint) {
         doRePaintRowOnCommit = pRePaint;
+        return this;
     }
 
     /**
      * Set the error predicate.
      * @param pError the error predicate
+     * @return the table
      */
-    public void setError(final BiPredicate<C, R> pError) {
+    public TethysTableManager<C, R> setError(final BiPredicate<C, R> pError) {
         theError = pError;
+        return this;
     }
 
     /**
@@ -204,9 +210,11 @@ public abstract class TethysTableManager<C, R>
     /**
      * Set the changed predicate.
      * @param pChanged the changed predicate
+     * @return the table
      */
-    public void setChanged(final BiPredicate<C, R> pChanged) {
+    public TethysTableManager<C, R> setChanged(final BiPredicate<C, R> pChanged) {
         theChanged = pChanged;
+        return this;
     }
 
     /**
@@ -224,9 +232,11 @@ public abstract class TethysTableManager<C, R>
     /**
      * Set the disabled predicate.
      * @param pDisabled the disabled predicate
+     * @return the table
      */
-    public void setDisabled(final Predicate<R> pDisabled) {
+    public TethysTableManager<C, R> setDisabled(final Predicate<R> pDisabled) {
         theDisabled = pDisabled;
+        return this;
     }
 
     /**
@@ -242,9 +252,11 @@ public abstract class TethysTableManager<C, R>
     /**
      * Set the filter.
      * @param pFilter the filter
+     * @return the table
      */
-    public void setFilter(final Predicate<R> pFilter) {
+    public TethysTableManager<C, R> setFilter(final Predicate<R> pFilter) {
         theFilter = pFilter;
+        return this;
     }
 
     /**
@@ -258,9 +270,11 @@ public abstract class TethysTableManager<C, R>
     /**
      * Set the comparator.
      * @param pComparator the comparator
+     * @return the table
      */
-    public void setComparator(final Comparator<R> pComparator) {
+    public TethysTableManager<C, R> setComparator(final Comparator<R> pComparator) {
         theComparator = pComparator;
+        return this;
     }
 
     /**
@@ -274,9 +288,11 @@ public abstract class TethysTableManager<C, R>
     /**
      * Set the on-commit consumer.
      * @param pOnCommit the consumer
+     * @return the table
      */
-    public void setOnCommit(final TethysOnRowCommit<R> pOnCommit) {
+    public TethysTableManager<C, R> setOnCommit(final TethysOnRowCommit<R> pOnCommit) {
         theOnCommit = pOnCommit;
+        return this;
     }
 
     /**
@@ -295,13 +311,15 @@ public abstract class TethysTableManager<C, R>
     /**
      * Set the on-select consumer.
      * @param pOnSelect the consumer
+     * @return the table
      */
-    public void setOnSelect(final TethysOnRowSelect<R> pOnSelect) {
+    public TethysTableManager<C, R> setOnSelect(final TethysOnRowSelect<R> pOnSelect) {
         theOnSelect = pOnSelect;
+        return this;
     }
 
     /**
-     * process onCommit.
+     * process onSelect.
      * @param pRow the row
      */
     protected void processOnSelect(final R pRow) {
@@ -321,9 +339,11 @@ public abstract class TethysTableManager<C, R>
     /**
      * Set the on-celEditState consumer.
      * @param pOnCellEditState the consumer
+     * @return the table
      */
-    public void setOnCellEditState(final Consumer<Boolean> pOnCellEditState) {
+    public TethysTableManager<C, R> setOnCellEditState(final Consumer<Boolean> pOnCellEditState) {
         theOnCellEditState = pOnCellEditState;
+        return this;
     }
 
     /**
@@ -341,9 +361,11 @@ public abstract class TethysTableManager<C, R>
     /**
      * Set the on-commitError consumer.
      * @param pOnCommitError the consumer
+     * @return the table
      */
-    public void setOnCommitError(final Consumer<OceanusException> pOnCommitError) {
+    public TethysTableManager<C, R> setOnCommitError(final Consumer<OceanusException> pOnCommitError) {
         theOnCommitError = pOnCommitError;
+        return this;
     }
 
     /**
@@ -361,9 +383,11 @@ public abstract class TethysTableManager<C, R>
     /**
      * Set the on-validateError consumer.
      * @param pOnValidateError the consumer
+     * @return the tabke
      */
-    public void setOnValidateError(final Consumer<String> pOnValidateError) {
+    public TethysTableManager<C, R> setOnValidateError(final Consumer<String> pOnValidateError) {
         theOnValidateError = pOnValidateError;
+        return this;
     }
 
     /**

@@ -16,18 +16,13 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.atlas.ui;
 
-import java.awt.BorderLayout;
-import java.util.Iterator;
-import java.util.Objects;
+import java.util.List;
 
 import net.sourceforge.joceanus.jmetis.atlas.ui.MetisErrorPanel;
 import net.sourceforge.joceanus.jmetis.data.MetisDataDifference;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisLetheField;
 import net.sourceforge.joceanus.jmetis.lethe.field.swing.MetisSwingFieldManager;
 import net.sourceforge.joceanus.jmetis.profile.MetisProfile;
-import net.sourceforge.joceanus.jmetis.ui.MetisAction;
-import net.sourceforge.joceanus.jmetis.ui.MetisIcon;
-import net.sourceforge.joceanus.jmetis.viewer.MetisViewerEntry;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.DepositCategory;
@@ -35,110 +30,31 @@ import net.sourceforge.joceanus.jmoneywise.lethe.data.DepositCategory.DepositCat
 import net.sourceforge.joceanus.jmoneywise.lethe.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.DepositCategoryClass;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.DepositCategoryType;
-import net.sourceforge.joceanus.jmoneywise.lethe.ui.MoneyWiseUIResource;
 import net.sourceforge.joceanus.jmoneywise.lethe.ui.dialog.swing.DepositCategoryPanel;
 import net.sourceforge.joceanus.jmoneywise.lethe.views.MoneyWiseView;
-import net.sourceforge.joceanus.jprometheus.PrometheusDataException;
-import net.sourceforge.joceanus.jprometheus.lethe.data.DataItem;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataList.ListStyle;
 import net.sourceforge.joceanus.jprometheus.lethe.swing.PrometheusSwingToolkit;
 import net.sourceforge.joceanus.jprometheus.lethe.views.PrometheusDataEvent;
-import net.sourceforge.joceanus.jprometheus.lethe.views.UpdateEntry;
 import net.sourceforge.joceanus.jprometheus.lethe.views.UpdateSet;
 import net.sourceforge.joceanus.jtethys.OceanusException;
-import net.sourceforge.joceanus.jtethys.event.TethysEventManager;
-import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
-import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventProvider;
-import net.sourceforge.joceanus.jtethys.ui.TethysBorderPaneManager;
-import net.sourceforge.joceanus.jtethys.ui.TethysBoxPaneManager;
-import net.sourceforge.joceanus.jtethys.ui.TethysButton;
-import net.sourceforge.joceanus.jtethys.ui.TethysComponent;
-import net.sourceforge.joceanus.jtethys.ui.TethysIconButtonManager.TethysIconMapSet;
-import net.sourceforge.joceanus.jtethys.ui.TethysLabel;
-import net.sourceforge.joceanus.jtethys.ui.TethysNode;
-import net.sourceforge.joceanus.jtethys.ui.TethysScrollButtonManager;
 import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollMenu;
-import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollMenuItem;
-import net.sourceforge.joceanus.jtethys.ui.TethysTableManager.TethysOnCellCommit;
-import net.sourceforge.joceanus.jtethys.ui.TethysUIEvent;
-import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingEnableWrapper.TethysSwingEnablePanel;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingGuiFactory;
-import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingNode;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingTableManager;
 
 /**
  * MoneyWise DepositCategory Table.
  */
 public class MoneyWiseDepositCategoryTable
-        implements TethysEventProvider<PrometheusDataEvent>, TethysComponent {
-    /**
-     * Filter Prompt.
-     */
-    private static final String TITLE_FILTER = MoneyWiseUIResource.CATEGORY_PROMPT_FILTER.getValue();
-
-    /**
-     * Filter Parents Title.
-     */
-    private static final String FILTER_PARENTS = MoneyWiseUIResource.CATEGORY_FILTER_PARENT.getValue();
-    /**
-     * The view.
-     */
-    private final MoneyWiseView theView;
-
-    /**
-     * The Event Manager.
-     */
-    private final TethysEventManager<PrometheusDataEvent> theEventManager;
-
-    /**
-     * The UpdateSet associated with the table.
-     */
-    private final UpdateSet<MoneyWiseDataType> theUpdateSet;
-
-    /**
-     * The UpdateEntry.
-     */
-    private final UpdateEntry<DepositCategory, MoneyWiseDataType> theUpdateEntry;
-
-    /**
-     * The error panel.
-     */
-    private final MetisErrorPanel theError;
-
-    /**
-     * The panel.
-     */
-    private final TethysBorderPaneManager thePanel;
-
-    /**
-     * The filter panel.
-     */
-    private final TethysBoxPaneManager theFilterPanel;
-
-    /**
-     * The underlying table.
-     */
-    private final TethysSwingTableManager<MetisLetheField, DepositCategory> theTable;
-
+        extends MoneyWiseCategoryTable<DepositCategory, DepositCategoryType, DepositCategoryClass> {
     /**
      * The Category dialog.
      */
     private final DepositCategoryPanel theActiveCategory;
 
     /**
-     * The select button.
-     */
-    private final TethysScrollButtonManager<DepositCategory> theSelectButton;
-
-    /**
      * The edit list.
      */
     private DepositCategoryList theCategories;
-
-    /**
-     * Active parent.
-     */
-    private DepositCategory theParent;
 
     /**
      * Constructor.
@@ -150,179 +66,61 @@ public class MoneyWiseDepositCategoryTable
                                   final UpdateSet<MoneyWiseDataType> pUpdateSet,
                                   final MetisErrorPanel pError) {
         /* Store parameters */
-        theView = pView;
-        theError = pError;
+        super(pView, pUpdateSet, pError, MoneyWiseDataType.DEPOSITCATEGORY, DepositCategoryType.class);
 
         /* Access field manager */
-        MetisSwingFieldManager myFieldMgr = ((PrometheusSwingToolkit) theView.getToolkit()).getFieldManager();
+        MetisSwingFieldManager myFieldMgr = ((PrometheusSwingToolkit) pView.getToolkit()).getFieldManager();
 
-        /* Create the event manager */
-        theEventManager = new TethysEventManager<>();
-
-        /* Build the Update set */
-        theUpdateSet = pUpdateSet;
-        theUpdateEntry = theUpdateSet.registerType(MoneyWiseDataType.DEPOSITCATEGORY);
-
-        /* Create the panel */
+        /* Access Gui factory */
         final TethysSwingGuiFactory myGuiFactory = (TethysSwingGuiFactory) pView.getGuiFactory();
-        thePanel = myGuiFactory.newBorderPane();
-
-        /* Create the table */
-        theTable = myGuiFactory.newTable();
-        thePanel.setCentre(theTable);
-
-        /* Create new button */
-        final TethysButton myNewButton = myGuiFactory.newButton();
-        MetisIcon.configureNewIconButton(myNewButton);
-
-        /* Create the filter components */
-        final TethysLabel myPrompt = myGuiFactory.newLabel(TITLE_FILTER);
-        theSelectButton = myGuiFactory.newScrollButton();
-        theSelectButton.setValue(null, FILTER_PARENTS);
-
-        /* Create a filter panel */
-        theFilterPanel = myGuiFactory.newHBoxPane();
-        theFilterPanel.addSpacer();
-        theFilterPanel.addNode(myPrompt);
-        theFilterPanel.addNode(theSelectButton);
-        theFilterPanel.addSpacer();
-        theFilterPanel.addNode(myNewButton);
+        final TethysSwingTableManager<MetisLetheField, DepositCategory> myTable = getTable();
 
         /* Create a category panel */
-        theActiveCategory = new DepositCategoryPanel(myGuiFactory, myFieldMgr, theUpdateSet, theError);
-        TethysSwingEnablePanel myPanel = new TethysSwingEnablePanel();
-        myPanel.setLayout(new BorderLayout());
-        myPanel.add(TethysSwingNode.getComponent(theActiveCategory), BorderLayout.CENTER);
-        thePanel.setSouth(myPanel);
+        theActiveCategory = new DepositCategoryPanel(myGuiFactory, myFieldMgr, pUpdateSet, pError);
+        declareItemPanel(theActiveCategory);
 
-        /* Set disabled indication and filter */
-        theTable.setOnCommitError(this::setError);
-        theTable.setOnValidateError(this::showValidateError);
-        theTable.setOnCellEditState(this::handleEditState);
-        theTable.setDisabled(DepositCategory::isDisabled);
-        theTable.setChanged(this::isFieldChanged);
-        theTable.setError(this::isFieldInError);
-        theTable.setComparator(DepositCategory::compareTo);
-        theTable.setFilter(this::isFiltered);
-        theTable.setEditable(true);
-        theTable.setOnSelect(theActiveCategory::setItem);
-
-        /* Create the short name column */
-        theTable.declareStringColumn(DepositCategory.FIELD_SUBCAT)
-                .setValidator(this::isValidName)
-                .setCellValueFactory(this::getShortName)
-                .setEditable(true)
-                .setOnCommit((r, v) -> updateField(DepositCategory::setSubCategoryName, r, v));
-
-        /* Create the full name column */
-        theTable.declareStringColumn(DepositCategory.FIELD_NAME)
-                .setCellValueFactory(DepositCategory::getName)
-                .setEditable(false);
-
-        /* Create the category type column */
-        theTable.declareScrollColumn(DepositCategory.FIELD_CATTYPE, DepositCategoryType.class)
-                .setMenuConfigurator(this::buildCategoryTypeMenu)
-                .setCellValueFactory(DepositCategory::getCategoryType)
-                .setEditable(true)
-                .setOnCommit((r, v) -> updateField(DepositCategory::setCategoryType, r, v));
-
-        /* Create the description column */
-        theTable.declareStringColumn(DepositCategory.FIELD_DESC)
-                .setValidator(this::isValidDesc)
-                .setCellValueFactory(DepositCategory::getDesc)
-                .setEditable(true)
-                .setOnCommit((r, v) -> updateField(DepositCategory::setDescription, r, v));
-
-        /* Create the Active column */
-        final TethysIconMapSet<MetisAction> myActionMapSet = MetisIcon.configureStatusIconButton();
-        theTable.declareIconColumn(DepositCategory.FIELD_TOUCH, MetisAction.class)
-                .setIconMapSet(r -> myActionMapSet)
-                .setCellValueFactory(r -> r.isActive() ? MetisAction.ACTIVE : MetisAction.DELETE)
-                .setName(MoneyWiseUIResource.STATICDATA_ACTIVE.getValue())
-                .setEditable(true)
-                .setCellEditable(r -> !r.isActive())
-                .setOnCommit((r, v) -> updateField(this::deleteRow, r, v));
+        /* Set table configuration */
+        myTable.setOnSelect(theActiveCategory::setItem);
 
         /* Add listeners */
-        myNewButton.getEventRegistrar().addEventListener(e -> addNewItem());
-        theUpdateSet.getEventRegistrar().addEventListener(e -> handleRewind());
         theActiveCategory.getEventRegistrar().addEventListener(PrometheusDataEvent.ADJUSTVISIBILITY, e -> handlePanelState());
-        theActiveCategory.getEventRegistrar().addEventListener(PrometheusDataEvent.GOTOWINDOW, theEventManager::cascadeEvent);
-        theSelectButton.getEventRegistrar().addEventListener(TethysUIEvent.NEWVALUE, e -> handleParentSelection());
-        theSelectButton.setMenuConfigurator(e -> buildSelectMenu());
     }
 
     @Override
-    public Integer getId() {
-        return thePanel.getId();
-    }
-
-    @Override
-    public TethysEventRegistrar<PrometheusDataEvent> getEventRegistrar() {
-        return theEventManager.getEventRegistrar();
-    }
-
-    @Override
-    public TethysNode getNode() {
-        return thePanel.getNode();
-    }
-
-    /**
-     * Are we in the middle of an item edit?
-     * @return true/false
-     */
     protected boolean isItemEditing() {
         return theActiveCategory.isEditing();
     }
 
     @Override
-    public void setEnabled(final boolean pEnabled) {
-        thePanel.setEnabled(pEnabled);
+    protected List<DepositCategory> getCategories() {
+        return theCategories == null ? null : theCategories.getUnderlyingList();
     }
 
     @Override
-    public void setVisible(final boolean pVisible) {
-        thePanel.setVisible(pVisible);
+    protected boolean isChildCategory(final DepositCategoryType pCategoryType) {
+        return !pCategoryType.getDepositClass().isParentCategory();
     }
 
-    /**
-     * Obtain the filter panel.
-     * @return the filter panel
-     */
-    protected TethysBoxPaneManager getFilterPanel() {
-        return theFilterPanel;
-    }
-
-    /**
-     * Obtain the short name.
-     * @return the name
-     */
-    private String getShortName(final DepositCategory pCategory) {
-        final String myName = pCategory.getSubCategory();
-        return myName == null ? pCategory.getName() : myName;
-    }
-
-    /**
-     * Refresh data.
-     */
-    void refreshData() throws OceanusException {
+    @Override
+    protected void refreshData() throws OceanusException {
         /* Obtain the active profile */
-        MetisProfile myTask = theView.getActiveTask();
+        MetisProfile myTask = getView().getActiveTask();
         myTask = myTask.startTask("DepositCategories");
 
         /* Access list */
-        final MoneyWiseData myData = theView.getData();
+        final MoneyWiseData myData = getView().getData();
         final DepositCategoryList myBase = myData.getDataList(DepositCategoryList.class);
         theCategories = (DepositCategoryList) myBase.deriveList(ListStyle.EDIT);
         theCategories.mapData();
-        theTable.setItems(theCategories.getUnderlyingList());
-        theUpdateEntry.setDataList(theCategories);
+        getTable().setItems(theCategories.getUnderlyingList());
+        getUpdateEntry().setDataList(theCategories);
 
         /* If we have a parent */
-        if (theParent != null) {
+        DepositCategory myParent = getParent();
+        if (myParent != null) {
             /* Update the parent via the edit list */
-            theParent = theCategories.findItemById(theParent.getId());
-            theSelectButton.setValue(theParent);
+            myParent = theCategories.findItemById(myParent.getId());
+            updateParent(myParent);
         }
 
         /* Notify panel of refresh */
@@ -332,48 +130,10 @@ public class MoneyWiseDepositCategoryTable
         myTask.end();
     }
 
-    /**
-     * Cancel editing.
-     */
-    void cancelEditing() {
-        theTable.cancelEditing();
+    @Override
+    protected void cancelEditing() {
+        super.cancelEditing();
         theActiveCategory.setEditable(false);
-    }
-
-    /**
-     * Does the panel have updates?
-     * @return true/false
-     */
-    public boolean hasUpdates() {
-        return theUpdateSet.hasUpdates();
-    }
-
-    /**
-     * Does the panel have a session?
-     * @return true/false
-     */
-    public boolean hasSession() {
-        return hasUpdates() || isItemEditing();
-    }
-
-    /**
-     * Does the panel have errors?
-     * @return true/false
-     */
-    public boolean hasErrors() {
-        return theUpdateSet.hasErrors();
-    }
-
-    /**
-     * Determine Focus.
-     * @param pEntry the master data entry
-     */
-    void determineFocus(final MetisViewerEntry pEntry) {
-        /* Request the focus */
-        theTable.requestFocus();
-
-        /* Set the required focus */
-        pEntry.setFocus(theUpdateEntry.getName());
     }
 
     /**
@@ -386,7 +146,7 @@ public class MoneyWiseDepositCategoryTable
         if (!MetisDataDifference.isEqual(myCurrent, pCategory)) {
             /* Ensure the correct parent is selected */
             DepositCategory myParent = pCategory.getParentCategory();
-            if (!MetisDataDifference.isEqual(theParent, myParent)) {
+            if (!MetisDataDifference.isEqual(getParent(), myParent)) {
                 if (myParent != null) {
                     myParent = theCategories.findItemById(myParent.getId());
                 }
@@ -394,58 +154,19 @@ public class MoneyWiseDepositCategoryTable
             }
 
             /* Select the row and ensure that it is visible */
-            theTable.selectRowWithScroll(pCategory);
+            getTable().selectRowWithScroll(pCategory);
             theActiveCategory.setItem(pCategory);
         }
     }
 
-    /**
-     * Select parent.
-     * @param pParent the parent category
-     */
-    private void selectParent(final DepositCategory pParent) {
-        /* If the parent is being changed */
-        if (!MetisDataDifference.isEqual(pParent, theParent)) {
-            /* Store new value */
-            theParent = pParent;
-
-            /* Update select button */
-            if (pParent == null) {
-                theSelectButton.setValue(null, FILTER_PARENTS);
-            } else {
-                theSelectButton.setValue(pParent);
-            }
-
-            /* Notify table of change */
-            theTable.fireTableDataChanged();
-        }
-    }
-
-    /**
-     * Handle parent selection.
-     */
-    private void handleParentSelection() {
-        selectParent(theSelectButton.getValue());
-    }
-
-    /**
-     * Delete row.
-     * @param pRow the row
-     * @param pValue the value (ignored)
-     */
-    private void deleteRow(final DepositCategory pRow,
-                           final Object pValue) {
-        pRow.setDeleted(true);
-    }
-
-    /**
-     * Handle updateSet rewind.
-     */
-    private void handleRewind() {
+    @Override
+    protected void handleRewind() {
         /* Only action if we are not editing */
         if (!theActiveCategory.isEditing()) {
             /* Handle the reWind */
-            theTable.fireTableDataChanged();
+            setEnabled(true);
+            getTable().fireTableDataChanged();
+            selectCategory(theActiveCategory.getSelectedItem());
         }
 
         /* Adjust for changes */
@@ -459,7 +180,8 @@ public class MoneyWiseDepositCategoryTable
         /* Only action if we are not editing */
         if (!theActiveCategory.isEditing()) {
             /* handle the edit transition */
-            theTable.fireTableDataChanged();
+            setEnabled(true);
+            getTable().fireTableDataChanged();
             selectCategory(theActiveCategory.getSelectedItem());
         }
 
@@ -467,77 +189,15 @@ public class MoneyWiseDepositCategoryTable
         notifyChanges();
     }
 
-    /**
-     * Build Select menu.
-     */
-    private void buildSelectMenu() {
-        /* Clear the menu */
-        final TethysScrollMenu<DepositCategory> myCategoryMenu = theSelectButton.getMenu();
-        myCategoryMenu.removeAllItems();
-
-        /* Cope if we have no categories */
-        if (theCategories == null) {
-            return;
-        }
-
-        /* Record active item */
-        TethysScrollMenuItem<DepositCategory> myActive = null;
-
-        /* Create the no filter MenuItem and add it to the popUp */
-        TethysScrollMenuItem<DepositCategory> myItem = myCategoryMenu.addItem(null, FILTER_PARENTS);
-
-        /* If this is the active parent */
-        if (theParent == null) {
-            /* Record it */
-            myActive = myItem;
-        }
-
-        /* Loop through the available category values */
-        final Iterator<DepositCategory> myIterator = theCategories.iterator();
-        while (myIterator.hasNext()) {
-            final DepositCategory myCurr = myIterator.next();
-            final DepositCategoryType myType = myCurr.getCategoryType();
-
-            /* Ignore deleted */
-            boolean bIgnore = myCurr.isDeleted();
-
-            /* Ignore category if it is not a parent */
-            bIgnore |= !myType.getDepositClass().isParentCategory();
-            if (bIgnore) {
-                continue;
-            }
-
-            /* Create a new MenuItem and add it to the popUp */
-            myItem = myCategoryMenu.addItem(myCurr);
-
-            /* If this is the active parent */
-            if (myCurr.equals(theParent)) {
-                /* Record it */
-                myActive = myItem;
-            }
-        }
-
-        /* Ensure active item is visible */
-        if (myActive != null) {
-            myActive.scrollToItem();
-        }
-    }
-
-    /**
-     * Build the category type list for the item.
-     * @param pCategory the item
-     * @param pMenu the menu to build
-     */
-    private void buildCategoryTypeMenu(final DepositCategory pCategory,
-                                       final TethysScrollMenu<DepositCategoryType> pMenu) {
+    @Override
+    protected void buildCategoryTypeMenu(final DepositCategory pCategory,
+                                         final TethysScrollMenu<DepositCategoryType> pMenu) {
         /* Build the menu */
         theActiveCategory.buildCategoryTypeMenu(pMenu, pCategory);
     }
 
-   /**
-     * New item.
-     */
-    private void addNewItem() {
+   @Override
+    protected void addNewItem() {
         /* Protect against Exceptions */
         try {
             /* Make sure that we have finished editing */
@@ -545,12 +205,12 @@ public class MoneyWiseDepositCategoryTable
 
             /* Create the new category */
             final DepositCategory myCategory = theCategories.addNewItem();
-            myCategory.setDefaults(theParent);
+            myCategory.setDefaults(getParent());
 
             /* Set as new and adjust map */
             myCategory.setNewVersion();
             myCategory.adjustMapForItem();
-            theUpdateSet.incrementVersion();
+            getUpdateSet().incrementVersion();
 
             /* Validate the new item and update panel */
             myCategory.validate();
@@ -569,172 +229,11 @@ public class MoneyWiseDepositCategoryTable
         }
     }
 
-    /**
-     * Update value.
-     * @param <V> the value type
-     * @param pOnCommit the update function
-     * @param pRow the row to update
-     * @param pValue the value
-     * @throws OceanusException on error
-     */
-    private <V> void updateField(final TethysOnCellCommit<DepositCategory, V> pOnCommit,
-                                 final DepositCategory pRow,
-                                 final V pValue) throws OceanusException {
-        /* Push history */
-        pRow.pushHistory();
-
-        /* Protect against Exceptions */
-        try {
-            /* Set the item value */
-            pOnCommit.commitCell(pRow, pValue);
-
-            /* Handle Exceptions */
-        } catch (OceanusException e) {
-            /* Reset values */
-            pRow.popHistory();
-
-            /* Throw the error */
-            throw new PrometheusDataException("Failed to update field", e);
-        }
-
-        /* Check for changes */
-        if (pRow.checkForHistory()) {
-            /* Increment data version */
-            theUpdateSet.incrementVersion();
-
-            /* Update components to reflect changes */
-            theTable.fireTableDataChanged();
-            notifyChanges();
-        }
-    }
-
-    /**
-     * Set the error.
-     * @param pError the error
-     */
-    protected void setError(final OceanusException pError) {
-        theError.addError(pError);
-    }
-
-    /**
-     * Notify that there have been changes to this list.
-     */
-    protected void notifyChanges() {
-        /* Adjust enable of the table */
-        theTable.setEnabled(!theActiveCategory.isEditing());
-
-        /* Notify listeners */
-        theEventManager.fireEvent(PrometheusDataEvent.ADJUSTVISIBILITY);
-    }
-
-    /**
-     * is field in error?
-     *
-     * @param pField the field
-     * @param pItem  the item
-     * @return true/false
-     */
-    private boolean isFieldInError(final MetisLetheField pField,
-                                   final DepositCategory pItem) {
-        return pItem.getFieldErrors(pField) != null;
-    }
-
-    /**
-     * is field changed?
-     *
-     * @param pField the field
-     * @param pItem  the item
-     * @return true/false
-     */
-    private boolean isFieldChanged(final MetisLetheField pField,
-                                   final DepositCategory pItem) {
-        return pItem.fieldChanged(pField).isDifferent();
-    }
-
-    /**
-     * isFiltered?
-     * @param pRow the row
-     * @return true/false
-     */
-    private boolean isFiltered(final DepositCategory pRow) {
-        return theParent == null
+    @Override
+    protected boolean isFiltered(final DepositCategory pRow) {
+        final DepositCategory myParent = getParent();
+        return super.isFiltered(pRow) && (myParent == null
                 ? pRow.isCategoryClass(DepositCategoryClass.PARENT)
-                : theParent.equals(pRow.getParentCategory());
-    }
-
-    /**
-     * is Valid name?
-     * @param pNewName the new name
-     * @param pRow the row
-     * @return error message or null
-     */
-    private String isValidName(final String pNewName,
-                               final DepositCategory pRow) {
-        /* Reject null name */
-        if (pNewName == null) {
-            return "Null Name not allowed";
-        }
-
-        /* Reject invalid name */
-        if (!DataItem.validString(pNewName, ":")) {
-            return "Invalid characters in name";
-        }
-
-        /* Reject name that is too long */
-        if (DataItem.byteLength(pNewName) > DepositCategory.NAMELEN) {
-            return "Name too long";
-        }
-
-        /* Loop through the existing values */
-        for (DepositCategory myValue : theCategories.getUnderlyingList()) {
-            /* Ignore self, deleted and non-siblings */
-            if (myValue.isDeleted()
-                || myValue.equals(pRow)
-                ||!Objects.equals(myValue.getParentCategory(), theParent)) {
-                continue;
-            }
-
-            /* Check for duplicate */
-            if (pNewName.equals(myValue.getName())) {
-                return "Duplicate name";
-            }
-        }
-
-        /* Valid name */
-        return null;
-    }
-
-    /**
-     * is Valid description?
-     * @param pNewDesc the new description
-     * @param pRow the row
-     * @return error message or null
-     */
-    private String isValidDesc(final String pNewDesc,
-                               final DepositCategory pRow) {
-        /* Reject description that is too long */
-        if (pNewDesc != null
-                && DataItem.byteLength(pNewDesc) > DepositCategory.DESCLEN) {
-            return "Description too long";
-        }
-
-        /* Valid description */
-        return null;
-    }
-
-    /**
-     * Show validation error TODO use panel.
-     * @param pError the error message
-     */
-    private void showValidateError(final String pError) {
-        System.out.println(Objects.requireNonNullElse(pError, "Error cleared"));
-    }
-
-    /**
-     * Check edit state.
-     * @param pState the new state
-     */
-    private void handleEditState(final Boolean pState) {
-        notifyChanges();
+                : myParent.equals(pRow.getParentCategory()));
     }
 }
