@@ -104,7 +104,7 @@ public class MoneyWiseLoanTable
                 .setCellValueFactory(Loan::getCategory)
                 .setEditable(true)
                 .setCellEditable(r -> !r.isActive())
-                .setOnCommit((r, v) -> updateField(Loan::setLoanCategory, r, v));
+                .setOnCommit((r, v) -> updateField(Loan::setCategory, r, v));
 
         /* Create the description column */
         myTable.declareStringColumn(Loan.FIELD_DESC)

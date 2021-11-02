@@ -97,12 +97,12 @@ public class MoneyWisePayeeTable
                .setOnCommit((r, v) -> updateField(Payee::setName, r, v));
 
         /* Create the payee type column */
-        myTable.declareScrollColumn(Payee.FIELD_PAYEETYPE, PayeeType.class)
+        myTable.declareScrollColumn(Payee.FIELD_CATEGORY, PayeeType.class)
                .setMenuConfigurator(this::buildPayeeTypeMenu)
-               .setCellValueFactory(Payee::getPayeeType)
+               .setCellValueFactory(Payee::getCategory)
                .setEditable(true)
                .setCellEditable(r -> !r.isActive())
-               .setOnCommit((r, v) -> updateField(Payee::setPayeeType, r, v));
+               .setOnCommit((r, v) -> updateField(Payee::setCategory, r, v));
 
         /* Create the description column */
         myTable.declareStringColumn(Payee.FIELD_DESC)

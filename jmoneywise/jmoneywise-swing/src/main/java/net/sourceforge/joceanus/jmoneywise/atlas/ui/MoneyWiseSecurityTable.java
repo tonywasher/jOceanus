@@ -101,12 +101,12 @@ public class MoneyWiseSecurityTable
                 .setOnCommit((r, v) -> updateField(Security::setName, r, v));
 
         /* Create the portfolio type column */
-        myTable.declareScrollColumn(Security.FIELD_SECTYPE, SecurityType.class)
+        myTable.declareScrollColumn(Security.FIELD_CATEGORY, SecurityType.class)
                 .setMenuConfigurator(this::buildSecurityTypeMenu)
-                .setCellValueFactory(Security::getSecurityType)
+                .setCellValueFactory(Security::getCategory)
                 .setEditable(true)
                 .setCellEditable(r -> !r.isActive())
-                .setOnCommit((r, v) -> updateField(Security::setSecurityType, r, v));
+                .setOnCommit((r, v) -> updateField(Security::setCategory, r, v));
 
         /* Create the description column */
         myTable.declareStringColumn(Security.FIELD_DESC)

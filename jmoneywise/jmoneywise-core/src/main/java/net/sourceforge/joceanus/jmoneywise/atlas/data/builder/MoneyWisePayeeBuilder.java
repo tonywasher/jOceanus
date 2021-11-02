@@ -86,7 +86,7 @@ public class MoneyWisePayeeBuilder {
         /* Create the payee */
         final Payee myPayee = theDataSet.getPayees().addNewItem();
         myPayee.setName(theName);
-        myPayee.setPayeeType(theType);
+        myPayee.setCategory(theType);
         myPayee.validate();
 
         /* Reset values */

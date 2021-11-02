@@ -49,7 +49,7 @@ public final class TransactionValidator {
 
         /* Reject pensions portfolio */
         if (pAccount instanceof Portfolio
-            && ((Portfolio) pAccount).getPortfolioTypeClass().holdsPensions()) {
+            && ((Portfolio) pAccount).getCategoryClass().holdsPensions()) {
             return false;
         }
 
@@ -87,7 +87,7 @@ public final class TransactionValidator {
             case PENSIONCONTRIB:
                 /* Pension contribution must be to a Pension holding or to a SIPP */
                 return (pAccount instanceof SecurityHolding
-                        && ((SecurityHolding) pAccount).getSecurity().getSecurityTypeClass().isPension())
+                        && ((SecurityHolding) pAccount).getSecurity().getCategoryClass().isPension())
                        || (pAccount instanceof Portfolio
                            && ((Portfolio) pAccount).isPortfolioClass(PortfolioTypeClass.SIPP));
 
@@ -266,7 +266,7 @@ public final class TransactionValidator {
 
         /* Reject pensions portfolio */
         if (pPartner instanceof Portfolio
-            && ((Portfolio) pPartner).getPortfolioTypeClass().holdsPensions()) {
+            && ((Portfolio) pPartner).getCategoryClass().holdsPensions()) {
             return false;
         }
 
@@ -300,12 +300,12 @@ public final class TransactionValidator {
             case GROSSINCOME:
                 /* Taxed Income must have a Payee that can provide income */
                 return pPartner instanceof Payee
-                       && ((Payee) pPartner).getPayeeTypeClass().canProvideTaxedIncome();
+                       && ((Payee) pPartner).getCategoryClass().canProvideTaxedIncome();
 
             case PENSIONCONTRIB:
                 /* Pension Contribution must be a payee that can parent */
                 return pPartner instanceof Payee
-                       && ((Payee) pPartner).getPayeeTypeClass().canContribPension();
+                       && ((Payee) pPartner).getCategoryClass().canContribPension();
 
             case OTHERINCOME:
             case RECOVEREDEXPENSES:
@@ -398,13 +398,13 @@ public final class TransactionValidator {
         final Security mySecurity = pHolding.getSecurity();
 
         /* If the portfolio can hold pensions */
-        if (myPortfolio.getPortfolioTypeClass().holdsPensions()) {
+        if (myPortfolio.getCategoryClass().holdsPensions()) {
             /* Can only hold pensions */
-            return mySecurity.getSecurityTypeClass().isPension();
+            return mySecurity.getCategoryClass().isPension();
         }
 
         /* cannot be a pension */
-        return !mySecurity.getSecurityTypeClass().isPension();
+        return !mySecurity.getCategoryClass().isPension();
     }
 
     /**
@@ -453,7 +453,7 @@ public final class TransactionValidator {
         }
 
         /* Security types must be the same */
-        return MetisDataDifference.isEqual(myAccount.getSecurity().getSecurityType(), myPartner.getSecurity().getSecurityType());
+        return MetisDataDifference.isEqual(myAccount.getSecurity().getCategory(), myPartner.getSecurity().getCategory());
     }
 
     /**

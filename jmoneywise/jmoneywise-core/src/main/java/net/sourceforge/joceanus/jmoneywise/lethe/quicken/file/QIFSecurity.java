@@ -71,7 +71,7 @@ public class QIFSecurity
         /* Store data */
         theName = pSecurity.getName();
         theSymbol = pSecurity.getSymbol();
-        theClass = pSecurity.getSecurityTypeClass();
+        theClass = pSecurity.getCategoryClass();
 
         /* Build lines */
         addLine(new QIFSecurityNameLine(theName));

@@ -743,7 +743,7 @@ public class LoanTable
                     pItem.setDescription((String) pValue);
                     break;
                 case COLUMN_CATEGORY:
-                    pItem.setLoanCategory((LoanCategory) pValue);
+                    pItem.setCategory((LoanCategory) pValue);
                     pItem.autoCorrect(theUpdateSet);
                     break;
                 case COLUMN_PARENT:

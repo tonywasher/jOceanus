@@ -47,7 +47,7 @@ import net.sourceforge.joceanus.jtethys.decimal.TethysRatio;
  * The Account Bucket class.
  * @param <T> the account data type
  */
-public abstract class AccountBucket<T extends AssetBase<T>>
+public abstract class AccountBucket<T extends AssetBase<T, ?>>
         implements MetisFieldTableItem {
     /**
      * Default currency.
@@ -785,7 +785,7 @@ public abstract class AccountBucket<T extends AssetBase<T>>
      * @param <B> the account bucket data type
      * @param <T> the account data type
      */
-    public abstract static class AccountBucketList<B extends AccountBucket<T>, T extends AssetBase<T>>
+    public abstract static class AccountBucketList<B extends AccountBucket<T>, T extends AssetBase<T, ?>>
             implements MetisFieldItem, MetisDataList<B> {
         /**
          * Local Report fields.

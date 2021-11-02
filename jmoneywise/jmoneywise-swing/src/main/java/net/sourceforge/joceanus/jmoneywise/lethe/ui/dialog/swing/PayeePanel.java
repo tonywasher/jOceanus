@@ -103,7 +103,7 @@ public class PayeePanel
         /* Assign the fields to the panel */
         myPanel.addField(Payee.FIELD_NAME, MetisDataType.STRING, myName);
         myPanel.addField(Payee.FIELD_DESC, MetisDataType.STRING, myDesc);
-        myPanel.addField(Payee.FIELD_PAYEETYPE, PayeeType.class, myTypeButton);
+        myPanel.addField(Payee.FIELD_CATEGORY, PayeeType.class, myTypeButton);
         myPanel.addField(Payee.FIELD_CLOSED, Boolean.class, myClosedButton);
 
         /* Layout the panel */
@@ -224,9 +224,9 @@ public class PayeePanel
         myFieldSet.setVisibility(PayeeInfoSet.getFieldForClass(AccountInfoClass.NOTES), bShowNotes);
 
         /* Payee type cannot be changed if the item is singular, or if its relevant */
-        final PayeeTypeClass myClass = myPayee.getPayeeTypeClass();
+        final PayeeTypeClass myClass = myPayee.getCategoryClass();
         final boolean bIsSingular = myClass.isSingular();
-        myFieldSet.setEditable(Payee.FIELD_PAYEETYPE, isEditable && !bIsSingular && !bIsRelevant);
+        myFieldSet.setEditable(Payee.FIELD_CATEGORY, isEditable && !bIsSingular && !bIsRelevant);
     }
 
     @Override
@@ -242,9 +242,9 @@ public class PayeePanel
         } else if (myField.equals(Payee.FIELD_DESC)) {
             /* Update the Description */
             myPayee.setDescription(pUpdate.getString());
-        } else if (myField.equals(Payee.FIELD_PAYEETYPE)) {
+        } else if (myField.equals(Payee.FIELD_CATEGORY)) {
             /* Update the Payee Type */
-            myPayee.setPayeeType(pUpdate.getValue(PayeeType.class));
+            myPayee.setCategory(pUpdate.getValue(PayeeType.class));
         } else if (myField.equals(Payee.FIELD_CLOSED)) {
             /* Update the Closed indication */
             myPayee.setClosed(pUpdate.getBoolean());
@@ -285,7 +285,7 @@ public class PayeePanel
     protected void declareGoToItems(final boolean pUpdates) {
         if (!pUpdates) {
             final Payee myItem = getItem();
-            final PayeeType myType = myItem.getPayeeType();
+            final PayeeType myType = myItem.getCategory();
             declareGoToItem(myType);
         }
     }
@@ -301,7 +301,7 @@ public class PayeePanel
         pMenu.removeAllItems();
 
         /* Record active item */
-        final PayeeType myCurr = pPayee.getPayeeType();
+        final PayeeType myCurr = pPayee.getCategory();
         final PayeeList myList = pPayee.getList();
         TethysScrollMenuItem<PayeeType> myActive = null;
 

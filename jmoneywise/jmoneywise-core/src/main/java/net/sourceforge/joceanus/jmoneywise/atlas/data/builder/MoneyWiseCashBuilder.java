@@ -159,7 +159,7 @@ public class MoneyWiseCashBuilder {
         /* Create the cash */
         final Cash myCash = theDataSet.getCash().addNewItem();
         myCash.setName(theName);
-        myCash.setCashCategory(theCategory);
+        myCash.setCategory(theCategory);
         myCash.setAssetCurrency(theCurrency);
         myCash.setOpeningBalance(theOpeningBalance);
         myCash.setAutoExpense(theAutoExpense);

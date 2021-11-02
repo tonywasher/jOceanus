@@ -477,7 +477,7 @@ public class SecurityPrice
             addError(ERROR_MISSING, FIELD_SECURITY);
 
             /* The security must not be an option */
-        } else if (mySecurity.getSecurityTypeClass().isOption()) {
+        } else if (mySecurity.getCategoryClass().isOption()) {
             addError("Options are priced by the underlying stock", FIELD_SECURITY);
         }
 
@@ -874,7 +874,7 @@ public class SecurityPrice
          * @param pDate the date
          * @return the latest price for the date.
          */
-        public TethysPrice getPriceForDate(final AssetBase<?> pSecurity,
+        public TethysPrice getPriceForDate(final AssetBase<?, ?> pSecurity,
                                            final TethysDate pDate) {
             /* Access as security */
             final Security mySecurity = Security.class.cast(pSecurity);

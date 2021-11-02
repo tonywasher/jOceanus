@@ -37,6 +37,7 @@ import net.sourceforge.joceanus.jmoneywise.MoneyWiseLogicException;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.PayeeInfo.PayeeInfoList;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.AccountInfoClass;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.AccountInfoType.AccountInfoTypeList;
+import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.AssetCurrency;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.PayeeType;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.PayeeType.PayeeTypeList;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.PayeeTypeClass;
@@ -53,7 +54,7 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
  * Payee class.
  */
 public class Payee
-        extends AssetBase<Payee>
+        extends AssetBase<Payee, PayeeType>
         implements InfoSetItem<MoneyWiseDataType> {
     /**
      * Object name.
@@ -69,11 +70,6 @@ public class Payee
      * Local Report fields.
      */
     private static final MetisFields FIELD_DEFS = new MetisFields(OBJECT_NAME, AssetBase.FIELD_DEFS);
-
-    /**
-     * PayeeType Field Id.
-     */
-    public static final MetisLetheField FIELD_PAYEETYPE = FIELD_DEFS.declareComparisonValueField(MoneyWiseDataType.PAYEETYPE.getItemName(), MetisDataType.LINK);
 
     /**
      * PayeeInfoSet field Id.
@@ -143,14 +139,6 @@ public class Payee
         /* Initialise the item */
         super(pList, pValues);
 
-        /* Store the PayeeType */
-        final Object myValue = pValues.getValue(FIELD_PAYEETYPE);
-        if (myValue instanceof Integer) {
-            setValueType((Integer) myValue);
-        } else if (myValue instanceof String) {
-            setValueType((String) myValue);
-        }
-
         /* Create the InfoSet */
         theInfoSet = new PayeeInfoSet(this, pList.getActInfoTypes(), pList.getPayeeInfo());
         hasInfoSet = true;
@@ -178,7 +166,7 @@ public class Payee
     @Override
     public boolean includeXmlField(final MetisLetheField pField) {
         /* Determine whether fields should be included */
-        if (FIELD_PAYEETYPE.equals(pField)) {
+        if (FIELD_CATEGORY.equals(pField)) {
             return true;
         }
 
@@ -291,42 +279,39 @@ public class Payee
                           : null;
     }
 
-    /**
-     * Obtain Payee Type.
-     * @return the type
-     */
-    public PayeeType getPayeeType() {
-        return getPayeeType(getValueSet());
+    @Override
+    public PayeeType getCategory() {
+        return getCategory(getValueSet());
     }
 
     /**
-     * Obtain PayeeTypeId.
+     * Obtain categoryId.
      * @return the categoryTypeId
      */
-    public Integer getPayeeTypeId() {
-        final PayeeType myType = getPayeeType();
+    public Integer getCategoryId() {
+        final PayeeType myType = getCategory();
         return (myType == null)
                                 ? null
                                 : myType.getId();
     }
 
     /**
-     * Obtain PayeeTypeName.
-     * @return the payeeTypeName
+     * Obtain categoryName.
+     * @return the categoryName
      */
-    public String getPayeeTypeName() {
-        final PayeeType myType = getPayeeType();
+    public String getCategoryName() {
+        final PayeeType myType = getCategory();
         return (myType == null)
                                 ? null
                                 : myType.getName();
     }
 
     /**
-     * Obtain PayeeTypeClass.
-     * @return the payeeTypeClass
+     * Obtain categoryClass.
+     * @return the categoryClass
      */
-    public PayeeTypeClass getPayeeTypeClass() {
-        final PayeeType myType = getPayeeType();
+    public PayeeTypeClass getCategoryClass() {
+        final PayeeType myType = getCategory();
         return (myType == null)
                                 ? null
                                 : myType.getPayeeClass();
@@ -337,32 +322,8 @@ public class Payee
      * @param pValueSet the valueSet
      * @return the PayeeType
      */
-    public static PayeeType getPayeeType(final MetisValueSet pValueSet) {
-        return pValueSet.getValue(FIELD_PAYEETYPE, PayeeType.class);
-    }
-
-    /**
-     * Set payee type value.
-     * @param pValue the value
-     */
-    private void setValueType(final PayeeType pValue) {
-        getValueSet().setValue(FIELD_PAYEETYPE, pValue);
-    }
-
-    /**
-     * Set payee type id.
-     * @param pValue the value
-     */
-    private void setValueType(final Integer pValue) {
-        getValueSet().setValue(FIELD_PAYEETYPE, pValue);
-    }
-
-    /**
-     * Set payee type name.
-     * @param pValue the value
-     */
-    private void setValueType(final String pValue) {
-        getValueSet().setValue(FIELD_PAYEETYPE, pValue);
+    public static PayeeType getCategory(final MetisValueSet pValueSet) {
+        return pValueSet.getValue(FIELD_CATEGORY, PayeeType.class);
     }
 
     @Override
@@ -492,7 +453,7 @@ public class Payee
      */
     public boolean isPayeeClass(final PayeeTypeClass pClass) {
         /* Check for match */
-        return getPayeeTypeClass() == pClass;
+        return getCategoryClass() == pClass;
     }
 
     /**
@@ -501,7 +462,7 @@ public class Payee
      */
     @Override
     public boolean isHidden() {
-        final PayeeTypeClass myClass = this.getPayeeTypeClass();
+        final PayeeTypeClass myClass = this.getCategoryClass();
         return myClass != null
                && myClass.isHiddenType();
     }
@@ -512,7 +473,7 @@ public class Payee
      */
     public void setDefaults() throws OceanusException {
         /* Set values */
-        setPayeeType(getDefaultPayeeType());
+        setCategory(getDefaultPayeeType());
         setName(getList().getUniqueName(NAME_NEWACCOUNT));
         setClosed(Boolean.FALSE);
     }
@@ -556,7 +517,7 @@ public class Payee
             && (pThat instanceof Payee)) {
             /* Check the payee type */
             final Payee myThat = (Payee) pThat;
-            iDiff = MetisDataDifference.compareObject(getPayeeType(), myThat.getPayeeType());
+            iDiff = MetisDataDifference.compareObject(getCategory(), myThat.getCategory());
             if (iDiff == 0) {
                 /* Check the underlying base */
                 iDiff = super.compareAsset(myThat);
@@ -574,15 +535,7 @@ public class Payee
 
         /* Resolve data links */
         final MoneyWiseData myData = getDataSet();
-        resolveDataLink(FIELD_PAYEETYPE, myData.getPayeeTypes());
-    }
-
-    /**
-     * Set a new payee type.
-     * @param pType the new type
-     */
-    public void setPayeeType(final PayeeType pType) {
-        setValueType(pType);
+        resolveDataLink(FIELD_CATEGORY, myData.getPayeeTypes());
     }
 
     /**
@@ -677,7 +630,7 @@ public class Payee
     @Override
     public void touchUnderlyingItems() {
         /* touch the payee type */
-        getPayeeType().touchItem(this);
+        getCategory().touchItem(this);
 
         /* touch infoSet items */
         theInfoSet.touchUnderlyingItems();
@@ -696,21 +649,23 @@ public class Payee
     @Override
     public void validate() {
         final PayeeList myList = getList();
-        final PayeeType myPayeeType = getPayeeType();
+        final PayeeType myPayeeType = getCategory();
+        final Payee myParent = getParent();
+         final AssetCurrency myCurrency = getAssetCurrency();
 
         /* Validate base components */
         super.validate();
 
         /* PayeeType must be non-null */
         if (myPayeeType == null) {
-            addError(ERROR_MISSING, FIELD_PAYEETYPE);
+            addError(ERROR_MISSING, FIELD_CATEGORY);
         } else {
             /* Access the class */
             final PayeeTypeClass myClass = myPayeeType.getPayeeClass();
 
             /* PayeeType must be enabled */
             if (!myPayeeType.getEnabled()) {
-                addError(ERROR_DISABLED, FIELD_PAYEETYPE);
+                addError(ERROR_DISABLED, FIELD_CATEGORY);
             }
 
             /* If the PayeeType is singular */
@@ -718,9 +673,19 @@ public class Payee
                 /* Count the elements of this class */
                 final PayeeDataMap myMap = myList.getDataMap();
                 if (!myMap.validSingularCount(myClass)) {
-                    addError(ERROR_MULT, FIELD_PAYEETYPE);
+                    addError(ERROR_MULT, FIELD_CATEGORY);
                 }
             }
+        }
+
+        /* Parent must be null */
+        if (myParent != null) {
+            addError(ERROR_EXIST, FIELD_PARENT);
+        }
+
+        /* Currency must be null */
+        if (myCurrency != null) {
+            addError(ERROR_EXIST, FIELD_CURRENCY);
         }
 
         /* If we have an infoSet */
@@ -754,11 +719,6 @@ public class Payee
         /* Apply basic changes */
         applyBasicChanges(myPayee);
 
-        /* Update the category type if required */
-        if (!MetisDataDifference.isEqual(getPayeeType(), myPayee.getPayeeType())) {
-            setValueType(myPayee.getPayeeType());
-        }
-
         /* Check for changes */
         return checkForHistory();
     }
@@ -774,7 +734,7 @@ public class Payee
      * The Payee List class.
      */
     public static class PayeeList
-            extends AssetBaseList<Payee> {
+            extends AssetBaseList<Payee, PayeeType> {
         /**
          * Report fields.
          */
@@ -1083,7 +1043,7 @@ public class Payee
         @Override
         public void adjustForItem(final Payee pItem) {
             /* If the class is singular */
-            final PayeeTypeClass myClass = pItem.getPayeeTypeClass();
+            final PayeeTypeClass myClass = pItem.getCategoryClass();
             if (myClass.isSingular()) {
                 /* Adjust category count */
                 final Integer myId = myClass.getClassId();
@@ -1108,7 +1068,7 @@ public class Payee
          * @return the matching item
          */
         public Payee findItemByName(final String pName) {
-            final AssetBase<?> myAsset = theUnderlyingMap.findAssetByName(pName);
+            final AssetBase<?, ?> myAsset = theUnderlyingMap.findAssetByName(pName);
             return myAsset instanceof Payee
                                             ? (Payee) myAsset
                                             : null;

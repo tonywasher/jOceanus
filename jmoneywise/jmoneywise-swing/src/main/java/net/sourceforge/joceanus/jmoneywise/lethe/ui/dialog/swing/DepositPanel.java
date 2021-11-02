@@ -296,7 +296,7 @@ public class DepositPanel
             myDeposit.setDescription(pUpdate.getString());
         } else if (myField.equals(Deposit.FIELD_CATEGORY)) {
             /* Update the Category */
-            myDeposit.setDepositCategory(pUpdate.getValue(DepositCategory.class));
+            myDeposit.setCategory(pUpdate.getValue(DepositCategory.class));
             myDeposit.autoCorrect(getUpdateSet());
         } else if (myField.equals(Deposit.FIELD_PARENT)) {
             /* Update the Parent */
@@ -465,7 +465,7 @@ public class DepositPanel
             final Payee myPayee = myIterator.next();
 
             /* Ignore deleted or non-owner */
-            boolean bIgnore = myPayee.isDeleted() || !myPayee.getPayeeTypeClass().canParentDeposit(myType);
+            boolean bIgnore = myPayee.isDeleted() || !myPayee.getCategoryClass().canParentDeposit(myType);
             bIgnore |= myPayee.isClosed();
             if (bIgnore) {
                 continue;

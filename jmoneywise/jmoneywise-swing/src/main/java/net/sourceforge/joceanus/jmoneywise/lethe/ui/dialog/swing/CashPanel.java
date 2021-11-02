@@ -263,7 +263,7 @@ public class CashPanel
             myCash.setDescription(pUpdate.getString());
         } else if (myField.equals(Cash.FIELD_CATEGORY)) {
             /* Update the Category */
-            myCash.setCashCategory(pUpdate.getValue(CashCategory.class));
+            myCash.setCategory(pUpdate.getValue(CashCategory.class));
             myCash.autoCorrect(getUpdateSet());
         } else if (myField.equals(Cash.FIELD_CURRENCY)) {
             /* Update the Currency */

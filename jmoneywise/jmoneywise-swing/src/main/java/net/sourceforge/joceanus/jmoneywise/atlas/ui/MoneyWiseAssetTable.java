@@ -36,7 +36,7 @@ import net.sourceforge.joceanus.jtethys.ui.TethysTableManager.TethysTableColumn;
  * MoneyWise Asset Table.
  * @param <T> the Category Data type
  */
-public abstract class MoneyWiseAssetTable<T extends AssetBase<T>>
+public abstract class MoneyWiseAssetTable<T extends AssetBase<T, ?>>
         extends MoneyWiseBaseTable<T> {
     /**
      * ShowClosed prompt.

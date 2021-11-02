@@ -108,6 +108,11 @@ public enum MoneyWiseDataResource
     MONEYWISEDATA_MAP_SINGULARCOUNTS("MoneyWiseData.Map.SingularCounts"),
 
     /**
+     * Category Name.
+     */
+    CATEGORY_NAME("Category.Name"),
+
+    /**
      * Category SubCategory.
      */
     CATEGORY_SUBCAT("Category.SubCategory"),

@@ -90,7 +90,7 @@ public class SecurityTable
     /**
      * Category Column Title.
      */
-    private static final String TITLE_CAT = Security.FIELD_SECTYPE.getName();
+    private static final String TITLE_CAT = Security.FIELD_CATEGORY.getName();
 
     /**
      * Parent Column Title.
@@ -715,7 +715,7 @@ public class SecurityTable
                 case COLUMN_NAME:
                     return pSecurity.getName();
                 case COLUMN_CATEGORY:
-                    return pSecurity.getSecurityType();
+                    return pSecurity.getCategory();
                 case COLUMN_DESC:
                     return pSecurity.getDesc();
                 case COLUMN_CLOSED:
@@ -751,7 +751,7 @@ public class SecurityTable
                     pItem.setName((String) pValue);
                     break;
                 case COLUMN_CATEGORY:
-                    pItem.setSecurityType((SecurityType) pValue);
+                    pItem.setCategory((SecurityType) pValue);
                     pItem.autoCorrect(theUpdateSet);
                     break;
                 case COLUMN_PARENT:
@@ -818,7 +818,7 @@ public class SecurityTable
                 case COLUMN_DESC:
                     return Security.FIELD_DESC;
                 case COLUMN_CATEGORY:
-                    return Security.FIELD_SECTYPE;
+                    return Security.FIELD_CATEGORY;
                 case COLUMN_CLOSED:
                     return Security.FIELD_CLOSED;
                 case COLUMN_ACTIVE:

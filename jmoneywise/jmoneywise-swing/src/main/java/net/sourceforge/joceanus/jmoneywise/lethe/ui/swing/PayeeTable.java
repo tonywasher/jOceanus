@@ -86,7 +86,7 @@ public class PayeeTable
     /**
      * Category Column Title.
      */
-    private static final String TITLE_CAT = Payee.FIELD_PAYEETYPE.getName();
+    private static final String TITLE_CAT = Payee.FIELD_CATEGORY.getName();
 
     /**
      * Closed Column Title.
@@ -668,7 +668,7 @@ public class PayeeTable
                 case COLUMN_NAME:
                     return pPayee.getName();
                 case COLUMN_CATEGORY:
-                    return pPayee.getPayeeType();
+                    return pPayee.getCategory();
                 case COLUMN_DESC:
                     return pPayee.getDesc();
                 case COLUMN_CLOSED:
@@ -706,7 +706,7 @@ public class PayeeTable
                     pItem.setDescription((String) pValue);
                     break;
                 case COLUMN_CATEGORY:
-                    pItem.setPayeeType((PayeeType) pValue);
+                    pItem.setCategory((PayeeType) pValue);
                     break;
                 case COLUMN_CLOSED:
                     pItem.setClosed((Boolean) pValue);
@@ -754,7 +754,7 @@ public class PayeeTable
                 case COLUMN_DESC:
                     return Payee.FIELD_DESC;
                 case COLUMN_CATEGORY:
-                    return Payee.FIELD_PAYEETYPE;
+                    return Payee.FIELD_CATEGORY;
                 case COLUMN_CLOSED:
                     return Payee.FIELD_CLOSED;
                 case COLUMN_ACTIVE:

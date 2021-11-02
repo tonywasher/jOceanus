@@ -135,7 +135,7 @@ public class MoneyWisePortfolioBuilder {
         final Portfolio myPortfolio = theDataSet.getPortfolios().addNewItem();
         myPortfolio.setName(theName);
         myPortfolio.setParent(theParent);
-        myPortfolio.setPortfolioType(theType);
+        myPortfolio.setCategory(theType);
         myPortfolio.setAssetCurrency(theCurrency);
         myPortfolio.validate();
 

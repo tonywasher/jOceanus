@@ -90,7 +90,7 @@ public class MoneyWiseCashBucket
      * @param pAnalysis the analysis
      * @return the initial values
      */
-    private static MoneyWiseAnalysisValues<MoneyWiseAccountAttr> initialValues(final AssetBase<?> pCash,
+    private static MoneyWiseAnalysisValues<MoneyWiseAccountAttr> initialValues(final AssetBase<?, ?> pCash,
                                                                                final MoneyWiseAnalysis pAnalysis) {
         return new MoneyWiseAnalysisValues<>(MoneyWiseAccountAttr.class, pCash.getAssetCurrency(), pAnalysis.getReportingCurrency());
     }

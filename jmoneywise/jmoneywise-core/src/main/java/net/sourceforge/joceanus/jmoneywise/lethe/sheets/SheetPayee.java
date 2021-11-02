@@ -88,7 +88,7 @@ public class SheetPayee
     protected DataValues<MoneyWiseDataType> loadSecureValues() throws OceanusException {
         /* Build data values */
         final DataValues<MoneyWiseDataType> myValues = getRowValues(Payee.OBJECT_NAME);
-        myValues.addValue(Payee.FIELD_PAYEETYPE, loadInteger(COL_TYPE));
+        myValues.addValue(Payee.FIELD_CATEGORY, loadInteger(COL_TYPE));
         myValues.addValue(Payee.FIELD_NAME, loadBytes(COL_NAME));
         myValues.addValue(Payee.FIELD_DESC, loadBytes(COL_DESC));
         myValues.addValue(Payee.FIELD_CLOSED, loadBoolean(COL_CLOSED));
@@ -101,7 +101,7 @@ public class SheetPayee
     protected void insertSecureItem(final Payee pItem) throws OceanusException {
         /* Set the fields */
         super.insertSecureItem(pItem);
-        writeInteger(COL_TYPE, pItem.getPayeeTypeId());
+        writeInteger(COL_TYPE, pItem.getCategoryId());
         writeBytes(COL_NAME, pItem.getNameBytes());
         writeBytes(COL_DESC, pItem.getDescBytes());
         writeBoolean(COL_CLOSED, pItem.isClosed());
@@ -143,7 +143,7 @@ public class SheetPayee
         /* Build data values */
         final DataValues<MoneyWiseDataType> myValues = new DataValues<>(Payee.OBJECT_NAME);
         myValues.addValue(Payee.FIELD_NAME, myName);
-        myValues.addValue(Payee.FIELD_PAYEETYPE, myType);
+        myValues.addValue(Payee.FIELD_CATEGORY, myType);
         myValues.addValue(Payee.FIELD_CLOSED, isClosed);
 
         /* Add the value into the list */

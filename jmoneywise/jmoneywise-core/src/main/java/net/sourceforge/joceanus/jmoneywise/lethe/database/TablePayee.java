@@ -48,7 +48,7 @@ public class TablePayee
         final PrometheusTableDefinition myTableDef = getTableDef();
 
         /* Declare the columns */
-        final PrometheusColumnDefinition myCatCol = myTableDef.addReferenceColumn(Payee.FIELD_PAYEETYPE, TablePayeeType.TABLE_NAME);
+        final PrometheusColumnDefinition myCatCol = myTableDef.addReferenceColumn(Payee.FIELD_CATEGORY, TablePayeeType.TABLE_NAME);
         myTableDef.addEncryptedColumn(Payee.FIELD_NAME, Payee.NAMELEN);
         myTableDef.addNullEncryptedColumn(Payee.FIELD_DESC, Payee.DESCLEN);
         myTableDef.addBooleanColumn(Payee.FIELD_CLOSED);
@@ -72,7 +72,7 @@ public class TablePayee
         final DataValues<MoneyWiseDataType> myValues = getRowValues(Payee.OBJECT_NAME);
         myValues.addValue(Payee.FIELD_NAME, myTableDef.getBinaryValue(Payee.FIELD_NAME));
         myValues.addValue(Payee.FIELD_DESC, myTableDef.getBinaryValue(Payee.FIELD_DESC));
-        myValues.addValue(Payee.FIELD_PAYEETYPE, myTableDef.getIntegerValue(Payee.FIELD_PAYEETYPE));
+        myValues.addValue(Payee.FIELD_CATEGORY, myTableDef.getIntegerValue(Payee.FIELD_CATEGORY));
         myValues.addValue(Payee.FIELD_CLOSED, myTableDef.getBooleanValue(Payee.FIELD_CLOSED));
 
         /* Return the values */
@@ -84,8 +84,8 @@ public class TablePayee
                                  final MetisLetheField iField) throws OceanusException {
         /* Switch on field id */
         final PrometheusTableDefinition myTableDef = getTableDef();
-        if (Payee.FIELD_PAYEETYPE.equals(iField)) {
-            myTableDef.setIntegerValue(iField, pItem.getPayeeTypeId());
+        if (Payee.FIELD_CATEGORY.equals(iField)) {
+            myTableDef.setIntegerValue(iField, pItem.getCategoryId());
         } else if (Payee.FIELD_NAME.equals(iField)) {
             myTableDef.setBinaryValue(iField, pItem.getNameBytes());
         } else if (Payee.FIELD_DESC.equals(iField)) {

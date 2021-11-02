@@ -103,7 +103,7 @@ public class MoneyWiseCashTable
                 .setCellValueFactory(Cash::getCategory)
                 .setEditable(true)
                 .setCellEditable(r -> !r.isActive())
-                .setOnCommit((r, v) -> updateField(Cash::setCashCategory, r, v));
+                .setOnCommit((r, v) -> updateField(Cash::setCategory, r, v));
 
         /* Create the description column */
         myTable.declareStringColumn(Cash.FIELD_DESC)

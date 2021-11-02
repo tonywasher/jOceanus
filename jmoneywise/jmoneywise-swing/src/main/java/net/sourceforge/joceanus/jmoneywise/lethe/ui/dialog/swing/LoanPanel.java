@@ -255,7 +255,7 @@ public class LoanPanel
             myLoan.setDescription(pUpdate.getString());
         } else if (myField.equals(Loan.FIELD_CATEGORY)) {
             /* Update the Category */
-            myLoan.setLoanCategory(pUpdate.getValue(LoanCategory.class));
+            myLoan.setCategory(pUpdate.getValue(LoanCategory.class));
             myLoan.autoCorrect(getUpdateSet());
         } else if (myField.equals(Loan.FIELD_PARENT)) {
             /* Update the Parent */
@@ -385,7 +385,7 @@ public class LoanPanel
             final Payee myPayee = myIterator.next();
 
             /* Ignore deleted or non-owner */
-            boolean bIgnore = myPayee.isDeleted() || !myPayee.getPayeeTypeClass().canParentLoan(myType);
+            boolean bIgnore = myPayee.isDeleted() || !myPayee.getCategoryClass().canParentLoan(myType);
             bIgnore |= myPayee.isClosed();
             if (bIgnore) {
                 continue;

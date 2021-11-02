@@ -531,7 +531,7 @@ public class AccountPanel
      * Select account.
      * @param pAccount the account to select
      */
-    protected void selectAccount(final AssetBase<?> pAccount) {
+    protected void selectAccount(final AssetBase<?, ?> pAccount) {
         /* Determine which panel to show */
         if (pAccount instanceof Deposit) {
             theDepositTable.selectDeposit((Deposit) pAccount);

@@ -762,7 +762,7 @@ public class CashTable
                     pItem.setDescription((String) pValue);
                     break;
                 case COLUMN_CATEGORY:
-                    pItem.setCashCategory((CashCategory) pValue);
+                    pItem.setCategory((CashCategory) pValue);
                     break;
                 case COLUMN_CURR:
                     pItem.setAssetCurrency((AssetCurrency) pValue);

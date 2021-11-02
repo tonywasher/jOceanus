@@ -660,8 +660,8 @@ public class TransactionPanel
             final SecurityHolding myHolding = (SecurityHolding) pAsset;
             declareGoToItem(myHolding.getPortfolio());
             declareGoToItem(myHolding.getSecurity());
-        } else if (pAsset instanceof AssetBase<?>) {
-            declareGoToItem((AssetBase<?>) pAsset);
+        } else if (pAsset instanceof AssetBase<?, ?>) {
+            declareGoToItem((AssetBase<?, ?>) pAsset);
         }
     }
 
@@ -731,10 +731,10 @@ public class TransactionPanel
      * @param pList the asset list
      * @param pTrans the transaction to build for
      */
-    private static <T extends AssetBase<T>> void buildAssetMenu(final TethysScrollMenu<TransactionAsset> pMenu,
-                                                                final AssetBaseList<T> pList,
-                                                                final boolean pIsAccount,
-                                                                final Transaction pTrans) {
+    private static <T extends AssetBase<T, ?>> void buildAssetMenu(final TethysScrollMenu<TransactionAsset> pMenu,
+                                                                   final AssetBaseList<T, ?> pList,
+                                                                   final boolean pIsAccount,
+                                                                   final Transaction pTrans) {
         /* Record active item */
         final TransactionAsset myAccount = pTrans.getAccount();
         final TransactionCategory myCategory = pTrans.getCategory();

@@ -99,12 +99,12 @@ public class MoneyWisePortfolioTable
                .setOnCommit((r, v) -> updateField(Portfolio::setName, r, v));
 
         /* Create the portfolio type column */
-        myTable.declareScrollColumn(Portfolio.FIELD_PORTTYPE, PortfolioType.class)
+        myTable.declareScrollColumn(Portfolio.FIELD_CATEGORY, PortfolioType.class)
                .setMenuConfigurator(this::buildPortfolioTypeMenu)
-               .setCellValueFactory(Portfolio::getPortfolioType)
+               .setCellValueFactory(Portfolio::getCategory)
                .setEditable(true)
                .setCellEditable(r -> !r.isActive())
-               .setOnCommit((r, v) -> updateField(Portfolio::setPortfolioType, r, v));
+               .setOnCommit((r, v) -> updateField(Portfolio::setCategory, r, v));
 
         /* Create the description column */
         myTable.declareStringColumn(Portfolio.FIELD_DESC)

@@ -45,8 +45,9 @@ import net.sourceforge.joceanus.jtethys.date.TethysDate;
 /**
  * Class representing an account that can be part of a transaction.
  * @param <T> the actual dataType
+ * @param <C> the category type
  */
-public abstract class AssetBase<T extends AssetBase<T>>
+public abstract class AssetBase<T extends AssetBase<T, C>, C>
         extends EncryptedItem<MoneyWiseDataType>
         implements TransactionAsset {
     /**
@@ -63,6 +64,21 @@ public abstract class AssetBase<T extends AssetBase<T>>
      * Description Field Id.
      */
     public static final MetisLetheField FIELD_DESC = FIELD_DEFS.declareEqualityEncryptedField(PrometheusDataResource.DATAITEM_FIELD_DESC.getValue(), MetisDataType.STRING, DESCLEN);
+
+    /**
+     * AccountCategory Field Id.
+     */
+    public static final MetisLetheField FIELD_CATEGORY = FIELD_DEFS.declareComparisonValueField(MoneyWiseDataResource.CATEGORY_NAME.getValue(), MetisDataType.LINK);
+
+    /**
+     * Parent Field Id.
+     */
+    public static final MetisLetheField FIELD_PARENT = FIELD_DEFS.declareEqualityValueField(MoneyWiseDataResource.ASSET_PARENT.getValue(), MetisDataType.LINK);
+
+    /**
+     * Currency Field Id.
+     */
+    public static final MetisLetheField FIELD_CURRENCY = FIELD_DEFS.declareEqualityValueField(MoneyWiseDataType.CURRENCY.getItemName(), MetisDataType.LINK);
 
     /**
      * isClosed Field Id.
@@ -139,8 +155,8 @@ public abstract class AssetBase<T extends AssetBase<T>>
      * @param pList the list
      * @param pAsset The Asset to copy
      */
-    protected AssetBase(final AssetBaseList<T> pList,
-                        final AssetBase<T> pAsset) {
+    protected AssetBase(final AssetBaseList<T, C> pList,
+                        final AssetBase<T, C> pAsset) {
         /* Set standard values */
         super(pList, pAsset);
 
@@ -162,7 +178,7 @@ public abstract class AssetBase<T extends AssetBase<T>>
      * @param pValues the values constructor
      * @throws OceanusException on error
      */
-    protected AssetBase(final AssetBaseList<T> pList,
+    protected AssetBase(final AssetBaseList<T, C> pList,
                         final DataValues<MoneyWiseDataType> pValues) throws OceanusException {
         /* Initialise the item */
         super(pList, pValues);
@@ -188,6 +204,32 @@ public abstract class AssetBase<T extends AssetBase<T>>
                 setValueDesc((byte[]) myValue);
             }
 
+            /* Store the Category */
+            myValue = pValues.getValue(FIELD_CATEGORY);
+            if (myValue instanceof Integer) {
+                setValueCategory((Integer) myValue);
+            } else if (myValue instanceof String) {
+                setValueCategory((String) myValue);
+            }
+
+            /* Store the Parent */
+            myValue = pValues.getValue(FIELD_PARENT);
+            if (myValue instanceof Integer) {
+                setValueParent((Integer) myValue);
+            } else if (myValue instanceof String) {
+                setValueParent((String) myValue);
+            }
+
+            /* Store the Currency */
+            myValue = pValues.getValue(FIELD_CURRENCY);
+            if (myValue instanceof Integer) {
+                setValueCurrency((Integer) myValue);
+            } else if (myValue instanceof String) {
+                setValueCurrency((String) myValue);
+            } else if (myValue instanceof AssetCurrency) {
+                setValueCurrency((AssetCurrency) myValue);
+            }
+
             /* Store the closed flag */
             myValue = pValues.getValue(FIELD_CLOSED);
             if (myValue instanceof Boolean) {
@@ -207,7 +249,7 @@ public abstract class AssetBase<T extends AssetBase<T>>
      * Edit Constructor.
      * @param pList the list
      */
-    public AssetBase(final AssetBaseList<T> pList) {
+    public AssetBase(final AssetBaseList<T, C> pList) {
         super(pList, 0);
         setNextDataKeySet();
     }
@@ -265,14 +307,42 @@ public abstract class AssetBase<T extends AssetBase<T>>
         return super.includeXmlField(pField);
     }
 
+    /**
+     * Obtain Category.
+     * @return the category
+     */
+    public abstract C getCategory();
+
     @Override
-    public AssetBase<?> getParent() {
-        return null;
+    public Payee getParent() {
+        return getParent(getValueSet());
+    }
+
+    /**
+     * Obtain ParentId.
+     * @return the parentId
+     */
+    public Integer getParentId() {
+        final Payee myParent = getParent();
+        return myParent == null
+                ? null
+                : myParent.getId();
+    }
+
+    /**
+     * Obtain ParentName.
+     * @return the parentName
+     */
+    public String getParentName() {
+        final Payee myParent = getParent();
+        return myParent == null
+                ? null
+                : myParent.getName();
     }
 
     @Override
     public AssetCurrency getAssetCurrency() {
-        return null;
+        return getCurrency(getValueSet());
     }
 
     /**
@@ -281,9 +351,7 @@ public abstract class AssetBase<T extends AssetBase<T>>
      */
     public Integer getAssetCurrencyId() {
         final AssetCurrency myCurrency = getAssetCurrency();
-        return (myCurrency == null)
-                                    ? null
-                                    : myCurrency.getId();
+        return myCurrency == null ? null : myCurrency.getId();
     }
 
     /**
@@ -292,9 +360,7 @@ public abstract class AssetBase<T extends AssetBase<T>>
      */
     public String getAssetCurrencyName() {
         final AssetCurrency myCurrency = getAssetCurrency();
-        return (myCurrency == null)
-                                    ? null
-                                    : myCurrency.getName();
+        return myCurrency == null ? null : myCurrency.getName();
     }
 
     @Override
@@ -303,9 +369,7 @@ public abstract class AssetBase<T extends AssetBase<T>>
         myCurrency = myCurrency == null
                                         ? getDataSet().getDefaultCurrency()
                                         : myCurrency;
-        return myCurrency == null
-                                  ? null
-                                  : myCurrency.getCurrency();
+        return myCurrency == null ? null : myCurrency.getCurrency();
     }
 
     @Override
@@ -505,6 +569,24 @@ public abstract class AssetBase<T extends AssetBase<T>>
     }
 
     /**
+     * Obtain Parent.
+     * @param pValueSet the valueSet
+     * @return the Parent
+     */
+    public static Payee getParent(final MetisValueSet pValueSet) {
+        return pValueSet.getValue(FIELD_PARENT, Payee.class);
+    }
+
+    /**
+     * Obtain Currency.
+     * @param pValueSet the valueSet
+     * @return the Currency
+     */
+    public static AssetCurrency getCurrency(final MetisValueSet pValueSet) {
+        return pValueSet.getValue(FIELD_CURRENCY, AssetCurrency.class);
+    }
+
+    /**
      * Is the asset closed?
      * @param pValueSet the valueSet
      * @return true/false
@@ -566,6 +648,78 @@ public abstract class AssetBase<T extends AssetBase<T>>
     }
 
     /**
+     * Set category value.
+     * @param pValue the value
+     */
+    private void setValueCategory(final C pValue) {
+        getValueSet().setValue(FIELD_CATEGORY, pValue);
+    }
+
+    /**
+     * Set category id.
+     * @param pValue the value
+     */
+    private void setValueCategory(final Integer pValue) {
+        getValueSet().setValue(FIELD_CATEGORY, pValue);
+    }
+
+    /**
+     * Set category name.
+     * @param pValue the value
+     */
+    private void setValueCategory(final String pValue) {
+        getValueSet().setValue(FIELD_CATEGORY, pValue);
+    }
+
+    /**
+     * Set parent value.
+     * @param pValue the value
+     */
+    private void setValueParent(final Payee pValue) {
+        getValueSet().setValue(FIELD_PARENT, pValue);
+    }
+
+    /**
+     * Set parent id.
+     * @param pValue the value
+     */
+    private void setValueParent(final Integer pValue) {
+        getValueSet().setValue(FIELD_PARENT, pValue);
+    }
+
+    /**
+     * Set parent name.
+     * @param pValue the value
+     */
+    private void setValueParent(final String pValue) {
+        getValueSet().setValue(FIELD_PARENT, pValue);
+    }
+
+    /**
+     * Set currency value.
+     * @param pValue the value
+     */
+    private void setValueCurrency(final AssetCurrency pValue) {
+        getValueSet().setValue(FIELD_CURRENCY, pValue);
+    }
+
+    /**
+     * Set currency id.
+     * @param pValue the value
+     */
+    private void setValueCurrency(final Integer pValue) {
+        getValueSet().setValue(FIELD_CURRENCY, pValue);
+    }
+
+    /**
+     * Set currency name.
+     * @param pValue the value
+     */
+    private void setValueCurrency(final String pValue) {
+        getValueSet().setValue(FIELD_CURRENCY, pValue);
+    }
+
+    /**
      * Set closed indication.
      * @param pValue the value
      */
@@ -580,8 +734,8 @@ public abstract class AssetBase<T extends AssetBase<T>>
 
     @Override
     @SuppressWarnings("unchecked")
-    public AssetBaseList<T> getList() {
-        return (AssetBaseList<T>) super.getList();
+    public AssetBaseList<T, C> getList() {
+        return (AssetBaseList<T, C>) super.getList();
     }
 
     @Override
@@ -614,12 +768,7 @@ public abstract class AssetBase<T extends AssetBase<T>>
      */
     public void adjustClosed() throws OceanusException {
         /* Access latest activity date */
-        final TethysDate myCloseDate = (theLatest == null)
-                                                           ? null
-                                                           : theLatest.getDate();
-
-        /* Store the close date */
-        theCloseDate = myCloseDate;
+        theCloseDate = theLatest == null ? null : theLatest.getDate();
     }
 
     @Override
@@ -654,7 +803,7 @@ public abstract class AssetBase<T extends AssetBase<T>>
             }
 
             /* Touch parent if it exists */
-            final AssetBase<?> myParent = getParent();
+            final AssetBase<?, ?> myParent = getParent();
             if (myParent != null) {
                 myParent.touchItem(pSource);
             }
@@ -663,7 +812,7 @@ public abstract class AssetBase<T extends AssetBase<T>>
         /* If we are being touched by an asset */
         if (pSource instanceof AssetBase) {
             /* Access as assetBase */
-            final AssetBase<?> myAsset = (AssetBase<?>) pSource;
+            final AssetBase<?,?> myAsset = (AssetBase<?, ?>) pSource;
 
             /* Mark as relevant if child is open */
             if (!myAsset.isClosed()) {
@@ -691,7 +840,7 @@ public abstract class AssetBase<T extends AssetBase<T>>
         }
 
         /* Access as AssetBase */
-        final AssetBase<?> myThat = (AssetBase<?>) pThat;
+        final AssetBase<?, ?> myThat = (AssetBase<?, ?>) pThat;
 
         /* Check data type */
         return getItemType().ordinal() - myThat.getItemType().ordinal();
@@ -756,6 +905,30 @@ public abstract class AssetBase<T extends AssetBase<T>>
     }
 
     /**
+     * Set a new category.
+     * @param pCategory the new category
+     */
+    public void setCategory(final C pCategory) {
+        setValueCategory(pCategory);
+    }
+
+    /**
+     * Set a new currency.
+     * @param pCurrency the new currency
+     */
+    public void setAssetCurrency(final AssetCurrency pCurrency) {
+        setValueCurrency(pCurrency);
+    }
+
+    /**
+     * Set a new parent.
+     * @param pParent the parent
+     */
+    public void setParent(final Payee pParent) {
+        setValueParent(pParent);
+    }
+
+    /**
      * Set a new closed indication.
      * @param isClosed the new closed indication
      */
@@ -790,7 +963,7 @@ public abstract class AssetBase<T extends AssetBase<T>>
      */
     protected void validateName(final String pName) {
         /* Access the list */
-        final AssetBaseList<T> myList = getList();
+        final AssetBaseList<T, C> myList = getList();
 
         /* The name must not be too long */
         if (pName.length() > NAMELEN) {
@@ -801,13 +974,18 @@ public abstract class AssetBase<T extends AssetBase<T>>
         if (!myList.validNameCount(pName)) {
             addError(ERROR_DUPLICATE, FIELD_NAME);
         }
+
+        /* Check that the name does not contain invalid characters */
+        if (pName.contains(SecurityHolding.SECURITYHOLDING_SEP)) {
+            addError(ERROR_INVALIDCHAR, FIELD_NAME);
+        }
     }
 
     /**
      * Update base asset from an edited asset.
      * @param pAsset the edited asset
      */
-    protected void applyBasicChanges(final AssetBase<T> pAsset) {
+    protected void applyBasicChanges(final AssetBase<T, C> pAsset) {
         /* Update the name if required */
         if (!MetisDataDifference.isEqual(getName(), pAsset.getName())) {
             setValueName(pAsset.getNameField());
@@ -816,6 +994,21 @@ public abstract class AssetBase<T extends AssetBase<T>>
         /* Update the description if required */
         if (!MetisDataDifference.isEqual(getDesc(), pAsset.getDesc())) {
             setValueDesc(pAsset.getDescField());
+        }
+
+        /* Update the category if required */
+        if (!MetisDataDifference.isEqual(getCategory(), pAsset.getCategory())) {
+            setValueCategory(pAsset.getCategory());
+        }
+
+        /* Update the parent if required */
+        if (!MetisDataDifference.isEqual(getParent(), pAsset.getParent())) {
+            setValueParent(pAsset.getParent());
+        }
+
+        /* Update the currency if required */
+        if (!MetisDataDifference.isEqual(getAssetCurrency(), pAsset.getAssetCurrency())) {
+            setValueCurrency(pAsset.getAssetCurrency());
         }
 
         /* Update the closed indication if required */
@@ -827,8 +1020,9 @@ public abstract class AssetBase<T extends AssetBase<T>>
     /**
      * The Asset List class.
      * @param <T> the dataType
+     * @param <C> the category
      */
-    public abstract static class AssetBaseList<T extends AssetBase<T>>
+    public abstract static class AssetBaseList<T extends AssetBase<T, C>, C>
             extends EncryptedList<T, MoneyWiseDataType> {
         /*
          * Report fields.
@@ -853,7 +1047,7 @@ public abstract class AssetBase<T extends AssetBase<T>>
          * Constructor for a cloned List.
          * @param pSource the source List
          */
-        protected AssetBaseList(final AssetBaseList<T> pSource) {
+        protected AssetBaseList(final AssetBaseList<T, C> pSource) {
             super(pSource);
         }
 
@@ -916,9 +1110,9 @@ public abstract class AssetBase<T extends AssetBase<T>>
      * The dataMap class.
      */
     protected static class AssetDataMap
-            extends DataInstanceMap<AssetBase<?>, MoneyWiseDataType, String> {
+            extends DataInstanceMap<AssetBase<?, ?>, MoneyWiseDataType, String> {
         @Override
-        public void adjustForItem(final AssetBase<?> pItem) {
+        public void adjustForItem(final AssetBase<?, ?> pItem) {
             /* Adjust name count */
             adjustForItem(pItem, pItem.getName());
         }
@@ -928,7 +1122,7 @@ public abstract class AssetBase<T extends AssetBase<T>>
          * @param pName the name to look up
          * @return the matching item
          */
-        public AssetBase<?> findAssetByName(final String pName) {
+        public AssetBase<?, ?> findAssetByName(final String pName) {
             return findItemByKey(pName);
         }
 

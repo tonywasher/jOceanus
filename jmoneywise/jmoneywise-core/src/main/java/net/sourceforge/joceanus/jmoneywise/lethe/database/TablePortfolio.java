@@ -48,7 +48,7 @@ public class TablePortfolio
         final PrometheusTableDefinition myTableDef = getTableDef();
 
         /* Declare the columns */
-        final PrometheusColumnDefinition myCatCol = myTableDef.addReferenceColumn(Portfolio.FIELD_PORTTYPE, TablePortfolioType.TABLE_NAME);
+        final PrometheusColumnDefinition myCatCol = myTableDef.addReferenceColumn(Portfolio.FIELD_CATEGORY, TablePortfolioType.TABLE_NAME);
         myTableDef.addEncryptedColumn(Portfolio.FIELD_NAME, Portfolio.NAMELEN);
         myTableDef.addReferenceColumn(Portfolio.FIELD_CURRENCY, TableAssetCurrency.TABLE_NAME);
         myTableDef.addReferenceColumn(Portfolio.FIELD_PARENT, TablePayee.TABLE_NAME);
@@ -74,7 +74,7 @@ public class TablePortfolio
         final DataValues<MoneyWiseDataType> myValues = getRowValues(Portfolio.OBJECT_NAME);
         myValues.addValue(Portfolio.FIELD_NAME, myTableDef.getBinaryValue(Portfolio.FIELD_NAME));
         myValues.addValue(Portfolio.FIELD_DESC, myTableDef.getBinaryValue(Portfolio.FIELD_DESC));
-        myValues.addValue(Portfolio.FIELD_PORTTYPE, myTableDef.getIntegerValue(Portfolio.FIELD_PORTTYPE));
+        myValues.addValue(Portfolio.FIELD_CATEGORY, myTableDef.getIntegerValue(Portfolio.FIELD_CATEGORY));
         myValues.addValue(Portfolio.FIELD_PARENT, myTableDef.getIntegerValue(Portfolio.FIELD_PARENT));
         myValues.addValue(Portfolio.FIELD_CURRENCY, myTableDef.getIntegerValue(Portfolio.FIELD_CURRENCY));
         myValues.addValue(Portfolio.FIELD_CLOSED, myTableDef.getBooleanValue(Portfolio.FIELD_CLOSED));
@@ -92,8 +92,8 @@ public class TablePortfolio
             myTableDef.setBinaryValue(iField, pItem.getNameBytes());
         } else if (Portfolio.FIELD_DESC.equals(iField)) {
             myTableDef.setBinaryValue(iField, pItem.getDescBytes());
-        } else if (Portfolio.FIELD_PORTTYPE.equals(iField)) {
-            myTableDef.setIntegerValue(iField, pItem.getPortfolioTypeId());
+        } else if (Portfolio.FIELD_CATEGORY.equals(iField)) {
+            myTableDef.setIntegerValue(iField, pItem.getCategoryId());
         } else if (Portfolio.FIELD_PARENT.equals(iField)) {
             myTableDef.setIntegerValue(iField, pItem.getParentId());
         } else if (Portfolio.FIELD_CURRENCY.equals(iField)) {

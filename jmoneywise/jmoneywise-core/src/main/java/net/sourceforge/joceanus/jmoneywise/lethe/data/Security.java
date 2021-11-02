@@ -60,7 +60,7 @@ import net.sourceforge.joceanus.jtethys.decimal.TethysPrice;
  * Security class.
  */
 public class Security
-        extends AssetBase<Security>
+        extends AssetBase<Security, SecurityType>
         implements InfoSetItem<MoneyWiseDataType> {
     /**
      * Object name.
@@ -76,21 +76,6 @@ public class Security
      * Local Report fields.
      */
     private static final MetisFields FIELD_DEFS = new MetisFields(OBJECT_NAME, AssetBase.FIELD_DEFS);
-
-    /**
-     * SecurityType Field Id.
-     */
-    public static final MetisLetheField FIELD_SECTYPE = FIELD_DEFS.declareComparisonValueField(MoneyWiseDataType.SECURITYTYPE.getItemName(), MetisDataType.LINK);
-
-    /**
-     * Parent Field Id.
-     */
-    public static final MetisLetheField FIELD_PARENT = FIELD_DEFS.declareEqualityValueField(MoneyWiseDataResource.ASSET_PARENT.getValue(), MetisDataType.LINK);
-
-    /**
-     * Currency Field Id.
-     */
-    public static final MetisLetheField FIELD_CURRENCY = FIELD_DEFS.declareEqualityValueField(MoneyWiseDataType.CURRENCY.getItemName(), MetisDataType.LINK);
 
     /**
      * SecurityInfoSet field Id.
@@ -160,32 +145,6 @@ public class Security
         /* Initialise the item */
         super(pList, pValues);
 
-        /* Store the SecurityType */
-        Object myValue = pValues.getValue(FIELD_SECTYPE);
-        if (myValue instanceof Integer) {
-            setValueType((Integer) myValue);
-        } else if (myValue instanceof String) {
-            setValueType((String) myValue);
-        }
-
-        /* Store the Parent */
-        myValue = pValues.getValue(FIELD_PARENT);
-        if (myValue instanceof Integer) {
-            setValueParent((Integer) myValue);
-        } else if (myValue instanceof String) {
-            setValueParent((String) myValue);
-        }
-
-        /* Store the Currency */
-        myValue = pValues.getValue(FIELD_CURRENCY);
-        if (myValue instanceof Integer) {
-            setValueCurrency((Integer) myValue);
-        } else if (myValue instanceof String) {
-            setValueCurrency((String) myValue);
-        } else if (myValue instanceof AssetCurrency) {
-            setValueCurrency((AssetCurrency) myValue);
-        }
-
         /* Create the InfoSet */
         theInfoSet = new SecurityInfoSet(this, pList.getActInfoTypes(), pList.getSecurityInfo());
         hasInfoSet = true;
@@ -213,7 +172,7 @@ public class Security
     @Override
     public boolean includeXmlField(final MetisLetheField pField) {
         /* Determine whether fields should be included */
-        if (FIELD_SECTYPE.equals(pField)) {
+        if (FIELD_CATEGORY.equals(pField)) {
             return true;
         }
         if (FIELD_CURRENCY.equals(pField)) {
@@ -303,57 +262,27 @@ public class Security
     }
 
     @Override
-    public Payee getParent() {
-        return getParent(getValueSet());
+    public SecurityType getCategory() {
+        return getCategory(getValueSet());
     }
 
     /**
-     * Obtain ParentId.
-     * @return the parentId
+     * Obtain CategoryId.
+     * @return the categoryId
      */
-    public Integer getParentId() {
-        final Payee myParent = getParent();
-        return myParent == null
-                                ? null
-                                : myParent.getId();
-    }
-
-    /**
-     * Obtain ParentName.
-     * @return the parentName
-     */
-    public String getParentName() {
-        final Payee myParent = getParent();
-        return myParent == null
-                                ? null
-                                : myParent.getName();
-    }
-
-    /**
-     * Obtain Security Type.
-     * @return the type
-     */
-    public SecurityType getSecurityType() {
-        return getSecurityType(getValueSet());
-    }
-
-    /**
-     * Obtain SecurityTypeId.
-     * @return the securityTypeId
-     */
-    public Integer getSecurityTypeId() {
-        final SecurityType myType = getSecurityType();
+    public Integer getCategoryId() {
+        final SecurityType myType = getCategory();
         return myType == null
                               ? null
                               : myType.getId();
     }
 
     /**
-     * Obtain SecurityTypeName.
-     * @return the securityTypeName
+     * Obtain CategoryName.
+     * @return the categoryName
      */
-    public String getSecurityTypeName() {
-        final SecurityType myType = getSecurityType();
+    public String getCategoryName() {
+        final SecurityType myType = getCategory();
         return myType == null
                               ? null
                               : myType.getName();
@@ -363,16 +292,11 @@ public class Security
      * Obtain SecurityTypeClass.
      * @return the securityTypeClass
      */
-    public SecurityTypeClass getSecurityTypeClass() {
-        final SecurityType myType = getSecurityType();
+    public SecurityTypeClass getCategoryClass() {
+        final SecurityType myType = getCategory();
         return myType == null
                               ? null
                               : myType.getSecurityClass();
-    }
-
-    @Override
-    public AssetCurrency getAssetCurrency() {
-        return getAssetCurrency(getValueSet());
     }
 
     @Override
@@ -382,102 +306,12 @@ public class Security
     }
 
     /**
-     * Obtain Parent.
-     * @param pValueSet the valueSet
-     * @return the Parent
-     */
-    public static Payee getParent(final MetisValueSet pValueSet) {
-        return pValueSet.getValue(FIELD_PARENT, Payee.class);
-    }
-
-    /**
      * Obtain SecurityType.
      * @param pValueSet the valueSet
      * @return the SecurityType
      */
-    public static SecurityType getSecurityType(final MetisValueSet pValueSet) {
-        return pValueSet.getValue(FIELD_SECTYPE, SecurityType.class);
-    }
-
-    /**
-     * Obtain SecurityCurrency.
-     * @param pValueSet the valueSet
-     * @return the SecurityCurrency
-     */
-    public static AssetCurrency getAssetCurrency(final MetisValueSet pValueSet) {
-        return pValueSet.getValue(FIELD_CURRENCY, AssetCurrency.class);
-    }
-
-    /**
-     * Set parent value.
-     * @param pValue the value
-     */
-    private void setValueParent(final Payee pValue) {
-        getValueSet().setValue(FIELD_PARENT, pValue);
-    }
-
-    /**
-     * Set parent id.
-     * @param pValue the value
-     */
-    private void setValueParent(final Integer pValue) {
-        getValueSet().setValue(FIELD_PARENT, pValue);
-    }
-
-    /**
-     * Set parent name.
-     * @param pValue the value
-     */
-    private void setValueParent(final String pValue) {
-        getValueSet().setValue(FIELD_PARENT, pValue);
-    }
-
-    /**
-     * Set security type value.
-     * @param pValue the value
-     */
-    private void setValueType(final SecurityType pValue) {
-        getValueSet().setValue(FIELD_SECTYPE, pValue);
-    }
-
-    /**
-     * Set security type id.
-     * @param pValue the value
-     */
-    private void setValueType(final Integer pValue) {
-        getValueSet().setValue(FIELD_SECTYPE, pValue);
-    }
-
-    /**
-     * Set security type name.
-     * @param pValue the value
-     */
-    private void setValueType(final String pValue) {
-        getValueSet().setValue(FIELD_SECTYPE, pValue);
-    }
-
-    /**
-     * Set security currency value.
-     * @param pValue the value
-     */
-    private void setValueCurrency(final AssetCurrency pValue) {
-        getValueSet().setValue(FIELD_CURRENCY, pValue);
-    }
-
-    /**
-     * Set security currency id.
-     * @param pValue the value
-     */
-    private void setValueCurrency(final Integer pValue) {
-        getValueSet().setValue(FIELD_CURRENCY, pValue);
-    }
-
-    /**
-     * Set security currency name.
-     * @param pValue the value
-     */
-    private void setValueCurrency(final String pValue) {
-        getValueSet().setValue(FIELD_CURRENCY, pValue);
+    public static SecurityType getCategory(final MetisValueSet pValueSet) {
+        return pValueSet.getValue(FIELD_CATEGORY, SecurityType.class);
     }
 
     @Override
@@ -607,7 +441,7 @@ public class Security
      */
     public boolean isSecurityClass(final SecurityTypeClass pClass) {
         /* Check for match */
-        return getSecurityTypeClass() == pClass;
+        return getCategoryClass() == pClass;
     }
 
     @Override
@@ -617,7 +451,7 @@ public class Security
 
     @Override
     public boolean isCapital() {
-        switch (getSecurityTypeClass()) {
+        switch (getCategoryClass()) {
             case INCOMEUNITTRUST:
             case GROWTHUNITTRUST:
             case LIFEBOND:
@@ -642,7 +476,7 @@ public class Security
     public void setDefaults(final UpdateSet<MoneyWiseDataType> pUpdateSet) throws OceanusException {
         /* Set values */
         setName(getList().getUniqueName(NAME_NEWACCOUNT));
-        setSecurityType(getDefaultSecurityType());
+        setCategory(getDefaultSecurityType());
         setAssetCurrency(getDataSet().getDefaultCurrency());
         setSymbol(getName());
         setClosed(Boolean.FALSE);
@@ -655,12 +489,12 @@ public class Security
      */
     public void autoCorrect(final UpdateSet<MoneyWiseDataType> pUpdateSet) {
         /* Access category class and parent */
-        final SecurityTypeClass myClass = getSecurityTypeClass();
+        final SecurityTypeClass myClass = getCategoryClass();
         final Payee myParent = getParent();
 
         /* Ensure that we have a valid parent */
         if ((myParent == null)
-            || myParent.getPayeeTypeClass().canParentSecurity(myClass)) {
+            || myParent.getCategoryClass().canParentSecurity(myClass)) {
             setParent(getDefaultParent(pUpdateSet));
         }
     }
@@ -694,7 +528,7 @@ public class Security
     private Payee getDefaultParent(final UpdateSet<MoneyWiseDataType> pUpdateSet) {
         /* Access details */
         final PayeeList myPayees = pUpdateSet.getDataList(MoneyWiseDataType.PAYEE, PayeeList.class);
-        final SecurityTypeClass myClass = getSecurityTypeClass();
+        final SecurityTypeClass myClass = getCategoryClass();
 
         /* loop through the payees */
         final Iterator<Payee> myIterator = myPayees.iterator();
@@ -707,7 +541,7 @@ public class Security
             }
 
             /* If the payee can parent */
-            if (myPayee.getPayeeTypeClass().canParentSecurity(myClass)) {
+            if (myPayee.getCategoryClass().canParentSecurity(myClass)) {
                 return myPayee;
             }
         }
@@ -732,7 +566,7 @@ public class Security
             && (pThat instanceof Security)) {
             /* Check the security type */
             final Security myThat = (Security) pThat;
-            iDiff = MetisDataDifference.compareObject(getSecurityType(), myThat.getSecurityType());
+            iDiff = MetisDataDifference.compareObject(getCategory(), myThat.getCategory());
             if (iDiff == 0) {
                 /* Check the underlying base */
                 iDiff = super.compareAsset(myThat);
@@ -750,7 +584,7 @@ public class Security
 
         /* Resolve data links */
         final MoneyWiseData myData = getDataSet();
-        resolveDataLink(FIELD_SECTYPE, myData.getSecurityTypes());
+        resolveDataLink(FIELD_CATEGORY, myData.getSecurityTypes());
         resolveDataLink(FIELD_CURRENCY, myData.getAccountCurrencies());
         resolveDataLink(FIELD_PARENT, myData.getPayees());
     }
@@ -760,30 +594,6 @@ public class Security
         /* Resolve parent within list */
         final PayeeList myPayees = pUpdateSet.getDataList(MoneyWiseDataType.PAYEE, PayeeList.class);
         resolveDataLink(FIELD_PARENT, myPayees);
-    }
-
-    /**
-     * Set a new security type.
-     * @param pType the new type
-     */
-    public void setSecurityType(final SecurityType pType) {
-        setValueType(pType);
-    }
-
-    /**
-     * Set a new security currency.
-     * @param pCurrency the new currency
-     */
-    public void setAssetCurrency(final AssetCurrency pCurrency) {
-        setValueCurrency(pCurrency);
-    }
-
-    /**
-     * Set a new parent.
-     * @param pParent the parent
-     */
-    public void setParent(final Payee pParent) {
-        setValueParent(pParent);
     }
 
     /**
@@ -857,9 +667,9 @@ public class Security
             if (isForeign()) {
                 return myCategories.getSingularClass(TransactionCategoryClass.FOREIGNDIVIDEND);
             }
-            return myCategories.getSingularClass(getSecurityTypeClass().isUnitTrust()
-                                                                                      ? TransactionCategoryClass.UNITTRUSTDIVIDEND
-                                                                                      : TransactionCategoryClass.SHAREDIVIDEND);
+            return myCategories.getSingularClass(getCategoryClass().isUnitTrust()
+                                                                                 ? TransactionCategoryClass.UNITTRUSTDIVIDEND
+                                                                                 : TransactionCategoryClass.SHAREDIVIDEND);
         }
         return pCategory;
     }
@@ -867,7 +677,7 @@ public class Security
     @Override
     public void touchUnderlyingItems() {
         /* touch the security type, currency and parent */
-        getSecurityType().touchItem(this);
+        getCategory().touchItem(this);
         getAssetCurrency().touchItem(this);
         getParent().touchItem(this);
 
@@ -888,7 +698,7 @@ public class Security
     public void validate() {
         final SecurityList myList = getList();
         final Payee myParent = getParent();
-        final SecurityType mySecType = getSecurityType();
+        final SecurityType mySecType = getCategory();
         final AssetCurrency myCurrency = getAssetCurrency();
         final String mySymbol = getSymbol();
 
@@ -897,14 +707,14 @@ public class Security
 
         /* SecurityType must be non-null */
         if (mySecType == null) {
-            addError(ERROR_MISSING, FIELD_SECTYPE);
+            addError(ERROR_MISSING, FIELD_CATEGORY);
         } else {
             /* Access the class */
             final SecurityTypeClass myClass = mySecType.getSecurityClass();
 
             /* SecurityType must be enabled */
             if (!mySecType.getEnabled()) {
-                addError(ERROR_DISABLED, FIELD_SECTYPE);
+                addError(ERROR_DISABLED, FIELD_CATEGORY);
             }
 
             /* If the SecurityType is singular */
@@ -912,7 +722,7 @@ public class Security
                 /* Count the elements of this class */
                 final SecurityDataMap myMap = myList.getDataMap();
                 if (!myMap.validSingularCount(myClass)) {
-                    addError(ERROR_MULT, FIELD_SECTYPE);
+                    addError(ERROR_MULT, FIELD_CATEGORY);
                 }
             }
         }
@@ -937,7 +747,7 @@ public class Security
             if (mySecType != null) {
                 /* Access the classes */
                 final SecurityTypeClass myClass = mySecType.getSecurityClass();
-                final PayeeTypeClass myParClass = myParent.getPayeeTypeClass();
+                final PayeeTypeClass myParClass = myParent.getCategoryClass();
 
                 /* Parent must be suitable */
                 if (!myParClass.canParentSecurity(myClass)) {
@@ -984,11 +794,6 @@ public class Security
             || pName.equals(Portfolio.NAME_CASHACCOUNT)) {
             addError(ERROR_RESERVED, FIELD_NAME);
         }
-
-        /* Check that the name does not contain invalid characters */
-        if (pName.contains(SecurityHolding.SECURITYHOLDING_SEP)) {
-            addError(ERROR_INVALIDCHAR, FIELD_NAME);
-        }
     }
 
     /**
@@ -1010,21 +815,6 @@ public class Security
         /* Apply basic changes */
         applyBasicChanges(mySecurity);
 
-        /* Update the category type if required */
-        if (!MetisDataDifference.isEqual(getSecurityType(), mySecurity.getSecurityType())) {
-            setValueType(mySecurity.getSecurityType());
-        }
-
-        /* Update the parent if required */
-        if (!MetisDataDifference.isEqual(getParent(), mySecurity.getParent())) {
-            setValueParent(mySecurity.getParent());
-        }
-
-        /* Update the security currency if required */
-        if (!MetisDataDifference.isEqual(getAssetCurrency(), mySecurity.getAssetCurrency())) {
-            setValueCurrency(mySecurity.getAssetCurrency());
-        }
-
         /* Check for changes */
         return checkForHistory();
     }
@@ -1040,7 +830,7 @@ public class Security
      * The Security List class.
      */
     public static class SecurityList
-            extends AssetBaseList<Security> {
+            extends AssetBaseList<Security, SecurityType> {
         /**
          * Report fields.
          */
@@ -1387,7 +1177,7 @@ public class Security
         @Override
         public void adjustForItem(final Security pItem) {
             /* If the class is singular */
-            final SecurityTypeClass myClass = pItem.getSecurityTypeClass();
+            final SecurityTypeClass myClass = pItem.getCategoryClass();
             if (myClass.isSingular()) {
                 /* Adjust category count */
                 final Integer myId = myClass.getClassId();

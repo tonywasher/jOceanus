@@ -88,7 +88,7 @@ public class PortfolioTable
     /**
      * Type Column Title.
      */
-    private static final String TITLE_TYPE = Portfolio.FIELD_PORTTYPE.getName();
+    private static final String TITLE_TYPE = Portfolio.FIELD_CATEGORY.getName();
 
     /**
      * Parent Column Title.
@@ -700,7 +700,7 @@ public class PortfolioTable
                 case COLUMN_NAME:
                     return pPortfolio.getName();
                 case COLUMN_TYPE:
-                    return pPortfolio.getPortfolioType();
+                    return pPortfolio.getCategory();
                 case COLUMN_PARENT:
                     return pPortfolio.getParent();
                 case COLUMN_DESC:
@@ -742,7 +742,7 @@ public class PortfolioTable
                     pItem.setDescription((String) pValue);
                     break;
                 case COLUMN_TYPE:
-                    pItem.setPortfolioType((PortfolioType) pValue);
+                    pItem.setCategory((PortfolioType) pValue);
                     break;
                 case COLUMN_PARENT:
                     pItem.setParent((Payee) pValue);
@@ -798,7 +798,7 @@ public class PortfolioTable
                 case COLUMN_DESC:
                     return Portfolio.FIELD_DESC;
                 case COLUMN_TYPE:
-                    return Portfolio.FIELD_PORTTYPE;
+                    return Portfolio.FIELD_CATEGORY;
                 case COLUMN_PARENT:
                     return Portfolio.FIELD_PARENT;
                 case COLUMN_CURR:

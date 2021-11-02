@@ -103,7 +103,7 @@ public class SheetSecurity
     protected DataValues<MoneyWiseDataType> loadSecureValues() throws OceanusException {
         /* Build data values */
         final DataValues<MoneyWiseDataType> myValues = getRowValues(Security.OBJECT_NAME);
-        myValues.addValue(Security.FIELD_SECTYPE, loadInteger(COL_TYPE));
+        myValues.addValue(Security.FIELD_CATEGORY, loadInteger(COL_TYPE));
         myValues.addValue(Security.FIELD_PARENT, loadInteger(COL_PARENT));
         myValues.addValue(Security.FIELD_CURRENCY, loadInteger(COL_CURRENCY));
         myValues.addValue(Security.FIELD_NAME, loadBytes(COL_NAME));
@@ -118,7 +118,7 @@ public class SheetSecurity
     protected void insertSecureItem(final Security pItem) throws OceanusException {
         /* Set the fields */
         super.insertSecureItem(pItem);
-        writeInteger(COL_TYPE, pItem.getSecurityTypeId());
+        writeInteger(COL_TYPE, pItem.getCategoryId());
         writeInteger(COL_PARENT, pItem.getParentId());
         writeInteger(COL_CURRENCY, pItem.getAssetCurrencyId());
         writeBytes(COL_NAME, pItem.getNameBytes());
@@ -222,7 +222,7 @@ public class SheetSecurity
         /* Build data values */
         final DataValues<MoneyWiseDataType> myValues = new DataValues<>(Security.OBJECT_NAME);
         myValues.addValue(Security.FIELD_NAME, myName);
-        myValues.addValue(Security.FIELD_SECTYPE, mySecType);
+        myValues.addValue(Security.FIELD_CATEGORY, mySecType);
         myValues.addValue(Security.FIELD_CURRENCY, myCurrency);
         myValues.addValue(Security.FIELD_PARENT, myParent);
         myValues.addValue(Security.FIELD_CLOSED, isClosed);

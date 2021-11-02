@@ -53,7 +53,7 @@ import net.sourceforge.joceanus.jtethys.decimal.TethysMoney;
  * Loan class.
  */
 public class Loan
-        extends AssetBase<Loan>
+        extends AssetBase<Loan, LoanCategory>
         implements InfoSetItem<MoneyWiseDataType> {
     /**
      * Object name.
@@ -71,22 +71,7 @@ public class Loan
     private static final MetisFields FIELD_DEFS = new MetisFields(OBJECT_NAME, AssetBase.FIELD_DEFS);
 
     /**
-     * LoanCategory Field Id.
-     */
-    public static final MetisLetheField FIELD_CATEGORY = FIELD_DEFS.declareComparisonValueField(MoneyWiseDataType.LOANCATEGORY.getItemName(), MetisDataType.LINK);
-
-    /**
-     * Parent Field Id.
-     */
-    public static final MetisLetheField FIELD_PARENT = FIELD_DEFS.declareEqualityValueField(MoneyWiseDataResource.ASSET_PARENT.getValue(), MetisDataType.LINK);
-
-    /**
-     * Currency Field Id.
-     */
-    public static final MetisLetheField FIELD_CURRENCY = FIELD_DEFS.declareEqualityValueField(MoneyWiseDataType.CURRENCY.getItemName(), MetisDataType.LINK);
-
-    /**
-     * PayeeInfoSet field Id.
+     * LoanInfoSet field Id.
      */
     private static final MetisLetheField FIELD_INFOSET = FIELD_DEFS.declareLocalField(PrometheusDataResource.DATAINFOSET_NAME.getValue());
 
@@ -152,32 +137,6 @@ public class Loan
                  final DataValues<MoneyWiseDataType> pValues) throws OceanusException {
         /* Initialise the item */
         super(pList, pValues);
-
-        /* Store the Category */
-        Object myValue = pValues.getValue(FIELD_CATEGORY);
-        if (myValue instanceof Integer) {
-            setValueCategory((Integer) myValue);
-        } else if (myValue instanceof String) {
-            setValueCategory((String) myValue);
-        }
-
-        /* Store the Parent */
-        myValue = pValues.getValue(FIELD_PARENT);
-        if (myValue instanceof Integer) {
-            setValueParent((Integer) myValue);
-        } else if (myValue instanceof String) {
-            setValueParent((String) myValue);
-        }
-
-        /* Store the Currency */
-        myValue = pValues.getValue(FIELD_CURRENCY);
-        if (myValue instanceof Integer) {
-            setValueCurrency((Integer) myValue);
-        } else if (myValue instanceof String) {
-            setValueCurrency((String) myValue);
-        } else if (myValue instanceof AssetCurrency) {
-            setValueCurrency((AssetCurrency) myValue);
-        }
 
         /* Create the InfoSet */
         theInfoSet = new LoanInfoSet(this, pList.getActInfoTypes(), pList.getLoanInfo());
@@ -296,36 +255,6 @@ public class Loan
     }
 
     @Override
-    public Payee getParent() {
-        return getParent(getValueSet());
-    }
-
-    /**
-     * Obtain ParentId.
-     * @return the parentId
-     */
-    public Integer getParentId() {
-        final Payee myParent = getParent();
-        return myParent == null
-                                ? null
-                                : myParent.getId();
-    }
-
-    /**
-     * Obtain ParentName.
-     * @return the parentName
-     */
-    public String getParentName() {
-        final Payee myParent = getParent();
-        return myParent == null
-                                ? null
-                                : myParent.getName();
-    }
-
-    /**
-     * Obtain LoanCategory.
-     * @return the category
-     */
     public LoanCategory getCategory() {
         return getCategory(getValueSet());
     }
@@ -364,23 +293,9 @@ public class Loan
     }
 
     @Override
-    public AssetCurrency getAssetCurrency() {
-        return getAssetCurrency(getValueSet());
-    }
-
-    @Override
     public Boolean isForeign() {
         final AssetCurrency myDefault = getDataSet().getDefaultCurrency();
         return !myDefault.equals(getAssetCurrency());
-    }
-
-    /**
-     * Obtain Parent.
-     * @param pValueSet the valueSet
-     * @return the Parent
-     */
-    public static Payee getParent(final MetisValueSet pValueSet) {
-        return pValueSet.getValue(FIELD_PARENT, Payee.class);
     }
 
     /**
@@ -390,87 +305,6 @@ public class Loan
      */
     public static LoanCategory getCategory(final MetisValueSet pValueSet) {
         return pValueSet.getValue(FIELD_CATEGORY, LoanCategory.class);
-    }
-
-    /**
-     * Obtain LoanCurrency.
-     * @param pValueSet the valueSet
-     * @return the LoanCurrency
-     */
-    public static AssetCurrency getAssetCurrency(final MetisValueSet pValueSet) {
-        return pValueSet.getValue(FIELD_CURRENCY, AssetCurrency.class);
-    }
-
-    /**
-     * Set parent value.
-     * @param pValue the value
-     */
-    private void setValueParent(final Payee pValue) {
-        getValueSet().setValue(FIELD_PARENT, pValue);
-    }
-
-    /**
-     * Set parent id.
-     * @param pValue the value
-     */
-    private void setValueParent(final Integer pValue) {
-        getValueSet().setValue(FIELD_PARENT, pValue);
-    }
-
-    /**
-     * Set parent name.
-     * @param pValue the value
-     */
-    private void setValueParent(final String pValue) {
-        getValueSet().setValue(FIELD_PARENT, pValue);
-    }
-
-    /**
-     * Set loan category value.
-     * @param pValue the value
-     */
-    private void setValueCategory(final LoanCategory pValue) {
-        getValueSet().setValue(FIELD_CATEGORY, pValue);
-    }
-
-    /**
-     * Set loan category id.
-     * @param pValue the value
-     */
-    private void setValueCategory(final Integer pValue) {
-        getValueSet().setValue(FIELD_CATEGORY, pValue);
-    }
-
-    /**
-     * Set loan category name.
-     * @param pValue the value
-     */
-    private void setValueCategory(final String pValue) {
-        getValueSet().setValue(FIELD_CATEGORY, pValue);
-    }
-
-    /**
-     * Set loan currency value.
-     * @param pValue the value
-     */
-    private void setValueCurrency(final AssetCurrency pValue) {
-        getValueSet().setValue(FIELD_CURRENCY, pValue);
-    }
-
-    /**
-     * Set loan currency id.
-     * @param pValue the value
-     */
-    private void setValueCurrency(final Integer pValue) {
-        getValueSet().setValue(FIELD_CURRENCY, pValue);
-    }
-
-    /**
-     * Set loan currency name.
-     * @param pValue the value
-     */
-    private void setValueCurrency(final String pValue) {
-        getValueSet().setValue(FIELD_CURRENCY, pValue);
     }
 
     @Override
@@ -611,7 +445,7 @@ public class Loan
     public void setDefaults(final UpdateSet<MoneyWiseDataType> pUpdateSet) throws OceanusException {
         /* Set values */
         setName(getList().getUniqueName(NAME_NEWACCOUNT));
-        setLoanCategory(getDefaultCategory());
+        setCategory(getDefaultCategory());
         setAssetCurrency(getDataSet().getDefaultCurrency());
         setClosed(Boolean.FALSE);
         autoCorrect(pUpdateSet);
@@ -629,7 +463,7 @@ public class Loan
 
         /* Ensure that we have valid parent */
         if ((myParent == null)
-            || !myParent.getPayeeTypeClass().canParentLoan(myClass)) {
+            || !myParent.getCategoryClass().canParentLoan(myClass)) {
             setParent(getDefaultParent(pUpdateSet));
         }
     }
@@ -681,7 +515,7 @@ public class Loan
             }
 
             /* If the payee can parent */
-            if (myPayee.getPayeeTypeClass().canParentLoan(myClass)) {
+            if (myPayee.getCategoryClass().canParentLoan(myClass)) {
                 return myPayee;
             }
         }
@@ -734,30 +568,6 @@ public class Loan
         /* Resolve parent within list */
         final PayeeList myPayees = pUpdateSet.getDataList(MoneyWiseDataType.PAYEE, PayeeList.class);
         resolveDataLink(FIELD_PARENT, myPayees);
-    }
-
-    /**
-     * Set a new loan category.
-     * @param pCategory the new category
-     */
-    public void setLoanCategory(final LoanCategory pCategory) {
-        setValueCategory(pCategory);
-    }
-
-    /**
-     * Set a new loan currency.
-     * @param pCurrency the new currency
-     */
-    public void setAssetCurrency(final AssetCurrency pCurrency) {
-        setValueCurrency(pCurrency);
-    }
-
-    /**
-     * Set a new parent.
-     * @param pParent the parent
-     */
-    public void setParent(final Payee pParent) {
-        setValueParent(pParent);
     }
 
     /**
@@ -874,7 +684,7 @@ public class Loan
             addError(ERROR_MISSING, FIELD_PARENT);
         } else {
             /* Parent must be suitable */
-            if (!myParent.getPayeeTypeClass().canParentLoan(myClass)) {
+            if (!myParent.getCategoryClass().canParentLoan(myClass)) {
                 addError(ERROR_BADPARENT, FIELD_PARENT);
             }
 
@@ -915,21 +725,6 @@ public class Loan
         /* Apply basic changes */
         applyBasicChanges(myLoan);
 
-        /* Update the category if required */
-        if (!MetisDataDifference.isEqual(getCategory(), myLoan.getCategory())) {
-            setValueCategory(myLoan.getCategory());
-        }
-
-        /* Update the parent if required */
-        if (!MetisDataDifference.isEqual(getParent(), myLoan.getParent())) {
-            setValueParent(myLoan.getParent());
-        }
-
-        /* Update the deposit currency if required */
-        if (!MetisDataDifference.isEqual(getAssetCurrency(), myLoan.getAssetCurrency())) {
-            setValueCurrency(myLoan.getAssetCurrency());
-        }
-
         /* Check for changes */
         return checkForHistory();
     }
@@ -945,7 +740,7 @@ public class Loan
      * The Loan List class.
      */
     public static class LoanList
-            extends AssetBaseList<Loan> {
+            extends AssetBaseList<Loan, LoanCategory> {
         /**
          * Report fields.
          */
@@ -1222,7 +1017,7 @@ public class Loan
          * @return the matching item
          */
         public Loan findItemByName(final String pName) {
-            final AssetBase<?> myAsset = theUnderlyingMap.findAssetByName(pName);
+            final AssetBase<?, ?> myAsset = theUnderlyingMap.findAssetByName(pName);
             return myAsset instanceof Loan
                                            ? (Loan) myAsset
                                            : null;

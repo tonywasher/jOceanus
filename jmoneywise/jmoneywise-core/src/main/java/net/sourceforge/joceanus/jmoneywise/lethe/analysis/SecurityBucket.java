@@ -145,7 +145,7 @@ public final class SecurityBucket
         theData = theAnalysis.getData();
 
         /* Obtain category */
-        theCategory = theSecurity.getSecurityType();
+        theCategory = theSecurity.getCategory();
 
         /* Determine currency */
         final AssetCurrency myReportingCurrency = pAnalysis.getCurrency();
@@ -749,7 +749,7 @@ public final class SecurityBucket
             /* Handle autoUnits */
             TethysUnits myUnits = getValues().getUnitsValue(SecurityAttribute.UNITS);
             if (myUnits.isZero()) {
-                myUnits = TethysUnits.getWholeUnits(theSecurity.getSecurityTypeClass().getAutoUnits());
+                myUnits = TethysUnits.getWholeUnits(theSecurity.getCategoryClass().getAutoUnits());
                 setValue(SecurityAttribute.UNITS, myUnits);
             }
 

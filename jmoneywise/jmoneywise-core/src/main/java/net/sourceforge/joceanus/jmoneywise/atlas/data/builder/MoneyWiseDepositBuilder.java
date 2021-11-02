@@ -151,7 +151,7 @@ public class MoneyWiseDepositBuilder {
         final Deposit myDeposit = theDataSet.getDeposits().addNewItem();
         myDeposit.setName(theName);
         myDeposit.setParent(theParent);
-        myDeposit.setDepositCategory(theCategory);
+        myDeposit.setCategory(theCategory);
         myDeposit.setAssetCurrency(theCurrency);
         myDeposit.setOpeningBalance(theOpeningBalance);
         myDeposit.validate();

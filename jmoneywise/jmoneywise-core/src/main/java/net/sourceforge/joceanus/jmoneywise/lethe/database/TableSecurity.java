@@ -48,7 +48,7 @@ public class TableSecurity
         final PrometheusTableDefinition myTableDef = getTableDef();
 
         /* Declare the columns */
-        final PrometheusColumnDefinition myCatCol = myTableDef.addReferenceColumn(Security.FIELD_SECTYPE, TableSecurityType.TABLE_NAME);
+        final PrometheusColumnDefinition myCatCol = myTableDef.addReferenceColumn(Security.FIELD_CATEGORY, TableSecurityType.TABLE_NAME);
         myTableDef.addReferenceColumn(Security.FIELD_CURRENCY, TableAssetCurrency.TABLE_NAME);
         myTableDef.addReferenceColumn(Security.FIELD_PARENT, TablePayee.TABLE_NAME);
         myTableDef.addEncryptedColumn(Security.FIELD_NAME, Security.NAMELEN);
@@ -74,7 +74,7 @@ public class TableSecurity
         final DataValues<MoneyWiseDataType> myValues = getRowValues(Security.OBJECT_NAME);
         myValues.addValue(Security.FIELD_NAME, myTableDef.getBinaryValue(Security.FIELD_NAME));
         myValues.addValue(Security.FIELD_DESC, myTableDef.getBinaryValue(Security.FIELD_DESC));
-        myValues.addValue(Security.FIELD_SECTYPE, myTableDef.getIntegerValue(Security.FIELD_SECTYPE));
+        myValues.addValue(Security.FIELD_CATEGORY, myTableDef.getIntegerValue(Security.FIELD_CATEGORY));
         myValues.addValue(Security.FIELD_PARENT, myTableDef.getIntegerValue(Security.FIELD_PARENT));
         myValues.addValue(Security.FIELD_CURRENCY, myTableDef.getIntegerValue(Security.FIELD_CURRENCY));
         myValues.addValue(Security.FIELD_CLOSED, myTableDef.getBooleanValue(Security.FIELD_CLOSED));
@@ -88,8 +88,8 @@ public class TableSecurity
                                  final MetisLetheField iField) throws OceanusException {
         /* Switch on field id */
         final PrometheusTableDefinition myTableDef = getTableDef();
-        if (Security.FIELD_SECTYPE.equals(iField)) {
-            myTableDef.setIntegerValue(iField, pItem.getSecurityTypeId());
+        if (Security.FIELD_CATEGORY.equals(iField)) {
+            myTableDef.setIntegerValue(iField, pItem.getCategoryId());
         } else if (Security.FIELD_PARENT.equals(iField)) {
             myTableDef.setIntegerValue(iField, pItem.getParentId());
         } else if (Security.FIELD_CURRENCY.equals(iField)) {

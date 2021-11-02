@@ -53,7 +53,7 @@ import net.sourceforge.joceanus.jtethys.decimal.TethysMoney;
  * Cash class.
  */
 public class Cash
-        extends AssetBase<Cash>
+        extends AssetBase<Cash, CashCategory>
         implements InfoSetItem<MoneyWiseDataType> {
     /**
      * Object name.
@@ -71,17 +71,7 @@ public class Cash
     private static final MetisFields FIELD_DEFS = new MetisFields(OBJECT_NAME, AssetBase.FIELD_DEFS);
 
     /**
-     * AccountCategory Field Id.
-     */
-    public static final MetisLetheField FIELD_CATEGORY = FIELD_DEFS.declareComparisonValueField(MoneyWiseDataType.CASHCATEGORY.getItemName(), MetisDataType.LINK);
-
-    /**
-     * Currency Field Id.
-     */
-    public static final MetisLetheField FIELD_CURRENCY = FIELD_DEFS.declareEqualityValueField(MoneyWiseDataType.CURRENCY.getItemName(), MetisDataType.LINK);
-
-    /**
-     * PayeeInfoSet field Id.
+     * CashInfoSet field Id.
      */
     private static final MetisLetheField FIELD_INFOSET = FIELD_DEFS.declareLocalField(PrometheusDataResource.DATAINFOSET_NAME.getValue());
 
@@ -147,24 +137,6 @@ public class Cash
                  final DataValues<MoneyWiseDataType> pValues) throws OceanusException {
         /* Initialise the item */
         super(pList, pValues);
-
-        /* Store the Category */
-        Object myValue = pValues.getValue(FIELD_CATEGORY);
-        if (myValue instanceof Integer) {
-            setValueCategory((Integer) myValue);
-        } else if (myValue instanceof String) {
-            setValueCategory((String) myValue);
-        }
-
-        /* Store the Currency */
-        myValue = pValues.getValue(FIELD_CURRENCY);
-        if (myValue instanceof Integer) {
-            setValueCurrency((Integer) myValue);
-        } else if (myValue instanceof String) {
-            setValueCurrency((String) myValue);
-        } else if (myValue instanceof AssetCurrency) {
-            setValueCurrency((AssetCurrency) myValue);
-        }
 
         /* Create the InfoSet */
         theInfoSet = new CashInfoSet(this, pList.getActInfoTypes(), pList.getCashInfo());
@@ -284,8 +256,8 @@ public class Cash
     public Integer getCategoryId() {
         final CashCategory myCategory = getCategory();
         return myCategory == null
-                                  ? null
-                                  : myCategory.getId();
+                ? null
+                : myCategory.getId();
     }
 
     /**
@@ -295,8 +267,8 @@ public class Cash
     public String getCategoryName() {
         final CashCategory myCategory = getCategory();
         return myCategory == null
-                                  ? null
-                                  : myCategory.getName();
+                ? null
+                : myCategory.getName();
     }
 
     /**
@@ -308,11 +280,6 @@ public class Cash
         return myCategory == null
                                   ? null
                                   : myCategory.getCategoryTypeClass();
-    }
-
-    @Override
-    public AssetCurrency getAssetCurrency() {
-        return getCurrency(getValueSet());
     }
 
     @Override
@@ -328,63 +295,6 @@ public class Cash
      */
     public static CashCategory getCategory(final MetisValueSet pValueSet) {
         return pValueSet.getValue(FIELD_CATEGORY, CashCategory.class);
-    }
-
-    /**
-     * Obtain CashCurrency.
-     * @param pValueSet the valueSet
-     * @return the CashCurrency
-     */
-    public static AssetCurrency getCurrency(final MetisValueSet pValueSet) {
-        return pValueSet.getValue(FIELD_CURRENCY, AssetCurrency.class);
-    }
-
-    /**
-     * Set cash category value.
-     * @param pValue the value
-     */
-    private void setValueCategory(final CashCategory pValue) {
-        getValueSet().setValue(FIELD_CATEGORY, pValue);
-    }
-
-    /**
-     * Set cash category id.
-     * @param pValue the value
-     */
-    private void setValueCategory(final Integer pValue) {
-        getValueSet().setValue(FIELD_CATEGORY, pValue);
-    }
-
-    /**
-     * Set cash category name.
-     * @param pValue the value
-     */
-    private void setValueCategory(final String pValue) {
-        getValueSet().setValue(FIELD_CATEGORY, pValue);
-    }
-
-    /**
-     * Set cash currency value.
-     * @param pValue the value
-     */
-    private void setValueCurrency(final AssetCurrency pValue) {
-        getValueSet().setValue(FIELD_CURRENCY, pValue);
-    }
-
-    /**
-     * Set cash currency id.
-     * @param pValue the value
-     */
-    private void setValueCurrency(final Integer pValue) {
-        getValueSet().setValue(FIELD_CURRENCY, pValue);
-    }
-
-    /**
-     * Set cash currency name.
-     * @param pValue the value
-     */
-    private void setValueCurrency(final String pValue) {
-        getValueSet().setValue(FIELD_CURRENCY, pValue);
     }
 
     @Override
@@ -527,7 +437,7 @@ public class Cash
     public void setDefaults(final UpdateSet<MoneyWiseDataType> pUpdateSet) throws OceanusException {
         /* Set values */
         setName(getList().getUniqueName(NAME_NEWACCOUNT));
-        setCashCategory(getDefaultCategory());
+        setCategory(getDefaultCategory());
         setAssetCurrency(getDataSet().getDefaultCurrency());
         setClosed(Boolean.FALSE);
         autoCorrect(pUpdateSet);
@@ -608,22 +518,6 @@ public class Cash
     }
 
     /**
-     * Set a new cash category.
-     * @param pCategory the new category
-     */
-    public void setCashCategory(final CashCategory pCategory) {
-        setValueCategory(pCategory);
-    }
-
-    /**
-     * Set a new cash currency.
-     * @param pCurrency the new currency
-     */
-    public void setAssetCurrency(final AssetCurrency pCurrency) {
-        setValueCurrency(pCurrency);
-    }
-
-    /**
      * Set a new Notes.
      * @param pNotes the new notes
      * @throws OceanusException on error
@@ -694,6 +588,7 @@ public class Cash
 
     @Override
     public void validate() {
+        final Payee myParent = getParent();
         final CashCategory myCategory = getCategory();
         final AssetCurrency myCurrency = getAssetCurrency();
 
@@ -705,6 +600,11 @@ public class Cash
             addError(ERROR_MISSING, FIELD_CATEGORY);
         } else if (myCategory.getCategoryTypeClass().isParentCategory()) {
             addError(ERROR_BADCATEGORY, FIELD_CATEGORY);
+        }
+
+        /* Parent must be null */
+        if (myParent != null) {
+            addError(ERROR_EXIST, FIELD_PARENT);
         }
 
         /* Currency must be non-null and enabled */
@@ -745,16 +645,6 @@ public class Cash
         /* Apply basic changes */
         applyBasicChanges(myCash);
 
-        /* Update the category if required */
-        if (!MetisDataDifference.isEqual(getCategory(), myCash.getCategory())) {
-            setValueCategory(myCash.getCategory());
-        }
-
-        /* Update the currency if required */
-        if (!MetisDataDifference.isEqual(getAssetCurrency(), myCash.getAssetCurrency())) {
-            setValueCurrency(myCash.getAssetCurrency());
-        }
-
         /* Check for changes */
         return checkForHistory();
     }
@@ -770,7 +660,7 @@ public class Cash
      * The Cash List class.
      */
     public static class CashList
-            extends AssetBaseList<Cash> {
+            extends AssetBaseList<Cash, CashCategory> {
         /**
          * Report fields.
          */
@@ -1054,7 +944,7 @@ public class Cash
          * @return the matching item
          */
         public Cash findItemByName(final String pName) {
-            final AssetBase<?> myAsset = theUnderlyingMap.findAssetByName(pName);
+            final AssetBase<?, ?> myAsset = theUnderlyingMap.findAssetByName(pName);
             return myAsset instanceof Cash
                                            ? (Cash) myAsset
                                            : null;

@@ -756,7 +756,7 @@ public class DepositTable
                     pItem.setDescription((String) pValue);
                     break;
                 case COLUMN_CATEGORY:
-                    pItem.setDepositCategory((DepositCategory) pValue);
+                    pItem.setCategory((DepositCategory) pValue);
                     pItem.autoCorrect(theUpdateSet);
                     break;
                 case COLUMN_PARENT:

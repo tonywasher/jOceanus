@@ -104,7 +104,7 @@ public class MoneyWiseDepositTable
                 .setCellValueFactory(Deposit::getCategory)
                 .setEditable(true)
                 .setCellEditable(r -> !r.isActive())
-                .setOnCommit((r, v) -> updateField(Deposit::setDepositCategory, r, v));
+                .setOnCommit((r, v) -> updateField(Deposit::setCategory, r, v));
 
         /* Create the description column */
         myTable.declareStringColumn(Deposit.FIELD_DESC)
