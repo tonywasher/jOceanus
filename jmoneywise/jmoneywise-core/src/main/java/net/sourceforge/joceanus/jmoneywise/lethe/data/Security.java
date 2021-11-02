@@ -997,7 +997,7 @@ public class Security
          */
         @Override
         public Security addCopyItem(final DataItem<?> pSecurity) {
-            /* Can only clone an Security */
+            /* Can only clone a Security */
             if (!(pSecurity instanceof Security)) {
                 throw new UnsupportedOperationException();
             }

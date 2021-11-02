@@ -32,7 +32,6 @@ import net.sourceforge.joceanus.jmoneywise.lethe.data.TransactionTag.Transaction
 import net.sourceforge.joceanus.jmoneywise.lethe.ui.MoneyWiseUIResource;
 import net.sourceforge.joceanus.jmoneywise.lethe.ui.dialog.swing.TransactionTagPanel;
 import net.sourceforge.joceanus.jmoneywise.lethe.views.MoneyWiseView;
-import net.sourceforge.joceanus.jprometheus.lethe.data.DataList.ListStyle;
 import net.sourceforge.joceanus.jprometheus.lethe.swing.PrometheusSwingToolkit;
 import net.sourceforge.joceanus.jprometheus.lethe.views.PrometheusDataEvent;
 import net.sourceforge.joceanus.jprometheus.lethe.views.UpdateSet;
@@ -150,9 +149,8 @@ public class MoneyWiseTransTagTable
 
         /* Access list */
         final MoneyWiseData myData = getView().getData();
-        final TransactionTagList myBase = myData.getDataList(TransactionTagList.class);
-        theTags = (TransactionTagList) myBase.deriveList(ListStyle.EDIT);
-        theTags.mapData();
+        final TransactionTagList myBase = myData.getTransactionTags();
+        theTags = myBase.deriveEditList();
         getTable().setItems(theTags.getUnderlyingList());
         getUpdateEntry().setDataList(theTags);
 

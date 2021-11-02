@@ -363,10 +363,10 @@ public class MoneyWiseAccountPanel
      * Refresh data.
      * @throws OceanusException on error
      */
-    protected void refreshData() throws OceanusException {
+    public void refreshData() throws OceanusException {
         /* Obtain the active profile */
         MetisProfile myTask = theView.getActiveTask();
-        myTask = myTask.startTask("Accounts");
+        myTask = myTask.startTask("Accounts1");
 
         /* Note that we are refreshing */
         isRefreshing = true;
@@ -393,7 +393,7 @@ public class MoneyWiseAccountPanel
     /**
      * Determine Focus.
      */
-    protected void determineFocus() {
+    public void determineFocus() {
         /* Switch on active component */
         switch (theActive) {
             case DEPOSITS:
@@ -531,7 +531,7 @@ public class MoneyWiseAccountPanel
      * Select account.
      * @param pAccount the account to select
      */
-    protected void selectAccount(final AssetBase<?, ?> pAccount) {
+    public void selectAccount(final AssetBase<?, ?> pAccount) {
         /* Determine which panel to show */
         if (pAccount instanceof Deposit) {
             theDepositTable.selectDeposit((Deposit) pAccount);

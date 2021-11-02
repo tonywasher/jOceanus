@@ -109,9 +109,8 @@ public class MoneyWiseCashCategoryTable
 
         /* Access list */
         final MoneyWiseData myData = getView().getData();
-        final CashCategoryList myBase = myData.getDataList(CashCategoryList.class);
-        theCategories = (CashCategoryList) myBase.deriveList(ListStyle.EDIT);
-        theCategories.mapData();
+        final CashCategoryList myBase = myData.getCashCategories();
+        theCategories = myBase.deriveEditList();
         getTable().setItems(theCategories.getUnderlyingList());
         getUpdateEntry().setDataList(theCategories);
 

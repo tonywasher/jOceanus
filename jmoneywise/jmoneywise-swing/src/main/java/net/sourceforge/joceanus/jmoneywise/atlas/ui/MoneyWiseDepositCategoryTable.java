@@ -32,7 +32,6 @@ import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.DepositCategoryCla
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.DepositCategoryType;
 import net.sourceforge.joceanus.jmoneywise.lethe.ui.dialog.swing.DepositCategoryPanel;
 import net.sourceforge.joceanus.jmoneywise.lethe.views.MoneyWiseView;
-import net.sourceforge.joceanus.jprometheus.lethe.data.DataList.ListStyle;
 import net.sourceforge.joceanus.jprometheus.lethe.swing.PrometheusSwingToolkit;
 import net.sourceforge.joceanus.jprometheus.lethe.views.PrometheusDataEvent;
 import net.sourceforge.joceanus.jprometheus.lethe.views.UpdateSet;
@@ -109,9 +108,8 @@ public class MoneyWiseDepositCategoryTable
 
         /* Access list */
         final MoneyWiseData myData = getView().getData();
-        final DepositCategoryList myBase = myData.getDataList(DepositCategoryList.class);
-        theCategories = (DepositCategoryList) myBase.deriveList(ListStyle.EDIT);
-        theCategories.mapData();
+        final DepositCategoryList myBase = myData.getDepositCategories();
+        theCategories = myBase.deriveEditList();
         getTable().setItems(theCategories.getUnderlyingList());
         getUpdateEntry().setDataList(theCategories);
 

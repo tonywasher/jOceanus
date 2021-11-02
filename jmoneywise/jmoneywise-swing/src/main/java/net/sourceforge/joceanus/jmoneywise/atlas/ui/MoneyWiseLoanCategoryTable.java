@@ -32,7 +32,6 @@ import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.LoanCategoryClass;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.LoanCategoryType;
 import net.sourceforge.joceanus.jmoneywise.lethe.ui.dialog.swing.LoanCategoryPanel;
 import net.sourceforge.joceanus.jmoneywise.lethe.views.MoneyWiseView;
-import net.sourceforge.joceanus.jprometheus.lethe.data.DataList.ListStyle;
 import net.sourceforge.joceanus.jprometheus.lethe.swing.PrometheusSwingToolkit;
 import net.sourceforge.joceanus.jprometheus.lethe.views.PrometheusDataEvent;
 import net.sourceforge.joceanus.jprometheus.lethe.views.UpdateSet;
@@ -109,9 +108,8 @@ public class MoneyWiseLoanCategoryTable
 
         /* Access list */
         final MoneyWiseData myData = getView().getData();
-        final LoanCategoryList myBase = myData.getDataList(LoanCategoryList.class);
-        theCategories = (LoanCategoryList) myBase.deriveList(ListStyle.EDIT);
-        theCategories.mapData();
+        final LoanCategoryList myBase = myData.getLoanCategories();
+        theCategories = myBase.deriveEditList();
         getTable().setItems(theCategories.getUnderlyingList());
         getUpdateEntry().setDataList(theCategories);
 

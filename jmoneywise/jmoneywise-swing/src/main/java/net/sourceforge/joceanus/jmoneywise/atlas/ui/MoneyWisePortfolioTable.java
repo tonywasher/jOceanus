@@ -16,35 +16,29 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.atlas.ui;
 
-import java.util.Map;
-
 import net.sourceforge.joceanus.jmetis.atlas.ui.MetisErrorPanel;
 import net.sourceforge.joceanus.jmetis.data.MetisDataDifference;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisLetheField;
 import net.sourceforge.joceanus.jmetis.lethe.field.swing.MetisSwingFieldManager;
 import net.sourceforge.joceanus.jmetis.profile.MetisProfile;
-import net.sourceforge.joceanus.jmetis.ui.MetisAction;
-import net.sourceforge.joceanus.jmetis.ui.MetisIcon;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.Payee;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.Portfolio;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.Portfolio.PortfolioList;
+import net.sourceforge.joceanus.jmoneywise.lethe.data.PortfolioInfo;
+import net.sourceforge.joceanus.jmoneywise.lethe.data.PortfolioInfo.PortfolioInfoList;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.AssetCurrency;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.PortfolioType;
-import net.sourceforge.joceanus.jmoneywise.lethe.ui.MoneyWiseIcon;
-import net.sourceforge.joceanus.jmoneywise.lethe.ui.MoneyWiseUIResource;
 import net.sourceforge.joceanus.jmoneywise.lethe.ui.dialog.swing.PortfolioPanel;
 import net.sourceforge.joceanus.jmoneywise.lethe.views.MoneyWiseView;
-import net.sourceforge.joceanus.jprometheus.lethe.data.DataList.ListStyle;
 import net.sourceforge.joceanus.jprometheus.lethe.swing.PrometheusSwingToolkit;
 import net.sourceforge.joceanus.jprometheus.lethe.views.PrometheusDataEvent;
+import net.sourceforge.joceanus.jprometheus.lethe.views.UpdateEntry;
 import net.sourceforge.joceanus.jprometheus.lethe.views.UpdateSet;
 import net.sourceforge.joceanus.jtethys.OceanusException;
-import net.sourceforge.joceanus.jtethys.ui.TethysIconButtonManager.TethysIconMapSet;
 import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollMenu;
-import net.sourceforge.joceanus.jtethys.ui.TethysTableManager.TethysTableColumn;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingGuiFactory;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingTableManager;
 
@@ -52,7 +46,12 @@ import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingTableManager;
  * MoneyWise Portfolio Table.
  */
 public class MoneyWisePortfolioTable
-        extends MoneyWiseAssetTable<Portfolio> {
+        extends MoneyWiseAssetTable<Portfolio, PortfolioType> {
+    /**
+     * The Info UpdateEntry.
+     */
+    private final UpdateEntry<PortfolioInfo, MoneyWiseDataType> theInfoEntry;
+
     /**
      * The Portfolio dialog.
      */
@@ -73,7 +72,10 @@ public class MoneyWisePortfolioTable
                             final UpdateSet<MoneyWiseDataType> pUpdateSet,
                             final MetisErrorPanel pError) {
         /* Store parameters */
-        super(pView, pUpdateSet, pError, MoneyWiseDataType.PORTFOLIO);
+        super(pView, pUpdateSet, pError, MoneyWiseDataType.PORTFOLIO, PortfolioType.class);
+
+        /* register the infoEntry */
+        theInfoEntry = getUpdateSet().registerType(MoneyWiseDataType.PORTFOLIOINFO);
 
         /* Access field manager */
         MetisSwingFieldManager myFieldMgr = ((PrometheusSwingToolkit) pView.getToolkit()).getFieldManager();
@@ -87,74 +89,10 @@ public class MoneyWisePortfolioTable
         declareItemPanel(theActivePortfolio);
 
         /* Set table configuration */
-        myTable.setDisabled(Portfolio::isDisabled)
-               .setComparator(Portfolio::compareTo)
-               .setOnSelect(theActivePortfolio::setItem);
+        myTable.setOnSelect(theActivePortfolio::setItem);
 
-        /* Create the name column */
-        myTable.declareStringColumn(Portfolio.FIELD_NAME)
-               .setValidator(this::isValidName)
-               .setCellValueFactory(Portfolio::getName)
-               .setEditable(true)
-               .setOnCommit((r, v) -> updateField(Portfolio::setName, r, v));
-
-        /* Create the portfolio type column */
-        myTable.declareScrollColumn(Portfolio.FIELD_CATEGORY, PortfolioType.class)
-               .setMenuConfigurator(this::buildPortfolioTypeMenu)
-               .setCellValueFactory(Portfolio::getCategory)
-               .setEditable(true)
-               .setCellEditable(r -> !r.isActive())
-               .setOnCommit((r, v) -> updateField(Portfolio::setCategory, r, v));
-
-        /* Create the description column */
-        myTable.declareStringColumn(Portfolio.FIELD_DESC)
-               .setValidator(this::isValidDesc)
-               .setCellValueFactory(Portfolio::getDesc)
-               .setEditable(true)
-               .setOnCommit((r, v) -> updateField(Portfolio::setDescription, r, v));
-
-        /* Create the parent column */
-        myTable.declareScrollColumn(Portfolio.FIELD_PARENT, Payee.class)
-                .setMenuConfigurator(this::buildParentMenu)
-                .setCellValueFactory(Portfolio::getParent)
-                .setEditable(true)
-                .setCellEditable(r -> !r.isActive())
-                .setOnCommit((r, v) -> updateField(Portfolio::setParent, r, v));
-
-        /* Create the currency column */
-        myTable.declareScrollColumn(Portfolio.FIELD_CURRENCY, AssetCurrency.class)
-                .setMenuConfigurator(this::buildCurrencyMenu)
-                .setCellValueFactory(Portfolio::getAssetCurrency)
-                .setEditable(true)
-                .setCellEditable(r -> !r.isActive())
-                .setOnCommit((r, v) -> updateField(Portfolio::setAssetCurrency, r, v));
-
-        /* Create the Closed column */
-        final Map<Boolean, TethysIconMapSet<Boolean>> myClosedMapSets = MoneyWiseIcon.configureLockedIconButton();
-        final TethysTableColumn<Boolean, MetisLetheField, Portfolio> myClosedColumn
-               = myTable.declareIconColumn(Portfolio.FIELD_CLOSED, Boolean.class)
-               .setIconMapSet(r -> myClosedMapSets.get(determineClosedState(r)))
-               .setCellValueFactory(Portfolio::isClosed)
-               .setEditable(true)
-               .setCellEditable(this::determineClosedState)
-               .setOnCommit((r, v) -> updateField(Portfolio::setClosed, r, v));
-        declareClosedColumn(myClosedColumn);
-
-        /* Create the Active column */
-        final TethysIconMapSet<MetisAction> myActionMapSet = MetisIcon.configureStatusIconButton();
-        myTable.declareIconColumn(Portfolio.FIELD_TOUCH, MetisAction.class)
-               .setIconMapSet(r -> myActionMapSet)
-               .setCellValueFactory(r -> r.isActive() ? MetisAction.ACTIVE : MetisAction.DELETE)
-               .setName(MoneyWiseUIResource.STATICDATA_ACTIVE.getValue())
-               .setEditable(true)
-               .setCellEditable(r -> !r.isActive())
-               .setOnCommit((r, v) -> updateField(this::deleteRow, r, v));
-
-        /* Create the latest event column */
-        myTable.declareDateColumn(Portfolio.FIELD_EVTLAST)
-               .setCellValueFactory(this::getLatestTranDate)
-               .setName(MoneyWiseUIResource.ASSET_COLUMN_LATEST.getValue())
-               .setEditable(false);
+        /* Finish the table */
+        finishTable(true, true, true);
 
         /* Add listeners */
         theActivePortfolio.getEventRegistrar().addEventListener(PrometheusDataEvent.ADJUSTVISIBILITY, e -> handlePanelState());
@@ -173,11 +111,12 @@ public class MoneyWisePortfolioTable
 
         /* Access list */
         final MoneyWiseData myData = getView().getData();
-        final PortfolioList myBase = myData.getDataList(PortfolioList.class);
-        thePortfolios = (PortfolioList) myBase.deriveList(ListStyle.EDIT);
-        thePortfolios.mapData();
+        final PortfolioList myBase = myData.getPortfolios();
+        thePortfolios = myBase.deriveEditList(getUpdateSet());
         getTable().setItems(thePortfolios.getUnderlyingList());
         getUpdateEntry().setDataList(thePortfolios);
+        final PortfolioInfoList myInfo = thePortfolios.getPortfolioInfo();
+        theInfoEntry.setDataList(myInfo);
 
         /* Notify panel of refresh */
         theActivePortfolio.refreshData();
@@ -239,35 +178,23 @@ public class MoneyWisePortfolioTable
         notifyChanges();
     }
 
-    /**
-     * Build the portfolio type list for the item.
-     * @param pPortfolio the item
-     * @param pMenu the menu to build
-     */
-    private void buildPortfolioTypeMenu(final Portfolio pPortfolio,
-                                        final TethysScrollMenu<PortfolioType> pMenu) {
+    @Override
+    protected void buildCategoryMenu(final Portfolio pPortfolio,
+                                     final TethysScrollMenu<PortfolioType> pMenu) {
         /* Build the menu */
         theActivePortfolio.buildTypeMenu(pMenu, pPortfolio);
     }
 
-    /**
-     * Build the portfolio type list for the item.
-     * @param pPortfolio the item
-     * @param pMenu the menu to build
-     */
-    private void buildParentMenu(final Portfolio pPortfolio,
-                                 final TethysScrollMenu<Payee> pMenu) {
+    @Override
+    protected void buildParentMenu(final Portfolio pPortfolio,
+                                   final TethysScrollMenu<Payee> pMenu) {
         /* Build the menu */
         theActivePortfolio.buildParentMenu(pMenu, pPortfolio);
     }
 
-    /**
-     * Build the currency list for the item.
-     * @param pPortfolio the item
-     * @param pMenu the menu to build
-     */
-    private void buildCurrencyMenu(final Portfolio pPortfolio,
-                                   final TethysScrollMenu<AssetCurrency> pMenu) {
+    @Override
+    protected void buildCurrencyMenu(final Portfolio pPortfolio,
+                                     final TethysScrollMenu<AssetCurrency> pMenu) {
         /* Build the menu */
         theActivePortfolio.buildCurrencyMenu(pMenu, pPortfolio);
     }

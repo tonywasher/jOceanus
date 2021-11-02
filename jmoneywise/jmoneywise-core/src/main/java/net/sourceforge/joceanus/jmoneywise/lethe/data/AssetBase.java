@@ -21,6 +21,7 @@ import java.util.Currency;
 import net.sourceforge.joceanus.jmetis.data.MetisDataDifference;
 import net.sourceforge.joceanus.jmetis.data.MetisDataFieldValue;
 import net.sourceforge.joceanus.jmetis.data.MetisDataFormatter;
+import net.sourceforge.joceanus.jmetis.data.MetisDataItem.MetisDataNamedItem;
 import net.sourceforge.joceanus.jmetis.data.MetisDataType;
 import net.sourceforge.joceanus.jmetis.field.MetisFieldSet;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisEncryptedData.MetisEncryptedString;
@@ -49,7 +50,7 @@ import net.sourceforge.joceanus.jtethys.date.TethysDate;
  */
 public abstract class AssetBase<T extends AssetBase<T, C>, C>
         extends EncryptedItem<MoneyWiseDataType>
-        implements TransactionAsset {
+        implements MetisDataNamedItem, TransactionAsset {
     /**
      * Local Report fields.
      */

@@ -23,6 +23,7 @@ import net.sourceforge.joceanus.jmetis.atlas.ui.MetisPreferenceView;
 import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceManager;
 import net.sourceforge.joceanus.jmetis.profile.MetisProfile;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
+import net.sourceforge.joceanus.jmoneywise.atlas.ui.MoneyWiseAccountPanel;
 import net.sourceforge.joceanus.jmoneywise.atlas.ui.MoneyWiseCategoryPanel;
 import net.sourceforge.joceanus.jmoneywise.atlas.ui.MoneyWiseStaticPanel;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.AssetBase;
@@ -107,6 +108,7 @@ public class MaintenanceTab
      * The Account Panel.
      */
     private final AccountPanel theAccountTab;
+    private final MoneyWiseAccountPanel theAccountTab1;
 
     /**
      * The Category Panel.
@@ -153,6 +155,8 @@ public class MaintenanceTab
         /* Create the account Tab and add it */
         theAccountTab = new AccountPanel(theView);
         theTabs.addTabItem(TITLE_ACCOUNT, theAccountTab);
+        theAccountTab1 = new MoneyWiseAccountPanel(theView);
+        theTabs.addTabItem(TITLE_ACCOUNT + "1", theAccountTab1);
 
         /* Create the category Tab and add it */
         theCategoryTab = new MoneyWiseCategoryPanel(theView);
@@ -263,6 +267,7 @@ public class MaintenanceTab
         try {
             /* Refresh sub-panels */
             theAccountTab.refreshData();
+            theAccountTab1.refreshData();
             theCategoryTab.refreshData();
             theStatic.refreshData();
 

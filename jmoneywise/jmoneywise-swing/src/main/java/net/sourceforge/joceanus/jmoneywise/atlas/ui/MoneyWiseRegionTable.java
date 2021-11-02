@@ -30,7 +30,6 @@ import net.sourceforge.joceanus.jmoneywise.lethe.data.Region.RegionList;
 import net.sourceforge.joceanus.jmoneywise.lethe.ui.MoneyWiseUIResource;
 import net.sourceforge.joceanus.jmoneywise.lethe.ui.dialog.swing.RegionPanel;
 import net.sourceforge.joceanus.jmoneywise.lethe.views.MoneyWiseView;
-import net.sourceforge.joceanus.jprometheus.lethe.data.DataList.ListStyle;
 import net.sourceforge.joceanus.jprometheus.lethe.swing.PrometheusSwingToolkit;
 import net.sourceforge.joceanus.jprometheus.lethe.views.PrometheusDataEvent;
 import net.sourceforge.joceanus.jprometheus.lethe.views.UpdateSet;
@@ -148,9 +147,8 @@ public class MoneyWiseRegionTable
 
         /* Access list */
         final MoneyWiseData myData = getView().getData();
-        final RegionList myBase = myData.getDataList(RegionList.class);
-        theRegions = (RegionList) myBase.deriveList(ListStyle.EDIT);
-        theRegions.mapData();
+        final RegionList myBase = myData.getRegions();
+        theRegions = myBase.deriveEditList();
         getTable().setItems(theRegions.getUnderlyingList());
         getUpdateEntry().setDataList(theRegions);
 

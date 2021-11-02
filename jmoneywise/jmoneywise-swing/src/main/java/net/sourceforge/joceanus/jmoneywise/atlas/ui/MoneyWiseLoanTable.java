@@ -16,35 +16,29 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.atlas.ui;
 
-import java.util.Map;
-
 import net.sourceforge.joceanus.jmetis.atlas.ui.MetisErrorPanel;
 import net.sourceforge.joceanus.jmetis.data.MetisDataDifference;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisLetheField;
 import net.sourceforge.joceanus.jmetis.lethe.field.swing.MetisSwingFieldManager;
 import net.sourceforge.joceanus.jmetis.profile.MetisProfile;
-import net.sourceforge.joceanus.jmetis.ui.MetisAction;
-import net.sourceforge.joceanus.jmetis.ui.MetisIcon;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.Loan;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.Loan.LoanList;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.LoanCategory;
+import net.sourceforge.joceanus.jmoneywise.lethe.data.LoanInfo;
+import net.sourceforge.joceanus.jmoneywise.lethe.data.LoanInfo.LoanInfoList;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.Payee;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.AssetCurrency;
-import net.sourceforge.joceanus.jmoneywise.lethe.ui.MoneyWiseIcon;
-import net.sourceforge.joceanus.jmoneywise.lethe.ui.MoneyWiseUIResource;
 import net.sourceforge.joceanus.jmoneywise.lethe.ui.dialog.swing.LoanPanel;
 import net.sourceforge.joceanus.jmoneywise.lethe.views.MoneyWiseView;
-import net.sourceforge.joceanus.jprometheus.lethe.data.DataList.ListStyle;
 import net.sourceforge.joceanus.jprometheus.lethe.swing.PrometheusSwingToolkit;
 import net.sourceforge.joceanus.jprometheus.lethe.views.PrometheusDataEvent;
+import net.sourceforge.joceanus.jprometheus.lethe.views.UpdateEntry;
 import net.sourceforge.joceanus.jprometheus.lethe.views.UpdateSet;
 import net.sourceforge.joceanus.jtethys.OceanusException;
-import net.sourceforge.joceanus.jtethys.ui.TethysIconButtonManager.TethysIconMapSet;
 import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollMenu;
-import net.sourceforge.joceanus.jtethys.ui.TethysTableManager.TethysTableColumn;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingGuiFactory;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingTableManager;
 
@@ -52,7 +46,12 @@ import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingTableManager;
  * MoneyWise Loan Table.
  */
 public class MoneyWiseLoanTable
-        extends MoneyWiseAssetTable<Loan> {
+        extends MoneyWiseAssetTable<Loan, LoanCategory> {
+    /**
+     * The Info UpdateEntry.
+     */
+    private final UpdateEntry<LoanInfo, MoneyWiseDataType> theInfoEntry;
+
     /**
      * The Loan dialog.
      */
@@ -73,7 +72,10 @@ public class MoneyWiseLoanTable
                             final UpdateSet<MoneyWiseDataType> pUpdateSet,
                             final MetisErrorPanel pError) {
         /* Store parameters */
-        super(pView, pUpdateSet, pError, MoneyWiseDataType.LOAN);
+        super(pView, pUpdateSet, pError, MoneyWiseDataType.LOAN, LoanCategory.class);
+
+        /* register the infoEntry */
+        theInfoEntry = getUpdateSet().registerType(MoneyWiseDataType.LOANINFO);
 
         /* Access field manager */
         MetisSwingFieldManager myFieldMgr = ((PrometheusSwingToolkit) pView.getToolkit()).getFieldManager();
@@ -87,74 +89,10 @@ public class MoneyWiseLoanTable
         declareItemPanel(theActiveLoan);
 
         /* Set table configuration */
-        myTable.setDisabled(Loan::isDisabled)
-                .setComparator(Loan::compareTo)
-                .setOnSelect(theActiveLoan::setItem);
+        myTable.setOnSelect(theActiveLoan::setItem);
 
-        /* Create the name column */
-        myTable.declareStringColumn(Loan.FIELD_NAME)
-                .setValidator(this::isValidName)
-                .setCellValueFactory(Loan::getName)
-                .setEditable(true)
-                .setOnCommit((r, v) -> updateField(Loan::setName, r, v));
-
-        /* Create the Loan type column */
-        myTable.declareScrollColumn(Loan.FIELD_CATEGORY, LoanCategory.class)
-                .setMenuConfigurator(this::buildCategoryMenu)
-                .setCellValueFactory(Loan::getCategory)
-                .setEditable(true)
-                .setCellEditable(r -> !r.isActive())
-                .setOnCommit((r, v) -> updateField(Loan::setCategory, r, v));
-
-        /* Create the description column */
-        myTable.declareStringColumn(Loan.FIELD_DESC)
-                .setValidator(this::isValidDesc)
-                .setCellValueFactory(Loan::getDesc)
-                .setEditable(true)
-                .setOnCommit((r, v) -> updateField(Loan::setDescription, r, v));
-
-        /* Create the parent column */
-        myTable.declareScrollColumn(Loan.FIELD_PARENT, Payee.class)
-                .setMenuConfigurator(this::buildParentMenu)
-                .setCellValueFactory(Loan::getParent)
-                .setEditable(true)
-                .setCellEditable(r -> !r.isActive())
-                .setOnCommit((r, v) -> updateField(Loan::setParent, r, v));
-
-        /* Create the currency column */
-        myTable.declareScrollColumn(Loan.FIELD_CURRENCY, AssetCurrency.class)
-                .setMenuConfigurator(this::buildCurrencyMenu)
-                .setCellValueFactory(Loan::getAssetCurrency)
-                .setEditable(true)
-                .setCellEditable(r -> !r.isActive())
-                .setOnCommit((r, v) -> updateField(Loan::setAssetCurrency, r, v));
-
-        /* Create the Closed column */
-        final Map<Boolean, TethysIconMapSet<Boolean>> myClosedMapSets = MoneyWiseIcon.configureLockedIconButton();
-        final TethysTableColumn<Boolean, MetisLetheField, Loan> myClosedColumn
-                = myTable.declareIconColumn(Loan.FIELD_CLOSED, Boolean.class)
-                .setIconMapSet(r -> myClosedMapSets.get(determineClosedState(r)))
-                .setCellValueFactory(Loan::isClosed)
-                .setEditable(true)
-                .setCellEditable(this::determineClosedState)
-                .setOnCommit((r, v) -> updateField(Loan::setClosed, r, v));
-        declareClosedColumn(myClosedColumn);
-
-        /* Create the Active column */
-        final TethysIconMapSet<MetisAction> myActionMapSet = MetisIcon.configureStatusIconButton();
-        myTable.declareIconColumn(Loan.FIELD_TOUCH, MetisAction.class)
-                .setIconMapSet(r -> myActionMapSet)
-                .setCellValueFactory(r -> r.isActive() ? MetisAction.ACTIVE : MetisAction.DELETE)
-                .setName(MoneyWiseUIResource.STATICDATA_ACTIVE.getValue())
-                .setEditable(true)
-                .setCellEditable(r -> !r.isActive())
-                .setOnCommit((r, v) -> updateField(this::deleteRow, r, v));
-
-        /* Create the latest event column */
-        myTable.declareDateColumn(Loan.FIELD_EVTLAST)
-                .setCellValueFactory(this::getLatestTranDate)
-                .setName(MoneyWiseUIResource.ASSET_COLUMN_LATEST.getValue())
-                .setEditable(false);
+        /* Finish the table */
+        finishTable(true, true, true);
 
         /* Add listeners */
         theActiveLoan.getEventRegistrar().addEventListener(PrometheusDataEvent.ADJUSTVISIBILITY, e -> handlePanelState());
@@ -173,11 +111,12 @@ public class MoneyWiseLoanTable
 
         /* Access list */
         final MoneyWiseData myData = getView().getData();
-        final LoanList myBase = myData.getDataList(LoanList.class);
-        theLoans = (LoanList) myBase.deriveList(ListStyle.EDIT);
-        theLoans.mapData();
+        final LoanList myBase = myData.getLoans();
+        theLoans = myBase.deriveEditList(getUpdateSet());
         getTable().setItems(theLoans.getUnderlyingList());
         getUpdateEntry().setDataList(theLoans);
+        final LoanInfoList myInfo = theLoans.getLoanInfo();
+        theInfoEntry.setDataList(myInfo);
 
         /* Notify panel of refresh */
         theActiveLoan.refreshData();
@@ -239,35 +178,23 @@ public class MoneyWiseLoanTable
         notifyChanges();
     }
 
-    /**
-     * Build the Loan type list for the item.
-     * @param pLoan the item
-     * @param pMenu the menu to build
-     */
-    private void buildCategoryMenu(final Loan pLoan,
-                                   final TethysScrollMenu<LoanCategory> pMenu) {
+    @Override
+    protected void buildCategoryMenu(final Loan pLoan,
+                                     final TethysScrollMenu<LoanCategory> pMenu) {
         /* Build the menu */
         theActiveLoan.buildCategoryMenu(pMenu, pLoan);
     }
 
-    /**
-     * Build the Loan type list for the item.
-     * @param pLoan the item
-     * @param pMenu the menu to build
-     */
-    private void buildParentMenu(final Loan pLoan,
-                                 final TethysScrollMenu<Payee> pMenu) {
+    @Override
+    protected void buildParentMenu(final Loan pLoan,
+                                   final TethysScrollMenu<Payee> pMenu) {
         /* Build the menu */
         theActiveLoan.buildParentMenu(pMenu, pLoan);
     }
 
-    /**
-     * Build the currency list for the item.
-     * @param pLoan the item
-     * @param pMenu the menu to build
-     */
-    private void buildCurrencyMenu(final Loan pLoan,
-                                   final TethysScrollMenu<AssetCurrency> pMenu) {
+    @Override
+    protected void buildCurrencyMenu(final Loan pLoan,
+                                     final TethysScrollMenu<AssetCurrency> pMenu) {
         /* Build the menu */
         theActiveLoan.buildCurrencyMenu(pMenu, pLoan);
     }

@@ -16,35 +16,31 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.atlas.ui;
 
-import java.util.Map;
-
 import net.sourceforge.joceanus.jmetis.atlas.ui.MetisErrorPanel;
 import net.sourceforge.joceanus.jmetis.data.MetisDataDifference;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisLetheField;
 import net.sourceforge.joceanus.jmetis.lethe.field.swing.MetisSwingFieldManager;
 import net.sourceforge.joceanus.jmetis.profile.MetisProfile;
-import net.sourceforge.joceanus.jmetis.ui.MetisAction;
-import net.sourceforge.joceanus.jmetis.ui.MetisIcon;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.Deposit;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.Deposit.DepositList;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.DepositCategory;
+import net.sourceforge.joceanus.jmoneywise.lethe.data.DepositInfo;
+import net.sourceforge.joceanus.jmoneywise.lethe.data.DepositInfo.DepositInfoList;
+import net.sourceforge.joceanus.jmoneywise.lethe.data.DepositRate;
+import net.sourceforge.joceanus.jmoneywise.lethe.data.DepositRate.DepositRateList;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.Payee;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.AssetCurrency;
-import net.sourceforge.joceanus.jmoneywise.lethe.ui.MoneyWiseIcon;
-import net.sourceforge.joceanus.jmoneywise.lethe.ui.MoneyWiseUIResource;
 import net.sourceforge.joceanus.jmoneywise.lethe.ui.dialog.swing.DepositPanel;
 import net.sourceforge.joceanus.jmoneywise.lethe.views.MoneyWiseView;
-import net.sourceforge.joceanus.jprometheus.lethe.data.DataList.ListStyle;
 import net.sourceforge.joceanus.jprometheus.lethe.swing.PrometheusSwingToolkit;
 import net.sourceforge.joceanus.jprometheus.lethe.views.PrometheusDataEvent;
+import net.sourceforge.joceanus.jprometheus.lethe.views.UpdateEntry;
 import net.sourceforge.joceanus.jprometheus.lethe.views.UpdateSet;
 import net.sourceforge.joceanus.jtethys.OceanusException;
-import net.sourceforge.joceanus.jtethys.ui.TethysIconButtonManager.TethysIconMapSet;
 import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollMenu;
-import net.sourceforge.joceanus.jtethys.ui.TethysTableManager.TethysTableColumn;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingGuiFactory;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingTableManager;
 
@@ -52,7 +48,17 @@ import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingTableManager;
  * MoneyWise Deposit Table.
  */
 public class MoneyWiseDepositTable
-        extends MoneyWiseAssetTable<Deposit> {
+        extends MoneyWiseAssetTable<Deposit, DepositCategory> {
+    /**
+     * The Info UpdateEntry.
+     */
+    private final UpdateEntry<DepositInfo, MoneyWiseDataType> theInfoEntry;
+
+    /**
+     * The Rate UpdateEntry.
+     */
+    private final UpdateEntry<DepositRate, MoneyWiseDataType> theRateEntry;
+
     /**
      * The Deposit dialog.
      */
@@ -73,7 +79,11 @@ public class MoneyWiseDepositTable
                           final UpdateSet<MoneyWiseDataType> pUpdateSet,
                           final MetisErrorPanel pError) {
         /* Store parameters */
-        super(pView, pUpdateSet, pError, MoneyWiseDataType.DEPOSIT);
+        super(pView, pUpdateSet, pError, MoneyWiseDataType.DEPOSIT, DepositCategory.class);
+
+        /* register the info/rateEntries */
+        theInfoEntry = getUpdateSet().registerType(MoneyWiseDataType.DEPOSITINFO);
+        theRateEntry = getUpdateSet().registerType(MoneyWiseDataType.DEPOSITRATE);
 
         /* Access field manager */
         MetisSwingFieldManager myFieldMgr = ((PrometheusSwingToolkit) pView.getToolkit()).getFieldManager();
@@ -87,74 +97,10 @@ public class MoneyWiseDepositTable
         declareItemPanel(theActiveDeposit);
 
         /* Set table configuration */
-        myTable.setDisabled(Deposit::isDisabled)
-                .setComparator(Deposit::compareTo)
-                .setOnSelect(theActiveDeposit::setItem);
+        myTable.setOnSelect(theActiveDeposit::setItem);
 
-        /* Create the name column */
-        myTable.declareStringColumn(Deposit.FIELD_NAME)
-                .setValidator(this::isValidName)
-                .setCellValueFactory(Deposit::getName)
-                .setEditable(true)
-                .setOnCommit((r, v) -> updateField(Deposit::setName, r, v));
-
-        /* Create the Deposit type column */
-        myTable.declareScrollColumn(Deposit.FIELD_CATEGORY, DepositCategory.class)
-                .setMenuConfigurator(this::buildCategoryMenu)
-                .setCellValueFactory(Deposit::getCategory)
-                .setEditable(true)
-                .setCellEditable(r -> !r.isActive())
-                .setOnCommit((r, v) -> updateField(Deposit::setCategory, r, v));
-
-        /* Create the description column */
-        myTable.declareStringColumn(Deposit.FIELD_DESC)
-                .setValidator(this::isValidDesc)
-                .setCellValueFactory(Deposit::getDesc)
-                .setEditable(true)
-                .setOnCommit((r, v) -> updateField(Deposit::setDescription, r, v));
-
-        /* Create the parent column */
-        myTable.declareScrollColumn(Deposit.FIELD_PARENT, Payee.class)
-                .setMenuConfigurator(this::buildParentMenu)
-                .setCellValueFactory(Deposit::getParent)
-                .setEditable(true)
-                .setCellEditable(r -> !r.isActive())
-                .setOnCommit((r, v) -> updateField(Deposit::setParent, r, v));
-
-        /* Create the currency column */
-        myTable.declareScrollColumn(Deposit.FIELD_CURRENCY, AssetCurrency.class)
-                .setMenuConfigurator(this::buildCurrencyMenu)
-                .setCellValueFactory(Deposit::getAssetCurrency)
-                .setEditable(true)
-                .setCellEditable(r -> !r.isActive())
-                .setOnCommit((r, v) -> updateField(Deposit::setAssetCurrency, r, v));
-
-        /* Create the Closed column */
-        final Map<Boolean, TethysIconMapSet<Boolean>> myClosedMapSets = MoneyWiseIcon.configureLockedIconButton();
-        final TethysTableColumn<Boolean, MetisLetheField, Deposit> myClosedColumn
-                = myTable.declareIconColumn(Deposit.FIELD_CLOSED, Boolean.class)
-                .setIconMapSet(r -> myClosedMapSets.get(determineClosedState(r)))
-                .setCellValueFactory(Deposit::isClosed)
-                .setEditable(true)
-                .setCellEditable(this::determineClosedState)
-                .setOnCommit((r, v) -> updateField(Deposit::setClosed, r, v));
-        declareClosedColumn(myClosedColumn);
-
-        /* Create the Active column */
-        final TethysIconMapSet<MetisAction> myActionMapSet = MetisIcon.configureStatusIconButton();
-        myTable.declareIconColumn(Deposit.FIELD_TOUCH, MetisAction.class)
-                .setIconMapSet(r -> myActionMapSet)
-                .setCellValueFactory(r -> r.isActive() ? MetisAction.ACTIVE : MetisAction.DELETE)
-                .setName(MoneyWiseUIResource.STATICDATA_ACTIVE.getValue())
-                .setEditable(true)
-                .setCellEditable(r -> !r.isActive())
-                .setOnCommit((r, v) -> updateField(this::deleteRow, r, v));
-
-        /* Create the latest event column */
-        myTable.declareDateColumn(Deposit.FIELD_EVTLAST)
-                .setCellValueFactory(this::getLatestTranDate)
-                .setName(MoneyWiseUIResource.ASSET_COLUMN_LATEST.getValue())
-                .setEditable(false);
+        /* Finish the table */
+        finishTable(true, true, true);
 
         /* Add listeners */
         theActiveDeposit.getEventRegistrar().addEventListener(PrometheusDataEvent.ADJUSTVISIBILITY, e -> handlePanelState());
@@ -173,11 +119,17 @@ public class MoneyWiseDepositTable
 
         /* Access list */
         final MoneyWiseData myData = getView().getData();
-        final DepositList myBase = myData.getDataList(DepositList.class);
-        theDeposits = (DepositList) myBase.deriveList(ListStyle.EDIT);
-        theDeposits.mapData();
+        final DepositList myBase = myData.getDeposits();
+        theDeposits = myBase.deriveEditList(getUpdateSet());
         getTable().setItems(theDeposits.getUnderlyingList());
         getUpdateEntry().setDataList(theDeposits);
+        final DepositInfoList myInfo = theDeposits.getDepositInfo();
+        theInfoEntry.setDataList(myInfo);
+
+        /* Get the Deposit rates list */
+        DepositRateList myRates = myData.getDepositRates();
+        myRates = myRates.deriveEditList(getUpdateSet());
+        theRateEntry.setDataList(myRates);
 
         /* Notify panel of refresh */
         theActiveDeposit.refreshData();
@@ -239,35 +191,23 @@ public class MoneyWiseDepositTable
         notifyChanges();
     }
 
-    /**
-     * Build the Deposit type list for the item.
-     * @param pDeposit the item
-     * @param pMenu the menu to build
-     */
-    private void buildCategoryMenu(final Deposit pDeposit,
-                                   final TethysScrollMenu<DepositCategory> pMenu) {
+    @Override
+    protected void buildCategoryMenu(final Deposit pDeposit,
+                                     final TethysScrollMenu<DepositCategory> pMenu) {
         /* Build the menu */
         theActiveDeposit.buildCategoryMenu(pMenu, pDeposit);
     }
 
-    /**
-     * Build the Deposit type list for the item.
-     * @param pDeposit the item
-     * @param pMenu the menu to build
-     */
-    private void buildParentMenu(final Deposit pDeposit,
-                                 final TethysScrollMenu<Payee> pMenu) {
+    @Override
+    protected void buildParentMenu(final Deposit pDeposit,
+                                   final TethysScrollMenu<Payee> pMenu) {
         /* Build the menu */
         theActiveDeposit.buildParentMenu(pMenu, pDeposit);
     }
 
-    /**
-     * Build the currency list for the item.
-     * @param pDeposit the item
-     * @param pMenu the menu to build
-     */
-    private void buildCurrencyMenu(final Deposit pDeposit,
-                                   final TethysScrollMenu<AssetCurrency> pMenu) {
+    @Override
+    protected void buildCurrencyMenu(final Deposit pDeposit,
+                                     final TethysScrollMenu<AssetCurrency> pMenu) {
         /* Build the menu */
         theActiveDeposit.buildCurrencyMenu(pMenu, pDeposit);
     }

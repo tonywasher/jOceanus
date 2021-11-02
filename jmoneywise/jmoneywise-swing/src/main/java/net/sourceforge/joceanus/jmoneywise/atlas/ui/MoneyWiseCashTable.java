@@ -16,34 +16,28 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.atlas.ui;
 
-import java.util.Map;
-
 import net.sourceforge.joceanus.jmetis.atlas.ui.MetisErrorPanel;
 import net.sourceforge.joceanus.jmetis.data.MetisDataDifference;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisLetheField;
 import net.sourceforge.joceanus.jmetis.lethe.field.swing.MetisSwingFieldManager;
 import net.sourceforge.joceanus.jmetis.profile.MetisProfile;
-import net.sourceforge.joceanus.jmetis.ui.MetisAction;
-import net.sourceforge.joceanus.jmetis.ui.MetisIcon;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.Cash;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.Cash.CashList;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.CashCategory;
+import net.sourceforge.joceanus.jmoneywise.lethe.data.CashInfo;
+import net.sourceforge.joceanus.jmoneywise.lethe.data.CashInfo.CashInfoList;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.AssetCurrency;
-import net.sourceforge.joceanus.jmoneywise.lethe.ui.MoneyWiseIcon;
-import net.sourceforge.joceanus.jmoneywise.lethe.ui.MoneyWiseUIResource;
 import net.sourceforge.joceanus.jmoneywise.lethe.ui.dialog.swing.CashPanel;
 import net.sourceforge.joceanus.jmoneywise.lethe.views.MoneyWiseView;
-import net.sourceforge.joceanus.jprometheus.lethe.data.DataList.ListStyle;
 import net.sourceforge.joceanus.jprometheus.lethe.swing.PrometheusSwingToolkit;
 import net.sourceforge.joceanus.jprometheus.lethe.views.PrometheusDataEvent;
+import net.sourceforge.joceanus.jprometheus.lethe.views.UpdateEntry;
 import net.sourceforge.joceanus.jprometheus.lethe.views.UpdateSet;
 import net.sourceforge.joceanus.jtethys.OceanusException;
-import net.sourceforge.joceanus.jtethys.ui.TethysIconButtonManager.TethysIconMapSet;
 import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollMenu;
-import net.sourceforge.joceanus.jtethys.ui.TethysTableManager.TethysTableColumn;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingGuiFactory;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingTableManager;
 
@@ -51,7 +45,12 @@ import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingTableManager;
  * MoneyWise Cash Table.
  */
 public class MoneyWiseCashTable
-        extends MoneyWiseAssetTable<Cash> {
+        extends MoneyWiseAssetTable<Cash, CashCategory> {
+    /**
+     * The Info UpdateEntry.
+     */
+    private final UpdateEntry<CashInfo, MoneyWiseDataType> theInfoEntry;
+
     /**
      * The Cash dialog.
      */
@@ -60,7 +59,7 @@ public class MoneyWiseCashTable
     /**
      * The edit list.
      */
-    private CashList theCashs;
+    private CashList theCash;
 
     /**
      * Constructor.
@@ -72,7 +71,10 @@ public class MoneyWiseCashTable
                             final UpdateSet<MoneyWiseDataType> pUpdateSet,
                             final MetisErrorPanel pError) {
         /* Store parameters */
-        super(pView, pUpdateSet, pError, MoneyWiseDataType.CASH);
+        super(pView, pUpdateSet, pError, MoneyWiseDataType.CASH, CashCategory.class);
+
+        /* register the infoEntry */
+        theInfoEntry = getUpdateSet().registerType(MoneyWiseDataType.CASHINFO);
 
         /* Access field manager */
         MetisSwingFieldManager myFieldMgr = ((PrometheusSwingToolkit) pView.getToolkit()).getFieldManager();
@@ -86,66 +88,10 @@ public class MoneyWiseCashTable
         declareItemPanel(theActiveCash);
 
         /* Set table configuration */
-        myTable.setDisabled(Cash::isDisabled)
-                .setComparator(Cash::compareTo)
-                .setOnSelect(theActiveCash::setItem);
+        myTable.setOnSelect(theActiveCash::setItem);
 
-        /* Create the name column */
-        myTable.declareStringColumn(Cash.FIELD_NAME)
-                .setValidator(this::isValidName)
-                .setCellValueFactory(Cash::getName)
-                .setEditable(true)
-                .setOnCommit((r, v) -> updateField(Cash::setName, r, v));
-
-        /* Create the Cash type column */
-        myTable.declareScrollColumn(Cash.FIELD_CATEGORY, CashCategory.class)
-                .setMenuConfigurator(this::buildCategoryMenu)
-                .setCellValueFactory(Cash::getCategory)
-                .setEditable(true)
-                .setCellEditable(r -> !r.isActive())
-                .setOnCommit((r, v) -> updateField(Cash::setCategory, r, v));
-
-        /* Create the description column */
-        myTable.declareStringColumn(Cash.FIELD_DESC)
-                .setValidator(this::isValidDesc)
-                .setCellValueFactory(Cash::getDesc)
-                .setEditable(true)
-                .setOnCommit((r, v) -> updateField(Cash::setDescription, r, v));
-
-        /* Create the currency column */
-        myTable.declareScrollColumn(Cash.FIELD_CURRENCY, AssetCurrency.class)
-                .setMenuConfigurator(this::buildCurrencyMenu)
-                .setCellValueFactory(Cash::getAssetCurrency)
-                .setEditable(true)
-                .setCellEditable(r -> !r.isActive())
-                .setOnCommit((r, v) -> updateField(Cash::setAssetCurrency, r, v));
-
-        /* Create the Closed column */
-        final Map<Boolean, TethysIconMapSet<Boolean>> myClosedMapSets = MoneyWiseIcon.configureLockedIconButton();
-        final TethysTableColumn<Boolean, MetisLetheField, Cash> myClosedColumn
-                = myTable.declareIconColumn(Cash.FIELD_CLOSED, Boolean.class)
-                .setIconMapSet(r -> myClosedMapSets.get(determineClosedState(r)))
-                .setCellValueFactory(Cash::isClosed)
-                .setEditable(true)
-                .setCellEditable(this::determineClosedState)
-                .setOnCommit((r, v) -> updateField(Cash::setClosed, r, v));
-        declareClosedColumn(myClosedColumn);
-
-        /* Create the Active column */
-        final TethysIconMapSet<MetisAction> myActionMapSet = MetisIcon.configureStatusIconButton();
-        myTable.declareIconColumn(Cash.FIELD_TOUCH, MetisAction.class)
-                .setIconMapSet(r -> myActionMapSet)
-                .setCellValueFactory(r -> r.isActive() ? MetisAction.ACTIVE : MetisAction.DELETE)
-                .setName(MoneyWiseUIResource.STATICDATA_ACTIVE.getValue())
-                .setEditable(true)
-                .setCellEditable(r -> !r.isActive())
-                .setOnCommit((r, v) -> updateField(this::deleteRow, r, v));
-
-        /* Create the latest event column */
-        myTable.declareDateColumn(Cash.FIELD_EVTLAST)
-                .setCellValueFactory(this::getLatestTranDate)
-                .setName(MoneyWiseUIResource.ASSET_COLUMN_LATEST.getValue())
-                .setEditable(false);
+        /* Finish the table */
+        finishTable(false, true, true);
 
         /* Add listeners */
         theActiveCash.getEventRegistrar().addEventListener(PrometheusDataEvent.ADJUSTVISIBILITY, e -> handlePanelState());
@@ -164,11 +110,12 @@ public class MoneyWiseCashTable
 
         /* Access list */
         final MoneyWiseData myData = getView().getData();
-        final CashList myBase = myData.getDataList(CashList.class);
-        theCashs = (CashList) myBase.deriveList(ListStyle.EDIT);
-        theCashs.mapData();
-        getTable().setItems(theCashs.getUnderlyingList());
-        getUpdateEntry().setDataList(theCashs);
+        final CashList myBase = myData.getCash();
+        theCash = myBase.deriveEditList(getUpdateSet());
+        getTable().setItems(theCash.getUnderlyingList());
+        getUpdateEntry().setDataList(theCash);
+        final CashInfoList myInfo = theCash.getCashInfo();
+        theInfoEntry.setDataList(myInfo);
 
         /* Notify panel of refresh */
         theActiveCash.refreshData();
@@ -230,24 +177,16 @@ public class MoneyWiseCashTable
         notifyChanges();
     }
 
-    /**
-     * Build the Cash type list for the item.
-     * @param pCash the item
-     * @param pMenu the menu to build
-     */
-    private void buildCategoryMenu(final Cash pCash,
-                                   final TethysScrollMenu<CashCategory> pMenu) {
+    @Override
+    protected void buildCategoryMenu(final Cash pCash,
+                                     final TethysScrollMenu<CashCategory> pMenu) {
         /* Build the menu */
         theActiveCash.buildCategoryMenu(pMenu, pCash);
     }
 
-    /**
-     * Build the currency list for the item.
-     * @param pCash the item
-     * @param pMenu the menu to build
-     */
-    private void buildCurrencyMenu(final Cash pCash,
-                                   final TethysScrollMenu<AssetCurrency> pMenu) {
+    @Override
+    protected void buildCurrencyMenu(final Cash pCash,
+                                     final TethysScrollMenu<AssetCurrency> pMenu) {
         /* Build the menu */
         theActiveCash.buildCurrencyMenu(pMenu, pCash);
     }
@@ -260,7 +199,7 @@ public class MoneyWiseCashTable
             cancelEditing();
 
             /* Create the new asset */
-            final Cash myCash = theCashs.addNewItem();
+            final Cash myCash = theCash.addNewItem();
             myCash.setDefaults(getUpdateSet());
 
             /* Set as new and adjust map */
