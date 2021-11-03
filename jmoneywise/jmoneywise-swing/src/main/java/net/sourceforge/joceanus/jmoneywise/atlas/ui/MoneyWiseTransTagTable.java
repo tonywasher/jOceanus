@@ -104,6 +104,7 @@ public class MoneyWiseTransTagTable
                .setValidator(this::isValidName)
                .setCellValueFactory(TransactionTag::getName)
                .setEditable(true)
+               .setColumnWidth(WIDTH_NAME)
                .setOnCommit((r, v) -> updateField(TransactionTag::setName, r, v));
 
         /* Create the description column */
@@ -111,6 +112,7 @@ public class MoneyWiseTransTagTable
                .setValidator(this::isValidDesc)
                .setCellValueFactory(TransactionTag::getDesc)
                .setEditable(true)
+               .setColumnWidth(WIDTH_DESC)
                .setOnCommit((r, v) -> updateField(TransactionTag::setDescription, r, v));
 
         /* Create the Active column */
@@ -121,6 +123,7 @@ public class MoneyWiseTransTagTable
                .setName(MoneyWiseUIResource.STATICDATA_ACTIVE.getValue())
                .setEditable(true)
                .setCellEditable(r -> !r.isActive())
+               .setColumnWidth(WIDTH_ICON)
                .setOnCommit((r, v) -> updateField(this::deleteRow, r, v));
 
         /* Add listeners */

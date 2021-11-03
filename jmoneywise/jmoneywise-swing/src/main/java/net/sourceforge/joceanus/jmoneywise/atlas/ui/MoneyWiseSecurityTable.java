@@ -106,6 +106,7 @@ public class MoneyWiseSecurityTable
                 .setValidator(this::isValidDesc)
                 .setCellValueFactory(Security::getSymbol)
                 .setEditable(true)
+                .setColumnWidth(WIDTH_NAME)
                 .setOnCommit((r, v) -> updateField(Security::setSymbol, r, v));
 
         /* Finish the table */

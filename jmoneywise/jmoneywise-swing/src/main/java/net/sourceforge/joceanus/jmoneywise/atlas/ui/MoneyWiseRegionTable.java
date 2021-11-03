@@ -102,6 +102,7 @@ public class MoneyWiseRegionTable
                .setValidator(this::isValidName)
                .setCellValueFactory(Region::getName)
                .setEditable(true)
+               .setColumnWidth(WIDTH_NAME)
                .setOnCommit((r, v) -> updateField(Region::setName, r, v));
 
         /* Create the description column */
@@ -109,6 +110,7 @@ public class MoneyWiseRegionTable
                .setValidator(this::isValidDesc)
                .setCellValueFactory(Region::getDesc)
                .setEditable(true)
+               .setColumnWidth(WIDTH_DESC)
                .setOnCommit((r, v) -> updateField(Region::setDescription, r, v));
 
         /* Create the Active column */
@@ -119,6 +121,7 @@ public class MoneyWiseRegionTable
                .setName(MoneyWiseUIResource.STATICDATA_ACTIVE.getValue())
                .setEditable(true)
                .setCellEditable(r -> !r.isActive())
+               .setColumnWidth(WIDTH_ICON)
                .setOnCommit((r, v) -> updateField(this::deleteRow, r, v));
 
         /* Add listeners */

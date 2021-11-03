@@ -121,12 +121,14 @@ public abstract class MoneyWiseCategoryTable<T extends CategoryBase<T, S, C>, S 
                 .setValidator(this::isValidName)
                 .setCellValueFactory(this::getShortName)
                 .setEditable(true)
+                .setColumnWidth(WIDTH_NAME)
                 .setOnCommit((r, v) -> updateField(CategoryBase::setSubCategoryName, r, v));
 
         /* Create the full name column */
         myTable.declareStringColumn(TransactionCategory.FIELD_NAME)
                 .setCellValueFactory(CategoryBase::getName)
-                .setEditable(false);
+                .setEditable(false)
+                .setColumnWidth(WIDTH_NAME);
 
         /* Create the category type column */
         myTable.declareScrollColumn(TransactionCategory.FIELD_CATTYPE, pTypeClass)
@@ -134,6 +136,7 @@ public abstract class MoneyWiseCategoryTable<T extends CategoryBase<T, S, C>, S 
                 .setCellValueFactory(CategoryBase::getCategoryType)
                 .setEditable(true)
                 .setCellEditable(r -> !r.isActive())
+                .setColumnWidth(WIDTH_NAME)
                 .setOnCommit((r, v) -> updateField(CategoryBase::setCategoryType, r, v));
 
         /* Create the description column */
@@ -141,6 +144,7 @@ public abstract class MoneyWiseCategoryTable<T extends CategoryBase<T, S, C>, S 
                 .setValidator(this::isValidDesc)
                 .setCellValueFactory(CategoryBase::getDesc)
                 .setEditable(true)
+                .setColumnWidth(WIDTH_NAME)
                 .setOnCommit((r, v) -> updateField(CategoryBase::setDescription, r, v));
 
         /* Create the Active column */
@@ -151,6 +155,7 @@ public abstract class MoneyWiseCategoryTable<T extends CategoryBase<T, S, C>, S 
                 .setName(MoneyWiseUIResource.STATICDATA_ACTIVE.getValue())
                 .setEditable(true)
                 .setCellEditable(r -> !r.isActive())
+                .setColumnWidth(WIDTH_ICON)
                 .setOnCommit((r, v) -> updateField(this::deleteRow, r, v));
 
         /* Add listeners */

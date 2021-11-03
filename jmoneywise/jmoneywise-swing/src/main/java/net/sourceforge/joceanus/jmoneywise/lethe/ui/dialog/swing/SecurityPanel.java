@@ -295,7 +295,7 @@ public class SecurityPanel
         myFieldSet.setEditable(Security.FIELD_PARENT, isEditable && !bIsClosed);
 
         /* Set the table visibility */
-        boolean bShowPrices = mySecurity.isSecurityClass(SecurityTypeClass.STOCKOPTION);
+        boolean bShowPrices = !mySecurity.isSecurityClass(SecurityTypeClass.STOCKOPTION);
         bShowPrices &= isEditable || !thePrices.isViewEmpty();
         thePricesTab.setRequireVisible(bShowPrices);
     }

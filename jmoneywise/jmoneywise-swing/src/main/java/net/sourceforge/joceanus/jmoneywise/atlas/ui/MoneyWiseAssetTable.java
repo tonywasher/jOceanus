@@ -116,6 +116,7 @@ public abstract class MoneyWiseAssetTable<T extends AssetBase<T, C>, C>
                 .setValidator(this::isValidName)
                 .setCellValueFactory(AssetBase::getName)
                 .setEditable(true)
+                .setColumnWidth(WIDTH_NAME)
                 .setOnCommit((r, v) -> updateField(AssetBase::setName, r, v));
 
         /* Create the Category column */
@@ -124,6 +125,7 @@ public abstract class MoneyWiseAssetTable<T extends AssetBase<T, C>, C>
                 .setCellValueFactory(AssetBase::getCategory)
                 .setEditable(true)
                 .setCellEditable(r -> !r.isActive())
+                .setColumnWidth(WIDTH_NAME)
                 .setOnCommit((r, v) -> updateField(AssetBase::setCategory, r, v));
 
         /* Create the description column */
@@ -131,6 +133,7 @@ public abstract class MoneyWiseAssetTable<T extends AssetBase<T, C>, C>
                 .setValidator(this::isValidDesc)
                 .setCellValueFactory(AssetBase::getDesc)
                 .setEditable(true)
+                .setColumnWidth(WIDTH_DESC)
                 .setOnCommit((r, v) -> updateField(AssetBase::setDescription, r, v));
 
         /* Add listeners */
@@ -157,6 +160,7 @@ public abstract class MoneyWiseAssetTable<T extends AssetBase<T, C>, C>
                     .setCellValueFactory(AssetBase::getParent)
                     .setEditable(true)
                     .setCellEditable(r -> !r.isActive())
+                    .setColumnWidth(WIDTH_NAME)
                     .setOnCommit((r, v) -> updateField(AssetBase::setParent, r, v));
         }
 
@@ -167,6 +171,7 @@ public abstract class MoneyWiseAssetTable<T extends AssetBase<T, C>, C>
                     .setCellValueFactory(AssetBase::getAssetCurrency)
                     .setEditable(true)
                     .setCellEditable(r -> !r.isActive())
+                    .setColumnWidth(WIDTH_CURR)
                     .setOnCommit((r, v) -> updateField(AssetBase::setAssetCurrency, r, v));
         }
 
@@ -178,8 +183,10 @@ public abstract class MoneyWiseAssetTable<T extends AssetBase<T, C>, C>
                 .setCellValueFactory(AssetBase::isClosed)
                 .setEditable(true)
                 .setCellEditable(this::determineClosedState)
+                .setColumnWidth(WIDTH_ICON)
                 .setOnCommit((r, v) -> updateField(AssetBase::setClosed, r, v));
         declareClosedColumn(myClosedColumn);
+        setShowAll(false);
 
         /* Create the Active column */
         final TethysIconMapSet<MetisAction> myActionMapSet = MetisIcon.configureStatusIconButton();
@@ -189,6 +196,7 @@ public abstract class MoneyWiseAssetTable<T extends AssetBase<T, C>, C>
                 .setName(MoneyWiseUIResource.STATICDATA_ACTIVE.getValue())
                 .setEditable(true)
                 .setCellEditable(r -> !r.isActive())
+                .setColumnWidth(WIDTH_ICON)
                 .setOnCommit((r, v) -> updateField(this::deleteRow, r, v));
 
         /* Create the latest event column */

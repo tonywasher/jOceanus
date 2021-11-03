@@ -49,6 +49,11 @@ import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingTableManager;
 public class MoneyWiseStaticTable<L extends StaticList<T, S, MoneyWiseDataType>, T extends StaticData<T, S, MoneyWiseDataType>, S extends Enum<S> & StaticInterface>
         extends MoneyWiseBaseTable<T> {
     /**
+     * Class column width.
+     */
+    private static final int WIDTH_CLASS = 90;
+
+    /**
      * The list class.
      */
     private final Class<L> theClass;
@@ -105,13 +110,15 @@ public class MoneyWiseStaticTable<L extends StaticList<T, S, MoneyWiseDataType>,
         /* Create the class column */
         myTable.declareStringColumn(StaticData.FIELD_CLASS)
                .setCellValueFactory(r -> r.getStaticClass().toString())
-               .setEditable(false);
+               .setEditable(false)
+               .setColumnWidth(WIDTH_CLASS);
 
         /* Create the name column */
         myTable.declareStringColumn(StaticData.FIELD_NAME)
                .setValidator(this::isValidName)
                .setCellValueFactory(StaticData::getName)
                .setEditable(true)
+               .setColumnWidth(WIDTH_NAME)
                .setOnCommit((r, v) -> updateField(StaticData::setName, r, v));
 
         /* Create the description column */
@@ -119,6 +126,7 @@ public class MoneyWiseStaticTable<L extends StaticList<T, S, MoneyWiseDataType>,
                .setValidator(this::isValidDesc)
                .setCellValueFactory(StaticData::getDesc)
                .setEditable(true)
+               .setColumnWidth(WIDTH_DESC)
                .setOnCommit((r, v) -> updateField(StaticData::setDescription, r, v));
 
         /* Create the enabled column */
@@ -129,6 +137,7 @@ public class MoneyWiseStaticTable<L extends StaticList<T, S, MoneyWiseDataType>,
                .setVisible(false)
                .setEditable(true)
                .setCellEditable(r -> !r.isActive())
+               .setColumnWidth(WIDTH_ICON)
                .setOnCommit((r, v) -> updateField(StaticData::setEnabled, r, v));
 
         /* Create the Active column */
@@ -139,6 +148,7 @@ public class MoneyWiseStaticTable<L extends StaticList<T, S, MoneyWiseDataType>,
                .setName(MoneyWiseUIResource.STATICDATA_ACTIVE.getValue())
                .setEditable(true)
                .setCellEditable(r -> !r.isActive())
+               .setColumnWidth(WIDTH_ICON)
                .setOnCommit((r, v) -> updateField(this::deleteRow, r, v));
 
         /* Add listeners */
