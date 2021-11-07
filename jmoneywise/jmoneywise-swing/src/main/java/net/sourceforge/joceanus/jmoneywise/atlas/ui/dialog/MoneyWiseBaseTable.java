@@ -14,9 +14,10 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  ******************************************************************************/
-package net.sourceforge.joceanus.jmoneywise.atlas.ui;
+package net.sourceforge.joceanus.jmoneywise.atlas.ui.dialog;
 
 import java.awt.BorderLayout;
+import java.awt.Dimension;
 import java.util.Iterator;
 import java.util.Objects;
 
@@ -26,7 +27,6 @@ import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisLetheField;
 import net.sourceforge.joceanus.jmetis.viewer.MetisViewerEntry;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
-import net.sourceforge.joceanus.jmoneywise.lethe.ui.dialog.swing.MoneyWiseItemPanel;
 import net.sourceforge.joceanus.jmoneywise.lethe.views.MoneyWiseView;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataItem;
 import net.sourceforge.joceanus.jprometheus.lethe.views.PrometheusDataEvent;
@@ -51,6 +51,16 @@ import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingTableManager;
  */
 public abstract class MoneyWiseBaseTable<T extends DataItem<MoneyWiseDataType> & Comparable<? super T>>
         implements TethysEventProvider<PrometheusDataEvent>, TethysComponent {
+    /**
+     * Panel height.
+     */
+    protected static final int HEIGHT_PANEL = 200;
+
+    /**
+     * Panel width.
+     */
+    protected static final int WIDTH_PANEL = 1100;
+
     /**
      * Date column standard width.
      */
@@ -158,10 +168,10 @@ public abstract class MoneyWiseBaseTable<T extends DataItem<MoneyWiseDataType> &
      * @param pError the error panel
      * @param pDataType the dataType
      */
-    MoneyWiseBaseTable(final MoneyWiseView pView,
-                       final UpdateSet<MoneyWiseDataType> pUpdateSet,
-                       final MetisErrorPanel pError,
-                       final MoneyWiseDataType pDataType) {
+    protected MoneyWiseBaseTable(final MoneyWiseView pView,
+                                 final UpdateSet<MoneyWiseDataType> pUpdateSet,
+                                 final MetisErrorPanel pError,
+                                 final MoneyWiseDataType pDataType) {
         /* Store parameters */
         theView = pView;
         theError = pError;
@@ -191,6 +201,9 @@ public abstract class MoneyWiseBaseTable<T extends DataItem<MoneyWiseDataType> &
                 .setFilter(this::isFiltered)
                 .setRepaintRowOnCommit(true)
                 .setEditable(true);
+
+        /* Set standard size */
+        theTable.setPreferredWidthAndHeight(WIDTH_PANEL, HEIGHT_PANEL);
 
         /* Add listeners */
         theUpdateSet.getEventRegistrar().addEventListener(e -> handleRewind());
@@ -237,7 +250,7 @@ public abstract class MoneyWiseBaseTable<T extends DataItem<MoneyWiseDataType> &
      * Obtain the item type.
      * @return the item type
      */
-    protected MoneyWiseDataType getItemType() {
+    public MoneyWiseDataType getItemType() {
         return theItemType;
     }
 
@@ -281,7 +294,7 @@ public abstract class MoneyWiseBaseTable<T extends DataItem<MoneyWiseDataType> &
     /**
      * Cancel editing.
      */
-    protected void cancelEditing() {
+    public void cancelEditing() {
         theTable.cancelEditing();
     }
 
@@ -289,7 +302,7 @@ public abstract class MoneyWiseBaseTable<T extends DataItem<MoneyWiseDataType> &
      * Is the table editing?
      * @return true/false
      */
-    protected boolean isEditing() {
+    public boolean isEditing() {
         return isEditing;
     }
 
@@ -297,7 +310,7 @@ public abstract class MoneyWiseBaseTable<T extends DataItem<MoneyWiseDataType> &
      * Determine Focus.
      * @param pEntry the master data entry
      */
-    protected void determineFocus(final MetisViewerEntry pEntry) {
+    public void determineFocus(final MetisViewerEntry pEntry) {
         /* Request the focus */
         theTable.requestFocus();
 

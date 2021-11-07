@@ -148,7 +148,7 @@ public class MoneyWiseSecurityTable
     }
 
     @Override
-    protected void cancelEditing() {
+    public void cancelEditing() {
         super.cancelEditing();
         theActiveSecurity.setEditable(false);
     }

@@ -76,6 +76,12 @@ public final class MoneyWiseUKSchemeFactory {
             Boolean.TRUE);
 
     /**
+     * The Dividends Additional Rate Scheme with no TaxCredit and new rates.
+     */
+    protected static final MoneyWiseUKDividendScheme DIVIDEND_NOTAXCREDIT1 = new MoneyWiseUKDividendAdditionalRateScheme(getTenthFractionalRate(875), getTenthFractionalRate(3375), getTenthFractionalRate(3935),
+            Boolean.TRUE);
+
+    /**
      * The Interest asIncome Scheme.
      */
     protected static final MoneyWiseUKInterestScheme INTEREST_ASINCOME = new MoneyWiseUKInterestAsIncomeScheme();
@@ -137,5 +143,14 @@ public final class MoneyWiseUKSchemeFactory {
      */
     private static TethysRate getFractionalRate(final int pUnits) {
         return TethysRate.getWholePermille(pUnits);
+    }
+
+    /**
+     * Create a fractional rate.
+     * @param pUnits the number of tenth units
+     * @return the amount
+     */
+    private static TethysRate getTenthFractionalRate(final int pUnits) {
+        return TethysRate.getTenthPermille(pUnits);
     }
 }

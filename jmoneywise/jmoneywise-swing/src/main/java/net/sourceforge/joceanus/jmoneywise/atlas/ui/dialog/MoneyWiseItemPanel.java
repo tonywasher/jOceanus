@@ -14,7 +14,7 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  ******************************************************************************/
-package net.sourceforge.joceanus.jmoneywise.lethe.ui.dialog.swing;
+package net.sourceforge.joceanus.jmoneywise.atlas.ui.dialog;
 
 import java.awt.BorderLayout;
 import java.awt.GridLayout;
@@ -36,6 +36,7 @@ import net.sourceforge.joceanus.jmetis.data.MetisDataType;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisLetheField;
 import net.sourceforge.joceanus.jmetis.lethe.field.swing.MetisSwingFieldManager;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
+import net.sourceforge.joceanus.jmoneywise.atlas.ui.dialog.MoneyWiseDialogTable;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.AssetBase;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.CategoryBase;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.Region;
@@ -47,7 +48,6 @@ import net.sourceforge.joceanus.jprometheus.lethe.data.DataItem;
 import net.sourceforge.joceanus.jprometheus.lethe.data.StaticData;
 import net.sourceforge.joceanus.jprometheus.lethe.ui.PrometheusGoToEvent;
 import net.sourceforge.joceanus.jprometheus.lethe.ui.swing.PrometheusDataItemPanel;
-import net.sourceforge.joceanus.jprometheus.lethe.ui.swing.PrometheusDataTable;
 import net.sourceforge.joceanus.jprometheus.lethe.views.UpdateSet;
 import net.sourceforge.joceanus.jtethys.ui.TethysGuiFactory;
 import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollMenu;
@@ -362,7 +362,7 @@ public abstract class MoneyWiseItemPanel<T extends DataItem<MoneyWiseDataType> &
     /**
      * Standard Panel.
      */
-    protected class MoneyWiseDataPanel
+    public class MoneyWiseDataPanel
             implements MoneyWisePanel {
         /**
          * The field width.
@@ -388,7 +388,7 @@ public abstract class MoneyWiseItemPanel<T extends DataItem<MoneyWiseDataType> &
          * Constructor.
          * @param pWidth the field width
          */
-        protected MoneyWiseDataPanel(final int pWidth) {
+        public MoneyWiseDataPanel(final int pWidth) {
             /* Store the parameters */
             theWidth = pWidth;
 
@@ -428,9 +428,9 @@ public abstract class MoneyWiseItemPanel<T extends DataItem<MoneyWiseDataType> &
          * @param pType the dataType
          * @param pControl the control
          */
-        protected void addField(final MetisLetheField pField,
-                                final MetisDataType pType,
-                                final TethysSwingStringTextField pControl) {
+        public void addField(final MetisLetheField pField,
+                             final MetisDataType pType,
+                             final TethysSwingStringTextField pControl) {
             /* Add to the fieldSet */
             getFieldSet().addFieldElement(pField, pType, pControl);
 
@@ -447,9 +447,9 @@ public abstract class MoneyWiseItemPanel<T extends DataItem<MoneyWiseDataType> &
          * @param pType the dataType
          * @param pControl the control
          */
-        protected void addField(final MetisLetheField pField,
-                                final MetisDataType pType,
-                                final TethysSwingScrollPaneManager pControl) {
+        public void addField(final MetisLetheField pField,
+                             final MetisDataType pType,
+                             final TethysSwingScrollPaneManager pControl) {
             /* Add to the fieldSet */
             getFieldSet().addFieldElement(pField, pType, pControl);
 
@@ -465,8 +465,8 @@ public abstract class MoneyWiseItemPanel<T extends DataItem<MoneyWiseDataType> &
          * @param pField the field.
          * @param pControl the control
          */
-        protected void addField(final MetisLetheField pField,
-                                final TethysSwingDateButtonManager pControl) {
+        public void addField(final MetisLetheField pField,
+                             final TethysSwingDateButtonManager pControl) {
             /* Add to the fieldSet */
             getFieldSet().addFieldElement(pField, pControl);
 
@@ -484,9 +484,9 @@ public abstract class MoneyWiseItemPanel<T extends DataItem<MoneyWiseDataType> &
          * @param pClazz the class of the value
          * @param pControl the control
          */
-        protected <I> void addField(final MetisLetheField pField,
-                                    final Class<I> pClazz,
-                                    final TethysSwingScrollButtonManager<I> pControl) {
+        public <I> void addField(final MetisLetheField pField,
+                                 final Class<I> pClazz,
+                                 final TethysSwingScrollButtonManager<I> pControl) {
             /* Add to the fieldSet */
             getFieldSet().addFieldElement(pField, pClazz, pControl);
 
@@ -504,9 +504,9 @@ public abstract class MoneyWiseItemPanel<T extends DataItem<MoneyWiseDataType> &
          * @param pClazz the class of the value
          * @param pControl the control
          */
-        protected <I> void addField(final MetisLetheField pField,
-                                    final Class<I> pClazz,
-                                    final TethysSwingIconButtonManager<I> pControl) {
+        public <I> void addField(final MetisLetheField pField,
+                                 final Class<I> pClazz,
+                                 final TethysSwingIconButtonManager<I> pControl) {
             /* Add to the fieldSet */
             getFieldSet().addFieldElement(pField, pClazz, pControl);
 
@@ -523,8 +523,8 @@ public abstract class MoneyWiseItemPanel<T extends DataItem<MoneyWiseDataType> &
          * @param pField the field.
          * @param pControl the control
          */
-        protected <I extends Comparable<I>> void addField(final MetisLetheField pField,
-                                                          final TethysSwingListButtonManager<I> pControl) {
+        public <I extends Comparable<I>> void addField(final MetisLetheField pField,
+                                                       final TethysSwingListButtonManager<I> pControl) {
             /* Add to the fieldSet */
             getFieldSet().addFieldElement(pField, pControl);
 
@@ -547,7 +547,7 @@ public abstract class MoneyWiseItemPanel<T extends DataItem<MoneyWiseDataType> &
         /**
          * Compact panel.
          */
-        protected void compactPanel() {
+        public void compactPanel() {
             TethysSwingSpringUtilities.makeCompactGrid(thePanel, theSpring, thePanel.getComponentCount() >> 1, 2, PADDING_SIZE);
         }
     }
@@ -585,7 +585,7 @@ public abstract class MoneyWiseItemPanel<T extends DataItem<MoneyWiseDataType> &
     /**
      * Standard Tab Item.
      */
-    protected class MoneyWiseDataTabItem
+    public class MoneyWiseDataTabItem
             extends MoneyWiseDataPanel
             implements MoneyWiseTab {
         /**
@@ -608,8 +608,8 @@ public abstract class MoneyWiseItemPanel<T extends DataItem<MoneyWiseDataType> &
          * @param pName the name of the tab.
          * @param pWidth the field width
          */
-        protected MoneyWiseDataTabItem(final String pName,
-                                       final int pWidth) {
+        public MoneyWiseDataTabItem(final String pName,
+                                    final int pWidth) {
             /* Initialise super-class */
             super(pWidth);
 
@@ -659,7 +659,7 @@ public abstract class MoneyWiseItemPanel<T extends DataItem<MoneyWiseDataType> &
     /**
      * Table Tab Item.
      */
-    protected class MoneyWiseDataTabTable
+    public class MoneyWiseDataTabTable
             implements MoneyWiseTab {
         /**
          * The name.
@@ -669,7 +669,7 @@ public abstract class MoneyWiseItemPanel<T extends DataItem<MoneyWiseDataType> &
         /**
          * The table.
          */
-        private final PrometheusDataTable<?, MoneyWiseDataType> theTable;
+        private final MoneyWiseDialogTable<?> theTable;
 
         /**
          * isVisible.
@@ -686,8 +686,8 @@ public abstract class MoneyWiseItemPanel<T extends DataItem<MoneyWiseDataType> &
          * @param pName the name of the tab.
          * @param pTable the table
          */
-        protected MoneyWiseDataTabTable(final String pName,
-                                        final PrometheusDataTable<?, MoneyWiseDataType> pTable) {
+        public MoneyWiseDataTabTable(final String pName,
+                                     final MoneyWiseDialogTable<?> pTable) {
             /* Store parameters */
             theName = pName;
             theTable = pTable;
@@ -729,7 +729,7 @@ public abstract class MoneyWiseItemPanel<T extends DataItem<MoneyWiseDataType> &
          * Require this table to be visible or not.
          * @param pVisible true/false
          */
-        protected void setRequireVisible(final boolean pVisible) {
+        public void setRequireVisible(final boolean pVisible) {
             requireVisible = pVisible;
         }
     }

@@ -124,7 +124,7 @@ public class MoneyWisePayeeTable
     }
 
     @Override
-    protected void cancelEditing() {
+    public void cancelEditing() {
         super.cancelEditing();
         theActivePayee.setEditable(false);
     }

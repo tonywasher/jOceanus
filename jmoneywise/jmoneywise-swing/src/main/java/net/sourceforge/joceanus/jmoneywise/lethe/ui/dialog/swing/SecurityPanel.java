@@ -28,6 +28,8 @@ import net.sourceforge.joceanus.jmetis.lethe.field.MetisLetheFieldSetBase.MetisL
 import net.sourceforge.joceanus.jmetis.lethe.field.swing.MetisSwingFieldManager;
 import net.sourceforge.joceanus.jmetis.lethe.field.swing.MetisSwingFieldSet;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
+import net.sourceforge.joceanus.jmoneywise.atlas.ui.dialog.MoneyWiseItemPanel;
+import net.sourceforge.joceanus.jmoneywise.atlas.ui.dialog.MoneyWiseSecurityPriceTable;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.Payee;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.Payee.PayeeList;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.Region;
@@ -69,7 +71,7 @@ public class SecurityPanel
     /**
      * SecurityPrice Table.
      */
-    private final SecurityPriceTable thePrices;
+    private final MoneyWiseSecurityPriceTable thePrices;
 
     /**
      * Table tab item.
@@ -107,7 +109,7 @@ public class SecurityPanel
         buildNotesPanel(pFactory);
 
         /* Create the SecurityPrices table */
-        thePrices = new SecurityPriceTable(pView, pFieldMgr, getUpdateSet(), pError);
+        thePrices = new MoneyWiseSecurityPriceTable(pView, getUpdateSet(), pError);
         thePricesTab = new MoneyWiseDataTabTable(TAB_PRICES, thePrices);
 
         /* Define the panel */

@@ -126,7 +126,7 @@ public class MoneyWiseLoanTable
     }
 
     @Override
-    protected void cancelEditing() {
+    public void cancelEditing() {
         super.cancelEditing();
         theActiveLoan.setEditable(false);
     }

@@ -23,6 +23,7 @@ import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisLetheField;
 import net.sourceforge.joceanus.jmetis.ui.MetisAction;
 import net.sourceforge.joceanus.jmetis.ui.MetisIcon;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
+import net.sourceforge.joceanus.jmoneywise.atlas.ui.dialog.MoneyWiseBaseTable;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.AssetBase;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.Payee;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.Transaction;
@@ -260,7 +261,8 @@ public abstract class MoneyWiseAssetTable<T extends AssetBase<T, C>, C>
      */
     protected void checkShowAll(final T pAsset) {
         /* If the item is closed, but we are not showing closed items */
-        if (pAsset.isClosed()
+        if (pAsset != null
+                && pAsset.isClosed()
                 && !theLockedCheckBox.isSelected()) {
             theLockedCheckBox.setSelected(true);
             setShowAll(true);

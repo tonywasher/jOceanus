@@ -126,7 +126,7 @@ public class MoneyWisePortfolioTable
     }
 
     @Override
-    protected void cancelEditing() {
+    public void cancelEditing() {
         super.cancelEditing();
         theActivePortfolio.setEditable(false);
     }

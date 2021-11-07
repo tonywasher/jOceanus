@@ -269,7 +269,7 @@ public final class MoneyWiseUKAllowanceFactory {
             getAmount(12000), getAmount(1000), getAmount(2000), ADDITIONAL_THRESHOLD);
 
     /**
-     * The 2020 Allowance.
+     * The 2021 Allowance.
      */
     protected static final MoneyWiseUKBasicAllowance ALLOWANCE_2021 = new MoneyWiseUKSavingsAllowance(getAmount(12500), NEW_RENTAL,
             getAmount(12300), getAmount(1000), getAmount(2000), ADDITIONAL_THRESHOLD);
@@ -277,7 +277,13 @@ public final class MoneyWiseUKAllowanceFactory {
     /**
      * The 2022 Allowance.
      */
-    protected static final MoneyWiseUKBasicAllowance ALLOWANCE_2022 = new MoneyWiseUKSavingsAllowance(getAmount(12700), NEW_RENTAL,
+    protected static final MoneyWiseUKBasicAllowance ALLOWANCE_2022 = new MoneyWiseUKSavingsAllowance(getAmount(12500), NEW_RENTAL,
+            getAmount(12300), getAmount(1000), getAmount(2000), ADDITIONAL_THRESHOLD);
+
+    /**
+     * The 2023 Allowance.
+     */
+    protected static final MoneyWiseUKBasicAllowance ALLOWANCE_2023 = new MoneyWiseUKSavingsAllowance(getAmount(12570), NEW_RENTAL,
             getAmount(12300), getAmount(1000), getAmount(2000), ADDITIONAL_THRESHOLD);
 
     /**

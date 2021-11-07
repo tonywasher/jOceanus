@@ -145,6 +145,14 @@ public abstract class TethysTableManager<C, R>
     }
 
     /**
+     * Set the Preferred Width and Height.
+     * @param pWidth the width
+     * @param pHeight the height
+     */
+    public abstract void setPreferredWidthAndHeight(Integer pWidth,
+                                                    Integer pHeight);
+
+    /**
      * Is the table editable?
      * @return true/false
      */

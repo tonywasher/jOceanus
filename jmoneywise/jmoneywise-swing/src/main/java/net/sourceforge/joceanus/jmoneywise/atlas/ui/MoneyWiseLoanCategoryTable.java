@@ -129,7 +129,7 @@ public class MoneyWiseLoanCategoryTable
     }
 
     @Override
-    protected void cancelEditing() {
+    public void cancelEditing() {
         super.cancelEditing();
         theActiveCategory.setEditable(false);
     }

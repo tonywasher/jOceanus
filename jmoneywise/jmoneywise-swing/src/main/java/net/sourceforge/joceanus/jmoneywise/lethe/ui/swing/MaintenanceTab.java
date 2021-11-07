@@ -107,8 +107,7 @@ public class MaintenanceTab
     /**
      * The Account Panel.
      */
-    private final AccountPanel theAccountTab;
-    private final MoneyWiseAccountPanel theAccountTab1;
+    private final MoneyWiseAccountPanel theAccountTab;
 
     /**
      * The Category Panel.
@@ -153,10 +152,8 @@ public class MaintenanceTab
         theTabs = theView.getGuiFactory().newTabPane();
 
         /* Create the account Tab and add it */
-        theAccountTab = new AccountPanel(theView);
+        theAccountTab = new MoneyWiseAccountPanel(theView);
         theTabs.addTabItem(TITLE_ACCOUNT, theAccountTab);
-        theAccountTab1 = new MoneyWiseAccountPanel(theView);
-        theTabs.addTabItem(TITLE_ACCOUNT + "1", theAccountTab1);
 
         /* Create the category Tab and add it */
         theCategoryTab = new MoneyWiseCategoryPanel(theView);
@@ -267,7 +264,6 @@ public class MaintenanceTab
         try {
             /* Refresh sub-panels */
             theAccountTab.refreshData();
-            theAccountTab1.refreshData();
             theCategoryTab.refreshData();
             theStatic.refreshData();
 

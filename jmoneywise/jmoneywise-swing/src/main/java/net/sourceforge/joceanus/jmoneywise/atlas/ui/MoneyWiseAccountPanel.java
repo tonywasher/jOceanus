@@ -366,7 +366,7 @@ public class MoneyWiseAccountPanel
     public void refreshData() throws OceanusException {
         /* Obtain the active profile */
         MetisProfile myTask = theView.getActiveTask();
-        myTask = myTask.startTask("Accounts1");
+        myTask = myTask.startTask("Accounts");
 
         /* Note that we are refreshing */
         isRefreshing = true;

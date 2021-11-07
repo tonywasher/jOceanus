@@ -125,7 +125,7 @@ public class MoneyWiseCashTable
     }
 
     @Override
-    protected void cancelEditing() {
+    public void cancelEditing() {
         super.cancelEditing();
         theActiveCash.setEditable(false);
     }

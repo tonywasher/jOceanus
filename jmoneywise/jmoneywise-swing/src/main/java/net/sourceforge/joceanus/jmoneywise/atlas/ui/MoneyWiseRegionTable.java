@@ -24,6 +24,7 @@ import net.sourceforge.joceanus.jmetis.ui.MetisAction;
 import net.sourceforge.joceanus.jmetis.ui.MetisIcon;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
+import net.sourceforge.joceanus.jmoneywise.atlas.ui.dialog.MoneyWiseBaseTable;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.Region;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.Region.RegionList;
@@ -163,7 +164,7 @@ public class MoneyWiseRegionTable
     }
 
     @Override
-    protected void cancelEditing() {
+    public void cancelEditing() {
         super.cancelEditing();
         theActiveRegion.setEditable(false);
     }

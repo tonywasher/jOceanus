@@ -16,6 +16,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jtethys.ui.swing;
 
+import java.awt.Dimension;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.util.ArrayList;
@@ -148,6 +149,12 @@ public class TethysSwingTableManager<C, R>
     }
 
     @Override
+    public void setPreferredWidthAndHeight(final Integer pWidth,
+                                           final Integer pHeight) {
+        theTable.setPreferredScrollableViewportSize(new Dimension(pWidth, pHeight));
+    }
+
+    @Override
     public void setEnabled(final boolean pEnabled) {
         theScroll.setEnabled(pEnabled);
         theTable.setEnabled(pEnabled);
@@ -194,6 +201,7 @@ public class TethysSwingTableManager<C, R>
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public TethysSwingTableColumn<?, C, R> getColumn(final C pId) {
         return (TethysSwingTableColumn<?, C, R>) super.getColumn(pId);
     }

@@ -93,7 +93,7 @@ public class MoneyWiseDepositTable
         final TethysSwingTableManager<MetisLetheField, Deposit> myTable = getTable();
 
         /* Create a Deposit panel */
-        theActiveDeposit = new DepositPanel(myGuiFactory, myFieldMgr, pUpdateSet, pError);
+        theActiveDeposit = new DepositPanel(myGuiFactory, pView, myFieldMgr, pUpdateSet, pError);
         declareItemPanel(theActiveDeposit);
 
         /* Set table configuration */
@@ -139,7 +139,7 @@ public class MoneyWiseDepositTable
     }
 
     @Override
-    protected void cancelEditing() {
+    public void cancelEditing() {
         super.cancelEditing();
         theActiveDeposit.setEditable(false);
     }

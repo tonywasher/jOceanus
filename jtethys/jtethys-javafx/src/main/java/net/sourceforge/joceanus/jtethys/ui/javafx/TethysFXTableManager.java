@@ -142,6 +142,13 @@ public class TethysFXTableManager<C, R>
     }
 
     @Override
+    public void setPreferredWidthAndHeight(final Integer pWidth,
+                                           final Integer pHeight) {
+        theNode.setPreferredWidth(pWidth);
+        theNode.setPreferredHeight(pHeight);
+    }
+
+    @Override
     public void setEnabled(final boolean pEnabled) {
         theTable.setDisable(!pEnabled);
     }
