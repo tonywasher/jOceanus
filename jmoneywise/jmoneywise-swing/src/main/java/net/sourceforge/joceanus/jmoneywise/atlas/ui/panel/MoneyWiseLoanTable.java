@@ -14,7 +14,7 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  ******************************************************************************/
-package net.sourceforge.joceanus.jmoneywise.atlas.ui;
+package net.sourceforge.joceanus.jmoneywise.atlas.ui.panel;
 
 import net.sourceforge.joceanus.jmetis.atlas.ui.MetisErrorPanel;
 import net.sourceforge.joceanus.jmetis.data.MetisDataDifference;
@@ -23,20 +23,17 @@ import net.sourceforge.joceanus.jmetis.lethe.field.swing.MetisSwingFieldManager;
 import net.sourceforge.joceanus.jmetis.profile.MetisProfile;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
+import net.sourceforge.joceanus.jmoneywise.atlas.ui.base.MoneyWiseAssetTable;
+import net.sourceforge.joceanus.jmoneywise.lethe.data.Loan;
+import net.sourceforge.joceanus.jmoneywise.lethe.data.Loan.LoanList;
+import net.sourceforge.joceanus.jmoneywise.lethe.data.LoanCategory;
+import net.sourceforge.joceanus.jmoneywise.lethe.data.LoanInfo;
+import net.sourceforge.joceanus.jmoneywise.lethe.data.LoanInfo.LoanInfoList;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.Payee;
-import net.sourceforge.joceanus.jmoneywise.lethe.data.Security;
-import net.sourceforge.joceanus.jmoneywise.lethe.data.Security.SecurityList;
-import net.sourceforge.joceanus.jmoneywise.lethe.data.SecurityInfo;
-import net.sourceforge.joceanus.jmoneywise.lethe.data.SecurityInfo.SecurityInfoList;
-import net.sourceforge.joceanus.jmoneywise.lethe.data.SecurityInfoSet;
-import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.AccountInfoClass;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.AssetCurrency;
-import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.SecurityType;
-import net.sourceforge.joceanus.jmoneywise.lethe.ui.dialog.swing.SecurityPanel;
+import net.sourceforge.joceanus.jmoneywise.lethe.ui.dialog.swing.LoanPanel;
 import net.sourceforge.joceanus.jmoneywise.lethe.views.MoneyWiseView;
-import net.sourceforge.joceanus.jmoneywise.lethe.views.ViewSecurityPrice;
-import net.sourceforge.joceanus.jmoneywise.lethe.views.ViewSecurityPrice.ViewSecurityPriceList;
 import net.sourceforge.joceanus.jprometheus.lethe.swing.PrometheusSwingToolkit;
 import net.sourceforge.joceanus.jprometheus.lethe.views.PrometheusDataEvent;
 import net.sourceforge.joceanus.jprometheus.lethe.views.UpdateEntry;
@@ -47,29 +44,24 @@ import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingGuiFactory;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingTableManager;
 
 /**
- * MoneyWise Security Table.
+ * MoneyWise Loan Table.
  */
-public class MoneyWiseSecurityTable
-        extends MoneyWiseAssetTable<Security, SecurityType> {
+public class MoneyWiseLoanTable
+        extends MoneyWiseAssetTable<Loan, LoanCategory> {
     /**
      * The Info UpdateEntry.
      */
-    private final UpdateEntry<SecurityInfo, MoneyWiseDataType> theInfoEntry;
+    private final UpdateEntry<LoanInfo, MoneyWiseDataType> theInfoEntry;
 
     /**
-     * The Info UpdateEntry.
+     * The Loan dialog.
      */
-    private final UpdateEntry<ViewSecurityPrice, MoneyWiseDataType> thePriceEntry;
-
-    /**
-     * The Security dialog.
-     */
-    private final SecurityPanel theActiveSecurity;
+    private final LoanPanel theActiveLoan;
 
     /**
      * The edit list.
      */
-    private SecurityList theSecurities;
+    private LoanList theLoans;
 
     /**
      * Constructor.
@@ -77,71 +69,58 @@ public class MoneyWiseSecurityTable
      * @param pUpdateSet the updateSet
      * @param pError the error panel
      */
-    MoneyWiseSecurityTable(final MoneyWiseView pView,
-                           final UpdateSet<MoneyWiseDataType> pUpdateSet,
-                           final MetisErrorPanel pError) {
+    MoneyWiseLoanTable(final MoneyWiseView pView,
+                            final UpdateSet<MoneyWiseDataType> pUpdateSet,
+                            final MetisErrorPanel pError) {
         /* Store parameters */
-        super(pView, pUpdateSet, pError, MoneyWiseDataType.SECURITY, SecurityType.class);
+        super(pView, pUpdateSet, pError, MoneyWiseDataType.LOAN, LoanCategory.class);
 
-        /* register the info/priceEntries */
-        theInfoEntry = getUpdateSet().registerType(MoneyWiseDataType.SECURITYINFO);
-        thePriceEntry = getUpdateSet().registerType(MoneyWiseDataType.SECURITYPRICE);
+        /* register the infoEntry */
+        theInfoEntry = getUpdateSet().registerType(MoneyWiseDataType.LOANINFO);
 
         /* Access field manager */
         MetisSwingFieldManager myFieldMgr = ((PrometheusSwingToolkit) pView.getToolkit()).getFieldManager();
 
         /* Access Gui factory */
         final TethysSwingGuiFactory myGuiFactory = (TethysSwingGuiFactory) pView.getGuiFactory();
-        final TethysSwingTableManager<MetisLetheField, Security> myTable = getTable();
+        final TethysSwingTableManager<MetisLetheField, Loan> myTable = getTable();
 
-        /* Create a security panel */
-        theActiveSecurity = new SecurityPanel(myGuiFactory, pView, myFieldMgr, pUpdateSet, pError);
-        declareItemPanel(theActiveSecurity);
+        /* Create a Loan panel */
+        theActiveLoan = new LoanPanel(myGuiFactory, myFieldMgr, pUpdateSet, pError);
+        declareItemPanel(theActiveLoan);
 
         /* Set table configuration */
-        myTable.setOnSelect(theActiveSecurity::setItem);
-
-        /* Create the symbol column */
-        myTable.declareStringColumn(SecurityInfoSet.getFieldForClass(AccountInfoClass.SYMBOL))
-                .setValidator(this::isValidDesc)
-                .setCellValueFactory(Security::getSymbol)
-                .setEditable(true)
-                .setColumnWidth(WIDTH_NAME)
-                .setOnCommit((r, v) -> updateField(Security::setSymbol, r, v));
+        myTable.setOnSelect(theActiveLoan::setItem);
 
         /* Finish the table */
-        finishTable(true, true, false);
+        finishTable(true, true, true);
 
         /* Add listeners */
-        theActiveSecurity.getEventRegistrar().addEventListener(PrometheusDataEvent.ADJUSTVISIBILITY, e -> handlePanelState());
+        theActiveLoan.getEventRegistrar().addEventListener(PrometheusDataEvent.ADJUSTVISIBILITY, e -> handlePanelState());
     }
 
     @Override
     protected boolean isItemEditing() {
-        return theActiveSecurity.isEditing();
+        return theActiveLoan.isEditing();
     }
 
     @Override
     protected void refreshData() throws OceanusException {
         /* Obtain the active profile */
         MetisProfile myTask = getView().getActiveTask();
-        myTask = myTask.startTask("Securities");
+        myTask = myTask.startTask("Loans");
 
         /* Access list */
         final MoneyWiseData myData = getView().getData();
-        final SecurityList myBase = myData.getSecurities();
-        theSecurities = myBase.deriveEditList(getUpdateSet());
-        getTable().setItems(theSecurities.getUnderlyingList());
-        getUpdateEntry().setDataList(theSecurities);
-        final SecurityInfoList myInfo = theSecurities.getSecurityInfo();
+        final LoanList myBase = myData.getLoans();
+        theLoans = myBase.deriveEditList(getUpdateSet());
+        getTable().setItems(theLoans.getUnderlyingList());
+        getUpdateEntry().setDataList(theLoans);
+        final LoanInfoList myInfo = theLoans.getLoanInfo();
         theInfoEntry.setDataList(myInfo);
 
-        /* Get the Security prices list */
-        final ViewSecurityPriceList myPrices = new ViewSecurityPriceList(getView(), getUpdateSet());
-        thePriceEntry.setDataList(myPrices);
-
         /* Notify panel of refresh */
-        theActiveSecurity.refreshData();
+        theActiveLoan.refreshData();
 
         /* Complete the task */
         myTask.end();
@@ -150,34 +129,34 @@ public class MoneyWiseSecurityTable
     @Override
     public void cancelEditing() {
         super.cancelEditing();
-        theActiveSecurity.setEditable(false);
+        theActiveLoan.setEditable(false);
     }
 
     /**
-     * Select security.
-     * @param pSecurity the security to select
+     * Select Loan.
+     * @param pLoan the Loan to select
      */
-    void selectSecurity(final Security pSecurity) {
+    void selectLoan(final Loan pLoan) {
         /* Check whether we need to showAll */
-        checkShowAll(pSecurity);
+        checkShowAll(pLoan);
 
         /* If we are changing the selection */
-        final Security myCurrent = theActiveSecurity.getSelectedItem();
-        if (!MetisDataDifference.isEqual(myCurrent, pSecurity)) {
+        final Loan myCurrent = theActiveLoan.getSelectedItem();
+        if (!MetisDataDifference.isEqual(myCurrent, pLoan)) {
             /* Select the row and ensure that it is visible */
-            getTable().selectRowWithScroll(pSecurity);
-            theActiveSecurity.setItem(pSecurity);
+            getTable().selectRowWithScroll(pLoan);
+            theActiveLoan.setItem(pLoan);
         }
     }
 
     @Override
     protected void handleRewind() {
         /* Only action if we are not editing */
-        if (!theActiveSecurity.isEditing()) {
+        if (!theActiveLoan.isEditing()) {
             /* Handle the reWind */
             setEnabled(true);
             getTable().fireTableDataChanged();
-            selectSecurity(theActiveSecurity.getSelectedItem());
+            selectLoan(theActiveLoan.getSelectedItem());
         }
 
         /* Adjust for changes */
@@ -189,11 +168,11 @@ public class MoneyWiseSecurityTable
      */
     private void handlePanelState() {
         /* Only action if we are not editing */
-        if (!theActiveSecurity.isEditing()) {
+        if (!theActiveLoan.isEditing()) {
             /* handle the edit transition */
             setEnabled(true);
             getTable().fireTableDataChanged();
-            selectSecurity(theActiveSecurity.getSelectedItem());
+            selectLoan(theActiveLoan.getSelectedItem());
         }
 
         /* Note changes */
@@ -201,24 +180,24 @@ public class MoneyWiseSecurityTable
     }
 
     @Override
-    protected void buildCategoryMenu(final Security pSecurity,
-                                     final TethysScrollMenu<SecurityType> pMenu) {
+    protected void buildCategoryMenu(final Loan pLoan,
+                                     final TethysScrollMenu<LoanCategory> pMenu) {
         /* Build the menu */
-        theActiveSecurity.buildSecTypeMenu(pMenu, pSecurity);
+        theActiveLoan.buildCategoryMenu(pMenu, pLoan);
     }
 
     @Override
-    protected void buildParentMenu(final Security pSecurity,
+    protected void buildParentMenu(final Loan pLoan,
                                    final TethysScrollMenu<Payee> pMenu) {
         /* Build the menu */
-        theActiveSecurity.buildParentMenu(pMenu, pSecurity);
+        theActiveLoan.buildParentMenu(pMenu, pLoan);
     }
 
     @Override
-    protected void buildCurrencyMenu(final Security pSecurity,
+    protected void buildCurrencyMenu(final Loan pLoan,
                                      final TethysScrollMenu<AssetCurrency> pMenu) {
         /* Build the menu */
-        theActiveSecurity.buildCurrencyMenu(pMenu, pSecurity);
+        theActiveLoan.buildCurrencyMenu(pMenu, pLoan);
     }
 
     @Override
@@ -229,17 +208,17 @@ public class MoneyWiseSecurityTable
             cancelEditing();
 
             /* Create the new asset */
-            final Security mySecurity = theSecurities.addNewItem();
-            mySecurity.setDefaults(getUpdateSet());
+            final Loan myLoan = theLoans.addNewItem();
+            myLoan.setDefaults(getUpdateSet());
 
             /* Set as new and adjust map */
-            mySecurity.setNewVersion();
-            mySecurity.adjustMapForItem();
+            myLoan.setNewVersion();
+            myLoan.adjustMapForItem();
             getUpdateSet().incrementVersion();
 
             /* Validate the new item and update panel */
-            mySecurity.validate();
-            theActiveSecurity.setNewItem(mySecurity);
+            myLoan.validate();
+            theActiveLoan.setNewItem(myLoan);
 
             /* Lock the table */
             setEnabled(false);
@@ -247,7 +226,7 @@ public class MoneyWiseSecurityTable
             /* Handle Exceptions */
         } catch (OceanusException e) {
             /* Build the error */
-            final OceanusException myError = new MoneyWiseDataException("Failed to create new security", e);
+            final OceanusException myError = new MoneyWiseDataException("Failed to create new loan", e);
 
             /* Show the error */
             setError(myError);

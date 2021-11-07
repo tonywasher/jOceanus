@@ -693,6 +693,35 @@ public class SecurityPrice
         }
 
         /**
+         * Construct an edit extract of a Rate list.
+         * @param pUpdateSet the updateSet
+         * @return the edit list
+         * @throws OceanusException on error
+         */
+        public SecurityPriceList deriveEditList(final UpdateSet<MoneyWiseDataType> pUpdateSet) throws OceanusException {
+            /* Build an empty List */
+            final SecurityPriceList myList = getEmptyList(ListStyle.EDIT);
+            myList.ensureMap();
+
+            /* Loop through the list */
+            final Iterator<SecurityPrice> myIterator = iterator();
+            while (myIterator.hasNext()) {
+                final SecurityPrice myCurr = myIterator.next();
+
+                /* Copy the item */
+                final SecurityPrice myItem = new SecurityPrice(myList, myCurr);
+                myItem.resolveUpdateSetLinks(pUpdateSet);
+                myList.add(myItem);
+
+                /* Adjust the map */
+                myItem.adjustMapForItem();
+            }
+
+            /* Return the List */
+            return myList;
+        }
+
+        /**
          * Add a new item to the core list.
          * @param pPrice item
          * @return the newly added item

@@ -14,7 +14,7 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  ******************************************************************************/
-package net.sourceforge.joceanus.jmoneywise.atlas.ui;
+package net.sourceforge.joceanus.jmoneywise.atlas.ui.panel;
 
 import java.util.List;
 
@@ -25,12 +25,13 @@ import net.sourceforge.joceanus.jmetis.lethe.field.swing.MetisSwingFieldManager;
 import net.sourceforge.joceanus.jmetis.profile.MetisProfile;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
-import net.sourceforge.joceanus.jmoneywise.lethe.data.DepositCategory;
-import net.sourceforge.joceanus.jmoneywise.lethe.data.DepositCategory.DepositCategoryList;
+import net.sourceforge.joceanus.jmoneywise.atlas.ui.base.MoneyWiseCategoryTable;
+import net.sourceforge.joceanus.jmoneywise.lethe.data.LoanCategory;
+import net.sourceforge.joceanus.jmoneywise.lethe.data.LoanCategory.LoanCategoryList;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.MoneyWiseData;
-import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.DepositCategoryClass;
-import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.DepositCategoryType;
-import net.sourceforge.joceanus.jmoneywise.lethe.ui.dialog.swing.DepositCategoryPanel;
+import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.LoanCategoryClass;
+import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.LoanCategoryType;
+import net.sourceforge.joceanus.jmoneywise.lethe.ui.dialog.swing.LoanCategoryPanel;
 import net.sourceforge.joceanus.jmoneywise.lethe.views.MoneyWiseView;
 import net.sourceforge.joceanus.jprometheus.lethe.swing.PrometheusSwingToolkit;
 import net.sourceforge.joceanus.jprometheus.lethe.views.PrometheusDataEvent;
@@ -41,19 +42,19 @@ import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingGuiFactory;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingTableManager;
 
 /**
- * MoneyWise DepositCategory Table.
+ * MoneyWise LoanCategory Table.
  */
-public class MoneyWiseDepositCategoryTable
-        extends MoneyWiseCategoryTable<DepositCategory, DepositCategoryType, DepositCategoryClass> {
+public class MoneyWiseLoanCategoryTable
+        extends MoneyWiseCategoryTable<LoanCategory, LoanCategoryType, LoanCategoryClass> {
     /**
      * The Category dialog.
      */
-    private final DepositCategoryPanel theActiveCategory;
+    private final LoanCategoryPanel theActiveCategory;
 
     /**
      * The edit list.
      */
-    private DepositCategoryList theCategories;
+    private LoanCategoryList theCategories;
 
     /**
      * Constructor.
@@ -61,21 +62,21 @@ public class MoneyWiseDepositCategoryTable
      * @param pUpdateSet the updateSet
      * @param pError the error panel
      */
-    MoneyWiseDepositCategoryTable(final MoneyWiseView pView,
+    MoneyWiseLoanCategoryTable(final MoneyWiseView pView,
                                   final UpdateSet<MoneyWiseDataType> pUpdateSet,
                                   final MetisErrorPanel pError) {
         /* Store parameters */
-        super(pView, pUpdateSet, pError, MoneyWiseDataType.DEPOSITCATEGORY, DepositCategoryType.class);
+        super(pView, pUpdateSet, pError, MoneyWiseDataType.LOANCATEGORY, LoanCategoryType.class);
 
         /* Access field manager */
         MetisSwingFieldManager myFieldMgr = ((PrometheusSwingToolkit) pView.getToolkit()).getFieldManager();
 
         /* Access Gui factory */
         final TethysSwingGuiFactory myGuiFactory = (TethysSwingGuiFactory) pView.getGuiFactory();
-        final TethysSwingTableManager<MetisLetheField, DepositCategory> myTable = getTable();
+        final TethysSwingTableManager<MetisLetheField, LoanCategory> myTable = getTable();
 
         /* Create a category panel */
-        theActiveCategory = new DepositCategoryPanel(myGuiFactory, myFieldMgr, pUpdateSet, pError);
+        theActiveCategory = new LoanCategoryPanel(myGuiFactory, myFieldMgr, pUpdateSet, pError);
         declareItemPanel(theActiveCategory);
 
         /* Set table configuration */
@@ -91,30 +92,30 @@ public class MoneyWiseDepositCategoryTable
     }
 
     @Override
-    protected List<DepositCategory> getCategories() {
+    protected List<LoanCategory> getCategories() {
         return theCategories == null ? null : theCategories.getUnderlyingList();
     }
 
     @Override
-    protected boolean isChildCategory(final DepositCategoryType pCategoryType) {
-        return !pCategoryType.getDepositClass().isParentCategory();
+    protected boolean isChildCategory(final LoanCategoryType pCategoryType) {
+        return !pCategoryType.getLoanClass().isParentCategory();
     }
 
     @Override
     protected void refreshData() throws OceanusException {
         /* Obtain the active profile */
         MetisProfile myTask = getView().getActiveTask();
-        myTask = myTask.startTask("DepositCategories");
+        myTask = myTask.startTask("LoanCategories");
 
         /* Access list */
         final MoneyWiseData myData = getView().getData();
-        final DepositCategoryList myBase = myData.getDepositCategories();
+        final LoanCategoryList myBase = myData.getLoanCategories();
         theCategories = myBase.deriveEditList();
         getTable().setItems(theCategories.getUnderlyingList());
         getUpdateEntry().setDataList(theCategories);
 
         /* If we have a parent */
-        DepositCategory myParent = getParent();
+        LoanCategory myParent = getParent();
         if (myParent != null) {
             /* Update the parent via the edit list */
             myParent = theCategories.findItemById(myParent.getId());
@@ -138,12 +139,12 @@ public class MoneyWiseDepositCategoryTable
      * Select category.
      * @param pCategory the category to select
      */
-    void selectCategory(final DepositCategory pCategory) {
+    void selectCategory(final LoanCategory pCategory) {
         /* If we are changing the selection */
-        final DepositCategory myCurrent = theActiveCategory.getSelectedItem();
+        final LoanCategory myCurrent = theActiveCategory.getSelectedItem();
         if (!MetisDataDifference.isEqual(myCurrent, pCategory)) {
             /* Ensure the correct parent is selected */
-            DepositCategory myParent = pCategory.getParentCategory();
+            LoanCategory myParent = pCategory.getParentCategory();
             if (!MetisDataDifference.isEqual(getParent(), myParent)) {
                 if (myParent != null) {
                     myParent = theCategories.findItemById(myParent.getId());
@@ -188,13 +189,13 @@ public class MoneyWiseDepositCategoryTable
     }
 
     @Override
-    protected void buildCategoryTypeMenu(final DepositCategory pCategory,
-                                         final TethysScrollMenu<DepositCategoryType> pMenu) {
+    protected void buildCategoryTypeMenu(final LoanCategory pCategory,
+                                         final TethysScrollMenu<LoanCategoryType> pMenu) {
         /* Build the menu */
         theActiveCategory.buildCategoryTypeMenu(pMenu, pCategory);
     }
 
-   @Override
+    @Override
     protected void addNewItem() {
         /* Protect against Exceptions */
         try {
@@ -202,7 +203,7 @@ public class MoneyWiseDepositCategoryTable
             cancelEditing();
 
             /* Create the new category */
-            final DepositCategory myCategory = theCategories.addNewItem();
+            final LoanCategory myCategory = theCategories.addNewItem();
             myCategory.setDefaults(getParent());
 
             /* Set as new and adjust map */
@@ -228,10 +229,10 @@ public class MoneyWiseDepositCategoryTable
     }
 
     @Override
-    protected boolean isFiltered(final DepositCategory pRow) {
-        final DepositCategory myParent = getParent();
+    protected boolean isFiltered(final LoanCategory pRow) {
+        final LoanCategory myParent = getParent();
         return super.isFiltered(pRow) && (myParent == null
-                ? pRow.isCategoryClass(DepositCategoryClass.PARENT)
+                ? pRow.isCategoryClass(LoanCategoryClass.PARENT)
                 : myParent.equals(pRow.getParentCategory()));
     }
 }

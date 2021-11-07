@@ -25,10 +25,10 @@ import net.sourceforge.joceanus.jmetis.ui.MetisAction;
 import net.sourceforge.joceanus.jmetis.ui.MetisIcon;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
+import net.sourceforge.joceanus.jmoneywise.atlas.ui.base.MoneyWiseDialogTable;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.Deposit;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.DepositRate;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.DepositRate.DepositRateList;
-import net.sourceforge.joceanus.jmoneywise.lethe.data.TransactionTag;
 import net.sourceforge.joceanus.jmoneywise.lethe.ui.MoneyWiseUIResource;
 import net.sourceforge.joceanus.jmoneywise.lethe.views.MoneyWiseView;
 import net.sourceforge.joceanus.jprometheus.lethe.views.UpdateSet;
@@ -103,7 +103,7 @@ public class MoneyWiseDepositRateTable
 
         /* Create the Active column */
         final TethysIconMapSet<MetisAction> myActionMapSet = MetisIcon.configureStatusIconButton();
-        theActiveColumn = myTable.declareIconColumn(TransactionTag.FIELD_TOUCH, MetisAction.class)
+        theActiveColumn = myTable.declareIconColumn(DepositRate.FIELD_TOUCH, MetisAction.class)
                 .setIconMapSet(r -> myActionMapSet)
                 .setCellValueFactory(r -> r.isActive() ? MetisAction.ACTIVE : MetisAction.DELETE)
                 .setName(MoneyWiseUIResource.STATICDATA_ACTIVE.getValue())

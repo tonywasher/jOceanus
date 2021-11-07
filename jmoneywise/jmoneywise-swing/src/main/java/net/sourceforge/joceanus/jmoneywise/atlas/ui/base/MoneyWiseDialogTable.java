@@ -14,12 +14,13 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  ******************************************************************************/
-package net.sourceforge.joceanus.jmoneywise.atlas.ui.dialog;
+package net.sourceforge.joceanus.jmoneywise.atlas.ui.base;
 
 import net.sourceforge.joceanus.jmetis.atlas.ui.MetisErrorPanel;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisLetheField;
 import net.sourceforge.joceanus.jmetis.ui.MetisIcon;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
+import net.sourceforge.joceanus.jmoneywise.atlas.ui.base.MoneyWiseBaseTable;
 import net.sourceforge.joceanus.jmoneywise.lethe.views.MoneyWiseView;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataItem;
 import net.sourceforge.joceanus.jprometheus.lethe.views.UpdateSet;
@@ -53,10 +54,10 @@ public abstract class MoneyWiseDialogTable<T extends DataItem<MoneyWiseDataType>
      * @param pError     the error panel
      * @param pDataType  the dataType
      */
-    MoneyWiseDialogTable(final MoneyWiseView pView,
-                         final UpdateSet<MoneyWiseDataType> pUpdateSet,
-                         final MetisErrorPanel pError,
-                         final MoneyWiseDataType pDataType) {
+    protected MoneyWiseDialogTable(final MoneyWiseView pView,
+                                   final UpdateSet<MoneyWiseDataType> pUpdateSet,
+                                   final MetisErrorPanel pError,
+                                   final MoneyWiseDataType pDataType) {
         /* Store parameters */
         super(pView, pUpdateSet, pError, pDataType);
 

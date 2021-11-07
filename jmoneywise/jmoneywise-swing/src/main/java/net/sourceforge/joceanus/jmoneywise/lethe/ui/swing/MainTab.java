@@ -22,6 +22,8 @@ import net.sourceforge.joceanus.jmetis.help.MetisHelpModule;
 import net.sourceforge.joceanus.jmetis.profile.MetisProfile;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseIOException;
+import net.sourceforge.joceanus.jmoneywise.atlas.ui.panel.MioneyWiseReportTab;
+import net.sourceforge.joceanus.jmoneywise.atlas.ui.panel.MoneyWiseMaintenance;
 import net.sourceforge.joceanus.jmoneywise.help.MoneyWiseHelp;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.lethe.tax.uk.MoneyWiseUKTaxYearCache;
@@ -107,7 +109,7 @@ public class MainTab
     /**
      * The maintenance panel.
      */
-    private MaintenanceTab theMaint;
+    private MoneyWiseMaintenance theMaint;
 
     /**
      * The about box.
@@ -153,7 +155,7 @@ public class MainTab
 
         /* Create the Report Tab */
         myTask.startTask("Report");
-        final ReportTab myReports = new ReportTab(theView);
+        final MioneyWiseReportTab myReports = new MioneyWiseReportTab(theView);
         theTabs.addTabItem(TITLE_REPORT, myReports);
 
         /* Create the Register Tab */
@@ -173,7 +175,7 @@ public class MainTab
 
         /* Create the Maintenance Tab */
         myTask.startTask("Maintenance");
-        theMaint = new MaintenanceTab(this);
+        theMaint = new MoneyWiseMaintenance(theView);
         theTabs.addTabItem(TITLE_MAINT, theMaint);
 
         /* Create the log tab */

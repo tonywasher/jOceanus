@@ -14,10 +14,9 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  ******************************************************************************/
-package net.sourceforge.joceanus.jmoneywise.atlas.ui.dialog;
+package net.sourceforge.joceanus.jmoneywise.atlas.ui.base;
 
 import java.awt.BorderLayout;
-import java.awt.Dimension;
 import java.util.Iterator;
 import java.util.Objects;
 

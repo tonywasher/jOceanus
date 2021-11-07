@@ -1,4 +1,4 @@
-package net.sourceforge.joceanus.jmoneywise.atlas.ui;
+package net.sourceforge.joceanus.jmoneywise.atlas.ui.panel;
 
 import net.sourceforge.joceanus.jmetis.atlas.ui.MetisErrorPanel;
 import net.sourceforge.joceanus.jmetis.profile.MetisProfile;

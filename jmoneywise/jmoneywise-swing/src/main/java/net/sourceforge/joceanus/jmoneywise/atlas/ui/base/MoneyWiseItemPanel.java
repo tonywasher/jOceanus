@@ -14,7 +14,7 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  ******************************************************************************/
-package net.sourceforge.joceanus.jmoneywise.atlas.ui.dialog;
+package net.sourceforge.joceanus.jmoneywise.atlas.ui.base;
 
 import java.awt.BorderLayout;
 import java.awt.GridLayout;
@@ -36,7 +36,6 @@ import net.sourceforge.joceanus.jmetis.data.MetisDataType;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisLetheField;
 import net.sourceforge.joceanus.jmetis.lethe.field.swing.MetisSwingFieldManager;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
-import net.sourceforge.joceanus.jmoneywise.atlas.ui.dialog.MoneyWiseDialogTable;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.AssetBase;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.CategoryBase;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.Region;

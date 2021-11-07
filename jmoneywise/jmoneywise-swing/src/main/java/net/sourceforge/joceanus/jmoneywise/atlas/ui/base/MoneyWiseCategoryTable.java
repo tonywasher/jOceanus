@@ -14,7 +14,7 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  ******************************************************************************/
-package net.sourceforge.joceanus.jmoneywise.atlas.ui;
+package net.sourceforge.joceanus.jmoneywise.atlas.ui.base;
 
 import java.util.List;
 
@@ -24,7 +24,7 @@ import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisLetheField;
 import net.sourceforge.joceanus.jmetis.ui.MetisAction;
 import net.sourceforge.joceanus.jmetis.ui.MetisIcon;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
-import net.sourceforge.joceanus.jmoneywise.atlas.ui.dialog.MoneyWiseBaseTable;
+import net.sourceforge.joceanus.jmoneywise.atlas.ui.base.MoneyWiseBaseTable;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.CategoryBase;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.TransactionCategory;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.CategoryInterface;
@@ -84,11 +84,11 @@ public abstract class MoneyWiseCategoryTable<T extends CategoryBase<T, S, C>, S 
      * @param pDataType the dataType
      * @param pTypeClass the class of the category type
      */
-    MoneyWiseCategoryTable(final MoneyWiseView pView,
-                           final UpdateSet<MoneyWiseDataType> pUpdateSet,
-                           final MetisErrorPanel pError,
-                           final MoneyWiseDataType pDataType,
-                           final Class<S> pTypeClass) {
+    protected MoneyWiseCategoryTable(final MoneyWiseView pView,
+                                     final UpdateSet<MoneyWiseDataType> pUpdateSet,
+                                     final MetisErrorPanel pError,
+                                     final MoneyWiseDataType pDataType,
+                                     final Class<S> pTypeClass) {
         /* Store parameters */
         super(pView, pUpdateSet, pError, pDataType);
 
@@ -169,7 +169,7 @@ public abstract class MoneyWiseCategoryTable<T extends CategoryBase<T, S, C>, S 
      * Obtain the filter panel.
      * @return the filter panel
      */
-    protected TethysBoxPaneManager getFilterPanel() {
+    public TethysBoxPaneManager getFilterPanel() {
         return theFilterPanel;
     }
 

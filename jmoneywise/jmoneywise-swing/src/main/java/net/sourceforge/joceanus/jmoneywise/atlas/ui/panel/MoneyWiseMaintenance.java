@@ -14,18 +14,15 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  ******************************************************************************/
-package net.sourceforge.joceanus.jmoneywise.lethe.ui.swing;
-
-import java.awt.BorderLayout;
-import javax.swing.JComponent;
+package net.sourceforge.joceanus.jmoneywise.atlas.ui.panel;
 
 import net.sourceforge.joceanus.jmetis.atlas.ui.MetisPreferenceView;
 import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceManager;
 import net.sourceforge.joceanus.jmetis.profile.MetisProfile;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
-import net.sourceforge.joceanus.jmoneywise.atlas.ui.MoneyWiseAccountPanel;
-import net.sourceforge.joceanus.jmoneywise.atlas.ui.MoneyWiseCategoryPanel;
-import net.sourceforge.joceanus.jmoneywise.atlas.ui.MoneyWiseStaticPanel;
+import net.sourceforge.joceanus.jmoneywise.atlas.ui.panel.MoneyWiseAccountPanel;
+import net.sourceforge.joceanus.jmoneywise.atlas.ui.panel.MoneyWiseCategoryPanel;
+import net.sourceforge.joceanus.jmoneywise.atlas.ui.panel.MoneyWiseStaticPanel;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.AssetBase;
 import net.sourceforge.joceanus.jmoneywise.lethe.quicken.definitions.QIFPreference.MoneyWiseQIFPreferences;
 import net.sourceforge.joceanus.jmoneywise.lethe.ui.MoneyWiseGoToId;
@@ -43,16 +40,15 @@ import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventProvider;
 import net.sourceforge.joceanus.jtethys.ui.TethysComponent;
 import net.sourceforge.joceanus.jtethys.ui.TethysGuiFactory;
+import net.sourceforge.joceanus.jtethys.ui.TethysNode;
 import net.sourceforge.joceanus.jtethys.ui.TethysTabPaneManager;
 import net.sourceforge.joceanus.jtethys.ui.TethysTabPaneManager.TethysTabItem;
-import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingEnableWrapper.TethysSwingEnablePanel;
-import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingNode;
 
 /**
  * Maintenance Tab panel.
  * @author Tony Washer
  */
-public class MaintenanceTab
+public class MoneyWiseMaintenance
         implements TethysEventProvider<PrometheusDataEvent>, TethysComponent {
     /**
      * Preferences tab title.
@@ -75,11 +71,6 @@ public class MaintenanceTab
     private static final String TITLE_STATIC = MoneyWiseUIResource.MAINTENANCE_STATIC.getValue();
 
     /**
-     * The Id.
-     */
-    private final Integer theId;
-
-    /**
      * The Event Manager.
      */
     private final TethysEventManager<PrometheusDataEvent> theEventManager;
@@ -88,16 +79,6 @@ public class MaintenanceTab
      * The Data View.
      */
     private final MoneyWiseView theView;
-
-    /**
-     * The Parent.
-     */
-    private final MainTab theParent;
-
-    /**
-     * The Panel.
-     */
-    private final TethysSwingEnablePanel thePanel;
 
     /**
      * The Tabs.
@@ -131,22 +112,17 @@ public class MaintenanceTab
 
     /**
      * Constructor.
-     * @param pTop top window
+     * @param pView the view
      */
-    public MaintenanceTab(final MainTab pTop) {
+    public MoneyWiseMaintenance(final MoneyWiseView pView) {
         /* Store details */
-        theView = pTop.getView();
-        theParent = pTop;
+        theView = pView;
 
         /* Access GUI Factory */
         final TethysGuiFactory myFactory = theView.getGuiFactory();
-        theId = myFactory.getNextId();
 
         /* Create the event manager */
         theEventManager = new TethysEventManager<>();
-
-        /* Create the Panel */
-        thePanel = new TethysSwingEnablePanel();
 
         /* Create the Tabbed Pane */
         theTabs = theView.getGuiFactory().newTabPane();
@@ -173,11 +149,6 @@ public class MaintenanceTab
         myPrefs.getPreferenceSet(PrometheusBackupPreferences.class);
         myPrefs.getPreferenceSet(MoneyWiseQIFPreferences.class);
 
-        /* Create the layout for the panel */
-        final BorderLayout myLayout = new BorderLayout();
-        thePanel.setLayout(myLayout);
-        thePanel.add(TethysSwingNode.getComponent(theTabs));
-
         /* Create a listeners */
         theTabs.getEventRegistrar().addEventListener(e -> determineFocus());
         setChildListeners(theAccountTab.getEventRegistrar());
@@ -199,7 +170,7 @@ public class MaintenanceTab
 
     @Override
     public Integer getId() {
-        return theId;
+        return theTabs.getId();
     }
 
     @Override
@@ -221,13 +192,13 @@ public class MaintenanceTab
     }
 
     @Override
-    public TethysSwingNode getNode() {
-        return thePanel.getNode();
+    public TethysNode getNode() {
+        return theTabs.getNode();
     }
 
     @Override
     public void setVisible(final boolean pVisible) {
-        thePanel.setVisible(pVisible);
+        theTabs.setVisible(pVisible);
     }
 
     /**
@@ -236,14 +207,6 @@ public class MaintenanceTab
      */
     protected MoneyWiseView getView() {
         return theView;
-    }
-
-    /**
-     * Obtain the top window.
-     * @return the window
-     */
-    protected MainTab getTopWindow() {
-        return theParent;
     }
 
     @Override
@@ -322,7 +285,7 @@ public class MaintenanceTab
      * Select maintenance.
      * @param pEvent the action request
      */
-    protected void selectMaintenance(final PrometheusGoToEvent<MoneyWiseGoToId> pEvent) {
+    public void selectMaintenance(final PrometheusGoToEvent<MoneyWiseGoToId> pEvent) {
         /* Switch on the subId */
         switch (pEvent.getId()) {
             /* View the requested account */
@@ -418,34 +381,34 @@ public class MaintenanceTab
         theTabs.enableItemByName(TITLE_PREFERENCES, doEnabled);
 
         /* Update the top level tabs */
-        theParent.setVisibility();
+        theEventManager.fireEvent(PrometheusDataEvent.ADJUSTVISIBILITY);
     }
 
     /**
      * Determine Focus.
      */
-    protected void determineFocus() {
+    public void determineFocus() {
         /* Access the selected component */
         final TethysTabItem myItem = theTabs.getSelectedTab();
-        final JComponent myComponent = TethysSwingNode.getComponent(myItem);
+        final Integer myId = myItem.getId();
 
         /* If the selected component is Account */
-        if (myComponent.equals(TethysSwingNode.getComponent(theAccountTab))) {
+        if (myId.equals(theAccountTab.getId())) {
             /* Set the debug focus */
             theAccountTab.determineFocus();
 
             /* If the selected component is Category */
-        } else if (myComponent.equals(TethysSwingNode.getComponent(theCategoryTab))) {
+        } else if (myId.equals(theCategoryTab.getId())) {
             /* Set the debug focus */
             theCategoryTab.determineFocus();
 
             /* If the selected component is Static */
-        } else if (myComponent.equals(TethysSwingNode.getComponent(theStatic))) {
+        } else if (myId.equals(theStatic.getId())) {
             /* Set the debug focus */
             theStatic.determineFocus();
 
             /* If the selected component is Preferences */
-        } else if (myComponent.equals(TethysSwingNode.getComponent(thePreferences))) {
+        } else if (myId.equals(thePreferences.getId())) {
             /* Set the debug focus */
             thePreferences.determineFocus();
         }

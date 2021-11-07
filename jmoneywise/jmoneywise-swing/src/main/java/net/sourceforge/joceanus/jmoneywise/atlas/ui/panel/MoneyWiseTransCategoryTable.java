@@ -14,7 +14,7 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  ******************************************************************************/
-package net.sourceforge.joceanus.jmoneywise.atlas.ui;
+package net.sourceforge.joceanus.jmoneywise.atlas.ui.panel;
 
 import java.util.List;
 
@@ -25,14 +25,14 @@ import net.sourceforge.joceanus.jmetis.lethe.field.swing.MetisSwingFieldManager;
 import net.sourceforge.joceanus.jmetis.profile.MetisProfile;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
-import net.sourceforge.joceanus.jmoneywise.lethe.data.CashCategory;
-import net.sourceforge.joceanus.jmoneywise.lethe.data.CashCategory.CashCategoryList;
+import net.sourceforge.joceanus.jmoneywise.atlas.ui.base.MoneyWiseCategoryTable;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.MoneyWiseData;
-import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.CashCategoryClass;
-import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.CashCategoryType;
-import net.sourceforge.joceanus.jmoneywise.lethe.ui.dialog.swing.CashCategoryPanel;
+import net.sourceforge.joceanus.jmoneywise.lethe.data.TransactionCategory;
+import net.sourceforge.joceanus.jmoneywise.lethe.data.TransactionCategory.TransactionCategoryList;
+import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.TransactionCategoryClass;
+import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.TransactionCategoryType;
+import net.sourceforge.joceanus.jmoneywise.lethe.ui.dialog.swing.TransactionCategoryPanel;
 import net.sourceforge.joceanus.jmoneywise.lethe.views.MoneyWiseView;
-import net.sourceforge.joceanus.jprometheus.lethe.data.DataList.ListStyle;
 import net.sourceforge.joceanus.jprometheus.lethe.swing.PrometheusSwingToolkit;
 import net.sourceforge.joceanus.jprometheus.lethe.views.PrometheusDataEvent;
 import net.sourceforge.joceanus.jprometheus.lethe.views.UpdateSet;
@@ -42,19 +42,19 @@ import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingGuiFactory;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingTableManager;
 
 /**
- * MoneyWise CashCategory Table.
+ * MoneyWise TransCategory Table.
  */
-public class MoneyWiseCashCategoryTable
-        extends MoneyWiseCategoryTable<CashCategory, CashCategoryType, CashCategoryClass> {
+public class MoneyWiseTransCategoryTable
+        extends MoneyWiseCategoryTable<TransactionCategory, TransactionCategoryType, TransactionCategoryClass> {
     /**
      * The Category dialog.
      */
-    private final CashCategoryPanel theActiveCategory;
+    private final TransactionCategoryPanel theActiveCategory;
 
     /**
      * The edit list.
      */
-    private CashCategoryList theCategories;
+    private TransactionCategoryList theCategories;
 
     /**
      * Constructor.
@@ -62,21 +62,21 @@ public class MoneyWiseCashCategoryTable
      * @param pUpdateSet the updateSet
      * @param pError the error panel
      */
-    MoneyWiseCashCategoryTable(final MoneyWiseView pView,
-                               final UpdateSet<MoneyWiseDataType> pUpdateSet,
-                               final MetisErrorPanel pError) {
+    MoneyWiseTransCategoryTable(final MoneyWiseView pView,
+                                final UpdateSet<MoneyWiseDataType> pUpdateSet,
+                                final MetisErrorPanel pError) {
         /* Store parameters */
-        super(pView, pUpdateSet, pError, MoneyWiseDataType.CASHCATEGORY, CashCategoryType.class);
+        super(pView, pUpdateSet, pError, MoneyWiseDataType.TRANSCATEGORY, TransactionCategoryType.class);
 
         /* Access field manager */
         MetisSwingFieldManager myFieldMgr = ((PrometheusSwingToolkit) pView.getToolkit()).getFieldManager();
 
         /* Access Gui factory */
         final TethysSwingGuiFactory myGuiFactory = (TethysSwingGuiFactory) pView.getGuiFactory();
-        final TethysSwingTableManager<MetisLetheField, CashCategory> myTable = getTable();
+        final TethysSwingTableManager<MetisLetheField, TransactionCategory> myTable = getTable();
 
         /* Create a category panel */
-        theActiveCategory = new CashCategoryPanel(myGuiFactory, myFieldMgr, pUpdateSet, pError);
+        theActiveCategory = new TransactionCategoryPanel(myGuiFactory, myFieldMgr, pUpdateSet, pError);
         declareItemPanel(theActiveCategory);
 
         /* Set table configuration */
@@ -92,30 +92,30 @@ public class MoneyWiseCashCategoryTable
     }
 
     @Override
-    protected List<CashCategory> getCategories() {
+    protected List<TransactionCategory> getCategories() {
         return theCategories == null ? null : theCategories.getUnderlyingList();
     }
 
     @Override
-    protected boolean isChildCategory(final CashCategoryType pCategoryType) {
-        return !pCategoryType.getCashClass().isParentCategory();
+    protected boolean isChildCategory(final TransactionCategoryType pCategoryType) {
+        return !pCategoryType.getCategoryClass().isSubTotal();
     }
 
     @Override
     protected void refreshData() throws OceanusException {
         /* Obtain the active profile */
         MetisProfile myTask = getView().getActiveTask();
-        myTask = myTask.startTask("CashCategories");
+        myTask = myTask.startTask("TransactionCategories");
 
         /* Access list */
         final MoneyWiseData myData = getView().getData();
-        final CashCategoryList myBase = myData.getCashCategories();
+        final TransactionCategoryList myBase = myData.getTransCategories();
         theCategories = myBase.deriveEditList();
         getTable().setItems(theCategories.getUnderlyingList());
         getUpdateEntry().setDataList(theCategories);
 
         /* If we have a parent */
-        CashCategory myParent = getParent();
+        TransactionCategory myParent = getParent();
         if (myParent != null) {
             /* Update the parent via the edit list */
             myParent = theCategories.findItemById(myParent.getId());
@@ -139,12 +139,12 @@ public class MoneyWiseCashCategoryTable
      * Select category.
      * @param pCategory the category to select
      */
-    void selectCategory(final CashCategory pCategory) {
+    void selectCategory(final TransactionCategory pCategory) {
         /* If we are changing the selection */
-        final CashCategory myCurrent = theActiveCategory.getSelectedItem();
+        final TransactionCategory myCurrent = theActiveCategory.getSelectedItem();
         if (!MetisDataDifference.isEqual(myCurrent, pCategory)) {
             /* Ensure the correct parent is selected */
-            CashCategory myParent = pCategory.getParentCategory();
+            TransactionCategory myParent = pCategory.getParentCategory();
             if (!MetisDataDifference.isEqual(getParent(), myParent)) {
                 if (myParent != null) {
                     myParent = theCategories.findItemById(myParent.getId());
@@ -189,8 +189,8 @@ public class MoneyWiseCashCategoryTable
     }
 
     @Override
-    protected void buildCategoryTypeMenu(final CashCategory pCategory,
-                                         final TethysScrollMenu<CashCategoryType> pMenu) {
+    protected void buildCategoryTypeMenu(final TransactionCategory pCategory,
+                                         final TethysScrollMenu<TransactionCategoryType> pMenu) {
         /* Build the menu */
         theActiveCategory.buildCategoryTypeMenu(pMenu, pCategory);
     }
@@ -203,7 +203,7 @@ public class MoneyWiseCashCategoryTable
             cancelEditing();
 
             /* Create the new category */
-            final CashCategory myCategory = theCategories.addNewItem();
+            final TransactionCategory myCategory = theCategories.addNewItem();
             myCategory.setDefaults(getParent());
 
             /* Set as new and adjust map */
@@ -229,10 +229,11 @@ public class MoneyWiseCashCategoryTable
     }
 
     @Override
-    protected boolean isFiltered(final CashCategory pRow) {
-        final CashCategory myParent = getParent();
+    protected boolean isFiltered(final TransactionCategory pRow) {
+        final TransactionCategory myParent = getParent();
         return super.isFiltered(pRow) && (myParent == null
-                ? pRow.isCategoryClass(CashCategoryClass.PARENT)
+                ? pRow.getParentCategory() == null
+                  || pRow.getParentCategory().isCategoryClass(TransactionCategoryClass.TOTALS)
                 : myParent.equals(pRow.getParentCategory()));
     }
 }

@@ -14,7 +14,7 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  ******************************************************************************/
-package net.sourceforge.joceanus.jmoneywise.lethe.ui.swing;
+package net.sourceforge.joceanus.jmoneywise.atlas.ui.panel;
 
 import org.w3c.dom.Document;
 
@@ -60,7 +60,7 @@ import net.sourceforge.joceanus.jtethys.ui.TethysUIEvent;
 /**
  * Report panel.
  */
-public class ReportTab
+public class MioneyWiseReportTab
         implements TethysEventProvider<PrometheusDataEvent>, TethysComponent {
     /**
      * Text for DataEntry Title.
@@ -117,7 +117,7 @@ public class ReportTab
      * @param pView the data view
      * @throws OceanusException on error
      */
-    public ReportTab(final MoneyWiseView pView) throws OceanusException {
+    public MioneyWiseReportTab(final MoneyWiseView pView) throws OceanusException {
         /* Store the view */
         theView = pView;
 

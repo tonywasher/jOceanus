@@ -25,7 +25,7 @@ import net.sourceforge.joceanus.jmetis.lethe.field.MetisLetheFieldSetBase.MetisL
 import net.sourceforge.joceanus.jmetis.lethe.field.swing.MetisSwingFieldManager;
 import net.sourceforge.joceanus.jmetis.lethe.field.swing.MetisSwingFieldSet;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
-import net.sourceforge.joceanus.jmoneywise.atlas.ui.dialog.MoneyWiseItemPanel;
+import net.sourceforge.joceanus.jmoneywise.atlas.ui.base.MoneyWiseItemPanel;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.LoanCategory;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.LoanCategory.LoanCategoryList;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.LoanCategoryClass;

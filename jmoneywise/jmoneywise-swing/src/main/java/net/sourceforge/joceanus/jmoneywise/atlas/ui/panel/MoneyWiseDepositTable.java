@@ -14,7 +14,7 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  ******************************************************************************/
-package net.sourceforge.joceanus.jmoneywise.atlas.ui;
+package net.sourceforge.joceanus.jmoneywise.atlas.ui.panel;
 
 import net.sourceforge.joceanus.jmetis.atlas.ui.MetisErrorPanel;
 import net.sourceforge.joceanus.jmetis.data.MetisDataDifference;
@@ -23,14 +23,18 @@ import net.sourceforge.joceanus.jmetis.lethe.field.swing.MetisSwingFieldManager;
 import net.sourceforge.joceanus.jmetis.profile.MetisProfile;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
-import net.sourceforge.joceanus.jmoneywise.lethe.data.Cash;
-import net.sourceforge.joceanus.jmoneywise.lethe.data.Cash.CashList;
-import net.sourceforge.joceanus.jmoneywise.lethe.data.CashCategory;
-import net.sourceforge.joceanus.jmoneywise.lethe.data.CashInfo;
-import net.sourceforge.joceanus.jmoneywise.lethe.data.CashInfo.CashInfoList;
+import net.sourceforge.joceanus.jmoneywise.atlas.ui.base.MoneyWiseAssetTable;
+import net.sourceforge.joceanus.jmoneywise.lethe.data.Deposit;
+import net.sourceforge.joceanus.jmoneywise.lethe.data.Deposit.DepositList;
+import net.sourceforge.joceanus.jmoneywise.lethe.data.DepositCategory;
+import net.sourceforge.joceanus.jmoneywise.lethe.data.DepositInfo;
+import net.sourceforge.joceanus.jmoneywise.lethe.data.DepositInfo.DepositInfoList;
+import net.sourceforge.joceanus.jmoneywise.lethe.data.DepositRate;
+import net.sourceforge.joceanus.jmoneywise.lethe.data.DepositRate.DepositRateList;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.MoneyWiseData;
+import net.sourceforge.joceanus.jmoneywise.lethe.data.Payee;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.AssetCurrency;
-import net.sourceforge.joceanus.jmoneywise.lethe.ui.dialog.swing.CashPanel;
+import net.sourceforge.joceanus.jmoneywise.lethe.ui.dialog.swing.DepositPanel;
 import net.sourceforge.joceanus.jmoneywise.lethe.views.MoneyWiseView;
 import net.sourceforge.joceanus.jprometheus.lethe.swing.PrometheusSwingToolkit;
 import net.sourceforge.joceanus.jprometheus.lethe.views.PrometheusDataEvent;
@@ -42,24 +46,29 @@ import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingGuiFactory;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingTableManager;
 
 /**
- * MoneyWise Cash Table.
+ * MoneyWise Deposit Table.
  */
-public class MoneyWiseCashTable
-        extends MoneyWiseAssetTable<Cash, CashCategory> {
+public class MoneyWiseDepositTable
+        extends MoneyWiseAssetTable<Deposit, DepositCategory> {
     /**
      * The Info UpdateEntry.
      */
-    private final UpdateEntry<CashInfo, MoneyWiseDataType> theInfoEntry;
+    private final UpdateEntry<DepositInfo, MoneyWiseDataType> theInfoEntry;
 
     /**
-     * The Cash dialog.
+     * The Rate UpdateEntry.
      */
-    private final CashPanel theActiveCash;
+    private final UpdateEntry<DepositRate, MoneyWiseDataType> theRateEntry;
+
+    /**
+     * The Deposit dialog.
+     */
+    private final DepositPanel theActiveDeposit;
 
     /**
      * The edit list.
      */
-    private CashList theCash;
+    private DepositList theDeposits;
 
     /**
      * Constructor.
@@ -67,58 +76,64 @@ public class MoneyWiseCashTable
      * @param pUpdateSet the updateSet
      * @param pError the error panel
      */
-    MoneyWiseCashTable(final MoneyWiseView pView,
-                            final UpdateSet<MoneyWiseDataType> pUpdateSet,
-                            final MetisErrorPanel pError) {
+    MoneyWiseDepositTable(final MoneyWiseView pView,
+                          final UpdateSet<MoneyWiseDataType> pUpdateSet,
+                          final MetisErrorPanel pError) {
         /* Store parameters */
-        super(pView, pUpdateSet, pError, MoneyWiseDataType.CASH, CashCategory.class);
+        super(pView, pUpdateSet, pError, MoneyWiseDataType.DEPOSIT, DepositCategory.class);
 
-        /* register the infoEntry */
-        theInfoEntry = getUpdateSet().registerType(MoneyWiseDataType.CASHINFO);
+        /* register the info/rateEntries */
+        theInfoEntry = getUpdateSet().registerType(MoneyWiseDataType.DEPOSITINFO);
+        theRateEntry = getUpdateSet().registerType(MoneyWiseDataType.DEPOSITRATE);
 
         /* Access field manager */
         MetisSwingFieldManager myFieldMgr = ((PrometheusSwingToolkit) pView.getToolkit()).getFieldManager();
 
         /* Access Gui factory */
         final TethysSwingGuiFactory myGuiFactory = (TethysSwingGuiFactory) pView.getGuiFactory();
-        final TethysSwingTableManager<MetisLetheField, Cash> myTable = getTable();
+        final TethysSwingTableManager<MetisLetheField, Deposit> myTable = getTable();
 
-        /* Create a Cash panel */
-        theActiveCash = new CashPanel(myGuiFactory, myFieldMgr, pUpdateSet, pError);
-        declareItemPanel(theActiveCash);
+        /* Create a Deposit panel */
+        theActiveDeposit = new DepositPanel(myGuiFactory, pView, myFieldMgr, pUpdateSet, pError);
+        declareItemPanel(theActiveDeposit);
 
         /* Set table configuration */
-        myTable.setOnSelect(theActiveCash::setItem);
+        myTable.setOnSelect(theActiveDeposit::setItem);
 
         /* Finish the table */
-        finishTable(false, true, true);
+        finishTable(true, true, true);
 
         /* Add listeners */
-        theActiveCash.getEventRegistrar().addEventListener(PrometheusDataEvent.ADJUSTVISIBILITY, e -> handlePanelState());
+        theActiveDeposit.getEventRegistrar().addEventListener(PrometheusDataEvent.ADJUSTVISIBILITY, e -> handlePanelState());
     }
 
     @Override
     protected boolean isItemEditing() {
-        return theActiveCash.isEditing();
+        return theActiveDeposit.isEditing();
     }
 
     @Override
     protected void refreshData() throws OceanusException {
         /* Obtain the active profile */
         MetisProfile myTask = getView().getActiveTask();
-        myTask = myTask.startTask("Cashs");
+        myTask = myTask.startTask("Deposits");
 
         /* Access list */
         final MoneyWiseData myData = getView().getData();
-        final CashList myBase = myData.getCash();
-        theCash = myBase.deriveEditList(getUpdateSet());
-        getTable().setItems(theCash.getUnderlyingList());
-        getUpdateEntry().setDataList(theCash);
-        final CashInfoList myInfo = theCash.getCashInfo();
+        final DepositList myBase = myData.getDeposits();
+        theDeposits = myBase.deriveEditList(getUpdateSet());
+        getTable().setItems(theDeposits.getUnderlyingList());
+        getUpdateEntry().setDataList(theDeposits);
+        final DepositInfoList myInfo = theDeposits.getDepositInfo();
         theInfoEntry.setDataList(myInfo);
 
+        /* Get the Deposit rates list */
+        DepositRateList myRates = myData.getDepositRates();
+        myRates = myRates.deriveEditList(getUpdateSet());
+        theRateEntry.setDataList(myRates);
+
         /* Notify panel of refresh */
-        theActiveCash.refreshData();
+        theActiveDeposit.refreshData();
 
         /* Complete the task */
         myTask.end();
@@ -127,34 +142,34 @@ public class MoneyWiseCashTable
     @Override
     public void cancelEditing() {
         super.cancelEditing();
-        theActiveCash.setEditable(false);
+        theActiveDeposit.setEditable(false);
     }
 
     /**
-     * Select Cash.
-     * @param pCash the Cash to select
+     * Select Deposit.
+     * @param pDeposit the Deposit to select
      */
-    void selectCash(final Cash pCash) {
+    void selectDeposit(final Deposit pDeposit) {
         /* Check whether we need to showAll */
-        checkShowAll(pCash);
+        checkShowAll(pDeposit);
 
         /* If we are changing the selection */
-        final Cash myCurrent = theActiveCash.getSelectedItem();
-        if (!MetisDataDifference.isEqual(myCurrent, pCash)) {
+        final Deposit myCurrent = theActiveDeposit.getSelectedItem();
+        if (!MetisDataDifference.isEqual(myCurrent, pDeposit)) {
             /* Select the row and ensure that it is visible */
-            getTable().selectRowWithScroll(pCash);
-            theActiveCash.setItem(pCash);
+            getTable().selectRowWithScroll(pDeposit);
+            theActiveDeposit.setItem(pDeposit);
         }
     }
 
     @Override
     protected void handleRewind() {
         /* Only action if we are not editing */
-        if (!theActiveCash.isEditing()) {
+        if (!theActiveDeposit.isEditing()) {
             /* Handle the reWind */
             setEnabled(true);
             getTable().fireTableDataChanged();
-            selectCash(theActiveCash.getSelectedItem());
+            selectDeposit(theActiveDeposit.getSelectedItem());
         }
 
         /* Adjust for changes */
@@ -166,11 +181,11 @@ public class MoneyWiseCashTable
      */
     private void handlePanelState() {
         /* Only action if we are not editing */
-        if (!theActiveCash.isEditing()) {
+        if (!theActiveDeposit.isEditing()) {
             /* handle the edit transition */
             setEnabled(true);
             getTable().fireTableDataChanged();
-            selectCash(theActiveCash.getSelectedItem());
+            selectDeposit(theActiveDeposit.getSelectedItem());
         }
 
         /* Note changes */
@@ -178,17 +193,24 @@ public class MoneyWiseCashTable
     }
 
     @Override
-    protected void buildCategoryMenu(final Cash pCash,
-                                     final TethysScrollMenu<CashCategory> pMenu) {
+    protected void buildCategoryMenu(final Deposit pDeposit,
+                                     final TethysScrollMenu<DepositCategory> pMenu) {
         /* Build the menu */
-        theActiveCash.buildCategoryMenu(pMenu, pCash);
+        theActiveDeposit.buildCategoryMenu(pMenu, pDeposit);
     }
 
     @Override
-    protected void buildCurrencyMenu(final Cash pCash,
+    protected void buildParentMenu(final Deposit pDeposit,
+                                   final TethysScrollMenu<Payee> pMenu) {
+        /* Build the menu */
+        theActiveDeposit.buildParentMenu(pMenu, pDeposit);
+    }
+
+    @Override
+    protected void buildCurrencyMenu(final Deposit pDeposit,
                                      final TethysScrollMenu<AssetCurrency> pMenu) {
         /* Build the menu */
-        theActiveCash.buildCurrencyMenu(pMenu, pCash);
+        theActiveDeposit.buildCurrencyMenu(pMenu, pDeposit);
     }
 
     @Override
@@ -199,17 +221,17 @@ public class MoneyWiseCashTable
             cancelEditing();
 
             /* Create the new asset */
-            final Cash myCash = theCash.addNewItem();
-            myCash.setDefaults(getUpdateSet());
+            final Deposit myDeposit = theDeposits.addNewItem();
+            myDeposit.setDefaults(getUpdateSet());
 
             /* Set as new and adjust map */
-            myCash.setNewVersion();
-            myCash.adjustMapForItem();
+            myDeposit.setNewVersion();
+            myDeposit.adjustMapForItem();
             getUpdateSet().incrementVersion();
 
             /* Validate the new item and update panel */
-            myCash.validate();
-            theActiveCash.setNewItem(myCash);
+            myDeposit.validate();
+            theActiveDeposit.setNewItem(myDeposit);
 
             /* Lock the table */
             setEnabled(false);
@@ -217,7 +239,7 @@ public class MoneyWiseCashTable
             /* Handle Exceptions */
         } catch (OceanusException e) {
             /* Build the error */
-            final OceanusException myError = new MoneyWiseDataException("Failed to create new cash", e);
+            final OceanusException myError = new MoneyWiseDataException("Failed to create new deposit", e);
 
             /* Show the error */
             setError(myError);

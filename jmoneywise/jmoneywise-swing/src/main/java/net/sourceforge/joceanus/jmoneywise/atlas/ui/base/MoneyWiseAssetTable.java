@@ -14,7 +14,7 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  ******************************************************************************/
-package net.sourceforge.joceanus.jmoneywise.atlas.ui;
+package net.sourceforge.joceanus.jmoneywise.atlas.ui.base;
 
 import java.util.Map;
 
@@ -23,7 +23,7 @@ import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisLetheField;
 import net.sourceforge.joceanus.jmetis.ui.MetisAction;
 import net.sourceforge.joceanus.jmetis.ui.MetisIcon;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
-import net.sourceforge.joceanus.jmoneywise.atlas.ui.dialog.MoneyWiseBaseTable;
+import net.sourceforge.joceanus.jmoneywise.atlas.ui.base.MoneyWiseBaseTable;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.AssetBase;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.Payee;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.Transaction;
@@ -82,11 +82,11 @@ public abstract class MoneyWiseAssetTable<T extends AssetBase<T, C>, C>
      * @param pDataType  the dataType
      * @param pCategoryClass the class of the category type
      */
-    MoneyWiseAssetTable(final MoneyWiseView pView,
-                        final UpdateSet<MoneyWiseDataType> pUpdateSet,
-                        final MetisErrorPanel pError,
-                        final MoneyWiseDataType pDataType,
-                        final Class<C> pCategoryClass) {
+    protected MoneyWiseAssetTable(final MoneyWiseView pView,
+                                  final UpdateSet<MoneyWiseDataType> pUpdateSet,
+                                  final MetisErrorPanel pError,
+                                  final MoneyWiseDataType pDataType,
+                                  final Class<C> pCategoryClass) {
         /* Store parameters */
         super(pView, pUpdateSet, pError, pDataType);
 
@@ -213,7 +213,7 @@ public abstract class MoneyWiseAssetTable<T extends AssetBase<T, C>, C>
      * Obtain the filter panel.
      * @return the filter panel
      */
-    protected TethysBoxPaneManager getFilterPanel() {
+    public TethysBoxPaneManager getFilterPanel() {
         return theFilterPanel;
     }
 
@@ -248,7 +248,7 @@ public abstract class MoneyWiseAssetTable<T extends AssetBase<T, C>, C>
      * Set the showAll indicator.
      * @param pShowAll show closed accounts?
      */
-    protected void setShowAll(final boolean pShowAll) {
+    public void setShowAll(final boolean pShowAll) {
         doShowClosed = pShowAll;
         cancelEditing();
         getTable().setFilter(this::isFiltered);

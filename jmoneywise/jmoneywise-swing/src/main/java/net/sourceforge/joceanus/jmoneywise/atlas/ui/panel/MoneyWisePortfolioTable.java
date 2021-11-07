@@ -14,7 +14,7 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  ******************************************************************************/
-package net.sourceforge.joceanus.jmoneywise.atlas.ui;
+package net.sourceforge.joceanus.jmoneywise.atlas.ui.panel;
 
 import net.sourceforge.joceanus.jmetis.atlas.ui.MetisErrorPanel;
 import net.sourceforge.joceanus.jmetis.data.MetisDataDifference;
@@ -23,17 +23,16 @@ import net.sourceforge.joceanus.jmetis.lethe.field.swing.MetisSwingFieldManager;
 import net.sourceforge.joceanus.jmetis.profile.MetisProfile;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
-import net.sourceforge.joceanus.jmoneywise.lethe.data.Deposit;
-import net.sourceforge.joceanus.jmoneywise.lethe.data.Deposit.DepositList;
-import net.sourceforge.joceanus.jmoneywise.lethe.data.DepositCategory;
-import net.sourceforge.joceanus.jmoneywise.lethe.data.DepositInfo;
-import net.sourceforge.joceanus.jmoneywise.lethe.data.DepositInfo.DepositInfoList;
-import net.sourceforge.joceanus.jmoneywise.lethe.data.DepositRate;
-import net.sourceforge.joceanus.jmoneywise.lethe.data.DepositRate.DepositRateList;
+import net.sourceforge.joceanus.jmoneywise.atlas.ui.base.MoneyWiseAssetTable;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.Payee;
+import net.sourceforge.joceanus.jmoneywise.lethe.data.Portfolio;
+import net.sourceforge.joceanus.jmoneywise.lethe.data.Portfolio.PortfolioList;
+import net.sourceforge.joceanus.jmoneywise.lethe.data.PortfolioInfo;
+import net.sourceforge.joceanus.jmoneywise.lethe.data.PortfolioInfo.PortfolioInfoList;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.AssetCurrency;
-import net.sourceforge.joceanus.jmoneywise.lethe.ui.dialog.swing.DepositPanel;
+import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.PortfolioType;
+import net.sourceforge.joceanus.jmoneywise.lethe.ui.dialog.swing.PortfolioPanel;
 import net.sourceforge.joceanus.jmoneywise.lethe.views.MoneyWiseView;
 import net.sourceforge.joceanus.jprometheus.lethe.swing.PrometheusSwingToolkit;
 import net.sourceforge.joceanus.jprometheus.lethe.views.PrometheusDataEvent;
@@ -45,29 +44,24 @@ import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingGuiFactory;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingTableManager;
 
 /**
- * MoneyWise Deposit Table.
+ * MoneyWise Portfolio Table.
  */
-public class MoneyWiseDepositTable
-        extends MoneyWiseAssetTable<Deposit, DepositCategory> {
+public class MoneyWisePortfolioTable
+        extends MoneyWiseAssetTable<Portfolio, PortfolioType> {
     /**
      * The Info UpdateEntry.
      */
-    private final UpdateEntry<DepositInfo, MoneyWiseDataType> theInfoEntry;
+    private final UpdateEntry<PortfolioInfo, MoneyWiseDataType> theInfoEntry;
 
     /**
-     * The Rate UpdateEntry.
+     * The Portfolio dialog.
      */
-    private final UpdateEntry<DepositRate, MoneyWiseDataType> theRateEntry;
-
-    /**
-     * The Deposit dialog.
-     */
-    private final DepositPanel theActiveDeposit;
+    private final PortfolioPanel theActivePortfolio;
 
     /**
      * The edit list.
      */
-    private DepositList theDeposits;
+    private PortfolioList thePortfolios;
 
     /**
      * Constructor.
@@ -75,64 +69,58 @@ public class MoneyWiseDepositTable
      * @param pUpdateSet the updateSet
      * @param pError the error panel
      */
-    MoneyWiseDepositTable(final MoneyWiseView pView,
-                          final UpdateSet<MoneyWiseDataType> pUpdateSet,
-                          final MetisErrorPanel pError) {
+    MoneyWisePortfolioTable(final MoneyWiseView pView,
+                            final UpdateSet<MoneyWiseDataType> pUpdateSet,
+                            final MetisErrorPanel pError) {
         /* Store parameters */
-        super(pView, pUpdateSet, pError, MoneyWiseDataType.DEPOSIT, DepositCategory.class);
+        super(pView, pUpdateSet, pError, MoneyWiseDataType.PORTFOLIO, PortfolioType.class);
 
-        /* register the info/rateEntries */
-        theInfoEntry = getUpdateSet().registerType(MoneyWiseDataType.DEPOSITINFO);
-        theRateEntry = getUpdateSet().registerType(MoneyWiseDataType.DEPOSITRATE);
+        /* register the infoEntry */
+        theInfoEntry = getUpdateSet().registerType(MoneyWiseDataType.PORTFOLIOINFO);
 
         /* Access field manager */
         MetisSwingFieldManager myFieldMgr = ((PrometheusSwingToolkit) pView.getToolkit()).getFieldManager();
 
         /* Access Gui factory */
         final TethysSwingGuiFactory myGuiFactory = (TethysSwingGuiFactory) pView.getGuiFactory();
-        final TethysSwingTableManager<MetisLetheField, Deposit> myTable = getTable();
+        final TethysSwingTableManager<MetisLetheField, Portfolio> myTable = getTable();
 
-        /* Create a Deposit panel */
-        theActiveDeposit = new DepositPanel(myGuiFactory, pView, myFieldMgr, pUpdateSet, pError);
-        declareItemPanel(theActiveDeposit);
+        /* Create a portfolio panel */
+        theActivePortfolio = new PortfolioPanel(myGuiFactory, myFieldMgr, pUpdateSet, pError);
+        declareItemPanel(theActivePortfolio);
 
         /* Set table configuration */
-        myTable.setOnSelect(theActiveDeposit::setItem);
+        myTable.setOnSelect(theActivePortfolio::setItem);
 
         /* Finish the table */
         finishTable(true, true, true);
 
         /* Add listeners */
-        theActiveDeposit.getEventRegistrar().addEventListener(PrometheusDataEvent.ADJUSTVISIBILITY, e -> handlePanelState());
+        theActivePortfolio.getEventRegistrar().addEventListener(PrometheusDataEvent.ADJUSTVISIBILITY, e -> handlePanelState());
     }
 
     @Override
     protected boolean isItemEditing() {
-        return theActiveDeposit.isEditing();
+        return theActivePortfolio.isEditing();
     }
 
     @Override
     protected void refreshData() throws OceanusException {
         /* Obtain the active profile */
         MetisProfile myTask = getView().getActiveTask();
-        myTask = myTask.startTask("Deposits");
+        myTask = myTask.startTask("Portfolios");
 
         /* Access list */
         final MoneyWiseData myData = getView().getData();
-        final DepositList myBase = myData.getDeposits();
-        theDeposits = myBase.deriveEditList(getUpdateSet());
-        getTable().setItems(theDeposits.getUnderlyingList());
-        getUpdateEntry().setDataList(theDeposits);
-        final DepositInfoList myInfo = theDeposits.getDepositInfo();
+        final PortfolioList myBase = myData.getPortfolios();
+        thePortfolios = myBase.deriveEditList(getUpdateSet());
+        getTable().setItems(thePortfolios.getUnderlyingList());
+        getUpdateEntry().setDataList(thePortfolios);
+        final PortfolioInfoList myInfo = thePortfolios.getPortfolioInfo();
         theInfoEntry.setDataList(myInfo);
 
-        /* Get the Deposit rates list */
-        DepositRateList myRates = myData.getDepositRates();
-        myRates = myRates.deriveEditList(getUpdateSet());
-        theRateEntry.setDataList(myRates);
-
         /* Notify panel of refresh */
-        theActiveDeposit.refreshData();
+        theActivePortfolio.refreshData();
 
         /* Complete the task */
         myTask.end();
@@ -141,34 +129,34 @@ public class MoneyWiseDepositTable
     @Override
     public void cancelEditing() {
         super.cancelEditing();
-        theActiveDeposit.setEditable(false);
+        theActivePortfolio.setEditable(false);
     }
 
     /**
-     * Select Deposit.
-     * @param pDeposit the Deposit to select
+     * Select portfolio.
+     * @param pPortfolio the portfolio to select
      */
-    void selectDeposit(final Deposit pDeposit) {
+    void selectPortfolio(final Portfolio pPortfolio) {
         /* Check whether we need to showAll */
-        checkShowAll(pDeposit);
+        checkShowAll(pPortfolio);
 
         /* If we are changing the selection */
-        final Deposit myCurrent = theActiveDeposit.getSelectedItem();
-        if (!MetisDataDifference.isEqual(myCurrent, pDeposit)) {
+        final Portfolio myCurrent = theActivePortfolio.getSelectedItem();
+        if (!MetisDataDifference.isEqual(myCurrent, pPortfolio)) {
             /* Select the row and ensure that it is visible */
-            getTable().selectRowWithScroll(pDeposit);
-            theActiveDeposit.setItem(pDeposit);
+            getTable().selectRowWithScroll(pPortfolio);
+            theActivePortfolio.setItem(pPortfolio);
         }
     }
 
     @Override
     protected void handleRewind() {
         /* Only action if we are not editing */
-        if (!theActiveDeposit.isEditing()) {
+        if (!theActivePortfolio.isEditing()) {
             /* Handle the reWind */
             setEnabled(true);
             getTable().fireTableDataChanged();
-            selectDeposit(theActiveDeposit.getSelectedItem());
+            selectPortfolio(theActivePortfolio.getSelectedItem());
         }
 
         /* Adjust for changes */
@@ -180,11 +168,11 @@ public class MoneyWiseDepositTable
      */
     private void handlePanelState() {
         /* Only action if we are not editing */
-        if (!theActiveDeposit.isEditing()) {
+        if (!theActivePortfolio.isEditing()) {
             /* handle the edit transition */
             setEnabled(true);
             getTable().fireTableDataChanged();
-            selectDeposit(theActiveDeposit.getSelectedItem());
+            selectPortfolio(theActivePortfolio.getSelectedItem());
         }
 
         /* Note changes */
@@ -192,24 +180,24 @@ public class MoneyWiseDepositTable
     }
 
     @Override
-    protected void buildCategoryMenu(final Deposit pDeposit,
-                                     final TethysScrollMenu<DepositCategory> pMenu) {
+    protected void buildCategoryMenu(final Portfolio pPortfolio,
+                                     final TethysScrollMenu<PortfolioType> pMenu) {
         /* Build the menu */
-        theActiveDeposit.buildCategoryMenu(pMenu, pDeposit);
+        theActivePortfolio.buildTypeMenu(pMenu, pPortfolio);
     }
 
     @Override
-    protected void buildParentMenu(final Deposit pDeposit,
+    protected void buildParentMenu(final Portfolio pPortfolio,
                                    final TethysScrollMenu<Payee> pMenu) {
         /* Build the menu */
-        theActiveDeposit.buildParentMenu(pMenu, pDeposit);
+        theActivePortfolio.buildParentMenu(pMenu, pPortfolio);
     }
 
     @Override
-    protected void buildCurrencyMenu(final Deposit pDeposit,
+    protected void buildCurrencyMenu(final Portfolio pPortfolio,
                                      final TethysScrollMenu<AssetCurrency> pMenu) {
         /* Build the menu */
-        theActiveDeposit.buildCurrencyMenu(pMenu, pDeposit);
+        theActivePortfolio.buildCurrencyMenu(pMenu, pPortfolio);
     }
 
     @Override
@@ -220,17 +208,17 @@ public class MoneyWiseDepositTable
             cancelEditing();
 
             /* Create the new asset */
-            final Deposit myDeposit = theDeposits.addNewItem();
-            myDeposit.setDefaults(getUpdateSet());
+            final Portfolio myPortfolio = thePortfolios.addNewItem();
+            myPortfolio.setDefaults(getUpdateSet());
 
             /* Set as new and adjust map */
-            myDeposit.setNewVersion();
-            myDeposit.adjustMapForItem();
+            myPortfolio.setNewVersion();
+            myPortfolio.adjustMapForItem();
             getUpdateSet().incrementVersion();
 
             /* Validate the new item and update panel */
-            myDeposit.validate();
-            theActiveDeposit.setNewItem(myDeposit);
+            myPortfolio.validate();
+            theActivePortfolio.setNewItem(myPortfolio);
 
             /* Lock the table */
             setEnabled(false);
@@ -238,11 +226,10 @@ public class MoneyWiseDepositTable
             /* Handle Exceptions */
         } catch (OceanusException e) {
             /* Build the error */
-            final OceanusException myError = new MoneyWiseDataException("Failed to create new deposit", e);
+            final OceanusException myError = new MoneyWiseDataException("Failed to create new portfolio", e);
 
             /* Show the error */
             setError(myError);
         }
     }
 }
-

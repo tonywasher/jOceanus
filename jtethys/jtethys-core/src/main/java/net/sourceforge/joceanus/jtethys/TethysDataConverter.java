@@ -149,7 +149,7 @@ public final class TethysDataConverter {
         /* For each byte in the value */
         for (final byte b : pBytes) {
             /* Access the byte as an unsigned integer */
-            int myInt = (int) b;
+            int myInt = b;
             if (myInt < 0) {
                 myInt += BYTE_MASK + 1;
             }

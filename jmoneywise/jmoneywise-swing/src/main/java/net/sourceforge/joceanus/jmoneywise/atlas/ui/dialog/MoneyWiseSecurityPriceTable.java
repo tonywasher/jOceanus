@@ -25,18 +25,15 @@ import net.sourceforge.joceanus.jmetis.ui.MetisAction;
 import net.sourceforge.joceanus.jmetis.ui.MetisIcon;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
+import net.sourceforge.joceanus.jmoneywise.atlas.ui.base.MoneyWiseDialogTable;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.Security;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.SecurityPrice;
-import net.sourceforge.joceanus.jmoneywise.lethe.data.TransactionTag;
+import net.sourceforge.joceanus.jmoneywise.lethe.data.SecurityPrice.SecurityPriceList;
 import net.sourceforge.joceanus.jmoneywise.lethe.ui.MoneyWiseUIResource;
 import net.sourceforge.joceanus.jmoneywise.lethe.views.MoneyWiseView;
-import net.sourceforge.joceanus.jmoneywise.lethe.views.ViewSecurityPrice;
-import net.sourceforge.joceanus.jmoneywise.lethe.views.ViewSecurityPrice.ViewSecurityPriceList;
 import net.sourceforge.joceanus.jprometheus.lethe.views.UpdateSet;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
-import net.sourceforge.joceanus.jtethys.decimal.TethysDilutedPrice;
-import net.sourceforge.joceanus.jtethys.decimal.TethysDilution;
 import net.sourceforge.joceanus.jtethys.decimal.TethysPrice;
 import net.sourceforge.joceanus.jtethys.ui.TethysIconButtonManager.TethysIconMapSet;
 import net.sourceforge.joceanus.jtethys.ui.TethysTableManager.TethysTableColumn;
@@ -47,7 +44,7 @@ import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingTableManager;
  * Security Price Table.
  */
 public class MoneyWiseSecurityPriceTable
-        extends MoneyWiseDialogTable<ViewSecurityPrice> {
+        extends MoneyWiseDialogTable<SecurityPrice> {
     /**
      * Security.
      */
@@ -56,22 +53,12 @@ public class MoneyWiseSecurityPriceTable
     /**
      * The edit list.
      */
-    private ViewSecurityPriceList thePrices;
-
-    /**
-     * The dilution column.
-     */
-    private final TethysTableColumn<TethysDilution, MetisLetheField, ViewSecurityPrice> theDilutionColumn;
-
-    /**
-     * The diluted price column.
-     */
-    private final TethysTableColumn<TethysDilutedPrice, MetisLetheField, ViewSecurityPrice> theDilutedColumn;
+    private SecurityPriceList thePrices;
 
     /**
      * The active column.
      */
-    private final TethysTableColumn<MetisAction, MetisLetheField, ViewSecurityPrice> theActiveColumn;
+    private final TethysTableColumn<MetisAction, MetisLetheField, SecurityPrice> theActiveColumn;
 
     /**
      * Constructor.
@@ -87,41 +74,29 @@ public class MoneyWiseSecurityPriceTable
 
         /* Access Gui factory */
         final TethysSwingGuiFactory myGuiFactory = (TethysSwingGuiFactory) pView.getGuiFactory();
-        final TethysSwingTableManager<MetisLetheField, ViewSecurityPrice> myTable = getTable();
+        final TethysSwingTableManager<MetisLetheField, SecurityPrice> myTable = getTable();
 
         /* Set table configuration */
-        myTable.setDisabled(ViewSecurityPrice::isDisabled)
-               .setComparator(ViewSecurityPrice::compareTo);
+        myTable.setDisabled(SecurityPrice::isDisabled)
+               .setComparator(SecurityPrice::compareTo);
 
         /* Create the date column */
         myTable.declareDateColumn(SecurityPrice.FIELD_DATE)
-               .setCellValueFactory(ViewSecurityPrice::getDate)
+               .setCellValueFactory(SecurityPrice::getDate)
                .setEditable(true)
                .setColumnWidth(WIDTH_DATE)
-               .setOnCommit((r, v) -> updateField(ViewSecurityPrice::setDate, r, v));
+               .setOnCommit((r, v) -> updateField(SecurityPrice::setDate, r, v));
 
         /* Create the price column */
         myTable.declarePriceColumn(SecurityPrice.FIELD_PRICE)
-               .setCellValueFactory(ViewSecurityPrice::getPrice)
+               .setCellValueFactory(SecurityPrice::getPrice)
                .setEditable(true)
                .setColumnWidth(WIDTH_PRICE)
-               .setOnCommit((r, v) -> updateField(ViewSecurityPrice::setPrice, r, v));
-
-        /* Create the dilution column */
-        theDilutionColumn = myTable.declareDilutionColumn(ViewSecurityPrice.FIELD_DILUTION)
-               .setCellValueFactory(ViewSecurityPrice::getDilution)
-               .setEditable(false)
-               .setColumnWidth(WIDTH_DILUTION);
-
-        /* Create the diluted price column */
-        theDilutedColumn = myTable.declareDilutedPriceColumn(ViewSecurityPrice.FIELD_DILUTEDPRICE)
-               .setCellValueFactory(ViewSecurityPrice::getDilutedPrice)
-               .setEditable(false)
-               .setColumnWidth(WIDTH_PRICE);
+               .setOnCommit((r, v) -> updateField(SecurityPrice::setPrice, r, v));
 
         /* Create the Active column */
         final TethysIconMapSet<MetisAction> myActionMapSet = MetisIcon.configureStatusIconButton();
-        theActiveColumn = myTable.declareIconColumn(TransactionTag.FIELD_TOUCH, MetisAction.class)
+        theActiveColumn = myTable.declareIconColumn(SecurityPrice.FIELD_TOUCH, MetisAction.class)
                .setIconMapSet(r -> myActionMapSet)
                .setCellValueFactory(r -> r.isActive() ? MetisAction.ACTIVE : MetisAction.DELETE)
                .setName(MoneyWiseUIResource.STATICDATA_ACTIVE.getValue())
@@ -137,7 +112,7 @@ public class MoneyWiseSecurityPriceTable
     @Override
     public void refreshData() {
         /* Access the prices list */
-        thePrices = getUpdateSet().getDataList(MoneyWiseDataType.SECURITYPRICE, ViewSecurityPriceList.class);
+        thePrices = getUpdateSet().getDataList(MoneyWiseDataType.SECURITYPRICE, SecurityPriceList.class);
         getTable().setItems(thePrices.getUnderlyingList());
     }
 
@@ -158,7 +133,7 @@ public class MoneyWiseSecurityPriceTable
         /* Protect against Exceptions */
         try {
             /* Add a new price */
-            final ViewSecurityPrice myPrice = addNewPrice(theSecurity);
+            final SecurityPrice myPrice = addNewPrice(theSecurity);
 
             /* Shift display to line */
             getTable().fireTableDataChanged();
@@ -182,16 +157,16 @@ public class MoneyWiseSecurityPriceTable
      * @throws OceanusException on error
      * @return the price
      */
-    public ViewSecurityPrice addNewPrice(final Security pSecurity) throws OceanusException {
+    public SecurityPrice addNewPrice(final Security pSecurity) throws OceanusException {
         /* Create the new price */
-        final ViewSecurityPrice myPrice = new ViewSecurityPrice(thePrices);
+        final SecurityPrice myPrice = new SecurityPrice(thePrices);
 
         /* Set the item value */
         myPrice.setSecurity(pSecurity);
         myPrice.setPrice(TethysPrice.getWholeUnits(1, pSecurity.getCurrency()));
 
         /* Access iterator */
-        final Iterator<ViewSecurityPrice> myIterator = getTable().viewIterator();
+        final Iterator<SecurityPrice> myIterator = getTable().viewIterator();
 
         /* Assume that we can use todays date */
         TethysDate myDate = new TethysDate();
@@ -232,13 +207,11 @@ public class MoneyWiseSecurityPriceTable
     public void setEditable(final boolean pEditable) {
         /* Show/Hide columns/panels */
         super.setEditable(pEditable);
-        theDilutionColumn.setVisible(pEditable);
-        theDilutedColumn.setVisible(pEditable);
         theActiveColumn.setVisible(pEditable);
     }
 
     @Override
-    protected boolean isFiltered(final ViewSecurityPrice pRow) {
+    protected boolean isFiltered(final SecurityPrice pRow) {
         return super.isFiltered(pRow)
                 && theSecurity != null
                 && theSecurity.equals(pRow.getSecurity());

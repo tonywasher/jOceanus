@@ -16,6 +16,6 @@
  ******************************************************************************/
 
 /**
- * New Gui features.
+ * New Gui base.
  */
-package net.sourceforge.joceanus.jmoneywise.atlas.ui;
+package net.sourceforge.joceanus.jmoneywise.atlas.ui.base;

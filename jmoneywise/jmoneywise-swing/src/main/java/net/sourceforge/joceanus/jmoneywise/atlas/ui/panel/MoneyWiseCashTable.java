@@ -14,7 +14,7 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  ******************************************************************************/
-package net.sourceforge.joceanus.jmoneywise.atlas.ui;
+package net.sourceforge.joceanus.jmoneywise.atlas.ui.panel;
 
 import net.sourceforge.joceanus.jmetis.atlas.ui.MetisErrorPanel;
 import net.sourceforge.joceanus.jmetis.data.MetisDataDifference;
@@ -23,15 +23,15 @@ import net.sourceforge.joceanus.jmetis.lethe.field.swing.MetisSwingFieldManager;
 import net.sourceforge.joceanus.jmetis.profile.MetisProfile;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
-import net.sourceforge.joceanus.jmoneywise.lethe.data.Loan;
-import net.sourceforge.joceanus.jmoneywise.lethe.data.Loan.LoanList;
-import net.sourceforge.joceanus.jmoneywise.lethe.data.LoanCategory;
-import net.sourceforge.joceanus.jmoneywise.lethe.data.LoanInfo;
-import net.sourceforge.joceanus.jmoneywise.lethe.data.LoanInfo.LoanInfoList;
+import net.sourceforge.joceanus.jmoneywise.atlas.ui.base.MoneyWiseAssetTable;
+import net.sourceforge.joceanus.jmoneywise.lethe.data.Cash;
+import net.sourceforge.joceanus.jmoneywise.lethe.data.Cash.CashList;
+import net.sourceforge.joceanus.jmoneywise.lethe.data.CashCategory;
+import net.sourceforge.joceanus.jmoneywise.lethe.data.CashInfo;
+import net.sourceforge.joceanus.jmoneywise.lethe.data.CashInfo.CashInfoList;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.MoneyWiseData;
-import net.sourceforge.joceanus.jmoneywise.lethe.data.Payee;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.AssetCurrency;
-import net.sourceforge.joceanus.jmoneywise.lethe.ui.dialog.swing.LoanPanel;
+import net.sourceforge.joceanus.jmoneywise.lethe.ui.dialog.swing.CashPanel;
 import net.sourceforge.joceanus.jmoneywise.lethe.views.MoneyWiseView;
 import net.sourceforge.joceanus.jprometheus.lethe.swing.PrometheusSwingToolkit;
 import net.sourceforge.joceanus.jprometheus.lethe.views.PrometheusDataEvent;
@@ -43,24 +43,24 @@ import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingGuiFactory;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingTableManager;
 
 /**
- * MoneyWise Loan Table.
+ * MoneyWise Cash Table.
  */
-public class MoneyWiseLoanTable
-        extends MoneyWiseAssetTable<Loan, LoanCategory> {
+public class MoneyWiseCashTable
+        extends MoneyWiseAssetTable<Cash, CashCategory> {
     /**
      * The Info UpdateEntry.
      */
-    private final UpdateEntry<LoanInfo, MoneyWiseDataType> theInfoEntry;
+    private final UpdateEntry<CashInfo, MoneyWiseDataType> theInfoEntry;
 
     /**
-     * The Loan dialog.
+     * The Cash dialog.
      */
-    private final LoanPanel theActiveLoan;
+    private final CashPanel theActiveCash;
 
     /**
      * The edit list.
      */
-    private LoanList theLoans;
+    private CashList theCash;
 
     /**
      * Constructor.
@@ -68,58 +68,58 @@ public class MoneyWiseLoanTable
      * @param pUpdateSet the updateSet
      * @param pError the error panel
      */
-    MoneyWiseLoanTable(final MoneyWiseView pView,
+    MoneyWiseCashTable(final MoneyWiseView pView,
                             final UpdateSet<MoneyWiseDataType> pUpdateSet,
                             final MetisErrorPanel pError) {
         /* Store parameters */
-        super(pView, pUpdateSet, pError, MoneyWiseDataType.LOAN, LoanCategory.class);
+        super(pView, pUpdateSet, pError, MoneyWiseDataType.CASH, CashCategory.class);
 
         /* register the infoEntry */
-        theInfoEntry = getUpdateSet().registerType(MoneyWiseDataType.LOANINFO);
+        theInfoEntry = getUpdateSet().registerType(MoneyWiseDataType.CASHINFO);
 
         /* Access field manager */
         MetisSwingFieldManager myFieldMgr = ((PrometheusSwingToolkit) pView.getToolkit()).getFieldManager();
 
         /* Access Gui factory */
         final TethysSwingGuiFactory myGuiFactory = (TethysSwingGuiFactory) pView.getGuiFactory();
-        final TethysSwingTableManager<MetisLetheField, Loan> myTable = getTable();
+        final TethysSwingTableManager<MetisLetheField, Cash> myTable = getTable();
 
-        /* Create a Loan panel */
-        theActiveLoan = new LoanPanel(myGuiFactory, myFieldMgr, pUpdateSet, pError);
-        declareItemPanel(theActiveLoan);
+        /* Create a Cash panel */
+        theActiveCash = new CashPanel(myGuiFactory, myFieldMgr, pUpdateSet, pError);
+        declareItemPanel(theActiveCash);
 
         /* Set table configuration */
-        myTable.setOnSelect(theActiveLoan::setItem);
+        myTable.setOnSelect(theActiveCash::setItem);
 
         /* Finish the table */
-        finishTable(true, true, true);
+        finishTable(false, true, true);
 
         /* Add listeners */
-        theActiveLoan.getEventRegistrar().addEventListener(PrometheusDataEvent.ADJUSTVISIBILITY, e -> handlePanelState());
+        theActiveCash.getEventRegistrar().addEventListener(PrometheusDataEvent.ADJUSTVISIBILITY, e -> handlePanelState());
     }
 
     @Override
     protected boolean isItemEditing() {
-        return theActiveLoan.isEditing();
+        return theActiveCash.isEditing();
     }
 
     @Override
     protected void refreshData() throws OceanusException {
         /* Obtain the active profile */
         MetisProfile myTask = getView().getActiveTask();
-        myTask = myTask.startTask("Loans");
+        myTask = myTask.startTask("Cashs");
 
         /* Access list */
         final MoneyWiseData myData = getView().getData();
-        final LoanList myBase = myData.getLoans();
-        theLoans = myBase.deriveEditList(getUpdateSet());
-        getTable().setItems(theLoans.getUnderlyingList());
-        getUpdateEntry().setDataList(theLoans);
-        final LoanInfoList myInfo = theLoans.getLoanInfo();
+        final CashList myBase = myData.getCash();
+        theCash = myBase.deriveEditList(getUpdateSet());
+        getTable().setItems(theCash.getUnderlyingList());
+        getUpdateEntry().setDataList(theCash);
+        final CashInfoList myInfo = theCash.getCashInfo();
         theInfoEntry.setDataList(myInfo);
 
         /* Notify panel of refresh */
-        theActiveLoan.refreshData();
+        theActiveCash.refreshData();
 
         /* Complete the task */
         myTask.end();
@@ -128,34 +128,34 @@ public class MoneyWiseLoanTable
     @Override
     public void cancelEditing() {
         super.cancelEditing();
-        theActiveLoan.setEditable(false);
+        theActiveCash.setEditable(false);
     }
 
     /**
-     * Select Loan.
-     * @param pLoan the Loan to select
+     * Select Cash.
+     * @param pCash the Cash to select
      */
-    void selectLoan(final Loan pLoan) {
+    void selectCash(final Cash pCash) {
         /* Check whether we need to showAll */
-        checkShowAll(pLoan);
+        checkShowAll(pCash);
 
         /* If we are changing the selection */
-        final Loan myCurrent = theActiveLoan.getSelectedItem();
-        if (!MetisDataDifference.isEqual(myCurrent, pLoan)) {
+        final Cash myCurrent = theActiveCash.getSelectedItem();
+        if (!MetisDataDifference.isEqual(myCurrent, pCash)) {
             /* Select the row and ensure that it is visible */
-            getTable().selectRowWithScroll(pLoan);
-            theActiveLoan.setItem(pLoan);
+            getTable().selectRowWithScroll(pCash);
+            theActiveCash.setItem(pCash);
         }
     }
 
     @Override
     protected void handleRewind() {
         /* Only action if we are not editing */
-        if (!theActiveLoan.isEditing()) {
+        if (!theActiveCash.isEditing()) {
             /* Handle the reWind */
             setEnabled(true);
             getTable().fireTableDataChanged();
-            selectLoan(theActiveLoan.getSelectedItem());
+            selectCash(theActiveCash.getSelectedItem());
         }
 
         /* Adjust for changes */
@@ -167,11 +167,11 @@ public class MoneyWiseLoanTable
      */
     private void handlePanelState() {
         /* Only action if we are not editing */
-        if (!theActiveLoan.isEditing()) {
+        if (!theActiveCash.isEditing()) {
             /* handle the edit transition */
             setEnabled(true);
             getTable().fireTableDataChanged();
-            selectLoan(theActiveLoan.getSelectedItem());
+            selectCash(theActiveCash.getSelectedItem());
         }
 
         /* Note changes */
@@ -179,24 +179,17 @@ public class MoneyWiseLoanTable
     }
 
     @Override
-    protected void buildCategoryMenu(final Loan pLoan,
-                                     final TethysScrollMenu<LoanCategory> pMenu) {
+    protected void buildCategoryMenu(final Cash pCash,
+                                     final TethysScrollMenu<CashCategory> pMenu) {
         /* Build the menu */
-        theActiveLoan.buildCategoryMenu(pMenu, pLoan);
+        theActiveCash.buildCategoryMenu(pMenu, pCash);
     }
 
     @Override
-    protected void buildParentMenu(final Loan pLoan,
-                                   final TethysScrollMenu<Payee> pMenu) {
-        /* Build the menu */
-        theActiveLoan.buildParentMenu(pMenu, pLoan);
-    }
-
-    @Override
-    protected void buildCurrencyMenu(final Loan pLoan,
+    protected void buildCurrencyMenu(final Cash pCash,
                                      final TethysScrollMenu<AssetCurrency> pMenu) {
         /* Build the menu */
-        theActiveLoan.buildCurrencyMenu(pMenu, pLoan);
+        theActiveCash.buildCurrencyMenu(pMenu, pCash);
     }
 
     @Override
@@ -207,17 +200,17 @@ public class MoneyWiseLoanTable
             cancelEditing();
 
             /* Create the new asset */
-            final Loan myLoan = theLoans.addNewItem();
-            myLoan.setDefaults(getUpdateSet());
+            final Cash myCash = theCash.addNewItem();
+            myCash.setDefaults(getUpdateSet());
 
             /* Set as new and adjust map */
-            myLoan.setNewVersion();
-            myLoan.adjustMapForItem();
+            myCash.setNewVersion();
+            myCash.adjustMapForItem();
             getUpdateSet().incrementVersion();
 
             /* Validate the new item and update panel */
-            myLoan.validate();
-            theActiveLoan.setNewItem(myLoan);
+            myCash.validate();
+            theActiveCash.setNewItem(myCash);
 
             /* Lock the table */
             setEnabled(false);
@@ -225,10 +218,11 @@ public class MoneyWiseLoanTable
             /* Handle Exceptions */
         } catch (OceanusException e) {
             /* Build the error */
-            final OceanusException myError = new MoneyWiseDataException("Failed to create new loan", e);
+            final OceanusException myError = new MoneyWiseDataException("Failed to create new cash", e);
 
             /* Show the error */
             setError(myError);
         }
     }
 }
+

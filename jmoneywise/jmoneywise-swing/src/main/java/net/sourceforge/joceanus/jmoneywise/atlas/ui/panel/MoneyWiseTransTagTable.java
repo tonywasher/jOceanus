@@ -14,7 +14,7 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  ******************************************************************************/
-package net.sourceforge.joceanus.jmoneywise.atlas.ui;
+package net.sourceforge.joceanus.jmoneywise.atlas.ui.panel;
 
 import net.sourceforge.joceanus.jmetis.atlas.ui.MetisErrorPanel;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisLetheField;
@@ -24,12 +24,12 @@ import net.sourceforge.joceanus.jmetis.ui.MetisAction;
 import net.sourceforge.joceanus.jmetis.ui.MetisIcon;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
-import net.sourceforge.joceanus.jmoneywise.atlas.ui.dialog.MoneyWiseBaseTable;
+import net.sourceforge.joceanus.jmoneywise.atlas.ui.base.MoneyWiseBaseTable;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.MoneyWiseData;
-import net.sourceforge.joceanus.jmoneywise.lethe.data.Region;
-import net.sourceforge.joceanus.jmoneywise.lethe.data.Region.RegionList;
+import net.sourceforge.joceanus.jmoneywise.lethe.data.TransactionTag;
+import net.sourceforge.joceanus.jmoneywise.lethe.data.TransactionTag.TransactionTagList;
 import net.sourceforge.joceanus.jmoneywise.lethe.ui.MoneyWiseUIResource;
-import net.sourceforge.joceanus.jmoneywise.lethe.ui.dialog.swing.RegionPanel;
+import net.sourceforge.joceanus.jmoneywise.lethe.ui.dialog.swing.TransactionTagPanel;
 import net.sourceforge.joceanus.jmoneywise.lethe.views.MoneyWiseView;
 import net.sourceforge.joceanus.jprometheus.lethe.swing.PrometheusSwingToolkit;
 import net.sourceforge.joceanus.jprometheus.lethe.views.PrometheusDataEvent;
@@ -42,24 +42,24 @@ import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingGuiFactory;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingTableManager;
 
 /**
- * MoneyWise Region Table.
+ * MoneyWise Tag Table.
  */
-public class MoneyWiseRegionTable
-        extends MoneyWiseBaseTable<Region> {
+public class MoneyWiseTransTagTable
+        extends MoneyWiseBaseTable<TransactionTag> {
     /**
      * The filter panel.
      */
     private final TethysBoxPaneManager theFilterPanel;
 
     /**
-     * The Region dialog.
+     * The tag dialog.
      */
-    private final RegionPanel theActiveRegion;
+    private final TransactionTagPanel theActiveTag;
 
     /**
      * The edit list.
      */
-    private RegionList theRegions;
+    private TransactionTagList theTags;
 
     /**
      * Constructor.
@@ -67,18 +67,18 @@ public class MoneyWiseRegionTable
      * @param pUpdateSet the updateSet
      * @param pError the error panel
      */
-    MoneyWiseRegionTable(final MoneyWiseView pView,
-                         final UpdateSet<MoneyWiseDataType> pUpdateSet,
-                         final MetisErrorPanel pError) {
+    MoneyWiseTransTagTable(final MoneyWiseView pView,
+                           final UpdateSet<MoneyWiseDataType> pUpdateSet,
+                           final MetisErrorPanel pError) {
         /* Store parameters */
-        super(pView, pUpdateSet, pError, MoneyWiseDataType.REGION);
+        super(pView, pUpdateSet, pError, MoneyWiseDataType.TRANSTAG);
 
         /* Access field manager */
         MetisSwingFieldManager myFieldMgr = ((PrometheusSwingToolkit) pView.getToolkit()).getFieldManager();
 
-        /* Access the GUI factory */
+        /* Access Gui factory */
         final TethysSwingGuiFactory myGuiFactory = (TethysSwingGuiFactory) pView.getGuiFactory();
-        final TethysSwingTableManager<MetisLetheField, Region> myTable = getTable();
+        final TethysSwingTableManager<MetisLetheField, TransactionTag> myTable = getTable();
 
         /* Create new button */
         final TethysButton myNewButton = myGuiFactory.newButton();
@@ -89,34 +89,34 @@ public class MoneyWiseRegionTable
         theFilterPanel.addSpacer();
         theFilterPanel.addNode(myNewButton);
 
-        /* Create a region panel */
-        theActiveRegion = new RegionPanel(myGuiFactory, myFieldMgr, pUpdateSet, pError);
-        declareItemPanel(theActiveRegion);
+        /* Create a tag panel */
+        theActiveTag = new TransactionTagPanel(myGuiFactory, myFieldMgr, pUpdateSet, pError);
+        declareItemPanel(theActiveTag);
 
         /* Set table configuration */
-        myTable.setDisabled(Region::isDisabled)
-               .setComparator(Region::compareTo)
-               .setOnSelect(theActiveRegion::setItem);
+        myTable.setDisabled(TransactionTag::isDisabled)
+               .setComparator(TransactionTag::compareTo)
+               .setOnSelect(theActiveTag::setItem);
 
         /* Create the name column */
-        myTable.declareStringColumn(Region.FIELD_NAME)
+        myTable.declareStringColumn(TransactionTag.FIELD_NAME)
                .setValidator(this::isValidName)
-               .setCellValueFactory(Region::getName)
+               .setCellValueFactory(TransactionTag::getName)
                .setEditable(true)
                .setColumnWidth(WIDTH_NAME)
-               .setOnCommit((r, v) -> updateField(Region::setName, r, v));
+               .setOnCommit((r, v) -> updateField(TransactionTag::setName, r, v));
 
         /* Create the description column */
-        myTable.declareStringColumn(Region.FIELD_DESC)
+        myTable.declareStringColumn(TransactionTag.FIELD_DESC)
                .setValidator(this::isValidDesc)
-               .setCellValueFactory(Region::getDesc)
+               .setCellValueFactory(TransactionTag::getDesc)
                .setEditable(true)
                .setColumnWidth(WIDTH_DESC)
-               .setOnCommit((r, v) -> updateField(Region::setDescription, r, v));
+               .setOnCommit((r, v) -> updateField(TransactionTag::setDescription, r, v));
 
         /* Create the Active column */
         final TethysIconMapSet<MetisAction> myActionMapSet = MetisIcon.configureStatusIconButton();
-        myTable.declareIconColumn(Region.FIELD_TOUCH, MetisAction.class)
+        myTable.declareIconColumn(TransactionTag.FIELD_TOUCH, MetisAction.class)
                .setIconMapSet(r -> myActionMapSet)
                .setCellValueFactory(r -> r.isActive() ? MetisAction.ACTIVE : MetisAction.DELETE)
                .setName(MoneyWiseUIResource.STATICDATA_ACTIVE.getValue())
@@ -127,12 +127,12 @@ public class MoneyWiseRegionTable
 
         /* Add listeners */
         myNewButton.getEventRegistrar().addEventListener(e -> addNewItem());
-        theActiveRegion.getEventRegistrar().addEventListener(PrometheusDataEvent.ADJUSTVISIBILITY, e -> handlePanelState());
+        theActiveTag.getEventRegistrar().addEventListener(PrometheusDataEvent.ADJUSTVISIBILITY, e -> handlePanelState());
     }
 
     @Override
     protected boolean isItemEditing() {
-        return theActiveRegion.isEditing();
+        return theActiveTag.isEditing();
     }
 
     /**
@@ -147,17 +147,17 @@ public class MoneyWiseRegionTable
     protected void refreshData() throws OceanusException {
         /* Obtain the active profile */
         MetisProfile myTask = getView().getActiveTask();
-        myTask = myTask.startTask("Regions");
+        myTask = myTask.startTask("Tags");
 
         /* Access list */
         final MoneyWiseData myData = getView().getData();
-        final RegionList myBase = myData.getRegions();
-        theRegions = myBase.deriveEditList();
-        getTable().setItems(theRegions.getUnderlyingList());
-        getUpdateEntry().setDataList(theRegions);
+        final TransactionTagList myBase = myData.getTransactionTags();
+        theTags = myBase.deriveEditList();
+        getTable().setItems(theTags.getUnderlyingList());
+        getUpdateEntry().setDataList(theTags);
 
         /* Notify panel of refresh */
-        theActiveRegion.refreshData();
+        theActiveTag.refreshData();
 
         /* Complete the task */
         myTask.end();
@@ -166,26 +166,26 @@ public class MoneyWiseRegionTable
     @Override
     public void cancelEditing() {
         super.cancelEditing();
-        theActiveRegion.setEditable(false);
+        theActiveTag.setEditable(false);
     }
 
     /**
-     * Select region.
-     * @param pRegion the region to select
+     * Select tag.
+     * @param pTag the tag to select
      */
-    void selectRegion(final Region pRegion) {
+    void selectTag(final TransactionTag pTag) {
         /* Select the row and ensure that it is visible */
-        getTable().selectRowWithScroll(pRegion);
+        getTable().selectRowWithScroll(pTag);
     }
 
     @Override
     protected void handleRewind() {
         /* Only action if we are not editing */
-        if (!theActiveRegion.isEditing()) {
+        if (!theActiveTag.isEditing()) {
             /* Handle the reWind */
             setEnabled(true);
             getTable().fireTableDataChanged();
-            selectRegion(theActiveRegion.getSelectedItem());
+            selectTag(theActiveTag.getSelectedItem());
         }
 
         /* Adjust for changes */
@@ -197,11 +197,11 @@ public class MoneyWiseRegionTable
      */
     private void handlePanelState() {
         /* Only action if we are not editing */
-        if (!theActiveRegion.isEditing()) {
+        if (!theActiveTag.isEditing()) {
             /* handle the edit transition */
             setEnabled(true);
             getTable().fireTableDataChanged();
-            selectRegion(theActiveRegion.getSelectedItem());
+            selectTag(theActiveTag.getSelectedItem());
         }
 
         /* Note changes */
@@ -217,18 +217,18 @@ public class MoneyWiseRegionTable
             /* Make sure that we have finished editing */
             cancelEditing();
 
-            /* Create the new region */
-            final Region myRegion = theRegions.addNewItem();
-            myRegion.setDefaults();
+            /* Create the new tag */
+            final TransactionTag myTag = theTags.addNewItem();
+            myTag.setDefaults();
 
             /* Set as new and adjust map */
-            myRegion.setNewVersion();
-            myRegion.adjustMapForItem();
+            myTag.setNewVersion();
+            myTag.adjustMapForItem();
             getUpdateSet().incrementVersion();
 
             /* Validate the new item and update panel */
-            myRegion.validate();
-            theActiveRegion.setNewItem(myRegion);
+            myTag.validate();
+            theActiveTag.setNewItem(myTag);
 
             /* Lock the table */
             setEnabled(false);
@@ -236,10 +236,15 @@ public class MoneyWiseRegionTable
             /* Handle Exceptions */
         } catch (OceanusException e) {
             /* Build the error */
-            final OceanusException myError = new MoneyWiseDataException("Failed to create new region", e);
+            final OceanusException myError = new MoneyWiseDataException("Failed to create new tag", e);
 
             /* Show the error */
             setError(myError);
         }
+    }
+
+    @Override
+    protected String getInvalidNameChars() {
+        return ",";
     }
 }
