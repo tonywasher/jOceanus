@@ -175,6 +175,7 @@ public abstract class MoneyWiseCategoryTable<T extends CategoryBase<T, S, C>, S 
 
     /**
      * Obtain the short name.
+     * @param pCategory the category
      * @return the name
      */
     protected String getShortName(final T pCategory) {

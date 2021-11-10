@@ -110,6 +110,7 @@
     <CheckStylePluginVersion>3.1.2</CheckStylePluginVersion>
     <PMDPluginVersion>3.15.0</PMDPluginVersion>
     <JacocoPluginVersion>0.8.7</JacocoPluginVersion>
+    <GPGPluginVersion>3.0.1</GPGPluginVersion>
     <JetBrainsAnnotationsVersion>22.0.0</JetBrainsAnnotationsVersion>
     <VersionsPluginVersion>2.8.1</VersionsPluginVersion>
   </properties>
@@ -409,6 +410,20 @@
               <phase>package</phase>
               <goals>
                 <goal>shade</goal>
+              </goals>
+            </execution>
+          </executions>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-gpg-plugin</artifactId>
+          <version>${GPGPluginVersion}</version>
+          <executions>
+            <execution>
+              <id>sign-artifacts</id>
+              <phase>verify</phase>
+              <goals>
+                <goal>sign</goal>
               </goals>
             </execution>
           </executions>

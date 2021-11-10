@@ -60,7 +60,7 @@ import net.sourceforge.joceanus.jtethys.ui.TethysUIEvent;
 /**
  * Report panel.
  */
-public class MioneyWiseReportTab
+public class MoneyWiseReportTab
         implements TethysEventProvider<PrometheusDataEvent>, TethysComponent {
     /**
      * Text for DataEntry Title.
@@ -117,7 +117,7 @@ public class MioneyWiseReportTab
      * @param pView the data view
      * @throws OceanusException on error
      */
-    public MioneyWiseReportTab(final MoneyWiseView pView) throws OceanusException {
+    public MoneyWiseReportTab(final MoneyWiseView pView) throws OceanusException {
         /* Store the view */
         theView = pView;
 

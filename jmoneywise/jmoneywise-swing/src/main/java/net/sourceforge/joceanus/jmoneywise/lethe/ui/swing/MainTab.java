@@ -22,8 +22,10 @@ import net.sourceforge.joceanus.jmetis.help.MetisHelpModule;
 import net.sourceforge.joceanus.jmetis.profile.MetisProfile;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseIOException;
-import net.sourceforge.joceanus.jmoneywise.atlas.ui.panel.MioneyWiseReportTab;
+import net.sourceforge.joceanus.jmoneywise.atlas.ui.panel.MoneyWiseReportTab;
 import net.sourceforge.joceanus.jmoneywise.atlas.ui.panel.MoneyWiseMaintenance;
+import net.sourceforge.joceanus.jmoneywise.atlas.ui.panel.MoneyWiseSpotPricesTable.MoneyWiseSpotPricesPanel;
+import net.sourceforge.joceanus.jmoneywise.atlas.ui.panel.MoneyWiseSpotRatesTable.MoneyWiseSpotRatesPanel;
 import net.sourceforge.joceanus.jmoneywise.help.MoneyWiseHelp;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.lethe.tax.uk.MoneyWiseUKTaxYearCache;
@@ -99,12 +101,12 @@ public class MainTab
     /**
      * The SpotPricesPanel.
      */
-    private SpotPricesTable theSpotPrices;
+    private MoneyWiseSpotPricesPanel theSpotPrices;
 
     /**
      * The SpotRatesPanel.
      */
-    private SpotRatesTable theSpotRates;
+    private MoneyWiseSpotRatesPanel theSpotRates;
 
     /**
      * The maintenance panel.
@@ -155,7 +157,7 @@ public class MainTab
 
         /* Create the Report Tab */
         myTask.startTask("Report");
-        final MioneyWiseReportTab myReports = new MioneyWiseReportTab(theView);
+        final MoneyWiseReportTab myReports = new MoneyWiseReportTab(theView);
         theTabs.addTabItem(TITLE_REPORT, myReports);
 
         /* Create the Register Tab */
@@ -165,12 +167,12 @@ public class MainTab
 
         /* Create the SpotPrices Tab */
         myTask.startTask("SpotPrices");
-        theSpotPrices = new SpotPricesTable(theView);
+        theSpotPrices = new MoneyWiseSpotPricesPanel(theView);
         theTabs.addTabItem(TITLE_SPOTPRICES, theSpotPrices);
 
         /* Create the SpotRates Tab */
         myTask.startTask("SpotRates");
-        theSpotRates = new SpotRatesTable(theView);
+        theSpotRates = new MoneyWiseSpotRatesPanel(theView);
         theTabs.addTabItem(TITLE_SPOTRATES, theSpotRates);
 
         /* Create the Maintenance Tab */

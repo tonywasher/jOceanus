@@ -287,6 +287,7 @@ public abstract class MoneyWiseBaseTable<T extends DataItem<MoneyWiseDataType> &
 
     /**
      * Refresh data.
+     * @throws OceanusException on error
      */
     protected abstract void refreshData() throws OceanusException;
 
@@ -328,9 +329,10 @@ public abstract class MoneyWiseBaseTable<T extends DataItem<MoneyWiseDataType> &
      * Delete row.
      * @param pRow the row
      * @param pValue the value (ignored)
+     * @throws OceanusException on error
      */
     protected void deleteRow(final T pRow,
-                             final Object pValue) {
+                             final Object pValue) throws OceanusException {
         pRow.setDeleted(true);
     }
 
