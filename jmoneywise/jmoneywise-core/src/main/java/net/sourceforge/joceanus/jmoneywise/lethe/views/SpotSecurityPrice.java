@@ -307,7 +307,7 @@ public final class SpotSecurityPrice
                 final Security mySecurity = mySecBucket.getSecurity();
 
                 /* Ignore Options */
-                if (mySecurity.getSecurityTypeClass().isOption()) {
+                if (mySecurity.getCategoryClass().isOption()) {
                     continue;
                 }
 

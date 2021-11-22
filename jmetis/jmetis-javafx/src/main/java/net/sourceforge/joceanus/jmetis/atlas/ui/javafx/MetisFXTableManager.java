@@ -234,8 +234,9 @@ public class MetisFXTableManager<R extends MetisFieldTableItem>
     }
 
     @Override
-    public <T extends Comparable<T>> MetisFXTableListColumn<T, R> declareListColumn(final MetisDataFieldId pId) {
-        final TethysFXTableListColumn<T, MetisDataFieldId, R> myColumn = getTable().declareListColumn(pId);
+    public <T extends Comparable<T>> MetisFXTableListColumn<T, R> declareListColumn(final MetisDataFieldId pId,
+                                                                                    final Class<T> pClazz) {
+        final TethysFXTableListColumn<T, MetisDataFieldId, R> myColumn = getTable().declareListColumn(pId, pClazz);
         return new MetisFXTableListColumn<>(this, myColumn);
     }
 

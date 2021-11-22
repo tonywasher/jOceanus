@@ -1082,7 +1082,7 @@ public final class TransactionCategoryBucket
             final Portfolio myPortfolio = pSource.getPortfolio();
 
             final boolean bTaxFreeGains = myPortfolio.isTaxFree()
-                                          || !mySecurity.getSecurityTypeClass().isCapitalGains();
+                                          || !mySecurity.getCategoryClass().isCapitalGains();
             final TransactionCategoryBucket myCategory = bTaxFreeGains
                                                                        ? theTaxFreeGains
                                                                        : theCapitalGains;

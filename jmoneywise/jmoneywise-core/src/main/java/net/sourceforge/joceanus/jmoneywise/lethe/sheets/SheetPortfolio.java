@@ -106,7 +106,7 @@ public class SheetPortfolio
     protected DataValues<MoneyWiseDataType> loadSecureValues() throws OceanusException {
         /* Build data values */
         final DataValues<MoneyWiseDataType> myValues = getRowValues(Portfolio.OBJECT_NAME);
-        myValues.addValue(Portfolio.FIELD_PORTTYPE, loadInteger(COL_TYPE));
+        myValues.addValue(Portfolio.FIELD_CATEGORY, loadInteger(COL_TYPE));
         myValues.addValue(Portfolio.FIELD_PARENT, loadInteger(COL_PARENT));
         myValues.addValue(Portfolio.FIELD_CURRENCY, loadInteger(COL_CURRENCY));
         myValues.addValue(Portfolio.FIELD_NAME, loadBytes(COL_NAME));
@@ -121,7 +121,7 @@ public class SheetPortfolio
     protected void insertSecureItem(final Portfolio pItem) throws OceanusException {
         /* Set the fields */
         super.insertSecureItem(pItem);
-        writeInteger(COL_TYPE, pItem.getPortfolioTypeId());
+        writeInteger(COL_TYPE, pItem.getCategoryId());
         writeInteger(COL_PARENT, pItem.getParentId());
         writeInteger(COL_CURRENCY, pItem.getAssetCurrencyId());
         writeBytes(COL_NAME, pItem.getNameBytes());
@@ -196,7 +196,7 @@ public class SheetPortfolio
         /* Build data values */
         final DataValues<MoneyWiseDataType> myValues = new DataValues<>(Portfolio.OBJECT_NAME);
         myValues.addValue(Portfolio.FIELD_NAME, myName);
-        myValues.addValue(Portfolio.FIELD_PORTTYPE, myPortType);
+        myValues.addValue(Portfolio.FIELD_CATEGORY, myPortType);
         myValues.addValue(Portfolio.FIELD_PARENT, myParent);
         myValues.addValue(Portfolio.FIELD_CURRENCY, myCurrency);
         myValues.addValue(Portfolio.FIELD_CLOSED, isClosed);

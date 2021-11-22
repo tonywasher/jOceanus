@@ -16,6 +16,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jtethys.ui.swing;
 
+import java.awt.Dimension;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.util.ArrayList;
@@ -148,6 +149,12 @@ public class TethysSwingTableManager<C, R>
     }
 
     @Override
+    public void setPreferredWidthAndHeight(final Integer pWidth,
+                                           final Integer pHeight) {
+        theTable.setPreferredScrollableViewportSize(new Dimension(pWidth, pHeight));
+    }
+
+    @Override
     public void setEnabled(final boolean pEnabled) {
         theScroll.setEnabled(pEnabled);
         theTable.setEnabled(pEnabled);
@@ -194,6 +201,7 @@ public class TethysSwingTableManager<C, R>
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public TethysSwingTableColumn<?, C, R> getColumn(final C pId) {
         return (TethysSwingTableColumn<?, C, R>) super.getColumn(pId);
     }
@@ -382,8 +390,9 @@ public class TethysSwingTableManager<C, R>
     }
 
     @Override
-    public <T extends Comparable<T>> TethysSwingTableListColumn<T, C, R> declareListColumn(final C pId) {
-        return new TethysSwingTableListColumn<>(this, pId);
+    public <T extends Comparable<T>> TethysSwingTableListColumn<T, C, R> declareListColumn(final C pId,
+                                                                                           final Class<T> pClazz) {
+        return new TethysSwingTableListColumn<>(this, pId, pClazz);
     }
 
     @Override
@@ -1316,9 +1325,11 @@ public class TethysSwingTableManager<C, R>
          *
          * @param pTable the table
          * @param pId    the id
+         * @param pClazz the data class
          */
         TethysSwingTableListColumn(final TethysSwingTableManager<C, R> pTable,
-                                   final C pId) {
+                                   final C pId,
+                                   final Class<T> pClazz) {
             super(pTable, pId, TethysFieldType.LIST);
             declareCell(getTable().getCellFactory().listCell(this));
             theSelectables = r -> Collections.emptyIterator();

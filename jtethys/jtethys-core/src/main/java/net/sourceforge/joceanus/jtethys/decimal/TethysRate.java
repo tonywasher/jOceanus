@@ -102,6 +102,18 @@ public class TethysRate
     }
 
     /**
+     * Construct a new Rate by setting the value explicitly.
+     * @param pValue the unscaled value of a whole percentage (e.g. 25 = 0.25%)
+     * @return the new Rate
+     */
+    public static TethysRate getTenthPermille(final long pValue) {
+        final TethysRate myRate = new TethysRate();
+        myRate.setValue(adjustDecimals(pValue, NUM_DECIMALS
+                - TethysDecimalParser.ADJUST_PERMILLE - 1), NUM_DECIMALS);
+        return myRate;
+    }
+
+    /**
      * Obtain remaining rate of this rate (i.e. 100% - this rate).
      * @return the remaining rate
      */

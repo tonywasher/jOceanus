@@ -57,7 +57,7 @@ import net.sourceforge.joceanus.jtethys.decimal.TethysMoney;
  * Deposit class.
  */
 public class Deposit
-        extends AssetBase<Deposit>
+        extends AssetBase<Deposit, DepositCategory>
         implements InfoSetItem<MoneyWiseDataType> {
     /**
      * Object name.
@@ -73,21 +73,6 @@ public class Deposit
      * Local Report fields.
      */
     private static final MetisFields FIELD_DEFS = new MetisFields(OBJECT_NAME, AssetBase.FIELD_DEFS);
-
-    /**
-     * AccountCategory Field Id.
-     */
-    public static final MetisLetheField FIELD_CATEGORY = FIELD_DEFS.declareComparisonValueField(MoneyWiseDataType.DEPOSITCATEGORY.getItemName(), MetisDataType.LINK);
-
-    /**
-     * Parent Field Id.
-     */
-    public static final MetisLetheField FIELD_PARENT = FIELD_DEFS.declareEqualityValueField(MoneyWiseDataResource.ASSET_PARENT.getValue(), MetisDataType.LINK);
-
-    /**
-     * Currency Field Id.
-     */
-    public static final MetisLetheField FIELD_CURRENCY = FIELD_DEFS.declareEqualityValueField(MoneyWiseDataType.CURRENCY.getItemName(), MetisDataType.LINK);
 
     /**
      * DepositInfoSet field Id.
@@ -156,40 +141,6 @@ public class Deposit
                     final DataValues<MoneyWiseDataType> pValues) throws OceanusException {
         /* Initialise the item */
         super(pList, pValues);
-
-        /* Protect against exceptions */
-        try {
-            /* Store the Category */
-            Object myValue = pValues.getValue(FIELD_CATEGORY);
-            if (myValue instanceof Integer) {
-                setValueCategory((Integer) myValue);
-            } else if (myValue instanceof String) {
-                setValueCategory((String) myValue);
-            }
-
-            /* Store the Parent */
-            myValue = pValues.getValue(FIELD_PARENT);
-            if (myValue instanceof Integer) {
-                setValueParent((Integer) myValue);
-            } else if (myValue instanceof String) {
-                setValueParent((String) myValue);
-            }
-
-            /* Store the Currency */
-            myValue = pValues.getValue(FIELD_CURRENCY);
-            if (myValue instanceof Integer) {
-                setValueCurrency((Integer) myValue);
-            } else if (myValue instanceof String) {
-                setValueCurrency((String) myValue);
-            } else if (myValue instanceof AssetCurrency) {
-                setValueCurrency((AssetCurrency) myValue);
-            }
-
-            /* Catch Exceptions */
-        } catch (NumberFormatException e) {
-            /* Pass on exception */
-            throw new MoneyWiseDataException(this, ERROR_CREATEITEM, e);
-        }
 
         /* Create the InfoSet */
         theInfoSet = new DepositInfoSet(this, pList.getActInfoTypes(), pList.getDepositInfo());
@@ -318,36 +269,6 @@ public class Deposit
     }
 
     @Override
-    public Payee getParent() {
-        return getParent(getValueSet());
-    }
-
-    /**
-     * Obtain ParentId.
-     * @return the parentId
-     */
-    public Integer getParentId() {
-        final Payee myParent = getParent();
-        return myParent == null
-                                ? null
-                                : myParent.getId();
-    }
-
-    /**
-     * Obtain ParentName.
-     * @return the parentName
-     */
-    public String getParentName() {
-        final Payee myParent = getParent();
-        return myParent == null
-                                ? null
-                                : myParent.getName();
-    }
-
-    /**
-     * Obtain DepositCategory.
-     * @return the category
-     */
     public DepositCategory getCategory() {
         return getCategory(getValueSet());
     }
@@ -386,11 +307,6 @@ public class Deposit
     }
 
     @Override
-    public AssetCurrency getAssetCurrency() {
-        return getCurrency(getValueSet());
-    }
-
-    @Override
     public Boolean isGross() {
         final DepositCategory myCategory = getCategory();
         return myCategory == null
@@ -413,102 +329,12 @@ public class Deposit
     }
 
     /**
-     * Obtain Parent.
-     * @param pValueSet the valueSet
-     * @return the Parent
-     */
-    public static Payee getParent(final MetisValueSet pValueSet) {
-        return pValueSet.getValue(FIELD_PARENT, Payee.class);
-    }
-
-    /**
      * Obtain Deposit Category.
      * @param pValueSet the valueSet
      * @return the Deposit Category
      */
     public static DepositCategory getCategory(final MetisValueSet pValueSet) {
         return pValueSet.getValue(FIELD_CATEGORY, DepositCategory.class);
-    }
-
-    /**
-     * Obtain DepositCurrency.
-     * @param pValueSet the valueSet
-     * @return the PortfolioCurrency
-     */
-    public static AssetCurrency getCurrency(final MetisValueSet pValueSet) {
-        return pValueSet.getValue(FIELD_CURRENCY, AssetCurrency.class);
-    }
-
-    /**
-     * Set parent value.
-     * @param pValue the value
-     */
-    private void setValueParent(final Payee pValue) {
-        getValueSet().setValue(FIELD_PARENT, pValue);
-    }
-
-    /**
-     * Set parent id.
-     * @param pValue the value
-     */
-    private void setValueParent(final Integer pValue) {
-        getValueSet().setValue(FIELD_PARENT, pValue);
-    }
-
-    /**
-     * Set parent name.
-     * @param pValue the value
-     */
-    private void setValueParent(final String pValue) {
-        getValueSet().setValue(FIELD_PARENT, pValue);
-    }
-
-    /**
-     * Set deposit category value.
-     * @param pValue the value
-     */
-    private void setValueCategory(final DepositCategory pValue) {
-        getValueSet().setValue(FIELD_CATEGORY, pValue);
-    }
-
-    /**
-     * Set deposit category id.
-     * @param pValue the value
-     */
-    private void setValueCategory(final Integer pValue) {
-        getValueSet().setValue(FIELD_CATEGORY, pValue);
-    }
-
-    /**
-     * Set deposit category name.
-     * @param pValue the value
-     */
-    private void setValueCategory(final String pValue) {
-        getValueSet().setValue(FIELD_CATEGORY, pValue);
-    }
-
-    /**
-     * Set deposit currency value.
-     * @param pValue the value
-     */
-    private void setValueCurrency(final AssetCurrency pValue) {
-        getValueSet().setValue(FIELD_CURRENCY, pValue);
-    }
-
-    /**
-     * Set deposit currency id.
-     * @param pValue the value
-     */
-    private void setValueCurrency(final Integer pValue) {
-        getValueSet().setValue(FIELD_CURRENCY, pValue);
-    }
-
-    /**
-     * Set deposit currency name.
-     * @param pValue the value
-     */
-    private void setValueCurrency(final String pValue) {
-        getValueSet().setValue(FIELD_CURRENCY, pValue);
     }
 
     @Override
@@ -649,7 +475,7 @@ public class Deposit
     public void setDefaults(final UpdateSet<MoneyWiseDataType> pUpdateSet) throws OceanusException {
         /* Set values */
         setName(getList().getUniqueName(NAME_NEWACCOUNT));
-        setDepositCategory(getDefaultCategory());
+        setCategory(getDefaultCategory());
         setAssetCurrency(getDataSet().getDefaultCurrency());
         setClosed(Boolean.FALSE);
         autoCorrect(pUpdateSet);
@@ -667,7 +493,7 @@ public class Deposit
 
         /* Ensure that we have a valid parent */
         if ((myParent == null)
-            || !myParent.getPayeeTypeClass().canParentDeposit(myClass)) {
+            || !myParent.getCategoryClass().canParentDeposit(myClass)) {
             setParent(getDefaultParent(pUpdateSet));
         }
 
@@ -728,7 +554,7 @@ public class Deposit
             }
 
             /* If the payee can parent */
-            if (myPayee.getPayeeTypeClass().canParentDeposit(myClass)) {
+            if (myPayee.getCategoryClass().canParentDeposit(myClass)) {
                 return myPayee;
             }
         }
@@ -781,30 +607,6 @@ public class Deposit
         /* Resolve parent within list */
         final PayeeList myPayees = pUpdateSet.getDataList(MoneyWiseDataType.PAYEE, PayeeList.class);
         resolveDataLink(FIELD_PARENT, myPayees);
-    }
-
-    /**
-     * Set a new account category.
-     * @param pCategory the new category
-     */
-    public void setDepositCategory(final DepositCategory pCategory) {
-        setValueCategory(pCategory);
-    }
-
-    /**
-     * Set a new deposit currency.
-     * @param pCurrency the new currency
-     */
-    public void setAssetCurrency(final AssetCurrency pCurrency) {
-        setValueCurrency(pCurrency);
-    }
-
-    /**
-     * Set a new parent.
-     * @param pParent the parent
-     */
-    public void setParent(final Payee pParent) {
-        setValueParent(pParent);
     }
 
     /**
@@ -976,7 +778,7 @@ public class Deposit
             addError(ERROR_MISSING, FIELD_PARENT);
         } else {
             /* Parent must be suitable */
-            if (!myParent.getPayeeTypeClass().canParentDeposit(myClass)) {
+            if (!myParent.getCategoryClass().canParentDeposit(myClass)) {
                 addError(ERROR_BADPARENT, FIELD_PARENT);
             }
 
@@ -1017,21 +819,6 @@ public class Deposit
         /* Apply basic changes */
         applyBasicChanges(myDeposit);
 
-        /* Update the category if required */
-        if (!MetisDataDifference.isEqual(getCategory(), myDeposit.getCategory())) {
-            setValueCategory(myDeposit.getCategory());
-        }
-
-        /* Update the parent if required */
-        if (!MetisDataDifference.isEqual(getParent(), myDeposit.getParent())) {
-            setValueParent(myDeposit.getParent());
-        }
-
-        /* Update the deposit currency if required */
-        if (!MetisDataDifference.isEqual(getAssetCurrency(), myDeposit.getAssetCurrency())) {
-            setValueCurrency(myDeposit.getAssetCurrency());
-        }
-
         /* Check for changes */
         return checkForHistory();
     }
@@ -1047,7 +834,7 @@ public class Deposit
      * The Deposit List class.
      */
     public static class DepositList
-            extends AssetBaseList<Deposit> {
+            extends AssetBaseList<Deposit, DepositCategory> {
         /**
          * Report fields.
          */
@@ -1350,7 +1137,7 @@ public class Deposit
          * @return the matching item
          */
         public Deposit findItemByName(final String pName) {
-            final AssetBase<?> myAsset = theUnderlyingMap.findAssetByName(pName);
+            final AssetBase<?, ?> myAsset = theUnderlyingMap.findAssetByName(pName);
             return myAsset instanceof Deposit
                                               ? (Deposit) myAsset
                                               : null;

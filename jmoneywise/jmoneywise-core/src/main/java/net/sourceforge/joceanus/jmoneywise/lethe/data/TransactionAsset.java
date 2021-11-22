@@ -56,7 +56,7 @@ public interface TransactionAsset
      * Obtain the parent.
      * @return the parent
      */
-    AssetBase<?> getParent();
+    AssetBase<?, ?> getParent();
 
     /**
      * Is the Asset taxFree?

@@ -242,8 +242,8 @@ public final class AssetPair
      * @param pClass the Asset type class
      * @return the list
      */
-    private static AssetBaseList<?> getListForClass(final MoneyWiseData pData,
-                                                    final AssetType pClass) {
+    private static AssetBaseList<?, ?> getListForClass(final MoneyWiseData pData,
+                                                       final AssetType pClass) {
         /* Switch on the class */
         switch (pClass) {
             case DEPOSIT:
@@ -272,7 +272,7 @@ public final class AssetPair
      * @throws OceanusException on error
      */
     private static void resolveDataLink(final TransactionBase<?> pOwner,
-                                        final AssetBaseList<?> pList,
+                                        final AssetBaseList<?, ?> pList,
                                         final MetisLetheField pField) throws OceanusException {
         /* Access the values */
         final MetisValueSet myValues = pOwner.getValueSet();
@@ -281,13 +281,13 @@ public final class AssetPair
         Object myValue = myValues.getValue(pField);
 
         /* Convert AssetBase reference to Id */
-        if (myValue instanceof AssetBase<?>) {
-            myValue = ((AssetBase<?>) myValue).getId();
+        if (myValue instanceof AssetBase) {
+            myValue = ((AssetBase<?,?>) myValue).getId();
         }
 
         /* Lookup Id reference */
         if (myValue instanceof Integer) {
-            final AssetBase<?> myItem = pList.findItemById((Integer) myValue);
+            final AssetBase<?, ?> myItem = pList.findItemById((Integer) myValue);
             if (myItem == null) {
                 pOwner.addError(Transaction.ERROR_UNKNOWN, pField);
                 throw new MoneyWiseDataException(pOwner, Transaction.ERROR_RESOLUTION);
@@ -296,7 +296,7 @@ public final class AssetPair
 
             /* Lookup Name reference */
         } else if (myValue instanceof String) {
-            final AssetBase<?> myItem = pList.findItemByName((String) myValue);
+            final AssetBase<?, ?> myItem = pList.findItemByName((String) myValue);
             if (myItem == null) {
                 pOwner.addError(Transaction.ERROR_UNKNOWN, pField);
                 throw new MoneyWiseDataException(pOwner, Transaction.ERROR_RESOLUTION);

@@ -358,7 +358,7 @@ public final class MoneyWiseUKTaxBandsFactory {
             new MoneyWiseTaxBand(getAmount(5000), getRate(0)));
 
     /**
-     * The 2022 TaxBands.
+     * The 2023 TaxBands.
      */
     protected static final MoneyWiseUKTaxBands BANDS_2022 = new MoneyWiseUKTaxBands(new MoneyWiseTaxBandSet(
             new MoneyWiseTaxBand(getAmount(37700), getRate(20)),

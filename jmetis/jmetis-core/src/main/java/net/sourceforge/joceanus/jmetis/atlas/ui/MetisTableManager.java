@@ -380,9 +380,11 @@ public abstract class MetisTableManager<R extends MetisFieldTableItem>
      *
      * @param <T> the column type
      * @param pId the column id
+     * @param pClazz the column class
      * @return the column
      */
-    public abstract <T extends Comparable<T>> MetisTableListColumn<T, R> declareListColumn(MetisDataFieldId pId);
+    public abstract <T extends Comparable<T>> MetisTableListColumn<T, R> declareListColumn(MetisDataFieldId pId,
+                                                                                           Class<T> pClazz);
 
     /**
      * Declare icon column.

@@ -27,6 +27,7 @@ import net.sourceforge.joceanus.jmetis.lethe.field.MetisLetheFieldSetBase.MetisL
 import net.sourceforge.joceanus.jmetis.lethe.field.swing.MetisSwingFieldManager;
 import net.sourceforge.joceanus.jmetis.lethe.field.swing.MetisSwingFieldSet;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
+import net.sourceforge.joceanus.jmoneywise.atlas.ui.base.MoneyWiseItemPanel;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.Cash;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.Cash.CashList;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.CashCategory;
@@ -263,7 +264,7 @@ public class CashPanel
             myCash.setDescription(pUpdate.getString());
         } else if (myField.equals(Cash.FIELD_CATEGORY)) {
             /* Update the Category */
-            myCash.setCashCategory(pUpdate.getValue(CashCategory.class));
+            myCash.setCategory(pUpdate.getValue(CashCategory.class));
             myCash.autoCorrect(getUpdateSet());
         } else if (myField.equals(Cash.FIELD_CURRENCY)) {
             /* Update the Currency */

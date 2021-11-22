@@ -28,6 +28,8 @@ import net.sourceforge.joceanus.jmetis.lethe.field.MetisLetheFieldSetBase.MetisL
 import net.sourceforge.joceanus.jmetis.lethe.field.swing.MetisSwingFieldManager;
 import net.sourceforge.joceanus.jmetis.lethe.field.swing.MetisSwingFieldSet;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
+import net.sourceforge.joceanus.jmoneywise.atlas.ui.base.MoneyWiseItemPanel;
+import net.sourceforge.joceanus.jmoneywise.atlas.ui.dialog.MoneyWiseSecurityPriceTable;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.Payee;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.Payee.PayeeList;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.Region;
@@ -69,7 +71,7 @@ public class SecurityPanel
     /**
      * SecurityPrice Table.
      */
-    private final SecurityPriceTable thePrices;
+    private final MoneyWiseSecurityPriceTable thePrices;
 
     /**
      * Table tab item.
@@ -107,7 +109,7 @@ public class SecurityPanel
         buildNotesPanel(pFactory);
 
         /* Create the SecurityPrices table */
-        thePrices = new SecurityPriceTable(pView, pFieldMgr, getUpdateSet(), pError);
+        thePrices = new MoneyWiseSecurityPriceTable(pView, getUpdateSet(), pError);
         thePricesTab = new MoneyWiseDataTabTable(TAB_PRICES, thePrices);
 
         /* Define the panel */
@@ -142,7 +144,7 @@ public class SecurityPanel
         /* Assign the fields to the panel */
         myPanel.addField(Security.FIELD_NAME, MetisDataType.STRING, myName);
         myPanel.addField(Security.FIELD_DESC, MetisDataType.STRING, myDesc);
-        myPanel.addField(Security.FIELD_SECTYPE, SecurityType.class, myTypeButton);
+        myPanel.addField(Security.FIELD_CATEGORY, SecurityType.class, myTypeButton);
         myPanel.addField(Security.FIELD_PARENT, Payee.class, myParentButton);
         myPanel.addField(Security.FIELD_CURRENCY, AssetCurrency.class, myCurrencyButton);
         myPanel.addField(Security.FIELD_CLOSED, Boolean.class, myClosedButton);
@@ -288,14 +290,14 @@ public class SecurityPanel
         myFieldSet.setAssumedCurrency(myField, myCurrency);
 
         /* Security type and currency cannot be changed if the item is active */
-        myFieldSet.setEditable(Security.FIELD_SECTYPE, isEditable && !bIsActive);
+        myFieldSet.setEditable(Security.FIELD_CATEGORY, isEditable && !bIsActive);
         myFieldSet.setEditable(Security.FIELD_CURRENCY, isEditable && !bIsActive);
 
         /* Set editable value for parent */
         myFieldSet.setEditable(Security.FIELD_PARENT, isEditable && !bIsClosed);
 
         /* Set the table visibility */
-        boolean bShowPrices = mySecurity.isSecurityClass(SecurityTypeClass.STOCKOPTION);
+        boolean bShowPrices = !mySecurity.isSecurityClass(SecurityTypeClass.STOCKOPTION);
         bShowPrices &= isEditable || !thePrices.isViewEmpty();
         thePricesTab.setRequireVisible(bShowPrices);
     }
@@ -329,9 +331,9 @@ public class SecurityPanel
         } else if (myField.equals(Security.FIELD_DESC)) {
             /* Update the Description */
             mySecurity.setDescription(pUpdate.getString());
-        } else if (myField.equals(Security.FIELD_SECTYPE)) {
+        } else if (myField.equals(Security.FIELD_CATEGORY)) {
             /* Update the Security Type */
-            mySecurity.setSecurityType(pUpdate.getValue(SecurityType.class));
+            mySecurity.setCategory(pUpdate.getValue(SecurityType.class));
             mySecurity.autoCorrect(getUpdateSet());
         } else if (myField.equals(Security.FIELD_PARENT)) {
             /* Update the Parent */
@@ -371,7 +373,7 @@ public class SecurityPanel
         final Security myItem = getItem();
         final Payee myParent = myItem.getParent();
         if (!pUpdates) {
-            final SecurityType myType = myItem.getSecurityType();
+            final SecurityType myType = myItem.getCategory();
             final AssetCurrency myCurrency = myItem.getAssetCurrency();
             final Region myRegion = myItem.getRegion();
             declareGoToItem(myType);
@@ -438,7 +440,7 @@ public class SecurityPanel
         pMenu.removeAllItems();
 
         /* Record active item */
-        final SecurityType myCurr = pSecurity.getSecurityType();
+        final SecurityType myCurr = pSecurity.getCategory();
         TethysScrollMenuItem<SecurityType> myActive = null;
 
         /* Access SecurityTypes */
@@ -482,7 +484,7 @@ public class SecurityPanel
         pMenu.removeAllItems();
 
         /* Record active item */
-        final SecurityTypeClass myType = pSecurity.getSecurityTypeClass();
+        final SecurityTypeClass myType = pSecurity.getCategoryClass();
         final Payee myCurr = pSecurity.getParent();
         TethysScrollMenuItem<Payee> myActive = null;
 
@@ -495,7 +497,7 @@ public class SecurityPanel
             final Payee myPayee = myIterator.next();
 
             /* Ignore deleted or non-owner */
-            boolean bIgnore = myPayee.isDeleted() || !myPayee.getPayeeTypeClass().canParentSecurity(myType);
+            boolean bIgnore = myPayee.isDeleted() || !myPayee.getCategoryClass().canParentSecurity(myType);
             bIgnore |= myPayee.isClosed();
             if (bIgnore) {
                 continue;
@@ -585,7 +587,7 @@ public class SecurityPanel
 
             /* Ignore deleted and non share */
             boolean bIgnore = mySecurity.isDeleted();
-            bIgnore |= !mySecurity.getSecurityTypeClass().isShares();
+            bIgnore |= !mySecurity.getCategoryClass().isShares();
             if (bIgnore) {
                 continue;
             }

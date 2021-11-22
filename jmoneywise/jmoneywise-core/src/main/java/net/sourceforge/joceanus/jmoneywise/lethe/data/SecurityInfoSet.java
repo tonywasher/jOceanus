@@ -193,7 +193,7 @@ public class SecurityInfoSet
     public MetisFieldRequired isClassRequired(final AccountInfoClass pClass) {
         /* Access details about the Security */
         final Security mySec = getOwner();
-        final SecurityTypeClass myType = mySec.getSecurityTypeClass();
+        final SecurityTypeClass myType = mySec.getCategoryClass();
 
         /* If we have no Type, no class is allowed */
         if (myType == null) {
@@ -302,7 +302,7 @@ public class SecurityInfoSet
             case UNDERLYINGSTOCK:
                 /* Access data */
                 final Security myStock = myInfo.getValue(Security.class);
-                if (!myStock.getSecurityTypeClass().isShares()) {
+                if (!myStock.getCategoryClass().isShares()) {
                     mySecurity.addError("Invalid underlying stock", getFieldForClass(pClass));
                 }
                 break;

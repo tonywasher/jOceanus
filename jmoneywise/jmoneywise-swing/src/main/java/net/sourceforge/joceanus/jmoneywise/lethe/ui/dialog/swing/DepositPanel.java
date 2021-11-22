@@ -27,6 +27,8 @@ import net.sourceforge.joceanus.jmetis.lethe.field.MetisLetheFieldSetBase.MetisL
 import net.sourceforge.joceanus.jmetis.lethe.field.swing.MetisSwingFieldManager;
 import net.sourceforge.joceanus.jmetis.lethe.field.swing.MetisSwingFieldSet;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
+import net.sourceforge.joceanus.jmoneywise.atlas.ui.dialog.MoneyWiseDepositRateTable;
+import net.sourceforge.joceanus.jmoneywise.atlas.ui.base.MoneyWiseItemPanel;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.Deposit;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.Deposit.DepositList;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.DepositCategory;
@@ -40,6 +42,7 @@ import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.AssetCurrency.Asse
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.DepositCategoryClass;
 import net.sourceforge.joceanus.jmoneywise.lethe.ui.MoneyWiseIcon;
 import net.sourceforge.joceanus.jmoneywise.lethe.ui.MoneyWiseUIResource;
+import net.sourceforge.joceanus.jmoneywise.lethe.views.MoneyWiseView;
 import net.sourceforge.joceanus.jprometheus.lethe.views.UpdateSet;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.ui.TethysIconButtonManager.TethysIconMapSet;
@@ -67,7 +70,7 @@ public class DepositPanel
     /**
      * DepositRate Table.
      */
-    private final DepositRateTable theRates;
+    private final MoneyWiseDepositRateTable theRates;
 
     /**
      * Table tab item.
@@ -82,11 +85,13 @@ public class DepositPanel
     /**
      * Constructor.
      * @param pFactory the GUI factory
+     * @param pView the data view
      * @param pFieldMgr the field manager
      * @param pUpdateSet the update set
      * @param pError the error panel
      */
     public DepositPanel(final TethysSwingGuiFactory pFactory,
+                        final MoneyWiseView pView,
                         final MetisSwingFieldManager pFieldMgr,
                         final UpdateSet<MoneyWiseDataType> pUpdateSet,
                         final MetisErrorPanel pError) {
@@ -103,7 +108,7 @@ public class DepositPanel
         buildNotesPanel(pFactory);
 
         /* Create the DepositRates table */
-        theRates = new DepositRateTable(pFactory, pFieldMgr, getUpdateSet(), pError);
+        theRates = new MoneyWiseDepositRateTable(pView, getUpdateSet(), pError);
         theRatesTab = new MoneyWiseDataTabTable(TAB_RATES, theRates);
 
         /* Define the panel */
@@ -296,7 +301,7 @@ public class DepositPanel
             myDeposit.setDescription(pUpdate.getString());
         } else if (myField.equals(Deposit.FIELD_CATEGORY)) {
             /* Update the Category */
-            myDeposit.setDepositCategory(pUpdate.getValue(DepositCategory.class));
+            myDeposit.setCategory(pUpdate.getValue(DepositCategory.class));
             myDeposit.autoCorrect(getUpdateSet());
         } else if (myField.equals(Deposit.FIELD_PARENT)) {
             /* Update the Parent */
@@ -465,7 +470,7 @@ public class DepositPanel
             final Payee myPayee = myIterator.next();
 
             /* Ignore deleted or non-owner */
-            boolean bIgnore = myPayee.isDeleted() || !myPayee.getPayeeTypeClass().canParentDeposit(myType);
+            boolean bIgnore = myPayee.isDeleted() || !myPayee.getCategoryClass().canParentDeposit(myType);
             bIgnore |= myPayee.isClosed();
             if (bIgnore) {
                 continue;

@@ -256,7 +256,7 @@ public class SheetCash
             /* Build values */
             final DataValues<MoneyWiseDataType> myValues = new DataValues<>(Payee.OBJECT_NAME);
             myValues.addValue(Payee.FIELD_NAME, myAutoPayee);
-            myValues.addValue(Payee.FIELD_PAYEETYPE, PayeeTypeClass.PAYEE.toString());
+            myValues.addValue(Payee.FIELD_CATEGORY, PayeeTypeClass.PAYEE.toString());
             myValues.addValue(Payee.FIELD_CLOSED, isClosed);
 
             /* Add the value into the list */

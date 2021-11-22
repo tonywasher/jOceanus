@@ -81,9 +81,9 @@ public abstract class OceanusException
      * @param s the description of the exception
      * @param c the underlying exception
      */
-    public OceanusException(final Object o,
-                            final String s,
-                            final Throwable c) {
+    protected OceanusException(final Object o,
+                               final String s,
+                               final Throwable c) {
         super(s, c);
         theObject = o;
     }

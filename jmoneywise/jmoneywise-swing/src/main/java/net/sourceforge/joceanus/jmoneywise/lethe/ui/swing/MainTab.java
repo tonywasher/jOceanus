@@ -22,6 +22,10 @@ import net.sourceforge.joceanus.jmetis.help.MetisHelpModule;
 import net.sourceforge.joceanus.jmetis.profile.MetisProfile;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseIOException;
+import net.sourceforge.joceanus.jmoneywise.atlas.ui.panel.MoneyWiseReportTab;
+import net.sourceforge.joceanus.jmoneywise.atlas.ui.panel.MoneyWiseMaintenance;
+import net.sourceforge.joceanus.jmoneywise.atlas.ui.panel.MoneyWiseSpotPricesTable.MoneyWiseSpotPricesPanel;
+import net.sourceforge.joceanus.jmoneywise.atlas.ui.panel.MoneyWiseSpotRatesTable.MoneyWiseSpotRatesPanel;
 import net.sourceforge.joceanus.jmoneywise.help.MoneyWiseHelp;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.lethe.tax.uk.MoneyWiseUKTaxYearCache;
@@ -97,17 +101,17 @@ public class MainTab
     /**
      * The SpotPricesPanel.
      */
-    private SpotPricesTable theSpotPrices;
+    private MoneyWiseSpotPricesPanel theSpotPrices;
 
     /**
      * The SpotRatesPanel.
      */
-    private SpotRatesTable theSpotRates;
+    private MoneyWiseSpotRatesPanel theSpotRates;
 
     /**
      * The maintenance panel.
      */
-    private MaintenanceTab theMaint;
+    private MoneyWiseMaintenance theMaint;
 
     /**
      * The about box.
@@ -153,7 +157,7 @@ public class MainTab
 
         /* Create the Report Tab */
         myTask.startTask("Report");
-        final ReportTab myReports = new ReportTab(theView);
+        final MoneyWiseReportTab myReports = new MoneyWiseReportTab(theView);
         theTabs.addTabItem(TITLE_REPORT, myReports);
 
         /* Create the Register Tab */
@@ -163,17 +167,17 @@ public class MainTab
 
         /* Create the SpotPrices Tab */
         myTask.startTask("SpotPrices");
-        theSpotPrices = new SpotPricesTable(theView);
+        theSpotPrices = new MoneyWiseSpotPricesPanel(theView);
         theTabs.addTabItem(TITLE_SPOTPRICES, theSpotPrices);
 
         /* Create the SpotRates Tab */
         myTask.startTask("SpotRates");
-        theSpotRates = new SpotRatesTable(theView);
+        theSpotRates = new MoneyWiseSpotRatesPanel(theView);
         theTabs.addTabItem(TITLE_SPOTRATES, theSpotRates);
 
         /* Create the Maintenance Tab */
         myTask.startTask("Maintenance");
-        theMaint = new MaintenanceTab(this);
+        theMaint = new MoneyWiseMaintenance(theView);
         theTabs.addTabItem(TITLE_MAINT, theMaint);
 
         /* Create the log tab */
@@ -374,25 +378,25 @@ public class MainTab
     private void determineFocus() {
         /* Access the selected component */
         final TethysTabItem myItem = theTabs.getSelectedTab();
-        final JComponent myComponent = TethysSwingNode.getComponent(myItem);
+        final Integer myId = myItem.getId();
 
         /* If the selected component is Register */
-        if (myComponent.equals(TethysSwingNode.getComponent(theRegister))) {
+        if (myId.equals(theRegister.getId())) {
             /* Determine focus of Register */
             theRegister.determineFocus();
 
             /* If the selected component is SpotPrices */
-        } else if (myComponent.equals(TethysSwingNode.getComponent(theSpotPrices))) {
+        } else if (myId.equals(theSpotPrices.getId())) {
             /* Determine focus of SpotPrices */
             theSpotPrices.determineFocus();
 
             /* If the selected component is SpotRates */
-        } else if (myComponent.equals(TethysSwingNode.getComponent(theSpotRates))) {
+        } else if (myId.equals(theSpotRates.getId())) {
             /* Determine focus of SpotRates */
             theSpotRates.determineFocus();
 
             /* If the selected component is Maintenance */
-        } else if (myComponent.equals(TethysSwingNode.getComponent(theMaint))) {
+        } else if (myId.equals(theMaint.getId())) {
             /* Determine focus of maintenance */
             theMaint.determineFocus();
         }
@@ -410,7 +414,7 @@ public class MainTab
     private void handleGoToEvent(final TethysEvent<PrometheusDataEvent> pEvent) {
         /* Access details */
         @SuppressWarnings("unchecked")
-        final PrometheusGoToEvent<MoneyWiseGoToId> myEvent = (PrometheusGoToEvent<MoneyWiseGoToId>) pEvent.getDetails(PrometheusGoToEvent.class);
+        final PrometheusGoToEvent<MoneyWiseGoToId> myEvent = pEvent.getDetails(PrometheusGoToEvent.class);
 
         /* Access event and obtain details */
         switch (myEvent.getId()) {

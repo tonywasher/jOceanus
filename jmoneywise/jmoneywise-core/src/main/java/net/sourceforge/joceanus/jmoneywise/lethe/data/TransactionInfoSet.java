@@ -367,7 +367,7 @@ public class TransactionInfoSet
 
         /* Account cannot be autoUnits */
         final SecurityHolding myHolding = (SecurityHolding) pAccount;
-        if (myHolding.getSecurity().getSecurityTypeClass().isAutoUnits()) {
+        if (myHolding.getSecurity().getCategoryClass().isAutoUnits()) {
             return MetisFieldRequired.NOTALLOWED;
         }
 
@@ -410,7 +410,7 @@ public class TransactionInfoSet
 
         /* Partner cannot be autoUnits */
         final SecurityHolding myHolding = (SecurityHolding) pPartner;
-        if (myHolding.getSecurity().getSecurityTypeClass().isAutoUnits()) {
+        if (myHolding.getSecurity().getCategoryClass().isAutoUnits()) {
             return MetisFieldRequired.NOTALLOWED;
         }
 

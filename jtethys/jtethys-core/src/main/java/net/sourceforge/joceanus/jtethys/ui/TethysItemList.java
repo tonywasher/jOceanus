@@ -218,7 +218,7 @@ public class TethysItemList<T extends Comparable<T>> {
         }
 
         /* Make sure that the object is the same class */
-        if (!TethysItemList.class.isInstance(pThat)) {
+        if (!(pThat instanceof TethysItemList)) {
             return false;
         }
 
@@ -314,7 +314,7 @@ public class TethysItemList<T extends Comparable<T>> {
             }
 
             /* Make sure that the object is the same class */
-            if (!TethysItem.class.isInstance(pThat)) {
+            if (!(pThat instanceof TethysItem)) {
                 return false;
             }
 

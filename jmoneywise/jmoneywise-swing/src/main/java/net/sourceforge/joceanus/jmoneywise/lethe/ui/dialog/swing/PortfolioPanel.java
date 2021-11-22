@@ -26,6 +26,7 @@ import net.sourceforge.joceanus.jmetis.lethe.field.MetisLetheFieldSetBase.MetisL
 import net.sourceforge.joceanus.jmetis.lethe.field.swing.MetisSwingFieldManager;
 import net.sourceforge.joceanus.jmetis.lethe.field.swing.MetisSwingFieldSet;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
+import net.sourceforge.joceanus.jmoneywise.atlas.ui.base.MoneyWiseItemPanel;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.Payee;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.Payee.PayeeList;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.Portfolio;
@@ -108,7 +109,7 @@ public class PortfolioPanel
         /* Assign the fields to the panel */
         myPanel.addField(Portfolio.FIELD_NAME, MetisDataType.STRING, myName);
         myPanel.addField(Portfolio.FIELD_DESC, MetisDataType.STRING, myDesc);
-        myPanel.addField(Portfolio.FIELD_PORTTYPE, PortfolioType.class, myTypeButton);
+        myPanel.addField(Portfolio.FIELD_CATEGORY, PortfolioType.class, myTypeButton);
         myPanel.addField(Portfolio.FIELD_PARENT, Payee.class, myParentButton);
         myPanel.addField(Portfolio.FIELD_CURRENCY, AssetCurrency.class, myCurrencyButton);
         myPanel.addField(Portfolio.FIELD_CLOSED, Boolean.class, myClosedButton);
@@ -233,7 +234,7 @@ public class PortfolioPanel
         myFieldSet.setVisibility(PortfolioInfoSet.getFieldForClass(AccountInfoClass.NOTES), bShowNotes);
 
         /* Type, Parent and Currency status cannot be changed if the item is active */
-        myFieldSet.setEditable(Portfolio.FIELD_PORTTYPE, bIsChangeable);
+        myFieldSet.setEditable(Portfolio.FIELD_CATEGORY, bIsChangeable);
         myFieldSet.setEditable(Portfolio.FIELD_PARENT, bIsChangeable);
         myFieldSet.setEditable(Portfolio.FIELD_CURRENCY, bIsChangeable);
 
@@ -254,9 +255,9 @@ public class PortfolioPanel
         } else if (myField.equals(Portfolio.FIELD_DESC)) {
             /* Update the Description */
             myPortfolio.setDescription(pUpdate.getString());
-        } else if (myField.equals(Portfolio.FIELD_PORTTYPE)) {
+        } else if (myField.equals(Portfolio.FIELD_CATEGORY)) {
             /* Update the portfolioType */
-            myPortfolio.setPortfolioType(pUpdate.getValue(PortfolioType.class));
+            myPortfolio.setCategory(pUpdate.getValue(PortfolioType.class));
         } else if (myField.equals(Portfolio.FIELD_PARENT)) {
             /* Update the Parent */
             myPortfolio.setParent(pUpdate.getValue(Payee.class));
@@ -304,7 +305,7 @@ public class PortfolioPanel
         final Portfolio myItem = getItem();
         final Payee myParent = myItem.getParent();
         if (!pUpdates) {
-            final PortfolioType myType = myItem.getPortfolioType();
+            final PortfolioType myType = myItem.getCategory();
             declareGoToItem(myType);
             final AssetCurrency myCurrency = myItem.getAssetCurrency();
             declareGoToItem(myCurrency);
@@ -323,7 +324,7 @@ public class PortfolioPanel
         pMenu.removeAllItems();
 
         /* Record active item */
-        final PortfolioType myCurr = pPortfolio.getPortfolioType();
+        final PortfolioType myCurr = pPortfolio.getCategory();
         TethysScrollMenuItem<PortfolioType> myActive = null;
 
         /* Access PortfolioTypes */
@@ -374,7 +375,7 @@ public class PortfolioPanel
 
             /* Ignore deleted/closed and ones that cannot own this portfolio */
             boolean bIgnore = myPayee.isDeleted() || myPayee.isClosed();
-            bIgnore |= !myPayee.getPayeeTypeClass().canParentPortfolio();
+            bIgnore |= !myPayee.getCategoryClass().canParentPortfolio();
             if (bIgnore) {
                 continue;
             }

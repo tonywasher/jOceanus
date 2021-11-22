@@ -274,7 +274,7 @@ public final class SecurityHolding
      */
     private SecurityTypeClass getSecurityTypeClass() {
         /* Check for match */
-        return theSecurity.getSecurityTypeClass();
+        return theSecurity.getCategoryClass();
     }
 
     /**
@@ -666,7 +666,7 @@ public final class SecurityHolding
 
                 /* Ignore closed/deleted and wrong class */
                 boolean bIgnore = mySecurity.isClosed() || mySecurity.isDeleted();
-                bIgnore |= pClass != null && !pClass.equals(mySecurity.getSecurityTypeClass());
+                bIgnore |= pClass != null && !pClass.equals(mySecurity.getCategoryClass());
                 if (bIgnore) {
                     continue;
                 }
@@ -860,7 +860,7 @@ public final class SecurityHolding
 
                 /* Ignore closed/deleted and wrong class/currency */
                 boolean bIgnore = mySecurity.isClosed() || mySecurity.isDeleted();
-                bIgnore |= pClass != null && pClass.equals(mySecurity.getSecurityTypeClass());
+                bIgnore |= pClass != null && pClass.equals(mySecurity.getCategoryClass());
                 if (bIgnore) {
                     continue;
                 }

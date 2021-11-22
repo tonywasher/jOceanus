@@ -197,7 +197,7 @@ public class MoneyWiseSecurityBuilder {
         final Security mySecurity = theDataSet.getSecurities().addNewItem();
         mySecurity.setName(theName);
         mySecurity.setParent(theParent);
-        mySecurity.setSecurityType(theType);
+        mySecurity.setCategory(theType);
         mySecurity.setAssetCurrency(theCurrency);
         mySecurity.setSymbol(theSymbol);
         mySecurity.setRegion(theRegion);

@@ -27,6 +27,7 @@ import net.sourceforge.joceanus.jmetis.lethe.field.MetisLetheFieldSetBase.MetisL
 import net.sourceforge.joceanus.jmetis.lethe.field.swing.MetisSwingFieldManager;
 import net.sourceforge.joceanus.jmetis.lethe.field.swing.MetisSwingFieldSet;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
+import net.sourceforge.joceanus.jmoneywise.atlas.ui.base.MoneyWiseItemPanel;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.Loan;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.Loan.LoanList;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.LoanCategory;
@@ -255,7 +256,7 @@ public class LoanPanel
             myLoan.setDescription(pUpdate.getString());
         } else if (myField.equals(Loan.FIELD_CATEGORY)) {
             /* Update the Category */
-            myLoan.setLoanCategory(pUpdate.getValue(LoanCategory.class));
+            myLoan.setCategory(pUpdate.getValue(LoanCategory.class));
             myLoan.autoCorrect(getUpdateSet());
         } else if (myField.equals(Loan.FIELD_PARENT)) {
             /* Update the Parent */
@@ -385,7 +386,7 @@ public class LoanPanel
             final Payee myPayee = myIterator.next();
 
             /* Ignore deleted or non-owner */
-            boolean bIgnore = myPayee.isDeleted() || !myPayee.getPayeeTypeClass().canParentLoan(myType);
+            boolean bIgnore = myPayee.isDeleted() || !myPayee.getCategoryClass().canParentLoan(myType);
             bIgnore |= myPayee.isClosed();
             if (bIgnore) {
                 continue;

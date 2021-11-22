@@ -142,6 +142,13 @@ public class TethysFXTableManager<C, R>
     }
 
     @Override
+    public void setPreferredWidthAndHeight(final Integer pWidth,
+                                           final Integer pHeight) {
+        theNode.setPreferredWidth(pWidth);
+        theNode.setPreferredHeight(pHeight);
+    }
+
+    @Override
     public void setEnabled(final boolean pEnabled) {
         theTable.setDisable(!pEnabled);
     }
@@ -369,8 +376,9 @@ public class TethysFXTableManager<C, R>
     }
 
     @Override
-    public <T extends Comparable<T>> TethysFXTableListColumn<T, C, R> declareListColumn(final C pId) {
-        return new TethysFXTableListColumn<>(this, pId);
+    public <T extends Comparable<T>> TethysFXTableListColumn<T, C, R> declareListColumn(final C pId,
+                                                                                        final Class<T> pClazz) {
+        return new TethysFXTableListColumn<>(this, pId, pClazz);
     }
 
     @Override
@@ -1072,9 +1080,11 @@ public class TethysFXTableManager<C, R>
          *
          * @param pTable the table
          * @param pId    the id
+         * @param pClazz the data class
          */
         TethysFXTableListColumn(final TethysFXTableManager<C, R> pTable,
-                                final C pId) {
+                                final C pId,
+                                final Class<T> pClazz) {
             super(pTable, pId, TethysFieldType.LIST);
             declareCellFactory(super.getCellFactory().listCellFactory(this));
             theSelectables = r -> Collections.emptyIterator();

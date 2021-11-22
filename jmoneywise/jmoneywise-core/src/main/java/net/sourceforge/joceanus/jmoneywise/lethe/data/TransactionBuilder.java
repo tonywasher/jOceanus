@@ -571,8 +571,8 @@ public class TransactionBuilder {
      * @param pCategory the category
      * @return the default partner or null
      */
-    private static <X extends AssetBase<X>> TransactionAsset getDefaultAssetForCategory(final AssetBaseList<X> pList,
-                                                                                        final TransactionCategory pCategory) {
+    private static <X extends AssetBase<X, ?>> TransactionAsset getDefaultAssetForCategory(final AssetBaseList<X, ?> pList,
+                                                                                           final TransactionCategory pCategory) {
         /* Loop through the available values */
         final Iterator<X> myIterator = pList.iterator();
         while (myIterator.hasNext()) {
@@ -601,9 +601,9 @@ public class TransactionBuilder {
      * @param pCategory the category
      * @return the default partner or null
      */
-    private static <X extends AssetBase<X>> TransactionAsset getDefaultPartnerAsset(final AssetBaseList<X> pList,
-                                                                                    final TransactionAsset pAccount,
-                                                                                    final TransactionCategory pCategory) {
+    private static <X extends AssetBase<X, ?>> TransactionAsset getDefaultPartnerAsset(final AssetBaseList<X, ?> pList,
+                                                                                       final TransactionAsset pAccount,
+                                                                                       final TransactionCategory pCategory) {
         /* Loop through the available values */
         final Iterator<X> myIterator = pList.iterator();
         while (myIterator.hasNext()) {

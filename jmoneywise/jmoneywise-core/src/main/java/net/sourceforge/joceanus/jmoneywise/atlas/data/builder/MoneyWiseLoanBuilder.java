@@ -151,7 +151,7 @@ public class MoneyWiseLoanBuilder {
         final Loan myLoan = theDataSet.getLoans().addNewItem();
         myLoan.setName(theName);
         myLoan.setParent(theParent);
-        myLoan.setLoanCategory(theCategory);
+        myLoan.setCategory(theCategory);
         myLoan.setAssetCurrency(theCurrency);
         myLoan.setOpeningBalance(theOpeningBalance);
         myLoan.validate();
