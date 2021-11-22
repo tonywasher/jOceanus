@@ -183,7 +183,7 @@ public class TethysFXTableExample
         myScrollColumn.setMenuConfigurator((r, c) -> theHelper.buildContextMenu(c));
 
         /* Create the list column */
-        final TethysFXTableListColumn<TethysListId, TethysDataId, TethysFXTableItem> myListColumn = theTable.declareListColumn(TethysDataId.LIST);
+        final TethysFXTableListColumn<TethysListId, TethysDataId, TethysFXTableItem> myListColumn = theTable.declareListColumn(TethysDataId.LIST, TethysListId.class);
         myListColumn.setCellValueFactory(p -> p.getValue().listProperty());
         myListColumn.setOnCommit((r, v) -> r.listProperty().setValue(v));
         myListColumn.setSelectables(r -> theHelper.buildSelectableList());

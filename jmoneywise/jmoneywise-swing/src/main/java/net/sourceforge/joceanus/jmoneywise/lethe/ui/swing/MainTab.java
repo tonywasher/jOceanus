@@ -378,25 +378,25 @@ public class MainTab
     private void determineFocus() {
         /* Access the selected component */
         final TethysTabItem myItem = theTabs.getSelectedTab();
-        final JComponent myComponent = TethysSwingNode.getComponent(myItem);
+        final Integer myId = myItem.getId();
 
         /* If the selected component is Register */
-        if (myComponent.equals(TethysSwingNode.getComponent(theRegister))) {
+        if (myId.equals(theRegister.getId())) {
             /* Determine focus of Register */
             theRegister.determineFocus();
 
             /* If the selected component is SpotPrices */
-        } else if (myComponent.equals(TethysSwingNode.getComponent(theSpotPrices))) {
+        } else if (myId.equals(theSpotPrices.getId())) {
             /* Determine focus of SpotPrices */
             theSpotPrices.determineFocus();
 
             /* If the selected component is SpotRates */
-        } else if (myComponent.equals(TethysSwingNode.getComponent(theSpotRates))) {
+        } else if (myId.equals(theSpotRates.getId())) {
             /* Determine focus of SpotRates */
             theSpotRates.determineFocus();
 
             /* If the selected component is Maintenance */
-        } else if (myComponent.equals(TethysSwingNode.getComponent(theMaint))) {
+        } else if (myId.equals(theMaint.getId())) {
             /* Determine focus of maintenance */
             theMaint.determineFocus();
         }
@@ -414,7 +414,7 @@ public class MainTab
     private void handleGoToEvent(final TethysEvent<PrometheusDataEvent> pEvent) {
         /* Access details */
         @SuppressWarnings("unchecked")
-        final PrometheusGoToEvent<MoneyWiseGoToId> myEvent = (PrometheusGoToEvent<MoneyWiseGoToId>) pEvent.getDetails(PrometheusGoToEvent.class);
+        final PrometheusGoToEvent<MoneyWiseGoToId> myEvent = pEvent.getDetails(PrometheusGoToEvent.class);
 
         /* Access event and obtain details */
         switch (myEvent.getId()) {

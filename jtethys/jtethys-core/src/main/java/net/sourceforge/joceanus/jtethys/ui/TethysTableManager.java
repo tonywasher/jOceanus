@@ -601,9 +601,11 @@ public abstract class TethysTableManager<C, R>
      * Declare list column.
      * @param <T> the data type
      * @param pId the column id
+     * @param pClazz the data class
      * @return the column
      */
-    public abstract <T extends Comparable<T>> TethysTableListColumn<T, C, R> declareListColumn(C pId);
+    public abstract <T extends Comparable<T>> TethysTableListColumn<T, C, R> declareListColumn(C pId,
+                                                                                               Class<T> pClazz);
 
     /**
      * Declare icon column.

@@ -201,7 +201,7 @@ public class TethysSwingTableExample {
         myScrollColumn.setMenuConfigurator((r, c) -> theHelper.buildContextMenu(c));
 
         /* Create the list column */
-        final TethysSwingTableListColumn<TethysListId, TethysDataId, TethysSwingTableItem> myListColumn = theTable.declareListColumn(TethysDataId.LIST);
+        final TethysSwingTableListColumn<TethysListId, TethysDataId, TethysSwingTableItem> myListColumn = theTable.declareListColumn(TethysDataId.LIST, TethysListId.class);
         myListColumn.setCellValueFactory(TethysSwingTableItem::getList);
         myListColumn.setOnCommit(TethysSwingTableItem::setList);
         myListColumn.setSelectables(r -> theHelper.buildSelectableList());

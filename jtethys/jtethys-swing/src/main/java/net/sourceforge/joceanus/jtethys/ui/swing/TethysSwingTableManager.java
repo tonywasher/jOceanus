@@ -390,8 +390,9 @@ public class TethysSwingTableManager<C, R>
     }
 
     @Override
-    public <T extends Comparable<T>> TethysSwingTableListColumn<T, C, R> declareListColumn(final C pId) {
-        return new TethysSwingTableListColumn<>(this, pId);
+    public <T extends Comparable<T>> TethysSwingTableListColumn<T, C, R> declareListColumn(final C pId,
+                                                                                           final Class<T> pClazz) {
+        return new TethysSwingTableListColumn<>(this, pId, pClazz);
     }
 
     @Override
@@ -1324,9 +1325,11 @@ public class TethysSwingTableManager<C, R>
          *
          * @param pTable the table
          * @param pId    the id
+         * @param pClazz the data class
          */
         TethysSwingTableListColumn(final TethysSwingTableManager<C, R> pTable,
-                                   final C pId) {
+                                   final C pId,
+                                   final Class<T> pClazz) {
             super(pTable, pId, TethysFieldType.LIST);
             declareCell(getTable().getCellFactory().listCell(this));
             theSelectables = r -> Collections.emptyIterator();

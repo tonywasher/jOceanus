@@ -242,7 +242,7 @@ public class MetisTestDataTable
         myScrollColumn.setMenuConfigurator((r, c) -> theHelper.buildContextMenu(c));
 
         /* Create the list column */
-        final MetisTableListColumn<TethysListId, MetisTestTableItem> myListColumn = theTable.declareListColumn(MetisTestDataField.LIST);
+        final MetisTableListColumn<TethysListId, MetisTestTableItem> myListColumn = theTable.declareListColumn(MetisTestDataField.LIST, TethysListId.class);
         myListColumn.setSelectables(r -> theHelper.buildSelectableList());
 
         /* Create the password column */

@@ -312,8 +312,9 @@ public class MetisSwingTableManager<R extends MetisFieldTableItem>
     }
 
     @Override
-    public <T extends Comparable<T>> MetisSwingTableListColumn<T, R> declareListColumn(final MetisDataFieldId pId) {
-        final TethysSwingTableListColumn<T, MetisDataFieldId, R> myColumn = getTable().declareListColumn(pId);
+    public <T extends Comparable<T>> MetisSwingTableListColumn<T, R> declareListColumn(final MetisDataFieldId pId,
+                                                                                       final Class<T> pClazz) {
+        final TethysSwingTableListColumn<T, MetisDataFieldId, R> myColumn = getTable().declareListColumn(pId, pClazz);
         return new MetisSwingTableListColumn<>(this, myColumn);
     }
 
