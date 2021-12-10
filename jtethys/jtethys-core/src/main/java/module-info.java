@@ -31,4 +31,12 @@ module net.sourceforge.joceanus.jtethys.core {
     exports net.sourceforge.joceanus.jtethys.logger;
     exports net.sourceforge.joceanus.jtethys.resource;
     exports net.sourceforge.joceanus.jtethys.ui;
+
+    /* New exports */
+    exports net.sourceforge.joceanus.jtethys.ui.api.base;
+    exports net.sourceforge.joceanus.jtethys.ui.api.pane;
+
+    /* New exports */
+    exports net.sourceforge.joceanus.jtethys.ui.core.base;
+    exports net.sourceforge.joceanus.jtethys.ui.core.pane;
 }
