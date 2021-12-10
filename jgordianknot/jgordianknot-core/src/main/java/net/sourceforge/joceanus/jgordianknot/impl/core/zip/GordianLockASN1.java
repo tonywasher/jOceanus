@@ -184,21 +184,21 @@ public class GordianLockASN1
             switch (myTagged.getTagNo()) {
                 case TAG_KEY:
                     theLockType = GordianLockType.KEY_PASSWORD;
-                    theKey = ASN1OctetString.getInstance(myTagged.getObject()).getOctets();
+                    theKey = ASN1OctetString.getInstance(myTagged, false).getOctets();
                     theKeyPairHello = null;
                     theKeyPairSetHello = null;
                     break;
                 case TAG_KEYPAIR:
                     theLockType = GordianLockType.KEYPAIR_PASSWORD;
                     theKey = null;
-                    theKeyPairHello = GordianAgreementClientHelloASN1.getInstance(myTagged.getObject());
+                    theKeyPairHello = GordianAgreementClientHelloASN1.getInstance(ASN1Sequence.getInstance(myTagged, false));
                     theKeyPairSetHello = null;
                     break;
                 case TAG_KEYPAIRSET:
                     theLockType = GordianLockType.KEYPAIRSET_PASSWORD;
                     theKey = null;
                     theKeyPairHello = null;
-                    theKeyPairSetHello = GordianKeyPairSetAgreeASN1.getInstance(myTagged.getObject());
+                    theKeyPairSetHello = GordianKeyPairSetAgreeASN1.getInstance(ASN1Sequence.getInstance(myTagged, false));
                     break;
                 case TAG_PASSWORD:
                 default:

@@ -26,6 +26,7 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
+import org.bouncycastle.asn1.ASN1BitString;
 import org.bouncycastle.asn1.DERBitString;
 import org.bouncycastle.asn1.x500.X500Name;
 import org.w3c.dom.Document;
@@ -809,7 +810,7 @@ public final class GordianKeyStoreDocument {
 
                 /* Parse the issuer and build the key */
                 final byte[] myIdBytes = TethysDataConverter.base64ToByteArray(myNode.getTextContent());
-                final DERBitString myId = DERBitString.getInstance(myIdBytes);
+                final DERBitString myId = DERBitString.convert(ASN1BitString.getInstance(myIdBytes));
                 return new GordianCoreCertificateId(myName, myId);
             }
 

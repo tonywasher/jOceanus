@@ -21,12 +21,12 @@ import java.math.BigInteger;
 import java.security.spec.PKCS8EncodedKeySpec;
 import java.security.spec.X509EncodedKeySpec;
 
+import org.bouncycastle.asn1.ASN1BitString;
 import org.bouncycastle.asn1.ASN1Encodable;
 import org.bouncycastle.asn1.ASN1Integer;
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
 import org.bouncycastle.asn1.ASN1OctetString;
 import org.bouncycastle.asn1.ASN1Primitive;
-import org.bouncycastle.asn1.DERBitString;
 import org.bouncycastle.asn1.cryptopro.ECGOST3410NamedCurves;
 import org.bouncycastle.asn1.pkcs.PrivateKeyInfo;
 import org.bouncycastle.asn1.rosstandart.RosstandartObjectIdentifiers;
@@ -235,7 +235,7 @@ public final class BouncyGOSTKeyPair {
          */
         private ECPublicKeyParameters deriveFromPubKeyInfo(final SubjectPublicKeyInfo pKeyInfo) throws OceanusException {
             final ASN1ObjectIdentifier algOid = pKeyInfo.getAlgorithm().getAlgorithm();
-            final DERBitString bits = pKeyInfo.getPublicKeyData();
+            final ASN1BitString bits = pKeyInfo.getPublicKeyData();
             final ASN1OctetString key;
 
             try {

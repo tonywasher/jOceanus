@@ -164,12 +164,12 @@ public class GordianAgreementServerHelloASN1
                 final ASN1TaggedObject myTagged = ASN1TaggedObject.getInstance(en.nextElement());
                 switch (myTagged.getTagNo()) {
                     case TAG_CONFIRMATION:
-                        theConfirmation = ASN1OctetString.getInstance(myTagged.getObject()).getOctets();
+                        theConfirmation = ASN1OctetString.getInstance(myTagged, false).getOctets();
                         theSignId = null;
                         theSignature = null;
                         break;
                     case TAG_SIGNATURE:
-                        final ASN1Sequence mySignature = ASN1Sequence.getInstance(myTagged.getObject());
+                        final ASN1Sequence mySignature = ASN1Sequence.getInstance(myTagged, false);
                         final Enumeration<?> es = mySignature.getObjects();
                         theSignId = AlgorithmIdentifier.getInstance(es.nextElement());
                         theSignature = ASN1OctetString.getInstance(es.nextElement()).getOctets();

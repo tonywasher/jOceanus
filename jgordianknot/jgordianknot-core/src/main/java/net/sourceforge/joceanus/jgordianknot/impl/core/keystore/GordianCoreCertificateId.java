@@ -55,7 +55,7 @@ public final class GordianCoreCertificateId
      * @return get the issuer id
      */
     public static GordianCoreCertificateId getSubjectId(final GordianCoreCertificate<?, ?> pCertificate) {
-        return new GordianCoreCertificateId(pCertificate.getSubjectName(), pCertificate.getSubjectId());
+        return new GordianCoreCertificateId(pCertificate.getSubjectName(), DERBitString.convert(pCertificate.getSubjectId()));
     }
 
     /**
@@ -64,7 +64,7 @@ public final class GordianCoreCertificateId
      * @return get the issuer id
      */
     public static GordianCoreCertificateId getIssuerId(final GordianCoreCertificate<?, ?> pCertificate) {
-        return new GordianCoreCertificateId(pCertificate.getIssuerName(), pCertificate.getIssuerId());
+        return new GordianCoreCertificateId(pCertificate.getIssuerName(), DERBitString.convert(pCertificate.getIssuerId()));
     }
 
     @Override
