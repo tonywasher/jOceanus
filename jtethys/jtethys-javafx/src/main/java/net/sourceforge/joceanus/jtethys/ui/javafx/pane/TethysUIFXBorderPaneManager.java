@@ -45,7 +45,7 @@ public class TethysUIFXBorderPaneManager
      *
      * @param pFactory the factory
      */
-    TethysUIFXBorderPaneManager(final TethysUICoreFactory pFactory) {
+    TethysUIFXBorderPaneManager(final TethysUICoreFactory<?> pFactory) {
         super(pFactory);
         theBorderPane = new BorderPane();
         theNode = new TethysUIFXNode(theBorderPane);

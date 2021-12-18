@@ -52,7 +52,7 @@ public class TethysUIFXTabPaneManager
      *
      * @param pFactory the factory
      */
-    TethysUIFXTabPaneManager(final TethysUICoreFactory pFactory) {
+    TethysUIFXTabPaneManager(final TethysUICoreFactory<?> pFactory) {
         /* Initialise underlying class */
         super(pFactory);
 

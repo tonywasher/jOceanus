@@ -42,7 +42,7 @@ public class TethysUISwingFlowPaneManager
      * Constructor.
      * @param pFactory the factory
      */
-    TethysUISwingFlowPaneManager(final TethysUICoreFactory pFactory) {
+    TethysUISwingFlowPaneManager(final TethysUICoreFactory<?> pFactory) {
         super(pFactory);
         thePanel = new JPanel();
         theNode = new TethysUISwingNode(thePanel);

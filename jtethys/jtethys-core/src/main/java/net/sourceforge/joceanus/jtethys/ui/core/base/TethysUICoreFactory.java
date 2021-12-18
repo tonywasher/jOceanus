@@ -20,14 +20,20 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import net.sourceforge.joceanus.jtethys.event.TethysEventManager;
+import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
+import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventProvider;
 import net.sourceforge.joceanus.jtethys.ui.api.TethysUIFactory;
 import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIComponent;
+import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIValueSet;
+import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIXEvent;
 
 /**
  * Core factory.
+ * @param <C> the color
  */
-public abstract class TethysUICoreFactory
-        implements TethysUIFactory {
+public abstract class TethysUICoreFactory<C>
+        implements TethysUIFactory<C>, TethysEventProvider<TethysUIXEvent> {
     /**
      * Parent Component definition.
      */
@@ -53,11 +59,28 @@ public abstract class TethysUICoreFactory
     private final Map<Integer, TethysUIParentComponent> theParentMap;
 
     /**
+     * ValueSet.
+     */
+    private final TethysUIValueSet theValueSet;
+
+    /**
+     * The event manager.
+     */
+    private final TethysEventManager<TethysUIXEvent> theEventManager;
+
+    /**
      * Constructor.
      */
     protected TethysUICoreFactory() {
         theNextNodeId = new AtomicInteger(1);
         theParentMap = new HashMap<>();
+        theValueSet = new TethysUICoreValueSet();
+        theEventManager = new TethysEventManager<>();
+    }
+
+    @Override
+    public TethysEventRegistrar<TethysUIXEvent> getEventRegistrar() {
+        return theEventManager.getEventRegistrar();
     }
 
     /**
@@ -98,5 +121,18 @@ public abstract class TethysUICoreFactory
      */
     public void deRegisterChild(final TethysUIComponent pChild) {
         theParentMap.remove(pChild.getId());
+    }
+
+    @Override
+    public TethysUIValueSet getValueSet() {
+        return theValueSet;
+    }
+
+    /**
+     * fire event.
+     * @param pEvent the event
+     */
+    protected void fireEvent(final TethysUIXEvent pEvent) {
+        theEventManager.fireEvent(pEvent);
     }
 }

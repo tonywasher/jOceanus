@@ -46,7 +46,7 @@ public class TethysUIFXFlowPaneManager
      *
      * @param pFactory the factory
      */
-    TethysUIFXFlowPaneManager(final TethysUICoreFactory pFactory) {
+    TethysUIFXFlowPaneManager(final TethysUICoreFactory<?> pFactory) {
         super(pFactory);
         theFlowPane = new FlowPane();
         theNode = new TethysUIFXNode(theFlowPane);

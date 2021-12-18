@@ -31,7 +31,7 @@ public class TethysUIFXScrollPaneManager
     /**
      * The node.
      */
-    private TethysUIFXNode theNode;
+    private final TethysUIFXNode theNode;
 
     /**
      * ScrollPane.
@@ -47,7 +47,7 @@ public class TethysUIFXScrollPaneManager
      * Constructor.
      * @param pFactory the factory
      */
-    TethysUIFXScrollPaneManager(final TethysUICoreFactory pFactory) {
+    TethysUIFXScrollPaneManager(final TethysUICoreFactory<?> pFactory) {
         super(pFactory);
         theScrollPane = new ScrollPane();
         theNode = new TethysUIFXNode(theScrollPane);

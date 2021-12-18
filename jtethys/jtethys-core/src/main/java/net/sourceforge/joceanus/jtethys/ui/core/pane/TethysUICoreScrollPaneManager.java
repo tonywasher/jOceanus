@@ -35,7 +35,7 @@ public abstract class TethysUICoreScrollPaneManager
      * Constructor.
      * @param pFactory the factory
      */
-    protected TethysUICoreScrollPaneManager(final TethysUICoreFactory pFactory) {
+    protected TethysUICoreScrollPaneManager(final TethysUICoreFactory<?> pFactory) {
         theId = pFactory.getNextId();
     }
 

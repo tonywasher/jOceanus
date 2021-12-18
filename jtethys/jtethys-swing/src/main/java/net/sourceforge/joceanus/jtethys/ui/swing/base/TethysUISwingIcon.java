@@ -44,7 +44,7 @@ public class TethysUISwingIcon
      * Obtain the icon that this represents.
      * @return the icon
      */
-    Icon getIcon() {
+    public Icon getIcon() {
         return theIcon;
     }
 

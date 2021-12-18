@@ -58,7 +58,7 @@ public abstract class TethysUICoreTabPaneManager
      * Constructor.
      * @param pFactory the factory
      */
-    protected TethysUICoreTabPaneManager(final TethysUICoreFactory pFactory) {
+    protected TethysUICoreTabPaneManager(final TethysUICoreFactory<?> pFactory) {
         theId = pFactory.getNextId();
         theEventManager = new TethysEventManager<>();
         isEnabled = true;

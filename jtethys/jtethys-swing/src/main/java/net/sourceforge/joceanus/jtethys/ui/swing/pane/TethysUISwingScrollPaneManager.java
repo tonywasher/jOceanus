@@ -47,7 +47,7 @@ public class TethysUISwingScrollPaneManager
      * Constructor.
      * @param pFactory the factory
      */
-    protected TethysUISwingScrollPaneManager(final TethysUICoreFactory pFactory) {
+    protected TethysUISwingScrollPaneManager(final TethysUICoreFactory<?> pFactory) {
         super(pFactory);
         theScrollPane = new JScrollPane();
         theNode = new TethysUISwingNode(theScrollPane);

@@ -55,7 +55,7 @@ public abstract class TethysUICoreCardPaneManager<P extends TethysUIComponent>
      * Constructor.
      * @param pFactory the factory
      */
-    protected TethysUICoreCardPaneManager(final TethysUICoreFactory pFactory) {
+    protected TethysUICoreCardPaneManager(final TethysUICoreFactory<?> pFactory) {
         theId = pFactory.getNextId();
         theMap = new HashMap<>();
     }

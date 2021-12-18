@@ -60,7 +60,7 @@ public class TethysUISwingBoxPaneManager
      * @param pFactory    the factory
      * @param pHorizontal horizontal box true/false
      */
-    protected TethysUISwingBoxPaneManager(final TethysUICoreFactory pFactory,
+    protected TethysUISwingBoxPaneManager(final TethysUICoreFactory<?> pFactory,
                                           final boolean pHorizontal) {
         super(pFactory);
         isHorizontal = pHorizontal;

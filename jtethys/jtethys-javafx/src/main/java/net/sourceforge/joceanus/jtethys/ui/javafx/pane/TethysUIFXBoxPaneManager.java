@@ -53,7 +53,7 @@ public class TethysUIFXBoxPaneManager
      * @param pFactory    the factory
      * @param pHorizontal horizontal box true/false
      */
-    TethysUIFXBoxPaneManager(final TethysUICoreFactory pFactory,
+    TethysUIFXBoxPaneManager(final TethysUICoreFactory<?> pFactory,
                              final boolean pHorizontal) {
         super(pFactory);
         if (pHorizontal) {

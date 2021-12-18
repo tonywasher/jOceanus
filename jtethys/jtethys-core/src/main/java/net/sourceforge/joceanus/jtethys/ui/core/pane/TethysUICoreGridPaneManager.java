@@ -69,7 +69,7 @@ public abstract class TethysUICoreGridPaneManager
      * Constructor.
      * @param pFactory the factory
      */
-    protected TethysUICoreGridPaneManager(final TethysUICoreFactory pFactory) {
+    protected TethysUICoreGridPaneManager(final TethysUICoreFactory<?> pFactory) {
         /* Initialise values */
         theId = pFactory.getNextId();
         theNodeList = new ArrayList<>();

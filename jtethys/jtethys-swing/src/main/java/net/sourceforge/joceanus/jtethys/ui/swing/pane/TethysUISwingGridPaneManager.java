@@ -60,7 +60,7 @@ public class TethysUISwingGridPaneManager
      * Constructor.
      * @param pFactory the factory
      */
-    TethysUISwingGridPaneManager(final TethysUICoreFactory pFactory) {
+    TethysUISwingGridPaneManager(final TethysUICoreFactory<?> pFactory) {
         /* Initialise the panel */
         super(pFactory);
         thePanel = new JPanel();

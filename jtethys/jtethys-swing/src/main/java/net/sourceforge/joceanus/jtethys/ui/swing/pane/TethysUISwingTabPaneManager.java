@@ -42,7 +42,7 @@ public class TethysUISwingTabPaneManager
      * Constructor.
      * @param pFactory the factory
      */
-    protected TethysUISwingTabPaneManager(final TethysUICoreFactory pFactory) {
+    protected TethysUISwingTabPaneManager(final TethysUICoreFactory<?> pFactory) {
         /* Initialise underlying class */
         super(pFactory);
 

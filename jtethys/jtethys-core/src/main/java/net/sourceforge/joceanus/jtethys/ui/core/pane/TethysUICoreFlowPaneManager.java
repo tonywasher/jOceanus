@@ -35,7 +35,7 @@ public abstract class TethysUICoreFlowPaneManager
     /**
      * The Factory.
      */
-    private final TethysUICoreFactory theFactory;
+    private final TethysUICoreFactory<?> theFactory;
 
     /**
      * The id.
@@ -51,7 +51,7 @@ public abstract class TethysUICoreFlowPaneManager
      * Constructor.
      * @param pFactory the factory
      */
-    protected TethysUICoreFlowPaneManager(final TethysUICoreFactory pFactory) {
+    protected TethysUICoreFlowPaneManager(final TethysUICoreFactory<?> pFactory) {
         theFactory = pFactory;
         theId = theFactory.getNextId();
         theNodeList = new ArrayList<>();

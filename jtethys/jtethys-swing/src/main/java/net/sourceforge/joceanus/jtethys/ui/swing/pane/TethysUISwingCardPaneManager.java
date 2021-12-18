@@ -50,7 +50,7 @@ public class TethysUISwingCardPaneManager<P extends TethysUIComponent>
      * Constructor.
      * @param pFactory the factory
      */
-    TethysUISwingCardPaneManager(final TethysUICoreFactory pFactory) {
+    TethysUISwingCardPaneManager(final TethysUICoreFactory<?> pFactory) {
         super(pFactory);
 
         /* Create the panel */

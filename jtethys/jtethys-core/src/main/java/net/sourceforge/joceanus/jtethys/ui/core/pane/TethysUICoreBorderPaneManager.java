@@ -40,7 +40,7 @@ public abstract class TethysUICoreBorderPaneManager
     /**
      * The Factory.
      */
-    private final TethysUICoreFactory theFactory;
+    private final TethysUICoreFactory<?> theFactory;
 
     /**
      * The id.
@@ -71,7 +71,7 @@ public abstract class TethysUICoreBorderPaneManager
      * Constructor.
      * @param pFactory the Factory
      */
-    protected TethysUICoreBorderPaneManager(final TethysUICoreFactory pFactory) {
+    protected TethysUICoreBorderPaneManager(final TethysUICoreFactory<?> pFactory) {
         theFactory = pFactory;
         theId = theFactory.getNextId();
         theIdMap = new HashMap<>();

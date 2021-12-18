@@ -26,15 +26,15 @@ import net.sourceforge.joceanus.jtethys.ui.core.base.TethysUICoreFactory;
 public class TethysUIFXPaneFactory
         implements TethysUIPaneFactory {
     /**
-     * The Child Manager.
+     * The Factory.
      */
-    private final TethysUICoreFactory theFactory;
+    private final TethysUICoreFactory<?> theFactory;
 
     /**
      * Constructor.
      * @param pFactory the factory.
      */
-    TethysUIFXPaneFactory(final TethysUICoreFactory pFactory) {
+    public TethysUIFXPaneFactory(final TethysUICoreFactory<?> pFactory) {
         /* Store parameters */
         theFactory = pFactory;
     }

@@ -16,15 +16,47 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jtethys.ui.api;
 
+import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIIcon;
+import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIIconId;
+import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIValueSet;
+import net.sourceforge.joceanus.jtethys.ui.api.control.TethysUIControlFactory;
+import net.sourceforge.joceanus.jtethys.ui.api.dialog.TethysUIDialogFactory;
 import net.sourceforge.joceanus.jtethys.ui.api.pane.TethysUIPaneFactory;
 
 /**
  * UI Factory.
+ * @param <C> the color
  */
-public interface TethysUIFactory {
+public interface TethysUIFactory<C> {
+    /**
+     * Obtain the valueSet.
+     * @return the valueSet
+     */
+    TethysUIValueSet getValueSet();
+
+    /**
+     * Resolve Icon.
+     * @param pIconId the mapped IconId
+     * @param pWidth the icon width
+     * @return the icon
+     */
+    TethysUIIcon resolveIcon(TethysUIIconId pIconId, int pWidth);
+
     /**
      * Obtain the pane factory.
      * @return the factory
      */
     TethysUIPaneFactory paneFactory();
+
+    /**
+     * Obtain the dialog factory.
+     * @return the factory
+     */
+    TethysUIControlFactory controlFactory();
+
+    /**
+     * Obtain the dialog factory.
+     * @return the factory
+     */
+    TethysUIDialogFactory<C> dialogFactory();
 }

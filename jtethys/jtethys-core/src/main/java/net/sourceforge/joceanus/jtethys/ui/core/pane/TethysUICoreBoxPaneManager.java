@@ -45,7 +45,7 @@ public abstract class TethysUICoreBoxPaneManager
     /**
      * The ChildManager.
      */
-    private final TethysUICoreFactory theFactory;
+    private final TethysUICoreFactory<?> theFactory;
 
     /**
      * Node List.
@@ -61,7 +61,7 @@ public abstract class TethysUICoreBoxPaneManager
      * Constructor.
      * @param pFactory the Factory
      */
-    protected TethysUICoreBoxPaneManager(final TethysUICoreFactory pFactory) {
+    protected TethysUICoreBoxPaneManager(final TethysUICoreFactory<?> pFactory) {
         theFactory = pFactory;
         theId = theFactory.getNextId();
         theNodeList = new ArrayList<>();

@@ -49,7 +49,7 @@ public class TethysUISwingBorderPaneManager
      * Constructor.
      * @param pFactory the factory
      */
-    TethysUISwingBorderPaneManager(final TethysUICoreFactory pFactory) {
+    TethysUISwingBorderPaneManager(final TethysUICoreFactory<?> pFactory) {
         /* Initialise underlying class */
         super(pFactory);
 

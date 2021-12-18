@@ -45,7 +45,7 @@ public class TethysUIFXCardPaneManager<P extends TethysUIComponent>
      *
      * @param pFactory the factory
      */
-    TethysUIFXCardPaneManager(final TethysUICoreFactory pFactory) {
+    TethysUIFXCardPaneManager(final TethysUICoreFactory<?> pFactory) {
         super(pFactory);
         theCardPane = new BorderPane();
         theNode = new TethysUIFXNode(theCardPane);

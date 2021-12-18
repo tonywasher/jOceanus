@@ -48,7 +48,7 @@ public class TethysUIFXGridPaneManager
      *
      * @param pFactory the factory
      */
-    TethysUIFXGridPaneManager(final TethysUICoreFactory pFactory) {
+    TethysUIFXGridPaneManager(final TethysUICoreFactory<?> pFactory) {
         super(pFactory);
         theGridPane = new GridPane();
         theGridPane.setHgap(getHGap());
