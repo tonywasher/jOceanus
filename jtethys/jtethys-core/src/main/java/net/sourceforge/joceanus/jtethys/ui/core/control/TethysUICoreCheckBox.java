@@ -21,7 +21,7 @@ import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
 import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIXEvent;
 import net.sourceforge.joceanus.jtethys.ui.api.control.TethysUICheckBox;
 import net.sourceforge.joceanus.jtethys.ui.core.base.TethysUICoreComponent;
-import net.sourceforge.joceanus.jtethys.ui.core.base.TethysUICoreFactory;
+import net.sourceforge.joceanus.jtethys.ui.core.factory.TethysUICoreFactory;
 
 /**
  * Check Box.

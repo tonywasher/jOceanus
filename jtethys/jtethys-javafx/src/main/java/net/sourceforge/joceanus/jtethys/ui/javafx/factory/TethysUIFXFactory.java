@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ******************************************************************************/
-package net.sourceforge.joceanus.jtethys.ui.javafx;
+package net.sourceforge.joceanus.jtethys.ui.javafx.factory;
 
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
@@ -24,11 +24,13 @@ import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIIconId;
 import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIXEvent;
 import net.sourceforge.joceanus.jtethys.ui.api.control.TethysUIControlFactory;
 import net.sourceforge.joceanus.jtethys.ui.api.dialog.TethysUIDialogFactory;
+import net.sourceforge.joceanus.jtethys.ui.api.menu.TethysUIMenuFactory;
 import net.sourceforge.joceanus.jtethys.ui.api.pane.TethysUIPaneFactory;
-import net.sourceforge.joceanus.jtethys.ui.core.base.TethysUICoreFactory;
+import net.sourceforge.joceanus.jtethys.ui.core.factory.TethysUICoreFactory;
 import net.sourceforge.joceanus.jtethys.ui.javafx.base.TethysUIFXUtils;
 import net.sourceforge.joceanus.jtethys.ui.javafx.control.TethysUIFXControlFactory;
 import net.sourceforge.joceanus.jtethys.ui.javafx.dialog.TethysUIFXDialogFactory;
+import net.sourceforge.joceanus.jtethys.ui.javafx.menu.TethysUIFXMenuFactory;
 import net.sourceforge.joceanus.jtethys.ui.javafx.pane.TethysUIFXPaneFactory;
 
 /**
@@ -52,12 +54,18 @@ public class TethysUIFXFactory
     private final TethysUIFXDialogFactory theDialogFactory;
 
     /**
+     * The menu factory.
+     */
+    private final TethysUIFXMenuFactory theMenuFactory;
+
+    /**
      * Constructor.
      */
     TethysUIFXFactory() {
         thePaneFactory = new TethysUIFXPaneFactory(this);
         theControlFactory = new TethysUIFXControlFactory(this);
         theDialogFactory = new TethysUIFXDialogFactory();
+        theMenuFactory = new TethysUIFXMenuFactory(this);
     }
 
     @Override
@@ -73,6 +81,11 @@ public class TethysUIFXFactory
     @Override
     public TethysUIDialogFactory<Color> dialogFactory() {
         return theDialogFactory;
+    }
+
+    @Override
+    public TethysUIMenuFactory menuFactory() {
+        return theMenuFactory;
     }
 
     @Override

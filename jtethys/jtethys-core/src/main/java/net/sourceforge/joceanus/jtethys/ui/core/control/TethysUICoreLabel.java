@@ -18,7 +18,7 @@ package net.sourceforge.joceanus.jtethys.ui.core.control;
 
 import net.sourceforge.joceanus.jtethys.ui.api.control.TethysUILabel;
 import net.sourceforge.joceanus.jtethys.ui.core.base.TethysUICoreComponent;
-import net.sourceforge.joceanus.jtethys.ui.core.base.TethysUICoreFactory;
+import net.sourceforge.joceanus.jtethys.ui.core.factory.TethysUICoreFactory;
 
 /**
  * Label.

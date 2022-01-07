@@ -21,7 +21,7 @@ import javafx.scene.control.Label;
 import javafx.scene.paint.Color;
 
 import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIAlignment;
-import net.sourceforge.joceanus.jtethys.ui.core.base.TethysUICoreFactory;
+import net.sourceforge.joceanus.jtethys.ui.core.factory.TethysUICoreFactory;
 import net.sourceforge.joceanus.jtethys.ui.core.control.TethysUICoreLabel;
 import net.sourceforge.joceanus.jtethys.ui.javafx.base.TethysUIFXNode;
 

@@ -18,7 +18,7 @@ package net.sourceforge.joceanus.jtethys.ui.swing.control;
 
 import javax.swing.JTextArea;
 
-import net.sourceforge.joceanus.jtethys.ui.core.base.TethysUICoreFactory;
+import net.sourceforge.joceanus.jtethys.ui.core.factory.TethysUICoreFactory;
 import net.sourceforge.joceanus.jtethys.ui.core.control.TethysUICoreTextArea;
 import net.sourceforge.joceanus.jtethys.ui.swing.base.TethysUISwingNode;
 

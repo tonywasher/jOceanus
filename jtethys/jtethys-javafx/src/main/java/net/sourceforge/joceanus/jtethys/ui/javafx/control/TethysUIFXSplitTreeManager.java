@@ -20,7 +20,7 @@ import javafx.application.Platform;
 import javafx.geometry.Orientation;
 import javafx.scene.control.SplitPane;
 
-import net.sourceforge.joceanus.jtethys.ui.core.base.TethysUICoreFactory;
+import net.sourceforge.joceanus.jtethys.ui.core.factory.TethysUICoreFactory;
 import net.sourceforge.joceanus.jtethys.ui.core.control.TethysUICoreSplitTreeManager;
 import net.sourceforge.joceanus.jtethys.ui.javafx.base.TethysUIFXNode;
 import net.sourceforge.joceanus.jtethys.ui.javafx.pane.TethysUIFXBorderPaneManager;

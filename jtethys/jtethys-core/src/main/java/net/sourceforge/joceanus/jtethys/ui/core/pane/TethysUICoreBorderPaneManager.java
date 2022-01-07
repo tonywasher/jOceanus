@@ -23,8 +23,8 @@ import java.util.Map;
 import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIComponent;
 import net.sourceforge.joceanus.jtethys.ui.api.pane.TethysUIBorderPaneManager;
 import net.sourceforge.joceanus.jtethys.ui.core.base.TethysUICoreComponent;
-import net.sourceforge.joceanus.jtethys.ui.core.base.TethysUICoreFactory;
-import net.sourceforge.joceanus.jtethys.ui.core.base.TethysUICoreFactory.TethysUIParentComponent;
+import net.sourceforge.joceanus.jtethys.ui.core.factory.TethysUICoreFactory;
+import net.sourceforge.joceanus.jtethys.ui.core.factory.TethysUICoreFactory.TethysUIParentComponent;
 
 /**
  * Core Border Pane Manager.

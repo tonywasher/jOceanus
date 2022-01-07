@@ -18,7 +18,7 @@ package net.sourceforge.joceanus.jtethys.ui.javafx.control;
 
 import javafx.scene.control.Slider;
 
-import net.sourceforge.joceanus.jtethys.ui.core.base.TethysUICoreFactory;
+import net.sourceforge.joceanus.jtethys.ui.core.factory.TethysUICoreFactory;
 import net.sourceforge.joceanus.jtethys.ui.core.control.TethysUICoreSlider;
 import net.sourceforge.joceanus.jtethys.ui.javafx.base.TethysUIFXNode;
 import net.sourceforge.joceanus.jtethys.ui.javafx.base.TethysUIFXUtils;

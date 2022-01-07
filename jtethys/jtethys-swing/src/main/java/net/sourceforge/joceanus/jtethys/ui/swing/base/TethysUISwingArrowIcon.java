@@ -171,7 +171,7 @@ public enum TethysUISwingArrowIcon implements Icon {
      * @param pId the id
      * @return the icon
      */
-    static TethysUISwingIcon getIconForId(final TethysUIArrowIconId pId) {
+    public static TethysUISwingIcon getIconForId(final TethysUIArrowIconId pId) {
         return TethysResourceLoader.getIconForEnum(ICON_MAP, pId);
     }
 }

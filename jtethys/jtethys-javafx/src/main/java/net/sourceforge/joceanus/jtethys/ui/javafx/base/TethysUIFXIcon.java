@@ -78,7 +78,7 @@ public class TethysUIFXIcon
      * @param pIcon the Tethys icon
      * @return the javaFX icon.
      */
-    static Node getIcon(final TethysUIIcon pIcon) {
+    public static Node getIcon(final TethysUIIcon pIcon) {
         return pIcon == null
                 ? null
                 : ((TethysUIFXIcon) pIcon).getIcon();

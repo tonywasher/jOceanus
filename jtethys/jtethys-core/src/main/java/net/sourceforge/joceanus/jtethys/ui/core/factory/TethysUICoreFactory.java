@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ******************************************************************************/
-package net.sourceforge.joceanus.jtethys.ui.core.base;
+package net.sourceforge.joceanus.jtethys.ui.core.factory;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -23,10 +23,11 @@ import java.util.concurrent.atomic.AtomicInteger;
 import net.sourceforge.joceanus.jtethys.event.TethysEventManager;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventProvider;
-import net.sourceforge.joceanus.jtethys.ui.api.TethysUIFactory;
+import net.sourceforge.joceanus.jtethys.ui.api.factory.TethysUIFactory;
 import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIComponent;
 import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIValueSet;
 import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIXEvent;
+import net.sourceforge.joceanus.jtethys.ui.core.base.TethysUICoreValueSet;
 
 /**
  * Core factory.
@@ -34,6 +35,11 @@ import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIXEvent;
  */
 public abstract class TethysUICoreFactory<C>
         implements TethysUIFactory<C>, TethysEventProvider<TethysUIXEvent> {
+    /**
+     * Default icon width.
+     */
+    public static final int DEFAULT_ICONWIDTH = 16;
+
     /**
      * Parent Component definition.
      */

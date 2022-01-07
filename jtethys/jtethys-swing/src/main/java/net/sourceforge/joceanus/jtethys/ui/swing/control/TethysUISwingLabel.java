@@ -24,7 +24,7 @@ import javax.swing.JLabel;
 import javax.swing.SwingConstants;
 
 import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIAlignment;
-import net.sourceforge.joceanus.jtethys.ui.core.base.TethysUICoreFactory;
+import net.sourceforge.joceanus.jtethys.ui.core.factory.TethysUICoreFactory;
 import net.sourceforge.joceanus.jtethys.ui.core.control.TethysUICoreLabel;
 import net.sourceforge.joceanus.jtethys.ui.swing.base.TethysUISwingNode;
 

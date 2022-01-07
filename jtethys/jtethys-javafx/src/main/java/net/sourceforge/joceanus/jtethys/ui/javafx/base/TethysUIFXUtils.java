@@ -188,9 +188,9 @@ public final class TethysUIFXUtils {
      * @param pSize the size of the dialog
      * @return the (adjusted) rectangle
      */
-    static Point2D obtainDisplayPoint(final Node pAnchor,
-                                      final Point2D pLocation,
-                                      final Dimension2D pSize) {
+    public static Point2D obtainDisplayPoint(final Node pAnchor,
+                                             final Point2D pLocation,
+                                             final Dimension2D pSize) {
         /* First of all determine the display screen for the anchor node */
         final Screen myScreen = getScreenForNode(pAnchor);
 
@@ -213,9 +213,9 @@ public final class TethysUIFXUtils {
      * @param pSize the size of the dialog
      * @return the (adjusted) rectangle
      */
-    static Point2D obtainDisplayPoint(final Node pAnchor,
-                                      final Side pSide,
-                                      final Dimension2D pSize) {
+    public static Point2D obtainDisplayPoint(final Node pAnchor,
+                                             final Side pSide,
+                                             final Dimension2D pSize) {
         /* First of all determine the display screen for the anchor node */
         final Screen myScreen = getScreenForNode(pAnchor);
 

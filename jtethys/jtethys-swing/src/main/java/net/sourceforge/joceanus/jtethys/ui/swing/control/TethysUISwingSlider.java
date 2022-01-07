@@ -18,7 +18,7 @@ package net.sourceforge.joceanus.jtethys.ui.swing.control;
 
 import javax.swing.JSlider;
 
-import net.sourceforge.joceanus.jtethys.ui.core.base.TethysUICoreFactory;
+import net.sourceforge.joceanus.jtethys.ui.core.factory.TethysUICoreFactory;
 import net.sourceforge.joceanus.jtethys.ui.core.control.TethysUICoreSlider;
 import net.sourceforge.joceanus.jtethys.ui.swing.base.TethysUISwingNode;
 

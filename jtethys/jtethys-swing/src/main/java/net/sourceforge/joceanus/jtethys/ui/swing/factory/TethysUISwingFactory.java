@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ******************************************************************************/
-package net.sourceforge.joceanus.jtethys.ui.swing;
+package net.sourceforge.joceanus.jtethys.ui.swing.factory;
 
 import java.awt.Color;
 import javax.swing.JFrame;
@@ -23,12 +23,14 @@ import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIIcon;
 import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIIconId;
 import net.sourceforge.joceanus.jtethys.ui.api.control.TethysUIControlFactory;
 import net.sourceforge.joceanus.jtethys.ui.api.dialog.TethysUIDialogFactory;
+import net.sourceforge.joceanus.jtethys.ui.api.menu.TethysUIMenuFactory;
 import net.sourceforge.joceanus.jtethys.ui.api.pane.TethysUIPaneFactory;
-import net.sourceforge.joceanus.jtethys.ui.core.base.TethysUICoreFactory;
+import net.sourceforge.joceanus.jtethys.ui.core.factory.TethysUICoreFactory;
 import net.sourceforge.joceanus.jtethys.ui.swing.base.TethysUISwingDataFieldAdjust;
 import net.sourceforge.joceanus.jtethys.ui.swing.base.TethysUISwingUtils;
 import net.sourceforge.joceanus.jtethys.ui.swing.control.TethysUISwingControlFactory;
 import net.sourceforge.joceanus.jtethys.ui.swing.dialog.TethysUISwingDialogFactory;
+import net.sourceforge.joceanus.jtethys.ui.swing.menu.TethysUISwingMenuFactory;
 import net.sourceforge.joceanus.jtethys.ui.swing.pane.TethysUISwingPaneFactory;
 
 /**
@@ -57,6 +59,11 @@ public class TethysUISwingFactory
     private final TethysUISwingDialogFactory theDialogFactory;
 
     /**
+     * The menu factory.
+     */
+    private final TethysUISwingMenuFactory theMenuFactory;
+
+    /**
      * Constructor.
      */
     TethysUISwingFactory() {
@@ -64,6 +71,7 @@ public class TethysUISwingFactory
         thePaneFactory = new TethysUISwingPaneFactory(this);
         theControlFactory = new TethysUISwingControlFactory(this, theFieldAdjust);
         theDialogFactory = new TethysUISwingDialogFactory();
+        theMenuFactory = new TethysUISwingMenuFactory(this);
     }
 
     /**
@@ -95,5 +103,10 @@ public class TethysUISwingFactory
     @Override
     public TethysUIDialogFactory<Color> dialogFactory() {
         return theDialogFactory;
+    }
+
+    @Override
+    public TethysUIMenuFactory menuFactory() {
+        return theMenuFactory;
     }
 }

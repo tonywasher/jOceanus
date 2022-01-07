@@ -26,7 +26,7 @@ import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIValueSet;
 import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIXEvent;
 import net.sourceforge.joceanus.jtethys.ui.api.control.TethysUIHTMLManager;
 import net.sourceforge.joceanus.jtethys.ui.core.base.TethysUICoreComponent;
-import net.sourceforge.joceanus.jtethys.ui.core.base.TethysUICoreFactory;
+import net.sourceforge.joceanus.jtethys.ui.core.factory.TethysUICoreFactory;
 
 /**
  * HTML Manager.

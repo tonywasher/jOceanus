@@ -27,7 +27,7 @@ import net.sourceforge.joceanus.jtethys.ui.api.control.TethysUISlider;
 import net.sourceforge.joceanus.jtethys.ui.api.control.TethysUISplitTreeManager;
 import net.sourceforge.joceanus.jtethys.ui.api.control.TethysUITextArea;
 import net.sourceforge.joceanus.jtethys.ui.api.control.TethysUITreeManager;
-import net.sourceforge.joceanus.jtethys.ui.core.base.TethysUICoreFactory;
+import net.sourceforge.joceanus.jtethys.ui.core.factory.TethysUICoreFactory;
 
 /**
  * javaFX Control factory.

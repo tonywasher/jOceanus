@@ -38,7 +38,7 @@ import javafx.scene.web.WebView;
 
 import net.sourceforge.joceanus.jtethys.logger.TethysLogManager;
 import net.sourceforge.joceanus.jtethys.logger.TethysLogger;
-import net.sourceforge.joceanus.jtethys.ui.core.base.TethysUICoreFactory;
+import net.sourceforge.joceanus.jtethys.ui.core.factory.TethysUICoreFactory;
 import net.sourceforge.joceanus.jtethys.ui.core.control.TethysUICoreHTMLManager;
 import net.sourceforge.joceanus.jtethys.ui.javafx.base.TethysUIFXNode;
 

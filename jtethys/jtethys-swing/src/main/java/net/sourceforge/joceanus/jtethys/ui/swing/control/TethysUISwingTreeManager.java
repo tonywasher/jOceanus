@@ -26,7 +26,7 @@ import javax.swing.tree.TreeSelectionModel;
 
 import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIIconId;
 import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIXEvent;
-import net.sourceforge.joceanus.jtethys.ui.core.base.TethysUICoreFactory;
+import net.sourceforge.joceanus.jtethys.ui.core.factory.TethysUICoreFactory;
 import net.sourceforge.joceanus.jtethys.ui.core.control.TethysUICoreTreeManager;
 import net.sourceforge.joceanus.jtethys.ui.swing.base.TethysUISwingIcon;
 import net.sourceforge.joceanus.jtethys.ui.swing.base.TethysUISwingNode;

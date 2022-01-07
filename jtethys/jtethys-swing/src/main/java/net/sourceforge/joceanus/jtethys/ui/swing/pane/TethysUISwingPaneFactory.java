@@ -18,7 +18,7 @@ package net.sourceforge.joceanus.jtethys.ui.swing.pane;
 
 import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIComponent;
 import net.sourceforge.joceanus.jtethys.ui.api.pane.TethysUIPaneFactory;
-import net.sourceforge.joceanus.jtethys.ui.core.base.TethysUICoreFactory;
+import net.sourceforge.joceanus.jtethys.ui.core.factory.TethysUICoreFactory;
 
 /**
  * Swing Pane Factory.

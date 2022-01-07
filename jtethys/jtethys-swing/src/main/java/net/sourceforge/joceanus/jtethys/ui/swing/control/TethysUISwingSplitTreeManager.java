@@ -20,7 +20,7 @@ import javax.swing.JSplitPane;
 
 import net.sourceforge.joceanus.jtethys.ui.api.pane.TethysUIBorderPaneManager;
 import net.sourceforge.joceanus.jtethys.ui.api.pane.TethysUIScrollPaneManager;
-import net.sourceforge.joceanus.jtethys.ui.core.base.TethysUICoreFactory;
+import net.sourceforge.joceanus.jtethys.ui.core.factory.TethysUICoreFactory;
 import net.sourceforge.joceanus.jtethys.ui.core.control.TethysUICoreSplitTreeManager;
 import net.sourceforge.joceanus.jtethys.ui.swing.base.TethysUISwingNode;
 

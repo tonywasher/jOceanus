@@ -27,7 +27,7 @@ import javax.swing.JPanel;
 
 import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIAlignment;
 import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIComponent;
-import net.sourceforge.joceanus.jtethys.ui.core.base.TethysUICoreFactory;
+import net.sourceforge.joceanus.jtethys.ui.core.factory.TethysUICoreFactory;
 import net.sourceforge.joceanus.jtethys.ui.core.pane.TethysUICoreGridPaneManager;
 import net.sourceforge.joceanus.jtethys.ui.swing.base.TethysUISwingNode;
 

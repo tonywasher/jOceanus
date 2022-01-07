@@ -26,7 +26,7 @@ import net.sourceforge.joceanus.jtethys.ui.api.control.TethysUISplitTreeManager;
 import net.sourceforge.joceanus.jtethys.ui.api.control.TethysUITreeManager;
 import net.sourceforge.joceanus.jtethys.ui.api.pane.TethysUIBorderPaneManager;
 import net.sourceforge.joceanus.jtethys.ui.core.base.TethysUICoreComponent;
-import net.sourceforge.joceanus.jtethys.ui.core.base.TethysUICoreFactory;
+import net.sourceforge.joceanus.jtethys.ui.core.factory.TethysUICoreFactory;
 
 /**
  * Split Manager, hosting a Tree and HTML in a split window.

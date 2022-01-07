@@ -28,7 +28,7 @@ import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIIconId;
 import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIXEvent;
 import net.sourceforge.joceanus.jtethys.ui.api.control.TethysUITreeManager;
 import net.sourceforge.joceanus.jtethys.ui.core.base.TethysUICoreComponent;
-import net.sourceforge.joceanus.jtethys.ui.core.base.TethysUICoreFactory;
+import net.sourceforge.joceanus.jtethys.ui.core.factory.TethysUICoreFactory;
 
 /**
  * Tree Manager.

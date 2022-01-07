@@ -18,7 +18,7 @@ package net.sourceforge.joceanus.jtethys.ui.swing.control;
 
 import javax.swing.JCheckBox;
 
-import net.sourceforge.joceanus.jtethys.ui.core.base.TethysUICoreFactory;
+import net.sourceforge.joceanus.jtethys.ui.core.factory.TethysUICoreFactory;
 import net.sourceforge.joceanus.jtethys.ui.core.control.TethysUICoreCheckBox;
 import net.sourceforge.joceanus.jtethys.ui.swing.base.TethysUISwingDataFieldAdjust;
 import net.sourceforge.joceanus.jtethys.ui.swing.base.TethysUISwingNode;

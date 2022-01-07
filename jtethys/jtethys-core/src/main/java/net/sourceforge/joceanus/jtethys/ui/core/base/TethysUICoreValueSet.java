@@ -133,7 +133,7 @@ public class TethysUICoreValueSet
     /**
      * Constructor.
      */
-    TethysUICoreValueSet() {
+    public TethysUICoreValueSet() {
         /* Create the event manager */
         theEventManager = new TethysEventManager<>();
 

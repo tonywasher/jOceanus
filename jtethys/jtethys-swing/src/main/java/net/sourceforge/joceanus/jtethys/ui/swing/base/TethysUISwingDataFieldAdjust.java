@@ -24,7 +24,7 @@ import javax.swing.JComponent;
 import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIValueKey;
 import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIValueSet;
 import net.sourceforge.joceanus.jtethys.ui.api.control.TethysUICheckBox;
-import net.sourceforge.joceanus.jtethys.ui.core.base.TethysUICoreFactory;
+import net.sourceforge.joceanus.jtethys.ui.core.factory.TethysUICoreFactory;
 
 /**
  * Class to set Font, Colour, and Background for label according to the FieldAttributes.

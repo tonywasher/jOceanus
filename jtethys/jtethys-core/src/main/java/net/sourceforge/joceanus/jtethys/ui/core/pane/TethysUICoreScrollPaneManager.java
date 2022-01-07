@@ -18,7 +18,7 @@ package net.sourceforge.joceanus.jtethys.ui.core.pane;
 
 import net.sourceforge.joceanus.jtethys.ui.api.pane.TethysUIScrollPaneManager;
 import net.sourceforge.joceanus.jtethys.ui.core.base.TethysUICoreComponent;
-import net.sourceforge.joceanus.jtethys.ui.core.base.TethysUICoreFactory;
+import net.sourceforge.joceanus.jtethys.ui.core.factory.TethysUICoreFactory;
 
 /**
  * Scroll Pane Manager.

@@ -19,7 +19,7 @@ package net.sourceforge.joceanus.jtethys.ui.javafx.pane;
 import javafx.scene.layout.BorderPane;
 
 import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIComponent;
-import net.sourceforge.joceanus.jtethys.ui.core.base.TethysUICoreFactory;
+import net.sourceforge.joceanus.jtethys.ui.core.factory.TethysUICoreFactory;
 import net.sourceforge.joceanus.jtethys.ui.core.pane.TethysUICoreCardPaneManager;
 import net.sourceforge.joceanus.jtethys.ui.javafx.base.TethysUIFXNode;
 

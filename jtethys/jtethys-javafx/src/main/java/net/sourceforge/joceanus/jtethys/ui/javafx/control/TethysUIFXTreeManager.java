@@ -22,7 +22,7 @@ import javafx.scene.image.ImageView;
 
 import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIIconId;
 import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIXEvent;
-import net.sourceforge.joceanus.jtethys.ui.core.base.TethysUICoreFactory;
+import net.sourceforge.joceanus.jtethys.ui.core.factory.TethysUICoreFactory;
 import net.sourceforge.joceanus.jtethys.ui.core.control.TethysUICoreTreeManager;
 import net.sourceforge.joceanus.jtethys.ui.javafx.base.TethysUIFXIcon;
 import net.sourceforge.joceanus.jtethys.ui.javafx.base.TethysUIFXNode;

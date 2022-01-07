@@ -19,7 +19,7 @@ package net.sourceforge.joceanus.jtethys.ui.swing.pane;
 import javax.swing.JTabbedPane;
 
 import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIComponent;
-import net.sourceforge.joceanus.jtethys.ui.core.base.TethysUICoreFactory;
+import net.sourceforge.joceanus.jtethys.ui.core.factory.TethysUICoreFactory;
 import net.sourceforge.joceanus.jtethys.ui.core.pane.TethysUICoreTabPaneManager;
 import net.sourceforge.joceanus.jtethys.ui.swing.base.TethysUISwingNode;
 

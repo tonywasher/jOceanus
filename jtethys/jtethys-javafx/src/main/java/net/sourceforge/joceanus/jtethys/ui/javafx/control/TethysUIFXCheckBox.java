@@ -20,7 +20,7 @@ import java.util.List;
 
 import javafx.scene.control.CheckBox;
 
-import net.sourceforge.joceanus.jtethys.ui.core.base.TethysUICoreFactory;
+import net.sourceforge.joceanus.jtethys.ui.core.factory.TethysUICoreFactory;
 import net.sourceforge.joceanus.jtethys.ui.core.control.TethysUICoreCheckBox;
 import net.sourceforge.joceanus.jtethys.ui.javafx.base.TethysUIFXNode;
 import net.sourceforge.joceanus.jtethys.ui.javafx.base.TethysUIFXUtils;

@@ -18,7 +18,7 @@ package net.sourceforge.joceanus.jtethys.ui.javafx.pane;
 
 import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIComponent;
 import net.sourceforge.joceanus.jtethys.ui.api.pane.TethysUIPaneFactory;
-import net.sourceforge.joceanus.jtethys.ui.core.base.TethysUICoreFactory;
+import net.sourceforge.joceanus.jtethys.ui.core.factory.TethysUICoreFactory;
 
 /**
  * javaFX Pane factory.

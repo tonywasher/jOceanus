@@ -14,13 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ******************************************************************************/
-package net.sourceforge.joceanus.jtethys.ui.api;
+package net.sourceforge.joceanus.jtethys.ui.api.factory;
 
 import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIIcon;
 import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIIconId;
 import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIValueSet;
 import net.sourceforge.joceanus.jtethys.ui.api.control.TethysUIControlFactory;
 import net.sourceforge.joceanus.jtethys.ui.api.dialog.TethysUIDialogFactory;
+import net.sourceforge.joceanus.jtethys.ui.api.menu.TethysUIMenuFactory;
 import net.sourceforge.joceanus.jtethys.ui.api.pane.TethysUIPaneFactory;
 
 /**
@@ -43,12 +44,6 @@ public interface TethysUIFactory<C> {
     TethysUIIcon resolveIcon(TethysUIIconId pIconId, int pWidth);
 
     /**
-     * Obtain the pane factory.
-     * @return the factory
-     */
-    TethysUIPaneFactory paneFactory();
-
-    /**
      * Obtain the dialog factory.
      * @return the factory
      */
@@ -59,4 +54,16 @@ public interface TethysUIFactory<C> {
      * @return the factory
      */
     TethysUIDialogFactory<C> dialogFactory();
+
+    /**
+     * Obtain the menu factory.
+     * @return the factory
+     */
+    TethysUIMenuFactory menuFactory();
+
+    /**
+     * Obtain the pane factory.
+     * @return the factory
+     */
+    TethysUIPaneFactory paneFactory();
 }

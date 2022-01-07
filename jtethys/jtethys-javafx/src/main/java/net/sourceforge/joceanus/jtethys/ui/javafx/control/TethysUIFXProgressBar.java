@@ -20,7 +20,7 @@ import javafx.scene.control.ProgressBar;
 import javafx.scene.layout.StackPane;
 import javafx.scene.text.Text;
 
-import net.sourceforge.joceanus.jtethys.ui.core.base.TethysUICoreFactory;
+import net.sourceforge.joceanus.jtethys.ui.core.factory.TethysUICoreFactory;
 import net.sourceforge.joceanus.jtethys.ui.core.control.TethysUICoreProgressBar;
 import net.sourceforge.joceanus.jtethys.ui.javafx.base.TethysUIFXNode;
 import net.sourceforge.joceanus.jtethys.ui.javafx.base.TethysUIFXUtils;

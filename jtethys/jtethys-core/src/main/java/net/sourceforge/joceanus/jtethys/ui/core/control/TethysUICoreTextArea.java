@@ -18,7 +18,7 @@ package net.sourceforge.joceanus.jtethys.ui.core.control;
 
 import net.sourceforge.joceanus.jtethys.ui.api.control.TethysUITextArea;
 import net.sourceforge.joceanus.jtethys.ui.core.base.TethysUICoreComponent;
-import net.sourceforge.joceanus.jtethys.ui.core.base.TethysUICoreFactory;
+import net.sourceforge.joceanus.jtethys.ui.core.factory.TethysUICoreFactory;
 
 /**
  * Non-editable text area.
