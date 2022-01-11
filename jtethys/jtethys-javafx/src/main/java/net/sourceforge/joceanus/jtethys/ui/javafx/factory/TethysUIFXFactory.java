@@ -22,12 +22,14 @@ import javafx.stage.Stage;
 import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIIcon;
 import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIIconId;
 import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIXEvent;
+import net.sourceforge.joceanus.jtethys.ui.api.chart.TethysUIChartFactory;
 import net.sourceforge.joceanus.jtethys.ui.api.control.TethysUIControlFactory;
 import net.sourceforge.joceanus.jtethys.ui.api.dialog.TethysUIDialogFactory;
 import net.sourceforge.joceanus.jtethys.ui.api.menu.TethysUIMenuFactory;
 import net.sourceforge.joceanus.jtethys.ui.api.pane.TethysUIPaneFactory;
 import net.sourceforge.joceanus.jtethys.ui.core.factory.TethysUICoreFactory;
 import net.sourceforge.joceanus.jtethys.ui.javafx.base.TethysUIFXUtils;
+import net.sourceforge.joceanus.jtethys.ui.javafx.chart.TethysUIFXChartFactory;
 import net.sourceforge.joceanus.jtethys.ui.javafx.control.TethysUIFXControlFactory;
 import net.sourceforge.joceanus.jtethys.ui.javafx.dialog.TethysUIFXDialogFactory;
 import net.sourceforge.joceanus.jtethys.ui.javafx.menu.TethysUIFXMenuFactory;
@@ -42,6 +44,11 @@ public class TethysUIFXFactory
      * The pane factory.
      */
     private final TethysUIFXPaneFactory thePaneFactory;
+
+    /**
+     * The chart factory.
+     */
+    private final TethysUIFXChartFactory theChartFactory;
 
     /**
      * The control factory.
@@ -63,6 +70,7 @@ public class TethysUIFXFactory
      */
     TethysUIFXFactory() {
         thePaneFactory = new TethysUIFXPaneFactory(this);
+        theChartFactory = new TethysUIFXChartFactory(this);
         theControlFactory = new TethysUIFXControlFactory(this);
         theDialogFactory = new TethysUIFXDialogFactory();
         theMenuFactory = new TethysUIFXMenuFactory(this);
@@ -71,6 +79,11 @@ public class TethysUIFXFactory
     @Override
     public TethysUIPaneFactory paneFactory() {
         return thePaneFactory;
+    }
+
+    @Override
+    public TethysUIChartFactory chartFactory() {
+        return theChartFactory;
     }
 
     @Override

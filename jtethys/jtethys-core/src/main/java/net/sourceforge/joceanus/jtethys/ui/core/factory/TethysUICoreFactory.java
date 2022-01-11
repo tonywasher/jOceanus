@@ -23,10 +23,12 @@ import java.util.concurrent.atomic.AtomicInteger;
 import net.sourceforge.joceanus.jtethys.event.TethysEventManager;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventProvider;
+import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIDataFormatter;
 import net.sourceforge.joceanus.jtethys.ui.api.factory.TethysUIFactory;
 import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIComponent;
 import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIValueSet;
 import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIXEvent;
+import net.sourceforge.joceanus.jtethys.ui.core.base.TethysUICoreDataFormatter;
 import net.sourceforge.joceanus.jtethys.ui.core.base.TethysUICoreValueSet;
 
 /**
@@ -55,6 +57,11 @@ public abstract class TethysUICoreFactory<C>
     }
 
     /**
+     * The Data Formatter.
+     */
+    private final TethysUIDataFormatter theFormatter;
+
+    /**
      * The Next nodeId.
      */
     private final AtomicInteger theNextNodeId;
@@ -78,6 +85,7 @@ public abstract class TethysUICoreFactory<C>
      * Constructor.
      */
     protected TethysUICoreFactory() {
+        theFormatter = new TethysUICoreDataFormatter();
         theNextNodeId = new AtomicInteger(1);
         theParentMap = new HashMap<>();
         theValueSet = new TethysUICoreValueSet();
@@ -87,6 +95,11 @@ public abstract class TethysUICoreFactory<C>
     @Override
     public TethysEventRegistrar<TethysUIXEvent> getEventRegistrar() {
         return theEventManager.getEventRegistrar();
+    }
+
+    @Override
+    public TethysUIDataFormatter getDataFormatter() {
+        return theFormatter;
     }
 
     /**

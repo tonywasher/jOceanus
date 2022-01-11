@@ -34,6 +34,7 @@ module net.sourceforge.joceanus.jtethys.core {
 
     /* New exports */
     exports net.sourceforge.joceanus.jtethys.ui.api.base;
+    exports net.sourceforge.joceanus.jtethys.ui.api.chart;
     exports net.sourceforge.joceanus.jtethys.ui.api.control;
     exports net.sourceforge.joceanus.jtethys.ui.api.dialog;
     exports net.sourceforge.joceanus.jtethys.ui.api.menu;
@@ -41,6 +42,7 @@ module net.sourceforge.joceanus.jtethys.core {
 
     /* Restricted exports */
     exports net.sourceforge.joceanus.jtethys.ui.core.base to net.sourceforge.joceanus.jtethys.javafx, net.sourceforge.joceanus.jtethys.swing;
+    exports net.sourceforge.joceanus.jtethys.ui.core.chart to net.sourceforge.joceanus.jtethys.javafx, net.sourceforge.joceanus.jtethys.swing;
     exports net.sourceforge.joceanus.jtethys.ui.core.control to net.sourceforge.joceanus.jtethys.javafx, net.sourceforge.joceanus.jtethys.swing;
     exports net.sourceforge.joceanus.jtethys.ui.core.dialog to net.sourceforge.joceanus.jtethys.javafx, net.sourceforge.joceanus.jtethys.swing;
     exports net.sourceforge.joceanus.jtethys.ui.core.menu to net.sourceforge.joceanus.jtethys.javafx, net.sourceforge.joceanus.jtethys.swing;

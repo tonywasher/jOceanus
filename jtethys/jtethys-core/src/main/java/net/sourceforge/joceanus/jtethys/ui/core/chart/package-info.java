@@ -16,6 +16,6 @@
  ******************************************************************************/
 
 /**
- * Control API.
+ * Core Charts.
  */
-package net.sourceforge.joceanus.jtethys.ui.api.control;
+package net.sourceforge.joceanus.jtethys.ui.core.chart;

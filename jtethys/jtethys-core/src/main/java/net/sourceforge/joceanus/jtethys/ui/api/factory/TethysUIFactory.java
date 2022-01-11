@@ -16,9 +16,11 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jtethys.ui.api.factory;
 
+import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIDataFormatter;
 import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIIcon;
 import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIIconId;
 import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIValueSet;
+import net.sourceforge.joceanus.jtethys.ui.api.chart.TethysUIChartFactory;
 import net.sourceforge.joceanus.jtethys.ui.api.control.TethysUIControlFactory;
 import net.sourceforge.joceanus.jtethys.ui.api.dialog.TethysUIDialogFactory;
 import net.sourceforge.joceanus.jtethys.ui.api.menu.TethysUIMenuFactory;
@@ -29,6 +31,12 @@ import net.sourceforge.joceanus.jtethys.ui.api.pane.TethysUIPaneFactory;
  * @param <C> the color
  */
 public interface TethysUIFactory<C> {
+    /**
+     * Obtain the formatter.
+     * @return the formatter
+     */
+    TethysUIDataFormatter getDataFormatter();
+
     /**
      * Obtain the valueSet.
      * @return the valueSet
@@ -44,7 +52,13 @@ public interface TethysUIFactory<C> {
     TethysUIIcon resolveIcon(TethysUIIconId pIconId, int pWidth);
 
     /**
-     * Obtain the dialog factory.
+     * Obtain the chart factory.
+     * @return the factory
+     */
+    TethysUIChartFactory chartFactory();
+
+    /**
+     * Obtain the control factory.
      * @return the factory
      */
     TethysUIControlFactory controlFactory();

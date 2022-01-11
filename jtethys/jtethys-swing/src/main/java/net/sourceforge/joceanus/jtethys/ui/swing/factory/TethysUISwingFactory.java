@@ -21,6 +21,7 @@ import javax.swing.JFrame;
 
 import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIIcon;
 import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIIconId;
+import net.sourceforge.joceanus.jtethys.ui.api.chart.TethysUIChartFactory;
 import net.sourceforge.joceanus.jtethys.ui.api.control.TethysUIControlFactory;
 import net.sourceforge.joceanus.jtethys.ui.api.dialog.TethysUIDialogFactory;
 import net.sourceforge.joceanus.jtethys.ui.api.menu.TethysUIMenuFactory;
@@ -28,6 +29,7 @@ import net.sourceforge.joceanus.jtethys.ui.api.pane.TethysUIPaneFactory;
 import net.sourceforge.joceanus.jtethys.ui.core.factory.TethysUICoreFactory;
 import net.sourceforge.joceanus.jtethys.ui.swing.base.TethysUISwingDataFieldAdjust;
 import net.sourceforge.joceanus.jtethys.ui.swing.base.TethysUISwingUtils;
+import net.sourceforge.joceanus.jtethys.ui.swing.chart.TethysUISwingChartFactory;
 import net.sourceforge.joceanus.jtethys.ui.swing.control.TethysUISwingControlFactory;
 import net.sourceforge.joceanus.jtethys.ui.swing.dialog.TethysUISwingDialogFactory;
 import net.sourceforge.joceanus.jtethys.ui.swing.menu.TethysUISwingMenuFactory;
@@ -47,6 +49,11 @@ public class TethysUISwingFactory
      * The pane factory.
      */
     private final TethysUISwingPaneFactory thePaneFactory;
+
+    /**
+     * The chart factory.
+     */
+    private final TethysUISwingChartFactory theChartFactory;
 
     /**
      * The control factory.
@@ -69,6 +76,7 @@ public class TethysUISwingFactory
     TethysUISwingFactory() {
         theFieldAdjust = new TethysUISwingDataFieldAdjust(this);
         thePaneFactory = new TethysUISwingPaneFactory(this);
+        theChartFactory = new TethysUISwingChartFactory(this);
         theControlFactory = new TethysUISwingControlFactory(this, theFieldAdjust);
         theDialogFactory = new TethysUISwingDialogFactory();
         theMenuFactory = new TethysUISwingMenuFactory(this);
@@ -93,6 +101,11 @@ public class TethysUISwingFactory
     @Override
     public TethysUIPaneFactory paneFactory() {
         return thePaneFactory;
+    }
+
+    @Override
+    public TethysUIChartFactory chartFactory() {
+        return theChartFactory;
     }
 
     @Override
