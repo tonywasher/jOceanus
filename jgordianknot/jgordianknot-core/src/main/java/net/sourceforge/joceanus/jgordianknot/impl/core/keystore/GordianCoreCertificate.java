@@ -24,6 +24,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.Objects;
 
+import org.bouncycastle.asn1.ASN1BitString;
 import org.bouncycastle.asn1.ASN1EncodableVector;
 import org.bouncycastle.asn1.ASN1Integer;
 import org.bouncycastle.asn1.ASN1OutputStream;
@@ -318,7 +319,7 @@ public abstract class GordianCoreCertificate<S, K>
      *
      * @return the subjectId
      */
-    DERBitString getSubjectId() {
+    ASN1BitString getSubjectId() {
         return theTbsCertificate.getSubjectUniqueId();
     }
 
@@ -336,7 +337,7 @@ public abstract class GordianCoreCertificate<S, K>
      *
      * @return the issuerId
      */
-    DERBitString getIssuerId() {
+    ASN1BitString getIssuerId() {
         return isSelfSigned
                ? getSubjectId()
                : theTbsCertificate.getIssuerUniqueId();
@@ -532,7 +533,7 @@ public abstract class GordianCoreCertificate<S, K>
 
         /* Check that the signing certificate is correct */
         final X500Name mySignerName = pSigner.getSubjectName();
-        final DERBitString mySignerId = pSigner.getSubjectId();
+        final DERBitString mySignerId = DERBitString.convert(pSigner.getSubjectId());
         if (!mySignerName.equals(getIssuerName())
                 || !Objects.equals(mySignerId, getIssuerId())) {
             throw new GordianDataException("Incorrect signer certificate");
@@ -615,7 +616,7 @@ public abstract class GordianCoreCertificate<S, K>
         myCertBuilder.setSignature(theSigAlgId);
         myCertBuilder.setSubjectUniqueID(createSubjectId(myPublicKeyEncoded, mySerialNo));
         if (pSigner != null) {
-            myCertBuilder.setIssuerUniqueID(pSigner.getSubjectId());
+            myCertBuilder.setIssuerUniqueID(DERBitString.convert(pSigner.getSubjectId()));
         }
 
         /* Create extensions for the certificate */

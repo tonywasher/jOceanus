@@ -71,36 +71,36 @@
     <appDir>${env.BACKUPDIR}</appDir>
     <appBinDir>bin/</appBinDir>
     <appLibDir>lib/</appLibDir>
-    <BouncyCastleVersion>1.69</BouncyCastleVersion>
-    <JUnitVersion>5.8.1</JUnitVersion>
-    <JSONVersion>20210307</JSONVersion>
+    <BouncyCastleVersion>1.70</BouncyCastleVersion>
+    <JUnitVersion>5.8.2</JUnitVersion>
+    <JSONVersion>20211205</JSONVersion>
     <ApacheMavenVersion>3.8.3</ApacheMavenVersion>
-    <MySQLVersion>8.0.27</MySQLVersion>
+    <MySQLVersion>8.0.28</MySQLVersion>
     <PostGreSQLVersion>42.3.1</PostGreSQLVersion>
     <JTDSVersion>1.3.1</JTDSVersion>
-    <H2Version>1.4.200</H2Version>
-    <ApachePOIVersion>5.1.0</ApachePOIVersion>
+    <H2Version>2.1.210</H2Version>
+    <ApachePOIVersion>5.2.0</ApachePOIVersion>
     <JSoupVersion>1.14.3</JSoupVersion>
     <JFreeChartVersion>1.5.3</JFreeChartVersion>
     <ZipSDKVersion>9.20</ZipSDKVersion>
     <JavaVersion>11</JavaVersion>
-    <JavaFXVersion>17.0.1</JavaFXVersion>
+    <JavaFXVersion>17.0.2</JavaFXVersion>
     <JavaLanguageVersion>11</JavaLanguageVersion>
-    <CheckStyleVersion>9.1</CheckStyleVersion>
-    <PMDVersion>6.40.0</PMDVersion>
+    <CheckStyleVersion>9.2.1</CheckStyleVersion>
+    <PMDVersion>6.42.0</PMDVersion>
     <CleanPluginVersion>3.1.0</CleanPluginVersion>
     <ResourcesPluginVersion>3.2.0</ResourcesPluginVersion>
     <InstallPluginVersion>3.0.0-M1</InstallPluginVersion>
     <SitePluginVersion>3.9.1</SitePluginVersion>
     <DeployPluginVersion>3.0.0-M1</DeployPluginVersion>
     <EnforcerPluginVersion>3.0.0</EnforcerPluginVersion>
-    <CompilerPluginVersion>3.8.1</CompilerPluginVersion>
+    <CompilerPluginVersion>3.9.0</CompilerPluginVersion>
     <ShadePluginVersion>3.2.4</ShadePluginVersion>
     <DependencyPluginVersion>3.2.0</DependencyPluginVersion>
     <SurefirePluginVersion>3.0.0-M5</SurefirePluginVersion>
     <BuildNumberPluginVersion>1.4</BuildNumberPluginVersion>
     <BuildHelperPluginVersion>3.2.0</BuildHelperPluginVersion>
-    <JarPluginVersion>3.2.0</JarPluginVersion>
+    <JarPluginVersion>3.2.2</JarPluginVersion>
     <ProjectInfoPluginVersion>3.1.2</ProjectInfoPluginVersion>
     <JxrPluginVersion>3.1.1</JxrPluginVersion>
     <JavaDocPluginVersion>3.3.1</JavaDocPluginVersion>

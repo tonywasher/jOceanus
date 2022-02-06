@@ -170,11 +170,11 @@ public class GordianAgreementClientHelloASN1
                 final ASN1TaggedObject myTagged = ASN1TaggedObject.getInstance(en.nextElement());
                 switch (myTagged.getTagNo()) {
                     case TAG_ENCAPSULATED:
-                        theEncapsulated = ASN1OctetString.getInstance(myTagged.getObject()).getOctets();
+                        theEncapsulated = ASN1OctetString.getInstance(myTagged, false).getOctets();
                         theEphemeral = null;
                         break;
                     case TAG_EPHEMERAL:
-                        theEphemeral = new X509EncodedKeySpec(SubjectPublicKeyInfo.getInstance(myTagged.getObject()).getEncoded());
+                        theEphemeral = new X509EncodedKeySpec(SubjectPublicKeyInfo.getInstance(myTagged, false).getEncoded());
                         theEncapsulated = null;
                         break;
                     default:
