@@ -30,17 +30,17 @@ import net.sourceforge.joceanus.jtethys.ui.core.chart.TethysUICorePieChart.Tethy
 public abstract class TethysUICoreChartFactory
         implements TethysUIChartFactory {
     @Override
-    public TethysUIAreaChartData newAreaData(String pTitle) {
+    public TethysUIAreaChartData newAreaData(final String pTitle) {
         return new TethysUICoreAreaChartData(pTitle);
     }
 
     @Override
-    public TethysUIBarChartData newBarData(String pTitle) {
+    public TethysUIBarChartData newBarData(final String pTitle) {
         return new TethysUICoreBarChartData(pTitle);
     }
 
     @Override
-    public TethysUIPieChartData newPieData(String pTitle) {
+    public TethysUIPieChartData newPieData(final String pTitle) {
         return new TethysUICorePieChartData(pTitle);
     }
 }

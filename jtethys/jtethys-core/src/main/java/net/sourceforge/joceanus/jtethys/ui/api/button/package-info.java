@@ -16,6 +16,6 @@
  ******************************************************************************/
 
 /**
- * Swing Charts.
+ * Button API.
  */
-package net.sourceforge.joceanus.jtethys.ui.swing.chart;
+package net.sourceforge.joceanus.jtethys.ui.api.button;

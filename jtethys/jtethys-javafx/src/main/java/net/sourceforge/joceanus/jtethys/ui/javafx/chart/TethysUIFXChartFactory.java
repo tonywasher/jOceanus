@@ -23,7 +23,7 @@ import net.sourceforge.joceanus.jtethys.ui.core.chart.TethysUICoreChartFactory;
 import net.sourceforge.joceanus.jtethys.ui.core.factory.TethysUICoreFactory;
 
 /**
- * javaFX Control factory.
+ * javaFX Chart factory.
  */
 public class TethysUIFXChartFactory
         extends TethysUICoreChartFactory {

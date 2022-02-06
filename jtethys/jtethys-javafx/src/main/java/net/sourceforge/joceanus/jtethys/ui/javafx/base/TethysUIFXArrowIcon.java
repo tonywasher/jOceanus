@@ -137,7 +137,7 @@ public enum TethysUIFXArrowIcon {
      * @param pId the id
      * @return the icon
      */
-    static TethysUIFXIcon getIconForId(final TethysUIArrowIconId pId) {
+    public static TethysUIFXIcon getIconForId(final TethysUIArrowIconId pId) {
         final TethysUIFXArrowIcon myArrow = ICON_MAP.get(pId);
         return myArrow == null
                 ? null

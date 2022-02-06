@@ -16,6 +16,6 @@
  ******************************************************************************/
 
 /**
- * Swing Charts.
+ * JavaFX Buttons.
  */
-package net.sourceforge.joceanus.jtethys.ui.swing.chart;
+package net.sourceforge.joceanus.jtethys.ui.javafx.button;

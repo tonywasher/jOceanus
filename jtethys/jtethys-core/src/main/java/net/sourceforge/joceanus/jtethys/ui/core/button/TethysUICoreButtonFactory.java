@@ -1,4 +1,4 @@
-/* *****************************************************************************
+/*******************************************************************************
  * Tethys: Java Utilities
  * Copyright 2012,2021 Tony Washer
  *
@@ -14,8 +14,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ******************************************************************************/
+package net.sourceforge.joceanus.jtethys.ui.core.button;
+
+import net.sourceforge.joceanus.jtethys.ui.api.button.TethysUIButtonFactory;
+import net.sourceforge.joceanus.jtethys.ui.api.control.TethysUIControl.TethysUIIconMapSet;
+import net.sourceforge.joceanus.jtethys.ui.core.button.TethysUICoreIconButtonManager.TethysUICoreIconMapSet;
 
 /**
- * Swing Charts.
+ * Core Button factory.
  */
-package net.sourceforge.joceanus.jtethys.ui.swing.chart;
+public abstract class TethysUICoreButtonFactory
+        implements TethysUIButtonFactory {
+    @Override
+    public <T> TethysUIIconMapSet<T> newIconMapSet() {
+        return new TethysUICoreIconMapSet();
+    }
+}

@@ -38,11 +38,6 @@ import net.sourceforge.joceanus.jtethys.ui.core.base.TethysUICoreValueSet;
 public abstract class TethysUICoreFactory<C>
         implements TethysUIFactory<C>, TethysEventProvider<TethysUIXEvent> {
     /**
-     * Default icon width.
-     */
-    public static final int DEFAULT_ICONWIDTH = 16;
-
-    /**
      * Parent Component definition.
      */
     @FunctionalInterface

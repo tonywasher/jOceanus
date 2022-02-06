@@ -71,7 +71,7 @@ public class TethysUISwingNode
      * Is the node visible?
      * @return true/false
      */
-    boolean isVisible() {
+    public boolean isVisible() {
         return theNode.isVisible();
     }
 

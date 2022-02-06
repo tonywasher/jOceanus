@@ -22,6 +22,7 @@ import javafx.stage.Stage;
 import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIIcon;
 import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIIconId;
 import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIXEvent;
+import net.sourceforge.joceanus.jtethys.ui.api.button.TethysUIButtonFactory;
 import net.sourceforge.joceanus.jtethys.ui.api.chart.TethysUIChartFactory;
 import net.sourceforge.joceanus.jtethys.ui.api.control.TethysUIControlFactory;
 import net.sourceforge.joceanus.jtethys.ui.api.dialog.TethysUIDialogFactory;
@@ -29,6 +30,7 @@ import net.sourceforge.joceanus.jtethys.ui.api.menu.TethysUIMenuFactory;
 import net.sourceforge.joceanus.jtethys.ui.api.pane.TethysUIPaneFactory;
 import net.sourceforge.joceanus.jtethys.ui.core.factory.TethysUICoreFactory;
 import net.sourceforge.joceanus.jtethys.ui.javafx.base.TethysUIFXUtils;
+import net.sourceforge.joceanus.jtethys.ui.javafx.button.TethysUIFXButtonFactory;
 import net.sourceforge.joceanus.jtethys.ui.javafx.chart.TethysUIFXChartFactory;
 import net.sourceforge.joceanus.jtethys.ui.javafx.control.TethysUIFXControlFactory;
 import net.sourceforge.joceanus.jtethys.ui.javafx.dialog.TethysUIFXDialogFactory;
@@ -44,6 +46,11 @@ public class TethysUIFXFactory
      * The pane factory.
      */
     private final TethysUIFXPaneFactory thePaneFactory;
+
+    /**
+     * The button factory.
+     */
+    private final TethysUIFXButtonFactory theButtonFactory;
 
     /**
      * The chart factory.
@@ -70,6 +77,7 @@ public class TethysUIFXFactory
      */
     TethysUIFXFactory() {
         thePaneFactory = new TethysUIFXPaneFactory(this);
+        theButtonFactory = new TethysUIFXButtonFactory(this);
         theChartFactory = new TethysUIFXChartFactory(this);
         theControlFactory = new TethysUIFXControlFactory(this);
         theDialogFactory = new TethysUIFXDialogFactory();
@@ -79,6 +87,11 @@ public class TethysUIFXFactory
     @Override
     public TethysUIPaneFactory paneFactory() {
         return thePaneFactory;
+    }
+
+    @Override
+    public TethysUIButtonFactory buttonFactory() {
+        return theButtonFactory;
     }
 
     @Override

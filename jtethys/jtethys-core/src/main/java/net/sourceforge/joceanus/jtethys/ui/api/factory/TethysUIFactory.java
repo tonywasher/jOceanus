@@ -20,6 +20,7 @@ import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIDataFormatter;
 import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIIcon;
 import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIIconId;
 import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIValueSet;
+import net.sourceforge.joceanus.jtethys.ui.api.button.TethysUIButtonFactory;
 import net.sourceforge.joceanus.jtethys.ui.api.chart.TethysUIChartFactory;
 import net.sourceforge.joceanus.jtethys.ui.api.control.TethysUIControlFactory;
 import net.sourceforge.joceanus.jtethys.ui.api.dialog.TethysUIDialogFactory;
@@ -50,6 +51,12 @@ public interface TethysUIFactory<C> {
      * @return the icon
      */
     TethysUIIcon resolveIcon(TethysUIIconId pIconId, int pWidth);
+
+    /**
+     * Obtain the button factory.
+     * @return the factory
+     */
+    TethysUIButtonFactory buttonFactory();
 
     /**
      * Obtain the chart factory.

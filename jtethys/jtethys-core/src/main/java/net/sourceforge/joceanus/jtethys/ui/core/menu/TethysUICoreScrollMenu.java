@@ -16,8 +16,6 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jtethys.ui.core.menu;
 
-import net.sourceforge.joceanus.jtethys.ui.api.menu.TethysUIScrollMenu;
-
 /**
  * Core Scroll Menu.
  */

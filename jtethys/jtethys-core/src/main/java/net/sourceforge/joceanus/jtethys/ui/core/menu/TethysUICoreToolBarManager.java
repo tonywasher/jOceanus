@@ -35,11 +35,6 @@ public abstract class TethysUICoreToolBarManager
         extends TethysUICoreComponent
         implements TethysUIToolBarManager {
     /**
-     * Default icon width.
-     */
-    protected static final int DEFAULT_ICONWIDTH = TethysUICoreFactory.DEFAULT_ICONWIDTH;
-
-    /**
      * The Id.
      */
     private final Integer theId;

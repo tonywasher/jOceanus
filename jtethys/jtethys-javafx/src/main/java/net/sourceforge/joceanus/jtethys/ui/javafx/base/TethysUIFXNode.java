@@ -50,7 +50,7 @@ public class TethysUIFXNode
      * Obtain the node that this represents.
      * @return the node
      */
-    Node getNode() {
+    public Node getNode() {
         return theNode;
     }
 
@@ -69,7 +69,7 @@ public class TethysUIFXNode
      * Is the node visible?
      * @return true/false
      */
-    boolean isVisible() {
+    public boolean isVisible() {
         return theNode.isVisible();
     }
 
@@ -93,7 +93,7 @@ public class TethysUIFXNode
      * Set the preferred width of the underlying node.
      * @param pWidth the preferred width
      */
-    void setPreferredWidth(final Integer pWidth) {
+    public void setPreferredWidth(final Integer pWidth) {
         ((Region) theUnderlying).setPrefWidth(pWidth);
     }
 
@@ -101,7 +101,7 @@ public class TethysUIFXNode
      * Set the preferred height of the underlying node.
      * @param pHeight the preferred height
      */
-    void setPreferredHeight(final Integer pHeight) {
+    public void setPreferredHeight(final Integer pHeight) {
         ((Region) theUnderlying).setPrefHeight(pHeight);
     }
 

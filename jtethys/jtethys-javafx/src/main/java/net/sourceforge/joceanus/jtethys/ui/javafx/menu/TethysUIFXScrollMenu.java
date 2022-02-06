@@ -55,7 +55,7 @@ import net.sourceforge.joceanus.jtethys.ui.api.menu.TethysUIScrollItem;
 import net.sourceforge.joceanus.jtethys.ui.api.menu.TethysUIScrollMenu;
 import net.sourceforge.joceanus.jtethys.ui.api.menu.TethysUIScrollSubMenu;
 import net.sourceforge.joceanus.jtethys.ui.api.menu.TethysUIScrollToggle;
-import net.sourceforge.joceanus.jtethys.ui.core.factory.TethysUICoreFactory;
+import net.sourceforge.joceanus.jtethys.ui.core.base.TethysUICoreComponent;
 import net.sourceforge.joceanus.jtethys.ui.core.menu.TethysUICoreScrollMenu;
 import net.sourceforge.joceanus.jtethys.ui.javafx.base.TethysUIFXArrowIcon;
 import net.sourceforge.joceanus.jtethys.ui.javafx.base.TethysUIFXIcon;
@@ -1023,7 +1023,7 @@ public class TethysUIFXScrollMenu<T>
             /* Create a Label for the graphic */
             theIcon = new Label();
             theIcon.setGraphic(TethysUIFXIcon.getIcon(pGraphic));
-            theIcon.setMinWidth(TethysUICoreFactory.DEFAULT_ICONWIDTH);
+            theIcon.setMinWidth(TethysUICoreComponent.DEFAULT_ICONWIDTH);
 
             /* Add the children */
             theBorderPane.setLeft(theIcon);
@@ -1181,7 +1181,7 @@ public class TethysUIFXScrollMenu<T>
         public void setSelected(final boolean pSelected) {
             isSelected = pSelected;
             setIcon(isSelected
-                    ? TethysUIFXUtils.getIconAtSize(TethysUIScrollIcon.CHECKMARK, TethysUICoreFactory.DEFAULT_ICONWIDTH)
+                    ? TethysUIFXUtils.getIconAtSize(TethysUIScrollIcon.CHECKMARK, TethysUICoreComponent.DEFAULT_ICONWIDTH)
                     : null);
         }
 

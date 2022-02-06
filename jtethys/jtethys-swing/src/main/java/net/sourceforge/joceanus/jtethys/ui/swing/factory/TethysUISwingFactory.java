@@ -21,6 +21,7 @@ import javax.swing.JFrame;
 
 import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIIcon;
 import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIIconId;
+import net.sourceforge.joceanus.jtethys.ui.api.button.TethysUIButtonFactory;
 import net.sourceforge.joceanus.jtethys.ui.api.chart.TethysUIChartFactory;
 import net.sourceforge.joceanus.jtethys.ui.api.control.TethysUIControlFactory;
 import net.sourceforge.joceanus.jtethys.ui.api.dialog.TethysUIDialogFactory;
@@ -101,6 +102,11 @@ public class TethysUISwingFactory
     @Override
     public TethysUIPaneFactory paneFactory() {
         return thePaneFactory;
+    }
+
+    @Override
+    public TethysUIButtonFactory buttonFactory() {
+        return null;
     }
 
     @Override
