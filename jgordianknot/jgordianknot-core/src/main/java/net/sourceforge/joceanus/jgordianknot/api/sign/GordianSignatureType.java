@@ -134,7 +134,6 @@ public enum GordianSignatureType {
         switch (pKeyType) {
             case EDDSA:
             case XMSS:
-            case SPHINCS:
             case RSA:
                 return true;
             default:
@@ -169,6 +168,8 @@ public enum GordianSignatureType {
             case DSTU4145:
             case GOST2012:
             case RAINBOW:
+            case SPHINCS:
+            case SPHINCSPLUS:
                 return true;
             default:
                 return false;

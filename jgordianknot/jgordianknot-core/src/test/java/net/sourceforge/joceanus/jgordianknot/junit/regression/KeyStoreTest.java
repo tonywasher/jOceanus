@@ -36,10 +36,12 @@ import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianStreamKeySpec;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianSymKeySpec;
 import net.sourceforge.joceanus.jgordianknot.api.factory.GordianFactory;
 import net.sourceforge.joceanus.jgordianknot.api.factory.GordianFactoryType;
+import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianCMCESpec;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianDHGroup;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianDSAElliptic;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianDSAKeyType;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianDSTU4145Elliptic;
+import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianFRODOSpec;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianGOSTElliptic;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPairSpec;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianLMSKeySpec;
@@ -49,8 +51,10 @@ import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianMcElieceKeySpec;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianMcElieceKeySpec.GordianMcElieceDigestType;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianQTESLAKeyType;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianRSAModulus;
+import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianSABERSpec;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianSM2Elliptic;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianSPHINCSDigestType;
+import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianSPHINCSPlusSpec;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianXMSSKeySpec.GordianXMSSDigestType;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianXMSSKeySpec.GordianXMSSHeight;
 import net.sourceforge.joceanus.jgordianknot.api.keypairset.GordianKeyPairSetSpec;
@@ -164,8 +168,8 @@ public class KeyStoreTest {
             signedKeyPairRequestTest(myState, GordianKeyPairSpec.dstu4145(GordianDSTU4145Elliptic.DSTU9)),
             signedKeyPairRequestTest(myState, GordianKeyPairSpec.sm2(GordianSM2Elliptic.SM2P256V1)),
             signedKeyPairRequestTest(myState, GordianKeyPairSpec.sphincs(GordianSPHINCSDigestType.SHA2)),
+            signedKeyPairRequestTest(myState, GordianKeyPairSpec.sphincsPlus(GordianSPHINCSPlusSpec.SHA128FR)),
             signedKeyPairRequestTest(myState, GordianKeyPairSpec.rainbow()),
-            signedKeyPairRequestTest(myState, GordianKeyPairSpec.qTESLA(GordianQTESLAKeyType.PROVABLY_SECURE_III)),
             signedKeyPairRequestTest(myState, GordianKeyPairSpec.xmss(GordianXMSSDigestType.SHA512, GordianXMSSHeight.H10)),
             signedKeyPairRequestTest(myState, GordianKeyPairSpec.lms(GordianLMSKeySpec.keySpec(GordianLMSSigType.H5, GordianLMSOtsType.W1))),
             encryptedKeyPairRequestTest(myState, GordianKeyPairSpec.mcEliece(GordianMcElieceKeySpec.standard())),
@@ -175,6 +179,9 @@ public class KeyStoreTest {
             agreedKeyPairRequestTest(myState, GordianKeyPairSpec.dh(GordianDHGroup.FFDHE2048)),
             agreedKeyPairRequestTest(myState, GordianKeyPairSpec.x25519()),
             agreedKeyPairRequestTest(myState, GordianKeyPairSpec.x448()),
+            agreedKeyPairRequestTest(myState, GordianKeyPairSpec.cmce(GordianCMCESpec.BASE3488)),
+            agreedKeyPairRequestTest(myState, GordianKeyPairSpec.frodo(GordianFRODOSpec.AES19888)),
+            agreedKeyPairRequestTest(myState, GordianKeyPairSpec.saber(GordianSABERSpec.BASE128)),
             DynamicTest.dynamicTest("Cleanup", myState::cleanUp)
         ));
     }

@@ -184,7 +184,15 @@ public final class GordianSignatureSpec {
      * @return the SignatureSpec
      */
     public static GordianSignatureSpec sphincs() {
-        return new GordianSignatureSpec(GordianKeyPairType.SPHINCS, GordianSignatureType.PREHASH);
+        return new GordianSignatureSpec(GordianKeyPairType.SPHINCS, GordianSignatureType.NATIVE);
+    }
+
+    /**
+     * Create SPHINCSPlusSpec.
+     * @return the SignatureSpec
+     */
+    public static GordianSignatureSpec sphincsPlus() {
+        return new GordianSignatureSpec(GordianKeyPairType.SPHINCSPLUS, GordianSignatureType.NATIVE);
     }
 
     /**
@@ -253,6 +261,8 @@ public final class GordianSignatureSpec {
                 return rainbow(GordianDigestSpec.sha2(GordianLength.LEN_512));
             case SPHINCS:
                 return sphincs();
+            case SPHINCSPLUS:
+                return sphincsPlus();
             case XMSS:
                 return xmss();
             case QTESLA:
@@ -315,6 +325,7 @@ public final class GordianSignatureSpec {
                 return theDigestSpec != null && theDigestSpec.isValid() && theDigestSpec.getDigestType().supportsLargeData();
             case EDDSA:
             case SPHINCS:
+            case SPHINCSPLUS:
             case QTESLA:
             case XMSS:
             case LMS:

@@ -21,13 +21,18 @@ import java.security.InvalidKeyException;
 import java.security.PublicKey;
 import java.security.spec.X509EncodedKeySpec;
 import javax.crypto.KeyAgreement;
+import javax.crypto.KeyGenerator;
 
+import org.bouncycastle.jcajce.SecretKeyWithEncapsulation;
 import org.bouncycastle.jcajce.spec.DHUParameterSpec;
+import org.bouncycastle.jcajce.spec.KEMExtractSpec;
+import org.bouncycastle.jcajce.spec.KEMGenerateSpec;
 import org.bouncycastle.jcajce.spec.MQVParameterSpec;
 import org.bouncycastle.jcajce.spec.UserKeyingMaterialSpec;
 
 import net.sourceforge.joceanus.jgordianknot.api.agree.GordianKDFType;
 import net.sourceforge.joceanus.jgordianknot.api.agree.GordianKeyPairAgreementSpec;
+import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianSymKeyType;
 import net.sourceforge.joceanus.jgordianknot.api.factory.GordianKeyPairFactory;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPair;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPairGenerator;
@@ -135,6 +140,81 @@ public final class JcaAgreement {
                 /* Store secret */
                 storeSecret(theAgreement.generateSecret());
             } catch (InvalidKeyException e) {
+                throw new GordianCryptoException(ERR_AGREEMENT, e);
+            }
+        }
+    }
+
+    /**
+     * Jca PostQuantum Agreement.
+     */
+    public static class JcaPostQuantumAgreement
+            extends GordianCoreAnonymousAgreement {
+        /**
+         * Key Agreement.
+         */
+        private final KeyGenerator theGenerator;
+
+        /**
+         * Constructor.
+         * @param pFactory the security factory
+         * @param pSpec the agreementSpec
+         * @param pGenerator the generator
+         */
+        JcaPostQuantumAgreement(final JcaFactory pFactory,
+                                final GordianKeyPairAgreementSpec pSpec,
+                                final KeyGenerator pGenerator) {
+            /* Initialise underlying class */
+            super(pFactory, pSpec);
+
+            /* Store the generator */
+            theGenerator = pGenerator;
+        }
+
+        @Override
+        public byte[] createClientHello(final GordianKeyPair pServer) throws OceanusException {
+            /* Protect against exceptions */
+            try {
+                /* Check keyPairs */
+                JcaKeyPair.checkKeyPair(pServer);
+                checkKeyPair(pServer);
+
+                /* Derive the secret */
+                final JcaPublicKey myTarget = (JcaPublicKey) getPublicKey(pServer);
+                theGenerator.init(new KEMGenerateSpec(myTarget.getPublicKey(), GordianSymKeyType.AES.toString()), getRandom());
+                final SecretKeyWithEncapsulation mySecret = (SecretKeyWithEncapsulation) theGenerator.generateKey();
+
+                /* Create the clientHello */
+                final byte[] myClientHello = buildClientHello(mySecret.getEncapsulation());
+                storeSecret(mySecret.getEncoded());
+                return myClientHello;
+
+            } catch (InvalidAlgorithmParameterException e) {
+                throw new GordianCryptoException(ERR_AGREEMENT, e);
+            }
+        }
+
+        @Override
+        public void acceptClientHello(final GordianKeyPair pServer,
+                                      final byte[] pClientHello) throws OceanusException {
+            /* Protect against exceptions */
+            try {
+                /* Check keyPair */
+                JcaKeyPair.checkKeyPair(pServer);
+                checkKeyPair(pServer);
+
+                /* Parse client hello */
+                final GordianAgreementClientHelloASN1 myHello = parseClientHello(pClientHello);
+
+                /* Derive the secret */
+                final JcaPrivateKey myTarget = (JcaPrivateKey) getPrivateKey(pServer);
+                theGenerator.init(new KEMExtractSpec(myTarget.getPrivateKey(), myHello.getEncapsulated(), GordianSymKeyType.AES.toString()));
+                final SecretKeyWithEncapsulation mySecret = (SecretKeyWithEncapsulation) theGenerator.generateKey();
+
+                /* Store secret */
+                storeSecret(mySecret.getEncoded());
+
+            } catch (InvalidAlgorithmParameterException e) {
                 throw new GordianCryptoException(ERR_AGREEMENT, e);
             }
         }

@@ -24,20 +24,34 @@ import java.util.Arrays;
 import org.bouncycastle.asn1.pkcs.PrivateKeyInfo;
 import org.bouncycastle.asn1.x509.SubjectPublicKeyInfo;
 import org.bouncycastle.crypto.AsymmetricCipherKeyPair;
+import org.bouncycastle.crypto.CipherParameters;
+import org.bouncycastle.crypto.Digest;
+import org.bouncycastle.crypto.digests.SHA3Digest;
+import org.bouncycastle.crypto.digests.SHA512tDigest;
 import org.bouncycastle.crypto.params.AsymmetricKeyParameter;
 import org.bouncycastle.crypto.params.ParametersWithRandom;
-import org.bouncycastle.pqc.crypto.qtesla.QTESLAKeyGenerationParameters;
-import org.bouncycastle.pqc.crypto.qtesla.QTESLAKeyPairGenerator;
-import org.bouncycastle.pqc.crypto.qtesla.QTESLAPrivateKeyParameters;
-import org.bouncycastle.pqc.crypto.qtesla.QTESLAPublicKeyParameters;
-import org.bouncycastle.pqc.crypto.qtesla.QTESLASigner;
+import org.bouncycastle.pqc.crypto.sphincs.SPHINCS256KeyGenerationParameters;
+import org.bouncycastle.pqc.crypto.sphincs.SPHINCS256KeyPairGenerator;
+import org.bouncycastle.pqc.crypto.sphincs.SPHINCS256Signer;
+import org.bouncycastle.pqc.crypto.sphincs.SPHINCSPrivateKeyParameters;
+import org.bouncycastle.pqc.crypto.sphincs.SPHINCSPublicKeyParameters;
+import org.bouncycastle.pqc.crypto.sphincsplus.SPHINCSPlusKeyGenerationParameters;
+import org.bouncycastle.pqc.crypto.sphincsplus.SPHINCSPlusKeyPairGenerator;
+import org.bouncycastle.pqc.crypto.sphincsplus.SPHINCSPlusParameters;
+import org.bouncycastle.pqc.crypto.sphincsplus.SPHINCSPlusPrivateKeyParameters;
+import org.bouncycastle.pqc.crypto.sphincsplus.SPHINCSPlusPublicKeyParameters;
+import org.bouncycastle.pqc.crypto.sphincsplus.SPHINCSPlusSigner;
 import org.bouncycastle.pqc.crypto.util.PrivateKeyFactory;
 import org.bouncycastle.pqc.crypto.util.PrivateKeyInfoFactory;
 import org.bouncycastle.pqc.crypto.util.PublicKeyFactory;
 import org.bouncycastle.pqc.crypto.util.SubjectPublicKeyInfoFactory;
 
+import net.sourceforge.joceanus.jgordianknot.api.base.GordianLength;
+import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigestSpec;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPair;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPairSpec;
+import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianSPHINCSDigestType;
+import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianSPHINCSPlusSpec;
 import net.sourceforge.joceanus.jgordianknot.api.sign.GordianSignatureSpec;
 import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyKeyPair.BouncyPrivateKey;
 import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyKeyPair.BouncyPublicKey;
@@ -47,53 +61,65 @@ import net.sourceforge.joceanus.jgordianknot.impl.core.keypair.GordianKeyPairVal
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
- * qTESLA KeyPair classes.
+ * SPHINCSPlus KeyPair classes.
  */
-public final class BouncyQTESLAKeyPair {
+public final class BouncySPHINCSPlusKeyPair {
     /**
      * Private constructor.
      */
-    private BouncyQTESLAKeyPair() {
+    private BouncySPHINCSPlusKeyPair() {
     }
 
     /**
-     * Bouncy QTESLA PublicKey.
+     * Bouncy SPHINCSPlus PublicKey.
      */
-    public static class BouncyQTESLAPublicKey
-            extends BouncyPublicKey<QTESLAPublicKeyParameters> {
+    public static class BouncySPHINCSPlusPublicKey
+            extends BouncyPublicKey<SPHINCSPlusPublicKeyParameters> {
         /**
          * Constructor.
          * @param pKeySpec the keySpec
          * @param pPublicKey the public key
          */
-        BouncyQTESLAPublicKey(final GordianKeyPairSpec pKeySpec,
-                              final QTESLAPublicKeyParameters pPublicKey) {
+        BouncySPHINCSPlusPublicKey(final GordianKeyPairSpec pKeySpec,
+                                   final SPHINCSPlusPublicKeyParameters pPublicKey) {
             super(pKeySpec, pPublicKey);
         }
 
         @Override
         protected boolean matchKey(final AsymmetricKeyParameter pThat) {
             /* Access keys */
-            final QTESLAPublicKeyParameters myThis = getPublicKey();
-            final QTESLAPublicKeyParameters myThat = (QTESLAPublicKeyParameters) pThat;
+            final SPHINCSPlusPublicKeyParameters myThis = getPublicKey();
+            final SPHINCSPlusPublicKeyParameters myThat = (SPHINCSPlusPublicKeyParameters) pThat;
 
             /* Compare keys */
-            return Arrays.equals(myThis.getPublicData(), myThat.getPublicData());
+            return compareKeys(myThis, myThat);
+        }
+
+        /**
+         * CompareKeys.
+         * @param pFirst the first key
+         * @param pSecond the second key
+         * @return true/false
+         */
+        private static boolean compareKeys(final SPHINCSPlusPublicKeyParameters pFirst,
+                                           final SPHINCSPlusPublicKeyParameters pSecond) {
+            return Arrays.equals(pFirst.getSeed(), pSecond.getSeed())
+                    && Arrays.equals(pFirst.getRoot(), pSecond.getRoot());
         }
     }
 
     /**
-     * Bouncy QTESLA PrivateKey.
+     * Bouncy SPHINCSPlus PrivateKey.
      */
-    public static class BouncyQTESLAPrivateKey
-            extends BouncyPrivateKey<QTESLAPrivateKeyParameters> {
+    public static class BouncySPHINCSPlusPrivateKey
+            extends BouncyPrivateKey<SPHINCSPlusPrivateKeyParameters> {
         /**
          * Constructor.
          * @param pKeySpec the keySpec
          * @param pPrivateKey the private key
          */
-        BouncyQTESLAPrivateKey(final GordianKeyPairSpec pKeySpec,
-                               final QTESLAPrivateKeyParameters pPrivateKey) {
+        BouncySPHINCSPlusPrivateKey(final GordianKeyPairSpec pKeySpec,
+                                    final SPHINCSPlusPrivateKeyParameters pPrivateKey) {
             super(pKeySpec, pPrivateKey);
         }
 
@@ -101,38 +127,52 @@ public final class BouncyQTESLAKeyPair {
         @Override
         protected boolean matchKey(final AsymmetricKeyParameter pThat) {
             /* Access keys */
-            final QTESLAPrivateKeyParameters myThis = getPrivateKey();
-            final QTESLAPrivateKeyParameters myThat = (QTESLAPrivateKeyParameters) pThat;
+            final SPHINCSPlusPrivateKeyParameters myThis = getPrivateKey();
+            final SPHINCSPlusPrivateKeyParameters myThat = (SPHINCSPlusPrivateKeyParameters) pThat;
 
             /* Compare keys */
-            return Arrays.equals(myThis.getSecret(), myThat.getSecret());
+            return compareKeys(myThis, myThat);
+        }
+
+        /**
+         * CompareKeys.
+         * @param pFirst the first key
+         * @param pSecond the second key
+         * @return true/false
+         */
+        private static boolean compareKeys(final SPHINCSPlusPrivateKeyParameters pFirst,
+                                           final SPHINCSPlusPrivateKeyParameters pSecond) {
+            return Arrays.equals(pFirst.getSeed(), pSecond.getSeed())
+                   && Arrays.equals(pFirst.getPrf(), pSecond.getPrf());
         }
     }
 
     /**
-     * BouncyCastle QTESLA KeyPair generator.
+     * BouncyCastle SPHINCSPlus KeyPair generator.
      */
-    public static class BouncyQTESLAKeyPairGenerator
+    public static class BouncySPHINCSPlusKeyPairGenerator
             extends BouncyKeyPairGenerator {
         /**
          * Generator.
          */
-        private final QTESLAKeyPairGenerator theGenerator;
+        private final SPHINCSPlusKeyPairGenerator theGenerator;
 
         /**
          * Constructor.
          * @param pFactory the Security Factory
          * @param pKeySpec the keySpec
          */
-        BouncyQTESLAKeyPairGenerator(final BouncyFactory pFactory,
-                                     final GordianKeyPairSpec pKeySpec) {
+        BouncySPHINCSPlusKeyPairGenerator(final BouncyFactory pFactory,
+                                          final GordianKeyPairSpec pKeySpec) {
             /* Initialise underlying class */
             super(pFactory, pKeySpec);
 
+            /* Determine the parameters */
+            final SPHINCSPlusParameters myParms = pKeySpec.getSPHINCSPlusKeySpec().getParameters();
+
             /* Create and initialise the generator */
-            theGenerator = new QTESLAKeyPairGenerator();
-            final int myCategory = pKeySpec.getQTESLACategory();
-            final QTESLAKeyGenerationParameters myParams = new QTESLAKeyGenerationParameters(myCategory, getRandom());
+            theGenerator = new SPHINCSPlusKeyPairGenerator();
+            final SPHINCSPlusKeyGenerationParameters myParams = new SPHINCSPlusKeyGenerationParameters(getRandom(), myParms);
             theGenerator.init(myParams);
         }
 
@@ -140,8 +180,8 @@ public final class BouncyQTESLAKeyPair {
         public BouncyKeyPair generateKeyPair() {
             /* Generate and return the keyPair */
             final AsymmetricCipherKeyPair myPair = theGenerator.generateKeyPair();
-            final BouncyQTESLAPublicKey myPublic = new BouncyQTESLAPublicKey(getKeySpec(), (QTESLAPublicKeyParameters) myPair.getPublic());
-            final BouncyQTESLAPrivateKey myPrivate = new BouncyQTESLAPrivateKey(getKeySpec(), (QTESLAPrivateKeyParameters) myPair.getPrivate());
+            final BouncySPHINCSPlusPublicKey myPublic = new BouncySPHINCSPlusPublicKey(getKeySpec(), (SPHINCSPlusPublicKeyParameters) myPair.getPublic());
+            final BouncySPHINCSPlusPrivateKey myPrivate = new BouncySPHINCSPlusPrivateKey(getKeySpec(), (SPHINCSPlusPrivateKeyParameters) myPair.getPrivate());
             return new BouncyKeyPair(myPublic, myPrivate);
         }
 
@@ -153,8 +193,8 @@ public final class BouncyQTESLAKeyPair {
                 BouncyKeyPair.checkKeyPair(pKeyPair, getKeySpec());
 
                 /* build and return the encoding */
-                final BouncyQTESLAPrivateKey myPrivateKey = (BouncyQTESLAPrivateKey) getPrivateKey(pKeyPair);
-                final QTESLAPrivateKeyParameters myParms = myPrivateKey.getPrivateKey();
+                final BouncySPHINCSPlusPrivateKey myPrivateKey = (BouncySPHINCSPlusPrivateKey) getPrivateKey(pKeyPair);
+                final SPHINCSPlusPrivateKeyParameters myParms = myPrivateKey.getPrivateKey();
                 final PrivateKeyInfo myInfo = PrivateKeyInfoFactory.createPrivateKeyInfo(myParms, null);
                 return new PKCS8EncodedKeySpec(myInfo.getEncoded());
 
@@ -172,10 +212,10 @@ public final class BouncyQTESLAKeyPair {
                 checkKeySpec(pPrivateKey);
 
                 /* derive keyPair */
-                final BouncyQTESLAPublicKey myPublic = derivePublicKey(pPublicKey);
+                final BouncySPHINCSPlusPublicKey myPublic = derivePublicKey(pPublicKey);
                 final PrivateKeyInfo myInfo = PrivateKeyInfo.getInstance(pPrivateKey.getEncoded());
-                final QTESLAPrivateKeyParameters myParms = (QTESLAPrivateKeyParameters) PrivateKeyFactory.createKey(myInfo);
-                final BouncyQTESLAPrivateKey myPrivate = new BouncyQTESLAPrivateKey(getKeySpec(), myParms);
+                final SPHINCSPlusPrivateKeyParameters myParms = (SPHINCSPlusPrivateKeyParameters) PrivateKeyFactory.createKey(myInfo);
+                final BouncySPHINCSPlusPrivateKey myPrivate = new BouncySPHINCSPlusPrivateKey(getKeySpec(), myParms);
                 final BouncyKeyPair myPair = new BouncyKeyPair(myPublic, myPrivate);
 
                 /* Check that we have a matching pair */
@@ -197,8 +237,8 @@ public final class BouncyQTESLAKeyPair {
                 BouncyKeyPair.checkKeyPair(pKeyPair, getKeySpec());
 
                 /* build and return the encoding */
-                final BouncyQTESLAPublicKey myPublicKey = (BouncyQTESLAPublicKey) getPublicKey(pKeyPair);
-                final QTESLAPublicKeyParameters myParms = myPublicKey.getPublicKey();
+                final BouncySPHINCSPlusPublicKey myPublicKey = (BouncySPHINCSPlusPublicKey) getPublicKey(pKeyPair);
+                final SPHINCSPlusPublicKeyParameters myParms = myPublicKey.getPublicKey();
                 final SubjectPublicKeyInfo myInfo = SubjectPublicKeyInfoFactory.createSubjectPublicKeyInfo(myParms);
                 return new X509EncodedKeySpec(myInfo.getEncoded());
 
@@ -209,7 +249,7 @@ public final class BouncyQTESLAKeyPair {
 
         @Override
         public BouncyKeyPair derivePublicOnlyKeyPair(final X509EncodedKeySpec pEncodedKey) throws OceanusException {
-            final BouncyQTESLAPublicKey myPublic = derivePublicKey(pEncodedKey);
+            final BouncySPHINCSPlusPublicKey myPublic = derivePublicKey(pEncodedKey);
             return new BouncyKeyPair(myPublic);
         }
 
@@ -219,7 +259,7 @@ public final class BouncyQTESLAKeyPair {
          * @return the public key
          * @throws OceanusException on error
          */
-        private BouncyQTESLAPublicKey derivePublicKey(final X509EncodedKeySpec pEncodedKey) throws OceanusException {
+        private BouncySPHINCSPlusPublicKey derivePublicKey(final X509EncodedKeySpec pEncodedKey) throws OceanusException {
             /* Protect against exceptions */
             try {
                 /* Check the keySpecs */
@@ -227,8 +267,8 @@ public final class BouncyQTESLAKeyPair {
 
                 /* derive publicKey */
                 final SubjectPublicKeyInfo myInfo = SubjectPublicKeyInfo.getInstance(pEncodedKey.getEncoded());
-                final QTESLAPublicKeyParameters myParms = (QTESLAPublicKeyParameters) PublicKeyFactory.createKey(myInfo);
-                return new BouncyQTESLAPublicKey(getKeySpec(), myParms);
+                final SPHINCSPlusPublicKeyParameters myParms = (SPHINCSPlusPublicKeyParameters) PublicKeyFactory.createKey(myInfo);
+                return new BouncySPHINCSPlusPublicKey(getKeySpec(), myParms);
 
             } catch (IOException e) {
                 throw new GordianCryptoException(ERROR_PARSE, e);
@@ -237,14 +277,14 @@ public final class BouncyQTESLAKeyPair {
     }
 
     /**
-     * QTESLA signature.
+     * SPHINCSPlus signer.
      */
-    public static class BouncyQTESLASignature
+    public static class BouncySPHINCSPlusSignature
             extends BouncyDigestSignature {
         /**
-         * The XMSS Signer.
+         * The SPHINCSPlus Signer.
          */
-        private final QTESLASigner theSigner;
+        private final SPHINCSPlusSigner theSigner;
 
         /**
          * Constructor.
@@ -252,15 +292,12 @@ public final class BouncyQTESLAKeyPair {
          * @param pSpec the signatureSpec.
          * @throws OceanusException on error
          */
-        BouncyQTESLASignature(final BouncyFactory pFactory,
-                              final GordianSignatureSpec pSpec) throws OceanusException {
+        BouncySPHINCSPlusSignature(final BouncyFactory pFactory,
+                                   final GordianSignatureSpec pSpec) throws OceanusException {
             /* Initialise underlying class */
             super(pFactory, pSpec);
-
-            /* Create the signer */
-            theSigner = new QTESLASigner();
+            theSigner = new SPHINCSPlusSigner();
         }
-
 
         @Override
         public void initForSigning(final GordianKeyPair pKeyPair) throws OceanusException {
@@ -269,8 +306,8 @@ public final class BouncyQTESLAKeyPair {
             super.initForSigning(pKeyPair);
 
             /* Initialise and set the signer */
-            final BouncyQTESLAPrivateKey myPrivate = (BouncyQTESLAPrivateKey) getKeyPair().getPrivateKey();
-            final ParametersWithRandom myParms = new ParametersWithRandom(myPrivate.getPrivateKey(), getRandom());
+            final BouncySPHINCSPlusPrivateKey myPrivate = (BouncySPHINCSPlusPrivateKey) getKeyPair().getPrivateKey();
+            final CipherParameters myParms = new ParametersWithRandom(myPrivate.getPrivateKey(), getRandom());
             theSigner.init(true, myParms);
         }
 
@@ -281,7 +318,7 @@ public final class BouncyQTESLAKeyPair {
             super.initForVerify(pKeyPair);
 
             /* Initialise and set the signer */
-            final BouncyQTESLAPublicKey myPublic = (BouncyQTESLAPublicKey) getKeyPair().getPublicKey();
+            final BouncySPHINCSPlusPublicKey myPublic = (BouncySPHINCSPlusPublicKey) getKeyPair().getPublicKey();
             theSigner.init(false, myPublic.getPublicKey());
         }
 

@@ -43,9 +43,9 @@ public final class JcaKeyGenerator<T extends GordianKeySpec>
      * @param pKeyType the keyType
      * @param pGenerator the key generator
      */
-    protected JcaKeyGenerator(final JcaFactory pFactory,
-                              final T pKeyType,
-                              final KeyGenerator pGenerator) {
+    JcaKeyGenerator(final JcaFactory pFactory,
+                    final T pKeyType,
+                    final KeyGenerator pGenerator) {
         /* Initialise underlying class */
         super(pFactory, pKeyType);
 

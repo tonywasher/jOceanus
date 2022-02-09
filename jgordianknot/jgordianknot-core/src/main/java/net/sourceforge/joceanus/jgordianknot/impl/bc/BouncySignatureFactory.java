@@ -26,11 +26,11 @@ import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyEdDSAKeyPair.BouncyEd
 import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyEllipticKeyPair.BouncyECSignature;
 import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyGOSTKeyPair.BouncyGOSTSignature;
 import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyLMSKeyPair.BouncyLMSSignature;
-import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyQTESLAKeyPair.BouncyQTESLASignature;
 import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyRSAKeyPair.BouncyRSASignature;
 import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyRainbowKeyPair.BouncyRainbowSignature;
 import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncySM2KeyPair.BouncySM2Signature;
 import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncySPHINCSKeyPair.BouncySPHINCSSignature;
+import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncySPHINCSPlusKeyPair.BouncySPHINCSPlusSignature;
 import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyXMSSKeyPair.BouncyXMSSSignature;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianCoreFactory;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianDataException;
@@ -96,12 +96,12 @@ public class BouncySignatureFactory
                 return new BouncyDSASignature(getFactory(), pSignatureSpec);
             case SPHINCS:
                 return new BouncySPHINCSSignature(getFactory(), pSignatureSpec);
+            case SPHINCSPLUS:
+                return new BouncySPHINCSPlusSignature(getFactory(), pSignatureSpec);
             case RAINBOW:
                 return new BouncyRainbowSignature(getFactory(), pSignatureSpec);
             case XMSS:
                 return new BouncyXMSSSignature(getFactory(), pSignatureSpec);
-            case QTESLA:
-                return new BouncyQTESLASignature(getFactory(), pSignatureSpec);
             case LMS:
                 return new BouncyLMSSignature(getFactory(), pSignatureSpec);
             default:

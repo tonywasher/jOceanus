@@ -24,6 +24,7 @@ import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigestSpec;
 import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigestType;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianEdwardsElliptic;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPairSpec;
+import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPairType;
 import net.sourceforge.joceanus.jgordianknot.api.sign.GordianKeyPairSignature;
 import net.sourceforge.joceanus.jgordianknot.api.sign.GordianSignatureSpec;
 import net.sourceforge.joceanus.jgordianknot.api.sign.GordianSignatureType;
@@ -35,9 +36,9 @@ import net.sourceforge.joceanus.jgordianknot.impl.jca.JcaSignature.JcaDSASignatu
 import net.sourceforge.joceanus.jgordianknot.impl.jca.JcaSignature.JcaEdDSASignature;
 import net.sourceforge.joceanus.jgordianknot.impl.jca.JcaSignature.JcaGOSTSignature;
 import net.sourceforge.joceanus.jgordianknot.impl.jca.JcaSignature.JcaLMSSignature;
-import net.sourceforge.joceanus.jgordianknot.impl.jca.JcaSignature.JcaQTESLASignature;
 import net.sourceforge.joceanus.jgordianknot.impl.jca.JcaSignature.JcaRSASignature;
 import net.sourceforge.joceanus.jgordianknot.impl.jca.JcaSignature.JcaRainbowSignature;
+import net.sourceforge.joceanus.jgordianknot.impl.jca.JcaSignature.JcaSPHINCSPlusSignature;
 import net.sourceforge.joceanus.jgordianknot.impl.jca.JcaSignature.JcaSPHINCSSignature;
 import net.sourceforge.joceanus.jgordianknot.impl.jca.JcaSignature.JcaXMSSSignature;
 import net.sourceforge.joceanus.jtethys.OceanusException;
@@ -117,10 +118,10 @@ public class JcaSignatureFactory
                 return new JcaXMSSSignature(getFactory(), pSignatureSpec);
             case SPHINCS:
                 return new JcaSPHINCSSignature(getFactory(), pSignatureSpec);
+            case SPHINCSPLUS:
+                return new JcaSPHINCSPlusSignature(getFactory(), pSignatureSpec);
             case RAINBOW:
                 return new JcaRainbowSignature(getFactory(), pSignatureSpec);
-            case QTESLA:
-                return new JcaQTESLASignature(getFactory(), pSignatureSpec);
             case LMS:
                 return new JcaLMSSignature(getFactory(), pSignatureSpec);
             default:
@@ -152,7 +153,7 @@ public class JcaSignatureFactory
                 return validRainbowSignature(myDigest);
             case XMSS:
             case SPHINCS:
-            case QTESLA:
+            case SPHINCSPLUS:
             case LMS:
                 return true;
             case EDDSA:
@@ -276,9 +277,8 @@ public class JcaSignatureFactory
         }
 
         /* Disallow EdDSA 25519 PURE */
-        final GordianEdwardsElliptic myEdwards = pKeyPairSpec.getEdwardsElliptic();
-        return myEdwards == null
-                || !myEdwards.is25519()
+        return pKeyPairSpec.getKeyPairType() != GordianKeyPairType.EDDSA
+                || !pKeyPairSpec.getEdwardsElliptic().is25519()
                 || pSpec.getSignatureType() != GordianSignatureType.PURE;
     }
 }

@@ -181,6 +181,7 @@ public final class GordianKeyPairValidity {
             case SM2:
             case RAINBOW:
             case SPHINCS:
+            case SPHINCSPLUS:
             case QTESLA:
             case XMSS:
             case LMS:
@@ -199,6 +200,12 @@ public final class GordianKeyPairValidity {
                         : GordianKeyPairAgreementSpec.xdhAnon(GordianKDFType.SHA512KDF);
             case NEWHOPE:
                 return GordianKeyPairAgreementSpec.newHope(GordianKDFType.SHA256KDF);
+            case CMCE:
+                return GordianKeyPairAgreementSpec.cmce();
+            case FRODO:
+                return GordianKeyPairAgreementSpec.frodo();
+            case SABER:
+                return GordianKeyPairAgreementSpec.saber();
             default:
                 return null;
         }

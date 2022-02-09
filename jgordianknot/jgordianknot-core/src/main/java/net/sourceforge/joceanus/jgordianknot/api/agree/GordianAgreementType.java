@@ -94,6 +94,9 @@ public enum GordianAgreementType {
             case GOST2012:
             case DSTU4145:
             case SM2:
+            case CMCE:
+            case FRODO:
+            case SABER:
                 return true;
             default:
                 return false;

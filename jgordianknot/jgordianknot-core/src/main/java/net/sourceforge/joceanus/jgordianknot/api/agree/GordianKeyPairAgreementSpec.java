@@ -337,6 +337,30 @@ public final class GordianKeyPairAgreementSpec {
     }
 
     /**
+     * Create the cmce agreementSpec.
+     * @return the Spec
+     */
+    public static GordianKeyPairAgreementSpec cmce() {
+        return new GordianKeyPairAgreementSpec(GordianKeyPairType.CMCE, GordianAgreementType.KEM, GordianKDFType.NONE);
+    }
+
+    /**
+     * Create the frodo agreementSpec.
+     * @return the Spec
+     */
+    public static GordianKeyPairAgreementSpec frodo() {
+        return new GordianKeyPairAgreementSpec(GordianKeyPairType.FRODO, GordianAgreementType.KEM, GordianKDFType.NONE);
+    }
+
+    /**
+     * Create the saber agreementSpec.
+     * @return the Spec
+     */
+    public static GordianKeyPairAgreementSpec saber() {
+        return new GordianKeyPairAgreementSpec(GordianKeyPairType.SABER, GordianAgreementType.KEM, GordianKDFType.NONE);
+    }
+
+    /**
      * Create default signatureSpec for key.
      * @param pKeySpec the keySpec
      * @return the SignatureSpec
@@ -352,6 +376,12 @@ public final class GordianKeyPairAgreementSpec {
                         : GordianKeyPairAgreementSpec.xdhAnon(GordianKDFType.SHA512KDF);
             case NEWHOPE:
                 return GordianKeyPairAgreementSpec.newHope(GordianKDFType.SHA256KDF);
+            case CMCE:
+                return GordianKeyPairAgreementSpec.cmce();
+            case FRODO:
+                return GordianKeyPairAgreementSpec.frodo();
+            case SABER:
+                return GordianKeyPairAgreementSpec.saber();
             case EC:
             case SM2:
             case GOST2012:
@@ -516,6 +546,15 @@ public final class GordianKeyPairAgreementSpec {
                 break;
             case NEWHOPE:
                 myAgreements.addAll(listAllKDFs(pKeyPairType, GordianAgreementType.ANON));
+                break;
+            case CMCE:
+                myAgreements.add(cmce());
+                break;
+            case FRODO:
+                myAgreements.add(frodo());
+                break;
+            case SABER:
+                myAgreements.add(saber());
                 break;
             case EC:
             case SM2:

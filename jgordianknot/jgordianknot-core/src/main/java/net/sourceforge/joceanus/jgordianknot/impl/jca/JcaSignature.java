@@ -401,6 +401,7 @@ public abstract class JcaSignature
             /* Initialise class */
             super(pFactory, pSignatureSpec);
         }
+
         @Override
         public void initForSigning(final GordianKeyPair pKeyPair) throws OceanusException {
             /* Determine the required signer */
@@ -441,6 +442,27 @@ public abstract class JcaSignature
 
             /* Build the algorithm */
             return myBuilder.toString();
+        }
+    }
+
+    /**
+     * SPHINCSPlus signature.
+     */
+    static class JcaSPHINCSPlusSignature
+            extends JcaSignature {
+        /**
+         * Constructor.
+         * @param pFactory the factory
+         * @param pSignatureSpec the signatureSpec
+         * @throws OceanusException on error
+         */
+        JcaSPHINCSPlusSignature(final GordianCoreFactory pFactory,
+                                final GordianSignatureSpec pSignatureSpec) throws OceanusException {
+            /* Initialise class */
+            super(pFactory, pSignatureSpec);
+
+            /* Create the signature class */
+            setSigner(JcaSignatureFactory.getJavaSignature("SPHINCSPLUS", true));
         }
     }
 

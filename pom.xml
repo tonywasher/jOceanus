@@ -71,7 +71,7 @@
     <appDir>${env.BACKUPDIR}</appDir>
     <appBinDir>bin/</appBinDir>
     <appLibDir>lib/</appLibDir>
-    <BouncyCastleVersion>1.70</BouncyCastleVersion>
+    <BouncyCastleVersion>171b11</BouncyCastleVersion>
     <JUnitVersion>5.8.2</JUnitVersion>
     <JSONVersion>20211205</JSONVersion>
     <ApacheMavenVersion>3.8.3</ApacheMavenVersion>

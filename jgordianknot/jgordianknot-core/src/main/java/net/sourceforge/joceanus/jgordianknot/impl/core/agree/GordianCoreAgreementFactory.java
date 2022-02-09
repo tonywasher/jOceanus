@@ -27,6 +27,7 @@ import net.sourceforge.joceanus.jgordianknot.api.agree.GordianKeyPairSetAgreemen
 import net.sourceforge.joceanus.jgordianknot.api.agree.GordianKeyPairSetAgreementSpec;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianEdwardsElliptic;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPairSpec;
+import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPairType;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianCoreFactory;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianDataException;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianLogicException;
@@ -125,8 +126,8 @@ public abstract class GordianCoreAgreementFactory
         }
 
         /* For Edwards XDH, disallow 512KDF for 25519 and 256KDF for 448 */
-        final GordianEdwardsElliptic myEdwards = pKeyPairSpec.getEdwardsElliptic();
-        if (myEdwards != null) {
+        if (pKeyPairSpec.getKeyPairType() == GordianKeyPairType.XDH) {
+            final GordianEdwardsElliptic myEdwards = pKeyPairSpec.getEdwardsElliptic();
             switch (pAgreementSpec.getKDFType()) {
                 case SHA256KDF:
                 case SHA256CKDF:
