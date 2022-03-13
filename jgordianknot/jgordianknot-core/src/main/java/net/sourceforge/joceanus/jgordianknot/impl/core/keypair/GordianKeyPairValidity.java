@@ -182,7 +182,6 @@ public final class GordianKeyPairValidity {
             case RAINBOW:
             case SPHINCS:
             case SPHINCSPLUS:
-            case QTESLA:
             case XMSS:
             case LMS:
                 return GordianSignatureSpec.defaultForKey(mySpec);

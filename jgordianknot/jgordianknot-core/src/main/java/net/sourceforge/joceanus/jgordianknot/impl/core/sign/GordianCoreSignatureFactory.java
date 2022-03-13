@@ -132,10 +132,10 @@ public abstract class GordianCoreSignatureFactory
         }
 
         /* Disallow NATIVE signature for ed448 */
-        if (GordianKeyPairType.EDDSA.equals(pKeyPairSpec.getKeyPairType())) {
-            return pSignSpec.getSignatureType() != GordianSignatureType.NATIVE
-                    || pKeyPairSpec.getEdwardsElliptic() == GordianEdwardsElliptic.CURVE25519;
-        }
+        //if (GordianKeyPairType.EDDSA.equals(pKeyPairSpec.getKeyPairType())) {
+        //    return pSignSpec.getSignatureType() != GordianSignatureType.NATIVE
+        //            || pKeyPairSpec.getEdwardsElliptic() == GordianEdwardsElliptic.CURVE25519;
+        //}
 
         /* If this is a RSA Signature */
         if (GordianKeyPairType.RSA.equals(pKeyPairSpec.getKeyPairType())) {

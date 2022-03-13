@@ -154,10 +154,9 @@ public class JcaSignatureFactory
             case XMSS:
             case SPHINCS:
             case SPHINCSPLUS:
+            case EDDSA:
             case LMS:
                 return true;
-            case EDDSA:
-                return !GordianSignatureType.PREHASH.equals(pSpec.getSignatureType());
             case DH:
             case NEWHOPE:
             case MCELIECE:
@@ -266,19 +265,5 @@ public class JcaSignatureFactory
     private static boolean validRainbowSignature(final GordianDigestSpec pSpec) {
         return pSpec.getDigestType() == GordianDigestType.SHA2
                 && pSpec.getStateLength() == null;
-    }
-
-    @Override
-    public boolean validSignatureSpecForKeyPairSpec(final GordianKeyPairSpec pKeyPairSpec,
-                                                    final GordianSignatureSpec pSpec) {
-        /* validate the signatureSpec/keySpec */
-        if (!super.validSignatureSpecForKeyPairSpec(pKeyPairSpec, pSpec)) {
-            return false;
-        }
-
-        /* Disallow EdDSA 25519 PURE */
-        return pKeyPairSpec.getKeyPairType() != GordianKeyPairType.EDDSA
-                || !pKeyPairSpec.getEdwardsElliptic().is25519()
-                || pSpec.getSignatureType() != GordianSignatureType.PURE;
     }
 }

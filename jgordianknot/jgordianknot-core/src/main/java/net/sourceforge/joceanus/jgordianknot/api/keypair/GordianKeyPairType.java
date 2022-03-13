@@ -96,11 +96,6 @@ public enum GordianKeyPairType {
     NEWHOPE,
 
     /**
-     * qTESLA.
-     */
-    QTESLA,
-
-    /**
      * LMS.
      */
     LMS,

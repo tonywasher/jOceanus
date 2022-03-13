@@ -168,7 +168,7 @@ public final class GordianSignatureSpec {
      * @return the SignatureSpec
      */
     public static GordianSignatureSpec edDSA() {
-        return new GordianSignatureSpec(GordianKeyPairType.EDDSA, GordianSignatureType.PURE);
+        return new GordianSignatureSpec(GordianKeyPairType.EDDSA, GordianSignatureType.NATIVE);
     }
 
     /**
@@ -209,7 +209,7 @@ public final class GordianSignatureSpec {
      * @return the SignatureSpec
      */
     public static GordianSignatureSpec xmss() {
-        return new GordianSignatureSpec(GordianKeyPairType.XMSS, GordianSignatureType.PURE);
+        return new GordianSignatureSpec(GordianKeyPairType.XMSS, GordianSignatureType.NATIVE);
     }
 
     /**
@@ -221,19 +221,11 @@ public final class GordianSignatureSpec {
     }
 
     /**
-     * Create qTESLASpec.
-     * @return the SignatureSpec
-     */
-    public static GordianSignatureSpec qTESLA() {
-        return new GordianSignatureSpec(GordianKeyPairType.QTESLA, GordianSignatureType.PURE);
-    }
-
-    /**
      * Create lmsSpec.
      * @return the SignatureSpec
      */
     public static GordianSignatureSpec lms() {
-        return new GordianSignatureSpec(GordianKeyPairType.LMS, GordianSignatureType.PURE);
+        return new GordianSignatureSpec(GordianKeyPairType.LMS, GordianSignatureType.NATIVE);
     }
 
     /**
@@ -265,8 +257,6 @@ public final class GordianSignatureSpec {
                 return sphincsPlus();
             case XMSS:
                 return xmss();
-            case QTESLA:
-                return qTESLA();
             case LMS:
                 return lms();
             default:
@@ -326,7 +316,6 @@ public final class GordianSignatureSpec {
             case EDDSA:
             case SPHINCS:
             case SPHINCSPLUS:
-            case QTESLA:
             case XMSS:
             case LMS:
                 return theDigestSpec == null;

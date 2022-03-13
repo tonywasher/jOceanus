@@ -25,7 +25,7 @@
                 that is created will implement an appropriate interface as per the following sections</p>
         </section>
         <section name="Anonymous Agreement">
-            <p><strong>GordianKeyPairAnonymousAgreement</strong> is is a oneShot process where the <strong>Client</strong> must already
+            <p><strong>GordianKeyPairAnonymousAgreement</strong> is a oneShot process where the <strong>Client</strong> must already
                 know the publicKey of the <strong>Server</strong>. It will generate a <strong>ClientHello</strong> message that is sent to
                 the <strong>Server</strong>. The <strong>Server</strong> knows nothing about the <strong>Client</strong>.</p>
             <subsection name="Sample">
@@ -123,7 +123,7 @@
         </section>
         <section name="Signed Agreement">
             <p><strong>GordianKeyPairSignedAgreement</strong> works similarly to the Handshake agreement without the confirmation message. The difference is that
-                the keys used in the agreement are ephemeral and the only well-known key is the publicKey of the server which is used to authenticate teh
+                the keys used in the agreement are ephemeral and the only well-known key is the publicKey of the server which is used to authenticate the
                 <strong>ServerHello</strong> message.</p>
             <subsection name="Sample">
                 <source>
@@ -162,12 +162,36 @@
                 </source>
             </subsection>
         </section>
+        <section name="Receiving a ClientHello">
+            <p>In all the above examples the server supports a single <strong>GordianAgreementSpec</strong>. In reality it might support a number
+                of different specs. It can obtain the required <strong>GordianAgreementSpec</strong> from the ClientHello and switch strategies accordingly.
+                It can also interrogate the KeyPairType should it support multiple keyPairs.</p>
+            <subsection name="Sample">
+                <source>
+                    /* Access factory */
+                    final GordianFactory myBaseFactory = GordianGenerator.createFactory();
+                    final GordianKeyPairFactory myKeyPairFactory = myBase.getKeyPairFactory();
+                    final GordianAgreementFactory myAgreementFactory = myKeyPairFactory.getAgreementFactory();
+
+                    /* Access clientHello and determine the agreementSpec that it represents */
+                    final byte[] myClientHello = .....
+                    final GordianKeyPairAgreement myAgreement = myAgreementFactory.createKeyPairAgreement(myClientHello);
+                    if (myAgreement instanceof GordianKeyPairAnonymousAgreement) {
+                        ....
+                    } else if (myAgreement instanceof GordianKeyPairHandshakeAgreement) {
+                        ....
+                    } else if (myAgreement instanceof GordianKeyPairSignedAgreement) {
+                        ....
+                    }
+                </source>
+            </subsection>
+        </section>
         <section name="Algorithms">
             <p>The following agreement algorithms are supported.</p>
             <table class="defTable">
                 <tr><th class="defHdr">Algorithm</th><th>Type</th><th class="defHdr">KeyTypes</th><th>Notes</th></tr>
                 <tr><td>KEM</td><td>Anonymous</td><td>RSA, EC, GOST2012, DSTU4145, SM2</td><td>Not available on JCA</td></tr>
-                <tr><td>Anonymous</td><td>Anonymous</td><td>DH, EC. GOST2012, DSTU4145, SM2, XDH, NewHope</td><td/></tr>
+                <tr><td>Anonymous</td><td>Anonymous</td><td>DH, EC, GOST2012, DSTU4145, SM2, XDH, NewHope, CMCE, Frodo, SABER</td><td/></tr>
                 <tr><td>Basic</td><td>Handshake</td><td>DH, EC, GOST2012, DSTU4145, SM2, XDH</td><td/></tr>
                 <tr><td>Signed</td><td>Signed</td><td>DH, EC, GOST2012, DSTU4145, SM2, XDH</td><td/></tr>
                 <tr><td>MQV</td><td>Handshake</td><td>DH, EC, GOST2012, DSTU4145, SM2</td><td/></tr>

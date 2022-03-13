@@ -1,5 +1,3 @@
-
-
 /*******************************************************************************
  * GordianKnot: Security Suite
  * Copyright 2012,2021 Tony Washer
@@ -72,12 +70,7 @@ public enum GordianSignatureType {
     /**
      * PreHash.
      */
-    PREHASH,
-
-    /**
-     * Pure.
-     */
-    PURE;
+    PREHASH;
 
     /**
      * Is this Signature supported for this AsymKeyType?
@@ -94,8 +87,6 @@ public enum GordianSignatureType {
                 return GordianKeyPairType.RSA == pKeyType;
             case NR:
                 return GordianKeyPairType.EC == pKeyType;
-            case PURE:
-                return hasPure(pKeyType);
             case PREHASH:
                 return hasPreHash(pKeyType);
             case NATIVE:
@@ -109,30 +100,12 @@ public enum GordianSignatureType {
     }
 
     /**
-     * Does the AsymKeyType have a Pure signature?
-     * @param pKeyType the asymKeyType
-     * @return true/false
-     */
-    public static boolean hasPure(final GordianKeyPairType pKeyType) {
-        switch (pKeyType) {
-            case EDDSA:
-            case XMSS:
-            case QTESLA:
-            case LMS:
-                return true;
-            default:
-                return false;
-        }
-    }
-
-    /**
      * Does the AsymKeyType have a PreHash signature?
      * @param pKeyType the asymKeyType
      * @return true/false
      */
     public static boolean hasPreHash(final GordianKeyPairType pKeyType) {
         switch (pKeyType) {
-            case EDDSA:
             case XMSS:
             case RSA:
                 return true;
@@ -170,6 +143,8 @@ public enum GordianSignatureType {
             case RAINBOW:
             case SPHINCS:
             case SPHINCSPLUS:
+            case XMSS:
+            case LMS:
                 return true;
             default:
                 return false;
