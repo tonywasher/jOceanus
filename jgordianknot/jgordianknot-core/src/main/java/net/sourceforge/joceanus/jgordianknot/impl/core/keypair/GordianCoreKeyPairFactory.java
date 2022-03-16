@@ -18,15 +18,19 @@ package net.sourceforge.joceanus.jgordianknot.impl.core.keypair;
 
 import java.security.spec.PKCS8EncodedKeySpec;
 import java.security.spec.X509EncodedKeySpec;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.function.Predicate;
 
 import net.sourceforge.joceanus.jgordianknot.api.agree.GordianAgreementFactory;
 import net.sourceforge.joceanus.jgordianknot.api.encrypt.GordianEncryptorFactory;
 import net.sourceforge.joceanus.jgordianknot.api.factory.GordianKeyPairFactory;
+import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPairGenerator;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPairSpec;
 import net.sourceforge.joceanus.jgordianknot.api.keypairset.GordianKeyPairSetFactory;
 import net.sourceforge.joceanus.jgordianknot.api.keystore.GordianKeyStoreFactory;
 import net.sourceforge.joceanus.jgordianknot.api.sign.GordianSignatureFactory;
+import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyKeyPairGenerator;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianCoreFactory;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianDataException;
 import net.sourceforge.joceanus.jtethys.OceanusException;
@@ -40,6 +44,11 @@ public abstract class GordianCoreKeyPairFactory
      * KeyPairAlgId.
      */
     private static final GordianKeyPairAlgId KEYPAIR_ALG_ID = new GordianKeyPairAlgId();
+
+    /**
+     * KeyPairGenerator Cache.
+     */
+    private final Map<GordianKeyPairSpec, GordianCompositeKeyPairGenerator> theCache;
 
     /**
      * The factory.
@@ -77,6 +86,7 @@ public abstract class GordianCoreKeyPairFactory
      */
     public GordianCoreKeyPairFactory(final GordianCoreFactory pFactory) {
         theFactory = pFactory;
+        theCache = new HashMap<>();
     }
 
     @Override
@@ -147,6 +157,23 @@ public abstract class GordianCoreKeyPairFactory
      */
     protected void setKeyStoreFactory(final GordianKeyStoreFactory pFactory) {
         theKeyStoreFactory = pFactory;
+    }
+
+    @Override
+    public GordianKeyPairGenerator getKeyPairGenerator(final GordianKeyPairSpec pKeySpec) throws OceanusException {
+        /* Look up in the cache */
+        GordianCompositeKeyPairGenerator myGenerator = theCache.get(pKeySpec);
+        if (myGenerator == null) {
+            /* Check the keySpec */
+            checkAsymKeySpec(pKeySpec);
+
+            /* Create the new generator */
+            myGenerator = new GordianCompositeKeyPairGenerator(this, pKeySpec);
+
+            /* Add to cache */
+            theCache.put(pKeySpec, myGenerator);
+        }
+        return myGenerator;
     }
 
     @Override

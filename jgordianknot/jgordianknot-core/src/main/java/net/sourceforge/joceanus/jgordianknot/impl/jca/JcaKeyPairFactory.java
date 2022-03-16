@@ -22,7 +22,9 @@ import java.security.NoSuchAlgorithmException;
 import java.util.HashMap;
 import java.util.Map;
 
+import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPairGenerator;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPairSpec;
+import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPairType;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianCoreFactory;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianCryptoException;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianDataException;
@@ -98,7 +100,12 @@ public class JcaKeyPairFactory
     }
 
     @Override
-    public JcaKeyPairGenerator getKeyPairGenerator(final GordianKeyPairSpec pKeySpec) throws OceanusException {
+    public GordianKeyPairGenerator getKeyPairGenerator(final GordianKeyPairSpec pKeySpec) throws OceanusException {
+        /* Handle composite keyPairGenerator */
+        if (GordianKeyPairType.COMPOSITE.equals(pKeySpec.getKeyPairType())) {
+            return super.getKeyPairGenerator(pKeySpec);
+        }
+
         /* Look up in the cache */
         JcaKeyPairGenerator myGenerator = theCache.get(pKeySpec);
         if (myGenerator == null) {

@@ -17,7 +17,9 @@
 package net.sourceforge.joceanus.jgordianknot.api.keypair;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.EnumSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
 
@@ -30,7 +32,7 @@ import net.sourceforge.joceanus.jtethys.TethysDataConverter;
 /**
  * Asymmetric KeyPair Specification.
  */
-public final class GordianKeyPairSpec {
+public class GordianKeyPairSpec {
     /**
      * The Separator.
      */
@@ -287,6 +289,24 @@ public final class GordianKeyPairSpec {
     }
 
     /**
+     * Create CompositeKey.
+     * @param pSpecs the list of keySpecs
+     * @return the KeySpec
+     */
+    public static GordianKeyPairSpec composite(final GordianKeyPairSpec... pSpecs) {
+        return composite(Arrays.asList(pSpecs));
+    }
+
+    /**
+     * Create CompositeKey.
+     * @param pSpecs the list of keySpecs
+     * @return the KeySpec
+     */
+    public static GordianKeyPairSpec composite(final List<GordianKeyPairSpec> pSpecs) {
+        return new GordianKeyPairSpec(GordianKeyPairType.COMPOSITE, pSpecs);
+    }
+
+    /**
      * Obtain the keyPairType.
      * @return the keyPairType.
      */
@@ -436,12 +456,21 @@ public final class GordianKeyPairSpec {
     }
 
     /**
-     * Obtain the SAber keySpec.
+     * Obtain the Saber keySpec.
      * @return the keySpec.
      */
     public GordianSABERSpec getSABERKeySpec() {
         if (!(theSubKeyType instanceof GordianSABERSpec)) throw new IllegalArgumentException();
         return (GordianSABERSpec) theSubKeyType;
+    }
+
+    /**
+     * Obtain the composite keySpec iterator.
+     * @return the keySpec iterator.
+     */
+    public Iterator<GordianKeyPairSpec> keySpecIterator() {
+        if (!(theSubKeyType instanceof List)) throw new IllegalArgumentException();
+        return ((List<GordianKeyPairSpec>) theSubKeyType).iterator();
     }
 
     @Override
@@ -478,6 +507,14 @@ public final class GordianKeyPairSpec {
                     break;
                 case XDH:
                     theName = "X" + ((GordianEdwardsElliptic) theSubKeyType).getSuffix();
+                    break;
+                case COMPOSITE:
+                    Iterator<GordianKeyPairSpec> myIterator = keySpecIterator();
+                    StringBuilder myBuilder = new StringBuilder(theName);
+                    while (myIterator.hasNext()) {
+                        myBuilder.append(SEP).append(myIterator.next().toString());
+                    }
+                    theName = myBuilder.toString();
                     break;
                 default:
                     theName += SEP + theSubKeyType.toString();
@@ -576,9 +613,28 @@ public final class GordianKeyPairSpec {
             case RAINBOW:
             case NEWHOPE:
                 return theSubKeyType == null;
+            case COMPOSITE:
+                return theSubKeyType instanceof List && checkComposite();
             default:
                 return false;
         }
+    }
+
+    /**
+     * Check composite spec validity.
+     * @return valid true/false
+     */
+    private boolean checkComposite() {
+        final List<GordianKeyPairType> myExisting = new ArrayList<>();
+        final Iterator<GordianKeyPairSpec> myIterator = keySpecIterator();
+        while (myIterator.hasNext()) {
+            /* Check that we have not got a duplicate */
+            final GordianKeyPairSpec mySpec = myIterator.next();
+            final GordianKeyPairType myType = mySpec.getKeyPairType();
+            if (myExisting.contains(myType)) return false;
+            myExisting.add(myType);
+        }
+        return myExisting.size() > 1;
     }
 
     /**

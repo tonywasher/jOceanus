@@ -19,7 +19,9 @@ package net.sourceforge.joceanus.jgordianknot.impl.bc;
 import java.util.HashMap;
 import java.util.Map;
 
+import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPairGenerator;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPairSpec;
+import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPairType;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianLMSKeySpec.GordianHSSKeySpec;
 import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyCMCEKeyPair.BouncyCMCEKeyPairGenerator;
 import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyDHKeyPair.BouncyDHKeyPairGenerator;
@@ -103,7 +105,12 @@ public class BouncyKeyPairFactory
     }
 
     @Override
-    public BouncyKeyPairGenerator getKeyPairGenerator(final GordianKeyPairSpec pKeySpec) throws OceanusException {
+    public GordianKeyPairGenerator getKeyPairGenerator(final GordianKeyPairSpec pKeySpec) throws OceanusException {
+        /* Handle composite keyPairGenerator */
+        if (GordianKeyPairType.COMPOSITE.equals(pKeySpec.getKeyPairType())) {
+            return super.getKeyPairGenerator(pKeySpec);
+        }
+
         /* Look up in the cache */
         BouncyKeyPairGenerator myGenerator = theCache.get(pKeySpec);
         if (myGenerator == null) {

@@ -118,7 +118,12 @@ public enum GordianKeyPairType {
     /**
      * SABER.
      */
-    SABER;
+    SABER,
+
+    /**
+     * Composite.
+     */
+    COMPOSITE;
 
     /**
      * use random for signatures?

@@ -20,16 +20,21 @@ import java.io.IOException;
 import java.math.BigInteger;
 import java.security.spec.PKCS8EncodedKeySpec;
 import java.security.spec.X509EncodedKeySpec;
+import java.util.ArrayList;
+import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
 import org.bouncycastle.asn1.ASN1OctetString;
+import org.bouncycastle.asn1.ASN1Sequence;
 import org.bouncycastle.asn1.bc.BCObjectIdentifiers;
 import org.bouncycastle.asn1.cryptopro.ECGOST3410NamedCurves;
 import org.bouncycastle.asn1.cryptopro.GOST3410PublicKeyAlgParameters;
 import org.bouncycastle.asn1.edec.EdECObjectIdentifiers;
 import org.bouncycastle.asn1.isara.IsaraObjectIdentifiers;
+import org.bouncycastle.asn1.misc.MiscObjectIdentifiers;
 import org.bouncycastle.asn1.nist.NISTObjectIdentifiers;
 import org.bouncycastle.asn1.oiw.ElGamalParameter;
 import org.bouncycastle.asn1.oiw.OIWObjectIdentifiers;
@@ -166,6 +171,7 @@ public class GordianKeyPairAlgId {
         GordianCMCEEncodedParser.register(this);
         GordianFrodoEncodedParser.register(this);
         GordianSABEREncodedParser.register(this);
+        GordianCompositeEncodedParser.register(this);
     }
 
     /**
@@ -1336,6 +1342,74 @@ public class GordianKeyPairAlgId {
 
             /* Parameter not recognised */
             throw new GordianDataException(ERROR_PARSE);
+        }
+    }
+
+    /**
+     * Composite Encoded parser.
+     */
+    private static class GordianCompositeEncodedParser implements GordianEncodedParser {
+        /**
+         * The KeyPairFactory.
+         */
+        private final GordianKeyPairAlgId theIdManager;
+
+        /**
+         * Constructor.
+         * @param pIdManager the idManager
+         */
+        GordianCompositeEncodedParser(final GordianKeyPairAlgId pIdManager) {
+            theIdManager = pIdManager;
+        }
+
+        /**
+         * Registrar.
+         * @param pIdManager the idManager
+         */
+        static void register(final GordianKeyPairAlgId pIdManager) {
+            pIdManager.registerParser(MiscObjectIdentifiers.id_alg_composite, new GordianCompositeEncodedParser(pIdManager));
+        }
+
+        @Override
+        public GordianKeyPairSpec determineKeyPairSpec(final SubjectPublicKeyInfo pInfo) throws OceanusException {
+            /* Protect against exceptions */
+            try {
+                final ASN1Sequence myKeys = ASN1Sequence.getInstance(pInfo.getPublicKeyData().getBytes());
+                final List<GordianKeyPairSpec> mySpecs = new ArrayList<>();
+
+                /* Build the list from the keys sequence */
+                final Enumeration<?> en = myKeys.getObjects();
+                while (en.hasMoreElements()) {
+                    final SubjectPublicKeyInfo myPKInfo = SubjectPublicKeyInfo.getInstance(en.nextElement());
+                    mySpecs.add(theIdManager.determineKeyPairSpec(new X509EncodedKeySpec(myPKInfo.getEncoded())));
+                }
+                return GordianKeyPairSpec.composite(mySpecs);
+
+                /* Handle exceptions */
+            } catch (IOException e) {
+                throw new GordianDataException(ERROR_PARSE);
+            }
+        }
+
+        @Override
+        public GordianKeyPairSpec determineKeyPairSpec(final PrivateKeyInfo pInfo) throws OceanusException {
+            /* Protect against exceptions */
+            try {
+                final ASN1Sequence myKeys = ASN1Sequence.getInstance(pInfo.getPrivateKey().getOctets());
+                final List<GordianKeyPairSpec> mySpecs = new ArrayList<>();
+
+                /* Build the list from the keys sequence */
+                final Enumeration<?> en = myKeys.getObjects();
+                while (en.hasMoreElements()) {
+                    final PrivateKeyInfo myPKInfo = PrivateKeyInfo.getInstance(en.nextElement());
+                    mySpecs.add(theIdManager.determineKeyPairSpec(new PKCS8EncodedKeySpec(myPKInfo.getEncoded())));
+                }
+                return GordianKeyPairSpec.composite(mySpecs);
+
+                /* Handle exceptions */
+            } catch (IOException e) {
+                throw new GordianDataException(ERROR_PARSE);
+            }
         }
     }
 }

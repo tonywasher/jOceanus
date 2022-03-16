@@ -156,27 +156,11 @@ public final class GordianSignatureSpec {
     }
 
     /**
-     * Create EdDSActxSpec.
-     * @return the SignatureSpec
-     */
-    public static GordianSignatureSpec edDSActx() {
-        return new GordianSignatureSpec(GordianKeyPairType.EDDSA, GordianSignatureType.NATIVE);
-    }
-
-    /**
      * Create EdDSASpec.
      * @return the SignatureSpec
      */
     public static GordianSignatureSpec edDSA() {
         return new GordianSignatureSpec(GordianKeyPairType.EDDSA, GordianSignatureType.NATIVE);
-    }
-
-    /**
-     * Create EdDSAphSpec.
-     * @return the SignatureSpec
-     */
-    public static GordianSignatureSpec edDSAph() {
-        return new GordianSignatureSpec(GordianKeyPairType.EDDSA, GordianSignatureType.PREHASH);
     }
 
     /**
@@ -248,7 +232,7 @@ public final class GordianSignatureSpec {
             case GOST2012:
                 return gost2012(GordianLength.LEN_512);
             case EDDSA:
-                return pKeySpec.getEdwardsElliptic().is25519() ? edDSActx() : edDSA();
+                return edDSA();
             case RAINBOW:
                 return rainbow(GordianDigestSpec.sha2(GordianLength.LEN_512));
             case SPHINCS:
