@@ -17,9 +17,7 @@
 package net.sourceforge.joceanus.jgordianknot.api.keypair;
 
 import org.bouncycastle.pqc.crypto.frodo.FrodoParameters;
-import org.bouncycastle.pqc.crypto.sphincsplus.SPHINCSPlusParameters;
 import org.bouncycastle.pqc.jcajce.spec.FrodoParameterSpec;
-import org.bouncycastle.pqc.jcajce.spec.SPHINCSPlusParameterSpec;
 
 /**
  * FRODO KeySpecs.

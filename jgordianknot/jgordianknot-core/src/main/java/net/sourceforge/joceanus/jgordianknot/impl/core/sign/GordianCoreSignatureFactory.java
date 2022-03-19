@@ -16,6 +16,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jgordianknot.impl.core.sign;
 
+import java.util.Iterator;
 import java.util.function.Predicate;
 
 import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
@@ -24,7 +25,6 @@ import net.sourceforge.joceanus.jgordianknot.api.base.GordianLength;
 import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigestSpec;
 import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigestType;
 import net.sourceforge.joceanus.jgordianknot.api.factory.GordianKeyPairFactory;
-import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianEdwardsElliptic;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPair;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPairSpec;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPairType;
@@ -58,7 +58,7 @@ public abstract class GordianCoreSignatureFactory
      * Constructor.
      * @param pFactory the factory
      */
-    public GordianCoreSignatureFactory(final GordianCoreFactory pFactory) {
+    protected GordianCoreSignatureFactory(final GordianCoreFactory pFactory) {
         theFactory = pFactory;
     }
 
@@ -105,11 +105,6 @@ public abstract class GordianCoreSignatureFactory
     @Override
     public boolean validSignatureSpecForKeyPairSpec(final GordianKeyPairSpec pKeyPairSpec,
                                                     final GordianSignatureSpec pSignSpec) {
-        /* Reject invalid signatureSpec */
-        if (pSignSpec == null || !pSignSpec.isValid()) {
-            return false;
-        }
-
         /* Check signature matches keySpec */
         if (pSignSpec.getKeyPairType() != pKeyPairSpec.getKeyPairType()) {
             return false;
@@ -131,12 +126,6 @@ public abstract class GordianCoreSignatureFactory
             return pKeyPairSpec.getElliptic().getKeySize() == myDigestLen;
         }
 
-        /* Disallow NATIVE signature for ed448 */
-        //if (GordianKeyPairType.EDDSA.equals(pKeyPairSpec.getKeyPairType())) {
-        //    return pSignSpec.getSignatureType() != GordianSignatureType.NATIVE
-        //            || pKeyPairSpec.getEdwardsElliptic() == GordianEdwardsElliptic.CURVE25519;
-        //}
-
         /* If this is a RSA Signature */
         if (GordianKeyPairType.RSA.equals(pKeyPairSpec.getKeyPairType())) {
             /* If this is a PSS signature */
@@ -156,6 +145,22 @@ public abstract class GordianCoreSignatureFactory
             if (pKeyPairSpec.getRSAModulus().getLength() < myLen) {
                 return false;
             }
+        }
+
+
+        /* For Composite EncryptorSpec */
+        if (pKeyPairSpec.getKeyPairType() == GordianKeyPairType.COMPOSITE) {
+            /* Loop through the keyPairs */
+            final Iterator<GordianKeyPairSpec> pairIterator = pKeyPairSpec.keySpecIterator();
+            final Iterator<GordianSignatureSpec> sigIterator = pSignSpec.signatureSpecIterator();
+            while (pairIterator.hasNext() && sigIterator.hasNext()) {
+                final GordianKeyPairSpec myPairSpec = pairIterator.next();
+                final GordianSignatureSpec mySigSpec = sigIterator.next();
+                if (!validSignatureSpecForKeyPairSpec(myPairSpec, mySigSpec)) {
+                    return false;
+                }
+            }
+            if (pairIterator.hasNext() || sigIterator.hasNext()) return false;
         }
 
         /* OK */
@@ -181,12 +186,24 @@ public abstract class GordianCoreSignatureFactory
         }
 
         /* Don't worry about digestSpec if it is irrelevant */
-        final GordianDigestSpec mySpec = pSignSpec.getDigestSpec();
         if (myType.nullDigestForSignatures()) {
-            return mySpec == null;
+            return pSignSpec.getSignatureSpec() == null;
+        }
+
+        /* Composite signatures */
+        if (GordianKeyPairType.COMPOSITE.equals(myType)) {
+            /* Loop through the specs */
+            final Iterator<GordianSignatureSpec> myIterator = pSignSpec.signatureSpecIterator();
+            while (myIterator.hasNext()) {
+                final GordianSignatureSpec mySpec = myIterator.next();
+                if (!validSignatureSpec(mySpec)) {
+                    return false;
+                }
+            }
         }
 
         /* Check that the digestSpec is supported */
+        final GordianDigestSpec mySpec = pSignSpec.getDigestSpec();
         if (mySpec == null
                 || !validSignatureDigestSpec(mySpec)) {
             return false;

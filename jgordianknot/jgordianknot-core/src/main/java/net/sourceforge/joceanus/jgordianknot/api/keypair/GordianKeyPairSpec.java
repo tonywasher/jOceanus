@@ -509,8 +509,8 @@ public class GordianKeyPairSpec {
                     theName = "X" + ((GordianEdwardsElliptic) theSubKeyType).getSuffix();
                     break;
                 case COMPOSITE:
-                    Iterator<GordianKeyPairSpec> myIterator = keySpecIterator();
-                    StringBuilder myBuilder = new StringBuilder(theName);
+                    final Iterator<GordianKeyPairSpec> myIterator = keySpecIterator();
+                    final StringBuilder myBuilder = new StringBuilder(theName);
                     while (myIterator.hasNext()) {
                         myBuilder.append(SEP).append(myIterator.next().toString());
                     }
@@ -630,6 +630,7 @@ public class GordianKeyPairSpec {
         while (myIterator.hasNext()) {
             /* Check that we have not got a duplicate */
             final GordianKeyPairSpec mySpec = myIterator.next();
+            if (mySpec == null) return false;
             final GordianKeyPairType myType = mySpec.getKeyPairType();
             if (myExisting.contains(myType)) return false;
             myExisting.add(myType);

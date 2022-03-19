@@ -145,6 +145,7 @@ public enum GordianSignatureType {
             case SPHINCSPLUS:
             case XMSS:
             case LMS:
+            case COMPOSITE:
                 return true;
             default:
                 return false;

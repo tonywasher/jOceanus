@@ -79,7 +79,7 @@ public final class BouncySignature {
         BouncyDigestSignature(final BouncyFactory pFactory,
                               final GordianSignatureSpec pSpec) throws OceanusException {
             super(pFactory, pSpec);
-            theDigest = pSpec.getDigestSpec() == null
+            theDigest = pSpec.getSignatureSpec() == null
                         ? new BouncyDigest(null, new NullDigest())
                         : (BouncyDigest) getDigestFactory().createDigest(pSpec.getDigestSpec());
         }

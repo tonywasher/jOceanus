@@ -28,6 +28,7 @@ import net.sourceforge.joceanus.jgordianknot.api.encrypt.GordianSM2EncryptionSpe
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianCoreFactory;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianCryptoException;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianDataException;
+import net.sourceforge.joceanus.jgordianknot.impl.core.encrypt.GordianCompositeEncryptor;
 import net.sourceforge.joceanus.jgordianknot.impl.core.encrypt.GordianCoreEncryptorFactory;
 import net.sourceforge.joceanus.jgordianknot.impl.jca.JcaEncryptor.JcaBlockEncryptor;
 import net.sourceforge.joceanus.jgordianknot.impl.jca.JcaEncryptor.JcaHybridEncryptor;
@@ -79,6 +80,8 @@ public class JcaEncryptorFactory
                 return GordianMcElieceEncryptionType.STANDARD.equals(pEncryptorSpec.getMcElieceType())
                        ? new JcaBlockEncryptor(getFactory(), pEncryptorSpec)
                        : new JcaHybridEncryptor(getFactory(), pEncryptorSpec);
+            case COMPOSITE:
+                return new GordianCompositeEncryptor(getFactory(), pEncryptorSpec);
             default:
                 throw new GordianDataException(GordianCoreFactory.getInvalidText(pEncryptorSpec.getKeyPairType()));
         }
@@ -120,6 +123,7 @@ public class JcaEncryptorFactory
             case RSA:
             case ELGAMAL:
             case MCELIECE:
+            case COMPOSITE:
                 return true;
             case SM2:
                 final GordianSM2EncryptionSpec mySpec = pSpec.getSM2EncryptionSpec();

@@ -16,6 +16,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jgordianknot.impl.core.agree;
 
+import java.util.Iterator;
 import java.util.function.Predicate;
 
 import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
@@ -53,7 +54,7 @@ public abstract class GordianCoreAgreementFactory
      *
      * @param pFactory the factory
      */
-    public GordianCoreAgreementFactory(final GordianCoreFactory pFactory) {
+    protected GordianCoreAgreementFactory(final GordianCoreFactory pFactory) {
         theFactory = pFactory;
     }
 
@@ -110,18 +111,13 @@ public abstract class GordianCoreAgreementFactory
     @Override
     public boolean validAgreementSpecForKeyPairSpec(final GordianKeyPairSpec pKeyPairSpec,
                                                     final GordianKeyPairAgreementSpec pAgreementSpec) {
-        /* Reject invalid agreementSpec */
-        if (pAgreementSpec == null || !pAgreementSpec.isValid()) {
+        /* Check that the agreementSpec is supported */
+        if (!validAgreementSpec(pAgreementSpec)) {
             return false;
         }
 
         /* Check agreement matches keySpec */
         if (pAgreementSpec.getKeyPairType() != pKeyPairSpec.getKeyPairType()) {
-            return false;
-        }
-
-        /* Check that the agreementSpec is supported */
-        if (!validAgreementSpec(pAgreementSpec)) {
             return false;
         }
 
@@ -137,6 +133,23 @@ public abstract class GordianCoreAgreementFactory
                     return !myEdwards.is25519();
                 default:
                     break;
+            }
+        }
+
+        /* For Composite AgreementSpec */
+        if (pKeyPairSpec.getKeyPairType() == GordianKeyPairType.COMPOSITE) {
+            /* Loop through the keyPairs */
+            final Iterator<GordianKeyPairSpec> myIterator = pKeyPairSpec.keySpecIterator();
+            while (myIterator.hasNext()) {
+                final GordianKeyPairSpec mySpec = myIterator.next();
+                final GordianKeyPairAgreementSpec mySubAgree
+                        = new GordianKeyPairAgreementSpec(mySpec.getKeyPairType(),
+                                                          pAgreementSpec.getAgreementType(),
+                                                          pAgreementSpec.getKDFType(),
+                                                          pAgreementSpec.withConfirm());
+                if (!validAgreementSpecForKeyPairSpec(mySpec, mySubAgree)) {
+                    return false;
+                }
             }
         }
 

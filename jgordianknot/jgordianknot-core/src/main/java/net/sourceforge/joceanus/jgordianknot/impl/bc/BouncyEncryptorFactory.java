@@ -27,6 +27,7 @@ import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyRSAKeyPair.BouncyRSAE
 import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncySM2KeyPair.BouncySM2Encryptor;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianCoreFactory;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianDataException;
+import net.sourceforge.joceanus.jgordianknot.impl.core.encrypt.GordianCompositeEncryptor;
 import net.sourceforge.joceanus.jgordianknot.impl.core.encrypt.GordianCoreEncryptorFactory;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
@@ -80,6 +81,8 @@ public class BouncyEncryptorFactory
                 return GordianMcElieceEncryptionType.STANDARD.equals(pSpec.getMcElieceType())
                        ? new BouncyMcElieceEncryptor(getFactory(), pSpec)
                        : new BouncyMcElieceCCA2Encryptor(getFactory(), pSpec);
+            case COMPOSITE:
+                return new GordianCompositeEncryptor(getFactory(), pSpec);
             default:
                 throw new GordianDataException(GordianCoreFactory.getInvalidText(pSpec));
         }

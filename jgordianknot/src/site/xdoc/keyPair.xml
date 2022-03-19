@@ -76,5 +76,33 @@
                 </table>
             </subsection>
         </section>
+        <section name="Composite KeyPairs">
+            <p>Composite keyPairs can be created as a list of <strong>different</strong> keyPairs. These composite keyPairs can be used
+            for signatures/agreements/encryption as long as each individual component keyPair can be used for the operation. The only restrictions
+            are that there must be at least two keyPairs and that all keyPairs must be of a different type</p>
+            <subsection name="Sample">
+                <source>
+                    /* Access factory */
+                    final GordianFactory myBaseFactory = GordianGenerator.createFactory();
+                    final GordianKeyPairFactory myKeyPairFactory = myBaseFactory.getKeyPairFactory();
+
+                    /* Access keyPairGenerator */
+                    final GordianKeyPairSpec mySpec = GordianKeyPairSpec.composite(GordianKeyPairSpec.rsa(GordianRSAModulus.MOD2048),
+                                                                                   GordianKeyPairSpec.elGamal(GordiaDHGroup.rfc7919_ffdhe2048));
+                    final GordianKeyPairGenerator myGenerator = myKeyPairFactory.getKeyPairGenerator(mySpec);
+                    final GordianKeyPair myPair = myGenerator.generateKeyPair();
+
+                    /* Access encodings */
+                    final PKCS8EncodedKeySpec myPKCS8 = myGenerator.getPKCS8Encoding(myPair);
+                    final X509EncodedKeySpec myX509 = myGenerator.getX509Encoding(myPair);
+
+                    /* Derive publicOnly KeyPair */
+                    final GordianKeyPair myPublicOnly = myGenerator.derivePublicOnlyKeyPair(myX509);
+
+                    /* Derive full keyPair */
+                    final GordianKeyPair myDerived = myGenerator.deriveKeyPair(myX509, myPKCS8);
+                </source>
+            </subsection>
+        </section>
     </body>
 </document>

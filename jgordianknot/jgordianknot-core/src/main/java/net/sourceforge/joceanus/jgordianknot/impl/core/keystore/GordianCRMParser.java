@@ -87,8 +87,8 @@ public abstract class GordianCRMParser {
      * @param pKeyStoreMgr the keyStoreManager
      * @param pResolver the password resolver
      */
-    public GordianCRMParser(final GordianCoreKeyStoreManager pKeyStoreMgr,
-                            final Function<String, char[]> pResolver) {
+    protected GordianCRMParser(final GordianCoreKeyStoreManager pKeyStoreMgr,
+                               final Function<String, char[]> pResolver) {
         /* Store parameters */
         theKeyStoreMgr = pKeyStoreMgr;
         theKeyStore = pKeyStoreMgr.getKeyStore();

@@ -98,7 +98,7 @@ public class GordianPBECipherSpec<T extends GordianKeySpec> {
         if (!(pThat instanceof GordianPBECipherSpec)) {
             return false;
         }
-        final GordianPBECipherSpec myThat = (GordianPBECipherSpec) pThat;
+        final GordianPBECipherSpec<?> myThat = (GordianPBECipherSpec<?>) pThat;
 
         /* Check that the fields are equal */
         return Objects.equals(theCipherSpec, myThat.getCipherSpec())

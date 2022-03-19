@@ -30,7 +30,6 @@ import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPairSpec;
 import net.sourceforge.joceanus.jgordianknot.api.keypairset.GordianKeyPairSetFactory;
 import net.sourceforge.joceanus.jgordianknot.api.keystore.GordianKeyStoreFactory;
 import net.sourceforge.joceanus.jgordianknot.api.sign.GordianSignatureFactory;
-import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyKeyPairGenerator;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianCoreFactory;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianDataException;
 import net.sourceforge.joceanus.jtethys.OceanusException;
@@ -84,7 +83,7 @@ public abstract class GordianCoreKeyPairFactory
      * Constructor.
      * @param pFactory the factory
      */
-    public GordianCoreKeyPairFactory(final GordianCoreFactory pFactory) {
+    protected GordianCoreKeyPairFactory(final GordianCoreFactory pFactory) {
         theFactory = pFactory;
         theCache = new HashMap<>();
     }

@@ -22,9 +22,6 @@ import java.security.Signature;
 import net.sourceforge.joceanus.jgordianknot.api.base.GordianLength;
 import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigestSpec;
 import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigestType;
-import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianEdwardsElliptic;
-import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPairSpec;
-import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPairType;
 import net.sourceforge.joceanus.jgordianknot.api.sign.GordianKeyPairSignature;
 import net.sourceforge.joceanus.jgordianknot.api.sign.GordianSignatureSpec;
 import net.sourceforge.joceanus.jgordianknot.api.sign.GordianSignatureType;
@@ -137,7 +134,6 @@ public class JcaSignatureFactory
         }
 
         /* Switch on KeyType */
-        final GordianDigestSpec myDigest = pSpec.getDigestSpec();
         switch (pSpec.getKeyPairType()) {
             case RSA:
                 return validRSASignature(pSpec);
@@ -150,7 +146,7 @@ public class JcaSignatureFactory
             case DSA:
                 return validDSASignature(pSpec);
             case RAINBOW:
-                return validRainbowSignature(myDigest);
+                return validRainbowSignature(pSpec.getDigestSpec());
             case XMSS:
             case SPHINCS:
             case SPHINCSPLUS:

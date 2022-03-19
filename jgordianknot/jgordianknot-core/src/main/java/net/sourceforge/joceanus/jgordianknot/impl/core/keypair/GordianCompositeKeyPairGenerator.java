@@ -156,7 +156,6 @@ public class GordianCompositeKeyPairGenerator
         checkKeySpec(pPublicKeySet);
         checkKeySpec(pPrivateKeySet);
 
-
         /* Protect against exceptions */
         try {
             /* Parse the Public ASN1 */

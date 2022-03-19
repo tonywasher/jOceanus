@@ -45,8 +45,8 @@ public abstract class GordianCoreKeyPair
      * @param pPublic the publicKey
      * @param pPrivate the privateKey
      */
-    public GordianCoreKeyPair(final GordianPublicKey pPublic,
-                              final GordianPrivateKey pPrivate) {
+    protected GordianCoreKeyPair(final GordianPublicKey pPublic,
+                                 final GordianPrivateKey pPrivate) {
         /* Store keys */
         thePublicKey = pPublic;
         thePrivateKey = pPrivate;

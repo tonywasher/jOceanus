@@ -75,11 +75,6 @@ public class GordianPEMCoder {
     private final GordianCoreFactory theFactory;
 
     /**
-     * The KeySetSpec.
-     */
-    private final GordianKeySetHashSpec theKeySetHashSpec;
-
-    /**
      * The Parser.
      */
     private final GordianPEMParser theParser;
@@ -96,7 +91,6 @@ public class GordianPEMCoder {
     GordianPEMCoder(final GordianCoreKeyStore pKeyStore) {
         /* Store details */
         theFactory = pKeyStore.getFactory();
-        theKeySetHashSpec = pKeyStore.getKeySetSpec();
         theParser = new GordianPEMParser();
     }
 

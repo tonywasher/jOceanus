@@ -34,6 +34,7 @@ import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncySPHINCSPlusKeyPair.Bo
 import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyXMSSKeyPair.BouncyXMSSSignature;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianCoreFactory;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianDataException;
+import net.sourceforge.joceanus.jgordianknot.impl.core.sign.GordianCompositeSigner;
 import net.sourceforge.joceanus.jgordianknot.impl.core.sign.GordianCoreSignatureFactory;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
@@ -104,9 +105,10 @@ public class BouncySignatureFactory
                 return new BouncyXMSSSignature(getFactory(), pSignatureSpec);
             case LMS:
                 return new BouncyLMSSignature(getFactory(), pSignatureSpec);
+            case COMPOSITE:
+                return new GordianCompositeSigner(getFactory(), pSignatureSpec);
             default:
                 throw new GordianDataException(GordianCoreFactory.getInvalidText(pSignatureSpec.getKeyPairType()));
         }
     }
-
 }

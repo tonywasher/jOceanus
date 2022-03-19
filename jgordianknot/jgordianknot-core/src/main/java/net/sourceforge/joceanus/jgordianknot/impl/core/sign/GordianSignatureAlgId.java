@@ -16,14 +16,22 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jgordianknot.impl.core.sign;
 
+import java.util.ArrayList;
+import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
+import org.bouncycastle.asn1.ASN1EncodableVector;
 import org.bouncycastle.asn1.ASN1Integer;
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
+import org.bouncycastle.asn1.ASN1Sequence;
 import org.bouncycastle.asn1.DERNull;
+import org.bouncycastle.asn1.DERSequence;
 import org.bouncycastle.asn1.edec.EdECObjectIdentifiers;
 import org.bouncycastle.asn1.gm.GMObjectIdentifiers;
+import org.bouncycastle.asn1.misc.MiscObjectIdentifiers;
 import org.bouncycastle.asn1.nist.NISTObjectIdentifiers;
 import org.bouncycastle.asn1.oiw.OIWObjectIdentifiers;
 import org.bouncycastle.asn1.pkcs.PKCSObjectIdentifiers;
@@ -39,7 +47,6 @@ import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigestSpec;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPair;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPairSpec;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPairType;
-import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianQTESLAKeyType;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianRSAModulus;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianSPHINCSDigestType;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianXMSSKeySpec;
@@ -49,6 +56,7 @@ import net.sourceforge.joceanus.jgordianknot.api.sign.GordianSignatureSpec;
 import net.sourceforge.joceanus.jgordianknot.api.sign.GordianSignatureType;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianASN1Util;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianCoreFactory;
+import net.sourceforge.joceanus.jgordianknot.impl.core.keypair.GordianCompositeKeyPair;
 
 /**
  * OID Manager for Signatures.
@@ -121,6 +129,18 @@ public class GordianSignatureAlgId {
      */
     AlgorithmIdentifier getIdentifierForSpecAndKeyPair(final GordianSignatureSpec pSpec,
                                                        final GordianKeyPair pKeyPair) {
+        /* Handle Composite keyPairs specially */
+        if (pSpec.getKeyPairType() == GordianKeyPairType.COMPOSITE) {
+            final GordianCompositeKeyPair myCompPair = (GordianCompositeKeyPair) pKeyPair;
+            final Iterator<GordianKeyPair> pairIterator = myCompPair.iterator();
+            final Iterator<GordianSignatureSpec> sigIterator = pSpec.signatureSpecIterator();
+            final ASN1EncodableVector ks = new ASN1EncodableVector();
+            while (sigIterator.hasNext()) {
+                ks.add(getIdentifierForSpecAndKeyPair(sigIterator.next(), pairIterator.next()));
+            }
+            return new AlgorithmIdentifier(MiscObjectIdentifiers.id_alg_composite, new DERSequence(ks));
+        }
+
         /* If we need to use the subType */
         if (pSpec.getKeyPairType().subTypeForSignatures()) {
             /* Look up in the subKey map */
@@ -140,6 +160,16 @@ public class GordianSignatureAlgId {
      * @return the signatureSpec (or null if not found)
      */
     public GordianSignatureSpec getSpecForIdentifier(final AlgorithmIdentifier pIdentifier) {
+        /* Handle Composite keyPairs specially */
+        if (MiscObjectIdentifiers.id_alg_composite.equals(pIdentifier.getAlgorithm())) {
+            final List<GordianSignatureSpec> myList = new ArrayList<>();
+            final ASN1Sequence myAlgs = ASN1Sequence.getInstance(pIdentifier.getParameters());
+            final Enumeration<?> en = myAlgs.getObjects();
+            while (en.hasMoreElements()) {
+                myList.add(getSpecForIdentifier(AlgorithmIdentifier.getInstance(en.nextElement())));
+            }
+            return GordianSignatureSpec.composite(myList);
+        }
         return theIdentifierMap.get(pIdentifier);
     }
 
@@ -321,10 +351,6 @@ public class GordianSignatureAlgId {
                 new AlgorithmIdentifier(NISTObjectIdentifiers.id_ecdsa_with_sha3_384, DERNull.INSTANCE));
         addToMaps(GordianSignatureSpec.ec(GordianSignatureType.DSA, GordianDigestSpec.sha3(GordianLength.LEN_512)),
                 new AlgorithmIdentifier(NISTObjectIdentifiers.id_ecdsa_with_sha3_512, DERNull.INSTANCE));
-        /*addToMaps(GordianSignatureSpec.ec(GordianSignatureType.DSA, GordianDigestSpec.shake128(GordianLength.LEN_256)),
-                new AlgorithmIdentifier(NISTObjectIdentifiers.id_ecdsa_with_shake128, DERNull.INSTANCE));
-        addToMaps(GordianSignatureSpec.ec(GordianSignatureType.DSA, GordianDigestSpec.shake256(GordianLength.LEN_512)),
-                new AlgorithmIdentifier(NISTObjectIdentifiers.id_ecdsa_with_shake256, DERNull.INSTANCE));*/
     }
 
     /**

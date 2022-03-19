@@ -235,8 +235,8 @@ public abstract class GordianCoreCertificate<S, K>
      * @param pSequence   the DER representation of the certificate
      * @throws OceanusException on error
      */
-    public GordianCoreCertificate(final GordianCoreFactory pFactory,
-                                  final byte[] pSequence) throws OceanusException {
+    protected GordianCoreCertificate(final GordianCoreFactory pFactory,
+                                     final byte[] pSequence) throws OceanusException {
         /* Store the parameters */
         theFactory = pFactory;
 
