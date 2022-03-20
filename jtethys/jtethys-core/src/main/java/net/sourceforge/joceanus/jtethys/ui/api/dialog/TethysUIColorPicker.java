@@ -47,7 +47,7 @@ public interface TethysUIColorPicker<C>
      * Set dialog visible.
      * @param pVisible true/false
      */
-    void setVisible(final boolean pVisible);
+    void setVisible(boolean pVisible);
 
     /**
      * Obtain the colour.

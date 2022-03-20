@@ -149,10 +149,8 @@ public class MoneyWiseTransactionTable
         theViewerAnalysis = pAnalysis;
         theViewerFilter = pFilter;
 
-        /* Access field manager */
-        MetisSwingFieldManager myFieldMgr = ((PrometheusSwingToolkit) pView.getToolkit()).getFieldManager();
-
-        /* Access Gui factory */
+        /* Access field manager and gui factory */
+        final MetisSwingFieldManager myFieldMgr = ((PrometheusSwingToolkit) pView.getToolkit()).getFieldManager();
         final TethysSwingGuiFactory myGuiFactory = (TethysSwingGuiFactory) pView.getGuiFactory();
         final TethysSwingTableManager<MetisLetheField, Transaction> myTable = getTable();
 
@@ -771,12 +769,12 @@ public class MoneyWiseTransactionTable
         }
 
         @Override
-        public void setEnabled(boolean pEnabled) {
+        public void setEnabled(final boolean pEnabled) {
             thePanel.setEnabled(pEnabled);
         }
 
         @Override
-        public void setVisible(boolean pVisible) {
+        public void setVisible(final boolean pVisible) {
             thePanel.setVisible(pVisible);
         }
 

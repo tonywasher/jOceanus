@@ -282,7 +282,7 @@ public final class AssetPair
 
         /* Convert AssetBase reference to Id */
         if (myValue instanceof AssetBase) {
-            myValue = ((AssetBase<?,?>) myValue).getId();
+            myValue = ((AssetBase<?, ?>) myValue).getId();
         }
 
         /* Lookup Id reference */

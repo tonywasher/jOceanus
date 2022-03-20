@@ -102,7 +102,7 @@ public interface TethysUITreeManager<T>
      * TreeItem class.
      * @param <T> the data type
      */
-    public interface TethysUITreeItem<T> {
+    interface TethysUITreeItem<T> {
         /**
          * Obtain the item.
          * @return the item
@@ -167,7 +167,7 @@ public interface TethysUITreeManager<T>
          * Do we have children?
          * @return true/false
          */
-        boolean hasChildren() ;
+        boolean hasChildren();
 
         /**
          * Count previous visible items.

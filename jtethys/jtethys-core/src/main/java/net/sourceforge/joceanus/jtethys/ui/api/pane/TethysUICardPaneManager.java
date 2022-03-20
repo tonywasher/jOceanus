@@ -49,5 +49,5 @@ public interface TethysUICardPaneManager<P extends TethysUIComponent>
      * @param pName the name of the card.
      * @return was card selected? true/false
      */
-    boolean selectCard(final String pName);
+    boolean selectCard(String pName);
 }

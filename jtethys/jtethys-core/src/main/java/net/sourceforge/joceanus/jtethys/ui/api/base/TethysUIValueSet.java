@@ -29,7 +29,7 @@ public interface TethysUIValueSet
      * Apply new Mappings.
      * @param pMappings the colour mappings
      */
-    void applyColorMapping(final Map<String, String> pMappings);
+    void applyColorMapping(Map<String, String> pMappings);
 
     /**
      * Get value for key.
@@ -43,7 +43,7 @@ public interface TethysUIValueSet
      * @param pKey the value key
      * @return the relevant value
      */
-    String getDefaultValueForKey(final String pKey);
+    String getDefaultValueForKey(String pKey);
 
     /**
      * Resolve values.

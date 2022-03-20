@@ -38,10 +38,4 @@ public interface TethysUIDialogFactory<C> {
      * @return the new selector
      */
     TethysUIDirectorySelector newDirectorySelector();
-
-    /**
-     * Obtain a new aboutBox.
-     * @return the new box
-     */
-    //TethysUIAbout newAboutBox();
 }

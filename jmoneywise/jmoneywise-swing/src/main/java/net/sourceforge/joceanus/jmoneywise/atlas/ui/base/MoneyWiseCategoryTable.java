@@ -233,8 +233,8 @@ public abstract class MoneyWiseCategoryTable<T extends CategoryBase<T, S, C>, S 
      * @param pCategory the item
      * @param pMenu the menu to build
      */
-    protected abstract void buildCategoryTypeMenu(final T pCategory,
-                                                  final TethysScrollMenu<S> pMenu);
+    protected abstract void buildCategoryTypeMenu(T pCategory,
+                                                  TethysScrollMenu<S> pMenu);
 
     /**
      * Obtain the categories.
@@ -247,7 +247,7 @@ public abstract class MoneyWiseCategoryTable<T extends CategoryBase<T, S, C>, S 
      * @param pCategoryType the categoryType
      * @return true/false
      */
-    protected abstract boolean isChildCategory(final S pCategoryType);
+    protected abstract boolean isChildCategory(S pCategoryType);
 
     /**
      * Build Select menu.
@@ -258,7 +258,7 @@ public abstract class MoneyWiseCategoryTable<T extends CategoryBase<T, S, C>, S 
         myCategoryMenu.removeAllItems();
 
         /* Cope if we have no categories */
-        List<T> myCategories = getCategories();
+        final List<T> myCategories = getCategories();
         if (myCategories == null) {
             return;
         }

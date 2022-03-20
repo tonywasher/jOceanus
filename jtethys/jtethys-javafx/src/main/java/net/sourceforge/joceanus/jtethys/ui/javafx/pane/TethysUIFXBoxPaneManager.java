@@ -220,12 +220,12 @@ public class TethysUIFXBoxPaneManager
         }
 
         @Override
-        public void setPreferredWidth(Integer pWidth) {
+        public void setPreferredWidth(final Integer pWidth) {
             /* NoOp */
         }
 
         @Override
-        public void setPreferredHeight(Integer pHeight) {
+        public void setPreferredHeight(final Integer pHeight) {
             /* NoOp */
         }
 

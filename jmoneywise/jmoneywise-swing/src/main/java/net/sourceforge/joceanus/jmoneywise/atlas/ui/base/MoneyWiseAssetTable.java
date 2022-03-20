@@ -273,8 +273,8 @@ public abstract class MoneyWiseAssetTable<T extends AssetBase<T, C>, C>
      * @param pAsset the item
      * @param pMenu the menu to build
      */
-    protected abstract void buildCategoryMenu(final T pAsset,
-                                              final TethysScrollMenu<C> pMenu);
+    protected abstract void buildCategoryMenu(T pAsset,
+                                              TethysScrollMenu<C> pMenu);
 
     /**
      * Build the Parent list for the item.

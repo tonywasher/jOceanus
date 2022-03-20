@@ -19,7 +19,6 @@ package net.sourceforge.joceanus.jmetis.help;
 import java.util.ResourceBundle;
 
 import net.sourceforge.joceanus.jmetis.ui.MetisUIResource;
-import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.resource.TethysBundleId;
 import net.sourceforge.joceanus.jtethys.resource.TethysBundleLoader;
 

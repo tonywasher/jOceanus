@@ -154,7 +154,7 @@ public class TethysUIFXToolBarManager
         }
 
         /**
-         * Set the icon
+         * Set the icon.
          * @param pIcon the icon
          */
         private void setIcon(final TethysUIToolBarId pIcon) {

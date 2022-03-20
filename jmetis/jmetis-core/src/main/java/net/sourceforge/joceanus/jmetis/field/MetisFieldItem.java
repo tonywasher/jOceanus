@@ -183,7 +183,7 @@ public interface MetisFieldItem
     /**
      * Field Item Type.
      */
-    public interface MetisFieldItemType {
+    interface MetisFieldItemType {
         /**
          * Obtain the item name.
          * @return the item name
@@ -201,7 +201,7 @@ public interface MetisFieldItem
     /**
      * Table Item.
      */
-    public interface MetisFieldTableItem
+    interface MetisFieldTableItem
             extends MetisFieldItem, MetisDataIndexedItem {
     }
 }

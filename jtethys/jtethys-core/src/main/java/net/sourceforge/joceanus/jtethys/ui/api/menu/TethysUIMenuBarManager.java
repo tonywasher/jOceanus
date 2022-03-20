@@ -53,7 +53,7 @@ public interface TethysUIMenuBarManager {
     TethysUIMenuSubMenu lookUpSubMenu(TethysUIMenuId pId);
 
     /**
-     * MenuId
+     * MenuId.
      */
     interface TethysUIMenuId {
     }

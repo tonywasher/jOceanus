@@ -46,6 +46,7 @@ public class TethysUISwingCheckBox
     /**
      * Constructor.
      * @param pFactory the GUI Factory
+     * @param pAdjuster the adjuster
      */
     protected TethysUISwingCheckBox(final TethysUICoreFactory<?> pFactory,
                                     final TethysUISwingDataFieldAdjust pAdjuster) {

@@ -39,13 +39,13 @@ public interface TethysUIBorderPaneManager
      * Set the Horizontal Grid Gap.
      * @param pGap the GridGap.
      */
-    void setHGap(final Integer pGap);
+    void setHGap(Integer pGap);
 
     /**
      * Set the Vertical Grid Gap.
      * @param pGap the GridGap.
      */
-    void setVGap(final Integer pGap);
+    void setVGap(Integer pGap);
 
     /**
      * Set the Centre Node.

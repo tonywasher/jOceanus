@@ -76,9 +76,9 @@ public interface TethysUIScrollButtonManager<T>
      * @param pWidth the icon width
      * @param pToolTip the toolTip for value
      */
-    public  void setSimpleDetails(TethysUIIconId pId,
-                                  int pWidth,
-                                  String pToolTip);
+    void setSimpleDetails(TethysUIIconId pId,
+                          int pWidth,
+                          String pToolTip);
 
     /**
      * Set Null Margins.

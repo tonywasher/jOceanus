@@ -813,7 +813,7 @@ public abstract class AssetBase<T extends AssetBase<T, C>, C>
         /* If we are being touched by an asset */
         if (pSource instanceof AssetBase) {
             /* Access as assetBase */
-            final AssetBase<?,?> myAsset = (AssetBase<?, ?>) pSource;
+            final AssetBase<?, ?> myAsset = (AssetBase<?, ?>) pSource;
 
             /* Mark as relevant if child is open */
             if (!myAsset.isClosed()) {

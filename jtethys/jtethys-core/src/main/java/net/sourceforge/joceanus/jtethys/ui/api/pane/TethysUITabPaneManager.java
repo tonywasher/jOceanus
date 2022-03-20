@@ -65,7 +65,7 @@ public interface TethysUITabPaneManager
     /**
      * Tab Iten.
      */
-    public interface TethysUITabItem {
+    interface TethysUITabItem {
         /**
          * Obtain the name.
          * @return the name

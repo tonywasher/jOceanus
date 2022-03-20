@@ -84,7 +84,7 @@ public class TethysUISwingFactory
     }
 
     /**
-     * Set the frame
+     * Set the frame.
      * @param pFrame the frame
      */
     public void setFrame(final JFrame pFrame) {

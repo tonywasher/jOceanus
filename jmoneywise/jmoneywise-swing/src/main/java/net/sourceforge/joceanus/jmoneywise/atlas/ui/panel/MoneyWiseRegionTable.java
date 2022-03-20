@@ -74,7 +74,7 @@ public class MoneyWiseRegionTable
         super(pView, pUpdateSet, pError, MoneyWiseDataType.REGION);
 
         /* Access field manager */
-        MetisSwingFieldManager myFieldMgr = ((PrometheusSwingToolkit) pView.getToolkit()).getFieldManager();
+        final MetisSwingFieldManager myFieldMgr = ((PrometheusSwingToolkit) pView.getToolkit()).getFieldManager();
 
         /* Access the GUI factory */
         final TethysSwingGuiFactory myGuiFactory = (TethysSwingGuiFactory) pView.getGuiFactory();

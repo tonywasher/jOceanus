@@ -276,7 +276,7 @@
             <id>javadoc</id>
             <goals>
               <goal>javadoc</goal>
-              <goal>test-javadoc</goal>
+              <!--<goal>test-javadoc</goal>-->
             </goals>
             <phase>site</phase>
           </execution>
@@ -414,7 +414,7 @@
             </execution>
           </executions>
         </plugin>
-        <plugin>
+        <!--<plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-gpg-plugin</artifactId>
           <version>${GPGPluginVersion}</version>
@@ -427,7 +427,7 @@
               </goals>
             </execution>
           </executions>
-        </plugin>
+        </plugin>-->
       </plugins>
     </pluginManagement>
   </build>
@@ -495,7 +495,7 @@
             </configuration>
             <reports>
               <report>javadoc-no-fork</report>
-              <report>test-javadoc-no-fork</report>
+              <!--<report>test-javadoc-no-fork</report>-->
             </reports>
           </reportSet>
           <reportSet>
@@ -503,7 +503,7 @@
             <inherited>false</inherited>
             <reports>
               <report>aggregate-no-fork</report>
-              <report>test-aggregate-no-fork</report>
+              <!--<report>test-aggregate-no-fork</report>-->
             </reports>
           </reportSet>
         </reportSets>

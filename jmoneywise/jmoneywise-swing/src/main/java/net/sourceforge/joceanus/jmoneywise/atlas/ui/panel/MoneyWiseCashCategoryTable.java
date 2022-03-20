@@ -69,7 +69,7 @@ public class MoneyWiseCashCategoryTable
         super(pView, pUpdateSet, pError, MoneyWiseDataType.CASHCATEGORY, CashCategoryType.class);
 
         /* Access field manager */
-        MetisSwingFieldManager myFieldMgr = ((PrometheusSwingToolkit) pView.getToolkit()).getFieldManager();
+        final MetisSwingFieldManager myFieldMgr = ((PrometheusSwingToolkit) pView.getToolkit()).getFieldManager();
 
         /* Access Gui factory */
         final TethysSwingGuiFactory myGuiFactory = (TethysSwingGuiFactory) pView.getGuiFactory();

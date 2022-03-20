@@ -213,7 +213,7 @@ public abstract class MoneyWiseBaseTable<T extends DataItem<MoneyWiseDataType> &
      * @param pPanel the item panel
      */
     protected void declareItemPanel(final MoneyWiseItemPanel<T> pPanel) {
-        TethysSwingEnablePanel myPanel = new TethysSwingEnablePanel();
+        final TethysSwingEnablePanel myPanel = new TethysSwingEnablePanel();
         myPanel.setLayout(new BorderLayout());
         myPanel.add(TethysSwingNode.getComponent(pPanel), BorderLayout.CENTER);
         thePanel.setSouth(myPanel);

@@ -33,6 +33,7 @@ public interface TethysUIChartFactory {
     /**
      * Create new area dataSet.
      * @param pTitle the title
+     * @return the dataset
      */
     TethysUIAreaChartData newAreaData(String pTitle);
 
@@ -45,6 +46,7 @@ public interface TethysUIChartFactory {
     /**
      * Create new bar dataSet.
      * @param pTitle the title
+     * @return the dataset
      */
     TethysUIBarChartData newBarData(String pTitle);
 
@@ -57,6 +59,7 @@ public interface TethysUIChartFactory {
     /**
      * Create new pie dataSet.
      * @param pTitle the title
+     * @return the dataset
      */
     TethysUIPieChartData newPieData(String pTitle);
 }

@@ -41,16 +41,6 @@ public final class TethysUIFXLabel
     private final Label theLabel;
 
     /**
-     * The Context Menu.
-     */
-    //private TethysFXScrollContextMenu<?> theContextMenu;
-
-    /**
-     * Has the context menu handler been set.
-     */
-    //private boolean menuListenerSet;
-
-    /**
      * Constructor.
      *
      * @param pFactory the GUI Factory
@@ -92,23 +82,6 @@ public final class TethysUIFXLabel
         theNode.setManaged(pVisible);
         theNode.setVisible(pVisible);
     }
-
-    /**
-     * Set context menu.
-     *
-     * @param pMenu the context menu.
-     */
-    //public void setContextMenu(final TethysFXScrollContextMenu<?> pMenu) {
-        /* Record the menu */
-    //    theContextMenu = pMenu;
-
-        /* If the listener has not been set */
-    //    if (!menuListenerSet) {
-    //        /* Set the handler */
-    //        theLabel.setOnContextMenuRequested(this::handleContextMenu);
-    //       menuListenerSet = true;
-    //    }
-    //}
 
     /**
      * Translate alignment.
@@ -166,15 +139,4 @@ public final class TethysUIFXLabel
         super.setBorderTitle(pTitle);
         theNode.createWrapperPane(getBorderTitle(), getBorderPadding());
     }
-
-    /**
-     * handleContextMenu.
-     *
-     * @param pEvent the event
-     */
-    //private void handleContextMenu(final ContextMenuEvent pEvent) {
-    //    if (theContextMenu != null) {
-    //        theContextMenu.showMenuAtPosition(theLabel, pEvent.getX(), pEvent.getY());
-    //    }
-    //}
 }

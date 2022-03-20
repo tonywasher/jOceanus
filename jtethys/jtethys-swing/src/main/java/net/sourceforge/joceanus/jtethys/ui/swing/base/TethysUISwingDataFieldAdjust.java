@@ -59,57 +59,6 @@ public class TethysUISwingDataFieldAdjust {
     }
 
     /**
-     * Adjust field.
-     * @param pDataField the dataField
-     */
-    //protected void adjustField(final TethysSwingDataTextField<?> pDataField) {
-        /* Determine the flags */
-    //    final boolean isNumeric = pDataField.isAttributeSet(TethysFieldAttribute.NUMERIC);
-    //    final boolean isSelected = pDataField.isAttributeSet(TethysFieldAttribute.SELECTED);
-    //    final boolean isChanged = pDataField.isAttributeSet(TethysFieldAttribute.CHANGED);
-    //    final boolean isDisabled = pDataField.isAttributeSet(TethysFieldAttribute.DISABLED);
-    //    final boolean isAlternate = pDataField.isAttributeSet(TethysFieldAttribute.ALTERNATE);
-
-        /* Obtain the label and the edit control */
-    //    final JLabel myLabel = pDataField.getLabel();
-    //    final JComponent myControl = pDataField.getEditControl();
-
-        /* Determine the font */
-     //   final Font myFont = isNumeric
-     //           ? isChanged
-     //           ? isSelected
-     //           ? theFontSet.getBoldChangedNumeric()
-     //           : theFontSet.getChangedNumeric()
-     //           : isSelected
-     //           ? theFontSet.getBoldNumeric()
-     //           : theFontSet.getNumeric()
-     //           : isChanged
-     //           ? isSelected
-     //           ? theFontSet.getBoldChanged()
-     //           : theFontSet.getChanged()
-     //           : isSelected
-     //           ? theFontSet.getBoldStandard()
-     //           : theFontSet.getStandard();
-     //   myLabel.setFont(myFont);
-     //   myControl.setFont(myFont);
-
-        /* Determine the foreground */
-     //   final Color myForeground = isChanged
-     //           ? theColorSet.getChanged()
-     //           : isDisabled
-     //           ? theColorSet.getDisabled()
-     //           : theColorSet.getStandard();
-     //   myLabel.setForeground(myForeground);
-     //   myControl.setForeground(myForeground);
-
-        /* Determine the background (don't set the control) */
-     //   final Color myBackground = isAlternate
-     //           ? theColorSet.getZebra()
-     //           : theColorSet.getBackground();
-     //   myLabel.setBackground(myBackground);
-    //}
-
-    /**
      * Adjust checkBox.
      * @param pCheckBox the checkBox
      * @param pChanged is the checkBox changed?

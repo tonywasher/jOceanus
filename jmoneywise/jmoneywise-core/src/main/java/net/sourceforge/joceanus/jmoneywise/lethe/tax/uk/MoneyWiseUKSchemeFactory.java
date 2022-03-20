@@ -62,24 +62,26 @@ public final class MoneyWiseUKSchemeFactory {
     /**
      * The Dividends Additional Rate Scheme.
      */
-    protected static final MoneyWiseUKDividendScheme DIVIDEND_ADDTAXCREDIT = new MoneyWiseUKDividendAdditionalRateScheme(getRate(10), getFractionalRate(325), getFractionalRate(425));
+    protected static final MoneyWiseUKDividendScheme DIVIDEND_ADDTAXCREDIT = new MoneyWiseUKDividendAdditionalRateScheme(getRate(10),
+            getFractionalRate(325), getFractionalRate(425));
 
     /**
      * The Dividends Additional Rate Scheme Mark 2.
      */
-    protected static final MoneyWiseUKDividendScheme DIVIDEND_ADDTAXCREDIT2 = new MoneyWiseUKDividendAdditionalRateScheme(getRate(10), getFractionalRate(325), getFractionalRate(375));
+    protected static final MoneyWiseUKDividendScheme DIVIDEND_ADDTAXCREDIT2 = new MoneyWiseUKDividendAdditionalRateScheme(getRate(10),
+            getFractionalRate(325), getFractionalRate(375));
 
     /**
      * The Dividends Additional Rate Scheme with no TaxCredit.
      */
-    protected static final MoneyWiseUKDividendScheme DIVIDEND_NOTAXCREDIT = new MoneyWiseUKDividendAdditionalRateScheme(getFractionalRate(75), getFractionalRate(325), getFractionalRate(381),
-            Boolean.TRUE);
+    protected static final MoneyWiseUKDividendScheme DIVIDEND_NOTAXCREDIT = new MoneyWiseUKDividendAdditionalRateScheme(getFractionalRate(75),
+            getFractionalRate(325), getFractionalRate(381), Boolean.TRUE);
 
     /**
      * The Dividends Additional Rate Scheme with no TaxCredit and new rates.
      */
-    protected static final MoneyWiseUKDividendScheme DIVIDEND_NOTAXCREDIT1 = new MoneyWiseUKDividendAdditionalRateScheme(getTenthFractionalRate(875), getTenthFractionalRate(3375), getTenthFractionalRate(3935),
-            Boolean.TRUE);
+    protected static final MoneyWiseUKDividendScheme DIVIDEND_NOTAXCREDIT1 = new MoneyWiseUKDividendAdditionalRateScheme(getTenthFractionalRate(875),
+            getTenthFractionalRate(3375), getTenthFractionalRate(3935), Boolean.TRUE);
 
     /**
      * The Interest asIncome Scheme.
@@ -119,7 +121,8 @@ public final class MoneyWiseUKSchemeFactory {
     /**
      * The Residential Capital Gains Scheme.
      */
-    protected static final MoneyWiseUKCapitalScheme CAPITAL_RESIDENTIAL = new MoneyWiseUKCapitalResidentialScheme(getRate(10), getRate(20), getRate(18), getRate(28));
+    protected static final MoneyWiseUKCapitalScheme CAPITAL_RESIDENTIAL = new MoneyWiseUKCapitalResidentialScheme(getRate(10),
+            getRate(20), getRate(18), getRate(28));
 
     /**
      * Constructor.

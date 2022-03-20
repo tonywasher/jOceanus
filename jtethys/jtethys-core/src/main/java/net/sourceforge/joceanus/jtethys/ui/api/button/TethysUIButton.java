@@ -53,7 +53,6 @@ public interface TethysUIButton
 
     /**
      * Set icon for button.
-     * @param <K> the keyId type
      * @param pId the icon Id
      */
     void setIcon(TethysUIIconId pId);

@@ -217,13 +217,13 @@ public abstract class TethysUICoreBarChart
         }
 
         @Override
-        public TethysUIBarChartData setXAxisLabel(String pLabel) {
+        public TethysUIBarChartData setXAxisLabel(final String pLabel) {
             theXAxisLabel = pLabel;
             return this;
         }
 
         @Override
-        public TethysUIBarChartData setYAxisLabel(String pLabel) {
+        public TethysUIBarChartData setYAxisLabel(final String pLabel) {
             theYAxisLabel = pLabel;
             return this;
         }

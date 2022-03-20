@@ -28,7 +28,7 @@ import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIXEvent;
 public interface TethysUIToolBarManager
         extends TethysUIComponent {
     /**
-     * ToolBarId
+     * ToolBarId.
      */
     interface TethysUIToolBarId
             extends TethysUIIconId {
@@ -89,7 +89,7 @@ public interface TethysUIToolBarManager
      * @param pId the id of the element
      * @return the subMenu
      */
-    TethysUIToolElement lookUpIcon(final TethysUIToolBarId pId);
+    TethysUIToolElement lookUpIcon(TethysUIToolBarId pId);
 
     /**
      * ToolElement.

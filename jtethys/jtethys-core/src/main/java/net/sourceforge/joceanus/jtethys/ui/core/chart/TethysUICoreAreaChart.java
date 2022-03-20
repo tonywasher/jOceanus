@@ -223,13 +223,13 @@ public abstract class TethysUICoreAreaChart
         }
 
         @Override
-        public TethysUIAreaChartData setXAxisLabel(String pLabel) {
+        public TethysUIAreaChartData setXAxisLabel(final String pLabel) {
             theXAxisLabel = pLabel;
             return this;
         }
 
         @Override
-        public TethysUIAreaChartData setYAxisLabel(String pLabel) {
+        public TethysUIAreaChartData setYAxisLabel(final String pLabel) {
             theYAxisLabel = pLabel;
             return this;
         }
