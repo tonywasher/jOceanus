@@ -200,10 +200,7 @@ public class MoneyWiseSecurityPriceTable
         return myPrice;
     }
 
-    /**
-     * Set whether the table is editable.
-     * @param pEditable true/false
-     */
+    @Override
     public void setEditable(final boolean pEditable) {
         /* Show/Hide columns/panels */
         super.setEditable(pEditable);

@@ -22,7 +22,6 @@ import net.sourceforge.joceanus.jtethys.decimal.TethysMoney;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventProvider;
 import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIComponent;
 import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIXEvent;
-import net.sourceforge.joceanus.jtethys.ui.api.chart.TethysUIAreaChart.TethysUIAreaChartData;
 
 /**
  * Bar Chart.

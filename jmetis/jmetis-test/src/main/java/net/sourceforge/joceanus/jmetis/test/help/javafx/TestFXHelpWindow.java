@@ -34,9 +34,6 @@ import net.sourceforge.joceanus.jtethys.logger.TethysLogManager;
 import net.sourceforge.joceanus.jtethys.logger.TethysLogger;
 import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXGuiFactory;
 
-import static net.sourceforge.joceanus.jmetis.help.MetisHelpModule.defineContentsEntry;
-import static net.sourceforge.joceanus.jmetis.help.MetisHelpModule.defineHelpEntry;
-
 /**
  * Help Window.
  */

@@ -47,6 +47,8 @@
         <dt>1.6.1-b2</dt> <dd>keySetCipher</dd>
         <dt>1.6.1-b3</dt> <dd>Coeus history rework</dd>
         <dt>1.6.1-b4</dt> <dd>Add Statistics and keyPairSet support</dd>
+        <dt>1.6.1-b5</dt> <dd>Analyse source code</dd>
+        <dt>1.6.1-b6</dt> <dd>Revamp of Tethys GUI support</dd>
       </dl>
     </section>
   </body>
