@@ -3,7 +3,7 @@
   <parent>
     <groupId>net.sourceforge.joceanus</groupId>
     <artifactId>jmetis</artifactId>
-    <version>1.6.1-b6</version>
+    <version>1.6.1-SNAPSHOT</version>
   </parent>
   <artifactId>jmetis-javafx</artifactId>
   <name>Metis javaFX Data Framework</name>
