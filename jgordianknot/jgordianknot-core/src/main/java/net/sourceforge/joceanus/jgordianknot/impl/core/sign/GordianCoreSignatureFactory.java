@@ -160,7 +160,9 @@ public abstract class GordianCoreSignatureFactory
                     return false;
                 }
             }
-            if (pairIterator.hasNext() || sigIterator.hasNext()) return false;
+            if (pairIterator.hasNext() || sigIterator.hasNext()) {
+                return false;
+            }
         }
 
         /* OK */
@@ -200,6 +202,7 @@ public abstract class GordianCoreSignatureFactory
                     return false;
                 }
             }
+            return true;
         }
 
         /* Check that the digestSpec is supported */

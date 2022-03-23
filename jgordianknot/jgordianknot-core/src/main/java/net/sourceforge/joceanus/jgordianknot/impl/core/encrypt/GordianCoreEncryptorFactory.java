@@ -180,7 +180,9 @@ public abstract class GordianCoreEncryptorFactory
                     return false;
                 }
             }
-            if (pairIterator.hasNext() || encIterator.hasNext()) return false;
+            if (pairIterator.hasNext() || encIterator.hasNext()) {
+                return false;
+            }
         }
 
         /* OK */

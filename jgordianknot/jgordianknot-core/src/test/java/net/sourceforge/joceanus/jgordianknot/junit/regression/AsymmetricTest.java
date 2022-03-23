@@ -367,7 +367,6 @@ public class AsymmetricTest {
         /* Access the keyPairs */
         final FactoryKeyPairs myPairs = pKeySpec.getKeyPairs();
         final GordianKeyPairFactory myFactory = pKeySpec.getFactory();
-        final GordianKeyPairSpec mySpec = pKeySpec.getKeySpec();
         final GordianKeyPair myPair = myPairs.getKeyPair();
         final X509EncodedKeySpec myPublic = myPairs.getX509Encoding();
 

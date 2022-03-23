@@ -206,7 +206,9 @@ public final class GordianEncryptorSpec {
      * @return the digestSpec.
      */
     public GordianDigestSpec getDigestSpec() {
-        if (!(theEncryptorType instanceof GordianDigestSpec)) throw new IllegalArgumentException();
+        if (!(theEncryptorType instanceof GordianDigestSpec)) {
+            throw new IllegalArgumentException();
+        }
         return (GordianDigestSpec) theEncryptorType;
     }
 
@@ -215,7 +217,9 @@ public final class GordianEncryptorSpec {
      * @return the encryptionType.
      */
     public GordianMcElieceEncryptionType getMcElieceType() {
-        if (!(theEncryptorType instanceof GordianMcElieceEncryptionType)) throw new IllegalArgumentException();
+        if (!(theEncryptorType instanceof GordianMcElieceEncryptionType)) {
+            throw new IllegalArgumentException();
+        }
         return (GordianMcElieceEncryptionType) theEncryptorType;
     }
 
@@ -224,7 +228,9 @@ public final class GordianEncryptorSpec {
      * @return the encryptionSpec.
      */
     public GordianSM2EncryptionSpec getSM2EncryptionSpec() {
-        if (!(theEncryptorType instanceof GordianSM2EncryptionSpec)) throw new IllegalArgumentException();
+        if (!(theEncryptorType instanceof GordianSM2EncryptionSpec)) {
+            throw new IllegalArgumentException();
+        }
         return (GordianSM2EncryptionSpec) theEncryptorType;
     }
 
@@ -233,7 +239,9 @@ public final class GordianEncryptorSpec {
      * @return the encryptorSpec iterator.
      */
     public Iterator<GordianEncryptorSpec> encryptorSpecIterator() {
-        if (!(theEncryptorType instanceof List)) throw new IllegalArgumentException();
+        if (!(theEncryptorType instanceof List)) {
+            throw new IllegalArgumentException();
+        }
         return ((List<GordianEncryptorSpec>) theEncryptorType).iterator();
     }
 
@@ -288,6 +296,7 @@ public final class GordianEncryptorSpec {
             case GOST2012:
             case MCELIECE:
             case SM2:
+            case COMPOSITE:
                 return true;
             default:
                 return false;

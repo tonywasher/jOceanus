@@ -28,6 +28,7 @@ import net.sourceforge.joceanus.jgordianknot.api.sign.GordianSignatureType;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianCoreFactory;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianCryptoException;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianDataException;
+import net.sourceforge.joceanus.jgordianknot.impl.core.sign.GordianCompositeSigner;
 import net.sourceforge.joceanus.jgordianknot.impl.core.sign.GordianCoreSignatureFactory;
 import net.sourceforge.joceanus.jgordianknot.impl.jca.JcaSignature.JcaDSASignature;
 import net.sourceforge.joceanus.jgordianknot.impl.jca.JcaSignature.JcaEdDSASignature;
@@ -121,6 +122,8 @@ public class JcaSignatureFactory
                 return new JcaRainbowSignature(getFactory(), pSignatureSpec);
             case LMS:
                 return new JcaLMSSignature(getFactory(), pSignatureSpec);
+            case COMPOSITE:
+                return new GordianCompositeSigner(getFactory(), pSignatureSpec);
             default:
                 throw new GordianDataException(GordianCoreFactory.getInvalidText(pSignatureSpec.getKeyPairType()));
         }
@@ -152,6 +155,7 @@ public class JcaSignatureFactory
             case SPHINCSPLUS:
             case EDDSA:
             case LMS:
+            case COMPOSITE:
                 return true;
             case DH:
             case NEWHOPE:

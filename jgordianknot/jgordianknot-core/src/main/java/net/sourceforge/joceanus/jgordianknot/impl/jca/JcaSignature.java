@@ -617,27 +617,6 @@ public abstract class JcaSignature
     }
 
     /**
-     * qTESLA signature.
-     */
-    static class JcaQTESLASignature
-            extends JcaSignature {
-        /**
-         * Constructor.
-         * @param pFactory the factory
-         * @param pSignatureSpec the signatureSpec
-         * @throws OceanusException on error
-         */
-        JcaQTESLASignature(final GordianCoreFactory pFactory,
-                           final GordianSignatureSpec pSignatureSpec) throws OceanusException {
-            /* Initialise class */
-            super(pFactory, pSignatureSpec);
-
-            /* Create the signature class */
-            setSigner(JcaSignatureFactory.getJavaSignature("QTESLA", true));
-        }
-    }
-
-    /**
      * LMS signature.
      */
     static class JcaLMSSignature

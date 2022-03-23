@@ -33,6 +33,7 @@ import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPair;
 import net.sourceforge.joceanus.jgordianknot.api.sign.GordianKeyPairSignature;
 import net.sourceforge.joceanus.jgordianknot.api.sign.GordianSignatureFactory;
 import net.sourceforge.joceanus.jgordianknot.api.sign.GordianSignatureSpec;
+import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianDataException;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianIOException;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianLogicException;
 import net.sourceforge.joceanus.jgordianknot.impl.core.keypair.GordianCompositeKeyPair;
@@ -178,6 +179,7 @@ public class GordianCompositeSigner
 
             /* Return the signature */
             return new DERSequence(ks).getEncoded();
+
         } catch (IOException e) {
             throw new GordianIOException("Failed to encode signature", e);
         }
@@ -190,28 +192,34 @@ public class GordianCompositeSigner
      * @throws OceanusException on error
      */
     public boolean verify(final byte[] pSignature) throws OceanusException {
-        /* Parse the signature */
-        final ASN1Sequence mySequence = ASN1Sequence.getInstance(pSignature);
+        /* Protect against exceptions */
+        try {
+            /* Parse the signature */
+            final ASN1Sequence mySequence = ASN1Sequence.getInstance(pSignature);
 
-        /* Loop through the signers */
-        byte[] mySign = null;
-        int numFailed = 0;
-        final Enumeration<?> en = mySequence.getObjects();
-        for (GordianKeyPairSignature mySigner : theSigners) {
-            /* If we have a previous signature */
-            if (mySign != null) {
-                /* Process previous signature */
-                mySigner.update(mySign);
+            /* Loop through the signers */
+            byte[] mySign = null;
+            int numFailed = 0;
+            final Enumeration<?> en = mySequence.getObjects();
+            for (GordianKeyPairSignature mySigner : theSigners) {
+                /* If we have a previous signature */
+                if (mySign != null) {
+                    /* Process previous signature */
+                    mySigner.update(mySign);
+                }
+
+                /* Access next signature */
+                mySign = ASN1OctetString.getInstance(en.nextElement()).getOctets();
+
+                /* Verify using this signature */
+                numFailed += mySigner.verify(mySign) ? 0 : 1;
             }
 
-            /* Access next signature */
-            mySign = ASN1OctetString.getInstance(en.nextElement()).getOctets();
+            /* Return validity */
+            return numFailed == 0;
 
-            /* Verify using this signature */
-            numFailed += mySigner.verify(mySign) ? 0 : 1;
+        } catch (IllegalArgumentException e) {
+            throw new GordianDataException("Invalid encoded signature");
         }
-
-        /* Return validity */
-        return numFailed == 0;
     }
 }

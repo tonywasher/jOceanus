@@ -33,8 +33,8 @@
                 }
 
                 /* Access signer */
-                final GordianSignatureSpec mySignSpec = GordianSignatureSpec.rsa(GordianSignatureType.PSS,
-                GordianDigestSpec.sha2(GordianLength.LEN_256));
+                final GordianSignatureSpec mySignSpec = GordianSignatureSpec.rsa(GordianSignatureType.PSSMGF1,
+                                                                                 GordianDigestSpec.sha2(GordianLength.LEN_256));
                 final GordianKeyPairSignature mySigner = mySignatureFactory.createKeyPairSigner(mySignSpec);
 
                 /* Sign message */
@@ -48,6 +48,42 @@
                 mySigner.update(message);
                 final boolean verified = mySigner.verify(mySignature);
             </source>
+        </section>
+        <section name="Composite Signatures">
+            <p>Composite signatures may be created by a composite keyPair, as long as each element of the composite keyPair is assigned a valid signatureSpec.
+                The resulting signatures are encoded as an ASN1Sequence.</p>
+            <subsection name="Sample">
+                <source>
+                    /* Access factory */
+                    final GordianFactory myBaseFactory = GordianGenerator.createFactory();
+                    final GordianKeyPairFactory myKeyPairFactory = myBase.getKeyPairFactory();
+                    final GordianSignatureFactory mySignatureFactory = myKeyPairFactory.getSignatureFactory();
+
+                    /* Access keyPairGenerator */
+                    final GordianKeyPairSpec mySpec = GordianKeyPairSpec.composite(GordianKeyPairSpec.rsa(GordianRSAModulus.MOD2048),
+                                                                                   GordianKeyPairSpec.ed25519());
+                    final GordianKeyPairGenerator myGenerator = myKeyPairFactory.getKeyPairGenerator(mySpec);
+                    final GordianKeyPair myKeyPair = myGenerator.generateKeyPair();
+                    GordianKeyPair mySigningPair = myKeyPair;
+
+                    /* Access signer */
+                    final GordianSignatureSpec mySignSpec = GordianSignatureSpec.composite(GordianSignatureSpec.rsa(GordianSignatureType.PSSMGF1,
+                                                                                                                    GordianDigestSpec.sha2(GordianLength.LEN_256)),
+                                                                                           GordianSignatureSpec.edDSA());
+                    final GordianKeyPairSignature mySigner = mySignatureFactory.createKeyPairSigner(mySignSpec);
+
+                    /* Sign message */
+                    final byte[] message = ....;
+                    mySigner.initForSigning(mySigningPair);
+                    mySigner.update(message);
+                    final byte[] mySignature = mySigner.sign();
+
+                    /* Verify signature */
+                    mySigner.initForVerify(myKeyPair);
+                    mySigner.update(message);
+                    final boolean verified = mySigner.verify(mySignature);
+                </source>
+            </subsection>
         </section>
         <section name="Algorithms">
             <p>The following signature algorithms are supported.</p>

@@ -264,6 +264,14 @@ public final class GordianSignatureSpec {
                 return xmss();
             case LMS:
                 return lms();
+            case COMPOSITE:
+                final List<GordianSignatureSpec> mySpecs = new ArrayList<>();
+                final Iterator<GordianKeyPairSpec> myIterator = pKeySpec.keySpecIterator();
+                while (myIterator.hasNext()) {
+                    final GordianKeyPairSpec mySpec = myIterator.next();
+                    mySpecs.add(defaultForKey(mySpec));
+                }
+                return GordianSignatureSpec.composite(mySpecs);
             default:
                 return null;
         }
@@ -298,7 +306,9 @@ public final class GordianSignatureSpec {
      * @return the digestSpec.
      */
     public GordianDigestSpec getDigestSpec() {
-        if (!(theSignatureSpec instanceof GordianDigestSpec)) throw new IllegalArgumentException();
+        if (!(theSignatureSpec instanceof GordianDigestSpec)) {
+            throw new IllegalArgumentException();
+        }
         return (GordianDigestSpec) theSignatureSpec;
     }
 
@@ -307,7 +317,9 @@ public final class GordianSignatureSpec {
      * @return the signatureeSpec iterator.
      */
     public Iterator<GordianSignatureSpec> signatureSpecIterator() {
-        if (!(theSignatureSpec instanceof List)) throw new IllegalArgumentException();
+        if (!(theSignatureSpec instanceof List)) {
+            throw new IllegalArgumentException();
+        }
         return ((List<GordianSignatureSpec>) theSignatureSpec).iterator();
     }
 
@@ -335,7 +347,9 @@ public final class GordianSignatureSpec {
             case GOST2012:
             case SM2:
             case RAINBOW:
-                if (!(theSignatureSpec instanceof GordianDigestSpec)) return false;
+                if (!(theSignatureSpec instanceof GordianDigestSpec)) {
+                    return false;
+                }
                 final GordianDigestSpec mySpec = getDigestSpec();
                 return mySpec.isValid() && mySpec.getDigestType().supportsLargeData();
             case EDDSA:
