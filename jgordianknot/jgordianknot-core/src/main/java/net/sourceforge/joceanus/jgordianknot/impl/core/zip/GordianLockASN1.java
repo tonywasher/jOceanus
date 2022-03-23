@@ -34,7 +34,6 @@ import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
 
 import net.sourceforge.joceanus.jgordianknot.api.zip.GordianLockType;
 import net.sourceforge.joceanus.jgordianknot.impl.core.agree.GordianAgreementClientHelloASN1;
-import net.sourceforge.joceanus.jgordianknot.impl.core.agree.GordianKeyPairSetAgreeASN1;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianASN1Util;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianASN1Util.GordianASN1Object;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianDataException;
@@ -51,7 +50,6 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
  *          password    [0] NULL
  *          key         [1] OCTET STRING
  *          keyPair     [2] GordianAgreementClientHelloASN1
- *          keyPairSet  [3] GordianKeyPairSetAgreeASN1
  *      }
  * }
  * </pre>
@@ -79,11 +77,6 @@ public class GordianLockASN1
     private static final int TAG_KEYPAIR = 2;
 
     /**
-     * KeyPairSet and Password.
-     */
-    private static final int TAG_KEYPAIRSET = 3;
-
-    /**
      * The zipLockType.
      */
     private final GordianLockType theLockType;
@@ -104,11 +97,6 @@ public class GordianLockASN1
     private final GordianAgreementClientHelloASN1 theKeyPairHello;
 
     /**
-     * The keyPairSet clientHelloASN1.
-     */
-    private final GordianKeyPairSetAgreeASN1 theKeyPairSetHello;
-
-    /**
      * Create the ASN1 sequence.
      * @param pKeySetHash the keySetHash
      */
@@ -118,7 +106,6 @@ public class GordianLockASN1
         theKeySetHash = pKeySetHash;
         theKey = null;
         theKeyPairHello = null;
-        theKeyPairSetHello = null;
     }
 
     /**
@@ -133,7 +120,6 @@ public class GordianLockASN1
         theKeySetHash = pKeySetHash;
         theKey = pKey;
         theKeyPairHello = null;
-        theKeyPairSetHello = null;
     }
 
     /**
@@ -148,22 +134,6 @@ public class GordianLockASN1
         theKeySetHash = pKeySetHash;
         theKey = null;
         theKeyPairHello = pClientHello;
-        theKeyPairSetHello = null;
-    }
-
-    /**
-     * Create the ASN1 sequence.
-     * @param pKeySetHash the keySetHash
-     * @param pClientHello the clientHello
-     */
-    public GordianLockASN1(final GordianKeySetHashASN1 pKeySetHash,
-                           final GordianKeyPairSetAgreeASN1 pClientHello) {
-        /* Store the Details */
-        theLockType = GordianLockType.KEYPAIRSET_PASSWORD;
-        theKeySetHash = pKeySetHash;
-        theKey = null;
-        theKeyPairHello = null;
-        theKeyPairSetHello = pClientHello;
     }
 
     /**
@@ -186,26 +156,17 @@ public class GordianLockASN1
                     theLockType = GordianLockType.KEY_PASSWORD;
                     theKey = ASN1OctetString.getInstance(myTagged, false).getOctets();
                     theKeyPairHello = null;
-                    theKeyPairSetHello = null;
                     break;
                 case TAG_KEYPAIR:
                     theLockType = GordianLockType.KEYPAIR_PASSWORD;
                     theKey = null;
                     theKeyPairHello = GordianAgreementClientHelloASN1.getInstance(ASN1Sequence.getInstance(myTagged, false));
-                    theKeyPairSetHello = null;
-                    break;
-                case TAG_KEYPAIRSET:
-                    theLockType = GordianLockType.KEYPAIRSET_PASSWORD;
-                    theKey = null;
-                    theKeyPairHello = null;
-                    theKeyPairSetHello = GordianKeyPairSetAgreeASN1.getInstance(ASN1Sequence.getInstance(myTagged, false));
                     break;
                 case TAG_PASSWORD:
                 default:
                     theLockType = GordianLockType.PASSWORD;
                     theKey = null;
                     theKeyPairHello = null;
-                    theKeyPairSetHello = null;
             }
 
             /* Make sure that we have completed the sequence */
@@ -267,14 +228,6 @@ public class GordianLockASN1
     }
 
     /**
-     * Obtain the keyPairSet clientHello.
-     * @return the clientHello
-     */
-    public GordianKeyPairSetAgreeASN1 getKeyPairSetHello() {
-        return theKeyPairSetHello;
-    }
-
-    /**
      * Obtain the algorithmId.
      * @return  the algorithmId
      */
@@ -291,8 +244,6 @@ public class GordianLockASN1
             v.add(new DERTaggedObject(false, TAG_KEY, myKey));
         } else if (theKeyPairHello != null) {
             v.add(new DERTaggedObject(false, TAG_KEYPAIR, theKeyPairHello));
-        } else if (theKeyPairSetHello != null) {
-            v.add(new DERTaggedObject(false, TAG_KEYPAIRSET, theKeyPairSetHello));
         } else {
             v.add(new DERTaggedObject(false, TAG_PASSWORD, DERNull.INSTANCE));
         }
@@ -318,13 +269,12 @@ public class GordianLockASN1
         /* Check that the fields are equal */
         return Objects.equals(theKeySetHash, myThat.getKeySetHash())
                 && Arrays.equals(theKey, myThat.getKey())
-                && Objects.equals(theKeyPairHello, myThat.getKeyPairHello())
-                && Objects.equals(theKeyPairSetHello, myThat.getKeyPairSetHello());
+                && Objects.equals(theKeyPairHello, myThat.getKeyPairHello());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(theKeySetHash, theKeyPairHello, theKeyPairSetHello)
+        return Objects.hash(theKeySetHash, theKeyPairHello)
                 ^ Arrays.hashCode(theKey);
     }
 }

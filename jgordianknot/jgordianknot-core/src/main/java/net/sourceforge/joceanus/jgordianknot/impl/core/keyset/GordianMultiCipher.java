@@ -37,8 +37,6 @@ import net.sourceforge.joceanus.jgordianknot.api.factory.GordianKeyPairFactory;
 import net.sourceforge.joceanus.jgordianknot.api.key.GordianKey;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPair;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPairGenerator;
-import net.sourceforge.joceanus.jgordianknot.api.keypairset.GordianKeyPairSet;
-import net.sourceforge.joceanus.jgordianknot.api.keypairset.GordianKeyPairSetFactory;
 import net.sourceforge.joceanus.jgordianknot.api.mac.GordianMacFactory;
 import net.sourceforge.joceanus.jgordianknot.api.mac.GordianMacSpec;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianCoreFactory;
@@ -46,7 +44,6 @@ import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianDataException
 import net.sourceforge.joceanus.jgordianknot.impl.core.cipher.GordianCoreWrapper;
 import net.sourceforge.joceanus.jgordianknot.impl.core.key.GordianCoreKey;
 import net.sourceforge.joceanus.jgordianknot.impl.core.key.GordianCoreKeyGenerator;
-import net.sourceforge.joceanus.jgordianknot.impl.core.keypairset.GordianCoreKeyPairSetGenerator;
 import net.sourceforge.joceanus.jgordianknot.impl.core.keyset.GordianKeySetRecipe.GordianKeySetParameters;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
@@ -450,26 +447,6 @@ final class GordianMultiCipher
         final GordianKeyPairFactory myFactory = theFactory.getKeyPairFactory();
         final GordianKeyPairGenerator myGenerator = myFactory.getKeyPairGenerator(pKeyPairToSecure.getKeyPairSpec());
         final PKCS8EncodedKeySpec myPKCS8Key = myGenerator.getPKCS8Encoding(pKeyPairToSecure);
-        return secureBytes(pParams, myPKCS8Key.getEncoded());
-    }
-
-    /**
-     * Secure privateKey.
-     * @param pParams the parameters
-     * @param pKeyPairSetToSecure the key to secure
-     * @return the securedKey
-     * @throws OceanusException on error
-     */
-    byte[] securePrivateKeySet(final GordianKeySetParameters pParams,
-                               final GordianKeyPairSet pKeyPairSetToSecure) throws OceanusException {
-        /* Check the parameters */
-        checkParameters(pParams);
-
-        /* Secure the key */
-        final GordianKeyPairFactory myPairFactory = theFactory.getKeyPairFactory();
-        final GordianKeyPairSetFactory myFactory = myPairFactory.getKeyPairSetFactory();
-        final GordianCoreKeyPairSetGenerator myGenerator = (GordianCoreKeyPairSetGenerator) myFactory.getKeyPairSetGenerator(pKeyPairSetToSecure.getKeyPairSetSpec());
-        final PKCS8EncodedKeySpec myPKCS8Key = myGenerator.getPKCS8Encoding(pKeyPairSetToSecure);
         return secureBytes(pParams, myPKCS8Key.getEncoded());
     }
 

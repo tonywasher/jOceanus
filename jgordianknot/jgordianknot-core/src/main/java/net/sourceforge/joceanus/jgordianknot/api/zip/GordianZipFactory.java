@@ -21,7 +21,6 @@ import java.io.InputStream;
 import java.io.OutputStream;
 
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPair;
-import net.sourceforge.joceanus.jgordianknot.api.keypairset.GordianKeyPairSet;
 import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetHashSpec;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
@@ -80,30 +79,6 @@ public interface GordianZipFactory {
     GordianLock createKeyPairLock(GordianKeyPair pKeyPair,
                                   GordianKeySetHashSpec pKeySetHashSpec,
                                   char[] pPassword) throws OceanusException;
-
-    /**
-     * Create a keyPairSetLock.
-     * @param pKeyPairSet the keyPairSet
-     * @param pPassword the password
-     * @return the Lock
-     * @throws OceanusException on error
-     */
-    default GordianLock createKeyPairSetLock(final GordianKeyPairSet pKeyPairSet,
-                                             final char[] pPassword) throws OceanusException {
-        return createKeyPairSetLock(pKeyPairSet, new GordianKeySetHashSpec(), pPassword);
-    }
-
-    /**
-     * Create a keyPairSetLock.
-     * @param pKeyPairSet the keyPairSet
-     * @param pKeySetHashSpec the KeySetHashSpec
-     * @param pPassword the password
-     * @return the Lock
-     * @throws OceanusException on error
-     */
-    GordianLock createKeyPairSetLock(GordianKeyPairSet pKeyPairSet,
-                                     GordianKeySetHashSpec pKeySetHashSpec,
-                                     char[] pPassword) throws OceanusException;
 
     /**
      * Create a secure zipFile.

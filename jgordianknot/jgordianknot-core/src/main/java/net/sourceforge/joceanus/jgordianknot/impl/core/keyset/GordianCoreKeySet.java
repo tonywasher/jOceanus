@@ -35,9 +35,6 @@ import net.sourceforge.joceanus.jgordianknot.api.key.GordianKeyGenerator;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPair;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPairGenerator;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPairSpec;
-import net.sourceforge.joceanus.jgordianknot.api.keypairset.GordianKeyPairSet;
-import net.sourceforge.joceanus.jgordianknot.api.keypairset.GordianKeyPairSetFactory;
-import net.sourceforge.joceanus.jgordianknot.api.keypairset.GordianKeyPairSetSpec;
 import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySet;
 import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetAADCipher;
 import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetCipher;
@@ -48,7 +45,6 @@ import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianIOException;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianLogicException;
 import net.sourceforge.joceanus.jgordianknot.impl.core.cipher.GordianCoreWrapper;
 import net.sourceforge.joceanus.jgordianknot.impl.core.key.GordianCoreKeyGenerator;
-import net.sourceforge.joceanus.jgordianknot.impl.core.keypairset.GordianCoreKeyPairSetGenerator;
 import net.sourceforge.joceanus.jgordianknot.impl.core.keyset.GordianKeySetRecipe.GordianKeySetParameters;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
@@ -401,38 +397,6 @@ public final class GordianCoreKeySet
         /* Derive the keyPair */
         final GordianKeyPairGenerator myGenerator = myFactory.getKeyPairGenerator(myKeySpec);
         return myGenerator.deriveKeyPair(pPublicKeySpec, myPrivate);
-    }
-
-    @Override
-    public byte[] securePrivateKeySet(final GordianKeyPairSet pKeyPairSet) throws OceanusException {
-        /* Generate set of keys */
-        final GordianKeySetRecipe myRecipe = GordianKeySetRecipe.newRecipe(theFactory, theSpec, false);
-        final GordianKeySetParameters myParams = myRecipe.getParameters();
-
-        /* Wrap the key */
-        final byte[] myBytes = theCipher.securePrivateKeySet(myParams, pKeyPairSet);
-
-        /* Package and return the encrypted bytes */
-        return buildExternal(myRecipe, myBytes);
-    }
-
-    @Override
-    public GordianKeyPairSet deriveKeyPairSet(final X509EncodedKeySpec pPublicKeySpec,
-                                              final byte[] pSecuredPrivateKeySet) throws OceanusException {
-        /* Access the PKCS8Encoding */
-        final PKCS8EncodedKeySpec myPrivate = derivePrivateKeySpec(pSecuredPrivateKeySet);
-
-        /* Determine and check the keySpec */
-        final GordianKeyPairFactory myPairFactory = theFactory.getKeyPairFactory();
-        final GordianKeyPairSetFactory myFactory = myPairFactory.getKeyPairSetFactory();
-        final GordianKeyPairSetSpec myKeySpec = myFactory.determineKeyPairSetSpec(pPublicKeySpec);
-        if (!myKeySpec.equals(myFactory.determineKeyPairSetSpec(myPrivate))) {
-            throw new GordianLogicException("Mismatch on keySpecs");
-        }
-
-        /* Derive the keyPair */
-        final GordianCoreKeyPairSetGenerator myGenerator = (GordianCoreKeyPairSetGenerator) myFactory.getKeyPairSetGenerator(myKeySpec);
-        return myGenerator.deriveKeyPairSet(pPublicKeySpec, myPrivate);
     }
 
     /**

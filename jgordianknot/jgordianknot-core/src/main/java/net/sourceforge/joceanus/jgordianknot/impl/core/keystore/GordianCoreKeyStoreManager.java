@@ -31,20 +31,14 @@ import net.sourceforge.joceanus.jgordianknot.api.key.GordianKeyGenerator;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPair;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPairGenerator;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPairSpec;
-import net.sourceforge.joceanus.jgordianknot.api.keypairset.GordianKeyPairSet;
-import net.sourceforge.joceanus.jgordianknot.api.keypairset.GordianKeyPairSetFactory;
-import net.sourceforge.joceanus.jgordianknot.api.keypairset.GordianKeyPairSetGenerator;
-import net.sourceforge.joceanus.jgordianknot.api.keypairset.GordianKeyPairSetSpec;
 import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySet;
 import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetFactory;
 import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetSpec;
 import net.sourceforge.joceanus.jgordianknot.api.keystore.GordianKeyPairCertificate;
-import net.sourceforge.joceanus.jgordianknot.api.keystore.GordianKeyPairSetCertificate;
 import net.sourceforge.joceanus.jgordianknot.api.keystore.GordianKeyPairUsage;
 import net.sourceforge.joceanus.jgordianknot.api.keystore.GordianKeyPairUse;
 import net.sourceforge.joceanus.jgordianknot.api.keystore.GordianKeyStoreEntry.GordianKeyStoreKey;
 import net.sourceforge.joceanus.jgordianknot.api.keystore.GordianKeyStoreEntry.GordianKeyStorePair;
-import net.sourceforge.joceanus.jgordianknot.api.keystore.GordianKeyStoreEntry.GordianKeyStorePairSet;
 import net.sourceforge.joceanus.jgordianknot.api.keystore.GordianKeyStoreEntry.GordianKeyStoreSet;
 import net.sourceforge.joceanus.jgordianknot.api.keystore.GordianKeyStoreManager;
 import net.sourceforge.joceanus.jgordianknot.api.mac.GordianMacSpec;
@@ -53,9 +47,7 @@ import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianCoreFactory;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianDataException;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianLogicException;
 import net.sourceforge.joceanus.jgordianknot.impl.core.keypair.GordianCoreKeyPair;
-import net.sourceforge.joceanus.jgordianknot.impl.core.keypairset.GordianCoreKeyPairSet;
 import net.sourceforge.joceanus.jgordianknot.impl.core.keystore.GordianCoreKeyStoreEntry.GordianCoreKeyStorePair;
-import net.sourceforge.joceanus.jgordianknot.impl.core.keystore.GordianCoreKeyStoreEntry.GordianCoreKeyStorePairSet;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
@@ -236,132 +228,6 @@ public class GordianCoreKeyStoreManager
         /* Handle failure */
         if (bFail) {
             throw new GordianLogicException("Unsupported Usage for keyPair");
-        }
-    }
-
-    @Override
-    public GordianCoreKeyStorePairSet createRootKeyPairSet(final GordianKeyPairSetSpec pKeySetSpec,
-                                                           final X500Name pSubject,
-                                                           final String pAlias,
-                                                           final char[] pPassword) throws OceanusException {
-        /* Check that the keySetSpec can provide a signature */
-        if (!pKeySetSpec.canSign()) {
-            throw new GordianDataException("Root keyPairSet must be capable of signing");
-        }
-
-        /* Create the new keyPair */
-        final GordianKeyPairFactory myPairFactory = theFactory.getKeyPairFactory();
-        final GordianKeyPairSetFactory myFactory = myPairFactory.getKeyPairSetFactory();
-        final GordianKeyPairSetGenerator myGenerator = myFactory.getKeyPairSetGenerator(pKeySetSpec);
-        final GordianCoreKeyPairSet myKeyPairSet = (GordianCoreKeyPairSet) myGenerator.generateKeyPairSet();
-
-        /* Create the certificate */
-        final GordianCoreKeyPairSetCertificate myCert = new GordianCoreKeyPairSetCertificate(theFactory, myKeyPairSet, pSubject);
-        final List<GordianKeyPairSetCertificate> myChain = Collections.singletonList(myCert);
-
-        /* Record into keyStore */
-        theKeyStore.setKeyPairSet(pAlias, myKeyPairSet, pPassword, myChain);
-        return (GordianCoreKeyStorePairSet) theKeyStore.getEntry(pAlias, pPassword);
-    }
-
-
-    @Override
-    public GordianCoreKeyStorePairSet createKeyPairSet(final GordianKeyPairSetSpec pKeySetSpec,
-                                                       final X500Name pSubject,
-                                                       final GordianKeyPairUsage pUsage,
-                                                       final GordianKeyStorePairSet pSigner,
-                                                       final String pAlias,
-                                                       final char[] pPassword) throws OceanusException {
-        /* Create the new keyPairSet */
-        checkKeyPairSetUsage(pKeySetSpec, pUsage);
-        final GordianKeyPairFactory myPairFactory = theFactory.getKeyPairFactory();
-        final GordianKeyPairSetFactory myFactory = myPairFactory.getKeyPairSetFactory();
-        final GordianKeyPairSetGenerator myGenerator = myFactory.getKeyPairSetGenerator(pKeySetSpec);
-        final GordianCoreKeyPairSet myKeyPairSet = (GordianCoreKeyPairSet) myGenerator.generateKeyPairSet();
-
-        /* Create the certificate */
-        final GordianCoreKeyPairSetCertificate myCert = new GordianCoreKeyPairSetCertificate(theFactory, (GordianCoreKeyStorePairSet) pSigner, myKeyPairSet, pSubject, pUsage);
-
-        /* Create the new chain */
-        final List<GordianKeyPairSetCertificate> myParentChain = pSigner.getCertificateChain();
-        final List<GordianKeyPairSetCertificate> myChain = new ArrayList<>(myParentChain);
-        myChain.add(0, myCert);
-
-        /* Record into keyStore */
-        theKeyStore.setKeyPairSet(pAlias, myKeyPairSet, pPassword, myChain);
-        return (GordianCoreKeyStorePairSet) theKeyStore.getEntry(pAlias, pPassword);
-    }
-
-    @Override
-    public GordianCoreKeyStorePairSet createAlternate(final GordianKeyStorePairSet pKeyPairSet,
-                                                      final GordianKeyPairUsage pUsage,
-                                                      final GordianKeyStorePairSet pSigner,
-                                                      final String pAlias,
-                                                      final char[] pPassword) throws OceanusException {
-        /* Access the keyPair and subject */
-        final GordianCoreKeyPairSet myKeyPairSet = (GordianCoreKeyPairSet) pKeyPairSet.getKeyPairSet();
-        final X500Name mySubject = pKeyPairSet.getCertificateChain().get(0).getSubject().getName();
-        checkKeyPairSetUsage(myKeyPairSet.getKeyPairSetSpec(), pUsage);
-
-        /* Create the certificate */
-        final GordianCoreKeyPairSetCertificate myCert = new GordianCoreKeyPairSetCertificate(theFactory, (GordianCoreKeyStorePairSet) pSigner, myKeyPairSet, mySubject, pUsage);
-
-        /* Create the new chain */
-        final List<GordianKeyPairSetCertificate> myParentChain = pSigner.getCertificateChain();
-        final List<GordianKeyPairSetCertificate> myChain = new ArrayList<>(myParentChain);
-        myChain.add(0, myCert);
-
-        /* Record into keyStore */
-        theKeyStore.setKeyPairSet(pAlias, myKeyPairSet, pPassword, myChain);
-        return (GordianCoreKeyStorePairSet) theKeyStore.getEntry(pAlias, pPassword);
-    }
-
-    /**
-     * Sign keyPairSet.
-     * @param pKeyPairSet the keyPairSet
-     * @param pSubject the name of the entity
-     * @param pUsage   the key usage
-     * @param pSigner the signer
-     * @return the certificate chain
-     * @throws OceanusException on error
-     */
-    List<GordianKeyPairSetCertificate> signKeyPairSet(final GordianKeyPairSet pKeyPairSet,
-                                                      final X500Name pSubject,
-                                                      final GordianKeyPairUsage pUsage,
-                                                      final GordianKeyStorePairSet pSigner) throws OceanusException {
-        /* Create the certificate */
-        final GordianCoreKeyPairSetCertificate myCert = new GordianCoreKeyPairSetCertificate(theFactory, (GordianCoreKeyStorePairSet) pSigner, pKeyPairSet, pSubject, pUsage);
-
-        /* Create the new chain */
-        final List<GordianKeyPairSetCertificate> myParentChain = pSigner.getCertificateChain();
-        final List<GordianKeyPairSetCertificate> myChain = new ArrayList<>(myParentChain);
-        myChain.add(0, myCert);
-        return myChain;
-    }
-
-    /**
-     * Check Usage for keyPairSetSpec.
-     * @param pKeyPairSetSpec the keyPairSetSpec
-     * @param pUsage   the key usage
-     * @throws OceanusException on error
-     */
-    private static void checkKeyPairSetUsage(final GordianKeyPairSetSpec pKeyPairSetSpec,
-                                             final GordianKeyPairUsage pUsage) throws OceanusException {
-        /* Determine the requirements */
-        final boolean needsSign = pUsage.hasUse(GordianKeyPairUse.CERTIFICATE)
-                                    || pUsage.hasUse(GordianKeyPairUse.SIGNATURE);
-        final boolean needsEnc = pUsage.hasUse(GordianKeyPairUse.KEYENCRYPT)
-                                    || pUsage.hasUse(GordianKeyPairUse.DATAENCRYPT);
-        final boolean needsAgree = pUsage.hasUse(GordianKeyPairUse.AGREEMENT);
-
-        /* Validate keyPairSetSpec against requirements */
-        final boolean bFail = (needsSign && !pKeyPairSetSpec.canSign())
-                || (needsEnc && !pKeyPairSetSpec.canEncrypt())
-                || (needsAgree && !pKeyPairSetSpec.canAgree());
-
-        /* Handle failure */
-        if (bFail) {
-            throw new GordianLogicException("Unsupported Usage for keyPairSet");
         }
     }
 }

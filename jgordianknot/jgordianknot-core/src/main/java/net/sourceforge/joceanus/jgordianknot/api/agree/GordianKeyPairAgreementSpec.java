@@ -602,8 +602,8 @@ public final class GordianKeyPairAgreementSpec {
      * @param pAgreementType the agreementType
      * @return the list
      */
-    private static List<GordianKeyPairAgreementSpec> listAllKDFs(final GordianKeyPairType pKeyPairType,
-                                                                 final GordianAgreementType pAgreementType) {
+    public static List<GordianKeyPairAgreementSpec> listAllKDFs(final GordianKeyPairType pKeyPairType,
+                                                                final GordianAgreementType pAgreementType) {
         return listAllKDFs(pKeyPairType, pAgreementType, Boolean.FALSE);
     }
 
@@ -614,9 +614,9 @@ public final class GordianKeyPairAgreementSpec {
      * @param pConfirm with key confirmation
      * @return the list
      */
-    private static List<GordianKeyPairAgreementSpec> listAllKDFs(final GordianKeyPairType pKeyPairType,
-                                                                 final GordianAgreementType pAgreementType,
-                                                                 final Boolean pConfirm) {
+    public static List<GordianKeyPairAgreementSpec> listAllKDFs(final GordianKeyPairType pKeyPairType,
+                                                                final GordianAgreementType pAgreementType,
+                                                                final Boolean pConfirm) {
         /* Create list */
         final List<GordianKeyPairAgreementSpec> myAgreements = new ArrayList<>();
 

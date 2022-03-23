@@ -23,13 +23,9 @@ import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
 
 import net.sourceforge.joceanus.jgordianknot.api.encrypt.GordianEncryptorFactory;
 import net.sourceforge.joceanus.jgordianknot.api.encrypt.GordianEncryptorSpec;
-import net.sourceforge.joceanus.jgordianknot.api.encrypt.GordianKeyPairSetEncryptor;
 import net.sourceforge.joceanus.jgordianknot.api.encrypt.GordianMcElieceEncryptionType;
-import net.sourceforge.joceanus.jgordianknot.api.factory.GordianKeyPairFactory;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPairSpec;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPairType;
-import net.sourceforge.joceanus.jgordianknot.api.keypairset.GordianKeyPairSetFactory;
-import net.sourceforge.joceanus.jgordianknot.api.keypairset.GordianKeyPairSetSpec;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianCoreFactory;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianDataException;
 import net.sourceforge.joceanus.jtethys.OceanusException;
@@ -68,20 +64,6 @@ public abstract class GordianCoreEncryptorFactory
     @Override
     public Predicate<GordianEncryptorSpec> supportedKeyPairEncryptors() {
         return this::validEncryptorSpec;
-    }
-
-    @Override
-    public GordianKeyPairSetEncryptor createKeyPairSetEncryptor(final GordianKeyPairSetSpec pKeyPairSetSpec) throws OceanusException {
-        /* Check valid spec */
-        final GordianKeyPairFactory myPairFactory = theFactory.getKeyPairFactory();
-        final GordianKeyPairSetFactory mySetFactory = myPairFactory.getKeyPairSetFactory();
-        if (!mySetFactory.supportedKeyPairSetSpecs().test(pKeyPairSetSpec)
-                || !pKeyPairSetSpec.canEncrypt()) {
-            throw new GordianDataException(GordianCoreFactory.getInvalidText(pKeyPairSetSpec));
-        }
-
-        /* Create the new encryptor */
-        return new GordianCoreKeyPairSetEncryptor(myPairFactory, pKeyPairSetSpec);
     }
 
     /**

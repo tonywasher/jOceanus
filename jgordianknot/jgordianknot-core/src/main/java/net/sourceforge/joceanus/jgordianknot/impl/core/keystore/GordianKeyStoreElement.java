@@ -24,7 +24,6 @@ import net.sourceforge.joceanus.jgordianknot.api.base.GordianKeySpec;
 import net.sourceforge.joceanus.jgordianknot.api.factory.GordianFactory;
 import net.sourceforge.joceanus.jgordianknot.api.key.GordianKey;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPair;
-import net.sourceforge.joceanus.jgordianknot.api.keypairset.GordianKeyPairSet;
 import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySet;
 import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetFactory;
 import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetHash;
@@ -32,7 +31,6 @@ import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetHashSpec;
 import net.sourceforge.joceanus.jgordianknot.api.keystore.GordianCertificate;
 import net.sourceforge.joceanus.jgordianknot.api.keystore.GordianCertificateId;
 import net.sourceforge.joceanus.jgordianknot.api.keystore.GordianKeyPairCertificate;
-import net.sourceforge.joceanus.jgordianknot.api.keystore.GordianKeyPairSetCertificate;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
 
@@ -227,40 +225,6 @@ public interface GordianKeyStoreElement {
         GordianCoreKeyStorePairCertificate buildEntry(final GordianCoreKeyStore pKeyStore) {
             final GordianCoreKeyPairCertificate myCert = (GordianCoreKeyPairCertificate) pKeyStore.getKeyPairCertificate(getCertificateKey());
             return new GordianCoreKeyStorePairCertificate(myCert, getCreationDate());
-        }
-    }
-
-    /**
-     * KeyStore pairSetCertificate Element.
-     */
-    class GordianKeyStorePairSetCertificateElement
-            extends GordianKeyStoreCertificateElement<GordianKeyPairSet> {
-        /**
-         * Constructor.
-         * @param pCertificate the certificate.
-         */
-        GordianKeyStorePairSetCertificateElement(final GordianKeyPairSetCertificate pCertificate) {
-            super(pCertificate);
-        }
-
-        /**
-         * Constructor.
-         * @param pKey the key.
-         * @param pDate the creation date
-         */
-        GordianKeyStorePairSetCertificateElement(final GordianKeyStoreCertificateKey pKey,
-                                                 final TethysDate pDate) {
-            super(pKey, pDate);
-        }
-
-        /**
-         * Obtain the corresponding keyStoreEntry.
-         * @param pKeyStore the keyStore
-         * @return the keyStore certificate entry
-         */
-        GordianCoreKeyStorePairSetCertificate buildEntry(final GordianCoreKeyStore pKeyStore) {
-            final GordianCoreKeyPairSetCertificate myCert = (GordianCoreKeyPairSetCertificate) pKeyStore.getKeyPairSetCertificate(getCertificateKey());
-            return new GordianCoreKeyStorePairSetCertificate(myCert, getCreationDate());
         }
     }
 
@@ -506,90 +470,6 @@ public interface GordianKeyStoreElement {
 
             /* Create the entry */
             return new GordianCoreKeyStorePair(myPair, myChain, getCreationDate());
-        }
-    }
-
-    /**
-     * KeyStore KeyPairSet Element.
-     */
-    class GordianKeyStorePairSetElement
-            extends GordianKeyStorePairElementBase<GordianKeyPairSetCertificate, GordianKeyPairSet> {
-        /**
-         * Constructor.
-         * @param pFactory the factory
-         * @param pSpec the keySetHashSpec
-         * @param pKeyPair the keyPair
-         * @param pPassword the securing password.
-         * @param pChain the certificate chain.
-         * @throws OceanusException on error
-         */
-        GordianKeyStorePairSetElement(final GordianFactory pFactory,
-                                      final GordianKeySetHashSpec pSpec,
-                                      final GordianKeyPairSet pKeyPair,
-                                      final char[] pPassword,
-                                      final List<GordianKeyPairSetCertificate> pChain) throws OceanusException {
-            /* Initialise underlying class */
-            super(pFactory, pSpec, pKeyPair, pPassword, pChain);
-        }
-
-        /**
-         * Constructor.
-         * @param pSecuredKey the secured privateKey
-         * @param pSecuringHash the securing hash.
-         * @param pChain the certificate chain.
-         * @param pDate the creation date
-         */
-        GordianKeyStorePairSetElement(final byte[] pSecuredKey,
-                                      final byte[] pSecuringHash,
-                                      final List<GordianKeyStoreCertificateKey> pChain,
-                                      final TethysDate pDate) {
-            /* Initialise underlying class */
-            super(pSecuredKey, pSecuringHash, pChain, pDate);
-        }
-
-        @Override
-        byte[] securePrivateKey(final GordianKeySet pKeySet,
-                                final GordianKeyPairSet pKeyPairSet) throws OceanusException {
-            return pKeySet.securePrivateKeySet(pKeyPairSet);
-        }
-
-        /**
-         * Build the corresponding certificate chain.
-         * @param pKeyStore the keyStore
-         * @return the certificate chain
-         */
-        List<GordianKeyPairSetCertificate> buildChain(final GordianCoreKeyStore pKeyStore) {
-            /* Create the chain */
-            final List<GordianKeyStoreCertificateKey> myKeys = getCertificateChain();
-            final List<GordianKeyPairSetCertificate> myChain = new ArrayList<>();
-            for (GordianKeyStoreCertificateKey myKey : myKeys) {
-                myChain.add(pKeyStore.getKeyPairSetCertificate(myKey));
-            }
-            return myChain;
-        }
-
-        /**
-         * Build the corresponding keyStoreEntry.
-         * @param pKeyStore the keyStore
-         * @param pPassword the password
-         * @return the keyStorePairSet entry
-         * @throws OceanusException on error
-         */
-        GordianCoreKeyStorePairSet buildEntry(final GordianCoreKeyStore pKeyStore,
-                                              final char[] pPassword) throws OceanusException {
-            /* Create the chain */
-            final List<GordianKeyPairSetCertificate> myChain = buildChain(pKeyStore);
-
-            /* Resolve securing hash */
-            final GordianKeySetHash myHash = getSecuringHash().buildEntry(pKeyStore, pPassword);
-
-            /* derive the keyPair */
-            final GordianKeySet myKeySet = myHash.getKeySet();
-            final GordianCoreKeyPairSetCertificate myCert = (GordianCoreKeyPairSetCertificate) myChain.get(0);
-            final GordianKeyPairSet myPair = myKeySet.deriveKeyPairSet(myCert.getX509KeySpec(), getSecuredKey());
-
-            /* Create the entry */
-            return new GordianCoreKeyStorePairSet(myPair, myChain, getCreationDate());
         }
     }
 

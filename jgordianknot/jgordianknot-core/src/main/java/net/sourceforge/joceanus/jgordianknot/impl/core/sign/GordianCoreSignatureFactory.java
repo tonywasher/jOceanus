@@ -28,9 +28,6 @@ import net.sourceforge.joceanus.jgordianknot.api.factory.GordianKeyPairFactory;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPair;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPairSpec;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPairType;
-import net.sourceforge.joceanus.jgordianknot.api.keypairset.GordianKeyPairSetFactory;
-import net.sourceforge.joceanus.jgordianknot.api.keypairset.GordianKeyPairSetSpec;
-import net.sourceforge.joceanus.jgordianknot.api.sign.GordianKeyPairSetSignature;
 import net.sourceforge.joceanus.jgordianknot.api.sign.GordianSignatureFactory;
 import net.sourceforge.joceanus.jgordianknot.api.sign.GordianSignatureSpec;
 import net.sourceforge.joceanus.jgordianknot.api.sign.GordianSignatureType;
@@ -68,21 +65,6 @@ public abstract class GordianCoreSignatureFactory
      */
     protected GordianCoreFactory getFactory() {
         return theFactory;
-    }
-
-
-    @Override
-    public GordianKeyPairSetSignature createKeyPairSetSigner(final GordianKeyPairSetSpec pKeyPairSetSpec) throws OceanusException {
-        /* Check valid spec */
-        final GordianKeyPairFactory myPairFactory = theFactory.getKeyPairFactory();
-        final GordianKeyPairSetFactory mySetFactory = myPairFactory.getKeyPairSetFactory();
-        if (!mySetFactory.supportedKeyPairSetSpecs().test(pKeyPairSetSpec)
-                || !pKeyPairSetSpec.canSign()) {
-            throw new GordianDataException(GordianCoreFactory.getInvalidText(pKeyPairSetSpec));
-        }
-
-        /* Create the new signer */
-        return new GordianKeyPairSetSigner(myPairFactory, pKeyPairSetSpec);
     }
 
     @Override

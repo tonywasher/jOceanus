@@ -27,7 +27,6 @@ import net.sourceforge.joceanus.jgordianknot.api.encrypt.GordianEncryptorFactory
 import net.sourceforge.joceanus.jgordianknot.api.factory.GordianKeyPairFactory;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPairGenerator;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPairSpec;
-import net.sourceforge.joceanus.jgordianknot.api.keypairset.GordianKeyPairSetFactory;
 import net.sourceforge.joceanus.jgordianknot.api.keystore.GordianKeyStoreFactory;
 import net.sourceforge.joceanus.jgordianknot.api.sign.GordianSignatureFactory;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianCoreFactory;
@@ -73,11 +72,6 @@ public abstract class GordianCoreKeyPairFactory
      * The keyStore factory.
      */
     private GordianKeyStoreFactory theKeyStoreFactory;
-
-    /**
-     * The keyPairSet factory.
-     */
-    private GordianKeyPairSetFactory theKeyPairSetFactory;
 
     /**
      * Constructor.
@@ -130,19 +124,6 @@ public abstract class GordianCoreKeyPairFactory
      */
     protected void setEncryptorFactory(final GordianEncryptorFactory pFactory) {
         theEncryptorFactory = pFactory;
-    }
-
-    @Override
-    public GordianKeyPairSetFactory getKeyPairSetFactory() {
-        return theKeyPairSetFactory;
-    }
-
-    /**
-     * Set the keyStore factory.
-     * @param pFactory the factory
-     */
-    protected void setKeyPairSetFactory(final GordianKeyPairSetFactory pFactory) {
-        theKeyPairSetFactory = pFactory;
     }
 
     @Override

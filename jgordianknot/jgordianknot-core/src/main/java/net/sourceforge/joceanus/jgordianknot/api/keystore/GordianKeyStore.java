@@ -23,7 +23,6 @@ import java.util.List;
 import net.sourceforge.joceanus.jgordianknot.api.base.GordianKeySpec;
 import net.sourceforge.joceanus.jgordianknot.api.key.GordianKey;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPair;
-import net.sourceforge.joceanus.jgordianknot.api.keypairset.GordianKeyPairSet;
 import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySet;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
@@ -86,15 +85,6 @@ public interface GordianKeyStore {
                                GordianKeyPairCertificate pCertificate) throws OceanusException;
 
     /**
-     * Set certificate entry.
-     * @param pAlias the alias
-     * @param pCertificate the certificate
-     * @throws OceanusException on error
-     */
-    void setKeyPairSetCertificate(String pAlias,
-                                  GordianKeyPairSetCertificate pCertificate) throws OceanusException;
-
-    /**
      * Set keyPair entry.
      * @param pAlias the alias
      * @param pKeyPair the keyPair
@@ -108,19 +98,6 @@ public interface GordianKeyStore {
                     List<GordianKeyPairCertificate> pCertificateChain) throws OceanusException;
 
     /**
-     * Set keyPair entry.
-     * @param pAlias the alias
-     * @param pKeyPairSet the keyPairSet
-     * @param pPassword the securing password.
-     * @param pCertificateChain the certificateChain
-     * @throws OceanusException on error
-     */
-    void setKeyPairSet(String pAlias,
-                       GordianKeyPairSet pKeyPairSet,
-                       char[] pPassword,
-                       List<GordianKeyPairSetCertificate> pCertificateChain) throws OceanusException;
-
-    /**
      * Update keyPair certificateChain.
      * @param pAlias the alias
      * @param pCertificateChain the certificateChain
@@ -128,15 +105,6 @@ public interface GordianKeyStore {
      */
     void updateKeyPairCertificateChain(String pAlias,
                                        List<GordianKeyPairCertificate> pCertificateChain) throws OceanusException;
-
-    /**
-     * Update keyPairSet certificate Chain.
-     * @param pAlias the alias
-     * @param pCertificateChain the certificateChain
-     * @throws OceanusException on error
-     */
-    void updateKeyPairSetCertificateChain(String pAlias,
-                                          List<GordianKeyPairSetCertificate> pCertificateChain) throws OceanusException;
 
     /**
      * Set key entry.
@@ -179,25 +147,11 @@ public interface GordianKeyStore {
     boolean isKeyPairCertificateEntry(String pAlias);
 
     /**
-     * Determine whether the alias is a keyPairSet certificate entry.
-     * @param pAlias the alias
-     * @return true/false
-     */
-    boolean isKeyPairSetCertificateEntry(String pAlias);
-
-    /**
      * Determine whether the alias is a keyPair entry.
      * @param pAlias the alias
      * @return true/false
      */
     boolean isKeyPairEntry(String pAlias);
-
-    /**
-     * Determine whether the alias is a keyPairSet entry.
-     * @param pAlias the alias
-     * @return true/false
-     */
-    boolean isKeyPairSetEntry(String pAlias);
 
     /**
      * Determine whether the alias is a keyPair certificate/pair entry.
@@ -206,15 +160,6 @@ public interface GordianKeyStore {
      */
     default boolean isKeyPairCertificate(final String pAlias) {
         return isKeyPairEntry(pAlias) || isKeyPairCertificateEntry(pAlias);
-    }
-
-    /**
-     * Determine whether the alias is a keyPairSet certificate/pair entry.
-     * @param pAlias the alias
-     * @return true/false
-     */
-    default boolean isKeyPairSetCertificate(final String pAlias) {
-        return isKeyPairSetEntry(pAlias) || isKeyPairSetCertificateEntry(pAlias);
     }
 
     /**
@@ -249,25 +194,11 @@ public interface GordianKeyStore {
     GordianKeyPairCertificate getKeyPairCertificate(String pAlias);
 
     /**
-     * Obtain the keyPairSetCertificate for the alias.
-     * @param pAlias the alias
-     * @return the keyPairSetCertificate (or null)
-     */
-    GordianKeyPairSetCertificate getKeyPairSetCertificate(String pAlias);
-
-    /**
      * Obtain the keyPairCertificateChain for the alias.
      * @param pAlias the alias
      * @return the keyPairCertificateChain (or null)
      */
     List<GordianKeyPairCertificate> getKeyPairCertificateChain(String pAlias);
-
-    /**
-     * Obtain the keyPairSetCertificateChain for the alias.
-     * @param pAlias the alias
-     * @return the keyPairSetCertificateChain (or null)
-     */
-    List<GordianKeyPairSetCertificate> getKeyPairSetCertificateChain(String pAlias);
 
     /**
      * Obtain the keyPair for the alias.
@@ -278,16 +209,6 @@ public interface GordianKeyStore {
      */
     GordianKeyPair getKeyPair(String pAlias,
                               char[] pPassword) throws OceanusException;
-
-    /**
-     * Obtain the keyPair for the alias.
-     * @param pAlias the alias
-     * @param pPassword the password
-     * @return the keyPairSet (or null)
-     * @throws OceanusException on error
-     */
-    GordianKeyPairSet getKeyPairSet(String pAlias,
-                                    char[] pPassword) throws OceanusException;
 
     /**
      * Obtain the key for the alias.

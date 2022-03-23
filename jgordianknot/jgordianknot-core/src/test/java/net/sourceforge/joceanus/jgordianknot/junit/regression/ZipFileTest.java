@@ -43,10 +43,6 @@ import net.sourceforge.joceanus.jgordianknot.api.factory.GordianKeyPairFactory;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPair;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPairGenerator;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPairSpec;
-import net.sourceforge.joceanus.jgordianknot.api.keypairset.GordianKeyPairSet;
-import net.sourceforge.joceanus.jgordianknot.api.keypairset.GordianKeyPairSetFactory;
-import net.sourceforge.joceanus.jgordianknot.api.keypairset.GordianKeyPairSetGenerator;
-import net.sourceforge.joceanus.jgordianknot.api.keypairset.GordianKeyPairSetSpec;
 import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetHashSpec;
 import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetSpec;
 import net.sourceforge.joceanus.jgordianknot.api.zip.GordianLock;
@@ -94,18 +90,13 @@ public class ZipFileTest {
         final GordianKeyPairGenerator myPairGenerator = myAsymFactory.getKeyPairGenerator(GordianKeyPairSpec.x448());
         final GordianKeyPair myKeyPair = myPairGenerator.generateKeyPair();
 
-        /* Create the keyPairSet */
-        final GordianKeyPairSetFactory mySetFactory = myAsymFactory.getKeyPairSetFactory();
-        final GordianKeyPairSetGenerator mySetGenerator = mySetFactory.getKeyPairSetGenerator(GordianKeyPairSetSpec.AGREELO);
-        final GordianKeyPairSet myKeyPairSet = mySetGenerator.generateKeyPairSet();
-
         /* Return the stream */
         final String myName = pType.toString();
         return Stream.of(DynamicContainer.dynamicContainer(myName, Stream.of(
                 DynamicTest.dynamicTest("standard", () -> testZipFile(myFactory, null, null)),
-                DynamicContainer.dynamicContainer("encrypted128", lockedZipFileTests(myFactory, myKeyPair, myKeyPairSet, GordianLength.LEN_128)),
-                DynamicContainer.dynamicContainer("encrypted192", lockedZipFileTests(myFactory, myKeyPair, myKeyPairSet, GordianLength.LEN_192)),
-                DynamicContainer.dynamicContainer("encrypted256", lockedZipFileTests(myFactory, myKeyPair, myKeyPairSet, GordianLength.LEN_256))
+                DynamicContainer.dynamicContainer("encrypted128", lockedZipFileTests(myFactory, myKeyPair, GordianLength.LEN_128)),
+                DynamicContainer.dynamicContainer("encrypted192", lockedZipFileTests(myFactory, myKeyPair, GordianLength.LEN_192)),
+                DynamicContainer.dynamicContainer("encrypted256", lockedZipFileTests(myFactory, myKeyPair, GordianLength.LEN_256))
         )));
     }
 
@@ -113,19 +104,16 @@ public class ZipFileTest {
      * Test security.
      * @param pFactory the factory.
      * @param pKeyPair the keyPair
-     * @param pKeyPairSet the keyPairSet
      * @param pKeyLen the keyLength
      * @throws OceanusException on error
      */
     private Stream<DynamicNode> lockedZipFileTests(final GordianFactory pFactory,
                                                    final GordianKeyPair pKeyPair,
-                                                   final GordianKeyPairSet pKeyPairSet,
                                                    final GordianLength pKeyLen) throws OceanusException {
         return Stream.of(
                 DynamicTest.dynamicTest("password", () -> testZipFile(pFactory,null, pKeyLen)),
                 DynamicTest.dynamicTest("key/password", () -> testZipFile(pFactory, Boolean.TRUE, pKeyLen)),
-                DynamicTest.dynamicTest("keyPair/password", () -> testZipFile(pFactory, pKeyPair, pKeyLen)),
-                DynamicTest.dynamicTest("keyPairSet/password", () -> testZipFile(pFactory, pKeyPairSet, pKeyLen))
+                DynamicTest.dynamicTest("keyPair/password", () -> testZipFile(pFactory, pKeyPair, pKeyLen))
         );
     }
 
@@ -244,9 +232,6 @@ public class ZipFileTest {
         if (pKeyPair instanceof GordianKeyPair) {
             return pFactory.createKeyPairLock((GordianKeyPair) pKeyPair, mySpec, DEF_PASSWORD.clone());
         }
-        if (pKeyPair instanceof GordianKeyPairSet) {
-            return pFactory.createKeyPairSetLock((GordianKeyPairSet) pKeyPair, mySpec, DEF_PASSWORD.clone());
-        }
         if (pKeyPair instanceof Boolean) {
             return pFactory.createKeyLock(DEF_PASSWORD.clone());
         }
@@ -281,11 +266,8 @@ public class ZipFileTest {
                     myLock.unlock(DEF_PASSWORD.clone());
                     break;
                 case KEYPAIR_PASSWORD:
-                    myLock.unlock((GordianKeyPair) pKeyPair, DEF_PASSWORD.clone());
-                    break;
-                case KEYPAIRSET_PASSWORD:
                 default:
-                    myLock.unlock((GordianKeyPairSet) pKeyPair, DEF_PASSWORD.clone());
+                    myLock.unlock((GordianKeyPair) pKeyPair, DEF_PASSWORD.clone());
                     break;
             }
         }

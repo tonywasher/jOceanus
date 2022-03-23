@@ -27,11 +27,9 @@ import java.util.List;
 import java.util.function.Function;
 
 import net.sourceforge.joceanus.jgordianknot.api.keystore.GordianKeyPairCertificate;
-import net.sourceforge.joceanus.jgordianknot.api.keystore.GordianKeyPairSetCertificate;
 import net.sourceforge.joceanus.jgordianknot.api.keystore.GordianKeyPairUse;
 import net.sourceforge.joceanus.jgordianknot.api.keystore.GordianKeyStoreEntry;
 import net.sourceforge.joceanus.jgordianknot.api.keystore.GordianKeyStoreEntry.GordianKeyStorePair;
-import net.sourceforge.joceanus.jgordianknot.api.keystore.GordianKeyStoreEntry.GordianKeyStorePairSet;
 import net.sourceforge.joceanus.jgordianknot.api.keystore.GordianKeyStoreGateway;
 import net.sourceforge.joceanus.jgordianknot.api.zip.GordianLock;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianCoreFactory;
@@ -70,11 +68,6 @@ public class GordianCoreKeyStoreGateway
      * The keyPairCertifier.
      */
     private GordianKeyStorePair theKeyPairCertifier;
-
-    /**
-     * The keyPairSetCertifier.
-     */
-    private GordianKeyStorePairSet theKeyPairSetCertifier;
 
     /**
      * The password callback.
@@ -137,11 +130,6 @@ public class GordianCoreKeyStoreGateway
             theTarget = (GordianCoreKeyPairCertificate) myKeyPairChain.get(0);
             return;
         }
-        final List<GordianKeyPairSetCertificate> myKeyPairSetChain = theKeyStore.getKeyPairSetCertificateChain(pAlias);
-        if (myKeyPairSetChain != null) {
-            theTarget = (GordianCoreKeyPairSetCertificate) myKeyPairSetChain.get(0);
-            return;
-        }
         throw new GordianDataException("Encryption target not found");
     }
 
@@ -193,21 +181,6 @@ public class GordianCoreKeyStoreGateway
     }
 
     @Override
-    public void setKeyPairSetCertifier(final String pAlias,
-                                       final char[] pPassword) throws OceanusException {
-        final GordianKeyStoreEntry myEntry = theKeyStore.getEntry(pAlias, pPassword);
-        if (myEntry instanceof GordianKeyStorePairSet) {
-            final GordianKeyStorePairSet myPairSet = (GordianKeyStorePairSet) myEntry;
-            final GordianKeyPairSetCertificate myCert = myPairSet.getCertificateChain().get(0);
-            if (myCert.getUsage().hasUse(GordianKeyPairUse.CERTIFICATE)) {
-                theKeyPairSetCertifier = myPairSet;
-                return;
-            }
-        }
-        throw new GordianDataException("Invalid keyPairSetCertifier");
-    }
-
-    @Override
     public void setPasswordResolver(final Function<String, char[]> pResolver) {
         thePasswordResolver = pResolver;
     }
@@ -237,11 +210,6 @@ public class GordianCoreKeyStoreGateway
             case KEYPAIRCERTREQ:
                 GordianCRMParser myCRMParser = new GordianKeyPairCRMParser(theKeyStoreMgr, theKeyPairCertifier, thePasswordResolver);
                 List<GordianPEMObject> myChain = myCRMParser.decodeCertificateRequest(myObject);
-                myParser.writePEMFile(pOutStream, myChain);
-                break;
-            case KEYPAIRSETCERTREQ:
-                myCRMParser = new GordianKeyPairSetCRMParser(theKeyStoreMgr, theKeyPairSetCertifier, thePasswordResolver);
-                myChain = myCRMParser.decodeCertificateRequest(myObject);
                 myParser.writePEMFile(pOutStream, myChain);
                 break;
             default:

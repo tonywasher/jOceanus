@@ -20,11 +20,9 @@ import org.bouncycastle.asn1.x500.X500Name;
 
 import net.sourceforge.joceanus.jgordianknot.api.base.GordianKeySpec;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPairSpec;
-import net.sourceforge.joceanus.jgordianknot.api.keypairset.GordianKeyPairSetSpec;
 import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetSpec;
 import net.sourceforge.joceanus.jgordianknot.api.keystore.GordianKeyStoreEntry.GordianKeyStoreKey;
 import net.sourceforge.joceanus.jgordianknot.api.keystore.GordianKeyStoreEntry.GordianKeyStorePair;
-import net.sourceforge.joceanus.jgordianknot.api.keystore.GordianKeyStoreEntry.GordianKeyStorePairSet;
 import net.sourceforge.joceanus.jgordianknot.api.keystore.GordianKeyStoreEntry.GordianKeyStoreSet;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
@@ -115,55 +113,4 @@ public interface GordianKeyStoreManager {
                                         GordianKeyStorePair pSigner,
                                         String pAlias,
                                         char[] pPassword) throws OceanusException;
-
-    /**
-     * Create a new keyPair with root certificate.
-     *
-     * @param pKeySetSpec the spec of the new keyPairSet
-     * @param pSubject the name of the entity
-     * @param pAlias the alias
-     * @param pPassword the password
-     * @return the new keyPairSet entry
-     * @throws OceanusException on error
-     */
-    GordianKeyStorePairSet createRootKeyPairSet(GordianKeyPairSetSpec pKeySetSpec,
-                                                X500Name pSubject,
-                                                String pAlias,
-                                                char[] pPassword) throws OceanusException;
-
-    /**
-     * Create a new keyPairSet with certificate.
-     *
-     * @param pKeySetSpec the spec of the new keyPairSet
-     * @param pSubject the name of the entity
-     * @param pUsage   the key usage
-     * @param pSigner the signer
-     * @param pAlias the alias
-     * @param pPassword the password
-     * @return the new keyPairSet entry
-     * @throws OceanusException on error
-     */
-    GordianKeyStorePairSet createKeyPairSet(GordianKeyPairSetSpec pKeySetSpec,
-                                            X500Name pSubject,
-                                            GordianKeyPairUsage pUsage,
-                                            GordianKeyStorePairSet pSigner,
-                                            String pAlias,
-                                            char[] pPassword) throws OceanusException;
-
-    /**
-     * Create an alternate certificate for keyPair.
-     *
-     * @param pKeyPairSet the existing keyPairSet record
-     * @param pUsage   the key usage
-     * @param pSigner the signer
-     * @param pAlias the alias
-     * @param pPassword the password
-     * @return the new keyPairSet entry
-     * @throws OceanusException on error
-     */
-    GordianKeyStorePairSet createAlternate(GordianKeyStorePairSet pKeyPairSet,
-                                           GordianKeyPairUsage pUsage,
-                                           GordianKeyStorePairSet pSigner,
-                                           String pAlias,
-                                           char[] pPassword) throws OceanusException;
 }

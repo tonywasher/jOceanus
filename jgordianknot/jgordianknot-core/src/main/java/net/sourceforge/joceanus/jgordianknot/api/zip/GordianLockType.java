@@ -33,10 +33,5 @@ public enum GordianLockType {
     /**
      * KeyPair and Password.
      */
-    KEYPAIR_PASSWORD,
-
-    /**
-     * KeyPairSet and Password.
-     */
-    KEYPAIRSET_PASSWORD;
+    KEYPAIR_PASSWORD;
 }

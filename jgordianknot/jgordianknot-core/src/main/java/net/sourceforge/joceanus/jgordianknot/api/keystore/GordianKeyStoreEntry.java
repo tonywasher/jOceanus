@@ -22,7 +22,6 @@ import java.util.List;
 import net.sourceforge.joceanus.jgordianknot.api.base.GordianKeySpec;
 import net.sourceforge.joceanus.jgordianknot.api.key.GordianKey;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPair;
-import net.sourceforge.joceanus.jgordianknot.api.keypairset.GordianKeyPairSet;
 import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySet;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
 
@@ -50,18 +49,6 @@ public interface GordianKeyStoreEntry
     }
 
     /**
-     * KeyStore keyPairSetCertificate API.
-     */
-    interface GordianKeyStorePairSetCertificate
-            extends GordianKeyStoreEntry {
-        /**
-         * Obtain the certificate.
-         * @return the certificate
-         */
-        GordianKeyPairSetCertificate getCertificate();
-    }
-
-    /**
      * KeyStore KeyPair.
      */
     interface GordianKeyStorePair
@@ -77,24 +64,6 @@ public interface GordianKeyStoreEntry
          * @return the certificate chain
          */
         List<GordianKeyPairCertificate> getCertificateChain();
-    }
-
-    /**
-     * KeyStore KeyPairSet.
-     */
-    interface GordianKeyStorePairSet
-            extends GordianKeyStoreEntry {
-        /**
-         * Obtain the keyPair.
-         * @return the keyPair
-         */
-        GordianKeyPairSet getKeyPairSet();
-
-        /**
-         * Obtain the certificate chain.
-         * @return the certificate chain
-         */
-        List<GordianKeyPairSetCertificate> getCertificateChain();
     }
 
     /**

@@ -75,19 +75,9 @@ public class GordianPEMObject {
         KEYPAIRCERT("CERTIFICATE"),
 
         /**
-         * keyPairSetCertificate.
-         */
-        KEYPAIRSETCERT("SETCERTIFICATE"),
-
-        /**
          * privateKey.
          */
         PRIVATEKEY("ENCRYPTED PRIVATE KEY"),
-
-        /**
-         * privateKeySet.
-         */
-        PRIVATEKEYSET("ENCRYPTED PRIVATE KEYSET"),
 
         /**
          * keySet.

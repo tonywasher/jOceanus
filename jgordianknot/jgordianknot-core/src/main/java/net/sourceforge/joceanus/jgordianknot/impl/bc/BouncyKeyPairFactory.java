@@ -50,7 +50,6 @@ import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyXMSSKeyPair.BouncyXMS
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianCoreFactory;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianDataException;
 import net.sourceforge.joceanus.jgordianknot.impl.core.keypair.GordianCoreKeyPairFactory;
-import net.sourceforge.joceanus.jgordianknot.impl.core.keypairset.GordianCoreKeyPairSetFactory;
 import net.sourceforge.joceanus.jgordianknot.impl.core.keystore.GordianCoreKeyStoreFactory;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
@@ -80,7 +79,6 @@ public class BouncyKeyPairFactory
         setSignatureFactory(new BouncySignatureFactory(pFactory));
         setAgreementFactory(new BouncyAgreementFactory(pFactory));
         setEncryptorFactory(new BouncyEncryptorFactory(pFactory));
-        setKeyPairSetFactory(new GordianCoreKeyPairSetFactory(this));
         setKeyStoreFactory(new GordianCoreKeyStoreFactory(this));
     }
 

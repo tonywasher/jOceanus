@@ -96,15 +96,6 @@ public interface GordianKeyStoreGateway {
                              char[] pPassword) throws OceanusException;
 
     /**
-     * set the keyPairSetCertifier.
-     * @param pAlias the alias
-     * @param pPassword the password
-     * @throws OceanusException on error
-     */
-    void setKeyPairSetCertifier(String pAlias,
-                                char[] pPassword) throws OceanusException;
-
-    /**
      * set the passwordResolver.
      * @param pResolver the resolver
      */
