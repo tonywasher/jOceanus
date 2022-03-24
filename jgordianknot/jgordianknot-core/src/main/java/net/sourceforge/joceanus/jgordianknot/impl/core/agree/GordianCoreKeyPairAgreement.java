@@ -29,11 +29,11 @@ import org.bouncycastle.crypto.generators.KDF2BytesGenerator;
 import org.bouncycastle.crypto.params.KDFParameters;
 import org.bouncycastle.util.Arrays;
 
+import net.sourceforge.joceanus.jgordianknot.api.agree.GordianAgreement;
 import net.sourceforge.joceanus.jgordianknot.api.agree.GordianAgreementFactory;
 import net.sourceforge.joceanus.jgordianknot.api.agree.GordianAgreementStatus;
 import net.sourceforge.joceanus.jgordianknot.api.agree.GordianKDFType;
-import net.sourceforge.joceanus.jgordianknot.api.agree.GordianKeyPairAgreement;
-import net.sourceforge.joceanus.jgordianknot.api.agree.GordianKeyPairAgreementSpec;
+import net.sourceforge.joceanus.jgordianknot.api.agree.GordianAgreementSpec;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPair;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianCoreFactory;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianDataException;
@@ -46,8 +46,8 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
  * Core KeyPairAgreement.
  */
 public class GordianCoreKeyPairAgreement
-    extends GordianCoreAgreement<GordianKeyPairAgreementSpec>
-    implements GordianKeyPairAgreement {
+    extends GordianCoreAgreement
+    implements GordianAgreement {
     /**
      * The keyDerivation function.
      */
@@ -59,7 +59,7 @@ public class GordianCoreKeyPairAgreement
      * @param pSpec the agreementSpec
      */
     protected GordianCoreKeyPairAgreement(final GordianCoreFactory pFactory,
-                                          final GordianKeyPairAgreementSpec pSpec) {
+                                          final GordianAgreementSpec pSpec) {
         super(pFactory, pSpec);
     }
 
@@ -140,7 +140,7 @@ public class GordianCoreKeyPairAgreement
      */
     protected void enableDerivation() {
         /* Only enable derivation if it is not none */
-        final GordianKeyPairAgreementSpec mySpec = getAgreementSpec();
+        final GordianAgreementSpec mySpec = getAgreementSpec();
         if (!GordianKDFType.NONE.equals(mySpec.getKDFType())) {
             theKDF = newDerivationFunction();
         }
@@ -151,7 +151,7 @@ public class GordianCoreKeyPairAgreement
      * @return the derivation function
      */
     protected DerivationFunction newDerivationFunction() {
-        final GordianKeyPairAgreementSpec mySpec = getAgreementSpec();
+        final GordianAgreementSpec mySpec = getAgreementSpec();
         switch (mySpec.getKDFType()) {
             case SHA256KDF:
                 return new KDF2BytesGenerator(new SHA256Digest());
@@ -210,7 +210,7 @@ public class GordianCoreKeyPairAgreement
 
         /* Create the clientHello */
         final GordianCoreAgreementFactory myFactory = getAgreementFactory();
-        final GordianKeyPairAgreementSpec mySpec = getAgreementSpec();
+        final GordianAgreementSpec mySpec = getAgreementSpec();
         final AlgorithmIdentifier myAlgId = myFactory.getIdentifierForSpec(mySpec);
         final AlgorithmIdentifier myResId = getIdentifierForResult();
         final GordianAgreementClientHelloASN1 myClientHello
@@ -238,7 +238,7 @@ public class GordianCoreKeyPairAgreement
 
         /* Check agreementSpec */
         final GordianCoreAgreementFactory myFactory = getAgreementFactory();
-        final GordianKeyPairAgreementSpec mySpec = myFactory.getSpecForIdentifier(myAlgId);
+        final GordianAgreementSpec mySpec = myFactory.getSpecForIdentifier(myAlgId);
         if (!Objects.equals(mySpec, getAgreementSpec())) {
             throw new GordianDataException(ERROR_INVSPEC);
         }
@@ -273,7 +273,7 @@ public class GordianCoreKeyPairAgreement
                                       final byte[] pConfirmation) throws OceanusException {
         /* Create the serverHello */
         final GordianCoreAgreementFactory myFactory = getAgreementFactory();
-        final GordianKeyPairAgreementSpec mySpec = getAgreementSpec();
+        final GordianAgreementSpec mySpec = getAgreementSpec();
         final AlgorithmIdentifier myAlgId = myFactory.getIdentifierForSpec(mySpec);
         final GordianAgreementServerHelloASN1 myServerHello
                 = new GordianAgreementServerHelloASN1(myAlgId, getServerIV(), pEphemeral, pConfirmation);
@@ -300,7 +300,7 @@ public class GordianCoreKeyPairAgreement
                                       final byte[] pSignature) throws OceanusException {
         /* Create the serverHello */
         final GordianCoreAgreementFactory myFactory = getAgreementFactory();
-        final GordianKeyPairAgreementSpec mySpec = getAgreementSpec();
+        final GordianAgreementSpec mySpec = getAgreementSpec();
         final AlgorithmIdentifier myAlgId = myFactory.getIdentifierForSpec(mySpec);
         final GordianAgreementServerHelloASN1 myServerHello
                 = new GordianAgreementServerHelloASN1(myAlgId, getServerIV(), pEphemeral, pSignId, pSignature);
@@ -328,7 +328,7 @@ public class GordianCoreKeyPairAgreement
 
         /* Check agreementSpec */
         final GordianCoreAgreementFactory myFactory = getAgreementFactory();
-        final GordianKeyPairAgreementSpec mySpec = myFactory.getSpecForIdentifier(myAlgId);
+        final GordianAgreementSpec mySpec = myFactory.getSpecForIdentifier(myAlgId);
         if (!Objects.equals(mySpec, getAgreementSpec())) {
             throw new GordianDataException(ERROR_INVSPEC);
         }

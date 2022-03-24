@@ -22,7 +22,7 @@ import java.security.Signature;
 import net.sourceforge.joceanus.jgordianknot.api.base.GordianLength;
 import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigestSpec;
 import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigestType;
-import net.sourceforge.joceanus.jgordianknot.api.sign.GordianKeyPairSignature;
+import net.sourceforge.joceanus.jgordianknot.api.sign.GordianSignature;
 import net.sourceforge.joceanus.jgordianknot.api.sign.GordianSignatureSpec;
 import net.sourceforge.joceanus.jgordianknot.api.sign.GordianSignatureType;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianCoreFactory;
@@ -62,7 +62,7 @@ public class JcaSignatureFactory
     }
 
     @Override
-    public GordianKeyPairSignature createKeyPairSigner(final GordianSignatureSpec pSignatureSpec) throws OceanusException {
+    public GordianSignature createSigner(final GordianSignatureSpec pSignatureSpec) throws OceanusException {
         /* Check validity of Signature */
         checkSignatureSpec(pSignatureSpec);
 
@@ -99,7 +99,7 @@ public class JcaSignatureFactory
      * @return the Signer
      * @throws OceanusException on error
      */
-    private GordianKeyPairSignature getJcaSigner(final GordianSignatureSpec pSignatureSpec) throws OceanusException {
+    private GordianSignature getJcaSigner(final GordianSignatureSpec pSignatureSpec) throws OceanusException {
         switch (pSignatureSpec.getKeyPairType()) {
             case RSA:
                 return new JcaRSASignature(getFactory(), pSignatureSpec);

@@ -24,6 +24,7 @@ import org.bouncycastle.util.Arrays;
 
 import net.sourceforge.joceanus.jgordianknot.api.agree.GordianAgreement;
 import net.sourceforge.joceanus.jgordianknot.api.agree.GordianAgreementStatus;
+import net.sourceforge.joceanus.jgordianknot.api.agree.GordianAgreementSpec;
 import net.sourceforge.joceanus.jgordianknot.api.base.GordianKeySpec;
 import net.sourceforge.joceanus.jgordianknot.api.base.GordianLength;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianCipherFactory;
@@ -56,10 +57,9 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
  * Key Agreement Specification.
- * @param <A> the agreement specification
  */
-public abstract class GordianCoreAgreement<A>
-    implements GordianAgreement<A> {
+public abstract class GordianCoreAgreement
+    implements GordianAgreement {
     /**
      * InitVectorLength.
      */
@@ -78,7 +78,7 @@ public abstract class GordianCoreAgreement<A>
     /**
      * The agreementSpec.
      */
-    private final A theSpec;
+    private final GordianAgreementSpec theSpec;
 
     /**
      * The status.
@@ -111,7 +111,7 @@ public abstract class GordianCoreAgreement<A>
      * @param pSpec the agreementSpec
      */
     protected GordianCoreAgreement(final GordianCoreFactory pFactory,
-                                   final A pSpec) {
+                                   final GordianAgreementSpec pSpec) {
         theFactory = pFactory;
         theSpec = pSpec;
         theStatus = GordianAgreementStatus.CLEAN;
@@ -126,7 +126,7 @@ public abstract class GordianCoreAgreement<A>
     }
 
     @Override
-    public A getAgreementSpec() {
+    public GordianAgreementSpec getAgreementSpec() {
         return theSpec;
     }
 

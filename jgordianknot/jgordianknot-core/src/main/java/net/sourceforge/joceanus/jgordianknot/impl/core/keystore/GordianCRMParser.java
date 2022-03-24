@@ -34,13 +34,13 @@ import org.bouncycastle.asn1.x500.X500Name;
 import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
 import org.bouncycastle.asn1.x509.GeneralName;
 
-import net.sourceforge.joceanus.jgordianknot.api.agree.GordianKeyPairAnonymousAgreement;
+import net.sourceforge.joceanus.jgordianknot.api.agree.GordianAnonymousAgreement;
+import net.sourceforge.joceanus.jgordianknot.api.encrypt.GordianEncryptor;
 import net.sourceforge.joceanus.jgordianknot.api.encrypt.GordianEncryptorSpec;
-import net.sourceforge.joceanus.jgordianknot.api.encrypt.GordianKeyPairEncryptor;
 import net.sourceforge.joceanus.jgordianknot.api.factory.GordianKeyPairFactory;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPair;
 import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySet;
-import net.sourceforge.joceanus.jgordianknot.api.keystore.GordianKeyPairCertificate;
+import net.sourceforge.joceanus.jgordianknot.api.keystore.GordianCertificate;
 import net.sourceforge.joceanus.jgordianknot.api.keystore.GordianKeyPairUsage;
 import net.sourceforge.joceanus.jgordianknot.api.keystore.GordianKeyPairUse;
 import net.sourceforge.joceanus.jgordianknot.api.keystore.GordianKeyStoreEntry;
@@ -129,7 +129,7 @@ public abstract class GordianCRMParser {
         final GordianKeyPairFactory myKPFactory = theFactory.getKeyPairFactory();
         final GordianCoreEncryptorFactory myEncFactory = (GordianCoreEncryptorFactory) myKPFactory.getEncryptorFactory();
         final GordianEncryptorSpec myEncSpec = myEncFactory.getSpecForIdentifier(pAlgId);
-        final GordianKeyPairEncryptor myEncryptor = myEncFactory.createKeyPairEncryptor(myEncSpec);
+        final GordianEncryptor myEncryptor = myEncFactory.createEncryptor(myEncSpec);
         myEncryptor.initForDecrypt(pKeyPair);
         final byte[] myKey = myEncryptor.decrypt(pEncryptedKey);
         return GordianCRMBuilder.deriveKeySetFromKey(theFactory, myKey);
@@ -200,7 +200,7 @@ public abstract class GordianCRMParser {
 
         /* Access details */
         final GordianKeyStorePair myIssuer = (GordianKeyStorePair) myIssuerEntry;
-        final GordianKeyPairCertificate myCert = myIssuer.getCertificateChain().get(0);
+        final GordianCertificate myCert = myIssuer.getCertificateChain().get(0);
         final GordianKeyPair myKeyPair = myIssuer.getKeyPair();
 
         /* Derive the keySet appropriately */
@@ -222,7 +222,7 @@ public abstract class GordianCRMParser {
         /* Handle agreement */
         final GordianKeyPairFactory myKPFactory = theFactory.getKeyPairFactory();
         final GordianCoreAgreementFactory myAgreeFactory = (GordianCoreAgreementFactory) myKPFactory.getAgreementFactory();
-        final GordianKeyPairAnonymousAgreement myAgree = (GordianKeyPairAnonymousAgreement) myAgreeFactory.createKeyPairAgreement(pHello);
+        final GordianAnonymousAgreement myAgree = (GordianAnonymousAgreement) myAgreeFactory.createAgreement(pHello);
         myAgree.acceptClientHello(pKeyPair, pHello);
         return (GordianKeySet) myAgree.getResult();
     }

@@ -21,10 +21,10 @@ import java.util.Objects;
 import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
 
 import net.sourceforge.joceanus.jgordianknot.api.agree.GordianAgreementFactory;
+import net.sourceforge.joceanus.jgordianknot.api.agree.GordianAgreementSpec;
 import net.sourceforge.joceanus.jgordianknot.api.agree.GordianAgreementType;
+import net.sourceforge.joceanus.jgordianknot.api.agree.GordianAnonymousAgreement;
 import net.sourceforge.joceanus.jgordianknot.api.agree.GordianKDFType;
-import net.sourceforge.joceanus.jgordianknot.api.agree.GordianKeyPairAgreementSpec;
-import net.sourceforge.joceanus.jgordianknot.api.agree.GordianKeyPairAnonymousAgreement;
 import net.sourceforge.joceanus.jgordianknot.api.base.GordianLength;
 import net.sourceforge.joceanus.jgordianknot.api.factory.GordianFactory;
 import net.sourceforge.joceanus.jgordianknot.api.factory.GordianFactoryType;
@@ -186,8 +186,8 @@ public class GordianCoreLock
         /* Create the agreement */
         final GordianKeyPairFactory myKeyPairFactory = theFactory.getKeyPairFactory();
         final GordianAgreementFactory myAgreeFactory = myKeyPairFactory.getAgreementFactory();
-        final GordianKeyPairAgreementSpec mySpec = getAgreementSpec(pKeyPair.getKeyPairSpec());
-        final GordianKeyPairAnonymousAgreement myAgreement = (GordianKeyPairAnonymousAgreement) myAgreeFactory.createKeyPairAgreement(mySpec);
+        final GordianAgreementSpec mySpec = getAgreementSpec(pKeyPair.getKeyPairSpec());
+        final GordianAnonymousAgreement myAgreement = (GordianAnonymousAgreement) myAgreeFactory.createAgreement(mySpec);
         myAgreement.setResultType(GordianFactoryType.BC);
         final byte[] myClientHello = myAgreement.createClientHello(pKeyPair);
         final GordianAgreementClientHelloASN1 myHelloASN = GordianAgreementClientHelloASN1.getInstance(myClientHello);
@@ -276,7 +276,7 @@ public class GordianCoreLock
         final GordianKeyPairFactory myKeyPairFactory = theFactory.getKeyPairFactory();
         final GordianAgreementFactory myAgreeFactory = myKeyPairFactory.getAgreementFactory();
         final byte[] myClientHello = theZipLock.getKeyPairHello().getEncodedBytes();
-        final GordianKeyPairAnonymousAgreement myAgreement = (GordianKeyPairAnonymousAgreement) myAgreeFactory.createKeyPairAgreement(myClientHello);
+        final GordianAnonymousAgreement myAgreement = (GordianAnonymousAgreement) myAgreeFactory.createAgreement(myClientHello);
         myAgreement.acceptClientHello(pKeyPair, myClientHello);
         final GordianFactory myFactory = (GordianFactory) myAgreement.getResult();
 
@@ -345,13 +345,13 @@ public class GordianCoreLock
      * @param pKeySpec the keySpec
      * @return the agreementSpec
      */
-    private static GordianKeyPairAgreementSpec getAgreementSpec(final GordianKeyPairSpec pKeySpec) {
+    private static GordianAgreementSpec getAgreementSpec(final GordianKeyPairSpec pKeySpec) {
         final GordianKeyPairType myKeyType = pKeySpec.getKeyPairType();
         final GordianEdwardsElliptic myEdwards = pKeySpec.getEdwardsElliptic();
         final GordianKDFType myKDFType = GordianEdwardsElliptic.CURVE25519.equals(myEdwards)
                     ? GordianKDFType.SHA256KDF
                     : GordianKDFType.SHA512KDF;
-        return new GordianKeyPairAgreementSpec(myKeyType, GordianAgreementType.ANON, myKDFType);
+        return new GordianAgreementSpec(myKeyType, GordianAgreementType.ANON, myKDFType);
     }
 
     @Override

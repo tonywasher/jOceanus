@@ -21,9 +21,9 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
 
+import net.sourceforge.joceanus.jgordianknot.api.encrypt.GordianEncryptor;
 import net.sourceforge.joceanus.jgordianknot.api.encrypt.GordianEncryptorFactory;
 import net.sourceforge.joceanus.jgordianknot.api.encrypt.GordianEncryptorSpec;
-import net.sourceforge.joceanus.jgordianknot.api.encrypt.GordianKeyPairEncryptor;
 import net.sourceforge.joceanus.jgordianknot.api.factory.GordianFactory;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPair;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianLogicException;
@@ -34,7 +34,7 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
  * Composite encryptor.
  */
 public class GordianCompositeEncryptor
-        implements GordianKeyPairEncryptor {
+        implements GordianEncryptor {
     /**
      * The factory.
      */
@@ -48,7 +48,7 @@ public class GordianCompositeEncryptor
     /**
      * The encryptors.
      */
-    private final List<GordianKeyPairEncryptor> theEncryptors;
+    private final List<GordianEncryptor> theEncryptors;
 
     /**
      * Constructor.
@@ -67,7 +67,7 @@ public class GordianCompositeEncryptor
         final Iterator<GordianEncryptorSpec> myIterator = theSpec.encryptorSpecIterator();
         while (myIterator.hasNext()) {
             final GordianEncryptorSpec mySpec = myIterator.next();
-            theEncryptors.add(theFactory.createKeyPairEncryptor(mySpec));
+            theEncryptors.add(theFactory.createEncryptor(mySpec));
         }
     }
 
@@ -84,7 +84,7 @@ public class GordianCompositeEncryptor
         /* Initialise the encryptors */
         final GordianCompositeKeyPair myCompositePair = (GordianCompositeKeyPair) pKeyPair;
         final Iterator<GordianKeyPair> myIterator = myCompositePair.iterator();
-        for (GordianKeyPairEncryptor myEncryptor : theEncryptors) {
+        for (GordianEncryptor myEncryptor : theEncryptors) {
             final GordianKeyPair myPair = myIterator.next();
             myEncryptor.initForEncrypt(myPair);
         }
@@ -98,7 +98,7 @@ public class GordianCompositeEncryptor
         /* Initialise the signers */
         final GordianCompositeKeyPair myCompositePair = (GordianCompositeKeyPair) pKeyPair;
         final Iterator<GordianKeyPair> myIterator = myCompositePair.iterator();
-        for (GordianKeyPairEncryptor myEncryptor : theEncryptors) {
+        for (GordianEncryptor myEncryptor : theEncryptors) {
             final GordianKeyPair myPair = myIterator.next();
             myEncryptor.initForDecrypt(myPair);
         }
@@ -124,7 +124,7 @@ public class GordianCompositeEncryptor
     public byte[] encrypt(final byte[] pBytes) throws OceanusException {
         /* Loop through the encryptors */
         byte[] myData = pBytes;
-        for (GordianKeyPairEncryptor myEncryptor : theEncryptors) {
+        for (GordianEncryptor myEncryptor : theEncryptors) {
             /* Encrypt using this encryptor */
             myData = myEncryptor.encrypt(myData);
         }
@@ -142,10 +142,10 @@ public class GordianCompositeEncryptor
     public byte[] decrypt(final byte[] pEncrypted) throws OceanusException {
         /* Loop through the encryptors */
         byte[] myData = pEncrypted;
-        final ListIterator<GordianKeyPairEncryptor> myIterator = theEncryptors.listIterator(theEncryptors.size());
+        final ListIterator<GordianEncryptor> myIterator = theEncryptors.listIterator(theEncryptors.size());
         while (myIterator.hasPrevious()) {
             /* Encrypt using this encryptor */
-            final GordianKeyPairEncryptor myEncryptor = myIterator.previous();
+            final GordianEncryptor myEncryptor = myIterator.previous();
             myData = myEncryptor.decrypt(myData);
         }
 

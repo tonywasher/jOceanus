@@ -37,15 +37,15 @@ public interface GordianKeyStoreEntry
     TethysDate getCreationDate();
 
     /**
-     * KeyStore keyPairCertificate API.
+     * KeyStore Certificate API.
      */
-    interface GordianKeyStorePairCertificate
+    interface GordianKeyStoreCertificate
             extends GordianKeyStoreEntry {
         /**
          * Obtain the certificate.
          * @return the certificate
          */
-        GordianKeyPairCertificate getCertificate();
+        GordianCertificate getCertificate();
     }
 
     /**
@@ -63,7 +63,7 @@ public interface GordianKeyStoreEntry
          * Obtain the certificate chain.
          * @return the certificate chain
          */
-        List<GordianKeyPairCertificate> getCertificateChain();
+        List<GordianCertificate> getCertificateChain();
     }
 
     /**

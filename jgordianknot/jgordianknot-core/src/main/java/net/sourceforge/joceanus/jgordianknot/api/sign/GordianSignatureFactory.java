@@ -35,7 +35,7 @@ public interface GordianSignatureFactory {
      * @return the signer
      * @throws OceanusException on error
      */
-    GordianKeyPairSignature createKeyPairSigner(GordianSignatureSpec pSignatureSpec) throws OceanusException;
+    GordianSignature createSigner(GordianSignatureSpec pSignatureSpec) throws OceanusException;
 
     /**
      * Obtain predicate for signatures.

@@ -20,14 +20,13 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
  * Key Agreement Specification.
- * @param <A> the agreement specification
  */
-public interface GordianAgreement<A> {
+public interface GordianAgreement {
     /**
      * Obtain the agreementSpec.
      * @return the spec
      */
-    A getAgreementSpec();
+    GordianAgreementSpec getAgreementSpec();
 
     /**
      * Set the result type of the agreement.

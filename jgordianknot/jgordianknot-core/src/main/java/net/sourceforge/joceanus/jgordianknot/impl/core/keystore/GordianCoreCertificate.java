@@ -46,25 +46,31 @@ import org.bouncycastle.asn1.x509.V3TBSCertificateGenerator;
 import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigest;
 import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigestFactory;
 import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigestSpec;
+import net.sourceforge.joceanus.jgordianknot.api.factory.GordianKeyPairFactory;
+import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPair;
+import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPairGenerator;
+import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPairSpec;
 import net.sourceforge.joceanus.jgordianknot.api.keystore.GordianCertificate;
 import net.sourceforge.joceanus.jgordianknot.api.keystore.GordianCertificateId;
 import net.sourceforge.joceanus.jgordianknot.api.keystore.GordianKeyPairUsage;
 import net.sourceforge.joceanus.jgordianknot.api.keystore.GordianKeyPairUse;
+import net.sourceforge.joceanus.jgordianknot.api.keystore.GordianKeyStoreEntry.GordianKeyStorePair;
 import net.sourceforge.joceanus.jgordianknot.api.sign.GordianSignature;
+import net.sourceforge.joceanus.jgordianknot.api.sign.GordianSignatureSpec;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianCoreFactory;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianDataException;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianIOException;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianLogicException;
-import net.sourceforge.joceanus.jgordianknot.impl.core.keystore.GordianCoreKeyStoreEntry.GordianKeyStorePairEntry;
+import net.sourceforge.joceanus.jgordianknot.impl.core.keypair.GordianCoreKeyPair;
+import net.sourceforge.joceanus.jgordianknot.impl.core.keypair.GordianCoreKeyPairGenerator;
+import net.sourceforge.joceanus.jgordianknot.impl.core.sign.GordianCoreSignatureFactory;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
  * Certificate implementation.
- * @param <S> the signature spec type
- * @param <K> the key type
  */
-public abstract class GordianCoreCertificate<S, K>
-    implements GordianCertificate<K> {
+public class GordianCoreCertificate
+    implements GordianCertificate {
     /**
      * The Factory.
      */
@@ -83,7 +89,7 @@ public abstract class GordianCoreCertificate<S, K>
     /**
      * The (public only) KeyPair to which this Certificate belongs.
      */
-    private final K theKeyPair;
+    private final GordianKeyPair theKeyPair;
 
     /**
      * The KeyUsage.
@@ -103,7 +109,7 @@ public abstract class GordianCoreCertificate<S, K>
     /**
      * The SignatureSpec.
      */
-    private final S theSigSpec;
+    private final GordianSignatureSpec theSigSpec;
 
     /**
      * The serial#.
@@ -139,7 +145,7 @@ public abstract class GordianCoreCertificate<S, K>
      * @throws OceanusException on error
      */
     GordianCoreCertificate(final GordianCoreFactory pFactory,
-                           final K pKeyPair,
+                           final GordianKeyPair pKeyPair,
                            final X500Name pSubject) throws OceanusException {
         /* Check that the keyPair is OK */
         if (isPublicOnly(pKeyPair)) {
@@ -185,8 +191,8 @@ public abstract class GordianCoreCertificate<S, K>
      * @throws OceanusException on error
      */
     GordianCoreCertificate(final GordianCoreFactory pFactory,
-                           final GordianKeyStorePairEntry<?, K> pSigner,
-                           final K pKeyPair,
+                           final GordianKeyStorePair pSigner,
+                           final GordianKeyPair pKeyPair,
                            final X500Name pSubject,
                            final GordianKeyPairUsage pUsage) throws OceanusException {
         /* Store the parameters */
@@ -195,8 +201,8 @@ public abstract class GordianCoreCertificate<S, K>
         theKeyUsage = pUsage;
 
         /* Check that the signer is allowed to sign certificates */
-        final K mySignerPair = pSigner.getPair();
-        final GordianCoreCertificate<?, K> mySignerCert = (GordianCoreCertificate<?, K>) pSigner.getCertificateChain().get(0);
+        final GordianKeyPair mySignerPair = pSigner.getKeyPair();
+        final GordianCoreCertificate mySignerCert = (GordianCoreCertificate) pSigner.getCertificateChain().get(0);
         if (!mySignerCert.getUsage().hasUse(GordianKeyPairUse.CERTIFICATE)
                 || !mySignerCert.isValidNow()
                 || isPublicOnly(mySignerPair)) {
@@ -207,10 +213,10 @@ public abstract class GordianCoreCertificate<S, K>
         theCAStatus = new GordianCAStatus(theKeyUsage, mySignerCert.theCAStatus);
 
         /* Determine the signatureSpec */
-        theSigSpec = determineSignatureSpecForKeyPair(pSigner.getPair());
+        theSigSpec = determineSignatureSpecForKeyPair(pSigner.getKeyPair());
 
         /* Determine the algorithm Id for the signatureSpec */
-        theSigAlgId = determineAlgIdForSignatureSpec(theSigSpec, pSigner.getPair());
+        theSigAlgId = determineAlgIdForSignatureSpec(theSigSpec, pSigner.getKeyPair());
 
         /* Create the TBSCertificate */
         theTbsCertificate = buildCertificate(mySignerCert, pSubject);
@@ -354,7 +360,7 @@ public abstract class GordianCoreCertificate<S, K>
     }
 
     @Override
-    public K getKeyPair() {
+    public GordianKeyPair getKeyPair() {
         return theKeyPair;
     }
 
@@ -370,7 +376,7 @@ public abstract class GordianCoreCertificate<S, K>
      * Obtain the signatureSpec.
      * @return the signatureSpec
      */
-    protected S getSignatureSpec() {
+    protected GordianSignatureSpec getSignatureSpec() {
         return theSigSpec;
     }
 
@@ -379,14 +385,18 @@ public abstract class GordianCoreCertificate<S, K>
      * @param pKeyPair the keyPair
      * @return true/false
      */
-    protected abstract boolean isPublicOnly(K pKeyPair);
+    protected boolean isPublicOnly(final GordianKeyPair pKeyPair) {
+        return pKeyPair.isPublicOnly();
+    }
 
     /**
      * get public only version of key.
      * @param pKeyPair the key
      * @return the publicOnly version
      */
-    protected abstract K getPublicOnly(K pKeyPair);
+    protected GordianKeyPair getPublicOnly(final GordianKeyPair pKeyPair) {
+        return ((GordianCoreKeyPair) pKeyPair).getPublicOnly();
+    }
 
     /**
      * Determine the signatureSpec for the key.
@@ -394,7 +404,9 @@ public abstract class GordianCoreCertificate<S, K>
      * @param pKeyPair the keyPair
      * @return the signatureSpec
      */
-    abstract S determineSignatureSpecForKeyPair(K pKeyPair);
+    GordianSignatureSpec determineSignatureSpecForKeyPair(final GordianKeyPair pKeyPair) {
+        return GordianSignatureSpec.defaultForKey(pKeyPair.getKeyPairSpec());
+    }
 
     /**
      * Determine the signatureSpec for the algorithmId.
@@ -402,7 +414,10 @@ public abstract class GordianCoreCertificate<S, K>
      * @param pAlgId the algorithmId
      * @return the signatureSpec
      */
-    abstract S determineSignatureSpecForAlgId(AlgorithmIdentifier pAlgId);
+    GordianSignatureSpec determineSignatureSpecForAlgId(final AlgorithmIdentifier pAlgId) {
+        final GordianCoreSignatureFactory mySigns = (GordianCoreSignatureFactory) getFactory().getKeyPairFactory().getSignatureFactory();
+        return mySigns.getSpecForIdentifier(pAlgId);
+    }
 
     /**
      * Determine the algorithmId for the signatureSpec.
@@ -411,36 +426,61 @@ public abstract class GordianCoreCertificate<S, K>
      * @param pSigner the signer
      * @return the algorithmId
      */
-    abstract AlgorithmIdentifier determineAlgIdForSignatureSpec(S pSpec,
-                                                                K pSigner);
+    AlgorithmIdentifier determineAlgIdForSignatureSpec(final GordianSignatureSpec pSpec,
+                                                       final GordianKeyPair pSigner) {
+        final GordianCoreSignatureFactory mySigns = (GordianCoreSignatureFactory) getFactory().getKeyPairFactory().getSignatureFactory();
+        return mySigns.getIdentifierForSpecAndKeyPair(getSignatureSpec(), pSigner);
+    }
 
     /**
      * Validate that the keyPair public Key matches.
      * @param pPair the key pair
      * @return matches true/false
      */
-    abstract boolean checkMatchingPublicKey(K pPair);
-
-    /**
-     * Obtain the encoded publicKey.
-     * @return the encoded bytes
-     * @throws OceanusException on error
-     */
-    protected abstract byte[] getPublicKeyEncoded() throws OceanusException;
+    boolean checkMatchingPublicKey(final GordianKeyPair pPair) {
+        final GordianCoreKeyPair myPair = (GordianCoreKeyPair) pPair;
+        return myPair.getPublicKey().equals(((GordianCoreKeyPair) getKeyPair()).getPublicKey());
+    }
 
     /**
      * parse encodedKey.
      * @return the parsed key
      * @throws OceanusException on error
      */
-    protected abstract K parseEncodedKey() throws OceanusException;
+    protected GordianKeyPair parseEncodedKey() throws OceanusException {
+        /* Derive the keyPair */
+        final GordianKeyPairFactory myFactory = getFactory().getKeyPairFactory();
+        final X509EncodedKeySpec myX509 = getX509KeySpec();
+        final GordianKeyPairSpec myKeySpec = myFactory.determineKeyPairSpec(myX509);
+        final GordianCoreKeyPairGenerator myGenerator = (GordianCoreKeyPairGenerator) myFactory.getKeyPairGenerator(myKeySpec);
+        return myGenerator.derivePublicOnlyKeyPair(myX509);
+    }
+
+    /**
+     * Obtain the encoded publicKey.
+     * @return the encoded bytes
+     * @throws OceanusException on error
+     */
+    protected byte[] getPublicKeyEncoded() throws OceanusException {
+        /* Access the keyPair */
+        final GordianKeyPair myPair = getKeyPair();
+
+        /* Access the keyPair generator */
+        final GordianKeyPairFactory myFactory = getFactory().getKeyPairFactory();
+        final GordianKeyPairGenerator myGenerator = myFactory.getKeyPairGenerator(myPair.getKeyPairSpec());
+
+        /* Obtain the publicKey Info */
+        return myGenerator.getX509Encoding(myPair).getEncoded();
+    }
 
     /**
      * Obtain the digestSpec.
      *
      * @return the digestSpec
      */
-    protected abstract GordianDigestSpec getDigestSpec();
+    protected GordianDigestSpec getDigestSpec() {
+        return getSignatureSpec().getDigestSpec();
+    }
 
     /**
      * Create the signer.
@@ -448,7 +488,11 @@ public abstract class GordianCoreCertificate<S, K>
      * @return the signer
      * @throws OceanusException on error
      */
-    protected abstract GordianSignature<S, K> createSigner() throws OceanusException;
+    protected GordianSignature createSigner() throws OceanusException {
+        /* Create the signer */
+        final GordianCoreSignatureFactory mySigns = (GordianCoreSignatureFactory) getFactory().getKeyPairFactory().getSignatureFactory();
+        return mySigns.createSigner(getSignatureSpec());
+    }
 
     /**
      * Determine usage.
@@ -525,7 +569,7 @@ public abstract class GordianCoreCertificate<S, K>
      * @return valid? true/false
      * @throws OceanusException on error
      */
-    public boolean validateCertificate(final GordianCoreCertificate<S, K> pSigner) throws OceanusException {
+    public boolean validateCertificate(final GordianCoreCertificate pSigner) throws OceanusException {
         /* Check that the certificate is not self-signed */
         if (isSelfSigned) {
             throw new GordianDataException("Root certificate used as intermediary");
@@ -583,7 +627,7 @@ public abstract class GordianCoreCertificate<S, K>
      * @return the theCertificate
      * @throws OceanusException on error
      */
-    private TBSCertificate buildCertificate(final GordianCoreCertificate<?, K> pSigner,
+    private TBSCertificate buildCertificate(final GordianCoreCertificate pSigner,
                                             final X500Name pSubject) throws OceanusException {
         /* Create the name of the certificate */
         final X500Name myIssuer = pSigner == null
@@ -682,11 +726,11 @@ public abstract class GordianCoreCertificate<S, K>
      * @return the generated signature
      * @throws OceanusException on error
      */
-    private byte[] createSignature(final K pSigner) throws OceanusException {
+    private byte[] createSignature(final GordianKeyPair pSigner) throws OceanusException {
         /* Protect against exceptions */
         try {
             /* Build the signature */
-            final GordianSignature<S, K> mySigner = createSigner();
+            final GordianSignature mySigner = createSigner();
             mySigner.initForSigning(pSigner);
             final GordianStreamConsumer myConsumer = new GordianStreamConsumer(mySigner);
             final ASN1OutputStream myOut = ASN1OutputStream.create(myConsumer);
@@ -724,11 +768,11 @@ public abstract class GordianCoreCertificate<S, K>
      * @return true/false is the signature valid?
      * @throws OceanusException on error
      */
-    private boolean validateSignature(final K pSigner) throws OceanusException {
+    private boolean validateSignature(final GordianKeyPair pSigner) throws OceanusException {
         /* Protect against exceptions */
         try {
             /* Build the signature */
-            final GordianSignature<S, K> myValidator = createSigner();
+            final GordianSignature myValidator = createSigner();
             myValidator.initForVerify(pSigner);
             final GordianStreamConsumer myConsumer = new GordianStreamConsumer(myValidator);
             final ASN1OutputStream myOut = ASN1OutputStream.create(myConsumer);
@@ -777,7 +821,7 @@ public abstract class GordianCoreCertificate<S, K>
         if (!(pThat instanceof GordianCoreCertificate)) {
             return false;
         }
-        final GordianCoreCertificate<?, ?> myThat = (GordianCoreCertificate<?, ?>) pThat;
+        final GordianCoreCertificate myThat = (GordianCoreCertificate) pThat;
 
         /* Compare fields */
         return Arrays.equals(theEncoded, myThat.theEncoded);

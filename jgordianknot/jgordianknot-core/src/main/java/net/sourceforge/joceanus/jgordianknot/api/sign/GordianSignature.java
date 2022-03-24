@@ -17,34 +17,33 @@
 package net.sourceforge.joceanus.jgordianknot.api.sign;
 
 import net.sourceforge.joceanus.jgordianknot.api.base.GordianConsumer;
+import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPair;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
  * GordianKnot base for signature.
- * @param <S> the specification type
- * @param <K> the keyPair Type
  */
-public interface GordianSignature<S, K>
+public interface GordianSignature
     extends GordianConsumer {
     /**
      * Obtain the signatureSpec.
      * @return the Spec
      */
-    S getSignatureSpec();
+    GordianSignatureSpec getSignatureSpec();
 
     /**
      * Initialise for signature.
      * @param pKeyPair the keyPair
      * @throws OceanusException on error
      */
-    void initForSigning(K pKeyPair) throws OceanusException;
+    void initForSigning(GordianKeyPair pKeyPair) throws OceanusException;
 
     /**
      * Initialise for verify.
      * @param pKeyPair the keyPair
      * @throws OceanusException on error
      */
-    void initForVerify(K pKeyPair) throws OceanusException;
+    void initForVerify(GordianKeyPair pKeyPair) throws OceanusException;
 
     /**
      * Complete the signature operation and return the signature bytes.

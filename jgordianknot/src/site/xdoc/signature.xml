@@ -35,7 +35,7 @@
                 /* Access signer */
                 final GordianSignatureSpec mySignSpec = GordianSignatureSpec.rsa(GordianSignatureType.PSSMGF1,
                                                                                  GordianDigestSpec.sha2(GordianLength.LEN_256));
-                final GordianKeyPairSignature mySigner = mySignatureFactory.createKeyPairSigner(mySignSpec);
+                final GordianSignature mySigner = mySignatureFactory.createSigner(mySignSpec);
 
                 /* Sign message */
                 final byte[] message = ....;
@@ -70,7 +70,7 @@
                     final GordianSignatureSpec mySignSpec = GordianSignatureSpec.composite(GordianSignatureSpec.rsa(GordianSignatureType.PSSMGF1,
                                                                                                                     GordianDigestSpec.sha2(GordianLength.LEN_256)),
                                                                                            GordianSignatureSpec.edDSA());
-                    final GordianKeyPairSignature mySigner = mySignatureFactory.createKeyPairSigner(mySignSpec);
+                    final GordianSignature mySigner = mySignatureFactory.createSigner(mySignSpec);
 
                     /* Sign message */
                     final byte[] message = ....;

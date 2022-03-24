@@ -21,13 +21,13 @@ import java.security.spec.X509EncodedKeySpec;
 import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
 
 import net.sourceforge.joceanus.jgordianknot.api.agree.GordianAgreementStatus;
-import net.sourceforge.joceanus.jgordianknot.api.agree.GordianKeyPairAgreementSpec;
-import net.sourceforge.joceanus.jgordianknot.api.agree.GordianKeyPairSignedAgreement;
+import net.sourceforge.joceanus.jgordianknot.api.agree.GordianAgreementSpec;
+import net.sourceforge.joceanus.jgordianknot.api.agree.GordianSignedAgreement;
 import net.sourceforge.joceanus.jgordianknot.api.factory.GordianKeyPairFactory;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPair;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPairGenerator;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPairSpec;
-import net.sourceforge.joceanus.jgordianknot.api.sign.GordianKeyPairSignature;
+import net.sourceforge.joceanus.jgordianknot.api.sign.GordianSignature;
 import net.sourceforge.joceanus.jgordianknot.api.sign.GordianSignatureSpec;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianCoreFactory;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianDataException;
@@ -39,7 +39,7 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
  */
 public abstract class GordianCoreSignedAgreement
         extends GordianCoreKeyPairAgreement
-        implements GordianKeyPairSignedAgreement {
+        implements GordianSignedAgreement {
     /**
      * The client ephemeral KeyPair.
      */
@@ -56,7 +56,7 @@ public abstract class GordianCoreSignedAgreement
      * @param pSpec the agreementSpec
      */
     protected GordianCoreSignedAgreement(final GordianCoreFactory pFactory,
-                                         final GordianKeyPairAgreementSpec pSpec) {
+                                         final GordianAgreementSpec pSpec) {
         super(pFactory, pSpec);
     }
 
@@ -151,7 +151,7 @@ public abstract class GordianCoreSignedAgreement
         final GordianSignatureSpec mySpec = GordianSignatureSpec.defaultForKey(pServer.getKeyPairSpec());
         final GordianCoreSignatureFactory mySigns = (GordianCoreSignatureFactory) myFactory.getSignatureFactory();
         final AlgorithmIdentifier myAlgId = mySigns.getIdentifierForSpecAndKeyPair(mySpec, pServer);
-        final GordianKeyPairSignature mySigner = mySigns.createKeyPairSigner(mySpec);
+        final GordianSignature mySigner = mySigns.createSigner(mySpec);
 
         /* Build the signature */
         mySigner.initForSigning(pServer);
@@ -188,7 +188,7 @@ public abstract class GordianCoreSignedAgreement
         final AlgorithmIdentifier myAlgId = myHello.getSignatureId();
         final byte[] mySignature = myHello.getSignature();
         final GordianSignatureSpec mySignSpec = mySigns.getSpecForIdentifier(myAlgId);
-        final GordianKeyPairSignature mySigner = mySigns.createKeyPairSigner(mySignSpec);
+        final GordianSignature mySigner = mySigns.createSigner(mySignSpec);
 
         /* Build the signature */
         mySigner.initForVerify(pServer);

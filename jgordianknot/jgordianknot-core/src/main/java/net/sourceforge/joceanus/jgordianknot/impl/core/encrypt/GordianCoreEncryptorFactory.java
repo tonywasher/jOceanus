@@ -62,7 +62,7 @@ public abstract class GordianCoreEncryptorFactory
     }
 
     @Override
-    public Predicate<GordianEncryptorSpec> supportedKeyPairEncryptors() {
+    public Predicate<GordianEncryptorSpec> supportedEncryptors() {
         return this::validEncryptorSpec;
     }
 

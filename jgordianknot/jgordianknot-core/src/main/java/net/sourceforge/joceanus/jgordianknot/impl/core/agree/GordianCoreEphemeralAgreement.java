@@ -22,10 +22,10 @@ import java.util.Objects;
 import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
 import org.bouncycastle.util.Arrays;
 
+import net.sourceforge.joceanus.jgordianknot.api.agree.GordianAgreementSpec;
 import net.sourceforge.joceanus.jgordianknot.api.agree.GordianAgreementStatus;
 import net.sourceforge.joceanus.jgordianknot.api.agree.GordianAgreementType;
-import net.sourceforge.joceanus.jgordianknot.api.agree.GordianKeyPairAgreementSpec;
-import net.sourceforge.joceanus.jgordianknot.api.agree.GordianKeyPairHandshakeAgreement;
+import net.sourceforge.joceanus.jgordianknot.api.agree.GordianHandshakeAgreement;
 import net.sourceforge.joceanus.jgordianknot.api.base.GordianLength;
 import net.sourceforge.joceanus.jgordianknot.api.digest.GordianDigestType;
 import net.sourceforge.joceanus.jgordianknot.api.factory.GordianFactory;
@@ -44,7 +44,7 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
  */
 public abstract class GordianCoreEphemeralAgreement
         extends GordianCoreKeyPairAgreement
-        implements GordianKeyPairHandshakeAgreement {
+        implements GordianHandshakeAgreement {
     /**
      * The client KeyPair.
      */
@@ -81,7 +81,7 @@ public abstract class GordianCoreEphemeralAgreement
      * @param pSpec the agreementSpec
      */
     protected GordianCoreEphemeralAgreement(final GordianCoreFactory pFactory,
-                                            final GordianKeyPairAgreementSpec pSpec) {
+                                            final GordianAgreementSpec pSpec) {
         super(pFactory, pSpec);
     }
 
@@ -144,7 +144,7 @@ public abstract class GordianCoreEphemeralAgreement
     @Override
     protected void processSecret(final byte[] pSecret) throws OceanusException {
         /* If we are using confirmation and are not SM2 */
-        final GordianKeyPairAgreementSpec mySpec = getAgreementSpec();
+        final GordianAgreementSpec mySpec = getAgreementSpec();
         if (Boolean.TRUE.equals(mySpec.withConfirm())
                 && mySpec.getAgreementType() != GordianAgreementType.SM2) {
             /* calculate the confirmation tags */
@@ -300,7 +300,7 @@ public abstract class GordianCoreEphemeralAgreement
 
         /* Check agreementSpec */
         final GordianCoreAgreementFactory myFactory = getAgreementFactory();
-        final GordianKeyPairAgreementSpec mySpec = myFactory.getSpecForIdentifier(myAlgId);
+        final GordianAgreementSpec mySpec = myFactory.getSpecForIdentifier(myAlgId);
         if (!Objects.equals(mySpec, getAgreementSpec())) {
             throw new GordianDataException(ERROR_INVSPEC);
         }

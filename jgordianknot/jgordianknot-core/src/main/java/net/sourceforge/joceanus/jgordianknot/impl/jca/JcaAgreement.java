@@ -30,8 +30,8 @@ import org.bouncycastle.jcajce.spec.KEMGenerateSpec;
 import org.bouncycastle.jcajce.spec.MQVParameterSpec;
 import org.bouncycastle.jcajce.spec.UserKeyingMaterialSpec;
 
+import net.sourceforge.joceanus.jgordianknot.api.agree.GordianAgreementSpec;
 import net.sourceforge.joceanus.jgordianknot.api.agree.GordianKDFType;
-import net.sourceforge.joceanus.jgordianknot.api.agree.GordianKeyPairAgreementSpec;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianSymKeyType;
 import net.sourceforge.joceanus.jgordianknot.api.factory.GordianKeyPairFactory;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPair;
@@ -79,7 +79,7 @@ public final class JcaAgreement {
          * @param pAgreement the agreement
          */
         JcaEncapsulationAgreement(final JcaFactory pFactory,
-                                  final GordianKeyPairAgreementSpec pSpec,
+                                  final GordianAgreementSpec pSpec,
                                   final KeyAgreement pAgreement) {
             /* Initialise underlying class */
             super(pFactory, pSpec);
@@ -162,7 +162,7 @@ public final class JcaAgreement {
          * @param pGenerator the generator
          */
         JcaPostQuantumAgreement(final JcaFactory pFactory,
-                                final GordianKeyPairAgreementSpec pSpec,
+                                final GordianAgreementSpec pSpec,
                                 final KeyGenerator pGenerator) {
             /* Initialise underlying class */
             super(pFactory, pSpec);
@@ -237,7 +237,7 @@ public final class JcaAgreement {
          * @param pAgreement the agreement
          */
         JcaAnonymousAgreement(final JcaFactory pFactory,
-                              final GordianKeyPairAgreementSpec pSpec,
+                              final GordianAgreementSpec pSpec,
                               final KeyAgreement pAgreement) {
             /* Initialise underlying class */
             super(pFactory, pSpec);
@@ -358,7 +358,7 @@ public final class JcaAgreement {
          * @param pAgreement the agreement
          */
         JcaBasicAgreement(final JcaFactory pFactory,
-                          final GordianKeyPairAgreementSpec pSpec,
+                          final GordianAgreementSpec pSpec,
                           final KeyAgreement pAgreement) {
             /* Initialise underlying class */
             super(pFactory, pSpec);
@@ -475,7 +475,7 @@ public final class JcaAgreement {
          * @param pAgreement the agreement
          */
         JcaSignedAgreement(final JcaFactory pFactory,
-                           final GordianKeyPairAgreementSpec pSpec,
+                           final GordianAgreementSpec pSpec,
                            final KeyAgreement pAgreement) {
             /* Initialise underlying class */
             super(pFactory, pSpec);
@@ -580,7 +580,7 @@ public final class JcaAgreement {
          * @param pAgreement the agreement
          */
         JcaUnifiedAgreement(final JcaFactory pFactory,
-                            final GordianKeyPairAgreementSpec pSpec,
+                            final GordianAgreementSpec pSpec,
                             final KeyAgreement pAgreement) {
             /* Initialise underlying class */
             super(pFactory, pSpec);
@@ -694,7 +694,7 @@ public final class JcaAgreement {
          * @param pAgreement the agreement
          */
         JcaMQVAgreement(final JcaFactory pFactory,
-                        final GordianKeyPairAgreementSpec pSpec,
+                        final GordianAgreementSpec pSpec,
                         final KeyAgreement pAgreement) {
             /* Initialise underlying class */
             super(pFactory, pSpec);

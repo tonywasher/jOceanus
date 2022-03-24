@@ -35,13 +35,13 @@ public interface GordianEncryptorFactory {
      * @return the Encryptor
      * @throws OceanusException on error
      */
-    GordianKeyPairEncryptor createKeyPairEncryptor(GordianEncryptorSpec pSpec) throws OceanusException;
+    GordianEncryptor createEncryptor(GordianEncryptorSpec pSpec) throws OceanusException;
 
     /**
      * Obtain predicate for Encryptor.
      * @return the predicate
      */
-    Predicate<GordianEncryptorSpec> supportedKeyPairEncryptors();
+    Predicate<GordianEncryptorSpec> supportedEncryptors();
 
     /**
      * Obtain a list of supported encryptorSpecs.
@@ -51,7 +51,7 @@ public interface GordianEncryptorFactory {
     default List<GordianEncryptorSpec> listAllSupportedEncryptors(final GordianKeyPairType pKeyType) {
         return GordianEncryptorSpec.listPossibleEncryptors(pKeyType)
                 .stream()
-                .filter(supportedKeyPairEncryptors())
+                .filter(supportedEncryptors())
                 .collect(Collectors.toList());
     }
 

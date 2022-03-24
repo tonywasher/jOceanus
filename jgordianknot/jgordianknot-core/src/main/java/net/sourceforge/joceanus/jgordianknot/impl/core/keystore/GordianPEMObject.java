@@ -70,9 +70,9 @@ public class GordianPEMObject {
      */
     enum GordianPEMObjectType {
         /**
-         * keyPairCertificate.
+         * Certificate.
          */
-        KEYPAIRCERT("CERTIFICATE"),
+        CERT("CERTIFICATE"),
 
         /**
          * privateKey.
@@ -92,12 +92,7 @@ public class GordianPEMObject {
         /**
          * keyPair certificate request.
          */
-        KEYPAIRCERTREQ("KEYPAIRCERTIFICATE REQUEST"),
-
-        /**
-         * keyPairSet certificate request.
-         */
-        KEYPAIRSETCERTREQ("KEYPAIRSETCERTIFICATE REQUEST");
+        CERTREQ("CERTIFICATE REQUEST");
 
         /**
          * The header.

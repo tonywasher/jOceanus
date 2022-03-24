@@ -30,7 +30,7 @@ import org.bouncycastle.asn1.DERSequence;
 
 import net.sourceforge.joceanus.jgordianknot.api.factory.GordianFactory;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPair;
-import net.sourceforge.joceanus.jgordianknot.api.sign.GordianKeyPairSignature;
+import net.sourceforge.joceanus.jgordianknot.api.sign.GordianSignature;
 import net.sourceforge.joceanus.jgordianknot.api.sign.GordianSignatureFactory;
 import net.sourceforge.joceanus.jgordianknot.api.sign.GordianSignatureSpec;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianDataException;
@@ -43,7 +43,7 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
  * KeyPairSet signer.
  */
 public class GordianCompositeSigner
-        implements GordianKeyPairSignature {
+        implements GordianSignature {
     /**
      * The factory.
      */
@@ -57,7 +57,7 @@ public class GordianCompositeSigner
     /**
      * The signers.
      */
-    private final List<GordianKeyPairSignature> theSigners;
+    private final List<GordianSignature> theSigners;
 
     /**
      * Constructor.
@@ -76,7 +76,7 @@ public class GordianCompositeSigner
         final Iterator<GordianSignatureSpec> myIterator = theSpec.signatureSpecIterator();
         while (myIterator.hasNext()) {
             final GordianSignatureSpec mySpec = myIterator.next();
-            theSigners.add(theFactory.createKeyPairSigner(mySpec));
+            theSigners.add(theFactory.createSigner(mySpec));
         }
     }
 
@@ -93,7 +93,7 @@ public class GordianCompositeSigner
         /* Initialise the signers */
         final GordianCompositeKeyPair myCompositePair = (GordianCompositeKeyPair) pKeyPair;
         final Iterator<GordianKeyPair> myIterator = myCompositePair.iterator();
-        for (GordianKeyPairSignature mySigner : theSigners) {
+        for (GordianSignature mySigner : theSigners) {
             final GordianKeyPair myPair = myIterator.next();
             mySigner.initForSigning(myPair);
         }
@@ -107,7 +107,7 @@ public class GordianCompositeSigner
         /* Initialise the signers */
         final GordianCompositeKeyPair myCompositePair = (GordianCompositeKeyPair) pKeyPair;
         final Iterator<GordianKeyPair> myIterator = myCompositePair.iterator();
-        for (GordianKeyPairSignature mySigner : theSigners) {
+        for (GordianSignature mySigner : theSigners) {
             final GordianKeyPair myPair = myIterator.next();
             mySigner.initForVerify(myPair);
         }
@@ -129,7 +129,7 @@ public class GordianCompositeSigner
                        final int pOffset,
                        final int pLength) {
         /* Loop through the signers */
-        for (GordianKeyPairSignature mySigner : theSigners) {
+        for (GordianSignature mySigner : theSigners) {
             mySigner.update(pBytes, pOffset, pLength);
         }
     }
@@ -137,7 +137,7 @@ public class GordianCompositeSigner
     @Override
     public void update(final byte pByte) {
         /* Loop through the signers */
-        for (GordianKeyPairSignature mySigner : theSigners) {
+        for (GordianSignature mySigner : theSigners) {
             mySigner.update(pByte);
         }
     }
@@ -145,7 +145,7 @@ public class GordianCompositeSigner
     @Override
     public void reset() {
         /* Loop through the signers */
-        for (GordianKeyPairSignature mySigner : theSigners) {
+        for (GordianSignature mySigner : theSigners) {
             mySigner.reset();
         }
     }
@@ -163,7 +163,7 @@ public class GordianCompositeSigner
 
             /* Loop through the signers */
             byte[] mySign = null;
-            for (GordianKeyPairSignature mySigner : theSigners) {
+            for (GordianSignature mySigner : theSigners) {
                 /* If we have a previous signature */
                 if (mySign != null) {
                     /* Process previous signature */
@@ -201,7 +201,7 @@ public class GordianCompositeSigner
             byte[] mySign = null;
             int numFailed = 0;
             final Enumeration<?> en = mySequence.getObjects();
-            for (GordianKeyPairSignature mySigner : theSigners) {
+            for (GordianSignature mySigner : theSigners) {
                 /* If we have a previous signature */
                 if (mySign != null) {
                     /* Process previous signature */

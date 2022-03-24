@@ -35,7 +35,7 @@ public interface GordianAgreementFactory {
      * @return the Agreement
      * @throws OceanusException on error
      */
-    GordianKeyPairAgreement createKeyPairAgreement(GordianKeyPairAgreementSpec pSpec) throws OceanusException;
+    GordianAgreement createAgreement(GordianAgreementSpec pSpec) throws OceanusException;
 
     /**
      * Create Agreement for clientHello message.
@@ -43,23 +43,23 @@ public interface GordianAgreementFactory {
      * @return the Agreement
      * @throws OceanusException on error
      */
-    GordianKeyPairAgreement createKeyPairAgreement(byte[] pClientHello) throws OceanusException;
+    GordianAgreement createAgreement(byte[] pClientHello) throws OceanusException;
 
     /**
      * Obtain predicate for keyAgreement.
      * @return the predicate
      */
-    Predicate<GordianKeyPairAgreementSpec> supportedKeyPairAgreements();
+    Predicate<GordianAgreementSpec> supportedAgreements();
 
     /**
      * Obtain a list of supported agreementSpecs.
      * @param pKeyType the keyType
      * @return the list of supported agreementSpecs.
      */
-    default List<GordianKeyPairAgreementSpec> listAllSupportedAgreements(final GordianKeyPairType pKeyType) {
-        return GordianKeyPairAgreementSpec.listPossibleAgreements(pKeyType)
+    default List<GordianAgreementSpec> listAllSupportedAgreements(final GordianKeyPairType pKeyType) {
+        return GordianAgreementSpec.listPossibleAgreements(pKeyType)
                 .stream()
-                .filter(supportedKeyPairAgreements())
+                .filter(supportedAgreements())
                 .collect(Collectors.toList());
     }
 
@@ -70,7 +70,7 @@ public interface GordianAgreementFactory {
      * @return true/false
      */
     default boolean validAgreementSpecForKeyPair(GordianKeyPair pKeyPair,
-                                                 GordianKeyPairAgreementSpec pAgreementSpec) {
+                                                 GordianAgreementSpec pAgreementSpec) {
         return validAgreementSpecForKeyPairSpec(pKeyPair.getKeyPairSpec(), pAgreementSpec);
     }
 
@@ -81,14 +81,14 @@ public interface GordianAgreementFactory {
      * @return true/false
      */
     boolean validAgreementSpecForKeyPairSpec(GordianKeyPairSpec pKeyPairSpec,
-                                             GordianKeyPairAgreementSpec pAgreementSpec);
+                                             GordianAgreementSpec pAgreementSpec);
 
     /**
      * Obtain a list of supported agreementSpecs.
      * @param pKeyPair the keyPair
      * @return the list of supported agreementSpecs.
      */
-    default List<GordianKeyPairAgreementSpec> listAllSupportedAgreements(final GordianKeyPair pKeyPair) {
+    default List<GordianAgreementSpec> listAllSupportedAgreements(final GordianKeyPair pKeyPair) {
         return listAllSupportedAgreements(pKeyPair.getKeyPairSpec());
     }
 
@@ -97,8 +97,8 @@ public interface GordianAgreementFactory {
      * @param pKeyPairSpec the keySpec
      * @return the list of supported agreementSpecs.
      */
-    default List<GordianKeyPairAgreementSpec> listAllSupportedAgreements(final GordianKeyPairSpec pKeyPairSpec) {
-        return GordianKeyPairAgreementSpec.listPossibleAgreements(pKeyPairSpec.getKeyPairType())
+    default List<GordianAgreementSpec> listAllSupportedAgreements(final GordianKeyPairSpec pKeyPairSpec) {
+        return GordianAgreementSpec.listPossibleAgreements(pKeyPairSpec.getKeyPairType())
                 .stream()
                 .filter(s -> validAgreementSpecForKeyPairSpec(pKeyPairSpec, s))
                 .collect(Collectors.toList());

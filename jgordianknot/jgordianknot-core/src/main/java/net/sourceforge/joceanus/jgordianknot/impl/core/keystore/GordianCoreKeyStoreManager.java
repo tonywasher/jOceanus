@@ -22,7 +22,7 @@ import java.util.List;
 
 import org.bouncycastle.asn1.x500.X500Name;
 
-import net.sourceforge.joceanus.jgordianknot.api.agree.GordianKeyPairAgreementSpec;
+import net.sourceforge.joceanus.jgordianknot.api.agree.GordianAgreementSpec;
 import net.sourceforge.joceanus.jgordianknot.api.base.GordianKeySpec;
 import net.sourceforge.joceanus.jgordianknot.api.encrypt.GordianEncryptorSpec;
 import net.sourceforge.joceanus.jgordianknot.api.factory.GordianKeyPairFactory;
@@ -34,7 +34,7 @@ import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPairSpec;
 import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySet;
 import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetFactory;
 import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetSpec;
-import net.sourceforge.joceanus.jgordianknot.api.keystore.GordianKeyPairCertificate;
+import net.sourceforge.joceanus.jgordianknot.api.keystore.GordianCertificate;
 import net.sourceforge.joceanus.jgordianknot.api.keystore.GordianKeyPairUsage;
 import net.sourceforge.joceanus.jgordianknot.api.keystore.GordianKeyPairUse;
 import net.sourceforge.joceanus.jgordianknot.api.keystore.GordianKeyStoreEntry.GordianKeyStoreKey;
@@ -123,8 +123,8 @@ public class GordianCoreKeyStoreManager
         final GordianCoreKeyPair myKeyPair = (GordianCoreKeyPair) myGenerator.generateKeyPair();
 
         /* Create the certificate */
-        final GordianCoreKeyPairCertificate myCert = new GordianCoreKeyPairCertificate(theFactory, myKeyPair, pSubject);
-        final List<GordianKeyPairCertificate> myChain = Collections.singletonList(myCert);
+        final GordianCoreCertificate myCert = new GordianCoreCertificate(theFactory, myKeyPair, pSubject);
+        final List<GordianCertificate> myChain = Collections.singletonList(myCert);
 
         /* Record into keyStore */
         theKeyStore.setKeyPair(pAlias, myKeyPair, pPassword, myChain);
@@ -146,11 +146,11 @@ public class GordianCoreKeyStoreManager
         final GordianCoreKeyPair myKeyPair = (GordianCoreKeyPair) myGenerator.generateKeyPair();
 
         /* Create the certificate */
-        final GordianCoreKeyPairCertificate myCert = new GordianCoreKeyPairCertificate(theFactory, (GordianCoreKeyStorePair) pSigner, myKeyPair, pSubject, pUsage);
+        final GordianCoreCertificate myCert = new GordianCoreCertificate(theFactory, (GordianCoreKeyStorePair) pSigner, myKeyPair, pSubject, pUsage);
 
         /* Create the new chain */
-        final List<GordianKeyPairCertificate> myParentChain = pSigner.getCertificateChain();
-        final List<GordianKeyPairCertificate> myChain = new ArrayList<>(myParentChain);
+        final List<GordianCertificate> myParentChain = pSigner.getCertificateChain();
+        final List<GordianCertificate> myChain = new ArrayList<>(myParentChain);
         myChain.add(0, myCert);
 
         /* Record into keyStore */
@@ -170,11 +170,11 @@ public class GordianCoreKeyStoreManager
         checkKeyPairUsage(myKeyPair.getKeyPairSpec(), pUsage);
 
         /* Create the certificate */
-        final GordianCoreKeyPairCertificate myCert = new GordianCoreKeyPairCertificate(theFactory, (GordianCoreKeyStorePair) pSigner, myKeyPair, mySubject, pUsage);
+        final GordianCoreCertificate myCert = new GordianCoreCertificate(theFactory, (GordianCoreKeyStorePair) pSigner, myKeyPair, mySubject, pUsage);
 
         /* Create the new chain */
-        final List<GordianKeyPairCertificate> myParentChain = pSigner.getCertificateChain();
-        final List<GordianKeyPairCertificate> myChain = new ArrayList<>(myParentChain);
+        final List<GordianCertificate> myParentChain = pSigner.getCertificateChain();
+        final List<GordianCertificate> myChain = new ArrayList<>(myParentChain);
         myChain.add(0, myCert);
 
         /* Record into keyStore */
@@ -191,16 +191,16 @@ public class GordianCoreKeyStoreManager
      * @return the certificate chain
      * @throws OceanusException on error
      */
-    List<GordianKeyPairCertificate> signKeyPair(final GordianKeyPair pKeyPair,
-                                                final X500Name pSubject,
-                                                final GordianKeyPairUsage pUsage,
-                                                final GordianKeyStorePair pSigner) throws OceanusException {
+    List<GordianCertificate> signKeyPair(final GordianKeyPair pKeyPair,
+                                         final X500Name pSubject,
+                                         final GordianKeyPairUsage pUsage,
+                                         final GordianKeyStorePair pSigner) throws OceanusException {
         /* Create the certificate */
-        final GordianCoreKeyPairCertificate myCert = new GordianCoreKeyPairCertificate(theFactory, (GordianCoreKeyStorePair) pSigner, pKeyPair, pSubject, pUsage);
+        final GordianCoreCertificate myCert = new GordianCoreCertificate(theFactory, pSigner, pKeyPair, pSubject, pUsage);
 
         /* Create the new chain */
-        final List<GordianKeyPairCertificate> myParentChain = pSigner.getCertificateChain();
-        final List<GordianKeyPairCertificate> myChain = new ArrayList<>(myParentChain);
+        final List<GordianCertificate> myParentChain = pSigner.getCertificateChain();
+        final List<GordianCertificate> myChain = new ArrayList<>(myParentChain);
         myChain.add(0, myCert);
         return myChain;
     }
@@ -223,7 +223,7 @@ public class GordianCoreKeyStoreManager
         /* Validate keyPairSpec against requirements */
         final boolean bFail = (needsSign && GordianSignatureSpec.defaultForKey(pKeyPairSpec) == null)
                 || (needsEnc && GordianEncryptorSpec.defaultForKey(pKeyPairSpec) == null)
-                || (needsAgree && GordianKeyPairAgreementSpec.defaultForKey(pKeyPairSpec) == null);
+                || (needsAgree && GordianAgreementSpec.defaultForKey(pKeyPairSpec) == null);
 
         /* Handle failure */
         if (bFail) {
