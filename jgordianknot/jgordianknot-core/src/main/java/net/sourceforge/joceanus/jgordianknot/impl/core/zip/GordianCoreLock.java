@@ -346,12 +346,11 @@ public class GordianCoreLock
      * @return the agreementSpec
      */
     private static GordianAgreementSpec getAgreementSpec(final GordianKeyPairSpec pKeySpec) {
-        final GordianKeyPairType myKeyType = pKeySpec.getKeyPairType();
         final GordianEdwardsElliptic myEdwards = pKeySpec.getEdwardsElliptic();
         final GordianKDFType myKDFType = GordianEdwardsElliptic.CURVE25519.equals(myEdwards)
                     ? GordianKDFType.SHA256KDF
                     : GordianKDFType.SHA512KDF;
-        return new GordianAgreementSpec(myKeyType, GordianAgreementType.ANON, myKDFType);
+        return new GordianAgreementSpec(pKeySpec, GordianAgreementType.ANON, myKDFType);
     }
 
     @Override

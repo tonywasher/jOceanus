@@ -22,7 +22,6 @@ import java.util.stream.Collectors;
 
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPair;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPairSpec;
-import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPairType;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
@@ -50,18 +49,6 @@ public interface GordianAgreementFactory {
      * @return the predicate
      */
     Predicate<GordianAgreementSpec> supportedAgreements();
-
-    /**
-     * Obtain a list of supported agreementSpecs.
-     * @param pKeyType the keyType
-     * @return the list of supported agreementSpecs.
-     */
-    default List<GordianAgreementSpec> listAllSupportedAgreements(final GordianKeyPairType pKeyType) {
-        return GordianAgreementSpec.listPossibleAgreements(pKeyType)
-                .stream()
-                .filter(supportedAgreements())
-                .collect(Collectors.toList());
-    }
 
     /**
      * Check AgreementSpec and KeyPair combination.
@@ -98,8 +85,9 @@ public interface GordianAgreementFactory {
      * @return the list of supported agreementSpecs.
      */
     default List<GordianAgreementSpec> listAllSupportedAgreements(final GordianKeyPairSpec pKeyPairSpec) {
-        return GordianAgreementSpec.listPossibleAgreements(pKeyPairSpec.getKeyPairType())
+        return GordianAgreementSpec.listPossibleAgreements(pKeyPairSpec)
                 .stream()
+                .filter(supportedAgreements())
                 .filter(s -> validAgreementSpecForKeyPairSpec(pKeyPairSpec, s))
                 .collect(Collectors.toList());
     }

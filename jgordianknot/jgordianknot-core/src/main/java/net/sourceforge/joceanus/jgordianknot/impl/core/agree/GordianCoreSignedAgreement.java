@@ -87,15 +87,10 @@ public abstract class GordianCoreSignedAgreement
     }
 
     @Override
-    public byte[] createClientHello(final GordianKeyPairSpec pKeySpec) throws OceanusException {
-        /* Check that the keySpec matches the agreement */
-        if (getAgreementSpec().getKeyPairType() != pKeySpec.getKeyPairType()) {
-            throw new GordianDataException("Incorrect KeySpec type");
-        }
-
+    public byte[] createClientHello() throws OceanusException {
         /* Create ephemeral key */
         final GordianKeyPairFactory myFactory = getFactory().getKeyPairFactory();
-        final GordianKeyPairGenerator myGenerator = myFactory.getKeyPairGenerator(pKeySpec);
+        final GordianKeyPairGenerator myGenerator = myFactory.getKeyPairGenerator(getAgreementSpec().getKeyPairSpec());
         theClientEphemeral = myGenerator.generateKeyPair();
         final X509EncodedKeySpec myKeySpec = myGenerator.getX509Encoding(theClientEphemeral);
 

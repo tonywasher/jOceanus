@@ -114,7 +114,7 @@ public abstract class GordianCoreAgreementFactory
         }
 
         /* Check agreement matches keySpec */
-        if (pAgreementSpec.getKeyPairType() != pKeyPairSpec.getKeyPairType()) {
+        if (!pAgreementSpec.getKeyPairSpec().equals(pKeyPairSpec)) {
             return false;
         }
 
@@ -140,10 +140,10 @@ public abstract class GordianCoreAgreementFactory
             while (myIterator.hasNext()) {
                 final GordianKeyPairSpec mySpec = myIterator.next();
                 final GordianAgreementSpec mySubAgree
-                        = new GordianAgreementSpec(mySpec.getKeyPairType(),
-                                                          pAgreementSpec.getAgreementType(),
-                                                          pAgreementSpec.getKDFType(),
-                                                          pAgreementSpec.withConfirm());
+                        = new GordianAgreementSpec(mySpec,
+                                                   pAgreementSpec.getAgreementType(),
+                                                   pAgreementSpec.getKDFType(),
+                                                   pAgreementSpec.withConfirm());
                 if (!validAgreementSpecForKeyPairSpec(mySpec, mySubAgree)) {
                     return false;
                 }
@@ -160,7 +160,7 @@ public abstract class GordianCoreAgreementFactory
      * @return the Identifier
      */
     public AlgorithmIdentifier getIdentifierForSpec(final GordianAgreementSpec pSpec) {
-        return getAlgorithmIds().getIdentifierForSpec(pSpec);
+        return getAlgorithmIds().determineIdentifier(pSpec);
     }
 
     /**
@@ -169,7 +169,7 @@ public abstract class GordianCoreAgreementFactory
      * @return the agreementSpec (or null if not found)
      */
     public GordianAgreementSpec getSpecForIdentifier(final AlgorithmIdentifier pIdentifier) {
-        return getAlgorithmIds().getSpecForIdentifier(pIdentifier);
+        return getAlgorithmIds().determineAgreementSpec(pIdentifier);
     }
 
     /**
@@ -178,7 +178,7 @@ public abstract class GordianCoreAgreementFactory
      */
     private GordianAgreementAlgId getAlgorithmIds() {
         if (theAlgIds == null) {
-            theAlgIds = new GordianAgreementAlgId(theFactory);
+            theAlgIds = new GordianAgreementAlgId();
         }
         return theAlgIds;
     }

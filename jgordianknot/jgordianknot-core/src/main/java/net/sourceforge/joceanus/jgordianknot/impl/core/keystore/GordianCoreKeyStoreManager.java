@@ -146,7 +146,7 @@ public class GordianCoreKeyStoreManager
         final GordianCoreKeyPair myKeyPair = (GordianCoreKeyPair) myGenerator.generateKeyPair();
 
         /* Create the certificate */
-        final GordianCoreCertificate myCert = new GordianCoreCertificate(theFactory, (GordianCoreKeyStorePair) pSigner, myKeyPair, pSubject, pUsage);
+        final GordianCoreCertificate myCert = new GordianCoreCertificate(theFactory, pSigner, myKeyPair, pSubject, pUsage);
 
         /* Create the new chain */
         final List<GordianCertificate> myParentChain = pSigner.getCertificateChain();
@@ -170,7 +170,7 @@ public class GordianCoreKeyStoreManager
         checkKeyPairUsage(myKeyPair.getKeyPairSpec(), pUsage);
 
         /* Create the certificate */
-        final GordianCoreCertificate myCert = new GordianCoreCertificate(theFactory, (GordianCoreKeyStorePair) pSigner, myKeyPair, mySubject, pUsage);
+        final GordianCoreCertificate myCert = new GordianCoreCertificate(theFactory, pSigner, myKeyPair, mySubject, pUsage);
 
         /* Create the new chain */
         final List<GordianCertificate> myParentChain = pSigner.getCertificateChain();

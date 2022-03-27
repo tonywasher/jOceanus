@@ -333,7 +333,7 @@ public final class JcaAgreement {
          * @throws OceanusException on error
          */
         private void establishAgreement(final GordianKeyPair pKeyPair) throws OceanusException {
-            if (getAgreementSpec().getKeyPairType() == GordianKeyPairType.XDH) {
+            if (getAgreementSpec().getKeyPairSpec().getKeyPairType().equals(GordianKeyPairType.XDH)) {
                 final String myBase = pKeyPair.getKeyPairSpec().toString();
                 final String myName = JcaAgreementFactory.getFullAgreementName(myBase, getAgreementSpec());
                 theAgreement = JcaAgreementFactory.getJavaKeyAgreement(myName, false);
@@ -450,7 +450,7 @@ public final class JcaAgreement {
          * @throws OceanusException on error
          */
         private void establishAgreement(final GordianKeyPair pKeyPair) throws OceanusException {
-            if (getAgreementSpec().getKeyPairType() == GordianKeyPairType.XDH) {
+            if (getAgreementSpec().getKeyPairSpec().getKeyPairType().equals(GordianKeyPairType.XDH)) {
                 final String myBase = pKeyPair.getKeyPairSpec().toString();
                 final String myName = JcaAgreementFactory.getFullAgreementName(myBase, getAgreementSpec());
                 theAgreement = JcaAgreementFactory.getJavaKeyAgreement(myName, false);
@@ -555,7 +555,7 @@ public final class JcaAgreement {
          * @throws OceanusException on error
          */
         private void establishAgreement(final GordianKeyPair pKeyPair) throws OceanusException {
-            if (getAgreementSpec().getKeyPairType() == GordianKeyPairType.XDH) {
+            if (getAgreementSpec().getKeyPairSpec().getKeyPairType().equals(GordianKeyPairType.XDH)) {
                 final String myBase = pKeyPair.getKeyPairSpec().toString();
                 final String myName = JcaAgreementFactory.getFullAgreementName(myBase, getAgreementSpec());
                 theAgreement = JcaAgreementFactory.getJavaKeyAgreement(myName, false);
@@ -669,7 +669,7 @@ public final class JcaAgreement {
          * @throws OceanusException on error
          */
         private void establishAgreement(final GordianKeyPair pKeyPair) throws OceanusException {
-            if (getAgreementSpec().getKeyPairType() == GordianKeyPairType.XDH) {
+            if (getAgreementSpec().getKeyPairSpec().getKeyPairType().equals(GordianKeyPairType.XDH)) {
                 final String myBase = pKeyPair.getKeyPairSpec().toString();
                 final String myName = JcaAgreementFactory.getFullAgreementName(myBase + "U", getAgreementSpec());
                 theAgreement = JcaAgreementFactory.getJavaKeyAgreement(myName, false);

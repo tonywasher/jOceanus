@@ -17,7 +17,6 @@
 package net.sourceforge.joceanus.jgordianknot.api.agree;
 
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPair;
-import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPairSpec;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
@@ -27,11 +26,10 @@ public interface GordianSignedAgreement
         extends GordianAgreement {
     /**
      * Create the clientHello message.
-     * @param pKeySpec the keySpec for the ephemeral keys
      * @return the clientHello message
      * @throws OceanusException on error
      */
-    byte[] createClientHello(GordianKeyPairSpec pKeySpec) throws OceanusException;
+    byte[] createClientHello() throws OceanusException;
 
     /**
      * Accept the clientHello.

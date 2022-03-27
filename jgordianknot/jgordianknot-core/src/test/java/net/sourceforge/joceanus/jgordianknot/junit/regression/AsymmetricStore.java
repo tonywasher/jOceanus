@@ -765,7 +765,7 @@ class AsymmetricStore {
         /* Access the list of possible agreements */
         final GordianKeyPairFactory myFactory = pKeySpec.theFactory;
         final GordianAgreementFactory myAgreeFactory = myFactory.getAgreementFactory();
-        final List<GordianAgreementSpec> myAgreeSpecs = myAgreeFactory.listAllSupportedAgreements(pKeySpec.theKeySpec.getKeyPairType());
+        final List<GordianAgreementSpec> myAgreeSpecs = myAgreeFactory.listAllSupportedAgreements(pKeySpec.theKeySpec);
 
         /* Skip key if there are no possible agreements */
         if (myAgreeSpecs.isEmpty()) {
@@ -850,16 +850,16 @@ class AsymmetricStore {
      */
     private static List<GordianAgreementSpec> compositeAgreementSpecProvider(final FactoryKeySpec pKeySpec) {
         final List<GordianAgreementSpec> mySpecs = new ArrayList<>();
-        mySpecs.addAll(GordianAgreementSpec.listAllKDFs(GordianKeyPairType.COMPOSITE, GordianAgreementType.KEM));
-        mySpecs.addAll(GordianAgreementSpec.listAllKDFs(GordianKeyPairType.COMPOSITE, GordianAgreementType.ANON));
-        mySpecs.addAll(GordianAgreementSpec.listAllKDFs(GordianKeyPairType.COMPOSITE, GordianAgreementType.BASIC));
-        mySpecs.addAll(GordianAgreementSpec.listAllKDFs(GordianKeyPairType.COMPOSITE, GordianAgreementType.SIGNED));
-        mySpecs.addAll(GordianAgreementSpec.listAllKDFs(GordianKeyPairType.COMPOSITE, GordianAgreementType.UNIFIED));
-        mySpecs.addAll(GordianAgreementSpec.listAllKDFs(GordianKeyPairType.COMPOSITE, GordianAgreementType.UNIFIED, Boolean.TRUE));
-        mySpecs.addAll(GordianAgreementSpec.listAllKDFs(GordianKeyPairType.COMPOSITE, GordianAgreementType.MQV));
-        mySpecs.addAll(GordianAgreementSpec.listAllKDFs(GordianKeyPairType.COMPOSITE, GordianAgreementType.MQV, Boolean.TRUE));
-        mySpecs.addAll(GordianAgreementSpec.listAllKDFs(GordianKeyPairType.COMPOSITE, GordianAgreementType.SM2));
-        mySpecs.addAll(GordianAgreementSpec.listAllKDFs(GordianKeyPairType.COMPOSITE, GordianAgreementType.SM2, Boolean.TRUE));
+        mySpecs.addAll(GordianAgreementSpec.listAllKDFs(pKeySpec.getKeySpec(), GordianAgreementType.KEM));
+        mySpecs.addAll(GordianAgreementSpec.listAllKDFs(pKeySpec.getKeySpec(), GordianAgreementType.ANON));
+        mySpecs.addAll(GordianAgreementSpec.listAllKDFs(pKeySpec.getKeySpec(), GordianAgreementType.BASIC));
+        mySpecs.addAll(GordianAgreementSpec.listAllKDFs(pKeySpec.getKeySpec(), GordianAgreementType.SIGNED));
+        mySpecs.addAll(GordianAgreementSpec.listAllKDFs(pKeySpec.getKeySpec(), GordianAgreementType.UNIFIED));
+        mySpecs.addAll(GordianAgreementSpec.listAllKDFs(pKeySpec.getKeySpec(), GordianAgreementType.UNIFIED, Boolean.TRUE));
+        mySpecs.addAll(GordianAgreementSpec.listAllKDFs(pKeySpec.getKeySpec(), GordianAgreementType.MQV));
+        mySpecs.addAll(GordianAgreementSpec.listAllKDFs(pKeySpec.getKeySpec(), GordianAgreementType.MQV, Boolean.TRUE));
+        mySpecs.addAll(GordianAgreementSpec.listAllKDFs(pKeySpec.getKeySpec(), GordianAgreementType.SM2));
+        mySpecs.addAll(GordianAgreementSpec.listAllKDFs(pKeySpec.getKeySpec(), GordianAgreementType.SM2, Boolean.TRUE));
         mySpecs.removeIf(s -> s == null || !s.isValid());
         return mySpecs;
     }

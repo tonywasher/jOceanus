@@ -191,20 +191,17 @@ public final class GordianKeyPairValidity {
                 return mySpec.getMcElieceKeySpec().isCCA2()
                         ? GordianEncryptorSpec.mcEliece(GordianMcElieceEncryptionType.FUJISAKI)
                         : GordianEncryptorSpec.mcEliece(GordianMcElieceEncryptionType.STANDARD);
+            case NEWHOPE:
             case DH:
-                return GordianAgreementSpec.dhAnon(GordianKDFType.SHA256KDF);
+                return GordianAgreementSpec.anon(mySpec, GordianKDFType.SHA256KDF);
             case XDH:
                 return mySpec.getEdwardsElliptic().is25519()
-                        ? GordianAgreementSpec.xdhAnon(GordianKDFType.SHA256KDF)
-                        : GordianAgreementSpec.xdhAnon(GordianKDFType.SHA512KDF);
-            case NEWHOPE:
-                return GordianAgreementSpec.newHope(GordianKDFType.SHA256KDF);
+                        ? GordianAgreementSpec.anon(mySpec, GordianKDFType.SHA256KDF)
+                        : GordianAgreementSpec.anon(mySpec, GordianKDFType.SHA512KDF);
             case CMCE:
-                return GordianAgreementSpec.cmce();
             case FRODO:
-                return GordianAgreementSpec.frodo();
             case SABER:
-                return GordianAgreementSpec.saber();
+                return GordianAgreementSpec.kem(mySpec, GordianKDFType.NONE);
             default:
                 return null;
         }

@@ -83,7 +83,7 @@ public class JcaAgreementFactory
      * @throws OceanusException on error
      */
     private GordianAgreement getJcaAgreement(final GordianAgreementSpec pAgreementSpec) throws OceanusException {
-        switch (pAgreementSpec.getKeyPairType()) {
+        switch (pAgreementSpec.getKeyPairSpec().getKeyPairType()) {
             case CMCE:
             case FRODO:
             case SABER:
@@ -100,7 +100,7 @@ public class JcaAgreementFactory
             case XDH:
                 return getXDHAgreement(pAgreementSpec);
             default:
-                throw new GordianDataException(GordianCoreFactory.getInvalidText(pAgreementSpec.getKeyPairType()));
+                throw new GordianDataException(GordianCoreFactory.getInvalidText(pAgreementSpec.getKeyPairSpec()));
         }
     }
 
@@ -111,7 +111,7 @@ public class JcaAgreementFactory
      * @throws OceanusException on error
      */
     private GordianAgreement getPostQuantumAgreement(final GordianAgreementSpec pAgreementSpec) throws OceanusException {
-        return new JcaPostQuantumAgreement(getFactory(), pAgreementSpec, getJavaKeyGenerator(pAgreementSpec.getKeyPairType()));
+        return new JcaPostQuantumAgreement(getFactory(), pAgreementSpec, getJavaKeyGenerator(pAgreementSpec.getKeyPairSpec().getKeyPairType()));
     }
 
     /**
@@ -272,7 +272,7 @@ public class JcaAgreementFactory
         }
 
         /* Switch on KeyType */
-        switch (pSpec.getKeyPairType()) {
+        switch (pSpec.getKeyPairSpec().getKeyPairType()) {
             case NEWHOPE:
             case CMCE:
             case FRODO:

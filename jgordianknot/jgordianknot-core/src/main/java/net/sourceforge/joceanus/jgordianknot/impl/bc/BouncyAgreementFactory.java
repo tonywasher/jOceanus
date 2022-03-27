@@ -81,7 +81,7 @@ public class BouncyAgreementFactory
      * @throws OceanusException on error
      */
     private GordianAgreement getBCAgreement(final GordianAgreementSpec pSpec) throws OceanusException {
-        switch (pSpec.getKeyPairType()) {
+        switch (pSpec.getKeyPairSpec().getKeyPairType()) {
             case RSA:
                 return new BouncyRSAEncapsulationAgreement(getFactory(), pSpec);
             case EC:

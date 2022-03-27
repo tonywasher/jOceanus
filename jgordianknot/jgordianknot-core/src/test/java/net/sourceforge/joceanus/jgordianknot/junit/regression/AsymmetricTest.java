@@ -479,7 +479,7 @@ public class AsymmetricTest {
             final GordianKeyPair mySignPair = getFactorySigner(pAgreement);
 
             /* Check the agreement */
-            final byte[] myClientHello = ((GordianSignedAgreement) mySender).createClientHello(myPair.getKeyPairSpec());
+            final byte[] myClientHello = ((GordianSignedAgreement) mySender).createClientHello();
             final byte[] myServerHello
                     = ((GordianSignedAgreement) myResponder).acceptClientHello(mySignPair, myClientHello);
             ((GordianSignedAgreement) mySender).acceptServerHello(mySignPair, myServerHello);
@@ -540,7 +540,7 @@ public class AsymmetricTest {
             final GordianKeyPair myPartnerSignPair = getPartnerSigner(pAgreement);
 
             /* Check the agreement */
-            final byte[] myClientHello = ((GordianSignedAgreement) mySender).createClientHello(myPair.getKeyPairSpec());
+            final byte[] myClientHello = ((GordianSignedAgreement) mySender).createClientHello();
             final byte[] myServerHello
                     = ((GordianSignedAgreement) myResponder).acceptClientHello(myPartnerSignPair, myClientHello);
             ((GordianSignedAgreement) mySender).acceptServerHello(mySignPair, myServerHello);

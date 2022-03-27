@@ -68,6 +68,22 @@ public class GordianLMSKeySpec {
     }
 
     /**
+     * Obtain the sigType.
+     * @return the sigType
+     */
+    public GordianLMSSigType getSigType() {
+        return theSigType;
+    }
+
+    /**
+     * Obtain the otsType.
+     * @return the otsType
+     */
+    public GordianLMSOtsType getOtsType() {
+        return theOtsType;
+    }
+
+    /**
      * Obtain the parameters.
      * @return the parameters
      */
