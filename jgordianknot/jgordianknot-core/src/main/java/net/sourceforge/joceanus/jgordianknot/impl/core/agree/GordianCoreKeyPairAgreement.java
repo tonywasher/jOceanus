@@ -55,6 +55,11 @@ public class GordianCoreKeyPairAgreement
     private DerivationFunction theKDF;
 
     /**
+     * The clientId.
+     */
+    private Integer theClientId;
+
+    /**
      * Constructor.
      * @param pFactory the factory
      * @param pSpec the agreementSpec
@@ -209,12 +214,17 @@ public class GordianCoreKeyPairAgreement
         /* Must be in clean state */
         checkStatus(GordianAgreementStatus.CLEAN);
 
-        /* Create the clientHello */
+        /* Access the algorithm details */
         final GordianCoreAgreementFactory myFactory = getAgreementFactory();
         final GordianAgreementSpec mySpec = getAgreementSpec();
         final AlgorithmIdentifier myAlgId = myFactory.getIdentifierForSpec(mySpec);
         final AlgorithmIdentifier myResId = getIdentifierForResult();
-        return GordianAgreementMessageASN1.newClientHello(0)
+
+        /* Determine the clientId */
+        theClientId = mySpec.getAgreementType().isAnonymous() ? null : myFactory.getNextId();
+
+        /* Create the clientHello */
+        return GordianAgreementMessageASN1.newClientHello(theClientId)
                 .setAgreementId(myAlgId)
                 .setResultId(myResId)
                 .setEncapsulated(pEncapsulated)
@@ -240,6 +250,7 @@ public class GordianCoreKeyPairAgreement
         final AlgorithmIdentifier myAlgId = myClientHello.getAgreementId();
         final AlgorithmIdentifier myResId = myClientHello.getResultId();
         final byte[] myInitVector = myClientHello.getInitVector();
+        theClientId = myClientHello.getClientId();
 
         /* Check agreementSpec */
         final GordianCoreAgreementFactory myFactory = getAgreementFactory();
@@ -276,11 +287,16 @@ public class GordianCoreKeyPairAgreement
      */
     protected GordianAgreementMessageASN1 buildServerHello(final X509EncodedKeySpec pEphemeral,
                                                            final byte[] pConfirmation) throws OceanusException {
-        /* Create the serverHello */
+        /* Access message parts */
         final GordianCoreAgreementFactory myFactory = getAgreementFactory();
         final GordianAgreementSpec mySpec = getAgreementSpec();
         final AlgorithmIdentifier myAlgId = myFactory.getIdentifierForSpec(mySpec);
-        final GordianAgreementMessageASN1 myServerHello = GordianAgreementMessageASN1.newServerHello(0)
+
+        /* Determine the serverId */
+        final Integer myServerId = Boolean.TRUE.equals(mySpec.withConfirm()) ?  myFactory.getNextId() : null;
+
+        /* Create the serverHello */
+        final GordianAgreementMessageASN1 myServerHello = GordianAgreementMessageASN1.newServerHello(theClientId, myServerId)
                                                                   .setAgreementId(myAlgId)
                                                                   .setInitVector(getServerIV())
                                                                   .setEphemeral(pEphemeral)
@@ -310,7 +326,7 @@ public class GordianCoreKeyPairAgreement
         final GordianCoreAgreementFactory myFactory = getAgreementFactory();
         final GordianAgreementSpec mySpec = getAgreementSpec();
         final AlgorithmIdentifier myAlgId = myFactory.getIdentifierForSpec(mySpec);
-        return GordianAgreementMessageASN1.newServerHello(0)
+        return GordianAgreementMessageASN1.newServerHello(theClientId, null)
                 .setAgreementId(myAlgId)
                 .setInitVector(getServerIV())
                 .setEphemeral(pEphemeral)
@@ -334,6 +350,11 @@ public class GordianCoreKeyPairAgreement
         /* Access message parts */
         final AlgorithmIdentifier myAlgId = myServerHello.getAgreementId();
         final byte[] myInitVector = myServerHello.getInitVector();
+
+        /* Check clientId */
+        if (!Objects.equals(theClientId, myServerHello.getClientId())) {
+            throw new GordianDataException("Mismatch on clientId");
+        }
 
         /* Check agreementSpec */
         final GordianCoreAgreementFactory myFactory = getAgreementFactory();

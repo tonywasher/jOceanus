@@ -237,28 +237,11 @@ public class GordianAgreementMessageASN1
 
     /**
      * Create a client hello.
-     * @return the clientHello
-     */
-    public static GordianAgreementMessageASN1 newClientHello()  {
-        return newClientHello(null);
-    }
-
-    /**
-     * Create a client hello.
      * @param pClientId the clientId
      * @return the clientHello
      */
     public static GordianAgreementMessageASN1 newClientHello(final Integer pClientId)  {
         return new GordianAgreementMessageASN1(GordianMessageType.CLIENTHELLO, pClientId, null);
-    }
-
-    /**
-     * Create a server hello.
-     * @param pClientId the clientId
-     * @return the serverHello
-     */
-    public static GordianAgreementMessageASN1 newServerHello(final Integer pClientId)  {
-        return newServerHello(pClientId, null);
     }
 
     /**

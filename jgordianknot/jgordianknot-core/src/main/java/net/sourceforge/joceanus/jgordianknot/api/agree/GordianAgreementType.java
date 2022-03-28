@@ -58,6 +58,28 @@ public enum GordianAgreementType {
     UNIFIED;
 
     /**
+     * Is this an anonymous agreement?
+     * @return true/false
+     */
+    public boolean isAnonymous() {
+        switch (this) {
+            case KEM:
+            case ANON:
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    /**
+     * Is this a signed agreement?
+     * @return true/false
+     */
+    public boolean isSigned() {
+        return this == SIGNED;
+    }
+
+    /**
      * Is this Agreement supported for this KeyPairType?
      * @param pKeyPairType the keyPair
      * @return true/false

@@ -77,6 +77,11 @@ public abstract class GordianCoreEphemeralAgreement
     private byte[] theServerConfirmation;
 
     /**
+     * The serverId.
+     */
+    private Integer theServerId;
+
+    /**
      * Constructor.
      * @param pFactory the factory
      * @param pSpec the agreementSpec
@@ -240,7 +245,9 @@ public abstract class GordianCoreEphemeralAgreement
         /* Add server ephemeral and any server confirmation tag to the serverHello */
         final GordianKeyPairFactory myFactory = getFactory().getKeyPairFactory();
         final GordianKeyPairGenerator myGenerator = myFactory.getKeyPairGenerator(theServerEphemeral.getKeyPairSpec());
-        return buildServerHello(myGenerator.getX509Encoding(theServerEphemeral), theServerConfirmation);
+        final GordianAgreementMessageASN1 myHello = buildServerHello(myGenerator.getX509Encoding(theServerEphemeral), theServerConfirmation);
+        theServerId = myHello.getServerId();
+        return myHello;
     }
 
     /**
@@ -260,6 +267,7 @@ public abstract class GordianCoreEphemeralAgreement
         /* Obtain details from the serverHello */
         final GordianAgreementMessageASN1 myHello = parseServerHello(pServerHello);
         theServerConfirmation = myHello.getConfirmation();
+        theServerId = myHello.getServerId();
         final X509EncodedKeySpec myKeySpec = myHello.getEphemeral();
 
         /* Derive partner ephemeral key */
@@ -282,7 +290,7 @@ public abstract class GordianCoreEphemeralAgreement
         /* Create the response */
         final GordianCoreAgreementFactory myFactory = getAgreementFactory();
         final AlgorithmIdentifier myAlgId = myFactory.getIdentifierForSpec(getAgreementSpec());
-        return GordianAgreementMessageASN1.newClientConfirm(0)
+        return GordianAgreementMessageASN1.newClientConfirm(theServerId)
                 .setAgreementId(myAlgId)
                 .setConfirmation(theClientConfirmation);
     }
@@ -299,6 +307,11 @@ public abstract class GordianCoreEphemeralAgreement
         /* Access message parts */
         final AlgorithmIdentifier myAlgId = myClientConfirm.getAgreementId();
         final byte[] myConfirm = myClientConfirm.getConfirmation();
+
+        /* Check serverId */
+        if (!Objects.equals(theServerId, myClientConfirm.getServerId())) {
+            throw new GordianDataException("Mismatch on serverId");
+        }
 
         /* Check agreementSpec */
         final GordianCoreAgreementFactory myFactory = getAgreementFactory();

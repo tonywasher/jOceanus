@@ -17,6 +17,7 @@
 package net.sourceforge.joceanus.jgordianknot.impl.core.agree;
 
 import java.util.Iterator;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Predicate;
 
 import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
@@ -43,6 +44,11 @@ public abstract class GordianCoreAgreementFactory
     private final GordianCoreFactory theFactory;
 
     /**
+     * The id control.
+     */
+    private final AtomicInteger theNextId;
+
+    /**
      * The algorithm Ids.
      */
     private GordianAgreementAlgId theAlgIds;
@@ -54,6 +60,7 @@ public abstract class GordianCoreAgreementFactory
      */
     protected GordianCoreAgreementFactory(final GordianCoreFactory pFactory) {
         theFactory = pFactory;
+        theNextId = new AtomicInteger();
     }
 
     /**
@@ -89,6 +96,14 @@ public abstract class GordianCoreAgreementFactory
         if (!validAgreementSpec(pAgreementSpec)) {
             throw new GordianDataException(GordianCoreFactory.getInvalidText(pAgreementSpec));
         }
+    }
+
+    /**
+     * Obtain the nextId.
+     * @return the nextId
+     */
+    Integer getNextId() {
+        return theNextId.incrementAndGet();
     }
 
     /**
