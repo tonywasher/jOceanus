@@ -46,7 +46,7 @@ import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPair;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPairSpec;
 import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyKeyPair.BouncyPrivateKey;
 import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyKeyPair.BouncyPublicKey;
-import net.sourceforge.joceanus.jgordianknot.impl.core.agree.GordianAgreementClientHelloASN1;
+import net.sourceforge.joceanus.jgordianknot.impl.core.agree.GordianAgreementMessageASN1;
 import net.sourceforge.joceanus.jgordianknot.impl.core.agree.GordianCoreAnonymousAgreement;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianCryptoException;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianIOException;
@@ -311,7 +311,7 @@ public final class BouncyCMCEKeyPair {
             final CMCEKEMExtractor myExtractor = new CMCEKEMExtractor(myPrivate.getPrivateKey());
 
             /* Parse clientHello message and store secret */
-            final GordianAgreementClientHelloASN1 myHello = parseClientHello(pClientHello);
+            final GordianAgreementMessageASN1 myHello = parseClientHello(pClientHello);
             final byte[] myMessage = myHello.getEncapsulated();
             storeSecret(myExtractor.extractSecret(myMessage));
         }

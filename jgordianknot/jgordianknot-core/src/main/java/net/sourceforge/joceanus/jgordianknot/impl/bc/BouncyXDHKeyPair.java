@@ -52,7 +52,7 @@ import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPairGenerator
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPairSpec;
 import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyKeyPair.BouncyPrivateKey;
 import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyKeyPair.BouncyPublicKey;
-import net.sourceforge.joceanus.jgordianknot.impl.core.agree.GordianAgreementClientHelloASN1;
+import net.sourceforge.joceanus.jgordianknot.impl.core.agree.GordianAgreementMessageASN1;
 import net.sourceforge.joceanus.jgordianknot.impl.core.agree.GordianCoreAnonymousAgreement;
 import net.sourceforge.joceanus.jgordianknot.impl.core.agree.GordianCoreBasicAgreement;
 import net.sourceforge.joceanus.jgordianknot.impl.core.agree.GordianCoreEphemeralAgreement;
@@ -511,7 +511,7 @@ public final class BouncyXDHKeyPair {
             theAgreement = establishAgreement(pServer);
 
             /* Parse request */
-            final GordianAgreementClientHelloASN1 myHello = parseClientHello(pClientHello);
+            final GordianAgreementMessageASN1 myHello = parseClientHello(pClientHello);
             final BouncyPrivateKey<?> myPrivate = (BouncyPrivateKey<?>) getPrivateKey(pServer);
             final X509EncodedKeySpec myKeySpec = myHello.getEphemeral();
             final GordianKeyPairFactory myFactory = getFactory().getKeyPairFactory();
@@ -578,7 +578,7 @@ public final class BouncyXDHKeyPair {
             storeSecret(mySecret);
 
             /* Return the serverHello */
-            return buildServerHello();
+            return buildServerHello().getEncodedBytes();
         }
 
         @Override
@@ -727,7 +727,7 @@ public final class BouncyXDHKeyPair {
             storeSecret(mySecret);
 
             /* Return the serverHello */
-            return buildServerHello();
+            return buildServerHello().getEncodedBytes();
         }
 
         @Override
@@ -761,7 +761,8 @@ public final class BouncyXDHKeyPair {
             storeSecret(mySecret);
 
             /* Return confirmation if needed */
-            return buildClientConfirm();
+            final GordianAgreementMessageASN1 myConfirm = buildClientConfirm();
+            return myConfirm == null ? null : myConfirm.getEncodedBytes();
         }
     }
 }

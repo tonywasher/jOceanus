@@ -26,15 +26,17 @@ import java.util.Map;
 import org.bouncycastle.asn1.ASN1EncodableVector;
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
 import org.bouncycastle.asn1.ASN1Sequence;
-import org.bouncycastle.asn1.DERNull;
 import org.bouncycastle.asn1.DERSequence;
 import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
 
-import net.sourceforge.joceanus.jgordianknot.api.agree.GordianAgreementFactory;
 import net.sourceforge.joceanus.jgordianknot.api.agree.GordianAgreementSpec;
 import net.sourceforge.joceanus.jgordianknot.api.agree.GordianAgreementType;
 import net.sourceforge.joceanus.jgordianknot.api.agree.GordianKDFType;
-import net.sourceforge.joceanus.jgordianknot.api.factory.GordianKeyPairFactory;
+import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianCipherSpec;
+import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianStreamCipherSpec;
+import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianSymCipherSpec;
+import net.sourceforge.joceanus.jgordianknot.api.factory.GordianFactory;
+import net.sourceforge.joceanus.jgordianknot.api.factory.GordianFactoryType;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianDSAElliptic;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianDSTU4145Elliptic;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianGOSTElliptic;
@@ -45,8 +47,13 @@ import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianLMSKeySpec.Gordi
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianMcElieceKeySpec;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianSM2Elliptic;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianXMSSKeySpec;
+import net.sourceforge.joceanus.jgordianknot.api.keyset.GordianKeySetSpec;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianASN1Util;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianCoreFactory;
+import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianDataException;
+import net.sourceforge.joceanus.jgordianknot.impl.core.cipher.GordianCoreCipherFactory;
+import net.sourceforge.joceanus.jgordianknot.impl.core.keyset.GordianKeySetSpecASN1;
+import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
  * Mappings from EncodedId to AgreementSpec.
@@ -78,6 +85,11 @@ public class GordianAgreementAlgId {
     private static final GordianKeyPairSpec NULLKEYPAIRSPEC = GordianKeyPairSpec.rainbow();
 
     /**
+     * The factory.
+     */
+    private final GordianFactory theFactory;
+
+    /**
      * Map of AgreementSpec to ObjectIdentifier.
      */
     private final Map<GordianAgreementSpec, ASN1ObjectIdentifier> theAgree2IdMap;
@@ -99,8 +111,12 @@ public class GordianAgreementAlgId {
 
     /**
      * Constructor.
+     * @param pFactory the factory
      */
-    GordianAgreementAlgId() {
+    GordianAgreementAlgId(final GordianFactory pFactory) {
+        /* Store parameters */
+        theFactory = pFactory;
+
         /* Create the maps */
         theId2AgreeMap = new HashMap<>();
         theId2KeyPairMap = new HashMap<>();
@@ -334,5 +350,70 @@ public class GordianAgreementAlgId {
                            final ASN1ObjectIdentifier pIdentifier) {
         theKeyPair2IdMap.put(pSpec, pIdentifier);
         theId2KeyPairMap.put(pIdentifier, pSpec);
+    }
+    /**
+     * Obtain identifier for result.
+     * @param pResultType the result type
+     * @return the identifier
+     * @throws OceanusException on error
+     */
+    protected AlgorithmIdentifier getIdentifierForResult(final Object pResultType) throws OceanusException {
+        if (pResultType instanceof GordianFactoryType) {
+            final ASN1ObjectIdentifier myOID = pResultType == GordianFactoryType.BC
+                    ? GordianCoreFactory.BCFACTORYOID
+                    : GordianCoreFactory.JCAFACTORYOID;
+            return new AlgorithmIdentifier(myOID, null);
+        }
+        if (pResultType instanceof GordianKeySetSpec) {
+            final GordianKeySetSpecASN1 myParms = new GordianKeySetSpecASN1((GordianKeySetSpec) pResultType);
+            return myParms.getAlgorithmId();
+        }
+        if (pResultType instanceof GordianSymCipherSpec) {
+            final GordianCoreCipherFactory myCipherFactory = (GordianCoreCipherFactory) theFactory.getCipherFactory();
+            return myCipherFactory.getIdentifierForSpec((GordianSymCipherSpec) pResultType);
+        }
+        if (pResultType instanceof GordianStreamCipherSpec) {
+            final GordianCoreCipherFactory myCipherFactory = (GordianCoreCipherFactory) theFactory.getCipherFactory();
+            return myCipherFactory.getIdentifierForSpec((GordianStreamCipherSpec) pResultType);
+        }
+        if (pResultType == null) {
+            return new AlgorithmIdentifier(GordianAgreementAlgId.NULLRESULTOID, null);
+        }
+        throw new GordianDataException("Illegal resultType set");
+    }
+
+    /**
+     * process result algorithmId.
+     * @param pResId the result algorithmId.
+     * @return the resultType
+     * @throws OceanusException on error
+     */
+    public Object  processResultIdentifier(final AlgorithmIdentifier pResId) throws OceanusException {
+        /* Look for a Factory */
+        final ASN1ObjectIdentifier myAlgId = pResId.getAlgorithm();
+        if (GordianCoreFactory.BCFACTORYOID.equals(myAlgId)) {
+            return GordianFactoryType.BC;
+        }
+        if (GordianCoreFactory.JCAFACTORYOID.equals(myAlgId)) {
+            return GordianFactoryType.JCA;
+        }
+
+        /* Look for a keySet Spec */
+        if (GordianKeySetSpecASN1.KEYSETALGID.equals(myAlgId)) {
+            return GordianKeySetSpecASN1.getInstance(pResId.getParameters()).getSpec();
+        }
+
+        /* Look for a cipher Spec */
+        final GordianCoreCipherFactory myCipherFactory = (GordianCoreCipherFactory) theFactory.getCipherFactory();
+        final GordianCipherSpec<?> mySpec = myCipherFactory.getCipherSpecForIdentifier(pResId);
+        if (mySpec != null) {
+            return mySpec;
+        }
+
+        /* Look for a Factory */
+        if (GordianAgreementAlgId.NULLRESULTOID.equals(myAlgId)) {
+            return null;
+        }
+        throw new GordianDataException("Unrecognised resultType");
     }
 }

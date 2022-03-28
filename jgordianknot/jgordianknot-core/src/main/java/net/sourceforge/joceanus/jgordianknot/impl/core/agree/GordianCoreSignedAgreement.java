@@ -111,7 +111,7 @@ public abstract class GordianCoreSignedAgreement
      */
     protected void processClientHello(final byte[] pClientHello) throws OceanusException {
         /* Parse the request */
-        final GordianAgreementClientHelloASN1 myHello = parseClientHello(pClientHello);
+        final GordianAgreementMessageASN1 myHello = parseClientHello(pClientHello);
 
         /* Parse the ephemeral encoding */
         final X509EncodedKeySpec myEncodedKeySpec = myHello.getEphemeral();
@@ -157,7 +157,7 @@ public abstract class GordianCoreSignedAgreement
         final byte[] mySignature = mySigner.sign();
 
         /* Build the server hello */
-        return buildServerHello(myServerKeySpec, myAlgId, mySignature);
+        return buildServerHello(myServerKeySpec, myAlgId, mySignature).getEncodedBytes();
     }
 
     /**
@@ -169,7 +169,7 @@ public abstract class GordianCoreSignedAgreement
     protected void processServerHello(final GordianKeyPair pServer,
                                       final byte[] pServerHello) throws OceanusException {
         /* Obtain keySpec */
-        final GordianAgreementServerHelloASN1 myHello = parseServerHello(pServerHello);
+        final GordianAgreementMessageASN1 myHello = parseServerHello(pServerHello);
         final X509EncodedKeySpec myKeySpec = myHello.getEphemeral();
 
         /* Derive partner ephemeral key */

@@ -27,6 +27,7 @@ import net.sourceforge.joceanus.jgordianknot.api.agree.GordianAgreementSpec;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianEdwardsElliptic;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPairSpec;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPairType;
+import net.sourceforge.joceanus.jgordianknot.impl.core.agree.GordianAgreementMessageASN1.GordianMessageType;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianCoreFactory;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianDataException;
 import net.sourceforge.joceanus.jtethys.OceanusException;
@@ -66,7 +67,8 @@ public abstract class GordianCoreAgreementFactory
     @Override
     public GordianAgreement createAgreement(final byte[] pClientHello) throws OceanusException {
         /* Parse the client hello message */
-        final GordianAgreementClientHelloASN1 myASN1 = GordianAgreementClientHelloASN1.getInstance(pClientHello);
+        final GordianAgreementMessageASN1 myASN1 = GordianAgreementMessageASN1.getInstance(pClientHello);
+        myASN1.checkMessageType(GordianMessageType.CLIENTHELLO);
         final AlgorithmIdentifier myAlgId = myASN1.getAgreementId();
         final GordianAgreementSpec mySpec = getSpecForIdentifier(myAlgId);
         return createAgreement(mySpec);
@@ -176,9 +178,9 @@ public abstract class GordianCoreAgreementFactory
      * Obtain the agreement algorithm Ids.
      * @return the agreement Algorithm Ids
      */
-    private GordianAgreementAlgId getAlgorithmIds() {
+    public GordianAgreementAlgId getAlgorithmIds() {
         if (theAlgIds == null) {
-            theAlgIds = new GordianAgreementAlgId();
+            theAlgIds = new GordianAgreementAlgId(theFactory);
         }
         return theAlgIds;
     }

@@ -66,7 +66,7 @@ import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyKeyPair.BouncyPrivate
 import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyKeyPair.BouncyPublicKey;
 import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncySignature.BouncyDERCoder;
 import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncySignature.BouncyDigestSignature;
-import net.sourceforge.joceanus.jgordianknot.impl.core.agree.GordianAgreementClientHelloASN1;
+import net.sourceforge.joceanus.jgordianknot.impl.core.agree.GordianAgreementMessageASN1;
 import net.sourceforge.joceanus.jgordianknot.impl.core.agree.GordianCoreAnonymousAgreement;
 import net.sourceforge.joceanus.jgordianknot.impl.core.agree.GordianCoreBasicAgreement;
 import net.sourceforge.joceanus.jgordianknot.impl.core.agree.GordianCoreEphemeralAgreement;
@@ -458,7 +458,7 @@ public final class BouncyEllipticKeyPair {
             final int myLen = 2 * myFieldSize + 1;
 
             /* Parse clientHello */
-            final GordianAgreementClientHelloASN1 myHello = parseClientHello(pClientHello);
+            final GordianAgreementMessageASN1 myHello = parseClientHello(pClientHello);
             final byte[] myMessage = myHello.getEncapsulated();
             final KeyParameter myParms = (KeyParameter) theAgreement.decrypt(myMessage, 0, myMessage.length, myLen);
 
@@ -526,7 +526,7 @@ public final class BouncyEllipticKeyPair {
             checkKeyPair(pSelf);
 
             /* Obtain source keySpec */
-            final GordianAgreementClientHelloASN1 myHello = parseClientHello(pClientHello);
+            final GordianAgreementMessageASN1 myHello = parseClientHello(pClientHello);
             final BouncyECPrivateKey myPrivate = (BouncyECPrivateKey) getPrivateKey(pSelf);
             final X509EncodedKeySpec myKeySpec = myHello.getEphemeral();
             final GordianKeyPairFactory myFactory = getFactory().getKeyPairFactory();
@@ -595,7 +595,7 @@ public final class BouncyEllipticKeyPair {
             storeSecret(BigIntegers.asUnsignedByteArray(theAgreement.getFieldSize(), mySecret));
 
             /* Return the serverHello */
-            return buildServerHello();
+            return buildServerHello().getEncodedBytes();
         }
 
         @Override
@@ -737,7 +737,7 @@ public final class BouncyEllipticKeyPair {
             storeSecret(theAgreement.calculateAgreement(myPubParams));
 
             /* Return the serverHello */
-            return buildServerHello();
+            return buildServerHello().getEncodedBytes();
         }
 
         @Override
@@ -766,7 +766,8 @@ public final class BouncyEllipticKeyPair {
             storeSecret(theAgreement.calculateAgreement(myPubParams));
 
             /* Return confirmation if needed */
-            return buildClientConfirm();
+            final GordianAgreementMessageASN1 myConfirm = buildClientConfirm();
+            return myConfirm == null ? null : myConfirm.getEncodedBytes();
         }
     }
 
@@ -822,7 +823,7 @@ public final class BouncyEllipticKeyPair {
             storeSecret(BigIntegers.asUnsignedByteArray(theAgreement.getFieldSize(), theAgreement.calculateAgreement(myPubParams)));
 
             /* Return the serverHello */
-            return buildServerHello();
+            return buildServerHello().getEncodedBytes();
         }
 
         @Override
@@ -851,7 +852,8 @@ public final class BouncyEllipticKeyPair {
             storeSecret(BigIntegers.asUnsignedByteArray(theAgreement.getFieldSize(), theAgreement.calculateAgreement(myPubParams)));
 
             /* Return confirmation if needed */
-            return buildClientConfirm();
+            final GordianAgreementMessageASN1 myConfirm = buildClientConfirm();
+            return myConfirm == null ? null : myConfirm.getEncodedBytes();
         }
     }
 

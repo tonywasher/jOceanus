@@ -45,7 +45,7 @@ import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPairSpec;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianRSAModulus;
 import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyKeyPair.BouncyPrivateKey;
 import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyKeyPair.BouncyPublicKey;
-import net.sourceforge.joceanus.jgordianknot.impl.core.agree.GordianAgreementClientHelloASN1;
+import net.sourceforge.joceanus.jgordianknot.impl.core.agree.GordianAgreementMessageASN1;
 import net.sourceforge.joceanus.jgordianknot.impl.core.agree.GordianCoreAnonymousAgreement;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianCryptoException;
 import net.sourceforge.joceanus.jgordianknot.impl.core.keypair.GordianKeyPairValidity;
@@ -298,7 +298,7 @@ public final class BouncyNewHopeKeyPair {
             checkKeyPair(pServer);
 
             /* Obtain keySpec */
-            final GordianAgreementClientHelloASN1 myHello = parseClientHello(pClientHello);
+            final GordianAgreementMessageASN1 myHello = parseClientHello(pClientHello);
             final X509EncodedKeySpec myKeySpec = myHello.getEphemeral();
 
             /* Derive ephemeral Public key */

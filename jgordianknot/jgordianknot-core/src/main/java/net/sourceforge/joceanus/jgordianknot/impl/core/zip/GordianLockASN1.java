@@ -33,7 +33,8 @@ import org.bouncycastle.asn1.DERTaggedObject;
 import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
 
 import net.sourceforge.joceanus.jgordianknot.api.zip.GordianLockType;
-import net.sourceforge.joceanus.jgordianknot.impl.core.agree.GordianAgreementClientHelloASN1;
+import net.sourceforge.joceanus.jgordianknot.impl.core.agree.GordianAgreementMessageASN1;
+import net.sourceforge.joceanus.jgordianknot.impl.core.agree.GordianAgreementMessageASN1.GordianMessageType;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianASN1Util;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianASN1Util.GordianASN1Object;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianDataException;
@@ -92,9 +93,9 @@ public class GordianLockASN1
     private final byte[] theKey;
 
     /**
-     * The keyPair clientHelloASN1.
+     * The keyPair messageASN1.
      */
-    private final GordianAgreementClientHelloASN1 theKeyPairHello;
+    private final GordianAgreementMessageASN1 theKeyPairHello;
 
     /**
      * Create the ASN1 sequence.
@@ -128,7 +129,7 @@ public class GordianLockASN1
      * @param pClientHello the clientHello
      */
     public GordianLockASN1(final GordianKeySetHashASN1 pKeySetHash,
-                           final GordianAgreementClientHelloASN1 pClientHello) {
+                           final GordianAgreementMessageASN1 pClientHello) {
         /* Store the Details */
         theLockType = GordianLockType.KEYPAIR_PASSWORD;
         theKeySetHash = pKeySetHash;
@@ -160,7 +161,8 @@ public class GordianLockASN1
                 case TAG_KEYPAIR:
                     theLockType = GordianLockType.KEYPAIR_PASSWORD;
                     theKey = null;
-                    theKeyPairHello = GordianAgreementClientHelloASN1.getInstance(ASN1Sequence.getInstance(myTagged, false));
+                    theKeyPairHello = GordianAgreementMessageASN1.getInstance(ASN1Sequence.getInstance(myTagged, false));
+                    theKeyPairHello.checkMessageType(GordianMessageType.CLIENTHELLO);
                     break;
                 case TAG_PASSWORD:
                 default:
@@ -223,7 +225,7 @@ public class GordianLockASN1
      * Obtain the keyPair clientHello.
      * @return the clientHello
      */
-    public GordianAgreementClientHelloASN1 getKeyPairHello() {
+    public GordianAgreementMessageASN1 getKeyPairHello() {
         return theKeyPairHello;
     }
 

@@ -36,6 +36,7 @@ import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyEllipticKeyPair.Bounc
 import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyEllipticKeyPair.BouncyECPublicKey;
 import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyKeyPair.BouncyPrivateKey;
 import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyKeyPair.BouncyPublicKey;
+import net.sourceforge.joceanus.jgordianknot.impl.core.agree.GordianAgreementMessageASN1;
 import net.sourceforge.joceanus.jgordianknot.impl.core.agree.GordianCoreEphemeralAgreement;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianCryptoException;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianDataException;
@@ -219,7 +220,7 @@ public final class BouncySM2KeyPair {
             }
 
             /* Return the serverHello */
-            return buildServerHello();
+            return buildServerHello().getEncodedBytes();
         }
 
         @Override
@@ -273,7 +274,8 @@ public final class BouncySM2KeyPair {
             }
 
             /* Return confirmation if needed */
-            return buildClientConfirm();
+            final GordianAgreementMessageASN1 myConfirm = buildClientConfirm();
+            return myConfirm == null ? null : myConfirm.getEncodedBytes();
         }
     }
 

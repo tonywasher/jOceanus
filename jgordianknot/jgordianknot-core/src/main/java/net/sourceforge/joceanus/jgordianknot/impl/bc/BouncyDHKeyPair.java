@@ -56,7 +56,7 @@ import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPairGenerator
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPairSpec;
 import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyKeyPair.BouncyPrivateKey;
 import net.sourceforge.joceanus.jgordianknot.impl.bc.BouncyKeyPair.BouncyPublicKey;
-import net.sourceforge.joceanus.jgordianknot.impl.core.agree.GordianAgreementClientHelloASN1;
+import net.sourceforge.joceanus.jgordianknot.impl.core.agree.GordianAgreementMessageASN1;
 import net.sourceforge.joceanus.jgordianknot.impl.core.agree.GordianCoreAnonymousAgreement;
 import net.sourceforge.joceanus.jgordianknot.impl.core.agree.GordianCoreBasicAgreement;
 import net.sourceforge.joceanus.jgordianknot.impl.core.agree.GordianCoreEphemeralAgreement;
@@ -362,7 +362,7 @@ public final class BouncyDHKeyPair {
             checkKeyPair(pServer);
 
             /* Parse the clientHello */
-            final GordianAgreementClientHelloASN1 myHello = parseClientHello(pClientHello);
+            final GordianAgreementMessageASN1 myHello = parseClientHello(pClientHello);
             final X509EncodedKeySpec myKeySpec = myHello.getEphemeral();
             final GordianKeyPairFactory myFactory = getFactory().getKeyPairFactory();
             final GordianKeyPairGenerator myGenerator = myFactory.getKeyPairGenerator(pServer.getKeyPairSpec());
@@ -429,7 +429,7 @@ public final class BouncyDHKeyPair {
             storeSecret(mySecret);
 
             /* Return the serverHello */
-            return buildServerHello();
+            return buildServerHello().getEncodedBytes();
         }
 
         @Override
@@ -570,7 +570,7 @@ public final class BouncyDHKeyPair {
             storeSecret(theAgreement.calculateAgreement(myPubParams));
 
             /* Return the serverHello */
-            return buildServerHello();
+            return buildServerHello().getEncodedBytes();
         }
 
         @Override
@@ -599,7 +599,8 @@ public final class BouncyDHKeyPair {
             storeSecret(theAgreement.calculateAgreement(myPubParams));
 
             /* Return confirmation if needed */
-            return buildClientConfirm();
+            final GordianAgreementMessageASN1 myConfirm = buildClientConfirm();
+            return myConfirm == null ? null : myConfirm.getEncodedBytes();
         }
     }
 
@@ -654,7 +655,7 @@ public final class BouncyDHKeyPair {
                     theAgreement.calculateAgreement(myPubParams)));
 
             /* Return the serverHello */
-            return buildServerHello();
+            return buildServerHello().getEncodedBytes();
         }
 
         @Override
@@ -684,7 +685,8 @@ public final class BouncyDHKeyPair {
                     theAgreement.calculateAgreement(myPubParams)));
 
             /* Return confirmation if needed */
-            return buildClientConfirm();
+            final GordianAgreementMessageASN1 myConfirm = buildClientConfirm();
+            return myConfirm == null ? null : myConfirm.getEncodedBytes();
         }
     }
 }

@@ -201,7 +201,9 @@ public class GordianAgreementMessageASN1
                         final ASN1Sequence myAlgs = ASN1Sequence.getInstance(myTagged, false);
                         final Enumeration<?> enAlgs = myAlgs.getObjects();
                         theAgreementId = AlgorithmIdentifier.getInstance(enAlgs.nextElement());
-                        theResultId = AlgorithmIdentifier.getInstance(enAlgs.nextElement());
+                        if (enAlgs.hasMoreElements()) {
+                            theResultId = AlgorithmIdentifier.getInstance(enAlgs.nextElement());
+                        }
                         break;
                     case TAG_INITVECTOR:
                         theInitVector = ASN1OctetString.getInstance(myTagged, false).getOctets();
@@ -213,7 +215,7 @@ public class GordianAgreementMessageASN1
                         theEphemeral = new X509EncodedKeySpec(SubjectPublicKeyInfo.getInstance(myTagged, false).getEncoded());
                         break;
                     case TAG_CONFIRMATION:
-                        theEncapsulated = ASN1OctetString.getInstance(myTagged, false).getOctets();
+                        theConfirmation = ASN1OctetString.getInstance(myTagged, false).getOctets();
                         break;
                     case TAG_SIGNATURE:
                         final ASN1Sequence mySign = ASN1Sequence.getInstance(myTagged, false);
@@ -267,7 +269,7 @@ public class GordianAgreementMessageASN1
      */
     public static GordianAgreementMessageASN1 newServerHello(final Integer pClientId,
                                                              final Integer pServerId)  {
-        return new GordianAgreementMessageASN1(GordianMessageType.CLIENTHELLO, pClientId, pServerId);
+        return new GordianAgreementMessageASN1(GordianMessageType.SERVERHELLO, pClientId, pServerId);
     }
     /**
      * Create a client confirm.
@@ -299,6 +301,17 @@ public class GordianAgreementMessageASN1
      */
     GordianMessageType getMessageType() {
         return theMessageType;
+    }
+
+    /**
+     * Check the message type.
+     * @param pMessageType the message type
+     * @throws OceanusException on error
+     */
+    public void checkMessageType(final GordianMessageType pMessageType) throws OceanusException {
+        if (!theMessageType.equals(pMessageType)) {
+            throw new GordianDataException("Unexpected Message type: " + pMessageType);
+        }
     }
 
     /**
@@ -375,7 +388,7 @@ public class GordianAgreementMessageASN1
      * Get the encapsulated.
      * @return the encapsulated (or null)
      */
-    byte[] getEncapsulated() {
+    public byte[] getEncapsulated() {
         return theEncapsulated;
     }
 
@@ -393,7 +406,7 @@ public class GordianAgreementMessageASN1
      * Get the ephemeral.
      * @return the ephemeral (or null)
      */
-    X509EncodedKeySpec getEphemeral() {
+    public X509EncodedKeySpec getEphemeral() {
         return theEphemeral;
     }
 
@@ -467,10 +480,12 @@ public class GordianAgreementMessageASN1
         }
         v.add(new DERSequence(vId));
 
-        if (theAgreementId != null && theResultId != null) {
+        if (theAgreementId != null) {
             final ASN1EncodableVector vAlg = new ASN1EncodableVector();
             vAlg.add(theAgreementId);
-            vAlg.add(theResultId);
+            if (theResultId != null) {
+                vAlg.add(theResultId);
+            }
             v.add(new DERTaggedObject(false, TAG_ALGORITHMS, new DERSequence(vAlg)));
         }
         if (theInitVector != null) {
@@ -489,7 +504,7 @@ public class GordianAgreementMessageASN1
             final ASN1EncodableVector vSign = new ASN1EncodableVector();
             vSign.add(theSignatureId);
             vSign.add(new BEROctetString(theSignature));
-            v.add(new DERTaggedObject(false, TAG_INITVECTOR, new DERSequence(vSign)));
+            v.add(new DERTaggedObject(false, TAG_SIGNATURE, new DERSequence(vSign)));
         }
 
         return new DERSequence(v);
@@ -539,7 +554,7 @@ public class GordianAgreementMessageASN1
     /**
      * The messageType.
      */
-    enum GordianMessageType {
+    public enum GordianMessageType {
         /**
          * ClientHello.
          */

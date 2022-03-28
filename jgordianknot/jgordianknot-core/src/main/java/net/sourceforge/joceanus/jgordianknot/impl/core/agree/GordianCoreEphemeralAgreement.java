@@ -34,6 +34,7 @@ import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPair;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPairGenerator;
 import net.sourceforge.joceanus.jgordianknot.api.mac.GordianMacFactory;
 import net.sourceforge.joceanus.jgordianknot.api.mac.GordianMacSpec;
+import net.sourceforge.joceanus.jgordianknot.impl.core.agree.GordianAgreementMessageASN1.GordianMessageType;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianCoreFactory;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianDataException;
 import net.sourceforge.joceanus.jgordianknot.impl.core.mac.GordianCoreMac;
@@ -217,7 +218,7 @@ public abstract class GordianCoreEphemeralAgreement
         theServer = pServer;
 
         /* Parse the request */
-        final GordianAgreementClientHelloASN1 myHello = parseClientHello(pClientHello);
+        final GordianAgreementMessageASN1 myHello = parseClientHello(pClientHello);
 
         /* Parse the ephemeral encoding */
         final X509EncodedKeySpec myKeySpec = myHello.getEphemeral();
@@ -235,7 +236,7 @@ public abstract class GordianCoreEphemeralAgreement
     }
 
     @Override
-    protected byte[] buildServerHello() throws OceanusException {
+    protected GordianAgreementMessageASN1 buildServerHello() throws OceanusException {
         /* Add server ephemeral and any server confirmation tag to the serverHello */
         final GordianKeyPairFactory myFactory = getFactory().getKeyPairFactory();
         final GordianKeyPairGenerator myGenerator = myFactory.getKeyPairGenerator(theServerEphemeral.getKeyPairSpec());
@@ -257,7 +258,7 @@ public abstract class GordianCoreEphemeralAgreement
         theServer = pServer;
 
         /* Obtain details from the serverHello */
-        final GordianAgreementServerHelloASN1 myHello = parseServerHello(pServerHello);
+        final GordianAgreementMessageASN1 myHello = parseServerHello(pServerHello);
         theServerConfirmation = myHello.getConfirmation();
         final X509EncodedKeySpec myKeySpec = myHello.getEphemeral();
 
@@ -272,7 +273,7 @@ public abstract class GordianCoreEphemeralAgreement
      * @return the clientConfirm message
      * @throws OceanusException on error
      */
-    protected byte[] buildClientConfirm() throws OceanusException {
+    protected GordianAgreementMessageASN1 buildClientConfirm() throws OceanusException {
         /* If there is no client confirmation, return null */
         if (theClientConfirmation == null) {
             return null;
@@ -281,9 +282,9 @@ public abstract class GordianCoreEphemeralAgreement
         /* Create the response */
         final GordianCoreAgreementFactory myFactory = getAgreementFactory();
         final AlgorithmIdentifier myAlgId = myFactory.getIdentifierForSpec(getAgreementSpec());
-        final GordianAgreementClientConfirmASN1 myClientConfirm
-                = new GordianAgreementClientConfirmASN1(myAlgId, theClientConfirmation);
-        return myClientConfirm.getEncodedBytes();
+        return GordianAgreementMessageASN1.newClientConfirm(0)
+                .setAgreementId(myAlgId)
+                .setConfirmation(theClientConfirmation);
     }
 
     @Override
@@ -292,7 +293,8 @@ public abstract class GordianCoreEphemeralAgreement
         checkStatus(GordianAgreementStatus.AWAITING_CLIENTCONFIRM);
 
         /* Access the sequence */
-        final GordianAgreementClientConfirmASN1 myClientConfirm = GordianAgreementClientConfirmASN1.getInstance(pClientConfirm);
+        final GordianAgreementMessageASN1 myClientConfirm = GordianAgreementMessageASN1.getInstance(pClientConfirm);
+        myClientConfirm.checkMessageType(GordianMessageType.CLIENTCONFIRM);
 
         /* Access message parts */
         final AlgorithmIdentifier myAlgId = myClientConfirm.getAgreementId();

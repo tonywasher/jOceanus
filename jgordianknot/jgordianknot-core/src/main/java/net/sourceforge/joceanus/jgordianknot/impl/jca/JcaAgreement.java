@@ -37,7 +37,7 @@ import net.sourceforge.joceanus.jgordianknot.api.factory.GordianKeyPairFactory;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPair;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPairGenerator;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPairType;
-import net.sourceforge.joceanus.jgordianknot.impl.core.agree.GordianAgreementClientHelloASN1;
+import net.sourceforge.joceanus.jgordianknot.impl.core.agree.GordianAgreementMessageASN1;
 import net.sourceforge.joceanus.jgordianknot.impl.core.agree.GordianCoreAnonymousAgreement;
 import net.sourceforge.joceanus.jgordianknot.impl.core.agree.GordianCoreBasicAgreement;
 import net.sourceforge.joceanus.jgordianknot.impl.core.agree.GordianCoreEphemeralAgreement;
@@ -123,7 +123,7 @@ public final class JcaAgreement {
                 checkKeyPair(pServer);
 
                 /* Obtain keySpec */
-                final GordianAgreementClientHelloASN1 myHello = parseClientHello(pClientHello);
+                final GordianAgreementMessageASN1 myHello = parseClientHello(pClientHello);
                 final X509EncodedKeySpec myKeySpec = myHello.getEphemeral();
 
                 /* Derive ephemeral Public key */
@@ -204,7 +204,7 @@ public final class JcaAgreement {
                 checkKeyPair(pServer);
 
                 /* Parse client hello */
-                final GordianAgreementClientHelloASN1 myHello = parseClientHello(pClientHello);
+                final GordianAgreementMessageASN1 myHello = parseClientHello(pClientHello);
 
                 /* Derive the secret */
                 final JcaPrivateKey myTarget = (JcaPrivateKey) getPrivateKey(pServer);
@@ -300,7 +300,7 @@ public final class JcaAgreement {
                 establishAgreement(pServer);
 
                 /* Obtain keySpec */
-                final GordianAgreementClientHelloASN1 myHello = parseClientHello(pClientHello);
+                final GordianAgreementMessageASN1 myHello = parseClientHello(pClientHello);
                 final X509EncodedKeySpec myKeySpec = myHello.getEphemeral();
 
                 /* Derive ephemeral Public key */
@@ -399,7 +399,7 @@ public final class JcaAgreement {
                 storeSecret(theAgreement.generateSecret());
 
                 /* Return the serverHello */
-                return buildServerHello();
+                return buildServerHello().getEncodedBytes();
 
             } catch (InvalidKeyException
                     | InvalidAlgorithmParameterException e) {
@@ -618,7 +618,7 @@ public final class JcaAgreement {
                 storeSecret(theAgreement.generateSecret());
 
                 /* Return the serverHello */
-                return buildServerHello();
+                return buildServerHello().getEncodedBytes();
 
             } catch (InvalidKeyException
                     | InvalidAlgorithmParameterException e) {
@@ -655,7 +655,8 @@ public final class JcaAgreement {
                 storeSecret(theAgreement.generateSecret());
 
                 /* Return confirmation if needed */
-                return buildClientConfirm();
+                final GordianAgreementMessageASN1 myConfirm = buildClientConfirm();
+                return myConfirm == null ? null : myConfirm.getEncodedBytes();
 
             } catch (InvalidKeyException
                     | InvalidAlgorithmParameterException e) {
@@ -728,8 +729,8 @@ public final class JcaAgreement {
                 theAgreement.doPhase(mySrcPublic.getPublicKey(), true);
                 storeSecret(theAgreement.generateSecret());
 
-                /* Return the serverhello */
-                return buildServerHello();
+                /* Return the serverHello */
+                return buildServerHello().getEncodedBytes();
 
             } catch (InvalidKeyException
                     | InvalidAlgorithmParameterException e) {
@@ -763,7 +764,8 @@ public final class JcaAgreement {
                 storeSecret(theAgreement.generateSecret());
 
                 /* Return confirmation if needed */
-                return buildClientConfirm();
+                final GordianAgreementMessageASN1 myConfirm = buildClientConfirm();
+                return myConfirm == null ? null : myConfirm.getEncodedBytes();
 
             } catch (InvalidKeyException
                     | InvalidAlgorithmParameterException e) {
