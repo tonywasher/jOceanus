@@ -20,6 +20,7 @@ import net.sourceforge.joceanus.jgordianknot.api.agree.GordianAgreementSpec;
 import net.sourceforge.joceanus.jgordianknot.api.agree.GordianAgreementStatus;
 import net.sourceforge.joceanus.jgordianknot.api.agree.GordianHandshakeAgreement;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPair;
+import net.sourceforge.joceanus.jgordianknot.impl.core.agree.GordianAgreementMessageASN1.GordianMessageType;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianCoreFactory;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
@@ -53,7 +54,18 @@ public abstract class GordianCoreBasicAgreement
     }
 
     @Override
-    public byte[] createClientHello(final GordianKeyPair pClient) throws OceanusException {
+    public byte[] createClientHello(final GordianKeyPair pServer) throws OceanusException {
+        /* Create the clientHello and extract the encoded bytes */
+        return createClientHelloASN1(pServer).getEncodedBytes();
+    }
+
+    /**
+     * Create the clientHello ASN1.
+     * @param pClient the client keyPair
+     * @return the clientHello message
+     * @throws OceanusException on error
+     */
+    public GordianAgreementMessageASN1 createClientHelloASN1(final GordianKeyPair pClient) throws OceanusException {
         /* Check the keyPair */
         checkKeyPair(pClient);
 
@@ -61,7 +73,7 @@ public abstract class GordianCoreBasicAgreement
         theClient = pClient;
 
         /* Create the clientHello message */
-        final byte[] myClientHello = buildClientHello();
+        final GordianAgreementMessageASN1 myClientHello = buildClientHelloASN1();
 
         /* Set status */
         setStatus(GordianAgreementStatus.AWAITING_SERVERHELLO);
@@ -70,42 +82,84 @@ public abstract class GordianCoreBasicAgreement
         return myClientHello;
     }
 
+    @Override
+    public byte[] acceptClientHello(final GordianKeyPair pClient,
+                                    final GordianKeyPair pServer,
+                                    final byte[] pClientHello) throws OceanusException {
+        /* Must be in clean state */
+        checkStatus(GordianAgreementStatus.CLEAN);
+
+        /* Access the sequence */
+        final GordianAgreementMessageASN1 myClientHello = GordianAgreementMessageASN1.getInstance(pClientHello);
+        myClientHello.checkMessageType(GordianMessageType.CLIENTHELLO);
+
+        /* Accept the ASN1 */
+        final GordianAgreementMessageASN1 myServerHello = acceptClientHelloASN1(pClient, pServer, myClientHello);
+        return myServerHello.getEncodedBytes();
+    }
+
+    /**
+     * Accept the clientHello.
+     * @param pClient the client keyPair
+     * @param pServer the server keyPair
+     * @param pClientHello the incoming clientHello message
+     * @return the serverHello message
+     * @throws OceanusException on error
+     */
+    public abstract GordianAgreementMessageASN1 acceptClientHelloASN1(GordianKeyPair pClient,
+                                                                      GordianKeyPair pServer,
+                                                                      GordianAgreementMessageASN1 pClientHello) throws OceanusException;
+
     /**
      * Process the incoming clientHello message request.
      * @param pServer the server keyPair
      * @param pClientHello the incoming clientHello message
      * @throws OceanusException on error
      */
-    protected void processClientHello(final GordianKeyPair pServer,
-                                      final byte[] pClientHello) throws OceanusException {
+    protected void processClientHelloASN1(final GordianKeyPair pServer,
+                                          final GordianAgreementMessageASN1 pClientHello) throws OceanusException {
         /* Check the keyPair */
         checkKeyPair(pServer);
 
         /* Parse the request */
-        parseClientHello(pClientHello);
+        parseClientHelloASN1(pClientHello);
 
         /* Create the new serverIV */
         newServerIV();
     }
+
+    @Override
+    public byte[] acceptServerHello(final GordianKeyPair pServer,
+                                    final byte[] pServerHello) throws OceanusException {
+        /* Must be in clean state */
+        checkStatus(GordianAgreementStatus.AWAITING_SERVERHELLO);
+
+        /* Access the sequence */
+        final GordianAgreementMessageASN1 myServerHello = GordianAgreementMessageASN1.getInstance(pServerHello);
+        myServerHello.checkMessageType(GordianMessageType.SERVERHELLO);
+
+        /* Accept the ASN1 */
+        acceptServerHelloASN1(pServer, myServerHello);
+        return null;
+    }
+
+    /**
+     * Accept the serverHello.
+     * @param pServer the server keyPair
+     * @param pServerHello the incoming serverHello message
+     * @throws OceanusException on error
+     */
+    public abstract void acceptServerHelloASN1(GordianKeyPair pServer,
+                                               GordianAgreementMessageASN1 pServerHello) throws OceanusException;
 
     /**
      * Process the serverHello.
      * @param pServerHello the serverHello message
      * @throws OceanusException on error
      */
-    protected void processServerHello(final byte[] pServerHello) throws OceanusException {
+    protected void processServerHelloASN1(final GordianAgreementMessageASN1 pServerHello) throws OceanusException {
         /* Parse the server hello */
-        parseServerHello(pServerHello);
-    }
-
-    /**
-     * Build clientConfirm message.
-     * @return the clientConfirm message
-     * @throws OceanusException on error
-     */
-    protected byte[] buildClientConfirm() throws OceanusException {
-        /* There is never a client confirm */
-        return null;
+        parseServerHelloASN1(pServerHello);
     }
 
     @Override

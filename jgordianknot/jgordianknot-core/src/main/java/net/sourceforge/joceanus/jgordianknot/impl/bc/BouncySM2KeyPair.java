@@ -181,13 +181,13 @@ public final class BouncySM2KeyPair {
         }
 
         @Override
-        public byte[] acceptClientHello(final GordianKeyPair pClient,
-                                        final GordianKeyPair pServer,
-                                        final byte[] pClientHello) throws OceanusException {
+        public GordianAgreementMessageASN1 acceptClientHelloASN1(final GordianKeyPair pClient,
+                                                                 final GordianKeyPair pServer,
+                                                                 final GordianAgreementMessageASN1 pClientHello) throws OceanusException {
             /* process clientHello */
             BouncyKeyPair.checkKeyPair(pClient);
             BouncyKeyPair.checkKeyPair(pServer);
-            processClientHello(pClient, pServer, pClientHello);
+            processClientHelloASN1(pClient, pServer, pClientHello);
 
             /* Initialise agreement */
             final BouncyECPrivateKey myPrivate = (BouncyECPrivateKey) getPrivateKey(pServer);
@@ -220,18 +220,18 @@ public final class BouncySM2KeyPair {
             }
 
             /* Return the serverHello */
-            return buildServerHello().getEncodedBytes();
+            return buildServerHello();
         }
 
         @Override
-        public byte[] acceptServerHello(final GordianKeyPair pServer,
-                                        final byte[] pServerHello) throws OceanusException {
+        public GordianAgreementMessageASN1 acceptServerHelloASN1(final GordianKeyPair pServer,
+                                                                 final GordianAgreementMessageASN1 pServerHello) throws OceanusException {
             /* Check keyPair */
             BouncyKeyPair.checkKeyPair(pServer);
             checkKeyPair(pServer);
 
             /* process the serverHello */
-            processServerHello(pServer, pServerHello);
+            processServerHelloASN1(pServer, pServerHello);
 
             /* Initialise agreement */
             final BouncyECPrivateKey myPrivate = (BouncyECPrivateKey) getPrivateKey(getClientKeyPair());
@@ -274,8 +274,7 @@ public final class BouncySM2KeyPair {
             }
 
             /* Return confirmation if needed */
-            final GordianAgreementMessageASN1 myConfirm = buildClientConfirm();
-            return myConfirm == null ? null : myConfirm.getEncodedBytes();
+            return buildClientConfirmASN1();
         }
     }
 

@@ -18,7 +18,6 @@ package net.sourceforge.joceanus.jgordianknot.impl.core.agree;
 
 import org.bouncycastle.util.Arrays;
 
-import net.sourceforge.joceanus.jgordianknot.api.agree.GordianAgreementStatus;
 import net.sourceforge.joceanus.jgordianknot.api.base.GordianKeySpec;
 import net.sourceforge.joceanus.jgordianknot.api.base.GordianLength;
 import net.sourceforge.joceanus.jgordianknot.api.cipher.GordianCipherFactory;

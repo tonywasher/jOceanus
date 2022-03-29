@@ -327,7 +327,7 @@ public final class BouncyDHKeyPair {
         }
 
         @Override
-        public byte[] createClientHello(final GordianKeyPair pServer) throws OceanusException {
+        public GordianAgreementMessageASN1 createClientHelloASN1(final GordianKeyPair pServer) throws OceanusException {
             /* Check keyPair */
             BouncyKeyPair.checkKeyPair(pServer);
             checkKeyPair(pServer);
@@ -340,7 +340,7 @@ public final class BouncyDHKeyPair {
 
             /* Create the clientHello */
             final X509EncodedKeySpec myKeySpec = myGenerator.getX509Encoding(myPair);
-            final byte[] myClientHello = buildClientHello(myKeySpec);
+            final GordianAgreementMessageASN1 myClientHello = buildClientHelloASN1(myKeySpec);
 
             /* Derive the secret */
             theAgreement.init(myPrivate.getPrivateKey());
@@ -355,15 +355,14 @@ public final class BouncyDHKeyPair {
         }
 
         @Override
-        public void acceptClientHello(final GordianKeyPair pServer,
-                                      final byte[] pClientHello) throws OceanusException {
+        public void acceptClientHelloASN1(final GordianKeyPair pServer,
+                                          final GordianAgreementMessageASN1 pClientHello) throws OceanusException {
             /* Check keyPair */
             BouncyKeyPair.checkKeyPair(pServer);
             checkKeyPair(pServer);
 
-            /* Parse the clientHello */
-            final GordianAgreementMessageASN1 myHello = parseClientHello(pClientHello);
-            final X509EncodedKeySpec myKeySpec = myHello.getEphemeral();
+            /* Process the clientHello */
+            final X509EncodedKeySpec myKeySpec = pClientHello.getEphemeral();
             final GordianKeyPairFactory myFactory = getFactory().getKeyPairFactory();
             final GordianKeyPairGenerator myGenerator = myFactory.getKeyPairGenerator(pServer.getKeyPairSpec());
             final GordianKeyPair myPartner = myGenerator.derivePublicOnlyKeyPair(myKeySpec);
@@ -406,9 +405,9 @@ public final class BouncyDHKeyPair {
         }
 
         @Override
-        public byte[] acceptClientHello(final GordianKeyPair pClient,
-                                        final GordianKeyPair pServer,
-                                        final byte[] pClientHello) throws OceanusException {
+        public GordianAgreementMessageASN1 acceptClientHelloASN1(final GordianKeyPair pClient,
+                                                                 final GordianKeyPair pServer,
+                                                                 final GordianAgreementMessageASN1 pClientHello) throws OceanusException {
             /* Check keyPair */
             BouncyKeyPair.checkKeyPair(pClient);
             checkKeyPair(pClient);
@@ -416,7 +415,7 @@ public final class BouncyDHKeyPair {
             checkKeyPair(pServer);
 
             /* Process the clientHello */
-            processClientHello(pServer, pClientHello);
+            processClientHelloASN1(pServer, pClientHello);
             final BouncyDHPrivateKey myPrivate = (BouncyDHPrivateKey) getPrivateKey(pServer);
             final BouncyDHPublicKey myPublic = (BouncyDHPublicKey) getPublicKey(pClient);
 
@@ -429,18 +428,18 @@ public final class BouncyDHKeyPair {
             storeSecret(mySecret);
 
             /* Return the serverHello */
-            return buildServerHello().getEncodedBytes();
+            return buildServerHello();
         }
 
         @Override
-        public byte[] acceptServerHello(final GordianKeyPair pServer,
-                                        final byte[] pServerHello) throws OceanusException {
+        public void acceptServerHelloASN1(final GordianKeyPair pServer,
+                                          final GordianAgreementMessageASN1 pServerHello) throws OceanusException {
             /* Check keyPair */
             BouncyKeyPair.checkKeyPair(pServer);
             checkKeyPair(pServer);
 
             /* process the serverHello */
-            processServerHello(pServerHello);
+            processServerHelloASN1(pServerHello);
             final BouncyPrivateKey<?> myPrivate = (BouncyPrivateKey<?>) getPrivateKey(getClientKeyPair());
 
             /* Calculate agreement */
@@ -449,9 +448,6 @@ public final class BouncyDHKeyPair {
             final BigInteger mySecretInt = theAgreement.calculateAgreement(mySrcPublic.getPublicKey());
             final byte[] mySecret = BigIntegers.asUnsignedByteArray(theAgreement.getFieldSize(), mySecretInt);
             storeSecret(mySecret);
-
-            /* Return confirmation if needed */
-            return buildClientConfirm();
         }
     }
 
@@ -481,11 +477,11 @@ public final class BouncyDHKeyPair {
         }
 
         @Override
-        public byte[] acceptClientHello(final GordianKeyPair pServer,
-                                        final byte[] pClientHello) throws OceanusException {
+        public GordianAgreementMessageASN1 acceptClientHelloASN1(final GordianKeyPair pServer,
+                                                                 final GordianAgreementMessageASN1 pClientHello) throws OceanusException {
             /* Process clientHello */
             BouncyKeyPair.checkKeyPair(pServer);
-            processClientHello(pClientHello);
+            processClientHelloASN1(pClientHello);
             final BouncyPrivateKey<?> myPrivate = (BouncyPrivateKey<?>) getPrivateKey(getServerEphemeralKeyPair());
             final BouncyPublicKey<?> myPublic = (BouncyPublicKey<?>) getPublicKey(getClientEphemeralKeyPair());
 
@@ -498,15 +494,15 @@ public final class BouncyDHKeyPair {
             storeSecret(mySecret);
 
             /* Return the serverHello */
-            return buildServerHello(pServer);
+            return buildServerHelloASN1(pServer);
         }
 
         @Override
-        public void acceptServerHello(final GordianKeyPair pServer,
-                                      final byte[] pServerHello) throws OceanusException {
+        public void acceptServerHelloASN1(final GordianKeyPair pServer,
+                                          final GordianAgreementMessageASN1 pServerHello) throws OceanusException {
             /* process the serverHello */
             BouncyKeyPair.checkKeyPair(pServer);
-            processServerHello(pServer, pServerHello);
+            processServerHelloASN1(pServer, pServerHello);
             final BouncyPrivateKey<?> myPrivate = (BouncyPrivateKey<?>) getPrivateKey(getClientEphemeralKeyPair());
 
             /* Calculate agreement */
@@ -546,13 +542,13 @@ public final class BouncyDHKeyPair {
         }
 
         @Override
-        public byte[] acceptClientHello(final GordianKeyPair pClient,
-                                        final GordianKeyPair pServer,
-                                        final byte[] pClientHello) throws OceanusException {
+        public GordianAgreementMessageASN1 acceptClientHelloASN1(final GordianKeyPair pClient,
+                                                                 final GordianKeyPair pServer,
+                                                                 final GordianAgreementMessageASN1 pClientHello) throws OceanusException {
             /* process clientHello */
             BouncyKeyPair.checkKeyPair(pClient);
             BouncyKeyPair.checkKeyPair(pServer);
-            processClientHello(pClient, pServer, pClientHello);
+            processClientHelloASN1(pClient, pServer, pClientHello);
 
             /* Initialise agreement */
             final BouncyDHPrivateKey myPrivate = (BouncyDHPrivateKey) getPrivateKey(pServer);
@@ -570,18 +566,18 @@ public final class BouncyDHKeyPair {
             storeSecret(theAgreement.calculateAgreement(myPubParams));
 
             /* Return the serverHello */
-            return buildServerHello().getEncodedBytes();
+            return buildServerHello();
         }
 
         @Override
-        public byte[] acceptServerHello(final GordianKeyPair pServer,
-                                        final byte[] pServerHello) throws OceanusException {
+        public GordianAgreementMessageASN1 acceptServerHelloASN1(final GordianKeyPair pServer,
+                                                                 final GordianAgreementMessageASN1 pServerHello) throws OceanusException {
             /* Check keyPair */
             BouncyKeyPair.checkKeyPair(pServer);
             checkKeyPair(pServer);
 
             /* process the serverHello */
-            processServerHello(pServer, pServerHello);
+            processServerHelloASN1(pServer, pServerHello);
 
             /* Initialise agreement */
             final BouncyDHPrivateKey myPrivate = (BouncyDHPrivateKey) getPrivateKey(getClientKeyPair());
@@ -599,9 +595,8 @@ public final class BouncyDHKeyPair {
             storeSecret(theAgreement.calculateAgreement(myPubParams));
 
             /* Return confirmation if needed */
-            final GordianAgreementMessageASN1 myConfirm = buildClientConfirm();
-            return myConfirm == null ? null : myConfirm.getEncodedBytes();
-        }
+            return buildClientConfirmASN1();
+         }
     }
 
     /**
@@ -630,13 +625,13 @@ public final class BouncyDHKeyPair {
         }
 
         @Override
-        public byte[] acceptClientHello(final GordianKeyPair pClient,
-                                        final GordianKeyPair pServer,
-                                        final byte[] pClientHello) throws OceanusException {
+        public GordianAgreementMessageASN1 acceptClientHelloASN1(final GordianKeyPair pClient,
+                                                                 final GordianKeyPair pServer,
+                                                                 final GordianAgreementMessageASN1 pClientHello) throws OceanusException {
             /* process clientHello */
             BouncyKeyPair.checkKeyPair(pClient);
             BouncyKeyPair.checkKeyPair(pServer);
-            processClientHello(pClient, pServer, pClientHello);
+            processClientHelloASN1(pClient, pServer, pClientHello);
 
             /* Initialise agreement */
             final BouncyDHPrivateKey myPrivate = (BouncyDHPrivateKey) getPrivateKey(pServer);
@@ -655,18 +650,18 @@ public final class BouncyDHKeyPair {
                     theAgreement.calculateAgreement(myPubParams)));
 
             /* Return the serverHello */
-            return buildServerHello().getEncodedBytes();
+            return buildServerHello();
         }
 
         @Override
-        public byte[] acceptServerHello(final GordianKeyPair pServer,
-                                        final byte[] pServerHello) throws OceanusException {
+        public GordianAgreementMessageASN1 acceptServerHelloASN1(final GordianKeyPair pServer,
+                                                                 final GordianAgreementMessageASN1 pServerHello) throws OceanusException {
             /* Check keyPair */
             BouncyKeyPair.checkKeyPair(pServer);
             checkKeyPair(pServer);
 
             /* process the serverHello */
-            processServerHello(pServer, pServerHello);
+            processServerHelloASN1(pServer, pServerHello);
 
             /* Initialise agreement */
             final BouncyDHPrivateKey myPrivate = (BouncyDHPrivateKey) getPrivateKey(getClientKeyPair());
@@ -685,8 +680,7 @@ public final class BouncyDHKeyPair {
                     theAgreement.calculateAgreement(myPubParams)));
 
             /* Return confirmation if needed */
-            final GordianAgreementMessageASN1 myConfirm = buildClientConfirm();
-            return myConfirm == null ? null : myConfirm.getEncodedBytes();
+            return buildClientConfirmASN1();
         }
     }
 }

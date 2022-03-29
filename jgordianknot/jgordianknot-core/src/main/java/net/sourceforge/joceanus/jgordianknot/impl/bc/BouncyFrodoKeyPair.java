@@ -274,7 +274,7 @@ public final class BouncyFrodoKeyPair {
         }
 
         @Override
-        public byte[] createClientHello(final GordianKeyPair pServer) throws OceanusException {
+        public GordianAgreementMessageASN1 createClientHelloASN1(final GordianKeyPair pServer) throws OceanusException {
             /* Protect against exceptions */
             try {
                 /* Check keyPair */
@@ -286,7 +286,7 @@ public final class BouncyFrodoKeyPair {
                 final SecretWithEncapsulation myResult = theGenerator.generateEncapsulated(myPublic.getPublicKey());
 
                 /* Build the clientHello Message */
-                final byte[] myClientHello = buildClientHello(myResult.getEncapsulation());
+                final GordianAgreementMessageASN1 myClientHello = buildClientHelloASN1(myResult.getEncapsulation());
 
                 /* Store secret and create initVector */
                 storeSecret(myResult.getSecret());
@@ -300,8 +300,8 @@ public final class BouncyFrodoKeyPair {
         }
 
         @Override
-        public void acceptClientHello(final GordianKeyPair pServer,
-                                      final byte[] pClientHello) throws OceanusException {
+        public void acceptClientHelloASN1(final GordianKeyPair pServer,
+                                          final GordianAgreementMessageASN1 pClientHello) throws OceanusException {
             /* Check keyPair */
             BouncyKeyPair.checkKeyPair(pServer);
             checkKeyPair(pServer);
@@ -311,8 +311,7 @@ public final class BouncyFrodoKeyPair {
             final FrodoKEMExtractor myExtractor = new FrodoKEMExtractor(myPrivate.getPrivateKey());
 
             /* Parse clientHello message and store secret */
-            final GordianAgreementMessageASN1 myHello = parseClientHello(pClientHello);
-            final byte[] myMessage = myHello.getEncapsulated();
+            final byte[] myMessage = pClientHello.getEncapsulated();
             storeSecret(myExtractor.extractSecret(myMessage));
         }
     }

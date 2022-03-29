@@ -259,7 +259,7 @@ public final class BouncyNewHopeKeyPair {
         }
 
         @Override
-        public byte[] createClientHello(final GordianKeyPair pServer) throws OceanusException {
+        public GordianAgreementMessageASN1 createClientHelloASN1(final GordianKeyPair pServer) throws OceanusException {
             try {
                 /* Check keyPair */
                 BouncyKeyPair.checkKeyPair(pServer);
@@ -276,7 +276,7 @@ public final class BouncyNewHopeKeyPair {
                 final X509EncodedKeySpec myKeySpec = new X509EncodedKeySpec(myInfo.getEncoded());
 
                 /* Build the clientHello Message */
-                final byte[] myClientHello = buildClientHello(myKeySpec);
+                final GordianAgreementMessageASN1 myClientHello = buildClientHelloASN1(myKeySpec);
 
                 /* Derive the secret */
                 final byte[] mySecret = myPair.getSharedValue();
@@ -291,15 +291,14 @@ public final class BouncyNewHopeKeyPair {
         }
 
         @Override
-        public void acceptClientHello(final GordianKeyPair pServer,
-                                      final byte[] pClientHello) throws OceanusException {
+        public void acceptClientHelloASN1(final GordianKeyPair pServer,
+                                          final GordianAgreementMessageASN1 pClientHello) throws OceanusException {
             /* Check keyPair */
             BouncyKeyPair.checkKeyPair(pServer);
             checkKeyPair(pServer);
 
             /* Obtain keySpec */
-            final GordianAgreementMessageASN1 myHello = parseClientHello(pClientHello);
-            final X509EncodedKeySpec myKeySpec = myHello.getEphemeral();
+            final X509EncodedKeySpec myKeySpec = pClientHello.getEphemeral();
 
             /* Derive ephemeral Public key */
             final GordianKeyPairFactory myFactory = getFactory().getKeyPairFactory();

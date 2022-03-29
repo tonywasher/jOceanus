@@ -90,7 +90,7 @@ public final class JcaAgreement {
         }
 
         @Override
-        public byte[] createClientHello(final GordianKeyPair pServer) throws OceanusException {
+        public GordianAgreementMessageASN1 createClientHelloASN1(final GordianKeyPair pServer) throws OceanusException {
             /* Protect against exceptions */
             try {
                 /* Check keyPairs */
@@ -104,7 +104,7 @@ public final class JcaAgreement {
 
                 /* Create the clientHello */
                 final X509EncodedKeySpec myKeySpec = new X509EncodedKeySpec(myKey.getEncoded());
-                final byte[] myClientHello = buildClientHello(myKeySpec);
+                final GordianAgreementMessageASN1 myClientHello = buildClientHelloASN1(myKeySpec);
                 storeSecret(theAgreement.generateSecret());
                 return myClientHello;
 
@@ -114,8 +114,8 @@ public final class JcaAgreement {
         }
 
         @Override
-        public void acceptClientHello(final GordianKeyPair pServer,
-                                      final byte[] pClientHello) throws OceanusException {
+        public void acceptClientHelloASN1(final GordianKeyPair pServer,
+                                          final GordianAgreementMessageASN1 pClientHello) throws OceanusException {
             /* Protect against exceptions */
             try {
                 /* Check keyPair */
@@ -123,8 +123,7 @@ public final class JcaAgreement {
                 checkKeyPair(pServer);
 
                 /* Obtain keySpec */
-                final GordianAgreementMessageASN1 myHello = parseClientHello(pClientHello);
-                final X509EncodedKeySpec myKeySpec = myHello.getEphemeral();
+                final X509EncodedKeySpec myKeySpec = pClientHello.getEphemeral();
 
                 /* Derive ephemeral Public key */
                 final GordianKeyPairFactory myFactory = getFactory().getKeyPairFactory();
@@ -172,7 +171,7 @@ public final class JcaAgreement {
         }
 
         @Override
-        public byte[] createClientHello(final GordianKeyPair pServer) throws OceanusException {
+        public GordianAgreementMessageASN1 createClientHelloASN1(final GordianKeyPair pServer) throws OceanusException {
             /* Protect against exceptions */
             try {
                 /* Check keyPairs */
@@ -185,7 +184,7 @@ public final class JcaAgreement {
                 final SecretKeyWithEncapsulation mySecret = (SecretKeyWithEncapsulation) theGenerator.generateKey();
 
                 /* Create the clientHello */
-                final byte[] myClientHello = buildClientHello(mySecret.getEncapsulation());
+                final GordianAgreementMessageASN1 myClientHello = buildClientHelloASN1(mySecret.getEncapsulation());
                 storeSecret(mySecret.getEncoded());
                 return myClientHello;
 
@@ -195,20 +194,17 @@ public final class JcaAgreement {
         }
 
         @Override
-        public void acceptClientHello(final GordianKeyPair pServer,
-                                      final byte[] pClientHello) throws OceanusException {
+        public void acceptClientHelloASN1(final GordianKeyPair pServer,
+                                          final GordianAgreementMessageASN1 pClientHello) throws OceanusException {
             /* Protect against exceptions */
             try {
                 /* Check keyPair */
                 JcaKeyPair.checkKeyPair(pServer);
                 checkKeyPair(pServer);
 
-                /* Parse client hello */
-                final GordianAgreementMessageASN1 myHello = parseClientHello(pClientHello);
-
                 /* Derive the secret */
                 final JcaPrivateKey myTarget = (JcaPrivateKey) getPrivateKey(pServer);
-                theGenerator.init(new KEMExtractSpec(myTarget.getPrivateKey(), myHello.getEncapsulated(), GordianSymKeyType.AES.toString()));
+                theGenerator.init(new KEMExtractSpec(myTarget.getPrivateKey(), pClientHello.getEncapsulated(), GordianSymKeyType.AES.toString()));
                 final SecretKeyWithEncapsulation mySecret = (SecretKeyWithEncapsulation) theGenerator.generateKey();
 
                 /* Store secret */
@@ -247,7 +243,7 @@ public final class JcaAgreement {
         }
 
         @Override
-        public byte[] createClientHello(final GordianKeyPair pServer) throws OceanusException {
+        public GordianAgreementMessageASN1 createClientHelloASN1(final GordianKeyPair pServer) throws OceanusException {
             /* Protect against exceptions */
             try {
                 /* Check keyPairs */
@@ -272,7 +268,7 @@ public final class JcaAgreement {
 
                 /* Create the clientHello */
                 final X509EncodedKeySpec myKeySpec = myGenerator.getX509Encoding(myPair);
-                final byte[] myClientHello = buildClientHello(myKeySpec);
+                final GordianAgreementMessageASN1 myClientHello = buildClientHelloASN1(myKeySpec);
 
                 /* Derive the secret */
                 final JcaPublicKey myTarget = (JcaPublicKey) getPublicKey(pServer);
@@ -288,8 +284,8 @@ public final class JcaAgreement {
         }
 
         @Override
-        public void acceptClientHello(final GordianKeyPair pServer,
-                                      final byte[] pClientHello) throws OceanusException {
+        public void acceptClientHelloASN1(final GordianKeyPair pServer,
+                                          final GordianAgreementMessageASN1 pClientHello) throws OceanusException {
             /* Protect against exceptions */
             try {
                 /* Check keyPair */
@@ -300,8 +296,7 @@ public final class JcaAgreement {
                 establishAgreement(pServer);
 
                 /* Obtain keySpec */
-                final GordianAgreementMessageASN1 myHello = parseClientHello(pClientHello);
-                final X509EncodedKeySpec myKeySpec = myHello.getEphemeral();
+                final X509EncodedKeySpec myKeySpec = pClientHello.getEphemeral();
 
                 /* Derive ephemeral Public key */
                 final GordianKeyPairFactory myFactory = getFactory().getKeyPairFactory();
@@ -368,9 +363,9 @@ public final class JcaAgreement {
         }
 
         @Override
-        public byte[] acceptClientHello(final GordianKeyPair pClient,
-                                        final GordianKeyPair pServer,
-                                        final byte[] pClientHello) throws OceanusException {
+        public GordianAgreementMessageASN1 acceptClientHelloASN1(final GordianKeyPair pClient,
+                                                                 final GordianKeyPair pServer,
+                                                                 final GordianAgreementMessageASN1 pClientHello) throws OceanusException {
             /* Protect against exceptions */
             try {
                 /* Check keyPair */
@@ -383,7 +378,7 @@ public final class JcaAgreement {
                 establishAgreement(pClient);
 
                 /* Process the clientHello */
-                processClientHello(pServer, pClientHello);
+                processClientHelloASN1(pServer, pClientHello);
                 final JcaPrivateKey myPrivate = (JcaPrivateKey) getPrivateKey(pServer);
 
                 /* Initialise the agreement taking care in case of null parameters */
@@ -399,7 +394,7 @@ public final class JcaAgreement {
                 storeSecret(theAgreement.generateSecret());
 
                 /* Return the serverHello */
-                return buildServerHello().getEncodedBytes();
+                return buildServerHello();
 
             } catch (InvalidKeyException
                     | InvalidAlgorithmParameterException e) {
@@ -408,8 +403,8 @@ public final class JcaAgreement {
         }
 
         @Override
-        public byte[] acceptServerHello(final GordianKeyPair pServer,
-                                        final byte[] pServerHello) throws OceanusException {
+        public void acceptServerHelloASN1(final GordianKeyPair pServer,
+                                          final GordianAgreementMessageASN1 pServerHello) throws OceanusException {
             /* Protect against exceptions */
             try {
                 /* Check keyPair */
@@ -420,7 +415,7 @@ public final class JcaAgreement {
                 establishAgreement(pServer);
 
                 /* process the serverHello */
-                processServerHello(pServerHello);
+                processServerHelloASN1(pServerHello);
                 final JcaPrivateKey myPrivate = (JcaPrivateKey) getPrivateKey(getClientKeyPair());
 
                 /* Initialise the agreement taking care in case of null parameters */
@@ -434,9 +429,6 @@ public final class JcaAgreement {
                 final JcaPublicKey myTarget = (JcaPublicKey) getPublicKey(pServer);
                 theAgreement.doPhase(myTarget.getPublicKey(), true);
                 storeSecret(theAgreement.generateSecret());
-
-                /* Return confirmation if needed */
-                return buildClientConfirm();
 
             } catch (InvalidKeyException
                     | InvalidAlgorithmParameterException e) {
@@ -485,13 +477,13 @@ public final class JcaAgreement {
         }
 
         @Override
-        public byte[] acceptClientHello(final GordianKeyPair pServer,
-                                        final byte[] pClientHello) throws OceanusException {
+        public GordianAgreementMessageASN1 acceptClientHelloASN1(final GordianKeyPair pServer,
+                                                                 final GordianAgreementMessageASN1 pClientHello) throws OceanusException {
             /* Protect against exceptions */
             try {
                 /* Process the clientHello */
                 JcaKeyPair.checkKeyPair(pServer);
-                processClientHello(pClientHello);
+                processClientHelloASN1(pClientHello);
                 final JcaPrivateKey myPrivate = (JcaPrivateKey) getPrivateKey(getServerEphemeralKeyPair());
                 final JcaPublicKey myPublic = (JcaPublicKey) getPublicKey(getClientEphemeralKeyPair());
 
@@ -510,7 +502,7 @@ public final class JcaAgreement {
                 storeSecret(theAgreement.generateSecret());
 
                 /* Return the serverHello */
-                return buildServerHello(pServer);
+                return buildServerHelloASN1(pServer);
 
             } catch (InvalidKeyException
                     | InvalidAlgorithmParameterException e) {
@@ -519,13 +511,13 @@ public final class JcaAgreement {
         }
 
         @Override
-        public void acceptServerHello(final GordianKeyPair pServer,
-                                      final byte[] pServerHello) throws OceanusException {
+        public void acceptServerHelloASN1(final GordianKeyPair pServer,
+                                          final GordianAgreementMessageASN1 pServerHello) throws OceanusException {
             /* Protect against exceptions */
             try {
                 /* process the serverHello */
                 JcaKeyPair.checkKeyPair(pServer);
-                processServerHello(pServer, pServerHello);
+                processServerHelloASN1(pServer, pServerHello);
                 final JcaPrivateKey myPrivate = (JcaPrivateKey) getPrivateKey(getClientEphemeralKeyPair());
                 final JcaPublicKey myTarget = (JcaPublicKey) getPublicKey(getServerEphemeralKeyPair());
 
@@ -590,9 +582,9 @@ public final class JcaAgreement {
         }
 
         @Override
-        public byte[] acceptClientHello(final GordianKeyPair pClient,
-                                        final GordianKeyPair pServer,
-                                        final byte[] pClientHello) throws OceanusException {
+        public GordianAgreementMessageASN1 acceptClientHelloASN1(final GordianKeyPair pClient,
+                                                                 final GordianKeyPair pServer,
+                                                                 final GordianAgreementMessageASN1 pClientHello) throws OceanusException {
             /* Protect against exceptions */
             try {
                 /* Establish agreement */
@@ -601,7 +593,7 @@ public final class JcaAgreement {
                 establishAgreement(pServer);
 
                 /* process clientHello */
-                processClientHello(pClient, pServer, pClientHello);
+                processClientHelloASN1(pClient, pServer, pClientHello);
 
                 /* Initialise agreement */
                 final JcaPrivateKey myPrivate = (JcaPrivateKey) getPrivateKey(pServer);
@@ -618,7 +610,7 @@ public final class JcaAgreement {
                 storeSecret(theAgreement.generateSecret());
 
                 /* Return the serverHello */
-                return buildServerHello().getEncodedBytes();
+                return buildServerHello();
 
             } catch (InvalidKeyException
                     | InvalidAlgorithmParameterException e) {
@@ -627,8 +619,8 @@ public final class JcaAgreement {
         }
 
         @Override
-        public byte[] acceptServerHello(final GordianKeyPair pServer,
-                                        final byte[] pServerHello) throws OceanusException {
+        public GordianAgreementMessageASN1 acceptServerHelloASN1(final GordianKeyPair pServer,
+                                                                 final GordianAgreementMessageASN1 pServerHello) throws OceanusException {
             /* Protect against exceptions */
             try {
                 /* Establish agreement */
@@ -636,7 +628,7 @@ public final class JcaAgreement {
                 establishAgreement(pServer);
 
                 /* parse the serverHello */
-                processServerHello(pServer, pServerHello);
+                processServerHelloASN1(pServer, pServerHello);
 
                 /* Initialise agreement */
                 final JcaPrivateKey myPrivate = (JcaPrivateKey) getPrivateKey(getClientKeyPair());
@@ -655,8 +647,7 @@ public final class JcaAgreement {
                 storeSecret(theAgreement.generateSecret());
 
                 /* Return confirmation if needed */
-                final GordianAgreementMessageASN1 myConfirm = buildClientConfirm();
-                return myConfirm == null ? null : myConfirm.getEncodedBytes();
+                return buildClientConfirmASN1();
 
             } catch (InvalidKeyException
                     | InvalidAlgorithmParameterException e) {
@@ -705,15 +696,15 @@ public final class JcaAgreement {
         }
 
         @Override
-        public byte[] acceptClientHello(final GordianKeyPair pClient,
-                                        final GordianKeyPair pServer,
-                                        final byte[] pClientHello) throws OceanusException {
+        public GordianAgreementMessageASN1 acceptClientHelloASN1(final GordianKeyPair pClient,
+                                                                 final GordianKeyPair pServer,
+                                                                 final GordianAgreementMessageASN1 pClientHello) throws OceanusException {
             /* Protect against exceptions */
             try {
                 /* process clientHello */
                 JcaKeyPair.checkKeyPair(pClient);
                 JcaKeyPair.checkKeyPair(pServer);
-                processClientHello(pClient, pServer, pClientHello);
+                processClientHelloASN1(pClient, pServer, pClientHello);
 
                 /* Initialise agreement */
                 final JcaPrivateKey myPrivate = (JcaPrivateKey) getPrivateKey(pServer);
@@ -730,7 +721,7 @@ public final class JcaAgreement {
                 storeSecret(theAgreement.generateSecret());
 
                 /* Return the serverHello */
-                return buildServerHello().getEncodedBytes();
+                return buildServerHello();
 
             } catch (InvalidKeyException
                     | InvalidAlgorithmParameterException e) {
@@ -739,13 +730,13 @@ public final class JcaAgreement {
         }
 
         @Override
-        public byte[] acceptServerHello(final GordianKeyPair pServer,
-                                        final byte[] pServerHello) throws OceanusException {
+        public GordianAgreementMessageASN1 acceptServerHelloASN1(final GordianKeyPair pServer,
+                                                                 final GordianAgreementMessageASN1 pServerHello) throws OceanusException {
             /* Protect against exceptions */
             try {
                 /* process the serverHello */
                 JcaKeyPair.checkKeyPair(pServer);
-                processServerHello(pServer, pServerHello);
+                processServerHelloASN1(pServer, pServerHello);
 
                 /* Initialise agreement */
                 final JcaPrivateKey myPrivate = (JcaPrivateKey) getPrivateKey(getClientKeyPair());
@@ -764,8 +755,7 @@ public final class JcaAgreement {
                 storeSecret(theAgreement.generateSecret());
 
                 /* Return confirmation if needed */
-                final GordianAgreementMessageASN1 myConfirm = buildClientConfirm();
-                return myConfirm == null ? null : myConfirm.getEncodedBytes();
+                return buildClientConfirmASN1();
 
             } catch (InvalidKeyException
                     | InvalidAlgorithmParameterException e) {
