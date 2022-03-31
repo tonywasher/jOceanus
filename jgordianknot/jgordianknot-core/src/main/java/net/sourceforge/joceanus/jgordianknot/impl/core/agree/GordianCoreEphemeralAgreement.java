@@ -143,6 +143,7 @@ public abstract class GordianCoreEphemeralAgreement
 
         /* Reset server details */
         theServer = null;
+        theServerId = null;
         theServerEphemeral = null;
         theServerConfirmation = null;
     }
@@ -159,6 +160,24 @@ public abstract class GordianCoreEphemeralAgreement
 
         /* Pass the call down */
         super.processSecret(pSecret);
+    }
+
+    /**
+     * Store client ephemeral.
+     * @param pEphemeral the server ephemeral
+     */
+    protected void storeClientEphemeral(final GordianKeyPair pEphemeral) {
+        /* Store the ephemeral */
+        theClientEphemeral = pEphemeral;
+    }
+
+    /**
+     * Store server ephemeral.
+     * @param pEphemeral the server ephemeral
+     */
+    protected void storeServerEphemeral(final GordianKeyPair pEphemeral) {
+        /* Store the ephemeral */
+        theServerEphemeral = pEphemeral;
     }
 
     /**
@@ -188,6 +207,7 @@ public abstract class GordianCoreEphemeralAgreement
 
     /**
      * Create the clientHello ASN1.
+     * @param pClien the client keyPair
      * @return the clientHello message
      * @throws OceanusException on error
      */
@@ -375,7 +395,7 @@ public abstract class GordianCoreEphemeralAgreement
     }
 
     /**
-     * Accept a client confirm message
+     * Accept a client confirm message.
      * @param pClientConfirm the confirm message
      * @throws OceanusException on error
      */

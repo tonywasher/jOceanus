@@ -207,8 +207,8 @@ public class GordianCoreKeyStoreGateway
         final GordianPEMParser myParser = new GordianPEMParser();
         final GordianPEMObject myObject = myParser.parsePEMFile(pInStream).get(0);
         if (myObject.getObjectType() == GordianPEMObjectType.CERTREQ) {
-            GordianCRMParser myCRMParser = new GordianKeyPairCRMParser(theKeyStoreMgr, theKeyPairCertifier, thePasswordResolver);
-            List<GordianPEMObject> myChain = myCRMParser.decodeCertificateRequest(myObject);
+            final GordianCRMParser myCRMParser = new GordianKeyPairCRMParser(theKeyStoreMgr, theKeyPairCertifier, thePasswordResolver);
+            final List<GordianPEMObject> myChain = myCRMParser.decodeCertificateRequest(myObject);
             myParser.writePEMFile(pOutStream, myChain);
         } else {
             throw new GordianDataException("Unexpected object type");

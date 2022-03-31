@@ -79,7 +79,7 @@ public class GordianAgreementResult {
     }
 
     /**
-     * Set clientIV
+     * Set clientIV.
      * @param pClientIV the clientIV
      */
     void setClientIV(final byte[] pClientIV) {
@@ -95,13 +95,16 @@ public class GordianAgreementResult {
     }
 
     /**
-     * Set serverIV
+     * Set serverIV.
      * @param pServerIV the serverIV
      */
     void setServerIV(final byte[] pServerIV) {
         theServerIV = pServerIV;
     }
 
+    /**
+     * Reset data.
+     */
     public void reset() {
         /* Reset the client and serverIVs */
         if (theClientIV != null) {

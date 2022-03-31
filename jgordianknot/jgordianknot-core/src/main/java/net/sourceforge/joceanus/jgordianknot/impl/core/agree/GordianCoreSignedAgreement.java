@@ -87,6 +87,24 @@ public abstract class GordianCoreSignedAgreement
         theServerEphemeral = null;
     }
 
+    /**
+     * Store client ephemeral.
+     * @param pEphemeral the server ephemeral
+     */
+    protected void storeClientEphemeral(final GordianKeyPair pEphemeral) {
+        /* Store the ephemeral */
+        theClientEphemeral = pEphemeral;
+    }
+
+    /**
+     * Store server ephemeral.
+     * @param pEphemeral the server ephemeral
+     */
+    protected void storeServerEphemeral(final GordianKeyPair pEphemeral) {
+        /* Store the ephemeral */
+        theServerEphemeral = pEphemeral;
+    }
+
     @Override
     public byte[] createClientHello() throws OceanusException {
         /* Create the clientHello and extract the encoded bytes */

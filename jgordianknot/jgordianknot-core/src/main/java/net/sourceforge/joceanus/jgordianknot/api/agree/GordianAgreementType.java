@@ -80,6 +80,21 @@ public enum GordianAgreementType {
     }
 
     /**
+     * Is this an confirmable agreement?
+     * @return true/false
+     */
+    public boolean canConfirm() {
+        switch (this) {
+            case UNIFIED:
+            case MQV:
+            case SM2:
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    /**
      * Is this Agreement supported for this KeyPairType?
      * @param pKeyPairType the keyPair
      * @return true/false

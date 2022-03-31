@@ -48,7 +48,7 @@ public class GordianCompositeKeyPair
      * Constructor.
      * @param pSpec the spec
      */
-    GordianCompositeKeyPair(final GordianKeyPairSpec pSpec) {
+    public GordianCompositeKeyPair(final GordianKeyPairSpec pSpec) {
         theSpec = pSpec;
         theKeyPairs = new LinkedHashMap<>();
     }

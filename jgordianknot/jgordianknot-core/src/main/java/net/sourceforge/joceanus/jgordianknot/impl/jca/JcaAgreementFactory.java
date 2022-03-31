@@ -99,6 +99,8 @@ public class JcaAgreementFactory
                 return getDHAgreement(pAgreementSpec);
             case XDH:
                 return getXDHAgreement(pAgreementSpec);
+            case COMPOSITE:
+                return getCompositeAgreement(pAgreementSpec);
             default:
                 throw new GordianDataException(GordianCoreFactory.getInvalidText(pAgreementSpec.getKeyPairSpec()));
         }

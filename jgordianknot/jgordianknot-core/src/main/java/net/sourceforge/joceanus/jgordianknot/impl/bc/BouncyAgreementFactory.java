@@ -101,6 +101,8 @@ public class BouncyAgreementFactory
                 return new BouncySABERAgreement(getFactory(), pSpec);
             case XDH:
                 return getBCXDHAgreement(pSpec);
+            case COMPOSITE:
+                return getCompositeAgreement(pSpec);
             default:
                 throw new GordianDataException(GordianCoreFactory.getInvalidText(pSpec));
         }

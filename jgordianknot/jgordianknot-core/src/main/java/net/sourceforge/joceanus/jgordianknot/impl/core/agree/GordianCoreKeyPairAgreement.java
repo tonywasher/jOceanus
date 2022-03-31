@@ -173,6 +173,32 @@ public abstract class GordianCoreKeyPairAgreement
         }
     }
 
+    @Override
+    public void reset() {
+        /* Reset underlying details */
+        super.reset();
+
+        /* Reset client details */
+        theClientId = null;
+    }
+
+    /**
+     * Store client id.
+     * @param pId the id
+     */
+    protected void storeClientId(final Integer pId) {
+        /* Store the initVector */
+        theClientId = pId;
+    }
+
+    /**
+     * Obtain the clientId.
+     * @return the clientId
+     */
+    protected Integer getClientId() {
+        return theClientId;
+    }
+
     /**
      * Build clientHello message.
      * @return the clientHello message
@@ -209,8 +235,8 @@ public abstract class GordianCoreKeyPairAgreement
      * @return the clientHello message
      * @throws OceanusException on error
      */
-    private GordianAgreementMessageASN1 buildClientHelloASN1(final byte[] pEncapsulated,
-                                                             final X509EncodedKeySpec pEphemeral) throws OceanusException {
+    GordianAgreementMessageASN1 buildClientHelloASN1(final byte[] pEncapsulated,
+                                                     final X509EncodedKeySpec pEphemeral) throws OceanusException {
         /* Must be in clean state */
         checkStatus(GordianAgreementStatus.CLEAN);
 
@@ -221,7 +247,11 @@ public abstract class GordianCoreKeyPairAgreement
         final AlgorithmIdentifier myResId = getIdentifierForResult();
 
         /* Determine the clientId */
-        theClientId = mySpec.getAgreementType().isAnonymous() ? null : myFactory.getNextId();
+        if (theClientId == null) {
+            theClientId = mySpec.getAgreementType().isAnonymous()
+                    ? null
+                    : myFactory.getNextId();
+        }
 
         /* Create the clientHello */
         return GordianAgreementMessageASN1.newClientHello(theClientId)

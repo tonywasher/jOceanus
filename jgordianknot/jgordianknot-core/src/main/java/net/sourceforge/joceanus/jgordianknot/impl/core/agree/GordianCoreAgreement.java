@@ -225,10 +225,14 @@ public abstract class GordianCoreAgreement
      * @return the initVector
      */
     protected byte[] newClientIV() {
-        /* Create a new initVector */
-        final byte[] myClientIV = new byte[INITLEN];
-        getRandom().nextBytes(myClientIV);
-        storeClientIV(myClientIV);
+        /* Obtain current IV */
+        byte[] myClientIV = getClientIV();
+        if (myClientIV == null) {
+            /* Create a new initVector */
+            myClientIV = new byte[INITLEN];
+            getRandom().nextBytes(myClientIV);
+            storeClientIV(myClientIV);
+        }
         return myClientIV;
     }
 
@@ -253,10 +257,13 @@ public abstract class GordianCoreAgreement
      * Create a new serverIV.
      */
     void newServerIV() {
-        /* Create a new initVector */
-        final byte[] myServerIV = new byte[INITLEN];
-        getRandom().nextBytes(myServerIV);
-        storeServerIV(myServerIV);
+        /* Obtain current IV */
+        if (getServerIV() == null) {
+            /* Create a new initVector */
+            final byte[] myServerIV = new byte[INITLEN];
+            getRandom().nextBytes(myServerIV);
+            storeServerIV(myServerIV);
+        }
     }
 
     /**

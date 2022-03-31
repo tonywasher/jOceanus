@@ -757,8 +757,8 @@ public class GordianKeyPairAlgId {
         @Override
         public GordianKeyPairSpec determineKeyPairSpec(final SubjectPublicKeyInfo pInfo) throws OceanusException {
             try {
-                byte[] keyEnc = ASN1OctetString.getInstance(pInfo.parsePublicKey()).getOctets();
-                SPHINCSPlusParameters myParms = SPHINCSPlusParameters.getParams(Integers.valueOf(Pack.bigEndianToInt(keyEnc, 0)));
+                final byte[] keyEnc = ASN1OctetString.getInstance(pInfo.parsePublicKey()).getOctets();
+                final SPHINCSPlusParameters myParms = SPHINCSPlusParameters.getParams(Integers.valueOf(Pack.bigEndianToInt(keyEnc, 0)));
                 return determineKeyPairSpec(myParms);
             } catch (IOException e) {
                 throw new GordianIOException("Failed to parse ASN1", e);
@@ -768,8 +768,8 @@ public class GordianKeyPairAlgId {
         @Override
         public GordianKeyPairSpec determineKeyPairSpec(final PrivateKeyInfo pInfo) throws OceanusException {
             try {
-                byte[] keyEnc = ASN1OctetString.getInstance(pInfo.parsePrivateKey()).getOctets();
-                SPHINCSPlusParameters myParms = SPHINCSPlusParameters.getParams(Integers.valueOf(Pack.bigEndianToInt(keyEnc, 0)));
+                final byte[] keyEnc = ASN1OctetString.getInstance(pInfo.parsePrivateKey()).getOctets();
+                final SPHINCSPlusParameters myParms = SPHINCSPlusParameters.getParams(Integers.valueOf(Pack.bigEndianToInt(keyEnc, 0)));
                 return determineKeyPairSpec(myParms);
             } catch (IOException e) {
                 throw new GordianIOException("Failed to parse ASN1", e);

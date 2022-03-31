@@ -132,7 +132,7 @@ public interface GordianKeyStoreElement {
     /**
      * KeyStore Certificate Element.
      */
-    static class GordianKeyStoreCertificateElement
+    class GordianKeyStoreCertificateElement
             extends GordianCoreKeyStoreEntry
             implements GordianKeyStoreCertificateHolder {
         /**
@@ -205,7 +205,7 @@ public interface GordianKeyStoreElement {
     /**
      * KeyStore KeyPair Element.
      */
-    static class GordianKeyStorePairElement
+    class GordianKeyStorePairElement
             extends GordianCoreKeyStoreEntry
             implements GordianKeyStoreCertificateHolder {
         /**
@@ -405,7 +405,7 @@ public interface GordianKeyStoreElement {
     /**
      * KeyStore hash Element.
      */
-    static class GordianKeyStoreHashElement
+    class GordianKeyStoreHashElement
             extends GordianCoreKeyStoreEntry {
         /**
          * The hash.
@@ -487,7 +487,7 @@ public interface GordianKeyStoreElement {
      * KeyStore key Element.
      * @param <T> the key type
      */
-    static class GordianKeyStoreKeyElement<T extends GordianKeySpec>
+    class GordianKeyStoreKeyElement<T extends GordianKeySpec>
             extends GordianCoreKeyStoreEntry {
         /**
          * The keyType.
@@ -630,7 +630,7 @@ public interface GordianKeyStoreElement {
     /**
      * KeyStore keySet Element.
      */
-    static class GordianKeyStoreSetElement
+    class GordianKeyStoreSetElement
             extends GordianCoreKeyStoreEntry {
         /**
          * The keyMap.

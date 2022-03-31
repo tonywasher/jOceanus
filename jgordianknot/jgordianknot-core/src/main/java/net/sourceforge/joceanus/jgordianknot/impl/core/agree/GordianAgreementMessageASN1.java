@@ -44,7 +44,7 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
  * <pre>
  * GordianAgreementMessageASN1 ::= SEQUENCE  {
  *      Id Identification
- *      Algs [1] Specifications OPTIONAL
+ *      Algs [1] Specifications
  *      initVector [2] OCTET STRING OPTIONAL
  *      encapsulated [3] OCTET STRING OPTIONAL
  *      ephemeral [4] SubjectPublicKeyInfo OPTIONAL
@@ -60,7 +60,7 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
  *
  * Specification ::= SEQUENCE  {
  *      agreeId AlgorithmIdentifier
- *      resultId AlgorithmIdentifier
+ *      resultId AlgorithmIdentifier OPTIONAL
  * }
  *
  * SignDetails ::= SEQUENCE  {
@@ -69,7 +69,7 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
  * }
  * </pre>
  */
-public class GordianAgreementMessageASN1
+public final class GordianAgreementMessageASN1
         extends GordianASN1Object {
     /**
      * The algorithms tag.
@@ -164,7 +164,7 @@ public class GordianAgreementMessageASN1
      */
     private GordianAgreementMessageASN1(final GordianMessageType pType,
                                         final Integer pClientId,
-                                        final Integer pServerId){
+                                        final Integer pServerId) {
         theMessageType = pType;
         theClientId = pClientId;
         theServerId = pServerId;
@@ -575,13 +575,13 @@ public class GordianAgreementMessageASN1
         }
 
         /**
-         * Determine the MessageType from the id
+         * Determine the MessageType from the id.
          * @param pId the id
          * @return the messageType
          * @throws OceanusException on error
          */
         private static GordianMessageType determineType(final int pId) throws OceanusException {
-            for(GordianMessageType myType : GordianMessageType.values()) {
+            for (GordianMessageType myType : GordianMessageType.values()) {
                 if (pId == myType.getId()) {
                     return myType;
                 }

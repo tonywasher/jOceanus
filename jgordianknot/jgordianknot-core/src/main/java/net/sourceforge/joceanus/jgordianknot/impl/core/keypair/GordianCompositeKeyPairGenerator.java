@@ -118,6 +118,7 @@ public class GordianCompositeKeyPairGenerator
                 ks.add(SubjectPublicKeyInfo.getInstance(myGenerator.getX509Encoding(myIterator.next()).getEncoded()));
             }
 
+            /* Build the x509 encoding */
             final AlgorithmIdentifier myId = new AlgorithmIdentifier(MiscObjectIdentifiers.id_alg_composite);
             final SubjectPublicKeyInfo myInfo = new SubjectPublicKeyInfo(myId, new DERSequence(ks).getEncoded());
             return new X509EncodedKeySpec(myInfo.getEncoded());

@@ -16,7 +16,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jgordianknot.impl.core.agree;
 
-import java.util.Iterator;
+import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Predicate;
 
@@ -29,6 +29,10 @@ import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianEdwardsElliptic;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPairSpec;
 import net.sourceforge.joceanus.jgordianknot.api.keypair.GordianKeyPairType;
 import net.sourceforge.joceanus.jgordianknot.impl.core.agree.GordianAgreementMessageASN1.GordianMessageType;
+import net.sourceforge.joceanus.jgordianknot.impl.core.agree.GordianCompositeAgreement.GordianCompositeAnonymousAgreement;
+import net.sourceforge.joceanus.jgordianknot.impl.core.agree.GordianCompositeAgreement.GordianCompositeBasicAgreement;
+import net.sourceforge.joceanus.jgordianknot.impl.core.agree.GordianCompositeAgreement.GordianCompositeHandshakeAgreement;
+import net.sourceforge.joceanus.jgordianknot.impl.core.agree.GordianCompositeAgreement.GordianCompositeSignedAgreement;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianCoreFactory;
 import net.sourceforge.joceanus.jgordianknot.impl.core.base.GordianDataException;
 import net.sourceforge.joceanus.jtethys.OceanusException;
@@ -79,6 +83,31 @@ public abstract class GordianCoreAgreementFactory
         final AlgorithmIdentifier myAlgId = myASN1.getAgreementId();
         final GordianAgreementSpec mySpec = getSpecForIdentifier(myAlgId);
         return createAgreement(mySpec);
+    }
+
+    /**
+     * Create the BouncyCastle Agreement.
+     *
+     * @param pSpec the agreementSpec
+     * @return the Agreement
+     * @throws OceanusException on error
+     */
+    protected GordianAgreement getCompositeAgreement(final GordianAgreementSpec pSpec) throws OceanusException {
+        switch (pSpec.getAgreementType()) {
+            case KEM:
+            case ANON:
+                return new GordianCompositeAnonymousAgreement(getFactory(), pSpec);
+            case BASIC:
+                return new GordianCompositeBasicAgreement(getFactory(), pSpec);
+            case SIGNED:
+                return new GordianCompositeSignedAgreement(getFactory(), pSpec);
+            case MQV:
+            case UNIFIED:
+            case SM2:
+                return new GordianCompositeHandshakeAgreement(getFactory(), pSpec);
+            default:
+                throw new GordianDataException(GordianCoreFactory.getInvalidText(pSpec));
+        }
     }
 
     @Override
@@ -152,18 +181,20 @@ public abstract class GordianCoreAgreementFactory
 
         /* For Composite AgreementSpec */
         if (pKeyPairSpec.getKeyPairType() == GordianKeyPairType.COMPOSITE) {
-            /* Loop through the keyPairs */
-            final Iterator<GordianKeyPairSpec> myIterator = pKeyPairSpec.keySpecIterator();
-            while (myIterator.hasNext()) {
-                final GordianKeyPairSpec mySpec = myIterator.next();
-                final GordianAgreementSpec mySubAgree
-                        = new GordianAgreementSpec(mySpec,
-                                                   pAgreementSpec.getAgreementType(),
-                                                   pAgreementSpec.getKDFType(),
-                                                   pAgreementSpec.withConfirm());
-                if (!validAgreementSpecForKeyPairSpec(mySpec, mySubAgree)) {
+            /* Access the subSpecs  */
+            final List<GordianAgreementSpec> mySubAgrees = GordianCompositeAgreement.getSubAgreements(pAgreementSpec);
+
+            /* Loop through the subAgreements */
+            for (GordianAgreementSpec mySpec : mySubAgrees) {
+                if (!validAgreementSpecForKeyPairSpec(mySpec.getKeyPairSpec(), mySpec)) {
                     return false;
                 }
+            }
+
+            /* Check confirmation */
+            if (Boolean.TRUE.equals(pAgreementSpec.withConfirm())
+                && !pAgreementSpec.getAgreementType().canConfirm()) {
+                return false;
             }
         }
 
